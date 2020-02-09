@@ -22,7 +22,8 @@ enum class Type {
     reset, // reset the terminal to its initial state
     save_state, // save cursor position and graphic rendition
     restore_state, // restore cursor position and graphic rendition
-    change_title // payload type = Type
+    change_title, // payload type - Title
+    move_cursor // payload type - CursorMovement
 };
 
 struct Empty {}; // default empty payload   
@@ -33,7 +34,7 @@ struct Title {
         Icon,
         Window
     };
-    Kind kind;
+    Kind kind = IconAndWindow;
     std::string title; 
 };
 
@@ -41,8 +42,18 @@ struct UTF32Text {
     std::u32string characters; // composed unicode characters 
 };
 
+struct CursorMovement {
+    enum Positioning {
+        Absolute,
+        Relative
+    };
+    Positioning positioning = Absolute;
+    int x = 0;
+    int y = 0;
+};
+
 struct Command {
-    using Payload = std::variant<Empty, UTF32Text, Title>;
+    using Payload = std::variant<Empty, UTF32Text, Title, CursorMovement>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

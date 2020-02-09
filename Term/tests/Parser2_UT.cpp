@@ -34,6 +34,13 @@ static const Title& as_title( const Command &_command )
     throw std::invalid_argument("not Title");
 }
 
+static const CursorMovement& as_cursor_movement( const Command &_command )
+{
+    if( auto ptr = std::get_if<CursorMovement>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not CursorMovement");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -213,6 +220,50 @@ TEST_CASE(PREFIX"OSC")
         CHECK( r[0].type == Type::change_title );
         CHECK( as_title(r[0]).kind == Title::Window );
         CHECK( as_title(r[0]).title == "Hello" );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI A")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ A" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[A"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == -1 );     
+    }
+    SECTION( "ESC [ 27 A" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[27A"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == -27 );     
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI B")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ B" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[B"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == 1 );     
+    }
+    SECTION( "ESC [ 45 A" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[45B"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == 45 );     
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

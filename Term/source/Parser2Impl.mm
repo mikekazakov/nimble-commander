@@ -285,8 +285,8 @@ bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
 
     SwitchTo(EscState::Text);
     switch (c) {
-            //                case '[': m_EscState = EscState::LeftBracket;   return;
-        case ']': SwitchTo(EscState::OSC);  return true;
+        case '[': SwitchTo(EscState::CSI); return true;
+        case ']': SwitchTo(EscState::OSC); return true;
             //                case '(': m_EscState = EscState::SetG0;         return;
             //                case ')': m_EscState = EscState::SetG1;         return;
         case '>':  /* Numeric keypad - ignoring now */  return true;
@@ -587,8 +587,134 @@ void Parser2Impl::SSOSCSubmit() noexcept
         m_Output.emplace_back( Type::change_title, Title{Title::Window, std::string(pt)});
     }
     else {
-        // TODO: log
+        LogMissedOSCRequest(ps, pt);
     }
+}
+
+void Parser2Impl::LogMissedOSCRequest( unsigned _ps, std::string_view _pt )
+{
+    if( m_ErrorLog ) {
+        using namespace std::string_literals;
+        auto msg = "Missed an OSC: "s + std::to_string(_ps) + ": "s + std::string(_pt);
+        m_ErrorLog( msg );
+    }
+}
+
+void Parser2Impl::SSCSIEnter() noexcept
+{
+    m_CSIState.buffer.clear();
+}
+
+void Parser2Impl::SSCSIExit() noexcept
+{
+    SSCSISubmit();
+}
+
+constexpr static std::array<bool, 256> CSI_Table( std::string_view _on )
+{
+    std::array<bool, 256> flags{};
+    std::fill(flags.begin(), flags.end(), false);
+    for( auto c: _on )
+        flags[(unsigned char)c] = true;
+    return flags;
+}
+
+constexpr static std::array<bool, 256> g_CSI_ValidTerminal = 
+    CSI_Table("@ABCDEFGHIJKLMPSTXZ^`abcdefghilmnpqrstuvwxyz{|}~");
+
+constexpr static std::array<bool, 256> g_CSI_ValidContents =
+    CSI_Table("01234567890; ?>=!\"\'$#*");
+
+bool Parser2Impl::SSCSIConsume(unsigned char _byte) noexcept
+{
+    if( g_CSI_ValidContents[_byte] ) {
+        m_CSIState.buffer += static_cast<char>(_byte);
+        return true;
+    }
+    else {
+        if( g_CSI_ValidTerminal[_byte] ) {
+            m_CSIState.buffer += static_cast<char>(_byte);
+            SwitchTo(EscState::Text);
+            return true;
+        }
+        else {            
+            m_CSIState.buffer.clear(); // discard
+            SwitchTo(EscState::Text);
+            return false;
+        }
+    }
+}
+
+void Parser2Impl::SSCSISubmit() noexcept
+{
+    if( m_CSIState.buffer.empty() )
+        return;
+
+    const auto c = m_CSIState.buffer.back();
+    switch( c ) {
+        case 'A': CSI_A(); break;
+        case 'B': CSI_B(); break;
+        default: break;
+    } 
+}
+
+    //               m_EscState = EState::Normal;
+    //               switch(c) {
+    //                   case 'h': CSI_DEC_PMS(true);  return;
+    //                   case 'l': CSI_DEC_PMS(false); return;
+    //                   case 'C': case 'a': CSI_C(); return;
+    //                   case 'd': CSI_d(); return;
+    //                   case 'D': CSI_D(); return;
+    //                   case 'H': case 'f': CSI_H(); return;
+    //                   case 'G': case '`': CSI_G(); return;
+    //                   case 'J': CSI_J(); return;
+    //                   case 'K': CSI_K(); return;
+    //                   case 'L': CSI_L(); return;
+    //                   case 'm': CSI_m(); return;
+    //                   case 'M': CSI_M(); return;
+    //                   case 'P': CSI_P(); return;
+    //                   case 'S': CSI_S(); return;
+    //                   case 'T': CSI_T(); return;
+    //                   case 'X': CSI_X(); return;
+    //                   case 's': EscSave(); return;
+    //                   case 'u': EscRestore(); return;
+    //                   case 'r': CSI_r(); return;
+    //                   case '@': CSI_At(); return;
+    //                   case 'c': CSI_c(); return;
+    //                   case 'n': CSI_n(); return;
+    //                   case 't': CSI_t(); return;
+    //                   default: CSI_Unknown(c); return;
+    //               }
+
+void Parser2Impl::CSI_A() noexcept
+{
+//    CSI Ps A - Cursor Up Ps Times (default = 1) (CUU).
+//    Not implemented:
+//    CSI Ps SP A - Shift right Ps columns(s) (default = 1) (SR), ECMA-48.
+
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    
+    using namespace input;
+    CursorMovement cm;
+    cm.positioning = CursorMovement::Relative;
+    cm.y = -static_cast<int>(ps);
+    m_Output.emplace_back( Type::move_cursor, cm );
+}
+
+void Parser2Impl::CSI_B() noexcept
+{
+//  CSI Ps B  Cursor Down Ps Times (default = 1) (CUD).
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    
+    using namespace input;
+    CursorMovement cm;
+    cm.positioning = CursorMovement::Relative;
+    cm.y = static_cast<int>(ps);
+    m_Output.emplace_back( Type::move_cursor, cm );    
 }
 
 }

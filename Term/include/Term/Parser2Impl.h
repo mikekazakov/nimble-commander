@@ -20,7 +20,8 @@ public:
         Text = 0,
         Control = 1,
         Esc = 2,
-        OSC = 3
+        OSC = 3,
+        CSI = 4
     };
 
     Parser2Impl( const Params& _params = {} );
@@ -38,6 +39,7 @@ private:
     void FlushText();
     void ConsumeNextUTF8TextChar( unsigned char _byte );
     void LogMissedEscChar( unsigned char _c );
+    void LogMissedOSCRequest( unsigned _ps, std::string_view _pt );
     
     void SSTextEnter() noexcept;
     void SSTextExit() noexcept;
@@ -56,6 +58,11 @@ private:
     bool SSOSCConsume(unsigned char _byte) noexcept;
     void SSOSCSubmit() noexcept;
     void SSOSCDiscard() noexcept;
+
+    void SSCSIEnter() noexcept;
+    void SSCSIExit() noexcept;
+    bool SSCSIConsume(unsigned char _byte) noexcept;
+    void SSCSISubmit() noexcept;
     
     void LF() noexcept;
     void HT() noexcept;
@@ -66,18 +73,21 @@ private:
     void RIS() noexcept;
     void DECSC() noexcept;
     void DECRC() noexcept;
+    void CSI_A() noexcept;
+    void CSI_B() noexcept;
     
     constexpr static struct SubStates {
         void (Me::*enter)() noexcept;
         void (Me::*exit)() noexcept;
         bool (Me::*consume)(unsigned char _byte) noexcept;    
-    } m_SubStates[4] = {
+    } m_SubStates[5] = {
         { &Me::SSTextEnter, &Me::SSTextExit, &Me::SSTextConsume },
         { &Me::SSControlEnter, &Me::SSControlExit, &Me::SSControlConsume },
         { &Me::SSEscEnter, &Me::SSEscExit, &Me::SSEscConsume },
         { &Me::SSOSCEnter, &Me::SSOSCExit, &Me::SSOSCConsume },
+        { &Me::SSCSIEnter, &Me::SSCSIExit, &Me::SSCSIConsume },
     };
-        
+
     EscState                m_EscState = EscState::Text;
     const unsigned short   *m_TranslateMap = nullptr;    
         
@@ -92,6 +102,10 @@ private:
         std::string buffer;
         bool        got_esc = false;
     } m_OSCState;
+    
+    struct SS_CSI {
+        std::string buffer;
+    } m_CSIState;
     
     // parse output
     std::vector<input::Command> m_Output;

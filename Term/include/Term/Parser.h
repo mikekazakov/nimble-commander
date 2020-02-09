@@ -11,7 +11,11 @@
 // https://vt100.net/docs/tp83/appendixb.html
 // http://www.real-world-systems.com/docs/ANSIcode.html
 // https://www.xfree86.org/4.5.0/ctlseqs.html
+// http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-048.pdf
+
+// xterm:
 // http://rtfm.etla.org/xterm/ctlseq.html
+// https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
 
 namespace nc::term {
 

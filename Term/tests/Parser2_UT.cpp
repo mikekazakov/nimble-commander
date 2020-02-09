@@ -27,6 +27,13 @@ static const UTF32Text& as_utf32text( const Command &_command )
     throw std::invalid_argument("not UTF32Text");
 }
 
+static const Title& as_title( const Command &_command )
+{
+    if( auto ptr = std::get_if<Title>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not Title");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -174,5 +181,38 @@ TEST_CASE(PREFIX"Handles control characters")
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::restore_state );
     }    
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Normal );
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"OSC")
+{
+    Parser2Impl parser;
+    SECTION( "ESC ] 0 ; Hello" ) {
+        std::vector<input::Command> r;
+        SECTION("") { r = parser.Parse(to_bytes("\x1B""]0;Hello\x07")); }    
+        SECTION("") { r = parser.Parse(to_bytes("\x1B""]0;Hello\x1B\\")); }
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::change_title );
+        CHECK( as_title(r[0]).kind == Title::IconAndWindow );
+        CHECK( as_title(r[0]).title == "Hello" );
+    }
+    SECTION( "ESC ] 1 ; Hello" ) {
+        std::vector<input::Command> r;
+        SECTION("") { r = parser.Parse(to_bytes("\x1B""]1;Hello\x07")); }    
+        SECTION("") { r = parser.Parse(to_bytes("\x1B""]1;Hello\x1B\\")); }
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::change_title );
+        CHECK( as_title(r[0]).kind == Title::Icon );
+        CHECK( as_title(r[0]).title == "Hello" );
+    }
+    SECTION( "ESC ] 2 ; Hello" ) {
+        std::vector<input::Command> r;
+        SECTION("") { r = parser.Parse(to_bytes("\x1B""]2;Hello\x07")); }    
+        SECTION("") { r = parser.Parse(to_bytes("\x1B""]2;Hello\x1B\\")); }
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::change_title );
+        CHECK( as_title(r[0]).kind == Title::Window );
+        CHECK( as_title(r[0]).title == "Hello" );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

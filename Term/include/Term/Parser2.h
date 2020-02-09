@@ -21,17 +21,28 @@ enum class Type {
     reverse_index, // move cursor up, scroll if needed
     reset, // reset the terminal to its initial state
     save_state, // save cursor position and graphic rendition
-    restore_state // restore cursor position and graphic rendition
+    restore_state, // restore cursor position and graphic rendition
+    change_title // payload type = Type
 };
 
 struct Empty {}; // default empty payload   
+
+struct Title {
+    enum Kind {
+        IconAndWindow,
+        Icon,
+        Window
+    };
+    Kind kind;
+    std::string title; 
+};
 
 struct UTF32Text {
     std::u32string characters; // composed unicode characters 
 };
 
 struct Command {
-    using Payload = std::variant<Empty, UTF32Text>;
+    using Payload = std::variant<Empty, UTF32Text, Title>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

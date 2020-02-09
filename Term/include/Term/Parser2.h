@@ -18,6 +18,10 @@ enum class Type {
     carriage_return, // move cursor to the beginning of the horizontal line
     back_space, // move cursor left by one space
     bell, // generates a bell tone
+    reverse_index, // move cursor up, scroll if needed
+    reset, // reset the terminal to its initial state
+    save_state, // save cursor position and graphic rendition
+    restore_state // restore cursor position and graphic rendition
 };
 
 struct Empty {}; // default empty payload   

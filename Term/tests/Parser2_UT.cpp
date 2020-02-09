@@ -133,6 +133,7 @@ TEST_CASE(PREFIX"Handles control characters")
         auto r = parser.Parse(to_bytes("\x1B"));
         REQUIRE( r.empty() );
         CHECK( parser.GetEscState() == Parser2Impl::EscState::Esc );
+        parser.Parse(to_bytes("\x18"));
     }
     SECTION( "go to normal mode" ) {
         std::vector<input::Command> r;
@@ -141,6 +142,37 @@ TEST_CASE(PREFIX"Handles control characters")
         SECTION("") { r = parser.Parse(to_bytes("\x1B\x18")); }
         SECTION("") { r = parser.Parse(to_bytes("\x1B\x1A")); }
         REQUIRE( r.empty() );
-        CHECK( parser.GetEscState() == Parser2Impl::EscState::Normal );
+    }
+    SECTION( "ESC E" ) {
+        auto r = parser.Parse(to_bytes("\x1B""E"));
+        REQUIRE( r.size() == 2 );
+        CHECK( r[0].type == Type::carriage_return );
+        CHECK( r[1].type == Type::line_feed );
+    }
+    SECTION( "ESC D" ) {
+        auto r = parser.Parse(to_bytes("\x1B""D"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::line_feed );
+    }
+    SECTION( "ESC M" ) {
+        auto r = parser.Parse(to_bytes("\x1B""M"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::reverse_index );
+    }
+    SECTION( "ESC c" ) {
+        auto r = parser.Parse(to_bytes("\x1B""c"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::reset );
+    }
+    SECTION( "ESC 7" ) {
+        auto r = parser.Parse(to_bytes("\x1B""7"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::save_state );
+    }
+    SECTION( "ESC 8" ) {
+        auto r = parser.Parse(to_bytes("\x1B""8"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::restore_state );
     }    
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Normal );
 }

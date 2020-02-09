@@ -8,11 +8,16 @@
 
 namespace nc::term {
 
-Parser2Impl::Parser2Impl()
+Parser2Impl::Parser2Impl(const Params& _params):
+    m_ErrorLog(_params.error_log)
 {
 }
 
 Parser2Impl::~Parser2Impl()
+{
+}
+
+void Parser2Impl::Reset()
 {
 }
 
@@ -68,23 +73,57 @@ void Parser2Impl::EatByte( unsigned char _byte )
     }
 
     switch (m_EscState) {
-//           case EState::Esc:
-//               m_EscState = EState::Normal;
-//               switch (c) {
-//                   case '[': m_EscState = EState::LeftBr;    return;
-//                   case ']': m_EscState = EState::RightBr;   return;
-//                   case '(': m_EscState = EState::SetG0;     return;
-//                   case ')': m_EscState = EState::SetG1;     return;
-//                   case '>':  /* Numeric keypad - ignoring now */  return;
-//                   case '=':  /* Appl. keypad - ignoring now */    return;
-//                   case '7': EscSave();    return;
-//                   case '8': EscRestore(); return;
-//                   case 'E': CR();         return;
-//                   case 'D': LF();         return;
-//                   case 'M': RI();         return;
-//                   case 'c': Reset();      return;
-//                   default: printf("missed Esc char: %d(\'%c\')\n", (int)c, c); return;
-//               }
+        case EscState::Esc:
+            m_EscState = EscState::Normal;
+            switch (c) {
+                case '[': m_EscState = EscState::LeftBracket;   return;
+                case ']': m_EscState = EscState::RightBracket;  return;
+                case '(': m_EscState = EscState::SetG0;         return;
+                case ')': m_EscState = EscState::SetG1;         return;
+                case '>':  /* Numeric keypad - ignoring now */  return;
+                case '=':  /* Appl. keypad - ignoring now */    return;
+                                
+                /* DECSC – Save Cursor (DEC Private)
+                   ESC 7     
+                   This sequence causes the cursor position, graphic rendition, and character set
+                   to be saved. */                
+                case '7': DECSC(); return;
+
+                /* DECRC – Restore Cursor (DEC Private)
+                   ESC 8     
+                   This sequence causes the previously saved cursor position, graphic rendition,
+                   and character set to be restored. */
+                case '8': DECRC(); return;
+                
+                /*  NEL – Next Line
+                    ESC E     
+                    This sequence causes the active position to move to the first position on the
+                    next line downward. If the active position is at the bottom margin, a scroll up
+                    is performed. */
+                case 'E': CR(); LF(); return;
+                    
+                /* IND – Index
+                   ESC D     
+                   This sequence causes the active position to move downward one line without
+                   changing the column position. If the active position is at the bottom margin, a
+                   scroll up is performed. */                     
+                case 'D': LF(); return;
+
+                /* RI – Reverse Index
+                   ESC M     
+                   Move the active position to the same horizontal position on the preceding line.
+                   If the active position is at the top margin, a scroll down is performed. */                                
+                case 'M': RI(); return;
+
+                /* RIS – Reset To Initial State
+                   ESC c     
+                   Reset the VT100 to its initial state, i.e., the state it has after it is
+                   powered on. */                                
+                case 'c': RIS(); return;
+                
+                // For everything else, i.e. unimplemented stuff - complain in a log.
+                default: LogMissedEscChar(c); return;
+            }
 //               
 //           case EState::RightBr:
 //               switch (c)
@@ -366,5 +405,36 @@ void Parser2Impl::BEL()
     m_Output.emplace_back( input::Type::bell );
 }
 
+void Parser2Impl::RI()
+{
+    m_Output.emplace_back( input::Type::reverse_index );
 }
 
+void Parser2Impl::RIS()
+{
+    Reset();
+    m_Output.emplace_back( input::Type::reset );
+}
+
+void Parser2Impl::DECSC()
+{
+    // TODO: save translation stuff
+    m_Output.emplace_back( input::Type::save_state ); 
+}
+
+void Parser2Impl::DECRC()
+{
+    // TODO: restore translation stuff
+    m_Output.emplace_back( input::Type::restore_state );
+}
+
+void Parser2Impl::LogMissedEscChar( unsigned char _c )
+{
+    if( m_ErrorLog ) {
+        char buf[256];
+        sprintf(buf, "Missed an Esc char: %d(\'%c\')\n", (int)_c, _c);
+        m_ErrorLog(buf);
+    }
+}
+
+}

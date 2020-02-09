@@ -1362,6 +1362,13 @@
 			remoteGlobalIDString = CFACF9BA1E24AAB800FD6AB6;
 			remoteInfo = MMTabBarViewLib;
 		};
+		CFC8F2BB23E5FEAC00A25046 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CFE08B3423DCFBD1007E99B8;
+			remoteInfo = TermUT;
+		};
 		CFD62B821C99C1CA0021EE7F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
@@ -2525,6 +2532,7 @@
 			children = (
 				CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */,
 				CF5099841F948EEB000AFDE7 /* Term Tests.xctest */,
+				CFC8F2BC23E5FEAC00A25046 /* TermUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3651,6 +3659,13 @@
 			fileType = archive.ar;
 			path = libMMTabBarViewLib.a;
 			remoteRef = CFACF9D01E24AAD800FD6AB6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CFC8F2BC23E5FEAC00A25046 /* TermUT */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = TermUT;
+			remoteRef = CFC8F2BB23E5FEAC00A25046 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */ = {

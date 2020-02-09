@@ -8,7 +8,10 @@
 // http://en.wikipedia.org/wiki/ANSI_escape_code
 // http://graphcomp.com/info/specs/ansi_col.html
 // http://vt100.net/docs/vt100-ug/chapter3.html
+// https://vt100.net/docs/tp83/appendixb.html
 // http://www.real-world-systems.com/docs/ANSIcode.html
+// https://www.xfree86.org/4.5.0/ctlseqs.html
+// http://rtfm.etla.org/xterm/ctlseq.html
 
 namespace nc::term {
 
@@ -117,6 +120,8 @@ private:
     void CSI_c();
     void CSI_n();
     void CSI_DEC_PMS(bool _on);
+    void CSI_t();
+    void CSI_Unknown(unsigned char _command);
     void EscSave();
     void EscRestore();
     void HT(); // horizontal tab

@@ -42,6 +42,13 @@
 		CF50998E1F948FD8000AFDE7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */; };
 		CF5099901F948FDD000AFDE7 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF50998F1F948FDD000AFDE7 /* libUtility.dylib */; };
 		CF5099921F948FFA000AFDE7 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5099911F948FFA000AFDE7 /* libHabanero.dylib */; };
+		CFE08B2923DCABA4007E99B8 /* Parser2.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2823DCABA4007E99B8 /* Parser2.h */; };
+		CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */; };
+		CFE08B2E23DCEB04007E99B8 /* Parser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */; };
+		CFE08B2F23DCEB04007E99B8 /* Parser2Impl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2D23DCEB04007E99B8 /* Parser2Impl.mm */; };
+		CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
+		CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */; };
+		CFE08B4123DDEFE2007E99B8 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +59,26 @@
 			remoteGlobalIDString = CF1ADE091F7E6A2A003E9B76;
 			remoteInfo = Term;
 		};
+		CFE08B4223DDF060007E99B8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF1ADE021F7E6A2A003E9B76 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF1ADE091F7E6A2A003E9B76;
+			remoteInfo = Term;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CFE08B3223DCFBD1007E99B8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libTerm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -94,6 +120,15 @@
 		CF50998F1F948FDD000AFDE7 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CF5099911F948FFA000AFDE7 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 		CF5FD92A1FA1AC5100752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
+		CFE08B2823DCABA4007E99B8 /* Parser2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2.h; path = include/Term/Parser2.h; sourceTree = "<group>"; };
+		CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2Impl.h; path = include/Term/Parser2Impl.h; sourceTree = "<group>"; };
+		CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser2.cpp; sourceTree = "<group>"; };
+		CFE08B2D23DCEB04007E99B8 /* Parser2Impl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Parser2Impl.mm; sourceTree = "<group>"; };
+		CFE08B3423DCFBD1007E99B8 /* TermUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TermUT; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFE08B3B23DCFC15007E99B8 /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tests.h; sourceTree = "<group>"; };
+		CFE08B3C23DCFC15007E99B8 /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tests.cpp; sourceTree = "<group>"; };
+		CFE08B3E23DCFC77007E99B8 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
+		CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser2_UT.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +154,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CFE08B3123DCFBD1007E99B8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFE08B4123DDEFE2007E99B8 /* libTerm.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -139,6 +182,7 @@
 			children = (
 				CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */,
 				CF5099771F948E7C000AFDE7 /* Term Tests.xctest */,
+				CFE08B3423DCFBD1007E99B8 /* TermUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -149,6 +193,9 @@
 				CF50996F1F948400000AFDE7 /* FlippableHolder.h */,
 				CF5099701F948400000AFDE7 /* FlippableHolder.mm */,
 				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
+				CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */,
+				CFE08B2D23DCEB04007E99B8 /* Parser2Impl.mm */,
+				CF4135101F846CF2007429B6 /* PrecompiledHeaders.pch */,
 				CF1ADE391F7E7379003E9B76 /* Screen.cpp */,
 				CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */,
 				CF50996D1F948018000AFDE7 /* ScrollView.mm */,
@@ -156,7 +203,6 @@
 				CF4135111F846CF2007429B6 /* ShellTask.cpp */,
 				CF4135121F846CF2007429B6 /* SingleTask.cpp */,
 				CF4135131F846CF2007429B6 /* Task.cpp */,
-				CF4135101F846CF2007429B6 /* PrecompiledHeaders.pch */,
 				CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */,
 				CF1ADE471F7E77AE003E9B76 /* TranslateMaps.h */,
 				CF4135241F891165007429B6 /* View.mm */,
@@ -170,6 +216,8 @@
 			children = (
 				CF4135221F890BC8007429B6 /* CursorMode.h */,
 				CF1ADE3E1F7E7587003E9B76 /* Parser.h */,
+				CFE08B2823DCABA4007E99B8 /* Parser2.h */,
+				CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */,
 				CF1ADE371F7E7370003E9B76 /* Screen.h */,
 				CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */,
 				CF50996B1F94800F000AFDE7 /* ScrollView.h */,
@@ -198,10 +246,13 @@
 		CF5099781F948E7C000AFDE7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF5099851F948EF9000AFDE7 /* ScreenBuffer_Tests.mm */,
-				CF5099861F948EF9000AFDE7 /* Screen_Tests.mm */,
-				CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */,
 				CF50997B1F948E7C000AFDE7 /* Info.plist */,
+				CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */,
+				CF5099861F948EF9000AFDE7 /* Screen_Tests.mm */,
+				CF5099851F948EF9000AFDE7 /* ScreenBuffer_Tests.mm */,
+				CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */,
+				CFE08B3C23DCFC15007E99B8 /* Tests.cpp */,
+				CFE08B3B23DCFC15007E99B8 /* Tests.h */,
 			);
 			name = Tests;
 			path = tests;
@@ -210,6 +261,7 @@
 		CF5FD9291FA1AC1200752E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				CFE08B3E23DCFC77007E99B8 /* tests.xcconfig */,
 				CF238E0B21A136E800569809 /* debug.xcconfig */,
 				CF5FD92A1FA1AC5100752E59 /* default.xcconfig */,
 				CF238E0C21A136E800569809 /* release.xcconfig */,
@@ -225,6 +277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF41350F1F846CE6007429B6 /* Task.h in Headers */,
+				CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */,
 				CF4135231F890BC8007429B6 /* CursorMode.h in Headers */,
 				CF1ADE491F7E77AE003E9B76 /* TranslateMaps.h in Headers */,
 				CF41350E1F846CE6007429B6 /* SingleTask.h in Headers */,
@@ -233,6 +286,7 @@
 				CF41350D1F846CE6007429B6 /* ShellTask.h in Headers */,
 				CF1ADE3F1F7E7587003E9B76 /* Parser.h in Headers */,
 				CF5099711F948400000AFDE7 /* FlippableHolder.h in Headers */,
+				CFE08B2923DCABA4007E99B8 /* Parser2.h in Headers */,
 				CF4135271F89116E007429B6 /* View.h in Headers */,
 				CF1ADE381F7E7370003E9B76 /* Screen.h in Headers */,
 				CF41351B1F8666B4007429B6 /* Settings.h in Headers */,
@@ -278,6 +332,24 @@
 			productReference = CF5099771F948E7C000AFDE7 /* Term Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		CFE08B3323DCFBD1007E99B8 /* TermUT */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFE08B3823DCFBD1007E99B8 /* Build configuration list for PBXNativeTarget "TermUT" */;
+			buildPhases = (
+				CFE08B3023DCFBD1007E99B8 /* Sources */,
+				CFE08B3123DCFBD1007E99B8 /* Frameworks */,
+				CFE08B3223DCFBD1007E99B8 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CFE08B4323DDF060007E99B8 /* PBXTargetDependency */,
+			);
+			name = TermUT;
+			productName = TermUT;
+			productReference = CFE08B3423DCFBD1007E99B8 /* TermUT */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -294,6 +366,9 @@
 					CF5099761F948E7C000AFDE7 = {
 						CreatedOnToolsVersion = 8.3.2;
 						ProvisioningStyle = Automatic;
+					};
+					CFE08B3323DCFBD1007E99B8 = {
+						CreatedOnToolsVersion = 11.2;
 					};
 				};
 			};
@@ -312,6 +387,7 @@
 			targets = (
 				CF1ADE091F7E6A2A003E9B76 /* Term */,
 				CF5099761F948E7C000AFDE7 /* Term Tests */,
+				CFE08B3323DCFBD1007E99B8 /* TermUT */,
 			);
 		};
 /* End PBXProject section */
@@ -338,6 +414,8 @@
 				CF4135161F846CF2007429B6 /* SingleTask.cpp in Sources */,
 				CF41351D1F8666BF007429B6 /* Settings.mm in Sources */,
 				CF1ADE481F7E77AE003E9B76 /* TranslateMaps.cpp in Sources */,
+				CFE08B2F23DCEB04007E99B8 /* Parser2Impl.mm in Sources */,
+				CFE08B2E23DCEB04007E99B8 /* Parser2.cpp in Sources */,
 				CF4135251F891165007429B6 /* View.mm in Sources */,
 				CF1ADE3A1F7E7379003E9B76 /* Screen.cpp in Sources */,
 				CF1ADE411F7E7593003E9B76 /* Parser.mm in Sources */,
@@ -355,6 +433,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CFE08B3023DCFBD1007E99B8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */,
+				CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -362,6 +449,11 @@
 			isa = PBXTargetDependency;
 			target = CF1ADE091F7E6A2A003E9B76 /* Term */;
 			targetProxy = CF50997D1F948E7C000AFDE7 /* PBXContainerItemProxy */;
+		};
+		CFE08B4323DDF060007E99B8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF1ADE091F7E6A2A003E9B76 /* Term */;
+			targetProxy = CFE08B4223DDF060007E99B8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -430,6 +522,20 @@
 			};
 			name = Release;
 		};
+		CFE08B3923DCFBD1007E99B8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFE08B3E23DCFC77007E99B8 /* tests.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		CFE08B3A23DCFBD1007E99B8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFE08B3E23DCFC77007E99B8 /* tests.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -456,6 +562,15 @@
 			buildConfigurations = (
 				CF5099801F948E7C000AFDE7 /* Debug */,
 				CF5099811F948E7C000AFDE7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFE08B3823DCFBD1007E99B8 /* Build configuration list for PBXNativeTarget "TermUT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFE08B3923DCFBD1007E99B8 /* Debug */,
+				CFE08B3A23DCFBD1007E99B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

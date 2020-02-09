@@ -160,7 +160,8 @@ void Parser::EatByte(unsigned char _byte, int &_result_flags)
         case 11:
         case 12: LF(); return;
         case 13: CR(); return;
-        case 24:
+        case 24: m_EscState = EState::Normal; return;
+        case 25: return;
         case 26: m_EscState = EState::Normal; return;
         case 27: m_EscState = EState::Esc; return;
         default: break;
@@ -282,9 +283,9 @@ void Parser::EatByte(unsigned char _byte, int &_result_flags)
                 case '@': CSI_At(); return;
                 case 'c': CSI_c(); return;
                 case 'n': CSI_n(); return;
-                default: printf("unhandled: CSI %c\n", c);
+                case 't': CSI_t(); return;
+                default: CSI_Unknown(c); return;
             }
-            return;
         
         case EState::SetG0:
             if (c == '0')       m_State[0].g0_charset  = TranslateMaps::Graph;
@@ -337,8 +338,6 @@ void Parser::EatByte(unsigned char _byte, int &_result_flags)
                 }
             }
             else if (m_TranslateMap != 0 && m_TranslateMap != g_TranslateMaps[0] ) {
-//                if (toggle_meta)
-//                    c|=0x80;
                 m_UTF32Char = m_TranslateMap[c];
             }
             else {
@@ -883,4 +882,83 @@ void Parser::WriteTaskInput( const char *_buffer )
     m_TaskInput( _buffer, (int)strlen(_buffer) );
 }
 
+void Parser::CSI_Unknown(unsigned char _command)
+{
+    printf("unhandled: CSI %c\n", _command);
 }
+
+void Parser::CSI_t()
+{
+
+
+}
+
+}
+
+//SI P t ; P l ; P b ;    
+//P r ; P s $ r
+//Change Attributes in Rectangular Area (DECCARA).
+//P t ; P l ; P b ; P r denotes the rectangle. 
+//P s denotes the SGR attributes to change: 0, 1, 4, 5, 7
+//
+//case 't':
+//     switch (param.p[0]) {
+//         case 8:
+//             result.type = XTERMCC_WINDOWSIZE;
+//             SET_PARAM_DEFAULT(param, 1, 0);     // columns or Y
+//             SET_PARAM_DEFAULT(param, 2, 0);     // rows or X
+//             break;
+//         case 3:
+//             result.type = XTERMCC_WINDOWPOS;
+//             SET_PARAM_DEFAULT(param, 1, 0);     // X position in px
+//             SET_PARAM_DEFAULT(param, 2, 0);     // Y position in px
+//             break;
+//         case 4:
+//             result.type = XTERMCC_WINDOWSIZE_PIXEL;
+//             break;
+//         case 2:
+//             result.type = XTERMCC_ICONIFY;
+//             break;
+//         case 1:
+//             result.type = XTERMCC_DEICONIFY;
+//             break;
+//         case 5:
+//             result.type = XTERMCC_RAISE;
+//             break;
+//         case 6:
+//             result.type = XTERMCC_LOWER;
+//             break;
+//         case 11:
+//             result.type = XTERMCC_REPORT_WIN_STATE;
+//             break;
+//         case 13:
+//             result.type = XTERMCC_REPORT_WIN_POS;
+//             break;
+//         case 14:
+//             result.type = XTERMCC_REPORT_WIN_PIX_SIZE;
+//             break;
+//         case 18:
+//             result.type = XTERMCC_REPORT_WIN_SIZE;
+//             break;
+//         case 19:
+//             result.type = XTERMCC_REPORT_SCREEN_SIZE;
+//             break;
+//         case 20:
+//             result.type = XTERMCC_REPORT_ICON_TITLE;
+//             break;
+//         case 21:
+//             result.type = XTERMCC_REPORT_WIN_TITLE;
+//             break;
+//         case 22:
+//             result.type = XTERMCC_PUSH_TITLE;
+//             SET_PARAM_DEFAULT(param, 0, 0);
+//             break;
+//         case 23:
+//             result.type = XTERMCC_POP_TITLE;
+//             SET_PARAM_DEFAULT(param, 0, 0);
+//             break;
+//         default:
+//             result.type = VT100_NOTSUPPORT;
+//             break;
+//     }
+//     break;

@@ -654,6 +654,8 @@ void Parser2Impl::SSCSISubmit() noexcept
     switch( c ) {
         case 'A': CSI_A(); break;
         case 'B': CSI_B(); break;
+        case 'C': CSI_C(); break;
+        case 'D': CSI_D(); break;
         default: break;
     } 
 }
@@ -662,9 +664,7 @@ void Parser2Impl::SSCSISubmit() noexcept
     //               switch(c) {
     //                   case 'h': CSI_DEC_PMS(true);  return;
     //                   case 'l': CSI_DEC_PMS(false); return;
-    //                   case 'C': case 'a': CSI_C(); return;
     //                   case 'd': CSI_d(); return;
-    //                   case 'D': CSI_D(); return;
     //                   case 'H': case 'f': CSI_H(); return;
     //                   case 'G': case '`': CSI_G(); return;
     //                   case 'J': CSI_J(); return;
@@ -696,11 +696,10 @@ void Parser2Impl::CSI_A() noexcept
     unsigned ps = 1; // default value
     std::from_chars(s.data(), s.data() + s.size(), ps);
     
-    using namespace input;
-    CursorMovement cm;
-    cm.positioning = CursorMovement::Relative;
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Relative;
     cm.y = -static_cast<int>(ps);
-    m_Output.emplace_back( Type::move_cursor, cm );
+    m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
 void Parser2Impl::CSI_B() noexcept
@@ -710,11 +709,37 @@ void Parser2Impl::CSI_B() noexcept
     unsigned ps = 1; // default value
     std::from_chars(s.data(), s.data() + s.size(), ps);
     
-    using namespace input;
-    CursorMovement cm;
-    cm.positioning = CursorMovement::Relative;
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Relative;
     cm.y = static_cast<int>(ps);
-    m_Output.emplace_back( Type::move_cursor, cm );    
+    m_Output.emplace_back( input::Type::move_cursor, cm );    
 }
+
+void Parser2Impl::CSI_C() noexcept
+{
+// CSI Ps C  Cursor Forward Ps Times (default = 1) (CUF).
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Relative;
+    cm.x = static_cast<int>(ps);
+    m_Output.emplace_back( input::Type::move_cursor, cm );
+}
+
+void Parser2Impl::CSI_D() noexcept
+{
+// CSI Ps D  Cursor Backward Ps Times (default = 1) (CUB).
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Relative;
+    cm.x = -static_cast<int>(ps);
+    m_Output.emplace_back( input::Type::move_cursor, cm );
+}
+
 
 }

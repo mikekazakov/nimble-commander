@@ -1,3 +1,4 @@
+// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Parser2Impl.h>
 #include "Tests.h"
 
@@ -264,6 +265,50 @@ TEST_CASE(PREFIX"CSI B")
         CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y == 45 );     
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI C")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ C" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[C"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 1 );
+        CHECK( as_cursor_movement(r[0]).y == 0 );     
+    }
+    SECTION( "ESC [ 42 C" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[42C"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 42 );
+        CHECK( as_cursor_movement(r[0]).y == 0 );     
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI D")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ D" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[D"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == -1 );
+        CHECK( as_cursor_movement(r[0]).y == 0 );     
+    }
+    SECTION( "ESC [ 32 D" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[32D"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == -32 );
+        CHECK( as_cursor_movement(r[0]).y == 0 );     
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

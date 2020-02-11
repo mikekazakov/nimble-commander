@@ -16,6 +16,8 @@ public:
         std::function<void(std::string_view _error)> error_log;
     };
     
+    struct CSIParamsScanner;    
+    
     enum class EscState{
         Text = 0,
         Control = 1,
@@ -77,6 +79,7 @@ private:
     void CSI_B() noexcept;
     void CSI_C() noexcept;
     void CSI_D() noexcept;
+    void CSI_H() noexcept;
     
     constexpr static struct SubStates {
         void (Me::*enter)() noexcept;
@@ -115,9 +118,14 @@ private:
     std::function<void(std::string_view _error)> m_ErrorLog;    
 };
 
+struct Parser2Impl::CSIParamsScanner
+{
+    static constexpr int MaxParams = 8;
+    struct Params {
+        std::array<unsigned, MaxParams> values;
+        int count = 0;
+    };
+    static Params Parse(std::string_view _csi) noexcept;
+};
 
 }
-
-
-//    static constexpr int        m_ParamsSize = 16;
-    

@@ -312,3 +312,82 @@ TEST_CASE(PREFIX"CSI D")
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
+
+TEST_CASE(PREFIX"CSI H")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ H" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[H"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Absolute );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == 0 );     
+    }
+    SECTION( "ESC [ 5 ; 10 H" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[5;10H"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Absolute );
+        CHECK( as_cursor_movement(r[0]).x == 9 );
+        CHECK( as_cursor_movement(r[0]).y == 4 );     
+    }
+    SECTION( "ESC [ 0 ; 0 H" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0;0H"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Absolute );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == 0 );     
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSIParamsScanner")
+{
+    using S = Parser2Impl::CSIParamsScanner;
+    SECTION("") {
+        auto p = S::Parse("");
+        CHECK(p.count == 0); 
+    }
+    SECTION("A") {
+        auto p = S::Parse("A");
+        CHECK(p.count == 0); 
+    }
+    SECTION("A11") {
+        auto p = S::Parse("A");
+        CHECK(p.count == 0); 
+    }    
+    SECTION("39A") {
+        auto p = S::Parse("39A");
+        CHECK(p.count == 1); 
+        CHECK(p.values[0] == 39);
+    }
+    SECTION("39;13A") {
+        auto p = S::Parse("39;13A");
+        CHECK(p.count == 2); 
+        CHECK(p.values[0] == 39);
+        CHECK(p.values[1] == 13);
+    }
+    SECTION("39;13A") {
+        auto p = S::Parse("39;13A");
+        CHECK(p.count == 2); 
+        CHECK(p.values[0] == 39);
+        CHECK(p.values[1] == 13);
+    }
+    SECTION("0;1;2;3;4;5;6;7;8;9;10A") {
+        auto p = S::Parse("0;1;2;3;4;5;6;7;8;9;10A");
+        CHECK(p.count == S::MaxParams); 
+        for( int i = 0; i != S::MaxParams; ++i)
+            CHECK(p.values[i] == i);
+    }       
+    SECTION("99999999999999999999999999999999999") {
+        auto p = S::Parse("99999999999999999999999999999999999");
+        CHECK(p.count == 0); 
+    }
+    SECTION("7;99999999999999999999999999999999999") {
+        auto p = S::Parse("7;99999999999999999999999999999999999");
+        CHECK(p.count == 1);
+        CHECK(p.values[0] == 7); 
+    }           
+}

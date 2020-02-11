@@ -656,6 +656,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'B': CSI_B(); break;
         case 'C': CSI_C(); break;
         case 'D': CSI_D(); break;
+        case 'H': CSI_H(); break;
         default: break;
     } 
 }
@@ -665,7 +666,6 @@ void Parser2Impl::SSCSISubmit() noexcept
     //                   case 'h': CSI_DEC_PMS(true);  return;
     //                   case 'l': CSI_DEC_PMS(false); return;
     //                   case 'd': CSI_d(); return;
-    //                   case 'H': case 'f': CSI_H(); return;
     //                   case 'G': case '`': CSI_G(); return;
     //                   case 'J': CSI_J(); return;
     //                   case 'K': CSI_K(); return;
@@ -741,5 +741,47 @@ void Parser2Impl::CSI_D() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
+void Parser2Impl::CSI_H() noexcept
+{
+//    CSI Ps ; Ps H
+//    Cursor Position [row;column] (default = [1,1]) (CUP).
+    int x = 0;
+    int y = 0;
+    const auto p = CSIParamsScanner::Parse(m_CSIState.buffer);
+    if( p.count == 2 ) {
+        y = p.values[0] > 0 ? p.values[0] - 1 : 0; 
+        x = p.values[1] > 0 ? p.values[1] - 1 : 0;
+    }
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Absolute;
+    cm.x = x;
+    cm.y = y;
+    m_Output.emplace_back( input::Type::move_cursor, cm );    
+}
+
+Parser2Impl::CSIParamsScanner::Params
+Parser2Impl::CSIParamsScanner::Parse(std::string_view _csi) noexcept
+{
+    Params p;
+    auto string = _csi;
+    while( true ) {
+        if( p.count == p.values.size() )
+            break;    
+        unsigned value = 0;
+        auto result = std::from_chars(string.data(), string.data() + string.size(), value); 
+        if( result.ec == std::errc{} ) {
+            p.values[p.count++] = value;
+            
+            string.remove_prefix( result.ptr - string.data() );
+            if( string.empty() || string.front() != ';' )
+                break;
+            string.remove_prefix(1);
+        }
+        else {
+            break;
+        }
+    }
+    return p;
+} 
 
 }

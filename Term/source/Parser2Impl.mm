@@ -656,6 +656,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'B': CSI_B(); break;
         case 'C': CSI_C(); break;
         case 'D': CSI_D(); break;
+        case 'G': CSI_G(); break;
         case 'H': CSI_H(); break;
         default: break;
     } 
@@ -698,6 +699,7 @@ void Parser2Impl::CSI_A() noexcept
     
     input::CursorMovement cm;
     cm.positioning = input::CursorMovement::Relative;
+    cm.x = 0;
     cm.y = -static_cast<int>(ps);
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
@@ -711,6 +713,7 @@ void Parser2Impl::CSI_B() noexcept
     
     input::CursorMovement cm;
     cm.positioning = input::CursorMovement::Relative;
+    cm.x = 0;
     cm.y = static_cast<int>(ps);
     m_Output.emplace_back( input::Type::move_cursor, cm );    
 }
@@ -725,6 +728,7 @@ void Parser2Impl::CSI_C() noexcept
     input::CursorMovement cm;
     cm.positioning = input::CursorMovement::Relative;
     cm.x = static_cast<int>(ps);
+    cm.y = 0;
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
@@ -738,7 +742,21 @@ void Parser2Impl::CSI_D() noexcept
     input::CursorMovement cm;
     cm.positioning = input::CursorMovement::Relative;
     cm.x = -static_cast<int>(ps);
+    cm.y = 0;
     m_Output.emplace_back( input::Type::move_cursor, cm );
+}
+
+void Parser2Impl::CSI_G() noexcept
+{
+//CSI Ps G  Cursor Character Absolute  [column] (default = [row,1]) (CHA).
+    int x = 0;
+    const auto p = CSIParamsScanner::Parse(m_CSIState.buffer);
+    if( p.count >= 1 )
+        x = p.values[0] > 0 ? p.values[0] - 1 : 0; 
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Absolute;
+    cm.x = x;
+    m_Output.emplace_back( input::Type::move_cursor, cm );   
 }
 
 void Parser2Impl::CSI_H() noexcept

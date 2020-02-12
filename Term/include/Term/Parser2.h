@@ -4,6 +4,7 @@
 #include <vector>
 #include <span>
 #include <memory>
+#include <optional>
 
 namespace nc::term {
 
@@ -48,8 +49,8 @@ struct CursorMovement {
         Relative
     };
     Positioning positioning = Absolute;
-    int x = 0;
-    int y = 0;
+    std::optional<int> x;
+    std::optional<int> y;
 };
 
 struct Command {

@@ -656,6 +656,8 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'B': CSI_B(); break;
         case 'C': CSI_C(); break;
         case 'D': CSI_D(); break;
+        case 'E': CSI_E(); break;
+        case 'F': CSI_F(); break;
         case 'G': CSI_G(); break;
         case 'H': CSI_H(); break;
         default: break;
@@ -667,7 +669,6 @@ void Parser2Impl::SSCSISubmit() noexcept
     //                   case 'h': CSI_DEC_PMS(true);  return;
     //                   case 'l': CSI_DEC_PMS(false); return;
     //                   case 'd': CSI_d(); return;
-    //                   case 'G': case '`': CSI_G(); return;
     //                   case 'J': CSI_J(); return;
     //                   case 'K': CSI_K(); return;
     //                   case 'L': CSI_L(); return;
@@ -746,6 +747,46 @@ void Parser2Impl::CSI_D() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
+void Parser2Impl::CSI_E() noexcept
+{
+// CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
+// E   CNL       Move cursor down the indicated # of rows, to column 1.
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Relative;
+    cm.x.reset();
+    cm.y = static_cast<int>(ps);
+    m_Output.emplace_back( input::Type::move_cursor, cm );
+    
+    cm.positioning = input::CursorMovement::Absolute;
+    cm.x = 0;
+    cm.y.reset();
+    m_Output.emplace_back( input::Type::move_cursor, cm );
+}
+    
+void Parser2Impl::CSI_F() noexcept
+{
+// CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
+// F   CPL       Move cursor up the indicated # of rows, to column 1.
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Relative;
+    cm.x.reset();
+    cm.y = -static_cast<int>(ps);
+    m_Output.emplace_back( input::Type::move_cursor, cm );
+    
+    cm.positioning = input::CursorMovement::Absolute;
+    cm.x = 0;
+    cm.y.reset();
+    m_Output.emplace_back( input::Type::move_cursor, cm );
+}
+    
 void Parser2Impl::CSI_G() noexcept
 {
 //CSI Ps G  Cursor Character Absolute  [column] (default = [row,1]) (CHA).

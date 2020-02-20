@@ -25,7 +25,8 @@ enum class Type {
     save_state, // save cursor position and graphic rendition
     restore_state, // restore cursor position and graphic rendition
     change_title, // payload type - Title
-    move_cursor // payload type - CursorMovement
+    move_cursor, // payload type - CursorMovement
+    erase_in_display // payload type - DisplayErasure
 };
 
 struct Empty {}; // default empty payload   
@@ -58,8 +59,20 @@ struct CursorMovement {
     std::optional<int> y;
 };
 
+struct DisplayErasure
+{
+    enum Area {
+        FromCursorToDisplayEnd,
+        FromDisplayStartToCursor,
+        WholeDisplay,
+        WholeDisplayWithScrollback
+    };
+    Area what_to_erase = FromCursorToDisplayEnd;
+};
+
 struct Command {
-    using Payload = std::variant<Empty, UTF32Text, Title, TabsAmount, CursorMovement>;
+    using Payload = std::variant<Empty, UTF32Text, Title, TabsAmount, CursorMovement,
+    DisplayErasure>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

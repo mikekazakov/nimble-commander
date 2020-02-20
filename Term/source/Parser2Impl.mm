@@ -661,6 +661,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'G': CSI_G(); break;
         case 'H': CSI_H(); break;
         case 'I': CSI_I(); break;
+        case 'J': CSI_J(); break;
         default: break;
     } 
 }
@@ -670,7 +671,6 @@ void Parser2Impl::SSCSISubmit() noexcept
     //                   case 'h': CSI_DEC_PMS(true);  return;
     //                   case 'l': CSI_DEC_PMS(false); return;
     //                   case 'd': CSI_d(); return;
-    //                   case 'J': CSI_J(); return;
     //                   case 'K': CSI_K(); return;
     //                   case 'L': CSI_L(); return;
     //                   case 'm': CSI_m(); return;
@@ -829,6 +829,39 @@ void Parser2Impl::CSI_I() noexcept
     input::TabsAmount ta;
     ta.amount = ps;
     m_Output.emplace_back( input::Type::horizontal_tab, ta );
+}
+    
+void Parser2Impl::CSI_J() noexcept
+{
+//    CSI Ps J  Erase in Display (ED), VT100.
+//    Ps = 0  ⇒  Erase Below (default).
+//    Ps = 1  ⇒  Erase Above.
+//    Ps = 2  ⇒  Erase All.
+//    Ps = 3  ⇒  Erase Saved Lines, xterm.
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 0; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    
+    using input::DisplayErasure;
+    DisplayErasure de;
+    switch( ps ) {
+        case 0:
+            de.what_to_erase = DisplayErasure::Area::FromCursorToDisplayEnd;
+            break;
+        case 1:
+            de.what_to_erase = DisplayErasure::Area::FromDisplayStartToCursor;
+            break;
+        case 2:
+            de.what_to_erase = DisplayErasure::Area::WholeDisplay;
+            break;
+        case 3:
+            de.what_to_erase = DisplayErasure::Area::WholeDisplayWithScrollback;
+            break;
+        default:
+            return;
+    };
+    
+    m_Output.emplace_back( input::Type::erase_in_display, de );
 }
 
 Parser2Impl::CSIParamsScanner::Params

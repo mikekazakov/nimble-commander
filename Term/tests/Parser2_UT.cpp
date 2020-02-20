@@ -49,6 +49,13 @@ static const TabsAmount& as_tabs_mount( const Command &_command )
     throw std::invalid_argument("not TabsAmount");
 }
 
+static const DisplayErasure& as_display_erasure( const Command &_command )
+{
+    if( auto ptr = std::get_if<DisplayErasure>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not TabsAmount");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -455,6 +462,47 @@ TEST_CASE(PREFIX"CSI I")
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::horizontal_tab );
         CHECK( as_tabs_mount(r[0]).amount == 123 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI J")
+{
+    Parser2Impl parser;
+    using Area = DisplayErasure::Area;
+    SECTION( "ESC [ J" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[J"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::erase_in_display );
+        CHECK( as_display_erasure(r[0]).what_to_erase == Area::FromCursorToDisplayEnd );
+    }
+    SECTION( "ESC [ 0 J" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0J"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::erase_in_display );
+        CHECK( as_display_erasure(r[0]).what_to_erase == Area::FromCursorToDisplayEnd );
+    }
+    SECTION( "ESC [ 1 J" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[1J"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::erase_in_display );
+        CHECK( as_display_erasure(r[0]).what_to_erase == Area::FromDisplayStartToCursor );
+    }
+    SECTION( "ESC [ 2 J" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[2J"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::erase_in_display );
+        CHECK( as_display_erasure(r[0]).what_to_erase == Area::WholeDisplay );
+    }
+    SECTION( "ESC [ 3 J" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[3J"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::erase_in_display );
+        CHECK( as_display_erasure(r[0]).what_to_erase == Area::WholeDisplayWithScrollback );
+    }
+    SECTION( "ESC [ 4 J" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[4J"));
+        REQUIRE( r.size() == 0 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

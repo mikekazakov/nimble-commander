@@ -220,7 +220,7 @@ void Parser2Impl::LF() noexcept
 
 void Parser2Impl::HT() noexcept
 {
-    m_Output.emplace_back( input::Type::horizontal_tab );
+    m_Output.emplace_back( input::Type::horizontal_tab, input::TabsAmount{} );
 }
 
 void Parser2Impl::CR() noexcept
@@ -660,6 +660,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'F': CSI_F(); break;
         case 'G': CSI_G(); break;
         case 'H': CSI_H(); break;
+        case 'I': CSI_I(); break;
         default: break;
     } 
 }
@@ -816,6 +817,18 @@ void Parser2Impl::CSI_H() noexcept
     cm.x = x;
     cm.y = y;
     m_Output.emplace_back( input::Type::move_cursor, cm );    
+}
+    
+void Parser2Impl::CSI_I() noexcept
+{
+// CSI Ps I  Cursor Forward Tabulation Ps tab stops (default = 1) (CHT).
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    
+    input::TabsAmount ta;
+    ta.amount = ps;
+    m_Output.emplace_back( input::Type::horizontal_tab, ta );
 }
 
 Parser2Impl::CSIParamsScanner::Params

@@ -42,6 +42,13 @@ static const CursorMovement& as_cursor_movement( const Command &_command )
     throw std::invalid_argument("not CursorMovement");
 }
 
+static const TabsAmount& as_tabs_mount( const Command &_command )
+{
+    if( auto ptr = std::get_if<TabsAmount>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not TabsAmount");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -128,6 +135,7 @@ TEST_CASE(PREFIX"Handles control characters")
         auto r = parser.Parse(to_bytes("\t"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::horizontal_tab );
+        CHECK( as_tabs_mount(r[0]).amount == 1 );
     }
     SECTION( "carriage return" ) {
         auto r = parser.Parse(to_bytes("\x0D"));
@@ -429,6 +437,24 @@ TEST_CASE(PREFIX"CSI H")
         CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Absolute );
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y == 0 );     
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI I")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ I" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[I"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::horizontal_tab );
+        CHECK( as_tabs_mount(r[0]).amount == 1 );
+    }
+    SECTION( "ESC [ 123 I" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[123I"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::horizontal_tab );
+        CHECK( as_tabs_mount(r[0]).amount == 123 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

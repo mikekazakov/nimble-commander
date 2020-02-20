@@ -16,6 +16,7 @@ enum class Type {
             // payload type - UTF32Text
     line_feed, // line feed or new line
     horizontal_tab, // move cursor to next horizontal tab stop
+                    // payload type - TabsAmount
     carriage_return, // move cursor to the beginning of the horizontal line
     back_space, // move cursor left by one space
     bell, // generates a bell tone
@@ -43,6 +44,10 @@ struct UTF32Text {
     std::u32string characters; // composed unicode characters 
 };
 
+struct TabsAmount {
+    unsigned amount = 1;
+};
+
 struct CursorMovement {
     enum Positioning {
         Absolute,
@@ -54,7 +59,7 @@ struct CursorMovement {
 };
 
 struct Command {
-    using Payload = std::variant<Empty, UTF32Text, Title, CursorMovement>;
+    using Payload = std::variant<Empty, UTF32Text, Title, TabsAmount, CursorMovement>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

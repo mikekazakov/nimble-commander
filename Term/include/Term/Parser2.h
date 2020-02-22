@@ -11,22 +11,23 @@ namespace nc::term {
 namespace input {
  
 enum class Type {
-    noop,   // no operation, defined only for conviniency 
-    text,   // clean unicode text without any control characters, both escaped and unescaped.
-            // payload type - UTF32Text
-    line_feed, // line feed or new line
-    horizontal_tab, // move cursor to next horizontal tab stop
-                    // payload type - TabsAmount
-    carriage_return, // move cursor to the beginning of the horizontal line
-    back_space, // move cursor left by one space
-    bell, // generates a bell tone
-    reverse_index, // move cursor up, scroll if needed
-    reset, // reset the terminal to its initial state
-    save_state, // save cursor position and graphic rendition
-    restore_state, // restore cursor position and graphic rendition
-    change_title, // payload type - Title
-    move_cursor, // payload type - CursorMovement
-    erase_in_display // payload type - DisplayErasure
+    noop,               // no operation, defined only for conviniency
+    text,               // clean unicode text without any control characters, both escaped
+                        // and unescaped. payload type - UTF32Text
+    line_feed,          // line feed or new line
+    horizontal_tab,     // move cursor to next horizontal tab stop
+                        // payload type - TabsAmount
+    carriage_return,    // move cursor to the beginning of the horizontal line
+    back_space,         // move cursor left by one space
+    bell,               // generates a bell tone
+    reverse_index,      // move cursor up, scroll if needed
+    reset,              // reset the terminal to its initial state
+    save_state,         // save cursor position and graphic rendition
+    restore_state,      // restore cursor position and graphic rendition
+    change_title,       // payload type - Title
+    move_cursor,        // payload type - CursorMovement
+    erase_in_display,   // payload type - DisplayErasure
+    erase_in_line       // payload type - LineErasure
 };
 
 struct Empty {}; // default empty payload   
@@ -70,9 +71,19 @@ struct DisplayErasure
     Area what_to_erase = FromCursorToDisplayEnd;
 };
 
+struct LineErasure
+{
+    enum Area {
+        FromCursorToLineEnd,
+        FromLineStartToCursor,
+        WholeLine
+    };
+    Area what_to_erase = FromCursorToLineEnd;
+};
+
 struct Command {
     using Payload = std::variant<Empty, UTF32Text, Title, TabsAmount, CursorMovement,
-    DisplayErasure>;
+    DisplayErasure, LineErasure>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

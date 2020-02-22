@@ -56,6 +56,13 @@ static const DisplayErasure& as_display_erasure( const Command &_command )
     throw std::invalid_argument("not TabsAmount");
 }
 
+static const LineErasure& as_line_erasure( const Command &_command )
+{
+    if( auto ptr = std::get_if<LineErasure>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not TabsAmount");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -502,6 +509,41 @@ TEST_CASE(PREFIX"CSI J")
     }
     SECTION( "ESC [ 4 J" ) {
         auto r = parser.Parse(to_bytes("\x1B""[4J"));
+        REQUIRE( r.size() == 0 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI K")
+{
+    Parser2Impl parser;
+    using Area = LineErasure::Area;
+    SECTION( "ESC [ K" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[K"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::erase_in_line );
+        CHECK( as_line_erasure(r[0]).what_to_erase == Area::FromCursorToLineEnd );
+    }
+    SECTION( "ESC [ 0 K" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0K"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::erase_in_line );
+        CHECK( as_line_erasure(r[0]).what_to_erase == Area::FromCursorToLineEnd );
+    }
+    SECTION( "ESC [ 1 K" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[1K"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::erase_in_line );
+        CHECK( as_line_erasure(r[0]).what_to_erase == Area::FromLineStartToCursor );
+    }
+    SECTION( "ESC [ 2 K" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[2K"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::erase_in_line );
+        CHECK( as_line_erasure(r[0]).what_to_erase == Area::WholeLine );
+    }
+    SECTION( "ESC [ 3 K" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[3K"));
         REQUIRE( r.size() == 0 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );

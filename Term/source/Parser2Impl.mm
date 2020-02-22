@@ -662,6 +662,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'H': CSI_H(); break;
         case 'I': CSI_I(); break;
         case 'J': CSI_J(); break;
+        case 'K': CSI_K(); break;
         default: break;
     } 
 }
@@ -671,7 +672,6 @@ void Parser2Impl::SSCSISubmit() noexcept
     //                   case 'h': CSI_DEC_PMS(true);  return;
     //                   case 'l': CSI_DEC_PMS(false); return;
     //                   case 'd': CSI_d(); return;
-    //                   case 'K': CSI_K(); return;
     //                   case 'L': CSI_L(); return;
     //                   case 'm': CSI_m(); return;
     //                   case 'M': CSI_M(); return;
@@ -864,6 +864,35 @@ void Parser2Impl::CSI_J() noexcept
     m_Output.emplace_back( input::Type::erase_in_display, de );
 }
 
+void Parser2Impl::CSI_K() noexcept
+{
+// CSI Ps K  Erase in Line (EL), VT100.
+// Ps = 0  ⇒  Erase to Right (default).
+// Ps = 1  ⇒  Erase to Left.
+// Ps = 2  ⇒  Erase All.
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 0; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    
+    using input::LineErasure;
+    LineErasure le;
+    switch( ps ) {
+        case 0:
+            le.what_to_erase = LineErasure::Area::FromCursorToLineEnd;
+            break;
+        case 1:
+            le.what_to_erase = LineErasure::Area::FromLineStartToCursor;
+            break;
+        case 2:
+            le.what_to_erase = LineErasure::Area::WholeLine;
+            break;
+        default:
+            return;
+    };
+    
+    m_Output.emplace_back( input::Type::erase_in_line, le );
+}
+    
 Parser2Impl::CSIParamsScanner::Params
 Parser2Impl::CSIParamsScanner::Parse(std::string_view _csi) noexcept
 {

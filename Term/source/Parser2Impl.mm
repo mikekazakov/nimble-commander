@@ -671,6 +671,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'X': CSI_X(); break;
         case 'Z': CSI_Z(); break;
         case 'a': CSI_a(); break;
+        case 'b': CSI_b(); break;
         case '`': CSI_Accent(); break;
         default: break;
     } 
@@ -967,6 +968,15 @@ void Parser2Impl::CSI_a() noexcept
     cm.x = ps;
     cm.y = std::nullopt;
     m_Output.emplace_back( input::Type::move_cursor, cm );
+}
+    
+void Parser2Impl::CSI_b() noexcept
+{
+// CSI Ps b  Repeat the preceding graphic character Ps times (REP).
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    m_Output.emplace_back( input::Type::repeat_last_character, ps );
 }
 
 void Parser2Impl::CSI_Accent() noexcept

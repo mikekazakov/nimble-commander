@@ -695,10 +695,29 @@ TEST_CASE(PREFIX"CSI a")
     }
     SECTION( "ESC [ 7 a" ) {
         auto r = parser.Parse(to_bytes("\x1B""[7a"));
+        REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::move_cursor );
         CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Positioning::Relative );
         CHECK( as_cursor_movement(r[0]).x == 7 );
         CHECK( as_cursor_movement(r[0]).y == std::nullopt );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI b")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ b" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[b"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::repeat_last_character );
+        CHECK( as_unsigned(r[0]) == 1 );
+    }
+    SECTION( "ESC [ 7 b" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[7b"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::repeat_last_character );
+        CHECK( as_unsigned(r[0]) == 7 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
@@ -716,6 +735,7 @@ TEST_CASE(PREFIX"CSI `")
     }
     SECTION( "ESC [ 7 `" ) {
         auto r = parser.Parse(to_bytes("\x1B""[7`"));
+        REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::move_cursor );
         CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Positioning::Absolute );
         CHECK( as_cursor_movement(r[0]).x == 6 );

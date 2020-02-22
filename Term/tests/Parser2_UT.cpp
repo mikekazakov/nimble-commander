@@ -25,7 +25,14 @@ static unsigned as_unsigned( const Command &_command )
 {
     if( auto ptr = std::get_if<unsigned>(&_command.payload) )
         return *ptr;
-    throw std::invalid_argument("not TabsAmount");
+    throw std::invalid_argument("not unsigned");
+}
+
+static signed as_signed( const Command &_command )
+{
+    if( auto ptr = std::get_if<signed>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not signed");
 }
 
 static const UTF32Text& as_utf32text( const Command &_command )
@@ -599,6 +606,42 @@ TEST_CASE(PREFIX"CSI P")
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::delete_characters );
         CHECK( as_unsigned(r[0]) == 34 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI S")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ S" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[S"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::scroll_lines );
+        CHECK( as_signed(r[0]) == 1 );
+    }
+    SECTION( "ESC [ 45 S" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[45S"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::scroll_lines );
+        CHECK( as_signed(r[0]) == 45 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI T")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ T" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[T"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::scroll_lines );
+        CHECK( as_signed(r[0]) == -1 );
+    }
+    SECTION( "ESC [ 56 T" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[56T"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::scroll_lines );
+        CHECK( as_signed(r[0]) == -56 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

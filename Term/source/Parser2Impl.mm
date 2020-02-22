@@ -666,6 +666,8 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'L': CSI_L(); break;
         case 'M': CSI_M(); break;
         case 'P': CSI_P(); break;
+        case 'S': CSI_S(); break;
+        case 'T': CSI_T(); break;
         default: break;
     } 
 }
@@ -676,8 +678,6 @@ void Parser2Impl::SSCSISubmit() noexcept
     //                   case 'l': CSI_DEC_PMS(false); return;
     //                   case 'd': CSI_d(); return;
     //                   case 'm': CSI_m(); return;
-    //                   case 'S': CSI_S(); return;
-    //                   case 'T': CSI_T(); return;
     //                   case 'X': CSI_X(); return;
     //                   case 's': EscSave(); return;
     //                   case 'u': EscRestore(); return;
@@ -916,6 +916,24 @@ void Parser2Impl::CSI_P() noexcept
     unsigned ps = 1; // default value
     std::from_chars(s.data(), s.data() + s.size(), ps);
     m_Output.emplace_back( input::Type::delete_characters, ps );
+}
+    
+void Parser2Impl::CSI_S() noexcept
+{
+// CSI Ps S  Scroll up Ps lines (default = 1) (SU), VT420, ECMA-48.
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    m_Output.emplace_back( input::Type::scroll_lines, static_cast<signed>(ps) );
+}
+    
+void Parser2Impl::CSI_T() noexcept
+{
+// CSI Ps T  Scroll down Ps lines (default = 1) (SD), VT420.
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    m_Output.emplace_back( input::Type::scroll_lines, -static_cast<signed>(ps) );
 }
 
 Parser2Impl::CSIParamsScanner::Params

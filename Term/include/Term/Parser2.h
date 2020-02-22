@@ -32,8 +32,10 @@ enum class Type {
                         // payload type - unsigned
     delete_lines,       // delete the indicated number of lines
                         // payload type - unsigned
-    delete_characters,  // delete the indicacted number of characters from the cursor position
+    delete_characters,  // delete the indicated number of characters from the cursor position
                         // to the right. payload type - unsigned
+    scroll_lines        // scroll up(positive) or down(negative) the indicated number of lines
+                        // payload type - signed
 };
 
 struct Empty {}; // default empty payload   
@@ -85,7 +87,7 @@ struct LineErasure
 
 struct Command {
     using Payload = std::variant<Empty, UTF32Text, Title, CursorMovement,
-    DisplayErasure, LineErasure, unsigned>;
+    DisplayErasure, LineErasure, signed, unsigned>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

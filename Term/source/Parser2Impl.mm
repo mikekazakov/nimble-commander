@@ -673,6 +673,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'a': CSI_a(); break;
         case 'b': CSI_b(); break;
         case 'c': CSI_c(); break;
+        case 'd': CSI_d(); break;
         case '`': CSI_Accent(); break;
         default: break;
     } 
@@ -682,7 +683,6 @@ void Parser2Impl::SSCSISubmit() noexcept
     //               switch(c) {
     //                   case 'h': CSI_DEC_PMS(true);  return;
     //                   case 'l': CSI_DEC_PMS(false); return;
-    //                   case 'd': CSI_d(); return;
     //                   case 'm': CSI_m(); return;
     //                   case 's': EscSave(); return;
     //                   case 'u': EscRestore(); return;
@@ -988,6 +988,20 @@ void Parser2Impl::CSI_c() noexcept
     std::from_chars(s.data(), s.data() + s.size(), ps);
     if( ps == 0 )
         m_Output.emplace_back( input::Type::terminal_id );
+}
+    
+void Parser2Impl::CSI_d() noexcept
+{
+// CSI Pm d  Line Position Absolute  [row] (default = [1,column]) (VPA).
+    const std::string_view s = m_CSIState.buffer;
+    int ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    ps = std::max(ps - 1, 0);
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Absolute;
+    cm.x = std::nullopt;
+    cm.y = ps;
+    m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
 void Parser2Impl::CSI_Accent() noexcept

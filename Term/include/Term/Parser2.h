@@ -28,7 +28,9 @@ enum class Type {
     move_cursor,        // payload type - CursorMovement
     erase_in_display,   // payload type - DisplayErasure
     erase_in_line,      // payload type - LineErasure
-    insert_lines        // insert the indicated number of blank lines.
+    insert_lines,       // insert the indicated number of blank lines
+                        // payload type - unsigned
+    delete_lines        // delete the indicated number of lines
                         // payload type - unsigned
 };
 

@@ -567,6 +567,24 @@ TEST_CASE(PREFIX"CSI L")
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 
+TEST_CASE(PREFIX"CSI M")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ M" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[M"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::delete_lines );
+        CHECK( as_unsigned(r[0]) == 1 );
+    }
+    SECTION( "ESC [ 23 M" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[23M"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::delete_lines );
+        CHECK( as_unsigned(r[0]) == 23 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
 TEST_CASE(PREFIX"CSIParamsScanner")
 {
     using S = Parser2Impl::CSIParamsScanner;

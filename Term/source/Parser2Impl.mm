@@ -664,6 +664,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'J': CSI_J(); break;
         case 'K': CSI_K(); break;
         case 'L': CSI_L(); break;
+        case 'M': CSI_M(); break;
         default: break;
     } 
 }
@@ -674,7 +675,6 @@ void Parser2Impl::SSCSISubmit() noexcept
     //                   case 'l': CSI_DEC_PMS(false); return;
     //                   case 'd': CSI_d(); return;
     //                   case 'm': CSI_m(); return;
-    //                   case 'M': CSI_M(); return;
     //                   case 'P': CSI_P(); return;
     //                   case 'S': CSI_S(); return;
     //                   case 'T': CSI_T(); return;
@@ -898,6 +898,15 @@ void Parser2Impl::CSI_L() noexcept
     unsigned ps = 1; // default value
     std::from_chars(s.data(), s.data() + s.size(), ps);
     m_Output.emplace_back( input::Type::insert_lines, ps );
+}
+
+void Parser2Impl::CSI_M() noexcept
+{
+// CSI Ps M  Delete Ps Line(s) (default = 1) (DL).
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    m_Output.emplace_back( input::Type::delete_lines, ps );
 }
 
 Parser2Impl::CSIParamsScanner::Params

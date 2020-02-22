@@ -30,8 +30,10 @@ enum class Type {
     erase_in_line,      // payload type - LineErasure
     insert_lines,       // insert the indicated number of blank lines
                         // payload type - unsigned
-    delete_lines        // delete the indicated number of lines
+    delete_lines,       // delete the indicated number of lines
                         // payload type - unsigned
+    delete_characters,  // delete the indicacted number of characters from the cursor position
+                        // to the right. payload type - unsigned
 };
 
 struct Empty {}; // default empty payload   

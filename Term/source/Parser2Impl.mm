@@ -220,7 +220,7 @@ void Parser2Impl::LF() noexcept
 
 void Parser2Impl::HT() noexcept
 {
-    m_Output.emplace_back( input::Type::horizontal_tab, input::TabsAmount{} );
+    m_Output.emplace_back( input::Type::horizontal_tab, static_cast<unsigned>(1) );
 }
 
 void Parser2Impl::CR() noexcept
@@ -663,6 +663,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'I': CSI_I(); break;
         case 'J': CSI_J(); break;
         case 'K': CSI_K(); break;
+        case 'L': CSI_L(); break;
         default: break;
     } 
 }
@@ -672,7 +673,6 @@ void Parser2Impl::SSCSISubmit() noexcept
     //                   case 'h': CSI_DEC_PMS(true);  return;
     //                   case 'l': CSI_DEC_PMS(false); return;
     //                   case 'd': CSI_d(); return;
-    //                   case 'L': CSI_L(); return;
     //                   case 'm': CSI_m(); return;
     //                   case 'M': CSI_M(); return;
     //                   case 'P': CSI_P(); return;
@@ -826,9 +826,7 @@ void Parser2Impl::CSI_I() noexcept
     unsigned ps = 1; // default value
     std::from_chars(s.data(), s.data() + s.size(), ps);
     
-    input::TabsAmount ta;
-    ta.amount = ps;
-    m_Output.emplace_back( input::Type::horizontal_tab, ta );
+    m_Output.emplace_back( input::Type::horizontal_tab, ps );
 }
     
 void Parser2Impl::CSI_J() noexcept
@@ -892,7 +890,16 @@ void Parser2Impl::CSI_K() noexcept
     
     m_Output.emplace_back( input::Type::erase_in_line, le );
 }
-    
+
+void Parser2Impl::CSI_L() noexcept
+{
+// CSI Ps L  Insert Ps Line(s) (default = 1) (IL).
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    m_Output.emplace_back( input::Type::insert_lines, ps );
+}
+
 Parser2Impl::CSIParamsScanner::Params
 Parser2Impl::CSIParamsScanner::Parse(std::string_view _csi) noexcept
 {

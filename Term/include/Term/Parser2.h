@@ -16,7 +16,7 @@ enum class Type {
                         // and unescaped. payload type - UTF32Text
     line_feed,          // line feed or new line
     horizontal_tab,     // move cursor to next horizontal tab stop
-                        // payload type - TabsAmount
+                        // payload type - unsigned
     carriage_return,    // move cursor to the beginning of the horizontal line
     back_space,         // move cursor left by one space
     bell,               // generates a bell tone
@@ -27,7 +27,9 @@ enum class Type {
     change_title,       // payload type - Title
     move_cursor,        // payload type - CursorMovement
     erase_in_display,   // payload type - DisplayErasure
-    erase_in_line       // payload type - LineErasure
+    erase_in_line,      // payload type - LineErasure
+    insert_lines        // insert the indicated number of blank lines.
+                        // payload type - unsigned
 };
 
 struct Empty {}; // default empty payload   
@@ -44,10 +46,6 @@ struct Title {
 
 struct UTF32Text {
     std::u32string characters; // composed unicode characters 
-};
-
-struct TabsAmount {
-    unsigned amount = 1;
 };
 
 struct CursorMovement {
@@ -82,8 +80,8 @@ struct LineErasure
 };
 
 struct Command {
-    using Payload = std::variant<Empty, UTF32Text, Title, TabsAmount, CursorMovement,
-    DisplayErasure, LineErasure>;
+    using Payload = std::variant<Empty, UTF32Text, Title, CursorMovement,
+    DisplayErasure, LineErasure, unsigned>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

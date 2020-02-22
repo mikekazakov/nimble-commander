@@ -21,6 +21,13 @@ static Parser2::Bytes to_bytes(const char8_t *_characters)
     };
 }
 
+static unsigned as_unsigned( const Command &_command )
+{
+    if( auto ptr = std::get_if<unsigned>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not TabsAmount");
+}
+
 static const UTF32Text& as_utf32text( const Command &_command )
 {
     if( auto ptr = std::get_if<UTF32Text>(&_command.payload) )
@@ -40,13 +47,6 @@ static const CursorMovement& as_cursor_movement( const Command &_command )
     if( auto ptr = std::get_if<CursorMovement>(&_command.payload) )
         return *ptr;
     throw std::invalid_argument("not CursorMovement");
-}
-
-static const TabsAmount& as_tabs_mount( const Command &_command )
-{
-    if( auto ptr = std::get_if<TabsAmount>(&_command.payload) )
-        return *ptr;
-    throw std::invalid_argument("not TabsAmount");
 }
 
 static const DisplayErasure& as_display_erasure( const Command &_command )
@@ -149,7 +149,7 @@ TEST_CASE(PREFIX"Handles control characters")
         auto r = parser.Parse(to_bytes("\t"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::horizontal_tab );
-        CHECK( as_tabs_mount(r[0]).amount == 1 );
+        CHECK( as_unsigned(r[0]) == 1 );
     }
     SECTION( "carriage return" ) {
         auto r = parser.Parse(to_bytes("\x0D"));
@@ -462,13 +462,13 @@ TEST_CASE(PREFIX"CSI I")
         auto r = parser.Parse(to_bytes("\x1B""[I"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::horizontal_tab );
-        CHECK( as_tabs_mount(r[0]).amount == 1 );
+        CHECK( as_unsigned(r[0]) == 1 );
     }
     SECTION( "ESC [ 123 I" ) {
         auto r = parser.Parse(to_bytes("\x1B""[123I"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::horizontal_tab );
-        CHECK( as_tabs_mount(r[0]).amount == 123 );
+        CHECK( as_unsigned(r[0]) == 123 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
@@ -545,6 +545,24 @@ TEST_CASE(PREFIX"CSI K")
     SECTION( "ESC [ 3 K" ) {
         auto r = parser.Parse(to_bytes("\x1B""[3K"));
         REQUIRE( r.size() == 0 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI L")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ L" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[L"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::insert_lines );
+        CHECK( as_unsigned(r[0]) == 1 );
+    }
+    SECTION( "ESC [ 12 L" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[12L"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::insert_lines );
+        CHECK( as_unsigned(r[0]) == 12 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

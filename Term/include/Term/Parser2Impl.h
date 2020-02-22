@@ -86,6 +86,7 @@ private:
     void CSI_I() noexcept;
     void CSI_J() noexcept;
     void CSI_K() noexcept;
+    void CSI_L() noexcept;
     
     constexpr static struct SubStates {
         void (Me::*enter)() noexcept;

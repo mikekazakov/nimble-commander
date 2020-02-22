@@ -34,8 +34,10 @@ enum class Type {
                         // payload type - unsigned
     delete_characters,  // delete the indicated number of characters from the cursor position
                         // to the right. payload type - unsigned
-    scroll_lines        // scroll up(positive) or down(negative) the indicated number of lines
+    scroll_lines,       // scroll up(positive) or down(negative) the indicated number of lines
                         // payload type - signed
+    erase_characters,   // erase the indicated number of characters on current line,
+                        // from the cursor position to the right. payload type - unsigned
 };
 
 struct Empty {}; // default empty payload   

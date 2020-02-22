@@ -41,6 +41,7 @@ enum class Type {
                             // from the cursor position to the right. payload type - unsigned
     repeat_last_character,  // repeat the last output character the indicated number of times.
                             // payload type - unsigned
+    terminal_id,            // ask for the terminal's architectural class and basic attributes
 };
 
 struct Empty {}; // default empty payload   

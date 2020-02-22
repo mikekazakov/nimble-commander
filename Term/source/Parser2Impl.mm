@@ -672,6 +672,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'Z': CSI_Z(); break;
         case 'a': CSI_a(); break;
         case 'b': CSI_b(); break;
+        case 'c': CSI_c(); break;
         case '`': CSI_Accent(); break;
         default: break;
     } 
@@ -687,7 +688,6 @@ void Parser2Impl::SSCSISubmit() noexcept
     //                   case 'u': EscRestore(); return;
     //                   case 'r': CSI_r(); return;
     //                   case '@': CSI_At(); return;
-    //                   case 'c': CSI_c(); return;
     //                   case 'n': CSI_n(); return;
     //                   case 't': CSI_t(); return;
     //                   default: CSI_Unknown(c); return;
@@ -977,6 +977,17 @@ void Parser2Impl::CSI_b() noexcept
     unsigned ps = 1; // default value
     std::from_chars(s.data(), s.data() + s.size(), ps);
     m_Output.emplace_back( input::Type::repeat_last_character, ps );
+}
+
+void Parser2Impl::CSI_c() noexcept
+{
+// CSI Ps c  Send Device Attributes (Primary DA).
+// Ps = 0  or omitted ⇒  request attributes from terminal.
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 0; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    if( ps == 0 )
+        m_Output.emplace_back( input::Type::terminal_id );
 }
 
 void Parser2Impl::CSI_Accent() noexcept

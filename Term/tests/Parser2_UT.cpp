@@ -722,6 +722,26 @@ TEST_CASE(PREFIX"CSI b")
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 
+TEST_CASE(PREFIX"CSI c")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ c" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[c"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::terminal_id );
+    }
+    SECTION( "ESC [ 0 c" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0c"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::terminal_id );
+    }
+    SECTION( "ESC [ 1 c" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[1c"));
+        REQUIRE( r.empty() );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
 TEST_CASE(PREFIX"CSI `")
 {
     Parser2Impl parser;

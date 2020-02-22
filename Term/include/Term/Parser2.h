@@ -15,8 +15,9 @@ enum class Type {
     text,               // clean unicode text without any control characters, both escaped
                         // and unescaped. payload type - UTF32Text
     line_feed,          // line feed or new line
-    horizontal_tab,     // move cursor to next horizontal tab stop
-                        // payload type - unsigned
+    horizontal_tab,     // move cursor to next horizontal tab stop.
+                        // negative values means backward direction.
+                        // payload type - signed
     carriage_return,    // move cursor to the beginning of the horizontal line
     back_space,         // move cursor left by one space
     bell,               // generates a bell tone

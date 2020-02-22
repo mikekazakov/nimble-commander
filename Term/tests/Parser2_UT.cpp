@@ -60,14 +60,14 @@ static const DisplayErasure& as_display_erasure( const Command &_command )
 {
     if( auto ptr = std::get_if<DisplayErasure>(&_command.payload) )
         return *ptr;
-    throw std::invalid_argument("not TabsAmount");
+    throw std::invalid_argument("not DisplayErasure");
 }
 
 static const LineErasure& as_line_erasure( const Command &_command )
 {
     if( auto ptr = std::get_if<LineErasure>(&_command.payload) )
         return *ptr;
-    throw std::invalid_argument("not TabsAmount");
+    throw std::invalid_argument("not LineErasure");
 }
 
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
@@ -156,7 +156,7 @@ TEST_CASE(PREFIX"Handles control characters")
         auto r = parser.Parse(to_bytes("\t"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::horizontal_tab );
-        CHECK( as_unsigned(r[0]) == 1 );
+        CHECK( as_signed(r[0]) == 1 );
     }
     SECTION( "carriage return" ) {
         auto r = parser.Parse(to_bytes("\x0D"));
@@ -469,13 +469,13 @@ TEST_CASE(PREFIX"CSI I")
         auto r = parser.Parse(to_bytes("\x1B""[I"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::horizontal_tab );
-        CHECK( as_unsigned(r[0]) == 1 );
+        CHECK( as_signed(r[0]) == 1 );
     }
     SECTION( "ESC [ 123 I" ) {
         auto r = parser.Parse(to_bytes("\x1B""[123I"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::horizontal_tab );
-        CHECK( as_unsigned(r[0]) == 123 );
+        CHECK( as_signed(r[0]) == 123 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
@@ -660,6 +660,24 @@ TEST_CASE(PREFIX"CSI X")
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::erase_characters );
         CHECK( as_unsigned(r[0]) == 67 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI Z")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ Z" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[Z"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::horizontal_tab );
+        CHECK( as_signed(r[0]) == -1 );
+    }
+    SECTION( "ESC [ 1234 Z" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[1234Z"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::horizontal_tab );
+        CHECK( as_signed(r[0]) == -1234 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

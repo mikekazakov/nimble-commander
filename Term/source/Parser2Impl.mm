@@ -220,7 +220,7 @@ void Parser2Impl::LF() noexcept
 
 void Parser2Impl::HT() noexcept
 {
-    m_Output.emplace_back( input::Type::horizontal_tab, static_cast<unsigned>(1) );
+    m_Output.emplace_back( input::Type::horizontal_tab, 1 );
 }
 
 void Parser2Impl::CR() noexcept
@@ -669,6 +669,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'S': CSI_S(); break;
         case 'T': CSI_T(); break;
         case 'X': CSI_X(); break;
+        case 'Z': CSI_Z(); break;
         default: break;
     } 
 }
@@ -825,8 +826,7 @@ void Parser2Impl::CSI_I() noexcept
     const std::string_view s = m_CSIState.buffer;
     unsigned ps = 1; // default value
     std::from_chars(s.data(), s.data() + s.size(), ps);
-    
-    m_Output.emplace_back( input::Type::horizontal_tab, ps );
+    m_Output.emplace_back( input::Type::horizontal_tab, static_cast<int>(ps) );
 }
     
 void Parser2Impl::CSI_J() noexcept
@@ -943,6 +943,15 @@ void Parser2Impl::CSI_X() noexcept
     unsigned ps = 1; // default value
     std::from_chars(s.data(), s.data() + s.size(), ps);
     m_Output.emplace_back( input::Type::erase_characters, ps );
+}
+    
+void Parser2Impl::CSI_Z() noexcept
+{
+// CSI Ps Z  Cursor Backward Tabulation Ps tab stops (default = 1) (CBT).
+    const std::string_view s = m_CSIState.buffer;
+    unsigned ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    m_Output.emplace_back( input::Type::horizontal_tab, -static_cast<int>(ps) );
 }
 
 Parser2Impl::CSIParamsScanner::Params

@@ -670,6 +670,8 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'T': CSI_T(); break;
         case 'X': CSI_X(); break;
         case 'Z': CSI_Z(); break;
+        case 'a': CSI_a(); break;
+        case '`': CSI_Accent(); break;
         default: break;
     } 
 }
@@ -953,7 +955,34 @@ void Parser2Impl::CSI_Z() noexcept
     std::from_chars(s.data(), s.data() + s.size(), ps);
     m_Output.emplace_back( input::Type::horizontal_tab, -static_cast<int>(ps) );
 }
+    
+void Parser2Impl::CSI_a() noexcept
+{
+// CSI Pm a  Character Position Relative  [columns] (default = [row,col+1]) (HPR).
+    const std::string_view s = m_CSIState.buffer;
+    int ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Relative;
+    cm.x = ps;
+    cm.y = std::nullopt;
+    m_Output.emplace_back( input::Type::move_cursor, cm );
+}
 
+void Parser2Impl::CSI_Accent() noexcept
+{
+// CSI Pm `  Character Position Absolute  [column] (default = [row,1]) (HPA).
+    const std::string_view s = m_CSIState.buffer;
+    int ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    ps = std::max(ps - 1, 0);
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Absolute;
+    cm.x = ps;
+    cm.y = std::nullopt;
+    m_Output.emplace_back( input::Type::move_cursor, cm );
+}
+    
 Parser2Impl::CSIParamsScanner::Params
 Parser2Impl::CSIParamsScanner::Parse(std::string_view _csi) noexcept
 {

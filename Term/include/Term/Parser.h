@@ -17,6 +17,8 @@
 // http://rtfm.etla.org/xterm/ctlseq.html
 // https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
 
+// https://invisible-island.net/vttest/vttest.html
+
 namespace nc::term {
 
 class Screen;

@@ -682,6 +682,48 @@ TEST_CASE(PREFIX"CSI Z")
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 
+TEST_CASE(PREFIX"CSI a")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ a" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[a"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Positioning::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 1 );
+        CHECK( as_cursor_movement(r[0]).y == std::nullopt );
+    }
+    SECTION( "ESC [ 7 a" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[7a"));
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Positioning::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 7 );
+        CHECK( as_cursor_movement(r[0]).y == std::nullopt );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI `")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ `" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[`"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Positioning::Absolute );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == std::nullopt );
+    }
+    SECTION( "ESC [ 7 `" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[7`"));
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Positioning::Absolute );
+        CHECK( as_cursor_movement(r[0]).x == 6 );
+        CHECK( as_cursor_movement(r[0]).y == std::nullopt );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
 TEST_CASE(PREFIX"CSIParamsScanner")
 {
     using S = Parser2Impl::CSIParamsScanner;

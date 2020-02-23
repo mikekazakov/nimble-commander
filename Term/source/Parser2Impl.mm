@@ -675,6 +675,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'c': CSI_c(); break;
         case 'd': CSI_d(); break;
         case 'e': CSI_e(); break;
+        case 'f': CSI_f(); break;
         case '`': CSI_Accent(); break;
         default: break;
     } 
@@ -1016,6 +1017,11 @@ void Parser2Impl::CSI_e() noexcept
     cm.x = std::nullopt;
     cm.y = ps;
     m_Output.emplace_back( input::Type::move_cursor, cm );
+}
+
+void Parser2Impl::CSI_f() noexcept
+{
+    CSI_H();
 }
 
 void Parser2Impl::CSI_Accent() noexcept

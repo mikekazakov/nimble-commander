@@ -786,6 +786,36 @@ TEST_CASE(PREFIX"CSI e")
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 
+TEST_CASE(PREFIX"CSI f")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ f" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[f"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Absolute );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == 0 );
+    }
+    SECTION( "ESC [ 5 ; 10 f" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[5;10f"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Absolute );
+        CHECK( as_cursor_movement(r[0]).x == 9 );
+        CHECK( as_cursor_movement(r[0]).y == 4 );
+    }
+    SECTION( "ESC [ 0 ; 0 f" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0;0f"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Absolute );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == 0 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
 TEST_CASE(PREFIX"CSI `")
 {
     Parser2Impl parser;

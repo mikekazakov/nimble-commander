@@ -42,6 +42,7 @@ private:
     void ConsumeNextUTF8TextChar( unsigned char _byte );
     void LogMissedEscChar( unsigned char _c );
     void LogMissedOSCRequest( unsigned _ps, std::string_view _pt );
+    void LogMissedCSIRequest( std::string_view _request );
     
     void SSTextEnter() noexcept;
     void SSTextExit() noexcept;
@@ -99,6 +100,7 @@ private:
     void CSI_d() noexcept;
     void CSI_e() noexcept;
     void CSI_f() noexcept;
+    void CSI_hl() noexcept;
     void CSI_Accent() noexcept;
     
     constexpr static struct SubStates {

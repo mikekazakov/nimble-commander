@@ -266,7 +266,7 @@ void Parser2Impl::LogMissedEscChar( unsigned char _c )
 {
     if( m_ErrorLog ) {
         char buf[256];
-        sprintf(buf, "Missed an Esc char: %d(\'%c\')\n", (int)_c, _c);
+        sprintf(buf, "Missed an Esc char: %d(\'%c\')", (int)_c, _c);
         m_ErrorLog(buf);
     }
 }
@@ -676,15 +676,16 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'd': CSI_d(); break;
         case 'e': CSI_e(); break;
         case 'f': CSI_f(); break;
+        // CSI Ps g  Tab Clear (TBC). <-- unimplemented
+        case 'h': CSI_hl(); break;
+        case 'l': CSI_hl(); break;
         case '`': CSI_Accent(); break;
-        default: break;
+        default: LogMissedCSIRequest( m_CSIState.buffer ); break;
     } 
 }
 
     //               m_EscState = EState::Normal;
     //               switch(c) {
-    //                   case 'h': CSI_DEC_PMS(true);  return;
-    //                   case 'l': CSI_DEC_PMS(false); return;
     //                   case 'm': CSI_m(); return;
     //                   case 's': EscSave(); return;
     //                   case 'u': EscRestore(); return;
@@ -695,6 +696,14 @@ void Parser2Impl::SSCSISubmit() noexcept
     //                   default: CSI_Unknown(c); return;
     //               }
 
+void Parser2Impl::LogMissedCSIRequest( std::string_view _request )
+{
+    if( m_ErrorLog ) {
+        auto msg = std::string("Missed a CSI: ") + std::string(_request);
+        m_ErrorLog(msg);
+    }
+}
+    
 void Parser2Impl::CSI_A() noexcept
 {
 //    CSI Ps A - Cursor Up Ps Times (default = 1) (CUU).
@@ -1024,6 +1033,55 @@ void Parser2Impl::CSI_f() noexcept
     CSI_H();
 }
 
+static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, bool _dec) noexcept
+{
+    if( _dec ) {
+        switch( _ps_number ) {
+            default:
+                return std::nullopt;
+        }
+    }
+    else {
+        switch( _ps_number ) {
+            case 4:     return input::ModeChange::InsertMode;
+            case 20:    return input::ModeChange::NewLineMode;
+            default:
+                return std::nullopt;
+        }
+    }
+}
+    
+void Parser2Impl::CSI_hl() noexcept
+{
+// CSI Pm h  Set Mode (SM).
+// CSI ? Pm h DEC Private Mode Set (DECSET).
+// CSI Pm l  Reset Mode (RM).
+// CSI ? Pm l DEC Private Mode Reset (DECRST).
+    std::string_view request = m_CSIState.buffer;
+    assert( request.empty() == false );
+    const bool on = request.back() == 'h'; // 'l' means Off
+    const bool dec = request.front() == '?';
+    if( dec )
+        request.remove_prefix(1);
+    
+    const auto p = CSIParamsScanner::Parse(request);
+    if( p.count != 1 ) {
+        LogMissedCSIRequest(m_CSIState.buffer);
+        return;
+    }
+    
+    const auto kind = ToModeChange(p.values[0], dec);
+    if( kind == std::nullopt ) {
+        LogMissedCSIRequest(m_CSIState.buffer);
+        return;
+    }
+
+    input::ModeChange mc;
+    mc.mode = *kind;
+    mc.status = on;
+    m_Output.emplace_back( input::Type::change_mode, mc );
+}
+    
 void Parser2Impl::CSI_Accent() noexcept
 {
 // CSI Pm `  Character Position Absolute  [column] (default = [row,1]) (HPA).

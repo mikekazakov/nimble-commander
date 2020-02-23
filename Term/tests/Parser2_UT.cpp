@@ -70,6 +70,13 @@ static const LineErasure& as_line_erasure( const Command &_command )
     throw std::invalid_argument("not LineErasure");
 }
 
+static const ModeChange& as_mode_change( const Command &_command )
+{
+    if( auto ptr = std::get_if<ModeChange>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not ModeChange");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -812,6 +819,38 @@ TEST_CASE(PREFIX"CSI f")
         CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Absolute );
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y == 0 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI hl")
+{
+    Parser2Impl parser;
+    using Kind = ModeChange::Kind;
+    auto verify = [&](const char *_cmd, Kind _kind, bool _status ) {
+        auto r = parser.Parse(to_bytes(_cmd));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::change_mode );
+        CHECK( as_mode_change(r[0]).mode == _kind );
+        CHECK( as_mode_change(r[0]).status == _status );
+    };
+    SECTION( "ESC [ 4 h" ) {
+        verify("\x1B""[4h", Kind::InsertMode, true);
+    }
+    SECTION( "ESC [ 4 l" ) {
+        verify("\x1B""[4l", Kind::InsertMode, false);
+    }
+    SECTION( "ESC [ 20 h" ) {
+        verify("\x1B""[20h", Kind::NewLineMode, true);
+    }
+    SECTION( "ESC [ 20 l" ) {
+        verify("\x1B""[20l", Kind::NewLineMode, false);        
+    }
+    SECTION( "ESC [ h" ) {
+        REQUIRE( parser.Parse(to_bytes("\x1B""[h")).empty() );
+    }
+    SECTION( "ESC [ l" ) {
+        REQUIRE( parser.Parse(to_bytes("\x1B""[l")).empty() );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

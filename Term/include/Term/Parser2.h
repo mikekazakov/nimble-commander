@@ -42,9 +42,8 @@ enum class Type {
     repeat_last_character,  // repeat the last output character the indicated number of times.
                             // payload type - unsigned
     terminal_id,            // ask for the terminal's architectural class and basic attributes
+    change_mode,            // payload type - ModeChange
 };
-
-struct Empty {}; // default empty payload   
 
 struct Title {
     enum Kind {
@@ -91,9 +90,19 @@ struct LineErasure
     Area what_to_erase = FromCursorToLineEnd;
 };
 
+struct ModeChange
+{
+    enum Kind {
+        InsertMode, // Insert Mode / Replace Mode (default)
+        NewLineMode, // New Line Mode / Line Feed Mode (default)
+    };
+    Kind mode = InsertMode;
+    bool status = true;
+};
+
 struct Command {
-    using Payload = std::variant<Empty, UTF32Text, Title, CursorMovement,
-    DisplayErasure, LineErasure, signed, unsigned>;
+    using Payload = std::variant<signed, unsigned, UTF32Text, Title, CursorMovement,
+    DisplayErasure, LineErasure, ModeChange>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;
@@ -122,7 +131,7 @@ inline Command::Command() noexcept :
 
 inline Command::Command(Type _type) noexcept:
     type{_type},
-    payload{Empty()}
+    payload{0}
 {
 }
 

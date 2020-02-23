@@ -764,6 +764,28 @@ TEST_CASE(PREFIX"CSI d")
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 
+TEST_CASE(PREFIX"CSI e")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ e" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[e"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Positioning::Relative );
+        CHECK( as_cursor_movement(r[0]).x == std::nullopt );
+        CHECK( as_cursor_movement(r[0]).y == 1 );
+    }
+    SECTION( "ESC [ 5 e" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[5e"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Positioning::Relative );
+        CHECK( as_cursor_movement(r[0]).x == std::nullopt );
+        CHECK( as_cursor_movement(r[0]).y == 5 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
 TEST_CASE(PREFIX"CSI `")
 {
     Parser2Impl parser;

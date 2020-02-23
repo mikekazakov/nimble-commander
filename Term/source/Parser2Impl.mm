@@ -674,6 +674,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'b': CSI_b(); break;
         case 'c': CSI_c(); break;
         case 'd': CSI_d(); break;
+        case 'e': CSI_e(); break;
         case '`': CSI_Accent(); break;
         default: break;
     } 
@@ -999,6 +1000,19 @@ void Parser2Impl::CSI_d() noexcept
     ps = std::max(ps - 1, 0);
     input::CursorMovement cm;
     cm.positioning = input::CursorMovement::Absolute;
+    cm.x = std::nullopt;
+    cm.y = ps;
+    m_Output.emplace_back( input::Type::move_cursor, cm );
+}
+
+void Parser2Impl::CSI_e() noexcept
+{
+// CSI Pm e  Line Position Relative  [rows] (default = [row+1,column]) (VPR).
+    const std::string_view s = m_CSIState.buffer;
+    int ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    input::CursorMovement cm;
+    cm.positioning = input::CursorMovement::Relative;
     cm.x = std::nullopt;
     cm.y = ps;
     m_Output.emplace_back( input::Type::move_cursor, cm );

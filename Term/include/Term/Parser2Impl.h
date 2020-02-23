@@ -97,6 +97,7 @@ private:
     void CSI_b() noexcept;
     void CSI_c() noexcept;
     void CSI_d() noexcept;
+    void CSI_e() noexcept;
     void CSI_Accent() noexcept;
     
     constexpr static struct SubStates {

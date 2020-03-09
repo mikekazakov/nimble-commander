@@ -55,8 +55,8 @@ struct Title {
     std::string title; 
 };
 
-struct UTF32Text {
-    std::u32string characters; // composed unicode characters 
+struct UTF8Text {
+    std::string characters;
 };
 
 struct CursorMovement {
@@ -101,7 +101,7 @@ struct ModeChange
 };
 
 struct Command {
-    using Payload = std::variant<signed, unsigned, UTF32Text, Title, CursorMovement,
+    using Payload = std::variant<signed, unsigned, UTF8Text, Title, CursorMovement,
     DisplayErasure, LineErasure, ModeChange>;
     Command() noexcept; 
     Command(Type _type) noexcept;

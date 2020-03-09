@@ -33,7 +33,6 @@ public:
     EscState GetEscState() const noexcept;
 private:
     using Me = Parser2Impl;
-    static constexpr int UTF16CharsStockSize = 16384;    
     
     void SwitchTo(EscState _state);
     void Reset();
@@ -116,13 +115,11 @@ private:
     };
 
     EscState                m_EscState = EscState::Text;
-    const unsigned short   *m_TranslateMap = nullptr;    
         
     struct SS_Text {
-        size_t      UTF16CharsStockLen = 0; // number of characters in m_UTF16CharsStock
-        uint32_t    UTF32Char = 0; // unicode character being parsed
-        int         UTF8Count = 0; // number of expected code units left to consume    
-        std::array<uint16_t, UTF16CharsStockSize> UTF16CharsStock;
+        static constexpr int UTF8CharsStockSize = 16384;
+        int UTF8StockLen = 0;
+        std::array<char, UTF8CharsStockSize> UTF8CharsStock;
     } m_TextState;
     
     struct SS_OSC {

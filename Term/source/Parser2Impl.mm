@@ -61,9 +61,7 @@ void Parser2Impl::SwitchTo(EscState _state)
 
 void Parser2Impl::SSTextEnter() noexcept
 {
-    m_TextState.UTF16CharsStockLen = 0;
-    m_TextState.UTF32Char = 0;
-    m_TextState.UTF8Count = 0;    
+    m_TextState.UTF8StockLen = 0;
 }
 
 void Parser2Impl::SSTextExit() noexcept
@@ -84,128 +82,27 @@ bool Parser2Impl::SSTextConsume(unsigned char _byte) noexcept
 
 void Parser2Impl::ConsumeNextUTF8TextChar( unsigned char _byte )
 {
-    const unsigned char c = _byte;
     auto &ts = m_TextState;
-    if(c > 0x7f) {
-        if (ts.UTF8Count && (c&0xc0)==0x80) {
-            ts.UTF32Char = (ts.UTF32Char<<6) | (c&0x3f);
-            ts.UTF8Count--;
-            if(ts.UTF8Count)
-                return;
-        }
-        else {
-            if ((c & 0xe0) == 0xc0) {
-                ts.UTF8Count = 1;
-                ts.UTF32Char = (c & 0x1f);
-            }
-            else if ((c & 0xf0) == 0xe0) {
-                ts.UTF8Count = 2;
-                ts.UTF32Char = (c & 0x0f);
-            }
-            else if ((c & 0xf8) == 0xf0) {
-                ts.UTF8Count = 3;
-                ts.UTF32Char = (c & 0x07);
-            }
-            else if ((c & 0xfc) == 0xf8) {
-                ts.UTF8Count = 4;
-                ts.UTF32Char = (c & 0x03);
-            }
-            else if ((c & 0xfe) == 0xfc) {
-                ts.UTF8Count = 5;
-                ts.UTF32Char = (c & 0x01);
-            }
-            else
-                ts.UTF8Count = 0;
-            return;
-        }
+    if( ts.UTF8StockLen < ts.UTF8CharsStockSize ) {
+        ts.UTF8CharsStock[ts.UTF8StockLen++] = (char)_byte;
     }
-    else if (m_TranslateMap != nullptr && m_TranslateMap != g_TranslateMaps[0] ) {
-        ts.UTF32Char = m_TranslateMap[c];
-    }
-    else {
-        ts.UTF32Char = c;
-    }
-    
-    if(ts.UTF16CharsStockLen < UTF16CharsStockSize) {
-        if(ts.UTF32Char < 0x10000) // store directly as UTF16
-            ts.UTF16CharsStock[ts.UTF16CharsStockLen++] = ts.UTF32Char;
-        else if(ts.UTF16CharsStockLen + 1 < UTF16CharsStockSize ) { // store as UTF16 suggorate pairs
-            ts.UTF16CharsStock[ts.UTF16CharsStockLen++] = 0xD800 + ((ts.UTF32Char - 0x010000) >> 10);
-            ts.UTF16CharsStock[ts.UTF16CharsStockLen++] = 0xDC00 + ((ts.UTF32Char - 0x010000) & 0x3FF);
-        }
-    }
-    ts.UTF32Char = 0;
-    ts.UTF8Count = 0;
 }
 
 void Parser2Impl::FlushText()
 {
-    using namespace input;
-
-    if( m_TextState.UTF16CharsStockLen == 0 )
+    if( m_TextState.UTF8StockLen == 0 )
         return;
     
-    bool can_be_composed = false;
-    for( size_t i = 0; i < m_TextState.UTF16CharsStockLen; ++i )
-        // treat utf16 code units as unicode, which is not right,
-        // but ok for this case, since we assume that >0xFFFF can't be composed
-        if( oms::CanCharBeTheoreticallyComposed(m_TextState.UTF16CharsStock[i]) ) {
-            can_be_composed = true;
-            break;
-        }
+    using namespace input;
+    UTF8Text payload;
+    payload.characters.assign(m_TextState.UTF8CharsStock.data(), m_TextState.UTF8StockLen);
     
-    int chars_len = m_TextState.UTF16CharsStockLen;
-
-    if(can_be_composed) {
-        auto str = nc::base::CFPtr<CFMutableStringRef>::adopt(
-            CFStringCreateMutableWithExternalCharactersNoCopy(nullptr,
-                                                              m_TextState.UTF16CharsStock.data(),
-                                                              m_TextState.UTF16CharsStockLen,
-                                                              UTF16CharsStockSize,
-                                                              kCFAllocatorNull
-                                                              )); 
-        if( str ) {
-            CFStringNormalize(str.get(), kCFStringNormalizationFormC);
-            chars_len = (int)CFStringGetLength(str.get());
-        }
-    }
-    
-    UTF32Text payload;
-    
-    for(int i = 0; i < chars_len; ++i) {
-        uint32_t c = 0;
-        if( CFStringIsSurrogateHighCharacter(m_TextState.UTF16CharsStock[i]) ) {
-            if(i + 1 < chars_len &&
-               CFStringIsSurrogateLowCharacter(m_TextState.UTF16CharsStock[i+1]) ) {
-                c = CFStringGetLongCharacterForSurrogatePair(m_TextState.UTF16CharsStock[i],
-                    m_TextState.UTF16CharsStock[i+1]);
-                ++i;
-            }
-        }
-        else
-            c = m_TextState.UTF16CharsStock[i];
-        
-//         TODO: if(wrapping_mode == ...) <- need to add this
-//        if( m_Scr.CursorX() >= m_Scr.Width() && !oms::IsUnicodeCombiningCharacter(c) )
-//        {
-//            m_Scr.PutWrap();
-//            CR();
-//            LF();
-//        }
-
-//        if(m_InsertMode)
-//            m_Scr.DoShiftRowRight(oms::WCWidthMin1(c));
-        
-//        m_Scr.PutCh(c);
-        payload.characters.push_back(c);
-    }
-    
-    m_TextState.UTF16CharsStockLen = 0;
-
     Command command;
     command.type = Type::text;
     command.payload = std::move(payload);
     m_Output.emplace_back( std::move(command) );
+    
+    m_TextState.UTF8StockLen = 0;
 }
 
 Parser2Impl::EscState Parser2Impl::GetEscState() const noexcept

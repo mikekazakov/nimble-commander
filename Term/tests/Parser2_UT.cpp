@@ -35,11 +35,11 @@ static signed as_signed( const Command &_command )
     throw std::invalid_argument("not signed");
 }
 
-static const UTF32Text& as_utf32text( const Command &_command )
+static const UTF8Text& as_utf8text( const Command &_command )
 {
-    if( auto ptr = std::get_if<UTF32Text>(&_command.payload) )
+    if( auto ptr = std::get_if<UTF8Text>(&_command.payload) )
         return *ptr;
-    throw std::invalid_argument("not UTF32Text");
+    throw std::invalid_argument("not UTF8Text");
 }
 
 static const Title& as_title( const Command &_command )
@@ -90,37 +90,32 @@ TEST_CASE(PREFIX"Parsing raw ascii text yields it")
         auto r = parser.Parse(to_bytes("t"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::text );
-        CHECK( as_utf32text(r[0]).characters == U"t" );
+        CHECK( as_utf8text(r[0]).characters == "t" );
     }
     SECTION( "Two characters" ) {
         auto r = parser.Parse(to_bytes("qp"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::text );
-        CHECK( as_utf32text(r[0]).characters == U"qp" );
+        CHECK( as_utf8text(r[0]).characters == "qp" );
     }
     SECTION( "Multiple characters" ) {
         auto r = parser.Parse(to_bytes("Hello, World!"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::text );
-        CHECK( as_utf32text(r[0]).characters == U"Hello, World!" ); 
-    }
-    SECTION( "Multiple characters" ) {
-        auto r = parser.Parse(to_bytes("Hello, World!"));
-        REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::text );
-        CHECK( as_utf32text(r[0]).characters == U"Hello, World!" ); 
+        CHECK( as_utf8text(r[0]).characters == "Hello, World!" );
     }
     SECTION("Smile") {
         auto r = parser.Parse(to_bytes(u8"🤩"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::text );
-        CHECK( as_utf32text(r[0]).characters == U"🤩" );
+        CHECK( as_utf8text(r[0]).characters == reinterpret_cast<const char*>(u8"🤩") );
     }
     SECTION("Variable length") {
         auto r = parser.Parse(to_bytes(u8"This is какая-то смесь языков 😱!"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::text );
-        CHECK( as_utf32text(r[0]).characters == U"This is какая-то смесь языков 😱!" );        
+        CHECK( as_utf8text(r[0]).characters ==
+              reinterpret_cast<const char*>(u8"This is какая-то смесь языков 😱!") );
     }
 }
 
@@ -844,7 +839,7 @@ TEST_CASE(PREFIX"CSI hl")
         verify("\x1B""[20h", Kind::NewLineMode, true);
     }
     SECTION( "ESC [ 20 l" ) {
-        verify("\x1B""[20l", Kind::NewLineMode, false);        
+        verify("\x1B""[20l", Kind::NewLineMode, false);
     }
     SECTION( "ESC [ h" ) {
         REQUIRE( parser.Parse(to_bytes("\x1B""[h")).empty() );

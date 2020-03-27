@@ -42,6 +42,7 @@
 		CF50998E1F948FD8000AFDE7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */; };
 		CF5099901F948FDD000AFDE7 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF50998F1F948FDD000AFDE7 /* libUtility.dylib */; };
 		CF5099921F948FFA000AFDE7 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5099911F948FFA000AFDE7 /* libHabanero.dylib */; };
+		CFB7456B2416E5850088F5EF /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB7456A2416E5850088F5EF /* Interpreter.h */; };
 		CFE08B2923DCABA4007E99B8 /* Parser2.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2823DCABA4007E99B8 /* Parser2.h */; };
 		CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */; };
 		CFE08B2E23DCEB04007E99B8 /* Parser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */; };
@@ -120,6 +121,7 @@
 		CF50998F1F948FDD000AFDE7 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CF5099911F948FFA000AFDE7 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 		CF5FD92A1FA1AC5100752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
+		CFB7456A2416E5850088F5EF /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interpreter.h; path = include/Term/Interpreter.h; sourceTree = "<group>"; };
 		CFE08B2823DCABA4007E99B8 /* Parser2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2.h; path = include/Term/Parser2.h; sourceTree = "<group>"; };
 		CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2Impl.h; path = include/Term/Parser2Impl.h; sourceTree = "<group>"; };
 		CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser2.cpp; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 			isa = PBXGroup;
 			children = (
 				CF4135221F890BC8007429B6 /* CursorMode.h */,
+				CFB7456A2416E5850088F5EF /* Interpreter.h */,
 				CF1ADE3E1F7E7587003E9B76 /* Parser.h */,
 				CFE08B2823DCABA4007E99B8 /* Parser2.h */,
 				CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */,
@@ -283,6 +286,7 @@
 				CF41350E1F846CE6007429B6 /* SingleTask.h in Headers */,
 				CF50996C1F94800F000AFDE7 /* ScrollView.h in Headers */,
 				CF4135141F846CF2007429B6 /* PrecompiledHeaders.pch in Headers */,
+				CFB7456B2416E5850088F5EF /* Interpreter.h in Headers */,
 				CF41350D1F846CE6007429B6 /* ShellTask.h in Headers */,
 				CF1ADE3F1F7E7587003E9B76 /* Parser.h in Headers */,
 				CF5099711F948400000AFDE7 /* FlippableHolder.h in Headers */,

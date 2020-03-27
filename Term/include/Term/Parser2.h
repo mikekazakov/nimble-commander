@@ -116,7 +116,7 @@ struct Command {
 class Parser2
 {
 public: 
-    using Bytes = std::span<const std::byte, std::dynamic_extent>;
+    using Bytes = std::span<const std::byte>;
     virtual ~Parser2() = default;
     virtual std::vector<input::Command> Parse( Bytes _to_parse ) = 0;
 };

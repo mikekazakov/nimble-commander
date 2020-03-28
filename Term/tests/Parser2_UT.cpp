@@ -10,14 +10,14 @@ static Parser2::Bytes to_bytes(const char *_characters)
 {
     assert( _characters != nullptr );
     return Parser2::Bytes{ reinterpret_cast<const std::byte*>(_characters),
-        static_cast<long>(std::string_view(_characters).size()) };
+        std::string_view(_characters).size() };
 }
 
 static Parser2::Bytes to_bytes(const char8_t *_characters)
 {
     assert( _characters != nullptr );
     return Parser2::Bytes{ reinterpret_cast<const std::byte*>(_characters),
-        static_cast<long>(std::u8string_view{_characters}.size())
+        std::u8string_view{_characters}.size()
     };
 }
 

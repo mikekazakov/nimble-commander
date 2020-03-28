@@ -42,6 +42,10 @@
 		CF50998E1F948FD8000AFDE7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */; };
 		CF5099901F948FDD000AFDE7 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF50998F1F948FDD000AFDE7 /* libUtility.dylib */; };
 		CF5099921F948FFA000AFDE7 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5099911F948FFA000AFDE7 /* libHabanero.dylib */; };
+		CF5F392D242F7D57004DF1F8 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */; };
+		CF5F392F242F7FB4004DF1F8 /* InterpreterImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */; };
+		CF5F3931242F7FC7004DF1F8 /* InterpreterImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5F3930242F7FC6004DF1F8 /* InterpreterImpl.h */; };
+		CF5F3934242FCD2B004DF1F8 /* Term_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */; };
 		CFB7456B2416E5850088F5EF /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB7456A2416E5850088F5EF /* Interpreter.h */; };
 		CFE08B2923DCABA4007E99B8 /* Parser2.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2823DCABA4007E99B8 /* Parser2.h */; };
 		CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */; };
@@ -120,6 +124,10 @@
 		CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShellTask_Tests.mm; path = tests/ShellTask_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF50998F1F948FDD000AFDE7 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CF5099911F948FFA000AFDE7 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
+		CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter.cpp; sourceTree = "<group>"; };
+		CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InterpreterImpl.cpp; sourceTree = "<group>"; };
+		CF5F3930242F7FC6004DF1F8 /* InterpreterImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterpreterImpl.h; path = include/Term/InterpreterImpl.h; sourceTree = "<group>"; };
+		CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Term_IT.cpp; sourceTree = "<group>"; };
 		CF5FD92A1FA1AC5100752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CFB7456A2416E5850088F5EF /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interpreter.h; path = include/Term/Interpreter.h; sourceTree = "<group>"; };
 		CFE08B2823DCABA4007E99B8 /* Parser2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2.h; path = include/Term/Parser2.h; sourceTree = "<group>"; };
@@ -194,6 +202,8 @@
 			children = (
 				CF50996F1F948400000AFDE7 /* FlippableHolder.h */,
 				CF5099701F948400000AFDE7 /* FlippableHolder.mm */,
+				CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */,
+				CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */,
 				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
 				CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */,
 				CFE08B2D23DCEB04007E99B8 /* Parser2Impl.mm */,
@@ -218,6 +228,7 @@
 			children = (
 				CF4135221F890BC8007429B6 /* CursorMode.h */,
 				CFB7456A2416E5850088F5EF /* Interpreter.h */,
+				CF5F3930242F7FC6004DF1F8 /* InterpreterImpl.h */,
 				CF1ADE3E1F7E7587003E9B76 /* Parser.h */,
 				CFE08B2823DCABA4007E99B8 /* Parser2.h */,
 				CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */,
@@ -254,6 +265,7 @@
 				CF5099861F948EF9000AFDE7 /* Screen_Tests.mm */,
 				CF5099851F948EF9000AFDE7 /* ScreenBuffer_Tests.mm */,
 				CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */,
+				CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */,
 				CFE08B3C23DCFC15007E99B8 /* Tests.cpp */,
 				CFE08B3B23DCFC15007E99B8 /* Tests.h */,
 			);
@@ -280,6 +292,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF41350F1F846CE6007429B6 /* Task.h in Headers */,
+				CF5F3931242F7FC7004DF1F8 /* InterpreterImpl.h in Headers */,
 				CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */,
 				CF4135231F890BC8007429B6 /* CursorMode.h in Headers */,
 				CF1ADE491F7E77AE003E9B76 /* TranslateMaps.h in Headers */,
@@ -415,6 +428,7 @@
 				CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */,
 				CF4135151F846CF2007429B6 /* ShellTask.cpp in Sources */,
 				CF4135171F846CF2007429B6 /* Task.cpp in Sources */,
+				CF5F392F242F7FB4004DF1F8 /* InterpreterImpl.cpp in Sources */,
 				CF4135161F846CF2007429B6 /* SingleTask.cpp in Sources */,
 				CF41351D1F8666BF007429B6 /* Settings.mm in Sources */,
 				CF1ADE481F7E77AE003E9B76 /* TranslateMaps.cpp in Sources */,
@@ -423,6 +437,7 @@
 				CF4135251F891165007429B6 /* View.mm in Sources */,
 				CF1ADE3A1F7E7379003E9B76 /* Screen.cpp in Sources */,
 				CF1ADE411F7E7593003E9B76 /* Parser.mm in Sources */,
+				CF5F392D242F7D57004DF1F8 /* Interpreter.cpp in Sources */,
 				CF50996E1F948018000AFDE7 /* ScrollView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -441,6 +456,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5F3934242FCD2B004DF1F8 /* Term_IT.cpp in Sources */,
 				CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */,
 				CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */,
 			);

@@ -2,7 +2,7 @@
 #pragma once
 
 #include <span>
-#include <function>
+#include <functional>
 
 #include "Parser2.h"
 
@@ -15,9 +15,9 @@ public:
     using Input = std::span<const input::Command>;
     using Output = std::function<void(Bytes _bytes)>;
 
-    virtual ~Parser2() = default;
+    virtual ~Interpreter() = default;
     virtual void Interpret( Input _to_interpret ) = 0;
-    virtual void SetOuput( Output _output );
+    virtual void SetOuput( Output _output ) = 0;
 };
 
 }

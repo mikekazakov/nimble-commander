@@ -1,4 +1,5 @@
 // Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+#pragma once
 #include <variant>
 #include <string>
 #include <vector>
@@ -13,7 +14,7 @@ namespace input {
 enum class Type {
     noop,                   // no operation, defined only for conviniency
     text,                   // clean unicode text without any control characters, both escaped
-                            // and unescaped. payload type - UTF32Text
+                            // and unescaped. payload type - UTF8Text
     line_feed,              // line feed or new line
     horizontal_tab,         // move cursor to next horizontal tab stop.
                             // negative values means backward direction.

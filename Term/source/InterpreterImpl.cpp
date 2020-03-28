@@ -26,7 +26,7 @@ void InterpreterImpl::Interpret( Input _to_interpret )
         using namespace input;
         const auto type = command.type;
         switch (type) {
-            case Type::text:            
+            case Type::text:
                 ProcessText( *std::get_if<UTF8Text>(&command.payload) );
                 break;
             case Type::line_feed:
@@ -34,6 +34,15 @@ void InterpreterImpl::Interpret( Input _to_interpret )
                 break;
             case Type::carriage_return:
                 ProcessCR();
+                break;
+            case Type::back_space:
+                ProcessBS();
+                break;
+            case Type::reverse_index:
+                ProcessRI();
+                break;
+            case Type::move_cursor:
+                ProcessMC( *std::get_if<CursorMovement>(&command.payload) );
                 break;
             default:
                 break;
@@ -67,6 +76,47 @@ void InterpreterImpl::ProcessLF()
 void InterpreterImpl::ProcessCR()
 {
     m_Screen.GoTo( 0, m_Screen.CursorY() );
+}
+
+void InterpreterImpl::ProcessBS()
+{
+    m_Screen.DoCursorLeft();
+}
+
+void InterpreterImpl::ProcessRI()
+{
+    if( m_Screen.CursorY() == m_Extent.top )
+        m_Screen.ScrollDown( m_Extent.top, m_Extent.bottom, 1);
+    else
+        m_Screen.DoCursorUp();
+}
+
+void InterpreterImpl::ProcessMC( const input::CursorMovement _cursor_movement )
+{
+    if( _cursor_movement.positioning == input::CursorMovement::Absolute ) {
+        if( _cursor_movement.x != std::nullopt && _cursor_movement.y != std::nullopt ) {
+            m_Screen.GoTo( *_cursor_movement.x, *_cursor_movement.y );
+        }
+        else if( _cursor_movement.x != std::nullopt && _cursor_movement.y == std::nullopt ) {
+            m_Screen.GoTo( *_cursor_movement.x, m_Screen.CursorY() );
+        }
+        else if( _cursor_movement.x == std::nullopt && _cursor_movement.y != std::nullopt ) {
+            m_Screen.GoTo( m_Screen.CursorX(), *_cursor_movement.y );
+        }
+    }
+    if( _cursor_movement.positioning == input::CursorMovement::Relative ) {
+        const int x = m_Screen.CursorX();
+        const int y = m_Screen.CursorY();
+        if( _cursor_movement.x != std::nullopt && _cursor_movement.y != std::nullopt ) {
+            m_Screen.GoTo( x + *_cursor_movement.x, y + *_cursor_movement.y );
+        }
+        else if( _cursor_movement.x != std::nullopt && _cursor_movement.y == std::nullopt ) {
+            m_Screen.GoTo( x + *_cursor_movement.x, y );
+        }
+        else if( _cursor_movement.x == std::nullopt && _cursor_movement.y != std::nullopt ) {
+            m_Screen.GoTo( x, y + *_cursor_movement.y );
+        }
+    }    
 }
 
 static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 )

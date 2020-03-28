@@ -19,6 +19,9 @@ private:
     void ProcessText( const input::UTF8Text &_text );
     void ProcessLF();
     void ProcessCR();
+    void ProcessBS();
+    void ProcessRI();
+    void ProcessMC( input::CursorMovement _cursor_movement );
 
     struct Extent {
         int height = 0;  // physical dimention - x

@@ -72,8 +72,33 @@ static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "Hello     "
     },    
-    
-    
+    {
+        "\x08Hello\x08\x08""Hello",
+        "HelHello  "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        "\x0C""\x1B""M""Hello",
+        "Hello     "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        "\x1B""[8;10H*""\x1B""[1;10H*""\x1B""[1;1H*""\x1B""[8;1H*",
+        "*        *"
+        "          "
+        "          "
+        "          "
+        "          "
+        "*        *"
+    },
 };
 
 TEST_CASE(PREFIX"Simple cases")

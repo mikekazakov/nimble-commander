@@ -99,6 +99,33 @@ static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "*        *"
     },
+    {
+        "\x0C\x0C\x1B[2A*\x1B[3B*\x1B[2C*\x1B[5D*",
+        "*         "
+        "          "
+        "          "
+        "**  *     "
+        "          "
+        "          "
+    },
+    {
+        "\x1B[9C**",
+        "         *"
+        "*         "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        "\t*\n\x1B[2Z*",
+        "        * "
+        "*         "
+        "          "
+        "          "
+        "          "
+        "          "
+    },    
 };
 
 TEST_CASE(PREFIX"Simple cases")

@@ -2,6 +2,7 @@
 #include "InterpreterImpl.h"
 #include <Habanero/CFString.h>
 #include <Habanero/CFPtr.h>
+#include <Utility/OrthodoxMonospace.h>
 
 namespace nc::term {
 
@@ -14,6 +15,7 @@ InterpreterImpl::InterpreterImpl(Screen &_screen):
     m_Extent.width = m_Screen.Width();
     m_Extent.top = 0;
     m_Extent.bottom = m_Screen.Height();
+    ResetToDefaultTabStops(m_TabStops);
 }
 
 InterpreterImpl::~InterpreterImpl()
@@ -44,6 +46,8 @@ void InterpreterImpl::Interpret( Input _to_interpret )
             case Type::move_cursor:
                 ProcessMC( *std::get_if<CursorMovement>(&command.payload) );
                 break;
+            case Type::horizontal_tab:
+                ProcessHT( *std::get_if<signed>(&command.payload) );
             default:
                 break;
         }
@@ -57,9 +61,21 @@ void InterpreterImpl::SetOuput( Output _output )
 
 void InterpreterImpl::ProcessText( const input::UTF8Text &_text )
 {
-    auto utf32 = ConvertUTF8ToUTF32( _text.characters );
+    const auto utf32 = ConvertUTF8ToUTF32( _text.characters );
     
-    for( auto c: utf32 ) {
+    for( const auto c: utf32 ) {
+    
+//    
+//    // TODO: if(wrapping_mode == ...) <- need to add this
+        if( m_Screen.CursorX() >= m_Screen.Width() && !oms::IsUnicodeCombiningCharacter(c) ) {
+            m_Screen.PutWrap();
+            ProcessCR();
+            ProcessLF();
+        }
+//
+//        if(m_InsertMode)
+//            m_Scr.DoShiftRowRight(oms::WCWidthMin1(c));    
+//    
         m_Screen.PutCh(c);
     }
     // TODO: MUCH STUFF
@@ -119,6 +135,33 @@ void InterpreterImpl::ProcessMC( const input::CursorMovement _cursor_movement )
     }    
 }
 
+void InterpreterImpl::ProcessHT( signed _amount )
+{
+    if( _amount == 0 )
+        return;
+    else if( _amount > 0 ) {
+        const int screen_width = m_Screen.Width();
+        const int tab_stops_width = static_cast<int>(m_TabStops.size());
+        const int width = std::min(screen_width, tab_stops_width);
+        int x = m_Screen.CursorX();
+        while( x < width - 1 && _amount > 0) {
+            ++x;
+            if( m_TabStops[x] )
+                --_amount;
+        }
+        m_Screen.GoTo( x, m_Screen.CursorY() );                        
+    }
+    else if( _amount < 0 ) {
+        int x = m_Screen.CursorX();
+        while( x > 0 && _amount < 0) {
+            --x;
+            if( m_TabStops[x] )
+                ++_amount;        
+        }
+        m_Screen.GoTo( x, m_Screen.CursorY() );
+    }
+}
+
 static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 )
 {
     // temp and slow implementation
@@ -155,5 +198,11 @@ static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 )
     return result; 
 }
 
+void InterpreterImpl::ResetToDefaultTabStops(TabStops &_tab_stops)
+{
+    _tab_stops.reset();
+    for( size_t n = 0; n < _tab_stops.size(); n += 8 )
+        _tab_stops.set(n, true);
+}
 
 }

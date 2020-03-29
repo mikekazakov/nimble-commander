@@ -3,6 +3,7 @@
 
 #include "Interpreter.h"
 #include "Screen.h"
+#include <bitset>
 
 namespace nc::term {
 
@@ -16,12 +17,15 @@ public:
     void SetOuput( Output _output ) override;
     
 private:
+    using TabStops = std::bitset<1024>;
+    static void ResetToDefaultTabStops(TabStops &_tab_stops); 
     void ProcessText( const input::UTF8Text &_text );
     void ProcessLF();
     void ProcessCR();
     void ProcessBS();
     void ProcessRI();
     void ProcessMC( input::CursorMovement _cursor_movement );
+    void ProcessHT( signed _amount );
 
     struct Extent {
         int height = 0;  // physical dimention - x
@@ -33,6 +37,7 @@ private:
     Screen &m_Screen;
     Output m_Output;
     Extent m_Extent;
+    TabStops m_TabStops;
 };
 
 }

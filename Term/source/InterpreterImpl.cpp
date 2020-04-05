@@ -7,6 +7,7 @@
 namespace nc::term {
 
 static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 );
+static std::u32string ComposeUnicodePoints( std::u32string _utf32 );
 
 InterpreterImpl::InterpreterImpl(Screen &_screen):
     m_Screen(_screen)
@@ -61,7 +62,7 @@ void InterpreterImpl::SetOuput( Output _output )
 
 void InterpreterImpl::ProcessText( const input::UTF8Text &_text )
 {
-    const auto utf32 = ConvertUTF8ToUTF32( _text.characters );
+    const auto utf32 = ComposeUnicodePoints( ConvertUTF8ToUTF32( _text.characters ) );
     
     for( const auto c: utf32 ) {
     
@@ -169,9 +170,9 @@ static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 )
     if( !str )
         return {};
     
-    const auto utf8_len = CFStringGetLength(str.get());
+    const auto utf16_len = CFStringGetLength(str.get());
     const auto utf32_len = CFStringGetBytes(str.get(),
-                                            CFRangeMake(0, utf8_len),
+                                            CFRangeMake(0, utf16_len),
                                             kCFStringEncodingUTF32LE,
                                             0,
                                             false,
@@ -185,7 +186,7 @@ static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 )
     result.resize(utf32_len);
             
     const auto utf32_fact = CFStringGetBytes(str.get(),
-                                            CFRangeMake(0, utf8_len),
+                                            CFRangeMake(0, utf16_len),
                                             kCFStringEncodingUTF32LE,
                                             0,
                                             false,
@@ -196,6 +197,56 @@ static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 )
     assert( utf32_len == utf32_fact );
 
     return result; 
+}
+
+std::u32string ComposeUnicodePoints( std::u32string _utf32 )
+{
+    // temp and slow implementation
+    const bool can_be_composed = std::any_of(_utf32.begin(), _utf32.end(), [](const char32_t _c){
+        return oms::CanCharBeTheoreticallyComposed(_c);
+    });
+    if( can_be_composed == false )
+        return _utf32;
+
+    const auto orig_str = base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(nullptr,
+                                                                                        (UInt8*)_utf32.data(),
+                                                                                        _utf32.length() * sizeof(char32_t),
+                                                                                        kCFStringEncodingUTF32LE,
+                                                                                        false,
+                                                                                        kCFAllocatorNull) );
+                                                                                            
+    const auto mut_str = base::CFPtr<CFMutableStringRef>::adopt(CFStringCreateMutableCopy(nullptr,
+                                                                                          0,
+                                                                                          orig_str.get()) );
+                                                                                              
+    CFStringNormalize(mut_str.get(), kCFStringNormalizationFormC);
+    const auto utf16_len = CFStringGetLength(mut_str.get());
+
+    const auto utf32_len = CFStringGetBytes(mut_str.get(),
+                                            CFRangeMake(0, utf16_len),
+                                            kCFStringEncodingUTF32LE,
+                                            0,
+                                            false,
+                                            nullptr,
+                                            0,
+                                            nullptr);
+    if( utf32_len == 0 )
+        return {};
+        
+    _utf32.resize(utf32_len);
+            
+    const auto utf32_fact = CFStringGetBytes(mut_str.get(),
+                                            CFRangeMake(0, utf16_len),
+                                            kCFStringEncodingUTF32LE,
+                                            0,
+                                            false,
+                                            reinterpret_cast<UInt8*>(_utf32.data()),
+                                            _utf32.size() * sizeof(char32_t),
+                                            nullptr);
+                                            
+    assert( utf32_len == utf32_fact );        
+    
+    return _utf32;
 }
 
 void InterpreterImpl::ResetToDefaultTabStops(TabStops &_tab_stops)

@@ -125,7 +125,20 @@ static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
         "          "
-    },    
+    },            
+};
+
+static std::pair<const char8_t*, const char32_t*> g_UTFCases[] = 
+{
+    {
+        reinterpret_cast<const char8_t*>("\xD0\xB5\xCC\x88"), // е ̈ 
+        U"ё         "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
 };
 
 TEST_CASE(PREFIX"Simple cases")
@@ -142,6 +155,26 @@ TEST_CASE(PREFIX"Simple cases")
         interpreter.Interpret(parser.Parse( input_bytes ) );
          
         const auto result = screen.Buffer().DumpScreenAsANSI();
+        const auto expectation = test_case.second;
+        CHECK( result == expectation );
+    }
+}
+
+TEST_CASE(PREFIX"UTF cases")
+{
+    for( size_t i = 0; i < std::extent_v<decltype(g_UTFCases)>; ++i ) {
+        const auto test_case = g_UTFCases[i];
+        
+        Parser2Impl parser;
+        Screen screen(10, 6);
+        InterpreterImpl interpreter(screen);
+        
+        const auto input = std::u8string_view{test_case.first};
+        const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+            input.length());
+        interpreter.Interpret(parser.Parse( input_bytes ) );
+         
+        const auto result = screen.Buffer().DumpScreenAsUTF32();
         const auto expectation = test_case.second;
         CHECK( result == expectation );
     }

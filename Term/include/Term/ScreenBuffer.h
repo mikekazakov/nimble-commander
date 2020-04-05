@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -109,6 +109,7 @@ public:
     // use for diagnose and test purposes only
     std::string DumpScreenAsANSI() const;
     std::string DumpScreenAsANSIBreaked() const;
+    std::u32string DumpScreenAsUTF32() const;
     
     inline bool HasSnapshot() const { return (bool)m_Snapshot; }
     void MakeSnapshot();

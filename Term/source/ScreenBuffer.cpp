@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ScreenBuffer.h"
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -221,6 +221,15 @@ std::string ScreenBuffer::DumpScreenAsANSIBreaked() const
             result += ( ( i->l >= 32 && i->l <= 127 ) ? (char)i->l : ' ');
         result += '\r';
     }
+    return result;
+}
+
+std::u32string ScreenBuffer::DumpScreenAsUTF32() const
+{
+    std::u32string result;
+    for( auto &l:m_OnScreenLines )
+        for(auto *i = &m_OnScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i)
+            result += ( i->l >= 32 ? i->l : ' ' );
     return result;
 }
 

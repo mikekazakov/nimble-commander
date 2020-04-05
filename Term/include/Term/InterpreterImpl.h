@@ -15,6 +15,7 @@ public:
     
     void Interpret( Input _to_interpret ) override;
     void SetOuput( Output _output ) override;
+    void SetBell( Bell _bell ) override;
     
 private:
     using TabStops = std::bitset<1024>;
@@ -27,6 +28,7 @@ private:
     void ProcessMC( input::CursorMovement _cursor_movement );
     void ProcessHT( signed _amount );
     void ProcessReport( input::DeviceReport _device_report );
+    void ProcessBell();
     void Response(std::string_view _text);
 
     struct Extent {
@@ -37,7 +39,8 @@ private:
     };
 
     Screen &m_Screen;
-    Output m_Output;
+    Output m_Output = [](Bytes){};
+    Bell m_Bell = []{};
     Extent m_Extent;
     TabStops m_TabStops;
 };

@@ -17,7 +17,6 @@ InterpreterImpl::InterpreterImpl(Screen &_screen):
     m_Extent.top = 0;
     m_Extent.bottom = m_Screen.Height();
     ResetToDefaultTabStops(m_TabStops);
-    m_Output = [](Bytes){};    
 }
 
 InterpreterImpl::~InterpreterImpl()
@@ -54,6 +53,9 @@ void InterpreterImpl::Interpret( Input _to_interpret )
             case Type::report:
                 ProcessReport( *std::get_if<DeviceReport>(&command.payload) );
                 break;
+            case Type::bell:
+                ProcessBell();
+                break;
             default:
                 break;
         }
@@ -63,6 +65,11 @@ void InterpreterImpl::Interpret( Input _to_interpret )
 void InterpreterImpl::SetOuput( Output _output )
 {
     m_Output = std::move(_output);
+}
+
+void InterpreterImpl::SetBell( Bell _bell )
+{
+    m_Bell = std::move(_bell);
 }
 
 void InterpreterImpl::ProcessText( const input::UTF8Text &_text )
@@ -193,6 +200,12 @@ void InterpreterImpl::ProcessReport( const input::DeviceReport _device_report )
         sprintf(buf, "\033[%d;%dR", y + 1, x + 1 );
         Response(buf);
     }
+}
+
+void InterpreterImpl::ProcessBell()
+{
+    assert( m_Bell );
+    m_Bell();
 }
 
 void InterpreterImpl::Response(std::string_view _text)

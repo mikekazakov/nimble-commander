@@ -14,10 +14,12 @@ public:
     using Bytes = std::span<const std::byte>;
     using Input = std::span<const input::Command>;
     using Output = std::function<void(Bytes _bytes)>;
+    using Bell = std::function<void()>;
 
     virtual ~Interpreter() = default;
     virtual void Interpret( Input _to_interpret ) = 0;
     virtual void SetOuput( Output _output ) = 0;
+    virtual void SetBell( Bell _bell ) = 0;
 };
 
 }

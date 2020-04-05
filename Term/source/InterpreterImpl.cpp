@@ -17,6 +17,7 @@ InterpreterImpl::InterpreterImpl(Screen &_screen):
     m_Extent.top = 0;
     m_Extent.bottom = m_Screen.Height();
     ResetToDefaultTabStops(m_TabStops);
+    m_Output = [](Bytes){};    
 }
 
 InterpreterImpl::~InterpreterImpl()
@@ -49,6 +50,8 @@ void InterpreterImpl::Interpret( Input _to_interpret )
                 break;
             case Type::horizontal_tab:
                 ProcessHT( *std::get_if<signed>(&command.payload) );
+            case Type::terminal_id:
+                ProcessTerminalId();
             default:
                 break;
         }
@@ -161,6 +164,20 @@ void InterpreterImpl::ProcessHT( signed _amount )
         }
         m_Screen.GoTo( x, m_Screen.CursorY() );
     }
+}
+
+void InterpreterImpl::ProcessTerminalId()
+{
+    // reporting our id as VT102
+    const auto myid = "\033[?6c";
+    Response(myid);
+}
+
+void InterpreterImpl::Response(std::string_view _text)
+{
+    assert( m_Output );
+    Bytes bytes{reinterpret_cast<const std::byte*>(_text.data()), _text.length()}; 
+    m_Output(bytes);
 }
 
 static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 )

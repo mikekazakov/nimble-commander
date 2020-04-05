@@ -26,6 +26,8 @@ private:
     void ProcessRI();
     void ProcessMC( input::CursorMovement _cursor_movement );
     void ProcessHT( signed _amount );
+    void ProcessTerminalId();
+    void Response(std::string_view _text);
 
     struct Extent {
         int height = 0;  // physical dimention - x

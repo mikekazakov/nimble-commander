@@ -7,7 +7,7 @@
 using namespace nc::term;
 #define PREFIX "nc::term::Interpreter "
 
-static std::pair<const char*, const char*> g_SimpleCases[] = 
+const static std::pair<const char*, const char*> g_SimpleCases[] = 
 {
     {
         "Hello",
@@ -128,7 +128,15 @@ static std::pair<const char*, const char*> g_SimpleCases[] =
     },            
 };
 
-static std::pair<const char8_t*, const char32_t*> g_UTFCases[] = 
+const static std::pair<const char*, const char*> g_ResponseCases[] = 
+{
+    {
+        "\x1B[c",
+        "\033[?6c"
+    }
+};
+
+const static std::pair<const char8_t*, const char32_t*> g_UTFCases[] = 
 {
     {
         reinterpret_cast<const char8_t*>("\xD0\xB5\xCC\x88"), // е ̈ 
@@ -184,6 +192,30 @@ TEST_CASE(PREFIX"Simple cases")
         const auto result = screen.Buffer().DumpScreenAsANSI();
         const auto expectation = test_case.second;
         CHECK( result == expectation );
+    }
+}
+
+TEST_CASE(PREFIX"Response cases")
+{
+    for( size_t i = 0; i < std::extent_v<decltype(g_ResponseCases)>; ++i ) {
+        const auto test_case = g_ResponseCases[i];
+        
+        Parser2Impl parser;
+        Screen screen(10, 6);
+        InterpreterImpl interpreter(screen);
+        
+        std::string response;
+        interpreter.SetOuput([&](Interpreter::Bytes _bytes){
+            if( not _bytes.empty() )
+                response.append( reinterpret_cast<const char*>(_bytes.data()), _bytes.size());        
+        });
+        
+        const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(test_case.first),
+            strlen(test_case.first));
+        interpreter.Interpret(parser.Parse( input_bytes ) );
+         
+        const auto expectation = test_case.second;
+        CHECK( response == expectation );
     }
 }
 

@@ -42,7 +42,8 @@ enum class Type {
                             // from the cursor position to the right. payload type - unsigned
     repeat_last_character,  // repeat the last output character the indicated number of times.
                             // payload type - unsigned
-    terminal_id,            // ask for the terminal's architectural class and basic attributes
+    report,                 // ask for the terminal's status
+                            // payload type - DeviceReport
     change_mode,            // payload type - ModeChange
 };
 
@@ -101,9 +102,19 @@ struct ModeChange
     bool status = true;
 };
 
+struct DeviceReport
+{
+    enum Kind {
+        TerminalId,
+        DeviceStatus,
+        CursorPosition
+    };
+    Kind mode = TerminalId;
+};
+
 struct Command {
     using Payload = std::variant<signed, unsigned, UTF8Text, Title, CursorMovement,
-    DisplayErasure, LineErasure, ModeChange>;
+    DisplayErasure, LineErasure, ModeChange, DeviceReport>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

@@ -77,6 +77,13 @@ static const ModeChange& as_mode_change( const Command &_command )
     throw std::invalid_argument("not ModeChange");
 }
 
+static const DeviceReport& as_device_report( const Command &_command )
+{
+    if( auto ptr = std::get_if<DeviceReport>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not DeviceReport");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -730,12 +737,14 @@ TEST_CASE(PREFIX"CSI c")
     SECTION( "ESC [ c" ) {
         auto r = parser.Parse(to_bytes("\x1B""[c"));
         REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::terminal_id );
+        CHECK( r[0].type == Type::report );
+        CHECK( as_device_report(r[0]).mode == DeviceReport::Kind::TerminalId );
     }
     SECTION( "ESC [ 0 c" ) {
         auto r = parser.Parse(to_bytes("\x1B""[0c"));
         REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::terminal_id );
+        CHECK( r[0].type == Type::report );
+        CHECK( as_device_report(r[0]).mode == DeviceReport::Kind::TerminalId );
     }
     SECTION( "ESC [ 1 c" ) {
         auto r = parser.Parse(to_bytes("\x1B""[1c"));
@@ -846,6 +855,32 @@ TEST_CASE(PREFIX"CSI hl")
     }
     SECTION( "ESC [ l" ) {
         REQUIRE( parser.Parse(to_bytes("\x1B""[l")).empty() );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI n")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ 5 n" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[5n"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::report );
+        CHECK( as_device_report(r[0]).mode == DeviceReport::DeviceStatus );
+    }
+    SECTION( "ESC [ 6 n" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[6n"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::report );
+        CHECK( as_device_report(r[0]).mode == DeviceReport::CursorPosition );
+    }
+    SECTION( "ESC [ n" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[n"));
+        REQUIRE( r.size() == 0 );
+    }
+    SECTION( "ESC [ 0 n" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0n"));
+        REQUIRE( r.size() == 0 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

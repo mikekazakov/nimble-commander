@@ -50,8 +50,10 @@ void InterpreterImpl::Interpret( Input _to_interpret )
                 break;
             case Type::horizontal_tab:
                 ProcessHT( *std::get_if<signed>(&command.payload) );
-            case Type::terminal_id:
-                ProcessTerminalId();
+                break;
+            case Type::report:
+                ProcessReport( *std::get_if<DeviceReport>(&command.payload) );
+                break;
             default:
                 break;
         }
@@ -166,11 +168,31 @@ void InterpreterImpl::ProcessHT( signed _amount )
     }
 }
 
-void InterpreterImpl::ProcessTerminalId()
+void InterpreterImpl::ProcessReport( const input::DeviceReport _device_report )
 {
-    // reporting our id as VT102
-    const auto myid = "\033[?6c";
-    Response(myid);
+    using input::DeviceReport;
+    if( _device_report.mode == DeviceReport::TerminalId ) {
+        // reporting our id as VT102
+        const auto myid = "\033[?6c";
+        Response(myid);
+    }
+    if( _device_report.mode == DeviceReport::DeviceStatus ) {
+        const auto ok = "\033[0n";
+        Response(ok);
+    }
+    if( _device_report.mode == DeviceReport::CursorPosition ) {    
+// orig:    
+//        sprintf(buf,
+//                "\033[?%d;%dR",
+//                (m_LineAbs ? m_Scr.CursorY() : m_Scr.CursorY() - m_Top) + 1,
+//                m_Scr.CursorX() + 1
+//                );
+        char buf[64];
+        const int x = m_Screen.CursorX();
+        const int y = m_Screen.CursorY();
+        sprintf(buf, "\033[%d;%dR", y + 1, x + 1 );
+        Response(buf);
+    }
 }
 
 void InterpreterImpl::Response(std::string_view _text)

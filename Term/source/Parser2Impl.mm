@@ -576,6 +576,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         // CSI Ps g  Tab Clear (TBC). <-- unimplemented
         case 'h': CSI_hl(); break;
         case 'l': CSI_hl(); break;
+        case 'n': CSI_n(); break;
         case '`': CSI_Accent(); break;
         default: LogMissedCSIRequest( m_CSIState.buffer ); break;
     } 
@@ -588,7 +589,6 @@ void Parser2Impl::SSCSISubmit() noexcept
     //                   case 'u': EscRestore(); return;
     //                   case 'r': CSI_r(); return;
     //                   case '@': CSI_At(); return;
-    //                   case 'n': CSI_n(); return;
     //                   case 't': CSI_t(); return;
     //                   default: CSI_Unknown(c); return;
     //               }
@@ -894,8 +894,11 @@ void Parser2Impl::CSI_c() noexcept
     const std::string_view s = m_CSIState.buffer;
     unsigned ps = 0; // default value
     std::from_chars(s.data(), s.data() + s.size(), ps);
-    if( ps == 0 )
-        m_Output.emplace_back( input::Type::terminal_id );
+    if( ps == 0 ) {
+        input::DeviceReport dr;
+        dr.mode = input::DeviceReport::TerminalId;
+        m_Output.emplace_back( input::Type::report, dr );
+    }
 }
     
 void Parser2Impl::CSI_d() noexcept
@@ -977,6 +980,30 @@ void Parser2Impl::CSI_hl() noexcept
     mc.mode = *kind;
     mc.status = on;
     m_Output.emplace_back( input::Type::change_mode, mc );
+}
+
+void Parser2Impl::CSI_n() noexcept
+{
+//CSI Ps n  Device Status Report (DSR).
+//            Ps = 5  ⇒  Status Report.
+//          Result ("OK") is CSI 0 n
+//            Ps = 6  ⇒  Report Cursor Position (CPR) [row;column].
+//          Result is CSI r ; c R
+    const std::string_view s = m_CSIState.buffer;
+    int ps = 0;
+    auto result = std::from_chars(s.data(), s.data() + s.size(), ps);
+    if( result.ec == std::errc{} ) {
+        if( ps == 5 ) {
+            input::DeviceReport dr;
+            dr.mode = input::DeviceReport::DeviceStatus;
+            m_Output.emplace_back( input::Type::report, dr );
+        }
+        if( ps == 6 ) {
+            input::DeviceReport dr;
+            dr.mode = input::DeviceReport::CursorPosition;
+            m_Output.emplace_back( input::Type::report, dr );
+        }
+    }
 }
     
 void Parser2Impl::CSI_Accent() noexcept

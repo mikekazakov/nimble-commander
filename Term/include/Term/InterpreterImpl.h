@@ -26,7 +26,7 @@ private:
     void ProcessRI();
     void ProcessMC( input::CursorMovement _cursor_movement );
     void ProcessHT( signed _amount );
-    void ProcessTerminalId();
+    void ProcessReport( input::DeviceReport _device_report );
     void Response(std::string_view _text);
 
     struct Extent {

@@ -45,7 +45,7 @@ void Screen::PutCh(uint32_t _char)
     }
     else { // combining characters goes here
         if(m_PosX > 0 &&
-           chars + m_PosX < end(line) ) {
+           chars + m_PosX <= end(line) ) {
             int target_pos = m_PosX - 1;
             if((chars[target_pos].l == MultiCellGlyph) && (target_pos > 0)) target_pos--;
             if(chars[target_pos].c1 == 0) chars[target_pos].c1 = _char;

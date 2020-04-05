@@ -19,6 +19,8 @@
 
 // https://invisible-island.net/vttest/vttest.html
 
+// https://onlineunicodetools.com/add-combining-characters
+
 namespace nc::term {
 
 class Screen;

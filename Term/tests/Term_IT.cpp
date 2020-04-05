@@ -139,6 +139,33 @@ static std::pair<const char8_t*, const char32_t*> g_UTFCases[] =
         "          "
         "          "
     },
+    {
+        reinterpret_cast<const char8_t*>("\xD0\xB5\xCC\x88\xCC\xB6"), // ё̶
+        U"\x451\x336         "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        reinterpret_cast<const char8_t*>("\x1B""[10G""\xD0\xB5\xCC\x88\xCC\xB6"), // ESC[10Gё̶
+        U"         \x451\x336"
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        reinterpret_cast<const char8_t*>("\x1B""[6;10H""\xD0\xB5\xCC\x88\xCC\xB6"), // ESC[6;10HGё̶
+        U"          "
+        "          "
+        "          "
+        "          "
+        "          "
+        "         \x451\x336"
+    },    
 };
 
 TEST_CASE(PREFIX"Simple cases")

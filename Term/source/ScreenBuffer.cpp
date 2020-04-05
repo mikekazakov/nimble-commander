@@ -228,8 +228,18 @@ std::u32string ScreenBuffer::DumpScreenAsUTF32() const
 {
     std::u32string result;
     for( auto &l:m_OnScreenLines )
-        for(auto *i = &m_OnScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i)
-            result += ( i->l >= 32 ? i->l : ' ' );
+        for(auto *i = &m_OnScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i) {
+            if( i->l >= 32 ) {
+                result += i->l;
+                if( i->c1 )
+                    result += i->c1;
+                if( i->c2 )
+                    result += i->c2;     
+            }
+            else {
+                result += ' ';
+            }
+        }
     return result;
 }
 

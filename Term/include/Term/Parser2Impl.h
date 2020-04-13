@@ -58,6 +58,7 @@ private:
     void SSOSCEnter() noexcept;
     void SSOSCExit() noexcept;
     bool SSOSCConsume(unsigned char _byte) noexcept;
+    bool SSOSCConsumeControl(unsigned char _byte) noexcept;
     void SSOSCSubmit() noexcept;
     void SSOSCDiscard() noexcept;
 

@@ -125,7 +125,25 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
         "          "
-    },            
+    },
+    {
+        "aaa\r\nbbb",
+        "aaa       "
+        "bbb       "
+        "          "
+        "          "
+        "          "
+        "          "
+    },        
+    {
+        "aaa\r\n""\x1B""Mbbb",
+        "bbb       "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
 };
 
 const static std::pair<const char*, const char*> g_ResponseCases[] = 
@@ -249,4 +267,44 @@ TEST_CASE(PREFIX"UTF cases")
         const auto expectation = test_case.second;
         CHECK( result == expectation );
     }
+}
+
+TEST_CASE(PREFIX"vtt - test of cursor movements, "
+"Test of cursor-control characters inside ESC sequences.")
+{
+    const auto raw_input =
+    "\x1B[?3l\x1B[2J\x1B[1;1HTest of cursor-control characters inside ESC sequences."
+    "\x0D\x0D\x0A""Below should be four identical lines:\x0D\x0D\x0A\x0D\x0D\x0A""A B C D E F G H I"
+    "\x0D\x0D\x0A""A\x1B[2\x08""CB\x1B[2\x08""CC\x1B[2\x08""CD\x1B[2\x08""CE\x1B[2\x08""CF\x1B[2\x08""CG\x1B[2\x08""CH\x1B[2\x08""CI"
+    "\x1B[2\x08""C\x0D\x0D\x0A""A \x1B[\x0D""2CB\x1B[\x0D""4CC\x1B[\x0D""6CD\x1B[\x0D""8CE\x1B[\x0D""10CF\x1B[\x0D""12CG\x1B[\x0D""14CH\x1B[\x0D""16CI"
+    "\x0D\x0D\x0A\x1B[20lA \x1B[1\x0B""AB \x1B[1\x0B""AC \x1B[1\x0B""AD \x1B[1\x0B""AE \x1B[1\x0B""AF \x1B[1\x0B""AG \x1B[1\x0B""AH \x1B[1\x0B""AI"
+    " \x1B[1\x0BA\x0D\x0D\x0A\x0D\x0D\x0A""Push <RETURN>";
+    const auto expectation = 
+    "Test of cursor-control characters inside ESC sequences.     "
+    "Below should be four identical lines:                       "
+    "                                                            "
+    "A B C D E F G H I                                           "
+    "A B C D E F G H I                                           "
+    "A B C D E F G H I                                           "
+    "A B C D E F G H I                                           "
+    "                                                            "
+    "Push <RETURN>                                               ";
+
+    Parser2Impl parser;
+    Screen screen(60, 9);
+    InterpreterImpl interpreter(screen);    
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret(parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+}
+
+TEST_CASE(PREFIX"rn escape assumption")
+{
+    auto string = std::string_view("\r\n");
+    REQUIRE( string.size() == 2 );
+    REQUIRE( string[0] == 13 );
+    REQUIRE( string[1] == 10 ); 
 }

@@ -326,6 +326,15 @@ TEST_CASE(PREFIX"CSI C")
         CHECK( as_cursor_movement(r[0]).x == 42 );
         CHECK( as_cursor_movement(r[0]).y == 0 );     
     }
+    SECTION( "ESC [ 2 BS C" ) {
+        auto r = parser.Parse(to_bytes("\x1B[2\x08""C"));
+        REQUIRE( r.size() == 2 );
+        CHECK( r[0].type == Type::back_space );        
+        CHECK( r[1].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[1]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[1]).x == 2 );
+        CHECK( as_cursor_movement(r[1]).y == 0 );
+    }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 

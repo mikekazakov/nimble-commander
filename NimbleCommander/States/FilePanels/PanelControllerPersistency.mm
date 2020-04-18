@@ -126,7 +126,7 @@ bool ControllerStateJSONDecoder::AllowSyncRecovery(const PersistentLocation &_lo
         return false;
     
     const auto &path = _location.path;
-    const auto fs_info = m_NativeFSManager.VolumeFromPathFast(path);
+    const auto fs_info = m_NativeFSManager.VolumeFromPath(path);
     if( fs_info == nullptr )
         return false;
     

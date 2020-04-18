@@ -218,8 +218,8 @@ NSDragOperation DragReceiver::BuildOperationForLocal(FilesDraggingSource *_sourc
             return NSDragOperationMove;
         
         if( m_DraggingOperationsMask & NSDragOperationGeneric ) {
-            const auto v1 = m_NativeFSManager.VolumeFromPathFast( _destination.Path() );
-            const auto v2 = m_NativeFSManager.VolumeFromPathFast( _source.items.front().item.Directory() );
+            const auto v1 = m_NativeFSManager.VolumeFromPath( _destination.Path() );
+            const auto v2 = m_NativeFSManager.VolumeFromPath( _source.items.front().item.Directory() );
             const auto same_native_fs = (v1 != nullptr && v1 == v2);
             return same_native_fs ? NSDragOperationMove : NSDragOperationCopy;
         }
@@ -257,8 +257,8 @@ NSDragOperation DragReceiver::BuildOperationForURLs(NSArray<NSURL*> *_source,
             return NSDragOperationLink;
         
         if( m_DraggingOperationsMask & NSDragOperationGeneric ) {
-            const auto v1 = m_NativeFSManager.VolumeFromPathFast( _destination.Path() );
-            const auto v2 = m_NativeFSManager.VolumeFromPathFast(_source.firstObject.fileSystemRepresentation);
+            const auto v1 = m_NativeFSManager.VolumeFromPath( _destination.Path() );
+            const auto v2 = m_NativeFSManager.VolumeFromPath(_source.firstObject.fileSystemRepresentation);
             const auto same_native_fs = (v1 != nullptr && v1 == v2);
             return same_native_fs ? NSDragOperationMove : NSDragOperationCopy;
         }

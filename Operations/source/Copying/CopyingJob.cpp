@@ -69,6 +69,24 @@ enum CopyingJob::Stage CopyingJob::Stage() const noexcept
     return m_Stage;
 }
 
+static utility::NativeFSManager::Info FindFirstFSInfoUpToRoot(
+    const nc::utility::NativeFSManager& _fs_man,
+    const std::string &_path)
+{
+    auto info = _fs_man.VolumeFromPath(_path);
+    if( info )
+        return info;
+    
+    auto p = boost::filesystem::path(_path).parent_path();
+    while( p.empty() == false ) {    
+        info = _fs_man.VolumeFromPath(p.generic_string());
+        if( info )
+            return info;        
+        p = p.parent_path();
+    }
+    return nullptr;
+}
+
 void CopyingJob::Perform()
 {
     SetStage(Stage::Preparing);
@@ -84,14 +102,12 @@ void CopyingJob::Perform()
     m_PathCompositionType = composition_type;
  
     if( m_IsDestinationHostNative ) {
-        if( !(m_DestinationNativeFSInfo = m_NativeFSManager->VolumeFromPath(m_DestinationPath)) ) {
-            // this may be wrong in case of symlinks
-            m_DestinationNativeFSInfo = m_NativeFSManager->VolumeFromPathFast(m_DestinationPath);
-            if( !m_DestinationNativeFSInfo ) {
-                Stop(); // we're totally broken. can't go on
-                return;
-            }
-        }
+        auto fs_info = FindFirstFSInfoUpToRoot(*m_NativeFSManager, m_DestinationPath);
+        if( !fs_info ) {
+            Stop(); // we're totally broken. can't go on
+            return;
+        }        
+        m_DestinationNativeFSInfo = fs_info;
     }
     
     auto [scan_result, source_db] = ScanSourceItems();

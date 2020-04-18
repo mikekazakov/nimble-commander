@@ -161,3 +161,38 @@ TEST_CASE(PREFIX"Can rename a symlink across firmlink injection points")
     CHECK( renamed_stat.st_dev == orig_stat.st_dev );
     CHECK( renamed_stat.st_ino == orig_stat.st_ino );
 }
+
+TEST_CASE(PREFIX"Can rename a regular file on injected data volume")
+{
+    const std::string filename_src = "__nc_rename_test__";
+    const std::string filename_dst = "__nc_rename_test__2";
+    const std::string target_dir = "/Applications/";
+    auto rm_result = [&]{
+        unlink((target_dir + filename_src).c_str());
+        unlink((target_dir + filename_dst).c_str());        
+    };
+    rm_result();
+    auto clean_afterward = at_scope_end([&]{ rm_result(); });        
+    
+    TempTestDir test_dir;
+    
+    REQUIRE( close( creat( (test_dir.directory + filename_src).c_str(), 0755 ) ) == 0 );
+
+    struct stat orig_stat;
+    REQUIRE( stat( (test_dir.directory + filename_src).c_str(), &orig_stat) == 0 );
+
+    CopyingOptions opts;
+    opts.docopy = false;
+    
+    auto host = TestEnv().vfs_native;
+    Copying op(FetchItems(test_dir.directory, {filename_src}, *host),
+        target_dir + filename_dst, host, opts);
+    RunOperationAndCheckSuccess(op);
+    
+    struct stat renamed_stat;
+    REQUIRE( stat( (target_dir + filename_dst).c_str(), &renamed_stat) == 0 );
+    
+    // Verify that the file was renamed instead of copied+deleted
+    CHECK( renamed_stat.st_dev == orig_stat.st_dev );
+    CHECK( renamed_stat.st_ino == orig_stat.st_ino );
+}

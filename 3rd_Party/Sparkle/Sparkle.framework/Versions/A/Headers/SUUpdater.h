@@ -9,11 +9,7 @@
 #ifndef SUUPDATER_H
 #define SUUPDATER_H
 
-#if __has_feature(modules)
-@import Cocoa;
-#else
 #import <Cocoa/Cocoa.h>
-#endif
 #import "SUExport.h"
 #import "SUVersionComparisonProtocol.h"
 #import "SUVersionDisplayProtocol.h"

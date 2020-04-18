@@ -9,11 +9,11 @@
 #ifndef SUAPPCAST_H
 #define SUAPPCAST_H
 
-#if __has_feature(modules)
-@import Foundation;
-#else
+//#if __has_feature(modules)
+//@import Foundation;
+//#else
 #import <Foundation/Foundation.h>
-#endif
+//#endif
 #import "SUExport.h"
 
 NS_ASSUME_NONNULL_BEGIN

@@ -10,11 +10,7 @@
    This view provides a control interface to manage a regular NSTabView.  It looks and works like the tabbed browsing interface of many popular browsers.
  */
 
-#if __has_feature(modules)
-@import Cocoa;
-#else
 #import <Cocoa/Cocoa.h>
-#endif
 
 #pragma mark Umbrella Header section
 

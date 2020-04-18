@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
-#include <Sparkle/Sparkle.h>
+#include <Sparkle/SUStandardVersionComparator.h>
 #include <Utility/SystemInformation.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/UTI.h>

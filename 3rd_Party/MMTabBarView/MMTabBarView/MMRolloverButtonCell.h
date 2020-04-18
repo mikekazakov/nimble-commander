@@ -5,11 +5,7 @@
 //  Created by Michael Monscheuer on 9/8/12.
 //
 
-#if __has_feature(modules)
-@import Cocoa;
-#else
 #import <Cocoa/Cocoa.h>
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

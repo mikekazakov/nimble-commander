@@ -8,11 +8,7 @@
 //  Copyright 2016 Ajin Man Tuladhar. All rights reserved.
 //
 
-#if __has_feature(modules)
-@import Cocoa;
-#else
 #import <Cocoa/Cocoa.h>
-#endif
 #import "../../MMTabStyle.h"
 
 NS_ASSUME_NONNULL_BEGIN

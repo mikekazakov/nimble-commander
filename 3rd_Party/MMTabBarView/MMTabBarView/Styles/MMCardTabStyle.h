@@ -6,11 +6,7 @@
 //
 //
 
-#if __has_feature(modules)
-@import Cocoa;
-#else
 #import <Cocoa/Cocoa.h>
-#endif
 #import "../MMTabStyle.h"
 #import "../NSBezierPath+MMTabBarViewExtensions.h"
 

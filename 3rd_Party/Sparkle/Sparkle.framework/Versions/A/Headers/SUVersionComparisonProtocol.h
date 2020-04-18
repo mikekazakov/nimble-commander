@@ -9,11 +9,7 @@
 #ifndef SUVERSIONCOMPARISONPROTOCOL_H
 #define SUVERSIONCOMPARISONPROTOCOL_H
 
-#if __has_feature(modules)
-@import Foundation;
-#else
 #import <Foundation/Foundation.h>
-#endif
 #import "SUExport.h"
 
 NS_ASSUME_NONNULL_BEGIN

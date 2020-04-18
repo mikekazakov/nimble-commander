@@ -196,3 +196,31 @@ TEST_CASE(PREFIX"Can rename a regular file on injected data volume")
     CHECK( renamed_stat.st_dev == orig_stat.st_dev );
     CHECK( renamed_stat.st_ino == orig_stat.st_ino );
 }
+
+TEST_CASE(PREFIX"Correctly handles requests to rename into non-existing dir")
+{
+    const std::string filename = "__nc_rename_test__";
+    const std::string target_dir = "a/b/c/d/";
+    
+    TempTestDir test_dir;
+    
+    REQUIRE( close( creat( (test_dir.directory + filename).c_str(), 0755 ) ) == 0 );
+
+    struct stat orig_stat;
+    REQUIRE( stat( (test_dir.directory + filename).c_str(), &orig_stat) == 0 );
+
+    CopyingOptions opts;
+    opts.docopy = false;
+    
+    auto host = TestEnv().vfs_native;
+    Copying op(FetchItems(test_dir.directory, {filename}, *host),
+        test_dir.directory + target_dir + filename, host, opts);
+    RunOperationAndCheckSuccess(op);
+    
+    struct stat renamed_stat;
+    REQUIRE( stat( (test_dir.directory + target_dir + filename).c_str(), &renamed_stat) == 0 );
+    
+    // Verify that the file was renamed instead of copied+deleted
+    CHECK( renamed_stat.st_dev == orig_stat.st_dev );
+    CHECK( renamed_stat.st_ino == orig_stat.st_ino );
+}

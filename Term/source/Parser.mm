@@ -6,6 +6,8 @@
 #include "Screen.h"
 #include "TranslateMaps.h"
 
+#include <iostream>
+
 namespace nc::term {
 
 Parser::Parser(Screen &_scr, std::function<void(const void* _d, int _sz)> _task_input):
@@ -126,6 +128,25 @@ void Parser::Flush()
 
 int Parser::EatBytes(const unsigned char *_bytes, const unsigned _sz)
 {
+
+//    std::cout << ""
+//"\x1B[c",    
+//    f0
+    for(int i = 0; i < (int)_sz; ++i) {
+        const auto byte = _bytes[i];    
+        if( byte < 32 ) {
+            const char h[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};            
+            std::cout << "\\x";
+            std::cout << h[(_bytes[i] & 0xF0) >> 4];
+            std::cout << h[_bytes[i] & 0xF];
+        }   
+        else {
+            std::cout << byte;
+        } 
+    }
+    std::cout << std::endl;
+
+
     int all_flags = 0;
     for(int i = 0; i < (int)_sz; ++i) {
         int flags = 0;
@@ -140,6 +161,7 @@ int Parser::EatBytes(const unsigned char *_bytes, const unsigned _sz)
 
 void Parser::EatByte(unsigned char _byte, int &_result_flags)
 {
+
     const unsigned char c = _byte;
     
     if(c < 32) Flush();

@@ -4,6 +4,8 @@
 #include <Screen.h>
 #include "Tests.h"
 
+#include <iostream>
+
 using namespace nc::term;
 #define PREFIX "nc::term::Interpreter "
 
@@ -144,6 +146,34 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
     },
+    {
+        "\x1B""#8",
+        "EEEEEEEEEE"
+        "EEEEEEEEEE"
+        "EEEEEEEEEE"
+        "EEEEEEEEEE"
+        "EEEEEEEEEE"
+        "EEEEEEEEEE"
+    },
+    {
+        "a\x08\x1B[1J",
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        "aa\x08\x1B[1J",
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    }
+
 };
 
 const static std::pair<const char*, const char*> g_ResponseCases[] = 
@@ -205,6 +235,13 @@ const static std::pair<const char8_t*, const char32_t*> g_UTFCases[] =
         "         \x451\x336"
     },    
 };
+
+[[maybe_unused]] static void Print( const std::span<const input::Command> &_commands )
+{
+    for( auto &cmd: _commands )
+        std::cout << input::VerboseDescription(cmd) << "\n";
+    std::cout << std::endl;
+}
 
 TEST_CASE(PREFIX"Simple cases")
 {
@@ -346,7 +383,141 @@ TEST_CASE(PREFIX"vttest - test of cursor movements, "
     interpreter.Interpret(parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
+}
 
+TEST_CASE(PREFIX"vttest - test of cursor movements, "
+"Test zero movements, display alignment, display erase, line erase")
+{
+    const auto raw_input =
+    "\x1B[?3l\x1B#8\x1B[9;10H\x1B[1J\x1B[18;60H\x1B[0J\x1B[1K\x1B[9;71H\x1B[0K\x1B[10;10H\x1B[1K"
+    "\x1B[10;71H\x1B[0K\x1B[11;10H\x1B[1K\x1B[11;71H\x1B[0K\x1B[12;10H\x1B[1K\x1B[12;71H\x1B[0K"
+    "\x1B[13;10H\x1B[1K\x1B[13;71H\x1B[0K\x1B[14;10H\x1B[1K\x1B[14;71H\x1B[0K\x1B[15;10H\x1B[1K"
+    "\x1B[15;71H\x1B[0K\x1B[16;10H\x1B[1K\x1B[16;71H\x1B[0K\x1B[17;30H\x1B[2K\x1B[24;1f*\x1B[1;1f*"
+    "\x1B[24;2f*\x1B[1;2f*\x1B[24;3f*\x1B[1;3f*\x1B[24;4f*\x1B[1;4f*\x1B[24;5f*\x1B[1;5f*"
+    "\x1B[24;6f*\x1B[1;6f*\x1B[24;7f*\x1B[1;7f*\x1B[24;8f*\x1B[1;8f*\x1B[24;9f*\x1B[1;9f*"
+    "\x1B[24;10f*\x1B[1;10f*\x1B[24;11f*\x1B[1;11f*\x1B[24;12f*\x1B[1;12f*\x1B[24;13f*\x1B[1;13f*"
+    "\x1B[24;14f*\x1B[1;14f*\x1B[24;15f*\x1B[1;15f*\x1B[24;16f*\x1B[1;16f*\x1B[24;17f*\x1B[1;17f*"
+    "\x1B[24;18f*\x1B[1;18f*\x1B[24;19f*\x1B[1;19f*\x1B[24;20f*\x1B[1;20f*\x1B[24;21f*\x1B[1;21f*"
+    "\x1B[24;22f*\x1B[1;22f*\x1B[24;23f*\x1B[1;23f*\x1B[24;24f*\x1B[1;24f*\x1B[24;25f*\x1B[1;25f*"
+    "\x1B[24;26f*\x1B[1;26f*\x1B[24;27f*\x1B[1;27f*\x1B[24;28f*\x1B[1;28f*\x1B[24;29f*\x1B[1;29f*"
+    "\x1B[24;30f*\x1B[1;30f*\x1B[24;31f*\x1B[1;31f*\x1B[24;32f*\x1B[1;32f*\x1B[24;33f*\x1B[1;33f*"
+    "\x1B[24;34f*\x1B[1;34f*\x1B[24;35f*\x1B[1;35f*\x1B[24;36f*\x1B[1;36f*\x1B[24;37f*\x1B[1;37f*"
+    "\x1B[24;38f*\x1B[1;38f*\x1B[24;39f*\x1B[1;39f*\x1B[24;40f*\x1B[1;40f*\x1B[24;41f*\x1B[1;41f*"
+    "\x1B[24;42f*\x1B[1;42f*\x1B[24;43f*\x1B[1;43f*\x1B[24;44f*\x1B[1;44f*\x1B[24;45f*\x1B[1;45f*"
+    "\x1B[24;46f*\x1B[1;46f*\x1B[24;47f*\x1B[1;47f*\x1B[24;48f*\x1B[1;48f*\x1B[24;49f*\x1B[1;49f*"
+    "\x1B[24;50f*\x1B[1;50f*\x1B[24;51f*\x1B[1;51f*\x1B[24;52f*\x1B[1;52f*\x1B[24;53f*\x1B[1;53f*"
+    "\x1B[24;54f*\x1B[1;54f*\x1B[24;55f*\x1B[1;55f*\x1B[24;56f*\x1B[1;56f*\x1B[24;57f*\x1B[1;57f*"
+    "\x1B[24;58f*\x1B[1;58f*\x1B[24;59f*\x1B[1;59f*\x1B[24;60f*\x1B[1;60f*\x1B[24;61f*\x1B[1;61f*"
+    "\x1B[24;62f*\x1B[1;62f*\x1B[24;63f*\x1B[1;63f*\x1B[24;64f*\x1B[1;64f*\x1B[24;65f*\x1B[1;65f*"
+    "\x1B[24;66f*\x1B[1;66f*\x1B[24;67f*\x1B[1;67f*\x1B[24;68f*\x1B[1;68f*\x1B[24;69f*\x1B[1;69f*"
+    "\x1B[24;70f*\x1B[1;70f*\x1B[24;71f*\x1B[1;71f*\x1B[24;72f*\x1B[1;72f*\x1B[24;73f*\x1B[1;73f*"
+    "\x1B[24;74f*\x1B[1;74f*\x1B[24;75f*\x1B[1;75f*\x1B[24;76f*\x1B[1;76f*\x1B[24;77f*\x1B[1;77f*"
+    "\x1B[24;78f*\x1B[1;78f*\x1B[24;79f*\x1B[1;79f*\x1B[24;80f*\x1B[1;80f*\x1B[2;2H+\x1B[1D"
+    "\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D"
+    "\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D"
+    "\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D"
+    "\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D+\x1B[1D\x1B""D\x1B[23;79H+\x1B[1D\x1BM+\x1B[1D\x1BM+"
+    "\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+"
+    "\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+"
+    "\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM+\x1B[1D\x1BM\x1B[2;1H*"
+    "\x1B[2;80H*\x1B[10D\x1B""E*\x1B[3;80H*\x1B[10D\x1B""E*\x1B[4;80H*\x1B[10D\x1B""E*\x1B[5;80H*"
+    "\x1B[10D\x1B""E*\x1B[6;80H*\x1B[10D\x1B""E*\x1B[7;80H*\x1B[10D\x1B""E*\x1B[8;80H*\x1B[10D"
+    "\x1B""E*\x1B[9;80H*\x1B[10D\x1B""E*\x1B[10;80H*\x1B[10D\x0D\x0A*\x1B[11;80H*\x1B[10D\x0D\x0A*"
+    "\x1B[12;80H*\x1B[10D\x0D\x0A*\x1B[13;80H*\x1B[10D\x0D\x0A*\x1B[14;80H*\x1B[10D\x0D\x0A*"
+    "\x1B[15;80H*\x1B[10D\x0D\x0A*\x1B[16;80H*\x1B[10D\x0D\x0A*\x1B[17;80H*\x1B[10D\x0D\x0A*"
+    "\x1B[18;80H*\x1B[10D\x0D\x0A*\x1B[19;80H*\x1B[10D\x0D\x0A*\x1B[20;80H*\x1B[10D\x0D\x0A*"
+    "\x1B[21;80H*\x1B[10D\x0D\x0A*\x1B[22;80H*\x1B[10D\x0D\x0A*\x1B[23;80H*\x1B[10D\x0D\x0A"
+    "\x1B[2;10H\x1B[42D\x1B[2C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+"
+    "\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C+\x1B[0C\x1B[2D\x1B[1C\x1B[23;70H\x1B[42C\x1B[2D+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C"
+    "\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C"
+    "\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C"
+    "\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08"
+    "+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C"
+    "\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C"
+    "\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C"
+    "\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C"
+    "\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C"
+    "\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C"
+    "\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C"
+    "\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+"
+    "\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08+\x1B[1D\x1B[1C\x1B[0D\x08\x1B[1;1H"
+    "\x1B[10A\x1B[1A\x1B[0A\x1B[24;80H\x1B[10B\x1B[1B\x1B[0B"
+    "\x1B[10;12H                                                          \x1B[1B"
+    "\x1B[58D                                                          \x1B[1B"
+    "\x1B[58D                                                          \x1B[1B"
+    "\x1B[58D                                                          \x1B[1B"
+    "\x1B[58D                                                          \x1B[1B"
+    "\x1B[58D                                                          \x1B[1B"
+    "\x1B[58D\x1B[5A\x1B[1C"
+    "The screen should be cleared,  and have an unbroken bor-\x1B[12;13Hder of *'s and +'s around"
+    " the edge,   and exactly in the\x1B[13;13Hmiddle  there should be a frame of E's around this"
+    "  text\x1B[14;13Hwith  one (1) free position around it.    Push <RETURN>";
+    
+    const auto expectation =
+    "********************************************************************************"
+    "*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*"
+    "*+                                                                            +*"
+    "*+                                                                            +*"
+    "*+                                                                            +*"
+    "*+                                                                            +*"
+    "*+                                                                            +*"
+    "*+                                                                            +*"
+    "*+        EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE        +*"
+    "*+        E                                                          E        +*"
+    "*+        E The screen should be cleared,  and have an unbroken bor- E        +*"
+    "*+        E der of *'s and +'s around the edge,   and exactly in the E        +*"
+    "*+        E middle  there should be a frame of E's around this  text E        +*"
+    "*+        E with  one (1) free position around it.    Push <RETURN>  E        +*"
+    "*+        E                                                          E        +*"
+    "*+        EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE        +*"
+    "*+                                                                            +*"
+    "*+                                                                            +*"
+    "*+                                                                            +*"
+    "*+                                                                            +*"
+    "*+                                                                            +*"
+    "*+                                                                            +*"
+    "*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*"
+    "********************************************************************************"
+    "                                                                                ";    
+    
+    Parser2Impl parser;
+    Screen screen(80, 25);
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
 }
 
 TEST_CASE(PREFIX"rn escape assumption")

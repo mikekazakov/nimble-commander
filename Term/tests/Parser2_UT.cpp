@@ -226,7 +226,12 @@ TEST_CASE(PREFIX"Handles control characters")
         auto r = parser.Parse(to_bytes("\x1B""8"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::restore_state );
-    }    
+    }
+    SECTION( "ESC # 8" ) {
+        auto r = parser.Parse(to_bytes("\x1B""#8"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::screen_alignment_test );
+    }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 
@@ -274,6 +279,14 @@ TEST_CASE(PREFIX"CSI A")
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y == -1 );     
     }
+    SECTION( "ESC [ 0 A" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0A"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == -1 );
+    }
     SECTION( "ESC [ 27 A" ) {
         auto r = parser.Parse(to_bytes("\x1B""[27A"));
         REQUIRE( r.size() == 1 );
@@ -296,6 +309,14 @@ TEST_CASE(PREFIX"CSI B")
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y == 1 );     
     }
+    SECTION( "ESC [ 0 B" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0B"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 0 );
+        CHECK( as_cursor_movement(r[0]).y == 1 );
+    }
     SECTION( "ESC [ 45 A" ) {
         auto r = parser.Parse(to_bytes("\x1B""[45B"));
         REQUIRE( r.size() == 1 );
@@ -317,6 +338,14 @@ TEST_CASE(PREFIX"CSI C")
         CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
         CHECK( as_cursor_movement(r[0]).x == 1 );
         CHECK( as_cursor_movement(r[0]).y == 0 );     
+    }
+    SECTION( "ESC [ 0 C" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0C"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == 1 );
+        CHECK( as_cursor_movement(r[0]).y == 0 );
     }
     SECTION( "ESC [ 42 C" ) {
         auto r = parser.Parse(to_bytes("\x1B""[42C"));
@@ -348,6 +377,14 @@ TEST_CASE(PREFIX"CSI D")
         CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
         CHECK( as_cursor_movement(r[0]).x == -1 );
         CHECK( as_cursor_movement(r[0]).y == 0 );     
+    }
+    SECTION( "ESC [ 0 D" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0D"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::move_cursor );
+        CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Relative );
+        CHECK( as_cursor_movement(r[0]).x == -1 );
+        CHECK( as_cursor_movement(r[0]).y == 0 );
     }
     SECTION( "ESC [ 32 D" ) {
         auto r = parser.Parse(to_bytes("\x1B""[32D"));

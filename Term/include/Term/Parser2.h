@@ -26,6 +26,7 @@ enum class Type {
     reset,                  // reset the terminal to its initial state
     save_state,             // save cursor position and graphic rendition
     restore_state,          // restore cursor position and graphic rendition
+    screen_alignment_test,  // DECALN — screen alignment pattern
     change_title,           // payload type - Title
     move_cursor,            // payload type - CursorMovement
     erase_in_display,       // payload type - DisplayErasure
@@ -45,6 +46,9 @@ enum class Type {
     report,                 // ask for the terminal's status
                             // payload type - DeviceReport
     change_mode,            // payload type - ModeChange
+};
+
+struct None {
 };
 
 struct Title {
@@ -113,7 +117,7 @@ struct DeviceReport
 };
 
 struct Command {
-    using Payload = std::variant<signed, unsigned, UTF8Text, Title, CursorMovement,
+    using Payload = std::variant<None, signed, unsigned, UTF8Text, Title, CursorMovement,
     DisplayErasure, LineErasure, ModeChange, DeviceReport>;
     Command() noexcept; 
     Command(Type _type) noexcept;
@@ -122,6 +126,8 @@ struct Command {
     Type type;
     Payload payload;
 };
+
+std::string VerboseDescription(const Command & _command);
 
 }
 
@@ -142,8 +148,7 @@ inline Command::Command() noexcept :
 }
 
 inline Command::Command(Type _type) noexcept:
-    type{_type},
-    payload{0}
+    type{_type}
 {
 }
 

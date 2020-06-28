@@ -77,7 +77,7 @@ void Screen::DoEraseScreen(int _mode)
                 std::fill(begin(l), end(l), m_EraseChar);
             else {
                 std::fill(begin(l),
-                          std::min( std::begin(l)+m_PosX, std::end(l) ),
+                          std::min( std::begin(l) + m_PosX + 1, std::end(l) ),
                           m_EraseChar);
                 return;
             }
@@ -187,6 +187,17 @@ void Screen::EraseInLineCount(unsigned _n)
     auto i = std::begin(line) + m_PosX;
     auto e = std::min( i + _n, std::end(line) );
     std::fill(i, e, m_EraseChar);
+}
+
+void Screen::FillScreenWithSpace(ScreenBuffer::Space _space)
+{
+    const auto height = Height();
+    for( int y = 0; y != height; ++y ) {
+        auto line = m_Buffer.LineFromNo(y);
+        for( auto& line_char: line ) {
+            line_char = _space;
+        }
+    }
 }
 
 void Screen::SetFgColor(int _color)

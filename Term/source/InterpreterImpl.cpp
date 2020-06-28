@@ -56,6 +56,14 @@ void InterpreterImpl::Interpret( Input _to_interpret )
             case Type::bell:
                 ProcessBell();
                 break;
+            case Type::screen_alignment_test:
+                ProcessScreenAlignment();
+                break;
+            case Type::erase_in_display:
+                ProcessEraseInDisplay( *std::get_if<DisplayErasure>(&command.payload) );
+                break;
+            case Type::erase_in_line:
+                ProcessEraseInLine( *std::get_if<LineErasure>(&command.payload) );
             default:
                 break;
         }
@@ -206,6 +214,50 @@ void InterpreterImpl::ProcessBell()
 {
     assert( m_Bell );
     m_Bell();
+}
+
+void InterpreterImpl::ProcessScreenAlignment()
+{
+    // + fill screen with 'E'
+    // - set the margins to the extremes of the page
+    // + move the cursor to the home position.
+    auto erase_char = m_Screen.Buffer().EraseChar();
+    erase_char.l = 'E';
+    m_Screen.FillScreenWithSpace(erase_char);
+    m_Screen.GoTo(0, 0);
+}
+
+void InterpreterImpl::ProcessEraseInDisplay(input::DisplayErasure _display_erasure)
+{
+    switch (_display_erasure.what_to_erase) {
+        case input::DisplayErasure::Area::FromCursorToDisplayEnd:
+            m_Screen.DoEraseScreen(0);
+            break;
+        case input::DisplayErasure::Area::FromDisplayStartToCursor:
+            m_Screen.DoEraseScreen(1);
+            break;
+        case input::DisplayErasure::Area::WholeDisplay:
+            m_Screen.DoEraseScreen(2);
+            break;
+        case input::DisplayErasure::Area::WholeDisplayWithScrollback:
+            throw std::logic_error("WholeDisplayWithScrollback unimplemented");
+            break;
+    }
+}
+
+void InterpreterImpl::ProcessEraseInLine( input::LineErasure _line_erasure )
+{
+    switch( _line_erasure.what_to_erase ) {
+        case input::LineErasure::Area::FromCursorToLineEnd:
+            m_Screen.EraseInLine(0);
+            break;
+        case input::LineErasure::Area::FromLineStartToCursor:
+            m_Screen.EraseInLine(1);
+            break;
+        case input::LineErasure::Area::WholeLine:
+            m_Screen.EraseInLine(2);
+            break;
+    }
 }
 
 void InterpreterImpl::Response(std::string_view _text)

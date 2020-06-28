@@ -38,23 +38,23 @@ std::vector<input::Command> Parser2Impl::Parse( Bytes _to_parse )
 void Parser2Impl::EatByte( unsigned char _byte )
 {
     while( true ) {
-        const auto state = m_EscState;
-        const auto consume = m_SubStates[static_cast<int>(m_EscState)].consume;
+        const auto state = m_SubState;
+        const auto consume = m_SubStates[static_cast<int>(m_SubState)].consume;
         const bool consumed = (*this.*consume)(_byte);
         if( consumed ) {
             return;
         }
         else {
-            assert( state != m_EscState ); // ensure that state has changed if a current refused 
+            assert( state != m_SubState ); // ensure that state has changed if a current refused 
         }  
     }
 }
 
 void Parser2Impl::SwitchTo(EscState _state)
 {
-    if( m_EscState != _state ) {
-        (*this.*m_SubStates[static_cast<int>(m_EscState)].exit)();
-        m_EscState = _state;
+    if( m_SubState != _state ) {
+        (*this.*m_SubStates[static_cast<int>(m_SubState)].exit)();
+        m_SubState = _state;
         (*this.*m_SubStates[static_cast<int>(_state)].enter)();
     }
 }
@@ -107,7 +107,7 @@ void Parser2Impl::FlushText()
 
 Parser2Impl::EscState Parser2Impl::GetEscState() const noexcept
 {
-    return m_EscState;
+    return m_SubState;
 }
 
 void Parser2Impl::LF() noexcept
@@ -159,6 +159,11 @@ void Parser2Impl::DECRC() noexcept
     m_Output.emplace_back( input::Type::restore_state );
 }
 
+void Parser2Impl::DECALN() noexcept
+{
+    m_Output.emplace_back( input::Type::screen_alignment_test );
+}
+
 void Parser2Impl::LogMissedEscChar( unsigned char _c )
 {
     if( m_ErrorLog ) {
@@ -170,6 +175,7 @@ void Parser2Impl::LogMissedEscChar( unsigned char _c )
 
 void Parser2Impl::SSEscEnter() noexcept
 {
+    m_EscState.hash = false;
 }
 
 void Parser2Impl::SSEscExit() noexcept
@@ -179,6 +185,10 @@ void Parser2Impl::SSEscExit() noexcept
 bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
 {
     const unsigned char c = _byte;
+    
+    switch (c ) {
+        case '#': m_EscState.hash = true; return true;
+    }
 
     SwitchTo(EscState::Text);
     switch (c) {
@@ -195,11 +205,21 @@ bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
              to be saved. */                
         case '7': DECSC(); return true;
             
+
+        case '8':
+            if ( m_EscState.hash == true )
+            /* DECALN – Screen Alignment Display (DEC Private)
+             ESC # 8
+             This command fills the entire screen area with uppercase Es for screen focus and
+             alignment. This command is used by DEC manufacturing and Field Service personnel.*/
+                DECALN();
+            else
             /* DECRC – Restore Cursor (DEC Private)
-             ESC 8     
+             ESC 8
              This sequence causes the previously saved cursor position, graphic rendition,
              and character set to be restored. */
-        case '8': DECRC(); return true;
+                DECRC();
+            return true;
             
             /*  NEL – Next Line
              ESC E     
@@ -656,7 +676,7 @@ void Parser2Impl::CSI_A() noexcept
     input::CursorMovement cm;
     cm.positioning = input::CursorMovement::Relative;
     cm.x = 0;
-    cm.y = -static_cast<int>(ps);
+    cm.y = -std::max(static_cast<int>(ps), 1);
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
@@ -670,7 +690,7 @@ void Parser2Impl::CSI_B() noexcept
     input::CursorMovement cm;
     cm.positioning = input::CursorMovement::Relative;
     cm.x = 0;
-    cm.y = static_cast<int>(ps);
+    cm.y = std::max(static_cast<int>(ps), 1);
     m_Output.emplace_back( input::Type::move_cursor, cm );    
 }
 
@@ -683,7 +703,7 @@ void Parser2Impl::CSI_C() noexcept
     
     input::CursorMovement cm;
     cm.positioning = input::CursorMovement::Relative;
-    cm.x = static_cast<int>(ps);
+    cm.x = std::max(static_cast<int>(ps), 1);
     cm.y = 0;
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
@@ -697,7 +717,7 @@ void Parser2Impl::CSI_D() noexcept
     
     input::CursorMovement cm;
     cm.positioning = input::CursorMovement::Relative;
-    cm.x = -static_cast<int>(ps);
+    cm.x = -std::max(static_cast<int>(ps), 1);
     cm.y = 0;
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }

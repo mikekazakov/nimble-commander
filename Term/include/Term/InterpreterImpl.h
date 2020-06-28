@@ -29,6 +29,9 @@ private:
     void ProcessHT( signed _amount );
     void ProcessReport( input::DeviceReport _device_report );
     void ProcessBell();
+    void ProcessScreenAlignment();
+    void ProcessEraseInDisplay( input::DisplayErasure _display_erasure );
+    void ProcessEraseInLine( input::LineErasure _line_erasure );
     void Response(std::string_view _text);
 
     struct Extent {

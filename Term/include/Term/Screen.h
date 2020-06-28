@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "ScreenBuffer.h"
@@ -75,6 +75,7 @@ public:
     
     void EraseAt(unsigned _x, unsigned _y, unsigned _count);
     
+    void FillScreenWithSpace(ScreenBuffer::Space _space);
     
     void DoShiftRowLeft(int _chars);
     void DoShiftRowRight(int _chars);    

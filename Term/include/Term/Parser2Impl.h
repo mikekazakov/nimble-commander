@@ -76,6 +76,7 @@ private:
     void RIS() noexcept;
     void DECSC() noexcept;
     void DECRC() noexcept;
+    void DECALN() noexcept;
     void CSI_A() noexcept;
     void CSI_B() noexcept;
     void CSI_C() noexcept;
@@ -116,8 +117,12 @@ private:
         { &Me::SSCSIEnter, &Me::SSCSIExit, &Me::SSCSIConsume },
     };
 
-    EscState                m_EscState = EscState::Text;
+    EscState                m_SubState = EscState::Text;
         
+    struct SS_Esc {
+        bool hash = false;
+    } m_EscState;
+    
     struct SS_Text {
         static constexpr int UTF8CharsStockSize = 16384;
         int UTF8StockLen = 0;

@@ -103,3 +103,16 @@ TEST_CASE(PREFIX"ScrollDown")
                                              "          "
                                              "ABCDE     ");
 }
+
+TEST_CASE(PREFIX"Line overflow logic")
+{
+    Screen scr(10, 1);
+    scr.GoTo(0, 0);
+    CHECK( scr.LineOverflown() == false );
+    scr.PutString("01234");
+    CHECK( scr.LineOverflown() == false );
+    scr.PutString("56789");
+    CHECK( scr.LineOverflown() == true );
+    scr.GoTo(0, 0);
+    CHECK( scr.LineOverflown() == false );
+}

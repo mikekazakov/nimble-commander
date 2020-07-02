@@ -36,7 +36,6 @@
 		CF5099711F948400000AFDE7 /* FlippableHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF50996F1F948400000AFDE7 /* FlippableHolder.h */; };
 		CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099701F948400000AFDE7 /* FlippableHolder.mm */; };
 		CF50997C1F948E7C000AFDE7 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */; };
-		CF50998B1F948F1F000AFDE7 /* ScreenBuffer_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099851F948EF9000AFDE7 /* ScreenBuffer_Tests.mm */; };
 		CF50998D1F948F25000AFDE7 /* ShellTask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */; };
 		CF50998E1F948FD8000AFDE7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */; };
 		CF5099901F948FDD000AFDE7 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF50998F1F948FDD000AFDE7 /* libUtility.dylib */; };
@@ -47,6 +46,7 @@
 		CF5F3934242FCD2B004DF1F8 /* Term_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */; };
 		CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */; };
 		CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D696624A897B5008352B0 /* Screen_UT.cpp */; };
+		CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */; };
 		CFB7456B2416E5850088F5EF /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB7456A2416E5850088F5EF /* Interpreter.h */; };
 		CFE08B2923DCABA4007E99B8 /* Parser2.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2823DCABA4007E99B8 /* Parser2.h */; };
 		CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */; };
@@ -120,7 +120,6 @@
 		CF5099701F948400000AFDE7 /* FlippableHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FlippableHolder.mm; path = source/FlippableHolder.mm; sourceTree = SOURCE_ROOT; };
 		CF5099771F948E7C000AFDE7 /* Term Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Term Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF50997B1F948E7C000AFDE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../tests/Info.plist; sourceTree = "<group>"; };
-		CF5099851F948EF9000AFDE7 /* ScreenBuffer_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ScreenBuffer_Tests.mm; path = tests/ScreenBuffer_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShellTask_Tests.mm; path = tests/ShellTask_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF50998F1F948FDD000AFDE7 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CF5099911F948FFA000AFDE7 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
@@ -131,6 +130,7 @@
 		CF5FD92A1FA1AC5100752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter_UT.cpp; sourceTree = "<group>"; };
 		CF9D696624A897B5008352B0 /* Screen_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Screen_UT.cpp; sourceTree = "<group>"; };
+		CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenBuffer_UT.cpp; sourceTree = "<group>"; };
 		CFB7456A2416E5850088F5EF /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interpreter.h; path = include/Term/Interpreter.h; sourceTree = "<group>"; };
 		CFE08B2823DCABA4007E99B8 /* Parser2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2.h; path = include/Term/Parser2.h; sourceTree = "<group>"; };
 		CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2Impl.h; path = include/Term/Parser2Impl.h; sourceTree = "<group>"; };
@@ -266,7 +266,7 @@
 				CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */,
 				CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */,
 				CF9D696624A897B5008352B0 /* Screen_UT.cpp */,
-				CF5099851F948EF9000AFDE7 /* ScreenBuffer_Tests.mm */,
+				CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */,
 				CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */,
 				CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */,
 				CFE08B3C23DCFC15007E99B8 /* Tests.cpp */,
@@ -449,7 +449,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF50998B1F948F1F000AFDE7 /* ScreenBuffer_Tests.mm in Sources */,
 				CF50998D1F948F25000AFDE7 /* ShellTask_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -462,6 +461,7 @@
 				CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */,
 				CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */,
 				CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */,
+				CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */,
 				CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

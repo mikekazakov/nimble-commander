@@ -53,6 +53,11 @@ void Screen::PutCh(uint32_t _char)
         }
     }
     
+//    if( m_PosX == std::distance(begin(line), end(line)) ) {
+//        m_LineOverflown = true;
+//        m_PosX = std::max( m_PosX - 1, 0 );
+//    }
+    
     m_Buffer.SetLineWrapped(m_PosY, false); // do we need it EVERY time?????
 }
 
@@ -110,6 +115,7 @@ void Screen::GoTo(int _x, int _y)
     if(m_PosX >= Width()) m_PosX = Width() - 1;
     if(m_PosY < 0) m_PosY = 0;
     if(m_PosY >= Height()) m_PosY = Height() - 1;
+    m_LineOverflown = false;
 }
 
 void Screen::DoCursorUp(int _n)

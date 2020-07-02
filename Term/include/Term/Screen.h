@@ -14,12 +14,13 @@ public:
     
     Screen(unsigned _width, unsigned _height);
     
-    std::unique_lock<std::mutex>    AcquireLock()    const { return std::unique_lock{m_Lock}; }
-    inline const ScreenBuffer      &Buffer()  const { return m_Buffer;          }
-    inline int                      Width()   const { return m_Buffer.Width();  }
-    inline int                      Height()  const { return m_Buffer.Height(); }
-    inline int                      CursorX() const { return m_PosX;            }
-    inline int                      CursorY() const { return m_PosY;            }
+    std::unique_lock<std::mutex> AcquireLock() const noexcept;
+    const ScreenBuffer &Buffer() const noexcept;
+    int Width()   const noexcept;
+    int Height()  const noexcept;
+    int CursorX() const noexcept;
+    int CursorY() const noexcept;
+    bool LineOverflown() const noexcept;
     
     void ResizeScreen(unsigned _new_sx, unsigned _new_sy);
     
@@ -94,6 +95,42 @@ private:
     ScreenBuffer                  m_Buffer;
     std::string                   m_Title;
     bool                          m_AlternateScreen = false;
+    bool                          m_LineOverflown = false;
 };
+
+inline std::unique_lock<std::mutex> Screen::AcquireLock() const noexcept
+{
+    return std::unique_lock{m_Lock};
+}
+
+inline const ScreenBuffer &Screen::Buffer() const noexcept
+{
+    return m_Buffer;
+}
+
+inline int Screen::Width() const noexcept
+{
+    return m_Buffer.Width();
+}
+
+inline int Screen::Height()  const noexcept
+{
+    return m_Buffer.Height();
+}
+
+inline int Screen::CursorX() const noexcept
+{
+    return m_PosX;
+}
+
+inline int Screen::CursorY() const noexcept
+{
+    return m_PosY;
+}
+
+inline bool Screen::LineOverflown() const noexcept
+{
+    return m_LineOverflown;
+}
 
 }

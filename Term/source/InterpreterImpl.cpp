@@ -64,6 +64,13 @@ void InterpreterImpl::Interpret( Input _to_interpret )
                 break;
             case Type::erase_in_line:
                 ProcessEraseInLine( *std::get_if<LineErasure>(&command.payload) );
+                break;
+            case Type::set_scrolling_region:
+                ProcessSetScrollingRegion( *std::get_if<ScrollingRegion>(&command.payload) );
+                break;
+            case Type::change_mode:
+                ProcessChangeMode( *std::get_if<ModeChange>(&command.payload) );
+                break;
             default:
                 break;
         }
@@ -131,14 +138,15 @@ void InterpreterImpl::ProcessRI()
 void InterpreterImpl::ProcessMC( const input::CursorMovement _cursor_movement )
 {
     if( _cursor_movement.positioning == input::CursorMovement::Absolute ) {
+        const int line_basis = m_OriginLineMode ? m_Extent.top : 0;
         if( _cursor_movement.x != std::nullopt && _cursor_movement.y != std::nullopt ) {
-            m_Screen.GoTo( *_cursor_movement.x, *_cursor_movement.y );
+            m_Screen.GoTo( *_cursor_movement.x, *_cursor_movement.y + line_basis );
         }
         else if( _cursor_movement.x != std::nullopt && _cursor_movement.y == std::nullopt ) {
             m_Screen.GoTo( *_cursor_movement.x, m_Screen.CursorY() );
         }
         else if( _cursor_movement.x == std::nullopt && _cursor_movement.y != std::nullopt ) {
-            m_Screen.GoTo( m_Screen.CursorX(), *_cursor_movement.y );
+            m_Screen.GoTo( m_Screen.CursorX(), *_cursor_movement.y + line_basis );
         }
     }
     if( _cursor_movement.positioning == input::CursorMovement::Relative ) {
@@ -195,17 +203,11 @@ void InterpreterImpl::ProcessReport( const input::DeviceReport _device_report )
         const auto ok = "\033[0n";
         Response(ok);
     }
-    if( _device_report.mode == DeviceReport::CursorPosition ) {    
-// orig:    
-//        sprintf(buf,
-//                "\033[?%d;%dR",
-//                (m_LineAbs ? m_Scr.CursorY() : m_Scr.CursorY() - m_Top) + 1,
-//                m_Scr.CursorX() + 1
-//                );
+    if( _device_report.mode == DeviceReport::CursorPosition ) {
         char buf[64];
         const int x = m_Screen.CursorX();
-        const int y = m_Screen.CursorY();
-        sprintf(buf, "\033[%d;%dR", y + 1, x + 1 );
+        const int y = m_OriginLineMode ? m_Screen.CursorY() - m_Extent.top : m_Screen.CursorY();
+        snprintf(buf, sizeof(buf), "\033[%d;%dR", y + 1, x + 1 );
         Response(buf);
     }
 }
@@ -227,7 +229,7 @@ void InterpreterImpl::ProcessScreenAlignment()
     m_Screen.GoTo(0, 0);
 }
 
-void InterpreterImpl::ProcessEraseInDisplay(input::DisplayErasure _display_erasure)
+void InterpreterImpl::ProcessEraseInDisplay( const input::DisplayErasure _display_erasure )
 {
     switch (_display_erasure.what_to_erase) {
         case input::DisplayErasure::Area::FromCursorToDisplayEnd:
@@ -245,7 +247,7 @@ void InterpreterImpl::ProcessEraseInDisplay(input::DisplayErasure _display_erasu
     }
 }
 
-void InterpreterImpl::ProcessEraseInLine( input::LineErasure _line_erasure )
+void InterpreterImpl::ProcessEraseInLine( const input::LineErasure _line_erasure )
 {
     switch( _line_erasure.what_to_erase ) {
         case input::LineErasure::Area::FromCursorToLineEnd:
@@ -256,6 +258,35 @@ void InterpreterImpl::ProcessEraseInLine( input::LineErasure _line_erasure )
             break;
         case input::LineErasure::Area::WholeLine:
             m_Screen.EraseInLine(2);
+            break;
+    }
+}
+
+void InterpreterImpl::ProcessSetScrollingRegion( const input::ScrollingRegion _scrolling_region )
+{
+    if( _scrolling_region.range ) {
+        if( _scrolling_region.range->top + 1 < _scrolling_region.range->bottom &&
+           _scrolling_region.range->top >= 0 &&
+           _scrolling_region.range->top <= m_Screen.Height()
+           ) {
+            // check indices!
+            m_Extent.top = _scrolling_region.range->top;
+            m_Extent.bottom = _scrolling_region.range->bottom;
+        }
+    }
+    else {
+        m_Extent.top = 0;
+        m_Extent.bottom = m_Screen.Height();
+    }
+}
+
+void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )
+{
+    switch ( _mode_change.mode ) {
+        case input::ModeChange::Kind::OriginMode:
+            m_OriginLineMode = _mode_change.status;
+            break;
+        default:
             break;
     }
 }

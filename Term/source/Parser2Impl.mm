@@ -639,6 +639,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'h': CSI_hl(); break;
         case 'l': CSI_hl(); break;
         case 'n': CSI_n(); break;
+        case 'r': CSI_r(); break;
         case '`': CSI_Accent(); break;
         default: LogMissedCSIRequest( m_CSIState.buffer ); break;
     } 
@@ -999,6 +1000,8 @@ static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, 
 {
     if( _dec ) {
         switch( _ps_number ) {
+            case 3:     return input::ModeChange::ColumnMode132;
+            case 6:     return input::ModeChange::OriginMode;
             default:
                 return std::nullopt;
         }
@@ -1067,7 +1070,31 @@ void Parser2Impl::CSI_n() noexcept
         }
     }
 }
-    
+
+void Parser2Impl::CSI_r() noexcept
+{
+// CSI Ps ; Ps r
+//    Set Scrolling Region [top;bottom] (default = full size of window) (DECSTBM), VT100.
+    std::string_view request = m_CSIState.buffer;
+    const auto p = CSIParamsScanner::Parse(request);
+    if( p.count == 0 ){
+        input::ScrollingRegion scrolling_region;
+        m_Output.emplace_back( input::Type::set_scrolling_region, scrolling_region );
+    }
+    else if (p.count == 2) {
+        input::ScrollingRegion scrolling_region;
+        if( p.values[0] >= 1 && p.values[1] >= 1 && p.values[1] > p.values[0] )
+            scrolling_region.range = input::ScrollingRegion::Range{
+                static_cast<int>(p.values[0]-1),
+                static_cast<int>(p.values[1])};
+        m_Output.emplace_back( input::Type::set_scrolling_region, scrolling_region );
+    }
+    else {
+        LogMissedCSIRequest(m_CSIState.buffer);
+        return;
+    }
+}
+
 void Parser2Impl::CSI_Accent() noexcept
 {
 // CSI Pm `  Character Position Absolute  [column] (default = [row,1]) (HPA).

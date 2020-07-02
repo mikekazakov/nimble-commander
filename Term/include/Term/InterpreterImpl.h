@@ -32,6 +32,8 @@ private:
     void ProcessScreenAlignment();
     void ProcessEraseInDisplay( input::DisplayErasure _display_erasure );
     void ProcessEraseInLine( input::LineErasure _line_erasure );
+    void ProcessSetScrollingRegion( input::ScrollingRegion _scrolling_region );
+    void ProcessChangeMode( input::ModeChange _mode_change );
     void Response(std::string_view _text);
 
     struct Extent {
@@ -46,6 +48,7 @@ private:
     Bell m_Bell = []{};
     Extent m_Extent;
     TabStops m_TabStops;
+    bool m_OriginLineMode = false;
 };
 
 }

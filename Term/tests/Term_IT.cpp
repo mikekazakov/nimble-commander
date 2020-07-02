@@ -28,7 +28,7 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
         "          "
-    },    
+    },
     {
         "Hello\x0C""\x0D""Hello",
         "Hello     "
@@ -37,7 +37,7 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
         "          "
-    },  
+    },
     {
         "Hello\x0D""\x0C""Hello",
         "Hello     "
@@ -46,7 +46,7 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
         "          "
-    },    
+    },
     {
         "\x0C\x0C\x0C\x0C""Hello",
         "          "
@@ -54,8 +54,8 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
         "Hello     "
-        "          "        
-    },       
+        "          "
+    },
     {
         "\x0C\x0C\x0C\x0C\x0C""Hello",
         "          "
@@ -64,7 +64,7 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
         "Hello     "
-    },     
+    },
     {
         "\x0C\x0C\x0C\x0C\x0C\x0C""Hello",
         "          "
@@ -73,7 +73,7 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
         "Hello     "
-    },    
+    },
     {
         "\x08Hello\x08\x08""Hello",
         "HelHello  "
@@ -136,7 +136,7 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
         "          "
-    },        
+    },
     {
         "aaa\r\n""\x1B""Mbbb",
         "bbb       "
@@ -172,8 +172,25 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
         "          "
-    }
-
+    },
+    {
+        "\x1B[3;10r\x1B[?6h\x1B[2;5HA",
+        "          "
+        "          "
+        "          "
+        "    A     "
+        "          "
+        "          "
+    },
+//    {
+//        "\x1B[1;10HA\x08 a",
+//        "         a"
+//        "          "
+//        "          "
+//        "          "
+//        "          "
+//        "          "
+//    },
 };
 
 const static std::pair<const char*, const char*> g_ResponseCases[] = 
@@ -194,6 +211,22 @@ const static std::pair<const char*, const char*> g_ResponseCases[] =
         "\x1B[6;10H\x1B[6n",
         "\033[6;10R"
     },
+    {
+        "\x1B[3;10r\x1B[2;5HA\x1B[6n",
+        "\033[2;6R"
+    },
+    {
+        "\x1B[3;10r\x1B[?6h\x1B[2;5HA\x1B[6n",
+        "\033[2;6R"
+    },
+//    {
+//        "\x1B[1;10HA\x1B[6n",
+//        "\033[1;10R"
+//    },
+//    {
+//        "\x1B[1;10HA\x08\x1B[6n",
+//        "\033[1;9R"
+//    },
 };
 
 const static std::pair<const char8_t*, const char32_t*> g_UTFCases[] = 
@@ -519,6 +552,46 @@ TEST_CASE(PREFIX"vttest - test of cursor movements, "
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
+
+#if 0
+TEST_CASE(PREFIX"vttest - test of cursor movements, "
+"blah")
+{
+    const auto raw_input =
+    "\x1B[?3l\x1B[?3lTest of autowrap, mixing control and print characters."
+    "\x0D\x0D\x0AThe left/right margins should have letters in order:\x0D\x0D\x0A\x1B[3;21r"
+    "\x1B[?6h\x1B[19;1HA\x1B[19;80H"
+"a\x0D\x0A\x1B[18;80HaB\x1B[19;80HB\x08 b"
+    "\x0D\x0A\x1B[19;80HC\x08\x08\x09\x09""c\x1B[19;2H\x08""C\x0D\x0A"
+//"\x1B[19;80H\x0D\x0A\x1B[18;1HD\x1B[18;80Hd\x1B[19;1HE\x1B[19;80He\x0D\x0A\x1B[18;80HeF\x1B[19;80HF\x08 f"
+//"\x0D\x0A\x1B[19;80HG\x08\x08\x09\x09g\x1B[19;2H\x08G\x0D\x0A\x1B[19;80H\x0D\x0A\x1B[18;1HH"
+//"\x1B[18;80Hh\x1B[19;1HI\x1B[19;80Hi\x0D\x0A\x1B[18;80HiJ\x1B[19;80HJ\x08 j"
+//"\x0D\x0A\x1B[19;80HK\x08\x08\x09\x09k\x1B[19;2H\x08K\x0D\x0A\x1B[19;80H\x0D\x0A\x1B[18;1HL"
+//"\x1B[18;80Hl\x1B[19;1HM\x1B[19;80Hm\x0D\x0A\x1B[18;80HmN\x1B[19;80HN\x08 n\x0D\x0A\x1B[19;80HO\x08\x08\x09\x09o\x1B[19;2H\x08O\x0D\x0A\x1B[19;80H\x0D\x0A\x1B[18;1HP\x1B[18;80Hp\x1B[19;1HQ\x1B[19;80Hq\x0D\x0A\x1B[18;80HqR\x1B[19;80HR\x08 r\x0D\x0A\x1B[19;80HS\x08\x08\x09\x09s\x1B[19;2H\x08S\x0D\x0A\x1B[19;80H\x0D\x0A\x1B[18;1HT\x1B[18;80Ht\x1B[19;1HU\x1B[19;80Hu\x0D\x0A\x1B[18;80HuV\x1B[19;80HV\x08 v\x0D\x0A\x1B[19;80HW\x08\x08\x09\x09w\x1B[19;2H\x08W\x0D\x0A\x1B[19;80H\x0D\x0A\x1B[18;1HX\x1B[18;80Hx\x1B[19;1HY\x1B[19;80Hy\x0D\x0A\x1B[18;80HyZ\x1B[19;80HZ\x08 z\x0D\x0A\x1B[?6l\x1B[r\x1B[22;1HPush <RETURN>"
+;
+    
+    const auto expectation =
+    "                                                                                ";
+    
+
+    Parser2Impl::Params parser_params;
+    parser_params.error_log = [](std::string_view _error){
+        std::cerr << _error << std::endl;
+    };
+    Parser2Impl parser{parser_params};
+    Screen screen(80, 25);
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    const auto cmds = parser.Parse( input_bytes );
+    Print(cmds);
+    interpreter.Interpret( cmds );
+    std::cout << screen.Buffer().DumpScreenAsANSIBreaked();
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+}
+#endif
 
 TEST_CASE(PREFIX"rn escape assumption")
 {

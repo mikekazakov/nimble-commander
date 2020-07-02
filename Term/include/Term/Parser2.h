@@ -46,6 +46,7 @@ enum class Type {
     report,                 // ask for the terminal's status
                             // payload type - DeviceReport
     change_mode,            // payload type - ModeChange
+    set_scrolling_region    // payload type - ScrollingRegion
 };
 
 struct None {
@@ -101,6 +102,8 @@ struct ModeChange
     enum Kind {
         InsertMode, // Insert Mode / Replace Mode (default)
         NewLineMode, // New Line Mode / Line Feed Mode (default)
+        ColumnMode132, // 132 Column Mode / 80 Column Mode (default)
+        OriginMode, // Origin Cursor Mode / Normal Cursor Mode (default)
     };
     Kind mode = InsertMode;
     bool status = true;
@@ -116,9 +119,18 @@ struct DeviceReport
     Kind mode = TerminalId;
 };
 
+struct ScrollingRegion
+{
+    struct Range {
+        int top; // closed range end, [
+        int bottom; // open range end, )
+    };
+    std::optional<Range> range;
+};
+
 struct Command {
     using Payload = std::variant<None, signed, unsigned, UTF8Text, Title, CursorMovement,
-    DisplayErasure, LineErasure, ModeChange, DeviceReport>;
+    DisplayErasure, LineErasure, ModeChange, DeviceReport, ScrollingRegion>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

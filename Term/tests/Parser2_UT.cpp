@@ -84,6 +84,13 @@ static const DeviceReport& as_device_report( const Command &_command )
     throw std::invalid_argument("not DeviceReport");
 }
 
+static const ScrollingRegion& as_scrolling_region( const Command &_command )
+{
+    if( auto ptr = std::get_if<ScrollingRegion>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not ScrollingRegion");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -927,6 +934,32 @@ TEST_CASE(PREFIX"CSI n")
     SECTION( "ESC [ 0 n" ) {
         auto r = parser.Parse(to_bytes("\x1B""[0n"));
         REQUIRE( r.size() == 0 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI r")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ r" ) {
+        auto r = parser.Parse(to_bytes("\x1B[r"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_scrolling_region );
+        CHECK( as_scrolling_region(r[0]).range == std::nullopt );
+    }
+    SECTION( "ESC [ 0 ; 0 r" ) {
+        auto r = parser.Parse(to_bytes("\x1B[0;0r"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_scrolling_region );
+        CHECK( as_scrolling_region(r[0]).range == std::nullopt );
+    }
+    SECTION( "ESC [ 5 ; 15 r" ) {
+        auto r = parser.Parse(to_bytes("\x1B[5;15r"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_scrolling_region );
+        REQUIRE( as_scrolling_region(r[0]).range != std::nullopt );
+        CHECK( as_scrolling_region(r[0]).range->top == 4 );
+        CHECK( as_scrolling_region(r[0]).range->bottom == 15 );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

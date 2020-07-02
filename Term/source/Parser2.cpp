@@ -40,9 +40,13 @@ static std::string ToString(const Command::Payload &_payload)
             return "what_to_erase="s + std::string(magic_enum::enum_name(arg.what_to_erase));
         else if constexpr( std::is_same_v<T, ModeChange> )
             return "mode="s + std::string(magic_enum::enum_name(arg.mode)) +
-            ", status=" + std::to_string(arg.status);
+            ", status=" + (arg.status ? "on" : "off");
         else if constexpr( std::is_same_v<T, DeviceReport> )
             return "mode="s + std::string(magic_enum::enum_name(arg.mode));
+        else if constexpr( std::is_same_v<T, ScrollingRegion> )
+            return "range=" + (arg.range ?
+                ( std::to_string(arg.range->top) + "," + std::to_string(arg.range->bottom)) :
+                "none" );
         else
             static_assert(always_false_v<T>, "non-exhaustive visitor!");
     }, _payload);

@@ -103,6 +103,7 @@ private:
     void CSI_f() noexcept;
     void CSI_hl() noexcept;
     void CSI_n() noexcept;
+    void CSI_r() noexcept;
     void CSI_Accent() noexcept;
     
     constexpr static struct SubStates {

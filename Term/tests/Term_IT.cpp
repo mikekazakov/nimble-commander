@@ -707,6 +707,64 @@ TEST_CASE(PREFIX"vttest(1.3) - test of cursor movements, "
     CHECK( result == expectation );
 }
 
+TEST_CASE(PREFIX"vttest(1.4) - test of cursor movements, "
+"autowrap, mixing control and print characters")
+{
+    const auto raw_input =
+    "\x1B[?3hTest of autowrap, mixing control and print characters.\x0D\x0D\x0AThe left/right "
+    "margins should have letters in order:\x0D\x0D\x0A\x1B[3;21r\x1B[?6h\x1B[19;1HA\x1B[19;132H"
+    "a\x0D\x0A\x1B[18;132HaB\x1B[19;132HB\x08 b\x0D\x0A\x1B[19;132HC\x08\x08\x09\x09c\x1B[19;2H"
+    "\x08C\x0D\x0A\x1B[19;132H\x0D\x0A\x1B[18;1HD\x1B[18;132Hd\x1B[19;1HE\x1B[19;132He\x0D\x0A"
+    "\x1B[18;132HeF\x1B[19;132HF\x08 f\x0D\x0A\x1B[19;132HG\x08\x08\x09\x09g\x1B[19;2H\x08G\x0D"
+    "\x0A\x1B[19;132H\x0D\x0A\x1B[18;1HH\x1B[18;132Hh\x1B[19;1HI\x1B[19;132Hi\x0D\x0A\x1B[18;132H"
+    "iJ\x1B[19;132HJ\x08 j\x0D\x0A\x1B[19;132HK\x08\x08\x09\x09k\x1B[19;2H\x08K\x0D\x0A"
+    "\x1B[19;132H\x0D\x0A\x1B[18;1HL\x1B[18;132Hl\x1B[19;1HM\x1B[19;132Hm\x0D\x0A\x1B[18;132HmN"
+    "\x1B[19;132HN\x08 n\x0D\x0A\x1B[19;132HO\x08\x08\x09\x09o\x1B[19;2H\x08O\x0D\x0A\x1B[19;132H"
+    "\x0D\x0A\x1B[18;1HP\x1B[18;132Hp\x1B[19;1HQ\x1B[19;132Hq\x0D\x0A\x1B[18;132HqR\x1B[19;132H"
+    "R\x08 r\x0D\x0A\x1B[19;132HS\x08\x08\x09\x09s\x1B[19;2H\x08S\x0D\x0A\x1B[19;132H\x0D\x0A"
+    "\x1B[18;1HT\x1B[18;132Ht\x1B[19;1HU\x1B[19;132Hu\x0D\x0A\x1B[18;132HuV\x1B[19;132HV\x08 v"
+    "\x0D\x0A\x1B[19;132HW\x08\x08\x09\x09w\x1B[19;2H\x08W\x0D\x0A\x1B[19;132H\x0D\x0A\x1B[18;1H"
+    "X\x1B[18;132Hx\x1B[19;1HY\x1B[19;132Hy\x0D\x0A\x1B[18;132HyZ\x1B[19;132HZ\x08 z\x0D\x0A"
+    "\x1B[?6l\x1B[r\x1B[22;1HPush <RETURN>";
+    
+    const auto expectation =
+    "Test of autowrap, mixing control and print characters.                                                                              "
+    "The left/right margins should have letters in order:                                                                                "
+    "I                                                                                                                                  i"
+    "J                                                                                                                                  j"
+    "K                                                                                                                                  k"
+    "L                                                                                                                                  l"
+    "M                                                                                                                                  m"
+    "N                                                                                                                                  n"
+    "O                                                                                                                                  o"
+    "P                                                                                                                                  p"
+    "Q                                                                                                                                  q"
+    "R                                                                                                                                  r"
+    "S                                                                                                                                  s"
+    "T                                                                                                                                  t"
+    "U                                                                                                                                  u"
+    "V                                                                                                                                  v"
+    "W                                                                                                                                  w"
+    "X                                                                                                                                  x"
+    "Y                                                                                                                                  y"
+    "Z                                                                                                                                  z"
+    "                                                                                                                                    "
+    "Push <RETURN>                                                                                                                       "
+    "                                                                                                                                    "
+    "                                                                                                                                    "
+    "                                                                                                                                    ";
+
+    Parser2Impl parser;
+    Screen screen(80, 25);
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+}
+
 TEST_CASE(PREFIX"vttest(1.5) - test of cursor movements, "
 "Test of cursor-control characters inside ESC sequences.")
 {

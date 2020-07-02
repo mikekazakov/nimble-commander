@@ -13,7 +13,40 @@ TEST_CASE(PREFIX"does call the Bell callback")
     bool did_bell = false;
     interpreter.SetBell([&]{ did_bell = true; });
 
-    const input::Command cmd{input::Type::bell};    
+    const Command cmd{input::Type::bell};
     interpreter.Interpret( {&cmd, 1} );
     CHECK( did_bell == true ); 
+}
+
+TEST_CASE(PREFIX"resizes screen only when allowed")
+{
+    Screen screen(10, 6);
+    InterpreterImpl interpreter(screen);
+    SECTION("Allowed - default") {
+        SECTION("80") {
+            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::ColumnMode132, false}};
+            interpreter.Interpret( {&cmd, 1} );
+            CHECK( screen.Width() == 80 );
+            CHECK( screen.Height() == 6 );
+        }
+        SECTION("132") {
+            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::ColumnMode132, true}};
+            interpreter.Interpret( {&cmd, 1} );
+            CHECK( screen.Width() == 132 );
+            CHECK( screen.Height() == 6 );
+        }
+    }
+    SECTION("Disabled") {
+        interpreter.SetScreenResizeAllowed(false);
+        SECTION("80") {
+            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::ColumnMode132, false}};
+            interpreter.Interpret( {&cmd, 1} );
+        }
+        SECTION("132") {
+            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::ColumnMode132, true}};
+            interpreter.Interpret( {&cmd, 1} );
+        }
+        CHECK( screen.Width() == 10 );
+        CHECK( screen.Height() == 6 );
+    }
 }

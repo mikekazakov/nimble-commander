@@ -542,17 +542,19 @@ TEST_CASE(PREFIX"vttest(1.5) - test of cursor movements, "
     "\x1B[2\x08""C\x0D\x0D\x0A""A \x1B[\x0D""2CB\x1B[\x0D""4CC\x1B[\x0D""6CD\x1B[\x0D""8CE\x1B[\x0D""10CF\x1B[\x0D""12CG\x1B[\x0D""14CH\x1B[\x0D""16CI"
     "\x0D\x0D\x0A\x1B[20lA \x1B[1\x0B""AB \x1B[1\x0B""AC \x1B[1\x0B""AD \x1B[1\x0B""AE \x1B[1\x0B""AF \x1B[1\x0B""AG \x1B[1\x0B""AH \x1B[1\x0B""AI"
     " \x1B[1\x0BA\x0D\x0D\x0A\x0D\x0D\x0A""Push <RETURN>";
-    const auto expectation = 
-    "Test of cursor-control characters inside ESC sequences.     "
-    "Below should be four identical lines:                       "
-    "                                                            "
-    "A B C D E F G H I                                           "
-    "A B C D E F G H I                                           "
-    "A B C D E F G H I                                           "
-    "A B C D E F G H I                                           "
-    "                                                            "
-    "Push <RETURN>                                               ";
-
+    const auto expectation =
+    
+    "Test of cursor-control characters inside ESC sequences.                         "
+    "Below should be four identical lines:                                           "
+    "                                                                                "
+    "A B C D E F G H I                                                               "
+    "A B C D E F G H I                                                               "
+    "A B C D E F G H I                                                               "
+    "A B C D E F G H I                                                               "
+    "                                                                                "
+    "Push <RETURN>                                                                   ";
+    
+    
     Parser2Impl parser;
     Screen screen(60, 9);
     InterpreterImpl interpreter(screen);    

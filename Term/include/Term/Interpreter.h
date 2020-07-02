@@ -20,6 +20,8 @@ public:
     virtual void Interpret( Input _to_interpret ) = 0;
     virtual void SetOuput( Output _output ) = 0;
     virtual void SetBell( Bell _bell ) = 0;
+    virtual bool ScreenResizeAllowed() = 0;
+    virtual void SetScreenResizeAllowed( bool _allow ) = 0;
 };
 
 }

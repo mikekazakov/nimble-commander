@@ -16,6 +16,8 @@ public:
     void Interpret( Input _to_interpret ) override;
     void SetOuput( Output _output ) override;
     void SetBell( Bell _bell ) override;
+    bool ScreenResizeAllowed() override;
+    void SetScreenResizeAllowed( bool _allow ) override;
     
 private:
     using TabStops = std::bitset<1024>;
@@ -34,6 +36,7 @@ private:
     void ProcessEraseInLine( input::LineErasure _line_erasure );
     void ProcessSetScrollingRegion( input::ScrollingRegion _scrolling_region );
     void ProcessChangeMode( input::ModeChange _mode_change );
+    void ProcessChangeColumnMode132( bool _on );
     void Response(std::string_view _text);
 
     struct Extent {
@@ -49,6 +52,7 @@ private:
     Extent m_Extent;
     TabStops m_TabStops;
     bool m_OriginLineMode = false;
+    bool m_AllowScreenResize = true;
 };
 
 }

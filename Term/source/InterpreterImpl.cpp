@@ -287,8 +287,27 @@ void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )
         case input::ModeChange::Kind::OriginMode:
             m_OriginLineMode = _mode_change.status;
             break;
+        case input::ModeChange::Kind::ColumnMode132: {
+            ProcessChangeColumnMode132(_mode_change.status);
+        }
         default:
             break;
+    }
+}
+
+void InterpreterImpl::ProcessChangeColumnMode132( bool _on )
+{
+    if( m_AllowScreenResize == false )
+        return;
+    
+    const auto height = m_Screen.Height();
+    if( _on ) {
+        // toggle 132-column mode
+        m_Screen.ResizeScreen(132, height);
+    }
+    else {
+        // toggle 80-column mode
+        m_Screen.ResizeScreen(80, height);
     }
 }
 
@@ -390,6 +409,16 @@ void InterpreterImpl::ResetToDefaultTabStops(TabStops &_tab_stops)
     _tab_stops.reset();
     for( size_t n = 0; n < _tab_stops.size(); n += 8 )
         _tab_stops.set(n, true);
+}
+
+bool InterpreterImpl::ScreenResizeAllowed()
+{
+    return m_AllowScreenResize;
+}
+
+void InterpreterImpl::SetScreenResizeAllowed( bool _allow )
+{
+    m_AllowScreenResize = _allow;
 }
 
 }

@@ -110,7 +110,9 @@ void Parser::Flush()
             c = m_UTF16CharsStock[i];
         
         // TODO: if(wrapping_mode == ...) <- need to add this
-        if( m_Scr.CursorX() >= m_Scr.Width() && !oms::IsUnicodeCombiningCharacter(c) )
+        if( m_Scr.CursorX() >= m_Scr.Width() - 1 &&
+           m_Scr.LineOverflown() &&
+           !oms::IsUnicodeCombiningCharacter(c) )
         {
             m_Scr.PutWrap();
             CR();
@@ -132,6 +134,7 @@ int Parser::EatBytes(const unsigned char *_bytes, const unsigned _sz)
 //    std::cout << ""
 //"\x1B[c",    
 //    f0
+    // !!! REMOVE THIS !!!
     for(int i = 0; i < (int)_sz; ++i) {
         const auto byte = _bytes[i];    
         if( byte < 32 ) {
@@ -161,7 +164,6 @@ int Parser::EatBytes(const unsigned char *_bytes, const unsigned _sz)
 
 void Parser::EatByte(unsigned char _byte, int &_result_flags)
 {
-
     const unsigned char c = _byte;
     
     if(c < 32) Flush();

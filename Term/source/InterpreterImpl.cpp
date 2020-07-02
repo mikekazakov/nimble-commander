@@ -93,9 +93,10 @@ void InterpreterImpl::ProcessText( const input::UTF8Text &_text )
     
     for( const auto c: utf32 ) {
     
-//    
-//    // TODO: if(wrapping_mode == ...) <- need to add this
-        if( m_Screen.CursorX() >= m_Screen.Width() && !oms::IsUnicodeCombiningCharacter(c) ) {
+    // TODO: if(wrapping_mode == ...) <- need to add this
+        if( m_Screen.CursorX() >= m_Screen.Width() - 1 &&
+           m_Screen.LineOverflown() &&
+           !oms::IsUnicodeCombiningCharacter(c) ) {
             m_Screen.PutWrap();
             ProcessCR();
             ProcessLF();

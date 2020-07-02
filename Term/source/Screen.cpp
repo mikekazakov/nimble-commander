@@ -46,17 +46,17 @@ void Screen::PutCh(uint32_t _char)
     else { // combining characters goes here
         if(m_PosX > 0 &&
            chars + m_PosX <= end(line) ) {
-            int target_pos = m_PosX - 1;
+            int target_pos = m_LineOverflown ? m_PosX : m_PosX - 1;
             if((chars[target_pos].l == MultiCellGlyph) && (target_pos > 0)) target_pos--;
             if(chars[target_pos].c1 == 0) chars[target_pos].c1 = _char;
             else if(chars[target_pos].c2 == 0) chars[target_pos].c2 = _char;
         }
     }
     
-//    if( m_PosX == std::distance(begin(line), end(line)) ) {
-//        m_LineOverflown = true;
-//        m_PosX = std::max( m_PosX - 1, 0 );
-//    }
+    if( m_PosX == std::distance(begin(line), end(line)) ) {
+        m_LineOverflown = true;
+        m_PosX = std::max( m_PosX - 1, 0 );
+    }
     
     m_Buffer.SetLineWrapped(m_PosY, false); // do we need it EVERY time?????
 }

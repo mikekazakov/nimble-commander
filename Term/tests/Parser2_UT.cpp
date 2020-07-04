@@ -953,6 +953,12 @@ TEST_CASE(PREFIX"CSI hl")
     SECTION( "ESC [ ? 3 l" ) {
         verify("\x1B""[?3l", Kind::Column132, false);
     }
+    SECTION( "ESC [ ? 4 h" ) {
+        verify("\x1B""[?4h", Kind::SmoothScroll, true);
+    }
+    SECTION( "ESC [ ? 4 l" ) {
+        verify("\x1B""[?4l", Kind::SmoothScroll, false);
+    }
     SECTION( "ESC [ ? 5 h" ) {
         verify("\x1B""[?5h", Kind::ReverseVideo, true);
     }

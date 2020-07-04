@@ -160,7 +160,12 @@ void InterpreterImpl::ProcessMC( const input::CursorMovement _cursor_movement )
         const int x = m_Screen.CursorX();
         const int y = m_Screen.CursorY();
         if( _cursor_movement.x != std::nullopt && _cursor_movement.y != std::nullopt ) {
-            m_Screen.GoTo( x + *_cursor_movement.x, y + *_cursor_movement.y );
+            const auto target_y = m_OriginLineMode ?
+                std::clamp(y + *_cursor_movement.y,
+                           m_Extent.top,
+                           m_Extent.bottom - 1) :
+                (y + *_cursor_movement.y);
+            m_Screen.GoTo( x + *_cursor_movement.x, target_y );
         }
         else if( _cursor_movement.x != std::nullopt && _cursor_movement.y == std::nullopt ) {
             m_Screen.GoTo( x + *_cursor_movement.x, y );

@@ -191,6 +191,51 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
     },
+    {
+        "\x1B[2;3rA\r\nB\r\nC\r\nD",
+        "A         "
+        "C         "
+        "D         "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        "\x1B[2;3r\x1B[5BA\r\nB",
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+        "B         "
+    },
+    {
+        "\x1B[2;3r\x1B[4BA\r\nB",
+        "          "
+        "          "
+        "          "
+        "          "
+        "A         "
+        "B         "
+    },
+    {
+        "\x1B[2;3r\x1B[4BA\r\nB\r\nC",
+        "          "
+        "          "
+        "          "
+        "          "
+        "A         "
+        "C         "
+    },
+    {
+        "\x1B[?6h\x1B[1;2r\x1B[24BA",
+        "          "
+        "A         "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
 };
 
 const static std::pair<const char*, const char*> g_ResponseCases[] = 
@@ -1115,6 +1160,76 @@ TEST_CASE(PREFIX"vttest(2.6) - 80 column / no video reverse")
 
     Parser2Impl parser;
     Screen screen(80, 21);
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+    CHECK( screen.VideoReverse() == false );
+}
+
+TEST_CASE(PREFIX"vttest(2.7) - soft scroll")
+{
+    const auto raw_input =
+    "\x1B[2J\x1B[?6h\x1B[?4h\x1B[12;13r\x1B[2J\x1B[24BSoft scroll up region [12..13] size 2 Line 1"
+    "\x0D\x0ASoft scroll up region [12..13] size 2 Line 2\x0D\x0ASoft scroll up region [12..13] "
+    "size 2 Line 3\x0D\x0ASoft scroll up region [12..13] size 2 Line 4\x0D\x0ASoft scroll up region"
+    " [12..13] size 2 Line 5\x0D\x0ASoft scroll up region [12..13] size 2 Line 6\x0D\x0ASoft scroll"
+    " up region [12..13] size 2 Line 7\x0D\x0ASoft scroll up region [12..13] size 2 Line 8\x0D\x0A"
+    "Soft scroll up region [12..13] size 2 Line 9\x0D\x0ASoft scroll up region [12..13] size 2 Line"
+    " 10\x0D\x0ASoft scroll up region [12..13] size 2 Line 11\x0D\x0ASoft scroll up region [12..13]"
+    " size 2 Line 12\x0D\x0ASoft scroll up region [12..13] size 2 Line 13\x0D\x0ASoft scroll up "
+    "region [12..13] size 2 Line 14\x0D\x0ASoft scroll up region [12..13] size 2 Line 15\x0D\x0A"
+    "Soft scroll up region [12..13] size 2 Line 16\x0D\x0ASoft scroll up region [12..13] size 2 "
+    "Line 17\x0D\x0ASoft scroll up region [12..13] size 2 Line 18\x0D\x0ASoft scroll up region "
+    "[12..13] size 2 Line 19\x0D\x0ASoft scroll up region [12..13] size 2 Line 20\x0D\x0ASoft "
+    "scroll up region [12..13] size 2 Line 21\x0D\x0ASoft scroll up region [12..13] size 2 Line 22"
+    "\x0D\x0ASoft scroll up region [12..13] size 2 Line 23\x0D\x0ASoft scroll up region [12..13] "
+    "size 2 Line 24\x0D\x0ASoft scroll up region [12..13] size 2 Line 25\x0D\x0ASoft scroll up "
+    "region [12..13] size 2 Line 26\x0D\x0ASoft scroll up region [12..13] size 2 Line 27\x0D\x0A"
+    "Soft scroll up region [12..13] size 2 Line 28\x0D\x0ASoft scroll up region [12..13] size 2 "
+    "Line 29\x0D\x0A\x1B[24ASoft scroll down region [12..13] size 2 Line 1\x0D\x0A\x1BM\x1BMSoft "
+    "scroll down region [12..13] size 2 Line 2\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] "
+    "size 2 Line 3\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 4\x0D\x0A\x1BM"
+    "\x1BMSoft scroll down region [12..13] size 2 Line 5\x0D\x0A\x1BM\x1BMSoft scroll down region "
+    "[12..13] size 2 Line 6\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 7\x0D\x0A"
+    "\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 8\x0D\x0A\x1BM\x1BMSoft scroll down "
+    "region [12..13] size 2 Line 9\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 10"
+    "\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 11\x0D\x0A\x1BM\x1BMSoft scroll"
+    " down region [12..13] size 2 Line 12\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2"
+    " Line 13\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 14\x0D\x0A\x1BM\x1BMSo"
+    "ft scroll down region [12..13] size 2 Line 15\x0D\x0A\x1BM\x1BMSoft scroll down region "
+    "[12..13] size 2 Line 16\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 17"
+    "\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 18\x0D\x0A\x1BM\x1BMSoft scroll"
+    " down region [12..13] size 2 Line 19\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2"
+    " Line 20\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 21\x0D\x0A\x1BM\x1BM"
+    "Soft scroll down region [12..13] size 2 Line 22\x0D\x0A\x1BM\x1BMSoft scroll down region "
+    "[12..13] size 2 Line 23\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 24"
+    "\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 25\x0D\x0A\x1BM\x1BMSoft scroll"
+    " down region [12..13] size 2 Line 26\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2"
+    " Line 27\x0D\x0A\x1BM\x1BMSoft scroll down region [12..13] size 2 Line 28\x0D\x0A\x1BM\x1BM"
+    "Soft scroll down region [12..13] size 2 Line 29\x0D\x0A\x1BM\x1BMPush <RETURN>";
+    
+    const auto expectation =
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "Push <RETURN>                                                                   "
+    "Soft scroll down region [12..13] size 2 Line 29                                 "
+    "                                                                                ";
+    
+    Parser2Impl parser;
+    Screen screen(80, 14);
     InterpreterImpl interpreter(screen);
     const auto input = std::string_view{raw_input};
     const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),

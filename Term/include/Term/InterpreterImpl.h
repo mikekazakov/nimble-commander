@@ -44,8 +44,8 @@ private:
     struct Extent {
         int height = 0;  // physical dimention - x
         int width = 0;   // physical dimention - y
-        int top = 0;     // logical bounds - top
-        int bottom = 0;  // logical bounds - bottom
+        int top = 0;     // logical bounds - top, closed [
+        int bottom = 0;  // logical bounds - bottom, open )
     };
 
     Screen &m_Screen;

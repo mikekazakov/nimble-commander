@@ -112,6 +112,7 @@ struct ModeChange
         Origin, // Origin Cursor Mode / Normal Cursor Mode [DECOM]
         AutoWrap, // Auto-wrap Mode / No Auto-wrap Mode [DECAWM]
         ReverseVideo, // Reverse Video / Normal Video [DECSCNM]
+        SmoothScroll, // Smooth (Slow) Scroll / Jump (Fast) Scroll [DECSCLM]
     };
     Kind mode = Insert;
     bool status = false;

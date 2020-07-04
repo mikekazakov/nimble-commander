@@ -1026,6 +1026,7 @@ static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, 
     if( _dec ) {
         switch( _ps_number ) {
             case 3:     return Kind::Column132;
+            case 4:     return Kind::SmoothScroll;
             case 5:     return Kind::ReverseVideo;
             case 6:     return Kind::Origin;
             case 7:     return Kind::AutoWrap;

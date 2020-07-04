@@ -91,6 +91,13 @@ static const ScrollingRegion& as_scrolling_region( const Command &_command )
     throw std::invalid_argument("not ScrollingRegion");
 }
 
+static const TabClear& as_tab_clear( const Command &_command )
+{
+    if( auto ptr = std::get_if<TabClear>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not TabClear");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -208,6 +215,11 @@ TEST_CASE(PREFIX"Handles control characters")
         REQUIRE( r.size() == 2 );
         CHECK( r[0].type == Type::carriage_return );
         CHECK( r[1].type == Type::line_feed );
+    }
+    SECTION( "ESC H" ) {
+        auto r = parser.Parse(to_bytes("\x1B""H"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_tab );
     }
     SECTION( "ESC D" ) {
         auto r = parser.Parse(to_bytes("\x1B""D"));
@@ -876,6 +888,38 @@ TEST_CASE(PREFIX"CSI f")
         CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Absolute );
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y == 0 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI g")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ g" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[g"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::clear_tab );
+        CHECK( as_tab_clear(r[0]).mode == input::TabClear::CurrentColumn );
+    }
+    SECTION( "ESC [ 0 g" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0g"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::clear_tab );
+        CHECK( as_tab_clear(r[0]).mode == input::TabClear::CurrentColumn );
+    }
+    SECTION( "ESC [ 1 g" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[1g"));
+        CHECK( r.size() == 0 );
+    }
+    SECTION( "ESC [ 2 g" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[2g"));
+        CHECK( r.size() == 0 );
+    }
+    SECTION( "ESC [ 3 g" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[3g"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::clear_tab );
+        CHECK( as_tab_clear(r[0]).mode == input::TabClear::All );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

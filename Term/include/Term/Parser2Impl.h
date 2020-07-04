@@ -74,6 +74,7 @@ private:
     void BEL() noexcept;
     void RI() noexcept;
     void RIS() noexcept;
+    void HTS() noexcept;
     void DECSC() noexcept;
     void DECRC() noexcept;
     void DECALN() noexcept;
@@ -101,6 +102,7 @@ private:
     void CSI_d() noexcept;
     void CSI_e() noexcept;
     void CSI_f() noexcept;
+    void CSI_g() noexcept;
     void CSI_hl() noexcept;
     void CSI_n() noexcept;
     void CSI_r() noexcept;

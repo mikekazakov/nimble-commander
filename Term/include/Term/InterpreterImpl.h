@@ -29,6 +29,7 @@ private:
     void ProcessRI();
     void ProcessMC( input::CursorMovement _cursor_movement );
     void ProcessHT( signed _amount );
+    void ProcessHTS();
     void ProcessReport( input::DeviceReport _device_report );
     void ProcessBell();
     void ProcessScreenAlignment();
@@ -37,6 +38,7 @@ private:
     void ProcessSetScrollingRegion( input::ScrollingRegion _scrolling_region );
     void ProcessChangeMode( input::ModeChange _mode_change );
     void ProcessChangeColumnMode132( bool _on );
+    void ProcessClearTab( input::TabClear _tab_clear );
     void Response(std::string_view _text);
 
     struct Extent {

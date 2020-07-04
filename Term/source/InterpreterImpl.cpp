@@ -71,6 +71,12 @@ void InterpreterImpl::Interpret( Input _to_interpret )
             case Type::change_mode:
                 ProcessChangeMode( *std::get_if<ModeChange>(&command.payload) );
                 break;
+            case Type::set_tab:
+                ProcessHTS();
+                break;
+            case Type::clear_tab:
+                ProcessClearTab( *std::get_if<TabClear>(&command.payload) );
+                break;
             default:
                 break;
         }
@@ -189,6 +195,14 @@ void InterpreterImpl::ProcessHT( signed _amount )
                 ++_amount;        
         }
         m_Screen.GoTo( x, m_Screen.CursorY() );
+    }
+}
+
+void InterpreterImpl::ProcessHTS()
+{
+    const size_t x = static_cast<size_t>(m_Screen.CursorX());
+    if( x < m_TabStops.size() ) {
+        m_TabStops[x] = true;
     }
 }
 
@@ -311,6 +325,19 @@ void InterpreterImpl::ProcessChangeColumnMode132( bool _on )
     else {
         // toggle 80-column mode
         m_Screen.ResizeScreen(80, height);
+    }
+}
+
+void  InterpreterImpl::ProcessClearTab( input::TabClear _tab_clear )
+{
+    if( _tab_clear.mode == input::TabClear::CurrentColumn ) {
+        const size_t x = static_cast<size_t>(m_Screen.CursorX());
+        if( x < m_TabStops.size() ) {
+            m_TabStops[x] = false;
+        }
+    }
+    else {
+        m_TabStops.reset();
     }
 }
 

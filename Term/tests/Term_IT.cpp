@@ -881,6 +881,40 @@ TEST_CASE(PREFIX"vttest(2.1) - test of WRAP AROUND mode setting")
     CHECK( result == expectation );
 }
 
+TEST_CASE(PREFIX"vttest(2.2) - Test of TAB setting/resetting")
+{
+    const auto raw_input =
+    "\x1B[2J\x1B[3g\x1B[1;1H\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C"
+    "\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C"
+    "\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C"
+    "\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[1;4H"
+    "\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C"
+    "\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C"
+    "\x1B[0g\x1B[6C\x1B[1;7H\x1B[1g\x1B[2g\x1B[1;1H"
+    "\x09*\x09*\x09*\x09*\x09*\x09*\x09*\x09*\x09*\x09*\x09*\x09*\x09*"
+    "\x1B[2;2H     *     *     *     *     *     *     *     *     *     *     *     *     *"
+    "\x1B[4;1HTest of TAB setting/resetting. These two lines\x0D\x0D\x0Ashould look the same. "
+    "Push <RETURN>";
+    
+    const auto expectation =
+	"      *     *     *     *     *     *     *     *     *     *     *     *     * "
+    "      *     *     *     *     *     *     *     *     *     *     *     *     * "
+    "                                                                                "
+    "Test of TAB setting/resetting. These two lines                                  "
+    "should look the same. Push <RETURN>                                             "
+    "                                                                                ";
+
+    Parser2Impl parser;
+    Screen screen(80, 6);
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+}
+
 TEST_CASE(PREFIX"rn escape assumption")
 {
     auto string = std::string_view("\r\n");

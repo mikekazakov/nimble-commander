@@ -46,13 +46,17 @@ enum class Type {
     report,                 // ask for the terminal's status
                             // payload type - DeviceReport
     change_mode,            // payload type - ModeChange
-    set_scrolling_region    // payload type - ScrollingRegion
+    set_scrolling_region,   // payload type - ScrollingRegion
+    clear_tab,              // payload type - TabClear
+    set_tab,                // set one horizontal stop at the active position.
 };
 
-struct None {
+struct None
+{
 };
 
-struct Title {
+struct Title
+{
     enum Kind {
         IconAndWindow,
         Icon,
@@ -62,11 +66,13 @@ struct Title {
     std::string title; 
 };
 
-struct UTF8Text {
+struct UTF8Text
+{
     std::string characters;
 };
 
-struct CursorMovement {
+struct CursorMovement
+{
     enum Positioning {
         Absolute,
         Relative
@@ -129,9 +135,19 @@ struct ScrollingRegion
     std::optional<Range> range;
 };
 
-struct Command {
+struct TabClear
+{
+    enum Kind {
+        All,
+        CurrentColumn
+    };
+    Kind mode = All;
+};
+
+struct Command
+{
     using Payload = std::variant<None, signed, unsigned, UTF8Text, Title, CursorMovement,
-    DisplayErasure, LineErasure, ModeChange, DeviceReport, ScrollingRegion>;
+    DisplayErasure, LineErasure, ModeChange, DeviceReport, ScrollingRegion, TabClear>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

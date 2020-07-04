@@ -47,6 +47,8 @@ static std::string ToString(const Command::Payload &_payload)
             return "range=" + (arg.range ?
                 ( std::to_string(arg.range->top) + "," + std::to_string(arg.range->bottom)) :
                 "none" );
+        else if constexpr( std::is_same_v<T, TabClear> )
+            return "mode="s + std::string(magic_enum::enum_name(arg.mode));
         else
             static_assert(always_false_v<T>, "non-exhaustive visitor!");
     }, _payload);

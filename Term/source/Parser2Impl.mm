@@ -147,6 +147,11 @@ void Parser2Impl::RIS() noexcept
     m_Output.emplace_back( input::Type::reset );
 }
 
+void Parser2Impl::HTS() noexcept
+{
+    m_Output.emplace_back( input::Type::set_tab );
+}
+
 void Parser2Impl::DECSC() noexcept
 {
     // TODO: save translation stuff
@@ -205,7 +210,6 @@ bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
              to be saved. */                
         case '7': DECSC(); return true;
             
-
         case '8':
             if ( m_EscState.hash == true )
             /* DECALN – Screen Alignment Display (DEC Private)
@@ -220,27 +224,32 @@ bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
              and character set to be restored. */
                 DECRC();
             return true;
-            
+        
+            /* IND – Index
+             ESC D
+             This sequence causes the active position to move downward one line without
+             changing the column position. If the active position is at the bottom margin, a
+             scroll up is performed. */
+        case 'D': LF(); return true;
+        
             /*  NEL – Next Line
              ESC E     
              This sequence causes the active position to move to the first position on the
              next line downward. If the active position is at the bottom margin, a scroll up
              is performed. */
         case 'E': CR(); LF(); return true;
-            
-            /* IND – Index
-             ESC D     
-             This sequence causes the active position to move downward one line without
-             changing the column position. If the active position is at the bottom margin, a
-             scroll up is performed. */                     
-        case 'D': LF(); return true;
-            
+
+            /*  HTS – Tab Set
+             ESC H
+             Set one horizontal stop at the active position. */
+        case 'H': HTS(); return true;
+
             /* RI – Reverse Index
              ESC M     
              Move the active position to the same horizontal position on the preceding line.
              If the active position is at the top margin, a scroll down is performed. */                                
         case 'M': RI(); return true;
-            
+
             /* RIS – Reset To Initial State
              ESC c     
              Reset the VT100 to its initial state, i.e., the state it has after it is
@@ -635,7 +644,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'd': CSI_d(); break;
         case 'e': CSI_e(); break;
         case 'f': CSI_f(); break;
-        // CSI Ps g  Tab Clear (TBC). <-- unimplemented
+        case 'g': CSI_g(); break;
         case 'h': CSI_hl(); break;
         case 'l': CSI_hl(); break;
         case 'n': CSI_n(); break;
@@ -994,6 +1003,21 @@ void Parser2Impl::CSI_e() noexcept
 void Parser2Impl::CSI_f() noexcept
 {
     CSI_H();
+}
+
+void Parser2Impl::CSI_g() noexcept
+{
+//    CSI Ps g  Tab Clear (TBC).
+//    Ps = 0  ⇒  Clear Current Column (default).
+//    Ps = 3  ⇒  Clear All.
+    const std::string_view s = m_CSIState.buffer;
+    int ps = 0; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    if( ps == 0 || ps == 3 ) {
+        input::TabClear tc;
+        tc.mode = ps == 0 ? input::TabClear::CurrentColumn : input::TabClear::All;
+        m_Output.emplace_back( input::Type::clear_tab, tc );
+    }
 }
 
 static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, bool _dec) noexcept

@@ -24,13 +24,13 @@ TEST_CASE(PREFIX"resizes screen only when allowed")
     InterpreterImpl interpreter(screen);
     SECTION("Allowed - default") {
         SECTION("80") {
-            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::ColumnMode132, false}};
+            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::Column132, false}};
             interpreter.Interpret( {&cmd, 1} );
             CHECK( screen.Width() == 80 );
             CHECK( screen.Height() == 6 );
         }
         SECTION("132") {
-            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::ColumnMode132, true}};
+            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::Column132, true}};
             interpreter.Interpret( {&cmd, 1} );
             CHECK( screen.Width() == 132 );
             CHECK( screen.Height() == 6 );
@@ -39,11 +39,11 @@ TEST_CASE(PREFIX"resizes screen only when allowed")
     SECTION("Disabled") {
         interpreter.SetScreenResizeAllowed(false);
         SECTION("80") {
-            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::ColumnMode132, false}};
+            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::Column132, false}};
             interpreter.Interpret( {&cmd, 1} );
         }
         SECTION("132") {
-            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::ColumnMode132, true}};
+            const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::Column132, true}};
             interpreter.Interpret( {&cmd, 1} );
         }
         CHECK( screen.Width() == 10 );

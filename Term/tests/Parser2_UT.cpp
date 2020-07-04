@@ -892,16 +892,34 @@ TEST_CASE(PREFIX"CSI hl")
         CHECK( as_mode_change(r[0]).status == _status );
     };
     SECTION( "ESC [ 4 h" ) {
-        verify("\x1B""[4h", Kind::InsertMode, true);
+        verify("\x1B""[4h", Kind::Insert, true);
     }
     SECTION( "ESC [ 4 l" ) {
-        verify("\x1B""[4l", Kind::InsertMode, false);
+        verify("\x1B""[4l", Kind::Insert, false);
     }
     SECTION( "ESC [ 20 h" ) {
-        verify("\x1B""[20h", Kind::NewLineMode, true);
+        verify("\x1B""[20h", Kind::NewLine, true);
     }
     SECTION( "ESC [ 20 l" ) {
-        verify("\x1B""[20l", Kind::NewLineMode, false);
+        verify("\x1B""[20l", Kind::NewLine, false);
+    }
+    SECTION( "ESC [ ? 3 h" ) {
+        verify("\x1B""[?3h", Kind::Column132, true);
+    }
+    SECTION( "ESC [ ? 3 l" ) {
+        verify("\x1B""[?3l", Kind::Column132, false);
+    }
+    SECTION( "ESC [ ? 6 h" ) {
+        verify("\x1B""[?6h", Kind::Origin, true);
+    }
+    SECTION( "ESC [ ? 6 l" ) {
+        verify("\x1B""[?6l", Kind::Origin, false);
+    }
+    SECTION( "ESC [ ? 7 h" ) {
+        verify("\x1B""[?7h", Kind::AutoWrap, true);
+    }
+    SECTION( "ESC [ ? 7 l" ) {
+        verify("\x1B""[?7l", Kind::AutoWrap, false);
     }
     SECTION( "ESC [ h" ) {
         REQUIRE( parser.Parse(to_bytes("\x1B""[h")).empty() );

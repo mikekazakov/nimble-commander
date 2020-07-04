@@ -53,6 +53,7 @@ private:
     TabStops m_TabStops;
     bool m_OriginLineMode = false;
     bool m_AllowScreenResize = true;
+    bool m_AutoWrapMode = true;
 };
 
 }

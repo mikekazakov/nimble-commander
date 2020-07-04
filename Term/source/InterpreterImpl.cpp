@@ -93,8 +93,8 @@ void InterpreterImpl::ProcessText( const input::UTF8Text &_text )
     
     for( const auto c: utf32 ) {
     
-    // TODO: if(wrapping_mode == ...) <- need to add this
-        if( m_Screen.CursorX() >= m_Screen.Width() - 1 &&
+        if( m_AutoWrapMode == true &&
+           m_Screen.CursorX() >= m_Screen.Width() - 1 &&
            m_Screen.LineOverflown() &&
            !oms::IsUnicodeCombiningCharacter(c) ) {
             m_Screen.PutWrap();
@@ -284,12 +284,15 @@ void InterpreterImpl::ProcessSetScrollingRegion( const input::ScrollingRegion _s
 void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )
 {
     switch ( _mode_change.mode ) {
-        case input::ModeChange::Kind::OriginMode:
+        case input::ModeChange::Kind::Origin:
             m_OriginLineMode = _mode_change.status;
             break;
-        case input::ModeChange::Kind::ColumnMode132: {
+        case input::ModeChange::Kind::AutoWrap:
+            m_AutoWrapMode = _mode_change.status;
+            break;
+        case input::ModeChange::Kind::Column132:
             ProcessChangeColumnMode132(_mode_change.status);
-        }
+            break;
         default:
             break;
     }

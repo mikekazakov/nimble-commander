@@ -100,12 +100,13 @@ struct LineErasure
 struct ModeChange
 {
     enum Kind {
-        InsertMode, // Insert Mode / Replace Mode (default)
-        NewLineMode, // New Line Mode / Line Feed Mode (default)
-        ColumnMode132, // 132 Column Mode / 80 Column Mode (default)
-        OriginMode, // Origin Cursor Mode / Normal Cursor Mode (default)
+        Insert, // Insert Mode / Replace Mode (default) [IRM]
+        NewLine, // New Line Mode / Line Feed Mode (default) [LNM]
+        Column132, // 132 Column Mode / 80 Column Mode (default) [DECCOLM]
+        Origin, // Origin Cursor Mode / Normal Cursor Mode (default) [DECOM]
+        AutoWrap, // Auto-wrap Mode / No Auto-wrap Mode [DECAWM]
     };
-    Kind mode = InsertMode;
+    Kind mode = Insert;
     bool status = true;
 };
 

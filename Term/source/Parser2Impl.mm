@@ -1000,16 +1000,17 @@ static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, 
 {
     if( _dec ) {
         switch( _ps_number ) {
-            case 3:     return input::ModeChange::ColumnMode132;
-            case 6:     return input::ModeChange::OriginMode;
+            case 3:     return input::ModeChange::Column132;
+            case 6:     return input::ModeChange::Origin;
+            case 7:     return input::ModeChange::AutoWrap;
             default:
                 return std::nullopt;
         }
     }
     else {
         switch( _ps_number ) {
-            case 4:     return input::ModeChange::InsertMode;
-            case 20:    return input::ModeChange::NewLineMode;
+            case 4:     return input::ModeChange::Insert;
+            case 20:    return input::ModeChange::NewLine;
             default:
                 return std::nullopt;
         }

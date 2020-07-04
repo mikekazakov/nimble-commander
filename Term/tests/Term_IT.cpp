@@ -846,6 +846,41 @@ TEST_CASE(PREFIX"vttest(1.6) - test of cursor movements, "
     CHECK( result == expectation );
 }
 
+TEST_CASE(PREFIX"vttest(2.1) - test of WRAP AROUND mode setting")
+{
+    const auto raw_input =
+    "\x0D\x0A\x1B[2J"
+    "\x1B[1;1H\x1B[?7h***************************************************************************"
+    "*************************************************************************************\x1B[?7l"
+    "\x1B[3;1H************************************************************************************"
+    "****************************************************************************\x1B[?7h\x1B[5;1H"
+    "This should be three identical lines of *'s completely filling\x0D\x0D\x0Athe top of the "
+    "screen without any empty lines between.\x0D\x0D\x0A(Test of WRAP AROUND mode setting.)"
+    "\x0D\x0D\x0APush <RETURN>";
+    
+    const auto expectation =
+    "********************************************************************************"
+    "********************************************************************************"
+    "********************************************************************************"
+    "                                                                                "
+    "This should be three identical lines of *'s completely filling                  "
+    "the top of the screen without any empty lines between.                          "
+    "(Test of WRAP AROUND mode setting.)                                             "
+    "Push <RETURN>                                                                   "
+    "                                                                                "
+    "                                                                                ";
+
+    Parser2Impl parser;
+    Screen screen(80, 10);
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+}
+
 TEST_CASE(PREFIX"rn escape assumption")
 {
     auto string = std::string_view("\r\n");

@@ -307,6 +307,9 @@ void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )
         case input::ModeChange::Kind::Column132:
             ProcessChangeColumnMode132(_mode_change.status);
             break;
+        case input::ModeChange::Kind::ReverseVideo:
+            m_Screen.SetVideoReverse(_mode_change.status);
+            break;
         default:
             break;
     }

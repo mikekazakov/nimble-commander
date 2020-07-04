@@ -5,8 +5,8 @@
 
 namespace nc::term::input {
 
-static_assert( std::is_nothrow_default_constructible_v<nc::term::input::Command> );
-static_assert( std::is_nothrow_move_constructible_v<nc::term::input::Command> );
+static_assert( std::is_nothrow_default_constructible_v<Command> );
+static_assert( std::is_nothrow_move_constructible_v<Command> );
 
 static std::string ToString(Type _type)
 {

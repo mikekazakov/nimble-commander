@@ -106,14 +106,15 @@ struct LineErasure
 struct ModeChange
 {
     enum Kind {
-        Insert, // Insert Mode / Replace Mode (default) [IRM]
-        NewLine, // New Line Mode / Line Feed Mode (default) [LNM]
-        Column132, // 132 Column Mode / 80 Column Mode (default) [DECCOLM]
-        Origin, // Origin Cursor Mode / Normal Cursor Mode (default) [DECOM]
+        Insert, // Insert Mode / Replace Mode [IRM]
+        NewLine, // New Line Mode / Line Feed Mode [LNM]
+        Column132, // 132 Column Mode / 80 Column Mode [DECCOLM]
+        Origin, // Origin Cursor Mode / Normal Cursor Mode [DECOM]
         AutoWrap, // Auto-wrap Mode / No Auto-wrap Mode [DECAWM]
+        ReverseVideo, // Reverse Video / Normal Video [DECSCNM]
     };
     Kind mode = Insert;
-    bool status = true;
+    bool status = false;
 };
 
 struct DeviceReport

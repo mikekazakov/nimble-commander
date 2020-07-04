@@ -397,4 +397,49 @@ const std::string& Screen::Title() const
     return m_Title;
 }
 
+void Screen::SetVideoReverse( bool _reverse ) noexcept
+{
+    m_ReverseVideo = _reverse;
+}
+
+bool Screen::VideoReverse() const noexcept
+{
+    return m_ReverseVideo;
+}
+
+std::unique_lock<std::mutex> Screen::AcquireLock() const noexcept
+{
+    return std::unique_lock{m_Lock};
+}
+
+const ScreenBuffer &Screen::Buffer() const noexcept
+{
+    return m_Buffer;
+}
+
+int Screen::Width() const noexcept
+{
+    return m_Buffer.Width();
+}
+
+int Screen::Height()  const noexcept
+{
+    return m_Buffer.Height();
+}
+
+int Screen::CursorX() const noexcept
+{
+    return m_PosX;
+}
+
+int Screen::CursorY() const noexcept
+{
+    return m_PosY;
+}
+
+bool Screen::LineOverflown() const noexcept
+{
+    return m_LineOverflown;
+}
+
 }

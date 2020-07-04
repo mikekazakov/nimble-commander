@@ -1022,19 +1022,21 @@ void Parser2Impl::CSI_g() noexcept
 
 static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, bool _dec) noexcept
 {
+    using Kind = input::ModeChange::Kind;
     if( _dec ) {
         switch( _ps_number ) {
-            case 3:     return input::ModeChange::Column132;
-            case 6:     return input::ModeChange::Origin;
-            case 7:     return input::ModeChange::AutoWrap;
+            case 3:     return Kind::Column132;
+            case 5:     return Kind::ReverseVideo;
+            case 6:     return Kind::Origin;
+            case 7:     return Kind::AutoWrap;
             default:
                 return std::nullopt;
         }
     }
     else {
         switch( _ps_number ) {
-            case 4:     return input::ModeChange::Insert;
-            case 20:    return input::ModeChange::NewLine;
+            case 4:     return Kind::Insert;
+            case 20:    return Kind::NewLine;
             default:
                 return std::nullopt;
         }

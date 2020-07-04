@@ -5,114 +5,120 @@
 using namespace nc::term;
 #define PREFIX "nc::term::Screen "
 
+TEST_CASE(PREFIX"Defaults")
+{
+    Screen screen(10, 10);
+    CHECK( screen.VideoReverse() == false );
+}
+
 TEST_CASE(PREFIX"EraseInLine")
 {
-    Screen scr(10, 1);
-    scr.GoTo(0, 0);
-    scr.PutString("ABCDE");
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "ABCDE     ");
+    Screen screen(10, 1);
+    screen.GoTo(0, 0);
+    screen.PutString("ABCDE");
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "ABCDE     ");
     
-    scr.GoTo(3, 0);
-    scr.EraseInLine(0);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "ABC       ");
+    screen.GoTo(3, 0);
+    screen.EraseInLine(0);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "ABC       ");
 
-    scr.GoTo(1, 0);
-    scr.EraseInLine(1);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "  C       ");
+    screen.GoTo(1, 0);
+    screen.EraseInLine(1);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "  C       ");
 
-    scr.EraseInLine(2);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "          ");
+    screen.EraseInLine(2);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "          ");
 }
 
 TEST_CASE(PREFIX"DoEraseScreen")
 {
-    Screen scr(10, 2);
-    scr.GoTo(0, 0);
-    scr.PutString("ABCDE");
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "ABCDE     "
-                                             "          ");
+    Screen screen(10, 2);
+    screen.GoTo(0, 0);
+    screen.PutString("ABCDE");
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "ABCDE     "
+                                                "          ");
     
-    scr.GoTo(2, 0);
-    scr.DoEraseScreen(1);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "   DE     "
-                                             "          ");
+    screen.GoTo(2, 0);
+    screen.DoEraseScreen(1);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "   DE     "
+                                                "          ");
 
-    scr.GoTo(4, 0);
-    scr.DoEraseScreen(0);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "   D      "
-                                             "          ");
+    screen.GoTo(4, 0);
+    screen.DoEraseScreen(0);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "   D      "
+                                                "          ");
 
-    scr.DoEraseScreen(2);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "          "
-                                             "          ");
+    screen.DoEraseScreen(2);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "          "
+                                                "          ");
 }
 
 TEST_CASE(PREFIX"EraseInLineCount")
 {
-    Screen scr(10, 1);
-    scr.GoTo(0, 0);
-    scr.PutString("ABCDE");
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "ABCDE     ");
+    Screen screen(10, 1);
+    screen.GoTo(0, 0);
+    screen.PutString("ABCDE");
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "ABCDE     ");
 
-    scr.GoTo(2, 0);
-    scr.EraseInLineCount(2);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "AB  E     ");
+    screen.GoTo(2, 0);
+    screen.EraseInLineCount(2);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "AB  E     ");
 
-    scr.GoTo(2, 0);
-    scr.EraseInLineCount(1000);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "AB        ");
+    screen.GoTo(2, 0);
+    screen.EraseInLineCount(1000);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "AB        ");
     
-    scr.GoTo(0, 0);
-    scr.EraseInLineCount(1000);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "          ");
+    screen.GoTo(0, 0);
+    screen.EraseInLineCount(1000);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "          ");
 }
 
 TEST_CASE(PREFIX"ScrollDown")
 {
-    Screen scr(10, 3);
-    scr.GoTo(0, 0);
-    scr.PutString("ABCDE");
-    scr.GoTo(0, 1);
-    scr.PutString("12345");
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "ABCDE     "
-                                             "12345     "
-                                             "          ");
-    scr.ScrollDown(0, 3, 1);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "          "
-                                             "ABCDE     "
-                                             "12345     ");
-    scr.ScrollDown(0, 3, 10);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "          "
-                                             "          "
-                                             "          ");
+    Screen screen(10, 3);
+    screen.GoTo(0, 0);
+    screen.PutString("ABCDE");
+    screen.GoTo(0, 1);
+    screen.PutString("12345");
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "ABCDE     "
+                                                "12345     "
+                                                "          ");
+    screen.ScrollDown(0, 3, 1);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "          "
+                                                "ABCDE     "
+                                                "12345     ");
+    screen.ScrollDown(0, 3, 10);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "          "
+                                                "          "
+                                                "          ");
     
-    scr.GoTo(0, 0);
-    scr.PutString("ABCDE");
-    scr.GoTo(0, 1);
-    scr.PutString("12345");
-    scr.ScrollDown(0, 3, 2);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "          "
-                                             "          "
-                                             "ABCDE     ");
-    scr.ScrollDown(0, 2, 2);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "          "
-                                             "          "
-                                             "ABCDE     ");
-    scr.ScrollDown(0, 2, 100);
-    CHECK(scr.Buffer().DumpScreenAsANSI() == "          "
-                                             "          "
-                                             "ABCDE     ");
+    screen.GoTo(0, 0);
+    screen.PutString("ABCDE");
+    screen.GoTo(0, 1);
+    screen.PutString("12345");
+    screen.ScrollDown(0, 3, 2);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "          "
+                                                "          "
+                                                "ABCDE     ");
+    screen.ScrollDown(0, 2, 2);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "          "
+                                                "          "
+                                                "ABCDE     ");
+    screen.ScrollDown(0, 2, 100);
+    CHECK(screen.Buffer().DumpScreenAsANSI() == "          "
+                                                "          "
+                                                "ABCDE     ");
 }
 
 TEST_CASE(PREFIX"Line overflow logic")
 {
-    Screen scr(10, 1);
-    scr.GoTo(0, 0);
-    CHECK( scr.LineOverflown() == false );
-    scr.PutString("01234");
-    CHECK( scr.LineOverflown() == false );
-    scr.PutString("56789");
-    CHECK( scr.LineOverflown() == true );
-    scr.GoTo(0, 0);
-    CHECK( scr.LineOverflown() == false );
+    Screen screen(10, 1);
+    screen.GoTo(0, 0);
+    CHECK( screen.LineOverflown() == false );
+    screen.PutString("01234");
+    CHECK( screen.LineOverflown() == false );
+    screen.PutString("56789");
+    CHECK( screen.LineOverflown() == true );
+    screen.GoTo(0, 0);
+    CHECK( screen.LineOverflown() == false );
 }

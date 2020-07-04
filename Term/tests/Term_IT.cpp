@@ -969,7 +969,6 @@ TEST_CASE(PREFIX"vttest(2.3) - 132 column / video reverse")
     CHECK( screen.VideoReverse() == true );
 }
 
-
 TEST_CASE(PREFIX"vttest(2.4) - 80 column / video reverse")
 {
     const auto raw_input =
@@ -1021,7 +1020,7 @@ TEST_CASE(PREFIX"vttest(2.4) - 80 column / video reverse")
     CHECK( screen.VideoReverse() == true );
 }
 
-TEST_CASE(PREFIX"vttest(2.5) - 132 column / video reverse")
+TEST_CASE(PREFIX"vttest(2.5) - 132 column / no video reverse")
 {
     const auto raw_input =
     "\x1B[?5l\x1B[?3h\x1B[2J\x1B[1;1H\x1B[3g\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C"
@@ -1062,6 +1061,57 @@ TEST_CASE(PREFIX"vttest(2.5) - 132 column / video reverse")
     "                  This is 132 column mode, dark background.                                                                         "
     "                   This is 132 column mode, dark background.Push <RETURN>                                                           "
     "                                                                                                                                    ";
+
+    Parser2Impl parser;
+    Screen screen(80, 21);
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+    CHECK( screen.VideoReverse() == false );
+}
+
+TEST_CASE(PREFIX"vttest(2.6) - 80 column / no video reverse")
+{
+    const auto raw_input =
+    "\x1B[?5l\x1B[?3l\x1B[2J\x1B[1;1H12345678901234567890123456789012345678901234567890123456789012"
+    "34567890123456789\x1B[3;3HThis is 80 column mode, dark background.\x1B[4;4HThis is 80 column "
+    "mode, dark background.\x1B[5;5HThis is 80 column mode, dark background.\x1B[6;6HThis is 80 "
+    "column mode, dark background.\x1B[7;7HThis is 80 column mode, dark background.\x1B[8;8HThis is"
+    " 80 column mode, dark background.\x1B[9;9HThis is 80 column mode, dark background.\x1B[10;10H"
+    "This is 80 column mode, dark background.\x1B[11;11HThis is 80 column mode, dark background."
+    "\x1B[12;12HThis is 80 column mode, dark background.\x1B[13;13HThis is 80 column mode, dark "
+    "background.\x1B[14;14HThis is 80 column mode, dark background.\x1B[15;15HThis is 80 column "
+    "mode, dark background.\x1B[16;16HThis is 80 column mode, dark background.\x1B[17;17HThis is 80"
+    " column mode, dark background.\x1B[18;18HThis is 80 column mode, dark background.\x1B[19;19H"
+    "This is 80 column mode, dark background.\x1B[20;20HThis is 80 column mode, dark background."
+    "Push <RETURN>";
+    
+    const auto expectation =
+    "1234567890123456789012345678901234567890123456789012345678901234567890123456789 "
+    "                                                                                "
+    "  This is 80 column mode, dark background.                                      "
+    "   This is 80 column mode, dark background.                                     "
+    "    This is 80 column mode, dark background.                                    "
+    "     This is 80 column mode, dark background.                                   "
+    "      This is 80 column mode, dark background.                                  "
+    "       This is 80 column mode, dark background.                                 "
+    "        This is 80 column mode, dark background.                                "
+    "         This is 80 column mode, dark background.                               "
+    "          This is 80 column mode, dark background.                              "
+    "           This is 80 column mode, dark background.                             "
+    "            This is 80 column mode, dark background.                            "
+    "             This is 80 column mode, dark background.                           "
+    "              This is 80 column mode, dark background.                          "
+    "               This is 80 column mode, dark background.                         "
+    "                This is 80 column mode, dark background.                        "
+    "                 This is 80 column mode, dark background.                       "
+    "                  This is 80 column mode, dark background.                      "
+    "                   This is 80 column mode, dark background.Push <RETURN>        "
+    "                                                                                ";
 
     Parser2Impl parser;
     Screen screen(80, 21);

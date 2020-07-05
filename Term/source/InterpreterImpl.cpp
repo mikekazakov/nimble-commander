@@ -138,8 +138,18 @@ void InterpreterImpl::ProcessRI()
 {
     if( m_Screen.CursorY() == m_Extent.top )
         m_Screen.ScrollDown( m_Extent.top, m_Extent.bottom, 1);
-    else
-        m_Screen.DoCursorUp();
+    else {
+        const int x = m_Screen.CursorX();
+        const int y = m_Screen.CursorY();
+        const auto target_y = m_OriginLineMode ?
+            std::clamp(y - 1,
+                       m_Extent.top,
+                       m_Extent.bottom - 1) :
+            std::clamp(y - 1,
+                       0,
+                       m_Extent.height - 1);
+        m_Screen.GoTo( x, target_y );
+    }
 }
 
 void InterpreterImpl::ProcessMC( const input::CursorMovement _cursor_movement )

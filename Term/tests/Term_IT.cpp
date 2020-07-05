@@ -1533,6 +1533,51 @@ TEST_CASE(PREFIX"vttest(2.11) - origin mode test")
     CHECK( screen.VideoReverse() == false );
 }
 
+TEST_CASE(PREFIX"vttest(2.12) - origin mode test")
+{
+    const auto raw_input =
+    "\x1B[2J\x1B[?6l\x1B[24;1HOrigin mode test. This line should be at the bottom of the screen."
+    "\x1B[1;1HThis line should be at the top of the screen. Push <RETURN>";
+    
+    const auto expectation =
+    "This line should be at the top of the screen. Push <RETURN>                     "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "Origin mode test. This line should be at the bottom of the screen.              "
+    "                                                                                ";
+    
+    Parser2Impl parser;
+    Screen screen(80, 25);
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+    CHECK( screen.VideoReverse() == false );
+}
+
 TEST_CASE(PREFIX"rn escape assumption")
 {
     auto string = std::string_view("\r\n");

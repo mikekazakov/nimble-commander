@@ -1407,6 +1407,87 @@ TEST_CASE(PREFIX"vttest(2.9) - jump scroll")
     CHECK( screen.VideoReverse() == false );
 }
 
+TEST_CASE(PREFIX"vttest(2.10) - jump scroll")
+{
+    const auto raw_input =
+    "\x1B[?6h\x1B[1;24r\x1B[2J\x1B[24BJump scroll up region [1..24] size 24 Line 1\x0D\x0AJump "
+    "scroll up region [1..24] size 24 Line 2\x0D\x0AJump scroll up region [1..24] size 24 Line 3"
+    "\x0D\x0AJump scroll up region [1..24] size 24 Line 4\x0D\x0AJump scroll up region [1..24] size"
+    " 24 Line 5\x0D\x0AJump scroll up region [1..24] size 24 Line 6\x0D\x0AJump scroll up region "
+    "[1..24] size 24 Line 7\x0D\x0AJump scroll up region [1..24] size 24 Line 8\x0D\x0AJump scroll"
+    " up region [1..24] size 24 Line 9\x0D\x0AJump scroll up region [1..24] size 24 Line 10\x0D\x0A"
+    "Jump scroll up region [1..24] size 24 Line 11\x0D\x0AJump scroll up region [1..24] size 24 "
+    "Line 12\x0D\x0AJump scroll up region [1..24] size 24 Line 13\x0D\x0AJump scroll up region "
+    "[1..24] size 24 Line 14\x0D\x0AJump scroll up region [1..24] size 24 Line 15\x0D\x0AJump "
+    "scroll up region [1..24] size 24 Line 16\x0D\x0AJump scroll up region [1..24] size 24 Line 17"
+    "\x0D\x0AJump scroll up region [1..24] size 24 Line 18\x0D\x0AJump scroll up region [1..24] "
+    "size 24 Line 19\x0D\x0AJump scroll up region [1..24] size 24 Line 20\x0D\x0AJump scroll up "
+    "region [1..24] size 24 Line 21\x0D\x0AJump scroll up region [1..24] size 24 Line 22\x0D\x0A"
+    "Jump scroll up region [1..24] size 24 Line 23\x0D\x0AJump scroll up region [1..24] size 24 "
+    "Line 24\x0D\x0AJump scroll up region [1..24] size 24 Line 25\x0D\x0AJump scroll up region "
+    "[1..24] size 24 Line 26\x0D\x0AJump scroll up region [1..24] size 24 Line 27\x0D\x0AJump "
+    "scroll up region [1..24] size 24 Line 28\x0D\x0AJump scroll up region [1..24] size 24 Line "
+    "29\x0D\x0A\x1B[24AJump scroll down region [1..24] size 24 Line 1\x0D\x0A\x1BM\x1BMJump scroll "
+    "down region [1..24] size 24 Line 2\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 "
+    "Line 3\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 Line 4\x0D\x0A\x1BM\x1BMJump "
+    "scroll down region [1..24] size 24 Line 5\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] "
+    "size 24 Line 6\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 Line 7\x0D\x0A\x1BM"
+    "\x1BMJump scroll down region [1..24] size 24 Line 8\x0D\x0A\x1BM\x1BMJump scroll down region "
+    "[1..24] size 24 Line 9\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 Line 10\x0D"
+    "\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 Line 11\x0D\x0A\x1BM\x1BMJump scroll "
+    "down region [1..24] size 24 Line 12\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 "
+    "Line 13\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 Line 14\x0D\x0A\x1BM\x1BMJump"
+    " scroll down region [1..24] size 24 Line 15\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] "
+    "size 24 Line 16\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 Line 17\x0D\x0A\x1BM"
+    "\x1BMJump scroll down region [1..24] size 24 Line 18\x0D\x0A\x1BM\x1BMJump scroll down region "
+    "[1..24] size 24 Line 19\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 Line 20\x0D"
+    "\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 Line 21\x0D\x0A\x1BM\x1BMJump scroll "
+    "down region [1..24] size 24 Line 22\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 "
+    "Line 23\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 Line 24\x0D\x0A\x1BM\x1BMJump"
+    " scroll down region [1..24] size 24 Line 25\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] "
+    "size 24 Line 26\x0D\x0A\x1BM\x1BMJump scroll down region [1..24] size 24 Line 27\x0D\x0A\x1BM"
+    "\x1BMJump scroll down region [1..24] size 24 Line 28\x0D\x0A\x1BM\x1BMJump scroll down region "
+    "[1..24] size 24 Line 29\x0D\x0A\x1BM\x1BMPush <RETURN>";
+    
+    const auto expectation =
+    "Push <RETURN>                                                                   "
+    "Jump scroll down region [1..24] size 24 Line 29                                 "
+    "Jump scroll down region [1..24] size 24 Line 28                                 "
+    "Jump scroll down region [1..24] size 24 Line 27                                 "
+    "Jump scroll down region [1..24] size 24 Line 26                                 "
+    "Jump scroll down region [1..24] size 24 Line 25                                 "
+    "Jump scroll down region [1..24] size 24 Line 24                                 "
+    "Jump scroll down region [1..24] size 24 Line 23                                 "
+    "Jump scroll down region [1..24] size 24 Line 22                                 "
+    "Jump scroll down region [1..24] size 24 Line 21                                 "
+    "Jump scroll down region [1..24] size 24 Line 20                                 "
+    "Jump scroll down region [1..24] size 24 Line 19                                 "
+    "Jump scroll down region [1..24] size 24 Line 18                                 "
+    "Jump scroll down region [1..24] size 24 Line 17                                 "
+    "Jump scroll down region [1..24] size 24 Line 16                                 "
+    "Jump scroll down region [1..24] size 24 Line 15                                 "
+    "Jump scroll down region [1..24] size 24 Line 14                                 "
+    "Jump scroll down region [1..24] size 24 Line 13                                 "
+    "Jump scroll down region [1..24] size 24 Line 12                                 "
+    "Jump scroll down region [1..24] size 24 Line 11                                 "
+    "Jump scroll down region [1..24] size 24 Line 10                                 "
+    "Jump scroll down region [1..24] size 24 Line 9                                  "
+    "Jump scroll down region [1..24] size 24 Line 8                                  "
+    "Jump scroll down region [1..24] size 24 Line 7                                  "
+    "                                                                                ";
+    
+    Parser2Impl parser;
+    Screen screen(80, 25);
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+    CHECK( screen.VideoReverse() == false );
+}
+
 TEST_CASE(PREFIX"rn escape assumption")
 {
     auto string = std::string_view("\r\n");

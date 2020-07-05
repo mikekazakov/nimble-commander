@@ -308,6 +308,9 @@ void InterpreterImpl::ProcessSetScrollingRegion( const input::ScrollingRegion _s
         m_Extent.top = 0;
         m_Extent.bottom = m_Screen.Height();
     }
+    if( m_OriginLineMode ) {
+        m_Screen.GoTo( 0, m_Extent.top );
+    }
 }
 
 void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )

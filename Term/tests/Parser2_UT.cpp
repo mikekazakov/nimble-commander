@@ -996,66 +996,120 @@ TEST_CASE(PREFIX"CSI hl")
 TEST_CASE(PREFIX"CSI m")
 {
     Parser2Impl parser;
-    SECTION( "ESC [ m" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[m"));
+    auto verify = [&](const char *_cmd, CharacterAttributes::Kind _mode) {
+        auto r = parser.Parse(to_bytes(_cmd));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::set_character_attributes );
-        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Normal );
+        CHECK( as_character_attributes(r[0]).mode == _mode );
+    };
+    SECTION( "ESC [ m" ) {
+        verify("\x1B[m", CharacterAttributes::Normal);
     }
     SECTION( "ESC [ 0 m" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[0m"));
-        REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::set_character_attributes );
-        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Normal );
+        verify("\x1B[0m", CharacterAttributes::Normal);
     }
     SECTION( "ESC [ 1 m" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[1m"));
-        REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::set_character_attributes );
-        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Bold );
+        verify("\x1B[1m", CharacterAttributes::Bold);
     }
     SECTION( "ESC [ 2 m" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[2m"));
-        REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::set_character_attributes );
-        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Faint );
+        verify("\x1B[2m", CharacterAttributes::Faint);
     }
     SECTION( "ESC [ 3 m" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[3m"));
-        REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::set_character_attributes );
-        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Italicized );
+        verify("\x1B[3m", CharacterAttributes::Italicized);
     }
     SECTION( "ESC [ 4 m" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[4m"));
-        REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::set_character_attributes );
-        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Underlined );
+        verify("\x1B[4m", CharacterAttributes::Underlined);
     }
     SECTION( "ESC [ 5 m" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[5m"));
-        REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::set_character_attributes );
-        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Blink );
+        verify("\x1B[5m", CharacterAttributes::Blink);
     }
     SECTION( "ESC [ 7 m" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[7m"));
-        REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::set_character_attributes );
-        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Inverse );
+        verify("\x1B[7m", CharacterAttributes::Inverse);
     }
     SECTION( "ESC [ 8 m" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[8m"));
-        REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::set_character_attributes );
-        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Invisible );
+        verify("\x1B[8m", CharacterAttributes::Invisible);
     }
     SECTION( "ESC [ 9 m" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[9m"));
-        REQUIRE( r.size() == 1 );
-        CHECK( r[0].type == Type::set_character_attributes );
-        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Crossed );
+        verify("\x1B[9m", CharacterAttributes::Crossed);
     }
+    SECTION( "ESC [ 21 m" ) {
+        verify("\x1B[21m", CharacterAttributes::DoublyUnderlined);
+    }
+    SECTION( "ESC [ 22 m" ) {
+        verify("\x1B[22m", CharacterAttributes::NotBoldNotFaint);
+    }
+    SECTION( "ESC [ 23 m" ) {
+        verify("\x1B[23m", CharacterAttributes::NotItalicized);
+    }
+    SECTION( "ESC [ 24 m" ) {
+        verify("\x1B[24m", CharacterAttributes::NotUnderlined);
+    }
+    SECTION( "ESC [ 25 m" ) {
+        verify("\x1B[25m", CharacterAttributes::NotBlink);
+    }
+    SECTION( "ESC [ 27 m" ) {
+        verify("\x1B[27m", CharacterAttributes::NotInverse);
+    }
+    SECTION( "ESC [ 28 m" ) {
+        verify("\x1B[28m", CharacterAttributes::NotInvisible);
+    }
+    SECTION( "ESC [ 29 m" ) {
+        verify("\x1B[29m", CharacterAttributes::NotCrossed);
+    }
+    SECTION( "ESC [ 30 m" ) {
+        verify("\x1B[30m", CharacterAttributes::ForegroundBlack);
+    }
+    SECTION( "ESC [ 31 m" ) {
+        verify("\x1B[31m", CharacterAttributes::ForegroundRed);
+    }
+    SECTION( "ESC [ 32 m" ) {
+        verify("\x1B[32m", CharacterAttributes::ForegroundGreen);
+    }
+    SECTION( "ESC [ 33 m" ) {
+        verify("\x1B[33m", CharacterAttributes::ForegroundYellow);
+    }
+    SECTION( "ESC [ 34 m" ) {
+        verify("\x1B[34m", CharacterAttributes::ForegroundBlue);
+    }
+    SECTION( "ESC [ 35 m" ) {
+        verify("\x1B[35m", CharacterAttributes::ForegroundMagenta);
+    }
+    SECTION( "ESC [ 36 m" ) {
+        verify("\x1B[36m", CharacterAttributes::ForegroundCyan);
+    }
+    SECTION( "ESC [ 37 m" ) {
+        verify("\x1B[37m", CharacterAttributes::ForegroundWhite);
+    }
+    SECTION( "ESC [ 39 m" ) {
+        verify("\x1B[39m", CharacterAttributes::ForegroundDefault);
+    }
+    SECTION( "ESC [ 40 m" ) {
+        verify("\x1B[40m", CharacterAttributes::BackgroundBlack);
+    }
+    SECTION( "ESC [ 41 m" ) {
+        verify("\x1B[41m", CharacterAttributes::BackgroundRed);
+    }
+    SECTION( "ESC [ 42 m" ) {
+        verify("\x1B[42m", CharacterAttributes::BackgroundGreen);
+    }
+    SECTION( "ESC [ 43 m" ) {
+        verify("\x1B[43m", CharacterAttributes::BackgroundYellow);
+    }
+    SECTION( "ESC [ 44 m" ) {
+        verify("\x1B[44m", CharacterAttributes::BackgroundBlue);
+    }
+    SECTION( "ESC [ 45 m" ) {
+        verify("\x1B[45m", CharacterAttributes::BackgroundMagenta);
+    }
+    SECTION( "ESC [ 46 m" ) {
+        verify("\x1B[46m", CharacterAttributes::BackgroundCyan);
+    }
+    SECTION( "ESC [ 47 m" ) {
+        verify("\x1B[47m", CharacterAttributes::BackgroundWhite);
+    }
+    SECTION( "ESC [ 49 m" ) {
+        verify("\x1B[49m", CharacterAttributes::BackgroundDefault);
+    }    
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 

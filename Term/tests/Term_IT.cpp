@@ -284,6 +284,10 @@ const static std::pair<const char*, const char*> g_ResponseCases[] =
         "\x1B[?6h\x1B[2;3r\x1BM\x1B[6n",
         "\033[1;1R"
     },
+    {
+        "\x1B[2;3r\n\n\n\x1B[6n",
+        "\033[3;1R"
+    },
 };
 
 const static std::pair<const char8_t*, const char32_t*> g_UTFCases[] = 

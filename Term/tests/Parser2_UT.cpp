@@ -98,6 +98,13 @@ static const TabClear& as_tab_clear( const Command &_command )
     throw std::invalid_argument("not TabClear");
 }
 
+static const CharacterAttributes& as_character_attributes( const Command &_command )
+{
+    if( auto ptr = std::get_if<CharacterAttributes>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not CharacterAttributes");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -982,6 +989,72 @@ TEST_CASE(PREFIX"CSI hl")
     }
     SECTION( "ESC [ l" ) {
         REQUIRE( parser.Parse(to_bytes("\x1B""[l")).empty() );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"CSI m")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ m" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[m"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Normal );
+    }
+    SECTION( "ESC [ 0 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[0m"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Normal );
+    }
+    SECTION( "ESC [ 1 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[1m"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Bold );
+    }
+    SECTION( "ESC [ 2 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[2m"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Faint );
+    }
+    SECTION( "ESC [ 3 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[3m"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Italicized );
+    }
+    SECTION( "ESC [ 4 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[4m"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Underlined );
+    }
+    SECTION( "ESC [ 5 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[5m"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Blink );
+    }
+    SECTION( "ESC [ 7 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[7m"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Inverse );
+    }
+    SECTION( "ESC [ 8 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[8m"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Invisible );
+    }
+    SECTION( "ESC [ 9 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[9m"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Crossed );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

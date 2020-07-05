@@ -49,6 +49,7 @@ enum class Type {
     set_scrolling_region,   // payload type - ScrollingRegion
     clear_tab,              // payload type - TabClear
     set_tab,                // set one horizontal stop at the active position.
+    set_character_attributes// payload type - CharacterAttributes
 };
 
 struct None
@@ -146,10 +147,26 @@ struct TabClear
     Kind mode = All;
 };
 
+struct CharacterAttributes {
+    enum Kind {
+        Normal,
+        Bold,
+        Faint,
+        Italicized,
+        Underlined,
+        Blink,
+        Inverse,
+        Invisible,
+        Crossed
+    };
+    Kind mode = Normal;
+};
+
 struct Command
 {
     using Payload = std::variant<None, signed, unsigned, UTF8Text, Title, CursorMovement,
-    DisplayErasure, LineErasure, ModeChange, DeviceReport, ScrollingRegion, TabClear>;
+    DisplayErasure, LineErasure, ModeChange, DeviceReport, ScrollingRegion, TabClear,
+    CharacterAttributes>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

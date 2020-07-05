@@ -647,6 +647,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'g': CSI_g(); break;
         case 'h': CSI_hl(); break;
         case 'l': CSI_hl(); break;
+        case 'm': CSI_m(); break;
         case 'n': CSI_n(); break;
         case 'r': CSI_r(); break;
         case '`': CSI_Accent(); break;
@@ -1073,6 +1074,74 @@ void Parser2Impl::CSI_hl() noexcept
     mc.mode = *kind;
     mc.status = on;
     m_Output.emplace_back( input::Type::change_mode, mc );
+}
+
+static std::optional<input::CharacterAttributes> SCImToCharacterAttributes(int _ps) noexcept
+{
+    using CA = input::CharacterAttributes;
+    input::CharacterAttributes ca;
+    switch( _ps ) {
+        case 0: ca.mode = CA::Normal; return ca;
+        case 1: ca.mode = CA::Bold; return ca;
+        case 2: ca.mode = CA::Faint; return ca;
+        case 3: ca.mode = CA::Italicized; return ca;
+        case 4: ca.mode = CA::Underlined; return ca;
+        case 5: ca.mode = CA::Blink; return ca;
+        case 7: ca.mode = CA::Inverse; return ca;
+        case 8: ca.mode = CA::Invisible; return ca;
+        case 9: ca.mode = CA::Crossed; return ca;
+        default: return std::nullopt;
+    };
+}
+
+void Parser2Impl::CSI_m() noexcept
+{
+// CSI Pm m  Character Attributes (SGR).
+// Ps = 0  ⇒  Normal (default), VT100.
+// Ps = 1  ⇒  Bold, VT100.
+// Ps = 2  ⇒  Faint, decreased intensity, ECMA-48 2nd.
+// Ps = 3  ⇒  Italicized, ECMA-48 2nd.
+// Ps = 4  ⇒  Underlined, VT100.
+// Ps = 5  ⇒  Blink, VT100.
+// Ps = 7  ⇒  Inverse, VT100.
+// Ps = 8  ⇒  Invisible, i.e., hidden, ECMA-48 2nd, VT300.
+// Ps = 9  ⇒  Crossed-out characters, ECMA-48 3rd.
+// Ps = 2 1  ⇒  Doubly-underlined, ECMA-48 3rd.
+// Ps = 2 2  ⇒  Normal (neither bold nor faint), ECMA-48 3rd.
+// Ps = 2 3  ⇒  Not italicized, ECMA-48 3rd.
+// Ps = 2 4  ⇒  Not underlined, ECMA-48 3rd.
+// Ps = 2 5  ⇒  Steady (not blinking), ECMA-48 3rd.
+// Ps = 2 7  ⇒  Positive (not inverse), ECMA-48 3rd.
+// Ps = 2 8  ⇒  Visible, i.e., not hidden, ECMA-48 3rd, VT300.
+// Ps = 2 9  ⇒  Not crossed-out, ECMA-48 3rd.
+// Ps = 3 0  ⇒  Set foreground color to Black.
+// Ps = 3 1  ⇒  Set foreground color to Red.
+// Ps = 3 2  ⇒  Set foreground color to Green.
+// Ps = 3 3  ⇒  Set foreground color to Yellow.
+// Ps = 3 4  ⇒  Set foreground color to Blue.
+// Ps = 3 5  ⇒  Set foreground color to Magenta.
+// Ps = 3 6  ⇒  Set foreground color to Cyan.
+// Ps = 3 7  ⇒  Set foreground color to White.
+// Ps = 3 9  ⇒  Set foreground color to default, ECMA-48 3rd.
+// Ps = 4 0  ⇒  Set background color to Black.
+// Ps = 4 1  ⇒  Set background color to Red.
+// Ps = 4 2  ⇒  Set background color to Green.
+// Ps = 4 3  ⇒  Set background color to Yellow.
+// Ps = 4 4  ⇒  Set background color to Blue.
+// Ps = 4 5  ⇒  Set background color to Magenta.
+// Ps = 4 6  ⇒  Set background color to Cyan.
+// Ps = 4 7  ⇒  Set background color to White.
+// Ps = 4 9  ⇒  Set background color to default, ECMA-48 3rd.
+    const std::string_view s = m_CSIState.buffer;
+    int ps = 0;
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    auto attrs = SCImToCharacterAttributes(ps);
+    if( attrs ) {
+        m_Output.emplace_back( input::Type::set_character_attributes, *attrs );
+    }
+    else {
+        LogMissedCSIRequest( s );
+    }
 }
 
 void Parser2Impl::CSI_n() noexcept

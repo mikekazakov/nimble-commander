@@ -1258,7 +1258,7 @@ TEST_CASE(PREFIX"vttest(2.7) - soft scroll")
 
 TEST_CASE(PREFIX"vttest(2.8) - soft scroll")
 {
-    const auto raw_input =
+    const auto raw_input = "\x1B[?4h"
     "\x1B[?6h\x1B[1;24r\x1B[2J\x1B[24BSoft scroll up region [1..24] size 24 Line 1\x0D\x0ASoft "
     "scroll up region [1..24] size 24 Line 2\x0D\x0ASoft scroll up region [1..24] size 24 Line 3"
     "\x0D\x0ASoft scroll up region [1..24] size 24 Line 4\x0D\x0ASoft scroll up region [1..24] size"
@@ -1327,6 +1327,76 @@ TEST_CASE(PREFIX"vttest(2.8) - soft scroll")
     
     Parser2Impl parser;
     Screen screen(80, 25);
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+    CHECK( screen.VideoReverse() == false );
+}
+
+TEST_CASE(PREFIX"vttest(2.9) - jump scroll")
+{
+    const auto raw_input =
+    "\x1B[?6h\x1B[?4l\x1B[12;13r\x1B[2J\x1B[24BJump scroll up region [12..13] size 2 Line 1\x0D\x0A"
+    "Jump scroll up region [12..13] size 2 Line 2\x0D\x0AJump scroll up region [12..13] size 2 Line"
+    " 3\x0D\x0AJump scroll up region [12..13] size 2 Line 4\x0D\x0AJump scroll up region [12..13] "
+    "size 2 Line 5\x0D\x0AJump scroll up region [12..13] size 2 Line 6\x0D\x0AJump scroll up region"
+    " [12..13] size 2 Line 7\x0D\x0AJump scroll up region [12..13] size 2 Line 8\x0D\x0AJump scroll"
+    " up region [12..13] size 2 Line 9\x0D\x0AJump scroll up region [12..13] size 2 Line 10\x0D\x0A"
+    "Jump scroll up region [12..13] size 2 Line 11\x0D\x0AJump scroll up region [12..13] size 2 "
+    "Line 12\x0D\x0AJump scroll up region [12..13] size 2 Line 13\x0D\x0AJump scroll up region "
+    "[12..13] size 2 Line 14\x0D\x0AJump scroll up region [12..13] size 2 Line 15\x0D\x0AJump "
+    "scroll up region [12..13] size 2 Line 16\x0D\x0AJump scroll up region [12..13] size 2 Line 17"
+    "\x0D\x0AJump scroll up region [12..13] size 2 Line 18\x0D\x0AJump scroll up region [12..13] "
+    "size 2 Line 19\x0D\x0AJump scroll up region [12..13] size 2 Line 20\x0D\x0AJump scroll up "
+    "region [12..13] size 2 Line 21\x0D\x0AJump scroll up region [12..13] size 2 Line 22\x0D\x0A"
+    "Jump scroll up region [12..13] size 2 Line 23\x0D\x0AJump scroll up region [12..13] size 2 "
+    "Line 24\x0D\x0AJump scroll up region [12..13] size 2 Line 25\x0D\x0AJump scroll up region "
+    "[12..13] size 2 Line 26\x0D\x0AJump scroll up region [12..13] size 2 Line 27\x0D\x0AJump "
+    "scroll up region [12..13] size 2 Line 28\x0D\x0AJump scroll up region [12..13] size 2 Line 29"
+    "\x0D\x0A\x1B[24AJump scroll down region [12..13] size 2 Line 1\x0D\x0A\x1BM\x1BMJump scroll "
+    "down region [12..13] size 2 Line 2\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 "
+    "Line 3\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 4\x0D\x0A\x1BM\x1BMJump "
+    "scroll down region [12..13] size 2 Line 5\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] "
+    "size 2 Line 6\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 7\x0D\x0A\x1BM"
+    "\x1BMJump scroll down region [12..13] size 2 Line 8\x0D\x0A\x1BM\x1BMJump scroll down region "
+    "[12..13] size 2 Line 9\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 10\x0D"
+    "\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 11\x0D\x0A\x1BM\x1BMJump scroll "
+    "down region [12..13] size 2 Line 12\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 "
+    "Line 13\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 14\x0D\x0A\x1BM\x1BM"
+    "Jump scroll down region [12..13] size 2 Line 15\x0D\x0A\x1BM\x1BMJump scroll down region "
+    "[12..13] size 2 Line 16\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 17\x0D"
+    "\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 18\x0D\x0A\x1BM\x1BMJump scroll "
+    "down region [12..13] size 2 Line 19\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 "
+    "Line 20\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 21\x0D\x0A\x1BM\x1BMJump"
+    " scroll down region [12..13] size 2 Line 22\x0D\x0A\x1BM\x1BMJump scroll down region [12..13]"
+    " size 2 Line 23\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 24\x0D\x0A\x1BM"
+    "\x1BMJump scroll down region [12..13] size 2 Line 25\x0D\x0A\x1BM\x1BMJump scroll down region"
+    " [12..13] size 2 Line 26\x0D\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 27\x0D"
+    "\x0A\x1BM\x1BMJump scroll down region [12..13] size 2 Line 28\x0D\x0A\x1BM\x1BMJump scroll "
+    "down region [12..13] size 2 Line 29\x0D\x0A\x1BM\x1BMPush <RETURN>";
+    
+    const auto expectation =
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "Push <RETURN>                                                                   "
+    "Jump scroll down region [12..13] size 2 Line 29                                 "
+    "                                                                                ";
+    
+    Parser2Impl parser;
+    Screen screen(80, 14);
     InterpreterImpl interpreter(screen);
     const auto input = std::string_view{raw_input};
     const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),

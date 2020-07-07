@@ -3,6 +3,7 @@
 
 #include "Interpreter.h"
 #include "Screen.h"
+#include "ScreenBuffer.h"
 #include <bitset>
 
 namespace nc::term {
@@ -14,6 +15,7 @@ public:
     ~InterpreterImpl() override;
     
     void Interpret( Input _to_interpret ) override;
+    void Interpret( const input::Command& _command );
     void SetOuput( Output _output ) override;
     void SetBell( Bell _bell ) override;
     bool ScreenResizeAllowed() override;
@@ -21,7 +23,8 @@ public:
     
 private:
     using TabStops = std::bitset<1024>;
-    static void ResetToDefaultTabStops(TabStops &_tab_stops); 
+    static void ResetToDefaultTabStops(TabStops &_tab_stops);
+    void InterpretSingleCommand( const input::Command& _command );
     void ProcessText( const input::UTF8Text &_text );
     void ProcessLF();
     void ProcessCR();
@@ -39,6 +42,7 @@ private:
     void ProcessChangeMode( input::ModeChange _mode_change );
     void ProcessChangeColumnMode132( bool _on );
     void ProcessClearTab( input::TabClear _tab_clear );
+    void ProcessSetCharacterAttributes( input::CharacterAttributes _attributes );
     void Response(std::string_view _text);
 
     struct Extent {
@@ -56,6 +60,8 @@ private:
     bool m_OriginLineMode = false;
     bool m_AllowScreenResize = true;
     bool m_AutoWrapMode = true;
+    std::uint8_t m_FgColor = ScreenColors::Default;
+    std::uint8_t m_BgColor = ScreenColors::Default;
 };
 
 }

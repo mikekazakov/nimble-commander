@@ -83,6 +83,8 @@ public:
     RangePair<const Space> LineFromNo(int _line_number) const;
     RangePair<Space> LineFromNo(int _line_number);
     
+    Space At(int x, int y) const;
+    
     void ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_with_backscreen );
     
     void FeedBackscreen( const Space* _from, const Space* _to, bool _wrapped );

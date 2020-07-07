@@ -50,3 +50,91 @@ TEST_CASE(PREFIX"resizes screen only when allowed")
         CHECK( screen.Height() == 6 );
     }
 }
+
+TEST_CASE(PREFIX"setting foreground colors")
+{
+    using namespace input;
+    using CA = input::CharacterAttributes;
+    Screen screen(1, 1);
+    InterpreterImpl interpreter(screen);
+    auto verify = [&](CA::Kind _kind, std::uint8_t _color) {
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).foreground == _color );
+    };
+    SECTION("Implicit") {
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).foreground == ScreenColors::Default );
+    }
+    SECTION("Black") {
+        verify(CA::ForegroundBlack, ScreenColors::Black);
+    }
+    SECTION("Red") {
+        verify(CA::ForegroundRed, ScreenColors::Red);
+    }
+    SECTION("Green") {
+        verify(CA::ForegroundGreen, ScreenColors::Green);
+    }
+    SECTION("Yellow") {
+        verify(CA::ForegroundYellow, ScreenColors::Yellow);
+    }
+    SECTION("Blue") {
+        verify(CA::ForegroundBlue, ScreenColors::Blue);
+    }
+    SECTION("Magenta") {
+        verify(CA::ForegroundMagenta, ScreenColors::Magenta);
+    }
+    SECTION("Cyan") {
+        verify(CA::ForegroundCyan, ScreenColors::Cyan);
+    }
+    SECTION("White") {
+        verify(CA::ForegroundWhite, ScreenColors::White);
+    }
+    SECTION("Default") {
+        verify(CA::ForegroundDefault, ScreenColors::Default);
+    }
+}
+
+TEST_CASE(PREFIX"setting background colors")
+{
+    using namespace input;
+    using CA = input::CharacterAttributes;
+    Screen screen(1, 1);
+    InterpreterImpl interpreter(screen);
+    auto verify = [&](CA::Kind _kind, std::uint8_t _color) {
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).background == _color );
+    };
+    SECTION("Implicit") {
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).background == ScreenColors::Default );
+    }
+    SECTION("Black") {
+        verify(CA::BackgroundBlack, ScreenColors::Black);
+    }
+    SECTION("Red") {
+        verify(CA::BackgroundRed, ScreenColors::Red);
+    }
+    SECTION("Green") {
+        verify(CA::BackgroundGreen, ScreenColors::Green);
+    }
+    SECTION("Yellow") {
+        verify(CA::BackgroundYellow, ScreenColors::Yellow);
+    }
+    SECTION("Blue") {
+        verify(CA::BackgroundBlue, ScreenColors::Blue);
+    }
+    SECTION("Magenta") {
+        verify(CA::BackgroundMagenta, ScreenColors::Magenta);
+    }
+    SECTION("Cyan") {
+        verify(CA::BackgroundCyan, ScreenColors::Cyan);
+    }
+    SECTION("White") {
+        verify(CA::BackgroundWhite, ScreenColors::White);
+    }
+    SECTION("Default") {
+        verify(CA::BackgroundDefault, ScreenColors::Default);
+    }
+}

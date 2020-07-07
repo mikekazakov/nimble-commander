@@ -25,61 +25,73 @@ InterpreterImpl::~InterpreterImpl()
 
 void InterpreterImpl::Interpret( Input _to_interpret )
 {
-    for( const auto &command: _to_interpret ) {
-        using namespace input;
-        const auto type = command.type;
-        switch (type) {
-            case Type::text:
-                ProcessText( *std::get_if<UTF8Text>(&command.payload) );
-                break;
-            case Type::line_feed:
-                ProcessLF();
-                break;
-            case Type::carriage_return:
-                ProcessCR();
-                break;
-            case Type::back_space:
-                ProcessBS();
-                break;
-            case Type::reverse_index:
-                ProcessRI();
-                break;
-            case Type::move_cursor:
-                ProcessMC( *std::get_if<CursorMovement>(&command.payload) );
-                break;
-            case Type::horizontal_tab:
-                ProcessHT( *std::get_if<signed>(&command.payload) );
-                break;
-            case Type::report:
-                ProcessReport( *std::get_if<DeviceReport>(&command.payload) );
-                break;
-            case Type::bell:
-                ProcessBell();
-                break;
-            case Type::screen_alignment_test:
-                ProcessScreenAlignment();
-                break;
-            case Type::erase_in_display:
-                ProcessEraseInDisplay( *std::get_if<DisplayErasure>(&command.payload) );
-                break;
-            case Type::erase_in_line:
-                ProcessEraseInLine( *std::get_if<LineErasure>(&command.payload) );
-                break;
-            case Type::set_scrolling_region:
-                ProcessSetScrollingRegion( *std::get_if<ScrollingRegion>(&command.payload) );
-                break;
-            case Type::change_mode:
-                ProcessChangeMode( *std::get_if<ModeChange>(&command.payload) );
-                break;
-            case Type::set_tab:
-                ProcessHTS();
-                break;
-            case Type::clear_tab:
-                ProcessClearTab( *std::get_if<TabClear>(&command.payload) );
-                break;
-            default:
-                break;
-        }
+    for( const auto &command: _to_interpret )
+        InterpretSingleCommand(command);
+}
+
+void InterpreterImpl::Interpret( const input::Command& _command )
+{
+    InterpretSingleCommand(_command);
+}
+
+void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
+{
+    using namespace input;
+    const auto type = _command.type;
+    switch (type) {
+        case Type::text:
+            ProcessText( *std::get_if<UTF8Text>(&_command.payload) );
+            break;
+        case Type::line_feed:
+            ProcessLF();
+            break;
+        case Type::carriage_return:
+            ProcessCR();
+            break;
+        case Type::back_space:
+            ProcessBS();
+            break;
+        case Type::reverse_index:
+            ProcessRI();
+            break;
+        case Type::move_cursor:
+            ProcessMC( *std::get_if<CursorMovement>(&_command.payload) );
+            break;
+        case Type::horizontal_tab:
+            ProcessHT( *std::get_if<signed>(&_command.payload) );
+            break;
+        case Type::report:
+            ProcessReport( *std::get_if<DeviceReport>(&_command.payload) );
+            break;
+        case Type::bell:
+            ProcessBell();
+            break;
+        case Type::screen_alignment_test:
+            ProcessScreenAlignment();
+            break;
+        case Type::erase_in_display:
+            ProcessEraseInDisplay( *std::get_if<DisplayErasure>(&_command.payload) );
+            break;
+        case Type::erase_in_line:
+            ProcessEraseInLine( *std::get_if<LineErasure>(&_command.payload) );
+            break;
+        case Type::set_scrolling_region:
+            ProcessSetScrollingRegion( *std::get_if<ScrollingRegion>(&_command.payload) );
+            break;
+        case Type::change_mode:
+            ProcessChangeMode( *std::get_if<ModeChange>(&_command.payload) );
+            break;
+        case Type::set_tab:
+            ProcessHTS();
+            break;
+        case Type::clear_tab:
+            ProcessClearTab( *std::get_if<TabClear>(&_command.payload) );
+            break;
+        case Type::set_character_attributes:
+            ProcessSetCharacterAttributes( *std::get_if<CharacterAttributes>(&_command.payload) );
+            break;
+        default:
+            break;
     }
 }
 
@@ -359,6 +371,41 @@ void  InterpreterImpl::ProcessClearTab( input::TabClear _tab_clear )
     }
     else {
         m_TabStops.reset();
+    }
+}
+
+void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes _attributes )
+{
+    auto set_fg = [this]( std::uint8_t _color ) {
+        m_FgColor = _color;
+        m_Screen.SetFgColor(_color);
+    };
+    auto set_bg = [this]( std::uint8_t _color ) {
+        m_BgColor = _color;
+        m_Screen.SetBgColor(_color);
+    };
+    
+    using Kind = input::CharacterAttributes::Kind;
+    switch (_attributes.mode) {
+        case Kind::ForegroundBlack: set_fg(ScreenColors::Black); break;
+        case Kind::ForegroundRed: set_fg(ScreenColors::Red); break;
+        case Kind::ForegroundGreen: set_fg(ScreenColors::Green); break;
+        case Kind::ForegroundYellow: set_fg(ScreenColors::Yellow); break;
+        case Kind::ForegroundBlue: set_fg(ScreenColors::Blue); break;
+        case Kind::ForegroundMagenta: set_fg(ScreenColors::Magenta); break;
+        case Kind::ForegroundCyan: set_fg(ScreenColors::Cyan); break;
+        case Kind::ForegroundWhite: set_fg(ScreenColors::White); break;
+        case Kind::ForegroundDefault: set_bg(ScreenColors::Default); break;
+        case Kind::BackgroundBlack: set_bg(ScreenColors::Black); break;
+        case Kind::BackgroundRed: set_bg(ScreenColors::Red); break;
+        case Kind::BackgroundGreen: set_bg(ScreenColors::Green); break;
+        case Kind::BackgroundYellow: set_bg(ScreenColors::Yellow); break;
+        case Kind::BackgroundBlue: set_bg(ScreenColors::Blue); break;
+        case Kind::BackgroundMagenta: set_bg(ScreenColors::Magenta); break;
+        case Kind::BackgroundCyan: set_bg(ScreenColors::Cyan); break;
+        case Kind::BackgroundWhite: set_bg(ScreenColors::White); break;
+        case Kind::BackgroundDefault: set_bg(ScreenColors::Default); break;
+        default: break;
     }
 }
 

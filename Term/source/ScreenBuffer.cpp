@@ -80,6 +80,17 @@ ScreenBuffer::RangePair<ScreenBuffer::Space> ScreenBuffer::LineFromNo(int _line_
         return {nullptr, nullptr};
 }
 
+ScreenBuffer::Space ScreenBuffer::At(int x, int y) const
+{
+    auto line = LineFromNo(y);
+    if( !line )
+        throw std::invalid_argument("ScreenBuffer::At(): invalid row");
+    if( x < 0 ||
+       x >= line.second - line.first )
+        throw std::invalid_argument("ScreenBuffer::At(): invalid column");
+    return line.first[x];
+}
+
 ScreenBuffer::LineMeta *ScreenBuffer::MetaFromLineNo( int _line_number )
 {
     if( _line_number >= 0 && _line_number < (int)m_OnScreenLines.size() )

@@ -138,3 +138,29 @@ TEST_CASE(PREFIX"setting background colors")
         verify(CA::BackgroundDefault, ScreenColors::Default);
     }
 }
+
+TEST_CASE(PREFIX"setting faint")
+{
+    using namespace input;
+    using CA = input::CharacterAttributes;
+    Screen screen(1, 1);
+    InterpreterImpl interpreter(screen);
+    auto verify = [&](CA::Kind _kind, bool _intensity) {
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).intensity == _intensity );
+    };
+    SECTION("Implicit") {
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).intensity == true );
+    }
+    SECTION("Normal") {
+        verify(CA::Normal, true);
+    }
+    SECTION("Faint") {
+        verify(CA::Faint, false);
+    }
+    SECTION("Not Bold Not Faint") {
+        verify(CA::NotBoldNotFaint, true);
+    }
+}

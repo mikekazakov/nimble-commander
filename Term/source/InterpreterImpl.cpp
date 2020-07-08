@@ -17,6 +17,7 @@ InterpreterImpl::InterpreterImpl(Screen &_screen):
     m_Extent.top = 0;
     m_Extent.bottom = m_Screen.Height();
     ResetToDefaultTabStops(m_TabStops);
+    UpdateCharacterAttributes();
 }
 
 InterpreterImpl::~InterpreterImpl()
@@ -384,9 +385,16 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
         m_BgColor = _color;
         m_Screen.SetBgColor(_color);
     };
+    auto set_faint = [this]( bool _faint ) {
+        m_Faint = _faint;
+        m_Screen.SetIntensity(!_faint);
+    };
     
     using Kind = input::CharacterAttributes::Kind;
     switch (_attributes.mode) {
+        case Kind::Normal: set_faint(false); /*others*/ break;
+        case Kind::Faint: set_faint(true); break;
+        case Kind::NotBoldNotFaint: set_faint(false); /*set_bold(false);*/ break;
         case Kind::ForegroundBlack: set_fg(ScreenColors::Black); break;
         case Kind::ForegroundRed: set_fg(ScreenColors::Red); break;
         case Kind::ForegroundGreen: set_fg(ScreenColors::Green); break;
@@ -407,6 +415,13 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
         case Kind::BackgroundDefault: set_bg(ScreenColors::Default); break;
         default: break;
     }
+}
+
+void InterpreterImpl::UpdateCharacterAttributes()
+{
+    m_Screen.SetFgColor(m_FgColor);
+    m_Screen.SetBgColor(m_BgColor);
+    m_Screen.SetIntensity(!m_Faint);
 }
 
 void InterpreterImpl::Response(std::string_view _text)

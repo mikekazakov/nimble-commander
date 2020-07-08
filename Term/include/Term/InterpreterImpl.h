@@ -44,7 +44,8 @@ private:
     void ProcessClearTab( input::TabClear _tab_clear );
     void ProcessSetCharacterAttributes( input::CharacterAttributes _attributes );
     void Response(std::string_view _text);
-
+    void UpdateCharacterAttributes();
+    
     struct Extent {
         int height = 0;  // physical dimention - x
         int width = 0;   // physical dimention - y
@@ -60,6 +61,7 @@ private:
     bool m_OriginLineMode = false;
     bool m_AllowScreenResize = true;
     bool m_AutoWrapMode = true;
+    bool m_Faint = false;
     std::uint8_t m_FgColor = ScreenColors::Default;
     std::uint8_t m_BgColor = ScreenColors::Default;
 };

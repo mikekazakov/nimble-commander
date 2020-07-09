@@ -37,6 +37,8 @@ public:
     void SetIntensity(bool _intensity);
     void SetUnderline(bool _is_underline);
     void SetReverse(bool _is_reverse);
+    void SetBold(bool _is_bold);
+    void SetItalic(bool _is_italic);
     void SetAlternateScreen(bool _is_alternate);
 
     void GoTo(int _x, int _y);

@@ -61,6 +61,8 @@ TEST_CASE(PREFIX"setting normal attributes")
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::ForegroundRed}));
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::BackgroundBlue}));
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Inverse}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Bold}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Italicized}));
     
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Normal}));
     interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
@@ -70,6 +72,8 @@ TEST_CASE(PREFIX"setting normal attributes")
     CHECK( c.background == ScreenColors::Default );
     CHECK( c.intensity == true );
     CHECK( c.reverse == false );
+    CHECK( c.bold == false );
+    CHECK( c.italic == false );
 }
 
 TEST_CASE(PREFIX"setting foreground colors")
@@ -206,5 +210,51 @@ TEST_CASE(PREFIX"setting inverse")
     }
     SECTION("Not inverse") {
         verify(CA::NotInverse, false);
+    }
+}
+
+TEST_CASE(PREFIX"setting bold")
+{
+    using namespace input;
+    using CA = input::CharacterAttributes;
+    Screen screen(1, 1);
+    InterpreterImpl interpreter(screen);
+    auto verify = [&](CA::Kind _kind, bool _bold) {
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).bold == _bold );
+    };
+    SECTION("Implicit") {
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).bold == false );
+    }
+    SECTION("Bold") {
+        verify(CA::Bold, true);
+    }
+    SECTION("Not bold") {
+        verify(CA::NotBoldNotFaint, false);
+    }
+}
+
+TEST_CASE(PREFIX"setting italic")
+{
+    using namespace input;
+    using CA = input::CharacterAttributes;
+    Screen screen(1, 1);
+    InterpreterImpl interpreter(screen);
+    auto verify = [&](CA::Kind _kind, bool _italic) {
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).italic == _italic );
+    };
+    SECTION("Implicit") {
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).italic == false );
+    }
+    SECTION("Italic") {
+        verify(CA::Italicized, true);
+    }
+    SECTION("Not italic") {
+        verify(CA::NotItalicized, false);
     }
 }

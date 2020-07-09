@@ -58,6 +58,8 @@ public:
         unsigned intensity  :1;
         unsigned underline  :1;
         unsigned reverse    :1;
+        unsigned bold       :1;
+        unsigned italic     :1;
     } __attribute__((packed)); // 10 bytes per screen space
     static_assert( sizeof(Space) == 10, "" );
     

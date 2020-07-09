@@ -236,6 +236,18 @@ void Screen::SetReverse(bool _is_reverse)
     m_Buffer.SetEraseChar(m_EraseChar);    
 }
 
+void Screen::SetBold(bool _is_bold)
+{
+    m_EraseChar.bold = _is_bold;
+    m_Buffer.SetEraseChar(m_EraseChar);
+}
+
+void Screen::SetItalic(bool _is_italic)
+{
+    m_EraseChar.italic = _is_italic;
+    m_Buffer.SetEraseChar(m_EraseChar);
+}
+
 void Screen::SetAlternateScreen(bool _is_alternate)
 {
     m_AlternateScreen = _is_alternate;

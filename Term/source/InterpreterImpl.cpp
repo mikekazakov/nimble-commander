@@ -389,12 +389,24 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
         m_Faint = _faint;
         m_Screen.SetIntensity(!_faint);
     };
+    auto set_inverse = [this]( bool _inverse ) {
+        m_Inverse = _inverse;
+        m_Screen.SetReverse(_inverse);
+    };
     
     using Kind = input::CharacterAttributes::Kind;
     switch (_attributes.mode) {
-        case Kind::Normal: set_faint(false); /*others*/ break;
+        case Kind::Normal:
+            set_faint(false);
+            set_inverse(false);
+            set_fg(ScreenColors::Default);
+            set_bg(ScreenColors::Default);
+            /*others*/
+            break;
         case Kind::Faint: set_faint(true); break;
         case Kind::NotBoldNotFaint: set_faint(false); /*set_bold(false);*/ break;
+        case Kind::Inverse: set_inverse(true); break;
+        case Kind::NotInverse: set_inverse(false); break;
         case Kind::ForegroundBlack: set_fg(ScreenColors::Black); break;
         case Kind::ForegroundRed: set_fg(ScreenColors::Red); break;
         case Kind::ForegroundGreen: set_fg(ScreenColors::Green); break;
@@ -422,6 +434,7 @@ void InterpreterImpl::UpdateCharacterAttributes()
     m_Screen.SetFgColor(m_FgColor);
     m_Screen.SetBgColor(m_BgColor);
     m_Screen.SetIntensity(!m_Faint);
+    m_Screen.SetReverse(m_Inverse);
 }
 
 void InterpreterImpl::Response(std::string_view _text)

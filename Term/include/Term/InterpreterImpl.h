@@ -62,6 +62,7 @@ private:
     bool m_AllowScreenResize = true;
     bool m_AutoWrapMode = true;
     bool m_Faint = false;
+    bool m_Inverse = false;
     std::uint8_t m_FgColor = ScreenColors::Default;
     std::uint8_t m_BgColor = ScreenColors::Default;
 };

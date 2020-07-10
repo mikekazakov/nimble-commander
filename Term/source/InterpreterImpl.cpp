@@ -401,6 +401,10 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
         m_Italic = _italic;
         m_Screen.SetItalic(_italic);
     };
+    auto set_invisible = [this]( bool _invisible ) {
+        m_Invisible = _invisible;
+        m_Screen.SetInvisible(_invisible);
+    };
     
     using Kind = input::CharacterAttributes::Kind;
     switch (_attributes.mode) {
@@ -409,6 +413,7 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
             set_inverse(false);
             set_bold(false);
             set_italic(false);
+            set_invisible(false);
             set_fg(ScreenColors::Default);
             set_bg(ScreenColors::Default);
             /*others*/
@@ -420,6 +425,8 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
         case Kind::Bold: set_bold(true); break;
         case Kind::Italicized: set_italic(true); break;
         case Kind::NotItalicized: set_italic(false); break;
+        case Kind::Invisible: set_invisible(true); break;
+        case Kind::NotInvisible: set_invisible(false); break;
         case Kind::ForegroundBlack: set_fg(ScreenColors::Black); break;
         case Kind::ForegroundRed: set_fg(ScreenColors::Red); break;
         case Kind::ForegroundGreen: set_fg(ScreenColors::Green); break;
@@ -450,6 +457,7 @@ void InterpreterImpl::UpdateCharacterAttributes()
     m_Screen.SetReverse(m_Inverse);
     m_Screen.SetBold(m_Bold);
     m_Screen.SetItalic(m_Italic);
+    m_Screen.SetInvisible(m_Invisible);
 }
 
 void InterpreterImpl::Response(std::string_view _text)

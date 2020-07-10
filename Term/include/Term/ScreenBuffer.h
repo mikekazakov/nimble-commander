@@ -60,6 +60,7 @@ public:
         unsigned reverse    :1;
         unsigned bold       :1;
         unsigned italic     :1;
+        unsigned invisible  :1;
     } __attribute__((packed)); // 10 bytes per screen space
     static_assert( sizeof(Space) == 10, "" );
     

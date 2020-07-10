@@ -290,6 +290,7 @@ ScreenBuffer::Space ScreenBuffer::DefaultEraseChar()
     sp.reverse   = 0;
     sp.bold      = 0;
     sp.italic    = 0;
+    sp.invisible = 0;
     return sp;
 }
 

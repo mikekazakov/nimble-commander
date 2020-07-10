@@ -248,6 +248,12 @@ void Screen::SetItalic(bool _is_italic)
     m_Buffer.SetEraseChar(m_EraseChar);
 }
 
+void Screen::SetInvisible(bool _is_invisible)
+{
+    m_EraseChar.invisible = _is_invisible;
+    m_Buffer.SetEraseChar(m_EraseChar);
+}
+
 void Screen::SetAlternateScreen(bool _is_alternate)
 {
     m_AlternateScreen = _is_alternate;

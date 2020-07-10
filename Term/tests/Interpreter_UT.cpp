@@ -63,6 +63,7 @@ TEST_CASE(PREFIX"setting normal attributes")
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Inverse}));
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Bold}));
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Italicized}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Invisible}));
     
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Normal}));
     interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
@@ -74,6 +75,7 @@ TEST_CASE(PREFIX"setting normal attributes")
     CHECK( c.reverse == false );
     CHECK( c.bold == false );
     CHECK( c.italic == false );
+    CHECK( c.invisible == false );
 }
 
 TEST_CASE(PREFIX"setting foreground colors")
@@ -256,5 +258,28 @@ TEST_CASE(PREFIX"setting italic")
     }
     SECTION("Not italic") {
         verify(CA::NotItalicized, false);
+    }
+}
+
+TEST_CASE(PREFIX"setting invisible")
+{
+    using namespace input;
+    using CA = input::CharacterAttributes;
+    Screen screen(1, 1);
+    InterpreterImpl interpreter(screen);
+    auto verify = [&](CA::Kind _kind, bool _invisible) {
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).invisible == _invisible );
+    };
+    SECTION("Implicit") {
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).invisible == false );
+    }
+    SECTION("Invisible") {
+        verify(CA::Invisible, true);
+    }
+    SECTION("Not invsible") {
+        verify(CA::NotInvisible, false);
     }
 }

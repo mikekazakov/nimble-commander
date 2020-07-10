@@ -39,6 +39,7 @@ public:
     void SetReverse(bool _is_reverse);
     void SetBold(bool _is_bold);
     void SetItalic(bool _is_italic);
+    void SetInvisible(bool _is_invisible);
     void SetAlternateScreen(bool _is_alternate);
 
     void GoTo(int _x, int _y);

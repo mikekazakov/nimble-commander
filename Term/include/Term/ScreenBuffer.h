@@ -61,8 +61,8 @@ public:
         unsigned bold       :1;
         unsigned italic     :1;
         unsigned invisible  :1;
-    } __attribute__((packed)); // 10 bytes per screen space
-    static_assert( sizeof(Space) == 10, "" );
+        unsigned blink      :1;
+    } /*__attribute__((packed))*/; // 12 bytes per screen space
     
     static const unsigned short MultiCellGlyph = 0xFFFE;    
     

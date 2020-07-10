@@ -66,6 +66,8 @@ private:
     bool m_Bold = false;
     bool m_Italic = false;
     bool m_Invisible = false;
+    bool m_Blink = false;
+    bool m_Underline = false;
     std::uint8_t m_FgColor = ScreenColors::Default;
     std::uint8_t m_BgColor = ScreenColors::Default;
 };

@@ -64,6 +64,8 @@ TEST_CASE(PREFIX"setting normal attributes")
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Bold}));
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Italicized}));
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Invisible}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Blink}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Underlined}));
     
     interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Normal}));
     interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
@@ -76,6 +78,8 @@ TEST_CASE(PREFIX"setting normal attributes")
     CHECK( c.bold == false );
     CHECK( c.italic == false );
     CHECK( c.invisible == false );
+    CHECK( c.blink == false );
+    CHECK( c.underline == false );
 }
 
 TEST_CASE(PREFIX"setting foreground colors")
@@ -281,5 +285,54 @@ TEST_CASE(PREFIX"setting invisible")
     }
     SECTION("Not invsible") {
         verify(CA::NotInvisible, false);
+    }
+}
+
+TEST_CASE(PREFIX"setting blink")
+{
+    using namespace input;
+    using CA = input::CharacterAttributes;
+    Screen screen(1, 1);
+    InterpreterImpl interpreter(screen);
+    auto verify = [&](CA::Kind _kind, bool _blink) {
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).blink == _blink );
+    };
+    SECTION("Implicit") {
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).blink == false );
+    }
+    SECTION("Blink") {
+        verify(CA::Blink, true);
+    }
+    SECTION("Not blink") {
+        verify(CA::NotBlink, false);
+    }
+}
+
+TEST_CASE(PREFIX"setting underline")
+{
+    using namespace input;
+    using CA = input::CharacterAttributes;
+    Screen screen(1, 1);
+    InterpreterImpl interpreter(screen);
+    auto verify = [&](CA::Kind _kind, bool _underline) {
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).underline == _underline );
+    };
+    SECTION("Implicit") {
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK( screen.Buffer().At(0, 0).underline == false );
+    }
+    SECTION("Underline") {
+        verify(CA::Underlined, true);
+    }
+    SECTION("Doubly Underline") {
+        verify(CA::DoublyUnderlined, true);
+    }
+    SECTION("Not underlined") {
+        verify(CA::NotUnderlined, false);
     }
 }

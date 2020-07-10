@@ -4,7 +4,7 @@
 
 namespace nc::term {
 
-static_assert( sizeof(ScreenBuffer::Space) == 10 , "");
+static_assert( sizeof(ScreenBuffer::Space) == 12 , "");
 
 ScreenBuffer::ScreenBuffer(unsigned _width, unsigned _height):
     m_Width(_width),
@@ -291,6 +291,7 @@ ScreenBuffer::Space ScreenBuffer::DefaultEraseChar()
     sp.bold      = 0;
     sp.italic    = 0;
     sp.invisible = 0;
+    sp.blink     = 0;
     return sp;
 }
 

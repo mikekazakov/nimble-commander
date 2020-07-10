@@ -405,6 +405,14 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
         m_Invisible = _invisible;
         m_Screen.SetInvisible(_invisible);
     };
+    auto set_blink = [this]( bool _blink ) {
+        m_Blink = _blink;
+        m_Screen.SetBlink(_blink);
+    };
+    auto set_underline = [this]( bool _underline ) {
+        m_Underline = _underline;
+        m_Screen.SetUnderline(_underline);
+    };
     
     using Kind = input::CharacterAttributes::Kind;
     switch (_attributes.mode) {
@@ -414,9 +422,10 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
             set_bold(false);
             set_italic(false);
             set_invisible(false);
+            set_blink(false);
+            set_underline(false);
             set_fg(ScreenColors::Default);
             set_bg(ScreenColors::Default);
-            /*others*/
             break;
         case Kind::Faint: set_faint(true); break;
         case Kind::NotBoldNotFaint: set_faint(false); set_bold(false); break;
@@ -427,6 +436,11 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
         case Kind::NotItalicized: set_italic(false); break;
         case Kind::Invisible: set_invisible(true); break;
         case Kind::NotInvisible: set_invisible(false); break;
+        case Kind::Blink: set_blink(true); break;
+        case Kind::NotBlink: set_blink(false); break;
+        case Kind::Underlined: set_underline(true); break;
+        case Kind::DoublyUnderlined: set_underline(true); break;
+        case Kind::NotUnderlined: set_underline(false); break;
         case Kind::ForegroundBlack: set_fg(ScreenColors::Black); break;
         case Kind::ForegroundRed: set_fg(ScreenColors::Red); break;
         case Kind::ForegroundGreen: set_fg(ScreenColors::Green); break;
@@ -458,6 +472,8 @@ void InterpreterImpl::UpdateCharacterAttributes()
     m_Screen.SetBold(m_Bold);
     m_Screen.SetItalic(m_Italic);
     m_Screen.SetInvisible(m_Invisible);
+    m_Screen.SetBlink(m_Blink);
+    m_Screen.SetUnderline(m_Underline);
 }
 
 void InterpreterImpl::Response(std::string_view _text)

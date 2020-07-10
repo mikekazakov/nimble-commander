@@ -1159,14 +1159,20 @@ void Parser2Impl::CSI_m() noexcept
 // Ps = 4 7  ⇒  Set background color to White.
 // Ps = 4 9  ⇒  Set background color to default, ECMA-48 3rd.
     const std::string_view s = m_CSIState.buffer;
-    int ps = 0;
-    std::from_chars(s.data(), s.data() + s.size(), ps);
-    auto attrs = SCImToCharacterAttributes(ps);
-    if( attrs ) {
-        m_Output.emplace_back( input::Type::set_character_attributes, *attrs );
-    }
-    else {
-        LogMissedCSIRequest( s );
+    
+    auto params = CSIParamsScanner::Parse(s);
+    if( params.count == 0 )
+        params.values[params.count++] = 0;
+    
+    for( int i = 0; i != params.count; ++i ) {
+        const auto ps = params.values[i];
+        auto attrs = SCImToCharacterAttributes(ps);
+        if( attrs ) {
+            m_Output.emplace_back( input::Type::set_character_attributes, *attrs );
+        }
+        else {
+            LogMissedCSIRequest( s );
+        }
     }
 }
 
@@ -1239,7 +1245,7 @@ Parser2Impl::CSIParamsScanner::Parse(std::string_view _csi) noexcept
     auto string = _csi;
     while( true ) {
         if( p.count == p.values.size() )
-            break;    
+            break;
         unsigned value = 0;
         auto result = std::from_chars(string.data(), string.data() + string.size(), value); 
         if( result.ec == std::errc{} ) {
@@ -1251,7 +1257,13 @@ Parser2Impl::CSIParamsScanner::Parse(std::string_view _csi) noexcept
             string.remove_prefix(1);
         }
         else {
-            break;
+            if( !string.empty() && string.front() == ';' ) {
+                p.values[p.count++] = 0;
+                string.remove_prefix(1);
+            }
+            else {
+                break;
+            }
         }
     }
     return p;

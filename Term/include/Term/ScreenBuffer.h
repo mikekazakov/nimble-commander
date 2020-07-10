@@ -97,7 +97,7 @@ public:
     
     Space EraseChar() const;
     void SetEraseChar(Space _ch);
-    static Space DefaultEraseChar();
+    static Space DefaultEraseChar() noexcept;
     
     /**
      * [1st, 2nd) lines range.

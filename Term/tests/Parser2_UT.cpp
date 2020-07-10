@@ -1011,6 +1011,22 @@ TEST_CASE(PREFIX"CSI m")
     SECTION( "ESC [ 1 m" ) {
         verify("\x1B[1m", CharacterAttributes::Bold);
     }
+    SECTION( "ESC [ ; 1 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B[;1m"));
+        REQUIRE( r.size() == 2 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Normal );
+        CHECK( r[1].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[1]).mode == CharacterAttributes::Bold );
+    }
+    SECTION( "ESC [ 0 ; 1 m" ) {
+        auto r = parser.Parse(to_bytes("\x1B[0;1m"));
+        REQUIRE( r.size() == 2 );
+        CHECK( r[0].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[0]).mode == CharacterAttributes::Normal );
+        CHECK( r[1].type == Type::set_character_attributes );
+        CHECK( as_character_attributes(r[1]).mode == CharacterAttributes::Bold );
+    }
     SECTION( "ESC [ 2 m" ) {
         verify("\x1B[2m", CharacterAttributes::Faint);
     }
@@ -1206,6 +1222,12 @@ TEST_CASE(PREFIX"CSIParamsScanner")
         auto p = S::Parse("39A");
         CHECK(p.count == 1); 
         CHECK(p.values[0] == 39);
+    }
+    SECTION(";39A") {
+        auto p = S::Parse(";39A");
+        CHECK(p.count == 2);
+        CHECK(p.values[0] == 0);
+        CHECK(p.values[1] == 39);
     }
     SECTION("39;13A") {
         auto p = S::Parse("39;13A");

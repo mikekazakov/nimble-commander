@@ -277,7 +277,7 @@ void ScreenBuffer::SetEraseChar(Space _ch)
     m_EraseChar = _ch;
 }
 
-ScreenBuffer::Space ScreenBuffer::DefaultEraseChar()
+ScreenBuffer::Space ScreenBuffer::DefaultEraseChar() noexcept
 {
     Space sp;
     sp.l = 0;

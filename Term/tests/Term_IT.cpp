@@ -1713,6 +1713,119 @@ TEST_CASE(PREFIX"vttest(2.13) - Graphic rendition test pattern / dark background
     Expect(buffer, 17, 44, 73, sp);
 }
 
+TEST_CASE(PREFIX"vttest(2.14) - Graphic rendition test pattern / light background")
+{
+    const auto raw_input =
+    "\x1B[1;24r\x1B[2J\x1B[1;20HGraphic rendition test pattern:\x1B[4;1H\x1B[0mvanilla\x1B[4;40H"
+    "\x1B[0;1mbold\x1B[6;6H\x1B[;4munderline\x1B[6;45H\x1B[;1m\x1B[4mbold underline\x1B[8;1H"
+    "\x1B[0;5mblink\x1B[8;40H\x1B[0;5;1mbold blink\x1B[10;6H\x1B[0;4;5munderline blink\x1B[10;45H"
+    "\x1B[0;1;4;5mbold underline blink\x1B[12;1H\x1B[1;4;5;0;7mnegative\x1B[12;40H\x1B[0;1;7m"
+    "bold negative\x1B[14;6H\x1B[0;4;7munderline negative\x1B[14;45H\x1B[0;1;4;7mbold underline "
+    "negative\x1B[16;1H\x1B[1;4;;5;7mblink negative\x1B[16;40H\x1B[0;1;5;7mbold blink negative"
+    "\x1B[18;6H\x1B[0;4;5;7munderline blink negative\x1B[18;45H\x1B[0;1;4;5;7mbold underline blink "
+    "negative\x1B[m\x1B[?5l\x1B[23;1H\x1B[0KDark background. Push <RETURN>\x1B[?5h\x1B[23;1H\x1B[0K"
+    "Light background. Push <RETURN>";
+    
+    const auto expectation =
+    "                   Graphic rendition test pattern:                              "
+    "                                                                                "
+    "                                                                                "
+    "vanilla                                bold                                     "
+    "                                                                                "
+    "     underline                              bold underline                      "
+    "                                                                                "
+    "blink                                  bold blink                               "
+    "                                                                                "
+    "     underline blink                        bold underline blink                "
+    "                                                                                "
+    "negative                               bold negative                            "
+    "                                                                                "
+    "     underline negative                     bold underline negative             "
+    "                                                                                "
+    "blink negative                         bold blink negative                      "
+    "                                                                                "
+    "     underline blink negative               bold underline blink negative       "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "Light background. Push <RETURN>                                                 "
+    "                                                                                "
+    "                                                                                ";
+    
+    Parser2Impl parser;
+    Screen screen(80, 25);
+    const ScreenBuffer &buffer = screen.Buffer();
+    InterpreterImpl interpreter(screen);
+    const auto input = std::string_view{raw_input};
+    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+                                            input.length());
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+    CHECK( screen.VideoReverse() == true );
+    
+    ScreenBuffer::Space sp = ScreenBuffer::DefaultEraseChar();
+    sp.intensity = true;
+    Expect(buffer, 3, 0, 7, sp);
+    
+    sp.underline = true;
+    Expect(buffer, 5, 5, 14, sp);
+    
+    sp.underline = false;
+    sp.blink = true;
+    Expect(buffer, 7, 0, 5, sp);
+
+    sp.underline = true;
+    Expect(buffer, 9, 5, 20, sp);
+
+    sp.blink = false;
+    sp.underline = false;
+    sp.reverse = true;
+    Expect(buffer, 11, 0, 8, sp);
+
+    sp.underline = true;
+    Expect(buffer, 13, 5, 23, sp);
+    
+    sp.underline = false;
+    sp.blink = true;
+    Expect(buffer, 15, 0, 14, sp);
+    
+    sp.underline = true;
+    Expect(buffer, 17, 5, 29, sp);
+    
+    sp.underline = false;
+    sp.blink = false;
+    sp.reverse = false;
+    sp.bold = true;
+    Expect(buffer, 3, 39, 43, sp);
+    
+    sp.underline = true;
+    Expect(buffer, 5, 44, 58, sp);
+    
+    sp.underline = false;
+    sp.blink = true;
+    Expect(buffer, 7, 39, 49, sp);
+    
+    sp.underline = true;
+    Expect(buffer, 9, 44, 64, sp);
+    
+    sp.underline = false;
+    sp.blink = false;
+    sp.reverse = true;
+    Expect(buffer, 11, 39, 52, sp);
+    
+    sp.underline = true;
+    Expect(buffer, 13, 44, 67, sp);
+    
+    sp.underline = false;
+    sp.blink = true;
+    Expect(buffer, 15, 39, 58, sp);
+    
+    sp.underline = true;
+    Expect(buffer, 17, 44, 73, sp);
+}
+
 TEST_CASE(PREFIX"rn escape assumption")
 {
     auto string = std::string_view("\r\n");

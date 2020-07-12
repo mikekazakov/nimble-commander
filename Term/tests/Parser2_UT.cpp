@@ -217,6 +217,18 @@ TEST_CASE(PREFIX"Handles control characters")
         SECTION("") { r = parser.Parse(to_bytes("\x1B\x1A")); }
         REQUIRE( r.empty() );
     }
+    SECTION( "select g0" ) {
+        auto r = parser.Parse(to_bytes("\x0E"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::select_character_set );
+        CHECK( as_unsigned(r[0]) == 0 );
+    }
+    SECTION( "select g1" ) {
+        auto r = parser.Parse(to_bytes("\x0F"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::select_character_set );
+        CHECK( as_unsigned(r[0]) == 1 );
+    }
     SECTION( "ESC E" ) {
         auto r = parser.Parse(to_bytes("\x1B""E"));
         REQUIRE( r.size() == 2 );

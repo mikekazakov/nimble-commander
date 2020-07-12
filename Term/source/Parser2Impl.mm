@@ -152,6 +152,16 @@ void Parser2Impl::HTS() noexcept
     m_Output.emplace_back( input::Type::set_tab );
 }
 
+void Parser2Impl::SI() noexcept
+{
+    m_Output.emplace_back( input::Type::select_character_set, 0u );
+}
+
+void Parser2Impl::SO() noexcept
+{
+    m_Output.emplace_back( input::Type::select_character_set, 1u );
+}
+
 void Parser2Impl::DECSC() noexcept
 {
     // TODO: save translation stuff
@@ -413,8 +423,8 @@ bool Parser2Impl::SSControlConsume(unsigned char _byte) noexcept
             case 11:
             case 12: SwitchTo(EscState::Text); LF(); return true;
             case 13: SwitchTo(EscState::Text); CR(); return true;
-            case 14: SwitchTo(EscState::Text); return true; // switch to g1
-            case 15: SwitchTo(EscState::Text); return true; // switch to g2
+            case 14: SwitchTo(EscState::Text); SI(); return true;
+            case 15: SwitchTo(EscState::Text); SO(); return true;
             case 16: SwitchTo(EscState::Text); return true;
             case 17: SwitchTo(EscState::Text); return true; // xon
             case 18: SwitchTo(EscState::Text); return true;

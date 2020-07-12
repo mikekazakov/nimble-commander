@@ -75,6 +75,8 @@ private:
     void RI() noexcept;
     void RIS() noexcept;
     void HTS() noexcept;
+    void SI() noexcept;
+    void SO() noexcept;
     void DECSC() noexcept;
     void DECRC() noexcept;
     void DECALN() noexcept;

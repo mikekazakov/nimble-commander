@@ -12,44 +12,45 @@ namespace nc::term {
 namespace input {
  
 enum class Type {
-    noop,                   // no operation, defined only for conviniency
-    text,                   // clean unicode text without any control characters, both escaped
-                            // and unescaped. payload type - UTF8Text
-    line_feed,              // line feed or new line
-    horizontal_tab,         // move cursor to next horizontal tab stop.
-                            // negative values means backward direction.
-                            // payload type - signed
-    carriage_return,        // move cursor to the beginning of the horizontal line
-    back_space,             // move cursor left by one space
-    bell,                   // generates a bell tone
-    reverse_index,          // move cursor up, scroll if needed
-    reset,                  // reset the terminal to its initial state
-    save_state,             // save cursor position and graphic rendition
-    restore_state,          // restore cursor position and graphic rendition
-    screen_alignment_test,  // DECALN — screen alignment pattern
-    change_title,           // payload type - Title
-    move_cursor,            // payload type - CursorMovement
-    erase_in_display,       // payload type - DisplayErasure
-    erase_in_line,          // payload type - LineErasure
-    insert_lines,           // insert the indicated number of blank lines
-                            // payload type - unsigned
-    delete_lines,           // delete the indicated number of lines
-                            // payload type - unsigned
-    delete_characters,      // delete the indicated number of characters from the cursor position
-                            // to the right. payload type - unsigned
-    scroll_lines,           // scroll up(positive) or down(negative) the indicated number of lines
-                            // payload type - signed
-    erase_characters,       // erase the indicated number of characters on current line,
-                            // from the cursor position to the right. payload type - unsigned
-    repeat_last_character,  // repeat the last output character the indicated number of times.
-                            // payload type - unsigned
-    report,                 // ask for the terminal's status
-                            // payload type - DeviceReport
-    change_mode,            // payload type - ModeChange
-    set_scrolling_region,   // payload type - ScrollingRegion
-    clear_tab,              // payload type - TabClear
-    set_tab,                // set one horizontal stop at the active position.
-    set_character_attributes// payload type - CharacterAttributes
+    noop,                    // no operation, defined only for conviniency
+    text,                    // clean unicode text without any control characters, both escaped
+                             // and unescaped. payload type - UTF8Text
+    line_feed,               // line feed or new line
+    horizontal_tab,          // move cursor to next horizontal tab stop.
+                             // negative values means backward direction.
+                             // payload type - signed
+    carriage_return,         // move cursor to the beginning of the horizontal line
+    back_space,              // move cursor left by one space
+    bell,                    // generates a bell tone
+    reverse_index,           // move cursor up, scroll if needed
+    reset,                   // reset the terminal to its initial state
+    save_state,              // save cursor position and graphic rendition
+    restore_state,           // restore cursor position and graphic rendition
+    screen_alignment_test,   // DECALN — screen alignment pattern
+    change_title,            // payload type - Title
+    move_cursor,             // payload type - CursorMovement
+    erase_in_display,        // payload type - DisplayErasure
+    erase_in_line,           // payload type - LineErasure
+    insert_lines,            // insert the indicated number of blank lines
+                             // payload type - unsigned
+    delete_lines,            // delete the indicated number of lines
+                             // payload type - unsigned
+    delete_characters,       // delete the indicated number of characters from the cursor position
+                             // to the right. payload type - unsigned
+    scroll_lines,            // scroll up(positive) or down(negative) the indicated number of lines
+                             // payload type - signed
+    erase_characters,        // erase the indicated number of characters on current line,
+                             // from the cursor position to the right. payload type - unsigned
+    repeat_last_character,   // repeat the last output character the indicated number of times.
+                             // payload type - unsigned
+    report,                  // ask for the terminal's status
+                             // payload type - DeviceReport
+    change_mode,             // payload type - ModeChange
+    set_scrolling_region,    // payload type - ScrollingRegion
+    clear_tab,               // payload type - TabClear
+    set_tab,                 // set one horizontal stop at the active position.
+    set_character_attributes,// payload type - CharacterAttributes
+    select_character_set     // payload type unsigned (0 - G0, 1 - G1, 2 - G2, 3 - G3)
 };
 
 struct None

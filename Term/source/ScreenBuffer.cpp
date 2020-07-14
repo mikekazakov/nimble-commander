@@ -235,10 +235,10 @@ std::string ScreenBuffer::DumpScreenAsANSIBreaked() const
     return result;
 }
 
-std::u32string ScreenBuffer::DumpScreenAsUTF32() const
+std::u32string ScreenBuffer::DumpScreenAsUTF32(bool _break_lines) const
 {
     std::u32string result;
-    for( auto &l:m_OnScreenLines )
+    for( auto &l:m_OnScreenLines ) {
         for(auto *i = &m_OnScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i) {
             if( i->l >= 32 ) {
                 result += i->l;
@@ -251,6 +251,9 @@ std::u32string ScreenBuffer::DumpScreenAsUTF32() const
                 result += ' ';
             }
         }
+        if( _break_lines )
+            result += '\r';
+    }
     return result;
 }
 

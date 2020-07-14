@@ -105,6 +105,13 @@ static const CharacterAttributes& as_character_attributes( const Command &_comma
     throw std::invalid_argument("not CharacterAttributes");
 }
 
+static const CharacterSetDesignation& as_character_set_designation( const Command &_command )
+{
+    if( auto ptr = std::get_if<CharacterSetDesignation>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not CharacterSetDesignation");
+}
+
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
     Parser2Impl parser;
@@ -217,17 +224,17 @@ TEST_CASE(PREFIX"Handles control characters")
         SECTION("") { r = parser.Parse(to_bytes("\x1B\x1A")); }
         REQUIRE( r.empty() );
     }
-    SECTION( "select g0" ) {
+    SECTION( "select g1" ) {
         auto r = parser.Parse(to_bytes("\x0E"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::select_character_set );
-        CHECK( as_unsigned(r[0]) == 0 );
+        CHECK( as_unsigned(r[0]) == 1 );
     }
-    SECTION( "select g1" ) {
+    SECTION( "select g0" ) {
         auto r = parser.Parse(to_bytes("\x0F"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::select_character_set );
-        CHECK( as_unsigned(r[0]) == 1 );
+        CHECK( as_unsigned(r[0]) == 0 );
     }
     SECTION( "ESC E" ) {
         auto r = parser.Parse(to_bytes("\x1B""E"));
@@ -1211,6 +1218,41 @@ TEST_CASE(PREFIX"CSI `")
         CHECK( as_cursor_movement(r[0]).positioning == CursorMovement::Positioning::Absolute );
         CHECK( as_cursor_movement(r[0]).x == 6 );
         CHECK( as_cursor_movement(r[0]).y == std::nullopt );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
+TEST_CASE(PREFIX"Character set designation")
+{
+    Parser2Impl parser;
+    using CSD = CharacterSetDesignation;
+    SECTION( "ESC ( 0" ) {
+        auto r = parser.Parse(to_bytes("\x1B""(0"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::designate_character_set );
+        CHECK( as_character_set_designation(r[0]).target == 0 );
+        CHECK( as_character_set_designation(r[0]).set == CSD::DECSpecialGraphics );
+    }
+    SECTION( "ESC ( A" ) {
+        auto r = parser.Parse(to_bytes("\x1B""(A"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::designate_character_set );
+        CHECK( as_character_set_designation(r[0]).target == 0 );
+        CHECK( as_character_set_designation(r[0]).set == CSD::UK );
+    }
+    SECTION( "ESC ( B" ) {
+        auto r = parser.Parse(to_bytes("\x1B""(B"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::designate_character_set );
+        CHECK( as_character_set_designation(r[0]).target == 0 );
+        CHECK( as_character_set_designation(r[0]).set == CSD::USASCII );
+    }
+    SECTION( "ESC ) 0" ) {
+        auto r = parser.Parse(to_bytes("\x1B"")0"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::designate_character_set );
+        CHECK( as_character_set_designation(r[0]).target == 1 );
+        CHECK( as_character_set_designation(r[0]).set == CSD::DECSpecialGraphics );
     }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }

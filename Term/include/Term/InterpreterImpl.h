@@ -5,6 +5,7 @@
 #include "Screen.h"
 #include "ScreenBuffer.h"
 #include <bitset>
+#include <optional>
 
 namespace nc::term {
 
@@ -43,6 +44,10 @@ private:
     void ProcessChangeColumnMode132( bool _on );
     void ProcessClearTab( input::TabClear _tab_clear );
     void ProcessSetCharacterAttributes( input::CharacterAttributes _attributes );
+    void ProcessDesignateCharacterSet( input::CharacterSetDesignation _designation );
+    void ProcessSelectCharacterSet( unsigned _target );
+    void ProcessSaveState();
+    void ProcessRestoreState();
     void Response(std::string_view _text);
     void UpdateCharacterAttributes();
     
@@ -52,24 +57,43 @@ private:
         int top = 0;     // logical bounds - top, closed [
         int bottom = 0;  // logical bounds - bottom, open )
     };
+    
+    struct CharacterSets {
+        std::array<unsigned, 4> Gx = {0, 0, 0, 0};
+    };
+    
+    struct Rendition {
+        bool faint = false;
+        bool inverse = false;
+        bool bold = false;
+        bool italic = false;
+        bool invisible = false;
+        bool blink = false;
+        bool underline = false;
+        std::uint8_t fg_color = ScreenColors::Default;
+        std::uint8_t bg_color = ScreenColors::Default;
+    };
+    
+    struct SavedState {
+        int x = 0;
+        int y = 0;
+        Rendition rendition;
+        CharacterSets character_sets;
+        const unsigned short *translate_map = nullptr;
+    };
 
     Screen &m_Screen;
     Output m_Output = [](Bytes){};
     Bell m_Bell = []{};
     Extent m_Extent;
     TabStops m_TabStops;
+    const unsigned short *m_TranslateMap = nullptr;
+    CharacterSets m_CS;
     bool m_OriginLineMode = false;
     bool m_AllowScreenResize = true;
     bool m_AutoWrapMode = true;
-    bool m_Faint = false;
-    bool m_Inverse = false;
-    bool m_Bold = false;
-    bool m_Italic = false;
-    bool m_Invisible = false;
-    bool m_Blink = false;
-    bool m_Underline = false;
-    std::uint8_t m_FgColor = ScreenColors::Default;
-    std::uint8_t m_BgColor = ScreenColors::Default;
+    Rendition m_Rendition;
+    std::optional<SavedState> m_SavedState;
 };
 
 }

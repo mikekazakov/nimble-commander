@@ -3,11 +3,13 @@
 #include <Habanero/CFString.h>
 #include <Habanero/CFPtr.h>
 #include <Utility/OrthodoxMonospace.h>
+#include "TranslateMaps.h"
 
 namespace nc::term {
 
 static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 );
 static std::u32string ComposeUnicodePoints( std::u32string _utf32 );
+static void ApplyTranslateMap( std::u32string &_utf32, const unsigned short *_map );
 
 InterpreterImpl::InterpreterImpl(Screen &_screen):
     m_Screen(_screen)
@@ -91,6 +93,18 @@ void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
         case Type::set_character_attributes:
             ProcessSetCharacterAttributes( *std::get_if<CharacterAttributes>(&_command.payload) );
             break;
+        case Type::designate_character_set:
+            ProcessDesignateCharacterSet(*std::get_if<CharacterSetDesignation>(&_command.payload) );
+            break;
+        case Type::select_character_set:
+            ProcessSelectCharacterSet( *std::get_if<unsigned>(&_command.payload) );
+            break;
+        case Type::save_state:
+            ProcessSaveState();
+            break;
+        case Type::restore_state:
+            ProcessRestoreState();
+            break;
         default:
             break;
     }
@@ -108,7 +122,12 @@ void InterpreterImpl::SetBell( Bell _bell )
 
 void InterpreterImpl::ProcessText( const input::UTF8Text &_text )
 {
-    const auto utf32 = ComposeUnicodePoints( ConvertUTF8ToUTF32( _text.characters ) );
+    auto uncomposed_utf32 = ConvertUTF8ToUTF32( _text.characters );
+    if( m_TranslateMap != nullptr ) {
+        ApplyTranslateMap(uncomposed_utf32, m_TranslateMap);
+    }
+    
+    const auto utf32 = ComposeUnicodePoints( std::move(uncomposed_utf32) );
     
     for( const auto c: utf32 ) {
     
@@ -378,39 +397,39 @@ void  InterpreterImpl::ProcessClearTab( input::TabClear _tab_clear )
 void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes _attributes )
 {
     auto set_fg = [this]( std::uint8_t _color ) {
-        m_FgColor = _color;
+        m_Rendition.fg_color = _color;
         m_Screen.SetFgColor(_color);
     };
     auto set_bg = [this]( std::uint8_t _color ) {
-        m_BgColor = _color;
+        m_Rendition.bg_color = _color;
         m_Screen.SetBgColor(_color);
     };
     auto set_faint = [this]( bool _faint ) {
-        m_Faint = _faint;
+        m_Rendition.faint = _faint;
         m_Screen.SetIntensity(!_faint);
     };
     auto set_inverse = [this]( bool _inverse ) {
-        m_Inverse = _inverse;
+        m_Rendition.inverse = _inverse;
         m_Screen.SetReverse(_inverse);
     };
     auto set_bold = [this]( bool _bold ) {
-        m_Bold = _bold;
+        m_Rendition.bold = _bold;
         m_Screen.SetBold(_bold);
     };
     auto set_italic = [this]( bool _italic ) {
-        m_Italic = _italic;
+        m_Rendition.italic = _italic;
         m_Screen.SetItalic(_italic);
     };
     auto set_invisible = [this]( bool _invisible ) {
-        m_Invisible = _invisible;
+        m_Rendition.invisible = _invisible;
         m_Screen.SetInvisible(_invisible);
     };
     auto set_blink = [this]( bool _blink ) {
-        m_Blink = _blink;
+        m_Rendition.blink = _blink;
         m_Screen.SetBlink(_blink);
     };
     auto set_underline = [this]( bool _underline ) {
-        m_Underline = _underline;
+        m_Rendition.underline = _underline;
         m_Screen.SetUnderline(_underline);
     };
     
@@ -465,15 +484,15 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
 
 void InterpreterImpl::UpdateCharacterAttributes()
 {
-    m_Screen.SetFgColor(m_FgColor);
-    m_Screen.SetBgColor(m_BgColor);
-    m_Screen.SetIntensity(!m_Faint);
-    m_Screen.SetReverse(m_Inverse);
-    m_Screen.SetBold(m_Bold);
-    m_Screen.SetItalic(m_Italic);
-    m_Screen.SetInvisible(m_Invisible);
-    m_Screen.SetBlink(m_Blink);
-    m_Screen.SetUnderline(m_Underline);
+    m_Screen.SetFgColor(m_Rendition.fg_color);
+    m_Screen.SetBgColor(m_Rendition.bg_color);
+    m_Screen.SetIntensity(!m_Rendition.faint);
+    m_Screen.SetReverse(m_Rendition.inverse);
+    m_Screen.SetBold(m_Rendition.bold);
+    m_Screen.SetItalic(m_Rendition.italic);
+    m_Screen.SetInvisible(m_Rendition.invisible);
+    m_Screen.SetBlink(m_Rendition.blink);
+    m_Screen.SetUnderline(m_Rendition.underline);
 }
 
 void InterpreterImpl::Response(std::string_view _text)
@@ -519,7 +538,7 @@ static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 )
     return result; 
 }
 
-std::u32string ComposeUnicodePoints( std::u32string _utf32 )
+static std::u32string ComposeUnicodePoints( std::u32string _utf32 )
 {
     // temp and slow implementation
     const bool can_be_composed = std::any_of(_utf32.begin(), _utf32.end(), [](const char32_t _c){
@@ -569,6 +588,15 @@ std::u32string ComposeUnicodePoints( std::u32string _utf32 )
     return _utf32;
 }
 
+static void ApplyTranslateMap( std::u32string &_utf32, const unsigned short *_map )
+{
+    for( auto &c: _utf32 ) {
+        if( c <= 0x7f ) {
+            c = _map[c];
+        }
+    }
+}
+
 void InterpreterImpl::ResetToDefaultTabStops(TabStops &_tab_stops)
 {
     _tab_stops.reset();
@@ -584,6 +612,69 @@ bool InterpreterImpl::ScreenResizeAllowed()
 void InterpreterImpl::SetScreenResizeAllowed( bool _allow )
 {
     m_AllowScreenResize = _allow;
+}
+
+void InterpreterImpl::ProcessDesignateCharacterSet(input::CharacterSetDesignation _designation) {
+    unsigned codeset = 0;
+    switch( _designation.set ) {
+        case input::CharacterSetDesignation::DECSpecialGraphics:
+            codeset = TranslateMaps::Graph;
+            break;
+        case input::CharacterSetDesignation::UK:
+            codeset = TranslateMaps::Lat1; // NOT TRUE!!!
+            break;
+        case input::CharacterSetDesignation::USASCII:
+            codeset = TranslateMaps::Lat1;
+            break;
+        default: return;
+    }
+
+    if( _designation.target < m_CS.Gx.size() ) {
+        m_CS.Gx[_designation.target] = codeset;
+    }
+    else {
+        return;
+    }
+        
+    if( codeset == TranslateMaps::Lat1 ) {
+        m_TranslateMap = nullptr;
+    }
+    else {
+        m_TranslateMap = g_TranslateMaps[codeset];
+    }
+}
+
+void InterpreterImpl::ProcessSelectCharacterSet( unsigned _target )
+{
+    if( _target < m_CS.Gx.size() ) {
+        const auto codeset = m_CS.Gx[_target];
+        if( codeset == TranslateMaps::Lat1 )
+            m_TranslateMap = nullptr;
+        else
+            m_TranslateMap = g_TranslateMaps[codeset];
+    }
+}
+
+void InterpreterImpl::ProcessSaveState()
+{
+    SavedState state;
+    state.x = m_Screen.CursorX();
+    state.y = m_Screen.CursorY();
+    state.rendition = m_Rendition;
+    state.character_sets = m_CS;
+    state.translate_map = m_TranslateMap;
+    m_SavedState = state;
+}
+
+void InterpreterImpl::ProcessRestoreState()
+{
+    if( m_SavedState == std::nullopt )
+        return;
+    m_Screen.GoTo(m_SavedState->x, m_SavedState->y);    
+    m_CS = m_SavedState->character_sets;
+    m_TranslateMap = m_SavedState->translate_map;
+    m_Rendition = m_SavedState->rendition;
+    UpdateCharacterAttributes();
 }
 
 }

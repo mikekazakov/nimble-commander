@@ -209,8 +209,6 @@ bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
     switch (c) {
         case '[': SwitchTo(EscState::CSI); return true;
         case ']': SwitchTo(EscState::OSC); return true;
-            //                case '(': m_EscState = EscState::SetG0;         return;
-            //                case ')': m_EscState = EscState::SetG1;         return;
         case '>':  /* Numeric keypad - ignoring now */  return true;
         case '=':  /* Appl. keypad - ignoring now */    return true;
             
@@ -266,6 +264,10 @@ bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
              powered on. */                                
         case 'c': RIS(); return true;
             
+        case '(':
+        case ')':
+            SwitchTo(EscState::DCS); return false;
+        
             // For everything else, i.e. unimplemented stuff - complain in a log.
         default: LogMissedEscChar(c); return true;
     }
@@ -423,8 +425,8 @@ bool Parser2Impl::SSControlConsume(unsigned char _byte) noexcept
             case 11:
             case 12: SwitchTo(EscState::Text); LF(); return true;
             case 13: SwitchTo(EscState::Text); CR(); return true;
-            case 14: SwitchTo(EscState::Text); SI(); return true;
-            case 15: SwitchTo(EscState::Text); SO(); return true;
+            case 14: SwitchTo(EscState::Text); SO(); return true;
+            case 15: SwitchTo(EscState::Text); SI(); return true;
             case 16: SwitchTo(EscState::Text); return true;
             case 17: SwitchTo(EscState::Text); return true; // xon
             case 18: SwitchTo(EscState::Text); return true;
@@ -546,7 +548,7 @@ void Parser2Impl::SSCSIExit() noexcept
     SSCSISubmit();
 }
 
-constexpr static std::array<bool, 256> CSI_Table( std::string_view _on )
+constexpr static std::array<bool, 256> Make8BitBoolTable( std::string_view _on )
 {
     std::array<bool, 256> flags{};
     std::fill(flags.begin(), flags.end(), false);
@@ -556,10 +558,10 @@ constexpr static std::array<bool, 256> CSI_Table( std::string_view _on )
 }
 
 constexpr static std::array<bool, 256> g_CSI_ValidTerminal = 
-    CSI_Table("@ABCDEFGHIJKLMPSTXZ^`abcdefghilmnpqrstuvwxyz{|}~");
+    Make8BitBoolTable("@ABCDEFGHIJKLMPSTXZ^`abcdefghilmnpqrstuvwxyz{|}~");
 
 constexpr static std::array<bool, 256> g_CSI_ValidContents =
-    CSI_Table("01234567890; ?>=!\"\'$#*");
+    Make8BitBoolTable("01234567890; ?>=!\"\'$#*");
 
 bool Parser2Impl::SSCSIConsume(unsigned char _byte) noexcept
 {
@@ -1247,7 +1249,79 @@ void Parser2Impl::CSI_Accent() noexcept
     cm.y = std::nullopt;
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
+
+void Parser2Impl::SSDCSEnter() noexcept
+{
+    m_DCSState.buffer.clear();
+}
+
+static std::optional<unsigned> DCS_Target(const char _c) noexcept
+{
+    switch( _c ) {
+        case '(': return 0;
+        case ')': return 1;
+        case '*': return 2;
+        case '+': return 3;
+        default: return std::nullopt;
+    }
+}
+
+static std::optional<input::CharacterSetDesignation::Set>
+DCS_Set( const std::string_view _str ) noexcept
+{
+    using CSD = input::CharacterSetDesignation;
+    if( _str == "0" ) return CSD::DECSpecialGraphics;
+    if( _str == "A" ) return CSD::UK;
+    if( _str == "B" ) return CSD::USASCII;
+    return std::nullopt;
+}
+
+void Parser2Impl::SSDCSExit() noexcept
+{
+    const std::string_view buffer = m_DCSState.buffer;
+    if( buffer.length() < 2 )
+        return;
     
+    const auto target = DCS_Target(buffer.front());
+    if( target == std::nullopt )
+        return;
+    
+    const auto set = DCS_Set(buffer.substr(1));
+    if( set == std::nullopt )
+        return;
+    
+    input::CharacterSetDesignation csd;
+    csd.target = *target;
+    csd.set = *set;
+    m_Output.emplace_back( input::Type::designate_character_set, csd );
+}
+
+constexpr static std::array<bool, 256> g_DCS_ValidTerminal =
+    Make8BitBoolTable("?=<>02345679ABCEHKQRfYZ");
+
+constexpr static std::array<bool, 256> g_DCS_ValidContents =
+    Make8BitBoolTable("()*+\"%`&");
+
+bool Parser2Impl::SSDCSConsume(unsigned char _byte) noexcept
+{
+     if( g_DCS_ValidContents[_byte] ) {
+         m_DCSState.buffer += static_cast<char>(_byte);
+         return true;
+     }
+     else {
+         if( g_DCS_ValidTerminal[_byte] ) {
+             m_DCSState.buffer += static_cast<char>(_byte);
+             SwitchTo(EscState::Text);
+             return true;
+         }
+         else {
+             m_DCSState.buffer.clear(); // discard
+             SwitchTo(EscState::Text);
+             return false;
+         }
+     }
+}
+
 Parser2Impl::CSIParamsScanner::Params
 Parser2Impl::CSIParamsScanner::Parse(std::string_view _csi) noexcept
 {

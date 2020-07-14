@@ -330,6 +330,13 @@ const static std::pair<const char8_t*, const char32_t*> g_UTFCases[] =
     },    
 };
 
+static Parser2::Bytes Bytes(const char *_string) noexcept
+{
+    const auto view = std::string_view{_string};
+    return Parser2::Bytes(reinterpret_cast<const std::byte*>(view.data()),
+                          view.length());
+}
+
 [[maybe_unused]] static void Print( const std::span<const input::Command> &_commands )
 {
     for( auto &cmd: _commands )
@@ -550,9 +557,7 @@ TEST_CASE(PREFIX"vttest(1.1) - test of cursor movements, "
     Parser2Impl parser;
     Screen screen(80, 25);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -725,9 +730,7 @@ TEST_CASE(PREFIX"vttest(1.2) - test of cursor movements, "
     Parser2Impl parser;
     Screen screen(80, 25);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -783,9 +786,7 @@ TEST_CASE(PREFIX"vttest(1.3) - test of cursor movements, "
     Parser2Impl parser;
     Screen screen(80, 25);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -841,9 +842,7 @@ TEST_CASE(PREFIX"vttest(1.4) - test of cursor movements, "
     Parser2Impl parser;
     Screen screen(80, 25);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -875,9 +874,7 @@ TEST_CASE(PREFIX"vttest(1.5) - test of cursor movements, "
     Parser2Impl parser;
     Screen screen(60, 9);
     InterpreterImpl interpreter(screen);    
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret(parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -922,9 +919,7 @@ TEST_CASE(PREFIX"vttest(1.6) - test of cursor movements, "
     Parser2Impl parser;
     Screen screen(80, 20);
     InterpreterImpl interpreter(screen);    
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret(parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -957,9 +952,7 @@ TEST_CASE(PREFIX"vttest(2.1) - test of WRAP AROUND mode setting")
     Parser2Impl parser;
     Screen screen(80, 10);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -991,9 +984,7 @@ TEST_CASE(PREFIX"vttest(2.2) - Test of TAB setting/resetting")
     Parser2Impl parser;
     Screen screen(80, 6);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1044,9 +1035,7 @@ TEST_CASE(PREFIX"vttest(2.3) - 132 column / video reverse")
     Parser2Impl parser;
     Screen screen(80, 21);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1095,9 +1084,7 @@ TEST_CASE(PREFIX"vttest(2.4) - 80 column / video reverse")
     Parser2Impl parser;
     Screen screen(80, 21);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1149,9 +1136,7 @@ TEST_CASE(PREFIX"vttest(2.5) - 132 column / no video reverse")
     Parser2Impl parser;
     Screen screen(80, 21);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1200,9 +1185,7 @@ TEST_CASE(PREFIX"vttest(2.6) - 80 column / no video reverse")
     Parser2Impl parser;
     Screen screen(80, 21);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1270,9 +1253,7 @@ TEST_CASE(PREFIX"vttest(2.7) - soft scroll")
     Parser2Impl parser;
     Screen screen(80, 14);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1351,9 +1332,7 @@ TEST_CASE(PREFIX"vttest(2.8) - soft scroll")
     Parser2Impl parser;
     Screen screen(80, 25);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1421,9 +1400,7 @@ TEST_CASE(PREFIX"vttest(2.9) - jump scroll")
     Parser2Impl parser;
     Screen screen(80, 14);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1502,9 +1479,7 @@ TEST_CASE(PREFIX"vttest(2.10) - jump scroll")
     Parser2Impl parser;
     Screen screen(80, 25);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1547,9 +1522,7 @@ TEST_CASE(PREFIX"vttest(2.11) - origin mode test")
     Parser2Impl parser;
     Screen screen(80, 25);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1592,9 +1565,7 @@ TEST_CASE(PREFIX"vttest(2.12) - origin mode test")
     Parser2Impl parser;
     Screen screen(80, 25);
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1644,9 +1615,7 @@ TEST_CASE(PREFIX"vttest(2.13) - Graphic rendition test pattern / dark background
     Screen screen(80, 25);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1757,9 +1726,7 @@ TEST_CASE(PREFIX"vttest(2.14) - Graphic rendition test pattern / light backgroun
     Screen screen(80, 25);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
-    const auto input = std::string_view{raw_input};
-    const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
-                                            input.length());
+    const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
@@ -1824,6 +1791,108 @@ TEST_CASE(PREFIX"vttest(2.14) - Graphic rendition test pattern / light backgroun
     
     sp.underline = true;
     Expect(buffer, 17, 44, 73, sp);
+}
+
+TEST_CASE(PREFIX"vttest(2.15) - Test of the SAVE/RESTORE CURSOR feature")
+{
+    const auto raw_input =
+    "\x1B[?5l\x1B[2J\x1B[8;12Hnormal\x1B[8;24Hbold\x1B[8;36Hunderscored\x1B[8;48Hblinking\x1B[8;60H"
+    "reversed\x1B[10;1Hstars:\x1B[12;1Hline:\x1B[14;1Hx'es:\x1B[16;1Hdiamonds:\x1B[10;12H\x1B[;0m"
+    "\x1B(B\x1B)B\x0F*****\x1B""7\x1B[1;1H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8*****\x1B[10;24H\x1B[;1m"
+    "\x1B(B\x1B)B\x0F*****\x1B""7\x1B[1;2H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8*****\x1B[10;36H\x1B[;4m"
+    "\x1B(B\x1B)B\x0F*****\x1B""7\x1B[1;3H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8*****\x1B[10;48H\x1B[;5m"
+    "\x1B(B\x1B)B\x0F*****\x1B""7\x1B[1;4H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8*****\x1B[10;60H\x1B[;7m"
+    "\x1B(B\x1B)B\x0F*****\x1B""7\x1B[1;5H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8*****\x1B[12;12H\x1B[;0m"
+    "\x1B(0\x1B)B\x0Fqqqqq\x1B""7\x1B[2;1H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8qqqqq\x1B[12;24H\x1B[;1m"
+    "\x1B(0\x1B)B\x0Fqqqqq\x1B""7\x1B[2;2H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8qqqqq\x1B[12;36H\x1B[;4m"
+    "\x1B(0\x1B)B\x0Fqqqqq\x1B""7\x1B[2;3H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8qqqqq\x1B[12;48H\x1B[;5m"
+    "\x1B(0\x1B)B\x0Fqqqqq\x1B""7\x1B[2;4H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8qqqqq\x1B[12;60H\x1B[;7m"
+    "\x1B(0\x1B)B\x0Fqqqqq\x1B""7\x1B[2;5H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8qqqqq\x1B[14;12H\x1B[;0m"
+    "\x1B(B\x1B)B\x0Fxxxxx\x1B""7\x1B[3;1H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8xxxxx\x1B[14;24H\x1B[;1m"
+    "\x1B(B\x1B)B\x0Fxxxxx\x1B""7\x1B[3;2H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8xxxxx\x1B[14;36H\x1B[;4m"
+    "\x1B(B\x1B)B\x0Fxxxxx\x1B""7\x1B[3;3H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8xxxxx\x1B[14;48H\x1B[;5m"
+    "\x1B(B\x1B)B\x0Fxxxxx\x1B""7\x1B[3;4H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8xxxxx\x1B[14;60H\x1B[;7m"
+    "\x1B(B\x1B)B\x0Fxxxxx\x1B""7\x1B[3;5H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8xxxxx\x1B[16;12H\x1B[;0m"
+    "\x1B(0\x1B)B\x0F`````\x1B""7\x1B[4;1H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8`````\x1B[16;24H\x1B[;1m"
+    "\x1B(0\x1B)B\x0F`````\x1B""7\x1B[4;2H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8`````\x1B[16;36H\x1B[;4m"
+    "\x1B(0\x1B)B\x0F`````\x1B""7\x1B[4;3H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8`````\x1B[16;48H\x1B[;5m"
+    "\x1B(0\x1B)B\x0F`````\x1B""7\x1B[4;4H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8`````\x1B[16;60H\x1B[;7m"
+    "\x1B(0\x1B)B\x0F`````\x1B""7\x1B[4;5H\x1B[m\x1B(B\x1B)B\x0F""A\x1B""8`````\x1B[0m\x1B(B\x1B)B"
+    "\x0F\x1B[21;1HTest of the SAVE/RESTORE CURSOR feature. There should\x0D\x0D\x0A""be ten "
+    "characters of each flavour, and a rectangle\x0D\x0D\x0Aof 5 x 4 A's filling the top left of "
+    "the screen.\x0D\x0D\x0APush <RETURN>";
+
+    const auto expectation =
+   U"AAAAA                                                                           "
+    "AAAAA                                                                           "
+    "AAAAA                                                                           "
+    "AAAAA                                                                           "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "           normal      bold        underscored blinking    reversed             "
+    "                                                                                "
+    "stars:     **********  **********  **********  **********  **********           "
+    "                                                                                "
+    "line:      ──────────  ──────────  ──────────  ──────────  ──────────           "
+    "                                                                                "
+    "x'es:      xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx           "
+    "                                                                                "
+    "diamonds:  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆           "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "Test of the SAVE/RESTORE CURSOR feature. There should                           "
+    "be ten characters of each flavour, and a rectangle                              "
+    "of 5 x 4 A's filling the top left of the screen.                                "
+    "Push <RETURN>                                                                   "
+    "                                                                                ";
+    
+    Parser2Impl parser;
+    Screen screen(80, 25);
+    const ScreenBuffer &buffer = screen.Buffer();
+    InterpreterImpl interpreter(screen);
+    const auto input_bytes = Bytes(raw_input);
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsUTF32();
+        
+    CHECK( result == expectation );
+    
+    ScreenBuffer::Space sp = ScreenBuffer::DefaultEraseChar();
+    sp.intensity = true;
+    
+    Expect(buffer, 9, 11, 21, sp);
+    Expect(buffer, 11, 11, 21, sp);
+    Expect(buffer, 13, 11, 21, sp);
+    Expect(buffer, 13, 11, 21, sp);
+    
+    sp.bold = true;
+    Expect(buffer, 9, 23, 33, sp);
+    Expect(buffer, 11, 23, 33, sp);
+    Expect(buffer, 13, 23, 33, sp);
+    Expect(buffer, 13, 23, 33, sp);
+    
+    sp.bold = false;
+    sp.underline = true;
+    Expect(buffer, 9, 35, 45, sp);
+    Expect(buffer, 11, 35, 45, sp);
+    Expect(buffer, 13, 35, 45, sp);
+    Expect(buffer, 13, 35, 45, sp);
+
+    sp.underline = false;
+    sp.blink = true;
+    Expect(buffer, 9, 47, 57, sp);
+    Expect(buffer, 11, 47, 57, sp);
+    Expect(buffer, 13, 47, 57, sp);
+    Expect(buffer, 13, 47, 57, sp);
+
+    sp.blink = false;
+    sp.reverse = true;
+    Expect(buffer, 9, 59, 69, sp);
+    Expect(buffer, 11, 59, 69, sp);
+    Expect(buffer, 13, 59, 69, sp);
+    Expect(buffer, 13, 59, 69, sp);
 }
 
 TEST_CASE(PREFIX"rn escape assumption")

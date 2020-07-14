@@ -336,3 +336,23 @@ TEST_CASE(PREFIX"setting underline")
         verify(CA::NotUnderlined, false);
     }
 }
+
+TEST_CASE(PREFIX"G0 - DEC Special Graphics")
+{
+    using namespace input;
+    using CSD = CharacterSetDesignation;
+    Screen screen(1, 1);
+    InterpreterImpl interpreter(screen);
+    SECTION("Graph") {
+        interpreter.Interpret(Command(Type::designate_character_set,
+                                      CSD{ 0, CSD::DECSpecialGraphics }));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"n"}));
+        CHECK( screen.Buffer().At(0, 0).l == U'┼' );
+    }
+    SECTION("Graph and back") {
+        interpreter.Interpret(Command(Type::designate_character_set,
+                                      CSD{ 0, CSD::USASCII }));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"n"}));
+        CHECK( screen.Buffer().At(0, 0).l == 'n' );
+    }
+}

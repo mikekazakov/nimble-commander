@@ -22,8 +22,9 @@ public:
         Text = 0,
         Control = 1,
         Esc = 2,
-        OSC = 3,
-        CSI = 4
+        OSC = 3, // operating system command
+        CSI = 4, // control sequence introducer
+        DCS = 5 // dedicate character set
     };
 
     Parser2Impl( const Params& _params = {} );
@@ -66,6 +67,10 @@ private:
     void SSCSIExit() noexcept;
     bool SSCSIConsume(unsigned char _byte) noexcept;
     void SSCSISubmit() noexcept;
+    
+    void SSDCSEnter() noexcept;
+    void SSDCSExit() noexcept;
+    bool SSDCSConsume(unsigned char _byte) noexcept;
     
     void LF() noexcept;
     void HT() noexcept;
@@ -115,12 +120,13 @@ private:
         void (Me::*enter)() noexcept;
         void (Me::*exit)() noexcept;
         bool (Me::*consume)(unsigned char _byte) noexcept;    
-    } m_SubStates[5] = {
+    } m_SubStates[6] = {
         { &Me::SSTextEnter, &Me::SSTextExit, &Me::SSTextConsume },
         { &Me::SSControlEnter, &Me::SSControlExit, &Me::SSControlConsume },
         { &Me::SSEscEnter, &Me::SSEscExit, &Me::SSEscConsume },
         { &Me::SSOSCEnter, &Me::SSOSCExit, &Me::SSOSCConsume },
         { &Me::SSCSIEnter, &Me::SSCSIExit, &Me::SSCSIConsume },
+        { &Me::SSDCSEnter, &Me::SSDCSExit, &Me::SSDCSConsume },
     };
 
     EscState                m_SubState = EscState::Text;
@@ -143,6 +149,10 @@ private:
     struct SS_CSI {
         std::string buffer;
     } m_CSIState;
+    
+    struct SS_DCS {
+        std::string buffer;
+    } m_DCSState;
     
     // parse output
     std::vector<input::Command> m_Output;

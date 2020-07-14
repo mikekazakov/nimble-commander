@@ -114,7 +114,7 @@ public:
     // use for diagnose and test purposes only
     std::string DumpScreenAsANSI() const;
     std::string DumpScreenAsANSIBreaked() const;
-    std::u32string DumpScreenAsUTF32() const;
+    std::u32string DumpScreenAsUTF32( bool _break_lines = false ) const;
     
     inline bool HasSnapshot() const { return (bool)m_Snapshot; }
     void MakeSnapshot();

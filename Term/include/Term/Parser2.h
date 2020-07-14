@@ -50,7 +50,8 @@ enum class Type {
     clear_tab,               // payload type - TabClear
     set_tab,                 // set one horizontal stop at the active position.
     set_character_attributes,// payload type - CharacterAttributes
-    select_character_set     // payload type unsigned (0 - G0, 1 - G1, 2 - G2, 3 - G3)
+    select_character_set,    // payload type unsigned (0 - G0, 1 - G1, 2 - G2, 3 - G3)
+    designate_character_set  // payload type - CharacterSetDesignation
 };
 
 struct None
@@ -189,11 +190,21 @@ struct CharacterAttributes {
     Kind mode = Normal;
 };
 
+struct CharacterSetDesignation {
+    enum Set {
+        DECSpecialGraphics, // '0'
+        UK,                 // 'A'
+        USASCII             // 'B'
+    };
+    unsigned target = 0; // 0 - G0, 1 - G1 etc
+    Set set = DECSpecialGraphics;
+};
+
 struct Command
 {
     using Payload = std::variant<None, signed, unsigned, UTF8Text, Title, CursorMovement,
     DisplayErasure, LineErasure, ModeChange, DeviceReport, ScrollingRegion, TabClear,
-    CharacterAttributes>;
+    CharacterAttributes, CharacterSetDesignation>;
     Command() noexcept; 
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

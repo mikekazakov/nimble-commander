@@ -51,6 +51,9 @@ static std::string ToString(const Command::Payload &_payload)
             return "mode="s + std::string(magic_enum::enum_name(arg.mode));
         else if constexpr( std::is_same_v<T, CharacterAttributes> )
             return "mode="s + std::string(magic_enum::enum_name(arg.mode));
+        else if constexpr( std::is_same_v<T, CharacterSetDesignation> )
+            return "target="s = std::to_string(arg.target) +
+                ", set=" + std::string(magic_enum::enum_name(arg.set));        
         else
             static_assert(always_false_v<T>, "non-exhaustive visitor!");
     }, _payload);

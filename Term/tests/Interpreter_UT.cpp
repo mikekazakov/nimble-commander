@@ -356,3 +356,53 @@ TEST_CASE(PREFIX"G0 - DEC Special Graphics")
         CHECK( screen.Buffer().At(0, 0).l == 'n' );
     }
 }
+
+TEST_CASE(PREFIX"Save/restore")
+{
+    using namespace input;
+    Screen screen(2, 2);
+    InterpreterImpl interpreter(screen);
+    SECTION("Coordinates") {
+        interpreter.Interpret(Command{Type::save_state});
+        interpreter.Interpret(Command(Type::move_cursor,
+                                      CursorMovement{CursorMovement::Absolute, 1, 1}));
+        interpreter.Interpret(Command{Type::restore_state});
+        CHECK(screen.CursorX() == 0);
+        CHECK(screen.CursorY() == 0);
+    }
+    SECTION("Rendition") {
+        using CA = CharacterAttributes;
+        const auto sca = Type::set_character_attributes;
+        interpreter.Interpret(Command{Type::save_state});
+        interpreter.Interpret(Command(sca, CA{CA::ForegroundRed}));
+        interpreter.Interpret(Command(sca, CA{CA::BackgroundBlue}));
+        interpreter.Interpret(Command(sca, CA{CA::Faint}));
+        interpreter.Interpret(Command(sca, CA{CA::Bold}));
+        interpreter.Interpret(Command(sca, CA{CA::Italicized}));
+        interpreter.Interpret(Command(sca, CA{CA::Blink}));
+        interpreter.Interpret(Command(sca, CA{CA::Inverse}));
+        interpreter.Interpret(Command(sca, CA{CA::Invisible}));
+        interpreter.Interpret(Command(sca, CA{CA::Underlined}));
+        interpreter.Interpret(Command{Type::restore_state});
+        interpreter.Interpret(Command(Type::text, UTF8Text{"a"}));
+        const auto sp = screen.Buffer().At(0, 0);
+        CHECK( sp.foreground == ScreenColors::Default );
+        CHECK( sp.background == ScreenColors::Default );
+        CHECK( sp.intensity == true );
+        CHECK( sp.bold == false );
+        CHECK( sp.italic == false );
+        CHECK( sp.blink == false );
+        CHECK( sp.reverse == false );
+        CHECK( sp.invisible == false );
+        CHECK( sp.underline == false );
+    }
+    SECTION("Character set") {
+        using CSD = CharacterSetDesignation;
+        interpreter.Interpret(Command{Type::save_state});
+        interpreter.Interpret(Command(Type::designate_character_set,
+                                      CSD{ 0, CSD::DECSpecialGraphics }));
+        interpreter.Interpret(Command{Type::restore_state});
+        interpreter.Interpret(Command(Type::text, UTF8Text{"n"}));
+        CHECK( screen.Buffer().At(0, 0).l == 'n' );
+    }
+}

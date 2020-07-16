@@ -193,6 +193,8 @@ struct CharacterAttributes {
 struct CharacterSetDesignation {
     enum Set {
         DECSpecialGraphics, // '0'
+        AlternateCharacterROMStandardCharacters, // '1'
+        AlternateCharacterROMSpecialGraphics, // '2'
         UK,                 // 'A'
         USASCII             // 'B'
     };

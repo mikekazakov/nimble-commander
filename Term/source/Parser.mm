@@ -29,7 +29,7 @@ void Parser::Reset()
     memset(&m_State, 0, sizeof(m_State));
     m_State[0].fg_color = ScreenColors::Default;
     m_State[0].bg_color = ScreenColors::Default;
-    m_State[0].g0_charset = TranslateMaps::Lat1;
+    m_State[0].g0_charset = TranslateMaps::USASCII;
     m_State[0].g1_charset = TranslateMaps::Graph;
     m_TitleType = 0;
     m_LineAbs = true;
@@ -47,7 +47,7 @@ void Parser::Reset()
     m_DECPMS_SavedCurY = 0;
     
     
-    SetTranslate(TranslateMaps::Lat1);
+    SetTranslate(TranslateMaps::USASCII);
     UpdateAttrs();
     m_Scr.GoToDefaultPosition();
     EscSave();
@@ -313,17 +313,13 @@ void Parser::EatByte(unsigned char _byte, int &_result_flags)
         
         case EState::SetG0:
             if (c == '0')       m_State[0].g0_charset  = TranslateMaps::Graph;
-            else if (c == 'B')  m_State[0].g0_charset  = TranslateMaps::Lat1;
-            else if (c == 'U')  m_State[0].g0_charset  = TranslateMaps::IBMPC;
-            else if (c == 'K')  m_State[0].g0_charset  = TranslateMaps::User;
+            else if (c == 'B')  m_State[0].g0_charset  = TranslateMaps::USASCII;
             SetTranslate(m_State[0].charset_no == 0 ? m_State[0].g0_charset : m_State[0].g1_charset);
             return;
             
         case EState::SetG1:
             if (c == '0')       m_State[0].g1_charset  = TranslateMaps::Graph;
-            else if (c == 'B')  m_State[0].g1_charset  = TranslateMaps::Lat1;
-            else if (c == 'U')  m_State[0].g1_charset  = TranslateMaps::IBMPC;
-            else if (c == 'K')  m_State[0].g1_charset  = TranslateMaps::User;
+            else if (c == 'B')  m_State[0].g1_charset  = TranslateMaps::USASCII;
             SetTranslate(m_State[0].charset_no == 0 ? m_State[0].g0_charset : m_State[0].g1_charset);
             return;
             

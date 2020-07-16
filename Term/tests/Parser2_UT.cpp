@@ -1247,6 +1247,22 @@ TEST_CASE(PREFIX"Character set designation")
         CHECK( as_character_set_designation(r[0]).target == 0 );
         CHECK( as_character_set_designation(r[0]).set == CSD::USASCII );
     }
+    SECTION( "ESC ( 1" ) {
+        auto r = parser.Parse(to_bytes("\x1B""(1"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::designate_character_set );
+        CHECK( as_character_set_designation(r[0]).target == 0 );
+        CHECK( as_character_set_designation(r[0]).set ==
+              CSD::AlternateCharacterROMStandardCharacters );
+    }
+    SECTION( "ESC ( 2" ) {
+        auto r = parser.Parse(to_bytes("\x1B""(2"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::designate_character_set );
+        CHECK( as_character_set_designation(r[0]).target == 0 );
+        CHECK( as_character_set_designation(r[0]).set ==
+              CSD::AlternateCharacterROMSpecialGraphics );
+    }
     SECTION( "ESC ) 0" ) {
         auto r = parser.Parse(to_bytes("\x1B"")0"));
         REQUIRE( r.size() == 1 );

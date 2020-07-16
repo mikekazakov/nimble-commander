@@ -618,13 +618,15 @@ void InterpreterImpl::ProcessDesignateCharacterSet(input::CharacterSetDesignatio
     unsigned codeset = 0;
     switch( _designation.set ) {
         case input::CharacterSetDesignation::DECSpecialGraphics:
+        case input::CharacterSetDesignation::AlternateCharacterROMSpecialGraphics:
             codeset = TranslateMaps::Graph;
             break;
         case input::CharacterSetDesignation::UK:
-            codeset = TranslateMaps::Lat1; // NOT TRUE!!!
+            codeset = TranslateMaps::UK;
             break;
         case input::CharacterSetDesignation::USASCII:
-            codeset = TranslateMaps::Lat1;
+        case input::CharacterSetDesignation::AlternateCharacterROMStandardCharacters:
+            codeset = TranslateMaps::USASCII;
             break;
         default: return;
     }
@@ -636,7 +638,7 @@ void InterpreterImpl::ProcessDesignateCharacterSet(input::CharacterSetDesignatio
         return;
     }
         
-    if( codeset == TranslateMaps::Lat1 ) {
+    if( codeset == TranslateMaps::USASCII ) {
         m_TranslateMap = nullptr;
     }
     else {
@@ -648,7 +650,7 @@ void InterpreterImpl::ProcessSelectCharacterSet( unsigned _target )
 {
     if( _target < m_CS.Gx.size() ) {
         const auto codeset = m_CS.Gx[_target];
-        if( codeset == TranslateMaps::Lat1 )
+        if( codeset == TranslateMaps::USASCII )
             m_TranslateMap = nullptr;
         else
             m_TranslateMap = g_TranslateMaps[codeset];

@@ -1,17 +1,16 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 namespace nc::term {
 
 struct TranslateMaps {
     enum {
-        Lat1    = 0,
-        Graph   = 1,
-        IBMPC   = 2,
-        User    = 3
+        USASCII = 0,
+        UK      = 1,
+        Graph   = 2
     };
 };
-    
-extern const unsigned short g_TranslateMaps[4][256];
+
+extern const unsigned short g_TranslateMaps[3][256];
 
 }

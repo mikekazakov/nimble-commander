@@ -1271,6 +1271,8 @@ DCS_Set( const std::string_view _str ) noexcept
 {
     using CSD = input::CharacterSetDesignation;
     if( _str == "0" ) return CSD::DECSpecialGraphics;
+    if( _str == "1" ) return CSD::AlternateCharacterROMStandardCharacters;
+    if( _str == "2" ) return CSD::AlternateCharacterROMSpecialGraphics;
     if( _str == "A" ) return CSD::UK;
     if( _str == "B" ) return CSD::USASCII;
     return std::nullopt;
@@ -1297,7 +1299,7 @@ void Parser2Impl::SSDCSExit() noexcept
 }
 
 constexpr static std::array<bool, 256> g_DCS_ValidTerminal =
-    Make8BitBoolTable("?=<>02345679ABCEHKQRfYZ");
+    Make8BitBoolTable("?=<>012345679ABCEHKQRfYZ");
 
 constexpr static std::array<bool, 256> g_DCS_ValidContents =
     Make8BitBoolTable("()*+\"%`&");

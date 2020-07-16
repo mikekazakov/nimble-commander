@@ -266,6 +266,8 @@ bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
             
         case '(':
         case ')':
+        case '*':
+        case '+':
             SwitchTo(EscState::DCS); return false;
         
             // For everything else, i.e. unimplemented stuff - complain in a log.

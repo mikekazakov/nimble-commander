@@ -1270,6 +1270,20 @@ TEST_CASE(PREFIX"Character set designation")
         CHECK( as_character_set_designation(r[0]).target == 1 );
         CHECK( as_character_set_designation(r[0]).set == CSD::DECSpecialGraphics );
     }
+    SECTION( "ESC * 0" ) {
+        auto r = parser.Parse(to_bytes("\x1B""*0"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::designate_character_set );
+        CHECK( as_character_set_designation(r[0]).target == 2 );
+        CHECK( as_character_set_designation(r[0]).set == CSD::DECSpecialGraphics );
+    }
+    SECTION( "ESC + 0" ) {
+        auto r = parser.Parse(to_bytes("\x1B""+0"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::designate_character_set );
+        CHECK( as_character_set_designation(r[0]).target == 3 );
+        CHECK( as_character_set_designation(r[0]).set == CSD::DECSpecialGraphics );
+    }
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 

@@ -5,6 +5,7 @@
 #include "Tests.h"
 
 #include <iostream>
+#include <codecvt>
 
 using namespace nc::term;
 #define PREFIX "nc::term::Interpreter "
@@ -342,6 +343,12 @@ static Parser2::Bytes Bytes(const char *_string) noexcept
     for( auto &cmd: _commands )
         std::cout << input::VerboseDescription(cmd) << "\n";
     std::cout << std::endl;
+}
+
+[[maybe_unused]] std::string ToUTF8(const std::u32string &str)
+{
+    std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
+    return conv.to_bytes(str);
 }
 
 static void Expect(const ScreenBuffer &buffer,
@@ -1893,6 +1900,70 @@ TEST_CASE(PREFIX"vttest(2.15) - Test of the SAVE/RESTORE CURSOR feature")
     Expect(buffer, 11, 59, 69, sp);
     Expect(buffer, 13, 59, 69, sp);
     Expect(buffer, 13, 59, 69, sp);
+}
+
+
+TEST_CASE(PREFIX"vttest(3) - Test of character sets")
+{
+    const auto raw_input =
+    "\x0D\x0A\x1B[2J\x1B[?42l\x1B(B\x1B)B\x1B*B\x1B+B\x1B[1;10HSelected as G0 (with SI)\x1B[1;48H"
+    "Selected as G1 (with SO)\x1B)B\x1B(B\x0E\x1B[3;1H\x1B[1mCharacter set B (US ASCII)\x1B[0m"
+    "\x1B(B\x1B)B\x0F\x1B[4;10H !\"#$%&'()*+,-./0123456789:;<=>?\x1B[5;10H@ABCDEFGHIJKLMNOPQRSTUVWX"
+    "YZ[\\]^_\x1B[6;10H`abcdefghijklmnopqrstuvwxyz{|}~\x1B)B\x1B(B\x0E\x1B[4;48H !\"#$%&'()*+,-./01"
+    "23456789:;<=>?\x1B[5;48H@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\x1B[6;48H`abcdefghijklmnopqrstuvwxyz"
+    "{|}~\x1B)B\x1B(B\x0E\x1B[7;1H\x1B[1mCharacter set A (British)\x1B[0m\x1B(A\x1B)B\x0F\x1B[8;10H"
+    " !\"#$%&'()*+,-./0123456789:;<=>?\x1B[9;10H@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\x1B[10;10H`abcdef"
+    "ghijklmnopqrstuvwxyz{|}~\x1B)A\x1B(B\x0E\x1B[8;48H !\"#$%&'()*+,-./0123456789:;<=>?\x1B[9;48H@"
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\x1B[10;48H`abcdefghijklmnopqrstuvwxyz{|}~\x1B)B\x1B(B\x0E\x1B"
+    "[11;1H\x1B[1mCharacter set 0 (DEC Special graphics and line drawing)\x1B[0m\x1B(0\x1B)B\x0F"
+    "\x1B[12;10H !\"#$%&'()*+,-./0123456789:;<=>?\x1B[13;10H@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
+    "\x1B[14;10H`abcdefghijklmnopqrstuvwxyz{|}~\x1B)0\x1B(B\x0E\x1B[12;48H !\"#$%&'()*+,-./01234567"
+    "89:;<=>?\x1B[13;48H@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\x1B[14;48H`abcdefghijklmnopqrstuvwxyz{|}~"
+    "\x1B)B\x1B(B\x0E\x1B[15;1H\x1B[1mCharacter set 1 (DEC Alternate character ROM standard charact"
+    "ers)\x1B[0m\x1B(1\x1B)B\x0F\x1B[16;10H !\"#$%&'()*+,-./0123456789:;<=>?\x1B[17;10H@ABCDEFGHIJK"
+    "LMNOPQRSTUVWXYZ[\\]^_\x1B[18;10H`abcdefghijklmnopqrstuvwxyz{|}~\x1B)1\x1B(B\x0E\x1B[16;48H !\""
+    "#$%&'()*+,-./0123456789:;<=>?\x1B[17;48H@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\x1B[18;48H`abcdefghi"
+    "jklmnopqrstuvwxyz{|}~\x1B)B\x1B(B\x0E\x1B[19;1H\x1B[1mCharacter set 2 (DEC Alternate character"
+    " ROM special graphics)\x1B[0m\x1B(2\x1B)B\x0F\x1B[20;10H !\"#$%&'()*+,-./0123456789:;<=>?\x1B["
+    "21;10H@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\x1B[22;10H`abcdefghijklmnopqrstuvwxyz{|}~\x1B)2\x1B(B"
+    "\x0E\x1B[20;48H !\"#$%&'()*+,-./0123456789:;<=>?\x1B[21;48H@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
+    "\x1B[22;48H`abcdefghijklmnopqrstuvwxyz{|}~\x1B(B\x1B)B\x0F\x1B[24;1HThese are the installed "
+    "character sets. Push <RETURN>";
+
+    const auto expectation =
+   U"         Selected as G0 (with SI)              Selected as G1 (with SO)         "
+    "                                                                                "
+    "Character set B (US ASCII)                                                      "
+    "          !\"#$%&'()*+,-./0123456789:;<=>?       !\"#$%&'()*+,-./0123456789:;<=>? "
+    "         @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_      @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_ "
+    "         `abcdefghijklmnopqrstuvwxyz{|}~       `abcdefghijklmnopqrstuvwxyz{|}~  "
+    "Character set A (British)                                                       "
+    "          !\"£$%&'()*+,-./0123456789:;<=>?       !\"£$%&'()*+,-./0123456789:;<=>? "
+    "         @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_      @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_ "
+    "         `abcdefghijklmnopqrstuvwxyz{|}~       `abcdefghijklmnopqrstuvwxyz{|}~  "
+    "Character set 0 (DEC Special graphics and line drawing)                         "
+    "          !\"#$%&'()*+,-./0123456789:;<=>?       !\"#$%&'()*+,-./0123456789:;<=>? "
+    "         @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^       @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^  "
+    "         ◆▒␉␌␍␊°±␤␋┘┐┌└┼⎺⎻─⎼⎽├┤┴┬│≤≥π≠£·       ◆▒␉␌␍␊°±␤␋┘┐┌└┼⎺⎻─⎼⎽├┤┴┬│≤≥π≠£·  "
+    "Character set 1 (DEC Alternate character ROM standard characters)               "
+    "          !\"#$%&'()*+,-./0123456789:;<=>?       !\"#$%&'()*+,-./0123456789:;<=>? "
+    "         @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_      @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_ "
+    "         `abcdefghijklmnopqrstuvwxyz{|}~       `abcdefghijklmnopqrstuvwxyz{|}~  "
+    "Character set 2 (DEC Alternate character ROM special graphics)                  "
+    "          !\"#$%&'()*+,-./0123456789:;<=>?       !\"#$%&'()*+,-./0123456789:;<=>? "
+    "         @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^       @ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^  "
+    "         ◆▒␉␌␍␊°±␤␋┘┐┌└┼⎺⎻─⎼⎽├┤┴┬│≤≥π≠£·       ◆▒␉␌␍␊°±␤␋┘┐┌└┼⎺⎻─⎼⎽├┤┴┬│≤≥π≠£·  "
+    "                                                                                "
+    "These are the installed character sets. Push <RETURN>                           ";
+
+    
+    Parser2Impl parser;
+    Screen screen(80, 24);
+    InterpreterImpl interpreter(screen);
+    const auto input_bytes = Bytes(raw_input);
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsUTF32();
+    CHECK( result == expectation );
 }
 
 TEST_CASE(PREFIX"rn escape assumption")

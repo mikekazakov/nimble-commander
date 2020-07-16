@@ -558,11 +558,10 @@ TEST_CASE(PREFIX"vttest(1.1) - test of cursor movements, "
     "*+                                                                            +*"
     "*+                                                                            +*"
     "*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*"
-    "********************************************************************************"
-    "                                                                                ";
+    "********************************************************************************";
     
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -731,11 +730,10 @@ TEST_CASE(PREFIX"vttest(1.2) - test of cursor movements, "
     "*+                                                                                                                                +*"
     "*+                                                                                                                                +*"
     "*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*"
-    "************************************************************************************************************************************"
-    "                                                                                                                                    ";
+    "************************************************************************************************************************************";
     
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -787,11 +785,10 @@ TEST_CASE(PREFIX"vttest(1.3) - test of cursor movements, "
     "                                                                                "
     "Push <RETURN>                                                                   "
     "                                                                                "
-    "                                                                                "
     "                                                                                ";
 
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -843,11 +840,10 @@ TEST_CASE(PREFIX"vttest(1.4) - test of cursor movements, "
     "                                                                                                                                    "
     "Push <RETURN>                                                                                                                       "
     "                                                                                                                                    "
-    "                                                                                                                                    "
     "                                                                                                                                    ";
 
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -952,12 +948,10 @@ TEST_CASE(PREFIX"vttest(2.1) - test of WRAP AROUND mode setting")
     "This should be three identical lines of *'s completely filling                  "
     "the top of the screen without any empty lines between.                          "
     "(Test of WRAP AROUND mode setting.)                                             "
-    "Push <RETURN>                                                                   "
-    "                                                                                "
-    "                                                                                ";
+    "Push <RETURN>                                                                   ";
 
     Parser2Impl parser;
-    Screen screen(80, 10);
+    Screen screen(80, 8);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -985,11 +979,10 @@ TEST_CASE(PREFIX"vttest(2.2) - Test of TAB setting/resetting")
     "      *     *     *     *     *     *     *     *     *     *     *     *     * "
     "                                                                                "
     "Test of TAB setting/resetting. These two lines                                  "
-    "should look the same. Push <RETURN>                                             "
-    "                                                                                ";
+    "should look the same. Push <RETURN>                                             ";
 
     Parser2Impl parser;
-    Screen screen(80, 6);
+    Screen screen(80, 5);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1036,11 +1029,10 @@ TEST_CASE(PREFIX"vttest(2.3) - 132 column / video reverse")
     "                This is 132 column mode, light background.                                                                          "
     "                 This is 132 column mode, light background.                                                                         "
     "                  This is 132 column mode, light background.                                                                        "
-    "                   This is 132 column mode, light background.Push <RETURN>                                                          "
-    "                                                                                                                                    ";
+    "                   This is 132 column mode, light background.Push <RETURN>                                                          ";
 
     Parser2Impl parser;
-    Screen screen(80, 21);
+    Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1085,11 +1077,10 @@ TEST_CASE(PREFIX"vttest(2.4) - 80 column / video reverse")
     "                This is 80 column mode, light background.                       "
     "                 This is 80 column mode, light background.                      "
     "                  This is 80 column mode, light background.                     "
-    "                   This is 80 column mode, light background.Push <RETURN>       "
-    "                                                                                ";
+    "                   This is 80 column mode, light background.Push <RETURN>       ";
 
     Parser2Impl parser;
-    Screen screen(80, 21);
+    Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1137,11 +1128,10 @@ TEST_CASE(PREFIX"vttest(2.5) - 132 column / no video reverse")
     "                This is 132 column mode, dark background.                                                                           "
     "                 This is 132 column mode, dark background.                                                                          "
     "                  This is 132 column mode, dark background.                                                                         "
-    "                   This is 132 column mode, dark background.Push <RETURN>                                                           "
-    "                                                                                                                                    ";
+    "                   This is 132 column mode, dark background.Push <RETURN>                                                           ";
 
     Parser2Impl parser;
-    Screen screen(80, 21);
+    Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1186,11 +1176,10 @@ TEST_CASE(PREFIX"vttest(2.6) - 80 column / no video reverse")
     "                This is 80 column mode, dark background.                        "
     "                 This is 80 column mode, dark background.                       "
     "                  This is 80 column mode, dark background.                      "
-    "                   This is 80 column mode, dark background.Push <RETURN>        "
-    "                                                                                ";
+    "                   This is 80 column mode, dark background.Push <RETURN>        ";
 
     Parser2Impl parser;
-    Screen screen(80, 21);
+    Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1254,11 +1243,10 @@ TEST_CASE(PREFIX"vttest(2.7) - soft scroll")
     "                                                                                "
     "                                                                                "
     "Push <RETURN>                                                                   "
-    "Soft scroll down region [12..13] size 2 Line 29                                 "
-    "                                                                                ";
+    "Soft scroll down region [12..13] size 2 Line 29                                 ";
     
     Parser2Impl parser;
-    Screen screen(80, 14);
+    Screen screen(80, 13);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1333,11 +1321,10 @@ TEST_CASE(PREFIX"vttest(2.8) - soft scroll")
     "Soft scroll down region [1..24] size 24 Line 10                                 "
     "Soft scroll down region [1..24] size 24 Line 9                                  "
     "Soft scroll down region [1..24] size 24 Line 8                                  "
-    "Soft scroll down region [1..24] size 24 Line 7                                  "
-    "                                                                                ";
+    "Soft scroll down region [1..24] size 24 Line 7                                  ";
     
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1401,11 +1388,10 @@ TEST_CASE(PREFIX"vttest(2.9) - jump scroll")
     "                                                                                "
     "                                                                                "
     "Push <RETURN>                                                                   "
-    "Jump scroll down region [12..13] size 2 Line 29                                 "
-    "                                                                                ";
+    "Jump scroll down region [12..13] size 2 Line 29                                 ";
     
     Parser2Impl parser;
-    Screen screen(80, 14);
+    Screen screen(80, 13);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1480,11 +1466,10 @@ TEST_CASE(PREFIX"vttest(2.10) - jump scroll")
     "Jump scroll down region [1..24] size 24 Line 10                                 "
     "Jump scroll down region [1..24] size 24 Line 9                                  "
     "Jump scroll down region [1..24] size 24 Line 8                                  "
-    "Jump scroll down region [1..24] size 24 Line 7                                  "
-    "                                                                                ";
+    "Jump scroll down region [1..24] size 24 Line 7                                  ";
     
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1523,11 +1508,10 @@ TEST_CASE(PREFIX"vttest(2.11) - origin mode test")
     "                                                                                "
     "                                                                                "
     "This line should be the one above the bottom of the screen. Push <RETURN>       "
-    "Origin mode test. This line should be at the bottom of the screen.              "
-    "                                                                                ";
+    "Origin mode test. This line should be at the bottom of the screen.              ";
     
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1566,11 +1550,10 @@ TEST_CASE(PREFIX"vttest(2.12) - origin mode test")
     "                                                                                "
     "                                                                                "
     "                                                                                "
-    "Origin mode test. This line should be at the bottom of the screen.              "
-    "                                                                                ";
+    "Origin mode test. This line should be at the bottom of the screen.              ";
     
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
     interpreter.Interpret( parser.Parse( input_bytes ) );
@@ -1615,11 +1598,10 @@ TEST_CASE(PREFIX"vttest(2.13) - Graphic rendition test pattern / dark background
     "                                                                                "
     "                                                                                "
     "Dark background. Push <RETURN>                                                  "
-    "                                                                                "
     "                                                                                ";
     
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
@@ -1726,11 +1708,10 @@ TEST_CASE(PREFIX"vttest(2.14) - Graphic rendition test pattern / light backgroun
     "                                                                                "
     "                                                                                "
     "Light background. Push <RETURN>                                                 "
-    "                                                                                "
     "                                                                                ";
     
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
@@ -1853,11 +1834,10 @@ TEST_CASE(PREFIX"vttest(2.15) - Test of the SAVE/RESTORE CURSOR feature")
     "Test of the SAVE/RESTORE CURSOR feature. There should                           "
     "be ten characters of each flavour, and a rectangle                              "
     "of 5 x 4 A's filling the top left of the screen.                                "
-    "Push <RETURN>                                                                   "
-    "                                                                                ";
+    "Push <RETURN>                                                                   ";
     
     Parser2Impl parser;
-    Screen screen(80, 25);
+    Screen screen(80, 24);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
     const auto input_bytes = Bytes(raw_input);
@@ -1901,7 +1881,6 @@ TEST_CASE(PREFIX"vttest(2.15) - Test of the SAVE/RESTORE CURSOR feature")
     Expect(buffer, 13, 59, 69, sp);
     Expect(buffer, 13, 59, 69, sp);
 }
-
 
 TEST_CASE(PREFIX"vttest(3) - Test of character sets")
 {

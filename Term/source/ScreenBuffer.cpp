@@ -257,6 +257,20 @@ std::u32string ScreenBuffer::DumpScreenAsUTF32(bool _break_lines) const
     return result;
 }
 
+void ScreenBuffer::LoadScreenFromANSI(std::string_view _dump)
+{
+    for( auto &l:m_OnScreenLines ) {
+        for(auto i = &m_OnScreenSpaces[l.start_index], e = i + l.line_length; i != e; ++i) {
+            if( _dump.empty() )
+                return;
+            i->l = _dump.front();
+            i->c1 = 0;
+            i->c2 = 0;
+            _dump = _dump.substr(1);
+        }
+    }
+}
+
 bool ScreenBuffer::LineWrapped(int _line_number) const
 {
     if(auto l = MetaFromLineNo(_line_number))

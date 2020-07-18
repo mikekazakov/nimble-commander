@@ -237,6 +237,60 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
     },
+    {
+        "A\r\nB\r\nC\r\nD\r\nE\r\nF\x1B[1;1H\x1B[L",
+        "          "
+        "A         "
+        "B         "
+        "C         "
+        "D         "
+        "E         "
+    },
+    {
+        "A\r\nB\r\nC\r\nD\r\nE\r\nF\x1B[1;1H\x1B[L\x1B[M",
+        "A         "
+        "B         "
+        "C         "
+        "D         "
+        "E         "
+        "          "
+    },
+    {
+        "A\r\nB\r\nC\r\nD\r\nE\r\nF\x1B[2;5r\x1B[1;1H\x1B[L",
+        "A         "
+        "B         "
+        "C         "
+        "D         "
+        "E         "
+        "F         "
+    },
+    {
+        "A\r\nB\r\nC\r\nD\r\nE\r\nF\x1B[2;4r\x1B[5;1H\x1B[L",
+        "A         "
+        "B         "
+        "C         "
+        "D         "
+        "E         "
+        "F         "
+    },
+    {
+        "A\r\nB\r\nC\r\nD\r\nE\r\nF\x1B[2;4r\x1B[2;1H\x1B[L",
+        "A         "
+        "          "
+        "B         "
+        "C         "
+        "E         "
+        "F         "
+    },
+    {
+        "A\r\nB\r\nC\r\nD\r\nE\r\nF\x1B[2;4r\x1B[4;1H\x1B[L",
+        "A         "
+        "B         "
+        "C         "
+        "          "
+        "E         "
+        "F         "
+    },
 };
 
 const static std::pair<const char*, const char*> g_ResponseCases[] = 
@@ -2008,7 +2062,78 @@ TEST_CASE(PREFIX"vttest(8.1) - Screen accordion test")
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+ 
+TEST_CASE(PREFIX"vttest(8.2)")
+{
+    const auto initial =
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+    "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+    "Screen accordion test (Insert & Delete Line). Push <RETURN>DDDDDDDDDDDDDDDDDDDDD"
+    "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
+    "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG"
+    "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+    "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
+    "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ"
+    "KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK"
+    "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+    "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"
+    "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"
+    "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
+    "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+    "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"
+    "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
+    "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"
+    "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
+    "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"
+    "VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV"
+    "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    
+    const auto raw_input =
+    "\x1B[4;1H\x0D\x0A\x1BM\x1B[2K\x1B[2;23r\x1B[?6h\x1B[1;1H\x1B[1L\x1B[1M\x1B[2L\x1B[2M\x1B[3L"
+    "\x1B[3M\x1B[4L\x1B[4M\x1B[5L\x1B[5M\x1B[6L\x1B[6M\x1B[7L\x1B[7M\x1B[8L\x1B[8M\x1B[9L\x1B[9M"
+    "\x1B[10L\x1B[10M\x1B[11L\x1B[11M\x1B[12L\x1B[12M\x1B[13L\x1B[13M\x1B[14L\x1B[14M\x1B[15L"
+    "\x1B[15M\x1B[16L\x1B[16M\x1B[17L\x1B[17M\x1B[18L\x1B[18M\x1B[19L\x1B[19M\x1B[20L\x1B[20M"
+    "\x1B[21L\x1B[21M\x1B[22L\x1B[22M\x1B[23L\x1B[23M\x1B[24L\x1B[24M\x1B[?6l\x1B[r\x1B[2;1H"
+    "Top line: A's, bottom line: X's, this line, nothing more. Push <RETURN>";
+
+    const auto expectation =
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    "Top line: A's, bottom line: X's, this line, nothing more. Push <RETURN>         "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    Parser2Impl parser;
+    Screen screen(80, 24);
+    screen.Buffer().LoadScreenFromANSI(initial);
+    InterpreterImpl interpreter(screen);
+    const auto input_bytes = Bytes(raw_input);
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+}
+
 TEST_CASE(PREFIX"rn escape assumption")
 {
     auto string = std::string_view("\r\n");

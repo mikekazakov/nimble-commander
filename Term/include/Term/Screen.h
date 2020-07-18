@@ -15,6 +15,7 @@ public:
     Screen(unsigned _width, unsigned _height);
     
     std::unique_lock<std::mutex> AcquireLock() const noexcept;
+    ScreenBuffer &Buffer() noexcept;
     const ScreenBuffer &Buffer() const noexcept;
     int Width()   const noexcept;
     int Height()  const noexcept;

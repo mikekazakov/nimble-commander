@@ -105,6 +105,12 @@ void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
         case Type::restore_state:
             ProcessRestoreState();
             break;
+        case Type::insert_lines:
+            ProcessInsertLines( *std::get_if<unsigned>(&_command.payload) );
+            break;
+        case Type::delete_lines:
+            ProcessDeleteLines( *std::get_if<unsigned>(&_command.payload) );
+            break;
         default:
             break;
     }
@@ -677,6 +683,39 @@ void InterpreterImpl::ProcessRestoreState()
     m_TranslateMap = m_SavedState->translate_map;
     m_Rendition = m_SavedState->rendition;
     UpdateCharacterAttributes();
+}
+
+void InterpreterImpl::ProcessInsertLines( unsigned _lines )
+{
+//    Only that portion of the display between the top, bottom, left, and right margins is affected.
+//    IL is ignored if the Active Position is outside the Scroll Area.
+    if( m_Screen.CursorY() < m_Extent.top || m_Screen.CursorY() > m_Extent.bottom ) {
+        return;
+    }
+        
+    int lines = static_cast<int>(_lines);
+    if( lines > m_Screen.Height() - m_Screen.CursorY() )
+        lines = m_Screen.Height() - m_Screen.CursorY();
+    else if( lines == 0 )
+        lines = 1;
+    
+    m_Screen.ScrollDown(m_Screen.CursorY(), m_Extent.bottom, lines);
+}
+
+void InterpreterImpl::ProcessDeleteLines( unsigned _lines )
+{
+//  Only that portion of the display between the top, bottom, left, and right margins is affected.
+//    DL is ignored if the active position is outside the scroll area.
+    if( m_Screen.CursorY() < m_Extent.top || m_Screen.CursorY() > m_Extent.bottom ) {
+        return;
+    }    
+    int lines = static_cast<int>(_lines);
+    if( lines > m_Screen.Height() - m_Screen.CursorY() )
+        lines = m_Screen.Height() - m_Screen.CursorY();
+    else if( lines == 0 )
+        lines = 1;
+
+    m_Screen.DoScrollUp(m_Screen.CursorY(), m_Extent.bottom, lines);
 }
 
 }

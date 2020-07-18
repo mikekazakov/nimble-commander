@@ -377,7 +377,7 @@ void Screen::DoScrollUp(const unsigned _top, const unsigned _bottom, const unsig
         m_Buffer.SetLineWrapped(n_dst, m_Buffer.LineWrapped(n_src));
     }
     
-    for( int i = _bottom - 1; i >= std::max( (int)_bottom-(int)_lines, 0); --i)
+    for( int i = bottom - 1; i >= std::max(bottom-lines, top); --i)
         ClearLine(i);
 }
 
@@ -437,6 +437,11 @@ std::unique_lock<std::mutex> Screen::AcquireLock() const noexcept
 }
 
 const ScreenBuffer &Screen::Buffer() const noexcept
+{
+    return m_Buffer;
+}
+
+ScreenBuffer &Screen::Buffer() noexcept
 {
     return m_Buffer;
 }

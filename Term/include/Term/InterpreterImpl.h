@@ -48,6 +48,8 @@ private:
     void ProcessSelectCharacterSet( unsigned _target );
     void ProcessSaveState();
     void ProcessRestoreState();
+    void ProcessInsertLines( unsigned _lines );
+    void ProcessDeleteLines( unsigned _lines );
     void Response(std::string_view _text);
     void UpdateCharacterAttributes();
     

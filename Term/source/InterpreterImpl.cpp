@@ -145,10 +145,10 @@ void InterpreterImpl::ProcessText( const input::UTF8Text &_text )
             ProcessCR();
             ProcessLF();
         }
-//
-//        if(m_InsertMode)
-//            m_Scr.DoShiftRowRight(oms::WCWidthMin1(c));    
-//    
+
+        if( m_InsertMode )
+            m_Screen.DoShiftRowRight( oms::WCWidthMin1(c) );
+    
         m_Screen.PutCh(c);
     }
     // TODO: MUCH STUFF
@@ -353,18 +353,22 @@ void InterpreterImpl::ProcessSetScrollingRegion( const input::ScrollingRegion _s
 
 void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )
 {
+    using Kind = input::ModeChange::Kind;
     switch ( _mode_change.mode ) {
-        case input::ModeChange::Kind::Origin:
+        case Kind::Origin:
             m_OriginLineMode = _mode_change.status;
             break;
-        case input::ModeChange::Kind::AutoWrap:
+        case Kind::AutoWrap:
             m_AutoWrapMode = _mode_change.status;
             break;
-        case input::ModeChange::Kind::Column132:
+        case Kind::Column132:
             ProcessChangeColumnMode132(_mode_change.status);
             break;
-        case input::ModeChange::Kind::ReverseVideo:
+        case Kind::ReverseVideo:
             m_Screen.SetVideoReverse(_mode_change.status);
+            break;
+        case Kind::Insert:
+            m_InsertMode = _mode_change.status;
             break;
         default:
             break;

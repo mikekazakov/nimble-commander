@@ -94,6 +94,7 @@ private:
     bool m_OriginLineMode = false;
     bool m_AllowScreenResize = true;
     bool m_AutoWrapMode = true;
+    bool m_InsertMode = false;
     Rendition m_Rendition;
     std::optional<SavedState> m_SavedState;
 };

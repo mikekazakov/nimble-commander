@@ -2134,6 +2134,35 @@ TEST_CASE(PREFIX"vttest(8.2)")
     CHECK( result == expectation );
 }
 
+TEST_CASE(PREFIX"vttest(8.3) - Test of 'Insert Mode'")
+{
+    const auto initial =
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    "Top line: A's, bottom line: X's, this line, nothing more. Push <RETURN>         "
+    "                                                                                "
+    "                                                                                ";
+    
+    const auto raw_input =
+    "\x1B[2;1H\x0D\x0A\x1B[2;1H\x1B[0J\x1B[1;2HB\x1B[1D\x1B[4h*************************************"
+    "*****************************************\x1B[4l\x1B[4;1HTest of 'Insert Mode'. The top line "
+    "should be 'A*** ... ***B'. Push <RETURN>";
+
+    const auto expectation =
+    "A******************************************************************************B"
+    "                                                                                "
+    "                                                                                "
+    "Test of 'Insert Mode'. The top line should be 'A*** ... ***B'. Push <RETURN>    ";
+    
+    Parser2Impl parser;
+    Screen screen(80, 4);
+    screen.Buffer().LoadScreenFromANSI(initial);
+    InterpreterImpl interpreter(screen);
+    const auto input_bytes = Bytes(raw_input);
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+}
+
 TEST_CASE(PREFIX"rn escape assumption")
 {
     auto string = std::string_view("\r\n");

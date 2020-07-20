@@ -617,8 +617,7 @@ TEST_CASE(PREFIX"vttest(1.1) - test of cursor movements, "
     Parser2Impl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -789,8 +788,7 @@ TEST_CASE(PREFIX"vttest(1.2) - test of cursor movements, "
     Parser2Impl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -844,8 +842,7 @@ TEST_CASE(PREFIX"vttest(1.3) - test of cursor movements, "
     Parser2Impl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -899,8 +896,7 @@ TEST_CASE(PREFIX"vttest(1.4) - test of cursor movements, "
     Parser2Impl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -930,9 +926,8 @@ TEST_CASE(PREFIX"vttest(1.5) - test of cursor movements, "
     
     Parser2Impl parser;
     Screen screen(60, 9);
-    InterpreterImpl interpreter(screen);    
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret(parser.Parse( input_bytes ) );
+    InterpreterImpl interpreter(screen);
+    interpreter.Interpret(parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -975,9 +970,8 @@ TEST_CASE(PREFIX"vttest(1.6) - test of cursor movements, "
 
     Parser2Impl parser;
     Screen screen(80, 20);
-    InterpreterImpl interpreter(screen);    
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret(parser.Parse( input_bytes ) );
+    InterpreterImpl interpreter(screen);
+    interpreter.Interpret(parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -1007,8 +1001,7 @@ TEST_CASE(PREFIX"vttest(2.1) - test of WRAP AROUND mode setting")
     Parser2Impl parser;
     Screen screen(80, 8);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -1038,8 +1031,7 @@ TEST_CASE(PREFIX"vttest(2.2) - Test of TAB setting/resetting")
     Parser2Impl parser;
     Screen screen(80, 5);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -1088,8 +1080,7 @@ TEST_CASE(PREFIX"vttest(2.3) - 132 column / video reverse")
     Parser2Impl parser;
     Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == true );
@@ -1136,8 +1127,7 @@ TEST_CASE(PREFIX"vttest(2.4) - 80 column / video reverse")
     Parser2Impl parser;
     Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == true );
@@ -1187,8 +1177,7 @@ TEST_CASE(PREFIX"vttest(2.5) - 132 column / no video reverse")
     Parser2Impl parser;
     Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == false );
@@ -1235,8 +1224,7 @@ TEST_CASE(PREFIX"vttest(2.6) - 80 column / no video reverse")
     Parser2Impl parser;
     Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == false );
@@ -1302,8 +1290,7 @@ TEST_CASE(PREFIX"vttest(2.7) - soft scroll")
     Parser2Impl parser;
     Screen screen(80, 13);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == false );
@@ -1380,8 +1367,7 @@ TEST_CASE(PREFIX"vttest(2.8) - soft scroll")
     Parser2Impl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == false );
@@ -1447,8 +1433,7 @@ TEST_CASE(PREFIX"vttest(2.9) - jump scroll")
     Parser2Impl parser;
     Screen screen(80, 13);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == false );
@@ -1525,8 +1510,7 @@ TEST_CASE(PREFIX"vttest(2.10) - jump scroll")
     Parser2Impl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == false );
@@ -1567,8 +1551,7 @@ TEST_CASE(PREFIX"vttest(2.11) - origin mode test")
     Parser2Impl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == false );
@@ -1609,8 +1592,7 @@ TEST_CASE(PREFIX"vttest(2.12) - origin mode test")
     Parser2Impl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == false );
@@ -1658,8 +1640,7 @@ TEST_CASE(PREFIX"vttest(2.13) - Graphic rendition test pattern / dark background
     Screen screen(80, 24);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == false );
@@ -1768,8 +1749,7 @@ TEST_CASE(PREFIX"vttest(2.14) - Graphic rendition test pattern / light backgroun
     Screen screen(80, 24);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
     CHECK( screen.VideoReverse() == true );
@@ -1894,8 +1874,7 @@ TEST_CASE(PREFIX"vttest(2.15) - Test of the SAVE/RESTORE CURSOR feature")
     Screen screen(80, 24);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsUTF32();
         
     CHECK( result == expectation );
@@ -1993,8 +1972,7 @@ TEST_CASE(PREFIX"vttest(3) - Test of character sets")
     Parser2Impl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsUTF32();
     CHECK( result == expectation );
 }
@@ -2057,8 +2035,7 @@ TEST_CASE(PREFIX"vttest(8.1) - Screen accordion test")
     Parser2Impl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -2128,8 +2105,7 @@ TEST_CASE(PREFIX"vttest(8.2)")
     Screen screen(80, 24);
     screen.Buffer().LoadScreenFromANSI(initial);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -2157,8 +2133,7 @@ TEST_CASE(PREFIX"vttest(8.3) - Test of 'Insert Mode'")
     Screen screen(80, 4);
     screen.Buffer().LoadScreenFromANSI(initial);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
@@ -2187,8 +2162,7 @@ TEST_CASE(PREFIX"vttest(8.4) - Test of 'Delete Character'")
     Screen screen(80, 5);
     screen.Buffer().LoadScreenFromANSI(initial);
     InterpreterImpl interpreter(screen);
-    const auto input_bytes = Bytes(raw_input);
-    interpreter.Interpret( parser.Parse( input_bytes ) );
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }

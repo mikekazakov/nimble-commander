@@ -111,6 +111,9 @@ void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
         case Type::delete_lines:
             ProcessDeleteLines( *std::get_if<unsigned>(&_command.payload) );
             break;
+        case Type::delete_characters:
+            ProcessDeleteCharacters( *std::get_if<unsigned>(&_command.payload) );
+            break;
         default:
             break;
     }
@@ -720,6 +723,16 @@ void InterpreterImpl::ProcessDeleteLines( unsigned _lines )
         lines = 1;
 
     m_Screen.DoScrollUp(m_Screen.CursorY(), m_Extent.bottom, lines);
+}
+
+void InterpreterImpl::ProcessDeleteCharacters( const unsigned _characters )
+{
+    int chars = static_cast<int>(_characters);
+    if( chars > m_Screen.Width() - m_Screen.CursorX() )
+        chars = m_Screen.Width() - m_Screen.CursorX();
+    else if( chars == 0 )
+        chars = 1;
+    m_Screen.DoShiftRowLeft(chars);
 }
 
 }

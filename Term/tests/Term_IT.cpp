@@ -2163,6 +2163,36 @@ TEST_CASE(PREFIX"vttest(8.3) - Test of 'Insert Mode'")
     CHECK( result == expectation );
 }
 
+TEST_CASE(PREFIX"vttest(8.4) - Test of 'Delete Character'")
+{
+    const auto initial =
+    "A******************************************************************************B"
+    "                                                                                "
+    "                                                                                "
+    "Test of 'Insert Mode'. The top line should be 'A*** ... ***B'. Push <RETURN>    "
+    "                                                                                ";
+    
+    const auto raw_input =
+    "\x1B[4;1H\x0D\x0A\x1BM\x1B[2K\x1B[1;2H\x1B[78P\x1B[4;1H"
+    "Test of 'Delete Character'. The top line should be 'AB'. Push <RETURN>";
+
+    const auto expectation =
+    "AB                                                                              "
+    "                                                                                "
+    "                                                                                "
+    "Test of 'Delete Character'. The top line should be 'AB'. Push <RETURN>          "
+    "                                                                                ";
+    
+    Parser2Impl parser;
+    Screen screen(80, 5);
+    screen.Buffer().LoadScreenFromANSI(initial);
+    InterpreterImpl interpreter(screen);
+    const auto input_bytes = Bytes(raw_input);
+    interpreter.Interpret( parser.Parse( input_bytes ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+}
+
 TEST_CASE(PREFIX"rn escape assumption")
 {
     auto string = std::string_view("\r\n");

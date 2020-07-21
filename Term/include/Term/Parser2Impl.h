@@ -115,6 +115,7 @@ private:
     void CSI_n() noexcept;
     void CSI_r() noexcept;
     void CSI_Accent() noexcept;
+    void CSI_At() noexcept;
     
     constexpr static struct SubStates {
         void (Me::*enter)() noexcept;

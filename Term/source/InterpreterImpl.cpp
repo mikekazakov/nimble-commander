@@ -114,6 +114,9 @@ void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
         case Type::delete_characters:
             ProcessDeleteCharacters( *std::get_if<unsigned>(&_command.payload) );
             break;
+        case Type::insert_characters:
+            ProcessInsertCharacters( *std::get_if<unsigned>(&_command.payload) );
+            break;
         default:
             break;
     }
@@ -733,6 +736,16 @@ void InterpreterImpl::ProcessDeleteCharacters( const unsigned _characters )
     else if( chars == 0 )
         chars = 1;
     m_Screen.DoShiftRowLeft(chars);
+}
+
+void InterpreterImpl::ProcessInsertCharacters( unsigned _characters )
+{
+    int characters = static_cast<int>(_characters);
+    if(characters > m_Screen.Width() - m_Screen.CursorX())
+        characters = m_Screen.Width() - m_Screen.CursorX();
+    else if(characters == 0)
+        characters = 1;
+    m_Screen.DoShiftRowRight(characters);
 }
 
 }

@@ -1222,6 +1222,24 @@ TEST_CASE(PREFIX"CSI `")
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 
+TEST_CASE(PREFIX"CSI @")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ @" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[@"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::insert_characters );
+        CHECK( as_unsigned(r[0]) == 1 );
+    }
+    SECTION( "ESC [ 42 @" ) {
+        auto r = parser.Parse(to_bytes("\x1B""[42@"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::insert_characters );
+        CHECK( as_unsigned(r[0]) == 42 );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}
+
 TEST_CASE(PREFIX"Character set designation")
 {
     Parser2Impl parser;

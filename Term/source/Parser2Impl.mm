@@ -665,17 +665,15 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'n': CSI_n(); break;
         case 'r': CSI_r(); break;
         case '`': CSI_Accent(); break;
+        case '@': CSI_At(); break;
         default: LogMissedCSIRequest( m_CSIState.buffer ); break;
     } 
 }
 
     //               m_EscState = EState::Normal;
     //               switch(c) {
-    //                   case 'm': CSI_m(); return;
     //                   case 's': EscSave(); return;
     //                   case 'u': EscRestore(); return;
-    //                   case 'r': CSI_r(); return;
-    //                   case '@': CSI_At(); return;
     //                   case 't': CSI_t(); return;
     //                   default: CSI_Unknown(c); return;
     //               }
@@ -1250,6 +1248,15 @@ void Parser2Impl::CSI_Accent() noexcept
     cm.x = ps;
     cm.y = std::nullopt;
     m_Output.emplace_back( input::Type::move_cursor, cm );
+}
+
+void Parser2Impl::CSI_At() noexcept
+{
+// CSI Ps @  Insert Ps (Blank) Character(s) (default = 1) (ICH).
+    const std::string_view s = m_CSIState.buffer;
+    int ps = 1; // default value
+    std::from_chars(s.data(), s.data() + s.size(), ps);
+    m_Output.emplace_back( input::Type::insert_characters, static_cast<unsigned>(ps) );    
 }
 
 void Parser2Impl::SSDCSEnter() noexcept

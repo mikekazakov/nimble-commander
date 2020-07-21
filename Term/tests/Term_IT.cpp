@@ -291,6 +291,42 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "E         "
         "F         "
     },
+    {
+        "A\x08\x1b[@D",
+        "DA        "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        "A\x08\x1b[2@",
+        "  A       "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        "A\x08\x1b[9@",
+        "         A"
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        "A\x08\x1b[10@",
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
 };
 
 const static std::pair<const char*, const char*> g_ResponseCases[] = 
@@ -2228,6 +2264,38 @@ TEST_CASE(PREFIX"vttest(8.5)")
     
     Parser2Impl parser;
     Screen screen(80, 24);
+    InterpreterImpl interpreter(screen);
+    interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
+    const auto result = screen.Buffer().DumpScreenAsANSI();
+    CHECK( result == expectation );
+}
+
+TEST_CASE(PREFIX"vttest(8.7) - Insert Character")
+{
+    const auto raw_input =
+    "\x0D\x0A\x1B[2J\x1B[1;1HIf your terminal has the ANSI 'Insert Character' function\x0D\x0D\x0A"
+    "(the VT102 does not), then you should see a line like this\x0D\x0D\x0A  A B C D E F G H I J K"
+    " L M N O P Q R S T U V W X Y Z\x0D\x0D\x0A""below:\x0D\x0D\x0A\x0D\x0D\x0AZ\x08\x1B[2@Y\x08"
+    "\x1B[2@X\x08\x1B[2@W\x08\x1B[2@V\x08\x1B[2@U\x08\x1B[2@T\x08\x1B[2@S\x08\x1B[2@R\x08\x1B[2@Q"
+    "\x08\x1B[2@P\x08\x1B[2@O\x08\x1B[2@N\x08\x1B[2@M\x08\x1B[2@L\x08\x1B[2@K\x08\x1B[2@J\x08"
+    "\x1B[2@I\x08\x1B[2@H\x08\x1B[2@G\x08\x1B[2@F\x08\x1B[2@E\x08\x1B[2@D\x08\x1B[2@C\x08\x1B[2@B"
+    "\x08\x1B[2@A\x08\x1B[2@\x1B[10;1HPush <RETURN>";
+
+    const auto expectation =
+    "If your terminal has the ANSI 'Insert Character' function                       "
+    "(the VT102 does not), then you should see a line like this                      "
+    "  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z                           "
+    "below:                                                                          "
+    "                                                                                "
+    "  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z                           "
+    "                                                                                "
+    "                                                                                "
+    "                                                                                "
+    "Push <RETURN>                                                                   "
+    "                                                                                ";
+        
+    Parser2Impl parser;
+    Screen screen(80, 11);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
     const auto result = screen.Buffer().DumpScreenAsANSI();

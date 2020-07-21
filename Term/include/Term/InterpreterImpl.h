@@ -51,6 +51,7 @@ private:
     void ProcessInsertLines( unsigned _lines );
     void ProcessDeleteLines( unsigned _lines );
     void ProcessDeleteCharacters( unsigned _characters );
+    void ProcessInsertCharacters( unsigned _characters );
     void Response(std::string_view _text);
     void UpdateCharacterAttributes();
     

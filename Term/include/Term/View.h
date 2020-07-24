@@ -7,6 +7,7 @@
 #include "Screen.h"
 #include "Parser.h"
 #include "CursorMode.h"
+#include "InputTranslator.h"
 
 namespace nc::term {
     class Settings;
@@ -46,7 +47,7 @@ namespace nc::term {
 @property (nonatomic) std::shared_ptr<nc::term::Settings> settings;
 
 - (void) AttachToScreen:(nc::term::Screen*)_scr;
-- (void) AttachToParser:(nc::term::Parser*)_par;
+- (void) AttachToInputTranslator:(nc::term::InputTranslator*)_input_translator;
 
 - (void) adjustSizes:(bool)_mandatory; // implicitly calls scrollToBottom when full height changes
 - (void) scrollToBottom;

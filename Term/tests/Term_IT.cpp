@@ -454,7 +454,7 @@ static void Expect(const ScreenBuffer &buffer,
         const auto space = *it;
         CHECK( space.foreground == expected_sp.foreground );
         CHECK( space.background == expected_sp.background );
-        CHECK( space.intensity == expected_sp.intensity );
+        CHECK( space.faint == expected_sp.faint );
         CHECK( space.underline == expected_sp.underline );
         CHECK( space.reverse == expected_sp.reverse );
         CHECK( space.bold == expected_sp.bold );
@@ -1682,7 +1682,6 @@ TEST_CASE(PREFIX"vttest(2.13) - Graphic rendition test pattern / dark background
     CHECK( screen.VideoReverse() == false );
     
     ScreenBuffer::Space sp = ScreenBuffer::DefaultEraseChar();
-    sp.intensity = true;
     Expect(buffer, 3, 0, 7, sp);
     
     sp.underline = true;
@@ -1791,7 +1790,6 @@ TEST_CASE(PREFIX"vttest(2.14) - Graphic rendition test pattern / light backgroun
     CHECK( screen.VideoReverse() == true );
     
     ScreenBuffer::Space sp = ScreenBuffer::DefaultEraseChar();
-    sp.intensity = true;
     Expect(buffer, 3, 0, 7, sp);
     
     sp.underline = true;
@@ -1915,9 +1913,7 @@ TEST_CASE(PREFIX"vttest(2.15) - Test of the SAVE/RESTORE CURSOR feature")
         
     CHECK( result == expectation );
     
-    ScreenBuffer::Space sp = ScreenBuffer::DefaultEraseChar();
-    sp.intensity = true;
-    
+    ScreenBuffer::Space sp = ScreenBuffer::DefaultEraseChar();    
     Expect(buffer, 9, 11, 21, sp);
     Expect(buffer, 11, 11, 21, sp);
     Expect(buffer, 13, 11, 21, sp);

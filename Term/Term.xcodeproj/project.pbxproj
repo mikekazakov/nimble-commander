@@ -13,7 +13,6 @@
 		CF1ADE3A1F7E7379003E9B76 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE391F7E7379003E9B76 /* Screen.cpp */; };
 		CF1ADE3D1F7E742D003E9B76 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE3C1F7E742D003E9B76 /* libUtility.dylib */; };
 		CF1ADE3F1F7E7587003E9B76 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE3E1F7E7587003E9B76 /* Parser.h */; };
-		CF1ADE411F7E7593003E9B76 /* Parser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE401F7E7593003E9B76 /* Parser.mm */; };
 		CF1ADE431F7E76BF003E9B76 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */; };
 		CF1ADE451F7E76C4003E9B76 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE441F7E76C4003E9B76 /* Carbon.framework */; };
 		CF1ADE481F7E77AE003E9B76 /* TranslateMaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */; };
@@ -59,6 +58,7 @@
 		CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
 		CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */; };
 		CFE08B4123DDEFE2007E99B8 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */; };
+		CFFDD1F424CB840300289876 /* Parser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE401F7E7593003E9B76 /* Parser.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -446,6 +446,7 @@
 				CFC4F4CC24CA3D2100DF4ED6 /* InputTranslatorImpl.mm in Sources */,
 				CF4135151F846CF2007429B6 /* ShellTask.cpp in Sources */,
 				CF4135171F846CF2007429B6 /* Task.cpp in Sources */,
+				CFFDD1F424CB840300289876 /* Parser.mm in Sources */,
 				CFC4F4C624CA396600DF4ED6 /* InputTranslator.cpp in Sources */,
 				CF5F392F242F7FB4004DF1F8 /* InterpreterImpl.cpp in Sources */,
 				CF4135161F846CF2007429B6 /* SingleTask.cpp in Sources */,
@@ -455,7 +456,6 @@
 				CFE08B2E23DCEB04007E99B8 /* Parser2.cpp in Sources */,
 				CF4135251F891165007429B6 /* View.mm in Sources */,
 				CF1ADE3A1F7E7379003E9B76 /* Screen.cpp in Sources */,
-				CF1ADE411F7E7593003E9B76 /* Parser.mm in Sources */,
 				CF5F392D242F7D57004DF1F8 /* Interpreter.cpp in Sources */,
 				CF50996E1F948018000AFDE7 /* ScrollView.mm in Sources */,
 			);

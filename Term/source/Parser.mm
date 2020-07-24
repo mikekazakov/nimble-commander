@@ -488,7 +488,7 @@ void Parser::UpdateAttrs()
 {
     m_Scr.SetFgColor(m_State[0].fg_color);
     m_Scr.SetBgColor(m_State[0].bg_color);
-    m_Scr.SetIntensity(m_State[0].intensity);
+//    m_Scr.SetIntensity(m_State[0].intensity);
     m_Scr.SetUnderline(m_State[0].underline);
     m_Scr.SetReverse(m_State[0].reverse);
 }
@@ -505,8 +505,8 @@ void Parser::CSI_m()
             case 0:  SetDefaultAttrs(); UpdateAttrs(); break;
 			case 1:
             case 21:
-            case 22: m_Scr.SetIntensity(m_State[0].intensity = true);  break;
-			case 2:  m_Scr.SetIntensity(m_State[0].intensity = false); break;
+//            case 22: m_Scr.SetIntensity(m_State[0].intensity = true);  break;
+//			case 2:  m_Scr.SetIntensity(m_State[0].intensity = false); break;
 			case 4:  m_Scr.SetUnderline(m_State[0].underline = true);  break;
 			case 24: m_Scr.SetUnderline(m_State[0].underline = false); break;
             case 7:  m_Scr.SetReverse(m_State[0].reverse = true);      break;

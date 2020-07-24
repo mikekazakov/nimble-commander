@@ -55,7 +55,7 @@ public:
         uint16_t            c2; // combining character 2. zero if no. bmp-only
         unsigned foreground :5;
         unsigned background :5;
-        unsigned intensity  :1;
+        unsigned faint      :1;
         unsigned underline  :1;
         unsigned reverse    :1;
         unsigned bold       :1;

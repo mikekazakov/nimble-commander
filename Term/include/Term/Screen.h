@@ -35,7 +35,7 @@ public:
     
     void SetFgColor(int _color);
     void SetBgColor(int _color);
-    void SetIntensity(bool _intensity);
+    void SetFaint(bool _faint);
     void SetUnderline(bool _is_underline);
     void SetReverse(bool _is_reverse);
     void SetBold(bool _is_bold);

@@ -17,6 +17,8 @@ using nc::utility::FontCache;
 
 using SelPoint = term::ScreenPoint;
 
+static constexpr double g_FaintColorAlpha = 0.6;
+
 static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     return _ch >= 0x2500 && _ch <= 0x257F;
@@ -26,7 +28,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     std::shared_ptr<FontCache> m_FontCache;
     Screen                 *m_Screen;
-    Parser                 *m_Parser;
+    InputTranslator        *m_InputTranslator;
     
     int                     m_LastScreenFullHeight;
     bool                    m_HasSelection;
@@ -45,6 +47,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     NSColor                *m_SelectionColor;
     NSColor                *m_CursorColor;
     NSColor                *m_AnsiColors[16];
+    NSColor                *m_FaintAnsiColors[16];
     std::shared_ptr<Settings>m_Settings;
     int                     m_SettingsNotificationTicket;
 }
@@ -99,7 +102,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (term::Parser *)parser
 {
-    return m_Parser;
+//    return m_Parser;
+    return nullptr;
 }
 
 - (const FontCache&) fontCache
@@ -112,9 +116,14 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     m_Screen = _scr;
 }
 
-- (void) AttachToParser:(term::Parser*)_par
+//- (void) AttachToParser:(term::Parser*)_par
+//{
+//    m_Parser = _par;
+//}
+
+- (void) AttachToInputTranslator:(nc::term::InputTranslator*)_input_translator
 {
-    m_Parser = _par;
+    m_InputTranslator = _input_translator;    
 }
 
 - (void) setAllowCursorBlinking:(bool)allowCursorBlinking
@@ -133,7 +142,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     if ( [character length] == 1 )
         m_HasSelection = false;
 
-    m_Parser->ProcessKeyDown(event);
+    m_InputTranslator->ProcessKeyDown(event);
     [self scrollToBottom];
 }
 
@@ -320,11 +329,12 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         } else {
             int foreground = char_space.foreground;
             if( foreground != ScreenColors::Default ){
-                if( char_space.intensity )
-                    foreground += 8;
-                c = m_AnsiColors[foreground].CGColor;
+                if( char_space.faint )
+                    c = m_FaintAnsiColors[foreground].CGColor;
+                else
+                    c = m_AnsiColors[foreground].CGColor;                
             } else {
-                if( char_space.intensity )
+                if( char_space.bold )
                     c =  m_BoldForegroundColor.CGColor;
             }
         }
@@ -598,7 +608,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     NSString *text = [paste_board stringForType:NSStringPboardType];
     if(!text)
         return;
-    m_Parser->PushRawTaskInput(text);
+    m_InputTranslator->ProcessTextInput(text);
 }
 
 - (void)selectAll:(id)[[maybe_unused]]_sender
@@ -770,6 +780,8 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     {\
         if( m_AnsiColors[index] != color ) { \
             m_AnsiColors[index] = color; \
+            m_FaintAnsiColors[index] = \
+                [m_AnsiColors[index] colorWithAlphaComponent:g_FaintColorAlpha]; \
             self.needsDisplay = true; \
         }\
     }

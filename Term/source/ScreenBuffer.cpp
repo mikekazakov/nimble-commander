@@ -302,7 +302,7 @@ ScreenBuffer::Space ScreenBuffer::DefaultEraseChar() noexcept
     sp.c2 = 0;
     sp.foreground = ScreenColors::Default;
     sp.background = ScreenColors::Default;
-    sp.intensity = 0;
+    sp.faint     = 0;
     sp.underline = 0;
     sp.reverse   = 0;
     sp.bold      = 0;

@@ -73,7 +73,7 @@ TEST_CASE(PREFIX"setting normal attributes")
     const auto c = screen.Buffer().At(0, 0);
     CHECK( c.foreground == ScreenColors::Default );
     CHECK( c.background == ScreenColors::Default );
-    CHECK( c.intensity == true );
+    CHECK( c.faint == false );
     CHECK( c.reverse == false );
     CHECK( c.bold == false );
     CHECK( c.italic == false );
@@ -224,23 +224,23 @@ TEST_CASE(PREFIX"setting faint")
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, bool _intensity) {
+    auto verify = [&](CA::Kind _kind, bool _faint) {
         interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).intensity == _intensity );
+        CHECK( screen.Buffer().At(0, 0).faint == _faint );
     };
     SECTION("Implicit") {
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).intensity == true );
+        CHECK( screen.Buffer().At(0, 0).faint == false );
     }
     SECTION("Normal") {
-        verify(CA::Normal, true);
+        verify(CA::Normal, false);
     }
     SECTION("Faint") {
-        verify(CA::Faint, false);
+        verify(CA::Faint, true);
     }
     SECTION("Not Bold Not Faint") {
-        verify(CA::NotBoldNotFaint, true);
+        verify(CA::NotBoldNotFaint, false);
     }
 }
 
@@ -436,7 +436,7 @@ TEST_CASE(PREFIX"Save/restore")
         const auto sp = screen.Buffer().At(0, 0);
         CHECK( sp.foreground == ScreenColors::Default );
         CHECK( sp.background == ScreenColors::Default );
-        CHECK( sp.intensity == true );
+        CHECK( sp.faint == false );
         CHECK( sp.bold == false );
         CHECK( sp.italic == false );
         CHECK( sp.blink == false );

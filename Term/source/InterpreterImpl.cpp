@@ -427,7 +427,7 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
     };
     auto set_faint = [this]( bool _faint ) {
         m_Rendition.faint = _faint;
-        m_Screen.SetIntensity(!_faint);
+        m_Screen.SetFaint(_faint);
     };
     auto set_inverse = [this]( bool _inverse ) {
         m_Rendition.inverse = _inverse;
@@ -523,7 +523,7 @@ void InterpreterImpl::UpdateCharacterAttributes()
 {
     m_Screen.SetFgColor(m_Rendition.fg_color);
     m_Screen.SetBgColor(m_Rendition.bg_color);
-    m_Screen.SetIntensity(!m_Rendition.faint);
+    m_Screen.SetFaint(m_Rendition.faint);
     m_Screen.SetReverse(m_Rendition.inverse);
     m_Screen.SetBold(m_Rendition.bold);
     m_Screen.SetItalic(m_Rendition.italic);

@@ -218,9 +218,9 @@ void Screen::SetBgColor(int _color)
     m_Buffer.SetEraseChar(m_EraseChar);    
 }
 
-void Screen::SetIntensity(bool _intensity)
+void Screen::SetFaint(bool _faint)
 {
-    m_EraseChar.intensity = _intensity;
+    m_EraseChar.faint = _faint;
     m_Buffer.SetEraseChar(m_EraseChar);
 }
 

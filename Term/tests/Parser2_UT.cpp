@@ -1150,7 +1150,58 @@ TEST_CASE(PREFIX"CSI m")
     }
     SECTION( "ESC [ 49 m" ) {
         verify("\x1B[49m", CharacterAttributes::BackgroundDefault);
-    }    
+    }
+    
+    SECTION( "ESC [ 90 m" ) {
+        verify("\x1B[90m", CharacterAttributes::ForegroundBlackBright);
+    }
+    SECTION( "ESC [ 91 m" ) {
+        verify("\x1B[91m", CharacterAttributes::ForegroundRedBright);
+    }
+    SECTION( "ESC [ 92 m" ) {
+        verify("\x1B[92m", CharacterAttributes::ForegroundGreenBright);
+    }
+    SECTION( "ESC [ 93 m" ) {
+        verify("\x1B[93m", CharacterAttributes::ForegroundYellowBright);
+    }
+    SECTION( "ESC [ 94 m" ) {
+        verify("\x1B[94m", CharacterAttributes::ForegroundBlueBright);
+    }
+    SECTION( "ESC [ 95 m" ) {
+        verify("\x1B[95m", CharacterAttributes::ForegroundMagentaBright);
+    }
+    SECTION( "ESC [ 96 m" ) {
+        verify("\x1B[96m", CharacterAttributes::ForegroundCyanBright);
+    }
+    SECTION( "ESC [ 97 m" ) {
+        verify("\x1B[97m", CharacterAttributes::ForegroundWhiteBright);
+    }
+    
+    SECTION( "ESC [ 100 m" ) {
+        verify("\x1B[100m", CharacterAttributes::BackgroundBlackBright);
+    }
+    SECTION( "ESC [ 101 m" ) {
+        verify("\x1B[101m", CharacterAttributes::BackgroundRedBright);
+    }
+    SECTION( "ESC [ 102 m" ) {
+        verify("\x1B[102m", CharacterAttributes::BackgroundGreenBright);
+    }
+    SECTION( "ESC [ 103 m" ) {
+        verify("\x1B[103m", CharacterAttributes::BackgroundYellowBright);
+    }
+    SECTION( "ESC [ 104 m" ) {
+        verify("\x1B[104m", CharacterAttributes::BackgroundBlueBright);
+    }
+    SECTION( "ESC [ 105 m" ) {
+        verify("\x1B[105m", CharacterAttributes::BackgroundMagentaBright);
+    }
+    SECTION( "ESC [ 106 m" ) {
+        verify("\x1B[106m", CharacterAttributes::BackgroundCyanBright);
+    }
+    SECTION( "ESC [ 107 m" ) {
+        verify("\x1B[107m", CharacterAttributes::BackgroundWhiteBright);
+    }
+    
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 

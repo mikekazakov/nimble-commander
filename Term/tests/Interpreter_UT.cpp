@@ -121,6 +121,30 @@ TEST_CASE(PREFIX"setting foreground colors")
     SECTION("White") {
         verify(CA::ForegroundWhite, ScreenColors::White);
     }
+    SECTION("BlackBright") {
+        verify(CA::ForegroundBlackBright, ScreenColors::BlackHi);
+    }
+    SECTION("RedBright") {
+        verify(CA::ForegroundRedBright, ScreenColors::RedHi);
+    }
+    SECTION("GreenBright") {
+        verify(CA::ForegroundGreenBright, ScreenColors::GreenHi);
+    }
+    SECTION("YellowBright") {
+        verify(CA::ForegroundYellowBright, ScreenColors::YellowHi);
+    }
+    SECTION("BlueBright") {
+        verify(CA::ForegroundBlueBright, ScreenColors::BlueHi);
+    }
+    SECTION("MagentaBright") {
+        verify(CA::ForegroundMagentaBright, ScreenColors::MagentaHi);
+    }
+    SECTION("CyanBright") {
+        verify(CA::ForegroundCyanBright, ScreenColors::CyanHi);
+    }
+    SECTION("WhiteBright") {
+        verify(CA::ForegroundWhiteBright, ScreenColors::WhiteHi);
+    }
     SECTION("Default") {
         verify(CA::ForegroundDefault, ScreenColors::Default);
     }
@@ -164,6 +188,30 @@ TEST_CASE(PREFIX"setting background colors")
     }
     SECTION("White") {
         verify(CA::BackgroundWhite, ScreenColors::White);
+    }    
+    SECTION("BlackBright") {
+        verify(CA::BackgroundBlackBright, ScreenColors::BlackHi);
+    }
+    SECTION("RedBright") {
+        verify(CA::BackgroundRedBright, ScreenColors::RedHi);
+    }
+    SECTION("GreenBright") {
+        verify(CA::BackgroundGreenBright, ScreenColors::GreenHi);
+    }
+    SECTION("YellowBright") {
+        verify(CA::BackgroundYellowBright, ScreenColors::YellowHi);
+    }
+    SECTION("BlueBright") {
+        verify(CA::BackgroundBlueBright, ScreenColors::BlueHi);
+    }
+    SECTION("MagentaBright") {
+        verify(CA::BackgroundMagentaBright, ScreenColors::MagentaHi);
+    }
+    SECTION("CyanBright") {
+        verify(CA::BackgroundCyanBright, ScreenColors::CyanHi);
+    }
+    SECTION("WhiteBright") {
+        verify(CA::BackgroundWhiteBright, ScreenColors::WhiteHi);
     }
     SECTION("Default") {
         verify(CA::BackgroundDefault, ScreenColors::Default);

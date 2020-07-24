@@ -48,6 +48,10 @@
 		CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D696624A897B5008352B0 /* Screen_UT.cpp */; };
 		CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */; };
 		CFB7456B2416E5850088F5EF /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB7456A2416E5850088F5EF /* Interpreter.h */; };
+		CFC4F4C624CA396600DF4ED6 /* InputTranslator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F4C524CA396600DF4ED6 /* InputTranslator.cpp */; };
+		CFC4F4C824CA397600DF4ED6 /* InputTranslator.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F4C724CA397600DF4ED6 /* InputTranslator.h */; };
+		CFC4F4CA24CA3D1B00DF4ED6 /* InputTranslatorImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F4C924CA3D1B00DF4ED6 /* InputTranslatorImpl.h */; };
+		CFC4F4CC24CA3D2100DF4ED6 /* InputTranslatorImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F4CB24CA3D2000DF4ED6 /* InputTranslatorImpl.mm */; };
 		CFE08B2923DCABA4007E99B8 /* Parser2.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2823DCABA4007E99B8 /* Parser2.h */; };
 		CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */; };
 		CFE08B2E23DCEB04007E99B8 /* Parser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */; };
@@ -132,6 +136,10 @@
 		CF9D696624A897B5008352B0 /* Screen_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Screen_UT.cpp; sourceTree = "<group>"; };
 		CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenBuffer_UT.cpp; sourceTree = "<group>"; };
 		CFB7456A2416E5850088F5EF /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interpreter.h; path = include/Term/Interpreter.h; sourceTree = "<group>"; };
+		CFC4F4C524CA396600DF4ED6 /* InputTranslator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputTranslator.cpp; sourceTree = "<group>"; };
+		CFC4F4C724CA397600DF4ED6 /* InputTranslator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputTranslator.h; path = include/Term/InputTranslator.h; sourceTree = "<group>"; };
+		CFC4F4C924CA3D1B00DF4ED6 /* InputTranslatorImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputTranslatorImpl.h; path = include/Term/InputTranslatorImpl.h; sourceTree = "<group>"; };
+		CFC4F4CB24CA3D2000DF4ED6 /* InputTranslatorImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InputTranslatorImpl.mm; sourceTree = "<group>"; };
 		CFE08B2823DCABA4007E99B8 /* Parser2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2.h; path = include/Term/Parser2.h; sourceTree = "<group>"; };
 		CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2Impl.h; path = include/Term/Parser2Impl.h; sourceTree = "<group>"; };
 		CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser2.cpp; sourceTree = "<group>"; };
@@ -204,6 +212,8 @@
 			children = (
 				CF50996F1F948400000AFDE7 /* FlippableHolder.h */,
 				CF5099701F948400000AFDE7 /* FlippableHolder.mm */,
+				CFC4F4C524CA396600DF4ED6 /* InputTranslator.cpp */,
+				CFC4F4CB24CA3D2000DF4ED6 /* InputTranslatorImpl.mm */,
 				CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */,
 				CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */,
 				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
@@ -229,6 +239,8 @@
 			isa = PBXGroup;
 			children = (
 				CF4135221F890BC8007429B6 /* CursorMode.h */,
+				CFC4F4C724CA397600DF4ED6 /* InputTranslator.h */,
+				CFC4F4C924CA3D1B00DF4ED6 /* InputTranslatorImpl.h */,
 				CFB7456A2416E5850088F5EF /* Interpreter.h */,
 				CF5F3930242F7FC6004DF1F8 /* InterpreterImpl.h */,
 				CF1ADE3E1F7E7587003E9B76 /* Parser.h */,
@@ -299,9 +311,11 @@
 				CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */,
 				CF4135231F890BC8007429B6 /* CursorMode.h in Headers */,
 				CF1ADE491F7E77AE003E9B76 /* TranslateMaps.h in Headers */,
+				CFC4F4C824CA397600DF4ED6 /* InputTranslator.h in Headers */,
 				CF41350E1F846CE6007429B6 /* SingleTask.h in Headers */,
 				CF50996C1F94800F000AFDE7 /* ScrollView.h in Headers */,
 				CF4135141F846CF2007429B6 /* PrecompiledHeaders.pch in Headers */,
+				CFC4F4CA24CA3D1B00DF4ED6 /* InputTranslatorImpl.h in Headers */,
 				CFB7456B2416E5850088F5EF /* Interpreter.h in Headers */,
 				CF41350D1F846CE6007429B6 /* ShellTask.h in Headers */,
 				CF1ADE3F1F7E7587003E9B76 /* Parser.h in Headers */,
@@ -429,8 +443,10 @@
 			files = (
 				CF1ADE2D1F7E6C4B003E9B76 /* ScreenBuffer.cpp in Sources */,
 				CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */,
+				CFC4F4CC24CA3D2100DF4ED6 /* InputTranslatorImpl.mm in Sources */,
 				CF4135151F846CF2007429B6 /* ShellTask.cpp in Sources */,
 				CF4135171F846CF2007429B6 /* Task.cpp in Sources */,
+				CFC4F4C624CA396600DF4ED6 /* InputTranslator.cpp in Sources */,
 				CF5F392F242F7FB4004DF1F8 /* InterpreterImpl.cpp in Sources */,
 				CF4135161F846CF2007429B6 /* SingleTask.cpp in Sources */,
 				CF41351D1F8666BF007429B6 /* Settings.mm in Sources */,

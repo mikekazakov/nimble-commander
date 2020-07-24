@@ -489,6 +489,14 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
         case Kind::ForegroundMagenta: set_fg(ScreenColors::Magenta); break;
         case Kind::ForegroundCyan: set_fg(ScreenColors::Cyan); break;
         case Kind::ForegroundWhite: set_fg(ScreenColors::White); break;
+        case Kind::ForegroundBlackBright: set_fg(ScreenColors::BlackHi); break;
+        case Kind::ForegroundRedBright: set_fg(ScreenColors::RedHi); break;
+        case Kind::ForegroundGreenBright: set_fg(ScreenColors::GreenHi); break;
+        case Kind::ForegroundYellowBright: set_fg(ScreenColors::YellowHi); break;
+        case Kind::ForegroundBlueBright: set_fg(ScreenColors::BlueHi); break;
+        case Kind::ForegroundMagentaBright: set_fg(ScreenColors::MagentaHi); break;
+        case Kind::ForegroundCyanBright: set_fg(ScreenColors::CyanHi); break;
+        case Kind::ForegroundWhiteBright: set_fg(ScreenColors::WhiteHi); break;
         case Kind::ForegroundDefault: set_bg(ScreenColors::Default); break;
         case Kind::BackgroundBlack: set_bg(ScreenColors::Black); break;
         case Kind::BackgroundRed: set_bg(ScreenColors::Red); break;
@@ -497,7 +505,15 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
         case Kind::BackgroundBlue: set_bg(ScreenColors::Blue); break;
         case Kind::BackgroundMagenta: set_bg(ScreenColors::Magenta); break;
         case Kind::BackgroundCyan: set_bg(ScreenColors::Cyan); break;
-        case Kind::BackgroundWhite: set_bg(ScreenColors::White); break;
+        case Kind::BackgroundWhite: set_bg(ScreenColors::White); break;            
+        case Kind::BackgroundBlackBright: set_bg(ScreenColors::BlackHi); break;
+        case Kind::BackgroundRedBright: set_bg(ScreenColors::RedHi); break;
+        case Kind::BackgroundGreenBright: set_bg(ScreenColors::GreenHi); break;
+        case Kind::BackgroundYellowBright: set_bg(ScreenColors::YellowHi); break;
+        case Kind::BackgroundBlueBright: set_bg(ScreenColors::BlueHi); break;
+        case Kind::BackgroundMagentaBright: set_bg(ScreenColors::MagentaHi); break;
+        case Kind::BackgroundCyanBright: set_bg(ScreenColors::CyanHi); break;
+        case Kind::BackgroundWhiteBright: set_bg(ScreenColors::WhiteHi); break;
         case Kind::BackgroundDefault: set_bg(ScreenColors::Default); break;
         default: break;
     }

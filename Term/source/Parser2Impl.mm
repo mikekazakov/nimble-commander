@@ -997,6 +997,22 @@ static std::optional<input::CharacterAttributes> SCImToCharacterAttributes(int _
         case 46: ca.mode = CA::BackgroundCyan; return ca;
         case 47: ca.mode = CA::BackgroundWhite; return ca;
         case 49: ca.mode = CA::BackgroundDefault; return ca;
+        case 90: ca.mode = CA::ForegroundBlackBright; return ca;
+        case 91: ca.mode = CA::ForegroundRedBright; return ca;
+        case 92: ca.mode = CA::ForegroundGreenBright; return ca;
+        case 93: ca.mode = CA::ForegroundYellowBright; return ca;
+        case 94: ca.mode = CA::ForegroundBlueBright; return ca;
+        case 95: ca.mode = CA::ForegroundMagentaBright; return ca;
+        case 96: ca.mode = CA::ForegroundCyanBright; return ca;
+        case 97: ca.mode = CA::ForegroundWhiteBright; return ca;
+        case 100: ca.mode = CA::BackgroundBlackBright; return ca;
+        case 101: ca.mode = CA::BackgroundRedBright; return ca;
+        case 102: ca.mode = CA::BackgroundGreenBright; return ca;
+        case 103: ca.mode = CA::BackgroundYellowBright; return ca;
+        case 104: ca.mode = CA::BackgroundBlueBright; return ca;
+        case 105: ca.mode = CA::BackgroundMagentaBright; return ca;
+        case 106: ca.mode = CA::BackgroundCyanBright; return ca;
+        case 107: ca.mode = CA::BackgroundWhiteBright; return ca;
         default: return std::nullopt;
     };
 }
@@ -1039,6 +1055,22 @@ void Parser2Impl::CSI_m() noexcept
 // Ps = 4 6  ⇒  Set background color to Cyan.
 // Ps = 4 7  ⇒  Set background color to White.
 // Ps = 4 9  ⇒  Set background color to default, ECMA-48 3rd.
+// Ps = 9 0  ⇒  Set foreground color to Bright Black.
+// Ps = 9 1  ⇒  Set foreground color to Bright Red.
+// Ps = 9 2  ⇒  Set foreground color to Bright Green.
+// Ps = 9 3  ⇒  Set foreground color to Bright Yellow.
+// Ps = 9 4  ⇒  Set foreground color to Bright Blue.
+// Ps = 9 5  ⇒  Set foreground color to Bright Magenta.
+// Ps = 9 6  ⇒  Set foreground color to Bright Cyan.
+// Ps = 9 7  ⇒  Set foreground color to Bright White.
+// Ps = 1 0 0  ⇒  Set background color to Bright Black.
+// Ps = 1 0 1  ⇒  Set background color to Bright Red.
+// Ps = 1 0 2  ⇒  Set background color to Bright Green.
+// Ps = 1 0 3  ⇒  Set background color to Bright Yellow.
+// Ps = 1 0 4  ⇒  Set background color to Bright Blue.
+// Ps = 1 0 5  ⇒  Set background color to Bright Magenta.
+// Ps = 1 0 6  ⇒  Set background color to Bright Cyan.
+// Ps = 1 0 7  ⇒  Set background color to Bright White.
     const std::string_view s = m_CSIState.buffer;
     
     auto params = CSIParamsScanner::Parse(s);

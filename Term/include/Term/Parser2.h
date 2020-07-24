@@ -118,6 +118,7 @@ struct ModeChange
         AutoWrap, // Auto-wrap Mode / No Auto-wrap Mode [DECAWM]
         ReverseVideo, // Reverse Video / Normal Video [DECSCNM]
         SmoothScroll, // Smooth (Slow) Scroll / Jump (Fast) Scroll [DECSCLM]
+        ApplicationCursorKeys, // Application Cursor Keys / Normal Cursor Keys [DECCKM]
     };
     Kind mode = Insert;
     bool status = false;

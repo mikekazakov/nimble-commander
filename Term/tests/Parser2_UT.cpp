@@ -973,6 +973,12 @@ TEST_CASE(PREFIX"CSI hl")
     SECTION( "ESC [ 20 l" ) {
         verify("\x1B""[20l", Kind::NewLine, false);
     }
+    SECTION( "ESC [ ? 1 h" ) {
+        verify("\x1B""[?1h", Kind::ApplicationCursorKeys, true);
+    }
+    SECTION( "ESC [ ? 1 l" ) {
+        verify("\x1B""[?1l", Kind::ApplicationCursorKeys, false);
+    }
     SECTION( "ESC [ ? 3 h" ) {
         verify("\x1B""[?3h", Kind::Column132, true);
     }

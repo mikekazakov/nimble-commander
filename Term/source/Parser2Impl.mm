@@ -272,131 +272,7 @@ bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
         
             // For everything else, i.e. unimplemented stuff - complain in a log.
         default: LogMissedEscChar(c); return true;
-    }
-    
-//               
-//           case EState::RightBr:
-//               switch (c)
-//               {
-//                   case '0':
-//                   case '1':
-//                   case '2':
-//                       m_TitleType = c - '0';
-//                       m_EscState = EState::TitleSemicolon;
-//                       return;
-//                   case 'P':
-//                       m_EscState = EState::Normal;
-//                       return;
-//                   case 'R':
-//                       m_EscState = EState::Normal;
-//                   default: printf("non-std right br char: %d(\'%c\')\n", (int)c, c);
-//               }
-//               
-//               m_EscState = EState::Normal;
-//               return;
-//               
-//           case EState::TitleSemicolon:
-//               if( c==';' ) {
-//                   m_EscState = EState::TitleBuf;
-//                   m_Title.clear();
-//               }
-//               else if( c == '1' )
-//                   // I have no idea why the on earth VIM on 10.13 uses this weird format, but it does:
-//                   // ESC ] 1 1 ; title BELL
-//                   return;
-//               else
-//                   m_EscState = EState::Normal;
-//               return;
-//               
-//           case EState::TitleBuf:
-//               m_Title += c;
-//               return;
-//               
-//           case EState::LeftBr:
-//               memset(m_Params, 0, sizeof(m_Params));
-//               m_ParamsCnt = 0;
-//               m_EscState = EState::ProcParams;
-//               m_ParsingParamNow = false;
-//               m_QuestionFlag = false;
-//               if(c == '?') {
-//                   m_QuestionFlag = true;
-//                   return;
-//               }
-//                    
-//           case EState::ProcParams:
-//               if(c == '>') {
-//                   // modifier '>' is somehow related with alternative screen, ignore now
-//                   return;
-//               }
-//               
-//               if(c == ';' && m_ParamsCnt < m_ParamsSize - 1) {
-//                   m_ParamsCnt++;
-//                   return;
-//               } else if( c >= '0' && c <= '9' ) {
-//                   m_ParsingParamNow = true;
-//                   m_Params[m_ParamsCnt] *= 10;
-//                   m_Params[m_ParamsCnt] += c - '0';
-//                   return;
-//               } else
-//                   m_EscState = EState::GotParams;
-//
-//           case EState::GotParams:
-//               if(m_ParsingParamNow) {
-//                   m_ParsingParamNow = false;
-//                   m_ParamsCnt++;
-//               }
-//               
-//               m_EscState = EState::Normal;
-//               switch(c) {
-//                   case 'h': CSI_DEC_PMS(true);  return;
-//                   case 'l': CSI_DEC_PMS(false); return;
-//                   case 'A': CSI_A(); return;
-//                   case 'B': case 'e': CSI_B(); return;
-//                   case 'C': case 'a': CSI_C(); return;
-//                   case 'd': CSI_d(); return;
-//                   case 'D': CSI_D(); return;
-//                   case 'H': case 'f': CSI_H(); return;
-//                   case 'G': case '`': CSI_G(); return;
-//                   case 'J': CSI_J(); return;
-//                   case 'K': CSI_K(); return;
-//                   case 'L': CSI_L(); return;
-//                   case 'm': CSI_m(); return;
-//                   case 'M': CSI_M(); return;
-//                   case 'P': CSI_P(); return;
-//                   case 'S': CSI_S(); return;
-//                   case 'T': CSI_T(); return;
-//                   case 'X': CSI_X(); return;
-//                   case 's': EscSave(); return;
-//                   case 'u': EscRestore(); return;
-//                   case 'r': CSI_r(); return;
-//                   case '@': CSI_At(); return;
-//                   case 'c': CSI_c(); return;
-//                   case 'n': CSI_n(); return;
-//                   case 't': CSI_t(); return;
-//                   default: CSI_Unknown(c); return;
-//               }
-//           
-//           case EState::SetG0:
-//               if (c == '0')       m_State[0].g0_charset  = TranslateMaps::Graph;
-//               else if (c == 'B')  m_State[0].g0_charset  = TranslateMaps::Lat1;
-//               else if (c == 'U')  m_State[0].g0_charset  = TranslateMaps::IBMPC;
-//               else if (c == 'K')  m_State[0].g0_charset  = TranslateMaps::User;
-//               SetTranslate(m_State[0].charset_no == 0 ? m_State[0].g0_charset : m_State[0].g1_charset);
-//               return;
-//               
-//           case EState::SetG1:
-//               if (c == '0')       m_State[0].g1_charset  = TranslateMaps::Graph;
-//               else if (c == 'B')  m_State[0].g1_charset  = TranslateMaps::Lat1;
-//               else if (c == 'U')  m_State[0].g1_charset  = TranslateMaps::IBMPC;
-//               else if (c == 'K')  m_State[0].g1_charset  = TranslateMaps::User;
-//               SetTranslate(m_State[0].charset_no == 0 ? m_State[0].g0_charset : m_State[0].g1_charset);
-//               return;
-               
-//        case EscState::Normal:
-//              ConsumeNextUTF8TextChar( c );
-//        default:
-//            break;
-//       }
+    }    
     return true;
 }
 
@@ -669,14 +545,6 @@ void Parser2Impl::SSCSISubmit() noexcept
         default: LogMissedCSIRequest( m_CSIState.buffer ); break;
     } 
 }
-
-    //               m_EscState = EState::Normal;
-    //               switch(c) {
-    //                   case 's': EscSave(); return;
-    //                   case 'u': EscRestore(); return;
-    //                   case 't': CSI_t(); return;
-    //                   default: CSI_Unknown(c); return;
-    //               }
 
 void Parser2Impl::LogMissedCSIRequest( std::string_view _request )
 {
@@ -1038,6 +906,7 @@ static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, 
     using Kind = input::ModeChange::Kind;
     if( _dec ) {
         switch( _ps_number ) {
+            case 1:     return Kind::ApplicationCursorKeys;
             case 3:     return Kind::Column132;
             case 4:     return Kind::SmoothScroll;
             case 5:     return Kind::ReverseVideo;

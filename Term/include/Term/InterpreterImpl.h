@@ -21,6 +21,7 @@ public:
     void SetBell( Bell _bell ) override;
     bool ScreenResizeAllowed() override;
     void SetScreenResizeAllowed( bool _allow ) override;
+    void SetInputTranslator( InputTranslator *_input_translator ) override;
     
 private:
     using TabStops = std::bitset<1024>;
@@ -89,6 +90,7 @@ private:
     Screen &m_Screen;
     Output m_Output = [](Bytes){};
     Bell m_Bell = []{};
+    InputTranslator *m_InputTranslator = nullptr;
     Extent m_Extent;
     TabStops m_TabStops;
     const unsigned short *m_TranslateMap = nullptr;

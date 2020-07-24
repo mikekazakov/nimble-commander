@@ -316,7 +316,8 @@ void InterpreterImpl::ProcessEraseInDisplay( const input::DisplayErasure _displa
             m_Screen.DoEraseScreen(2);
             break;
         case input::DisplayErasure::Area::WholeDisplayWithScrollback:
-            throw std::logic_error("WholeDisplayWithScrollback unimplemented");
+            // TODO: need a real implementation
+            m_Screen.DoEraseScreen(2);
             break;
     }
 }
@@ -375,6 +376,10 @@ void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )
             break;
         case Kind::Insert:
             m_InsertMode = _mode_change.status;
+            break;
+        case Kind::ApplicationCursorKeys:
+            if( m_InputTranslator )
+                m_InputTranslator->SetApplicationCursorKeys(_mode_change.status);
             break;
         default:
             break;
@@ -746,6 +751,11 @@ void InterpreterImpl::ProcessInsertCharacters( unsigned _characters )
     else if(characters == 0)
         characters = 1;
     m_Screen.DoShiftRowRight(characters);
+}
+
+void InterpreterImpl::SetInputTranslator( InputTranslator *_input_translator )
+{
+    m_InputTranslator = _input_translator;    
 }
 
 }

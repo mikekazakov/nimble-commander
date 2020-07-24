@@ -5,6 +5,7 @@
 #include <functional>
 
 #include "Parser2.h"
+#include "InputTranslator.h"
 
 namespace nc::term {
 
@@ -22,6 +23,7 @@ public:
     virtual void SetBell( Bell _bell ) = 0;
     virtual bool ScreenResizeAllowed() = 0;
     virtual void SetScreenResizeAllowed( bool _allow ) = 0;
+    virtual void SetInputTranslator( InputTranslator *_input_translator ) = 0;
 };
 
 }

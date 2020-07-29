@@ -1015,6 +1015,12 @@ TEST_CASE(PREFIX"CSI hl")
     SECTION( "ESC [ ? 47 l" ) {
         verify("\x1B""[?47l", Kind::AlternateScreenBuffer, false);
     }
+    SECTION( "ESC [ ? 1049 h" ) {
+        verify("\x1B""[?1049h", Kind::AlternateScreenBuffer1049, true);
+    }
+    SECTION( "ESC [ ? 1049 l" ) {
+        verify("\x1B""[?1049l", Kind::AlternateScreenBuffer1049, false);
+    }
     SECTION( "ESC [ h" ) {
         REQUIRE( parser.Parse(to_bytes("\x1B""[h")).empty() );
     }

@@ -384,6 +384,11 @@ void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )
         case Kind::AlternateScreenBuffer:
             m_Screen.SetAlternateScreen(_mode_change.status );
             break;
+        case Kind::AlternateScreenBuffer1049:
+            m_Screen.SetAlternateScreen(_mode_change.status );
+            if( _mode_change.status )
+                ProcessEraseInDisplay( input::DisplayErasure{input::DisplayErasure::WholeDisplay} );
+            break;
         default:
             break;
     }

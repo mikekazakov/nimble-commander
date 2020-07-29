@@ -253,7 +253,7 @@ void Screen::SetAlternateScreen(bool _is_alternate)
     else {
         m_PrimaryScreenshot = CaptureScreen();
         m_Buffer.RevertToSnapshot(m_AlternativeScreenshot.snapshot);
-        GoTo(m_AlternativeScreenshot.pos_x, m_AlternativeScreenshot.pos_y);
+        GoTo(0, 0);
     }
     m_AlternateScreen = _is_alternate;
 }

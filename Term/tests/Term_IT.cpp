@@ -345,6 +345,33 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
     },
+    {
+        "A\x1b[?47hBB\x1b[?47lC\x1b[?47hD",
+        "DB        "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        "AAAA\x1b[?1049hBB\x1b[?1049lC",
+        "AAAAC     "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
+    {
+        "A\x1b[?1049hBB\x1b[?1049lC\x1b[?1049hD",
+        "D         "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
 };
 
 const static std::pair<const char*, const char*> g_ResponseCases[] = 
@@ -491,6 +518,7 @@ TEST_CASE(PREFIX"Simple cases")
         Screen screen(10, 6);
         InterpreterImpl interpreter(screen);
         
+        INFO( test_case.first );
         const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(test_case.first),
             strlen(test_case.first));
         interpreter.Interpret(parser.Parse( input_bytes ) );

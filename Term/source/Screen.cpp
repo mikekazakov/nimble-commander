@@ -138,35 +138,6 @@ void Screen::DoCursorRight(int _n)
     GoTo(m_PosX+_n, m_PosY);
 }
 
-//void TermScreen::DoLineFeed()
-//{
-//    if(m_PosY == m_Height - 1)
-//        ScrollBufferUp();
-//    else
-//        DoCursorDown(1);
-    
-    /*
-#define lf() do { \
-if (y+1==bottom) \
-{ \
-scrup(foo,top,bottom,1,(top==0 && bottom==height)?YES:NO); \
-} \
-else if (y<height-1) \
-{ \
-y++; \
-[ts ts_goto: x:y]; \
-} \
-} while (0)
-*/
-
-    
-//}
-
-/*void TermScreen::DoCarriageReturn()
-{
-    GoTo(0, m_PosY);
-}*/
-
 void Screen::EraseInLine(int _mode)
 {
     // If n is zero (or missing), clear from cursor to the end of the line.
@@ -260,8 +231,30 @@ void Screen::SetBlink(bool _is_blink)
     m_Buffer.SetEraseChar(m_EraseChar);
 }
 
+Screen::SavedScreen Screen::CaptureScreen() const
+{
+    SavedScreen screen;
+    screen.pos_x = m_PosX;
+    screen.pos_y = m_PosY;
+    screen.snapshot = m_Buffer.MakeSnapshot();
+    return screen;
+}
+
 void Screen::SetAlternateScreen(bool _is_alternate)
 {
+    if( m_AlternateScreen == _is_alternate )
+        return;
+
+    if( m_AlternateScreen ) {
+        m_AlternativeScreenshot = CaptureScreen();
+        m_Buffer.RevertToSnapshot(m_PrimaryScreenshot.snapshot);
+        GoTo(m_PrimaryScreenshot.pos_x, m_PrimaryScreenshot.pos_y);
+    }
+    else {
+        m_PrimaryScreenshot = CaptureScreen();
+        m_Buffer.RevertToSnapshot(m_AlternativeScreenshot.snapshot);
+        GoTo(m_AlternativeScreenshot.pos_x, m_AlternativeScreenshot.pos_y);
+    }
     m_AlternateScreen = _is_alternate;
 }
 
@@ -379,16 +372,6 @@ void Screen::DoScrollUp(const unsigned _top, const unsigned _bottom, const unsig
     
     for( int i = bottom - 1; i >= std::max(bottom-lines, top); --i)
         ClearLine(i);
-}
-
-void Screen::SaveScreen()
-{
-    m_Buffer.MakeSnapshot();
-}
-
-void Screen::RestoreScreen()
-{
-    m_Buffer.RevertToSnapshot();
 }
 
 void Screen::ResizeScreen(const unsigned _new_sx, const unsigned _new_sy)

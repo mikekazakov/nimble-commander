@@ -1009,6 +1009,12 @@ TEST_CASE(PREFIX"CSI hl")
     SECTION( "ESC [ ? 7 l" ) {
         verify("\x1B""[?7l", Kind::AutoWrap, false);
     }
+    SECTION( "ESC [ ? 47 h" ) {
+        verify("\x1B""[?47h", Kind::AlternateScreenBuffer, true);
+    }
+    SECTION( "ESC [ ? 47 l" ) {
+        verify("\x1B""[?47l", Kind::AlternateScreenBuffer, false);
+    }
     SECTION( "ESC [ h" ) {
         REQUIRE( parser.Parse(to_bytes("\x1B""[h")).empty() );
     }
@@ -1151,7 +1157,6 @@ TEST_CASE(PREFIX"CSI m")
     SECTION( "ESC [ 49 m" ) {
         verify("\x1B[49m", CharacterAttributes::BackgroundDefault);
     }
-    
     SECTION( "ESC [ 90 m" ) {
         verify("\x1B[90m", CharacterAttributes::ForegroundBlackBright);
     }
@@ -1176,7 +1181,6 @@ TEST_CASE(PREFIX"CSI m")
     SECTION( "ESC [ 97 m" ) {
         verify("\x1B[97m", CharacterAttributes::ForegroundWhiteBright);
     }
-    
     SECTION( "ESC [ 100 m" ) {
         verify("\x1B[100m", CharacterAttributes::BackgroundBlackBright);
     }

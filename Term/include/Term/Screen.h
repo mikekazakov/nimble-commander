@@ -57,10 +57,7 @@ public:
      */
     void ScrollDown(unsigned _top, unsigned _bottom, unsigned _lines);
     void DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines);
-    
-    void SaveScreen();
-    void RestoreScreen();
-    
+        
 // CSI n J
 // ED – Erase Display	Clears part of the screen.
 //    If n is zero (or missing), clear from cursor to end of screen.
@@ -93,8 +90,15 @@ public:
     bool VideoReverse() const noexcept;
     
 private:
+    struct SavedScreen {
+        ScreenBuffer::Snapshot snapshot;
+        int pos_x = 0;
+        int pos_y = 0;
+    };
+    
     void CopyLineChars(int _from, int _to);
     void ClearLine(int _ind);
+    SavedScreen CaptureScreen() const;
     
     mutable std::mutex            m_Lock;
     int                           m_PosX = 0;
@@ -105,6 +109,8 @@ private:
     bool                          m_AlternateScreen = false;
     bool                          m_LineOverflown = false;
     bool                          m_ReverseVideo = false;
+    SavedScreen                   m_PrimaryScreenshot;
+    SavedScreen                   m_AlternativeScreenshot;
 };
 
 }

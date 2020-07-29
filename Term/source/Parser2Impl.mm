@@ -912,6 +912,7 @@ static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, 
             case 5:     return Kind::ReverseVideo;
             case 6:     return Kind::Origin;
             case 7:     return Kind::AutoWrap;
+            case 47:    return Kind::AlternateScreenBuffer;
             default:
                 return std::nullopt;
         }

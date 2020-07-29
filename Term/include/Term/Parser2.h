@@ -119,6 +119,7 @@ struct ModeChange
         ReverseVideo, // Reverse Video / Normal Video [DECSCNM]
         SmoothScroll, // Smooth (Slow) Scroll / Jump (Fast) Scroll [DECSCLM]
         ApplicationCursorKeys, // Application Cursor Keys / Normal Cursor Keys [DECCKM]
+        AlternateScreenBuffer, // Alternate Screen Buffer / Normal Screen Buffer
     };
     Kind mode = Insert;
     bool status = false;

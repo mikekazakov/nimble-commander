@@ -506,6 +506,12 @@ std::vector< std::tuple<std::vector<ScreenBuffer::Space>, bool> >
     return result;
 }
 
+ScreenBuffer::Snapshot::Snapshot():
+    width(0),
+    height(0)
+{
+}
+
 ScreenBuffer::Snapshot::Snapshot(unsigned _w, unsigned _h):
     width(_w),
     height(_h),
@@ -513,34 +519,26 @@ ScreenBuffer::Snapshot::Snapshot(unsigned _w, unsigned _h):
 {
 }
 
-void ScreenBuffer::MakeSnapshot()
+ScreenBuffer::Snapshot ScreenBuffer::MakeSnapshot() const
 {
-    if( !m_Snapshot || m_Snapshot->width != m_Width || m_Snapshot->height != m_Height )
-        m_Snapshot = std::make_unique<Snapshot>( m_Width, m_Height );
-    std::copy_n( m_OnScreenSpaces.get(), m_Width*m_Height, m_Snapshot->chars.get() );
+    Snapshot snapshot( m_Width, m_Height );
+    std::copy_n( m_OnScreenSpaces.get(), m_Width*m_Height, snapshot.chars.get() );
+    return snapshot;
 }
 
-void ScreenBuffer::RevertToSnapshot()
+void ScreenBuffer::RevertToSnapshot(const Snapshot& _snapshot)
 {
-    if( !HasSnapshot() )
-        return;
-    
-    if( m_Height == m_Snapshot->height && m_Width == m_Snapshot->width ) {
-        std::copy_n( m_Snapshot->chars.get(), m_Width*m_Height, m_OnScreenSpaces.get() );
+    if( m_Height == _snapshot.height && m_Width == _snapshot.width ) {
+        std::copy_n( _snapshot.chars.get(), m_Width*m_Height, m_OnScreenSpaces.get() );
     }
     else { // TODO: anchor?
         std::fill_n( m_OnScreenSpaces.get(), m_Width*m_Height, m_EraseChar );
-        for( int y = 0, e = std::min(m_Snapshot->height, m_Height); y != e; ++y ) {
-            std::copy_n( m_Snapshot->chars.get() + y*m_Snapshot->width,
-                        std::min(m_Snapshot->width, m_Width),
+        for( int y = 0, e = std::min(_snapshot.height, m_Height); y != e; ++y ) {
+            std::copy_n( _snapshot.chars.get() + y * _snapshot.width,
+                        std::min(_snapshot.width, m_Width),
                         m_OnScreenSpaces.get() + y*m_Width);
         }
     }
-}
-
-void ScreenBuffer::DropSnapshot()
-{
-    m_Snapshot.reset();
 }
 
 std::optional<std::pair<int, int>> ScreenBuffer::OccupiedOnScreenLines() const

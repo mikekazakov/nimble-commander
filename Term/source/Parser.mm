@@ -579,8 +579,6 @@ void Parser::CSI_DEC_PMS(bool _on)
                     /*NOT YET IMPLEMENTED*/
                     break;
 				case 47: // alternate screen buffer mode
-					if(_on) m_Scr.SaveScreen();
-					else    m_Scr.RestoreScreen();
                     m_Scr.SetAlternateScreen(_on);
 					break;
                 case 1048:
@@ -595,15 +593,15 @@ void Parser::CSI_DEC_PMS(bool _on)
                     // NB!
                     // be careful here: for some reasons some implementations use different save/restore path, not
                     // conventional EscSave/EscRestore. may cause a side-effect.
-                    if( _on ) {
-                        EscSave();
-                        m_Scr.SaveScreen();
-                        m_Scr.DoEraseScreen(2);
-                    }
-                    else {
-                        EscRestore();
-                        m_Scr.RestoreScreen();
-                    }
+//                    if( _on ) {
+//                        EscSave();
+//                        m_Scr.SaveScreen();
+//                        m_Scr.DoEraseScreen(2);
+//                    }
+//                    else {
+//                        EscRestore();
+//                        m_Scr.RestoreScreen();
+//                    }
                     m_Scr.SetAlternateScreen(_on);
                     break;
                 case 1002:

@@ -381,6 +381,9 @@ void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )
             if( m_InputTranslator )
                 m_InputTranslator->SetApplicationCursorKeys(_mode_change.status);
             break;
+        case Kind::AlternateScreenBuffer:
+            m_Screen.SetAlternateScreen(_mode_change.status );
+            break;
         default:
             break;
     }

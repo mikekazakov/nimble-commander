@@ -64,6 +64,15 @@ public:
         unsigned blink      :1;
     } /*__attribute__((packed))*/; // 12 bytes per screen space
     
+    struct Snapshot
+    {
+        Snapshot();
+        Snapshot(unsigned _w, unsigned _h);
+        unsigned                 width;
+        unsigned                 height;
+        std::unique_ptr<Space[]> chars;
+    };
+    
     static const unsigned short MultiCellGlyph = 0xFFFE;    
     
     ScreenBuffer(unsigned _width, unsigned _height);
@@ -117,10 +126,8 @@ public:
     std::u32string DumpScreenAsUTF32( bool _break_lines = false ) const;
     void LoadScreenFromANSI(std::string_view _dump);
     
-    inline bool HasSnapshot() const { return (bool)m_Snapshot; }
-    void MakeSnapshot();
-    void RevertToSnapshot();
-    void DropSnapshot();
+    Snapshot MakeSnapshot() const;
+    void RevertToSnapshot(const Snapshot& _snapshot);
 
     static unsigned OccupiedChars( const RangePair<const Space> &_line );
     static unsigned OccupiedChars( const Space *_begin, const Space *_end );
@@ -134,14 +141,6 @@ private:
         unsigned start_index = 0;
         unsigned line_length = 0;
         bool is_wrapped = false;
-    };
-    
-    struct Snapshot
-    {
-        Snapshot(unsigned _w, unsigned _h);
-        const unsigned            width;
-        const unsigned            height;
-        const std::unique_ptr<Space[]> chars;
     };
     
     LineMeta *MetaFromLineNo( int _line_number );
@@ -169,8 +168,6 @@ private:
     std::vector<Space>       m_BackScreenSpaces; // will be growing
     
     Space               m_EraseChar = DefaultEraseChar();
-
-    std::unique_ptr<Snapshot>m_Snapshot;
 };
 
 }

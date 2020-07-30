@@ -505,7 +505,7 @@ void InterpreterImpl::ProcessSetCharacterAttributes( input::CharacterAttributes 
         case Kind::ForegroundMagentaBright: set_fg(ScreenColors::MagentaHi); break;
         case Kind::ForegroundCyanBright: set_fg(ScreenColors::CyanHi); break;
         case Kind::ForegroundWhiteBright: set_fg(ScreenColors::WhiteHi); break;
-        case Kind::ForegroundDefault: set_bg(ScreenColors::Default); break;
+        case Kind::ForegroundDefault: set_fg(ScreenColors::Default); break;
         case Kind::BackgroundBlack: set_bg(ScreenColors::Black); break;
         case Kind::BackgroundRed: set_bg(ScreenColors::Red); break;
         case Kind::BackgroundGreen: set_bg(ScreenColors::Green); break;

@@ -69,4 +69,11 @@ std::string VerboseDescription(const Command & _command)
         return type + ", " + payload;
 }
 
+void PrintCommands(std::span<const Command> _commands, std::ostream &_out)
+{
+    for( auto &cmd: _commands )
+        _out << VerboseDescription(cmd) << "\n";
+    _out.flush();
+}
+
 }

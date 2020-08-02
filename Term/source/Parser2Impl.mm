@@ -1,6 +1,7 @@
 // Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Parser2Impl.h"
 #include <Utility/OrthodoxMonospace.h>
+#include <Utility/Encodings.h>
 #include <Habanero/CFPtr.h>
 #include <Carbon/Carbon.h>
 #include <CoreFoundation/CoreFoundation.h>
@@ -30,7 +31,7 @@ std::vector<input::Command> Parser2Impl::Parse( Bytes _to_parse )
 {
     for( auto c: _to_parse )
         EatByte( static_cast<unsigned char>(c) );
-    FlushText();
+    FlushCompleteText();
     
     return std::move(m_Output);
 }
@@ -66,7 +67,7 @@ void Parser2Impl::SSTextEnter() noexcept
 
 void Parser2Impl::SSTextExit() noexcept
 {
-    FlushText();
+    FlushAllText();
 }
 
 bool Parser2Impl::SSTextConsume(unsigned char _byte) noexcept
@@ -88,7 +89,7 @@ void Parser2Impl::ConsumeNextUTF8TextChar( unsigned char _byte )
     }
 }
 
-void Parser2Impl::FlushText()
+void Parser2Impl::FlushAllText()
 {
     if( m_TextState.UTF8StockLen == 0 )
         return;
@@ -103,6 +104,33 @@ void Parser2Impl::FlushText()
     m_Output.emplace_back( std::move(command) );
     
     m_TextState.UTF8StockLen = 0;
+}
+
+void Parser2Impl::FlushCompleteText()
+{
+    if( m_TextState.UTF8StockLen == 0 )
+        return;
+    
+    const size_t valid_length = encodings::ScanUTF8ForValidSequenceLength
+    (reinterpret_cast<const unsigned char*>(m_TextState.UTF8CharsStock.data()),
+     m_TextState.UTF8StockLen);
+    
+    if( valid_length == 0 )
+        return;
+    assert( valid_length <= (size_t)m_TextState.UTF8StockLen );
+    
+    using namespace input;
+    UTF8Text payload;
+    payload.characters.assign(m_TextState.UTF8CharsStock.data(), valid_length);
+    std::memmove(m_TextState.UTF8CharsStock.data(),
+                 m_TextState.UTF8CharsStock.data() + valid_length,
+                 m_TextState.UTF8StockLen - valid_length);
+    m_TextState.UTF8StockLen = m_TextState.UTF8StockLen - valid_length;
+    
+    Command command;
+    command.type = Type::text;
+    command.payload = std::move(payload);
+    m_Output.emplace_back( std::move(command) );
 }
 
 Parser2Impl::EscState Parser2Impl::GetEscState() const noexcept

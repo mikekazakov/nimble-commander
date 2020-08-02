@@ -38,7 +38,8 @@ private:
     void SwitchTo(EscState _state);
     void Reset();
     void EatByte( unsigned char _byte );
-    void FlushText();
+    void FlushAllText();
+    void FlushCompleteText();
     void ConsumeNextUTF8TextChar( unsigned char _byte );
     void LogMissedEscChar( unsigned char _c );
     void LogMissedOSCRequest( unsigned _ps, std::string_view _pt );

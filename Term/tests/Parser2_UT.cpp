@@ -1426,3 +1426,29 @@ TEST_CASE(PREFIX"CSIParamsScanner")
         CHECK(p.values[0] == 7); 
     }           
 }
+
+TEST_CASE(PREFIX"Properly handles torn sequences")
+{
+    Parser2Impl parser;
+    SECTION( "ESC [ 34 P" ) {
+        auto r1 = parser.Parse(to_bytes("\x1B"));
+        REQUIRE( r1.size() == 0 );
+        auto r2 = parser.Parse(to_bytes("[34P"));
+        REQUIRE( r2.size() == 1 );
+        CHECK( r2[0].type == Type::delete_characters );
+        CHECK( as_unsigned(r2[0]) == 34 );
+    }
+    SECTION( "\xf0\x9f\x98\xb1" ) { // 😱
+        auto r1 = parser.Parse(to_bytes("\xf0\x9f"));
+        REQUIRE( r1.size() == 0 );
+        auto r2 = parser.Parse(to_bytes("\x98\xb1\xf0\x9f\x98"));
+        REQUIRE( r2.size() == 1 );
+        CHECK( r2[0].type == Type::text );
+        CHECK( as_utf8text(r2[0]).characters == "\xf0\x9f\x98\xb1" );
+        auto r3 = parser.Parse(to_bytes("\xb1"));
+        REQUIRE( r3.size() == 1 );
+        CHECK( r3[0].type == Type::text );
+        CHECK( as_utf8text(r3[0]).characters == "\xf0\x9f\x98\xb1" );
+    }
+    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+}

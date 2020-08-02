@@ -1,6 +1,7 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "Encodings.h"
+#include <string_view>
 
 #define PREFIX "Encodings " 
 
@@ -67,4 +68,30 @@ TEST_CASE(PREFIX"InterpretUnicodeAsUTF8")
         for(size_t i = 0; i < output_sz; ++i)
             CHECK(output[i] == (unsigned char)input_ns_utf8[i]);
     }
+}
+
+TEST_CASE(PREFIX"ScanUTF8ForValidSequenceLength")
+{
+    struct {
+        size_t operator()(const char* s) noexcept{
+            return encodings::ScanUTF8ForValidSequenceLength
+            (reinterpret_cast<const unsigned char*>(s), std::string_view(s).size() );
+        };
+        size_t operator()(const char8_t * s) noexcept{
+            return encodings::ScanUTF8ForValidSequenceLength
+            (reinterpret_cast<const unsigned char*>(s), std::u8string_view(s).size() );
+        };
+    } len;
+    CHECK( len("") == 0 );
+    CHECK( len("A") == 1 );
+    CHECK( len("AB") == 2 );
+    CHECK( len(u8"Ф") == 2 );
+    CHECK( len(u8"☕") == 3 );
+    CHECK( len(u8"🙀") == 4 );
+    CHECK( len(u8"🙀a") == 5 );
+    CHECK( len(u8"🙀a☕") == 8 );
+    CHECK( len("\xd0") == 0 );
+    CHECK( len("\xd0z") == 0 );
+    CHECK( len("\xf0\x9f\x99z") == 0 );
+    CHECK( len("x\xf0\x9f\x99z") == 1 );
 }

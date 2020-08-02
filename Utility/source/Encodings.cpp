@@ -1663,3 +1663,55 @@ void InterpretUnicodeAsUTF8(const uint32_t* _input,
     if(_input_chars_eaten)
         *_input_chars_eaten = cur - _input;
 }
+
+namespace encodings {
+
+size_t ScanUTF8ForValidSequenceLength(const unsigned char* _input, size_t _input_size) noexcept
+{
+    if( _input == nullptr || _input_size == 0 )
+        return 0;
+        
+    int utf8_expected = 0;
+    int utf8_pending = 0;
+    int length = 0;
+    
+    for( size_t index = 0; index != _input_size; ++index ) {
+        const unsigned c = _input[index];
+        if(c > 0x7f) {
+            if ( utf8_expected != 0 ) {
+                if ( (c & 0xC0) == 0x80 ) {
+                    utf8_expected--;
+                    utf8_pending++;
+                    if( utf8_expected == 0 ) {
+                        length += utf8_pending + 1;
+                        utf8_pending = 0;
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+            else {
+                if ((c & 0xe0) == 0xc0) {
+                    utf8_expected = 1;
+                }
+                else if ((c & 0xf0) == 0xe0) {
+                    utf8_expected = 2;
+                }
+                else if ((c & 0xf8) == 0xf0) {
+                    utf8_expected = 3;
+                }
+                else
+                    break;
+            }
+        }
+        else {
+            if ( utf8_expected != 0 )
+                break;
+            length++;
+        }
+    }
+    return static_cast<size_t>(length);
+}
+
+}

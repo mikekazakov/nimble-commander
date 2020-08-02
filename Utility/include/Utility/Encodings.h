@@ -189,4 +189,9 @@ namespace encodings
                             uint32_t       *_indexes_buf, // should be at least _input_size 32b words long, can be NULL
                             size_t *_output_sz           // size of an _output_buf
                             );
+
+    // returns a length of a valid UTF8 sequence of code units
+    size_t ScanUTF8ForValidSequenceLength(const unsigned char* _input,
+                                          size_t _input_size) noexcept;
+
 }

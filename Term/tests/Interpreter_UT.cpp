@@ -454,3 +454,42 @@ TEST_CASE(PREFIX"Save/restore")
         CHECK( screen.Buffer().At(0, 0).l == 'n' );
     }
 }
+
+TEST_CASE(PREFIX"Change title")
+{
+    using namespace input;
+    Screen screen(2, 2);
+    InterpreterImpl interpreter(screen);
+    
+    std::string title;
+    bool icon = false;
+    bool window = false;
+    auto callback = [&](const std::string& _title, bool _icon, bool _window) {
+        title = _title;
+        icon = _icon;
+        window = _window;
+    };
+    interpreter.SetTitle( callback );
+
+    SECTION( "IconAndWindow" ) {
+        Title t{Title::IconAndWindow, "Hi1"};
+        interpreter.Interpret(Command(Type::change_title, t));
+        CHECK(title == "Hi1");
+        CHECK(icon == true);
+        CHECK(window == true);
+    }
+    SECTION( "Icon" ) {
+        Title t{Title::Icon, "Hi2"};
+        interpreter.Interpret(Command(Type::change_title, t));
+        CHECK(title == "Hi2");
+        CHECK(icon == true);
+        CHECK(window == false);
+    }
+    SECTION( "Window" ) {
+        Title t{Title::Window, "Hi3"};
+        interpreter.Interpret(Command(Type::change_title, t));
+        CHECK(title == "Hi3");
+        CHECK(icon == false);
+        CHECK(window == true);
+    }
+}

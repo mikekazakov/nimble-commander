@@ -16,11 +16,13 @@ public:
     using Input = std::span<const input::Command>;
     using Output = std::function<void(Bytes _bytes)>;
     using Bell = std::function<void()>;
+    using Title = std::function<void(const std::string &_title, bool _icon, bool _window)>;
 
     virtual ~Interpreter() = default;
     virtual void Interpret( Input _to_interpret ) = 0;
     virtual void SetOuput( Output _output ) = 0;
     virtual void SetBell( Bell _bell ) = 0;
+    virtual void SetTitle( Title _title ) = 0;
     virtual bool ScreenResizeAllowed() = 0;
     virtual void SetScreenResizeAllowed( bool _allow ) = 0;
     virtual void SetInputTranslator( InputTranslator *_input_translator ) = 0;

@@ -117,6 +117,9 @@ void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
         case Type::insert_characters:
             ProcessInsertCharacters( *std::get_if<unsigned>(&_command.payload) );
             break;
+        case Type::change_title:
+            ProcessChangeTitle( *std::get_if<input::Title>(&_command.payload) );
+            break;
         default:
             break;
     }
@@ -794,6 +797,23 @@ void InterpreterImpl::NotifyScreenResized()
         m_Extent.bottom = std::min(old_extent.bottom, m_Extent.height);
     }
     m_Extent.bottom = std::min( old_extent.top, m_Extent.height - 1 );
+}
+
+void InterpreterImpl::SetTitle( Title _title )
+{
+    assert(_title);
+    m_Title = std::move(_title);
+}
+
+void InterpreterImpl::ProcessChangeTitle( const input::Title &_title )
+{
+    assert(m_Title);
+    if( _title.kind == input::Title::Icon )
+        m_Title(_title.title, true, false);
+    else if( _title.kind == input::Title::Window )
+        m_Title(_title.title, false, true);
+    else if( _title.kind == input::Title::IconAndWindow )
+        m_Title(_title.title, true, true);
 }
 
 }

@@ -19,6 +19,7 @@ public:
     void Interpret( const input::Command& _command );
     void SetOuput( Output _output ) override;
     void SetBell( Bell _bell ) override;
+    void SetTitle( Title _title ) override;
     bool ScreenResizeAllowed() override;
     void SetScreenResizeAllowed( bool _allow ) override;
     void SetInputTranslator( InputTranslator *_input_translator ) override;
@@ -54,6 +55,7 @@ private:
     void ProcessDeleteLines( unsigned _lines );
     void ProcessDeleteCharacters( unsigned _characters );
     void ProcessInsertCharacters( unsigned _characters );
+    void ProcessChangeTitle( const input::Title &_title );
     void Response(std::string_view _text);
     void UpdateCharacterAttributes();
     
@@ -91,6 +93,7 @@ private:
     Screen &m_Screen;
     Output m_Output = [](Bytes){};
     Bell m_Bell = []{};
+    Title m_Title = [](const std::string&, bool, bool){};
     InputTranslator *m_InputTranslator = nullptr;
     Extent m_Extent;
     TabStops m_TabStops;

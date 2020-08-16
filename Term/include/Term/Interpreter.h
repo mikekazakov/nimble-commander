@@ -24,6 +24,7 @@ public:
     virtual bool ScreenResizeAllowed() = 0;
     virtual void SetScreenResizeAllowed( bool _allow ) = 0;
     virtual void SetInputTranslator( InputTranslator *_input_translator ) = 0;
+    virtual void NotifyScreenResized() = 0;
 };
 
 }

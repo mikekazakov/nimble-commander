@@ -22,6 +22,7 @@ public:
     bool ScreenResizeAllowed() override;
     void SetScreenResizeAllowed( bool _allow ) override;
     void SetInputTranslator( InputTranslator *_input_translator ) override;
+    void NotifyScreenResized() override;
     
 private:
     using TabStops = std::bitset<1024>;

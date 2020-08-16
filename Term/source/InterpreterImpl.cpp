@@ -782,4 +782,18 @@ void InterpreterImpl::SetInputTranslator( InputTranslator *_input_translator )
     m_InputTranslator = _input_translator;    
 }
 
+void InterpreterImpl::NotifyScreenResized()
+{
+    const auto old_extent = m_Extent;
+    m_Extent.width = m_Screen.Width();
+    m_Extent.height = m_Screen.Height();
+    if( old_extent.bottom == old_extent.height ) {
+        m_Extent.bottom = m_Extent.height;
+    }
+    else {
+        m_Extent.bottom = std::min(old_extent.bottom, m_Extent.height);
+    }
+    m_Extent.bottom = std::min( old_extent.top, m_Extent.height - 1 );
+}
+
 }

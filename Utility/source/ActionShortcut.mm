@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ActionShortcut.h"
 #include <locale>
 #include <vector>
@@ -117,62 +117,61 @@ static NSString *StringForModifierFlags(uint64_t flags)
     return [NSString stringWithCharacters:modChars length:charCount];
 }
 
+static const std::unordered_map<uint16_t, NSString*> g_UnicodeToNiceString = {
+        {NSLeftArrowFunctionKey,     @"←"},
+        {NSRightArrowFunctionKey,    @"→"},
+        {NSDownArrowFunctionKey,     @"↓"},
+        {NSUpArrowFunctionKey,       @"↑"},
+        {NSF1FunctionKey,            @"F1"},
+        {NSF2FunctionKey,            @"F2"},
+        {NSF3FunctionKey,            @"F3"},
+        {NSF4FunctionKey,            @"F4"},
+        {NSF5FunctionKey,            @"F5"},
+        {NSF6FunctionKey,            @"F6"},
+        {NSF7FunctionKey,            @"F7"},
+        {NSF8FunctionKey,            @"F8"},
+        {NSF9FunctionKey,            @"F9"},
+        {NSF10FunctionKey,           @"F10"},
+        {NSF11FunctionKey,           @"F11"},
+        {NSF12FunctionKey,           @"F12"},
+        {NSF13FunctionKey,           @"F13"},
+        {NSF14FunctionKey,           @"F14"},
+        {NSF15FunctionKey,           @"F15"},
+        {NSF16FunctionKey,           @"F16"},
+        {NSF17FunctionKey,           @"F17"},
+        {NSF18FunctionKey,           @"F18"},
+        {NSF19FunctionKey,           @"F19"},
+        {0x2326,                     @"⌦"},
+        {'\r',                       @"↩"},
+        {0x3,                        @"⌅"},
+        {0x9,                        @"⇥"},
+        {0x2423,                     @"Space"},
+        {0x0020,                     @"Space"},
+        {0x8,                        @"⌫"},
+        {NSClearDisplayFunctionKey,  @"Clear"},
+        {0x1B,                       @"⎋"},
+        {NSHomeFunctionKey,          @"↖"},
+        {NSPageUpFunctionKey,        @"⇞"},
+        {NSEndFunctionKey,           @"↘"},
+        {NSPageDownFunctionKey,      @"⇟"},
+        {NSHelpFunctionKey,          @"Help"}
+};
+
 NSString *ActionShortcut::PrettyString() const noexcept
 {
-    static const std::vector< std::pair<uint16_t, NSString*> > unicode_to_nice_string = {
-            {NSLeftArrowFunctionKey,     @"←"},
-            {NSRightArrowFunctionKey,    @"→"},
-            {NSDownArrowFunctionKey,     @"↓"},
-            {NSUpArrowFunctionKey,       @"↑"},
-            {NSF1FunctionKey,            @"F1"},
-            {NSF2FunctionKey,            @"F2"},
-            {NSF3FunctionKey,            @"F3"},
-            {NSF4FunctionKey,            @"F4"},
-            {NSF5FunctionKey,            @"F5"},
-            {NSF6FunctionKey,            @"F6"},
-            {NSF7FunctionKey,            @"F7"},
-            {NSF8FunctionKey,            @"F8"},
-            {NSF9FunctionKey,            @"F9"},
-            {NSF10FunctionKey,           @"F10"},
-            {NSF11FunctionKey,           @"F11"},
-            {NSF12FunctionKey,           @"F12"},
-            {NSF13FunctionKey,           @"F13"},
-            {NSF14FunctionKey,           @"F14"},
-            {NSF15FunctionKey,           @"F15"},
-            {NSF16FunctionKey,           @"F16"},
-            {NSF17FunctionKey,           @"F17"},
-            {NSF18FunctionKey,           @"F18"},
-            {NSF19FunctionKey,           @"F19"},
-            {0x2326,                     @"⌦"},
-            {'\r',                       @"↩"},
-            {0x3,                        @"⌅"},
-            {0x9,                        @"⇥"},
-            {0x2423,                     @"Space"},
-            {0x0020,                     @"Space"},
-            {0x8,                        @"⌫"},
-            {NSClearDisplayFunctionKey,  @"Clear"},
-            {0x1B,                       @"⎋"},
-            {NSHomeFunctionKey,          @"↖"},
-            {NSPageUpFunctionKey,        @"⇞"},
-            {NSEndFunctionKey,           @"↘"},
-            {NSPageDownFunctionKey,      @"⇟"},
-            {NSHelpFunctionKey,          @"Help"}
-    };
     if( !*this )
         return @"";
     
     NSString *vis_key;
-    auto it = find_if(begin(unicode_to_nice_string),
-                      end(unicode_to_nice_string),
-                      [=](auto &_i){ return _i.first == unicode; });
-    if( it != end(unicode_to_nice_string) )
+    if( auto it = g_UnicodeToNiceString.find(unicode); it != std::end(g_UnicodeToNiceString) )
         vis_key = it->second;
     else
         vis_key = Key().uppercaseString;
     
-    return [NSString stringWithFormat:@"%@%@",
-            StringForModifierFlags(modifiers),
-            vis_key];
+    if( modifiers.is_empty() )
+        return vis_key;
+    else
+        return [NSString stringWithFormat:@"%@%@", StringForModifierFlags(modifiers), vis_key];
 }
 
 bool ActionShortcut::IsKeyDown(uint16_t _unicode, unsigned long long _modifiers) const noexcept

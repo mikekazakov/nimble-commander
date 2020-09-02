@@ -62,7 +62,7 @@ struct StateStorage
     std::unique_ptr<IconRepository> m_IconRepository;
     
     int                         m_CursorPos;
-    NSEventModifierFlagsHolder  m_KeyboardModifierFlags;
+    nc::utility::NSEventModifierFlagsHolder m_KeyboardModifierFlags;
     CursorSelectionType         m_KeyboardCursorSelectionType;
 }
 

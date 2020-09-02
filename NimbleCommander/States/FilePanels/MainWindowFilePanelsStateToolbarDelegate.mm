@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
 #include "StateActionsDispatcher.h"
 #include "../../Core/ActionsShortcutsManager.h"
@@ -123,13 +123,20 @@ static NSImage *ImageForTool( const ExternalTool &_et)
 
 - (void)setupExternalToolItem:(NSToolbarItem*)_item forTool:(const ExternalTool&)_et no:(int)_no
 {
+    const auto title = [NSString stringWithUTF8StdString:_et.m_Title];
     _item.image = ImageForTool(_et);
-    _item.label = [NSString stringWithUTF8StdString:_et.m_Title];
-    _item.paletteLabel = _item.label;
+    _item.label = title;
+    _item.paletteLabel = title;
     _item.target = self;
     _item.action = @selector(onExternalToolAction:);
     _item.tag = _no;
-    _item.toolTip = _et.m_Shorcut.PrettyString();
+    _item.toolTip = [&]{
+        const auto hotkey = _et.m_Shorcut.PrettyString();
+        if( hotkey.length == 0 )
+            return title;
+        else
+            return [NSString stringWithFormat:@"%@ (%@)", title, hotkey];
+    }();
 }
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)[[maybe_unused]]_toolbar

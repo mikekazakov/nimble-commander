@@ -7,7 +7,7 @@ MACOSX_DEPLOYMENT_TARGET = 10.11
 PRODUCT_NAME = $(TARGET_NAME)
 
 // paths
-HEADER_SEARCH_PATHS = $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../3rd_Party/boost/include $(PROJECT_DIR)/../3rd_Party/magic_enum/include $(PROJECT_DIR)/include/Term
+HEADER_SEARCH_PATHS = $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../3rd_Party/boost/include $(PROJECT_DIR)/../3rd_Party/magic_enum/include $(PROJECT_DIR)/../3rd_Party/robin_hood/include $(PROJECT_DIR)/include/Term
 LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/boost/built
 USE_HEADERMAP = NO
 

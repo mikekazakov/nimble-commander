@@ -7,7 +7,7 @@ MACOSX_DEPLOYMENT_TARGET = 10.11
 ALWAYS_SEARCH_USER_PATHS = NO
 HEADER_SEARCH_PATHS = $(PROJECT_DIR)/include/ $(PROJECT_DIR)/include/Utility/ $(PROJECT_DIR)/../Habanero/include
 LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/boost/built
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -isystem$(PROJECT_DIR)/../3rd_Party/boost/include
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -isystem$(PROJECT_DIR)/../3rd_Party/boost/include -isystem$(PROJECT_DIR)/../3rd_Party/robin_hood/include
 OTHER_LDFLAGS = -framework SystemConfiguration -lboost_system-mt
 
 // library settings

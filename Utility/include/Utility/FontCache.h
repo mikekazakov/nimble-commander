@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreText/CTFont.h>
@@ -6,34 +6,36 @@
 #include <array>
 #include <map>
 #include <memory>
+#include <cassert>
+#include <robin_hood.h>
 #include "FontExtras.h"
+#include <Habanero/CFPtr.h>
 
 namespace nc::utility {
 
 class FontCache
 {
 public:
-    FontCache(CTFontRef _basic_font);
-    ~FontCache();
-    
     struct Pair
     {
         uint8_t     font = 0;       // zero mean that basic font is just ok, other ones are the indeces of ctfallbacks
         uint8_t     searched = 0;   // zero means that this glyph wasn't looked up yet
         uint16_t    glyph = 0;      // zero glyphs should be ignored - that signal some king of failure
     }; // 4bytes total
+    
+    FontCache(CTFontRef _basic_font);
+    FontCache(const FontCache&) = delete;
+    ~FontCache();
 
-    inline CTFontRef BaseFont() const {return m_CTFonts[0];}
-    inline CTFontRef Font(int _no) const { return m_CTFonts[_no]; }
-    
-    inline double Size()    const {return m_FontInfo.Size();}
-    inline double Height()  const {return m_FontInfo.LineHeight();}
-    inline double Width()   const {return m_FontInfo.MonospaceWidth();}
-    inline double Ascent()  const {return m_FontInfo.Ascent();}
-    inline double Descent() const {return m_FontInfo.Descent();}
-    inline double Leading() const {return m_FontInfo.Leading();}
-    
-    Pair    Get(uint32_t _c);
+    CTFontRef BaseFont() const noexcept;
+    CTFontRef Font(unsigned _no) const noexcept;
+    double Size()    const noexcept;
+    double Height()  const noexcept;
+    double Width()   const noexcept;
+    double Ascent()  const noexcept;
+    double Descent() const noexcept;
+    double Leading() const noexcept;
+    Pair Get(uint32_t _c) noexcept;
     
     static std::shared_ptr<FontCache> FontCacheFromFont(CTFontRef _basic_font);
     
@@ -44,14 +46,51 @@ private:
     
     std::array<CTFontRef, 256> m_CTFonts;    // will anybody need more than 256 fallback fonts?
                                              // fallbacks start from [1]. [0] is basefont
-
     std::array<Pair, 65536> m_CacheBMP;
-    // TODO: consider mutex locking here
-    std::map<uint32_t, Pair> m_CacheNonBMP;
-    
-    CFStringRef m_FontName;
+    robin_hood::unordered_map<uint32_t, Pair> m_CacheNonBMP;
+    base::CFPtr<CFStringRef> m_FontName;
     FontGeometryInfo m_FontInfo;
-    FontCache(const FontCache&); // forbid
 };
+
+inline CTFontRef FontCache::BaseFont() const noexcept
+{
+    return m_CTFonts[0];
+}
+
+inline CTFontRef FontCache::Font(unsigned _no) const noexcept
+{
+    assert( _no < m_CTFonts.size() );
+    return m_CTFonts[_no];
+}
+   
+inline double FontCache::Size() const noexcept
+{
+    return m_FontInfo.Size();
+}
+
+inline double FontCache::Height() const noexcept
+{
+    return m_FontInfo.LineHeight();
+}
+
+inline double FontCache::Width() const noexcept
+{
+    return m_FontInfo.MonospaceWidth();
+}
+
+inline double FontCache::Ascent() const noexcept
+{
+    return m_FontInfo.Ascent();
+}
+
+inline double FontCache::Descent() const noexcept
+{
+    return m_FontInfo.Descent();
+}
+
+inline double FontCache::Leading() const noexcept
+{
+    return m_FontInfo.Leading();
+}
 
 }

@@ -68,7 +68,7 @@ public:
         std::swap( m_Ptr, _rhs.m_Ptr );
     }
     
-    static CFPtr adopt(PointerType _ptr) noexcept {
+    [[nodiscard]] static CFPtr adopt(PointerType _ptr) noexcept {
         CFPtr p;
         p.m_Ptr = _ptr;
         return p;

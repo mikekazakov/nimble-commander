@@ -3,6 +3,7 @@
 #include <locale>
 #include <vector>
 #include <codecvt>
+#include <unordered_map>
 #include <Carbon/Carbon.h>
 
 namespace nc::utility {

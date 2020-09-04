@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include <Utility/OrthodoxMonospace.h>
 #include "Screen.h"
@@ -389,19 +389,9 @@ void Screen::ResizeScreen(const unsigned _new_sx, const unsigned _new_sy)
     GoTo(CursorX(), feed_from_bs ? Height() - 1 : CursorY()); // will clip if necessary
 }
 
-void Screen::SetTitle(const char *_t)
-{
-    m_Title = _t;
-}
-
 void Screen::GoToDefaultPosition()
 {
     GoTo(0, 0);
-}
-
-const std::string& Screen::Title() const
-{
-    return m_Title;
 }
 
 void Screen::SetVideoReverse( bool _reverse ) noexcept

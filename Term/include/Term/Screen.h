@@ -82,10 +82,7 @@ public:
     
     void DoShiftRowLeft(int _chars);
     void DoShiftRowRight(int _chars);    
-    
-    void SetTitle(const char *_t);
-    const std::string& Title() const;
-    
+        
     void SetVideoReverse( bool _reverse ) noexcept;
     bool VideoReverse() const noexcept;
     
@@ -105,7 +102,6 @@ private:
     int                           m_PosY = 0;
     Space                         m_EraseChar = ScreenBuffer::DefaultEraseChar();
     ScreenBuffer                  m_Buffer;
-    std::string                   m_Title;
     bool                          m_AlternateScreen = false;
     bool                          m_LineOverflown = false;
     bool                          m_ReverseVideo = false;

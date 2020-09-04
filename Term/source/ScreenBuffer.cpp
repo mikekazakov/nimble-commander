@@ -224,6 +224,15 @@ std::string ScreenBuffer::DumpScreenAsANSI() const
     return result;
 }
 
+std::string ScreenBuffer::DumpBackScreenAsANSI() const
+{
+    std::string result;
+    for( auto &l: m_BackScreenLines )
+        for(auto *i = &m_BackScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i)
+            result += ( ( i->l >= 32 && i->l <= 127 ) ? (char)i->l : ' ');
+    return result;
+}
+
 std::string ScreenBuffer::DumpScreenAsANSIBreaked() const
 {
     std::string result;

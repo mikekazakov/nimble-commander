@@ -493,3 +493,23 @@ TEST_CASE(PREFIX"Change title")
         CHECK(window == true);
     }
 }
+
+TEST_CASE(PREFIX"Properly updates internal sizes")
+{
+    using namespace input;
+    Screen screen(2, 2);
+    const auto &buffer = screen.Buffer();
+    InterpreterImpl interpreter(screen);
+    screen.ResizeScreen(3, 3);
+    interpreter.NotifyScreenResized();
+    interpreter.Interpret(Command(Type::text, UTF8Text{"012"}));
+    interpreter.Interpret(Command(Type::text, UTF8Text{"123"}));
+    interpreter.Interpret(Command(Type::text, UTF8Text{"234"}));
+    interpreter.Interpret(Command(Type::text, UTF8Text{"345"}));
+    CHECK( buffer.DumpBackScreenAsANSI() ==
+          "012" );
+    CHECK( buffer.DumpScreenAsANSI() ==
+          "123"
+          "234"
+          "345" );
+}

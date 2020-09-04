@@ -125,6 +125,7 @@ public:
     std::string DumpScreenAsANSIBreaked() const;
     std::u32string DumpScreenAsUTF32( bool _break_lines = false ) const;
     void LoadScreenFromANSI(std::string_view _dump);
+    std::string DumpBackScreenAsANSI() const;
     
     Snapshot MakeSnapshot() const;
     void RevertToSnapshot(const Snapshot& _snapshot);

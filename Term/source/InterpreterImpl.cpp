@@ -796,7 +796,7 @@ void InterpreterImpl::NotifyScreenResized()
     else {
         m_Extent.bottom = std::min(old_extent.bottom, m_Extent.height);
     }
-    m_Extent.bottom = std::min( old_extent.top, m_Extent.height - 1 );
+    m_Extent.top = std::min( old_extent.top, m_Extent.height - 1 );
 }
 
 void InterpreterImpl::SetTitle( Title _title )

@@ -534,8 +534,8 @@
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
                       "terminalOverlayColor": "@whiteColor",
-                      "terminalForegroundColor": "#BFBFBF",
-                      "terminalBoldForegroundColor": "#E5E5E5",
+                      "terminalForegroundColor": "#FFFFFF",
+                      "terminalBoldForegroundColor": "#FFFFFF",
                       "terminalBackgroundColor": "#000000",
                       "terminalSelectionColor": "#E5E5E5",
                       "terminalCursorColor": "#666666",
@@ -546,7 +546,7 @@
                       "terminalAnsiColor4": "#0000B2", // blue
                       "terminalAnsiColor5": "#B200B2", // magenta
                       "terminalAnsiColor6": "#00A6B2", // cyan
-                      "terminalAnsiColor7": "#BFBFBF", // white
+                      "terminalAnsiColor7": "#BFC2BF", // white
                       "terminalAnsiColor8": "#666666", // bright black
                       "terminalAnsiColor9": "#E50000", // bright red
                       "terminalAnsiColorA": "#00D900", // bright green
@@ -554,9 +554,9 @@
                       "terminalAnsiColorC": "#0000FF", // bright blue
                       "terminalAnsiColorD": "#E500E5", // bright magenta
                       "terminalAnsiColorE": "#00E5E5", // bright cyan
-                      "terminalAnsiColorF": "#E5E5E5", // bright white
+                      "terminalAnsiColorF": "#E5E6E5", // bright white
                       
-                      /* Viewer Emulator */
+                      /* Viewer */
                       "viewerFont": "Menlo-Regular, 13",
                       "viewerOverlayColor": "@whiteColor",
                       "viewerTextColor": "#000000",
@@ -664,8 +664,8 @@
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
                       "terminalOverlayColor": "@whiteColor",
-                      "terminalForegroundColor": "#BFBFBF",
-                      "terminalBoldForegroundColor": "#E5E5E5",
+                      "terminalForegroundColor": "#FFFFFF",
+                      "terminalBoldForegroundColor": "#FFFFFF",
                       "terminalBackgroundColor": "#000000",
                       "terminalSelectionColor": "#E5E5E5",
                       "terminalCursorColor": "#666666",
@@ -676,7 +676,7 @@
                       "terminalAnsiColor4": "#0000B2", // blue
                       "terminalAnsiColor5": "#B200B2", // magenta
                       "terminalAnsiColor6": "#00A6B2", // cyan
-                      "terminalAnsiColor7": "#BFBFBF", // white
+                      "terminalAnsiColor7": "#BFC2BF", // white
                       "terminalAnsiColor8": "#666666", // bright black
                       "terminalAnsiColor9": "#E50000", // bright red
                       "terminalAnsiColorA": "#00D900", // bright green
@@ -684,9 +684,9 @@
                       "terminalAnsiColorC": "#0000FF", // bright blue
                       "terminalAnsiColorD": "#E500E5", // bright magenta
                       "terminalAnsiColorE": "#00E5E5", // bright cyan
-                      "terminalAnsiColorF": "#E5E5E5", // bright white
+                      "terminalAnsiColorF": "#E5E6E5", // bright white
                       
-                      /* Viewer Emulator */
+                      /* Viewer */
                       "viewerFont": "Menlo-Regular, 13",
                       "viewerOverlayColor": "@whiteColor",
                       "viewerTextColor": "#00FFFF",
@@ -779,8 +779,8 @@
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
                       "terminalOverlayColor": "@blackColor",
-                      "terminalForegroundColor": "#BFBFBF",
-                      "terminalBoldForegroundColor": "#E5E5E5",
+                      "terminalForegroundColor": "#FFFFFF",
+                      "terminalBoldForegroundColor": "#FFFFFF",
                       "terminalBackgroundColor": "#000000",
                       "terminalSelectionColor": "#E5E5E5",
                       "terminalCursorColor": "#666666",
@@ -791,7 +791,7 @@
                       "terminalAnsiColor4": "#0000B2", // blue
                       "terminalAnsiColor5": "#B200B2", // magenta
                       "terminalAnsiColor6": "#00A6B2", // cyan
-                      "terminalAnsiColor7": "#BFBFBF", // white
+                      "terminalAnsiColor7": "#BFC2BF", // white
                       "terminalAnsiColor8": "#666666", // bright black
                       "terminalAnsiColor9": "#E50000", // bright red
                       "terminalAnsiColorA": "#00D900", // bright green
@@ -799,7 +799,7 @@
                       "terminalAnsiColorC": "#0000FF", // bright blue
                       "terminalAnsiColorD": "#E500E5", // bright magenta
                       "terminalAnsiColorE": "#00E5E5", // bright cyan
-                      "terminalAnsiColorF": "#E5E5E5", // bright white
+                      "terminalAnsiColorF": "#E5E6E5", // bright white
                       
                       /* Viewer Emulator */
                       "viewerFont": "Menlo-Regular, 13",

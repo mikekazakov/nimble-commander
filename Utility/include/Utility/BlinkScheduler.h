@@ -6,12 +6,12 @@
 
 namespace nc::utility {
 
-class BlinkingCaret
+class BlinkScheduler
 {
 public:
-    BlinkingCaret( id<ViewWithFPSLimitedDrawer> _view,
+    BlinkScheduler( id<ViewWithFPSLimitedDrawer> _view,
                   std::chrono::milliseconds _blink_time = std::chrono::milliseconds(600) );
-    ~BlinkingCaret();
+    ~BlinkScheduler();
 
     bool Enabled() const;
     void SetEnabled( bool _enabled );

@@ -69,7 +69,7 @@
 		CFE3F1C622933058009D6AB4 /* FilenameTextNavigation_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38472B2010780B00BAB3BE /* FilenameTextNavigation_UT.mm */; };
 		CFE3F1C7229332FB009D6AB4 /* Encodings_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA91F9D871D0005F2DB /* Encodings_UT.mm */; };
 		CFFA94671F453CC00035E606 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */; };
-		CFFA94681F453CC00035E606 /* BlinkingCaret.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */; };
+		CFFA94681F453CC00035E606 /* BlinkScheduler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22A1DFBD8740039A104 /* BlinkScheduler.mm */; };
 		CFFA94691F453CC00035E606 /* ButtonWithTextColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */; };
 		CFFA946A1F453CC00035E606 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */; };
 		CFFA946B1F453CC00035E606 /* ColoredSeparatorLine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */; };
@@ -240,8 +240,8 @@
 		CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SheetWithHotkeys.mm; path = source/SheetWithHotkeys.mm; sourceTree = "<group>"; };
 		CFD79AB921FE1F3B0043A26D /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = include/Utility/CocoaAppearanceManager.h; sourceTree = "<group>"; };
 		CFD79ABB21FE1F480043A26D /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = source/CocoaAppearanceManager.mm; sourceTree = "<group>"; };
-		CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlinkingCaret.h; path = include/Utility/BlinkingCaret.h; sourceTree = "<group>"; };
-		CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BlinkingCaret.mm; path = source/BlinkingCaret.mm; sourceTree = "<group>"; };
+		CFDAC2281DFBD8690039A104 /* BlinkScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlinkScheduler.h; path = include/Utility/BlinkScheduler.h; sourceTree = "<group>"; };
+		CFDAC22A1DFBD8740039A104 /* BlinkScheduler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BlinkScheduler.mm; path = source/BlinkScheduler.mm; sourceTree = "<group>"; };
 		CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataBlockAnalysis.h; path = include/Utility/DataBlockAnalysis.h; sourceTree = "<group>"; };
 		CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DataBlockAnalysis.mm; path = source/DataBlockAnalysis.mm; sourceTree = "<group>"; };
 		CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionLowercaseComparison.h; path = include/Utility/ExtensionLowercaseComparison.h; sourceTree = "<group>"; };
@@ -346,7 +346,7 @@
 			children = (
 				CF24E1F32288A9FB00C166FA /* ActionShortcut.h */,
 				CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */,
-				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
+				CFDAC2281DFBD8690039A104 /* BlinkScheduler.h */,
 				CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */,
 				CF308F32213ACD2500915730 /* BriefOnDiskStorageImpl.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
@@ -402,7 +402,7 @@
 			children = (
 				CF24E1F52288AA0500C166FA /* ActionShortcut.mm */,
 				CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */,
-				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
+				CFDAC22A1DFBD8740039A104 /* BlinkScheduler.mm */,
 				CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */,
 				CF308F30213ACD1900915730 /* BriefOnDiskStorageImpl.cpp */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
@@ -634,7 +634,7 @@
 				CFFA94851F453CC00035E606 /* VolumeInformation.cpp in Sources */,
 				CFFA94741F453CC00035E606 /* FSEventsDirUpdate.cpp in Sources */,
 				CFFA94831F453CC00035E606 /* SystemInformation.mm in Sources */,
-				CFFA94681F453CC00035E606 /* BlinkingCaret.mm in Sources */,
+				CFFA94681F453CC00035E606 /* BlinkScheduler.mm in Sources */,
 				CF0A49AD250D2C83008EC7B0 /* CharInfo.cpp in Sources */,
 				CFFA94821F453CC00035E606 /* SyncMessageBox.mm in Sources */,
 				CFFA946E1F453CC00035E606 /* EncodingsAdditions.mm in Sources */,

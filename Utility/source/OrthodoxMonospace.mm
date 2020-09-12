@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include "OrthodoxMonospace.h"
 
@@ -15,22 +15,22 @@ void SetStrokeColor(CGContextRef _context, const DoubleColor &_color)
     CGContextSetRGBStrokeColor(_context, _color.r, _color.g, _color.b, _color.a);
 }
 
-void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _context, FontCache *_cache)
+void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _context, FontCache &_cache)
 {
-    FontCache::Pair p = _cache->Get(_s);
+    FontCache::Pair p = _cache.Get(_s);
     if( p.glyph == 0 )
         return;
 
     CGPoint pos{0., 0.};
-    CGContextSetTextPosition(_context, _x, _y + _cache->Height() - _cache->Descent());
-    CTFontDrawGlyphs(_cache->Font(p.font), &p.glyph, &pos, 1, _context);
+    CGContextSetTextPosition(_context, _x, _y + _cache.Height() - _cache.Descent());
+    CTFontDrawGlyphs(_cache.Font(p.font), &p.glyph, &pos, 1, _context);
 }
     
 void DrawSingleUniChar(uint32_t _s,
                        double _x,
                        double _y,
                        CGContextRef _context,
-                       FontCache *_font_cache,
+                       FontCache &_font_cache,
                        const DoubleColor &_text_color
                        )
 {
@@ -38,34 +38,34 @@ void DrawSingleUniChar(uint32_t _s,
     DrawSingleUniChar(_s, _x, _y, _context, _font_cache);
 }
 
-void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache)
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache &_cache)
 {
-    DrawSingleUniChar(_s, _x * _cache->Width(), _y * _cache->Height(), _cont, _cache);
+    DrawSingleUniChar(_s, _x * _cache.Width(), _y * _cache.Height(), _cont, _cache);
 }
     
-void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color)
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache &_cache, const DoubleColor &_color)
 {
-    DrawSingleUniChar(_s, _x * _cache->Width(), _y * _cache->Height(), _cont, _cache, _color);
+    DrawSingleUniChar(_s, _x * _cache.Width(), _y * _cache.Height(), _cont, _cache, _color);
 }
 
-void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color, const DoubleColor &_bk_color)
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache &_cache, const DoubleColor &_color, const DoubleColor &_bk_color)
 {
     SetFillColor(_cont, _bk_color);
     CGContextFillRect(_cont,
-                      CGRectMake(_x * _cache->Width(),
-                                 _y * _cache->Height(),
-                                 _cache->Width(),
-                                 _cache->Height()));
-    DrawSingleUniChar(_s, _x * _cache->Width(), _y * _cache->Height(), _cont, _cache, _color);
+                      CGRectMake(_x * _cache.Width(),
+                                 _y * _cache.Height(),
+                                 _cache.Width(),
+                                 _cache.Height()));
+    DrawSingleUniChar(_s, _x * _cache.Width(), _y * _cache.Height(), _cont, _cache, _color);
 }
     
-void DrawUniCharsXY(unichars_draw_batch &_batch, CGContextRef _cont, FontCache *_cache)
+void DrawUniCharsXY(unichars_draw_batch &_batch, CGContextRef _cont, FontCache &_cache)
 {
     // TODO: implement it rolled-up, it should be (?) faster
     for(int i =0; i < _batch.amount; ++i)
         DrawSingleUniChar(_batch.chars[i].c,
-                          _batch.chars[i].x * _cache->Width(),
-                          _batch.chars[i].y * _cache->Height(),
+                          _batch.chars[i].x * _cache.Width(),
+                          _batch.chars[i].y * _cache.Height(),
                           _cont, _cache);
 }
     
@@ -75,7 +75,7 @@ void DrawString(uint16_t *_s,
                         double _x,
                         double _y,
                         CGContextRef _context,
-                        FontCache *_cache,
+                        FontCache &_cache,
                         const DoubleColor &_text_color
                         )
 {
@@ -108,10 +108,12 @@ void DrawString(uint16_t *_s,
             posdelta = WCWidthMin1(c);
         }
         
-        auto p = _cache->Get(c);
+        auto p = _cache.Get(c);
         if( p.glyph != 0 ) {
-            CGContextSetTextPosition(_context, _x + cpos*_cache->Width(), _y + _cache->Height() - _cache->Descent());
-            CTFontDrawGlyphs(_cache->Font(p.font), &p.glyph, &pos, 1, _context);
+            CGContextSetTextPosition(_context,
+                                     _x + cpos*_cache.Width(),
+                                     _y + _cache.Height() - _cache.Descent());
+            CTFontDrawGlyphs(_cache.Font(p.font), &p.glyph, &pos, 1, _context);
         }
     }
 }
@@ -122,14 +124,14 @@ void DrawStringWithBackground(UniChar *_s,
                                      double _x,
                                      double _y,
                                      CGContextRef _context,
-                                     FontCache *_cache,
+                                     FontCache &_cache,
                                      const DoubleColor &_text_color,
                                      size_t _bk_fill_amount, // amount of symbols places to fill with _bk_color
                                      const DoubleColor &_bk_color
                                          )
 {
     SetFillColor(_context, _bk_color);
-    CGContextFillRect(_context, CGRectMake(_x, _y, _bk_fill_amount*_cache->Width(), _cache->Height()));
+    CGContextFillRect(_context, CGRectMake(_x, _y, _bk_fill_amount*_cache.Width(), _cache.Height()));
     DrawString(_s, _start, _amount, _x, _y, _context, _cache, _text_color);
 }
 
@@ -139,11 +141,11 @@ void DrawStringXY(UniChar *_s,
                       int _x,
                       int _y,
                       CGContextRef _context,
-                      FontCache *_cache,
+                      FontCache &_cache,
                       const DoubleColor &_text_color
                       )
 {
-    DrawString(_s, _start, _amount, _x * _cache->Width(), _y * _cache->Height(), _context, _cache, _text_color);
+    DrawString(_s, _start, _amount, _x * _cache.Width(), _y * _cache.Height(), _context, _cache, _text_color);
 }
     
 void DrawStringWithBackgroundXY(UniChar *_s,
@@ -152,16 +154,16 @@ void DrawStringWithBackgroundXY(UniChar *_s,
                                     int _x,
                                     int _y,
                                     CGContextRef _context,
-                                    FontCache *_cache,
+                                    FontCache &_cache,
                                     const DoubleColor &_text_color,
                                     size_t _bk_fill_amount, // amount of symbols places to fill with _bk_color
                                     const DoubleColor &_bk_color
                                     )
 {
-    DrawStringWithBackground(_s, _start, _amount, _x * _cache->Width(), _y * _cache->Height(), _context, _cache, _text_color, _bk_fill_amount, _bk_color);
+    DrawStringWithBackground(_s, _start, _amount, _x * _cache.Width(), _y * _cache.Height(), _context, _cache, _text_color, _bk_fill_amount, _bk_color);
 }
 
-void SetParamsForUserReadableText(CGContextRef _context, [[maybe_unused]] FontCache *_cache)
+void SetParamsForUserReadableText(CGContextRef _context, [[maybe_unused]] FontCache &_cache)
 {
     // font settings
     CGContextSetTextDrawingMode(_context, kCGTextFill);
@@ -179,7 +181,7 @@ void SetParamsForUserReadableText(CGContextRef _context, [[maybe_unused]] FontCa
     CGContextSetTextMatrix(_context, AFF);
 }
     
-void SetParamsForUserASCIIArt(CGContextRef _context, [[maybe_unused]] FontCache *_cache)
+void SetParamsForUserASCIIArt(CGContextRef _context, [[maybe_unused]] FontCache &_cache)
 {
     // font settings
     CGContextSetTextDrawingMode(_context, kCGTextFill);
@@ -315,7 +317,7 @@ int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const uint16_t * const _s,
     return ell_num + chars.len;
 }
     
-Context::Context(CGContextRef _cg_context, FontCache* _font_cache):
+Context::Context(CGContextRef _cg_context, FontCache& _font_cache):
     m_CGContext(_cg_context),
     m_FontCache(_font_cache)
 {
@@ -373,8 +375,8 @@ void Context::DrawString(uint16_t *_s,
     oms::DrawString(_s,
                     _start,
                     _amount,
-                    _x * m_FontCache->Width(),
-                    _y * m_FontCache->Height(),
+                    _x * m_FontCache.Width(),
+                    _y * m_FontCache.Height(),
                     m_CGContext,
                     m_FontCache,
                     _text_color);
@@ -384,10 +386,10 @@ void Context::DrawBackground(const DoubleColor &_color, int _x, int _y, int _w, 
 {
     SetFillColor(_color);
     CGContextFillRect(m_CGContext,
-                      CGRectMake(_x * m_FontCache->Width(),
-                                 _y * m_FontCache->Height(),
-                                 _w * m_FontCache->Width(),
-                                 _h * m_FontCache->Height()));
+                      CGRectMake(_x * m_FontCache.Width(),
+                                 _y * m_FontCache.Height(),
+                                 _w * m_FontCache.Width(),
+                                 _h * m_FontCache.Height()));
 }
     
 #pragma clang diagnostic push

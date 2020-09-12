@@ -231,7 +231,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     auto lock = m_Screen->AcquireLock();
     
-    oms::SetParamsForUserReadableText(context, m_FontCache.get());
+    oms::SetParamsForUserReadableText(context, *m_FontCache);
     CGContextSetShouldSmoothFonts(context, true);
 
     for(int i = line_start, bsl = m_Screen->Buffer().BackScreenLines();
@@ -335,9 +335,9 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     
     for( const auto char_space: _line ) {
         auto c = m_ForegroundColor.CGColor;
-        FontCache * const effective_font_cache = char_space.bold ?
-            m_BoldFontCache.get() :
-            m_FontCache.get();
+        FontCache &effective_font_cache = char_space.bold ?
+            *m_BoldFontCache :
+            *m_FontCache;
 
         if( char_space.reverse ) {
             c = char_space.background != ScreenColors::Default ?

@@ -1,10 +1,15 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/Encodings.h>
 #include "FontCache.h"
 
 #include <string>
+
+namespace oms
+{
+
+using nc::utility::FontCache;
 
 struct DoubleColor
 {
@@ -44,11 +49,6 @@ struct DoubleColor
         return memcmp(this, &_r, sizeof(*this)) != 0;
     }
 };
-
-namespace oms
-{
-
-using nc::utility::FontCache;
     
 struct range
 {
@@ -78,23 +78,23 @@ struct unichars_draw_batch
 // graphic configuration
 void SetFillColor(CGContextRef _cont, const DoubleColor &_color);
 void SetStrokeColor(CGContextRef _cont, const DoubleColor &_color);
-void SetParamsForUserReadableText(CGContextRef _context, FontCache *_cache);
-void SetParamsForUserASCIIArt(CGContextRef _context, FontCache *_cache);
+void SetParamsForUserReadableText(CGContextRef _context, FontCache &_cache);
+void SetParamsForUserASCIIArt(CGContextRef _context, FontCache &_cache);
     
 // drawing routines
-void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color);
-void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _cont, FontCache *_cache);
-void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color, const DoubleColor &_bk_color);
-void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache, const DoubleColor &_color);
-void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache *_cache);
-void DrawUniCharsXY(unichars_draw_batch &_batch, CGContextRef _cont, FontCache *_cache);
+void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _cont, FontCache &_cache, const DoubleColor &_color);
+void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _cont, FontCache &_cache);
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache &_cache, const DoubleColor &_color, const DoubleColor &_bk_color);
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache &_cache, const DoubleColor &_color);
+void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache &_cache);
+void DrawUniCharsXY(unichars_draw_batch &_batch, CGContextRef _cont, FontCache &_cache);
 void DrawString(uint16_t *_s,
                 size_t _start,    // position of a first symbol to draw
                 size_t _amount,   // number of symbols to draw. this means UniChar symbols, not visible symbols - result may be shorter
                 double _x,
                 double _y,
                 CGContextRef _context,
-                FontCache *_font_cache,
+                FontCache &_font_cache,
                 const DoubleColor &_text_color
                 );
 void DrawStringWithBackground(UniChar *_s,
@@ -103,7 +103,7 @@ void DrawStringWithBackground(UniChar *_s,
                 double _x,
                 double _y,
                 CGContextRef _context,
-                FontCache *_font_cache,
+                FontCache &_font_cache,
                 const DoubleColor &_text_color,
                 size_t _bk_fill_amount, // amount of symbols places to fill with _bk_color
                 const DoubleColor &_bk_color
@@ -114,7 +114,7 @@ void DrawStringXY(UniChar *_s,
                 int _x,
                 int _y,
                 CGContextRef _context,
-                FontCache *_font_cache,
+                FontCache &_font_cache,
                 const DoubleColor &_text_color
                 );
 void DrawStringWithBackgroundXY(UniChar *_s,
@@ -123,7 +123,7 @@ void DrawStringWithBackgroundXY(UniChar *_s,
                 int _x,
                 int _y,
                 CGContextRef _context,
-                FontCache *_font_cache,
+                FontCache &_font_cache,
                 const DoubleColor &_text_color,
                 size_t _bk_fill_amount, // amount of symbols places to fill with _bk_color
                 const DoubleColor &_bk_color
@@ -330,7 +330,7 @@ private:
 class Context
 {
 public:
-    Context(CGContextRef _cg_context, FontCache* _font_cache);
+    Context(CGContextRef _cg_context, FontCache& _font_cache);
 
     void SetFillColor(const DoubleColor &_color);
     void SetupForText();
@@ -348,7 +348,7 @@ public:
 
 private:
     CGContextRef m_CGContext;
-    FontCache   *m_FontCache;
+    FontCache   &m_FontCache;
 };
     
 }

@@ -122,6 +122,8 @@ struct ModeChange
         ApplicationCursorKeys, // Application Cursor Keys / Normal Cursor Keys [DECCKM]
         AlternateScreenBuffer, // Alternate Screen Buffer / Normal Screen Buffer
         AlternateScreenBuffer1049, // as AlternateScreenBuffer, but clears alternate screen
+        BlinkingCursor, // Start Blinking Cursor / Stop Blinking Cursor
+        ShowCursor, // Show Cursor / Hide Cursor [DECTCEM]
     };
     Kind mode = Insert;
     bool status = false;

@@ -20,6 +20,7 @@ namespace nc::term {
 @property (nonatomic, readonly) nc::term::Parser *parser; // may be nullptr
 @property (nonatomic) bool reportsSizeByOccupiedContent;
 @property (nonatomic) bool allowCursorBlinking;
+@property (nonatomic) bool showCursor;
 @property (nonatomic) NSFont  *font;
 @property (nonatomic) NSColor *foregroundColor;
 @property (nonatomic) NSColor *boldForegroundColor;

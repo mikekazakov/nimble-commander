@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CF0A49AF250D575D008EC7B0 /* OrthodoxMonospace.h in Headers */ = {isa = PBXBuildFile; fileRef = CF0A49AE250D575C008EC7B0 /* OrthodoxMonospace.h */; };
-		CF0A49B1250D576D008EC7B0 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.mm */; };
+		CF0A49B1250D576D008EC7B0 /* OrthodoxMonospace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */; };
 		CF1ADE2D1F7E6C4B003E9B76 /* ScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */; };
 		CF1ADE361F7E7344003E9B76 /* ScreenBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */; };
 		CF1ADE381F7E7370003E9B76 /* Screen.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE371F7E7370003E9B76 /* Screen.h */; };
@@ -94,7 +94,7 @@
 
 /* Begin PBXFileReference section */
 		CF0A49AE250D575C008EC7B0 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OrthodoxMonospace.h; path = include/Term/OrthodoxMonospace.h; sourceTree = "<group>"; };
-		CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OrthodoxMonospace.mm; sourceTree = "<group>"; };
+		CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OrthodoxMonospace.cpp; sourceTree = "<group>"; };
 		CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libTerm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenBuffer.cpp; path = source/ScreenBuffer.cpp; sourceTree = SOURCE_ROOT; };
 		CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenBuffer.h; path = include/Term/ScreenBuffer.h; sourceTree = "<group>"; };
@@ -220,7 +220,7 @@
 				CFC4F4CB24CA3D2000DF4ED6 /* InputTranslatorImpl.mm */,
 				CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */,
 				CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */,
-				CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.mm */,
+				CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */,
 				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
 				CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */,
 				CFE08B2D23DCEB04007E99B8 /* Parser2Impl.mm */,
@@ -464,7 +464,7 @@
 				CF4135251F891165007429B6 /* View.mm in Sources */,
 				CF1ADE3A1F7E7379003E9B76 /* Screen.cpp in Sources */,
 				CF5F392D242F7D57004DF1F8 /* Interpreter.cpp in Sources */,
-				CF0A49B1250D576D008EC7B0 /* OrthodoxMonospace.mm in Sources */,
+				CF0A49B1250D576D008EC7B0 /* OrthodoxMonospace.cpp in Sources */,
 				CF50996E1F948018000AFDE7 /* ScrollView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

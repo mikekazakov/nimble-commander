@@ -17,6 +17,7 @@ public:
     using Output = std::function<void(Bytes _bytes)>;
     using Bell = std::function<void()>;
     using Title = std::function<void(const std::string &_title, bool _icon, bool _window)>;
+    using ShownCursorChanged = std::function<void(bool)>;
 
     virtual ~Interpreter() = default;
     virtual void Interpret( Input _to_interpret ) = 0;
@@ -27,6 +28,8 @@ public:
     virtual void SetScreenResizeAllowed( bool _allow ) = 0;
     virtual void SetInputTranslator( InputTranslator *_input_translator ) = 0;
     virtual void NotifyScreenResized() = 0;
+    virtual bool ShowCursor() = 0;
+    virtual void SetShowCursorChanged( ShownCursorChanged _on_show_cursor_changed ) = 0;
 };
 
 }

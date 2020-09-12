@@ -1,5 +1,6 @@
 // Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <InterpreterImpl.h>
+#include <optional>
 #include "Tests.h"
 
 using namespace nc::term;
@@ -512,4 +513,43 @@ TEST_CASE(PREFIX"Properly updates internal sizes")
           "123"
           "234"
           "345" );
+}
+
+TEST_CASE(PREFIX"Cursor visibility management")
+{
+    using namespace input;
+    Screen screen(2, 2);
+    InterpreterImpl interpreter(screen);
+    
+    CHECK( interpreter.ShowCursor() == true );
+
+    std::optional<bool> show;
+    interpreter.SetShowCursorChanged([&](bool _show){
+        show = _show;
+    });
+    SECTION( "on->on" ) {
+        interpreter.Interpret(Command(Type::change_mode,
+                                      ModeChange{ModeChange::ShowCursor, true}));
+        CHECK( interpreter.ShowCursor() == true );
+        REQUIRE( show.has_value() == false );
+    }
+    SECTION( "on->off->off->on" ) {
+        interpreter.Interpret(Command(Type::change_mode,
+                                      ModeChange{ModeChange::ShowCursor, false}));
+        CHECK( interpreter.ShowCursor() == false );
+        REQUIRE( show.has_value() );
+        CHECK( show == false );
+        
+        show.reset();
+        interpreter.Interpret(Command(Type::change_mode,
+                                      ModeChange{ModeChange::ShowCursor, false}));
+        CHECK( interpreter.ShowCursor() == false );
+        CHECK( show.has_value() == false );
+        
+        interpreter.Interpret(Command(Type::change_mode,
+                                      ModeChange{ModeChange::ShowCursor, true}));
+        CHECK( interpreter.ShowCursor() == true );
+        REQUIRE( show.has_value() );
+        CHECK( show == true );
+    }
 }

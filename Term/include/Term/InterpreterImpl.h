@@ -24,6 +24,8 @@ public:
     void SetScreenResizeAllowed( bool _allow ) override;
     void SetInputTranslator( InputTranslator *_input_translator ) override;
     void NotifyScreenResized() override;
+    bool ShowCursor() override;
+    void SetShowCursorChanged( ShownCursorChanged _on_show_cursor_changed ) override;
     
 private:
     using TabStops = std::bitset<1024>;
@@ -94,6 +96,7 @@ private:
     Output m_Output = [](Bytes){};
     Bell m_Bell = []{};
     Title m_Title = [](const std::string&, bool, bool){};
+    ShownCursorChanged m_OnShowCursorChanged = [](bool){};
     InputTranslator *m_InputTranslator = nullptr;
     Extent m_Extent;
     TabStops m_TabStops;
@@ -103,6 +106,7 @@ private:
     bool m_AllowScreenResize = true;
     bool m_AutoWrapMode = true;
     bool m_InsertMode = false;
+    bool m_CursorShown = true;
     Rendition m_Rendition;
     std::optional<SavedState> m_SavedState;
 };

@@ -392,6 +392,12 @@ void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )
             if( _mode_change.status )
                 ProcessEraseInDisplay( input::DisplayErasure{input::DisplayErasure::WholeDisplay} );
             break;
+        case Kind::ShowCursor:
+            if( _mode_change.status != m_CursorShown ) {
+                m_CursorShown = _mode_change.status;
+                m_OnShowCursorChanged(m_CursorShown);
+            }
+            break;
         default:
             break;
     }
@@ -814,6 +820,17 @@ void InterpreterImpl::ProcessChangeTitle( const input::Title &_title )
         m_Title(_title.title, false, true);
     else if( _title.kind == input::Title::IconAndWindow )
         m_Title(_title.title, true, true);
+}
+
+bool InterpreterImpl::ShowCursor()
+{
+    return m_CursorShown;
+}
+
+void InterpreterImpl::SetShowCursorChanged( ShownCursorChanged _on_show_cursor_changed )
+{
+    assert( _on_show_cursor_changed );
+    m_OnShowCursorChanged = std::move(_on_show_cursor_changed);
 }
 
 }

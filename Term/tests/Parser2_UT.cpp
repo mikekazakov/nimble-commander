@@ -1009,6 +1009,18 @@ TEST_CASE(PREFIX"CSI hl")
     SECTION( "ESC [ ? 7 l" ) {
         verify("\x1B""[?7l", Kind::AutoWrap, false);
     }
+    SECTION( "ESC [ ? 12 h" ) {
+        verify("\x1B""[?12h", Kind::BlinkingCursor, true);
+    }
+    SECTION( "ESC [ ? 12 l" ) {
+        verify("\x1B""[?12l", Kind::BlinkingCursor, false);
+    }
+    SECTION( "ESC [ ? 25 h" ) {
+        verify("\x1B""[?25h", Kind::ShowCursor, true);
+    }
+    SECTION( "ESC [ ? 25 l" ) {
+        verify("\x1B""[?25l", Kind::ShowCursor, false);
+    }
     SECTION( "ESC [ ? 47 h" ) {
         verify("\x1B""[?47h", Kind::AlternateScreenBuffer, true);
     }

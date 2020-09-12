@@ -39,7 +39,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     FPSLimitedDrawer       *m_FPS;
     NSSize                  m_IntrinsicSize;
-    std::unique_ptr<BlinkingCaret> m_BlinkingCaret;
+    std::unique_ptr<utility::BlinkingCaret> m_BlinkingCaret;
     NSFont                     *m_Font;
     std::shared_ptr<FontCache>  m_FontCache;
     NSFont                     *m_BoldFont;
@@ -64,7 +64,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     if (self) {
         m_SettingsNotificationTicket = 0;
         m_CursorType = TermViewCursor::Block;
-        m_BlinkingCaret = std::make_unique<BlinkingCaret>(self);
+        m_BlinkingCaret = std::make_unique<utility::BlinkingCaret>(self);
         m_LastScreenFullHeight = 0;
         m_HasSelection = false;
         m_ReportsSizeByOccupiedContent = false;

@@ -1,13 +1,16 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <stdexcept>
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+
+#include "../include/Utility/BlinkingCaret.h"
 #include <Habanero/mach_time.h>
 #include <Habanero/dispatch_cpp.h>
-#include "../include/Utility/BlinkingCaret.h"
+#include <stdexcept>
 
-using namespace std;
-using namespace std::chrono;
+namespace nc::utility {
 
-BlinkingCaret::BlinkingCaret( id<ViewWithFPSLimitedDrawer> _view, milliseconds _blink_time ):
+using namespace std::chrono_literals;
+
+BlinkingCaret::BlinkingCaret( id<ViewWithFPSLimitedDrawer> _view,
+                             std::chrono::milliseconds _blink_time ):
     m_View( _view ),
     m_BlinkTime( _blink_time ),
     m_NextScheduleTime( 0 )
@@ -37,7 +40,7 @@ bool BlinkingCaret::Visible() const
     if( !m_Enabled )
         return true;
     
-    auto n = duration_cast<milliseconds>(machtime()) / m_BlinkTime;
+    auto n = std::chrono::duration_cast<std::chrono::milliseconds>(machtime()) / m_BlinkTime;
     return n % 2 == 0;
 }
 
@@ -57,4 +60,6 @@ void BlinkingCaret::ScheduleNextRedraw()
             [v.fpsDrawer invalidate];
     });
     m_NextScheduleTime = mt + m_BlinkTime;
+}
+
 }

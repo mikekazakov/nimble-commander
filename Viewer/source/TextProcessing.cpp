@@ -1,15 +1,19 @@
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
 
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/OrthodoxMonospace.h>
+#include <Utility/CharInfo.h>
 
 #include <stdexcept>
 #include <cmath>
 #include <algorithm>
 
 namespace nc::viewer {
+
+using utility::CharInfo;
 
 void CleanUnicodeControlSymbols(char16_t* const _characters,
                                 int const _characters_length,
@@ -109,7 +113,7 @@ std::vector< std::pair<int, int> > SplitStringIntoLines(const char16_t* _charact
                 break;
             }
             
-            if( oms::IsUnicodeCombiningCharacter(c) ) {
+            if( CharInfo::IsUnicodeCombiningCharacter(c) ) {
                 count++;
                 continue;
             }
@@ -122,7 +126,7 @@ std::vector< std::pair<int, int> > SplitStringIntoLines(const char16_t* _charact
             }
             else {
                 const auto probe_width =
-                    oms::WCWidthMin1( c ) == 1 ?  // TODO: add support for surrogate pairs
+                    CharInfo::WCWidthMin1( c ) == 1 ?  // TODO: add support for surrogate pairs
                         width + _monospace_width :
                         width + 2 * _monospace_width;
                 

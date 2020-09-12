@@ -1,9 +1,12 @@
 // Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include <Utility/OrthodoxMonospace.h>
+#include <Utility/CharInfo.h>
 #include "Screen.h"
 
 namespace nc::term {
+
+using utility::CharInfo;
 
 Screen::Screen(unsigned _w, unsigned _h):
     m_Buffer(_w, _h)
@@ -28,7 +31,7 @@ void Screen::PutCh(uint32_t _char)
     
     auto chars = begin(line);
     
-    if( !oms::IsUnicodeCombiningCharacter(_char) ) {
+    if( !CharInfo::IsUnicodeCombiningCharacter(_char) ) {
         if( chars + m_PosX < end(line) ) {
             auto sp = m_EraseChar;
             sp.l = _char;
@@ -36,7 +39,7 @@ void Screen::PutCh(uint32_t _char)
             // sp.c2 == 0
             chars[m_PosX++] = sp;
             
-            if(oms::WCWidthMin1(_char) == 2 &&
+            if(CharInfo::WCWidthMin1(_char) == 2 &&
                chars + m_PosX < end(line) ) {
                 sp.l = MultiCellGlyph;
                 chars[m_PosX++] = sp;

@@ -3,9 +3,12 @@
 #include <Habanero/CFString.h>
 #include <Habanero/CFPtr.h>
 #include <Utility/OrthodoxMonospace.h>
+#include <Utility/CharInfo.h>
 #include "TranslateMaps.h"
 
 namespace nc::term {
+
+using utility::CharInfo;
 
 static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 );
 static std::u32string ComposeUnicodePoints( std::u32string _utf32 );
@@ -149,14 +152,14 @@ void InterpreterImpl::ProcessText( const input::UTF8Text &_text )
         if( m_AutoWrapMode == true &&
            m_Screen.CursorX() >= m_Screen.Width() - 1 &&
            m_Screen.LineOverflown() &&
-           !oms::IsUnicodeCombiningCharacter(c) ) {
+           !CharInfo::IsUnicodeCombiningCharacter(c) ) {
             m_Screen.PutWrap();
             ProcessCR();
             ProcessLF();
         }
 
         if( m_InsertMode )
-            m_Screen.DoShiftRowRight( oms::WCWidthMin1(c) );
+            m_Screen.DoShiftRowRight( CharInfo::WCWidthMin1(c) );
     
         m_Screen.PutCh(c);
     }
@@ -596,7 +599,7 @@ static std::u32string ComposeUnicodePoints( std::u32string _utf32 )
 {
     // temp and slow implementation
     const bool can_be_composed = std::any_of(_utf32.begin(), _utf32.end(), [](const char32_t _c){
-        return oms::CanCharBeTheoreticallyComposed(_c);
+        return CharInfo::CanCharBeTheoreticallyComposed(_c);
     });
     if( can_be_composed == false )
         return _utf32;

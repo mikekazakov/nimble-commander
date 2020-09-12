@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF0A49AB250D2C70008EC7B0 /* CharInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = CF0A49AA250D2C6F008EC7B0 /* CharInfo.h */; };
+		CF0A49AD250D2C83008EC7B0 /* CharInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49AC250D2C83008EC7B0 /* CharInfo.cpp */; };
 		CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */; };
 		CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */; };
 		CF24E1F42288A9FB00C166FA /* ActionShortcut.h in Headers */ = {isa = PBXBuildFile; fileRef = CF24E1F32288A9FB00C166FA /* ActionShortcut.h */; };
@@ -127,6 +129,8 @@
 /* Begin PBXFileReference section */
 		CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FunctionKeysPass.h; path = include/Utility/FunctionKeysPass.h; sourceTree = "<group>"; };
 		CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FunctionKeysPass.mm; path = source/FunctionKeysPass.mm; sourceTree = "<group>"; };
+		CF0A49AA250D2C6F008EC7B0 /* CharInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CharInfo.h; path = include/Utility/CharInfo.h; sourceTree = "<group>"; };
+		CF0A49AC250D2C83008EC7B0 /* CharInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CharInfo.cpp; path = source/CharInfo.cpp; sourceTree = "<group>"; };
 		CF1846F51E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VerticallyCenteredTextFieldCell.h; path = include/Utility/VerticallyCenteredTextFieldCell.h; sourceTree = "<group>"; };
 		CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VerticallyCenteredTextFieldCell.mm; path = source/VerticallyCenteredTextFieldCell.mm; sourceTree = "<group>"; };
 		CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OrthodoxMonospace.h; path = include/Utility/OrthodoxMonospace.h; sourceTree = "<group>"; };
@@ -351,6 +355,7 @@
 				CF308F32213ACD2500915730 /* BriefOnDiskStorageImpl.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
 				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
+				CF0A49AA250D2C6F008EC7B0 /* CharInfo.h */,
 				CFD79AB921FE1F3B0043A26D /* CocoaAppearanceManager.h */,
 				CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */,
 				CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */,
@@ -407,6 +412,7 @@
 				CF308F30213ACD1900915730 /* BriefOnDiskStorageImpl.cpp */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
 				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
+				CF0A49AC250D2C83008EC7B0 /* CharInfo.cpp */,
 				CFD79ABB21FE1F480043A26D /* CocoaAppearanceManager.mm */,
 				CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */,
 				CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */,
@@ -493,6 +499,7 @@
 				CF308F2D213ABFAA00915730 /* BriefOnDiskStorage.h in Headers */,
 				CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */,
 				CFE08B2523DBA7AD007E99B8 /* NativeFSManagerImpl.h in Headers */,
+				CF0A49AB250D2C70008EC7B0 /* CharInfo.h in Headers */,
 				CF2B751622B82EF8009D4160 /* UTI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -635,6 +642,7 @@
 				CFFA94741F453CC00035E606 /* FSEventsDirUpdate.cpp in Sources */,
 				CFFA94831F453CC00035E606 /* SystemInformation.mm in Sources */,
 				CFFA94681F453CC00035E606 /* BlinkingCaret.mm in Sources */,
+				CF0A49AD250D2C83008EC7B0 /* CharInfo.cpp in Sources */,
 				CFFA94821F453CC00035E606 /* SyncMessageBox.mm in Sources */,
 				CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */,
 				CFFA946E1F453CC00035E606 /* EncodingsAdditions.mm in Sources */,

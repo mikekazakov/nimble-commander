@@ -2,6 +2,7 @@
 #include <Carbon/Carbon.h>
 #include <Utility/FontCache.h>
 #include <Utility/OrthodoxMonospace.h>
+#include <Utility/CharInfo.h>
 #include "Parser.h"
 #include "Screen.h"
 #include "TranslateMaps.h"
@@ -9,6 +10,8 @@
 #include <iostream>
 
 namespace nc::term {
+
+using utility::CharInfo;
 
 Parser::Parser(Screen &_scr, std::function<void(const void* _d, int _sz)> _task_input):
     m_Scr(_scr),
@@ -53,7 +56,7 @@ void Parser::Reset()
     EscSave();
 
     m_Title.clear();
-    m_Scr.SetTitle("");
+//    m_Scr.SetTitle("");
     
     m_Scr.SetAlternateScreen(false);
 
@@ -74,7 +77,7 @@ void Parser::Flush()
     bool can_be_composed = false;
     for(int i = 0; i < m_UTF16CharsStockLen; ++i)
         // treat utf16 code units as unicode, which is not right, but ok for this case, since we assume that >0xFFFF can't be composed
-        if(oms::CanCharBeTheoreticallyComposed(m_UTF16CharsStock[i])) {
+        if(CharInfo::CanCharBeTheoreticallyComposed(m_UTF16CharsStock[i])) {
             can_be_composed = true;
             break;
         }
@@ -112,7 +115,7 @@ void Parser::Flush()
         // TODO: if(wrapping_mode == ...) <- need to add this
         if( m_Scr.CursorX() >= m_Scr.Width() - 1 &&
            m_Scr.LineOverflown() &&
-           !oms::IsUnicodeCombiningCharacter(c) )
+           !CharInfo::IsUnicodeCombiningCharacter(c) )
         {
             m_Scr.PutWrap();
             CR();
@@ -120,7 +123,7 @@ void Parser::Flush()
         }
 
         if(m_InsertMode)
-            m_Scr.DoShiftRowRight(oms::WCWidthMin1(c));
+            m_Scr.DoShiftRowRight(CharInfo::WCWidthMin1(c));
         
         m_Scr.PutCh(c);
     }
@@ -171,7 +174,7 @@ void Parser::EatByte(unsigned char _byte, int &_result_flags)
     switch (c) {
         case  0: return;
         case  7: if(m_EscState == EState::TitleBuf) {
-                     m_Scr.SetTitle(m_Title.c_str());
+//                     m_Scr.SetTitle(m_Title.c_str());
                      m_EscState = EState::Normal;
                      _result_flags |= Result_ChangedTitle;
                      return;

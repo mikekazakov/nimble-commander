@@ -56,7 +56,7 @@
 		CFE08B2923DCABA4007E99B8 /* Parser2.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2823DCABA4007E99B8 /* Parser2.h */; };
 		CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */; };
 		CFE08B2E23DCEB04007E99B8 /* Parser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */; };
-		CFE08B2F23DCEB04007E99B8 /* Parser2Impl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2D23DCEB04007E99B8 /* Parser2Impl.mm */; };
+		CFE08B2F23DCEB04007E99B8 /* Parser2Impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2D23DCEB04007E99B8 /* Parser2Impl.cpp */; };
 		CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
 		CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */; };
 		CFE08B4123DDEFE2007E99B8 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */; };
@@ -147,7 +147,7 @@
 		CFE08B2823DCABA4007E99B8 /* Parser2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2.h; path = include/Term/Parser2.h; sourceTree = "<group>"; };
 		CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2Impl.h; path = include/Term/Parser2Impl.h; sourceTree = "<group>"; };
 		CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser2.cpp; sourceTree = "<group>"; };
-		CFE08B2D23DCEB04007E99B8 /* Parser2Impl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Parser2Impl.mm; sourceTree = "<group>"; };
+		CFE08B2D23DCEB04007E99B8 /* Parser2Impl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser2Impl.cpp; sourceTree = "<group>"; };
 		CFE08B3423DCFBD1007E99B8 /* TermUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TermUT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFE08B3B23DCFC15007E99B8 /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tests.h; sourceTree = "<group>"; };
 		CFE08B3C23DCFC15007E99B8 /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tests.cpp; sourceTree = "<group>"; };
@@ -223,7 +223,7 @@
 				CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */,
 				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
 				CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */,
-				CFE08B2D23DCEB04007E99B8 /* Parser2Impl.mm */,
+				CFE08B2D23DCEB04007E99B8 /* Parser2Impl.cpp */,
 				CF4135101F846CF2007429B6 /* PrecompiledHeaders.pch */,
 				CF1ADE391F7E7379003E9B76 /* Screen.cpp */,
 				CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */,
@@ -459,7 +459,7 @@
 				CF4135161F846CF2007429B6 /* SingleTask.cpp in Sources */,
 				CF41351D1F8666BF007429B6 /* Settings.mm in Sources */,
 				CF1ADE481F7E77AE003E9B76 /* TranslateMaps.cpp in Sources */,
-				CFE08B2F23DCEB04007E99B8 /* Parser2Impl.mm in Sources */,
+				CFE08B2F23DCEB04007E99B8 /* Parser2Impl.cpp in Sources */,
 				CFE08B2E23DCEB04007E99B8 /* Parser2.cpp in Sources */,
 				CF4135251F891165007429B6 /* View.mm in Sources */,
 				CF1ADE3A1F7E7379003E9B76 /* Screen.cpp in Sources */,

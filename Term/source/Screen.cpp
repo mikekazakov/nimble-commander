@@ -1,6 +1,5 @@
 // Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
-#include <Utility/OrthodoxMonospace.h>
 #include <Utility/CharInfo.h>
 #include "Screen.h"
 

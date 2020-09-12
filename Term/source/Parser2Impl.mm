@@ -1,6 +1,5 @@
 // Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Parser2Impl.h"
-#include <Utility/OrthodoxMonospace.h>
 #include <Utility/Encodings.h>
 #include <Habanero/CFPtr.h>
 #include <Carbon/Carbon.h>

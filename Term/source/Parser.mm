@@ -1,11 +1,11 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/FontCache.h>
-#include <Utility/OrthodoxMonospace.h>
 #include <Utility/CharInfo.h>
 #include "Parser.h"
 #include "Screen.h"
 #include "TranslateMaps.h"
+#include "OrthodoxMonospace.h"
 
 #include <iostream>
 

@@ -1,12 +1,12 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "View.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontCache.h>
 #include <Utility/FontExtras.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/BlinkingCaret.h>
-#include <Utility/OrthodoxMonospace.h>
 #include <Habanero/algo.h>
+#include "OrthodoxMonospace.h"
 #include "Screen.h"
 #include "Parser.h"
 #include "Settings.h"
@@ -231,7 +231,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     auto lock = m_Screen->AcquireLock();
     
-    oms::SetParamsForUserReadableText(context, *m_FontCache);
+    SetParamsForUserReadableText(context, *m_FontCache);
     CGContextSetShouldSmoothFonts(context, true);
 
     for(int i = line_start, bsl = m_Screen->Buffer().BackScreenLines();
@@ -373,12 +373,12 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
                 
             }
             
-            oms::DrawSingleUniCharXY(char_space.l, x, _y, _context, effective_font_cache);
+            DrawSingleUniCharXY(char_space.l, x, _y, _context, effective_font_cache);
             
             if(char_space.c1 != 0)
-                oms::DrawSingleUniCharXY(char_space.c1, x, _y, _context, effective_font_cache);
+                DrawSingleUniCharXY(char_space.c1, x, _y, _context, effective_font_cache);
             if(char_space.c2 != 0)
-                oms::DrawSingleUniCharXY(char_space.c2, x, _y, _context, effective_font_cache);
+                DrawSingleUniCharXY(char_space.c2, x, _y, _context, effective_font_cache);
             
             if(pop)
                 CGContextRestoreGState(_context);

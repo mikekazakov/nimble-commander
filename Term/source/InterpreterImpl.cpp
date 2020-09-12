@@ -2,8 +2,8 @@
 #include "InterpreterImpl.h"
 #include <Habanero/CFString.h>
 #include <Habanero/CFPtr.h>
-#include <Utility/OrthodoxMonospace.h>
 #include <Utility/CharInfo.h>
+#include "OrthodoxMonospace.h"
 #include "TranslateMaps.h"
 
 namespace nc::term {

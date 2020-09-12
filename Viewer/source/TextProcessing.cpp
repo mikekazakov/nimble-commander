@@ -4,7 +4,6 @@
 
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
-#include <Utility/OrthodoxMonospace.h>
 #include <Utility/CharInfo.h>
 
 #include <stdexcept>

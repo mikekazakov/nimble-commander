@@ -1,7 +1,7 @@
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
-#include <Utility/OrthodoxMonospace.h>
 #include <Utility/StringExtras.h>
 #include <Utility/Encodings.h>
 #include <Utility/FontExtras.h>

@@ -26,13 +26,13 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 @implementation NCTermView
 {
-    std::shared_ptr<FontCache> m_FontCache;
     Screen                 *m_Screen;
     InputTranslator        *m_InputTranslator;
     
     int                     m_LastScreenFullHeight;
     bool                    m_HasSelection;
     bool                    m_ReportsSizeByOccupiedContent;
+    bool                    m_ShowCursor;
     TermViewCursor          m_CursorType;
     SelPoint                m_SelStart;
     SelPoint                m_SelEnd;
@@ -40,7 +40,10 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     FPSLimitedDrawer       *m_FPS;
     NSSize                  m_IntrinsicSize;
     std::unique_ptr<BlinkingCaret> m_BlinkingCaret;
-    NSFont                 *m_Font;
+    NSFont                     *m_Font;
+    std::shared_ptr<FontCache>  m_FontCache;
+    NSFont                     *m_BoldFont;
+    std::shared_ptr<FontCache>  m_BoldFontCache;
     NSColor                *m_ForegroundColor;
     NSColor                *m_BoldForegroundColor;
     NSColor                *m_BackgroundColor;
@@ -65,6 +68,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_LastScreenFullHeight = 0;
         m_HasSelection = false;
         m_ReportsSizeByOccupiedContent = false;
+        m_ShowCursor = true;
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
         m_FPS.fps = 60;
         m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, frame.size.height);
@@ -134,6 +138,16 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 - (bool) allowCursorBlinking
 {
     return m_BlinkingCaret->Enabled();
+}
+
+- (void)setShowCursor:(bool)showCursor
+{
+    m_ShowCursor = showCursor;
+}
+
+- (bool)showCursor
+{
+    return m_ShowCursor;
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -321,6 +335,9 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     
     for( const auto char_space: _line ) {
         auto c = m_ForegroundColor.CGColor;
+        FontCache * const effective_font_cache = char_space.bold ?
+            m_BoldFontCache.get() :
+            m_FontCache.get();
 
         if( char_space.reverse ) {
             c = char_space.background != ScreenColors::Default ?
@@ -356,12 +373,12 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
                 
             }
             
-            oms::DrawSingleUniCharXY(char_space.l, x, _y, _context, m_FontCache.get());
+            oms::DrawSingleUniCharXY(char_space.l, x, _y, _context, effective_font_cache);
             
             if(char_space.c1 != 0)
-                oms::DrawSingleUniCharXY(char_space.c1, x, _y, _context, m_FontCache.get());
+                oms::DrawSingleUniCharXY(char_space.c1, x, _y, _context, effective_font_cache);
             if(char_space.c2 != 0)
-                oms::DrawSingleUniCharXY(char_space.c2, x, _y, _context, m_FontCache.get());
+                oms::DrawSingleUniCharXY(char_space.c2, x, _y, _context, effective_font_cache);
             
             if(pop)
                 CGContextRestoreGState(_context);
@@ -384,6 +401,9 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void)drawCursor:(NSRect)_char_rect context:(CGContextRef)_context
 {
+    if( m_ShowCursor == false )
+        return;
+    
     const bool is_wnd_active = NSView.focusView.window.isKeyWindow;
     const bool is_first_responder = self.window.firstResponder == self;
     
@@ -702,6 +722,9 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     if( m_Font != font ) {
         m_Font = font;
         m_FontCache = FontCache::FontCacheFromFont( (__bridge CTFontRef)m_Font );
+        m_BoldFont = [NSFontManager.sharedFontManager convertFont:m_Font
+                                                      toHaveTrait:NSBoldFontMask];
+        m_BoldFontCache = FontCache::FontCacheFromFont( (__bridge CTFontRef)m_BoldFont );
         self.needsDisplay = true;
     }
 }

@@ -42,10 +42,11 @@ public:
 private:
     Pair DoGetBMP(uint16_t _c);
     Pair DoGetNonBMP(uint32_t _c);
-    unsigned char InsertFont(CTFontRef _font);
+    unsigned char InsertFont(base::CFPtr<CTFontRef> _font);
     
-    std::array<CTFontRef, 256> m_CTFonts;    // will anybody need more than 256 fallback fonts?
-                                             // fallbacks start from [1]. [0] is basefont
+    // will anybody need more than 256 fallback fonts?
+    // fallbacks start from [1]. [0] is basefont
+    std::array<base::CFPtr<CTFontRef>, 256> m_CTFonts;
     std::array<Pair, 65536> m_CacheBMP;
     robin_hood::unordered_map<uint32_t, Pair> m_CacheNonBMP;
     base::CFPtr<CFStringRef> m_FontName;
@@ -54,13 +55,13 @@ private:
 
 inline CTFontRef FontCache::BaseFont() const noexcept
 {
-    return m_CTFonts[0];
+    return m_CTFonts[0].get();
 }
 
 inline CTFontRef FontCache::Font(unsigned _no) const noexcept
 {
     assert( _no < m_CTFonts.size() );
-    return m_CTFonts[_no];
+    return m_CTFonts[_no].get();
 }
    
 inline double FontCache::Size() const noexcept

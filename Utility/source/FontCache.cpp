@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <CoreText/CoreText.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -24,30 +24,31 @@ static bool IsLastResortFont(CTFontRef _font)
     return is_resort;
 }
 
-static CTFontRef GetFallbackFontStraight(uint32_t _unicode, CTFontRef _basic_font)
+static base::CFPtr<CTFontRef> CreateFallbackFontStraight(uint32_t _unicode, CTFontRef _basic_font)
 {
-    CFStringRef str = NULL;
-
-    if(_unicode < 0x10000) { // BMP
-        uint16_t chr = _unicode;
-        str = CFStringCreateWithCharactersNoCopy(0, &chr, 1, kCFAllocatorNull);
-    } else { // non-BMP
-        uint16_t nbmp[2];
-        nbmp[0] = 0xD800 + ((_unicode - 0x010000) >> 10);
-        nbmp[1] = 0xDC00 + ((_unicode - 0x010000) & 0x3FF);
-        str = CFStringCreateWithCharactersNoCopy(0, nbmp, 2, kCFAllocatorNull);
-    }
+    uint16_t chars[2];
+    const auto str = [&]{
+        if(_unicode < 0x10000) { // BMP
+            chars[0] = _unicode;;
+            auto cf_str = CFStringCreateWithCharactersNoCopy(0, chars, 1, kCFAllocatorNull);
+            return base::CFPtr<CFStringRef>::adopt( cf_str );
+        } else { // non-BMP
+            chars[0] = 0xD800 + ((_unicode - 0x010000) >> 10);
+            chars[1] = 0xDC00 + ((_unicode - 0x010000) & 0x3FF);
+            auto cf_str = CFStringCreateWithCharactersNoCopy(0, chars, 2, kCFAllocatorNull);
+            return base::CFPtr<CFStringRef>::adopt(cf_str);
+        }
+    }();
     
-    if(str == NULL)
-        return NULL;
-
-    CTFontRef font = CTFontCreateForString(_basic_font, str, CFRangeMake(0, 1));
+    if( !str )
+        return {};
     
-    CFRelease(str);
-    return font;
+    const auto range = CFRangeMake(0, 1);
+    const auto font = CTFontCreateForString(_basic_font, str.get(), range);
+    return base::CFPtr<CTFontRef>::adopt(font);
 }
 
-static CTFontRef GetFallbackFontHardway(uint32_t _unicode, CTFontRef _basic_font)
+static base::CFPtr<CTFontRef> CreateFallbackFontHardway(uint32_t _unicode, CTFontRef _basic_font)
 {
     static CFStringRef font_key = CFSTR("NSFont");
     static CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, 1000, 1000), NULL);
@@ -132,9 +133,9 @@ cleanup:
         CFRelease(str_dict);
     if(str)
         CFRelease(str);
-    return font;
+    
+    return base::CFPtr<CTFontRef>::adopt(font);
 }
-
 
 std::shared_ptr<FontCache> FontCache::FontCacheFromFont(CTFontRef _basic_font)
 {
@@ -164,24 +165,17 @@ FontCache::FontCache(CTFontRef _basic_font):
 {
     static_assert(sizeof(Pair) == 4, "");
     m_FontName = decltype(m_FontName)::adopt( CTFontCopyFullName(_basic_font) );
-    
-    m_CTFonts.fill(nullptr);
-    m_CTFonts[0] = _basic_font;
+        
+    m_CTFonts[0] = base::CFPtr<CTFontRef>(_basic_font);
     m_CacheBMP[0].searched = 1;
 }
 
 FontCache::~FontCache()
 {
-    for( auto i: m_CTFonts )
-        if(i != nullptr)
-            CFRelease(i);
-    
-    g_Caches.erase(remove_if(begin(g_Caches),
-                             end(g_Caches),
-                             [](auto _t) {
-                                 return _t.lock() == nullptr;
-                             }),
-                   end(g_Caches)
+    g_Caches.erase(std::remove_if(std::begin(g_Caches),
+                                  std::end(g_Caches),
+                                  [](auto _t) { return _t.lock() == nullptr; }),
+                   std::end(g_Caches)
                    );
 }
 
@@ -194,7 +188,7 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
     
     // unknown unichar - ask system about it
     CGGlyph g;
-    bool r = CTFontGetGlyphsForCharacters(m_CTFonts[0], &_c, &g, 1);
+    bool r = CTFontGetGlyphsForCharacters(m_CTFonts[0].get(), &_c, &g, 1);
     if(r)
     {
         m_CacheBMP[_c].searched = 1;
@@ -204,20 +198,19 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
     else
     {
         // need to look up for fallback font
-        CTFontRef ctfont = GetFallbackFontStraight(_c, m_CTFonts[0]);
-        if(ctfont != 0)
+        auto ctfont = CreateFallbackFontStraight(_c, m_CTFonts[0].get());
+        if( ctfont )
         {
-            r = CTFontGetGlyphsForCharacters(ctfont, &_c, &g, 1);
+            r = CTFontGetGlyphsForCharacters(ctfont.get(), &_c, &g, 1);
             if(r == true) // it should be true always, but for confidence...
             {
                 // check if this font is new one, or we already have this one in dictionary
                 for(int i = 1; i < (int)m_CTFonts.size(); ++i)
                 {
-                    if( m_CTFonts[i] != 0 )
+                    if( m_CTFonts[i] )
                     {
-                        if( CFEqual(m_CTFonts[i], ctfont) )
+                        if( CFEqual(m_CTFonts[i].get(), ctfont.get()) )
                         { // this is just the exactly one we need
-                            CFRelease(ctfont);
                             m_CacheBMP[_c].font = i;
                             m_CacheBMP[_c].searched = 1;
                             m_CacheBMP[_c].glyph = g;
@@ -228,7 +221,6 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
                     {
                         // a new one
                         m_CTFonts[i] = ctfont;
-                        
                         m_CacheBMP[_c].font = i;
                         m_CacheBMP[_c].searched = 1;
                         m_CacheBMP[_c].glyph = g;
@@ -240,7 +232,6 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
             }
             else
             { // something is very-very bad in the system - let this unichar be a null
-                CFRelease(ctfont);
                 m_CacheBMP[_c].searched = 1;
                 return m_CacheBMP[_c];
             }
@@ -267,7 +258,7 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
     utf16[1] = 0xDC00 + ((_c - 0x010000) & 0x3FF);
     
     CGGlyph g[2];
-    bool r = CTFontGetGlyphsForCharacters(m_CTFonts[0], utf16, g, 2);
+    bool r = CTFontGetGlyphsForCharacters(m_CTFonts[0].get(), utf16, g, 2);
     if(r)
     { // glyph found in basic font
         Pair p;
@@ -279,10 +270,10 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
     }
     else
     { // need to try fallback fonts
-        if(CTFontRef font_straight = GetFallbackFontStraight(_c, m_CTFonts[0])) {
-            r = CTFontGetGlyphsForCharacters(font_straight, utf16, g, 2);
+        if( auto font_straight = CreateFallbackFontStraight(_c, m_CTFonts[0].get()) ) {
+            r = CTFontGetGlyphsForCharacters(font_straight.get(), utf16, g, 2);
             if(r) {
-                if( !IsLastResortFont(font_straight) ) { // ok, use it
+                if( !IsLastResortFont(font_straight.get()) ) { // ok, use it
                     Pair p;
                     p.font = InsertFont(font_straight);
                     p.searched = 1;
@@ -291,18 +282,16 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
                     return p;
                 }
                 else { // try hard way to extract font from CoreText-made layout
-                    if(CTFontRef font_hard = GetFallbackFontHardway(_c, m_CTFonts[0])) {
-                        r = CTFontGetGlyphsForCharacters(font_hard, utf16, g, 2);
+                    if( auto font_hard = CreateFallbackFontHardway(_c, m_CTFonts[0].get())) {
+                        r = CTFontGetGlyphsForCharacters(font_hard.get(), utf16, g, 2);
                         if(r) { // use this font
                             Pair p;
                             p.font = InsertFont(font_hard);
                             p.searched = 1;
                             p.glyph = g[0];
                             m_CacheNonBMP.emplace(_c, p);
-                            CFRelease(font_straight);
                             return p;
                         }
-                        CFRelease(font_hard);
                     }
                     // back to straight fallback
                     Pair p;
@@ -313,7 +302,6 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
                     return p;
                 }
             }
-            CFRelease(font_straight);
         }
         
         // no luck
@@ -326,21 +314,19 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
     }
 }
 
-unsigned char FontCache::InsertFont(CTFontRef _font)
+unsigned char FontCache::InsertFont(base::CFPtr<CTFontRef> _font)
 {
     for(int i = 1; i < (int)m_CTFonts.size(); ++i)
-        if( m_CTFonts[i] != 0 ) {
-            if( CFEqual(m_CTFonts[i], _font) ) { // this is just the exactly one we need
-                CFRelease(_font);
+        if( m_CTFonts[i] ) {
+            if( CFEqual(m_CTFonts[i].get(), _font.get()) ) { // this is just the exactly one we need
                 return i;
             }
         }
         else {
             // a new one
-            m_CTFonts[i] = _font;
+            m_CTFonts[i] = std::move(_font);
             return i;
         }
-    CFRelease(_font);
     return 0;
 }
 

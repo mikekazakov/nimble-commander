@@ -1015,6 +1015,12 @@ TEST_CASE(PREFIX"CSI hl")
     SECTION( "ESC [ ? 12 l" ) {
         verify("\x1B""[?12l", Kind::BlinkingCursor, false);
     }
+    SECTION( "ESC [ ? 8 h" ) {
+        verify("\x1B""[?8h", Kind::AutoRepeatKeys, true);
+    }
+    SECTION( "ESC [ ? 8 l" ) {
+        verify("\x1B""[?8l", Kind::AutoRepeatKeys, false);
+    }
     SECTION( "ESC [ ? 25 h" ) {
         verify("\x1B""[?25h", Kind::ShowCursor, true);
     }

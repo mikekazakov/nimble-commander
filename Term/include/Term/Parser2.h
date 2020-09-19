@@ -124,6 +124,7 @@ struct ModeChange
         AlternateScreenBuffer1049, // as AlternateScreenBuffer, but clears alternate screen
         BlinkingCursor, // Start Blinking Cursor / Stop Blinking Cursor
         ShowCursor, // Show Cursor / Hide Cursor [DECTCEM]
+        AutoRepeatKeys, // Auto-repeat Keys / No Auto-repeat Keys [DECARM]
     };
     Kind mode = Insert;
     bool status = false;

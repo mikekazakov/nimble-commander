@@ -12,6 +12,7 @@
 #include "Settings.h"
 
 #include <iostream>
+#include <cmath>
 
 using namespace nc;
 using namespace nc::term;
@@ -38,6 +39,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     bool                    m_IsFirstResponder;
     bool                    m_AllowCursorBlinking;
     bool                    m_CursorShouldBlink;
+    bool                    m_HasVisibleBlinkingSpaces;
     TermViewCursor          m_CursorType;
     SelPoint                m_SelStart;
     SelPoint                m_SelEnd;
@@ -70,6 +72,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_AllowCursorBlinking = true;
         m_IsFirstResponder = false;
         m_CursorShouldBlink = false;
+        m_HasVisibleBlinkingSpaces = false;
         m_SettingsNotificationTicket = 0;
         m_CursorType = TermViewCursor::Block;
         
@@ -269,10 +272,14 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     if( !m_Screen )
         return;
-
+    
+    // that's outright stupid, need to be more clever with such scans
+    [self scanForBlinkingCharacters];
+    
     const auto font_height = m_FontCache->Height();
-    const auto line_start= (int)floor( dirtyRect.origin.y / font_height );
-    const auto line_end = (int)ceil( (dirtyRect.origin.y + dirtyRect.size.height) / font_height );
+    const auto line_start= (int)std::floor( dirtyRect.origin.y / font_height );
+    const auto line_end = (int)std::ceil( (dirtyRect.origin.y + dirtyRect.size.height) /
+                                         font_height );
     
     auto lock = m_Screen->AcquireLock();
     
@@ -378,7 +385,14 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     current_color = g_ClearCGColor;
     CGContextSetShouldAntialias(_context, true);
     
-    for( const auto char_space: _line ) {
+    const bool blink_visible = m_BlinkScheduler.Visible();
+    for( auto iter = std::begin(_line); iter != std::end(_line); ++iter, ++x ) {
+        const ScreenBuffer::Space char_space = *iter;
+        if( char_space.invisible )
+            continue;
+        if( char_space.blink && blink_visible == false )
+            continue;
+                
         auto c = m_ForegroundColor.CGColor;
         FontCache &effective_font_cache = char_space.bold ?
             *m_BoldFontCache :
@@ -439,8 +453,6 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             rc.size.height = 1;
             CGContextFillRect(_context, rc);
         }
-        
-        ++x;
     }
 }
 
@@ -889,8 +901,52 @@ ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
 
 - (void) updateBlinkSheduling
 {
-    bool blink = m_AllowCursorBlinking && m_CursorShouldBlink;
-    m_BlinkScheduler.Enable( blink );
+    const bool cursor_blink = m_AllowCursorBlinking && m_CursorShouldBlink;
+    const bool spaces_blink = m_HasVisibleBlinkingSpaces;
+    m_BlinkScheduler.Enable( cursor_blink || spaces_blink );
+}
+
+- (void) scanForBlinkingCharacters
+{
+    const bool has = [self visibleLinesHaveBlinkingCharacters];
+    if( has != m_HasVisibleBlinkingSpaces ) {
+        m_HasVisibleBlinkingSpaces = has;
+        [self updateBlinkSheduling];
+    }
+}
+
+static bool LineHasBlinkingCharacters(ScreenBuffer::RangePair<const ScreenBuffer::Space> _range)
+{
+    return std::any_of(std::begin(_range),
+                       std::end(_range),
+                       [](const auto &space){ return space.blink; } );
+}
+
+- (bool)visibleLinesHaveBlinkingCharacters
+{
+    const auto &buffer = m_Screen->Buffer();
+    const auto rect = self.visibleRect;
+    const auto font_height = m_FontCache->Height();
+    const auto line_start= (int)std::floor( rect.origin.y / font_height );
+    const auto line_end = (int)std::ceil( (rect.origin.y + rect.size.height) /
+                                         font_height );
+    
+    auto lock = m_Screen->AcquireLock(); // WTF??
+    const auto bsl = static_cast<int>(buffer.BackScreenLines());
+    for( int line_index = line_start; line_index != line_end; ++line_index ) {
+        if( line_index < bsl ) { // scrollback
+            const auto line = buffer.LineFromNo(line_index - bsl);
+            if( line && LineHasBlinkingCharacters(line) )
+                return true;
+          }
+          else { // real screen
+              const auto line = buffer.LineFromNo(line_index - bsl);
+              if( line && LineHasBlinkingCharacters(line) )
+                  return true;
+              
+          }
+    }
+    return false;
 }
 
 @end

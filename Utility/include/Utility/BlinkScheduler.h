@@ -8,6 +8,7 @@
 namespace nc::utility {
 
 // STA design - do talk from the main thread only
+// BlinkScheduler fires callbackes aligned across all BlinkScheduler.
 class BlinkScheduler
 {
 public:
@@ -27,7 +28,11 @@ public:
     BlinkScheduler(std::function<void()> _on_blink,
                    std::chrono::milliseconds _blink_time = std::chrono::milliseconds(600),
                    IO& _io = DefaultIO::Instance);
+    BlinkScheduler(const BlinkScheduler&);
+    BlinkScheduler(BlinkScheduler&&) noexcept;
     ~BlinkScheduler();
+    BlinkScheduler& operator=(const BlinkScheduler&);
+    BlinkScheduler& operator=(BlinkScheduler&&) noexcept;
 
     bool Enabled() const noexcept;
     void Enable( bool _enabled = true ) noexcept;

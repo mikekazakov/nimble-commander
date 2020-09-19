@@ -12,20 +12,17 @@ using namespace std::chrono_literals;
 BlinkScheduler::BlinkScheduler::DefaultIO BlinkScheduler::DefaultIO::Instance;
 
 struct BlinkScheduler::Impl : std::enable_shared_from_this<Impl> {
-    std::function<void()>                       m_OnBlink;
-    std::chrono::milliseconds                   m_BlinkTime;
-    std::chrono::nanoseconds                    m_NextScheduleTime = 0ns;
-    IO*                                         m_IO;
-    bool                                        m_Enabled = false;
-    bool                                        m_PhaseVisible = true;
-    bool                                        m_Scheduled = false;
     void Fire();
     void Schedule();
     bool VisibleNow() const noexcept;
     std::chrono::nanoseconds NextFireAfter() const noexcept;
-    Impl()
-    {        
-    }
+    
+    std::function<void()>                       m_OnBlink;
+    std::chrono::milliseconds                   m_BlinkTime;
+    IO*                                         m_IO;
+    bool                                        m_Enabled = false;
+    bool                                        m_PhaseVisible = true;
+    bool                                        m_Scheduled = false;
 };
 
 BlinkScheduler::BlinkScheduler(std::function<void()> _on_blink,
@@ -43,9 +40,29 @@ BlinkScheduler::BlinkScheduler(std::function<void()> _on_blink,
         throw std::invalid_argument("BlinkScheduler _blink_time must be zero");
 }
 
-BlinkScheduler::~BlinkScheduler()
+BlinkScheduler::BlinkScheduler( const BlinkScheduler& _rhs ):
+    I( std::make_shared<Impl>() )
 {
+    I->m_OnBlink = _rhs.I->m_OnBlink;
+    I->m_BlinkTime = _rhs.I->m_BlinkTime;
+    I->m_IO = _rhs.I->m_IO;
+    I->m_Enabled = false;
+    I->m_PhaseVisible = _rhs.I->m_PhaseVisible;
+    I->m_Scheduled = false;
 }
+
+BlinkScheduler::BlinkScheduler(BlinkScheduler&&) noexcept = default;
+
+BlinkScheduler::~BlinkScheduler() = default;
+
+BlinkScheduler& BlinkScheduler::operator=(const BlinkScheduler& _rhs)
+{
+    if( this != &_rhs )
+        *this = BlinkScheduler(_rhs);
+    return *this;
+}
+
+BlinkScheduler& BlinkScheduler::operator=(BlinkScheduler&&) noexcept = default;
 
 bool BlinkScheduler::Enabled() const noexcept
 {

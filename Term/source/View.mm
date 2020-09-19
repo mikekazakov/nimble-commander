@@ -44,7 +44,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     FPSLimitedDrawer       *m_FPS;
     NSSize                  m_IntrinsicSize;
-    std::unique_ptr<utility::BlinkScheduler> m_BlinkScheduler;
+    utility::BlinkScheduler m_BlinkScheduler;
     NSFont                     *m_Font;
     std::shared_ptr<FontCache>  m_FontCache;
     NSFont                     *m_BoldFont;
@@ -74,7 +74,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_CursorType = TermViewCursor::Block;
         
         __weak NCTermView *weak_self = self;
-        m_BlinkScheduler = std::make_unique<utility::BlinkScheduler>([weak_self]{
+        m_BlinkScheduler = utility::BlinkScheduler([weak_self]{
             if( auto me = weak_self ) {
 //                std::cerr << "Blink! " << (__bridge void*)me << std::endl;
                 [me->m_FPS invalidate];
@@ -452,7 +452,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     const bool is_wnd_active = self.window.isKeyWindow;
     
     if( is_wnd_active && m_IsFirstResponder ) {
-        if( m_BlinkScheduler->Visible() ) {
+        if( m_BlinkScheduler.Visible() ) {
             CGContextSetFillColorWithColor(_context, m_CursorColor.CGColor );
             switch (m_CursorType) {
                 case TermViewCursor::Block:
@@ -890,7 +890,7 @@ ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
 - (void) updateBlinkSheduling
 {
     bool blink = m_AllowCursorBlinking && m_CursorShouldBlink;
-    m_BlinkScheduler->Enable( blink );
+    m_BlinkScheduler.Enable( blink );
 }
 
 @end

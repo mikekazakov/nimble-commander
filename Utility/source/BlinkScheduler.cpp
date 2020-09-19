@@ -25,6 +25,11 @@ struct BlinkScheduler::Impl : std::enable_shared_from_this<Impl> {
     bool                                        m_Scheduled = false;
 };
 
+BlinkScheduler::BlinkScheduler():
+    BlinkScheduler([]{}, DefaultBlinkTime, DefaultIO::Instance)
+{
+}
+
 BlinkScheduler::BlinkScheduler(std::function<void()> _on_blink,
                                std::chrono::milliseconds _blink_time,
                                IO& _io):

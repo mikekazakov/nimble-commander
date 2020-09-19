@@ -24,12 +24,19 @@ public:
         static DefaultIO Instance;
     };
     
+    static constexpr std::chrono::milliseconds DefaultBlinkTime = std::chrono::milliseconds(600);
+        
+    // convinience constructor, creates a scheduler with an empty callback
+    BlinkScheduler();
+    
     // _on_blink will be fired on each timer run
     BlinkScheduler(std::function<void()> _on_blink,
-                   std::chrono::milliseconds _blink_time = std::chrono::milliseconds(600),
+                   std::chrono::milliseconds _blink_time = DefaultBlinkTime,
                    IO& _io = DefaultIO::Instance);
+    
     BlinkScheduler(const BlinkScheduler&);
     BlinkScheduler(BlinkScheduler&&) noexcept;
+    
     ~BlinkScheduler();
     BlinkScheduler& operator=(const BlinkScheduler&);
     BlinkScheduler& operator=(BlinkScheduler&&) noexcept;

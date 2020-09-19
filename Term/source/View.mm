@@ -11,6 +11,8 @@
 #include "Parser.h"
 #include "Settings.h"
 
+#include <iostream>
+
 using namespace nc;
 using namespace nc::term;
 using nc::utility::FontCache;
@@ -33,13 +35,16 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     bool                    m_HasSelection;
     bool                    m_ReportsSizeByOccupiedContent;
     bool                    m_ShowCursor;
+    bool                    m_IsFirstResponder;
+    bool                    m_AllowCursorBlinking;
+    bool                    m_CursorShouldBlink;
     TermViewCursor          m_CursorType;
     SelPoint                m_SelStart;
     SelPoint                m_SelEnd;
     
     FPSLimitedDrawer       *m_FPS;
     NSSize                  m_IntrinsicSize;
-    std::unique_ptr<utility::BlinkScheduler> m_BlinkingCaret;
+    std::unique_ptr<utility::BlinkScheduler> m_BlinkScheduler;
     NSFont                     *m_Font;
     std::shared_ptr<FontCache>  m_FontCache;
     NSFont                     *m_BoldFont;
@@ -62,9 +67,19 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     self = [super initWithFrame:frame];
     if (self) {
+        m_AllowCursorBlinking = true;
+        m_IsFirstResponder = false;
+        m_CursorShouldBlink = false;
         m_SettingsNotificationTicket = 0;
         m_CursorType = TermViewCursor::Block;
-        m_BlinkingCaret = std::make_unique<utility::BlinkScheduler>(self);
+        
+        __weak NCTermView *weak_self = self;
+        m_BlinkScheduler = std::make_unique<utility::BlinkScheduler>([weak_self]{
+            if( auto me = weak_self ) {
+//                std::cerr << "Blink! " << (__bridge void*)me << std::endl;
+                [me->m_FPS invalidate];
+            }
+        });
         m_LastScreenFullHeight = 0;
         m_HasSelection = false;
         m_ReportsSizeByOccupiedContent = false;
@@ -76,6 +91,31 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     }
     return self;
 }
+
+- (void)viewWillMoveToWindow:(NSWindow *)_wnd
+{
+//    NSLog(@"%@ viewWillMoveToWindow: %@", self, _wnd);
+    static const auto notify = NSNotificationCenter.defaultCenter;
+    if( self.window ) {
+        [notify removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
+        [notify removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
+    }
+    if( _wnd ) {
+        [notify addObserver:self
+                   selector:@selector(viewStatusDidChange)
+                       name:NSWindowDidBecomeKeyNotification
+                     object:_wnd];
+        [notify addObserver:self
+                   selector:@selector(viewStatusDidChange)
+                       name:NSWindowDidResignKeyNotification
+                     object:_wnd];
+    }
+    else {
+        m_IsFirstResponder = false;
+        [self viewStatusDidChange];
+    }
+}
+
 
 - (BOOL)isFlipped
 {
@@ -89,13 +129,17 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (BOOL)becomeFirstResponder
 {
-    self.needsDisplay = true;
+//    NSLog(@"%@ becomeFirstResponder", self);
+    m_IsFirstResponder = true;
+    [self viewStatusDidChange];
     return true;
 }
 
 - (BOOL)resignFirstResponder
 {
-    self.needsDisplay = true;
+//    NSLog(@"%@ resignFirstResponder", self);
+    m_IsFirstResponder = false;
+    [self viewStatusDidChange];
     return true;
 }
 
@@ -132,12 +176,13 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void) setAllowCursorBlinking:(bool)allowCursorBlinking
 {
-    m_BlinkingCaret->SetEnabled(allowCursorBlinking);
+    m_AllowCursorBlinking = allowCursorBlinking;
+    [self updateBlinkSheduling];
 }
 
 - (bool) allowCursorBlinking
 {
-    return m_BlinkingCaret->Enabled();
+    return m_AllowCursorBlinking;
 }
 
 - (void)setShowCursor:(bool)showCursor
@@ -404,12 +449,10 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     if( m_ShowCursor == false )
         return;
     
-    const bool is_wnd_active = NSView.focusView.window.isKeyWindow;
-    const bool is_first_responder = self.window.firstResponder == self;
+    const bool is_wnd_active = self.window.isKeyWindow;
     
-    if( is_wnd_active && is_first_responder ) {
-        m_BlinkingCaret->ScheduleNextRedraw(); // be sure not to call Shedule... when view is not active
-        if( m_BlinkingCaret->Visible() ) {
+    if( is_wnd_active && m_IsFirstResponder ) {
+        if( m_BlinkScheduler->Visible() ) {
             CGContextSetFillColorWithColor(_context, m_CursorColor.CGColor );
             switch (m_CursorType) {
                 case TermViewCursor::Block:
@@ -833,6 +876,21 @@ ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
     if( _line_number <= 0 )
         return NSMakePoint(0., 0.);
     return NSMakePoint(0., _line_number * m_FontCache->Height());
+}
+
+- (void) viewStatusDidChange
+{
+    const auto wnd = self.window;
+    const bool is_wnd_active = wnd.isKeyWindow;
+    m_CursorShouldBlink = is_wnd_active && m_IsFirstResponder;
+    [self updateBlinkSheduling];
+    self.needsDisplay = true;
+}
+
+- (void) updateBlinkSheduling
+{
+    bool blink = m_AllowCursorBlinking && m_CursorShouldBlink;
+    m_BlinkScheduler->Enable( blink );
 }
 
 @end

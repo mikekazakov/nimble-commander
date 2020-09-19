@@ -2,29 +2,41 @@
 #pragma once
 
 #include <chrono>
-#include <Utility/FPSLimitedDrawer.h>
+#include <functional>
+#include <memory>
 
 namespace nc::utility {
 
+// STA design - do talk from the main thread only
 class BlinkScheduler
 {
 public:
-    BlinkScheduler( id<ViewWithFPSLimitedDrawer> _view,
-                  std::chrono::milliseconds _blink_time = std::chrono::milliseconds(600) );
+    struct IO {
+        virtual std::chrono::nanoseconds Now() noexcept = 0;
+        virtual void Dispatch(std::chrono::nanoseconds _after,
+                              std::function<void()> _what) noexcept = 0;
+    };
+    struct DefaultIO : IO {
+        std::chrono::nanoseconds Now() noexcept override;
+        void Dispatch(std::chrono::nanoseconds _after,
+                      std::function<void()> _what) noexcept override;
+        static DefaultIO Instance;
+    };
+    
+    // _on_blink will be fired on each timer run
+    BlinkScheduler(std::function<void()> _on_blink,
+                   std::chrono::milliseconds _blink_time = std::chrono::milliseconds(600),
+                   IO& _io = DefaultIO::Instance);
     ~BlinkScheduler();
 
-    bool Enabled() const;
-    void SetEnabled( bool _enabled );
+    bool Enabled() const noexcept;
+    void Enable( bool _enabled = true ) noexcept;
     
-    bool Visible() const;
-    
-    void ScheduleNextRedraw();
+    bool Visible() const noexcept;
     
 private:
-    const __weak id<ViewWithFPSLimitedDrawer>   m_View;
-    const std::chrono::milliseconds             m_BlinkTime;
-    std::chrono::nanoseconds                    m_NextScheduleTime;
-    bool                                        m_Enabled = true;
+    struct Impl;
+    std::shared_ptr<Impl> I;    
 };
 
 }

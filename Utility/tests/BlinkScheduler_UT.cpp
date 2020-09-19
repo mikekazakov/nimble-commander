@@ -32,7 +32,7 @@ struct StubIO : BlinkScheduler::IO {
 
 TEST_CASE(PREFIX"Constructor throws on invalid parameters")
 {
-    CHECK_THROWS_AS( BlinkScheduler( {} ), std::invalid_argument  );
+    CHECK_THROWS_AS( BlinkScheduler( std::function<void()>{} ), std::invalid_argument  );
     CHECK_THROWS_AS( BlinkScheduler( []{}, 0s ), std::invalid_argument );
     CHECK_THROWS_AS( BlinkScheduler( []{}, -5s ), std::invalid_argument );
 }

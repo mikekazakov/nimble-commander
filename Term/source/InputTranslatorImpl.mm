@@ -1,12 +1,24 @@
 // Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InputTranslatorImpl.h"
 #include <cassert>
+#include <string>
 #include <Carbon/Carbon.h>
 
 namespace nc::term{
 
+static_assert( sizeof(InputTranslator::MouseEvent) == 8 );
+
 static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode,
                                                        NSEventModifierFlags _flags);
+static std::string ReportX10( InputTranslator::MouseEvent _event ) noexcept;
+static std::string ReportNormal( InputTranslator::MouseEvent _event ) noexcept;
+static std::string ReportUTF8( InputTranslator::MouseEvent _event ) noexcept;
+static std::string ReportSGR( InputTranslator::MouseEvent _event ) noexcept;
+
+InputTranslatorImpl::InputTranslatorImpl():
+    m_MouseReportFormatter(ReportNormal)
+{
+}
 
 void InputTranslatorImpl::SetOuput( Output _output )
 {
@@ -145,6 +157,148 @@ static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode, 
                    unicodeString);
     CFRelease(currentKeyboard);
     return CFStringCreateWithCharacters(kCFAllocatorDefault, unicodeString, realLength);
+}
+
+static std::string ReportX10( InputTranslator::MouseEvent _event ) noexcept
+{
+    char buf[6];
+    buf[0] = '\x1B';
+    buf[1] = '[';
+    buf[2] = 'M';
+    switch( _event.type ) {
+        case InputTranslator::MouseEvent::LDown: buf[3] = 32; break;
+        case InputTranslator::MouseEvent::MDown: buf[3] = 33; break;
+        case InputTranslator::MouseEvent::RDown: buf[3] = 34; break;
+        case InputTranslator::MouseEvent::LUp:
+        case InputTranslator::MouseEvent::MUp:
+        case InputTranslator::MouseEvent::RUp: buf[3] = 35; break;
+        default: return {};
+    }
+    buf[4] = std::clamp(_event.x + 32 + 1, 33, 255);
+    buf[5] = std::clamp(_event.y + 32 + 1, 33, 255);
+    return std::string(buf, sizeof(buf));
+}
+
+static std::string ReportNormal( InputTranslator::MouseEvent _event ) noexcept
+{
+    constexpr int base = 32;
+    char buf[6];
+    buf[0] = '\x1B';
+    buf[1] = '[';
+    buf[2] = 'M';
+    switch( _event.type ) {
+        case InputTranslator::MouseEvent::LDown:    buf[3] = base + 0; break;
+        case InputTranslator::MouseEvent::MDown:    buf[3] = base + 1; break;
+        case InputTranslator::MouseEvent::RDown:    buf[3] = base + 2; break;
+        case InputTranslator::MouseEvent::LUp:
+        case InputTranslator::MouseEvent::MUp:
+        case InputTranslator::MouseEvent::RUp:      buf[3] = base + 3; break;
+        case InputTranslator::MouseEvent::LDrag:    buf[3] = base + 0 + 32; break;
+        case InputTranslator::MouseEvent::MDrag:    buf[3] = base + 1 + 32; break;
+        case InputTranslator::MouseEvent::RDrag:    buf[3] = base + 2 + 32; break;
+        case InputTranslator::MouseEvent::Motion:   buf[3] = base + 3 + 32; break;
+    }
+    if( _event.shift ) buf[3] |= 4;
+    if( _event.alt ) buf[3] |= 8;
+    if( _event.control ) buf[3] |= 16;
+    buf[4] = std::clamp(_event.x + 32 + 1, 33, 255);
+    buf[5] = std::clamp(_event.y + 32 + 1, 33, 255);
+    return std::string(buf, sizeof(buf));
+}
+
+static std::string ReportUTF8( InputTranslator::MouseEvent _event ) noexcept
+{
+    auto to_utf8 = [](unsigned int codepoint) -> std::string {
+        std::string out;
+        if (codepoint <= 0x7f)
+            out.append(1, static_cast<char>(codepoint));
+        else if (codepoint <= 0x7ff) {
+            out.append(1, static_cast<char>(0xc0 | ((codepoint >> 6) & 0x1f)));
+            out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
+        }
+        return out;
+    };
+    
+    constexpr int base = 32;
+    std::string buf;
+    buf += "\x1B[M";
+    unsigned cb = 0;
+    switch( _event.type ) {
+        case InputTranslator::MouseEvent::LDown:    cb = base + 0; break;
+        case InputTranslator::MouseEvent::MDown:    cb = base + 1; break;
+        case InputTranslator::MouseEvent::RDown:    cb = base + 2; break;
+        case InputTranslator::MouseEvent::LUp:
+        case InputTranslator::MouseEvent::MUp:
+        case InputTranslator::MouseEvent::RUp:      cb = base + 3; break;
+        case InputTranslator::MouseEvent::LDrag:    cb = base + 0 + 32; break;
+        case InputTranslator::MouseEvent::MDrag:    cb = base + 1 + 32; break;
+        case InputTranslator::MouseEvent::RDrag:    cb = base + 2 + 32; break;
+        case InputTranslator::MouseEvent::Motion:   cb = base + 3 + 32; break;
+    }
+    if( _event.shift ) cb |= 4;
+    if( _event.alt ) cb |= 8;
+    if( _event.control ) cb |= 16;
+    unsigned x = std::clamp(_event.x + 32 + 1, 33, 2047);
+    unsigned y = std::clamp(_event.y + 32 + 1, 33, 2047);
+    buf += to_utf8(cb);
+    buf += to_utf8(x);
+    buf += to_utf8(y);
+    return buf;
+}
+
+static std::string ReportSGR( InputTranslator::MouseEvent _event ) noexcept
+{
+    std::string buf;
+    buf += "\x1B[<";
+    unsigned cb = 0;
+    switch( _event.type ) {
+        case InputTranslator::MouseEvent::LDown:
+        case InputTranslator::MouseEvent::LUp:      cb = 0; break;
+        case InputTranslator::MouseEvent::MDown:
+        case InputTranslator::MouseEvent::MUp:      cb = 1; break;
+        case InputTranslator::MouseEvent::RDown:
+        case InputTranslator::MouseEvent::RUp:      cb = 2; break;
+        case InputTranslator::MouseEvent::LDrag:    cb = 0 + 32; break;
+        case InputTranslator::MouseEvent::MDrag:    cb = 1 + 32; break;
+        case InputTranslator::MouseEvent::RDrag:    cb = 2 + 32; break;
+        case InputTranslator::MouseEvent::Motion:   cb = 3 + 32; break;
+    }
+    if( _event.shift ) cb |= 4;
+    if( _event.alt ) cb |= 8;
+    if( _event.control ) cb |= 16;
+    unsigned x = std::max(_event.x + 1, 1);
+    unsigned y = std::max(_event.y + 1, 1);
+    buf += std::to_string(cb);
+    buf += ";";
+    buf += std::to_string(x);
+    buf += ";";
+    buf += std::to_string(y);
+    switch( _event.type ) {
+        case InputTranslator::MouseEvent::LUp:
+        case InputTranslator::MouseEvent::MUp:
+        case InputTranslator::MouseEvent::RUp:      buf += "m"; break;
+        default:                                    buf += "M"; break;
+    }
+    return buf;
+}
+
+void InputTranslatorImpl::ProcessMouseEvent( MouseEvent _event )
+{
+    assert( m_Output );
+    assert( m_MouseReportFormatter );
+    const std::string result = m_MouseReportFormatter(_event);
+    m_Output( {reinterpret_cast<const std::byte*>(result.c_str()), result.length() } );
+}
+
+void InputTranslatorImpl::SetMouseReportingMode( MouseReportingMode _mode )
+{
+    m_ReportingMode = _mode;
+    switch( m_ReportingMode ) {
+        case MouseReportingMode::X10:       m_MouseReportFormatter = ReportX10;     break;
+        case MouseReportingMode::Normal:    m_MouseReportFormatter = ReportNormal;  break;
+        case MouseReportingMode::UTF8:      m_MouseReportFormatter = ReportUTF8;    break;
+        case MouseReportingMode::SGR:       m_MouseReportFormatter = ReportSGR;     break;
+    }
 }
 
 }

@@ -125,6 +125,8 @@ struct ModeChange
         BlinkingCursor, // Start Blinking Cursor / Stop Blinking Cursor
         ShowCursor, // Show Cursor / Hide Cursor [DECTCEM]
         AutoRepeatKeys, // Auto-repeat Keys / No Auto-repeat Keys [DECARM]
+        SendMouseXYOnPress, // Do send / don't send (xterm)
+        SendMouseXYOnPressAndRelease, // Do send / don't send (xterm)
     };
     Kind mode = Insert;
     bool status = false;

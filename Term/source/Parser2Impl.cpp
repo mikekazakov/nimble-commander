@@ -940,9 +940,11 @@ static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, 
             case 6:     return Kind::Origin;
             case 7:     return Kind::AutoWrap;
             case 8:     return Kind::AutoRepeatKeys;
+            case 9:     return Kind::SendMouseXYOnPress;
             case 12:    return Kind::BlinkingCursor;
             case 25:    return Kind::ShowCursor;
             case 47:    return Kind::AlternateScreenBuffer;
+            case 1000:  return Kind::SendMouseXYOnPressAndRelease;
             case 1049:  return Kind::AlternateScreenBuffer1049;
             default:
                 return std::nullopt;

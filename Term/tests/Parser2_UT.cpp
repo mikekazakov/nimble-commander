@@ -1021,6 +1021,12 @@ TEST_CASE(PREFIX"CSI hl")
     SECTION( "ESC [ ? 8 l" ) {
         verify("\x1B""[?8l", Kind::AutoRepeatKeys, false);
     }
+    SECTION( "ESC [ ? 9 h" ) {
+        verify("\x1B""[?9h", Kind::SendMouseXYOnPress, true);
+    }
+    SECTION( "ESC [ ? 9 l" ) {
+        verify("\x1B""[?9l", Kind::SendMouseXYOnPress, false);
+    }
     SECTION( "ESC [ ? 25 h" ) {
         verify("\x1B""[?25h", Kind::ShowCursor, true);
     }
@@ -1032,6 +1038,12 @@ TEST_CASE(PREFIX"CSI hl")
     }
     SECTION( "ESC [ ? 47 l" ) {
         verify("\x1B""[?47l", Kind::AlternateScreenBuffer, false);
+    }
+    SECTION( "ESC [ ? 1000 h" ) {
+        verify("\x1B""[?1000h", Kind::SendMouseXYOnPressAndRelease, true);
+    }
+    SECTION( "ESC [ ? 1000 l" ) {
+        verify("\x1B""[?1000l", Kind::SendMouseXYOnPressAndRelease, false);
     }
     SECTION( "ESC [ ? 1049 h" ) {
         verify("\x1B""[?1049h", Kind::AlternateScreenBuffer1049, true);

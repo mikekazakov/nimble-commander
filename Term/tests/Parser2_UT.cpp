@@ -1045,6 +1045,30 @@ TEST_CASE(PREFIX"CSI hl")
     SECTION( "ESC [ ? 1000 l" ) {
         verify("\x1B""[?1000l", Kind::SendMouseXYOnPressAndRelease, false);
     }
+    SECTION( "ESC [ ? 1002 h" ) {
+        verify("\x1B""[?1002h", Kind::SendMouseXYOnPressDragAndRelease, true);
+    }
+    SECTION( "ESC [ ? 1002 l" ) {
+        verify("\x1B""[?1002l", Kind::SendMouseXYOnPressDragAndRelease, false);
+    }
+    SECTION( "ESC [ ? 1003 h" ) {
+        verify("\x1B""[?1003h", Kind::SendMouseXYAnyEvent, true);
+    }
+    SECTION( "ESC [ ? 1003 l" ) {
+        verify("\x1B""[?1003l", Kind::SendMouseXYAnyEvent, false);
+    }
+    SECTION( "ESC [ ? 1005 h" ) {
+        verify("\x1B""[?1005h", Kind::SendMouseReportUFT8, true);
+    }
+    SECTION( "ESC [ ? 1005 l" ) {
+        verify("\x1B""[?1005l", Kind::SendMouseReportUFT8, false);
+    }
+    SECTION( "ESC [ ? 1006 h" ) {
+        verify("\x1B""[?1006h", Kind::SendMouseReportSGR, true);
+    }
+    SECTION( "ESC [ ? 1006 l" ) {
+        verify("\x1B""[?1006l", Kind::SendMouseReportSGR, false);
+    }
     SECTION( "ESC [ ? 1049 h" ) {
         verify("\x1B""[?1049h", Kind::AlternateScreenBuffer1049, true);
     }
@@ -1057,6 +1081,16 @@ TEST_CASE(PREFIX"CSI hl")
     SECTION( "ESC [ l" ) {
         REQUIRE( parser.Parse(to_bytes("\x1B""[l")).empty() );
     }
+    SECTION( "ESC [ ? 1006 ; 1000 h"  ) {
+        auto r = parser.Parse(to_bytes("\x1B[?1006;1000h"));
+        REQUIRE( r.size() == 2 );
+        CHECK( r[0].type == Type::change_mode );
+        CHECK( as_mode_change(r[0]).mode == Kind::SendMouseReportSGR );
+        CHECK( as_mode_change(r[0]).status == true );
+        CHECK( r[1].type == Type::change_mode );
+        CHECK( as_mode_change(r[1]).mode == Kind::SendMouseXYOnPressAndRelease );
+        CHECK( as_mode_change(r[1]).status == true );
+    }    
     CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
 }
 

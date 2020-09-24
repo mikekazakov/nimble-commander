@@ -125,8 +125,12 @@ struct ModeChange
         BlinkingCursor, // Start Blinking Cursor / Stop Blinking Cursor
         ShowCursor, // Show Cursor / Hide Cursor [DECTCEM]
         AutoRepeatKeys, // Auto-repeat Keys / No Auto-repeat Keys [DECARM]
-        SendMouseXYOnPress, // Do send / don't send (xterm)
+        SendMouseXYOnPress, // Do send / don't send (X10 compatibility - xterm)
         SendMouseXYOnPressAndRelease, // Do send / don't send (xterm)
+        SendMouseXYOnPressDragAndRelease, // Do send / don't send (xterm)
+        SendMouseXYAnyEvent, // Use All Motion Mouse Tracking / Don't use All Motion Mouse Tracking (xterm)
+        SendMouseReportUFT8, // Enable UTF-8 Mouse Mode / Disable UTF-8 Mouse Mode (xterm)
+        SendMouseReportSGR, // Enable SGR Mouse Mode / Disable SGR Mouse Mode (xterm)
     };
     Kind mode = Insert;
     bool status = false;

@@ -945,6 +945,10 @@ static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, 
             case 25:    return Kind::ShowCursor;
             case 47:    return Kind::AlternateScreenBuffer;
             case 1000:  return Kind::SendMouseXYOnPressAndRelease;
+            case 1002:  return Kind::SendMouseXYOnPressDragAndRelease;
+            case 1003:  return Kind::SendMouseXYAnyEvent;
+            case 1005:  return Kind::SendMouseReportUFT8;
+            case 1006:  return Kind::SendMouseReportSGR;
             case 1049:  return Kind::AlternateScreenBuffer1049;
             default:
                 return std::nullopt;
@@ -973,22 +977,24 @@ void Parser2Impl::CSI_hl() noexcept
     if( dec )
         request.remove_prefix(1);
     
-    const auto p = CSIParamsScanner::Parse(request);
-    if( p.count != 1 ) {
-        LogMissedCSIRequest(m_CSIState.buffer);
+    const auto params = CSIParamsScanner::Parse(request);
+    if( params.count == 0 ) {
         return;
     }
     
-    const auto kind = ToModeChange(p.values[0], dec);
-    if( kind == std::nullopt ) {
-        LogMissedCSIRequest(m_CSIState.buffer);
-        return;
+    for( int i = 0; i != params.count; ++i ) {
+        const auto ps = params.values[i];
+        const auto kind = ToModeChange(ps, dec);
+        if( kind == std::nullopt ) {
+            LogMissedCSIRequest(m_CSIState.buffer);
+            continue;
+        }
+        
+        input::ModeChange mc;
+        mc.mode = *kind;
+        mc.status = on;
+        m_Output.emplace_back( input::Type::change_mode, mc );
     }
-
-    input::ModeChange mc;
-    mc.mode = *kind;
-    mc.status = on;
-    m_Output.emplace_back( input::Type::change_mode, mc );
 }
 
 static std::optional<input::CharacterAttributes> SCImToCharacterAttributes(int _ps) noexcept

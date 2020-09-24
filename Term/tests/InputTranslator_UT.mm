@@ -351,3 +351,26 @@ TEST_CASE(PREFIX"Mouse reporting: SGR")
         expect("\x1B[<35;1;1M");
     }
 }
+
+TEST_CASE(PREFIX"Pasting")
+{
+    std::string output;
+    InputTranslatorImpl it;
+    it.SetOuput([&output](std::span<const std::byte> _bytes){
+        output.append(reinterpret_cast<const char*>(_bytes.data()), _bytes.size());
+    });
+    SECTION("Default") {
+        it.ProcessPaste("Hello");
+        CHECK( output == "Hello" );
+    }
+    SECTION("Not Bracketed") {
+        it.SetBracketedPaste(false);
+        it.ProcessPaste("Hello");
+        CHECK( output == "Hello" );
+    }
+    SECTION("Bracketed") {
+        it.SetBracketedPaste(true);
+        it.ProcessPaste("Hello");
+        CHECK( output == "\x1B[200~,Hello\x1B[201~." );
+    }
+}

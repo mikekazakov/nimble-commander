@@ -301,5 +301,32 @@ void InputTranslatorImpl::SetMouseReportingMode( MouseReportingMode _mode )
     }
 }
 
+void InputTranslatorImpl::ProcessPaste( std::string_view _utf8 )
+{
+    if( _utf8.empty() )
+        return;
+    
+    constexpr std::string_view bracket_prefix = "\x1B[200~,";
+    constexpr std::string_view bracket_postfix = "\x1B[201~.";
+    
+    if( m_BracketedPaste ) {
+        m_Output( Bytes(reinterpret_cast<const std::byte*>(bracket_prefix.data()),
+                        bracket_prefix.size()) );
+        m_Output( Bytes(reinterpret_cast<const std::byte*>(_utf8.data()),
+                        _utf8.size()) );
+        m_Output( Bytes(reinterpret_cast<const std::byte*>(bracket_postfix.data()),
+                        bracket_postfix.size()) );
+    }
+    else {
+        m_Output( Bytes(reinterpret_cast<const std::byte*>(_utf8.data()),
+                        _utf8.size()) );
+    }
+}
+
+void InputTranslatorImpl::SetBracketedPaste( bool _bracketed )
+{
+    m_BracketedPaste = _bracketed;
+}
+
 }
 

@@ -8,6 +8,7 @@
 #endif
 
 #include <span>
+#include <string_view>
 
 namespace nc::term {
 
@@ -23,7 +24,9 @@ public:
     virtual void ProcessKeyDown( NSEvent *_event ) = 0;
     virtual void ProcessTextInput( NSString *_str ) = 0;
     virtual void ProcessMouseEvent( MouseEvent _event ) = 0;
+    virtual void ProcessPaste( std::string_view _utf8 ) = 0;
     virtual void SetApplicationCursorKeys( bool _enabled ) = 0;
+    virtual void SetBracketedPaste( bool _bracketed ) = 0;
     virtual void SetMouseReportingMode( MouseReportingMode _mode ) = 0;
 };
 

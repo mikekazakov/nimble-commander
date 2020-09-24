@@ -758,7 +758,9 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     NSString *text = [paste_board stringForType:NSStringPboardType];
     if(!text)
         return;
-    m_InputTranslator->ProcessTextInput(text);
+    
+    if( const char *utf8 = text.UTF8String )
+        m_InputTranslator->ProcessPaste( utf8 );
 }
 
 - (void)selectAll:(id)[[maybe_unused]]_sender

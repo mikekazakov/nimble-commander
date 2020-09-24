@@ -8,6 +8,7 @@
 #include "Parser.h"
 #include "CursorMode.h"
 #include "InputTranslator.h"
+#include "Interpreter.h"
 
 namespace nc::term {
     class Settings;
@@ -21,6 +22,7 @@ namespace nc::term {
 @property (nonatomic) bool reportsSizeByOccupiedContent;
 @property (nonatomic) bool allowCursorBlinking;
 @property (nonatomic) bool showCursor;
+@property (nonatomic) nc::term::Interpreter::RequestedMouseEvents mouseEvents;
 @property (nonatomic) NSFont  *font;
 @property (nonatomic) NSColor *foregroundColor;
 @property (nonatomic) NSColor *boldForegroundColor;

@@ -26,6 +26,7 @@ public:
     void NotifyScreenResized() override;
     bool ShowCursor() override;
     void SetShowCursorChanged( ShownCursorChanged _on_show_cursor_changed ) override;
+    void SetRequstedMouseEventsChanged( RequstedMouseEventsChanged _on_events_changed ) override;
     
 private:
     using TabStops = std::bitset<1024>;
@@ -60,6 +61,8 @@ private:
     void ProcessChangeTitle( const input::Title &_title );
     void Response(std::string_view _text);
     void UpdateCharacterAttributes();
+    void UpdateMouseReporting();
+    void RequestMouseEventsChanged();
     
     struct Extent {
         int height = 0;  // physical dimention - x
@@ -97,6 +100,7 @@ private:
     Bell m_Bell = []{};
     Title m_Title = [](const std::string&, bool, bool){};
     ShownCursorChanged m_OnShowCursorChanged = [](bool){};
+    RequstedMouseEventsChanged m_OnRequestedMouseEventsChanged = [](RequestedMouseEvents){};
     InputTranslator *m_InputTranslator = nullptr;
     Extent m_Extent;
     TabStops m_TabStops;
@@ -107,7 +111,10 @@ private:
     bool m_AutoWrapMode = true;
     bool m_InsertMode = false;
     bool m_CursorShown = true;
+    bool m_MouseReportingUTF8 = false;
+    bool m_MouseReportingSGR = false;
     Rendition m_Rendition;
+    RequestedMouseEvents m_RequestedMouseEvents = RequestedMouseEvents::None;
     std::optional<SavedState> m_SavedState;
 };
 

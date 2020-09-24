@@ -401,6 +401,66 @@ void InterpreterImpl::ProcessChangeMode( const input::ModeChange _mode_change )
                 m_OnShowCursorChanged(m_CursorShown);
             }
             break;
+        case Kind::SendMouseReportUFT8:
+            if( _mode_change.status != m_MouseReportingUTF8 ) {
+                m_MouseReportingUTF8 = _mode_change.status;
+                UpdateMouseReporting();
+            }
+            break;
+        case Kind::SendMouseReportSGR:
+            if( _mode_change.status != m_MouseReportingSGR ) {
+                m_MouseReportingSGR = _mode_change.status;
+                UpdateMouseReporting();
+            }
+            break;
+        case Kind::SendMouseXYOnPress:
+            if( _mode_change.status == true &&
+               m_RequestedMouseEvents != RequestedMouseEvents::X10 ) {
+                m_RequestedMouseEvents = RequestedMouseEvents::X10;
+                RequestMouseEventsChanged();
+            }
+            if( _mode_change.status == false &&
+               m_RequestedMouseEvents == RequestedMouseEvents::X10 ) {
+                m_RequestedMouseEvents = RequestedMouseEvents::None;
+                RequestMouseEventsChanged();
+            }
+            break;
+        case Kind::SendMouseXYOnPressAndRelease:
+            if( _mode_change.status == true &&
+               m_RequestedMouseEvents != RequestedMouseEvents::Normal ) {
+                m_RequestedMouseEvents = RequestedMouseEvents::Normal;
+                RequestMouseEventsChanged();
+            }
+            if( _mode_change.status == false &&
+               m_RequestedMouseEvents == RequestedMouseEvents::Normal ) {
+                m_RequestedMouseEvents = RequestedMouseEvents::None;
+                RequestMouseEventsChanged();
+            }
+            break;
+        case Kind::SendMouseXYOnPressDragAndRelease:
+            if( _mode_change.status == true &&
+               m_RequestedMouseEvents != RequestedMouseEvents::ButtonTracking ) {
+                m_RequestedMouseEvents = RequestedMouseEvents::ButtonTracking;
+                RequestMouseEventsChanged();
+            }
+            if( _mode_change.status == false &&
+               m_RequestedMouseEvents == RequestedMouseEvents::ButtonTracking ) {
+                m_RequestedMouseEvents = RequestedMouseEvents::None;
+                RequestMouseEventsChanged();
+            }
+            break;
+        case Kind::SendMouseXYAnyEvent:
+            if( _mode_change.status == true &&
+               m_RequestedMouseEvents != RequestedMouseEvents::Any ) {
+                m_RequestedMouseEvents = RequestedMouseEvents::Any;
+                RequestMouseEventsChanged();
+            }
+            if( _mode_change.status == false &&
+               m_RequestedMouseEvents == RequestedMouseEvents::Any ) {
+                m_RequestedMouseEvents = RequestedMouseEvents::None;
+                RequestMouseEventsChanged();
+            }
+            break;
         default:
             break;
     }
@@ -834,6 +894,36 @@ void InterpreterImpl::SetShowCursorChanged( ShownCursorChanged _on_show_cursor_c
 {
     assert( _on_show_cursor_changed );
     m_OnShowCursorChanged = std::move(_on_show_cursor_changed);
+}
+
+void InterpreterImpl::SetRequstedMouseEventsChanged( RequstedMouseEventsChanged _on_events_changed )
+{
+    assert( _on_events_changed );
+    m_OnRequestedMouseEventsChanged = std::move(_on_events_changed);
+}
+
+void InterpreterImpl::UpdateMouseReporting()
+{
+    const auto events = m_RequestedMouseEvents;
+    if( events == RequestedMouseEvents::X10 ) {
+        m_InputTranslator->SetMouseReportingMode(InputTranslator::MouseReportingMode::X10);
+    }
+    if( events == RequestedMouseEvents::Normal ||
+        events == RequestedMouseEvents::ButtonTracking ||
+        events == RequestedMouseEvents::Any ) {
+        if( m_MouseReportingSGR )
+            m_InputTranslator->SetMouseReportingMode(InputTranslator::MouseReportingMode::SGR);
+        else if( m_MouseReportingUTF8 )
+            m_InputTranslator->SetMouseReportingMode(InputTranslator::MouseReportingMode::UTF8);
+        else
+            m_InputTranslator->SetMouseReportingMode(InputTranslator::MouseReportingMode::Normal);
+    }
+}
+
+void InterpreterImpl::RequestMouseEventsChanged()
+{
+    m_OnRequestedMouseEventsChanged(m_RequestedMouseEvents);
+    UpdateMouseReporting();
 }
 
 }

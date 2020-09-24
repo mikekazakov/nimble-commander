@@ -5,6 +5,7 @@
 #include <Utility/FontExtras.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/BlinkScheduler.h>
+#include <Utility/NSEventModifierFlagsHolder.h>
 #include <Habanero/algo.h>
 #include "OrthodoxMonospace.h"
 #include "Screen.h"
@@ -13,6 +14,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <array>
 
 using namespace nc;
 using namespace nc::term;
@@ -43,6 +45,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     TermViewCursor          m_CursorType;
     SelPoint                m_SelStart;
     SelPoint                m_SelEnd;
+    Interpreter::RequestedMouseEvents m_MouseEvents;
     
     FPSLimitedDrawer       *m_FPS;
     NSSize                  m_IntrinsicSize;
@@ -60,6 +63,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     NSColor                *m_FaintAnsiColors[16];
     std::shared_ptr<Settings>m_Settings;
     int                     m_SettingsNotificationTicket;
+    SelPoint                m_LastMouseCell;
 }
 
 @synthesize fpsDrawer = m_FPS;
@@ -75,6 +79,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_HasVisibleBlinkingSpaces = false;
         m_SettingsNotificationTicket = 0;
         m_CursorType = TermViewCursor::Block;
+        m_MouseEvents = Interpreter::RequestedMouseEvents::None;
+        m_LastMouseCell = {0, 0};
         
         __weak NCTermView *weak_self = self;
         m_BlinkScheduler = utility::BlinkScheduler([weak_self]{
@@ -528,12 +534,81 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void) mouseDown:(NSEvent *)_event
 {
+    if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
+        [self passMouseEvent:_event];
+        return;
+    }
+        
     if(_event.clickCount > 2)
         [self handleSelectionWithTripleClick:_event];
     else if(_event.clickCount == 2 )
         [self handleSelectionWithDoubleClick:_event];
     else
         [self handleSelectionWithMouseDragging:_event];
+}
+
+- (void)mouseDragged:(NSEvent *)_event
+{
+    if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
+        [self passMouseEvent:_event];
+        return;
+    }    
+}
+
+- (void)mouseUp:(NSEvent *)_event
+{
+    if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
+        [self passMouseEvent:_event];
+        return;
+    }
+}
+
+- (void)rightMouseDown:(NSEvent *)_event
+{
+    if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
+        [self passMouseEvent:_event];
+        return;
+    }
+}
+
+- (void)rightMouseDragged:(NSEvent *)_event
+{
+    if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
+        [self passMouseEvent:_event];
+        return;
+    }
+}
+
+- (void)rightMouseUp:(NSEvent *)_event
+{
+    if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
+        [self passMouseEvent:_event];
+        return;
+    }
+}
+
+- (void)otherMouseDown:(NSEvent *)_event
+{
+    if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
+        [self passMouseEvent:_event];
+        return;
+    }
+}
+
+- (void)otherMouseDragged:(NSEvent *)_event
+{
+    if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
+        [self passMouseEvent:_event];
+        return;
+    }
+}
+
+- (void)otherMouseUp:(NSEvent *)_event
+{
+    if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
+        [self passMouseEvent:_event];
+        return;
+    }
 }
 
 - (void) handleSelectionWithTripleClick:(NSEvent *) event
@@ -947,6 +1022,149 @@ static bool LineHasBlinkingCharacters(ScreenBuffer::RangePair<const ScreenBuffer
           }
     }
     return false;
+}
+
+- (void)setMouseEvents:(Interpreter::RequestedMouseEvents)_mouseEvents
+{
+    if( _mouseEvents == m_MouseEvents )
+        return;
+    m_MouseEvents = _mouseEvents;
+}
+
+- (Interpreter::RequestedMouseEvents)mouseEvents
+{
+    return m_MouseEvents;
+}
+
+static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType _type) noexcept
+{
+    using MouseEvent = InputTranslator::MouseEvent;
+    switch ( _type ) {
+        case NSEventTypeLeftMouseDown:      return MouseEvent::LDown;
+        case NSEventTypeLeftMouseDragged:   return MouseEvent::LDrag;
+        case NSEventTypeLeftMouseUp:        return MouseEvent::LUp;
+        case NSEventTypeOtherMouseDown:     return MouseEvent::MDown;
+        case NSEventTypeOtherMouseDragged:  return MouseEvent::MDrag;
+        case NSEventTypeOtherMouseUp:       return MouseEvent::MUp;
+        case NSEventTypeRightMouseDown:     return MouseEvent::RDown;
+        case NSEventTypeRightMouseDragged:  return MouseEvent::RDrag;
+        case NSEventTypeRightMouseUp:       return MouseEvent::RUp;
+        default:                            return MouseEvent::LDown;
+    }
+}
+
+- (void) passMouseEvent:(NSEvent *)_event
+{
+    constexpr auto has = [](const auto &_container, const auto &_value) -> bool {
+        return std::find( std::begin(_container), std::end(_container), _value ) !=
+            std::end(_container);
+    };
+    
+    const NSEventType type = _event.type;
+    const utility::NSEventModifierFlagsHolder flags = _event.modifierFlags;
+    const NSPoint location_px = [self convertPoint:_event.locationInWindow fromView:nil];
+    const SelPoint location_cell = [self projectPoint:location_px];
+    const bool location_cell_changed = location_cell == m_LastMouseCell;
+    m_LastMouseCell = location_cell;
+            
+    if( m_MouseEvents == Interpreter::RequestedMouseEvents::X10 ) {
+        constexpr std::array<NSEventType, 3> types = {
+            NSEventTypeLeftMouseDown,
+            NSEventTypeRightMouseDown,
+            NSEventTypeOtherMouseDown};
+        if( !has(types, type) )
+            return;
+        
+        InputTranslator::MouseEvent evt;
+        evt.type = NSEventTypeToMouseEventType(type);
+        evt.x = location_cell.x;
+        evt.y = location_cell.y;
+        m_InputTranslator->ProcessMouseEvent(evt);        
+    }
+    else if( m_MouseEvents == Interpreter::RequestedMouseEvents::Normal ) {
+        constexpr std::array<NSEventType, 8> types = {
+            NSEventTypeLeftMouseDown,
+            NSEventTypeLeftMouseUp,
+            NSEventTypeOtherMouseDown,
+            NSEventTypeOtherMouseUp,
+            NSEventTypeRightMouseDown,
+            NSEventTypeRightMouseUp};
+        
+        if( !has(types, type) )
+            return;
+
+        InputTranslator::MouseEvent evt;
+        evt.type = NSEventTypeToMouseEventType(type);
+        evt.x = location_cell.x;
+        evt.y = location_cell.y;
+        evt.shift = flags.is_shift();
+        evt.alt = flags.is_option();
+        evt.control = flags.is_control();
+        m_InputTranslator->ProcessMouseEvent(evt);
+    }
+    else if( m_MouseEvents == Interpreter::RequestedMouseEvents::ButtonTracking ) {
+        constexpr std::array<NSEventType, 9> types = {
+            NSEventTypeLeftMouseDown,
+            NSEventTypeLeftMouseDragged,
+            NSEventTypeLeftMouseUp,
+            NSEventTypeOtherMouseDown,
+            NSEventTypeOtherMouseDragged,
+            NSEventTypeOtherMouseUp,
+            NSEventTypeRightMouseDown,
+            NSEventTypeRightMouseDragged,
+            NSEventTypeRightMouseUp};
+        constexpr std::array<NSEventType, 3> movement_types = {
+            NSEventTypeLeftMouseDragged,
+            NSEventTypeOtherMouseDragged,
+            NSEventTypeRightMouseDragged};
+        
+        if( !has(types, type) )
+            return;
+        
+        if( location_cell_changed == false && has(movement_types, type) )
+            return;
+
+        InputTranslator::MouseEvent evt;
+        evt.type = NSEventTypeToMouseEventType(type);
+        evt.x = location_cell.x;
+        evt.y = location_cell.y;
+        evt.shift = flags.is_shift();
+        evt.alt = flags.is_option();
+        evt.control = flags.is_control();
+        m_InputTranslator->ProcessMouseEvent(evt);
+    }
+    else if( m_MouseEvents == Interpreter::RequestedMouseEvents::Any ) {
+        constexpr std::array<NSEventType, 9> types = {
+            NSEventTypeLeftMouseDown,
+            NSEventTypeLeftMouseDragged,
+            NSEventTypeLeftMouseUp,
+            NSEventTypeOtherMouseDown,
+            NSEventTypeOtherMouseDragged,
+            NSEventTypeOtherMouseUp,
+            NSEventTypeRightMouseDown,
+            NSEventTypeRightMouseDragged,
+            NSEventTypeRightMouseUp};
+        constexpr std::array<NSEventType, 3> movement_types = {
+            NSEventTypeLeftMouseDragged,
+            NSEventTypeOtherMouseDragged,
+            NSEventTypeRightMouseDragged};
+        // plus moved?
+        
+        if( !has(types, type) )
+            return;
+        
+        if( location_cell_changed == false && has(movement_types, type) )
+            return;
+
+        InputTranslator::MouseEvent evt;
+        evt.type = NSEventTypeToMouseEventType(type);
+        evt.x = location_cell.x;
+        evt.y = location_cell.y;
+        evt.shift = flags.is_shift();
+        evt.alt = flags.is_option();
+        evt.control = flags.is_control();
+        m_InputTranslator->ProcessMouseEvent(evt);
+    }
 }
 
 @end

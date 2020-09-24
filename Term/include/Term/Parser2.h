@@ -131,6 +131,7 @@ struct ModeChange
         SendMouseXYAnyEvent, // Use All Motion Mouse Tracking / Don't use All Motion Mouse Tracking (xterm)
         SendMouseReportUFT8, // Enable UTF-8 Mouse Mode / Disable UTF-8 Mouse Mode (xterm)
         SendMouseReportSGR, // Enable SGR Mouse Mode / Disable SGR Mouse Mode (xterm)
+        BracketedPaste, // Enable bracketed paste mode/ Disable bracketed paste mode (xterm)
     };
     Kind mode = Insert;
     bool status = false;

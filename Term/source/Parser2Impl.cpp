@@ -950,6 +950,7 @@ static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, 
             case 1005:  return Kind::SendMouseReportUFT8;
             case 1006:  return Kind::SendMouseReportSGR;
             case 1049:  return Kind::AlternateScreenBuffer1049;
+            case 2004:  return Kind::BracketedPaste;
             default:
                 return std::nullopt;
         }

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -40,7 +40,13 @@ public:
         TCSH        =  2
     };
 
+    // _callback can be called from a background thread
     void SetOnPwdPrompt( std::function<void(const char *_cwd, bool _changed)> _callback );
+    
+    /**
+     * Set a callback to be notified each time the shell state changes.
+     * _callback can be called from a background thread.
+     */
     void SetOnStateChange( std::function<void(TaskState _new_state)> _callback );
     
     /**
@@ -50,8 +56,9 @@ public:
      */
     void SetShellPath(const std::string &_path);
     
-    // launches /bin/bash actually (hardcoded now)
+    // Launches current shell at _work_dir
     bool Launch(const char *_work_dir);
+    
     void Terminate();
     
     /**

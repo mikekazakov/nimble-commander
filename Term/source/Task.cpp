@@ -125,34 +125,32 @@ static std::string GetLocale()
     return locale;
 }
 
-const std::map<std::string, std::string> &Task::BuildEnv()
+std::span<const std::pair<std::string, std::string>> Task::BuildEnv()
 {
-    static std::map<std::string, std::string> env;
-    static std::once_flag once;
-    std::call_once(once, []{
-        // do it once per app run
-        std::string locale = GetLocale();
-        if(!locale.empty()) {
-            env.emplace("LANG", locale);
-            env.emplace("LC_COLLATE", locale);
-            env.emplace("LC_CTYPE", locale);
-            env.emplace("LC_MESSAGES", locale);
-            env.emplace("LC_MONETARY", locale);
-            env.emplace("LC_NUMERIC", locale);
-            env.emplace("LC_TIME", locale);
+    static const std::vector<std::pair<std::string, std::string>> env = []{
+        std::vector<std::pair<std::string, std::string>> env;
+        const std::string locale = GetLocale();
+        if( !locale.empty() ) {
+            env.emplace_back("LANG", locale);
+            env.emplace_back("LC_COLLATE", locale);
+            env.emplace_back("LC_CTYPE", locale);
+            env.emplace_back("LC_MESSAGES", locale);
+            env.emplace_back("LC_MONETARY", locale);
+            env.emplace_back("LC_NUMERIC", locale);
+            env.emplace_back("LC_TIME", locale);
         }
         else {
-            env.emplace("LC_CTYPE", "UTF-8");
+            env.emplace_back("LC_CTYPE", "UTF-8");
         }
         
-        env.emplace("TERM", "xterm-16color");
-        env.emplace("TERM_PROGRAM", "Nimble_Commander");
-    });
-    
+        env.emplace_back("TERM", "xterm-16color");
+        env.emplace_back("TERM_PROGRAM", "Nimble_Commander");
+        return env;
+    }();
     return env;
 }
 
-void Task::SetEnv(const std::map<std::string, std::string>& _env)
+void Task::SetEnv(std::span<const std::pair<std::string, std::string>> _env)
 {
     for(auto &i: _env)
         setenv(i.first.c_str(), i.second.c_str(), 1);

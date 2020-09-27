@@ -1,5 +1,7 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
+
+#include <functional>
 
 @class NCTermView;
 namespace nc::term {
@@ -19,5 +21,6 @@ namespace nc::term {
 @property (nonatomic, readonly) nc::term::Screen    &screen;
 @property (nonatomic, readonly) NSEdgeInsets         viewInsets;
 @property (nonatomic, readwrite) NSCursor           *customCursor;
+@property (nonatomic, readwrite) std::function<void(int sx, int sy)> onScreenResized;
 
 @end

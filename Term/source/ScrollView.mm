@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include "Parser.h"
 #include "View.h"
@@ -6,6 +6,7 @@
 #include "Settings.h"
 #include "ScrollView.h"
 #include "FlippableHolder.h"
+#include <cmath>
 
 using namespace nc;
 using namespace nc::term;
@@ -18,11 +19,13 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     NCTermFlippableHolder          *m_ViewHolder;
     std::unique_ptr<term::Screen>   m_Screen;
     std::shared_ptr<nc::term::Settings>m_Settings;
+    std::function<void(int sx, int sy)> m_OnScreenResized;
     int                             m_SettingsNotificationTicket;
     bool                            m_MouseInsideNonOverlappedArea;
 }
 
 @synthesize view = m_View;
+@synthesize onScreenResized = m_OnScreenResized;
 
 - (id)initWithFrame:(NSRect)frameRect
         attachToTop:(bool)top
@@ -185,15 +188,19 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     
     const auto full_size = self.contentView.frame.size;     
     
-    int sy = floor(full_size.height / m_View.fontCache.Height());
-    int sx = floor(full_size.width / m_View.fontCache.Width());
+    const int sy = std::floor(full_size.height / m_View.fontCache.Height());
+    const int sx = std::floor(full_size.width / m_View.fontCache.Width());
 
     if(sx != m_Screen->Width() || sy != m_Screen->Height()) {
-        auto lock = m_Screen->AcquireLock();
-        m_Screen->ResizeScreen(sx, sy);
-        if( auto p = m_View.parser )
-            p->Resized();
+        {
+            auto lock = m_Screen->AcquireLock();
+            m_Screen->ResizeScreen(sx, sy);
+        }
+  
+        if( m_OnScreenResized )
+            m_OnScreenResized(sx, sy);
     }
+    
     [self tile];
     [m_View adjustSizes:true];
 }
@@ -203,7 +210,7 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     // is this code necessary?
     NSRect scrollRect;
     scrollRect = [self documentVisibleRect];
-    scrollRect.origin.y +=  floor(theEvent.deltaY) *
+    scrollRect.origin.y +=  std::floor(theEvent.deltaY) *
                             self.verticalLineScroll *
                             (m_ViewHolder.isFlipped ? -1 : 1);
     [(NSView *)self.documentView scrollRectToVisible:scrollRect];
@@ -226,7 +233,7 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     rc.size.width -= g_Insets.left + g_Insets.right;
     
     const auto rest = rc.size.height -
-        floor(rc.size.height / m_View.fontCache.Height()) * m_View.fontCache.Height();
+        std::floor(rc.size.height / m_View.fontCache.Height()) * m_View.fontCache.Height();
     rc.size.height -= rest;
     
     self.contentView.frame = rc;

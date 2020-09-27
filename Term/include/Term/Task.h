@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -7,6 +7,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <span>
 
 namespace nc::term {
 
@@ -41,8 +42,8 @@ protected:
     
     static void SetupHandlesAndSID(int _slave_fd);
     
-    static const std::map<std::string, std::string> &BuildEnv();
-    static void SetEnv(const std::map<std::string, std::string>& _env);
+    static std::span<const std::pair<std::string, std::string>> BuildEnv();
+    static void SetEnv(std::span<const std::pair<std::string, std::string>> _env);
     static void CloseAllFDAbove3();
     
     // assumes that some data is available already (call only after select()'ing)

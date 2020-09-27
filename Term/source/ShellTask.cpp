@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/select.h>
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
@@ -15,6 +15,7 @@
 #include <Utility/SystemInformation.h>
 #include <Utility/PathManip.h>
 #include <Habanero/algo.h>
+#include <Habanero/mach_time.h>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/dispatch_cpp.h>
 #include <iostream>
@@ -29,6 +30,18 @@ static char *g_BashParams[2]    = {(char*)"-L", 0};
 static char *g_ZSHParams[3]     = {(char*)"-Z", (char*)"-g", 0};
 static char *g_TCSH[2]          = {(char*)"tcsh", 0};
 static char **g_ShellParams[3]  = { g_BashParams, g_ZSHParams, g_TCSH };
+
+static bool IsDirectoryAvailableForBrowsing(const char *_path);
+static bool IsDirectoryAvailableForBrowsing(const std::string &_path);
+static int MaxFD();
+static std::string GetDefaultShell();
+static std::string ProcPidPath(int _pid);
+static bool WaitUntilBecomes(int _pid,
+                             std::string_view _expected_image_path,
+                             std::chrono::nanoseconds _timeout,
+                             std::chrono::nanoseconds _pull_period);
+static ShellTask::ShellType DetectShellType( const std::string &_path );
+static bool fd_is_valid(int fd);
 
 static bool IsDirectoryAvailableForBrowsing(const char *_path)
 {
@@ -58,6 +71,33 @@ static std::string GetDefaultShell()
         return "/bin/bash";
 }
 
+static std::string ProcPidPath(int _pid)
+{
+    char buf[PROC_PIDPATHINFO_MAXSIZE] = {0};
+    if( proc_pidpath(_pid, buf, PROC_PIDPATHINFO_MAXSIZE) <= 0 )
+        return {};
+    else
+        return buf;
+}
+
+static bool WaitUntilBecomes(int _pid,
+                             std::string_view _expected_image_path,
+                             std::chrono::nanoseconds _timeout,
+                             std::chrono::nanoseconds _pull_period)
+{
+    const auto deadline = machtime() + _timeout;
+    while( true ) {
+        const auto current_path = ProcPidPath(_pid);
+        if( current_path.empty() )
+            return false;
+        if( current_path == _expected_image_path )
+            return true;
+        if( machtime() >= deadline )
+            return false;
+        std::this_thread::sleep_for(_pull_period);
+    }
+}
+
 static ShellTask::ShellType DetectShellType( const std::string &_path )
 {
     if( _path.find("/bash") != std::string::npos )
@@ -71,6 +111,11 @@ static ShellTask::ShellType DetectShellType( const std::string &_path )
     return ShellTask::ShellType::Unknown;
 }
 
+static bool fd_is_valid(int fd)
+{
+    return fcntl(fd, F_GETFD) != -1 || errno != EBADF;
+}
+
 ShellTask::ShellTask():
     m_ShellPath( GetDefaultShell() )
 {
@@ -80,11 +125,6 @@ ShellTask::~ShellTask()
 {
     m_IsShuttingDown = true;
     CleanUp();
-}
-
-static bool fd_is_valid(int fd)
-{
-    return fcntl(fd, F_GETFD) != -1 || errno != EBADF;
 }
 
 bool ShellTask::Launch(const char *_work_dir)
@@ -132,15 +172,25 @@ bool ShellTask::Launch(const char *_work_dir)
     }
     
     // Create the child process
-    if( (rc = fork()) != 0 ) {
-        if( rc < 0 )
-            std::cerr << "fork() returned " << rc << "!" << std::endl;
-        
+    const auto fork_rc = fork();
+    if( fork_rc < 0 ) {
+        // error
+        std::cerr << "fork() failed with " << errno << "!" << std::endl;
+        return false;
+    }
+    else if( fork_rc > 0) {
         // master
-        m_ShellPID = rc;
+        m_ShellPID = fork_rc;
         close(slave_fd);
         close(m_CwdPipe[1]);
         m_TemporarySuppressed = true;
+
+        // wait until either the forked process becomes an expected shell or dies
+        const bool became_shell = WaitUntilBecomes(m_ShellPID, m_ShellPath, 1s, 1ms);
+        if( !became_shell ) {
+            CleanUp(); // Well, RIP
+            return false;
+        }
         
         SetState(TaskState::Shell);
         
@@ -150,17 +200,14 @@ bool ShellTask::Launch(const char *_work_dir)
             ReadChildOutput();
         });
         
-        // give shell some time to init and background thead to read any ouput available
-        std::this_thread::sleep_for(50ms);
-        
         // setup pwd feedback
         char prompt_setup[1024] = {0};
         if( m_ShellType == ShellType::Bash )
-            sprintf(prompt_setup, " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; fi'\n", rc);
+            sprintf(prompt_setup, " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; fi'\n", fork_rc);
         else if( m_ShellType == ShellType::ZSH )
-            sprintf(prompt_setup, " precmd(){ if [ $$ -eq %d ]; then pwd>&20; fi; }\n", rc);
+            sprintf(prompt_setup, " precmd(){ if [ $$ -eq %d ]; then pwd>&20; fi; }\n", fork_rc);
         else if( m_ShellType == ShellType::TCSH )
-            sprintf(prompt_setup, " alias precmd 'if ( $$ == %d ) pwd>>%s;sleep 0.05'\n", rc, m_TCSH_FifoPath.c_str());
+            sprintf(prompt_setup, " alias precmd 'if ( $$ == %d ) pwd>>%s;sleep 0.05'\n", fork_rc, m_TCSH_FifoPath.c_str());
         
         if( !fd_is_valid(m_MasterFD) )
             std::cerr << "m_MasterFD is dead!" << std::endl;
@@ -176,7 +223,7 @@ bool ShellTask::Launch(const char *_work_dir)
         // give the shell some time to parse the setup input
         std::this_thread::sleep_for(50ms);
     }
-    else {
+    else { // fork_rc == 0
         // slave/child
         SetupTermios(slave_fd);
         SetTermWindow(slave_fd, m_TermSX, m_TermSY);
@@ -209,7 +256,7 @@ bool ShellTask::Launch(const char *_work_dir)
         execv( m_ShellPath.c_str(), g_ShellParams[(int)m_ShellType] );
         
         // we never get here in normal condition
-        printf("fin.\n");
+        exit(-1);
     }
     return true;
 }

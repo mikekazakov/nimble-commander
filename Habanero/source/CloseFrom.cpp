@@ -23,7 +23,9 @@ static std::optional<std::vector<proc_fdinfo>> GetFDs()
     
     const int result = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, buf.data(), size);
     if( result < 0 )
-        return std::nullopt;
+        return std::nullopt;    
+    assert( result % sizeof(proc_fdinfo) == 0 );
+    buf.resize( result / sizeof(proc_fdinfo) );
     
     return buf;
 }

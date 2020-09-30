@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF0A49F025252BF4008EC7B0 /* CloseFrom.h in Headers */ = {isa = PBXBuildFile; fileRef = CF0A49EF25252BF4008EC7B0 /* CloseFrom.h */; };
+		CF0A49F225252C40008EC7B0 /* CloseFrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F125252C40008EC7B0 /* CloseFrom.cpp */; };
 		CF2083FF1FEFACF30014D6AD /* StringsBulk.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2083FE1FEFACF30014D6AD /* StringsBulk.h */; };
 		CF2084011FEFACFC0014D6AD /* StringsBulk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */; };
 		CF24E1D52280274900C166FA /* CFRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CF24E1D42280274900C166FA /* CFRange.h */; };
@@ -27,6 +29,7 @@
 		CF31851B2150BBA30012F5DD /* intrusive_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF31851A2150BBA30012F5DD /* intrusive_ptr.h */; };
 		CF3ABD8523C093BE00D1878B /* StringViewZBuf.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ABD8423C093BE00D1878B /* StringViewZBuf.h */; };
 		CF3ABD8723C094A700D1878B /* StringViewZBuf_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */; };
+		CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */; };
 		CF7D7D602158B2C000DA1794 /* tribool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7D7D5F2158B2C000DA1794 /* tribool.h */; };
 		CF9BF90B226B423B00AD36D9 /* CFPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9BF90A226B423B00AD36D9 /* CFPtr.h */; };
 		CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD22CD32012DDDF00608DFE /* LRUCache.h */; };
@@ -65,6 +68,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CF0A49EF25252BF4008EC7B0 /* CloseFrom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CloseFrom.h; path = include/Habanero/CloseFrom.h; sourceTree = "<group>"; };
+		CF0A49F125252C40008EC7B0 /* CloseFrom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CloseFrom.cpp; path = source/CloseFrom.cpp; sourceTree = "<group>"; };
+		CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CloseFrom_UT.cpp; sourceTree = "<group>"; };
 		CF2083FE1FEFACF30014D6AD /* StringsBulk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringsBulk.h; path = ../habanero/include/Habanero/StringsBulk.h; sourceTree = "<group>"; };
 		CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringsBulk.cpp; path = ../habanero/source/StringsBulk.cpp; sourceTree = "<group>"; };
 		CF2084021FEFB2F70014D6AD /* StringsBulk_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringsBulk_UT.cpp; path = ../habanero/tests/StringsBulk_UT.cpp; sourceTree = SOURCE_ROOT; };
@@ -177,6 +183,7 @@
 			children = (
 				CF24E214229196E100C166FA /* CFPtr_UT.cpp */,
 				CF614AD11F9D8EF00005F2DB /* chained_strings_UT.cpp */,
+				CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */,
 				CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */,
 				CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */,
 				CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */,
@@ -221,6 +228,7 @@
 				CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */,
 				CFD62B871C99C2A60021EE7F /* CFString.h */,
 				CFD62BBB1C99C73E0021EE7F /* chained_strings.h */,
+				CF0A49EF25252BF4008EC7B0 /* CloseFrom.h */,
 				CFD62B881C99C2A60021EE7F /* CommonPaths.h */,
 				CFD62B891C99C2A60021EE7F /* debug.h */,
 				CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */,
@@ -255,6 +263,7 @@
 				CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */,
 				CFD62BA01C99C2AE0021EE7F /* CFString.cpp */,
 				CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */,
+				CF0A49F125252C40008EC7B0 /* CloseFrom.cpp */,
 				CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */,
 				CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */,
 				CFD62BA31C99C2AE0021EE7F /* debug.cpp */,
@@ -290,6 +299,7 @@
 				CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */,
 				CF9BF90B226B423B00AD36D9 /* CFPtr.h in Headers */,
 				CF24E1D52280274900C166FA /* CFRange.h in Headers */,
+				CF0A49F025252BF4008EC7B0 /* CloseFrom.h in Headers */,
 				CF7D7D602158B2C000DA1794 /* tribool.h in Headers */,
 				CF3ABD8523C093BE00D1878B /* StringViewZBuf.h in Headers */,
 				CF308F4F213B7B3C00915730 /* PosixFilesystemMock.h in Headers */,
@@ -381,6 +391,7 @@
 				CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */,
 				CF24E21D2291B63E00C166FA /* VariableContainer_UT.cpp in Sources */,
 				CF24E21622919DFB00C166FA /* spinlock_UT.cpp in Sources */,
+				CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */,
 				CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */,
 				CF24E21C2291B0E500C166FA /* chained_strings_UT.cpp in Sources */,
 				CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */,
@@ -401,6 +412,7 @@
 				CFFA94591F4535750035E606 /* SerialQueue.cpp in Sources */,
 				CFFA94501F4535750035E606 /* dispatch_cpp.cpp in Sources */,
 				CFFA944C1F4535750035E606 /* chained_strings.cpp in Sources */,
+				CF0A49F225252C40008EC7B0 /* CloseFrom.cpp in Sources */,
 				CFFA94551F4535750035E606 /* KVO.cpp in Sources */,
 				CFFA94581F4535750035E606 /* ScopedObservable.cpp in Sources */,
 				CFFA94531F4535750035E606 /* Hash.cpp in Sources */,

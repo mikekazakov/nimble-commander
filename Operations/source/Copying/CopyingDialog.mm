@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include "../Internal.h"
@@ -192,9 +192,9 @@ static std::string MakeCanonicPath(std::string _input)
             return not_valid();
         
         if( m_SourceHost->IsNativeFS() && has_prefix(input, "~/") ) // input is relative to home dir
-            input.replace(0, 2, CommonPaths::Home());
+            input.replace(0, 2, nc::base::CommonPaths::Home());
         else if( m_SourceHost->IsNativeFS() && has_prefix(input, "~") ) // input is relative to home dir
-            input.replace(0, 1, CommonPaths::Home());
+            input.replace(0, 1, nc::base::CommonPaths::Home());
         else // input is relative to source base dir
             input = m_SourceDirectory + input;
 

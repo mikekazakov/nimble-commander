@@ -63,7 +63,7 @@ static void LoadHomeDirectory(PanelController *_panel)
     auto context = std::make_shared<DirectoryChangeRequest>();
     context->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
     context->PerformAsynchronous = true;
-    context->RequestedDirectory = CommonPaths::Home();
+    context->RequestedDirectory = base::CommonPaths::Home();
     [_panel GoToDirWithContext:context];
 }
     

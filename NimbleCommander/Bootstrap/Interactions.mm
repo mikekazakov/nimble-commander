@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Interactions.h"
 #include "ActivationManager.h"
 #include <Habanero/CommonPaths.h>
@@ -18,7 +18,7 @@ std::optional<std::string> AskUserForLicenseFile()
     const auto extension = bootstrap::ActivationManager::LicenseFileExtension();
     panel.allowedFileTypes = @[ [NSString stringWithUTF8StdString:extension] ];
     panel.allowsOtherFileTypes = false;
-    const auto downloads_path = [NSString stringWithUTF8StdString:CommonPaths::Downloads()];
+    const auto downloads_path = [NSString stringWithUTF8StdString:base::CommonPaths::Downloads()];
     panel.directoryURL = [[NSURL alloc] initFileURLWithPath:downloads_path isDirectory:true];
     panel.message = NSLocalizedString(@"Please select your license file (.nimblecommanderlicense)", "");
     if( [panel runModal] == NSFileHandlingPanelOKButton )

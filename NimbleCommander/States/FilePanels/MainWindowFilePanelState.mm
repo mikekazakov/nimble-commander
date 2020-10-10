@@ -69,7 +69,7 @@ static std::string ExpandPath(const std::string &_ref )
     
     if( _ref.front() == '~' ) { // relative to home
         auto ref = _ref.substr(1);
-        auto p = boost::filesystem::path(CommonPaths::Home());
+        auto p = boost::filesystem::path(nc::base::CommonPaths::Home());
         if( !ref.empty() )
             p.remove_filename();
         p /= ref;
@@ -317,8 +317,8 @@ static NSString *TitleForData( const data::Model* _data );
     right_panel_desired_paths.emplace_back( ExpandPath(GlobalConfig().GetString(g_ConfigInitialRightPath)) );
     
     // 2nd attempt - load home path
-    left_panel_desired_paths.emplace_back( CommonPaths::Home() );
-    right_panel_desired_paths.emplace_back( CommonPaths::Home() );
+    left_panel_desired_paths.emplace_back( nc::base::CommonPaths::Home() );
+    right_panel_desired_paths.emplace_back( nc::base::CommonPaths::Home() );
     
     // 3rd attempt - load first reachable folder in case of sandboxed environment
     if( am.Sandboxed() ) {
@@ -327,8 +327,8 @@ static NSString *TitleForData( const data::Model* _data );
     }
     
     // 4rth attempt - load dir at startup cwd
-    left_panel_desired_paths.emplace_back( CommonPaths::StartupCWD() );
-    right_panel_desired_paths.emplace_back( CommonPaths::StartupCWD() );
+    left_panel_desired_paths.emplace_back( nc::base::CommonPaths::StartupCWD() );
+    right_panel_desired_paths.emplace_back( nc::base::CommonPaths::StartupCWD() );
     
     const auto try_to_load = [&](const std::vector<std::string> &_paths_to_try,
                                  PanelController *_panel) {

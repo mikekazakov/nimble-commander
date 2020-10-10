@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileOverwritesStorage.h"
 #include <sys/stat.h>
 #include <unistd.h>
@@ -89,7 +89,7 @@ static bool AtomicallyWriteToFile( const std::string &_file_pathname, std::strin
     if( _file_pathname.empty() )
         return false;
 
-    auto filename_temp = CommonPaths::AppTemporaryDirectory() + "XXXXXX"; 
+    auto filename_temp = base::CommonPaths::AppTemporaryDirectory() + "XXXXXX"; 
         
     const auto fd = mkstemp(filename_temp.data());
     if( fd < 0 )

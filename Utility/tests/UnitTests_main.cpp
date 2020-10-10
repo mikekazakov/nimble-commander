@@ -40,7 +40,7 @@ static int RMRF(const std::string& _path)
 
 static std::string MakeTempFilesStorage()
 {
-    const auto base_path = CommonPaths::AppTemporaryDirectory();
+    const auto base_path = nc::base::CommonPaths::AppTemporaryDirectory();
     const auto tmp_path = base_path + g_TestDirPrefix + "/";
     if( access(tmp_path.c_str(), F_OK) == 0 )
         RMRF(tmp_path);

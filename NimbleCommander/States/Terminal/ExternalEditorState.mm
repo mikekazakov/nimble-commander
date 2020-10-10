@@ -1,12 +1,14 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalEditorState.h"
-#include <Utility/FontCache.h>
 #include "../../../NimbleCommander/States/MainWindowController.h"
 #include <Term/SingleTask.h>
 #include <Term/Screen.h>
+#include <Term/InterpreterImpl.h>
 #include <Term/Parser.h>
+#include <Term/Parser2Impl.h>
 #include <Term/View.h>
 #include <Term/ScrollView.h>
+#include <Term/InputTranslatorImpl.h>
 #include "SettingsAdaptor.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
@@ -17,12 +19,16 @@ using namespace nc::term;
 @implementation NCTermExternalEditorState
 {
     std::unique_ptr<SingleTask> m_Task;
-    std::unique_ptr<Parser>     m_Parser;
+//    std::unique_ptr<Parser>     m_Parser;
+    std::unique_ptr<Parser2>            m_Parser;
+    std::unique_ptr<InputTranslator>    m_InputTranslator;
+    std::unique_ptr<Interpreter>        m_Interpreter;
     NCTermScrollView           *m_TermScrollView;
     boost::filesystem::path     m_BinaryPath;
     std::string                 m_Params;
     std::string                 m_FileTitle;
     NSLayoutConstraint         *m_TopLayoutConstraint;
+    std::string                 m_Title;
 }
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
@@ -53,42 +59,98 @@ using namespace nc::term;
                                                     metrics:nil
                                                     views:views]];
         
-        __weak NCTermExternalEditorState *weakself = self;
+        __weak NCTermExternalEditorState *weak_self = self;
         
         m_Task = std::make_unique<SingleTask>();
         auto task_raw_ptr = m_Task.get();
-        m_Parser = std::make_unique<Parser>(m_TermScrollView.screen,
-                                       [=](const void* _d, int _sz){
-                                           task_raw_ptr->WriteChildInput(_d, _sz);
-                                       });
-
-        m_Parser->SetTaskScreenResize([=](int sx, int sy) {
-            task_raw_ptr->ResizeWindow(sx, sy);
+//        m_Parser = std::make_unique<Parser>(m_TermScrollView.screen,
+//                                       [=](const void* _d, int _sz){
+//                                           task_raw_ptr->WriteChildInput(_d, _sz);
+//                                       });
+//
+//        m_Parser->SetTaskScreenResize([=](int sx, int sy) {
+//            task_raw_ptr->ResizeWindow(sx, sy);
+//        });
+                
+        m_InputTranslator = std::make_unique<InputTranslatorImpl>();
+        m_InputTranslator->SetOuput([=]( std::span<const std::byte> _bytes  ){
+            task_raw_ptr->WriteChildInput( (const void*)_bytes.data(), _bytes.size() );
         });
         
-        [m_TermScrollView.view AttachToParser:m_Parser.get()];
+        Parser2Impl::Params parser_params;
+        parser_params.error_log = [](std::string_view _error){
+            std::cerr << _error << std::endl;
+        };
+        m_Parser = std::make_unique<Parser2Impl>(parser_params);
+                
+        m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);
+        m_Interpreter->SetOuput([=](std::span<const std::byte> _bytes){
+            task_raw_ptr->WriteChildInput( (const void*)_bytes.data(), _bytes.size() );
+        });
+        m_Interpreter->SetBell([]{
+            NSBeep();
+        });
+        m_Interpreter->SetTitle([weak_self](const std::string &_title, bool, bool){
+            dispatch_to_main_queue( [weak_self, _title]{
+                NCTermExternalEditorState *me = weak_self;
+                me->m_Title = _title;
+                [me updateTitle];
+            });
+        });
+        m_Interpreter->SetInputTranslator( m_InputTranslator.get() );
+        
+//        [m_TermScrollView.view AttachToParser:m_Parser.get()];
+        [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
+        m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {
+            NCTermExternalEditorState *me = weak_self;
+            me->m_Interpreter->NotifyScreenResized();
+            me->m_Task->ResizeWindow(_sx, _sy);
+        };
 
         m_Task->SetOnChildOutput([=](const void* _d, int _sz){
-            if( auto strongself = weakself ) {
-                bool newtitle = false;
-                if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
-                    int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
-                    if(flags & Parser::Result_ChangedTitle)
-                        newtitle = true;
-                    strongself->m_Parser->Flush();
-                }
-                [strongself->m_TermScrollView.view.fpsDrawer invalidate];
+            if( auto strongself = weak_self ) {
+//                bool newtitle = false;
+                auto cmds = strongself->m_Parser->Parse({(const std::byte*)_d, (size_t)_sz});
+                if( cmds.empty() )
+                    return;
+
                 
+//                if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
+//                    int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
+//                    if(flags & Parser::Result_ChangedTitle)
+//                        newtitle = true;
+//                    strongself->m_Parser->Flush();
+//                }
+//                [strongself->m_TermScrollView.view.fpsDrawer invalidate];
                 dispatch_to_main_queue( [=]{
-                    [strongself->m_TermScrollView.view adjustSizes:false]; // !!!!! REFACTOR  !!!
-                    if(newtitle)
-                        [strongself updateTitle];
+                    if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
+                        strongself->m_Interpreter->Interpret(cmds);
+                    [strongself->m_TermScrollView.view.fpsDrawer invalidate];
+                    [strongself->m_TermScrollView.view adjustSizes:false];
+//                    if(newtitle)
+//                        [strongself updateTitle];
                 });
             }
+            
+            
+            
+//            if( auto strongself = weakself ) {
+//                auto cmds = strongself->m_Parser->Parse({(const std::byte*)_d, (size_t)_sz});
+//                if( cmds.empty() )
+//                    return;
+//                dispatch_to_main_queue( [=, cmds=std::move(cmds)]{
+//                    if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
+//                        strongself->m_Interpreter->Interpret(cmds);
+//                    [strongself->m_TermScrollView.view.fpsDrawer invalidate];
+//                    [strongself->m_TermScrollView.view adjustSizes:false];
+//                });
+//            }
+
+            
         });
-        m_Task->SetOnChildDied([weakself]{
+        m_Task->SetOnChildDied([weak_self]{
             dispatch_to_main_queue( [=]{
-                if( auto strongself = weakself )
+                if( auto strongself = weak_self )
                     [(NCMainWindowController*)strongself.window.delegate ResignAsWindowState:strongself];
             });
         });
@@ -134,14 +196,22 @@ using namespace nc::term;
 
 - (void) updateTitle
 {
-    auto lock = m_TermScrollView.screen.AcquireLock();
-    NSString *title = [NSString stringWithUTF8StdString:m_TermScrollView.screen.Title()];
-    
-    if(title.length == 0)
-        title = [NSString stringWithFormat:@"%@ - %@",
-                 [NSString stringWithUTF8StdString:m_Task->TaskBinaryName()],
-                 [NSString stringWithUTF8StdString:m_FileTitle]];
-    
+//    auto lock = m_TermScrollView.screen.AcquireLock();
+////    NSString *title = [NSString stringWithUTF8StdString:m_TermScrollView.screen.Title()];
+//    NSString *title = @"";
+//
+//    if(title.length == 0)
+//        title = [NSString stringWithFormat:@"%@ - %@",
+//                 [NSString stringWithUTF8StdString:m_Task->TaskBinaryName()],
+//                 [NSString stringWithUTF8StdString:m_FileTitle]];
+//
+//    dispatch_or_run_in_main_queue([=]{
+//        self.window.title = title;
+//    });
+    const auto &screen_title = m_Title;
+    const auto title = [NSString stringWithUTF8StdString:screen_title.empty() ?
+                        ( m_Task->TaskBinaryName() + " - " + m_FileTitle ) :
+                        screen_title];
     dispatch_or_run_in_main_queue([=]{
         self.window.title = title;
     });

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
 #include <Utility/SystemInformation.h>
@@ -100,7 +100,7 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         // we need to write it into a temp dir and delete it upon finish
         char pattern_buf[MAXPATHLEN];
         sprintf(pattern_buf, ("%s" + nc::utility::GetBundleID() + ".vfs.XXXXXX").c_str(),
-                CommonPaths::AppTemporaryDirectory().c_str());
+                nc::base::CommonPaths::AppTemporaryDirectory().c_str());
         
         int fd = mkstemp(pattern_buf);
         

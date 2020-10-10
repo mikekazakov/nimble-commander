@@ -56,28 +56,28 @@ static void GoToNativeDir( const std::string& _path, PanelController *_target )
 
 void GoToHomeFolder::Perform( PanelController *_target, id ) const
 {
-    GoToNativeDir( CommonPaths::Home(), _target );
+    GoToNativeDir( base::CommonPaths::Home(), _target );
 }
 
 void GoToDocumentsFolder::Perform( PanelController *_target, id ) const
 {
-    GoToNativeDir( CommonPaths::Documents(), _target );
+    GoToNativeDir( base::CommonPaths::Documents(), _target );
 }
 
 void GoToDesktopFolder::Perform( PanelController *_target, id ) const
 {
-    GoToNativeDir( CommonPaths::Desktop(), _target );
+    GoToNativeDir( base::CommonPaths::Desktop(), _target );
 }
 
 void GoToDownloadsFolder::Perform( PanelController *_target, id ) const
 {
-    GoToNativeDir( CommonPaths::Downloads(), _target );
+    GoToNativeDir( base::CommonPaths::Downloads(), _target );
 }
 
 void GoToApplicationsFolder::Perform( PanelController *_target, id ) const
 {
     if( utility::GetOSXVersion() < utility::OSXVersion::OSX_15 ) { 
-        GoToNativeDir( CommonPaths::Applications(), _target );
+        GoToNativeDir( base::CommonPaths::Applications(), _target );
     }    
     else {
         auto task = [_target]( const std::function<bool()> &_cancelled ) {
@@ -99,7 +99,7 @@ void GoToApplicationsFolder::Perform( PanelController *_target, id ) const
 void GoToUtilitiesFolder::Perform( PanelController *_target, id ) const
 {
     if( utility::GetOSXVersion() < utility::OSXVersion::OSX_15 ) {
-        GoToNativeDir( CommonPaths::Utilities(), _target );
+        GoToNativeDir( base::CommonPaths::Utilities(), _target );
     }
     else {
         auto task = [_target]( const std::function<bool()> &_cancelled ) {
@@ -120,12 +120,12 @@ void GoToUtilitiesFolder::Perform( PanelController *_target, id ) const
 
 void GoToLibraryFolder::Perform( PanelController *_target, id ) const
 {
-   GoToNativeDir( CommonPaths::Library(), _target );
+    GoToNativeDir( base::CommonPaths::Library(), _target );
 }
 
 void GoToRootFolder::Perform( PanelController *_target, id ) const
 {
-   GoToNativeDir( CommonPaths::Root(), _target );
+    GoToNativeDir( base::CommonPaths::Root(), _target );
 }
 
 void GoToProcessesList::Perform( PanelController *_target, id ) const

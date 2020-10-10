@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
@@ -6,7 +6,7 @@
 #include "SFTPConnectionSheetController.h"
 #include <Utility/StringExtras.h>
 
-static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
+static const auto g_SSHdir = nc::base::CommonPaths::Home() + ".ssh/";
 
 @interface SFTPConnectionSheetController()
 @property (nonatomic) NSString *title;
@@ -101,7 +101,9 @@ static bool ValidateFileExistence( const std::string &_filepath )
 
 - (IBAction)OnChooseKey:(id)[[maybe_unused]]_sender
 {
-    auto initial_dir = access(g_SSHdir.c_str(), X_OK) == 0 ? g_SSHdir : CommonPaths::Home();
+    auto initial_dir = access(g_SSHdir.c_str(), X_OK) == 0 ?
+        g_SSHdir :
+        nc::base::CommonPaths::Home();
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.allowsMultipleSelection = false;
     panel.canChooseFiles = true;

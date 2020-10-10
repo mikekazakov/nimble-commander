@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
 
@@ -18,6 +18,7 @@
 #include <syslog.h>
 #include <signal.h>
 #include <Habanero/dispatch_cpp.h>
+#include <Habanero/CloseFrom.h>
 
 #include "SingleTask.h"
 
@@ -123,7 +124,7 @@ void SingleTask::Launch(const char *_full_binary_path, const char *_params, int 
         SetEnv(env);
 
         // closing any used file descriptors
-        CloseAllFDAbove3();
+        nc::base::CloseFrom(3);
         
         // split _params into an array of argv[1], argv[2] etc
         std::vector<std::string> args = SplitArgs(_params);

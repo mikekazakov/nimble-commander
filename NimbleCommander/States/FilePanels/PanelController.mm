@@ -942,7 +942,7 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
         
         // we can't work on this vfs. currently for simplicity - just go home
         auto request = std::make_shared<DirectoryChangeRequest>();
-        request->RequestedDirectory = CommonPaths::Home();
+        request->RequestedDirectory = nc::base::CommonPaths::Home();
         request->VFS = m_NativeHost->SharedPtr();
         request->PerformAsynchronous = true;
         [self GoToDirWithContext:request];

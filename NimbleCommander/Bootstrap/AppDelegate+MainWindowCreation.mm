@@ -117,7 +117,7 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
     static const auto ext_cache = std::make_shared<nc::vfsicon::WorkspaceExtensionIconsCacheImpl>(
         self.utiDB);
     static const auto brief_storage = std::make_shared<nc::utility::BriefOnDiskStorageImpl>
-        (CommonPaths::AppTemporaryDirectory(),
+    (nc::base::CommonPaths::AppTemporaryDirectory(),
          nc::bootstrap::ActivationManager::BundleID() + ".ico"); 
     static const auto vfs_cache = std::make_shared<nc::vfsicon::QLVFSThumbnailsCacheImpl>(
         brief_storage);

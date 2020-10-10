@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
 
@@ -47,7 +47,7 @@ int TestDir::RMRF(const std::string& _path)
 
 std::string TestDir::MakeTempFilesStorage()
 {
-    const auto base_path = CommonPaths::AppTemporaryDirectory();
+    const auto base_path = nc::base::CommonPaths::AppTemporaryDirectory();
     const auto tmp_path = base_path + g_TestDirPrefix + "/";
     if( access(tmp_path.c_str(), F_OK) == 0 )
         RMRF(tmp_path);

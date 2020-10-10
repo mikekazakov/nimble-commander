@@ -21,3 +21,4 @@ CLANG_ENABLE_OBJC_ARC = YES
 
 // ld
 OTHER_LDFLAGS = -lboost_system-mt -lboost_filesystem-mt
+INSTALL_PATH = @rpath/

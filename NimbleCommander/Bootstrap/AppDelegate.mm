@@ -249,7 +249,7 @@ static NCAppDelegate *g_Me = nil;
     if( ActivationManager::Instance().Sandboxed() ) {
         auto &sm = SandboxManager::Instance();
         if( sm.Empty() ) {
-            sm.AskAccessForPathSync(CommonPaths::Home(), false);
+            sm.AskAccessForPathSync(nc::base::CommonPaths::Home(), false);
             showed_modal_dialog = true;
             if( self.mainWindowControllers.empty() ) {
                 auto ctrl = [self allocateDefaultMainWindow];
@@ -936,7 +936,7 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
     params.export_options = ctrail::ValuesStorageExporter::Options::differential;
     params.exporter = ctrail::ValuesStorageExporter{ ctrail::ChromeTraceExporter{} };
     params.save = [](std::string _exported) {
-        std::ofstream( CommonPaths::Desktop() + "NimbleCommander.json" ) << _exported;
+        std::ofstream( nc::base::CommonPaths::Desktop() + "NimbleCommander.json" ) << _exported;
     };
     
     m_CTrailMonitor = std::make_unique<ctrail::OneShotMonitor>( std::move(params) );
@@ -1062,7 +1062,7 @@ static void DoTemporaryFileStoragePurge()
 - (nc::utility::TemporaryFileStorage &)temporaryFileStorage
 {
     const auto instance = []{
-        const auto base_dir = CommonPaths::AppTemporaryDirectory();
+        const auto base_dir = nc::base::CommonPaths::AppTemporaryDirectory();
         const auto prefix = ActivationManager::BundleID() + ".tmp.";
         g_TemporaryFileStorage = new nc::utility::TemporaryFileStorageImpl(base_dir, prefix);
         dispatch_to_background(DoTemporaryFileStoragePurge);

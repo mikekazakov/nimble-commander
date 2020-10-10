@@ -1,24 +1,11 @@
-/* Copyright (c) 2013-2016 Michael G. Kazakov
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the "Software"), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
+// Copyright (C) 2013-2020 Michael G. Kazakov. Subject to GNU General Public License version 3.
 #include <CoreFoundation/CoreFoundation.h>
 #include <sys/param.h>
 #include <pwd.h>
 #include <unistd.h>
 #include <Habanero/CommonPaths.h>
 
-namespace CommonPaths
-{
+namespace nc::base {
 
 static std::string GetMainBundlePath()
 {
@@ -36,73 +23,73 @@ static std::string ensure_tr_slash( std::string _str )
     return _str;
 }
 
-const std::string &AppBundle() noexcept
+const std::string &CommonPaths::AppBundle() noexcept
 {
     static const auto path = ensure_tr_slash(GetMainBundlePath());
     return path;
 }
 
-const std::string &Home() noexcept
+const std::string &CommonPaths::Home() noexcept
 {
     static const auto path = ensure_tr_slash(getpwuid(getuid())->pw_dir);
     return path;
 }
 
-const std::string &Documents() noexcept
+const std::string &CommonPaths::Documents() noexcept
 {
     static const auto path = Home() + "Documents/";
     return path;
 }
 
-const std::string &Desktop() noexcept
+const std::string &CommonPaths::Desktop() noexcept
 {
     static const auto path = Home() + "Desktop/";
     return path;
 }
 
-const std::string &Downloads() noexcept
+const std::string &CommonPaths::Downloads() noexcept
 {
     static const auto path = Home() + "Downloads/";
     return path;
 }
 
-const std::string &Applications() noexcept
+const std::string &CommonPaths::Applications() noexcept
 {
     static const auto path = std::string("/Applications/");
     return path;
 }
 
-const std::string &Utilities() noexcept
+const std::string &CommonPaths::Utilities() noexcept
 {
     static const auto path = std::string("/Applications/Utilities/");
     return path;
 }
 
-const std::string &Library() noexcept
+const std::string &CommonPaths::Library() noexcept
 {
     static const auto path = Home() + "Library/";
     return path;
 }
 
-const std::string &Pictures() noexcept
+const std::string &CommonPaths::Pictures() noexcept
 {
     static const auto path = Home() + "Pictures/";
     return path;
 }
 
-const std::string &Music() noexcept
+const std::string &CommonPaths::Music() noexcept
 {
     static const auto path = Home() + "Music/";
     return path;
 }
 
-const std::string &Movies() noexcept
+const std::string &CommonPaths::Movies() noexcept
 {
     static const auto path = Home() + "Movies/";
     return path;
 }
 
-const std::string &Root() noexcept
+const std::string &CommonPaths::Root() noexcept
 {
     static const auto path = std::string("/");
     return path;
@@ -116,7 +103,7 @@ static std::string cwd()
 }
 
 static const std::string g_StartupCWD = ensure_tr_slash( cwd() );
-const std::string &StartupCWD() noexcept
+const std::string &CommonPaths::StartupCWD() noexcept
 {
     return g_StartupCWD;
 }

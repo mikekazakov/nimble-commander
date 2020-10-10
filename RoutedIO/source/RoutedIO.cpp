@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <ServiceManagement/ServiceManagement.h>
 #include <Security/Authorization.h>
 #include <Security/AuthorizationDB.h>
@@ -74,7 +74,8 @@ static const char *InstalledPath()
 
 static const char *BundledPath()
 {
-    static string s = CommonPaths::AppBundle() + "Contents/Library/LaunchServices/" + g_HelperLabel;
+    static string s = nc::base::CommonPaths::AppBundle() +
+        "Contents/Library/LaunchServices/" + g_HelperLabel;
     return s.c_str();
 }
 

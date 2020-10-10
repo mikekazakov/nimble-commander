@@ -211,6 +211,7 @@ static std::vector<std::pair<std::string, std::string>> GetFindersFavorites() //
 
 static std::vector<std::pair<std::string, std::string>> GetDefaultFavorites()
 {
+    using namespace nc::base;
     return {{
         {TitleForPath(CommonPaths::Home()),         CommonPaths::Home()},
         {TitleForPath(CommonPaths::Desktop()),      CommonPaths::Desktop()},

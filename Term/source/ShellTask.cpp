@@ -185,7 +185,7 @@ bool ShellTask::Launch(const char *_work_dir)
     else if( I->shell_type == ShellType::TCSH ) {
         // for TCSH use named fifo file
         I->tcsh_fifo_path =
-            CommonPaths::AppTemporaryDirectory() +
+            base::CommonPaths::AppTemporaryDirectory() +
             "nimble_commander.tcsh.pipe." + 
             std::to_string(getpid());
         

@@ -7,7 +7,7 @@
 #include "Parser.h"
 
 using namespace nc::term;
-
+using nc::base::CommonPaths;
 using namespace std;
 using namespace std::chrono;
 

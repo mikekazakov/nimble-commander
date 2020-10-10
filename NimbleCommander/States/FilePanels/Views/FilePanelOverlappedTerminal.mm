@@ -1,11 +1,11 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
-#include <Utility/FontCache.h>
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
 #include <Term/View.h>
 #include <Term/ScrollView.h>
+#include <Term/InputTranslatorImpl.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/States/Terminal/SettingsAdaptor.h>
 #include "FilePanelOverlappedTerminal.h"
@@ -28,6 +28,7 @@ static const auto g_LongProcessDelay = 100ms;
     NCTermScrollView           *m_TermScrollView;
     std::unique_ptr<ShellTask>  m_Task;
     std::unique_ptr<Parser>     m_Parser;
+    std::unique_ptr<InputTranslator>    m_InputTranslator;
     std::string                 m_InitalWD;
     std::function<void()>       m_OnShellCWDChanged;
     std::function<void()>       m_OnLongTaskStarted;
@@ -48,7 +49,7 @@ static const auto g_LongProcessDelay = 100ms;
     {
         m_BashCommandStartX = m_BashCommandStartY = std::numeric_limits<int>::max();
         m_RunningLongTask = false;
-        m_InitalWD = CommonPaths::Home();
+        m_InitalWD = nc::base::CommonPaths::Home();
         
         m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
                                                        attachToTop:false
@@ -72,7 +73,13 @@ static const auto g_LongProcessDelay = 100ms;
         m_Parser->SetTaskScreenResize([=](int sx, int sy) {
             task_ptr->ResizeWindow(sx, sy);
         });
-        [m_TermScrollView.view AttachToParser:m_Parser.get()];
+        m_InputTranslator = std::make_unique<InputTranslatorImpl>();
+        m_InputTranslator->SetOuput([=]( std::span<const std::byte> _bytes  ){
+            task_ptr->WriteChildInput( std::string_view((const char*)_bytes.data(), _bytes.size()) );
+            
+        });
+//        [m_TermScrollView.view AttachToParser:m_Parser.get()];
+        [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
         
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"

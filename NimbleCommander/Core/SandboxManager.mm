@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
@@ -228,7 +228,7 @@ bool SandboxManager::HasAccessToFolder_Unlocked(const std::string &_p) const
         "/usr/share",
         "/System",
         EnsureNoTrailingSlash(NSTemporaryDirectory().fileSystemRepresentation),
-        EnsureNoTrailingSlash(CommonPaths::StartupCWD())
+        EnsureNoTrailingSlash(nc::base::CommonPaths::StartupCWD())
     };
     for( auto &s: granted_ro )
         if( has_prefix(p, s) )

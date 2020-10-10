@@ -40,3 +40,9 @@ $BINARY_PATH
 
 build_target OperationsIT
 $BINARY_PATH
+
+build_target TermUT
+$BINARY_PATH
+
+build_target TermIT
+$BINARY_PATH

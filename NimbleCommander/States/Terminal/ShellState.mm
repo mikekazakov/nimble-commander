@@ -11,9 +11,11 @@
 #include <NimbleCommander/States/MainWindowController.h>
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
-#include <Term/Parser.h>
 #include <Term/View.h>
 #include <Term/ScrollView.h>
+#include <Term/InputTranslatorImpl.h>
+#include <Term/Parser2Impl.h>
+#include <Term/InterpreterImpl.h>
 #include "SettingsAdaptor.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
@@ -26,12 +28,15 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
 @implementation NCTermShellState
 {
-    NCTermScrollView           *m_TermScrollView;
-    std::unique_ptr<ShellTask>  m_Task;
-    std::unique_ptr<Parser>     m_Parser;
-    std::string                 m_InitalWD;
-    NSLayoutConstraint         *m_TopLayoutConstraint;
-    nc::utility::NativeFSManager *m_NativeFSManager;
+    NCTermScrollView                   *m_TermScrollView;
+    std::unique_ptr<ShellTask>          m_Task;
+    std::unique_ptr<InputTranslator>    m_InputTranslator;
+    std::unique_ptr<Parser2>            m_Parser;
+    std::unique_ptr<Interpreter>        m_Interpreter;
+    NSLayoutConstraint                 *m_TopLayoutConstraint;
+    nc::utility::NativeFSManager       *m_NativeFSManager;
+    std::string                         m_InitalWD;
+    std::string                         m_Title;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -40,8 +45,9 @@ static const auto g_CustomPath = "terminal.customShellPath";
     self = [super initWithFrame:frameRect];
     if(self)
     {
+        __weak NCTermShellState *weak_self = self;
         m_NativeFSManager = &_native_fs_man;
-        m_InitalWD = CommonPaths::Home();
+        m_InitalWD = nc::base::CommonPaths::Home();
         
         m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
                                                        attachToTop:true
@@ -65,14 +71,50 @@ static const auto g_CustomPath = "terminal.customShellPath";
             if( GlobalConfig().Has(g_CustomPath) )
                 m_Task->SetShellPath(GlobalConfig().GetString(g_CustomPath));
         auto task_ptr = m_Task.get();
-        m_Parser = std::make_unique<Parser>(m_TermScrollView.screen,
-                                           [=](const void* _d, int _sz){
-                                               task_ptr->WriteChildInput( std::string_view((const char*)_d, _sz) );
-                                           });
-        m_Parser->SetTaskScreenResize([=](int sx, int sy) {
-            task_ptr->ResizeWindow(sx, sy);
+        
+        m_InputTranslator = std::make_unique<InputTranslatorImpl>();
+        m_InputTranslator->SetOuput([task_ptr]( std::span<const std::byte> _bytes  ){
+            task_ptr->WriteChildInput( std::string_view((const char*)_bytes.data(), _bytes.size()) );
         });
-        [m_TermScrollView.view AttachToParser:m_Parser.get()];
+        
+        Parser2Impl::Params parser_params;
+        parser_params.error_log = [](std::string_view _error){
+            std::cerr << _error << std::endl;
+        };
+        m_Parser = std::make_unique<Parser2Impl>(parser_params);
+        
+        m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);
+        m_Interpreter->SetOuput([=](std::span<const std::byte> _bytes){
+            task_ptr->WriteChildInput( std::string_view((const char*)_bytes.data(), _bytes.size()) );
+        });
+        m_Interpreter->SetBell([]{
+            NSBeep();
+        });
+        m_Interpreter->SetTitle([weak_self](const std::string &_title, bool, bool){
+            dispatch_to_main_queue( [weak_self, _title]{
+                NCTermShellState *me = weak_self;
+                me->m_Title = _title;
+                [me updateTitle];
+            });
+        });
+        m_Interpreter->SetInputTranslator( m_InputTranslator.get() );
+        m_Interpreter->SetShowCursorChanged([weak_self](bool _show){
+            NCTermShellState *me = weak_self;
+            me->m_TermScrollView.view.showCursor = _show;
+        });
+        m_Interpreter->SetRequstedMouseEventsChanged ([weak_self]
+                                                      (Interpreter::RequestedMouseEvents _events){
+            NCTermShellState *me = weak_self;
+            me->m_TermScrollView.view.mouseEvents = _events;
+        });
+        
+        [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
+        m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {
+            NCTermShellState *me = weak_self;
+            me->m_Interpreter->NotifyScreenResized();
+            me->m_Task->ResizeWindow(_sx, _sy);
+        };
+
         self.wantsLayer = true;
         
         [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self
@@ -147,24 +189,24 @@ static const auto g_CustomPath = "terminal.customShellPath";
     __weak NCTermShellState *weakself = self;
     m_Task->SetOnChildOutput([=](const void* _d, int _sz){
         if( auto strongself = weakself ) {
-            bool newtitle = false;
-            if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
-                int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
-                if(flags & Parser::Result_ChangedTitle)
-                    newtitle = true;
-            }
-            [strongself->m_TermScrollView.view.fpsDrawer invalidate];
-            dispatch_to_main_queue( [=]{
+            auto cmds = strongself->m_Parser->Parse({(const std::byte*)_d, (size_t)_sz});
+            if( cmds.empty() )
+                return;
+            dispatch_to_main_queue( [=, cmds=std::move(cmds)]{
+                
+//                nc::term::input::PrintCommands(cmds);
+                
+                if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
+                    strongself->m_Interpreter->Interpret(cmds);
+                [strongself->m_TermScrollView.view.fpsDrawer invalidate];
                 [strongself->m_TermScrollView.view adjustSizes:false];
-                if(newtitle)
-                    [strongself updateTitle];
             });
         }
     });
     
     m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const char *_cwd, [[maybe_unused]] bool _changed){
         if( auto strongself = weakself ) {
-            strongself->m_TermScrollView.screen.SetTitle("");
+            strongself->m_Title = "";
             [strongself updateTitle];
         }
     });
@@ -192,8 +234,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
 - (void) updateTitle
 {
-    const auto lock = m_TermScrollView.screen.AcquireLock();
-    const auto screen_title = m_TermScrollView.screen.Title();
+    const auto &screen_title = m_Title;
     const auto title = [NSString stringWithUTF8StdString:screen_title.empty() ?
                         EnsureTrailingSlash(m_Task->CWD()) :
                         screen_title];

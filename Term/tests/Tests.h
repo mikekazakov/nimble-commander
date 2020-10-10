@@ -2,3 +2,11 @@
 #pragma once
 
 #include <catch2/catch.hpp>
+#include <filesystem>
+
+struct TempTestDir
+{
+    TempTestDir();
+    ~TempTestDir();
+    std::filesystem::path directory;
+};

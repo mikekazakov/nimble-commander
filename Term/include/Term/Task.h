@@ -44,7 +44,6 @@ protected:
     
     static std::span<const std::pair<std::string, std::string>> BuildEnv();
     static void SetEnv(std::span<const std::pair<std::string, std::string>> _env);
-    static void CloseAllFDAbove3();
     
     // assumes that some data is available already (call only after select()'ing)
     // will block for _usec_wait usecs

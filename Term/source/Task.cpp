@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Task.h"
 #include <sys/select.h>
 #include <sys/ioctl.h>
@@ -12,6 +12,7 @@
 #include <termios.h>
 #include <locale.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <Habanero/CloseFrom.h>
 
 namespace nc::term {
 
@@ -205,13 +206,6 @@ static const char *GetImgNameFromPath(const char *_path)
     return img_name;
 }
 
-void Task::CloseAllFDAbove3()
-{
-    static const int max_fd = (int)sysconf(_SC_OPEN_MAX);
-    for( int fd = 3; fd < max_fd; fd++ )
-        close(fd);
-}
-
 int Task::RunDetachedProcess(const std::string &_process_path,
                              const std::vector<std::string> &_args)
 {
@@ -223,7 +217,7 @@ int Task::RunDetachedProcess(const std::string &_process_path,
             argvs[i+1] = strdup(_args[i].c_str());
         argvs[_args.size()+1] = NULL;
         
-        CloseAllFDAbove3();
+        nc::base::CloseFrom(3);
         
         execvp(_process_path.c_str(), argvs);
         

@@ -12,9 +12,6 @@ namespace nc::term {
 class ShellTask : public Task
 {
 public:
-    ShellTask();
-    ~ShellTask();
-    
     enum class TaskState {
 
         // initial state - shell is not initialized and is not running
@@ -39,15 +36,24 @@ public:
         ZSH         =  1,
         TCSH        =  2
     };
+    
+    using OnStateChange = std::function<void(TaskState _new_state)>;
+    using OnPwdPrompt = std::function<void(const char *_cwd, bool _changed)>;
+    
+    ShellTask();
+    ShellTask(const ShellTask&) = delete;
+    ~ShellTask();
+    ShellTask &operator=(const ShellTask&) = delete;
+
 
     // _callback can be called from a background thread
-    void SetOnPwdPrompt( std::function<void(const char *_cwd, bool _changed)> _callback );
+    void SetOnPwdPrompt( OnPwdPrompt _callback );
     
     /**
      * Set a callback to be notified each time the shell state changes.
      * _callback can be called from a background thread.
      */
-    void SetOnStateChange( std::function<void(TaskState _new_state)> _callback );
+    void SetOnStateChange( OnStateChange _callback );
     
     /**
      * Sets the desired custom shell path.
@@ -55,6 +61,17 @@ public:
      * Should be called before Launch().
      */
     void SetShellPath(const std::string &_path);
+
+    /**
+     * Adds an argument to be passed to the shell upon startup.
+     * This will OVERRIDE the default ones that ShellTask automatically feeds the shell with.
+     */
+    void AddCustomShellArgument( std::string_view argument );
+
+    /**
+     * Sets a value to be fed into the spawned shell task ***upon startup***.
+     */
+    void SetEnvVar(const std::string &_var, const std::string &_value);
     
     // Launches current shell at _work_dir
     bool Launch(const char *_work_dir);
@@ -129,27 +146,10 @@ private:
     void ShellDied();
     void CleanUp();
     void ReadChildOutput();
-    
     void DoOnPwdPromptCallout( const char *_cwd, bool _changed ) const;
-
-    std::shared_ptr<std::function<void(const char *_cwd, bool _changed)>> m_OnPwdPrompt;
-    mutable spinlock                                            m_OnPwdPromptLock;
-    std::function<void(TaskState _new_state)> m_OnStateChanged;
-    volatile TaskState m_State = TaskState::Inactive;
-    volatile int m_MasterFD = -1;
-    spinlock     m_MasterWriteLock;
-    volatile int m_ShellPID = -1;
-    int m_CwdPipe[2] = {-1, -1};
-    std::string m_TCSH_FifoPath;
-    std::atomic_bool m_TemporarySuppressed{ false }; // will give no output until the next bash prompt will show m_RequestedCWD path
-    int m_TermSX = 80;
-    int m_TermSY = 25;
-    std::thread m_InputThread;
-    std::string m_RequestedCWD = "";
-    std::string m_CWD = "";
-    ShellType m_ShellType = ShellType::Unknown;
-    std::string m_ShellPath = "";
-    volatile bool m_IsShuttingDown = false;
+    char **BuildShellArgs() const;    
+    struct Impl;
+    std::shared_ptr<Impl> I;
 };
 
 }

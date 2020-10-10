@@ -229,6 +229,9 @@ bool GetSystemOverview(SystemOverview &_overview)
         CFRelease(computer_name);
     }
     
+    // get user name everytime
+    _overview.user_name = NSUserName().UTF8String;
+    
     // get full user name everytime
     _overview.user_full_name = NSFullUserName().UTF8String;
     

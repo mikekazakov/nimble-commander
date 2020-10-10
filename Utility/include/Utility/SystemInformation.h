@@ -30,6 +30,7 @@ struct CPULoad
 struct SystemOverview
 {
     std::string computer_name;
+    std::string user_name;
     std::string user_full_name;
     std::string human_model; // like MacBook Pro (mid 2012), or MacBook Air (early 2013),localizable
     std::string coded_model; // like "Macmini6,2"

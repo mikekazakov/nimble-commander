@@ -1,0 +1,16 @@
+name: Build and Test
+on: [workflow_dispatch]
+jobs:
+  build:
+    runs-on: [macos-latest]
+    env:
+      XC_VERSION: ${{ '11.5' }}
+    steps:
+    - name: Select latest Xcode
+      run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
+    - uses: actions/checkout@v2
+    - name: Build and run unit tests
+      run:
+      - run: |
+          cd Scripts
+          ./run_all_unit_tests.sh

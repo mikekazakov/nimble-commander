@@ -280,3 +280,4 @@ TEST_CASE(PREFIX"CWD prompt response")
 //    REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
 //    REQUIRE( cwd.wait_to_become(5s, dir.directory ) );
 }
+ 

@@ -9,6 +9,8 @@ jobs:
     - name: Select latest Xcode
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
     - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
     - name: Build and run unit tests
       run: |
         cd Scripts

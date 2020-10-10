@@ -2,6 +2,7 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
 #include <Habanero/CommonPaths.h>
+#include <Habanero/ExecutionDeadline.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 #include <sys/dirent.h>
@@ -11,6 +12,7 @@
 static auto g_TestDirPrefix = "_nc__term__test_";
 
 int main( int argc, char* argv[] ) {
+    nc::base::ExecutionDeadline deadline(std::chrono::minutes(1));
     int result = Catch::Session().run( argc, argv );
     return result;
 }

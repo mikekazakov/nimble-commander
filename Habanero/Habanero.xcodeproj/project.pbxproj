@@ -30,6 +30,8 @@
 		CF3ABD8523C093BE00D1878B /* StringViewZBuf.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ABD8423C093BE00D1878B /* StringViewZBuf.h */; };
 		CF3ABD8723C094A700D1878B /* StringViewZBuf_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */; };
 		CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */; };
+		CF533867253250F500022EE8 /* ExecutionDeadline.h in Headers */ = {isa = PBXBuildFile; fileRef = CF533866253250F500022EE8 /* ExecutionDeadline.h */; };
+		CF5338692532512100022EE8 /* ExecutionDeadline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5338682532512100022EE8 /* ExecutionDeadline.cpp */; };
 		CF7D7D602158B2C000DA1794 /* tribool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7D7D5F2158B2C000DA1794 /* tribool.h */; };
 		CF9BF90B226B423B00AD36D9 /* CFPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9BF90A226B423B00AD36D9 /* CFPtr.h */; };
 		CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD22CD32012DDDF00608DFE /* LRUCache.h */; };
@@ -94,6 +96,8 @@
 		CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringViewZBuf_UT.cpp; sourceTree = "<group>"; };
 		CF47DF701E063CC500AAAF3C /* DispatchGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DispatchGroup.h; path = ../habanero/include/Habanero/DispatchGroup.h; sourceTree = "<group>"; };
 		CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchGroup.cpp; path = ../habanero/source/DispatchGroup.cpp; sourceTree = "<group>"; };
+		CF533866253250F500022EE8 /* ExecutionDeadline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExecutionDeadline.h; path = include/Habanero/ExecutionDeadline.h; sourceTree = "<group>"; };
+		CF5338682532512100022EE8 /* ExecutionDeadline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExecutionDeadline.cpp; path = source/ExecutionDeadline.cpp; sourceTree = "<group>"; };
 		CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Hash_UT.cpp; path = ../habanero/tests/Hash_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VariableContainer_UT.cpp; path = ../habanero/tests/VariableContainer_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CF614AD11F9D8EF00005F2DB /* chained_strings_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chained_strings_UT.cpp; path = ../habanero/tests/chained_strings_UT.cpp; sourceTree = SOURCE_ROOT; };
@@ -233,6 +237,7 @@
 				CFD62B891C99C2A60021EE7F /* debug.h */,
 				CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */,
 				CF47DF701E063CC500AAAF3C /* DispatchGroup.h */,
+				CF533866253250F500022EE8 /* ExecutionDeadline.h */,
 				CF27F9401E373BDA009A3ACF /* GoogleAnalytics.h */,
 				CFD62B8C1C99C2A60021EE7F /* Hash.h */,
 				CFD62B8D1C99C2A60021EE7F /* IdleSleepPreventer.h */,
@@ -269,6 +274,7 @@
 				CFD62BA31C99C2AE0021EE7F /* debug.cpp */,
 				CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */,
 				CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */,
+				CF5338682532512100022EE8 /* ExecutionDeadline.cpp */,
 				CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */,
 				CFD62BA71C99C2AE0021EE7F /* Hash.cpp */,
 				CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */,
@@ -304,6 +310,7 @@
 				CF3ABD8523C093BE00D1878B /* StringViewZBuf.h in Headers */,
 				CF308F4F213B7B3C00915730 /* PosixFilesystemMock.h in Headers */,
 				CF31851B2150BBA30012F5DD /* intrusive_ptr.h in Headers */,
+				CF533867253250F500022EE8 /* ExecutionDeadline.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,6 +411,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5338692532512100022EE8 /* ExecutionDeadline.cpp in Sources */,
 				CFFA94491F4535750035E606 /* CFDefaultsCPP.cpp in Sources */,
 				CFFA94541F4535750035E606 /* IdleSleepPreventer.cpp in Sources */,
 				CFFA944E1F4535750035E606 /* CommonPaths.mm in Sources */,

@@ -12,6 +12,8 @@
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/SystemInformation.h>
 #include <atomic>
+#include <queue>
+#include <magic_enum.hpp>
 
 using namespace nc;
 using namespace nc::term;
@@ -70,6 +72,51 @@ private:
     std::mutex mutex;
 };
 
+template <class T>
+struct QueuedAtomicHolder {
+    QueuedAtomicHolder():
+        m_Value(){}
+    
+    QueuedAtomicHolder(T _value):
+        m_Value(_value){}
+    
+    bool wait_to_become(std::chrono::nanoseconds _timeout,
+                        const T &_new_value) {
+        std::unique_lock<std::mutex> lock(m_Mutex);
+        const auto pred = [&_new_value, this]{
+            while( !m_Queue.empty() ) {
+                T current = m_Queue.front();
+                m_Queue.pop();
+                if( current == _new_value ) {
+                    m_Value = current;
+                    return true;
+                }
+            }
+            return false;
+        };
+        return m_CondVar.wait_for(lock, _timeout, pred);
+    }
+        
+    void store(const T &_new_value) {
+        {
+            std::lock_guard<std::mutex> lock(m_Mutex);
+            m_Queue.push(_new_value);
+        }
+        m_CondVar.notify_all();
+    }
+    
+    T load() const {
+        std::lock_guard<std::mutex> lock(m_Mutex);
+        return m_Value;
+    }
+    
+private:
+    T m_Value;
+    std::queue<T> m_Queue;
+    std::condition_variable m_CondVar;
+    mutable std::mutex m_Mutex;
+};
+
 [[maybe_unused]] static std::string RightPad(std::string _input, size_t _to, char _with = ' ')
 {
     if( _input.size() < _to )
@@ -80,18 +127,17 @@ private:
 TEST_CASE(PREFIX"Inactive -> Shell -> Terminate - Inactive")
 {
     using TaskState = ShellTask::TaskState;
-    AtomicHolder<ShellTask::TaskState> shell_state;
     ShellTask shell;
+    QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     REQUIRE( shell.State() == TaskState::Inactive );
-    
-    shell_state.value = shell.State();
+
     shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state){
         shell_state.store(_new_state);
     });
-        
+
     shell.Launch( CommonPaths::AppTemporaryDirectory().c_str() );
     REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
-    
+
     shell.Terminate();
     REQUIRE( shell_state.wait_to_become(5s, TaskState::Inactive) );
 }
@@ -99,9 +145,8 @@ TEST_CASE(PREFIX"Inactive -> Shell -> Terminate - Inactive")
 TEST_CASE(PREFIX"Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactive")
 {
     using TaskState = ShellTask::TaskState;
-    AtomicHolder<ShellTask::TaskState> shell_state;
     ShellTask shell;
-    shell_state.value = shell.State();
+    QueuedAtomicHolder<ShellTask::TaskState> shell_state( shell.State() );
     shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state){
         shell_state.store(_new_state);
     });
@@ -117,9 +162,8 @@ TEST_CASE(PREFIX"Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactive
 TEST_CASE(PREFIX"Inactive -> Shell -> ProgramInternal (vi) -> Shell -> Terminate -> Inactive")
 {
     using TaskState = ShellTask::TaskState;
-    AtomicHolder<ShellTask::TaskState> shell_state;
     ShellTask shell;
-    shell_state.value = shell.State();
+    QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state){
         shell_state.store(_new_state);
     });
@@ -137,9 +181,8 @@ TEST_CASE(PREFIX"Inactive -> Shell -> ProgramInternal (vi) -> Shell -> Terminate
 TEST_CASE(PREFIX"Inactive -> Shell -> ProgramExternal (vi) -> Shell -> Terminate -> Inactive")
 {
     using TaskState = ShellTask::TaskState;
-    AtomicHolder<ShellTask::TaskState> shell_state;
     ShellTask shell;
-    shell_state.value = shell.State();
+    QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state){
         shell_state.store(_new_state);
     });
@@ -280,4 +323,4 @@ TEST_CASE(PREFIX"CWD prompt response")
 //    REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
 //    REQUIRE( cwd.wait_to_become(5s, dir.directory ) );
 }
- 
+

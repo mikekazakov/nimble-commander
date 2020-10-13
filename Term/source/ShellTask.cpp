@@ -115,7 +115,7 @@ struct ShellTask::Impl {
     std::mutex lock;
     TaskState state = TaskState::Inactive;
     int master_fd = -1;
-    int shell_pid = -1;
+    std::atomic_int shell_pid{-1};
     int cwd_pipe[2] = {-1, -1};
     std::string tcsh_fifo_path;
     // will give no output until the next bash prompt will show the requested_cwd path
@@ -304,13 +304,16 @@ void ShellTask::ReadChildOutput()
         
         int max_fd = std::max((int)I->master_fd, I->cwd_pipe[0]);
         
+//        std::cerr << "blocking on select()" << std::endl;
         rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
-        if( I->shell_pid < 0 )
+        if( I->shell_pid < 0 ) {
+//            std::cerr << "I->shell_pid < 0, returning" << std::endl;
             break; // shell is dead
+        }
         
         if( rc < 0 ) {
-            std::cerr << "select(max_fd + 1, &fd_in, NULL, &fd_err, NULL) returned "
-                << rc << std::endl;
+//            std::cerr << "select(max_fd + 1, &fd_in, NULL, &fd_err, NULL) returned "
+//                << rc << std::endl;
             // error on select(), let's think that shell has died
             // mb call ShellDied() here?
             break;
@@ -333,7 +336,7 @@ void ShellTask::ReadChildOutput()
         
         // check if child process died
         if( FD_ISSET(I->master_fd, &fd_err) ) {
-//            cout << "shell died: FD_ISSET(m_MasterFD, &fd_err)" << endl;
+//            std::cout << "shell died: FD_ISSET(I->master_fd, &fd_err)" << std::endl;
             if( !I->is_shutting_down )
 //                dispatch_to_main_queue([=]{
                 ShellDied();
@@ -341,10 +344,12 @@ void ShellTask::ReadChildOutput()
             break;
         }
     } // End while
+//    std::cerr << "done with ReadChildOutput()" << std::endl;
 }
 
 void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
 {
+    dispatch_assert_background_queue();
     std::string current_cwd = I->cwd;
     bool do_nr_hack = false;
     bool current_wd_changed = false;
@@ -353,6 +358,9 @@ void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
         char tmp[1024];
         memcpy(tmp, _d, _sz);
         tmp[_sz] = 0;
+        
+//        std::cerr << tmp << std::endl;        
+        
         while(strlen(tmp) > 0 && ( // need MOAR slow strlens in this while! gimme MOAR!!!!!
                                   tmp[strlen(tmp)-1] == '\n' ||
                                   tmp[strlen(tmp)-1] == '\r' ))
@@ -423,26 +431,123 @@ void ShellTask::WriteChildInput( std::string_view _data )
 void ShellTask::CleanUp()
 {
     std::lock_guard lock{I->lock};
+    
     if(I->shell_pid > 0) {
-        int pid = I->shell_pid;
+        const int pid = I->shell_pid;
         I->shell_pid = -1;
-        kill(pid, SIGKILL);
+                
+        // 1st attempt - do with a gentle SIGTERM
+        /* const int term_rc = */ kill(pid, SIGTERM);
+//        std::cerr << "kill(SIGTERM) returned " << term_rc << std::endl;
+//        std::cerr << "waiting for " << pid << " to die" << std::endl;
+        int status = 0;
+        int waitpid_rc = 0;
+        const auto gentle_deadline = machtime() + std::chrono::milliseconds(200);
+        while( true ) {
+            waitpid_rc = waitpid(pid, &status, WNOHANG | WUNTRACED );
+//            std::cerr << "status " << status << std::endl;
+//            std::cerr << "waitpid_rc " << waitpid_rc << std::endl;
+
+            if( waitpid_rc != 0 )
+                break;
+
+            if( machtime() >= gentle_deadline )
+                break;
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+
+        if( waitpid_rc > 0 ) {
+            // 2nd attemp - bruteforce
+            /*const int kill_rc = */kill(pid, SIGKILL);
+//            std::cerr << "kill(SIGKILL) returned " << kill_rc << std::endl;
+//            std::cerr << "waiting for " << pid << " to die" << std::endl;
+            const auto brutal_deadline = machtime() + std::chrono::milliseconds(1000);
+            while( true ) {
+                waitpid_rc = waitpid(pid, &status, WNOHANG | WUNTRACED );
+//                std::cerr << "status " << status << std::endl;
+//                std::cerr << "waitpid_rc " << waitpid_rc << std::endl;
+
+                if( waitpid_rc != 0 )
+                    break;
+                
+                if( machtime() >= brutal_deadline ) {
+                    // at this point we give up and let the child linger in limbo/zombie state.
+                    // I have no idea what to do with the marvelous MacOS thing called
+                    // "E - The process is trying to exit". Subprocesses can fall into this state
+                    // with some low propability, deadlocking a blocking waitpid() forever.
+                    std::cerr << "Letting go a child at PID " << pid << std::endl;
+                    break;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
+        }
+
+    
         
-        // possible and very bad workaround for sometimes appearing ZOMBIE BASHes
-        struct timespec tm, tm2;
-        tm.tv_sec  = 0;
-        tm.tv_nsec = 10000000L; // 10 ms
-        nanosleep(&tm, &tm2);
+#if 0
+        const int kill_rc = kill(pid, SIGKILL);        
+        std::cerr << "kill() returned " << kill_rc << std::endl;
+//        if( kill_rc == 0) { // sucessfully killed
+            // possible and very bad workaround for sometimes appearing ZOMBIE BASHes
+//            struct timespec tm, tm2;
+//            tm.tv_sec  = 0;
+//            tm.tv_nsec = 10000000L; // 10 ms
+//            nanosleep(&tm, &tm2);
         
-        int status;
-        waitpid(pid, &status, 0);
+//            int status;
+//            std::cerr << "waiting for " << pid << " to die" << std::endl;
+//            waitpid(pid, &status, WUNTRACED);
+//            std::cerr << "dead" << std::endl;
+
+            std::cerr << "waiting for " << pid << " to die" << std::endl;
+            int status = 0;
+            int waitpid_rc = 0;
+            do {
+                waitpid_rc = waitpid(pid, &status, WNOHANG | WUNTRACED );
+                std::cerr << "status " << status << std::endl;
+                std::cerr << "waitpid_rc " << waitpid_rc << std::endl;
+
+//                if( kill(pid, 0) != 0 ) {
+//                    std::cerr << "already dead " << std::endl;
+//                    break;
+//                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            } while( waitpid_rc == 0 );
+            
+        
+#endif
+            
+//If wait() or waitpid() returns because the status of a child process is available,
+// these functions shall return a value equal to the process ID of the child process for
+// which status is reported. If wait() or waitpid() returns due to the delivery of a signal to
+// the calling process, -1 shall be returned and errno set to [EINTR].
+// If waitpid() was invoked with WNOHANG set in options, it has at least one child
+// process specified by pid for which status is not available, and status
+// is not available for any process specified by pid, 0 is returned.
+// Otherwise, -1 shall be returned, and errno set to indicate the error.
+            
+//                while (some_condition) {
+//                    result = waitpid(pid, &status, WNOHANG);
+//                    if (result > 0) {
+//                        // clean up the process
+//                    } else if (result < 0) {
+//                        perror("waitpid");
+//                    }
+//                    // do other processing
+//                }
+                
+//        }
+//        else {
+//            // either a process was already dead or something is screwed. nothing to do.
+//        }
     }
     
     if(I->master_fd >= 0) {
         close(I->master_fd);
         I->master_fd = -1;
     }
-    
+
     if(I->cwd_pipe[0] >= 0) {
         close(I->cwd_pipe[0]);
         I->cwd_pipe[0] = I->cwd_pipe[1] = -1;

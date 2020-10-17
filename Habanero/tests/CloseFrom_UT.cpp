@@ -78,7 +78,12 @@ TEST_CASE(PREFIX"works")
         REQUIRE( !IsValid(fd1) );
         REQUIRE( IsValid(fd2) );
     }
-        
+    SECTION( "CloseFromExcept - skipp both" ) {
+        CloseFromExcept( fd1, std::array<int, 2>{fd1, fd2} );
+        REQUIRE( IsValid(fd1) );
+        REQUIRE( IsValid(fd2) );
+    }
+    
     close( fd1 );
     close( fd2 );
 }

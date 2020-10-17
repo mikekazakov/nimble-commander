@@ -23,7 +23,7 @@ static std::optional<std::vector<proc_fdinfo>> GetFDs()
     
     const int result = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, buf.data(), size);
     if( result < 0 )
-        return std::nullopt;    
+        return std::nullopt;
     assert( result % sizeof(proc_fdinfo) == 0 );
     buf.resize( result / sizeof(proc_fdinfo) );
     
@@ -55,6 +55,24 @@ void CloseFromExcept(int _lowfd, int _except) noexcept
     else {
         for( int fd = _lowfd; fd != g_MaxFD; fd++ )
             if( fd != _except )
+                close(fd);
+    }
+}
+
+void CloseFromExcept(int _lowfd, std::span<const int> _except) noexcept
+{
+    const auto skip = [_except](int _fd) -> bool {
+        return std::find(_except.begin(), _except.end(), _fd) != _except.end();
+    };
+    if( const auto fds = GetFDs() ) {
+        for( auto &info: *fds ) {
+            if( info.proc_fd >= _lowfd && !skip(info.proc_fd) )
+                close( info.proc_fd );
+        }
+    }
+    else {
+        for( int fd = _lowfd; fd != g_MaxFD; fd++ )
+            if( !skip(fd) )
                 close(fd);
     }
 }

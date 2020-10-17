@@ -371,3 +371,69 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     shell.Terminate();
     REQUIRE( shell.ChildrenList().empty() );
 }
+
+TEST_CASE(PREFIX "Test vim interaction via output")
+{
+    const TempTestDir dir;
+    std::filesystem::remove(dir.directory / ".vim_test.swp");
+
+    AtomicHolder<std::string> buffer_dump;
+    Screen screen(40, 10);
+    Parser2Impl parser;
+    InterpreterImpl interpreter(screen);
+
+    ShellTask shell;
+    shell.ResizeWindow(40, 10);
+    shell.SetShellPath("/bin/bash");
+    shell.SetEnvVar("PS1", ">");
+    shell.AddCustomShellArgument("bash");
+    shell.SetOnChildOutput([&](const void *_d, int _sz) {
+        if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
+            if( auto lock = screen.AcquireLock() ) {
+                interpreter.Interpret(cmds);
+                buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
+            }
+        }
+    });
+    shell.Launch(dir.directory);
+
+    shell.WriteChildInput("vim vim_test\r"); // vim vim_test Return
+    const auto expected1 = "                                        "
+                           "~                                       "
+                           "~                                       "
+                           "~                                       "
+                           "~                                       "
+                           "~                                       "
+                           "~                                       "
+                           "~                                       "
+                           "~                                       "
+                           "\"vim_test\" [New File]                   ";
+    REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected1));
+
+    shell.WriteChildInput("i1\r2\r3\r4\r5\r\eOA\eOA\r"); // i 1 Return 2 Return 3 Return 4 Return 5
+                                                         // Return Up Up Return
+    const auto expected2 = "1                                       "
+                           "2                                       "
+                           "3                                       "
+                           "                                        "
+                           "4                                       "
+                           "5                                       "
+                           "                                        "
+                           "~                                       "
+                           "~                                       "
+                           "-- INSERT --                            ";
+    REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected2));
+
+    shell.WriteChildInput("\x1b:q!\r"); // Esc : q ! Return
+    const auto expected3 = ">vim vim_test                           "
+                           ">                                       "
+                           "                                        "
+                           "                                        "
+                           "                                        "
+                           "                                        "
+                           "                                        "
+                           "                                        "
+                           "                                        "
+                           "                                        ";
+    REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected3));
+}

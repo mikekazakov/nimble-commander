@@ -3,8 +3,8 @@
 
 #include <functional>
 #include <string>
-#include <Habanero/spinlock.h>
 #include <thread>
+#include <filesystem>
 #include "Task.h"
 
 namespace nc::term {
@@ -75,7 +75,7 @@ public:
     void SetEnvVar(const std::string &_var, const std::string &_value);
 
     // Launches current shell at _work_dir
-    bool Launch(const char *_work_dir);
+    bool Launch(const std::filesystem::path &_work_dir);
 
     void Terminate();
 
@@ -85,7 +85,7 @@ public:
      * Does sync I/O on access checking, thus may cause blocking.
      * Thread-safe.
      */
-    void ChDir(const char *_new_cwd);
+    void ChDir(const std::filesystem::path &_new_cwd);
 
     /**
      * executes a binary file in a directory using ./filename.

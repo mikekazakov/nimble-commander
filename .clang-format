@@ -9,6 +9,7 @@ ColumnLimit: 100
 AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: InlineOnly
 AllowAllParametersOfDeclarationOnNextLine: false
+AlwaysBreakTemplateDeclarations: Yes
 BinPackParameters: false
 BreakBeforeBraces: Custom
 BraceWrapping:

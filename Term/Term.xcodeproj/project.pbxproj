@@ -146,6 +146,7 @@
 		CF5F3930242F7FC6004DF1F8 /* InterpreterImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterpreterImpl.h; path = include/Term/InterpreterImpl.h; sourceTree = "<group>"; };
 		CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Term_IT.cpp; sourceTree = "<group>"; };
 		CF5FD92A1FA1AC5100752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
+		CF69DCD9253B17BD00AB1E3A /* AtomicHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicHolder.h; sourceTree = "<group>"; };
 		CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter_UT.cpp; sourceTree = "<group>"; };
 		CF9D696624A897B5008352B0 /* Screen_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Screen_UT.cpp; sourceTree = "<group>"; };
 		CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenBuffer_UT.cpp; sourceTree = "<group>"; };
@@ -300,6 +301,7 @@
 		CF5099781F948E7C000AFDE7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF69DCD9253B17BD00AB1E3A /* AtomicHolder.h */,
 				CF50997B1F948E7C000AFDE7 /* Info.plist */,
 				CF0A49CC2516676A008EC7B0 /* InputTranslator_UT.mm */,
 				CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */,

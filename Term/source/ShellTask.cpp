@@ -20,6 +20,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/CloseFrom.h>
+#include <Habanero/spinlock.h>
 #include <iostream>
 #include <signal.h>
 #include "ShellTask.h"
@@ -209,7 +210,7 @@ ShellTask::~ShellTask()
     CleanUp();
 }
 
-bool ShellTask::Launch(const char *_work_dir)
+bool ShellTask::Launch(const std::filesystem::path &_work_dir)
 {
     using namespace std::literals;
 
@@ -311,7 +312,7 @@ bool ShellTask::Launch(const char *_work_dir)
         SetTermWindow(slave_fd, I->term_sx, I->term_sy);
         SetupHandlesAndSID(slave_fd);
 
-        chdir(_work_dir);
+        chdir(_work_dir.generic_string().c_str());
 
         // put basic environment stuff
         SetEnv(env);
@@ -561,12 +562,12 @@ void ShellTask::SetState(TaskState _new_state)
         (*callback)(I->state);
 }
 
-void ShellTask::ChDir(const char *_new_cwd)
+void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
 {
     if( I->state != TaskState::Shell )
         return;
 
-    auto requested_cwd = EnsureTrailingSlash(_new_cwd);
+    auto requested_cwd = EnsureTrailingSlash(_new_cwd.generic_string());
     LOCK_GUARD(I->lock)
     if( I->cwd == requested_cwd )
         return; // do nothing if current working directory is the same as requested
@@ -586,9 +587,17 @@ void ShellTask::ChDir(const char *_new_cwd)
     std::string child_feed;
     child_feed +=
         "\x03"; // pass ctrl+C to shell to ensure that no previous user input (if any) will stay
-    child_feed += " cd '";
-    child_feed += requested_cwd;
-    child_feed += "'\n";
+
+//    child_feed += " cd '";
+//    child_feed += requested_cwd;
+//    child_feed += "'\n";
+
+    child_feed += " cd ";
+    child_feed += EscapeShellFeed(requested_cwd);
+    child_feed += "\n";
+    
+//    child_feed += EscapeShellFeed(requested_cwd);
+    
     WriteChildInput(child_feed);
 }
 

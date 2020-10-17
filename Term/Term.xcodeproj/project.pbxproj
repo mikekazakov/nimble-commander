@@ -40,11 +40,6 @@
 		CF50996E1F948018000AFDE7 /* ScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50996D1F948018000AFDE7 /* ScrollView.mm */; };
 		CF5099711F948400000AFDE7 /* FlippableHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF50996F1F948400000AFDE7 /* FlippableHolder.h */; };
 		CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099701F948400000AFDE7 /* FlippableHolder.mm */; };
-		CF50997C1F948E7C000AFDE7 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */; };
-		CF50998D1F948F25000AFDE7 /* ShellTask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */; };
-		CF50998E1F948FD8000AFDE7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */; };
-		CF5099901F948FDD000AFDE7 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF50998F1F948FDD000AFDE7 /* libUtility.dylib */; };
-		CF5099921F948FFA000AFDE7 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5099911F948FFA000AFDE7 /* libHabanero.dylib */; };
 		CF5338642532425300022EE8 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */; };
 		CF5338652532426300022EE8 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */; };
 		CF5F392D242F7D57004DF1F8 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */; };
@@ -67,16 +62,6 @@
 		CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */; };
 		CFFDD1F424CB840300289876 /* Parser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE401F7E7593003E9B76 /* Parser.mm */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		CF50997D1F948E7C000AFDE7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF1ADE021F7E6A2A003E9B76 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CF1ADE091F7E6A2A003E9B76;
-			remoteInfo = Term;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		CF0A49DD251F19DB008EC7B0 /* CopyFiles */ = {
@@ -136,9 +121,7 @@
 		CF50996D1F948018000AFDE7 /* ScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ScrollView.mm; path = source/ScrollView.mm; sourceTree = SOURCE_ROOT; };
 		CF50996F1F948400000AFDE7 /* FlippableHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlippableHolder.h; path = source/FlippableHolder.h; sourceTree = SOURCE_ROOT; };
 		CF5099701F948400000AFDE7 /* FlippableHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FlippableHolder.mm; path = source/FlippableHolder.mm; sourceTree = SOURCE_ROOT; };
-		CF5099771F948E7C000AFDE7 /* Term Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Term Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF50997B1F948E7C000AFDE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../tests/Info.plist; sourceTree = "<group>"; };
-		CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShellTask_Tests.mm; path = tests/ShellTask_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF50998F1F948FDD000AFDE7 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CF5099911F948FFA000AFDE7 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 		CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter.cpp; sourceTree = "<group>"; };
@@ -187,17 +170,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CF5099741F948E7C000AFDE7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CF5099921F948FFA000AFDE7 /* libHabanero.dylib in Frameworks */,
-				CF5099901F948FDD000AFDE7 /* libUtility.dylib in Frameworks */,
-				CF50998E1F948FD8000AFDE7 /* Cocoa.framework in Frameworks */,
-				CF50997C1F948E7C000AFDE7 /* libTerm.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CFE08B3123DCFBD1007E99B8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -225,7 +197,6 @@
 			isa = PBXGroup;
 			children = (
 				CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */,
-				CF5099771F948E7C000AFDE7 /* Term Tests.xctest */,
 				CFE08B3423DCFBD1007E99B8 /* TermUT */,
 				CF0A49DF251F19DB008EC7B0 /* TermIT */,
 			);
@@ -309,7 +280,6 @@
 				CF9D696624A897B5008352B0 /* Screen_UT.cpp */,
 				CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */,
 				CF0A49E6251F1A42008EC7B0 /* ShellTask_IT.cpp */,
-				CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */,
 				CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */,
 				CFE08B3C23DCFC15007E99B8 /* Tests.cpp */,
 				CFE08B3B23DCFC15007E99B8 /* Tests.h */,
@@ -396,24 +366,6 @@
 			productReference = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		CF5099761F948E7C000AFDE7 /* Term Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CF50997F1F948E7C000AFDE7 /* Build configuration list for PBXNativeTarget "Term Tests" */;
-			buildPhases = (
-				CF5099731F948E7C000AFDE7 /* Sources */,
-				CF5099741F948E7C000AFDE7 /* Frameworks */,
-				CF5099751F948E7C000AFDE7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				CF50997E1F948E7C000AFDE7 /* PBXTargetDependency */,
-			);
-			name = "Term Tests";
-			productName = "Term Tests";
-			productReference = CF5099771F948E7C000AFDE7 /* Term Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		CFE08B3323DCFBD1007E99B8 /* TermUT */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CFE08B3823DCFBD1007E99B8 /* Build configuration list for PBXNativeTarget "TermUT" */;
@@ -448,10 +400,6 @@
 						CreatedOnToolsVersion = 8.3.2;
 						ProvisioningStyle = Automatic;
 					};
-					CF5099761F948E7C000AFDE7 = {
-						CreatedOnToolsVersion = 8.3.2;
-						ProvisioningStyle = Automatic;
-					};
 					CFE08B3323DCFBD1007E99B8 = {
 						CreatedOnToolsVersion = 11.2;
 					};
@@ -471,22 +419,11 @@
 			projectRoot = "";
 			targets = (
 				CF1ADE091F7E6A2A003E9B76 /* Term */,
-				CF5099761F948E7C000AFDE7 /* Term Tests */,
 				CFE08B3323DCFBD1007E99B8 /* TermUT */,
 				CF0A49DE251F19DB008EC7B0 /* TermIT */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		CF5099751F948E7C000AFDE7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CF0A49DB251F19DB008EC7B0 /* Sources */ = {
@@ -523,14 +460,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CF5099731F948E7C000AFDE7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CF50998D1F948F25000AFDE7 /* ShellTask_Tests.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CFE08B3023DCFBD1007E99B8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -546,14 +475,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		CF50997E1F948E7C000AFDE7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CF1ADE091F7E6A2A003E9B76 /* Term */;
-			targetProxy = CF50997D1F948E7C000AFDE7 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		CF0A49E4251F19DC008EC7B0 /* Debug */ = {
@@ -606,30 +527,6 @@
 			};
 			name = Release;
 		};
-		CF5099801F948E7C000AFDE7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.magnumbytes.Term-Tests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		CF5099811F948E7C000AFDE7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.magnumbytes.Term-Tests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		CFE08B3923DCFBD1007E99B8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFE08B3E23DCFC77007E99B8 /* tests.xcconfig */;
@@ -670,15 +567,6 @@
 			buildConfigurations = (
 				CF1ADE161F7E6A2A003E9B76 /* Debug */,
 				CF1ADE171F7E6A2A003E9B76 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CF50997F1F948E7C000AFDE7 /* Build configuration list for PBXNativeTarget "Term Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CF5099801F948E7C000AFDE7 /* Debug */,
-				CF5099811F948E7C000AFDE7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

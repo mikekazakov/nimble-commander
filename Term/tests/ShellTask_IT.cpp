@@ -262,21 +262,20 @@ TEST_CASE(PREFIX"CWD prompt response")
     AtomicHolder<std::filesystem::path> cwd;
     shell.SetOnPwdPrompt([&](const char *_cwd, bool){
         cwd.store(_cwd);
-//        std::cout << _cwd << std::endl;
     });
     REQUIRE( shell.State() == TaskState::Inactive );
     SECTION("/bin/bash") {
         shell.SetShellPath("/bin/bash");
     }
-//    SECTION("/bin/zsh") {
-//        shell.SetShellPath("/bin/zsh");
-//    }
-//    SECTION("/bin/tcsh") {
-//        shell.SetShellPath("/bin/tcsh");
-//    }
-//    SECTION("/bin/csh") {
-//        shell.SetShellPath("/bin/csh");
-//    }
+    SECTION("/bin/zsh") {
+        shell.SetShellPath("/bin/zsh");
+    }
+    SECTION("/bin/tcsh") {
+        shell.SetShellPath("/bin/tcsh");
+    }
+    SECTION("/bin/csh") {
+        shell.SetShellPath("/bin/csh");
+    }
     shell.Launch( dir.directory.c_str() );
     REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
     REQUIRE( cwd.wait_to_become(5s, dir.directory ) );
@@ -309,18 +308,34 @@ TEST_CASE(PREFIX"CWD prompt response")
     REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
     REQUIRE( cwd.wait_to_become(5s, dir.directory ) );
     
-//    const char *new_dir3 = reinterpret_cast<const char*>(u8"Немного русского тексты и эмодзи!🍻");
-//    shell.ExecuteWithFullPath("/bin/mkdir", ("\""+std::string(new_dir3)+"\"").c_str() );
+    const char *new_dir3 = reinterpret_cast<const char*>(u8"привет, мир!");
+    shell.ExecuteWithFullPath("/bin/mkdir", ("'"+std::string(new_dir3)+"'").c_str() );
+    REQUIRE( shell_state.wait_to_become(5s, TaskState::ProgramExternal) );
+    REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
+    REQUIRE( cwd.wait_to_become(5s, dir.directory ) );
+    shell.ExecuteWithFullPath("cd", Task::EscapeShellFeed(new_dir3).c_str() );
+    REQUIRE( shell_state.wait_to_become(5s, TaskState::ProgramExternal) );
+    REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
+    REQUIRE( cwd.wait_to_become(5s, dir.directory / new_dir3 / "") );
+    shell.ExecuteWithFullPath("cd", "..");
+    REQUIRE( shell_state.wait_to_become(5s, TaskState::ProgramExternal) );
+    REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
+    REQUIRE( cwd.wait_to_become(5s, dir.directory ) );
+    
+// skipping this test for now, as CSH/TCSH requires escaping the emoji as '\U+1F37B', i.e.
+// EscapeShellFeed should ideally become shell-type-aware AND to properly parse its input
+// unicode-wise. that really sucks.
+//    const char *new_dir4 = reinterpret_cast<const char*>(u8"Немного русского текста и эмодзи!🍻");
+//    shell.ExecuteWithFullPath("/bin/mkdir", ("'"+std::string(new_dir4)+"'").c_str() );
 //    REQUIRE( shell_state.wait_to_become(5s, TaskState::ProgramExternal) );
 //    REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
 //    REQUIRE( cwd.wait_to_become(5s, dir.directory ) );
-//    shell.ExecuteWithFullPath("cd", ("\""+std::string(new_dir3)+"\"").c_str() );
+//    shell.ExecuteWithFullPath("cd", Task::EscapeShellFeed(new_dir4).c_str() );
 //    REQUIRE( shell_state.wait_to_become(5s, TaskState::ProgramExternal) );
 //    REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
-//    REQUIRE( cwd.wait_to_become(5s, dir.directory / new_dir3 / "") );
+//    REQUIRE( cwd.wait_to_become(5s, dir.directory / new_dir4 / "") );
 //    shell.ExecuteWithFullPath("cd", "..");
 //    REQUIRE( shell_state.wait_to_become(5s, TaskState::ProgramExternal) );
 //    REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
 //    REQUIRE( cwd.wait_to_become(5s, dir.directory ) );
 }
-

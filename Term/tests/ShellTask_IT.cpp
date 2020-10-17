@@ -1,8 +1,8 @@
 // Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
+#include "AtomicHolder.h"
 
-#include <CoreFoundation/CoreFoundation.h>
 #include <ShellTask.h>
 #include <Screen.h>
 #include <Parser2Impl.h>
@@ -11,8 +11,6 @@
 #include <Habanero/mach_time.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/SystemInformation.h>
-#include <atomic>
-#include <queue>
 #include <magic_enum.hpp>
 
 using namespace nc;
@@ -20,102 +18,6 @@ using namespace nc::term;
 using nc::base::CommonPaths;
 using namespace std::chrono_literals;
 #define PREFIX "nc::term::ShellTask "
-
-template <class T>
-struct AtomicHolder {
-    AtomicHolder():
-        value(){}
-    
-    AtomicHolder(T _value):
-        value(_value){}
-    
-    bool wait_to_become(std::chrono::nanoseconds _timeout,
-                        const T &_new_value) {
-        std::unique_lock<std::mutex> lock(mutex);
-        const auto pred = [&_new_value, this]{
-            return value == _new_value;
-        };
-        return condvar.wait_for(lock, _timeout, pred);
-    }
-        
-    bool wait_to_become_with_runloop(std::chrono::nanoseconds _timeout,
-                                     std::chrono::nanoseconds _slice,
-                                     const T &_new_value) {
-        const auto deadline = machtime() + _timeout;
-        do {
-            {
-                std::unique_lock<std::mutex> lock(mutex);
-                const auto pred = [&_new_value, this]{
-                    return value == _new_value;
-                };
-                if( condvar.wait_for(lock, _slice, pred) )
-                    return true;
-            }
-            CFRunLoopRunInMode(kCFRunLoopDefaultMode,
-                               std::chrono::duration<double>(_slice).count(),
-                               false);
-        } while( deadline > machtime() );
-        return false;
-    }
-    
-    void store(const T &_new_value) {
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            value = _new_value;
-        }
-        condvar.notify_all();        
-    }
-    
-    T value;
-private:
-    std::condition_variable condvar;
-    std::mutex mutex;
-};
-
-template <class T>
-struct QueuedAtomicHolder {
-    QueuedAtomicHolder():
-        m_Value(){}
-    
-    QueuedAtomicHolder(T _value):
-        m_Value(_value){}
-    
-    bool wait_to_become(std::chrono::nanoseconds _timeout,
-                        const T &_new_value) {
-        std::unique_lock<std::mutex> lock(m_Mutex);
-        const auto pred = [&_new_value, this]{
-            while( !m_Queue.empty() ) {
-                T current = m_Queue.front();
-                m_Queue.pop();
-                if( current == _new_value ) {
-                    m_Value = current;
-                    return true;
-                }
-            }
-            return false;
-        };
-        return m_CondVar.wait_for(lock, _timeout, pred);
-    }
-        
-    void store(const T &_new_value) {
-        {
-            std::lock_guard<std::mutex> lock(m_Mutex);
-            m_Queue.push(_new_value);
-        }
-        m_CondVar.notify_all();
-    }
-    
-    T load() const {
-        std::lock_guard<std::mutex> lock(m_Mutex);
-        return m_Value;
-    }
-    
-private:
-    T m_Value;
-    std::queue<T> m_Queue;
-    std::condition_variable m_CondVar;
-    mutable std::mutex m_Mutex;
-};
 
 [[maybe_unused]] static std::string RightPad(std::string _input, size_t _to, char _with = ' ')
 {
@@ -155,6 +57,7 @@ TEST_CASE(PREFIX"Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactive
     REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
     shell.WriteChildInput("exit\r");
     REQUIRE( shell_state.wait_to_become(5s, TaskState::ProgramInternal) );
+    REQUIRE( shell_state.wait_to_become(5s, TaskState::Shell) );
     REQUIRE( shell_state.wait_to_become(5s, TaskState::Dead) );
     REQUIRE( shell_state.wait_to_become(5s, TaskState::Inactive) );
 }

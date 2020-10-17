@@ -24,7 +24,9 @@ public:
         // a child program is running under shell, executed from it's command line
         ProgramInternal = 2,
 
-        // a child program is running under shell, executed from NC's UI
+        // a child program is running under shell, executed from NC's UI.
+        // shell gets this state right before the actual execution, i.e. there's a bit of delay the
+        // child process is spawned.
         ProgramExternal = 3,
 
         // shell died

@@ -221,6 +221,8 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     if( I->shell_type == ShellType::Unknown )
         return false;
 
+    I->cwd = _work_dir.generic_string();
+    
     // remember current locale and stuff
     auto env = BuildEnv();
 

@@ -12,10 +12,12 @@
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/SystemInformation.h>
 #include <magic_enum.hpp>
+#include <sys/param.h>
 
 using namespace nc;
 using namespace nc::term;
 using nc::base::CommonPaths;
+using TaskState = ShellTask::TaskState;
 using namespace std::chrono_literals;
 #define PREFIX "nc::term::ShellTask "
 
@@ -26,9 +28,24 @@ using namespace std::chrono_literals;
     return _input;
 }
 
+static bool WaitChildrenListToBecome(const ShellTask &_shell,
+                                     const std::vector<std::string> &_expected,
+                                     std::chrono::nanoseconds _deadline,
+                                     std::chrono::nanoseconds _poll_period)
+{
+    const auto deadline = machtime() + _deadline;
+    while( true ) {
+        const auto list = _shell.ChildrenList();
+        if( list == _expected )
+            return true;
+        if( machtime() >= deadline )
+            return false;
+        std::this_thread::sleep_for(_poll_period);
+    }
+}
+
 TEST_CASE(PREFIX "Inactive -> Shell -> Terminate - Inactive")
 {
-    using TaskState = ShellTask::TaskState;
     ShellTask shell;
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     REQUIRE(shell.State() == TaskState::Inactive);
@@ -45,7 +62,6 @@ TEST_CASE(PREFIX "Inactive -> Shell -> Terminate - Inactive")
 
 TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactive")
 {
-    using TaskState = ShellTask::TaskState;
     ShellTask shell;
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     shell.SetOnStateChange(
@@ -62,7 +78,6 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactiv
 
 TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (vi) -> Shell -> Terminate -> Inactive")
 {
-    using TaskState = ShellTask::TaskState;
     ShellTask shell;
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     shell.SetOnStateChange(
@@ -80,7 +95,6 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (vi) -> Shell -> Terminat
 
 TEST_CASE(PREFIX "Inactive -> Shell -> ProgramExternal (vi) -> Shell -> Terminate -> Inactive")
 {
-    using TaskState = ShellTask::TaskState;
     ShellTask shell;
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     shell.SetOnStateChange(
@@ -229,7 +243,6 @@ TEST_CASE(PREFIX "Launch an invalid shell")
 TEST_CASE(PREFIX "CWD prompt response")
 {
     const TempTestDir dir;
-    using TaskState = ShellTask::TaskState;
     AtomicHolder<ShellTask::TaskState> shell_state;
     ShellTask shell;
     shell_state.value = shell.State();
@@ -291,4 +304,70 @@ TEST_CASE(PREFIX "CWD prompt response")
     // skipping emoji test for now, as CSH/TCSH requires escaping emojis as e.g. '\U+1F37B', i.e.
     // EscapeShellFeed should ideally become shell-type-aware AND to properly parse its input
     // unicode-wise. that really sucks.
+}
+
+TEST_CASE(PREFIX "Test basics (legacy stuff)")
+{
+    const TempTestDir dir;
+    const auto dir2 = dir.directory / "Test" / "";
+    std::filesystem::create_directory(dir2);
+    
+    QueuedAtomicHolder<ShellTask::TaskState> shell_state;
+    AtomicHolder<std::filesystem::path> cwd;
+    ShellTask shell;
+    shell_state.store(shell.State());
+    shell_state.strict(false);
+    shell.SetOnStateChange(
+        [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
+    shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
+    shell.ResizeWindow(100, 100);
+    shell.Launch(dir.directory);
+    
+    // check cwd
+    REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
+    REQUIRE( shell.CWD() == dir.directory.generic_string() );
+    
+    // the only task is running is shell itself, and is not returned by ChildrenList
+    CHECK( shell.ChildrenList().empty() );
+
+    // test executing binaries within a shell
+    shell.ExecuteWithFullPath("/usr/bin/top", nullptr);
+    REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
+    REQUIRE( WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms) );
+        
+    // simulates user press Q to quit top
+    shell.WriteChildInput("q");
+    REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
+    REQUIRE( WaitChildrenListToBecome(shell, {}, 5s, 1ms) );
+  
+    // check chdir
+    shell.ChDir( dir2 );
+    REQUIRE(cwd.wait_to_become(5s, dir2));
+    REQUIRE( shell.CWD() == dir2.generic_string() );
+    
+    // test chdir in the middle of some typing
+    shell.WriteChildInput("ls ");
+    shell.ChDir( dir.directory );
+    REQUIRE(cwd.wait_to_become(5s, dir.directory));
+    REQUIRE( shell.CWD() == dir.directory.generic_string() );
+
+    // check internal program state
+    shell.WriteChildInput("top\r");
+    REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramInternal));
+    REQUIRE( WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms) );
+    
+    // check termination
+    shell.Terminate();
+    REQUIRE( shell.ChildrenList().empty() );
+    REQUIRE( shell.State() == ShellTask::TaskState::Inactive );
+    
+    // check execution with short path in different directory
+    shell.Launch(dir.directory);
+    REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
+    shell.Execute("top", "/usr/bin/", nullptr);
+    REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
+    REQUIRE( WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms) );
+    
+    shell.Terminate();
+    REQUIRE( shell.ChildrenList().empty() );
 }

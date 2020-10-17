@@ -26,13 +26,13 @@
 
 namespace nc::term {
 
-static const int g_PromptPipe    = 20;
+static const int g_PromptPipe = 20;
 static const int g_SemaphorePipe = 21;
 
-static char *g_BashParams[3]    = {(char*)"bash", (char*)"--login", 0};
-static char *g_ZSHParams[3]     = {(char*)"-Z", (char*)"-g", 0};
-static char *g_TCSH[2]          = {(char*)"tcsh", 0};
-static char **g_ShellParams[3]  = { g_BashParams, g_ZSHParams, g_TCSH };
+static char *g_BashParams[3] = {(char *)"bash", (char *)"--login", 0};
+static char *g_ZSHParams[3] = {(char *)"-Z", (char *)"-g", 0};
+static char *g_TCSH[2] = {(char *)"tcsh", 0};
+static char **g_ShellParams[3] = {g_BashParams, g_ZSHParams, g_TCSH};
 
 static bool IsDirectoryAvailableForBrowsing(const char *_path);
 static bool IsDirectoryAvailableForBrowsing(const std::string &_path);
@@ -42,7 +42,7 @@ static bool WaitUntilBecomes(int _pid,
                              std::string_view _expected_image_path,
                              std::chrono::nanoseconds _timeout,
                              std::chrono::nanoseconds _pull_period);
-static ShellTask::ShellType DetectShellType( const std::string &_path );
+static ShellTask::ShellType DetectShellType(const std::string &_path);
 static bool fd_is_valid(int fd);
 static void KillAndReap(int _pid,
                         std::chrono::nanoseconds _gentle_deadline,
@@ -98,7 +98,7 @@ static bool WaitUntilBecomes(int _pid,
     }
 }
 
-static ShellTask::ShellType DetectShellType( const std::string &_path )
+static ShellTask::ShellType DetectShellType(const std::string &_path)
 {
     if( _path.find("/bash") != std::string::npos )
         return ShellTask::ShellType::Bash;
@@ -119,9 +119,7 @@ static bool fd_is_valid(int fd)
 static void TurnOffSigPipe()
 {
     static std::once_flag once;
-    std::call_once(once, []{
-        signal(SIGPIPE, SIG_IGN);
-    });
+    std::call_once(once, [] { signal(SIGPIPE, SIG_IGN); });
 }
 
 static void KillAndReap(int _pid,
@@ -135,26 +133,26 @@ static void KillAndReap(int _pid,
     int waitpid_rc = 0;
     const auto gentle_deadline = machtime() + _gentle_deadline;
     while( true ) {
-        waitpid_rc = waitpid(_pid, &status, WNOHANG | WUNTRACED );
-        
+        waitpid_rc = waitpid(_pid, &status, WNOHANG | WUNTRACED);
+
         if( waitpid_rc != 0 )
             break;
-        
+
         if( machtime() >= gentle_deadline )
             break;
-        
+
         std::this_thread::sleep_for(poll_wait);
     }
-    
+
     if( waitpid_rc > 0 ) {
         // 2nd attemp - bruteforce
         kill(_pid, SIGKILL);
         const auto brutal_deadline = machtime() + _brutal_deadline;
         while( true ) {
-            waitpid_rc = waitpid(_pid, &status, WNOHANG | WUNTRACED );
+            waitpid_rc = waitpid(_pid, &status, WNOHANG | WUNTRACED);
             if( waitpid_rc != 0 )
                 break;
-            
+
             if( machtime() >= brutal_deadline ) {
                 // at this point we give up and let the child linger in limbo/zombie state.
                 // I have no idea what to do with the marvelous MacOS thing called
@@ -183,24 +181,23 @@ struct ShellTask::Impl {
     std::string requested_cwd = "";
     std::string cwd = "";
     ShellType shell_type = ShellType::Unknown;
-        
+
     // accessible from main thread only (presumably)
     int term_sx = 80;
     int term_sy = 25;
     std::string shell_path = "";
-    std::vector< std::pair<std::string, std::string> > custom_env_vars;
+    std::vector<std::pair<std::string, std::string>> custom_env_vars;
     std::vector<std::string> custom_shell_args;
-    
-    std::atomic_bool is_shutting_down {false};
+
+    std::atomic_bool is_shutting_down{false};
     spinlock master_write_lock;
-    
+
     spinlock callback_lock;
     std::shared_ptr<std::function<void(const char *_cwd, bool _changed)>> on_pwd_prompt;
     std::shared_ptr<OnStateChange> on_state_changed;
 };
 
-ShellTask::ShellTask():
-    I( std::make_shared<Impl>() )
+ShellTask::ShellTask() : I(std::make_shared<Impl>())
 {
     I->shell_path = GetDefaultShell();
     TurnOffSigPipe();
@@ -215,57 +212,52 @@ ShellTask::~ShellTask()
 bool ShellTask::Launch(const char *_work_dir)
 {
     using namespace std::literals;
-    
+
     if( I->input_thread.joinable() )
         throw std::logic_error("ShellTask::Launch called with joinable input thread");
 
     I->shell_type = DetectShellType(I->shell_path);
     if( I->shell_type == ShellType::Unknown )
         return false;
-    
+
     // remember current locale and stuff
     auto env = BuildEnv();
-    
+
     I->master_fd = posix_openpt(O_RDWR);
     assert(I->master_fd >= 0);
-    
+
     grantpt(I->master_fd);
     unlockpt(I->master_fd);
-    
+
     int slave_fd = open(ptsname(I->master_fd), O_RDWR);
-    
+
     int rc = 0;
     // init FIFO stuff for Shell's CWD
-    if( I->shell_type == ShellType::Bash ||
-        I->shell_type == ShellType::ZSH ) {
+    if( I->shell_type == ShellType::Bash || I->shell_type == ShellType::ZSH ) {
         // for Bash or ZSH use regular pipe handle
-        rc = pipe( I->cwd_pipe );
+        rc = pipe(I->cwd_pipe);
         assert(rc == 0);
-        rc = pipe( I->semaphore_pipe );
+        rc = pipe(I->semaphore_pipe);
         assert(rc == 0);
-    }
-    else if( I->shell_type == ShellType::TCSH ) {
+    } else if( I->shell_type == ShellType::TCSH ) {
         // for TCSH use named fifo file
-        I->tcsh_fifo_path =
-            base::CommonPaths::AppTemporaryDirectory() +
-            "nimble_commander.tcsh.pipe." + 
-            std::to_string(getpid());
-        
+        I->tcsh_fifo_path = base::CommonPaths::AppTemporaryDirectory() +
+                            "nimble_commander.tcsh.pipe." + std::to_string(getpid());
+
         rc = mkfifo(I->tcsh_fifo_path.c_str(), 0600);
-        assert( rc == 0 );
-        
+        assert(rc == 0);
+
         rc = I->cwd_pipe[0] = open(I->tcsh_fifo_path.c_str(), O_RDWR);
-        assert( rc != -1 );
+        assert(rc != -1);
     }
-    
+
     // Create the child process
     const auto fork_rc = fork();
     if( fork_rc < 0 ) {
         // error
         std::cerr << "fork() failed with " << errno << "!" << std::endl;
         return false;
-    }
-    else if( fork_rc > 0) {
+    } else if( fork_rc > 0 ) {
         // master
         I->shell_pid = fork_rc;
         close(slave_fd);
@@ -279,51 +271,54 @@ bool ShellTask::Launch(const char *_work_dir)
             CleanUp(); // Well, RIP
             return false;
         }
-        
+
         SetState(TaskState::Shell);
-        
-        I->input_thread = std::thread([=]{
+
+        I->input_thread = std::thread([=] {
             auto name = "ShellTask background input thread, PID="s + std::to_string(I->shell_pid);
-            pthread_setname_np( name.c_str() );
+            pthread_setname_np(name.c_str());
             ReadChildOutput();
         });
-        
+
         // setup pwd feedback
         char prompt_setup[1024] = {0};
         if( I->shell_type == ShellType::Bash )
-            sprintf(prompt_setup, " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi'\n", fork_rc);
+            sprintf(prompt_setup,
+                    " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi'\n",
+                    fork_rc);
         else if( I->shell_type == ShellType::ZSH )
             sprintf(prompt_setup, " precmd(){ if [ $$ -eq %d ]; then pwd>&20; fi; }\n", fork_rc);
         else if( I->shell_type == ShellType::TCSH )
-            sprintf(prompt_setup, " alias precmd 'if ( $$ == %d ) pwd>>%s;sleep 0.05'\n", fork_rc, I->tcsh_fifo_path.c_str());
-        
+            sprintf(prompt_setup, " alias precmd 'if ( $$ == %d ) pwd>>%s;sleep 0.05'\n", fork_rc,
+                    I->tcsh_fifo_path.c_str());
+
         if( !fd_is_valid(I->master_fd) )
             std::cerr << "m_MasterFD is dead!" << std::endl;
-        
-        LOCK_GUARD(I->master_write_lock) {
-            ssize_t write_res = write( I->master_fd, prompt_setup, strlen(prompt_setup) );
+
+        LOCK_GUARD(I->master_write_lock)
+        {
+            ssize_t write_res = write(I->master_fd, prompt_setup, strlen(prompt_setup));
             if( write_res == -1 ) {
-                std::cout << "write() error: " << errno
-                    << ", verbose: " << strerror(errno) << std::endl;
+                std::cout << "write() error: " << errno << ", verbose: " << strerror(errno)
+                          << std::endl;
             }
         }
-        
+
         return true;
-    }
-    else { // fork_rc == 0
+    } else { // fork_rc == 0
         // slave/child
         SetupTermios(slave_fd);
         SetTermWindow(slave_fd, I->term_sx, I->term_sy);
         SetupHandlesAndSID(slave_fd);
-        
+
         chdir(_work_dir);
-        
+
         // put basic environment stuff
         SetEnv(env);
-        
+
         // put custom variables if any
         SetEnv(I->custom_env_vars);
-        
+
         if( I->shell_type != ShellType::TCSH ) {
             // setup piping for CWD prompt
             // using FDs g_PromptPipe/g_SemaphorePipe becuse bash is closing fds [3,20) upon
@@ -333,16 +328,16 @@ bool ShellTask::Launch(const char *_work_dir)
             rc = dup2(I->semaphore_pipe[0], g_SemaphorePipe);
             assert(rc == g_SemaphorePipe);
         }
-        
+
         // say BASH to not put into history any command starting with space character
         putenv((char *)"HISTCONTROL=ignorespace");
-        
+
         // close all file descriptors except [0], [1], [2] and [g_PromptPipe][g_SemaphorePipe]
         nc::base::CloseFromExcept(3, std::array<int, 2>{g_PromptPipe, g_SemaphorePipe});
-        
+
         // execution of the program
-        execv( I->shell_path.c_str(), BuildShellArgs() );
-        
+        execv(I->shell_path.c_str(), BuildShellArgs());
+
         // we never get here in normal condition
         exit(-1);
     }
@@ -355,34 +350,33 @@ void ShellTask::ReadChildOutput()
 
     static const int input_sz = 65536;
     char input[65536];
-    
+
     while( true ) {
         // Wait for data from standard input and master side of PTY
         FD_ZERO(&fd_in);
         FD_SET(I->master_fd, &fd_in);
         FD_SET(I->cwd_pipe[0], &fd_in);
-        
+
         FD_ZERO(&fd_err);
         FD_SET(I->master_fd, &fd_err);
-        
+
         int max_fd = std::max((int)I->master_fd, I->cwd_pipe[0]);
-        
-//        std::cerr << "blocking on select()" << std::endl;
+
+        //        std::cerr << "blocking on select()" << std::endl;
         rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
         if( I->shell_pid < 0 ) {
-//            std::cerr << "I->shell_pid < 0, returning" << std::endl;
+            //            std::cerr << "I->shell_pid < 0, returning" << std::endl;
             break; // shell is dead
         }
-        
+
         if( rc < 0 ) {
-//            std::cerr << "select(max_fd + 1, &fd_in, NULL, &fd_err, NULL) returned "
-//                << rc << std::endl;
+            //            std::cerr << "select(max_fd + 1, &fd_in, NULL, &fd_err, NULL) returned "
+            //                << rc << std::endl;
             // error on select(), let's think that shell has died
             // mb call ShellDied() here?
             break;
         }
-        
-        
+
         // If data on master side of PTY (some child's output)
         // Need to consume it first as it can be suppressed and we want to eat it before opening a
         // shell's semaphore.
@@ -392,25 +386,25 @@ void ShellTask::ReadChildOutput()
             if( !I->temporary_suppressed )
                 DoCalloutOnChildOutput(input, have_read);
         }
-        
+
         // check prompt's output
         if( FD_ISSET(I->cwd_pipe[0], &fd_in) ) {
             rc = (int)read(I->cwd_pipe[0], input, input_sz);
             if( rc > 0 )
                 ProcessPwdPrompt(input, rc);
         }
-        
+
         // check if child process died
         if( FD_ISSET(I->master_fd, &fd_err) ) {
-//            std::cout << "shell died: FD_ISSET(I->master_fd, &fd_err)" << std::endl;
+            //            std::cout << "shell died: FD_ISSET(I->master_fd, &fd_err)" << std::endl;
             if( !I->is_shutting_down )
-//                dispatch_to_main_queue([=]{
+                //                dispatch_to_main_queue([=]{
                 ShellDied();
-//                });
+            //                });
             break;
         }
     } // End while
-//    std::cerr << "done with ReadChildOutput()" << std::endl;
+    //    std::cerr << "done with ReadChildOutput()" << std::endl;
 }
 
 void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
@@ -420,34 +414,33 @@ void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
     bool do_nr_hack = false;
     bool current_wd_changed = false;
 
-    LOCK_GUARD(I->lock) {
+    LOCK_GUARD(I->lock)
+    {
         char tmp[1024];
         memcpy(tmp, _d, _sz);
         tmp[_sz] = 0;
-                
-        while(strlen(tmp) > 0 && ( // need MOAR slow strlens in this while! gimme MOAR!!!!!
-                                  tmp[strlen(tmp)-1] == '\n' ||
-                                  tmp[strlen(tmp)-1] == '\r' ))
-            tmp[strlen(tmp)-1] = 0;
-        
+
+        while( strlen(tmp) > 0 &&
+               ( // need MOAR slow strlens in this while! gimme MOAR!!!!!
+                   tmp[strlen(tmp) - 1] == '\n' || tmp[strlen(tmp) - 1] == '\r') )
+            tmp[strlen(tmp) - 1] = 0;
+
         I->cwd = tmp;
         if( I->cwd.empty() || I->cwd.back() != '/' )
             I->cwd += '/';
-        
-        if(current_cwd != I->cwd) {
+
+        if( current_cwd != I->cwd ) {
             current_cwd = I->cwd;
             current_wd_changed = true;
         }
-        
-        if(I->state == TaskState::ProgramExternal ||
-           I->state == TaskState::ProgramInternal ) {
+
+        if( I->state == TaskState::ProgramExternal || I->state == TaskState::ProgramInternal ) {
             // shell just finished running something - let's back it to StateShell state
             SetState(TaskState::Shell);
         }
-        
-        if( I->temporary_suppressed &&
-           (I->requested_cwd.empty() || I->requested_cwd == tmp) ) {
-                        
+
+        if( I->temporary_suppressed && (I->requested_cwd.empty() || I->requested_cwd == tmp) ) {
+
             I->temporary_suppressed = false;
             if( !I->requested_cwd.empty() ) {
                 I->requested_cwd = "";
@@ -455,102 +448,101 @@ void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
             }
         }
     }
-    
+
     if( I->requested_cwd.empty() )
         DoOnPwdPromptCallout(current_cwd.c_str(), current_wd_changed);
     if( do_nr_hack )
         DoCalloutOnChildOutput("\n\r", 2);
-    
+
     write(I->semaphore_pipe[1], "OK\n\r", 4);
 }
 
-
-void ShellTask::DoOnPwdPromptCallout( const char *_cwd, bool _changed ) const
+void ShellTask::DoOnPwdPromptCallout(const char *_cwd, bool _changed) const
 {
     I->callback_lock.lock();
     auto on_pwd = I->on_pwd_prompt;
     I->callback_lock.unlock();
-        
+
     if( on_pwd && *on_pwd )
         (*on_pwd)(_cwd, _changed);
 }
 
-void ShellTask::WriteChildInput( std::string_view _data )
+void ShellTask::WriteChildInput(std::string_view _data)
 {
     if( I->state == TaskState::Inactive || I->state == TaskState::Dead )
         return;
     if( _data.empty() )
         return;
 
-    LOCK_GUARD(I->master_write_lock) {
-        ssize_t rc = write( I->master_fd, _data.data(), _data.size() );
+    LOCK_GUARD(I->master_write_lock)
+    {
+        ssize_t rc = write(I->master_fd, _data.data(), _data.size());
         if( rc < 0 || rc != (ssize_t)_data.size() )
-            std::cerr << "write( m_MasterFD, _data.data(), _data.size() ) returned "
-                << rc << std::endl;
+            std::cerr << "write( m_MasterFD, _data.data(), _data.size() ) returned " << rc
+                      << std::endl;
     }
-    
+
     if( (_data.back() == '\n' || _data.back() == '\r') && I->state == TaskState::Shell ) {
         LOCK_GUARD(I->lock)
-            SetState(TaskState::ProgramInternal);
+        SetState(TaskState::ProgramInternal);
     }
 }
 
 void ShellTask::CleanUp()
 {
     std::lock_guard lock{I->lock};
-    
-    if(I->shell_pid > 0) {
+
+    if( I->shell_pid > 0 ) {
         const int pid = I->shell_pid;
         I->shell_pid = -1;
         KillAndReap(pid, std::chrono::milliseconds(400), std::chrono::milliseconds(1000));
     }
-    
-    if(I->master_fd >= 0) {
+
+    if( I->master_fd >= 0 ) {
         close(I->master_fd);
         I->master_fd = -1;
     }
 
-    if(I->cwd_pipe[0] >= 0) {
+    if( I->cwd_pipe[0] >= 0 ) {
         close(I->cwd_pipe[0]);
         I->cwd_pipe[0] = I->cwd_pipe[1] = -1;
     }
-    
-    if(I->semaphore_pipe[1] >= 0) {
+
+    if( I->semaphore_pipe[1] >= 0 ) {
         close(I->semaphore_pipe[1]);
         I->semaphore_pipe[0] = I->semaphore_pipe[1] = -1;
     }
-    
+
     if( !I->tcsh_fifo_path.empty() ) {
-        unlink( I->tcsh_fifo_path.c_str() );
+        unlink(I->tcsh_fifo_path.c_str());
         I->tcsh_fifo_path.clear();
     }
-    
+
     if( I->input_thread.joinable() ) {
         if( I->input_thread.get_id() == std::this_thread::get_id() ) {
             I->input_thread.detach();
-        }
-        else {
+        } else {
             I->input_thread.join();
         }
     }
-    
+
     I->temporary_suppressed = false;
     I->requested_cwd = "";
     I->cwd = "";
-    
+
     SetState(TaskState::Inactive);
 }
 
 void ShellTask::ShellDied()
 {
     dispatch_assert_background_queue();
-    
+
     // no need to call it if PID is already set to invalid - we're in closing state
     if( I->shell_pid <= 0 )
         return; // wtf this even is??
-    
+
     SetState(TaskState::Dead);
-    
+
     CleanUp();
 }
 
@@ -558,13 +550,13 @@ void ShellTask::SetState(TaskState _new_state)
 {
     if( I->state == _new_state )
         return;
-    
+
     I->state = _new_state;
-  
+
     I->callback_lock.lock();
     auto callback = I->on_state_changed;
     I->callback_lock.unlock();
-        
+
     if( callback && *callback )
         (*callback)(I->state);
 }
@@ -573,112 +565,100 @@ void ShellTask::ChDir(const char *_new_cwd)
 {
     if( I->state != TaskState::Shell )
         return;
-    
+
     auto requested_cwd = EnsureTrailingSlash(_new_cwd);
     LOCK_GUARD(I->lock)
-        if( I->cwd == requested_cwd )
-            return; // do nothing if current working directory is the same as requested
-    
-    requested_cwd = EnsureNoTrailingSlash( requested_cwd ); // cd command don't like trailing slashes
-    
-    // file I/O here    
+    if( I->cwd == requested_cwd )
+        return; // do nothing if current working directory is the same as requested
+
+    requested_cwd = EnsureNoTrailingSlash(requested_cwd); // cd command don't like trailing slashes
+
+    // file I/O here
     if( !IsDirectoryAvailableForBrowsing(requested_cwd) )
         return;
 
-    LOCK_GUARD(I->lock) {
+    LOCK_GUARD(I->lock)
+    {
         I->temporary_suppressed = true; // will show no output of shell when changing a directory
         I->requested_cwd = requested_cwd;
     }
-    
+
     std::string child_feed;
-    child_feed += "\x03"; // pass ctrl+C to shell to ensure that no previous user input (if any) will stay
+    child_feed +=
+        "\x03"; // pass ctrl+C to shell to ensure that no previous user input (if any) will stay
     child_feed += " cd '";
     child_feed += requested_cwd;
     child_feed += "'\n";
-    WriteChildInput( child_feed );
+    WriteChildInput(child_feed);
 }
 
 bool ShellTask::IsCurrentWD(const char *_what) const
 {
     char cwd[MAXPATHLEN];
     strcpy(cwd, _what);
-    
+
     if( !IsPathWithTrailingSlash(cwd) )
         strcat(cwd, "/");
-    
+
     return I->cwd == cwd;
 }
 
 void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_parameters)
 {
-    if(I->state != TaskState::Shell)
+    if( I->state != TaskState::Shell )
         return;
-    
-    std::string cmd = EscapeShellFeed( _short_fn );
-    
+
+    std::string cmd = EscapeShellFeed(_short_fn);
+
     // process cwd stuff if any
     char cwd[MAXPATHLEN];
     cwd[0] = 0;
-    if(_at != 0)
-    {
+    if( _at != 0 ) {
         strcpy(cwd, _at);
-        if(IsPathWithTrailingSlash(cwd) && strlen(cwd) > 1) // cd command don't like trailing slashes
-            cwd[strlen(cwd)-1] = 0;
-        
-        if(IsCurrentWD(cwd))
-        {
+        if( IsPathWithTrailingSlash(cwd) &&
+            strlen(cwd) > 1 ) // cd command don't like trailing slashes
+            cwd[strlen(cwd) - 1] = 0;
+
+        if( IsCurrentWD(cwd) ) {
             cwd[0] = 0;
-        }
-        else
-        {
-            if(!IsDirectoryAvailableForBrowsing(cwd)) // file I/O here
+        } else {
+            if( !IsDirectoryAvailableForBrowsing(cwd) ) // file I/O here
                 return;
         }
     }
-    
-    
+
     char input[2048];
-    if(cwd[0] != 0)
-        sprintf(input, "cd '%s'; ./%s%s%s\n",
-                cwd,
-                cmd.c_str(),
-                _parameters != nullptr ? " " : "",
-                _parameters != nullptr ? _parameters : ""
-                );
+    if( cwd[0] != 0 )
+        sprintf(input, "cd '%s'; ./%s%s%s\n", cwd, cmd.c_str(), _parameters != nullptr ? " " : "",
+                _parameters != nullptr ? _parameters : "");
     else
-        sprintf(input, "./%s%s%s\n",
-                cmd.c_str(),
-                _parameters != nullptr ? " " : "",
-                _parameters != nullptr ? _parameters : ""
-                );
-    
+        sprintf(input, "./%s%s%s\n", cmd.c_str(), _parameters != nullptr ? " " : "",
+                _parameters != nullptr ? _parameters : "");
+
     SetState(TaskState::ProgramExternal);
-    WriteChildInput( input );
+    WriteChildInput(input);
 }
 
 void ShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
 {
-    if(I->state != TaskState::Shell)
+    if( I->state != TaskState::Shell )
         return;
-    
+
     std::string cmd = EscapeShellFeed(_path);
-    
+
     char input[2048];
-    sprintf(input, "%s%s%s\n",
-            cmd.c_str(),
-            _parameters != nullptr ? " " : "",
-            _parameters != nullptr ? _parameters : ""
-            );
+    sprintf(input, "%s%s%s\n", cmd.c_str(), _parameters != nullptr ? " " : "",
+            _parameters != nullptr ? _parameters : "");
 
     SetState(TaskState::ProgramExternal);
-    WriteChildInput( input );
+    WriteChildInput(input);
 }
 
 std::vector<std::string> ShellTask::ChildrenList() const
 {
     if( I->state == TaskState::Inactive || I->state == TaskState::Dead || I->shell_pid < 0 )
         return {};
-    
+
     size_t proc_cnt = 0;
     kinfo_proc *proc_list;
     if( nc::utility::GetBSDProcessList(&proc_list, &proc_cnt) != 0 )
@@ -688,38 +668,38 @@ std::vector<std::string> ShellTask::ChildrenList() const
     for( size_t i = 0; i < proc_cnt; ++i ) {
         int pid = proc_list[i].kp_proc.p_pid;
         int ppid = proc_list[i].kp_eproc.e_ppid;
-        
-again:  if( ppid == I->shell_pid ) {
+
+    again:
+        if( ppid == I->shell_pid ) {
             char name[1024];
-            int ret = proc_name( pid, name, sizeof(name) );
+            int ret = proc_name(pid, name, sizeof(name));
             result.emplace_back(ret > 0 ? name : proc_list[i].kp_proc.p_comm);
-        }
-        else if( ppid >= 1024 )
+        } else if( ppid >= 1024 )
             for( size_t j = 0; j < proc_cnt; ++j )
                 if( proc_list[j].kp_proc.p_pid == ppid ) {
                     ppid = proc_list[j].kp_eproc.e_ppid;
                     goto again;
                 }
     }
-    
-    free( proc_list );
+
+    free(proc_list);
     return result;
 }
 
 int ShellTask::ShellChildPID() const
 {
-    if(I->state == TaskState::Inactive || I->state == TaskState::Dead ||
-       I->state == TaskState::Shell || I->shell_pid < 0)
+    if( I->state == TaskState::Inactive || I->state == TaskState::Dead ||
+        I->state == TaskState::Shell || I->shell_pid < 0 )
         return -1;
-    
+
     size_t proc_cnt = 0;
     kinfo_proc *proc_list;
-    if(nc::utility::GetBSDProcessList(&proc_list, &proc_cnt) != 0)
+    if( nc::utility::GetBSDProcessList(&proc_list, &proc_cnt) != 0 )
         return -1;
-    
+
     int child_pid = -1;
-    
-    for(size_t i = 0; i < proc_cnt; ++i) {
+
+    for( size_t i = 0; i < proc_cnt; ++i ) {
         int pid = proc_list[i].kp_proc.p_pid;
         int ppid = proc_list[i].kp_eproc.e_ppid;
         if( ppid == I->shell_pid ) {
@@ -727,7 +707,7 @@ int ShellTask::ShellChildPID() const
             break;
         }
     }
-    
+
     free(proc_list);
     return child_pid;
 }
@@ -745,7 +725,7 @@ void ShellTask::ResizeWindow(int _sx, int _sy)
 
     I->term_sx = _sx;
     I->term_sy = _sy;
-    
+
     if( I->state != TaskState::Inactive && I->state != TaskState::Dead )
         Task::SetTermWindow(I->master_fd, _sx, _sy);
 }
@@ -755,19 +735,19 @@ void ShellTask::Terminate()
     CleanUp();
 }
 
-void ShellTask::SetOnPwdPrompt( OnPwdPrompt _callback )
+void ShellTask::SetOnPwdPrompt(OnPwdPrompt _callback)
 {
-    auto callback = to_shared_ptr( std::move(_callback) );
+    auto callback = to_shared_ptr(std::move(_callback));
     I->callback_lock.lock();
     I->on_pwd_prompt = std::move(callback);
     I->callback_lock.unlock();
 }
 
-void ShellTask::SetOnStateChange( OnStateChange _callback )
+void ShellTask::SetOnStateChange(OnStateChange _callback)
 {
-    auto callback = to_shared_ptr( std::move(_callback) );
+    auto callback = to_shared_ptr(std::move(_callback));
     I->callback_lock.lock();
-    I->on_state_changed = move( callback );
+    I->on_state_changed = move(callback);
     I->callback_lock.unlock();
 }
 
@@ -786,7 +766,7 @@ void ShellTask::SetEnvVar(const std::string &_var, const std::string &_value)
     I->custom_env_vars.emplace_back(_var, _value);
 }
 
-void ShellTask::AddCustomShellArgument( std::string_view argument )
+void ShellTask::AddCustomShellArgument(std::string_view argument)
 {
     if( argument.empty() )
         return;
@@ -797,21 +777,20 @@ char **ShellTask::BuildShellArgs() const
 {
     if( I->shell_type == ShellType::Unknown )
         return nullptr;
-    
+
     const auto &custom_args = I->custom_shell_args;
-    
+
     if( !custom_args.empty() ) {
         // Feed the custom arguments
-        char **args = new char*[custom_args.size()+1];
+        char **args = new char *[custom_args.size() + 1];
         for( size_t i = 0; i != custom_args.size(); ++i )
             args[i] = strdup(custom_args[i].c_str());
         args[custom_args.size()] = nullptr;
         return args;
-    }
-    else {
+    } else {
         // Feed the built-in ones
         return g_ShellParams[static_cast<int>(I->shell_type)];
     }
 }
 
-}
+} // namespace nc::term

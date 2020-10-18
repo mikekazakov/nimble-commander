@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindow.h"
 #include <Utility/SystemInformation.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
@@ -15,34 +15,30 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 
 @implementation NCMainWindow
 
-+ (NSString*) defaultIdentifier
++ (NSString *)defaultIdentifier
 {
     return g_Identifier;
 }
 
-+ (NSString*) defaultFrameIdentifier
++ (NSString *)defaultFrameIdentifier
 {
     return g_FrameIdentifier;
 }
 
-- (instancetype) init
+- (instancetype)init
 {
-    static const auto flags = []{
-        auto f = 
-            NSResizableWindowMask |
-            NSTitledWindowMask |
-            NSClosableWindowMask |
-            NSMiniaturizableWindowMask |
-            NSTexturedBackgroundWindowMask |
-            NSWindowStyleMaskFullSizeContentView;
+    static const auto flags = [] {
+        auto f = NSWindowStyleMaskResizable | NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
+                 NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskTexturedBackground |
+                 NSWindowStyleMaskFullSizeContentView;
         if( nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_14 ) {
             // on Mojave the header bar looks like shit with the textured window background,
             // thus turning it off.
-            f &= ~NSTexturedBackgroundWindowMask;
+            f &= ~NSWindowStyleMaskTexturedBackground;
         }
         return f;
     }();
-    
+
     if( self = [super initWithContentRect:g_InitialWindowContentRect
                                 styleMask:flags
                                   backing:NSBackingStoreBuffered
@@ -52,20 +48,17 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
         self.restorable = true;
         self.identifier = g_Identifier;
         self.title = @"";
-        
+
         // window placement logic below:
         // (it may be later overwritten by Cocoa's restoration mechanism)
         if( auto mwc = NCMainWindowController.lastFocused ) {
             // if there's any previous main window alive - copy that frame initially
-            [self setFrame:mwc.window.frame
-                   display:false
-                   animate:false];
+            [self setFrame:mwc.window.frame display:false animate:false];
             // then cascade it using built-in AppKit logic:
             auto cascade_loc = NSMakePoint(0, 0);
             cascade_loc = [self cascadeTopLeftFromPoint:cascade_loc]; // init cascasing
             [self cascadeTopLeftFromPoint:cascade_loc]; // actually cascade this window
-        }
-        else {
+        } else {
             // if there's no alive window - grab previous value from user defaults
             if( ![self setFrameUsingName:g_FrameIdentifier] ) {
                 // if we somehow don't have it - simply center window
@@ -75,13 +68,11 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 
         if( nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_12 )
             self.tabbingMode = NSWindowTabbingModeDisallowed;
-        
-        [self setAutorecalculatesContentBorderThickness:false
-                                                forEdge:NSMinYEdge];
-        [self setContentBorderThickness:40
-                                forEdge:NSMinYEdge];
-        
-//        self.contentView.wantsLayer = YES;
+
+        [self setAutorecalculatesContentBorderThickness:false forEdge:NSMinYEdge];
+        [self setContentBorderThickness:40 forEdge:NSMinYEdge];
+
+        //        self.contentView.wantsLayer = YES;
         nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self);
         [self invalidateShadow];
     }
@@ -100,30 +91,33 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
     [super close];
 }
 
-+ (BOOL) allowsAutomaticWindowTabbing
++ (BOOL)allowsAutomaticWindowTabbing
 {
     return false;
 }
 
-static const auto g_CloseWindowTitle =
-    NSLocalizedString(@"Close Window", "Menu item title");
-- (BOOL) validateMenuItem:(NSMenuItem *)item
+static const auto g_CloseWindowTitle = NSLocalizedString(@"Close Window", "Menu item title");
+- (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     auto tag = item.tag;
-    
-    IF_MENU_TAG("menu.file.close") {
+
+    IF_MENU_TAG("menu.file.close")
+    {
         item.title = g_CloseWindowTitle;
         return true;
     }
-    IF_MENU_TAG("menu.file.close_window") {
+    IF_MENU_TAG("menu.file.close_window")
+    {
         item.hidden = true;
         return true;
     }
-    
+
     return [super validateMenuItem:item];
 }
 
-- (IBAction)OnFileCloseWindow:(id)[[maybe_unused]]_sender { /* dummy, never called */ }
+- (IBAction)OnFileCloseWindow:(id) [[maybe_unused]] _sender
+{ /* dummy, never called */
+}
 
 - (IBAction)toggleToolbarShown:(id)sender
 {

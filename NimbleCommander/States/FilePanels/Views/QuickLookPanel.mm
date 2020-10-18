@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickLookPanel.h"
 #include <Quartz/Quartz.h>
 #include "../MainWindowFilePanelState.h"
@@ -146,7 +146,7 @@ previewItemAtIndex:(NSInteger)index
 
 - (BOOL)previewPanel:(QLPreviewPanel *)[[maybe_unused]]_panel handleEvent:(NSEvent *)event
 {
-    if( event.type == NSKeyDown ) {
+    if( event.type == NSEventTypeKeyDown ) {
         auto main_wnd = NSApp.mainWindow;
         if( main_wnd &&
             main_wnd.visible ) {

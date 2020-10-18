@@ -8,44 +8,43 @@
 
 static const auto g_SSHdir = nc::base::CommonPaths::Home() + ".ssh/";
 
-@interface SFTPConnectionSheetController()
-@property (nonatomic) NSString *title;
-@property (nonatomic) NSString *server;
-@property (nonatomic) NSString *username;
-@property (nonatomic) NSString *passwordEntered;
-@property (nonatomic) NSString *port;
-@property (nonatomic) NSString *keypath;
-@property (nonatomic) IBOutlet NSButton *connectButton;
-@property (nonatomic) bool isValid;
-@property (nonatomic) bool invalidPassword;
-@property (nonatomic) bool invalidKeypath;
+@interface SFTPConnectionSheetController ()
+@property(nonatomic) NSString *title;
+@property(nonatomic) NSString *server;
+@property(nonatomic) NSString *username;
+@property(nonatomic) NSString *passwordEntered;
+@property(nonatomic) NSString *port;
+@property(nonatomic) NSString *keypath;
+@property(nonatomic) IBOutlet NSButton *connectButton;
+@property(nonatomic) bool isValid;
+@property(nonatomic) bool invalidPassword;
+@property(nonatomic) bool invalidKeypath;
 
 @end
 
-static bool ValidateFileExistence( const std::string &_filepath )
+static bool ValidateFileExistence(const std::string &_filepath)
 {
     return access(_filepath.c_str(), R_OK) == 0;
 }
 
-@implementation SFTPConnectionSheetController
-{
+@implementation SFTPConnectionSheetController {
     std::optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::SFTP m_Connection;
 }
 
-- (id) init
+- (id)init
 {
     self = [super init];
-    if(self) {
-        
+    if( self ) {
+
         std::string rsa_path = g_SSHdir + "id_rsa";
         std::string dsa_path = g_SSHdir + "id_dsa";
-        
+
         if( ValidateFileExistence(rsa_path) )
             self.keypath = [NSString stringWithUTF8StdString:rsa_path];
         else if( ValidateFileExistence(dsa_path) )
             self.keypath = [NSString stringWithUTF8StdString:dsa_path];
-        
+
         self.isValid = false;
         self.invalidPassword = false;
         self.invalidKeypath = false;
@@ -53,7 +52,7 @@ static bool ValidateFileExistence( const std::string &_filepath )
     return self;
 }
 
-- (void) windowDidLoad
+- (void)windowDidLoad
 {
     [super windowDidLoad];
     nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
@@ -62,8 +61,7 @@ static bool ValidateFileExistence( const std::string &_filepath )
         self.connectButton.title = self.connectButton.alternateTitle;
 
     GA().PostScreenView("SFTP Connection");
-    
-    
+
     if( m_Original ) {
         auto &c = m_Original->Get<NetworkConnectionsManager::SFTP>();
         self.title = [NSString stringWithUTF8StdString:c.title];
@@ -72,50 +70,50 @@ static bool ValidateFileExistence( const std::string &_filepath )
         self.keypath = [NSString stringWithUTF8StdString:c.keypath];
         self.port = [NSString stringWithFormat:@"%li", c.port];
     }
-    
-    [self validate];    
+
+    [self validate];
 }
 
-- (IBAction)OnConnect:(id)[[maybe_unused]]_sender
+- (IBAction)OnConnect:(id) [[maybe_unused]] _sender
 {
-    if( m_Original)
+    if( m_Original )
         m_Connection.uuid = m_Original->Uuid();
     else
-        m_Connection.uuid =  NetworkConnectionsManager::MakeUUID();
-    
+        m_Connection.uuid = NetworkConnectionsManager::MakeUUID();
+
     m_Connection.title = self.title.UTF8String ? self.title.UTF8String : "";
     m_Connection.host = self.server.UTF8String ? self.server.UTF8String : "";
     m_Connection.user = self.username ? self.username.UTF8String : "";
     m_Connection.keypath = self.keypath ? self.keypath.UTF8String : "";
     m_Connection.port = 22;
-    if(self.port.intValue != 0)
+    if( self.port.intValue != 0 )
         m_Connection.port = self.port.intValue;
-    
+
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)OnClose:(id)[[maybe_unused]]_sender
+- (IBAction)OnClose:(id) [[maybe_unused]] _sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (IBAction)OnChooseKey:(id)[[maybe_unused]]_sender
+- (IBAction)OnChooseKey:(id) [[maybe_unused]] _sender
 {
-    auto initial_dir = access(g_SSHdir.c_str(), X_OK) == 0 ?
-        g_SSHdir :
-        nc::base::CommonPaths::Home();
+    auto initial_dir =
+        access(g_SSHdir.c_str(), X_OK) == 0 ? g_SSHdir : nc::base::CommonPaths::Home();
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.allowsMultipleSelection = false;
     panel.canChooseFiles = true;
     panel.canChooseDirectories = false;
-    panel.directoryURL = [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:initial_dir]
-                                                isDirectory:true];
+    panel.directoryURL =
+        [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:initial_dir]
+                               isDirectory:true];
     [panel beginSheetModalForWindow:self.window
-                  completionHandler:^(NSInteger result){
-                      if(result == NSFileHandlingPanelOKButton) {
-                          self.keypath = panel.URL.path;
-                          [self validate];
-                      }
+                  completionHandler:^(NSInteger result) {
+                    if( result == NSModalResponseOK ) {
+                        self.keypath = panel.URL.path;
+                        [self validate];
+                    }
                   }];
 }
 
@@ -126,10 +124,10 @@ static bool ValidateFileExistence( const std::string &_filepath )
 
 - (NetworkConnectionsManager::Connection)connection
 {
-    return NetworkConnectionsManager::Connection( m_Connection );
+    return NetworkConnectionsManager::Connection(m_Connection);
 }
 
-- (void) setPassword:(std::string)password
+- (void)setPassword:(std::string)password
 {
     self.passwordEntered = [NSString stringWithUTF8StdString:password];
 }
@@ -151,9 +149,8 @@ static bool ValidateFileExistence( const std::string &_filepath )
 
 - (bool)validatePort
 {
-    return !self.port ||
-            (self.port.length == 0) ||
-            (self.port.intValue > 0 && self.port.intValue < 65'536);
+    return !self.port || (self.port.length == 0) ||
+           (self.port.intValue > 0 && self.port.intValue < 65'536);
 }
 
 - (bool)validateKeypath
@@ -170,18 +167,16 @@ static bool ValidateFileExistence( const std::string &_filepath )
         self.invalidPassword = false;
         return false;
     }
-    
+
     self.invalidKeypath = false;
 
-    nc::vfs::sftp::KeyValidator validator{self.keypath.fileSystemRepresentation,
-                                          self.passwordEntered.UTF8String ?
-                                          self.passwordEntered.UTF8String :
-                                          ""};
+    nc::vfs::sftp::KeyValidator validator{
+        self.keypath.fileSystemRepresentation,
+        self.passwordEntered.UTF8String ? self.passwordEntered.UTF8String : ""};
     if( validator.Validate() ) {
         self.invalidPassword = false;
         return true;
-    }
-    else {
+    } else {
         self.invalidPassword = true;
         return false;
     }
@@ -204,7 +199,7 @@ static bool ValidateFileExistence( const std::string &_filepath )
     self.isValid = valid_server && valid_username && valid_port && valid_password && valid_keypath;
 }
 
-- (void)controlTextDidChange:(NSNotification *)[[maybe_unused]]_obj
+- (void)controlTextDidChange:(NSNotification *) [[maybe_unused]] _obj
 {
     [self validate];
 }

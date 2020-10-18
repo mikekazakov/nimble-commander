@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
@@ -18,19 +18,19 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     static std::once_flag once;
     std::call_once(once, []{
         NSMutableParagraphStyle *p0 = [NSMutableParagraphStyle new];
-        p0.alignment = NSLeftTextAlignment;
+        p0.alignment = NSTextAlignmentLeft;
         p0.lineBreakMode = NSLineBreakByTruncatingHead;
         p0.allowsDefaultTighteningForTruncation = false;
         styles[0] = p0;
         
         NSMutableParagraphStyle *p1 = [NSMutableParagraphStyle new];
-        p1.alignment = NSLeftTextAlignment;
+        p1.alignment = NSTextAlignmentLeft;
         p1.lineBreakMode = NSLineBreakByTruncatingTail;
         p1.allowsDefaultTighteningForTruncation = false;
         styles[1] = p1;
         
         NSMutableParagraphStyle *p2 = [NSMutableParagraphStyle new];
-        p2.alignment = NSLeftTextAlignment;
+        p2.alignment = NSTextAlignmentLeft;
         p2.lineBreakMode = NSLineBreakByTruncatingMiddle;
         p2.allowsDefaultTighteningForTruncation = false;
         styles[2] = p2;
@@ -189,7 +189,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
                                       m_LayoutConstants.icon_size);
     [m_Icon drawInRect:icon_rect
               fromRect:NSZeroRect
-             operation:NSCompositeSourceOver
+             operation:NSCompositingOperationSourceOver
               fraction:1.0
         respectFlipped:false
                  hints:nil];
@@ -198,7 +198,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     if( m_IsSymlink )
         [g_SymlinkArrowImage drawInRect:icon_rect
                                fromRect:NSZeroRect
-                              operation:NSCompositeSourceOver
+                              operation:NSCompositingOperationSourceOver
                                fraction:1.0
                          respectFlipped:false
                                   hints:nil];

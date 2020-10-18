@@ -372,10 +372,13 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL*> *_source,
 
 bool DragReceiver::PerformWithURLsPromiseSource(const VFSPath& _dest)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     const auto drop_url = [NSURL fileURLWithFileSystemRepresentation:_dest.Path().c_str()
                                                          isDirectory:true
                                                        relativeToURL:nil];
     [m_Dragging namesOfPromisedFilesDroppedAtDestination:drop_url];
+#pragma clang diagnostic pop
     return true;
 }
 

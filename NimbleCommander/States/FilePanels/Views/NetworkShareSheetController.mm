@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkShareSheetController.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
@@ -125,7 +125,7 @@
     panel.showsHiddenFiles = true;
     panel.treatsFilePackagesAsDirectories = true;
 
-    if( [panel runModal] == NSFileHandlingPanelOKButton ) {
+    if( [panel runModal] == NSModalResponseOK ) {
         if( panel.URL )
             self.mountpath = panel.URL.path;
     }

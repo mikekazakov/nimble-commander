@@ -725,7 +725,7 @@ void Parser::ProcessKeyDown(NSEvent *_event)
         case NSPageUpFunctionKey:       seq_resp = "\e[5~";     break;
         case NSPageDownFunctionKey:     seq_resp = "\e[6~";     break;
         case 9: /* tab */
-            if (modflags & NSShiftKeyMask) /* do we really getting these messages? */
+            if (modflags & NSEventModifierFlagShift) /* do we really getting these messages? */
                 seq_resp = "\e[Z";
             else
                 seq_resp = "\011";
@@ -738,7 +738,7 @@ void Parser::ProcessKeyDown(NSEvent *_event)
     }
     
     // process regular keys down
-    if( modflags & NSControlKeyMask ) {
+    if( modflags & NSEventModifierFlagControl ) {
         unsigned short cc = 0xFFFF;
         if (unicode >= 'a' && unicode <= 'z')                           cc = unicode - 'a' + 1;
         else if (unicode == ' ' || unicode == '2' || unicode == '@')    cc = 0;
@@ -751,10 +751,10 @@ void Parser::ProcessKeyDown(NSEvent *_event)
         return;
     }
 
-    if( modflags & NSAlternateKeyMask )
+    if( modflags & NSEventModifierFlagOption )
         character = (NSString*)CFBridgingRelease(CreateModifiedCharactersForKeyPress(_event.keyCode,
                                                                                      modflags) );
-    else if( (modflags&NSDeviceIndependentModifierFlagsMask) == NSAlphaShiftKeyMask )
+    else if( (modflags&NSEventModifierFlagDeviceIndependentFlagsMask) == NSEventModifierFlagCapsLock )
         character = _event.characters;
     
     const char* utf8 = character.UTF8String;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ToggleSort.h"
 #include "../PanelController.h"
 #include "../PanelData.h"
@@ -34,11 +34,11 @@ static void UpdateItemState(NSMenuItem *_item,
 {
     if( _mode.sort == _direct || _mode.sort == _reversed ) {
         _item.image = ImageFromSortMode( _mode.sort );
-        _item.state = NSOnState;
+        _item.state = NSControlStateValueOn;
     }
     else {
         _item.image = nil;
-        _item.state = NSOffState;
+        _item.state = NSControlStateValueOff;
     }
 }
 

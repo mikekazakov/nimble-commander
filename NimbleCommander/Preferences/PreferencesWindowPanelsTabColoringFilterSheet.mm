@@ -1,25 +1,25 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include <Utility/StringExtras.h>
 
 using nc::hbn::tribool;
 using nc::hbn::indeterminate;
 
-static NSCellStateValue tribool_to_state(tribool _val)
+static NSControlStateValue tribool_to_state(tribool _val)
 {
     if(_val == false)
-        return NSOffState;
+        return NSControlStateValueOff;
     else if(_val == true)
-        return NSOnState;
+        return NSControlStateValueOn;
     else
-        return NSMixedState;
+        return NSControlStateValueMixed;
 }
 
-static tribool state_to_tribool(NSCellStateValue _val)
+static tribool state_to_tribool(NSControlStateValue _val)
 {
-    if(_val == NSOnState)
+    if(_val == NSControlStateValueOn)
         return true;
-    else if(_val == NSOffState)
+    else if(_val == NSControlStateValueOff)
         return false;
     else
         return indeterminate;

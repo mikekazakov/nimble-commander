@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMAttachedTabBarButton.h>
 #include <Habanero/CommonPaths.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
@@ -467,7 +467,7 @@ shouldDragTabViewItem:(NSTabViewItem *)[[maybe_unused]]tabViewItem
 {
     const auto handler = ^(MMAttachedTabBarButton* aButton, [[maybe_unused]] NSUInteger idx,
                            [[maybe_unused]] BOOL* stop) {
-      [aButton setNeedsDisplay];
+      [aButton setNeedsDisplay:true];
     };
     [m_SplitView.leftTabbedHolder.tabBar enumerateAttachedButtonsUsingBlock:handler];
     [m_SplitView.rightTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
@@ -494,7 +494,7 @@ static NSImage *ResizeImage( NSImage* _img, NSSize _new_size)
     NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
     [_img drawAtPoint:NSZeroPoint
              fromRect:CGRectMake(0, 0, _new_size.width, _new_size.height)
-            operation:NSCompositeCopy
+            operation:NSCompositingOperationCopy
              fraction:1.0];
     [small_img unlockFocus];
     

@@ -21,7 +21,7 @@ std::optional<std::string> AskUserForLicenseFile()
     const auto downloads_path = [NSString stringWithUTF8StdString:base::CommonPaths::Downloads()];
     panel.directoryURL = [[NSURL alloc] initFileURLWithPath:downloads_path isDirectory:true];
     panel.message = NSLocalizedString(@"Please select your license file (.nimblecommanderlicense)", "");
-    if( [panel runModal] == NSFileHandlingPanelOKButton )
+    if( [panel runModal] == NSModalResponseOK )
         if(panel.URL != nil) {
             std::string path = panel.URL.path.fileSystemRepresentationSafe;
             return path;

@@ -340,10 +340,10 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
     UniChar modChars[4];  // We only look for 4 flags
     unsigned int charCount = 0;
     // These are in the same order as the menu manager shows them
-    if (flags & NSControlKeyMask)   modChars[charCount++] = kControlUnicode;
-    if (flags & NSAlternateKeyMask) modChars[charCount++] = kOptionUnicode;
-    if (flags & NSShiftKeyMask)     modChars[charCount++] = kShiftUnicode;
-    if (flags & NSCommandKeyMask)   modChars[charCount++] = kCommandUnicode;
+    if (flags & NSEventModifierFlagControl)   modChars[charCount++] = kControlUnicode;
+    if (flags & NSEventModifierFlagOption) modChars[charCount++] = kOptionUnicode;
+    if (flags & NSEventModifierFlagShift)     modChars[charCount++] = kShiftUnicode;
+    if (flags & NSEventModifierFlagCommand)   modChars[charCount++] = kCommandUnicode;
     if (charCount == 0) return @"";
     return [NSString stringWithCharacters:modChars length:charCount];
 }
@@ -476,10 +476,10 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
         m_ClearButton.title = @"−";
         m_ClearButton.font = [NSFont labelFontOfSize:9];
         m_ClearButton.refusesFirstResponder = true;
-        m_ClearButton.bezelStyle = NSCircularBezelStyle;
+        m_ClearButton.bezelStyle = NSBezelStyleCircular;
         m_ClearButton.target = self;
         m_ClearButton.action = @selector(OnClearButton:);
-        ((NSButtonCell*)m_ClearButton.cell).controlSize = NSMiniControlSize;
+        ((NSButtonCell*)m_ClearButton.cell).controlSize = NSControlSizeMini;
         [self addSubview:m_ClearButton];
     }
     
@@ -488,10 +488,10 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
         m_RevertButton.title = @"↺";
         m_RevertButton.font = [NSFont labelFontOfSize:9];
         m_RevertButton.refusesFirstResponder = true;
-        m_RevertButton.bezelStyle = NSCircularBezelStyle;
+        m_RevertButton.bezelStyle = NSBezelStyleCircular;
         m_RevertButton.target = self;
         m_RevertButton.action = @selector(OnRevertButton:);
-        ((NSButtonCell*)m_RevertButton.cell).controlSize = NSMiniControlSize;
+        ((NSButtonCell*)m_RevertButton.cell).controlSize = NSControlSizeMini;
         [self addSubview:m_RevertButton];
     }
     
@@ -564,26 +564,26 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
 - (BOOL)shouldBypassEvent:(NSEvent *)theEvent {
   BOOL bypass = NO;
   UInt16 keyCode = theEvent.keyCode;
-  NSUInteger modifierFlags = theEvent.modifierFlags & NSDeviceIndependentModifierFlagsMask;
+    NSUInteger modifierFlags = theEvent.modifierFlags & NSEventModifierFlagDeviceIndependentFlagsMask;
 
   if (keyCode == 48) {  // Tab
     // Ignore all events that the dock cares about
     // Just to be extra clear if the user is trying to use Dock hotkeys beep
     // at them
-    if ((modifierFlags == NSCommandKeyMask) ||
-        (modifierFlags == (NSCommandKeyMask | NSShiftKeyMask))) {
+      if ((modifierFlags == NSEventModifierFlagCommand) ||
+          (modifierFlags == (NSEventModifierFlagCommand | NSEventModifierFlagShift))) {
       NSBeep();
       bypass = YES;
-    } else if (modifierFlags == 0 || modifierFlags == NSShiftKeyMask) {
+      } else if (modifierFlags == 0 || modifierFlags == NSEventModifierFlagShift) {
       // Probably attempting to tab around the dialog.
       bypass = YES;
     }
 
-  } else if ((keyCode == 12) && (modifierFlags == NSCommandKeyMask)) {
+  } else if ((keyCode == 12) && (modifierFlags == NSEventModifierFlagCommand)) {
     // Don't eat Cmd-Q. Users could have it as a hotkey, but its more likely
     // they're trying to quit
     bypass = YES;
-  } else if ((keyCode == 13) && (modifierFlags == NSCommandKeyMask)) {
+  } else if ((keyCode == 13) && (modifierFlags == NSEventModifierFlagCommand)) {
     // Same for Cmd-W, user is probably trying to close the window
     bypass = YES;
   }
@@ -597,7 +597,7 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
     GTMHotKey *newHotKey = GTMHotKey.emptyHotKey;
     NSString *prettyString = @"";
     // 51 is "the delete key"
-    static const NSUInteger allModifiers = (NSCommandKeyMask | NSAlternateKeyMask | NSControlKeyMask | NSShiftKeyMask);
+    static const NSUInteger allModifiers = (NSEventModifierFlagCommand | NSEventModifierFlagOption | NSEventModifierFlagControl | NSEventModifierFlagShift);
     if (!((theEvent.keyCode == 51 ) && ((theEvent.modifierFlags & allModifiers)== 0))) {
         newHotKey = [self hotKeyForEvent:theEvent];
         if (!newHotKey) {
@@ -639,7 +639,7 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
   NSUInteger flags = event.modifierFlags;
   UInt16 keycode = event.keyCode;
   // If the event has no modifiers do nothing
-  const NSUInteger allModifiers = (NSCommandKeyMask | NSAlternateKeyMask | NSControlKeyMask | NSShiftKeyMask);
+    const NSUInteger allModifiers = (NSEventModifierFlagCommand | NSEventModifierFlagOption | NSEventModifierFlagControl | NSEventModifierFlagShift);
 
   if ([self.cell doesKeyCodeRequireModifier:keycode]) {
     // If we aren't a function key, and have no modifiers do nothing.
@@ -658,10 +658,10 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
 
   // Clean the flags to only contain things we care about
   UInt32 cleanFlags = 0;
-  if (flags & NSCommandKeyMask)     cleanFlags |= NSCommandKeyMask;
-  if (flags & NSAlternateKeyMask)   cleanFlags |= NSAlternateKeyMask;
-  if (flags & NSControlKeyMask)     cleanFlags |= NSControlKeyMask;
-  if (flags & NSShiftKeyMask)       cleanFlags |= NSShiftKeyMask;
+    if (flags & NSEventModifierFlagCommand)     cleanFlags |= NSEventModifierFlagCommand;
+    if (flags & NSEventModifierFlagOption)   cleanFlags |= NSEventModifierFlagOption;
+    if (flags & NSEventModifierFlagControl)     cleanFlags |= NSEventModifierFlagControl;
+    if (flags & NSEventModifierFlagShift)       cleanFlags |= NSEventModifierFlagShift;
 //  return [GTMHotKey hotKeyWithKeyCode:keycode modifiers:cleanFlags];
     return [GTMHotKey hotKeyWithKey:stroke modifiers:cleanFlags];
     

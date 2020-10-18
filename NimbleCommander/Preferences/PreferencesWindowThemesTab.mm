@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowThemesTab.h"
 #include <Config/RapidJSON.h>
 #include <fstream>
@@ -338,7 +338,7 @@ child:(NSInteger)index ofItem:(nullable id)item
                                                          appropriateForURL:nil
                                                                     create:false
                                                                      error:nil];
-        if( [panel runModal] == NSFileHandlingPanelOKButton )
+        if( [panel runModal] == NSModalResponseOK )
             if( panel.URL != nil ) {
                 auto data = [NSData dataWithBytes:buffer.GetString()
                                            length:buffer.GetSize()];
@@ -387,7 +387,7 @@ child:(NSInteger)index ofItem:(nullable id)item
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.allowedFileTypes = @[@"json"];
     panel.allowsOtherFileTypes = false;
-    if( [panel runModal] == NSFileHandlingPanelOKButton && panel.URL != nil) {
+    if( [panel runModal] == NSModalResponseOK && panel.URL != nil) {
         NSURL *url = panel.URL;
         dispatch_to_main_queue_after(200ms, [=]{
             [self importThemeWithURL:url];

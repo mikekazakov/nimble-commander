@@ -2,6 +2,7 @@ BasedOnStyle: LLVM
 IndentWidth: 4
 ---
 Language: Cpp
+Language: ObjC
 Standard: Cpp11
 DerivePointerAlignment: false
 PointerAlignment: Right
@@ -20,4 +21,4 @@ BreakStringLiterals: true
 SortIncludes: false
 SpaceBeforeParens: Never
 SpacesInConditionalStatement: true
-
+SpacesInContainerLiterals: false

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefSystemOverview.h"
 #include <Utility/SystemInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
@@ -130,7 +130,7 @@ static NSTextField *CreateStockTF()
     ////////////////////////////////////////////////////////////////////////////////// Title
     NSTextField *title = CreateStockTF();
     title.stringValue = NSLocalizedString(@"Brief System Information", "Brief System Information overlay title");
-    title.alignment = NSCenterTextAlignment;
+    title.alignment = NSTextAlignmentCenter;
     title.font = [NSFont boldSystemFontOfSize:13];
     [self addSubview:title];
     
@@ -172,19 +172,19 @@ static NSTextField *CreateStockTF()
         [cpu_box addSubview:cpu_idle_title];
 
         m_TextCPULoadSystem = CreateStockTF();
-        m_TextCPULoadSystem.alignment = NSRightTextAlignment;
+        m_TextCPULoadSystem.alignment = NSTextAlignmentRight;
         m_TextCPULoadSystem.font = digits_font;
         m_TextCPULoadSystem.textColor = [NSColor colorWithCalibratedRed:1.00 green:0.15 blue:0.10 alpha:1.0];
         [cpu_box addSubview:m_TextCPULoadSystem];
     
         m_TextCPULoadUser = CreateStockTF();
-        m_TextCPULoadUser.alignment = NSRightTextAlignment;
+        m_TextCPULoadUser.alignment = NSTextAlignmentRight;
         m_TextCPULoadUser.font = digits_font;
         m_TextCPULoadUser.textColor = [NSColor colorWithCalibratedRed:0.10 green:0.15 blue:1.00 alpha:1.0];
         [cpu_box addSubview:m_TextCPULoadUser];
     
         m_TextCPULoadIdle = CreateStockTF();
-        m_TextCPULoadIdle.alignment = NSRightTextAlignment;
+        m_TextCPULoadIdle.alignment = NSTextAlignmentRight;
         m_TextCPULoadIdle.font = digits_font;
         [cpu_box addSubview:m_TextCPULoadIdle];
     
@@ -238,17 +238,17 @@ static NSTextField *CreateStockTF()
         [ram_box addSubview:ram_swap_title];
     
         m_TextMemTotal = CreateStockTF();
-        m_TextMemTotal.alignment = NSRightTextAlignment;
+        m_TextMemTotal.alignment = NSTextAlignmentRight;
         m_TextMemTotal.font = digits_font;
         [ram_box addSubview:m_TextMemTotal];
 
         m_TextMemUsed = CreateStockTF();
-        m_TextMemUsed.alignment = NSRightTextAlignment;
+        m_TextMemUsed.alignment = NSTextAlignmentRight;
         m_TextMemUsed.font = digits_font;
         [ram_box addSubview:m_TextMemUsed];
 
         m_TextMemSwap = CreateStockTF();
-        m_TextMemSwap.alignment = NSRightTextAlignment;
+        m_TextMemSwap.alignment = NSTextAlignmentRight;
         m_TextMemSwap.font = digits_font;
         [ram_box addSubview:m_TextMemSwap];
     
@@ -302,17 +302,17 @@ static NSTextField *CreateStockTF()
         [system_box addSubview:user_title];
         
         m_TextMachineModel = CreateStockTF();
-        m_TextMachineModel.alignment = NSRightTextAlignment;
+        m_TextMachineModel.alignment = NSTextAlignmentRight;
         m_TextMachineModel.font = text_font;
         [system_box addSubview:m_TextMachineModel];
     
         m_TextComputerName = CreateStockTF();
-        m_TextComputerName.alignment = NSRightTextAlignment;
+        m_TextComputerName.alignment = NSTextAlignmentRight;
         m_TextComputerName.font = text_font;
         [system_box addSubview:m_TextComputerName];
     
         m_TextUserName = CreateStockTF();
-        m_TextUserName.alignment = NSRightTextAlignment;
+        m_TextUserName.alignment = NSTextAlignmentRight;
         m_TextUserName.font = text_font;
         [system_box addSubview:m_TextUserName];
         
@@ -367,17 +367,17 @@ static NSTextField *CreateStockTF()
         [storage_box addSubview:free_title];
         
         m_TextVolumeName = CreateStockTF();
-        m_TextVolumeName.alignment = NSRightTextAlignment;
+        m_TextVolumeName.alignment = NSTextAlignmentRight;
         m_TextVolumeName.font = text_font;
         [storage_box addSubview:m_TextVolumeName];
     
         m_TextVolumeTotalBytes = CreateStockTF();
-        m_TextVolumeTotalBytes.alignment = NSRightTextAlignment;
+        m_TextVolumeTotalBytes.alignment = NSTextAlignmentRight;
         m_TextVolumeTotalBytes.font = digits_font;
         [storage_box addSubview:m_TextVolumeTotalBytes];
     
         m_TextVolumeAvailBytes = CreateStockTF();
-        m_TextVolumeAvailBytes.alignment = NSRightTextAlignment;
+        m_TextVolumeAvailBytes.alignment = NSTextAlignmentRight;
         m_TextVolumeAvailBytes.font = digits_font;
         [storage_box addSubview:m_TextVolumeAvailBytes];
     

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ContextMenu.h"
 #include "PanelController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
@@ -104,7 +104,7 @@ using namespace nc::panel;
         always_openwith.submenu = always_openwith_submenu;
         always_openwith.alternate = true;
         always_openwith.keyEquivalent = @"";
-        always_openwith.keyEquivalentModifierMask = NSAlternateKeyMask;
+        always_openwith.keyEquivalentModifierMask = NSEventModifierFlagOption;
         [self addItem:always_openwith];
 
         [self addItem:NSMenuItem.separatorItem];
@@ -126,7 +126,7 @@ using namespace nc::panel;
     delete_item.action = @selector(OnDeletePermanently:);
     delete_item.alternate = trash_item.hidden ? false : true;
     delete_item.keyEquivalent = @"";
-    delete_item.keyEquivalentModifierMask = trash_item.hidden ? 0 : NSAlternateKeyMask;
+    delete_item.keyEquivalentModifierMask = trash_item.hidden ? 0 : NSEventModifierFlagOption;
     [self addItem:delete_item];
 
     [self addItem:NSMenuItem.separatorItem];
@@ -149,7 +149,7 @@ using namespace nc::panel;
     compress_in_opposite_item.action = compression_enabled ? @selector(OnCompressToOppositePanel:) : nil;
     compress_in_opposite_item.keyEquivalent = @"";
     compress_in_opposite_item.alternate = YES;
-    compress_in_opposite_item.keyEquivalentModifierMask = NSAlternateKeyMask;
+    compress_in_opposite_item.keyEquivalentModifierMask = NSEventModifierFlagOption;
     [self addItem:compress_in_opposite_item];
     
     //////////////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalToolParameterValueSheetController.h"
 #include <Utility/CocoaAppearanceManager.h>
 #include <Utility/StringExtras.h>
@@ -40,8 +40,8 @@
     NSView *prev_block = nil;
     int number = 0;
     for( auto &s: m_ValueNames ) {
-    
-        NSView *v = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject:self.valueBlockView]];
+        auto data = [NSKeyedArchiver archivedDataWithRootObject:self.valueBlockView requiringSecureCoding:false error:nil];        
+        NSView *v = [NSKeyedUnarchiver unarchivedObjectOfClass:NSView.class fromData:data error:nil];
         
         NSTextField *tf1 = [v viewWithTag:1];
         if( !s.empty()  )

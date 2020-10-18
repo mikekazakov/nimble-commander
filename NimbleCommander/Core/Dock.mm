@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Dock.h"
 #include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <cmath>
@@ -25,7 +25,7 @@ Dock::Dock():
     
     const auto ind_rect = NSMakeRect(0, 0, m_Tile.size.width, 14);
     m_Indicator = [[NCCoreDockProgressIndicator alloc] initWithFrame:ind_rect];
-    m_Indicator.style = NSProgressIndicatorBarStyle;
+    m_Indicator.style = NSProgressIndicatorStyleBar;
     m_Indicator.indeterminate = false;
     m_Indicator.minValue = 0;
     m_Indicator.maxValue = 1;

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "../PanelController.h"
 #include "../PanelView.h"
@@ -19,10 +19,10 @@ static const char* Separator()
 static void WriteSingleStringToClipboard(const std::string &_s)
 {
     NSPasteboard *pb = NSPasteboard.generalPasteboard;
-    [pb declareTypes:@[NSStringPboardType]
+    [pb declareTypes:@[NSPasteboardTypeString]
                owner:nil];
     [pb setString:[NSString stringWithUTF8StdString:_s]
-          forType:NSStringPboardType];
+          forType:NSPasteboardTypeString];
 }
 
 bool CopyFileName::Predicate( PanelController *_source ) const

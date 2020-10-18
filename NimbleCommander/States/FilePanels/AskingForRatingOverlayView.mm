@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../../Core/FeedbackManager.h"
 #include "AskingForRatingOverlayView.h"
 #include <cmath>
@@ -68,7 +68,7 @@
         m_LevelIndicator.translatesAutoresizingMaskIntoConstraints = false;
         m_LevelIndicator.minValue = 0;
         m_LevelIndicator.maxValue = 5;
-        m_LevelIndicator.levelIndicatorStyle = NSRatingLevelIndicatorStyle;
+        m_LevelIndicator.levelIndicatorStyle = NSLevelIndicatorStyleRating;
         m_LevelIndicator.integerValue = 5;
         m_LevelIndicator.enabled = true;
         m_LevelIndicator.highlighted = true;
@@ -119,7 +119,7 @@
         m_DiscardButton.translatesAutoresizingMaskIntoConstraints = false;
         m_DiscardButton.image = [NSImage imageNamed:NSImageNameStopProgressFreestandingTemplate];
         m_DiscardButton.imagePosition = NSImageOnly;
-        m_DiscardButton.buttonType = NSMomentaryChangeButton;
+        m_DiscardButton.buttonType = NSButtonTypeMomentaryChange;
         m_DiscardButton.bordered = false;
         m_DiscardButton.target = self;
         m_DiscardButton.action = @selector(discardClicked:);

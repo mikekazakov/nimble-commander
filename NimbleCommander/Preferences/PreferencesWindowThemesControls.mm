@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <Utility/HexadecimalColor.h>
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
@@ -35,34 +35,33 @@
 
 @end
 
-@implementation PreferencesWindowThemesTabColorControl
-{
-    NSColor         *m_Color;
-    NCPreferencesAlphaColorWell  *m_ColorWell;
-    NSTextField     *m_Description;
+@implementation PreferencesWindowThemesTabColorControl {
+    NSColor *m_Color;
+    NCPreferencesAlphaColorWell *m_ColorWell;
+    NSTextField *m_Description;
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect
 {
     if( self = [super initWithFrame:frameRect] ) {
         m_Color = NSColor.blackColor;
-    
+
         m_ColorWell = [[NCPreferencesAlphaColorWell alloc] initWithFrame:NSRect()];
         m_ColorWell.translatesAutoresizingMaskIntoConstraints = false;
         m_ColorWell.color = m_Color;
         m_ColorWell.target = self;
         m_ColorWell.action = @selector(colorChanged:);
         [self addSubview:m_ColorWell];
-        
+
         m_Description = [[NSTextField alloc] initWithFrame:NSRect()];
         m_Description.translatesAutoresizingMaskIntoConstraints = false;
         m_Description.bordered = false;
         m_Description.editable = false;
         m_Description.drawsBackground = false;
         m_Description.font = [NSFont labelFontOfSize:11];
-        m_Description.stringValue = [m_Color toHexString];        
+        m_Description.stringValue = [m_Color toHexString];
         [self addSubview:m_Description];
-        
+
         auto views = NSDictionaryOfVariableBindings(m_ColorWell, m_Description);
         auto add_visfmt = [&](NSString *_layout) {
             auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_layout
@@ -81,18 +80,18 @@
 - (void)colorChanged:(id)sender
 {
     if( NSColorWell *cw = objc_cast<NSColorWell>(sender) ) {
-            if( cw.color != m_Color ) {
-                m_Color = cw.color;
-                m_Description.stringValue = [m_Color toHexString];
-                [self sendAction:self.action to:self.target];
-            }
+        if( cw.color != m_Color ) {
+            m_Color = cw.color;
+            m_Description.stringValue = [m_Color toHexString];
+            [self sendAction:self.action to:self.target];
         }
+    }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
-                        change:(NSDictionary *)[[maybe_unused]]change
-                       context:(void *)[[maybe_unused]]context
+                        change:(NSDictionary *) [[maybe_unused]] change
+                       context:(void *) [[maybe_unused]] context
 {
     if( [keyPath isEqualToString:@"color"] )
         if( NSColorWell *cw = objc_cast<NSColorWell>(object) ) {
@@ -104,12 +103,12 @@
         }
 }
 
-- (NSColor*)color
+- (NSColor *)color
 {
     return m_Color;
 }
 
-- (void) setColor:(NSColor *)color
+- (void)setColor:(NSColor *)color
 {
     if( !color )
         return;
@@ -122,25 +121,24 @@
 
 @end
 
-@implementation PreferencesWindowThemesTabFontControl
-{
-    NSFont      *m_Font;
-    NSButton    *m_Custom;
-    NSButton    *m_System;
+@implementation PreferencesWindowThemesTabFontControl {
+    NSFont *m_Font;
+    NSButton *m_Custom;
+    NSButton *m_System;
     NSTextField *m_Description;
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect
 {
     if( self = [super initWithFrame:frameRect] ) {
         m_Font = [NSFont systemFontOfSize:NSFont.systemFontSize];
-        
+
         m_Custom = [[NSButton alloc] initWithFrame:NSRect()];
         m_Custom.translatesAutoresizingMaskIntoConstraints = false;
         m_Custom.title = @"Custom";
         m_Custom.buttonType = NSButtonTypeMomentaryLight;
         m_Custom.bezelStyle = NSBezelStyleRecessed;
-        ((NSButtonCell*)m_Custom.cell).controlSize = NSMiniControlSize;
+        ((NSButtonCell *)m_Custom.cell).controlSize = NSControlSizeMini;
         m_Custom.target = self;
         m_Custom.action = @selector(onSetCustomFont:);
         [self addSubview:m_Custom];
@@ -150,11 +148,11 @@
         m_System.title = @"Standard";
         m_System.buttonType = NSButtonTypeMomentaryLight;
         m_System.bezelStyle = NSBezelStyleRecessed;
-        ((NSButtonCell*)m_System.cell).controlSize = NSMiniControlSize;
+        ((NSButtonCell *)m_System.cell).controlSize = NSControlSizeMini;
         m_System.target = self;
         m_System.action = @selector(onSetStandardFont:);
         [self addSubview:m_System];
-        
+
         m_Description = [[NSTextField alloc] initWithFrame:NSRect()];
         m_Description.translatesAutoresizingMaskIntoConstraints = false;
         m_Description.bordered = false;
@@ -164,33 +162,38 @@
         m_Description.usesSingleLineMode = true;
         m_Description.stringValue = [m_Font toStringDescription];
         [self addSubview:m_Description];
-        
+
         auto views = NSDictionaryOfVariableBindings(m_Custom, m_System, m_Description);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[m_Custom]-(==1)-[m_System]-[m_Description]-(>=0)-|"
-                                                                     options:0
-                                                                     metrics:nil
-                                                                       views:views]];
-        //NSLayoutAnchor
+        [self addConstraints:[NSLayoutConstraint
+                                 constraintsWithVisualFormat:
+                                     @"|[m_Custom]-(==1)-[m_System]-[m_Description]-(>=0)-|"
+                                                     options:0
+                                                     metrics:nil
+                                                       views:views]];
+        // NSLayoutAnchor
 
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_Custom
                                                          attribute:NSLayoutAttributeCenterY
                                                          relatedBy:NSLayoutRelationEqual
                                                             toItem:self
                                                          attribute:NSLayoutAttributeCenterY
-                                                        multiplier:1 constant:0]];
+                                                        multiplier:1
+                                                          constant:0]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_System
                                                          attribute:NSLayoutAttributeBaseline
                                                          relatedBy:NSLayoutRelationEqual
                                                             toItem:m_Custom
                                                          attribute:NSLayoutAttributeBaseline
-                                                        multiplier:1 constant:0]];
+                                                        multiplier:1
+                                                          constant:0]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_Description
                                                          attribute:NSLayoutAttributeCenterY
                                                          relatedBy:NSLayoutRelationEqual
                                                             toItem:self
                                                          attribute:NSLayoutAttributeCenterY
-                                                        multiplier:1 constant:0]];
-        
+                                                        multiplier:1
+                                                          constant:0]];
+
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_Custom(==18)]"
                                                                      options:0
                                                                      metrics:nil
@@ -203,12 +206,12 @@
     return self;
 }
 
-- (NSFont*)font
+- (NSFont *)font
 {
     return m_Font;
 }
 
-- (void) setFont:(NSFont *)font
+- (void)setFont:(NSFont *)font
 {
     if( !font )
         return;
@@ -218,7 +221,7 @@
     }
 }
 
-- (void) onSetCustomFont:(id)[[maybe_unused]]sender
+- (void)onSetCustomFont:(id) [[maybe_unused]] sender
 {
     NSFontManager *fontManager = NSFontManager.sharedFontManager;
     fontManager.target = self;
@@ -227,7 +230,7 @@
     [fontManager orderFrontFontPanel:self];
 }
 
-- (void) fontManagerChanged:(id)sender
+- (void)fontManagerChanged:(id)sender
 {
     const auto new_font = [sender convertFont:m_Font];
     if( new_font != m_Font ) {
@@ -237,27 +240,27 @@
     }
 }
 
-- (void) onSetStandardFont:(id)sender
+- (void)onSetStandardFont:(id)sender
 {
     auto menu = [[NSMenu alloc] init];
     const auto sizes = {10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36};
-    for( auto s: sizes ) {
+    for( auto s : sizes ) {
         auto item = [[NSMenuItem alloc] init];
         item.title = [NSString stringWithFormat:@"%d", s];
         item.tag = s;
         item.target = self;
         item.action = @selector(standardFontClicked:);
-        if( (int)std::floor(m_Font.pointSize+0.5) == s )
-            item.state = NSOnState;
+        if( (int)std::floor(m_Font.pointSize + 0.5) == s )
+            item.state = NSControlStateValueOn;
         [menu addItem:item];
     }
-    
+
     [menu popUpMenuPositioningItem:nil
                         atLocation:NSMakePoint(0, [sender bounds].size.height)
                             inView:sender];
 }
 
-- (void) standardFontClicked:(id)sender
+- (void)standardFontClicked:(id)sender
 {
     if( auto i = objc_cast<NSMenuItem>(sender) ) {
         const auto new_font = [NSFont systemFontOfSize:i.tag];
@@ -271,35 +274,33 @@
 
 @end
 
-@interface PreferencesWindowThemesTabColoringRulesControl()
-@property (nonatomic) IBOutlet NSView *carrier;
-@property (nonatomic) IBOutlet NSTableView *table;
-@property (nonatomic) IBOutlet NSSegmentedControl *plusMinus;
-
+@interface PreferencesWindowThemesTabColoringRulesControl ()
+@property(nonatomic) IBOutlet NSView *carrier;
+@property(nonatomic) IBOutlet NSTableView *table;
+@property(nonatomic) IBOutlet NSSegmentedControl *plusMinus;
 
 @end
 
 static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     @"PreferencesWindowThemesTabColoringRulesControlDataType";
 
-@implementation PreferencesWindowThemesTabColoringRulesControl
-{
+@implementation PreferencesWindowThemesTabColoringRulesControl {
     std::vector<nc::panel::PresentationItemsColoringRule> m_Rules;
-
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect
 {
     if( self = [super initWithFrame:frameRect] ) {
-    
-        NSNib *nib = [[NSNib alloc] initWithNibNamed:
-                      @"PreferencesWindowThemesTabColoringRulesControl" bundle:nil];
+
+        NSNib *nib =
+            [[NSNib alloc] initWithNibNamed:@"PreferencesWindowThemesTabColoringRulesControl"
+                                     bundle:nil];
         [nib instantiateWithOwner:self topLevelObjects:nil];
-        
+
         auto v = self.carrier;
         v.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:self.carrier];
-        
+
         auto views = NSDictionaryOfVariableBindings(v);
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[v]|"
                                                                      options:0
@@ -309,20 +310,19 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
                                                                      options:0
                                                                      metrics:nil
                                                                        views:views]];
-        
-        [self.table registerForDraggedTypes:
-            @[g_PreferencesWindowThemesTabColoringRulesControlDataType]];
+
+        [self.table
+            registerForDraggedTypes:@[g_PreferencesWindowThemesTabColoringRulesControlDataType]];
     }
     return self;
-    
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)[[maybe_unused]]tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]] tableView
 {
     return m_Rules.size();
 }
 
-- (void) setRules:(std::vector<nc::panel::PresentationItemsColoringRule>)rules
+- (void)setRules:(std::vector<nc::panel::PresentationItemsColoringRule>)rules
 {
     if( m_Rules != rules ) {
         m_Rules = rules;
@@ -355,14 +355,14 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
             }
 }
 
-- (NSView *)tableView:(NSTableView *)[[maybe_unused]]tableView
-   viewForTableColumn:(NSTableColumn *)tableColumn
-                  row:(NSInteger)row
+- (NSView *)tableView:(NSTableView *) [[maybe_unused]] tableView
+    viewForTableColumn:(NSTableColumn *)tableColumn
+                   row:(NSInteger)row
 {
     if( row >= (int)m_Rules.size() )
         return nil;
     auto &r = m_Rules[row];
-    if([tableColumn.identifier isEqualToString:@"name"]) {
+    if( [tableColumn.identifier isEqualToString:@"name"] ) {
         NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
         tf.stringValue = [NSString stringWithUTF8StdString:r.name];
         tf.bordered = false;
@@ -371,28 +371,27 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         tf.delegate = self;
         return tf;
     }
-    if([tableColumn.identifier isEqualToString:@"unfocused"]) {
+    if( [tableColumn.identifier isEqualToString:@"unfocused"] ) {
         NSColorWell *cw = [[NSColorWell alloc] initWithFrame:NSRect()];
         cw.color = r.regular;
         cw.target = self;
         cw.action = @selector(onColorChanged:);
         return cw;
     }
-    if([tableColumn.identifier isEqualToString:@"focused"]) {
+    if( [tableColumn.identifier isEqualToString:@"focused"] ) {
         NSColorWell *cw = [[NSColorWell alloc] initWithFrame:NSRect()];
         cw.color = r.focused;
         cw.target = self;
         cw.action = @selector(onColorChanged:);
         return cw;
     }
-    if([tableColumn.identifier isEqualToString:@"filter"]) {
+    if( [tableColumn.identifier isEqualToString:@"filter"] ) {
         NSButton *bt = [[NSButton alloc] initWithFrame:NSRect()];
-        bt.title = NSLocalizedStringFromTable(@"edit",
-                                              @"Preferences",
-                                              "Coloring rules edit button title");
+        bt.title =
+            NSLocalizedStringFromTable(@"edit", @"Preferences", "Coloring rules edit button title");
         bt.buttonType = NSButtonTypeMomentaryLight;
         bt.bezelStyle = NSBezelStyleRecessed;
-        ((NSButtonCell*)bt.cell).controlSize = NSMiniControlSize;
+        ((NSButtonCell *)bt.cell).controlSize = NSControlSizeMini;
         bt.target = self;
         bt.action = @selector(onColoringFilterClicked:);
         return bt;
@@ -400,9 +399,9 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     return nil;
 }
 
-- (void)tableView:(NSTableView *)[[maybe_unused]]tableView
+- (void)tableView:(NSTableView *) [[maybe_unused]] tableView
     didAddRowView:(NSTableRowView *)rowView
-           forRow:(NSInteger)[[maybe_unused]]row
+           forRow:(NSInteger) [[maybe_unused]] row
 {
     for( int i = 1; i <= 2; ++i ) {
         NSView *v = [rowView viewAtColumn:i];
@@ -432,107 +431,108 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     }
 }
 
-- (void) onColoringFilterClicked:(id)sender
+- (void)onColoringFilterClicked:(id)sender
 {
     if( auto button = objc_cast<NSButton>(sender) )
         if( auto rv = objc_cast<NSTableRowView>(button.superview) ) {
-            long row_no = [((NSTableView*)rv.superview) rowForView:rv];
+            long row_no = [((NSTableView *)rv.superview) rowForView:rv];
             auto sheet = [[PreferencesWindowPanelsTabColoringFilterSheet alloc]
                 initWithFilter:m_Rules.at(row_no).filter];
             [sheet beginSheetForWindow:self.window
                      completionHandler:^(NSModalResponse returnCode) {
-                         if( returnCode != NSModalResponseOK )
-                             return;
-                         if( sheet.filter != m_Rules.at(row_no).filter ) {
-                            m_Rules.at(row_no).filter = sheet.filter;
-                            [self commit];
-                         }
+                       if( returnCode != NSModalResponseOK )
+                           return;
+                       if( sheet.filter != m_Rules.at(row_no).filter ) {
+                           m_Rules.at(row_no).filter = sheet.filter;
+                           [self commit];
+                       }
                      }];
         }
 }
 
-- (NSDragOperation)tableView:(NSTableView *)[[maybe_unused]]aTableView
-                validateDrop:(id < NSDraggingInfo >)[[maybe_unused]]info
-                 proposedRow:(NSInteger)[[maybe_unused]]row
+- (NSDragOperation)tableView:(NSTableView *) [[maybe_unused]] aTableView
+                validateDrop:(id<NSDraggingInfo>) [[maybe_unused]] info
+                 proposedRow:(NSInteger) [[maybe_unused]] row
        proposedDropOperation:(NSTableViewDropOperation)operation
 {
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
 }
 
-- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
-writeRowsWithIndexes:(NSIndexSet *)rowIndexes
-     toPasteboard:(NSPasteboard *)pboard
+- (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
+    writeRowsWithIndexes:(NSIndexSet *)rowIndexes
+            toPasteboard:(NSPasteboard *)pboard
 {
-    [pboard declareTypes:@[g_PreferencesWindowThemesTabColoringRulesControlDataType]
-                   owner:self];
-    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes]
+    [pboard declareTypes:@[g_PreferencesWindowThemesTabColoringRulesControlDataType] owner:self];
+    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes
+                                          requiringSecureCoding:false
+                                                          error:nil]
             forType:g_PreferencesWindowThemesTabColoringRulesControlDataType];
     return true;
 }
 
-- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
+- (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
        acceptDrop:(id<NSDraggingInfo>)info
               row:(NSInteger)drag_to
-    dropOperation:(NSTableViewDropOperation)[[maybe_unused]]operation
+    dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
-    NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:[info.draggingPasteboard
-        dataForType:g_PreferencesWindowThemesTabColoringRulesControlDataType]];
+    auto data = [info.draggingPasteboard
+        dataForType:g_PreferencesWindowThemesTabColoringRulesControlDataType];
+    NSIndexSet *inds =
+        [NSKeyedUnarchiver unarchivedObjectOfClass:NSIndexSet.class fromData:data error:nil];
     NSInteger drag_from = inds.firstIndex;
-    
-    if(drag_to == drag_from || // same index, above
-       drag_to == drag_from + 1) // same index, below
-    return false;
-    
+
+    if( drag_to == drag_from ||    // same index, above
+        drag_to == drag_from + 1 ) // same index, below
+        return false;
+
     assert(drag_from < (int)m_Rules.size());
-    
+
     auto i = begin(m_Rules);
     if( drag_from < drag_to )
-        rotate( i + drag_from, i + drag_from + 1, i + drag_to );
+        rotate(i + drag_from, i + drag_from + 1, i + drag_to);
     else
-        rotate( i + drag_to, i + drag_from, i + drag_from + 1 );
+        rotate(i + drag_to, i + drag_from, i + drag_from + 1);
     [self.table reloadData];
     [self commit];
     return true;
 }
 
-- (IBAction)onPlusMinusButton:(id)[[maybe_unused]]sender
+- (IBAction)onPlusMinusButton:(id) [[maybe_unused]] sender
 {
     const auto segment = self.plusMinus.selectedSegment;
     if( segment == 0 ) {
         m_Rules.emplace_back();
         [self.table reloadData];
         [self commit];
-    }
-    else if( segment == 1 ) {
+    } else if( segment == 1 ) {
         const auto row = self.table.selectedRow;
         if( row < 0 )
             return;
-        m_Rules.erase( begin(m_Rules) + row );
+        m_Rules.erase(begin(m_Rules) + row);
         [self.table reloadData];
         [self commit];
     }
 }
 
-- (void) commit
+- (void)commit
 {
     [self sendAction:self.action to:self.target];
 }
 
 @end
 
-@implementation PreferencesWindowThemesAppearanceControl
-{
+@implementation PreferencesWindowThemesAppearanceControl {
     NSPopUpButton *m_Button;
     ThemeAppearance m_ThemeAppearance;
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect
 {
     if( self = [super initWithFrame:frameRect] ) {
         m_ThemeAppearance = ThemeAppearance::Light;
         m_Button = [[NSPopUpButton alloc] initWithFrame:NSRect()];
         m_Button.translatesAutoresizingMaskIntoConstraints = false;
-        ((NSPopUpButtonCell*)m_Button.cell).controlSize = NSControlSizeSmall;
+        ((NSPopUpButtonCell *)m_Button.cell).controlSize = NSControlSizeSmall;
         [m_Button addItemWithTitle:@"Aqua"];
         m_Button.lastItem.tag = (int)ThemeAppearance::Light;
         [m_Button addItemWithTitle:@"Dark"];
@@ -541,7 +541,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         m_Button.target = self;
         m_Button.action = @selector(onSelectionChanged:);
         [self addSubview:m_Button];
-        
+
         auto views = NSDictionaryOfVariableBindings(m_Button);
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[m_Button(>=80)]"
                                                                      options:0
@@ -552,12 +552,13 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
                                                          relatedBy:NSLayoutRelationEqual
                                                             toItem:self
                                                          attribute:NSLayoutAttributeCenterY
-                                                        multiplier:1 constant:0]];
+                                                        multiplier:1
+                                                          constant:0]];
     }
     return self;
 }
 
-- (void)onSelectionChanged:(id)[[maybe_unused]]sender
+- (void)onSelectionChanged:(id) [[maybe_unused]] sender
 {
     auto new_value = (ThemeAppearance)m_Button.selectedTag;
     if( new_value != m_ThemeAppearance ) {
@@ -590,4 +591,3 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 }
 
 @end
-

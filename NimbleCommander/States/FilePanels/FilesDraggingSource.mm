@@ -17,10 +17,13 @@ static const auto g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFil
 // "public.file-url"
 static const auto g_PasteboardFileURLUTI = (NSString *)kUTTypeFileURL;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(
     UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType,
                                           (__bridge CFStringRef)NSFilenamesPboardType,
                                           kUTTypeData));
+#pragma clang diagnostic pop
 
 @implementation PanelDraggingItem
 {

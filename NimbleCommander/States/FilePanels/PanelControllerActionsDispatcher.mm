@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActionsDispatcher.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/Alert.h>
@@ -124,7 +124,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
     }
     
     if(keycode == 51 && // backspace
-       (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 ) {
+       (modif & (NSEventModifierFlagShift|NSEventModifierFlagControl|NSEventModifierFlagOption|NSEventModifierFlagCommand)) == 0 ) {
         // treat not-processed by QuickSearch backspace as a GoToUpperLevel command
         if( _handle ) {
             actions::GoToEnclosingFolder{}.Perform(m_PC, m_PC);
@@ -177,6 +177,8 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         NSBeep();
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (id)validRequestorForSendType:(NSString *)sendType
                      returnType:(NSString *)returnType
 {
@@ -197,6 +199,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
                                                         pboard);
     return false;
 }
+#pragma clang diagnostic pop
 
 
 #define PERFORM Perform(_cmd, *m_AM, m_PC, sender)

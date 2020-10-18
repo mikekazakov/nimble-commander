@@ -662,7 +662,7 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
         @"Try using a name with fewer characters or without punctuation marks.",
         "Informative text when user is entering an invalid filename");
     a.informativeText = info;
-    a.alertStyle = NSCriticalAlertStyle;
+    a.alertStyle = NSAlertStyleCritical;
     [a runModal];
 }
 

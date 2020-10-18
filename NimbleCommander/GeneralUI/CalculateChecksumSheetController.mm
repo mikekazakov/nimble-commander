@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/Hash.h>
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -173,7 +173,7 @@ const static std::vector<std::pair<NSString*,int>> g_Algos = {
     self.Progress.doubleValue = 0;
     self.Progress.minValue = 0;
     self.Progress.maxValue = double(m_TotalSize);
-    self.Progress.controlSize = NSMiniControlSize;
+    self.Progress.controlSize = NSControlSizeMini;
     [self.Progress setIndeterminate:false];
     
     GA().PostScreenView("Calculate Checksum");

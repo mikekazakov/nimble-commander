@@ -150,8 +150,8 @@ static void CheckMASReceipt()
 
 static void CheckDefaultsReset()
 {
-    const auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask |
-                            NSAlternateKeyMask | NSCommandKeyMask;
+    const auto erase_mask = NSEventModifierFlagCapsLock | NSEventModifierFlagShift |
+    NSEventModifierFlagOption | NSEventModifierFlagCommand;
     if( (NSEvent.modifierFlags & erase_mask) == erase_mask )
         if( AskUserToResetDefaults() ) {
             ResetDefaults();
@@ -383,7 +383,7 @@ static NCAppDelegate *g_Me = nil;
 
 - (void)enableDebugMenuIfAsked
 {
-    const auto show_mask = NSAlternateKeyMask;
+    const auto show_mask = NSEventModifierFlagOption;
     const auto debug_submenu_tag = 17'020;
     if( (NSEvent.modifierFlags & show_mask) != show_mask ) {
         auto debug_submenu = [NSApp.mainMenu itemWithTagHierarchical:debug_submenu_tag];
@@ -399,8 +399,11 @@ static NCAppDelegate *g_Me = nil;
         [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a freshly new one
     
     NSApp.servicesProvider = self;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL]
                              returnTypes:@[]]; // pasteboard types provided by PanelController
+#pragma clang diagnostic pop
     NSUpdateDynamicServices();
     
     // Since we have different app names (Nimble Commander and Nimble Commander Pro) and one

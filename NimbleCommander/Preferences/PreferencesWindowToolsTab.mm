@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowToolsTab.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
@@ -10,17 +10,17 @@ using namespace std::literals;
 
 @interface PreferencesWindowToolsTab ()
 
-@property (nonatomic) IBOutlet NSTableView                            *toolsTable;
-@property (nonatomic) IBOutlet NSTextField                            *toolTitle;
-@property (nonatomic) IBOutlet NSTextField                            *toolPath;
-@property (nonatomic) IBOutlet NSTextField                            *toolParameters;
-@property (nonatomic) IBOutlet NSPopUpButton                          *toolStartupMode;
-@property (nonatomic) IBOutlet NSSegmentedControl                     *toolsAddRemove;
-@property (nonatomic) IBOutlet NSMenu                                 *parametersMenu;
-@property (nonatomic) IBOutlet NSButton                               *addParameterButton;
-@property (nonatomic) bool                                             anySelected;
-@property (readonly, nonatomic) bool                                haveCommandLineTools;
-@property (readonly, nonatomic) std::shared_ptr<const ExternalTool>    selectedTool;
+@property(nonatomic) IBOutlet NSTableView *toolsTable;
+@property(nonatomic) IBOutlet NSTextField *toolTitle;
+@property(nonatomic) IBOutlet NSTextField *toolPath;
+@property(nonatomic) IBOutlet NSTextField *toolParameters;
+@property(nonatomic) IBOutlet NSPopUpButton *toolStartupMode;
+@property(nonatomic) IBOutlet NSSegmentedControl *toolsAddRemove;
+@property(nonatomic) IBOutlet NSMenu *parametersMenu;
+@property(nonatomic) IBOutlet NSButton *addParameterButton;
+@property(nonatomic) bool anySelected;
+@property(readonly, nonatomic) bool haveCommandLineTools;
+@property(readonly, nonatomic) std::shared_ptr<const ExternalTool> selectedTool;
 
 @end
 
@@ -29,8 +29,12 @@ static auto g_MyPrivateTableViewDataType = @"PreferencesWindowToolsTabPrivateTab
 static bool AskUserToDeleteTool()
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedString(@"Are you sure you want to remove this tool?", "Asking the user for confirmation on deleting the external tool - message");
-    alert.informativeText = NSLocalizedString(@"This operation is not reversible.", "Asking the user for confirmation on deleting the external tool - message");
+    alert.messageText = NSLocalizedString(
+        @"Are you sure you want to remove this tool?",
+        "Asking the user for confirmation on deleting the external tool - message");
+    alert.informativeText = NSLocalizedString(
+        @"This operation is not reversible.",
+        "Asking the user for confirmation on deleting the external tool - message");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [alert.buttons objectAtIndex:0].keyEquivalent = @"";
@@ -39,14 +43,13 @@ static bool AskUserToDeleteTool()
     return false;
 }
 
-@implementation PreferencesWindowToolsTab
-{
-    std::function<ExternalToolsStorage&()>              m_ToolsStorage;
-    std::vector<std::shared_ptr<const ExternalTool>>    m_Tools;
-    ExternalToolsStorage::ObservationTicket             m_ToolsObserver;
+@implementation PreferencesWindowToolsTab {
+    std::function<ExternalToolsStorage &()> m_ToolsStorage;
+    std::vector<std::shared_ptr<const ExternalTool>> m_Tools;
+    ExternalToolsStorage::ObservationTicket m_ToolsObserver;
 }
 
-- (id) initWithToolsStorage:(std::function<ExternalToolsStorage&()>)_tool_storage
+- (id)initWithToolsStorage:(std::function<ExternalToolsStorage &()>)_tool_storage
 {
     assert(_tool_storage);
     self = [super init];
@@ -66,66 +69,68 @@ static bool AskUserToDeleteTool()
     return item;
 }
 
--(NSString*)identifier{
+- (NSString *)identifier
+{
     return NSStringFromClass(self.class);
 }
 
--(NSImage*)toolbarItemImage{
+- (NSImage *)toolbarItemImage
+{
     return [NSImage imageNamed:NSImageNameAdvanced];
 }
 
--(NSString*)toolbarItemLabel{
-    return NSLocalizedStringFromTable(@"Tools",
-                                      @"Preferences",
-                                      "Tools preferences tab title");
+- (NSString *)toolbarItemLabel
+{
+    return NSLocalizedStringFromTable(@"Tools", @"Preferences", "Tools preferences tab title");
 }
 
 - (void)loadView
 {
     [super loadView];
     m_Tools = m_ToolsStorage().GetAllTools();
-    m_ToolsObserver = m_ToolsStorage().ObserveChanges([=]{
-        dispatch_to_main_queue([=]{
+    m_ToolsObserver = m_ToolsStorage().ObserveChanges([=] {
+        dispatch_to_main_queue([=] {
             m_Tools = m_ToolsStorage().GetAllTools();
-  
+
             if( (long)m_Tools.size() != self.toolsTable.numberOfRows )
                 [self.toolsTable noteNumberOfRowsChanged];
-            [self.toolsTable reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, m_Tools.size())]
-                                       columnIndexes:[NSIndexSet indexSetWithIndex:0]];
-            
-            [self tableViewSelectionDidChange:[NSNotification notificationWithName:@""
-                                                                            object:nil]];
+            [self.toolsTable
+                reloadDataForRowIndexes:[NSIndexSet
+                                            indexSetWithIndexesInRange:NSMakeRange(0,
+                                                                                   m_Tools.size())]
+                          columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+
+            [self tableViewSelectionDidChange:[NSNotification notificationWithName:@"" object:nil]];
         });
     });
-    
-    [self.toolsTable registerForDraggedTypes:@[g_MyPrivateTableViewDataType]];
+
+    [self.toolsTable registerForDraggedTypes:@[ g_MyPrivateTableViewDataType ]];
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)[[maybe_unused]]tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]] tableView
 {
     return m_Tools.size();
 }
 
-- (NSView *)tableView:(NSTableView *)[[maybe_unused]]tableView
-   viewForTableColumn:(NSTableColumn *)[[maybe_unused]]tableColumn
-                  row:(NSInteger)row
+- (NSView *)tableView:(NSTableView *) [[maybe_unused]] tableView
+    viewForTableColumn:(NSTableColumn *) [[maybe_unused]] tableColumn
+                   row:(NSInteger)row
 {
     if( row >= (long)m_Tools.size() )
         return nil;
 
     auto &tool = m_Tools[row];
-    
+
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-    tf.stringValue = tool->m_Title.empty() ?
-        [NSString stringWithFormat:@"Tool #%ld", row] :
-        [NSString stringWithUTF8StdString:tool->m_Title];
+    tf.stringValue = tool->m_Title.empty() ? [NSString stringWithFormat:@"Tool #%ld", row]
+                                           : [NSString stringWithUTF8StdString:tool->m_Title];
     tf.bordered = false;
     tf.editable = false;
     tf.drawsBackground = false;
     return tf;
 }
 
-- (void)tableViewSelectionDidChange:(NSNotification *)[[maybe_unused]]notification
+- (void)tableViewSelectionDidChange:(NSNotification *) [[maybe_unused]] notification
 {
     NSInteger row = self.toolsTable.selectedRow;
     self.anySelected = row >= 0;
@@ -135,7 +140,7 @@ static bool AskUserToDeleteTool()
         [self clearFields];
 }
 
-- (void) fillFields
+- (void)fillFields
 {
     auto t = self.selectedTool;
     assert(t);
@@ -145,7 +150,7 @@ static bool AskUserToDeleteTool()
     [self.toolStartupMode selectItemWithTag:(int)t->m_StartupMode];
 }
 
-- (void) clearFields
+- (void)clearFields
 {
     self.toolTitle.stringValue = @"";
     self.toolPath.stringValue = @"";
@@ -153,21 +158,21 @@ static bool AskUserToDeleteTool()
     [self.toolStartupMode selectItemWithTag:(int)ExternalTool::StartupMode::Automatic];
 }
 
-- (std::shared_ptr<const ExternalTool>) selectedTool
+- (std::shared_ptr<const ExternalTool>)selectedTool
 {
     NSInteger row = self.toolsTable.selectedRow;
     return row < (long)m_Tools.size() ? m_Tools[row] : nullptr;
 }
 
-- (void) commitToolChanges:(const ExternalTool&)_et
+- (void)commitToolChanges:(const ExternalTool &)_et
 {
     NSInteger row = self.toolsTable.selectedRow;
-    assert( row >= 0 );
-    
+    assert(row >= 0);
+
     m_ToolsStorage().ReplaceTool(_et, row);
 }
 
-- (IBAction)onToolTitleChanged:(id)[[maybe_unused]]sender
+- (IBAction)onToolTitleChanged:(id) [[maybe_unused]] sender
 {
     if( auto t = self.selectedTool ) {
         if( t->m_Title != self.toolTitle.stringValue.UTF8String ) {
@@ -178,7 +183,7 @@ static bool AskUserToDeleteTool()
     }
 }
 
-- (IBAction)onToolPathChanged:(id)[[maybe_unused]]sender
+- (IBAction)onToolPathChanged:(id) [[maybe_unused]] sender
 {
     if( auto t = self.selectedTool ) {
         if( t->m_ExecutablePath != self.toolPath.stringValue.UTF8String ) {
@@ -189,21 +194,23 @@ static bool AskUserToDeleteTool()
     }
 }
 
-- (IBAction)onToolParametersChanged:(id)[[maybe_unused]]sender
+- (IBAction)onToolParametersChanged:(id) [[maybe_unused]] sender
 {
     if( auto t = self.selectedTool ) {
         if( t->m_Parameters != self.toolParameters.stringValue.UTF8String ) {
             ExternalTool changed_tool = *t;
             changed_tool.m_Parameters = self.toolParameters.stringValue.UTF8String;
             [self commitToolChanges:changed_tool];
-            
+
             std::string error;
             ExternalToolsParametersParser().Parse(changed_tool.m_Parameters,
-                                                  [&](std::string _err){ error = _err; });
+                                                  [&](std::string _err) { error = _err; });
             if( !error.empty() ) {
                 NSHelpManager *helpManager = [NSHelpManager sharedHelpManager];
-                [helpManager setContextHelp:[[NSAttributedString alloc] initWithString:[NSString stringWithUTF8StdString:error]]
-                                  forObject:self.toolParameters];
+                [helpManager
+                    setContextHelp:[[NSAttributedString alloc]
+                                       initWithString:[NSString stringWithUTF8StdString:error]]
+                         forObject:self.toolParameters];
                 [helpManager showContextHelpForObject:self.toolParameters
                                          locationHint:NSEvent.mouseLocation];
                 [helpManager removeContextHelpForObject:self.toolParameters];
@@ -212,20 +219,21 @@ static bool AskUserToDeleteTool()
     }
 }
 
-- (IBAction)onPlusMinusButton:(id)[[maybe_unused]]sender
+- (IBAction)onPlusMinusButton:(id) [[maybe_unused]] sender
 {
     const auto segment = self.toolsAddRemove.selectedSegment;
     if( segment == 0 ) {
-        m_ToolsStorage().InsertTool( ExternalTool() );
-        dispatch_to_main_queue_after(10ms, [=]{
+        m_ToolsStorage().InsertTool(ExternalTool());
+        dispatch_to_main_queue_after(10ms, [=] {
             if( self.toolsTable.numberOfRows > 0 ) {
-                [self.toolsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:self.toolsTable.numberOfRows-1]
-                             byExtendingSelection:false];
+                [self.toolsTable
+                        selectRowIndexes:[NSIndexSet
+                                             indexSetWithIndex:self.toolsTable.numberOfRows - 1]
+                    byExtendingSelection:false];
                 [self.view.window makeFirstResponder:self.toolTitle];
             }
         });
-    }
-    else if( segment == 1 ) {
+    } else if( segment == 1 ) {
         const auto row = self.toolsTable.selectedRow;
         if( row < 0 )
             return;
@@ -234,13 +242,12 @@ static bool AskUserToDeleteTool()
     }
 }
 
-- (IBAction)onAddParameter:(id)[[maybe_unused]]sender
+- (IBAction)onAddParameter:(id) [[maybe_unused]] sender
 {
     const auto rect = self.addParameterButton.bounds;
     [self.parametersMenu popUpMenuPositioningItem:nil
                                        atLocation:NSMakePoint(NSMinX(rect), NSMaxY(rect) + 4.0)
                                            inView:self.addParameterButton];
-
 }
 
 - (IBAction)onAddParametersMenuItemClicked:(id)sender
@@ -250,41 +257,43 @@ static bool AskUserToDeleteTool()
             [self insertStringIntoParameters:s];
 }
 
-- (IBAction)onStartupModeChanged:(id)[[maybe_unused]]sender
+- (IBAction)onStartupModeChanged:(id) [[maybe_unused]] sender
 {
     if( auto t = self.selectedTool ) {
         if( t->m_StartupMode != (ExternalTool::StartupMode)self.toolStartupMode.selectedTag ) {
             ExternalTool changed_tool = *t;
-            changed_tool.m_StartupMode = (ExternalTool::StartupMode)self.toolStartupMode.selectedTag;
+            changed_tool.m_StartupMode =
+                (ExternalTool::StartupMode)self.toolStartupMode.selectedTag;
             [self commitToolChanges:changed_tool];
         }
     }
 }
 
-- (void)insertStringIntoParameters:(NSString*)_str
+- (void)insertStringIntoParameters:(NSString *)_str
 {
-    NSString *current_parameters = self.toolParameters.stringValue ? self.toolParameters.stringValue : @"";
+    NSString *current_parameters =
+        self.toolParameters.stringValue ? self.toolParameters.stringValue : @"";
     if( self.toolParameters.currentEditor ) {
         NSRange range = self.toolParameters.currentEditor.selectedRange;
-        current_parameters = [current_parameters stringByReplacingCharactersInRange:range withString:_str];
-    }
-    else
+        current_parameters = [current_parameters stringByReplacingCharactersInRange:range
+                                                                         withString:_str];
+    } else
         current_parameters = [current_parameters stringByAppendingString:_str];
-    
+
     [self setNewParametersString:current_parameters];
 }
 
-- (void)setNewParametersString:(NSString*)_str
+- (void)setNewParametersString:(NSString *)_str
 {
     [self.toolParameters.undoManager registerUndoWithTarget:self
                                                    selector:@selector(setNewParametersString:)
                                                      object:self.toolParameters.stringValue];
-    
+
     self.toolParameters.stringValue = _str;
     [self onToolParametersChanged:self.toolParameters];
 }
 
-- (void)setNewPathString:(NSString*)_str
+- (void)setNewPathString:(NSString *)_str
 {
     [self.toolPath.undoManager registerUndoWithTarget:self
                                              selector:@selector(setNewPathString:)
@@ -293,7 +302,7 @@ static bool AskUserToDeleteTool()
     [self onToolPathChanged:self.toolPath];
 }
 
-- (void)setNewTitleString:(NSString*)_str
+- (void)setNewTitleString:(NSString *)_str
 {
     [self.toolTitle.undoManager registerUndoWithTarget:self
                                               selector:@selector(setNewPathString:)
@@ -302,11 +311,11 @@ static bool AskUserToDeleteTool()
     [self onToolTitleChanged:self.toolTitle];
 }
 
-- (IBAction)onSetApplicationPathButtonClicked:(id)[[maybe_unused]]sender
+- (IBAction)onSetApplicationPathButtonClicked:(id) [[maybe_unused]] sender
 {
     if( !self.selectedTool )
         return;
-    
+
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.resolvesAliases = false;
     panel.canChooseDirectories = true;
@@ -314,52 +323,55 @@ static bool AskUserToDeleteTool()
     panel.allowsMultipleSelection = false;
     panel.showsHiddenFiles = true;
     panel.treatsFilePackagesAsDirectories = true;
-    
+
     if( !self.selectedTool->m_ExecutablePath.empty() )
-        if( auto u = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:self.selectedTool->m_ExecutablePath]] )
+        if( auto u = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:self.selectedTool->
+                                                                              m_ExecutablePath]] )
             panel.directoryURL = u;
-    
-    if( [panel runModal] == NSFileHandlingPanelOKButton )
+
+    if( [panel runModal] == NSModalResponseOK )
         if( panel.URL ) {
             [self setNewPathString:panel.URL.path];
-            
+
             dispatch_to_main_queue_after(1ms, [=] {
                 if( auto t = self.selectedTool )
                     if( t->m_Title.empty() )
-                        if( NSString *name = [NSFileManager.defaultManager displayNameAtPath:panel.URL.path] )
+                        if( NSString *name =
+                                [NSFileManager.defaultManager displayNameAtPath:panel.URL.path] )
                             [self setNewTitleString:name];
             });
         }
 }
 
-- (NSDragOperation)tableView:(NSTableView *)[[maybe_unused]]aTableView
-validateDrop:(id < NSDraggingInfo >)[[maybe_unused]]info
-proposedRow:(NSInteger)[[maybe_unused]]row 
-proposedDropOperation:(NSTableViewDropOperation)operation
+- (NSDragOperation)tableView:(NSTableView *) [[maybe_unused]] aTableView
+                validateDrop:(id<NSDraggingInfo>) [[maybe_unused]] info
+                 proposedRow:(NSInteger) [[maybe_unused]] row
+       proposedDropOperation:(NSTableViewDropOperation)operation
 {
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
 }
 
-- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView 
-writeRowsWithIndexes:(NSIndexSet *)rowIndexes 
-toPasteboard:(NSPasteboard *)pboard
+- (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
+    writeRowsWithIndexes:(NSIndexSet *)rowIndexes
+            toPasteboard:(NSPasteboard *)pboard
 {
-    [pboard declareTypes:@[g_MyPrivateTableViewDataType]
-                   owner:self];
-    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes]
+    [pboard declareTypes:@[ g_MyPrivateTableViewDataType ] owner:self];
+    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes
+                                          requiringSecureCoding:false
+                                                          error:nil]
             forType:g_MyPrivateTableViewDataType];
     return true;
 }
 
-- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
+- (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
        acceptDrop:(id<NSDraggingInfo>)info
               row:(NSInteger)drag_to
-    dropOperation:(NSTableViewDropOperation)[[maybe_unused]]operation
+    dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
-    NSData* data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];
-    NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSData *data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];
+    NSIndexSet *inds =
+        [NSKeyedUnarchiver unarchivedObjectOfClass:NSIndexSet.class fromData:data error:nil];
     NSInteger drag_from = inds.firstIndex;
-
 
     if( drag_to == drag_from ||    // same index, above
         drag_to == drag_from + 1 ) // same index, below
@@ -367,13 +379,13 @@ toPasteboard:(NSPasteboard *)pboard
 
     if( drag_from < drag_to )
         drag_to--;
-    
-    m_ToolsStorage().MoveTool( drag_from, drag_to );
-    
+
+    m_ToolsStorage().MoveTool(drag_from, drag_to);
+
     return true;
 }
 
-- (bool) haveCommandLineTools
+- (bool)haveCommandLineTools
 {
     return nc::bootstrap::ActivationManager::Instance().HasTerminal();
 }

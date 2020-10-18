@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DragSender.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
@@ -150,7 +150,7 @@ static NSDraggingImageComponent *BuildLabelComponent(PanelDraggingItem* _item,
     
     static const auto attributes = [&]{
         NSMutableParagraphStyle *item_text_pstyle = [NSMutableParagraphStyle new];
-        item_text_pstyle.alignment = NSLeftTextAlignment;
+        item_text_pstyle.alignment = NSTextAlignmentLeft;
         item_text_pstyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
         const auto attrs = @{ NSFontAttributeName:_font,
                               NSForegroundColorAttributeName: NSColor.whiteColor,

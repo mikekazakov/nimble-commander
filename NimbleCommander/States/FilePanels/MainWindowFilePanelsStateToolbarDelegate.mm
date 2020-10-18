@@ -80,7 +80,7 @@ static const auto g_MaxPoolViewWith = 540.;
 - (void) buildBasicControls
 {
     m_LeftPanelGoToButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
-    m_LeftPanelGoToButton.bezelStyle = NSTexturedRoundedBezelStyle;
+    m_LeftPanelGoToButton.bezelStyle = NSBezelStyleTexturedRounded;
     m_LeftPanelGoToButton.refusesFirstResponder = true;
     m_LeftPanelGoToButton.title = @"";
     m_LeftPanelGoToButton.image = [NSImage imageNamed:NSImageNamePathTemplate];
@@ -88,7 +88,7 @@ static const auto g_MaxPoolViewWith = 540.;
     m_LeftPanelGoToButton.action = @selector(onLeftPanelGoToButtonAction:);
     
     m_RightPanelGoToButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
-    m_RightPanelGoToButton.bezelStyle = NSTexturedRoundedBezelStyle;
+    m_RightPanelGoToButton.bezelStyle = NSBezelStyleTexturedRounded;
     m_RightPanelGoToButton.refusesFirstResponder = true;
     m_RightPanelGoToButton.title = @"";
     m_RightPanelGoToButton.image = [NSImage imageNamed:NSImageNamePathTemplate];    
@@ -143,18 +143,19 @@ static NSImage *ImageForTool( const ExternalTool &_et)
      itemForItemIdentifier:(NSString *)itemIdentifier
  willBeInsertedIntoToolbar:(BOOL)[[maybe_unused]]_flag
 {
+    const auto &actman = ActionsShortcutsManager::Instance();
     if( [itemIdentifier isEqualToString:@"filepanels_left_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_LeftPanelGoToButton;
         item.paletteLabel = item.label = NSLocalizedString(@"Left GoTo", "Toolbar palette");
-        item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.go.left_panel").PrettyString();
+        item.toolTip = actman.ShortCutFromAction("menu.go.left_panel").PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"filepanels_right_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_RightPanelGoToButton;
         item.paletteLabel = item.label = NSLocalizedString(@"Right GoTo", "Toolbar palette");
-        item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.go.right_panel").PrettyString();
+        item.toolTip = actman.ShortCutFromAction("menu.go.right_panel").PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"operations_pool"] ) {

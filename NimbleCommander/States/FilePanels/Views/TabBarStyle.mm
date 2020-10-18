@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "TabBarStyle.h"
 #import <MMTabBarView/MMTabStyle.h>
 #import <MMTabBarView/MMAttachedTabBarButton.h>
@@ -193,7 +193,7 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
         });
     }
 
-    return NSMakeSize(NSViewNoInstrinsicMetric, 24);
+    return NSMakeSize(NSViewNoIntrinsicMetric, 24);
 }
 
 - (CGFloat)leftMarginForTabBarView:(MMTabBarView *)[[maybe_unused]]tabBarView {
@@ -290,7 +290,7 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
     static const auto paragraph_style = []()-> NSParagraphStyle* {
         NSMutableParagraphStyle *ps = NSParagraphStyle.defaultParagraphStyle.mutableCopy;
 		ps.lineBreakMode = NSLineBreakByTruncatingTail;
-		ps.alignment = NSCenterTextAlignment;
+        ps.alignment = NSTextAlignmentCenter;
         return ps;
     }();
 
@@ -355,7 +355,7 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
     const NSColor *bg_color = [&]{
         const MMTabBarView *tabBarView = [controlView enclosingTabBarView];
         const bool wnd_active = [tabBarView isWindowActive];
-        const bool tab_selected = [button state] == NSOnState;
+        const bool tab_selected = [button state] == NSControlStateValueOn;
         const bool button_hovered = [button mouseHovered];
         // this might not work, check!!!:
         const bool tab_isfr = tab_selected &&

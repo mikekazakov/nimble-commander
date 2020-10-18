@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FeedbackManager.h"
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <Habanero/CFDefaultsCPP.h>
@@ -225,29 +225,6 @@ void FeedbackManager::RateOnAppStore()
     NSString *mas_url = [NSString stringWithFormat:@"macappstore://itunes.apple.com/app/id%s",
                                                 nc::bootstrap::ActivationManager::Instance().AppStoreID().c_str()];
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
-}
-
-static const auto g_SocialMessage = NSLocalizedString(@"I use Nimble Commander, a great file manager for macOS! http://magnumbytes.com/", "Note for a social network share");
-
-void FeedbackManager::ShareOnFacebook()
-{
-    GA().PostEvent("Feedback", "Action", "Share on Facebook");
-    if( auto fb = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnFacebook] )
-        [fb performWithItems:@[g_SocialMessage]];
-}
-
-void FeedbackManager::ShareOnTwitter()
-{
-    GA().PostEvent("Feedback", "Action", "Share on Twitter");
-    if( auto tw = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnTwitter] )
-        [tw performWithItems:@[g_SocialMessage]];
-}
-
-void FeedbackManager::ShareOnLinkedIn()
-{
-    GA().PostEvent("Feedback", "Action", "Share on LinkedIn");
-    if( auto li = [NSSharingService sharingServiceNamed:NSSharingServiceNamePostOnLinkedIn] )
-        [li performWithItems:@[g_SocialMessage]];
 }
 
 int FeedbackManager::ApplicationRunsCount() const noexcept

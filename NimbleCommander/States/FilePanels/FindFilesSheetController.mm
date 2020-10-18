@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FindFilesSheetController.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/DispatchGroup.h>
@@ -362,7 +362,7 @@ private:
 - (IBAction)OnClose:(id)[[maybe_unused]]_sender
 {
     if( NSEvent *ev = NSApp.currentEvent )
-        if( ev.type == NSKeyDown && m_FileSearch->IsRunning() ) {
+        if( ev.type == NSEventTypeKeyDown && m_FileSearch->IsRunning() ) {
             // Close was triggered by Esc hotkey. just stop current search and don't close the dialog
             m_FileSearch->Stop();
             return;

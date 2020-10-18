@@ -29,41 +29,40 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return _ch >= 0x2500 && _ch <= 0x257F;
 }
 
-@implementation NCTermView
-{
-    Screen                 *m_Screen;
-    InputTranslator        *m_InputTranslator;
-    
-    int                     m_LastScreenFullHeight;
-    bool                    m_HasSelection;
-    bool                    m_ReportsSizeByOccupiedContent;
-    bool                    m_ShowCursor;
-    bool                    m_IsFirstResponder;
-    bool                    m_AllowCursorBlinking;
-    bool                    m_CursorShouldBlink;
-    bool                    m_HasVisibleBlinkingSpaces;
-    TermViewCursor          m_CursorType;
-    SelPoint                m_SelStart;
-    SelPoint                m_SelEnd;
+@implementation NCTermView {
+    Screen *m_Screen;
+    InputTranslator *m_InputTranslator;
+
+    int m_LastScreenFullHeight;
+    bool m_HasSelection;
+    bool m_ReportsSizeByOccupiedContent;
+    bool m_ShowCursor;
+    bool m_IsFirstResponder;
+    bool m_AllowCursorBlinking;
+    bool m_CursorShouldBlink;
+    bool m_HasVisibleBlinkingSpaces;
+    TermViewCursor m_CursorType;
+    SelPoint m_SelStart;
+    SelPoint m_SelEnd;
     Interpreter::RequestedMouseEvents m_MouseEvents;
-    
-    FPSLimitedDrawer       *m_FPS;
-    NSSize                  m_IntrinsicSize;
+
+    FPSLimitedDrawer *m_FPS;
+    NSSize m_IntrinsicSize;
     utility::BlinkScheduler m_BlinkScheduler;
-    NSFont                     *m_Font;
-    std::shared_ptr<FontCache>  m_FontCache;
-    NSFont                     *m_BoldFont;
-    std::shared_ptr<FontCache>  m_BoldFontCache;
-    NSColor                *m_ForegroundColor;
-    NSColor                *m_BoldForegroundColor;
-    NSColor                *m_BackgroundColor;
-    NSColor                *m_SelectionColor;
-    NSColor                *m_CursorColor;
-    NSColor                *m_AnsiColors[16];
-    NSColor                *m_FaintAnsiColors[16];
-    std::shared_ptr<Settings>m_Settings;
-    int                     m_SettingsNotificationTicket;
-    SelPoint                m_LastMouseCell;
+    NSFont *m_Font;
+    std::shared_ptr<FontCache> m_FontCache;
+    NSFont *m_BoldFont;
+    std::shared_ptr<FontCache> m_BoldFontCache;
+    NSColor *m_ForegroundColor;
+    NSColor *m_BoldForegroundColor;
+    NSColor *m_BackgroundColor;
+    NSColor *m_SelectionColor;
+    NSColor *m_CursorColor;
+    NSColor *m_AnsiColors[16];
+    NSColor *m_FaintAnsiColors[16];
+    std::shared_ptr<Settings> m_Settings;
+    int m_SettingsNotificationTicket;
+    SelPoint m_LastMouseCell;
 }
 
 @synthesize fpsDrawer = m_FPS;
@@ -72,7 +71,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
-    if (self) {
+    if( self ) {
         m_AllowCursorBlinking = true;
         m_IsFirstResponder = false;
         m_CursorShouldBlink = false;
@@ -81,11 +80,11 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_CursorType = TermViewCursor::Block;
         m_MouseEvents = Interpreter::RequestedMouseEvents::None;
         m_LastMouseCell = {0, 0};
-        
+
         __weak NCTermView *weak_self = self;
-        m_BlinkScheduler = utility::BlinkScheduler([weak_self]{
+        m_BlinkScheduler = utility::BlinkScheduler([weak_self] {
             if( auto me = weak_self ) {
-//                std::cerr << "Blink! " << (__bridge void*)me << std::endl;
+                //                std::cerr << "Blink! " << (__bridge void*)me << std::endl;
                 [me->m_FPS invalidate];
             }
         });
@@ -95,7 +94,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_ShowCursor = true;
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
         m_FPS.fps = 60;
-        m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, frame.size.height);
+        m_IntrinsicSize = NSMakeSize(NSViewNoIntrinsicMetric, frame.size.height);
         self.settings = DefaultSettings::SharedDefaultSettings();
     }
     return self;
@@ -103,7 +102,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
 {
-//    NSLog(@"%@ viewWillMoveToWindow: %@", self, _wnd);
+    //    NSLog(@"%@ viewWillMoveToWindow: %@", self, _wnd);
     static const auto notify = NSNotificationCenter.defaultCenter;
     if( self.window ) {
         [notify removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
@@ -118,13 +117,11 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
                    selector:@selector(viewStatusDidChange)
                        name:NSWindowDidResignKeyNotification
                      object:_wnd];
-    }
-    else {
+    } else {
         m_IsFirstResponder = false;
         [self viewStatusDidChange];
     }
 }
-
 
 - (BOOL)isFlipped
 {
@@ -138,7 +135,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (BOOL)becomeFirstResponder
 {
-//    NSLog(@"%@ becomeFirstResponder", self);
+    //    NSLog(@"%@ becomeFirstResponder", self);
     m_IsFirstResponder = true;
     [self viewStatusDidChange];
     return true;
@@ -146,29 +143,29 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (BOOL)resignFirstResponder
 {
-//    NSLog(@"%@ resignFirstResponder", self);
+    //    NSLog(@"%@ resignFirstResponder", self);
     m_IsFirstResponder = false;
     [self viewStatusDidChange];
     return true;
 }
 
--(BOOL) isOpaque
+- (BOOL)isOpaque
 {
-	return YES;
+    return YES;
 }
 
 - (term::Parser *)parser
 {
-//    return m_Parser;
+    //    return m_Parser;
     return nullptr;
 }
 
-- (const FontCache&) fontCache
+- (const FontCache &)fontCache
 {
     return *m_FontCache;
 }
 
-- (void) AttachToScreen:(term::Screen*)_scr
+- (void)AttachToScreen:(term::Screen *)_scr
 {
     m_Screen = _scr;
 }
@@ -178,18 +175,18 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 //    m_Parser = _par;
 //}
 
-- (void) AttachToInputTranslator:(nc::term::InputTranslator*)_input_translator
+- (void)AttachToInputTranslator:(nc::term::InputTranslator *)_input_translator
 {
-    m_InputTranslator = _input_translator;    
+    m_InputTranslator = _input_translator;
 }
 
-- (void) setAllowCursorBlinking:(bool)allowCursorBlinking
+- (void)setAllowCursorBlinking:(bool)allowCursorBlinking
 {
     m_AllowCursorBlinking = allowCursorBlinking;
     [self updateBlinkSheduling];
 }
 
-- (bool) allowCursorBlinking
+- (bool)allowCursorBlinking
 {
     return m_AllowCursorBlinking;
 }
@@ -206,15 +203,15 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void)keyDown:(NSEvent *)event
 {
-    NSString*  const character = [event charactersIgnoringModifiers];
-    if ( [character length] == 1 )
+    NSString *const character = [event charactersIgnoringModifiers];
+    if( [character length] == 1 )
         m_HasSelection = false;
 
     m_InputTranslator->ProcessKeyDown(event);
     [self scrollToBottom];
 }
 
-- (NSSize) intrinsicContentSize
+- (NSSize)intrinsicContentSize
 {
     return m_IntrinsicSize;
 }
@@ -223,8 +220,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     if( !m_ReportsSizeByOccupiedContent ) {
         return m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
-    }
-    else {
+    } else {
         int onscreen = 0;
         if( auto occupied = m_Screen->Buffer().OccupiedOnScreenLines() )
             onscreen = occupied->second;
@@ -239,27 +235,26 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     const int full_lines_height = self.fullScreenLinesHeight;
     if( full_lines_height == m_LastScreenFullHeight && _mandatory == false )
         return;
-    
+
     m_LastScreenFullHeight = full_lines_height;
     const auto full_lines_height_px = full_lines_height * m_FontCache->Height();
-    m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, full_lines_height_px);    
+    m_IntrinsicSize = NSMakeSize(NSViewNoIntrinsicMetric, full_lines_height_px);
     [self invalidateIntrinsicContentSize];
     [self.enclosingScrollView.contentView layoutSubtreeIfNeeded];
     [self scrollToBottom];
 }
 
-- (void) scrollToBottom
+- (void)scrollToBottom
 {
     auto scrollview = self.enclosingScrollView;
     auto clipview = scrollview.contentView;
-    
+
     auto h1 = self.frame.size.height;
     auto h2 = scrollview.contentSize.height;
-    if( h1 > h2 ) {        
-        auto p = NSMakePoint(0,
-                             self.superview.isFlipped ?
-                                (self.frame.size.height - scrollview.contentSize.height) : 0
-                             );
+    if( h1 > h2 ) {
+        auto p = NSMakePoint(0, self.superview.isFlipped
+                                    ? (self.frame.size.height - scrollview.contentSize.height)
+                                    : 0);
         [clipview scrollToPoint:p];
         [scrollview reflectScrolledClipView:clipview];
     }
@@ -267,44 +262,37 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-	[super drawRect:dirtyRect];
-    
+    [super drawRect:dirtyRect];
+
     // Drawing code here.
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     CGContextSaveGState(context);
-    auto restore_gstate = at_scope_end([=]{ CGContextRestoreGState(context); });
-    CGContextSetFillColorWithColor( context, m_BackgroundColor.CGColor );
-    CGContextFillRect( context, NSRectToCGRect(self.bounds) );
-    
+    auto restore_gstate = at_scope_end([=] { CGContextRestoreGState(context); });
+    CGContextSetFillColorWithColor(context, m_BackgroundColor.CGColor);
+    CGContextFillRect(context, NSRectToCGRect(self.bounds));
+
     if( !m_Screen )
         return;
-    
+
     // that's outright stupid, need to be more clever with such scans
     [self scanForBlinkingCharacters];
-    
+
     const auto font_height = m_FontCache->Height();
-    const auto line_start= (int)std::floor( dirtyRect.origin.y / font_height );
-    const auto line_end = (int)std::ceil( (dirtyRect.origin.y + dirtyRect.size.height) /
-                                         font_height );
-    
+    const auto line_start = (int)std::floor(dirtyRect.origin.y / font_height);
+    const auto line_end =
+        (int)std::ceil((dirtyRect.origin.y + dirtyRect.size.height) / font_height);
+
     auto lock = m_Screen->AcquireLock();
-    
+
     SetParamsForUserReadableText(context, *m_FontCache);
     CGContextSetShouldSmoothFonts(context, true);
 
-    for(int i = line_start, bsl = m_Screen->Buffer().BackScreenLines();
-        i < line_end;
-        ++i) {
-        if(i < bsl) { // scrollback
-            if(auto line = m_Screen->Buffer().LineFromNo(i - bsl))
-                [self DrawLine:line
-                          at_y:i
-                         sel_y:i - bsl
-                       context:context
-                     cursor_at:-1];
-        }
-        else { // real screen
-            if(auto line = m_Screen->Buffer().LineFromNo(i - bsl))
+    for( int i = line_start, bsl = m_Screen->Buffer().BackScreenLines(); i < line_end; ++i ) {
+        if( i < bsl ) { // scrollback
+            if( auto line = m_Screen->Buffer().LineFromNo(i - bsl) )
+                [self DrawLine:line at_y:i sel_y:i - bsl context:context cursor_at:-1];
+        } else { // real screen
+            if( auto line = m_Screen->Buffer().LineFromNo(i - bsl) )
                 [self DrawLine:line
                           at_y:i
                          sel_y:i - bsl
@@ -315,82 +303,74 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 }
 
 static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
-- (void) DrawLine:(term::ScreenBuffer::RangePair<const term::ScreenBuffer::Space>)_line
-             at_y:(int)_y
-            sel_y:(int)_sel_y
-          context:(CGContextRef)_context
-        cursor_at:(int)_cur_x
+- (void)DrawLine:(term::ScreenBuffer::RangePair<const term::ScreenBuffer::Space>)_line
+            at_y:(int)_y
+           sel_y:(int)_sel_y
+         context:(CGContextRef)_context
+       cursor_at:(int)_cur_x
 {
     auto current_color = g_ClearCGColor;
     int x = 0;
 
-    for( auto char_space: _line ) {
-        const auto fg_fill_color = char_space.reverse ?
-            ( char_space.foreground != ScreenColors::Default ?
-                m_AnsiColors[char_space.foreground] :
-                m_ForegroundColor).CGColor :
-            ( char_space.background != ScreenColors::Default ?
-                m_AnsiColors[char_space.background] :
-                m_BackgroundColor).CGColor;
-        
+    for( auto char_space : _line ) {
+        const auto fg_fill_color = char_space.reverse
+                                       ? (char_space.foreground != ScreenColors::Default
+                                              ? m_AnsiColors[char_space.foreground]
+                                              : m_ForegroundColor)
+                                             .CGColor
+                                       : (char_space.background != ScreenColors::Default
+                                              ? m_AnsiColors[char_space.background]
+                                              : m_BackgroundColor)
+                                             .CGColor;
+
         if( !CGColorEqualToColor(fg_fill_color, m_BackgroundColor.CGColor) ) {
-            if( !CGColorEqualToColor(fg_fill_color, current_color) )  {
+            if( !CGColorEqualToColor(fg_fill_color, current_color) ) {
                 current_color = fg_fill_color;
-                CGContextSetFillColorWithColor(_context, current_color );
+                CGContextSetFillColorWithColor(_context, current_color);
             }
-            
+
             CGContextFillRect(_context,
-                              CGRectMake(x * m_FontCache->Width(),
-                                         _y * m_FontCache->Height(),
-                                         m_FontCache->Width(),
-                                         m_FontCache->Height()));
+                              CGRectMake(x * m_FontCache->Width(), _y * m_FontCache->Height(),
+                                         m_FontCache->Width(), m_FontCache->Height()));
         }
         ++x;
     }
-    
+
     // draw selection if it's here
     if( m_HasSelection ) {
         CGRect rc = {{-1, -1}, {0, 0}};
-        if(m_SelStart.y == m_SelEnd.y && m_SelStart.y == _sel_y)
-            rc = CGRectMake(m_SelStart.x * m_FontCache->Width(),
-                            _y * m_FontCache->Height(),
+        if( m_SelStart.y == m_SelEnd.y && m_SelStart.y == _sel_y )
+            rc = CGRectMake(m_SelStart.x * m_FontCache->Width(), _y * m_FontCache->Height(),
                             (m_SelEnd.x - m_SelStart.x) * m_FontCache->Width(),
                             m_FontCache->Height());
-        else if(_sel_y < m_SelEnd.y && _sel_y > m_SelStart.y)
-            rc = CGRectMake(0,
-                            _y * m_FontCache->Height(),
-                            self.frame.size.width,
+        else if( _sel_y < m_SelEnd.y && _sel_y > m_SelStart.y )
+            rc = CGRectMake(0, _y * m_FontCache->Height(), self.frame.size.width,
                             m_FontCache->Height());
-        else if(_sel_y == m_SelStart.y)
-            rc = CGRectMake(m_SelStart.x * m_FontCache->Width(),
-                            _y * m_FontCache->Height(),
+        else if( _sel_y == m_SelStart.y )
+            rc = CGRectMake(m_SelStart.x * m_FontCache->Width(), _y * m_FontCache->Height(),
                             self.frame.size.width - m_SelStart.x * m_FontCache->Width(),
                             m_FontCache->Height());
-        else if(_sel_y == m_SelEnd.y)
-            rc = CGRectMake(0,
-                            _y * m_FontCache->Height(),
-                            m_SelEnd.x * m_FontCache->Width(),
+        else if( _sel_y == m_SelEnd.y )
+            rc = CGRectMake(0, _y * m_FontCache->Height(), m_SelEnd.x * m_FontCache->Width(),
                             m_FontCache->Height());
-        
+
         if( rc.origin.x >= 0 ) {
-            CGContextSetFillColorWithColor( _context, m_SelectionColor.CGColor );
-            CGContextFillRect( _context, rc );
+            CGContextSetFillColorWithColor(_context, m_SelectionColor.CGColor);
+            CGContextFillRect(_context, rc);
         }
     }
-    
+
     // draw cursor if it's here
-    if(_cur_x >= 0)
-        [self drawCursor:NSMakeRect(_cur_x * m_FontCache->Width(),
-                                   _y * m_FontCache->Height(),
-                                   m_FontCache->Width(),
-                                   m_FontCache->Height())
+    if( _cur_x >= 0 )
+        [self drawCursor:NSMakeRect(_cur_x * m_FontCache->Width(), _y * m_FontCache->Height(),
+                                    m_FontCache->Width(), m_FontCache->Height())
                  context:_context];
-    
+
     // draw glyphs
     x = 0;
     current_color = g_ClearCGColor;
     CGContextSetShouldAntialias(_context, true);
-    
+
     const bool blink_visible = m_BlinkScheduler.Visible();
     for( auto iter = std::begin(_line); iter != std::end(_line); ++iter, ++x ) {
         const ScreenBuffer::Space char_space = *iter;
@@ -398,57 +378,51 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             continue;
         if( char_space.blink && blink_visible == false )
             continue;
-                
+
         auto c = m_ForegroundColor.CGColor;
-        FontCache &effective_font_cache = char_space.bold ?
-            *m_BoldFontCache :
-            *m_FontCache;
+        FontCache &effective_font_cache = char_space.bold ? *m_BoldFontCache : *m_FontCache;
 
         if( char_space.reverse ) {
-            c = char_space.background != ScreenColors::Default ?
-                m_AnsiColors[char_space.background].CGColor :
-                m_BackgroundColor.CGColor;
+            c = char_space.background != ScreenColors::Default
+                    ? m_AnsiColors[char_space.background].CGColor
+                    : m_BackgroundColor.CGColor;
         } else {
             int foreground = char_space.foreground;
-            if( foreground != ScreenColors::Default ){
+            if( foreground != ScreenColors::Default ) {
                 if( char_space.faint )
                     c = m_FaintAnsiColors[foreground].CGColor;
                 else
-                    c = m_AnsiColors[foreground].CGColor;                
+                    c = m_AnsiColors[foreground].CGColor;
             } else {
                 if( char_space.bold )
-                    c =  m_BoldForegroundColor.CGColor;
+                    c = m_BoldForegroundColor.CGColor;
             }
         }
-        
-        if(char_space.l != 0 &&
-           char_space.l != 32 &&
-           char_space.l != Screen::MultiCellGlyph
-           ) {
-            if( !CGColorEqualToColor(c, current_color) )  {
+
+        if( char_space.l != 0 && char_space.l != 32 && char_space.l != Screen::MultiCellGlyph ) {
+            if( !CGColorEqualToColor(c, current_color) ) {
                 current_color = c;
-                CGContextSetFillColorWithColor(_context, current_color );
+                CGContextSetFillColorWithColor(_context, current_color);
             }
-            
+
             bool pop = false;
             if( IsBoxDrawingCharacter(char_space.l) ) {
                 CGContextSaveGState(_context);
                 CGContextSetShouldAntialias(_context, false);
                 pop = true;
-                
             }
-            
+
             DrawSingleUniCharXY(char_space.l, x, _y, _context, effective_font_cache);
-            
-            if(char_space.c1 != 0)
+
+            if( char_space.c1 != 0 )
                 DrawSingleUniCharXY(char_space.c1, x, _y, _context, effective_font_cache);
-            if(char_space.c2 != 0)
+            if( char_space.c2 != 0 )
                 DrawSingleUniCharXY(char_space.c2, x, _y, _context, effective_font_cache);
-            
-            if(pop)
+
+            if( pop )
                 CGContextRestoreGState(_context);
-        }        
-        
+        }
+
         if( char_space.underline ) {
             /* NEED A REAL UNDERLINE POSITION HERE !!! */
             // need to set color here?
@@ -466,35 +440,32 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 {
     if( m_ShowCursor == false )
         return;
-    
+
     const bool is_wnd_active = self.window.isKeyWindow;
-    
+
     if( is_wnd_active && m_IsFirstResponder ) {
         if( m_BlinkScheduler.Visible() ) {
-            CGContextSetFillColorWithColor(_context, m_CursorColor.CGColor );
-            switch (m_CursorType) {
-                case TermViewCursor::Block:
-                    CGContextFillRect(_context, NSRectToCGRect(_char_rect));
-                    break;
-                    
-                case TermViewCursor::Underline:
-                    CGContextFillRect(_context,
-                                      CGRectMake(_char_rect.origin.x,
-                                                 _char_rect.origin.y + _char_rect.size.height - 2,
-                                                 _char_rect.size.width,
-                                                 2));
-                    break;
-                    
-                case TermViewCursor::VerticalBar:
-                    CGContextFillRect(_context,
-                                      CGRectMake(_char_rect.origin.x, _char_rect.origin.y, 1., _char_rect.size.height)
-                                      );
-                    break;
+            CGContextSetFillColorWithColor(_context, m_CursorColor.CGColor);
+            switch( m_CursorType ) {
+            case TermViewCursor::Block:
+                CGContextFillRect(_context, NSRectToCGRect(_char_rect));
+                break;
+
+            case TermViewCursor::Underline:
+                CGContextFillRect(_context,
+                                  CGRectMake(_char_rect.origin.x,
+                                             _char_rect.origin.y + _char_rect.size.height - 2,
+                                             _char_rect.size.width, 2));
+                break;
+
+            case TermViewCursor::VerticalBar:
+                CGContextFillRect(_context, CGRectMake(_char_rect.origin.x, _char_rect.origin.y, 1.,
+                                                       _char_rect.size.height));
+                break;
             }
         }
-    }
-    else {
-        CGContextSetStrokeColorWithColor(_context, m_CursorColor.CGColor );
+    } else {
+        CGContextSetStrokeColorWithColor(_context, m_CursorColor.CGColor);
         CGContextSetLineWidth(_context, 1);
         CGContextSetShouldAntialias(_context, false);
         _char_rect.origin.y += 1;
@@ -506,7 +477,8 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect
 {
     const auto font_height = m_FontCache->Height();
-    proposedVisibleRect.origin.y = floor(proposedVisibleRect.origin.y/font_height + 0.5) * font_height;
+    proposedVisibleRect.origin.y =
+        floor(proposedVisibleRect.origin.y / font_height + 0.5) * font_height;
     return proposedVisibleRect;
 }
 
@@ -515,16 +487,17 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
  * y values [0...+y should be treated as rows in real terminal screen
  * y values -y...0) should be treated as rows in backscroll. y=-1 mean the closes to real screen row
  * x values are trivial - float x position divided by font's width
- * returned points may not correlate with real lines' lengths or scroll sizes, so they need to be treated carefully
+ * returned points may not correlate with real lines' lengths or scroll sizes, so they need to be
+ * treated carefully
  */
 - (SelPoint)projectPoint:(NSPoint)_point
 {
     auto y_pos = _point.y;
     if( y_pos < 0 )
         y_pos = 0;
-    
+
     int line_predict = floor(y_pos / m_FontCache->Height()) - m_Screen->Buffer().BackScreenLines();
-    
+
     auto x_pos = _point.x;
     if( x_pos < 0 )
         x_pos = 0;
@@ -532,16 +505,16 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     return SelPoint{col_predict, line_predict};
 }
 
-- (void) mouseDown:(NSEvent *)_event
+- (void)mouseDown:(NSEvent *)_event
 {
     if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
         [self passMouseEvent:_event];
         return;
     }
-        
-    if(_event.clickCount > 2)
+
+    if( _event.clickCount > 2 )
         [self handleSelectionWithTripleClick:_event];
-    else if(_event.clickCount == 2 )
+    else if( _event.clickCount == 2 )
         [self handleSelectionWithDoubleClick:_event];
     else
         [self handleSelectionWithMouseDragging:_event];
@@ -552,7 +525,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     if( m_MouseEvents != Interpreter::RequestedMouseEvents::None ) {
         [self passMouseEvent:_event];
         return;
-    }    
+    }
 }
 
 - (void)mouseUp:(NSEvent *)_event
@@ -611,169 +584,162 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     }
 }
 
-- (void) handleSelectionWithTripleClick:(NSEvent *) event
+- (void)handleSelectionWithTripleClick:(NSEvent *)event
 {
     NSPoint click_location = [self convertPoint:event.locationInWindow fromView:nil];
     SelPoint position = [self projectPoint:click_location];
     auto lock = m_Screen->AcquireLock();
     if( m_Screen->Buffer().LineFromNo(position.y) ) {
         m_HasSelection = true;
-        m_SelStart = ScreenPoint( 0, position.y );
-        m_SelEnd = ScreenPoint( m_Screen->Buffer().Width(), position.y );
-        while( m_Screen->Buffer().LineWrapped(m_SelStart.y-1) )
+        m_SelStart = ScreenPoint(0, position.y);
+        m_SelEnd = ScreenPoint(m_Screen->Buffer().Width(), position.y);
+        while( m_Screen->Buffer().LineWrapped(m_SelStart.y - 1) )
             m_SelStart.y--;
         while( m_Screen->Buffer().LineWrapped(m_SelEnd.y) )
             m_SelEnd.y++;
-    }
-    else {
+    } else {
         m_HasSelection = false;
         m_SelStart = m_SelEnd = {0, 0};
     }
     [self setNeedsDisplay];
 }
 
-- (void) handleSelectionWithDoubleClick:(NSEvent *) event
+- (void)handleSelectionWithDoubleClick:(NSEvent *)event
 {
     NSPoint click_location = [self convertPoint:event.locationInWindow fromView:nil];
     SelPoint position = [self projectPoint:click_location];
     auto lock = m_Screen->AcquireLock();
-    auto data = m_Screen->Buffer().DumpUTF16StringWithLayout(SelPoint(0, position.y-1), SelPoint(1024, position.y+1));
+    auto data = m_Screen->Buffer().DumpUTF16StringWithLayout(SelPoint(0, position.y - 1),
+                                                             SelPoint(1024, position.y + 1));
     auto &utf16 = data.first;
     auto &layout = data.second;
 
     if( utf16.empty() )
         return;
-    
-    NSString *string = [[NSString alloc] initWithBytesNoCopy:(void*)utf16.data()
-                                                      length:utf16.size()*sizeof(uint16_t)
+
+    NSString *string = [[NSString alloc] initWithBytesNoCopy:(void *)utf16.data()
+                                                      length:utf16.size() * sizeof(uint16_t)
                                                     encoding:NSUTF16LittleEndianStringEncoding
                                                 freeWhenDone:false];
     if( !string )
         return;
-    
+
     std::optional<std::pair<SelPoint, SelPoint>> search_result;
     [string enumerateSubstringsInRange:NSMakeRange(0, string.length)
-                               options:NSStringEnumerationByWords | NSStringEnumerationSubstringNotRequired
-                            usingBlock:[&](NSString*,
-                                           NSRange wordRange,
-                                           NSRange,
-                                           BOOL *stop){
+                               options:NSStringEnumerationByWords |
+                                       NSStringEnumerationSubstringNotRequired
+                            usingBlock:[&](NSString *, NSRange wordRange, NSRange, BOOL *stop) {
                                 if( wordRange.location < layout.size() ) {
                                     auto begin = layout[wordRange.location];
                                     if( position >= begin ) {
-                                        auto end = wordRange.location + wordRange.length < layout.size() ?
-                                                layout[wordRange.location + wordRange.length] :
-                                                layout.back();
+                                        auto end =
+                                            wordRange.location + wordRange.length < layout.size()
+                                                ? layout[wordRange.location + wordRange.length]
+                                                : layout.back();
                                         if( position < end ) {
                                             search_result = std::make_pair(begin, end);
                                             *stop = true;
                                         }
-                                    }
-                                    else
+                                    } else
                                         *stop = YES;
-                                }
-                                else
+                                } else
                                     *stop = YES;
                             }];
-    
+
     if( search_result ) {
         m_SelStart = search_result->first;
         m_SelEnd = search_result->second;
-    }
-    else {
+    } else {
         m_SelStart = position;
-        m_SelEnd = SelPoint(position.x+1, position.y);
+        m_SelEnd = SelPoint(position.x + 1, position.y);
     }
     [self setNeedsDisplay];
 }
 
-- (void) handleSelectionWithMouseDragging: (NSEvent*) event
+- (void)handleSelectionWithMouseDragging:(NSEvent *)event
 {
     // TODO: not a precise selection modification. look at viewer, it has better implementation.
-    
-    bool modifying_existing_selection = ([event modifierFlags] & NSShiftKeyMask) ? true : false;
+
+    bool modifying_existing_selection =
+        ([event modifierFlags] & NSEventModifierFlagShift) ? true : false;
     NSPoint first_loc = [self convertPoint:[event locationInWindow] fromView:nil];
-    
-    while ([event type]!=NSLeftMouseUp)
-    {
+
+    while( [event type] != NSEventTypeLeftMouseUp ) {
         NSPoint curr_loc = [self convertPoint:[event locationInWindow] fromView:nil];
-        
+
         SelPoint start = [self projectPoint:first_loc];
-        SelPoint end   = [self projectPoint:curr_loc];
-        
-        if(start > end)
+        SelPoint end = [self projectPoint:curr_loc];
+
+        if( start > end )
             std::swap(start, end);
-        
-        
-        if(modifying_existing_selection && m_HasSelection)
-        {
-            if(end > m_SelStart) {
+
+        if( modifying_existing_selection && m_HasSelection ) {
+            if( end > m_SelStart ) {
                 m_SelEnd = end;
                 [self setNeedsDisplay];
-            }
-            else if(end < m_SelStart) {
+            } else if( end < m_SelStart ) {
                 m_SelStart = end;
                 [self setNeedsDisplay];
             }
-        }
-        else if(!m_HasSelection || m_SelEnd != end || m_SelStart != start)
-        {
+        } else if( !m_HasSelection || m_SelEnd != end || m_SelStart != start ) {
             m_HasSelection = true;
             m_SelStart = start;
             m_SelEnd = end;
             [self setNeedsDisplay];
         }
 
-        event = [self.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
+        event = [self.window
+            nextEventMatchingMask:(NSEventMaskLeftMouseDragged | NSEventMaskLeftMouseUp)];
     }
 }
 
-- (void)copy:(id)[[maybe_unused]]_sender
+- (void)copy:(id) [[maybe_unused]] _sender
 {
-    if(!m_HasSelection)
+    if( !m_HasSelection )
         return;
-    
-    if(m_SelStart == m_SelEnd)
+
+    if( m_SelStart == m_SelEnd )
         return;
 
     auto lock = m_Screen->AcquireLock();
     std::vector<uint32_t> unichars = m_Screen->Buffer().DumpUnicodeString(m_SelStart, m_SelEnd);
-    
+
     NSString *result = [[NSString alloc] initWithBytes:unichars.data()
                                                 length:unichars.size() * sizeof(uint32_t)
                                               encoding:NSUTF32LittleEndianStringEncoding];
     NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
     [pasteBoard clearContents];
-    [pasteBoard declareTypes:@[NSStringPboardType] owner:nil];
-    [pasteBoard setString:result forType:NSStringPboardType];
+    [pasteBoard declareTypes:@[ NSPasteboardTypeString ] owner:nil];
+    [pasteBoard setString:result forType:NSPasteboardTypeString];
 }
 
-- (IBAction)paste:(id)[[maybe_unused]]_sender
-{    
+- (IBAction)paste:(id) [[maybe_unused]] _sender
+{
     NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
-    NSString *best_type = [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
-    if(!best_type)
+    NSString *best_type =
+        [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSPasteboardTypeString]];
+    if( !best_type )
         return;
-    
-    NSString *text = [paste_board stringForType:NSStringPboardType];
-    if(!text)
+
+    NSString *text = [paste_board stringForType:NSPasteboardTypeString];
+    if( !text )
         return;
-    
+
     if( const char *utf8 = text.UTF8String )
-        m_InputTranslator->ProcessPaste( utf8 );
+        m_InputTranslator->ProcessPaste(utf8);
 }
 
-- (void)selectAll:(id)[[maybe_unused]]_sender
+- (void)selectAll:(id) [[maybe_unused]] _sender
 {
     m_HasSelection = true;
     m_SelStart.y = -m_Screen->Buffer().BackScreenLines();
     m_SelStart.x = 0;
-    m_SelEnd.y = m_Screen->Height()-1;
+    m_SelEnd.y = m_Screen->Height() - 1;
     m_SelEnd.x = m_Screen->Width();
     [self setNeedsDisplay];
 }
 
-- (void)deselectAll:(id)[[maybe_unused]]_sender
+- (void)deselectAll:(id) [[maybe_unused]] _sender
 {
     m_HasSelection = false;
     [self setNeedsDisplay];
@@ -781,7 +747,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void)loadSettings
 {
-    assert( m_Settings );
+    assert(m_Settings);
     self.font = m_Settings->Font();
     self.foregroundColor = m_Settings->ForegroundColor();
     self.boldForegroundColor = m_Settings->BoldForegroundColor();
@@ -808,7 +774,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     self.cursorMode = m_Settings->CursorMode();
 }
 
-- (std::shared_ptr<nc::term::Settings>) settings
+- (std::shared_ptr<nc::term::Settings>)settings
 {
     return m_Settings;
 }
@@ -823,15 +789,15 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
     m_Settings = settings;
     [self loadSettings];
-    
-    __weak NCTermView* weak_self = self;
-    m_SettingsNotificationTicket = settings->StartChangesObserving([weak_self]{
+
+    __weak NCTermView *weak_self = self;
+    m_SettingsNotificationTicket = settings->StartChangesObserving([weak_self] {
         if( auto s = weak_self )
             [s loadSettings];
     });
 }
 
-- (nc::term::CursorMode) cursorMode
+- (nc::term::CursorMode)cursorMode
 {
     return m_CursorType;
 }
@@ -844,24 +810,24 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     }
 }
 
-- (NSFont*) font
+- (NSFont *)font
 {
     return m_Font;
 }
 
-- (void) setFont:(NSFont *)font
+- (void)setFont:(NSFont *)font
 {
     if( m_Font != font ) {
         m_Font = font;
-        m_FontCache = FontCache::FontCacheFromFont( (__bridge CTFontRef)m_Font );
+        m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_Font);
         m_BoldFont = [NSFontManager.sharedFontManager convertFont:m_Font
                                                       toHaveTrait:NSBoldFontMask];
-        m_BoldFontCache = FontCache::FontCacheFromFont( (__bridge CTFontRef)m_BoldFont );
+        m_BoldFontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_BoldFont);
         self.needsDisplay = true;
     }
 }
 
-- (NSColor*) foregroundColor
+- (NSColor *)foregroundColor
 {
     return m_ForegroundColor;
 }
@@ -874,7 +840,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     }
 }
 
-- (NSColor*)boldForegroundColor
+- (NSColor *)boldForegroundColor
 {
     return m_BoldForegroundColor;
 }
@@ -887,12 +853,12 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     }
 }
 
-- (NSColor*) backgroundColor
+- (NSColor *)backgroundColor
 {
     return m_BackgroundColor;
 }
 
-- (void) setBackgroundColor:(NSColor *)backgroundColor
+- (void)setBackgroundColor:(NSColor *)backgroundColor
 {
     if( m_BackgroundColor != backgroundColor ) {
         m_BackgroundColor = backgroundColor;
@@ -900,12 +866,12 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     }
 }
 
-- (NSColor*)selectionColor
+- (NSColor *)selectionColor
 {
     return m_SelectionColor;
 }
 
-- (void) setSelectionColor:(NSColor *)selectionColor
+- (void)setSelectionColor:(NSColor *)selectionColor
 {
     if( m_SelectionColor != selectionColor ) {
         m_SelectionColor = selectionColor;
@@ -913,7 +879,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     }
 }
 
-- (NSColor*)cursorColor
+- (NSColor *)cursorColor
 {
     return m_CursorColor;
 }
@@ -926,19 +892,16 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     }
 }
 
-#define ANSI_COLOR( getter, setter, index ) \
-    - (NSColor*)getter \
-    {\
-        return m_AnsiColors[index];\
-    }\
-    - (void)setter:(NSColor *)color\
-    {\
-        if( m_AnsiColors[index] != color ) { \
-            m_AnsiColors[index] = color; \
-            m_FaintAnsiColors[index] = \
-                [m_AnsiColors[index] colorWithAlphaComponent:g_FaintColorAlpha]; \
-            self.needsDisplay = true; \
-        }\
+#define ANSI_COLOR(getter, setter, index)                                                          \
+    -(NSColor *)getter { return m_AnsiColors[index]; }                                             \
+    -(void)setter : (NSColor *)color                                                               \
+    {                                                                                              \
+        if( m_AnsiColors[index] != color ) {                                                       \
+            m_AnsiColors[index] = color;                                                           \
+            m_FaintAnsiColors[index] =                                                             \
+                [m_AnsiColors[index] colorWithAlphaComponent:g_FaintColorAlpha];                   \
+            self.needsDisplay = true;                                                              \
+        }                                                                                          \
     }
 
 ANSI_COLOR(ansiColor0, setAnsiColor0, 0);
@@ -967,7 +930,7 @@ ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
     return NSMakePoint(0., _line_number * m_FontCache->Height());
 }
 
-- (void) viewStatusDidChange
+- (void)viewStatusDidChange
 {
     const auto wnd = self.window;
     const bool is_wnd_active = wnd.isKeyWindow;
@@ -976,14 +939,14 @@ ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
     self.needsDisplay = true;
 }
 
-- (void) updateBlinkSheduling
+- (void)updateBlinkSheduling
 {
     const bool cursor_blink = m_AllowCursorBlinking && m_CursorShouldBlink;
     const bool spaces_blink = m_HasVisibleBlinkingSpaces;
-    m_BlinkScheduler.Enable( cursor_blink || spaces_blink );
+    m_BlinkScheduler.Enable(cursor_blink || spaces_blink);
 }
 
-- (void) scanForBlinkingCharacters
+- (void)scanForBlinkingCharacters
 {
     const bool has = [self visibleLinesHaveBlinkingCharacters];
     if( has != m_HasVisibleBlinkingSpaces ) {
@@ -994,9 +957,8 @@ ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
 
 static bool LineHasBlinkingCharacters(ScreenBuffer::RangePair<const ScreenBuffer::Space> _range)
 {
-    return std::any_of(std::begin(_range),
-                       std::end(_range),
-                       [](const auto &space){ return space.blink; } );
+    return std::any_of(std::begin(_range), std::end(_range),
+                       [](const auto &space) { return space.blink; });
 }
 
 - (bool)visibleLinesHaveBlinkingCharacters
@@ -1004,10 +966,9 @@ static bool LineHasBlinkingCharacters(ScreenBuffer::RangePair<const ScreenBuffer
     const auto &buffer = m_Screen->Buffer();
     const auto rect = self.visibleRect;
     const auto font_height = m_FontCache->Height();
-    const auto line_start= (int)std::floor( rect.origin.y / font_height );
-    const auto line_end = (int)std::ceil( (rect.origin.y + rect.size.height) /
-                                         font_height );
-    
+    const auto line_start = (int)std::floor(rect.origin.y / font_height);
+    const auto line_end = (int)std::ceil((rect.origin.y + rect.size.height) / font_height);
+
     auto lock = m_Screen->AcquireLock(); // WTF??
     const auto bsl = static_cast<int>(buffer.BackScreenLines());
     for( int line_index = line_start; line_index != line_end; ++line_index ) {
@@ -1015,13 +976,11 @@ static bool LineHasBlinkingCharacters(ScreenBuffer::RangePair<const ScreenBuffer
             const auto line = buffer.LineFromNo(line_index - bsl);
             if( line && LineHasBlinkingCharacters(line) )
                 return true;
-          }
-          else { // real screen
-              const auto line = buffer.LineFromNo(line_index - bsl);
-              if( line && LineHasBlinkingCharacters(line) )
-                  return true;
-              
-          }
+        } else { // real screen
+            const auto line = buffer.LineFromNo(line_index - bsl);
+            if( line && LineHasBlinkingCharacters(line) )
+                return true;
+        }
     }
     return false;
 }
@@ -1041,57 +1000,60 @@ static bool LineHasBlinkingCharacters(ScreenBuffer::RangePair<const ScreenBuffer
 static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType _type) noexcept
 {
     using MouseEvent = InputTranslator::MouseEvent;
-    switch ( _type ) {
-        case NSEventTypeLeftMouseDown:      return MouseEvent::LDown;
-        case NSEventTypeLeftMouseDragged:   return MouseEvent::LDrag;
-        case NSEventTypeLeftMouseUp:        return MouseEvent::LUp;
-        case NSEventTypeOtherMouseDown:     return MouseEvent::MDown;
-        case NSEventTypeOtherMouseDragged:  return MouseEvent::MDrag;
-        case NSEventTypeOtherMouseUp:       return MouseEvent::MUp;
-        case NSEventTypeRightMouseDown:     return MouseEvent::RDown;
-        case NSEventTypeRightMouseDragged:  return MouseEvent::RDrag;
-        case NSEventTypeRightMouseUp:       return MouseEvent::RUp;
-        default:                            return MouseEvent::LDown;
+    switch( _type ) {
+    case NSEventTypeLeftMouseDown:
+        return MouseEvent::LDown;
+    case NSEventTypeLeftMouseDragged:
+        return MouseEvent::LDrag;
+    case NSEventTypeLeftMouseUp:
+        return MouseEvent::LUp;
+    case NSEventTypeOtherMouseDown:
+        return MouseEvent::MDown;
+    case NSEventTypeOtherMouseDragged:
+        return MouseEvent::MDrag;
+    case NSEventTypeOtherMouseUp:
+        return MouseEvent::MUp;
+    case NSEventTypeRightMouseDown:
+        return MouseEvent::RDown;
+    case NSEventTypeRightMouseDragged:
+        return MouseEvent::RDrag;
+    case NSEventTypeRightMouseUp:
+        return MouseEvent::RUp;
+    default:
+        return MouseEvent::LDown;
     }
 }
 
-- (void) passMouseEvent:(NSEvent *)_event
+- (void)passMouseEvent:(NSEvent *)_event
 {
     constexpr auto has = [](const auto &_container, const auto &_value) -> bool {
-        return std::find( std::begin(_container), std::end(_container), _value ) !=
-            std::end(_container);
+        return std::find(std::begin(_container), std::end(_container), _value) !=
+               std::end(_container);
     };
-    
+
     const NSEventType type = _event.type;
     const utility::NSEventModifierFlagsHolder flags = _event.modifierFlags;
     const NSPoint location_px = [self convertPoint:_event.locationInWindow fromView:nil];
     const SelPoint location_cell = [self projectPoint:location_px];
     const bool location_cell_changed = location_cell == m_LastMouseCell;
     m_LastMouseCell = location_cell;
-            
+
     if( m_MouseEvents == Interpreter::RequestedMouseEvents::X10 ) {
         constexpr std::array<NSEventType, 3> types = {
-            NSEventTypeLeftMouseDown,
-            NSEventTypeRightMouseDown,
-            NSEventTypeOtherMouseDown};
+            NSEventTypeLeftMouseDown, NSEventTypeRightMouseDown, NSEventTypeOtherMouseDown};
         if( !has(types, type) )
             return;
-        
+
         InputTranslator::MouseEvent evt;
         evt.type = NSEventTypeToMouseEventType(type);
         evt.x = location_cell.x;
         evt.y = location_cell.y;
-        m_InputTranslator->ProcessMouseEvent(evt);        
-    }
-    else if( m_MouseEvents == Interpreter::RequestedMouseEvents::Normal ) {
+        m_InputTranslator->ProcessMouseEvent(evt);
+    } else if( m_MouseEvents == Interpreter::RequestedMouseEvents::Normal ) {
         constexpr std::array<NSEventType, 8> types = {
-            NSEventTypeLeftMouseDown,
-            NSEventTypeLeftMouseUp,
-            NSEventTypeOtherMouseDown,
-            NSEventTypeOtherMouseUp,
-            NSEventTypeRightMouseDown,
-            NSEventTypeRightMouseUp};
-        
+            NSEventTypeLeftMouseDown, NSEventTypeLeftMouseUp,    NSEventTypeOtherMouseDown,
+            NSEventTypeOtherMouseUp,  NSEventTypeRightMouseDown, NSEventTypeRightMouseUp};
+
         if( !has(types, type) )
             return;
 
@@ -1103,26 +1065,18 @@ static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType
         evt.alt = flags.is_option();
         evt.control = flags.is_control();
         m_InputTranslator->ProcessMouseEvent(evt);
-    }
-    else if( m_MouseEvents == Interpreter::RequestedMouseEvents::ButtonTracking ) {
+    } else if( m_MouseEvents == Interpreter::RequestedMouseEvents::ButtonTracking ) {
         constexpr std::array<NSEventType, 9> types = {
-            NSEventTypeLeftMouseDown,
-            NSEventTypeLeftMouseDragged,
-            NSEventTypeLeftMouseUp,
-            NSEventTypeOtherMouseDown,
-            NSEventTypeOtherMouseDragged,
-            NSEventTypeOtherMouseUp,
-            NSEventTypeRightMouseDown,
-            NSEventTypeRightMouseDragged,
-            NSEventTypeRightMouseUp};
-        constexpr std::array<NSEventType, 3> movement_types = {
-            NSEventTypeLeftMouseDragged,
-            NSEventTypeOtherMouseDragged,
-            NSEventTypeRightMouseDragged};
-        
+            NSEventTypeLeftMouseDown,  NSEventTypeLeftMouseDragged,  NSEventTypeLeftMouseUp,
+            NSEventTypeOtherMouseDown, NSEventTypeOtherMouseDragged, NSEventTypeOtherMouseUp,
+            NSEventTypeRightMouseDown, NSEventTypeRightMouseDragged, NSEventTypeRightMouseUp};
+        constexpr std::array<NSEventType, 3> movement_types = {NSEventTypeLeftMouseDragged,
+                                                               NSEventTypeOtherMouseDragged,
+                                                               NSEventTypeRightMouseDragged};
+
         if( !has(types, type) )
             return;
-        
+
         if( location_cell_changed == false && has(movement_types, type) )
             return;
 
@@ -1134,27 +1088,19 @@ static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType
         evt.alt = flags.is_option();
         evt.control = flags.is_control();
         m_InputTranslator->ProcessMouseEvent(evt);
-    }
-    else if( m_MouseEvents == Interpreter::RequestedMouseEvents::Any ) {
+    } else if( m_MouseEvents == Interpreter::RequestedMouseEvents::Any ) {
         constexpr std::array<NSEventType, 9> types = {
-            NSEventTypeLeftMouseDown,
-            NSEventTypeLeftMouseDragged,
-            NSEventTypeLeftMouseUp,
-            NSEventTypeOtherMouseDown,
-            NSEventTypeOtherMouseDragged,
-            NSEventTypeOtherMouseUp,
-            NSEventTypeRightMouseDown,
-            NSEventTypeRightMouseDragged,
-            NSEventTypeRightMouseUp};
-        constexpr std::array<NSEventType, 3> movement_types = {
-            NSEventTypeLeftMouseDragged,
-            NSEventTypeOtherMouseDragged,
-            NSEventTypeRightMouseDragged};
+            NSEventTypeLeftMouseDown,  NSEventTypeLeftMouseDragged,  NSEventTypeLeftMouseUp,
+            NSEventTypeOtherMouseDown, NSEventTypeOtherMouseDragged, NSEventTypeOtherMouseUp,
+            NSEventTypeRightMouseDown, NSEventTypeRightMouseDragged, NSEventTypeRightMouseUp};
+        constexpr std::array<NSEventType, 3> movement_types = {NSEventTypeLeftMouseDragged,
+                                                               NSEventTypeOtherMouseDragged,
+                                                               NSEventTypeRightMouseDragged};
         // plus moved?
-        
+
         if( !has(types, type) )
             return;
-        
+
         if( location_cell_changed == false && has(movement_types, type) )
             return;
 

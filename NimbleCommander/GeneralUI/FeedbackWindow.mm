@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../Bootstrap/ActivationManager.h"
 #include "../Core/FeedbackManager.h"
 #include "FeedbackWindow.h"
@@ -71,20 +71,6 @@ using namespace std::literals;
 - (IBAction)onRate:(id)[[maybe_unused]]_sender
 {
     FeedbackManager::Instance().RateOnAppStore();
-}
-
-- (IBAction)onFacebook:(id)[[maybe_unused]]_sender
-{
-    FeedbackManager::Instance().ShareOnFacebook();
-}
-- (IBAction)onTwitter:(id)[[maybe_unused]]_sender
-{
-    FeedbackManager::Instance().ShareOnTwitter();
-}
-
-- (IBAction)onLinkedIn:(id)[[maybe_unused]]_sender
-{
-    FeedbackManager::Instance().ShareOnLinkedIn();
 }
 
 @end

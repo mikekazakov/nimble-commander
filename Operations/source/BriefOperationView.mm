@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOperationView.h"
 
 @implementation NCOpsBriefOperationView
@@ -26,7 +26,7 @@
     const auto mouse = [self convertPoint:self.window.mouseLocationOutsideOfEventStream
                                  fromView:nil];
     
-    static const auto dummy_event = [NSEvent otherEventWithType:NSApplicationDefined
+    static const auto dummy_event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined
                                                        location:{0,0}
                                                   modifierFlags:0
                                                       timestamp:0

@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeView.h"
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
@@ -591,14 +591,8 @@ static double CalculateVerticalPxPositionFromScrollPosition
 - (void)onVerticalScroll:(id)_sender
 {
     switch( m_VerticalScroller.hitPart ) {
-        case NSScrollerIncrementLine:
-            [self moveDown:_sender];
-            break;
         case NSScrollerIncrementPage:
             [self pageDown:_sender];
-            break;
-        case NSScrollerDecrementLine:
-            [self moveUp:_sender];
             break;
         case NSScrollerDecrementPage:
             [self pageUp:_sender];
@@ -779,13 +773,13 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
 
 - (void) handleSelectionWithMouseDragging:(NSEvent*)_event
 {
-    const auto modifying_existing_selection = bool(_event.modifierFlags & NSShiftKeyMask);
+    const auto modifying_existing_selection = bool(_event.modifierFlags & NSEventModifierFlagShift);
     const auto first_down_view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
     const auto first_down_frame_coords = [self viewCoordsToTextFrameCoords:first_down_view_coords];
     const auto first_ind = m_Frame->CharIndexForPosition( first_down_frame_coords );
     const auto original_selection = [self localSelection];
-    const auto event_mask = NSLeftMouseDraggedMask | NSLeftMouseUpMask;
-    for( auto event = _event; event && event.type != NSLeftMouseUp;
+    const auto event_mask = NSEventMaskLeftMouseDragged | NSEventMaskLeftMouseUp;
+    for( auto event = _event; event && event.type != NSEventTypeLeftMouseUp;
          event = [self.window nextEventMatchingMask:event_mask] ) {
     
         const auto curr_view_coords = [self convertPoint:event.locationInWindow fromView:nil];

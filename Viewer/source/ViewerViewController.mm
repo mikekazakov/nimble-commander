@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerViewController.h"
 #include <VFS/VFS.h>
 #include <CUI/ProcessSheetController.h>
@@ -541,7 +541,7 @@ doCommandBySelector:(SEL)commandSelector
 
     m_SearchProgressIndicator = searchProgressIndicator;
     m_SearchProgressIndicator.indeterminate = true;
-    m_SearchProgressIndicator.style = NSProgressIndicatorSpinningStyle;
+    m_SearchProgressIndicator.style = NSProgressIndicatorStyleSpinning;
     m_SearchProgressIndicator.displayedWhenStopped = false;
 }
 

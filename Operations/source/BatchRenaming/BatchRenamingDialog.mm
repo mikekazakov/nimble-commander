@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 #include "BatchRenamingDialog.h"
@@ -243,12 +243,12 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 
     NSString *search_for = self.SearchForComboBox.stringValue ? self.SearchForComboBox.stringValue : @"";
     NSString *replace_with = self.ReplaceWithComboBox.stringValue ? self.ReplaceWithComboBox.stringValue : @"";
-    bool search_case_sens = self.SearchCaseSensitive.state == NSOnState;
-    bool search_once = self.SearchOnlyOnce.state == NSOnState;
-    bool search_in_ext = self.SearchInExtension.state == NSOnState;
-    bool search_regexp = self.SearchWithRegExp.state == NSOnState;
+    bool search_case_sens = self.SearchCaseSensitive.state == NSControlStateValueOn;
+    bool search_once = self.SearchOnlyOnce.state == NSControlStateValueOn;
+    bool search_in_ext = self.SearchInExtension.state == NSControlStateValueOn;
+    bool search_regexp = self.SearchWithRegExp.state == NSControlStateValueOn;
     BatchRenamingScheme::CaseTransform ct = (BatchRenamingScheme::CaseTransform)self.CaseProcessing.selectedTag;
-    bool ct_with_ext = self.CaseProcessingWithExtension.state == NSOnState;
+    bool ct_with_ext = self.CaseProcessingWithExtension.state == NSControlStateValueOn;
     
     BatchRenamingScheme br;
     br.SetReplacingOptions(search_for, replace_with, search_case_sens, search_once, search_in_ext, search_regexp);
@@ -517,7 +517,8 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
      toPasteboard:(NSPasteboard *)pboard
 {
     [pboard declareTypes:@[g_MyPrivateTableViewDataType] owner:self];
-    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes] forType:g_MyPrivateTableViewDataType];
+    auto data = [NSKeyedArchiver archivedDataWithRootObject:rowIndexes requiringSecureCoding:false error:nil];
+    [pboard setData:data forType:g_MyPrivateTableViewDataType];
     return true;
 }
 
@@ -526,8 +527,8 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
               row:(NSInteger)drag_to
     dropOperation:(NSTableViewDropOperation)[[maybe_unused]]operation
 {
-    NSData* data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];
-    NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    NSData* data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];    
+    NSIndexSet* inds = [NSKeyedUnarchiver unarchivedObjectOfClass:NSIndexSet.class fromData:data error:nil];
     NSInteger drag_from = inds.firstIndex;
     
     if(drag_to == drag_from || // same index, above

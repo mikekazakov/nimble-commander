@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerView.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
@@ -448,8 +448,8 @@ using namespace nc::viewer;
                                                       length:m_SelectionInWindowUnichars.length];
         NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
         [pasteBoard clearContents];
-        [pasteBoard declareTypes:@[NSStringPboardType] owner:nil];
-        [pasteBoard setString:str forType:NSStringPboardType];
+        [pasteBoard declareTypes:@[NSPasteboardTypeString] owner:nil];
+        [pasteBoard setString:str forType:NSPasteboardTypeString];
     }
 }
 

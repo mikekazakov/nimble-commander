@@ -1,6 +1,5 @@
 #include "default.xcconfig"
 
-MACOSX_DEPLOYMENT_TARGET = 10.13
 OTHER_LDFLAGS = $(inherited) -lgmock -lgtest
 LD_RUNPATH_SEARCH_PATHS = @executable_path/
 HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../3rd_Party/Catch2/single_include/ $(PROJECT_DIR)/../3rd_Party/googletest/include/

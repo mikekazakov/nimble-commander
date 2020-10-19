@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 
@@ -6,7 +6,7 @@
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event
 {
-    if(event.type == NSKeyDown && (event.modifierFlags & NSControlKeyMask) ) {
+    if(event.type == NSEventTypeKeyDown && (event.modifierFlags & NSEventModifierFlagControl) ) {
         auto keycode = event.keyCode;
 #define stuff(kk, aa) \
     if( keycode == kk && self.aa ) { \

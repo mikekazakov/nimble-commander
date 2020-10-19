@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GenericErrorDialog.h"
 #include <VFS/VFS.h>
 #include "Internal.h"
@@ -127,7 +127,7 @@ using namespace nc::ops;
 {
     if( auto b = objc_cast<NSButton>(sender) ) {
         if( m_ShowApplyToAll && m_Context )
-            m_Context->messages["apply_to_all"] = self.applyToAllCheckBox.state == NSOnState;
+            m_Context->messages["apply_to_all"] = self.applyToAllCheckBox.state == NSControlStateValueOn;
         [self.window.sheetParent endSheet:self.window returnCode:b.tag];
     }
 }

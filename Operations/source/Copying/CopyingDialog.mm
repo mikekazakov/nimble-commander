@@ -210,11 +210,11 @@ static std::string MakeCanonicPath(std::string _input)
 
 - (void)fillOptions
 {
-    m_Options.preserve_symlinks    = self.PreserveSymlinksCheckbox.state == NSOnState;
-    m_Options.copy_xattrs          = self.CopyXattrsCheckbox.state == NSOnState;
-    m_Options.copy_file_times      = self.CopyFileTimesCheckbox.state == NSOnState;
-    m_Options.copy_unix_flags      = self.CopyUNIXFlagsCheckbox.state == NSOnState;
-    m_Options.copy_unix_owners     = self.CopyUnixOwnersCheckbox.state == NSOnState;
+    m_Options.preserve_symlinks    = self.PreserveSymlinksCheckbox.state == NSControlStateValueOn;
+    m_Options.copy_xattrs          = self.CopyXattrsCheckbox.state == NSControlStateValueOn;
+    m_Options.copy_file_times      = self.CopyFileTimesCheckbox.state == NSControlStateValueOn;
+    m_Options.copy_unix_flags      = self.CopyUNIXFlagsCheckbox.state == NSControlStateValueOn;
+    m_Options.copy_unix_owners     = self.CopyUnixOwnersCheckbox.state == NSControlStateValueOn;
     m_Options.verification         = (CopyingOptions::ChecksumVerification) self.VerifySetting.selectedTag;
 }
 

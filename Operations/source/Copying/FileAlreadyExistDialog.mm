@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Carbon/Carbon.h>
 #include "FileAlreadyExistDialog.h"
@@ -14,10 +14,10 @@ using namespace nc::ops;
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event
 {
-    if( event.type == NSKeyDown &&
+    if( event.type == NSEventTypeKeyDown &&
         (event.modifierFlags & NSEventModifierFlagShift) &&
         event.keyCode == kVK_Return) { // mimic Shift+Enter as enter so hotkey can trigger
-        return [super performKeyEquivalent:[NSEvent keyEventWithType:NSKeyDown
+        return [super performKeyEquivalent:[NSEvent keyEventWithType:NSEventTypeKeyDown
                                                             location:event.locationInWindow
                                                        modifierFlags:0
                                                            timestamp:event.timestamp
@@ -93,7 +93,7 @@ static bool IsShiftPressed()
     
     self.NewFileSize.integerValue = m_SourceStat.st_size;
     self.ExistingFileSize.integerValue = m_DestinationStat.st_size;
-    self.RememberCheck.state = NSOffState;
+    self.RememberCheck.state = NSControlStateValueOff;
 }
 
 - (IBAction)OnOverwrite:(id)[[maybe_unused]]_sender
@@ -129,10 +129,10 @@ static bool IsShiftPressed()
 - (void)endDialogWithReturnCode:(NSInteger)_returnCode
 {
     if( IsShiftPressed()  )
-        self.RememberCheck.state = NSOnState;
+        self.RememberCheck.state = NSControlStateValueOn;
     
     if( m_Ctx )
-        m_Ctx->SetApplyToAll( self.RememberCheck.state == NSOnState );
+        m_Ctx->SetApplyToAll( self.RememberCheck.state == NSControlStateValueOn );
     
     [self.window.sheetParent endSheet:self.window returnCode:_returnCode];
 }

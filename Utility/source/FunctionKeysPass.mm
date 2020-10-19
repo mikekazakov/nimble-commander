@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <FunctionKeysPass.h>
 #include <Carbon/Carbon.h>
 #include <AppKit/AppKit.h>
@@ -71,7 +71,7 @@ CGEventRef FunctionalKeysPass::Callback([[maybe_unused]] CGEventTapProxy _proxy,
          */
         if( _type == kCGEventKeyDown || _type == kCGEventKeyUp)
             return HandleRegularKeyEvents(_type, _event);
-        else if( (NSEventType)_type == NSSystemDefined )
+        else if( (NSEventType)_type == NSEventTypeSystemDefined )
             return HandleControlButtons(_type, _event);
     }
 
@@ -145,7 +145,7 @@ bool FunctionalKeysPass::Enable()
 
         const auto interested_events = CGEventMaskBit(kCGEventKeyDown) |
                                        CGEventMaskBit(kCGEventKeyUp) |
-                                       CGEventMaskBit(NSSystemDefined);        
+                                       CGEventMaskBit(NSEventTypeSystemDefined);        
         const auto handler = [](CGEventTapProxy _proxy,
                                 CGEventType _type,
                                 CGEventRef _event,

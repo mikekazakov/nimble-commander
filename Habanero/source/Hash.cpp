@@ -1,10 +1,13 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/Hash.h>
 #include <CommonCrypto/CommonDigest.h>
 #include <zlib.h>
 #include <assert.h>
 
 namespace nc::base {
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 Hash::Hash(Mode _mode):
     m_Mode(_mode)
@@ -124,5 +127,7 @@ std::string Hash::Hex(const std::vector<uint8_t> &_d)
     }
     return r;
 }
+
+#pragma clang diagnostic pop
 
 }

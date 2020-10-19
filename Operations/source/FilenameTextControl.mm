@@ -76,14 +76,17 @@
         if( m_IsBuilding == true )
             return nil;
         m_IsBuilding = true;
-        
-        const auto default_fe = [aControlView.window fieldEditor:true
-                                                       forObject:aControlView];
+
+        const auto default_fe = [aControlView.window fieldEditor:true forObject:aControlView];
         if( !objc_cast<NSTextView>(default_fe) )
             return nil;
-        
-        const auto archived_fe = [NSKeyedArchiver archivedDataWithRootObject:default_fe];
-        const id copied_fe = [NSKeyedUnarchiver unarchiveObjectWithData:archived_fe];
+
+        const auto archived_fe = [NSKeyedArchiver archivedDataWithRootObject:default_fe
+                                                       requiringSecureCoding:false
+                                                                       error:nil];
+        const id copied_fe = [NSKeyedUnarchiver unarchivedObjectOfClass:NSTextView.class
+                                                               fromData:archived_fe
+                                                                  error:nil];
         m_FieldEditor = objc_cast<NSTextView>(copied_fe);
         [m_FieldEditor.layoutManager replaceTextStorage:[[NCFilenameTextStorage alloc] init]];
     }

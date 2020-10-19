@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingDialog.h"
 #include <VFS/VFS.h>
 #include <Habanero/algo.h>
@@ -189,17 +189,17 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
         if( m_ProcessSubfolders ) {
             _b.allowsMixedState = true;
             if( !has_user_input )
-                _b.state = NSMixedState;
+                _b.state = NSControlStateValueMixed;
         }
         else {
             if( has_user_input ) {
-                if( _b.state == NSMixedState && _v )
+                if( _b.state == NSControlStateValueMixed && _v )
                     _b.state = *_v;
                 _b.allowsMixedState = !bool(_v);
             }
             else {
                 _b.allowsMixedState = !bool(_v);
-                _b.state = _v ? *_v : NSMixedState;
+                _b.state = _v ? *_v : NSControlStateValueMixed;
             }
         }
         // these two lines are intended to remove a strange behaviour of non-redrawing NSButton
@@ -245,12 +245,12 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
     
     if( !user_has_toggled_applying ) {
         if( _t && !m_ProcessSubfolders )
-            _b.state = NSOnState;
+            _b.state = NSControlStateValueOn;
         else
-            _b.state = NSOffState;
+            _b.state = NSControlStateValueOff;
     }
 
-    if( _b.state == NSOnState ) {
+    if( _b.state == NSControlStateValueOn ) {
         _dp.enabled = true;
         _dp.textColor = NSColor.controlTextColor;
     }
@@ -294,7 +294,7 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
 {
     self.timesATime.dateValue = [NSDate date];
     self.timesATime.tag++;
-    self.timesATimeCheckbox.state = NSOnState;
+    self.timesATimeCheckbox.state = NSControlStateValueOn;
     self.timesATimeCheckbox.tag++;
     [self fillTimes];
 }
@@ -303,7 +303,7 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
 {
     self.timesMTime.dateValue = [NSDate date];
     self.timesMTime.tag++;
-    self.timesMTimeCheckbox.state = NSOnState;
+    self.timesMTimeCheckbox.state = NSControlStateValueOn;
     self.timesMTimeCheckbox.tag++;
     [self fillTimes];
 }
@@ -312,7 +312,7 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
 {
     self.timesCTime.dateValue = [NSDate date];
     self.timesCTime.tag++;
-    self.timesCTimeCheckbox.state = NSOnState;
+    self.timesCTimeCheckbox.state = NSControlStateValueOn;
     self.timesCTimeCheckbox.tag++;
     [self fillTimes];
 }
@@ -321,7 +321,7 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
 {
     self.timesBTime.dateValue = [NSDate date];
     self.timesBTime.tag++;
-    self.timesBTimeCheckbox.state = NSOnState;
+    self.timesBTimeCheckbox.state = NSControlStateValueOn;
     self.timesBTimeCheckbox.tag++;
     [self fillTimes];
 }
@@ -333,17 +333,17 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
         if( m_ProcessSubfolders ) {
             _b.allowsMixedState = true;
             if( !has_user_input )
-                _b.state = NSMixedState;
+                _b.state = NSControlStateValueMixed;
         }
         else {
             if( has_user_input ) {
-                if( _b.state == NSMixedState && _v )
+                if( _b.state == NSControlStateValueMixed && _v )
                     _b.state = *_v;
                 _b.allowsMixedState = !bool(_v);
             }
             else {
                 _b.allowsMixedState = !bool(_v);
-                _b.state = _v ? *_v : NSMixedState;
+                _b.state = _v ? *_v : NSControlStateValueMixed;
             }
         }
         // these two lines are intended to remove a strange behaviour of non-redrawing NSButton
@@ -483,9 +483,9 @@ static const auto g_MixedOwnageTitle = @"[???]";
 
     auto m = [](NSButton *_b, std::optional<bool> &_v) {
         const auto state = _b.state;
-        if( state == NSOnState )
+        if( state == NSControlStateValueOn )
             _v = true;
-        else if( state == NSOffState )
+        else if( state == NSControlStateValueOff )
             _v = false;
     };
     
@@ -534,9 +534,9 @@ static const auto g_MixedOwnageTitle = @"[???]";
     
     auto m = [](NSButton *_b, std::optional<bool> &_v) {
         const auto state = _b.state;
-        if( state == NSOnState )
+        if( state == NSControlStateValueOn )
             _v = true;
-        else if( state == NSOffState )
+        else if( state == NSControlStateValueOff )
             _v = false;
     };
     
@@ -612,13 +612,13 @@ static const auto g_MixedOwnageTitle = @"[???]";
         return std::nullopt;
     
     AttrsChangingCommand::Times t;
-    if( self.timesATimeCheckbox.state == NSOnState )
+    if( self.timesATimeCheckbox.state == NSControlStateValueOn )
         t.atime = self.timesATime.dateValue.timeIntervalSince1970;
-    if( self.timesMTimeCheckbox.state == NSOnState )
+    if( self.timesMTimeCheckbox.state == NSControlStateValueOn )
         t.mtime = self.timesMTime.dateValue.timeIntervalSince1970;
-    if( self.timesCTimeCheckbox.state == NSOnState )
+    if( self.timesCTimeCheckbox.state == NSControlStateValueOn )
         t.ctime = self.timesCTime.dateValue.timeIntervalSince1970;
-    if( self.timesBTimeCheckbox.state == NSOnState )
+    if( self.timesBTimeCheckbox.state == NSControlStateValueOn )
         t.btime = self.timesBTime.dateValue.timeIntervalSince1970;
 
     const auto &common = m_CommonItemsTimes;

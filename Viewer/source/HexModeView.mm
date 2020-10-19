@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeView.h"
 #include "HexModeFrame.h"
 #include "HexModeLayout.h"
@@ -169,14 +169,8 @@ static std::shared_ptr<const TextModeWorkingSet>
 - (void)onVerticalScroll:(id)_sender
 {
     switch( m_VerticalScroller.hitPart ) {
-        case NSScrollerIncrementLine:
-            [self moveDown:_sender];
-            break;
         case NSScrollerIncrementPage:
             [self pageDown:_sender];
-            break;
-        case NSScrollerDecrementLine:
-            [self moveUp:_sender];
             break;
         case NSScrollerDecrementPage:
             [self pageUp:_sender];
@@ -606,13 +600,13 @@ static std::shared_ptr<const TextModeWorkingSet>
 
 - (void) handleSelectionWithMouseDragging:(NSEvent*)_event
 {
-    const auto event_mask = NSLeftMouseDraggedMask | NSLeftMouseUpMask;
-    const auto modifying_existing_selection = bool(_event.modifierFlags & NSShiftKeyMask);
+    const auto event_mask = NSEventMaskLeftMouseDragged | NSEventMaskLeftMouseUp;
+    const auto modifying_existing_selection = bool(_event.modifierFlags & NSEventModifierFlagShift);
     const auto first_down_view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
     if( [self shouldDoDraggingSelectionInColumns:_event] ) {
         const auto first_ind = m_Layout->ByteOffsetFromColumnHit(first_down_view_coords);
         const auto original_selection = [self localBytesSelection];
-        for( auto event = _event; event && event.type != NSLeftMouseUp;
+        for( auto event = _event; event && event.type != NSEventTypeLeftMouseUp;
             event = [self.window nextEventMatchingMask:event_mask] ) {
             const auto curr_view_coords = [self convertPoint:event.locationInWindow fromView:nil];
             const auto curr_ind = m_Layout->ByteOffsetFromColumnHit(curr_view_coords);
@@ -632,7 +626,7 @@ static std::shared_ptr<const TextModeWorkingSet>
     else if( [self shouldDoDraggingSelectionInSnippet:_event] ) {
         const auto first_ind = m_Layout->CharOffsetFromSnippetHit(first_down_view_coords);
         const auto original_selection = [self localCharsSelection];
-        for( auto event = _event; event && event.type != NSLeftMouseUp;
+        for( auto event = _event; event && event.type != NSEventTypeLeftMouseUp;
             event = [self.window nextEventMatchingMask:event_mask] ) {
             const auto curr_view_coords = [self convertPoint:event.locationInWindow fromView:nil];
             const auto curr_ind = m_Layout->CharOffsetFromSnippetHit(curr_view_coords);

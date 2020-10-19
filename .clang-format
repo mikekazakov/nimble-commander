@@ -2,6 +2,27 @@ BasedOnStyle: LLVM
 IndentWidth: 4
 ---
 Language: Cpp
+Standard: Cpp11
+DerivePointerAlignment: false
+PointerAlignment: Right
+ColumnLimit: 100
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowAllParametersOfDeclarationOnNextLine: false
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterFunction: true
+    AfterClass: true
+    AfterEnum: true
+BreakStringLiterals: true
+SortIncludes: false
+SpaceBeforeParens: Never
+SpacesInConditionalStatement: true
+SpacesInContainerLiterals: false
+---
 Language: ObjC
 Standard: Cpp11
 DerivePointerAlignment: false
@@ -11,6 +32,7 @@ AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: InlineOnly
 AllowAllParametersOfDeclarationOnNextLine: false
 AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
 BinPackParameters: false
 BreakBeforeBraces: Custom
 BraceWrapping:

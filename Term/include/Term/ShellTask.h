@@ -1,11 +1,11 @@
 // Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include "Task.h"
+#include <filesystem>
 #include <functional>
 #include <string>
 #include <thread>
-#include <filesystem>
-#include "Task.h"
 
 namespace nc::term {
 
@@ -21,12 +21,13 @@ public:
         // shell is running normally
         Shell = 1,
 
-        // a child program is running under shell, executed from it's command line
+        // a child program is running under shell, executed from it's command
+        // line
         ProgramInternal = 2,
 
         // a child program is running under shell, executed from NC's UI.
-        // shell gets this state right before the actual execution, i.e. there's a bit of delay the
-        // child process is spawned.
+        // shell gets this state right before the actual execution, i.e. there's
+        // a bit of delay the child process is spawned.
         ProgramExternal = 3,
 
         // shell died
@@ -67,7 +68,8 @@ public:
 
     /**
      * Adds an argument to be passed to the shell upon startup.
-     * This will OVERRIDE the default ones that ShellTask automatically feeds the shell with.
+     * This will OVERRIDE the default ones that ShellTask automatically feeds
+     * the shell with.
      */
     void AddCustomShellArgument(std::string_view argument);
 
@@ -92,8 +94,8 @@ public:
     /**
      * executes a binary file in a directory using ./filename.
      * _at can be NULL. if it is the same as CWD - then ignored.
-     * _parameters can be NULL. if they are not NULL - this string should be escaped in advance -
-     * this function doesn't convert is anyhow.
+     * _parameters can be NULL. if they are not NULL - this string should be
+     * escaped in advance - this function doesn't convert is anyhow.
      */
     void Execute(const char *_short_fn, const char *_at, const char *_parameters);
 
@@ -105,8 +107,8 @@ public:
 
     /**
      * Can be used in any TermShellTask state.
-     * If shell is alive - will send actual resize signal, otherwise will only set internal width
-     * and height.
+     * If shell is alive - will send actual resize signal, otherwise will only
+     * set internal width and height.
      */
     void ResizeWindow(int _sx, int _sy);
 
@@ -125,8 +127,8 @@ public:
 
     /**
      * Current working directory. With trailing slash, in form: /Users/migun/.
-     * Return string by value to minimize potential chance to get race condition.
-     * Thread-safe.
+     * Return string by value to minimize potential chance to get race
+     * condition. Thread-safe.
      */
     std::string CWD() const;
 
@@ -137,6 +139,13 @@ public:
     std::vector<std::string> ChildrenList() const;
 
     /**
+     * Returns  a PID of a shell if any, -1 otherwise.
+     * Thread-safe.
+     */
+    int ShellPID() const;
+
+    /**
+     * Returns  a PID of a process currently executed by a shell.
      * Will return -1 if there's no children on shell or on any errors.
      * Based on same mech as ChildrenList() so may be time-costly.
      * Thread-safe.

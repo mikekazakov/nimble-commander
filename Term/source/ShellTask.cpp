@@ -498,7 +498,9 @@ void ShellTask::CleanUp()
     if( I->shell_pid > 0 ) {
         const int pid = I->shell_pid;
         I->shell_pid = -1;
-        KillAndReap(pid, std::chrono::milliseconds(400), std::chrono::milliseconds(1000));
+        std::thread([pid]{
+            KillAndReap(pid, std::chrono::milliseconds(400), std::chrono::milliseconds(1000));
+        }).detach();
     }
 
     if( I->master_fd >= 0 ) {
@@ -695,6 +697,11 @@ std::vector<std::string> ShellTask::ChildrenList() const
 
     free(proc_list);
     return result;
+}
+
+int ShellTask::ShellPID() const
+{
+    return I->shell_pid;
 }
 
 int ShellTask::ShellChildPID() const

@@ -44,6 +44,21 @@ static bool WaitChildrenListToBecome(const ShellTask &_shell,
     }
 }
 
+static bool WaitUntilProcessDies(int _pid,
+                                 std::chrono::nanoseconds _deadline,
+                                 std::chrono::nanoseconds _poll_period)
+{
+    const auto deadline = machtime() + _deadline;
+    while( true ) {
+        const bool dead = kill(_pid, 0) < 0;
+        if( dead && errno == ESRCH )
+            return true;
+        if( machtime() >= deadline )
+            return false;
+        std::this_thread::sleep_for(_poll_period);
+    }
+}
+
 TEST_CASE(PREFIX "Inactive -> Shell -> Terminate - Inactive")
 {
     ShellTask shell;
@@ -55,9 +70,12 @@ TEST_CASE(PREFIX "Inactive -> Shell -> Terminate - Inactive")
 
     shell.Launch(CommonPaths::AppTemporaryDirectory());
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
+    const int pid = shell.ShellPID();
+    REQUIRE(pid >= 0);
 
     shell.Terminate();
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Inactive));
+    REQUIRE(WaitUntilProcessDies(pid, 5s, 1ms));
 }
 
 TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactive")
@@ -311,7 +329,7 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     const TempTestDir dir;
     const auto dir2 = dir.directory / "Test" / "";
     std::filesystem::create_directory(dir2);
-    
+
     QueuedAtomicHolder<ShellTask::TaskState> shell_state;
     AtomicHolder<std::filesystem::path> cwd;
     ShellTask shell;
@@ -322,54 +340,54 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
     shell.ResizeWindow(100, 100);
     shell.Launch(dir.directory);
-    
+
     // check cwd
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
-    REQUIRE( shell.CWD() == dir.directory.generic_string() );
-    
+    REQUIRE(shell.CWD() == dir.directory.generic_string());
+
     // the only task is running is shell itself, and is not returned by ChildrenList
-    CHECK( shell.ChildrenList().empty() );
+    CHECK(shell.ChildrenList().empty());
 
     // test executing binaries within a shell
     shell.ExecuteWithFullPath("/usr/bin/top", nullptr);
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
-    REQUIRE( WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms) );
-        
+    REQUIRE(WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms));
+
     // simulates user press Q to quit top
     shell.WriteChildInput("q");
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
-    REQUIRE( WaitChildrenListToBecome(shell, {}, 5s, 1ms) );
-  
+    REQUIRE(WaitChildrenListToBecome(shell, {}, 5s, 1ms));
+
     // check chdir
-    shell.ChDir( dir2 );
+    shell.ChDir(dir2);
     REQUIRE(cwd.wait_to_become(5s, dir2));
-    REQUIRE( shell.CWD() == dir2.generic_string() );
-    
+    REQUIRE(shell.CWD() == dir2.generic_string());
+
     // test chdir in the middle of some typing
     shell.WriteChildInput("ls ");
-    shell.ChDir( dir.directory );
+    shell.ChDir(dir.directory);
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
-    REQUIRE( shell.CWD() == dir.directory.generic_string() );
+    REQUIRE(shell.CWD() == dir.directory.generic_string());
 
     // check internal program state
     shell.WriteChildInput("top\r");
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramInternal));
-    REQUIRE( WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms) );
-    
+    REQUIRE(WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms));
+
     // check termination
     shell.Terminate();
-    REQUIRE( shell.ChildrenList().empty() );
-    REQUIRE( shell.State() == ShellTask::TaskState::Inactive );
-    
+    REQUIRE(shell.ChildrenList().empty());
+    REQUIRE(shell.State() == ShellTask::TaskState::Inactive);
+
     // check execution with short path in different directory
     shell.Launch(dir.directory);
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     shell.Execute("top", "/usr/bin/", nullptr);
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
-    REQUIRE( WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms) );
-    
+    REQUIRE(WaitChildrenListToBecome(shell, {"top"}, 5s, 1ms));
+
     shell.Terminate();
-    REQUIRE( shell.ChildrenList().empty() );
+    REQUIRE(shell.ChildrenList().empty());
 }
 
 TEST_CASE(PREFIX "Test vim interaction via output")

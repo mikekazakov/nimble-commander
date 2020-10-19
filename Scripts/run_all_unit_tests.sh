@@ -13,7 +13,8 @@ build_target()
         -quiet"
     BINARY_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//')
     BINARY_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//')
-    BINARY_PATH=$BINARY_DIR/$BINARY_NAME    
+    BINARY_PATH=$BINARY_DIR/$BINARY_NAME
+    echo building ${TARGET}
     $XC build
 }
 

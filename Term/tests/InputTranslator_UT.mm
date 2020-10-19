@@ -371,6 +371,6 @@ TEST_CASE(PREFIX"Pasting")
     SECTION("Bracketed") {
         it.SetBracketedPaste(true);
         it.ProcessPaste("Hello");
-        CHECK( output == "\x1B[200~,Hello\x1B[201~." );
+        CHECK( output == "\x1B[200~Hello\x1B[201~" );
     }
 }

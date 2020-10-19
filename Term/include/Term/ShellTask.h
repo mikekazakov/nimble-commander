@@ -7,6 +7,8 @@
 #include <string>
 #include <thread>
 
+// RTFM: https://hyperpolyglot.org/unix-shells
+
 namespace nc::term {
 
 class ShellTask : public Task
@@ -152,6 +154,11 @@ public:
      */
     int ShellChildPID() const;
 
+    /**
+     * Returns a shell type, depending on a startup path, regardless of an actual state
+     */
+    ShellType GetShellType() const;
+    
 private:
     bool IsCurrentWD(const char *_what) const;
     void ProcessPwdPrompt(const void *_d, int _sz);

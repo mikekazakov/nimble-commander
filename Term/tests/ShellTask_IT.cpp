@@ -13,6 +13,7 @@
 #include <Utility/SystemInformation.h>
 #include <magic_enum.hpp>
 #include <sys/param.h>
+#include <unordered_map>
 
 using namespace nc;
 using namespace nc::term;
@@ -62,6 +63,10 @@ static bool WaitUntilProcessDies(int _pid,
 TEST_CASE(PREFIX "Inactive -> Shell -> Terminate - Inactive")
 {
     ShellTask shell;
+    SECTION("/bin/bash") { shell.SetShellPath("/bin/bash"); }
+    SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
+    SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
+    SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     REQUIRE(shell.State() == TaskState::Inactive);
 
@@ -81,6 +86,10 @@ TEST_CASE(PREFIX "Inactive -> Shell -> Terminate - Inactive")
 TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactive")
 {
     ShellTask shell;
+    SECTION("/bin/bash") { shell.SetShellPath("/bin/bash"); }
+    SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
+    SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
+    SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     shell.SetOnStateChange(
         [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
@@ -97,6 +106,10 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactiv
 TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (vi) -> Shell -> Terminate -> Inactive")
 {
     ShellTask shell;
+    SECTION("/bin/bash") { shell.SetShellPath("/bin/bash"); }
+    SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
+    SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
+    SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     shell.SetOnStateChange(
         [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
@@ -114,13 +127,16 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (vi) -> Shell -> Terminat
 TEST_CASE(PREFIX "Inactive -> Shell -> ProgramExternal (vi) -> Shell -> Terminate -> Inactive")
 {
     ShellTask shell;
+    SECTION("/bin/bash") { shell.SetShellPath("/bin/bash"); }
+    SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
+    SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
+    SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     shell.SetOnStateChange(
         [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     REQUIRE(shell.State() == TaskState::Inactive);
     shell.Launch(CommonPaths::AppTemporaryDirectory());
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
-    ;
     shell.ExecuteWithFullPath("/usr/bin/vi", nullptr);
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
     shell.WriteChildInput(":q\r");
@@ -129,7 +145,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramExternal (vi) -> Shell -> Terminat
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Inactive));
 }
 
-TEST_CASE(PREFIX "Launch=>Exit via output")
+TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
 {
     AtomicHolder<std::string> buffer_dump;
     Screen screen(20, 3);
@@ -138,9 +154,20 @@ TEST_CASE(PREFIX "Launch=>Exit via output")
 
     ShellTask shell;
     shell.ResizeWindow(20, 3);
-    shell.SetShellPath("/bin/bash");
-    shell.SetEnvVar("PS1", "Hello=>");
-    shell.AddCustomShellArgument("bash");
+    SECTION("bash")
+    {
+        shell.SetShellPath("/bin/bash");
+        shell.SetEnvVar("PS1", "Hello=>");
+        shell.AddCustomShellArgument("bash");
+    }
+    SECTION("zsh")
+    {
+        shell.SetShellPath("/bin/zsh");
+        shell.SetEnvVar("PS1", "Hello=>");
+        shell.AddCustomShellArgument("zsh");
+        shell.AddCustomShellArgument("-f");
+    }
+    const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
         if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
@@ -157,12 +184,15 @@ TEST_CASE(PREFIX "Launch=>Exit via output")
     REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected));
 
     shell.WriteChildInput("exit\r");
-    const std::string expected2 = "Hello=>exit         "
-                                  "exit                "
-                                  "                    ";
-    REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected2));
+    std::unordered_map<ShellTask::ShellType, std::string> expected2;
+    expected2[ShellTask::ShellType::Bash] = "Hello=>exit         "
+                                            "exit                "
+                                            "                    ";
+    expected2[ShellTask::ShellType::ZSH] = "Hello=>exit         "
+                                           "                    "
+                                           "                    ";
+    REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected2[type]));
 }
-
 TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
 {
     const TempTestDir dir;
@@ -181,9 +211,19 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
 
     ShellTask shell;
     shell.ResizeWindow(20, 5);
-    shell.SetShellPath("/bin/bash");
-    shell.SetEnvVar("PS1", ">");
-    shell.AddCustomShellArgument("bash");
+    SECTION("bash")
+    {
+        shell.SetShellPath("/bin/bash");
+        shell.SetEnvVar("PS1", ">");
+        shell.AddCustomShellArgument("bash");
+    }
+    SECTION("zsh")
+    {
+        shell.SetShellPath("/bin/zsh");
+        shell.SetEnvVar("PS1", ">");
+        shell.AddCustomShellArgument("zsh");
+        shell.AddCustomShellArgument("-f");
+    }
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
         if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
@@ -338,6 +378,10 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     shell.SetOnStateChange(
         [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
+    SECTION("/bin/bash") { shell.SetShellPath("/bin/bash"); }
+    SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
+    SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
+    SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
     shell.ResizeWindow(100, 100);
     shell.Launch(dir.directory);
 
@@ -402,9 +446,19 @@ TEST_CASE(PREFIX "Test vim interaction via output")
 
     ShellTask shell;
     shell.ResizeWindow(40, 10);
-    shell.SetShellPath("/bin/bash");
-    shell.SetEnvVar("PS1", ">");
-    shell.AddCustomShellArgument("bash");
+    SECTION("bash")
+    {
+        shell.SetShellPath("/bin/bash");
+        shell.SetEnvVar("PS1", ">");
+        shell.AddCustomShellArgument("bash");
+    }
+    SECTION("zsh")
+    {
+        shell.SetShellPath("/bin/zsh");
+        shell.SetEnvVar("PS1", ">");
+        shell.AddCustomShellArgument("zsh");
+        shell.AddCustomShellArgument("-f");
+    }
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
         if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {

@@ -181,12 +181,12 @@ struct ShellTask::Impl {
     std::thread input_thread;
     std::string requested_cwd = "";
     std::string cwd = "";
-    ShellType shell_type = ShellType::Unknown;
 
     // accessible from main thread only (presumably)
     int term_sx = 80;
     int term_sy = 25;
     std::string shell_path = "";
+    ShellType shell_type = ShellType::Unknown;
     std::vector<std::pair<std::string, std::string>> custom_env_vars;
     std::vector<std::string> custom_shell_args;
 
@@ -200,7 +200,7 @@ struct ShellTask::Impl {
 
 ShellTask::ShellTask() : I(std::make_shared<Impl>())
 {
-    I->shell_path = GetDefaultShell();
+    SetShellPath(GetDefaultShell());
     TurnOffSigPipe();
 }
 
@@ -217,7 +217,6 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     if( I->input_thread.joinable() )
         throw std::logic_error("ShellTask::Launch called with joinable input thread");
 
-    I->shell_type = DetectShellType(I->shell_path);
     if( I->shell_type == ShellType::Unknown )
         return false;
 
@@ -290,11 +289,14 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
                     " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi'\n",
                     fork_rc);
         else if( I->shell_type == ShellType::ZSH )
-            sprintf(prompt_setup, " precmd(){ if [ $$ -eq %d ]; then pwd>&20; fi; }\n", fork_rc);
+            sprintf(prompt_setup,
+                    " precmd(){ if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi; }\n",
+                    fork_rc);
         else if( I->shell_type == ShellType::TCSH )
-            sprintf(prompt_setup, " alias precmd 'if ( $$ == %d ) pwd>>%s;sleep 0.05'\n", fork_rc,
+            sprintf(prompt_setup,
+                    " alias precmd 'if ( $$ == %d ) pwd>>%s;sleep 0.05'\n",
+                    fork_rc,
                     I->tcsh_fifo_path.c_str());
-
         if( !fd_is_valid(I->master_fd) )
             std::cerr << "m_MasterFD is dead!" << std::endl;
 
@@ -777,6 +779,7 @@ ShellTask::TaskState ShellTask::State() const
 void ShellTask::SetShellPath(const std::string &_path)
 {
     I->shell_path = _path;
+    I->shell_type = DetectShellType(_path);
 }
 
 void ShellTask::SetEnvVar(const std::string &_var, const std::string &_value)
@@ -809,6 +812,11 @@ char **ShellTask::BuildShellArgs() const
         // Feed the built-in ones
         return g_ShellParams[static_cast<int>(I->shell_type)];
     }
+}
+
+ShellTask::ShellType ShellTask::GetShellType() const
+{
+    return I->shell_type;
 }
 
 } // namespace nc::term

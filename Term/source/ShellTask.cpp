@@ -176,6 +176,7 @@ struct ShellTask::Impl {
     int cwd_pipe[2] = {-1, -1};
     int semaphore_pipe[2] = {-1, -1};
     std::string tcsh_fifo_path;
+    std::string tcsh_semaphore_path;
     // will give no output until the next bash prompt will show the requested_cwd path
     bool temporary_suppressed = false;
     std::thread input_thread;
@@ -244,12 +245,21 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     } else if( I->shell_type == ShellType::TCSH ) {
         // for TCSH use named fifo file
         I->tcsh_fifo_path = base::CommonPaths::AppTemporaryDirectory() +
-                            "nimble_commander.tcsh.pipe." + std::to_string(getpid());
+                            "nimble_commander.tcsh.pwd_pipe." + std::to_string(getpid());
 
         rc = mkfifo(I->tcsh_fifo_path.c_str(), 0600);
         assert(rc == 0);
 
         rc = I->cwd_pipe[0] = open(I->tcsh_fifo_path.c_str(), O_RDWR);
+        assert(rc != -1);
+        
+        I->tcsh_semaphore_path = base::CommonPaths::AppTemporaryDirectory() +
+                "nimble_commander.tcsh.semaphore_pipe." + std::to_string(getpid());
+        
+        rc = mkfifo(I->tcsh_semaphore_path.c_str(), 0600);
+        assert(rc == 0);
+
+        rc = I->semaphore_pipe[1] = open(I->tcsh_semaphore_path.c_str(), O_RDWR);
         assert(rc != -1);
     }
 
@@ -283,6 +293,14 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         });
 
         // setup pwd feedback
+        // this braindead construct creates a two-way communication channel between a shell and NC:
+        // 1) the shell is about to print a command prompt
+        // 2) PROMPT_COMMAND/precmd is executed by the shell
+        // 2.a) current directory is told to NC through the pwd pipe
+        // 2.b) shell is blocked until NC responds via the semaphore pipe
+        // 2.c) NC processes the pwd notification (hopefully) and writes into the semaphore pipe
+        // 2.d) data from that semaphore is read and the shell is unblocked
+        // 3) the shell resumes
         char prompt_setup[1024] = {0};
         if( I->shell_type == ShellType::Bash )
             sprintf(prompt_setup,
@@ -293,10 +311,13 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
                     " precmd(){ if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi; }\n",
                     fork_rc);
         else if( I->shell_type == ShellType::TCSH )
-            sprintf(prompt_setup,
-                    " alias precmd 'if ( $$ == %d ) pwd>>%s;sleep 0.05'\n",
-                    fork_rc,
-                    I->tcsh_fifo_path.c_str());
+            sprintf(
+                prompt_setup,
+                " alias precmd 'if ( $$ == %d ) pwd>>%s;dd if=%s of=/dev/null bs=4 count=1 >&/dev/null'\n",
+                fork_rc,
+                I->tcsh_fifo_path.c_str(),
+                I->tcsh_semaphore_path.c_str());
+        
         if( !fd_is_valid(I->master_fd) )
             std::cerr << "m_MasterFD is dead!" << std::endl;
 
@@ -523,6 +544,11 @@ void ShellTask::CleanUp()
     if( !I->tcsh_fifo_path.empty() ) {
         unlink(I->tcsh_fifo_path.c_str());
         I->tcsh_fifo_path.clear();
+    }
+    
+    if( !I->tcsh_semaphore_path.empty()) {
+        unlink(I->tcsh_semaphore_path.c_str());
+        I->tcsh_semaphore_path.clear();
     }
 
     if( I->input_thread.joinable() ) {

@@ -85,12 +85,12 @@ TEST_CASE(PREFIX "Inactive -> Shell -> Terminate - Inactive")
 
 TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactive")
 {
+    QueuedAtomicHolder<ShellTask::TaskState> shell_state(ShellTask::TaskState::Inactive);
     ShellTask shell;
     SECTION("/bin/bash") { shell.SetShellPath("/bin/bash"); }
     SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
     SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
     SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
-    QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     shell.SetOnStateChange(
         [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     REQUIRE(shell.State() == TaskState::Inactive);

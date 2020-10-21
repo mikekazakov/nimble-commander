@@ -29,6 +29,7 @@ namespace nc::term {
 
 static const int g_PromptPipe = 20;
 static const int g_SemaphorePipe = 21;
+static int g_TCSHPipeGeneration = 0;
 
 static char *g_BashParams[3] = {(char *)"bash", (char *)"--login", 0};
 static char *g_ZSHParams[3] = {(char *)"-Z", (char *)"-g", 0};
@@ -175,7 +176,7 @@ struct ShellTask::Impl {
     std::atomic_int shell_pid{-1};
     int cwd_pipe[2] = {-1, -1};
     int semaphore_pipe[2] = {-1, -1};
-    std::string tcsh_fifo_path;
+    std::string tcsh_cwd_path;
     std::string tcsh_semaphore_path;
     // will give no output until the next bash prompt will show the requested_cwd path
     bool temporary_suppressed = false;
@@ -243,26 +244,29 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         rc = pipe(I->semaphore_pipe);
         assert(rc == 0);
     } else if( I->shell_type == ShellType::TCSH ) {
-        // for TCSH use named fifo file
-        I->tcsh_fifo_path = base::CommonPaths::AppTemporaryDirectory() +
-                            "nimble_commander.tcsh.pwd_pipe." + std::to_string(getpid());
+        // for TCSH use named fifo file. supporting [t]csh was a mistake :(
+        const auto &dir = base::CommonPaths::AppTemporaryDirectory();
+        const auto mypid = std::to_string(getpid());
+        const auto gen = std::to_string(g_TCSHPipeGeneration);
+        I->tcsh_cwd_path = dir + "nimble_commander.tcsh.cwd_pipe." + mypid + "." + gen;
 
-        rc = mkfifo(I->tcsh_fifo_path.c_str(), 0600);
+        rc = mkfifo(I->tcsh_cwd_path.c_str(), 0600);
         assert(rc == 0);
 
-        rc = I->cwd_pipe[0] = open(I->tcsh_fifo_path.c_str(), O_RDWR);
+        rc = I->cwd_pipe[0] = open(I->tcsh_cwd_path.c_str(), O_RDWR);
         assert(rc != -1);
-        
-        I->tcsh_semaphore_path = base::CommonPaths::AppTemporaryDirectory() +
-                "nimble_commander.tcsh.semaphore_pipe." + std::to_string(getpid());
-        
+
+        I->tcsh_semaphore_path = dir + "nimble_commander.tcsh.semaphore_pipe." + mypid + "." + gen;
+
         rc = mkfifo(I->tcsh_semaphore_path.c_str(), 0600);
         assert(rc == 0);
 
         rc = I->semaphore_pipe[1] = open(I->tcsh_semaphore_path.c_str(), O_RDWR);
         assert(rc != -1);
-    }
 
+        ++g_TCSHPipeGeneration;
+    }
+    
     // Create the child process
     const auto fork_rc = fork();
     if( fork_rc < 0 ) {
@@ -315,7 +319,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
                 prompt_setup,
                 " alias precmd 'if ( $$ == %d ) pwd>>%s;dd if=%s of=/dev/null bs=4 count=1 >&/dev/null'\n",
                 fork_rc,
-                I->tcsh_fifo_path.c_str(),
+                I->tcsh_cwd_path.c_str(),
                 I->tcsh_semaphore_path.c_str());
         
         if( !fd_is_valid(I->master_fd) )
@@ -541,9 +545,9 @@ void ShellTask::CleanUp()
         I->semaphore_pipe[0] = I->semaphore_pipe[1] = -1;
     }
 
-    if( !I->tcsh_fifo_path.empty() ) {
-        unlink(I->tcsh_fifo_path.c_str());
-        I->tcsh_fifo_path.clear();
+    if( !I->tcsh_cwd_path.empty() ) {
+        unlink(I->tcsh_cwd_path.c_str());
+        I->tcsh_cwd_path.clear();
     }
     
     if( !I->tcsh_semaphore_path.empty()) {

@@ -176,6 +176,7 @@ struct ShellTask::Impl {
     std::atomic_int shell_pid{-1};
     int cwd_pipe[2] = {-1, -1};
     int semaphore_pipe[2] = {-1, -1};
+    int signal_pipe[2] = {-1, -1};
     std::string tcsh_cwd_path;
     std::string tcsh_semaphore_path;
     // will give no output until the next bash prompt will show the requested_cwd path
@@ -266,6 +267,10 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
 
         ++g_TCSHPipeGeneration;
     }
+    
+    // create a pipe to communicate with the blocking select()
+    rc = pipe(I->signal_pipe);
+    assert(rc == 0);
     
     // Create the child process
     const auto fork_rc = fork();
@@ -375,31 +380,29 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
 
 void ShellTask::ReadChildOutput()
 {
-    int rc;
-    fd_set fd_in, fd_err;
-
-    static const int input_sz = 65536;
+    constexpr int input_sz = 65536;
     char input[65536];
-
+    fd_set fd_in, fd_err;
+    
     while( true ) {
-        // Wait for data from standard input and master side of PTY
+        // Wait for either a data from master, cwd or signal, or an error from master.        
         FD_ZERO(&fd_in);
         FD_SET(I->master_fd, &fd_in);
         FD_SET(I->cwd_pipe[0], &fd_in);
-
+        FD_SET(I->signal_pipe[0], &fd_in);
         FD_ZERO(&fd_err);
         FD_SET(I->master_fd, &fd_err);
-
-        int max_fd = std::max((int)I->master_fd, I->cwd_pipe[0]);
-
-        //        std::cerr << "blocking on select()" << std::endl;
-        rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
+        const int max_fd = std::max({I->master_fd, I->cwd_pipe[0], I->signal_pipe[0]});
+        const int select_rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
         if( I->shell_pid < 0 ) {
-            //            std::cerr << "I->shell_pid < 0, returning" << std::endl;
-            break; // shell is dead
+            // The shell was closed from the master thread, don't do aything.
+            // Most likely it's due to FD_ISSET(I->signal_pipe[0], &fd_in), but we can't(?) reliably
+            // check for that due to a possible race condition between "I->shell_pid = -1;" and
+            // "write(I->signal_pipe[1], ...)".
+            break;
         }
 
-        if( rc < 0 ) {
+        if( select_rc < 0 ) {
             //            std::cerr << "select(max_fd + 1, &fd_in, NULL, &fd_err, NULL) returned "
             //                << rc << std::endl;
             // error on select(), let's think that shell has died
@@ -419,9 +422,9 @@ void ShellTask::ReadChildOutput()
 
         // check prompt's output
         if( FD_ISSET(I->cwd_pipe[0], &fd_in) ) {
-            rc = (int)read(I->cwd_pipe[0], input, input_sz);
-            if( rc > 0 )
-                ProcessPwdPrompt(input, rc);
+            const int read_rc = (int)read(I->cwd_pipe[0], input, input_sz);
+            if( read_rc > 0 )
+                ProcessPwdPrompt(input, read_rc);
         }
 
         // check if child process died
@@ -529,6 +532,22 @@ void ShellTask::CleanUp()
             KillAndReap(pid, std::chrono::milliseconds(400), std::chrono::milliseconds(1000));
         }).detach();
     }
+    
+    if( I->input_thread.joinable() ) {
+        if( I->input_thread.get_id() == std::this_thread::get_id() ) {
+            I->input_thread.detach();
+        } else {
+            char c = 0;
+            write(I->signal_pipe[1], &c, 1);
+            I->input_thread.join();
+        }
+    }
+    
+    if( I->signal_pipe[0] >= 0 ) {
+        close(I->signal_pipe[0]);
+        close(I->signal_pipe[1]);
+        I->signal_pipe[0] = I->signal_pipe[1] = -1;
+    }
 
     if( I->master_fd >= 0 ) {
         close(I->master_fd);
@@ -553,14 +572,6 @@ void ShellTask::CleanUp()
     if( !I->tcsh_semaphore_path.empty()) {
         unlink(I->tcsh_semaphore_path.c_str());
         I->tcsh_semaphore_path.clear();
-    }
-
-    if( I->input_thread.joinable() ) {
-        if( I->input_thread.get_id() == std::this_thread::get_id() ) {
-            I->input_thread.detach();
-        } else {
-            I->input_thread.join();
-        }
     }
 
     I->temporary_suppressed = false;

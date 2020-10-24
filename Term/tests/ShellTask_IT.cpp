@@ -548,3 +548,102 @@ TEST_CASE(PREFIX "Test vim interaction via output")
                            "                                        ";
     REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected3));
 }
+
+TEST_CASE(PREFIX "Test multiple shells in parallel via output")
+{
+    const TempTestDir dir;
+    constexpr size_t number = 100; // just casually spawn 100 shells, not a big deal...
+        
+    struct Context {
+        AtomicHolder<std::string> buffer_dump;
+        AtomicHolder<ShellTask::TaskState> shell_state;
+        Screen screen{20, 5};
+        Parser2Impl parser;
+        InterpreterImpl interpreter{screen};
+        ShellTask shell;
+    };
+    std::array<Context, number> shells;
+
+    SECTION("bash")
+    {
+        for( auto &ctx : shells ) {
+            ctx.shell.SetShellPath("/bin/bash");
+            ctx.shell.SetEnvVar("PS1", ">");
+            ctx.shell.AddCustomShellArgument("bash");
+        }
+    }
+    SECTION("zsh")
+    {
+        for( auto &ctx : shells ) {
+            ctx.shell.SetShellPath("/bin/zsh");
+            ctx.shell.SetEnvVar("PS1", ">");
+            ctx.shell.AddCustomShellArgument("zsh");
+            ctx.shell.AddCustomShellArgument("-f");
+        }
+    }
+    SECTION("csh")
+    {
+        for( auto &ctx : shells ) {
+            ctx.shell.SetShellPath("/bin/csh");
+        }
+    }
+    SECTION("tcsh")
+    {
+        for( auto &ctx : shells ) {
+            ctx.shell.SetShellPath("/bin/tcsh");
+        }
+    }
+    for( auto &ctx : shells ) {
+        ctx.shell.ResizeWindow(20, 5);
+        ctx.shell.SetOnChildOutput([&](const void *_d, int _sz) {
+            if( auto cmds = ctx.parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
+                if( auto lock = ctx.screen.AcquireLock() ) {
+                    ctx.interpreter.Interpret(cmds);
+                    ctx.buffer_dump.store(ctx.screen.Buffer().DumpScreenAsANSI());
+                }
+            }
+        });
+        ctx.shell.SetOnStateChange(
+            [&](ShellTask::TaskState _new_state) { ctx.shell_state.store(_new_state); });
+        ctx.shell.Launch(dir.directory);
+
+        if( ctx.shell.GetShellType() == ShellTask::ShellType::TCSH )
+            ctx.shell.WriteChildInput("set prompt='>'\rclear\r");
+    }
+    
+    // wait until each shell wakes up
+    for( size_t i = 0; i != number; ++i ) {
+        const std::string expected = ">                   "
+                                     "                    "
+                                     "                    "
+                                     "                    "
+                                     "                    ";
+        REQUIRE(shells[i].buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected));
+    }
+    
+    // write the shell number to each shell
+    for( size_t i = 0; i != number; ++i ) {
+        const std::string msg = "Hi," + std::to_string(i);
+        shells[i].shell.WriteChildInput(msg);
+    }
+    
+    // wait until each shell dispays it
+    for( size_t i = 0; i != number; ++i ) {
+        const std::string msg = "Hi," + std::to_string(i);
+        std::string line = ">                   ";
+        line.replace(1, msg.size(), msg);
+        const std::string expected = line + "                    "
+                                            "                    "
+                                            "                    "
+                                            "                    ";
+        REQUIRE(shells[i].buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected));
+    }
+    
+    // now tell all the shell to bugger off
+    for( auto &ctx : shells )
+        ctx.shell.Terminate();
+    
+    // and wait until there were none
+    for( auto &ctx : shells )
+        REQUIRE(ctx.shell_state.wait_to_become(5s, TaskState::Inactive));
+}

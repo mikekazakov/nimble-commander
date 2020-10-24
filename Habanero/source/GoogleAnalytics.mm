@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/GoogleAnalytics.h>
 #include <chrono>
 #include <boost/uuid/random_generator.hpp>
@@ -174,7 +174,8 @@ void GoogleAnalytics::AcceptMessage(string _message)
     if( !m_Enabled )
         return;
     
-    LOCK_GUARD(m_MessagesLock) {
+    {
+        const auto lock = std::lock_guard{m_MessagesLock};
         if( m_FilterRedundantMessages && has(m_Messages, _message) )
             return;
         if( m_Messages.size() >= g_MessagesOverflowLimit )
@@ -201,8 +202,10 @@ void GoogleAnalytics::PostMessages()
     const auto batch_url = [NSURL URLWithString:m_UseHTTPS ? g_HttpsBatch : g_HttpBatch];
     
     vector<string> messages;
-    LOCK_GUARD(m_MessagesLock)
+    {
+        const auto lock = std::lock_guard{m_MessagesLock};
         messages = move(m_Messages);
+    }
     
     string payload;
     for( size_t ind = 0, ind_max = messages.size(); ind < ind_max; ) {

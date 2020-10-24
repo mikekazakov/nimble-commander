@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 Michael G. Kazakov
+/* Copyright (c) 2017-2020 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -39,10 +39,9 @@ ScopedObservableBase::ObservationTicket::ObservationTicket(ObservationTicket &&_
 ScopedObservableBase::ObservationTicket::~ObservationTicket()
 {
     if( *this ) {
-        LOCK_GUARD( indirect->lock ) {
-            if( indirect->instance )
-                indirect->instance->StopObservation(ticket);
-        }
+        const auto lock = std::lock_guard{indirect->lock};
+        if( indirect->instance )
+            indirect->instance->StopObservation(ticket);
     }
 }
 
@@ -50,10 +49,9 @@ const ScopedObservableBase::ObservationTicket &
 ScopedObservableBase::ObservationTicket::operator=(ScopedObservableBase::ObservationTicket &&_r)
 {
     if( *this ) {
-        LOCK_GUARD( indirect->lock ) {
-            if( indirect->instance )
-                indirect->instance->StopObservation(ticket);
-        }
+        const auto lock = std::lock_guard{indirect->lock};
+        if( indirect->instance )
+            indirect->instance->StopObservation(ticket);
     }
     indirect = _r.indirect;
     ticket = _r.ticket;
@@ -75,8 +73,8 @@ ScopedObservableBase::ScopedObservableBase()
 
 ScopedObservableBase::~ScopedObservableBase()
 {
-    LOCK_GUARD(m_Indirect->lock)
-        m_Indirect->instance = nullptr;
+    const auto lock = std::lock_guard{m_Indirect->lock};
+    m_Indirect->instance = nullptr;
 }
 
 ScopedObservableBase::ObservationTicket ScopedObservableBase::AddTicketedObserver
@@ -93,7 +91,8 @@ ScopedObservableBase::ObservationTicket ScopedObservableBase::AddTicketedObserve
     o.mask = _mask;
     
     auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
-    LOCK_GUARD(m_ObserversLock) {
+    {
+        const auto lock = std::lock_guard{m_ObserversLock};
         if( m_Observers ) {
             new_observers->reserve( m_Observers->size() + 1 );
             new_observers->assign( m_Observers->begin(), m_Observers->end() );
@@ -117,7 +116,8 @@ void ScopedObservableBase::AddUnticketedObserver
     o.mask = _mask;
     
     auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
-    LOCK_GUARD(m_ObserversLock) {
+    {
+        const auto lock = std::lock_guard{m_ObserversLock};
         if( m_Observers ) {
             new_observers->reserve( m_Observers->size() + 1 );
             new_observers->assign( m_Observers->begin(), m_Observers->end() );
@@ -133,8 +133,10 @@ void ScopedObservableBase::FireObservers( const uint64_t _mask ) const
         return;
 
     shared_ptr<vector<shared_ptr<Observer>>> observers;
-    LOCK_GUARD(m_ObserversLock)
+    {
+        const auto lock = std::lock_guard{m_ObserversLock};
         observers = m_Observers;
+    }
     
     if( observers )
         for( auto &o: *observers )
@@ -146,7 +148,8 @@ void ScopedObservableBase::StopObservation(const uint64_t _ticket)
 {
     // keep this shared_ptr after time lock is released, so any observers will be ponentially freed without locking.
     shared_ptr<vector<shared_ptr<Observer>>> old;
-    LOCK_GUARD(m_ObserversLock) {
+    {
+        const auto lock = std::lock_guard{m_ObserversLock};
         if( !m_Observers )
             return;
         old = m_Observers;

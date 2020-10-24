@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Michael G. Kazakov
+/* Copyright (c) 2016-2020 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -60,10 +60,11 @@ ObservableBase::ObservationTicket::operator bool() const noexcept
 
 ObservableBase::~ObservableBase()
 {
-    LOCK_GUARD(m_ObserversLock) {
-        if( m_Observers && !m_Observers->empty() )
-            printf("ObservableBase %p was destroyed with alive observers! This will lead to UB or crash.\n", this);
-    }
+    const auto lock = std::lock_guard{m_ObserversLock};
+    if( m_Observers && !m_Observers->empty() )
+        printf("ObservableBase %p was destroyed with alive observers! This will lead to UB or "
+               "crash.\n",
+               this);
 }
 
 ObservableBase::ObservationTicket ObservableBase::AddObserver( function<void()> _callback, const uint64_t _mask )
@@ -79,7 +80,8 @@ ObservableBase::ObservationTicket ObservableBase::AddObserver( function<void()> 
     o.mask = _mask;
     
     auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
-    LOCK_GUARD(m_ObserversLock) {
+    {
+        const auto lock = std::lock_guard{m_ObserversLock};
         if( m_Observers ) {
             new_observers->reserve( m_Observers->size() + 1 );
             new_observers->assign( m_Observers->begin(), m_Observers->end() );
@@ -97,7 +99,8 @@ void ObservableBase::FireObservers( const uint64_t _mask ) const
         return;
 
     shared_ptr<vector<shared_ptr<Observer>>> observers;
-    LOCK_GUARD(m_ObserversLock) {
+    {
+        const auto lock = std::lock_guard{m_ObserversLock};
         observers = m_Observers;
     }
     
@@ -109,21 +112,21 @@ void ObservableBase::FireObservers( const uint64_t _mask ) const
 
 void ObservableBase::StopObservation(const uint64_t _ticket)
 {
-    // keep this shared_ptr after time lock is released, so any observers will be ponentially freed without locking.
+    // keep this shared_ptr after time lock is released, so any observers will be ponentially freed
+    // without locking.
     shared_ptr<vector<shared_ptr<Observer>>> old;
-    LOCK_GUARD(m_ObserversLock) {
-        if( !m_Observers )
+    const auto lock = std::lock_guard{m_ObserversLock};
+    if( !m_Observers )
+        return;
+    old = m_Observers;
+    for( size_t i = 0, e = old->size(); i != e; ++i ) {
+        auto &o = (*old)[i];
+        if( o->ticket == _ticket ) {
+            auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
+            *new_observers = *old;
+            new_observers->erase(next(new_observers->begin(), i));
+            m_Observers = new_observers;
             return;
-        old = m_Observers;
-        for( size_t i = 0, e = old->size(); i != e; ++i ) {
-            auto &o = (*old)[i];
-            if( o->ticket == _ticket ) {
-                auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
-                *new_observers = *old;
-                new_observers->erase( next(new_observers->begin(), i) );
-                m_Observers = new_observers;
-                return;
-            }
         }
     }
 }

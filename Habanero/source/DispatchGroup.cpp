@@ -1,4 +1,4 @@
-/* Copyright (c) 2014-2016 Michael G. Kazakov
+/* Copyright (c) 2014-2020 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -41,27 +41,24 @@ void DispatchGroup::SetOnDry( std::function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
         std::make_shared<std::function<void()>>( move(_cb) );
-    LOCK_GUARD(m_CallbackLock) {
-        m_OnDry = cb;
-    }
+    const auto lock = std::lock_guard{m_CallbackLock};
+    m_OnDry = cb;
 }
 
 void DispatchGroup::SetOnWet( std::function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
         std::make_shared<std::function<void()>>( move(_cb) );
-    LOCK_GUARD(m_CallbackLock) {
-        m_OnWet = cb;
-    }
+    const auto lock = std::lock_guard{m_CallbackLock};
+    m_OnWet = cb;
 }
 
 void DispatchGroup::SetOnChange( std::function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
         std::make_shared<std::function<void()>>( move(_cb) );
-    LOCK_GUARD(m_CallbackLock) {
-        m_OnChange = cb;
-    }
+    const auto lock = std::lock_guard{m_CallbackLock};
+    m_OnChange = cb;
 }
 
 void DispatchGroup::Increment() const
@@ -81,7 +78,8 @@ void DispatchGroup::Decrement() const
 void DispatchGroup::FireDry() const
 {
     std::shared_ptr<std::function<void()>> cb;
-    LOCK_GUARD(m_CallbackLock) {
+    {
+        const auto lock = std::lock_guard{m_CallbackLock};
         cb = m_OnDry;
     }
     if( cb && *cb )
@@ -91,7 +89,8 @@ void DispatchGroup::FireDry() const
 void DispatchGroup::FireWet() const
 {
     std::shared_ptr<std::function<void()>> cb;
-    LOCK_GUARD(m_CallbackLock) {
+    {
+        const auto lock = std::lock_guard{m_CallbackLock};
         cb = m_OnWet;
     }
     if( cb && *cb )
@@ -101,7 +100,8 @@ void DispatchGroup::FireWet() const
 void DispatchGroup::FireChange() const
 {
     std::shared_ptr<std::function<void()>> cb;
-    LOCK_GUARD(m_CallbackLock) {
+    {
+        const auto lock = std::lock_guard{m_CallbackLock};
         cb = m_OnChange;
     }
     if( cb && *cb )

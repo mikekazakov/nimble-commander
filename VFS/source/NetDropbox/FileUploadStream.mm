@@ -66,21 +66,19 @@ length:(NSUInteger *)[[maybe_unused]] _len
 
 - (BOOL) hasBytesAvailable
 {
-    LOCK_GUARD(m_CallbacksLock) {
-        if( m_HasDataToFeed )
-            return m_HasDataToFeed();
-    }
+    const auto lock = std::lock_guard{m_CallbacksLock};
+    if( m_HasDataToFeed )
+        return m_HasDataToFeed();
     return false;
 }
 
 - (NSInteger)read:(uint8_t *)buffer maxLength:(NSUInteger)len
 {
-    LOCK_GUARD(m_CallbacksLock) {
-        if( m_FeedData ) {
-            auto rc = m_FeedData(buffer, len);
-            if( rc >= 0 )
-                return rc;
-        }
+    const auto lock = std::lock_guard{m_CallbacksLock};
+    if( m_FeedData ) {
+        auto rc = m_FeedData(buffer, len);
+        if( rc >= 0 )
+            return rc;
     }
     return -1;
 }
@@ -150,32 +148,26 @@ forMode:(NSRunLoopMode)[[maybe_unused]]_mode {}
 
 - (void) setFeedData:(std::function<ssize_t (uint8_t *, size_t)>)feedData
 {
-    LOCK_GUARD(m_CallbacksLock) {
-        m_FeedData = move(feedData);
-    }
+    const auto lock = std::lock_guard{m_CallbacksLock};
+    m_FeedData = move(feedData);
 }
 
 - (std::function<ssize_t(uint8_t *_buffer, size_t _sz)>) feedData
 {
-    LOCK_GUARD(m_CallbacksLock) {
-        return m_FeedData;
-    }
-    return nullptr;
+    const auto lock = std::lock_guard{m_CallbacksLock};
+    return m_FeedData;
 }
 
 - (void) setHasDataToFeed:(std::function<bool()>)hasDataToFeed
 {
-    LOCK_GUARD(m_CallbacksLock) {
-        m_HasDataToFeed = move(hasDataToFeed);
-    }
+    const auto lock = std::lock_guard{m_CallbacksLock};
+    m_HasDataToFeed = move(hasDataToFeed);
 }
 
 - (std::function<bool()>) hasDataToFeed
 {
-    LOCK_GUARD(m_CallbacksLock) {
-        return m_HasDataToFeed;
-    }
-    return nullptr;
+    const auto lock = std::lock_guard{m_CallbacksLock};
+    return m_HasDataToFeed;
 }
 
 - (void)notifyAboutNewData

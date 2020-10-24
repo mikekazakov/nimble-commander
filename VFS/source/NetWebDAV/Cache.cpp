@@ -29,7 +29,8 @@ void Cache::CommitListing( const std::string &_at_path, std::vector<PropFindResp
         return _1st.filename < _2nd.filename;
     });
     
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto lock = std::lock_guard{m_Lock};
         auto &directory = m_Dirs[path];
         directory.fetch_time = time;
         directory.has_dirty_items = false;
@@ -41,22 +42,21 @@ void Cache::CommitListing( const std::string &_at_path, std::vector<PropFindResp
     Notify(path);
 }
 
-std::optional<std::vector<PropFindResponse>> Cache::Listing( const std::string &_at_path ) const
+std::optional<std::vector<PropFindResponse>> Cache::Listing(const std::string &_at_path) const
 {
-    const auto path = EnsureTrailingSlash( _at_path );
-
-    LOCK_GUARD(m_Lock) {
-        const auto it = m_Dirs.find(path);
-        if( it == end(m_Dirs) )
-            return std::nullopt;
-        const auto &listing = it->second;
-        if( listing.has_dirty_items )
-            return std::nullopt;
-        if( IsOutdated(listing) )
-            return std::nullopt;
-        return listing.items;
-    }
-    return std::nullopt;
+    const auto path = EnsureTrailingSlash(_at_path);
+    
+    const auto lock = std::lock_guard{m_Lock};
+    
+    const auto it = m_Dirs.find(path);
+    if( it == end(m_Dirs) )
+        return std::nullopt;
+    const auto &listing = it->second;
+    if( listing.has_dirty_items )
+        return std::nullopt;
+    if( IsOutdated(listing) )
+        return std::nullopt;
+    return listing.items;
 }
 
 std::pair<std::optional<PropFindResponse>, Cache::E> Cache::Item(const std::string &_at_path) const
@@ -64,40 +64,37 @@ std::pair<std::optional<PropFindResponse>, Cache::E> Cache::Item(const std::stri
     const auto [directory, filename] = DeconstructPath(_at_path);
     if( filename.empty() )
         return {std::nullopt, E::NonExist};
+
+    const auto lock = std::lock_guard{m_Lock};
     
-    LOCK_GUARD(m_Lock) {
-        const auto dir_it = m_Dirs.find(directory);
-        if( dir_it == end(m_Dirs) )
-            return {std::nullopt, E::Unknown};
+    const auto dir_it = m_Dirs.find(directory);
+    if( dir_it == end(m_Dirs) )
+        return {std::nullopt, E::Unknown};
 
-        const auto &listing = dir_it->second;
+    const auto &listing = dir_it->second;
 
-        if( IsOutdated(listing) )
-            return {std::nullopt, E::Unknown};
+    if( IsOutdated(listing) )
+        return {std::nullopt, E::Unknown};
 
-        const auto item = std::lower_bound(std::begin(listing.items),
-                                           std::end(listing.items),
-                                           filename,
-                                           []( auto &_1, auto &_2 ){
-                                               return _1.filename < _2;
-                                           });
-        if( item == std::end(listing.items) || item->filename != filename )
-            return {std::nullopt, E::NonExist};
-        
-        const auto index = std::distance(begin(listing.items), item);
-        if( listing.dirty_marks[index] )
-            return {std::nullopt, E::Unknown};
-        
-        return {*item, E::Ok};
-    }
+    const auto item = std::lower_bound(std::begin(listing.items),
+                                       std::end(listing.items),
+                                       filename,
+                                       [](auto &_1, auto &_2) { return _1.filename < _2; });
+    if( item == std::end(listing.items) || item->filename != filename )
+        return {std::nullopt, E::NonExist};
+
+    const auto index = std::distance(begin(listing.items), item);
+    if( listing.dirty_marks[index] )
+        return {std::nullopt, E::Unknown};
+
+    return {*item, E::Ok};
 }
 
 void Cache::DiscardListing( const std::string &_at_path )
 {
     const auto path = EnsureTrailingSlash( _at_path );
-    LOCK_GUARD(m_Lock) {
-        m_Dirs.erase(path);
-    }
+    const auto lock = std::lock_guard{m_Lock};
+    m_Dirs.erase(path);
 }
 
 bool Cache::IsOutdated(const Directory &_listing)
@@ -111,7 +108,9 @@ void Cache::CommitMkDir( const std::string &_at_path )
     if( filename.empty() )
         return;
 
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto lock = std::lock_guard{m_Lock};
+        
         const auto dir_it = m_Dirs.find(directory);
         if( dir_it == end(m_Dirs) )
             return;
@@ -148,7 +147,9 @@ void Cache::CommitMkFile( const std::string &_at_path )
     if( filename.empty() )
         return;
 
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto lock = std::lock_guard{m_Lock};
+        
         const auto dir_it = m_Dirs.find(directory);
         if( dir_it == end(m_Dirs) )
             return;
@@ -190,7 +191,9 @@ void Cache::CommitUnlink( const std::string &_at_path )
     if( filename.empty() )
         return;
     
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto lock = std::lock_guard{m_Lock};
+        
         const auto dir_it = m_Dirs.find(directory);
         if( dir_it == end(m_Dirs) )
             return;
@@ -215,7 +218,9 @@ void Cache::CommitUnlink( const std::string &_at_path )
 
 void Cache::CommitMove( const std::string &_old_path, const std::string &_new_path )
 {
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto lock = std::lock_guard{m_Lock};
+        
         const auto dir_it = m_Dirs.find(EnsureTrailingSlash(_old_path));
         if( dir_it != end(m_Dirs) ) {
             m_Dirs[EnsureTrailingSlash(_new_path)] = std::move(dir_it->second);
@@ -229,7 +234,8 @@ void Cache::CommitMove( const std::string &_old_path, const std::string &_new_pa
     
     std::optional<PropFindResponse> entry;
     
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto lock = std::lock_guard{m_Lock};
         const auto dir_it = m_Dirs.find(old_directory);
         if( dir_it == end(m_Dirs) )
             return;
@@ -254,7 +260,9 @@ void Cache::CommitMove( const std::string &_old_path, const std::string &_new_pa
     if( new_filename.empty() )
         return;
     
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto lock = std::lock_guard{m_Lock};
+        
         const auto dir_it = m_Dirs.find(new_directory);
         if( dir_it == end(m_Dirs) )
             return;
@@ -283,13 +291,13 @@ void Cache::CommitMove( const std::string &_old_path, const std::string &_new_pa
     Notify(new_directory);
 }
 
-void Cache::Notify( const std::string &_changed_dir_path )
+void Cache::Notify(const std::string &_changed_dir_path)
 {
-    LOCK_GUARD(m_ObserversLock) {
-        auto [first, last] = m_Observers.equal_range(_changed_dir_path);
-        for(; first != last; ++first )
-            first->second.callback();
-    }
+    const auto lock = std::lock_guard{m_ObserversLock};
+
+    auto [first, last] = m_Observers.equal_range(_changed_dir_path);
+    for( ; first != last; ++first )
+        first->second.callback();
 }
 
 unsigned long Cache::Observe(const std::string &_path, std::function<void()> _handler)
@@ -303,7 +311,8 @@ unsigned long Cache::Observe(const std::string &_path, std::function<void()> _ha
     o.callback = move(_handler);
     o.ticket = ticket;
     
-    LOCK_GUARD(m_ObserversLock) {
+    {
+        const auto lock = std::lock_guard{m_ObserversLock};
         m_Observers.emplace( std::make_pair(EnsureTrailingSlash(_path), std::move(o)) );
     }
 
@@ -314,16 +323,14 @@ void Cache::StopObserving(unsigned long _ticket)
 {
     if( _ticket == 0 )
         return;
+
+    const auto lock = std::lock_guard{m_ObserversLock};
     
-    LOCK_GUARD(m_ObserversLock) {
-        const auto it = std::find_if(std::begin(m_Observers),
-                                     std::end(m_Observers),
-                                     [_ticket](const auto &_o){
-            return _o.second.ticket == _ticket;
-        });
-        if( it != end(m_Observers) )
-            m_Observers.erase(it);
-    }
+    const auto it = std::find_if(std::begin(m_Observers),
+                                 std::end(m_Observers),
+                                 [_ticket](const auto &_o) { return _o.second.ticket == _ticket; });
+    if( it != end(m_Observers) )
+        m_Observers.erase(it);
 }
 
 }

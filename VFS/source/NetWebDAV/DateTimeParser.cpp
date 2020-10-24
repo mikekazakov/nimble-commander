@@ -23,9 +23,8 @@ time_t DateTimeFromRFC1123( const char *_date_time )
         return f;
     }();
     static spinlock formatter_lock;
-    
-    LOCK_GUARD(formatter_lock)
-        return ParseUnlocked(formatter, _date_time);
+    const auto lock = std::lock_guard{formatter_lock};
+    return ParseUnlocked(formatter, _date_time);
 }
 
 time_t DateTimeFromRFC850( const char *_date_time )
@@ -44,9 +43,8 @@ time_t DateTimeFromRFC850( const char *_date_time )
         return f;
     }();
     static spinlock formatter_lock;
-    
-    LOCK_GUARD(formatter_lock)
-        return ParseUnlocked(formatter, _date_time);
+    const auto lock = std::lock_guard{formatter_lock};
+    return ParseUnlocked(formatter, _date_time);
 }
 
 time_t DateTimeFromASCTime( const char *_date_time )
@@ -65,9 +63,8 @@ time_t DateTimeFromASCTime( const char *_date_time )
         return f;
     }();
     static spinlock formatter_lock;
-    
-    LOCK_GUARD(formatter_lock)
-        return ParseUnlocked(formatter, _date_time);
+    const auto lock = std::lock_guard{formatter_lock};
+    return ParseUnlocked(formatter, _date_time);
 }
 
 time_t DateTimeFromRFC3339( const char *_date_time )
@@ -86,9 +83,8 @@ time_t DateTimeFromRFC3339( const char *_date_time )
         return f;
     }();
     static spinlock formatter_lock;
-    
-    LOCK_GUARD(formatter_lock)
-        return ParseUnlocked(formatter, _date_time);
+    const auto lock = std::lock_guard{formatter_lock};
+    return ParseUnlocked(formatter, _date_time);
 }
 
 static time_t ParseUnlocked( CFDateFormatterRef _fmt, const char *_date_time )

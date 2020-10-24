@@ -354,7 +354,8 @@ int SFTPHost::SpawnSFTP(std::unique_ptr<Connection> &_t)
 
 int SFTPHost::GetConnection(std::unique_ptr<Connection> &_t)
 {
-    LOCK_GUARD(m_ConnectionsLock) {
+    {
+        const auto lock = std::lock_guard{m_ConnectionsLock};
         while( !m_Connections.empty() ) {
             auto connection = move(m_Connections.front());
             m_Connections.erase( begin(m_Connections) );

@@ -486,6 +486,14 @@ TEST_CASE(PREFIX "Test vim interaction via output")
         shell.AddCustomShellArgument("zsh");
         shell.AddCustomShellArgument("-f");
     }
+    SECTION("csh")
+    {
+        shell.SetShellPath("/bin/csh");
+    }
+    SECTION("tcsh")
+    {
+        shell.SetShellPath("/bin/tcsh");
+    }
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
         if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
@@ -495,6 +503,10 @@ TEST_CASE(PREFIX "Test vim interaction via output")
         }
     });
     shell.Launch(dir.directory);
+    
+    if( shell.GetShellType() == ShellTask::ShellType::TCSH ) {
+        shell.WriteChildInput("set prompt='>'\rclear\r");
+    }
 
     shell.WriteChildInput("vim vim_test\r"); // vim vim_test Return
     const auto expected1 = "                                        "

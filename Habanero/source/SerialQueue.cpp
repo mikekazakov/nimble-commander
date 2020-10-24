@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/SerialQueue.h>
 
 using namespace std;
@@ -18,27 +18,24 @@ void SerialQueue::SetOnDry( function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
         std::make_shared<std::function<void()>>( move(_cb) );
-    LOCK_GUARD(m_CallbackLock) {
-        m_OnDry = cb;
-    }
+    const auto lock = std::lock_guard{m_CallbackLock};
+    m_OnDry = cb;
 }
 
 void SerialQueue::SetOnWet( function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
         std::make_shared<std::function<void()>>( move(_cb) );
-    LOCK_GUARD(m_CallbackLock) {
-        m_OnWet = cb;
-    }
+    const auto lock = std::lock_guard{m_CallbackLock};
+    m_OnWet = cb;
 }
 
 void SerialQueue::SetOnChange( function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
         std::make_shared<std::function<void()>>( move(_cb) );
-    LOCK_GUARD(m_CallbackLock) {
-        m_OnChange = cb;
-    }
+    const auto lock = std::lock_guard{m_CallbackLock};
+    m_OnChange = cb;
 }
 
 void SerialQueue::Stop()
@@ -89,7 +86,8 @@ void SerialQueue::FireDry() const
     m_Stopped = false;
 
     std::shared_ptr<std::function<void()>> cb;
-    LOCK_GUARD(m_CallbackLock) {
+    {
+        const auto lock = std::lock_guard{m_CallbackLock};
         cb = m_OnDry;
     }
     if( cb && *cb )
@@ -99,7 +97,8 @@ void SerialQueue::FireDry() const
 void SerialQueue::FireWet() const
 {
     std::shared_ptr<std::function<void()>> cb;
-    LOCK_GUARD(m_CallbackLock) {
+    {
+        const auto lock = std::lock_guard{m_CallbackLock};
         cb = m_OnWet;
     }
     if( cb && *cb )
@@ -109,7 +108,8 @@ void SerialQueue::FireWet() const
 void SerialQueue::FireChanged() const
 {
     std::shared_ptr<std::function<void()>> cb;
-    LOCK_GUARD(m_CallbackLock) {
+    {
+        const auto lock = std::lock_guard{m_CallbackLock};
         cb = m_OnChange;
     }
     if( cb && *cb )

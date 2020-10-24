@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Aux.h"
 #include "FileUploadStream.h"
@@ -42,7 +42,8 @@ int File::Close()
         }
     }
 
-    LOCK_GUARD(m_DataLock) {
+    {
+        const auto lock = std::lock_guard{m_DataLock};
         if( m_Download ) {
             [m_Download->task cancel];
             m_Download->delegate.handleResponse = nullptr;
@@ -199,7 +200,8 @@ ssize_t File::Read(void *_buf, size_t _size)
         return 0;
     
     do {
-        LOCK_GUARD(m_DataLock) {
+        {
+            const auto lock = std::lock_guard{m_DataLock};
             if( !m_Download->fifo.empty() ) {
                 const ssize_t sz = std::min( _size, m_Download->fifo.size() );
                 copy_n( begin(m_Download->fifo), sz, (uint8_t*)_buf );
@@ -533,7 +535,8 @@ void File::ExtractSessionIdOrCancelUploadAsync( NSData *_data )
     
     if( auto doc = ParseJSON(_data) )
         if( auto session_id = GetString(*doc, "session_id") ) {
-            LOCK_GUARD(m_DataLock) {
+            {
+                const auto lock = std::lock_guard{m_DataLock};
                 m_Upload->session_id = session_id;
             }
             m_Signal.notify_all();
@@ -639,7 +642,8 @@ ssize_t File::FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz )
     
     ssize_t sz = 0;
     
-    LOCK_GUARD(m_DataLock) {
+    {
+        const auto lock = std::lock_guard{m_DataLock};
         sz = std::min( _sz, m_Upload->fifo.size() );
         copy_n( begin(m_Upload->fifo), sz, _buffer );
         m_Upload->fifo.erase( begin(m_Upload->fifo), begin(m_Upload->fifo) + sz );

@@ -330,8 +330,8 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         if( !fd_is_valid(I->master_fd) )
             std::cerr << "m_MasterFD is dead!" << std::endl;
 
-        LOCK_GUARD(I->master_write_lock)
         {
+            const auto lock = std::lock_guard{I->master_write_lock};
             ssize_t write_res = write(I->master_fd, prompt_setup, strlen(prompt_setup));
             if( write_res == -1 ) {
                 std::cout << "write() error: " << errno << ", verbose: " << strerror(errno)
@@ -447,8 +447,8 @@ void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
     bool do_nr_hack = false;
     bool current_wd_changed = false;
 
-    LOCK_GUARD(I->lock)
     {
+        const auto lock = std::lock_guard{I->lock};
         char tmp[1024];
         memcpy(tmp, _d, _sz);
         tmp[_sz] = 0;
@@ -507,8 +507,8 @@ void ShellTask::WriteChildInput(std::string_view _data)
     if( _data.empty() )
         return;
 
-    LOCK_GUARD(I->master_write_lock)
     {
+        const auto lock = std::lock_guard{I->master_write_lock};
         ssize_t rc = write(I->master_fd, _data.data(), _data.size());
         if( rc < 0 || rc != (ssize_t)_data.size() )
             std::cerr << "write( m_MasterFD, _data.data(), _data.size() ) returned " << rc
@@ -516,7 +516,7 @@ void ShellTask::WriteChildInput(std::string_view _data)
     }
 
     if( (_data.back() == '\n' || _data.back() == '\r') && I->state == TaskState::Shell ) {
-        LOCK_GUARD(I->lock)
+        const auto lock = std::lock_guard{I->lock};
         SetState(TaskState::ProgramInternal);
     }
 }
@@ -615,9 +615,12 @@ void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
         return;
 
     auto requested_cwd = EnsureTrailingSlash(_new_cwd.generic_string());
-    LOCK_GUARD(I->lock)
-    if( I->cwd == requested_cwd )
-        return; // do nothing if current working directory is the same as requested
+    
+    {
+        const auto lock = std::lock_guard{I->lock};
+        if( I->cwd == requested_cwd )
+            return; // do nothing if current working directory is the same as requested
+    }
 
     requested_cwd = EnsureNoTrailingSlash(requested_cwd); // cd command don't like trailing slashes
 
@@ -625,8 +628,8 @@ void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
     if( !IsDirectoryAvailableForBrowsing(requested_cwd) )
         return;
 
-    LOCK_GUARD(I->lock)
     {
+        const auto lock = std::lock_guard{I->lock};
         I->temporary_suppressed = true; // will show no output of shell when changing a directory
         I->requested_cwd = requested_cwd;
     }

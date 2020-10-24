@@ -27,6 +27,15 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "CF2C101022A072BE00A5359D"
+            BuildableName = "OperationsIT"
+            BlueprintName = "OperationsIT"
+            ReferencedContainer = "container:Operations.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -38,18 +47,37 @@
                ReferencedContainer = "container:Operations.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "CF47A97F186C607B00745C4C"
+               BuildableName = "Nimble Commander.xctest"
+               BlueprintName = "NimbleCommander-Tests"
+               ReferencedContainer = "container:../NimbleCommander.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "CF5099761F948E7C000AFDE7"
+               BuildableName = "Term Tests.xctest"
+               BlueprintName = "Term Tests"
+               ReferencedContainer = "container:../Term/Term.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "CF1846FD1E41C86D008B7C9F"
+               BuildableName = "VFS Tests.xctest"
+               BlueprintName = "VFS Tests"
+               ReferencedContainer = "container:../VFS/VFS.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CF2C101022A072BE00A5359D"
-            BuildableName = "OperationsIT"
-            BlueprintName = "OperationsIT"
-            ReferencedContainer = "container:Operations.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -71,8 +99,6 @@
             ReferencedContainer = "container:Operations.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

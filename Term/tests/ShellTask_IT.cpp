@@ -238,6 +238,15 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
         shell.AddCustomShellArgument("zsh");
         shell.AddCustomShellArgument("-f");
     }
+    SECTION("csh")
+    {
+        shell.SetShellPath("/bin/csh");
+    }
+    SECTION("tcsh")
+    {
+        shell.SetShellPath("/bin/tcsh");
+    }
+    const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
         if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
@@ -248,6 +257,10 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
     });
     shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
     shell.Launch(dir.directory);
+    
+    if( type == ShellTask::ShellType::TCSH ) {
+        shell.WriteChildInput("set prompt='>'\rclear\r");
+    }
 
     const std::string expected1 = ">                   "
                                   "                    "

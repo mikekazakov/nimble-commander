@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Pool.h"
 #include "Operation.h"
 #include <Habanero/dispatch_cpp.h>
@@ -52,8 +52,10 @@ void Pool::Enqueue( std::shared_ptr<Operation> _operation )
         return false;
     });
 
-    LOCK_GUARD(m_Lock)
+    {
+        const auto guard = std::lock_guard{m_Lock};
         m_PendingOperations.push_back( _operation );
+    }
     
     FireObservers( NotifyAboutAddition );
     StartPendingOperations();
@@ -65,7 +67,8 @@ void Pool::OperationDidStart( [[maybe_unused]] const std::shared_ptr<Operation> 
 
 void Pool::OperationDidFinish( [[maybe_unused]] const std::shared_ptr<Operation> &_operation )
 {
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto guard = std::lock_guard{m_Lock};
         erase_from(m_RunningOperations, _operation);
         erase_from(m_PendingOperations, _operation);
     }
@@ -80,7 +83,8 @@ void Pool::StartPendingOperations()
 {
     std::vector<std::shared_ptr<Operation>> to_start;
 
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto guard = std::lock_guard{m_Lock};
         const auto running_now = (int)m_RunningOperations.size();
         while( running_now + (int)to_start.size() < m_ConcurrencyPerPool &&
                !m_PendingOperations.empty() ) {
@@ -107,29 +111,28 @@ void Pool::ObserveUnticketed( uint64_t _notification_mask, std::function<void()>
 
 int Pool::RunningOperationsCount() const
 {
-    LOCK_GUARD(m_Lock)
-        return (int)m_RunningOperations.size();
+    const auto guard = std::lock_guard{m_Lock};
+    return (int)m_RunningOperations.size();
 }
 
 int Pool::OperationsCount() const
 {
-    LOCK_GUARD(m_Lock)
-        return (int)m_RunningOperations.size() + (int)m_PendingOperations.size();
+    const auto guard = std::lock_guard{m_Lock};
+    return (int)m_RunningOperations.size() + (int)m_PendingOperations.size();
 }
 
 std::vector<std::shared_ptr<Operation>> Pool::Operations() const
 {
-    LOCK_GUARD(m_Lock) {
-        auto v = m_RunningOperations;
-        v.insert( end(v), begin(m_PendingOperations), end(m_PendingOperations) );
-        return v;
-    }
+    const auto guard = std::lock_guard{m_Lock};
+    auto v = m_RunningOperations;
+    v.insert( end(v), begin(m_PendingOperations), end(m_PendingOperations) );
+    return v;
 }
 
 std::vector<std::shared_ptr<Operation>> Pool::RunningOperations() const
 {
-    LOCK_GUARD(m_Lock)
-        return m_RunningOperations;
+    const auto guard = std::lock_guard{m_Lock};
+    return m_RunningOperations;
 }
 
 void Pool::SetDialogCallback(std::function<void(NSWindow*, std::function<void(NSModalResponse)>)> _callback)
@@ -170,13 +173,14 @@ void Pool::SetConcurrencyPerPool( int _maximum_current_operations )
 
 bool Pool::Empty() const
 {
-    LOCK_GUARD(m_Lock)
-        return m_RunningOperations.empty() && m_PendingOperations.empty();
+    const auto guard = std::lock_guard{m_Lock};
+    return m_RunningOperations.empty() && m_PendingOperations.empty();
 }
 
 void Pool::StopAndWaitForShutdown()
 {
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto guard = std::lock_guard{m_Lock};
         for( auto &o: m_PendingOperations )
             o->Stop();
         for( auto &o: m_RunningOperations )

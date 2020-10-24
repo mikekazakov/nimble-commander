@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
 #include <Cocoa/Cocoa.h>
 #include <Utility/StringExtras.h>
@@ -24,24 +24,22 @@ NSImage *WorkspaceExtensionIconsCacheImpl::
     return Find_Locked(_extension);
 }
 
-NSImage *WorkspaceExtensionIconsCacheImpl::Find_Locked( const std::string &_extension ) const
+NSImage *WorkspaceExtensionIconsCacheImpl::Find_Locked(const std::string &_extension) const
 {
     if( _extension.empty() )
         return nil;
-    
-    LOCK_GUARD(m_Lock) {
-        if( const auto i = m_Icons.find( _extension ); i != end(m_Icons) )
-            return i->second;
-    }
+
+    const auto lock = std::lock_guard{m_Lock};
+    if( const auto i = m_Icons.find(_extension); i != end(m_Icons) )
+        return i->second;
     return nil;
 }
 
 void WorkspaceExtensionIconsCacheImpl::
     Commit_Locked( const std::string &_extension, NSImage *_image)
 {
-    LOCK_GUARD(m_Lock) {
-        m_Icons.emplace(_extension, _image);
-    }
+    const auto lock = std::lock_guard{m_Lock};
+    m_Icons.emplace(_extension, _image);
 }
 
 NSImage *WorkspaceExtensionIconsCacheImpl::IconForExtension( const std::string& _extension )
@@ -49,7 +47,8 @@ NSImage *WorkspaceExtensionIconsCacheImpl::IconForExtension( const std::string& 
     if( _extension.empty() )
         return nil;
     
-    LOCK_GUARD(m_Lock) {
+    {
+        const auto lock = std::lock_guard{m_Lock};
         if( auto i = m_Icons.find( _extension );  i != end(m_Icons) )
             return i->second;
     }

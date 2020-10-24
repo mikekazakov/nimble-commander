@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/Operations/Job.h"
 #include <Habanero/IdleSleepPreventer.h>
 #include <boost/core/demangle.hpp>
@@ -170,14 +170,14 @@ void Job::BlockIfPaused()
 
 void Job::SetPauseCallback( std::function<void()> _callback )
 {
-    LOCK_GUARD(m_CallbackLock)
-        m_OnPause = move(_callback);
+    const auto guard = std::lock_guard{m_CallbackLock};
+    m_OnPause = move(_callback);
 }
 
 void Job::SetResumeCallback( std::function<void()> _callback )
 {
-    LOCK_GUARD(m_CallbackLock)
-        m_OnResume = move(_callback);
+    const auto guard = std::lock_guard{m_CallbackLock};
+    m_OnResume = move(_callback);
 }
 
 }

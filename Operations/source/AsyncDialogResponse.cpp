@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AsyncDialogResponse.h"
 #include "ModalDialogResponses.h"
 #include <Habanero/spinlock.h>
@@ -7,15 +7,19 @@ namespace nc::ops {
 
 void AsyncDialogResponse::Abort() noexcept
 {
-    LOCK_GUARD(lock)
+    {
+        const auto guard = std::lock_guard{lock};
         response = NSModalResponseAbort;
+    }
     blocker.notify_all();
 }
 
 void AsyncDialogResponse::Commit(long _response) noexcept
 {
-    LOCK_GUARD(lock)
+    {
+        const auto guard = std::lock_guard{lock};
         response = _response;
+    }
     blocker.notify_all();
 }
 

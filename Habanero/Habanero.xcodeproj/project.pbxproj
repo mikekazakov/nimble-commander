@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		CF0A49F225252C40008EC7B0 /* CloseFrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F125252C40008EC7B0 /* CloseFrom.cpp */; };
 		CF19B3EE2544B94800838B45 /* ScopedObservable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B3ED2544B94800838B45 /* ScopedObservable.cpp */; };
-		CF19B3F02544B95F00838B45 /* SerialQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B3EF2544B95F00838B45 /* SerialQueue.cpp */; };
 		CF19B4182544B9E700838B45 /* KVO.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3F72544B9E400838B45 /* KVO.h */; };
 		CF19B4192544B9E700838B45 /* CFRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3F82544B9E400838B45 /* CFRange.h */; };
 		CF19B41A2544B9E700838B45 /* PosixFilesystemMock.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3F92544B9E400838B45 /* PosixFilesystemMock.h */; };
@@ -43,6 +42,7 @@
 		CF19B4362544B9E700838B45 /* IdleSleepPreventer.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4152544B9E700838B45 /* IdleSleepPreventer.h */; };
 		CF19B4372544B9E700838B45 /* StringViewZBuf.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4162544B9E700838B45 /* StringViewZBuf.h */; };
 		CF19B4382544B9E700838B45 /* LRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4172544B9E700838B45 /* LRUCache.h */; };
+		CF19B43A2544BD2400838B45 /* SerialQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B4392544BD2400838B45 /* SerialQueue.cpp */; };
 		CF2084011FEFACFC0014D6AD /* StringsBulk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */; };
 		CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E20B2291777D00C166FA /* UnitTests_main.cpp */; };
 		CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E214229196E100C166FA /* CFPtr_UT.cpp */; };
@@ -94,7 +94,6 @@
 		CF0A49F125252C40008EC7B0 /* CloseFrom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CloseFrom.cpp; path = source/CloseFrom.cpp; sourceTree = "<group>"; };
 		CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CloseFrom_UT.cpp; sourceTree = "<group>"; };
 		CF19B3ED2544B94800838B45 /* ScopedObservable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScopedObservable.cpp; path = source/ScopedObservable.cpp; sourceTree = "<group>"; };
-		CF19B3EF2544B95F00838B45 /* SerialQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SerialQueue.cpp; path = source/SerialQueue.cpp; sourceTree = "<group>"; };
 		CF19B3F72544B9E400838B45 /* KVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KVO.h; path = include/Habanero/KVO.h; sourceTree = "<group>"; };
 		CF19B3F82544B9E400838B45 /* CFRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFRange.h; path = include/Habanero/CFRange.h; sourceTree = "<group>"; };
 		CF19B3F92544B9E400838B45 /* PosixFilesystemMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PosixFilesystemMock.h; path = include/Habanero/PosixFilesystemMock.h; sourceTree = "<group>"; };
@@ -128,6 +127,7 @@
 		CF19B4152544B9E700838B45 /* IdleSleepPreventer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IdleSleepPreventer.h; path = include/Habanero/IdleSleepPreventer.h; sourceTree = "<group>"; };
 		CF19B4162544B9E700838B45 /* StringViewZBuf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringViewZBuf.h; path = include/Habanero/StringViewZBuf.h; sourceTree = "<group>"; };
 		CF19B4172544B9E700838B45 /* LRUCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LRUCache.h; path = include/Habanero/LRUCache.h; sourceTree = "<group>"; };
+		CF19B4392544BD2400838B45 /* SerialQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SerialQueue.cpp; path = source/SerialQueue.cpp; sourceTree = "<group>"; };
 		CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringsBulk.cpp; path = source/StringsBulk.cpp; sourceTree = "<group>"; };
 		CF2084021FEFB2F70014D6AD /* StringsBulk_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringsBulk_UT.cpp; path = ../habanero/tests/StringsBulk_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CF24E2042291772900C166FA /* HabaneroUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HabaneroUT; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -307,7 +307,7 @@
 				CF308F48213B755F00915730 /* PosixFilesystem.cpp */,
 				CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */,
 				CF19B3ED2544B94800838B45 /* ScopedObservable.cpp */,
-				CF19B3EF2544B95F00838B45 /* SerialQueue.cpp */,
+				CF19B4392544BD2400838B45 /* SerialQueue.cpp */,
 				CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */,
 				CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */,
 				CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */,
@@ -468,7 +468,7 @@
 				CFFA94531F4535750035E606 /* Hash.cpp in Sources */,
 				CFFA944A1F4535750035E606 /* CFStackAllocator.cpp in Sources */,
 				CF308F49213B755F00915730 /* PosixFilesystem.cpp in Sources */,
-				CF19B3F02544B95F00838B45 /* SerialQueue.cpp in Sources */,
+				CF19B43A2544BD2400838B45 /* SerialQueue.cpp in Sources */,
 				CF2084011FEFACFC0014D6AD /* StringsBulk.cpp in Sources */,
 				CFFA945A1F4535750035E606 /* spinlock.cpp in Sources */,
 				CF19B3EE2544B94800838B45 /* ScopedObservable.cpp in Sources */,

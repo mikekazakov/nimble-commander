@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AggregateProgressTracker.h"
 #include "Statistics.h"
 #include <iostream>
@@ -23,22 +23,23 @@ AggregateProgressTracker::~AggregateProgressTracker()
 {
 }
 
-void AggregateProgressTracker::AddPool( Pool &_pool )
+void AggregateProgressTracker::AddPool(Pool &_pool)
 {
     Purge();
 
     const auto p = _pool.shared_from_this();
-    LOCK_GUARD(m_Lock) {
-        if( any_of( begin(m_Pools), end(m_Pools), [=](const auto &_i){ return _i.lock() == p; } ) )
-            return;
-        m_Pools.emplace_back(p);
-        
-        const auto weak_this = std::weak_ptr<AggregateProgressTracker>(shared_from_this());
-        _pool.ObserveUnticketed(Pool::NotifyAboutChange, [weak_this]{
-            if( auto me = weak_this.lock() )
-                me->PoolsChanged();
-        });
-    }
+    
+    const auto lock = std::lock_guard{m_Lock};
+
+    if( any_of(begin(m_Pools), end(m_Pools), [=](const auto &_i) { return _i.lock() == p; }) )
+        return;
+    m_Pools.emplace_back(p);
+
+    const auto weak_this = std::weak_ptr<AggregateProgressTracker>(shared_from_this());
+    _pool.ObserveUnticketed(Pool::NotifyAboutChange, [weak_this] {
+        if( auto me = weak_this.lock() )
+            me->PoolsChanged();
+    });
 }
 
 void AggregateProgressTracker::PoolsChanged()
@@ -70,11 +71,11 @@ void AggregateProgressTracker::PoolsChanged()
 
 bool AggregateProgressTracker::ArePoolsEmpty() const
 {
-    LOCK_GUARD(m_Lock)
-        for( const auto &wp: m_Pools )
-            if( const auto p = wp.lock() )
-                if( !p->Empty() )
-                    return false;
+    const auto lock = std::lock_guard{m_Lock};
+    for( const auto &wp : m_Pools )
+        if( const auto p = wp.lock() )
+            if( !p->Empty() )
+                return false;
     return true;
 }
 
@@ -82,7 +83,8 @@ std::tuple<int, double> AggregateProgressTracker::OperationsAmountAndProgress() 
 {
     int amount = 0;
     double progress = 0.;
-    LOCK_GUARD(m_Lock)
+    {
+        const auto lock = std::lock_guard{m_Lock};
         for( const auto &wp: m_Pools )
             if( const auto p = wp.lock() )
                 if( !p->Empty() )
@@ -91,6 +93,7 @@ std::tuple<int, double> AggregateProgressTracker::OperationsAmountAndProgress() 
                         progress += stat.DoneFraction( stat.PreferredSource() );
                         ++amount;
                     }
+    }
     if( amount )
         progress /= amount;
 
@@ -130,11 +133,9 @@ void AggregateProgressTracker::SetProgressCallback( std::function<void(double _p
 
 void AggregateProgressTracker::Purge()
 {
-    LOCK_GUARD(m_Lock)
-        m_Pools.erase(remove_if(begin(m_Pools),
-                                end(m_Pools),
-                                [](auto &v){ return v.expired(); }),
-                      end(m_Pools));
+    const auto lock = std::lock_guard{m_Lock};
+    m_Pools.erase(remove_if(begin(m_Pools), end(m_Pools), [](auto &v) { return v.expired(); }),
+                  end(m_Pools));
 }
 
 }

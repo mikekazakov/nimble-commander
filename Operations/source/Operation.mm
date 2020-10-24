@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Operation.h"
 #include "Job.h"
 #include "AsyncDialogResponse.h"
@@ -174,14 +174,14 @@ void Operation::ObserveUnticketed( uint64_t _notification_mask, std::function<vo
 void Operation::SetDialogCallback
     (std::function<bool(NSWindow *, std::function<void(NSModalResponse)>)> _callback)
 {
-    LOCK_GUARD(m_DialogCallbackLock)
-        m_DialogCallback = move(_callback);
+    const auto guard = std::lock_guard{m_DialogCallbackLock};
+    m_DialogCallback = move(_callback);
 }
 
 bool Operation::IsInteractive() const noexcept
 {
-    LOCK_GUARD(m_DialogCallbackLock)
-        return m_DialogCallback != nullptr;
+    const auto guard = std::lock_guard{m_DialogCallbackLock};
+    return m_DialogCallback != nullptr;
 }
 
 void Operation::Show( NSWindow *_dialog, std::shared_ptr<AsyncDialogResponse> _response )
@@ -190,7 +190,8 @@ void Operation::Show( NSWindow *_dialog, std::shared_ptr<AsyncDialogResponse> _r
     if( !_dialog || !_response )
         return;
     
-    LOCK_GUARD(m_DialogCallbackLock)
+    {
+        const auto guard = std::lock_guard{m_DialogCallbackLock};
         if( m_DialogCallback ) {
             const auto controller = _dialog.windowController;
             const auto dialog_callback = [_response, controller](NSModalResponse _dialog_response){
@@ -202,6 +203,7 @@ void Operation::Show( NSWindow *_dialog, std::shared_ptr<AsyncDialogResponse> _r
             if( shown )
                 return;
         }
+    }
     
     _response->Abort();
 }
@@ -276,27 +278,31 @@ void Operation::WaitForDialogResponse( std::shared_ptr<AsyncDialogResponse> _res
     
     StatisticsTimingPauser timing_pauser{GetJob()->Statistics()};
     
-    LOCK_GUARD(m_PendingResponseLock)
+    {
+        const auto guard = std::lock_guard{m_PendingResponseLock};
         m_PendingResponse = _response;
+    }
     
     _response->Wait();
     assert( _response->response );
     
-    LOCK_GUARD(m_PendingResponseLock)
+    {
+        const auto guard = std::lock_guard{m_PendingResponseLock};
         m_PendingResponse.reset();
+    }
 }
 
 bool Operation::IsWaitingForUIResponse() const noexcept
 {
-    LOCK_GUARD(m_PendingResponseLock)
-        return !m_PendingResponse.expired();
+    const auto guard = std::lock_guard{m_PendingResponseLock};
+    return !m_PendingResponse.expired();
 }
 
 void Operation::AbortUIWaiting() noexcept
 {
-    LOCK_GUARD(m_PendingResponseLock)
-        if( auto r = m_PendingResponse.lock() )
-            r->Abort();
+    const auto guard = std::lock_guard{m_PendingResponseLock};
+    if( auto r = m_PendingResponse.lock() )
+        r->Abort();
 }
 
 void Operation::ReportHaltReason(NSString *_message,
@@ -320,13 +326,14 @@ void Operation::ReportHaltReason(NSString *_message,
 
 std::string Operation::Title() const
 {
-    LOCK_GUARD(m_TitleLock)
-        return m_Title;
+    const auto guard = std::lock_guard{m_TitleLock};
+    return m_Title;
 }
 
 void Operation::SetTitle( std::string _title )
 {
-    LOCK_GUARD(m_TitleLock) {
+    {
+        const auto guard = std::lock_guard{m_TitleLock};
         if( m_Title == _title )
             return;
         m_Title = std::move(_title);

@@ -167,6 +167,14 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
         shell.AddCustomShellArgument("zsh");
         shell.AddCustomShellArgument("-f");
     }
+    SECTION("csh")
+    {
+        shell.SetShellPath("/bin/csh");
+    }
+    SECTION("tcsh")
+    {
+        shell.SetShellPath("/bin/tcsh");
+    }
     const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
         if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
@@ -178,6 +186,10 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
     });
     shell.Launch(CommonPaths::AppTemporaryDirectory());
 
+    if( type == ShellTask::ShellType::TCSH ) {
+        shell.WriteChildInput("set prompt='Hello=>'\rclear\r");
+    }
+    
     const std::string expected = "Hello=>             "
                                  "                    "
                                  "                    ";
@@ -188,11 +200,13 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
     expected2[ShellTask::ShellType::Bash] = "Hello=>exit         "
                                             "exit                "
                                             "                    ";
+    expected2[ShellTask::ShellType::TCSH] = expected2[ShellTask::ShellType::Bash];
     expected2[ShellTask::ShellType::ZSH] = "Hello=>exit         "
                                            "                    "
                                            "                    ";
     REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected2[type]));
 }
+
 TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
 {
     const TempTestDir dir;

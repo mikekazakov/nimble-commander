@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Settings.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
@@ -12,7 +12,7 @@ Settings::~Settings()
     
 std::shared_ptr<Settings> DefaultSettings::SharedDefaultSettings()
 {
-    static const auto settings = std::make_shared<DefaultSettings>();
+    [[clang::no_destroy]] static const auto settings = std::make_shared<DefaultSettings>();
     return settings;
 }
 

@@ -13,6 +13,7 @@ class BlinkScheduler
 {
 public:
     struct IO {
+        virtual ~IO() = default;
         virtual std::chrono::nanoseconds Now() noexcept = 0;
         virtual void Dispatch(std::chrono::nanoseconds _after,
                               std::function<void()> _what) noexcept = 0;

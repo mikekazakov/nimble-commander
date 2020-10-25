@@ -128,7 +128,7 @@ static std::string GetLocale()
 
 std::span<const std::pair<std::string, std::string>> Task::BuildEnv()
 {
-    static const std::vector<std::pair<std::string, std::string>> env = []{
+    [[clang::no_destroy]] static const std::vector<std::pair<std::string, std::string>> env = []{
         std::vector<std::pair<std::string, std::string>> env;
         const std::string locale = GetLocale();
         if( !locale.empty() ) {

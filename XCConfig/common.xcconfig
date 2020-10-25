@@ -1,0 +1,42 @@
+// Architecture
+VALID_ARCHS = x86_64
+ONLY_ACTIVE_ARCH = YES
+
+// SDK
+MACOSX_DEPLOYMENT_TARGET = 10.15
+SDKROOT = macosx
+
+// Preprocessor
+GCC_PREPROCESSOR_DEFINITIONS = SPDLOG_COMPILED_LIB
+
+// C++
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror
+
+// Objective-C
+CLANG_ENABLE_OBJC_ARC = YES
+
+// Linker
+OTHER_LDFLAGS = -lboost_system-mt -lboost_filesystem-mt -lspdlog -lgmock -lgtest
+
+// Paths - headers
+USE_HEADERMAP = NO
+THRDPTY=../3rd_Party
+HEADER_SEARCH_PATHS = $(THRDPTY)/boost/include $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/single_include $(THRDPTY)/googletest/include/ $(THRDPTY)/spdlog/include
+
+// Paths - libraries
+LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/built $(THRDPTY)/spdlog/built $(THRDPTY)/googletest/built
+
+// Warnings - all languages
+
+// Warnings - C++
+CLANG_WARN_VEXING_PARSE = YES
+CLANG_WARN_DELETE_NON_VIRTUAL_DTOR = YES
+CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES
+GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES
+GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES
+CLANG_WARN_RANGE_LOOP_ANALYSIS = YES
+CLANG_WARN_SUSPICIOUS_MOVE = YES
+GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES
+CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES
+CLANG_WARN_CXX0X_EXTENSIONS = YES
+

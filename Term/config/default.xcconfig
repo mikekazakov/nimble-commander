@@ -1,24 +1,10 @@
-VALID_ARCHS = x86_64
-SDKROOT = macosx
-ONLY_ACTIVE_ARCH = YES
+#include "../../XCConfig/common.xcconfig"
+
 ENABLE_TESTABILITY = YES
 COPY_PHASE_STRIP = NO
-MACOSX_DEPLOYMENT_TARGET = 10.15
 PRODUCT_NAME = $(TARGET_NAME)
 
-// paths
-HEADER_SEARCH_PATHS = $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../3rd_Party/boost/include $(PROJECT_DIR)/../3rd_Party/magic_enum/include $(PROJECT_DIR)/../3rd_Party/robin_hood/include $(PROJECT_DIR)/include/Term
-LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/boost/built
-USE_HEADERMAP = NO
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/include/Term
 
-// c++
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror
-
-GCC_PREPROCESSOR_DEFINITIONS=_LIBCPP_DISABLE_AVAILABILITY
-
-// objective-c
-CLANG_ENABLE_OBJC_ARC = YES
-
-// ld
-OTHER_LDFLAGS = -lboost_system-mt -lboost_filesystem-mt
 INSTALL_PATH = @rpath/
+

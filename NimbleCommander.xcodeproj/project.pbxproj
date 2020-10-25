@@ -1215,6 +1215,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		CF19B47B254624C100838B45 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF0A49DF251F19DB008EC7B0;
+			remoteInfo = TermIT;
+		};
 		CF1ADE241F7E6A6F003E9B76 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */;
@@ -1256,13 +1263,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = CF8BDD5F2147EB3F00F14C3E;
 			remoteInfo = VFSIconUnitTests;
-		};
-		CF5099831F948EEB000AFDE7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CF5099771F948E7C000AFDE7;
-			remoteInfo = "Term Tests";
 		};
 		CF52C3BC22BE5B2D0043E825 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1604,6 +1604,7 @@
 		CF197C481FB92E80009F6C59 /* CopyFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyFile.mm; path = NimbleCommander/States/FilePanels/Actions/CopyFile.mm; sourceTree = SOURCE_ROOT; };
 		CF197C4A1FB960CC009F6C59 /* RevealInOppositePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RevealInOppositePanel.h; path = NimbleCommander/States/FilePanels/Actions/RevealInOppositePanel.h; sourceTree = SOURCE_ROOT; };
 		CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RevealInOppositePanel.mm; path = NimbleCommander/States/FilePanels/Actions/RevealInOppositePanel.mm; sourceTree = SOURCE_ROOT; };
+		CF19B4872546250000838B45 /* XCConfig */ = {isa = PBXFileReference; lastKnownFileType = folder; path = XCConfig; sourceTree = "<group>"; };
 		CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Term.xcodeproj; path = Term/Term.xcodeproj; sourceTree = "<group>"; };
 		CF1E3D181D5AD3C600609ADB /* MainWindowInternalViewerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowInternalViewerState.h; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.h; sourceTree = SOURCE_ROOT; };
 		CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowInternalViewerState.mm; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.mm; sourceTree = SOURCE_ROOT; };
@@ -2531,8 +2532,8 @@
 			isa = PBXGroup;
 			children = (
 				CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */,
-				CF5099841F948EEB000AFDE7 /* Term Tests.xctest */,
 				CFC8F2BC23E5FEAC00A25046 /* TermUT */,
+				CF19B47C254624C100838B45 /* TermIT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3100,21 +3101,22 @@
 		CFC5120816C4BD3D00D247EE = {
 			isa = PBXGroup;
 			children = (
-				CFDA1110177E8A15009E29F7 /* 3rd_party */,
-				CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */,
-				CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */,
-				CFD79AD821FE29420043A26D /* CUI.xcodeproj */,
+				CF19B4872546250000838B45 /* XCConfig */,
 				CF20CC01215A258F006716F6 /* Config.xcodeproj */,
-				CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */,
+				CFD79AD821FE29420043A26D /* CUI.xcodeproj */,
+				CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */,
+				CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */,
 				CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */,
+				CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */,
+				CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */,
 				CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */,
 				CF8BDD0B2147D60800F14C3E /* VFSIcon.xcodeproj */,
-				CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */,
 				CFD79A7321F65A540043A26D /* Viewer.xcodeproj */,
-				CFC5121A16C4BD3D00D247EE /* Source */,
-				B51014CF170721340023FF24 /* Resources */,
+				CFDA1110177E8A15009E29F7 /* 3rd_party */,
 				CFC5121316C4BD3D00D247EE /* Frameworks */,
 				CFC5121216C4BD3D00D247EE /* Products */,
+				B51014CF170721340023FF24 /* Resources */,
+				CFC5121A16C4BD3D00D247EE /* Source */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3535,6 +3537,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		CF19B47C254624C100838B45 /* TermIT */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = TermIT;
+			remoteRef = CF19B47B254624C100838B45 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
@@ -3575,13 +3584,6 @@
 			fileType = "compiled.mach-o.executable";
 			path = libVFSIconUnitTests;
 			remoteRef = CF38BEB72148A959005E336C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF5099841F948EEB000AFDE7 /* Term Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Term Tests.xctest";
-			remoteRef = CF5099831F948EEB000AFDE7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CF52C3BD22BE5B2D0043E825 /* OperationsIT */ = {

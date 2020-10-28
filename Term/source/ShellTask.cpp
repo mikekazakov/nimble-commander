@@ -24,6 +24,7 @@
 #include <iostream>
 #include <signal.h>
 #include "ShellTask.h"
+#include "Log.h"
 
 namespace nc::term {
 
@@ -224,53 +225,120 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         return false;
 
     I->cwd = _work_dir.generic_string();
+    Log::Info(SPDLOC, "Starting a new shell: {}", I->shell_path);
+    Log::Info(SPDLOC, "Initial work directory: {}", I->cwd);
     
     // remember current locale and stuff
-    auto env = BuildEnv();
+    const auto env = BuildEnv();
+    Log::Debug(SPDLOC, "Environment:");
+    for( auto &env_record: env )
+        Log::Debug(SPDLOC, "\t{} = {}", env_record.first, env_record.second);
 
-    I->master_fd = posix_openpt(O_RDWR);
-    assert(I->master_fd >= 0);
-
-    grantpt(I->master_fd);
-    unlockpt(I->master_fd);
-
-    int slave_fd = open(ptsname(I->master_fd), O_RDWR);
+    // open a pseudo-terminal device
+    const int openpt_rc = posix_openpt(O_RDWR);
+    if( openpt_rc < 0 ) {
+        Log::Warn(SPDLOC, "posix_openpt() returned a negative value");
+        throw std::runtime_error("posix_openpt() returned a negative value");
+    }
+    Log::Debug(SPDLOC, "posix_openpt(O_RDWR) returned {} (master_fd)", openpt_rc);
+    I->master_fd = openpt_rc;
+    
+    // grant access to the slave pseudo-terminal device
+    const int graptpt_rc = grantpt(I->master_fd);
+    if( graptpt_rc != 0 ) {
+        Log::Warn(SPDLOC, "graptpt_rc() failed");
+        throw std::runtime_error("graptpt_rc() failed");
+    }
+    
+    // unlock a pseudo-terminal master/slave pair
+    const int unlockpt_rc = unlockpt(I->master_fd);
+    if( unlockpt_rc != 0 ) {
+        Log::Warn(SPDLOC, "unlockpt() failed");
+        throw std::runtime_error("unlockpt() failed");
+    }
+    
+    // get name of the slave pseudo-terminal device
+    const char * const ptsname = ::ptsname(I->master_fd);
+    if( ptsname == nullptr ) {
+        Log::Warn(SPDLOC, "ptsname() failed");
+        throw std::runtime_error("ptsname() failed");
+    }
+    Log::Debug(SPDLOC, "ptsname: {}", ptsname);
+    
+    // opening a slave fd for the pseudo-terminal
+    const int slave_fd = open(ptsname, O_RDWR);
+    if( openpt_rc < 0 ) {
+        Log::Warn(SPDLOC, "open() returned a negative value");
+        throw std::runtime_error("open() returned a negative value");
+    }
+    Log::Debug(SPDLOC, "slave_fd: {}", slave_fd);
 
     int rc = 0;
     // init FIFO stuff for Shell's CWD
     if( I->shell_type == ShellType::Bash || I->shell_type == ShellType::ZSH ) {
-        // for Bash or ZSH use regular pipe handle
-        rc = pipe(I->cwd_pipe);
-        assert(rc == 0);
-        rc = pipe(I->semaphore_pipe);
-        assert(rc == 0);
+        // for Bash and ZSH use a regular pipe handle
+        const int cwd_pipe_rc = pipe(I->cwd_pipe);
+        if( cwd_pipe_rc != 0 ) {
+            Log::Warn(SPDLOC, "pipe(I->cwd_pipe) failed");
+            throw std::runtime_error("pipe(I->cwd_pipe) failed");
+        }
+        
+        const int semaphore_pipe_rc = pipe(I->semaphore_pipe);
+        if( semaphore_pipe_rc != 0 ) {
+            Log::Warn(SPDLOC, "pipe(I->semaphore_pipe) failed");
+            throw std::runtime_error("pipe(I->semaphore_pipe) failed");
+        }
     } else if( I->shell_type == ShellType::TCSH ) {
         // for TCSH use named fifo file. supporting [t]csh was a mistake :(
         const auto &dir = base::CommonPaths::AppTemporaryDirectory();
         const auto mypid = std::to_string(getpid());
-        const auto gen = std::to_string(g_TCSHPipeGeneration);
+        const auto gen = std::to_string(g_TCSHPipeGeneration++);
+        
+        // open the cwd channel first
         I->tcsh_cwd_path = dir + "nimble_commander.tcsh.cwd_pipe." + mypid + "." + gen;
+        Log::Debug(SPDLOC, "tcsh_cwd_path: {}", I->tcsh_cwd_path);
 
-        rc = mkfifo(I->tcsh_cwd_path.c_str(), 0600);
-        assert(rc == 0);
+        const int cwd_fifo_rc = mkfifo(I->tcsh_cwd_path.c_str(), 0600);
+        if( cwd_fifo_rc != 0 ) {
+            Log::Warn(SPDLOC, "mkfifo(I->tcsh_cwd_path.c_str(), 0600) failed");
+            throw std::runtime_error("mkfifo(I->tcsh_cwd_path.c_str(), 0600) failed");
+        }
+        
+        const int cwd_open_rc = open(I->tcsh_cwd_path.c_str(), O_RDWR);
+        if( cwd_open_rc < 0 ) {
+            Log::Warn(SPDLOC, "open(I->tcsh_cwd_path.c_str(), O_RDWR) failed");
+            throw std::runtime_error("open(I->tcsh_cwd_path.c_str(), O_RDWR) failed");
+        }
+        I->cwd_pipe[0] = cwd_open_rc;
 
-        rc = I->cwd_pipe[0] = open(I->tcsh_cwd_path.c_str(), O_RDWR);
-        assert(rc != -1);
-
+        // and then open the semaphore channel
         I->tcsh_semaphore_path = dir + "nimble_commander.tcsh.semaphore_pipe." + mypid + "." + gen;
+        Log::Debug(SPDLOC, "tcsh_semaphore_path: {}", I->tcsh_semaphore_path);
 
-        rc = mkfifo(I->tcsh_semaphore_path.c_str(), 0600);
-        assert(rc == 0);
+        const int semaphore_fifo_rc = mkfifo(I->tcsh_semaphore_path.c_str(), 0600);
+        if( semaphore_fifo_rc != 0 ) {
+            Log::Warn(SPDLOC, "mkfifo(I->tcsh_semaphore_path.c_str(), 0600) failed");
+            throw std::runtime_error("mkfifo(I->tcsh_semaphore_path.c_str(), 0600) failed");
+        }
 
-        rc = I->semaphore_pipe[1] = open(I->tcsh_semaphore_path.c_str(), O_RDWR);
-        assert(rc != -1);
-
-        ++g_TCSHPipeGeneration;
+        const int semaphore_open_rc = open(I->tcsh_semaphore_path.c_str(), O_RDWR);
+        if( semaphore_open_rc < 0 ) {
+            Log::Warn(SPDLOC, "open(I->tcsh_semaphore_path.c_str(), O_RDWR) failed");
+            throw std::runtime_error("open(I->tcsh_semaphore_path.c_str(), O_RDWR) failed");
+        }
+        
+        I->semaphore_pipe[1] = semaphore_open_rc;
     }
     
+    Log::Debug(SPDLOC, "cwd_pipe: {}, {}", I->cwd_pipe[0], I->cwd_pipe[1]);
+    Log::Debug(SPDLOC, "semaphore_pipe: {}, {}", I->semaphore_pipe[0], I->semaphore_pipe[1]);
+    
     // create a pipe to communicate with the blocking select()
-    rc = pipe(I->signal_pipe);
-    assert(rc == 0);
+    const int signal_pipe_rc = pipe(I->signal_pipe);
+    if( signal_pipe_rc != 0 ) {
+        Log::Warn(SPDLOC, "pipe(I->signal_pipe) failed");
+        throw std::runtime_error("pipe(I->signal_pipe) failed");
+    }
     
     // Create the child process
     const auto fork_rc = fork();
@@ -279,6 +347,8 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         std::cerr << "fork() failed with " << errno << "!" << std::endl;
         return false;
     } else if( fork_rc > 0 ) {
+        Log::Debug(SPDLOC, "fork() returned {}", fork_rc);
+        
         // master
         I->shell_pid = fork_rc;
         close(slave_fd);

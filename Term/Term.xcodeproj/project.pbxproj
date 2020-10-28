@@ -13,6 +13,8 @@
 		CF0A49E7251F1A42008EC7B0 /* ShellTask_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49E6251F1A42008EC7B0 /* ShellTask_IT.cpp */; };
 		CF0A49E8251F1A51008EC7B0 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
 		CF0A49EE251F2362008EC7B0 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF50998F1F948FDD000AFDE7 /* libUtility.dylib */; };
+		CF19B4952547611000838B45 /* Log.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4942547611000838B45 /* Log.h */; };
+		CF19B4972547611F00838B45 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B4962547611F00838B45 /* Log.cpp */; };
 		CF1ADE2D1F7E6C4B003E9B76 /* ScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */; };
 		CF1ADE361F7E7344003E9B76 /* ScreenBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */; };
 		CF1ADE381F7E7370003E9B76 /* Screen.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE371F7E7370003E9B76 /* Screen.h */; };
@@ -90,6 +92,8 @@
 		CF0A49CC2516676A008EC7B0 /* InputTranslator_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InputTranslator_UT.mm; sourceTree = "<group>"; };
 		CF0A49DF251F19DB008EC7B0 /* TermIT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TermIT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF0A49E6251F1A42008EC7B0 /* ShellTask_IT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShellTask_IT.cpp; sourceTree = "<group>"; };
+		CF19B4942547611000838B45 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Log.h; path = include/Term/Log.h; sourceTree = "<group>"; };
+		CF19B4962547611F00838B45 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
 		CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libTerm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenBuffer.cpp; path = source/ScreenBuffer.cpp; sourceTree = SOURCE_ROOT; };
 		CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenBuffer.h; path = include/Term/ScreenBuffer.h; sourceTree = "<group>"; };
@@ -212,6 +216,7 @@
 				CFC4F4CB24CA3D2000DF4ED6 /* InputTranslatorImpl.mm */,
 				CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */,
 				CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */,
+				CF19B4962547611F00838B45 /* Log.cpp */,
 				CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */,
 				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
 				CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */,
@@ -240,6 +245,7 @@
 				CFC4F4C924CA3D1B00DF4ED6 /* InputTranslatorImpl.h */,
 				CFB7456A2416E5850088F5EF /* Interpreter.h */,
 				CF5F3930242F7FC6004DF1F8 /* InterpreterImpl.h */,
+				CF19B4942547611000838B45 /* Log.h */,
 				CF0A49AE250D575C008EC7B0 /* OrthodoxMonospace.h */,
 				CF1ADE3E1F7E7587003E9B76 /* Parser.h */,
 				CFE08B2823DCABA4007E99B8 /* Parser2.h */,
@@ -309,6 +315,7 @@
 				CF41350F1F846CE6007429B6 /* Task.h in Headers */,
 				CF0A49AF250D575D008EC7B0 /* OrthodoxMonospace.h in Headers */,
 				CF5F3931242F7FC7004DF1F8 /* InterpreterImpl.h in Headers */,
+				CF19B4952547611000838B45 /* Log.h in Headers */,
 				CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */,
 				CF4135231F890BC8007429B6 /* CursorMode.h in Headers */,
 				CF1ADE491F7E77AE003E9B76 /* TranslateMaps.h in Headers */,
@@ -439,6 +446,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF19B4972547611F00838B45 /* Log.cpp in Sources */,
 				CF1ADE2D1F7E6C4B003E9B76 /* ScreenBuffer.cpp in Sources */,
 				CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */,
 				CFC4F4CC24CA3D2100DF4ED6 /* InputTranslatorImpl.mm in Sources */,

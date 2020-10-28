@@ -8,26 +8,55 @@
 #include <sys/dirent.h>
 #include <ftw.h>
 #include "Tests.h"
+#include <Log.h>
+#include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/sinks/ringbuffer_sink.h>
+
+using namespace nc::term;
 
 static auto g_TestDirPrefix = "_nc__term__test_";
+[[clang::no_destroy]] static auto g_LogSink =
+    std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(1000);
+[[clang::no_destroy]] static auto g_Log = std::make_shared<spdlog::logger>(Log::Name(), g_LogSink);
 
-int main( int argc, char* argv[] ) {
+static void DumpLog()
+{
+    std::cout << "Last log entries, up to 100:" << std::endl;
+    for( auto &line : g_LogSink->last_formatted(100) )
+        std::cout << line;
+    std::cout << std::endl;
+}
+
+struct CatchEventsListener : Catch::TestEventListenerBase {
+    using TestEventListenerBase::TestEventListenerBase; // inherit constructor
+    bool assertionEnded(Catch::AssertionStats const &stats) override
+    {
+        if( !stats.assertionResult.isOk() ) {
+            DumpLog();
+        }
+        return true;
+    }
+};
+CATCH_REGISTER_LISTENER(CatchEventsListener);
+
+int main(int argc, char *argv[])
+{
     nc::base::ExecutionDeadline deadline(std::chrono::minutes(1));
-    int result = Catch::Session().run( argc, argv );
+    g_Log->set_level(spdlog::level::debug);
+    Log::Set(g_Log);
+    int result = Catch::Session().run(argc, argv);
     return result;
 }
 
-static int RMRF(const std::string& _path)
+static int RMRF(const std::string &_path)
 {
     auto unlink_cb = [](const char *fpath,
                         [[maybe_unused]] const struct stat *sb,
                         int typeflag,
                         [[maybe_unused]] struct FTW *ftwbuf) {
-        if( typeflag == FTW_F)
+        if( typeflag == FTW_F )
             unlink(fpath);
-        else if( typeflag == FTW_D   ||
-                typeflag == FTW_DNR ||
-                typeflag == FTW_DP   )
+        else if( typeflag == FTW_D || typeflag == FTW_DNR || typeflag == FTW_DP )
             rmdir(fpath);
         return 0;
     };

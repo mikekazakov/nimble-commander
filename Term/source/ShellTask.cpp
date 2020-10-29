@@ -412,10 +412,13 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
             // setup piping for CWD prompt
             // using FDs g_PromptPipe/g_SemaphorePipe becuse bash is closing fds [3,20) upon
             // opening in logon mode (our case)
-            int rc = dup2(I->cwd_pipe[1], g_PromptPipe);
-            assert(rc == g_PromptPipe);
-            rc = dup2(I->semaphore_pipe[0], g_SemaphorePipe);
-            assert(rc == g_SemaphorePipe);
+            const int cwd_dup_rc = dup2(I->cwd_pipe[1], g_PromptPipe);
+            if( cwd_dup_rc != g_PromptPipe )
+                exit(-1);
+            
+            const int semaphore_dup_rc = dup2(I->semaphore_pipe[0], g_SemaphorePipe);
+            if( semaphore_dup_rc != g_SemaphorePipe )
+                exit(-1);
         }
 
         // say BASH to not put into history any command starting with space character
@@ -448,11 +451,13 @@ void ShellTask::ReadChildOutput()
         FD_SET(I->master_fd, &fd_err);
         const int max_fd = std::max({I->master_fd, I->cwd_pipe[0], I->signal_pipe[0]});
         const int select_rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
-        if( I->shell_pid < 0 ) {
+        const int shell_pid = I->shell_pid.load();
+        if( shell_pid < 0 ) {
             // The shell was closed from the master thread, don't do aything.
             // Most likely it's due to FD_ISSET(I->signal_pipe[0], &fd_in), but we can't(?) reliably
             // check for that due to a possible race condition between "I->shell_pid = -1;" and
             // "write(I->signal_pipe[1], ...)".
+            Log::Debug(SPDLOC, "shell_pid < 0, gracefully stopping the background thread");
             break;
         }
 
@@ -461,6 +466,7 @@ void ShellTask::ReadChildOutput()
             //                << rc << std::endl;
             // error on select(), let's think that shell has died
             // mb call ShellDied() here?
+            Log::Warn(SPDLOC, "select() failed, errno={}({})", errno, strerror(errno));
             break;
         }
 
@@ -483,11 +489,11 @@ void ShellTask::ReadChildOutput()
 
         // check if child process died
         if( FD_ISSET(I->master_fd, &fd_err) ) {
-            //            std::cout << "shell died: FD_ISSET(I->master_fd, &fd_err)" << std::endl;
-            if( !I->is_shutting_down )
-                //                dispatch_to_main_queue([=]{
+            Log::Info(SPDLOC, "error on master_fd=, shell_pid={}", I->master_fd, shell_pid );
+            if( !I->is_shutting_down ) {
+                Log::Info(SPDLOC, "shutting down" );
                 ShellDied();
-            //                });
+            }
             break;
         }
     } // End while
@@ -506,6 +512,7 @@ void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
         char tmp[1024];
         memcpy(tmp, _d, _sz);
         tmp[_sz] = 0;
+        Log::Debug(SPDLOC, "from pwd prompt from shell_pid={}: {}", I->shell_pid.load(), tmp);
 
         while( strlen(tmp) > 0 &&
                ( // need MOAR slow strlens in this while! gimme MOAR!!!!!

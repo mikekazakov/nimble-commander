@@ -168,6 +168,7 @@ private:
     void ReadChildOutput();
     void DoOnPwdPromptCallout(const char *_cwd, bool _changed) const;
     char **BuildShellArgs() const;
+    std::string ComposePromptCommand() const;
     struct Impl;
     std::shared_ptr<Impl> I;
 };

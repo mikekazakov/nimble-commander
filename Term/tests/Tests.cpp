@@ -22,7 +22,7 @@ static auto g_TestDirPrefix = "_nc__term__test_";
 static void DumpLog()
 {
     std::cout << "Last log entries, up to 100:" << std::endl;
-    for( auto &line : g_LogSink->last_formatted(100) )
+    for( auto &line : g_LogSink->last_formatted(1000) )
         std::cout << line;
     std::cout << std::endl;
 }

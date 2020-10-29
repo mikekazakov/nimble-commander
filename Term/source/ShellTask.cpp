@@ -227,11 +227,11 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     I->cwd = _work_dir.generic_string();
     Log::Info(SPDLOC, "Starting a new shell: {}", I->shell_path);
     Log::Info(SPDLOC, "Initial work directory: {}", I->cwd);
-    
+
     // remember current locale and stuff
     const auto env = BuildEnv();
     Log::Debug(SPDLOC, "Environment:");
-    for( auto &env_record: env )
+    for( auto &env_record : env )
         Log::Debug(SPDLOC, "\t{} = {}", env_record.first, env_record.second);
 
     // open a pseudo-terminal device
@@ -242,29 +242,29 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     }
     Log::Debug(SPDLOC, "posix_openpt(O_RDWR) returned {} (master_fd)", openpt_rc);
     I->master_fd = openpt_rc;
-    
+
     // grant access to the slave pseudo-terminal device
     const int graptpt_rc = grantpt(I->master_fd);
     if( graptpt_rc != 0 ) {
         Log::Warn(SPDLOC, "graptpt_rc() failed");
         throw std::runtime_error("graptpt_rc() failed");
     }
-    
+
     // unlock a pseudo-terminal master/slave pair
     const int unlockpt_rc = unlockpt(I->master_fd);
     if( unlockpt_rc != 0 ) {
         Log::Warn(SPDLOC, "unlockpt() failed");
         throw std::runtime_error("unlockpt() failed");
     }
-    
+
     // get name of the slave pseudo-terminal device
-    const char * const ptsname = ::ptsname(I->master_fd);
+    const char *const ptsname = ::ptsname(I->master_fd);
     if( ptsname == nullptr ) {
         Log::Warn(SPDLOC, "ptsname() failed");
         throw std::runtime_error("ptsname() failed");
     }
     Log::Debug(SPDLOC, "ptsname: {}", ptsname);
-    
+
     // opening a slave fd for the pseudo-terminal
     const int slave_fd = open(ptsname, O_RDWR);
     if( openpt_rc < 0 ) {
@@ -273,7 +273,6 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     }
     Log::Debug(SPDLOC, "slave_fd: {}", slave_fd);
 
-    int rc = 0;
     // init FIFO stuff for Shell's CWD
     if( I->shell_type == ShellType::Bash || I->shell_type == ShellType::ZSH ) {
         // for Bash and ZSH use a regular pipe handle
@@ -282,7 +281,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
             Log::Warn(SPDLOC, "pipe(I->cwd_pipe) failed");
             throw std::runtime_error("pipe(I->cwd_pipe) failed");
         }
-        
+
         const int semaphore_pipe_rc = pipe(I->semaphore_pipe);
         if( semaphore_pipe_rc != 0 ) {
             Log::Warn(SPDLOC, "pipe(I->semaphore_pipe) failed");
@@ -293,7 +292,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         const auto &dir = base::CommonPaths::AppTemporaryDirectory();
         const auto mypid = std::to_string(getpid());
         const auto gen = std::to_string(g_TCSHPipeGeneration++);
-        
+
         // open the cwd channel first
         I->tcsh_cwd_path = dir + "nimble_commander.tcsh.cwd_pipe." + mypid + "." + gen;
         Log::Debug(SPDLOC, "tcsh_cwd_path: {}", I->tcsh_cwd_path);
@@ -303,7 +302,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
             Log::Warn(SPDLOC, "mkfifo(I->tcsh_cwd_path.c_str(), 0600) failed");
             throw std::runtime_error("mkfifo(I->tcsh_cwd_path.c_str(), 0600) failed");
         }
-        
+
         const int cwd_open_rc = open(I->tcsh_cwd_path.c_str(), O_RDWR);
         if( cwd_open_rc < 0 ) {
             Log::Warn(SPDLOC, "open(I->tcsh_cwd_path.c_str(), O_RDWR) failed");
@@ -326,20 +325,20 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
             Log::Warn(SPDLOC, "open(I->tcsh_semaphore_path.c_str(), O_RDWR) failed");
             throw std::runtime_error("open(I->tcsh_semaphore_path.c_str(), O_RDWR) failed");
         }
-        
+
         I->semaphore_pipe[1] = semaphore_open_rc;
     }
-    
+
     Log::Debug(SPDLOC, "cwd_pipe: {}, {}", I->cwd_pipe[0], I->cwd_pipe[1]);
     Log::Debug(SPDLOC, "semaphore_pipe: {}, {}", I->semaphore_pipe[0], I->semaphore_pipe[1]);
-    
+
     // create a pipe to communicate with the blocking select()
     const int signal_pipe_rc = pipe(I->signal_pipe);
     if( signal_pipe_rc != 0 ) {
         Log::Warn(SPDLOC, "pipe(I->signal_pipe) failed");
         throw std::runtime_error("pipe(I->signal_pipe) failed");
     }
-    
+
     // Create the child process
     const auto fork_rc = fork();
     if( fork_rc < 0 ) {
@@ -348,7 +347,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         return false;
     } else if( fork_rc > 0 ) {
         Log::Debug(SPDLOC, "fork() returned {}", fork_rc);
-        
+
         // master
         I->shell_pid = fork_rc;
         close(slave_fd);
@@ -359,54 +358,39 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         // wait until either the forked process becomes an expected shell or dies
         const bool became_shell = WaitUntilBecomes(I->shell_pid, I->shell_path, 1s, 1ms);
         if( !became_shell ) {
+            Log::Warn(SPDLOC, "forked process failed to become a shell!");
             CleanUp(); // Well, RIP
             return false;
         }
 
+        // now let's declare that we have a working shell
         SetState(TaskState::Shell);
 
+        // kickstart a background thread that will receive input from the shell
         I->input_thread = std::thread([=] {
             auto name = "ShellTask background input thread, PID="s + std::to_string(I->shell_pid);
             pthread_setname_np(name.c_str());
             ReadChildOutput();
         });
+        Log::Debug(SPDLOC, "started a background thread {}", I->input_thread.get_id());
 
-        // setup pwd feedback
-        // this braindead construct creates a two-way communication channel between a shell and NC:
-        // 1) the shell is about to print a command prompt
-        // 2) PROMPT_COMMAND/precmd is executed by the shell
-        // 2.a) current directory is told to NC through the pwd pipe
-        // 2.b) shell is blocked until NC responds via the semaphore pipe
-        // 2.c) NC processes the pwd notification (hopefully) and writes into the semaphore pipe
-        // 2.d) data from that semaphore is read and the shell is unblocked
-        // 3) the shell resumes
-        char prompt_setup[1024] = {0};
-        if( I->shell_type == ShellType::Bash )
-            sprintf(prompt_setup,
-                    " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi'\n",
-                    fork_rc);
-        else if( I->shell_type == ShellType::ZSH )
-            sprintf(prompt_setup,
-                    " precmd(){ if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi; }\n",
-                    fork_rc);
-        else if( I->shell_type == ShellType::TCSH )
-            sprintf(
-                prompt_setup,
-                " alias precmd 'if ( $$ == %d ) pwd>>%s;dd if=%s of=/dev/null bs=4 count=1 >&/dev/null'\n",
-                fork_rc,
-                I->tcsh_cwd_path.c_str(),
-                I->tcsh_semaphore_path.c_str());
-        
-        if( !fd_is_valid(I->master_fd) )
-            std::cerr << "m_MasterFD is dead!" << std::endl;
+        if( !fd_is_valid(I->master_fd) ) {
+            Log::Warn(SPDLOC, "m_MasterFD is dead!");
+            CleanUp(); // Well, RIP
+            return false;
+        }
 
-        {
-            const auto lock = std::lock_guard{I->master_write_lock};
-            ssize_t write_res = write(I->master_fd, prompt_setup, strlen(prompt_setup));
-            if( write_res == -1 ) {
-                std::cout << "write() error: " << errno << ", verbose: " << strerror(errno)
-                          << std::endl;
-            }
+        // write prompt setup to the shell
+        const std::string prompt_setup = ComposePromptCommand();
+        Log::Debug(SPDLOC, "prompt_setup: {}", prompt_setup);
+        I->master_write_lock.lock();
+        const ssize_t write_res = write(I->master_fd, prompt_setup.data(), prompt_setup.size());
+        I->master_write_lock.unlock();
+        if( write_res != (ssize_t)prompt_setup.size() ) {
+            Log::Warn(
+                SPDLOC, "failed to write command prompt, errno: {} ({})", errno, strerror(errno));
+            CleanUp(); // Well, RIP
+            return false;
         }
 
         return true;
@@ -428,7 +412,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
             // setup piping for CWD prompt
             // using FDs g_PromptPipe/g_SemaphorePipe becuse bash is closing fds [3,20) upon
             // opening in logon mode (our case)
-            rc = dup2(I->cwd_pipe[1], g_PromptPipe);
+            int rc = dup2(I->cwd_pipe[1], g_PromptPipe);
             assert(rc == g_PromptPipe);
             rc = dup2(I->semaphore_pipe[0], g_SemaphorePipe);
             assert(rc == g_SemaphorePipe);
@@ -453,9 +437,9 @@ void ShellTask::ReadChildOutput()
     constexpr int input_sz = 65536;
     char input[65536];
     fd_set fd_in, fd_err;
-    
+
     while( true ) {
-        // Wait for either a data from master, cwd or signal, or an error from master.        
+        // Wait for either a data from master, cwd or signal, or an error from master.
         FD_ZERO(&fd_in);
         FD_SET(I->master_fd, &fd_in);
         FD_SET(I->cwd_pipe[0], &fd_in);
@@ -598,11 +582,11 @@ void ShellTask::CleanUp()
     if( I->shell_pid > 0 ) {
         const int pid = I->shell_pid;
         I->shell_pid = -1;
-        std::thread([pid]{
+        std::thread([pid] {
             KillAndReap(pid, std::chrono::milliseconds(400), std::chrono::milliseconds(1000));
         }).detach();
     }
-    
+
     if( I->input_thread.joinable() ) {
         if( I->input_thread.get_id() == std::this_thread::get_id() ) {
             I->input_thread.detach();
@@ -612,7 +596,7 @@ void ShellTask::CleanUp()
             I->input_thread.join();
         }
     }
-    
+
     if( I->signal_pipe[0] >= 0 ) {
         close(I->signal_pipe[0]);
         close(I->signal_pipe[1]);
@@ -638,8 +622,8 @@ void ShellTask::CleanUp()
         unlink(I->tcsh_cwd_path.c_str());
         I->tcsh_cwd_path.clear();
     }
-    
-    if( !I->tcsh_semaphore_path.empty()) {
+
+    if( !I->tcsh_semaphore_path.empty() ) {
         unlink(I->tcsh_semaphore_path.c_str());
         I->tcsh_semaphore_path.clear();
     }
@@ -685,7 +669,7 @@ void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
         return;
 
     auto requested_cwd = EnsureTrailingSlash(_new_cwd.generic_string());
-    
+
     {
         const auto lock = std::lock_guard{I->lock};
         if( I->cwd == requested_cwd )
@@ -708,16 +692,16 @@ void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
     child_feed +=
         "\x03"; // pass ctrl+C to shell to ensure that no previous user input (if any) will stay
 
-//    child_feed += " cd '";
-//    child_feed += requested_cwd;
-//    child_feed += "'\n";
+    //    child_feed += " cd '";
+    //    child_feed += requested_cwd;
+    //    child_feed += "'\n";
 
     child_feed += " cd ";
     child_feed += EscapeShellFeed(requested_cwd);
     child_feed += "\n";
-    
-//    child_feed += EscapeShellFeed(requested_cwd);
-    
+
+    //    child_feed += EscapeShellFeed(requested_cwd);
+
     WriteChildInput(child_feed);
 }
 
@@ -758,10 +742,17 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
 
     char input[2048];
     if( cwd[0] != 0 )
-        sprintf(input, "cd '%s'; ./%s%s%s\n", cwd, cmd.c_str(), _parameters != nullptr ? " " : "",
+        sprintf(input,
+                "cd '%s'; ./%s%s%s\n",
+                cwd,
+                cmd.c_str(),
+                _parameters != nullptr ? " " : "",
                 _parameters != nullptr ? _parameters : "");
     else
-        sprintf(input, "./%s%s%s\n", cmd.c_str(), _parameters != nullptr ? " " : "",
+        sprintf(input,
+                "./%s%s%s\n",
+                cmd.c_str(),
+                _parameters != nullptr ? " " : "",
                 _parameters != nullptr ? _parameters : "");
 
     SetState(TaskState::ProgramExternal);
@@ -776,7 +767,10 @@ void ShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
     std::string cmd = EscapeShellFeed(_path);
 
     char input[2048];
-    sprintf(input, "%s%s%s\n", cmd.c_str(), _parameters != nullptr ? " " : "",
+    sprintf(input,
+            "%s%s%s\n",
+            cmd.c_str(),
+            _parameters != nullptr ? " " : "",
             _parameters != nullptr ? _parameters : "");
 
     SetState(TaskState::ProgramExternal);
@@ -931,6 +925,38 @@ char **ShellTask::BuildShellArgs() const
 ShellTask::ShellType ShellTask::GetShellType() const
 {
     return I->shell_type;
+}
+
+std::string ShellTask::ComposePromptCommand() const
+{
+    // setup pwd feedback
+    // this braindead construct creates a two-way communication channel between a shell and NC:
+    // 1) the shell is about to print a command prompt
+    // 2) PROMPT_COMMAND/precmd is executed by the shell
+    // 2.a) current directory is told to NC through the pwd pipe
+    // 2.b) shell is blocked until NC responds via the semaphore pipe
+    // 2.c) NC processes the pwd notification (hopefully) and writes into the semaphore pipe
+    // 2.d) data from that semaphore is read and the shell is unblocked
+    // 3) the shell resumes
+    char prompt_setup[1024] = {0};
+    const int pid = I->shell_pid;
+    if( I->shell_type == ShellType::Bash )
+        sprintf(prompt_setup,
+                " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi'\n",
+                pid);
+    else if( I->shell_type == ShellType::ZSH )
+        sprintf(prompt_setup,
+                " precmd(){ if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi; }\n",
+                pid);
+    else if( I->shell_type == ShellType::TCSH )
+        sprintf(prompt_setup,
+                " alias precmd 'if ( $$ == %d ) pwd>>%s;dd if=%s of=/dev/null bs=4 count=1 "
+                ">&/dev/null'\n",
+                pid,
+                I->tcsh_cwd_path.c_str(),
+                I->tcsh_semaphore_path.c_str());
+
+    return prompt_setup;
 }
 
 } // namespace nc::term

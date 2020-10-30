@@ -575,7 +575,7 @@ TEST_CASE(PREFIX "Test vim interaction via output")
 TEST_CASE(PREFIX "Test multiple shells in parallel via output")
 {
     const TempTestDir dir;
-    constexpr size_t number = 100; // just casually spawn 100 shells, not a big deal...
+    constexpr size_t number = 50; // just casually spawn 50 shells, not a big deal...
         
     struct Context {
         AtomicHolder<std::string> buffer_dump;

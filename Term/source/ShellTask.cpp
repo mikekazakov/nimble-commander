@@ -489,7 +489,7 @@ void ShellTask::ReadChildOutput()
 
         // check if child process died
         if( FD_ISSET(I->master_fd, &fd_err) ) {
-            Log::Info(SPDLOC, "error on master_fd=, shell_pid={}", I->master_fd, shell_pid );
+            Log::Info(SPDLOC, "error on master_fd={}, shell_pid={}", I->master_fd, shell_pid );
             if( !I->is_shutting_down ) {
                 Log::Info(SPDLOC, "shutting down" );
                 ShellDied();
@@ -510,11 +510,11 @@ void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
     std::string cwd(static_cast<const char *>(_d), _sz);
     while( cwd.empty() == false && (cwd.back() == '\n' || cwd.back() == '\r') )
         cwd.pop_back();
-    cwd = EnsureTrailingSlash(cwd);
+    cwd = EnsureTrailingSlash(cwd);    
+    Log::Info(SPDLOC, "pwd prompt from shell_pid={}: {}", I->shell_pid.load(), cwd);
         
     {
         const auto lock = std::lock_guard{I->lock};
-        Log::Info(SPDLOC, "from pwd prompt from shell_pid={}: {}", I->shell_pid.load(), cwd);
 
         I->cwd = cwd;
 

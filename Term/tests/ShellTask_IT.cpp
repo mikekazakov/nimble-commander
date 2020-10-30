@@ -391,6 +391,29 @@ TEST_CASE(PREFIX "CWD prompt response")
     // unicode-wise. that really sucks.
 }
 
+TEST_CASE(PREFIX "CWD prompt response - changed/same")
+{
+    const TempTestDir dir;
+    ShellTask shell;
+    QueuedAtomicHolder<std::pair<std::filesystem::path, bool>> cwd;
+    shell.SetOnPwdPrompt([&](const char *_cwd, bool _changed) { cwd.store({_cwd, _changed}); });
+    SECTION("/bin/bash") { shell.SetShellPath("/bin/bash"); }
+    SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
+    SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
+    SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
+    shell.Launch(dir.directory);
+    REQUIRE(cwd.wait_to_become(5s, {dir.directory, false}));
+    
+    shell.ExecuteWithFullPath("cd", ".");
+    REQUIRE(cwd.wait_to_become(5s, {dir.directory, false}));
+    
+    shell.ExecuteWithFullPath("cd", "/");
+    REQUIRE(cwd.wait_to_become(5s, {"/", true}));
+    
+    shell.ExecuteWithFullPath("cd", "/");
+    REQUIRE(cwd.wait_to_become(5s, {"/", false}));
+}
+
 TEST_CASE(PREFIX "Test basics (legacy stuff)")
 {
     const TempTestDir dir;

@@ -507,21 +507,16 @@ void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
     bool do_nr_hack = false;
     bool current_wd_changed = false;
 
+    std::string cwd(static_cast<const char *>(_d), _sz);
+    while( cwd.empty() == false && (cwd.back() == '\n' || cwd.back() == '\r') )
+        cwd.pop_back();
+    cwd = EnsureTrailingSlash(cwd);
+        
     {
         const auto lock = std::lock_guard{I->lock};
-        char tmp[1024];
-        memcpy(tmp, _d, _sz);
-        tmp[_sz] = 0;
-        Log::Debug(SPDLOC, "from pwd prompt from shell_pid={}: {}", I->shell_pid.load(), tmp);
+        Log::Info(SPDLOC, "from pwd prompt from shell_pid={}: {}", I->shell_pid.load(), cwd);
 
-        while( strlen(tmp) > 0 &&
-               ( // need MOAR slow strlens in this while! gimme MOAR!!!!!
-                   tmp[strlen(tmp) - 1] == '\n' || tmp[strlen(tmp) - 1] == '\r') )
-            tmp[strlen(tmp) - 1] = 0;
-
-        I->cwd = tmp;
-        if( I->cwd.empty() || I->cwd.back() != '/' )
-            I->cwd += '/';
+        I->cwd = cwd;
 
         if( current_cwd != I->cwd ) {
             current_cwd = I->cwd;
@@ -533,8 +528,7 @@ void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
             SetState(TaskState::Shell);
         }
 
-        if( I->temporary_suppressed && (I->requested_cwd.empty() || I->requested_cwd == tmp) ) {
-
+        if( I->temporary_suppressed && (I->requested_cwd.empty() || I->requested_cwd == cwd) ) {
             I->temporary_suppressed = false;
             if( !I->requested_cwd.empty() ) {
                 I->requested_cwd = "";
@@ -675,15 +669,13 @@ void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
     if( I->state != TaskState::Shell )
         return;
 
-    auto requested_cwd = EnsureTrailingSlash(_new_cwd.generic_string());
+    const auto requested_cwd = EnsureTrailingSlash(_new_cwd.generic_string());
 
     {
         const auto lock = std::lock_guard{I->lock};
         if( I->cwd == requested_cwd )
             return; // do nothing if current working directory is the same as requested
     }
-
-    requested_cwd = EnsureNoTrailingSlash(requested_cwd); // cd command don't like trailing slashes
 
     // file I/O here
     if( !IsDirectoryAvailableForBrowsing(requested_cwd) )
@@ -694,21 +686,17 @@ void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
         I->temporary_suppressed = true; // will show no output of shell when changing a directory
         I->requested_cwd = requested_cwd;
     }
-
+    
+    // now compose a command to feed the shell with
     std::string child_feed;
-    child_feed +=
-        "\x03"; // pass ctrl+C to shell to ensure that no previous user input (if any) will stay
-
-    //    child_feed += " cd '";
-    //    child_feed += requested_cwd;
-    //    child_feed += "'\n";
-
+    // pass ctrl+C to shell to ensure that no previous user input (if any) will stay
+    child_feed += "\x03";
     child_feed += " cd ";
-    child_feed += EscapeShellFeed(requested_cwd);
+    // cd command don't like trailing slashes, so remove it
+    child_feed += EscapeShellFeed(EnsureNoTrailingSlash(requested_cwd));
     child_feed += "\n";
 
-    //    child_feed += EscapeShellFeed(requested_cwd);
-
+    // and send it
     WriteChildInput(child_feed);
 }
 

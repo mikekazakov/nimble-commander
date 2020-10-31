@@ -1605,6 +1605,7 @@
 		CF197C4A1FB960CC009F6C59 /* RevealInOppositePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RevealInOppositePanel.h; path = NimbleCommander/States/FilePanels/Actions/RevealInOppositePanel.h; sourceTree = SOURCE_ROOT; };
 		CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RevealInOppositePanel.mm; path = NimbleCommander/States/FilePanels/Actions/RevealInOppositePanel.mm; sourceTree = SOURCE_ROOT; };
 		CF19B4872546250000838B45 /* XCConfig */ = {isa = PBXFileReference; lastKnownFileType = folder; path = XCConfig; sourceTree = "<group>"; };
+		CF19B4A4254DD43700838B45 /* Nimble Commander.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Nimble Commander.entitlements"; sourceTree = "<group>"; };
 		CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Term.xcodeproj; path = Term/Term.xcodeproj; sourceTree = "<group>"; };
 		CF1E3D181D5AD3C600609ADB /* MainWindowInternalViewerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowInternalViewerState.h; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.h; sourceTree = SOURCE_ROOT; };
 		CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowInternalViewerState.mm; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.mm; sourceTree = SOURCE_ROOT; };
@@ -3101,6 +3102,7 @@
 		CFC5120816C4BD3D00D247EE = {
 			isa = PBXGroup;
 			children = (
+				CF19B4A4254DD43700838B45 /* Nimble Commander.entitlements */,
 				CF19B4872546250000838B45 /* XCConfig */,
 				CF20CC01215A258F006716F6 /* Config.xcodeproj */,
 				CFD79AD821FE29420043A26D /* CUI.xcodeproj */,
@@ -5479,6 +5481,7 @@
 		CFC5122F16C4BD3D00D247EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Nimble Commander.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
@@ -5498,6 +5501,7 @@
 		CFC5123016C4BD3D00D247EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Nimble Commander.entitlements";
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";

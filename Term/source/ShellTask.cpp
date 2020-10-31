@@ -51,6 +51,7 @@ static void KillAndReap(int _pid,
                         std::chrono::nanoseconds _gentle_deadline,
                         std::chrono::nanoseconds _brutal_deadline);
 static void TurnOffSigPipe();
+static bool IsProcessDead(int _pid) noexcept;
 
 static bool IsDirectoryAvailableForBrowsing(const char *_path)
 {
@@ -83,6 +84,12 @@ static std::string ProcPidPath(int _pid)
         return buf;
 }
 
+static bool IsProcessDead(int _pid) noexcept
+{
+    const bool dead = kill(_pid, 0) < 0;
+    return dead && errno == ESRCH;
+}
+
 static bool WaitUntilBecomes(int _pid,
                              std::string_view _expected_image_path,
                              std::chrono::nanoseconds _timeout,
@@ -90,6 +97,8 @@ static bool WaitUntilBecomes(int _pid,
 {
     const auto deadline = machtime() + _timeout;
     while( true ) {
+        if( IsProcessDead(_pid) )
+            return false;
         const auto current_path = ProcPidPath(_pid);
         if( current_path.empty() )
             return false;
@@ -356,7 +365,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         I->temporary_suppressed = true; /// HACKY!!!
 
         // wait until either the forked process becomes an expected shell or dies
-        const bool became_shell = WaitUntilBecomes(I->shell_pid, I->shell_path, 1s, 1ms);
+        const bool became_shell = WaitUntilBecomes(I->shell_pid, I->shell_path, 5s, 1ms);
         if( !became_shell ) {
             Log::Warn(SPDLOC, "forked process failed to become a shell!");
             CleanUp(); // Well, RIP

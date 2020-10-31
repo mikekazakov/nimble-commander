@@ -73,7 +73,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> Terminate - Inactive")
     shell.SetOnStateChange(
         [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
 
-    shell.Launch(CommonPaths::AppTemporaryDirectory());
+    REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     const int pid = shell.ShellPID();
     REQUIRE(pid >= 0);
@@ -94,7 +94,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactiv
     shell.SetOnStateChange(
         [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     REQUIRE(shell.State() == TaskState::Inactive);
-    shell.Launch(CommonPaths::AppTemporaryDirectory());
+    REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     shell.WriteChildInput("exit\r");
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramInternal));
@@ -114,7 +114,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (vi) -> Shell -> Terminat
     shell.SetOnStateChange(
         [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     REQUIRE(shell.State() == TaskState::Inactive);
-    shell.Launch(CommonPaths::AppTemporaryDirectory());
+    REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     shell.WriteChildInput("vi\r");
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramInternal));
@@ -135,7 +135,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramExternal (vi) -> Shell -> Terminat
     shell.SetOnStateChange(
         [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     REQUIRE(shell.State() == TaskState::Inactive);
-    shell.Launch(CommonPaths::AppTemporaryDirectory());
+    REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     shell.ExecuteWithFullPath("/usr/bin/vi", nullptr);
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
@@ -167,14 +167,8 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
         shell.AddCustomShellArgument("zsh");
         shell.AddCustomShellArgument("-f");
     }
-    SECTION("csh")
-    {
-        shell.SetShellPath("/bin/csh");
-    }
-    SECTION("tcsh")
-    {
-        shell.SetShellPath("/bin/tcsh");
-    }
+    SECTION("csh") { shell.SetShellPath("/bin/csh"); }
+    SECTION("tcsh") { shell.SetShellPath("/bin/tcsh"); }
     const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
         if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
@@ -184,12 +178,12 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
             }
         }
     });
-    shell.Launch(CommonPaths::AppTemporaryDirectory());
+    REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
 
     if( type == ShellTask::ShellType::TCSH ) {
         shell.WriteChildInput("set prompt='Hello=>'\rclear\r");
     }
-    
+
     const std::string expected = "Hello=>             "
                                  "                    "
                                  "                    ";
@@ -238,14 +232,8 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
         shell.AddCustomShellArgument("zsh");
         shell.AddCustomShellArgument("-f");
     }
-    SECTION("csh")
-    {
-        shell.SetShellPath("/bin/csh");
-    }
-    SECTION("tcsh")
-    {
-        shell.SetShellPath("/bin/tcsh");
-    }
+    SECTION("csh") { shell.SetShellPath("/bin/csh"); }
+    SECTION("tcsh") { shell.SetShellPath("/bin/tcsh"); }
     const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
         if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
@@ -256,8 +244,8 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
         }
     });
     shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
-    shell.Launch(dir.directory);
-    
+    REQUIRE(shell.Launch(dir.directory));
+
     if( type == ShellTask::ShellType::TCSH ) {
         shell.WriteChildInput("set prompt='>'\rclear\r");
     }
@@ -340,7 +328,7 @@ TEST_CASE(PREFIX "CWD prompt response")
     SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
     SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
     SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
-    shell.Launch(dir.directory);
+    REQUIRE(shell.Launch(dir.directory));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     REQUIRE(cwd.wait_to_become(5s, dir.directory));
 
@@ -401,15 +389,15 @@ TEST_CASE(PREFIX "CWD prompt response - changed/same")
     SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
     SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
     SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
-    shell.Launch(dir.directory);
+    REQUIRE(shell.Launch(dir.directory));
     REQUIRE(cwd.wait_to_become(5s, {dir.directory, false}));
-    
+
     shell.ExecuteWithFullPath("cd", ".");
     REQUIRE(cwd.wait_to_become(5s, {dir.directory, false}));
-    
+
     shell.ExecuteWithFullPath("cd", "/");
     REQUIRE(cwd.wait_to_become(5s, {"/", true}));
-    
+
     shell.ExecuteWithFullPath("cd", "/");
     REQUIRE(cwd.wait_to_become(5s, {"/", false}));
 }
@@ -433,7 +421,7 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
     SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
     shell.ResizeWindow(100, 100);
-    shell.Launch(dir.directory);
+    REQUIRE(shell.Launch(dir.directory));
 
     // check cwd
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
@@ -474,7 +462,7 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     REQUIRE(shell.State() == ShellTask::TaskState::Inactive);
 
     // check execution with short path in different directory
-    shell.Launch(dir.directory);
+    REQUIRE(shell.Launch(dir.directory));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
     shell.Execute("top", "/usr/bin/", nullptr);
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
@@ -509,14 +497,8 @@ TEST_CASE(PREFIX "Test vim interaction via output")
         shell.AddCustomShellArgument("zsh");
         shell.AddCustomShellArgument("-f");
     }
-    SECTION("csh")
-    {
-        shell.SetShellPath("/bin/csh");
-    }
-    SECTION("tcsh")
-    {
-        shell.SetShellPath("/bin/tcsh");
-    }
+    SECTION("csh") { shell.SetShellPath("/bin/csh"); }
+    SECTION("tcsh") { shell.SetShellPath("/bin/tcsh"); }
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
         if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
@@ -525,8 +507,8 @@ TEST_CASE(PREFIX "Test vim interaction via output")
             }
         }
     });
-    shell.Launch(dir.directory);
-    
+    REQUIRE(shell.Launch(dir.directory));
+
     if( shell.GetShellType() == ShellTask::ShellType::TCSH ) {
         shell.WriteChildInput("set prompt='>'\rclear\r");
     }
@@ -579,7 +561,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
 {
     const TempTestDir dir;
     constexpr size_t number = 10; // just casually spawn 10 shells, not a big deal...
-        
+
     struct Context {
         AtomicHolder<std::string> buffer_dump;
         AtomicHolder<ShellTask::TaskState> shell_state;
@@ -622,7 +604,8 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
     for( auto &ctx : shells ) {
         ctx.shell.ResizeWindow(20, 5);
         ctx.shell.SetOnChildOutput([&](const void *_d, int _sz) {
-            if( auto cmds = ctx.parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
+            if( auto cmds = ctx.parser.Parse({(const std::byte *)_d, (size_t)_sz});
+                !cmds.empty() ) {
                 if( auto lock = ctx.screen.AcquireLock() ) {
                     ctx.interpreter.Interpret(cmds);
                     ctx.buffer_dump.store(ctx.screen.Buffer().DumpScreenAsANSI());
@@ -631,12 +614,12 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
         });
         ctx.shell.SetOnStateChange(
             [&](ShellTask::TaskState _new_state) { ctx.shell_state.store(_new_state); });
-        ctx.shell.Launch(dir.directory);
+        REQUIRE(ctx.shell.Launch(dir.directory));
 
         if( ctx.shell.GetShellType() == ShellTask::ShellType::TCSH )
             ctx.shell.WriteChildInput("set prompt='>'\rclear\r");
     }
-    
+
     // wait until each shell wakes up
     for( size_t i = 0; i != number; ++i ) {
         const std::string expected = ">                   "
@@ -646,13 +629,13 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
                                      "                    ";
         REQUIRE(shells[i].buffer_dump.wait_to_become(5s, expected));
     }
-    
+
     // write the shell number to each shell
     for( size_t i = 0; i != number; ++i ) {
         const std::string msg = "Hi," + std::to_string(i);
         shells[i].shell.WriteChildInput(msg);
     }
-    
+
     // wait until each shell dispays it
     for( size_t i = 0; i != number; ++i ) {
         const std::string msg = "Hi," + std::to_string(i);
@@ -664,11 +647,11 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
                                             "                    ";
         REQUIRE(shells[i].buffer_dump.wait_to_become(5s, expected));
     }
-    
+
     // now tell all the shell to bugger off
     for( auto &ctx : shells )
         ctx.shell.Terminate();
-    
+
     // and wait until there were none
     for( auto &ctx : shells )
         REQUIRE(ctx.shell_state.wait_to_become(5s, TaskState::Inactive));

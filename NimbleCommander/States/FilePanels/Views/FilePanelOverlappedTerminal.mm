@@ -2,10 +2,11 @@
 #include <Habanero/CommonPaths.h>
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
-#include <Term/Parser.h>
+#include <Term/Parser2Impl.h>
 #include <Term/View.h>
 #include <Term/ScrollView.h>
 #include <Term/InputTranslatorImpl.h>
+#include <Term/InterpreterImpl.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/States/Terminal/SettingsAdaptor.h>
 #include "FilePanelOverlappedTerminal.h"
@@ -27,8 +28,9 @@ static const auto g_LongProcessDelay = 100ms;
 {
     NCTermScrollView           *m_TermScrollView;
     std::unique_ptr<ShellTask>  m_Task;
-    std::unique_ptr<Parser>     m_Parser;
+    std::unique_ptr<Parser2>     m_Parser;
     std::unique_ptr<InputTranslator>    m_InputTranslator;
+    std::unique_ptr<Interpreter>        m_Interpreter;
     std::string                 m_InitalWD;
     std::function<void()>       m_OnShellCWDChanged;
     std::function<void()>       m_OnLongTaskStarted;
@@ -50,6 +52,7 @@ static const auto g_LongProcessDelay = 100ms;
         m_BashCommandStartX = m_BashCommandStartY = std::numeric_limits<int>::max();
         m_RunningLongTask = false;
         m_InitalWD = nc::base::CommonPaths::Home();
+        __weak FilePanelOverlappedTerminal* weak_self = self;
         
         m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
                                                        attachToTop:false
@@ -66,51 +69,77 @@ static const auto g_LongProcessDelay = 100ms;
                 m_Task->SetShellPath(GlobalConfig().GetString(g_CustomPath));
         
         auto task_ptr = m_Task.get();
-        m_Parser = std::make_unique<Parser>(m_TermScrollView.screen,
-                                           [=](const void* _d, int _sz){
-                                               task_ptr->WriteChildInput( std::string_view((const char*)_d, _sz) );
-                                           });
-        m_Parser->SetTaskScreenResize([=](int sx, int sy) {
-            task_ptr->ResizeWindow(sx, sy);
+        Parser2Impl::Params parser_params;
+        parser_params.error_log = [](std::string_view _error){
+            std::cerr << _error << std::endl;
+        };
+        m_Parser = std::make_unique<Parser2Impl>(parser_params);
+        
+        m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);
+        m_Interpreter->SetOuput([=](std::span<const std::byte> _bytes) {
+            task_ptr->WriteChildInput(std::string_view((const char *)_bytes.data(), _bytes.size()));
         });
+        m_Interpreter->SetBell([] { NSBeep(); });
+        m_Interpreter->SetTitle([](const std::string &, bool, bool) { /* deliberately nothing*/ });
+        m_Interpreter->SetInputTranslator(m_InputTranslator.get());
+        m_Interpreter->SetShowCursorChanged([weak_self](bool _show) {
+            FilePanelOverlappedTerminal *me = weak_self;
+            me->m_TermScrollView.view.showCursor = _show;
+        });
+        m_Interpreter->SetRequstedMouseEventsChanged(
+            [weak_self](Interpreter::RequestedMouseEvents _events) {
+                FilePanelOverlappedTerminal *me = weak_self;
+                me->m_TermScrollView.view.mouseEvents = _events;
+            });
+        
+
         m_InputTranslator = std::make_unique<InputTranslatorImpl>();
         m_InputTranslator->SetOuput([=]( std::span<const std::byte> _bytes  ){
             task_ptr->WriteChildInput( std::string_view((const char*)_bytes.data(), _bytes.size()) );
             
         });
-//        [m_TermScrollView.view AttachToParser:m_Parser.get()];
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
-        
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
-        __weak FilePanelOverlappedTerminal *weakself = self;
-        m_Task->SetOnChildOutput([=](const void* _d, int _sz){
-            [(FilePanelOverlappedTerminal*)weakself onChildOutput:_d size:_sz];
+        m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {
+            FilePanelOverlappedTerminal *me = weak_self;
+            me->m_Interpreter->NotifyScreenResized();
+            me->m_Task->ResizeWindow(_sx, _sy);
+        };
+
+        m_Task->SetOnChildOutput([weak_self](const void* _d, int _sz){
+            [(FilePanelOverlappedTerminal*)weak_self onChildOutput:_d size:_sz];
         });
-        m_Task->SetOnPwdPrompt([=](const char *_cwd, bool _changed){
-            [(FilePanelOverlappedTerminal*)weakself onBashPrompt:_cwd cwdChanged:_changed];
+        m_Task->SetOnPwdPrompt([weak_self](const char *_cwd, bool _changed){
+            [(FilePanelOverlappedTerminal*)weak_self onBashPrompt:_cwd cwdChanged:_changed];
         });
-        m_Task->SetOnStateChange([=](ShellTask::TaskState _state){
-            [(FilePanelOverlappedTerminal*)weakself onTaskStateChanged:_state];
+        m_Task->SetOnStateChange([weak_self](ShellTask::TaskState _state){
+            [(FilePanelOverlappedTerminal*)weak_self onTaskStateChanged:_state];
         });
-#pragma clang diagnostic pop
     }
     return self;
 }
 
 - (void) onChildOutput:(const void*)_d size:(int)_sz
 {
-    if( auto lock = m_TermScrollView.screen.AcquireLock() )
-        m_Parser->EatBytes((const unsigned char*)_d, _sz);
-    [m_TermScrollView.view.fpsDrawer invalidate];
+    dispatch_assert_background_queue();
     
-    dispatch_to_main_queue( [=]{
-        [m_TermScrollView.view adjustSizes:false];
+    auto cmds = m_Parser -> Parse({(const std::byte *)_d, (size_t)_sz});
+    if( cmds.empty() )
+        return;
+    
+    __weak FilePanelOverlappedTerminal* weak_self = self;
+    
+    dispatch_to_main_queue([weak_self, cmds = std::move(cmds)] {
+        FilePanelOverlappedTerminal *me = weak_self;
+        if( auto lock = me->m_TermScrollView.screen.AcquireLock() )
+            me->m_Interpreter->Interpret(cmds);
+        [me->m_TermScrollView.view.fpsDrawer invalidate];
+        [me->m_TermScrollView.view adjustSizes:false];
     });
 }
 
 - (void) onBashPrompt:(const char*)[[maybe_unused]]_cwd cwdChanged:(bool)_changed
 {
+    dispatch_assert_background_queue();
     dispatch_to_main_queue_after(g_BashPromptInputDelay, [=]{
         [self guessWhereCommandLineIs];
     });

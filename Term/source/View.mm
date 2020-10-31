@@ -154,12 +154,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return YES;
 }
 
-- (term::Parser *)parser
-{
-    //    return m_Parser;
-    return nullptr;
-}
-
 - (const FontCache &)fontCache
 {
     return *m_FontCache;

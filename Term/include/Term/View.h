@@ -5,7 +5,6 @@
 #include <Utility/FontCache.h>
 
 #include "Screen.h"
-#include "Parser.h"
 #include "CursorMode.h"
 #include "InputTranslator.h"
 #include "Interpreter.h"
@@ -18,7 +17,6 @@ namespace nc::term {
 
 @property (nonatomic, readonly) FPSLimitedDrawer *fpsDrawer;
 @property (nonatomic, readonly) const nc::utility::FontCache &fontCache;
-@property (nonatomic, readonly) nc::term::Parser *parser; // may be nullptr
 @property (nonatomic) bool reportsSizeByOccupiedContent;
 @property (nonatomic) bool allowCursorBlinking;
 @property (nonatomic) bool showCursor;

@@ -62,7 +62,6 @@
 		CFE08B2F23DCEB04007E99B8 /* Parser2Impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2D23DCEB04007E99B8 /* Parser2Impl.cpp */; };
 		CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
 		CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */; };
-		CFFDD1F424CB840300289876 /* Parser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE401F7E7593003E9B76 /* Parser.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -452,7 +451,6 @@
 				CFC4F4CC24CA3D2100DF4ED6 /* InputTranslatorImpl.mm in Sources */,
 				CF4135151F846CF2007429B6 /* ShellTask.cpp in Sources */,
 				CF4135171F846CF2007429B6 /* Task.cpp in Sources */,
-				CFFDD1F424CB840300289876 /* Parser.mm in Sources */,
 				CFC4F4C624CA396600DF4ED6 /* InputTranslator.cpp in Sources */,
 				CF5F392F242F7FB4004DF1F8 /* InterpreterImpl.cpp in Sources */,
 				CF4135161F846CF2007429B6 /* SingleTask.cpp in Sources */,

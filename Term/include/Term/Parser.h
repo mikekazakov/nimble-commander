@@ -1,4 +1,5 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#if 0
 #pragma once
 
 #include <string>
@@ -144,3 +145,4 @@ private:
 };
 
 }
+#endif

@@ -578,7 +578,7 @@ TEST_CASE(PREFIX "Test vim interaction via output")
 TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
 {
     const TempTestDir dir;
-    constexpr size_t number = 50; // just casually spawn 50 shells, not a big deal...
+    constexpr size_t number = 10; // just casually spawn 10 shells, not a big deal...
         
     struct Context {
         AtomicHolder<std::string> buffer_dump;
@@ -644,7 +644,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
                                      "                    "
                                      "                    "
                                      "                    ";
-        REQUIRE(shells[i].buffer_dump.wait_to_become(20s, expected));
+        REQUIRE(shells[i].buffer_dump.wait_to_become(5s, expected));
     }
     
     // write the shell number to each shell
@@ -662,7 +662,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
                                             "                    "
                                             "                    "
                                             "                    ";
-        REQUIRE(shells[i].buffer_dump.wait_to_become(20s, expected));
+        REQUIRE(shells[i].buffer_dump.wait_to_become(5s, expected));
     }
     
     // now tell all the shell to bugger off
@@ -671,5 +671,5 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
     
     // and wait until there were none
     for( auto &ctx : shells )
-        REQUIRE(ctx.shell_state.wait_to_become(20s, TaskState::Inactive));
+        REQUIRE(ctx.shell_state.wait_to_become(5s, TaskState::Inactive));
 }

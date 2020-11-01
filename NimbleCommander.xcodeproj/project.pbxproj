@@ -311,6 +311,10 @@
 		CF509273201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */; };
 		CF509274201C3DB7004D9CF5 /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */; };
 		CF52C3FA22BEBA4F0043E825 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF52C3E122BEBA090043E825 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF55F80F254F2BAB00CC415D /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; };
+		CF55F810254F2BAC00CC415D /* LetsMove.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF55F812254F2F1200CC415D /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; };
+		CF55F813254F2F1200CC415D /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF56BF541D68061600A08D2B /* VFSInstanceManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */; };
 		CF56BF551D68129700A08D2B /* VFSInstanceManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */; };
 		CF56BF561D68129800A08D2B /* VFSInstanceManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */; };
@@ -588,10 +592,6 @@
 		CF8D0D051D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
 		CF8D0D061D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
 		CF8D0D071D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
-		CF90C0291EBB02850056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CF90C02A1EBB03280056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		CF90C02B1EBB04910056E3B8 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; };
-		CF90C02C1EBB04960056E3B8 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; };
 		CF90C0B61EC161E70056E3B8 /* NavigateHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0B51EC161E70056E3B8 /* NavigateHistory.mm */; };
 		CF90C0B71EC161E70056E3B8 /* NavigateHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0B51EC161E70056E3B8 /* NavigateHistory.mm */; };
 		CF90C0B81EC161E70056E3B8 /* NavigateHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0B51EC161E70056E3B8 /* NavigateHistory.mm */; };
@@ -1327,20 +1327,6 @@
 			remoteGlobalIDString = CF8BDCF92147D50300F14C3E;
 			remoteInfo = VFSIcon;
 		};
-		CF90C0251EBB02240056E3B8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D1107320486CEB800E47090;
-			remoteInfo = "LetsMove Test";
-		};
-		CF90C0271EBB02240056E3B8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F146F8271CE7094400233A9B;
-			remoteInfo = LetsMove;
-		};
 		CF9721EE214FD43100A1B19E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF8BDD0B2147D60800F14C3E /* VFSIcon.xcodeproj */;
@@ -1442,6 +1428,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				CF52C3FA22BEBA4F0043E825 /* Sparkle.framework in CopyFiles */,
+				CF55F810254F2BAC00CC415D /* LetsMove.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1460,7 +1447,6 @@
 				CFFA949E1F4541300035E606 /* libUtility.dylib in Copy Files */,
 				CFFA949F1F4541360035E606 /* libHabanero.dylib in Copy Files */,
 				CFFA949D1F4541290035E606 /* libRoutedIO.dylib in Copy Files */,
-				CF90C0291EBB02850056E3B8 /* LetsMove.framework in Copy Files */,
 				CFF53B6A1EDD283E00F567C4 /* Operations.framework in Copy Files */,
 			);
 			name = "Copy Files";
@@ -1524,13 +1510,13 @@
 				CF614AEF1F9D92EA0005F2DB /* Operations.framework in Copy Files */,
 				CF614AEE1F9D92D70005F2DB /* libTerm.dylib in Copy Files */,
 				CF36DBEE1F6C185D004A018E /* Sparkle.framework in Copy Files */,
+				CF55F813254F2F1200CC415D /* LetsMove.framework in Copy Files */,
 				CFFA95111F45A2D50035E606 /* libHabanero.dylib in Copy Files */,
 				CF6BF8372194444B0017CECB /* libConfig.dylib in Copy Files */,
 				CFFA95101F45A2CF0035E606 /* libUtility.dylib in Copy Files */,
 				CFFA950F1F45A2C80035E606 /* libRoutedIO.dylib in Copy Files */,
 				CFFA950D1F45A2BD0035E606 /* libVFS.dylib in Copy Files */,
 				CF6BF8342194444B0017CECB /* libVFSIcon.dylib in Copy Files */,
-				CF90C02A1EBB03280056E3B8 /* LetsMove.framework in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1744,6 +1730,7 @@
 		CF51D11E1FD512A70026CC00 /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
 		CF52C3CB22BE5B2D0043E825 /* NCNonMAS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = NCNonMAS.entitlements; path = NimbleCommander/Resources/NCNonMAS.entitlements; sourceTree = SOURCE_ROOT; };
 		CF52C3E122BEBA090043E825 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_Party/Sparkle/Sparkle.framework; sourceTree = SOURCE_ROOT; };
+		CF55F80E254F2BAB00CC415D /* LetsMove.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LetsMove.framework; path = 3rd_Party/LetsMove/LetsMove.framework; sourceTree = SOURCE_ROOT; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF56BF521D68061600A08D2B /* VFSInstanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstanceManager.h; path = NimbleCommander/Core/VFSInstanceManager.h; sourceTree = SOURCE_ROOT; };
 		CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstanceManagerImpl.cpp; path = NimbleCommander/Core/VFSInstanceManagerImpl.cpp; sourceTree = SOURCE_ROOT; };
@@ -1903,7 +1890,6 @@
 		CF9066C319AB7928001DC687 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
 		CF90C0081EBAE3190056E3B8 /* NetworkConnectionIconProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionIconProvider.h; path = NimbleCommander/Core/NetworkConnectionIconProvider.h; sourceTree = SOURCE_ROOT; };
 		CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkConnectionIconProvider.mm; path = NimbleCommander/Core/NetworkConnectionIconProvider.mm; sourceTree = SOURCE_ROOT; };
-		CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LetsMove.xcodeproj; path = 3rd_Party/LetsMove/LetsMove/LetsMove.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CF90C0B41EC161E70056E3B8 /* NavigateHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NavigateHistory.h; path = NimbleCommander/States/FilePanels/Actions/NavigateHistory.h; sourceTree = SOURCE_ROOT; };
 		CF90C0B51EC161E70056E3B8 /* NavigateHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NavigateHistory.mm; path = NimbleCommander/States/FilePanels/Actions/NavigateHistory.mm; sourceTree = SOURCE_ROOT; };
 		CF90C0BA1EC171FD0056E3B8 /* PanelDataFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataFilter.h; path = NimbleCommander/States/FilePanels/PanelDataFilter.h; sourceTree = SOURCE_ROOT; };
@@ -2234,7 +2220,6 @@
 				CFDC07B72158F6430069D364 /* libVFSIcon.dylib in Frameworks */,
 				CF36DBED1F6C184D004A018E /* Sparkle.framework in Frameworks */,
 				CFFA95121F45A2EB0035E606 /* Operations.framework in Frameworks */,
-				CF90C02C1EBB04960056E3B8 /* LetsMove.framework in Frameworks */,
 				CF1FBF3C1E90ABC000D3569C /* NetFS.framework in Frameworks */,
 				CF614AF01F9D932B0005F2DB /* libTerm.dylib in Frameworks */,
 				CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */,
@@ -2244,6 +2229,7 @@
 				CFA53A1C1D433E2A00C562A7 /* libUtility.dylib in Frameworks */,
 				CFA53A1E1D433E2A00C562A7 /* libHabanero.dylib in Frameworks */,
 				CFA53A1F1D433E2A00C562A7 /* ServiceManagement.framework in Frameworks */,
+				CF55F812254F2F1200CC415D /* LetsMove.framework in Frameworks */,
 				CFA53A261D433E2A00C562A7 /* Carbon.framework in Frameworks */,
 				CFA53A271D433E2A00C562A7 /* LDAP.framework in Frameworks */,
 				CFA53A281D433E2A00C562A7 /* Security.framework in Frameworks */,
@@ -2270,10 +2256,10 @@
 				CFFA949B1F45411C0035E606 /* libUtility.dylib in Frameworks */,
 				CFFA949A1F4541110035E606 /* libRoutedIO.dylib in Frameworks */,
 				CFF53B651EDD1AC300F567C4 /* Operations.framework in Frameworks */,
-				CF90C02B1EBB04910056E3B8 /* LetsMove.framework in Frameworks */,
 				CFD8CD9D1E823CAC00E4DC53 /* NetFS.framework in Frameworks */,
 				CFA183731CA0133600544633 /* libAquaticPrime.a in Frameworks */,
 				CFACFA3F1E24AB1200FD6AB6 /* libMMTabBarViewLib.a in Frameworks */,
+				CF55F80F254F2BAB00CC415D /* LetsMove.framework in Frameworks */,
 				CFD54FD01A29CA480098A4A9 /* ServiceManagement.framework in Frameworks */,
 				CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */,
 				CF1100D01913788800E170FC /* Security.framework in Frameworks */,
@@ -2908,15 +2894,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CF90C0211EBB02240056E3B8 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CF90C0261EBB02240056E3B8 /* LetsMove Test.app */,
-				CF90C0281EBB02240056E3B8 /* LetsMove.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -3137,6 +3114,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF55F80E254F2BAB00CC415D /* LetsMove.framework */,
 				CF36DBDD1F6BA76B004A018E /* Sparkle.framework */,
 				CF2A3CDF1E667F5E00E6C6F0 /* libssh2.a */,
 				CF0E76DF1E4C1BE30052A679 /* liblzmadec.a */,
@@ -3262,7 +3240,6 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
-				CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */,
 				CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */,
 				CF039E981791109000DC85D6 /* RHPreferences */,
 				CF8629201B956B3300B33CFD /* SparkleEmbedded */,
@@ -3491,10 +3468,6 @@
 					ProjectRef = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
 				},
 				{
-					ProductGroup = CF90C0211EBB02240056E3B8 /* Products */;
-					ProjectRef = CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */;
-				},
-				{
 					ProductGroup = CFACF9CD1E24AAD800FD6AB6 /* Products */;
 					ProjectRef = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
 				},
@@ -3635,20 +3608,6 @@
 			fileType = "compiled.mach-o.dylib";
 			path = libVFSIcon.dylib;
 			remoteRef = CF8BDD0F2147D60800F14C3E /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF90C0261EBB02240056E3B8 /* LetsMove Test.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "LetsMove Test.app";
-			remoteRef = CF90C0251EBB02240056E3B8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF90C0281EBB02240056E3B8 /* LetsMove.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = LetsMove.framework;
-			remoteRef = CF90C0271EBB02240056E3B8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CF9721EF214FD43100A1B19E /* libVFSIconIntegrationTests */ = {
@@ -5447,6 +5406,7 @@
 					"__NC_VERSION_TRIAL__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -5459,6 +5419,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_Unsigned";
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -5492,6 +5453,7 @@
 					"__NC_VERSION_TRIAL__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE_SPECIFIER = "NC NonMAS Developer ID";
@@ -5512,6 +5474,7 @@
 					"__NC_VERSION_TRIAL__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE_SPECIFIER = "NC NonMAS Developer ID";

@@ -10,7 +10,7 @@
 
 #include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <Sparkle/Sparkle.h>
-#include <LetsMove/PFMoveApplication.h>
+#include <LetsMove.framework/Headers/PFMoveApplication.h>
 
 #include <Habanero/CommonPaths.h>
 #include <Habanero/CFDefaultsCPP.h>

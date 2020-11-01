@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileUploadStream.h"
 #include <mutex>
 #include <deque>
@@ -124,7 +124,7 @@ forMode:(NSRunLoopMode)[[maybe_unused]]_mode {}
         if( m_Status == NSStreamStatusNotOpen || m_Status == NSStreamStatusOpening ) {
             m_EOF = true;
         }
-        else if( m_Status == NSStreamStatusOpen || NSStreamStatusReading ) {
+        else if( m_Status == NSStreamStatusOpen || m_Status == NSStreamStatusReading ) {
             m_Status = NSStreamStatusAtEnd;
         
             if( [m_Delegate respondsToSelector:@selector(stream:handleEvent:)] )

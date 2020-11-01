@@ -99,7 +99,6 @@ using namespace nc::term;
         });
         m_Interpreter->SetInputTranslator( m_InputTranslator.get() );
         
-//        [m_TermScrollView.view AttachToParser:m_Parser.get()];
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
         m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {
             NCTermExternalEditorState *me = weak_self;
@@ -107,46 +106,18 @@ using namespace nc::term;
             me->m_Task->ResizeWindow(_sx, _sy);
         };
 
-        m_Task->SetOnChildOutput([=](const void* _d, int _sz){
+        m_Task->SetOnChildOutput([=](const void *_d, int _sz) {
             if( auto strongself = weak_self ) {
-//                bool newtitle = false;
-                auto cmds = strongself->m_Parser->Parse({(const std::byte*)_d, (size_t)_sz});
+                auto cmds = strongself->m_Parser->Parse({(const std::byte *)_d, (size_t)_sz});
                 if( cmds.empty() )
                     return;
-
-                
-//                if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
-//                    int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
-//                    if(flags & Parser::Result_ChangedTitle)
-//                        newtitle = true;
-//                    strongself->m_Parser->Flush();
-//                }
-//                [strongself->m_TermScrollView.view.fpsDrawer invalidate];
-                dispatch_to_main_queue( [=]{
+                dispatch_to_main_queue([=] {
                     if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
                         strongself->m_Interpreter->Interpret(cmds);
                     [strongself->m_TermScrollView.view.fpsDrawer invalidate];
                     [strongself->m_TermScrollView.view adjustSizes:false];
-//                    if(newtitle)
-//                        [strongself updateTitle];
                 });
             }
-            
-            
-            
-//            if( auto strongself = weakself ) {
-//                auto cmds = strongself->m_Parser->Parse({(const std::byte*)_d, (size_t)_sz});
-//                if( cmds.empty() )
-//                    return;
-//                dispatch_to_main_queue( [=, cmds=std::move(cmds)]{
-//                    if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
-//                        strongself->m_Interpreter->Interpret(cmds);
-//                    [strongself->m_TermScrollView.view.fpsDrawer invalidate];
-//                    [strongself->m_TermScrollView.view adjustSizes:false];
-//                });
-//            }
-
-            
         });
         m_Task->SetOnChildDied([weak_self]{
             dispatch_to_main_queue( [=]{

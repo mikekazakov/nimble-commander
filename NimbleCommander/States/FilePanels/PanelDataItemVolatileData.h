@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -31,8 +31,8 @@ struct ItemVolatileData
     void toggle_selected( bool _v ) noexcept;
     void toggle_shown( bool _v ) noexcept;
     void toggle_highlight( bool _v ) noexcept;
-    bool operator==(ItemVolatileData&_rhs) const noexcept;
-    bool operator!=(ItemVolatileData&_rhs) const noexcept;
+    bool operator==(const ItemVolatileData&_rhs) const noexcept;
+    bool operator!=(const ItemVolatileData&_rhs) const noexcept;
 };
 
 }

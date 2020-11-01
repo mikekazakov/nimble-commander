@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyToPasteboard.h"
 #include "../PanelController.h"
 #include "../Helpers/Pasteboard.h"
@@ -23,7 +23,7 @@ bool CopyToPasteboard::ValidateMenuItem( PanelController *_target, NSMenuItem *_
     const auto &stats = _target.data.Stats();
     if( stats.selected_entries_amount > 0 ) {
         _item.title = [NSString stringWithFormat:
-            NSLocalizedStringFromTable(@"Copy %lu Items",
+                       NSLocalizedStringFromTable(@"Copy %d Items",
                                        @"FilePanelsContextMenu",
                                        "Copy many items"),
                        stats.selected_entries_amount];

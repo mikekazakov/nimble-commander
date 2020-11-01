@@ -69,12 +69,21 @@ static const auto g_LongProcessDelay = 100ms;
                 m_Task->SetShellPath(GlobalConfig().GetString(g_CustomPath));
         
         auto task_ptr = m_Task.get();
+        
+        // input translator
+        m_InputTranslator = std::make_unique<InputTranslatorImpl>();
+        m_InputTranslator->SetOuput([=]( std::span<const std::byte> _bytes  ){
+            task_ptr->WriteChildInput( std::string_view((const char*)_bytes.data(), _bytes.size()) );
+        });
+        
+        // parser
         Parser2Impl::Params parser_params;
         parser_params.error_log = [](std::string_view _error){
             std::cerr << _error << std::endl;
         };
         m_Parser = std::make_unique<Parser2Impl>(parser_params);
         
+        // interpreter
         m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);
         m_Interpreter->SetOuput([=](std::span<const std::byte> _bytes) {
             task_ptr->WriteChildInput(std::string_view((const char *)_bytes.data(), _bytes.size()));
@@ -92,12 +101,6 @@ static const auto g_LongProcessDelay = 100ms;
                 me->m_TermScrollView.view.mouseEvents = _events;
             });
         
-
-        m_InputTranslator = std::make_unique<InputTranslatorImpl>();
-        m_InputTranslator->SetOuput([=]( std::span<const std::byte> _bytes  ){
-            task_ptr->WriteChildInput( std::string_view((const char*)_bytes.data(), _bytes.size()) );
-            
-        });
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
         m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {
             FilePanelOverlappedTerminal *me = weak_self;

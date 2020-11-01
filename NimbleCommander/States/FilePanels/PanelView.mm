@@ -569,9 +569,9 @@ struct StateStorage {
         [super keyDown:event];
 }
 
-- (void)checkKeyboardModifierFlags:(unsigned long)_current_flags
+- (void)checkKeyboardModifierFlags:(NSEventModifierFlags)_current_flags
 {
-    if( _current_flags == m_KeyboardModifierFlags )
+    if( nc::utility::NSEventModifierFlagsHolder(_current_flags) == m_KeyboardModifierFlags )
         return; // we're ok
 
     // flags have changed, need to update selection logic

@@ -908,6 +908,9 @@ void InterpreterImpl::SetRequstedMouseEventsChanged( RequstedMouseEventsChanged 
 
 void InterpreterImpl::UpdateMouseReporting()
 {
+    if( m_InputTranslator == nullptr )
+        return;
+    
     const auto events = m_RequestedMouseEvents;
     if( events == RequestedMouseEvents::X10 ) {
         m_InputTranslator->SetMouseReportingMode(InputTranslator::MouseReportingMode::X10);

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataItemVolatileData.h"
 
 namespace nc::panel::data {
@@ -40,7 +40,7 @@ void ItemVolatileData::toggle_highlight( bool _v ) noexcept
     flags = (flags & ~flag_highlight) | (_v ? flag_highlight : 0);
 }
 
-bool ItemVolatileData::operator==(ItemVolatileData &_rhs) const noexcept
+bool ItemVolatileData::operator==(const ItemVolatileData &_rhs) const noexcept
 {
     return size  == _rhs.size  &&
         flags == _rhs.flags &&
@@ -49,7 +49,7 @@ bool ItemVolatileData::operator==(ItemVolatileData &_rhs) const noexcept
         qs_highlight_end == _rhs.qs_highlight_end;
 }
 
-bool ItemVolatileData::operator!=(ItemVolatileData &_rhs) const noexcept
+bool ItemVolatileData::operator!=(const ItemVolatileData &_rhs) const noexcept
 {
     return !(*this == _rhs);
 }

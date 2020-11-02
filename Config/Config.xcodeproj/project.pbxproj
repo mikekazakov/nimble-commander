@@ -49,7 +49,7 @@
 		CF20CBDC215A2526006716F6 /* libConfig.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libConfig.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF20CC0B215A2666006716F6 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = include/Config/Config.h; sourceTree = "<group>"; };
 		CF20CC0D215A267B006716F6 /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Config.cpp; path = source/Config.cpp; sourceTree = "<group>"; };
-		CF20CC0F215A2701006716F6 /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
+		CF20CC0F215A2701006716F6 /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF20CC10215A2701006716F6 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CF20CC11215A2701006716F6 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF20CC12215B524C006716F6 /* RapidJSON_fwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RapidJSON_fwd.h; path = include/Config/RapidJSON_fwd.h; sourceTree = "<group>"; };
@@ -57,7 +57,7 @@
 		CF20CC16215B5253006716F6 /* RapidJSON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RapidJSON.cpp; path = source/RapidJSON.cpp; sourceTree = "<group>"; };
 		CF20CC18215B9B1A006716F6 /* ConfigImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigImpl.h; path = include/Config/ConfigImpl.h; sourceTree = "<group>"; };
 		CF20CC1A215B9B45006716F6 /* ConfigImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConfigImpl.cpp; path = source/ConfigImpl.cpp; sourceTree = "<group>"; };
-		CF20CC20215BB0CE006716F6 /* libConfigUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libConfigUT; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF20CC20215BB0CE006716F6 /* ConfigUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConfigUT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF20CC27215BB10A006716F6 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CF20CC2A215BB19C006716F6 /* ConfigImpl_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConfigImpl_UT.cpp; path = tests/ConfigImpl_UT.cpp; sourceTree = "<group>"; };
 		CF20CC2B215BB19C006716F6 /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
@@ -114,7 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				CF20CBDC215A2526006716F6 /* libConfig.dylib */,
-				CF20CC20215BB0CE006716F6 /* libConfigUT */,
+				CF20CC20215BB0CE006716F6 /* ConfigUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -235,7 +235,7 @@
 			);
 			name = ConfigUT;
 			productName = ConfigUT;
-			productReference = CF20CC20215BB0CE006716F6 /* libConfigUT */;
+			productReference = CF20CC20215BB0CE006716F6 /* ConfigUT */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */

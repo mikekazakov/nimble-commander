@@ -5,7 +5,7 @@
 #include <fstream>
 #include <Habanero/CommonPaths.h>
 #include <Utility/FSEventsDirUpdate.h>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 namespace nc::config {
 
@@ -17,7 +17,7 @@ static bool AtomicallyWriteToFile(const std::string &_file_pathname, std::string
 FileOverwritesStorage::FileOverwritesStorage(std::string_view _file_path):
     m_Path(_file_path)
 {
-    auto parent_path = boost::filesystem::path{std::string{_file_path}}.parent_path();
+    auto parent_path = std::filesystem::path{std::string{_file_path}}.parent_path();
     m_DirObservationTicket = FSEventsDirUpdate::Instance().AddWatchPath(parent_path.c_str(),
                                                                         [this]{
         OverwritesDirChanged(); 

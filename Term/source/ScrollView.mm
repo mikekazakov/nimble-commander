@@ -188,8 +188,8 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     
     const auto full_size = self.contentView.frame.size;     
     
-    const int sy = std::floor(full_size.height / m_View.fontCache.Height());
-    const int sx = std::floor(full_size.width / m_View.fontCache.Width());
+    const int sy = static_cast<int>(std::floor(full_size.height / m_View.fontCache.Height()));
+    const int sx = static_cast<int>(std::floor(full_size.width / m_View.fontCache.Width()));
 
     if(sx != m_Screen->Width() || sy != m_Screen->Height()) {
         {

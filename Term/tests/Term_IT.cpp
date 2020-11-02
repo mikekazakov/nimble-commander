@@ -480,7 +480,7 @@ static Parser2::Bytes Bytes(const char *_string) noexcept
     std::cout << std::endl;
 }
 
-[[maybe_unused]] std::string ToUTF8(const std::u32string &str)
+[[maybe_unused]] static std::string ToUTF8(const std::u32string &str)
 {
     std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
     return conv.to_bytes(str);

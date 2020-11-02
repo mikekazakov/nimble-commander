@@ -1,4 +1,4 @@
-/* Copyright (c) 2015-2016 Michael G. Kazakov
+/* Copyright (c) 2015-2020 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -91,22 +91,6 @@ auto at_scope_end( T _l )
     };
     
     return guard( std::move(_l) );
-}
-
-inline bool has_prefix( const std::string &_string, const std::string &_prefix )
-{
-    return _string.size() >= _prefix.size() &&
-        std::equal( std::begin(_prefix),
-                    std::end(_prefix),
-                    std::begin(_string));
-}
-
-inline bool has_suffix( const std::string &_string, const std::string &_suffix )
-{
-    return _string.size() >= _suffix.size() &&
-        std::equal( std::begin(_suffix),
-                    std::end(_suffix),
-                    std::begin(_string) + _string.size() - _suffix.size() );
 }
 
 class upward_flag

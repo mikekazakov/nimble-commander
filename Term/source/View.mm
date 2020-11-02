@@ -490,12 +490,13 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     if( y_pos < 0 )
         y_pos = 0;
 
-    int line_predict = floor(y_pos / m_FontCache->Height()) - m_Screen->Buffer().BackScreenLines();
+    const int line_predict = static_cast<int>(std::floor(y_pos / m_FontCache->Height()) -
+                                              m_Screen->Buffer().BackScreenLines());
 
     auto x_pos = _point.x;
     if( x_pos < 0 )
         x_pos = 0;
-    int col_predict = floor(x_pos / m_FontCache->Width());
+    const int col_predict = static_cast<int>(std::floor(x_pos / m_FontCache->Width()));
     return SelPoint{col_predict, line_predict};
 }
 
@@ -1040,8 +1041,8 @@ static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType
 
         InputTranslator::MouseEvent evt;
         evt.type = NSEventTypeToMouseEventType(type);
-        evt.x = location_cell.x;
-        evt.y = location_cell.y;
+        evt.x = static_cast<short>(location_cell.x);
+        evt.y = static_cast<short>(location_cell.y);
         m_InputTranslator->ProcessMouseEvent(evt);
     } else if( m_MouseEvents == Interpreter::RequestedMouseEvents::Normal ) {
         constexpr std::array<NSEventType, 8> types = {
@@ -1053,8 +1054,8 @@ static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType
 
         InputTranslator::MouseEvent evt;
         evt.type = NSEventTypeToMouseEventType(type);
-        evt.x = location_cell.x;
-        evt.y = location_cell.y;
+        evt.x = static_cast<short>(location_cell.x);
+        evt.y = static_cast<short>(location_cell.y);
         evt.shift = flags.is_shift();
         evt.alt = flags.is_option();
         evt.control = flags.is_control();
@@ -1076,8 +1077,8 @@ static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType
 
         InputTranslator::MouseEvent evt;
         evt.type = NSEventTypeToMouseEventType(type);
-        evt.x = location_cell.x;
-        evt.y = location_cell.y;
+        evt.x = static_cast<short>(location_cell.x);
+        evt.y = static_cast<short>(location_cell.y);
         evt.shift = flags.is_shift();
         evt.alt = flags.is_option();
         evt.control = flags.is_control();
@@ -1100,8 +1101,8 @@ static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType
 
         InputTranslator::MouseEvent evt;
         evt.type = NSEventTypeToMouseEventType(type);
-        evt.x = location_cell.x;
-        evt.y = location_cell.y;
+        evt.x = static_cast<short>(location_cell.x);
+        evt.y = static_cast<short>(location_cell.y);
         evt.shift = flags.is_shift();
         evt.alt = flags.is_option();
         evt.control = flags.is_control();

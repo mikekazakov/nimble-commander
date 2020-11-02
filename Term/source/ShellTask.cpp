@@ -406,7 +406,9 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     } else { // fork_rc == 0
         // slave/child
         SetupTermios(slave_fd);
-        SetTermWindow(slave_fd, I->term_sx, I->term_sy);
+        SetTermWindow(slave_fd,
+                      static_cast<unsigned short>(I->term_sx),
+                      static_cast<unsigned short>(I->term_sy));
         SetupHandlesAndSID(slave_fd);
 
         chdir(_work_dir.generic_string().c_str());
@@ -859,7 +861,9 @@ void ShellTask::ResizeWindow(int _sx, int _sy)
     I->term_sy = _sy;
 
     if( I->state != TaskState::Inactive && I->state != TaskState::Dead )
-        Task::SetTermWindow(I->master_fd, _sx, _sy);
+        Task::SetTermWindow(I->master_fd,
+                            static_cast<unsigned short>(_sx),
+                            static_cast<unsigned short>(_sy));
 }
 
 void ShellTask::Terminate()

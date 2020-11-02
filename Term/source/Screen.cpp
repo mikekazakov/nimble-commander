@@ -50,8 +50,8 @@ void Screen::PutCh(uint32_t _char)
            chars + m_PosX <= end(line) ) {
             int target_pos = m_LineOverflown ? m_PosX : m_PosX - 1;
             if((chars[target_pos].l == MultiCellGlyph) && (target_pos > 0)) target_pos--;
-            if(chars[target_pos].c1 == 0) chars[target_pos].c1 = _char;
-            else if(chars[target_pos].c2 == 0) chars[target_pos].c2 = _char;
+            if(chars[target_pos].c1 == 0) chars[target_pos].c1 = static_cast<uint16_t>(_char);
+            else if(chars[target_pos].c2 == 0) chars[target_pos].c2 = static_cast<uint16_t>(_char);
         }
     }
     

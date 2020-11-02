@@ -221,8 +221,8 @@ static std::string ReportX10(InputTranslator::MouseEvent _event) noexcept
     default:
         return {};
     }
-    buf[4] = std::clamp(_event.x + 32 + 1, 33, 255);
-    buf[5] = std::clamp(_event.y + 32 + 1, 33, 255);
+    buf[4] = static_cast<char>(std::clamp(_event.x + 32 + 1, 33, 255));
+    buf[5] = static_cast<char>(std::clamp(_event.y + 32 + 1, 33, 255));
     return std::string(buf, sizeof(buf));
 }
 
@@ -267,8 +267,8 @@ static std::string ReportNormal(InputTranslator::MouseEvent _event) noexcept
         buf[3] |= 8;
     if( _event.control )
         buf[3] |= 16;
-    buf[4] = std::clamp(_event.x + 32 + 1, 33, 255);
-    buf[5] = std::clamp(_event.y + 32 + 1, 33, 255);
+    buf[4] = static_cast<char>(std::clamp(_event.x + 32 + 1, 33, 255));
+    buf[5] = static_cast<char>(std::clamp(_event.y + 32 + 1, 33, 255));
     return std::string(buf, sizeof(buf));
 }
 

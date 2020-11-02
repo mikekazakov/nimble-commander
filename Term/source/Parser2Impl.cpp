@@ -124,7 +124,7 @@ void Parser2Impl::FlushCompleteText()
     std::memmove(m_TextState.UTF8CharsStock.data(),
                  m_TextState.UTF8CharsStock.data() + valid_length,
                  m_TextState.UTF8StockLen - valid_length);
-    m_TextState.UTF8StockLen = m_TextState.UTF8StockLen - valid_length;
+    m_TextState.UTF8StockLen = m_TextState.UTF8StockLen - static_cast<int>(valid_length);
     
     Command command;
     command.type = Type::text;

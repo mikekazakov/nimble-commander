@@ -112,7 +112,7 @@ void SingleTask::Launch(const char *_full_binary_path, const char *_params, int 
     else
     { // slave/child
         SetupTermios(slave_fd);
-        SetTermWindow(slave_fd, _sx, _sy);
+        SetTermWindow(slave_fd, static_cast<unsigned short>(_sx), static_cast<unsigned short>(_sy));
         SetupHandlesAndSID(slave_fd);
         
         
@@ -230,7 +230,7 @@ void SingleTask::ResizeWindow(int _sx, int _sy)
     m_TermSX = _sx;
     m_TermSY = _sy;
     
-    SetTermWindow(m_MasterFD, _sx, _sy);
+    SetTermWindow(m_MasterFD, static_cast<unsigned short>(_sx), static_cast<unsigned short>(_sy));
 }
 
 void SingleTask::CleanUp()

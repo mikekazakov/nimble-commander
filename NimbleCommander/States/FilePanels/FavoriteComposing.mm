@@ -178,9 +178,9 @@ static std::vector<std::pair<std::string, std::string>> GetFindersFavorites() //
                 if( url ) {
                     auto path = StringFromURL( url );
                     if( !path.empty() &&
-                        !has_suffix(path, ".cannedSearch") &&
-                        !has_suffix(path, ".cannedSearch/") &&
-                        !has_suffix(path, ".savedSearch") &&
+                        !path.ends_with(".cannedSearch") &&
+                        !path.ends_with(".cannedSearch/") &&
+                        !path.ends_with(".savedSearch") &&
                         nc::bootstrap::NativeVFSHostInstance().IsDirectory(path.c_str(), 0) )
                         paths.emplace_back( make_pair(
                             TitleForURL(url),

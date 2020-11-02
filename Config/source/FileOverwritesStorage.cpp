@@ -69,9 +69,10 @@ static std::optional<std::string> Load(const std::string &_filepath)
         
     std::string contents;
     in.seekg( 0, std::ios::end );
-    contents.resize( in.tellg() );
+    const auto length = in.tellg();
+    contents.resize( static_cast<size_t>(length) );
     in.seekg( 0, std::ios::beg );
-    in.read( &contents[0], contents.size() );
+    in.read( &contents[0], length );
     in.close();
     return contents;
 }

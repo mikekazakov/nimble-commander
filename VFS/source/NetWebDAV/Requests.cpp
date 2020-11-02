@@ -81,7 +81,7 @@ static HTTPRequests::Mask ParseSupportedRequests( const std::string &_options_re
     
     static const auto allowed_prefix = "Allow: "s;
     const auto allowed = find_if(begin(lines), end(lines), [](const auto &_line){
-        return has_prefix(_line, allowed_prefix);
+        return _line.starts_with(allowed_prefix);
     });
     if( allowed != end(lines) ) {
         const auto requests_set = allowed->substr( allowed_prefix.size() );
@@ -214,7 +214,7 @@ static std::vector<PropFindResponse> PruneFilepaths(std::vector<PropFindResponse
     
     const auto base_path_len = _base_path.length();
     _items.erase(remove_if(begin(_items), end(_items), [&](auto &_item){
-            if( !has_prefix(_item.filename, _base_path ) )
+            if( !_item.filename.starts_with(_base_path ) )
                 return true;
 
             _item.filename.erase(0, base_path_len);
@@ -246,7 +246,7 @@ static bool FilepathsHavePathPrefix(const std::vector<PropFindResponse> &_items,
     
     const auto base_path = "/" + _path;
     const auto server_uses_prefixes = all_of(begin(_items), end(_items), [&](const auto &_item){
-        return has_prefix(_item.filename, base_path);
+        return _item.filename.starts_with(base_path);
     });
     return server_uses_prefixes;
 }

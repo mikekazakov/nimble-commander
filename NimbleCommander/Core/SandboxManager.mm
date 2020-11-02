@@ -214,7 +214,7 @@ bool SandboxManager::HasAccessToFolder_Unlocked(const std::string &_p) const
     
     // look in our bookmarks user has given
     for( auto &i: m_Bookmarks )
-        if( has_prefix(p, i.path) )
+        if( p.starts_with(i.path) )
             return true;
     
     // look in built-in r/o access
@@ -231,7 +231,7 @@ bool SandboxManager::HasAccessToFolder_Unlocked(const std::string &_p) const
         EnsureNoTrailingSlash(nc::base::CommonPaths::StartupCWD())
     };
     for( auto &s: granted_ro )
-        if( has_prefix(p, s) )
+        if( p.starts_with(s) )
             return true;
   
     // special treating for /Volumes dir - can browse it by default, but not dirs inside it

@@ -325,7 +325,7 @@ void ConfigImpl::DropToken(unsigned long _number)
             // fire it even if it still has a version of observers list with this observer.
             // The mutex is recursive becase the callback might want to delete its own
             // observation token and we don't want to deadlock in this case.
-            const auto lock = std::lock_guard{observer->lock};
+            const auto observer_guard = std::lock_guard{observer->lock};
             observer->was_removed = true;
             
             if( observers.size() > 1 ) {

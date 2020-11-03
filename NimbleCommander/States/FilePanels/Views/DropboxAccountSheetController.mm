@@ -1,7 +1,8 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DropboxAccountSheetController.h"
-#import <AppAuth.h>
-#include "OIDRedirectHTTPHandler+FixedPort.h"
+#import <AppAuth/AppAuth.h>
+#import <AppAuth/OIDRedirectHTTPHandler.h>
+#import <AppAuth/OIDAuthorizationRequest.h>
 #include <VFS/NetDropbox.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
@@ -104,8 +105,8 @@ enum class State
 - (IBAction)onRequestAccess:(id)[[maybe_unused]]_sender
 {
     m_RedirectHTTPHandler = [[OIDRedirectHTTPHandler alloc] initWithSuccessURL:g_SuccessURL];
-    const auto redirectURI = [m_RedirectHTTPHandler startHTTPListenerForPort:g_LoopbackPort
-                                                                       error:nil];
+    const auto redirectURI = [m_RedirectHTTPHandler startHTTPListener:nil
+                                                             withPort:g_LoopbackPort];
 
     const auto configuration = [[OIDServiceConfiguration alloc]
         initWithAuthorizationEndpoint:g_AuthorizationEndpoint
@@ -118,6 +119,7 @@ enum class State
                                                                     redirectURL:redirectURI
                                                                    responseType:OIDResponseTypeCode
                                                                           state:nil
+                                                                          nonce:nil
                                                                    codeVerifier:nil
                                                                   codeChallenge:nil
                                                             codeChallengeMethod:nil

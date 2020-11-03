@@ -458,7 +458,6 @@
 		CF75E88B1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
 		CF75E88C1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
 		CF75E88D1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
-		CF75E8E01EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
 		CF7A09961EC2B37000533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
 		CF7A09AE1EC2DF5C00533B07 /* Delete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7E02C1EB97B60001FE66C /* Delete.mm */; };
@@ -627,9 +626,6 @@
 		CF9F4B031ECC8DE200E0AF82 /* ExecuteInTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEF1ECC015700E0AF82 /* ExecuteInTerminal.mm */; };
 		CF9F4B041ECC8DE300E0AF82 /* ExecuteInTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEF1ECC015700E0AF82 /* ExecuteInTerminal.mm */; };
 		CF9F4B051ECC8DE300E0AF82 /* ExecuteInTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEF1ECC015700E0AF82 /* ExecuteInTerminal.mm */; };
-		CF9F4B061ECC919900E0AF82 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */; };
-		CF9F4B071ECC919A00E0AF82 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */; };
-		CF9F4B081ECC919A00E0AF82 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */; };
 		CF9F4B101ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9F4B151ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib */; };
 		CF9F4B111ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9F4B151ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib */; };
 		CF9F4B121ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9F4B151ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib */; };
@@ -1833,8 +1829,6 @@
 		CF75E87F1EAF7DC70028C108 /* ConnectionSheetProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionSheetProtocol.h; path = NimbleCommander/States/FilePanels/Views/ConnectionSheetProtocol.h; sourceTree = SOURCE_ROOT; };
 		CF75E8871EB0EFDC0028C108 /* DropboxAccountSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DropboxAccountSheetController.h; path = NimbleCommander/States/FilePanels/Views/DropboxAccountSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DropboxAccountSheetController.mm; path = NimbleCommander/States/FilePanels/Views/DropboxAccountSheetController.mm; sourceTree = SOURCE_ROOT; };
-		CF75E8DE1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "OIDRedirectHTTPHandler+FixedPort.h"; path = "NimbleCommander/States/FilePanels/Views/OIDRedirectHTTPHandler+FixedPort.h"; sourceTree = SOURCE_ROOT; };
-		CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "OIDRedirectHTTPHandler+FixedPort.mm"; path = "NimbleCommander/States/FilePanels/Views/OIDRedirectHTTPHandler+FixedPort.mm"; sourceTree = SOURCE_ROOT; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CF7A09941EC2B37000533B07 /* Duplicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Duplicate.h; path = NimbleCommander/States/FilePanels/Actions/Duplicate.h; sourceTree = SOURCE_ROOT; };
 		CF7A09951EC2B37000533B07 /* Duplicate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Duplicate.mm; path = NimbleCommander/States/FilePanels/Actions/Duplicate.mm; sourceTree = SOURCE_ROOT; };
@@ -2951,8 +2945,6 @@
 				CFD8CDA51E84CC3B00E4DC53 /* NetworkShareSheetController.h */,
 				CFD8CDA61E84CC3B00E4DC53 /* NetworkShareSheetController.mm */,
 				CF9F4B461ECD81BC00E0AF82 /* NetworkShareSheetController.xib */,
-				CF75E8DE1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.h */,
-				CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */,
 				CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */,
 				CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */,
 				CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */,
@@ -3599,7 +3591,7 @@
 		CF84A7982161C53700E03CB1 /* libConfigUT */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			path = libConfigUT;
+			path = ConfigUT;
 			remoteRef = CF84A7972161C53700E03CB1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -4004,7 +3996,6 @@
 				CF818B531EA0610D00BC28E6 /* ToggleLayout.mm in Sources */,
 				CFD7270C1E42E30800603077 /* QuickLookOverlay.mm in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
-				CF9F4B071ECC919A00E0AF82 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */,
 				CFD726B71E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
 				CFD7269E1E42E23A00603077 /* PanelDataStatistics.cpp in Sources */,
 				CF20DF481FC670130074ABB8 /* ShowTerminal.mm in Sources */,
@@ -4270,7 +4261,6 @@
 				CFA5398D1D433E2A00C562A7 /* GTMHotKeyTextField.mm in Sources */,
 				CFB66F9B1D853B1E0017D2A0 /* FeedbackManager.mm in Sources */,
 				CFA539911D433E2A00C562A7 /* DetailedVolumeInformationSheetController.mm in Sources */,
-				CF9F4B061ECC919900E0AF82 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */,
 				CFD726B21E42E26200603077 /* CopyFilePaths.mm in Sources */,
 				CFD7267E1E42E20900603077 /* PanelController+DataAccess.mm in Sources */,
 				CFA539951D433E2A00C562A7 /* CalculateChecksumSheetController.mm in Sources */,
@@ -4555,7 +4545,6 @@
 				CFD8CDD61E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CFF695721E20C6CF0069EEA4 /* TabBarStyle.mm in Sources */,
 				CF6BF83F21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
-				CF75E8E01EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */,
 				CFA6C86E20159C7200CD7681 /* PanelControllerPersistency.mm in Sources */,
 				CFDAC23C1DFBDEBA0039A104 /* AppDelegateCPP.mm in Sources */,
 				CF04DDF51E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
@@ -4708,7 +4697,6 @@
 				CFA2D6071E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
 				CF9F4AFA1ECC8DBC00E0AF82 /* OpenFile.mm in Sources */,
 				CF20DF451FC670100074ABB8 /* ShowTerminal.mm in Sources */,
-				CF9F4B081ECC919A00E0AF82 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */,
 				CFD7269D1E42E23900603077 /* PanelDataStatistics.cpp in Sources */,
 				CF818B641EA0610E00BC28E6 /* ShowGoToPopup.mm in Sources */,
 				CF36DBEF1F6C18DA004A018E /* DragSender.mm in Sources */,

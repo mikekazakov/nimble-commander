@@ -6,3 +6,4 @@ HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../3rd_Party/Catch2/single_inc
 LIBRARY_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../3rd_Party/googletest/built/
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_DONT_DEFINE_FAIL=1 GTEST_DONT_DEFINE_SUCCEED=1
 OTHER_LDFLAGS = $(inherited) -framework Foundation -framework Cocoa
+EXECUTABLE_PREFIX=

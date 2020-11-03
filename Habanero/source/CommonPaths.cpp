@@ -7,6 +7,12 @@
 
 namespace nc::base {
 
+static std::string cwd();
+static std::string ensure_tr_slash( std::string _str );
+static std::string GetMainBundlePath();
+
+[[clang::no_destroy]] static const std::string g_StartupCWD = ensure_tr_slash( cwd() );
+
 static std::string GetMainBundlePath()
 {
     CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
@@ -25,73 +31,73 @@ static std::string ensure_tr_slash( std::string _str )
 
 const std::string &CommonPaths::AppBundle() noexcept
 {
-    static const auto path = ensure_tr_slash(GetMainBundlePath());
+    [[clang::no_destroy]] static const auto path = ensure_tr_slash(GetMainBundlePath());
     return path;
 }
 
 const std::string &CommonPaths::Home() noexcept
 {
-    static const auto path = ensure_tr_slash(getpwuid(getuid())->pw_dir);
+    [[clang::no_destroy]] static const auto path = ensure_tr_slash(getpwuid(getuid())->pw_dir);
     return path;
 }
 
 const std::string &CommonPaths::Documents() noexcept
 {
-    static const auto path = Home() + "Documents/";
+    [[clang::no_destroy]] static const auto path = Home() + "Documents/";
     return path;
 }
 
 const std::string &CommonPaths::Desktop() noexcept
 {
-    static const auto path = Home() + "Desktop/";
+    [[clang::no_destroy]] static const auto path = Home() + "Desktop/";
     return path;
 }
 
 const std::string &CommonPaths::Downloads() noexcept
 {
-    static const auto path = Home() + "Downloads/";
+    [[clang::no_destroy]] static const auto path = Home() + "Downloads/";
     return path;
 }
 
 const std::string &CommonPaths::Applications() noexcept
 {
-    static const auto path = std::string("/Applications/");
+    [[clang::no_destroy]] static const auto path = std::string("/Applications/");
     return path;
 }
 
 const std::string &CommonPaths::Utilities() noexcept
 {
-    static const auto path = std::string("/Applications/Utilities/");
+    [[clang::no_destroy]] static const auto path = std::string("/Applications/Utilities/");
     return path;
 }
 
 const std::string &CommonPaths::Library() noexcept
 {
-    static const auto path = Home() + "Library/";
+    [[clang::no_destroy]] static const auto path = Home() + "Library/";
     return path;
 }
 
 const std::string &CommonPaths::Pictures() noexcept
 {
-    static const auto path = Home() + "Pictures/";
+    [[clang::no_destroy]] static const auto path = Home() + "Pictures/";
     return path;
 }
 
 const std::string &CommonPaths::Music() noexcept
 {
-    static const auto path = Home() + "Music/";
+    [[clang::no_destroy]] static const auto path = Home() + "Music/";
     return path;
 }
 
 const std::string &CommonPaths::Movies() noexcept
 {
-    static const auto path = Home() + "Movies/";
+    [[clang::no_destroy]] static const auto path = Home() + "Movies/";
     return path;
 }
 
 const std::string &CommonPaths::Root() noexcept
 {
-    static const auto path = std::string("/");
+    [[clang::no_destroy]] static const auto path = std::string("/");
     return path;
 }
 
@@ -102,7 +108,6 @@ static std::string cwd()
     return cwd;
 }
 
-static const std::string g_StartupCWD = ensure_tr_slash( cwd() );
 const std::string &CommonPaths::StartupCWD() noexcept
 {
     return g_StartupCWD;

@@ -1,10 +1,10 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PosixFilesystemImpl.h"
 #include <stdio.h>
 
 namespace nc::hbn {
 
-PosixFilesystemImpl PosixFilesystemImpl::instance;
+[[clang::no_destroy]] PosixFilesystemImpl PosixFilesystemImpl::instance;
     
 int PosixFilesystemImpl::close(int _fd)
 {

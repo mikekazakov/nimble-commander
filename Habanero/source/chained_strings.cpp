@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/chained_strings.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -86,7 +86,7 @@ void chained_strings::insert_into(block *_to, const char *_str, unsigned _len, c
 {
     assert(_to->amount < strings_per_block);
     auto &node = _to->strings[_to->amount];
-    node.len = _len;
+    node.len = static_cast<unsigned short>(_len);
     node.prefix = _prefix;
     if(_len < buffer_length) {
         memcpy(node.buf, _str, _len+1);

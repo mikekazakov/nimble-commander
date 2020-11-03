@@ -1,4 +1,4 @@
-// Copyright (C) 2015 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -223,7 +223,7 @@ inline unsigned tiny_string::__len_from_info(uint8_t _i)
 
 inline uint8_t tiny_string::__len_to_info(unsigned _len)
 {
-    return ((_len & 0xF) << 1) | 0x1;
+    return static_cast<uint8_t>(((_len & 0xF) << 1) | 0x1);
 }
 
 inline bool tiny_string::__is_compressed() const noexcept

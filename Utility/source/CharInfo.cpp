@@ -1,5 +1,7 @@
 // Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CharInfo.h"
+#include <vector>
+#include <CoreFoundation/CoreFoundation.h>
 
 namespace nc::utility {
 

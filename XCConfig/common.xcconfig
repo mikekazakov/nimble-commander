@@ -16,7 +16,7 @@ OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isy
 CLANG_ENABLE_OBJC_ARC = YES
 
 // Linker
-OTHER_LDFLAGS = -lboost_system-mt -lboost_filesystem-mt -lspdlog -lgmock -lgtest
+OTHER_LDFLAGS = -framework SystemConfiguration -framework IOKit -lboost_system-mt -lboost_filesystem-mt -lspdlog -lgmock -lgtest -lz
 
 // Paths - headers
 USE_HEADERMAP = NO

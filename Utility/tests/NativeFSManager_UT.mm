@@ -3,6 +3,7 @@
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
 #include <boost/process.hpp>
+#include <filesystem>
 #include "UnitTests_main.h"
 
 using nc::utility::NativeFSManagerImpl;
@@ -15,6 +16,9 @@ static int Execute(const std::string &_command);
 
 TEST_CASE(PREFIX"Fast lookup considers firmlinks")
 {
+    if( !std::filesystem::exists("/Applications/") )
+        return; // on CI environment it's possible that this directory does not exist
+
     NativeFSManagerImpl fsm;
     
     auto root_volume = fsm.VolumeFromPathFast("/");

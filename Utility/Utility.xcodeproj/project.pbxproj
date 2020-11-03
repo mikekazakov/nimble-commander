@@ -686,14 +686,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF233AF3219E7E9600693E1A /* tests.xcconfig */;
 			buildSettings = {
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-lgmock",
-					"-lgtest",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -701,14 +693,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF233AF3219E7E9600693E1A /* tests.xcconfig */;
 			buildSettings = {
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-lgmock",
-					"-lgtest",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};

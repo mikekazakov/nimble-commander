@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <Utility/StringExtras.h>
 #include <Habanero/CFStackAllocator.h>
@@ -43,7 +43,7 @@ static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETrun
     [str replaceCharactersInRange:replaceRange withString:sEllipsisString];
 }
 
-static void StringTruncateToWidth(NSMutableString *str, float maxWidth, ETruncationType truncationType, NSDictionary *attributes)
+static void StringTruncateToWidth(NSMutableString *str, double maxWidth, ETruncationType truncationType, NSDictionary *attributes)
 {
     // First check if we have to truncate at all.
     if ([str sizeWithAttributes:attributes].width <= maxWidth)
@@ -52,7 +52,7 @@ static void StringTruncateToWidth(NSMutableString *str, float maxWidth, ETruncat
     // Essentially, we perform a binary search on the string length
     // which fits best into maxWidth.
     
-    float width = maxWidth;
+    double width = maxWidth;
     int lo = 0;
     int hi = (int)[str length];
     int mid;
@@ -87,7 +87,7 @@ static void StringTruncateToWidth(NSMutableString *str, float maxWidth, ETruncat
         StringTruncateTo(str, hi, truncationType);
 }
 
-NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationType truncationType, NSDictionary *attributes)
+NSString *StringByTruncatingToWidth(NSString *str, double inWidth, ETruncationType truncationType, NSDictionary *attributes)
 {
     if ([str sizeWithAttributes:attributes].width > inWidth)
     {

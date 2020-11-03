@@ -280,7 +280,7 @@ int FromCFStringEncoding(int _encoding)
     
 const std::vector< std::pair<int, CFStringRef> >& LiteralEncodingsList()
 {
-    static std::vector< std::pair<int, CFStringRef> > encodings;
+    [[clang::no_destroy]] static std::vector< std::pair<int, CFStringRef> > encodings;
     static std::once_flag token;
     std::call_once(token, []{
 #define _(a) encodings.emplace_back(a, (CFStringRef)CFBridgingRetain(\

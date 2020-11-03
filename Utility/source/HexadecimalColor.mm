@@ -41,20 +41,24 @@ uint32_t HexadecimalColorStringToRGBA(string_view _string) noexcept
         return g_BlackColor;
 
     if( _string.length() >= 9 ) // #RRGGBBAA
-        return MakeRGBA(HexToInt(_string[1]) * 16 + HexToInt(_string[2]),
-                        HexToInt(_string[3]) * 16 + HexToInt(_string[4]),
-                        HexToInt(_string[5]) * 16 + HexToInt(_string[6]),
-                        HexToInt(_string[7]) * 16 + HexToInt(_string[8]));
+        return MakeRGBA(static_cast<uint8_t>(HexToInt(_string[1]) * 16 + HexToInt(_string[2])),
+                        static_cast<uint8_t>(HexToInt(_string[3]) * 16 + HexToInt(_string[4])),
+                        static_cast<uint8_t>(HexToInt(_string[5]) * 16 + HexToInt(_string[6])),
+                        static_cast<uint8_t>(HexToInt(_string[7]) * 16 + HexToInt(_string[8])));
     if( _string.length() >= 7 ) // #RRGGBB
-        return MakeRGBA(HexToInt(_string[1]) * 16 + HexToInt(_string[2]),
-                        HexToInt(_string[3]) * 16 + HexToInt(_string[4]),
-                        HexToInt(_string[5]) * 16 + HexToInt(_string[6]), 255);
+        return MakeRGBA(static_cast<uint8_t>(HexToInt(_string[1]) * 16 + HexToInt(_string[2])),
+                        static_cast<uint8_t>(HexToInt(_string[3]) * 16 + HexToInt(_string[4])),
+                        static_cast<uint8_t>(HexToInt(_string[5]) * 16 + HexToInt(_string[6])),
+                                             255);
     if( _string.length() >= 5 ) // #RGBA
-        return MakeRGBA(DupHex(HexToInt(_string[1])), DupHex(HexToInt(_string[2])),
-                        DupHex(HexToInt(_string[3])), DupHex(HexToInt(_string[4])));
+        return MakeRGBA(static_cast<uint8_t>(DupHex(HexToInt(_string[1]))),
+                        static_cast<uint8_t>(DupHex(HexToInt(_string[2]))),
+                        static_cast<uint8_t>(DupHex(HexToInt(_string[3]))),
+                        static_cast<uint8_t>(DupHex(HexToInt(_string[4]))));
     if( _string.length() >= 4 ) // #RGB
-        return MakeRGBA(DupHex(HexToInt(_string[1])), DupHex(HexToInt(_string[2])),
-                        DupHex(HexToInt(_string[3])), 255);
+        return MakeRGBA(static_cast<uint8_t>(DupHex(HexToInt(_string[1]))),
+                        static_cast<uint8_t>(DupHex(HexToInt(_string[2]))),
+                        static_cast<uint8_t>(DupHex(HexToInt(_string[3]))), 255);
 
     return g_BlackColor;
 }
@@ -83,7 +87,7 @@ void HexadecimalColorRGBAToString(uint32_t _rgba, char _string[10]) noexcept
     }
 }
 
-static const std::unordered_map<std::string, NSColor *> g_SystemColors = {
+[[clang::no_destroy]] static const std::unordered_map<std::string, NSColor *> g_SystemColors = {
     {"@blackColor", NSColor.blackColor},
     {"@darkGrayColor", NSColor.darkGrayColor},
     {"@lightGrayColor", NSColor.lightGrayColor},

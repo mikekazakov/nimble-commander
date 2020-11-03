@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ByteCountFormatter.h>
 #include <Foundation/Foundation.h>
 #include <Utility/Encodings.h>
@@ -36,8 +36,7 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
         NSString *decimal_symbol = [def_formatter decimalSeparator];
         if(decimal_symbol.length == 1 && [decimal_symbol characterAtIndex:0] < 256) {
             m_DecimalSeparatorUni = [decimal_symbol characterAtIndex:0];
-            unsigned char sep = [decimal_symbol characterAtIndex:0];
-            m_DecimalSeparator = (char)sep;
+            m_DecimalSeparator = static_cast<char>(m_DecimalSeparatorUni);
         }
         
         NSString *b = [&]{
@@ -67,7 +66,7 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
 
 ByteCountFormatter &ByteCountFormatter::Instance()
 {
-    static ByteCountFormatter bcf(true);
+    [[clang::no_destroy]] static ByteCountFormatter bcf(true);
     return bcf;
 }
 
@@ -373,7 +372,7 @@ int ByteCountFormatter::Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]) c
                 return 5;
             }
             else {
-                _buf[0] = '0' + significant + 1;
+                _buf[0] = static_cast<unsigned short>('0' + significant + 1);
                 _buf[1] = m_DecimalSeparatorUni;
                 _buf[2] = '0';
                 _buf[3] = ' ';
@@ -386,9 +385,9 @@ int ByteCountFormatter::Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]) c
             remainer = remainer % 100;
             if (remainer > 50 || (remainer == 50 && ((decimal & 1) || hrem)))
                 decimal++;
-            _buf[0] = '0' + significant;
+            _buf[0] = static_cast<unsigned short>('0' + significant);
             _buf[1] = m_DecimalSeparatorUni;
-            _buf[2] = '0' + decimal;
+            _buf[2] = static_cast<unsigned short>('0' + decimal);
             _buf[3] = ' ';
             _buf[4] = m_SI[expo];
             _buf[5] = m_B;

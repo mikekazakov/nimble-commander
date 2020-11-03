@@ -10,7 +10,7 @@ SDKROOT = macosx
 GCC_PREPROCESSOR_DEFINITIONS = SPDLOG_COMPILED_LIB
 
 // C++
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/spdlog/include
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include
 
 // Objective-C
 CLANG_ENABLE_OBJC_ARC = YES
@@ -21,7 +21,7 @@ OTHER_LDFLAGS = -framework SystemConfiguration -framework IOKit -lboost_system-m
 // Paths - headers
 USE_HEADERMAP = NO
 THRDPTY=../3rd_Party
-HEADER_SEARCH_PATHS = $(THRDPTY)/boost/include $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/single_include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include
+HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/single_include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include
 
 // Paths - libraries
 LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/built $(THRDPTY)/spdlog/built $(THRDPTY)/googletest/built

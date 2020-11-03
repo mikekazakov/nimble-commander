@@ -125,7 +125,8 @@ static NSString *StringForModifierFlags(uint64_t flags)
     return [NSString stringWithCharacters:modChars length:charCount];
 }
 
-static const std::unordered_map<uint16_t, NSString *> g_UnicodeToNiceString = {
+[[clang::no_destroy]] static const std::unordered_map<uint16_t, NSString *> g_UnicodeToNiceString =
+{
     {NSLeftArrowFunctionKey, @"←"},
     {NSRightArrowFunctionKey, @"→"},
     {NSDownArrowFunctionKey, @"↓"},

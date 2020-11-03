@@ -10,7 +10,7 @@
 
 namespace nc::utility {
 
-static std::vector<std::weak_ptr<FontCache>> g_Caches;
+[[clang::no_destroy]] static std::vector<std::weak_ptr<FontCache>> g_Caches;
 
 static bool IsLastResortFont(CTFontRef _font)
 {
@@ -29,12 +29,12 @@ static base::CFPtr<CTFontRef> CreateFallbackFontStraight(uint32_t _unicode, CTFo
     uint16_t chars[2];
     const auto str = [&]{
         if(_unicode < 0x10000) { // BMP
-            chars[0] = _unicode;;
+            chars[0] = static_cast<unsigned short>(_unicode);
             auto cf_str = CFStringCreateWithCharactersNoCopy(0, chars, 1, kCFAllocatorNull);
             return base::CFPtr<CFStringRef>::adopt( cf_str );
         } else { // non-BMP
-            chars[0] = 0xD800 + ((_unicode - 0x010000) >> 10);
-            chars[1] = 0xDC00 + ((_unicode - 0x010000) & 0x3FF);
+            chars[0] = static_cast<unsigned short>(0xD800 + ((_unicode - 0x010000) >> 10));
+            chars[1] = static_cast<unsigned short>(0xDC00 + ((_unicode - 0x010000) & 0x3FF));
             auto cf_str = CFStringCreateWithCharactersNoCopy(0, chars, 2, kCFAllocatorNull);
             return base::CFPtr<CFStringRef>::adopt(cf_str);
         }
@@ -66,11 +66,11 @@ static base::CFPtr<CTFontRef> CreateFallbackFontHardway(uint32_t _unicode, CTFon
     uint16_t chrs[2];
 
     if(_unicode < 0x10000) { // BMP
-        chrs[0] = _unicode;
+        chrs[0] = static_cast<uint16_t>(_unicode);
         str = CFStringCreateWithCharactersNoCopy(0, chrs, 1, kCFAllocatorNull);
     } else { // non-BMP
-        chrs[0] = 0xD800 + ((_unicode - 0x010000) >> 10);
-        chrs[1] = 0xDC00 + ((_unicode - 0x010000) & 0x3FF);
+        chrs[0] = static_cast<uint16_t>(0xD800 + ((_unicode - 0x010000) >> 10));
+        chrs[1] = static_cast<uint16_t>(0xDC00 + ((_unicode - 0x010000) & 0x3FF));
         str = CFStringCreateWithCharactersNoCopy(0, chrs, 2, kCFAllocatorNull);
     }
     
@@ -211,7 +211,7 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
                     {
                         if( CFEqual(m_CTFonts[i].get(), ctfont.get()) )
                         { // this is just the exactly one we need
-                            m_CacheBMP[_c].font = i;
+                            m_CacheBMP[_c].font = static_cast<uint8_t>(i);
                             m_CacheBMP[_c].searched = 1;
                             m_CacheBMP[_c].glyph = g;
                             return m_CacheBMP[_c];
@@ -221,7 +221,7 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
                     {
                         // a new one
                         m_CTFonts[i] = ctfont;
-                        m_CacheBMP[_c].font = i;
+                        m_CacheBMP[_c].font = static_cast<uint8_t>(i);
                         m_CacheBMP[_c].searched = 1;
                         m_CacheBMP[_c].glyph = g;
                         return m_CacheBMP[_c];
@@ -254,8 +254,8 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
     
     // unknown unichar - ask system about it
     uint16_t utf16[2];
-    utf16[0] = 0xD800 + ((_c - 0x010000) >> 10);
-    utf16[1] = 0xDC00 + ((_c - 0x010000) & 0x3FF);
+    utf16[0] = static_cast<uint16_t>(0xD800 + ((_c - 0x010000) >> 10));
+    utf16[1] = static_cast<uint16_t>(0xDC00 + ((_c - 0x010000) & 0x3FF));
     
     CGGlyph g[2];
     bool r = CTFontGetGlyphsForCharacters(m_CTFonts[0].get(), utf16, g, 2);
@@ -319,20 +319,20 @@ unsigned char FontCache::InsertFont(base::CFPtr<CTFontRef> _font)
     for(int i = 1; i < (int)m_CTFonts.size(); ++i)
         if( m_CTFonts[i] ) {
             if( CFEqual(m_CTFonts[i].get(), _font.get()) ) { // this is just the exactly one we need
-                return i;
+                return static_cast<unsigned char>(i);
             }
         }
         else {
             // a new one
             m_CTFonts[i] = std::move(_font);
-            return i;
+            return static_cast<unsigned char>(i);
         }
     return 0;
 }
 
 FontCache::Pair FontCache::Get(uint32_t _c) noexcept
 {
-    return _c < 0x10000 ? DoGetBMP(_c) : DoGetNonBMP(_c);
+    return _c < 0x10000 ? DoGetBMP(static_cast<uint16_t>(_c)) : DoGetNonBMP(_c);
 }
 
 }

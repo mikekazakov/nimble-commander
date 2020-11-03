@@ -5,7 +5,7 @@
 
 using nc::utility::FontGeometryInfo;
 
-static const auto g_RandomAlphabet = []{
+[[clang::no_destroy]] static const auto g_RandomAlphabet = []{
     std::vector<char> chars;
     for( char i = 'a'; i <= 'z'; ++i )
         chars.emplace_back(i);

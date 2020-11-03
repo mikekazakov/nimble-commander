@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <assert.h>
 #include <stdlib.h>
 
@@ -1025,10 +1025,9 @@ void InterpretUTF8BufferAsUniCharPreservingBufferSize(
         // seems that sequence is ok
         if(sz == 2)
         {
-            unsigned short out;
             unsigned char high = *_input;
             unsigned char low = *(_input + 1);
-            out = (((unsigned short)(high & 0x1F)) << 6) | (low & 0x3F);
+            unsigned short out = static_cast<unsigned short> ((((unsigned short)(high & 0x1F)) << 6) | (low & 0x3F) );
             
             *_output = out;
             ++_output;
@@ -1039,11 +1038,10 @@ void InterpretUTF8BufferAsUniCharPreservingBufferSize(
         }
         else if(sz == 3)
         {
-            unsigned short out;
             unsigned char _1 = *_input;
             unsigned char _2 = *(_input + 1);
             unsigned char _3 = *(_input + 2);
-            out = (((unsigned short)(_1 & 0xF)) << 12) | (((unsigned short)(_2 & 0x3F)) << 6) | ((unsigned short)(_3 & 0x3F));
+            unsigned short out = static_cast<unsigned short>( (((unsigned short)(_1 & 0xF)) << 12) | (((unsigned short)(_2 & 0x3F)) << 6) | ((unsigned short)(_3 & 0x3F)) );
             *_output = out;
             ++_output;
             *_output = _stuffing_symb;
@@ -1139,21 +1137,19 @@ void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
         
         // seems that sequence is ok
         if(sz == 2) {
-            unsigned short out;
-            unsigned char _1 = _input[0] & 0x1F;
-            unsigned char _2 = _input[1] & 0x3F;
-            out = (_1 << 6) | _2;            
+            unsigned short _1 = _input[0] & 0x1F;
+            unsigned short _2 = _input[1] & 0x3F;
+            unsigned short out = static_cast<unsigned short>((_1 << 6) | _2);
             *(_output_buf++) = out;
             ++total;
             _input += 2;
             continue;
         }
         else if(sz == 3) {
-            unsigned short out;
             uint16_t _1 = _input[0] & 0x0F;
             uint16_t _2 = _input[1] & 0x3F;
             uint16_t _3 = _input[2] & 0x3F;
-            out = (_1 << 12) | (_2 << 6) | _3;
+            unsigned short out = static_cast<unsigned short>((_1 << 12) | (_2 << 6) | _3);
             *(_output_buf++) = out;
             ++total;
             _input += 3;
@@ -1171,8 +1167,8 @@ void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
                 total += 1;
             }
             else {
-                uint16_t ls = 0xD800 + ((out - 0x010000) >> 10);
-                uint16_t ts = 0xDC00 + ((out - 0x010000) & 0x3FF);
+                uint16_t ls = static_cast<unsigned short>(0xD800 + ((out - 0x010000) >> 10));
+                uint16_t ts = static_cast<unsigned short>(0xDC00 + ((out - 0x010000) & 0x3FF));
                 *(_output_buf++) = ls;
                 *(_output_buf++) = ts;
                 total += 2;
@@ -1282,10 +1278,9 @@ void InterpretUTF8BufferAsIndexedUTF16(
         // seems that sequence is ok
         if(sz == 2)
         {
-            unsigned short out;
-            unsigned char high = *_input;
-            unsigned char low = *(_input + 1);
-            out = (((unsigned short)(high & 0x1F)) << 6) | (low & 0x3F);
+            unsigned short high = *_input;
+            unsigned short low = *(_input + 1);
+            unsigned short out = static_cast<unsigned short>((((high & 0x1F)) << 6) | (low & 0x3F));
             
             *_output_buf = out;
             *_indexes_buf = (uint32_t)(_input - start);
@@ -1297,11 +1292,10 @@ void InterpretUTF8BufferAsIndexedUTF16(
         }
         else if(sz == 3)
         {
-            unsigned short out;
-            unsigned char _1 = *_input;
-            unsigned char _2 = *(_input + 1);
-            unsigned char _3 = *(_input + 2);
-            out = (((unsigned short)(_1 & 0xF)) << 12) | (((unsigned short)(_2 & 0x3F)) << 6) | ((unsigned short)(_3 & 0x3F));
+            unsigned short _1 = *_input;
+            unsigned short _2 = *(_input + 1);
+            unsigned short _3 = *(_input + 2);
+            unsigned short out = static_cast<unsigned short>((((_1 & 0xF)) << 12) | (((_2 & 0x3F)) << 6) | (_3 & 0x3F));
             *_output_buf = out;
             *_indexes_buf = (uint32_t)(_input - start);
             ++_indexes_buf;
@@ -1323,8 +1317,8 @@ void InterpretUTF8BufferAsIndexedUTF16(
                 total += 1;
             }
             else {
-                uint16_t ls = 0xD800 + ((out - 0x010000) >> 10);
-                uint16_t ts = 0xDC00 + ((out - 0x010000) & 0x3FF);
+                uint16_t ls = static_cast<unsigned short>(0xD800 + ((out - 0x010000) >> 10));
+                uint16_t ts = static_cast<unsigned short>(0xDC00 + ((out - 0x010000) & 0x3FF));
                 *(_output_buf++) = ls;
                 *(_output_buf++) = ts;
                 *(_indexes_buf++) = (uint32_t)(_input - start); // lead and trailing surrpairs chars will point at same byte position
@@ -1422,7 +1416,7 @@ void InterpretUTF16BEBufferAsUniChar(
     
     while(cur < end)
     {
-        uint16_t val = Endian16_Swap(*cur);
+        uint16_t val = static_cast<unsigned short>(Endian16_Swap(*cur));
         
         if(val <= 0xD7FF || val >= 0xE000)
         { // BMP - just use it
@@ -1436,7 +1430,7 @@ void InterpretUTF16BEBufferAsUniChar(
             { // leading surrogate
                 if(cur + 1 < end)
                 {
-                    uint16_t next = Endian16_Swap(*(cur+1));
+                    uint16_t next = static_cast<unsigned short>(Endian16_Swap(*(cur+1)));
                     if(next >= 0xDC00 && next <= 0xDFFF)
                     { 
                         const uint32_t code_point = (((uint32_t)val - 0xD800U) << 10) +
@@ -1541,25 +1535,25 @@ void InterpretUnicharsAsUTF8(const uint16_t* _input,
         // convert unicode code points into an array of UTF8 chars
         if( codepoint < 0x0080 ) {
             utf8_sz = 1;
-            utf8[0] = codepoint;
+            utf8[0] = static_cast<unsigned char>(codepoint);
         }
         else if( codepoint <= 0x7FF ) {
             utf8_sz = 2;
-            utf8[0] = (codepoint >> 6)   + 0xC0;
-            utf8[1] = (codepoint & 0x3F) + 0x80;
+            utf8[0] = static_cast<unsigned char>((codepoint >> 6)   + 0xC0);
+            utf8[1] = static_cast<unsigned char>((codepoint & 0x3F) + 0x80);
         }
         else if( codepoint <= 0xFFFF ) {
             utf8_sz = 3;
-            utf8[0] = (codepoint >> 12)         + 0xE0;
-            utf8[1] = ((codepoint >> 6) & 0x3F) + 0x80;
-            utf8[2] = (codepoint & 0x3F)        + 0x80;
+            utf8[0] = static_cast<unsigned char>((codepoint >> 12)         + 0xE0);
+            utf8[1] = static_cast<unsigned char>(((codepoint >> 6) & 0x3F) + 0x80);
+            utf8[2] = static_cast<unsigned char>((codepoint & 0x3F)        + 0x80);
         }
         else if( codepoint <= 0x10FFFF ) {
             utf8_sz = 4;
-            utf8[0] = (codepoint >> 18)          + 0xF0;
-            utf8[1] = ((codepoint >> 12) & 0x3F) + 0x80;
-            utf8[2] = ((codepoint >> 6)  & 0x3F) + 0x80;
-            utf8[3] = (codepoint & 0x3F)         + 0x80;
+            utf8[0] = static_cast<unsigned char>((codepoint >> 18)          + 0xF0);
+            utf8[1] = static_cast<unsigned char>(((codepoint >> 12) & 0x3F) + 0x80);
+            utf8[2] = static_cast<unsigned char>(((codepoint >> 6)  & 0x3F) + 0x80);
+            utf8[3] = static_cast<unsigned char>((codepoint & 0x3F)         + 0x80);
         }
         else { // fallback on error
             utf8_sz = 1;
@@ -1621,25 +1615,25 @@ void InterpretUnicodeAsUTF8(const uint32_t* _input,
         // convert unicode code points into an array of UTF8 chars
         if( codepoint < 0x0080 ) {
             utf8_sz = 1;
-            utf8[0] = codepoint;
+            utf8[0] = static_cast<unsigned char>(codepoint);
         }
         else if( codepoint <= 0x7FF ) {
             utf8_sz = 2;
-            utf8[0] = (codepoint >> 6)   + 0xC0;
-            utf8[1] = (codepoint & 0x3F) + 0x80;
+            utf8[0] = static_cast<unsigned char>((codepoint >> 6)   + 0xC0);
+            utf8[1] = static_cast<unsigned char>((codepoint & 0x3F) + 0x80);
         }
         else if( codepoint <= 0xFFFF ) {
             utf8_sz = 3;
-            utf8[0] = (codepoint >> 12)         + 0xE0;
-            utf8[1] = ((codepoint >> 6) & 0x3F) + 0x80;
-            utf8[2] = (codepoint & 0x3F)        + 0x80;
+            utf8[0] = static_cast<unsigned char>((codepoint >> 12)         + 0xE0);
+            utf8[1] = static_cast<unsigned char>(((codepoint >> 6) & 0x3F) + 0x80);
+            utf8[2] = static_cast<unsigned char>((codepoint & 0x3F)        + 0x80);
         }
         else if( codepoint <= 0x10FFFF ) {
             utf8_sz = 4;
-            utf8[0] = (codepoint >> 18)          + 0xF0;
-            utf8[1] = ((codepoint >> 12) & 0x3F) + 0x80;
-            utf8[2] = ((codepoint >> 6)  & 0x3F) + 0x80;
-            utf8[3] = (codepoint & 0x3F)         + 0x80;
+            utf8[0] = static_cast<unsigned char>((codepoint >> 18)          + 0xF0);
+            utf8[1] = static_cast<unsigned char>(((codepoint >> 12) & 0x3F) + 0x80);
+            utf8[2] = static_cast<unsigned char>(((codepoint >> 6)  & 0x3F) + 0x80);
+            utf8[3] = static_cast<unsigned char>((codepoint & 0x3F)         + 0x80);
         }
         else { // fallback on error
             utf8_sz = 1;

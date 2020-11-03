@@ -50,7 +50,7 @@
 static bool IsSystemFont( NSFont *_font )
 {
     static const auto max_sz = 100;
-    static std::array<NSString*, max_sz> descriptions;
+    [[clang::no_destroy]] static std::array<NSString*, max_sz> descriptions;
     const auto pt = (int)floor(_font.pointSize + 0.5);
     if( pt < 0 || pt >= max_sz )
         return false;

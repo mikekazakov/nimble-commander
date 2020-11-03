@@ -115,7 +115,7 @@ bool GetMemoryInfo(MemoryInfo &_mem) noexcept
         
         int memsizemib[2] = {CTL_HW,HW_MEMSIZE};
         length = sizeof(memsize);
-        sysctl(memsizemib, 2, &memsize, &length, NULL, NULL);
+        sysctl(memsizemib, 2, &memsize, &length, NULL, 0);
     });
     
     // get general memory info
@@ -144,7 +144,7 @@ bool GetMemoryInfo(MemoryInfo &_mem) noexcept
 	int swapmib[2] = {CTL_VM,VM_SWAPUSAGE};
     struct xsw_usage swap_info;
 	size_t length = sizeof(swap_info);
-    if( sysctl(swapmib, 2, &swap_info, &length, NULL, NULL) < 0)
+    if( sysctl(swapmib, 2, &swap_info, &length, NULL, 0) < 0)
         return false;
     _mem.swap = swap_info.xsu_used;
     
@@ -236,7 +236,7 @@ bool GetSystemOverview(SystemOverview &_overview)
     _overview.user_full_name = NSFullUserName().UTF8String;
     
     // get machine model once
-    static std::string coded_model = "unknown";
+    [[clang::no_destroy]] static std::string coded_model = "unknown";
     static NSString *human_model = @"N/A";
     static std::once_flag once;
     call_once(once, []{
@@ -258,14 +258,14 @@ bool GetSystemOverview(SystemOverview &_overview)
         
         if( auto info = objc_cast<NSDictionary>(dict[[NSString stringWithUTF8String:model]]) ) {
             if( auto localizable = objc_cast<NSDictionary>(info[@"_LOCALIZABLE_"]) ) {
-                auto model = objc_cast<NSString>(localizable[@"model"]);
-                if( model ) {
-                    human_model = model;
+                auto loc_model = objc_cast<NSString>(localizable[@"model"]);
+                if( loc_model ) {
+                    human_model = loc_model;
                     if( auto market_model = objc_cast<NSString>(localizable[@"marketingModel"]) ) {
                         auto cs = [NSCharacterSet characterSetWithCharactersInString:@"()"];
                         auto splitted = [market_model componentsSeparatedByCharactersInSet:cs];
                         if( splitted.count == 3)
-                            human_model = [NSString stringWithFormat:@"%@ (%@)", model, splitted[1]];
+                            human_model = [NSString stringWithFormat:@"%@ (%@)", loc_model, splitted[1]];
                     }
                 }
             }
@@ -287,7 +287,7 @@ bool IsThisProcessSandboxed() noexcept
 const std::string& GetBundleID() noexcept
 {
     using namespace std::string_literals;
-    static const std::string bundle_id = []{
+    [[clang::no_destroy]] static const std::string bundle_id = []{
         if( CFStringRef bid = CFBundleGetIdentifier(CFBundleGetMainBundle()) )
             return CFStringGetUTF8StdString(bid);
         else

@@ -9,7 +9,7 @@ namespace nc::utility {
 
 using namespace std::chrono_literals;
 
-BlinkScheduler::BlinkScheduler::DefaultIO BlinkScheduler::DefaultIO::Instance;
+[[clang::no_destroy]] BlinkScheduler::BlinkScheduler::DefaultIO BlinkScheduler::DefaultIO::Instance;
 
 struct BlinkScheduler::Impl : std::enable_shared_from_this<Impl> {
     void Fire();

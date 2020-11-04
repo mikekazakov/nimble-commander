@@ -109,11 +109,11 @@ static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
                                  const TextModeIndexedTextLine *_lines_end,
                                  float *_widths)
 {
-    const auto block = [&] (size_t n) {
-        _widths[n] = CTLineGetTypographicBounds(_lines_begin[n].Line(),
-                                                nullptr, nullptr, nullptr );
+    const auto block = [&](size_t n) {
+        _widths[n] = static_cast<float>(
+            CTLineGetTypographicBounds(_lines_begin[n].Line(), nullptr, nullptr, nullptr));
     };
-    dispatch_apply( _lines_end - _lines_begin, dispatch_get_global_queue(0, 0), block );
+    dispatch_apply(_lines_end - _lines_begin, dispatch_get_global_queue(0, 0), block);
 }
 
 }

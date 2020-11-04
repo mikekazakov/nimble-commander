@@ -566,7 +566,7 @@ inline bool Listing::HasSymlink(unsigned _ind) const
 
 inline const std::string& Listing::Symlink(unsigned _ind) const
 {
-    static const std::string st = "";
+    [[clang::no_destroy]] static const std::string st = "";
     __CHECK_BOUNDS(_ind);
     return m_Symlinks.has(_ind) ? m_Symlinks[_ind] : st;
 }

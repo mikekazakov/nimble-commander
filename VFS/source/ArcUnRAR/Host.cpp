@@ -245,7 +245,8 @@ int UnRARHost::InitialReadFileList(void *_rar_handle)
         if(is_directory)
             FindOrBuildDirectory(std::string(utf8buf) + '/')->time = entry->time;
         
-		if ((proc_file_ret = RARProcessFile(_rar_handle, RAR_SKIP, NULL, NULL)) != 0)
+        proc_file_ret = RARProcessFile(_rar_handle, RAR_SKIP, NULL, NULL);
+		if (proc_file_ret != 0)
             return VFSError::GenericError; // TODO: need an adequate error code here
 	}
     

@@ -51,8 +51,9 @@ int File::Open(unsigned long _open_flags,
     }
     
     LIBSSH2_SFTP_ATTRIBUTES attrs;
-    if((rc = libssh2_sftp_fstat_ex(handle, &attrs, 0)) < 0) {
-        rc = sftp_host->VFSErrorForConnection(*conn);
+    const int fstat_rc = libssh2_sftp_fstat_ex(handle, &attrs, 0);
+    if( fstat_rc < 0 ) {
+        const int rc = sftp_host->VFSErrorForConnection(*conn);
         return rc;
     }
     

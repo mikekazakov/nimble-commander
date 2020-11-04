@@ -849,7 +849,9 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
             return res;
         
         auto new_state = std::make_unique<State>(file, SpawnLibarchive());
-        if( (res = new_state->Open()) < 0 ) {
+        
+        res = new_state->Open();
+        if( res < 0 ) {
             int rc = VFSError::FromLibarchive(new_state->Errno());
             return rc;
         }

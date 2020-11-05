@@ -319,7 +319,7 @@ VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing( const Listing& _orig
 
 const base::intrusive_ptr<const Listing> &Listing::EmptyListing() noexcept
 {
-    static const base::intrusive_ptr<const Listing> empty = []{
+    [[clang::no_destroy]] static const base::intrusive_ptr<const Listing> empty = []{
         auto l = base::intrusive_ptr{new Listing};
         l->m_ItemsCount = 0;
         l->m_Hosts.insert(0, Host::DummyHost());

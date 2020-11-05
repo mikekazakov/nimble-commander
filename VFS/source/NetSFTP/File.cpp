@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include <libssh2.h>
 #include <libssh2_sftp.h>
@@ -53,8 +53,8 @@ int File::Open(unsigned long _open_flags,
     LIBSSH2_SFTP_ATTRIBUTES attrs;
     const int fstat_rc = libssh2_sftp_fstat_ex(handle, &attrs, 0);
     if( fstat_rc < 0 ) {
-        const int rc = sftp_host->VFSErrorForConnection(*conn);
-        return rc;
+        const int conn_err = sftp_host->VFSErrorForConnection(*conn);
+        return conn_err;
     }
     
     m_Connection = move(conn);

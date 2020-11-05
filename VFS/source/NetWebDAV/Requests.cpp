@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Requests.h"
 #include "WebDAVHost.h"
 #include <boost/algorithm/string/split.hpp>
@@ -79,8 +79,8 @@ static HTTPRequests::Mask ParseSupportedRequests( const std::string &_options_re
 
     HTTPRequests::Mask mask = HTTPRequests::None;
     
-    static const auto allowed_prefix = "Allow: "s;
-    const auto allowed = find_if(begin(lines), end(lines), [](const auto &_line){
+    const std::string_view allowed_prefix = "Allow: ";
+    const auto allowed = find_if(begin(lines), end(lines), [allowed_prefix](const auto &_line){
         return _line.starts_with(allowed_prefix);
     });
     if( allowed != end(lines) ) {
@@ -145,17 +145,21 @@ static time_t ParseModDate( const char *_date_time )
     return DateTimeFromASCTime(_date_time);
 }
 
-static std::optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
+static std::optional<PropFindResponse> ParseResponseNode(pugi::xml_node _node)
 {
     using namespace pugi;
-    static const auto href_query    = xpath_query{ "./*[local-name()='href']" };
-    static const auto len_query     = xpath_query{ "./*/*/*[local-name()='getcontentlength']" };
-    static const auto restype_query = xpath_query{ "./*/*/*[local-name()='resourcetype']" };    
-    static const auto credate_query = xpath_query{ "./*/*/*[local-name()='creationdate']" };
-    static const auto moddate_query = xpath_query{ "./*/*/*[local-name()='getlastmodified']" };
-    
+    [[clang::no_destroy]] static const auto href_query = xpath_query{"./*[local-name()='href']"};
+    [[clang::no_destroy]] static const auto len_query =
+        xpath_query{"./*/*/*[local-name()='getcontentlength']"};
+    [[clang::no_destroy]] static const auto restype_query =
+        xpath_query{"./*/*/*[local-name()='resourcetype']"};
+    [[clang::no_destroy]] static const auto credate_query =
+        xpath_query{"./*/*/*[local-name()='creationdate']"};
+    [[clang::no_destroy]] static const auto moddate_query =
+        xpath_query{"./*/*/*[local-name()='getlastmodified']"};
+
     PropFindResponse response;
-    
+
     if( const auto href = _node.select_node(href_query) )
         if( const auto c = href.node().first_child() )
             if( const auto v = c.value() )
@@ -167,25 +171,25 @@ static std::optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
         if( const auto c = len.node().first_child() )
             if( const auto v = c.value() )
                 response.size = atol(v);
-    
+
     if( const auto res = _node.select_node(restype_query) )
         if( const auto c = res.node().first_child() )
             if( strstr(c.name(), "collection") )
                 response.is_directory = true;
-    
+
     if( const auto credate = _node.select_node(credate_query) )
         if( const auto c = credate.node().first_child() )
             if( const auto v = c.value() )
-                if( const auto t = DateTimeFromRFC3339(v);  t >= 0 )
+                if( const auto t = DateTimeFromRFC3339(v); t >= 0 )
                     response.creation_date = t;
-    
+
     if( const auto modddate = _node.select_node(moddate_query) )
         if( const auto c = modddate.node().first_child() )
             if( const auto v = c.value() )
-                if(const auto t = ParseModDate(v);  t >= 0 )
+                if( const auto t = ParseModDate(v); t >= 0 )
                     response.modification_date = t;
 
-    return std::optional<PropFindResponse>{ std::move(response) };
+    return std::optional<PropFindResponse>{std::move(response)};
 }
 
 static std::vector<PropFindResponse> ParseDAVListing( const std::string &_xml_listing )
@@ -320,29 +324,31 @@ std::pair<int, std::vector<PropFindResponse>> RequestDAVListing(const HostConfig
 }
 
 // free space, used space
-static std::pair<long, long> ParseSpaceQouta( const std::string &_xml )
+static std::pair<long, long> ParseSpaceQouta(const std::string &_xml)
 {
     using namespace pugi;
 
     xml_document doc;
-    xml_parse_result result = doc.load_string( _xml.c_str() );
+    xml_parse_result result = doc.load_string(_xml.c_str());
     if( !result )
         return {-1, -1};
 
     long free = -1;
-    static const auto free_query = xpath_query{"./*/*/*/*/*[local-name()='quota-available-bytes']"};
+    [[clang::no_destroy]] static const auto free_query =
+        xpath_query{"./*/*/*/*/*[local-name()='quota-available-bytes']"};
     if( const auto href = doc.select_node(free_query) )
         if( const auto c = href.node().first_child() )
             if( const auto v = c.value() )
                 free = atol(v);
 
     long used = -1;
-    static const auto used_query = xpath_query{"./*/*/*/*/*[local-name()='quota-used-bytes']"};
+    [[clang::no_destroy]] static const auto used_query =
+        xpath_query{"./*/*/*/*/*[local-name()='quota-used-bytes']"};
     if( const auto href = doc.select_node(used_query) )
         if( const auto c = href.node().first_child() )
             if( const auto v = c.value() )
                 used = atol(v);
-    
+
     return {free, used};
 }
 

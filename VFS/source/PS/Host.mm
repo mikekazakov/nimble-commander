@@ -30,7 +30,7 @@ static NSDateFormatter *ProcDateFormatter()
 
 static const std::string& ProcStatus(int _st)
 {
-    static const std::string strings[] = {
+    [[clang::no_destroy]] static const std::string strings[] = {
         "",
         "SIDL (process being created by fork)",
         "SRUN (currently runnable)",
@@ -70,15 +70,21 @@ static cpu_type_t ArchTypeFromPID(pid_t _pid)
     return 0;
 }
 
-static const std::string& ArchType(int _type)
+static const std::string &ArchType(int _type)
 {
-    static const std::string x86 = "x86";
-    static const std::string x86_64 = "x86-64";
-    static const std::string na = "N/A";
-    
-    if(_type == CPU_TYPE_X86_64)    return x86_64;
-    else if(_type == CPU_TYPE_X86)  return x86;
-    else                            return na;
+    [[clang::no_destroy]] static const std::string x86 = "x86";
+    [[clang::no_destroy]] static const std::string x86_64 = "x86-64";
+    [[clang::no_destroy]] static const std::string arm64 = "arm64";
+    [[clang::no_destroy]] static const std::string na = "N/A";
+
+    if( _type == CPU_TYPE_X86_64 )
+        return x86_64;
+    else if( _type == CPU_TYPE_X86 )
+        return x86;
+    else if( _type == CPU_TYPE_ARM64 )
+        return arm64;
+    else
+        return na;
 }
 
 // from https://gist.github.com/nonowarn/770696
@@ -293,8 +299,8 @@ VFSMeta PSHost::Meta()
 
 std::shared_ptr<PSHost> PSHost::GetSharedOrNew()
 {
-    static std::mutex mt;
-    static std::weak_ptr<PSHost> cache;
+    [[clang::no_destroy]] static std::mutex mt;
+    [[clang::no_destroy]] static std::weak_ptr<PSHost> cache;
     
     std::lock_guard<std::mutex> lock(mt);
     if(auto host = cache.lock())

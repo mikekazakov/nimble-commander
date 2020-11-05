@@ -10,21 +10,21 @@ SDKROOT = macosx
 GCC_PREPROCESSOR_DEFINITIONS = SPDLOG_COMPILED_LIB
 
 // C++
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include
 
 // Objective-C
 CLANG_ENABLE_OBJC_ARC = YES
 
 // Linker
-OTHER_LDFLAGS = -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework QuartzCore -larchive -lboost_system-mt -lboost_filesystem-mt -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2
+OTHER_LDFLAGS = -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework QuartzCore -larchive -lboost_system-mt -lboost_filesystem-mt -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv
 
 // Paths - headers
 USE_HEADERMAP = NO
 THRDPTY=../3rd_Party
-HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/single_include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libarchive/include
+HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/single_include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/unrar/include
 
 // Paths - libraries
-LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/built $(THRDPTY)/spdlog/built $(THRDPTY)/googletest/built $(THRDPTY)/z/built $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/built $(THRDPTY)/lzma/built $(THRDPTY)/bz2/built
+LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/built $(THRDPTY)/spdlog/built $(THRDPTY)/googletest/built $(THRDPTY)/z/built $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/built $(THRDPTY)/lzma/built $(THRDPTY)/bz2/built $(THRDPTY)/libssh2/built $(THRDPTY)/pugixml/built $(THRDPTY)/unrar/built
 
 // Warnings - all languages
 CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES

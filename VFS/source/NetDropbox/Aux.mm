@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <VFS/VFSError.h>
 #include "Aux.h"
@@ -191,8 +191,8 @@ std::pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
 Metadata ParseMetadata( const rapidjson::Value &_value )
 {
     using namespace std::literals;
-    static const auto file_type = "file"s, folder_type = "folder"s;
-    static const auto date_formatter = []{
+    [[clang::no_destroy]] static const auto file_type = "file"s, folder_type = "folder"s;
+    [[clang::no_destroy]] static const auto date_formatter = []{
         NSDateFormatter * df = [[NSDateFormatter alloc] init];
         df.dateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";
         return df;

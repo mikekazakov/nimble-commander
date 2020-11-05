@@ -349,13 +349,13 @@ int Host::GetXAttrs([[maybe_unused]] const char *_path,
 
 const std::shared_ptr<Host> &Host::DummyHost()
 {
-    static auto host = std::make_shared<Host>("", nullptr, Host::UniqueTag);
+    [[clang::no_destroy]] static auto host = std::make_shared<Host>("", nullptr, Host::UniqueTag);
     return host;
 }
 
 VFSConfiguration Host::Configuration() const
 {
-    static auto config = VFSConfiguration( VFSHostConfiguration() );
+    [[clang::no_destroy]] static auto config = VFSConfiguration( VFSHostConfiguration() );
     return config;
 }
 

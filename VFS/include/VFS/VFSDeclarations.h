@@ -172,7 +172,7 @@ class Host;
 }
 
 using VFSListing            = nc::vfs::Listing;
-using VFSListingPtr         = nc::base::intrusive_ptr<nc::vfs::Listing>;
+using VFSListingPtr         = nc::base::intrusive_ptr<const nc::vfs::Listing>;
 using VFSListingItem        = nc::vfs::ListingItem;
 using VFSHost               = nc::vfs::Host;
 using VFSHostPtr            = std::shared_ptr<nc::vfs::Host>;

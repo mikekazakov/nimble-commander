@@ -450,7 +450,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
 
     if( S_ISREG(stat_buffer.mode) ) {
         Source::ItemMeta meta;
-        meta.base_vfs_indx = _vfs_no;
+        meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
         meta.flags = (uint16_t)Source::ItemFlags::no_flags;
         _ctx.metas.emplace_back( meta );
@@ -459,7 +459,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
     }
     else if( S_ISLNK(stat_buffer.mode) ) {
         Source::ItemMeta meta;
-        meta.base_vfs_indx = _vfs_no;
+        meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
         meta.flags = (uint16_t)Source::ItemFlags::symlink;
         _ctx.metas.emplace_back( meta );
@@ -467,7 +467,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
     }
     else if( S_ISDIR(stat_buffer.mode) ) {
         Source::ItemMeta meta;
-        meta.base_vfs_indx = _vfs_no;
+        meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
         meta.flags = (uint16_t)Source::ItemFlags::is_dir;
         _ctx.metas.emplace_back( meta );

@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingScheme.h"
 
 namespace nc::ops {
@@ -488,57 +488,57 @@ std::optional<std::pair<BatchRenamingScheme::Counter, int>> BatchRenamingScheme:
 
 NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction &_te)
 {
-    auto length = (unsigned short) _from.length;
-    if( length == 0)
+    auto length = (unsigned short)_from.length;
+    if( length == 0 )
         return @"";
-    
+
     if( _te.direct_range ) {
         auto rr = *_te.direct_range;
         auto sr = Range(0, length);
-        if( !sr.intersects( rr ) )
+        if( !sr.intersects(rr) )
             return @"";
-        
-        auto res = sr.intersection( rr );
+
+        auto res = sr.intersection(rr);
         auto str = [_from substringWithRange:res.toNSRange()];
-        if((_te.zero_flag || _te.space_flag) &&
-           rr.length != Range::max_length() &&
-           str.length < rr.length) {
+        if( (_te.zero_flag || _te.space_flag) && rr.length != Range::max_length() &&
+            str.length < rr.length ) {
             auto insufficient = rr.length - str.length;
-            if(insufficient > 300) insufficient = 300;
-            
-            auto padding = [@"" stringByPaddingToLength:insufficient withString:(_te.zero_flag ? @"0" : @" ") startingAtIndex:0];
+            if( insufficient > 300 )
+                insufficient = 300;
+
+            auto padding =
+                [@"" stringByPaddingToLength:insufficient
+                                  withString:(_te.zero_flag ? @"0" : @" ")startingAtIndex:0];
             return [padding stringByAppendingString:str];
-        }
-        else {
+        } else {
             return str;
         }
-    }
-    else if( _te.reverse_range ) {
+    } else if( _te.reverse_range ) {
         auto rr = *_te.reverse_range;
         auto sr = Range(0, length);
-        if(rr.location + 1 > sr.length)
+        if( rr.location + 1 > sr.length )
             rr.location = 0;
         else
             rr.location = sr.length - rr.location - 1;
 
         if( !sr.intersects(rr) )
             return @"";
-        
+
         auto res = sr.intersection(rr);
         return [_from substringWithRange:res.toNSRange()];
-    }
-    else {
-        if(_te.to_last + 1 >= length)
+    } else {
+        if( _te.to_last + 1 >= length )
             return @"";
         unsigned start = _te.from_first;
         unsigned end = length - _te.to_last - 1;
-        if(start > end)
+        if( start > end )
             return @"";
-        
-        auto res = Range(start, end - start + 1);
+
+        auto res =
+            Range(static_cast<unsigned short>(start), static_cast<unsigned short>(end - start + 1));
         return [_from substringWithRange:res.toNSRange()];
     }
-    
+
     return nil;
 }
 

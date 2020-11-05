@@ -1,16 +1,4 @@
-HEADER_SEARCH_PATHS = $(PROJECT_DIR)/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../RoutedIO/include $(PROJECT_DIR)/../3rd_Party/libarchive/include $(PROJECT_DIR)/../3rd_Party/boost/include $(HOME)
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror
-
-LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/libarchive/built $(PROJECT_DIR)/../3rd_Party/boost/built $(PROJECT_DIR)/../3rd_Party/OpenSSL/lib
-
-VALID_ARCHS = x86_64
-MACOSX_DEPLOYMENT_TARGET = 10.15
-
-OTHER_LDFLAGS = -larchive -lboost_system-mt -lboost_filesystem-mt -lz -lssl -lcrypto -llzma -lbz2 -framework AppKit -framework DiskArbitration -framework Foundation -framework SystemConfiguration -framework ServiceManagement -framework Security -framework Cocoa -framework OpenDirectory -framework QuartzCore -framework IOKit -lVFS -lHabanero
-
+#include "../../XCConfig/common.xcconfig"
 ALWAYS_SEARCH_USER_PATHS = NO
-USE_HEADERMAP = NO
-
-CLANG_ENABLE_OBJC_ARC = YES
-
-ENABLE_STRICT_OBJC_MSGSEND = YES
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../RoutedIO/include $(HOME)
+OTHER_LDFLAGS = $(inherited) -lVFS -lHabanero

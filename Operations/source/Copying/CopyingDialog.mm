@@ -17,7 +17,7 @@ static std::string MakeCanonicPath(std::string _input)
 {
     using namespace std::literals;
     
-    static const auto dotdot = "/../"s;
+    const auto dotdot = "/../"s;
     auto pos = _input.find(dotdot);
     if( pos != _input.npos && pos > 0 ) {
         auto sl = _input.rfind('/', pos-1);
@@ -27,7 +27,7 @@ static std::string MakeCanonicPath(std::string _input)
         }
     }
     
-    static const auto dot = "/./"s;
+    const auto dot = "/./"s;
     pos = _input.find(dot);
     if( pos != _input.npos ) {
         _input.erase( pos, 2 );

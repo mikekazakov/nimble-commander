@@ -112,7 +112,7 @@ bool Operation::Wait( std::chrono::nanoseconds _wait_for_time ) const
     if( pred() )
         return true;
     
-    static std::mutex m;
+    [[clang::no_destroy]] static std::mutex m; // wtf is this???
     std::unique_lock<std::mutex> lock{m};
     if( _wait_for_time == std::chrono::nanoseconds::max() ) {
         m_FinishCV.wait(lock, pred);

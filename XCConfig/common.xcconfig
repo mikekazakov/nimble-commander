@@ -16,15 +16,15 @@ OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isy
 CLANG_ENABLE_OBJC_ARC = YES
 
 // Linker
-OTHER_LDFLAGS = -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -lboost_system-mt -lboost_filesystem-mt -lspdlog -lgmock -lgtest -lz
+OTHER_LDFLAGS = -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework QuartzCore -larchive -lboost_system-mt -lboost_filesystem-mt -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2
 
 // Paths - headers
 USE_HEADERMAP = NO
 THRDPTY=../3rd_Party
-HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/single_include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include
+HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/single_include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libarchive/include
 
 // Paths - libraries
-LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/built $(THRDPTY)/spdlog/built $(THRDPTY)/googletest/built
+LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/built $(THRDPTY)/spdlog/built $(THRDPTY)/googletest/built $(THRDPTY)/z/built $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/built $(THRDPTY)/lzma/built $(THRDPTY)/bz2/built
 
 // Warnings - all languages
 CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES

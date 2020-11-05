@@ -242,7 +242,7 @@ static std::vector<unsigned> ListDirsWithPrefix
 }
 
 // sync operation with simple caching
-- (VFSListing*) listingFromDir:(const std::string&)_path
+- (const VFSListing*) listingFromDir:(const std::string&)_path
 {
     if( _path.empty() )
         return nullptr;

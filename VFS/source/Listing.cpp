@@ -99,7 +99,7 @@ Listing::Listing() = default;
 
 Listing::~Listing() = default;
 
-base::intrusive_ptr<Listing> Listing::Build(ListingInput &&_input)
+base::intrusive_ptr<const Listing> Listing::Build(ListingInput &&_input)
 {
     Validate( _input ); // will throw an exception on error
     Compress( _input );
@@ -130,7 +130,7 @@ base::intrusive_ptr<Listing> Listing::Build(ListingInput &&_input)
     return l;
 }
 
-ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<Listing>> &_listings)
+ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<const Listing>> &_listings)
 {
     ListingInput result;
     result.hosts.reset( variable_container<>::type::dense );
@@ -189,7 +189,7 @@ ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<Listing>> &_
     return result;
 }
 
-ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<Listing>> &_listings,
+ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<const Listing>> &_listings,
                               const std::vector<std::vector<unsigned> > &_items_indeces)
 {
     if( _listings.size() != _items_indeces.size() )
@@ -317,9 +317,9 @@ VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing( const Listing& _orig
     return Build( std::move(result) );
 }
 
-const base::intrusive_ptr<Listing> &Listing::EmptyListing() noexcept
+const base::intrusive_ptr<const Listing> &Listing::EmptyListing() noexcept
 {
-    static const auto empty = []{
+    static const base::intrusive_ptr<const Listing> empty = []{
         auto l = base::intrusive_ptr{new Listing};
         l->m_ItemsCount = 0;
         l->m_Hosts.insert(0, Host::DummyHost());

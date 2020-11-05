@@ -43,8 +43,7 @@ bool SupportsFastTruncationAfterPreallocation
     // noticable lag. Thus, until something changes in F_PREALLOCATE/ftruncate() implementation on
     // APFS or some clarification on the situation appears, the preallocation is not followed with
     // ftruncate() for this FS.
-    using namespace std::literals;
-    static const auto hfs_plus = "hfs"s;
+    constexpr std::string_view hfs_plus = "hfs";
     return _fs_info.fs_type_name == hfs_plus;
 }
 

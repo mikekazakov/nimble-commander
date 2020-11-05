@@ -5,6 +5,7 @@
 #include <Habanero/CFString.h>
 #include <Habanero/intrusive_ptr.h>
 #include <VFS/VFSDeclarations.h>
+#include <cassert>
 
 /**
  * A note about symlinks handling. Listing must be aware, that some items might be symlinks.
@@ -28,20 +29,20 @@ class Listing : public nc::base::intrusive_ref_counter<Listing>
 public:
     ~Listing();
 
-    static const base::intrusive_ptr<Listing> &EmptyListing() noexcept;
-    static base::intrusive_ptr<Listing> Build(ListingInput &&_input);
+    static const base::intrusive_ptr<const Listing> &EmptyListing() noexcept;
+    static base::intrusive_ptr<const Listing> Build(ListingInput &&_input);
     
     /**
      * compose many listings into a new ListingInput.
      * it will contain only sparse-based variable containers.
      * will throw on errors
      */
-    static ListingInput Compose(const std::vector<base::intrusive_ptr<Listing>> &_listings);
-    static ListingInput Compose(const std::vector<base::intrusive_ptr<Listing>> &_listings,
+    static ListingInput Compose(const std::vector<base::intrusive_ptr<const Listing>> &_listings);
+    static ListingInput Compose(const std::vector<base::intrusive_ptr<const Listing>> &_listings,
                                 const std::vector< std::vector<unsigned> > &_items_indeces);
     
     
-    static base::intrusive_ptr<Listing>
+    static base::intrusive_ptr<const Listing>
         ProduceUpdatedTemporaryPanelListing(const Listing& _original,
                                             VFSCancelChecker _cancel_checker );
     
@@ -138,6 +139,8 @@ public:
     
 private:
     Listing();
+    Listing(const Listing&) = delete;
+    Listing& operator=(const Listing&) = delete;
     void BuildFilenames();    
     
     unsigned                                m_ItemsCount;
@@ -328,15 +331,17 @@ inline const char *Listing::Extension(unsigned _ind) const
     return m_Filenames[_ind].c_str() + m_ExtensionOffsets[_ind];
 }
 
-inline const std::string& Listing::Filename(unsigned _ind) const
+inline const std::string &Listing::Filename(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
+    assert(_ind < m_Filenames.size());
     return m_Filenames[_ind];
 }
 
 inline CFStringRef Listing::FilenameCF(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
+    assert(_ind < m_FilenamesCF.size());
     return *m_FilenamesCF[_ind];
 }
 

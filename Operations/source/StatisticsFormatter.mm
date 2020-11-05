@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StatisticsFormatter.h"
 #include <Utility/ByteCountFormatter.h>
 #include "Statistics.h"
@@ -56,14 +56,14 @@ NSString *StatisticsFormatter::WithItems() const
   
 NSString *StatisticsFormatter::WithBytes() const
 {
-    auto &fmt = ByteCountFormatter::Instance();
+    auto &formatter = ByteCountFormatter::Instance();
     const auto fmt_type = ByteCountFormatter::Adaptive8;
 
     const auto volume_total = m_Stats.VolumeTotal(Statistics::SourceType::Bytes);
-    const auto volume_total_str = fmt.ToNSString(volume_total, fmt_type);
+    const auto volume_total_str = formatter.ToNSString(volume_total, fmt_type);
     
     const auto volume_processed = m_Stats.VolumeProcessed(Statistics::SourceType::Bytes);
-    const auto volume_processed_str = fmt.ToNSString(volume_processed, fmt_type);
+    const auto volume_processed_str = formatter.ToNSString(volume_processed, fmt_type);
 
     if( m_Stats.IsPaused() ) {
         auto fmt = NSLocalizedString(@"%@ of %@ - Paused", "");
@@ -74,7 +74,7 @@ NSString *StatisticsFormatter::WithBytes() const
     else {
         const auto speed = m_Stats.SpeedPerSecondDirect(Statistics::SourceType::Bytes);
         if( speed != 0 ) {
-            const auto speed_str = fmt.ToNSString(speed, fmt_type);
+            const auto speed_str = formatter.ToNSString(static_cast<uint64_t>(speed), fmt_type);
             const auto eta = m_Stats.ETA(Statistics::SourceType::Bytes);
             const auto eta_str = eta ? FormatETAString(*eta) : nil;
             if( eta_str ) {

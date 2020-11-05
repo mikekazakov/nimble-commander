@@ -5,7 +5,7 @@
 
 const TestEnvironment& TestEnv() noexcept
 {
-    static const std::unique_ptr<TestEnvironment> env = []{
+    [[clang::no_destroy]] static const std::unique_ptr<TestEnvironment> env = []{
         auto e = std::make_unique<TestEnvironment>();
         e->native_fs_man = std::make_shared<nc::utility::NativeFSManagerImpl>();
         e->vfs_native = std::make_shared<nc::vfs::NativeHost>( *e->native_fs_man );

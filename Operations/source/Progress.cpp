@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Progress.h"
 #include <iostream>
 #include <Habanero/mach_time.h>
@@ -50,8 +50,8 @@ void Progress::CommitProcessed( uint64_t _delta )
         auto &last = m_Timeline.back();
         const auto dt = std::min( 1. - last.fraction, fp_left_delta_time );
         const auto db = fp_bytes * dt / fp_delta_time;
-        last.value += db;
-        last.fraction += dt;
+        last.value = static_cast<float>(last.value + db);
+        last.fraction = static_cast<float>(last.fraction + dt);
         fp_left_delta_time -= dt;
     }
     
@@ -60,8 +60,8 @@ void Progress::CommitProcessed( uint64_t _delta )
         const auto db = fp_bytes * dt / fp_delta_time;
         fp_left_delta_time -= dt;
         TimePoint sp;
-        sp.value = db;
-        sp.fraction = dt;
+        sp.value = static_cast<float>(db);
+        sp.fraction = static_cast<float>(dt);
         m_Timeline.emplace_back( sp );
     }
 }

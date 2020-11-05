@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionJob.h"
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>
@@ -82,35 +82,39 @@ void DeletionJob::ScanDirectory(const std::string &_path,
     auto &vfs = *m_SourceItems[_listing_item_index].Host();
 
     std::vector<VFSDirEnt> dir_entries;
-    const auto it_callback = [&](const VFSDirEnt &_entry){
+    const auto it_callback = [&](const VFSDirEnt &_entry) {
         dir_entries.emplace_back(_entry);
         return true;
     };
     while( true )
         if( auto rc = vfs.IterateDirectoryListing(_path.c_str(), it_callback); rc == VFSError::Ok )
             break;
-        else switch( m_OnReadDirError(rc, _path, vfs) ) {
-                case ReadDirErrorResolution::Retry: continue;
-                case ReadDirErrorResolution::Stop: Stop();
-                case ReadDirErrorResolution::Skip: return;
+        else
+            switch( m_OnReadDirError(rc, _path, vfs) ) {
+            case ReadDirErrorResolution::Retry:
+                continue;
+            case ReadDirErrorResolution::Stop:
+                Stop();
+            case ReadDirErrorResolution::Skip:
+                return;
             }
 
-    for( const auto &e: dir_entries ) {
+    for( const auto &e : dir_entries ) {
         Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
         if( e.type == DT_DIR ) {
-            m_Paths.push_back( EnsureTrailingSlash(e.name), _prefix );
+            m_Paths.push_back(EnsureTrailingSlash(e.name), _prefix);
             SourceItem si;
             si.listing_item_index = _listing_item_index;
             si.filename = &m_Paths.back();
             si.type = DeletionType::Permanent;
             m_Script.emplace(si);
-            
-            ScanDirectory( EnsureTrailingSlash(_path) + e.name, _listing_item_index, si.filename);
-        }
-        else {
-            const auto is_ea_storage = IsEAStorage(vfs, _path, e.name, e.type);
+
+            ScanDirectory(EnsureTrailingSlash(_path) + e.name, _listing_item_index, si.filename);
+        } else {
+            const auto is_ea_storage =
+                IsEAStorage(vfs, _path, e.name, static_cast<uint8_t>(e.type));
             if( !is_ea_storage ) {
-                m_Paths.push_back( e.name, _prefix );
+                m_Paths.push_back(e.name, _prefix);
                 SourceItem si;
                 si.listing_item_index = _listing_item_index;
                 si.filename = &m_Paths.back();

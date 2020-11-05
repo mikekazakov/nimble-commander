@@ -158,7 +158,7 @@ bool Job::IsPaused() const noexcept
 void Job::BlockIfPaused()
 {
     if( m_IsPaused && !m_IsStopped ) {
-        static std::mutex mutex;
+        [[clang::no_destroy]] static std::mutex mutex; // wtf is this???
         std::unique_lock<std::mutex> lock{mutex};
         const auto predicate = [this]{ return !m_IsPaused; };
         

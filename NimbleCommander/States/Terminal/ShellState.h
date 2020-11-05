@@ -16,6 +16,7 @@ namespace nc::term {
 @interface NCTermShellState : NSView<NCMainWindowState>
 
 @property (nonatomic, readonly) bool isAnythingRunning;
+@property (nonatomic) bool spamVT100Input;
 
 - (instancetype)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)frameRect

@@ -37,7 +37,10 @@ static const auto g_CustomPath = "terminal.customShellPath";
     nc::utility::NativeFSManager       *m_NativeFSManager;
     std::string                         m_InitalWD;
     std::string                         m_Title;
+    bool                                m_SpamVT100Input;
 }
+
+@synthesize spamVT100Input = m_SpamVT100Input;
 
 - (id)initWithFrame:(NSRect)frameRect
     nativeFSManager:(nc::utility::NativeFSManager&)_native_fs_man
@@ -48,6 +51,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
         __weak NCTermShellState *weak_self = self;
         m_NativeFSManager = &_native_fs_man;
         m_InitalWD = nc::base::CommonPaths::Home();
+        m_SpamVT100Input = false;
         
         m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
                                                        attachToTop:true
@@ -174,7 +178,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
         m_InitalWD = _wd;
 }
 
-- (void) windowStateDidBecomeAssigned
+- (void)windowStateDidBecomeAssigned
 {
     m_TopLayoutConstraint = [NSLayoutConstraint constraintWithItem:m_TermScrollView
                                                          attribute:NSLayoutAttributeTop
@@ -187,15 +191,15 @@ static const auto g_CustomPath = "terminal.customShellPath";
     [self layoutSubtreeIfNeeded];
 
     __weak NCTermShellState *weakself = self;
-    m_Task->SetOnChildOutput([=](const void* _d, int _sz){
+    m_Task->SetOnChildOutput([=](const void *_d, int _sz) {
         if( auto strongself = weakself ) {
-            auto cmds = strongself->m_Parser->Parse({(const std::byte*)_d, (size_t)_sz});
+            auto cmds = strongself->m_Parser->Parse({(const std::byte *)_d, (size_t)_sz});
             if( cmds.empty() )
                 return;
-            dispatch_to_main_queue( [=, cmds=std::move(cmds)]{
-                
-//                nc::term::input::PrintCommands(cmds);
-                
+            dispatch_to_main_queue([=, cmds = std::move(cmds)] {
+                if( strongself->m_SpamVT100Input )
+                    nc::term::input::PrintCommands(cmds);
+
                 if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
                     strongself->m_Interpreter->Interpret(cmds);
                 [strongself->m_TermScrollView.view.fpsDrawer invalidate];
@@ -203,23 +207,21 @@ static const auto g_CustomPath = "terminal.customShellPath";
             });
         }
     });
-    
-    m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const char *_cwd, [[maybe_unused]] bool _changed){
+
+    m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const char *_cwd, [[maybe_unused]] bool _changed) {
         if( auto strongself = weakself ) {
             strongself->m_Title = "";
             [strongself updateTitle];
         }
     });
-    
-    
+
     // need right CWD here
     if( m_Task->State() == ShellTask::TaskState::Inactive ||
         m_Task->State() == ShellTask::TaskState::Dead ) {
-        m_Task->ResizeWindow( m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height() );
-        m_Task->Launch( m_InitalWD.c_str() );
+        m_Task->ResizeWindow(m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
+        m_Task->Launch(m_InitalWD.c_str());
     }
 
-    
     [self.window makeFirstResponder:m_TermScrollView.view];
     [self updateTitle];
     [m_TermScrollView tile];
@@ -331,6 +333,9 @@ static const auto g_CustomPath = "terminal.customShellPath";
         item.title = NSLocalizedString(@"Hide Terminal", "Menu item title for hiding terminal");
         return true;
     }
+    else if( item.action == @selector(onPrintVT100Commands:) ) {
+        item.state = m_SpamVT100Input ? NSControlStateValueOn : NSControlStateValueOff;
+    }
     return true;
 }
 
@@ -348,6 +353,10 @@ static const auto g_CustomPath = "terminal.customShellPath";
                 [self chDir:"/Volumes/"]; // TODO: need to do something more elegant
         }
     }
+}
+
+- (IBAction)onPrintVT100Commands:(id)sender {
+    m_SpamVT100Input = !m_SpamVT100Input;
 }
 
 @end

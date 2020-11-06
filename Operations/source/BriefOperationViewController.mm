@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOperationViewController.h"
 #include "Internal.h"
 #include "Operation.h"
@@ -19,14 +19,14 @@ static const auto g_RapidUpdateFreq = 30.0;
 static const auto g_SlowUpdateFreq = 1.0;
 
 @interface NCOpsBriefOperationViewController()
-@property (strong) IBOutlet NSTextField *titleLabel;
-@property (strong) IBOutlet NSTextField *ETA;
-@property (strong) IBOutlet NSProgressIndicator *progressBar;
-@property (strong) IBOutlet NSButton *pauseButton;
-@property (strong) IBOutlet NSButton *resumeButton;
-@property (strong) IBOutlet NSButton *stopButton;
-@property bool isPaused;
-@property bool isCold;
+@property (strong, nonatomic) IBOutlet NSTextField *titleLabel;
+@property (strong, nonatomic) IBOutlet NSTextField *ETA;
+@property (strong, nonatomic) IBOutlet NSProgressIndicator *progressBar;
+@property (strong, nonatomic) IBOutlet NSButton *pauseButton;
+@property (strong, nonatomic) IBOutlet NSButton *resumeButton;
+@property (strong, nonatomic) IBOutlet NSButton *stopButton;
+@property (nonatomic) bool isPaused;
+@property (nonatomic) bool isCold;
 @end
 
 @implementation NCOpsBriefOperationViewController

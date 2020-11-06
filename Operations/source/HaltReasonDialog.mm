@@ -1,12 +1,12 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "HaltReasonDialog.h"
 #include <VFS/VFS.h>
 
 @interface NCOpsHaltReasonDialog ()
-@property (strong) IBOutlet NSTextField *pathLabel;
-@property (strong) IBOutlet NSTextField *errorLabel;
-@property (strong) IBOutlet NSTextField *messageLabel;
-@property (strong) IBOutlet NSImageView *appIcon;
+@property (strong, nonatomic) IBOutlet NSTextField *pathLabel;
+@property (strong, nonatomic) IBOutlet NSTextField *errorLabel;
+@property (strong, nonatomic) IBOutlet NSTextField *messageLabel;
+@property (strong, nonatomic) IBOutlet NSImageView *appIcon;
 
 @end
 

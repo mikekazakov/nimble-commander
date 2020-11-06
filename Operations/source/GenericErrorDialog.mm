@@ -9,12 +9,12 @@
 using namespace nc::ops;
 
 @interface NCOpsGenericErrorDialog ()
-@property (strong) IBOutlet NSTextField *pathLabel;
-@property (strong) IBOutlet NSTextField *errorLabel;
-@property (strong) IBOutlet NSTextField *messageLabel;
-@property (strong) IBOutlet NSImageView *appIcon;
-@property (strong) IBOutlet NSImageView *dialogIcon;
-@property (strong) IBOutlet NSButton *applyToAllCheckBox;
+@property (strong, nonatomic) IBOutlet NSTextField *pathLabel;
+@property (strong, nonatomic) IBOutlet NSTextField *errorLabel;
+@property (strong, nonatomic) IBOutlet NSTextField *messageLabel;
+@property (strong, nonatomic) IBOutlet NSImageView *appIcon;
+@property (strong, nonatomic) IBOutlet NSImageView *dialogIcon;
+@property (strong, nonatomic) IBOutlet NSButton *applyToAllCheckBox;
 
 @end
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AlterSymlinkDialog.h"
 #include "../Internal.h"
 #include <Utility/StringExtras.h>
@@ -7,8 +7,8 @@ using namespace nc::ops;
 
 @interface NCOpsAlterSymlinkDialog ()
 
-@property (strong) IBOutlet NSTextField *Text;
-@property (strong) IBOutlet NSTextField *SourcePath;
+@property (strong, nonatomic) IBOutlet NSTextField *Text;
+@property (strong, nonatomic) IBOutlet NSTextField *SourcePath;
 
 - (IBAction)OnOk:(id)sender;
 - (IBAction)OnCancel:(id)sender;

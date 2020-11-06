@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PoolViewController.h"
 #include "Pool.h"
 #include "Internal.h"
@@ -12,10 +12,10 @@ using namespace std::literals;
 static const auto g_ViewAppearTimeout = 100ms;
 
 @interface NCOpsPoolViewController()
-@property (strong) IBOutlet NSView *idleViewHolder;
-@property (strong) IBOutlet NSView *briefViewHolder;
-@property (strong) IBOutlet NSButton *upButton;
-@property (strong) IBOutlet NSButton *downButton;
+@property (strong, nonatomic) IBOutlet NSView *idleViewHolder;
+@property (strong, nonatomic) IBOutlet NSView *briefViewHolder;
+@property (strong, nonatomic) IBOutlet NSButton *upButton;
+@property (strong, nonatomic) IBOutlet NSButton *downButton;
 
 
 @end

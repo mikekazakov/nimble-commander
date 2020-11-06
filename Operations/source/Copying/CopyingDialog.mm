@@ -39,22 +39,22 @@ static std::string MakeCanonicPath(std::string _input)
 
 @interface NCOpsCopyingDialog()
 
-@property (strong) IBOutlet NSButton *CopyButton;
-@property (strong) IBOutlet NSTextField *TextField;
-@property (strong) IBOutlet NSTextField *DescriptionText;
-@property (strong) IBOutlet NSButton *PreserveSymlinksCheckbox;
-@property (strong) IBOutlet NSButton *CopyXattrsCheckbox;
-@property (strong) IBOutlet NSButton *CopyFileTimesCheckbox;
-@property (strong) IBOutlet NSButton *CopyUNIXFlagsCheckbox;
-@property (strong) IBOutlet NSButton *CopyUnixOwnersCheckbox;
-@property (strong) IBOutlet NSButton *CopyButtonStringStub;
-@property (strong) IBOutlet NSButton *RenameButtonStringStub;
-@property bool isValidInput;
-@property (strong) IBOutlet DisclosureViewController *DisclosedViewController;
-@property (strong) IBOutlet NSStackView *StackView;
-@property (strong) IBOutlet NSView *PathPart;
-@property (strong) IBOutlet NSView *ButtonsPart;
-@property (strong) IBOutlet NSPopUpButton *VerifySetting;
+@property (strong, nonatomic) IBOutlet NSButton *CopyButton;
+@property (strong, nonatomic) IBOutlet NSTextField *TextField;
+@property (strong, nonatomic) IBOutlet NSTextField *DescriptionText;
+@property (strong, nonatomic) IBOutlet NSButton *PreserveSymlinksCheckbox;
+@property (strong, nonatomic) IBOutlet NSButton *CopyXattrsCheckbox;
+@property (strong, nonatomic) IBOutlet NSButton *CopyFileTimesCheckbox;
+@property (strong, nonatomic) IBOutlet NSButton *CopyUNIXFlagsCheckbox;
+@property (strong, nonatomic) IBOutlet NSButton *CopyUnixOwnersCheckbox;
+@property (strong, nonatomic) IBOutlet NSButton *CopyButtonStringStub;
+@property (strong, nonatomic) IBOutlet NSButton *RenameButtonStringStub;
+@property (nonatomic) bool isValidInput;
+@property (strong, nonatomic) IBOutlet DisclosureViewController *DisclosedViewController;
+@property (strong, nonatomic) IBOutlet NSStackView *StackView;
+@property (strong, nonatomic) IBOutlet NSView *PathPart;
+@property (strong, nonatomic) IBOutlet NSView *ButtonsPart;
+@property (strong, nonatomic) IBOutlet NSPopUpButton *VerifySetting;
 
 @end
 

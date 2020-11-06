@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -14,6 +14,6 @@ namespace nc::ops {
 
 @property (nonatomic, readonly) const std::shared_ptr<nc::ops::Operation>& operation;
 
-@property bool shouldDelayAppearance;
+@property (nonatomic) bool shouldDelayAppearance;
 
 @end

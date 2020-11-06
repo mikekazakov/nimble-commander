@@ -1,34 +1,34 @@
-// Copyright (C) 2015-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 
 @interface SheetWithHotkeys : NSWindow
 
-@property (strong) void (^onCtrlA)();
-@property (strong) void (^onCtrlB)();
-@property (strong) void (^onCtrlC)();
-@property (strong) void (^onCtrlD)();
-@property (strong) void (^onCtrlE)();
-@property (strong) void (^onCtrlF)();
-@property (strong) void (^onCtrlG)();
-@property (strong) void (^onCtrlH)();
-@property (strong) void (^onCtrlI)();
-@property (strong) void (^onCtrlJ)();
-@property (strong) void (^onCtrlK)();
-@property (strong) void (^onCtrlL)();
-@property (strong) void (^onCtrlM)();
-@property (strong) void (^onCtrlN)();
-@property (strong) void (^onCtrlO)();
-@property (strong) void (^onCtrlP)();
-@property (strong) void (^onCtrlQ)();
-@property (strong) void (^onCtrlR)();
-@property (strong) void (^onCtrlS)();
-@property (strong) void (^onCtrlT)();
-@property (strong) void (^onCtrlU)();
-@property (strong) void (^onCtrlV)();
-@property (strong) void (^onCtrlW)();
-@property (strong) void (^onCtrlX)();
-@property (strong) void (^onCtrlY)();
-@property (strong) void (^onCtrlZ)();
+@property (strong, nonatomic) void (^onCtrlA)();
+@property (strong, nonatomic) void (^onCtrlB)();
+@property (strong, nonatomic) void (^onCtrlC)();
+@property (strong, nonatomic) void (^onCtrlD)();
+@property (strong, nonatomic) void (^onCtrlE)();
+@property (strong, nonatomic) void (^onCtrlF)();
+@property (strong, nonatomic) void (^onCtrlG)();
+@property (strong, nonatomic) void (^onCtrlH)();
+@property (strong, nonatomic) void (^onCtrlI)();
+@property (strong, nonatomic) void (^onCtrlJ)();
+@property (strong, nonatomic) void (^onCtrlK)();
+@property (strong, nonatomic) void (^onCtrlL)();
+@property (strong, nonatomic) void (^onCtrlM)();
+@property (strong, nonatomic) void (^onCtrlN)();
+@property (strong, nonatomic) void (^onCtrlO)();
+@property (strong, nonatomic) void (^onCtrlP)();
+@property (strong, nonatomic) void (^onCtrlQ)();
+@property (strong, nonatomic) void (^onCtrlR)();
+@property (strong, nonatomic) void (^onCtrlS)();
+@property (strong, nonatomic) void (^onCtrlT)();
+@property (strong, nonatomic) void (^onCtrlU)();
+@property (strong, nonatomic) void (^onCtrlV)();
+@property (strong, nonatomic) void (^onCtrlW)();
+@property (strong, nonatomic) void (^onCtrlX)();
+@property (strong, nonatomic) void (^onCtrlY)();
+@property (strong, nonatomic) void (^onCtrlZ)();
 
 - (void (^)()) makeActionHotkey:(SEL)_action;
 - (void (^)()) makeFocusHotkey:(NSView*)_target;

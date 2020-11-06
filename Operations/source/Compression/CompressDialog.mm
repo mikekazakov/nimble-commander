@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
@@ -8,16 +8,16 @@
 using namespace nc::ops;
 
 @interface NCOpsCompressDialog ()
-@property (weak) IBOutlet NSButton *compressButton;
-@property (weak) IBOutlet NSButton *cancelButton;
-@property (weak) IBOutlet NSButton *protectWithPasswordCheckbox;
-@property (weak) IBOutlet NSSecureTextField *passwordTextField;
-@property (weak) IBOutlet NSTextField *destinationTextField;
-@property (weak) IBOutlet NSTextField *destinationTitleTextField;
-@property () bool protectWithPassword;
-@property () bool validInput;
-@property () NSString *destinationString;
-@property () NSString *passwordString;
+@property (weak, nonatomic) IBOutlet NSButton *compressButton;
+@property (weak, nonatomic) IBOutlet NSButton *cancelButton;
+@property (weak, nonatomic) IBOutlet NSButton *protectWithPasswordCheckbox;
+@property (weak, nonatomic) IBOutlet NSSecureTextField *passwordTextField;
+@property (weak, nonatomic) IBOutlet NSTextField *destinationTextField;
+@property (weak, nonatomic) IBOutlet NSTextField *destinationTitleTextField;
+@property (nonatomic) bool protectWithPassword;
+@property (nonatomic) bool validInput;
+@property (nonatomic) NSString *destinationString;
+@property (nonatomic) NSString *passwordString;
 
 @end
 

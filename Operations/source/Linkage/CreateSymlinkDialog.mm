@@ -1,13 +1,13 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CreateSymlinkDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 
 @interface NCOpsCreateSymlinkDialog()
 
-@property (strong) IBOutlet NSTextField *SourcePath;
-@property (strong) IBOutlet NSTextField *LinkPath;
-@property bool isValid;
+@property (strong, nonatomic) IBOutlet NSTextField *SourcePath;
+@property (strong, nonatomic) IBOutlet NSTextField *LinkPath;
+@property (nonatomic) bool isValid;
 @end
 
 @implementation NCOpsCreateSymlinkDialog

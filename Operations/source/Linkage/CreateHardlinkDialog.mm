@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CreateHardlinkDialog.h"
 #include "../Internal.h"
 #include <Utility/StringExtras.h>
@@ -8,9 +8,9 @@ using namespace nc::ops;
 
 @interface NCOpsCreateHardlinkDialog ()
 
-@property (strong) IBOutlet NSTextField *Text;
-@property (strong) IBOutlet NSTextField *LinkName;
-@property bool isValid;
+@property (strong, nonatomic) IBOutlet NSTextField *Text;
+@property (strong, nonatomic) IBOutlet NSTextField *LinkName;
+@property (nonatomic) bool isValid;
 
 @end
 

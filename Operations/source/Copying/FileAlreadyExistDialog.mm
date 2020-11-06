@@ -36,12 +36,12 @@ using namespace nc::ops;
 
 @interface NCOpsFileAlreadyExistDialog ()
 
-@property (strong) IBOutlet NSTextField *TargetFilename;
-@property (strong) IBOutlet NSTextField *NewFileSize;
-@property (strong) IBOutlet NSTextField *ExistingFileSize;
-@property (strong) IBOutlet NSTextField *NewFileTime;
-@property (strong) IBOutlet NSTextField *ExistingFileTime;
-@property (strong) IBOutlet NSButton *RememberCheck;
+@property (strong, nonatomic) IBOutlet NSTextField *TargetFilename;
+@property (strong, nonatomic) IBOutlet NSTextField *NewFileSize;
+@property (strong, nonatomic) IBOutlet NSTextField *ExistingFileSize;
+@property (strong, nonatomic) IBOutlet NSTextField *NewFileTime;
+@property (strong, nonatomic) IBOutlet NSTextField *ExistingFileTime;
+@property (strong, nonatomic) IBOutlet NSButton *RememberCheck;
 
 @end
 

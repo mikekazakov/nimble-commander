@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionDialog.h"
 #include "../Internal.h"
 #include <VFS/VFS.h>
@@ -7,9 +7,9 @@ using namespace nc::ops;
 
 @interface NCOpsDeletionDialog()
 
-@property (strong) IBOutlet NSTextField *Label;
-@property (strong) IBOutlet NSButton *primaryActionButton;
-@property (strong) IBOutlet NSPopUpButton *auxiliaryActionPopup;
+@property (strong, nonatomic) IBOutlet NSTextField *Label;
+@property (strong, nonatomic) IBOutlet NSButton *primaryActionButton;
+@property (strong, nonatomic) IBOutlet NSPopUpButton *auxiliaryActionPopup;
 
 @end
 

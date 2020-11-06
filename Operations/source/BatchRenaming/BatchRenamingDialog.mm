@@ -29,21 +29,21 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 
 @interface NCOpsBatchRenamingDialog()
 
-@property (strong) IBOutlet NSTableView *FilenamesTable;
-@property (strong) IBOutlet NSComboBox *FilenameMask;
-@property (strong) IBOutlet NSComboBox *SearchForComboBox;
-@property (strong) IBOutlet NSComboBox *ReplaceWithComboBox;
-@property (strong) IBOutlet NSButton *SearchCaseSensitive;
-@property (strong) IBOutlet NSButton *SearchOnlyOnce;
-@property (strong) IBOutlet NSButton *SearchInExtension;
-@property (strong) IBOutlet NSButton *SearchWithRegExp;
-@property (strong) IBOutlet NSPopUpButton *CaseProcessing;
-@property (strong) IBOutlet NSButton *CaseProcessingWithExtension;
-@property (strong) IBOutlet NSPopUpButton *CounterDigits;
-@property (strong) IBOutlet NSButton *InsertNameRangePlaceholderButton;
-@property (strong) IBOutlet NSButton *InsertPlaceholderMenuButton;
-@property (strong) IBOutlet NSMenu *InsertPlaceholderMenu;
-@property (strong) IBOutlet NSButton *OkButton;
+@property (strong, nonatomic) IBOutlet NSTableView *FilenamesTable;
+@property (strong, nonatomic) IBOutlet NSComboBox *FilenameMask;
+@property (strong, nonatomic) IBOutlet NSComboBox *SearchForComboBox;
+@property (strong, nonatomic) IBOutlet NSComboBox *ReplaceWithComboBox;
+@property (strong, nonatomic) IBOutlet NSButton *SearchCaseSensitive;
+@property (strong, nonatomic) IBOutlet NSButton *SearchOnlyOnce;
+@property (strong, nonatomic) IBOutlet NSButton *SearchInExtension;
+@property (strong, nonatomic) IBOutlet NSButton *SearchWithRegExp;
+@property (strong, nonatomic) IBOutlet NSPopUpButton *CaseProcessing;
+@property (strong, nonatomic) IBOutlet NSButton *CaseProcessingWithExtension;
+@property (strong, nonatomic) IBOutlet NSPopUpButton *CounterDigits;
+@property (strong, nonatomic) IBOutlet NSButton *InsertNameRangePlaceholderButton;
+@property (strong, nonatomic) IBOutlet NSButton *InsertPlaceholderMenuButton;
+@property (strong, nonatomic) IBOutlet NSMenu *InsertPlaceholderMenu;
+@property (strong, nonatomic) IBOutlet NSButton *OkButton;
 @property (nonatomic, readwrite) int CounterStartsAt;
 @property (nonatomic, readwrite) int CounterStepsBy;
 

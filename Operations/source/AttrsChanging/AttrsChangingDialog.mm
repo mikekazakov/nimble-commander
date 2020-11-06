@@ -12,56 +12,56 @@ using namespace nc::ops;
 
 @interface NCOpsAttrsChangingDialog ()
 
-@property (strong) IBOutlet NSTextField *titleLabel;
+@property (strong, nonatomic) IBOutlet NSTextField *titleLabel;
 
-@property (strong) IBOutlet NSStackView *stackView;
-@property (strong) IBOutlet NSView *permissionsBlockView;
-@property (strong) IBOutlet NSView *ownageBlockView;
-@property (strong) IBOutlet NSView *flagsBlockView;
-@property (strong) IBOutlet NSView *timesBlockView;
+@property (strong, nonatomic) IBOutlet NSStackView *stackView;
+@property (strong, nonatomic) IBOutlet NSView *permissionsBlockView;
+@property (strong, nonatomic) IBOutlet NSView *ownageBlockView;
+@property (strong, nonatomic) IBOutlet NSView *flagsBlockView;
+@property (strong, nonatomic) IBOutlet NSView *timesBlockView;
 
-@property (strong) IBOutlet NSButton *permUsrR;
-@property (strong) IBOutlet NSButton *permUsrW;
-@property (strong) IBOutlet NSButton *permUsrX;
-@property (strong) IBOutlet NSButton *permGrpR;
-@property (strong) IBOutlet NSButton *permGrpW;
-@property (strong) IBOutlet NSButton *permGrpX;
-@property (strong) IBOutlet NSButton *permOthR;
-@property (strong) IBOutlet NSButton *permOthW;
-@property (strong) IBOutlet NSButton *permOthX;
-@property (strong) IBOutlet NSButton *permSUID;
-@property (strong) IBOutlet NSButton *permSGID;
-@property (strong) IBOutlet NSButton *permSticky;
+@property (strong, nonatomic) IBOutlet NSButton *permUsrR;
+@property (strong, nonatomic) IBOutlet NSButton *permUsrW;
+@property (strong, nonatomic) IBOutlet NSButton *permUsrX;
+@property (strong, nonatomic) IBOutlet NSButton *permGrpR;
+@property (strong, nonatomic) IBOutlet NSButton *permGrpW;
+@property (strong, nonatomic) IBOutlet NSButton *permGrpX;
+@property (strong, nonatomic) IBOutlet NSButton *permOthR;
+@property (strong, nonatomic) IBOutlet NSButton *permOthW;
+@property (strong, nonatomic) IBOutlet NSButton *permOthX;
+@property (strong, nonatomic) IBOutlet NSButton *permSUID;
+@property (strong, nonatomic) IBOutlet NSButton *permSGID;
+@property (strong, nonatomic) IBOutlet NSButton *permSticky;
 
-@property (strong) IBOutlet NSPopUpButton *userPopup;
-@property (strong) IBOutlet NSPopUpButton *groupPopup;
+@property (strong, nonatomic) IBOutlet NSPopUpButton *userPopup;
+@property (strong, nonatomic) IBOutlet NSPopUpButton *groupPopup;
 
-@property (strong) IBOutlet NSButton *flagUAppend;
-@property (strong) IBOutlet NSButton *flagUImmutable;
-@property (strong) IBOutlet NSButton *flagUHidden;
-@property (strong) IBOutlet NSButton *flagUNodump;
-@property (strong) IBOutlet NSButton *flagUOpaque;
-@property (strong) IBOutlet NSButton *flagUTracked;
-@property (strong) IBOutlet NSButton *flagUCompressed;
-@property (strong) IBOutlet NSButton *flagUDataVault;
-@property (strong) IBOutlet NSButton *flagSAppend;
-@property (strong) IBOutlet NSButton *flagSImmutable;
-@property (strong) IBOutlet NSButton *flagSArchived;
-@property (strong) IBOutlet NSButton *flagSNounlink;
-@property (strong) IBOutlet NSButton *flagSRestricted;
-@property (strong) IBOutlet NSButton *flagSFirmlink;
-@property (strong) IBOutlet NSButton *flagSDataless;
+@property (strong, nonatomic) IBOutlet NSButton *flagUAppend;
+@property (strong, nonatomic) IBOutlet NSButton *flagUImmutable;
+@property (strong, nonatomic) IBOutlet NSButton *flagUHidden;
+@property (strong, nonatomic) IBOutlet NSButton *flagUNodump;
+@property (strong, nonatomic) IBOutlet NSButton *flagUOpaque;
+@property (strong, nonatomic) IBOutlet NSButton *flagUTracked;
+@property (strong, nonatomic) IBOutlet NSButton *flagUCompressed;
+@property (strong, nonatomic) IBOutlet NSButton *flagUDataVault;
+@property (strong, nonatomic) IBOutlet NSButton *flagSAppend;
+@property (strong, nonatomic) IBOutlet NSButton *flagSImmutable;
+@property (strong, nonatomic) IBOutlet NSButton *flagSArchived;
+@property (strong, nonatomic) IBOutlet NSButton *flagSNounlink;
+@property (strong, nonatomic) IBOutlet NSButton *flagSRestricted;
+@property (strong, nonatomic) IBOutlet NSButton *flagSFirmlink;
+@property (strong, nonatomic) IBOutlet NSButton *flagSDataless;
 
-@property (strong) IBOutlet NSDatePicker *timesATime;
-@property (strong) IBOutlet NSButton *timesATimeCheckbox;
-@property (strong) IBOutlet NSDatePicker *timesMTime;
-@property (strong) IBOutlet NSButton *timesMTimeCheckbox;
-@property (strong) IBOutlet NSDatePicker *timesCTime;
-@property (strong) IBOutlet NSButton *timesCTimeCheckbox;
-@property (strong) IBOutlet NSDatePicker *timesBTime;
-@property (strong) IBOutlet NSButton *timesBTimeCheckbox;
+@property (strong, nonatomic) IBOutlet NSDatePicker *timesATime;
+@property (strong, nonatomic) IBOutlet NSButton *timesATimeCheckbox;
+@property (strong, nonatomic) IBOutlet NSDatePicker *timesMTime;
+@property (strong, nonatomic) IBOutlet NSButton *timesMTimeCheckbox;
+@property (strong, nonatomic) IBOutlet NSDatePicker *timesCTime;
+@property (strong, nonatomic) IBOutlet NSButton *timesCTimeCheckbox;
+@property (strong, nonatomic) IBOutlet NSDatePicker *timesBTime;
+@property (strong, nonatomic) IBOutlet NSButton *timesBTimeCheckbox;
 
-@property (strong) IBOutlet NSButton *processSubfolders;
+@property (strong, nonatomic) IBOutlet NSButton *processSubfolders;
 @end
 
 static AttrsChangingCommand::Permissions

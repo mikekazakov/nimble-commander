@@ -1,13 +1,13 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreationDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 
 @interface NCOpsDirectoryCreationDialog()
 
-@property (strong) IBOutlet NSTextField *TextField;
-@property (strong) IBOutlet NSButton *CreateButton;
-@property bool isValid;
+@property (strong, nonatomic) IBOutlet NSTextField *TextField;
+@property (strong, nonatomic) IBOutlet NSButton *CreateButton;
+@property (nonatomic) bool isValid;
 @end
 
 

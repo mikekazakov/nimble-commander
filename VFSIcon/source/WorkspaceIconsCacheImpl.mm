@@ -101,7 +101,7 @@ void WorkspaceIconsCacheImpl::ProduceNew(const std::string &_file_path, Info &_i
 
 namespace detail {    
 
-WorkspaceIconsCacheImplBase::FileStateReaderImpl
+[[clang::no_destroy]] WorkspaceIconsCacheImplBase::FileStateReaderImpl
     WorkspaceIconsCacheImplBase::FileStateReaderImpl::instance;
     
 std::optional<WorkspaceIconsCacheImplBase::FileStateHint>
@@ -118,7 +118,7 @@ std::optional<WorkspaceIconsCacheImplBase::FileStateHint>
     return hint;        
 }
  
-WorkspaceIconsCacheImplBase::IconBuilderImpl
+[[clang::no_destroy]] WorkspaceIconsCacheImplBase::IconBuilderImpl
     WorkspaceIconsCacheImplBase::IconBuilderImpl::instance;
     
 NSImage *

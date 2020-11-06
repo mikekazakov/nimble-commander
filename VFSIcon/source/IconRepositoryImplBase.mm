@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/IconRepositoryImpl.h>
 #include <Habanero/dispatch_cpp.h>
 
@@ -6,7 +6,7 @@ namespace nc::vfsicon::detail {
 
 using Base = IconRepositoryImplBase; 
     
-const std::shared_ptr<Base::Executor>
+[[clang::no_destroy]] const std::shared_ptr<Base::Executor>
     Base::MainQueueExecutor::instance{ std::make_shared<Base::MainQueueExecutor>() };
         
 void Base::MainQueueExecutor::Execute( std::function<void()> _block )

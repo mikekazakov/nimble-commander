@@ -21,7 +21,6 @@
 		CFD79ACB21FE29130043A26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = SOURCE_ROOT; };
 		CFD79ADE21FE298F0043A26D /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CFD79ADF21FE298F0043A26D /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
-		CFD79AE021FE298F0043A26D /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CFD79AE121FE29900043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CFD79AEA21FE474B0043A26D /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessSheetController.h; path = include/CUI/ProcessSheetController.h; sourceTree = "<group>"; };
 		CFD79AEC21FE47560043A26D /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessSheetController.mm; path = source/ProcessSheetController.mm; sourceTree = "<group>"; };
@@ -74,7 +73,6 @@
 				CFD79ADF21FE298F0043A26D /* debug.xcconfig */,
 				CFD79AE121FE29900043A26D /* default.xcconfig */,
 				CFD79ADE21FE298F0043A26D /* release.xcconfig */,
-				CFD79AE021FE298F0043A26D /* tests.xcconfig */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -219,8 +217,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFD79AE121FE29900043A26D /* default.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
 			};
 			name = Debug;
 		};
@@ -228,8 +224,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFD79AE121FE29900043A26D /* default.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
 			};
 			name = Release;
 		};

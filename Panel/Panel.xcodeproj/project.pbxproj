@@ -22,7 +22,7 @@
 		CFF33FBB255695B800B3C92C /* PanelDataExternalEntryKey.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33FBA255695B800B3C92C /* PanelDataExternalEntryKey.h */; };
 		CFF33FBE255695BF00B3C92C /* PanelDataExternalEntryKey.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FBD255695BF00B3C92C /* PanelDataExternalEntryKey.mm */; };
 		CFF33FF225569DF300B3C92C /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FF025569DF200B3C92C /* Tests.cpp */; };
-		CFF3401625569EC600B3C92C /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF3401525569EC600B3C92C /* PanelData_Tests.mm */; };
+		CFF3401625569EC600B3C92C /* PanelData_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF3401525569EC600B3C92C /* PanelData_UT.mm */; };
 		CFF3401F25569F3B00B3C92C /* libPanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF33F5F2556924900B3C92C /* libPanel.a */; };
 		CFF3402A2556A13200B3C92C /* PanelDataSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF3401A25569F2400B3C92C /* PanelDataSelection.mm */; };
 /* End PBXBuildFile section */
@@ -72,7 +72,7 @@
 		CFF33FE425569DA700B3C92C /* PanelUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PanelUT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF33FF025569DF200B3C92C /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
 		CFF33FF125569DF200B3C92C /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
-		CFF3401525569EC600B3C92C /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelData_Tests.mm; path = tests/PanelData_Tests.mm; sourceTree = "<group>"; };
+		CFF3401525569EC600B3C92C /* PanelData_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelData_UT.mm; path = tests/PanelData_UT.mm; sourceTree = "<group>"; };
 		CFF3401925569F1700B3C92C /* PanelDataSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataSelection.h; path = include/Panel/PanelDataSelection.h; sourceTree = "<group>"; };
 		CFF3401A25569F2400B3C92C /* PanelDataSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataSelection.mm; path = source/PanelDataSelection.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -161,7 +161,7 @@
 		CFF33FEF25569DBE00B3C92C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CFF3401525569EC600B3C92C /* PanelData_Tests.mm */,
+				CFF3401525569EC600B3C92C /* PanelData_UT.mm */,
 				CFF33FF025569DF200B3C92C /* Tests.cpp */,
 				CFF33FF125569DF200B3C92C /* Tests.h */,
 			);
@@ -285,7 +285,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFF3401625569EC600B3C92C /* PanelData_Tests.mm in Sources */,
+				CFF3401625569EC600B3C92C /* PanelData_UT.mm in Sources */,
 				CFF33FF225569DF300B3C92C /* Tests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

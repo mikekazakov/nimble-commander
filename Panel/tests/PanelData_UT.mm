@@ -5,6 +5,7 @@
 #include "PanelData.h"
 #include "PanelDataSelection.h"
 #include <memory>
+#include <set>
 #include "Tests.h"
 
 #define PREFIX "PanelData "
@@ -58,14 +59,13 @@ static VFSListingPtr ProduceDummyListing(const std::vector<std::tuple<std::strin
 TEST_CASE(PREFIX "Empty model")
 {
     Model model;
-    CHECK( model.IsLoaded() == false );
-    CHECK( model.Listing().Count() == 0 );
-    CHECK( model.RawEntriesCount() == 0 );
+    CHECK(model.IsLoaded() == false);
+    CHECK(model.Listing().Count() == 0);
+    CHECK(model.RawEntriesCount() == 0);
 }
 
 TEST_CASE(PREFIX "Load")
 {
-    Model model;
     const auto listing =
         ProduceDummyListing(std::vector<std::tuple<std::string, bool>>{{"..", true},
                                                                        {"file1", false},
@@ -73,7 +73,7 @@ TEST_CASE(PREFIX "Load")
                                                                        {"file3", false},
                                                                        {"Dir1", true},
                                                                        {"dir2", true}});
-
+    Model model;
     model.Load(listing, Model::PanelType::Directory);
 
     CHECK(model.IsLoaded() == true);
@@ -81,6 +81,31 @@ TEST_CASE(PREFIX "Load")
     CHECK(model.ListingPtr() == listing);
     CHECK(model.RawEntriesCount() == 6);
     CHECK(model.SortedEntriesCount() == 6);
+}
+
+TEST_CASE(PREFIX "RawIndicesForName")
+{
+    const auto listing =
+        ProduceDummyListing(std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
+    Model model;
+    model.Load(listing, Model::PanelType::Directory);
+    {
+        const auto inds = model.RawIndicesForName("a");
+        CHECK(std::set<unsigned>(inds.begin(), inds.end()) == std::set<unsigned>{0, 3, 6, 8});
+    }
+    {
+        const auto inds = model.RawIndicesForName("c");
+        CHECK(std::set<unsigned>(inds.begin(), inds.end()) == std::set<unsigned>{2, 7});
+    }
+
+    {
+        const auto inds = model.RawIndicesForName("A");
+        CHECK(std::set<unsigned>(inds.begin(), inds.end()) == std::set<unsigned>{4});
+    }
+    {
+        const auto inds = model.RawIndicesForName("nope");
+        CHECK(inds.empty());
+    }
 }
 
 TEST_CASE(PREFIX "Basic")

@@ -1,10 +1,12 @@
 // Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <VFS/VFS.h>
+#include <VFS/VFSListing.h>
 #include "PanelDataSortMode.h"
 #include "PanelDataStatistics.h"
 #include "PanelDataFilter.h"
+
+#include <vector>
 
 namespace nc::panel::data {
 
@@ -19,6 +21,9 @@ struct ExternalEntryKey;
  * - paths accessing
  * - custom information setting/getting
  * - statistics
+ * These methods should be called by a controller, since some view's props have to be updated.
+ * PanelData is solely sync class - it does not know about concurrency,
+ * any parallelism should be done by callers (i.e. controller).
  */
 class Model
 {
@@ -29,14 +34,22 @@ public:
         Temporary = 1
     };
 
+    // creates a Model with an empty listing
     Model();
+    
+    Model(const Model&);
+    
+    Model(Model&&) noexcept;
+    
     ~Model();
+    
+    Model &operator=(const Model &);
+    Model &operator=(Model &&) noexcept;    
 
-    // these methods should be called by a controller, since some view's props have to be updated
-    // PanelData is solely sync class - it does not know about concurrency,
-    // any parallelism should be done by callers (i.e. controller)
-    // just like Metallica:
+    // Initializes a new model with _listing, allocates fresh volatile data, builds search indices,
+    // updates statistics.
     void Load(const VFSListingPtr &_listing, PanelType _type);
+        
     void ReLoad(const VFSListingPtr &_listing);
 
     /**
@@ -45,15 +58,36 @@ public:
     bool IsLoaded() const noexcept;
 
     /**
-     * Will throw logic_error if called on listing with no common host.
+     * Returns a common VHS host referred by the stored listing.
+     * Will throw logic_error if called on a listing with no common host.
      */
     const std::shared_ptr<VFSHost> &Host() const;
-    const VFSListing &Listing() const;
-    const VFSListingPtr &ListingPtr() const;
+    
+    /**
+     * Returns a stored VFS listing.
+     */
+    const VFSListing &Listing() const noexcept;
+    
+    /**
+     * Returns a shared pointer to a stored VFS listing.
+     */
+    const VFSListingPtr &ListingPtr() const noexcept;
+    
+    /**
+     * Returns a panel type provided upen loading.
+     */
     PanelType Type() const noexcept;
 
+    /**
+     * Returns the number of raw i.e. unfiltered entires in the listing.
+     */
     int RawEntriesCount() const noexcept;
+    
+    /**
+     * Returns the number of sorted i.e. possibly filtered entires in the listing.
+     */
     int SortedEntriesCount() const noexcept;
+
 
     const std::vector<unsigned> &SortedDirectoryEntries() const noexcept;
 
@@ -206,9 +240,6 @@ public:
     void __InvariantCheck() const;
 
 private:
-    Model(const Model &) = delete;
-    void operator=(const Model &) = delete;
-
     void DoSortWithHardFiltering();
     void CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected);
     void ClearSelectedFlagsFromHiddenElements();

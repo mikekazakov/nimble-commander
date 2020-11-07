@@ -12,6 +12,7 @@
 using namespace nc;
 using namespace nc::base;
 using namespace nc::panel;
+using data::Model;
 
 static VFSListingPtr ProduceDummyListing(const std::vector<std::string> &_filenames)
 {
@@ -52,6 +53,34 @@ static VFSListingPtr ProduceDummyListing(const std::vector<std::tuple<std::strin
         l.unix_types.emplace_back(is_directory ? DT_DIR : DT_REG);
     }
     return VFSListing::Build(std::move(l));
+}
+
+TEST_CASE(PREFIX "Empty model")
+{
+    Model model;
+    CHECK( model.IsLoaded() == false );
+    CHECK( model.Listing().Count() == 0 );
+    CHECK( model.RawEntriesCount() == 0 );
+}
+
+TEST_CASE(PREFIX "Load")
+{
+    Model model;
+    const auto listing =
+        ProduceDummyListing(std::vector<std::tuple<std::string, bool>>{{"..", true},
+                                                                       {"file1", false},
+                                                                       {"File2", false},
+                                                                       {"file3", false},
+                                                                       {"Dir1", true},
+                                                                       {"dir2", true}});
+
+    model.Load(listing, Model::PanelType::Directory);
+
+    CHECK(model.IsLoaded() == true);
+    CHECK(&model.Listing() == listing.get());
+    CHECK(model.ListingPtr() == listing);
+    CHECK(model.RawEntriesCount() == 6);
+    CHECK(model.SortedEntriesCount() == 6);
 }
 
 TEST_CASE(PREFIX "Basic")

@@ -67,9 +67,15 @@ Model::Model():
 {
 }
 
-Model::~Model()
-{
-}
+Model::Model(const Model&) = default;
+
+Model::Model(Model&&) noexcept = default;
+
+Model::~Model() = default;
+
+Model &Model::operator=(const Model &) = default;
+
+Model &Model::operator=(Model &&) noexcept = default;
 
 bool Model::IsLoaded() const noexcept
 {
@@ -213,12 +219,12 @@ const std::shared_ptr<VFSHost> &Model::Host() const
     return m_Listing->Host(0);
 }
 
-const VFSListing &Model::Listing() const
+const VFSListing &Model::Listing() const noexcept
 {
     return *m_Listing;
 }
 
-const VFSListingPtr& Model::ListingPtr() const
+const VFSListingPtr& Model::ListingPtr() const noexcept
 {
     return m_Listing;
 }

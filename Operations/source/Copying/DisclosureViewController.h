@@ -51,7 +51,7 @@
 
 @interface DisclosureViewController : NSViewController
 
-@property IBOutlet NSView *disclosedView;
+@property (nonatomic) IBOutlet NSView *disclosedView;
 
 - (IBAction)toggleDisclosure:(id)sender;
 

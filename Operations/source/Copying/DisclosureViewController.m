@@ -53,11 +53,11 @@
 {
     NSView *_disclosedView;
 }
-@property (weak) IBOutlet NSTextField *titleTextField;      // the title of the discloved view
-@property (weak) IBOutlet NSButton *disclosureButton;       // the hide/show button
-@property (weak) IBOutlet NSView *headerView;               // header/title section of this view controller
+@property (weak, nonatomic) IBOutlet NSTextField *titleTextField;      // the title of the discloved view
+@property (weak, nonatomic) IBOutlet NSButton *disclosureButton;       // the hide/show button
+@property (weak, nonatomic) IBOutlet NSView *headerView;               // header/title section of this view controller
 
-@property (strong) NSLayoutConstraint *closingConstraint;   // layout constraint applied to this view controller when closed
+@property (strong, nonatomic) NSLayoutConstraint *closingConstraint;   // layout constraint applied to this view controller when closed
 
 @end
 

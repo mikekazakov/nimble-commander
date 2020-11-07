@@ -9,14 +9,22 @@ SDKROOT = macosx
 // Preprocessor
 GCC_PREPROCESSOR_DEFINITIONS = SPDLOG_COMPILED_LIB
 
-// C++
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include
-
 // Objective-C
 CLANG_ENABLE_OBJC_ARC = YES
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Toolchain flags
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// C++
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include
+
 // Linker
 OTHER_LDFLAGS = -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework QuartzCore -larchive -lboost_system-mt -lboost_filesystem-mt -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Search paths
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Paths - headers
 USE_HEADERMAP = NO
@@ -25,6 +33,10 @@ HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/includ
 
 // Paths - libraries
 LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/built $(THRDPTY)/spdlog/built $(THRDPTY)/googletest/built $(THRDPTY)/z/built $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/built $(THRDPTY)/lzma/built $(THRDPTY)/bz2/built $(THRDPTY)/libssh2/built $(THRDPTY)/pugixml/built $(THRDPTY)/unrar/built
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Warnings
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Warnings - all languages
 CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES
@@ -85,16 +97,16 @@ GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = YES
 CLANG_WARN_ATOMIC_IMPLICIT_SEQ_CST = YES
 CLANG_WARN_CXX0X_EXTENSIONS = YES
 
-// Warnings - C++
+// Warnings - Objective C
 CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES
 CLANG_WARN__DUPLICATE_METHOD_MATCH = YES
 CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES
-//CLANG_WARN_OBJC_LITERAL_CONVERSION
-//CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS
-//GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL
-//CLANG_WARN_OBJC_INTERFACE_IVARS
-//CLANG_WARN_MISSING_NOESCAPE
-//CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS
-//GCC_WARN_STRICT_SELECTOR_MATCH
-//GCC_WARN_UNDECLARED_SELECTOR
-//CLANG_WARN_OBJC_ROOT_CLASS
+CLANG_WARN_OBJC_LITERAL_CONVERSION = YES
+CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = NO // not sure what this brings to the table
+GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = YES
+CLANG_WARN_OBJC_INTERFACE_IVARS = YES
+CLANG_WARN_MISSING_NOESCAPE = YES
+CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES
+GCC_WARN_STRICT_SELECTOR_MATCH = YES
+GCC_WARN_UNDECLARED_SELECTOR = YES
+CLANG_WARN_OBJC_ROOT_CLASS = YES

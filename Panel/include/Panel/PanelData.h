@@ -7,6 +7,7 @@
 #include "PanelDataFilter.h"
 
 #include <vector>
+#include <span>
 
 namespace nc::panel::data {
 
@@ -153,8 +154,17 @@ public:
      * Performs a binary case-sensivitive search.
      * Return -1 if didn't found.
      * Returning value is in raw land, that is DirectoryEntries[N], not sorted ones.
+     * TODO: remove this one, it has issues with non-uniform listings - it can return only the first entry
      */
     int RawIndexForName(const char *_filename) const;
+
+    /**
+     * Performs a binary case-sensivitive search.
+     * Return a non-owning range of indices.
+     * Returning value is in raw land, that is Listing()[N], not sorted ones.
+     * Complexity: O( 2 * LogN  ), N - total number of items in the listing.
+     */
+    std::span<const unsigned> RawIndicesForName(std::string_view _filename) const noexcept;
 
     /**
      * Performs a search using current sort settings with prodived keys.

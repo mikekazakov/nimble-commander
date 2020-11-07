@@ -1,7 +1,7 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataOptionsPersistence.h"
-#include "PanelData.h"
-#include "PanelDataSortMode.h"
+#include <Panel/PanelData.h>
+#include <Panel/PanelDataSortMode.h>
 #include <Config/RapidJSON.h>
 
 namespace nc::panel::data {

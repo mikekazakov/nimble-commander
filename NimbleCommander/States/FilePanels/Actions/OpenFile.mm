@@ -1,9 +1,9 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OpenFile.h"
 #include "../NCPanelOpenWithMenuDelegate.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
-#include "../PanelData.h"
+#include <Panel/PanelData.h>
 #include "../PanelAux.h"
 #include <VFS/VFS.h>
 #include <Utility/ObjCpp.h>

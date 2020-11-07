@@ -1,8 +1,8 @@
 // Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickSearch.h"
 #include <boost/container/static_vector.hpp>
-#include "PanelDataFilter.h"
-#include "PanelData.h"
+#include <Panel/PanelDataFilter.h>
+#include <Panel/PanelData.h>
 #include "CursorBackup.h"
 #include <Utility/ObjCpp.h>
 #include <Habanero/mach_time.h>

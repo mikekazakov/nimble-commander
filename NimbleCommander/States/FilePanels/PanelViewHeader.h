@@ -1,7 +1,7 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include "PanelDataSortMode.h"
+#include <Panel/PanelDataSortMode.h>
 #include "PanelViewHeaderTheme.h"
 
 @interface NCPanelViewHeader : NSView<NSSearchFieldDelegate>

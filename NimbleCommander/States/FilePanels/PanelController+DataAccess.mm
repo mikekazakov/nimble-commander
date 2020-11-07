@@ -1,8 +1,8 @@
 // Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include "PanelController+DataAccess.h"
-#include "PanelDataItemVolatileData.h"
-#include "PanelData.h"
+#include <Panel/PanelDataItemVolatileData.h>
+#include <Panel/PanelData.h>
 #include "PanelView.h"
 #include <VFS/VFS.h>
 

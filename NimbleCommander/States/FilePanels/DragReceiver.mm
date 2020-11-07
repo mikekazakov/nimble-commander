@@ -2,7 +2,7 @@
 #include "DragReceiver.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
-#include "PanelData.h"
+#include <Panel/PanelData.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Utility/NativeFSManager.h>
 #include <Utility/ObjCpp.h>

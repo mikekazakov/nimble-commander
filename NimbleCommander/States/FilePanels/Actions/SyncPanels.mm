@@ -1,8 +1,8 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SyncPanels.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
-#include "../PanelData.h"
+#include <Panel/PanelData.h>
 #include "../Views/FilePanelMainSplitView.h"
 
 namespace nc::panel::actions {

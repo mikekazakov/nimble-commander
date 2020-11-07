@@ -4,7 +4,7 @@
 #include "../MainWindowFilePanelState.h"
 #include <Utility/NativeFSManager.h>
 #include <Habanero/algo.h>
-#include "../PanelData.h"
+#include <Panel/PanelData.h>
 #include "../PanelView.h"
 #include <Operations/Deletion.h>
 #include <Operations/DeletionDialog.h>

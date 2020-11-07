@@ -1,7 +1,7 @@
 // Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerPersistency.h"
 #include "PanelController.h"
-#include "PanelData.h"
+#include <Panel/PanelData.h>
 #include "PanelDataOptionsPersistence.h"
 #include "PanelDataPersistency.h"
 #include <VFS/Native.h>

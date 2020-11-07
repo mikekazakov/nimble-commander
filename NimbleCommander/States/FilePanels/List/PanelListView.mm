@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
 #include <Habanero/algo.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -6,8 +6,8 @@
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <Utility/AdaptiveDateFormatting.h>
 #include <Utility/ObjCpp.h>
-#include "../PanelData.h"
-#include "../PanelDataSortMode.h"
+#include <Panel/PanelData.h>
+#include <Panel/PanelDataSortMode.h>
 #include "../PanelView.h"
 #include "Layout.h"
 #include "PanelListViewNameView.h"

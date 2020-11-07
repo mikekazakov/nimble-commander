@@ -1,10 +1,10 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ChangeAttributes.h"
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
 #include <VFS/VFS.h>
 #include "../PanelController.h"
-#include "../PanelData.h"
+#include <Panel/PanelData.h>
 #include "../PanelView.h"
 #include "../../MainWindowController.h"
 #include <Operations/AttrsChangingDialog.h>

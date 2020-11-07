@@ -1,6 +1,6 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CursorBackup.h"
-#include "PanelData.h"
+#include <Panel/PanelData.h>
 
 namespace nc::panel {
 

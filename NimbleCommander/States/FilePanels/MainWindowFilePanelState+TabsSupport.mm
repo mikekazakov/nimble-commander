@@ -9,7 +9,7 @@
 #include "Views/FilePanelMainSplitView.h"
 #include "FilesDraggingSource.h"
 #include "PanelHistory.h"
-#include "PanelData.h"
+#include <Panel/PanelData.h>
 #include "TabContextMenu.h"
 #include <NimbleCommander/GeneralUI/FilterPopUpMenu.h>
 #include "Helpers/ClosedPanelsHistory.h"

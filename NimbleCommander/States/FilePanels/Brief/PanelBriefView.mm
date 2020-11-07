@@ -1,10 +1,10 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefView.h"
 #include <VFS/VFS.h>
 #include <Habanero/algo.h>
 #include <Utility/FontExtras.h>
-#include "../PanelData.h"
-#include "../PanelDataSortMode.h"
+#include <Panel/PanelData.h>
+#include <Panel/PanelDataSortMode.h>
 #include "../PanelView.h"
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include <NimbleCommander/Bootstrap/AppDelegate.h>

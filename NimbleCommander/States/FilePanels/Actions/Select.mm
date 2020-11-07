@@ -1,10 +1,10 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Select.h"
 #include <Utility/FileMask.h>
 #include "../Views/SelectionWithMaskPopupViewController.h"
 #include "../PanelDataSelection.h"
 #include "../PanelController.h"
-#include "../PanelData.h"
+#include <Panel/PanelData.h>
 #include "../PanelView.h"
 #include <VFS/VFS.h>
 #include <Utility/StringExtras.h>

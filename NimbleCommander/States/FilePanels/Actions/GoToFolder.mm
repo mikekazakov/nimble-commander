@@ -6,7 +6,7 @@
 #include <VFS/PS.h>
 #include "../Views/GoToFolderSheetController.h"
 #include "../PanelController.h"
-#include "../PanelData.h"
+#include <Panel/PanelData.h>
 #include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>

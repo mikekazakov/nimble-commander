@@ -6,7 +6,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include "PanelViewLayoutSupport.h"
-#include "PanelData.h"
+#include <Panel/PanelData.h>
 #include "PanelController.h"
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"

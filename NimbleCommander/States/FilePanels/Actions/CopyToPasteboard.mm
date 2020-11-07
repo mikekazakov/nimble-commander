@@ -2,7 +2,7 @@
 #include "CopyToPasteboard.h"
 #include "../PanelController.h"
 #include "../Helpers/Pasteboard.h"
-#include "../PanelData.h"
+#include <Panel/PanelData.h>
 #include "../PanelView.h"
 #include <VFS/VFS.h>
 

@@ -1,6 +1,6 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "IconRepositoryCleaner.h"
-#include "../PanelDataItemVolatileData.h"
+#include <Panel/PanelDataItemVolatileData.h>
 
 namespace nc::panel {
 

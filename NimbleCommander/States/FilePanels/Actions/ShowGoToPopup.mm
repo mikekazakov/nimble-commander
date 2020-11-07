@@ -17,7 +17,7 @@
 #include "NavigateHistory.h"
 #include "OpenNetworkConnection.h"
 #include "../PanelHistory.h"
-#include "../PanelData.h"
+#include <Panel/PanelData.h>
 #include "../PanelView.h"
 #include "../Helpers/LocationFormatter.h"
 #include "Helpers.h"

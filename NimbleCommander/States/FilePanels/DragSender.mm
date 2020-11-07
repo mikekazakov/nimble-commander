@@ -2,8 +2,8 @@
 #include "DragSender.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
-#include "PanelData.h"
-#include "PanelDataItemVolatileData.h"
+#include <Panel/PanelData.h>
+#include <Panel/PanelDataItemVolatileData.h>
 #include <Utility/FontExtras.h>
 #include <VFS/Native.h>
 

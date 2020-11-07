@@ -1,9 +1,9 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Utility/FileMask.h>
 #include "PanelDataSelection.h"
-#include "PanelData.h"
-#include "PanelDataItemVolatileData.h"
+#include <Panel/PanelData.h>
+#include <Panel/PanelDataItemVolatileData.h>
 #include <VFS/VFS.h>
 
 namespace nc::panel::data {

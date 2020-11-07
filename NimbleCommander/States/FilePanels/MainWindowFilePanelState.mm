@@ -25,7 +25,7 @@
 #include "Views/FilePanelMainSplitView.h"
 #include "Views/BriefSystemOverview.h"
 #include "Views/FilePanelOverlappedTerminal.h"
-#include "PanelData.h"
+#include <Panel/PanelData.h>
 #include "PanelView.h"
 #include <Operations/Pool.h>
 #include <Operations/PoolViewController.h>

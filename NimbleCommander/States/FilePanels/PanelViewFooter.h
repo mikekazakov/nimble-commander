@@ -1,10 +1,10 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
 
-#include "PanelDataItemVolatileData.h"
-#include "PanelDataStatistics.h"
+#include <Panel/PanelDataItemVolatileData.h>
+#include <Panel/PanelDataStatistics.h>
 #include "PanelViewFooterTheme.h"
 
 @interface NCPanelViewFooter : NSView

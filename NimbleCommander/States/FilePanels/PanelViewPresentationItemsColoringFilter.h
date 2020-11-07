@@ -1,10 +1,10 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
 #include <Habanero/tribool.h>
 #include <Utility/FileMask.h>
-#include "PanelDataItemVolatileData.h"
+#include <Panel/PanelDataItemVolatileData.h>
 #include <Cocoa/Cocoa.h>
 
 namespace nc::panel {

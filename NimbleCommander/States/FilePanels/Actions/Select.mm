@@ -2,7 +2,7 @@
 #include "Select.h"
 #include <Utility/FileMask.h>
 #include "../Views/SelectionWithMaskPopupViewController.h"
-#include "../PanelDataSelection.h"
+#include <Panel/PanelDataSelection.h>
 #include "../PanelController.h"
 #include <Panel/PanelData.h>
 #include "../PanelView.h"

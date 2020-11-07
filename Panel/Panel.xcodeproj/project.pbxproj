@@ -21,7 +21,33 @@
 		CFF33FB82556959400B3C92C /* PanelDataEntriesComparator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FB72556959400B3C92C /* PanelDataEntriesComparator.mm */; };
 		CFF33FBB255695B800B3C92C /* PanelDataExternalEntryKey.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33FBA255695B800B3C92C /* PanelDataExternalEntryKey.h */; };
 		CFF33FBE255695BF00B3C92C /* PanelDataExternalEntryKey.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FBD255695BF00B3C92C /* PanelDataExternalEntryKey.mm */; };
+		CFF33FF225569DF300B3C92C /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FF025569DF200B3C92C /* Tests.cpp */; };
+		CFF3401625569EC600B3C92C /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF3401525569EC600B3C92C /* PanelData_Tests.mm */; };
+		CFF3401F25569F3B00B3C92C /* libPanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF33F5F2556924900B3C92C /* libPanel.a */; };
+		CFF3402A2556A13200B3C92C /* PanelDataSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF3401A25569F2400B3C92C /* PanelDataSelection.mm */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CFF3402025569F3B00B3C92C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFF33F572556924900B3C92C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFF33F5E2556924900B3C92C;
+			remoteInfo = Panel;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CFF33FE225569DA700B3C92C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		CFF33F5F2556924900B3C92C /* libPanel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPanel.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -43,6 +69,12 @@
 		CFF33FB72556959400B3C92C /* PanelDataEntriesComparator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataEntriesComparator.mm; path = source/PanelDataEntriesComparator.mm; sourceTree = "<group>"; };
 		CFF33FBA255695B800B3C92C /* PanelDataExternalEntryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataExternalEntryKey.h; path = include/Panel/PanelDataExternalEntryKey.h; sourceTree = "<group>"; };
 		CFF33FBD255695BF00B3C92C /* PanelDataExternalEntryKey.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataExternalEntryKey.mm; path = source/PanelDataExternalEntryKey.mm; sourceTree = "<group>"; };
+		CFF33FE425569DA700B3C92C /* PanelUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PanelUT; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFF33FF025569DF200B3C92C /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
+		CFF33FF125569DF200B3C92C /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
+		CFF3401525569EC600B3C92C /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelData_Tests.mm; path = tests/PanelData_Tests.mm; sourceTree = "<group>"; };
+		CFF3401925569F1700B3C92C /* PanelDataSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataSelection.h; path = include/Panel/PanelDataSelection.h; sourceTree = "<group>"; };
+		CFF3401A25569F2400B3C92C /* PanelDataSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataSelection.mm; path = source/PanelDataSelection.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +82,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFF33FE125569DA700B3C92C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFF3401F25569F3B00B3C92C /* libPanel.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +103,8 @@
 				CFF33F932556940200B3C92C /* Headers */,
 				CFF33F602556924900B3C92C /* Products */,
 				CFF33F942556940800B3C92C /* Source */,
+				CFF33FEF25569DBE00B3C92C /* Tests */,
+				CFF3401E25569F3B00B3C92C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -70,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				CFF33F5F2556924900B3C92C /* libPanel.a */,
+				CFF33FE425569DA700B3C92C /* PanelUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -88,6 +131,7 @@
 		CFF33F932556940200B3C92C /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFF3401925569F1700B3C92C /* PanelDataSelection.h */,
 				CFF33FBA255695B800B3C92C /* PanelDataExternalEntryKey.h */,
 				CFF33FB42556958C00B3C92C /* PanelDataEntriesComparator.h */,
 				CFF33FAE2556954200B3C92C /* PanelDataItemVolatileData.h */,
@@ -102,6 +146,7 @@
 		CFF33F942556940800B3C92C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFF3401A25569F2400B3C92C /* PanelDataSelection.mm */,
 				CFF33FBD255695BF00B3C92C /* PanelDataExternalEntryKey.mm */,
 				CFF33FB72556959400B3C92C /* PanelDataEntriesComparator.mm */,
 				CFF33FB12556954900B3C92C /* PanelDataItemVolatileData.cpp */,
@@ -111,6 +156,23 @@
 				CFF33F982556942600B3C92C /* PanelData.mm */,
 			);
 			name = Source;
+			sourceTree = "<group>";
+		};
+		CFF33FEF25569DBE00B3C92C /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				CFF3401525569EC600B3C92C /* PanelData_Tests.mm */,
+				CFF33FF025569DF200B3C92C /* Tests.cpp */,
+				CFF33FF125569DF200B3C92C /* Tests.h */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		CFF3401E25569F3B00B3C92C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -150,6 +212,24 @@
 			productReference = CFF33F5F2556924900B3C92C /* libPanel.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		CFF33FE325569DA700B3C92C /* PanelUT */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFF33FE825569DA700B3C92C /* Build configuration list for PBXNativeTarget "PanelUT" */;
+			buildPhases = (
+				CFF33FE025569DA700B3C92C /* Sources */,
+				CFF33FE125569DA700B3C92C /* Frameworks */,
+				CFF33FE225569DA700B3C92C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CFF3402125569F3B00B3C92C /* PBXTargetDependency */,
+			);
+			name = PanelUT;
+			productName = PanelUT;
+			productReference = CFF33FE425569DA700B3C92C /* PanelUT */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -159,6 +239,9 @@
 				LastUpgradeCheck = 1200;
 				TargetAttributes = {
 					CFF33F5E2556924900B3C92C = {
+						CreatedOnToolsVersion = 12.0;
+					};
+					CFF33FE325569DA700B3C92C = {
 						CreatedOnToolsVersion = 12.0;
 					};
 				};
@@ -177,6 +260,7 @@
 			projectRoot = "";
 			targets = (
 				CFF33F5E2556924900B3C92C /* Panel */,
+				CFF33FE325569DA700B3C92C /* PanelUT */,
 			);
 		};
 /* End PBXProject section */
@@ -191,12 +275,30 @@
 				CFF33FA02556948900B3C92C /* PanelDataSortMode.mm in Sources */,
 				CFF33FAC2556950E00B3C92C /* PanelDataFilter.mm in Sources */,
 				CFF33FA6255694E300B3C92C /* PanelDataStatistics.cpp in Sources */,
+				CFF3402A2556A13200B3C92C /* PanelDataSelection.mm in Sources */,
 				CFF33FB22556954900B3C92C /* PanelDataItemVolatileData.cpp in Sources */,
 				CFF33FB82556959400B3C92C /* PanelDataEntriesComparator.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CFF33FE025569DA700B3C92C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFF3401625569EC600B3C92C /* PanelData_Tests.mm in Sources */,
+				CFF33FF225569DF300B3C92C /* Tests.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CFF3402125569F3B00B3C92C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFF33F5E2556924900B3C92C /* Panel */;
+			targetProxy = CFF3402025569F3B00B3C92C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		CFF33F612556924900B3C92C /* Debug */ = {
@@ -233,6 +335,24 @@
 			};
 			name = Release;
 		};
+		CFF33FE925569DA700B3C92C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFF33F90255692C000B3C92C /* tests.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CFF33FEA25569DA700B3C92C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFF33F90255692C000B3C92C /* tests.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -250,6 +370,15 @@
 			buildConfigurations = (
 				CFF33F642556924900B3C92C /* Debug */,
 				CFF33F652556924900B3C92C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFF33FE825569DA700B3C92C /* Build configuration list for PBXNativeTarget "PanelUT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFF33FE925569DA700B3C92C /* Debug */,
+				CFF33FEA25569DA700B3C92C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

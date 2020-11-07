@@ -95,7 +95,6 @@
 		CF20DF4C1FC694B60074ABB8 /* SyncPanels.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF4A1FC693440074ABB8 /* SyncPanels.mm */; };
 		CF20DF4D1FC694B70074ABB8 /* SyncPanels.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF4A1FC693440074ABB8 /* SyncPanels.mm */; };
 		CF20DF4E1FC694B80074ABB8 /* SyncPanels.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF4A1FC693440074ABB8 /* SyncPanels.mm */; };
-		CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
 		CF233AD1219C110A00693E1A /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
 		CF233AD2219C110D00693E1A /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; };
 		CF233AD3219C112400693E1A /* libConfig.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -501,7 +500,6 @@
 		CF7D7D5D21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */; };
 		CF7D7D5E21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */; };
 		CF7E35781F6CAF2F009D15D9 /* SparkleDSA_Pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */; };
-		CF818B3D1EA05AC600BC28E6 /* PanelDataSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B3C1EA05AC600BC28E6 /* PanelDataSelection.mm */; };
 		CF818B451EA0610C00BC28E6 /* Select.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDB51E9F7353008FA79E /* Select.mm */; };
 		CF818B461EA0610C00BC28E6 /* RenameInPlace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDB21E9F4AF3008FA79E /* RenameInPlace.mm */; };
 		CF818B471EA0610C00BC28E6 /* ChangeAttributes.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */; };
@@ -535,9 +533,6 @@
 		CF818B631EA0610E00BC28E6 /* MakeNew.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260BC1E9DC9000025B50F /* MakeNew.mm */; };
 		CF818B641EA0610E00BC28E6 /* ShowGoToPopup.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139B71E9B156500E44F2D /* ShowGoToPopup.mm */; };
 		CF818B651EA0610E00BC28E6 /* ToggleSort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */; };
-		CF818B661EA0612E00BC28E6 /* PanelDataSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B3C1EA05AC600BC28E6 /* PanelDataSelection.mm */; };
-		CF818B671EA0612F00BC28E6 /* PanelDataSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B3C1EA05AC600BC28E6 /* PanelDataSelection.mm */; };
-		CF818B681EA0612F00BC28E6 /* PanelDataSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B3C1EA05AC600BC28E6 /* PanelDataSelection.mm */; };
 		CF818B691EA0613C00BC28E6 /* AnyHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */; };
 		CF818B6A1EA0613D00BC28E6 /* AnyHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */; };
 		CF818B6B1EA0613D00BC28E6 /* AnyHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */; };
@@ -1383,6 +1378,13 @@
 			remoteGlobalIDString = CFF33F5F2556924900B3C92C;
 			remoteInfo = Panel;
 		};
+		CFF340252556A0F900B3C92C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFF33F842556929300B3C92C /* Panel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CFF33FE425569DA700B3C92C;
+			remoteInfo = PanelUT;
+		};
 		CFF53B601EDD19A400F567C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */;
@@ -1825,8 +1827,6 @@
 		CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SparkleDSA_Pub.pem; path = NimbleCommander/Resources/SparkleDSA_Pub.pem; sourceTree = SOURCE_ROOT; };
 		CF811A901D8262BE001F9E7F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = SOURCE_ROOT; };
 		CF811A911D8262BE001F9E7F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_Party/OpenSSL/built/libssl.a; sourceTree = SOURCE_ROOT; };
-		CF818B3B1EA05AC600BC28E6 /* PanelDataSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataSelection.h; path = NimbleCommander/States/FilePanels/PanelDataSelection.h; sourceTree = SOURCE_ROOT; };
-		CF818B3C1EA05AC600BC28E6 /* PanelDataSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataSelection.mm; path = NimbleCommander/States/FilePanels/PanelDataSelection.mm; sourceTree = SOURCE_ROOT; };
 		CF818B6F1EA07A5B00BC28E6 /* Pasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pasteboard.h; path = NimbleCommander/States/FilePanels/Helpers/Pasteboard.h; sourceTree = SOURCE_ROOT; };
 		CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pasteboard.mm; path = NimbleCommander/States/FilePanels/Helpers/Pasteboard.mm; sourceTree = SOURCE_ROOT; };
 		CF818B721EA0830400BC28E6 /* CopyToPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyToPasteboard.h; path = NimbleCommander/States/FilePanels/Actions/CopyToPasteboard.h; sourceTree = SOURCE_ROOT; };
@@ -1843,7 +1843,6 @@
 		CF8629221B956B7A00B33CFD /* SUStandardVersionComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUStandardVersionComparator.h; path = ../3rd_Party/SparkleEmbedded/Sparkle/SUStandardVersionComparator.h; sourceTree = "<group>"; };
 		CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUStandardVersionComparator.m; path = ../3rd_Party/SparkleEmbedded/Sparkle/SUStandardVersionComparator.m; sourceTree = "<group>"; };
 		CF8629241B956B7A00B33CFD /* SUVersionComparisonProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUVersionComparisonProtocol.h; path = ../3rd_Party/SparkleEmbedded/Sparkle/SUVersionComparisonProtocol.h; sourceTree = "<group>"; };
-		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = PanelData_Tests.mm; path = NimbleCommander/States/FilePanels/PanelData_Tests.mm; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FavoritesImpl.cpp; path = NimbleCommander/States/FilePanels/FavoritesImpl.cpp; sourceTree = SOURCE_ROOT; };
 		CF8B24371E6FC68D008EB447 /* Favorites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Favorites.h; path = NimbleCommander/States/FilePanels/Favorites.h; sourceTree = SOURCE_ROOT; };
 		CF8BDD0B2147D60800F14C3E /* VFSIcon.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VFSIcon.xcodeproj; path = VFSIcon/VFSIcon.xcodeproj; sourceTree = "<group>"; };
@@ -2425,13 +2424,10 @@
 				CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */,
 				CFA6C85A2015944D00CD7681 /* PanelControllerPersistency.h */,
 				CFA6C85B2015944D00CD7681 /* PanelControllerPersistency.mm */,
-				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CF2F42E51EADB8D000AA031A /* PanelDataOptionsPersistence.h */,
 				CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */,
 				CFDAC21F1DFBCA290039A104 /* PanelDataPersistency.cpp */,
 				CFDAC2201DFBCA290039A104 /* PanelDataPersistency.h */,
-				CF818B3B1EA05AC600BC28E6 /* PanelDataSelection.h */,
-				CF818B3C1EA05AC600BC28E6 /* PanelDataSelection.mm */,
 				CFDAC2191DFBC6CB0039A104 /* PanelHistory.h */,
 				CFDAC21A1DFBC6CB0039A104 /* PanelHistory.mm */,
 				CF5E9A5D1FCD46AD005608F5 /* PanelPreview.h */,
@@ -3224,6 +3220,7 @@
 			isa = PBXGroup;
 			children = (
 				CFF33F892556929300B3C92C /* libPanel.a */,
+				CFF340262556A0F900B3C92C /* PanelUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3638,6 +3635,13 @@
 			remoteRef = CFF33F882556929300B3C92C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		CFF340262556A0F900B3C92C /* PanelUT */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = PanelUT;
+			remoteRef = CFF340252556A0F900B3C92C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CFF53B611EDD19A400F567C4 /* Operations.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -3957,7 +3961,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */,
 				CF28B2FD21A3BAF60004D697 /* ActivationManager_Tests.mm in Sources */,
 				CF6BF843219518690017CECB /* PanelBriefViewDynamicWidthLayoutEngine_Tests.mm in Sources */,
 				CF6BF833219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm in Sources */,
@@ -4044,7 +4047,6 @@
 				CFDAC2B61DFD0B7D0039A104 /* AppStoreHelper.mm in Sources */,
 				CFD7260B1E42E07400603077 /* Application.mm in Sources */,
 				CFD726A11E42E23F00603077 /* PanelHistory.mm in Sources */,
-				CF818B671EA0612F00BC28E6 /* PanelDataSelection.mm in Sources */,
 				CFD727091E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */,
 				CFD726651E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */,
 				CF6237251EB4444C00152B2B /* PanelDataOptionsPersistence.mm in Sources */,
@@ -4312,7 +4314,6 @@
 				CF36DBF11F6C18DB004A018E /* DragSender.mm in Sources */,
 				CFD799FB21F50B010043A26D /* ThemeAdaptor.mm in Sources */,
 				CF818B481EA0610C00BC28E6 /* ToggleLayout.mm in Sources */,
-				CF818B681EA0612F00BC28E6 /* PanelDataSelection.mm in Sources */,
 				CFD7265D1E42E1B800603077 /* MainWindowController.mm in Sources */,
 				CFBA63B01FC1A4FA00077682 /* CopyFile.mm in Sources */,
 				CFD726C71E42E29B00603077 /* Layout.mm in Sources */,
@@ -4549,7 +4550,6 @@
 				CF2084261FF14E270014D6AD /* ListingPromise.cpp in Sources */,
 				CF5E9A491FCBC66B005608F5 /* ViewFile.mm in Sources */,
 				CF56C2CB1DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm in Sources */,
-				CF818B3D1EA05AC600BC28E6 /* PanelDataSelection.mm in Sources */,
 				CFFA952F1F4930BA0035E606 /* DragSender.mm in Sources */,
 				CF2740841E57F5DD000D4365 /* Alert.mm in Sources */,
 				CF0139AF1E99DAC100E44F2D /* ToggleSort.mm in Sources */,
@@ -4822,7 +4822,6 @@
 				CF818B5C1EA0610E00BC28E6 /* RenameInPlace.mm in Sources */,
 				CFD726971E42E23000603077 /* PanelDataPersistency.cpp in Sources */,
 				CF20DF2A1FC41E9C0074ABB8 /* TabContextMenu.mm in Sources */,
-				CF818B661EA0612E00BC28E6 /* PanelDataSelection.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

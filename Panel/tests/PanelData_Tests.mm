@@ -1,9 +1,7 @@
 // Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <VFS/VFS.h>
-#include <VFS/Native.h>
 #include <VFS/VFSListingInput.h>
-#include <Utility/NativeFSManagerImpl.h>
 #include "PanelData.h"
 #include "PanelDataSelection.h"
 #include <memory>
@@ -56,30 +54,14 @@ static VFSListingPtr ProduceDummyListing(const std::vector<std::tuple<std::strin
     return VFSListing::Build(std::move(l));
 }
 
-static VFSListingPtr ProduceDummyListing(const std::vector<NSString *> &_filenames)
-{
-    std::vector<std::string> t;
-    for( auto &i : _filenames )
-        t.emplace_back(i.fileSystemRepresentation);
-
-    return ProduceDummyListing(t);
-}
-
-static VFSHostPtr NativeHost()
-{
-    [[clang::no_destroy]] static const auto native_fs_man =
-        std::make_shared<nc::utility::NativeFSManagerImpl>();
-    [[clang::no_destroy]] static const auto vfs_native =
-        std::make_shared<nc::vfs::NativeHost>(*native_fs_man);
-    return vfs_native;
-}
-
 TEST_CASE(PREFIX "Basic")
 {
-    NSString *strings[] = {
-        @"..", @"some filename", @"another filename", @"even written with какие-то буквы"};
-    auto listing =
-        ProduceDummyListing(std::vector<NSString *>(std::begin(strings), std::end(strings)));
+    const auto strings = std::vector<std::string>{
+        "..",
+        "some filename",
+        "another filename",
+        reinterpret_cast<const char *>(u8"even written with какие-то буквы")};
+    const auto listing = ProduceDummyListing(strings);
 
     data::Model data;
     data.Load(listing, data::Model::PanelType::Directory);
@@ -101,9 +83,11 @@ TEST_CASE(PREFIX "Basic")
 
 TEST_CASE(PREFIX "SortingWithCases")
 {
-    NSString *strings[] = {@"аааа", @"бббб", @"АААА", @"ББББ"};
-    auto listing =
-        ProduceDummyListing(std::vector<NSString *>(std::begin(strings), std::end(strings)));
+    const auto strings = std::vector<std::string>{reinterpret_cast<const char *>(u8"аааа"),
+                                                  reinterpret_cast<const char *>(u8"бббб"),
+                                                  reinterpret_cast<const char *>(u8"АААА"),
+                                                  reinterpret_cast<const char *>(u8"ББББ")};
+    const auto listing = ProduceDummyListing(strings);
 
     data::Model data;
     auto sorting = data.SortMode();
@@ -128,41 +112,42 @@ TEST_CASE(PREFIX "SortingWithCases")
 TEST_CASE(PREFIX "HardFiltering")
 {
     // just my home dir below
-    NSString *strings[] = {@"..",
-                           @".cache",
-                           @"АААА",
-                           @"ББББ",
-                           @".config",
-                           @".cups",
-                           @".dropbox",
-                           @".dvdcss",
-                           @".local",
-                           @".mplayer",
-                           @".ssh",
-                           @".subversion",
-                           @".Trash",
-                           @"Applications",
-                           @"Another app",
-                           @"Another app number two",
-                           @"Applications (Parallels)",
-                           @"что-то на русском языке",
-                           @"ЕЩЕ РУССКИЙ ЯЗЫК",
-                           @"Desktop",
-                           @"Documents",
-                           @"Downloads",
-                           @"Dropbox",
-                           @"Games",
-                           @"Library",
-                           @"Movies",
-                           @"Music",
-                           @"Pictures",
-                           @"Public"};
-    auto listing =
-        ProduceDummyListing(std::vector<NSString *>(std::begin(strings), std::end(strings)));
+    const auto strings =
+        std::vector<std::string>{"..",
+                                 ".cache",
+                                 reinterpret_cast<const char *>(u8"АААА"),
+                                 reinterpret_cast<const char *>(u8"ББББ"),
+                                 ".config",
+                                 ".cups",
+                                 ".dropbox",
+                                 ".dvdcss",
+                                 ".local",
+                                 ".mplayer",
+                                 ".ssh",
+                                 ".subversion",
+                                 ".Trash",
+                                 "Applications",
+                                 "Another app",
+                                 "Another app number two",
+                                 "Applications (Parallels)",
+                                 reinterpret_cast<const char *>(u8"что-то на русском языке"),
+                                 reinterpret_cast<const char *>(u8"ЕЩЕ РУССКИЙ ЯЗЫК"),
+                                 "Desktop",
+                                 "Documents",
+                                 "Downloads",
+                                 "Dropbox",
+                                 "Games",
+                                 "Library",
+                                 "Movies",
+                                 "Music",
+                                 "Pictures",
+                                 "Public"};
+    const auto listing = ProduceDummyListing(strings);
 
-    auto empty_listing = VFSListing::EmptyListing();
+    const auto empty_listing = VFSListing::EmptyListing();
 
-    auto almost_empty_listing = ProduceDummyListing(std::vector<NSString *>(1, @"какой-то файл"));
+    const auto almost_empty_listing = ProduceDummyListing(
+        std::vector<std::string>{reinterpret_cast<const char *>(u8"какой-то файл")});
 
     data::Model data;
     auto sorting = data.SortMode();
@@ -225,7 +210,7 @@ TEST_CASE(PREFIX "HardFiltering")
     CHECK(data.SortedIndexForName("Pictures") < 0);
     CHECK(data.SortedIndexForName("Public") < 0);
     CHECK(data.SortedIndexForName(@"что-то на русском языке".fileSystemRepresentation) >= 0);
-    CHECK(data.SortedIndexForName(@"ЕЩЕ РУССКИЙ ЯЗЫК".fileSystemRepresentation) >= 0);
+    CHECK(data.SortedIndexForName(reinterpret_cast<const char *>(u8"ЕЩЕ РУССКИЙ ЯЗЫК")) >= 0);
 
     filtering.text.type = data::TextualFilter::Beginning;
     filtering.text.text = @"APP";
@@ -249,43 +234,82 @@ TEST_CASE(PREFIX "HardFiltering")
 
 TEST_CASE(PREFIX "SelectionWithExtension")
 {
-    VFSHostPtr host = NativeHost();
-    VFSListingPtr listing;
     data::Model data;
-    data::SelectionBuilder selector{data, true};
-    data::SelectionBuilder selector_w_dirs{data, false};
+    const data::SelectionBuilder selector{data, true};
+    const data::SelectionBuilder selector_w_dirs{data, false};
 
-    host->FetchDirectoryListing("/bin/", listing, 0);
-    data.Load(listing, data::Model::PanelType::Directory);
+    const auto bin_listing = ProduceDummyListing(std::vector<std::string>{
+        "..",   "[",         "bash",   "cat",       "chmod", "cp",    "csh",      "dash",
+        "date", "dd",        "df",     "echo",      "ed",    "expr",  "hostname", "kill",
+        "ksh",  "launchctl", "link",   "ln",        "ls",    "mkdir", "mv",       "pax",
+        "ps",   "pwd",       "rm",     "rmdir",     "sh",    "sleep", "stty",     "sync",
+        "tcsh", "test",      "unlink", "wait4path", "zsh"});
+    data.Load(bin_listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted(selector.SelectionByExtension("", true));
-    CHECK(data.Stats().selected_entries_amount >= 30);
+    CHECK(data.Stats().selected_entries_amount == 36);
 
-    host->FetchDirectoryListing("/usr/share/man/man1", listing, 0);
-    data.Load(listing, data::Model::PanelType::Directory);
+    const auto man1_listing = ProduceDummyListing(std::vector<std::string>{"..",
+                                                                           "gzexe.1",
+                                                                           "splain5.28.1",
+                                                                           "hpmdiagnose.1",
+                                                                           "perl5142delta.1",
+                                                                           "perlfaq.1",
+                                                                           "bundle-platform.1",
+                                                                           "env.1",
+                                                                           "head.1",
+                                                                           "cpan5.18.1",
+                                                                           "perlembed5.28.1",
+                                                                           "gzip.1",
+                                                                           "unvis.1",
+                                                                           "unzipsfx.1",
+                                                                           "perlxstypemap5.18.1",
+                                                                           "assetutil.1",
+                                                                           "ipcs.1",
+                                                                           "perlmodlib5.28.1",
+                                                                           "dapptrace.1m",
+                                                                           "quota.1"});
+    data.Load(man1_listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted(selector.SelectionByExtension("1", true));
-    CHECK(data.Stats().selected_entries_amount >= 1000);
+    CHECK(data.Stats().selected_entries_amount == 18);
 
-    host->FetchDirectoryListing("/System/Library/CoreServices", listing, 0);
-
-    data.Load(listing, data::Model::PanelType::Directory);
+    const auto servs_listing = ProduceDummyListing(
+        std::vector<std::tuple<std::string, bool>>{{"..", true},
+                                                   {".disk_label", false},
+                                                   {".disk_label_2x", false},
+                                                   {"AOS.bundle", true},
+                                                   {"APFSUserAgent", false},
+                                                   {"AVB Audio Configuration.app", true},
+                                                   {"AddPrinter.app", true},
+                                                   {"AddressBookUrlForwarder.app", true},
+                                                   {"AirPlayUIAgent.app", true},
+                                                   {"AirPort Base Station Agent.app", true},
+                                                   {"AppleFileServer.app", true},
+                                                   {"AppleScript Utility.app", true},
+                                                   {"ApplicationFirewall.bundle", true},
+                                                   {"Applications", true},
+                                                   {"Automator Installer.app", true},
+                                                   {"Bluetooth Setup Assistant.app", true},
+                                                   {"BluetoothUIServer.app", true},
+                                                   {"BridgeRestoreVersion.plist", false}});
+    data.Load(servs_listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted(selector.SelectionByExtension("app", true));
     CHECK(data.Stats().selected_entries_amount == 0);
 
-    data.Load(listing, data::Model::PanelType::Directory);
+    data.Load(servs_listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted(selector_w_dirs.SelectionByExtension("app", true));
-    CHECK(data.Stats().selected_entries_amount >= 30);
+    CHECK(data.Stats().selected_entries_amount == 10);
 
-    data.Load(listing, data::Model::PanelType::Directory);
+    data.Load(servs_listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted(selector_w_dirs.SelectionByExtension("App", true));
-    CHECK(data.Stats().selected_entries_amount >= 30);
+    CHECK(data.Stats().selected_entries_amount == 10);
 
-    data.Load(listing, data::Model::PanelType::Directory);
+    data.Load(servs_listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted(selector_w_dirs.SelectionByExtension("ApP", true));
-    CHECK(data.Stats().selected_entries_amount >= 30);
+    CHECK(data.Stats().selected_entries_amount == 10);
 
-    data.Load(listing, data::Model::PanelType::Directory);
+    data.Load(servs_listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted(selector_w_dirs.SelectionByExtension("APP", true));
-    CHECK(data.Stats().selected_entries_amount >= 30);
+    CHECK(data.Stats().selected_entries_amount == 10);
 }
 
 TEST_CASE(PREFIX "DirectorySorting")

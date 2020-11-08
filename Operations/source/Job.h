@@ -1,12 +1,12 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <atomic>
 #include <functional>
 #include <mutex>
-
+#include <Habanero/spinlock.h>
 #include "Statistics.h"
-
+#include "ItemStateReport.h"
 
 namespace nc::ops
 {
@@ -29,6 +29,7 @@ public:
     void SetFinishCallback( std::function<void()> _callback );
     void SetPauseCallback( std::function<void()> _callback );
     void SetResumeCallback( std::function<void()> _callback );
+    void SetItemStateReportCallback( ItemStateReportCallback _callback );
     
     class Statistics &Statistics();
     const class Statistics &Statistics() const;
@@ -41,6 +42,7 @@ protected:
     void SetCompleted();
     void Execute();
     void BlockIfPaused();
+    void TellItemReport(ItemStateReport _report);
 
 private:
     std::atomic_bool        m_IsRunning;
@@ -52,7 +54,8 @@ private:
     std::function<void()>   m_OnFinish;
     std::function<void()>   m_OnPause;
     std::function<void()>   m_OnResume;
-    std::mutex              m_CallbackLock;
+    std::shared_ptr<ItemStateReportCallback> m_OnItemStateReport;
+    spinlock                m_CallbackLock;
     
     class Statistics      m_Stats;
 };

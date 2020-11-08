@@ -166,135 +166,141 @@ void CopyingJob::ProcessItems()
         ClearSourceItems();
     }
 }
-    
+
 CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
 {
     m_CurrentlyProcessingSourceItemIndex = _item_number;
     auto source_mode = m_SourceItems.ItemMode(_item_number);
-    auto&source_host = m_SourceItems.ItemHost(_item_number);
+    auto &source_host = m_SourceItems.ItemHost(_item_number);
     auto source_size = m_SourceItems.ItemSize(_item_number);
     auto destination_path = ComposeDestinationNameForItem(_item_number);
     auto source_path = m_SourceItems.ComposeFullPath(_item_number);
-    const auto nonexistent_dst_req_handler = RequestNonexistentDst([&]{
-        auto new_path = FindNonExistingItemPath(destination_path,
-                                                *m_DestinationHost,
-                                                [&]{ return IsStopped(); });
+    const auto nonexistent_dst_req_handler = RequestNonexistentDst([&] {
+        auto new_path = FindNonExistingItemPath(
+            destination_path, *m_DestinationHost, [&] { return IsStopped(); });
         if( new_path.empty() == false )
             destination_path = std::move(new_path);
     });
     const auto is_same_native_volume = [&]() {
         assert(m_NativeFSManager);
         auto src_fsinfo = m_NativeFSManager->VolumeFromPath(source_path);
-        if( src_fsinfo == nullptr  )
+        if( src_fsinfo == nullptr )
             return false;
         return src_fsinfo == m_DestinationNativeFSInfo;
-    };    
-    
+    };
+
     StepResult step_result = StepResult::Stop;
-    
+
     if( S_ISREG(source_mode) ) {
         /////////////////////////////////////////////////////////////////////////////////////////////////
         // Regular files
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        std::optional<base::Hash> hash; // this optional will be filled with the first call of hash_feedback
+        std::optional<base::Hash>
+            hash; // this optional will be filled with the first call of hash_feedback
         auto hash_feedback = [&](const void *_data, unsigned _sz) {
             if( !hash )
                 hash.emplace(base::Hash::MD5);
-            hash->Feed( _data, _sz );
+            hash->Feed(_data, _sz);
         };
-        
+
         std::function<void(const void *_data, unsigned _sz)> data_feedback = nullptr;
         if( m_Options.verification == ChecksumVerification::Always )
             data_feedback = hash_feedback;
         else if( !m_Options.docopy && m_Options.verification >= ChecksumVerification::WhenMoves )
             data_feedback = hash_feedback;
-        
-        if( source_host.IsNativeFS() && m_IsDestinationHostNative ) { // native -> native ///////////////////////
+
+        if( source_host.IsNativeFS() &&
+            m_IsDestinationHostNative ) { // native -> native ///////////////////////
             // native fs processing
             if( m_Options.docopy ) { // copy
-                step_result = CopyNativeFileToNativeFile(dynamic_cast<vfs::NativeHost&>(source_host),
-                                                         source_path,
-                                                         destination_path,
-                                                         data_feedback,
-                                                         nonexistent_dst_req_handler);
-            }
-            else {
+                step_result =
+                    CopyNativeFileToNativeFile(dynamic_cast<vfs::NativeHost &>(source_host),
+                                               source_path,
+                                               destination_path,
+                                               data_feedback,
+                                               nonexistent_dst_req_handler);
+            } else {
                 if( is_same_native_volume() ) { // rename
-                    step_result = RenameNativeFile(dynamic_cast<vfs::NativeHost&>(source_host),
+                    step_result = RenameNativeFile(dynamic_cast<vfs::NativeHost &>(source_host),
                                                    source_path,
                                                    destination_path,
                                                    nonexistent_dst_req_handler);
                     if( step_result == StepResult::Ok )
                         Statistics().CommitProcessed(Statistics::SourceType::Bytes, source_size);
-                }
-                else { // move
-                    step_result = CopyNativeFileToNativeFile(dynamic_cast<vfs::NativeHost&>(source_host),
-                                                             source_path,
-                                                             destination_path,
-                                                             data_feedback,
-                                                             nonexistent_dst_req_handler);
+                } else { // move
+                    step_result =
+                        CopyNativeFileToNativeFile(dynamic_cast<vfs::NativeHost &>(source_host),
+                                                   source_path,
+                                                   destination_path,
+                                                   data_feedback,
+                                                   nonexistent_dst_req_handler);
                     if( step_result == StepResult::Ok )
-                        m_SourceItemsToDelete.emplace_back(_item_number); // mark source file for deletion
+                        m_SourceItemsToDelete.emplace_back(
+                            _item_number); // mark source file for deletion
                 }
             }
-        }
-        else if( m_IsDestinationHostNative  ) { // vfs -> native ///////////////////////////////////////////////
-            step_result = CopyVFSFileToNativeFile(source_host,
-                                                  source_path,
-                                                  dynamic_cast<vfs::NativeHost&>(*m_DestinationHost),
-                                                  destination_path,
-                                                  data_feedback,
-                                                  nonexistent_dst_req_handler);
+        } else if( m_IsDestinationHostNative ) { // vfs -> native
+                                                 // ///////////////////////////////////////////////
+            step_result =
+                CopyVFSFileToNativeFile(source_host,
+                                        source_path,
+                                        dynamic_cast<vfs::NativeHost &>(*m_DestinationHost),
+                                        destination_path,
+                                        data_feedback,
+                                        nonexistent_dst_req_handler);
             if( m_Options.docopy == false ) { // move
                 if( step_result == StepResult::Ok )
-                    m_SourceItemsToDelete.emplace_back(_item_number); // mark source file for deletion
+                    m_SourceItemsToDelete.emplace_back(
+                        _item_number); // mark source file for deletion
             }
-        }
-        else { // vfs -> vfs /////////////////////////////////////////////////////////////////////////////
+        } else { // vfs -> vfs
+                 // /////////////////////////////////////////////////////////////////////////////
             if( m_Options.docopy ) { // copy
                 step_result = CopyVFSFileToVFSFile(source_host,
                                                    source_path,
                                                    destination_path,
                                                    data_feedback,
                                                    nonexistent_dst_req_handler);
-            }
-            else { // move
+            } else {                                            // move
                 if( &source_host == m_DestinationHost.get() ) { // rename
                     // moving on the same host - lets do rename
-                    step_result = RenameVFSFile(source_host,
-                                                source_path,
-                                                destination_path,
-                                                nonexistent_dst_req_handler);
+                    step_result = RenameVFSFile(
+                        source_host, source_path, destination_path, nonexistent_dst_req_handler);
                     if( step_result == StepResult::Ok )
                         Statistics().CommitProcessed(Statistics::SourceType::Bytes, source_size);
-                }
-                else { // move
+                } else { // move
                     step_result = CopyVFSFileToVFSFile(source_host,
                                                        source_path,
                                                        destination_path,
                                                        data_feedback,
                                                        nonexistent_dst_req_handler);
                     if( step_result == StepResult::Ok )
-                        m_SourceItemsToDelete.emplace_back(_item_number); // mark source file for deletion
+                        m_SourceItemsToDelete.emplace_back(
+                            _item_number); // mark source file for deletion
                 }
             }
         }
-        
+
         // check step result?
         if( hash )
-            m_Checksums.emplace_back( _item_number, destination_path, hash->Final() );
-    }
-    else if( S_ISDIR(source_mode) )
-        step_result = ProcessDirectoryItem(source_host, source_path, _item_number, destination_path);
+            m_Checksums.emplace_back(_item_number, destination_path, hash->Final());
+    } else if( S_ISDIR(source_mode) )
+        step_result =
+            ProcessDirectoryItem(source_host, source_path, _item_number, destination_path);
     else if( S_ISLNK(source_mode) )
-        step_result = ProcessSymlinkItem(source_host,
-                                         source_path,
-                                         destination_path,
-                                         nonexistent_dst_req_handler);    
-    
+        step_result = ProcessSymlinkItem(
+            source_host, source_path, destination_path, nonexistent_dst_req_handler);
+
+    if( step_result == StepResult::Ok || step_result == StepResult::Skipped ) {
+        const ItemStatus status =
+            step_result == StepResult::Ok ? ItemStatus::Processed : ItemStatus::Skipped;
+        const ItemStateReport report{source_host, std::string_view(source_path), status};
+        TellItemReport(report);
+    }
+
     return step_result;
 }
-    
+
 CopyingJob::StepResult CopyingJob::ProcessDirectoryItem(VFSHost& _source_host,
                                                         const std::string &_source_path,
                                                         int _source_index,

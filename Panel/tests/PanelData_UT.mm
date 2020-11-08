@@ -85,26 +85,34 @@ TEST_CASE(PREFIX "Load")
 
 TEST_CASE(PREFIX "RawIndicesForName")
 {
-    const auto listing =
-        ProduceDummyListing(std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
-    Model model;
-    model.Load(listing, Model::PanelType::Directory);
+    SECTION("Filled")
     {
-        const auto inds = model.RawIndicesForName("a");
-        CHECK(std::set<unsigned>(inds.begin(), inds.end()) == std::set<unsigned>{0, 3, 6, 8});
-    }
-    {
-        const auto inds = model.RawIndicesForName("c");
-        CHECK(std::set<unsigned>(inds.begin(), inds.end()) == std::set<unsigned>{2, 7});
-    }
+        const auto listing = ProduceDummyListing(
+            std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
+        Model model;
+        model.Load(listing, Model::PanelType::Directory);
+        {
+            const auto inds = model.RawIndicesForName("a");
+            CHECK(std::set<unsigned>(inds.begin(), inds.end()) == std::set<unsigned>{0, 3, 6, 8});
+        }
+        {
+            const auto inds = model.RawIndicesForName("c");
+            CHECK(std::set<unsigned>(inds.begin(), inds.end()) == std::set<unsigned>{2, 7});
+        }
 
-    {
-        const auto inds = model.RawIndicesForName("A");
-        CHECK(std::set<unsigned>(inds.begin(), inds.end()) == std::set<unsigned>{4});
+        {
+            const auto inds = model.RawIndicesForName("A");
+            CHECK(std::set<unsigned>(inds.begin(), inds.end()) == std::set<unsigned>{4});
+        }
+        {
+            const auto inds = model.RawIndicesForName("nope");
+            CHECK(inds.empty());
+        }
     }
+    SECTION("Empty")
     {
-        const auto inds = model.RawIndicesForName("nope");
-        CHECK(inds.empty());
+        Model model;
+        CHECK(model.RawIndicesForName("a").empty());
     }
 }
 

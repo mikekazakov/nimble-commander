@@ -158,6 +158,7 @@
 		CFE08AFD23D3719B007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 		CFE08AFE23D3719B007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 		CFE08AFF23D374B5007E99B8 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBEF9081F67E56A00C63816 /* libUtility.dylib */; };
+		CFF340472557E21E00B3C92C /* ItemStateReport.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF340462557E21E00B3C92C /* ItemStateReport.h */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
@@ -361,6 +362,7 @@
 		CFDE716E215267BB005449C8 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		CFE08AFB23D3719B007E99B8 /* TestEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestEnv.h; sourceTree = "<group>"; };
 		CFE08AFC23D3719B007E99B8 /* TestEnv.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestEnv.mm; sourceTree = "<group>"; };
+		CFF340462557E21E00B3C92C /* ItemStateReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ItemStateReport.h; path = source/ItemStateReport.h; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -523,6 +525,7 @@
 				CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */,
 				CFC4F8D11EFA17070000B3EE /* Internal.h */,
 				CFC4F8D21EFA17070000B3EE /* Internal.mm */,
+				CFF340462557E21E00B3C92C /* ItemStateReport.h */,
 				CFF53B791EDEA83900F567C4 /* Job.cpp */,
 				CFF53B781EDEA83900F567C4 /* Job.h */,
 				CFC4F9011F0617E20000B3EE /* ModalDialogResponses.h */,
@@ -800,6 +803,7 @@
 				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
 				CFC4F92D1F0B49C00000B3EE /* Deletion.h in Headers */,
 				CFC4F9081F06253D0000B3EE /* DirectoryCreation.h in Headers */,
+				CFF340472557E21E00B3C92C /* ItemStateReport.h in Headers */,
 				CF4BCF0D1F1EF579005F8414 /* FileAlreadyExistDialog.h in Headers */,
 				CFC4F9961F0F22900000B3EE /* BatchRenamingScheme.h in Headers */,
 				CF4BCF051F1EF0F2005F8414 /* SourceItems.h in Headers */,

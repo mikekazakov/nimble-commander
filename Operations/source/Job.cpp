@@ -3,16 +3,12 @@
 #include <Habanero/IdleSleepPreventer.h>
 #include <boost/core/demangle.hpp>
 #include <thread>
+#include <cassert>
 #include <iostream>
 
-namespace nc::ops
-{
+namespace nc::ops {
 
-Job::Job():
-    m_IsRunning{false},
-    m_IsPaused{false},
-    m_IsCompleted{false},
-    m_IsStopped{false}
+Job::Job() : m_IsRunning{false}, m_IsPaused{false}, m_IsCompleted{false}, m_IsStopped{false}
 {
 }
 
@@ -28,41 +24,39 @@ void Job::Run()
 {
     if( m_IsRunning || m_IsStopped )
         return;
-    
+
     m_IsRunning = true;
-    std::thread{ [this]{ Execute(); } }.detach();
+    std::thread{[this] { Execute(); }}.detach();
 }
 
 void Job::Execute()
 {
-    const auto thread_title = "com.magnumbytes.nimblecommander." +
-                              boost::core::demangle(typeid(*this).name());
+    const auto thread_title =
+        "com.magnumbytes.nimblecommander." + boost::core::demangle(typeid(*this).name());
     pthread_setname_np(thread_title.c_str());
 
     const auto sleep_preventer = IdleSleepPreventer::Instance().GetPromise();
     m_Stats.StartTiming();
-    
+
     try {
         Perform();
-    }
-    catch( std::exception &e ) {
-        std::cerr << "Error: operation " << typeid(*this).name() <<
-            " has thrown an exeption: " << e.what() << "." << std::endl;
+    } catch( const std::exception &e ) {
+        std::cerr << "Error: operation " << typeid(*this).name()
+                  << " has thrown an exeption: " << e.what() << "." << std::endl;
+        Stop();
+    } catch( ... ) {
+        std::cerr << "Error: operation " << typeid(*this).name()
+                  << " has thrown an unknown exeption." << std::endl;
         Stop();
     }
-    catch(...){
-        std::cerr << "Error: operation " << typeid(*this).name() <<
-            " has thrown an unknown exeption."<< std::endl;
-        Stop();
-    }
-    
+
     if( !IsStopped() )
         SetCompleted();
-    
+
     m_IsRunning = false;
-    
+
     m_Stats.StopTiming();
-    
+
     m_CallbackLock.lock();
     const auto callback = m_OnFinish;
     m_CallbackLock.unlock();
@@ -75,9 +69,9 @@ bool Job::IsRunning() const noexcept
     return m_IsRunning;
 }
 
-void Job::SetFinishCallback( std::function<void()> _callback )
+void Job::SetFinishCallback(std::function<void()> _callback)
 {
-    std::lock_guard<std::mutex> lock{m_CallbackLock};
+    const auto guard = std::lock_guard{m_CallbackLock};
     m_OnFinish = std::move(_callback);
 }
 
@@ -128,7 +122,7 @@ void Job::Pause()
     if( m_IsPaused || m_IsCompleted || m_IsStopped )
         return;
     m_IsPaused = true;
-    
+
     m_CallbackLock.lock();
     const auto callback = m_OnPause;
     m_CallbackLock.unlock();
@@ -142,7 +136,7 @@ void Job::Resume()
         return;
     m_IsPaused = false;
     m_PauseCV.notify_all();
-    
+
     m_CallbackLock.lock();
     const auto callback = m_OnResume;
     m_CallbackLock.unlock();
@@ -160,24 +154,44 @@ void Job::BlockIfPaused()
     if( m_IsPaused && !m_IsStopped ) {
         [[clang::no_destroy]] static std::mutex mutex; // wtf is this???
         std::unique_lock<std::mutex> lock{mutex};
-        const auto predicate = [this]{ return !m_IsPaused; };
-        
+        const auto predicate = [this] { return !m_IsPaused; };
+
         m_Stats.PauseTiming();
         m_PauseCV.wait(lock, predicate);
         m_Stats.ResumeTiming();
     }
 }
 
-void Job::SetPauseCallback( std::function<void()> _callback )
+void Job::SetPauseCallback(std::function<void()> _callback)
 {
     const auto guard = std::lock_guard{m_CallbackLock};
     m_OnPause = move(_callback);
 }
 
-void Job::SetResumeCallback( std::function<void()> _callback )
+void Job::SetResumeCallback(std::function<void()> _callback)
 {
     const auto guard = std::lock_guard{m_CallbackLock};
     m_OnResume = move(_callback);
 }
 
+void Job::SetItemStateReportCallback(ItemStateReportCallback _callback)
+{
+    const auto guard = std::lock_guard{m_CallbackLock};
+    if( _callback )
+        m_OnItemStateReport = std::make_shared<ItemStateReportCallback>(std::move(_callback));
+    else
+        m_OnItemStateReport = nullptr;
 }
+
+void Job::TellItemReport(ItemStateReport _report)
+{
+    m_CallbackLock.lock();
+    const auto callback = m_OnItemStateReport;
+    m_CallbackLock.unlock();
+
+    if( callback && *callback ) {
+        (*callback)(_report);
+    }
+}
+
+} // namespace nc::ops

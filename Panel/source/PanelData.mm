@@ -457,16 +457,16 @@ void Model::UpdateStatictics()
     }
 }
 
-int Model::SortIndexForEntry(const VFSListingItem &_item) const noexcept
+int Model::SortIndexForRawIndex(int _index) const noexcept
 {
-    if( _item.Listing() != m_Listing )
+    if( _index < 0 || static_cast<size_t>(_index) >= m_ReverseToCustomSort.size() )
         return -1;
-
-    const auto it = find(begin(m_EntriesByCustomSort), end(m_EntriesByCustomSort), _item.Index());
-    if( it != end(m_EntriesByCustomSort) )
-        return (int)distance(begin(m_EntriesByCustomSort), it);
+    
+    const unsigned reverse = m_ReverseToCustomSort[_index];
+    if( reverse == std::numeric_limits<unsigned>::max() )
+        return -1;
     else
-        return -1;
+        return static_cast<int>(reverse);
 }
 
 int Model::RawIndexForSortIndex(int _index) const noexcept
@@ -708,7 +708,7 @@ void Model::DoSortWithHardFiltering()
 {
     m_EntriesByCustomSort.clear();
 
-    const int size = m_Listing->Count();
+    const unsigned size = m_Listing->Count();
 
     if( size == 0 )
         return;
@@ -722,7 +722,7 @@ void Model::DoSortWithHardFiltering()
 
     if( m_HardFiltering.IsFiltering() ) {
         TextualFilter::FoundRange found_range;
-        for( int i = 0; i < size; ++i )
+        for( unsigned i = 0; i != size; ++i )
             if( m_HardFiltering.IsValidItem(m_Listing->Item(i), found_range) ) {
                 if( m_HardFiltering.text.hightlight_results ) {
                     m_VolatileData[i].qs_highlight_begin = found_range.first;
@@ -742,9 +742,19 @@ void Model::DoSortWithHardFiltering()
 
     // do not touch dotdot directory. however, in some cases (root dir for example) there will be
     // no dotdot dir. also assumes that no filtering will exclude dotdot dir
-    sort(next(begin(m_EntriesByCustomSort), m_Listing->IsDotDot(0) ? 1 : 0),
-         end(m_EntriesByCustomSort),
-         IndirectListingComparator{*m_Listing, m_VolatileData, m_CustomSortMode});
+    const auto first = std::next(m_EntriesByCustomSort.begin(), m_Listing->IsDotDot(0) ? 1 : 0);
+    const auto last = std::end(m_EntriesByCustomSort);
+    std::sort(first, last, IndirectListingComparator{*m_Listing, m_VolatileData, m_CustomSortMode});
+
+    m_ReverseToCustomSort.resize(size);
+    std::fill(m_ReverseToCustomSort.begin(),
+              m_ReverseToCustomSort.end(),
+              std::numeric_limits<unsigned>::max());
+    for( unsigned i = 0, e = static_cast<unsigned>(m_EntriesByCustomSort.size()); i != e; ++i ) {
+        const unsigned forward_index = m_EntriesByCustomSort[i];
+        assert( forward_index < size );
+        m_ReverseToCustomSort[forward_index] = i;
+    }
 }
 
 void Model::SetSoftFiltering(const TextualFilter &_filter)

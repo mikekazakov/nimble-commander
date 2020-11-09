@@ -141,9 +141,12 @@ public:
     std::string FullPathForEntry(int _raw_index) const;
 
     /**
-     * Return _item position in sorted array, -1 if not found.
+     * Returns a sorted index for the raw index.
+     * If the raw index is not present in the sorted indices - returns -1.
+     * For OOB access returns -1 as well.
+     * O(1) complexity.
      */
-    int SortIndexForEntry(const VFSListingItem &_item) const noexcept;
+    int SortIndexForRawIndex(int _index) const noexcept;
 
     /**
      * Converts sorted index into raw index. Returns -1 on any errors.
@@ -261,10 +264,19 @@ private:
     // content changing
     VFSListingPtr m_Listing;
     std::vector<ItemVolatileData> m_VolatileData;
-    std::vector<unsigned> m_EntriesByRawName;    // sorted with raw strcmp comparison
-    std::vector<unsigned> m_EntriesByCustomSort; // custom defined sort
-    std::vector<unsigned>
-        m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
+    
+    // sorted with raw strcmp comparison
+    std::vector<unsigned> m_EntriesByRawName;
+        
+    // sorted with customly defined sort
+    std::vector<unsigned> m_EntriesByCustomSort;
+    
+    // Reversed index: maps from the raw indices to the sorted indices. Can be
+    // std::numeric_limits<unsigned>::max() if the entry is not present in the custom sort.
+    std::vector<unsigned> m_ReverseToCustomSort;
+    
+    // sorted and filtered, points at m_EntriesByCustomSort indices, not the raw ones
+    std::vector<unsigned> m_EntriesBySoftFiltering;
     struct SortMode m_CustomSortMode;
     HardFilter m_HardFiltering;
     TextualFilter m_SoftFiltering;

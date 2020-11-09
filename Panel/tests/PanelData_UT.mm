@@ -116,6 +116,74 @@ TEST_CASE(PREFIX "RawIndicesForName")
     }
 }
 
+//int Model::SortIndexForRawIndex(int _index) const noexcept
+
+TEST_CASE(PREFIX "SortIndexForRawIndex")
+{
+    SECTION("Empty")
+    {
+        Model model;
+        CHECK( model.SortIndexForRawIndex(-1) == -1 );
+        CHECK( model.SortIndexForRawIndex(0) == -1 );
+    }
+    SECTION("Filled, no hard filtering")
+    {
+        const auto listing = ProduceDummyListing(
+            std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
+        data::SortMode sorting;
+        sorting.sort = data::SortMode::SortByName;
+        sorting.case_sens = false;
+        
+        Model model;
+        model.SetSortMode(sorting);
+        model.Load(listing, Model::PanelType::Directory);
+        
+        CHECK( model.SortIndexForRawIndex(-1) == -1 );
+        CHECK( model.SortIndexForRawIndex(0) == 0 );
+        CHECK( model.SortIndexForRawIndex(1) == 5 );
+        CHECK( model.SortIndexForRawIndex(2) == 7 );
+        CHECK( model.SortIndexForRawIndex(3) == 1 );
+        CHECK( model.SortIndexForRawIndex(4) == 2 );
+        CHECK( model.SortIndexForRawIndex(5) == 6 );
+        CHECK( model.SortIndexForRawIndex(6) == 3 );
+        CHECK( model.SortIndexForRawIndex(7) == 8 );
+        CHECK( model.SortIndexForRawIndex(8) == 4 );
+        CHECK( model.SortIndexForRawIndex(9) == -1 );
+    }
+    SECTION("Filled, hard filtering")
+    {
+        const auto listing = ProduceDummyListing(
+            std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
+        data::SortMode sorting;
+        sorting.sort = data::SortMode::SortByName;
+        sorting.case_sens = false;
+        
+        data::TextualFilter textual_filter;
+        textual_filter.text = @"a";
+        textual_filter.type = data::TextualFilter::Anywhere;
+                
+        data::HardFilter filter;
+        filter.text = textual_filter;
+        
+        Model model;
+        model.SetSortMode(sorting);
+        model.SetHardFiltering(filter);
+        model.Load(listing, Model::PanelType::Directory);
+        
+        CHECK( model.SortIndexForRawIndex(-1) == -1 );
+        CHECK( model.SortIndexForRawIndex(0) == 0 );
+        CHECK( model.SortIndexForRawIndex(1) == -1 );
+        CHECK( model.SortIndexForRawIndex(2) == -1 );
+        CHECK( model.SortIndexForRawIndex(3) == 1 );
+        CHECK( model.SortIndexForRawIndex(4) == 2 );
+        CHECK( model.SortIndexForRawIndex(5) == -1 );
+        CHECK( model.SortIndexForRawIndex(6) == 3 );
+        CHECK( model.SortIndexForRawIndex(7) == -1 );
+        CHECK( model.SortIndexForRawIndex(8) == 4 );
+        CHECK( model.SortIndexForRawIndex(9) == -1 );
+    }
+}
+
 TEST_CASE(PREFIX "Basic")
 {
     const auto strings = std::vector<std::string>{

@@ -152,3 +152,22 @@ bool GetDirectoryNameFromPath(const char *_path, char *_dir_out, size_t _dir_siz
     
     return true;
 }
+
+namespace nc::utility {
+
+std::string_view PathManip::Filename(std::string_view _path) noexcept
+{
+    const char *const first = _path.data();
+    const char *last = first + _path.size();
+
+    while( last > first && last[-1] == '/' )
+        --last;
+
+    const char *filename = last;
+    while( filename > first && filename[-1] != '/' )
+        --filename;
+
+    return std::string_view(filename, last - filename);
+}
+
+} // namespace nc::utility

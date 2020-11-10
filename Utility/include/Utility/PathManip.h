@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdbool.h>
@@ -86,4 +86,14 @@ inline std::string EnsureNoTrailingSlash(std::string _s)
 inline bool IsPathWithTrailingSlash(const std::string &_path)
 {
     return !_path.empty() && _path.back() == '/';
+}
+
+namespace nc::utility {
+
+struct PathManip {
+
+static std::string_view Filename(std::string_view _path) noexcept;
+
+};
+
 }

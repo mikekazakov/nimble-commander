@@ -280,7 +280,7 @@ std::string Model::FullPathForEntry(int _raw_index) const
     }
 }
 
-int Model::RawIndexForName(const char *_filename) const
+int Model::RawIndexForName(const char *_filename) const noexcept
 {
     assert(m_EntriesByRawName.size() == m_Listing->Count()); // consistency check
 
@@ -290,15 +290,15 @@ int Model::RawIndexForName(const char *_filename) const
     if( _filename[0] == 0 )
         return -1; // can't handle empty filenames
 
-    // TODO! not accounting possibility of repeating filenames in listing.
-    // it's possible with flexible listing
+    const auto listing = m_Listing.get();
+    assert( listing != nullptr );
 
     // performing binary search on m_EntriesByRawName
-    auto begin = m_EntriesByRawName.begin(), end = m_EntriesByRawName.end();
-    auto i = lower_bound(begin, end, _filename, [=](unsigned _i, const char *_s) {
-        return m_Listing->Filename(_i) < _s;
+    const auto begin = m_EntriesByRawName.begin(), end = m_EntriesByRawName.end();
+    const auto i = std::lower_bound(begin, end, _filename, [listing](unsigned _i, const char *_s) {
+        return listing->Filename(_i) < _s;
     });
-    if( i < end && m_Listing->Filename(*i) == _filename )
+    if( i < end && listing->Filename(*i) == _filename )
         return *i;
 
     return -1;
@@ -324,21 +324,6 @@ std::span<const unsigned> Model::RawIndicesForName(std::string_view _filename) c
 
     return std::span<const unsigned>(m_EntriesByRawName.data() + std::distance(begin, first),
                                      m_EntriesByRawName.data() + std::distance(begin, last));
-}
-
-int Model::SortedIndexForRawIndex(int _desired_raw_index) const
-{
-    if( _desired_raw_index < 0 || _desired_raw_index >= (int)m_Listing->Count() )
-        return -1;
-
-    // TODO: consider creating reverse (raw entry->sorted entry) map to speed up performance
-    // ( if the code below will every became a problem - we can change it from O(n) to O(1) )
-    auto i = find_if(m_EntriesByCustomSort.begin(), m_EntriesByCustomSort.end(), [=](unsigned t) {
-        return t == (unsigned)_desired_raw_index;
-    });
-    if( i < m_EntriesByCustomSort.end() )
-        return int(i - m_EntriesByCustomSort.begin());
-    return -1;
 }
 
 std::string Model::DirectoryPathWithoutTrailingSlash() const
@@ -457,7 +442,7 @@ void Model::UpdateStatictics()
     }
 }
 
-int Model::SortIndexForRawIndex(int _index) const noexcept
+int Model::SortedIndexForRawIndex(int _index) const noexcept
 {
     if( _index < 0 || static_cast<size_t>(_index) >= m_ReverseToCustomSort.size() )
         return -1;
@@ -661,7 +646,7 @@ void Model::CustomFlagsClearHighlights()
         vd.toggle_highlight(false);
 }
 
-int Model::SortedIndexForName(const char *_filename) const
+int Model::SortedIndexForName(const char *_filename) const noexcept
 {
     return SortedIndexForRawIndex(RawIndexForName(_filename));
 }

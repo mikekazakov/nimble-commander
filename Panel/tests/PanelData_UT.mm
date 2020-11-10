@@ -116,15 +116,13 @@ TEST_CASE(PREFIX "RawIndicesForName")
     }
 }
 
-//int Model::SortIndexForRawIndex(int _index) const noexcept
-
-TEST_CASE(PREFIX "SortIndexForRawIndex")
+TEST_CASE(PREFIX "SortedIndexForRawIndex")
 {
     SECTION("Empty")
     {
         Model model;
-        CHECK( model.SortIndexForRawIndex(-1) == -1 );
-        CHECK( model.SortIndexForRawIndex(0) == -1 );
+        CHECK( model.SortedIndexForRawIndex(-1) == -1 );
+        CHECK( model.SortedIndexForRawIndex(0) == -1 );
     }
     SECTION("Filled, no hard filtering")
     {
@@ -138,17 +136,17 @@ TEST_CASE(PREFIX "SortIndexForRawIndex")
         model.SetSortMode(sorting);
         model.Load(listing, Model::PanelType::Directory);
         
-        CHECK( model.SortIndexForRawIndex(-1) == -1 );
-        CHECK( model.SortIndexForRawIndex(0) == 0 );
-        CHECK( model.SortIndexForRawIndex(1) == 5 );
-        CHECK( model.SortIndexForRawIndex(2) == 7 );
-        CHECK( model.SortIndexForRawIndex(3) == 1 );
-        CHECK( model.SortIndexForRawIndex(4) == 2 );
-        CHECK( model.SortIndexForRawIndex(5) == 6 );
-        CHECK( model.SortIndexForRawIndex(6) == 3 );
-        CHECK( model.SortIndexForRawIndex(7) == 8 );
-        CHECK( model.SortIndexForRawIndex(8) == 4 );
-        CHECK( model.SortIndexForRawIndex(9) == -1 );
+        CHECK( model.SortedIndexForRawIndex(-1) == -1 );
+        CHECK( model.SortedIndexForRawIndex(0) == 0 );
+        CHECK( model.SortedIndexForRawIndex(1) == 5 );
+        CHECK( model.SortedIndexForRawIndex(2) == 7 );
+        CHECK( model.SortedIndexForRawIndex(3) == 1 );
+        CHECK( model.SortedIndexForRawIndex(4) == 2 );
+        CHECK( model.SortedIndexForRawIndex(5) == 6 );
+        CHECK( model.SortedIndexForRawIndex(6) == 3 );
+        CHECK( model.SortedIndexForRawIndex(7) == 8 );
+        CHECK( model.SortedIndexForRawIndex(8) == 4 );
+        CHECK( model.SortedIndexForRawIndex(9) == -1 );
     }
     SECTION("Filled, hard filtering")
     {
@@ -170,17 +168,17 @@ TEST_CASE(PREFIX "SortIndexForRawIndex")
         model.SetHardFiltering(filter);
         model.Load(listing, Model::PanelType::Directory);
         
-        CHECK( model.SortIndexForRawIndex(-1) == -1 );
-        CHECK( model.SortIndexForRawIndex(0) == 0 );
-        CHECK( model.SortIndexForRawIndex(1) == -1 );
-        CHECK( model.SortIndexForRawIndex(2) == -1 );
-        CHECK( model.SortIndexForRawIndex(3) == 1 );
-        CHECK( model.SortIndexForRawIndex(4) == 2 );
-        CHECK( model.SortIndexForRawIndex(5) == -1 );
-        CHECK( model.SortIndexForRawIndex(6) == 3 );
-        CHECK( model.SortIndexForRawIndex(7) == -1 );
-        CHECK( model.SortIndexForRawIndex(8) == 4 );
-        CHECK( model.SortIndexForRawIndex(9) == -1 );
+        CHECK( model.SortedIndexForRawIndex(-1) == -1 );
+        CHECK( model.SortedIndexForRawIndex(0) == 0 );
+        CHECK( model.SortedIndexForRawIndex(1) == -1 );
+        CHECK( model.SortedIndexForRawIndex(2) == -1 );
+        CHECK( model.SortedIndexForRawIndex(3) == 1 );
+        CHECK( model.SortedIndexForRawIndex(4) == 2 );
+        CHECK( model.SortedIndexForRawIndex(5) == -1 );
+        CHECK( model.SortedIndexForRawIndex(6) == 3 );
+        CHECK( model.SortedIndexForRawIndex(7) == -1 );
+        CHECK( model.SortedIndexForRawIndex(8) == 4 );
+        CHECK( model.SortedIndexForRawIndex(9) == -1 );
     }
 }
 

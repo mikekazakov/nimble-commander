@@ -141,15 +141,8 @@ public:
     std::string FullPathForEntry(int _raw_index) const;
 
     /**
-     * Returns a sorted index for the raw index.
-     * If the raw index is not present in the sorted indices - returns -1.
-     * For OOB access returns -1 as well.
-     * O(1) complexity.
-     */
-    int SortIndexForRawIndex(int _index) const noexcept;
-
-    /**
      * Converts sorted index into raw index. Returns -1 on any errors.
+     * O(1) complexity.
      */
     int RawIndexForSortIndex(int _index) const noexcept;
 
@@ -157,15 +150,16 @@ public:
      * Performs a binary case-sensivitive search.
      * Return -1 if didn't found.
      * Returning value is in raw land, that is DirectoryEntries[N], not sorted ones.
-     * TODO: remove this one, it has issues with non-uniform listings - it can return only the first entry
+     * TODO: (?) remove this one, it has issues with non-uniform listings - it can return only the first entry
+     * * Complexity: O(logN ), N - total number of items in the listing.
      */
-    int RawIndexForName(const char *_filename) const;
+    int RawIndexForName(const char *_filename) const noexcept;
 
     /**
      * Performs a binary case-sensivitive search.
      * Return a non-owning range of indices.
      * Returning value is in raw land, that is Listing()[N], not sorted ones.
-     * Complexity: O( 2 * LogN  ), N - total number of items in the listing.
+     * Complexity: O(2 * logN ), N - total number of items in the listing.
      */
     std::span<const unsigned> RawIndicesForName(std::string_view _filename) const noexcept;
 
@@ -177,17 +171,21 @@ public:
     int SortLowerBoundForEntrySortKeys(const ExternalEntryKey &_key) const;
 
     /**
-     * return -1 if didn't found.
-     * returned value is in sorted indxs land.
+     * Returns a sorted index for a given filename.
+     * Returns -1 if such entry wasn't found.
+     * Returned value is in sorted indxs land.
+     * O(logN) complexity, N - total number of items in the listing.
+     * NB! for non-uniform listings this will return only the first item, while there can be more, as filename is not unique there.
      */
-    int SortedIndexForName(const char *_filename) const;
+    int SortedIndexForName(const char *_filename) const noexcept;
 
     /**
-     * does bruteforce O(N) search.
-     * return -1 if didn't found.
-     * _desired_raw_index - raw item index.
+     * Returns a sorted index for the raw index.
+     * If the raw index is not present in the sorted indices - returns -1.
+     * For OOB access returns -1 as well.
+     * O(1) complexity.
      */
-    int SortedIndexForRawIndex(int _desired_raw_index) const;
+    int SortedIndexForRawIndex(int _desired_raw_index) const noexcept;
 
     /**
      * return current directory in long variant starting from /

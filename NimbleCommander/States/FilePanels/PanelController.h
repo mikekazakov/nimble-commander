@@ -136,6 +136,12 @@ using ContextMenuProvider =
 @property (nonatomic, readonly) NCMainWindowController* mainWindowController;
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) const nc::panel::data::Model& data;
+
+// Monotonically increasing number representing the number of times this Panel's content was
+// changed. I.e. it means a complete change of location/type/etc instead of reloading/updating
+// the existing listing.
+@property (nonatomic, readonly) unsigned long dataGeneration;
+
 @property (nonatomic, readonly) nc::panel::History& history;
 @property (nonatomic, readonly) bool isActive;
 @property (nonatomic, readonly) bool isUniform; // return true if panel's listing has common vfs host and directory for it's items
@@ -187,7 +193,7 @@ using ContextMenuProvider =
 // managing entries selection
 - (void) selectEntriesWithFilenames:(const std::vector<std::string>&)_filenames;
 - (void) setEntriesSelection:(const std::vector<bool>&)_selection;
-
+- (void) setSelectionForItemAtIndex:(int)_index selected:(bool)_selected;
 
 - (void) calculateSizesOfItems:(const std::vector<VFSListingItem>&)_items;
 

@@ -181,6 +181,8 @@ static void HeatUpConfigValues()
     ContextMenuProvider m_ContextMenuProvider;
     nc::utility::NativeFSManager *m_NativeFSManager;
     nc::vfs::NativeHost *m_NativeHost;
+    
+    unsigned long m_DataGeneration;
 }
 
 @synthesize view = m_View;
@@ -188,6 +190,7 @@ static void HeatUpConfigValues()
 @synthesize history = m_History;
 @synthesize layoutIndex = m_ViewLayoutIndex;
 @synthesize vfsFetchingFlags = m_VFSFetchingFlags;
+@synthesize dataGeneration = m_DataGeneration;
 
 - (instancetype)initWithView:(PanelView*)_panel_view
                      layouts:(std::shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
@@ -214,6 +217,7 @@ static void HeatUpConfigValues()
         m_History.SetVFSInstanceManager(_vfs_mgr);
         m_VFSFetchingFlags = 0;
         m_NextActivityTicket = 1;
+        m_DataGeneration = 0;
         m_IsAnythingWorksInBackground = false;
         m_ViewLayoutIndex = m_Layouts->DefaultLayoutIndex();
         m_AssignedViewLayout = m_Layouts->DefaultLayout();
@@ -555,6 +559,14 @@ static void HeatUpConfigValues()
         [m_View volatileDataChanged];
 }
 
+- (void)setSelectionForItemAtIndex:(int)_index selected:(bool)_selected
+{
+    if( m_Data.VolatileDataAtSortPosition(_index).is_selected() == _selected )
+        return;
+    m_Data.CustomFlagsSelectSorted(_index, _selected);
+    [m_View volatileDataChanged];
+}
+
 - (void) onPathChanged
 {
     panel::Counters::Ctrl::OnPathChanged++;
@@ -851,6 +863,7 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
             m_Data.Load(listing, data::Model::PanelType::Directory);
             for( auto &i: _request->RequestSelectedEntries )
                 m_Data.CustomFlagsSelectSorted( m_Data.SortedIndexForName(i.c_str()), true );
+            m_DataGeneration++;
             [m_View dataUpdated];
             [m_View panelChangedWithFocusedFilename:_request->RequestFocusedEntry
                                   loadPreviousState:_request->LoadPreviousViewState];
@@ -903,6 +916,7 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
             m_Data.Load(_listing, data::Model::PanelType::Directory);
         else
             m_Data.Load(_listing, data::Model::PanelType::Temporary);
+        m_DataGeneration++;
         [m_View dataUpdated];
         [m_View panelChangedWithFocusedFilename:"" loadPreviousState:false];
         [self onPathChanged];

@@ -153,7 +153,7 @@ public:
      * TODO: (?) remove this one, it has issues with non-uniform listings - it can return only the first entry
      * * Complexity: O(logN ), N - total number of items in the listing.
      */
-    int RawIndexForName(const char *_filename) const noexcept;
+    int RawIndexForName(std::string_view _filename) const noexcept;
 
     /**
      * Performs a binary case-sensivitive search.
@@ -177,7 +177,7 @@ public:
      * O(logN) complexity, N - total number of items in the listing.
      * NB! for non-uniform listings this will return only the first item, while there can be more, as filename is not unique there.
      */
-    int SortedIndexForName(const char *_filename) const noexcept;
+    int SortedIndexForName(std::string_view _filename) const noexcept;
 
     /**
      * Returns a sorted index for the raw index.

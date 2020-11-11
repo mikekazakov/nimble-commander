@@ -280,24 +280,22 @@ std::string Model::FullPathForEntry(int _raw_index) const
     }
 }
 
-int Model::RawIndexForName(const char *_filename) const noexcept
+int Model::RawIndexForName(std::string_view _filename) const noexcept
 {
     assert(m_EntriesByRawName.size() == m_Listing->Count()); // consistency check
 
-    if( _filename == nullptr )
-        return -1;
-
-    if( _filename[0] == 0 )
+    if( _filename.empty() )
         return -1; // can't handle empty filenames
 
     const auto listing = m_Listing.get();
-    assert( listing != nullptr );
+    assert(listing != nullptr);
 
     // performing binary search on m_EntriesByRawName
     const auto begin = m_EntriesByRawName.begin(), end = m_EntriesByRawName.end();
-    const auto i = std::lower_bound(begin, end, _filename, [listing](unsigned _i, const char *_s) {
-        return listing->Filename(_i) < _s;
-    });
+    const auto i =
+        std::lower_bound(begin, end, _filename, [listing](unsigned _i, std::string_view _s) {
+            return listing->Filename(_i) < _s;
+        });
     if( i < end && listing->Filename(*i) == _filename )
         return *i;
 
@@ -646,7 +644,7 @@ void Model::CustomFlagsClearHighlights()
         vd.toggle_highlight(false);
 }
 
-int Model::SortedIndexForName(const char *_filename) const noexcept
+int Model::SortedIndexForName(std::string_view _filename) const noexcept
 {
     return SortedIndexForRawIndex(RawIndexForName(_filename));
 }

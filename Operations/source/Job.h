@@ -54,7 +54,7 @@ private:
     std::function<void()>   m_OnFinish;
     std::function<void()>   m_OnPause;
     std::function<void()>   m_OnResume;
-    std::shared_ptr<ItemStateReportCallback> m_OnItemStateReport;
+    ItemStateReportCallback m_OnItemStateReport;
     spinlock                m_CallbackLock;
     
     class Statistics      m_Stats;

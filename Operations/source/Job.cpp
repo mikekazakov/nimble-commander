@@ -165,32 +165,25 @@ void Job::BlockIfPaused()
 void Job::SetPauseCallback(std::function<void()> _callback)
 {
     const auto guard = std::lock_guard{m_CallbackLock};
-    m_OnPause = move(_callback);
+    m_OnPause = std::move(_callback);
 }
 
 void Job::SetResumeCallback(std::function<void()> _callback)
 {
-    const auto guard = std::lock_guard{m_CallbackLock};
-    m_OnResume = move(_callback);
+    m_OnResume = std::move(_callback);
 }
 
 void Job::SetItemStateReportCallback(ItemStateReportCallback _callback)
 {
-    const auto guard = std::lock_guard{m_CallbackLock};
-    if( _callback )
-        m_OnItemStateReport = std::make_shared<ItemStateReportCallback>(std::move(_callback));
-    else
-        m_OnItemStateReport = nullptr;
+    if( m_IsRunning )
+        throw std::logic_error("Job::SetResumeCallback should be only called before job start");
+    m_OnItemStateReport = std::move(_callback);
 }
 
 void Job::TellItemReport(ItemStateReport _report)
 {
-    m_CallbackLock.lock();
-    const auto callback = m_OnItemStateReport;
-    m_CallbackLock.unlock();
-
-    if( callback && *callback ) {
-        (*callback)(_report);
+    if( m_OnItemStateReport ) {
+        m_OnItemStateReport(_report);
     }
 }
 

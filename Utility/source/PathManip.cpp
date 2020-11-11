@@ -170,4 +170,18 @@ std::string_view PathManip::Filename(std::string_view _path) noexcept
     return std::string_view(filename, last - filename);
 }
 
+std::string_view PathManip::Parent(std::string_view _path) noexcept
+{
+    const char *const first = _path.data();
+    const char *last = first + _path.size();
+
+    while( last > first && last[-1] == '/' )
+        --last;
+
+    while( last > first && last[-1] != '/' )
+        --last;
+            
+    return std::string_view(first, last - first);
+}
+
 } // namespace nc::utility

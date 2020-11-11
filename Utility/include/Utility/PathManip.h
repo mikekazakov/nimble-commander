@@ -93,6 +93,7 @@ namespace nc::utility {
 struct PathManip {
 
 static std::string_view Filename(std::string_view _path) noexcept;
+static std::string_view Parent(std::string_view _path) noexcept;
 
 };
 

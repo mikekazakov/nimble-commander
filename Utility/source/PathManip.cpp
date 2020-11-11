@@ -120,7 +120,7 @@ bool GetExtensionFromRelPath(const char* _path, char *_buf)
     }
 }
 
-bool GetDirectoryNameFromPath(const char *_path, char *_dir_out, size_t _dir_size)
+bool GetDirectoryNameFromPath(const char *_path, char *_dir_out, [[maybe_unused]] size_t _dir_size)
 {
     const char *second_sep = strrchr(_path, '/');
     if (!second_sep) return false;

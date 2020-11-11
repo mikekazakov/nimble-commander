@@ -1,9 +1,12 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSDeclarations.h>
+#include <Operations/Operation.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include "../PanelDataPersistency.h"
+#include <memory>
+
 @class PanelController;
 
 namespace nc::panel::actions {
@@ -16,16 +19,16 @@ namespace nc::panel::actions {
 class AsyncVFSPromiseRestorer
 {
 public:
-    AsyncVFSPromiseRestorer(PanelController *_panel, nc::core::VFSInstanceManager &_instance_mgr); 
+    AsyncVFSPromiseRestorer(PanelController *_panel, nc::core::VFSInstanceManager &_instance_mgr);
 
     using SuccessHandler = std::function<void(VFSHostPtr)>;
     using FailureHandler = std::function<void(int)>;
     void Restore(const nc::core::VFSInstanceManager::Promise &_promise,
-                 SuccessHandler _success_handler, 
+                 SuccessHandler _success_handler,
                  FailureHandler _failure_handler);
-    
+
 private:
-    PanelController *m_Panel = nil; 
+    PanelController *m_Panel = nil;
     nc::core::VFSInstanceManager &m_InstanceManager;
 };
 
@@ -45,12 +48,33 @@ public:
     using SuccessHandler = std::function<void(VFSHostPtr)>;
     using FailureHandler = std::function<void(int)>;
     void Restore(const nc::panel::PersistentLocation &_location,
-                 SuccessHandler _success_handler, 
+                 SuccessHandler _success_handler,
                  FailureHandler _failure_handler);
-    
+
 private:
-    PanelController *m_Panel = nil; 
-    nc::core::VFSInstanceManager &m_InstanceManager;    
+    PanelController *m_Panel = nil;
+    nc::core::VFSInstanceManager &m_InstanceManager;
 };
 
-}
+// Actions that trigger operations can spawn these objects and hook them up with the operation.
+// The deselectors should be allocated via std::make_shared.
+// They are immutable.
+// The public handler should be called from the background job thread, it then will send a message
+// to the main thread and process it there.
+class DeselectorViaOpNotification : public std::enable_shared_from_this<DeselectorViaOpNotification>
+{
+public:
+    DeselectorViaOpNotification(PanelController *_pc);
+
+    void Handle(nc::ops::ItemStateReport _report) const;
+
+private:
+    void HandleImpl([[maybe_unused]] nc::vfs::Host *_host, const std::string &_path) const;
+    
+    mutable std::atomic_bool m_Cancelled;
+    std::string m_ExpectedUniformDirectory;
+    __weak PanelController *m_Panel;
+    unsigned long m_Generation;    
+};
+
+} // namespace nc::panel::actions

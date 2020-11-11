@@ -6,6 +6,7 @@
 #include <Panel/PanelDataStatistics.h>
 #include "../PanelView.h"
 #include "../PanelAux.h"
+#include "Helpers.h"
 #include <Operations/Copying.h>
 #include <Operations/CopyingDialog.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
@@ -77,6 +78,11 @@ void CopyTo::Perform( MainWindowFilePanelState *_target, id ) const
         
         const auto update_both_panels = RefreshBothCurrentControllersLambda(_target);
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
+
+        const auto deselector = std::make_shared<const DeselectorViaOpNotification>(act_pc);
+        op->SetItemStatusCallback([deselector](nc::ops::ItemStateReport _report){
+            deselector->Handle(_report);
+        });
         
         [_target.mainWindowController enqueueOperation:op];
     };

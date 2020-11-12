@@ -14,8 +14,8 @@
 using namespace nc::ops;
 using namespace nc::vfs;
 using namespace std::literals;
-static const boost::filesystem::path g_DataPref = NCE(nc::env::test::ext_data_prefix);
-static const boost::filesystem::path g_PhotosRAR = g_DataPref / "archives" / "photos.rar";
+[[clang::no_destroy]] static const boost::filesystem::path g_DataPref = NCE(nc::env::test::ext_data_prefix);
+[[clang::no_destroy]] static const boost::filesystem::path g_PhotosRAR = g_DataPref / "archives" / "photos.rar";
 static const auto g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
 
 static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path,

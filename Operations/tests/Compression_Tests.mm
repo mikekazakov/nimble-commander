@@ -58,7 +58,7 @@ TEST_CASE(PREFIX"Compressing Mac kernel")
 
     REQUIRE( operation.State() == OperationState::Completed );
     CHECK( operation.Statistics().ElapsedTime() > 1ms );
-    CHECK( operation.Statistics().ElapsedTime() < 1s );
+    CHECK( operation.Statistics().ElapsedTime() < 5s );
     REQUIRE( native_host->Exists(operation.ArchivePath().c_str()) );
     
     std::shared_ptr<vfs::ArchiveHost> arc_host;
@@ -263,6 +263,31 @@ TEST_CASE(PREFIX"Long compression stats (compressing Music.app)")
                                           cmp_result);
     CHECK( cmp_rc == VFSError::Ok );
     CHECK( cmp_result == 0 );
+}
+
+TEST_CASE(PREFIX "Item reporting")
+{
+    TempTestDir tmp_dir;
+    REQUIRE(mkdir((tmp_dir.directory + "dir").c_str(), 0755) == 0);
+    REQUIRE(close(creat((tmp_dir.directory + "dir/f1").c_str(), 0755)) == 0);
+    REQUIRE(symlink("./f1", (tmp_dir.directory + "dir/f2").c_str()) == 0);
+    const auto native_host = TestEnv().vfs_native;
+    Compression operation{
+        FetchItems(tmp_dir.directory, {"dir"}, *native_host), tmp_dir.directory, native_host};
+    std::set<std::string> processed;
+    operation.SetItemStatusCallback([&](nc::ops::ItemStateReport _report) {
+        REQUIRE(&_report.host == native_host.get());
+        REQUIRE(_report.status == nc::ops::ItemStatus::Processed);
+        processed.emplace(_report.path);
+    });
+
+    operation.Start();
+    operation.Wait();
+    REQUIRE(operation.State() == OperationState::Completed);
+
+    const std::set<std::string> expected{
+        tmp_dir.directory + "dir", tmp_dir.directory + "dir/f1", tmp_dir.directory + "dir/f2"};
+    CHECK(processed == expected);
 }
 
 static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,

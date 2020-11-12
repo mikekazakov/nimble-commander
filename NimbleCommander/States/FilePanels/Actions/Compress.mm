@@ -10,6 +10,7 @@
 #include <Operations/Compression.h>
 #include <Operations/CompressDialog.h>
 #include <Habanero/dispatch_cpp.h>
+#include "Helpers.h"
 
 namespace nc::panel::actions {
 
@@ -54,6 +55,11 @@ void CompressHere::Perform( PanelController *_target, id ) const
         __weak PanelController *weak_target = _target;
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
             FocusResult((PanelController*)weak_target, weak_op.lock());
+        });
+        
+        const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
+        op->SetItemStatusCallback([deselector](nc::ops::ItemStateReport _report){
+            deselector->Handle(_report);
         });
         
         [_target.mainWindowController enqueueOperation:op];
@@ -104,6 +110,12 @@ void CompressToOpposite::Perform( PanelController *_target, id ) const
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
             FocusResult((PanelController*)weak_target, weak_op.lock());
         });
+        
+        const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
+        op->SetItemStatusCallback([deselector](nc::ops::ItemStateReport _report){
+            deselector->Handle(_report);
+        });
+        
         
         [_target.mainWindowController enqueueOperation:op];
     };

@@ -156,6 +156,12 @@ void CopyAs::Perform( MainWindowFilePanelState *_target, id ) const
                 }
             });
         });
+
+        const auto deselector = std::make_shared<const DeselectorViaOpNotification>(act_pc);
+        op->SetItemStatusCallback([deselector](nc::ops::ItemStateReport _report){
+            deselector->Handle(_report);
+        });
+
         
         [_target.mainWindowController enqueueOperation:op];
     };

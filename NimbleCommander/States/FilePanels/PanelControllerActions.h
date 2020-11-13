@@ -3,6 +3,7 @@
 
 #include "Actions/DefaultAction.h"
 #include <Utility/NativeFSManager.h>
+#include <Config/Config.h>
 #include <unordered_map>
 
 class NetworkConnectionsManager;
@@ -11,20 +12,22 @@ class NetworkConnectionsManager;
 @class NCViewerViewController;
 
 namespace nc::vfs {
-    class NativeHost;
+class NativeHost;
 }
 
 namespace nc::panel {
 class FileOpener;
 
-using PanelActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::PanelAction> >;
-PanelActionsMap BuildPanelActionsMap
-    (NetworkConnectionsManager& _net_mgr,
-     utility::NativeFSManager& _native_fs_mgr,
-     nc::vfs::NativeHost &_native_host,
-     FileOpener &_file_opener,
-     NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
-     std::function<NCViewerView*(NSRect)> _make_viewer,
-     std::function<NCViewerViewController*()> _make_viewer_controller );
-    
+using PanelActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::PanelAction>>;
+
+PanelActionsMap
+BuildPanelActionsMap(nc::config::Config &_global_config,
+                     NetworkConnectionsManager &_net_mgr,
+                     utility::NativeFSManager &_native_fs_mgr,
+                     nc::vfs::NativeHost &_native_host,
+                     FileOpener &_file_opener,
+                     NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
+                     std::function<NCViewerView *(NSRect)> _make_viewer,
+                     std::function<NCViewerViewController *()> _make_viewer_controller);
+
 }

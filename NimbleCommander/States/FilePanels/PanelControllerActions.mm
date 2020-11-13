@@ -57,7 +57,9 @@ static std::vector<SEL> QuickListsBut(int but)
 }
     
 PanelActionsMap BuildPanelActionsMap
-    (NetworkConnectionsManager& _net_mgr,
+    (
+    nc::config::Config &_global_config,
+    NetworkConnectionsManager& _net_mgr,
      utility::NativeFSManager& _native_fs_mgr,
      nc::vfs::NativeHost &_native_host,
      FileOpener &_file_opener,
@@ -171,8 +173,8 @@ PanelActionsMap BuildPanelActionsMap
     add( @selector(OnMoveToTrash:),              new MoveToTrash{_native_fs_mgr});
     add( @selector(OnDeleteCommand:),            new Delete{_native_fs_mgr});
     add( @selector(OnDeletePermanentlyCommand:), new Delete{_native_fs_mgr, true});
-    add( @selector(onCompressItemsHere:),        new CompressHere);
-    add( @selector(onCompressItems:),            new CompressToOpposite);
+    add( @selector(onCompressItemsHere:),        new CompressHere{_global_config});
+    add( @selector(onCompressItems:),            new CompressToOpposite{_global_config});
     add( @selector(OnCreateSymbolicLinkCommand:),new CreateSymlink);
     add( @selector(OnEditSymbolicLinkCommand:),  new AlterSymlink);
     add( @selector(OnCreateHardLinkCommand:),    new CreateHardlink);

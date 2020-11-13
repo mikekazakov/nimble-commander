@@ -48,15 +48,16 @@ using namespace nc::panel;
 
         self.delegate = self;
         self.minimumWidth = 230; // hardcoding is bad!
+        auto &global_config = NCAppDelegate.me.globalConfig;
 
         m_CopyAction.reset(new actions::context::CopyToPasteboard{m_Items});
         m_MoveToTrashAction.reset(new actions::context::MoveToTrash{m_Items});
         m_DeletePermanentlyAction.reset(new actions::context::DeletePermanently{m_Items});
-        m_DuplicateAction.reset(new actions::context::Duplicate{m_Items});
+        m_DuplicateAction.reset(new actions::context::Duplicate{global_config, m_Items});
         m_CompressHereAction.reset(
-            new actions::context::CompressHere{NCAppDelegate.me.globalConfig, m_Items});
+            new actions::context::CompressHere{global_config, m_Items});
         m_CompressToOppositeAction.reset(
-            new actions::context::CompressToOpposite{NCAppDelegate.me.globalConfig, m_Items});
+            new actions::context::CompressToOpposite{global_config, m_Items});
         m_OpenFileAction.reset(
             new actions::context::OpenFileWithDefaultHandler{m_Items, _file_opener});
         m_OpenWithDelegate = [[NCPanelOpenWithMenuDelegate alloc] initWithFileOpener:_file_opener

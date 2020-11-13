@@ -11,6 +11,7 @@
 #include <Operations/Copying.h>
 #include <unordered_set>
 #include <Habanero/dispatch_cpp.h>
+#include <Config/Config.h>
 #include "Helpers.h"
 
 namespace nc::panel::actions {
@@ -18,12 +19,19 @@ namespace nc::panel::actions {
 using namespace std::literals;
 
 static const auto g_Suffix = "copy"s; // TODO: localize
+static const auto g_DeselectConfigFlag = "filePanel.general.deselectItemsAfterFileOperations";
 
 static std::unordered_set<std::string> ExtractFilenames(const VFSListing &_listing);
 static std::string ProduceFormCLowercase(std::string_view _string);
 static std::string FindFreeFilenameToDuplicateIn(const VFSListingItem &_item,
                                                  const std::unordered_set<std::string> &_filenames);
-static void CommonPerform(PanelController *_target, const std::vector<VFSListingItem> &_items);
+static void CommonPerform(PanelController *_target,
+                          const std::vector<VFSListingItem> &_items,
+                          bool _add_deselector);
+
+Duplicate::Duplicate(nc::config::Config &_config) : m_Config(_config)
+{
+}
 
 bool Duplicate::Predicate(PanelController *_target) const
 {
@@ -40,7 +48,9 @@ bool Duplicate::Predicate(PanelController *_target) const
     return !i.IsDotDot() || _target.data.Stats().selected_entries_amount > 0;
 }
 
-static void CommonPerform(PanelController *_target, const std::vector<VFSListingItem> &_items)
+static void CommonPerform(PanelController *_target,
+                          const std::vector<VFSListingItem> &_items,
+                          bool _add_deselector)
 {
     auto directory_filenames = ExtractFilenames(_target.data.Listing());
 
@@ -71,10 +81,12 @@ static void CommonPerform(PanelController *_target, const std::vector<VFSListing
             };
             op->ObserveUnticketed(ops::Operation::NotifyAboutCompletion, std::move(finish_handler));
         }
-        
-        const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
-        op->SetItemStatusCallback(
-            [deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
+
+        if( _add_deselector ) {
+            const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
+            op->SetItemStatusCallback(
+                [deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
+        }
 
         [_target.mainWindowController enqueueOperation:op];
     }
@@ -82,10 +94,13 @@ static void CommonPerform(PanelController *_target, const std::vector<VFSListing
 
 void Duplicate::Perform(PanelController *_target, id) const
 {
-    CommonPerform(_target, _target.selectedEntriesOrFocusedEntry);
+    CommonPerform(
+        _target, _target.selectedEntriesOrFocusedEntry, m_Config.GetBool(g_DeselectConfigFlag));
 }
 
-context::Duplicate::Duplicate(const std::vector<VFSListingItem> &_items) : m_Items(_items)
+context::Duplicate::Duplicate(nc::config::Config &_config,
+                              const std::vector<VFSListingItem> &_items)
+    : m_Config(_config), m_Items(_items)
 {
 }
 
@@ -99,7 +114,7 @@ bool context::Duplicate::Predicate(PanelController *_target) const
 
 void context::Duplicate::Perform(PanelController *_target, id) const
 {
-    CommonPerform(_target, m_Items);
+    CommonPerform(_target, m_Items, m_Config.GetBool(g_DeselectConfigFlag));
 }
 
 static std::pair<int, std::string> ExtractExistingDuplicateInfo(const std::string &_filename)

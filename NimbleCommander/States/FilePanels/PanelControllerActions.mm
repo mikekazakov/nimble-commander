@@ -84,7 +84,7 @@ PanelActionsMap BuildPanelActionsMap
     add(@selector(onMainMenuPerformFindAction:),
         new FindFiles{_make_viewer,_make_viewer_controller});
     add( @selector(OnSpotlightSearch:),              new SpotlightSearch);
-    add( @selector(OnDuplicate:),                    new Duplicate);
+    add( @selector(OnDuplicate:),                    new Duplicate{_global_config});
     add( @selector(OnAddToFavorites:),               new AddToFavorites);
     add( @selector(OnCalculateSizes:),               new CalculateSizes);
     add( @selector(OnCalculateAllSizes:),            new CalculateAllSizes);

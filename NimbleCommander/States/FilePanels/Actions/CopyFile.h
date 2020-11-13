@@ -33,7 +33,8 @@ struct CopyTo final : StateAction, CopyBase {
     virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
 };
 
-struct CopyAs final : StateAction {
+struct CopyAs final : StateAction, CopyBase {
+    CopyAs(nc::config::Config &_config);
     virtual bool Predicate(MainWindowFilePanelState *_target) const;
     virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
 };

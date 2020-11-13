@@ -112,6 +112,11 @@ void CopyTo::Perform(MainWindowFilePanelState *_target, id) const
     [_target.mainWindowController beginSheet:cd.window completionHandler:handler];
 }
 
+CopyAs::CopyAs(nc::config::Config &_config):
+    CopyBase(_config)
+{
+}
+
 bool CopyAs::Predicate(MainWindowFilePanelState *_target) const
 {
     const auto act_pc = _target.activePanelController;
@@ -179,9 +184,7 @@ void CopyAs::Perform(MainWindowFilePanelState *_target, id) const
           });
       });
 
-      const auto deselector = std::make_shared<const DeselectorViaOpNotification>(act_pc);
-      op->SetItemStatusCallback(
-          [deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
+      AddDeselectorIfNeeded(*op, act_pc);
 
       [_target.mainWindowController enqueueOperation:op];
     };

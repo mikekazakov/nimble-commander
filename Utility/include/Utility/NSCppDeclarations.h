@@ -9,3 +9,4 @@ using NSString  = void *;
 using NSURL     = void *;
 using NSImage   = void *;
 using NSEvent   = void *;
+using NSWindow  = void *;

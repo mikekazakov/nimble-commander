@@ -54,7 +54,7 @@
 		CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7084D71EF7CC770072F0F6 /* Pool.mm */; };
 		CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DA1EF7CCB00072F0F6 /* Pool.h */; };
 		CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DC1EF7CF7E0072F0F6 /* Compression.h */; };
-		CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.mm */; };
+		CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */; };
 		CFAAF0741FA9D8B8009230B3 /* CopyingTitleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CFAAF0721FA9D8B8009230B3 /* CopyingTitleBuilder.h */; };
 		CFAAF0751FA9D8B8009230B3 /* CopyingTitleBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAAF0731FA9D8B8009230B3 /* CopyingTitleBuilder.mm */; };
 		CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */; };
@@ -254,7 +254,7 @@
 		CF7084D71EF7CC770072F0F6 /* Pool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pool.mm; path = source/Pool.mm; sourceTree = "<group>"; };
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
 		CF7084DC1EF7CF7E0072F0F6 /* Compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Compression.h; path = include/Operations/Compression.h; sourceTree = "<group>"; };
-		CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttrsChanging_IT.mm; sourceTree = "<group>"; };
+		CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttrsChanging_IT.cpp; sourceTree = "<group>"; };
 		CFAAF0721FA9D8B8009230B3 /* CopyingTitleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingTitleBuilder.h; path = source/Copying/CopyingTitleBuilder.h; sourceTree = "<group>"; };
 		CFAAF0731FA9D8B8009230B3 /* CopyingTitleBuilder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyingTitleBuilder.mm; path = source/Copying/CopyingTitleBuilder.mm; sourceTree = "<group>"; };
 		CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Copying_Tests.mm; path = tests/Copying_Tests.mm; sourceTree = SOURCE_ROOT; };
@@ -660,7 +660,7 @@
 			isa = PBXGroup;
 			children = (
 				CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */,
-				CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.mm */,
+				CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */,
 				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
 				CFC4F9661F0CEEB90000B3EE /* BatchRenaming_Tests.mm */,
 				CFF53B951EE252F200F567C4 /* Compression_Tests.mm */,
@@ -978,7 +978,7 @@
 			files = (
 				CF2C101A22A0731500A5359D /* Tests.cpp in Sources */,
 				CF2C102622A4116F00A5359D /* DirectoryPathAutoCompetion_IT.mm in Sources */,
-				CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.mm in Sources */,
+				CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.cpp in Sources */,
 				CF3ABD8123BA1B1A00D1878B /* Copying_IT.mm in Sources */,
 				CFE08AFE23D3719B007E99B8 /* TestEnv.mm in Sources */,
 				CF2C102722A4128500A5359D /* Compression_Tests.mm in Sources */,

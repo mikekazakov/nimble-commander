@@ -7,9 +7,14 @@
 
 #include "ItemStateReport.h"
 
+#ifdef __OBJC__
 @class NSWindow;
 @class NSString;
 @class NCOpsGenericErrorDialog;
+#else
+#include <Utility/NSCppDeclarations.h>
+using NCOpsGenericErrorDialog = void*;
+#endif
 
 namespace nc::ops {
 

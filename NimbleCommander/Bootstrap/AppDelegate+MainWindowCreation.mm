@@ -91,7 +91,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 - (const nc::panel::StateActionsMap &)stateActionsMap
 {
     static auto actions_map = nc::panel::BuildStateActionsMap
-    (*self.networkConnectionsManager,
+    (self.globalConfig,
+    *self.networkConnectionsManager,
      self.temporaryFileStorage,
      self.nativeFSManager);
     return actions_map;

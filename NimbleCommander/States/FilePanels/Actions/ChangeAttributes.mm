@@ -9,6 +9,7 @@
 #include "../../MainWindowController.h"
 #include <Operations/AttrsChangingDialog.h>
 #include <Operations/AttrsChanging.h>
+#include "Helpers.h"
 
 namespace nc::panel::actions {
 
@@ -41,6 +42,11 @@ void ChangeAttributes::Perform( PanelController *_target, [[maybe_unused]] id _s
                 });
             });
         }
+        
+        const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
+        op->SetItemStatusCallback([deselector](nc::ops::ItemStateReport _report){
+            deselector->Handle(_report);
+        });
         
         [_target.mainWindowController enqueueOperation:op];
     };

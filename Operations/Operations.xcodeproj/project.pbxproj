@@ -54,6 +54,7 @@
 		CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7084D71EF7CC770072F0F6 /* Pool.mm */; };
 		CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DA1EF7CCB00072F0F6 /* Pool.h */; };
 		CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DC1EF7CF7E0072F0F6 /* Compression.h */; };
+		CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.mm */; };
 		CFAAF0741FA9D8B8009230B3 /* CopyingTitleBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CFAAF0721FA9D8B8009230B3 /* CopyingTitleBuilder.h */; };
 		CFAAF0751FA9D8B8009230B3 /* CopyingTitleBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAAF0731FA9D8B8009230B3 /* CopyingTitleBuilder.mm */; };
 		CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */; };
@@ -151,7 +152,6 @@
 		CFC4F9D01F14BFFE0000B3EE /* AttrsChanging.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9CE1F14BFFE0000B3EE /* AttrsChanging.mm */; };
 		CFC4F9D31F14C4030000B3EE /* AttrsChangingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9D11F14C4030000B3EE /* AttrsChangingJob.cpp */; };
 		CFC4F9D41F14C4030000B3EE /* AttrsChangingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9D21F14C4030000B3EE /* AttrsChangingJob.h */; };
-		CFC4F9D71F14FA100000B3EE /* AttrsChanging_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9D51F14F9FE0000B3EE /* AttrsChanging_Tests.mm */; };
 		CFC4F9E91F15BA800000B3EE /* AttrsChangingDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9E61F15BA800000B3EE /* AttrsChangingDialog.h */; };
 		CFC4F9EA1F15BA800000B3EE /* AttrsChangingDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9E71F15BA800000B3EE /* AttrsChangingDialog.mm */; };
 		CFDE7170215269AE005449C8 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CFDE716E215267BB005449C8 /* libiconv.tbd */; };
@@ -254,6 +254,7 @@
 		CF7084D71EF7CC770072F0F6 /* Pool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pool.mm; path = source/Pool.mm; sourceTree = "<group>"; };
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
 		CF7084DC1EF7CF7E0072F0F6 /* Compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Compression.h; path = include/Operations/Compression.h; sourceTree = "<group>"; };
+		CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttrsChanging_IT.mm; sourceTree = "<group>"; };
 		CFAAF0721FA9D8B8009230B3 /* CopyingTitleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingTitleBuilder.h; path = source/Copying/CopyingTitleBuilder.h; sourceTree = "<group>"; };
 		CFAAF0731FA9D8B8009230B3 /* CopyingTitleBuilder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyingTitleBuilder.mm; path = source/Copying/CopyingTitleBuilder.mm; sourceTree = "<group>"; };
 		CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Copying_Tests.mm; path = tests/Copying_Tests.mm; sourceTree = SOURCE_ROOT; };
@@ -356,7 +357,6 @@
 		CFC4F9CE1F14BFFE0000B3EE /* AttrsChanging.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AttrsChanging.mm; path = source/AttrsChanging/AttrsChanging.mm; sourceTree = "<group>"; };
 		CFC4F9D11F14C4030000B3EE /* AttrsChangingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AttrsChangingJob.cpp; path = source/AttrsChanging/AttrsChangingJob.cpp; sourceTree = "<group>"; };
 		CFC4F9D21F14C4030000B3EE /* AttrsChangingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttrsChangingJob.h; path = source/AttrsChanging/AttrsChangingJob.h; sourceTree = "<group>"; };
-		CFC4F9D51F14F9FE0000B3EE /* AttrsChanging_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AttrsChanging_Tests.mm; path = tests/AttrsChanging_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFC4F9E61F15BA800000B3EE /* AttrsChangingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttrsChangingDialog.h; path = source/AttrsChanging/AttrsChangingDialog.h; sourceTree = "<group>"; };
 		CFC4F9E71F15BA800000B3EE /* AttrsChangingDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AttrsChangingDialog.mm; path = source/AttrsChanging/AttrsChangingDialog.mm; sourceTree = "<group>"; };
 		CFDE716E215267BB005449C8 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
@@ -660,7 +660,7 @@
 			isa = PBXGroup;
 			children = (
 				CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */,
-				CFC4F9D51F14F9FE0000B3EE /* AttrsChanging_Tests.mm */,
+				CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.mm */,
 				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
 				CFC4F9661F0CEEB90000B3EE /* BatchRenaming_Tests.mm */,
 				CFF53B951EE252F200F567C4 /* Compression_Tests.mm */,
@@ -671,8 +671,8 @@
 				CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */,
 				CF3ABD8223BA1B2800D1878B /* Environment.h */,
 				CFC4F9981F0F271E0000B3EE /* Linkage_Tests.mm */,
-				CFE08AFC23D3719B007E99B8 /* TestEnv.mm */,
 				CFE08AFB23D3719B007E99B8 /* TestEnv.h */,
+				CFE08AFC23D3719B007E99B8 /* TestEnv.mm */,
 				CF2C101822A0731500A5359D /* Tests.cpp */,
 				CF2C101922A0731500A5359D /* Tests.h */,
 			);
@@ -978,6 +978,7 @@
 			files = (
 				CF2C101A22A0731500A5359D /* Tests.cpp in Sources */,
 				CF2C102622A4116F00A5359D /* DirectoryPathAutoCompetion_IT.mm in Sources */,
+				CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.mm in Sources */,
 				CF3ABD8123BA1B1A00D1878B /* Copying_IT.mm in Sources */,
 				CFE08AFE23D3719B007E99B8 /* TestEnv.mm in Sources */,
 				CF2C102722A4128500A5359D /* Compression_Tests.mm in Sources */,
@@ -1048,7 +1049,6 @@
 				CF36DBE91F6BF3FB004A018E /* Archive_Tests.mm in Sources */,
 				CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */,
 				CFC4F99A1F0F27230000B3EE /* Linkage_Tests.mm in Sources */,
-				CFC4F9D71F14FA100000B3EE /* AttrsChanging_Tests.mm in Sources */,
 				CFE08AFD23D3719B007E99B8 /* TestEnv.mm in Sources */,
 				CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */,
 				CFC4F9231F09DFF60000B3EE /* Deletion_Tests.mm in Sources */,

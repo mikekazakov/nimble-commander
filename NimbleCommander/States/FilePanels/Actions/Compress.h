@@ -40,8 +40,8 @@ struct CompressToOpposite final : PanelAction, CompressBase {
 
 namespace context {
 
-struct CompressHere final : PanelAction {
-    CompressHere(const std::vector<VFSListingItem> &_items);
+struct CompressHere final : PanelAction, CompressBase {
+    CompressHere(nc::config::Config &_config, const std::vector<VFSListingItem> &_items);
     bool Predicate(PanelController *_target) const override;
     bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
     void Perform(PanelController *_target, id _sender) const override;
@@ -50,8 +50,8 @@ private:
     const std::vector<VFSListingItem> &m_Items;
 };
 
-struct CompressToOpposite final : PanelAction {
-    CompressToOpposite(const std::vector<VFSListingItem> &_items);
+struct CompressToOpposite final : PanelAction, CompressBase {
+    CompressToOpposite(nc::config::Config &_config, const std::vector<VFSListingItem> &_items);
     bool Predicate(PanelController *_target) const override;
     bool ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const override;
     void Perform(PanelController *_target, id _sender) const override;

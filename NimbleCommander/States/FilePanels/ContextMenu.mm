@@ -11,55 +11,59 @@
 #include <VFS/VFS.h>
 #include <Utility/StringExtras.h>
 
+// TODO: remove this global dependency
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+
 using namespace nc::panel;
 
-@interface NCPanelContextMenuSharingDelegate :NSObject<NSSharingServiceDelegate>
-@property (nonatomic, weak) NSWindow *sourceWindow;
+@interface NCPanelContextMenuSharingDelegate : NSObject <NSSharingServiceDelegate>
+@property(nonatomic, weak) NSWindow *sourceWindow;
 @end
 
-@implementation NCPanelContextMenu
-{
-    std::vector<VFSListingItem>         m_Items;
-    PanelController                    *m_Panel;
-    NSMutableArray                     *m_ShareItemsURLs;
-    NCPanelOpenWithMenuDelegate        *m_OpenWithDelegate;
-    std::unique_ptr<actions::PanelAction>   m_CopyAction;
-    std::unique_ptr<actions::PanelAction>   m_MoveToTrashAction;
-    std::unique_ptr<actions::PanelAction>   m_DeletePermanentlyAction;
-    std::unique_ptr<actions::PanelAction>   m_DuplicateAction;
-    std::unique_ptr<actions::PanelAction>   m_CompressHereAction;
-    std::unique_ptr<actions::PanelAction>   m_CompressToOppositeAction;
-    std::unique_ptr<actions::PanelAction>   m_OpenFileAction;
+@implementation NCPanelContextMenu {
+    std::vector<VFSListingItem> m_Items;
+    PanelController *m_Panel;
+    NSMutableArray *m_ShareItemsURLs;
+    NCPanelOpenWithMenuDelegate *m_OpenWithDelegate;
+    std::unique_ptr<actions::PanelAction> m_CopyAction;
+    std::unique_ptr<actions::PanelAction> m_MoveToTrashAction;
+    std::unique_ptr<actions::PanelAction> m_DeletePermanentlyAction;
+    std::unique_ptr<actions::PanelAction> m_DuplicateAction;
+    std::unique_ptr<actions::PanelAction> m_CompressHereAction;
+    std::unique_ptr<actions::PanelAction> m_CompressToOppositeAction;
+    std::unique_ptr<actions::PanelAction> m_OpenFileAction;
 }
 
-- (instancetype) initWithItems:(std::vector<VFSListingItem>)_items
-                       ofPanel:(PanelController*)_panel
-                withFileOpener:(nc::panel::FileOpener&)_file_opener
-                withUTIDB:(const nc::utility::UTIDB&)_uti_db
+- (instancetype)initWithItems:(std::vector<VFSListingItem>)_items
+                      ofPanel:(PanelController *)_panel
+               withFileOpener:(nc::panel::FileOpener &)_file_opener
+                    withUTIDB:(const nc::utility::UTIDB &)_uti_db
 {
     if( _items.empty() )
         throw std::invalid_argument("NCPanelContextMenu.initWithData - there's no items");
     self = [super init];
-    if(self) {
+    if( self ) {
         m_Panel = _panel;
         m_Items = move(_items);
 
         self.delegate = self;
         self.minimumWidth = 230; // hardcoding is bad!
-    
-        m_CopyAction.reset( new actions::context::CopyToPasteboard{m_Items} );
-        m_MoveToTrashAction.reset( new actions::context::MoveToTrash{m_Items} );
-        m_DeletePermanentlyAction.reset( new actions::context::DeletePermanently{m_Items} );
-        m_DuplicateAction.reset( new actions::context::Duplicate{m_Items} );
-        m_CompressHereAction.reset( new actions::context::CompressHere{m_Items} );
-        m_CompressToOppositeAction.reset( new actions::context::CompressToOpposite{m_Items} );
-        m_OpenFileAction.reset
-            ( new actions::context::OpenFileWithDefaultHandler{m_Items, _file_opener} );
+
+        m_CopyAction.reset(new actions::context::CopyToPasteboard{m_Items});
+        m_MoveToTrashAction.reset(new actions::context::MoveToTrash{m_Items});
+        m_DeletePermanentlyAction.reset(new actions::context::DeletePermanently{m_Items});
+        m_DuplicateAction.reset(new actions::context::Duplicate{m_Items});
+        m_CompressHereAction.reset(
+            new actions::context::CompressHere{NCAppDelegate.me.globalConfig, m_Items});
+        m_CompressToOppositeAction.reset(
+            new actions::context::CompressToOpposite{NCAppDelegate.me.globalConfig, m_Items});
+        m_OpenFileAction.reset(
+            new actions::context::OpenFileWithDefaultHandler{m_Items, _file_opener});
         m_OpenWithDelegate = [[NCPanelOpenWithMenuDelegate alloc] initWithFileOpener:_file_opener
-            utiDB:_uti_db];
+                                                                               utiDB:_uti_db];
         [m_OpenWithDelegate setContextSource:m_Items];
         m_OpenWithDelegate.target = m_Panel;
-        
+
         [self doStuffing];
     }
     return self;
@@ -70,12 +74,15 @@ using namespace nc::panel;
     [m_Panel contextMenuDidClose:menu];
 }
 
-- (void) doStuffing
+- (void)doStuffing
 {
     //////////////////////////////////////////////////////////////////////
     // regular Open item
     const auto open_item = [NSMenuItem new];
-    open_item.title = NSLocalizedStringFromTable(@"Open", @"FilePanelsContextMenu", "Menu item title for opening a file by default, for English is 'Open'");
+    open_item.title = NSLocalizedStringFromTable(
+        @"Open",
+        @"FilePanelsContextMenu",
+        "Menu item title for opening a file by default, for English is 'Open'");
     open_item.target = self;
     open_item.action = @selector(OnRegularOpen:);
     [self addItem:open_item];
@@ -87,20 +94,27 @@ using namespace nc::panel;
         openwith_submenu.identifier = NCPanelOpenWithMenuDelegate.regularMenuIdentifier;
         openwith_submenu.delegate = m_OpenWithDelegate;
         [m_OpenWithDelegate addManagedMenu:openwith_submenu];
-        
+
         NSMenuItem *openwith = [NSMenuItem new];
-        openwith.title = NSLocalizedStringFromTable(@"Open With", @"FilePanelsContextMenu", "Submenu title to choose app to open with, for English is 'Open With'");
+        openwith.title = NSLocalizedStringFromTable(
+            @"Open With",
+            @"FilePanelsContextMenu",
+            "Submenu title to choose app to open with, for English is 'Open With'");
         openwith.submenu = openwith_submenu;
         openwith.keyEquivalent = @"";
         [self addItem:openwith];
 
         NSMenu *always_openwith_submenu = [NSMenu new];
-        always_openwith_submenu.identifier = NCPanelOpenWithMenuDelegate.alwaysOpenWithMenuIdentifier;
+        always_openwith_submenu.identifier =
+            NCPanelOpenWithMenuDelegate.alwaysOpenWithMenuIdentifier;
         always_openwith_submenu.delegate = m_OpenWithDelegate;
         [m_OpenWithDelegate addManagedMenu:always_openwith_submenu];
 
         NSMenuItem *always_openwith = [NSMenuItem new];
-        always_openwith.title = NSLocalizedStringFromTable(@"Always Open With", @"FilePanelsContextMenu", "Submenu title to choose app to always open with, for English is 'Always Open With'");
+        always_openwith.title = NSLocalizedStringFromTable(
+            @"Always Open With",
+            @"FilePanelsContextMenu",
+            "Submenu title to choose app to always open with, for English is 'Always Open With'");
         always_openwith.submenu = always_openwith_submenu;
         always_openwith.alternate = true;
         always_openwith.keyEquivalent = @"";
@@ -113,15 +127,21 @@ using namespace nc::panel;
     //////////////////////////////////////////////////////////////////////
     // Move to Trash / Delete Permanently stuff
     const auto trash_item = [NSMenuItem new];
-    trash_item.title = NSLocalizedStringFromTable(@"Move to Trash", @"FilePanelsContextMenu", "Menu item title to move to trash, for English is 'Move to Trash'");
+    trash_item.title = NSLocalizedStringFromTable(
+        @"Move to Trash",
+        @"FilePanelsContextMenu",
+        "Menu item title to move to trash, for English is 'Move to Trash'");
     trash_item.target = self;
     trash_item.action = @selector(OnMoveToTrash:);
     trash_item.hidden = !m_MoveToTrashAction->Predicate(m_Panel);
     trash_item.keyEquivalent = @"";
     [self addItem:trash_item];
-    
+
     const auto delete_item = [NSMenuItem new];
-    delete_item.title = NSLocalizedStringFromTable(@"Delete Permanently", @"FilePanelsContextMenu", "Menu item title to delete file, for English is 'Delete Permanently'");
+    delete_item.title = NSLocalizedStringFromTable(
+        @"Delete Permanently",
+        @"FilePanelsContextMenu",
+        "Menu item title to delete file, for English is 'Delete Permanently'");
     delete_item.target = self;
     delete_item.action = @selector(OnDeletePermanently:);
     delete_item.alternate = trash_item.hidden ? false : true;
@@ -130,50 +150,53 @@ using namespace nc::panel;
     [self addItem:delete_item];
 
     [self addItem:NSMenuItem.separatorItem];
-    
-    
+
     //////////////////////////////////////////////////////////////////////
     // Compression stuff
-    const auto compression_enabled = nc::bootstrap::ActivationManager::Instance().HasCompressionOperation();
-   
+    const auto compression_enabled =
+        nc::bootstrap::ActivationManager::Instance().HasCompressionOperation();
+
     const auto compress_here_item = [NSMenuItem new];
-    compress_here_item.title = NSLocalizedStringFromTable(@"Compress", @"FilePanelsContextMenu", "Compress some items here");
+    compress_here_item.title = NSLocalizedStringFromTable(
+        @"Compress", @"FilePanelsContextMenu", "Compress some items here");
     compress_here_item.target = self;
     compress_here_item.action = compression_enabled ? @selector(OnCompressToCurrentPanel:) : nil;
     compress_here_item.keyEquivalent = @"";
     [self addItem:compress_here_item];
-    
+
     const auto compress_in_opposite_item = [NSMenuItem new];
-    compress_in_opposite_item.title = NSLocalizedStringFromTable(@"Compress in Opposite Panel", @"FilePanelsContextMenu", "Compress some items");
+    compress_in_opposite_item.title = NSLocalizedStringFromTable(
+        @"Compress in Opposite Panel", @"FilePanelsContextMenu", "Compress some items");
     compress_in_opposite_item.target = self;
-    compress_in_opposite_item.action = compression_enabled ? @selector(OnCompressToOppositePanel:) : nil;
+    compress_in_opposite_item.action =
+        compression_enabled ? @selector(OnCompressToOppositePanel:) : nil;
     compress_in_opposite_item.keyEquivalent = @"";
     compress_in_opposite_item.alternate = YES;
     compress_in_opposite_item.keyEquivalentModifierMask = NSEventModifierFlagOption;
     [self addItem:compress_in_opposite_item];
-    
+
     //////////////////////////////////////////////////////////////////////
     // Duplicate stuff
     const auto duplicate_item = [NSMenuItem new];
-    duplicate_item.title = NSLocalizedStringFromTable(@"Duplicate", @"FilePanelsContextMenu", "Duplicate an item");
+    duplicate_item.title =
+        NSLocalizedStringFromTable(@"Duplicate", @"FilePanelsContextMenu", "Duplicate an item");
     duplicate_item.target = self;
     duplicate_item.action = @selector(OnDuplicateItem:);
     [self addItem:duplicate_item];
-    
+
     //////////////////////////////////////////////////////////////////////
     // Share stuff
     {
         const auto share_submenu = [NSMenu new];
-        const auto eligible = all_of(begin(m_Items),
-                                     end(m_Items),
-                                     [](const auto &_i){return _i.Host()->IsNativeFS(); });
+        const auto eligible = all_of(
+            begin(m_Items), end(m_Items), [](const auto &_i) { return _i.Host()->IsNativeFS(); });
         if( eligible ) {
             m_ShareItemsURLs = [NSMutableArray new];
-            for( auto &i:m_Items )
+            for( auto &i : m_Items )
                 if( NSString *s = [NSString stringWithUTF8StdString:i.Path()] )
                     if( NSURL *url = [[NSURL alloc] initFileURLWithPath:s] )
                         [m_ShareItemsURLs addObject:url];
-            
+
             auto services = [NSSharingService sharingServicesForItems:m_ShareItemsURLs];
             for( NSSharingService *service in services ) {
                 NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:service.title
@@ -185,16 +208,17 @@ using namespace nc::panel;
                 [share_submenu addItem:item];
             }
         }
-        
+
         const auto share_menuitem = [NSMenuItem new];
-        share_menuitem.title = NSLocalizedStringFromTable(@"Share", @"FilePanelsContextMenu", "Share submenu title");
+        share_menuitem.title =
+            NSLocalizedStringFromTable(@"Share", @"FilePanelsContextMenu", "Share submenu title");
         share_menuitem.submenu = share_submenu;
         share_menuitem.enabled = share_submenu.numberOfItems > 0;
         [self addItem:share_menuitem];
     }
-    
+
     [self addItem:NSMenuItem.separatorItem];
-    
+
     //////////////////////////////////////////////////////////////////////
     // Copy element for native FS. simply copies selected items' paths
     {
@@ -207,7 +231,7 @@ using namespace nc::panel;
     [self addItem:NSMenuItem.separatorItem];
 }
 
-- (BOOL) validateMenuItem:(NSMenuItem *)item
+- (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     if( item.action == @selector(OnCopyPaths:) )
         return m_CopyAction->ValidateMenuItem(m_Panel, item);
@@ -223,7 +247,7 @@ using namespace nc::panel;
         return m_CompressToOppositeAction->ValidateMenuItem(m_Panel, item);
     if( item.action == @selector(OnRegularOpen:) )
         return m_OpenFileAction->ValidateMenuItem(m_Panel, item);
-    
+
     return true;
 }
 
@@ -261,8 +285,8 @@ using namespace nc::panel;
 {
     auto delegate = [[NCPanelContextMenuSharingDelegate alloc] init];
     delegate.sourceWindow = m_Panel.window;
-    
-    NSSharingService *service = ((NSMenuItem*)sender).representedObject;
+
+    NSSharingService *service = ((NSMenuItem *)sender).representedObject;
     service.delegate = delegate;
     [service performWithItems:m_ShareItemsURLs];
 }
@@ -274,8 +298,7 @@ using namespace nc::panel;
 
 @end
 
-@implementation NCPanelContextMenuSharingDelegate
-{
+@implementation NCPanelContextMenuSharingDelegate {
     NCPanelContextMenuSharingDelegate *m_Self;
 }
 
@@ -287,22 +310,22 @@ using namespace nc::panel;
     return self;
 }
 
-- (void)sharingService:(NSSharingService *)[[maybe_unused]]sharingService
-   didFailToShareItems:(NSArray *)[[maybe_unused]]items
-                 error:(NSError *)[[maybe_unused]]error
+- (void)sharingService:(NSSharingService *) [[maybe_unused]] sharingService
+    didFailToShareItems:(NSArray *) [[maybe_unused]] items
+                  error:(NSError *) [[maybe_unused]] error
 {
     m_Self = nil;
 }
 
-- (void)sharingService:(NSSharingService *)[[maybe_unused]]sharingService
-         didShareItems:(NSArray *)[[maybe_unused]]items
+- (void)sharingService:(NSSharingService *) [[maybe_unused]] sharingService
+         didShareItems:(NSArray *) [[maybe_unused]] items
 {
     m_Self = nil;
 }
 
-- (nullable NSWindow *)sharingService:(NSSharingService *)[[maybe_unused]]sharingService
-            sourceWindowForShareItems:(NSArray *)[[maybe_unused]]items
-                  sharingContentScope:(NSSharingContentScope *)[[maybe_unused]]sharingContentScope
+- (nullable NSWindow *)sharingService:(NSSharingService *) [[maybe_unused]] sharingService
+            sourceWindowForShareItems:(NSArray *) [[maybe_unused]] items
+                  sharingContentScope:(NSSharingContentScope *) [[maybe_unused]] sharingContentScope
 {
     return self.sourceWindow;
 }

@@ -88,8 +88,7 @@ void CompressHere::Perform(PanelController *_target, id) const
     [_target.mainWindowController beginSheet:dialog.window completionHandler:handler];
 }
 
-CompressToOpposite::CompressToOpposite(nc::config::Config &_config):
-    CompressBase(_config)
+CompressToOpposite::CompressToOpposite(nc::config::Config &_config) : CompressBase(_config)
 {
 }
 
@@ -142,7 +141,9 @@ void CompressToOpposite::Perform(PanelController *_target, id) const
     [_target.mainWindowController beginSheet:dialog.window completionHandler:handler];
 }
 
-context::CompressHere::CompressHere(const std::vector<VFSListingItem> &_items) : m_Items(_items)
+context::CompressHere::CompressHere(nc::config::Config &_config,
+                                    const std::vector<VFSListingItem> &_items)
+    : CompressBase(_config), m_Items(_items)
 {
 }
 
@@ -181,15 +182,14 @@ void context::CompressHere::Perform(PanelController *_target, id) const
         FocusResult((PanelController *)weak_target, weak_op.lock());
     });
 
-    const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
-    op->SetItemStatusCallback(
-        [deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
+    AddDeselectorIfNeeded(*op, _target);
 
     [_target.mainWindowController enqueueOperation:op];
 }
 
-context::CompressToOpposite::CompressToOpposite(const std::vector<VFSListingItem> &_items)
-    : m_Items(_items)
+context::CompressToOpposite::CompressToOpposite(nc::config::Config &_config,
+                                                const std::vector<VFSListingItem> &_items)
+    : CompressBase(_config), m_Items(_items)
 {
 }
 
@@ -236,9 +236,7 @@ void context::CompressToOpposite::Perform(PanelController *_target, id) const
         FocusResult((PanelController *)weak_target, weak_op.lock());
     });
 
-    const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
-    op->SetItemStatusCallback(
-        [deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
+    AddDeselectorIfNeeded(*op, _target);
 
     [_target.mainWindowController enqueueOperation:op];
 }

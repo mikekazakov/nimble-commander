@@ -13,46 +13,49 @@
 
 namespace nc::panel::actions {
 
-bool ChangeAttributes::Predicate( PanelController *_target ) const
+static const auto g_DeselectConfigFlag = "filePanel.general.deselectItemsAfterFileOperations";
+
+ChangeAttributes::ChangeAttributes(nc::config::Config &_config) : m_Config(_config)
 {
-    const auto i = _target.view.item;
-    return i &&
-        ((!i.IsDotDot() && i.Host()->IsWritable()) ||
-         _target.data.Stats().selected_entries_amount > 0 );
 }
 
-void ChangeAttributes::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
+bool ChangeAttributes::Predicate(PanelController *_target) const
+{
+    const auto i = _target.view.item;
+    return i && ((!i.IsDotDot() && i.Host()->IsWritable()) ||
+                 _target.data.Stats().selected_entries_amount > 0);
+}
+
+void ChangeAttributes::Perform(PanelController *_target, [[maybe_unused]] id _sender) const
 {
     auto items = _target.selectedEntriesOrFocusedEntry;
     if( ![NCOpsAttrsChangingDialog canEditAnythingInItems:items] )
         return;
-    
-    const auto sheet = [[NCOpsAttrsChangingDialog alloc] initWithItems:move(items)];
-    
-    const auto handler = ^(NSModalResponse returnCode) {
-        if( returnCode != NSModalResponseOK )
-            return;
 
-        const auto op = std::make_shared<nc::ops::AttrsChanging>(sheet.command);
-        if( !_target.receivesUpdateNotifications ) {
-            __weak PanelController *weak_panel = _target;
-            op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
-                dispatch_to_main_queue( [=]{
-                    [(PanelController*)weak_panel refreshPanel];
-                });
-            });
-        }
-        
-        const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
-        op->SetItemStatusCallback([deselector](nc::ops::ItemStateReport _report){
-            deselector->Handle(_report);
-        });
-        
-        [_target.mainWindowController enqueueOperation:op];
+    const auto sheet = [[NCOpsAttrsChangingDialog alloc] initWithItems:move(items)];
+
+    const auto handler = ^(NSModalResponse returnCode) {
+      if( returnCode != NSModalResponseOK )
+          return;
+
+      const auto op = std::make_shared<nc::ops::AttrsChanging>(sheet.command);
+      if( !_target.receivesUpdateNotifications ) {
+          __weak PanelController *weak_panel = _target;
+          op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
+              dispatch_to_main_queue([=] { [(PanelController *)weak_panel refreshPanel]; });
+          });
+      }
+
+      if( m_Config.GetBool(g_DeselectConfigFlag) ) {
+          const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
+          op->SetItemStatusCallback(
+              [deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
+      }
+
+      [_target.mainWindowController enqueueOperation:op];
     };
-    
-    [_target.mainWindowController beginSheet:sheet.window
-                           completionHandler:handler];
+
+    [_target.mainWindowController beginSheet:sheet.window completionHandler:handler];
 }
 
 }

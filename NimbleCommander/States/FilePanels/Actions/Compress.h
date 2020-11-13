@@ -2,8 +2,11 @@
 #pragma once
 
 #include <VFS/VFS.h>
-#include <Config/Config.h>
 #include "DefaultAction.h"
+
+namespace nc::config {
+class Config;
+}
 
 namespace nc::ops {
 class Operation;

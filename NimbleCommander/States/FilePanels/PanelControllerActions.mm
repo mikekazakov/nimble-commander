@@ -160,7 +160,7 @@ PanelActionsMap BuildPanelActionsMap
     add( @selector(OnDeselectByMask:),           new SelectAllByMask{false});
     add( @selector(OnQuickDeselectByExtension:), new SelectAllByExtension{false});
     add( @selector(OnDetailedVolumeInformation:),new ShowVolumeInformation{_native_fs_mgr});
-    add( @selector(OnFileAttributes:),           new ChangeAttributes);
+    add( @selector(OnFileAttributes:),           new ChangeAttributes{_global_config});
     add( @selector(OnOpenWithExternalEditor:),   new OpenWithExternalEditor{_file_opener});
     add( @selector(OnEjectVolume:),              new EjectVolume{_native_fs_mgr});
     add( @selector(OnCopyCurrentFileName:),      new CopyFileName);

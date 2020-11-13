@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include "../source/AttrsChanging/AttrsChanging.h"
 #include <VFS/Native.h>
+#include <chrono>
 
 using namespace nc;
 using namespace nc::ops;
@@ -11,7 +12,7 @@ using namespace std::literals;
 
 #define PREFIX "Operations::AttrsChanging "
 
-static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path,
+static std::vector<VFSListingItem> FetchItems(const std::string &_directory_path,
                                               const std::vector<std::string> &_filenames,
                                               VFSHost &_host);
 
@@ -20,7 +21,7 @@ TEST_CASE(PREFIX "chmod")
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory + "test";
-    close( creat( path.c_str(), 0755 ) );
+    close(creat(path.c_str(), 0755));
     AttrsChangingCommand cmd;
     cmd.items = FetchItems(tmp_dir.directory, {"test"}, *native_host);
     cmd.permissions.emplace();
@@ -28,15 +29,15 @@ TEST_CASE(PREFIX "chmod")
     cmd.permissions->grp_x = false;
     cmd.permissions->oth_r = false;
     cmd.permissions->oth_x = false;
-    
-    AttrsChanging operation{ cmd };
+
+    AttrsChanging operation{cmd};
     operation.Start();
     operation.Wait();
-    REQUIRE( operation.State() == OperationState::Completed );
-    
+    REQUIRE(operation.State() == OperationState::Completed);
+
     VFSStat st;
-    CHECK( native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok );
-    CHECK( (st.mode & ~S_IFMT) == 0700 );
+    CHECK(native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok);
+    CHECK((st.mode & ~S_IFMT) == 0700);
 }
 
 TEST_CASE(PREFIX "recursion")
@@ -44,12 +45,12 @@ TEST_CASE(PREFIX "recursion")
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory + "test";
-    const auto path1= tmp_dir.directory + "test/qwer";
-    const auto path2= tmp_dir.directory + "test/qwer/asdf";
-    mkdir( path.c_str(), 0755 );
-    mkdir( path1.c_str(), 0755 );
-    close( creat( path2.c_str(), 0755 ) );
-    
+    const auto path1 = tmp_dir.directory + "test/qwer";
+    const auto path2 = tmp_dir.directory + "test/qwer/asdf";
+    mkdir(path.c_str(), 0755);
+    mkdir(path1.c_str(), 0755);
+    close(creat(path2.c_str(), 0755));
+
     AttrsChangingCommand cmd;
     cmd.items = FetchItems(tmp_dir.directory, {"test"}, *native_host);
     cmd.permissions.emplace();
@@ -58,21 +59,21 @@ TEST_CASE(PREFIX "recursion")
     cmd.permissions->oth_r = false;
     cmd.permissions->oth_x = false;
     cmd.apply_to_subdirs = true;
-    
-    AttrsChanging operation{ cmd };
+
+    AttrsChanging operation{cmd};
     operation.Start();
     operation.Wait();
-    REQUIRE( operation.State() == OperationState::Completed );
-    
-    VFSStat st;
-    CHECK( native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok );
-    CHECK( (st.mode & ~S_IFMT) == 0700 );
-    
-    CHECK( native_host->Stat(path1.c_str(), st, 0, {}) == VFSError::Ok );
-    CHECK( (st.mode & ~S_IFMT) == 0700 );
+    REQUIRE(operation.State() == OperationState::Completed);
 
-    CHECK( native_host->Stat(path2.c_str(), st, 0, {}) == VFSError::Ok );
-    CHECK( (st.mode & ~S_IFMT) == 0700 );
+    VFSStat st;
+    CHECK(native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok);
+    CHECK((st.mode & ~S_IFMT) == 0700);
+
+    CHECK(native_host->Stat(path1.c_str(), st, 0, {}) == VFSError::Ok);
+    CHECK((st.mode & ~S_IFMT) == 0700);
+
+    CHECK(native_host->Stat(path2.c_str(), st, 0, {}) == VFSError::Ok);
+    CHECK((st.mode & ~S_IFMT) == 0700);
 }
 
 TEST_CASE(PREFIX "chown")
@@ -80,19 +81,19 @@ TEST_CASE(PREFIX "chown")
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory + "test";
-    close( creat( path.c_str(), 0755 ) );
+    close(creat(path.c_str(), 0755));
     AttrsChangingCommand cmd;
     cmd.items = FetchItems(tmp_dir.directory, {"test"}, *native_host);
     cmd.ownage.emplace();
     cmd.ownage->gid = 12;
-    AttrsChanging operation{ cmd };
+    AttrsChanging operation{cmd};
     operation.Start();
     operation.Wait();
-    REQUIRE( operation.State() == OperationState::Completed );
+    REQUIRE(operation.State() == OperationState::Completed);
 
     VFSStat st;
-    CHECK( native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok );
-    CHECK( st.gid == 12 );
+    CHECK(native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok);
+    CHECK(st.gid == 12);
 }
 
 TEST_CASE(PREFIX "chflags")
@@ -100,21 +101,21 @@ TEST_CASE(PREFIX "chflags")
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory + "test";
-    close( creat( path.c_str(), 0755 ) );
-    
+    close(creat(path.c_str(), 0755));
+
     AttrsChangingCommand cmd;
     cmd.items = FetchItems(tmp_dir.directory, {"test"}, *native_host);
     cmd.flags.emplace();
     cmd.flags->u_hidden = true;
-    
-    AttrsChanging operation{ cmd };
+
+    AttrsChanging operation{cmd};
     operation.Start();
     operation.Wait();
-    REQUIRE( operation.State() == OperationState::Completed );
-    
+    REQUIRE(operation.State() == OperationState::Completed);
+
     VFSStat st;
-    CHECK( native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok );
-    CHECK( (st.flags & UF_HIDDEN) != 0 );
+    CHECK(native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok);
+    CHECK((st.flags & UF_HIDDEN) != 0);
 }
 
 TEST_CASE(PREFIX "mtime")
@@ -122,25 +123,26 @@ TEST_CASE(PREFIX "mtime")
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
     const auto path = tmp_dir.directory + "test";
-    const auto mtime = (long)[NSDate dateWithTimeIntervalSinceNow:-10000].timeIntervalSince1970;
-    close( creat( path.c_str(), 0755 ) );
-    
+    // now - 10'000 seconds
+    const long mtime =
+        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) - 10'000;
+    close(creat(path.c_str(), 0755));
     AttrsChangingCommand cmd;
     cmd.items = FetchItems(tmp_dir.directory, {"test"}, *native_host);
     cmd.times.emplace();
     cmd.times->mtime = mtime;
- 
-    AttrsChanging operation{ cmd };
+
+    AttrsChanging operation{cmd};
     operation.Start();
     operation.Wait();
-    REQUIRE( operation.State() == OperationState::Completed );
-    
+    REQUIRE(operation.State() == OperationState::Completed);
+
     VFSStat st;
-    CHECK( native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok );
-    CHECK( st.mtime.tv_sec == mtime );
+    CHECK(native_host->Stat(path.c_str(), st, 0, {}) == VFSError::Ok);
+    CHECK(st.mtime.tv_sec == mtime);
 }
 
-static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path,
+static std::vector<VFSListingItem> FetchItems(const std::string &_directory_path,
                                               const std::vector<std::string> &_filenames,
                                               VFSHost &_host)
 {

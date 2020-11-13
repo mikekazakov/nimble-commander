@@ -142,6 +142,38 @@ TEST_CASE(PREFIX "mtime")
     CHECK(st.mtime.tv_sec == mtime);
 }
 
+TEST_CASE(PREFIX "Item reporting")
+{
+    TempTestDir tmp_dir;
+    const auto native_host = TestEnv().vfs_native;
+    const auto path = tmp_dir.directory + "test";
+    const auto path1 = tmp_dir.directory + "test/dir";
+    const auto path2 = tmp_dir.directory + "test/dir/file.txt";
+    mkdir(path.c_str(), 0755);
+    mkdir(path1.c_str(), 0755);
+    close(creat(path2.c_str(), 0755));
+
+    AttrsChangingCommand cmd;
+    cmd.items = FetchItems(tmp_dir.directory, {"test"}, *native_host);
+    cmd.flags.emplace();
+    cmd.flags->u_hidden = true;
+    cmd.apply_to_subdirs = true;
+
+    AttrsChanging operation{cmd};
+    std::set<std::string> processed;
+    operation.SetItemStatusCallback([&](nc::ops::ItemStateReport _report) {
+        REQUIRE(&_report.host == native_host.get());
+        REQUIRE(_report.status == nc::ops::ItemStatus::Processed);
+        processed.emplace(_report.path);
+    });    
+    operation.Start();
+    operation.Wait();
+    REQUIRE(operation.State() == OperationState::Completed);
+
+    const std::set<std::string> expected{path, path1, path2};
+    CHECK(processed == expected);
+}
+
 static std::vector<VFSListingItem> FetchItems(const std::string &_directory_path,
                                               const std::vector<std::string> &_filenames,
                                               VFSHost &_host)

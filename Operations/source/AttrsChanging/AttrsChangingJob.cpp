@@ -160,12 +160,17 @@ void AttrsChangingJob::DoChange()
     for( auto i = std::begin(m_Filenames), e = std::end(m_Filenames); i != e; ++i, ++n ) {
         const auto &meta = m_Metas[n];
         const auto &origin_item = m_Command.items[meta.origin_item ];
-        const auto path = origin_item.Directory() + (*i).to_str_with_pref();
+        const auto path = EnsureNoTrailingSlash(origin_item.Directory() + (*i).to_str_with_pref());
         
         const auto success = AlterSingleItem(path, *origin_item.Host(), meta.stat);
         
-        if( success )
+        if( success ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
+            
+            // for now reports only about successful processing
+            ItemStateReport report{*origin_item.Host(), path, ItemStatus::Processed};
+            TellItemReport(report);
+        }
         
         if( BlockIfPaused(); IsStopped() )
             return;

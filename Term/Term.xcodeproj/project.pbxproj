@@ -7,59 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF0A49AF250D575D008EC7B0 /* OrthodoxMonospace.h in Headers */ = {isa = PBXBuildFile; fileRef = CF0A49AE250D575C008EC7B0 /* OrthodoxMonospace.h */; };
-		CF0A49B1250D576D008EC7B0 /* OrthodoxMonospace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */; };
 		CF0A49DA251668E8008EC7B0 /* InputTranslator_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49CC2516676A008EC7B0 /* InputTranslator_UT.mm */; };
 		CF0A49E7251F1A42008EC7B0 /* ShellTask_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49E6251F1A42008EC7B0 /* ShellTask_IT.cpp */; };
 		CF0A49E8251F1A51008EC7B0 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
 		CF0A49EE251F2362008EC7B0 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF50998F1F948FDD000AFDE7 /* libUtility.dylib */; };
-		CF19B4952547611000838B45 /* Log.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4942547611000838B45 /* Log.h */; };
-		CF19B4972547611F00838B45 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B4962547611F00838B45 /* Log.cpp */; };
-		CF1ADE2D1F7E6C4B003E9B76 /* ScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */; };
-		CF1ADE361F7E7344003E9B76 /* ScreenBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */; };
-		CF1ADE381F7E7370003E9B76 /* Screen.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE371F7E7370003E9B76 /* Screen.h */; };
-		CF1ADE3A1F7E7379003E9B76 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE391F7E7379003E9B76 /* Screen.cpp */; };
-		CF1ADE3D1F7E742D003E9B76 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE3C1F7E742D003E9B76 /* libUtility.dylib */; };
-		CF1ADE3F1F7E7587003E9B76 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE3E1F7E7587003E9B76 /* Parser.h */; };
-		CF1ADE431F7E76BF003E9B76 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */; };
-		CF1ADE451F7E76C4003E9B76 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE441F7E76C4003E9B76 /* Carbon.framework */; };
-		CF1ADE481F7E77AE003E9B76 /* TranslateMaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */; };
-		CF1ADE491F7E77AE003E9B76 /* TranslateMaps.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE471F7E77AE003E9B76 /* TranslateMaps.h */; };
-		CF41350D1F846CE6007429B6 /* ShellTask.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41350A1F846CE6007429B6 /* ShellTask.h */; };
-		CF41350E1F846CE6007429B6 /* SingleTask.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41350B1F846CE6007429B6 /* SingleTask.h */; };
-		CF41350F1F846CE6007429B6 /* Task.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41350C1F846CE6007429B6 /* Task.h */; };
-		CF4135141F846CF2007429B6 /* PrecompiledHeaders.pch in Headers */ = {isa = PBXBuildFile; fileRef = CF4135101F846CF2007429B6 /* PrecompiledHeaders.pch */; };
-		CF4135151F846CF2007429B6 /* ShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135111F846CF2007429B6 /* ShellTask.cpp */; };
-		CF4135161F846CF2007429B6 /* SingleTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135121F846CF2007429B6 /* SingleTask.cpp */; };
-		CF4135171F846CF2007429B6 /* Task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135131F846CF2007429B6 /* Task.cpp */; };
-		CF4135191F846D48007429B6 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF4135181F846D48007429B6 /* libHabanero.dylib */; };
-		CF41351B1F8666B4007429B6 /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41351A1F8666B4007429B6 /* Settings.h */; };
-		CF41351D1F8666BF007429B6 /* Settings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351C1F8666BF007429B6 /* Settings.mm */; };
-		CF4135231F890BC8007429B6 /* CursorMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4135221F890BC8007429B6 /* CursorMode.h */; };
-		CF4135251F891165007429B6 /* View.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4135241F891165007429B6 /* View.mm */; };
-		CF4135271F89116E007429B6 /* View.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4135261F89116E007429B6 /* View.h */; };
-		CF50996C1F94800F000AFDE7 /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = CF50996B1F94800F000AFDE7 /* ScrollView.h */; };
-		CF50996E1F948018000AFDE7 /* ScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50996D1F948018000AFDE7 /* ScrollView.mm */; };
-		CF5099711F948400000AFDE7 /* FlippableHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF50996F1F948400000AFDE7 /* FlippableHolder.h */; };
-		CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099701F948400000AFDE7 /* FlippableHolder.mm */; };
-		CF5338642532425300022EE8 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */; };
-		CF5338652532426300022EE8 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */; };
-		CF5F392D242F7D57004DF1F8 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */; };
-		CF5F392F242F7FB4004DF1F8 /* InterpreterImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */; };
-		CF5F3931242F7FC7004DF1F8 /* InterpreterImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5F3930242F7FC6004DF1F8 /* InterpreterImpl.h */; };
+		CF4600D725605B830095FC73 /* InputTranslator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F4C524CA396600DF4ED6 /* InputTranslator.cpp */; };
+		CF4600D825605B830095FC73 /* InputTranslatorImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F4CB24CA3D2000DF4ED6 /* InputTranslatorImpl.mm */; };
+		CF4600D925605B830095FC73 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B4962547611F00838B45 /* Log.cpp */; };
+		CF4600DA25605B830095FC73 /* FlippableHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099701F948400000AFDE7 /* FlippableHolder.mm */; };
+		CF4600DB25605B830095FC73 /* Parser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */; };
+		CF4600DC25605B830095FC73 /* ScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50996D1F948018000AFDE7 /* ScrollView.mm */; };
+		CF4600DD25605B830095FC73 /* ShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135111F846CF2007429B6 /* ShellTask.cpp */; };
+		CF4600DE25605B830095FC73 /* InterpreterImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */; };
+		CF4600DF25605B830095FC73 /* ScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */; };
+		CF4600E025605B830095FC73 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */; };
+		CF4600E125605B830095FC73 /* Task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135131F846CF2007429B6 /* Task.cpp */; };
+		CF4600E225605B830095FC73 /* Parser2Impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2D23DCEB04007E99B8 /* Parser2Impl.cpp */; };
+		CF4600E325605B830095FC73 /* SingleTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135121F846CF2007429B6 /* SingleTask.cpp */; };
+		CF4600E425605B830095FC73 /* OrthodoxMonospace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */; };
+		CF4600E525605B830095FC73 /* TranslateMaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */; };
+		CF4600E625605B830095FC73 /* View.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4135241F891165007429B6 /* View.mm */; };
+		CF4600E725605B830095FC73 /* Settings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351C1F8666BF007429B6 /* Settings.mm */; };
+		CF4600E825605B830095FC73 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE391F7E7379003E9B76 /* Screen.cpp */; };
 		CF5F3934242FCD2B004DF1F8 /* Term_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */; };
 		CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */; };
 		CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D696624A897B5008352B0 /* Screen_UT.cpp */; };
 		CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */; };
-		CFB7456B2416E5850088F5EF /* Interpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB7456A2416E5850088F5EF /* Interpreter.h */; };
-		CFC4F4C624CA396600DF4ED6 /* InputTranslator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F4C524CA396600DF4ED6 /* InputTranslator.cpp */; };
-		CFC4F4C824CA397600DF4ED6 /* InputTranslator.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F4C724CA397600DF4ED6 /* InputTranslator.h */; };
-		CFC4F4CA24CA3D1B00DF4ED6 /* InputTranslatorImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F4C924CA3D1B00DF4ED6 /* InputTranslatorImpl.h */; };
-		CFC4F4CC24CA3D2100DF4ED6 /* InputTranslatorImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F4CB24CA3D2000DF4ED6 /* InputTranslatorImpl.mm */; };
-		CFE08B2923DCABA4007E99B8 /* Parser2.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2823DCABA4007E99B8 /* Parser2.h */; };
-		CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */; };
-		CFE08B2E23DCEB04007E99B8 /* Parser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */; };
-		CFE08B2F23DCEB04007E99B8 /* Parser2Impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2D23DCEB04007E99B8 /* Parser2Impl.cpp */; };
 		CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
 		CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */; };
 /* End PBXBuildFile section */
@@ -93,7 +66,6 @@
 		CF0A49E6251F1A42008EC7B0 /* ShellTask_IT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShellTask_IT.cpp; sourceTree = "<group>"; };
 		CF19B4942547611000838B45 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Log.h; path = include/Term/Log.h; sourceTree = "<group>"; };
 		CF19B4962547611F00838B45 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
-		CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libTerm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenBuffer.cpp; path = source/ScreenBuffer.cpp; sourceTree = SOURCE_ROOT; };
 		CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenBuffer.h; path = include/Term/ScreenBuffer.h; sourceTree = "<group>"; };
 		CF1ADE371F7E7370003E9B76 /* Screen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Screen.h; path = include/Term/Screen.h; sourceTree = "<group>"; };
@@ -120,6 +92,7 @@
 		CF4135221F890BC8007429B6 /* CursorMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorMode.h; path = include/Term/CursorMode.h; sourceTree = "<group>"; };
 		CF4135241F891165007429B6 /* View.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = View.mm; path = source/View.mm; sourceTree = SOURCE_ROOT; };
 		CF4135261F89116E007429B6 /* View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = View.h; path = include/Term/View.h; sourceTree = "<group>"; };
+		CF4600D025605B1F0095FC73 /* libTerm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTerm.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF50996B1F94800F000AFDE7 /* ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollView.h; path = include/Term/ScrollView.h; sourceTree = "<group>"; };
 		CF50996D1F948018000AFDE7 /* ScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ScrollView.mm; path = source/ScrollView.mm; sourceTree = SOURCE_ROOT; };
 		CF50996F1F948400000AFDE7 /* FlippableHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlippableHolder.h; path = source/FlippableHolder.h; sourceTree = SOURCE_ROOT; };
@@ -157,19 +130,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF5338652532426300022EE8 /* libTerm.dylib in Frameworks */,
 				CF0A49EE251F2362008EC7B0 /* libUtility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CF1ADE071F7E6A2A003E9B76 /* Frameworks */ = {
+		CF4600CE25605B1F0095FC73 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF1ADE451F7E76C4003E9B76 /* Carbon.framework in Frameworks */,
-				CF1ADE431F7E76BF003E9B76 /* Cocoa.framework in Frameworks */,
-				CF4135191F846D48007429B6 /* libHabanero.dylib in Frameworks */,
-				CF1ADE3D1F7E742D003E9B76 /* libUtility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,7 +145,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF5338642532425300022EE8 /* libTerm.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,9 +166,9 @@
 		CF1ADE0B1F7E6A2A003E9B76 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */,
 				CFE08B3423DCFBD1007E99B8 /* TermUT */,
 				CF0A49DF251F19DB008EC7B0 /* TermIT */,
+				CF4600D025605B1F0095FC73 /* libTerm.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -307,31 +274,10 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		CF1ADE081F7E6A2A003E9B76 /* Headers */ = {
+		CF4600CC25605B1F0095FC73 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF41350F1F846CE6007429B6 /* Task.h in Headers */,
-				CF0A49AF250D575D008EC7B0 /* OrthodoxMonospace.h in Headers */,
-				CF5F3931242F7FC7004DF1F8 /* InterpreterImpl.h in Headers */,
-				CF19B4952547611000838B45 /* Log.h in Headers */,
-				CFE08B2B23DCEAF7007E99B8 /* Parser2Impl.h in Headers */,
-				CF4135231F890BC8007429B6 /* CursorMode.h in Headers */,
-				CF1ADE491F7E77AE003E9B76 /* TranslateMaps.h in Headers */,
-				CFC4F4C824CA397600DF4ED6 /* InputTranslator.h in Headers */,
-				CF41350E1F846CE6007429B6 /* SingleTask.h in Headers */,
-				CF50996C1F94800F000AFDE7 /* ScrollView.h in Headers */,
-				CF4135141F846CF2007429B6 /* PrecompiledHeaders.pch in Headers */,
-				CFC4F4CA24CA3D1B00DF4ED6 /* InputTranslatorImpl.h in Headers */,
-				CFB7456B2416E5850088F5EF /* Interpreter.h in Headers */,
-				CF41350D1F846CE6007429B6 /* ShellTask.h in Headers */,
-				CF1ADE3F1F7E7587003E9B76 /* Parser.h in Headers */,
-				CF5099711F948400000AFDE7 /* FlippableHolder.h in Headers */,
-				CFE08B2923DCABA4007E99B8 /* Parser2.h in Headers */,
-				CF4135271F89116E007429B6 /* View.h in Headers */,
-				CF1ADE381F7E7370003E9B76 /* Screen.h in Headers */,
-				CF41351B1F8666B4007429B6 /* Settings.h in Headers */,
-				CF1ADE361F7E7344003E9B76 /* ScreenBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,13 +301,13 @@
 			productReference = CF0A49DF251F19DB008EC7B0 /* TermIT */;
 			productType = "com.apple.product-type.tool";
 		};
-		CF1ADE091F7E6A2A003E9B76 /* Term */ = {
+		CF4600CF25605B1F0095FC73 /* Term */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF1ADE151F7E6A2A003E9B76 /* Build configuration list for PBXNativeTarget "Term" */;
+			buildConfigurationList = CF4600D125605B1F0095FC73 /* Build configuration list for PBXNativeTarget "Term" */;
 			buildPhases = (
-				CF1ADE061F7E6A2A003E9B76 /* Sources */,
-				CF1ADE071F7E6A2A003E9B76 /* Frameworks */,
-				CF1ADE081F7E6A2A003E9B76 /* Headers */,
+				CF4600CC25605B1F0095FC73 /* Headers */,
+				CF4600CD25605B1F0095FC73 /* Sources */,
+				CF4600CE25605B1F0095FC73 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -369,8 +315,8 @@
 			);
 			name = Term;
 			productName = Term;
-			productReference = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
+			productReference = CF4600D025605B1F0095FC73 /* libTerm.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 		CFE08B3323DCFBD1007E99B8 /* TermUT */ = {
 			isa = PBXNativeTarget;
@@ -402,9 +348,8 @@
 						CreatedOnToolsVersion = 11.5;
 						ProvisioningStyle = Automatic;
 					};
-					CF1ADE091F7E6A2A003E9B76 = {
-						CreatedOnToolsVersion = 8.3.2;
-						ProvisioningStyle = Automatic;
+					CF4600CF25605B1F0095FC73 = {
+						CreatedOnToolsVersion = 12.0;
 					};
 					CFE08B3323DCFBD1007E99B8 = {
 						CreatedOnToolsVersion = 11.2;
@@ -424,7 +369,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CF1ADE091F7E6A2A003E9B76 /* Term */,
+				CF4600CF25605B1F0095FC73 /* Term */,
 				CFE08B3323DCFBD1007E99B8 /* TermUT */,
 				CF0A49DE251F19DB008EC7B0 /* TermIT */,
 			);
@@ -441,28 +386,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CF1ADE061F7E6A2A003E9B76 /* Sources */ = {
+		CF4600CD25605B1F0095FC73 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF19B4972547611F00838B45 /* Log.cpp in Sources */,
-				CF1ADE2D1F7E6C4B003E9B76 /* ScreenBuffer.cpp in Sources */,
-				CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */,
-				CFC4F4CC24CA3D2100DF4ED6 /* InputTranslatorImpl.mm in Sources */,
-				CF4135151F846CF2007429B6 /* ShellTask.cpp in Sources */,
-				CF4135171F846CF2007429B6 /* Task.cpp in Sources */,
-				CFC4F4C624CA396600DF4ED6 /* InputTranslator.cpp in Sources */,
-				CF5F392F242F7FB4004DF1F8 /* InterpreterImpl.cpp in Sources */,
-				CF4135161F846CF2007429B6 /* SingleTask.cpp in Sources */,
-				CF41351D1F8666BF007429B6 /* Settings.mm in Sources */,
-				CF1ADE481F7E77AE003E9B76 /* TranslateMaps.cpp in Sources */,
-				CFE08B2F23DCEB04007E99B8 /* Parser2Impl.cpp in Sources */,
-				CFE08B2E23DCEB04007E99B8 /* Parser2.cpp in Sources */,
-				CF4135251F891165007429B6 /* View.mm in Sources */,
-				CF1ADE3A1F7E7379003E9B76 /* Screen.cpp in Sources */,
-				CF5F392D242F7D57004DF1F8 /* Interpreter.cpp in Sources */,
-				CF0A49B1250D576D008EC7B0 /* OrthodoxMonospace.cpp in Sources */,
-				CF50996E1F948018000AFDE7 /* ScrollView.mm in Sources */,
+				CF4600E525605B830095FC73 /* TranslateMaps.cpp in Sources */,
+				CF4600D925605B830095FC73 /* Log.cpp in Sources */,
+				CF4600DD25605B830095FC73 /* ShellTask.cpp in Sources */,
+				CF4600E425605B830095FC73 /* OrthodoxMonospace.cpp in Sources */,
+				CF4600E125605B830095FC73 /* Task.cpp in Sources */,
+				CF4600DE25605B830095FC73 /* InterpreterImpl.cpp in Sources */,
+				CF4600DC25605B830095FC73 /* ScrollView.mm in Sources */,
+				CF4600E225605B830095FC73 /* Parser2Impl.cpp in Sources */,
+				CF4600D825605B830095FC73 /* InputTranslatorImpl.mm in Sources */,
+				CF4600DB25605B830095FC73 /* Parser2.cpp in Sources */,
+				CF4600E625605B830095FC73 /* View.mm in Sources */,
+				CF4600E025605B830095FC73 /* Interpreter.cpp in Sources */,
+				CF4600DF25605B830095FC73 /* ScreenBuffer.cpp in Sources */,
+				CF4600D725605B830095FC73 /* InputTranslator.cpp in Sources */,
+				CF4600E325605B830095FC73 /* SingleTask.cpp in Sources */,
+				CF4600E725605B830095FC73 /* Settings.mm in Sources */,
+				CF4600DA25605B830095FC73 /* FlippableHolder.mm in Sources */,
+				CF4600E825605B830095FC73 /* Screen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -511,25 +456,19 @@
 			};
 			name = Release;
 		};
-		CF1ADE161F7E6A2A003E9B76 /* Debug */ = {
+		CF4600D225605B1F0095FC73 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
-		CF1ADE171F7E6A2A003E9B76 /* Release */ = {
+		CF4600D325605B1F0095FC73 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -568,11 +507,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CF1ADE151F7E6A2A003E9B76 /* Build configuration list for PBXNativeTarget "Term" */ = {
+		CF4600D125605B1F0095FC73 /* Build configuration list for PBXNativeTarget "Term" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CF1ADE161F7E6A2A003E9B76 /* Debug */,
-				CF1ADE171F7E6A2A003E9B76 /* Release */,
+				CF4600D225605B1F0095FC73 /* Debug */,
+				CF4600D325605B1F0095FC73 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

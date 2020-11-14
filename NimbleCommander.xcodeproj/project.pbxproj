@@ -60,7 +60,6 @@
 		CF197C491FB92E80009F6C59 /* CopyFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C481FB92E80009F6C59 /* CopyFile.mm */; };
 		CF197C4C1FB960CC009F6C59 /* RevealInOppositePanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */; };
 		CF1ADE291F7E6BB4003E9B76 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
-		CF1ADE4A1F7E7B28003E9B76 /* libTerm.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF1E3D1B1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */; };
 		CF1E3D1C1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */; };
 		CF1E3D1D1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */; };
@@ -359,7 +358,6 @@
 		CF614AEB1F9D92A30005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
 		CF614AEC1F9D92A40005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
 		CF614AED1F9D92B30005F2DB /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
-		CF614AEE1F9D92D70005F2DB /* libTerm.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
 		CF614AF01F9D932B0005F2DB /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
 		CF6237241EB4444B00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF6237251EB4444C00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
@@ -1459,7 +1457,6 @@
 			files = (
 				CFD79AF821FE47E20043A26D /* CUI.framework in Copy Files */,
 				CF82610D2162470B00707B80 /* libConfig.dylib in Copy Files */,
-				CF1ADE4A1F7E7B28003E9B76 /* libTerm.dylib in Copy Files */,
 				CFFA949E1F4541300035E606 /* libUtility.dylib in Copy Files */,
 				CFFA949F1F4541360035E606 /* libHabanero.dylib in Copy Files */,
 				CFFA949D1F4541290035E606 /* libRoutedIO.dylib in Copy Files */,
@@ -1513,7 +1510,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				CF5C8BF922D0FB8E00619F45 /* CUI.framework in Copy Files */,
-				CF614AEE1F9D92D70005F2DB /* libTerm.dylib in Copy Files */,
 				CF36DBEE1F6C185D004A018E /* Sparkle.framework in Copy Files */,
 				CF55F813254F2F1200CC415D /* LetsMove.framework in Copy Files */,
 				CFFA95111F45A2D50035E606 /* libHabanero.dylib in Copy Files */,
@@ -2201,6 +2197,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF614AF01F9D932B0005F2DB /* libTerm.dylib in Frameworks */,
 				CFD727381E42E3E300603077 /* libVFS.dylib in Frameworks */,
 				CFDC07B72158F6430069D364 /* libVFSIcon.dylib in Frameworks */,
 				CF5C8BE222D0F9A200619F45 /* libViewer.a in Frameworks */,
@@ -2208,7 +2205,6 @@
 				CF36DBED1F6C184D004A018E /* Sparkle.framework in Frameworks */,
 				CFFA95121F45A2EB0035E606 /* Operations.framework in Frameworks */,
 				CF1FBF3C1E90ABC000D3569C /* NetFS.framework in Frameworks */,
-				CF614AF01F9D932B0005F2DB /* libTerm.dylib in Frameworks */,
 				CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */,
 				CFD727391E42E3EE00603077 /* libRoutedIO.dylib in Frameworks */,
 				CFA53A191D433E2A00C562A7 /* libAquaticPrime.a in Frameworks */,
@@ -2232,13 +2228,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF1ADE291F7E6BB4003E9B76 /* libTerm.dylib in Frameworks */,
 				CFFA95081F45638F0035E606 /* libVFS.dylib in Frameworks */,
 				CF8BDD272147DEC600F14C3E /* libVFSIcon.dylib in Frameworks */,
 				CFF53B651EDD1AC300F567C4 /* Operations.framework in Frameworks */,
 				CFD79AF721FE47D70043A26D /* CUI.framework in Frameworks */,
 				CFD79AB121F65C380043A26D /* libViewer.a in Frameworks */,
 				CF84A7992161C53700E03CB1 /* libConfig.dylib in Frameworks */,
-				CF1ADE291F7E6BB4003E9B76 /* libTerm.dylib in Frameworks */,
 				CF36DBDE1F6BA76B004A018E /* Sparkle.framework in Frameworks */,
 				CFFA949C1F4541200035E606 /* libHabanero.dylib in Frameworks */,
 				CFFA949B1F45411C0035E606 /* libUtility.dylib in Frameworks */,

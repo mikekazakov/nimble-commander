@@ -7,52 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF3736E22148EF1600C3EBDC /* IconRepositoryImplBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3736E12148EF1600C3EBDC /* IconRepositoryImplBase.mm */; };
 		CF3736E42149245400C3EBDC /* IconRepositoryImpl_UnitTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3736E32149245400C3EBDC /* IconRepositoryImpl_UnitTests.mm */; };
-		CF3736E52149378800C3EBDC /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */; };
-		CF3736E62149378E00C3EBDC /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */; };
 		CF38BECA2148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */; };
 		CF38BECB2148AF9C005E336C /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD662147EC7900F14C3E /* Tests.cpp */; };
 		CF38BECD2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */; };
-		CF52C39E22BE37170043E825 /* ExtensionsWhitelistImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF52C39C22BE37170043E825 /* ExtensionsWhitelistImpl.h */; };
-		CF52C39F22BE37170043E825 /* ExtensionsWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = CF52C39D22BE37170043E825 /* ExtensionsWhitelist.h */; };
-		CF52C3A122BE371F0043E825 /* ExtensionsWhitelistImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A022BE371F0043E825 /* ExtensionsWhitelistImpl.cpp */; };
-		CF52C3A322BE37D50043E825 /* ExtensionsWhitelist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A222BE37D50043E825 /* ExtensionsWhitelist.cpp */; };
+		CF46002A256052570095FC73 /* WorkspaceIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD502147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm */; };
+		CF46002B256052570095FC73 /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4E2147E8B600F14C3E /* QLThumbnailsCache.mm */; };
+		CF46002C256052570095FC73 /* WorkspaceExtensionIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4D2147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm */; };
+		CF46002D256052570095FC73 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4F2147E8B600F14C3E /* WorkspaceIconsCache.mm */; };
+		CF46002E256052570095FC73 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4C2147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm */; };
+		CF46002F256052570095FC73 /* QLThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD512147E8B600F14C3E /* QLThumbnailsCacheImpl.mm */; };
+		CF460030256052570095FC73 /* VFSBundleIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD2E2147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm */; };
+		CF460031256052570095FC73 /* IconBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD372147E6A700F14C3E /* IconBuilder.mm */; };
+		CF460032256052570095FC73 /* IconRepositoryImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4B2147E8B600F14C3E /* IconRepositoryImpl.mm */; };
+		CF460033256052570095FC73 /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD1E2147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
+		CF460034256052570095FC73 /* IconRepositoryImplBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3736E12148EF1600C3EBDC /* IconRepositoryImplBase.mm */; };
+		CF460035256052570095FC73 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD1D2147D79400F14C3E /* QLVFSThumbnailsCache.mm */; };
+		CF460036256052570095FC73 /* VFSBundleIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD2D2147E3EA00F14C3E /* VFSBundleIconsCache.mm */; };
+		CF460037256052570095FC73 /* IconRepository.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD522147E8B600F14C3E /* IconRepository.mm */; };
+		CF460038256052570095FC73 /* ExtensionsWhitelistImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A022BE371F0043E825 /* ExtensionsWhitelistImpl.cpp */; };
+		CF460039256052570095FC73 /* ExtensionsWhitelist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A222BE37D50043E825 /* ExtensionsWhitelist.cpp */; };
+		CF46003A256052570095FC73 /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD382147E6A700F14C3E /* IconBuilderImpl.mm */; };
 		CF52C3A522BE3F380043E825 /* ExtensionsWhitelistImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A422BE3F380043E825 /* ExtensionsWhitelistImpl_UT.cpp */; };
-		CF8BDD132147D6F400F14C3E /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD122147D6F400F14C3E /* libUtility.dylib */; };
-		CF8BDD152147D6F400F14C3E /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD142147D6F400F14C3E /* libVFS.dylib */; };
-		CF8BDD1B2147D78A00F14C3E /* QLVFSThumbnailsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD192147D78A00F14C3E /* QLVFSThumbnailsCache.h */; };
-		CF8BDD1C2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD1A2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h */; };
-		CF8BDD1F2147D79400F14C3E /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD1D2147D79400F14C3E /* QLVFSThumbnailsCache.mm */; };
-		CF8BDD202147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD1E2147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
-		CF8BDD222147DE1900F14C3E /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD212147DE1900F14C3E /* libHabanero.dylib */; };
-		CF8BDD242147DE3000F14C3E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD232147DE3000F14C3E /* Cocoa.framework */; };
-		CF8BDD262147DE4400F14C3E /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD252147DE4400F14C3E /* Quartz.framework */; };
-		CF8BDD2B2147E3E300F14C3E /* VFSBundleIconsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD292147E3E200F14C3E /* VFSBundleIconsCacheImpl.h */; };
-		CF8BDD2C2147E3E300F14C3E /* VFSBundleIconsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD2A2147E3E200F14C3E /* VFSBundleIconsCache.h */; };
-		CF8BDD2F2147E3EB00F14C3E /* VFSBundleIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD2D2147E3EA00F14C3E /* VFSBundleIconsCache.mm */; };
-		CF8BDD302147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD2E2147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm */; };
-		CF8BDD322147E4E900F14C3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD312147E4E900F14C3E /* Foundation.framework */; };
-		CF8BDD352147E69F00F14C3E /* IconBuilderImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD332147E69F00F14C3E /* IconBuilderImpl.h */; };
-		CF8BDD362147E69F00F14C3E /* IconBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD342147E69F00F14C3E /* IconBuilder.h */; };
-		CF8BDD392147E6A700F14C3E /* IconBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD372147E6A700F14C3E /* IconBuilder.mm */; };
-		CF8BDD3A2147E6A700F14C3E /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD382147E6A700F14C3E /* IconBuilderImpl.mm */; };
-		CF8BDD432147E8AB00F14C3E /* IconRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD3B2147E8AA00F14C3E /* IconRepository.h */; };
-		CF8BDD442147E8AB00F14C3E /* WorkspaceExtensionIconsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD3C2147E8AA00F14C3E /* WorkspaceExtensionIconsCacheImpl.h */; };
-		CF8BDD452147E8AB00F14C3E /* IconRepositoryImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD3D2147E8AA00F14C3E /* IconRepositoryImpl.h */; };
-		CF8BDD462147E8AB00F14C3E /* QLThumbnailsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD3E2147E8AA00F14C3E /* QLThumbnailsCacheImpl.h */; };
-		CF8BDD472147E8AB00F14C3E /* QLThumbnailsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD3F2147E8AA00F14C3E /* QLThumbnailsCache.h */; };
-		CF8BDD482147E8AB00F14C3E /* WorkspaceIconsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD402147E8AB00F14C3E /* WorkspaceIconsCacheImpl.h */; };
-		CF8BDD492147E8AB00F14C3E /* WorkspaceExtensionIconsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD412147E8AB00F14C3E /* WorkspaceExtensionIconsCache.h */; };
-		CF8BDD4A2147E8AB00F14C3E /* WorkspaceIconsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD422147E8AB00F14C3E /* WorkspaceIconsCache.h */; };
-		CF8BDD532147E8B600F14C3E /* IconRepositoryImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4B2147E8B600F14C3E /* IconRepositoryImpl.mm */; };
-		CF8BDD542147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4C2147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm */; };
-		CF8BDD552147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4D2147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm */; };
-		CF8BDD562147E8B600F14C3E /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4E2147E8B600F14C3E /* QLThumbnailsCache.mm */; };
-		CF8BDD572147E8B600F14C3E /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4F2147E8B600F14C3E /* WorkspaceIconsCache.mm */; };
-		CF8BDD582147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD502147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm */; };
-		CF8BDD592147E8B600F14C3E /* QLThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD512147E8B600F14C3E /* QLThumbnailsCacheImpl.mm */; };
-		CF8BDD5A2147E8B600F14C3E /* IconRepository.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD522147E8B600F14C3E /* IconRepository.mm */; };
 		CF8BDD6A2147EC7D00F14C3E /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD662147EC7900F14C3E /* Tests.cpp */; };
 		CF8BDD6E2147ED1400F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD6B2147ECA900F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm */; };
 /* End PBXBuildFile section */
@@ -85,15 +61,15 @@
 		CF38BEBB2148AB1B005E336C /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CF38BEBC2148AB1B005E336C /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF38BEBD2148AD64005E336C /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
-		CF38BEC22148AE5D005E336C /* libVFSIconIntegrationTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libVFSIconIntegrationTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF38BEC22148AE5D005E336C /* VFSIconIntegrationTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VFSIconIntegrationTests; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCacheImpl_IntegrationTests.mm; path = tests/QLThumbnailsCacheImpl_IntegrationTests.mm; sourceTree = "<group>"; };
 		CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm; path = tests/WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm; sourceTree = "<group>"; };
+		CF460020256051B10095FC73 /* libVFSIcon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVFSIcon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF52C39C22BE37170043E825 /* ExtensionsWhitelistImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionsWhitelistImpl.h; path = include/VFSIcon/ExtensionsWhitelistImpl.h; sourceTree = "<group>"; };
 		CF52C39D22BE37170043E825 /* ExtensionsWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionsWhitelist.h; path = include/VFSIcon/ExtensionsWhitelist.h; sourceTree = "<group>"; };
 		CF52C3A022BE371F0043E825 /* ExtensionsWhitelistImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionsWhitelistImpl.cpp; path = source/ExtensionsWhitelistImpl.cpp; sourceTree = "<group>"; };
 		CF52C3A222BE37D50043E825 /* ExtensionsWhitelist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionsWhitelist.cpp; path = source/ExtensionsWhitelist.cpp; sourceTree = "<group>"; };
 		CF52C3A422BE3F380043E825 /* ExtensionsWhitelistImpl_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionsWhitelistImpl_UT.cpp; path = tests/ExtensionsWhitelistImpl_UT.cpp; sourceTree = "<group>"; };
-		CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libVFSIcon.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF8BDD122147D6F400F14C3E /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF8BDD142147D6F400F14C3E /* libVFS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libVFS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF8BDD192147D78A00F14C3E /* QLVFSThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QLVFSThumbnailsCache.h; path = include/VFSIcon/QLVFSThumbnailsCache.h; sourceTree = "<group>"; };
@@ -128,7 +104,7 @@
 		CF8BDD502147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCacheImpl.mm; path = source/WorkspaceIconsCacheImpl.mm; sourceTree = "<group>"; };
 		CF8BDD512147E8B600F14C3E /* QLThumbnailsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCacheImpl.mm; path = source/QLThumbnailsCacheImpl.mm; sourceTree = "<group>"; };
 		CF8BDD522147E8B600F14C3E /* IconRepository.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconRepository.mm; path = source/IconRepository.mm; sourceTree = "<group>"; };
-		CF8BDD5F2147EB3F00F14C3E /* libVFSIconUnitTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libVFSIconUnitTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF8BDD5F2147EB3F00F14C3E /* VFSIconUnitTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VFSIconUnitTests; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF8BDD662147EC7900F14C3E /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
 		CF8BDD672147EC7900F14C3E /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
 		CF8BDD6B2147ECA900F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCacheImpl_UnitTests.mm; path = tests/WorkspaceIconsCacheImpl_UnitTests.mm; sourceTree = "<group>"; };
@@ -139,20 +115,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF3736E62149378E00C3EBDC /* libVFSIcon.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CF8BDCF72147D50300F14C3E /* Frameworks */ = {
+		CF46001E256051B10095FC73 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF8BDD322147E4E900F14C3E /* Foundation.framework in Frameworks */,
-				CF8BDD262147DE4400F14C3E /* Quartz.framework in Frameworks */,
-				CF8BDD242147DE3000F14C3E /* Cocoa.framework in Frameworks */,
-				CF8BDD222147DE1900F14C3E /* libHabanero.dylib in Frameworks */,
-				CF8BDD132147D6F400F14C3E /* libUtility.dylib in Frameworks */,
-				CF8BDD152147D6F400F14C3E /* libVFS.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,7 +129,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF3736E52149378800C3EBDC /* libVFSIcon.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,9 +161,9 @@
 		CF8BDCFA2147D50300F14C3E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */,
-				CF8BDD5F2147EB3F00F14C3E /* libVFSIconUnitTests */,
-				CF38BEC22148AE5D005E336C /* libVFSIconIntegrationTests */,
+				CF8BDD5F2147EB3F00F14C3E /* VFSIconUnitTests */,
+				CF38BEC22148AE5D005E336C /* VFSIconIntegrationTests */,
+				CF460020256051B10095FC73 /* libVFSIcon.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -277,26 +245,10 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		CF8BDCF52147D50300F14C3E /* Headers */ = {
+		CF46001C256051B10095FC73 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF8BDD352147E69F00F14C3E /* IconBuilderImpl.h in Headers */,
-				CF8BDD2C2147E3E300F14C3E /* VFSBundleIconsCache.h in Headers */,
-				CF8BDD492147E8AB00F14C3E /* WorkspaceExtensionIconsCache.h in Headers */,
-				CF8BDD452147E8AB00F14C3E /* IconRepositoryImpl.h in Headers */,
-				CF8BDD4A2147E8AB00F14C3E /* WorkspaceIconsCache.h in Headers */,
-				CF52C39E22BE37170043E825 /* ExtensionsWhitelistImpl.h in Headers */,
-				CF8BDD2B2147E3E300F14C3E /* VFSBundleIconsCacheImpl.h in Headers */,
-				CF8BDD1B2147D78A00F14C3E /* QLVFSThumbnailsCache.h in Headers */,
-				CF52C39F22BE37170043E825 /* ExtensionsWhitelist.h in Headers */,
-				CF8BDD472147E8AB00F14C3E /* QLThumbnailsCache.h in Headers */,
-				CF8BDD432147E8AB00F14C3E /* IconRepository.h in Headers */,
-				CF8BDD1C2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h in Headers */,
-				CF8BDD482147E8AB00F14C3E /* WorkspaceIconsCacheImpl.h in Headers */,
-				CF8BDD462147E8AB00F14C3E /* QLThumbnailsCacheImpl.h in Headers */,
-				CF8BDD442147E8AB00F14C3E /* WorkspaceExtensionIconsCacheImpl.h in Headers */,
-				CF8BDD362147E69F00F14C3E /* IconBuilder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,16 +269,16 @@
 			);
 			name = VFSIconIntegrationTests;
 			productName = VFSIconIntegrationTests;
-			productReference = CF38BEC22148AE5D005E336C /* libVFSIconIntegrationTests */;
+			productReference = CF38BEC22148AE5D005E336C /* VFSIconIntegrationTests */;
 			productType = "com.apple.product-type.tool";
 		};
-		CF8BDCF82147D50300F14C3E /* VFSIcon */ = {
+		CF46001F256051B10095FC73 /* VFSIcon */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF8BDD022147D50300F14C3E /* Build configuration list for PBXNativeTarget "VFSIcon" */;
+			buildConfigurationList = CF460021256051B10095FC73 /* Build configuration list for PBXNativeTarget "VFSIcon" */;
 			buildPhases = (
-				CF8BDCF52147D50300F14C3E /* Headers */,
-				CF8BDCF62147D50300F14C3E /* Sources */,
-				CF8BDCF72147D50300F14C3E /* Frameworks */,
+				CF46001C256051B10095FC73 /* Headers */,
+				CF46001D256051B10095FC73 /* Sources */,
+				CF46001E256051B10095FC73 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -334,8 +286,8 @@
 			);
 			name = VFSIcon;
 			productName = VFSIcon;
-			productReference = CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
+			productReference = CF460020256051B10095FC73 /* libVFSIcon.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 		CF8BDD5E2147EB3F00F14C3E /* VFSIconUnitTests */ = {
 			isa = PBXNativeTarget;
@@ -351,7 +303,7 @@
 			);
 			name = VFSIconUnitTests;
 			productName = VFSIconUnitTests;
-			productReference = CF8BDD5F2147EB3F00F14C3E /* libVFSIconUnitTests */;
+			productReference = CF8BDD5F2147EB3F00F14C3E /* VFSIconUnitTests */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -366,8 +318,8 @@
 					CF38BEC12148AE5D005E336C = {
 						CreatedOnToolsVersion = 10.0;
 					};
-					CF8BDCF82147D50300F14C3E = {
-						CreatedOnToolsVersion = 10.0;
+					CF46001F256051B10095FC73 = {
+						CreatedOnToolsVersion = 12.0;
 					};
 					CF8BDD5E2147EB3F00F14C3E = {
 						CreatedOnToolsVersion = 10.0;
@@ -387,7 +339,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CF8BDCF82147D50300F14C3E /* VFSIcon */,
+				CF46001F256051B10095FC73 /* VFSIcon */,
 				CF8BDD5E2147EB3F00F14C3E /* VFSIconUnitTests */,
 				CF38BEC12148AE5D005E336C /* VFSIconIntegrationTests */,
 			);
@@ -405,27 +357,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CF8BDCF62147D50300F14C3E /* Sources */ = {
+		CF46001D256051B10095FC73 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF8BDD3A2147E6A700F14C3E /* IconBuilderImpl.mm in Sources */,
-				CF8BDD202147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */,
-				CF3736E22148EF1600C3EBDC /* IconRepositoryImplBase.mm in Sources */,
-				CF8BDD392147E6A700F14C3E /* IconBuilder.mm in Sources */,
-				CF8BDD542147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm in Sources */,
-				CF8BDD552147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm in Sources */,
-				CF8BDD302147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */,
-				CF8BDD532147E8B600F14C3E /* IconRepositoryImpl.mm in Sources */,
-				CF8BDD582147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm in Sources */,
-				CF52C3A322BE37D50043E825 /* ExtensionsWhitelist.cpp in Sources */,
-				CF8BDD2F2147E3EB00F14C3E /* VFSBundleIconsCache.mm in Sources */,
-				CF8BDD572147E8B600F14C3E /* WorkspaceIconsCache.mm in Sources */,
-				CF52C3A122BE371F0043E825 /* ExtensionsWhitelistImpl.cpp in Sources */,
-				CF8BDD562147E8B600F14C3E /* QLThumbnailsCache.mm in Sources */,
-				CF8BDD592147E8B600F14C3E /* QLThumbnailsCacheImpl.mm in Sources */,
-				CF8BDD5A2147E8B600F14C3E /* IconRepository.mm in Sources */,
-				CF8BDD1F2147D79400F14C3E /* QLVFSThumbnailsCache.mm in Sources */,
+				CF46003A256052570095FC73 /* IconBuilderImpl.mm in Sources */,
+				CF46002E256052570095FC73 /* WorkspaceExtensionIconsCache.mm in Sources */,
+				CF46002B256052570095FC73 /* QLThumbnailsCache.mm in Sources */,
+				CF46002F256052570095FC73 /* QLThumbnailsCacheImpl.mm in Sources */,
+				CF460034256052570095FC73 /* IconRepositoryImplBase.mm in Sources */,
+				CF46002D256052570095FC73 /* WorkspaceIconsCache.mm in Sources */,
+				CF460039256052570095FC73 /* ExtensionsWhitelist.cpp in Sources */,
+				CF460038256052570095FC73 /* ExtensionsWhitelistImpl.cpp in Sources */,
+				CF460036256052570095FC73 /* VFSBundleIconsCache.mm in Sources */,
+				CF460030256052570095FC73 /* VFSBundleIconsCacheImpl.mm in Sources */,
+				CF460035256052570095FC73 /* QLVFSThumbnailsCache.mm in Sources */,
+				CF46002C256052570095FC73 /* WorkspaceExtensionIconsCacheImpl.mm in Sources */,
+				CF460033256052570095FC73 /* QLVFSThumbnailsCacheImpl.mm in Sources */,
+				CF460031256052570095FC73 /* IconBuilder.mm in Sources */,
+				CF46002A256052570095FC73 /* WorkspaceIconsCacheImpl.mm in Sources */,
+				CF460037256052570095FC73 /* IconRepository.mm in Sources */,
+				CF460032256052570095FC73 /* IconRepositoryImpl.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,6 +409,24 @@
 			};
 			name = Release;
 		};
+		CF460022256051B10095FC73 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CF460023256051B10095FC73 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		CF8BDD002147D50300F14C3E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF38BEBC2148AB1B005E336C /* debug.xcconfig */;
@@ -467,18 +437,6 @@
 		CF8BDD012147D50300F14C3E /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF38BEBA2148AB1B005E336C /* release.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		CF8BDD032147D50300F14C3E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		CF8BDD042147D50300F14C3E /* Release */ = {
-			isa = XCBuildConfiguration;
 			buildSettings = {
 			};
 			name = Release;
@@ -509,20 +467,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		CF460021256051B10095FC73 /* Build configuration list for PBXNativeTarget "VFSIcon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF460022256051B10095FC73 /* Debug */,
+				CF460023256051B10095FC73 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CF8BDCF42147D50300F14C3E /* Build configuration list for PBXProject "VFSIcon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CF8BDD002147D50300F14C3E /* Debug */,
 				CF8BDD012147D50300F14C3E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CF8BDD022147D50300F14C3E /* Build configuration list for PBXNativeTarget "VFSIcon" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CF8BDD032147D50300F14C3E /* Debug */,
-				CF8BDD042147D50300F14C3E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

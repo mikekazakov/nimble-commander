@@ -162,11 +162,9 @@
 		CF39A0E41F70C20C005A4583 /* libHabanero.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF39A0E51F70C20C005A4583 /* libUtility.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF39A0E61F70C20C005A4583 /* libRoutedIO.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CF39A0E71F70C20C005A4583 /* libVFS.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF39A0E91F70C5CA005A4583 /* libHabanero.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF39A0EA1F70C5CA005A4583 /* libUtility.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF39A0EB1F70C5CA005A4583 /* libRoutedIO.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CF39A0EC1F70C5CA005A4583 /* libVFS.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF3B7F70201F20D300BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
 		CF3B7F71201F212F00BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
 		CF3B7F72201F213000BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
@@ -325,7 +323,6 @@
 		CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */; };
 		CF5C1D4F255EE6CD00ADE703 /* ViewerResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1D4E255EE6CD00ADE703 /* ViewerResources.bundle */; };
 		CF5C8BE222D0F9A200619F45 /* libViewer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A7821F65A540043A26D /* libViewer.a */; };
-		CF5C8BF822D0FB7400619F45 /* libViewer.a in Copy Files */ = {isa = PBXBuildFile; fileRef = CFD79A7821F65A540043A26D /* libViewer.a */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CF5C8BF922D0FB8E00619F45 /* CUI.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* CUI.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CF5C8BFA22D0FBDF00619F45 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8400FF21A2A8DE007FEF7B /* TrialWindowController.xib */; };
 		CF5E9A381FCBC521005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
@@ -363,7 +360,6 @@
 		CF614AEC1F9D92A40005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
 		CF614AED1F9D92B30005F2DB /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
 		CF614AEE1F9D92D70005F2DB /* libTerm.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
-		CF614AEF1F9D92EA0005F2DB /* Operations.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CF614AF01F9D932B0005F2DB /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
 		CF6237241EB4444B00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF6237251EB4444C00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
@@ -1150,8 +1146,6 @@
 		CFFA949E1F4541300035E606 /* libUtility.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CFFA949F1F4541360035E606 /* libHabanero.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CFFA95081F45638F0035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
-		CFFA95091F4564100035E606 /* libVFS.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CFFA950D1F45A2BD0035E606 /* libVFS.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
 		CFFA950F1F45A2C80035E606 /* libRoutedIO.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; };
 		CFFA95101F45A2CF0035E606 /* libUtility.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; };
 		CFFA95111F45A2D50035E606 /* libHabanero.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; };
@@ -1466,7 +1460,6 @@
 				CFD79AF821FE47E20043A26D /* CUI.framework in Copy Files */,
 				CF82610D2162470B00707B80 /* libConfig.dylib in Copy Files */,
 				CF1ADE4A1F7E7B28003E9B76 /* libTerm.dylib in Copy Files */,
-				CFFA95091F4564100035E606 /* libVFS.dylib in Copy Files */,
 				CFFA949E1F4541300035E606 /* libUtility.dylib in Copy Files */,
 				CFFA949F1F4541360035E606 /* libHabanero.dylib in Copy Files */,
 				CFFA949D1F4541290035E606 /* libRoutedIO.dylib in Copy Files */,
@@ -1486,7 +1479,6 @@
 				CF39A0E41F70C20C005A4583 /* libHabanero.dylib in CopyFiles */,
 				CF39A0E51F70C20C005A4583 /* libUtility.dylib in CopyFiles */,
 				CF39A0E61F70C20C005A4583 /* libRoutedIO.dylib in CopyFiles */,
-				CF39A0E71F70C20C005A4583 /* libVFS.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1502,7 +1494,6 @@
 				CF39A0E91F70C5CA005A4583 /* libHabanero.dylib in CopyFiles */,
 				CF39A0EA1F70C5CA005A4583 /* libUtility.dylib in CopyFiles */,
 				CF39A0EB1F70C5CA005A4583 /* libRoutedIO.dylib in CopyFiles */,
-				CF39A0EC1F70C5CA005A4583 /* libVFS.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1522,8 +1513,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				CF5C8BF922D0FB8E00619F45 /* CUI.framework in Copy Files */,
-				CF5C8BF822D0FB7400619F45 /* libViewer.a in Copy Files */,
-				CF614AEF1F9D92EA0005F2DB /* Operations.framework in Copy Files */,
 				CF614AEE1F9D92D70005F2DB /* libTerm.dylib in Copy Files */,
 				CF36DBEE1F6C185D004A018E /* Sparkle.framework in Copy Files */,
 				CF55F813254F2F1200CC415D /* LetsMove.framework in Copy Files */,
@@ -1531,7 +1520,6 @@
 				CF6BF8372194444B0017CECB /* libConfig.dylib in Copy Files */,
 				CFFA95101F45A2CF0035E606 /* libUtility.dylib in Copy Files */,
 				CFFA950F1F45A2C80035E606 /* libRoutedIO.dylib in Copy Files */,
-				CFFA950D1F45A2BD0035E606 /* libVFS.dylib in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2180,6 +2168,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF7C7CE91E5D3990002DB0E2 /* libVFS.dylib in Frameworks */,
 				CF233AD2219C110D00693E1A /* libVFSIcon.dylib in Frameworks */,
 				CF4E556623114BF700F607D7 /* Carbon.framework in Frameworks */,
 				CF233AD1219C110A00693E1A /* libConfig.dylib in Frameworks */,
@@ -2190,7 +2179,6 @@
 				CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */,
 				CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */,
 				CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.dylib in Frameworks */,
-				CF7C7CE91E5D3990002DB0E2 /* libVFS.dylib in Frameworks */,
 				CF6E44511CC9DAE8009F45B0 /* libHabanero.dylib in Frameworks */,
 				CF6E44501CC9DAE1009F45B0 /* libUtility.dylib in Frameworks */,
 				CF6E444F1CC9DACA009F45B0 /* libunrar.a in Frameworks */,
@@ -2213,6 +2201,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD727381E42E3E300603077 /* libVFS.dylib in Frameworks */,
 				CFDC07B72158F6430069D364 /* libVFSIcon.dylib in Frameworks */,
 				CF5C8BE222D0F9A200619F45 /* libViewer.a in Frameworks */,
 				CF6BF83A219444A90017CECB /* libConfig.dylib in Frameworks */,
@@ -2222,7 +2211,6 @@
 				CF614AF01F9D932B0005F2DB /* libTerm.dylib in Frameworks */,
 				CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */,
 				CFD727391E42E3EE00603077 /* libRoutedIO.dylib in Frameworks */,
-				CFD727381E42E3E300603077 /* libVFS.dylib in Frameworks */,
 				CFA53A191D433E2A00C562A7 /* libAquaticPrime.a in Frameworks */,
 				CFA53A1C1D433E2A00C562A7 /* libUtility.dylib in Frameworks */,
 				CFA53A1E1D433E2A00C562A7 /* libHabanero.dylib in Frameworks */,
@@ -2244,13 +2232,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFFA95081F45638F0035E606 /* libVFS.dylib in Frameworks */,
 				CF8BDD272147DEC600F14C3E /* libVFSIcon.dylib in Frameworks */,
 				CFF53B651EDD1AC300F567C4 /* Operations.framework in Frameworks */,
 				CFD79AF721FE47D70043A26D /* CUI.framework in Frameworks */,
 				CFD79AB121F65C380043A26D /* libViewer.a in Frameworks */,
 				CF84A7992161C53700E03CB1 /* libConfig.dylib in Frameworks */,
 				CF1ADE291F7E6BB4003E9B76 /* libTerm.dylib in Frameworks */,
-				CFFA95081F45638F0035E606 /* libVFS.dylib in Frameworks */,
 				CF36DBDE1F6BA76B004A018E /* Sparkle.framework in Frameworks */,
 				CFFA949C1F4541200035E606 /* libHabanero.dylib in Frameworks */,
 				CFFA949B1F45411C0035E606 /* libUtility.dylib in Frameworks */,
@@ -2275,6 +2263,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF7C7CE51E5D3521002DB0E2 /* libVFS.dylib in Frameworks */,
 				CFDAC8462169D31600DEBA2A /* libVFSIcon.dylib in Frameworks */,
 				CF4E55612311425400F607D7 /* CUI.framework in Frameworks */,
 				CF4E55602311424F00F607D7 /* libViewer.a in Frameworks */,
@@ -2286,7 +2275,6 @@
 				CF2A3CEA1E667FAF00E6C6F0 /* libssh2.a in Frameworks */,
 				CF02B5A61D0A61FD00F2760D /* libarchive.a in Frameworks */,
 				CF02B5A21D0A61E200F2760D /* libunrar.a in Frameworks */,
-				CF7C7CE51E5D3521002DB0E2 /* libVFS.dylib in Frameworks */,
 				CF7C7CE61E5D352D002DB0E2 /* libRoutedIO.dylib in Frameworks */,
 				CF02B5A11D0A61C600F2760D /* libHabanero.dylib in Frameworks */,
 				CF7C7CE71E5D353C002DB0E2 /* libMMTabBarViewLib.a in Frameworks */,

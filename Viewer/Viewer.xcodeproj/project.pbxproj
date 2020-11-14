@@ -7,70 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF13255B2222B6D40097F9A1 /* TextModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255A2222B6D40097F9A1 /* TextModeFrame.cpp */; };
-		CF13255D2222B6DD0097F9A1 /* TextModeFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = CF13255C2222B6DD0097F9A1 /* TextModeFrame.h */; };
 		CF1325622225FD630097F9A1 /* TextModeFrame_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */; };
-		CF13256422287F250097F9A1 /* TextModeFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF13256322287F250097F9A1 /* TextModeFrame.mm */; };
-		CF132566222AB80B0097F9A1 /* TextModeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CF132565222AB80B0097F9A1 /* TextModeView.h */; };
-		CF132568222AB8170097F9A1 /* TextModeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF132567222AB8170097F9A1 /* TextModeView.mm */; };
-		CF13256A222ACF640097F9A1 /* TextModeViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CF132569222ACF640097F9A1 /* TextModeViewDelegate.h */; };
-		CF2343F222CDDFC600F516CB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF2343F022CDDFC600F516CB /* Localizable.strings */; };
-		CF2343F622CDE0F000F516CB /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2343F422CDE0F000F516CB /* Internal.mm */; };
-		CF2343F722CDE0F000F516CB /* Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2343F522CDE0F000F516CB /* Internal.h */; };
 		CF24E1D3227F0B2A00C166FA /* HexModeLayout_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */; };
-		CF24E1D72286E23800C166FA /* PreviewModeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1D62286E23800C166FA /* PreviewModeView.mm */; };
-		CF24E1D92286E24300C166FA /* PreviewModeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CF24E1D82286E24300C166FA /* PreviewModeView.h */; };
-		CF9BF9002269E4CD00AD36D9 /* HexModeProcessing.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9BF8FF2269E4CD00AD36D9 /* HexModeProcessing.h */; };
-		CF9BF9022269E4D800AD36D9 /* HexModeProcessing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */; };
+		CF46FEFF255EF4480095FC73 /* Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF46FEFE255EF4480095FC73 /* Internal.h */; };
+		CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B0821FE4F430043A26D /* InternalViewerController.xib */; };
+		CF5C1D3A255EE63C00ADE703 /* InternalViewerToolbar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */; };
+		CF5C1D3E255EE63F00ADE703 /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */; };
+		CF5C1D42255EE64200ADE703 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF2343F022CDDFC600F516CB /* Localizable.strings */; };
+		CF5C1D46255EE64500ADE703 /* NCViewerSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B132205B8450043A26D /* NCViewerSheet.xib */; };
+		CF5C1D7A255EEA6A00ADE703 /* TextModeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF132567222AB8170097F9A1 /* TextModeView.mm */; };
+		CF5C1D7B255EEA6A00ADE703 /* HexModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF908226B2B0C00AD36D9 /* HexModeFrame.cpp */; };
+		CF5C1D7C255EEA6A00ADE703 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8821F65B4F0043A26D /* Theme.mm */; };
+		CF5C1D7D255EEA6A00ADE703 /* ViewerViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B0421FE4CCC0043A26D /* ViewerViewController.mm */; };
+		CF5C1D7E255EEA6A00ADE703 /* DataBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8B21F65B4F0043A26D /* DataBackend.cpp */; };
+		CF5C1D7F255EEA6A00ADE703 /* HexModeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF913226DD3D300AD36D9 /* HexModeView.mm */; };
+		CF5C1D80255EEA6A00ADE703 /* HexModeProcessing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */; };
+		CF5C1D81255EEA6A00ADE703 /* TextModeIndexedTextLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6E221097B30043A26D /* TextModeIndexedTextLine.cpp */; };
+		CF5C1D82255EEA6A00ADE703 /* ViewerSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B112205B8360043A26D /* ViewerSheet.mm */; };
+		CF5C1D83255EEA6A00ADE703 /* TextProcessing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B3F2210452C0043A26D /* TextProcessing.cpp */; };
+		CF5C1D84255EEA6A00ADE703 /* ViewerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8921F65B4F0043A26D /* ViewerView.mm */; };
+		CF5C1D85255EEA6A00ADE703 /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2343F422CDE0F000F516CB /* Internal.mm */; };
+		CF5C1D86255EEA6A00ADE703 /* PreviewModeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1D62286E23800C166FA /* PreviewModeView.mm */; };
+		CF5C1D87255EEA6A00ADE703 /* TextModeWorkingSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B702210B6DB0043A26D /* TextModeWorkingSet.cpp */; };
+		CF5C1D8A255EEA6A00ADE703 /* HexModeLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF91C2275FD9500AD36D9 /* HexModeLayout.cpp */; };
+		CF5C1D8B255EEA6A00ADE703 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79AB521FCA4F30043A26D /* History.cpp */; };
+		CF5C1D8C255EEA6A00ADE703 /* InternalViewerToolbarProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */; };
+		CF5C1D8E255EEA6A00ADE703 /* InternalViewerWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */; };
+		CF5C1D8F255EEA6A00ADE703 /* TextModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255A2222B6D40097F9A1 /* TextModeFrame.cpp */; };
+		CF5C1D90255EEA6A00ADE703 /* TextModeFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF13256322287F250097F9A1 /* TextModeFrame.mm */; };
 		CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */; };
 		CF9BF90D226CF99000AD36D9 /* HexModeFrame_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF90C226CF99000AD36D9 /* HexModeFrame_UT.cpp */; };
-		CF9BF915226DD3D700AD36D9 /* HexModeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF913226DD3D300AD36D9 /* HexModeView.mm */; };
-		CF9BF91A226DE47B00AD36D9 /* HexModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF908226B2B0C00AD36D9 /* HexModeFrame.cpp */; };
-		CF9BF91F2275FDCB00AD36D9 /* HexModeLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF91C2275FD9500AD36D9 /* HexModeLayout.cpp */; };
-		CFD79A8E21F65B4F0043A26D /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8821F65B4F0043A26D /* Theme.mm */; };
-		CFD79A8F21F65B4F0043A26D /* ViewerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8921F65B4F0043A26D /* ViewerView.mm */; };
-		CFD79A9121F65B4F0043A26D /* DataBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8B21F65B4F0043A26D /* DataBackend.cpp */; };
-		CFD79A9921F65B570043A26D /* ViewerImplementationProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9221F65B570043A26D /* ViewerImplementationProtocol.h */; };
-		CFD79A9A21F65B570043A26D /* Theme.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9321F65B570043A26D /* Theme.h */; };
-		CFD79A9B21F65B570043A26D /* DataBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9421F65B570043A26D /* DataBackend.h */; };
-		CFD79A9C21F65B570043A26D /* InternalViewerViewPreviewMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9521F65B570043A26D /* InternalViewerViewPreviewMode.h */; };
-		CFD79A9D21F65B570043A26D /* BigFileViewText.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9621F65B570043A26D /* BigFileViewText.h */; };
-		CFD79A9E21F65B570043A26D /* ViewerView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9721F65B570043A26D /* ViewerView.h */; };
-		CFD79A9F21F65B570043A26D /* BigFileViewHex.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9821F65B570043A26D /* BigFileViewHex.h */; };
-		CFD79AA221F65BA10043A26D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA121F65BA10043A26D /* Cocoa.framework */; };
-		CFD79AA421F65BA60043A26D /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA321F65BA60043A26D /* CoreFoundation.framework */; };
-		CFD79AA621F65BAA0043A26D /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA521F65BAA0043A26D /* CoreText.framework */; };
-		CFD79AA821F65BB20043A26D /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA721F65BB20043A26D /* Quartz.framework */; };
-		CFD79AAA21F65BB70043A26D /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA921F65BB70043A26D /* libUtility.dylib */; };
-		CFD79AAC21F65BBC0043A26D /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AAB21F65BBC0043A26D /* libConfig.dylib */; };
-		CFD79AAE21F65BC20043A26D /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AAD21F65BC20043A26D /* libVFS.dylib */; };
-		CFD79AB021F65BC60043A26D /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AAF21F65BC60043A26D /* libHabanero.dylib */; };
-		CFD79AB421FCA4E50043A26D /* History.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79AB321FCA4E50043A26D /* History.h */; };
-		CFD79AB621FCA4F30043A26D /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79AB521FCA4F30043A26D /* History.cpp */; };
-		CFD79AB821FCA8900043A26D /* Modes.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79AB721FCA8900043A26D /* Modes.h */; };
-		CFD79B0321FE4CC40043A26D /* ViewerViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B0221FE4CC40043A26D /* ViewerViewController.h */; };
-		CFD79B0521FE4CCC0043A26D /* ViewerViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B0421FE4CCC0043A26D /* ViewerViewController.mm */; };
-		CFD79B0721FE4D400043A26D /* CUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79B0621FE4D400043A26D /* CUI.framework */; };
-		CFD79B0A21FE4F430043A26D /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B0821FE4F430043A26D /* InternalViewerController.xib */; };
-		CFD79B102205B82F0043A26D /* ViewerSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B0F2205B82F0043A26D /* ViewerSheet.h */; };
-		CFD79B122205B8360043A26D /* ViewerSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B112205B8360043A26D /* ViewerSheet.mm */; };
-		CFD79B152205B8450043A26D /* NCViewerSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B132205B8450043A26D /* NCViewerSheet.xib */; };
-		CFD79B182205DE3E0043A26D /* InternalViewerToolbarProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B172205DE3D0043A26D /* InternalViewerToolbarProtocol.h */; };
-		CFD79B1A2205DE480043A26D /* InternalViewerToolbarProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */; };
-		CFD79B1D2205DE520043A26D /* InternalViewerToolbar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */; };
-		CFD79B202205DE9D0043A26D /* InternalViewerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B1F2205DE9C0043A26D /* InternalViewerWindowController.h */; };
-		CFD79B222205DEA50043A26D /* InternalViewerWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */; };
-		CFD79B242205DEB30043A26D /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */; };
-		CFD79B3E221045210043A26D /* TextProcessing.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B3D221045210043A26D /* TextProcessing.h */; };
-		CFD79B402210452C0043A26D /* TextProcessing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B3F2210452C0043A26D /* TextProcessing.cpp */; };
-		CFD79B5922106E3C0043A26D /* Tests.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B5722106E3B0043A26D /* Tests.h */; };
 		CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B5822106E3C0043A26D /* Tests.cpp */; };
 		CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */; };
-		CFD79B6B221071180043A26D /* Viewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A6221F65A010043A26D /* Viewer.framework */; };
-		CFD79B6D221097A40043A26D /* TextModeIndexedTextLine.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B6C221097A40043A26D /* TextModeIndexedTextLine.h */; };
-		CFD79B6F221097B30043A26D /* TextModeIndexedTextLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6E221097B30043A26D /* TextModeIndexedTextLine.cpp */; };
-		CFD79B722210B6DB0043A26D /* TextModeWorkingSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B702210B6DB0043A26D /* TextModeWorkingSet.cpp */; };
-		CFD79B812214C46C0043A26D /* TextModeWorkingSet.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B802214C46C0043A26D /* TextModeWorkingSet.h */; };
 		CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */; };
 		CFD79B85221991130043A26D /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA921F65BB70043A26D /* libUtility.dylib */; };
 		CFEA2D6F221CADC0008BE48C /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AAF21F65BC60043A26D /* libHabanero.dylib */; };
@@ -99,10 +67,14 @@
 		CF2343F122CDDFC600F516CB /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = resources/Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CF2343F322CDDFCF00F516CB /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = resources/ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CF2343F422CDE0F000F516CB /* Internal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Internal.mm; path = source/Internal.mm; sourceTree = "<group>"; };
-		CF2343F522CDE0F000F516CB /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/Internal.h; sourceTree = "<group>"; };
 		CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeLayout_UT.cpp; path = tests/HexModeLayout_UT.cpp; sourceTree = "<group>"; };
 		CF24E1D62286E23800C166FA /* PreviewModeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreviewModeView.mm; path = source/PreviewModeView.mm; sourceTree = "<group>"; };
 		CF24E1D82286E24300C166FA /* PreviewModeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreviewModeView.h; path = include/Viewer/PreviewModeView.h; sourceTree = "<group>"; };
+		CF46FEFE255EF4480095FC73 /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/Internal.h; sourceTree = "<group>"; };
+		CF46FF03255EF4690095FC73 /* Bundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Bundle.h; path = include/Viewer/Bundle.h; sourceTree = "<group>"; };
+		CF5C1D1D255ED68200ADE703 /* ViewerResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViewerResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF5C1D2C255ED7D300ADE703 /* ViewerResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ViewerResources.plist; path = resources/ViewerResources.plist; sourceTree = "<group>"; };
+		CF5C1D70255EEA5200ADE703 /* libViewer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libViewer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF9BF8FF2269E4CD00AD36D9 /* HexModeProcessing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeProcessing.h; path = include/Viewer/HexModeProcessing.h; sourceTree = "<group>"; };
 		CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeProcessing.cpp; path = source/HexModeProcessing.cpp; sourceTree = "<group>"; };
 		CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeProcessing_UT.cpp; path = tests/HexModeProcessing_UT.cpp; sourceTree = "<group>"; };
@@ -114,8 +86,6 @@
 		CF9BF91B22724A3D00AD36D9 /* HexModeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeViewDelegate.h; path = include/Viewer/HexModeViewDelegate.h; sourceTree = "<group>"; };
 		CF9BF91C2275FD9500AD36D9 /* HexModeLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeLayout.cpp; path = source/HexModeLayout.cpp; sourceTree = "<group>"; };
 		CF9BF91E2275FD9E00AD36D9 /* HexModeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeLayout.h; path = include/Viewer/HexModeLayout.h; sourceTree = "<group>"; };
-		CFD79A6221F65A010043A26D /* Viewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Viewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFD79A6621F65A010043A26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = SOURCE_ROOT; };
 		CFD79A7B21F65A980043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CFD79A7C21F65A980043A26D /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CFD79A7D21F65A980043A26D /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
@@ -174,19 +144,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CFD79A5F21F65A010043A26D /* Frameworks */ = {
+		CF5C1D1A255ED68200ADE703 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD79B0721FE4D400043A26D /* CUI.framework in Frameworks */,
-				CFD79AB021F65BC60043A26D /* libHabanero.dylib in Frameworks */,
-				CFD79AAE21F65BC20043A26D /* libVFS.dylib in Frameworks */,
-				CFD79AAC21F65BBC0043A26D /* libConfig.dylib in Frameworks */,
-				CFD79AAA21F65BB70043A26D /* libUtility.dylib in Frameworks */,
-				CFD79AA821F65BB20043A26D /* Quartz.framework in Frameworks */,
-				CFD79AA621F65BAA0043A26D /* CoreText.framework in Frameworks */,
-				CFD79AA421F65BA60043A26D /* CoreFoundation.framework in Frameworks */,
-				CFD79AA221F65BA10043A26D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF5C1D6E255EEA5200ADE703 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,7 +164,6 @@
 			files = (
 				CFEA2D6F221CADC0008BE48C /* libHabanero.dylib in Frameworks */,
 				CFD79B85221991130043A26D /* libUtility.dylib in Frameworks */,
-				CFD79B6B221071180043A26D /* Viewer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,8 +186,9 @@
 		CFD79A6321F65A010043A26D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79A6221F65A010043A26D /* Viewer.framework */,
 				CFD79B5022106E010043A26D /* ViewerUT */,
+				CF5C1D1D255ED68200ADE703 /* ViewerResources.bundle */,
+				CF5C1D70255EEA5200ADE703 /* libViewer.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -228,12 +196,12 @@
 		CFD79A7921F65A710043A26D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CF2343F022CDDFC600F516CB /* Localizable.strings */,
-				CFD79B132205B8450043A26D /* NCViewerSheet.xib */,
-				CFD79A6621F65A010043A26D /* Info.plist */,
 				CFD79B0821FE4F430043A26D /* InternalViewerController.xib */,
 				CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */,
 				CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */,
+				CF2343F022CDDFC600F516CB /* Localizable.strings */,
+				CFD79B132205B8450043A26D /* NCViewerSheet.xib */,
+				CF5C1D2C255ED7D300ADE703 /* ViewerResources.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -254,6 +222,7 @@
 			children = (
 				CFD79A9821F65B570043A26D /* BigFileViewHex.h */,
 				CFD79A9621F65B570043A26D /* BigFileViewText.h */,
+				CF46FF03255EF4690095FC73 /* Bundle.h */,
 				CFD79A9421F65B570043A26D /* DataBackend.h */,
 				CF9BF907226B2B0400AD36D9 /* HexModeFrame.h */,
 				CF9BF91E2275FD9E00AD36D9 /* HexModeLayout.h */,
@@ -292,7 +261,7 @@
 				CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */,
 				CF9BF913226DD3D300AD36D9 /* HexModeView.mm */,
 				CFD79AB521FCA4F30043A26D /* History.cpp */,
-				CF2343F522CDE0F000F516CB /* Internal.h */,
+				CF46FEFE255EF4480095FC73 /* Internal.h */,
 				CF2343F422CDE0F000F516CB /* Internal.mm */,
 				CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */,
 				CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */,
@@ -346,47 +315,41 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		CFD79A5D21F65A010043A26D /* Headers */ = {
+		CF5C1D6C255EEA5200ADE703 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD79AB821FCA8900043A26D /* Modes.h in Headers */,
-				CFD79A9B21F65B570043A26D /* DataBackend.h in Headers */,
-				CFD79AB421FCA4E50043A26D /* History.h in Headers */,
-				CFD79B5922106E3C0043A26D /* Tests.h in Headers */,
-				CFD79A9D21F65B570043A26D /* BigFileViewText.h in Headers */,
-				CFD79B6D221097A40043A26D /* TextModeIndexedTextLine.h in Headers */,
-				CFD79A9E21F65B570043A26D /* ViewerView.h in Headers */,
-				CFD79B202205DE9D0043A26D /* InternalViewerWindowController.h in Headers */,
-				CFD79B3E221045210043A26D /* TextProcessing.h in Headers */,
-				CFD79B182205DE3E0043A26D /* InternalViewerToolbarProtocol.h in Headers */,
-				CF2343F722CDE0F000F516CB /* Internal.h in Headers */,
-				CF13255D2222B6DD0097F9A1 /* TextModeFrame.h in Headers */,
-				CF24E1D92286E24300C166FA /* PreviewModeView.h in Headers */,
-				CFD79B0321FE4CC40043A26D /* ViewerViewController.h in Headers */,
-				CF13256A222ACF640097F9A1 /* TextModeViewDelegate.h in Headers */,
-				CFD79A9A21F65B570043A26D /* Theme.h in Headers */,
-				CFD79A9C21F65B570043A26D /* InternalViewerViewPreviewMode.h in Headers */,
-				CFD79B102205B82F0043A26D /* ViewerSheet.h in Headers */,
-				CFD79A9F21F65B570043A26D /* BigFileViewHex.h in Headers */,
-				CFD79A9921F65B570043A26D /* ViewerImplementationProtocol.h in Headers */,
-				CF9BF9002269E4CD00AD36D9 /* HexModeProcessing.h in Headers */,
-				CF132566222AB80B0097F9A1 /* TextModeView.h in Headers */,
-				CFD79B812214C46C0043A26D /* TextModeWorkingSet.h in Headers */,
+				CF46FEFF255EF4480095FC73 /* Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		CFD79A6121F65A010043A26D /* Viewer */ = {
+		CF5C1D1C255ED68200ADE703 /* ViewerResources */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFD79A6A21F65A010043A26D /* Build configuration list for PBXNativeTarget "Viewer" */;
+			buildConfigurationList = CF5C1D22255ED68300ADE703 /* Build configuration list for PBXNativeTarget "ViewerResources" */;
 			buildPhases = (
-				CFD79A5D21F65A010043A26D /* Headers */,
-				CFD79A5E21F65A010043A26D /* Sources */,
-				CFD79A5F21F65A010043A26D /* Frameworks */,
-				CFD79A6021F65A010043A26D /* Resources */,
+				CF5C1D19255ED68200ADE703 /* Sources */,
+				CF5C1D1A255ED68200ADE703 /* Frameworks */,
+				CF5C1D1B255ED68200ADE703 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ViewerResources;
+			productName = ViewerResources;
+			productReference = CF5C1D1D255ED68200ADE703 /* ViewerResources.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+		CF5C1D6F255EEA5200ADE703 /* Viewer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF5C1D71255EEA5200ADE703 /* Build configuration list for PBXNativeTarget "Viewer" */;
+			buildPhases = (
+				CF5C1D6C255EEA5200ADE703 /* Headers */,
+				CF5C1D6D255EEA5200ADE703 /* Sources */,
+				CF5C1D6E255EEA5200ADE703 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -394,8 +357,8 @@
 			);
 			name = Viewer;
 			productName = Viewer;
-			productReference = CFD79A6221F65A010043A26D /* Viewer.framework */;
-			productType = "com.apple.product-type.framework";
+			productReference = CF5C1D70255EEA5200ADE703 /* libViewer.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 		CFD79B4F22106E010043A26D /* ViewerUT */ = {
 			isa = PBXNativeTarget;
@@ -423,8 +386,11 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
-					CFD79A6121F65A010043A26D = {
-						CreatedOnToolsVersion = 10.1;
+					CF5C1D1C255ED68200ADE703 = {
+						CreatedOnToolsVersion = 12.0;
+					};
+					CF5C1D6F255EEA5200ADE703 = {
+						CreatedOnToolsVersion = 12.0;
 					};
 					CFD79B4F22106E010043A26D = {
 						CreatedOnToolsVersion = 10.1;
@@ -445,52 +411,60 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CFD79A6121F65A010043A26D /* Viewer */,
+				CF5C1D6F255EEA5200ADE703 /* Viewer */,
 				CFD79B4F22106E010043A26D /* ViewerUT */,
+				CF5C1D1C255ED68200ADE703 /* ViewerResources */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		CFD79A6021F65A010043A26D /* Resources */ = {
+		CF5C1D1B255ED68200ADE703 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF2343F222CDDFC600F516CB /* Localizable.strings in Resources */,
-				CFD79B1D2205DE520043A26D /* InternalViewerToolbar.xib in Resources */,
-				CFD79B152205B8450043A26D /* NCViewerSheet.xib in Resources */,
-				CFD79B0A21FE4F430043A26D /* InternalViewerController.xib in Resources */,
-				CFD79B242205DEB30043A26D /* InternalViewerWindowController.xib in Resources */,
+				CF5C1D3A255EE63C00ADE703 /* InternalViewerToolbar.xib in Resources */,
+				CF5C1D42255EE64200ADE703 /* Localizable.strings in Resources */,
+				CF5C1D46255EE64500ADE703 /* NCViewerSheet.xib in Resources */,
+				CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */,
+				CF5C1D3E255EE63F00ADE703 /* InternalViewerWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		CFD79A5E21F65A010043A26D /* Sources */ = {
+		CF5C1D19255ED68200ADE703 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD79A8E21F65B4F0043A26D /* Theme.mm in Sources */,
-				CFD79B722210B6DB0043A26D /* TextModeWorkingSet.cpp in Sources */,
-				CFD79B1A2205DE480043A26D /* InternalViewerToolbarProtocol.mm in Sources */,
-				CF132568222AB8170097F9A1 /* TextModeView.mm in Sources */,
-				CF9BF91F2275FDCB00AD36D9 /* HexModeLayout.cpp in Sources */,
-				CF9BF9022269E4D800AD36D9 /* HexModeProcessing.cpp in Sources */,
-				CF13255B2222B6D40097F9A1 /* TextModeFrame.cpp in Sources */,
-				CF24E1D72286E23800C166FA /* PreviewModeView.mm in Sources */,
-				CFD79AB621FCA4F30043A26D /* History.cpp in Sources */,
-				CFD79B6F221097B30043A26D /* TextModeIndexedTextLine.cpp in Sources */,
-				CFD79B402210452C0043A26D /* TextProcessing.cpp in Sources */,
-				CF9BF915226DD3D700AD36D9 /* HexModeView.mm in Sources */,
-				CFD79A8F21F65B4F0043A26D /* ViewerView.mm in Sources */,
-				CFD79A9121F65B4F0043A26D /* DataBackend.cpp in Sources */,
-				CF9BF91A226DE47B00AD36D9 /* HexModeFrame.cpp in Sources */,
-				CFD79B0521FE4CCC0043A26D /* ViewerViewController.mm in Sources */,
-				CF2343F622CDE0F000F516CB /* Internal.mm in Sources */,
-				CFD79B222205DEA50043A26D /* InternalViewerWindowController.mm in Sources */,
-				CF13256422287F250097F9A1 /* TextModeFrame.mm in Sources */,
-				CFD79B122205B8360043A26D /* ViewerSheet.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF5C1D6D255EEA5200ADE703 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF5C1D8B255EEA6A00ADE703 /* History.cpp in Sources */,
+				CF5C1D85255EEA6A00ADE703 /* Internal.mm in Sources */,
+				CF5C1D7D255EEA6A00ADE703 /* ViewerViewController.mm in Sources */,
+				CF5C1D8F255EEA6A00ADE703 /* TextModeFrame.cpp in Sources */,
+				CF5C1D87255EEA6A00ADE703 /* TextModeWorkingSet.cpp in Sources */,
+				CF5C1D7C255EEA6A00ADE703 /* Theme.mm in Sources */,
+				CF5C1D84255EEA6A00ADE703 /* ViewerView.mm in Sources */,
+				CF5C1D7B255EEA6A00ADE703 /* HexModeFrame.cpp in Sources */,
+				CF5C1D7E255EEA6A00ADE703 /* DataBackend.cpp in Sources */,
+				CF5C1D8C255EEA6A00ADE703 /* InternalViewerToolbarProtocol.mm in Sources */,
+				CF5C1D81255EEA6A00ADE703 /* TextModeIndexedTextLine.cpp in Sources */,
+				CF5C1D8E255EEA6A00ADE703 /* InternalViewerWindowController.mm in Sources */,
+				CF5C1D83255EEA6A00ADE703 /* TextProcessing.cpp in Sources */,
+				CF5C1D8A255EEA6A00ADE703 /* HexModeLayout.cpp in Sources */,
+				CF5C1D82255EEA6A00ADE703 /* ViewerSheet.mm in Sources */,
+				CF5C1D90255EEA6A00ADE703 /* TextModeFrame.mm in Sources */,
+				CF5C1D80255EEA6A00ADE703 /* HexModeProcessing.cpp in Sources */,
+				CF5C1D7A255EEA6A00ADE703 /* TextModeView.mm in Sources */,
+				CF5C1D86255EEA6A00ADE703 /* PreviewModeView.mm in Sources */,
+				CF5C1D7F255EEA6A00ADE703 /* HexModeView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,11 +524,60 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		CF5C1D20255ED68300ADE703 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				INFOPLIST_FILE = resources/ViewerResources.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.ViewerResources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		CF5C1D21255ED68300ADE703 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				INFOPLIST_FILE = resources/ViewerResources.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.ViewerResources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+		CF5C1D72255EEA5200ADE703 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		CF5C1D73255EEA5200ADE703 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		CFD79A6821F65A010043A26D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFD79A7D21F65A980043A26D /* debug.xcconfig */;
 			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 			};
 			name = Debug;
@@ -563,60 +586,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFD79A7E21F65A980043A26D /* release.xcconfig */;
 			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-			};
-			name = Release;
-		};
-		CFD79A6B21F65A010043A26D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "$(SRCROOT)/resources/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.Viewer;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		CFD79A6C21F65A010043A26D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = "$(SRCROOT)/resources/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.Viewer;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -639,20 +609,29 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		CF5C1D22255ED68300ADE703 /* Build configuration list for PBXNativeTarget "ViewerResources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF5C1D20255ED68300ADE703 /* Debug */,
+				CF5C1D21255ED68300ADE703 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF5C1D71255EEA5200ADE703 /* Build configuration list for PBXNativeTarget "Viewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF5C1D72255EEA5200ADE703 /* Debug */,
+				CF5C1D73255EEA5200ADE703 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CFD79A5C21F65A000043A26D /* Build configuration list for PBXProject "Viewer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFD79A6821F65A010043A26D /* Debug */,
 				CFD79A6921F65A010043A26D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CFD79A6A21F65A010043A26D /* Build configuration list for PBXNativeTarget "Viewer" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CFD79A6B21F65A010043A26D /* Debug */,
-				CFD79A6C21F65A010043A26D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

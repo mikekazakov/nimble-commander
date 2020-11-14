@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerWindowController.h"
 #include <Utility/CocoaAppearanceManager.h>
 #include <Viewer/ViewerView.h>
@@ -6,7 +6,9 @@
 #include <Habanero/dispatch_cpp.h>
 #include <chrono>
 #include <Utility/ObjCpp.h>
+#include "Internal.h"
 
+using namespace nc::viewer;
 using namespace std::literals;
 
 @interface InternalViewerWindow : NSWindow
@@ -46,13 +48,15 @@ using namespace std::literals;
           viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
              controller:(NCViewerViewController*)_controller
 {
-    self = [super initWithWindowNibName:NSStringFromClass(self.class)];
+    auto nib_path = [Bundle() pathForResource:@"InternalViewerWindowController"
+                                                           ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
         m_Controller = _controller;
         [m_Controller setFile:path at:vfs];
         
         NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar"
-                                                      bundle:[NSBundle bundleForClass:self.class]];
+                                                      bundle:Bundle()];
         [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
         
         self.viewerView = _viewer_factory(NSMakeRect(0, 0, 100, 100));

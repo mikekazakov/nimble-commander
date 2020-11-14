@@ -5,8 +5,9 @@
 #error This file should only be used in pure C++ sources 
 #endif 
 
+using NSBundle  = void *;
+using NSEvent   = void *;
+using NSImage   = void *;
 using NSString  = void *;
 using NSURL     = void *;
-using NSImage   = void *;
-using NSEvent   = void *;
 using NSWindow  = void *;

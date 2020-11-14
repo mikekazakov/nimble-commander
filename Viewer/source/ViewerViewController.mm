@@ -116,7 +116,7 @@ static int InvertBitFlag( int _value, int _flag )
         
         NSNib *mynib = [[NSNib alloc]
                         initWithNibNamed:@"InternalViewerController"
-                        bundle:[NSBundle bundleForClass:NCViewerViewController.class]];
+                        bundle:Bundle()];
         [mynib instantiateWithOwner:self topLevelObjects:nil];
     }
     return self;

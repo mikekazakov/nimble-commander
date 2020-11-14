@@ -1,8 +1,9 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../MainWindowController.h"
 #include <Viewer/ViewerViewController.h>
+#include <Viewer/Bundle.h>
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowInternalViewerState.h"
 #include <Habanero/dispatch_cpp.h>
@@ -39,10 +40,8 @@
     if( self = [super initWithFrame:_frame_rect] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
         
-        const auto toolbar_bundle =
-            [NSBundle bundleWithIdentifier:@"com.magnumbytes.NimbleCommander.Viewer"];
         NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar"
-                                                      bundle:toolbar_bundle];
+                                                      bundle:nc::viewer::Bundle()];
         [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
 
         auto viewer = _viewer_factory(NSMakeRect(0, 0, 100, 100));

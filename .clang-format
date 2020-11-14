@@ -18,6 +18,7 @@ BraceWrapping:
     AfterClass: true
     AfterEnum: true
 BreakStringLiterals: true
+FixNamespaceComments: true
 SortIncludes: false
 SpaceBeforeParens: Never
 SpacesInConditionalStatement: true
@@ -40,6 +41,7 @@ BraceWrapping:
     AfterClass: true
     AfterEnum: true
 BreakStringLiterals: true
+FixNamespaceComments: true
 SortIncludes: false
 SpaceBeforeParens: Never
 SpacesInConditionalStatement: true

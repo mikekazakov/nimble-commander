@@ -1,3 +1,3 @@
 #!/bin/sh
 
-sloccount ../VFS/ ../Operations/ ../Term/ ../RoutedIO/ ../Habanero/ ../Utility/ ../VFSIcon/ ../Config/ ../Viewer/ ../CUI/ ../NimbleCommander/
+sloccount ../VFS/ ../Operations/ ../Term/ ../RoutedIO/ ../Habanero/ ../Utility/ ../VFSIcon/ ../Config/ ../Viewer/ ../CUI/ ../Panel/ ../NimbleCommander/

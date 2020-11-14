@@ -85,7 +85,8 @@ static std::string MakeCanonicPath(std::string _input)
                 destinationVFS:(const VFSHostPtr&)_destination_host
               operationOptions:(const CopyingOptions&)_options
 {
-    self = [super initWithWindowNibName:@"CopyingDialog"];
+    const auto nib_path = [Bundle() pathForResource:@"CopyingDialog" ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
         self.allowVerification = false;
         m_SourceItems = move( _source_items );

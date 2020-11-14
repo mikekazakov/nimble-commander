@@ -39,7 +39,8 @@ using namespace nc::ops;
                 destinationVFS:(const VFSHostPtr&)_destination_host
             initialDestination:(const std::string&)_initial_destination
 {
-    self = [super initWithWindowNibName:@"CompressDialog"];
+    const auto nib_path = [Bundle() pathForResource:@"CompressDialog" ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
         m_SourceItems = _source_items;
         m_DestinationHost = _destination_host;

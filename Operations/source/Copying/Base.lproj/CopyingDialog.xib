@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="17B48" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17156" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17156"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -28,10 +28,10 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customView translatesAutoresizingMaskIntoConstraints="NO" id="oVI-wD-asY" userLabel="Path">
-            <rect key="frame" x="0.0" y="0.0" width="340" height="73"/>
+            <rect key="frame" x="0.0" y="0.0" width="340" height="71"/>
             <subviews>
-                <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="12">
-                    <rect key="frame" x="18" y="36" width="104" height="17"/>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="12">
+                    <rect key="frame" x="18" y="35" width="104" height="16"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="BH4-3a-y1C"/>
                     </constraints>
@@ -41,14 +41,14 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5">
-                    <rect key="frame" x="20" y="6" width="300" height="22"/>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5">
+                    <rect key="frame" x="20" y="6" width="300" height="21"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="tf1-0r-hzi"/>
                     </constraints>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="6" customClass="NCFilenameTextCell">
                         <font key="font" metaFont="system"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
@@ -113,10 +113,10 @@ Gw
             </constraints>
             <point key="canvasLocation" x="-535.5" y="754.5"/>
         </customView>
-        <window allowsToolTipsWhenApplicationIsInactive="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
+        <window allowsToolTipsWhenApplicationIsInactive="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <rect key="contentRect" x="688" y="323" width="485" height="100"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="485" height="100"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -160,50 +160,50 @@ Gw
             <point key="canvasLocation" x="19" y="268"/>
         </button>
         <viewController title="Advanced options" nibName="MassCopySheetDisclosureViewController" id="jQo-c7-41i" customClass="DisclosureViewController"/>
-        <viewController title="Advanced options" nibName="CopyingDialogDisclosedView" id="E1e-vG-fVc" customClass="DisclosureViewController">
+        <viewController title="Advanced options" nibName="CopyingDialogDisclosedView" nibBundleIdentifier="com.magnumbytes.NimbleCommander.OperationsResources" id="E1e-vG-fVc" customClass="DisclosureViewController">
             <connections>
                 <outlet property="disclosedView" destination="4Xp-mm-USZ" id="h1o-T6-hK4"/>
             </connections>
         </viewController>
         <customView translatesAutoresizingMaskIntoConstraints="NO" id="4Xp-mm-USZ">
-            <rect key="frame" x="0.0" y="0.0" width="384" height="148"/>
+            <rect key="frame" x="0.0" y="0.0" width="384" height="147"/>
             <subviews>
                 <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="qsB-Vr-8ZA">
-                    <rect key="frame" x="18" y="92" width="176" height="18"/>
+                    <rect key="frame" x="18" y="91" width="176" height="18"/>
                     <buttonCell key="cell" type="check" title="Copy extended attributes" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="bVV-Mm-AAW">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                 </button>
                 <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="dpu-XA-3T3">
-                    <rect key="frame" x="18" y="72" width="112" height="18"/>
+                    <rect key="frame" x="18" y="71" width="112" height="18"/>
                     <buttonCell key="cell" type="check" title="Copy file times" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="9bP-RY-UQi">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                 </button>
                 <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Qai-ZS-UAD">
-                    <rect key="frame" x="18" y="52" width="122" height="18"/>
+                    <rect key="frame" x="18" y="51" width="122" height="18"/>
                     <buttonCell key="cell" type="check" title="Copy UNIX flags" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="AJ8-VF-u7U">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                 </button>
                 <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="EmM-aw-84e">
-                    <rect key="frame" x="18" y="32" width="155" height="18"/>
+                    <rect key="frame" x="18" y="31" width="155" height="18"/>
                     <buttonCell key="cell" type="check" title="Copy UNIX ownership" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="y8g-hO-IAN">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                 </button>
                 <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="8IL-zI-QIe">
-                    <rect key="frame" x="20" y="145" width="344" height="5"/>
+                    <rect key="frame" x="20" y="144" width="344" height="5"/>
                 </box>
                 <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="9Yh-TR-VXC">
                     <rect key="frame" x="20" y="-2" width="344" height="5"/>
                 </box>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wBy-zy-hwn">
-                    <rect key="frame" x="18" y="9" width="117" height="17"/>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wBy-zy-hwn">
+                    <rect key="frame" x="18" y="9" width="117" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Verify copied files:" id="zc8-ET-VWt">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -211,7 +211,7 @@ Gw
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ihm-D6-SBj">
-                    <rect key="frame" x="139" y="3" width="120" height="26"/>
+                    <rect key="frame" x="139" y="3" width="121" height="25"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="bg2-66-WSB">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -225,7 +225,7 @@ Gw
                     </popUpButtonCell>
                 </popUpButton>
                 <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Sz2-k9-71G">
-                    <rect key="frame" x="18" y="112" width="164" height="18"/>
+                    <rect key="frame" x="18" y="111" width="164" height="18"/>
                     <buttonCell key="cell" type="check" title="Preserve symbolic links" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="j2d-E0-qK6">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>

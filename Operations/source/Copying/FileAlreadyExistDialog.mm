@@ -3,6 +3,7 @@
 #include <Carbon/Carbon.h>
 #include "FileAlreadyExistDialog.h"
 #include "../ModalDialogResponses.h"
+#include "../Internal.h"
 #include <Utility/StringExtras.h>
 
 using namespace nc::ops;
@@ -63,7 +64,8 @@ static bool IsShiftPressed()
    withDestinationStat:(const struct stat &)_dst_stat
             andContext:(std::shared_ptr<AsyncDialogResponse>)_ctx
 {
-    self = [super initWithWindowNibName:@"FileAlreadyExistDialog"];
+    const auto nib_path = [Bundle() pathForResource:@"FileAlreadyExistDialog" ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if(self) {
         m_DestPath = _path;
         m_SourceStat = _src_stat;

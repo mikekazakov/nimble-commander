@@ -28,7 +28,8 @@ using namespace nc::ops;
 
 - (id)initWithItems:(const std::shared_ptr<std::vector<VFSListingItem>>&)_items
 {
-   self = [super initWithWindowNibName:@"DeletionDialog"];
+    const auto nib_path = [Bundle() pathForResource:@"DeletionDialog" ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if (self) {
         m_AllowMoveToTrash = true;
         m_DefaultType = DeletionType::Permanent;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #ifdef __OBJC__
@@ -8,10 +8,10 @@
 namespace nc::ops {
 
 #ifdef __OBJC__
-NSBundle *Bundle();
+NSBundle *Bundle() noexcept;
 
 #undef NSLocalizedString
-NSString *NSLocalizedString(NSString *_key, const char *_comment);
+NSString *NSLocalizedString(NSString *_key, const char *_comment) noexcept;
 
 #endif
     

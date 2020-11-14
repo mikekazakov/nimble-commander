@@ -6,7 +6,8 @@ LD_RUNPATH_SEARCH_PATHS = @executable_path/../Frameworks
 
 FRAMEWORK_SEARCH_PATHS = $(PROJECT_DIR)/3rd_Party/Sparkle $(PROJECT_DIR)/3rd_Party/LetsMove
 
-LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/3rd_Party/libarchive/built $(PROJECT_DIR)/3rd_Party/unrar/built $(PROJECT_DIR)/3rd_Party/AquaticPrime/built $(PROJECT_DIR)/3rd_Party/libssh2/built $(PROJECT_DIR)/3rd_Party/AppAuth/built $(PROJECT_DIR)/3rd_Party/boost/built $(PROJECT_DIR)/3rd_Party/ctrail/built $(SDKROOT)/usr/lib/system
+LIBRARY_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/3rd_Party/libarchive/built $(PROJECT_DIR)/3rd_Party/unrar/built $(PROJECT_DIR)/3rd_Party/AquaticPrime/built $(PROJECT_DIR)/3rd_Party/libssh2/built $(PROJECT_DIR)/3rd_Party/AppAuth/built $(PROJECT_DIR)/3rd_Party/boost/built $(PROJECT_DIR)/3rd_Party/ctrail/built $(PROJECT_DIR)/3rd_Party/spdlog/built $(PROJECT_DIR)/3rd_Party/googletest/built $(PROJECT_DIR)/3rd_Party/z/built $(PROJECT_DIR)/3rd_Party/OpenSSL/lib $(PROJECT_DIR)/3rd_Party/lzma/built $(PROJECT_DIR)/3rd_Party/bz2/built $(PROJECT_DIR)/3rd_Party/libssh2/built $(PROJECT_DIR)/3rd_Party/pugixml/built
+
 
 USE_HEADERMAP = NO
 
@@ -22,3 +23,5 @@ GCC_NO_COMMON_BLOCKS = YES
 ENABLE_STRICT_OBJC_MSGSEND = YES
 
 RUN_CLANG_STATIC_ANALYZER = NO
+
+OTHER_LDFLAGS = $(inherited) -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework QuartzCore -larchive -lboost_system-mt -lboost_filesystem-mt -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv

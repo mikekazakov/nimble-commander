@@ -40,7 +40,8 @@ using namespace nc::ops;
 - (instancetype)initWithContext:(std::shared_ptr<nc::ops::AsyncDialogResponse>)_context
 {
     dispatch_assert_main_queue();
-    self = [super initWithWindowNibName:@"GenericErrorDialog"];
+    const auto nib_path = [Bundle() pathForResource:@"GenericErrorDialog" ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
         m_Context = _context;
         m_ShowApplyToAll = false;

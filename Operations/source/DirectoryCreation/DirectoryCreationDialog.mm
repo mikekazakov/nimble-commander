@@ -2,6 +2,9 @@
 #include "DirectoryCreationDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include "../Internal.h"
+
+using namespace nc::ops;
 
 @interface NCOpsDirectoryCreationDialog()
 
@@ -24,7 +27,8 @@
 
 - (instancetype)init
 {
-    self = [super initWithWindowNibName:@"DirectoryCreationDialog"];
+    const auto nib_path = [Bundle() pathForResource:@"DirectoryCreationDialog" ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
         self.isValid = false;
     }

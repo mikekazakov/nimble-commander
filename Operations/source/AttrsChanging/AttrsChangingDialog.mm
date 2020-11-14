@@ -107,7 +107,8 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
     if( !all_equal(begin(_items), end(_items), [](auto &i){ return i.Host(); }) )
         throw std::invalid_argument("NCOpsAttrsChangingDialog: input items must have a same vfs host");
     
-    self = [super initWithWindowNibName:@"AttrsChangingDialog"];
+    const auto nib_path = [Bundle() pathForResource:@"AttrsChangingDialog" ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if( !self )
         return nil;
     

@@ -1,6 +1,9 @@
 // Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "HaltReasonDialog.h"
 #include <VFS/VFS.h>
+#include "Internal.h"
+
+using namespace nc::ops;
 
 @interface NCOpsHaltReasonDialog ()
 @property (strong, nonatomic) IBOutlet NSTextField *pathLabel;
@@ -24,7 +27,8 @@
 
 - (instancetype)init
 {
-    self = [super initWithWindowNibName:@"HaltReasonDialog"];
+    const auto nib_path = [Bundle() pathForResource:@"HaltReasonDialog" ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
         m_ErrorNo = VFSError::Ok;
     

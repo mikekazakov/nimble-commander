@@ -7,6 +7,7 @@
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include "../Internal.h"
 
 using namespace nc::ops;
 
@@ -97,7 +98,8 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 
 - (instancetype) initWithItems:(std::vector<VFSListingItem>)_items
 {
-    self = [super initWithWindowNibName:@"BatchRenamingDialog"];
+    const auto nib_path = [Bundle() pathForResource:@"BatchRenamingDialog" ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if(self) {
         if(_items.empty())
             throw std::logic_error("empty files list");

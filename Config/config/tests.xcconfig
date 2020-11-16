@@ -1,6 +1,6 @@
 #include "default.xcconfig"
 
-OTHER_LDFLAGS = $(inherited) -lgmock -lgtest
+OTHER_LDFLAGS = $(inherited) -lgmock -lgtest -lConfig
 LD_RUNPATH_SEARCH_PATHS = @executable_path/
 HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../3rd_Party/Catch2/single_include/ $(PROJECT_DIR)/../3rd_Party/googletest/include/
 LIBRARY_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../3rd_Party/googletest/built/

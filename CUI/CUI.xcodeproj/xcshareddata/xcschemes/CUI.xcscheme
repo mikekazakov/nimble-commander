@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CFD79AC621FE29130043A26D"
-               BuildableName = "CUI.framework"
+               BlueprintIdentifier = "CF46017B25612BDC0095FC73"
+               BuildableName = "libCUI.a"
                BlueprintName = "CUI"
                ReferencedContainer = "container:CUI.xcodeproj">
             </BuildableReference>
@@ -29,8 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -45,14 +43,12 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFD79AC621FE29130043A26D"
-            BuildableName = "CUI.framework"
+            BlueprintIdentifier = "CF46017B25612BDC0095FC73"
+            BuildableName = "libCUI.a"
             BlueprintName = "CUI"
             ReferencedContainer = "container:CUI.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -63,8 +59,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFD79AC621FE29130043A26D"
-            BuildableName = "CUI.framework"
+            BlueprintIdentifier = "CF46017B25612BDC0095FC73"
+            BuildableName = "libCUI.a"
             BlueprintName = "CUI"
             ReferencedContainer = "container:CUI.xcodeproj">
          </BuildableReference>

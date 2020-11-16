@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF4601D8256132110095FC73 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF4601D7256132110095FC73 /* Cocoa.framework */; };
+		CF4601DB2561322F0095FC73 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF4601D7256132110095FC73 /* Cocoa.framework */; };
+		CF4601DF256132400095FC73 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF4601DE256132400095FC73 /* SystemConfiguration.framework */; };
 		CF69CFBB1DA20A1E00992B84 /* PrivilegedIOHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69CFAC1DA2099C00992B84 /* PrivilegedIOHelper.cpp */; };
 		CF69CFBE1DA20B4F00992B84 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFBD1DA20B4F00992B84 /* Foundation.framework */; };
 		CF69CFC01DA20B5500992B84 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFBF1DA20B5500992B84 /* Security.framework */; };
@@ -35,6 +38,8 @@
 		CF2343E922C908AC00F516CB /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CF2343EA22C90A0600F516CB /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CF2343EB22C90A0600F516CB /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
+		CF4601D7256132110095FC73 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		CF4601DE256132400095FC73 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CF69CFA21DA200E300992B84 /* RoutedIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoutedIO.cpp; path = source/RoutedIO.cpp; sourceTree = "<group>"; };
 		CF69CFA31DA200E300992B84 /* RoutedIOInterfaces.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoutedIOInterfaces.cpp; path = source/RoutedIOInterfaces.cpp; sourceTree = "<group>"; };
 		CF69CFA61DA200EC00992B84 /* RoutedIOInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoutedIOInterfaces.h; path = source/RoutedIOInterfaces.h; sourceTree = "<group>"; };
@@ -59,6 +64,7 @@
 			files = (
 				CF69CFC01DA20B5500992B84 /* Security.framework in Frameworks */,
 				CF69CFBE1DA20B4F00992B84 /* Foundation.framework in Frameworks */,
+				CF4601D8256132110095FC73 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,7 +73,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFFA94AA1F4541E80035E606 /* libHabanero.dylib in Frameworks */,
+				CF4601DF256132400095FC73 /* SystemConfiguration.framework in Frameworks */,
 				CFFA94A81F4541E30035E606 /* libUtility.dylib in Frameworks */,
+				CF4601DB2561322F0095FC73 /* Cocoa.framework in Frameworks */,
 				CFFA94A61F4541D20035E606 /* ServiceManagement.framework in Frameworks */,
 				CFFA94A41F4541C60035E606 /* Security.framework in Frameworks */,
 				CFFA94A31F4541B00035E606 /* CoreFoundation.framework in Frameworks */,
@@ -118,6 +126,8 @@
 		CF69CFBC1DA20B4F00992B84 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF4601DE256132400095FC73 /* SystemConfiguration.framework */,
+				CF4601D7256132110095FC73 /* Cocoa.framework */,
 				CFFA94A91F4541E80035E606 /* libHabanero.dylib */,
 				CFFA94A71F4541E30035E606 /* libUtility.dylib */,
 				CFFA94A51F4541D20035E606 /* ServiceManagement.framework */,

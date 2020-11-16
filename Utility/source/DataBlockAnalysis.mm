@@ -109,7 +109,7 @@ static int UTF16BEErrors(const unsigned char *_bytes, size_t _n)
     
     while(cur < end)
     {
-        uint16_t val = Endian16_Swap(*cur);
+        uint16_t val = (uint16_t)Endian16_Swap(*cur);
         
         if(val <= 0xD7FF || val >= 0xE000)
         { // BMP - just ok
@@ -121,7 +121,7 @@ static int UTF16BEErrors(const unsigned char *_bytes, size_t _n)
             { // leading surrogate
                 if(cur + 1 < end)
                 {
-                    uint16_t next = Endian16_Swap(*(cur+1));
+                    uint16_t next = (uint16_t)Endian16_Swap(*(cur+1));
                     if(next >= 0xDC00 && next <= 0xDFFF)
                     { // ok, normal surrogate
                         cur += 2;

@@ -1,9 +1,35 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ProcessSheetController.h"
 #include <Utility/CocoaAppearanceManager.h>
 #include <Habanero/dispatch_cpp.h>
+#include <Habanero/CommonPaths.h>
+#include <filesystem>
+#include <cassert>
 
 static const std::chrono::nanoseconds g_ShowDelay = std::chrono::milliseconds{150};
+
+static NSBundle *Bundle() noexcept
+{
+    static NSBundle *const bundle = []() -> NSBundle * {
+        const std::filesystem::path packaged = "Contents/Resources/CUIResources.bundle";
+        const std::filesystem::path non_packaged = "CUIResources.bundle";
+        const std::filesystem::path base = nc::base::CommonPaths::AppBundle();
+
+        if( auto path = base / packaged; std::filesystem::is_directory(path) ) {
+            // packaged structure
+            NSString *const ns_path = [NSString stringWithUTF8String:path.c_str()];
+            return [NSBundle bundleWithPath:ns_path];
+        }
+        if( auto path = base / non_packaged; std::filesystem::is_directory(path) ) {
+            // non-packaged structure
+            NSString *const ns_path = [NSString stringWithUTF8String:path.c_str()];
+            return [NSBundle bundleWithPath:ns_path];
+        }
+        return nil;
+    }();
+    assert(bundle != nil);
+    return bundle;
+}
 
 @interface ProcessSheetController()
 @property (nonatomic) IBOutlet NSTextField *titleTextField;
@@ -24,13 +50,15 @@ static const std::chrono::nanoseconds g_ShowDelay = std::chrono::milliseconds{15
 {
     // NEED EVEN MOAR GCD HACKS!!
     if(dispatch_is_main_queue()) {
-        self = [super initWithWindowNibName:NSStringFromClass(self.class)];
+        const auto nib_path = [Bundle() pathForResource:@"ProcessSheetController" ofType:@"nib"];
+        self = [super initWithWindowNibPath:nib_path owner:self];
         (void)self.window;
     }
     else {
-        __block ProcessSheetController *me;
+        __block ProcessSheetController *me = self;
         dispatch_sync(dispatch_get_main_queue(), ^{
-            me = [super initWithWindowNibName:NSStringFromClass(self.class)];
+            const auto nib_path = [Bundle() pathForResource:@"ProcessSheetController" ofType:@"nib"];
+            me = [super initWithWindowNibPath:nib_path owner:me];
             (void)me.window;
         });
         self = me;

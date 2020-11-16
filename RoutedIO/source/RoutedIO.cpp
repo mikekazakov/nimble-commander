@@ -25,7 +25,7 @@ static CFStringRef g_HelperLabelCF    = CFStringCreateWithUTF8StringNoCopy(g_Hel
 static const char *AuthRCToString(OSStatus _rc);
 
 static PosixIOInterface &IODirectCreateProxy() {
-    static PosixIOInterfaceNative direct;
+    [[clang::no_destroy]] static PosixIOInterfaceNative direct;
     return direct;
 }
 
@@ -68,13 +68,13 @@ static optional<vector<uint8_t>> ReadFile(const char *_path)
 
 static const char *InstalledPath()
 {
-    static string s = "/Library/PrivilegedHelperTools/"s + g_HelperLabel;
+    [[clang::no_destroy]] static string s = "/Library/PrivilegedHelperTools/"s + g_HelperLabel;
     return s.c_str();
 }
 
 static const char *BundledPath()
 {
-    static string s = nc::base::CommonPaths::AppBundle() +
+    [[clang::no_destroy]] static string s = nc::base::CommonPaths::AppBundle() +
         "Contents/Library/LaunchServices/" + g_HelperLabel;
     return s.c_str();
 }
@@ -85,8 +85,8 @@ RoutedIO::RoutedIO()
 
 RoutedIO& RoutedIO::Instance()
 {
-    static auto inst = make_unique<RoutedIO>();
-    return *inst;
+    [[clang::no_destroy]] static RoutedIO inst;
+    return inst;
 }
 
 bool RoutedIO::IsHelperInstalled()

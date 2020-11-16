@@ -8,18 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		CF4601D8256132110095FC73 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF4601D7256132110095FC73 /* Cocoa.framework */; };
-		CF4601DB2561322F0095FC73 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF4601D7256132110095FC73 /* Cocoa.framework */; };
-		CF4601DF256132400095FC73 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF4601DE256132400095FC73 /* SystemConfiguration.framework */; };
+		CF4602372563125C0095FC73 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69CFA21DA200E300992B84 /* RoutedIO.cpp */; };
+		CF4602382563125C0095FC73 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69CFA31DA200E300992B84 /* RoutedIOInterfaces.cpp */; };
 		CF69CFBB1DA20A1E00992B84 /* PrivilegedIOHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69CFAC1DA2099C00992B84 /* PrivilegedIOHelper.cpp */; };
 		CF69CFBE1DA20B4F00992B84 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFBD1DA20B4F00992B84 /* Foundation.framework */; };
 		CF69CFC01DA20B5500992B84 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFBF1DA20B5500992B84 /* Security.framework */; };
-		CFFA94981F4540420035E606 /* RoutedIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69CFA21DA200E300992B84 /* RoutedIO.cpp */; };
-		CFFA94991F4540420035E606 /* RoutedIOInterfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69CFA31DA200E300992B84 /* RoutedIOInterfaces.cpp */; };
-		CFFA94A31F4541B00035E606 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94A21F4541B00035E606 /* CoreFoundation.framework */; };
-		CFFA94A41F4541C60035E606 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFBF1DA20B5500992B84 /* Security.framework */; };
-		CFFA94A61F4541D20035E606 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94A51F4541D20035E606 /* ServiceManagement.framework */; };
-		CFFA94A81F4541E30035E606 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94A71F4541E30035E606 /* libUtility.dylib */; };
-		CFFA94AA1F4541E80035E606 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94A91F4541E80035E606 /* libHabanero.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +33,7 @@
 		CF2343EB22C90A0600F516CB /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF4601D7256132110095FC73 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CF4601DE256132400095FC73 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		CF46022F256312190095FC73 /* libRoutedIO.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRoutedIO.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF69CFA21DA200E300992B84 /* RoutedIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoutedIO.cpp; path = source/RoutedIO.cpp; sourceTree = "<group>"; };
 		CF69CFA31DA200E300992B84 /* RoutedIOInterfaces.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoutedIOInterfaces.cpp; path = source/RoutedIOInterfaces.cpp; sourceTree = "<group>"; };
 		CF69CFA61DA200EC00992B84 /* RoutedIOInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoutedIOInterfaces.h; path = source/RoutedIOInterfaces.h; sourceTree = "<group>"; };
@@ -50,7 +44,6 @@
 		CF69CFB41DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = info.filesmanager.Files.PrivilegedIOHelperV2; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF69CFBD1DA20B4F00992B84 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CF69CFBF1DA20B5500992B84 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		CFFA94941F4540330035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libRoutedIO.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFFA94A21F4541B00035E606 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		CFFA94A51F4541D20035E606 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		CFFA94A71F4541E30035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
@@ -58,6 +51,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		CF46022D256312190095FC73 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF69CFB11DA209F000992B84 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -65,20 +65,6 @@
 				CF69CFC01DA20B5500992B84 /* Security.framework in Frameworks */,
 				CF69CFBE1DA20B4F00992B84 /* Foundation.framework in Frameworks */,
 				CF4601D8256132110095FC73 /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFFA94911F4540330035E606 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CFFA94AA1F4541E80035E606 /* libHabanero.dylib in Frameworks */,
-				CF4601DF256132400095FC73 /* SystemConfiguration.framework in Frameworks */,
-				CFFA94A81F4541E30035E606 /* libUtility.dylib in Frameworks */,
-				CF4601DB2561322F0095FC73 /* Cocoa.framework in Frameworks */,
-				CFFA94A61F4541D20035E606 /* ServiceManagement.framework in Frameworks */,
-				CFFA94A41F4541C60035E606 /* Security.framework in Frameworks */,
-				CFFA94A31F4541B00035E606 /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,7 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				CF69CFB41DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
-				CFFA94941F4540330035E606 /* libRoutedIO.dylib */,
+				CF46022F256312190095FC73 /* libRoutedIO.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -162,7 +148,7 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		CFFA94921F4540330035E606 /* Headers */ = {
+		CF46022B256312190095FC73 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -172,6 +158,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		CF46022E256312190095FC73 /* RoutedIO */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF460230256312190095FC73 /* Build configuration list for PBXNativeTarget "RoutedIO" */;
+			buildPhases = (
+				CF46022B256312190095FC73 /* Headers */,
+				CF46022C256312190095FC73 /* Sources */,
+				CF46022D256312190095FC73 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RoutedIO;
+			productName = RoutedIO;
+			productReference = CF46022F256312190095FC73 /* libRoutedIO.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		CF69CFB31DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF69CFB81DA209F000992B84 /* Build configuration list for PBXNativeTarget "info.filesmanager.Files.PrivilegedIOHelperV2" */;
@@ -189,23 +192,6 @@
 			productReference = CF69CFB41DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */;
 			productType = "com.apple.product-type.tool";
 		};
-		CFFA94931F4540330035E606 /* RoutedIO */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CFFA94951F4540330035E606 /* Build configuration list for PBXNativeTarget "RoutedIO" */;
-			buildPhases = (
-				CFFA94901F4540330035E606 /* Sources */,
-				CFFA94911F4540330035E606 /* Frameworks */,
-				CFFA94921F4540330035E606 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = RoutedIO;
-			productName = RoutedIO;
-			productReference = CFFA94941F4540330035E606 /* libRoutedIO.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -215,12 +201,11 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
+					CF46022E256312190095FC73 = {
+						CreatedOnToolsVersion = 12.0;
+					};
 					CF69CFB31DA209F000992B84 = {
 						CreatedOnToolsVersion = 8.0;
-						ProvisioningStyle = Automatic;
-					};
-					CFFA94931F4540330035E606 = {
-						CreatedOnToolsVersion = 8.3.2;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -239,12 +224,21 @@
 			projectRoot = "";
 			targets = (
 				CF69CFB31DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
-				CFFA94931F4540330035E606 /* RoutedIO */,
+				CF46022E256312190095FC73 /* RoutedIO */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		CF46022C256312190095FC73 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF4602382563125C0095FC73 /* RoutedIOInterfaces.cpp in Sources */,
+				CF4602372563125C0095FC73 /* RoutedIO.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CF69CFB01DA209F000992B84 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -253,18 +247,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CFFA94901F4540330035E606 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CFFA94991F4540420035E606 /* RoutedIOInterfaces.cpp in Sources */,
-				CFFA94981F4540420035E606 /* RoutedIO.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		CF460231256312190095FC73 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CF460232256312190095FC73 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		CF69CFB91DA209F000992B84 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -313,35 +314,18 @@
 			};
 			name = Release;
 		};
-		CFFA94961F4540330035E606 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath/";
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@rpath/";
-				LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		CFFA94971F4540330035E606 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath/";
-				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@rpath/";
-				LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		CF460230256312190095FC73 /* Build configuration list for PBXNativeTarget "RoutedIO" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF460231256312190095FC73 /* Debug */,
+				CF460232256312190095FC73 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CF69CFB81DA209F000992B84 /* Build configuration list for PBXNativeTarget "info.filesmanager.Files.PrivilegedIOHelperV2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -356,15 +340,6 @@
 			buildConfigurations = (
 				CF8D0D5F1D9E4D7400ADFF14 /* Debug */,
 				CF8D0D601D9E4D7400ADFF14 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CFFA94951F4540330035E606 /* Build configuration list for PBXNativeTarget "RoutedIO" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CFFA94961F4540330035E606 /* Debug */,
-				CFFA94971F4540330035E606 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

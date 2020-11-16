@@ -171,7 +171,7 @@ static bool HandleMkDir(xpc_object_t _event) noexcept
         return false;
     int mode = (int)xpc_int64_get_value(xpc_mode);
     
-    int result = mkdir(path, mode);
+    int result = mkdir(path, (mode_t)mode);
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -431,7 +431,7 @@ static bool HandleKillPG(xpc_object_t _event) noexcept
     return true;
 }
 
-static const unordered_map<string, bool(*)(xpc_object_t)> g_Handlers {
+[[clang::no_destroy]] static const unordered_map<string, bool(*)(xpc_object_t)> g_Handlers {
     {"heartbeat",   HandleHeartbeat},
     {"uninstall",   HandleUninstall},
     {"exit",        HandleExit},

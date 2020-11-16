@@ -7,75 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF0A49F225252C40008EC7B0 /* CloseFrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F125252C40008EC7B0 /* CloseFrom.cpp */; };
-		CF19B3EE2544B94800838B45 /* ScopedObservable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B3ED2544B94800838B45 /* ScopedObservable.cpp */; };
-		CF19B4182544B9E700838B45 /* KVO.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3F72544B9E400838B45 /* KVO.h */; };
-		CF19B4192544B9E700838B45 /* CFRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3F82544B9E400838B45 /* CFRange.h */; };
-		CF19B41A2544B9E700838B45 /* PosixFilesystemMock.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3F92544B9E400838B45 /* PosixFilesystemMock.h */; };
-		CF19B41B2544B9E700838B45 /* fixed_eytzinger_map.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3FA2544B9E400838B45 /* fixed_eytzinger_map.h */; };
-		CF19B41C2544B9E700838B45 /* GoogleAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3FB2544B9E500838B45 /* GoogleAnalytics.h */; };
-		CF19B41D2544B9E700838B45 /* Hash.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3FC2544B9E500838B45 /* Hash.h */; };
-		CF19B41E2544B9E700838B45 /* variable_container.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3FD2544B9E500838B45 /* variable_container.h */; };
-		CF19B41F2544B9E700838B45 /* CloseFrom.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3FE2544B9E500838B45 /* CloseFrom.h */; };
-		CF19B4202544B9E700838B45 /* StringsBulk.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B3FF2544B9E500838B45 /* StringsBulk.h */; };
-		CF19B4212544B9E700838B45 /* DispatchGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4002544B9E500838B45 /* DispatchGroup.h */; };
-		CF19B4222544B9E700838B45 /* mach_time.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4012544B9E500838B45 /* mach_time.h */; };
-		CF19B4232544B9E700838B45 /* CommonPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4022544B9E500838B45 /* CommonPaths.h */; };
-		CF19B4242544B9E700838B45 /* dispatch_cpp.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4032544B9E500838B45 /* dispatch_cpp.h */; };
-		CF19B4252544B9E700838B45 /* chained_strings.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4042544B9E500838B45 /* chained_strings.h */; };
-		CF19B4262544B9E700838B45 /* intrusive_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4052544B9E500838B45 /* intrusive_ptr.h */; };
-		CF19B4272544B9E700838B45 /* tiny_string.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4062544B9E500838B45 /* tiny_string.h */; };
-		CF19B4282544B9E700838B45 /* CFPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4072544B9E500838B45 /* CFPtr.h */; };
-		CF19B4292544B9E700838B45 /* spinlock.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4082544B9E600838B45 /* spinlock.h */; };
-		CF19B42A2544B9E700838B45 /* PosixFilesystem.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4092544B9E600838B45 /* PosixFilesystem.h */; };
-		CF19B42B2544B9E700838B45 /* Observable.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B40A2544B9E600838B45 /* Observable.h */; };
-		CF19B42C2544B9E700838B45 /* ExecutionDeadline.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B40B2544B9E600838B45 /* ExecutionDeadline.h */; };
-		CF19B42D2544B9E700838B45 /* tribool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B40C2544B9E600838B45 /* tribool.h */; };
-		CF19B42E2544B9E700838B45 /* ScopedObservable.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B40D2544B9E600838B45 /* ScopedObservable.h */; };
-		CF19B42F2544B9E700838B45 /* CFString.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B40E2544B9E600838B45 /* CFString.h */; };
-		CF19B4302544B9E700838B45 /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B40F2544B9E600838B45 /* debug.h */; };
-		CF19B4312544B9E700838B45 /* algo.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4102544B9E600838B45 /* algo.h */; };
-		CF19B4322544B9E700838B45 /* SerialQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4112544B9E600838B45 /* SerialQueue.h */; };
-		CF19B4332544B9E700838B45 /* CFStackAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4122544B9E700838B45 /* CFStackAllocator.h */; };
-		CF19B4342544B9E700838B45 /* CFDefaultsCPP.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4132544B9E700838B45 /* CFDefaultsCPP.h */; };
-		CF19B4352544B9E700838B45 /* PosixFilesystemImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4142544B9E700838B45 /* PosixFilesystemImpl.h */; };
-		CF19B4362544B9E700838B45 /* IdleSleepPreventer.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4152544B9E700838B45 /* IdleSleepPreventer.h */; };
-		CF19B4372544B9E700838B45 /* StringViewZBuf.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4162544B9E700838B45 /* StringViewZBuf.h */; };
-		CF19B4382544B9E700838B45 /* LRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF19B4172544B9E700838B45 /* LRUCache.h */; };
-		CF19B43A2544BD2400838B45 /* SerialQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B4392544BD2400838B45 /* SerialQueue.cpp */; };
-		CF2084011FEFACFC0014D6AD /* StringsBulk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */; };
 		CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E20B2291777D00C166FA /* UnitTests_main.cpp */; };
 		CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E214229196E100C166FA /* CFPtr_UT.cpp */; };
 		CF24E21622919DFB00C166FA /* spinlock_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE8F90321A27F3000300019 /* spinlock_UT.cpp */; };
-		CF24E21822919F8100C166FA /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94411F45322E0035E606 /* libHabanero.dylib */; };
 		CF24E2192291A0D500C166FA /* LRUCache_Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */; };
 		CF24E21A2291A61F00C166FA /* Hash_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */; };
 		CF24E21B2291ABAD00C166FA /* StringsBulk_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2084021FEFB2F70014D6AD /* StringsBulk_UT.cpp */; };
 		CF24E21C2291B0E500C166FA /* chained_strings_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF614AD11F9D8EF00005F2DB /* chained_strings_UT.cpp */; };
 		CF24E21D2291B63E00C166FA /* VariableContainer_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */; };
-		CF308F49213B755F00915730 /* PosixFilesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F48213B755F00915730 /* PosixFilesystem.cpp */; };
-		CF308F4D213B773400915730 /* PosixFilesystemImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */; };
 		CF3ABD8723C094A700D1878B /* StringViewZBuf_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */; };
+		CF4601ED25630DE80095FC73 /* DispatchGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */; };
+		CF4601EE25630DE80095FC73 /* PosixFilesystemImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */; };
+		CF4601EF25630DE80095FC73 /* StringsBulk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */; };
+		CF4601F025630DE80095FC73 /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA71C99C2AE0021EE7F /* Hash.cpp */; };
+		CF4601F125630DE80095FC73 /* KVO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA91C99C2AE0021EE7F /* KVO.cpp */; };
+		CF4601F225630DE80095FC73 /* CommonPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */; };
+		CF4601F325630DE80095FC73 /* CommonPaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */; };
+		CF4601F425630DE80095FC73 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */; };
+		CF4601F525630DE80095FC73 /* spinlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */; };
+		CF4601F625630DE80095FC73 /* CFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA01C99C2AE0021EE7F /* CFString.cpp */; };
+		CF4601F725630DE80095FC73 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA31C99C2AE0021EE7F /* debug.cpp */; };
+		CF4601F825630DE80095FC73 /* CFStackAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */; };
+		CF4601F925630DE80095FC73 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */; };
+		CF4601FA25630DE80095FC73 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */; };
+		CF4601FB25630DE80095FC73 /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */; };
+		CF4601FC25630DE80095FC73 /* CloseFrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F125252C40008EC7B0 /* CloseFrom.cpp */; };
+		CF4601FD25630DE80095FC73 /* mach_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */; };
+		CF4601FE25630DE80095FC73 /* PosixFilesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F48213B755F00915730 /* PosixFilesystem.cpp */; };
+		CF4601FF25630DE80095FC73 /* ScopedObservable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B3ED2544B94800838B45 /* ScopedObservable.cpp */; };
+		CF46020025630DE80095FC73 /* SerialQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B4392544BD2400838B45 /* SerialQueue.cpp */; };
+		CF46020125630DE80095FC73 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; };
+		CF46020225630DE80095FC73 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */; };
+		CF46020325630DE80095FC73 /* Observable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD211D6C44C1006B94C2 /* Observable.cpp */; };
+		CF46020425630DE80095FC73 /* ExecutionDeadline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5338682532512100022EE8 /* ExecutionDeadline.cpp */; };
 		CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */; };
-		CF5338692532512100022EE8 /* ExecutionDeadline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5338682532512100022EE8 /* ExecutionDeadline.cpp */; };
 		CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */; };
-		CFFA94491F4535750035E606 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; };
-		CFFA944A1F4535750035E606 /* CFStackAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */; };
-		CFFA944B1F4535750035E606 /* CFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA01C99C2AE0021EE7F /* CFString.cpp */; };
-		CFFA944C1F4535750035E606 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */; };
-		CFFA944D1F4535750035E606 /* CommonPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */; };
-		CFFA944E1F4535750035E606 /* CommonPaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */; };
-		CFFA944F1F4535750035E606 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA31C99C2AE0021EE7F /* debug.cpp */; };
-		CFFA94501F4535750035E606 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */; };
-		CFFA94511F4535750035E606 /* DispatchGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */; };
-		CFFA94521F4535750035E606 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */; };
-		CFFA94531F4535750035E606 /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA71C99C2AE0021EE7F /* Hash.cpp */; };
-		CFFA94541F4535750035E606 /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */; };
-		CFFA94551F4535750035E606 /* KVO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA91C99C2AE0021EE7F /* KVO.cpp */; };
-		CFFA94561F4535750035E606 /* mach_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */; };
-		CFFA94571F4535750035E606 /* Observable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD211D6C44C1006B94C2 /* Observable.cpp */; };
-		CFFA945A1F4535750035E606 /* spinlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */; };
-		CFFA945B1F4535750035E606 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -141,6 +107,7 @@
 		CF308F48213B755F00915730 /* PosixFilesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PosixFilesystem.cpp; path = source/PosixFilesystem.cpp; sourceTree = "<group>"; };
 		CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PosixFilesystemImpl.cpp; path = source/PosixFilesystemImpl.cpp; sourceTree = "<group>"; };
 		CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringViewZBuf_UT.cpp; sourceTree = "<group>"; };
+		CF4601E725630DCB0095FC73 /* libHabanero.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHabanero.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchGroup.cpp; path = source/DispatchGroup.cpp; sourceTree = "<group>"; };
 		CF5338682532512100022EE8 /* ExecutionDeadline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExecutionDeadline.cpp; path = source/ExecutionDeadline.cpp; sourceTree = "<group>"; };
 		CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Hash_UT.cpp; path = ../habanero/tests/Hash_UT.cpp; sourceTree = SOURCE_ROOT; };
@@ -164,7 +131,6 @@
 		CFD6DD211D6C44C1006B94C2 /* Observable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Observable.cpp; path = source/Observable.cpp; sourceTree = "<group>"; };
 		CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intrusive_ptr_UT.cpp; sourceTree = "<group>"; };
 		CFE8F90321A27F3000300019 /* spinlock_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spinlock_UT.cpp; sourceTree = "<group>"; };
-		CFFA94411F45322E0035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,11 +138,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF24E21822919F8100C166FA /* libHabanero.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CFFA943E1F45322E0035E606 /* Frameworks */ = {
+		CF4601E525630DCB0095FC73 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -238,8 +203,8 @@
 		CFD62B731C99C19A0021EE7F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFFA94411F45322E0035E606 /* libHabanero.dylib */,
 				CF24E2042291772900C166FA /* HabaneroUT */,
+				CF4601E725630DCB0095FC73 /* libHabanero.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -318,43 +283,10 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		CFFA943F1F45322E0035E606 /* Headers */ = {
+		CF4601E325630DCB0095FC73 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF19B41E2544B9E700838B45 /* variable_container.h in Headers */,
-				CF19B41D2544B9E700838B45 /* Hash.h in Headers */,
-				CF19B42D2544B9E700838B45 /* tribool.h in Headers */,
-				CF19B41B2544B9E700838B45 /* fixed_eytzinger_map.h in Headers */,
-				CF19B4222544B9E700838B45 /* mach_time.h in Headers */,
-				CF19B4232544B9E700838B45 /* CommonPaths.h in Headers */,
-				CF19B4302544B9E700838B45 /* debug.h in Headers */,
-				CF19B42A2544B9E700838B45 /* PosixFilesystem.h in Headers */,
-				CF19B41F2544B9E700838B45 /* CloseFrom.h in Headers */,
-				CF19B41A2544B9E700838B45 /* PosixFilesystemMock.h in Headers */,
-				CF19B41C2544B9E700838B45 /* GoogleAnalytics.h in Headers */,
-				CF19B4282544B9E700838B45 /* CFPtr.h in Headers */,
-				CF19B42E2544B9E700838B45 /* ScopedObservable.h in Headers */,
-				CF19B4312544B9E700838B45 /* algo.h in Headers */,
-				CF19B4262544B9E700838B45 /* intrusive_ptr.h in Headers */,
-				CF19B4372544B9E700838B45 /* StringViewZBuf.h in Headers */,
-				CF19B4182544B9E700838B45 /* KVO.h in Headers */,
-				CF19B4202544B9E700838B45 /* StringsBulk.h in Headers */,
-				CF19B4252544B9E700838B45 /* chained_strings.h in Headers */,
-				CF19B42F2544B9E700838B45 /* CFString.h in Headers */,
-				CF19B4292544B9E700838B45 /* spinlock.h in Headers */,
-				CF19B4332544B9E700838B45 /* CFStackAllocator.h in Headers */,
-				CF19B42B2544B9E700838B45 /* Observable.h in Headers */,
-				CF19B4362544B9E700838B45 /* IdleSleepPreventer.h in Headers */,
-				CF19B4212544B9E700838B45 /* DispatchGroup.h in Headers */,
-				CF19B42C2544B9E700838B45 /* ExecutionDeadline.h in Headers */,
-				CF19B4342544B9E700838B45 /* CFDefaultsCPP.h in Headers */,
-				CF19B4382544B9E700838B45 /* LRUCache.h in Headers */,
-				CF19B4272544B9E700838B45 /* tiny_string.h in Headers */,
-				CF19B4242544B9E700838B45 /* dispatch_cpp.h in Headers */,
-				CF19B4352544B9E700838B45 /* PosixFilesystemImpl.h in Headers */,
-				CF19B4192544B9E700838B45 /* CFRange.h in Headers */,
-				CF19B4322544B9E700838B45 /* SerialQueue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,22 +310,22 @@
 			productReference = CF24E2042291772900C166FA /* HabaneroUT */;
 			productType = "com.apple.product-type.tool";
 		};
-		CFFA94401F45322E0035E606 /* Habanero */ = {
+		CF4601E625630DCB0095FC73 /* Habanero */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFFA94421F45322F0035E606 /* Build configuration list for PBXNativeTarget "Habanero" */;
+			buildConfigurationList = CF4601E825630DCB0095FC73 /* Build configuration list for PBXNativeTarget "Habanero" */;
 			buildPhases = (
-				CFFA943D1F45322E0035E606 /* Sources */,
-				CFFA943E1F45322E0035E606 /* Frameworks */,
-				CFFA943F1F45322E0035E606 /* Headers */,
+				CF4601E325630DCB0095FC73 /* Headers */,
+				CF4601E425630DCB0095FC73 /* Sources */,
+				CF4601E525630DCB0095FC73 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = Habanero;
-			productName = Habanero1;
-			productReference = CFFA94411F45322E0035E606 /* libHabanero.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
+			productName = Habanero;
+			productReference = CF4601E725630DCB0095FC73 /* libHabanero.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -407,9 +339,8 @@
 					CF24E2032291772900C166FA = {
 						CreatedOnToolsVersion = 10.2.1;
 					};
-					CFFA94401F45322E0035E606 = {
-						CreatedOnToolsVersion = 8.3.2;
-						ProvisioningStyle = Automatic;
+					CF4601E625630DCB0095FC73 = {
+						CreatedOnToolsVersion = 12.0;
 					};
 				};
 			};
@@ -426,7 +357,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CFFA94401F45322E0035E606 /* Habanero */,
+				CF4601E625630DCB0095FC73 /* Habanero */,
 				CF24E2032291772900C166FA /* HabaneroUT */,
 			);
 		};
@@ -451,34 +382,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CFFA943D1F45322E0035E606 /* Sources */ = {
+		CF4601E425630DCB0095FC73 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF5338692532512100022EE8 /* ExecutionDeadline.cpp in Sources */,
-				CFFA94491F4535750035E606 /* CFDefaultsCPP.cpp in Sources */,
-				CFFA94541F4535750035E606 /* IdleSleepPreventer.cpp in Sources */,
-				CFFA944E1F4535750035E606 /* CommonPaths.mm in Sources */,
-				CFFA94511F4535750035E606 /* DispatchGroup.cpp in Sources */,
-				CFFA944D1F4535750035E606 /* CommonPaths.cpp in Sources */,
-				CFFA94501F4535750035E606 /* dispatch_cpp.cpp in Sources */,
-				CFFA944C1F4535750035E606 /* chained_strings.cpp in Sources */,
-				CF0A49F225252C40008EC7B0 /* CloseFrom.cpp in Sources */,
-				CFFA94551F4535750035E606 /* KVO.cpp in Sources */,
-				CFFA94531F4535750035E606 /* Hash.cpp in Sources */,
-				CFFA944A1F4535750035E606 /* CFStackAllocator.cpp in Sources */,
-				CF308F49213B755F00915730 /* PosixFilesystem.cpp in Sources */,
-				CF19B43A2544BD2400838B45 /* SerialQueue.cpp in Sources */,
-				CF2084011FEFACFC0014D6AD /* StringsBulk.cpp in Sources */,
-				CFFA945A1F4535750035E606 /* spinlock.cpp in Sources */,
-				CF19B3EE2544B94800838B45 /* ScopedObservable.cpp in Sources */,
-				CFFA945B1F4535750035E606 /* tiny_string.cpp in Sources */,
-				CFFA94571F4535750035E606 /* Observable.cpp in Sources */,
-				CFFA944B1F4535750035E606 /* CFString.cpp in Sources */,
-				CF308F4D213B773400915730 /* PosixFilesystemImpl.cpp in Sources */,
-				CFFA94561F4535750035E606 /* mach_time.cpp in Sources */,
-				CFFA944F1F4535750035E606 /* debug.cpp in Sources */,
-				CFFA94521F4535750035E606 /* GoogleAnalytics.mm in Sources */,
+				CF46020425630DE80095FC73 /* ExecutionDeadline.cpp in Sources */,
+				CF4601EE25630DE80095FC73 /* PosixFilesystemImpl.cpp in Sources */,
+				CF4601FB25630DE80095FC73 /* IdleSleepPreventer.cpp in Sources */,
+				CF4601FA25630DE80095FC73 /* GoogleAnalytics.mm in Sources */,
+				CF4601FD25630DE80095FC73 /* mach_time.cpp in Sources */,
+				CF4601F025630DE80095FC73 /* Hash.cpp in Sources */,
+				CF4601F325630DE80095FC73 /* CommonPaths.mm in Sources */,
+				CF4601FE25630DE80095FC73 /* PosixFilesystem.cpp in Sources */,
+				CF4601F525630DE80095FC73 /* spinlock.cpp in Sources */,
+				CF4601F425630DE80095FC73 /* dispatch_cpp.cpp in Sources */,
+				CF4601F825630DE80095FC73 /* CFStackAllocator.cpp in Sources */,
+				CF4601FC25630DE80095FC73 /* CloseFrom.cpp in Sources */,
+				CF4601ED25630DE80095FC73 /* DispatchGroup.cpp in Sources */,
+				CF4601F725630DE80095FC73 /* debug.cpp in Sources */,
+				CF46020025630DE80095FC73 /* SerialQueue.cpp in Sources */,
+				CF4601EF25630DE80095FC73 /* StringsBulk.cpp in Sources */,
+				CF4601F625630DE80095FC73 /* CFString.cpp in Sources */,
+				CF4601F125630DE80095FC73 /* KVO.cpp in Sources */,
+				CF4601F925630DE80095FC73 /* chained_strings.cpp in Sources */,
+				CF4601FF25630DE80095FC73 /* ScopedObservable.cpp in Sources */,
+				CF46020325630DE80095FC73 /* Observable.cpp in Sources */,
+				CF46020125630DE80095FC73 /* CFDefaultsCPP.cpp in Sources */,
+				CF46020225630DE80095FC73 /* tiny_string.cpp in Sources */,
+				CF4601F225630DE80095FC73 /* CommonPaths.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +430,22 @@
 			};
 			name = Release;
 		};
+		CF4601E925630DCB0095FC73 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CF4601EA25630DCB0095FC73 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		CFD62B791C99C19A0021EE7F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF24E20D229191B700C166FA /* default.xcconfig */;
@@ -509,20 +456,6 @@
 		CFD62B7A1C99C19A0021EE7F /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF24E2132291937F00C166FA /* debug.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		CFFA94431F45322F0035E606 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF24E2132291937F00C166FA /* debug.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		CFFA94441F45322F0035E606 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF24E20F229191B800C166FA /* release.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -539,20 +472,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		CF4601E825630DCB0095FC73 /* Build configuration list for PBXNativeTarget "Habanero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF4601E925630DCB0095FC73 /* Debug */,
+				CF4601EA25630DCB0095FC73 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CFD62B6D1C99C19A0021EE7F /* Build configuration list for PBXProject "Habanero" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFD62B791C99C19A0021EE7F /* Debug */,
 				CFD62B7A1C99C19A0021EE7F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CFFA94421F45322F0035E606 /* Build configuration list for PBXNativeTarget "Habanero" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CFFA94431F45322F0035E606 /* Debug */,
-				CFFA94441F45322F0035E606 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

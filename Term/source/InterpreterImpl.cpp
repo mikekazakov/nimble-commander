@@ -645,7 +645,7 @@ static std::u32string ConvertUTF8ToUTF32( std::string_view _utf8 )
     std::u32string result;
     result.resize(utf32_len);
             
-    const auto utf32_fact = CFStringGetBytes(str.get(),
+    [[maybe_unused]] const auto utf32_fact = CFStringGetBytes(str.get(),
                                             CFRangeMake(0, utf16_len),
                                             kCFStringEncodingUTF32LE,
                                             0,
@@ -695,7 +695,7 @@ static std::u32string ComposeUnicodePoints( std::u32string _utf32 )
         
     _utf32.resize(utf32_len);
             
-    const auto utf32_fact = CFStringGetBytes(mut_str.get(),
+    [[maybe_unused]] const auto utf32_fact = CFStringGetBytes(mut_str.get(),
                                             CFRangeMake(0, utf16_len),
                                             kCFStringEncodingUTF32LE,
                                             0,

@@ -4,6 +4,7 @@
 #include <NimbleCommander/Core/VFSInstancePromise.h>
 #include <Panel/PanelData.h>
 #include <Utility/PathManip.h>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 

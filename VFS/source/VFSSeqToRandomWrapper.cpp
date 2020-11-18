@@ -231,6 +231,7 @@ ssize_t VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size
             return VFSError::FromErrno(errno);
     }
     assert(0);
+    return VFSError::GenericError;
 }
 
 off_t VFSSeqToRandomROWrapperFile::Seek(off_t _off, int _basis)

@@ -174,6 +174,8 @@ int SFTPHost::DoInit()
     call_once(once, []{
         int rc = libssh2_init(0);
         assert(rc == 0);
+        if( rc != 0 )
+            throw std::runtime_error("libssh2_init failed");
     });
 
     struct hostent *remote_host = gethostbyname( Config().server_url.c_str() );

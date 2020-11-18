@@ -1,4 +1,2 @@
+#include "XCConfig/release.xcconfig"
 #include "default.xcconfig"
-
-DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
-GCC_PREPROCESSOR_DEFINITIONS = NDEBUG=1 $(inherited)

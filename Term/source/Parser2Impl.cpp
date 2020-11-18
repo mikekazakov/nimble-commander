@@ -38,7 +38,7 @@ std::vector<input::Command> Parser2Impl::Parse( Bytes _to_parse )
 void Parser2Impl::EatByte( unsigned char _byte )
 {
     while( true ) {
-        const auto state = m_SubState;
+        [[maybe_unused]] const auto state = m_SubState;
         const auto consume = m_SubStates[static_cast<int>(m_SubState)].consume;
         const bool consumed = (*this.*consume)(_byte);
         if( consumed ) {

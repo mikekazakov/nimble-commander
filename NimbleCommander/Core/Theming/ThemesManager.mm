@@ -200,6 +200,7 @@ std::shared_ptr<const nc::config::Value> ThemesManager::
         return i->second;
     
     assert( "default config is corrupted, there's no Modern theme" == nullptr );
+    abort();
 }
 
 static uint64_t NotificationMaskForKey( const std::string &_key )

@@ -161,7 +161,10 @@ void DrawTableVerticalSeparatorForView(NSView *v)
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
-        
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(dateDidChange:)
+                                                   name:NSCalendarDayChangedNotification
+                                                 object:nil];
     }
     return self;
 }
@@ -907,6 +910,35 @@ static PanelListViewColumns IdentifierToKind( unsigned char _letter )
     self.cursorPosition = cp;
     m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
     m_ScrollView.backgroundColor = CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
+}
+
+- (void)dateDidChange:(NSNotification *) [[maybe_unused]] _notification
+{
+    // may be triggered from a background notification thread, so kick the handling to the main
+    // thread
+    __weak PanelListView *weak_self = self;
+    dispatch_to_main_queue([weak_self] {
+        if( PanelListView *strong_self = weak_self )
+            [strong_self dateDidChangeImpl];
+    });
+}
+
+- (void)dateDidChangeImpl
+{
+    dispatch_assert_main_queue();
+    auto block = ^(PanelListViewRowView *row_view, NSInteger) {
+      for( NSView *v in row_view.subviews ) {
+          NSString *identifier = v.identifier;
+          if( identifier.length == 0 )
+              continue;
+          const auto col_id = [v.identifier characterAtIndex:0];
+          if( col_id == 'C' || col_id == 'D' || col_id == 'E' ) {
+              auto date_view = objc_cast<PanelListViewDateTimeView>(v);
+              [date_view dateChanged];
+          }
+      }
+    };
+    [m_TableView enumerateAvailableRowViewsUsingBlock:block];
 }
 
 @end

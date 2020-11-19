@@ -1,9 +1,12 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerSheet.h"
 #include <Utility/CocoaAppearanceManager.h>
 #include <Viewer/ViewerViewController.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
+#include "Internal.h"
+
+using namespace nc::viewer;
 
 @interface NCViewerSheet ()
 
@@ -39,7 +42,9 @@
        viewerController:(NCViewerViewController*)_viewer_controller
 {
     assert( dispatch_is_main_queue() );
-    self = [super init];
+    auto nib_path = [Bundle() pathForResource:@"NCViewerSheet"
+                                       ofType:@"nib"];
+    self = [super initWithWindowNibPath:nib_path owner:self];
     if(self) {
         m_VFS = vfs;
         m_Path = path;

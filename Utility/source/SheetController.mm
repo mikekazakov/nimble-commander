@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/SheetController.h>
 
@@ -10,11 +10,15 @@ using namespace std::chrono;
     __strong SheetController *m_Self;
 }
 
-- (id) init
+- (instancetype) init
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
-    if(self) {
-    }
+    return self;
+}
+
+- (instancetype) initWithWindowNibPath:(NSString *)_window_nib_path owner:(id)_owner
+{
+    self = [super initWithWindowNibPath:_window_nib_path owner:_owner];
     return self;
 }
 

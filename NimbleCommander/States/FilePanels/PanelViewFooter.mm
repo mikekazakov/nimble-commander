@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFooter.h"
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ColoredSeparatorLine.h>
@@ -123,6 +123,8 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
     std::unique_ptr<nc::panel::FooterTheme> m_Theme;    
     
     bool m_Active;
+    
+    time_t m_ItemMTime; // need to store this to be able to re-format time when date changes
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -131,6 +133,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
     self = [super initWithFrame:frameRect];
     if( self ) {
         m_Active = false;
+        m_ItemMTime = 0;
         m_Theme = std::move(_theme);
     
         [self createControls];
@@ -156,10 +159,20 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
         m_Theme->ObserveChanges( [weak_self]{
             if( auto strong_self = weak_self )
                 [strong_self setupPresentation];
-        });        
+        });
+        
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(dateDidChange:)
+                                                   name:NSCalendarDayChangedNotification
+                                                 object:nil];
     }
 
     return self;
+}
+
+-(void) dealloc
+{
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (void) createControls
@@ -338,12 +351,23 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
                                                    _vd,
                                                    GetFileSizeFormat(),
                                                    ByteCountFormatter::Instance());        
-        const auto style = AdaptiveDateFormatting::Style::Medium;
-        m_ModTime.stringValue = AdaptiveDateFormatting{}.Format(style, _item.MTime());
+        m_ItemMTime = _item.MTime();
     }
     else {
         m_FilenameLabel.stringValue = @"";
         m_SizeLabel.stringValue = @"";
+        m_ItemMTime = 0;
+    }
+    [self updateModTime];
+}
+
+- (void)updateModTime
+{
+    if( m_ItemMTime > 0 ) {
+        const auto style = AdaptiveDateFormatting::Style::Medium;
+        m_ModTime.stringValue = AdaptiveDateFormatting{}.Format(style, m_ItemMTime);
+    }
+    else {
         m_ModTime.stringValue = @"";
     }
 }
@@ -470,5 +494,15 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     return m_Active;
 }
 
+- (void)dateDidChange:(NSNotification *) [[maybe_unused]] _notification
+{
+    // may be triggered from a background notification thread, so kick the handling to the main
+    // thread
+    __weak NCPanelViewFooter *weak_self = self;
+    dispatch_to_main_queue([weak_self] {
+        if( NCPanelViewFooter *strong_self = weak_self )
+            [strong_self updateModTime];
+    });
+}
 
 @end

@@ -154,7 +154,7 @@
 		CF26DE0E21CFA2CC003F0E93 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileWindow_Tests.mm; path = tests/FileWindow_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF26DE1021D266E0003F0E93 /* SearchInFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchInFile.h; path = include/VFS/SearchInFile.h; sourceTree = "<group>"; };
 		CF26DE1121D266EA003F0E93 /* SearchInFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchInFile.cpp; path = source/SearchInFile.cpp; sourceTree = "<group>"; };
-		CF26DE1821D285A6003F0E93 /* libVFSUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libVFSUT; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF26DE1821D285A6003F0E93 /* VFSUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VFSUT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF26DE1F21D2864D003F0E93 /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = SOURCE_ROOT; };
 		CF26DE2021D2864D003F0E93 /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = SOURCE_ROOT; };
 		CF26DE2221D28699003F0E93 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
@@ -433,7 +433,7 @@
 			isa = PBXGroup;
 			children = (
 				CF1846FE1E41C86D008B7C9F /* VFS Tests.xctest */,
-				CF26DE1821D285A6003F0E93 /* libVFSUT */,
+				CF26DE1821D285A6003F0E93 /* VFSUT */,
 				CF460065256057250095FC73 /* libVFS.a */,
 			);
 			name = Products;
@@ -682,7 +682,7 @@
 			);
 			name = VFSUT;
 			productName = VFSUT;
-			productReference = CF26DE1821D285A6003F0E93 /* libVFSUT */;
+			productReference = CF26DE1821D285A6003F0E93 /* VFSUT */;
 			productType = "com.apple.product-type.tool";
 		};
 		CF460064256057250095FC73 /* VFS */ = {

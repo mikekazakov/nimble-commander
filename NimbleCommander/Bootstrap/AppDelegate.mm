@@ -7,6 +7,7 @@
 #include "ConfigWiring.h"
 #include "VFSInit.h"
 #include "Interactions.h"
+#include "NCHelpMenuDelegate.h"
 
 #include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <Sparkle/Sparkle.h>
@@ -237,7 +238,6 @@ static NCAppDelegate *g_Me = nil;
     [self themesManager];
     [self favoriteLocationsStorage];
     
-    [self enableDebugMenuIfAsked];
     [self updateMainMenuFeaturesByVersionAndState];
     
     // update menu with current shortcuts layout
@@ -320,6 +320,11 @@ static NCAppDelegate *g_Me = nil;
     // This solution is horrible but I can find a better one right now.
     item_for_action("menu.file.open_with_submenu").submenu = [NSMenu new];
     item_for_action("menu.file.always_open_with_submenu").submenu = [NSMenu new];
+    
+    // Set up a delegate for the Help menu
+    static const auto help_delegate = [[NCHelpMenuDelegate alloc] init];
+    auto help_menu_item = [NSApp.mainMenu itemWithTagHierarchical:17'000].menu;
+    help_menu_item.delegate = help_delegate;
 }
 
 - (void)updateMainMenuFeaturesByVersionAndState
@@ -379,16 +384,6 @@ static NCAppDelegate *g_Me = nil;
     enable( "menu.command.link_create_hard",    am.HasLinksManipulation() );
     enable( "menu.command.link_edit",           am.HasLinksManipulation());
     enable( "menu.command.open_xattr",          am.HasXAttrFS() );
-}
-
-- (void)enableDebugMenuIfAsked
-{
-    const auto show_mask = NSEventModifierFlagOption;
-    const auto debug_submenu_tag = 17'020;
-    if( (NSEvent.modifierFlags & show_mask) != show_mask ) {
-        auto debug_submenu = [NSApp.mainMenu itemWithTagHierarchical:debug_submenu_tag];
-        debug_submenu.hidden = true;    
-    }
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)[[maybe_unused]]_notification

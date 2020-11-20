@@ -18,7 +18,7 @@
 		CF0260C71E9DEC380025B50F /* CalculateSizes.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260C61E9DEC380025B50F /* CalculateSizes.mm */; };
 		CF0260CA1E9DF45D0025B50F /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260C91E9DF45D0025B50F /* BatchRename.mm */; };
 		CF0260D21E9F10060025B50F /* ToggleLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260D11E9F10060025B50F /* ToggleLayout.mm */; };
-		CF02B5A01D0A61C000F2760D /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; };
+		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF02B5A21D0A61E200F2760D /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
 		CF02B5A61D0A61FD00F2760D /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62D9B1C9BC7540021EE7F /* libarchive.a */; };
 		CF02B5BB1D0A642500F2760D /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
@@ -58,7 +58,7 @@
 		CF197C461FB834B7009F6C59 /* ShowTabs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C451FB834B7009F6C59 /* ShowTabs.mm */; };
 		CF197C491FB92E80009F6C59 /* CopyFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C481FB92E80009F6C59 /* CopyFile.mm */; };
 		CF197C4C1FB960CC009F6C59 /* RevealInOppositePanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */; };
-		CF1ADE291F7E6BB4003E9B76 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
+		CF1ADE291F7E6BB4003E9B76 /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.a */; };
 		CF1E3D1B1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */; };
 		CF1E3D1C1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */; };
 		CF1E3D1D1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */; };
@@ -93,9 +93,9 @@
 		CF20DF4C1FC694B60074ABB8 /* SyncPanels.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF4A1FC693440074ABB8 /* SyncPanels.mm */; };
 		CF20DF4D1FC694B70074ABB8 /* SyncPanels.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF4A1FC693440074ABB8 /* SyncPanels.mm */; };
 		CF20DF4E1FC694B80074ABB8 /* SyncPanels.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF4A1FC693440074ABB8 /* SyncPanels.mm */; };
-		CF233AD1219C110A00693E1A /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
-		CF233AD2219C110D00693E1A /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; };
-		CF233AD3219C112400693E1A /* libConfig.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF233AD1219C110A00693E1A /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
+		CF233AD2219C110D00693E1A /* libVFSIcon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.a */; };
+		CF233AD3219C112400693E1A /* libConfig.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF233AD7219C34F900693E1A /* Helpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF233AD6219C34F900693E1A /* Helpers.mm */; };
 		CF233AD8219C34F900693E1A /* Helpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF233AD6219C34F900693E1A /* Helpers.mm */; };
 		CF233AD9219C34F900693E1A /* Helpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF233AD6219C34F900693E1A /* Helpers.mm */; };
@@ -116,6 +116,10 @@
 		CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
+		CF2F10B12567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F10972567DF2500622405 /* NCHelpMenuDelegate.mm */; };
+		CF2F10B22567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F10972567DF2500622405 /* NCHelpMenuDelegate.mm */; };
+		CF2F10B32567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F10972567DF2500622405 /* NCHelpMenuDelegate.mm */; };
+		CF2F10B42567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F10972567DF2500622405 /* NCHelpMenuDelegate.mm */; };
 		CF2F42E71EADB8D000AA031A /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF2F43471EAF345400AA031A /* ConnectToServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F43451EAF345400AA031A /* ConnectToServer.mm */; };
 		CF2F43481EAF345400AA031A /* ConnectToServer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F43451EAF345400AA031A /* ConnectToServer.mm */; };
@@ -153,12 +157,12 @@
 		CF36DBF81F6C1987004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF36DBF91F6C1988004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF36DBFA1F6C1988004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
-		CF36DBFB1F6C1B60004A018E /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
-		CF36DBFC1F6C1B63004A018E /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; };
-		CF36DBFD1F6C1C09004A018E /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; };
-		CF39A0E21F70C1E1005A4583 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; };
-		CF39A0E61F70C20C005A4583 /* libRoutedIO.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CF39A0EB1F70C5CA005A4583 /* libRoutedIO.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF36DBFB1F6C1B60004A018E /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
+		CF36DBFC1F6C1B63004A018E /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
+		CF36DBFD1F6C1C09004A018E /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
+		CF39A0E21F70C1E1005A4583 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* libOperations.a */; };
+		CF39A0E61F70C20C005A4583 /* libRoutedIO.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF39A0EB1F70C5CA005A4583 /* libRoutedIO.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF3B7F70201F20D300BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
 		CF3B7F71201F212F00BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
 		CF3B7F72201F213000BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
@@ -192,20 +196,20 @@
 		CF46018D25612D300095FC73 /* CUIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF46018C25612D1C0095FC73 /* CUIResources.bundle */; };
 		CF46018F25612D4D0095FC73 /* CUIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF46018C25612D1C0095FC73 /* CUIResources.bundle */; };
 		CF46019125612D560095FC73 /* OperationsResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF46FFA3255FCD320095FC73 /* OperationsResources.bundle */; };
-		CF46019425612D680095FC73 /* CUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* CUI.framework */; };
-		CF46019525612D710095FC73 /* CUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* CUI.framework */; };
+		CF46019425612D680095FC73 /* libCUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* libCUI.a */; };
+		CF46019525612D710095FC73 /* libCUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* libCUI.a */; };
 		CF46019625612D7C0095FC73 /* OperationsResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF46FFA3255FCD320095FC73 /* OperationsResources.bundle */; };
 		CF46019825612D800095FC73 /* CUIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF46018C25612D1C0095FC73 /* CUIResources.bundle */; };
 		CF46019A25612D8F0095FC73 /* CUIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF46018C25612D1C0095FC73 /* CUIResources.bundle */; };
 		CF46019C25612D920095FC73 /* OperationsResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF46FFA3255FCD320095FC73 /* OperationsResources.bundle */; };
-		CF4601B625612F140095FC73 /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
-		CF4601B725612F180095FC73 /* CUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* CUI.framework */; };
-		CF46022525630E790095FC73 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; };
-		CF46022625630E8E0095FC73 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; };
-		CF46022725630EA70095FC73 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; };
-		CF46022825630EC20095FC73 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; };
-		CF46023B256313880095FC73 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; };
-		CF46023C256313B60095FC73 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; };
+		CF4601B625612F140095FC73 /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
+		CF4601B725612F180095FC73 /* libCUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* libCUI.a */; };
+		CF46022525630E790095FC73 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
+		CF46022625630E8E0095FC73 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
+		CF46022725630EA70095FC73 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
+		CF46022825630EC20095FC73 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
+		CF46023B256313880095FC73 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
+		CF46023C256313B60095FC73 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
 		CF46C23620317FD700A91E2F /* ServicesHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46C23520317FD700A91E2F /* ServicesHandler.mm */; };
 		CF46C24620317FEE00A91E2F /* ServicesHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46C23520317FD700A91E2F /* ServicesHandler.mm */; };
 		CF46C24720317FEF00A91E2F /* ServicesHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46C23520317FD700A91E2F /* ServicesHandler.mm */; };
@@ -229,7 +233,7 @@
 		CF4D98CC202C206000ECE06D /* StateActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98B4202BE89700ECE06D /* StateActions.mm */; };
 		CF4D98CD202C206000ECE06D /* StateActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98B4202BE89700ECE06D /* StateActions.mm */; };
 		CF4E55602311424F00F607D7 /* libViewer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A7821F65A540043A26D /* libViewer.a */; };
-		CF4E55612311425400F607D7 /* CUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* CUI.framework */; };
+		CF4E55612311425400F607D7 /* libCUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* libCUI.a */; };
 		CF4E556523114AC400F607D7 /* libViewer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A7821F65A540043A26D /* libViewer.a */; };
 		CF4E556623114BF700F607D7 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA3D7C81962613B006A30A1 /* Carbon.framework */; };
 		CF4E563E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */; };
@@ -366,15 +370,15 @@
 		CF614AEA1F9D92A20005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
 		CF614AEB1F9D92A30005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
 		CF614AEC1F9D92A40005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
-		CF614AED1F9D92B30005F2DB /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
-		CF614AF01F9D932B0005F2DB /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
+		CF614AED1F9D92B30005F2DB /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.a */; };
+		CF614AF01F9D932B0005F2DB /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.a */; };
 		CF6237241EB4444B00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF6237251EB4444C00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF6237261EB4444D00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF624BF221A6B7E100B3A595 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */; };
 		CF624C0621A6B7E200B3A595 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */; };
 		CF624C0721A6B8EB00B3A595 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
-		CF65729B1FA6D08F00ABF85F /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
+		CF65729B1FA6D08F00ABF85F /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.a */; };
 		CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
 		CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
 		CF662AE31D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
@@ -397,8 +401,8 @@
 		CF6BF83021941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */; };
 		CF6BF83121941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */; };
 		CF6BF833219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF832219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm */; };
-		CF6BF83A219444A90017CECB /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
-		CF6BF83B219445F00017CECB /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
+		CF6BF83A219444A90017CECB /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
+		CF6BF83B219445F00017CECB /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
 		CF6BF83E21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */; };
 		CF6BF83F21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */; };
 		CF6BF84021944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */; };
@@ -435,7 +439,7 @@
 		CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CF6E444E1CC9DABA009F45B0 /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62D9B1C9BC7540021EE7F /* libarchive.a */; };
 		CF6E444F1CC9DACA009F45B0 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5A0B291C9E7D76005839B7 /* libunrar.a */; };
-		CF6E44501CC9DAE1009F45B0 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; };
+		CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
 		CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E44871CCE390A009F45B0 /* StoreKit.framework */; };
 		CF6ECDA91E9F4776008FA79E /* ChangeAttributes.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */; };
@@ -485,12 +489,12 @@
 		CF7C7CD01E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7C7CD41E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib */; };
 		CF7C7CD11E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7C7CD41E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib */; };
 		CF7C7CD21E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7C7CD41E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib */; };
-		CF7C7CE51E5D3521002DB0E2 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
-		CF7C7CE61E5D352D002DB0E2 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; };
+		CF7C7CE51E5D3521002DB0E2 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
+		CF7C7CE61E5D352D002DB0E2 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
 		CF7C7CE71E5D353C002DB0E2 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CF7C7CE81E5D356D002DB0E2 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
-		CF7C7CE91E5D3990002DB0E2 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
-		CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; };
+		CF7C7CE91E5D3990002DB0E2 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
+		CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
 		CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CF7C7CEC1E5D39AD002DB0E2 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
 		CF7D7A751C15AAC200ECEBA0 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
@@ -556,7 +560,7 @@
 		CF8B24401E6FC695008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
 		CF8B24411E6FC696008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
 		CF8B24421E6FC696008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
-		CF8BDD272147DEC600F14C3E /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; };
+		CF8BDD272147DEC600F14C3E /* libVFSIcon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.a */; };
 		CF8D0CE31D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
 		CF8D0CE41D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
 		CF8D0CE51D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
@@ -659,7 +663,7 @@
 		CFA53A081D433E2A00C562A7 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
 		CFA53A091D433E2A00C562A7 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFA53A191D433E2A00C562A7 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
-		CFA53A1C1D433E2A00C562A7 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; };
+		CFA53A1C1D433E2A00C562A7 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CFA53A1F1D433E2A00C562A7 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
 		CFA53A261D433E2A00C562A7 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA3D7C81962613B006A30A1 /* Carbon.framework */; };
 		CFA53A271D433E2A00C562A7 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100D1191378BD00E170FC /* LDAP.framework */; };
@@ -761,7 +765,7 @@
 		CFBA63B41FC1A51100077682 /* ShowTabs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C451FB834B7009F6C59 /* ShowTabs.mm */; };
 		CFBA63B51FC1A51100077682 /* ShowTabs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C451FB834B7009F6C59 /* ShowTabs.mm */; };
 		CFBA63B61FC1A51200077682 /* ShowTabs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C451FB834B7009F6C59 /* ShowTabs.mm */; };
-		CFBA63B71FC1A5A200077682 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
+		CFBA63B71FC1A5A200077682 /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.a */; };
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
 		CFBEF9011F6781A100C63816 /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */; };
 		CFC4F99F1F0F40430000B3EE /* Link.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F99E1F0F40430000B3EE /* Link.mm */; };
@@ -993,7 +997,7 @@
 		CFD7271D1E42E32F00603077 /* ShellState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27A1DFBF9260039A104 /* ShellState.mm */; };
 		CFD7271E1E42E32F00603077 /* ShellState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27A1DFBF9260039A104 /* ShellState.mm */; };
 		CFD7271F1E42E33000603077 /* ShellState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27A1DFBF9260039A104 /* ShellState.mm */; };
-		CFD727381E42E3E300603077 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
+		CFD727381E42E3E300603077 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
 		CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CFD7889F23944036003ED616 /* DragSender_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD7889E23944035003ED616 /* DragSender_Tests.mm */; };
 		CFD799EF21F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
@@ -1084,11 +1088,11 @@
 		CFDAC2F31DFD16550039A104 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */; };
 		CFDAC2FC1DFD1C120039A104 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */; };
 		CFDAC3001DFD1D7C0039A104 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */; };
-		CFDAC8452169D31300DEBA2A /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
-		CFDAC8462169D31600DEBA2A /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; };
+		CFDAC8452169D31300DEBA2A /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
+		CFDAC8462169D31600DEBA2A /* libVFSIcon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.a */; };
 		CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
-		CFDC07B72158F6430069D364 /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; };
+		CFDC07B72158F6430069D364 /* libVFSIcon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.a */; };
 		CFDC07CA2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDC07C92159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
 		CFDC07CB2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDC07C92159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
 		CFDC07CC2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDC07C92159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
@@ -1105,8 +1109,8 @@
 		CFF33FC12556964500B3C92C /* libPanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF33F892556929300B3C92C /* libPanel.a */; };
 		CFF33FC22556964A00B3C92C /* libPanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF33F892556929300B3C92C /* libPanel.a */; };
 		CFF33FC32556964F00B3C92C /* libPanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF33F892556929300B3C92C /* libPanel.a */; };
-		CFF53B641EDD1A6100F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; };
-		CFF53B651EDD1AC300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; };
+		CFF53B641EDD1A6100F567C4 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* libOperations.a */; };
+		CFF53B651EDD1AC300F567C4 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* libOperations.a */; };
 		CFF695721E20C6CF0069EEA4 /* TabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */; };
 		CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
 		CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
@@ -1135,9 +1139,9 @@
 		CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFFA942E1F3DBF790035E606 /* Dock.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA942D1F3DBF790035E606 /* Dock.mm */; };
 		CFFA943C1F3E9C4D0035E606 /* ConfigWiring.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA943B1F3E9C4D0035E606 /* ConfigWiring.mm */; };
-		CFFA949B1F45411C0035E606 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; };
-		CFFA95081F45638F0035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
-		CFFA95121F45A2EB0035E606 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; };
+		CFFA949B1F45411C0035E606 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
+		CFFA95081F45638F0035E606 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
+		CFFA95121F45A2EB0035E606 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* libOperations.a */; };
 		CFFA95131F45A3040035E606 /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
 		CFFA95141F45A3050035E606 /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
 		CFFA95151F45A3050035E606 /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
@@ -1459,7 +1463,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CF39A0E61F70C20C005A4583 /* libRoutedIO.dylib in CopyFiles */,
+				CF39A0E61F70C20C005A4583 /* libRoutedIO.a in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1469,8 +1473,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CF233AD3219C112400693E1A /* libConfig.dylib in CopyFiles */,
-				CF39A0EB1F70C5CA005A4583 /* libRoutedIO.dylib in CopyFiles */,
+				CF233AD3219C112400693E1A /* libConfig.a in CopyFiles */,
+				CF39A0EB1F70C5CA005A4583 /* libRoutedIO.a in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1600,6 +1604,8 @@
 		CF2B2B3D1D825C0A00E4E8CB /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
 		CF2C4DEB1C57A00400DEC75A /* AskForPasswordWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AskForPasswordWindowController.h; path = NimbleCommander/GeneralUI/AskForPasswordWindowController.h; sourceTree = SOURCE_ROOT; };
 		CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AskForPasswordWindowController.mm; path = NimbleCommander/GeneralUI/AskForPasswordWindowController.mm; sourceTree = SOURCE_ROOT; };
+		CF2F10972567DF2500622405 /* NCHelpMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NCHelpMenuDelegate.mm; path = NimbleCommander/Bootstrap/NCHelpMenuDelegate.mm; sourceTree = "<group>"; };
+		CF2F10B02567DF2500622405 /* NCHelpMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCHelpMenuDelegate.h; path = NimbleCommander/Bootstrap/NCHelpMenuDelegate.h; sourceTree = "<group>"; };
 		CF2F42E51EADB8D000AA031A /* PanelDataOptionsPersistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataOptionsPersistence.h; path = NimbleCommander/States/FilePanels/PanelDataOptionsPersistence.h; sourceTree = SOURCE_ROOT; };
 		CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataOptionsPersistence.mm; path = NimbleCommander/States/FilePanels/PanelDataOptionsPersistence.mm; sourceTree = SOURCE_ROOT; };
 		CF2F43441EAF345400AA031A /* ConnectToServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectToServer.h; path = NimbleCommander/States/FilePanels/Views/ConnectToServer.h; sourceTree = SOURCE_ROOT; };
@@ -2126,11 +2132,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF6BF83B219445F00017CECB /* libConfig.dylib in Frameworks */,
-				CF614AED1F9D92B30005F2DB /* libTerm.dylib in Frameworks */,
-				CF36DBFD1F6C1C09004A018E /* libUtility.dylib in Frameworks */,
-				CF36DBFC1F6C1B63004A018E /* libHabanero.dylib in Frameworks */,
-				CF36DBFB1F6C1B60004A018E /* libVFS.dylib in Frameworks */,
+				CF6BF83B219445F00017CECB /* libConfig.a in Frameworks */,
+				CF614AED1F9D92B30005F2DB /* libTerm.a in Frameworks */,
+				CF36DBFD1F6C1C09004A018E /* libUtility.a in Frameworks */,
+				CF36DBFC1F6C1B63004A018E /* libHabanero.a in Frameworks */,
+				CF36DBFB1F6C1B60004A018E /* libVFS.a in Frameworks */,
 				CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2139,20 +2145,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF46022725630EA70095FC73 /* libHabanero.dylib in Frameworks */,
-				CF46019525612D710095FC73 /* CUI.framework in Frameworks */,
-				CF6E44501CC9DAE1009F45B0 /* libUtility.dylib in Frameworks */,
-				CF7C7CE91E5D3990002DB0E2 /* libVFS.dylib in Frameworks */,
-				CF233AD2219C110D00693E1A /* libVFSIcon.dylib in Frameworks */,
+				CF46022725630EA70095FC73 /* libHabanero.a in Frameworks */,
+				CF46019525612D710095FC73 /* libCUI.a in Frameworks */,
+				CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */,
+				CF7C7CE91E5D3990002DB0E2 /* libVFS.a in Frameworks */,
+				CF233AD2219C110D00693E1A /* libVFSIcon.a in Frameworks */,
 				CF4E556623114BF700F607D7 /* Carbon.framework in Frameworks */,
-				CF233AD1219C110A00693E1A /* libConfig.dylib in Frameworks */,
-				CFBA63B71FC1A5A200077682 /* libTerm.dylib in Frameworks */,
-				CFF53B641EDD1A6100F567C4 /* Operations.framework in Frameworks */,
+				CF233AD1219C110A00693E1A /* libConfig.a in Frameworks */,
+				CFBA63B71FC1A5A200077682 /* libTerm.a in Frameworks */,
+				CFF53B641EDD1A6100F567C4 /* libOperations.a in Frameworks */,
 				CF1FBF1A1E8F57B700D3569C /* NetFS.framework in Frameworks */,
 				CF2A3CE91E667F9A00E6C6F0 /* libssh2.a in Frameworks */,
 				CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */,
 				CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */,
-				CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.dylib in Frameworks */,
+				CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.a in Frameworks */,
 				CF6E444F1CC9DACA009F45B0 /* libunrar.a in Frameworks */,
 				CF6E444E1CC9DABA009F45B0 /* libarchive.a in Frameworks */,
 				CF6D9C9119667A640077B146 /* Quartz.framework in Frameworks */,
@@ -2173,17 +2179,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF46023C256313B60095FC73 /* libRoutedIO.dylib in Frameworks */,
-				CF46022625630E8E0095FC73 /* libHabanero.dylib in Frameworks */,
-				CF46019425612D680095FC73 /* CUI.framework in Frameworks */,
-				CFA53A1C1D433E2A00C562A7 /* libUtility.dylib in Frameworks */,
-				CF614AF01F9D932B0005F2DB /* libTerm.dylib in Frameworks */,
-				CFD727381E42E3E300603077 /* libVFS.dylib in Frameworks */,
-				CFDC07B72158F6430069D364 /* libVFSIcon.dylib in Frameworks */,
+				CF46023C256313B60095FC73 /* libRoutedIO.a in Frameworks */,
+				CF46022625630E8E0095FC73 /* libHabanero.a in Frameworks */,
+				CF46019425612D680095FC73 /* libCUI.a in Frameworks */,
+				CFA53A1C1D433E2A00C562A7 /* libUtility.a in Frameworks */,
+				CF614AF01F9D932B0005F2DB /* libTerm.a in Frameworks */,
+				CFD727381E42E3E300603077 /* libVFS.a in Frameworks */,
+				CFDC07B72158F6430069D364 /* libVFSIcon.a in Frameworks */,
 				CF5C8BE222D0F9A200619F45 /* libViewer.a in Frameworks */,
-				CF6BF83A219444A90017CECB /* libConfig.dylib in Frameworks */,
+				CF6BF83A219444A90017CECB /* libConfig.a in Frameworks */,
 				CF36DBED1F6C184D004A018E /* Sparkle.framework in Frameworks */,
-				CFFA95121F45A2EB0035E606 /* Operations.framework in Frameworks */,
+				CFFA95121F45A2EB0035E606 /* libOperations.a in Frameworks */,
 				CF1FBF3C1E90ABC000D3569C /* NetFS.framework in Frameworks */,
 				CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */,
 				CFA53A191D433E2A00C562A7 /* libAquaticPrime.a in Frameworks */,
@@ -2205,15 +2211,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF46023B256313880095FC73 /* libRoutedIO.dylib in Frameworks */,
-				CF46022525630E790095FC73 /* libHabanero.dylib in Frameworks */,
-				CF4601B725612F180095FC73 /* CUI.framework in Frameworks */,
-				CF4601B625612F140095FC73 /* libConfig.dylib in Frameworks */,
-				CFFA949B1F45411C0035E606 /* libUtility.dylib in Frameworks */,
-				CF1ADE291F7E6BB4003E9B76 /* libTerm.dylib in Frameworks */,
-				CFFA95081F45638F0035E606 /* libVFS.dylib in Frameworks */,
-				CF8BDD272147DEC600F14C3E /* libVFSIcon.dylib in Frameworks */,
-				CFF53B651EDD1AC300F567C4 /* Operations.framework in Frameworks */,
+				CF46023B256313880095FC73 /* libRoutedIO.a in Frameworks */,
+				CF46022525630E790095FC73 /* libHabanero.a in Frameworks */,
+				CF4601B725612F180095FC73 /* libCUI.a in Frameworks */,
+				CF4601B625612F140095FC73 /* libConfig.a in Frameworks */,
+				CFFA949B1F45411C0035E606 /* libUtility.a in Frameworks */,
+				CF1ADE291F7E6BB4003E9B76 /* libTerm.a in Frameworks */,
+				CFFA95081F45638F0035E606 /* libVFS.a in Frameworks */,
+				CF8BDD272147DEC600F14C3E /* libVFSIcon.a in Frameworks */,
+				CFF53B651EDD1AC300F567C4 /* libOperations.a in Frameworks */,
 				CFD79AB121F65C380043A26D /* libViewer.a in Frameworks */,
 				CF36DBDE1F6BA76B004A018E /* Sparkle.framework in Frameworks */,
 				CFD8CD9D1E823CAC00E4DC53 /* NetFS.framework in Frameworks */,
@@ -2236,21 +2242,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF46022825630EC20095FC73 /* libHabanero.dylib in Frameworks */,
-				CF02B5A01D0A61C000F2760D /* libUtility.dylib in Frameworks */,
-				CF7C7CE51E5D3521002DB0E2 /* libVFS.dylib in Frameworks */,
-				CFDAC8462169D31600DEBA2A /* libVFSIcon.dylib in Frameworks */,
-				CF4E55612311425400F607D7 /* CUI.framework in Frameworks */,
+				CF46022825630EC20095FC73 /* libHabanero.a in Frameworks */,
+				CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */,
+				CF7C7CE51E5D3521002DB0E2 /* libVFS.a in Frameworks */,
+				CFDAC8462169D31600DEBA2A /* libVFSIcon.a in Frameworks */,
+				CF4E55612311425400F607D7 /* libCUI.a in Frameworks */,
 				CF4E55602311424F00F607D7 /* libViewer.a in Frameworks */,
 				CF624C0721A6B8EB00B3A595 /* libAquaticPrime.a in Frameworks */,
-				CFDAC8452169D31300DEBA2A /* libConfig.dylib in Frameworks */,
-				CF65729B1FA6D08F00ABF85F /* libTerm.dylib in Frameworks */,
-				CF39A0E21F70C1E1005A4583 /* Operations.framework in Frameworks */,
+				CFDAC8452169D31300DEBA2A /* libConfig.a in Frameworks */,
+				CF65729B1FA6D08F00ABF85F /* libTerm.a in Frameworks */,
+				CF39A0E21F70C1E1005A4583 /* libOperations.a in Frameworks */,
 				CF9F4AF61ECC8D9500E0AF82 /* NetFS.framework in Frameworks */,
 				CF2A3CEA1E667FAF00E6C6F0 /* libssh2.a in Frameworks */,
 				CF02B5A61D0A61FD00F2760D /* libarchive.a in Frameworks */,
 				CF02B5A21D0A61E200F2760D /* libunrar.a in Frameworks */,
-				CF7C7CE61E5D352D002DB0E2 /* libRoutedIO.dylib in Frameworks */,
+				CF7C7CE61E5D352D002DB0E2 /* libRoutedIO.a in Frameworks */,
 				CF7C7CE71E5D353C002DB0E2 /* libMMTabBarViewLib.a in Frameworks */,
 				CFF33FC32556964F00B3C92C /* libPanel.a in Frameworks */,
 				CF7C7CE81E5D356D002DB0E2 /* ServiceManagement.framework in Frameworks */,
@@ -2463,7 +2469,7 @@
 		CF1ADE191F7E6A6F003E9B76 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */,
+				CF1ADE251F7E6A6F003E9B76 /* libTerm.a */,
 				CFC8F2BC23E5FEAC00A25046 /* TermUT */,
 				CF19B47C254624C100838B45 /* TermIT */,
 			);
@@ -2473,7 +2479,7 @@
 		CF20CC02215A258F006716F6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF20CC06215A258F006716F6 /* libConfig.dylib */,
+				CF20CC06215A258F006716F6 /* libConfig.a */,
 				CF84A7982161C53700E03CB1 /* ConfigUT */,
 			);
 			name = Products;
@@ -2696,7 +2702,7 @@
 			isa = PBXGroup;
 			children = (
 				CF69CFC31DA20DC200992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
-				CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */,
+				CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2704,7 +2710,7 @@
 		CF69CFD71DA2250C00992B84 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF69CFDB1DA2250C00992B84 /* libVFS.dylib */,
+				CF69CFDB1DA2250C00992B84 /* libVFS.a */,
 				CFD725F31E42DBD900603077 /* VFS Tests.xctest */,
 				CF26DE3421D92135003F0E93 /* libVFSUT */,
 			);
@@ -2733,7 +2739,7 @@
 		CF768DEE1C99C0F4002748BC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF768DF51C99C0F4002748BC /* libUtility.dylib */,
+				CF768DF51C99C0F4002748BC /* libUtility.a */,
 				CF308F43213ADAD800915730 /* UtilityUT */,
 			);
 			name = Products;
@@ -2807,6 +2813,8 @@
 				CFDAC2321DFBDE2B0039A104 /* main.cpp */,
 				CFC5122916C4BD3D00D247EE /* MainMenu.xib */,
 				CFE08B0C23D4BE3D007E99B8 /* NativeVFSHostInstance.h */,
+				CF2F10B02567DF2500622405 /* NCHelpMenuDelegate.h */,
+				CF2F10972567DF2500622405 /* NCHelpMenuDelegate.mm */,
 				CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */,
 				CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */,
 				CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */,
@@ -2832,9 +2840,9 @@
 		CF8BDD0C2147D60800F14C3E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */,
-				CF38BEB82148A959005E336C /* libVFSIconUnitTests */,
-				CF9721EF214FD43100A1B19E /* libVFSIconIntegrationTests */,
+				CF8BDD102147D60800F14C3E /* libVFSIcon.a */,
+				CF38BEB82148A959005E336C /* VFSIconUnitTests */,
+				CF9721EF214FD43100A1B19E /* VFSIconIntegrationTests */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3139,7 +3147,7 @@
 		CFD62B7F1C99C1C90021EE7F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */,
+				CFD62B831C99C1CA0021EE7F /* libHabanero.a */,
 				CFE3F1DC229A8319009D6AB4 /* HabaneroUT */,
 			);
 			name = Products;
@@ -3177,7 +3185,7 @@
 		CFD79AD921FE29420043A26D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79ADD21FE29430043A26D /* CUI.framework */,
+				CFD79ADD21FE29430043A26D /* libCUI.a */,
 				CF46018C25612D1C0095FC73 /* CUIResources.bundle */,
 			);
 			name = Products;
@@ -3225,7 +3233,7 @@
 		CFF53B5C1EDD19A400F567C4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFF53B611EDD19A400F567C4 /* Operations.framework */,
+				CFF53B611EDD19A400F567C4 /* libOperations.a */,
 				CFF53B631EDD19A400F567C4 /* OperationsTests.xctest */,
 				CF52C3BD22BE5B2D0043E825 /* OperationsIT */,
 				CF46FFA3255FCD320095FC73 /* OperationsResources.bundle */,
@@ -3484,17 +3492,17 @@
 			remoteRef = CF19B47B254624C100838B45 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */ = {
+		CF1ADE251F7E6A6F003E9B76 /* libTerm.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libTerm.dylib;
+			fileType = archive.ar;
+			path = libTerm.a;
 			remoteRef = CF1ADE241F7E6A6F003E9B76 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF20CC06215A258F006716F6 /* libConfig.dylib */ = {
+		CF20CC06215A258F006716F6 /* libConfig.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libConfig.dylib;
+			fileType = archive.ar;
+			path = libConfig.a;
 			remoteRef = CF20CC05215A258F006716F6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -3519,10 +3527,10 @@
 			remoteRef = CF308F42213ADAD800915730 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF38BEB82148A959005E336C /* libVFSIconUnitTests */ = {
+		CF38BEB82148A959005E336C /* VFSIconUnitTests */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			path = libVFSIconUnitTests;
+			path = VFSIconUnitTests;
 			remoteRef = CF38BEB72148A959005E336C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -3554,10 +3562,10 @@
 			remoteRef = CF5C1D4D255EE6CD00ADE703 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */ = {
+		CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libRoutedIO.dylib;
+			fileType = archive.ar;
+			path = libRoutedIO.a;
 			remoteRef = CF69CF9C1DA2003D00992B84 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -3568,17 +3576,17 @@
 			remoteRef = CF69CFC21DA20DC200992B84 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF69CFDB1DA2250C00992B84 /* libVFS.dylib */ = {
+		CF69CFDB1DA2250C00992B84 /* libVFS.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libVFS.dylib;
+			fileType = archive.ar;
+			path = libVFS.a;
 			remoteRef = CF69CFDA1DA2250C00992B84 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF768DF51C99C0F4002748BC /* libUtility.dylib */ = {
+		CF768DF51C99C0F4002748BC /* libUtility.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libUtility.dylib;
+			fileType = archive.ar;
+			path = libUtility.a;
 			remoteRef = CF768DF41C99C0F4002748BC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -3589,17 +3597,17 @@
 			remoteRef = CF84A7972161C53700E03CB1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */ = {
+		CF8BDD102147D60800F14C3E /* libVFSIcon.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libVFSIcon.dylib;
+			fileType = archive.ar;
+			path = libVFSIcon.a;
 			remoteRef = CF8BDD0F2147D60800F14C3E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF9721EF214FD43100A1B19E /* libVFSIconIntegrationTests */ = {
+		CF9721EF214FD43100A1B19E /* VFSIconIntegrationTests */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			path = libVFSIconIntegrationTests;
+			path = VFSIconIntegrationTests;
 			remoteRef = CF9721EE214FD43100A1B19E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -3617,10 +3625,10 @@
 			remoteRef = CFC8F2BB23E5FEAC00A25046 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */ = {
+		CFD62B831C99C1CA0021EE7F /* libHabanero.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = libHabanero.dylib;
+			fileType = archive.ar;
+			path = libHabanero.a;
 			remoteRef = CFD62B821C99C1CA0021EE7F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -3638,10 +3646,10 @@
 			remoteRef = CFD79A7721F65A540043A26D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CFD79ADD21FE29430043A26D /* CUI.framework */ = {
+		CFD79ADD21FE29430043A26D /* libCUI.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = CUI.framework;
+			fileType = archive.ar;
+			path = libCUI.a;
 			remoteRef = CFD79ADC21FE29430043A26D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -3666,10 +3674,10 @@
 			remoteRef = CFF340252556A0F900B3C92C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CFF53B611EDD19A400F567C4 /* Operations.framework */ = {
+		CFF53B611EDD19A400F567C4 /* libOperations.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Operations.framework;
+			fileType = archive.ar;
+			path = libOperations.a;
 			remoteRef = CFF53B601EDD19A400F567C4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -4111,6 +4119,7 @@
 				CFD726D21E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CFD726FD1E42E2F400603077 /* TabBarStyle.mm in Sources */,
 				CF46C24720317FEF00A91E2F /* ServicesHandler.mm in Sources */,
+				CF2F10B32567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
 				CF5E9A5C1FCBFED9005608F5 /* ShowSystemOverview.mm in Sources */,
 				CFD726D81E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */,
 				CF818B581EA0610D00BC28E6 /* MakeNew.mm in Sources */,
@@ -4399,6 +4408,7 @@
 				CFA53A091D433E2A00C562A7 /* PreferencesWindowToolsTab.mm in Sources */,
 				CFD726AC1E42E25100603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CFA1716320196CB400F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
+				CF2F10B12567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
 				CFDC07CA2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CFFA95191F45A3400035E606 /* ConfigWiring.mm in Sources */,
 				CFD8CDBF1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
@@ -4612,6 +4622,7 @@
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
 				CF56C2CA1DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CF4E56411D5064FE00452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
+				CF2F10B22567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
 				CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFDAC2D11DFD105A0039A104 /* MASAppInstalledChecker.cpp in Sources */,
 				CFDC07CB2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
@@ -4825,6 +4836,7 @@
 				CFD726611E42E1DB00603077 /* ExternalEditorInfo.mm in Sources */,
 				CFD7263D1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
 				CF5E9A671FCE738A005608F5 /* QuickLookVFSBridge.mm in Sources */,
+				CF2F10B42567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
 				CFBA63AE1FC1A4F900077682 /* CopyFile.mm in Sources */,
 				CF4E56B01D5068E600452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CFD726091E42E07100603077 /* AppDelegateCPP.mm in Sources */,

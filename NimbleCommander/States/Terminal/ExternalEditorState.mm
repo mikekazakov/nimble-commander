@@ -98,6 +98,16 @@ using namespace nc::term;
             });
         });
         m_Interpreter->SetInputTranslator( m_InputTranslator.get() );
+        m_Interpreter->SetShowCursorChanged([weak_self](bool _show){
+            NCTermExternalEditorState *me = weak_self;
+            me->m_TermScrollView.view.showCursor = _show;
+        });
+        m_Interpreter->SetRequstedMouseEventsChanged ([weak_self]
+                                                      (Interpreter::RequestedMouseEvents _events){
+            NCTermExternalEditorState *me = weak_self;
+            me->m_TermScrollView.view.mouseEvents = _events;
+        });        
+        m_Interpreter->SetScreenResizeAllowed(false);
         
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
         m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {

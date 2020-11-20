@@ -113,6 +113,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
             NCTermShellState *me = weak_self;
             me->m_TermScrollView.view.mouseEvents = _events;
         });
+        m_Interpreter->SetScreenResizeAllowed(false);
         
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
         m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {

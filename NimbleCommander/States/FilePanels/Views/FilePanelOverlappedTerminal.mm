@@ -99,7 +99,8 @@ static const auto g_LongProcessDelay = 100ms;
             [weak_self](Interpreter::RequestedMouseEvents _events) {
                 FilePanelOverlappedTerminal *me = weak_self;
                 me->m_TermScrollView.view.mouseEvents = _events;
-            });
+        });
+        m_Interpreter->SetScreenResizeAllowed(false);
         
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
         m_TermScrollView.onScreenResized = [weak_self](int _sx, int _sy) {

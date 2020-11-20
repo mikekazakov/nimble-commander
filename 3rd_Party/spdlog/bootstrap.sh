@@ -12,7 +12,6 @@ git clone -b v1.8.1 --single-branch https://github.com/gabime/spdlog.git
 cd spdlog
 
 mkdir build && cd build
-export MACOSX_DEPLOYMENT_TARGET="10.15"
 
 cmake .. && make -j
 

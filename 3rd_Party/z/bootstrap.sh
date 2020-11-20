@@ -13,7 +13,6 @@ gunzip -c zlib-1.2.11.tar.gz | tar xopf -
 
 cd zlib-1.2.11
 mkdir build && cd build
-export MACOSX_DEPLOYMENT_TARGET="10.15"
 cmake .. && make -j zlibstatic
 
 cd ../../..

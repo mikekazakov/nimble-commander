@@ -1,0 +1,4 @@
+bz2 		1.0.8
+lzma(xz) 	5.2.5
+spdlog 		1.8.1
+zlib 		1.2.11

@@ -1,6 +1,7 @@
 #!/bin/sh
 set -o pipefail
 set -o xtrace
+set -e
 
 CUR_DIR="$(dirname "$0")"
 TMP_DIR=${CUR_DIR}/curl.tmp

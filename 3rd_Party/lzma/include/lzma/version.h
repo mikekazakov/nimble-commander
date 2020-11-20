@@ -21,7 +21,7 @@
  * Version number split into components
  */
 #define LZMA_VERSION_MAJOR 5
-#define LZMA_VERSION_MINOR 0
+#define LZMA_VERSION_MINOR 2
 #define LZMA_VERSION_PATCH 5
 #define LZMA_VERSION_STABILITY LZMA_VERSION_STABILITY_STABLE
 

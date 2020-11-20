@@ -29,7 +29,7 @@ OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemCo
 // Paths - headers
 USE_HEADERMAP = NO
 THRDPTY=../3rd_Party
-HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/unrar/include $(THRDPTY)/zlib/include
+HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/unrar/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include
 
 // Paths - libraries
 LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/built $(THRDPTY)/spdlog/built $(THRDPTY)/googletest/built $(THRDPTY)/z/built $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/built $(THRDPTY)/lzma/built $(THRDPTY)/bz2/built $(THRDPTY)/libssh2/built $(THRDPTY)/pugixml/built $(THRDPTY)/unrar/built

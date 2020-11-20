@@ -26,6 +26,8 @@ using namespace nc::term;
 static const auto g_UseDefault = "terminal.useDefaultLoginShell";
 static const auto g_CustomPath = "terminal.customShellPath";
 
+[[maybe_unused]] static void DumpInputAsHex(std::string_view _input);
+
 @implementation NCTermShellState
 {
     NCTermScrollView                   *m_TermScrollView;
@@ -192,6 +194,9 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
     __weak NCTermShellState *weakself = self;
     m_Task->SetOnChildOutput([=](const void *_d, int _sz) {
+    
+        DumpInputAsHex(std::string_view(static_cast<const char*>(_d), _sz));
+    
         if( auto strongself = weakself ) {
             auto cmds = strongself->m_Parser->Parse({(const std::byte *)_d, (size_t)_sz});
             if( cmds.empty() )
@@ -360,3 +365,20 @@ static const auto g_CustomPath = "terminal.customShellPath";
 }
 
 @end
+
+static void DumpInputAsHex(std::string_view _input)
+{
+    for( const auto c : _input ) {
+        const auto byte = static_cast<unsigned char>(c);
+        if( byte < 32 ) {
+            constexpr const char h[16] = {
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+            std::cout << "\\x";
+            std::cout << h[(byte & 0xF0) >> 4];
+            std::cout << h[byte & 0xF];
+        } else {
+            std::cout << byte;
+        }
+    }
+    std::cout << std::endl;
+}

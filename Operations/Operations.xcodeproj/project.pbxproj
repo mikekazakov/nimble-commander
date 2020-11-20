@@ -93,6 +93,16 @@
 		CFFA95431F4C17CC0035E606 /* Info-TestsPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95451F4C17CC0035E606 /* Info-TestsPlist.strings */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		CF2F110525680BF400622405 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFF53B261EDD197300F567C4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF46FF31255FCA770095FC73;
+			remoteInfo = OperationsResources;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		CF2C100F22A072BE00A5359D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -718,6 +728,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CF2F110625680BF400622405 /* PBXTargetDependency */,
 			);
 			name = Operations;
 			productName = Operations;
@@ -916,6 +927,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CF2F110625680BF400622405 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF46FF31255FCA770095FC73 /* OperationsResources */;
+			targetProxy = CF2F110525680BF400622405 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CF197C271FB4381E009F6C59 /* CopyingDialogDisclosedView.xib */ = {

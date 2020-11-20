@@ -44,6 +44,16 @@
 		CFEA2D6F221CADC0008BE48C /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AAF21F65BC60043A26D /* libHabanero.dylib */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		CF2F110025680BCB00622405 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD79A5921F65A000043A26D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF5C1D1C255ED68200ADE703;
+			remoteInfo = ViewerResources;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		CFD79B4E22106E010043A26D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -354,6 +364,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CF2F110125680BCB00622405 /* PBXTargetDependency */,
 			);
 			name = Viewer;
 			productName = Viewer;
@@ -483,6 +494,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CF2F110125680BCB00622405 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF5C1D1C255ED68200ADE703 /* ViewerResources */;
+			targetProxy = CF2F110025680BCB00622405 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CF2343F022CDDFC600F516CB /* Localizable.strings */ = {

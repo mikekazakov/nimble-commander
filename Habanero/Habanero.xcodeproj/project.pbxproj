@@ -450,14 +450,14 @@
 		};
 		CFD62B791C99C19A0021EE7F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF24E20D229191B700C166FA /* default.xcconfig */;
+			baseConfigurationReference = CF24E2132291937F00C166FA /* debug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		CFD62B7A1C99C19A0021EE7F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF24E2132291937F00C166FA /* debug.xcconfig */;
+			baseConfigurationReference = CF24E20F229191B800C166FA /* release.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;

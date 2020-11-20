@@ -47,3 +47,6 @@ $BINARY_PATH
 
 build_target TermIT
 $BINARY_PATH
+
+build_target PanelUT
+$BINARY_PATH

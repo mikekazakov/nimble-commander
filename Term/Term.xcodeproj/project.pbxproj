@@ -10,7 +10,6 @@
 		CF0A49DA251668E8008EC7B0 /* InputTranslator_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49CC2516676A008EC7B0 /* InputTranslator_UT.mm */; };
 		CF0A49E7251F1A42008EC7B0 /* ShellTask_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49E6251F1A42008EC7B0 /* ShellTask_IT.cpp */; };
 		CF0A49E8251F1A51008EC7B0 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
-		CF0A49EE251F2362008EC7B0 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF50998F1F948FDD000AFDE7 /* libUtility.dylib */; };
 		CF4600D725605B830095FC73 /* InputTranslator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F4C524CA396600DF4ED6 /* InputTranslator.cpp */; };
 		CF4600D825605B830095FC73 /* InputTranslatorImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F4CB24CA3D2000DF4ED6 /* InputTranslatorImpl.mm */; };
 		CF4600D925605B830095FC73 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B4962547611F00838B45 /* Log.cpp */; };
@@ -36,6 +35,23 @@
 		CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3C23DCFC15007E99B8 /* Tests.cpp */; };
 		CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B3F23DCFCF9007E99B8 /* Parser2_UT.cpp */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CF2F10FC2567F89D00622405 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF1ADE021F7E6A2A003E9B76 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF4600CF25605B1F0095FC73;
+			remoteInfo = Term;
+		};
+		CF2F10FE2567F8A000622405 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF1ADE021F7E6A2A003E9B76 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF4600CF25605B1F0095FC73;
+			remoteInfo = Term;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		CF0A49DD251F19DB008EC7B0 /* CopyFiles */ = {
@@ -130,7 +146,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF0A49EE251F2362008EC7B0 /* libUtility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,10 +278,10 @@
 		CF5FD9291FA1AC1200752E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CFE08B3E23DCFC77007E99B8 /* tests.xcconfig */,
 				CF238E0B21A136E800569809 /* debug.xcconfig */,
 				CF5FD92A1FA1AC5100752E59 /* default.xcconfig */,
 				CF238E0C21A136E800569809 /* release.xcconfig */,
+				CFE08B3E23DCFC77007E99B8 /* tests.xcconfig */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -295,6 +310,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CF2F10FF2567F8A000622405 /* PBXTargetDependency */,
 			);
 			name = TermIT;
 			productName = TermIT;
@@ -329,6 +345,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CF2F10FD2567F89D00622405 /* PBXTargetDependency */,
 			);
 			name = TermUT;
 			productName = TermUT;
@@ -426,6 +443,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CF2F10FD2567F89D00622405 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF4600CF25605B1F0095FC73 /* Term */;
+			targetProxy = CF2F10FC2567F89D00622405 /* PBXContainerItemProxy */;
+		};
+		CF2F10FF2567F8A000622405 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF4600CF25605B1F0095FC73 /* Term */;
+			targetProxy = CF2F10FE2567F8A000622405 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		CF0A49E4251F19DC008EC7B0 /* Debug */ = {

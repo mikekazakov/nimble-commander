@@ -2,6 +2,5 @@
 
 COPY_PHASE_STRIP = NO
 HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include/ $(PROJECT_DIR)/include/Utility/ $(PROJECT_DIR)/../Habanero/include
-INSTALL_PATH = @rpath/
 EXECUTABLE_PREFIX = lib
 PRODUCT_NAME = $(TARGET_NAME)

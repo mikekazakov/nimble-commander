@@ -1,3 +1,4 @@
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "FontExtras.h"
 #include <Habanero/CFString.h>

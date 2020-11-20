@@ -1484,7 +1484,7 @@ TEST_CASE(PREFIX"CSIParamsScanner")
         auto p = S::Parse("0;1;2;3;4;5;6;7;8;9;10A");
         CHECK(p.count == S::MaxParams); 
         for( int i = 0; i != S::MaxParams; ++i)
-            CHECK(p.values[i] == i);
+            CHECK(p.values[i] == static_cast<unsigned>(i));
     }       
     SECTION("99999999999999999999999999999999999") {
         auto p = S::Parse("99999999999999999999999999999999999");

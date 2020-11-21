@@ -16,6 +16,8 @@
 #define BOOST_LOG_UTILITY_FUNCTIONAL_IN_RANGE_HPP_INCLUDED_
 
 #include <utility>
+#include <boost/type_traits/is_integral.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/utility/functional/logical.hpp> // make_common_integral_type
 #include <boost/log/detail/header.hpp>
@@ -36,17 +38,17 @@ struct in_range_fun
     template< typename T, typename U >
     bool operator() (T const& value, std::pair< U, U > const& rng) const
     {
-        return op(value, rng, typename mpl::and_< is_integral< T >, is_integral< U > >::type());
+        return op(value, rng, integral_constant< bool, is_integral< T >::value && is_integral< U >::value >());
     }
 
 private:
     template< typename T, typename U >
-    static bool op(T const& value, std::pair< U, U > const& rng, mpl::false_ const&)
+    static bool op(T const& value, std::pair< U, U > const& rng, false_type)
     {
         return (value >= rng.first && value < rng.second);
     }
     template< typename T, typename U >
-    static bool op(T const& value, std::pair< U, U > const& rng, mpl::true_ const&)
+    static bool op(T const& value, std::pair< U, U > const& rng, true_type)
     {
         typedef typename aux::make_common_integral_type< T, U >::type common_integral_type;
         return (static_cast< common_integral_type >(value) >= static_cast< common_integral_type >(rng.first))

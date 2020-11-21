@@ -8,7 +8,6 @@
 #define BOOST_PHOENIX_CORE_EXPRESSION_HPP
 
 #include <boost/phoenix/core/limits.hpp>
-#include <boost/call_traits.hpp>
 #include <boost/fusion/sequence/intrinsic/at.hpp>
 #include <boost/phoenix/core/as_actor.hpp>
 #include <boost/phoenix/core/detail/expression.hpp>
@@ -27,22 +26,26 @@ namespace boost { namespace phoenix
     template <template <typename> class Actor, typename Tag, typename... A>
     struct expr_ext;
 
-    // This void filter is necessary to avoid forming reference to void
-    // because most of other expressions are not based on variadics.
-    template <typename Tag, typename F, typename... T>
+    // This filter cuts arguments of a template pack after a first void.
+    // It is necessary because the interface can be used in C++03 style.
+    template <typename Tag, typename... A>
     struct expr_impl;
 
+    // Helper template. Used to store filtered argument types.
+    template <typename... A>
+    struct expr_arg_types {};
+
     template <typename Tag, typename... A>
-    struct expr_impl<Tag, void(A...)> : expr_ext<actor, Tag, A...> {};
+    struct expr_impl<Tag, expr_arg_types<A...>> : expr_ext<actor, Tag, A...> {};
 
     template <typename Tag, typename... A, typename... T>
-    struct expr_impl<Tag, void(A...), void, T...> : expr_impl<Tag, void(A...)> {};
+    struct expr_impl<Tag, expr_arg_types<A...>, void, T...> : expr_ext<actor, Tag, A...> {};
 
     template <typename Tag, typename... A, typename H, typename... T>
-    struct expr_impl<Tag, void(A...), H, T...> : expr_impl<Tag, void(A..., H), T...> {};
+    struct expr_impl<Tag, expr_arg_types<A...>, H, T...> : expr_impl<Tag, expr_arg_types<A..., H>, T...> {};
 
     template <typename Tag, typename... A>
-    struct expr : expr_impl<Tag, void(), A...> {};
+    struct expr : expr_impl<Tag, expr_arg_types<>, A...> {};
 
     template <template <typename> class Actor, typename Tag, typename... A>
     struct expr_ext
@@ -52,7 +55,7 @@ namespace boost { namespace phoenix
             typename proto::result_of::make_expr<
                 Tag
               , phoenix_default_domain //proto::basic_default_domain
-              , typename proto::detail::uncvref<typename call_traits<A>::value_type>::type...
+              , typename proto::detail::uncvref<A>::type...
             >::type
         base_type;
 
@@ -60,7 +63,7 @@ namespace boost { namespace phoenix
 
         typedef typename proto::nary_expr<Tag, A...>::proto_grammar proto_grammar;
 
-        static type make(typename call_traits<A>::param_type... a)
+        static type make(A const&... a)
         { //?? actor or Actor??
             //Actor<base_type> const e =
             actor<base_type> const e =

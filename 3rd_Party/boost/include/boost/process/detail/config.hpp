@@ -31,7 +31,7 @@
 extern char **environ;
 #endif
 #elif defined(BOOST_WINDOWS_API)
-#include <boost/detail/winapi/get_last_error.hpp>
+#include <boost/winapi/get_last_error.hpp>
 #else
 #error "System API not supported by boost.process"
 #endif
@@ -53,8 +53,12 @@ inline std::error_code get_last_error() noexcept
 }
 
 //copied from linux spec.
-#if defined (__USE_XOPEN_EXTENDED) && !defined (__USE_XOPEN2K8) || defined( __USE_BSD)
+#if (_XOPEN_SOURCE >= 500 || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED) && !(_POSIX_C_SOURCE >= 200809L || _XOPEN_SOURCE >= 700)
 #define BOOST_POSIX_HAS_VFORK 1
+#endif
+
+#if (_POSIX_C_SOURCE >= 199309L)
+#define BOOST_POSIX_HAS_SIGTIMEDWAIT 1
 #endif
 
 #elif defined(BOOST_WINDOWS_API)
@@ -63,11 +67,16 @@ namespace api = windows;
 
 inline std::error_code get_last_error() noexcept
 {
-    return std::error_code(::boost::detail::winapi::GetLastError(), std::system_category());
+    return std::error_code(::boost::winapi::GetLastError(), std::system_category());
 }
 #endif
 
 inline void throw_last_error(const std::string & msg)
+{
+    throw process_error(get_last_error(), msg);
+}
+
+inline void throw_last_error(const char * msg)
 {
     throw process_error(get_last_error(), msg);
 }
@@ -77,6 +86,17 @@ inline void throw_last_error()
     throw process_error(get_last_error());
 }
 
+inline void throw_error(const std::error_code& ec)
+{
+    if (ec)
+        throw process_error(ec);
+}
+
+inline void throw_error(const std::error_code& ec, const char* msg)
+{
+    if (ec)
+        throw process_error(ec, msg);
+}
 
 template<typename Char> constexpr Char null_char();
 template<> constexpr char     null_char<char>     (){return   '\0';}

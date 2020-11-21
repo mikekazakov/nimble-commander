@@ -11,6 +11,8 @@
 #ifndef BOOST_COMPUTE_CL_EXT_HPP
 #define BOOST_COMPUTE_CL_EXT_HPP
 
+#include "detail/cl_versions.hpp"
+
 #if defined(__APPLE__)
 #include <OpenCL/cl_ext.h>
 #else

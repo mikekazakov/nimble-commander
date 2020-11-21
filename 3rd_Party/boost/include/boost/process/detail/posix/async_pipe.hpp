@@ -9,8 +9,10 @@
 
 #include <boost/process/detail/posix/basic_pipe.hpp>
 #include <boost/asio/posix/stream_descriptor.hpp>
+#include <boost/asio/post.hpp>
 #include <system_error>
 #include <string>
+#include <utility>
 
 namespace boost { namespace process { namespace detail { namespace posix {
 
@@ -21,11 +23,12 @@ class async_pipe
 public:
     typedef int native_handle_type;
     typedef ::boost::asio::posix::stream_descriptor handle_type;
+    typedef typename handle_type::executor_type executor_type;
 
-    inline async_pipe(boost::asio::io_service & ios) : async_pipe(ios, ios) {}
+    inline async_pipe(boost::asio::io_context & ios) : async_pipe(ios, ios) {}
 
-    inline async_pipe(boost::asio::io_service & ios_source,
-                      boost::asio::io_service & ios_sink) : _source(ios_source), _sink(ios_sink)
+    inline async_pipe(boost::asio::io_context & ios_source,
+                      boost::asio::io_context & ios_sink) : _source(ios_source), _sink(ios_sink)
     {
         int fds[2];
         if (::pipe(fds) == -1)
@@ -34,11 +37,11 @@ public:
         _source.assign(fds[0]);
         _sink  .assign(fds[1]);
     };
-    inline async_pipe(boost::asio::io_service & ios, const std::string & name)
+    inline async_pipe(boost::asio::io_context & ios, const std::string & name)
         : async_pipe(ios, ios, name) {}
 
-    inline async_pipe(boost::asio::io_service & ios_source,
-                      boost::asio::io_service & io_sink, const std::string & name);
+    inline async_pipe(boost::asio::io_context & ios_source,
+                      boost::asio::io_context & io_sink, const std::string & name);
     inline async_pipe(const async_pipe& lhs);
     async_pipe(async_pipe&& lhs)  : _source(std::move(lhs._source)), _sink(std::move(lhs._sink))
     {
@@ -47,15 +50,15 @@ public:
     }
 
     template<class CharT, class Traits = std::char_traits<CharT>>
-    explicit async_pipe(::boost::asio::io_service & ios_source,
-                        ::boost::asio::io_service & ios_sink,
+    explicit async_pipe(::boost::asio::io_context & ios_source,
+                        ::boost::asio::io_context & ios_sink,
                          const basic_pipe<CharT, Traits> & p)
             : _source(ios_source, p.native_source()), _sink(ios_sink, p.native_sink())
     {
     }
 
     template<class CharT, class Traits = std::char_traits<CharT>>
-    explicit async_pipe(boost::asio::io_service & ios, const basic_pipe<CharT, Traits> & p)
+    explicit async_pipe(boost::asio::io_context & ios, const basic_pipe<CharT, Traits> & p)
             : async_pipe(ios, ios, p)
     {
     }
@@ -68,10 +71,8 @@ public:
 
     ~async_pipe()
     {
-        if (_sink .native()  != -1)
-            ::close(_sink.native());
-        if (_source.native() != -1)
-            ::close(_source.native());
+        boost::system::error_code ec;
+        close(ec);
     }
 
     template<class CharT, class Traits = std::char_traits<CharT>>
@@ -108,9 +109,9 @@ public:
     void async_close()
     {
         if (_sink.is_open())
-            _sink.get_io_service().  post([this]{_sink.close();});
+            boost::asio::post(_sink.get_executor(),   [this]{_sink.close();});
         if (_source.is_open())
-            _source.get_io_service().post([this]{_source.close();});
+            boost::asio::post(_source.get_executor(), [this]{_source.close();});
     }
 
     template<typename MutableBufferSequence>
@@ -124,8 +125,20 @@ public:
         return _sink.write_some(buffers);
     }
 
-    native_handle_type native_source() const {return const_cast<boost::asio::posix::stream_descriptor&>(_source).native();}
-    native_handle_type native_sink  () const {return const_cast<boost::asio::posix::stream_descriptor&>(_sink  ).native();}
+    template<typename MutableBufferSequence>
+    std::size_t read_some(const MutableBufferSequence & buffers, boost::system::error_code & ec) noexcept
+    {
+        return _source.read_some(buffers, ec);
+    }
+    template<typename MutableBufferSequence>
+    std::size_t write_some(const MutableBufferSequence & buffers, boost::system::error_code & ec) noexcept
+    {
+        return _sink.write_some(buffers, ec);
+    }
+
+
+    native_handle_type native_source() const {return const_cast<boost::asio::posix::stream_descriptor&>(_source).native_handle();}
+    native_handle_type native_sink  () const {return const_cast<boost::asio::posix::stream_descriptor&>(_sink  ).native_handle();}
 
     template<typename MutableBufferSequence,
              typename ReadHandler>
@@ -135,7 +148,7 @@ public:
         const MutableBufferSequence & buffers,
               ReadHandler &&handler)
     {
-        _source.async_read_some(buffers, std::forward<ReadHandler>(handler));
+        return _source.async_read_some(buffers, std::forward<ReadHandler>(handler));
     }
 
     template<typename ConstBufferSequence,
@@ -146,7 +159,7 @@ public:
         const ConstBufferSequence & buffers,
         WriteHandler&& handler)
     {
-        _sink.async_write_some(buffers, std::forward<WriteHandler>(handler));
+        return _sink.async_write_some(buffers, std::forward<WriteHandler>(handler));
     }
 
 
@@ -156,32 +169,32 @@ public:
     handle_type && sink()  &&  { return std::move(_sink); }
     handle_type && source()&&  { return std::move(_source); }
 
-    handle_type source(::boost::asio::io_service& ios) &&
+    handle_type source(::boost::asio::io_context& ios) &&
     {
         ::boost::asio::posix::stream_descriptor stolen(ios, _source.release());
         return stolen;
     }
-    handle_type sink  (::boost::asio::io_service& ios) &&
+    handle_type sink  (::boost::asio::io_context& ios) &&
     {
         ::boost::asio::posix::stream_descriptor stolen(ios, _sink.release());
         return stolen;
     }
 
-    handle_type source(::boost::asio::io_service& ios) const &
+    handle_type source(::boost::asio::io_context& ios) const &
     {
-        auto source_in = const_cast<::boost::asio::posix::stream_descriptor &>(_source).native();
+        auto source_in = const_cast<::boost::asio::posix::stream_descriptor &>(_source).native_handle();
         return ::boost::asio::posix::stream_descriptor(ios, ::dup(source_in));
     }
-    handle_type sink  (::boost::asio::io_service& ios) const &
+    handle_type sink  (::boost::asio::io_context& ios) const &
     {
-        auto sink_in = const_cast<::boost::asio::posix::stream_descriptor &>(_sink).native();
+        auto sink_in = const_cast<::boost::asio::posix::stream_descriptor &>(_sink).native_handle();
         return ::boost::asio::posix::stream_descriptor(ios, ::dup(sink_in));
     }
 };
 
 
-async_pipe::async_pipe(boost::asio::io_service & ios_source,
-                       boost::asio::io_service & ios_sink,
+async_pipe::async_pipe(boost::asio::io_context & ios_source,
+                       boost::asio::io_context & ios_sink,
                        const std::string & name) : _source(ios_source), _sink(ios_sink)
 {
     auto fifo = mkfifo(name.c_str(), 0666 );
@@ -205,19 +218,19 @@ async_pipe::async_pipe(boost::asio::io_service & ios_source,
 }
 
 async_pipe::async_pipe(const async_pipe & p) :
-        _source(const_cast<async_pipe&>(p)._source.get_io_service()),
-        _sink(  const_cast<async_pipe&>(p)._sink.get_io_service())
+        _source(const_cast<async_pipe&>(p)._source.get_executor()),
+        _sink(  const_cast<async_pipe&>(p)._sink.get_executor())
 {
 
     //cannot get the handle from a const object.
-    auto source_in = const_cast<::boost::asio::posix::stream_descriptor &>(_source).native();
-    auto sink_in   = const_cast<::boost::asio::posix::stream_descriptor &>(_sink).native();
+    auto source_in = const_cast<::boost::asio::posix::stream_descriptor &>(_source).native_handle();
+    auto sink_in   = const_cast<::boost::asio::posix::stream_descriptor &>(_sink).native_handle();
     if (source_in == -1)
         _source.assign(-1);
     else
     {
         _source.assign(::dup(source_in));
-        if (_source.native()== -1)
+        if (_source.native_handle()== -1)
             ::boost::process::detail::throw_last_error("dup()");
     }
 
@@ -226,7 +239,7 @@ async_pipe::async_pipe(const async_pipe & p) :
     else
     {
         _sink.assign(::dup(sink_in));
-        if (_sink.native() == -1)
+        if (_sink.native_handle() == -1)
             ::boost::process::detail::throw_last_error("dup()");
     }
 }
@@ -237,8 +250,8 @@ async_pipe& async_pipe::operator=(const async_pipe & p)
     int sink;
 
     //cannot get the handle from a const object.
-    auto source_in = const_cast<::boost::asio::posix::stream_descriptor &>(_source).native();
-    auto sink_in   = const_cast<::boost::asio::posix::stream_descriptor &>(_sink).native();
+    auto source_in = const_cast<::boost::asio::posix::stream_descriptor &>(p._source).native_handle();
+    auto sink_in   = const_cast<::boost::asio::posix::stream_descriptor &>(p._sink).native_handle();
     if (source_in == -1)
         source = -1;
     else
@@ -264,16 +277,8 @@ async_pipe& async_pipe::operator=(const async_pipe & p)
 
 async_pipe& async_pipe::operator=(async_pipe && lhs)
 {
-    if (_source.native_handle() == -1)
-         ::close(_source.native());
-
-    if (_sink.native_handle()   == -1)
-        ::close(_sink.native());
-
-    _source.assign(lhs._source.native_handle());
-    _sink  .assign(lhs._sink  .native_handle());
-    lhs._source.assign(-1);
-    lhs._sink  .assign(-1);
+    std::swap(_source, lhs._source);
+    std::swap(_sink, lhs._sink);
     return *this;
 }
 
@@ -284,8 +289,8 @@ async_pipe::operator basic_pipe<CharT, Traits>() const
     int sink;
 
     //cannot get the handle from a const object.
-    auto source_in = const_cast<::boost::asio::posix::stream_descriptor &>(_source).native();
-    auto sink_in   = const_cast<::boost::asio::posix::stream_descriptor &>(_sink).native();
+    auto source_in = const_cast<::boost::asio::posix::stream_descriptor &>(_source).native_handle();
+    auto sink_in   = const_cast<::boost::asio::posix::stream_descriptor &>(_sink).native_handle();
 
 
     if (source_in == -1)

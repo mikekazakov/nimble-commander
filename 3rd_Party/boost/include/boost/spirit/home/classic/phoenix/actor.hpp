@@ -5,11 +5,12 @@
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ==============================================================================*/
-#ifndef PHOENIX_ACTOR_HPP
-#define PHOENIX_ACTOR_HPP
+#ifndef BOOST_SPIRIT_CLASSIC_PHOENIX_ACTOR_HPP
+#define BOOST_SPIRIT_CLASSIC_PHOENIX_ACTOR_HPP
 
 ///////////////////////////////////////////////////////////////////////////////
 #include <boost/spirit/home/classic/phoenix/tuples.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace phoenix {
@@ -120,7 +121,7 @@ template <typename ActorT, typename TupleT>
 struct actor_result {
 
     typedef typename ActorT::template result<TupleT>::type type;
-    typedef typename remove_reference<type>::type plain_type;
+    typedef typename boost::remove_reference<type>::type plain_type;
 };
 
 //////////////////////////////////

@@ -13,6 +13,7 @@
 
 #include <boost/smart_ptr/local_shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared.hpp>
+#include <boost/type_traits/remove_const.hpp>
 #include <boost/config.hpp>
 #include <utility>
 #include <cstddef>
@@ -186,12 +187,14 @@ template<class T, class A> typename boost::detail::lsp_if_not_array<T>::type all
 
 template<class T, class... Args> typename boost::detail::lsp_if_not_array<T>::type make_local_shared( Args&&... args )
 {
-    return boost::allocate_local_shared<T>( std::allocator<T>(), std::forward<Args>(args)... );
+    typedef typename boost::remove_const<T>::type T2;
+    return boost::allocate_local_shared<T2>( std::allocator<T2>(), std::forward<Args>(args)... );
 }
 
 template<class T> typename boost::detail::lsp_if_not_array<T>::type make_local_shared_noinit()
 {
-    return boost::allocate_shared_noinit<T>( std::allocator<T>() );
+    typedef typename boost::remove_const<T>::type T2;
+    return boost::allocate_shared_noinit<T2>( std::allocator<T2>() );
 }
 
 } // namespace boost

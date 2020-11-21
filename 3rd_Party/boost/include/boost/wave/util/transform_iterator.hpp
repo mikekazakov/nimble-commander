@@ -8,8 +8,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(TRANSFORM_ITERATOR_HPP_D492C659_88C7_4258_8C42_192F9AE80EC0_INCLUDED)
-#define TRANSFORM_ITERATOR_HPP_D492C659_88C7_4258_8C42_192F9AE80EC0_INCLUDED
+#if !defined(BOOST_TRANSFORM_ITERATOR_HPP_D492C659_88C7_4258_8C42_192F9AE80EC0_INCLUDED)
+#define BOOST_TRANSFORM_ITERATOR_HPP_D492C659_88C7_4258_8C42_192F9AE80EC0_INCLUDED
 
 #include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
@@ -24,12 +24,12 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
-namespace wave { 
+namespace wave {
 namespace impl {
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  The new Boost.Iterator library already conatins a transform_iterator usable 
+//  The new Boost.Iterator library already conatins a transform_iterator usable
 //  for our needs. The code below wraps this up.
 //
 ///////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace impl {
     };
 
     template <class AdaptableUnaryFunctionT, class IteratorT>
-    inline 
+    inline
     typename ref_transform_iterator_generator<
         AdaptableUnaryFunctionT, IteratorT>::type
     make_ref_transform_iterator(
@@ -68,9 +68,9 @@ namespace impl {
         typedef ParseTreeNodeT const &argument_type;
 
         static result_type
-        transform (argument_type node) 
+        transform (argument_type node)
         {
-            BOOST_ASSERT(1 == std::distance(node.value.begin(), 
+            BOOST_ASSERT(1 == std::distance(node.value.begin(),
                 node.value.end()));
             return *node.value.begin();
         }
@@ -86,4 +86,4 @@ namespace impl {
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(TRANSFORM_ITERATOR_HPP_D492C659_88C7_4258_8C42_192F9AE80EC0_INCLUDED)
+#endif // !defined(BOOST_TRANSFORM_ITERATOR_HPP_D492C659_88C7_4258_8C42_192F9AE80EC0_INCLUDED)

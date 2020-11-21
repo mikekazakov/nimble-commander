@@ -11,7 +11,6 @@
 #include <boost/fiber/algo/round_robin.hpp>
 #include <boost/fiber/algo/shared_work.hpp>
 #include <boost/fiber/algo/work_stealing.hpp>
-#include <boost/fiber/algo/numa/work_stealing.hpp>
 #include <boost/fiber/barrier.hpp>
 #include <boost/fiber/buffered_channel.hpp>
 #include <boost/fiber/channel_op_status.hpp>
@@ -22,8 +21,6 @@
 #include <boost/fiber/fixedsize_stack.hpp>
 #include <boost/fiber/fss.hpp>
 #include <boost/fiber/future.hpp>
-#include <boost/fiber/numa/pin_thread.hpp>
-#include <boost/fiber/numa/topology.hpp>
 #include <boost/fiber/mutex.hpp>
 #include <boost/fiber/operations.hpp>
 #include <boost/fiber/policy.hpp>

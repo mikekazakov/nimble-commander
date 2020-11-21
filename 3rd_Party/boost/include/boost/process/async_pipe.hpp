@@ -47,32 +47,34 @@ public:
      */
     typedef platform_specific handle_type;
 
+    typedef typename handle_type::executor_type executor_type;
+
     /** Construct a new async_pipe, does automatically open the pipe.
-     * Initializes source and sink with the same io_service.
+     * Initializes source and sink with the same io_context.
      * @note Windows creates a named pipe here, where the name is automatically generated.
      */
-    inline async_pipe(boost::asio::io_service & ios);
+    inline async_pipe(boost::asio::io_context & ios);
 
     /** Construct a new async_pipe, does automatically open the pipe.
      * @note Windows creates a named pipe here, where the name is automatically generated.
      */
-    inline async_pipe(boost::asio::io_service & ios_source,
-                      boost::asio::io_service & ios_sink);
+    inline async_pipe(boost::asio::io_context & ios_source,
+                      boost::asio::io_context & ios_sink);
 
     /** Construct a new async_pipe, does automatically open.
-     * Initializes source and sink with the same io_service.
+     * Initializes source and sink with the same io_context.
      *
      * @note Windows restricts possible names.
      */
-    inline async_pipe(boost::asio::io_service & ios, const std::string & name);
+    inline async_pipe(boost::asio::io_context & ios, const std::string & name);
 
 
     /** Construct a new async_pipe, does automatically open.
      *
      * @note Windows restricts possible names.
      */
-    inline async_pipe(boost::asio::io_service & ios_source,
-                      boost::asio::io_service & ios_sink, const std::string & name);
+    inline async_pipe(boost::asio::io_context & ios_source,
+                      boost::asio::io_context & ios_sink, const std::string & name);
 
     /** Copy-Constructor of the async pipe.
      * @note Windows requires a named pipe for this, if a the wrong type is used an exception is thrown.
@@ -89,15 +91,15 @@ public:
      *
      */
     template<class CharT, class Traits = std::char_traits<CharT>>
-    explicit async_pipe(boost::asio::io_service & ios, const basic_pipe<CharT, Traits> & p);
+    explicit async_pipe(boost::asio::io_context & ios, const basic_pipe<CharT, Traits> & p);
 
-    /** Construct the async-pipe from a pipe, with two different io_service objects.
+    /** Construct the async-pipe from a pipe, with two different io_context objects.
      * @note Windows requires a named pipe for this, if a the wrong type is used an exception is thrown.
      *
      */
     template<class CharT, class Traits = std::char_traits<CharT>>
-    explicit async_pipe(boost::asio::io_service & ios_source,
-                        boost::asio::io_service & ios_sink,
+    explicit async_pipe(boost::asio::io_context & ios_source,
+                        boost::asio::io_context & ios_sink,
                         const basic_pipe<CharT, Traits> & p);
 
 
@@ -189,15 +191,15 @@ public:
     ///Get the asio handle of the pipe source. Qualified as rvalue
     handle_type && source() &&;
 
-    /// Move the source out of this class and change the io_service. Qualified as rvalue. \attention Will always move.
-    handle_type source(::boost::asio::io_service& ios) &&;
-    /// Move the sink out of this class and change the io_service. Qualified as rvalue. \attention Will always move
-    handle_type sink  (::boost::asio::io_service& ios) &&;
+    /// Move the source out of this class and change the io_context. Qualified as rvalue. \attention Will always move.
+    handle_type source(::boost::asio::io_context& ios) &&;
+    /// Move the sink out of this class and change the io_context. Qualified as rvalue. \attention Will always move
+    handle_type sink  (::boost::asio::io_context& ios) &&;
 
-    /// Copy the source out of this class and change the io_service. \attention Will always copy.
-    handle_type source(::boost::asio::io_service& ios) const &;
-    /// Copy the sink out of this class and change the io_service. \attention Will always copy
-    handle_type sink  (::boost::asio::io_service& ios) const &;
+    /// Copy the source out of this class and change the io_context. \attention Will always copy.
+    handle_type source(::boost::asio::io_context& ios) const &;
+    /// Copy the sink out of this class and change the io_context. \attention Will always copy
+    handle_type sink  (::boost::asio::io_context& ios) const &;
 
 
 

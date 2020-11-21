@@ -10,8 +10,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED)
-#define CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED
+#if !defined(BOOST_CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED)
+#define BOOST_CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED
 
 #include <string>
 #include <vector>
@@ -23,6 +23,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/spirit/include/classic_multi_pass.hpp>
 #include <boost/spirit/include/classic_parse_tree_utils.hpp>
 
@@ -546,7 +547,7 @@ pp_iterator_functor<ContextT>::operator()()
 
 // cleanup of certain tokens required
     seen_newline = false;
-    switch (static_cast<unsigned int>(id)) {
+    switch (id) {
     case T_NONREPLACABLE_IDENTIFIER:
         act_token.set_token_id(id = T_IDENTIFIER);
         break;
@@ -668,9 +669,19 @@ bool returned_from_include_file = returned_from_include();
                 if ((!seen_newline || act_pos.get_column() > 1) &&
                     !need_single_line(ctx.get_language()))
                 {
-                // warn, if this file does not end with a newline
-                    BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
-                        last_line_not_terminated, "", act_pos);
+                    if (need_no_newline_at_end_of_file(ctx.get_language()))
+                    {
+                        seen_newline = true;
+                        pending_queue.push_back(
+                            result_type(T_NEWLINE, "\n", act_pos)
+                        );
+                    }
+                    else
+                    {
+                    // warn, if this file does not end with a newline
+                        BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
+                            last_line_not_terminated, "", act_pos);
+                    }
                 }
                 continue;   // if this is the main file, the while loop breaks
             }
@@ -695,6 +706,11 @@ bool returned_from_include_file = returned_from_include();
 //                 pending_queue.push_back(result_type(T_NEWLINE, "\n", act_pos));
 //                 seen_newline = true;
 //                 must_emit_line_directive = true;
+                if (iter_ctx->first == iter_ctx->last)
+                {
+                    seen_newline = true;
+                    act_token = result_type(T_NEWLINE, "\n", act_pos);
+                }
 
             // loop to the next token to analyze
             // simply fall through, since the iterator was already adjusted
@@ -780,7 +796,7 @@ typename ContextT::position_type pos = act_token.get_position();
 
             if (!ctx.get_hooks().emit_line_directive(ctx, pending, act_token))
             {
-            unsigned int column = 6;
+                unsigned int column = 6;
 
                 // the hook did not generate anything, emit default #line
                 pos.set_column(1);
@@ -789,22 +805,20 @@ typename ContextT::position_type pos = act_token.get_position();
                 pos.set_column(column);      // account for '#line'
                 pending.push_back(result_type(T_SPACE, " ", pos));
 
-            // 21 is the max required size for a 64 bit integer represented as a
-            // string
-            char buffer[22];
+                // 21 is the max required size for a 64 bit integer represented as a
+                // string
 
-                using namespace std;    // for some systems sprintf is in namespace std
-                sprintf (buffer, "%ld", pos.get_line());
+                std::string buffer = lexical_cast<std::string>(pos.get_line());
 
                 pos.set_column(++column);                 // account for ' '
-                pending.push_back(result_type(T_INTLIT, buffer, pos));
-                pos.set_column(column += (unsigned int)strlen(buffer)); // account for <number>
+                pending.push_back(result_type(T_INTLIT, buffer.c_str(), pos));
+                pos.set_column(column += (unsigned int)buffer.size()); // account for <number>
                 pending.push_back(result_type(T_SPACE, " ", pos));
                 pos.set_column(++column);                 // account for ' '
 
-            std::string file("\"");
-            boost::filesystem::path filename(
-                wave::util::create_path(act_pos.get_file().c_str()));
+                std::string file("\"");
+                boost::filesystem::path filename(
+                    wave::util::create_path(act_pos.get_file().c_str()));
 
                 using wave::util::impl::escape_lit;
                 file += escape_lit(wave::util::native_file_string(filename)) + "\"";
@@ -962,7 +976,7 @@ namespace impl {
             if (call_hook)
                 util::impl::call_skipped_token_hook(ctx, *it);
         }
-        return false;
+        return need_no_newline_at_end_of_file(ctx.get_language());
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1060,10 +1074,13 @@ pp_iterator_functor<ContextT>::ensure_is_last_on_line(IteratorT& it, bool call_h
         seen_newline = true;    // allow to resume after warning
         iter_ctx->first = it;
 
-    // Trigger a warning that the last line was not terminated with a
-    // newline.
-        BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
-            last_line_not_terminated, "", act_pos);
+        if (!need_no_newline_at_end_of_file(ctx.get_language()))
+        {
+        // Trigger a warning that the last line was not terminated with a
+        // newline.
+            BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
+                last_line_not_terminated, "", act_pos);
+        }
 
         return false;
     }
@@ -1083,10 +1100,13 @@ pp_iterator_functor<ContextT>::skip_to_eol_with_check(IteratorT &it, bool call_h
         seen_newline = true;    // allow to resume after warning
         iter_ctx->first = it;
 
-    // Trigger a warning, that the last line was not terminated with a
-    // newline.
-        BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
-            last_line_not_terminated, "", act_pos);
+        if (!need_no_newline_at_end_of_file(ctx.get_language()))
+        {
+        // Trigger a warning, that the last line was not terminated with a
+        // newline.
+            BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
+                last_line_not_terminated, "", act_pos);
+        }
         return false;
     }
 
@@ -1109,7 +1129,7 @@ pp_iterator_functor<ContextT>::handle_pp_directive(IteratorT &it)
     if (!ctx.get_if_block_status()) {
         if (IS_EXTCATEGORY(*it, PPConditionalTokenType)) {
         // simulate the if block hierarchy
-            switch (static_cast<unsigned int>(id)) {
+            switch (id) {
             case T_PP_IFDEF:        // #ifdef
             case T_PP_IFNDEF:       // #ifndef
             case T_PP_IF:           // #if
@@ -1163,7 +1183,7 @@ pp_iterator_functor<ContextT>::handle_pp_directive(IteratorT &it)
     // try to handle the simple pp directives without parsing
         result_type directive = *it;
         bool include_next = false;
-        switch (static_cast<unsigned int>(id)) {
+        switch (id) {
         case T_PP_QHEADER:        // #include "..."
 #if BOOST_WAVE_SUPPORT_INCLUDE_NEXT != 0
         case T_PP_QHEADER_NEXT:
@@ -1368,7 +1388,9 @@ tree_parse_info_type hit = cpp_grammar_type::parse_cpp_grammar(
     // the found pp directive
     bool result = dispatch_directive (hit, found_directive, found_eoltokens);
 
-        if (found_eof && !need_single_line(ctx.get_language())) {
+        if (found_eof && !need_single_line(ctx.get_language()) &&
+            !need_no_newline_at_end_of_file(ctx.get_language()))
+        {
         // The line was terminated with an end of file token.
         // So trigger a warning, that the last line was not terminated with a
         // newline.
@@ -1424,7 +1446,7 @@ token_id id = token_id(found_directive);
     if (impl::call_found_directive_hook(ctx, found_directive))
         return true;    // skip this directive and return newline only
 
-    switch (static_cast<unsigned int>(id)) {
+    switch (id) {
 //     case T_PP_QHEADER:      // #include "..."
 // #if BOOST_WAVE_SUPPORT_INCLUDE_NEXT != 0
 //     case T_PP_QHEADER_NEXT: // #include_next "..."
@@ -1658,23 +1680,6 @@ char const *current_name = 0;   // never try to match current file name
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace impl {
-
-    // trim all whitespace from the beginning and the end of the given string
-    template <typename StringT>
-    inline StringT
-    trim_whitespace(StringT const &s)
-    {
-        typedef typename StringT::size_type size_type;
-
-        size_type first = s.find_first_not_of(" \t\v\f");
-        if (StringT::npos == first)
-            return StringT();
-        size_type last = s.find_last_not_of(" \t\v\f");
-        return s.substr(first, last-first+1);
-    }
-}
-
 template <typename ContextT>
 inline void
 pp_iterator_functor<ContextT>::on_include(
@@ -1693,12 +1698,14 @@ token_sequence_type toexpand;
         std::inserter(toexpand, toexpand.end()));
 
     typename token_sequence_type::iterator begin2 = toexpand.begin();
+    // expanding the computed include
     ctx.expand_whole_tokensequence(begin2, toexpand.end(), expanded,
-        false);
+                                   false, false);
 
-// now, include the file
-string_type s (impl::trim_whitespace(boost::wave::util::impl::as_string(expanded)));
-bool is_system = '<' == s[0] && '>' == s[s.size()-1];
+    // now, include the file
+    using namespace boost::wave::util::impl;
+    string_type s (trim_whitespace(as_string(expanded)));
+    bool is_system = '<' == s[0] && '>' == s[s.size()-1];
 
     if (!is_system && !('\"' == s[0] && '\"' == s[s.size()-1])) {
     // should resolve into something like <...> or "..."
@@ -1767,6 +1774,17 @@ position_type pos(act_token.get_position());
                         macroname.get_value().c_str(), (*pit).get_position());
                     return;
                 }
+
+#if BOOST_WAVE_SUPPORT_VA_OPT != 0
+                // can't use __VA_OPT__ either
+                if (boost::wave::need_va_opt(ctx.get_language()) &&
+                    ("__VA_OPT__" == (*pit).get_value())) {
+                    BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
+                        bad_define_statement_va_opt,
+                        macroname.get_value().c_str(), (*pit).get_position());
+                    return;
+                }
+#endif
             }
 
         // if there wasn't an ellipsis, then there shouldn't be a __VA_ARGS__
@@ -1775,6 +1793,9 @@ position_type pos(act_token.get_position());
                 typedef typename token_sequence_type::iterator definition_iterator_t;
 
                 bool seen_va_args = false;
+#if BOOST_WAVE_SUPPORT_VA_OPT != 0
+                bool seen_va_opt = false;
+#endif
                 definition_iterator_t pend = macrodefinition.end();
                 for (definition_iterator_t dit = macrodefinition.begin();
                      dit != pend; ++dit)
@@ -1784,6 +1805,13 @@ position_type pos(act_token.get_position());
                     {
                         seen_va_args = true;
                     }
+#if BOOST_WAVE_SUPPORT_VA_OPT != 0
+                    if (T_IDENTIFIER == token_id(*dit) &&
+                        "__VA_OPT__" == (*dit).get_value())
+                    {
+                        seen_va_opt = true;
+                    }
+#endif
                 }
                 if (seen_va_args) {
                 // must not have seen __VA_ARGS__ placeholder
@@ -1792,6 +1820,14 @@ position_type pos(act_token.get_position());
                         macroname.get_value().c_str(), act_token.get_position());
                     return;
                 }
+#if BOOST_WAVE_SUPPORT_VA_OPT != 0
+                if (seen_va_opt) {
+                    BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
+                        bad_define_statement_va_opt,
+                        macroname.get_value().c_str(), act_token.get_position());
+                    return;
+                }
+#endif
             }
         }
         else
@@ -2271,7 +2307,7 @@ token_sequence_type toexpand;
     // preprocess the body of this #line message
         typename token_sequence_type::iterator begin2 = toexpand.begin();
         ctx.expand_whole_tokensequence(begin2, toexpand.end(),
-            expanded, false);
+                                       expanded, false, false);
 
         error = preprocess_exception::no_error;
         if (!impl::retrieve_line_info(expanded.begin(), expanded.end(),
@@ -2316,7 +2352,10 @@ token_sequence_type toexpand;
         act_pos.set_file(unescape_lit(file_name).c_str());
     }
     act_pos.set_line(line);
-    iter_ctx->first.set_position(act_pos);
+    if (iter_ctx->first != iter_ctx->last)
+    {
+      iter_ctx->first.set_position(act_pos);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2350,7 +2389,7 @@ token_sequence_type toexpand;
 
     typename token_sequence_type::iterator begin2 = toexpand.begin();
     ctx.expand_whole_tokensequence(begin2, toexpand.end(), expanded,
-        false);
+                                   false, false);
     if (!ctx.get_hooks().found_error_directive(ctx.derived(), toexpand))
 #else
 // simply copy the body of this #error message to the issued diagnostic
@@ -2399,7 +2438,7 @@ token_sequence_type toexpand;
 
     typename token_sequence_type::iterator begin2 = toexpand.begin();
     ctx.expand_whole_tokensequence(begin2, toexpand.end(), expanded,
-        false);
+                                   false, false);
     if (!ctx.get_hooks().found_warning_directive(ctx.derived(), toexpand))
 #else
 // simply copy the body of this #warning message to the issued diagnostic
@@ -2469,7 +2508,7 @@ const_tree_iterator_t last = make_ref_transform_iterator(end, get_value);
 
             typename token_sequence_type::iterator begin2 = toexpand.begin();
             ctx.expand_whole_tokensequence(begin2, toexpand.end(),
-                expanded, false);
+                                           expanded, false, false);
 #else
         // do _not_ preprocess the token sequence
             std::copy(first, last, std::inserter(expanded, expanded.end()));
@@ -2581,4 +2620,4 @@ public:
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED)
+#endif // !defined(BOOST_CPP_ITERATOR_HPP_175CA88F_7273_43FA_9039_BCF7459E1F29_INCLUDED)

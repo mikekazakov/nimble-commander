@@ -95,7 +95,7 @@ typedef attribute_keyword< tag::message > message_type;
 /*!
  * Generic message keyword.
  */
-const message_type message = {};
+BOOST_INLINE_VARIABLE const message_type message = {};
 
 #if defined(BOOST_LOG_USE_CHAR)
 /*!
@@ -105,7 +105,7 @@ typedef attribute_keyword< tag::smessage > smessage_type;
 /*!
  * Narrow message keyword.
  */
-const smessage_type smessage = {};
+BOOST_INLINE_VARIABLE const smessage_type smessage = {};
 #endif
 
 #if defined(BOOST_LOG_USE_WCHAR_T)
@@ -116,7 +116,7 @@ typedef attribute_keyword< tag::wmessage > wmessage_type;
 /*!
  * Wide message keyword.
  */
-const wmessage_type wmessage = {};
+BOOST_INLINE_VARIABLE const wmessage_type wmessage = {};
 #endif
 
 } // namespace expressions

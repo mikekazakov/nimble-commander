@@ -9,7 +9,7 @@
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // set.hpp: serialization for stl set templates
 
-// (C) Copyright 2002-2014 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002-2014 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -20,7 +20,6 @@
 
 #include <boost/config.hpp>
 
-#include <boost/archive/detail/basic_iarchive.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/detail/stack_constructor.hpp>
@@ -31,21 +30,21 @@
 #include <boost/serialization/split_free.hpp>
 #include <boost/move/utility_core.hpp>
 
-namespace boost { 
+namespace boost {
 namespace serialization {
 
 template<class Archive, class Container>
 inline void load_set_collection(Archive & ar, Container &s)
 {
     s.clear();
-    const boost::archive::library_version_type library_version(
+    const boost::serialization::library_version_type library_version(
         ar.get_library_version()
     );
     // retrieve number of elements
     item_version_type item_version(0);
     collection_size_type count;
     ar >> BOOST_SERIALIZATION_NVP(count);
-    if(boost::archive::library_version_type(3) < library_version){
+    if(boost::serialization::library_version_type(3) < library_version){
         ar >> BOOST_SERIALIZATION_NVP(item_version);
     }
     typename Container::iterator hint;
@@ -57,7 +56,8 @@ inline void load_set_collection(Archive & ar, Container &s)
         ar >> boost::serialization::make_nvp("item", t.reference());
         typename Container::iterator result =
             s.insert(hint, boost::move(t.reference()));
-        ar.reset_object_address(& (* result), & t.reference());
+        const type * new_address = & (* result);
+        ar.reset_object_address(new_address, & t.reference());
         hint = result;
     }
 }
@@ -69,7 +69,7 @@ inline void save(
     const unsigned int /* file_version */
 ){
     boost::serialization::stl::save_collection<
-        Archive, std::set<Key, Compare, Allocator> 
+        Archive, std::set<Key, Compare, Allocator>
     >(ar, t);
 }
 
@@ -101,8 +101,8 @@ inline void save(
     const unsigned int /* file_version */
 ){
     boost::serialization::stl::save_collection<
-        Archive, 
-        std::multiset<Key, Compare, Allocator> 
+        Archive,
+        std::multiset<Key, Compare, Allocator>
     >(ar, t);
 }
 

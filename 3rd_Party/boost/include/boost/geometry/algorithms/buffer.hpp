@@ -4,8 +4,8 @@
 // Copyright (c) 2008-2012 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2017.
-// Modifications copyright (c) 2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017, 2019.
+// Modifications copyright (c) 2017, 2019 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
@@ -37,51 +37,11 @@
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/util/math.hpp>
 
+#include <boost/geometry/algorithms/detail/buffer/buffer_box.hpp>
 #include <boost/geometry/algorithms/detail/buffer/buffer_inserter.hpp>
 
 namespace boost { namespace geometry
 {
-
-
-#ifndef DOXYGEN_NO_DETAIL
-namespace detail { namespace buffer
-{
-
-template <typename BoxIn, typename BoxOut, typename T, std::size_t C, std::size_t D, std::size_t N>
-struct box_loop
-{
-    typedef typename coordinate_type<BoxOut>::type coordinate_type;
-
-    static inline void apply(BoxIn const& box_in, T const& distance, BoxOut& box_out)
-    {
-        coordinate_type d = distance;
-        set<C, D>(box_out, get<C, D>(box_in) + d);
-        box_loop<BoxIn, BoxOut, T, C, D + 1, N>::apply(box_in, distance, box_out);
-    }
-};
-
-template <typename BoxIn, typename BoxOut, typename T, std::size_t C, std::size_t N>
-struct box_loop<BoxIn, BoxOut, T, C, N, N>
-{
-    static inline void apply(BoxIn const&, T const&, BoxOut&) {}
-};
-
-// Extends a box with the same amount in all directions
-template<typename BoxIn, typename BoxOut, typename T>
-inline void buffer_box(BoxIn const& box_in, T const& distance, BoxOut& box_out)
-{
-    assert_dimension_equal<BoxIn, BoxOut>();
-
-    static const std::size_t N = dimension<BoxIn>::value;
-
-    box_loop<BoxIn, BoxOut, T, min_corner, 0, N>::apply(box_in, -distance, box_out);
-    box_loop<BoxIn, BoxOut, T, max_corner, 0, N>::apply(box_in, distance, box_out);
-}
-
-
-
-}} // namespace detail::buffer
-#endif // DOXYGEN_NO_DETAIL
 
 #ifndef DOXYGEN_NO_DISPATCH
 namespace dispatch
@@ -264,7 +224,11 @@ inline void buffer(GeometryIn const& geometry_in,
     concepts::check<polygon_type>();
 
     typedef typename point_type<GeometryIn>::type point_type;
-    typedef typename rescale_policy_type<point_type>::type rescale_policy_type;
+    typedef typename rescale_policy_type
+        <
+            point_type,
+            typename geometry::cs_tag<point_type>::type
+        >::type rescale_policy_type;
 
     geometry_out.clear();
 
@@ -284,7 +248,8 @@ inline void buffer(GeometryIn const& geometry_in,
         >::type intersection_strategy;
 
     rescale_policy_type rescale_policy
-            = boost::geometry::get_rescale_policy<rescale_policy_type>(box);
+            = boost::geometry::get_rescale_policy<rescale_policy_type>(
+                box, intersection_strategy);
 
     detail::buffer::buffer_inserter<polygon_type>(geometry_in, range::back_inserter(geometry_out),
                 distance_strategy,

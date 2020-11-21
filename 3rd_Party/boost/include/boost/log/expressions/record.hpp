@@ -37,7 +37,7 @@ typedef phoenix::expression::argument< 1 >::type record_type;
 /*!
  * Log record placeholder in formatter template expressions.
  */
-const record_type record = {};
+BOOST_INLINE_VARIABLE const record_type record = {};
 
 } // namespace expressions
 

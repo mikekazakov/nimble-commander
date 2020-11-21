@@ -16,8 +16,8 @@
 #include <boost/process/detail/traits.hpp>
 #include <boost/process/error.hpp>
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
-#include <boost/detail/winapi/handles.hpp>
-#include <boost/detail/winapi/process.hpp>
+#include <boost/winapi/handles.hpp>
+#include <boost/winapi/process.hpp>
 #include <boost/none.hpp>
 #include <system_error>
 #include <memory>
@@ -33,13 +33,13 @@ template<typename CharType> struct startup_info;
 
 template<> struct startup_info<char>
 {
-    typedef ::boost::detail::winapi::STARTUPINFOA_ type;
+    typedef ::boost::winapi::STARTUPINFOA_ type;
 };
 #endif
 
 template<> struct startup_info<wchar_t>
 {
-    typedef ::boost::detail::winapi::STARTUPINFOW_ type;
+    typedef ::boost::winapi::STARTUPINFOW_ type;
 };
 
 #if BOOST_USE_WINAPI_VERSION >= BOOST_WINAPI_VERSION_WIN6
@@ -49,13 +49,13 @@ template<typename CharType> struct startup_info_ex;
 #if !defined( BOOST_NO_ANSI_APIS )
 template<> struct startup_info_ex<char>
 {
-    typedef ::boost::detail::winapi::STARTUPINFOEXA_ type;
+    typedef ::boost::winapi::STARTUPINFOEXA_ type;
 };
 #endif
 
 template<> struct startup_info_ex<wchar_t>
 {
-    typedef ::boost::detail::winapi::STARTUPINFOEXW_ type;
+    typedef ::boost::winapi::STARTUPINFOEXW_ type;
 };
 
 
@@ -66,7 +66,7 @@ template<> struct startup_info_ex<wchar_t>
 template<typename CharT>
 struct startup_info_impl
 {
-    ::boost::detail::winapi::DWORD_ creation_flags = 0;
+    ::boost::winapi::DWORD_ creation_flags = 0;
 
     typedef typename startup_info_ex<CharT>::type startup_info_ex_t;
     typedef typename startup_info<CharT>::type    startup_info_t;
@@ -74,9 +74,9 @@ struct startup_info_impl
     startup_info_ex_t  startup_info_ex
             {startup_info_t {sizeof(startup_info_t), nullptr, nullptr, nullptr,
                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, nullptr,
-                               ::boost::detail::winapi::invalid_handle_value,
-                               ::boost::detail::winapi::invalid_handle_value,
-                               ::boost::detail::winapi::invalid_handle_value},
+                               ::boost::winapi::invalid_handle_value,
+                               ::boost::winapi::invalid_handle_value,
+                               ::boost::winapi::invalid_handle_value},
                 nullptr
     };
     startup_info_t & startup_info = startup_info_ex.StartupInfo;
@@ -84,7 +84,7 @@ struct startup_info_impl
     void set_startup_info_ex()
     {
        startup_info.cb = sizeof(startup_info_ex_t);
-       creation_flags  = ::boost::detail::winapi::EXTENDED_STARTUPINFO_PRESENT_;
+       creation_flags |= ::boost::winapi::EXTENDED_STARTUPINFO_PRESENT_;
     }
 };
 
@@ -96,13 +96,13 @@ struct startup_info_impl
 {
     typedef typename startup_info<CharT>::type    startup_info_t;
 
-    ::boost::detail::winapi::DWORD_ creation_flags = 0;
+    ::boost::winapi::DWORD_ creation_flags = 0;
     startup_info_t          startup_info
             {sizeof(startup_info_t), nullptr, nullptr, nullptr,
              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, nullptr,
-             ::boost::detail::winapi::invalid_handle_value,
-             ::boost::detail::winapi::invalid_handle_value,
-             ::boost::detail::winapi::invalid_handle_value};
+             ::boost::winapi::invalid_handle_value,
+             ::boost::winapi::invalid_handle_value,
+             ::boost::winapi::invalid_handle_value};
 };
 #endif
 
@@ -186,7 +186,7 @@ public:
         }
 
         //NOTE: The non-cast cmd-line string can only be modified by the wchar_t variant which is currently disabled.
-        int err_code = ::boost::detail::winapi::create_process(
+        int err_code = ::boost::winapi::create_process(
             exe,                                        //       LPCSTR_ lpApplicationName,
             const_cast<Char*>(cmd_line),                //       LPSTR_ lpCommandLine,
             proc_attrs,                                 //       LPSECURITY_ATTRIBUTES_ lpProcessAttributes,
@@ -232,9 +232,9 @@ public:
 
     const std::error_code& error() const {return _ec;}
 
-    ::boost::detail::winapi::LPSECURITY_ATTRIBUTES_ proc_attrs   = nullptr;
-    ::boost::detail::winapi::LPSECURITY_ATTRIBUTES_ thread_attrs = nullptr;
-    ::boost::detail::winapi::BOOL_ inherit_handles = false;
+    ::boost::winapi::LPSECURITY_ATTRIBUTES_ proc_attrs   = nullptr;
+    ::boost::winapi::LPSECURITY_ATTRIBUTES_ thread_attrs = nullptr;
+    ::boost::winapi::BOOL_ inherit_handles = false;
     const Char * work_dir = nullptr;
     const Char * cmd_line = nullptr;
     const Char * exe      = nullptr;
@@ -242,7 +242,7 @@ public:
 
 
     Sequence & seq;
-    ::boost::detail::winapi::PROCESS_INFORMATION_ proc_info{nullptr, nullptr, 0,0};
+    ::boost::winapi::PROCESS_INFORMATION_ proc_info{nullptr, nullptr, 0,0};
 };
 
 

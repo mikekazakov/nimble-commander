@@ -8,7 +8,7 @@
 #define BOOST_FUSION_STD_ARRAY_ARRAY_SIZE_01062013_1700
 
 #include <cstddef>
-#include <type_traits>
+#include <boost/type_traits/integral_constant.hpp>
 
 namespace boost { namespace fusion
 {
@@ -18,7 +18,7 @@ namespace boost { namespace fusion
         struct std_array_size;
 
         template<template<typename, std::size_t> class Array, typename T, std::size_t N>
-        struct std_array_size<Array<T, N>> : std::integral_constant<std::size_t, N> {};
+        struct std_array_size<Array<T, N> > : boost::integral_constant<std::size_t, N> {};
     }
 }}
 

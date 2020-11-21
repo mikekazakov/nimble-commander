@@ -71,8 +71,11 @@ protected:
         // check if other segments are closer
         for (++prev, ++it; it != last; ++prev, ++it)
         {
-            Distance dist = strategy.apply(point, *prev, *it);
-            if (geometry::math::equals(dist, zero))
+            Distance const dist = strategy.apply(point, *prev, *it);
+
+            // Stop only if we find exactly zero distance
+            // otherwise it may stop at some very small value and miss the min
+            if (dist == zero)
             {
                 dist_min = zero;
                 it_min1 = prev;

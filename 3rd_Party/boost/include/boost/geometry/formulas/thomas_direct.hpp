@@ -1,7 +1,8 @@
 // Boost.Geometry
 
-// Copyright (c) 2016 Oracle and/or its affiliates.
+// Copyright (c) 2016-2020 Oracle and/or its affiliates.
 
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -14,11 +15,12 @@
 
 #include <boost/math/constants/constants.hpp>
 
+#include <boost/geometry/core/assert.hpp>
 #include <boost/geometry/core/radius.hpp>
-#include <boost/geometry/core/srs.hpp>
 
 #include <boost/geometry/util/condition.hpp>
 #include <boost/geometry/util/math.hpp>
+#include <boost/geometry/util/normalize_spheroidal_coordinates.hpp>
 
 #include <boost/geometry/formulas/differential_quantities.hpp>
 #include <boost/geometry/formulas/flattening.hpp>
@@ -31,16 +33,16 @@ namespace boost { namespace geometry { namespace formula
 
 /*!
 \brief The solution of the direct problem of geodesics on latlong coordinates,
-       Forsyth-Andoyer-Lambert type approximation with second order terms.
+       Forsyth-Andoyer-Lambert type approximation with first/second order terms.
 \author See
     - Technical Report: PAUL D. THOMAS, MATHEMATICAL MODELS FOR NAVIGATION SYSTEMS, 1965
       http://www.dtic.mil/docs/citations/AD0627893
     - Technical Report: PAUL D. THOMAS, SPHEROIDAL GEODESICS, REFERENCE SYSTEMS, AND LOCAL GEOMETRY, 1970
       http://www.dtic.mil/docs/citations/AD0703541
-
 */
 template <
     typename CT,
+    bool SecondOrder = true,
     bool EnableCoordinates = true,
     bool EnableReverseAzimuth = false,
     bool EnableReducedLength = false,
@@ -67,13 +69,6 @@ public:
         CT const lon1 = lo1;
         CT const lat1 = la1;
 
-        if ( math::equals(distance, Dist(0)) || distance < Dist(0) )
-        {
-            result.lon2 = lon1;
-            result.lat2 = lat1;
-            return result;
-        }
-
         CT const c0 = 0;
         CT const c1 = 1;
         CT const c2 = 2;
@@ -87,12 +82,14 @@ public:
         CT const pi = math::pi<CT>();
         CT const pi_half = pi / c2;
 
+        BOOST_GEOMETRY_ASSERT(-pi <= azimuth12 && azimuth12 <= pi);
+
         // keep azimuth small - experiments show low accuracy
         // if the azimuth is closer to (+-)180 deg.
         CT azi12_alt = azimuth12;
         CT lat1_alt = lat1;
         bool alter_result = vflip_if_south(lat1, azimuth12, lat1_alt, azi12_alt);
-        
+
         CT const theta1 = math::equals(lat1_alt, pi_half) ? lat1_alt :
                           math::equals(lat1_alt, -pi_half) ? lat1_alt :
                           atan(one_minus_f * tan(lat1_alt));
@@ -109,9 +106,18 @@ public:
         CT const N = cos_theta1 * cos_a12;
         CT const C1 = f * M; // lower-case c1 in the technical report
         CT const C2 = f * (c1 - math::sqr(M)) / c4; // lower-case c2 in the technical report
-        CT const D = (c1 - C2) * (c1 - C2 - C1 * M);
-        CT const P = C2 * (c1 + C1 * M / c2) / D;
-
+        CT D = 0;
+        CT P = 0;
+        if ( BOOST_GEOMETRY_CONDITION(SecondOrder) )
+        {
+            D = (c1 - C2) * (c1 - C2 - C1 * M);
+            P = C2 * (c1 + C1 * M / c2) / D;
+        }
+        else
+        {
+            D = c1 - c2 * C2 - C1 * M;
+            P = C2 / D;
+        }
         // special case for equator:
         // sin_theta0 = 0 <=> lat1 = 0 ^ |azimuth12| = pi/2
         // NOTE: in this case it doesn't matter what's the value of cos_sigma1 because
@@ -133,9 +139,14 @@ public:
 
         CT const W = c1 - c2 * P * cos_u;
         CT const V = cos_u * cos_d - sin_u * sin_d;
-        CT const X = math::sqr(C2) * sin_d * cos_d * (2 * math::sqr(V) - c1);
         CT const Y = c2 * P * V * W * sin_d;
-        CT const d_sigma = d + X - Y;
+        CT X = 0;
+        CT d_sigma = d - Y;
+        if ( BOOST_GEOMETRY_CONDITION(SecondOrder) )
+        {
+            X = math::sqr(C2) * sin_d * cos_d * (2 * math::sqr(V) - c1);
+            d_sigma += X;
+        }
         CT const sin_d_sigma = sin(d_sigma);
         CT const cos_d_sigma = cos(d_sigma);
 
@@ -152,11 +163,16 @@ public:
         if (BOOST_GEOMETRY_CONDITION(CalcCoordinates))
         {
             CT const S_sigma = c2 * sigma1 - d_sigma;
-            CT const cos_S_sigma = cos(S_sigma);
+            CT cos_S_sigma = 0;
+            CT H = C1 * d_sigma;
+            if ( BOOST_GEOMETRY_CONDITION(SecondOrder) )
+            {
+                cos_S_sigma = cos(S_sigma);
+                H = H * (c1 - C2) - C1 * C2 * sin_d_sigma * cos_S_sigma;
+            }
             CT const d_eta = atan2(sin_d_sigma * sin_a12, cos_theta1 * cos_d_sigma - sin_theta1 * sin_d_sigma * cos_a12);
-            CT const H = C1 * (c1 - C2) * d_sigma - C1 * C2 * sin_d_sigma * cos_S_sigma;
             CT const d_lambda = d_eta - H;
-            
+
             result.lon2 = lon1 + d_lambda;
 
             if (! math::equals(M, c0))
@@ -169,7 +185,8 @@ public:
             {
                 CT const sigma2 = S_sigma - sigma1;
                 //theta2 = asin(cos(sigma2)) <=> sin_theta0 = 1
-                CT const tan_theta2 = cos(sigma2) / sin(sigma2);
+                // NOTE: cos(sigma2) defines the sign of tan_theta2
+                CT const tan_theta2 = cos(sigma2) / math::abs(sin(sigma2));
                 result.lat2 = atan(tan_theta2 / one_minus_f);
             }
 
@@ -177,7 +194,7 @@ public:
             {
                 result.lat2 = -result.lat2;
             }
-        }        
+        }
 
         if (BOOST_GEOMETRY_CONDITION(CalcQuantities))
         {
@@ -186,6 +203,15 @@ public:
                               azimuth12, result.reverse_azimuth,
                               b, f,
                               result.reduced_length, result.geodesic_scale);
+        }
+
+        if (BOOST_GEOMETRY_CONDITION(CalcCoordinates))
+        {
+            // For longitudes close to the antimeridian the result can be out
+            // of range. Therefore normalize.
+            // It has to be done at the end because otherwise differential
+            // quantities are calculated incorrectly.
+            math::detail::normalize_angle_cond<radian>(result.lon2);
         }
 
         return result;

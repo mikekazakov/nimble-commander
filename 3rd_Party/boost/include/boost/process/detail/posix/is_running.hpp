@@ -13,37 +13,25 @@
 
 namespace boost { namespace process { namespace detail { namespace posix {
 
+// Use the "stopped" state (WIFSTOPPED) to indicate "not terminated".
+// This bit arrangement of status codes is not guaranteed by POSIX, but (according to comments in
+// the glibc <bits/waitstatus.h> header) is the same across systems in practice.
+constexpr int still_active = 0x017f;
+static_assert(WIFSTOPPED(still_active), "Expected still_active to indicate WIFSTOPPED");
+static_assert(!WIFEXITED(still_active), "Expected still_active to not indicate WIFEXITED");
+static_assert(!WIFSIGNALED(still_active), "Expected still_active to not indicate WIFSIGNALED");
+static_assert(!WIFCONTINUED(still_active), "Expected still_active to not indicate WIFCONTINUED");
 
-constexpr int still_active = 0x7F;
-static_assert(!WIFEXITED(still_active), "Internal Error");
-
-inline bool is_running(const child_handle &p, int & exit_code)
+inline bool is_running(int code)
 {
-    int status; 
-    auto ret = ::waitpid(p.pid, &status, WNOHANG|WUNTRACED);
-    
-    if (ret == -1)
-    {
-        if (errno != ECHILD) //because it no child is running, than this one isn't either, obviously.
-            ::boost::process::detail::throw_last_error("is_running error");
-
-        return false;
-    }
-    else if (ret == 0)
-        return true;
-    else //exited
-    {
-        if (WIFEXITED(status))
-            exit_code = status;
-        return false;
-    }
+    return !WIFEXITED(code) && !WIFSIGNALED(code);
 }
 
 inline bool is_running(const child_handle &p, int & exit_code, std::error_code &ec) noexcept
 {
     int status;
-    auto ret = ::waitpid(p.pid, &status, WNOHANG|WUNTRACED); 
-    
+    auto ret = ::waitpid(p.pid, &status, WNOHANG);
+
     if (ret == -1)
     {
         if (errno != ECHILD) //because it no child is running, than this one isn't either, obviously.
@@ -55,22 +43,36 @@ inline bool is_running(const child_handle &p, int & exit_code, std::error_code &
     else
     {
         ec.clear();
-        
-        if (WIFEXITED(status))
+
+        if (!is_running(status))
             exit_code = status;
-        
+
         return false;
     }
 }
 
-inline bool is_running(int code)
+inline bool is_running(const child_handle &p, int & exit_code)
 {
-    return !WIFEXITED(code);
+    std::error_code ec;
+    bool b = is_running(p, exit_code, ec);
+    boost::process::detail::throw_error(ec, "waitpid(2) failed in is_running");
+    return b;
 }
 
 inline int eval_exit_status(int code)
 {
-    return WEXITSTATUS(code);
+    if (WIFEXITED(code))
+    {
+        return WEXITSTATUS(code);
+    }
+    else if (WIFSIGNALED(code))
+    {
+        return WTERMSIG(code);
+    }
+    else
+    {
+        return code;
+    }
 }
 
 }}}}

@@ -18,6 +18,7 @@
 #include <string>
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
+#include <boost/type_traits/is_nothrow_move_constructible.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/locks.hpp>
 #include <boost/log/detail/default_attribute_names.hpp>
@@ -76,7 +77,7 @@ public:
     typedef typename strictest_lock<
         typename base_type::swap_lock,
 #ifndef BOOST_LOG_NO_THREADS
-        boost::log::aux::exclusive_lock_guard< threading_model >
+        boost::log::aux::multiple_unique_lock2< threading_model, threading_model >
 #else
         no_lock< threading_model >
 #endif // !defined(BOOST_LOG_NO_THREADS)
@@ -109,16 +110,16 @@ public:
         base_type(static_cast< base_type const& >(that)),
         m_ChannelAttr(that.m_ChannelAttr)
     {
+        // Our attributes must refer to our channel attribute
         base_type::attributes()[boost::log::aux::default_attribute_names::channel()] = m_ChannelAttr;
     }
     /*!
      * Move constructor
      */
-    basic_channel_logger(BOOST_RV_REF(basic_channel_logger) that) :
+    basic_channel_logger(BOOST_RV_REF(basic_channel_logger) that) BOOST_NOEXCEPT_IF(boost::is_nothrow_move_constructible< base_type >::value && boost::is_nothrow_move_constructible< channel_attribute >::value) :
         base_type(boost::move(static_cast< base_type& >(that))),
         m_ChannelAttr(boost::move(that.m_ChannelAttr))
     {
-        base_type::attributes()[boost::log::aux::default_attribute_names::channel()] = m_ChannelAttr;
     }
     /*!
      * Constructor with arguments. Allows to register a channel name attribute on construction.

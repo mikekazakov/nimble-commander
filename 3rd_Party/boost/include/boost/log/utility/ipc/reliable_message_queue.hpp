@@ -429,7 +429,7 @@ public:
 
     /*!
      * The method wakes up all threads that are blocked in calls to <tt>send()</tt> or
-     * <tt>receive()</tt>. Those calls would then return \c false with \c errno \c EINTR.
+     * <tt>receive()</tt>. Those calls would then return <tt>operation_result::aborted</tt>.
      * Note that, the method does not block until the woken-up threads have actually
      * returned from <tt>send()</tt> or <tt>receive()</tt>. Other means is needed to ensure
      * that calls to <tt>send()</tt> or <tt>receive()</tt> have returned, e.g., joining the
@@ -437,7 +437,7 @@ public:
      *
      * The method also puts the object in stopped state. When in stopped state, calls to
      * <tt>send()</tt> or <tt>receive()</tt> will return immediately with return value
-     * \c false and \c errno \c EINTR when they would otherwise block in running state.
+     * <tt>operation_result::aborted</tt> when they would otherwise block in running state.
      *
      * Concurrent calls to this method, <tt>send()</tt>, <tt>try_send()</tt>, <tt>receive()</tt>,
      * <tt>try_receive()</tt>, and <tt>clear()</tt> are allowed.

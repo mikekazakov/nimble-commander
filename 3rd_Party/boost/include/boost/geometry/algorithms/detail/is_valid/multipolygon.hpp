@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2017, Oracle and/or its affiliates.
+// Copyright (c) 2014-2019, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -116,26 +116,29 @@ private:
         }
 
         // prepare strategies
-        typedef typename std::iterator_traits<PolygonIterator>::value_type polygon_type;
-        typedef typename Strategy::template point_in_geometry_strategy
-            <
-                polygon_type, polygon_type
-            >::type within_strategy_type;
-        within_strategy_type const within_strategy
-            = strategy.template get_point_in_geometry_strategy<polygon_type, polygon_type>();
         typedef typename Strategy::envelope_strategy_type envelope_strategy_type;
         envelope_strategy_type const envelope_strategy
             = strategy.get_envelope_strategy();
+        typedef typename Strategy::disjoint_box_box_strategy_type disjoint_box_box_strategy_type;
+        disjoint_box_box_strategy_type const disjoint_strategy
+            = strategy.get_disjoint_box_box_strategy();
 
         // call partition to check if polygons are disjoint from each other
-        typename base::template item_visitor_type<within_strategy_type> item_visitor(within_strategy);
+        typename base::template item_visitor_type<Strategy> item_visitor(strategy);
 
         geometry::partition
             <
                 geometry::model::box<typename point_type<MultiPolygon>::type>
             >::apply(polygon_iterators, item_visitor,
-                     typename base::template expand_box<envelope_strategy_type>(envelope_strategy),
-                     typename base::template overlaps_box<envelope_strategy_type>(envelope_strategy));
+                     typename base::template expand_box
+                        <
+                            envelope_strategy_type
+                        >(envelope_strategy),
+                     typename base::template overlaps_box
+                        <
+                            envelope_strategy_type,
+                            disjoint_box_box_strategy_type
+                        >(envelope_strategy, disjoint_strategy));
 
         if (item_visitor.items_overlap)
         {
@@ -290,8 +293,8 @@ public:
     {
         typedef debug_validity_phase<MultiPolygon> debug_phase;
 
-        if (BOOST_GEOMETRY_CONDITION(
-                AllowEmptyMultiGeometries && boost::empty(multipolygon)))
+        if (BOOST_GEOMETRY_CONDITION(AllowEmptyMultiGeometries)
+            && boost::empty(multipolygon))
         {
             return visitor.template apply<no_failure>();
         }
@@ -314,7 +317,7 @@ public:
         // compute turns and check if all are acceptable
         debug_phase::apply(2);
 
-        typedef has_valid_self_turns<MultiPolygon> has_valid_turns;
+        typedef has_valid_self_turns<MultiPolygon, typename Strategy::cs_tag> has_valid_turns;
 
         std::deque<typename has_valid_turns::turn_type> turns;
         bool has_invalid_turns =

@@ -9,8 +9,6 @@
 #ifndef BOOST_MATH_FWD_HPP
 #define BOOST_MATH_FWD_HPP
 
-#include <boost/cstdint.hpp>
-
 namespace boost
 {
 namespace math
@@ -21,13 +19,6 @@ namespace math
 
 template < typename T >
     class quaternion;
-
-template < >
-    class quaternion< float >;
-template < >
-    class quaternion< double >;
-template < >
-    class quaternion< long double >;
 
 // Also has many function templates (including operators)
 

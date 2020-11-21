@@ -1,8 +1,9 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014, Oracle and/or its affiliates.
+// Copyright (c) 2014, 2019, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -53,7 +54,15 @@ private:
                              QueryRangeIterator& qit_min,
                              Distance& dist_min)
     {
-        typedef index::rtree<RTreeValueType, index::linear<8> > rtree_type;
+        typedef strategy::index::services::from_strategy
+            <
+                Strategy
+            > index_strategy_from;
+        typedef index::parameters
+            <
+                index::linear<8>, typename index_strategy_from::type
+            > index_parameters_type;
+        typedef index::rtree<RTreeValueType, index_parameters_type> rtree_type;
 
         BOOST_GEOMETRY_ASSERT( rtree_first != rtree_last );
         BOOST_GEOMETRY_ASSERT( queries_first != queries_last );
@@ -62,7 +71,9 @@ private:
         dist_min = zero;
 
         // create -- packing algorithm
-        rtree_type rt(rtree_first, rtree_last);
+        rtree_type rt(rtree_first, rtree_last,
+                      index_parameters_type(index::linear<8>(),
+                                            index_strategy_from::get(strategy)));
 
         RTreeValueType t_v;
         bool first = true;

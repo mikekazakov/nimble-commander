@@ -13,6 +13,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/fwd/string.hpp>
 
 #include <boost/hana/bool.hpp>
+#include <boost/hana/concept/constant.hpp>
 #include <boost/hana/config.hpp>
 #include <boost/hana/core/make.hpp>
 #include <boost/hana/detail/algorithm.hpp>
@@ -148,6 +149,35 @@ BOOST_HANA_NAMESPACE_BEGIN
     };
 
     //////////////////////////////////////////////////////////////////////////
+    // to<string_tag>
+    //////////////////////////////////////////////////////////////////////////
+    namespace detail {
+        constexpr std::size_t cx_strlen(char const* s) {
+          std::size_t n = 0u;
+          while (*s != '\0')
+            ++s, ++n;
+          return n;
+        }
+
+        template <typename S, std::size_t ...I>
+        constexpr hana::string<hana::value<S>()[I]...> expand(std::index_sequence<I...>)
+        { return {}; }
+    }
+
+    template <typename IC>
+    struct to_impl<hana::string_tag, IC, hana::when<
+        hana::Constant<IC>::value &&
+        std::is_convertible<typename IC::value_type, char const*>::value
+    >> {
+        template <typename S>
+        static constexpr auto apply(S const&) {
+            constexpr char const* s = hana::value<S>();
+            constexpr std::size_t len = detail::cx_strlen(s);
+            return detail::expand<S>(std::make_index_sequence<len>{});
+        }
+    };
+
+    //////////////////////////////////////////////////////////////////////////
     // Comparable
     //////////////////////////////////////////////////////////////////////////
     template <>
@@ -241,7 +271,7 @@ BOOST_HANA_NAMESPACE_BEGIN
         template <char ...xs, typename N>
         static constexpr auto apply(string<xs...> const& s, N const&) {
             return helper<N::value>(s, std::make_index_sequence<
-                N::value < sizeof...(xs) ? sizeof...(xs) - N::value : 0
+                (N::value < sizeof...(xs)) ? sizeof...(xs) - N::value : 0
             >{});
         }
 

@@ -2,7 +2,7 @@
 // detail/winrt_ssocket_service.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -20,8 +20,8 @@
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
 #include <boost/asio/error.hpp>
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/detail/addressof.hpp>
+#include <boost/asio/execution_context.hpp>
+#include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/winrt_socket_connect_op.hpp>
 #include <boost/asio/detail/winrt_ssocket_service_base.hpp>
 #include <boost/asio/detail/winrt_utils.hpp>
@@ -34,6 +34,7 @@ namespace detail {
 
 template <typename Protocol>
 class winrt_ssocket_service :
+  public execution_context_service_base<winrt_ssocket_service<Protocol> >,
   public winrt_ssocket_service_base
 {
 public:
@@ -61,14 +62,21 @@ public:
   };
 
   // Constructor.
-  winrt_ssocket_service(boost::asio::io_service& io_service)
-    : winrt_ssocket_service_base(io_service)
+  winrt_ssocket_service(execution_context& context)
+    : execution_context_service_base<winrt_ssocket_service<Protocol> >(context),
+      winrt_ssocket_service_base(context)
   {
+  }
+
+  // Destroy all user-defined handler objects owned by the service.
+  void shutdown()
+  {
+    this->base_shutdown();
   }
 
   // Move-construct a new socket implementation.
   void move_construct(implementation_type& impl,
-      implementation_type& other_impl)
+      implementation_type& other_impl) BOOST_ASIO_NOEXCEPT
   {
     this->base_move_construct(impl, other_impl);
 
@@ -171,6 +179,14 @@ public:
     return endpoint;
   }
 
+  // Disable sends or receives on the socket.
+  boost::system::error_code shutdown(implementation_type&,
+      socket_base::shutdown_type, boost::system::error_code& ec)
+  {
+    ec = boost::asio::error::operation_not_supported;
+    return ec;
+  }
+
   // Set a socket option.
   template <typename Option>
   boost::system::error_code set_option(implementation_type& impl,
@@ -203,21 +219,22 @@ public:
   }
 
   // Start an asynchronous connect.
-  template <typename Handler>
+  template <typename Handler, typename IoExecutor>
   void async_connect(implementation_type& impl,
-      const endpoint_type& peer_endpoint, Handler& handler)
+      const endpoint_type& peer_endpoint,
+      Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
       boost_asio_handler_cont_helpers::is_continuation(handler);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef winrt_socket_connect_op<Handler> op;
+    typedef winrt_socket_connect_op<Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
-      boost_asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
-    p.p = new (p.v) op(handler);
+      op::ptr::allocate(handler), 0 };
+    p.p = new (p.v) op(handler, io_ex);
 
-    BOOST_ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_connect"));
+    BOOST_ASIO_HANDLER_CREATION((scheduler_.context(),
+          *p.p, "socket", &impl, 0, "async_connect"));
 
     start_connect_op(impl, peer_endpoint.data(), p.p, is_continuation);
     p.v = p.p = 0;

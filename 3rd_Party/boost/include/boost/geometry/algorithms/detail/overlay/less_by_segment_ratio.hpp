@@ -71,13 +71,11 @@ template
 struct less_by_segment_ratio
 {
     inline less_by_segment_ratio(Turns const& turns
-            , operation_type for_operation
             , Geometry1 const& geometry1
             , Geometry2 const& geometry2
             , RobustPolicy const& robust_policy
             , SideStrategy const& strategy)
         : m_turns(turns)
-        , m_for_operation(for_operation)
         , m_geometry1(geometry1)
         , m_geometry2(geometry2)
         , m_robust_policy(robust_policy)
@@ -88,7 +86,6 @@ struct less_by_segment_ratio
 private :
 
     Turns const& m_turns;
-    operation_type m_for_operation;
     Geometry1 const& m_geometry1;
     Geometry2 const& m_geometry2;
     RobustPolicy const& m_robust_policy;

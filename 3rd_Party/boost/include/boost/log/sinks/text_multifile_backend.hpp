@@ -25,7 +25,10 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/light_function.hpp>
+#include <boost/log/detail/parameter_tools.hpp>
 #include <boost/log/detail/cleanup_scope_guard.hpp>
+#include <boost/log/keywords/auto_newline_mode.hpp>
+#include <boost/log/sinks/auto_newline_mode.hpp>
 #include <boost/log/sinks/basic_sink_backend.hpp>
 #include <boost/log/utility/formatting_ostream.hpp>
 #include <boost/log/detail/header.hpp>
@@ -161,9 +164,23 @@ private:
 public:
     /*!
      * Default constructor. The constructed sink backend has no file name composer and
-     * thus will not write any files.
+     * thus will not write any files. All other parameters are set to their defaults.
      */
     BOOST_LOG_API text_multifile_backend();
+
+    /*!
+     * Constructor. Creates a sink backend with the specified named parameters.
+     * The following named parameters are supported:
+     *
+     * \li \c auto_newline_mode - Specifies automatic trailing newline insertion mode. Must be a value of
+     *                            the \c auto_newline_mode enum. By default, is <tt>auto_newline_mode::insert_if_missing</tt>.
+     */
+#ifndef BOOST_LOG_DOXYGEN_PASS
+    BOOST_LOG_PARAMETRIZED_CONSTRUCTORS_CALL(text_multifile_backend, construct)
+#else
+    template< typename... ArgsT >
+    explicit text_multifile_backend(ArgsT... const& args);
+#endif
 
     /*!
      * Destructor
@@ -182,12 +199,29 @@ public:
     }
 
     /*!
+     * Selects whether a trailing newline should be automatically inserted after every log record. See
+     * \c auto_newline_mode description for the possible modes of operation.
+     *
+     * \param mode The trailing newline insertion mode.
+     */
+    BOOST_LOG_API void set_auto_newline_mode(auto_newline_mode mode);
+
+    /*!
      * The method writes the message to the sink
      */
     BOOST_LOG_API void consume(record_view const& rec, string_type const& formatted_message);
 
 private:
 #ifndef BOOST_LOG_DOXYGEN_PASS
+    //! Constructor implementation
+    template< typename ArgsT >
+    void construct(ArgsT const& args)
+    {
+        construct(args[keywords::auto_newline_mode | insert_if_missing]);
+    }
+    //! Constructor implementation
+    BOOST_LOG_API void construct(auto_newline_mode auto_newline);
+
     //! The method sets the file name composer
     BOOST_LOG_API void set_file_name_composer_internal(file_name_composer_type const& composer);
 #endif // BOOST_LOG_DOXYGEN_PASS

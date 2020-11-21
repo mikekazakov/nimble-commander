@@ -19,7 +19,6 @@ Phil Endecott and Frank Gennari
 #include <limits>
 #include <functional>
 #include <boost/static_assert.hpp>
-#include <boost/serialization/static_warning.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/sort/spreadsort/detail/constants.hpp>
 #include <boost/sort/spreadsort/detail/spreadsort_common.hpp>
@@ -186,9 +185,9 @@ namespace spreadsort {
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
-        //using std::sort if its worst-case is better
+        //using boost::sort::pdqsort if its worst-case is better
         if (count < max_count)
-          std::sort(lastPos, bin_cache[u]);
+          boost::sort::pdqsort(lastPos, bin_cache[u]);
         else
           spreadsort_rec<RandomAccessIter, Div_type, Size_type>(lastPos,
                                                                  bin_cache[u],
@@ -294,7 +293,7 @@ namespace spreadsort {
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[u], comp);
+          boost::sort::pdqsort(lastPos, bin_cache[u], comp);
         else
           spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Compare,
         Size_type, log_mean_bin_size, log_min_split_count, log_finishing_count>
@@ -351,7 +350,7 @@ namespace spreadsort {
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[u]);
+          boost::sort::pdqsort(lastPos, bin_cache[u]);
         else
           spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Size_type,
           log_mean_bin_size, log_min_split_count, log_finishing_count>(lastPos,
@@ -388,12 +387,12 @@ namespace spreadsort {
     template <class RandomAccessIter, class Div_type>
     inline typename boost::disable_if_c< sizeof(Div_type) <= sizeof(size_t)
       || sizeof(Div_type) <= sizeof(boost::uintmax_t), void >::type
-    //defaulting to std::sort when integer_sort won't work
+    //defaulting to boost::sort::pdqsort when integer_sort won't work
     integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
     {
-      //Warning that we're using std::sort, even though integer_sort was called
-      BOOST_STATIC_WARNING( sizeof(Div_type) <= sizeof(size_t) );
-      std::sort(first, last);
+      //Warning that we're using boost::sort::pdqsort, even though integer_sort was called
+      BOOST_STATIC_ASSERT( sizeof(Div_type) <= sizeof(size_t) );
+      boost::sort::pdqsort(first, last);
     }
 
 
@@ -434,13 +433,13 @@ namespace spreadsort {
               class Compare>
     inline typename boost::disable_if_c< sizeof(Div_type) <= sizeof(size_t)
       || sizeof(Div_type) <= sizeof(boost::uintmax_t), void >::type
-    //defaulting to std::sort when integer_sort won't work
+    //defaulting to boost::sort::pdqsort when integer_sort won't work
     integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
                 Right_shift shift, Compare comp)
     {
-      //Warning that we're using std::sort, even though integer_sort was called
-      BOOST_STATIC_WARNING( sizeof(Div_type) <= sizeof(size_t) );
-      std::sort(first, last, comp);
+      //Warning that we're using boost::sort::pdqsort, even though integer_sort was called
+      BOOST_STATIC_ASSERT( sizeof(Div_type) <= sizeof(size_t) );
+      boost::sort::pdqsort(first, last, comp);
     }
 
 
@@ -478,13 +477,13 @@ namespace spreadsort {
     template <class RandomAccessIter, class Div_type, class Right_shift>
     inline typename boost::disable_if_c< sizeof(Div_type) <= sizeof(size_t)
       || sizeof(Div_type) <= sizeof(boost::uintmax_t), void >::type
-    //defaulting to std::sort when integer_sort won't work
+    //defaulting to boost::sort::pdqsort when integer_sort won't work
     integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
                 Right_shift shift)
     {
-      //Warning that we're using std::sort, even though integer_sort was called
-      BOOST_STATIC_WARNING( sizeof(Div_type) <= sizeof(size_t) );
-      std::sort(first, last);
+      //Warning that we're using boost::sort::pdqsort, even though integer_sort was called
+      BOOST_STATIC_ASSERT( sizeof(Div_type) <= sizeof(size_t) );
+      boost::sort::pdqsort(first, last);
     }
   }
 }

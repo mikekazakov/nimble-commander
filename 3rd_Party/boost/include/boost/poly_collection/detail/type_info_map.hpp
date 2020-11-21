@@ -1,4 +1,4 @@
-/* Copyright 2016-2017 Joaquin M Lopez Munoz.
+/* Copyright 2016-2020 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -13,8 +13,11 @@
 #pragma once
 #endif
 
-#include <boost/poly_collection/detail/newdelete_allocator.hpp>
+#include <boost/detail/workaround.hpp>
 #include <functional>
+#include <iterator>
+#include <memory>
+#include <type_traits>
 #include <typeinfo>
 #include <unordered_map>
 #include <utility>
@@ -48,7 +51,6 @@ struct type_info_ptr_equal_to
   {return *p==*q;}
 };
 
-
 template<typename T,typename Allocator>
 class type_info_map
 {
@@ -69,35 +71,68 @@ public:
 
   type_info_map()=default;
   type_info_map(const type_info_map& x):
-    map{x.map},cache{x.cache.get_allocator()}{build_cache(x.cache);}
+    map{x.map},
+    cache{make<cache_type>(std::allocator_traits<cache_allocator_type>::
+      select_on_container_copy_construction(x.cache.get_allocator()))}
+    {build_cache(x.cache);}
   type_info_map(type_info_map&& x)=default;
   type_info_map(const allocator_type& al):
-    map{al},cache{cache_allocator_type{al}}{}
+    map{make<map_type>(al)},cache{make<cache_type>(al)}{}
   type_info_map(const type_info_map& x,const allocator_type& al):
-    map{x.map,al},cache{cache_allocator_type{al}}{build_cache(x.cache);}
+    map{make(x.map,al)},cache{make<cache_type>(al)}
+    {build_cache(x.cache);}
   type_info_map(type_info_map&& x,const allocator_type& al):
-    map{std::move(x.map),al},cache{cache_allocator_type{al}}
+    map{make(std::move(x.map),al)},
+    cache{
+      al==allocator_type{x.map.get_allocator()}&&x.map.empty()?
+      make(std::move(x.cache),al):
+      make<cache_type>(al)
+    }
   {
-    if(al==x.map.get_allocator()&&
-       cache_allocator_type{al}==x.cache.get_allocator()){
-      cache=std::move(x.cache);
-    }
-    else{
+    if(!(al==allocator_type{x.map.get_allocator()}&&x.map.empty())){
       build_cache(x.cache);
-      x.cache.clear();
     }
+    x.map.clear();
+    x.cache.clear();
   }
 
   type_info_map& operator=(const type_info_map& x)
   {
-    if(this!=&x){
-      type_info_map c{x};
-      swap(c);
+    if(this!=&x)try{
+      map=x.map;
+      cache=make<cache_type>(map.get_allocator());
+      build_cache(x.cache);
+    }
+    catch(...){
+      map.clear();
+      cache.clear();
+      throw;
     }
     return *this;
   }
 
-  type_info_map& operator=(type_info_map&& x)=default;
+  type_info_map& operator=(type_info_map&& x)
+  {
+    if(this!=&x)try{
+      map=std::move(x.map);
+      if(map.get_allocator()==x.map.get_allocator()){
+        cache=std::move(x.cache);
+      }
+      else{
+        cache=make<cache_type>(map.get_allocator());
+        build_cache(x.cache);
+        x.cache.clear();
+      }
+    }
+    catch(...){
+      map.clear();
+      cache.clear();
+      x.map.clear();
+      x.cache.clear();
+      throw;
+    }
+    return *this;
+  }
 
   allocator_type get_allocator()const noexcept{return map.get_allocator();}
 
@@ -127,7 +162,9 @@ public:
   template<typename P>
   std::pair<iterator,bool> insert(const key_type& key,P&& x)
   {
-    auto p=map.insert({&key,std::forward<P>(x)});
+    auto c=map.bucket_count();
+    auto p=map.emplace(&key,std::forward<P>(x));
+    if(map.bucket_count()!=c)rebuild_cache();
     cache.insert({&key,p.first});
     return p;
   }
@@ -138,16 +175,68 @@ private:
   using cache_type=std::unordered_map<
     const std::type_info*,iterator,
     std::hash<const std::type_info*>,std::equal_to<const std::type_info*>,
-    newdelete_allocator_adaptor<
-      typename std::allocator_traits<Allocator>::template
-        rebind_alloc<std::pair<const std::type_info* const,iterator>>
-    >
+    typename std::allocator_traits<Allocator>::template
+      rebind_alloc<std::pair<const std::type_info* const,iterator>>
   >;
   using cache_allocator_type=typename cache_type::allocator_type;
+
+#if BOOST_WORKAROUND(BOOST_LIBSTDCXX_VERSION,<40900)
+  /* std::unordered_map(const allocator_type&),
+   * std::unordered_map(const unordered_map&,const allocator_type&) and
+   * std::unordered_map(unordered_map&&,const allocator_type&) not available.
+   */
+
+  template<typename UnorderedMap>
+  static UnorderedMap make(const typename UnorderedMap::allocator_type& al)
+  {
+    return UnorderedMap{
+      10,typename UnorderedMap::hasher{},typename UnorderedMap::key_equal{},al
+    };
+  }
+
+  template<typename UnorderedMap>
+  static typename std::decay<UnorderedMap>::type make(
+    UnorderedMap&& x,
+    const typename std::decay<UnorderedMap>::type::allocator_type& al)
+  {
+    using RawUnorderedMap=typename std::decay<UnorderedMap>::type;
+    using iterator=typename std::conditional<
+      !std::is_lvalue_reference<UnorderedMap>::value&&
+      !std::is_const<UnorderedMap>::value,
+      std::move_iterator<typename RawUnorderedMap::iterator>,
+      typename RawUnorderedMap::const_iterator
+    >::type;
+
+    return RawUnorderedMap{
+      iterator{x.begin()},iterator{x.end()},0,
+      typename RawUnorderedMap::hasher{},typename RawUnorderedMap::key_equal{},
+      al
+    };
+  }
+#else
+  template<typename UnorderedMap>
+  static UnorderedMap make(const typename UnorderedMap::allocator_type& al)
+  {
+    return UnorderedMap{al};
+  }
+
+  template<typename UnorderedMap>
+  static typename std::decay<UnorderedMap>::type make(
+    UnorderedMap&& x,
+    const typename std::decay<UnorderedMap>::type::allocator_type& al)
+  {
+    return {std::forward<UnorderedMap>(x),al};
+  }
+#endif
 
   void build_cache(const cache_type& x)
   {
     for(const auto& p:x)cache.insert({p.first,map.find(p.first)});
+  }
+
+  void rebuild_cache()
+  {
+    for(auto& p:cache)p.second=map.find(p.first);
   }
 
   map_type   map;

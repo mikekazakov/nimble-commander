@@ -4,8 +4,8 @@
 // Copyright (c) 2008-2015 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2015, 2016, 2017.
-// Modifications copyright (c) 2015-2017, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015, 2016, 2017, 2018.
+// Modifications copyright (c) 2015-2018, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -21,19 +21,24 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_ENVELOPE_INTERFACE_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_ENVELOPE_INTERFACE_HPP
 
+
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/static_visitor.hpp>
 #include <boost/variant/variant_fwd.hpp>
 
-#include <boost/geometry/geometries/concepts/check.hpp>
-
 #include <boost/geometry/algorithms/dispatch/envelope.hpp>
+
+#include <boost/geometry/core/coordinate_system.hpp>
+#include <boost/geometry/core/tag.hpp>
+#include <boost/geometry/core/tags.hpp>
+
+#include <boost/geometry/geometries/concepts/check.hpp>
 
 #include <boost/geometry/strategies/default_strategy.hpp>
 #include <boost/geometry/strategies/envelope.hpp>
-#include <boost/geometry/strategies/cartesian/envelope_segment.hpp>
-#include <boost/geometry/strategies/spherical/envelope_segment.hpp>
-#include <boost/geometry/strategies/geographic/envelope_segment.hpp>
+
+#include <boost/geometry/util/select_most_precise.hpp>
+
 
 namespace boost { namespace geometry
 {
@@ -57,13 +62,15 @@ struct envelope
                              Box& box,
                              default_strategy)
     {
-        typedef typename point_type<Geometry>::type point_type;
-        typedef typename coordinate_type<point_type>::type coordinate_type;
-
         typedef typename strategy::envelope::services::default_strategy
             <
-                typename cs_tag<point_type>::type,
-                coordinate_type
+                typename tag<Geometry>::type,
+                typename cs_tag<Geometry>::type,
+                typename select_most_precise
+                    <
+                        typename coordinate_type<Geometry>::type,
+                        typename coordinate_type<Box>::type
+                    >::type
             >::type strategy_type;
 
         dispatch::envelope<Geometry>::apply(geometry, box, strategy_type());

@@ -27,7 +27,7 @@ namespace boost { namespace cnv
     operator()
 
 #define BOOST_CNV_PARAM(param_name, param_type)                         \
-    derived_type& operator()(boost::parameter::aux::tag<ARG::type::param_name, param_type>::type const& arg)
+    derived_type& operator()(boost::parameter::aux::tag<ARG::type::param_name, param_type const>::type const& arg)
 
 template<typename derived_type>
 struct boost::cnv::cnvbase
@@ -78,26 +78,25 @@ struct boost::cnv::cnvbase
     BOOST_CNV_STRING_TO (string_type const& s, optional<   dbl_type>& r) const { str_to_(s, r); }
     BOOST_CNV_STRING_TO (string_type const& s, optional<  ldbl_type>& r) const { str_to_(s, r); }
     // Formatters
-//  BOOST_CNV_PARAM (locale,  std::locale const) { locale_    = arg[ARG::   locale]; return dncast(); }
-    BOOST_CNV_PARAM (base,     base::type const) { base_      = arg[ARG::     base]; return dncast(); }
-    BOOST_CNV_PARAM (adjust, adjust::type const) { adjust_    = arg[ARG::   adjust]; return dncast(); }
-    BOOST_CNV_PARAM (precision,       int const) { precision_ = arg[ARG::precision]; return dncast(); }
-    BOOST_CNV_PARAM (precision,             int) { precision_ = arg[ARG::precision]; return dncast(); }
-    BOOST_CNV_PARAM (uppercase,      bool const) { uppercase_ = arg[ARG::uppercase]; return dncast(); }
-    BOOST_CNV_PARAM (skipws,         bool const) { skipws_    = arg[ARG::   skipws]; return dncast(); }
-    BOOST_CNV_PARAM (width,           int const) { width_     = arg[ARG::    width]; return dncast(); }
-    BOOST_CNV_PARAM (fill,           char const) {  fill_     = arg[ARG::     fill]; return dncast(); }
+//  BOOST_CNV_PARAM (locale, std::locale) { locale_    = arg[ARG::   locale]; return dncast(); }
+    BOOST_CNV_PARAM (base,     cnv::base) { base_      = arg[ARG::     base]; return dncast(); }
+    BOOST_CNV_PARAM (adjust, cnv::adjust) { adjust_    = arg[ARG::   adjust]; return dncast(); }
+    BOOST_CNV_PARAM (precision,      int) { precision_ = arg[ARG::precision]; return dncast(); }
+    BOOST_CNV_PARAM (uppercase,     bool) { uppercase_ = arg[ARG::uppercase]; return dncast(); }
+    BOOST_CNV_PARAM (skipws,        bool) { skipws_    = arg[ARG::   skipws]; return dncast(); }
+    BOOST_CNV_PARAM (width,          int) { width_     = arg[ARG::    width]; return dncast(); }
+    BOOST_CNV_PARAM (fill,          char) {  fill_     = arg[ARG::     fill]; return dncast(); }
 
     protected:
 
     cnvbase()
     :
-        base_       (10),
         skipws_     (false),
         precision_  (0),
         uppercase_  (false),
         width_      (0),
         fill_       (' '),
+        base_       (boost::cnv::base::dec),
         adjust_     (boost::cnv::adjust::right)
     {}
 
@@ -162,13 +161,13 @@ struct boost::cnv::cnvbase
     // ULONG_MAX(8 bytes) = 18446744073709551615 (20(10) or 32(2) characters)
     // double (8 bytes) max is 316 chars
     static int const bufsize_ = 512;
-    int                 base_;
     bool              skipws_;
     int            precision_;
     bool           uppercase_;
     int                width_;
     int                 fill_;
-    adjust::type      adjust_;
+    cnv::base           base_;
+    cnv::adjust       adjust_;
 //  std::locale       locale_;
 };
 

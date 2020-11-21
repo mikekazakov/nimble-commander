@@ -8,17 +8,18 @@
 #define BOOST_MATH_COMMON_FACTOR_RT_HPP
 
 #include <boost/integer/common_factor_rt.hpp>
+#include <boost/config/header_deprecated.hpp>
+
+BOOST_HEADER_DEPRECATED("<boost/integer/common_factor_rt.hpp>");
 
 namespace boost {
    namespace math {
-
       using boost::integer::gcd;
       using boost::integer::lcm;
       using boost::integer::gcd_range;
       using boost::integer::lcm_range;
       using boost::integer::gcd_evaluator;
       using boost::integer::lcm_evaluator;
-
    }
 }
 

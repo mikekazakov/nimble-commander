@@ -10,8 +10,8 @@
 #ifndef BOOST_PROCESS_WINDOWS_INITIALIZERS_CLOSE_IN_HPP
 #define BOOST_PROCESS_WINDOWS_INITIALIZERS_CLOSE_IN_HPP
 
-#include <boost/detail/winapi/process.hpp>
-#include <boost/detail/winapi/handles.hpp>
+#include <boost/winapi/process.hpp>
+#include <boost/winapi/handles.hpp>
 #include <boost/process/detail/handler_base.hpp>
 
 namespace boost { namespace process { namespace detail { namespace windows {
@@ -21,8 +21,8 @@ struct close_in : public ::boost::process::detail::handler_base
     template <class WindowsExecutor>
     void on_setup(WindowsExecutor &e) const
     {
-        e.startup_info.hStdInput = boost::detail::winapi::INVALID_HANDLE_VALUE_;
-        e.startup_info.dwFlags  |= boost::detail::winapi::STARTF_USESTDHANDLES_;
+        e.startup_info.hStdInput = boost::winapi::INVALID_HANDLE_VALUE_;
+        e.startup_info.dwFlags  |= boost::winapi::STARTF_USESTDHANDLES_;
     }
 };
 

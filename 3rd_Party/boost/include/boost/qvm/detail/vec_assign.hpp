@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_185557CE385511E780ACD7B781262D2E
-#define UUID_185557CE385511E780ACD7B781262D2E
+#ifndef BOOST_QVM_185557CE385511E780ACD7B781262D2E
+#define BOOST_QVM_185557CE385511E780ACD7B781262D2E
 
 #include <boost/qvm/gen/vec_assign2.hpp>
 #include <boost/qvm/gen/vec_assign3.hpp>

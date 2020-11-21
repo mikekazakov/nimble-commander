@@ -97,6 +97,13 @@ public:
         #endif
     };
 
+    #ifdef BOOST_COMPUTE_CL_VERSION_1_2
+    enum mem_migration_flags {
+        migrate_to_host = CL_MIGRATE_MEM_OBJECT_HOST,
+        migrate_content_undefined = CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED
+    };
+    #endif // BOOST_COMPUTE_CL_VERSION_1_2
+
     /// Creates a null command queue.
     command_queue()
         : m_queue(0)
@@ -252,6 +259,35 @@ public:
     {
         return get_info<cl_command_queue_properties>(CL_QUEUE_PROPERTIES);
     }
+
+    #if defined(BOOST_COMPUTE_CL_VERSION_2_1) || defined(BOOST_COMPUTE_DOXYGEN_INVOKED)
+    /// Returns the current default device command queue for the underlying device.
+    ///
+    /// \opencl_version_warning{2,1}
+    command_queue get_default_device_queue() const
+    {
+        return command_queue(get_info<cl_command_queue>(CL_QUEUE_DEVICE_DEFAULT));
+    }
+
+    /// Replaces the default device command queue for the underlying device
+    /// with this command queue. Command queue must have been created
+    /// with CL_QUEUE_ON_DEVICE flag.
+    ///
+    /// \see_opencl21_ref{clSetDefaultDeviceCommandQueue}
+    ///
+    /// \opencl_version_warning{2,1}
+    void set_as_default_device_queue() const
+    {
+        cl_int ret = clSetDefaultDeviceCommandQueue(
+            this->get_context().get(),
+            this->get_device().get(),
+            m_queue
+        );
+        if(ret != CL_SUCCESS){
+            BOOST_THROW_EXCEPTION(opencl_error(ret));
+        }
+    }
+    #endif // BOOST_COMPUTE_CL_VERSION_2_1
 
     /// Enqueues a command to read data from \p buffer to host memory.
     ///
@@ -1810,6 +1846,80 @@ public:
     }
     #endif // BOOST_COMPUTE_CL_VERSION_2_0
 
+    #if defined(BOOST_COMPUTE_CL_VERSION_2_1) || defined(BOOST_COMPUTE_DOXYGEN_INVOKED)
+    /// Enqueues a command to indicate which device a set of ranges of SVM allocations
+    /// should be associated with. The pair \p svm_ptrs[i] and \p sizes[i] together define
+    /// the starting address and number of bytes in a range to be migrated.
+    ///
+    /// If \p sizes is empty, then that means every allocation containing any \p svm_ptrs[i]
+    /// is to be migrated. Also, if \p sizes[i] is zero, then the entire allocation containing
+    /// \p svm_ptrs[i] is migrated.
+    ///
+    /// \opencl_version_warning{2,1}
+    ///
+    /// \see_opencl21_ref{clEnqueueSVMMigrateMem}
+    event enqueue_svm_migrate_memory(const std::vector<const void*> &svm_ptrs,
+                                     const std::vector<size_t> &sizes,
+                                     const cl_mem_migration_flags flags = 0,
+                                     const wait_list &events = wait_list())
+    {
+        BOOST_ASSERT(svm_ptrs.size() == sizes.size() || sizes.size() == 0);
+        event event_;
+
+        cl_int ret = clEnqueueSVMMigrateMem(
+            m_queue,
+            static_cast<cl_uint>(svm_ptrs.size()),
+            const_cast<void const **>(&svm_ptrs[0]),
+            sizes.size() > 0 ? &sizes[0] : NULL,
+            flags,
+            events.size(),
+            events.get_event_ptr(),
+            &event_.get()
+        );
+
+        if(ret != CL_SUCCESS){
+            BOOST_THROW_EXCEPTION(opencl_error(ret));
+        }
+
+        return event_;
+    }
+
+    /// Enqueues a command to indicate which device a range of SVM allocation
+    /// should be associated with. The pair \p svm_ptr and \p size together define
+    /// the starting address and number of bytes in a range to be migrated.
+    ///
+    /// If \p size is 0, then the entire allocation containing \p svm_ptr is
+    /// migrated. The default value for \p size is 0.
+    ///
+    /// \opencl_version_warning{2,1}
+    ///
+    /// \see_opencl21_ref{clEnqueueSVMMigrateMem}
+    event enqueue_svm_migrate_memory(const void* svm_ptr,
+                                     const size_t size = 0,
+                                     const cl_mem_migration_flags flags = 0,
+                                     const wait_list &events = wait_list())
+    {
+        event event_;
+
+        cl_int ret = clEnqueueSVMMigrateMem(
+            m_queue,
+            cl_uint(1),
+            &svm_ptr,
+            &size,
+            flags,
+            events.size(),
+            events.get_event_ptr(),
+            &event_.get()
+        );
+
+        if(ret != CL_SUCCESS){
+            BOOST_THROW_EXCEPTION(opencl_error(ret));
+        }
+
+        return event_;
+    }
+    #endif // BOOST_COMPUTE_CL_VERSION_2_1
+
     /// Returns \c true if the command queue is the same at \p other.
     bool operator==(const command_queue &other) const
     {
@@ -1885,6 +1995,12 @@ BOOST_COMPUTE_DETAIL_DEFINE_GET_INFO_SPECIALIZATIONS(command_queue,
     ((uint_, CL_QUEUE_REFERENCE_COUNT))
     ((cl_command_queue_properties, CL_QUEUE_PROPERTIES))
 )
+
+#ifdef BOOST_COMPUTE_CL_VERSION_2_1
+BOOST_COMPUTE_DETAIL_DEFINE_GET_INFO_SPECIALIZATIONS(command_queue,
+    ((cl_command_queue, CL_QUEUE_DEVICE_DEFAULT))
+)
+#endif // BOOST_COMPUTE_CL_VERSION_2_1
 
 } // end compute namespace
 } // end boost namespace

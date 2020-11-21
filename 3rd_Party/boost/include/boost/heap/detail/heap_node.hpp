@@ -11,8 +11,9 @@
 
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/core/allocator_access.hpp>
 #include <boost/intrusive/list.hpp>
-#include <boost/mpl/if.hpp>
+#include <boost/type_traits/conditional.hpp>
 
 #ifdef BOOST_HEAP_SANITYCHECKS
 #define BOOST_HEAP_ASSERT BOOST_ASSERT
@@ -26,11 +27,10 @@ namespace heap   {
 namespace detail {
 
 namespace bi = boost::intrusive;
-namespace mpl = boost::mpl;
 
 template <bool auto_unlink = false>
 struct heap_node_base:
-    bi::list_base_hook<typename mpl::if_c<auto_unlink,
+    bi::list_base_hook<typename boost::conditional<auto_unlink,
                                           bi::link_mode<bi::auto_unlink>,
                                           bi::link_mode<bi::safe_link>
                                          >::type
@@ -132,7 +132,7 @@ template <typename Node,
           typename Alloc>
 struct node_disposer
 {
-    typedef typename Alloc::pointer node_pointer;
+    typedef typename boost::allocator_pointer<Alloc>::type node_pointer;
 
     node_disposer(Alloc & alloc):
         alloc_(alloc)
@@ -142,7 +142,7 @@ struct node_disposer
     {
         node_pointer n = static_cast<node_pointer>(base);
         n->clear_subtree(alloc_);
-        alloc_.destroy(n);
+        n->~Node();
         alloc_.deallocate(n, 1);
     }
 

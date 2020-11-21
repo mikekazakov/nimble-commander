@@ -282,7 +282,7 @@ struct construction_traits;
 template <class Policy>
 struct construction_traits<mpfr_class, Policy>
 {
-   typedef mpl::int_<0> type;
+   typedef boost::integral_constant<int, 0> type;
 };
 
 }
@@ -493,7 +493,7 @@ namespace detail{
 // Version of Digamma accurate to ~100 decimal digits.
 //
 template <class Policy>
-mpfr_class digamma_imp(mpfr_class x, const mpl::int_<0>* , const Policy& pol)
+mpfr_class digamma_imp(mpfr_class x, const boost::integral_constant<int, 0>* , const Policy& pol)
 {
    //
    // This handles reflection of negative arguments, and all our
@@ -533,7 +533,7 @@ mpfr_class digamma_imp(mpfr_class x, const mpl::int_<0>* , const Policy& pol)
 // starting guess for Halley iteration:
 //
 template <class Policy>
-inline mpfr_class erf_inv_imp(const mpfr_class& p, const mpfr_class& q, const Policy&, const boost::mpl::int_<64>*)
+inline mpfr_class erf_inv_imp(const mpfr_class& p, const mpfr_class& q, const Policy&, const boost::integral_constant<int, 64>*)
 {
    BOOST_MATH_STD_USING // for ADL of std names.
 
@@ -946,7 +946,7 @@ inline mpfr_class bessel_i1(mpfr_class x)
 
 }
 
-template<> struct is_convertible<long double, mpfr_class> : public mpl::false_{};
+template<> struct is_convertible<long double, mpfr_class> : public boost::false_type{};
 
 }
 

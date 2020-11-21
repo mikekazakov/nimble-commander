@@ -98,7 +98,7 @@ inline context opengl_create_shared_context()
             CL_GLX_DISPLAY_KHR, (cl_context_properties) glXGetCurrentDisplay(),
         #elif defined(_WIN32)
             CL_GL_CONTEXT_KHR, (cl_context_properties) wglGetCurrentContext(),
-            CL_WGL_HDC_KHR, (cl_context_properties) wglGetCurrentDC(), 
+            CL_WGL_HDC_KHR, (cl_context_properties) wglGetCurrentDC(),
         #endif
             0
         };

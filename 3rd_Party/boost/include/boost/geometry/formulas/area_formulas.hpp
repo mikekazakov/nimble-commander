@@ -1,8 +1,9 @@
 // Boost.Geometry
 
-// Copyright (c) 2015-2016 Oracle and/or its affiliates.
+// Copyright (c) 2015-2018 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -11,7 +12,9 @@
 #ifndef BOOST_GEOMETRY_FORMULAS_AREA_FORMULAS_HPP
 #define BOOST_GEOMETRY_FORMULAS_AREA_FORMULAS_HPP
 
+#include <boost/geometry/core/radian_access.hpp>
 #include <boost/geometry/formulas/flattening.hpp>
+#include <boost/geometry/util/math.hpp>
 #include <boost/math/special_functions/hypot.hpp>
 
 namespace boost { namespace geometry { namespace formula
@@ -44,7 +47,7 @@ public:
         Evaluate the polynomial in x using Horner's method.
     */
     template <typename NT, typename IteratorType>
-    static inline NT horner_evaluate(NT x,
+    static inline NT horner_evaluate(NT const& x,
                                      IteratorType begin,
                                      IteratorType end)
     {
@@ -63,7 +66,7 @@ public:
         https://en.wikipedia.org/wiki/Clenshaw_algorithm
     */
     template <typename NT, typename IteratorType>
-    static inline NT clenshaw_sum(NT cosx,
+    static inline NT clenshaw_sum(NT const& cosx,
                                   IteratorType begin,
                                   IteratorType end)
     {
@@ -165,7 +168,7 @@ public:
                s/case\sCT(/case /g; s/):/:/g'
     */
 
-    static inline void evaluate_coeffs_n(CT n, CT coeffs_n[])
+    static inline void evaluate_coeffs_n(CT const& n, CT coeffs_n[])
     {
 
         switch (SeriesOrder) {
@@ -244,7 +247,7 @@ public:
     /*
        Expand in k2 and ep2.
     */
-    static inline void evaluate_coeffs_ep(CT ep, CT coeffs_n[])
+    static inline void evaluate_coeffs_ep(CT const& ep, CT coeffs_n[])
     {
         switch (SeriesOrder) {
         case 0:
@@ -322,17 +325,21 @@ public:
         Given the set of coefficients coeffs1[] evaluate on var2 and return
         the set of coefficients coeffs2[]
     */
-    static inline void evaluate_coeffs_var2(CT var2,
-                                            CT coeffs1[],
-                                            CT coeffs2[]){
+
+    static inline void evaluate_coeffs_var2(CT const& var2,
+                                            CT const coeffs1[],
+                                            CT coeffs2[])
+    {
         std::size_t begin(0), end(0);
-        for(std::size_t i = 0; i <= SeriesOrder; i++){
+        for(std::size_t i = 0; i <= SeriesOrder; i++)
+        {
             end = begin + SeriesOrder + 1 - i;
-            coeffs2[i] = ((i==0) ? CT(1) : pow(var2,int(i)))
+            coeffs2[i] = ((i==0) ? CT(1) : math::pow(var2, int(i)))
                         * horner_evaluate(var2, coeffs1 + begin, coeffs1 + end);
             begin = end;
         }
     }
+
 
     /*
         Compute the spherical excess of a geodesic (or shperical) segment
@@ -402,13 +409,12 @@ public:
     */
     template <
                 template <typename, bool, bool, bool, bool, bool> class Inverse,
-                //typename AzimuthStrategy,
                 typename PointOfSegment,
                 typename SpheroidConst
              >
     static inline return_type_ellipsoidal ellipsoidal(PointOfSegment const& p1,
                                                       PointOfSegment const& p2,
-                                                      SpheroidConst spheroid_const)
+                                                      SpheroidConst const& spheroid_const)
     {
         return_type_ellipsoidal result;
 
@@ -540,12 +546,11 @@ public:
         return result;
     }
 
-    // Keep track whenever a segment crosses the prime meridian
+    // Check whenever a segment crosses the prime meridian
     // First normalize to [0,360)
-    template <typename PointOfSegment, typename StateType>
-    static inline int crosses_prime_meridian(PointOfSegment const& p1,
-                                             PointOfSegment const& p2,
-                                             StateType& state)
+    template <typename PointOfSegment>
+    static inline bool crosses_prime_meridian(PointOfSegment const& p1,
+                                              PointOfSegment const& p2)
     {
         CT const pi
             = geometry::math::pi<CT>();
@@ -562,12 +567,7 @@ public:
         CT max_lon = (std::max)(p1_lon, p2_lon);
         CT min_lon = (std::min)(p1_lon, p2_lon);
 
-        if(max_lon > pi && min_lon < pi && max_lon - min_lon > pi)
-        {
-            state.m_crosses_prime_meridian++;
-        }
-
-        return state.m_crosses_prime_meridian;
+        return max_lon > pi && min_lon < pi && max_lon - min_lon > pi;
     }
 
 };

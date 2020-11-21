@@ -1,4 +1,4 @@
-/* Copyright 2016-2017 Joaquin M Lopez Munoz.
+/* Copyright 2016-2018 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -35,7 +35,7 @@ struct base_model
 {
   using value_type=Base;
   template<typename Derived>
-  using is_subtype=std::is_base_of<Base,Derived>;
+  using is_implementation=std::is_base_of<Base,Derived>;
   template<typename T>
   using is_terminal=is_final<T>; //TODO: should we say !is_polymorhpic||is_final?
 
@@ -80,15 +80,11 @@ public:
   using iterator=Derived*;
   template<typename Derived>
   using const_iterator=const Derived*;
-  using segment_backend=detail::segment_backend<base_model>;
+  template<typename Allocator>
+  using segment_backend=detail::segment_backend<base_model,Allocator>;
   template<typename Derived,typename Allocator>
-  using segment_backend_implementation=packed_segment<
-    base_model,
-    Derived,
-    typename std::allocator_traits<Allocator>::template rebind_alloc<Derived>
-  >;
-  using segment_backend_unique_ptr=
-    typename segment_backend::segment_backend_unique_ptr;
+  using segment_backend_implementation=
+    packed_segment<base_model,Derived,Allocator>;
 
   static base_iterator nonconst_iterator(const_base_iterator it)
   {
@@ -102,12 +98,6 @@ public:
   static iterator<T> nonconst_iterator(const_iterator<T> it)
   {
     return const_cast<iterator<T>>(it);
-  }
-
-  template<typename Derived,typename Allocator>
-  static segment_backend_unique_ptr make(const Allocator& al)
-  {
-    return segment_backend_implementation<Derived,Allocator>::new_(al,al);
   }
 
 private:

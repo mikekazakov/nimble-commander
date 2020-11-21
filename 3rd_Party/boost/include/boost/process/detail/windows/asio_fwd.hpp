@@ -7,6 +7,7 @@
 #define BOOST_PROCESS_DETAIL_WINDOWS_ASIO_FWD_HPP_
 
 #include <memory>
+#include <boost/asio/ts/netfwd.hpp>
 
 namespace boost { namespace asio {
 
@@ -19,27 +20,19 @@ template<typename Allocator>
 class basic_streambuf;
 
 typedef basic_streambuf<std::allocator<char>> streambuf;
-class io_service;
 
 template <typename Handler>
 class basic_yield_context;
 
 namespace windows {
 
-class stream_handle_service;
-
-template <typename StreamHandleService>
+template <typename Executor>
 class basic_stream_handle;
+typedef basic_stream_handle<any_io_executor> stream_handle;
 
-typedef basic_stream_handle<stream_handle_service> stream_handle;
-
-
-class object_handle_service;
-
-template <typename ObjectHandleService>
+template <typename Executor>
 class basic_object_handle;
-
-typedef basic_object_handle<object_handle_service> object_handle;
+typedef basic_object_handle<any_io_executor> object_handle;
 
 } //windows
 } //asio

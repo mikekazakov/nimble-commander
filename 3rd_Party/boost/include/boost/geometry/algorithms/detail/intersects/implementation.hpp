@@ -29,7 +29,6 @@
 #include <boost/geometry/algorithms/detail/overlay/self_turn_points.hpp>
 #include <boost/geometry/policies/disjoint_interrupt_policy.hpp>
 #include <boost/geometry/policies/robustness/no_rescale_policy.hpp>
-#include <boost/geometry/policies/robustness/segment_ratio_type.hpp>
 
 #include <boost/geometry/strategies/relate.hpp>
 
@@ -53,13 +52,8 @@ struct self_intersects
                 <
                     Geometry, Geometry
                 >::type strategy_type;
-        typedef detail::no_rescale_policy rescale_policy_type;
 
-        typedef detail::overlay::turn_info
-            <
-                point_type,
-                typename segment_ratio_type<point_type, rescale_policy_type>::type
-            > turn_info;
+        typedef detail::overlay::turn_info<point_type> turn_info;
 
         std::deque<turn_info> turns;
 
@@ -69,13 +63,13 @@ struct self_intersects
             > turn_policy;
 
         strategy_type strategy;
-        rescale_policy_type robust_policy;
 
         detail::disjoint::disjoint_interrupt_policy policy;
+    // TODO: skip_adjacent should be set to false
         detail::self_get_turn_points::get_turns
             <
                 false, turn_policy
-            >::apply(geometry, strategy, robust_policy, turns, policy, 0);
+            >::apply(geometry, strategy, detail::no_rescale_policy(), turns, policy, 0, true);
         return policy.has_intersections;
     }
 };

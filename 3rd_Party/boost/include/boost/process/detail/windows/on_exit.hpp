@@ -9,7 +9,6 @@
 #include <boost/process/detail/config.hpp>
 #include <boost/process/detail/handler_base.hpp>
 #include <boost/process/detail/windows/async_handler.hpp>
-#include <boost/detail/winapi/process.hpp>
 #include <system_error>
 #include <functional>
 
@@ -26,10 +25,10 @@ struct on_exit_ : boost::process::detail::windows::async_handler
     template<typename Executor>
     std::function<void(int, const std::error_code&)> on_exit_handler(Executor&)
     {
-        auto handler = this->handler;
-        return [handler](int exit_code, const std::error_code & ec)
+        auto handler_ = this->handler;
+        return [handler_](int exit_code, const std::error_code & ec)
                {
-                    handler(static_cast<int>(exit_code), ec);
+                    handler_(static_cast<int>(exit_code), ec);
                };
 
     }

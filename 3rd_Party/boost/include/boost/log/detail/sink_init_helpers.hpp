@@ -20,9 +20,13 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/type_traits/is_void.hpp>
+#include <boost/type_traits/is_array.hpp>
 #include <boost/core/enable_if.hpp>
-#include <boost/phoenix/core/is_actor.hpp>
+#include <boost/utility/string_view_fwd.hpp>
 #include <boost/log/detail/config.hpp>
+#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+#include <string_view>
+#endif
 #include <boost/log/core/core.hpp>
 #include <boost/log/expressions/filter.hpp>
 #include <boost/log/expressions/formatter.hpp>
@@ -30,6 +34,7 @@
 #include <boost/log/utility/setup/formatter_parser.hpp>
 #include <boost/log/keywords/filter.hpp>
 #include <boost/log/keywords/format.hpp>
+#include <boost/log/detail/is_character_type.hpp>
 #include <boost/log/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
@@ -44,18 +49,39 @@ namespace aux {
 
 // The function creates a filter functional object from the provided argument
 template< typename CharT >
-inline filter acquire_filter(const CharT* filter)
+inline typename boost::enable_if_c<
+    log::aux::is_character_type< CharT >::value,
+    filter
+>::type acquire_filter(const CharT* filter)
 {
     return boost::log::parse_filter(filter);
 }
+
 template< typename CharT, typename TraitsT, typename AllocatorT >
 inline filter acquire_filter(std::basic_string< CharT, TraitsT, AllocatorT > const& filter)
 {
     return boost::log::parse_filter(filter);
 }
+
+#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+template< typename CharT, typename TraitsT >
+inline filter acquire_filter(std::basic_string_view< CharT, TraitsT > const& filter)
+{
+    const CharT* p = filter.data();
+    return boost::log::parse_filter(p, p + filter.size());
+}
+#endif // !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+
+template< typename CharT, typename TraitsT >
+inline filter acquire_filter(boost::basic_string_view< CharT, TraitsT > const& filter)
+{
+    const CharT* p = filter.data();
+    return boost::log::parse_filter(p, p + filter.size());
+}
+
 template< typename FilterT >
-inline typename boost::enable_if_c<
-    phoenix::is_actor< FilterT >::value,
+inline typename boost::disable_if_c<
+    boost::is_array< FilterT >::value,
     FilterT const&
 >::type acquire_filter(FilterT const& filter)
 {
@@ -75,20 +101,41 @@ inline void setup_filter(SinkT& s, ArgsT const& args, mpl::false_)
 }
 
 
-// The function creates a filter functional object from the provided argument
+// The function creates a formatter functional object from the provided argument
 template< typename CharT >
-inline basic_formatter< CharT > acquire_formatter(const CharT* formatter)
+inline typename boost::enable_if_c<
+    log::aux::is_character_type< CharT >::value,
+    basic_formatter< CharT >
+>::type acquire_formatter(const CharT* formatter)
 {
     return boost::log::parse_formatter(formatter);
 }
+
 template< typename CharT, typename TraitsT, typename AllocatorT >
 inline basic_formatter< CharT > acquire_formatter(std::basic_string< CharT, TraitsT, AllocatorT > const& formatter)
 {
     return boost::log::parse_formatter(formatter);
 }
+
+#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+template< typename CharT, typename TraitsT >
+inline basic_formatter< CharT > acquire_formatter(std::basic_string_view< CharT, TraitsT > const& formatter)
+{
+    const CharT* p = formatter.data();
+    return boost::log::parse_formatter(p, p + formatter.size());
+}
+#endif // !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+
+template< typename CharT, typename TraitsT >
+inline basic_formatter< CharT > acquire_formatter(boost::basic_string_view< CharT, TraitsT > const& formatter)
+{
+    const CharT* p = formatter.data();
+    return boost::log::parse_formatter(p, p + formatter.size());
+}
+
 template< typename FormatterT >
-inline typename boost::enable_if_c<
-    phoenix::is_actor< FormatterT >::value,
+inline typename boost::disable_if_c<
+    boost::is_array< FormatterT >::value,
     FormatterT const&
 >::type acquire_formatter(FormatterT const& formatter)
 {

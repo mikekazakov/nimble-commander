@@ -5,11 +5,12 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_X3_DETAIL_ATTRIBUTES_APR_18_2010_0458PM)
-#define SPIRIT_X3_DETAIL_ATTRIBUTES_APR_18_2010_0458PM
+#ifndef BOOST_SPIRIT_X3_NONTERMINAL_DETAIL_TRANSFORM_ATTRIBUTE_HPP
+#define BOOST_SPIRIT_X3_NONTERMINAL_DETAIL_TRANSFORM_ATTRIBUTE_HPP
 
 #include <boost/spirit/home/x3/support/traits/transform_attribute.hpp>
 #include <boost/spirit/home/x3/support/traits/move_to.hpp>
+#include <type_traits>
 #include <utility>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,15 +44,6 @@ namespace boost { namespace spirit { namespace x3
     template <typename Exposed, typename Transformed, typename Enable = void>
     struct transform_attribute
       : default_transform_attribute<Exposed, Transformed> {};
-
-    // reference types need special handling
-    template <typename Attribute>
-    struct transform_attribute<Attribute&, Attribute>
-    {
-        typedef Attribute& type;
-        static Attribute& pre(Attribute& val) { return val; }
-        static void post(Attribute&, Attribute const&) {}
-    };
 
     // unused_type needs some special handling as well
     template <>
@@ -88,23 +80,13 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
 {
     template <typename Exposed, typename Transformed>
     struct transform_attribute<Exposed, Transformed, x3::parser_id>
-      : x3::transform_attribute<Exposed, Transformed> {};
-
-    template <typename Exposed, typename Transformed>
-    struct transform_attribute<Exposed&, Transformed, x3::parser_id>
-      : transform_attribute<Exposed, Transformed, x3::parser_id> {};
-
-    template <typename Attribute>
-    struct transform_attribute<Attribute&, Attribute, x3::parser_id>
-      : x3::transform_attribute<Attribute&, Attribute> {};
-
-    ///////////////////////////////////////////////////////////////////////////
-    template <typename Exposed, typename Transformed>
-    void post_transform(Exposed& dest, Transformed&& attr)
+      : x3::transform_attribute<Exposed, Transformed>
     {
-        return transform_attribute<Exposed, Transformed, x3::parser_id>
-            ::post(dest, std::forward<Transformed>(attr));
-    }
+        static_assert(!std::is_reference<Exposed>::value,
+            "Exposed cannot be a reference type");
+        static_assert(!std::is_reference<Transformed>::value,
+            "Transformed cannot be a reference type");
+    };
 }}}}
 
 #endif

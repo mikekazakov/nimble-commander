@@ -64,6 +64,10 @@ struct dot_product_maker<P1, P2, DimensionCount, DimensionCount>
     \param p1 first point
     \param p2 second point
     \return the dot product
+    
+    \qbk{[heading Examples]}
+    \qbk{[dot_product] [dot_product_output]}
+
  */
 template <typename Point1, typename Point2>
 inline typename select_coordinate_type<Point1, Point2>::type dot_product(

@@ -19,6 +19,7 @@
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
 #include <boost/type_traits/remove_cv.hpp>
+#include <boost/type_traits/is_nothrow_move_constructible.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/attributes/attribute_value.hpp>
 #include <boost/log/utility/type_dispatch/type_dispatcher.hpp>
@@ -64,7 +65,10 @@ public:
     /*!
      * Constructor with initialization of the stored value
      */
-    explicit attribute_value_impl(BOOST_RV_REF(value_type) v) : m_value(boost::move(v)) {}
+    explicit attribute_value_impl(BOOST_RV_REF(value_type) v) BOOST_NOEXCEPT_IF(boost::is_nothrow_move_constructible< value_type >::value) :
+        m_value(boost::move(v))
+    {
+    }
 
     /*!
      * Attribute value dispatching method.
@@ -73,7 +77,7 @@ public:
      *
      * \return \c true if the value has been dispatched, \c false otherwise
      */
-    virtual bool dispatch(type_dispatcher& dispatcher)
+    bool dispatch(type_dispatcher& dispatcher) BOOST_OVERRIDE
     {
         type_dispatcher::callback< value_type > callback = dispatcher.get_callback< value_type >();
         if (callback)
@@ -88,7 +92,7 @@ public:
     /*!
      * \return The attribute value type
      */
-    typeindex::type_index get_type() const { return typeindex::type_id< value_type >(); }
+    typeindex::type_index get_type() const BOOST_OVERRIDE { return typeindex::type_id< value_type >(); }
 
     /*!
      * \return Reference to the contained value.

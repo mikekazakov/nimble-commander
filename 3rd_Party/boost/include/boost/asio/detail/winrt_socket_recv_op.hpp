@@ -2,7 +2,7 @@
 // detail/winrt_socket_recv_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,12 +19,13 @@
 
 #if defined(BOOST_ASIO_WINDOWS_RUNTIME)
 
-#include <boost/asio/detail/addressof.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/asio/detail/buffer_sequence_adapter.hpp>
 #include <boost/asio/detail/fenced_block.hpp>
 #include <boost/asio/detail/handler_alloc_helpers.hpp>
 #include <boost/asio/detail/handler_invoke_helpers.hpp>
+#include <boost/asio/detail/handler_work.hpp>
+#include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/winrt_async_op.hpp>
 #include <boost/asio/error.hpp>
 
@@ -34,29 +35,36 @@ namespace boost {
 namespace asio {
 namespace detail {
 
-template <typename MutableBufferSequence, typename Handler>
+template <typename MutableBufferSequence, typename Handler, typename IoExecutor>
 class winrt_socket_recv_op :
   public winrt_async_op<Windows::Storage::Streams::IBuffer^>
 {
 public:
   BOOST_ASIO_DEFINE_HANDLER_PTR(winrt_socket_recv_op);
 
-  winrt_socket_recv_op(const MutableBufferSequence& buffers, Handler& handler)
+  winrt_socket_recv_op(const MutableBufferSequence& buffers,
+      Handler& handler, const IoExecutor& io_ex)
     : winrt_async_op<Windows::Storage::Streams::IBuffer^>(
           &winrt_socket_recv_op::do_complete),
       buffers_(buffers),
-      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler))
+      handler_(BOOST_ASIO_MOVE_CAST(Handler)(handler)),
+      work_(handler_, io_ex)
   {
   }
 
-  static void do_complete(io_service_impl* owner, operation* base,
+  static void do_complete(void* owner, operation* base,
       const boost::system::error_code&, std::size_t)
   {
     // Take ownership of the operation object.
     winrt_socket_recv_op* o(static_cast<winrt_socket_recv_op*>(base));
     ptr p = { boost::asio::detail::addressof(o->handler_), o, o };
 
-    BOOST_ASIO_HANDLER_COMPLETION((o));
+    BOOST_ASIO_HANDLER_COMPLETION((*o));
+
+    // Take ownership of the operation's outstanding work.
+    handler_work<Handler, IoExecutor> w(
+        BOOST_ASIO_MOVE_CAST2(handler_work<Handler, IoExecutor>)(
+          o->work_));
 
 #if defined(BOOST_ASIO_ENABLE_BUFFER_DEBUGGING)
     // Check whether buffers are still valid.
@@ -91,7 +99,7 @@ public:
     {
       fenced_block b(fenced_block::half);
       BOOST_ASIO_HANDLER_INVOCATION_BEGIN((handler.arg1_, handler.arg2_));
-      boost_asio_handler_invoke_helpers::invoke(handler, handler.handler_);
+      w.complete(handler, handler.handler_);
       BOOST_ASIO_HANDLER_INVOCATION_END;
     }
   }
@@ -99,6 +107,7 @@ public:
 private:
   MutableBufferSequence buffers_;
   Handler handler_;
+  handler_work<Handler, IoExecutor> executor_;
 };
 
 } // namespace detail

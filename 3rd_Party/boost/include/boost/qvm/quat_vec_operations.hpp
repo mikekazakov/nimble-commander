@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_51968952D30A11DFAFE78CE3DFD72085
-#define UUID_51968952D30A11DFAFE78CE3DFD72085
+#ifndef BOOST_QVM_51968952D30A11DFAFE78CE3DFD72085
+#define BOOST_QVM_51968952D30A11DFAFE78CE3DFD72085
 
 #include <boost/qvm/quat_traits.hpp>
 #include <boost/qvm/deduce_vec.hpp>

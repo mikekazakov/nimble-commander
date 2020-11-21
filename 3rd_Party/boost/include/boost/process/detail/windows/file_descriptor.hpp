@@ -6,11 +6,12 @@
 #ifndef BOOST_PROCESS_DETAIL_WINDOWS_FILE_DESCRIPTOR_HPP_
 #define BOOST_PROCESS_DETAIL_WINDOWS_FILE_DESCRIPTOR_HPP_
 
-#include <boost/detail/winapi/basic_types.hpp>
-#include <boost/detail/winapi/handles.hpp>
-#include <boost/detail/winapi/file_management.hpp>
+#include <boost/winapi/basic_types.hpp>
+#include <boost/winapi/handles.hpp>
+#include <boost/winapi/file_management.hpp>
 #include <string>
 #include <boost/filesystem/path.hpp>
+#include <boost/core/exchange.hpp>
 
 namespace boost { namespace process { namespace detail { namespace windows {
 
@@ -22,17 +23,17 @@ struct file_descriptor
         write = 2,
         read_write = 3
     };
-    static ::boost::detail::winapi::DWORD_ desired_access(mode_t mode)
+    static ::boost::winapi::DWORD_ desired_access(mode_t mode)
     {
         switch(mode)
         {
         case read:
-            return ::boost::detail::winapi::GENERIC_READ_;
+            return ::boost::winapi::GENERIC_READ_;
         case write:
-            return ::boost::detail::winapi::GENERIC_WRITE_;
+            return ::boost::winapi::GENERIC_WRITE_;
         case read_write:
-            return ::boost::detail::winapi::GENERIC_READ_
-                 | ::boost::detail::winapi::GENERIC_WRITE_;
+            return ::boost::winapi::GENERIC_READ_
+                 | ::boost::winapi::GENERIC_WRITE_;
         default:
             return 0u;
         }
@@ -45,58 +46,74 @@ struct file_descriptor
     }
 
     file_descriptor(const std::string & path , mode_t mode = read_write)
-        : file_descriptor(path.c_str(), mode) {}
+#if defined(BOOST_NO_ANSI_APIS)
+        : file_descriptor(::boost::process::detail::convert(path), mode)
+#else
+        : file_descriptor(path.c_str(), mode)
+#endif
+    {}
     file_descriptor(const std::wstring & path, mode_t mode = read_write)
         : file_descriptor(path.c_str(), mode) {}
 
     file_descriptor(const char*    path, mode_t mode = read_write)
+#if defined(BOOST_NO_ANSI_APIS)
+        : file_descriptor(std::string(path), mode)
+#else
         : _handle(
-                ::boost::detail::winapi::create_file(
+                ::boost::winapi::create_file(
                         path,
                         desired_access(mode),
-                        ::boost::detail::winapi::FILE_SHARE_READ_ |
-                        ::boost::detail::winapi::FILE_SHARE_WRITE_,
+                        ::boost::winapi::FILE_SHARE_READ_ |
+                        ::boost::winapi::FILE_SHARE_WRITE_,
                         nullptr,
-                        ::boost::detail::winapi::OPEN_ALWAYS_,
+                        ::boost::winapi::OPEN_ALWAYS_,
 
-                        ::boost::detail::winapi::FILE_ATTRIBUTE_NORMAL_,
+                        ::boost::winapi::FILE_ATTRIBUTE_NORMAL_,
                         nullptr
                 ))
+#endif
     {
-
     }
     file_descriptor(const wchar_t * path, mode_t mode = read_write)
         : _handle(
-            ::boost::detail::winapi::create_file(
+            ::boost::winapi::create_file(
                     path,
                     desired_access(mode),
-                    ::boost::detail::winapi::FILE_SHARE_READ_ |
-                    ::boost::detail::winapi::FILE_SHARE_WRITE_,
+                    ::boost::winapi::FILE_SHARE_READ_ |
+                    ::boost::winapi::FILE_SHARE_WRITE_,
                     nullptr,
-                    ::boost::detail::winapi::OPEN_ALWAYS_,
+                    ::boost::winapi::OPEN_ALWAYS_,
 
-                    ::boost::detail::winapi::FILE_ATTRIBUTE_NORMAL_,
+                    ::boost::winapi::FILE_ATTRIBUTE_NORMAL_,
                     nullptr
             ))
 {
 
 }
     file_descriptor(const file_descriptor & ) = delete;
-    file_descriptor(file_descriptor && ) = default;
+    file_descriptor(file_descriptor &&other)
+        : _handle( boost::exchange(other._handle, ::boost::winapi::INVALID_HANDLE_VALUE_) )
+    {
+    }
 
     file_descriptor& operator=(const file_descriptor & ) = delete;
-    file_descriptor& operator=(file_descriptor && ) = default;
+    file_descriptor& operator=(file_descriptor &&other)
+    {
+        if (_handle != ::boost::winapi::INVALID_HANDLE_VALUE_)
+            ::boost::winapi::CloseHandle(_handle);
+        _handle = boost::exchange(other._handle, ::boost::winapi::INVALID_HANDLE_VALUE_);
+    }
 
     ~file_descriptor()
     {
-        if (_handle != ::boost::detail::winapi::INVALID_HANDLE_VALUE_)
-            ::boost::detail::winapi::CloseHandle(_handle);
+        if (_handle != ::boost::winapi::INVALID_HANDLE_VALUE_)
+            ::boost::winapi::CloseHandle(_handle);
     }
 
-    ::boost::detail::winapi::HANDLE_ handle() const { return _handle;}
+    ::boost::winapi::HANDLE_ handle() const { return _handle;}
 
 private:
-    ::boost::detail::winapi::HANDLE_ _handle = ::boost::detail::winapi::INVALID_HANDLE_VALUE_;
+    ::boost::winapi::HANDLE_ _handle = ::boost::winapi::INVALID_HANDLE_VALUE_;
 };
 
 }}}}

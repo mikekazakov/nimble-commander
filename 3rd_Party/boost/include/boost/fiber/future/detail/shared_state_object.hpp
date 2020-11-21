@@ -44,8 +44,9 @@ private:
 
     static void destroy_( allocator_type const& alloc, shared_state_object * p) noexcept {
         allocator_type a{ alloc };
-        a.destroy( p);
-        a.deallocate( p, 1);
+        typedef std::allocator_traits< allocator_type >    traity_type;
+        traity_type::destroy( a, p);
+        traity_type::deallocate( a, p, 1);
     }
 };
 

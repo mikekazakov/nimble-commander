@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_DFFD61ACC72311E6955FFF1F07624D53
-#define UUID_DFFD61ACC72311E6955FFF1F07624D53
+#ifndef BOOST_QVM_DFFD61ACC72311E6955FFF1F07624D53
+#define BOOST_QVM_DFFD61ACC72311E6955FFF1F07624D53
 
 #include <boost/qvm/inline.hpp>
 #include <boost/qvm/assert.hpp>

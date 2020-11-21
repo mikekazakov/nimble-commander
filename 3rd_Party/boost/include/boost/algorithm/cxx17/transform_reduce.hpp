@@ -2,7 +2,7 @@
    Copyright (c) Marshall Clow 2017.
 
    Distributed under the Boost Software License, Version 1.0. (See accompanying
-   file LICENSE10.txt or copy at http://www.boost.org/LICENSE10.txt)
+   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 */
 
 /// \file  transform_reduce.hpp
@@ -15,6 +15,7 @@
 #include <functional>     // for std::plus
 #include <iterator>       // for std::iterator_traits
 
+#include <boost/config.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/range/value_type.hpp>
@@ -46,7 +47,7 @@ template<class InputIterator1, class InputIterator2, class T>
 T transform_reduce(InputIterator1 first1, InputIterator1 last1,
                    InputIterator2 first2, T init)
 {
-    return transform_reduce(first1, last1, first2, init,
+    return boost::algorithm::transform_reduce(first1, last1, first2, init,
                             std::plus<T>(), std::multiplies<T>());
 }
 

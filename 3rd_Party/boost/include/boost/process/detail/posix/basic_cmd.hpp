@@ -118,12 +118,8 @@ struct exe_cmd_init<char> : boost::process::detail::api::handler_base_ext
         else
             exec.exe = &exe.front();
 
-
-        if (!args.empty())
-        {
-            cmd_impl = make_cmd();
-            exec.cmd_line = cmd_impl.data();
-        }
+        cmd_impl = make_cmd();
+        exec.cmd_line = cmd_impl.data();
     }
     static exe_cmd_init exe_args(std::string && exe, std::vector<std::string> && args) {return exe_cmd_init(std::move(exe), std::move(args));}
     static exe_cmd_init cmd     (std::string && cmd)
@@ -163,8 +159,10 @@ std::vector<char*> exe_cmd_init<char>::make_cmd()
     if (!exe.empty())
         vec.push_back(&exe.front());
 
-    for (auto & v : args)
-        vec.push_back(&v.front());
+    if (!args.empty()) {
+        for (auto & v : args)
+            vec.push_back(&v.front());
+    }
 
     vec.push_back(nullptr);
 

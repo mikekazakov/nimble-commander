@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014, 2016.
-// Modifications copyright (c) 2014-2016 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2020.
+// Modifications copyright (c) 2014-2020 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -18,10 +18,10 @@
 #include <boost/math/constants/constants.hpp>
 
 #include <boost/geometry/core/radius.hpp>
-#include <boost/geometry/core/srs.hpp>
 
 #include <boost/geometry/util/condition.hpp>
 #include <boost/geometry/util/math.hpp>
+#include <boost/geometry/util/normalize_spheroidal_coordinates.hpp>
 
 #include <boost/geometry/formulas/differential_quantities.hpp>
 #include <boost/geometry/formulas/flattening.hpp>
@@ -74,13 +74,6 @@ public:
 
         CT const lon1 = lo1;
         CT const lat1 = la1;
-
-        if ( math::equals(distance, Dist(0)) || distance < Dist(0) )
-        {
-            result.lon2 = lon1;
-            result.lat2 = lat1;
-            return result;
-        }
 
         CT const radius_a = CT(get_radius<0>(spheroid));
         CT const radius_b = CT(get_radius<2>(spheroid));
@@ -171,6 +164,15 @@ public:
                               azimuth12, result.reverse_azimuth,
                               radius_b, flattening,
                               result.reduced_length, result.geodesic_scale);
+        }
+
+        if (BOOST_GEOMETRY_CONDITION(CalcCoordinates))
+        {
+            // For longitudes close to the antimeridian the result can be out
+            // of range. Therefore normalize.
+            // It has to be done at the end because otherwise differential
+            // quantities are calculated incorrectly.
+            math::detail::normalize_angle_cond<radian>(result.lon2);
         }
 
         return result;

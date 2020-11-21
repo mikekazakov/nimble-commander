@@ -23,6 +23,7 @@ namespace boost { namespace spirit { namespace char_encoding
     struct unicode
     {
         typedef ::boost::uint32_t char_type;
+        typedef ::boost::uint32_t classify_type;
 
     ///////////////////////////////////////////////////////////////////////////
     //  Posix stuff

@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2016-2017 Oracle and/or its affiliates.
+// Copyright (c) 2016-2018 Oracle and/or its affiliates.
 // Contributed and/or modified by Vissarion Fisikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -23,16 +23,17 @@ namespace strategy { namespace envelope { namespace services
 /*!
 \brief Traits class binding a default envelope strategy to a coordinate system
 \ingroup util
+\tparam Tag tag of geometry
 \tparam CSTag tag of coordinate system
 \tparam CalculationType \tparam_calculation
 */
-template <typename CSTag, typename CalculationType = void>
+template <typename Tag, typename CSTag, typename CalculationType = void>
 struct default_strategy
 {
     BOOST_MPL_ASSERT_MSG
         (
             false, NOT_IMPLEMENTED_FOR_THIS_TYPE
-            , (types<CSTag>)
+            , (types<Tag, CSTag>)
         );
 };
 

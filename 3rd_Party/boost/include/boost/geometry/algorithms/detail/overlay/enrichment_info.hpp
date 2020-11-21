@@ -35,6 +35,7 @@ struct enrichment_info
         , travels_to_ip_index(-1)
         , next_ip_index(-1)
         , startable(true)
+        , prefer_start(true)
         , count_left(0)
         , count_right(0)
         , rank(-1)
@@ -60,6 +61,7 @@ struct enrichment_info
     signed_size_type next_ip_index;
 
     bool startable; // Can be used to start in traverse
+    bool prefer_start; // Is preferred as starting point (if true)
 
     // Counts if polygons left/right of this operation
     std::size_t count_left;

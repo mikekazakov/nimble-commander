@@ -200,7 +200,7 @@ struct protoify< boost::reference_wrapper< const boost::log::expressions::attrib
 
 #define BOOST_LOG_ATTRIBUTE_KEYWORD_IMPL(keyword_, name_, value_type_, tag_ns_)\
     BOOST_LOG_ATTRIBUTE_KEYWORD_TYPE_IMPL(keyword_, name_, value_type_, tag_ns_)\
-    const BOOST_PP_CAT(keyword_, _type) keyword_ = {};
+    BOOST_INLINE_VARIABLE const BOOST_PP_CAT(keyword_, _type) keyword_ = {};
 
 #endif // BOOST_LOG_DOXYGEN_PASS
 

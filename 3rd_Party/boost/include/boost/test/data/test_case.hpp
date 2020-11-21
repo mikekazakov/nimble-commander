@@ -32,13 +32,16 @@
 #include <boost/preprocessor/control/iif.hpp>
 #include <boost/preprocessor/comparison/equal.hpp>
 
-#include <boost/bind.hpp>
-
+#include <boost/bind/bind.hpp>
 #include <boost/type_traits/is_copy_constructible.hpp>
 
-#include <boost/test/detail/suppress_warnings.hpp>
 #include <boost/test/tools/detail/print_helper.hpp>
 #include <boost/test/utils/string_cast.hpp>
+
+#include <list>
+#include <string>
+
+#include <boost/test/detail/suppress_warnings.hpp>
 
 #if defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) \
    && !defined(BOOST_TEST_DATASET_MAX_ARITY)
@@ -123,15 +126,17 @@ public:
     // Constructor
 #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
     test_case_gen( const_string tc_name, const_string tc_file, std::size_t tc_line, DataSet&& ds )
-    : m_tc_name( ut_detail::normalize_test_case_name( tc_name ) )
+    : m_dataset( std::forward<DataSet>( ds ) )
+    , m_generated( false )
+    , m_tc_name( ut_detail::normalize_test_case_name( tc_name ) )
     , m_tc_file( tc_file )
     , m_tc_line( tc_line )
     , m_tc_index( 0 )
-    {
-        data::for_each_sample( std::forward<DataSet>( ds ), *this );
-    }
+    {}
     test_case_gen( test_case_gen&& gen )
-    : m_tc_name( gen.m_tc_name )
+    : m_dataset( std::move( gen.m_dataset ) )
+    , m_generated( gen.m_generated )
+    , m_tc_name( gen.m_tc_name )
     , m_tc_file( gen.m_tc_file )
     , m_tc_line( gen.m_tc_line )
     , m_tc_index( gen.m_tc_index )
@@ -139,17 +144,23 @@ public:
     {}
 #else
     test_case_gen( const_string tc_name, const_string tc_file, std::size_t tc_line, DataSet const& ds )
-    : m_tc_name( ut_detail::normalize_test_case_name( tc_name ) )
-    , m_tc_file( tc_file )    
+    : m_dataset( ds )
+    , m_generated( false )
+    , m_tc_name( ut_detail::normalize_test_case_name( tc_name ) )
+    , m_tc_file( tc_file )
     , m_tc_line( tc_line )
     , m_tc_index( 0 )
-    {
-        data::for_each_sample( ds, *this );
-    }
+    {}
 #endif
 
+public:
     virtual test_unit* next() const
     {
+        if(!m_generated) {
+            data::for_each_sample( m_dataset, *this );
+            m_generated = true;
+        }
+
         if( m_test_cases.empty() )
             return 0;
 
@@ -159,8 +170,10 @@ public:
         return res;
     }
 
+
 #if !defined(BOOST_TEST_DATASET_VARIADIC)
     // see BOOST_TEST_DATASET_MAX_ARITY to increase the default supported arity
+    // there is also a limit on boost::bind
 #define TC_MAKE(z,arity,_)                                                              \
     template<BOOST_PP_ENUM_PARAMS(arity, typename Arg)>                                 \
     void    operator()( BOOST_PP_ENUM_BINARY_PARAMS(arity, Arg, const& arg) ) const     \
@@ -179,8 +192,8 @@ public:
             new test_case( genTestCaseName(),
                            m_tc_file,
                            m_tc_line,
-                           boost::bind( &TestCase::template test_method<Arg...>,
-                                        boost_bind_rvalue_holder_helper(std::forward<Arg>(arg))...)));
+                           std::bind( &TestCase::template test_method<Arg...>,
+                                      boost_bind_rvalue_holder_helper(std::forward<Arg>(arg))...)));
     }
 #endif
 
@@ -191,6 +204,8 @@ private:
     }
 
     // Data members
+    DataSet                         m_dataset;
+    mutable bool                    m_generated;
     std::string                     m_tc_name;
     const_string                    m_tc_file;
     std::size_t                     m_tc_line;
@@ -202,10 +217,10 @@ private:
 
 #ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
 template<typename TestCase,typename DataSet>
-test_case_gen<TestCase,DataSet>
+boost::shared_ptr<test_unit_generator> //test_case_gen<TestCase,DataSet>
 make_test_case_gen( const_string tc_name, const_string tc_file, std::size_t tc_line, DataSet&& ds )
 {
-    return test_case_gen<TestCase,DataSet>( tc_name, tc_file, tc_line, std::forward<DataSet>(ds) );
+    return boost::shared_ptr<test_unit_generator>(new test_case_gen<TestCase,DataSet>( tc_name, tc_file, tc_line, std::forward<DataSet>(ds) ));
 }
 #else
 template<typename TestCase,typename DataSet>
@@ -237,20 +252,29 @@ struct BOOST_PP_CAT(test_name, case) : public F {                       \
     template<BOOST_PP_ENUM_PARAMS(arity, typename Arg)>                 \
     static void test_method( BOOST_DATA_TEST_CASE_PARAMS( params ) )    \
     {                                                                   \
-        BOOST_TEST_CHECKPOINT('"' << #test_name << "\" fixture entry.");\
-        BOOST_PP_CAT(test_name, case) t;                                \
-        BOOST_TEST_CHECKPOINT('"' << #test_name << "\" entry.");        \
         BOOST_TEST_CONTEXT( ""                                          \
             BOOST_PP_SEQ_FOR_EACH(BOOST_DATA_TEST_CONTEXT, _, params))  \
-        t._impl(BOOST_PP_SEQ_ENUM(params));                             \
-        BOOST_TEST_CHECKPOINT('"' << #test_name << "\" exit.");         \
+        {                                                               \
+          BOOST_TEST_CHECKPOINT('"' << #test_name << "\" fixture ctor");\
+          BOOST_PP_CAT(test_name, case) t;                              \
+          BOOST_TEST_CHECKPOINT('"'                                     \
+              << #test_name << "\" fixture setup");                     \
+          boost::unit_test::setup_conditional(t);                       \
+          BOOST_TEST_CHECKPOINT('"' << #test_name << "\" test entry");  \
+          t._impl(BOOST_PP_SEQ_ENUM(params));                           \
+          BOOST_TEST_CHECKPOINT('"'                                     \
+              << #test_name << "\" fixture teardown");                  \
+          boost::unit_test::teardown_conditional(t);                    \
+          BOOST_TEST_CHECKPOINT('"' << #test_name << "\" fixture dtor");\
+        }                                                               \
     }                                                                   \
 private:                                                                \
     template<BOOST_PP_ENUM_PARAMS(arity, typename Arg)>                 \
     void _impl(BOOST_DATA_TEST_CASE_PARAMS( params ));                  \
 };                                                                      \
                                                                         \
-BOOST_AUTO_TEST_SUITE( test_name )                                      \
+BOOST_AUTO_TEST_SUITE( test_name,                                       \
+                       *boost::unit_test::decorator::stack_decorator()) \
                                                                         \
 BOOST_AUTO_TU_REGISTRAR( BOOST_PP_CAT(test_name, case) )(               \
     boost::unit_test::data::ds_detail::make_test_case_gen<              \
@@ -258,7 +282,7 @@ BOOST_AUTO_TU_REGISTRAR( BOOST_PP_CAT(test_name, case) )(               \
           BOOST_STRINGIZE( test_name ),                                 \
           __FILE__, __LINE__,                                           \
           boost::unit_test::data::ds_detail::seed{} ->* dataset ),      \
-    boost::unit_test::decorator::collector::instance() );               \
+    boost::unit_test::decorator::collector_t::instance() );             \
                                                                         \
 BOOST_AUTO_TEST_SUITE_END()                                             \
                                                                         \

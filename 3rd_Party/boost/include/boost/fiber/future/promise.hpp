@@ -41,7 +41,7 @@ struct promise_base {
         typedef pointer_traits< typename traits_type::pointer > ptrait_type;
         typename object_type::allocator_type a{ alloc };
         typename traits_type::pointer ptr{ traits_type::allocate( a, 1) };
-        typename ptrait_type::element_type* p = ptrait_type::to_address(ptr);
+        typename ptrait_type::element_type* p = boost::to_address(ptr);
 
         try {
             traits_type::construct( a, p, a);
@@ -53,7 +53,7 @@ struct promise_base {
     }
 
     ~promise_base() {
-        if ( future_) {
+        if ( future_ && obtained_) {
             future_->owner_destroyed();
         }
     }

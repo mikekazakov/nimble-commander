@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2014 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014, 2017.
-// Modifications copyright (c) 2014-2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014, 2017, 2018.
+// Modifications copyright (c) 2014-2018 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -23,22 +23,26 @@
 #include <boost/range.hpp>
 #include <boost/type_traits/integral_constant.hpp>
 
+#include <boost/geometry/algorithms/detail/assign_box_corners.hpp>
+#include <boost/geometry/algorithms/detail/signed_size_type.hpp>
+#include <boost/geometry/algorithms/detail/overlay/append_no_duplicates.hpp>
+#include <boost/geometry/algorithms/detail/overlay/append_no_dups_or_spikes.hpp>
+#include <boost/geometry/algorithms/not_implemented.hpp>
+
 #include <boost/geometry/core/assert.hpp>
 #include <boost/geometry/core/exterior_ring.hpp>
 #include <boost/geometry/core/interior_rings.hpp>
 #include <boost/geometry/core/ring_type.hpp>
 #include <boost/geometry/core/tags.hpp>
-#include <boost/geometry/algorithms/not_implemented.hpp>
-#include <boost/geometry/geometries/concepts/check.hpp>
-#include <boost/geometry/iterators/ever_circling_iterator.hpp>
-#include <boost/geometry/views/closeable_view.hpp>
-#include <boost/geometry/views/reversible_view.hpp>
 
-#include <boost/geometry/algorithms/detail/overlay/append_no_duplicates.hpp>
-#include <boost/geometry/algorithms/detail/overlay/append_no_dups_or_spikes.hpp>
-#include <boost/geometry/algorithms/detail/signed_size_type.hpp>
+#include <boost/geometry/geometries/concepts/check.hpp>
+
+#include <boost/geometry/iterators/ever_circling_iterator.hpp>
 
 #include <boost/geometry/util/range.hpp>
+
+#include <boost/geometry/views/closeable_view.hpp>
+#include <boost/geometry/views/reversible_view.hpp>
 
 
 namespace boost { namespace geometry
@@ -137,11 +141,11 @@ private:
     template <typename RangeOut, typename Point, typename SideStrategy, typename RobustPolicy>
     static inline void append_to_output(RangeOut& current_output,
                                         Point const& point,
-                                        SideStrategy const&,
+                                        SideStrategy const& strategy,
                                         RobustPolicy const&,
                                         boost::false_type const&)
     {
-        detail::overlay::append_no_duplicates(current_output, point);
+        detail::overlay::append_no_duplicates(current_output, point, strategy.get_equals_point_point_strategy());
     }
 
 public:

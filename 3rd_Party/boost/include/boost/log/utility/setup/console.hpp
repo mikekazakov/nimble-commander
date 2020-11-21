@@ -16,10 +16,12 @@
 #define BOOST_LOG_UTILITY_SETUP_CONSOLE_HPP_INCLUDED_
 
 #include <iostream>
+#include <boost/type_traits/is_void.hpp>
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared_object.hpp>
 #include <boost/core/null_deleter.hpp>
 #include <boost/log/detail/config.hpp>
+#include <boost/log/detail/parameter_tools.hpp>
 #include <boost/log/detail/sink_init_helpers.hpp>
 #ifndef BOOST_LOG_NO_THREADS
 #include <boost/log/sinks/sync_frontend.hpp>
@@ -29,7 +31,6 @@
 #include <boost/log/sinks/text_ostream_backend.hpp>
 #include <boost/log/keywords/format.hpp>
 #include <boost/log/keywords/filter.hpp>
-#include <boost/log/keywords/auto_flush.hpp>
 #include <boost/log/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
@@ -62,10 +63,9 @@ shared_ptr<
     shared_ptr< std::basic_ostream< CharT > > pStream(&strm, boost::null_deleter());
 
     typedef sinks::basic_text_ostream_backend< CharT > backend_t;
-    shared_ptr< backend_t > pBackend = boost::make_shared< backend_t >();
+    shared_ptr< backend_t > pBackend = boost::make_shared< backend_t >(args);
 
     pBackend->add_stream(pStream);
-    pBackend->auto_flush(args[keywords::auto_flush | false]);
 
     typedef BOOST_LOG_CONSOLE_SINK_FRONTEND_INTERNAL< backend_t > sink_t;
     shared_ptr< sink_t > pSink = boost::make_shared< sink_t >(pBackend);
@@ -112,7 +112,7 @@ inline shared_ptr<
 > add_console_log()
 {
     return aux::add_console_log(
-        aux::default_console_stream< CharT >::get(), keywords::auto_flush = false);
+        aux::default_console_stream< CharT >::get(), log::aux::empty_arg_list());
 }
 
 
@@ -123,7 +123,7 @@ inline shared_ptr<
     >
 > add_console_log(std::basic_ostream< CharT >& strm)
 {
-    return aux::add_console_log(strm, keywords::auto_flush = false);
+    return aux::add_console_log(strm, log::aux::empty_arg_list());
 }
 
 template< typename CharT, typename ArgT1 >
@@ -156,6 +156,16 @@ inline shared_ptr<
     return aux::add_console_log(strm, (arg1, arg2, arg3));
 }
 
+template< typename CharT, typename ArgT1, typename ArgT2, typename ArgT3, typename ArgT4 >
+inline shared_ptr<
+    BOOST_LOG_CONSOLE_SINK_FRONTEND_INTERNAL<
+        sinks::basic_text_ostream_backend< CharT >
+    >
+> add_console_log(std::basic_ostream< CharT >& strm, ArgT1 const& arg1, ArgT2 const& arg2, ArgT3 const& arg3, ArgT3 const& arg4)
+{
+    return aux::add_console_log(strm, (arg1, arg2, arg3, arg4));
+}
+
 #else // BOOST_LOG_DOXYGEN_PASS
 
 /*!
@@ -170,6 +180,8 @@ inline shared_ptr<
  *                           or a formatter lambda expression (either streaming or Boost.Format-like notation).
  *             \li \c auto_flush A boolean flag that shows whether the sink should automatically flush the stream
  *                               after each written record.
+ *             \li \c auto_newline_mode - Specifies automatic trailing newline insertion mode. Must be a value of
+ *                                        the \c auto_newline_mode enum. By default, is <tt>auto_newline_mode::insert_if_missing</tt>.
  * \return Pointer to the constructed sink.
  */
 template< typename CharT, typename... ArgsT >

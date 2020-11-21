@@ -10,8 +10,8 @@
 #ifndef BOOST_PROCESS_WINDOWS_INITIALIZERS_CLOSE_OUT_HPP
 #define BOOST_PROCESS_WINDOWS_INITIALIZERS_CLOSE_OUT_HPP
 
-#include <boost/detail/winapi/process.hpp>
-#include <boost/detail/winapi/handles.hpp>
+#include <boost/winapi/process.hpp>
+#include <boost/winapi/handles.hpp>
 #include <boost/process/detail/handler_base.hpp>
 
 namespace boost { namespace process { namespace detail { namespace windows {
@@ -27,25 +27,25 @@ template<>
 template<typename WindowsExecutor>
 void close_out<1,-1>::on_setup(WindowsExecutor &e) const
 {
-    e.startup_info.hStdOutput = ::boost::detail::winapi::INVALID_HANDLE_VALUE_;
-    e.startup_info.dwFlags   |= ::boost::detail::winapi::STARTF_USESTDHANDLES_;
+    e.startup_info.hStdOutput = ::boost::winapi::INVALID_HANDLE_VALUE_;
+    e.startup_info.dwFlags   |= ::boost::winapi::STARTF_USESTDHANDLES_;
 }
 
 template<>
 template<typename WindowsExecutor>
 void close_out<2,-1>::on_setup(WindowsExecutor &e) const
 {
-    e.startup_info.hStdError = ::boost::detail::winapi::INVALID_HANDLE_VALUE_;
-    e.startup_info.dwFlags  |= ::boost::detail::winapi::STARTF_USESTDHANDLES_;
+    e.startup_info.hStdError = ::boost::winapi::INVALID_HANDLE_VALUE_;
+    e.startup_info.dwFlags  |= ::boost::winapi::STARTF_USESTDHANDLES_;
 }
 
 template<>
 template<typename WindowsExecutor>
 void close_out<1,2>::on_setup(WindowsExecutor &e) const
 {
-    e.startup_info.hStdOutput = ::boost::detail::winapi::INVALID_HANDLE_VALUE_;
-    e.startup_info.hStdError  = ::boost::detail::winapi::INVALID_HANDLE_VALUE_;
-    e.startup_info.dwFlags   |= ::boost::detail::winapi::STARTF_USESTDHANDLES_;
+    e.startup_info.hStdOutput = ::boost::winapi::INVALID_HANDLE_VALUE_;
+    e.startup_info.hStdError  = ::boost::winapi::INVALID_HANDLE_VALUE_;
+    e.startup_info.dwFlags   |= ::boost::winapi::STARTF_USESTDHANDLES_;
 }
 
 }}}}

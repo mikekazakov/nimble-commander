@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2016, Oracle and/or its affiliates.
+// Copyright (c) 2016-2017, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -22,6 +22,7 @@
 
 #include <boost/geometry/formulas/eccentricity_sqr.hpp>
 #include <boost/geometry/formulas/flattening.hpp>
+#include <boost/geometry/formulas/unit_spheroid.hpp>
 
 #include <boost/geometry/util/math.hpp>
 #include <boost/geometry/util/normalize_spheroidal_coordinates.hpp>
@@ -186,7 +187,7 @@ inline Point3d projected_to_surface(Point3d const& direction, Spheroid const& sp
     //coord_t const b_sqr = math::sqr(get_radius<2>(spheroid));
     // "unit" spheroid, a = 1
     coord_t const a_sqr = 1;
-    coord_t const b_sqr = math::sqr(get_radius<2>(spheroid) / get_radius<0>(spheroid));
+    coord_t const b_sqr = math::sqr(formula::unit_spheroid_b<coord_t>(spheroid));
 
     coord_t const param_a = (dx*dx + dy*dy) / a_sqr + dz*dz / b_sqr;
     coord_t const delta = c4 * param_a;
@@ -226,7 +227,7 @@ inline bool projected_to_surface(Point3d const& origin, Point3d const& direction
     //coord_t const b_sqr = math::sqr(get_radius<2>(spheroid));
     // "unit" spheroid, a = 1
     coord_t const a_sqr = 1;
-    coord_t const b_sqr = math::sqr(get_radius<2>(spheroid) / get_radius<0>(spheroid));
+    coord_t const b_sqr = math::sqr(formula::unit_spheroid_b<coord_t>(spheroid));
 
     coord_t const param_a = (dx*dx + dy*dy) / a_sqr + dz*dz / b_sqr;
     coord_t const param_b = c2 * ((ox*dx + oy*dy) / a_sqr + oz*dz / b_sqr);

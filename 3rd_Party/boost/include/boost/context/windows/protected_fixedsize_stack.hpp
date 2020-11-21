@@ -16,6 +16,7 @@ extern "C" {
 #include <new>
 
 #include <boost/config.hpp>
+#include <boost/core/ignore_unused.hpp>
 
 #include <boost/context/detail/config.hpp>
 #include <boost/context/stack_context.hpp>
@@ -53,14 +54,10 @@ public:
         if ( ! vp) throw std::bad_alloc();
 
         DWORD old_options;
-#if defined(BOOST_DISABLE_ASSERTS)
-        ::VirtualProtect(
-            vp, traits_type::page_size(), PAGE_READWRITE | PAGE_GUARD /*PAGE_NOACCESS*/, & old_options);
-#else
         const BOOL result = ::VirtualProtect(
             vp, traits_type::page_size(), PAGE_READWRITE | PAGE_GUARD /*PAGE_NOACCESS*/, & old_options);
+        boost::ignore_unused(result);
         BOOST_ASSERT( FALSE != result);
-#endif
 
         stack_context sctx;
         sctx.size = size__;

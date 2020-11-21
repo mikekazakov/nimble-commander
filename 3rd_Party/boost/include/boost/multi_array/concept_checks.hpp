@@ -10,8 +10,8 @@
 //           Andrew Lumsdaine
 //  See http://www.boost.org/libs/multi_array for documentation.
 
-#ifndef BOOST_MULTI_ARRAY_CONCEPT_CHECKS_RG110101_HPP
-#define BOOST_MULTI_ARRAY_CONCEPT_CHECKS_RG110101_HPP
+#ifndef BOOST_MULTI_ARRAY_CONCEPT_CHECKS_HPP
+#define BOOST_MULTI_ARRAY_CONCEPT_CHECKS_HPP
 
 //
 // concept-checks.hpp - Checks out Const MultiArray and MultiArray
@@ -39,8 +39,6 @@ namespace detail {
 
     template <typename Array, typename IdxGen, typename Call_Type>
     static void call(Array& a, const IdxGen& idgen, Call_Type c) {
-      typedef typename Array::index_range index_range;
-      typedef typename Array::index index;
       idgen_helper<N-1>::call(a,idgen[c],c);
     }
   };
@@ -50,8 +48,6 @@ namespace detail {
 
     template <typename Array, typename IdxGen, typename Call_Type>
     static void call(Array& a, const IdxGen& idgen, Call_Type) {
-      typedef typename Array::index_range index_range;
-      typedef typename Array::index index;
       a[ idgen ];
     }
   };
@@ -222,4 +218,4 @@ namespace detail {
 } // namespace boost
 
 
-#endif // BOOST_MULTI_ARRAY_CONCEPT_CHECKS_RG110101_HPP
+#endif

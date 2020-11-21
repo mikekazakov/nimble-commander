@@ -27,6 +27,8 @@
 #include <boost/interprocess/creation_tags.hpp>
 #include <boost/interprocess/exceptions.hpp>
 #include <boost/interprocess/detail/posix_time_types_wrk.hpp>
+#include <boost/interprocess/sync/detail/locks.hpp>
+#include <boost/interprocess/sync/detail/common_algorithms.hpp>
 
 #if !defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION) && \
    (defined(BOOST_INTERPROCESS_POSIX_PROCESS_SHARED) && defined(BOOST_INTERPROCESS_POSIX_UNNAMED_SEMAPHORES))
@@ -95,14 +97,15 @@ class interprocess_semaphore
    private:
    #if defined(BOOST_INTERPROCESS_USE_GENERIC_EMULATION)
       #undef BOOST_INTERPROCESS_USE_GENERIC_EMULATION
-      ipcdetail::spin_semaphore m_sem;
+      typedef ipcdetail::spin_semaphore internal_sem_t;
    #elif defined(BOOST_INTERPROCESS_USE_WINDOWS)
       #undef BOOST_INTERPROCESS_USE_WINDOWS
-      ipcdetail::windows_semaphore m_sem;
+      typedef ipcdetail::windows_semaphore internal_sem_t;
    #else
       #undef BOOST_INTERPROCESS_USE_POSIX
-      ipcdetail::posix_semaphore m_sem;
+      typedef ipcdetail::posix_semaphore internal_sem_t;
    #endif   //#if defined(BOOST_INTERPROCESS_USE_GENERIC_EMULATION)
+   internal_sem_t m_sem;
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 };
 
@@ -120,18 +123,10 @@ inline interprocess_semaphore::~interprocess_semaphore(){}
 
 inline void interprocess_semaphore::wait()
 {
-   #ifdef BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING
-      boost::posix_time::ptime wait_time
-         = microsec_clock::universal_time()
-         + boost::posix_time::milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS);
-      if (!m_sem.timed_wait(wait_time))
-      {
-         throw interprocess_exception(timeout_when_waiting_error, "Interprocess semaphore timeout when waiting. Possible deadlock: owner died without posting?");
-      }
-   #else
-      m_sem.wait();
-   #endif
+   ipcdetail::lock_to_wait<internal_sem_t> ltw(m_sem);
+   timeout_when_locking_aware_lock(ltw);
 }
+
 inline bool interprocess_semaphore::try_wait()
 { return m_sem.try_wait(); }
 

@@ -6,8 +6,8 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_NO_SKIP_JAN_16_2010_0802PM)
-#define SPIRIT_NO_SKIP_JAN_16_2010_0802PM
+#if !defined(BOOST_SPIRIT_X3_NO_SKIP_JAN_16_2010_0802PM)
+#define BOOST_SPIRIT_X3_NO_SKIP_JAN_16_2010_0802PM
 
 #include <boost/spirit/home/x3/support/context.hpp>
 #include <boost/spirit/home/x3/support/unused.hpp>
@@ -26,7 +26,7 @@ namespace boost { namespace spirit { namespace x3
         static bool const is_pass_through_unary = true;
         static bool const handles_container = Subject::handles_container;
 
-        no_skip_directive(Subject const& subject)
+        constexpr no_skip_directive(Subject const& subject)
           : base_type(subject) {}
 
         template <typename Iterator, typename Context
@@ -65,14 +65,14 @@ namespace boost { namespace spirit { namespace x3
     struct no_skip_gen
     {
         template <typename Subject>
-        no_skip_directive<typename extension::as_parser<Subject>::value_type>
+        constexpr no_skip_directive<typename extension::as_parser<Subject>::value_type>
         operator[](Subject const& subject) const
         {
             return { as_parser(subject) };
         }
     };
 
-    auto const no_skip = no_skip_gen{};
+    constexpr auto no_skip = no_skip_gen{};
 }}}
 
 #endif

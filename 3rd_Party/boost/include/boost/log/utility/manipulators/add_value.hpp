@@ -15,10 +15,10 @@
 #ifndef BOOST_LOG_UTILITY_MANIPULATORS_ADD_VALUE_HPP_INCLUDED_
 #define BOOST_LOG_UTILITY_MANIPULATORS_ADD_VALUE_HPP_INCLUDED_
 
-#include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_scalar.hpp>
 #include <boost/type_traits/remove_cv.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+#include <boost/type_traits/conditional.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/embedded_string_type.hpp>
 #include <boost/log/attributes/attribute_name.hpp>
@@ -61,14 +61,14 @@ private:
     //  To work around this problem we save the value inside the manipulator in this case.
     typedef typename remove_reference< reference_type >::type& lvalue_reference_type;
 
-    typedef typename mpl::if_<
-        is_scalar< value_type >,
+    typedef typename conditional<
+        is_scalar< value_type >::value,
         value_type,
         lvalue_reference_type
     >::type stored_type;
 
-    typedef typename mpl::if_<
-        is_scalar< value_type >,
+    typedef typename conditional<
+        is_scalar< value_type >::value,
         value_type,
         reference_type
     >::type get_value_result_type;

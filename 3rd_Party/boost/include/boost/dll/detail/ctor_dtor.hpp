@@ -9,7 +9,7 @@
 #ifndef BOOST_DLL_DETAIL_CTOR_DTOR_HPP_
 #define BOOST_DLL_DETAIL_CTOR_DTOR_HPP_
 
-#include <boost/config.hpp>
+#include <boost/dll/config.hpp>
 #ifdef BOOST_HAS_PRAGMA_ONCE
 # pragma once
 #endif
@@ -17,7 +17,7 @@
 #include <boost/dll/detail/aggressive_ptr_cast.hpp>
 #include <boost/dll/detail/get_mem_fn_type.hpp>
 
-#if defined(BOOST_MSVC) || defined(BOOST_MSVC_VER)
+#if defined(_MSC_VER) // MSVC, Clang-cl, and ICC on Windows
 #   include <boost/dll/detail/demangling/msvc.hpp>
 #else
 #   include <boost/dll/detail/demangling/itanium.hpp>
@@ -46,7 +46,7 @@ struct constructor<Class(Args...)> {
     //! The allocating constructor.  @warning May differ with the compiler. Use @ref constructor::call_allocating instead.
     allocating_t allocating;
 
-    //! Call the standard contructor
+    //! Call the standard constructor
     void call_standard  (Class * const ptr, Args...args){ (ptr->*standard)(static_cast<Args>(args)...); }
 
     //! Call the deleting destructor
@@ -91,7 +91,7 @@ struct destructor {
     //! The deleting destructor. @warning May differ with the compiler. Use @ref destructor::call_deallocating instead.
     deleting_t deleting;
 
-    //! Call the standard contructor
+    //! Call the standard constructor
     void call_standard(Class * const ptr){ standard(ptr); }
 
     //! Call the deleting destructor
@@ -117,7 +117,8 @@ struct destructor {
     {}
 };
 
-#if defined(BOOST_MSVC) || defined(BOOST_MSVC_VER)
+#if defined(_MSC_VER) // MSVC, Clang-cl, and ICC on Windows
+
 template<typename Signature, typename Lib>
 constructor<Signature> load_ctor(Lib & lib, const mangled_storage_impl::ctor_sym & ct) {
     typedef typename constructor<Signature>::standard_t standard_t;
@@ -130,7 +131,7 @@ destructor<Class> load_dtor(Lib & lib, const mangled_storage_impl::dtor_sym & dt
     typedef typename destructor<Class>::standard_t standard_t;
     //@apolukhin That does NOT work this way with MSVC-14 x32 via memcpy. The x64 is different.
     //standard_t dtor = &lib.template get< typename boost::remove_pointer<standard_t>::type >(dt);
-    void * buf = &lib.template get<int>(dt);
+    void * buf = &lib.template get<unsigned char>(dt);
     standard_t dtor;
     std::memcpy(&dtor, &buf, sizeof(dtor));
     return destructor<Class>(dtor);
@@ -152,12 +153,12 @@ constructor<Signature> load_ctor(Lib & lib, const mangled_storage_impl::ctor_sym
     {
         //the only way this works on mingw/win.
         //For some reason there is always an 0xA in the following poniter, which screws with the this pointer.
-        void *buf = &lib.template get<int>(ct.C1);
+        void *buf = &lib.template get<unsigned char>(ct.C1);
         std::memcpy(&s, &buf, sizeof(void*));
     }
     if (!ct.C3.empty())
     {
-        void *buf = &lib.template get<int>(ct.C3);
+        void *buf = &lib.template get<unsigned char>(ct.C3);
         std::memcpy(&a, &buf, sizeof(void*));
     }
 

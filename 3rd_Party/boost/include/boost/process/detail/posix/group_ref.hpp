@@ -28,7 +28,7 @@ struct group_ref : handler_base_ext
     {}
 
     template <class Executor>
-    void on_exec_setup(Executor& exec) const
+    void on_exec_setup(Executor&) const
     {
         if (grp.grp == -1)
             ::setpgid(0, 0);

@@ -13,7 +13,6 @@
 #include <string>
 #include <algorithm> // std::copy
 #include <locale>
-#include <exception>
 
 #include <cstring> // strlen
 #include <cstdlib> // mbtowc
@@ -31,6 +30,8 @@ namespace std{
     #endif
 } // namespace std
 #endif
+
+#include <boost/core/uncaught_exceptions.hpp>
 
 #include <boost/archive/xml_woarchive.hpp>
 #include <boost/archive/detail/utf8_codecvt_facet.hpp>
@@ -103,7 +104,6 @@ xml_woarchive_impl<Archive>::save(const char * s){
 template<class Archive>
 BOOST_WARCHIVE_DECL void
 xml_woarchive_impl<Archive>::save(const wchar_t * ws){
-    os << ws;
     typedef iterators::xml_escape<const wchar_t *> xmbtows;
     std::copy(
         xmbtows(ws),
@@ -126,24 +126,22 @@ xml_woarchive_impl<Archive>::xml_woarchive_impl(
     basic_xml_oarchive<Archive>(flags)
 {
     if(0 == (flags & no_codecvt)){
-        std::locale l = std::locale(
+        archive_locale = std::locale(
             os_.getloc(),
             new boost::archive::detail::utf8_codecvt_facet
         );
         os_.flush();
-        os_.imbue(l);
+        os_.imbue(archive_locale);
     }
-    if(0 == (flags & no_header))
-        this->init();
 }
 
 template<class Archive>
 BOOST_WARCHIVE_DECL
 xml_woarchive_impl<Archive>::~xml_woarchive_impl(){
-    if(std::uncaught_exception())
+    if(boost::core::uncaught_exceptions() > 0)
         return;
     if(0 == (this->get_flags() & no_header)){
-        save(L"</boost_serialization>\n");
+        os << L"</boost_serialization>";
     }
 }
 

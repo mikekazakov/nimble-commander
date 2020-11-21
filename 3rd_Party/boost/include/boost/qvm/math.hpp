@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_5FD6A664ACC811DEAAFF8A8055D89593
-#define UUID_5FD6A664ACC811DEAAFF8A8055D89593
+#ifndef BOOST_QVM_5FD6A664ACC811DEAAFF8A8055D89593
+#define BOOST_QVM_5FD6A664ACC811DEAAFF8A8055D89593
 
 #include <math.h>
 #include <boost/qvm/inline.hpp>
@@ -59,7 +59,7 @@ boost
         template <> BOOST_QVM_INLINE_TRIVIAL float floor<float>( float x ) { return ::floorf(x); }
         template <> BOOST_QVM_INLINE_TRIVIAL float ldexp<float>( float x, int y ) { return ::ldexpf(x,y); }
         template <> BOOST_QVM_INLINE_TRIVIAL float sign<float>( float x ) { return x<0 ? -1.f : +1.f; }
-                    
+
         template <> BOOST_QVM_INLINE_TRIVIAL double acos<double>( double x ) { return ::acos(x); }
         template <> BOOST_QVM_INLINE_TRIVIAL double asin<double>( double x ) { return ::asin(x); }
         template <> BOOST_QVM_INLINE_TRIVIAL double atan<double>( double x ) { return ::atan(x); }
@@ -81,6 +81,28 @@ boost
         template <> BOOST_QVM_INLINE_TRIVIAL double floor<double>( double x ) { return ::floor(x); }
         template <> BOOST_QVM_INLINE_TRIVIAL double ldexp<double>( double x, int y ) { return ::ldexp(x,y); }
         template <> BOOST_QVM_INLINE_TRIVIAL double sign<double>( double x ) { return x<0 ? -1.0 : +1.0; }
+
+        template <> BOOST_QVM_INLINE_TRIVIAL long double acos<long double>( long double x ) { return ::acosl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double asin<long double>( long double x ) { return ::asinl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double atan<long double>( long double x ) { return ::atanl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double atan2<long double>( long double x, long double y ) { return ::atan2l(x,y); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double cos<long double>( long double x ) { return ::cosl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double sin<long double>( long double x ) { return ::sinl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double tan<long double>( long double x ) { return ::tanl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double cosh<long double>( long double x ) { return ::coshl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double sinh<long double>( long double x ) { return ::sinhl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double tanh<long double>( long double x ) { return ::tanhl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double exp<long double>( long double x ) { return ::expl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double log<long double>( long double x ) { return ::logl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double log10<long double>( long double x ) { return ::log10l(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double mod<long double>( long double x, long double y ) { return ::fmodl(x,y); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double pow<long double>( long double x, long double y ) { return ::powl(x,y); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double sqrt<long double>( long double x ) { return ::sqrtl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double ceil<long double>( long double x ) { return ::ceill(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double abs<long double>( long double x ) { return ::fabsl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double floor<long double>( long double x ) { return ::floorl(x); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double ldexp<long double>( long double x, int y ) { return ::ldexpl(x,y); }
+        template <> BOOST_QVM_INLINE_TRIVIAL long double sign<long double>( long double x ) { return x<0 ? -1.0 : +1.0; }
         }
     }
 

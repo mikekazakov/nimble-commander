@@ -767,7 +767,7 @@ namespace boost
     }
     inline int32_t days_from_1970(int32_t year)
     {
-      static const int days_from_0_to_1970 = days_from_0(1970);
+      static const int32_t days_from_0_to_1970 = days_from_0(1970);
       return days_from_0(year) - days_from_0_to_1970;
     }
     inline int32_t days_from_1jan(int32_t year,int32_t month,int32_t day)
@@ -940,11 +940,15 @@ namespace boost
           if (tz == timezone::local)
           {
 #if defined BOOST_WINDOWS && ! defined(__CYGWIN__)
+#if BOOST_MSVC < 1400  // localtime_s doesn't exist in vc7.1
             std::tm *tmp = 0;
             if ((tmp=localtime(&t)) == 0)
               failed = true;
             else
               tm =*tmp;
+# else
+            if (localtime_s(&tm, &t) != 0) failed = true;
+# endif
 #else
             if (localtime_r(&t, &tm) == 0) failed = true;
 #endif

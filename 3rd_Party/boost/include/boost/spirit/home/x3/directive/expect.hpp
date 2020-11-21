@@ -4,20 +4,21 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_EXPECT_MARCH_16_2012_1024PM)
-#define SPIRIT_EXPECT_MARCH_16_2012_1024PM
+#if !defined(BOOST_SPIRIT_X3_EXPECT_MARCH_16_2012_1024PM)
+#define BOOST_SPIRIT_X3_EXPECT_MARCH_16_2012_1024PM
 
 #include <boost/spirit/home/x3/support/context.hpp>
 #include <boost/spirit/home/x3/core/parser.hpp>
 #include <boost/spirit/home/x3/core/detail/parse_into_container.hpp>
 
+#include <boost/config.hpp> // for BOOST_SYMBOL_VISIBLE
 #include <boost/throw_exception.hpp>
 #include <stdexcept>
 
 namespace boost { namespace spirit { namespace x3
 {
     template <typename Iterator>
-    struct expectation_failure : std::runtime_error
+    struct BOOST_SYMBOL_VISIBLE expectation_failure : std::runtime_error
     {
     public:
 
@@ -25,7 +26,7 @@ namespace boost { namespace spirit { namespace x3
           : std::runtime_error("boost::spirit::x3::expectation_failure")
           , where_(where), which_(which)
         {}
-        ~expectation_failure() throw() {}
+        ~expectation_failure() {}
 
         std::string which() const { return which_; }
         Iterator const& where() const { return where_; }
@@ -42,7 +43,7 @@ namespace boost { namespace spirit { namespace x3
         typedef unary_parser<Subject, expect_directive<Subject> > base_type;
         static bool const is_pass_through_unary = true;
 
-        expect_directive(Subject const& subject)
+        constexpr expect_directive(Subject const& subject)
           : base_type(subject) {}
 
         template <typename Iterator, typename Context
@@ -65,14 +66,14 @@ namespace boost { namespace spirit { namespace x3
     struct expect_gen
     {
         template <typename Subject>
-        expect_directive<typename extension::as_parser<Subject>::value_type>
+        constexpr expect_directive<typename extension::as_parser<Subject>::value_type>
         operator[](Subject const& subject) const
         {
             return { as_parser(subject) };
         }
     };
 
-    auto const expect = expect_gen{};
+    constexpr auto expect = expect_gen{};
 }}}
 
 namespace boost { namespace spirit { namespace x3 { namespace detail

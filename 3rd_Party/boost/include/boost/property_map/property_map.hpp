@@ -15,11 +15,12 @@
 #include <boost/config.hpp>
 #include <boost/static_assert.hpp>
 #include <cstddef>
-#include <boost/detail/iterator.hpp>
+#include <iterator>
 #include <boost/concept/assert.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/concept_archetype.hpp>
 #include <boost/mpl/assert.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/has_xxx.hpp>
@@ -406,14 +407,14 @@ namespace boost {
   template <class RAIter, class ID>
   inline safe_iterator_property_map<
     RAIter, ID,
-    typename boost::detail::iterator_traits<RAIter>::value_type,
-    typename boost::detail::iterator_traits<RAIter>::reference>
+    typename std::iterator_traits<RAIter>::value_type,
+    typename std::iterator_traits<RAIter>::reference>
   make_safe_iterator_property_map(RAIter iter, std::size_t n, ID id) {
     BOOST_CONCEPT_ASSERT((RandomAccessIteratorConcept<RAIter>));
     typedef safe_iterator_property_map<
       RAIter, ID,
-      typename boost::detail::iterator_traits<RAIter>::value_type,
-      typename boost::detail::iterator_traits<RAIter>::reference> PA;
+      typename std::iterator_traits<RAIter>::value_type,
+      typename std::iterator_traits<RAIter>::reference> PA;
     return PA(iter, n, id);
   }
   template <class RAIter, class Value, class ID>

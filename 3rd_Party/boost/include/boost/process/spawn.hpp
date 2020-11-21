@@ -42,7 +42,7 @@ but will also cause the system to be unable to wait for the child to exit.
 \note This will set `SIGCHLD` to `SIGIGN` on posix.
 
 \warning This function does not allow asynchronous operations, since it cannot wait for the end of the process.
-It will fail to compile if a reference to `boost::asio::io_service` is passed.
+It will fail to compile if a reference to `boost::asio::io_context` is passed.
 
  */
 template<typename ...Args>

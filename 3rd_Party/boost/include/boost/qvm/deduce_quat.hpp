@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_435FA7E8196311E0A176DE6BDFD72085
-#define UUID_435FA7E8196311E0A176DE6BDFD72085
+#ifndef BOOST_QVM_435FA7E8196311E0A176DE6BDFD72085
+#define BOOST_QVM_435FA7E8196311E0A176DE6BDFD72085
 
 #include <boost/qvm/deduce_scalar.hpp>
 #include <boost/qvm/quat_traits.hpp>

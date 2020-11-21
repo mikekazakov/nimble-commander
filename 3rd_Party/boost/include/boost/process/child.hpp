@@ -35,6 +35,9 @@ child::child(Args&&...args)
     : child(::boost::process::detail::execute_impl(std::forward<Args>(args)...)) {}
 
 
+///Typedef for the type of an pid_t
+typedef ::boost::process::detail::api::pid_t pid_t;
+
 #if defined(BOOST_PROCESS_DOXYGEN)
 /** The main class to hold a child process. It is simliar to [std::thread](http://en.cppreference.com/w/cpp/thread/thread),
  * in that it has a join and detach function.
@@ -88,6 +91,10 @@ class child
     int exit_code() const;
     /** Get the Process Identifier. */
     pid_t id()      const;
+
+    /** Get the native, uninterpreted exit code. The return value is without any meaning if the child wasn't waited
+     *  for or if it was terminated. */
+    int native_exit_code() const;
 
     /** Check if the child process is running. */
     bool running();

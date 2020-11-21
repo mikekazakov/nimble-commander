@@ -23,7 +23,6 @@
 #include <boost/fusion/include/vector.hpp>
 #include <boost/fusion/include/at.hpp>
 #include <boost/fusion/include/value_at.hpp>
-#include <boost/detail/iterator.hpp>
 #include <boost/variant.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/bool.hpp>
@@ -34,7 +33,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/range/iterator_range.hpp>
+#include <boost/range/iterator_range_core.hpp>
 #include <boost/static_assert.hpp>
 
 #if defined(BOOST_SPIRIT_DEBUG)
@@ -859,8 +858,8 @@ namespace boost { namespace spirit { namespace traits
       , lex::lexertl::position_token<Iterator, lex::omit, HasState, Idtype> >
     {
         static void 
-        call(lex::lexertl::position_token<Iterator, lex::omit, HasState, Idtype> const& t
-          , Attribute& attr)
+        call(lex::lexertl::position_token<Iterator, lex::omit, HasState, Idtype> const&
+          , Attribute&)
         {
             // do nothing
         }

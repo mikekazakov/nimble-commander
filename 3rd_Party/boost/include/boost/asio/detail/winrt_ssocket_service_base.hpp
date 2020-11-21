@@ -2,7 +2,7 @@
 // detail/winrt_ssocket_service_base.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -21,14 +21,20 @@
 
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/error.hpp>
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/execution_context.hpp>
 #include <boost/asio/socket_base.hpp>
-#include <boost/asio/detail/addressof.hpp>
 #include <boost/asio/detail/buffer_sequence_adapter.hpp>
+#include <boost/asio/detail/memory.hpp>
 #include <boost/asio/detail/socket_types.hpp>
 #include <boost/asio/detail/winrt_async_manager.hpp>
 #include <boost/asio/detail/winrt_socket_recv_op.hpp>
 #include <boost/asio/detail/winrt_socket_send_op.hpp>
+
+#if defined(BOOST_ASIO_HAS_IOCP)
+# include <boost/asio/detail/win_iocp_io_context.hpp>
+#else // defined(BOOST_ASIO_HAS_IOCP)
+# include <boost/asio/detail/scheduler.hpp>
+#endif // defined(BOOST_ASIO_HAS_IOCP)
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -62,18 +68,17 @@ public:
   };
 
   // Constructor.
-  BOOST_ASIO_DECL winrt_ssocket_service_base(
-      boost::asio::io_service& io_service);
+  BOOST_ASIO_DECL winrt_ssocket_service_base(execution_context& context);
 
   // Destroy all user-defined handler objects owned by the service.
-  BOOST_ASIO_DECL void shutdown_service();
+  BOOST_ASIO_DECL void base_shutdown();
 
   // Construct a new socket implementation.
   BOOST_ASIO_DECL void construct(base_implementation_type&);
 
   // Move-construct a new socket implementation.
   BOOST_ASIO_DECL void base_move_construct(base_implementation_type& impl,
-      base_implementation_type& other_impl);
+      base_implementation_type& other_impl) BOOST_ASIO_NOEXCEPT;
 
   // Move-assign from another socket implementation.
   BOOST_ASIO_DECL void base_move_assign(base_implementation_type& impl,
@@ -91,6 +96,10 @@ public:
 
   // Destroy a socket implementation.
   BOOST_ASIO_DECL boost::system::error_code close(
+      base_implementation_type& impl, boost::system::error_code& ec);
+
+  // Release ownership of the socket.
+  BOOST_ASIO_DECL native_handle_type release(
       base_implementation_type& impl, boost::system::error_code& ec);
 
   // Get the native socket representation.
@@ -160,14 +169,6 @@ public:
     return ec;
   }
 
-  // Disable sends or receives on the socket.
-  boost::system::error_code shutdown(base_implementation_type&,
-      socket_base::shutdown_type, boost::system::error_code& ec)
-  {
-    ec = boost::asio::error::operation_not_supported;
-    return ec;
-  }
-
   // Send the given data to the peer.
   template <typename ConstBufferSequence>
   std::size_t send(base_implementation_type& impl,
@@ -189,22 +190,22 @@ public:
 
   // Start an asynchronous send. The data being sent must be valid for the
   // lifetime of the asynchronous operation.
-  template <typename ConstBufferSequence, typename Handler>
+  template <typename ConstBufferSequence, typename Handler, typename IoExecutor>
   void async_send(base_implementation_type& impl,
-      const ConstBufferSequence& buffers,
-      socket_base::message_flags flags, Handler& handler)
+      const ConstBufferSequence& buffers, socket_base::message_flags flags,
+      Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
       boost_asio_handler_cont_helpers::is_continuation(handler);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef winrt_socket_send_op<ConstBufferSequence, Handler> op;
+    typedef winrt_socket_send_op<ConstBufferSequence, Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
-      boost_asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
-    p.p = new (p.v) op(buffers, handler);
+      op::ptr::allocate(handler), 0 };
+    p.p = new (p.v) op(buffers, handler, io_ex);
 
-    BOOST_ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_send"));
+    BOOST_ASIO_HANDLER_CREATION((scheduler_.context(),
+          *p.p, "socket", &impl, 0, "async_send"));
 
     start_send_op(impl,
         buffer_sequence_adapter<boost::asio::const_buffer,
@@ -214,13 +215,13 @@ public:
   }
 
   // Start an asynchronous wait until data can be sent without blocking.
-  template <typename Handler>
+  template <typename Handler, typename IoExecutor>
   void async_send(base_implementation_type&, const null_buffers&,
-      socket_base::message_flags, Handler& handler)
+      socket_base::message_flags, Handler& handler, const IoExecutor& io_ex)
   {
     boost::system::error_code ec = boost::asio::error::operation_not_supported;
     const std::size_t bytes_transferred = 0;
-    io_service_.get_io_service().post(
+    boost::asio::post(io_ex,
         detail::bind_handler(handler, ec, bytes_transferred));
   }
 
@@ -245,22 +246,23 @@ public:
 
   // Start an asynchronous receive. The buffer for the data being received
   // must be valid for the lifetime of the asynchronous operation.
-  template <typename MutableBufferSequence, typename Handler>
+  template <typename MutableBufferSequence,
+      typename Handler, typename IoExecutor>
   void async_receive(base_implementation_type& impl,
-      const MutableBufferSequence& buffers,
-      socket_base::message_flags flags, Handler& handler)
+      const MutableBufferSequence& buffers, socket_base::message_flags flags,
+      Handler& handler, const IoExecutor& io_ex)
   {
     bool is_continuation =
       boost_asio_handler_cont_helpers::is_continuation(handler);
 
     // Allocate and construct an operation to wrap the handler.
-    typedef winrt_socket_recv_op<MutableBufferSequence, Handler> op;
+    typedef winrt_socket_recv_op<MutableBufferSequence, Handler, IoExecutor> op;
     typename op::ptr p = { boost::asio::detail::addressof(handler),
-      boost_asio_handler_alloc_helpers::allocate(
-        sizeof(op), handler), 0 };
-    p.p = new (p.v) op(buffers, handler);
+      op::ptr::allocate(handler), 0 };
+    p.p = new (p.v) op(buffers, handler, io_ex);
 
-    BOOST_ASIO_HANDLER_CREATION((p.p, "socket", &impl, "async_receive"));
+    BOOST_ASIO_HANDLER_CREATION((scheduler_.context(),
+          *p.p, "socket", &impl, 0, "async_receive"));
 
     start_receive_op(impl,
         buffer_sequence_adapter<boost::asio::mutable_buffer,
@@ -270,13 +272,13 @@ public:
   }
 
   // Wait until data can be received without blocking.
-  template <typename Handler>
+  template <typename Handler, typename IoExecutor>
   void async_receive(base_implementation_type&, const null_buffers&,
-      socket_base::message_flags, Handler& handler)
+      socket_base::message_flags, Handler& handler, const IoExecutor& io_ex)
   {
     boost::system::error_code ec = boost::asio::error::operation_not_supported;
     const std::size_t bytes_transferred = 0;
-    io_service_.get_io_service().post(
+    boost::asio::post(io_ex,
         detail::bind_handler(handler, ec, bytes_transferred));
   }
 
@@ -329,8 +331,13 @@ protected:
       winrt_async_op<Windows::Storage::Streams::IBuffer^>* op,
       bool is_continuation);
 
-  // The io_service implementation used for delivering completions.
-  io_service_impl& io_service_;
+  // The scheduler implementation used for delivering completions.
+#if defined(BOOST_ASIO_HAS_IOCP)
+  typedef class win_iocp_io_context scheduler_impl;
+#else
+  typedef class scheduler scheduler_impl;
+#endif
+  scheduler_impl& scheduler_;
 
   // The manager that keeps track of outstanding operations.
   winrt_async_manager& async_manager_;

@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 // Copyright (c) 2013-2015 Adam Wulkiewicz, Lodz, Poland
 
-// This file was modified by Oracle on 2013-2017.
-// Modifications copyright (c) 2013-2017, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2018.
+// Modifications copyright (c) 2013-2018, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -41,16 +41,11 @@ namespace detail { namespace disjoint
 /*!
     \brief Internal utility function to detect if point/box are disjoint
  */
-template <typename Point, typename Box>
-inline bool disjoint_point_box(Point const& point, Box const& box)
+template <typename Point, typename Box, typename Strategy>
+inline bool disjoint_point_box(Point const& point, Box const& box, Strategy const& )
 {
-    typedef typename strategy::disjoint::services::default_strategy
-        <
-            Point, Box
-        >::type strategy_type;
-
     // ! covered_by(point, box)
-    return ! strategy_type::apply(point, box);
+    return ! Strategy::apply(point, box);
 }
 
 

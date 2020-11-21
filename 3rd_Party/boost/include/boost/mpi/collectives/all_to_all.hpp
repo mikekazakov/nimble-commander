@@ -22,7 +22,7 @@
 namespace boost { namespace mpi {
           
 namespace detail {
-  // We're performaing an all-to-all with a type that has an
+  // We're performing an all-to-all with a type that has an
   // associated MPI datatype, so we'll use MPI_Alltoall to do all of
   // the work.
   template<typename T>
@@ -38,9 +38,7 @@ namespace detail {
 
   // We're performing an all-to-all with a type that does not have an
   // associated MPI datatype, so we'll need to serialize
-  // it. Unfortunately, this means that we cannot use MPI_Alltoall, so
-  // we'll just have to send individual messages to the other
-  // processes.
+  // it.
   template<typename T>
   void
   all_to_all_impl(const communicator& comm, const T* in_values, int n,
@@ -93,10 +91,10 @@ namespace detail {
 
     // Transmit the actual data
     BOOST_MPI_CHECK_RESULT(MPI_Alltoallv,
-                           (&outgoing[0], &send_sizes[0],
-                            &send_disps[0], MPI_PACKED,
-                            &incoming[0], &recv_sizes[0],
-                            &recv_disps[0], MPI_PACKED,
+                           (detail::c_data(outgoing), detail::c_data(send_sizes),
+                            detail::c_data(send_disps), MPI_PACKED,
+                            detail::c_data(incoming), detail::c_data(recv_sizes),
+                            detail::c_data(recv_disps), MPI_PACKED,
                             comm));
 
     // Deserialize data from the iarchive
@@ -128,7 +126,7 @@ all_to_all(const communicator& comm, const std::vector<T>& in_values,
 {
   BOOST_ASSERT((int)in_values.size() == comm.size());
   out_values.resize(comm.size());
-  ::boost::mpi::all_to_all(comm, &in_values[0], &out_values[0]);
+  ::boost::mpi::all_to_all(comm, detail::c_data(in_values), detail::c_data(out_values));
 }
 
 template<typename T>
@@ -145,7 +143,7 @@ all_to_all(const communicator& comm, const std::vector<T>& in_values, int n,
 {
   BOOST_ASSERT((int)in_values.size() == comm.size() * n);
   out_values.resize(comm.size() * n);
-  ::boost::mpi::all_to_all(comm, &in_values[0], n, &out_values[0]);
+  ::boost::mpi::all_to_all(comm, detail::c_data(in_values), n, detail::c_data(out_values));
 }
 
 } } // end namespace boost::mpi

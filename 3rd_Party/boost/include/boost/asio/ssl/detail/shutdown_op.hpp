@@ -2,7 +2,7 @@
 // ssl/detail/shutdown_op.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,9 +17,7 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
-# include <boost/asio/ssl/detail/engine.hpp>
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+#include <boost/asio/ssl/detail/engine.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -28,11 +26,14 @@ namespace asio {
 namespace ssl {
 namespace detail {
 
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
-
 class shutdown_op
 {
 public:
+  static BOOST_ASIO_CONSTEXPR const char* tracking_name()
+  {
+    return "ssl::stream<>::async_shutdown";
+  }
+
   engine::want operator()(engine& eng,
       boost::system::error_code& ec,
       std::size_t& bytes_transferred) const
@@ -46,11 +47,19 @@ public:
       const boost::system::error_code& ec,
       const std::size_t&) const
   {
-    handler(ec);
+    if (ec == boost::asio::error::eof)
+    {
+      // The engine only generates an eof when the shutdown notification has
+      // been received from the peer. This indicates that the shutdown has
+      // completed successfully, and thus need not be passed on to the handler.
+      handler(boost::system::error_code());
+    }
+    else
+    {
+      handler(ec);
+    }
   }
 };
-
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
 
 } // namespace detail
 } // namespace ssl

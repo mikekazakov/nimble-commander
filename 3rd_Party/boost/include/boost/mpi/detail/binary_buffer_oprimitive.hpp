@@ -40,14 +40,19 @@ public:
 
     void const * address() const
     {
-      return &buffer_.front();
+      return detail::c_data(buffer_);
     }
 
     const std::size_t& size() const
     {
       return size_ = buffer_.size();
     }
-
+    
+    const std::size_t* size_ptr() const
+    {
+      return &size();
+    }
+    
     void save_binary(void const *address, std::size_t count)
     {
       save_impl(address,count);

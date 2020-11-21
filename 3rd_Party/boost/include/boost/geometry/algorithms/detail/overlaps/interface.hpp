@@ -99,6 +99,11 @@ inline bool overlaps(Geometry1 const& geometry1,
 \return \return_check2{overlap}
 
 \qbk{[include reference/algorithms/overlaps.qbk]}
+\qbk{
+[heading Examples]
+[overlaps]
+[overlaps_output]
+}
 */
 template <typename Geometry1, typename Geometry2>
 inline bool overlaps(Geometry1 const& geometry1, Geometry2 const& geometry2)

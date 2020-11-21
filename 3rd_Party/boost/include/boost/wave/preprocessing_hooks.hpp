@@ -8,8 +8,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(DEFAULT_PREPROCESSING_HOOKS_HPP_INCLUDED)
-#define DEFAULT_PREPROCESSING_HOOKS_HPP_INCLUDED
+#if !defined(BOOST_DEFAULT_PREPROCESSING_HOOKS_HPP_INCLUDED)
+#define BOOST_DEFAULT_PREPROCESSING_HOOKS_HPP_INCLUDED
 
 #include <boost/wave/wave_config.hpp>
 #include <boost/wave/util/cpp_include_paths.hpp>
@@ -816,4 +816,4 @@ struct default_preprocessing_hooks
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(DEFAULT_PREPROCESSING_HOOKS_HPP_INCLUDED)
+#endif // !defined(BOOST_DEFAULT_PREPROCESSING_HOOKS_HPP_INCLUDED)

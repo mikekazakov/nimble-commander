@@ -9,7 +9,6 @@
 # define BOOST_ZIP_ITERATOR_TMB_07_13_2003_HPP_
 
 #include <stddef.h>
-#include <boost/iterator.hpp>
 #include <boost/iterator/iterator_traits.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/iterator_adaptor.hpp> // for enable_if_convertible

@@ -192,6 +192,11 @@ struct perimeter<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
 \return \return_calc{perimeter}
 
 \qbk{[include reference/algorithms/perimeter.qbk]}
+\qbk{
+[heading Example]
+[perimeter]
+[perimeter_output]
+}
  */
 template<typename Geometry>
 inline typename default_length_result<Geometry>::type perimeter(

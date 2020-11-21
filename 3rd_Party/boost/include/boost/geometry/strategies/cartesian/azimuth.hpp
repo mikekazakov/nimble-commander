@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2016-2017 Oracle and/or its affiliates.
+// Copyright (c) 2016-2018 Oracle and/or its affiliates.
 // Contributed and/or modified by Vissarion Fisikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -12,6 +12,8 @@
 #define BOOST_GEOMETRY_STRATEGIES_CARTESIAN_AZIMUTH_HPP
 
 #include <boost/geometry/core/tags.hpp>
+
+#include <boost/geometry/strategies/azimuth.hpp>
 
 namespace boost { namespace geometry
 {

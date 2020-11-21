@@ -16,7 +16,10 @@
 #ifndef BOOST_LOG_DETAIL_PARAMETER_TOOLS_HPP_INCLUDED_
 #define BOOST_LOG_DETAIL_PARAMETER_TOOLS_HPP_INCLUDED_
 
+#include <boost/mpl/or.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/parameter/keyword.hpp>
+#include <boost/type_traits/is_base_of.hpp>
 #include <boost/preprocessor/control/if.hpp>
 #include <boost/preprocessor/comparison/equal.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
@@ -121,26 +124,20 @@ struct make_arg_list< ArgT0, BOOST_PP_ENUM_PARAMS(BOOST_PP_DEC(BOOST_LOG_MAX_PAR
 
 #endif
 
+#if !defined(BOOST_NO_CXX11_TEMPLATE_ALIASES)
+
 template< typename T, typename R >
-struct enable_if_named_parameters {};
+using enable_if_named_parameters = boost::enable_if_c< boost::mpl::or_< boost::is_base_of< boost::parameter::aux::tagged_argument_base, T >, boost::is_base_of< empty_arg_list, T > >::value, R >;
 
-template< typename R >
-struct enable_if_named_parameters< empty_arg_list, R >
+#else // !defined(BOOST_NO_CXX11_TEMPLATE_ALIASES)
+
+template< typename T, typename R >
+struct enable_if_named_parameters :
+    public boost::enable_if_c< boost::mpl::or_< boost::is_base_of< boost::parameter::aux::tagged_argument_base, T >, boost::is_base_of< empty_arg_list, T > >::value, R >
 {
-    typedef R type;
 };
 
-template< typename Keyword, typename Arg, typename R >
-struct enable_if_named_parameters< boost::parameter::aux::tagged_argument< Keyword, Arg >, R >
-{
-    typedef R type;
-};
-
-template< typename TaggedArg, typename Next, typename R >
-struct enable_if_named_parameters< boost::parameter::aux::arg_list< TaggedArg, Next >, R >
-{
-    typedef R type;
-};
+#endif // !defined(BOOST_NO_CXX11_TEMPLATE_ALIASES)
 
 } // namespace aux
 

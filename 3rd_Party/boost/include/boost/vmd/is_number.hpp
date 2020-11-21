@@ -31,7 +31,7 @@
     
     sequence = a possible number
 
-    returns = 1 if the sequence is a Boost PP number, 
+    returns = 1 if the sequence is a Boost PP number,
               0 if it is not.
               
     If the input is not a VMD data type this macro could lead to

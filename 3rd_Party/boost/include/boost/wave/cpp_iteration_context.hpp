@@ -9,11 +9,11 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPP_ITERATION_CONTEXT_HPP_00312288_9DDB_4668_AFE5_25D3994FD095_INCLUDED)
-#define CPP_ITERATION_CONTEXT_HPP_00312288_9DDB_4668_AFE5_25D3994FD095_INCLUDED
+#if !defined(BOOST_CPP_ITERATION_CONTEXT_HPP_00312288_9DDB_4668_AFE5_25D3994FD095_INCLUDED)
+#define BOOST_CPP_ITERATION_CONTEXT_HPP_00312288_9DDB_4668_AFE5_25D3994FD095_INCLUDED
 
 #include <iterator>
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 #if defined(BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS)
 #include <sstream>
 #endif
@@ -64,7 +64,7 @@ namespace iteration_context_policies {
                 typedef typename IterContextT::iterator_type iterator_type;
 
                 // read in the file
-                std::ifstream instream(iter_ctx.filename.c_str());
+                boost::filesystem::ifstream instream(iter_ctx.filename.c_str());
                 if (!instream.is_open()) {
                     BOOST_WAVE_THROW_CTX(iter_ctx.ctx, preprocess_exception,
                         bad_include_file, iter_ctx.filename.c_str(), act_pos);
@@ -168,4 +168,4 @@ struct iteration_context
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(CPP_ITERATION_CONTEXT_HPP_00312288_9DDB_4668_AFE5_25D3994FD095_INCLUDED)
+#endif // !defined(BOOST_CPP_ITERATION_CONTEXT_HPP_00312288_9DDB_4668_AFE5_25D3994FD095_INCLUDED)

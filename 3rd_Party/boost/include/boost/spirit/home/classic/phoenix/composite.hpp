@@ -5,8 +5,8 @@
   Distributed under the Boost Software License, Version 1.0. (See accompanying
   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ==============================================================================*/
-#ifndef PHOENIX_COMPOSITE_HPP
-#define PHOENIX_COMPOSITE_HPP
+#ifndef BOOST_SPIRIT_CLASSIC_PHOENIX_COMPOSITE_HPP
+#define BOOST_SPIRIT_CLASSIC_PHOENIX_COMPOSITE_HPP
 
 ///////////////////////////////////////////////////////////////////////////////
 #include <boost/spirit/home/classic/phoenix/actor.hpp>
@@ -1374,13 +1374,13 @@ namespace impl {
             <OperationT, actor<BaseT>, B>::type type;
 
         static type
-        construct(actor<BaseT> const& _0, B const& _1)
+        construct(actor<BaseT> const& _0_, B const& _1_)
         {
             typedef typename make_composite
                     <OperationT, actor<BaseT>, B>::composite_type
                 ret_t;
             
-            return ret_t(OperationT(), _0, as_actor<B>::convert(_1));
+            return ret_t(OperationT(), _0_, as_actor<B>::convert(_1_));
         }
     };
 
@@ -1392,13 +1392,13 @@ namespace impl {
             <OperationT, A, actor<BaseT> >::type type;
 
         static type
-        construct(A const& _0, actor<BaseT> const& _1)
+        construct(A const& _0_, actor<BaseT> const& _1_)
         {
             typedef typename make_composite
                     <OperationT, A, actor<BaseT> >::composite_type
                 ret_t;
 
-            return ret_t(OperationT(), as_actor<A>::convert(_0), _1);
+            return ret_t(OperationT(), as_actor<A>::convert(_0_), _1_);
         }
     };
 
@@ -1410,13 +1410,13 @@ namespace impl {
             <OperationT, actor<BaseA>, actor<BaseB> >::type type;
 
         static type
-        construct(actor<BaseA> const& _0, actor<BaseB> const& _1)
+        construct(actor<BaseA> const& _0_, actor<BaseB> const& _1_)
         {
             typedef typename make_composite
                     <OperationT, actor<BaseA>, actor<BaseB> >::composite_type
                 ret_t;
 
-            return ret_t(OperationT(), _0, _1);
+            return ret_t(OperationT(), _0_, _1_);
         }
     };
 

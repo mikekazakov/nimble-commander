@@ -1,100 +1,160 @@
-/*
-    Copyright 2005-2007 Adobe Systems Incorporated
-   
-    Use, modification and distribution are subject to the Boost Software License,
-    Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-    http://www.boost.org/LICENSE_1_0.txt).
+//
+// Copyright 2005-2007 Adobe Systems Incorporated
+// Copyright 2020 Samuel Debionne
+//
+// Distributed under the Boost Software License, Version 1.0
+// See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt
+//
+#ifndef BOOST_GIL_EXTENSION_DYNAMIC_IMAGE_ANY_IMAGE_HPP
+#define BOOST_GIL_EXTENSION_DYNAMIC_IMAGE_ANY_IMAGE_HPP
 
-    See http://opensource.adobe.com/gil for most recent version including documentation.
-*/
-/*************************************************************************************************/
+#include <boost/gil/extension/dynamic_image/any_image_view.hpp>
+#include <boost/gil/extension/dynamic_image/apply_operation.hpp>
 
-#ifndef GIL_DYNAMICIMAGE_ANY_IMAGE_HPP
-#define GIL_DYNAMICIMAGE_ANY_IMAGE_HPP
+#include <boost/gil/image.hpp>
+#include <boost/gil/detail/mp11.hpp>
 
-////////////////////////////////////////////////////////////////////////////////////////
-/// \file               
-/// \brief Support for run-time instantiated images and image views
-/// \author Lubomir Bourdev and Hailin Jin \n
-///         Adobe Systems Incorporated
-///
-///
-////////////////////////////////////////////////////////////////////////////////////////
+#include <boost/config.hpp>
+#include <boost/variant2/variant.hpp>
 
-#include "any_image_view.hpp"
-#include "../../image.hpp"
-
-//#ifdef _MSC_VER
-//#pragma warning(push)
-//#pragma warning(disable : 4244)     // conversion from 'std::ptrdiff_t' to 'int', possible loss of data. even if we static-assert the two types are the same (on visual studio 8)
-//#endif
+#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
+#pragma warning(push)
+#pragma warning(disable:4512) //assignment operator could not be generated
+#endif
 
 namespace boost { namespace gil {
 
 namespace detail {
-    template <typename T> struct get_view_t       { typedef typename T::view_t type; };
-    template <typename Images> struct images_get_views_t : public mpl::transform<Images, get_view_t<mpl::_1> > {};
 
-    template <typename T> struct get_const_view_t { typedef typename T::const_view_t type; };
-    template <typename Images> struct images_get_const_views_t : public mpl::transform<Images, get_const_view_t<mpl::_1> > {};
+template <typename T>
+using get_view_t = typename T::view_t;
 
-    struct recreate_image_fnobj {
-        typedef void result_type;
-        const point2<std::ptrdiff_t>& _dimensions;
-        unsigned _alignment;
+template <typename Images>
+using images_get_views_t = mp11::mp_transform<get_view_t, Images>;
 
-        recreate_image_fnobj(const point2<std::ptrdiff_t>& dims, unsigned alignment) : _dimensions(dims), _alignment(alignment) {}
-        template <typename Image> result_type operator()(Image& img) const { img.recreate(_dimensions,_alignment); }
-    };
+template <typename T>
+using get_const_view_t = typename T::const_view_t;
 
-    template <typename AnyView>  // Models AnyViewConcept
-    struct any_image_get_view {
-        typedef AnyView result_type;
-        template <typename Image> result_type operator()(      Image& img) const { return result_type(view(img)); }
-    };
+template <typename Images>
+using images_get_const_views_t = mp11::mp_transform<get_const_view_t, Images>;
 
-    template <typename AnyConstView>  // Models AnyConstViewConcept
-    struct any_image_get_const_view {
-        typedef AnyConstView result_type;
-        template <typename Image> result_type operator()(const Image& img) const { return result_type(const_view(img)); }
-    };
-}
+struct recreate_image_fnobj
+{
+    using result_type = void;
+    point<std::ptrdiff_t> const& _dimensions;
+    unsigned _alignment;
+
+    recreate_image_fnobj(point<std::ptrdiff_t> const& dims, unsigned alignment)
+        : _dimensions(dims), _alignment(alignment)
+    {}
+
+    template <typename Image>
+    result_type operator()(Image& img) const { img.recreate(_dimensions,_alignment); }
+};
+
+template <typename AnyView>  // Models AnyViewConcept
+struct any_image_get_view
+{
+    using result_type = AnyView;
+    template <typename Image>
+    result_type operator()(Image& img) const
+    {
+        return result_type(view(img));
+    }
+};
+
+template <typename AnyConstView>  // Models AnyConstViewConcept
+struct any_image_get_const_view
+{
+    using result_type = AnyConstView;
+    template <typename Image>
+    result_type operator()(Image const& img) const { return result_type{const_view(img)}; }
+};
+
+} // namespce detail
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// \ingroup ImageModel
 /// \brief Represents a run-time specified image. Note it does NOT model ImageConcept
-///  
+///
 /// Represents an image whose type (color space, layout, planar/interleaved organization, etc) can be specified at run time.
 /// It is the runtime equivalent of \p image.
-/// Some of the requirements of ImageConcept, such as the \p value_type typedef cannot be fulfilled, since the language does not allow runtime type specification.
+/// Some of the requirements of ImageConcept, such as the \p value_type alias cannot be fulfilled, since the language does not allow runtime type specification.
 /// Other requirements, such as access to the pixels, would be inefficient to provide. Thus \p any_image does not fully model ImageConcept.
 /// In particular, its \p view and \p const_view methods return \p any_image_view, which does not fully model ImageViewConcept. See \p any_image_view for more.
 ////////////////////////////////////////////////////////////////////////////////////////
-template <typename ImageTypes>
-class any_image : public variant<ImageTypes> {
-    typedef variant<ImageTypes> parent_t;
-public:
-    typedef any_image_view<typename detail::images_get_const_views_t<ImageTypes>::type> const_view_t;
-    typedef any_image_view<typename detail::images_get_views_t<ImageTypes>::type>       view_t;
-    typedef std::ptrdiff_t x_coord_t;
-    typedef std::ptrdiff_t y_coord_t;
-    typedef point2<std::ptrdiff_t> point_t;
 
-    any_image()                                                          : parent_t() {}
-    template <typename T> explicit any_image(const T& obj)               : parent_t(obj) {}
-    template <typename T> explicit any_image(T& obj, bool do_swap)       : parent_t(obj,do_swap) {}
-    any_image(const any_image& v)                                        : parent_t((const parent_t&)v)    {}
+template <typename ...Images>
+class any_image : public variant2::variant<Images...>
+{
+    using parent_t = variant2::variant<Images...>;
+public:    
+    using view_t = mp11::mp_rename<detail::images_get_views_t<any_image>, any_image_view>;
+    using const_view_t = mp11::mp_rename<detail::images_get_const_views_t<any_image>, any_image_view>;
+    using x_coord_t = std::ptrdiff_t;
+    using y_coord_t = std::ptrdiff_t;
+    using point_t = point<std::ptrdiff_t>;
 
-    template <typename T> any_image& operator=(const T& obj)             { parent_t::operator=(obj); return *this; }
-    any_image&                       operator=(const any_image& v)       { parent_t::operator=((const parent_t&)v); return *this;}
+    any_image() = default;
+    any_image(any_image const& img) : parent_t((parent_t const&)img) {}
 
-    void recreate(const point_t& dims, unsigned alignment=1)               { apply_operation(*this,detail::recreate_image_fnobj(dims,alignment)); }
-    void recreate(x_coord_t width, y_coord_t height, unsigned alignment=1) { recreate(point2<std::ptrdiff_t>(width,height),alignment); }
+    template <typename Image>
+    explicit any_image(Image const& img) : parent_t(img) {}
+    
+    template <typename Image>
+    any_image(Image&& img) : parent_t(std::move(img)) {}
 
-    std::size_t num_channels()  const { return apply_operation(*this, detail::any_type_get_num_channels()); }
-    point_t     dimensions()    const { return apply_operation(*this, detail::any_type_get_dimensions()); }
-    x_coord_t   width()         const { return dimensions().x; }
-    y_coord_t   height()        const { return dimensions().y; }
+    template <typename Image>
+    explicit any_image(Image& img, bool do_swap) : parent_t(img, do_swap) {}
+
+    template <typename ...OtherImages>
+    any_image(any_image<OtherImages...> const& img)
+        : parent_t((variant2::variant<OtherImages...> const&)img)
+    {}
+
+    any_image& operator=(any_image const& img)
+    {
+        parent_t::operator=((parent_t const&)img);
+        return *this;
+    }
+
+    template <typename Image>
+    any_image& operator=(Image const& img)
+    {
+        parent_t::operator=(img);
+        return *this;
+    }
+
+    template <typename ...OtherImages>
+    any_image& operator=(any_image<OtherImages...> const& img)
+    {
+            parent_t::operator=((typename variant2::variant<OtherImages...> const&)img);
+            return *this;
+    }
+
+    void recreate(const point_t& dims, unsigned alignment=1)
+    {
+        apply_operation(*this, detail::recreate_image_fnobj(dims, alignment));
+    }
+
+    void recreate(x_coord_t width, y_coord_t height, unsigned alignment=1)
+    {
+        recreate({ width, height }, alignment);
+    }
+
+    std::size_t num_channels() const
+    {
+        return apply_operation(*this, detail::any_type_get_num_channels());
+    }
+
+    point_t dimensions() const
+    {
+        return apply_operation(*this, detail::any_type_get_dimensions());
+    }
+
+    x_coord_t width()  const { return dimensions().x; }
+    y_coord_t height() const { return dimensions().y; }
 };
 
 ///@{
@@ -104,22 +164,30 @@ public:
 /// \ingroup ImageModel
 
 /// \brief Returns the non-constant-pixel view of any image. The returned view is any view.
-template <typename Types>  GIL_FORCEINLINE // Models ImageVectorConcept
-typename any_image<Types>::view_t view(any_image<Types>& anyImage) { 
-    return apply_operation(anyImage, detail::any_image_get_view<typename any_image<Types>::view_t>());
+/// \tparam Images Models ImageVectorConcept
+template <typename ...Images>
+BOOST_FORCEINLINE
+auto view(any_image<Images...>& img) -> typename any_image<Images...>::view_t
+{
+    using view_t = typename any_image<Images...>::view_t;
+    return apply_operation(img, detail::any_image_get_view<view_t>());
 }
 
 /// \brief Returns the constant-pixel view of any image. The returned view is any view.
-template <typename Types> GIL_FORCEINLINE // Models ImageVectorConcept
-typename any_image<Types>::const_view_t const_view(const any_image<Types>& anyImage) { 
-    return apply_operation(anyImage, detail::any_image_get_const_view<typename any_image<Types>::const_view_t>());
+/// \tparam Types Models ImageVectorConcept
+template <typename ...Images>
+BOOST_FORCEINLINE
+auto const_view(any_image<Images...> const& img) -> typename any_image<Images...>::const_view_t
+{
+    using view_t = typename any_image<Images...>::const_view_t;
+    return apply_operation(img, detail::any_image_get_const_view<view_t>());
 }
 ///@}
 
-} }  // namespace boost::gil
+}}  // namespace boost::gil
 
-//#ifdef _MSC_VER
-//#pragma warning(pop)
-//#endif
+#if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
+#pragma warning(pop)
+#endif
 
 #endif

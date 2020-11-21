@@ -3,7 +3,7 @@
 // Copyright (c) 2007-2013 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2008-2013 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2013 Mateusz Loskot, London, UK.
-// Copyright (c) 2013 Adam Wulkiewicz, Lodz, Poland.
+// Copyright (c) 2013-2017 Adam Wulkiewicz, Lodz, Poland.
 
 // This file was modified by Oracle on 2014, 2017.
 // Modifications copyright (c) 2014-2017 Oracle and/or its affiliates.
@@ -31,6 +31,7 @@
 #include <boost/geometry/geometries/concepts/check.hpp>
 
 #include <boost/geometry/algorithms/detail/extreme_points.hpp>
+#include <boost/geometry/algorithms/detail/signed_size_type.hpp>
 
 #include <boost/geometry/strategies/cartesian/centroid_bashein_detmer.hpp>
 #include <boost/geometry/strategies/side.hpp>
@@ -154,7 +155,6 @@ inline void calculate_average(Point& point, std::vector<P> const& points)
 {
     typedef typename geometry::coordinate_type<Point>::type coordinate_type;
     typedef typename std::vector<P>::const_iterator iterator_type;
-    typedef typename std::vector<P>::size_type size_type;
 
     coordinate_type x = 0;
     coordinate_type y = 0;
@@ -166,7 +166,7 @@ inline void calculate_average(Point& point, std::vector<P> const& points)
         y += geometry::get<1>(*it);
     }
 
-    size_type const count = points.size();
+    signed_size_type const count = points.size();
     geometry::set<0>(point, x / count);
     geometry::set<1>(point, y / count);
 }

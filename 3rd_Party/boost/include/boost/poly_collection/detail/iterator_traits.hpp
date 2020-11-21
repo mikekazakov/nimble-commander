@@ -20,6 +20,13 @@ namespace boost{
 
 namespace poly_collection{
 
+namespace common_impl{
+
+template<typename Model,typename Allocator>
+class poly_collection;
+
+}
+
 namespace detail{
 
 /* (Internal) bunch of traits-grouped functions for const-preserving
@@ -33,18 +40,11 @@ struct poly_collection_of /* to be specialized for iterator impls */
  using type=void;
 };
 
-namespace poly_collection_impl{
-
-template<typename Model,typename Allocator>
-class poly_collection;
-
-}
-
 template<typename PolyCollection>
 struct model_of;
 
 template<typename Model,typename Allocator>
-struct model_of<poly_collection_impl::poly_collection<Model,Allocator>>
+struct model_of<common_impl::poly_collection<Model,Allocator>>
 {
   using type=Model;
 };

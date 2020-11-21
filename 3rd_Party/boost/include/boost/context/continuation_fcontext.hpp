@@ -78,8 +78,11 @@ void context_entry( transfer_t t) noexcept {
         t = jump_fcontext( t.fctx, nullptr);
         // start executing
         t.fctx = rec->run( t.fctx);
-    } catch ( forced_unwind const& e) {
-        t = { e.fctx, nullptr };
+    } catch ( forced_unwind const& ex) {
+        t = { ex.fctx, nullptr };
+#ifndef BOOST_ASSERT_IS_VOID
+        const_cast< forced_unwind & >( ex).caught = true;
+#endif
     }
     BOOST_ASSERT( nullptr != t.fctx);
     // destroy context-stack of `this`context on next context
@@ -107,11 +110,11 @@ template< typename Ctx, typename StackAlloc, typename Fn >
 class record {
 private:
     stack_context                                       sctx_;
-    StackAlloc                                          salloc_;
+    typename std::decay< StackAlloc >::type             salloc_;
     typename std::decay< Fn >::type                     fn_;
 
     static void destroy( record * p) noexcept {
-        StackAlloc salloc = p->salloc_;
+        typename std::decay< StackAlloc >::type salloc = std::move( p->salloc_);
         stack_context sctx = p->sctx_;
         // deallocate record
         p->~record();
@@ -120,10 +123,10 @@ private:
     }
 
 public:
-    record( stack_context sctx, StackAlloc const& salloc,
+    record( stack_context sctx, StackAlloc && salloc,
             Fn && fn) noexcept :
         sctx_( sctx),
-        salloc_( salloc),
+        salloc_( std::forward< StackAlloc >( salloc)),
         fn_( std::forward< Fn >( fn) ) {
     }
 
@@ -138,7 +141,7 @@ public:
         Ctx c{ fctx };
         // invoke context-function
 #if defined(BOOST_NO_CXX17_STD_INVOKE)
-        c = invoke( fn_, std::move( c) );
+        c = boost::context::detail::invoke( fn_, std::move( c) );
 #else
         c = std::invoke( fn_, std::move( c) );
 #endif
@@ -151,7 +154,7 @@ public:
 };
 
 template< typename Record, typename StackAlloc, typename Fn >
-fcontext_t create_context1( StackAlloc salloc, Fn && fn) {
+fcontext_t create_context1( StackAlloc && salloc, Fn && fn) {
     auto sctx = salloc.allocate();
     // reserve space for control structure
 	void * storage = reinterpret_cast< void * >(
@@ -159,7 +162,7 @@ fcontext_t create_context1( StackAlloc salloc, Fn && fn) {
             & ~static_cast< uintptr_t >( 0xff) );
     // placment new for control structure on context stack
     Record * record = new ( storage) Record{
-            sctx, salloc, std::forward< Fn >( fn) };
+            sctx, std::forward< StackAlloc >( salloc), std::forward< Fn >( fn) };
     // 64byte gab between control structure and stack top
     // should be 16byte aligned
     void * stack_top = reinterpret_cast< void * >(
@@ -175,14 +178,14 @@ fcontext_t create_context1( StackAlloc salloc, Fn && fn) {
 }
 
 template< typename Record, typename StackAlloc, typename Fn >
-fcontext_t create_context2( preallocated palloc, StackAlloc salloc, Fn && fn) {
+fcontext_t create_context2( preallocated palloc, StackAlloc && salloc, Fn && fn) {
     // reserve space for control structure
     void * storage = reinterpret_cast< void * >(
             ( reinterpret_cast< uintptr_t >( palloc.sp) - static_cast< uintptr_t >( sizeof( Record) ) )
             & ~ static_cast< uintptr_t >( 0xff) );
     // placment new for control structure on context-stack
     Record * record = new ( storage) Record{
-            palloc.sctx, salloc, std::forward< Fn >( fn) };
+            palloc.sctx, std::forward< StackAlloc >( salloc), std::forward< Fn >( fn) };
     // 64byte gab between control structure and stack top
     void * stack_top = reinterpret_cast< void * >(
             reinterpret_cast< uintptr_t >( storage) - static_cast< uintptr_t >( 64) );
@@ -209,11 +212,11 @@ private:
 
     template< typename StackAlloc, typename Fn >
     friend continuation
-    callcc( std::allocator_arg_t, StackAlloc, Fn &&);
+    callcc( std::allocator_arg_t, StackAlloc &&, Fn &&);
 
     template< typename StackAlloc, typename Fn >
     friend continuation
-    callcc( std::allocator_arg_t, preallocated, StackAlloc, Fn &&);
+    callcc( std::allocator_arg_t, preallocated, StackAlloc &&, Fn &&);
 
     detail::fcontext_t  fctx_{ nullptr };
 
@@ -238,7 +241,7 @@ public:
     }
 
     continuation( continuation && other) noexcept {
-        std::swap( fctx_, other.fctx_);
+        swap( other);
     }
 
     continuation & operator=( continuation && other) noexcept {
@@ -252,29 +255,38 @@ public:
     continuation( continuation const& other) noexcept = delete;
     continuation & operator=( continuation const& other) noexcept = delete;
 
-    continuation resume() {
+    continuation resume() & {
+        return std::move( * this).resume();
+    }
+
+    continuation resume() && {
         BOOST_ASSERT( nullptr != fctx_);
-        return detail::jump_fcontext(
+        return { detail::jump_fcontext(
 #if defined(BOOST_NO_CXX14_STD_EXCHANGE)
                     detail::exchange( fctx_, nullptr),
 #else
                     std::exchange( fctx_, nullptr),
 #endif
-                    nullptr).fctx;
+                    nullptr).fctx };
     }
 
     template< typename Fn >
-    continuation resume_with( Fn && fn) {
+    continuation resume_with( Fn && fn) & {
+        return std::move( * this).resume_with( std::forward< Fn >( fn) );
+    }
+
+    template< typename Fn >
+    continuation resume_with( Fn && fn) && {
         BOOST_ASSERT( nullptr != fctx_);
         auto p = std::make_tuple( std::forward< Fn >( fn) );
-        return detail::ontop_fcontext(
+        return { detail::ontop_fcontext(
 #if defined(BOOST_NO_CXX14_STD_EXCHANGE)
                     detail::exchange( fctx_, nullptr),
 #else
                     std::exchange( fctx_, nullptr),
 #endif
                     & p,
-                    detail::context_ontop< continuation, Fn >).fctx;
+                    detail::context_ontop< continuation, Fn >).fctx };
     }
 
     explicit operator bool() const noexcept {
@@ -285,28 +297,8 @@ public:
         return nullptr == fctx_;
     }
 
-    bool operator==( continuation const& other) const noexcept {
-        return fctx_ == other.fctx_;
-    }
-
-    bool operator!=( continuation const& other) const noexcept {
-        return fctx_ != other.fctx_;
-    }
-
     bool operator<( continuation const& other) const noexcept {
         return fctx_ < other.fctx_;
-    }
-
-    bool operator>( continuation const& other) const noexcept {
-        return other.fctx_ < fctx_;
-    }
-
-    bool operator<=( continuation const& other) const noexcept {
-        return ! ( * this > other);
-    }
-
-    bool operator>=( continuation const& other) const noexcept {
-        return ! ( * this < other);
     }
 
     template< typename charT, class traitsT >
@@ -337,20 +329,20 @@ callcc( Fn && fn) {
 
 template< typename StackAlloc, typename Fn >
 continuation
-callcc( std::allocator_arg_t, StackAlloc salloc, Fn && fn) {
+callcc( std::allocator_arg_t, StackAlloc && salloc, Fn && fn) {
     using Record = detail::record< continuation, StackAlloc, Fn >;
     return continuation{
                 detail::create_context1< Record >(
-                        salloc, std::forward< Fn >( fn) ) }.resume();
+                        std::forward< StackAlloc >( salloc), std::forward< Fn >( fn) ) }.resume();
 }
 
 template< typename StackAlloc, typename Fn >
 continuation
-callcc( std::allocator_arg_t, preallocated palloc, StackAlloc salloc, Fn && fn) {
+callcc( std::allocator_arg_t, preallocated palloc, StackAlloc && salloc, Fn && fn) {
     using Record = detail::record< continuation, StackAlloc, Fn >;
     return continuation{
                 detail::create_context2< Record >(
-                        palloc, salloc, std::forward< Fn >( fn) ) }.resume();
+                        palloc, std::forward< StackAlloc >( salloc), std::forward< Fn >( fn) ) }.resume();
 }
 
 #if defined(BOOST_USE_SEGMENTED_STACKS)
@@ -363,7 +355,6 @@ continuation
 callcc( std::allocator_arg_t, preallocated, segmented_stack, Fn &&);
 #endif
 
-// swap
 inline
 void swap( continuation & l, continuation & r) noexcept {
     l.swap( r);

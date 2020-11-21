@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2017.
+// Copyright Antony Polukhin, 2016-2019.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -16,6 +16,7 @@
 
 #include <unistd.h>     // ::write
 #include <fcntl.h>      // ::open
+#include <sys/stat.h>   // S_IWUSR and friends
 
 
 namespace boost { namespace stacktrace { namespace detail {

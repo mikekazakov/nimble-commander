@@ -27,6 +27,9 @@
 #include <boost/type_traits/is_scalar.hpp>
 #include <boost/type_traits/remove_cv.hpp>
 #include <boost/log/detail/config.hpp>
+#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+#include <string_view>
+#endif
 #include <boost/log/detail/attachable_sstream_buf.hpp>
 #include <boost/log/detail/code_conversion.hpp>
 #include <boost/log/utility/string_literal_fwd.hpp>
@@ -45,31 +48,49 @@ namespace aux {
 
 template< typename T, typename R >
 struct enable_if_streamable_char_type {};
+template< typename T, typename R >
+struct disable_if_streamable_char_type { typedef R type; };
 template< typename R >
 struct enable_if_streamable_char_type< char, R > { typedef R type; };
 template< typename R >
+struct disable_if_streamable_char_type< char, R > {};
+template< typename R >
 struct enable_if_streamable_char_type< wchar_t, R > { typedef R type; };
+template< typename R >
+struct disable_if_streamable_char_type< wchar_t, R > {};
 #if !defined(BOOST_LOG_NO_CXX11_CODECVT_FACETS)
 #if !defined(BOOST_NO_CXX11_CHAR16_T)
 template< typename R >
 struct enable_if_streamable_char_type< char16_t, R > { typedef R type; };
+template< typename R >
+struct disable_if_streamable_char_type< char16_t, R > {};
 #endif
 #if !defined(BOOST_NO_CXX11_CHAR32_T)
 template< typename R >
 struct enable_if_streamable_char_type< char32_t, R > { typedef R type; };
+template< typename R >
+struct disable_if_streamable_char_type< char32_t, R > {};
 #endif
 #endif
 
 template< typename StreamT, typename T, bool ByValueV, typename R >
 struct enable_formatting_ostream_generic_operator {};
+
 template< typename CharT, typename TraitsT, typename AllocatorT, typename T, typename R >
 struct enable_formatting_ostream_generic_operator< basic_formatting_ostream< CharT, TraitsT, AllocatorT >, T, false, R > :
     public boost::disable_if_c< boost::is_scalar< typename boost::remove_cv< T >::type >::value, R >
 {
 };
+
 template< typename CharT, typename TraitsT, typename AllocatorT, typename T, typename R >
 struct enable_formatting_ostream_generic_operator< basic_formatting_ostream< CharT, TraitsT, AllocatorT >, T, true, R > :
     public boost::enable_if_c< boost::is_enum< typename boost::remove_cv< T >::type >::value, R >
+{
+};
+
+template< typename CharT, typename TraitsT, typename AllocatorT, typename T, typename R >
+struct enable_formatting_ostream_generic_operator< basic_formatting_ostream< CharT, TraitsT, AllocatorT >, T*, true, R > :
+    public disable_if_streamable_char_type< typename boost::remove_cv< T >::type, R >
 {
 };
 
@@ -528,12 +549,6 @@ public:
         return *this;
     }
 
-    basic_formatting_ostream& operator<< (const void* value)
-    {
-        m_stream << value;
-        return *this;
-    }
-
     basic_formatting_ostream& operator<< (std::basic_streambuf< char_type, traits_type >* buf)
     {
         m_stream << buf;
@@ -544,14 +559,23 @@ public:
     friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
     operator<< (basic_formatting_ostream& strm, std::basic_string< OtherCharT, OtherTraitsT, OtherAllocatorT > const& str)
     {
-        return strm.formatted_write(str.c_str(), static_cast< std::streamsize >(str.size()));
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
     }
+
+#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+    template< typename OtherCharT, typename OtherTraitsT >
+    friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
+    operator<< (basic_formatting_ostream& strm, std::basic_string_view< OtherCharT, OtherTraitsT > const& str)
+    {
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
+    }
+#endif
 
     template< typename OtherCharT, typename OtherTraitsT >
     friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
     operator<< (basic_formatting_ostream& strm, basic_string_literal< OtherCharT, OtherTraitsT > const& str)
     {
-        return strm.formatted_write(str.c_str(), static_cast< std::streamsize >(str.size()));
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
     }
 
     template< typename OtherCharT, typename OtherTraitsT >
@@ -573,14 +597,23 @@ public:
     friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
     operator<< (basic_formatting_ostream& strm, std::basic_string< OtherCharT, OtherTraitsT, OtherAllocatorT >& str)
     {
-        return strm.formatted_write(str.c_str(), static_cast< std::streamsize >(str.size()));
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
     }
+
+#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+    template< typename OtherCharT, typename OtherTraitsT >
+    friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
+    operator<< (basic_formatting_ostream& strm, std::basic_string_view< OtherCharT, OtherTraitsT >& str)
+    {
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
+    }
+#endif
 
     template< typename OtherCharT, typename OtherTraitsT >
     friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
     operator<< (basic_formatting_ostream& strm, basic_string_literal< OtherCharT, OtherTraitsT >& str)
     {
-        return strm.formatted_write(str.c_str(), static_cast< std::streamsize >(str.size()));
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
     }
 
     template< typename OtherCharT, typename OtherTraitsT >
@@ -603,14 +636,23 @@ public:
     friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
     operator<< (basic_formatting_ostream&& strm, std::basic_string< OtherCharT, OtherTraitsT, OtherAllocatorT > const& str)
     {
-        return strm.formatted_write(str.c_str(), static_cast< std::streamsize >(str.size()));
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
     }
+
+#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+    template< typename OtherCharT, typename OtherTraitsT >
+    friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
+    operator<< (basic_formatting_ostream&& strm, std::basic_string_view< OtherCharT, OtherTraitsT > const& str)
+    {
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
+    }
+#endif
 
     template< typename OtherCharT, typename OtherTraitsT >
     friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
     operator<< (basic_formatting_ostream&& strm, basic_string_literal< OtherCharT, OtherTraitsT > const& str)
     {
-        return strm.formatted_write(str.c_str(), static_cast< std::streamsize >(str.size()));
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
     }
 
     template< typename OtherCharT, typename OtherTraitsT >
@@ -632,14 +674,23 @@ public:
     friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
     operator<< (basic_formatting_ostream&& strm, std::basic_string< OtherCharT, OtherTraitsT, OtherAllocatorT >& str)
     {
-        return strm.formatted_write(str.c_str(), static_cast< std::streamsize >(str.size()));
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
     }
+
+#if !defined(BOOST_NO_CXX17_HDR_STRING_VIEW)
+    template< typename OtherCharT, typename OtherTraitsT >
+    friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
+    operator<< (basic_formatting_ostream&& strm, std::basic_string_view< OtherCharT, OtherTraitsT >& str)
+    {
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
+    }
+#endif
 
     template< typename OtherCharT, typename OtherTraitsT >
     friend typename aux::enable_if_streamable_char_type< OtherCharT, basic_formatting_ostream& >::type
     operator<< (basic_formatting_ostream&& strm, basic_string_literal< OtherCharT, OtherTraitsT >& str)
     {
-        return strm.formatted_write(str.c_str(), static_cast< std::streamsize >(str.size()));
+        return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
     }
 
     template< typename OtherCharT, typename OtherTraitsT >
@@ -656,7 +707,7 @@ public:
     {
         return strm.formatted_write(str.data(), static_cast< std::streamsize >(str.size()));
     }
-#endif
+#endif // !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
 
 protected:
     void init_stream()

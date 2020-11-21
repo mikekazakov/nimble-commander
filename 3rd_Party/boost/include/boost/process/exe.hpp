@@ -26,10 +26,28 @@ namespace boost {
 </programlisting>
 \endxmlonly
  */
-namespace boost { namespace process { namespace detail {
+namespace boost {
+namespace filesystem { class path; }
+
+namespace process {
+
+namespace detail {
 
 struct exe_
 {
+    template<typename = void>
+    inline exe_setter_<typename boost::filesystem::path::value_type> operator()(const boost::filesystem::path & pth) const
+    {
+        return exe_setter_<typename boost::filesystem::path::value_type>(pth.native());
+    }
+
+    template<typename = void>
+    inline exe_setter_<typename boost::filesystem::path::value_type> operator=(const boost::filesystem::path & pth) const
+    {
+        return exe_setter_<typename boost::filesystem::path::value_type>(pth.native());
+    }
+
+
     template<typename Char>
     inline exe_setter_<Char> operator()(const Char *s) const
     {

@@ -2,7 +2,11 @@
 //
 // Spatial query predicates
 //
-// Copyright (c) 2011-2015 Adam Wulkiewicz, Lodz, Poland.
+// Copyright (c) 2011-2018 Adam Wulkiewicz, Lodz, Poland.
+//
+// This file was modified by Oracle on 2019.
+// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -12,7 +16,7 @@
 #define BOOST_GEOMETRY_INDEX_PREDICATES_HPP
 
 #include <boost/geometry/index/detail/predicates.hpp>
-#include <boost/geometry/index/detail/tuples.hpp>
+#include <boost/geometry/util/tuples.hpp>
 
 /*!
 \defgroup predicates Predicates (boost::geometry::index::)
@@ -23,9 +27,10 @@ namespace boost { namespace geometry { namespace index {
 /*!
 \brief Generate \c contains() predicate.
 
-Generate a predicate defining Value and Geometry relationship.
-Value will be returned by the query if <tt>bg::within(Geometry, Indexable)</tt>
-returns true.
+Generate a predicate defining Value and Geometry relationship. With this
+predicate query returns indexed Values that contain passed Geometry.
+Value is returned by the query if <tt>bg::within(Geometry, Indexable)</tt>
+returns <tt>true</tt>.
 
 \par Example
 \verbatim
@@ -53,9 +58,10 @@ contains(Geometry const& g)
 /*!
 \brief Generate \c covered_by() predicate.
 
-Generate a predicate defining Value and Geometry relationship.
-Value will be returned by the query if <tt>bg::covered_by(Indexable, Geometry)</tt>
-returns true.
+Generate a predicate defining Value and Geometry relationship. With this
+predicate query returns indexed Values that are covered by passed Geometry.
+Value is returned by the query if <tt>bg::covered_by(Indexable, Geometry)</tt>
+returns <tt>true</tt>.
 
 \par Example
 \verbatim
@@ -83,9 +89,10 @@ covered_by(Geometry const& g)
 /*!
 \brief Generate \c covers() predicate.
 
-Generate a predicate defining Value and Geometry relationship.
-Value will be returned by the query if <tt>bg::covered_by(Geometry, Indexable)</tt>
-returns true.
+Generate a predicate defining Value and Geometry relationship. With this
+predicate query returns indexed Values that cover passed Geometry.
+Value is returned by the query if <tt>bg::covered_by(Geometry, Indexable)</tt>
+returns <tt>true</tt>.
 
 \par Example
 \verbatim
@@ -113,9 +120,10 @@ covers(Geometry const& g)
 /*!
 \brief Generate \c disjoint() predicate.
 
-Generate a predicate defining Value and Geometry relationship.
-Value will be returned by the query if <tt>bg::disjoint(Indexable, Geometry)</tt>
-returns true.
+Generate a predicate defining Value and Geometry relationship. With this
+predicate query returns indexed Values that are disjoint with passed Geometry.
+Value is returned by the query if <tt>bg::disjoint(Indexable, Geometry)</tt>
+returns <tt>true</tt>.
 
 \par Example
 \verbatim
@@ -143,9 +151,10 @@ disjoint(Geometry const& g)
 /*!
 \brief Generate \c intersects() predicate.
 
-Generate a predicate defining Value and Geometry relationship.
-Value will be returned by the query if <tt>bg::intersects(Indexable, Geometry)</tt>
-returns true.
+Generate a predicate defining Value and Geometry relationship. With this
+predicate query returns indexed Values that intersect passed Geometry.
+Value is returned by the query if <tt>bg::intersects(Indexable, Geometry)</tt>
+returns <tt>true</tt>.
 
 \par Example
 \verbatim
@@ -175,9 +184,10 @@ intersects(Geometry const& g)
 /*!
 \brief Generate \c overlaps() predicate.
 
-Generate a predicate defining Value and Geometry relationship.
-Value will be returned by the query if <tt>bg::overlaps(Indexable, Geometry)</tt>
-returns true.
+Generate a predicate defining Value and Geometry relationship. With this
+predicate query returns indexed Values that overlap passed Geometry.
+Value is returned by the query if <tt>bg::overlaps(Indexable, Geometry)</tt>
+returns <tt>true</tt>.
 
 \par Example
 \verbatim
@@ -207,9 +217,10 @@ overlaps(Geometry const& g)
 /*!
 \brief Generate \c touches() predicate.
 
-Generate a predicate defining Value and Geometry relationship.
-Value will be returned by the query if <tt>bg::touches(Indexable, Geometry)</tt>
-returns true.
+Generate a predicate defining Value and Geometry relationship. With this
+predicate query returns indexed Values that touch passed Geometry.
+Value is returned by the query if <tt>bg::touches(Indexable, Geometry)</tt>
+returns <tt>true</tt>.
 
 \ingroup predicates
 
@@ -234,9 +245,10 @@ touches(Geometry const& g)
 /*!
 \brief Generate \c within() predicate.
 
-Generate a predicate defining Value and Geometry relationship.
-Value will be returned by the query if <tt>bg::within(Indexable, Geometry)</tt>
-returns true.
+Generate a predicate defining Value and Geometry relationship. With this
+predicate query returns indexed Values that are within passed Geometry.
+Value is returned by the query if <tt>bg::within(Indexable, Geometry)</tt>
+returns <tt>true</tt>.
 
 \par Example
 \verbatim
@@ -400,7 +412,7 @@ operator&&(Pred1 const& p1, Pred2 const& p2)
 }
 
 template <typename Head, typename Tail, typename Pred> inline
-typename tuples::push_back<
+typename geometry::tuples::push_back<
     boost::tuples::cons<Head, Tail>, Pred
 >::type
 operator&&(boost::tuples::cons<Head, Tail> const& t, Pred const& p)
@@ -409,7 +421,7 @@ operator&&(boost::tuples::cons<Head, Tail> const& t, Pred const& p)
     namespace bt = boost::tuples;
 
     return
-    tuples::push_back<
+    geometry::tuples::push_back<
         bt::cons<Head, Tail>, Pred
     >::apply(t, p);
 }

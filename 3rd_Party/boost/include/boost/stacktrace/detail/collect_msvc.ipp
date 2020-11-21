@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2017.
+// Copyright Antony Polukhin, 2016-2019.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -14,15 +14,15 @@
 
 #include <boost/stacktrace/safe_dump_to.hpp>
 
-#include <boost/detail/winapi/stack_backtrace.hpp>
+#include <boost/winapi/stack_backtrace.hpp>
 
 namespace boost { namespace stacktrace { namespace detail {
 
 std::size_t this_thread_frames::collect(native_frame_ptr_t* out_frames, std::size_t max_frames_count, std::size_t skip) BOOST_NOEXCEPT {
-    return boost::detail::winapi::RtlCaptureStackBackTrace(
-        static_cast<boost::detail::winapi::ULONG_>(skip),
-        static_cast<boost::detail::winapi::ULONG_>(max_frames_count),
-        const_cast<boost::detail::winapi::PVOID_*>(out_frames),
+    return boost::winapi::RtlCaptureStackBackTrace(
+        static_cast<boost::winapi::ULONG_>(skip),
+        static_cast<boost::winapi::ULONG_>(max_frames_count),
+        const_cast<boost::winapi::PVOID_*>(out_frames),
         0
     );
 }

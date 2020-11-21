@@ -8,8 +8,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPPLEXER_EXCEPTIONS_HPP_1A09DE1A_6D1F_4091_AF7F_5F13AB0D31AB_INCLUDED)
-#define CPPLEXER_EXCEPTIONS_HPP_1A09DE1A_6D1F_4091_AF7F_5F13AB0D31AB_INCLUDED
+#if !defined(BOOST_CPPLEXER_EXCEPTIONS_HPP_1A09DE1A_6D1F_4091_AF7F_5F13AB0D31AB_INCLUDED)
+#define BOOST_CPPLEXER_EXCEPTIONS_HPP_1A09DE1A_6D1F_4091_AF7F_5F13AB0D31AB_INCLUDED
 
 #include <exception>
 #include <string>
@@ -142,7 +142,7 @@ public:
     }
     ~cpplexer_exception() throw() {}
 
-    virtual char const *what() const throw() = 0;   // to be overloaded
+    char const *what() const throw() BOOST_OVERRIDE = 0;   // to be overloaded
     virtual char const *description() const throw() = 0;
     virtual int get_errorcode() const throw() = 0;
     virtual int get_severity() const throw() = 0;
@@ -186,23 +186,23 @@ public:
     }
     ~lexing_exception() throw() {}
 
-    virtual char const *what() const throw()
+    char const *what() const throw() BOOST_OVERRIDE
     {
         return "boost::wave::lexing_exception";
     }
-    virtual char const *description() const throw()
+    char const *description() const throw() BOOST_OVERRIDE
     {
         return buffer;
     }
-    virtual int get_severity() const throw()
+    int get_severity() const throw() BOOST_OVERRIDE
     {
         return level;
     }
-    virtual int get_errorcode() const throw()
+    int get_errorcode() const throw() BOOST_OVERRIDE
     {
         return code;
     }
-    virtual bool is_recoverable() const throw()
+    bool is_recoverable() const throw() BOOST_OVERRIDE
     {
         switch (get_errorcode()) {
         case lexing_exception::universal_char_invalid:
@@ -287,4 +287,4 @@ is_recoverable(lexing_exception const& e)
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(CPPLEXER_EXCEPTIONS_HPP_1A09DE1A_6D1F_4091_AF7F_5F13AB0D31AB_INCLUDED)
+#endif // !defined(BOOST_CPPLEXER_EXCEPTIONS_HPP_1A09DE1A_6D1F_4091_AF7F_5F13AB0D31AB_INCLUDED)

@@ -18,8 +18,8 @@
 #include <boost/smart_ptr/intrusive_ptr.hpp>
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
+#include <boost/core/explicit_operator_bool.hpp>
 #include <boost/log/detail/config.hpp>
-#include <boost/utility/explicit_operator_bool.hpp>
 #include <boost/log/attributes/attribute_value_set.hpp>
 #include <boost/log/expressions/keyword_fwd.hpp>
 #ifndef BOOST_LOG_NO_THREADS

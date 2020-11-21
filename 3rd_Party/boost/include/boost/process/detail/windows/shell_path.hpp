@@ -13,15 +13,15 @@
 #include <boost/process/detail/config.hpp>
 #include <system_error>
 #include <boost/filesystem/path.hpp>
-#include <boost/detail/winapi/basic_types.hpp>
-#include <boost/detail/winapi/get_system_directory.hpp>
+#include <boost/winapi/basic_types.hpp>
+#include <boost/winapi/get_system_directory.hpp>
 
 namespace boost { namespace process { namespace detail { namespace windows {
 
 inline boost::filesystem::path shell_path()
 {
-    ::boost::detail::winapi::WCHAR_ sysdir[260];
-    unsigned int size = ::boost::detail::winapi::get_system_directory(sysdir, sizeof(sysdir));
+    ::boost::winapi::WCHAR_ sysdir[260];
+    unsigned int size = ::boost::winapi::get_system_directory(sysdir, sizeof(sysdir));
     if (!size)
         throw_last_error("GetSystemDirectory() failed");
 
@@ -32,12 +32,12 @@ inline boost::filesystem::path shell_path()
 inline boost::filesystem::path shell_path(std::error_code &ec) noexcept
 {
 
-    ::boost::detail::winapi::WCHAR_ sysdir[260];
-    unsigned int size = ::boost::detail::winapi::get_system_directory(sysdir, sizeof(sysdir));
+    ::boost::winapi::WCHAR_ sysdir[260];
+    unsigned int size = ::boost::winapi::get_system_directory(sysdir, sizeof(sysdir));
     boost::filesystem::path p;
     if (!size)
         ec = std::error_code(
-                ::boost::detail::winapi::GetLastError(),
+                ::boost::winapi::GetLastError(),
                 std::system_category());
     else
     {

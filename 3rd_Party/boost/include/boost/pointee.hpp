@@ -20,6 +20,8 @@
 # include <boost/mpl/if.hpp>
 # include <boost/mpl/eval_if.hpp>
 
+#include <iterator>
+
 namespace boost {
 
 namespace detail
@@ -33,7 +35,7 @@ namespace detail
   template <class Iterator>
   struct iterator_pointee
   {
-      typedef typename iterator_traits<Iterator>::value_type value_type;
+      typedef typename std::iterator_traits<Iterator>::value_type value_type;
 
       struct impl
       {
@@ -48,7 +50,7 @@ namespace detail
       BOOST_STATIC_CONSTANT(bool, is_constant = sizeof(impl::test(*impl::x)) == 1);
 
       typedef typename mpl::if_c<
-#  if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x551))
+#  if BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x551))
           ::boost::detail::iterator_pointee<Iterator>::is_constant
 #  else
           is_constant

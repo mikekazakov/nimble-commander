@@ -1,4 +1,4 @@
-/* Copyright 2016-2017 Joaquin M Lopez Munoz.
+/* Copyright 2016-2018 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -16,11 +16,11 @@
 #include <algorithm>
 #include <boost/assert.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/poly_collection/detail/allocator_adaptor.hpp>
 #include <boost/poly_collection/detail/iterator_impl.hpp>
 #include <boost/poly_collection/detail/is_acceptable.hpp>
 #include <boost/poly_collection/detail/is_constructible.hpp>
 #include <boost/poly_collection/detail/is_final.hpp>
-#include <boost/poly_collection/detail/newdelete_allocator.hpp>
 #include <boost/poly_collection/detail/segment.hpp>
 #include <boost/poly_collection/detail/type_info_map.hpp>
 #include <boost/poly_collection/exception.hpp>
@@ -33,11 +33,11 @@ namespace boost{
 
 namespace poly_collection{
 
-namespace detail{
-
-namespace poly_collection_impl{
+namespace common_impl{
 
 /* common implementation for all polymorphic collections */
+
+using namespace detail;
 
 template<typename Model,typename Allocator>
 class poly_collection
@@ -50,14 +50,14 @@ class poly_collection
   template<typename... T>
   using for_all=typename for_all_types<T...>::type;
   template<typename T>
-  struct is_subtype: /* using makes VS2015 choke, hence we derive */
-    Model::template is_subtype<typename std::decay<T>::type>{};
+  struct is_implementation: /* using makes VS2015 choke, hence we derive */
+    Model::template is_implementation<typename std::decay<T>::type>{};
   template<typename T>
-  using enable_if_subtype=
-    typename std::enable_if<is_subtype<T>::value>::type*;
+  using enable_if_implementation=
+    typename std::enable_if<is_implementation<T>::value>::type*;
   template<typename T>
-  using enable_if_not_subtype=
-    typename std::enable_if<!is_subtype<T>::value>::type*;
+  using enable_if_not_implementation=
+    typename std::enable_if<!is_implementation<T>::value>::type*;
   template<typename T>
   using is_acceptable=
     detail::is_acceptable<typename std::decay<T>::type,Model>;
@@ -68,7 +68,7 @@ class poly_collection
   using enable_if_not_acceptable=
     typename std::enable_if<!is_acceptable<T>::value>::type*;
   template<typename InputIterator>
-  using enable_if_derefs_to_subtype=enable_if_subtype<
+  using enable_if_derefs_to_implementation=enable_if_implementation<
     typename std::iterator_traits<InputIterator>::value_type
   >;
   template<typename T>
@@ -103,7 +103,8 @@ class poly_collection
   using enable_if_not_constructible=
     typename std::enable_if<!is_constructible<T,U>::value>::type*;
 
-  using segment_type=detail::segment<Model,Allocator>;
+  using segment_allocator_type=allocator_adaptor<Allocator>;
+  using segment_type=detail::segment<Model,segment_allocator_type>;
   using segment_base_iterator=typename segment_type::base_iterator;
   using const_segment_base_iterator=
     typename segment_type::const_base_iterator;
@@ -117,10 +118,8 @@ class poly_collection
     typename segment_type::template const_iterator<T>;
   using segment_map=type_info_map<
     segment_type,
-    newdelete_allocator_adaptor<
-      typename std::allocator_traits<Allocator>::template
-        rebind_alloc<segment_type>
-    >
+    typename std::allocator_traits<segment_allocator_type>::template
+      rebind_alloc<segment_type>
   >;
   using segment_map_allocator_type=typename segment_map::allocator_type;
   using segment_map_iterator=typename segment_map::iterator;
@@ -679,7 +678,7 @@ public:
     };
   }
 
-  template<typename T,enable_if_subtype<T> =nullptr>
+  template<typename T,enable_if_implementation<T> =nullptr>
   iterator insert(T&& x)
   {
     auto it=get_map_iterator_for(x);
@@ -689,7 +688,7 @@ public:
   template<
     typename T,
     enable_if_not_same<const_iterator,T> =nullptr,
-    enable_if_subtype<T> =nullptr
+    enable_if_implementation<T> =nullptr
   >
   iterator insert(const_iterator hint,T&& x)
   {
@@ -705,7 +704,7 @@ public:
   template<
     typename BaseIterator,typename T,
     enable_if_not_same<local_iterator_impl<BaseIterator>,T> =nullptr,
-    enable_if_subtype<T> =nullptr
+    enable_if_implementation<T> =nullptr
   >
   nonconst_version<local_iterator_impl<BaseIterator>>
   insert(local_iterator_impl<BaseIterator> pos,T&& x)
@@ -719,7 +718,7 @@ public:
 
   template<
     typename InputIterator,
-    enable_if_derefs_to_subtype<InputIterator> =nullptr,
+    enable_if_derefs_to_implementation<InputIterator> =nullptr,
     enable_if_derefs_to_not_terminal<InputIterator> =nullptr
   >
   void insert(InputIterator first,InputIterator last)
@@ -729,7 +728,7 @@ public:
 
   template<
     typename InputIterator,
-    enable_if_derefs_to_subtype<InputIterator> =nullptr,
+    enable_if_derefs_to_implementation<InputIterator> =nullptr,
     enable_if_derefs_to_terminal<InputIterator> =nullptr
   >
   void insert(InputIterator first,InputIterator last) 
@@ -766,7 +765,7 @@ public:
 
   template<
     typename InputIterator,
-    enable_if_derefs_to_subtype<InputIterator> =nullptr,
+    enable_if_derefs_to_implementation<InputIterator> =nullptr,
     enable_if_derefs_to_not_terminal<InputIterator> =nullptr
   >
   void insert(const_iterator hint,InputIterator first,InputIterator last)
@@ -783,7 +782,7 @@ public:
 
   template<
     typename InputIterator,
-    enable_if_derefs_to_subtype<InputIterator> =nullptr,
+    enable_if_derefs_to_implementation<InputIterator> =nullptr,
     enable_if_derefs_to_terminal<InputIterator> =nullptr
   >
   void insert(const_iterator hint,InputIterator first,InputIterator last) 
@@ -837,7 +836,7 @@ public:
 
   template<
     typename InputIterator,
-    enable_if_derefs_to_subtype<InputIterator> =nullptr
+    enable_if_derefs_to_implementation<InputIterator> =nullptr
   >
   local_base_iterator insert(
     const_local_base_iterator pos,InputIterator first,InputIterator last)
@@ -1020,7 +1019,8 @@ private:
     const auto& id=subtypeid(x);
     auto        it=map.find(id);
     if(it!=map.end())return it;
-    else return map.insert(id,segment_type::make_from_prototype(seg)).first;
+    else return map.insert(
+      id,segment_type::make_from_prototype(seg,get_allocator())).first;
   }
 
   template<typename T>
@@ -1084,7 +1084,7 @@ private:
 
   template<
     typename T,typename BaseIterator,typename U,
-    enable_if_subtype<U> =nullptr,
+    enable_if_implementation<U> =nullptr,
     enable_if_not_constructible<T,U&&> =nullptr
   >
   static segment_base_iterator local_insert(
@@ -1096,7 +1096,7 @@ private:
 
   template<
     typename T,typename BaseIterator,typename U,
-    enable_if_subtype<U> =nullptr,
+    enable_if_implementation<U> =nullptr,
     enable_if_constructible<T,U&&> =nullptr
   >
   static segment_base_iterator local_insert(
@@ -1108,7 +1108,7 @@ private:
 
   template<
     typename T,typename BaseIterator,typename U,
-    enable_if_not_subtype<U> =nullptr,
+    enable_if_not_implementation<U> =nullptr,
     enable_if_constructible<T,U&&> =nullptr
   >
   static segment_base_iterator local_insert(
@@ -1119,7 +1119,7 @@ private:
 
   template<
     typename T,typename BaseIterator,typename U,
-    enable_if_not_subtype<U> =nullptr,
+    enable_if_not_implementation<U> =nullptr,
     enable_if_not_constructible<T,U&&> =nullptr
   >
   static segment_base_iterator local_insert(
@@ -1165,9 +1165,7 @@ void swap(
   x.swap(y);
 }
 
-} /* namespace poly_collection::detail::poly_collection_impl */
-
-} /* namespace poly_collection::detail */
+} /* namespace poly_collection::common_impl */
 
 } /* namespace poly_collection */
 

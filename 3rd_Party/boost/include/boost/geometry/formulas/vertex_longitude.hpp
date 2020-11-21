@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2016-2017 Oracle and/or its affiliates.
+// Copyright (c) 2016-2018 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -14,7 +14,7 @@
 
 #include <boost/geometry/formulas/spherical.hpp>
 #include <boost/geometry/formulas/flattening.hpp>
-#include <boost/geometry/core/srs.hpp>
+
 #include <boost/mpl/assert.hpp>
 
 #include <boost/math/special_functions/hypot.hpp>
@@ -209,12 +209,10 @@ public:
                             + C31 * (sin2_sig3 - sin2_sig1)
                             + C32 * (sin4_sig3 - sin4_sig1));
 
-        int sign = c1;
-        if (bet3 < c0)
-        {
-            sign = cminus1;
-        }
-
+        CT const sign = bet3 >= c0
+                      ? c1
+                      : cminus1;
+        
         CT const dlon_max = omg13 - sign * f * sin_alp0 * I3;
 
         return dlon_max;
@@ -331,6 +329,23 @@ public :
         }
 
         return vertex_lon;
+    }
+};
+
+template <typename CT>
+class vertex_longitude<CT, cartesian_tag>
+{
+public :
+    template <typename Strategy>
+    static inline CT apply(CT& /*lon1*/,
+                           CT& /*lat1*/,
+                           CT& lon2,
+                           CT& /*lat2*/,
+                           CT const& /*vertex_lat*/,
+                           CT& /*alp1*/,
+                           Strategy const& /*azimuth_strategy*/)
+    {
+        return lon2;
     }
 };
 

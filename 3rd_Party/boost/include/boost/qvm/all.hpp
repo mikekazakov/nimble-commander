@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_BE94EA1A31B211E0BBF943CFDFD72085
-#define UUID_BE94EA1A31B211E0BBF943CFDFD72085
+#ifndef BOOST_QVM_BE94EA1A31B211E0BBF943CFDFD72085
+#define BOOST_QVM_BE94EA1A31B211E0BBF943CFDFD72085
 
 #include <boost/qvm/error.hpp>
 #include <boost/qvm/mat_operations.hpp>

@@ -92,7 +92,7 @@ struct integer_alias_table {
         return _alias_table == other._alias_table &&
             _average == other._average && _excess == other._excess;
     }
-    static WeightType normalize(WeightType val, WeightType average)
+    static WeightType normalize(WeightType val, WeightType /* average */)
     {
         return val;
     }
@@ -183,7 +183,7 @@ struct real_alias_table {
     {
         return true;
     }
-    static WeightType try_get_sum(const std::vector<WeightType>& weights)
+    static WeightType try_get_sum(const std::vector<WeightType>& /* weights */)
     {
         return static_cast<WeightType>(1);
     }
@@ -571,8 +571,12 @@ private:
     template<class Iter>
     void init(Iter first, Iter last, std::forward_iterator_tag)
     {
+        size_t input_size = std::distance(first, last);
         std::vector<std::pair<WeightType, IntType> > below_average;
         std::vector<std::pair<WeightType, IntType> > above_average;
+        below_average.reserve(input_size);
+        above_average.reserve(input_size);
+        
         WeightType weight_average = _impl.init_average(first, last);
         WeightType normalized_average = _impl.get_weight(0);
         std::size_t i = 0;

@@ -10,7 +10,7 @@
 #include <exception>
 
 #include <boost/config.hpp>
-#include <boost/context/continuation.hpp>
+#include <boost/context/fiber.hpp>
 
 #include <boost/coroutine2/detail/state.hpp>
 
@@ -24,7 +24,7 @@ namespace detail {
 
 template< typename T >
 struct push_coroutine< T >::control_block {
-    boost::context::continuation                    c;
+    boost::context::fiber                           c;
     typename pull_coroutine< T >::control_block *   other;
     state_t                                         state;
     std::exception_ptr                              except;
@@ -32,9 +32,9 @@ struct push_coroutine< T >::control_block {
     static void destroy( control_block * cb) noexcept;
 
     template< typename StackAllocator, typename Fn >
-    control_block( context::preallocated, StackAllocator, Fn &&);
+    control_block( context::preallocated, StackAllocator &&, Fn &&);
 
-    control_block( typename pull_coroutine< T >::control_block *, boost::context::continuation &) noexcept;
+    control_block( typename pull_coroutine< T >::control_block *, boost::context::fiber &) noexcept;
 
     control_block( control_block &) = delete;
     control_block & operator=( control_block &) = delete;
@@ -50,7 +50,7 @@ struct push_coroutine< T >::control_block {
 
 template< typename T >
 struct push_coroutine< T & >::control_block {
-    boost::context::continuation                        c;
+    boost::context::fiber                               c;
     typename pull_coroutine< T & >::control_block   *   other;
     state_t                                             state;
     std::exception_ptr                                  except;
@@ -58,9 +58,9 @@ struct push_coroutine< T & >::control_block {
     static void destroy( control_block * cb) noexcept;
 
     template< typename StackAllocator, typename Fn >
-    control_block( context::preallocated, StackAllocator, Fn &&);
+    control_block( context::preallocated, StackAllocator &&, Fn &&);
 
-    control_block( typename pull_coroutine< T & >::control_block *, boost::context::continuation &) noexcept;
+    control_block( typename pull_coroutine< T & >::control_block *, boost::context::fiber &) noexcept;
 
     control_block( control_block &) = delete;
     control_block & operator=( control_block &) = delete;
@@ -73,7 +73,7 @@ struct push_coroutine< T & >::control_block {
 };
 
 struct push_coroutine< void >::control_block {
-    boost::context::continuation                c;
+    boost::context::fiber                       c;
     pull_coroutine< void >::control_block  *    other;
     state_t                                     state;
     std::exception_ptr                          except;
@@ -81,9 +81,9 @@ struct push_coroutine< void >::control_block {
     static void destroy( control_block * cb) noexcept;
 
     template< typename StackAllocator, typename Fn >
-    control_block( context::preallocated, StackAllocator, Fn &&);
+    control_block( context::preallocated, StackAllocator &&, Fn &&);
 
-    control_block( pull_coroutine< void >::control_block *, boost::context::continuation &) noexcept;
+    control_block( pull_coroutine< void >::control_block *, boost::context::fiber &) noexcept;
 
     control_block( control_block &) = delete;
     control_block & operator=( control_block &) = delete;

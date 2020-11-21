@@ -2,6 +2,10 @@
 //
 // Copyright (c) 2011-2013 Adam Wulkiewicz, Lodz, Poland.
 //
+// This file was modified by Oracle on 2019.
+// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+//
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -12,6 +16,30 @@
 namespace boost { namespace geometry { namespace index {
 
 namespace detail {
+
+template <typename Strategy>
+struct translator_equals
+{
+    template <typename EqualTo, typename Value>
+    static inline bool apply(EqualTo const& equal_to,
+                             Value const& v1, Value const& v2,
+                             Strategy const& strategy)
+    {
+        return equal_to(v1, v2, strategy);
+    }
+};
+
+template <>
+struct translator_equals<default_strategy>
+{
+    template <typename EqualTo, typename Value>
+    static inline bool apply(EqualTo const& equal_to,
+                             Value const& v1, Value const& v2,
+                             default_strategy const&)
+    {
+        return equal_to(v1, v2);
+    }
+};
 
 template <typename IndexableGetter, typename EqualTo>
 struct translator
@@ -30,11 +58,14 @@ struct translator
         return IndexableGetter::operator()(value);
     }
 
-    template <typename Value>
-    bool equals(Value const& v1, Value const& v2) const
-    {
-        return EqualTo::operator()(v1, v2);
-    }
+	template <typename Value, typename Strategy>
+	bool equals(Value const& v1, Value const& v2, Strategy const& strategy) const
+	{
+		return translator_equals
+                <
+                    Strategy
+                >::apply(static_cast<EqualTo const&>(*this), v1, v2, strategy);
+	}
 };
 
 template <typename IndexableGetter>

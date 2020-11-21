@@ -15,6 +15,7 @@
 #ifndef BOOST_LOG_TRIVIAL_HPP_INCLUDED_
 #define BOOST_LOG_TRIVIAL_HPP_INCLUDED_
 
+#include <cstddef>
 #include <iosfwd>
 #include <ostream>
 #include <boost/log/detail/config.hpp>
@@ -49,15 +50,26 @@ enum severity_level
 };
 
 //! Returns stringized enumeration value or \c NULL, if the value is not valid
-BOOST_LOG_API const char* to_string(severity_level lvl);
+template< typename CharT >
+BOOST_LOG_API const CharT* to_string(severity_level lvl);
+
+//! Returns stringized enumeration value or \c NULL, if the value is not valid
+inline const char* to_string(severity_level lvl)
+{
+    return boost::log::trivial::to_string< char >(lvl);
+}
+
+//! Parses enumeration value from string and returns \c true on success and \c false otherwise
+template< typename CharT >
+BOOST_LOG_API bool from_string(const CharT* str, std::size_t len, severity_level& lvl);
 
 //! Outputs stringized representation of the severity level to the stream
 template< typename CharT, typename TraitsT >
 inline std::basic_ostream< CharT, TraitsT >& operator<< (
     std::basic_ostream< CharT, TraitsT >& strm, severity_level lvl)
 {
-    const char* str = boost::log::trivial::to_string(lvl);
-    if (str)
+    const CharT* str = boost::log::trivial::to_string< CharT >(lvl);
+    if (BOOST_LIKELY(!!str))
         strm << str;
     else
         strm << static_cast< int >(lvl);

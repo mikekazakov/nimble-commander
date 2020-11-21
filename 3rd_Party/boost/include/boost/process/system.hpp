@@ -22,6 +22,7 @@
 #include <boost/process/child.hpp>
 #include <boost/process/detail/async_handler.hpp>
 #include <boost/process/detail/execute_impl.hpp>
+#include <boost/asio/post.hpp>
 #include <type_traits>
 #include <mutex>
 #include <condition_variable>
@@ -48,10 +49,10 @@ struct system_impl_success_check : handler
 template<typename IoService, typename ...Args>
 inline int system_impl(
         std::true_type, /*needs ios*/
-        std::true_type, /*has io_service*/
+        std::true_type, /*has io_context*/
         Args && ...args)
 {
-    IoService & ios = ::boost::process::detail::get_io_service_var(args...);
+    IoService & ios = ::boost::process::detail::get_io_context_var(args...);
 
     system_impl_success_check check;
 
@@ -62,7 +63,7 @@ inline int system_impl(
             ::boost::process::on_exit(
                 [&](int, const std::error_code&)
                 {
-                    ios.post([&]{exited.store(true);});
+                    boost::asio::post(ios.get_executor(), [&]{exited.store(true);});
                 }));
     if (!c.valid() || !check.succeeded)
         return -1;
@@ -76,7 +77,7 @@ inline int system_impl(
 template<typename IoService, typename ...Args>
 inline int system_impl(
         std::true_type,  /*needs ios */
-        std::false_type, /*has io_service*/
+        std::false_type, /*has io_context*/
         Args && ...args)
 {
     IoService ios;
@@ -85,6 +86,8 @@ inline int system_impl(
         return -1;
 
     ios.run();
+    if (c.running())
+        c.wait();
     return c.exit_code();
 }
 
@@ -92,7 +95,7 @@ inline int system_impl(
 template<typename IoService, typename ...Args>
 inline int system_impl(
         std::false_type, /*needs ios*/
-        std::true_type, /*has io_service*/
+        std::true_type, /*has io_context*/
         Args && ...args)
 {
     child c(std::forward<Args>(args)...);
@@ -105,7 +108,7 @@ inline int system_impl(
 template<typename IoService, typename ...Args>
 inline int system_impl(
         std::false_type, /*has async */
-        std::false_type, /*has io_service*/
+        std::false_type, /*has io_context*/
         Args && ...args)
 {
     child c(std::forward<Args>(args)...
@@ -131,19 +134,19 @@ int ret = system("ls");
 
 \attention Using this function with synchronous pipes leads to many potential deadlocks.
 
-When using this function with an asynchronous properties and NOT passing an io_service object,
-the system function will create one and run it. When the io_service is passed to the function,
-the system function will check if it is active, and call the io_service::run function if not.
+When using this function with an asynchronous properties and NOT passing an io_context object,
+the system function will create one and run it. When the io_context is passed to the function,
+the system function will check if it is active, and call the io_context::run function if not.
 
 */
 template<typename ...Args>
 inline int system(Args && ...args)
 {
-    typedef typename ::boost::process::detail::needs_io_service<Args...>::type
+    typedef typename ::boost::process::detail::needs_io_context<Args...>::type
             need_ios;
-    typedef typename ::boost::process::detail::has_io_service<Args...>::type
+    typedef typename ::boost::process::detail::has_io_context<Args...>::type
             has_ios;
-    return ::boost::process::detail::system_impl<boost::asio::io_service>(
+    return ::boost::process::detail::system_impl<boost::asio::io_context>(
             need_ios(), has_ios(),
             std::forward<Args>(args)...);
 }

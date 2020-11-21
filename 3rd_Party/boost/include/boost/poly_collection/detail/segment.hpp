@@ -1,4 +1,4 @@
-/* Copyright 2016-2017 Joaquin M Lopez Munoz.
+/* Copyright 2016-2018 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -40,6 +40,7 @@ class segment
 {
 public:
   using value_type=typename Model::value_type;
+  using allocator_type=Allocator; /* needed for uses-allocator construction */
   using base_iterator=typename Model::base_iterator;
   using const_base_iterator=typename Model::const_base_iterator;
   using base_sentinel=typename Model::base_sentinel;
@@ -50,24 +51,42 @@ public:
   using const_iterator=typename Model::template const_iterator<T>;
 
   template<typename T>
-  static segment make(const Allocator& al)
+  static segment make(const allocator_type& al)
   {
-    return Model::template make<T>(al);
+    return segment_backend_implementation<T>::make(al);
   }
 
   /* clones the implementation of x with no elements */
 
-  static segment make_from_prototype(const segment& x)
+  static segment make_from_prototype(const segment& x,const allocator_type& al)
   {
-    return {from_prototype{},x};
+    return {from_prototype{},x,al};
   }
 
-  segment(const segment& x):pimpl{x.impl().copy()}{set_sentinel();}
+  segment(const segment& x):
+    pimpl{x.impl().copy()}{set_sentinel();}
   segment(segment&& x)=default;
-  segment& operator=(segment x) // TODO: Why do we need this?
+  segment(const segment& x,const allocator_type& al):
+    pimpl{x.impl().copy(al)}{set_sentinel();}
+
+  /* TODO: try ptr-level move before impl().move() */
+  segment(segment&& x,const allocator_type& al):
+    pimpl{x.impl().move(al)}{set_sentinel();}
+
+  segment& operator=(const segment& x)
   {
-    pimpl=std::move(x.pimpl);
-    snt=x.snt;
+    pimpl=allocator_traits::propagate_on_container_copy_assignment::value?
+      x.impl().copy():x.impl().copy(impl().get_allocator());
+    set_sentinel();
+    return *this;
+  }
+  
+  segment& operator=(segment&& x)
+  {
+    pimpl=x.impl().move(
+      allocator_traits::propagate_on_container_move_assignment::value?
+      x.impl().get_allocator():impl().get_allocator());
+    set_sentinel();
     return *this;
   }
 
@@ -243,7 +262,8 @@ public:
   void                 clear()noexcept{filter(impl<U>().nv_clear());}
 
 private:
-  using segment_backend=typename Model::segment_backend;
+  using allocator_traits=std::allocator_traits<Allocator>;
+  using segment_backend=typename Model::template segment_backend<Allocator>;
   template<typename Concrete>
   using segment_backend_implementation=typename Model::
     template segment_backend_implementation<Concrete,Allocator>;
@@ -255,8 +275,8 @@ private:
 
   segment(segment_backend_unique_ptr&& pimpl):
     pimpl{std::move(pimpl)}{set_sentinel();}
-  segment(from_prototype,const segment& x):
-    pimpl{x.impl().empty_copy()}{set_sentinel();}
+  segment(from_prototype,const segment& x,const allocator_type& al):
+    pimpl{x.impl().empty_copy(al)}{set_sentinel();}
 
   segment_backend&       impl()noexcept{return *pimpl;}
   const segment_backend& impl()const noexcept{return *pimpl;}

@@ -24,10 +24,10 @@ namespace poly_collection{
 
 template<typename Signature,typename Allocator>
 class function_collection:
- public detail::poly_collection_impl::poly_collection<
+ public common_impl::poly_collection<
    detail::function_model<Signature>,Allocator>
 {
-  using base_type=detail::poly_collection_impl::poly_collection<
+  using base_type=common_impl::poly_collection<
     detail::function_model<Signature>,Allocator>;
 
   base_type&       base()noexcept{return *this;}

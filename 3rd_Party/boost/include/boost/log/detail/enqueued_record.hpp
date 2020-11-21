@@ -63,10 +63,10 @@ public:
     boost::log::aux::timestamp m_timestamp;
     record_view m_record;
 
-    enqueued_record(enqueued_record const& that) : m_timestamp(that.m_timestamp), m_record(that.m_record)
+    enqueued_record(enqueued_record const& that) BOOST_NOEXCEPT : m_timestamp(that.m_timestamp), m_record(that.m_record)
     {
     }
-    enqueued_record(BOOST_RV_REF(enqueued_record) that) :
+    enqueued_record(BOOST_RV_REF(enqueued_record) that) BOOST_NOEXCEPT :
         m_timestamp(that.m_timestamp),
         m_record(boost::move(that.m_record))
     {
@@ -76,13 +76,13 @@ public:
         m_record(rec)
     {
     }
-    enqueued_record& operator= (BOOST_COPY_ASSIGN_REF(enqueued_record) that)
+    enqueued_record& operator= (BOOST_COPY_ASSIGN_REF(enqueued_record) that) BOOST_NOEXCEPT
     {
         m_timestamp = that.m_timestamp;
         m_record = that.m_record;
         return *this;
     }
-    enqueued_record& operator= (BOOST_RV_REF(enqueued_record) that)
+    enqueued_record& operator= (BOOST_RV_REF(enqueued_record) that) BOOST_NOEXCEPT
     {
         m_timestamp = that.m_timestamp;
         m_record = boost::move(that.m_record);

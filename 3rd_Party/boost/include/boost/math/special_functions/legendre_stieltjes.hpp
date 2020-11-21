@@ -34,7 +34,7 @@ public:
         {
            throw std::domain_error("The Legendre-Stieltjes polynomial is defined for order m > 0.\n");
         }
-        m_m = m;
+        m_m = static_cast<int>(m);
         std::ptrdiff_t n = m - 1;
         std::ptrdiff_t q;
         std::ptrdiff_t r;
@@ -141,11 +141,11 @@ public:
         {
             if(m_m & 1)
             {
-                Em_prime += m_a[i]*detail::legendre_p_prime_imp(2*i - 1, x, policies::policy<>());
+                Em_prime += m_a[i]*detail::legendre_p_prime_imp(static_cast<unsigned>(2*i - 1), x, policies::policy<>());
             }
             else
             {
-                Em_prime += m_a[i]*detail::legendre_p_prime_imp(2*i - 2, x, policies::policy<>());
+                Em_prime += m_a[i]*detail::legendre_p_prime_imp(static_cast<unsigned>(2*i - 2), x, policies::policy<>());
             }
         }
         return Em_prime;

@@ -69,12 +69,20 @@ public:
     }
 };
 
+#if defined(BOOST_MSVC) && BOOST_MSVC == 1925
+// MSVC 14.2 has a codegen bug that makes inlined `matches` functions below crash on copy constructing the phoenix::actor on return.
+// https://developercommunity.visualstudio.com/content/problem/982738/bad-code-generated-in-boostlogboostregex-test-case.html
+#define BOOST_LOG_AUX_FORCEINLINE_MSVC_BUG982738 inline BOOST_NOINLINE
+#else
+#define BOOST_LOG_AUX_FORCEINLINE_MSVC_BUG982738 BOOST_FORCEINLINE
+#endif
+
 /*!
  * The function generates a terminal node in a template expression. The node will check if the attribute value,
  * which is assumed to be a string, matches the specified regular expression.
  */
 template< typename T, typename FallbackPolicyT, typename TagT, template< typename > class ActorT, typename RegexT >
-BOOST_FORCEINLINE ActorT< aux::unary_function_terminal< attribute_matches< T, RegexT, FallbackPolicyT > > >
+BOOST_LOG_AUX_FORCEINLINE_MSVC_BUG982738 ActorT< aux::unary_function_terminal< attribute_matches< T, RegexT, FallbackPolicyT > > >
 matches(attribute_actor< T, FallbackPolicyT, TagT, ActorT > const& attr, RegexT const& rex)
 {
     typedef aux::unary_function_terminal< attribute_matches< T, RegexT, FallbackPolicyT > > terminal_type;
@@ -87,7 +95,7 @@ matches(attribute_actor< T, FallbackPolicyT, TagT, ActorT > const& attr, RegexT 
  * which is assumed to be a string, matches the specified regular expression.
  */
 template< typename DescriptorT, template< typename > class ActorT, typename RegexT >
-BOOST_FORCEINLINE ActorT< aux::unary_function_terminal< attribute_matches< typename DescriptorT::value_type, RegexT > > >
+BOOST_LOG_AUX_FORCEINLINE_MSVC_BUG982738 ActorT< aux::unary_function_terminal< attribute_matches< typename DescriptorT::value_type, RegexT > > >
 matches(attribute_keyword< DescriptorT, ActorT > const&, RegexT const& rex)
 {
     typedef aux::unary_function_terminal< attribute_matches< typename DescriptorT::value_type, RegexT > > terminal_type;
@@ -100,13 +108,15 @@ matches(attribute_keyword< DescriptorT, ActorT > const&, RegexT const& rex)
  * which is assumed to be a string, matches the specified regular expression.
  */
 template< typename T, typename RegexT >
-BOOST_FORCEINLINE phoenix::actor< aux::unary_function_terminal< attribute_matches< T, RegexT > > >
+BOOST_LOG_AUX_FORCEINLINE_MSVC_BUG982738 phoenix::actor< aux::unary_function_terminal< attribute_matches< T, RegexT > > >
 matches(attribute_name const& name, RegexT const& rex)
 {
     typedef aux::unary_function_terminal< attribute_matches< T, RegexT > > terminal_type;
     phoenix::actor< terminal_type > act = {{ terminal_type(name, rex) }};
     return act;
 }
+
+#undef BOOST_LOG_AUX_FORCEINLINE_MSVC_BUG982738
 
 } // namespace expressions
 

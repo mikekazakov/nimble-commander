@@ -87,7 +87,7 @@ struct ast_tree_policy :
         typedef typename tree_match<iterator_t, NodeFactoryT, T>::container_t
             container_t;
 
-        // test for size() is nessecary, because no_tree_gen_node leaves a.trees
+        // test for size() is necessary, because no_tree_gen_node leaves a.trees
         // and/or b.trees empty
         if (0 != b.trees.size() && b.trees.begin()->value.is_root())
         {
@@ -301,15 +301,15 @@ ast_parse(
     SkipT const&            skip_,
     AstFactoryT const &   /*dummy_*/ = AstFactoryT())
 {
-    typedef skip_parser_iteration_policy<SkipT> iter_policy_t;
+    typedef skip_parser_iteration_policy<SkipT> it_policy_t;
     typedef ast_match_policy<IteratorT, AstFactoryT> ast_match_policy_t;
     typedef
-        scanner_policies<iter_policy_t, ast_match_policy_t>
-        scanner_policies_t;
-    typedef scanner<IteratorT, scanner_policies_t> scanner_t;
+        scanner_policies<it_policy_t, ast_match_policy_t>
+        scan_policies_t;
+    typedef scanner<IteratorT, scan_policies_t> scanner_t;
 
-    iter_policy_t iter_policy(skip_);
-    scanner_policies_t policies(iter_policy);
+    it_policy_t iter_policy(skip_);
+    scan_policies_t policies(iter_policy);
     IteratorT first = first_;
     scanner_t scan(first, last_, policies);
     tree_match<IteratorT, AstFactoryT> hit = parser.derived().parse(scan);

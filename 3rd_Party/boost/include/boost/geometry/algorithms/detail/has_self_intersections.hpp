@@ -3,8 +3,8 @@
 // Copyright (c) 2011-2012 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2017.
-// Modifications copyright (c) 2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017, 2019.
+// Modifications copyright (c) 2017, 2019 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -81,7 +81,11 @@ inline bool has_self_intersections(Geometry const& geometry,
     std::deque<turn_info> turns;
     detail::disjoint::disjoint_interrupt_policy policy;
 
-    detail::self_get_turn_points::self_turns<false, detail::overlay::assign_null_policy>(geometry, strategy, robust_policy, turns, policy);
+    detail::self_get_turn_points::self_turns
+        <
+            false,
+            detail::overlay::assign_null_policy
+        >(geometry, strategy, robust_policy, turns, policy, 0, false);
 
 #ifdef BOOST_GEOMETRY_DEBUG_HAS_SELF_INTERSECTIONS
     bool first = true;
@@ -146,7 +150,7 @@ inline bool has_self_intersections(Geometry const& geometry,
         >::type strategy;
 
     rescale_policy_type robust_policy
-            = geometry::get_rescale_policy<rescale_policy_type>(geometry);
+        = geometry::get_rescale_policy<rescale_policy_type>(geometry, strategy);
 
     return has_self_intersections(geometry, strategy, robust_policy,
                                   throw_on_self_intersection);

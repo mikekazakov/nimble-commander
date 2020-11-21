@@ -11,7 +11,7 @@
 #ifndef BOOST_PROCESS_DETAIL_CMD_LINE_HPP
 #define BOOST_PROCESS_DETAIL_CMD_LINE_HPP
 
-#include <boost/detail/winapi/config.hpp>
+#include <boost/winapi/config.hpp>
 #include <boost/process/detail/config.hpp>
 #include <boost/process/detail/handler_base.hpp>
 #include <boost/process/detail/traits/cmd_or_exe.hpp>
@@ -43,7 +43,7 @@ namespace boost { namespace process { namespace detail {
 
 struct cmd_
 {
-    constexpr cmd_() {}
+    constexpr cmd_() = default;
 
     template<typename Char>
     inline api::cmd_setter_<Char> operator()(const Char *s) const

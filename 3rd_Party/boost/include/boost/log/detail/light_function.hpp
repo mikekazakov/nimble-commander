@@ -22,8 +22,8 @@
 #include <cstddef>
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
+#include <boost/core/explicit_operator_bool.hpp>
 #include <boost/log/detail/config.hpp>
-#include <boost/utility/explicit_operator_bool.hpp>
 #include <boost/type_traits/remove_cv.hpp>
 #if defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES)
 #include <boost/preprocessor/iteration/iterate.hpp>

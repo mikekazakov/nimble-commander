@@ -13,6 +13,7 @@
 #include <boost/process/detail/config.hpp>
 #include <boost/process/detail/handler.hpp>
 #include <boost/process/locale.hpp>
+#include <boost/process/detail/traits/wchar_t.hpp>
 
 #if defined (BOOST_POSIX_API)
 #include <boost/process/detail/posix/start_dir.hpp>

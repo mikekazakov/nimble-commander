@@ -30,7 +30,7 @@
 
 namespace boost {
 namespace container {
-namespace container_detail {
+namespace dtl {
 
 //!A deleter for scoped_ptr that deallocates the memory
 //!allocated for an object using a STL allocator.
@@ -39,8 +39,8 @@ struct scoped_deallocator
 {
    typedef allocator_traits<Allocator> allocator_traits_type;
    typedef typename allocator_traits_type::pointer pointer;
-   typedef container_detail::integral_constant<unsigned,
-      boost::container::container_detail::
+   typedef dtl::integral_constant<unsigned,
+      boost::container::dtl::
          version<Allocator>::value>                   alloc_version;
 
    private:
@@ -142,8 +142,8 @@ struct scoped_destroy_deallocator
    typedef boost::container::allocator_traits<Allocator> AllocTraits;
    typedef typename AllocTraits::pointer    pointer;
    typedef typename AllocTraits::size_type  size_type;
-   typedef container_detail::integral_constant<unsigned,
-      boost::container::container_detail::
+   typedef dtl::integral_constant<unsigned,
+      boost::container::dtl::
          version<Allocator>::value>                          alloc_version;
 
    scoped_destroy_deallocator(pointer p, Allocator& a)
@@ -270,12 +270,12 @@ class scoped_destructor
 };
 
 
-template<class Allocator>
+template<class Allocator, class Value = typename Allocator::value_type>
 class value_destructor
 {
    typedef boost::container::allocator_traits<Allocator> AllocTraits;
    public:
-   typedef typename Allocator::value_type value_type;
+   typedef Value value_type;
    value_destructor(Allocator &a, value_type &rv)
       : rv_(rv), a_(a)
    {}
@@ -296,8 +296,8 @@ class allocator_destroyer
    typedef boost::container::allocator_traits<Allocator> AllocTraits;
    typedef typename AllocTraits::value_type value_type;
    typedef typename AllocTraits::pointer    pointer;
-   typedef container_detail::integral_constant<unsigned,
-      boost::container::container_detail::
+   typedef dtl::integral_constant<unsigned,
+      boost::container::dtl::
          version<Allocator>::value>                           alloc_version;
 
    private:
@@ -369,7 +369,7 @@ class allocator_multialloc_chain_node_deallocator
    }
 };
 
-}  //namespace container_detail {
+}  //namespace dtl {
 }  //namespace container {
 }  //namespace boost {
 

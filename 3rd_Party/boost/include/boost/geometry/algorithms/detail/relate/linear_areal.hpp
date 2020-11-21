@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2013, 2014, 2015, 2017.
-// Modifications copyright (c) 2013-2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013, 2014, 2015, 2017, 2018, 2019.
+// Modifications copyright (c) 2013-2019 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -219,21 +219,21 @@ struct linear_areal
                 >
         {};
 
-    template <typename Geom1, typename Geom2>
+    template <typename Geom1, typename Geom2, typename Strategy>
     struct multi_turn_info
-        : turns::get_turns<Geom1, Geom2>::turn_info
+        : turns::get_turns<Geom1, Geom2>::template turn_info_type<Strategy>::type
     {
         multi_turn_info() : priority(0) {}
         int priority; // single-geometry sorting priority
     };
 
-    template <typename Geom1, typename Geom2>
+    template <typename Geom1, typename Geom2, typename Strategy>
     struct turn_info_type
         : boost::mpl::if_c
             <
                 is_multi<Geometry2>::value,
-                multi_turn_info<Geom1, Geom2>,
-                typename turns::get_turns<Geom1, Geom2>::turn_info
+                multi_turn_info<Geom1, Geom2, Strategy>,
+                typename turns::get_turns<Geom1, Geom2>::template turn_info_type<Strategy>::type
             >
     {};
     
@@ -251,7 +251,7 @@ struct linear_areal
             return;
 
         // get and analyse turns
-        typedef typename turn_info_type<Geometry1, Geometry2>::type turn_type;
+        typedef typename turn_info_type<Geometry1, Geometry2, IntersectionStrategy>::type turn_type;
         std::vector<turn_type> turns;
 
         interrupt_policy_linear_areal<Geometry2, Result> interrupt_policy(geometry2, result);
@@ -260,17 +260,29 @@ struct linear_areal
         if ( BOOST_GEOMETRY_CONDITION( result.interrupt ) )
             return;
 
-        boundary_checker<Geometry1> boundary_checker1(geometry1);
+        typedef typename IntersectionStrategy::template point_in_geometry_strategy<Geometry1, Geometry2>::type within_strategy_type;
+        within_strategy_type const within_strategy = intersection_strategy.template get_point_in_geometry_strategy<Geometry1, Geometry2>();
+
+        typedef typename IntersectionStrategy::cs_tag cs_tag;
+        typedef typename within_strategy_type::equals_point_point_strategy_type eq_pp_strategy_type;
+        
+        typedef boundary_checker
+            <
+                Geometry1,
+                eq_pp_strategy_type
+            > boundary_checker1_type;
+        boundary_checker1_type boundary_checker1(geometry1);
+
         no_turns_la_linestring_pred
             <
                 Geometry2,
                 Result,
-                typename IntersectionStrategy::template point_in_geometry_strategy<Geometry1, Geometry2>::type,
-                boundary_checker<Geometry1>,
+                within_strategy_type,
+                boundary_checker1_type,
                 TransposeResult
             > pred1(geometry2,
                     result,
-                    intersection_strategy.template get_point_in_geometry_strategy<Geometry1, Geometry2>(),
+                    within_strategy,
                     boundary_checker1);
         for_each_disjoint_geometry_if<0, Geometry1>::apply(turns.begin(), turns.end(), geometry1, pred1);
         if ( BOOST_GEOMETRY_CONDITION( result.interrupt ) )
@@ -291,7 +303,7 @@ struct linear_areal
             return;
 
         {
-            sort_dispatch(turns.begin(), turns.end(), is_multi<Geometry2>());
+            sort_dispatch<cs_tag>(turns.begin(), turns.end(), is_multi<Geometry2>());
 
             turns_analyser<turn_type> analyser;
             analyse_each_turn(result, analyser,
@@ -388,15 +400,17 @@ struct linear_areal
                 else
                 {
                     // u, c
-                    typedef turns::less<1, turns::less_op_areal_linear<1> > less;
+                    typedef turns::less<1, turns::less_op_areal_linear<1>, cs_tag> less;
                     std::sort(it, next, less());
+
+                    eq_pp_strategy_type const eq_pp_strategy = within_strategy.get_equals_point_point_strategy();
 
                     // analyse
                     areal_boundary_analyser<turn_type> analyser;
                     for ( turn_iterator rit = it ; rit != next ; ++rit )
                     {
                         // if the analyser requests, break the search
-                        if ( !analyser.apply(it, rit, next) )
+                        if ( !analyser.apply(it, rit, next, eq_pp_strategy) )
                             break;
                     }
 
@@ -516,11 +530,11 @@ struct linear_areal
         }
     };
 
-    template <typename TurnIt>
+    template <typename CSTag, typename TurnIt>
     static void sort_dispatch(TurnIt first, TurnIt last, boost::true_type const& /*is_multi*/)
     {
         // sort turns by Linear seg_id, then by fraction, then by other multi_index
-        typedef turns::less<0, turns::less_other_multi_index<0> > less;
+        typedef turns::less<0, turns::less_other_multi_index<0>, CSTag> less;
         std::sort(first, last, less());
 
         // For the same IP and multi_index - the same other's single geometry
@@ -534,19 +548,19 @@ struct linear_areal
         // When priorities for single geometries are set now sort turns for the same IP
         // if multi_index is the same sort them according to the single-less
         // else use priority of the whole single-geometry set earlier
-        typedef turns::less<0, turns::less_op_linear_areal_single<0> > single_less;
+        typedef turns::less<0, turns::less_op_linear_areal_single<0>, CSTag> single_less;
         for_each_equal_range(first, last,
                              sort_turns_group<single_less>(),
                              same_ip());
     }
 
-    template <typename TurnIt>
+    template <typename CSTag, typename TurnIt>
     static void sort_dispatch(TurnIt first, TurnIt last, boost::false_type const& /*is_multi*/)
     {
         // sort turns by Linear seg_id, then by fraction, then
         // for same ring id: x, u, i, c
         // for different ring id: c, i, u, x
-        typedef turns::less<0, turns::less_op_linear_areal_single<0> > less;
+        typedef turns::less<0, turns::less_op_linear_areal_single<0>, CSTag> less;
         std::sort(first, last, less());
     }
     
@@ -619,6 +633,37 @@ struct linear_areal
         static const std::size_t op_id = 0;
         static const std::size_t other_op_id = 1;
 
+        template <typename TurnPointCSTag, typename PointP, typename PointQ,
+                  typename SideStrategy,
+                  typename Pi = PointP, typename Pj = PointP, typename Pk = PointP,
+                  typename Qi = PointQ, typename Qj = PointQ, typename Qk = PointQ
+        >
+        struct la_side_calculator
+        {
+            inline la_side_calculator(Pi const& pi, Pj const& pj, Pk const& pk,
+                                   Qi const& qi, Qj const& qj, Qk const& qk,
+                                   SideStrategy const& side_strategy)
+                : m_pi(pi), m_pj(pj), m_pk(pk)
+                , m_qi(qi), m_qj(qj), m_qk(qk)
+                , m_side_strategy(side_strategy)
+            {}
+
+            inline int pk_wrt_p1() const { return m_side_strategy.apply(m_pi, m_pj, m_pk); }
+            inline int qk_wrt_p1() const { return m_side_strategy.apply(m_pi, m_pj, m_qk); }
+            inline int pk_wrt_q2() const { return m_side_strategy.apply(m_qj, m_qk, m_pk); }
+
+         private :
+            Pi const& m_pi;
+            Pj const& m_pj;
+            Pk const& m_pk;
+            Qi const& m_qi;
+            Qj const& m_qj;
+            Qk const& m_qk;
+
+            SideStrategy m_side_strategy;
+        };
+
+
     public:
         turns_analyser()
             : m_previous_turn_ptr(NULL)
@@ -668,7 +713,8 @@ struct linear_areal
             {
                 // real exit point - may be multiple
                 // we know that we entered and now we exit
-                if ( ! turn_on_the_same_ip<op_id>(m_exit_watcher.get_exit_turn(), *it) )
+                if ( ! turn_on_the_same_ip<op_id>(m_exit_watcher.get_exit_turn(), *it,
+                                                  side_strategy.get_equals_point_point_strategy()) )
                 {
                     m_exit_watcher.reset_detected_exit();
                     
@@ -710,7 +756,8 @@ struct linear_areal
 
                 if ( ( op == overlay::operation_intersection
                     || op == overlay::operation_continue )
-                  && turn_on_the_same_ip<op_id>(m_exit_watcher.get_exit_turn(), *it) )
+                  && turn_on_the_same_ip<op_id>(m_exit_watcher.get_exit_turn(), *it,
+                                                side_strategy.get_equals_point_point_strategy()) )
                 {
                     fake_enter_detected = true;
                 }
@@ -730,7 +777,8 @@ struct linear_areal
                     && ( op != overlay::operation_blocked // operation different than block
                         || seg_id.multi_index != m_previous_turn_ptr->operations[op_id].seg_id.multi_index ) ) // or the next single-geometry
                   || ( m_previous_operation == overlay::operation_union
-                    && ! turn_on_the_same_ip<op_id>(*m_previous_turn_ptr, *it) )
+                    && ! turn_on_the_same_ip<op_id>(*m_previous_turn_ptr, *it,
+                                                    side_strategy.get_equals_point_point_strategy()) )
                    )
                 {
                     update<interior, exterior, '1', TransposeResult>(res);
@@ -762,7 +810,8 @@ struct linear_areal
                 BOOST_GEOMETRY_ASSERT_MSG(m_previous_turn_ptr, "non-NULL ptr expected");
 
                 // real interior overlap
-                if ( ! turn_on_the_same_ip<op_id>(*m_previous_turn_ptr, *it) )
+                if ( ! turn_on_the_same_ip<op_id>(*m_previous_turn_ptr, *it,
+                                                  side_strategy.get_equals_point_point_strategy()) )
                 {
                     update<interior, interior, '1', TransposeResult>(res);
                     m_interior_detected = false;
@@ -1201,7 +1250,7 @@ struct linear_areal
             point2_type const& qj = range::at(range2, q_seg_ij + 1);
             point1_type qi_conv;
             geometry::convert(qi, qi_conv);
-            bool const is_ip_qj = equals::equals_point_point(turn.point, qj);
+            bool const is_ip_qj = equals::equals_point_point(turn.point, qj, side_strategy.get_equals_point_point_strategy());
 // TODO: test this!
 //            BOOST_GEOMETRY_ASSERT(!equals::equals_point_point(turn.point, pi));
 //            BOOST_GEOMETRY_ASSERT(!equals::equals_point_point(turn.point, qi));
@@ -1215,10 +1264,11 @@ struct linear_areal
 // It would be good to replace it with some O(1) mechanism
                 range2_iterator qk_it = find_next_non_duplicated(boost::begin(range2),
                                                                  range::pos(range2, q_seg_jk),
-                                                                 boost::end(range2));
+                                                                 boost::end(range2),
+                                                                 side_strategy.get_equals_point_point_strategy());
 
                 // Will this sequence of points be always correct?
-                overlay::side_calculator<cs_tag, point1_type, point2_type, SideStrategy>
+                la_side_calculator<cs_tag, point1_type, point2_type, SideStrategy>
                     side_calc(qi_conv, new_pj, pi, qi, qj, *qk_it, side_strategy);
 
                 return calculate_from_inside_sides(side_calc);
@@ -1228,15 +1278,16 @@ struct linear_areal
                 point2_type new_qj;
                 geometry::convert(turn.point, new_qj);
 
-                overlay::side_calculator<cs_tag, point1_type, point2_type, SideStrategy>
+                la_side_calculator<cs_tag, point1_type, point2_type, SideStrategy>
                     side_calc(qi_conv, new_pj, pi, qi, new_qj, qj, side_strategy);
 
                 return calculate_from_inside_sides(side_calc);
             }
         }
 
-        template <typename It>
-        static inline It find_next_non_duplicated(It first, It current, It last)
+        template <typename It, typename EqPPStrategy>
+        static inline It find_next_non_duplicated(It first, It current, It last,
+                                                  EqPPStrategy const& strategy)
         {
             BOOST_GEOMETRY_ASSERT( current != last );
 
@@ -1244,14 +1295,14 @@ struct linear_areal
 
             for ( ++it ; it != last ; ++it )
             {
-                if ( !equals::equals_point_point(*current, *it) )
+                if ( !equals::equals_point_point(*current, *it, strategy) )
                     return it;
             }
 
             // if not found start from the beginning
             for ( it = first ; it != current ; ++it )
             {
-                if ( !equals::equals_point_point(*current, *it) )
+                if ( !equals::equals_point_point(*current, *it, strategy) )
                     return it;
             }
 
@@ -1394,8 +1445,9 @@ struct linear_areal
             , m_previous_turn_ptr(NULL)
         {}
 
-        template <typename TurnIt>
-        bool apply(TurnIt /*first*/, TurnIt it, TurnIt last)
+        template <typename TurnIt, typename EqPPStrategy>
+        bool apply(TurnIt /*first*/, TurnIt it, TurnIt last,
+                   EqPPStrategy const& strategy)
         {
             overlay::operation_type op = it->operations[1].operation;
 
@@ -1410,7 +1462,7 @@ struct linear_areal
                 if ( is_union_detected )
                 {
                     BOOST_GEOMETRY_ASSERT(m_previous_turn_ptr != NULL);
-                    if ( !detail::equals::equals_point_point(it->point, m_previous_turn_ptr->point) )
+                    if ( !detail::equals::equals_point_point(it->point, m_previous_turn_ptr->point, strategy) )
                     {
                         // break
                         return false;

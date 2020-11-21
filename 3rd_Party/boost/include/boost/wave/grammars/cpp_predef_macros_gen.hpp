@@ -8,8 +8,8 @@
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPP_PREDEF_MACROS_GEN_HPP_CADB6D2C_76A4_4988_83E1_EFFC6902B9A2_INCLUDED)
-#define CPP_PREDEF_MACROS_GEN_HPP_CADB6D2C_76A4_4988_83E1_EFFC6902B9A2_INCLUDED
+#if !defined(BOOST_CPP_PREDEF_MACROS_GEN_HPP_CADB6D2C_76A4_4988_83E1_EFFC6902B9A2_INCLUDED)
+#define BOOST_CPP_PREDEF_MACROS_GEN_HPP_CADB6D2C_76A4_4988_83E1_EFFC6902B9A2_INCLUDED
 
 #include <boost/spirit/include/classic_parse_tree.hpp>
 
@@ -41,11 +41,11 @@ namespace grammars {
 #define BOOST_WAVE_MACRO_DEFINITION_ID  7
 
 ///////////////////////////////////////////////////////////////////////////////
-//  
+//
 //  predefined_macros_grammar_gen template class
 //
-//      This template helps separating the compilation of the 
-//      predefined_macros_grammar class from the compilation of the 
+//      This template helps separating the compilation of the
+//      predefined_macros_grammar class from the compilation of the
 //      main pp_iterator. This is done to safe compilation time.
 //
 //      This class helps parsing command line given macro definitions in a
@@ -58,8 +58,8 @@ struct BOOST_WAVE_DECL predefined_macros_grammar_gen
 {
     typedef LexIteratorT iterator_type;
 
-//  parse the cpp_grammar and return the resulting parse tree    
-    static boost::spirit::classic::tree_parse_info<iterator_type> 
+//  parse the cpp_grammar and return the resulting parse tree
+    static boost::spirit::classic::tree_parse_info<iterator_type>
     parse_predefined_macro (iterator_type const &first, iterator_type const &last);
 };
 
@@ -77,4 +77,4 @@ struct BOOST_WAVE_DECL predefined_macros_grammar_gen
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(CPP_PREDEF_MACROS_GEN_HPP_CADB6D2C_76A4_4988_83E1_EFFC6902B9A2_INCLUDED)
+#endif // !defined(BOOST_CPP_PREDEF_MACROS_GEN_HPP_CADB6D2C_76A4_4988_83E1_EFFC6902B9A2_INCLUDED)

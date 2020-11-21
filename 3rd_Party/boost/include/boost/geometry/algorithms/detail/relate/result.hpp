@@ -3,8 +3,8 @@
 // Copyright (c) 2007-2015 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2013-2016.
-// Modifications copyright (c) 2013-2016 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2020.
+// Modifications copyright (c) 2013-2020 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -15,7 +15,9 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_RELATE_RESULT_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_RELATE_RESULT_HPP
 
+#include <algorithm>
 #include <cstddef>
+#include <cstring>
 
 #include <boost/mpl/assert.hpp>
 #include <boost/mpl/at.hpp>
@@ -24,6 +26,7 @@
 #include <boost/mpl/end.hpp>
 #include <boost/mpl/is_sequence.hpp>
 #include <boost/mpl/next.hpp>
+#include <boost/mpl/size.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -651,6 +654,10 @@ public:
 private:
     Mask const& m_mask;
 };
+
+// --------------- FALSE MASK ----------------
+
+struct false_mask {};
 
 // --------------- COMPILE-TIME MASK ----------------
 

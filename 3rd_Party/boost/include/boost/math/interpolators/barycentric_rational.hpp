@@ -18,7 +18,8 @@
  *  A disadvantage of this interpolant is that it does not reproduce rational functions; for example, 1/(1+x^2) is not interpolated exactly.
  *
  *  References:
- *  Floater, Michael S., and Kai Hormann. "Barycentric rational interpolation with no poles and high rates of approximation." Numerische Mathematik 107.2 (2007): 315-331.
+ *  Floater, Michael S., and Kai Hormann. "Barycentric rational interpolation with no poles and high rates of approximation."
+*      Numerische Mathematik 107.2 (2007): 315-331.
  *  Press, William H., et al. "Numerical recipes third edition: the art of scientific computing." Cambridge University Press 32 (2007): 10013-2473.
  */
 
@@ -36,10 +37,24 @@ class barycentric_rational
 public:
     barycentric_rational(const Real* const x, const Real* const y, size_t n, size_t approximation_order = 3);
 
+    barycentric_rational(std::vector<Real>&& x, std::vector<Real>&& y, size_t approximation_order = 3);
+
     template <class InputIterator1, class InputIterator2>
     barycentric_rational(InputIterator1 start_x, InputIterator1 end_x, InputIterator2 start_y, size_t approximation_order = 3, typename boost::disable_if_c<boost::is_integral<InputIterator2>::value>::type* = 0);
 
     Real operator()(Real x) const;
+
+    Real prime(Real x) const;
+
+    std::vector<Real>&& return_x()
+    {
+        return m_imp->return_x();
+    }
+
+    std::vector<Real>&& return_y()
+    {
+        return m_imp->return_y();
+    }
 
 private:
     std::shared_ptr<detail::barycentric_rational_imp<Real>> m_imp;
@@ -53,6 +68,14 @@ barycentric_rational<Real>::barycentric_rational(const Real* const x, const Real
 }
 
 template <class Real>
+barycentric_rational<Real>::barycentric_rational(std::vector<Real>&& x, std::vector<Real>&& y, size_t approximation_order):
+ m_imp(std::make_shared<detail::barycentric_rational_imp<Real>>(std::move(x), std::move(y), approximation_order))
+{
+    return;
+}
+
+
+template <class Real>
 template <class InputIterator1, class InputIterator2>
 barycentric_rational<Real>::barycentric_rational(InputIterator1 start_x, InputIterator1 end_x, InputIterator2 start_y, size_t approximation_order, typename boost::disable_if_c<boost::is_integral<InputIterator2>::value>::type*)
  : m_imp(std::make_shared<detail::barycentric_rational_imp<Real>>(start_x, end_x, start_y, approximation_order))
@@ -63,6 +86,12 @@ template<class Real>
 Real barycentric_rational<Real>::operator()(Real x) const
 {
     return m_imp->operator()(x);
+}
+
+template<class Real>
+Real barycentric_rational<Real>::prime(Real x) const
+{
+    return m_imp->prime(x);
 }
 
 

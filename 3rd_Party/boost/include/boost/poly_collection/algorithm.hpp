@@ -1,4 +1,4 @@
-/* Copyright 2016-2017 Joaquin M Lopez Munoz.
+/* Copyright 2016-2020 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -20,6 +20,7 @@
 #include <boost/poly_collection/detail/segment_split.hpp>
 #include <boost/poly_collection/detail/type_restitution.hpp>
 #include <iterator>
+#include <random>
 #include <type_traits>
 #include <utility>
 
@@ -105,7 +106,51 @@ template<
 Function for_each(const Iterator& first,const Iterator& last,Function f)
 {
   for_each_segment(first,last,restitute_range<Ts...>(for_each_alg{},f));
-  return std::move(f);
+  return f;
+}
+
+struct for_each_n_alg
+{
+  template<
+    typename InputIterator,typename Size,typename Function
+  >
+  InputIterator operator()(
+    InputIterator first,Size n,Function& f)const /* note the & */
+  {
+    for(;n>0;++first,(void)--n)f(*first);
+    return first;
+  }
+};
+
+template<
+  typename... Ts,typename Iterator,typename Size,typename Function,
+  enable_if_poly_collection_iterator<Iterator> =nullptr
+>
+Iterator for_each_n(const Iterator& first,Size n,Function f)
+{
+  using traits=iterator_traits<Iterator>;
+  using local_base_iterator=typename traits::local_base_iterator;
+
+  if(n<=0)return first;
+
+  auto alg=restitute_iterator<Ts...>(
+         cast_return<local_base_iterator>(for_each_n_alg{}));
+  auto lbit=traits::local_base_iterator_from(first);
+  auto sit=traits::base_segment_info_iterator_from(first);
+  for(;;){
+    auto m=sit->end()-lbit;
+    if(n<=m){
+      auto it=alg(sit->type_info(),lbit,n,f);
+      return traits::iterator_from(
+        it,traits::end_base_segment_info_iterator_from(first));
+    }
+    else{
+      alg(sit->type_info(),lbit,m,f);
+      n-=m;
+    }
+    ++sit;
+    lbit=sit->begin();
+  }
 }
 
 template<
@@ -448,6 +493,35 @@ bool equal(
 }
 
 template<
+  typename Iterator,
+  enable_if_poly_collection_iterator<Iterator> =nullptr
+>
+std::ptrdiff_t fast_distance(const Iterator& first,const Iterator& last)
+{
+  using traits=iterator_traits<Iterator>;
+
+  if(first==last)return 0;
+
+  auto sfirst=traits::base_segment_info_iterator_from(first),
+       slast=traits::base_segment_info_iterator_from(last);
+  if(sfirst==slast){
+    return std::distance(
+      traits::local_base_iterator_from(first),
+      traits::local_base_iterator_from(last));
+  }
+  else{
+    std::ptrdiff_t m=std::distance(
+      traits::local_base_iterator_from(first),sfirst->end());
+    while(++sfirst!=slast)m+=std::distance(sfirst->begin(),sfirst->end());
+    if(slast!=traits::end_base_segment_info_iterator_from(last)){
+      m+=std::distance(
+        slast->begin(),traits::local_base_iterator_from(last));
+    }
+    return m;
+  }
+}
+
+template<
   typename... Ts,typename Iterator,
   typename ForwardIterator,typename BinaryPredicate,
   enable_if_poly_collection_iterator<Iterator> =nullptr
@@ -483,7 +557,7 @@ bool is_permutation(
   Iterator first1,Iterator last1,ForwardIterator first2,BinaryPredicate pred)
 {
   std::tie(first1,first2)=algorithm::mismatch<Ts...>(first1,last1,first2,pred);
-  auto last2=std::next(first2,std::distance(first1,last1));
+  auto last2=std::next(first2,algorithm::fast_distance(first1,last1));
   return is_permutation_suffix<Ts...>(first1,last1,first2,last2,pred);
 }
 
@@ -509,7 +583,8 @@ bool is_permutation(
 {
   std::tie(first1,first2)=algorithm::mismatch<Ts...>(
     first1,last1,first2,last2,pred);
-  if(std::distance(first1,last1)!=std::distance(first2,last2))return false;
+  if(algorithm::fast_distance(first1,last1)!=std::distance(first2,last2))
+    return false;
   else return is_permutation_suffix<Ts...>(first1,last1,first2,last2,pred);
 }
 
@@ -938,6 +1013,48 @@ OutputIterator rotate_copy(
   return algorithm::copy<Ts...>(first,middle,res);
 }
 
+struct sample_alg
+{
+  template<
+    typename InputIterator,typename OutputIterator,
+    typename Distance,typename UniformRandomBitGenerator
+  >
+  OutputIterator operator()(
+    InputIterator first,InputIterator last,
+    OutputIterator res,Distance& n,Distance& m, /* note the &s */
+    UniformRandomBitGenerator& g)const 
+  {
+    for(;first!=last&&n!=0;++first){
+      auto r=std::uniform_int_distribution<Distance>(0,--m)(g);
+      if (r<n){
+        *res++=*first;
+        --n;
+      }
+    }
+    return res;
+  }
+};
+
+template<
+  typename... Ts,typename Iterator,typename OutputIterator,
+  typename Distance,typename UniformRandomBitGenerator,
+  enable_if_poly_collection_iterator<Iterator> =nullptr
+>
+OutputIterator sample(
+  const Iterator& first,const Iterator& last,
+  OutputIterator res,Distance n,UniformRandomBitGenerator&& g)
+{
+  Distance m=algorithm::fast_distance(first,last);
+  n=(std::min)(n,m);
+
+  for(auto i:detail::segment_split(first,last)){
+    auto alg=restitute_range<Ts...>(sample_alg{},res,n,m,g);
+    res=alg(i);
+    if(n==0)return res;
+  }
+  return res; /* never reached */
+}
+
 template<
   typename... Ts,typename Iterator,typename Predicate,
   enable_if_poly_collection_iterator<Iterator> =nullptr
@@ -971,6 +1088,8 @@ std::pair<OutputIterator1,OutputIterator2> partition_copy(
 template<typename Predicate,typename... Ts>
 struct partition_point_pred
 {
+  partition_point_pred(const Predicate& pred):pred(pred){}
+
   template<typename Iterator>
   bool operator()(const Iterator& it)const
   {
@@ -1006,6 +1125,7 @@ using detail::algorithm::all_of;
 using detail::algorithm::any_of;
 using detail::algorithm::none_of;
 using detail::algorithm::for_each;
+using detail::algorithm::for_each_n;
 using detail::algorithm::find;
 using detail::algorithm::find_if;
 using detail::algorithm::find_if_not;
@@ -1025,9 +1145,9 @@ using detail::algorithm::search_n;
 using detail::algorithm::copy;
 using detail::algorithm::copy_n;
 using detail::algorithm::copy_if;
-                      /* copy_backwards requires BidirectionalIterator */
+                      /* copy_backward requires BidirectionalIterator */
 using detail::algorithm::move;
-                      /* move_backwards requires BidirectionalIterator */
+                      /* move_backward requires BidirectionalIterator */
                       /* swap_ranges requires Swappable */
                       /* iter_swap requires Swappable */
 using detail::algorithm::transform;
@@ -1049,6 +1169,7 @@ using detail::algorithm::unique_copy;
                       /* reverse_copy requires BidirectionalIterator */
                       /* rotate requires MoveAssignable */
 using detail::algorithm::rotate_copy;
+using detail::algorithm::sample;
                       /* shuffle requires RandomAccessIterator */
 using detail::algorithm::is_partitioned;
                       /* partition requires Swappable */

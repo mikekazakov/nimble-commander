@@ -10,13 +10,14 @@
 
 #include <cstddef> // NULL
 #include <algorithm> // std::copy
-#include <exception> // std::uncaught_exception
 #include <boost/config.hpp>
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{ 
     using ::size_t; 
 } // namespace std
 #endif
+
+#include <boost/core/uncaught_exceptions.hpp>
 
 #include <boost/archive/basic_text_oprimitive.hpp>
 
@@ -106,7 +107,7 @@ basic_text_oprimitive<OStream>::basic_text_oprimitive(
 template<class OStream>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL
 basic_text_oprimitive<OStream>::~basic_text_oprimitive(){
-    if(std::uncaught_exception())
+    if(boost::core::uncaught_exceptions() > 0)
         return;
     os << std::endl;
 }

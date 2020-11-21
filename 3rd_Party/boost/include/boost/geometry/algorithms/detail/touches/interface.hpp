@@ -261,6 +261,11 @@ struct self_touches<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
 \qbk{distinguish,one geometry}
 \qbk{[def __one_parameter__]}
 \qbk{[include reference/algorithms/touches.qbk]}
+\qbk{
+[heading Examples]
+[touches_one_geometry]
+[touches_one_geometry_output]
+}
 */
 template <typename Geometry>
 inline bool touches(Geometry const& geometry)
@@ -280,6 +285,11 @@ inline bool touches(Geometry const& geometry)
 
 \qbk{distinguish,two geometries}
 \qbk{[include reference/algorithms/touches.qbk]}
+\qbk{
+[heading Examples]
+[touches_two_geometries]
+[touches_two_geometries_output]
+}
  */
 template <typename Geometry1, typename Geometry2>
 inline bool touches(Geometry1 const& geometry1, Geometry2 const& geometry2)

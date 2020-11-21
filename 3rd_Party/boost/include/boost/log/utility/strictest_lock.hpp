@@ -108,6 +108,11 @@ struct thread_access_mode_of< boost::log::aux::shared_lock_guard< MutexT > > : m
 {
 };
 
+template< typename MutexT1, typename MutexT2 >
+struct thread_access_mode_of< boost::log::aux::multiple_unique_lock2< MutexT1, MutexT2 > > : mpl::integral_c< lock_access_mode, exclusive_access >
+{
+};
+
 #endif // !defined(BOOST_LOG_NO_THREADS)
 
 namespace aux {

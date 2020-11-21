@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_86A42DA4385511E7822024B881262D2E
-#define UUID_86A42DA4385511E7822024B881262D2E
+#ifndef BOOST_QVM_86A42DA4385511E7822024B881262D2E
+#define BOOST_QVM_86A42DA4385511E7822024B881262D2E
 
 #include <boost/qvm/inline.hpp>
 #include <boost/qvm/enable_if.hpp>

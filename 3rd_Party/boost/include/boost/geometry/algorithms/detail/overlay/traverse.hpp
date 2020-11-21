@@ -62,14 +62,16 @@ public :
         typename RobustPolicy,
         typename Turns,
         typename Rings,
-        typename Visitor,
-        typename Clusters
+        typename TurnInfoMap,
+        typename Clusters,
+        typename Visitor
     >
     static inline void apply(Geometry1 const& geometry1,
                 Geometry2 const& geometry2,
                 IntersectionStrategy const& intersection_strategy,
                 RobustPolicy const& robust_policy,
                 Turns& turns, Rings& rings,
+                TurnInfoMap& turn_info_map,
                 Clusters& clusters,
                 Visitor& visitor)
     {
@@ -89,11 +91,11 @@ public :
             <
                 Reverse1, Reverse2, OverlayType,
                 Geometry1, Geometry2,
-                Turns, Clusters,
+                Turns, TurnInfoMap, Clusters,
                 IntersectionStrategy,
                 RobustPolicy, Visitor,
                 Backtrack
-            > trav(geometry1, geometry2, turns, clusters,
+            > trav(geometry1, geometry2, turns, turn_info_map, clusters,
                    intersection_strategy, robust_policy, visitor);
 
         std::size_t finalized_ring_size = boost::size(rings);

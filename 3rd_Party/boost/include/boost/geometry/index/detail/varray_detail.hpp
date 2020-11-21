@@ -2,7 +2,7 @@
 //
 // varray details
 //
-// Copyright (c) 2012-2015 Adam Wulkiewicz, Lodz, Poland.
+// Copyright (c) 2012-2020 Adam Wulkiewicz, Lodz, Poland.
 // Copyright (c) 2011-2013 Andrew Hundt.
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -16,6 +16,8 @@
 #include <cstring>
 #include <memory>
 #include <limits>
+
+#include <boost/config.hpp>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/and.hpp>
@@ -36,8 +38,11 @@
 //#include <boost/type_traits/has_nothrow_assign.hpp>
 //#include <boost/type_traits/has_nothrow_destructor.hpp>
 
+#if ! defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS)
+#include <type_traits>
+#endif
+
 #include <boost/detail/no_exceptions_support.hpp>
-#include <boost/config.hpp>
 #include <boost/move/move.hpp>
 #include <boost/core/addressof.hpp>
 #include <boost/iterator/iterator_traits.hpp>
@@ -53,7 +58,28 @@
 #include <boost/container/vector.hpp>
 #endif // BOOST_GEOMETRY_INDEX_DETAIL_VARRAY_ENABLE_VECTOR_OPTIMIZATION && !BOOST_NO_EXCEPTIONS
 
-namespace boost { namespace geometry { namespace index { namespace detail { namespace varray_detail {
+namespace boost { namespace geometry { namespace index { namespace detail { namespace varray_detail
+{
+
+#if ! defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS)
+
+using std::is_trivially_copyable;
+
+#else
+
+template <typename T>
+struct is_trivially_copyable
+    : boost::integral_constant
+        <
+            bool,
+            boost::has_trivial_copy<T>::value
+         && boost::has_trivial_assign<T>::value
+         && boost::has_trivial_destructor<T>::value
+        >
+{};
+
+#endif
+
 
 template <typename I>
 struct are_elements_contiguous : boost::is_pointer<I>
@@ -164,7 +190,7 @@ template <typename I>
 void destroy(I first, I last)
 {
     typedef typename boost::iterator_value<I>::type value_type;
-    destroy_dispatch(first, last, has_trivial_destructor<value_type>());
+    destroy_dispatch(first, last, boost::has_trivial_destructor<value_type>());
 }
 
 // destroy(I)
@@ -186,7 +212,7 @@ template <typename I>
 void destroy(I pos)
 {
     typedef typename boost::iterator_value<I>::type value_type;
-    destroy_dispatch(pos, has_trivial_destructor<value_type>());
+    destroy_dispatch(pos, boost::has_trivial_destructor<value_type>());
 }
 
 // copy(I, I, O)
@@ -215,7 +241,7 @@ inline O copy(I first, I last, O dst)
     typedef typename
     ::boost::mpl::and_<
         are_corresponding<I, O>,
-        ::boost::has_trivial_assign<
+        is_trivially_copyable<
             typename ::boost::iterator_value<O>::type
         >
     >::type
@@ -253,7 +279,7 @@ F uninitialized_copy(I first, I last, F dst)
     typedef typename
     ::boost::mpl::and_<
         are_corresponding<I, F>,
-        ::boost::has_trivial_copy<
+        is_trivially_copyable<
             typename ::boost::iterator_value<F>::type
         >
     >::type
@@ -308,7 +334,7 @@ O uninitialized_move(I first, I last, O dst)
     typedef typename
     ::boost::mpl::and_<
         are_corresponding<I, O>,
-        ::boost::has_trivial_copy<
+        is_trivially_copyable<
             typename ::boost::iterator_value<O>::type
         >
     >::type
@@ -348,7 +374,7 @@ O move(I first, I last, O dst)
     typedef typename
     ::boost::mpl::and_<
         are_corresponding<I, O>,
-        ::boost::has_trivial_assign<
+        is_trivially_copyable<
             typename ::boost::iterator_value<O>::type
         >
     >::type
@@ -387,7 +413,7 @@ BDO move_backward(BDI first, BDI last, BDO dst)
     typedef typename
     ::boost::mpl::and_<
         are_corresponding<BDI, BDO>,
-        ::boost::has_trivial_assign<
+        is_trivially_copyable<
             typename ::boost::iterator_value<BDO>::type
         >
     >::type
@@ -561,7 +587,7 @@ void construct(DisableTrivialInit const&,
     typedef typename
     ::boost::mpl::and_<
         is_corresponding_value<I, P>,
-        ::boost::has_trivial_copy<P>
+        is_trivially_copyable<P>
     >::type
     use_memcpy;
 
@@ -668,7 +694,7 @@ void assign(I pos, V const& v)
     typedef typename
     ::boost::mpl::and_<
         is_corresponding_value<I, V>,
-        ::boost::has_trivial_assign<V>
+        is_trivially_copyable<V>
     >::type
     use_memcpy;
 

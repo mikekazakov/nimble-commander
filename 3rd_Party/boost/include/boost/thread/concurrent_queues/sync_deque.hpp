@@ -92,13 +92,13 @@ namespace concurrent
     inline void push_back(const value_type& elem, unique_lock<mutex>& lk)
     {
       super::data_.push_back(elem);
-      super::notify_not_empty_if_needed(lk);
+      super::notify_elem_added(lk);
     }
 
     inline void push_back(BOOST_THREAD_RV_REF(value_type) elem, unique_lock<mutex>& lk)
     {
       super::data_.push_back(boost::move(elem));
-      super::notify_not_empty_if_needed(lk);
+      super::notify_elem_added(lk);
     }
   };
 
@@ -122,7 +122,7 @@ namespace concurrent
 //      {
 //        data_.push(boost::move(*cur));;
 //      }
-//      notify_not_empty_if_needed(lk);
+//      notify_elem_added(lk);
 //    }
 //    catch (...)
 //    {
@@ -149,11 +149,7 @@ namespace concurrent
   template <class ValueType, class Container>
   queue_op_status sync_deque<ValueType, Container>::wait_pull_front(ValueType& elem, unique_lock<mutex>& lk)
   {
-    if (super::empty(lk))
-    {
-      if (super::closed(lk)) return queue_op_status::closed;
-    }
-    bool has_been_closed = super::wait_until_not_empty_or_closed(lk);
+    const bool has_been_closed = super::wait_until_not_empty_or_closed(lk);
     if (has_been_closed) return queue_op_status::closed;
     pull_front(elem, lk);
     return queue_op_status::success;
@@ -188,7 +184,8 @@ namespace concurrent
   void sync_deque<ValueType, Container>::pull_front(ValueType& elem)
   {
       unique_lock<mutex> lk(super::mtx_);
-      super::wait_until_not_empty(lk);
+      const bool has_been_closed = super::wait_until_not_empty_or_closed(lk);
+      if (has_been_closed) super::throw_if_closed(lk);
       pull_front(elem, lk);
   }
 
@@ -197,7 +194,8 @@ namespace concurrent
   ValueType sync_deque<ValueType, Container>::pull_front()
   {
       unique_lock<mutex> lk(super::mtx_);
-      super::wait_until_not_empty(lk);
+      const bool has_been_closed = super::wait_until_not_empty_or_closed(lk);
+      if (has_been_closed) super::throw_if_closed(lk);
       return pull_front(lk);
   }
 

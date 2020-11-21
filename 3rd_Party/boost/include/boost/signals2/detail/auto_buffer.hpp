@@ -18,10 +18,11 @@
 #endif
 
 #include <boost/assert.hpp>
+#include <boost/config.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
 #include <boost/iterator/iterator_traits.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/multi_index/detail/scope_guard.hpp>
+#include <boost/signals2/detail/scope_guard.hpp>
 #include <boost/swap.hpp>
 #include <boost/type_traits/aligned_storage.hpp>
 #include <boost/type_traits/alignment_of.hpp>
@@ -142,7 +143,11 @@ namespace detail
         typedef typename Allocator::size_type            size_type;
         typedef typename Allocator::difference_type      difference_type;
         typedef T*                                       pointer;
+#ifdef BOOST_NO_CXX11_ALLOCATOR
         typedef typename Allocator::pointer              allocator_pointer;
+#else
+        typedef typename std::allocator_traits<Allocator>::pointer allocator_pointer;
+#endif
         typedef const T*                                 const_pointer;
         typedef T&                                       reference;
         typedef const T&                                 const_reference;
@@ -288,11 +293,10 @@ namespace detail
         pointer move_to_new_buffer( size_type new_capacity, const boost::false_type& )
         {
             pointer new_buffer = allocate( new_capacity ); // strong
-            boost::multi_index::detail::scope_guard guard =
-                boost::multi_index::detail::make_obj_guard( *this,
-                                                            &auto_buffer::deallocate,
-                                                            new_buffer,
-                                                            new_capacity );
+            scope_guard guard = make_obj_guard( *this,
+                                                &auto_buffer::deallocate,
+                                                new_buffer,
+                                                new_capacity );
             copy_impl( begin(), end(), new_buffer ); // strong
             guard.dismiss();                         // nothrow
             return new_buffer;
@@ -517,11 +521,10 @@ namespace detail
                     auto_buffer_destroy();
                     buffer_ = 0;
                     pointer new_buffer = allocate( r.size() );
-                    boost::multi_index::detail::scope_guard guard =
-                        boost::multi_index::detail::make_obj_guard( *this,
-                                                                    &auto_buffer::deallocate,
-                                                                    new_buffer,
-                                                                    r.size() );
+                    scope_guard guard = make_obj_guard( *this,
+                                                        &auto_buffer::deallocate,
+                                                        new_buffer,
+                                                        r.size() );
                     copy_impl( r.begin(), r.end(), new_buffer );
                     guard.dismiss();
                     buffer_            = new_buffer;

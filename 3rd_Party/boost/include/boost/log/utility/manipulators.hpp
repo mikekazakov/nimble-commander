@@ -20,6 +20,7 @@
 #include <boost/log/utility/manipulators/add_value.hpp>
 #include <boost/log/utility/manipulators/to_log.hpp>
 #include <boost/log/utility/manipulators/dump.hpp>
+#include <boost/log/utility/manipulators/auto_newline.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once

@@ -343,22 +343,29 @@ private:
 // TODO - move to index/detail/rtree/load.hpp
 namespace boost { namespace geometry { namespace index { namespace detail { namespace rtree {
 
-template <typename Value, typename Options, typename Translator, typename Box, typename Allocators>
+template <typename MembersHolder>
 class load
 {
-    typedef typename rtree::node<Value, typename Options::parameters_type, Box, Allocators, typename Options::node_tag>::type node;
-    typedef typename rtree::internal_node<Value, typename Options::parameters_type, Box, Allocators, typename Options::node_tag>::type internal_node;
-    typedef typename rtree::leaf<Value, typename Options::parameters_type, Box, Allocators, typename Options::node_tag>::type leaf;
+    typedef typename MembersHolder::parameters_type parameters_type;
+    typedef typename MembersHolder::translator_type translator_type;
+    typedef typename MembersHolder::allocators_type allocators_type;
 
-    typedef typename Options::parameters_type parameters_type;
+    typedef typename MembersHolder::node node;
+    typedef typename MembersHolder::internal_node internal_node;
+    typedef typename MembersHolder::leaf leaf;
 
-    typedef typename Allocators::node_pointer node_pointer;
-    typedef rtree::subtree_destroyer<Value, Options, Translator, Box, Allocators> subtree_destroyer;
-    typedef typename Allocators::size_type size_type;
+    typedef typename allocators_type::node_pointer node_pointer;
+    typedef typename allocators_type::size_type size_type;
+
+    typedef rtree::subtree_destroyer<MembersHolder> subtree_destroyer;
 
 public:
     template <typename Archive> inline static
-    node_pointer apply(Archive & ar, unsigned int version, size_type leafs_level, size_type & values_count, parameters_type const& parameters, Translator const& translator, Allocators & allocators)
+    node_pointer apply(Archive & ar, unsigned int version, size_type leafs_level,
+                       size_type & values_count,
+                       parameters_type const& parameters,
+                       translator_type const& translator,
+                       allocators_type & allocators)
     {
         values_count = 0;
         return raw_apply(ar, version, leafs_level, values_count, parameters, translator, allocators);
@@ -366,7 +373,12 @@ public:
 
 private:
     template <typename Archive> inline static
-    node_pointer raw_apply(Archive & ar, unsigned int version, size_type leafs_level, size_type & values_count, parameters_type const& parameters, Translator const& translator, Allocators & allocators, size_type current_level = 0)
+    node_pointer raw_apply(Archive & ar, unsigned int version, size_type leafs_level,
+                           size_type & values_count,
+                           parameters_type const& parameters,
+                           translator_type const& translator,
+                           allocators_type & allocators,
+                           size_type current_level = 0)
     {
         //BOOST_GEOMETRY_INDEX_ASSERT(current_level <= leafs_level, "invalid parameter");
 

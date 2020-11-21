@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2015, Oracle and/or its affiliates.
+// Copyright (c) 2014-2019, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 
@@ -30,7 +30,7 @@ namespace boost { namespace geometry
 namespace detail { namespace is_valid
 {
 
-template <typename Range, closure_selector Closure>
+template <typename Range, closure_selector Closure, typename CSTag>
 struct has_duplicates
 {
     template <typename VisitPolicy>
@@ -51,7 +51,12 @@ struct has_duplicates
             return ! visitor.template apply<no_failure>();
         }
 
-        geometry::equal_to<typename boost::range_value<Range>::type> equal;
+        geometry::equal_to
+            <
+                typename boost::range_value<Range>::type,
+                -1,
+                CSTag
+            > equal;
 
         const_iterator it = boost::const_begin(view);
         const_iterator next = it;

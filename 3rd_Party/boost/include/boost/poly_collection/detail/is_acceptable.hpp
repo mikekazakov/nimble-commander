@@ -1,4 +1,4 @@
-/* Copyright 2016 Joaquin M Lopez Munoz.
+/* Copyright 2016-2017 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -29,7 +29,7 @@ namespace detail{
 template<typename T,typename Model,typename=void>
 struct is_acceptable:std::integral_constant<
   bool,
-  Model::template is_subtype<T>::value&&
+  Model::template is_implementation<T>::value&&
   std::is_move_constructible<typename std::decay<T>::type>::value&&
   (std::is_move_assignable<typename std::decay<T>::type>::value||
    std::is_nothrow_move_constructible<typename std::decay<T>::type>::value)

@@ -1,18 +1,16 @@
-#ifndef BOOST_SERIALIZATION_ARRAY_HPP
-#define BOOST_SERIALIZATION_ARRAY_HPP
+#ifndef BOOST_SERIALIZATION_BOOST_ARRAY_HPP
+#define BOOST_SERIALIZATION_BOOST_ARRAY_HPP
 
 // (C) Copyright 2005 Matthias Troyer and Dave Abrahams
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-//#include <iostream>
-
 #include <boost/config.hpp> // msvc 6.0 needs this for warning suppression
 
 #if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{ 
-    using ::size_t; 
+namespace std{
+    using ::size_t;
 } // namespace std
 #endif
 
@@ -30,4 +28,4 @@ void serialize(Archive& ar, boost::array<T,N>& a, const unsigned int /* version 
 } } // end namespace boost::serialization
 
 
-#endif //BOOST_SERIALIZATION_ARRAY_HPP
+#endif //BOOST_SERIALIZATION_BOOST_ARRAY_HPP

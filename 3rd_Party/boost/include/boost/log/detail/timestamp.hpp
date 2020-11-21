@@ -19,7 +19,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/log/detail/config.hpp>
 #if defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
-#include <boost/detail/winapi/basic_types.hpp>
+#include <boost/winapi/basic_types.hpp>
 #endif
 #include <boost/log/detail/header.hpp>
 
@@ -41,7 +41,7 @@ class duration
     int64_t m_ticks;
 
 public:
-    explicit duration(int64_t ticks = 0) : m_ticks(ticks) {}
+    explicit duration(int64_t ticks = 0) BOOST_NOEXCEPT : m_ticks(ticks) {}
 
 #if defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
     int64_t milliseconds() const { return m_ticks; }
@@ -58,7 +58,7 @@ class timestamp
     uint64_t m_ticks;
 
 public:
-    explicit timestamp(uint64_t ticks = 0) : m_ticks(ticks) {}
+    explicit timestamp(uint64_t ticks = 0) BOOST_NOEXCEPT : m_ticks(ticks) {}
 
     duration operator- (timestamp that) const
     {
@@ -76,7 +76,7 @@ public:
  */
 #if defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
 
-typedef uint64_t (WINAPI* get_tick_count_t)();
+typedef uint64_t (BOOST_WINAPI_WINAPI_CC* get_tick_count_t)();
 extern BOOST_LOG_API get_tick_count_t get_tick_count;
 
 inline timestamp get_timestamp()

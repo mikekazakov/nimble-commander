@@ -21,6 +21,7 @@
 #include <boost/date_time/time_zone_names.hpp>
 #include <boost/date_time/time_zone_base.hpp>
 #include <boost/date_time/time_parsing.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace boost {
   namespace date_time {
@@ -170,8 +171,9 @@ namespace boost {
       /*! May throw bad_field_count exceptions */
       void load_from_stream(std::istream &in)
       {
-        std::string  buff;
+        std::string buff;
         while( std::getline(in, buff)) {
+          boost::trim_right(buff);
           parse_string(buff);
         }
       }
@@ -243,7 +245,6 @@ namespace boost {
       //! parses rule specs for transition day rules
       rule_type* parse_rules(const string_type& sr, const string_type& er) const
       {
-        using namespace gregorian;
         // start and end rule are of the same type, 
         // both are included here for readability
         typedef typename rule_type::start_rule start_rule;

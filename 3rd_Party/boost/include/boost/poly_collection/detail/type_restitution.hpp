@@ -62,7 +62,7 @@ struct restitute_range_class<F,T,Ts...>:
 template<typename F>
 struct restitute_range_class<F>
 {
-  restitute_range_class(const F& f):f{f}{}
+  restitute_range_class(const F& f):f(f){}
   
   template<typename SegmentInfo>
   auto operator()(SegmentInfo&& s)
@@ -120,7 +120,7 @@ struct restitute_iterator_class<F,T,Ts...>:
 template<typename F>
 struct restitute_iterator_class<F>
 {
-  restitute_iterator_class(const F& f):f{f}{}
+  restitute_iterator_class(const F& f):f(f){}
   
   template<typename Iterator,typename... Args>
   auto operator()(
@@ -152,7 +152,7 @@ auto restitute_iterator(const F& f,Args&&... args)
 template<typename F,typename... Ts>
 struct binary_restitute_iterator_class
 {
-  binary_restitute_iterator_class(const F& f):f{f}{}
+  binary_restitute_iterator_class(const F& f):f(f){}
 
   template<typename Iterator1,typename Iterator2>
   auto operator()(

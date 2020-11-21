@@ -20,6 +20,7 @@
 #include <boost/heap/policies.hpp>
 #include <boost/heap/detail/stable_heap.hpp>
 #include <boost/heap/detail/tree_iterator.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
 #pragma once
@@ -50,7 +51,7 @@ struct make_pairing_heap_base
 {
     static const bool constant_time_size = parameter::binding<Parspec,
                                                               tag::constant_time_size,
-                                                              boost::mpl::true_
+                                                              boost::true_type
                                                              >::type::value;
     typedef typename detail::make_heap_base<T, Parspec, constant_time_size>::type base_type;
     typedef typename detail::make_heap_base<T, Parspec, constant_time_size>::allocator_argument allocator_argument;
@@ -58,7 +59,7 @@ struct make_pairing_heap_base
 
     typedef heap_node<typename base_type::internal_type, false> node_type;
 
-    typedef typename allocator_argument::template rebind<node_type>::other allocator_type;
+    typedef typename boost::allocator_rebind<allocator_argument, node_type>::type allocator_type;
 
     struct type:
         base_type,
@@ -158,8 +159,8 @@ private:
         typedef typename base_maker::compare_argument value_compare;
         typedef typename base_maker::allocator_type allocator_type;
 
-        typedef typename allocator_type::pointer node_pointer;
-        typedef typename allocator_type::const_pointer const_node_pointer;
+        typedef typename boost::allocator_pointer<allocator_type>::type node_pointer;
+        typedef typename boost::allocator_const_pointer<allocator_type>::type const_node_pointer;
 
         typedef detail::heap_node_list node_list_type;
         typedef typename node_list_type::iterator node_list_iterator;
@@ -302,7 +303,8 @@ public:
     /// \copydoc boost::heap::priority_queue::max_size
     size_type max_size(void) const
     {
-        return allocator_type::max_size();
+        const allocator_type& alloc = *this;
+        return boost::allocator_max_size(alloc);
     }
 
     /// \copydoc boost::heap::priority_queue::clear
@@ -313,7 +315,8 @@ public:
 
         root->template clear_subtree<allocator_type>(*this);
         root->~node();
-        allocator_type::deallocate(root, 1);
+        allocator_type& alloc = *this;
+        alloc.deallocate(root, 1);
         root = NULL;
         size_holder::set_size(0);
     }
@@ -354,10 +357,9 @@ public:
     {
         size_holder::increment();
 
-        node_pointer n = allocator_type::allocate(1);
-
+        allocator_type& alloc = *this;
+        node_pointer n = alloc.allocate(1);
         new(n) node(super_t::make_node(v));
-
         merge_node(n);
         return handle_type(n);
     }
@@ -378,10 +380,9 @@ public:
     {
         size_holder::increment();
 
-        node_pointer n = allocator_type::allocate(1);
-
+        allocator_type& alloc = *this;
+        node_pointer n = alloc.allocate(1);
         new(n) node(super_t::make_node(std::forward<Args>(args)...));
-
         merge_node(n);
         return handle_type(n);
     }
@@ -528,7 +529,8 @@ public:
 
         size_holder::decrement();
         n->~node();
-        allocator_type::deallocate(n, 1);
+        allocator_type& alloc = *this;
+        alloc.deallocate(n, 1);
     }
 
     /// \copydoc boost::heap::priority_queue::begin

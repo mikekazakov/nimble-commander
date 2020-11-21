@@ -1,26 +1,27 @@
 ///////////////////////////////////////////////////////////////
 //  Copyright 2013 John Maddock. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_
+//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 //
 // Comparison operators for cpp_int_backend:
 //
 #ifndef BOOST_MP_DETAIL_BITSCAN_HPP
 #define BOOST_MP_DETAIL_BITSCAN_HPP
 
-#include <boost/detail/endian.hpp>
+#include <boost/predef/other/endian.h>
+#include <boost/cstdint.hpp>
 
 #if (defined(BOOST_MSVC) || (defined(__clang__) && defined(__c2__)) || (defined(BOOST_INTEL) && defined(_MSC_VER))) && (defined(_M_IX86) || defined(_M_X64))
 #include <intrin.h>
 #endif
 
-namespace boost{ namespace multiprecision{ namespace detail{
+namespace boost { namespace multiprecision { namespace detail {
 
 template <class Unsigned>
-inline unsigned find_lsb(Unsigned mask, const mpl::int_<0>&)
+inline BOOST_MP_CXX14_CONSTEXPR unsigned find_lsb_default(Unsigned mask)
 {
    unsigned result = 0;
-   while(!(mask & 1u))
+   while (!(mask & 1u))
    {
       mask >>= 1;
       ++result;
@@ -29,10 +30,10 @@ inline unsigned find_lsb(Unsigned mask, const mpl::int_<0>&)
 }
 
 template <class Unsigned>
-inline unsigned find_msb(Unsigned mask, const mpl::int_<0>&)
+inline BOOST_MP_CXX14_CONSTEXPR unsigned find_msb_default(Unsigned mask)
 {
    unsigned index = 0;
-   while(mask)
+   while (mask)
    {
       ++index;
       mask >>= 1;
@@ -40,9 +41,21 @@ inline unsigned find_msb(Unsigned mask, const mpl::int_<0>&)
    return --index;
 }
 
+template <class Unsigned>
+inline BOOST_MP_CXX14_CONSTEXPR unsigned find_lsb(Unsigned mask, const mpl::int_<0>&)
+{
+   return find_lsb_default(mask);
+}
+
+template <class Unsigned>
+inline BOOST_MP_CXX14_CONSTEXPR unsigned find_msb(Unsigned mask, const mpl::int_<0>&)
+{
+   return find_msb_default(mask);
+}
+
 #if (defined(BOOST_MSVC) || (defined(__clang__) && defined(__c2__)) || (defined(BOOST_INTEL) && defined(_MSC_VER))) && (defined(_M_IX86) || defined(_M_X64))
 
-#pragma intrinsic(_BitScanForward,_BitScanReverse)
+#pragma intrinsic(_BitScanForward, _BitScanReverse)
 
 BOOST_FORCEINLINE unsigned find_lsb(unsigned long mask, const mpl::int_<1>&)
 {
@@ -59,7 +72,7 @@ BOOST_FORCEINLINE unsigned find_msb(unsigned long mask, const mpl::int_<1>&)
 }
 #ifdef _M_X64
 
-#pragma intrinsic(_BitScanForward64,_BitScanReverse64)
+#pragma intrinsic(_BitScanForward64, _BitScanReverse64)
 
 BOOST_FORCEINLINE unsigned find_lsb(unsigned __int64 mask, const mpl::int_<2>&)
 {
@@ -77,43 +90,55 @@ BOOST_FORCEINLINE unsigned find_msb(Unsigned mask, const mpl::int_<2>&)
 #endif
 
 template <class Unsigned>
-BOOST_FORCEINLINE unsigned find_lsb(Unsigned mask)
+BOOST_FORCEINLINE BOOST_MP_CXX14_CONSTEXPR unsigned find_lsb(Unsigned mask)
 {
    typedef typename make_unsigned<Unsigned>::type ui_type;
    typedef typename mpl::if_c<
-      sizeof(Unsigned) <= sizeof(unsigned long),
-      mpl::int_<1>,
+       sizeof(Unsigned) <= sizeof(unsigned long),
+       mpl::int_<1>,
 #ifdef _M_X64
-      typename mpl::if_c<
-         sizeof(Unsigned) <= sizeof(__int64),
-         mpl::int_<2>,
-         mpl::int_<0>
-      >::type
+       typename mpl::if_c<
+           sizeof(Unsigned) <= sizeof(__int64),
+           mpl::int_<2>,
+           mpl::int_<0> >::type
 #else
-      mpl::int_<0>
+       mpl::int_<0>
 #endif
-   >::type tag_type;
-   return find_lsb(static_cast<ui_type>(mask), tag_type());
+       >::type tag_type;
+#ifndef BOOST_MP_NO_CONSTEXPR_DETECTION
+   if (BOOST_MP_IS_CONST_EVALUATED(mask))
+   {
+      return find_lsb_default(mask);
+   }
+   else
+#endif
+      return find_lsb(static_cast<ui_type>(mask), tag_type());
 }
 
 template <class Unsigned>
-BOOST_FORCEINLINE unsigned find_msb(Unsigned mask)
+BOOST_FORCEINLINE BOOST_MP_CXX14_CONSTEXPR unsigned find_msb(Unsigned mask)
 {
    typedef typename make_unsigned<Unsigned>::type ui_type;
    typedef typename mpl::if_c<
-      sizeof(Unsigned) <= sizeof(unsigned long),
-      mpl::int_<1>,
+       sizeof(Unsigned) <= sizeof(unsigned long),
+       mpl::int_<1>,
 #ifdef _M_X64
-      typename mpl::if_c<
-         sizeof(Unsigned) <= sizeof(__int64),
-         mpl::int_<2>,
-         mpl::int_<0>
-      >::type
+       typename mpl::if_c<
+           sizeof(Unsigned) <= sizeof(__int64),
+           mpl::int_<2>,
+           mpl::int_<0> >::type
 #else
-      mpl::int_<0>
+       mpl::int_<0>
 #endif
-   >::type tag_type;
-   return find_msb(static_cast<ui_type>(mask), tag_type());
+       >::type tag_type;
+#ifndef BOOST_MP_NO_CONSTEXPR_DETECTION
+   if (BOOST_MP_IS_CONST_EVALUATED(mask))
+   {
+      return find_msb_default(mask);
+   }
+   else
+#endif
+      return find_msb(static_cast<ui_type>(mask), tag_type());
 }
 
 #elif defined(BOOST_GCC) || defined(__clang__) || (defined(BOOST_INTEL) && defined(__GNUC__))
@@ -144,32 +169,40 @@ BOOST_FORCEINLINE unsigned find_msb(boost::ulong_long_type mask, mpl::int_<3> co
 }
 #ifdef BOOST_HAS_INT128
 
-__extension__  typedef unsigned __int128 uint128_type;
+__extension__ typedef unsigned __int128 uint128_type;
 
 BOOST_FORCEINLINE unsigned find_msb(uint128_type mask, mpl::int_<0> const&)
 {
-   union { uint128_type v; boost::uint64_t sv[2]; } val;
+   union
+   {
+      uint128_type    v;
+      boost::uint64_t sv[2];
+   } val;
    val.v = mask;
-#ifdef BOOST_LITTLE_ENDIAN
-   if(val.sv[1])
+#if BOOST_ENDIAN_LITTLE_BYTE
+   if (val.sv[1])
       return find_msb(val.sv[1], mpl::int_<3>()) + 64;
    return find_msb(val.sv[0], mpl::int_<3>());
 #else
-   if(val.sv[0])
+   if (val.sv[0])
       return find_msb(val.sv[0], mpl::int_<3>()) + 64;
    return find_msb(val.sv[1], mpl::int_<3>());
 #endif
 }
 BOOST_FORCEINLINE unsigned find_lsb(uint128_type mask, mpl::int_<0> const&)
 {
-   union { uint128_type v; boost::uint64_t sv[2]; } val;
+   union
+   {
+      uint128_type    v;
+      boost::uint64_t sv[2];
+   } val;
    val.v = mask;
-#ifdef BOOST_LITTLE_ENDIAN
-   if(val.sv[0] == 0)
+#if BOOST_ENDIAN_LITTLE_BYTE
+   if (val.sv[0] == 0)
       return find_lsb(val.sv[1], mpl::int_<3>()) + 64;
    return find_lsb(val.sv[0], mpl::int_<3>());
 #else
-   if(val.sv[1] == 0)
+   if (val.sv[1] == 0)
       return find_lsb(val.sv[0], mpl::int_<3>()) + 64;
    return find_lsb(val.sv[1], mpl::int_<3>());
 #endif
@@ -177,42 +210,50 @@ BOOST_FORCEINLINE unsigned find_lsb(uint128_type mask, mpl::int_<0> const&)
 #endif
 
 template <class Unsigned>
-BOOST_FORCEINLINE unsigned find_lsb(Unsigned mask)
+BOOST_FORCEINLINE BOOST_MP_CXX14_CONSTEXPR unsigned find_lsb(Unsigned mask)
 {
    typedef typename make_unsigned<Unsigned>::type ui_type;
    typedef typename mpl::if_c<
-      sizeof(Unsigned) <= sizeof(unsigned),
-      mpl::int_<1>,
-      typename mpl::if_c<
-         sizeof(Unsigned) <= sizeof(unsigned long),
-         mpl::int_<2>,
-         typename mpl::if_c<
-            sizeof(Unsigned) <= sizeof(boost::ulong_long_type),
-            mpl::int_<3>,
-            mpl::int_<0>
-         >::type
-      >::type
-   >::type tag_type;
+       sizeof(Unsigned) <= sizeof(unsigned),
+       mpl::int_<1>,
+       typename mpl::if_c<
+           sizeof(Unsigned) <= sizeof(unsigned long),
+           mpl::int_<2>,
+           typename mpl::if_c<
+               sizeof(Unsigned) <= sizeof(boost::ulong_long_type),
+               mpl::int_<3>,
+               mpl::int_<0> >::type>::type>::type tag_type;
+#ifndef BOOST_MP_NO_CONSTEXPR_DETECTION
+   if (BOOST_MP_IS_CONST_EVALUATED(mask))
+   {
+      return find_lsb_default(mask);
+   }
+   else
+#endif
    return find_lsb(static_cast<ui_type>(mask), tag_type());
 }
 template <class Unsigned>
-BOOST_FORCEINLINE unsigned find_msb(Unsigned mask)
+BOOST_FORCEINLINE BOOST_MP_CXX14_CONSTEXPR unsigned find_msb(Unsigned mask)
 {
    typedef typename make_unsigned<Unsigned>::type ui_type;
    typedef typename mpl::if_c<
-      sizeof(Unsigned) <= sizeof(unsigned),
-      mpl::int_<1>,
-      typename mpl::if_c<
-         sizeof(Unsigned) <= sizeof(unsigned long),
-         mpl::int_<2>,
-         typename mpl::if_c<
-            sizeof(Unsigned) <= sizeof(boost::ulong_long_type),
-            mpl::int_<3>,
-            mpl::int_<0>
-         >::type
-      >::type
-   >::type tag_type;
-   return find_msb(static_cast<ui_type>(mask), tag_type());
+       sizeof(Unsigned) <= sizeof(unsigned),
+       mpl::int_<1>,
+       typename mpl::if_c<
+           sizeof(Unsigned) <= sizeof(unsigned long),
+           mpl::int_<2>,
+           typename mpl::if_c<
+               sizeof(Unsigned) <= sizeof(boost::ulong_long_type),
+               mpl::int_<3>,
+               mpl::int_<0> >::type>::type>::type tag_type;
+#ifndef BOOST_MP_NO_CONSTEXPR_DETECTION
+   if (BOOST_MP_IS_CONST_EVALUATED(mask))
+   {
+      return find_msb_default(mask);
+   }
+   else
+#endif
+      return find_msb(static_cast<ui_type>(mask), tag_type());
 }
 #elif defined(BOOST_INTEL)
 BOOST_FORCEINLINE unsigned find_lsb(unsigned mask, mpl::int_<1> const&)
@@ -224,41 +265,52 @@ BOOST_FORCEINLINE unsigned find_msb(unsigned mask, mpl::int_<1> const&)
    return _bit_scan_reverse(mask);
 }
 template <class Unsigned>
-BOOST_FORCEINLINE unsigned find_lsb(Unsigned mask)
+BOOST_FORCEINLINE BOOST_MP_CXX14_CONSTEXPR unsigned find_lsb(Unsigned mask)
 {
    typedef typename make_unsigned<Unsigned>::type ui_type;
    typedef typename mpl::if_c<
-      sizeof(Unsigned) <= sizeof(unsigned),
-      mpl::int_<1>,
-      mpl::int_<0>
-   >::type tag_type;
-   return find_lsb(static_cast<ui_type>(mask), tag_type());
+       sizeof(Unsigned) <= sizeof(unsigned),
+       mpl::int_<1>,
+       mpl::int_<0> >::type tag_type;
+#ifndef BOOST_MP_NO_CONSTEXPR_DETECTION
+   if (BOOST_MP_IS_CONST_EVALUATED(mask))
+   {
+      return find_lsb_default(mask);
+   }
+   else
+#endif
+      return find_lsb(static_cast<ui_type>(mask), tag_type());
 }
 template <class Unsigned>
-BOOST_FORCEINLINE unsigned find_msb(Unsigned mask)
+BOOST_FORCEINLINE BOOST_MP_CXX14_CONSTEXPR unsigned find_msb(Unsigned mask)
 {
    typedef typename make_unsigned<Unsigned>::type ui_type;
    typedef typename mpl::if_c<
-      sizeof(Unsigned) <= sizeof(unsigned),
-      mpl::int_<1>,
-      mpl::int_<0>
-   >::type tag_type;
-   return find_msb(static_cast<ui_type>(mask), tag_type());
+       sizeof(Unsigned) <= sizeof(unsigned),
+       mpl::int_<1>,
+       mpl::int_<0> >::type tag_type;
+#ifndef BOOST_MP_NO_CONSTEXPR_DETECTION
+   if (BOOST_MP_IS_CONST_EVALUATED(mask))
+   {
+      return find_msb_default(mask);
+   }
+   else
+#endif
+      return find_msb(static_cast<ui_type>(mask), tag_type());
 }
 #else
 template <class Unsigned>
-BOOST_FORCEINLINE unsigned find_lsb(Unsigned mask)
+BOOST_FORCEINLINE BOOST_MP_CXX14_CONSTEXPR unsigned find_lsb(Unsigned mask)
 {
    return find_lsb(mask, mpl::int_<0>());
 }
 template <class Unsigned>
-BOOST_FORCEINLINE unsigned find_msb(Unsigned mask)
+BOOST_FORCEINLINE BOOST_MP_CXX14_CONSTEXPR unsigned find_msb(Unsigned mask)
 {
    return find_msb(mask, mpl::int_<0>());
 }
 #endif
 
-}}}
+}}} // namespace boost::multiprecision::detail
 
 #endif
-

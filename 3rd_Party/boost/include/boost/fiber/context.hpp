@@ -17,13 +17,15 @@
 #include <memory>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
+#include <boost/core/ignore_unused.hpp>
 #if defined(BOOST_NO_CXX17_STD_APPLY)
 #include <boost/context/detail/apply.hpp>
 #endif
-#include <boost/context/continuation.hpp>
+#include <boost/context/fiber.hpp>
 #include <boost/context/stack_context.hpp>
 #include <boost/intrusive/list.hpp>
 #include <boost/intrusive/parent_from_member.hpp>
@@ -72,12 +74,12 @@ typedef intrusive::list_member_hook<
 // the context class and the wait-hook
 struct wait_functor {
     // required types
-    typedef wait_hook               hook_type;
-    typedef hook_type           *   hook_ptr;
-    typedef const hook_type     *   const_hook_ptr;
-    typedef context                 value_type;
-    typedef value_type          *   pointer;
-    typedef const value_type    *   const_pointer;
+    using hook_type = wait_hook;
+    using hook_ptr = hook_type *;
+    using const_hook_ptr = const hook_type *;
+    using value_type = context;
+    using pointer = value_type *;
+    using const_pointer = const value_type *;
 
     // required static functions
     static hook_ptr to_hook_ptr( value_type &value);
@@ -146,13 +148,12 @@ private:
         void                                *   vp{ nullptr };
         detail::fss_cleanup_function::ptr_t     cleanup_function{};
 
-        fss_data() noexcept {
-        }
+        fss_data() noexcept = default;
 
         fss_data( void * vp_,
-                  detail::fss_cleanup_function::ptr_t const& fn) noexcept :
+                  detail::fss_cleanup_function::ptr_t fn) noexcept :
             vp( vp_),
-            cleanup_function( fn) {
+            cleanup_function(std::move( fn)) {
             BOOST_ASSERT( cleanup_function);
         }
 
@@ -187,13 +188,14 @@ private:
     detail::terminated_hook                             terminated_hook_{};
     detail::worker_hook                                 worker_hook_{};
     fiber_properties                                *   properties_{ nullptr };
-    std::chrono::steady_clock::time_point               tp_{ (std::chrono::steady_clock::time_point::max)() };
-    boost::context::continuation                        c_{};
+    boost::context::fiber                               c_{};
+    std::chrono::steady_clock::time_point               tp_;
     type                                                type_;
     launch                                              policy_;
 
     context( std::size_t initial_count, type t, launch policy) noexcept :
         use_count_{ initial_count },
+        tp_{ (std::chrono::steady_clock::time_point::max)() },
         type_{ t },
         policy_{ policy } {
     }
@@ -239,9 +241,8 @@ public:
         operator<<( std::basic_ostream< charT, traitsT > & os, id const& other) {
             if ( nullptr != other.impl_) {
                 return os << other.impl_;
-            } else {
-                return os << "{not-valid}";
             }
+            return os << "{not-valid}";
         }
 
         explicit operator bool() const noexcept {
@@ -258,7 +259,9 @@ public:
     static void reset_active() noexcept;
 
     context( context const&) = delete;
+    context( context &&) = delete;
     context & operator=( context const&) = delete;
+    context & operator=( context &&) = delete;
 
     friend bool
     operator==( context const& lhs, context const& rhs) noexcept {
@@ -274,8 +277,7 @@ public:
     id get_id() const noexcept;
 
     bool is_resumable() const noexcept {
-        if ( c_) return true;
-        else return false;
+        return static_cast<bool>(c_);
     }
 
     void resume() noexcept;
@@ -285,8 +287,8 @@ public:
     void suspend() noexcept;
     void suspend( detail::spinlock_lock &) noexcept;
 
-    boost::context::continuation suspend_with_cc() noexcept;
-    boost::context::continuation terminate() noexcept;
+    boost::context::fiber suspend_with_cc() noexcept;
+    boost::context::fiber terminate() noexcept;
 
     void join();
 
@@ -395,11 +397,11 @@ public:
         BOOST_ASSERT( nullptr != ctx);
         if ( 1 == ctx->use_count_.fetch_sub( 1, std::memory_order_release) ) {
             std::atomic_thread_fence( std::memory_order_acquire);
-            boost::context::continuation c = std::move( ctx->c_);
+            boost::context::fiber c = std::move( ctx->c_);
             // destruct context
             ctx->~context();
             // deallocated stack
-            c.resume();
+            std::move( c).resume();
         }
     }
 };
@@ -415,13 +417,17 @@ private:
     typename std::decay< Fn >::type                     fn_;
     std::tuple< Arg ... >                               arg_;
 
-    boost::context::continuation
-    run_( boost::context::continuation && c) {
+    boost::context::fiber
+    run_( boost::context::fiber && c) {
         {
             // fn and tpl must be destroyed before calling terminate()
             auto fn = std::move( fn_);
             auto arg = std::move( arg_);
-            c.resume();
+#if (defined(BOOST_USE_UCONTEXT)||defined(BOOST_USE_WINFIB))
+            std::move( c).resume();
+#else
+            boost::ignore_unused(c);
+#endif
 #if defined(BOOST_NO_CXX17_STD_APPLY)
            boost::context::detail::apply( std::move( fn), std::move( arg) );
 #else
@@ -435,21 +441,23 @@ private:
 public:
     template< typename StackAlloc >
     worker_context( launch policy,
-                    boost::context::preallocated const& palloc, StackAlloc const& salloc,
+                    boost::context::preallocated const& palloc, StackAlloc && salloc,
                     Fn && fn, Arg ... arg) :
             context{ 1, type::worker_context, policy },
             fn_( std::forward< Fn >( fn) ),
             arg_( std::forward< Arg >( arg) ... ) {
-        c_ = boost::context::callcc(
-                std::allocator_arg, palloc, salloc,
-                std::bind( & worker_context::run_, this, std::placeholders::_1) );
+        c_ = boost::context::fiber{ std::allocator_arg, palloc, std::forward< StackAlloc >( salloc),
+                                    std::bind( & worker_context::run_, this, std::placeholders::_1) };
+#if (defined(BOOST_USE_UCONTEXT)||defined(BOOST_USE_WINFIB))
+        c_ = std::move( c_).resume();
+#endif
     }
 };
 
 
 template< typename StackAlloc, typename Fn, typename ... Arg >
 static intrusive_ptr< context > make_worker_context( launch policy,
-                                                     StackAlloc salloc,
+                                                     StackAlloc && salloc,
                                                      Fn && fn, Arg ... arg) {
     typedef worker_context< Fn, Arg ... >   context_t;
 
@@ -466,7 +474,7 @@ static intrusive_ptr< context > make_worker_context( launch policy,
             new ( storage) context_t{
                 policy,
                 boost::context::preallocated{ storage, size, sctx },
-                salloc,
+                std::forward< StackAlloc >( salloc),
                 std::forward< Fn >( fn),
                 std::forward< Arg >( arg) ... } };
 }

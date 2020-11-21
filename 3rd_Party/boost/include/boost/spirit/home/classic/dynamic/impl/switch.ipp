@@ -12,6 +12,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/core/ignore_unused.hpp>
 
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/inc.hpp>
@@ -221,7 +222,7 @@ struct default_case<CaseT, true> {
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-//  The case_chain template calculates recursivly the depth of the left
+//  The case_chain template calculates recursively the depth of the left
 //  subchain of the given case branch node.
 template <typename CaseT, bool IsSimple = CaseT::is_simple>
 struct case_chain {
@@ -239,7 +240,7 @@ struct case_chain<CaseT, true> {
 
 ///////////////////////////////////////////////////////////////////////////////
 //  The chain_parser template is used to extract the type and the instance of
-//  a left or a right parser, burried arbitrary deep inside the case parser
+//  a left or a right parser, buried arbitrary deep inside the case parser
 //  chain.
 template <int Depth, typename CaseT>
 struct chain_parser {
@@ -328,8 +329,8 @@ struct compound_case_parser
             case_chain<self_t>::depth < BOOST_SPIRIT_SWITCH_CASE_LIMIT
         );
 
-        typedef case_parser<N1, ParserT1, IsDefault1> right_t;
-        return compound_case_parser<self_t, right_t, IsDefault1>(*this, p);
+        typedef case_parser<N1, ParserT1, IsDefault1> rhs_t;
+        return compound_case_parser<self_t, rhs_t, IsDefault1>(*this, p);
     }
 };
 
@@ -445,7 +446,7 @@ inline typename parser_result<
 compound_case_parser<LeftT, RightT, IsDefault>::
     parse(ScannerT const& scan, CondT const &cond) const
 {
-    scan.at_end();    // allow skipper to take effect
+    ignore_unused(scan.at_end());    // allow skipper to take effect
     return parse_switch<value, case_chain<self_t>::depth, is_default>::
         do_(*this, scan, cond(scan), scan.first);
 }

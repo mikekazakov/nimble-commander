@@ -133,7 +133,7 @@ private:
     }
 
     std::priority_queue<size_t,
-                        std::vector<size_t, typename Alloc::template rebind<size_t>::other >,
+                        std::vector<size_t, typename boost::allocator_rebind<Alloc, size_t>::type>,
                         compare_by_heap_value
                        > unvisited_nodes;
 };

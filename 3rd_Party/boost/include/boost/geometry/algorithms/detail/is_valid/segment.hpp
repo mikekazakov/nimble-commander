@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2017, Oracle and/or its affiliates.
+// Copyright (c) 2014-2019, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -17,8 +17,8 @@
 #include <boost/geometry/core/tags.hpp>
 
 #include <boost/geometry/algorithms/assign.hpp>
-#include <boost/geometry/algorithms/equals.hpp>
 #include <boost/geometry/algorithms/validity_failure_type.hpp>
+#include <boost/geometry/algorithms/detail/equals/point_point.hpp>
 #include <boost/geometry/algorithms/detail/is_valid/has_invalid_coordinate.hpp>
 #include <boost/geometry/algorithms/dispatch/is_valid.hpp>
 
@@ -47,6 +47,8 @@ struct is_valid<Segment, segment_tag>
     template <typename VisitPolicy, typename Strategy>
     static inline bool apply(Segment const& segment, VisitPolicy& visitor, Strategy const&)
     {
+        typedef typename Strategy::equals_point_point_strategy_type eq_pp_strategy_type;
+
         boost::ignore_unused(visitor);
 
         typename point_type<Segment>::type p[2];
@@ -60,7 +62,8 @@ struct is_valid<Segment, segment_tag>
         {
             return false;
         }
-        else if (! geometry::equals(p[0], p[1]))
+        else if (! geometry::detail::equals::equals_point_point(
+                        p[0], p[1], eq_pp_strategy_type()))
         {
             return visitor.template apply<no_failure>();
         }

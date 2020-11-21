@@ -35,7 +35,7 @@ class BOOST_FIBERS_DECL timed_mutex {
 private:
     friend class condition_variable;
 
-    typedef context::wait_queue_t   wait_queue_type;
+    using wait_queue_type = context::wait_queue_t;
 
     detail::spinlock            wait_queue_splk_{};
     wait_queue_type             wait_queue_{};

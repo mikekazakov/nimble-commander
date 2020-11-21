@@ -2,7 +2,7 @@
 // ssl/detail/io.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2017 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2020 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -17,11 +17,10 @@
 
 #include <boost/asio/detail/config.hpp>
 
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
-# include <boost/asio/ssl/detail/engine.hpp>
-# include <boost/asio/ssl/detail/stream_core.hpp>
-# include <boost/asio/write.hpp>
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
+#include <boost/asio/detail/handler_tracking.hpp>
+#include <boost/asio/ssl/detail/engine.hpp>
+#include <boost/asio/ssl/detail/stream_core.hpp>
+#include <boost/asio/write.hpp>
 
 #include <boost/asio/detail/push_options.hpp>
 
@@ -30,12 +29,11 @@ namespace asio {
 namespace ssl {
 namespace detail {
 
-#if !defined(BOOST_ASIO_ENABLE_OLD_SSL)
-
 template <typename Stream, typename Operation>
 std::size_t io(Stream& next_layer, stream_core& core,
     const Operation& op, boost::system::error_code& ec)
 {
+  boost::system::error_code io_ec;
   std::size_t bytes_transferred = 0;
   do switch (op(core.engine_, ec, bytes_transferred))
   {
@@ -43,9 +41,13 @@ std::size_t io(Stream& next_layer, stream_core& core,
 
     // If the input buffer is empty then we need to read some more data from
     // the underlying transport.
-    if (boost::asio::buffer_size(core.input_) == 0)
+    if (core.input_.size() == 0)
+    {
       core.input_ = boost::asio::buffer(core.input_buffer_,
-          next_layer.read_some(core.input_buffer_, ec));
+          next_layer.read_some(core.input_buffer_, io_ec));
+      if (!ec)
+        ec = io_ec;
+    }
 
     // Pass the new input data to the engine.
     core.input_ = core.engine_.put_input(core.input_);
@@ -58,7 +60,9 @@ std::size_t io(Stream& next_layer, stream_core& core,
     // Get output data from the engine and write it to the underlying
     // transport.
     boost::asio::write(next_layer,
-        core.engine_.get_output(core.output_buffer_), ec);
+        core.engine_.get_output(core.output_buffer_), io_ec);
+    if (!ec)
+      ec = io_ec;
 
     // Try the operation again.
     continue;
@@ -68,7 +72,9 @@ std::size_t io(Stream& next_layer, stream_core& core,
     // Get output data from the engine and write it to the underlying
     // transport.
     boost::asio::write(next_layer,
-        core.engine_.get_output(core.output_buffer_), ec);
+        core.engine_.get_output(core.output_buffer_), io_ec);
+    if (!ec)
+      ec = io_ec;
 
     // Operation is complete. Return result to caller.
     core.engine_.map_error_code(ec);
@@ -119,7 +125,7 @@ public:
   io_op(io_op&& other)
     : next_layer_(other.next_layer_),
       core_(other.core_),
-      op_(other.op_),
+      op_(BOOST_ASIO_MOVE_CAST(Operation)(other.op_)),
       start_(other.start_),
       want_(other.want_),
       ec_(other.ec_),
@@ -143,7 +149,7 @@ public:
 
           // If the input buffer already has data in it we can pass it to the
           // engine and then retry the operation immediately.
-          if (boost::asio::buffer_size(core_.input_) != 0)
+          if (core_.input_.size() != 0)
           {
             core_.input_ = core_.engine_.put_input(core_.input_);
             continue;
@@ -153,10 +159,13 @@ public:
           // cannot allow more than one read operation at a time on the
           // underlying transport. The pending_read_ timer's expiry is set to
           // pos_infin if a read is in progress, and neg_infin otherwise.
-          if (core_.pending_read_.expires_at() == core_.neg_infin())
+          if (core_.expiry(core_.pending_read_) == core_.neg_infin())
           {
             // Prevent other read operations from being started.
             core_.pending_read_.expires_at(core_.pos_infin());
+
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, Operation::tracking_name()));
 
             // Start reading some data from the underlying transport.
             next_layer_.async_read_some(
@@ -165,6 +174,9 @@ public:
           }
           else
           {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, Operation::tracking_name()));
+
             // Wait until the current read operation completes.
             core_.pending_read_.async_wait(BOOST_ASIO_MOVE_CAST(io_op)(*this));
           }
@@ -180,10 +192,13 @@ public:
           // cannot allow more than one write operation at a time on the
           // underlying transport. The pending_write_ timer's expiry is set to
           // pos_infin if a write is in progress, and neg_infin otherwise.
-          if (core_.pending_write_.expires_at() == core_.neg_infin())
+          if (core_.expiry(core_.pending_write_) == core_.neg_infin())
           {
             // Prevent other write operations from being started.
             core_.pending_write_.expires_at(core_.pos_infin());
+
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, Operation::tracking_name()));
 
             // Start writing all the data to the underlying transport.
             boost::asio::async_write(next_layer_,
@@ -192,6 +207,9 @@ public:
           }
           else
           {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, Operation::tracking_name()));
+
             // Wait until the current write operation completes.
             core_.pending_write_.async_wait(BOOST_ASIO_MOVE_CAST(io_op)(*this));
           }
@@ -206,9 +224,12 @@ public:
           // have to keep in mind that this function might be being called from
           // the async operation's initiating function. In this case we're not
           // allowed to call the handler directly. Instead, issue a zero-sized
-          // read so the handler runs "as-if" posted using io_service::post().
+          // read so the handler runs "as-if" posted using io_context::post().
           if (start)
           {
+            BOOST_ASIO_HANDLER_LOCATION((
+                  __FILE__, __LINE__, Operation::tracking_name()));
+
             next_layer_.async_read_some(
                 boost::asio::buffer(core_.input_buffer_, 0),
                 BOOST_ASIO_MOVE_CAST(io_op)(*this));
@@ -288,20 +309,30 @@ public:
   Handler handler_;
 };
 
-template <typename Stream, typename Operation,  typename Handler>
-inline void* asio_handler_allocate(std::size_t size,
+template <typename Stream, typename Operation, typename Handler>
+inline asio_handler_allocate_is_deprecated
+asio_handler_allocate(std::size_t size,
     io_op<Stream, Operation, Handler>* this_handler)
 {
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+  boost_asio_handler_alloc_helpers::allocate(size, this_handler->handler_);
+  return asio_handler_allocate_is_no_longer_used();
+#else // defined(BOOST_ASIO_NO_DEPRECATED)
   return boost_asio_handler_alloc_helpers::allocate(
       size, this_handler->handler_);
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Stream, typename Operation, typename Handler>
-inline void asio_handler_deallocate(void* pointer, std::size_t size,
+inline asio_handler_deallocate_is_deprecated
+asio_handler_deallocate(void* pointer, std::size_t size,
     io_op<Stream, Operation, Handler>* this_handler)
 {
   boost_asio_handler_alloc_helpers::deallocate(
       pointer, size, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+  return asio_handler_deallocate_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Stream, typename Operation, typename Handler>
@@ -314,20 +345,28 @@ inline bool asio_handler_is_continuation(
 
 template <typename Function, typename Stream,
     typename Operation, typename Handler>
-inline void asio_handler_invoke(Function& function,
+inline asio_handler_invoke_is_deprecated
+asio_handler_invoke(Function& function,
     io_op<Stream, Operation, Handler>* this_handler)
 {
   boost_asio_handler_invoke_helpers::invoke(
       function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+  return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Function, typename Stream,
     typename Operation, typename Handler>
-inline void asio_handler_invoke(const Function& function,
+inline asio_handler_invoke_is_deprecated
+asio_handler_invoke(const Function& function,
     io_op<Stream, Operation, Handler>* this_handler)
 {
   boost_asio_handler_invoke_helpers::invoke(
       function, this_handler->handler_);
+#if defined(BOOST_ASIO_NO_DEPRECATED)
+  return asio_handler_invoke_is_no_longer_used();
+#endif // defined(BOOST_ASIO_NO_DEPRECATED)
 }
 
 template <typename Stream, typename Operation, typename Handler>
@@ -339,10 +378,37 @@ inline void async_io(Stream& next_layer, stream_core& core,
       boost::system::error_code(), 0, 1);
 }
 
-#endif // !defined(BOOST_ASIO_ENABLE_OLD_SSL)
-
 } // namespace detail
 } // namespace ssl
+
+template <typename Stream, typename Operation,
+    typename Handler, typename Allocator>
+struct associated_allocator<
+    ssl::detail::io_op<Stream, Operation, Handler>, Allocator>
+{
+  typedef typename associated_allocator<Handler, Allocator>::type type;
+
+  static type get(const ssl::detail::io_op<Stream, Operation, Handler>& h,
+      const Allocator& a = Allocator()) BOOST_ASIO_NOEXCEPT
+  {
+    return associated_allocator<Handler, Allocator>::get(h.handler_, a);
+  }
+};
+
+template <typename Stream, typename Operation,
+    typename Handler, typename Executor>
+struct associated_executor<
+    ssl::detail::io_op<Stream, Operation, Handler>, Executor>
+{
+  typedef typename associated_executor<Handler, Executor>::type type;
+
+  static type get(const ssl::detail::io_op<Stream, Operation, Handler>& h,
+      const Executor& ex = Executor()) BOOST_ASIO_NOEXCEPT
+  {
+    return associated_executor<Handler, Executor>::get(h.handler_, ex);
+  }
+};
+
 } // namespace asio
 } // namespace boost
 

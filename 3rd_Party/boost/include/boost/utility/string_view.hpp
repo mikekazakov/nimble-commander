@@ -1,6 +1,7 @@
 /*
    Copyright (c) Marshall Clow 2012-2015.
    Copyright (c) Beman Dawes 2015
+   Copyright (c) Glen Joseph Fernandes 2019 (glenjofe@gmail.com)
 
    Distributed under the Boost Software License, Version 1.0. (See accompanying
    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -19,8 +20,10 @@
 
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
+#include <boost/io/ostream_put.hpp>
 #include <boost/utility/string_view_fwd.hpp>
 #include <boost/throw_exception.hpp>
+#include <boost/container_hash/hash_fwd.hpp>
 
 #include <cstddef>
 #include <stdexcept>
@@ -183,7 +186,7 @@ namespace boost {
             if (pos > size())
                 BOOST_THROW_EXCEPTION(std::out_of_range("string_view::copy" ));
             size_type rlen = (std::min)(n, len_ - pos);
-    		traits_type::copy(s, data() + pos, rlen);
+            traits_type::copy(s, data() + pos, rlen);
             return rlen;
             }
 
@@ -245,12 +248,27 @@ namespace boost {
               return npos;
             if (s.empty())
               return pos;
-            const_iterator iter = std::search(this->cbegin() + pos, this->cend(),
-                                               s.cbegin (), s.cend (), traits::eq);
-            return iter == this->cend () ? npos : std::distance(this->cbegin (), iter);
+            if (s.size() > size() - pos)
+                return npos;
+            const charT* cur = ptr_ + pos;
+            const charT* last = cend() - s.size() + 1;
+            for (; cur != last ; ++cur) {
+                cur = traits::find(cur, last - cur, s[0]);
+                if (!cur)
+                    return npos;
+                if (traits::compare(cur, s.cbegin(), s.size()) == 0)
+                    return cur - ptr_;
             }
-        BOOST_CXX14_CONSTEXPR size_type find(charT c, size_type pos = 0) const BOOST_NOEXCEPT
-            { return find(basic_string_view(&c, 1), pos); }
+            return npos;
+            }
+        BOOST_CXX14_CONSTEXPR size_type find(charT c, size_type pos = 0) const BOOST_NOEXCEPT {
+            if (pos > size())
+              return npos;
+            const charT* ret_ptr = traits::find(ptr_ + pos, len_ - pos, c);
+            if (ret_ptr)
+              return ret_ptr - ptr_;
+            return npos;
+            }
         BOOST_CXX14_CONSTEXPR size_type find(const charT* s, size_type pos, size_type n) const BOOST_NOEXCEPT
             { return find(basic_string_view(s, n), pos); }
         BOOST_CXX14_CONSTEXPR size_type find(const charT* s, size_type pos = 0) const BOOST_NOEXCEPT
@@ -287,7 +305,7 @@ namespace boost {
             return iter == this->cend () ? npos : std::distance ( this->cbegin (), iter );
             }
         BOOST_CXX14_CONSTEXPR size_type find_first_of(charT c, size_type pos = 0) const BOOST_NOEXCEPT
-            { return find_first_of(basic_string_view(&c, 1), pos); }
+            { return find(c, pos); }
         BOOST_CXX14_CONSTEXPR size_type find_first_of(const charT* s, size_type pos, size_type n) const BOOST_NOEXCEPT
             { return find_first_of(basic_string_view(s, n), pos); }
         BOOST_CXX14_CONSTEXPR size_type find_first_of(const charT* s, size_type pos = 0) const BOOST_NOEXCEPT
@@ -555,53 +573,12 @@ namespace boost {
         return basic_string_view<charT, traits>(x) >= y;
         }
 
-    namespace detail {
-
-        template<class charT, class traits>
-        inline void sv_insert_fill_chars(std::basic_ostream<charT, traits>& os, std::size_t n) {
-            enum { chunk_size = 8 };
-            charT fill_chars[chunk_size];
-            std::fill_n(fill_chars, static_cast< std::size_t >(chunk_size), os.fill());
-            for (; n >= chunk_size && os.good(); n -= chunk_size)
-                os.write(fill_chars, static_cast< std::size_t >(chunk_size));
-            if (n > 0 && os.good())
-                os.write(fill_chars, n);
-            }
-
-        template<class charT, class traits>
-        void sv_insert_aligned(std::basic_ostream<charT, traits>& os, const basic_string_view<charT,traits>& str) {
-            const std::size_t size = str.size();
-            const std::size_t alignment_size = static_cast< std::size_t >(os.width()) - size;
-            const bool align_left = (os.flags() & std::basic_ostream<charT, traits>::adjustfield) == std::basic_ostream<charT, traits>::left;
-            if (!align_left) {
-                detail::sv_insert_fill_chars(os, alignment_size);
-                if (os.good())
-                    os.write(str.data(), size);
-                }
-            else {
-                os.write(str.data(), size);
-                if (os.good())
-                    detail::sv_insert_fill_chars(os, alignment_size);
-                }
-            }
-
-        } // namespace detail
-
     // Inserter
     template<class charT, class traits>
     inline std::basic_ostream<charT, traits>&
     operator<<(std::basic_ostream<charT, traits>& os,
       const basic_string_view<charT,traits>& str) {
-        if (os.good()) {
-            const std::size_t size = str.size();
-            const std::size_t w = static_cast< std::size_t >(os.width());
-            if (w <= size)
-                os.write(str.data(), size);
-            else
-                detail::sv_insert_aligned(os, str);
-            os.width(0);
-            }
-        return os;
+        return boost::io::ostream_put(os, str.data(), str.size());
         }
 
 #if 0
@@ -675,6 +652,10 @@ namespace boost {
         }
 #endif
 
+    template <class charT, class traits>
+    std::size_t hash_value(basic_string_view<charT, traits> s) {
+        return boost::hash_range(s.begin(), s.end());
+        }
 }
 
 #if 0

@@ -18,6 +18,8 @@
 #include <boost/geometry/core/ring_type.hpp>
 #include <boost/geometry/core/tags.hpp>
 #include <boost/geometry/algorithms/detail/ring_identifier.hpp>
+#include <boost/geometry/algorithms/detail/overlay/segment_identifier.hpp>
+#include <boost/geometry/algorithms/num_points.hpp>
 #include <boost/geometry/geometries/concepts/check.hpp>
 #include <boost/geometry/util/range.hpp>
 
@@ -47,8 +49,6 @@ struct get_ring<void>
         return range::at(container, id.multi_index);
     }
 };
-
-
 
 
 template<>
@@ -112,6 +112,17 @@ struct get_ring<multi_polygon_tag>
     }
 };
 
+
+template <typename Geometry>
+inline std::size_t segment_count_on_ring(Geometry const& geometry,
+                                         segment_identifier const& seg_id)
+{
+    typedef typename geometry::tag<Geometry>::type tag;
+    ring_identifier const rid(0, seg_id.multi_index, seg_id.ring_index);
+    // A closed polygon, a triangle of 4 points, including starting point,
+    // contains 3 segments. So handle as if closed and subtract one.
+    return geometry::num_points(detail::overlay::get_ring<tag>::apply(rid, geometry), true) - 1;
+}
 
 }} // namespace detail::overlay
 #endif // DOXYGEN_NO_DETAIL

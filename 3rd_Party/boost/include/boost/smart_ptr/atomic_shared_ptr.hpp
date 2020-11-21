@@ -63,6 +63,11 @@ public:
     {
     }
 
+    atomic_shared_ptr( shared_ptr<T> p ) BOOST_SP_NOEXCEPT
+        : p_( std::move( p ) ), l_ BOOST_DETAIL_SPINLOCK_INIT
+    {
+    }
+
 #else
 
     atomic_shared_ptr() BOOST_SP_NOEXCEPT
@@ -70,8 +75,6 @@ public:
         boost::detail::spinlock init = BOOST_DETAIL_SPINLOCK_INIT;
         std::memcpy( &l_, &init, sizeof( init ) );
     }
-
-#endif
 
     atomic_shared_ptr( shared_ptr<T> p ) BOOST_SP_NOEXCEPT
 #if !defined( BOOST_NO_CXX11_RVALUE_REFERENCES )
@@ -83,6 +86,8 @@ public:
         boost::detail::spinlock init = BOOST_DETAIL_SPINLOCK_INIT;
         std::memcpy( &l_, &init, sizeof( init ) );
     }
+
+#endif
 
     atomic_shared_ptr& operator=( shared_ptr<T> r ) BOOST_SP_NOEXCEPT
     {
@@ -97,7 +102,13 @@ public:
         return false;
     }
 
-    shared_ptr<T> load( int = 0 ) const BOOST_SP_NOEXCEPT
+    shared_ptr<T> load() const BOOST_SP_NOEXCEPT
+    {
+        boost::detail::spinlock::scoped_lock lock( l_ );
+        return p_;
+    }
+
+    template<class M> shared_ptr<T> load( M ) const BOOST_SP_NOEXCEPT
     {
         boost::detail::spinlock::scoped_lock lock( l_ );
         return p_;
@@ -109,13 +120,19 @@ public:
         return p_;
     }
 
-    void store( shared_ptr<T> r, int = 0 ) BOOST_SP_NOEXCEPT
+    void store( shared_ptr<T> r ) BOOST_SP_NOEXCEPT
     {
         boost::detail::spinlock::scoped_lock lock( l_ );
         p_.swap( r );
     }
 
-    shared_ptr<T> exchange( shared_ptr<T> r, int = 0 ) BOOST_SP_NOEXCEPT
+    template<class M> void store( shared_ptr<T> r, M ) BOOST_SP_NOEXCEPT
+    {
+        boost::detail::spinlock::scoped_lock lock( l_ );
+        p_.swap( r );
+    }
+
+    shared_ptr<T> exchange( shared_ptr<T> r ) BOOST_SP_NOEXCEPT
     {
         {
             boost::detail::spinlock::scoped_lock lock( l_ );
@@ -133,44 +150,82 @@ public:
 #endif
     }
 
-    bool compare_exchange_weak( shared_ptr<T>& v, const shared_ptr<T>& w, int, int ) BOOST_SP_NOEXCEPT
+    template<class M> shared_ptr<T> exchange( shared_ptr<T> r, M ) BOOST_SP_NOEXCEPT
+    {
+        {
+            boost::detail::spinlock::scoped_lock lock( l_ );
+            p_.swap( r );
+        }
+
+#if !defined( BOOST_NO_CXX11_RVALUE_REFERENCES )
+
+        return std::move( r );
+
+#else
+
+        return r;
+
+#endif
+    }
+
+    template<class M> bool compare_exchange_weak( shared_ptr<T>& v, const shared_ptr<T>& w, M, M ) BOOST_SP_NOEXCEPT
     {
         return compare_exchange( v, w );
     }
 
-    bool compare_exchange_weak( shared_ptr<T>& v, const shared_ptr<T>& w, int = 0 ) BOOST_SP_NOEXCEPT
+    template<class M> bool compare_exchange_weak( shared_ptr<T>& v, const shared_ptr<T>& w, M ) BOOST_SP_NOEXCEPT
     {
         return compare_exchange( v, w );
     }
 
-    bool compare_exchange_strong( shared_ptr<T>& v, const shared_ptr<T>& w, int, int ) BOOST_SP_NOEXCEPT
+    bool compare_exchange_weak( shared_ptr<T>& v, const shared_ptr<T>& w ) BOOST_SP_NOEXCEPT
     {
         return compare_exchange( v, w );
     }
 
-    bool compare_exchange_strong( shared_ptr<T>& v, const shared_ptr<T>& w, int = 0 ) BOOST_SP_NOEXCEPT
+    template<class M> bool compare_exchange_strong( shared_ptr<T>& v, const shared_ptr<T>& w, M, M ) BOOST_SP_NOEXCEPT
+    {
+        return compare_exchange( v, w );
+    }
+
+    template<class M> bool compare_exchange_strong( shared_ptr<T>& v, const shared_ptr<T>& w, M ) BOOST_SP_NOEXCEPT
+    {
+        return compare_exchange( v, w );
+    }
+
+    bool compare_exchange_strong( shared_ptr<T>& v, const shared_ptr<T>& w ) BOOST_SP_NOEXCEPT
     {
         return compare_exchange( v, w );
     }
 
 #if !defined( BOOST_NO_CXX11_RVALUE_REFERENCES )
 
-    bool compare_exchange_weak( shared_ptr<T>& v, shared_ptr<T>&& w, int, int ) BOOST_SP_NOEXCEPT
+    template<class M> bool compare_exchange_weak( shared_ptr<T>& v, shared_ptr<T>&& w, M, M ) BOOST_SP_NOEXCEPT
     {
         return compare_exchange( v, std::move( w ) );
     }
 
-    bool compare_exchange_weak( shared_ptr<T>& v, shared_ptr<T>&& w, int = 0 ) BOOST_SP_NOEXCEPT
+    template<class M> bool compare_exchange_weak( shared_ptr<T>& v, shared_ptr<T>&& w, M ) BOOST_SP_NOEXCEPT
     {
         return compare_exchange( v, std::move( w ) );
     }
 
-    bool compare_exchange_strong( shared_ptr<T>& v, shared_ptr<T>&& w, int, int ) BOOST_SP_NOEXCEPT
+    bool compare_exchange_weak( shared_ptr<T>& v, shared_ptr<T>&& w ) BOOST_SP_NOEXCEPT
     {
         return compare_exchange( v, std::move( w ) );
     }
 
-    bool compare_exchange_strong( shared_ptr<T>& v, shared_ptr<T>&& w, int = 0 ) BOOST_SP_NOEXCEPT
+    template<class M> bool compare_exchange_strong( shared_ptr<T>& v, shared_ptr<T>&& w, M, M ) BOOST_SP_NOEXCEPT
+    {
+        return compare_exchange( v, std::move( w ) );
+    }
+
+    template<class M> bool compare_exchange_strong( shared_ptr<T>& v, shared_ptr<T>&& w, M ) BOOST_SP_NOEXCEPT
+    {
+        return compare_exchange( v, std::move( w ) );
+    }
+
+    bool compare_exchange_strong( shared_ptr<T>& v, shared_ptr<T>&& w ) BOOST_SP_NOEXCEPT
     {
         return compare_exchange( v, std::move( w ) );
     }

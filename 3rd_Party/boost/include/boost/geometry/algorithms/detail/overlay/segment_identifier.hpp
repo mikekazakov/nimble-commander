@@ -20,6 +20,7 @@
 
 
 #include <boost/geometry/algorithms/detail/signed_size_type.hpp>
+#include <boost/geometry/algorithms/detail/ring_identifier.hpp>
 
 
 namespace boost { namespace geometry
@@ -57,6 +58,7 @@ struct segment_identifier
         return source_index != other.source_index ? source_index < other.source_index
             : multi_index !=other.multi_index ? multi_index < other.multi_index
             : ring_index != other.ring_index ? ring_index < other.ring_index
+            : piece_index != other.piece_index ? piece_index < other.piece_index
             : segment_index < other.segment_index
             ;
     }
@@ -66,6 +68,7 @@ struct segment_identifier
         return source_index == other.source_index
             && segment_index == other.segment_index
             && ring_index == other.ring_index
+            && piece_index == other.piece_index
             && multi_index == other.multi_index
             ;
     }
@@ -79,6 +82,7 @@ struct segment_identifier
             ;
         if (seg_id.ring_index >= 0) os << ", r:" << seg_id.ring_index;
         if (seg_id.multi_index >= 0) os << ", m:" << seg_id.multi_index;
+        if (seg_id.piece_index >= 0) os << ", p:" << seg_id.piece_index;
         return os;
     }
 #endif
@@ -92,7 +96,18 @@ struct segment_identifier
     signed_size_type piece_index;
 };
 
+#ifndef DOXYGEN_NO_DETAIL
+namespace detail { namespace overlay
+{
 
+// Create a ring identifier from a segment identifier
+inline ring_identifier ring_id_by_seg_id(segment_identifier const& seg_id)
+{
+    return ring_identifier(seg_id.source_index, seg_id.multi_index, seg_id.ring_index);
+}
+
+}} // namespace detail::overlay
+#endif // DOXYGEN_NO_DETAIL
 
 }} // namespace boost::geometry
 

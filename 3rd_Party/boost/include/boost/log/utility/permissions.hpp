@@ -33,11 +33,17 @@ struct _SECURITY_ATTRIBUTES;
 namespace boost {
 
 #ifdef BOOST_WINDOWS
-namespace detail {
+#if defined(BOOST_GCC) && BOOST_GCC >= 40600
+#pragma GCC diagnostic push
+// type attributes ignored after type is already defined
+#pragma GCC diagnostic ignored "-Wattributes"
+#endif
 namespace winapi {
 struct BOOST_LOG_MAY_ALIAS _SECURITY_ATTRIBUTES;
 }
-}
+#if defined(BOOST_GCC) && BOOST_GCC >= 40600
+#pragma GCC diagnostic pop
+#endif
 #endif
 
 namespace interprocess {
@@ -108,7 +114,7 @@ public:
     }
 
 #ifdef BOOST_WINDOWS
-    permissions(boost::detail::winapi::_SECURITY_ATTRIBUTES* perms) BOOST_NOEXCEPT : m_perms(reinterpret_cast< native_type >(perms))
+    permissions(boost::winapi::_SECURITY_ATTRIBUTES* perms) BOOST_NOEXCEPT : m_perms(reinterpret_cast< native_type >(perms))
     {
     }
 #endif

@@ -9,11 +9,11 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <boost/detail/winapi/error_codes.hpp>
-#include <boost/detail/winapi/environment.hpp>
+#include <boost/winapi/error_codes.hpp>
+#include <boost/winapi/environment.hpp>
+#include <boost/winapi/get_current_process.hpp>
+#include <boost/winapi/get_current_process_id.hpp>
 #include <boost/process/detail/config.hpp>
-#include <boost/detail/winapi/get_current_process.hpp>
-#include <boost/detail/winapi/get_current_process_id.hpp>
 #include <algorithm>
 #include <boost/process/locale.hpp>
 
@@ -22,8 +22,8 @@ namespace boost { namespace process { namespace detail { namespace windows {
 template<typename Char>
 class native_environment_impl
 {
-    static void _deleter(Char* p) {boost::detail::winapi::free_environment_strings(p);};
-    std::unique_ptr<Char[], void(*)(Char*)> _buf{boost::detail::winapi::get_environment_strings<Char>(), &native_environment_impl::_deleter};
+    static void _deleter(Char* p) {boost::winapi::free_environment_strings(p);};
+    std::unique_ptr<Char[], void(*)(Char*)> _buf{boost::winapi::get_environment_strings<Char>(), &native_environment_impl::_deleter};
     static inline std::vector<Char*> _load_var(Char* p);
     std::vector<Char*> _env_arr{_load_var(_buf.get())};
 public:
@@ -33,7 +33,7 @@ public:
     using native_handle_type = pointer_type;
     void reload()
     {
-        _buf.reset(boost::detail::winapi::get_environment_strings<Char>());
+        _buf.reset(boost::winapi::get_environment_strings<Char>());
         _env_arr = _load_var(_buf.get());
         _env_impl = &*_env_arr.begin();
     }
@@ -60,11 +60,11 @@ template<typename Char>
 inline auto native_environment_impl<Char>::get(const pointer_type id) -> string_type
 {
     Char buf[4096];
-    auto size = boost::detail::winapi::get_environment_variable(id, buf, sizeof(buf));
+    auto size = boost::winapi::get_environment_variable(id, buf, sizeof(buf));
     if (size == 0) //failed
     {
-        auto err =  ::boost::detail::winapi::GetLastError();
-        if (err == ::boost::detail::winapi::ERROR_ENVVAR_NOT_FOUND_)//well, then we consider that an empty value
+        auto err =  ::boost::winapi::GetLastError();
+        if (err == ::boost::winapi::ERROR_ENVVAR_NOT_FOUND_)//well, then we consider that an empty value
             return "";
         else
             throw process_error(std::error_code(err, std::system_category()),
@@ -82,7 +82,7 @@ inline auto native_environment_impl<Char>::get(const pointer_type id) -> string_
         while (buf_size <= max_size)
         {
             std::vector<Char> buf(buf_size);
-            auto size = boost::detail::winapi::get_environment_variable(id, buf.data(), buf.size());
+            auto size = boost::winapi::get_environment_variable(id, buf.data(), buf.size());
 
             if (size == buf_size) //buffer to small
                 buf_size *= 2;
@@ -101,13 +101,13 @@ inline auto native_environment_impl<Char>::get(const pointer_type id) -> string_
 template<typename Char>
 inline void native_environment_impl<Char>::set(const pointer_type id, const pointer_type value)
 {
-    boost::detail::winapi::set_environment_variable(id, value);
+    boost::winapi::set_environment_variable(id, value);
 }
 
 template<typename Char>
 inline void  native_environment_impl<Char>::reset(const pointer_type id)
 {
-    boost::detail::winapi::set_environment_variable(id, nullptr);
+    boost::winapi::set_environment_variable(id, nullptr);
 }
 
 template<typename Char>
@@ -300,10 +300,8 @@ inline void  basic_environment_impl<Char>::reset(const string_type &id)
 
     auto end = itr;
 
-    while (*end != '\0')
-        end++;
+    while (*++end != '\0');
 
-    end ++; //to point behind the last null-char
 
     _data.erase(itr, end);//and remove it
     reload();
@@ -339,8 +337,8 @@ template<typename T> constexpr T env_seperator();
 template<> constexpr  char   env_seperator() {return  ';'; }
 template<> constexpr wchar_t env_seperator() {return L';'; }
 
-inline int   get_id()         {return boost::detail::winapi::GetCurrentProcessId();}
-inline void* native_handle()  {return boost::detail::winapi::GetCurrentProcess(); }
+inline int   get_id()         {return boost::winapi::GetCurrentProcessId();}
+inline void* native_handle()  {return boost::winapi::GetCurrentProcess(); }
 
 typedef void* native_handle_t;
 

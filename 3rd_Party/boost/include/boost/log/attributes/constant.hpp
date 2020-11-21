@@ -18,6 +18,7 @@
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+#include <boost/type_traits/is_nothrow_move_constructible.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/embedded_string_type.hpp>
 #include <boost/log/attributes/attribute.hpp>
@@ -66,7 +67,10 @@ protected:
         /*!
          * Constructor with the stored value initialization
          */
-        explicit impl(BOOST_RV_REF(value_type) value) : base_type(boost::move(value)) {}
+        explicit impl(BOOST_RV_REF(value_type) value) BOOST_NOEXCEPT_IF(boost::is_nothrow_move_constructible< value_type >::value) :
+            base_type(boost::move(value))
+        {
+        }
     };
 
 public:

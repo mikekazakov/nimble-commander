@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_49C5A1042AEF11DF9603880056D89593
-#define UUID_49C5A1042AEF11DF9603880056D89593
+#ifndef BOOST_QVM_49C5A1042AEF11DF9603880056D89593
+#define BOOST_QVM_49C5A1042AEF11DF9603880056D89593
 
 #include <boost/qvm/detail/quat_assign.hpp>
 #include <boost/qvm/assert.hpp>

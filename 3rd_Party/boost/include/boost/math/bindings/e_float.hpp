@@ -532,13 +532,13 @@ inline int digits< ::boost::math::ef::e_float>(BOOST_MATH_EXPLICIT_TEMPLATE_TYPE
 template <>
 inline  ::boost::math::ef::e_float root_epsilon< ::boost::math::ef::e_float>()
 {
-   return detail::root_epsilon_imp(static_cast< ::boost::math::ef::e_float const*>(0), mpl::int_<0>());
+   return detail::root_epsilon_imp(static_cast< ::boost::math::ef::e_float const*>(0), boost::integral_constant<int, 0>());
 }
 
 template <>
 inline  ::boost::math::ef::e_float forth_root_epsilon< ::boost::math::ef::e_float>()
 {
-   return detail::forth_root_epsilon_imp(static_cast< ::boost::math::ef::e_float const*>(0), mpl::int_<0>());
+   return detail::forth_root_epsilon_imp(static_cast< ::boost::math::ef::e_float const*>(0), boost::integral_constant<int, 0>());
 }
 
 }
@@ -614,7 +614,7 @@ namespace detail{
 // Version of Digamma accurate to ~100 decimal digits.
 //
 template <class Policy>
-boost::math::ef::e_float digamma_imp(boost::math::ef::e_float x, const mpl::int_<0>* , const Policy& pol)
+boost::math::ef::e_float digamma_imp(boost::math::ef::e_float x, const boost::integral_constant<int, 0>* , const Policy& pol)
 {
    //
    // This handles reflection of negative arguments, and all our

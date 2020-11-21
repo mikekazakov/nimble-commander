@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_B3B8081A277711E09E007F2DDFD72085
-#define UUID_B3B8081A277711E09E007F2DDFD72085
+#ifndef BOOST_QVM_B3B8081A277711E09E007F2DDFD72085
+#define BOOST_QVM_B3B8081A277711E09E007F2DDFD72085
 
 #include <boost/qvm/deduce_mat.hpp>
 #include <boost/qvm/static_assert.hpp>

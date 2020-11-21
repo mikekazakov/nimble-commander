@@ -15,6 +15,7 @@
 #ifndef BOOST_LOG_ATTRIBUTES_SCOPED_ATTRIBUTE_HPP_INCLUDED_
 #define BOOST_LOG_ATTRIBUTES_SCOPED_ATTRIBUTE_HPP_INCLUDED_
 
+#include <cstddef>
 #include <utility>
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
@@ -81,14 +82,14 @@ public:
         if (res.second)
             m_itAttribute = res.first;
         else
-            m_pLogger = 0; // if there already is a same-named attribute, don't register anything
+            m_pLogger = NULL; // if there already is a same-named attribute, don't register anything
     }
     //! Move constructor
-    scoped_logger_attribute(BOOST_RV_REF(scoped_logger_attribute) that) :
+    scoped_logger_attribute(BOOST_RV_REF(scoped_logger_attribute) that) BOOST_NOEXCEPT :
         m_pLogger(that.m_pLogger),
         m_itAttribute(that.m_itAttribute)
     {
-        that.m_pLogger = 0;
+        that.m_pLogger = NULL;
     }
 
     //! Destructor
@@ -101,9 +102,9 @@ public:
 #ifndef BOOST_LOG_BROKEN_REFERENCE_FROM_RVALUE_INIT
     BOOST_DELETED_FUNCTION(scoped_logger_attribute(scoped_logger_attribute const&))
 #else // BOOST_LOG_BROKEN_REFERENCE_FROM_RVALUE_INIT
-    scoped_logger_attribute(scoped_logger_attribute const& that) : m_pLogger(that.m_pLogger), m_itAttribute(that.m_itAttribute)
+    scoped_logger_attribute(scoped_logger_attribute const& that) BOOST_NOEXCEPT : m_pLogger(that.m_pLogger), m_itAttribute(that.m_itAttribute)
     {
-        const_cast< scoped_logger_attribute& >(that).m_pLogger = 0;
+        const_cast< scoped_logger_attribute& >(that).m_pLogger = NULL;
     }
 #endif // BOOST_LOG_BROKEN_REFERENCE_FROM_RVALUE_INIT
 

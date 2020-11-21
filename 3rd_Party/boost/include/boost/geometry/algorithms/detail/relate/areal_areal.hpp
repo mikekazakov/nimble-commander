@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2013, 2014, 2015, 2017.
-// Modifications copyright (c) 2013-2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013, 2014, 2015, 2017, 2018, 2019.
+// Modifications copyright (c) 2013-2019 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -223,7 +223,10 @@ struct areal_areal
             return;
 
         // get and analyse turns
-        typedef typename turns::get_turns<Geometry1, Geometry2>::turn_info turn_type;
+        typedef typename turns::get_turns
+            <
+                Geometry1, Geometry2
+            >::template turn_info_type<IntersectionStrategy>::type turn_type;
         std::vector<turn_type> turns;
 
         interrupt_policy_areal_areal<Result> interrupt_policy(geometry1, geometry2, result);
@@ -231,6 +234,8 @@ struct areal_areal
         turns::get_turns<Geometry1, Geometry2>::apply(turns, geometry1, geometry2, interrupt_policy, intersection_strategy);
         if ( BOOST_GEOMETRY_CONDITION(result.interrupt) )
             return;
+
+        typedef typename IntersectionStrategy::cs_tag cs_tag;
 
         typedef typename IntersectionStrategy::template point_in_geometry_strategy
             <
@@ -267,7 +272,7 @@ struct areal_areal
           || may_update<exterior, interior, '2'>(result) )
         {
             // sort turns
-            typedef turns::less<0, turns::less_op_areal_areal<0> > less;
+            typedef turns::less<0, turns::less_op_areal_areal<0>, cs_tag> less;
             std::sort(turns.begin(), turns.end(), less());
 
             /*if ( may_update<interior, exterior, '2'>(result)
@@ -277,7 +282,8 @@ struct areal_areal
             {
                 // analyse sorted turns
                 turns_analyser<turn_type, 0> analyser;
-                analyse_each_turn(result, analyser, turns.begin(), turns.end());
+                analyse_each_turn(result, analyser, turns.begin(), turns.end(),
+                                  point_in_areal_strategy12.get_equals_point_point_strategy());
 
                 if ( BOOST_GEOMETRY_CONDITION(result.interrupt) )
                     return;
@@ -307,7 +313,7 @@ struct areal_areal
           || may_update<exterior, interior, '2', true>(result) )
         {
             // sort turns
-            typedef turns::less<1, turns::less_op_areal_areal<1> > less;
+            typedef turns::less<1, turns::less_op_areal_areal<1>, cs_tag> less;
             std::sort(turns.begin(), turns.end(), less());
 
             /*if ( may_update<interior, exterior, '2', true>(result)
@@ -317,7 +323,8 @@ struct areal_areal
             {
                 // analyse sorted turns
                 turns_analyser<turn_type, 1> analyser;
-                analyse_each_turn(result, analyser, turns.begin(), turns.end());
+                analyse_each_turn(result, analyser, turns.begin(), turns.end(),
+                                  point_in_areal_strategy21.get_equals_point_point_strategy());
 
                 if ( BOOST_GEOMETRY_CONDITION(result.interrupt) )
                     return;
@@ -441,9 +448,8 @@ struct areal_areal
             , m_exit_detected(false)
         {}
 
-        template <typename Result,
-                  typename TurnIt>
-        void apply(Result & result, TurnIt it)
+        template <typename Result, typename TurnIt, typename EqPPStrategy>
+        void apply(Result & result, TurnIt it, EqPPStrategy const& strategy)
         {
             //BOOST_GEOMETRY_ASSERT( it != last );
 
@@ -468,7 +474,7 @@ struct areal_areal
                 {
                     // real exit point - may be multiple
                     if ( first_in_range
-                      || ! turn_on_the_same_ip<op_id>(*m_previous_turn_ptr, *it) )
+                      || ! turn_on_the_same_ip<op_id>(*m_previous_turn_ptr, *it, strategy) )
                     {
                         update_exit(result);
                         m_exit_detected = false;
@@ -484,7 +490,7 @@ struct areal_areal
                 {
                     // real entry point
                     if ( first_in_range
-                      || ! turn_on_the_same_ip<op_id>(*m_previous_turn_ptr, *it) )
+                      || ! turn_on_the_same_ip<op_id>(*m_previous_turn_ptr, *it, strategy) )
                     {
                         update_enter(result);
                         m_enter_detected = false;
@@ -581,19 +587,24 @@ struct areal_areal
 
     // call analyser.apply() for each turn in range
     // IMPORTANT! The analyser is also called for the end iterator - last
-    template <typename Result,
-              typename Analyser,
-              typename TurnIt>
+    template
+    <
+        typename Result,
+        typename Analyser,
+        typename TurnIt,
+        typename EqPPStrategy
+    >
     static inline void analyse_each_turn(Result & res,
                                          Analyser & analyser,
-                                         TurnIt first, TurnIt last)
+                                         TurnIt first, TurnIt last,
+                                         EqPPStrategy const& strategy)
     {
         if ( first == last )
             return;
 
         for ( TurnIt it = first ; it != last ; ++it )
         {
-            analyser.apply(res, it);
+            analyser.apply(res, it, strategy);
 
             if ( BOOST_GEOMETRY_CONDITION(res.interrupt) )
                 return;

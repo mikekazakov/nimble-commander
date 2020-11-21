@@ -24,11 +24,9 @@ namespace poly_collection{
 
 template<typename Concept,typename Allocator>
 class any_collection:
- public detail::poly_collection_impl::poly_collection<
-   detail::any_model<Concept>,Allocator
- >
+ public common_impl::poly_collection<detail::any_model<Concept>,Allocator>
 {
-  using base_type=detail::poly_collection_impl::poly_collection<
+  using base_type=common_impl::poly_collection<
     detail::any_model<Concept>,Allocator>;
 
   base_type&       base()noexcept{return *this;}

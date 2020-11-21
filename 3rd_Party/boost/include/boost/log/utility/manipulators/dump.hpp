@@ -128,7 +128,7 @@ public:
 template< typename CharT, typename TraitsT >
 inline std::basic_ostream< CharT, TraitsT >& operator<< (std::basic_ostream< CharT, TraitsT >& strm, dump_manip const& manip)
 {
-    if (strm.good())
+    if (BOOST_LIKELY(strm.good()))
         aux::dump_data(manip.get_data(), manip.get_size(), strm);
 
     return strm;
@@ -155,7 +155,7 @@ public:
 template< typename CharT, typename TraitsT >
 inline std::basic_ostream< CharT, TraitsT >& operator<< (std::basic_ostream< CharT, TraitsT >& strm, bounded_dump_manip const& manip)
 {
-    if (strm.good())
+    if (BOOST_LIKELY(strm.good()))
     {
         const std::size_t size = manip.get_size(), max_size = manip.get_max_size();
         if (max_size >= size)

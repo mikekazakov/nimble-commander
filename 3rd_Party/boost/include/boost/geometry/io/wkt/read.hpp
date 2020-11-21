@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2014, 2015.
-// Modifications copyright (c) 2014-2015 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014, 2015, 2018.
+// Modifications copyright (c) 2014-2018 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -39,7 +39,7 @@
 #include <boost/geometry/algorithms/assign.hpp>
 #include <boost/geometry/algorithms/append.hpp>
 #include <boost/geometry/algorithms/clear.hpp>
-#include <boost/geometry/algorithms/detail/equals/point_point.hpp>
+#include <boost/geometry/algorithms/detail/disjoint/point_point.hpp>
 
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/coordinate_dimension.hpp>
@@ -295,7 +295,7 @@ struct stateful_range_appender<Geometry, open>
             should_append
                 = is_next_expected
                 || pt_index < core_detail::closure::minimum_ring_size<open>::value
-                || !detail::equals::equals_point_point(point, first_point);
+                || disjoint(point, first_point);
         }
         ++pt_index;
 
@@ -306,6 +306,17 @@ struct stateful_range_appender<Geometry, open>
     }
 
 private:
+    static inline bool disjoint(point_type const& p1, point_type const& p2)
+    {
+        // TODO: pass strategy
+        typedef typename strategy::disjoint::services::default_strategy
+            <
+                point_type, point_type
+            >::type strategy_type;
+
+        return detail::disjoint::disjoint_point_point(p1, p2, strategy_type());
+    }
+
     size_type pt_index;
     point_type first_point;
 };
@@ -517,11 +528,15 @@ inline bool initialize(tokenizer const& tokens,
 {
     it = tokens.begin();
     end = tokens.end();
-    if (it != end && boost::iequals(*it++, geometry_name))
-    {
-        bool has_empty, has_z, has_m;
 
-        handle_empty_z_m(it, end, has_empty, has_z, has_m);
+    if (it == end || ! boost::iequals(*it++, geometry_name))
+    {
+        BOOST_THROW_EXCEPTION(read_wkt_exception(std::string("Should start with '") + geometry_name + "'", wkt));
+    }
+
+    bool has_empty, has_z, has_m;
+
+    handle_empty_z_m(it, end, has_empty, has_z, has_m);
 
 // Silence warning C4127: conditional expression is constant
 #if defined(_MSC_VER)
@@ -529,25 +544,23 @@ inline bool initialize(tokenizer const& tokens,
 #pragma warning(disable : 4127)  
 #endif
 
-        if (has_z && dimension<Geometry>::type::value < 3)
-        {
-            BOOST_THROW_EXCEPTION(read_wkt_exception("Z only allowed for 3 or more dimensions", wkt));
-        }
+    if (has_z && dimension<Geometry>::type::value < 3)
+    {
+        BOOST_THROW_EXCEPTION(read_wkt_exception("Z only allowed for 3 or more dimensions", wkt));
+    }
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
 
-        if (has_empty)
-        {
-            check_end(it, end, wkt);
-            return false;
-        }
-        // M is ignored at all.
-
-        return true;
+    if (has_empty)
+    {
+        check_end(it, end, wkt);
+        return false;
     }
-    BOOST_THROW_EXCEPTION(read_wkt_exception(std::string("Should start with '") + geometry_name + "'", wkt));
+    // M is ignored at all.
+    
+    return true;
 }
 
 

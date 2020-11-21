@@ -1,5 +1,5 @@
 // Copyright 2014 Renato Tegon Forti, Antony Polukhin.
-// Copyright 2015-2016 Antony Polukhin.
+// Copyright 2015-2019 Antony Polukhin.
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt
@@ -12,11 +12,11 @@
 /// \brief Contains the boost::dll::shared_library class, core class for all the
 /// DLL/DSO operations.
 
-#include <boost/config.hpp>
+#include <boost/dll/config.hpp>
 #include <boost/predef/os.h>
-#include <boost/utility/enable_if.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/core/explicit_operator_bool.hpp>
 #include <boost/type_traits/is_member_pointer.hpp>
-#include <boost/utility/explicit_operator_bool.hpp>
 #include <boost/dll/detail/system_error.hpp>
 #include <boost/dll/detail/aggressive_ptr_cast.hpp>
 
@@ -55,7 +55,7 @@ class shared_library
 public:
 #ifdef BOOST_DLL_DOXYGEN
     typedef platform_specific native_handle_t;
-#else 
+#else
     typedef shared_library_impl::native_handle_t native_handle_t;
 #endif
 
@@ -73,7 +73,7 @@ public:
     *
     * \param lib A library to copy.
     * \post lib == *this
-    * \throw boost::system::system_error, std::bad_alloc in case of insufficient memory.
+    * \throw \forcedlinkfs{system_error}, std::bad_alloc in case of insufficient memory.
     */
     shared_library(const shared_library& lib)
         : base_t()
@@ -90,7 +90,7 @@ public:
     * \post lib == *this
     * \throw std::bad_alloc in case of insufficient memory.
     */
-    shared_library(const shared_library& lib, boost::system::error_code& ec)
+    shared_library(const shared_library& lib, boost::dll::fs::error_code& ec)
         : base_t()
     {
         assign(lib, ec);
@@ -111,11 +111,11 @@ public:
     * Loads a library by specified path with a specified mode.
     *
     * \param lib_path Library file name. Can handle std::string, const char*, std::wstring,
-    *           const wchar_t* or boost::filesystem::path.
+    *           const wchar_t* or \forcedlinkfs{path}.
     * \param mode A mode that will be used on library load.
-    * \throw boost::system::system_error, std::bad_alloc in case of insufficient memory.
+    * \throw \forcedlinkfs{system_error}, std::bad_alloc in case of insufficient memory.
     */
-    explicit shared_library(const boost::filesystem::path& lib_path, load_mode::type mode = load_mode::default_mode) {
+    explicit shared_library(const boost::dll::fs::path& lib_path, load_mode::type mode = load_mode::default_mode) {
         shared_library::load(lib_path, mode);
     }
 
@@ -123,17 +123,17 @@ public:
     * Loads a library by specified path with a specified mode.
     *
     * \param lib_path Library file name. Can handle std::string, const char*, std::wstring,
-    *           const wchar_t* or boost::filesystem::path.
+    *           const wchar_t* or \forcedlinkfs{path}.
     * \param mode A mode that will be used on library load.
     * \param ec Variable that will be set to the result of the operation.
     * \throw std::bad_alloc in case of insufficient memory.
     */
-    shared_library(const boost::filesystem::path& lib_path, boost::system::error_code& ec, load_mode::type mode = load_mode::default_mode) {
+    shared_library(const boost::dll::fs::path& lib_path, boost::dll::fs::error_code& ec, load_mode::type mode = load_mode::default_mode) {
         shared_library::load(lib_path, mode, ec);
     }
 
-    //! \overload shared_library(const boost::filesystem::path& lib_path, boost::system::error_code& ec, load_mode::type mode = load_mode::default_mode)
-    shared_library(const boost::filesystem::path& lib_path, load_mode::type mode, boost::system::error_code& ec) {
+    //! \overload shared_library(const boost::dll::fs::path& lib_path, boost::dll::fs::error_code& ec, load_mode::type mode = load_mode::default_mode)
+    shared_library(const boost::dll::fs::path& lib_path, load_mode::type mode, boost::dll::fs::error_code& ec) {
         shared_library::load(lib_path, mode, ec);
     }
 
@@ -142,10 +142,10 @@ public:
     *
     * \param lib A shared library to assign from.
     * \post lib == *this
-    * \throw boost::system::system_error, std::bad_alloc in case of insufficient memory.
+    * \throw \forcedlinkfs{system_error}, std::bad_alloc in case of insufficient memory.
     */
     shared_library& operator=(BOOST_COPY_ASSIGN_REF(shared_library) lib) {
-        boost::system::error_code ec;
+        boost::dll::fs::error_code ec;
         assign(lib, ec);
         if (ec) {
             boost::dll::detail::report_error(ec, "boost::dll::shared_library::operator= failed");
@@ -186,7 +186,7 @@ public:
     * \param ec Variable that will be set to the result of the operation.
     * \throw std::bad_alloc in case of insufficient memory.
     */
-    shared_library& assign(const shared_library& lib, boost::system::error_code& ec) {
+    shared_library& assign(const shared_library& lib, boost::dll::fs::error_code& ec) {
         ec.clear();
 
         if (native() == lib.native()) {
@@ -198,7 +198,7 @@ public:
             return *this;
         }
 
-        boost::filesystem::path loc = lib.location(ec);
+        boost::dll::fs::path loc = lib.location(ec);
         if (ec) {
             return *this;
         }
@@ -217,10 +217,10 @@ public:
     *
     * \param lib A library instance to assign from.
     * \post lib.location() == this->location()
-    * \throw boost::system::system_error, std::bad_alloc in case of insufficient memory.
+    * \throw \forcedlinkfs{system_error}, std::bad_alloc in case of insufficient memory.
     */
     shared_library& assign(const shared_library& lib) {
-        boost::system::error_code ec;
+        boost::dll::fs::error_code ec;
         assign(lib, ec);
         if (ec) {
             boost::dll::detail::report_error(ec, "boost::dll::shared_library::assign() failed");
@@ -236,13 +236,13 @@ public:
     * call unload() and then load the new provided library.
     *
     * \param lib_path Library file name. Can handle std::string, const char*, std::wstring,
-    *           const wchar_t* or boost::filesystem::path.
+    *           const wchar_t* or \forcedlinkfs{path}.
     * \param mode A mode that will be used on library load.
-    * \throw boost::system::system_error, std::bad_alloc in case of insufficient memory.
+    * \throw \forcedlinkfs{system_error}, std::bad_alloc in case of insufficient memory.
     *
     */
-    void load(const boost::filesystem::path& lib_path, load_mode::type mode = load_mode::default_mode) {
-        boost::system::error_code ec;
+    void load(const boost::dll::fs::path& lib_path, load_mode::type mode = load_mode::default_mode) {
+        boost::dll::fs::error_code ec;
 
         base_t::load(lib_path, mode, ec);
 
@@ -258,18 +258,18 @@ public:
     * call unload() and then load the new provided library.
     *
     * \param lib_path Library file name. Can handle std::string, const char*, std::wstring,
-    *           const wchar_t* or boost::filesystem::path.
+    *           const wchar_t* or \forcedlinkfs{path}.
     * \param ec Variable that will be set to the result of the operation.
     * \param mode A mode that will be used on library load.
     * \throw std::bad_alloc in case of insufficient memory.
     */
-    void load(const boost::filesystem::path& lib_path, boost::system::error_code& ec, load_mode::type mode = load_mode::default_mode) {
+    void load(const boost::dll::fs::path& lib_path, boost::dll::fs::error_code& ec, load_mode::type mode = load_mode::default_mode) {
         ec.clear();
         base_t::load(lib_path, mode, ec);
     }
 
-    //! \overload void load(const boost::filesystem::path& lib_path, boost::system::error_code& ec, load_mode::type mode = load_mode::default_mode)
-    void load(const boost::filesystem::path& lib_path, load_mode::type mode, boost::system::error_code& ec) {
+    //! \overload void load(const boost::dll::fs::path& lib_path, boost::dll::fs::error_code& ec, load_mode::type mode = load_mode::default_mode)
+    void load(const boost::dll::fs::path& lib_path, load_mode::type mode, boost::dll::fs::error_code& ec) {
         ec.clear();
         base_t::load(lib_path, mode, ec);
     }
@@ -322,7 +322,7 @@ public:
     * \throw Nothing.
     */
     bool has(const char* symbol_name) const BOOST_NOEXCEPT {
-        boost::system::error_code ec;
+        boost::dll::fs::error_code ec;
         return is_loaded() && !!base_t::symbol_addr(symbol_name, ec) && !ec;
     }
 
@@ -345,7 +345,7 @@ public:
     * \tparam T Type of the symbol that we are going to import. Must be explicitly specified.
     * \param symbol_name Null-terminated symbol name. Can handle std::string, char*, const char*.
     * \return Reference to the symbol.
-    * \throw boost::system::system_error if symbol does not exist or if the DLL/DSO was not loaded.
+    * \throw \forcedlinkfs{system_error} if symbol does not exist or if the DLL/DSO was not loaded.
     */
     template <typename T>
     inline typename boost::enable_if_c<boost::is_member_pointer<T>::value || boost::is_reference<T>::value, T>::type  get(const std::string& symbol_name) const {
@@ -384,7 +384,7 @@ public:
     *
     * \tparam T Type of the symbol that we are going to import. Must be explicitly specified..
     * \param alias_name Null-terminated alias symbol name. Can handle std::string, char*, const char*.
-    * \throw boost::system::system_error if symbol does not exist or if the DLL/DSO was not loaded.
+    * \throw \forcedlinkfs{system_error} if symbol does not exist or if the DLL/DSO was not loaded.
     */
     template <typename T>
     inline T& get_alias(const char* alias_name) const {
@@ -402,17 +402,16 @@ private:
     // get_void is required to reduce binary size: it does not depend on a template
     // parameter and will be instantiated only once.
     void* get_void(const char* sb) const {
-        boost::system::error_code ec;
+        boost::dll::fs::error_code ec;
 
         if (!is_loaded()) {
-            ec = boost::system::error_code(
-                boost::system::errc::bad_file_descriptor,
-                boost::system::generic_category()
+            ec = boost::dll::fs::make_error_code(
+                boost::dll::fs::errc::bad_file_descriptor
             );
 
             // report_error() calls dlsym, do not use it here!
             boost::throw_exception(
-                boost::system::system_error(
+                boost::dll::fs::system_error(
                     ec, "boost::dll::shared_library::get() failed: no library was loaded"
                 )
             );
@@ -448,24 +447,23 @@ public:
     * \endcode
     *
     * \return Full path to the shared library.
-    * \throw boost::system::system_error, std::bad_alloc.
+    * \throw \forcedlinkfs{system_error}, std::bad_alloc.
     */
-    boost::filesystem::path location() const {
-        boost::system::error_code ec;
+    boost::dll::fs::path location() const {
+        boost::dll::fs::error_code ec;
         if (!is_loaded()) {
-            ec = boost::system::error_code(
-                boost::system::errc::bad_file_descriptor,
-                boost::system::generic_category()
+            ec = boost::dll::fs::make_error_code(
+                boost::dll::fs::errc::bad_file_descriptor
             );
 
             boost::throw_exception(
-                boost::system::system_error(
+                boost::dll::fs::system_error(
                     ec, "boost::dll::shared_library::location() failed (no library was loaded)"
                 )
             );
         }
 
-        boost::filesystem::path full_path = base_t::full_module_path(ec);
+        boost::dll::fs::path full_path = base_t::full_module_path(ec);
 
         if (ec) {
             boost::dll::detail::report_error(ec, "boost::dll::shared_library::location() failed");
@@ -487,14 +485,13 @@ public:
     * \return Full path to the shared library.
     * \throw std::bad_alloc.
     */
-    boost::filesystem::path location(boost::system::error_code& ec) const {
+    boost::dll::fs::path location(boost::dll::fs::error_code& ec) const {
         if (!is_loaded()) {
-            ec = boost::system::error_code(
-                boost::system::errc::bad_file_descriptor,
-                boost::system::generic_category()
+            ec = boost::dll::fs::make_error_code(
+                boost::dll::fs::errc::bad_file_descriptor
             );
 
-            return boost::filesystem::path();
+            return boost::dll::fs::path();
         }
 
         ec.clear();
@@ -507,8 +504,31 @@ public:
     *
     * \return The suffix od shared module: ".dll" (Windows), ".so" (Unix/Linux/BSD), ".dylib" (MacOS/IOS)
     */
-    static boost::filesystem::path suffix() {
+    static boost::dll::fs::path suffix() {
         return base_t::suffix();
+    }
+
+    /*!
+    * Returns the decorated path to a shared module name, i.e. with needed prefix/suffix added.
+    *
+    * \b Recommendations: Use `load` with `load_mode::append_decorations` instead of constructing the decorated path via `decorate()` and loading by it.
+    *
+    * For instance, for a path like "path/to/boost" it returns :
+    * - path/to/libboost.so on posix platforms
+    * - path/to/libboost.dylib on OSX
+    * - path/to/boost.dll on Windows
+    *
+    * Method handles both relative and absolute paths.
+    *
+    * - Windows note: `decorate()` does not prepend "lib" to the decorated path. Use `load` with `load_mode::append_decorations` for MinGW compatibility purpose.
+    * - Posix note: if the initial module name is already prepended with lib, only the suffix() is appended to the path
+    *
+    * \param sl the module name and path to decorate - for instance : /usr/lib/boost
+    *
+    * \return The decorated unportable path that may not exists in the filesystem or could be wrong due to platform specifics.
+    */
+    static boost::dll::fs::path decorate(const boost::dll::fs::path& sl) {
+        return base_t::decorate(sl);
     }
 
     /*!
@@ -547,4 +567,3 @@ inline void swap(shared_library& lhs, shared_library& rhs) BOOST_NOEXCEPT {
 }} // boost::dll
 
 #endif // BOOST_DLL_SHARED_LIBRARY_HPP
-

@@ -4,8 +4,8 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_NO_CASE_SEPT_16_2014_0912PM)
-#define SPIRIT_NO_CASE_SEPT_16_2014_0912PM
+#if !defined(BOOST_SPIRIT_X3_NO_CASE_SEPT_16_2014_0912PM)
+#define BOOST_SPIRIT_X3_NO_CASE_SEPT_16_2014_0912PM
 
 #include <boost/spirit/home/x3/support/context.hpp>
 #include <boost/spirit/home/x3/support/unused.hpp>
@@ -22,7 +22,7 @@ namespace boost { namespace spirit { namespace x3
         static bool const is_pass_through_unary = true;
         static bool const handles_container = Subject::handles_container;
 
-        no_case_directive(Subject const& subject)
+        constexpr no_case_directive(Subject const& subject)
           : base_type(subject) {}
 
         template <typename Iterator, typename Context
@@ -41,14 +41,14 @@ namespace boost { namespace spirit { namespace x3
     struct no_case_gen
     {
         template <typename Subject>
-        no_case_directive<typename extension::as_parser<Subject>::value_type>
+        constexpr no_case_directive<typename extension::as_parser<Subject>::value_type>
         operator[](Subject const& subject) const
         {
             return { as_parser(subject) };
         }
     };
 
-    auto const no_case = no_case_gen{};
+    constexpr auto no_case = no_case_gen{};
 }}}
 
 #endif

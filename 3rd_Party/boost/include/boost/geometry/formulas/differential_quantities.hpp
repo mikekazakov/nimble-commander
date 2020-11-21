@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2016-2017 Oracle and/or its affiliates.
+// Copyright (c) 2016-2019 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -11,6 +11,7 @@
 #ifndef BOOST_GEOMETRY_FORMULAS_INVERSE_DIFFERENTIAL_QUANTITIES_HPP
 #define BOOST_GEOMETRY_FORMULAS_INVERSE_DIFFERENTIAL_QUANTITIES_HPP
 
+#include <boost/geometry/core/assert.hpp>
 
 #include <boost/geometry/util/condition.hpp>
 #include <boost/geometry/util/math.hpp>
@@ -70,10 +71,13 @@ public:
         // equator
         if (math::equals(sin_bet1, c0) && math::equals(sin_bet2, c0))
         {
-            CT const sig_12 = math::abs(dlon) / one_minus_f;
+            CT const sig_12 = dlon / one_minus_f;
             if (BOOST_GEOMETRY_CONDITION(EnableReducedLength))
             {
-                CT m12 = sin(sig_12) * b;
+                BOOST_GEOMETRY_ASSERT((-math::pi<CT>() <= azimuth && azimuth <= math::pi<CT>()));
+
+                int azi_sign = math::sign(azimuth) >= 0 ? 1 : -1; // for antipodal
+                CT m12 = azi_sign * sin(sig_12) * b;
                 reduced_length = m12;
             }
                 

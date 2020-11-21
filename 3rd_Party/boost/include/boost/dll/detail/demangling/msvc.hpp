@@ -36,7 +36,7 @@ class mangled_storage_impl  : public mangled_storage_base
     {
         return get_name<Return>();
     }
-    //function to remove preceeding 'class ' or 'struct ' if the are given in this format.
+    //function to remove preceding 'class ' or 'struct ' if the are given in this format.
 
     inline static void trim_typename(std::string & val);
 public:
@@ -78,7 +78,7 @@ public:
 
 void mangled_storage_impl::trim_typename(std::string & val)
 {
-    //remove preceeding class or struct, because you might want to use a struct as class, et vice versa
+    //remove preceding class or struct, because you might want to use a struct as class, et vice versa
     if (val.size() >= 6)
     {
         using namespace std;
@@ -98,46 +98,48 @@ namespace parser
 {
     namespace x3 = spirit::x3;
 
-    auto ptr_rule_impl(std::integral_constant<std::size_t, 32>)
+    inline auto ptr_rule_impl(std::integral_constant<std::size_t, 32>)
     {
         return -((-x3::space) >> "__ptr32");
     }
-    auto ptr_rule_impl(std::integral_constant<std::size_t, 64>)
+    inline auto ptr_rule_impl(std::integral_constant<std::size_t, 64>)
     {
         return -((-x3::space) >> "__ptr64");
     }
 
-    auto ptr_rule() { return ptr_rule_impl(std::integral_constant<std::size_t, sizeof(std::size_t)*8>());}
+    inline auto ptr_rule() {
+        return ptr_rule_impl(std::integral_constant<std::size_t, sizeof(std::size_t)*8>());
+    }
 
     auto const visibility = ("public:" | x3::lit("protected:") | "private:");
     auto const virtual_ = x3::space >> "virtual";
     auto const static_     = x3::space >> x3::lit("static") ;
 
-    auto const_rule_impl(true_type )  {return x3::space >> "const";};
-    auto const_rule_impl(false_type)  {return x3::eps;};
+    inline auto const_rule_impl(true_type )  {return x3::space >> "const";};
+    inline auto const_rule_impl(false_type)  {return x3::eps;};
     template<typename T>
     auto const_rule() {using t = is_const<typename remove_reference<T>::type>; return const_rule_impl(t());}
 
-    auto volatile_rule_impl(true_type )  {return x3::space >> "volatile";};
-    auto volatile_rule_impl(false_type)  {return x3::eps;};
+    inline auto volatile_rule_impl(true_type )  {return x3::space >> "volatile";};
+    inline auto volatile_rule_impl(false_type)  {return x3::eps;};
     template<typename T>
     auto volatile_rule() {using t = is_volatile<typename remove_reference<T>::type>; return volatile_rule_impl(t());}
 
 
-    auto inv_const_rule_impl(true_type )  {return "const" >>  x3::space ;};
-    auto inv_const_rule_impl(false_type)  {return x3::eps;};
+    inline auto inv_const_rule_impl(true_type )  {return "const" >>  x3::space ;};
+    inline auto inv_const_rule_impl(false_type)  {return x3::eps;};
     template<typename T>
     auto inv_const_rule() {using t = is_const<typename remove_reference<T>::type>; return inv_const_rule_impl(t());}
 
-    auto inv_volatile_rule_impl(true_type )  {return "volatile" >> x3::space;};
-    auto inv_volatile_rule_impl(false_type)  {return x3::eps;};
+    inline auto inv_volatile_rule_impl(true_type )  {return "volatile" >> x3::space;};
+    inline auto inv_volatile_rule_impl(false_type)  {return x3::eps;};
     template<typename T>
     auto inv_volatile_rule() {using t = is_volatile<typename remove_reference<T>::type>; return inv_volatile_rule_impl(t());}
 
 
-    auto reference_rule_impl(false_type, false_type) {return x3::eps;}
-    auto reference_rule_impl(true_type,  false_type) {return x3::space >>"&"  ;}
-    auto reference_rule_impl(false_type, true_type ) {return x3::space >>"&&" ;}
+    inline auto reference_rule_impl(false_type, false_type) {return x3::eps;}
+    inline auto reference_rule_impl(true_type,  false_type) {return x3::space >>"&"  ;}
+    inline auto reference_rule_impl(false_type, true_type ) {return x3::space >>"&&" ;}
 
 
     template<typename T>
@@ -158,7 +160,7 @@ namespace parser
                 ptr_rule();
     }
     template<>
-    auto type_rule<void>(const std::string &) { return x3::string("void"); };
+    inline auto type_rule<void>(const std::string &) { return x3::string("void"); };
 
     auto const cdecl_   = "__cdecl"     >> x3::space;
     auto const stdcall  = "__stdcall"     >> x3::space;

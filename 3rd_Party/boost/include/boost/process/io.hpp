@@ -91,14 +91,14 @@ child c2("c++filt", std_in<p);
 Utilizing `boost.asio` asynchronous I/O is provided.
 
 \code
-boost::asio::io_service ios;
+boost::asio::io_context ios;
 std::future<std::string> output;
 system("ls", std_out > output, ios);
 
 auto res = fut.get();
 \endcode
 
-\note `boost/process/asnyc.hpp` must also be included for this to work.
+\note `boost/process/async.hpp` must also be included for this to work.
 
 \par Closing
 
@@ -136,13 +136,13 @@ template<typename T> using is_mutable_buffer =
         >;
 
 
-struct null_t  {constexpr null_t() {}};
+struct null_t  {constexpr null_t() = default;};
 struct close_t;
 
 template<class>
 struct std_in_
 {
-    constexpr std_in_() {}
+    constexpr std_in_() = default;
 
     api::close_in close() const {return api::close_in(); }
     api::close_in operator=(const close_t &) const {return api::close_in();}
@@ -199,7 +199,7 @@ struct std_in_
 template<int p1, int p2 = -1>
 struct std_out_
 {
-    constexpr std_out_() {}
+    constexpr std_out_() = default;
 
     api::close_out<p1,p2> close() const {return api::close_out<p1,p2>(); }
     api::close_out<p1,p2> operator=(const close_t &) const {return api::close_out<p1,p2>();}
@@ -260,7 +260,7 @@ struct std_out_
 
 struct close_t
 {
-    constexpr close_t() {}
+    constexpr close_t() = default;
     template<int T, int U>
     api::close_out<T,U> operator()(std_out_<T,U>) {return api::close_out<T,U>();}
 };
@@ -371,7 +371,7 @@ std_err = buffer;
 so you can wait for the input to be completed. It looks like this:
 \code{.cpp}
 std::future<void> fut;
-boost::asio::io_service ios;
+boost::asio::io_context ios;
 std::string data;
 child c("prog", std_in < buffer(data) >  fut, ios);
 fut.get();
@@ -380,7 +380,7 @@ fut.get();
 
 \note `boost::asio::buffer` is also available in the `boost::process` namespace.
 
-\warning This feature requires `boost/process/async.hpp` to be included and a reference to `boost::asio::io_service` to be passed to the launching function.
+\warning This feature requires `boost/process/async.hpp` to be included and a reference to `boost::asio::io_context` to be passed to the launching function.
 
 
 \subsection stdin_close Close
@@ -510,7 +510,7 @@ std_err = buffer;
 
 \note `boost::asio::buffer` is also available in the `boost::process` namespace.
 
-\warning This feature requires `boost/process/async.hpp` to be included and a reference to `boost::asio::io_service` to be passed to the launching function.
+\warning This feature requires `boost/process/async.hpp` to be included and a reference to `boost::asio::io_context` to be passed to the launching function.
 
 
 \subsection stdout_close Close

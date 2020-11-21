@@ -55,7 +55,7 @@ public:
     /*!
      * Constructs the pseudo-lock. The mutex is not affected during the construction.
      */
-    explicit no_lock(MutexT&) {}
+    explicit no_lock(MutexT&) BOOST_NOEXCEPT {}
 
 private:
     no_lock(no_lock const&);
@@ -117,7 +117,7 @@ protected:
 template< typename MutexT >
 struct exclusive_lock_guard
 {
-    explicit exclusive_lock_guard(MutexT& m) : m_Mutex(m)
+    explicit exclusive_lock_guard(MutexT& m) BOOST_NOEXCEPT_IF(BOOST_NOEXCEPT_EXPR(m.lock())) : m_Mutex(m)
     {
         m.lock();
     }
@@ -137,7 +137,7 @@ private:
 template< typename MutexT >
 struct shared_lock_guard
 {
-    explicit shared_lock_guard(MutexT& m) : m_Mutex(m)
+    explicit shared_lock_guard(MutexT& m) BOOST_NOEXCEPT_IF(BOOST_NOEXCEPT_EXPR(m.lock_shared())) : m_Mutex(m)
     {
         m.lock_shared();
     }
@@ -158,7 +158,7 @@ template< typename MutexT1, typename MutexT2 >
 class multiple_unique_lock2
 {
 public:
-    multiple_unique_lock2(MutexT1& m1, MutexT2& m2) :
+    multiple_unique_lock2(MutexT1& m1, MutexT2& m2) BOOST_NOEXCEPT_IF(BOOST_NOEXCEPT_EXPR(m1.lock()) && BOOST_NOEXCEPT_EXPR(m2.lock())) :
         m_p1(&m1),
         m_p2(&m2)
     {

@@ -12,7 +12,9 @@
 #include <functional>
 #include <vector>
 
+#include <boost/core/allocator_access.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/type_traits/conditional.hpp>
 #include <queue>
 
 namespace boost  {
@@ -80,7 +82,7 @@ struct unordered_tree_iterator_storage
         return data_.empty();
     }
 
-    std::vector<HandleType, typename Alloc::template rebind<HandleType>::other > data_;
+    std::vector<HandleType, typename boost::allocator_rebind<Alloc, HandleType>::type> data_;
 };
 
 template <typename ValueType,
@@ -133,7 +135,7 @@ struct ordered_tree_iterator_storage:
     }
 
     std::priority_queue<HandleType,
-                        std::vector<HandleType, typename Alloc::template rebind<HandleType>::other>,
+                        std::vector<HandleType, typename boost::allocator_rebind<Alloc, HandleType>::type>,
                         compare_values_by_handle> data_;
 };
 
@@ -187,7 +189,7 @@ class tree_iterator:
 
     friend class boost::iterator_core_access;
 
-    typedef typename boost::mpl::if_c< ordered_iterator,
+    typedef typename boost::conditional< ordered_iterator,
                                        ordered_tree_iterator_storage<ValueType, const Node*, Alloc, ValueCompare, ValueExtractor>,
                                        unordered_tree_iterator_storage<const Node*, Alloc, ValueCompare>
                                      >::type

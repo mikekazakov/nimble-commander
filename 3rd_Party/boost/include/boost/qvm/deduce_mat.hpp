@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_C5DC682E196211E0A4C1686BDFD72085
-#define UUID_C5DC682E196211E0A4C1686BDFD72085
+#ifndef BOOST_QVM_C5DC682E196211E0A4C1686BDFD72085
+#define BOOST_QVM_C5DC682E196211E0A4C1686BDFD72085
 
 #include <boost/qvm/deduce_scalar.hpp>
 #include <boost/qvm/mat_traits.hpp>

@@ -13,7 +13,7 @@
 #include <vector>
 
 #include <boost/config.hpp>
-#include <boost/context/continuation.hpp>
+#include <boost/context/fiber.hpp>
 #include <boost/intrusive/list.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/intrusive/set.hpp>
@@ -122,9 +122,9 @@ public:
     void schedule_from_remote( context *) noexcept;
 #endif
 
-    boost::context::continuation dispatch() noexcept;
+    boost::context::fiber dispatch() noexcept;
 
-    boost::context::continuation terminate( detail::spinlock_lock &, context *) noexcept;
+    boost::context::fiber terminate( detail::spinlock_lock &, context *) noexcept;
 
     void yield( context *) noexcept;
 

@@ -44,7 +44,7 @@ struct child_handle
         return pid;
     }
     bool in_group() const {return true;}
-    bool in_group(std::error_code &ec) const noexcept {return true;}
+    bool in_group(std::error_code&) const noexcept {return true;}
 
     typedef int process_handle_t;
     process_handle_t process_handle() const { return pid; }

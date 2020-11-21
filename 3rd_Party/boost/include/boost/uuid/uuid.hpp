@@ -3,7 +3,7 @@
 // Copyright 2006 Andy Tompkins.
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// https://www.boost.org/LICENSE_1_0.txt)
 
 // Revision History
 //  06 Feb 2006 - Initial Revision
@@ -200,9 +200,9 @@ struct is_pod<uuids::uuid> : true_type {};
 #endif
 
 #if defined(BOOST_UUID_USE_SSE2)
-#include <boost/uuid/detail/uuid_x86.hpp>
+#include <boost/uuid/detail/uuid_x86.ipp>
 #else
-#include <boost/uuid/detail/uuid_generic.hpp>
+#include <boost/uuid/detail/uuid_generic.ipp>
 #endif
 
 #if defined(_MSC_VER)

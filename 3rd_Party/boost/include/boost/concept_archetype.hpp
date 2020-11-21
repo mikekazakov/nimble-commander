@@ -15,9 +15,10 @@
 #define BOOST_CONCEPT_ARCHETYPES_HPP
 
 #include <boost/config.hpp>
-#include <boost/iterator.hpp>
-#include <boost/mpl/identity.hpp>
+#include <boost/config/workaround.hpp>
 #include <functional>
+#include <iterator>  // iterator tags
+#include <cstddef>   // std::ptrdiff_t
 
 namespace boost {
 
@@ -56,7 +57,7 @@ namespace boost {
   public:
       static T& get()
       {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+#if BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x564))
           return *reinterpret_cast<T*>(0);
 #else 
           static char d[sizeof(T)];

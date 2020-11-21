@@ -55,21 +55,21 @@ public:
     iterator(
       base_segment_info_iterator it,
       const PolyCollectionIterator& first,const PolyCollectionIterator& last):
-      it{it},first{&first},last{&last}{}
+      it{it},pfirst{&first},plast{&last}{}
     iterator(
       const PolyCollectionIterator& first,const PolyCollectionIterator& last):
       it{traits::base_segment_info_iterator_from(first)},
-         first{&first},last{&last}
+      pfirst{&first},plast{&last}
       {}
 
     info dereference()const noexcept
     {
       return {
         &it->type_info(),
-        it==traits::base_segment_info_iterator_from(*first)?
-          traits::local_base_iterator_from(*first):it->begin(),
-        it==traits::base_segment_info_iterator_from(*last)?
-          traits::local_base_iterator_from(*last):it->end()
+        it==traits::base_segment_info_iterator_from(*pfirst)?
+          traits::local_base_iterator_from(*pfirst):it->begin(),
+        it==traits::base_segment_info_iterator_from(*plast)?
+          traits::local_base_iterator_from(*plast):it->end()
       };
     }
 
@@ -77,26 +77,26 @@ public:
     void increment()noexcept{++it;}
 
     base_segment_info_iterator    it;
-    const PolyCollectionIterator* first;
-    const PolyCollectionIterator* last;
+    const PolyCollectionIterator* pfirst;
+    const PolyCollectionIterator* plast;
   };
 
   segment_splitter(
     const PolyCollectionIterator& first,const PolyCollectionIterator& last):
-    first{first},last{last}{}
+    pfirst{&first},plast{&last}{}
 
-  iterator begin()const noexcept{return {first,last};}
+  iterator begin()const noexcept{return {*pfirst,*plast};}
 
   iterator end()const noexcept
   {
-    auto slast=traits::base_segment_info_iterator_from(last);
-    if(slast!=traits::end_base_segment_info_iterator_from(last))++slast;
-    return {slast,last,last};
+    auto slast=traits::base_segment_info_iterator_from(*plast);
+    if(slast!=traits::end_base_segment_info_iterator_from(*plast))++slast;
+    return {slast,*plast,*plast};
   }
 
 private:
-  const PolyCollectionIterator& first;
-  const PolyCollectionIterator& last;
+  const PolyCollectionIterator* pfirst;
+  const PolyCollectionIterator* plast;
 };
 
 template<typename PolyCollectionIterator>

@@ -41,14 +41,14 @@ class BOOST_FIBERS_DECL fiber {
 private:
     friend class context;
 
-    typedef intrusive_ptr< context >  ptr_t;
+    using ptr_t = intrusive_ptr<context>;
 
     ptr_t       impl_{};
 
     void start_() noexcept;
 
 public:
-    typedef context::id    id;
+    using id = context::id;
 
     fiber() = default;
 
@@ -59,7 +59,7 @@ public:
               typename = detail::disable_overload< std::allocator_arg_t, Fn >
     >
 #if BOOST_COMP_GNUC < 50000000
-    fiber( Fn && fn, Arg && ... arg) :
+    explicit fiber( Fn && fn, Arg && ... arg) :
 #else
     fiber( Fn && fn, Arg ... arg) :
 #endif
@@ -87,12 +87,12 @@ public:
               typename ... Arg
     >
 #if BOOST_COMP_GNUC < 50000000
-    fiber( std::allocator_arg_t, StackAllocator salloc, Fn && fn, Arg && ... arg) :
+    fiber( std::allocator_arg_t, StackAllocator && salloc, Fn && fn, Arg && ... arg) :
 #else
-    fiber( std::allocator_arg_t, StackAllocator salloc, Fn && fn, Arg ... arg) :
+    fiber( std::allocator_arg_t, StackAllocator && salloc, Fn && fn, Arg ... arg) :
 #endif
         fiber{ launch::post,
-               std::allocator_arg, salloc,
+               std::allocator_arg, std::forward< StackAllocator >( salloc),
                std::forward< Fn >( fn), std::forward< Arg >( arg) ... } {
     }
 
@@ -101,11 +101,11 @@ public:
               typename ... Arg
     >
 #if BOOST_COMP_GNUC < 50000000
-    fiber( launch policy, std::allocator_arg_t, StackAllocator salloc, Fn && fn, Arg && ... arg) :
+    fiber( launch policy, std::allocator_arg_t, StackAllocator && salloc, Fn && fn, Arg && ... arg) :
 #else
-    fiber( launch policy, std::allocator_arg_t, StackAllocator salloc, Fn && fn, Arg ... arg) :
+    fiber( launch policy, std::allocator_arg_t, StackAllocator && salloc, Fn && fn, Arg ... arg) :
 #endif
-        impl_{ make_worker_context( policy, salloc, std::forward< Fn >( fn), std::forward< Arg >( arg) ... ) } {
+        impl_{ make_worker_context( policy, std::forward< StackAllocator >( salloc), std::forward< Fn >( fn), std::forward< Arg >( arg) ... ) } {
         start_();
     }
 
@@ -120,7 +120,7 @@ public:
 
     fiber( fiber && other) noexcept :
         impl_{} {
-        impl_.swap( other.impl_);
+        swap( other);
     }
 
     fiber & operator=( fiber && other) noexcept {

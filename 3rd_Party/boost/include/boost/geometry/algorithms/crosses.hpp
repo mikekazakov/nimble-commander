@@ -252,6 +252,11 @@ inline bool crosses(Geometry1 const& geometry1,
 \return \return_check2{crosses}
 
 \qbk{[include reference/algorithms/crosses.qbk]}
+\qbk{
+[heading Examples]
+[crosses]
+[crosses_output]
+}
 */
 template <typename Geometry1, typename Geometry2>
 inline bool crosses(Geometry1 const& geometry1, Geometry2 const& geometry2)

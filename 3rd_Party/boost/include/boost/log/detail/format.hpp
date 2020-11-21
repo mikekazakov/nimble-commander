@@ -16,14 +16,15 @@
 #ifndef BOOST_LOG_DETAIL_FORMAT_HPP_INCLUDED_
 #define BOOST_LOG_DETAIL_FORMAT_HPP_INCLUDED_
 
+#include <cstddef>
 #include <string>
 #include <vector>
 #include <iosfwd>
 #include <boost/assert.hpp>
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
+#include <boost/core/uncaught_exceptions.hpp>
 #include <boost/log/detail/config.hpp>
-#include <boost/log/detail/unhandled_exception_count.hpp>
 #include <boost/log/detail/cleanup_scope_guard.hpp>
 #include <boost/log/utility/formatting_ostream.hpp>
 #include <boost/log/detail/header.hpp>
@@ -93,13 +94,13 @@ public:
     {
     }
 
-    format_description(BOOST_RV_REF(format_description) that)
+    format_description(BOOST_RV_REF(format_description) that) BOOST_NOEXCEPT
     {
         literal_chars.swap(that.literal_chars);
         format_elements.swap(that.format_elements);
     }
 
-    format_description& operator= (format_description that)
+    format_description& operator= (format_description that) BOOST_NOEXCEPT
     {
         literal_chars.swap(that.literal_chars);
         format_elements.swap(that.format_elements);
@@ -276,7 +277,7 @@ private:
 
 public:
     //! Initializing constructor
-    pump(basic_format& owner, stream_type& strm) BOOST_NOEXCEPT : m_owner(&owner), m_stream(&strm), m_exception_count(unhandled_exception_count())
+    pump(basic_format& owner, stream_type& strm) BOOST_NOEXCEPT : m_owner(&owner), m_stream(&strm), m_exception_count(boost::core::uncaught_exceptions())
     {
     }
 
@@ -296,7 +297,7 @@ public:
             boost::log::aux::cleanup_guard< basic_format< char_type > > cleanup1(*m_owner);
 
             BOOST_ASSERT(m_stream != NULL);
-            if (m_exception_count >= unhandled_exception_count())
+            if (m_exception_count >= boost::core::uncaught_exceptions())
             {
                 // Compose the final string in the stream buffer
                 m_stream->flush();

@@ -83,7 +83,7 @@ inline void windows_named_sync::close(windows_named_sync_interface &sync_interfa
    winapi::interprocess_overlapped overlapped;
    if(winapi::lock_file_ex
       (m_file_hnd, winapi::lockfile_exclusive_lock, 0, sizeof_file_info, 0, &overlapped)){
-      if(winapi::set_file_pointer_ex(m_file_hnd, sizeof(sync_id::internal_type), 0, winapi::file_begin)){
+      if(winapi::set_file_pointer(m_file_hnd, sizeof(sync_id::internal_type), 0, winapi::file_begin)){
          const void *buf = sync_interface.buffer_with_final_data_to_file();
 
          unsigned long written_or_read = 0;

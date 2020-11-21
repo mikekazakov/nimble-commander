@@ -32,8 +32,10 @@ namespace monomorphic {
 /// Models a single element data set
 template<typename T>
 class singleton {
-public:
+private:
     typedef typename boost::decay<T>::type sample;
+
+public:
 
     enum { arity = 1 };
 

@@ -16,8 +16,8 @@
 #define BOOST_LOG_CORE_RECORD_HPP_INCLUDED_
 
 #include <boost/move/core.hpp>
+#include <boost/core/explicit_operator_bool.hpp>
 #include <boost/log/detail/config.hpp>
-#include <boost/utility/explicit_operator_bool.hpp>
 #include <boost/log/attributes/attribute_value_set.hpp>
 #include <boost/log/expressions/keyword_fwd.hpp>
 #include <boost/log/core/record_view.hpp>

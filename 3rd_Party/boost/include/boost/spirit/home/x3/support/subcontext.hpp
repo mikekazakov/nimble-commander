@@ -1,6 +1,6 @@
 /*=============================================================================
     Copyright (c) 2001-2014 Joel de Guzman
-    Copyright (c) 2013 Agustín Bergé
+    Copyright (c) 2013 Agustin Berge
     http://spirit.sourceforge.net/
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -9,7 +9,6 @@
 #if !defined(BOOST_SPIRIT_X3_SUBCONTEXT_APR_15_2013_0840AM)
 #define BOOST_SPIRIT_X3_SUBCONTEXT_APR_15_2013_0840AM
 
-#include <boost/fusion/support/pair.hpp>
 #include <boost/spirit/home/x3/support/context.hpp>
 #include <boost/spirit/home/x3/support/unused.hpp>
 

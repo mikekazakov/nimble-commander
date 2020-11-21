@@ -9,8 +9,8 @@
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(SCANNER_HPP_F4FB01EB_E75C_4537_A146_D34B9895EF37_INCLUDED)
-#define SCANNER_HPP_F4FB01EB_E75C_4537_A146_D34B9895EF37_INCLUDED
+#if !defined(BOOST_SCANNER_HPP_F4FB01EB_E75C_4537_A146_D34B9895EF37_INCLUDED)
+#define BOOST_SCANNER_HPP_F4FB01EB_E75C_4537_A146_D34B9895EF37_INCLUDED
 
 #include <boost/wave/wave_config.hpp>
 #include <boost/wave/cpplexer/re2clex/aq.hpp>
@@ -26,15 +26,31 @@ namespace wave {
 namespace cpplexer {
 namespace re2clex {
 
+template<typename Iterator>
 struct Scanner;
 typedef unsigned char uchar;
-typedef int (* ReportErrorProc)(struct Scanner const *, int errorcode,
-    char const *, ...);
 
-typedef struct Scanner {
-    uchar* first;   /* start of input buffer */
-    uchar* act;     /* act position of input buffer */
-    uchar* last;    /* end (one past last char) of input buffer */
+template<typename Iterator>
+struct Scanner {
+    typedef int (* ReportErrorProc)(struct Scanner const *, int errorcode,
+        char const *, ...);
+
+
+    Scanner(Iterator const & f, Iterator const & l)
+        : first(f), act(f), last(l),
+          bot(0), top(0), eof(0), tok(0), ptr(0), cur(0), lim(0),
+          eol_offsets(aq_create())
+          // remaining data members externally initialized
+    {}
+
+    ~Scanner()
+    {
+        aq_terminate(eol_offsets);
+    }
+
+    Iterator first; /* start of input buffer */
+    Iterator act;   /* act position of input buffer */
+    Iterator last;  /* end (one past last char) of input buffer */
     uchar* bot;     /* beginning of the current buffer */
     uchar* top;     /* top of the current buffer */
     uchar* eof;     /* when we read in the last buffer, will point 1 past the
@@ -58,7 +74,7 @@ typedef struct Scanner {
     bool enable_import_keyword;  /* recognize import as a keyword */
     bool single_line_only;       /* don't report missing eol's in C++ comments */
     bool act_in_cpp0x_mode;      /* lexer works in C++11 mode */
-} Scanner;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 }   // namespace re2clex
@@ -71,4 +87,4 @@ typedef struct Scanner {
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(SCANNER_HPP_F4FB01EB_E75C_4537_A146_D34B9895EF37_INCLUDED)
+#endif // !defined(BOOST_SCANNER_HPP_F4FB01EB_E75C_4537_A146_D34B9895EF37_INCLUDED)

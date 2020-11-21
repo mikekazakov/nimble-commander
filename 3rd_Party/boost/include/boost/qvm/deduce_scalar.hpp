@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_F20566FC196311E0B99D606CDFD72085
-#define UUID_F20566FC196311E0B99D606CDFD72085
+#ifndef BOOST_QVM_F20566FC196311E0B99D606CDFD72085
+#define BOOST_QVM_F20566FC196311E0B99D606CDFD72085
 
 #include <boost/qvm/scalar_traits.hpp>
 

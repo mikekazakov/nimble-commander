@@ -4,8 +4,8 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_DIFFERENCE_FEBRUARY_11_2007_1250PM)
-#define SPIRIT_DIFFERENCE_FEBRUARY_11_2007_1250PM
+#if !defined(BOOST_SPIRIT_X3_DIFFERENCE_FEBRUARY_11_2007_1250PM)
+#define BOOST_SPIRIT_X3_DIFFERENCE_FEBRUARY_11_2007_1250PM
 
 #include <boost/spirit/home/x3/support/traits/attribute_of.hpp>
 #include <boost/spirit/home/x3/support/traits/has_attribute.hpp>
@@ -19,7 +19,7 @@ namespace boost { namespace spirit { namespace x3
         typedef binary_parser<Left, Right, difference<Left, Right>> base_type;
         static bool const handles_container = Left::handles_container;
 
-        difference(Left const& left, Right const& right)
+        constexpr difference(Left const& left, Right const& right)
           : base_type(left, right) {}
 
         template <typename Iterator, typename Context
@@ -40,7 +40,7 @@ namespace boost { namespace spirit { namespace x3
         }
 
         template <typename Left_, typename Right_>
-        difference<Left_, Right_>
+        constexpr difference<Left_, Right_>
         make(Left_ const& left, Right_ const& right) const
         {
             return { left, right };
@@ -48,7 +48,7 @@ namespace boost { namespace spirit { namespace x3
     };
 
     template <typename Left, typename Right>
-    inline difference<
+    constexpr difference<
         typename extension::as_parser<Left>::value_type
       , typename extension::as_parser<Right>::value_type>
     operator-(Left const& left, Right const& right)

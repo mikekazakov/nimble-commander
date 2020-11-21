@@ -4,8 +4,8 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_SEQUENTIAL_OR_MARCH_12_2007_1130PM)
-#define SPIRIT_SEQUENTIAL_OR_MARCH_12_2007_1130PM
+#ifndef BOOST_SPIRIT_QI_OPERATOR_SEQUENTIAL_OR_HPP
+#define BOOST_SPIRIT_QI_OPERATOR_SEQUENTIAL_OR_HPP
 
 #if defined(_MSC_VER)
 #pragma once
@@ -15,10 +15,12 @@
 #include <boost/spirit/home/qi/detail/pass_function.hpp>
 #include <boost/spirit/home/qi/detail/attributes.hpp>
 #include <boost/spirit/home/support/detail/what_function.hpp>
-#include <boost/spirit/home/support/algorithm/any_if_ns.hpp>
+#include <boost/spirit/home/support/algorithm/any_if_ns_so.hpp>
 #include <boost/spirit/home/support/handles_container.hpp>
 #include <boost/fusion/include/as_vector.hpp>
 #include <boost/fusion/include/for_each.hpp>
+#include <boost/proto/operators.hpp>
+#include <boost/proto/tags.hpp>
 
 namespace boost { namespace spirit
 {
@@ -75,9 +77,10 @@ namespace boost { namespace spirit { namespace qi
             typename traits::wrap_if_not_tuple<Attribute>::type attr_local(attr_);
 
             // return true if *any* of the parsers succeed
-            // (we use the non-short-circuiting version: any_if_ns
-            // to force all elements to be tested)
-            return spirit::any_if_ns(elements, attr_local, f, predicate());
+            // (we use the non-short-circuiting and strict order version:
+            // any_if_ns_so to force all the elements to be tested and
+            // in the defined order: first is first, last is last)
+            return spirit::any_if_ns_so(elements, attr_local, f, predicate());
         }
 
         template <typename Context>

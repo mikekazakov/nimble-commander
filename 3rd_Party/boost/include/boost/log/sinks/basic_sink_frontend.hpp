@@ -122,7 +122,7 @@ public:
      *
      * \param attrs A set of attribute values of a logging record
      */
-    bool will_consume(attribute_value_set const& attrs)
+    bool will_consume(attribute_value_set const& attrs) BOOST_OVERRIDE
     {
         BOOST_LOG_EXPR_IF_MT(boost::log::aux::shared_lock_guard< mutex_type > lock(m_Mutex);)
         try

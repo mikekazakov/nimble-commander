@@ -25,6 +25,7 @@
 #include <type_traits>
 #include <memory>
 #include <boost/asio/async_result.hpp>
+#include <boost/asio/post.hpp>
 #include <boost/system/error_code.hpp>
 #include <tuple>
 
@@ -40,8 +41,8 @@ namespace detail
 template<typename ExitHandler>
 struct async_system_handler : ::boost::process::detail::api::async_handler
 {
-    boost::asio::io_service & ios;
-    boost::asio::detail::async_result_init<
+    boost::asio::io_context & ios;
+    boost::asio::async_completion<
             ExitHandler, void(boost::system::error_code, int)> init;
 
 #if defined(BOOST_POSIX_API)
@@ -50,8 +51,8 @@ struct async_system_handler : ::boost::process::detail::api::async_handler
 
     template<typename ExitHandler_>
     async_system_handler(
-            boost::asio::io_service & ios,
-            ExitHandler_ && exit_handler) : ios(ios), init(std::forward<ExitHandler_>(exit_handler))
+            boost::asio::io_context & ios,
+            ExitHandler_ && exit_handler) : ios(ios), init(exit_handler)
     {
 
     }
@@ -63,12 +64,13 @@ struct async_system_handler : ::boost::process::detail::api::async_handler
 #if defined(BOOST_POSIX_API)
         errored = true;
 #endif
-        auto & h = init.handler;
-        ios.post(
-                [h, ec]() mutable
-                {
-                    h(boost::system::error_code(ec.value(), boost::system::system_category()), -1);
-                });
+        auto & h = init.completion_handler;
+        boost::asio::post(
+            ios.get_executor(),
+            [h, ec]() mutable
+            {
+                h(boost::system::error_code(ec.value(), boost::system::system_category()), -1);
+            });
     }
 
     BOOST_ASIO_INITFN_RESULT_TYPE(ExitHandler, void (boost::system::error_code, int))
@@ -82,9 +84,9 @@ struct async_system_handler : ::boost::process::detail::api::async_handler
     {
 #if defined(BOOST_POSIX_API)
         if (errored)
-            return [](int exit_code, const std::error_code & ec){};
+            return [](int , const std::error_code &){};
 #endif
-        auto & h = init.handler;
+        auto & h = init.completion_handler;
         return [h](int exit_code, const std::error_code & ec) mutable
                {
                     h(boost::system::error_code(ec.value(), boost::system::system_category()), exit_code);
@@ -106,7 +108,7 @@ but is similar to the asynchronous functions in [boost.asio](http://www.boost.or
 It uses [asio::async_result](http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/async_result.html) to determine
 the return value (from the second parameter, `exit_handler`).
 
-\param ios A reference to an [io_service](http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference.html)
+\param ios A reference to an [io_context](http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference.html)
 \param exit_handler The exit-handler for the signature `void(boost::system::error_code, int)`
 
 \note This function does not allow custom error handling, since those are done through the `exit_handler`.
@@ -115,12 +117,12 @@ the return value (from the second parameter, `exit_handler`).
 #if defined(BOOST_PROCESS_DOXYGEN)
 template<typename ExitHandler, typename ...Args>
 inline boost::process::detail::dummy
-    async_system(boost::asio::io_service & ios, ExitHandler && exit_handler, Args && ...args);
+    async_system(boost::asio::io_context & ios, ExitHandler && exit_handler, Args && ...args);
 #endif
 
 template<typename ExitHandler, typename ...Args>
 inline BOOST_ASIO_INITFN_RESULT_TYPE(ExitHandler, void (boost::system::error_code, int))
-    async_system(boost::asio::io_service & ios, ExitHandler && exit_handler, Args && ...args)
+    async_system(boost::asio::io_context & ios, ExitHandler && exit_handler, Args && ...args)
 {
     detail::async_system_handler<ExitHandler> async_h{ios, std::forward<ExitHandler>(exit_handler)};
 

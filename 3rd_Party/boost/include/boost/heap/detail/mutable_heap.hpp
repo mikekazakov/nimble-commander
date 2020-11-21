@@ -47,7 +47,7 @@ public:
 private:
     typedef std::pair<value_type, size_type> node_type;
 
-    typedef std::list<node_type, typename allocator_type::template rebind<node_type>::other> object_list;
+    typedef std::list<node_type, typename boost::allocator_rebind<allocator_type, node_type>::type> object_list;
 
     typedef typename object_list::iterator list_iterator;
     typedef typename object_list::const_iterator const_list_iterator;
@@ -296,7 +296,7 @@ public:
         }
 
         std::priority_queue<iterator,
-                            std::vector<iterator, typename allocator_type::template rebind<iterator>::other >,
+                            std::vector<iterator, typename boost::allocator_rebind<allocator_type, iterator>::type>,
                             indirect_cmp
                            > unvisited_nodes;
         const priority_queue_mutable_wrapper * q_;

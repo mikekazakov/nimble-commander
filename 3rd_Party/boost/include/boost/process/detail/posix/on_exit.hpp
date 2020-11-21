@@ -23,11 +23,11 @@ struct on_exit_ : boost::process::detail::posix::async_handler
     }
 
     template<typename Executor>
-    std::function<void(int, const std::error_code&)> on_exit_handler(Executor & exec)
+    std::function<void(int, const std::error_code&)> on_exit_handler(Executor&) 
     {
         return handler;
 
-    };
+    }
 };
 
 

@@ -1,4 +1,4 @@
-/* Copyright 2016-2017 Joaquin M Lopez Munoz.
+/* Copyright 2016-2018 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -40,10 +40,9 @@ namespace detail{
  *    lambda functions, whose assignment operator is deleted by standard
  *    mandate [expr.prim.lambda]/20 even if the compiler generated one would
  *    work (capture by value).
- *  - To comply with [container.requirements.general]/3 (or, more precisely,
- *    its natural extension to polymorphic containers), value_holder ctors
- *    accept a first allocator arg passed by value_holder_allocator_adaptor,
- *    which must therefore be used in the vectors of value_holder's.
+ *  - value_holder ctors accept a first allocator arg passed by
+ *    boost::poly_collection::detail::allocator_adaptor, for purposes
+ *    explained there.
  *
  * A pointer to value_holder_base<T> can be reinterpret_cast'ed to T*.
  * Emplacing is explicitly signalled with value_holder_emplacing_ctor to
@@ -222,85 +221,6 @@ private:
   bool equal(const T&,std::false_type)const
   {
     throw not_equality_comparable{typeid(T)};
-  }
-};
-
-template<typename Allocator>
-struct value_holder_allocator_adaptor:Allocator
-{
-  using traits=std::allocator_traits<Allocator>;
-
-  using value_type=typename traits::value_type;
-  using size_type=typename traits::size_type;
-  using difference_type=typename traits::difference_type;
-  using pointer=typename traits::pointer;
-  using const_pointer=typename traits::const_pointer;
-  using void_pointer=typename traits::void_pointer;
-  using const_void_pointer=typename traits::const_void_pointer;
-  using propagate_on_container_copy_assignment=
-    typename traits::propagate_on_container_copy_assignment;
-  using propagate_on_container_move_assignment=
-    typename traits::propagate_on_container_move_assignment;
-  using propagate_on_container_swap=
-    typename traits::propagate_on_container_swap;
-
-  template<typename U>
-  struct rebind
-  {
-    using other=value_holder_allocator_adaptor<
-      typename traits::template rebind_alloc<U>>;
-  };
-
-  value_holder_allocator_adaptor()=default;
-  value_holder_allocator_adaptor(
-    const value_holder_allocator_adaptor&)=default;
-
-  template<
-    typename Allocator2,
-    typename std::enable_if<
-      is_constructible<Allocator,Allocator2>::value
-    >::type* =nullptr
-  >
-  value_holder_allocator_adaptor(const Allocator2& x)noexcept:Allocator{x}{}
-
-  template<
-    typename Allocator2,
-    typename std::enable_if<
-      is_constructible<Allocator,Allocator2>::value
-    >::type* =nullptr
-  >
-  value_holder_allocator_adaptor(
-    const value_holder_allocator_adaptor<Allocator2>& x)noexcept:
-    Allocator{static_cast<const Allocator2&>(x)}{}
-
-  value_holder_allocator_adaptor& operator=(
-    const value_holder_allocator_adaptor&)=default;
-
-  template<typename T,typename... Args>
-  void construct(T* p,Args&&... args)
-  {
-    ::new ((void*)p) T(std::forward<Args>(args)...);
-  }
-
-  template<typename T,typename... Args>
-  void construct(value_holder<T>* p,Args&&... args)
-  {
-    ::new ((void*)p) value_holder<T>(
-      static_cast<Allocator&>(*this),std::forward<Args>(args)...);
-  }
-
-  template<typename T>
-  void destroy(T* p)
-  {
-    p->~T();
-  }
-
-  template<typename T>
-  void destroy(value_holder<T>* p)
-  {
-    traits::destroy(
-      static_cast<Allocator&>(*this),
-      reinterpret_cast<T*>(static_cast<value_holder_base<T>*>(p)));
   }
 };
 

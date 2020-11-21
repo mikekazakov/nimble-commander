@@ -74,7 +74,7 @@ namespace boost { namespace cnv
 
         range (T& r) : base_type(r.begin(), r.end()) {}
 
-        iterator       end () { return base_type::end_; }
+        iterator       end ()       { return base_type::end_; }
         const_iterator end () const { return base_type::end_; }
         sentry_type sentry () const { return base_type::end_; }
         std::size_t   size () const { return base_type::end_ - base_type::begin_; }

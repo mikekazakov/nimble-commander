@@ -39,7 +39,7 @@ namespace boost { namespace process {
  *
  * \param filename The base of the filename to find
  *
- * \param path the set of paths so search, defaults to "PATH" environment variable.
+ * \param path the set of paths to search, defaults to the "PATH" environment variable.
  *
  * \returns the absolute path to the executable filename or an
  *          empty string if filename isn't found

@@ -1,5 +1,5 @@
 // Copyright 2014 Renato Tegon Forti, Antony Polukhin.
-// Copyright 2015 Antony Polukhin.
+// Copyright 2015-2019 Antony Polukhin.
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt
@@ -8,9 +8,8 @@
 #ifndef BOOST_DLL_DETAIL_POSIX_PROGRAM_LOCATION_IMPL_HPP
 #define BOOST_DLL_DETAIL_POSIX_PROGRAM_LOCATION_IMPL_HPP
 
-#include <boost/config.hpp>
+#include <boost/dll/config.hpp>
 #include <boost/dll/detail/system_error.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/predef/os.h>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
@@ -22,23 +21,22 @@
 #include <mach-o/dyld.h>
 
 namespace boost { namespace dll { namespace detail {
-    inline boost::filesystem::path program_location_impl(boost::system::error_code &ec) {
+    inline boost::dll::fs::path program_location_impl(boost::dll::fs::error_code &ec) {
         ec.clear();
 
         char path[1024];
         uint32_t size = sizeof(path);
         if (_NSGetExecutablePath(path, &size) == 0)
-            return boost::filesystem::path(path);
-        
+            return boost::dll::fs::path(path);
+
         char *p = new char[size];
         if (_NSGetExecutablePath(p, &size) != 0) {
-            ec = boost::system::error_code(
-                boost::system::errc::bad_file_descriptor,
-                boost::system::generic_category()
+            ec = boost::dll::fs::make_error_code(
+                boost::dll::fs::errc::bad_file_descriptor
             );
         }
 
-        boost::filesystem::path ret(p);
+        boost::dll::fs::path ret(p);
         delete[] p;
         return ret;
     }
@@ -48,10 +46,10 @@ namespace boost { namespace dll { namespace detail {
 
 #include <stdlib.h>
 namespace boost { namespace dll { namespace detail {
-    inline boost::filesystem::path program_location_impl(boost::system::error_code& ec) {
+    inline boost::dll::fs::path program_location_impl(boost::dll::fs::error_code& ec) {
         ec.clear();
 
-        return boost::filesystem::path(getexecname());
+        return boost::dll::fs::path(getexecname());
     }
 }}} // namespace boost::dll::detail
 
@@ -62,7 +60,7 @@ namespace boost { namespace dll { namespace detail {
 #include <stdlib.h>
 
 namespace boost { namespace dll { namespace detail {
-    inline boost::filesystem::path program_location_impl(boost::system::error_code& ec) {
+    inline boost::dll::fs::path program_location_impl(boost::dll::fs::error_code& ec) {
         ec.clear();
 
         int mib[4];
@@ -74,7 +72,7 @@ namespace boost { namespace dll { namespace detail {
         size_t cb = sizeof(buf);
         sysctl(mib, 4, buf, &cb, NULL, 0);
 
-        return boost::filesystem::path(buf);
+        return boost::dll::fs::path(buf);
     }
 }}} // namespace boost::dll::detail
 
@@ -82,19 +80,18 @@ namespace boost { namespace dll { namespace detail {
 
 #elif BOOST_OS_BSD_NET
 
-#include <boost/filesystem/operations.hpp>
 namespace boost { namespace dll { namespace detail {
-    inline boost::filesystem::path program_location_impl(boost::system::error_code &ec) {
-        return boost::filesystem::read_symlink("/proc/curproc/exe", ec);
+    inline boost::dll::fs::path program_location_impl(boost::dll::fs::error_code &ec) {
+        return boost::dll::fs::read_symlink("/proc/curproc/exe", ec);
     }
 }}} // namespace boost::dll::detail
 
 #elif BOOST_OS_BSD_DRAGONFLY
 
-#include <boost/filesystem/operations.hpp>
+
 namespace boost { namespace dll { namespace detail {
-    inline boost::filesystem::path program_location_impl(boost::system::error_code &ec) {
-        return boost::filesystem::read_symlink("/proc/curproc/file", ec);
+    inline boost::dll::fs::path program_location_impl(boost::dll::fs::error_code &ec) {
+        return boost::dll::fs::read_symlink("/proc/curproc/file", ec);
     }
 }}} // namespace boost::dll::detail
 
@@ -103,7 +100,7 @@ namespace boost { namespace dll { namespace detail {
 #include <fstream>
 #include <string> // for std::getline
 namespace boost { namespace dll { namespace detail {
-    inline boost::filesystem::path program_location_impl(boost::system::error_code &ec) {
+    inline boost::dll::fs::path program_location_impl(boost::dll::fs::error_code &ec) {
         ec.clear();
 
         std::string s;
@@ -111,26 +108,24 @@ namespace boost { namespace dll { namespace detail {
         std::getline(ifs, s);
 
         if (ifs.fail() || s.empty()) {
-            ec = boost::system::error_code(
-                boost::system::errc::bad_file_descriptor,
-                boost::system::generic_category()
+            ec = boost::dll::fs::make_error_code(
+                boost::dll::fs::errc::bad_file_descriptor
             );
         }
 
-        return boost::filesystem::path(s);
+        return boost::dll::fs::path(s);
     }
 }}} // namespace boost::dll::detail
 
 #else  // BOOST_OS_LINUX || BOOST_OS_UNIX || BOOST_OS_HPUX || BOOST_OS_ANDROID
 
-#include <boost/filesystem/operations.hpp>
 namespace boost { namespace dll { namespace detail {
-    inline boost::filesystem::path program_location_impl(boost::system::error_code &ec) {
+    inline boost::dll::fs::path program_location_impl(boost::dll::fs::error_code &ec) {
         // We can not use
         // boost::dll::detail::path_from_handle(dlopen(NULL, RTLD_LAZY | RTLD_LOCAL), ignore);
         // because such code returns empty path.
 
-        return boost::filesystem::read_symlink("/proc/self/exe", ec);   // Linux specific
+        return boost::dll::fs::read_symlink("/proc/self/exe", ec);   // Linux specific
     }
 }}} // namespace boost::dll::detail
 

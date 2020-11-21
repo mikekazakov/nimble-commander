@@ -7,12 +7,8 @@
 #if !defined(BOOST_SPIRIT_X3_ERROR_REPORTING_MAY_19_2014_00405PM)
 #define BOOST_SPIRIT_X3_ERROR_REPORTING_MAY_19_2014_00405PM
 
-#ifndef BOOST_SPIRIT_X3_NO_FILESYSTEM
-#include <boost/filesystem/path.hpp>
-#endif
-
-#include <boost/locale/encoding_utf.hpp>
 #include <boost/spirit/home/x3/support/ast/position_tagged.hpp>
+#include <boost/spirit/home/x3/support/utility/utf8.hpp>
 #include <ostream>
 
 // Clang-style error handling utilities
@@ -58,6 +54,11 @@ namespace boost { namespace spirit { namespace x3
             return pos_cache.position_of(pos);
         }
 
+        position_cache<std::vector<Iterator>> const& get_position_cache() const
+        {
+            return pos_cache;
+        }
+
     private:
 
         void print_file_line(std::size_t line) const;
@@ -79,12 +80,7 @@ namespace boost { namespace spirit { namespace x3
     {
         if (file != "")
         {
-#ifdef BOOST_SPIRIT_X3_NO_FILESYSTEM
             err_out << "In file " << file << ", ";
-#else
-            namespace fs = boost::filesystem;
-            err_out << "In file " << fs::path(file).generic_string() << ", ";
-#endif
         }
         else
         {
@@ -108,7 +104,7 @@ namespace boost { namespace spirit { namespace x3
         }
         typedef typename std::iterator_traits<Iterator>::value_type char_type;
         std::basic_string<char_type> line{start, end};
-        err_out << locale::conv::utf_to_utf<char>(line) << std::endl;
+        err_out << x3::to_utf8(line) << std::endl;
     }
 
     template <typename Iterator>
@@ -178,7 +174,7 @@ namespace boost { namespace spirit { namespace x3
                 if (prev != '\r') ++line;
                 break;
             case '\r':
-                if (prev != '\n') ++line;
+                ++line;
                 break;
             default:
                 break;

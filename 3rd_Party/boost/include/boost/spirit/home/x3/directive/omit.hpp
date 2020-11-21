@@ -4,8 +4,8 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_OMIT_MARCH_24_2007_0802AM)
-#define SPIRIT_OMIT_MARCH_24_2007_0802AM
+#if !defined(BOOST_SPIRIT_X3_OMIT_MARCH_24_2007_0802AM)
+#define BOOST_SPIRIT_X3_OMIT_MARCH_24_2007_0802AM
 
 #include <boost/spirit/home/x3/support/unused.hpp>
 #include <boost/spirit/home/x3/core/parser.hpp>
@@ -24,7 +24,7 @@ namespace boost { namespace spirit { namespace x3
         static bool const has_attribute = false;
 
         typedef Subject subject_type;
-        omit_directive(Subject const& subject)
+        constexpr omit_directive(Subject const& subject)
           : base_type(subject) {}
 
         template <typename Iterator, typename Context, typename RContext>
@@ -38,14 +38,14 @@ namespace boost { namespace spirit { namespace x3
     struct omit_gen
     {
         template <typename Subject>
-        omit_directive<typename extension::as_parser<Subject>::value_type>
+        constexpr omit_directive<typename extension::as_parser<Subject>::value_type>
         operator[](Subject const& subject) const
         {
             return { as_parser(subject) };
         }
     };
 
-    auto const omit = omit_gen{};
+    constexpr auto omit = omit_gen{};
 }}}
 
 #endif

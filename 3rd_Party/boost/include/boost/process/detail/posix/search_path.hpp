@@ -24,11 +24,12 @@ inline boost::filesystem::path search_path(
         const boost::filesystem::path &filename,
         const std::vector<boost::filesystem::path> &path)
 {
-    std::string result;
     for (const boost::filesystem::path & pp : path)
     {
         auto p = pp / filename;
-        if (!::access(p.c_str(), X_OK))
+        boost::system::error_code ec;
+        bool file = boost::filesystem::is_regular_file(p, ec);
+        if (!ec && file && ::access(p.c_str(), X_OK) == 0)
             return p;
     }
     return "";

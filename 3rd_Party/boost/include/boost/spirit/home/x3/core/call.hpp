@@ -4,14 +4,14 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_CALL_CONTEXT_MAY_26_2014_0234PM)
-#define SPIRIT_CALL_CONTEXT_MAY_26_2014_0234PM
+#if !defined(BOOST_SPIRIT_X3_CALL_CONTEXT_MAY_26_2014_0234PM)
+#define BOOST_SPIRIT_X3_CALL_CONTEXT_MAY_26_2014_0234PM
 
 #include <type_traits>
 
 #include <boost/spirit/home/x3/support/context.hpp>
 #include <boost/spirit/home/x3/support/utility/is_callable.hpp>
-#include <boost/range/iterator_range.hpp>
+#include <boost/range/iterator_range_core.hpp>
 
 namespace boost { namespace spirit { namespace x3
 {

@@ -23,6 +23,8 @@
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
 #include <boost/core/addressof.hpp>
+#include <boost/type_traits/is_nothrow_swappable.hpp>
+#include <boost/type_traits/is_nothrow_move_constructible.hpp>
 #include <boost/preprocessor/facilities/empty.hpp>
 #include <boost/preprocessor/facilities/identity.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
@@ -92,7 +94,7 @@ public:
 
 #if !defined(BOOST_LOG_NO_THREADS)
     //! Lock requirement for the swap_unlocked method
-    typedef boost::log::aux::exclusive_lock_guard< threading_model > swap_lock;
+    typedef boost::log::aux::multiple_unique_lock2< threading_model, threading_model > swap_lock;
     //! Lock requirement for the add_attribute_unlocked method
     typedef boost::log::aux::exclusive_lock_guard< threading_model > add_attribute_lock;
     //! Lock requirement for the remove_attribute_unlocked method
@@ -144,7 +146,7 @@ public:
      */
     basic_logger(basic_logger const& that) :
         threading_model(static_cast< threading_model const& >(that)),
-        m_pCore(core::get()),
+        m_pCore(that.m_pCore),
         m_Attributes(that.m_Attributes)
     {
     }
@@ -155,11 +157,13 @@ public:
      *
      * \param that Source logger
      */
-    basic_logger(BOOST_RV_REF(basic_logger) that) :
-        threading_model(boost::move(static_cast< threading_model& >(that)))
+    basic_logger(BOOST_RV_REF(basic_logger) that) BOOST_NOEXCEPT_IF(boost::is_nothrow_move_constructible< threading_model >::value &&
+                                                                    boost::is_nothrow_move_constructible< core_ptr >::value &&
+                                                                    boost::is_nothrow_move_constructible< attribute_set >::value) :
+        threading_model(boost::move(static_cast< threading_model& >(that))),
+        m_pCore(boost::move(that.m_pCore)),
+        m_Attributes(boost::move(that.m_Attributes))
     {
-        m_pCore.swap(that.m_pCore);
-        m_Attributes.swap(that.m_Attributes);
     }
     /*!
      * Constructor with named arguments. The constructor ignores all arguments. The result of
@@ -188,15 +192,15 @@ protected:
     /*!
      * An accessor to the threading model base
      */
-    threading_model& get_threading_model() { return *this; }
+    threading_model& get_threading_model() BOOST_NOEXCEPT { return *this; }
     /*!
      * An accessor to the threading model base
      */
-    threading_model const& get_threading_model() const { return *this; }
+    threading_model const& get_threading_model() const BOOST_NOEXCEPT { return *this; }
     /*!
      * An accessor to the final logger
      */
-    final_type* final_this()
+    final_type* final_this() BOOST_NOEXCEPT
     {
         BOOST_LOG_ASSUME(this != NULL);
         return static_cast< final_type* >(this);
@@ -204,7 +208,7 @@ protected:
     /*!
      * An accessor to the final logger
      */
-    final_type const* final_this() const
+    final_type const* final_this() const BOOST_NOEXCEPT
     {
         BOOST_LOG_ASSUME(this != NULL);
         return static_cast< final_type const* >(this);
@@ -293,7 +297,7 @@ protected:
 template< typename CharT, typename FinalT, typename ThreadingModelT >
 inline void swap(
     basic_logger< CharT, FinalT, ThreadingModelT >& left,
-    basic_logger< CharT, FinalT, ThreadingModelT >& right)
+    basic_logger< CharT, FinalT, ThreadingModelT >& right) BOOST_NOEXCEPT_IF(boost::is_nothrow_swappable< FinalT >::value)
 {
     static_cast< FinalT& >(left).swap(static_cast< FinalT& >(right));
 }
@@ -332,6 +336,9 @@ public:
     //! Threading model being used
     typedef typename base_type::threading_model threading_model;
 
+    //! Lock requirement for the swap_unlocked method
+    typedef typename base_type::swap_lock swap_lock;
+
 #if !defined(BOOST_LOG_NO_THREADS)
 
 public:
@@ -353,7 +360,7 @@ public:
     /*!
      * Move constructor
      */
-    basic_composite_logger(BOOST_RV_REF(logger_base) that) :
+    basic_composite_logger(BOOST_RV_REF(logger_base) that) BOOST_NOEXCEPT_IF(boost::is_nothrow_move_constructible< base_type >::value) :
         base_type(boost::move(static_cast< base_type& >(that)))
     {
     }
@@ -476,11 +483,8 @@ public:
      */
     void swap(basic_composite_logger& that)
     {
-        boost::log::aux::multiple_unique_lock2<
-            threading_model,
-            threading_model
-        > lock(base_type::get_threading_model(), that.get_threading_model());
-        base_type::swap_unlocked(that);
+        swap_lock lock(base_type::get_threading_model(), that.get_threading_model());
+        base_type::swap_unlocked(static_cast< base_type& >(that));
     }
 
 protected:
@@ -530,7 +534,7 @@ public:
         base_type(static_cast< base_type const& >(that))
     {
     }
-    basic_composite_logger(BOOST_RV_REF(logger_base) that) :
+    basic_composite_logger(BOOST_RV_REF(logger_base) that) BOOST_NOEXCEPT_IF(boost::is_nothrow_move_constructible< base_type >::value) :
         base_type(boost::move(static_cast< base_type& >(that)))
     {
     }
@@ -582,7 +586,7 @@ public:
     }
     void swap(basic_composite_logger& that)
     {
-        base_type::swap_unlocked(that);
+        base_type::swap_unlocked(static_cast< base_type& >(that));
     }
 
 protected:
@@ -601,7 +605,7 @@ protected:
         BOOST_DEFAULTED_FUNCTION(class_type(), {})\
         class_type(class_type const& that) : class_type::logger_base(\
             static_cast< typename_keyword() class_type::logger_base const& >(that)) {}\
-        class_type(BOOST_RV_REF(class_type) that) : class_type::logger_base(\
+        class_type(BOOST_RV_REF(class_type) that) BOOST_NOEXCEPT_IF(boost::is_nothrow_move_constructible< typename_keyword() class_type::logger_base >::value) : class_type::logger_base(\
             ::boost::move(static_cast< typename_keyword() class_type::logger_base& >(that))) {}\
         BOOST_LOG_PARAMETRIZED_CONSTRUCTORS_FORWARD(class_type, class_type::logger_base)\
 

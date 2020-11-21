@@ -37,7 +37,7 @@ typedef phoenix::expression::argument< 2 >::type stream_type;
 /*!
  * Stream placeholder in formatter template expressions.
  */
-const stream_type stream = {};
+BOOST_INLINE_VARIABLE const stream_type stream = {};
 
 } // namespace expressions
 

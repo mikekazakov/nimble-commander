@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_A61EC088D31511DFA59D2B03E0D72085
-#define UUID_A61EC088D31511DFA59D2B03E0D72085
+#ifndef BOOST_QVM_A61EC088D31511DFA59D2B03E0D72085
+#define BOOST_QVM_A61EC088D31511DFA59D2B03E0D72085
 
 #include <boost/qvm/vec_mat_operations2.hpp>
 #include <boost/qvm/vec_mat_operations3.hpp>

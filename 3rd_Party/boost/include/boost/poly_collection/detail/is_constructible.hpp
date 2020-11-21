@@ -16,8 +16,12 @@
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
 
-#if BOOST_WORKAROUND(BOOST_MSVC,BOOST_TESTED_AT(1900))
-/* https://connect.microsoft.com/VisualStudio/Feedback/Details/2118677 */
+#if BOOST_WORKAROUND(BOOST_MSVC_FULL_VER,<190023918)
+/* https://connect.microsoft.com/VisualStudio/Feedback/Details/2118677,
+ * fixed in VS2015U2 according to
+ * https://blogs.msdn.microsoft.com/vcblog/2016/03/31/
+ * visual-c-2015-update-2-bug-fixes/, via github.com/dodheim
+ */
 
 #include <boost/type_traits/is_constructible.hpp>
 

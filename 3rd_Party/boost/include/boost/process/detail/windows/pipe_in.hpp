@@ -10,45 +10,48 @@
 #ifndef BOOST_PROCESS_WINDOWS_INITIALIZERS_PIPE_IN_HPP
 #define BOOST_PROCESS_WINDOWS_INITIALIZERS_PIPE_IN_HPP
 
-#include <boost/detail/winapi/process.hpp>
-#include <boost/detail/winapi/handles.hpp>
+#include <boost/winapi/process.hpp>
+#include <boost/winapi/handles.hpp>
+#include <boost/process/detail/used_handles.hpp>
 #include <boost/process/detail/handler_base.hpp>
 
 namespace boost { namespace process { namespace detail { namespace windows {
 
-struct pipe_in : public ::boost::process::detail::handler_base
+struct pipe_in : public ::boost::process::detail::handler_base, ::boost::process::detail::uses_handles
 {
-    ::boost::detail::winapi::HANDLE_ handle;
+    ::boost::winapi::HANDLE_ handle;
 
-    pipe_in(::boost::detail::winapi::HANDLE_ handle) : handle(handle) {}
+    ::boost::winapi::HANDLE_ get_used_handles() const { return handle; }
+
+    pipe_in(::boost::winapi::HANDLE_ handle) : handle(handle) {}
 
     template<typename T> //async_pipe
     pipe_in(T & p) : handle(p.native_source())
     {
-        p.assign_source(::boost::detail::winapi::INVALID_HANDLE_VALUE_);
+        p.assign_source(::boost::winapi::INVALID_HANDLE_VALUE_);
     }
 
     template <class WindowsExecutor>
     void on_setup(WindowsExecutor &e) const
     {
-        boost::detail::winapi::SetHandleInformation(handle,
-                boost::detail::winapi::HANDLE_FLAG_INHERIT_,
-                boost::detail::winapi::HANDLE_FLAG_INHERIT_);
+        boost::winapi::SetHandleInformation(handle,
+                boost::winapi::HANDLE_FLAG_INHERIT_,
+                boost::winapi::HANDLE_FLAG_INHERIT_);
 
         e.startup_info.hStdInput = handle;
-        e.startup_info.dwFlags  |= boost::detail::winapi::STARTF_USESTDHANDLES_;
+        e.startup_info.dwFlags  |= boost::winapi::STARTF_USESTDHANDLES_;
         e.inherit_handles = true;
     }
     template<typename WindowsExecutor>
     void on_error(WindowsExecutor &, const std::error_code &) const
     {
-        ::boost::detail::winapi::CloseHandle(handle);
+        ::boost::winapi::CloseHandle(handle);
     }
 
     template<typename WindowsExecutor>
     void on_success(WindowsExecutor &) const
     {
-        ::boost::detail::winapi::CloseHandle(handle);
+        ::boost::winapi::CloseHandle(handle);
     }
 };
 

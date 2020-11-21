@@ -9,8 +9,8 @@
 #include <boost/config.hpp> // msvc 6.0 needs this for warning suppression
 
 #if defined(BOOST_NO_STDC_NAMESPACE)
-namespace std{ 
-    using ::size_t; 
+namespace std{
+    using ::size_t;
 } // namespace std
 #endif
 

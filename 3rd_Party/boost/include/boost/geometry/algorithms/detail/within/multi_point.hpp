@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2017 Oracle and/or its affiliates.
+// Copyright (c) 2017, 2019 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -21,7 +21,6 @@
 #include <boost/geometry/algorithms/detail/disjoint/box_box.hpp>
 #include <boost/geometry/algorithms/detail/disjoint/point_box.hpp>
 #include <boost/geometry/algorithms/detail/expand_by_epsilon.hpp>
-#include <boost/geometry/algorithms/detail/relate/less.hpp>
 #include <boost/geometry/algorithms/detail/within/point_in_geometry.hpp>
 #include <boost/geometry/algorithms/envelope.hpp>
 #include <boost/geometry/algorithms/detail/partition.hpp>
@@ -32,6 +31,8 @@
 #include <boost/geometry/geometries/box.hpp>
 
 #include <boost/geometry/index/rtree.hpp>
+
+#include <boost/geometry/policies/compare.hpp>
 
 #include <boost/geometry/strategies/covered_by.hpp>
 #include <boost/geometry/strategies/disjoint.hpp>
@@ -63,7 +64,7 @@ struct multi_point_point
     }
 };
 
-// NOTE: currently the strategy is ignored, math::equals() is used inside relate::less
+// NOTE: currently the strategy is ignored, math::equals() is used inside geometry::less<>
 struct multi_point_multi_point
 {
     template <typename MultiPoint1, typename MultiPoint2, typename Strategy>
@@ -72,8 +73,10 @@ struct multi_point_multi_point
                              Strategy const& /*strategy*/)
     {
         typedef typename boost::range_value<MultiPoint2>::type point2_type;
+        typedef typename Strategy::cs_tag cs_tag;
+        typedef geometry::less<void, -1, cs_tag> less_type;
 
-        relate::less const less = relate::less();
+        less_type const less = less_type();
 
         std::vector<point2_type> points2(boost::begin(multi_point2), boost::end(multi_point2));
         std::sort(points2.begin(), points2.end(), less);
@@ -113,7 +116,7 @@ struct multi_point_single_geometry
                              LinearOrAreal const& linear_or_areal,
                              Strategy const& strategy)
     {
-        typedef typename boost::range_value<MultiPoint>::type point1_type;
+        //typedef typename boost::range_value<MultiPoint>::type point1_type;
         typedef typename point_type<LinearOrAreal>::type point2_type;
         typedef model::box<point2_type> box2_type;
 
@@ -122,10 +125,7 @@ struct multi_point_single_geometry
         geometry::envelope(linear_or_areal, box, strategy.get_envelope_strategy());
         geometry::detail::expand_by_epsilon(box);
 
-        typedef typename strategy::covered_by::services::default_strategy
-            <
-                point1_type, box2_type
-            >::type point_in_box_type;
+        typedef typename Strategy::disjoint_point_box_strategy_type point_in_box_type;
 
         // Test each Point with envelope and then geometry if needed
         // If in the exterior, break
@@ -195,7 +195,17 @@ struct multi_point_multi_geometry
         }
 
         // Create R-tree
-        index::rtree<box_pair_type, index::rstar<4> > rtree(boxes.begin(), boxes.end());
+        typedef strategy::index::services::from_strategy
+            <
+                Strategy
+            > index_strategy_from;
+        typedef index::parameters
+            <
+                index::rstar<4>, typename index_strategy_from::type
+            > index_parameters_type;
+        index::rtree<box_pair_type, index_parameters_type>
+            rtree(boxes.begin(), boxes.end(),
+                  index_parameters_type(index::rstar<4>(), index_strategy_from::get(strategy)));
 
         // For each point find overlapping envelopes and test corresponding single geometries
         // If a point is in the exterior break
@@ -213,15 +223,21 @@ struct multi_point_multi_geometry
             bool found_boundary = false;
             int boundaries = 0;
 
-            typedef typename box_pair_vector::const_iterator iterator;
-            for ( iterator box_it = inters_boxes.begin() ; box_it != inters_boxes.end() ; ++box_it )
+            typedef typename box_pair_vector::const_iterator box_iterator;
+            for (box_iterator box_it = inters_boxes.begin() ;
+                 box_it != inters_boxes.end() ; ++box_it )
             {
-                int in_val = point_in_geometry(*it, range::at(linear_or_areal, box_it->second), strategy);
+                int const in_val = point_in_geometry(*it,
+                    range::at(linear_or_areal, box_it->second), strategy);
 
                 if (in_val > 0)
+                {
                     found_interior = true;
+                }
                 else if (in_val == 0)
+                {
                     ++boundaries;
+                }
 
                 // If the result was set previously (interior or
                 // interior/boundary found) the only thing that needs to be
@@ -233,12 +249,16 @@ struct multi_point_multi_geometry
                 }
             }
 
-            if ( boundaries > 0)
+            if (boundaries > 0)
             {
                 if (is_linear && boundaries % 2 == 0)
+                {
                     found_interior = true;
+                }
                 else
+                {
                     found_boundary = true;
+                }
             }
 
             // exterior

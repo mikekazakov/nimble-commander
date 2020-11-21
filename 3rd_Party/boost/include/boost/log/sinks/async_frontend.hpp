@@ -26,7 +26,7 @@
 #error Boost.Log: Asynchronous sink frontend is only supported in multithreaded environment
 #endif
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/memory_order.hpp>
 #include <boost/atomic/atomic.hpp>
@@ -304,7 +304,7 @@ public:
     /*!
      * Destructor. Implicitly stops the dedicated feeding thread, if one is running.
      */
-    ~asynchronous_sink() BOOST_NOEXCEPT
+    ~asynchronous_sink() BOOST_NOEXCEPT BOOST_OVERRIDE
     {
         try
         {
@@ -328,7 +328,7 @@ public:
     /*!
      * Enqueues the log record to the backend
      */
-    void consume(record_view const& rec)
+    void consume(record_view const& rec) BOOST_OVERRIDE
     {
         if (BOOST_UNLIKELY(m_FlushRequested.load(boost::memory_order_acquire)))
         {
@@ -343,7 +343,7 @@ public:
     /*!
      * The method attempts to pass logging record to the backend
      */
-    bool try_consume(record_view const& rec)
+    bool try_consume(record_view const& rec) BOOST_OVERRIDE
     {
         if (!m_FlushRequested.load(boost::memory_order_acquire))
         {
@@ -439,7 +439,7 @@ public:
      * Unlike \c feed_records, in case of ordering queueing the method also feeds records
      * that were enqueued during the ordering window, attempting to empty the queue completely.
      */
-    void flush()
+    void flush() BOOST_OVERRIDE
     {
         unique_lock< frontend_mutex_type > lock(base_type::frontend_mutex());
         if (m_FeedingThreadID != thread::id() || m_DedicatedFeedingThread.joinable())

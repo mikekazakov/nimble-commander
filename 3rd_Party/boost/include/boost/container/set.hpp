@@ -60,21 +60,21 @@ namespace container {
 //! \tparam Compare is the comparison functor used to order keys
 //! \tparam Allocator is the allocator to be used to allocate memory for this container
 //! \tparam Options is an packed option type generated using using boost::container::tree_assoc_options.
-template <class Key, class Compare = std::less<Key>, class Allocator = new_allocator<Key>, class Options = tree_assoc_defaults >
+template <class Key, class Compare = std::less<Key>, class Allocator = new_allocator<Key>, class Options = void>
 #else
 template <class Key, class Compare, class Allocator, class Options>
 #endif
 class set
    ///@cond
-   : public container_detail::tree
-      < Key, container_detail::identity<Key>, Compare, Allocator, Options>
+   : public dtl::tree
+      < Key, void, Compare, Allocator, Options>
    ///@endcond
 {
    #ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
    private:
    BOOST_COPYABLE_AND_MOVABLE(set)
-   typedef container_detail::tree
-      < Key, container_detail::identity<Key>, Compare, Allocator, Options> base_t;
+   typedef dtl::tree
+      < Key, void, Compare, Allocator, Options> base_t;
    #endif   //#ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
 
    public:
@@ -83,25 +83,25 @@ class set
    //                    types
    //
    //////////////////////////////////////////////
-   typedef Key                                                                         key_type;
-   typedef Key                                                                         value_type;
-   typedef Compare                                                                     key_compare;
-   typedef Compare                                                                     value_compare;
-   typedef ::boost::container::allocator_traits<Allocator>                             allocator_traits_type;
-   typedef typename ::boost::container::allocator_traits<Allocator>::pointer           pointer;
-   typedef typename ::boost::container::allocator_traits<Allocator>::const_pointer     const_pointer;
-   typedef typename ::boost::container::allocator_traits<Allocator>::reference         reference;
-   typedef typename ::boost::container::allocator_traits<Allocator>::const_reference   const_reference;
-   typedef typename ::boost::container::allocator_traits<Allocator>::size_type         size_type;
-   typedef typename ::boost::container::allocator_traits<Allocator>::difference_type   difference_type;
-   typedef Allocator                                                                   allocator_type;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::stored_allocator_type)              stored_allocator_type;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::iterator)                           iterator;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::const_iterator)                     const_iterator;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::reverse_iterator)                   reverse_iterator;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::const_reverse_iterator)             const_reverse_iterator;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::node_type)                          node_type;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::insert_return_type)                 insert_return_type;
+   typedef Key                                                                            key_type;
+   typedef Key                                                                            value_type;
+   typedef Compare                                                                        key_compare;
+   typedef key_compare                                                                    value_compare;
+   typedef typename base_t::allocator_type                                                allocator_type;
+   typedef ::boost::container::allocator_traits<allocator_type>                           allocator_traits_type;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::pointer         pointer;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::const_pointer   const_pointer;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::reference       reference;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::const_reference const_reference;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::size_type       size_type;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::difference_type difference_type;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::stored_allocator_type)                 stored_allocator_type;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::iterator)                              iterator;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::const_iterator)                        const_iterator;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::reverse_iterator)                      reverse_iterator;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::const_reverse_iterator)                const_reverse_iterator;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::node_type)                             node_type;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::insert_return_type)                    insert_return_type;
 
    //////////////////////////////////////////////
    //
@@ -114,8 +114,8 @@ class set
    //! <b>Complexity</b>: Constant.
    
    BOOST_CONTAINER_FORCEINLINE set()
-      BOOST_NOEXCEPT_IF(container_detail::is_nothrow_default_constructible<Allocator>::value &&
-                        container_detail::is_nothrow_default_constructible<Compare>::value)
+      BOOST_NOEXCEPT_IF(dtl::is_nothrow_default_constructible<allocator_type>::value &&
+                        dtl::is_nothrow_default_constructible<Compare>::value)
       : base_t()
    {}
 
@@ -227,6 +227,21 @@ class set
       : base_t(ordered_range, first, last, comp, a)
    {}
 
+   //! <b>Effects</b>: Constructs an empty set using the specified allocator and
+   //! inserts elements from the ordered unique range [first ,last). This function
+   //! is more efficient than the normal range creation for ordered ranges.
+   //!
+   //! <b>Requires</b>: [first ,last) must be ordered according to the predicate and must be
+   //! unique values.
+   //!
+   //! <b>Complexity</b>: Linear in N.
+   //!
+   //! <b>Note</b>: Non-standard extension.
+   template <class InputIterator>
+   BOOST_CONTAINER_FORCEINLINE set(ordered_unique_range_t, InputIterator first, InputIterator last, const allocator_type& a)
+      : base_t(ordered_range, first, last, Compare(), a)
+   {}
+
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
    //! <b>Effects</b>: Constructs an empty set and
    //! inserts elements from the range [il.begin(), il.end()).
@@ -320,7 +335,7 @@ class set
    //!
    //! <b>Postcondition</b>: x is emptied.
    BOOST_CONTAINER_FORCEINLINE set(BOOST_RV_REF(set) x)
-      BOOST_NOEXCEPT_IF(boost::container::container_detail::is_nothrow_move_constructible<Compare>::value)
+      BOOST_NOEXCEPT_IF(boost::container::dtl::is_nothrow_move_constructible<Compare>::value)
       : base_t(BOOST_MOVE_BASE(base_t, x))
    {}
 
@@ -356,7 +371,7 @@ class set
    BOOST_CONTAINER_FORCEINLINE set& operator=(BOOST_RV_REF(set) x)
       BOOST_NOEXCEPT_IF( (allocator_traits_type::propagate_on_container_move_assignment::value ||
                           allocator_traits_type::is_always_equal::value) &&
-                           boost::container::container_detail::is_nothrow_move_assignable<Compare>::value)
+                           boost::container::dtl::is_nothrow_move_assignable<Compare>::value)
    {  return static_cast<set&>(this->base_t::operator=(BOOST_MOVE_BASE(base_t, x)));  }
 
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
@@ -639,8 +654,8 @@ class set
    template<class C2>
    BOOST_CONTAINER_FORCEINLINE void merge(set<Key, C2, Allocator, Options>& source)
    {
-      typedef container_detail::tree
-         <Key, container_detail::identity<Key>, C2, Allocator, Options> base2_t;
+      typedef dtl::tree
+         <Key, void, C2, Allocator, Options> base2_t;
       this->base_t::merge_unique(static_cast<base2_t&>(source));
    }
 
@@ -653,8 +668,8 @@ class set
    template<class C2>
    BOOST_CONTAINER_FORCEINLINE void merge(multiset<Key, C2, Allocator, Options>& source)
    {
-      typedef container_detail::tree
-         <Key, container_detail::identity<Key>, C2, Allocator, Options> base2_t;
+      typedef dtl::tree
+         <Key, void, C2, Allocator, Options> base2_t;
       this->base_t::merge_unique(static_cast<base2_t&>(source));
    }
 
@@ -701,9 +716,9 @@ class set
    //! <b>Complexity</b>: Constant.
    void swap(set& x)
       BOOST_NOEXCEPT_IF(  allocator_traits_type::is_always_equal::value
-                                 && boost::container::container_detail::is_nothrow_swappable<Compare>::value );
+                                 && boost::container::dtl::is_nothrow_swappable<Compare>::value );
 
-   //! <b>Effects</b>: erase(a.begin(),a.end()).
+   //! <b>Effects</b>: erase(begin(),end()).
    //!
    //! <b>Postcondition</b>: size() == 0.
    //!
@@ -734,6 +749,26 @@ class set
    //! <b>Complexity</b>: Logarithmic.
    const_iterator find(const key_type& x) const;
 
+   //! <b>Requires</b>: This overload is available only if
+   //! key_compare::is_transparent exists.
+   //!
+   //! <b>Returns</b>: An iterator pointing to an element with the key
+   //!   equivalent to x, or end() if such an element is not found.
+   //!
+   //! <b>Complexity</b>: Logarithmic.
+   template<typename K>
+   iterator find(const K& x);
+
+   //! <b>Requires</b>: This overload is available only if
+   //! key_compare::is_transparent exists.
+   //!
+   //! <b>Returns</b>: A const_iterator pointing to an element with the key
+   //!   equivalent to x, or end() if such an element is not found.
+   //!
+   //! <b>Complexity</b>: Logarithmic.
+   template<typename K>
+   const_iterator find(const K& x) const;
+
    #endif   //#if defined(BOOST_CONTAINER_DOXYGEN_INVOKED)
 
    //! <b>Returns</b>: The number of elements with key equivalent to x.
@@ -742,37 +777,97 @@ class set
    BOOST_CONTAINER_FORCEINLINE size_type count(const key_type& x) const
    {  return static_cast<size_type>(this->base_t::find(x) != this->base_t::cend());  }
 
+   //! <b>Requires</b>: This overload is available only if
+   //! key_compare::is_transparent exists.
+   //!
    //! <b>Returns</b>: The number of elements with key equivalent to x.
    //!
    //! <b>Complexity</b>: log(size())+count(k)
-   BOOST_CONTAINER_FORCEINLINE size_type count(const key_type& x)
-   {  return static_cast<size_type>(this->base_t::find(x) != this->base_t::end());  }
+   template<typename K>
+   BOOST_CONTAINER_FORCEINLINE size_type count(const K& x) const
+   {  return static_cast<size_type>(this->find(x) != this->cend());  }
 
    #if defined(BOOST_CONTAINER_DOXYGEN_INVOKED)
 
-   //! <b>Returns</b>: An iterator pointing to the first element with key not less
-   //!   than k, or a.end() if such an element is not found.
+   //! <b>Returns</b>: Returns true if there is an element with key
+   //!   equivalent to key in the container, otherwise false.
    //!
-   //! <b>Complexity</b>: Logarithmic
-   iterator lower_bound(const key_type& x);
+   //! <b>Complexity</b>: log(size()).
+   bool contains(const key_type& x) const;
 
-   //! <b>Returns</b>: A const iterator pointing to the first element with key not
-   //!   less than k, or a.end() if such an element is not found.
+   //! <b>Requires</b>: This overload is available only if
+   //! key_compare::is_transparent exists.
    //!
-   //! <b>Complexity</b>: Logarithmic
-   const_iterator lower_bound(const key_type& x) const;
+   //! <b>Returns</b>: Returns true if there is an element with key
+   //!   equivalent to key in the container, otherwise false.
+   //!
+   //! <b>Complexity</b>: log(size()).
+   template<typename K>
+   bool contains(const K& x) const;
 
    //! <b>Returns</b>: An iterator pointing to the first element with key not less
    //!   than x, or end() if such an element is not found.
    //!
    //! <b>Complexity</b>: Logarithmic
-   iterator upper_bound(const key_type& x);
+   iterator lower_bound(const key_type& x);
 
    //! <b>Returns</b>: A const iterator pointing to the first element with key not
    //!   less than x, or end() if such an element is not found.
    //!
    //! <b>Complexity</b>: Logarithmic
+   const_iterator lower_bound(const key_type& x) const;
+
+   //! <b>Requires</b>: This overload is available only if
+   //! key_compare::is_transparent exists.
+   //!
+   //! <b>Returns</b>: An iterator pointing to the first element with key not less
+   //!   than x, or end() if such an element is not found.
+   //!
+   //! <b>Complexity</b>: Logarithmic
+   template<typename K>
+   iterator lower_bound(const K& x);
+
+   //! <b>Requires</b>: This overload is available only if
+   //! key_compare::is_transparent exists.
+   //!
+   //! <b>Returns</b>: A const iterator pointing to the first element with key not
+   //!   less than x, or end() if such an element is not found.
+   //!
+   //! <b>Complexity</b>: Logarithmic
+   template<typename K>
+   const_iterator lower_bound(const K& x) const;
+
+   //! <b>Returns</b>: An iterator pointing to the first element with key greater
+   //!   than x, or end() if such an element is not found.
+   //!
+   //! <b>Complexity</b>: Logarithmic
+   iterator upper_bound(const key_type& x);
+
+   //! <b>Returns</b>: A const iterator pointing to the first element with key
+   //!   greater than x, or end() if such an element is not found.
+   //!
+   //! <b>Complexity</b>: Logarithmic
    const_iterator upper_bound(const key_type& x) const;
+
+   //! <b>Requires</b>: This overload is available only if
+   //! key_compare::is_transparent exists.
+   //!
+   //! <b>Returns</b>: An iterator pointing to the first element with key greater
+   //!   than x, or end() if such an element is not found.
+   //!
+   //! <b>Complexity</b>: Logarithmic
+   template<typename K>
+   iterator upper_bound(const K& x);
+
+   //! <b>Requires</b>: This overload is available only if
+   //! key_compare::is_transparent exists.
+   //!
+   //! <b>Returns</b>: A const iterator pointing to the first element with key
+   //!   greater than x, or end() if such an element is not found.
+   //!
+   //! <b>Complexity</b>: Logarithmic
+   template<typename K>
+   const_iterator upper_bound(const K& x) const;
 
    #endif   //#if defined(BOOST_CONTAINER_DOXYGEN_INVOKED)
 
@@ -788,17 +883,27 @@ class set
    BOOST_CONTAINER_FORCEINLINE std::pair<const_iterator, const_iterator> equal_range(const key_type& x) const
    {  return this->base_t::lower_bound_range(x);  }
 
+   //! <b>Requires</b>: This overload is available only if
+   //! key_compare::is_transparent exists.
+   //!
+   //! <b>Effects</b>: Equivalent to std::make_pair(this->lower_bound(k), this->upper_bound(k)).
+   //!
+   //! <b>Complexity</b>: Logarithmic
+   template<typename K>
+   BOOST_CONTAINER_FORCEINLINE std::pair<iterator,iterator> equal_range(const K& x)
+   {  return this->base_t::lower_bound_range(x);  }
+
+   //! <b>Requires</b>: This overload is available only if
+   //! key_compare::is_transparent exists.
+   //!
+   //! <b>Effects</b>: Equivalent to std::make_pair(this->lower_bound(k), this->upper_bound(k)).
+   //!
+   //! <b>Complexity</b>: Logarithmic
+   template<typename K>
+   BOOST_CONTAINER_FORCEINLINE std::pair<const_iterator,const_iterator> equal_range(const K& x) const
+   {  return this->base_t::lower_bound_range(x);  }
+
    #if defined(BOOST_CONTAINER_DOXYGEN_INVOKED)
-
-   //! <b>Effects</b>: Equivalent to std::make_pair(this->lower_bound(k), this->upper_bound(k)).
-   //!
-   //! <b>Complexity</b>: Logarithmic
-   std::pair<iterator,iterator> equal_range(const key_type& x);
-
-   //! <b>Effects</b>: Equivalent to std::make_pair(this->lower_bound(k), this->upper_bound(k)).
-   //!
-   //! <b>Complexity</b>: Logarithmic
-   std::pair<const_iterator, const_iterator> equal_range(const key_type& x) const;
 
    //! <b>Effects</b>: Rebalances the tree. It's a no-op for Red-Black and AVL trees.
    //!
@@ -854,19 +959,76 @@ class set
    #endif   //#ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
 };
 
+#ifndef BOOST_CONTAINER_NO_CXX17_CTAD
+
+template <typename InputIterator>
+set(InputIterator, InputIterator) ->
+   set< it_based_value_type_t<InputIterator> >;
+
+template < typename InputIterator, typename AllocatorOrCompare>
+    set(InputIterator, InputIterator, AllocatorOrCompare const&) ->
+    set< it_based_value_type_t<InputIterator>
+            , typename dtl::if_c< // Compare
+                dtl::is_allocator<AllocatorOrCompare>::value
+                , std::less<it_based_value_type_t<InputIterator>>
+                , AllocatorOrCompare
+            >::type
+            , typename dtl::if_c< // Allocator
+                dtl::is_allocator<AllocatorOrCompare>::value
+                , AllocatorOrCompare
+                , new_allocator<it_based_value_type_t<InputIterator>>
+                >::type
+            >;
+
+template < typename InputIterator, typename Compare, typename Allocator
+         , typename = dtl::require_nonallocator_t<Compare>
+         , typename = dtl::require_allocator_t<Allocator>>
+set(InputIterator, InputIterator, Compare const&, Allocator const&) ->
+   set< it_based_value_type_t<InputIterator>
+           , Compare
+           , Allocator>;
+
+template <typename InputIterator>
+set(ordered_unique_range_t, InputIterator, InputIterator) ->
+   set< it_based_value_type_t<InputIterator>>;
+
+
+template < typename InputIterator, typename AllocatorOrCompare>
+    set(ordered_unique_range_t, InputIterator, InputIterator, AllocatorOrCompare const&) ->
+    set< it_based_value_type_t<InputIterator>
+            , typename dtl::if_c< // Compare
+                dtl::is_allocator<AllocatorOrCompare>::value
+                , std::less<it_based_value_type_t<InputIterator>>
+                , AllocatorOrCompare
+            >::type
+            , typename dtl::if_c< // Allocator
+                dtl::is_allocator<AllocatorOrCompare>::value
+                , AllocatorOrCompare
+                , new_allocator<it_based_value_type_t<InputIterator>>
+                >::type
+            >;
+
+template < typename InputIterator, typename Compare, typename Allocator
+         , typename = dtl::require_nonallocator_t<Compare>
+         , typename = dtl::require_allocator_t<Allocator>>
+set(ordered_unique_range_t, InputIterator, InputIterator, Compare const&, Allocator const&) ->
+   set< it_based_value_type_t<InputIterator>
+           , Compare
+           , Allocator>;
+
+#endif
+
 #ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
 
 }  //namespace container {
 
 //!has_trivial_destructor_after_move<> == true_type
 //!specialization for optimizations
-template <class Key, class Compare, class Options, class Allocator>
+template <class Key, class Compare, class Allocator, class Options>
 struct has_trivial_destructor_after_move<boost::container::set<Key, Compare, Allocator, Options> >
 {
-   typedef typename ::boost::container::allocator_traits<Allocator>::pointer pointer;
-   static const bool value = ::boost::has_trivial_destructor_after_move<Allocator>::value &&
-                             ::boost::has_trivial_destructor_after_move<pointer>::value &&
-                             ::boost::has_trivial_destructor_after_move<Compare>::value;
+   typedef ::boost::container::dtl::tree<Key, void, Compare, Allocator, Options> tree;
+   static const bool value = ::boost::has_trivial_destructor_after_move<tree>::value;
 };
 
 namespace container {
@@ -893,15 +1055,15 @@ template <class Key, class Compare, class Allocator, class Options>
 #endif
 class multiset
    /// @cond
-   : public container_detail::tree
-      <Key,container_detail::identity<Key>, Compare, Allocator, Options>
+   : public dtl::tree
+      <Key, void, Compare, Allocator, Options>
    /// @endcond
 {
    #ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
    private:
    BOOST_COPYABLE_AND_MOVABLE(multiset)
-   typedef container_detail::tree
-      <Key,container_detail::identity<Key>, Compare, Allocator, Options> base_t;
+   typedef dtl::tree
+      <Key, void, Compare, Allocator, Options> base_t;
    #endif   //#ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
 
    public:
@@ -911,24 +1073,24 @@ class multiset
    //                    types
    //
    //////////////////////////////////////////////
-   typedef Key                                                                         key_type;
-   typedef Key                                                                         value_type;
-   typedef Compare                                                                     key_compare;
-   typedef Compare                                                                     value_compare;
-   typedef ::boost::container::allocator_traits<Allocator>                             allocator_traits_type;
-   typedef typename ::boost::container::allocator_traits<Allocator>::pointer           pointer;
-   typedef typename ::boost::container::allocator_traits<Allocator>::const_pointer     const_pointer;
-   typedef typename ::boost::container::allocator_traits<Allocator>::reference         reference;
-   typedef typename ::boost::container::allocator_traits<Allocator>::const_reference   const_reference;
-   typedef typename ::boost::container::allocator_traits<Allocator>::size_type         size_type;
-   typedef typename ::boost::container::allocator_traits<Allocator>::difference_type   difference_type;
-   typedef Allocator                                                                   allocator_type;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::stored_allocator_type)              stored_allocator_type;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::iterator)                           iterator;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::const_iterator)                     const_iterator;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::reverse_iterator)                   reverse_iterator;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::const_reverse_iterator)             const_reverse_iterator;
-   typedef typename BOOST_CONTAINER_IMPDEF(base_t::node_type)                          node_type;
+   typedef Key                                                                            key_type;
+   typedef Key                                                                            value_type;
+   typedef Compare                                                                        key_compare;
+   typedef key_compare                                                                    value_compare;
+   typedef typename base_t::allocator_type                                                allocator_type;
+   typedef ::boost::container::allocator_traits<allocator_type>                           allocator_traits_type;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::pointer         pointer;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::const_pointer   const_pointer;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::reference       reference;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::const_reference const_reference;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::size_type       size_type;
+   typedef typename ::boost::container::allocator_traits<allocator_type>::difference_type difference_type;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::stored_allocator_type)                 stored_allocator_type;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::iterator)                              iterator;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::const_iterator)                        const_iterator;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::reverse_iterator)                      reverse_iterator;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::const_reverse_iterator)                const_reverse_iterator;
+   typedef typename BOOST_CONTAINER_IMPDEF(base_t::node_type)                             node_type;
 
    //////////////////////////////////////////////
    //
@@ -938,8 +1100,8 @@ class multiset
 
    //! @copydoc ::boost::container::set::set()
    BOOST_CONTAINER_FORCEINLINE multiset()
-      BOOST_NOEXCEPT_IF(container_detail::is_nothrow_default_constructible<Allocator>::value &&
-                        container_detail::is_nothrow_default_constructible<Compare>::value)
+      BOOST_NOEXCEPT_IF(dtl::is_nothrow_default_constructible<allocator_type>::value &&
+                        dtl::is_nothrow_default_constructible<Compare>::value)
       : base_t()
    {}
 
@@ -1024,6 +1186,20 @@ class multiset
       : base_t(ordered_range, first, last, comp, a)
    {}
 
+   //! <b>Effects</b>: Constructs an empty multiset using the specified allocator and
+   //! inserts elements from the ordered range [first ,last ). This function
+   //! is more efficient than the normal range creation for ordered ranges.
+   //!
+   //! <b>Requires</b>: [first ,last) must be ordered according to the predicate.
+   //!
+   //! <b>Complexity</b>: Linear in N.
+   //!
+   //! <b>Note</b>: Non-standard extension.
+   template <class InputIterator>
+   BOOST_CONTAINER_FORCEINLINE multiset(ordered_range_t, InputIterator first, InputIterator last, const allocator_type &a)
+      : base_t(ordered_range, first, last, Compare(), a)
+   {}
+
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
    //! @copydoc ::boost::container::set::set(std::initializer_list<value_type>)
    BOOST_CONTAINER_FORCEINLINE multiset(std::initializer_list<value_type> il)
@@ -1068,7 +1244,7 @@ class multiset
 
    //! @copydoc ::boost::container::set::set(set &&)
    BOOST_CONTAINER_FORCEINLINE multiset(BOOST_RV_REF(multiset) x)
-      BOOST_NOEXCEPT_IF(boost::container::container_detail::is_nothrow_move_constructible<Compare>::value)
+      BOOST_NOEXCEPT_IF(boost::container::dtl::is_nothrow_move_constructible<Compare>::value)
       : base_t(BOOST_MOVE_BASE(base_t, x))
    {}
 
@@ -1090,7 +1266,7 @@ class multiset
    BOOST_CONTAINER_FORCEINLINE multiset& operator=(BOOST_RV_REF(multiset) x)
       BOOST_NOEXCEPT_IF( (allocator_traits_type::propagate_on_container_move_assignment::value ||
                           allocator_traits_type::is_always_equal::value) &&
-                           boost::container::container_detail::is_nothrow_move_assignable<Compare>::value)
+                           boost::container::dtl::is_nothrow_move_assignable<Compare>::value)
    {  return static_cast<multiset&>(this->base_t::operator=(BOOST_MOVE_BASE(base_t, x)));  }
 
 #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
@@ -1269,8 +1445,8 @@ class multiset
    template<class C2>
    BOOST_CONTAINER_FORCEINLINE void merge(multiset<Key, C2, Allocator, Options>& source)
    {
-      typedef container_detail::tree
-         <Key, container_detail::identity<Key>, C2, Allocator, Options> base2_t;
+      typedef dtl::tree
+         <Key, void, C2, Allocator, Options> base2_t;
       this->base_t::merge_equal(static_cast<base2_t&>(source));
    }
 
@@ -1283,8 +1459,8 @@ class multiset
    template<class C2>
    BOOST_CONTAINER_FORCEINLINE void merge(set<Key, C2, Allocator, Options>& source)
    {
-      typedef container_detail::tree
-         <Key, container_detail::identity<Key>, C2, Allocator, Options> base2_t;
+      typedef dtl::tree
+         <Key, void, C2, Allocator, Options> base2_t;
       this->base_t::merge_equal(static_cast<base2_t&>(source));
    }
 
@@ -1313,7 +1489,7 @@ class multiset
    //! @copydoc ::boost::container::set::swap
    void swap(multiset& x)
       BOOST_NOEXCEPT_IF(  allocator_traits_type::is_always_equal::value
-                                 && boost::container::container_detail::is_nothrow_swappable<Compare>::value );
+                                 && boost::container::dtl::is_nothrow_swappable<Compare>::value );
 
    //! @copydoc ::boost::container::set::clear
    void clear() BOOST_NOEXCEPT_OR_NOTHROW;
@@ -1330,8 +1506,27 @@ class multiset
    //! @copydoc ::boost::container::set::find(const key_type& ) const
    const_iterator find(const key_type& x) const;
 
+   //! @copydoc ::boost::container::set::find(const K& )
+   template<typename K>
+   iterator find(const K& x);
+
+   //! @copydoc ::boost::container::set::find(const K& )
+   template<typename K>
+   const_iterator find(const K& x) const;
+
    //! @copydoc ::boost::container::set::count(const key_type& ) const
    size_type count(const key_type& x) const;
+
+   //! @copydoc ::boost::container::set::count(const K& ) const
+   template<typename K>
+   size_type count(const K& x) const;
+
+   //! @copydoc ::boost::container::set::contains(const key_type& ) const
+   bool contains(const key_type& x) const;
+
+   //! @copydoc ::boost::container::set::contains(const K& ) const
+   template<typename K>
+   bool contains(const K& x) const;
 
    //! @copydoc ::boost::container::set::lower_bound(const key_type& )
    iterator lower_bound(const key_type& x);
@@ -1339,17 +1534,41 @@ class multiset
    //! @copydoc ::boost::container::set::lower_bound(const key_type& ) const
    const_iterator lower_bound(const key_type& x) const;
 
+   //! @copydoc ::boost::container::set::lower_bound(const K& )
+   template<typename K>
+   iterator lower_bound(const K& x);
+
+   //! @copydoc ::boost::container::set::lower_bound(const K& ) const
+   template<typename K>
+   const_iterator lower_bound(const K& x) const;
+
    //! @copydoc ::boost::container::set::upper_bound(const key_type& )
    iterator upper_bound(const key_type& x);
 
    //! @copydoc ::boost::container::set::upper_bound(const key_type& ) const
    const_iterator upper_bound(const key_type& x) const;
 
+   //! @copydoc ::boost::container::set::upper_bound(const K& )
+   template<typename K>
+   iterator upper_bound(const K& x);
+
+   //! @copydoc ::boost::container::set::upper_bound(const K& ) const
+   template<typename K>
+   const_iterator upper_bound(const K& x) const;
+
    //! @copydoc ::boost::container::set::equal_range(const key_type& ) const
    std::pair<const_iterator, const_iterator> equal_range(const key_type& x) const;
 
    //! @copydoc ::boost::container::set::equal_range(const key_type& )
    std::pair<iterator,iterator> equal_range(const key_type& x);
+
+   //! @copydoc ::boost::container::set::equal_range(const K& ) const
+   template<typename K>
+   std::pair<const_iterator, const_iterator> equal_range(const K& x) const;
+
+   //! @copydoc ::boost::container::set::equal_range(const K& )
+   template<typename K>
+   std::pair<iterator,iterator> equal_range(const K& x);
 
    //! @copydoc ::boost::container::set::rebalance()
    void rebalance();
@@ -1404,6 +1623,65 @@ class multiset
    #endif   //#ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
 };
 
+#ifndef BOOST_CONTAINER_NO_CXX17_CTAD
+
+template <typename InputIterator>
+multiset(InputIterator, InputIterator) ->
+   multiset< it_based_value_type_t<InputIterator> >;
+
+
+template < typename InputIterator, typename AllocatorOrCompare>
+multiset(InputIterator, InputIterator, AllocatorOrCompare const&) ->
+    multiset < it_based_value_type_t<InputIterator>
+                  , typename dtl::if_c< // Compare
+                      dtl::is_allocator<AllocatorOrCompare>::value
+                      , std::less<it_based_value_type_t<InputIterator>>
+                      , AllocatorOrCompare
+                  >::type
+                  , typename dtl::if_c< // Allocator
+                      dtl::is_allocator<AllocatorOrCompare>::value
+                      , AllocatorOrCompare
+                      , new_allocator<it_based_value_type_t<InputIterator>>
+                      >::type
+                  >;
+
+template < typename InputIterator, typename Compare, typename Allocator
+         , typename = dtl::require_nonallocator_t<Compare>
+         , typename = dtl::require_allocator_t<Allocator>>
+multiset(InputIterator, InputIterator, Compare const&, Allocator const&) ->
+   multiset< it_based_value_type_t<InputIterator>
+           , Compare
+           , Allocator>;
+
+template <typename InputIterator>
+multiset(ordered_range_t, InputIterator, InputIterator) ->
+   multiset< it_based_value_type_t<InputIterator>>;
+
+template < typename InputIterator, typename AllocatorOrCompare>
+multiset(ordered_range_t, InputIterator, InputIterator, AllocatorOrCompare const&) ->
+    multiset < it_based_value_type_t<InputIterator>
+                  , typename dtl::if_c< // Compare
+                      dtl::is_allocator<AllocatorOrCompare>::value
+                      , std::less<it_based_value_type_t<InputIterator>>
+                      , AllocatorOrCompare
+                  >::type
+                  , typename dtl::if_c< // Allocator
+                      dtl::is_allocator<AllocatorOrCompare>::value
+                      , AllocatorOrCompare
+                      , new_allocator<it_based_value_type_t<InputIterator>>
+                      >::type
+                  >;
+
+template < typename InputIterator, typename Compare, typename Allocator
+         , typename = dtl::require_nonallocator_t<Compare>
+         , typename = dtl::require_allocator_t<Allocator>>
+multiset(ordered_range_t, InputIterator, InputIterator, Compare const&, Allocator const&) ->
+   multiset< it_based_value_type_t<InputIterator>
+           , Compare
+           , Allocator>;
+
+#endif
+
 #ifndef BOOST_CONTAINER_DOXYGEN_INVOKED
 
 }  //namespace container {
@@ -1413,10 +1691,8 @@ class multiset
 template <class Key, class Compare, class Allocator, class Options>
 struct has_trivial_destructor_after_move<boost::container::multiset<Key, Compare, Allocator, Options> >
 {
-   typedef typename ::boost::container::allocator_traits<Allocator>::pointer pointer;
-   static const bool value = ::boost::has_trivial_destructor_after_move<Allocator>::value &&
-                             ::boost::has_trivial_destructor_after_move<pointer>::value &&
-                             ::boost::has_trivial_destructor_after_move<Compare>::value;
+   typedef ::boost::container::dtl::tree<Key, void, Compare, Allocator, Options> tree;
+   static const bool value = ::boost::has_trivial_destructor_after_move<tree>::value;
 };
 
 namespace container {

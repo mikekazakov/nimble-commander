@@ -4,8 +4,8 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_LEXEME_MARCH_24_2007_0802AM)
-#define SPIRIT_LEXEME_MARCH_24_2007_0802AM
+#if !defined(BOOST_SPIRIT_X3_LEXEME_MARCH_24_2007_0802AM)
+#define BOOST_SPIRIT_X3_LEXEME_MARCH_24_2007_0802AM
 
 #include <boost/spirit/home/x3/support/context.hpp>
 #include <boost/spirit/home/x3/support/unused.hpp>
@@ -23,7 +23,7 @@ namespace boost { namespace spirit { namespace x3
         static bool const is_pass_through_unary = true;
         static bool const handles_container = Subject::handles_container;
 
-        lexeme_directive(Subject const& subject)
+        constexpr lexeme_directive(Subject const& subject)
           : base_type(subject) {}
 
         template <typename Iterator, typename Context
@@ -65,14 +65,14 @@ namespace boost { namespace spirit { namespace x3
     struct lexeme_gen
     {
         template <typename Subject>
-        lexeme_directive<typename extension::as_parser<Subject>::value_type>
+        constexpr lexeme_directive<typename extension::as_parser<Subject>::value_type>
         operator[](Subject const& subject) const
         {
             return { as_parser(subject) };
         }
     };
 
-    auto const lexeme = lexeme_gen{};
+    constexpr auto lexeme = lexeme_gen{};
 }}}
 
 #endif

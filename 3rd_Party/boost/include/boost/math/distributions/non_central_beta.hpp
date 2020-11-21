@@ -294,7 +294,7 @@ namespace boost
             BOOST_MATH_STD_USING
                static const char* function = "boost::math::tools::bracket_and_solve_root_01<%1%>";
             //
-            // Set up inital brackets:
+            // Set up initial brackets:
             //
             T a = guess;
             T b = a;
@@ -779,7 +779,7 @@ namespace boost
       inline RealType variance(const non_central_beta_distribution<RealType, Policy>& dist)
       { 
          //
-         // Relative error of this function may be arbitarily large... absolute
+         // Relative error of this function may be arbitrarily large... absolute
          // error will be small however... that's the best we can do for now.
          //
          BOOST_MATH_STD_USING

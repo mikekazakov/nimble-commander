@@ -7,8 +7,8 @@
 #ifndef BOOST_PROCESS_DETAIL_WINDOWS_ENV_INIT_HPP_
 #define BOOST_PROCESS_DETAIL_WINDOWS_ENV_INIT_HPP_
 
-#include <boost/detail/winapi/error_codes.hpp>
-#include <boost/detail/winapi/process.hpp>
+#include <boost/winapi/error_codes.hpp>
+#include <boost/winapi/process.hpp>
 
 
 #include <boost/process/detail/config.hpp>
@@ -25,10 +25,10 @@ struct env_init : public ::boost::process::detail::handler_base
     env_init(boost::process::basic_environment<Char> && env) : env(std::move(env)) {};
     env_init(const boost::process::basic_environment<Char> & env) : env(env) {};
 
-    constexpr static ::boost::detail::winapi::DWORD_ creation_flag(char)    {return 0u;}
-    constexpr static ::boost::detail::winapi::DWORD_ creation_flag(wchar_t)
+    constexpr static ::boost::winapi::DWORD_ creation_flag(char)    {return 0u;}
+    constexpr static ::boost::winapi::DWORD_ creation_flag(wchar_t)
     {
-       return ::boost::detail::winapi::CREATE_UNICODE_ENVIRONMENT_;
+       return ::boost::winapi::CREATE_UNICODE_ENVIRONMENT_;
     }
 
     template <class WindowsExecutor>
@@ -37,7 +37,7 @@ struct env_init : public ::boost::process::detail::handler_base
         auto e = env.native_handle();
         if (*e == null_char<char>())
         {
-            exec.set_error(std::error_code(::boost::detail::winapi::ERROR_BAD_ENVIRONMENT_, std::system_category()),
+            exec.set_error(std::error_code(::boost::winapi::ERROR_BAD_ENVIRONMENT_, std::system_category()),
                     "Empty Environment");
         }
 

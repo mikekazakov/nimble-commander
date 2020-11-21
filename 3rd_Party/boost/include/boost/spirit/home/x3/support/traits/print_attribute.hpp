@@ -67,9 +67,8 @@ namespace boost { namespace spirit { namespace x3 { namespace traits
     template <typename Out, typename T, typename Enable = void>
     struct print_attribute_debug
     {
-        // for plain data types
-        template <typename T_>
-        static void call(Out& out, T_ const& val, unused_attribute)
+        // for unused_type
+        static void call(Out& out, unused_type, unused_attribute)
         {
             out << "unused";
         }

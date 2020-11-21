@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2016, Oracle and/or its affiliates.
+// Copyright (c) 2016-2020, Oracle and/or its affiliates.
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -13,8 +13,10 @@
 
 #include <boost/geometry/core/coordinate_system.hpp>
 #include <boost/geometry/core/coordinate_type.hpp>
+#include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/radian_access.hpp>
+#include <boost/geometry/core/radius.hpp>
 
 //#include <boost/geometry/arithmetic/arithmetic.hpp>
 #include <boost/geometry/arithmetic/cross_product.hpp>
@@ -23,6 +25,8 @@
 #include <boost/geometry/util/math.hpp>
 #include <boost/geometry/util/normalize_spheroidal_coordinates.hpp>
 #include <boost/geometry/util/select_coordinate_type.hpp>
+
+#include <boost/geometry/formulas/result_direct.hpp>
 
 namespace boost { namespace geometry {
     
@@ -95,7 +99,7 @@ static inline PointSph cart3d_to_sph(Point3d const& point_3d)
 
     math::normalize_spheroidal_coordinates
         <
-            typename coordinate_system<PointSph>::type::units,
+            typename detail::cs_angular_units<PointSph>::type,
             coord_t
         >(lon, lat);
 
@@ -180,18 +184,15 @@ inline T spherical_azimuth(T const& lon1, T const& lat1, T const& lon2, T const&
 template <typename T>
 inline int azimuth_side_value(T const& azi_a1_p, T const& azi_a1_a2)
 {
+    T const c0 = 0;
     T const pi = math::pi<T>();
-    T const two_pi = math::two_pi<T>();
 
     // instead of the formula from XTD
     //calc_t a_diff = asin(sin(azi_a1_p - azi_a1_a2));
 
     T a_diff = azi_a1_p - azi_a1_a2;
-    // normalize, angle in [-pi, pi]
-    while (a_diff > pi)
-        a_diff -= two_pi;
-    while (a_diff < -pi)
-        a_diff += two_pi;
+    // normalize, angle in (-pi, pi]
+    math::detail::normalize_angle_loop<radian>(a_diff);
 
     // NOTE: in general it shouldn't be required to support the pi/-pi case
     // because in non-cartesian systems it makes sense to check the side
@@ -200,7 +201,7 @@ inline int azimuth_side_value(T const& azi_a1_p, T const& azi_a1_a2)
     // for vertical segments to check if the point is "between the endpoints.
     // This could be avoided since the side strategy is not required for that
     // because meridian is the shortest path. So a difference of
-    // longitudes would be sufficient (of course normalized to [-pi, pi]).
+    // longitudes would be sufficient (of course normalized to (-pi, pi]).
 
     // NOTE: with the above said, the pi/-pi check is temporary
     // however in case if this was required
@@ -210,11 +211,71 @@ inline int azimuth_side_value(T const& azi_a1_p, T const& azi_a1_a2)
     // the difference to 0 as well
 
     // positive azimuth is on the right side
-    return math::equals(a_diff, 0)
+    return math::equals(a_diff, c0)
         || math::equals(a_diff, pi)
         || math::equals(a_diff, -pi) ? 0
         : a_diff > 0 ? -1 // right
         : 1; // left
+}
+
+template
+<
+    bool Coordinates,
+    bool ReverseAzimuth,
+    typename CT,
+    typename Sphere
+>
+inline result_direct<CT> spherical_direct(CT const& lon1,
+                                          CT const& lat1,
+                                          CT const& sig12,
+                                          CT const& alp1,
+                                          Sphere const& sphere)
+{
+    result_direct<CT> result;
+
+    CT const sin_alp1 = sin(alp1);
+    CT const sin_lat1 = sin(lat1);
+    CT const cos_alp1 = cos(alp1);
+    CT const cos_lat1 = cos(lat1);
+
+    CT const norm = math::sqrt(cos_alp1 * cos_alp1 + sin_alp1 * sin_alp1
+                                                   * sin_lat1 * sin_lat1);
+    CT const alp0 = atan2(sin_alp1 * cos_lat1, norm);
+    CT const sig1 = atan2(sin_lat1, cos_alp1 * cos_lat1);
+    CT const sig2 = sig1 + sig12 / get_radius<0>(sphere);
+
+    CT const cos_sig2 = cos(sig2);
+    CT const sin_alp0 = sin(alp0);
+    CT const cos_alp0 = cos(alp0);
+
+    if (Coordinates)
+    {
+        CT const sin_sig2 = sin(sig2);
+        CT const sin_sig1 = sin(sig1);
+        CT const cos_sig1 = cos(sig1);
+
+        CT const norm2 = math::sqrt(cos_alp0 * cos_alp0 * cos_sig2 * cos_sig2
+                                    + sin_alp0 * sin_alp0);
+        CT const lat2 = atan2(cos_alp0 * sin_sig2, norm2);
+
+        CT const omg1 = atan2(sin_alp0 * sin_sig1, cos_sig1);
+        CT const lon2 = atan2(sin_alp0 * sin_sig2, cos_sig2);
+
+        result.lon2 = lon1 + lon2 - omg1;
+        result.lat2 = lat2;
+
+        // For longitudes close to the antimeridian the result can be out
+        // of range. Therefore normalize.
+        math::detail::normalize_angle_cond<radian>(result.lon2);
+    }
+
+    if (ReverseAzimuth)
+    {
+        CT const alp2 = atan2(sin_alp0, cos_alp0 * cos_sig2);
+        result.reverse_azimuth = alp2;
+    }
+
+    return result;
 }
 
 } // namespace formula

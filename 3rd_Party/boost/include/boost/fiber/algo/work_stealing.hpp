@@ -34,7 +34,7 @@ namespace boost {
 namespace fibers {
 namespace algo {
 
-class work_stealing : public algorithm {
+class BOOST_FIBERS_DECL work_stealing : public algorithm {
 private:
     static std::atomic< std::uint32_t >                     counter_;
     static std::vector< intrusive_ptr< work_stealing > >    schedulers_;
@@ -62,21 +62,21 @@ public:
     work_stealing & operator=( work_stealing const&) = delete;
     work_stealing & operator=( work_stealing &&) = delete;
 
-    virtual void awakened( context *) noexcept;
+    void awakened( context *) noexcept override;
 
-    virtual context * pick_next() noexcept;
+    context * pick_next() noexcept override;
 
     virtual context * steal() noexcept {
         return rqueue_.steal();
     }
 
-    virtual bool has_ready_fibers() const noexcept {
+    bool has_ready_fibers() const noexcept override {
         return ! rqueue_.empty();
     }
 
-    virtual void suspend_until( std::chrono::steady_clock::time_point const&) noexcept;
+    void suspend_until( std::chrono::steady_clock::time_point const&) noexcept override;
 
-    virtual void notify() noexcept;
+    void notify() noexcept override;
 };
 
 }}}

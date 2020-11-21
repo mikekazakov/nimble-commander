@@ -17,6 +17,7 @@
 #ifndef BOOST_LOG_SOURCES_THREADING_MODELS_HPP_INCLUDED_
 #define BOOST_LOG_SOURCES_THREADING_MODELS_HPP_INCLUDED_
 
+#include <boost/type_traits/has_nothrow_constructor.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/locks.hpp> // is_mutex_type
 #if !defined(BOOST_LOG_NO_THREADS)
@@ -38,28 +39,32 @@ namespace sources {
 struct single_thread_model
 {
     // We provide methods for the most advanced locking concept: UpgradeLockable
-    void lock_shared() const {}
-    bool try_lock_shared() const { return true; }
+    void lock_shared() const BOOST_NOEXCEPT {}
+    bool try_lock_shared() const BOOST_NOEXCEPT { return true; }
     template< typename TimeT >
-    bool timed_lock_shared(TimeT const&) const { return true; }
-    void unlock_shared() const {}
-    void lock() const {}
-    bool try_lock() const { return true; }
+    bool timed_lock_shared(TimeT const&) const BOOST_NOEXCEPT { return true; }
+    void unlock_shared() const BOOST_NOEXCEPT {}
+    void lock() const BOOST_NOEXCEPT {}
+    bool try_lock() const BOOST_NOEXCEPT { return true; }
     template< typename TimeT >
-    bool timed_lock(TimeT const&) const { return true; }
-    void unlock() const {}
-    void lock_upgrade() const {}
-    bool try_lock_upgrade() const { return true; }
+    bool timed_lock(TimeT const&) const BOOST_NOEXCEPT { return true; }
+    void unlock() const BOOST_NOEXCEPT {}
+    void lock_upgrade() const BOOST_NOEXCEPT {}
+    bool try_lock_upgrade() const BOOST_NOEXCEPT { return true; }
     template< typename TimeT >
-    bool timed_lock_upgrade(TimeT const&) const { return true; }
-    void unlock_upgrade() const {}
-    void unlock_upgrade_and_lock() const {}
-    void unlock_and_lock_upgrade() const {}
-    void unlock_and_lock_shared() const {}
-    void unlock_upgrade_and_lock_shared() const {}
+    bool timed_lock_upgrade(TimeT const&) const BOOST_NOEXCEPT { return true; }
+    void unlock_upgrade() const BOOST_NOEXCEPT {}
+    void unlock_upgrade_and_lock() const BOOST_NOEXCEPT {}
+    void unlock_and_lock_upgrade() const BOOST_NOEXCEPT {}
+    void unlock_and_lock_shared() const BOOST_NOEXCEPT {}
+    void unlock_upgrade_and_lock_shared() const BOOST_NOEXCEPT {}
 
-    void swap(single_thread_model&) {}
+    void swap(single_thread_model&) BOOST_NOEXCEPT {}
 };
+
+inline void swap(single_thread_model&, single_thread_model&) BOOST_NOEXCEPT
+{
+}
 
 #if !defined(BOOST_LOG_NO_THREADS)
 
@@ -67,36 +72,45 @@ struct single_thread_model
 template< typename MutexT >
 struct multi_thread_model
 {
-    multi_thread_model() {}
-    multi_thread_model(multi_thread_model const&) {}
-    multi_thread_model& operator= (multi_thread_model const&) { return *this; }
+    multi_thread_model() BOOST_NOEXCEPT_IF(boost::has_nothrow_constructor< MutexT >::value) {}
+    multi_thread_model(multi_thread_model const&) BOOST_NOEXCEPT_IF(boost::has_nothrow_constructor< MutexT >::value) {}
+    multi_thread_model& operator= (multi_thread_model const&) BOOST_NOEXCEPT { return *this; }
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
+    multi_thread_model(multi_thread_model&&) BOOST_NOEXCEPT_IF(boost::has_nothrow_constructor< MutexT >::value) {}
+    multi_thread_model& operator= (multi_thread_model&&) BOOST_NOEXCEPT { return *this; }
+#endif
 
     void lock_shared() const { m_Mutex.lock_shared(); }
     bool try_lock_shared() const { return m_Mutex.try_lock_shared(); }
     template< typename TimeT >
     bool timed_lock_shared(TimeT const& t) const { return m_Mutex.timed_lock_shared(t); }
-    void unlock_shared() const { m_Mutex.unlock_shared(); }
+    void unlock_shared() const BOOST_NOEXCEPT { m_Mutex.unlock_shared(); }
     void lock() const { m_Mutex.lock(); }
     bool try_lock() const { return m_Mutex.try_lock(); }
     template< typename TimeT >
     bool timed_lock(TimeT const& t) const { return m_Mutex.timed_lock(t); }
-    void unlock() const { m_Mutex.unlock(); }
+    void unlock() const BOOST_NOEXCEPT { m_Mutex.unlock(); }
     void lock_upgrade() const { m_Mutex.lock_upgrade(); }
     bool try_lock_upgrade() const { return m_Mutex.try_lock_upgrade(); }
     template< typename TimeT >
     bool timed_lock_upgrade(TimeT const& t) const { return m_Mutex.timed_lock_upgrade(t); }
-    void unlock_upgrade() const { m_Mutex.unlock_upgrade(); }
+    void unlock_upgrade() const BOOST_NOEXCEPT { m_Mutex.unlock_upgrade(); }
     void unlock_upgrade_and_lock() const { m_Mutex.unlock_upgrade_and_lock(); }
     void unlock_and_lock_upgrade() const { m_Mutex.unlock_and_lock_upgrade(); }
     void unlock_and_lock_shared() const { m_Mutex.unlock_and_lock_shared(); }
     void unlock_upgrade_and_lock_shared() const { m_Mutex.unlock_upgrade_and_lock_shared(); }
 
-    void swap(multi_thread_model&) {}
+    void swap(multi_thread_model&) BOOST_NOEXCEPT {}
 
 private:
     //! Synchronization primitive
     mutable MutexT m_Mutex;
 };
+
+template< typename MutexT >
+inline void swap(multi_thread_model< MutexT >&, multi_thread_model< MutexT >&) BOOST_NOEXCEPT
+{
+}
 
 #endif // !defined(BOOST_LOG_NO_THREADS)
 

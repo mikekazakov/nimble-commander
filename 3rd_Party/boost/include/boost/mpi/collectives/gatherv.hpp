@@ -8,15 +8,18 @@
 #ifndef BOOST_MPI_GATHERV_HPP
 #define BOOST_MPI_GATHERV_HPP
 
+#include <vector>
+
 #include <boost/mpi/exception.hpp>
 #include <boost/mpi/datatype.hpp>
-#include <vector>
 #include <boost/mpi/packed_oarchive.hpp>
 #include <boost/mpi/packed_iarchive.hpp>
 #include <boost/mpi/detail/point_to_point.hpp>
 #include <boost/mpi/communicator.hpp>
 #include <boost/mpi/environment.hpp>
+#include <boost/mpi/detail/offsets.hpp>
 #include <boost/assert.hpp>
+#include <boost/scoped_array.hpp>
 
 namespace boost { namespace mpi {
 
@@ -58,41 +61,21 @@ namespace detail {
   gatherv_impl(const communicator& comm, const T* in_values, int in_size, 
                T* out_values, const int* sizes, const int* displs, int root, mpl::false_)
   {
-    int tag = environment::collectives_tag();
-    int nprocs = comm.size();
-
-    for (int src = 0; src < nprocs; ++src) {
-      if (src == root)
-        // Our own values will never be transmitted: just copy them.
-        std::copy(in_values, in_values + in_size, out_values + displs[src]);
-      else {
-//        comm.recv(src, tag, out_values + displs[src], sizes[src]);
-        // Receive archive
-        packed_iarchive ia(comm);
-        MPI_Status status;
-        detail::packed_archive_recv(comm, src, tag, ia, status);
-        for (int i = 0; i < sizes[src]; ++i)
-          ia >> out_values[ displs[src] + i ];
-      }
-    }
+    // convert displacement to offsets to skip
+    scoped_array<int> skipped(make_skipped_slots(comm, sizes, displs, root));
+    gather_impl(comm, in_values, in_size, out_values, sizes, skipped.get(), root, mpl::false_());
   }
 
   // We're gathering at a non-root for a type that does not have an
   // associated MPI datatype, so we'll need to serialize
-  // it. Unfortunately, this means that we cannot use MPI_Gatherv, so
-  // we'll just have all of the non-root nodes send individual
-  // messages to the root.
+  // it.
   template<typename T>
   void
   gatherv_impl(const communicator& comm, const T* in_values, int in_size, int root, 
               mpl::false_)
   {
-    int tag = environment::collectives_tag();
-//    comm.send(root, tag, in_values, in_size);
-    packed_oarchive oa(comm);
-    for (int i = 0; i < in_size; ++i)
-      oa << in_values[i];
-    detail::packed_archive_send(comm, root, tag, oa);
+    gather_impl(comm, in_values, in_size, (T*)0,(int const*)0,(int const*)0, root,
+                mpl::false_());
   }
 } // end namespace detail
 
@@ -104,7 +87,7 @@ gatherv(const communicator& comm, const T* in_values, int in_size,
 {
   if (comm.rank() == root)
     detail::gatherv_impl(comm, in_values, in_size,
-                         out_values, &sizes[0], &displs[0],
+                         out_values, detail::c_data(sizes), detail::c_data(displs),
                          root, is_mpi_datatype<T>());
   else
     detail::gatherv_impl(comm, in_values, in_size, root, is_mpi_datatype<T>());
@@ -116,7 +99,7 @@ gatherv(const communicator& comm, const std::vector<T>& in_values,
         T* out_values, const std::vector<int>& sizes, const std::vector<int>& displs,
         int root)
 {
-  ::boost::mpi::gatherv(comm, &in_values[0], in_values.size(), out_values, sizes, displs, root);
+  ::boost::mpi::gatherv(comm, detail::c_data(in_values), in_values.size(), out_values, sizes, displs, root);
 }
 
 template<typename T>
@@ -130,7 +113,7 @@ template<typename T>
 void gatherv(const communicator& comm, const std::vector<T>& in_values, int root)
 {
   BOOST_ASSERT(comm.rank() != root);
-  detail::gatherv_impl(comm, &in_values[0], in_values.size(), root, is_mpi_datatype<T>());
+  detail::gatherv_impl(comm, detail::c_data(in_values), in_values.size(), root, is_mpi_datatype<T>());
 }
 
 ///////////////////////
@@ -156,7 +139,7 @@ void
 gatherv(const communicator& comm, const std::vector<T>& in_values,
         T* out_values, const std::vector<int>& sizes, int root)
 {
-  ::boost::mpi::gatherv(comm, &in_values[0], in_values.size(), out_values, sizes, root);
+  ::boost::mpi::gatherv(comm, detail::c_data(in_values), in_values.size(), out_values, sizes, root);
 }
 
 } } // end namespace boost::mpi

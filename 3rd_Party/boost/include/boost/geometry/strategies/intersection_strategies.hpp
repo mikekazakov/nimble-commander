@@ -63,7 +63,7 @@ private :
     typedef segment_intersection_points
     <
         IntersectionPoint,
-        typename geometry::segment_ratio_type
+        typename detail::segment_ratio_type
         <
             IntersectionPoint, RobustPolicy
         >::type

@@ -5,7 +5,8 @@
 // Copyright (c) 2014-2015 Mateusz Loskot, London, UK.
 // Copyright (c) 2014-2015 Adam Wulkiewicz, Lodz, Poland.
 
-// Copyright (c) 2015, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015, 2018.
+// Modifications copyright (c) 2015-2018, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -18,8 +19,9 @@
 
 #include <cstddef>
 
+#include <boost/geometry/core/coordinate_type.hpp>
+
 #include <boost/geometry/policies/robustness/segment_ratio.hpp>
-#include <boost/geometry/policies/robustness/segment_ratio_type.hpp>
 #include <boost/geometry/policies/robustness/robust_point_type.hpp>
 
 #include <boost/geometry/util/math.hpp>
@@ -72,13 +74,6 @@ template <typename Point, typename FpPoint, typename IntPoint, typename Calculat
 struct robust_point_type<Point, detail::robust_policy<FpPoint, IntPoint, CalculationType> >
 {
     typedef IntPoint type;
-};
-
-// Meta function for rescaling, if rescaling is done segment_ratio is based on long long
-template <typename Point, typename FpPoint, typename IntPoint, typename CalculationType>
-struct segment_ratio_type<Point, detail::robust_policy<FpPoint, IntPoint, CalculationType> >
-{
-    typedef segment_ratio<boost::long_long_type> type;
 };
 
 

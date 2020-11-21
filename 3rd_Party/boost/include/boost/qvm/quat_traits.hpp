@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_EF321CBE275911E084A4550FDFD72085
-#define UUID_EF321CBE275911E084A4550FDFD72085
+#ifndef BOOST_QVM_EF321CBE275911E084A4550FDFD72085
+#define BOOST_QVM_EF321CBE275911E084A4550FDFD72085
 
 namespace
 boost

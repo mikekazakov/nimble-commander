@@ -7,8 +7,9 @@
 #if !defined(BOOST_SPIRIT_X3_POSITION_TAGGED_MAY_01_2014_0321PM)
 #define BOOST_SPIRIT_X3_POSITION_TAGGED_MAY_01_2014_0321PM
 
-#include <boost/range.hpp>
+#include <boost/range/iterator_range_core.hpp>
 #include <boost/type_traits/is_base_of.hpp>
+#include <boost/core/enable_if.hpp>
 
 namespace boost { namespace spirit { namespace x3
 {
@@ -46,16 +47,19 @@ namespace boost { namespace spirit { namespace x3
 
         // This will catch all nodes except those inheriting from position_tagged
         template <typename AST>
-        boost::iterator_range<iterator_type>
-        position_of(AST const& ast) const
+        typename boost::enable_if_c<
+            (!is_base_of<position_tagged, AST>::value)
+          , boost::iterator_range<iterator_type>
+        >::type
+        position_of(AST const& /* ast */) const
         {
             // returns an empty position
             return boost::iterator_range<iterator_type>();
         }
-        
+
         // This will catch all nodes except those inheriting from position_tagged
         template <typename AST>
-        void annotate(AST& ast, iterator_type first, iterator_type last, mpl::false_)
+        void annotate(AST& /* ast */, iterator_type /* first */, iterator_type /* last */, mpl::false_)
         {
             // (no-op) no need for tags
         }

@@ -19,13 +19,15 @@
 #include <boost/spirit/home/qi/parser.hpp>
 #include <boost/spirit/home/qi/meta_compiler.hpp>
 #include <boost/spirit/home/qi/detail/assign_to.hpp>
-#include <boost/range/iterator_range.hpp>
+
 #include <boost/fusion/include/vector.hpp>
 #include <boost/fusion/include/at.hpp>
 #include <boost/mpl/or.hpp>
+#include <boost/range/iterator_range_core.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/type_traits/is_enum.hpp>
-#include <boost/lexical_cast.hpp>
+#include <iterator> // for std::iterator_traits
+#include <sstream>
 
 namespace boost { namespace spirit
 {
@@ -84,7 +86,7 @@ namespace boost { namespace spirit { namespace qi
                 // been initialized with
 
                 typedef typename
-                    boost::detail::iterator_traits<Iterator>::value_type
+                    std::iterator_traits<Iterator>::value_type
                 token_type;
                 typedef typename token_type::id_type id_type;
 
@@ -102,8 +104,9 @@ namespace boost { namespace spirit { namespace qi
         template <typename Context>
         info what(Context& /*context*/) const
         {
-            return info("tokenid_mask",
-                "tokenid_mask(" + boost::lexical_cast<utf8_string>(mask) + ")");
+            std::stringstream ss;
+            ss << "tokenid_mask(" << mask << ")";
+            return info("tokenid_mask", ss.str());
         }
 
         Mask mask;

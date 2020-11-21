@@ -2,8 +2,8 @@
 
 // Copyright (c) 2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017.
-// Modifications copyright (c) 2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017, 2018.
+// Modifications copyright (c) 2017-2018 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -45,6 +45,9 @@ struct ring_is_convex
     template <typename Ring, typename SideStrategy>
     static inline bool apply(Ring const& ring, SideStrategy const& strategy)
     {
+        typename SideStrategy::equals_point_point_strategy_type
+            eq_pp_strategy = strategy.get_equals_point_point_strategy();
+
         std::size_t n = boost::size(ring);
         if (boost::size(ring) < core_detail::closure::minimum_ring_size
                                     <
@@ -67,7 +70,8 @@ struct ring_is_convex
         current++;
 
         std::size_t index = 1;
-        while (equals::equals_point_point(*current, *previous) && index < n)
+        while (equals::equals_point_point(*current, *previous, eq_pp_strategy)
+            && index < n)
         {
             current++;
             index++;
@@ -81,7 +85,7 @@ struct ring_is_convex
 
         it_type next = current;
         next++;
-        while (equals::equals_point_point(*current, *next))
+        while (equals::equals_point_point(*current, *next, eq_pp_strategy))
         {
             next++;
         }
@@ -105,7 +109,7 @@ struct ring_is_convex
             // Advance next to next different point
             // (because there are non-equal points, this loop is not infinite)
             next++;
-            while (equals::equals_point_point(*current, *next))
+            while (equals::equals_point_point(*current, *next, eq_pp_strategy))
             {
                 next++;
             }

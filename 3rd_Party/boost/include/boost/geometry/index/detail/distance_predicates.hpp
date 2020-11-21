@@ -5,6 +5,10 @@
 //
 // Copyright (c) 2011-2015 Adam Wulkiewicz, Lodz, Poland.
 //
+// This file was modified by Oracle on 2019.
+// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+//
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -93,64 +97,211 @@ struct relation< to_furthest<T> >
 };
 
 // ------------------------------------------------------------------ //
+
+template
+<
+    typename G1, typename G2, typename Strategy,
+    typename Tag1 = typename geometry::tag<G1>::type,
+    typename Tag2 = typename geometry::tag<G2>::type
+>
+struct comparable_distance_call_base
+{
+    typedef typename geometry::default_comparable_distance_result
+        <
+            G1, G2
+        >::type result_type;
+
+    static inline result_type apply(G1 const& g1, G2 const& g2, Strategy const&)
+    {
+        return geometry::comparable_distance(g1, g2);
+    }
+};
+
+template
+<
+    typename G1, typename G2, typename Strategy
+>
+struct comparable_distance_call_base<G1, G2, Strategy, point_tag, point_tag>
+{
+    typedef typename geometry::comparable_distance_result
+        <
+            G1, G2,
+            typename Strategy::comparable_distance_point_point_strategy_type
+        >::type result_type;
+
+    static inline result_type apply(G1 const& g1, G2 const& g2, Strategy const& s)
+    {
+        return geometry::comparable_distance(g1, g2,
+                s.get_comparable_distance_point_point_strategy());
+    }
+};
+
+template
+<
+    typename G1, typename G2, typename Strategy
+>
+struct comparable_distance_call_base<G1, G2, Strategy, point_tag, box_tag>
+{
+    typedef typename geometry::comparable_distance_result
+        <
+            G1, G2,
+            typename Strategy::comparable_distance_point_box_strategy_type
+        >::type result_type;
+
+    static inline result_type apply(G1 const& g1, G2 const& g2, Strategy const& s)
+    {
+        return geometry::comparable_distance(g1, g2,
+                s.get_comparable_distance_point_box_strategy());
+    }
+};
+
+template
+<
+    typename G1, typename G2, typename Strategy
+>
+struct comparable_distance_call_base<G1, G2, Strategy, segment_tag, point_tag>
+{
+    typedef typename geometry::comparable_distance_result
+        <
+            G1, G2,
+            typename Strategy::comparable_distance_point_segment_strategy_type
+        >::type result_type;
+
+    static inline result_type apply(G1 const& g1, G2 const& g2, Strategy const& s)
+    {
+        return geometry::comparable_distance(g1, g2,
+                s.get_comparable_distance_point_segment_strategy());
+    }
+};
+
+template
+<
+    typename G1, typename G2, typename Strategy
+>
+struct comparable_distance_call_base<G1, G2, Strategy, segment_tag, box_tag>
+{
+    typedef typename geometry::comparable_distance_result
+        <
+            G1, G2,
+            typename Strategy::comparable_distance_segment_box_strategy_type
+        >::type result_type;
+
+    static inline result_type apply(G1 const& g1, G2 const& g2, Strategy const& s)
+    {
+        return geometry::comparable_distance(g1, g2,
+                s.get_comparable_distance_segment_box_strategy());
+    }
+};
+
+template
+<
+    typename G1, typename G2, typename Strategy
+>
+struct comparable_distance_call_base<G1, G2, Strategy, segment_tag, segment_tag>
+{
+    typedef typename geometry::comparable_distance_result
+        <
+            G1, G2,
+            typename Strategy::comparable_distance_point_segment_strategy_type
+        >::type result_type;
+
+    static inline result_type apply(G1 const& g1, G2 const& g2, Strategy const& s)
+    {
+        return geometry::comparable_distance(g1, g2,
+                s.get_comparable_distance_point_segment_strategy());
+    }
+};
+
+template
+<
+    typename G1, typename G2, typename Strategy
+>
+struct comparable_distance_call
+    : comparable_distance_call_base<G1, G2, Strategy>
+{};
+
+template
+<
+    typename G1, typename G2
+>
+struct comparable_distance_call<G1, G2, default_strategy>
+    : comparable_distance_call_base<G1, G2, default_strategy, void, void>
+{};
+
+// ------------------------------------------------------------------ //
 // calculate_distance
 // ------------------------------------------------------------------ //
 
-template <typename Predicate, typename Indexable, typename Tag>
+template <typename Predicate, typename Indexable, typename Strategy, typename Tag>
 struct calculate_distance
 {
     BOOST_MPL_ASSERT_MSG((false), INVALID_PREDICATE_OR_TAG, (calculate_distance));
 };
 
 // this handles nearest() with default Point parameter, to_nearest() and bounds
-template <typename PointRelation, typename Indexable, typename Tag>
-struct calculate_distance< predicates::nearest<PointRelation>, Indexable, Tag >
+template <typename PointRelation, typename Indexable, typename Strategy, typename Tag>
+struct calculate_distance< predicates::nearest<PointRelation>, Indexable, Strategy, Tag>
 {
     typedef detail::relation<PointRelation> relation;
-    typedef typename relation::value_type point_type;
-    typedef typename geometry::default_comparable_distance_result<point_type, Indexable>::type result_type;
+    typedef comparable_distance_call
+        <
+            typename relation::value_type,
+            Indexable,
+            Strategy
+        > call_type;
+    typedef typename call_type::result_type result_type;
 
-    static inline bool apply(predicates::nearest<PointRelation> const& p, Indexable const& i, result_type & result)
+    static inline bool apply(predicates::nearest<PointRelation> const& p, Indexable const& i,
+                             Strategy const& s, result_type & result)
     {
-        result = geometry::comparable_distance(relation::value(p.point_or_relation), i);
+        result = call_type::apply(relation::value(p.point_or_relation), i, s);
         return true;
     }
 };
 
-template <typename Point, typename Indexable>
-struct calculate_distance< predicates::nearest< to_centroid<Point> >, Indexable, value_tag>
+template <typename Point, typename Indexable, typename Strategy>
+struct calculate_distance< predicates::nearest< to_centroid<Point> >, Indexable, Strategy, value_tag>
 {
     typedef Point point_type;
-    typedef typename geometry::default_comparable_distance_result<point_type, Indexable>::type result_type;
+    typedef typename geometry::default_comparable_distance_result
+        <
+            point_type, Indexable
+        >::type result_type;
 
-    static inline bool apply(predicates::nearest< to_centroid<Point> > const& p, Indexable const& i, result_type & result)
+    static inline bool apply(predicates::nearest< to_centroid<Point> > const& p, Indexable const& i,
+                             Strategy const& , result_type & result)
     {
         result = index::detail::comparable_distance_centroid(p.point_or_relation.value, i);
         return true;
     }
 };
 
-template <typename Point, typename Indexable>
-struct calculate_distance< predicates::nearest< to_furthest<Point> >, Indexable, value_tag>
+template <typename Point, typename Indexable, typename Strategy>
+struct calculate_distance< predicates::nearest< to_furthest<Point> >, Indexable, Strategy, value_tag>
 {
     typedef Point point_type;
-    typedef typename geometry::default_comparable_distance_result<point_type, Indexable>::type result_type;
+    typedef typename geometry::default_comparable_distance_result
+        <
+            point_type, Indexable
+        >::type result_type;
 
-    static inline bool apply(predicates::nearest< to_furthest<Point> > const& p, Indexable const& i, result_type & result)
+    static inline bool apply(predicates::nearest< to_furthest<Point> > const& p, Indexable const& i,
+                             Strategy const& , result_type & result)
     {
         result = index::detail::comparable_distance_far(p.point_or_relation.value, i);
         return true;
     }
 };
 
-template <typename SegmentOrLinestring, typename Indexable, typename Tag>
-struct calculate_distance< predicates::path<SegmentOrLinestring>, Indexable, Tag>
+template <typename SegmentOrLinestring, typename Indexable, typename Strategy, typename Tag>
+struct calculate_distance< predicates::path<SegmentOrLinestring>, Indexable, Strategy, Tag>
 {
     typedef typename index::detail::default_path_intersection_distance_type<
         Indexable, SegmentOrLinestring
     >::type result_type;
 
-    static inline bool apply(predicates::path<SegmentOrLinestring> const& p, Indexable const& i, result_type & result)
+    static inline bool apply(predicates::path<SegmentOrLinestring> const& p, Indexable const& i,
+                             Strategy const& , result_type & result)
     {
         return index::detail::path_intersection(i, p.geometry, result);
     }

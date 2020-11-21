@@ -3,8 +3,8 @@
 //Distributed under the Boost Software License, Version 1.0. (See accompanying
 //file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef UUID_8AC84A2217C411E0A7AF3A1BDFD72085
-#define UUID_8AC84A2217C411E0A7AF3A1BDFD72085
+#ifndef BOOST_QVM_8AC84A2217C411E0A7AF3A1BDFD72085
+#define BOOST_QVM_8AC84A2217C411E0A7AF3A1BDFD72085
 
 #include <boost/qvm/inline.hpp>
 #include <boost/qvm/quat_traits.hpp>

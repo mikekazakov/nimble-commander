@@ -37,13 +37,13 @@ template< typename Fn, typename Tpl, std::size_t ... I >
 auto
 apply_impl( Fn && fn, Tpl && tpl, index_sequence< I ... >) 
 #if defined(BOOST_NO_CXX17_STD_INVOKE)
-    -> decltype( invoke( std::forward< Fn >( fn), std::get< I >( std::forward< Tpl >( tpl) ) ... ) )
+    -> decltype( boost::context::detail::invoke( std::forward< Fn >( fn), std::get< I >( std::forward< Tpl >( tpl) ) ... ) )
 #else
     -> decltype( std::invoke( std::forward< Fn >( fn), std::get< I >( std::forward< Tpl >( tpl) ) ... ) )
 #endif
 {
 #if defined(BOOST_NO_CXX17_STD_INVOKE)
-    return invoke( std::forward< Fn >( fn), std::get< I >( std::forward< Tpl >( tpl) ) ... );
+    return boost::context::detail::invoke( std::forward< Fn >( fn), std::get< I >( std::forward< Tpl >( tpl) ) ... );
 #else
     return std::invoke( std::forward< Fn >( fn), std::get< I >( std::forward< Tpl >( tpl) ) ... );
 #endif

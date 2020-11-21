@@ -9,8 +9,8 @@
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(VALIDATE_UNIVERSAL_CHAR_HPP_55F1B811_CD76_4C72_8344_CBC69CF3B339_INCLUDED)
-#define VALIDATE_UNIVERSAL_CHAR_HPP_55F1B811_CD76_4C72_8344_CBC69CF3B339_INCLUDED
+#if !defined(BOOST_VALIDATE_UNIVERSAL_CHAR_HPP_55F1B811_CD76_4C72_8344_CBC69CF3B339_INCLUDED)
+#define BOOST_VALIDATE_UNIVERSAL_CHAR_HPP_55F1B811_CD76_4C72_8344_CBC69CF3B339_INCLUDED
 
 #include <boost/assert.hpp>
 
@@ -219,7 +219,7 @@ classify_universal_char (unsigned long ch)
 ///////////////////////////////////////////////////////////////////////////////
 template <typename StringT>
 inline void
-validate_identifier_name (StringT const &name, std::size_t line, 
+validate_identifier_name (StringT const &name, std::size_t line,
     std::size_t column, StringT const &file_name)
 {
     using namespace std;    // some systems have strtoul in namespace std::
@@ -319,4 +319,4 @@ typename StringT::size_type pos = name.find_first_of('\\');
 #include BOOST_ABI_SUFFIX
 #endif
 
-#endif // !defined(VALIDATE_UNIVERSAL_CHAR_HPP_55F1B811_CD76_4C72_8344_CBC69CF3B339_INCLUDED)
+#endif // !defined(BOOST_VALIDATE_UNIVERSAL_CHAR_HPP_55F1B811_CD76_4C72_8344_CBC69CF3B339_INCLUDED)

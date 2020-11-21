@@ -77,7 +77,7 @@ invoke_action( Action const& action, T&& args, std::true_type /* is_tuple */ )
 
 template<typename DataSet, typename Action>
 inline typename std::enable_if<monomorphic::is_dataset<DataSet>::value,void>::type
-for_each_sample( DataSet &&         samples,
+for_each_sample( DataSet const &    samples,
                  Action const&      act,
                  data::size_t       number_of_samples = BOOST_TEST_DS_INFINITE_SIZE )
 {

@@ -27,37 +27,37 @@ namespace detail {
 
 #if defined(BOOST_POSIX_API)
 using ::boost::process::detail::posix::is_async_handler;
-using ::boost::process::detail::posix::does_require_io_service;
+using ::boost::process::detail::posix::does_require_io_context;
 #else
 using ::boost::process::detail::windows::is_async_handler;
-using ::boost::process::detail::windows::does_require_io_service;
+using ::boost::process::detail::windows::does_require_io_context;
 #endif
 
 template<typename ...Args>
-struct has_io_service;
+struct has_io_context;
 
 template<typename T, typename ...Args>
-struct has_io_service<T, Args...>
+struct has_io_context<T, Args...>
 {
-    typedef typename has_io_service<Args...>::type next;
+    typedef typename has_io_context<Args...>::type next;
     typedef typename std::is_same<
                 typename std::remove_reference<T>::type,
-                boost::asio::io_service>::type is_ios;
+                boost::asio::io_context>::type is_ios;
     typedef typename std::conditional<is_ios::value,
             std::true_type,
             next>::type type;
 };
 
 template<typename T>
-struct has_io_service<T>
+struct has_io_context<T>
 {
     typedef typename std::is_same<
             typename std::remove_reference<T>::type,
-            boost::asio::io_service>::type type;
+            boost::asio::io_context>::type type;
 };
 
 template<typename ...Args>
-using has_io_service_t = typename has_io_service<Args...>::type;
+using has_io_context_t = typename has_io_context<Args...>::type;
 
 template<typename ...Args>
 struct has_async_handler;
@@ -79,34 +79,34 @@ struct has_async_handler<T>
 };
 
 template<typename ...Args>
-struct needs_io_service;
+struct needs_io_context;
 
 template<typename T, typename ...Args>
-struct needs_io_service<T, Args...>
+struct needs_io_context<T, Args...>
 {
-    typedef typename needs_io_service<Args...>::type next;
-    typedef typename does_require_io_service<T>::type is_ios;
+    typedef typename needs_io_context<Args...>::type next;
+    typedef typename does_require_io_context<T>::type is_ios;
     typedef typename std::conditional<is_ios::value,
             std::true_type,
             next>::type type;
 };
 
 template<typename T>
-struct needs_io_service<T>
+struct needs_io_context<T>
 {
-    typedef typename does_require_io_service<T>::type type;
+    typedef typename does_require_io_context<T>::type type;
 };
 
 template<typename ...Args>
-boost::asio::io_service &get_io_service_var(boost::asio::io_service & f, Args&...)
+boost::asio::io_context &get_io_context_var(boost::asio::io_context & f, Args&...)
 {
     return f;
 }
 
 template<typename First, typename ...Args>
-boost::asio::io_service &get_io_service_var(First&, Args&...args)
+boost::asio::io_context &get_io_context_var(First&, Args&...args)
 {
-    return get_io_service_var(args...);
+    return get_io_context_var(args...);
 }
 
 }

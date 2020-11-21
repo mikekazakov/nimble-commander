@@ -148,7 +148,7 @@ public:
     /*!
      * Passes the log record to the backend
      */
-    void consume(record_view const& rec)
+    void consume(record_view const& rec) BOOST_OVERRIDE
     {
         base_type::feed_record(rec, m_BackendMutex, *m_pBackend);
     }
@@ -156,7 +156,7 @@ public:
     /*!
      * The method attempts to pass logging record to the backend
      */
-    bool try_consume(record_view const& rec)
+    bool try_consume(record_view const& rec) BOOST_OVERRIDE
     {
         return base_type::try_feed_record(rec, m_BackendMutex, *m_pBackend);
     }
@@ -166,7 +166,7 @@ public:
      * may take considerable time to complete and may block both the calling thread and threads
      * attempting to put new records into the sink while this call is in progress.
      */
-    void flush()
+    void flush() BOOST_OVERRIDE
     {
         base_type::flush_backend(m_BackendMutex, *m_pBackend);
     }

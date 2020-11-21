@@ -5,8 +5,8 @@
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
-#if !defined(SPIRIT_OPTIONAL_MARCH_23_2007_1117PM)
-#define SPIRIT_OPTIONAL_MARCH_23_2007_1117PM
+#if !defined(BOOST_SPIRIT_X3_OPTIONAL_MARCH_23_2007_1117PM)
+#define BOOST_SPIRIT_X3_OPTIONAL_MARCH_23_2007_1117PM
 
 #include <boost/spirit/home/x3/core/proxy.hpp>
 #include <boost/spirit/home/x3/core/detail/parse_into_container.hpp>
@@ -23,7 +23,7 @@ namespace boost { namespace spirit { namespace x3
         typedef proxy<Subject, optional<Subject>> base_type;
         static bool const handles_container = true;
 
-        optional(Subject const& subject)
+        constexpr optional(Subject const& subject)
           : base_type(subject) {}
 
         using base_type::parse_subject;
@@ -52,7 +52,7 @@ namespace boost { namespace spirit { namespace x3
             value_type;
 
             // create a local value
-            value_type val = value_type();
+            value_type val{};
 
             if (this->subject.parse(first, last, context, rcontext, val))
             {
@@ -64,7 +64,7 @@ namespace boost { namespace spirit { namespace x3
     };
 
     template <typename Subject>
-    inline optional<typename extension::as_parser<Subject>::value_type>
+    constexpr optional<typename extension::as_parser<Subject>::value_type>
     operator-(Subject const& subject)
     {
         return { as_parser(subject) };

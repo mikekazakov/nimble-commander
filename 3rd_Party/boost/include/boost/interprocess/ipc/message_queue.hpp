@@ -74,7 +74,7 @@ class message_queue_t
       pointer_traits<void_pointer>::template
          rebind_pointer<char>::type                                    char_ptr;
    typedef typename boost::intrusive::pointer_traits<char_ptr>::difference_type difference_type;
-   typedef typename boost::container::container_detail::make_unsigned<difference_type>::type        size_type;
+   typedef typename boost::container::dtl::make_unsigned<difference_type>::type        size_type;
 
    //!Creates a process shared message queue with name "name". For this message queue,
    //!the maximum number of messages will be "max_num_msg" and the maximum message size
@@ -211,7 +211,7 @@ class msg_hdr_t
       pointer_traits<void_pointer>::template
          rebind_pointer<char>::type                                              char_ptr;
    typedef typename boost::intrusive::pointer_traits<char_ptr>::difference_type  difference_type;
-   typedef typename boost::container::container_detail::make_unsigned<difference_type>::type                  size_type;
+   typedef typename boost::container::dtl::make_unsigned<difference_type>::type                  size_type;
 
    public:
    size_type               len;     // Message length
@@ -297,7 +297,7 @@ class mq_hdr_t
    typedef typename boost::intrusive::pointer_traits
       <msg_hdr_ptr_t>::difference_type                                     difference_type;
    typedef typename boost::container::
-      container_detail::make_unsigned<difference_type>::type               size_type;
+      dtl::make_unsigned<difference_type>::type               size_type;
    typedef typename boost::intrusive::
       pointer_traits<void_pointer>::template
          rebind_pointer<msg_hdr_ptr_t>::type                              msg_hdr_ptr_ptr_t;
@@ -529,8 +529,8 @@ class mq_hdr_t
       (size_type max_msg_size, size_type max_num_msg)
    {
       const size_type
-       msg_hdr_align  = ::boost::container::container_detail::alignment_of<msg_header>::value,
-       index_align    = ::boost::container::container_detail::alignment_of<msg_hdr_ptr_t>::value,
+       msg_hdr_align  = ::boost::container::dtl::alignment_of<msg_header>::value,
+       index_align    = ::boost::container::dtl::alignment_of<msg_hdr_ptr_t>::value,
          r_hdr_size     = ipcdetail::ct_rounded_size<sizeof(mq_hdr_t), index_align>::value,
          r_index_size   = ipcdetail::get_rounded_size<size_type>(max_num_msg*sizeof(msg_hdr_ptr_t), msg_hdr_align),
          r_max_msg_size = ipcdetail::get_rounded_size<size_type>(max_msg_size, msg_hdr_align) + sizeof(msg_header);
@@ -543,8 +543,8 @@ class mq_hdr_t
    void initialize_memory()
    {
       const size_type
-        msg_hdr_align  = ::boost::container::container_detail::alignment_of<msg_header>::value,
-        index_align    = ::boost::container::container_detail::alignment_of<msg_hdr_ptr_t>::value,
+        msg_hdr_align  = ::boost::container::dtl::alignment_of<msg_header>::value,
+        index_align    = ::boost::container::dtl::alignment_of<msg_hdr_ptr_t>::value,
          r_hdr_size     = ipcdetail::ct_rounded_size<sizeof(mq_hdr_t), index_align>::value,
          r_index_size   = ipcdetail::get_rounded_size<size_type>(m_max_num_msg*sizeof(msg_hdr_ptr_t), msg_hdr_align),
          r_max_msg_size = ipcdetail::get_rounded_size<size_type>(m_max_msg_size, msg_hdr_align) + sizeof(msg_header);
@@ -603,7 +603,7 @@ class msg_queue_initialization_func_t
          rebind_pointer<char>::type                               char_ptr;
    typedef typename boost::intrusive::pointer_traits<char_ptr>::
       difference_type                                             difference_type;
-   typedef typename boost::container::container_detail::
+   typedef typename boost::container::dtl::
       make_unsigned<difference_type>::type                        size_type;
 
    msg_queue_initialization_func_t(size_type maxmsg = 0,
@@ -709,7 +709,7 @@ inline bool message_queue_t<VoidPointer>::timed_send
    (const void *buffer, size_type buffer_size
    ,unsigned int priority, const boost::posix_time::ptime &abs_time)
 {
-   if(abs_time == boost::posix_time::pos_infin){
+   if(abs_time.is_pos_infinity()){
       this->send(buffer, buffer_size, priority);
       return true;
    }
@@ -834,7 +834,7 @@ inline bool
                                 size_type &recvd_size,   unsigned int &priority,
                                 const boost::posix_time::ptime &abs_time)
 {
-   if(abs_time == boost::posix_time::pos_infin){
+   if(abs_time.is_pos_infinity()){
       this->receive(buffer, buffer_size, recvd_size, priority);
       return true;
    }

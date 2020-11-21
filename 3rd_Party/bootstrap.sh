@@ -8,4 +8,5 @@ export MACOSX_DEPLOYMENT_TARGET="10.15"
 ./z/bootstrap.sh
 ./bz2/bootstrap.sh
 ./lzma/bootstrap.sh
+./openssl/bootstrap.sh
 ./spdlog/bootstrap.sh

@@ -19,11 +19,11 @@ cmake .. && make -j zlibstatic
 cd ../../..
 
 rm -rf ./include/
-rm -rf ./built/
+rm -rf ./lib/
 mkdir include
-mkdir built
+mkdir lib
 
-cp ${TMP_DIR}/zlib-1.2.11/build/libz.a ./built/
+cp ${TMP_DIR}/zlib-1.2.11/build/libz.a ./lib/
 cp ${TMP_DIR}/zlib-1.2.11/build/zconf.h ./include/
 cp ${TMP_DIR}/zlib-1.2.11/zlib.h ./include/
 

@@ -9,7 +9,8 @@ export MACOSX_DEPLOYMENT_TARGET="10.15"
 ./bz2/bootstrap.sh
 ./lzma/bootstrap.sh
 ./openssl/bootstrap.sh
-./curl/bootstrap.sh
+./libcurl/bootstrap.sh
+./libssh2/bootstrap.sh
 ./pugixml/bootstrap.sh
 ./boost/bootstrap.sh
 ./spdlog/bootstrap.sh

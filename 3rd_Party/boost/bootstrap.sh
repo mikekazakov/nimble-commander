@@ -17,11 +17,11 @@ cd boost_1_74_0
 cd ../..
 
 rm -rf ./include/
-rm -rf ./built/
+rm -rf ./lib/
 mkdir include
-mkdir built
+mkdir lib
 
 cp -R ${TMP_DIR}/boost_1_74_0/boost ./include/
-cp ${TMP_DIR}/boost_1_74_0/stage/lib/*.a ./built/
+cp ${TMP_DIR}/boost_1_74_0/stage/lib/*.a ./lib/
 
 rm -rf ${TMP_DIR}

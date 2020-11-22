@@ -11,15 +11,15 @@ cd ${TMP_DIR}
 
 git clone -b bzip2-1.0.8 --single-branch https://sourceware.org/git/bzip2.git
 cd bzip2
-make 
+make -j
 cd ../..
 
 rm -rf ./include/
-rm -rf ./built/
+rm -rf ./lib/
 mkdir include
-mkdir built
+mkdir lib
 
-cp ${TMP_DIR}/bzip2/libbz2.a ./built/
+cp ${TMP_DIR}/bzip2/libbz2.a ./lib/
 cp ${TMP_DIR}/bzip2/bzlib.h ./include/
 
 rm -rf ${TMP_DIR} 

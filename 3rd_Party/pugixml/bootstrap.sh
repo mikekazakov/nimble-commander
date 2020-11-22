@@ -18,12 +18,12 @@ make
 cd ../../..
 
 rm -rf ./include/
-rm -rf ./built/
+rm -rf ./lib/
 mkdir include
 mkdir include/pugixml
-mkdir built
+mkdir lib
 
-cp ./pugixml.tmp/pugixml/build/*.a ./built/
+cp ./pugixml.tmp/pugixml/build/*.a ./lib/
 cp ./pugixml.tmp/pugixml/src/*.hpp ./include/pugixml/
 
 rm -rf ${TMP_DIR} 

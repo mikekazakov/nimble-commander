@@ -25,12 +25,13 @@ make -j
 
 cd ./../../
 rm -rf ./include/
-rm -rf ./built/
+rm -rf ./lib/
 
 mkdir include
 mkdir include/curl
-mkdir built
+mkdir lib
+
 cp ./curl.tmp/curl/include/curl/*.h ./include/curl/
-cp ./curl.tmp/curl/lib/.libs/libcurl.a ./built/
+cp ./curl.tmp/curl/lib/.libs/libcurl.a ./lib/
 
 rm -rf ${TMP_DIR} 

@@ -18,12 +18,12 @@ cmake .. && make -j
 
 cd ./../../../
 rm -rf ./include/
-rm -rf ./built/
+rm -rf ./lib/
 
 mkdir include
-mkdir built
+mkdir lib
 cp -R ${TMP_DIR}/spdlog/include/spdlog ./include/
-cp ${TMP_DIR}/spdlog/build/libspdlog.a ./built/
+cp ${TMP_DIR}/spdlog/build/libspdlog.a ./lib/
 
 rm -rf ${TMP_DIR}
 

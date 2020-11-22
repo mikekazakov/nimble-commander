@@ -13,26 +13,25 @@ git clone -b libssh2-1.9.0 --single-branch https://github.com/libssh2/libssh2.gi
 cd libssh2
 
 ./buildconf
-export MACOSX_DEPLOYMENT_TARGET="10.11"
 
 ./configure \
 --disable-shared \
 --enable-static \
 --enable-crypt-none \
 --enable-mac-none \
---with-libssl-prefix=${CUR_DIR}/../OpenSSL/ \
+--with-libssl-prefix=${CUR_DIR}/../OpenSSL \
 --with-libz \
-CFLAGS='-g -O3'
+CFLAGS='-O3'
 
-make
+make -j
 
 cd ./../../
 rm -rf ./include/
-rm -rf ./built/
+rm -rf ./lib/
 
 mkdir include
-mkdir built
+mkdir lib
 cp ${TMP_DIR}/libssh2/include/*.h ./include/
-cp ${TMP_DIR}/libssh2/src/.libs/libssh2.a ./built/
+cp ${TMP_DIR}/libssh2/src/.libs/libssh2.a ./lib/
 
 rm -rf ${TMP_DIR} 

@@ -26,11 +26,11 @@ make install
 cd ../..
 
 rm -rf ./include/
-rm -rf ./built/
+rm -rf ./lib/
 mkdir include
-mkdir built
+mkdir lib
 
-cp ${TMP_DIR}/installed/lib/*.a ./built/
+cp ${TMP_DIR}/installed/lib/*.a ./lib/
 cp -R ${TMP_DIR}/installed/include/* ./include/
 
 rm -rf ${TMP_DIR}

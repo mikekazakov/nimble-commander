@@ -18,11 +18,11 @@ make DESTDIR=./installed -j install
 cd ../../..
 
 rm -rf ./include/
-rm -rf ./built/
+rm -rf ./lib/
 mkdir include
-mkdir built
+mkdir lib
 
-cp ${TMP_DIR}/xz/build/liblzma.a ./built/
+cp ${TMP_DIR}/xz/build/liblzma.a ./lib/
 cp -R ${TMP_DIR}/xz/build/installed/usr/local/include/* ./include/
 
 rm -rf ${TMP_DIR}

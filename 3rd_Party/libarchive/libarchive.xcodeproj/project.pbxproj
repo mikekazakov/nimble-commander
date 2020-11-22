@@ -628,6 +628,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = CFD62C2F1C9BBF8C0021EE7F;
@@ -798,7 +799,6 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -815,8 +815,7 @@
 					"$(SRCROOT)/../lzma/include/",
 					"$(SRCROOT)/../liblzmadec/include/liblzmadec/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;
@@ -857,8 +856,7 @@
 					"$(SRCROOT)/../lzma/include/",
 					"$(SRCROOT)/../liblzmadec/include/liblzmadec/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;
 			};
@@ -867,7 +865,6 @@
 		CFD62C3D1C9BBF8C0021EE7F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/built/";
 				EXECUTABLE_PREFIX = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -876,7 +873,6 @@
 		CFD62C3E1C9BBF8C0021EE7F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/built/";
 				EXECUTABLE_PREFIX = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

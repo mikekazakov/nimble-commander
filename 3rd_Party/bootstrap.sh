@@ -13,4 +13,6 @@ export MACOSX_DEPLOYMENT_TARGET="10.15"
 ./libssh2/bootstrap.sh
 ./pugixml/bootstrap.sh
 ./boost/bootstrap.sh
+./libarchive/bootstrap.sh
 ./spdlog/bootstrap.sh
+./AppAuth/bootstrap.sh

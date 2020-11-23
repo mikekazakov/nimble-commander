@@ -16,6 +16,9 @@ CLANG_ENABLE_OBJC_ARC = YES
 // Toolchain flags
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// C
+OTHER_CFLAGS = -fvisibility=hidden
+
 // C++
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include
 

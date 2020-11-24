@@ -14,6 +14,7 @@
 		CF36DBE91F6BF3FB004A018E /* Archive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */; };
 		CF3ABD8123BA1B1A00D1878B /* Copying_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD8023BA1B1A00D1878B /* Copying_IT.mm */; };
 		CF3ABD8323BA1D8F00D1878B /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBEF9081F67E56A00C63816 /* libUtility.dylib */; };
+		CF402372256D9C440028E0B3 /* BasicOperationsSemantics_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF402371256D9C440028E0B3 /* BasicOperationsSemantics_UT.mm */; };
 		CF460003255FD0600095FC73 /* AlterSymlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9AF1F10890B0000B3EE /* AlterSymlinkDialog.mm */; };
 		CF460004255FD0600095FC73 /* LinkageJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9881F0F22850000B3EE /* LinkageJob.cpp */; };
 		CF460005255FD0600095FC73 /* CreateHardlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9B11F10890B0000B3EE /* CreateHardlinkDialog.mm */; };
@@ -89,7 +90,6 @@
 		CFE08AFD23D3719B007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 		CFE08AFE23D3719B007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 		CFE08AFF23D374B5007E99B8 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBEF9081F67E56A00C63816 /* libUtility.dylib */; };
-		CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */; };
 		CFFA95431F4C17CC0035E606 /* Info-TestsPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95451F4C17CC0035E606 /* Info-TestsPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -135,6 +135,7 @@
 		CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Archive_Tests.mm; path = tests/Archive_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF3ABD8023BA1B1A00D1878B /* Copying_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Copying_IT.mm; sourceTree = "<group>"; };
 		CF3ABD8223BA1B2800D1878B /* Environment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Environment.h; sourceTree = "<group>"; };
+		CF402371256D9C440028E0B3 /* BasicOperationsSemantics_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BasicOperationsSemantics_UT.mm; sourceTree = "<group>"; };
 		CF46FF32255FCA770095FC73 /* OperationsResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF46FFAD255FCF690095FC73 /* libOperations.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOperations.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CopyingJob.cpp; path = source/Copying/CopyingJob.cpp; sourceTree = "<group>"; };
@@ -291,7 +292,6 @@
 		CFF53B751EDE53E800F567C4 /* Operation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Operation.mm; path = source/Operation.mm; sourceTree = SOURCE_ROOT; };
 		CFF53B781EDEA83900F567C4 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = source/Job.h; sourceTree = SOURCE_ROOT; };
 		CFF53B791EDEA83900F567C4 /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = source/Job.cpp; sourceTree = SOURCE_ROOT; };
-		CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BasicOperationsSemantics_Tests.mm; path = tests/BasicOperationsSemantics_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFF53B871EE1577100F567C4 /* Operations-prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Operations-prefix.pch"; path = "source/Operations-prefix.pch"; sourceTree = "<group>"; };
 		CFF53B8C1EE24F9E00F567C4 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = include/Operations/Job.h; sourceTree = "<group>"; };
 		CFF53B8D1EE24F9E00F567C4 /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operation.h; path = include/Operations/Operation.h; sourceTree = "<group>"; };
@@ -582,7 +582,7 @@
 			children = (
 				CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */,
 				CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */,
-				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
+				CF402371256D9C440028E0B3 /* BasicOperationsSemantics_UT.mm */,
 				CF2F1152256C528400622405 /* BatchRenaming_UT.mm */,
 				CFF53B951EE252F200F567C4 /* Compression_Tests.mm */,
 				CF3ABD8023BA1B1A00D1878B /* Copying_IT.mm */,
@@ -843,6 +843,7 @@
 				CF2C101A22A0731500A5359D /* Tests.cpp in Sources */,
 				CF2C102622A4116F00A5359D /* DirectoryPathAutoCompetion_IT.mm in Sources */,
 				CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.cpp in Sources */,
+				CF402372256D9C440028E0B3 /* BasicOperationsSemantics_UT.mm in Sources */,
 				CF3ABD8123BA1B1A00D1878B /* Copying_IT.mm in Sources */,
 				CF2F1153256C528400622405 /* BatchRenaming_UT.mm in Sources */,
 				CFE08AFE23D3719B007E99B8 /* TestEnv.mm in Sources */,
@@ -916,7 +917,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */,
 				CF36DBE91F6BF3FB004A018E /* Archive_Tests.mm in Sources */,
 				CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */,
 				CFC4F99A1F0F27230000B3EE /* Linkage_Tests.mm in Sources */,

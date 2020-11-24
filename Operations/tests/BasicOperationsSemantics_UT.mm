@@ -1,5 +1,5 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#import <XCTest/XCTest.h>
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "Tests.h"
 #include <thread>
 #include "../include/Operations/Operation.h"
 #include "../include/Operations/Job.h"
@@ -31,14 +31,9 @@ struct MyOperation : public Operation
 
 }
 
-@interface BasicOperationsSemanticsTests : XCTestCase
+#define PREFIX "Basic Operations Semantics: "
 
-@end
-
-@implementation BasicOperationsSemanticsTests
-
-
-- (void)testExternalWait
+TEST_CASE(PREFIX"External wait")
 {
     MyOperation myop;
     
@@ -48,42 +43,40 @@ struct MyOperation : public Operation
     myop.ObserveUnticketed(Operation::NotifyAboutFinish, [&]{ cv.notify_all(); });    
     
     myop.Start();
-    XCTAssert( myop.State() == OperationState::Running );
+    REQUIRE( myop.State() == OperationState::Running );
 
     std::unique_lock<std::mutex> lock{cv_lock};
     cv.wait(lock, [&]{ return myop.State() >= OperationState::Stopped; });
 
-    XCTAssert( myop.State() == OperationState::Completed );
+    REQUIRE( myop.State() == OperationState::Completed );
 }
 
-- (void)testBuiltinWait
+TEST_CASE(PREFIX"builtin wait")
 {
     MyOperation myop;
     myop.Start();
     myop.Wait();
-    XCTAssert( myop.State() == OperationState::Completed );
+    REQUIRE( myop.State() == OperationState::Completed );
 }
 
-- (void)testBuiltinPartialWait
+TEST_CASE(PREFIX"builtin partial wait")
 {
     MyOperation myop;
     myop.Start();
-    XCTAssert( myop.Wait( std::chrono::milliseconds{200} ) == false );
-    XCTAssert( myop.State() == OperationState::Running );
+    REQUIRE( myop.Wait( std::chrono::milliseconds{200} ) == false );
+    REQUIRE( myop.State() == OperationState::Running );
 }
 
-- (void)testAccidentalOperationWait
+TEST_CASE(PREFIX"accidental operation wait")
 {
     MyOperation myop;
     myop.Start();
-    XCTAssert( myop.State() == OperationState::Running );
+    REQUIRE( myop.State() == OperationState::Running );
 }
 
-- (void)testNonStartedOperationBehaviour
+TEST_CASE(PREFIX"non-started operation behaviour")
 {
     MyOperation myop;
-    XCTAssert( myop.State() == OperationState::Cold );
+    REQUIRE( myop.State() == OperationState::Cold );
 }
-
-@end
 

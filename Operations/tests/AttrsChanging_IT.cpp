@@ -20,7 +20,7 @@ TEST_CASE(PREFIX "chmod")
 {
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
-    const auto path = tmp_dir.directory + "test";
+    const auto path = tmp_dir.directory / "test";
     close(creat(path.c_str(), 0755));
     AttrsChangingCommand cmd;
     cmd.items = FetchItems(tmp_dir.directory, {"test"}, *native_host);
@@ -44,9 +44,9 @@ TEST_CASE(PREFIX "recursion")
 {
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
-    const auto path = tmp_dir.directory + "test";
-    const auto path1 = tmp_dir.directory + "test/qwer";
-    const auto path2 = tmp_dir.directory + "test/qwer/asdf";
+    const auto path = tmp_dir.directory / "test";
+    const auto path1 = tmp_dir.directory / "test/qwer";
+    const auto path2 = tmp_dir.directory / "test/qwer/asdf";
     mkdir(path.c_str(), 0755);
     mkdir(path1.c_str(), 0755);
     close(creat(path2.c_str(), 0755));
@@ -80,7 +80,7 @@ TEST_CASE(PREFIX "chown")
 {
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
-    const auto path = tmp_dir.directory + "test";
+    const auto path = tmp_dir.directory / "test";
     close(creat(path.c_str(), 0755));
     AttrsChangingCommand cmd;
     cmd.items = FetchItems(tmp_dir.directory, {"test"}, *native_host);
@@ -100,7 +100,7 @@ TEST_CASE(PREFIX "chflags")
 {
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
-    const auto path = tmp_dir.directory + "test";
+    const auto path = tmp_dir.directory / "test";
     close(creat(path.c_str(), 0755));
 
     AttrsChangingCommand cmd;
@@ -122,7 +122,7 @@ TEST_CASE(PREFIX "mtime")
 {
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
-    const auto path = tmp_dir.directory + "test";
+    const auto path = tmp_dir.directory / "test";
     // now - 10'000 seconds
     const long mtime =
         std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) - 10'000;
@@ -146,9 +146,9 @@ TEST_CASE(PREFIX "Item reporting")
 {
     TempTestDir tmp_dir;
     const auto native_host = TestEnv().vfs_native;
-    const auto path = tmp_dir.directory + "test";
-    const auto path1 = tmp_dir.directory + "test/dir";
-    const auto path2 = tmp_dir.directory + "test/dir/file.txt";
+    const auto path = tmp_dir.directory / "test";
+    const auto path1 = tmp_dir.directory / "test/dir";
+    const auto path2 = tmp_dir.directory / "test/dir/file.txt";
     mkdir(path.c_str(), 0755);
     mkdir(path1.c_str(), 0755);
     close(creat(path2.c_str(), 0755));

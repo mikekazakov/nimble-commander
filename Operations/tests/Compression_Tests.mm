@@ -268,9 +268,9 @@ TEST_CASE(PREFIX"Long compression stats (compressing Music.app)")
 TEST_CASE(PREFIX "Item reporting")
 {
     TempTestDir tmp_dir;
-    REQUIRE(mkdir((tmp_dir.directory + "dir").c_str(), 0755) == 0);
-    REQUIRE(close(creat((tmp_dir.directory + "dir/f1").c_str(), 0755)) == 0);
-    REQUIRE(symlink("./f1", (tmp_dir.directory + "dir/f2").c_str()) == 0);
+    REQUIRE(mkdir((tmp_dir.directory / "dir").c_str(), 0755) == 0);
+    REQUIRE(close(creat((tmp_dir.directory / "dir/f1").c_str(), 0755)) == 0);
+    REQUIRE(symlink("./f1", (tmp_dir.directory / "dir/f2").c_str()) == 0);
     const auto native_host = TestEnv().vfs_native;
     Compression operation{
         FetchItems(tmp_dir.directory, {"dir"}, *native_host), tmp_dir.directory, native_host};
@@ -286,7 +286,7 @@ TEST_CASE(PREFIX "Item reporting")
     REQUIRE(operation.State() == OperationState::Completed);
 
     const std::set<std::string> expected{
-        tmp_dir.directory + "dir", tmp_dir.directory + "dir/f1", tmp_dir.directory + "dir/f2"};
+        tmp_dir.directory / "dir", tmp_dir.directory / "dir/f1", tmp_dir.directory / "dir/f2"};
     CHECK(processed == expected);
 }
 

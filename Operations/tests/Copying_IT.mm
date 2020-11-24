@@ -34,7 +34,7 @@ TEST_CASE(PREFIX "Verify that /Applications/ and temp dir are on the same fs")
 {
     const std::string target_dir = "/Applications/";
     TempTestDir test_dir;
-    REQUIRE(TestEnv().native_fs_man->VolumeFromPath(test_dir.directory) ==
+    REQUIRE(TestEnv().native_fs_man->VolumeFromPath(test_dir.directory.native()) ==
             TestEnv().native_fs_man->VolumeFromPath(target_dir));
 }
 
@@ -48,10 +48,10 @@ TEST_CASE(PREFIX "Can rename a regular file across firmlink injection points")
 
     TempTestDir test_dir;
 
-    REQUIRE(close(creat((test_dir.directory + filename).c_str(), 0755)) == 0);
+    REQUIRE(close(creat((test_dir.directory / filename).c_str(), 0755)) == 0);
 
     struct stat orig_stat;
-    REQUIRE(stat((test_dir.directory + filename).c_str(), &orig_stat) == 0);
+    REQUIRE(stat((test_dir.directory / filename).c_str(), &orig_stat) == 0);
 
     CopyingOptions opts;
     opts.docopy = false;
@@ -78,10 +78,10 @@ TEST_CASE(PREFIX "Can rename a directory across firmlink injection points")
 
     TempTestDir test_dir;
 
-    REQUIRE(mkdir((test_dir.directory + filename).c_str(), 0755) == 0);
+    REQUIRE(mkdir((test_dir.directory / filename).c_str(), 0755) == 0);
 
     struct stat orig_stat;
-    REQUIRE(stat((test_dir.directory + filename).c_str(), &orig_stat) == 0);
+    REQUIRE(stat((test_dir.directory / filename).c_str(), &orig_stat) == 0);
 
     CopyingOptions opts;
     opts.docopy = false;
@@ -112,12 +112,12 @@ TEST_CASE(PREFIX "Can rename a non-empty directory across firmlink injection poi
 
     TempTestDir test_dir;
 
-    REQUIRE(mkdir((test_dir.directory + filename).c_str(), 0755) == 0);
-    REQUIRE(close(creat((test_dir.directory + filename + "/" + filename_in_dir).c_str(), 0755)) ==
+    REQUIRE(mkdir((test_dir.directory / filename).c_str(), 0755) == 0);
+    REQUIRE(close(creat((test_dir.directory / filename / filename_in_dir).c_str(), 0755)) ==
             0);
 
     struct stat orig_stat;
-    REQUIRE(stat((test_dir.directory + filename).c_str(), &orig_stat) == 0);
+    REQUIRE(stat((test_dir.directory / filename).c_str(), &orig_stat) == 0);
 
     CopyingOptions opts;
     opts.docopy = false;
@@ -144,10 +144,10 @@ TEST_CASE(PREFIX "Can rename a symlink across firmlink injection points")
 
     TempTestDir test_dir;
 
-    REQUIRE(symlink("/", (test_dir.directory + filename).c_str()) == 0);
+    REQUIRE(symlink("/", (test_dir.directory / filename).c_str()) == 0);
 
     struct stat orig_stat;
-    REQUIRE(lstat((test_dir.directory + filename).c_str(), &orig_stat) == 0);
+    REQUIRE(lstat((test_dir.directory / filename).c_str(), &orig_stat) == 0);
 
     CopyingOptions opts;
     opts.docopy = false;
@@ -178,10 +178,10 @@ TEST_CASE(PREFIX "Can rename a regular file on injected data volume")
 
     TempTestDir test_dir;
 
-    REQUIRE(close(creat((test_dir.directory + filename_src).c_str(), 0755)) == 0);
+    REQUIRE(close(creat((test_dir.directory / filename_src).c_str(), 0755)) == 0);
 
     struct stat orig_stat;
-    REQUIRE(stat((test_dir.directory + filename_src).c_str(), &orig_stat) == 0);
+    REQUIRE(stat((test_dir.directory / filename_src).c_str(), &orig_stat) == 0);
 
     CopyingOptions opts;
     opts.docopy = false;
@@ -208,23 +208,23 @@ TEST_CASE(PREFIX "Correctly handles requests to rename into non-existing dir")
 
     TempTestDir test_dir;
 
-    REQUIRE(close(creat((test_dir.directory + filename).c_str(), 0755)) == 0);
+    REQUIRE(close(creat((test_dir.directory / filename).c_str(), 0755)) == 0);
 
     struct stat orig_stat;
-    REQUIRE(stat((test_dir.directory + filename).c_str(), &orig_stat) == 0);
+    REQUIRE(stat((test_dir.directory / filename).c_str(), &orig_stat) == 0);
 
     CopyingOptions opts;
     opts.docopy = false;
 
     auto host = TestEnv().vfs_native;
     Copying op(FetchItems(test_dir.directory, {filename}, *host),
-               test_dir.directory + target_dir + filename,
+               test_dir.directory / target_dir / filename,
                host,
                opts);
     RunOperationAndCheckSuccess(op);
 
     struct stat renamed_stat;
-    REQUIRE(stat((test_dir.directory + target_dir + filename).c_str(), &renamed_stat) == 0);
+    REQUIRE(stat((test_dir.directory / target_dir / filename).c_str(), &renamed_stat) == 0);
 
     // Verify that the file was renamed instead of copied+deleted
     CHECK(renamed_stat.st_dev == orig_stat.st_dev);
@@ -234,13 +234,13 @@ TEST_CASE(PREFIX "Correctly handles requests to rename into non-existing dir")
 TEST_CASE(PREFIX "Reports item status")
 {
     TempTestDir test_dir;
-    REQUIRE(mkdir((test_dir.directory + "A").c_str(), 0755) == 0);
-    REQUIRE(close(creat((test_dir.directory + "A/f1").c_str(), 0755)) == 0);
-    REQUIRE(close(creat((test_dir.directory + "A/f2").c_str(), 0755)) == 0);
+    REQUIRE(mkdir((test_dir.directory / "A").c_str(), 0755) == 0);
+    REQUIRE(close(creat((test_dir.directory / "A/f1").c_str(), 0755)) == 0);
+    REQUIRE(close(creat((test_dir.directory / "A/f2").c_str(), 0755)) == 0);
 
     auto host = TestEnv().vfs_native;
     std::set<std::string> processed;
-    Copying op(FetchItems(test_dir.directory, {"A"}, *host), test_dir.directory + "B", host, {});
+    Copying op(FetchItems(test_dir.directory, {"A"}, *host), test_dir.directory / "B", host, {});
     op.SetItemStatusCallback([&](nc::ops::ItemStateReport _report) {
         REQUIRE(&_report.host == host.get());
         REQUIRE(_report.status == nc::ops::ItemStatus::Processed);
@@ -249,6 +249,6 @@ TEST_CASE(PREFIX "Reports item status")
     RunOperationAndCheckSuccess(op);
 
     const std::set<std::string> expected{
-        test_dir.directory + "A", test_dir.directory + "A/f1", test_dir.directory + "A/f2"};
+        test_dir.directory / "A", test_dir.directory / "A/f1", test_dir.directory / "A/f2"};
     CHECK(processed == expected);
 }

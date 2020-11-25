@@ -16,6 +16,7 @@
 		CF402372256D9C440028E0B3 /* BasicOperationsSemantics_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF402371256D9C440028E0B3 /* BasicOperationsSemantics_UT.mm */; };
 		CF40237C256D9F1A0028E0B3 /* Linkage_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF40237B256D9F1A0028E0B3 /* Linkage_IT.mm */; };
 		CF40238A256DA6850028E0B3 /* Archive_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF402389256DA6850028E0B3 /* Archive_IT.mm */; };
+		CF402397256EFA580028E0B3 /* DirectoryCreations_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_IT.mm */; };
 		CF460003255FD0600095FC73 /* AlterSymlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9AF1F10890B0000B3EE /* AlterSymlinkDialog.mm */; };
 		CF460004255FD0600095FC73 /* LinkageJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9881F0F22850000B3EE /* LinkageJob.cpp */; };
 		CF460005255FD0600095FC73 /* CreateHardlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9B11F10890B0000B3EE /* CreateHardlinkDialog.mm */; };
@@ -85,7 +86,6 @@
 		CF46FFFE255FD0590095FC73 /* DirectoryCreationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.cpp */; };
 		CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */; };
 		CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */; };
-		CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */; };
 		CFC4F9231F09DFF60000B3EE /* Deletion_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */; };
 		CFE08AFD23D3719B007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 		CFE08AFE23D3719B007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
@@ -216,7 +216,7 @@
 		CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreation.mm; path = source/DirectoryCreation/DirectoryCreation.mm; sourceTree = "<group>"; };
 		CFC4F9061F06253D0000B3EE /* DirectoryCreationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreationJob.h; path = source/DirectoryCreation/DirectoryCreationJob.h; sourceTree = "<group>"; };
 		CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DirectoryCreationJob.cpp; path = source/DirectoryCreation/DirectoryCreationJob.cpp; sourceTree = "<group>"; };
-		CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreations_Tests.mm; path = tests/DirectoryCreations_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreations_IT.mm; path = tests/DirectoryCreations_IT.mm; sourceTree = SOURCE_ROOT; };
 		CFC4F9171F09D9740000B3EE /* Deletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Deletion.h; path = source/Deletion/Deletion.h; sourceTree = "<group>"; };
 		CFC4F9181F09D9740000B3EE /* Deletion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Deletion.mm; path = source/Deletion/Deletion.mm; sourceTree = "<group>"; };
 		CFC4F9191F09D9740000B3EE /* DeletionJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeletionJob.cpp; path = source/Deletion/DeletionJob.cpp; sourceTree = "<group>"; };
@@ -588,7 +588,7 @@
 				CF3ABD8023BA1B1A00D1878B /* Copying_IT.mm */,
 				CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */,
 				CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */,
-				CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */,
+				CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_IT.mm */,
 				CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */,
 				CF3ABD8223BA1B2800D1878B /* Environment.h */,
 				CF40237B256D9F1A0028E0B3 /* Linkage_IT.mm */,
@@ -850,6 +850,7 @@
 				CF40238A256DA6850028E0B3 /* Archive_IT.mm in Sources */,
 				CF40237C256D9F1A0028E0B3 /* Linkage_IT.mm in Sources */,
 				CF2C102722A4128500A5359D /* Compression_IT.mm in Sources */,
+				CF402397256EFA580028E0B3 /* DirectoryCreations_IT.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -921,7 +922,6 @@
 			files = (
 				CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */,
 				CFE08AFD23D3719B007E99B8 /* TestEnv.mm in Sources */,
-				CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */,
 				CFC4F9231F09DFF60000B3EE /* Deletion_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

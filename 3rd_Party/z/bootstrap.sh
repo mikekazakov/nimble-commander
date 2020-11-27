@@ -14,7 +14,11 @@ gunzip -c zlib-1.2.11.tar.gz | tar xopf -
 
 cd zlib-1.2.11
 mkdir build && cd build
-cmake .. && make -j zlibstatic
+cmake \
+  -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+  -D CMAKE_C_FLAGS="-fvisibility=hidden -flto" \
+  ..
+make -j zlibstatic
 
 cd ../../..
 

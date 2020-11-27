@@ -4,7 +4,7 @@ set -o xtrace
 set -e
 
 CUR_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )
-TMP_DIR=${CUR_DIR}/rapidjson.tmp
+TMP_DIR=${CUR_DIR}/letsmove.tmp
 
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 

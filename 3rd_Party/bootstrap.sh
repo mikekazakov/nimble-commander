@@ -16,3 +16,4 @@ export MACOSX_DEPLOYMENT_TARGET="10.15"
 ./libarchive/bootstrap.sh
 ./spdlog/bootstrap.sh
 ./AppAuth/bootstrap.sh
+./Sparkle/bootstrap.sh

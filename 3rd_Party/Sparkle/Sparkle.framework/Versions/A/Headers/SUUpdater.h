@@ -9,7 +9,11 @@
 #ifndef SUUPDATER_H
 #define SUUPDATER_H
 
+#if __has_feature(modules)
+@import Cocoa;
+#else
 #import <Cocoa/Cocoa.h>
+#endif
 #import "SUExport.h"
 #import "SUVersionComparisonProtocol.h"
 #import "SUVersionDisplayProtocol.h"
@@ -185,6 +189,8 @@ SU_EXPORT @interface SUUpdater : NSObject
     For UI-less/daemon apps that aren't usually quit, instead of this function,
     you can use the delegate method
     SUUpdaterDelegate::updater:willInstallUpdateOnQuit:immediateInstallationInvocation:
+    or
+    SUUpdaterDelegate::updater:willInstallUpdateOnQuit:immediateInstallationBlock:
     to immediately start installation when an update was found.
 
     A progress dialog is shown but the user will never be prompted to read the

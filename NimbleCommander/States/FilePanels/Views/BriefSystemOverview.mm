@@ -140,7 +140,6 @@ static NSTextField *CreateStockTF()
         cpu_box.translatesAutoresizingMaskIntoConstraints = NO;
         cpu_box.titlePosition = NSAtTop;
         cpu_box.contentViewMargins = {2, 2};
-        cpu_box.borderType = NSLineBorder;
         cpu_box.title = NSLocalizedString(@"CPU", "Brief System Information cpu box title");
         [self addSubview:cpu_box];
         
@@ -206,7 +205,6 @@ static NSTextField *CreateStockTF()
         ram_box.translatesAutoresizingMaskIntoConstraints = NO;
         ram_box.titlePosition = NSAtTop;
         ram_box.contentViewMargins = {2, 2};
-        ram_box.borderType = NSLineBorder;
         ram_box.title = NSLocalizedString(@"RAM", "Brief System Information ram box title");
         [self addSubview:ram_box];
     
@@ -270,7 +268,6 @@ static NSTextField *CreateStockTF()
         system_box.translatesAutoresizingMaskIntoConstraints = NO;
         system_box.titlePosition = NSAtTop;
         system_box.contentViewMargins = {2, 2};
-        system_box.borderType = NSLineBorder;
         system_box.title = NSLocalizedString(@"General", "Brief System Information general box title");
         [self addSubview:system_box];
     
@@ -335,7 +332,6 @@ static NSTextField *CreateStockTF()
         storage_box.translatesAutoresizingMaskIntoConstraints = NO;
         storage_box.titlePosition = NSAtTop;
         storage_box.contentViewMargins = {2, 2};
-        storage_box.borderType = NSLineBorder;
         storage_box.title = NSLocalizedString(@"Storage", "Brief System Information storage box title");
         [self addSubview:storage_box];
     

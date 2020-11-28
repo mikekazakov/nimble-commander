@@ -66,7 +66,9 @@
 		CF460164256125E50095FC73 /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E271C992F35001D8B02 /* SystemInformation.mm */; };
 		CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C39922B974210043E825 /* UTIImpl_UT.cpp */; };
 		CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */; };
+		CF88363925716F9300BAC081 /* VersionCompare_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF88363825716F9300BAC081 /* VersionCompare_UT.cpp */; };
 		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
+		CFC41DAB257159630037677B /* VersionCompare.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC41DAA257159630037677B /* VersionCompare.mm */; };
 		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
 		CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */; };
 		CFE3F1C422932CCF009D6AB4 /* ByteCountFormatter_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */; };
@@ -156,6 +158,7 @@
 		CF6E64EC1F62721C00BF986E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CF84C8E61DB867F200B4E888 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = include/Utility/Layout.h; sourceTree = "<group>"; };
 		CF84C8E81DB867FC00B4E888 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = source/Layout.mm; sourceTree = "<group>"; };
+		CF88363825716F9300BAC081 /* VersionCompare_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VersionCompare_UT.cpp; path = tests/VersionCompare_UT.cpp; sourceTree = "<group>"; };
 		CF960E171C992F2C001D8B02 /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encodings.h; path = include/Utility/Encodings.h; sourceTree = "<group>"; };
 		CF960E181C992F2C001D8B02 /* HexadecimalColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexadecimalColor.h; path = include/Utility/HexadecimalColor.h; sourceTree = "<group>"; };
 		CF960E191C992F2C001D8B02 /* ObjCpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjCpp.h; path = include/Utility/ObjCpp.h; sourceTree = "<group>"; };
@@ -171,6 +174,8 @@
 		CFB0F235215A076F0088C18E /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMask.h; path = include/Utility/FileMask.h; sourceTree = "<group>"; };
 		CFB0F237215A07770088C18E /* FileMask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask.cpp; path = source/FileMask.cpp; sourceTree = "<group>"; };
 		CFB0F239215A07830088C18E /* FileMask_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask_UT.cpp; path = tests/FileMask_UT.cpp; sourceTree = "<group>"; };
+		CFC41DA92571594E0037677B /* VersionCompare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VersionCompare.h; path = include/Utility/VersionCompare.h; sourceTree = "<group>"; };
+		CFC41DAA257159630037677B /* VersionCompare.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VersionCompare.mm; path = source/VersionCompare.mm; sourceTree = "<group>"; };
 		CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleComboBoxPersistentDataSource.h; path = include/Utility/SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
 		CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SimpleComboBoxPersistentDataSource.mm; path = source/SimpleComboBoxPersistentDataSource.mm; sourceTree = "<group>"; };
 		CFC546272136DAC800D288A4 /* UtilityUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UtilityUT; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -273,6 +278,7 @@
 				CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */,
 				CF308F10213781ED00915730 /* UnitTests_main.h */,
 				CF52C39922B974210043E825 /* UTIImpl_UT.cpp */,
+				CF88363825716F9300BAC081 /* VersionCompare_UT.cpp */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -348,6 +354,7 @@
 				CF26DE2821D3EFEE003F0E93 /* TemporaryFileStorageImpl.h */,
 				CF2B751522B82EF8009D4160 /* UTI.h */,
 				CF2B751922B82FE8009D4160 /* UTIImpl.h */,
+				CFC41DA92571594E0037677B /* VersionCompare.h */,
 				CF1846F51E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h */,
 				CF960E1C1C992F2C001D8B02 /* VolumeInformation.h */,
 			);
@@ -404,6 +411,7 @@
 				CF26DE2D21D3F033003F0E93 /* TemporaryFileStorageImpl.cpp */,
 				CF2B751722B82F05009D4160 /* UTI.cpp */,
 				CF2B751B22B82FF0009D4160 /* UTIImpl.cpp */,
+				CFC41DAA257159630037677B /* VersionCompare.mm */,
 				CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */,
 				CF960E281C992F35001D8B02 /* VolumeInformation.cpp */,
 			);
@@ -520,6 +528,7 @@
 				CF46014B256125E50095FC73 /* PathManip.cpp in Sources */,
 				CF460156256125E50095FC73 /* HexadecimalColor.mm in Sources */,
 				CF460154256125E50095FC73 /* TemporaryFileStorage.cpp in Sources */,
+				CFC41DAB257159630037677B /* VersionCompare.mm in Sources */,
 				CF460137256125E50095FC73 /* SyncMessageBox.mm in Sources */,
 				CF460148256125E50095FC73 /* CocoaAppearanceManager.mm in Sources */,
 				CF46014A256125E50095FC73 /* BriefOnDiskStorage.cpp in Sources */,
@@ -580,6 +589,7 @@
 				CF2C102922A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp in Sources */,
 				CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */,
 				CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */,
+				CF88363925716F9300BAC081 /* VersionCompare_UT.cpp in Sources */,
 				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
 				CF3ABD7D23B8AC0A00D1878B /* NativeFSManagerVolumeLookup_UT.cpp in Sources */,

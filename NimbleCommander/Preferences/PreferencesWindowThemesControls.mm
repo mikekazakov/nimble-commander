@@ -442,8 +442,8 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
                      completionHandler:^(NSModalResponse returnCode) {
                        if( returnCode != NSModalResponseOK )
                            return;
-                       if( sheet.filter != m_Rules.at(row_no).filter ) {
-                           m_Rules.at(row_no).filter = sheet.filter;
+                       if( sheet.filter != self->m_Rules.at(row_no).filter ) {
+                           self->m_Rules.at(row_no).filter = sheet.filter;
                            [self commit];
                        }
                      }];

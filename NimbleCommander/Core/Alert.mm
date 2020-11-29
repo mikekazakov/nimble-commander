@@ -134,8 +134,8 @@
     // use this artifical retain cycle to ensure longlivety of Alert
     m_Handler = handler;
     [m_Alert beginSheetModalForWindow:sheetWindow completionHandler:^(NSModalResponse returnCode){
-        if(m_Handler)
-            m_Handler(returnCode);
+        if(self->m_Handler)
+            self->m_Handler(returnCode);
     }];
 }
 

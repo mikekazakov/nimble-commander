@@ -347,37 +347,37 @@ child:(NSInteger)index ofItem:(nullable id)item
     }
 }
 
-- (void) importThemeWithURL:(NSURL*)url
+- (void)importThemeWithURL:(NSURL *)url
 {
     if( auto d = [NSData dataWithContentsOfURL:url] ) {
-        std::string str { (const char*)d.bytes, d.length };
-        
+        std::string str{(const char *)d.bytes, d.length};
+
         auto doc = std::make_shared<rapidjson::Document>();
-        rapidjson::ParseResult ok = doc->Parse<rapidjson::kParseCommentsFlag>( str.c_str() );
+        rapidjson::ParseResult ok = doc->Parse<rapidjson::kParseCommentsFlag>(str.c_str());
         if( !ok )
             return;
-        
+
         PreferencesWindowThemesTabImportSheet *sheet =
             [[PreferencesWindowThemesTabImportSheet alloc] init];
         sheet.importAsName = url.lastPathComponent.stringByDeletingPathExtension;
-        
+
         [sheet beginSheetForWindow:self.view.window
                  completionHandler:^(NSModalResponse returnCode) {
-                     if( returnCode != NSModalResponseOK  )
-                         return;
-                     
-                     auto name = sheet.overwriteCurrentTheme ?
-                        m_ThemeNames[m_SelectedTheme] :
-                        sheet.importAsName.UTF8String ;
-                     
-                     nc::config::Document sdoc;
-                     sdoc.CopyFrom(*doc, nc::config::g_CrtAllocator);
-                     bool result = sheet.overwriteCurrentTheme ?
-                        m_Manager->ImportThemeData( name, sdoc ) :
-                        m_Manager->AddTheme(name, sdoc);
-                     
-                     if( result )
-                         [self reloadAll];
+                   if( returnCode != NSModalResponseOK )
+                       return;
+
+                   auto name = sheet.overwriteCurrentTheme
+                                   ? self->m_ThemeNames[self->m_SelectedTheme]
+                                   : sheet.importAsName.UTF8String;
+
+                   nc::config::Document sdoc;
+                   sdoc.CopyFrom(*doc, nc::config::g_CrtAllocator);
+                   bool result = sheet.overwriteCurrentTheme
+                                     ? self->m_Manager->ImportThemeData(name, sdoc)
+                                     : self->m_Manager->AddTheme(name, sdoc);
+
+                   if( result )
+                       [self reloadAll];
                  }];
     }
 }

@@ -87,7 +87,7 @@ static std::vector<unsigned> ListDirsWithPrefix
     m_Handler = _handler;
     [_window beginSheet:self.window
       completionHandler:^([[maybe_unused]]NSModalResponse returnCode){
-          m_Handler = nullptr;
+        self->m_Handler = nullptr;
       }
      ];
 }

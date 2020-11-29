@@ -244,11 +244,11 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
             const auto new_connection = sheet.connection;
             const auto new_password = sheet.password;
             if( new_connection != connection ) {
-                m_Manager->InsertConnection(new_connection);
+                self->m_Manager->InsertConnection(new_connection);
                 [self reloadConnections];
             }
             if( new_password != password || new_connection != connection )
-                m_Manager->SetPassword(new_connection, new_password);
+                self->m_Manager->SetPassword(new_connection, new_password);
         }
     }];
 }

@@ -9,11 +9,15 @@ SDKROOT = macosx
 // Preprocessor
 GCC_PREPROCESSOR_DEFINITIONS = SPDLOG_COMPILED_LIB
 
-// Objective-C
-CLANG_ENABLE_OBJC_ARC = YES
-
 // Path to 3rd-Part dependencies. Can be overriden.
 THRDPTY=../3rd_Party
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Code generation
+////////////////////////////////////////////////////////////////////////////////////////////////////
+GCC_NO_COMMON_BLOCKS = YES
+ENABLE_STRICT_OBJC_MSGSEND = YES
+CLANG_ENABLE_OBJC_ARC = YES
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Toolchain flags
@@ -115,3 +119,4 @@ CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES
 GCC_WARN_STRICT_SELECTOR_MATCH = YES
 GCC_WARN_UNDECLARED_SELECTOR = YES
 CLANG_WARN_OBJC_ROOT_CLASS = YES
+CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES

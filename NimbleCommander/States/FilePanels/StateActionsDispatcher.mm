@@ -92,7 +92,7 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
     // overlapped terminal stuff
     if( _hasTerminal ) {
         static ActionsShortcutsManager::ShortCut hk_move_up, hk_move_down, hk_showhide, hk_focus;
-        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
+        [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
             {&hk_move_up, &hk_move_down, &hk_showhide, &hk_focus},
             {"menu.view.panels_position.move_up", "menu.view.panels_position.move_down",
              "menu.view.panels_position.showpanels", "menu.view.panels_position.focusterminal"});

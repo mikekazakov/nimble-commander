@@ -8,10 +8,11 @@
 #include "VFSInit.h"
 #include "Interactions.h"
 #include "NCHelpMenuDelegate.h"
+#include "SparkleShim.h"
+#include "NativeVFSHostInstance.h"
 
 #include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
-#include <Sparkle/Sparkle.h>
-#include <LetsMove.framework/Headers/PFMoveApplication.h>
+#include <LetsMove/PFMoveApplication.h>
 
 #include <Habanero/CommonPaths.h>
 #include <Habanero/CFDefaultsCPP.h>
@@ -79,8 +80,6 @@ using namespace nc::bootstrap;
 using nc::bootstrap::ActivationManager;
 
 static std::optional<std::string> Load(const std::string &_filepath);
-
-static SUUpdater *g_Sparkle = nil;
 
 static auto g_ConfigDirPostfix = @"/Config/";
 static auto g_StateDirPostfix = @"/State/";
@@ -418,14 +417,10 @@ static NCAppDelegate *g_Me = nil;
             dispatch_to_main_queue_after(500ms, [self]{ [self showTrialWindow]; });
 
         // setup Sparkle updater stuff
-        g_Sparkle = [SUUpdater sharedUpdater];
         NSMenuItem *item = [[NSMenuItem alloc] init];
         item.title = NSLocalizedString(@"Check for Updates...", "Menu item title for check if any Nimble Commander updates are available");
-        item.target = g_Sparkle;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wselector"
-        item.action = @selector(checkForUpdates:);
-#pragma clang diagnostic pop
+        item.target = NCBootstrapSharedSUUpdaterInstance();
+        item.action = NCBootstrapSUUpdaterAction();
         [[NSApp.mainMenu itemAtIndex:0].submenu insertItem:item atIndex:1];
     }
     
@@ -629,7 +624,8 @@ static NCAppDelegate *g_Me = nil;
 
 - (bool) processLicenseFileActivation:(NSArray<NSString *> *)_filenames
 {
-    static const auto nc_license_extension = "."s + ActivationManager::LicenseFileExtension();
+    [[clang::no_destroy]] static const auto nc_license_extension =
+        "."s + ActivationManager::LicenseFileExtension();
     
     if( _filenames.count != 1)
         return false;
@@ -792,9 +788,10 @@ static NCAppDelegate *g_Me = nil;
     return *i;
 }
 
-- (const std::shared_ptr<nc::panel::PanelViewLayoutsStorage>&) panelLayouts
+- (const std::shared_ptr<nc::panel::PanelViewLayoutsStorage> &)panelLayouts
 {
-    static auto i = std::make_shared<nc::panel::PanelViewLayoutsStorage>(g_ConfigLayoutsList);
+    [[clang::no_destroy]] static auto i =
+        std::make_shared<nc::panel::PanelViewLayoutsStorage>(g_ConfigLayoutsList);
     return i;
 }
 
@@ -810,15 +807,16 @@ static NCAppDelegate *g_Me = nil;
     return *i;
 }
 
-- (const std::shared_ptr<nc::panel::FavoriteLocationsStorage>&) favoriteLocationsStorage
+- (const std::shared_ptr<nc::panel::FavoriteLocationsStorage> &)favoriteLocationsStorage
 {
     static std::once_flag once;
-    std::call_once(once, [&]{
+    std::call_once(once, [&] {
         using t = nc::panel::FavoriteLocationsStorageImpl;
         m_Favorites = std::make_shared<t>(StateConfig(), "filePanel.favorites");
     });
-    
-    static const std::shared_ptr<nc::panel::FavoriteLocationsStorage> inst = m_Favorites;
+
+    [[clang::no_destroy]] static const std::shared_ptr<nc::panel::FavoriteLocationsStorage> inst =
+        m_Favorites;
     return inst;
 }
 
@@ -942,15 +940,16 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
 
 - (const std::shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager
 {
-    static const auto mgr = std::make_shared<ConfigBackedNetworkConnectionsManager>
-        (*g_NetworkConnectionsConfig, self.nativeFSManager);
-    static const std::shared_ptr<NetworkConnectionsManager> int_ptr = mgr;
+    [[clang::no_destroy]] static const auto mgr =
+        std::make_shared<ConfigBackedNetworkConnectionsManager>(*g_NetworkConnectionsConfig,
+                                                                self.nativeFSManager);
+    [[clang::no_destroy]] static const std::shared_ptr<NetworkConnectionsManager> int_ptr = mgr;
     return int_ptr;
 }
 
 - (nc::ops::AggregateProgressTracker&) operationsProgressTracker
 {
-    static const auto apt = []{
+    [[clang::no_destroy]] static const auto apt = []{
         const auto apt = std::make_shared<nc::ops::AggregateProgressTracker>();
         apt->SetProgressCallback([](double _progress){
             g_Me.dock.SetProgress( _progress );
@@ -972,10 +971,12 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
     return *instance;
 }
 
-- (const std::shared_ptr<nc::panel::ClosedPanelsHistory>&)closedPanelsHistory
+- (const std::shared_ptr<nc::panel::ClosedPanelsHistory> &)closedPanelsHistory
 {
-    static const auto impl = std::make_shared<nc::panel::ClosedPanelsHistoryImpl>();
-    static const std::shared_ptr<nc::panel::ClosedPanelsHistory> history = impl;
+    [[clang::no_destroy]] static const auto impl =
+        std::make_shared<nc::panel::ClosedPanelsHistoryImpl>();
+    [[clang::no_destroy]] static const std::shared_ptr<nc::panel::ClosedPanelsHistory> history =
+        impl;
     return history;
 }
 
@@ -998,12 +999,11 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
     return target_window;
 }
 
-- (nc::core::ServicesHandler&)servicesHandler
+- (nc::core::ServicesHandler &)servicesHandler
 {
-    auto window_locator = []{
-        return [g_Me windowForExternalRevealRequest];
-    };
-    static nc::core::ServicesHandler handler(window_locator, self.nativeHostPtr);
+    auto window_locator = [] { return [g_Me windowForExternalRevealRequest]; };
+    [[clang::no_destroy]] static nc::core::ServicesHandler handler(window_locator,
+                                                                   self.nativeHostPtr);
     return handler;
 }
 
@@ -1090,7 +1090,7 @@ static void DoTemporaryFileStoragePurge()
 
 - (nc::utility::UTIDB &)utiDB
 {
-    static nc::utility::UTIDBImpl uti_db;
+    [[clang::no_destroy]] static nc::utility::UTIDBImpl uti_db;
     return uti_db;
 }
 

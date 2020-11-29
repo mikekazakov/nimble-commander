@@ -9,10 +9,10 @@
 #include <numeric>
 
 static const auto g_ConfigAlgo = "filePanel.general.checksumCalculationAlgorithm";
-const static std::string g_SumsFilename = "checksums.txt";
+[[clang::no_destroy]] const static std::string g_SumsFilename = "checksums.txt";
 using nc::base::Hash;
 
-const static std::vector<std::pair<NSString*,int>> g_Algos = {
+[[clang::no_destroy]] const static std::vector<std::pair<NSString*,int>> g_Algos = {
     {@"Adler32",     Hash::Adler32},
     {@"CRC32",       Hash::CRC32},
     {@"MD2",         Hash::MD2},

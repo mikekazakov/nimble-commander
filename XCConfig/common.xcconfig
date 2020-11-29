@@ -12,6 +12,9 @@ GCC_PREPROCESSOR_DEFINITIONS = SPDLOG_COMPILED_LIB
 // Objective-C
 CLANG_ENABLE_OBJC_ARC = YES
 
+// Path to 3rd-Part dependencies. Can be overriden.
+THRDPTY=../3rd_Party
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Toolchain flags
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +26,7 @@ OTHER_CFLAGS = -fvisibility=hidden
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include
 
 // Linker
-OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -larchive -lboost_system -lboost_filesystem -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv
+OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -larchive -lboost_system -lboost_filesystem -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv -lctrail -lAppAuth-macOS
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Search paths
@@ -31,11 +34,10 @@ OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemCo
 
 // Paths - headers
 USE_HEADERMAP = NO
-THRDPTY=../3rd_Party
-HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/unrar/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include
+HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/unrar/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include $(THRDPTY)/AquaticPrime/include $(THRDPTY)/ctrail/include $(THRDPTY)/MMTabBarView $(THRDPTY)/AppAuth/include
 
 // Paths - libraries
-LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/lib $(THRDPTY)/spdlog/lib $(THRDPTY)/googletest/built $(THRDPTY)/z/lib $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/lib $(THRDPTY)/lzma/lib $(THRDPTY)/bz2/lib $(THRDPTY)/libssh2/lib $(THRDPTY)/pugixml/lib $(THRDPTY)/unrar/built
+LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/lib $(THRDPTY)/spdlog/lib $(THRDPTY)/googletest/built $(THRDPTY)/z/lib $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/lib $(THRDPTY)/lzma/lib $(THRDPTY)/bz2/lib $(THRDPTY)/libssh2/lib $(THRDPTY)/pugixml/lib $(THRDPTY)/unrar/built $(THRDPTY)/AquaticPrime/built $(THRDPTY)/ctrail/built $(THRDPTY)/AppAuth/built
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Warnings

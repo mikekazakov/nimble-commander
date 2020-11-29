@@ -527,7 +527,7 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 
 static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action)
 {
-    static const std::vector<std::pair<const char *, NSString *>> titles = {
+    [[clang::no_destroy]] static const std::vector<std::pair<const char *, NSString *>> titles = {
         {"panel.move_up", NSLocalizedString(@"File Panels ▶ Move Up", "")},
         {"panel.move_down", NSLocalizedString(@"File Panels ▶ Move Down", "")},
         {"panel.move_left", NSLocalizedString(@"File Panels ▶ Move Left", "")},

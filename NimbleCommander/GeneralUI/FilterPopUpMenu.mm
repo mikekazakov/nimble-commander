@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include "FilterPopUpMenu.h"
 #include <vector>
@@ -212,7 +212,7 @@ static OSStatus CarbonCallback(EventHandlerCallRef _handler,
         return noErr;
 }
 
-static const std::vector<bool> g_PassthruTable = []{
+[[clang::no_destroy]] static const std::vector<bool> g_PassthruTable = []{
     std::vector<bool> table(256, false);
     table[115] = true; // Home
     table[117] = true; // Delete

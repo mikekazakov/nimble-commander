@@ -26,7 +26,7 @@ struct KeycodesHardcode
     NSString *vis;
 };
 
-static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
+[[clang::no_destroy]] static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
     {123,   NSLeftArrowFunctionKey,     @"←"},
     {124,   NSRightArrowFunctionKey,    @"→"},
     {125,   NSDownArrowFunctionKey,     @"↓"},

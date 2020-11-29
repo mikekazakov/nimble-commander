@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "Theme.h"
@@ -12,10 +12,10 @@ using nc::utility::CocoaAppearanceManager;
 
 static const auto g_NameKey = "themeName";
 
-static std::shared_ptr<Theme> g_CurrentTheme;
+[[clang::no_destroy]] static std::shared_ptr<Theme> g_CurrentTheme;
 
 using TMN = ThemesManager::Notifications;
-static const fixed_eytzinger_map<std::string, uint64_t> g_EntryToNotificationMapping = {
+[[clang::no_destroy]] static const fixed_eytzinger_map<std::string, uint64_t> g_EntryToNotificationMapping = {
 {"themeAppearance", TMN::Appearance },
 {"filePanelsColoringRules_v1",          TMN::FilePanelsGeneral },
 {"filePanelsGeneralDropBorderColor",    TMN::FilePanelsGeneral },
@@ -184,7 +184,7 @@ std::shared_ptr<const nc::config::Value> ThemesManager::
     if( it != end(m_Themes) )
         return it->second;
 
-    static const auto dummy = std::make_shared<nc::config::Value>(rapidjson::kNullType);
+    [[clang::no_destroy]] static const auto dummy = std::make_shared<nc::config::Value>(rapidjson::kNullType);
     return dummy;
 }
 

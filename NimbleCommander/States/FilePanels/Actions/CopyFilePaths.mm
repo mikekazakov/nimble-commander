@@ -12,7 +12,7 @@ namespace nc::panel::actions {
 static const char* Separator()
 {
     static const auto config_path = "filePanel.general.separatorForCopyingMultipleFilenames";
-    static const auto s = GlobalConfig().GetString(config_path);
+    [[clang::no_destroy]] static const auto s = GlobalConfig().GetString(config_path);
     return s.c_str();
 }
 

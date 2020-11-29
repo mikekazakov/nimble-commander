@@ -6,7 +6,7 @@
 #include "SFTPConnectionSheetController.h"
 #include <Utility/StringExtras.h>
 
-static const auto g_SSHdir = nc::base::CommonPaths::Home() + ".ssh/";
+[[clang::no_destroy]] static const auto g_SSHdir = nc::base::CommonPaths::Home() + ".ssh/";
 
 @interface SFTPConnectionSheetController ()
 @property(nonatomic) NSString *title;

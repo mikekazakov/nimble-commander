@@ -2,12 +2,9 @@
 #include "ConfigBackedNetworkConnectionsManager.h"
 #include <dirent.h>
 #include <NetFS/NetFS.h>
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wshadow"
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#pragma clang diagnostic pop
 #include <Habanero/algo.h>
 #include <Utility/KeychainServices.h>
 #include <Utility/ObjCpp.h>
@@ -219,7 +216,7 @@ static std::optional<NetworkConnectionsManager::Connection>
 
 static const std::string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
 {
-    static const auto smb = "smb"s, afp = "afp"s, nfs = "nfs"s, unknown = ""s;
+    [[clang::no_destroy]] static const auto smb = "smb"s, afp = "afp"s, nfs = "nfs"s, unknown = ""s;
     if( p == NetworkConnectionsManager::LANShare::Protocol::SMB ) return smb;
     if( p == NetworkConnectionsManager::LANShare::Protocol::AFP ) return afp;
     if( p == NetworkConnectionsManager::LANShare::Protocol::NFS ) return nfs;
@@ -637,7 +634,7 @@ static bool TearDownSMBOrAFPMountName
 static bool TearDownNFSMountName
     ( const std::string &_name, std::string &_host, std::string &_share )
 {
-    static const auto delimiter = ":/"s;
+    [[clang::no_destroy]] static const auto delimiter = ":/"s;
     auto pos = _name.find( delimiter );
     if( pos == _name.npos )
         return false;
@@ -649,7 +646,7 @@ static bool TearDownNFSMountName
 static std::vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>>
     GetMountedRemoteFilesystems(nc::utility::NativeFSManager &_native_fs_man)
 {
-    static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
+    [[clang::no_destroy]] static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
     std::vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>> remotes;
     
     for( const auto &v: _native_fs_man.Volumes() ) {
@@ -673,7 +670,7 @@ static std::vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>>
 static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo& _volume,
                                  const NetworkConnectionsManager::LANShare &_share )
 {
-    static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
+    [[clang::no_destroy]] static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
     using protocols = NetworkConnectionsManager::LANShare::Protocol;
     if( (_share.proto == protocols::SMB && _volume.fs_type_name == smb) ||
         (_share.proto == protocols::AFP && _volume.fs_type_name == afp) ) {

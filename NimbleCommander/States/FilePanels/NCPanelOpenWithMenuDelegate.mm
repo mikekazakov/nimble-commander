@@ -1,10 +1,10 @@
 // Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
-#include <Sparkle/SUStandardVersionComparator.h>
 #include <Utility/SystemInformation.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/UTI.h>
+#include <Utility/VersionCompare.h>
 #include <VFS/VFS.h>
 #include "PanelAux.h"
 #include "PanelController.h"
@@ -29,18 +29,19 @@ static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_ha
         return [_1st.Name() localizedCompare:_2nd.Name()] < 0;
     });
 
+    nc::utility::VersionCompare ver_cmp;
     for( int i = 0; i < (int)_handlers.size() - 1; ) {
-        if( [_handlers[i].Name() isEqualToString:_handlers[i + 1].Name()] &&
-            [_handlers[i].Identifier() isEqualToString:_handlers[i + 1].Identifier()] ) {
+        auto &first = _handlers[i];
+        auto &second = _handlers[i + 1];
+        if( [first.Name() isEqualToString:second.Name()] &&
+            [first.Identifier() isEqualToString:second.Identifier()] ) {
             // choose the latest version
-            // TODO: remove sparkle here, switch to something more lightweight
-            if( [[SUStandardVersionComparator defaultComparator]
-                    compareVersion:_handlers[i].Version()
-                         toVersion:_handlers[i + 1].Version()] >=
-                NSOrderedSame ) { // _handlers[i] has later version or they are the same
+            if( ver_cmp.Compare(first.Version(), second.Version()) >= 0 ) {
+                // _handlers[i] has later version or they are the same, remove the second
                 _handlers.erase(_handlers.begin() + i + 1);
 
-            } else { // _handlers[i+1] has later version
+            } else {
+                // _handlers[i+1] has later version, remove the first
                 _handlers.erase(_handlers.begin() + i);
                 continue;
             }

@@ -11,8 +11,9 @@
 
 using namespace nc::panel;
 
-static const auto g_LayoutColumnsDDType = @"PreferencesWindowPanelsTabPrivateTableViewDataColumns";
-
+static const auto g_LayoutColumnsDDType =
+    @"com.magnumbytes.nc.pref.PreferencesWindowPanelsTabPrivateTableViewDataColumns";
+    
 @interface PreferencesToNumberValueTransformer : NSValueTransformer
 @end
 
@@ -242,21 +243,21 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
     return NSDragOperationNone;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView
-    writeRowsWithIndexes:(NSIndexSet *)rowIndexes
-            toPasteboard:(NSPasteboard *)pboard
+- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view
+                       pasteboardWriterForRow:(NSInteger)_row
 {
-    if( aTableView == self.layoutsListColumnsTable ) {
-        if( rowIndexes.firstIndex == 0 )
-            return false;
-        [pboard declareTypes:@[g_LayoutColumnsDDType] owner:self];
-        auto data = [NSKeyedArchiver archivedDataWithRootObject:rowIndexes
-                                          requiringSecureCoding:false
-                                                          error:nil];
-        [pboard setData:data forType:g_LayoutColumnsDDType];
-        return true;
-    }
-    return false;
+    if( _table_view != self.layoutsListColumnsTable )
+        return nil;
+
+    if( _row == 0 )
+        return nil;
+
+    auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
+                                      requiringSecureCoding:false
+                                                      error:nil];
+    NSPasteboardItem *pbitem = [[NSPasteboardItem alloc] init];
+    [pbitem setData:data forType:g_LayoutColumnsDDType];
+    return pbitem;
 }
 
 - (BOOL)tableView:(NSTableView *)aTableView
@@ -266,9 +267,9 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
 {
     if( aTableView == self.layoutsListColumnsTable ) {
         auto data = [info.draggingPasteboard dataForType:g_LayoutColumnsDDType];
-        NSIndexSet *inds =
-            [NSKeyedUnarchiver unarchivedObjectOfClass:NSIndexSet.class fromData:data error:nil];
-        NSInteger drag_from = inds.firstIndex;
+        NSNumber *ind =
+            [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+        NSInteger drag_from = ind.integerValue;
 
         if( drag_to == drag_from ||     // same index, above
             drag_to == drag_from + 1 || // same index, below

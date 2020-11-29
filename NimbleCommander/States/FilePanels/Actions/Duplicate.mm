@@ -18,7 +18,7 @@ namespace nc::panel::actions {
 
 using namespace std::literals;
 
-static const auto g_Suffix = "copy"s; // TODO: localize
+[[clang::no_destroy]] static const auto g_Suffix = "copy"s; // TODO: localize
 static const auto g_DeselectConfigFlag = "filePanel.general.deselectItemsAfterFileOperations";
 
 static std::unordered_set<std::string> ExtractFilenames(const VFSListing &_listing);

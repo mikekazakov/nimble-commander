@@ -147,13 +147,10 @@ static void SetupRatingOverlay(NSView *_background_view)
 
 static bool GoToForcesPanelActivation()
 {
-    static const auto fetch = []{
-        return GlobalConfig().GetBool(g_ConfigGoToActivation);
-    };
-    static bool force = []{
-        static auto ticket = GlobalConfig().Observe(g_ConfigGoToActivation, []{
-            force = fetch();
-        });
+    static const auto fetch = [] { return GlobalConfig().GetBool(g_ConfigGoToActivation); };
+    static bool force = [] {
+        [[clang::no_destroy]] static auto ticket =
+            GlobalConfig().Observe(g_ConfigGoToActivation, [] { force = fetch(); });
         return fetch();
     }();
     return force;
@@ -1110,10 +1107,11 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
 
 static bool RouteKeyboardInputIntoTerminal()
 {
-    static bool route = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
-    static auto observe_ticket = GlobalConfig().Observe(g_ConfigRouteKeyboardInputIntoTerminal, []{
-        route = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
-    });
+    static bool route = GlobalConfig().GetBool(g_ConfigRouteKeyboardInputIntoTerminal);
+    [[clang::no_destroy]] static auto observe_ticket =
+        GlobalConfig().Observe(g_ConfigRouteKeyboardInputIntoTerminal, [] {
+            route = GlobalConfig().GetBool(g_ConfigRouteKeyboardInputIntoTerminal);
+        });
     return route;
 }
 

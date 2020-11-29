@@ -60,7 +60,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
     
     static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root,
                                              hk_go_home, hk_preview, hk_go_into, kh_go_outside;
-    static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
+    [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
     {&hk_file_open, &hk_file_open_native, &hk_go_root, &hk_go_home,
         &hk_preview, &hk_go_into, &kh_go_outside},
     {"menu.file.enter", "menu.file.open", "panel.go_root", "panel.go_home",

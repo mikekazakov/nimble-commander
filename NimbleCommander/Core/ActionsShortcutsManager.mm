@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "ActionsShortcutsManager.h"
@@ -8,7 +8,7 @@
 static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
 
  // the persistance holy grail is below, change ids only in emergency case:
-static const std::vector<std::pair<const char*,int>> g_ActionsTags = {
+[[clang::no_destroy]] static const std::vector<std::pair<const char*,int>> g_ActionsTags = {
     {"menu.nimble_commander.about",                     10'000},
     {"menu.nimble_commander.preferences",               10'010},
     {"menu.nimble_commander.hide",                      10'020},
@@ -207,7 +207,7 @@ static const std::vector<std::pair<const char*,int>> g_ActionsTags = {
     {"viewer.show_goto",                                101'004}        
 };
 
-static const std::vector<std::pair<const char*, const char8_t*>> g_DefaultShortcuts = {
+[[clang::no_destroy]] static const std::vector<std::pair<const char*, const char8_t*>> g_DefaultShortcuts = {
     {"menu.nimble_commander.about",                         u8""        },
     {"menu.nimble_commander.preferences",                   u8"⌘,"      }, // cmd+,
     {"menu.nimble_commander.toggle_admin_mode",             u8""        },

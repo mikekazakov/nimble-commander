@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -40,6 +40,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
                                              NCPanelViewKeystrokeSink,
                                              MMTabBarViewDelegate>
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-interface-ivars" 
     std::function<PanelController*()> m_PanelFactory;
     std::vector<PanelController*> m_LeftPanelControllers;
     std::vector<PanelController*> m_RightPanelControllers;
@@ -64,6 +66,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     std::shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
     nc::panel::ControllerStateJSONDecoder *m_ControllerStateJSONDecoder;
     NCPanelQLPanelAdaptor *m_QLPanelAdaptor;
+#pragma clang diagnostic pop    
 }
 
 @property (nonatomic, readonly) NCMainWindowController* mainWindowController;

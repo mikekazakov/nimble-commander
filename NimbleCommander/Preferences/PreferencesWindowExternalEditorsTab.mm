@@ -5,7 +5,8 @@
 #include "PreferencesWindowExternalEditorsTab.h"
 #include <Utility/StringExtras.h>
 
-static const auto g_TableViewDataType = @"PreferencesWindowExternalEditorsTabPrivateTableViewDataType";
+static const auto g_TableViewDataType =
+    @"com.magnumbytes.nc.pref.PreferencesWindowExternalEditorsTabPrivateTableViewDataType";
 
 @interface PreferencesWindowExternalEditorsTab ()
 
@@ -141,16 +142,15 @@ static bool AskUserToDeleteEditor()
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
 }
 
-- (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
-    writeRowsWithIndexes:(NSIndexSet *)rowIndexes
-            toPasteboard:(NSPasteboard *)pboard
+- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view
+                       pasteboardWriterForRow:(NSInteger)_row
 {
-    [pboard declareTypes:@[g_TableViewDataType] owner:self];
-    auto data = [NSKeyedArchiver archivedDataWithRootObject:rowIndexes
+    auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
                                       requiringSecureCoding:false
                                                       error:nil];
-    [pboard setData:data forType:g_TableViewDataType];
-    return true;
+    NSPasteboardItem *pbitem = [[NSPasteboardItem alloc] init];
+    [pbitem setData:data forType:g_TableViewDataType];
+    return pbitem;
 }
 
 - (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
@@ -159,9 +159,9 @@ static bool AskUserToDeleteEditor()
     dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
     NSData *data = [info.draggingPasteboard dataForType:g_TableViewDataType];
-    NSIndexSet *inds =
-        [NSKeyedUnarchiver unarchivedObjectOfClass:NSIndexSet.class fromData:data error:nil];
-    NSInteger drag_from = inds.firstIndex;
+    NSNumber *ind =
+        [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+    NSInteger drag_from = ind.integerValue;
 
     if( drag_to == drag_from ||    // same index, above
         drag_to == drag_from + 1 ) // same index, below

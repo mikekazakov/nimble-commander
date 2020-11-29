@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkConnectionsManager.h"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
@@ -13,7 +13,7 @@ using namespace std::literals;
 boost::uuids::uuid NetworkConnectionsManager::MakeUUID()
 {
     static spinlock lock;
-    static boost::uuids::basic_random_generator<boost::mt19937> gen;
+    [[clang::no_destroy]] static boost::uuids::basic_random_generator<boost::mt19937> gen;
 
     std::lock_guard<spinlock> guard(lock);
     return gen();
@@ -21,7 +21,7 @@ boost::uuids::uuid NetworkConnectionsManager::MakeUUID()
 
 static const std::string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
 {
-    static const auto smb = "smb"s, afp = "afp"s, nfs = "nfs"s, unknown = ""s;
+    [[clang::no_destroy]] static const auto smb = "smb"s, afp = "afp"s, nfs = "nfs"s, unknown = ""s;
     if( p == NetworkConnectionsManager::LANShare::Protocol::SMB ) return smb;
     if( p == NetworkConnectionsManager::LANShare::Protocol::AFP ) return afp;
     if( p == NetworkConnectionsManager::LANShare::Protocol::NFS ) return nfs;

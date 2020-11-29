@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegateCPP.h"
 #include <Utility/PathManip.h>
 #include <Utility/StringExtras.h>
@@ -22,7 +22,7 @@ const std::string &AppDelegate::SupportDirectory()
     if( NCAppDelegate.me )
         return NCAppDelegate.me.supportDirectory;
     
-    static std::string support_dir = []{
+    [[clang::no_destroy]] static std::string support_dir = []{
         auto path = NSFileManager.defaultManager.applicationSupportDirectory;
         return EnsureTrailingSlash( path.fileSystemRepresentationSafe );
     }();

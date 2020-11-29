@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MASAppInstalledChecker.h"
 #include <unistd.h>
 
@@ -10,7 +10,7 @@ MASAppInstalledChecker::MASAppInstalledChecker()
 
 MASAppInstalledChecker &MASAppInstalledChecker::Instance()
 {
-    static auto inst = std::make_unique<MASAppInstalledChecker>();
+    [[clang::no_destroy]] static auto inst = std::make_unique<MASAppInstalledChecker>();
     return *inst;
 }
 

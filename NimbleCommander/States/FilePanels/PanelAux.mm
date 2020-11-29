@@ -37,7 +37,7 @@ static std::chrono::milliseconds UploadingCheckDelay()
         return std::chrono::milliseconds(value);
     };
     static std::chrono::milliseconds delay = []{
-        static auto ticket = GlobalConfig().Observe(g_CheckDelay, []{
+        [[clang::no_destroy]] static auto ticket = GlobalConfig().Observe(g_CheckDelay, []{
             delay = fetch();
         });
         return fetch();
@@ -53,7 +53,7 @@ static std::chrono::milliseconds UploadingDropDelay()
         return std::chrono::milliseconds(value);
     };
     static std::chrono::milliseconds delay = []{
-        static auto ticket = GlobalConfig().Observe(g_DropDelay, []{
+        [[clang::no_destroy]] static auto ticket = GlobalConfig().Observe(g_DropDelay, []{
             delay = fetch();
         });
         return fetch();
@@ -301,7 +301,7 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
-    static const std::vector<std::string> extensions = []{
+    [[clang::no_destroy]] static const std::vector<std::string> extensions = []{
         std::vector<std::string> v;
         auto exts_string = GlobalConfig().GetString(g_ConfigExecutableExtensionsWhitelist);
         if( auto extensions_array = [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","] )
@@ -371,7 +371,7 @@ bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept
 {
     if( !_ext )
         return false;
-    static const std::vector<std::string> archive_extensions = []{
+    [[clang::no_destroy]] static const std::vector<std::string> archive_extensions = []{
         std::vector<std::string> v;
         auto exts_string = GlobalConfig().GetString(g_ConfigArchivesExtensionsWhieList);
         if( auto extensions_array = [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","] )

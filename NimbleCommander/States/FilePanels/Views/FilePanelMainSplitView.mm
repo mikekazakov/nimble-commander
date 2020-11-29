@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -246,17 +246,18 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
 
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
 {
-    NSString* characters = theEvent.charactersIgnoringModifiers;
-    if ( characters.length != 1 )
+    NSString *characters = theEvent.charactersIgnoringModifiers;
+    if( characters.length != 1 )
         return [super performKeyEquivalent:theEvent];
-    
+
     const auto mod = theEvent.modifierFlags;
     const auto unicode = [characters characterAtIndex:0];
-    
+
     static ActionsShortcutsManager::ShortCut hk_move_left, hk_move_right;
-    static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_move_left, &hk_move_right},
-                                                                     {"menu.view.panels_position.move_left", "menu.view.panels_position.move_right"});
-    
+    [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
+        {&hk_move_left, &hk_move_right},
+        {"menu.view.panels_position.move_left", "menu.view.panels_position.move_right"});
+
     if( hk_move_left.IsKeyDown(unicode, mod) ) {
         [self OnViewPanelsPositionMoveLeft:self];
         return true;
@@ -266,7 +267,7 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
         [self OnViewPanelsPositionMoveRight:self];
         return true;
     }
-    
+
     return [super performKeyEquivalent:theEvent];
 }
 

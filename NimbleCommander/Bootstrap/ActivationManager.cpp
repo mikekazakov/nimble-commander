@@ -13,15 +13,15 @@ namespace nc::bootstrap {
 using namespace std::literals;
     
 // trial non-mas version setup
-static const auto g_LicenseExtension = "nimblecommanderlicense"s;
-static const auto g_LicenseFilename = "registration."s + g_LicenseExtension;
+[[clang::no_destroy]] static const auto g_LicenseExtension = "nimblecommanderlicense"s;
+[[clang::no_destroy]] static const auto g_LicenseFilename = "registration."s + g_LicenseExtension;
 static CFStringRef const g_DefaultsTrialExpireDate = CFSTR("TrialExpirationDate");
 static const int g_TrialPeriodDays = 30;
 static const int g_TrialNagScreenMinDays = 15; // when amount of trial days becomes less that this value - an app will start showing a nag screen upon startup
 static const double g_TrialPeriodTimeInterval = 60.*60.*24.*g_TrialPeriodDays; // 30 days
 
 // free mas version setup
-static const auto g_ProFeaturesInAppID = "com.magnumbytes.nimblecommander.paid_features"s;
+[[clang::no_destroy]] static const auto g_ProFeaturesInAppID = "com.magnumbytes.nimblecommander.paid_features"s;
 static std::optional<std::string> Load(const std::string &_filepath);
     
 static bool UserHasPaidVersionInstalled()
@@ -88,12 +88,13 @@ static std::string AquaticPrimePublicKey()
     
 ActivationManager &ActivationManager::Instance()
 {
-    static auto ext_license_support =
-        ActivationManagerBase::ExternalLicenseSupport{ AquaticPrimePublicKey(),
-                InstalledAquaticLicensePath() };
-    static auto trial_period_support = 
-        ActivationManagerBase::TrialPeriodSupport{ g_DefaultsTrialExpireDate };
-    static auto inst = ActivationManager{ ext_license_support, trial_period_support, GA() };
+    [[clang::no_destroy]] static auto ext_license_support =
+        ActivationManagerBase::ExternalLicenseSupport{AquaticPrimePublicKey(),
+                                                      InstalledAquaticLicensePath()};
+    [[clang::no_destroy]] static auto trial_period_support =
+        ActivationManagerBase::TrialPeriodSupport{g_DefaultsTrialExpireDate};
+    [[clang::no_destroy]] static auto inst =
+        ActivationManager{ext_license_support, trial_period_support, GA()};
     return inst;
 }
 

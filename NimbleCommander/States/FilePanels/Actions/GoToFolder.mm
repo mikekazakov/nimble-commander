@@ -166,7 +166,7 @@ void GoToFavoriteLocation::Perform( PanelController *_target, id _sender ) const
 
 bool GoToEnclosingFolder::Predicate( PanelController *_target ) const
 {
-    static const auto root = "/"s;
+    [[clang::no_destroy]] static const auto root = "/"s;
 
     if( _target.isUniform ) {
         if( _target.data.Listing().Directory() != root )

@@ -17,7 +17,7 @@ namespace nc::panel::actions {
 
 using namespace std::literals;
 
-static const auto g_InitialFileName = []() -> std::string {
+[[clang::no_destroy]] static const auto g_InitialFileName = []() -> std::string {
     NSString *stub = NSLocalizedString(@"untitled.txt",
                                        "Name for freshly created file by hotkey");
     if( stub && stub.length  )
@@ -26,7 +26,7 @@ static const auto g_InitialFileName = []() -> std::string {
     return "untitled.txt";
 }();
 
-static const auto g_InitialFolderName = []() -> std::string {
+[[clang::no_destroy]] static const auto g_InitialFolderName = []() -> std::string {
     NSString *stub = NSLocalizedString(@"untitled folder",
                                        "Name for freshly create folder by hotkey");
     if( stub && stub.length  )
@@ -35,7 +35,7 @@ static const auto g_InitialFolderName = []() -> std::string {
     return "untitled folder";
 }();
 
-static const auto g_InitialFolderWithItemsName = []() -> std::string {
+[[clang::no_destroy]] static const auto g_InitialFolderWithItemsName = []() -> std::string {
     NSString *stub = NSLocalizedString(@"New Folder with Items",
                                        "Name for freshly created folder by hotkey with items");
     if( stub && stub.length  )

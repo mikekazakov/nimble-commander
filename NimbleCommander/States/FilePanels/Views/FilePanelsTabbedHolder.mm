@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMTabBarView.h>
 #import <MMTabBarView/MMTabBarItem.h>
 #include "FilePanelsTabbedHolder.h"
@@ -219,7 +219,7 @@
     
     static ActionsShortcutsManager::ShortCut hk_prev, hk_next,
         hk_t1, hk_t2, hk_t3, hk_t4, hk_t5, hk_t6, hk_t7, hk_t8, hk_t9, hk_t10;
-    static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
+    [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         {&hk_prev, &hk_next, &hk_t1, &hk_t2, &hk_t3, &hk_t4, &hk_t5,
         &hk_t6, &hk_t7, &hk_t8, &hk_t9, &hk_t10},
         {"panel.show_previous_tab", "panel.show_next_tab", "panel.show_tab_no_1", "panel.show_tab_no_2",

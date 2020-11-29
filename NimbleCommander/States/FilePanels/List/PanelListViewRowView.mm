@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
@@ -111,7 +111,7 @@ using namespace nc::panel;
     }
 }
 
-struct {
+[[clang::no_destroy]] struct {
     uint64_t generation = 0;
     NSColor *focused_active_odd = nil;
     NSColor *focused_active_even = nil;

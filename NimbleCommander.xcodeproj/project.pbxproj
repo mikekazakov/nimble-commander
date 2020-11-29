@@ -51,6 +51,10 @@
 		CF0939551D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
 		CF0939561D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
 		CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
+		CF0B78F225739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
+		CF0B78F325739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
+		CF0B78F425739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
+		CF0B78F525739F61003061D0 /* SparkleShim.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0B78D925739F61003061D0 /* SparkleShim.m */; };
 		CF1100D01913788800E170FC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF15D0831E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */; };
 		CF1863FB1D8B9224008628E4 /* ProFeaturesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */; };
@@ -1553,6 +1557,8 @@
 		CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport_Tests.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF09394B1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolParameterValueSheetController.h; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolParameterValueSheetController.mm; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.mm; sourceTree = SOURCE_ROOT; };
+		CF0B78D925739F61003061D0 /* SparkleShim.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SparkleShim.m; path = NimbleCommander/Bootstrap/SparkleShim.m; sourceTree = "<group>"; };
+		CF0B78F825739F79003061D0 /* SparkleShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SparkleShim.h; path = NimbleCommander/Bootstrap/SparkleShim.h; sourceTree = "<group>"; };
 		CF0E76DF1E4C1BE30052A679 /* liblzmadec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzmadec.a; path = 3rd_Party/liblzmadec/built/liblzmadec.a; sourceTree = SOURCE_ROOT; };
 		CF1100CF1913788800E170FC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
@@ -2712,7 +2718,7 @@
 			children = (
 				CF69CFDB1DA2250C00992B84 /* libVFS.a */,
 				CFD725F31E42DBD900603077 /* VFS Tests.xctest */,
-				CF26DE3421D92135003F0E93 /* libVFSUT */,
+				CF26DE3421D92135003F0E93 /* VFSUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2816,6 +2822,8 @@
 				CF2F10B02567DF2500622405 /* NCHelpMenuDelegate.h */,
 				CF2F10972567DF2500622405 /* NCHelpMenuDelegate.mm */,
 				CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */,
+				CF0B78F825739F79003061D0 /* SparkleShim.h */,
+				CF0B78D925739F61003061D0 /* SparkleShim.m */,
 				CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */,
 				CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */,
 			);
@@ -3513,10 +3521,10 @@
 			remoteRef = CF24E1F12288A9EB00C166FA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF26DE3421D92135003F0E93 /* libVFSUT */ = {
+		CF26DE3421D92135003F0E93 /* VFSUT */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			path = libVFSUT;
+			path = VFSUT;
 			remoteRef = CF26DE3321D92135003F0E93 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -4206,6 +4214,7 @@
 				CFD7263E1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
 				CFD726CC1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF5E9A681FCE738B005608F5 /* QuickLookVFSBridge.mm in Sources */,
+				CF0B78F425739F61003061D0 /* SparkleShim.m in Sources */,
 				CFD726391E42E0D900603077 /* LaunchServices.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF233AD9219C34F900693E1A /* Helpers.mm in Sources */,
@@ -4406,6 +4415,7 @@
 				CFA53A081D433E2A00C562A7 /* GoToFolderSheetController.mm in Sources */,
 				CF04DDFC1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CFA53A091D433E2A00C562A7 /* PreferencesWindowToolsTab.mm in Sources */,
+				CF0B78F225739F61003061D0 /* SparkleShim.m in Sources */,
 				CFD726AC1E42E25100603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CFA1716320196CB400F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
 				CF2F10B12567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
@@ -4620,6 +4630,7 @@
 				CFDAC2F31DFD16550039A104 /* AppDelegate+Migration.mm in Sources */,
 				CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
+				CF0B78F325739F61003061D0 /* SparkleShim.m in Sources */,
 				CF56C2CA1DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CF4E56411D5064FE00452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF2F10B22567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
@@ -4834,6 +4845,7 @@
 				CF818B631EA0610E00BC28E6 /* MakeNew.mm in Sources */,
 				CF5E9A5A1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */,
 				CFD726611E42E1DB00603077 /* ExternalEditorInfo.mm in Sources */,
+				CF0B78F525739F61003061D0 /* SparkleShim.m in Sources */,
 				CFD7263D1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
 				CF5E9A671FCE738A005608F5 /* QuickLookVFSBridge.mm in Sources */,
 				CF2F10B42567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,

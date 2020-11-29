@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SettingsAdaptor.h"
 #include <Term/Settings.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -107,7 +107,7 @@ public:
     
 std::shared_ptr<Settings> TerminalSettings()
 {
-    static const auto settings = std::make_shared<SettingsImpl>();
+    [[clang::no_destroy]] static const auto settings = std::make_shared<SettingsImpl>();
     return settings;
 }
 

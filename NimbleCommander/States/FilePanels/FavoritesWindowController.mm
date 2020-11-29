@@ -19,7 +19,7 @@ using namespace nc::panel;
 using namespace std::literals;
 
 static const auto g_FavoritesWindowControllerDragDataType =
-    @"FavoritesWindowControllerDragDataType";
+    @"com.magnumbytes.nc.FavoritesWindowControllerDragDataType";
 
 @interface FavoritesWindowController ()
 @property(nonatomic) IBOutlet NSTableView *table;
@@ -180,16 +180,16 @@ static const auto g_FavoritesWindowControllerDragDataType =
     return external_drag ? NSDragOperationCopy : NSDragOperationMove;
 }
 
-- (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
-    writeRowsWithIndexes:(NSIndexSet *)rowIndexes
-            toPasteboard:(NSPasteboard *)pboard
+
+- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view
+                       pasteboardWriterForRow:(NSInteger)_row
 {
-    [pboard declareTypes:@[g_FavoritesWindowControllerDragDataType] owner:self];
-    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes
-                                          requiringSecureCoding:false
-                                                          error:nil]
-            forType:g_FavoritesWindowControllerDragDataType];
-    return true;
+    auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
+                                      requiringSecureCoding:false
+                                                      error:nil];
+    NSPasteboardItem *pbitem = [[NSPasteboardItem alloc] init];
+    [pbitem setData:data forType:g_FavoritesWindowControllerDragDataType];
+    return pbitem;
 }
 
 - (bool)hasFavorite:(const FavoriteLocationsStorage::Favorite &)_f
@@ -208,9 +208,9 @@ static const auto g_FavoritesWindowControllerDragDataType =
     if( [pasteboard.types containsObject:g_FavoritesWindowControllerDragDataType] ) {
         // dragging items inside table
         auto data = [info.draggingPasteboard dataForType:g_FavoritesWindowControllerDragDataType];
-        NSIndexSet *inds =
-            [NSKeyedUnarchiver unarchivedObjectOfClass:NSIndexSet.class fromData:data error:nil];
-        NSInteger drag_from = inds.firstIndex;
+        NSNumber *ind =
+            [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+        NSInteger drag_from = ind.integerValue;
 
         if( drag_to == drag_from ||    // same index, above
             drag_to == drag_from + 1 ) // same index, below

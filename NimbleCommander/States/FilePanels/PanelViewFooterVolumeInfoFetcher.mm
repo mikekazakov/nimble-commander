@@ -31,8 +31,8 @@ struct LookPath
 };
 }
 
-static std::vector<LookPath> g_Context;
-static dispatch_queue g_Queue{ "com.magnumbytes.nimblecommander.footer_fs_stat" };
+[[clang::no_destroy]] static std::vector<LookPath> g_Context;
+[[clang::no_destroy]] static dispatch_queue g_Queue{ "com.magnumbytes.nimblecommander.footer_fs_stat" };
 static const auto g_Delay = 5s;
 
 struct PanelViewFooterVolumeInfoFetcherInternals

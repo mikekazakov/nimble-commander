@@ -24,7 +24,8 @@ using namespace std::literals;
 
 @end
 
-static auto g_MyPrivateTableViewDataType = @"PreferencesWindowToolsTabPrivateTableViewDataType";
+static auto g_MyPrivateTableViewDataType =
+    @"com.magnumbytes.nc.pref.PreferencesWindowToolsTabPrivateTableViewDataType";
 
 static bool AskUserToDeleteTool()
 {
@@ -351,16 +352,15 @@ static bool AskUserToDeleteTool()
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
 }
 
-- (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
-    writeRowsWithIndexes:(NSIndexSet *)rowIndexes
-            toPasteboard:(NSPasteboard *)pboard
+- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view
+                       pasteboardWriterForRow:(NSInteger)_row
 {
-    [pboard declareTypes:@[ g_MyPrivateTableViewDataType ] owner:self];
-    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes
-                                          requiringSecureCoding:false
-                                                          error:nil]
-            forType:g_MyPrivateTableViewDataType];
-    return true;
+    auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
+                                      requiringSecureCoding:false
+                                                      error:nil];
+    NSPasteboardItem *pbitem = [[NSPasteboardItem alloc] init];
+    [pbitem setData:data forType:g_MyPrivateTableViewDataType];
+    return pbitem;
 }
 
 - (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
@@ -369,9 +369,9 @@ static bool AskUserToDeleteTool()
     dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
     NSData *data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];
-    NSIndexSet *inds =
-        [NSKeyedUnarchiver unarchivedObjectOfClass:NSIndexSet.class fromData:data error:nil];
-    NSInteger drag_from = inds.firstIndex;
+    NSNumber *ind =
+        [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+    NSInteger drag_from = ind.integerValue;
 
     if( drag_to == drag_from ||    // same index, above
         drag_to == drag_from + 1 ) // same index, below

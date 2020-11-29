@@ -1,25 +1,31 @@
-HEADER_SEARCH_PATHS = $(PROJECT_DIR)/3rd_Party/libarchive/include $(PROJECT_DIR)/3rd_Party/unrar/include $(PROJECT_DIR)/3rd_Party/AquaticPrime/include $(PROJECT_DIR)/3rd_Party/rapidjson/include $(PROJECT_DIR)/3rd_Party/boost/include $(PROJECT_DIR)/3rd_Party/AppAuth/include $(PROJECT_DIR)/3rd_Party/LetsMove $(PROJECT_DIR)/3rd_Party/MMTabBarView $(PROJECT_DIR)/3rd_Party/ctrail/include $(PROJECT_DIR)/3rd_Party/robin_hood/include $(PROJECT_DIR)/3rd_Party $(PROJECT_DIR)/Habanero/include $(PROJECT_DIR)/Utility/include $(PROJECT_DIR)/RoutedIO/include $(PROJECT_DIR)/VFS/include $(PROJECT_DIR)/VFSIcon/include $(PROJECT_DIR)/Config/include $(PROJECT_DIR)/Operations/include $(PROJECT_DIR)/Term/include $(PROJECT_DIR)/CUI/include $(PROJECT_DIR)/Viewer/include $(PROJECT_DIR)/Panel/include $(PROJECT_DIR) $(HOME)
+#include "../../XCConfig/common.xcconfig"
+THRDPTY=3rd_Party
 
-OTHER_LDFLAGS = $(inherited) -ObjC -lAppAuth-macOS -lctrail -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework QuartzCore -larchive -lboost_system -lboost_filesystem -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv
+//HEADER_SEARCH_PATHS = $(PROJECT_DIR)/3rd_Party/libarchive/include $(PROJECT_DIR)/3rd_Party/unrar/include $(PROJECT_DIR)/3rd_Party/AquaticPrime/include $(PROJECT_DIR)/3rd_Party/rapidjson/include $(PROJECT_DIR)/3rd_Party/boost/include $(PROJECT_DIR)/3rd_Party/AppAuth/include $(PROJECT_DIR)/3rd_Party/LetsMove $(PROJECT_DIR)/3rd_Party/MMTabBarView $(PROJECT_DIR)/3rd_Party/ctrail/include $(PROJECT_DIR)/3rd_Party/robin_hood/include $(PROJECT_DIR)/3rd_Party $(PROJECT_DIR)/Habanero/include $(PROJECT_DIR)/Utility/include $(PROJECT_DIR)/RoutedIO/include $(PROJECT_DIR)/VFS/include $(PROJECT_DIR)/VFSIcon/include $(PROJECT_DIR)/Config/include $(PROJECT_DIR)/Operations/include $(PROJECT_DIR)/Term/include $(PROJECT_DIR)/CUI/include $(PROJECT_DIR)/Viewer/include $(PROJECT_DIR)/Panel/include $(PROJECT_DIR) $(HOME)
+
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/3rd_Party/robin_hood/include $(PROJECT_DIR)/3rd_Party $(PROJECT_DIR)/Habanero/include $(PROJECT_DIR)/Utility/include $(PROJECT_DIR)/RoutedIO/include $(PROJECT_DIR)/VFS/include $(PROJECT_DIR)/VFSIcon/include $(PROJECT_DIR)/Config/include $(PROJECT_DIR)/Operations/include $(PROJECT_DIR)/Term/include $(PROJECT_DIR)/CUI/include $(PROJECT_DIR)/Viewer/include $(PROJECT_DIR)/Panel/include $(PROJECT_DIR) $(HOME)
+
+//OTHER_LDFLAGS = $(inherited) -ObjC -lAppAuth-macOS -lctrail -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework QuartzCore -larchive -lboost_system -lboost_filesystem -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv
 
 LD_RUNPATH_SEARCH_PATHS = @executable_path/../Frameworks
 
 FRAMEWORK_SEARCH_PATHS = $(PROJECT_DIR)/3rd_Party/Sparkle $(PROJECT_DIR)/3rd_Party/LetsMove
 
-LIBRARY_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/3rd_Party/libarchive/lib $(PROJECT_DIR)/3rd_Party/unrar/built $(PROJECT_DIR)/3rd_Party/AquaticPrime/built $(PROJECT_DIR)/3rd_Party/libssh2/lib $(PROJECT_DIR)/3rd_Party/AppAuth/built $(PROJECT_DIR)/3rd_Party/boost/lib $(PROJECT_DIR)/3rd_Party/ctrail/built $(PROJECT_DIR)/3rd_Party/spdlog/lib $(PROJECT_DIR)/3rd_Party/googletest/built $(PROJECT_DIR)/3rd_Party/z/lib $(PROJECT_DIR)/3rd_Party/OpenSSL/lib $(PROJECT_DIR)/3rd_Party/lzma/lib $(PROJECT_DIR)/3rd_Party/bz2/lib $(PROJECT_DIR)/3rd_Party/libssh2/lib $(PROJECT_DIR)/3rd_Party/pugixml/lib
+//
+//LIBRARY_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/3rd_Party/libarchive/lib $(PROJECT_DIR)/3rd_Party/unrar/built $(PROJECT_DIR)/3rd_Party/AquaticPrime/built $(PROJECT_DIR)/3rd_Party/libssh2/lib $(PROJECT_DIR)/3rd_Party/AppAuth/built $(PROJECT_DIR)/3rd_Party/boost/lib $(PROJECT_DIR)/3rd_Party/ctrail/built $(PROJECT_DIR)/3rd_Party/spdlog/lib $(PROJECT_DIR)/3rd_Party/googletest/built $(PROJECT_DIR)/3rd_Party/z/lib $(PROJECT_DIR)/3rd_Party/OpenSSL/lib $(PROJECT_DIR)/3rd_Party/lzma/lib $(PROJECT_DIR)/3rd_Party/bz2/lib $(PROJECT_DIR)/3rd_Party/libssh2/lib $(PROJECT_DIR)/3rd_Party/pugixml/lib
 
 
-USE_HEADERMAP = NO
-
-MACOSX_DEPLOYMENT_TARGET = 10.15
+//USE_HEADERMAP = NO
+//
+//MACOSX_DEPLOYMENT_TARGET = 10.15
 WRAPPER_EXTENSION = app
-VALID_ARCHS = x86_64
-SDKROOT = macosx
-CLANG_ENABLE_OBJC_ARC = YES
-OTHER_CFLAGS = -fvisibility=hidden
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror
-GCC_NO_COMMON_BLOCKS = YES
-ENABLE_STRICT_OBJC_MSGSEND = YES
-
-RUN_CLANG_STATIC_ANALYZER = NO
-
+//VALID_ARCHS = x86_64
+//SDKROOT = macosx
+//CLANG_ENABLE_OBJC_ARC = YES
+//OTHER_CFLAGS = -fvisibility=hidden
+//OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror
+//GCC_NO_COMMON_BLOCKS = YES
+//ENABLE_STRICT_OBJC_MSGSEND = YES
+//
+//RUN_CLANG_STATIC_ANALYZER = NO
+//

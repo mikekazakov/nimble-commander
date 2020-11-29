@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewLayoutSupport.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
@@ -271,7 +271,8 @@ std::vector<std::shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::Get
 
 const std::shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::LastResortLayout()
 {
-    static const std::shared_ptr<const PanelViewLayout> l = std::make_shared<PanelViewLayout>( L1() );
+    [[clang::no_destroy]] static const std::shared_ptr<const PanelViewLayout> l =
+        std::make_shared<PanelViewLayout>(L1());
     return l;
 }
 

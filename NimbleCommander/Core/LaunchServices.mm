@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "LaunchServices.h"
 #include <sys/stat.h>
 #include <VFS/VFS.h>
@@ -249,8 +249,9 @@ private:
     static std::mutex g_HandlersByPathLock;
 };
 
-std::unordered_map<std::string, CachedLaunchServiceHandler> CachedLaunchServiceHandler::g_HandlersByPath;
-std::mutex CachedLaunchServiceHandler::g_HandlersByPathLock;
+[[clang::no_destroy]] std::unordered_map<std::string, CachedLaunchServiceHandler>
+    CachedLaunchServiceHandler::g_HandlersByPath;
+[[clang::no_destroy]] std::mutex CachedLaunchServiceHandler::g_HandlersByPathLock;
 
 LaunchServiceHandler::LaunchServiceHandler( const std::string &_handler_path )
 {

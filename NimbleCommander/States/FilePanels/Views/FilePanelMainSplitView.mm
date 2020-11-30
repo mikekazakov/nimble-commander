@@ -274,9 +274,12 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
 - (IBAction)OnViewPanelsPositionMoveLeft:(id)[[maybe_unused]]sender
 {
     dispatch_assert_main_queue();
-    if( self.anyCollapsed ) {
-        if( self.isRightCollapsed )
-            [self expandRightView];
+    if( self.isLeftCollapsed ) {
+        NSBeep();
+        return;
+    }
+    if( self.isRightCollapsed ) {
+        [self expandRightView];
         return;
     }
     
@@ -313,9 +316,12 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
 - (IBAction)OnViewPanelsPositionMoveRight:(id)[[maybe_unused]]sender
 {
     dispatch_assert_main_queue();
-    if( self.anyCollapsed ) {
-        if( self.isLeftCollapsed )
-            [self expandLeftView];
+    if( self.isRightCollapsed ) {
+        NSBeep();
+        return;
+    }
+    if( self.isLeftCollapsed ) {
+        [self expandLeftView];
         return;
     }
     
@@ -407,6 +413,24 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
     left.frameSize = leftFrame.size;
     right.frame = rightFrame;
     [self display];
+}
+
+- (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)_item
+{
+    static const long move_left_tag = ActionsShortcutsManager::Instance().
+        TagFromAction("menu.view.panels_position.move_left");
+    static const long move_right_tag = ActionsShortcutsManager::Instance().
+        TagFromAction("menu.view.panels_position.move_right");
+    
+    const long item_tag = _item.tag;
+    if( item_tag == move_left_tag ) {
+        return self.isLeftCollapsed == false;
+    }
+    if( item_tag == move_right_tag ) {
+        return self.isRightCollapsed == false;
+    }
+    
+    return true;
 }
 
 @end

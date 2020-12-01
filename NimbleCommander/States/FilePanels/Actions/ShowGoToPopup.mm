@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
-#include <NimbleCommander/GeneralUI/FilterPopUpMenu.h>
+#include <CUI/FilterPopUpMenu.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>

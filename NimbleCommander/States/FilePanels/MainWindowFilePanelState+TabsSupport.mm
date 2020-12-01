@@ -11,7 +11,7 @@
 #include "PanelHistory.h"
 #include <Panel/PanelData.h>
 #include "TabContextMenu.h"
-#include <NimbleCommander/GeneralUI/FilterPopUpMenu.h>
+#include <CUI/FilterPopUpMenu.h>
 #include "Helpers/ClosedPanelsHistory.h"
 #include "Helpers/LocationFormatter.h"
 #include <NimbleCommander/Core/AnyHolder.h>

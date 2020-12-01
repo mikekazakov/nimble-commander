@@ -3,7 +3,6 @@
 #include "FilterPopUpMenu.h"
 #include <vector>
 #include <Utility/ObjCpp.h>
-#include <Utility/SystemInformation.h>
 
 @interface FilterPopUpMenu()
 
@@ -47,21 +46,14 @@
 }
 
 - (void) updateFilter:(NSString*)_filter
-{    
-    static const auto is_10_13_or_higher = 
-        nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_13;
-    
+{
     m_Filter = _filter;
     auto items = self.itemArray;
     for( int i = 1, e = (int)items.count; i < e; ++i ) {
         auto item = [items objectAtIndex:i];
         
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"
-        if( is_10_13_or_higher && item.hidden && item.allowsKeyEquivalentWhenHidden )
+        if( item.hidden && item.allowsKeyEquivalentWhenHidden )
             continue;
-#pragma clang diagnostic pop
-
         item.hidden = ![self validateItem:item];
     }
 
@@ -212,8 +204,9 @@ static OSStatus CarbonCallback(EventHandlerCallRef _handler,
         return noErr;
 }
 
-[[clang::no_destroy]] static const std::vector<bool> g_PassthruTable = []{
-    std::vector<bool> table(256, false);
+static constexpr std::array<bool, 256> g_PassthruTable = []{
+    std::array<bool, 256> table;
+    std::fill(table.begin(), table.end(), false);
     table[115] = true; // Home
     table[117] = true; // Delete
     table[116] = true; // PgUp
@@ -310,8 +303,11 @@ static OSStatus CarbonCallback(EventHandlerCallRef _handler,
 {
     const auto window = self.window;
     if( window ) {
-        if( ![window.className isEqualToString:@"NSCarbonMenuWindow"] ) {
-            NSLog(@"Sorry, but FilterPopUpMenu was designed to work with NSCarbonMenuWindow.");
+        const auto window_class = window.className;
+        const auto is_supported = [window_class isEqualToString:@"NSCarbonMenuWindow"] ||
+            [window_class isEqualToString:@"NSMenuWindowManagerWindow"];
+        if( is_supported == false ) {
+            NSLog(@"Sorry, but FilterPopUpMenu doesn't support this version of macOS");
             return;
         }
         

@@ -27,17 +27,9 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 
 - (instancetype)init
 {
-    static const auto flags = [] {
-        auto f = NSWindowStyleMaskResizable | NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
-                 NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskTexturedBackground |
-                 NSWindowStyleMaskFullSizeContentView;
-        if( nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_14 ) {
-            // on Mojave the header bar looks like shit with the textured window background,
-            // thus turning it off.
-            f &= ~NSWindowStyleMaskTexturedBackground;
-        }
-        return f;
-    }();
+    const auto flags = NSWindowStyleMaskResizable | NSWindowStyleMaskTitled |
+        NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable |
+        NSWindowStyleMaskFullSizeContentView;
 
     if( self = [super initWithContentRect:g_InitialWindowContentRect
                                 styleMask:flags
@@ -48,7 +40,11 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
         self.restorable = true;
         self.identifier = g_Identifier;
         self.title = @"";
-
+        
+        if (@available(macOS 11.0, *)) {
+            self.titlebarSeparatorStyle = NSTitlebarSeparatorStyleNone;
+        }
+        
         // window placement logic below:
         // (it may be later overwritten by Cocoa's restoration mechanism)
         if( auto mwc = NCMainWindowController.lastFocused ) {
@@ -66,8 +62,7 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
             }
         }
 
-        if( nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_12 )
-            self.tabbingMode = NSWindowTabbingModeDisallowed;
+        self.tabbingMode = NSWindowTabbingModeDisallowed;
 
         [self setAutorecalculatesContentBorderThickness:false forEdge:NSMinYEdge];
         [self setContentBorderThickness:40 forEdge:NSMinYEdge];

@@ -202,23 +202,26 @@ bool GetCPULoad(CPULoad &_load) noexcept
     return true;
 }
 
+static const OSXVersion g_Version = []{
+    const auto sys_ver = NSProcessInfo.processInfo.operatingSystemVersion;
+    if( sys_ver.majorVersion == 11 )
+        return OSXVersion::macOS_11;
+    if( sys_ver.majorVersion == 10 )
+        switch( sys_ver.minorVersion ) {
+            case 15:    return OSXVersion::OSX_15;
+            case 14:    return OSXVersion::OSX_14;
+            case 13:    return OSXVersion::OSX_13;
+            case 12:    return OSXVersion::OSX_12;
+            case 11:    return OSXVersion::OSX_11;
+            case 10:    return OSXVersion::OSX_10;
+            case 9:     return OSXVersion::OSX_9;
+        }
+    return OSXVersion::OSX_Unknown;
+}();
+
 OSXVersion GetOSXVersion() noexcept
 {
-    static const auto version = []{
-        const auto sys_ver = NSProcessInfo.processInfo.operatingSystemVersion;
-        if( sys_ver.majorVersion == 10 )
-            switch( sys_ver.minorVersion ) {
-                case 15:    return OSXVersion::OSX_15;
-                case 14:    return OSXVersion::OSX_14;
-                case 13:    return OSXVersion::OSX_13;
-                case 12:    return OSXVersion::OSX_12;
-                case 11:    return OSXVersion::OSX_11;
-                case 10:    return OSXVersion::OSX_10;
-                case 9:     return OSXVersion::OSX_9;
-            }
-        return OSXVersion::OSX_Unknown;
-    }();
-    return version;
+    return g_Version;
 }
 
 bool GetSystemOverview(SystemOverview &_overview)

@@ -38,14 +38,15 @@ struct SystemOverview
 
 enum class OSXVersion
 {
-    OSX_9       = 1090,
-    OSX_10      = 1100,
-    OSX_11      = 1110,
-    OSX_12      = 1120,
-    OSX_13      = 1130,
-    OSX_14      = 1140,
-    OSX_15      = 1150,
-    OSX_Unknown = 100500
+    OSX_9       = 100900,
+    OSX_10      = 101000,
+    OSX_11      = 101100,
+    OSX_12      = 101200,
+    OSX_13      = 101300,
+    OSX_14      = 101400,
+    OSX_15      = 101500,
+    macOS_11    = 110000,
+    OSX_Unknown = 999999
 };
     
 bool GetMemoryInfo(MemoryInfo &_mem) noexcept;

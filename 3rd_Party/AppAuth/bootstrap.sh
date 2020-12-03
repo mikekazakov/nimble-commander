@@ -25,6 +25,7 @@ $XC clean build
 
 cd ./../..
 
+rm -rf ./include
 rm -rf ./built
 
 mkdir include

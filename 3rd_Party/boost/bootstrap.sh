@@ -13,7 +13,11 @@ wget https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.zip
 unzip boost_1_74_0.zip
 cd boost_1_74_0
 ./bootstrap.sh --with-libraries=filesystem,system
-./b2 link=static
+
+./b2 \
+  cxxflags="-fvisibility=hidden -fvisibility-inlines-hidden -std=c++17 -mmacosx-version-min=10.15 -arch x86_64 -arch arm64" \
+  link=static
+ 
 cd ../..
 
 rm -rf ./include/

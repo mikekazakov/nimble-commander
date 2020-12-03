@@ -13,17 +13,22 @@ git clone -b curl-7_73_0 --single-branch https://github.com/curl/curl.git
 
 cd curl
 
-./buildconf
-./configure \
-  --disable-shared \
-  --enable-static \
-  --disable-ldap \
-  --without-libidn2 \
-  --with-secure-transport \
-  --with-zlib=${CUR_DIR}/../z/include
+mkdir build
+cd build
+
+cmake \
+  -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+  -D CMAKE_C_FLAGS="-fvisibility=hidden -flto" \
+  -D CMAKE_USE_SECTRANSP="ON" \
+  -D CURL_DISABLE_LDAP="ON" \
+  -D CURL_ZLIB="ON" \
+  -D CURL_STATICLIB="ON" \
+  -D BUILD_SHARED_LIBS="OFF" \
+  -D ZLIB_INCLUDE_DIR=${CUR_DIR}/../z/include \
+  ..
 make -j
 
-cd ./../../
+cd ./../../../
 rm -rf ./include/
 rm -rf ./lib/
 
@@ -32,6 +37,7 @@ mkdir include/curl
 mkdir lib
 
 cp ./curl.tmp/curl/include/curl/*.h ./include/curl/
-cp ./curl.tmp/curl/lib/.libs/libcurl.a ./lib/
+cp ./curl.tmp/curl/build/lib/libcurl.a ./lib/
+cp ./curl.tmp/curl/build/lib/curl_config.h ./include/curl/
 
 rm -rf ${TMP_DIR} 

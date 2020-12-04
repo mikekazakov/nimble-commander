@@ -16,10 +16,12 @@ cd openssl
   --with-zlib-lib=../../../z/built \
   --prefix=${CUR_DIR}/openssl.tmp/installed/ \
   no-shared \
+  no-asm \
   zlib \
   enable-md2 \
-  enable-rc5
-make -j
+  enable-rc5 \
+  CFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -fvisibility=hidden -flto -Os"
+make -j4
 make test
 make install
 

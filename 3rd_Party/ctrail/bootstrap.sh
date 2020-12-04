@@ -18,12 +18,12 @@ ar rcs libctrail.a CTrail-all.o
 
 cd ./../../
 rm -rf ./include/
-rm -rf ./built/
+rm -rf ./lib/
 
 mkdir include
-mkdir built
+mkdir lib
 
 cp -r ${TMP_DIR}/ctrail/include/ctrail ./include/
-cp ${TMP_DIR}/ctrail/libctrail.a ./built/
+cp ${TMP_DIR}/ctrail/libctrail.a ./lib/
 
 rm -rf ${TMP_DIR} 

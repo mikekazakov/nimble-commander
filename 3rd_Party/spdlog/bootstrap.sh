@@ -14,7 +14,12 @@ cd spdlog
 
 mkdir build && cd build
 
-cmake .. && make -j
+cmake \
+  -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+  -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
+  -D CMAKE_CXX_FLAGS="-fvisibility=hidden -flto -Os" \
+  ..
+make -j
 
 cd ./../../../
 rm -rf ./include/

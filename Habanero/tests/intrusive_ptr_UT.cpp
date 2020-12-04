@@ -370,7 +370,7 @@ TEST_CASE(PREFIX"Memory order correctness")
     std::vector<std::thread> threads;
     {
         intrusive_ptr<Counted> ptr{raw_ptr};
-        for( int i = 0; i < 10000; ++i )
+        for( int i = 0; i < 1000; ++i )
             threads.emplace_back( [ptr]{ /* destroy ptr */} );
         CHECK( Counted::alive == 1 );
     }

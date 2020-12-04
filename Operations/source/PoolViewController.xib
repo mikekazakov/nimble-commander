@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -17,27 +17,27 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="ATb-7c-oae" customClass="NCOpsPoolView">
-            <rect key="frame" x="0.0" y="0.0" width="325" height="36"/>
+        <customView misplaced="YES" id="ATb-7c-oae" customClass="NCOpsPoolView">
+            <rect key="frame" x="0.0" y="0.0" width="325" height="38"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
             <subviews>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="Uxg-px-o5e">
-                    <rect key="frame" x="0.0" y="0.0" width="325" height="36"/>
+                    <rect key="frame" x="0.0" y="0.0" width="325" height="38"/>
                 </customView>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="B4U-QC-TQx">
-                    <rect key="frame" x="24" y="0.0" width="300" height="36"/>
+                    <rect key="frame" x="24" y="0.0" width="300" height="38"/>
                 </customView>
                 <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="RvR-Jq-dpl">
-                    <rect key="frame" x="322" y="0.0" width="5" height="36"/>
+                    <rect key="frame" x="322" y="0.0" width="5" height="38"/>
                 </box>
                 <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="WYl-Hs-CbZ">
-                    <rect key="frame" x="-2" y="0.0" width="5" height="36"/>
+                    <rect key="frame" x="-2" y="0.0" width="5" height="38"/>
                 </box>
                 <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6qb-FW-bHe">
-                    <rect key="frame" x="0.0" y="18" width="24" height="18"/>
+                    <rect key="frame" x="0.0" y="19" width="24" height="19"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="24" id="BUh-Pc-D6e"/>
-                        <constraint firstAttribute="height" constant="18" id="DX7-Dh-xUc"/>
+                        <constraint firstAttribute="height" constant="19" id="DX7-Dh-xUc"/>
                     </constraints>
                     <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSAscendingSortIndicator" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="Md5-UL-FrE">
                         <behavior key="behavior" lightByContents="YES"/>
@@ -48,10 +48,10 @@
                     </connections>
                 </button>
                 <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Amm-UI-EXl">
-                    <rect key="frame" x="0.0" y="0.0" width="24" height="18"/>
+                    <rect key="frame" x="0.0" y="0.0" width="24" height="19"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="24" id="JUZ-4k-EaH"/>
-                        <constraint firstAttribute="height" constant="18" id="l7Y-uG-6tg"/>
+                        <constraint firstAttribute="height" constant="19" id="l7Y-uG-6tg"/>
                     </constraints>
                     <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSDescendingSortIndicator" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="ar8-0t-aqV">
                         <behavior key="behavior" lightByContents="YES"/>
@@ -78,6 +78,7 @@
                 <constraint firstItem="Uxg-px-o5e" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="ZwC-vN-nhs"/>
                 <constraint firstAttribute="bottom" secondItem="Uxg-px-o5e" secondAttribute="bottom" id="fbc-da-XWF"/>
                 <constraint firstAttribute="bottom" secondItem="WYl-Hs-CbZ" secondAttribute="bottom" id="g1i-2m-a0p"/>
+                <constraint firstItem="Amm-UI-EXl" firstAttribute="top" secondItem="6qb-FW-bHe" secondAttribute="bottom" id="hDk-UW-gsQ"/>
                 <constraint firstAttribute="bottom" secondItem="Amm-UI-EXl" secondAttribute="bottom" id="jM3-mG-fva"/>
                 <constraint firstItem="RvR-Jq-dpl" firstAttribute="leading" secondItem="B4U-QC-TQx" secondAttribute="trailing" id="jem-t1-mBw"/>
                 <constraint firstItem="6qb-FW-bHe" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="ne5-6p-F88"/>

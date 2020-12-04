@@ -13,7 +13,10 @@ git clone -b v5.2 --single-branch https://git.tukaani.org/xz.git
 cd xz
 mkdir build
 cd build
-cmake ..
+cmake \
+  -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+  -D CMAKE_C_FLAGS="-mmacosx-version-min=10.15 -fvisibility=hidden -flto -Os" \
+  ..
 make DESTDIR=./installed -j install
 cd ../../..
 

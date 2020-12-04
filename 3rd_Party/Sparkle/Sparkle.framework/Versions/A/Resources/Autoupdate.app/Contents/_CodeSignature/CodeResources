@@ -10,7 +10,7 @@
 		</data>
 		<key>Resources/SUStatus.nib</key>
 		<data>
-		SQXrLQWnOUECCAE/1XaZ6rWQHA8=
+		ECVWRExfxyDt5uvKRD+70wc9J6s=
 		</data>
 		<key>Resources/ar.lproj/Sparkle.strings</key>
 		<dict>
@@ -307,10 +307,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			kzbfq5k6EYpU/83itDo4x/Do2u0=
+			jbqvBVG5iEwxf6qfcX5ngEM2ba4=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"f36ba795c93942054999a5246c0bbe9e40071b3f" or cdhash H"9336dfab993a118a54ffcde2b43a38c7f0e8daed" or cdhash H"71ee62c91af4e2a9dae25e17cea7dfb575a83374" or cdhash H"395bda485e6c91ffc9f5f7229b534c3e6c86517d"</string>
+			<string>cdhash H"f0fbc69b53253ed1bc0f8d020c3aa6fe0b813d37" or cdhash H"8dbaaf0551b9884c317faa9f717e678043366dae" or cdhash H"9881254e39f345d52cfb5af1aa83c9c6515d0854" or cdhash H"46e748a8fb6f994256646653c911cb8724e741c4"</string>
 		</dict>
 		<key>Resources/AppIcon.icns</key>
 		<dict>
@@ -327,11 +327,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			SQXrLQWnOUECCAE/1XaZ6rWQHA8=
+			ECVWRExfxyDt5uvKRD+70wc9J6s=
 			</data>
 			<key>hash2</key>
 			<data>
-			jHFrj2N4s1f20vKK/2HQ5vwSkGem9qhnW4xPyy+J2LY=
+			AtY9YmPv7cUlbFWP2vCyVdi3/M+XQn98wOlrIES2Dgk=
 			</data>
 		</dict>
 		<key>Resources/ar.lproj/Sparkle.strings</key>

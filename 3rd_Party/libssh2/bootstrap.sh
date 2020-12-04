@@ -15,13 +15,13 @@ cd libssh2
 ./buildconf
 
 ./configure \
---disable-shared \
---enable-static \
---enable-crypt-none \
---enable-mac-none \
---with-libssl-prefix=${CUR_DIR}/../OpenSSL \
---with-libz \
-CFLAGS='-O3'
+  --disable-shared \
+  --enable-static \
+  --enable-crypt-none \
+  --enable-mac-none \
+  --with-libssl-prefix=${CUR_DIR}/../OpenSSL \
+  --with-libz \
+  CFLAGS='-arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -fvisibility=hidden -flto -Os'
 
 make -j
 

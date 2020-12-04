@@ -1,5 +1,5 @@
 // Architecture
-VALID_ARCHS = x86_64
+VALID_ARCHS = $(ARCHS_STANDARD_64_BIT)
 ONLY_ACTIVE_ARCH = YES
 
 // SDK
@@ -7,7 +7,10 @@ MACOSX_DEPLOYMENT_TARGET = 10.15
 SDKROOT = macosx
 
 // Preprocessor
-GCC_PREPROCESSOR_DEFINITIONS = SPDLOG_COMPILED_LIB
+
+RAPIDJSON_PP_FLAGS[arch=x86_64] = RAPIDJSON_HAS_STDSTRING=1 RAPIDJSON_HAS_CXX11_RVALUE_REFS=1 RAPIDJSON_48BITPOINTER_OPTIMIZATION=1 RAPIDJSON_SSE2=1 RAPIDJSON_SSE42=1
+RAPIDJSON_PP_FLAGS[arch=arm64]  = RAPIDJSON_HAS_STDSTRING=1 RAPIDJSON_HAS_CXX11_RVALUE_REFS=1 RAPIDJSON_48BITPOINTER_OPTIMIZATION=1 RAPIDJSON_NEON=1
+GCC_PREPROCESSOR_DEFINITIONS = SPDLOG_COMPILED_LIB $(RAPIDJSON_PP_FLAGS)
 
 // Path to 3rd-Part dependencies. Can be overriden.
 THRDPTY=../3rd_Party
@@ -15,6 +18,7 @@ THRDPTY=../3rd_Party
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Code generation
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+CLANG_X86_VECTOR_INSTRUCTIONS = sse4.2
 GCC_NO_COMMON_BLOCKS = YES
 ENABLE_STRICT_OBJC_MSGSEND = YES
 CLANG_ENABLE_OBJC_ARC = YES
@@ -27,7 +31,7 @@ CLANG_ENABLE_OBJC_ARC = YES
 OTHER_CFLAGS = -fvisibility=hidden
 
 // C++
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include -cxx-isystem$(THRDPTY)/googletest/include
 
 // Linker
 OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -larchive -lboost_system -lboost_filesystem -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv -lctrail -lAppAuth-macOS
@@ -38,10 +42,10 @@ OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemCo
 
 // Paths - headers
 USE_HEADERMAP = NO
-HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/include $(THRDPTY)/googletest/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/unrar/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include $(THRDPTY)/AquaticPrime/include $(THRDPTY)/ctrail/include $(THRDPTY)/MMTabBarView $(THRDPTY)/AppAuth/include
+HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/robin_hood/include $(THRDPTY)/Catch2/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/unrar/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include $(THRDPTY)/AquaticPrime/include $(THRDPTY)/ctrail/include $(THRDPTY)/MMTabBarView $(THRDPTY)/AppAuth/include
 
 // Paths - libraries
-LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/lib $(THRDPTY)/spdlog/lib $(THRDPTY)/googletest/built $(THRDPTY)/z/lib $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/lib $(THRDPTY)/lzma/lib $(THRDPTY)/bz2/lib $(THRDPTY)/libssh2/lib $(THRDPTY)/pugixml/lib $(THRDPTY)/unrar/built $(THRDPTY)/AquaticPrime/built $(THRDPTY)/ctrail/built $(THRDPTY)/AppAuth/built
+LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/lib $(THRDPTY)/spdlog/lib $(THRDPTY)/googletest/lib $(THRDPTY)/z/lib $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/lib $(THRDPTY)/lzma/lib $(THRDPTY)/bz2/lib $(THRDPTY)/libssh2/lib $(THRDPTY)/pugixml/lib $(THRDPTY)/unrar/lib $(THRDPTY)/AquaticPrime/lib $(THRDPTY)/ctrail/lib $(THRDPTY)/AppAuth/built
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Warnings

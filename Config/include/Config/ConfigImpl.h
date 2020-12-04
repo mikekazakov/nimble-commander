@@ -69,7 +69,6 @@ private:
         std::function<void()> callback;
         mutable std::recursive_mutex lock;
     };
-    static_assert( sizeof(Observer) == 128 );    
     using ObserverPtr = base::intrusive_ptr<const Observer>; 
     
     struct Observers : base::intrusive_ref_counter<Observers>

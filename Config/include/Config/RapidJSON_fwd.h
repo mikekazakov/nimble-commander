@@ -1,25 +1,8 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
 #include <string>
-
-#ifdef RAPIDJSON_RAPIDJSON_H_
-    #error include this file before rapidjson headers!
-#endif
-
-#define RAPIDJSON_48BITPOINTER_OPTIMIZATION   1
-// has minor effect, keep it.
-
-#define RAPIDJSON_SSE2 1
-// about a 10% faster parsing recorded, keep it.
-
-// #define RAPIDJSON_SSE42
-// can't use this option, as 10.11 can run without it
-
-#define RAPIDJSON_HAS_STDSTRING 1
-
-#define RAPIDJSON_HAS_CXX11_RVALUE_REFS 1
 
 #include <rapidjson/fwd.h>
 

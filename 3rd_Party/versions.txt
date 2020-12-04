@@ -1,12 +1,26 @@
-appauth		1.4.0
-boost 		1.74.0
-bz2 		1.0.8
-curl 		7.73.0
-libarchive 	3.3.4 + custom patches
-libssh2 	1.9.0
-lzma(xz) 	5.2.5
-openssl		1.1.1
-pugixml		1.10
-sparkle 	1.24.0
-spdlog 		1.8.1
-zlib 		1.2.11
+appauth         1.4.0                       [arm64,x64]
+aquaticprime    ???                         [arm64,x64]
+boost           1.74.0                      [arm64,x64]
+bz2             1.0.8                       [arm64,x64]
+ctrail          head                        [arm64,x64]
+curl            7.73.0                      [arm64,x64]
+gtest           1.10.0                      [arm64,x64]
+letsmove        1.25                        [arm64,x64]
+libarchive      3.3.4 + custom patches      [arm64,x64]
+libssh2         1.9.0                       [arm64,x64]
+lzma(xz)        5.2.5                       [arm64,x64]
+openssl         1.1.1                       [arm64,x64]
+robin_hood      3.9.1                       [N/A]
+pugixml         1.10                        [arm64,x64]
+sparkle 		1.24.0                      [arm64,x64]
+spdlog          1.8.1                       [arm64,x64]
+unrar           ???                         [arm64,x64]
+zlib            1.2.11                      [arm64,x64]
+
+Build flags:
+-arch x86_64
+-arch arm64
+-mmacosx-version-min=10.15
+-fvisibility=hidden
+-flto
+-Os

@@ -15,5 +15,11 @@ export MACOSX_DEPLOYMENT_TARGET="10.15"
 ./boost/bootstrap.sh
 ./libarchive/bootstrap.sh
 ./spdlog/bootstrap.sh
+./ctrail/bootstrap.sh
+./googletest/bootstrap.sh
+./unrar/bootstrap.sh
+./robin_hood/bootstrap.sh
 ./AppAuth/bootstrap.sh
 ./Sparkle/bootstrap.sh
+./LetsMove/bootstrap.sh
+./AquaticPrime/bootstrap.sh

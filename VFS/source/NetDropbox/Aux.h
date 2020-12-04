@@ -1,13 +1,5 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
-
-#ifdef RAPIDJSON_RAPIDJSON_H_
-    #error include this file before rapidjson headers!
-#endif
-
-#define RAPIDJSON_48BITPOINTER_OPTIMIZATION   1
-#define RAPIDJSON_SSE2 1
-#define RAPIDJSON_HAS_STDSTRING 1
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>

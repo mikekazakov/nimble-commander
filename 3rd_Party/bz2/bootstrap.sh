@@ -11,7 +11,9 @@ cd ${TMP_DIR}
 
 git clone -b bzip2-1.0.8 --single-branch https://sourceware.org/git/bzip2.git
 cd bzip2
-make CFLAGS="-arch x86_64 -arch arm64" -j
+make \
+  CFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -fvisibility=hidden -flto" \
+  -j
 cd ../..
 
 rm -rf ./include/

@@ -4,7 +4,7 @@ set -o xtrace
 set -e
 
 CUR_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )
-TMP_DIR=${CUR_DIR}/libssh2.tmp
+TMP_DIR=${CUR_DIR}/ctrail.tmp
 
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
@@ -12,8 +12,8 @@ cd ${TMP_DIR}
 git clone https://github.com/mikekazakov/ctrail
 cd ctrail
 
-export MACOSX_DEPLOYMENT_TARGET="10.11"
-clang++ -std=c++17 -I./include ./src/CTrail-all.cpp -c
+export MACOSX_DEPLOYMENT_TARGET="10.15"
+clang++ -arch x86_64 -arch arm64 -fvisibility=hidden -flto -Os -std=c++17 -I./include ./src/CTrail-all.cpp -c
 ar rcs libctrail.a CTrail-all.o
 
 cd ./../../

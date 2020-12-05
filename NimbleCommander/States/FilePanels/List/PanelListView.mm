@@ -137,7 +137,9 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_TableView.rowHeight = m_Geometry.LineHeight();
         m_TableView.intercellSpacing = NSMakeSize(0, 0);
         m_TableView.columnAutoresizingStyle = NSTableViewFirstColumnOnlyAutoresizingStyle;
-        m_TableView.gridStyleMask = NSTableViewSolidVerticalGridLineMask;
+        m_TableView.gridStyleMask = NSTableViewSolidVerticalGridLineMask;        
+        if (@available(macOS 11.0, *))
+            m_TableView.style = NSTableViewStylePlain;
         m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
         m_TableView.headerView = [[PanelListViewTableHeaderView alloc] init];
         [self setupColumns];

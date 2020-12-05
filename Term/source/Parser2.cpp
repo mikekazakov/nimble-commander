@@ -76,4 +76,23 @@ void PrintCommands(std::span<const Command> _commands, std::ostream &_out)
     _out.flush();
 }
 
+std::string FormatRawInput(std::span<const std::byte>  _input)
+{
+    std::string formatted;
+    formatted.reserve(_input.size());
+    for( const auto c : _input ) {
+        const auto byte = static_cast<unsigned char>(c);
+        if( byte < 32 ) {
+            constexpr const char h[16] = {
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+            formatted += "\\x";
+            formatted += h[(byte & 0xF0) >> 4];
+            formatted += h[byte & 0xF];
+        } else {
+            formatted += byte;
+        }
+    }
+    return formatted;
+}
+
 }

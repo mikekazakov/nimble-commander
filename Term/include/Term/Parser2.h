@@ -249,6 +249,7 @@ struct Command
 
 std::string VerboseDescription(const Command & _command);
 void PrintCommands(std::span<const Command> _commands, std::ostream &_out = std::cout);
+std::string FormatRawInput(std::span<const std::byte> _input);
 
 }
 

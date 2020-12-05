@@ -5,6 +5,7 @@
 #include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <Utility/AdaptiveDateFormatting.h>
 #include <Utility/StringExtras.h>
+#include <Habanero/dispatch_cpp.h>
 #include "PanelViewPresentationSettings.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
 

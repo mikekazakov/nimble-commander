@@ -9,35 +9,35 @@
 
 @implementation InternalViewerToolbalDynamicSizeLabelItem
 
-- (void) dealloc
-{
-    [self.view removeObserver:self forKeyPath:@"stringValue"];
-    [self.view removeObserver:self forKeyPath:@"controlSize"];
-}
-
-- (void) setView:(NSView *)view
-{
-    [self.view removeObserver:self forKeyPath:@"stringValue"];
-    [self.view removeObserver:self forKeyPath:@"controlSize"];
-    [view addObserver:self forKeyPath:@"stringValue" options:0 context:NULL];
-    [view addObserver:self forKeyPath:@"controlSize" options:0 context:NULL];
-    
-    [super setView:view];
-}
-
--(void)observeValueForKeyPath:(NSString *)[[maybe_unused]]keyPath
-                     ofObject:(id)object
-                       change:(NSDictionary *)[[maybe_unused]]change
-                      context:(void *)[[maybe_unused]]context
-{
-    static const auto magic_padding_number = 6;
-    if( object == self.view )
-        if( auto tf = objc_cast<NSTextField>(self.view) ) {
-            NSSize sz = [tf.attributedStringValue size];
-            self.minSize = NSMakeSize(sz.width + magic_padding_number, self.minSize.height);
-            self.maxSize = NSMakeSize(sz.width + magic_padding_number, self.maxSize.height);
-        }
-}
+//- (void) dealloc
+//{
+//    [self.view removeObserver:self forKeyPath:@"stringValue"];
+//    [self.view removeObserver:self forKeyPath:@"controlSize"];
+//}
+//
+//- (void) setView:(NSView *)view
+//{
+//    [self.view removeObserver:self forKeyPath:@"stringValue"];
+//    [self.view removeObserver:self forKeyPath:@"controlSize"];
+//    [view addObserver:self forKeyPath:@"stringValue" options:0 context:NULL];
+//    [view addObserver:self forKeyPath:@"controlSize" options:0 context:NULL];
+//    
+//    [super setView:view];
+//}
+//
+//-(void)observeValueForKeyPath:(NSString *)[[maybe_unused]]keyPath
+//                     ofObject:(id)object
+//                       change:(NSDictionary *)[[maybe_unused]]change
+//                      context:(void *)[[maybe_unused]]context
+//{
+//    static const auto magic_padding_number = 6;
+//    if( object == self.view )
+//        if( auto tf = objc_cast<NSTextField>(self.view) ) {
+//            NSSize sz = [tf.attributedStringValue size];
+//            self.minSize = NSMakeSize(sz.width + magic_padding_number, self.minSize.height);
+//            self.maxSize = NSMakeSize(sz.width + magic_padding_number, self.maxSize.height);
+//        }
+//}
 
 @end
 

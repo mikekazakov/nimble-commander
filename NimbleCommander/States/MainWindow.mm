@@ -43,6 +43,7 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
         
         if (@available(macOS 11.0, *)) {
             self.titlebarSeparatorStyle = NSTitlebarSeparatorStyleNone;
+            self.toolbarStyle = NSWindowToolbarStyleUnifiedCompact;
         }
         
         // window placement logic below:

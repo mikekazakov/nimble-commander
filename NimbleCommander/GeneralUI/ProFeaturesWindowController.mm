@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ProFeaturesWindowController.h"
 
 @interface ProFeaturesWindowController ()
@@ -46,14 +46,14 @@
 
 - (IBAction)onBuyNow:(id)[[maybe_unused]]sender
 {
-    m_DontShowAgain = (self.dontShowAgainCheckbox.state == NSOnState);
+    m_DontShowAgain = (self.dontShowAgainCheckbox.state == NSControlStateValueOn);
     [self.window close];
     [NSApplication.sharedApplication stopModalWithCode:NSModalResponseOK];    
 }
 
 - (IBAction)onContinue:(id)[[maybe_unused]]sender
 {
-    m_DontShowAgain = (self.dontShowAgainCheckbox.state == NSOnState);
+    m_DontShowAgain = (self.dontShowAgainCheckbox.state == NSControlStateValueOn);
     [self.window close];
     [NSApplication.sharedApplication stopModalWithCode:NSModalResponseCancel];    
 }

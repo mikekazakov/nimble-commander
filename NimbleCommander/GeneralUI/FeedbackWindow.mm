@@ -36,7 +36,7 @@ using namespace std::literals;
     
     if( self.rating == 5 || self.rating == 4) {
         // positive branch
-        if( nc::bootstrap::ActivationManager::ForAppStore() )
+        if( nc::bootstrap::ActivationManager::Instance().ForAppStore() )
             [self.tabView selectTabViewItemAtIndex:0];
         else
             [self.tabView selectTabViewItemAtIndex:1];

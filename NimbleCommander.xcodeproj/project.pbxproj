@@ -337,6 +337,15 @@
 		CF56C2CB1DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C71DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm */; };
 		CF56C2CF1DC35E8B00F0DF0F /* PanelListViewSizeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */; };
 		CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */; };
+		CF5BB35B258170AA00486C49 /* AppStoreHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B41DFD0B330039A104 /* AppStoreHelper.mm */; };
+		CF5BB35D258170AB00486C49 /* AppStoreHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B41DFD0B330039A104 /* AppStoreHelper.mm */; };
+		CF5BB35F258170AB00486C49 /* AppStoreHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B41DFD0B330039A104 /* AppStoreHelper.mm */; };
+		CF5BB3612581714000486C49 /* ProFeaturesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */; };
+		CF5BB3632581714000486C49 /* ProFeaturesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */; };
+		CF5BB3652581714100486C49 /* ProFeaturesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */; };
+		CF5BB3672581714600486C49 /* ProFeaturesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CF11D96244900ADFF14 /* ProFeaturesWindowController.xib */; };
+		CF5BB3692581714700486C49 /* ProFeaturesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CF11D96244900ADFF14 /* ProFeaturesWindowController.xib */; };
+		CF5BB36A2581714700486C49 /* ProFeaturesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CF11D96244900ADFF14 /* ProFeaturesWindowController.xib */; };
 		CF5C1D4F255EE6CD00ADE703 /* ViewerResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1D4E255EE6CD00ADE703 /* ViewerResources.bundle */; };
 		CF5C8BE222D0F9A200619F45 /* libViewer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A7821F65A540043A26D /* libViewer.a */; };
 		CF5C8BFA22D0FBDF00619F45 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8400FF21A2A8DE007FEF7B /* TrialWindowController.xib */; };
@@ -3761,6 +3770,7 @@
 				CF4E56C21D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF7C7CBE1E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */,
 				CF9F4B301ECD810C00E0AF82 /* FavoritesWindowController.xib in Resources */,
+				CF5BB36A2581714700486C49 /* ProFeaturesWindowController.xib in Resources */,
 				CF4E56A91D5068D800452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */,
 				CFA53A4C1D433E2A00C562A7 /* Media.xcassets in Resources */,
@@ -3818,6 +3828,7 @@
 				CF8D0D041D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */,
 				CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CF7C7CBD1E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */,
+				CF5BB3692581714700486C49 /* ProFeaturesWindowController.xib in Resources */,
 				CF4E567B1D50669100452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF3120C41A510F640062185A /* Localizable.strings in Resources */,
 				CF4E56811D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
@@ -3898,6 +3909,7 @@
 				CF8D0CE61D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
 				CFD629631C2CE7030050EC68 /* State.json in Resources */,
 				CF4E56AD1D5068E100452912 /* PreferencesWindowGeneralTab.xib in Resources */,
+				CF5BB3672581714600486C49 /* ProFeaturesWindowController.xib in Resources */,
 				CF4E56A71D5068D600452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
@@ -4303,6 +4315,7 @@
 				CFD7270A1E42E30500603077 /* FilePanelsTabbedHolder.mm in Sources */,
 				CF3E2F7A1F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */,
 				CFD726661E42E1E400603077 /* MainWindowFilePanelState.mm in Sources */,
+				CF5BB35F258170AB00486C49 /* AppStoreHelper.mm in Sources */,
 				CFB66FA21D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF6659802394075A005BF071 /* Counters.cpp in Sources */,
 				CFA539BB1D433E2A00C562A7 /* ExternalToolsSupport.mm in Sources */,
@@ -4396,6 +4409,7 @@
 				CFD726991E42E23100603077 /* PanelDataPersistency.cpp in Sources */,
 				CFD7266E1E42E1F100603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF818B4C1EA0610C00BC28E6 /* FindFiles.mm in Sources */,
+				CF5BB3652581714100486C49 /* ProFeaturesWindowController.mm in Sources */,
 				CFD727191E42E32500603077 /* ToolsMenuDelegate.mm in Sources */,
 				CFB9F109201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CF1FBF2A1E8F57E500D3569C /* OpenWithExternalEditor.mm in Sources */,
@@ -4517,6 +4531,7 @@
 				CFDAC2DE1DFD137F0039A104 /* QuickLookOverlay.mm in Sources */,
 				CF94CF941DD4418000EEA420 /* Layout.mm in Sources */,
 				CF6659812394075A005BF071 /* Counters.cpp in Sources */,
+				CF5BB35D258170AB00486C49 /* AppStoreHelper.mm in Sources */,
 				CFC4F99F1F0F40430000B3EE /* Link.mm in Sources */,
 				CF9F4A921EC9442C00E0AF82 /* Compress.mm in Sources */,
 				CF50926E201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */,
@@ -4610,6 +4625,7 @@
 				CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */,
 				CF5FE8041E14A08500CD83B4 /* ThemesManager.mm in Sources */,
 				CF4E56451D5064FE00452912 /* PreferencesWindowViewerTab.mm in Sources */,
+				CF5BB3632581714000486C49 /* ProFeaturesWindowController.mm in Sources */,
 				CF0139B51E99F7C200E44F2D /* FindFiles.mm in Sources */,
 				CF197C461FB834B7009F6C59 /* ShowTabs.mm in Sources */,
 				CFDAC21B1DFBC6CB0039A104 /* PanelHistory.mm in Sources */,
@@ -4655,6 +4671,7 @@
 				CF9F4B031ECC8DE200E0AF82 /* ExecuteInTerminal.mm in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF818B621EA0610E00BC28E6 /* FindFiles.mm in Sources */,
+				CF5BB35B258170AA00486C49 /* AppStoreHelper.mm in Sources */,
 				CFD726C51E42E29A00603077 /* Layout.mm in Sources */,
 				CF233ADA219C34F900693E1A /* Helpers.mm in Sources */,
 				CFD7266D1E42E1F000603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
@@ -4709,6 +4726,7 @@
 				CFD8CD3E1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
 				CFD726641E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */,
 				CF36DBF21F6C18F3004A018E /* TextWidthsCache.mm in Sources */,
+				CF5BB3612581714000486C49 /* ProFeaturesWindowController.mm in Sources */,
 				CF04DDE91E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CFD726C81E42E2A100603077 /* PanelBriefView.mm in Sources */,
 				CFD726EA1E42E2D500603077 /* PanelListViewNameView.mm in Sources */,

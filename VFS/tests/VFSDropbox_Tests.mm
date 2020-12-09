@@ -421,6 +421,6 @@ static vector<uint8_t> MakeNoise(size_t size)
     vector<uint8_t> noise(size);
     srand((int)time(0));
     for( size_t i = 0; i < size; ++i )
-        noise[i] = rand() % 256; // yes, I know that rand() is harmful!
+        noise[i] = static_cast<uint8_t>(rand() % 256); // yes, I know that rand() is harmful!
     return noise;
 }

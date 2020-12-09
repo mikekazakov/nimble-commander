@@ -9,19 +9,19 @@ using namespace nc::vfs;
 using namespace std;
 using boost::filesystem::path;
 
-static const auto g_Preffix = string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
-static const auto g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
-static const auto g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
-static const auto g_Adium = g_Preffix + "adium.app.zip";
-static const auto g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
-static const auto g_Files = g_Preffix + "files-1.1.0(1341).zip";
-static const auto g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
-static const auto g_LZMA = g_Preffix + "lzma-4.32.7.tar.xz";
-static const auto g_WarningArchive = g_Preffix + "maverix-master.zip";
-static const auto g_ChineseArchive = g_Preffix + "GB18030.zip";
-static const auto g_HeadingSlash = g_Preffix + "the.expanse.calibans.war.(2017).tv.s02.e13.eng.1cd.zip";
-static const auto g_SlashDir = g_Preffix + "archive_with_slash_dir.zip";
-static const auto g_GDriveDownload = g_Preffix + "gdrive_encoding.zip";
+[[clang::no_destroy]] static const auto g_Preffix = string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
+[[clang::no_destroy]] static const auto g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
+[[clang::no_destroy]] static const auto g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
+[[clang::no_destroy]] static const auto g_Adium = g_Preffix + "adium.app.zip";
+[[clang::no_destroy]] static const auto g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
+[[clang::no_destroy]] static const auto g_Files = g_Preffix + "files-1.1.0(1341).zip";
+[[clang::no_destroy]] static const auto g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
+[[clang::no_destroy]] static const auto g_LZMA = g_Preffix + "lzma-4.32.7.tar.xz";
+[[clang::no_destroy]] static const auto g_WarningArchive = g_Preffix + "maverix-master.zip";
+[[clang::no_destroy]] static const auto g_ChineseArchive = g_Preffix + "GB18030.zip";
+[[clang::no_destroy]] static const auto g_HeadingSlash = g_Preffix + "the.expanse.calibans.war.(2017).tv.s02.e13.eng.1cd.zip";
+[[clang::no_destroy]] static const auto g_SlashDir = g_Preffix + "archive_with_slash_dir.zip";
+[[clang::no_destroy]] static const auto g_GDriveDownload = g_Preffix + "gdrive_encoding.zip";
 
 
 static int VFSCompareEntries(const path& _file1_full_path,

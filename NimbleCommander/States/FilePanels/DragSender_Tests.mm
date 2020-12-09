@@ -3,8 +3,8 @@
 #include "DragSender.h"
 #include <VFS/VFS.h>
 #include <VFS/VFSListingInput.h>
-#include <NimbleCommander/States/FilePanels/PanelData.h>
-#include <NimbleCommander/States/FilePanels/PanelDataSelection.h>
+#include <Panel/PanelData.h>
+#include <Panel/PanelDataSelection.h>
 
 using namespace nc;
 using namespace nc::base;

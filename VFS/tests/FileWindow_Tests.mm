@@ -165,7 +165,7 @@ int TestGenericMemReadOnlyFile::Close()
     const auto data_size = 1024*1024;
     std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for(int i = 0; i < data_size; ++i)
-        data[i] = rand() % 256;
+        data[i] = static_cast<unsigned char>(rand() % 256);
     
     auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
                                                             data.get(), data_size,
@@ -195,7 +195,7 @@ int TestGenericMemReadOnlyFile::Close()
     const auto data_size = 100*1024*1024;
     std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for(int i = 0; i < data_size; ++i)
-        data[i] = rand() % 256;
+        data[i] = static_cast<unsigned char>(rand() % 256);
     
     auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
                                                             data.get(), data_size,
@@ -229,7 +229,7 @@ int TestGenericMemReadOnlyFile::Close()
     const auto data_size = 10*1024*1024;
     std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for(int i = 0; i < data_size; ++i)
-        data[i] = rand() % 256;
+        data[i] = static_cast<unsigned char>(rand() % 256);
     
     auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
                                                             data.get(), data_size,

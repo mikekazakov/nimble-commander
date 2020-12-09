@@ -15,7 +15,7 @@ std::optional<std::string> AskUserForLicenseFile()
     panel.canChooseFiles = true;
     panel.allowsMultipleSelection = false;
     panel.showsHiddenFiles = true;
-    const auto extension = bootstrap::ActivationManager::LicenseFileExtension();
+    const auto extension = bootstrap::ActivationManager::Instance().LicenseFileExtension();
     panel.allowedFileTypes = @[ [NSString stringWithUTF8StdString:extension] ];
     panel.allowsOtherFileTypes = false;
     const auto downloads_path = [NSString stringWithUTF8StdString:base::CommonPaths::Downloads()];

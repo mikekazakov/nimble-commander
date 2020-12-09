@@ -1,8 +1,8 @@
 // Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <VFS/VFSListingInput.h>
-#include "PanelData.h"
-#include "PanelDataItemVolatileData.h"
+#include <Panel/PanelData.h>
+#include <Panel/PanelDataItemVolatileData.h>
 #include "PanelView.h"
 #include "QuickSearch.h"
 #include <Config/ConfigImpl.h>

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/SystemInformation.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Bootstrap/NCE.h>
@@ -17,7 +17,7 @@ static void PostStartupInfo()
 
 static const char *TrackingID()
 {
-    switch( nc::bootstrap::ActivationManager::Type() ) {
+    switch( nc::bootstrap::ActivationManager::Instance().Type() ) {
         case nc::bootstrap::ActivationManager::Distribution::Trial:
             return NCE(nc::env::ga_nonmas_trial);
         case nc::bootstrap::ActivationManager::Distribution::Free:

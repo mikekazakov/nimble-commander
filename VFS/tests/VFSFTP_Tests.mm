@@ -9,8 +9,8 @@ using namespace nc::vfs;
 using namespace std;
 using boost::filesystem::path;
 
-static string g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
-static string g_LocalTestPath = "/Public/!FilesTesting/";
+[[clang::no_destroy]] static string g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
+[[clang::no_destroy]] static string g_LocalTestPath = "/Public/!FilesTesting/";
 
 static string UUID()
 {

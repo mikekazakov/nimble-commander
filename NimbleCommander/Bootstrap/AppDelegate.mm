@@ -32,6 +32,7 @@
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/UTIImpl.h>
+#include <Utility/SystemInformation.h>
 
 #include <RoutedIO/RoutedIO.h>
 
@@ -74,6 +75,8 @@
 #include <Viewer/History.h>
 #include <Viewer/ViewerViewController.h>
 #include <Viewer/InternalViewerWindowController.h>
+
+#include <filesystem>
 
 using namespace std::literals;
 using namespace nc::bootstrap;
@@ -138,7 +141,7 @@ static void UpdateMenuItemsPlaceholders( const char *_action )
 
 static void CheckMASReceipt()
 {
-    if constexpr ( ActivationManager::ForAppStore() ) {
+    if ( ActivationManager::Instance().ForAppStore() ) {
         const auto path = NSBundle.mainBundle.appStoreReceiptURL.path;
         const auto exists = [NSFileManager.defaultManager fileExistsAtPath:path];
         if( !exists ) {
@@ -412,7 +415,7 @@ static NCAppDelegate *g_Me = nil;
     auto &am = ActivationManager::Instance();
     
     // Non-MAS version stuff below:
-    if( !ActivationManager::ForAppStore() && !self.isRunningTests ) {
+    if( !ActivationManager::Instance().ForAppStore() && !self.isRunningTests ) {
         if( am.ShouldShowTrialNagScreen() ) // check if we should show a nag screen
             dispatch_to_main_queue_after(500ms, [self]{ [self showTrialWindow]; });
 
@@ -425,7 +428,7 @@ static NCAppDelegate *g_Me = nil;
     }
     
     // initialize stuff related with in-app purchases
-    if( ActivationManager::Type() == ActivationManager::Distribution::Free ) {
+    if( ActivationManager::Instance().Type() == ActivationManager::Distribution::Free ) {
         m_AppStoreHelper = [AppStoreHelper new];
         m_AppStoreHelper.onProductPurchased = [=]([[maybe_unused]] const std::string &_id){
             if( ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() ) {
@@ -437,17 +440,17 @@ static NCAppDelegate *g_Me = nil;
     }
     
     // accessibility stuff for NonMAS version
-    if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
+    if( ActivationManager::Instance().Type() == ActivationManager::Distribution::Trial &&
         GlobalConfig().GetBool(g_ConfigForceFn) ) {
         nc::utility::FunctionalKeysPass::Instance().Enable();
     }
     
-    if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
+    if( ActivationManager::Instance().Type() == ActivationManager::Distribution::Trial &&
         am.UserHadRegistered() == false &&
         am.IsTrialPeriod() == false )
         self.dock.SetUnregisteredBadge( true );
 
-    if( !ActivationManager::ForAppStore() && !self.isRunningTests )
+    if( !ActivationManager::Instance().ForAppStore() && !self.isRunningTests )
         PFMoveToApplicationsFolderIfNecessary();
     
     ConfigWiring{GlobalConfig()}.Wire();
@@ -625,16 +628,16 @@ static NCAppDelegate *g_Me = nil;
 - (bool) processLicenseFileActivation:(NSArray<NSString *> *)_filenames
 {
     [[clang::no_destroy]] static const auto nc_license_extension =
-        "."s + ActivationManager::LicenseFileExtension();
+        "."s + ActivationManager::Instance().LicenseFileExtension();
     
     if( _filenames.count != 1)
         return false;
     
     for( NSString *pathstring in _filenames )
         if( auto fs = pathstring.fileSystemRepresentationSafe ) {
-            if constexpr( ActivationManager::Type() == ActivationManager::Distribution::Trial ) {
+            if ( ActivationManager::Instance().Type() == ActivationManager::Distribution::Trial ) {
                 if( _filenames.count == 1 &&
-                    boost::filesystem::path(fs).extension() == nc_license_extension ) {
+                    std::filesystem::path(fs).extension() == nc_license_extension ) {
                     std::string p = fs;
                     dispatch_to_main_queue([=]{
                         [self processProvidedLicenseFile:p];
@@ -1061,7 +1064,7 @@ static void DoTemporaryFileStoragePurge()
 {
     const auto instance = []{
         const auto base_dir = nc::base::CommonPaths::AppTemporaryDirectory();
-        const auto prefix = ActivationManager::BundleID() + ".tmp.";
+        const auto prefix = nc::utility::GetBundleID() + ".tmp.";
         g_TemporaryFileStorage = new nc::utility::TemporaryFileStorageImpl(base_dir, prefix);
         dispatch_to_background(DoTemporaryFileStoragePurge);
         return g_TemporaryFileStorage;

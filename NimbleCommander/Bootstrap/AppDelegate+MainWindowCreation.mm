@@ -7,6 +7,7 @@
 #include <VFSIcon/WorkspaceIconsCacheImpl.h>
 #include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
 #include <Utility/BriefOnDiskStorageImpl.h>
+#include <Utility/SystemInformation.h>
 #include <VFSIcon/QLVFSThumbnailsCacheImpl.h>
 #include <VFSIcon/VFSBundleIconsCacheImpl.h>
 #include <VFSIcon/ExtensionsWhitelistImpl.h>
@@ -122,7 +123,7 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
     [[clang::no_destroy]] static const auto brief_storage =
         std::make_shared<nc::utility::BriefOnDiskStorageImpl>(
             nc::base::CommonPaths::AppTemporaryDirectory(),
-            nc::bootstrap::ActivationManager::BundleID() + ".ico");
+            nc::utility::GetBundleID() + ".ico");
     [[clang::no_destroy]] static const auto vfs_cache =
         std::make_shared<nc::vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
     [[clang::no_destroy]] static const auto vfs_bi_cache =
@@ -344,7 +345,7 @@ bool DirectoryAccessProviderImpl::HasAccess([[maybe_unused]] PanelController *_p
                                             VFSHost &_host)
 {
     // at this moment we (thankfully) care only about sanboxed versions
-    if constexpr( nc::bootstrap::ActivationManager::Sandboxed() == false )
+    if ( nc::bootstrap::ActivationManager::Instance().Sandboxed() == false )
         return true;
 
     if( _host.IsNativeFS() )
@@ -357,7 +358,7 @@ bool DirectoryAccessProviderImpl::RequestAccessSync([[maybe_unused]] PanelContro
                                                     const std::string &_directory_path,
                                                     VFSHost &_host)
 {
-    if constexpr( nc::bootstrap::ActivationManager::Sandboxed() == false )
+    if ( nc::bootstrap::ActivationManager::Instance().Sandboxed() == false )
         return true;
 
     if( _host.IsNativeFS() )

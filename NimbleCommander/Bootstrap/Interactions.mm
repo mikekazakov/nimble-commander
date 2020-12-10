@@ -7,7 +7,7 @@
 
 namespace nc::bootstrap {
 
-std::optional<std::string> AskUserForLicenseFile()
+std::optional<std::string> AskUserForLicenseFile(const ActivationManager &_am)
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.resolvesAliases = true;
@@ -15,7 +15,7 @@ std::optional<std::string> AskUserForLicenseFile()
     panel.canChooseFiles = true;
     panel.allowsMultipleSelection = false;
     panel.showsHiddenFiles = true;
-    const auto extension = bootstrap::ActivationManager::Instance().LicenseFileExtension();
+    const auto extension = _am.LicenseFileExtension();
     panel.allowedFileTypes = @[ [NSString stringWithUTF8StdString:extension] ];
     panel.allowsOtherFileTypes = false;
     const auto downloads_path = [NSString stringWithUTF8StdString:base::CommonPaths::Downloads()];

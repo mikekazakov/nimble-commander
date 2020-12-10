@@ -52,11 +52,15 @@ enum class CreationContext
 class DirectoryAccessProviderImpl : public nc::panel::DirectoryAccessProvider
 {
 public:
+    DirectoryAccessProviderImpl(nc::bootstrap::ActivationManager &_activation_manager);
     bool
     HasAccess(PanelController *_panel, const std::string &_directory_path, VFSHost &_host) override;
     bool RequestAccessSync(PanelController *_panel,
                            const std::string &_directory_path,
                            VFSHost &_host) override;
+
+private:
+    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
 }
@@ -122,8 +126,7 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
         std::make_shared<nc::vfsicon::WorkspaceExtensionIconsCacheImpl>(self.utiDB);
     [[clang::no_destroy]] static const auto brief_storage =
         std::make_shared<nc::utility::BriefOnDiskStorageImpl>(
-            nc::base::CommonPaths::AppTemporaryDirectory(),
-            nc::utility::GetBundleID() + ".ico");
+            nc::base::CommonPaths::AppTemporaryDirectory(), nc::utility::GetBundleID() + ".ico");
     [[clang::no_destroy]] static const auto vfs_cache =
         std::make_shared<nc::vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
     [[clang::no_destroy]] static const auto vfs_bi_cache =
@@ -146,7 +149,7 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
 
 - (nc::panel::DirectoryAccessProvider &)directoryAccessProvider
 {
-    [[clang::no_destroy]] static auto provider = DirectoryAccessProviderImpl{};
+    [[clang::no_destroy]] static auto provider = DirectoryAccessProviderImpl{self.activationManager};
     return provider;
 }
 
@@ -262,7 +265,7 @@ static PanelController *PanelFactory()
     auto actions_dispatcher =
         [[NCPanelsStateActionsDispatcher alloc] initWithState:file_state
                                                 andActionsMap:self.stateActionsMap];
-    actions_dispatcher.hasTerminal = nc::bootstrap::ActivationManager::Instance().HasTerminal();
+    actions_dispatcher.hasTerminal = self.activationManager.HasTerminal();
     file_state.attachedResponder = actions_dispatcher;
 
     file_state.closedPanelsHistory = self.closedPanelsHistory;
@@ -340,12 +343,18 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     return true;
 }
 
+DirectoryAccessProviderImpl::DirectoryAccessProviderImpl(
+    nc::bootstrap::ActivationManager &_activation_manager)
+    : m_ActivationManager(_activation_manager)
+{
+}
+
 bool DirectoryAccessProviderImpl::HasAccess([[maybe_unused]] PanelController *_panel,
                                             const std::string &_directory_path,
                                             VFSHost &_host)
 {
     // at this moment we (thankfully) care only about sanboxed versions
-    if ( nc::bootstrap::ActivationManager::Instance().Sandboxed() == false )
+    if( m_ActivationManager.Sandboxed() == false )
         return true;
 
     if( _host.IsNativeFS() )
@@ -358,7 +367,7 @@ bool DirectoryAccessProviderImpl::RequestAccessSync([[maybe_unused]] PanelContro
                                                     const std::string &_directory_path,
                                                     VFSHost &_host)
 {
-    if ( nc::bootstrap::ActivationManager::Instance().Sandboxed() == false )
+    if( m_ActivationManager.Sandboxed() == false )
         return true;
 
     if( _host.IsNativeFS() )

@@ -1,25 +1,35 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
+
+#include <functional>
+#include <string>
+
+namespace nc::bootstrap {
+
+class ActivationManager;
+
+}
 
 #ifdef __OBJC__
 
 #include <StoreKit/StoreKit.h>
-#include <functional>
-#include <string>
 
-@interface AppStoreHelper : NSObject<SKProductsRequestDelegate, SKPaymentTransactionObserver>
+@interface AppStoreHelper : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 
-@property (nonatomic) std::function<void(const std::string &_id)> onProductPurchased;
-@property (nonatomic, readonly) NSString *priceString;
-@property (nonatomic, readonly) SKProduct *proFeaturesProduct;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager&)_am;
 
-- (void) askUserToRestorePurchases;
+@property(nonatomic) std::function<void(const std::string &_id)> onProductPurchased;
+@property(nonatomic, readonly) NSString *priceString;
+@property(nonatomic, readonly) SKProduct *proFeaturesProduct;
 
-- (void) showProFeaturesWindow;
-- (void) showProFeaturesWindowIfNeededAsNagScreen;
+- (void)askUserToRestorePurchases;
+
+- (void)showProFeaturesWindow;
+- (void)showProFeaturesWindowIfNeededAsNagScreen;
 
 @end
 
 #endif
 
-std::string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle );
+std::string CFBundleGetAppStoreReceiptPath(CFBundleRef _bundle);

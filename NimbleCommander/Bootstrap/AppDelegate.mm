@@ -139,18 +139,6 @@ static void UpdateMenuItemsPlaceholders( const char *_action )
     UpdateMenuItemsPlaceholders( ActionsShortcutsManager::Instance().TagFromAction(_action) );
 }
 
-static void CheckMASReceipt()
-{
-    if ( ActivationManager::Instance().ForAppStore() ) {
-        const auto path = NSBundle.mainBundle.appStoreReceiptURL.path;
-        const auto exists = [NSFileManager.defaultManager fileExistsAtPath:path];
-        if( !exists ) {
-            std::cerr << "No receipt - exit the app with code 173" << std::endl;
-            exit(173);
-        }
-    }
-}
-
 static void CheckDefaultsReset()
 {
     const auto erase_mask = NSEventModifierFlagCapsLock | NSEventModifierFlagShift |
@@ -198,6 +186,7 @@ static NCAppDelegate *g_Me = nil;
     std::shared_ptr<nc::vfs::NativeHost> m_NativeHost;
     std::optional<ctrail::DashboardImpl> m_CTrailDashboard;    
     std::unique_ptr<ctrail::OneShotMonitor> m_CTrailMonitor;
+    nc::bootstrap::ActivationManager *m_ActivationManager; // non-owned for now (Instance())
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
@@ -217,7 +206,8 @@ static NCAppDelegate *g_Me = nil;
         m_ViewerWindowDelegateBridge = [[NCViewerWindowDelegateBridge alloc] init];
         m_NativeFSManager = std::make_unique<nc::utility::NativeFSManagerImpl>();
         m_NativeHost = std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager);
-        CheckMASReceipt();
+        m_ActivationManager = &ActivationManager::Instance();
+        [self checkMASReceipt];
         CheckDefaultsReset();
         m_SupportDirectory =
             EnsureTrailingSlash(NSFileManager.defaultManager.
@@ -248,7 +238,7 @@ static NCAppDelegate *g_Me = nil;
     [self wireMenuDelegates];
  
     bool showed_modal_dialog = false;
-    if( ActivationManager::Instance().Sandboxed() ) {
+    if( self.activationManager.Sandboxed() ) {
         auto &sm = SandboxManager::Instance();
         if( sm.Empty() ) {
             sm.AskAccessForPathSync(nc::base::CommonPaths::Home(), false);
@@ -345,7 +335,7 @@ static NCAppDelegate *g_Me = nil;
     auto enable             = [&](const char *_action, bool _enabled) {
         current_menuitem(_action).action = _enabled ? initial_menuitem(_action).action : nil;
     };
-    auto &am = ActivationManager::Instance();
+    auto &am = self.activationManager;
     
     // one-way items hiding
     if( !am.HasTerminal() ) {                   hide("menu.view.show_terminal");
@@ -412,10 +402,10 @@ static NCAppDelegate *g_Me = nil;
     
     [self temporaryFileStorage]; // implicitly runs the background temp storage purging
     
-    auto &am = ActivationManager::Instance();
+    auto &am = self.activationManager;
     
     // Non-MAS version stuff below:
-    if( !ActivationManager::Instance().ForAppStore() && !self.isRunningTests ) {
+    if( !am.ForAppStore() && !self.isRunningTests ) {
         if( am.ShouldShowTrialNagScreen() ) // check if we should show a nag screen
             dispatch_to_main_queue_after(500ms, [self]{ [self showTrialWindow]; });
 
@@ -428,10 +418,10 @@ static NCAppDelegate *g_Me = nil;
     }
     
     // initialize stuff related with in-app purchases
-    if( ActivationManager::Instance().Type() == ActivationManager::Distribution::Free ) {
-        m_AppStoreHelper = [AppStoreHelper new];
-        m_AppStoreHelper.onProductPurchased = [=]([[maybe_unused]] const std::string &_id){
-            if( ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() ) {
+    if( am.Type() == ActivationManager::Distribution::Free ) {
+        m_AppStoreHelper = [[AppStoreHelper alloc] initWithActivationManager:am];
+        m_AppStoreHelper.onProductPurchased = [=, &am]([[maybe_unused]] const std::string &_id){
+            if( am.ReCheckProFeaturesInAppPurchased() ) {
                 [self updateMainMenuFeaturesByVersionAndState];
                 GA().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
             }
@@ -440,17 +430,17 @@ static NCAppDelegate *g_Me = nil;
     }
     
     // accessibility stuff for NonMAS version
-    if( ActivationManager::Instance().Type() == ActivationManager::Distribution::Trial &&
+    if( am.Type() == ActivationManager::Distribution::Trial &&
         GlobalConfig().GetBool(g_ConfigForceFn) ) {
         nc::utility::FunctionalKeysPass::Instance().Enable();
     }
     
-    if( ActivationManager::Instance().Type() == ActivationManager::Distribution::Trial &&
+    if( am.Type() == ActivationManager::Distribution::Trial &&
         am.UserHadRegistered() == false &&
         am.IsTrialPeriod() == false )
         self.dock.SetUnregisteredBadge( true );
 
-    if( !ActivationManager::Instance().ForAppStore() && !self.isRunningTests )
+    if( !am.ForAppStore() && !self.isRunningTests )
         PFMoveToApplicationsFolderIfNecessary();
     
     ConfigWiring{GlobalConfig()}.Wire();
@@ -628,14 +618,14 @@ static NCAppDelegate *g_Me = nil;
 - (bool) processLicenseFileActivation:(NSArray<NSString *> *)_filenames
 {
     [[clang::no_destroy]] static const auto nc_license_extension =
-        "."s + ActivationManager::Instance().LicenseFileExtension();
+        "."s + self.activationManager.LicenseFileExtension();
     
     if( _filenames.count != 1)
         return false;
     
     for( NSString *pathstring in _filenames )
         if( auto fs = pathstring.fileSystemRepresentationSafe ) {
-            if ( ActivationManager::Instance().Type() == ActivationManager::Distribution::Trial ) {
+            if ( self.activationManager.Type() == ActivationManager::Distribution::Trial ) {
                 if( _filenames.count == 1 &&
                     std::filesystem::path(fs).extension() == nc_license_extension ) {
                     std::string p = fs;
@@ -676,7 +666,7 @@ static NCAppDelegate *g_Me = nil;
 
 - (void) processProvidedLicenseFile:(const std::string&)_path
 {
-    const bool valid_and_installed = ActivationManager::Instance().ProcessLicenseFile(_path);
+    const bool valid_and_installed = self.activationManager.ProcessLicenseFile(_path);
     if( valid_and_installed ) {
         ThankUserForBuyingALicense();
         [self updateMainMenuFeaturesByVersionAndState];
@@ -687,7 +677,7 @@ static NCAppDelegate *g_Me = nil;
 
 - (IBAction)OnActivateExternalLicense:(id)[[maybe_unused]]_sender
 {
-    if( auto path = AskUserForLicenseFile() )
+    if( auto path = AskUserForLicenseFile(self.activationManager) )
         [self processProvidedLicenseFile:*path];
 }
 
@@ -1018,8 +1008,8 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
 - (void) showTrialWindow
 {
     const auto expired =
-        (ActivationManager::Instance().UserHadRegistered() == false) &&
-        (ActivationManager::Instance().IsTrialPeriod() == false);
+        (self.activationManager.UserHadRegistered() == false) &&
+        (self.activationManager.IsTrialPeriod() == false);
     
     auto window = [[TrialWindowController alloc] init];
     window.isExpired = expired;
@@ -1032,7 +1022,7 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
     window.onActivate = [weak_self]{
         if( auto self = weak_self ) {
             [self OnActivateExternalLicense:self];
-            if( ActivationManager::Instance().UserHadRegistered() == true )
+            if( self.activationManager.UserHadRegistered() == true )
                 return true;
         }
         return false;
@@ -1040,8 +1030,8 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
     window.onQuit = [weak_self]{
         if( auto self = weak_self ) {
             const auto expired =
-                (ActivationManager::Instance().UserHadRegistered() == false) &&
-                (ActivationManager::Instance().IsTrialPeriod() == false);            
+                (self.activationManager.UserHadRegistered() == false) &&
+                (self.activationManager.IsTrialPeriod() == false);
             if( expired == true )
                 dispatch_to_main_queue([]{ [NSApp terminate:nil]; });
         }
@@ -1106,6 +1096,23 @@ static void DoTemporaryFileStoragePurge()
 - (const std::shared_ptr<nc::vfs::NativeHost> &)nativeHostPtr
 {
     return m_NativeHost;
+}
+
+- (nc::bootstrap::ActivationManager&) activationManager
+{
+    return *m_ActivationManager;
+}
+
+- (void) checkMASReceipt
+{
+    if ( self.activationManager.ForAppStore() ) {
+        const auto path = NSBundle.mainBundle.appStoreReceiptURL.path;
+        const auto exists = [NSFileManager.defaultManager fileExistsAtPath:path];
+        if( !exists ) {
+            std::cerr << "No receipt - exit the app with code 173" << std::endl;
+            exit(173);
+        }
+    }
 }
 
 @end

@@ -1,9 +1,10 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ActivationManagerBase.h"
 #include <Habanero/algo.h>
 #include <AquaticPrime/AquaticPrime.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <fstream>
+#include <filesystem>
 
 namespace nc::bootstrap {
 
@@ -12,11 +13,14 @@ using AMB = ActivationManagerBase;
 static std::optional<std::string> Load(const std::string &_filepath);
 static bool Save(const std::string &_filepath, const std::string &_content);
     
-AMB::ExternalLicenseSupport::ExternalLicenseSupport( std::string _public_key,
-                                                     std::string _installed_license_path):
-    m_PublicKey( std::move(_public_key) ),
-    m_InstalledLicensePath( std::move(_installed_license_path) )
+AMB::ExternalLicenseSupport::ExternalLicenseSupport(std::string _public_key,
+                                                    std::string _installed_license_path)
+    : m_PublicKey(std::move(_public_key)),
+      m_InstalledLicensePath(std::move(_installed_license_path))
 {
+    if( std::filesystem::path(m_InstalledLicensePath).is_absolute() == false )
+        throw std::invalid_argument(
+            "ExternalLicenseSupport: installed license path must be absolute");
 }
 
 bool AMB::ExternalLicenseSupport::

@@ -19,10 +19,9 @@ const std::string &AppDelegate::StateDirectory()
 
 const std::string &AppDelegate::SupportDirectory()
 {
-    if( NCAppDelegate.me )
-        return NCAppDelegate.me.supportDirectory;
-    
-    [[clang::no_destroy]] static std::string support_dir = []{
+    // this is a duplicate of NCAppDelegate.supportDirectory,
+    // but it has to be here to break down an initialization dependency circle
+    [[clang::no_destroy]] static const std::string support_dir = []{
         auto path = NSFileManager.defaultManager.applicationSupportDirectory;
         return EnsureTrailingSlash( path.fileSystemRepresentationSafe );
     }();

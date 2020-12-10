@@ -259,7 +259,7 @@ int ActivationManager::TrialDaysLeft() const noexcept
     return m_TrialDaysLeft;
 }
 
-const std::string &ActivationManager::LicenseFileExtension() noexcept
+const std::string &ActivationManager::LicenseFileExtension() const noexcept
 {
     return g_LicenseExtension;
 }

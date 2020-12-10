@@ -3,7 +3,6 @@
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
 #include "SandboxManager.h"
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <boost/filesystem.hpp>
 #include <Utility/ObjCpp.h>
 #include <Habanero/dispatch_cpp.h>
@@ -285,8 +284,7 @@ void SandboxManager::StopUsingBookmarks()
 
 bool SandboxManager::EnsurePathAccess(const std::string& _path)
 {
-    if( nc::bootstrap::ActivationManager::Instance().Sandboxed() &&
-        !SandboxManager::Instance().CanAccessFolder(_path) &&
+    if( !SandboxManager::Instance().CanAccessFolder(_path) &&
         !SandboxManager::Instance().AskAccessForPathSync(_path) )
         return false;
     return true;

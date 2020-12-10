@@ -33,6 +33,7 @@ public:
     ActivationManager(ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
                       ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
                       GoogleAnalytics &_ga);
+    ActivationManager(const ActivationManager&)=delete;
     static ActivationManager &Instance();
     Distribution Type() const noexcept;
     bool Sandboxed() const noexcept;
@@ -65,7 +66,7 @@ public:
     bool IsTrialPeriod() const noexcept;
     int TrialDaysLeft() const noexcept; // zero means that trial has expired
     bool ShouldShowTrialNagScreen() const noexcept;
-    const std::string &LicenseFileExtension() noexcept; // currently it's "nimblecommanderlicense"
+    const std::string &LicenseFileExtension() const noexcept; // currently it's "nimblecommanderlicense"
     bool ProcessLicenseFile(const std::string &_path);
     const std::unordered_map<std::string, std::string> &LicenseInformation() const noexcept;
 

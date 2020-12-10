@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppStoreHelper.h"
 #include <Habanero/CFDefaultsCPP.h>
 #include <Habanero/dispatch_cpp.h>
@@ -34,16 +34,18 @@ std::string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     SKProduct                          *m_ProFeaturesProduct;
     std::function<void(const std::string &_id)> m_PurchaseCallback;
     NSString                           *m_PriceString;
-    std::function<void()>              m_OnProFeaturesProductFetched;    
+    std::function<void()>              m_OnProFeaturesProductFetched;
+    nc::bootstrap::ActivationManager  *m_ActivationManager;
 }
 
 @synthesize onProductPurchased = m_PurchaseCallback;
 @synthesize priceString = m_PriceString;
 @synthesize proFeaturesProduct = m_ProFeaturesProduct;
 
-- (id) init
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager&)_am
 {
     if(self = [super init]) {
+        m_ActivationManager = &_am;
         m_ProFeaturesProduct = nil;
         m_ProductRequest = nil;
         
@@ -172,7 +174,7 @@ didFailWithError:(NSError *)[[maybe_unused]]error
     const auto min_runs = 10;
     const auto next_show_delay = 60l * 60l* 24l * 14l; // every 14 days
 
-    if( nc::bootstrap::ActivationManager::Instance().UsedHadPurchasedProFeatures() ||      // don't show nag screen if user has already bought pro features
+    if( m_ActivationManager->UsedHadPurchasedProFeatures() ||      // don't show nag screen if user has already bought pro features
         FeedbackManager::Instance().ApplicationRunsCount() < min_runs ||    // don't show nag screen if user didn't use software for long enough
         CFDefaultsGetBool(g_PrefsPFDontShow) )                              // don't show nag screen it user has opted to
         return;

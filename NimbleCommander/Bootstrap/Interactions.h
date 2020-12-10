@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -6,7 +6,9 @@
 
 namespace nc::bootstrap {
 
-std::optional<std::string> AskUserForLicenseFile();
+class ActivationManager;
+
+std::optional<std::string> AskUserForLicenseFile(const ActivationManager &_am);
 bool AskUserToResetDefaults();
 bool AskUserToProvideUsageStatistics();
 bool AskToExitWithRunningOperations();

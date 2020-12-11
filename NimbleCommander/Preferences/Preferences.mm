@@ -11,28 +11,33 @@
 #include "PreferencesWindowThemesTab.h"
 #include "Preferences.h"
 
+static RHPreferencesWindowController *CreatePrefWindow()
+{
+    auto tools_storage = []() -> ExternalToolsStorage & { return NCAppDelegate.me.externalTools; };
+    auto app_del = NCAppDelegate.me;
+    auto &am = app_del.activationManager;
+    auto tabs = @[
+        [[PreferencesWindowGeneralTab alloc] initWithActivationManager:am],
+        [[PreferencesWindowThemesTab alloc] initWithActivationManager:am],
+        [PreferencesWindowPanelsTab new],
+        [[PreferencesWindowViewerTab alloc] initWithHistory:app_del.internalViewerHistory
+                                          activationManager:am],
+        [[PreferencesWindowExternalEditorsTab alloc]
+            initWithActivationManager:am
+                       editorsStorage:app_del.externalEditorsStorage],
+        [[PreferencesWindowTerminalTab alloc] initWithActivationManager:am],
+        [[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage
+                                                activationManager:am],
+        [[PreferencesWindowToolsTab alloc] initWithToolsStorage:tools_storage
+                                              activationManager:am]
+    ];
+    return [[RHPreferencesWindowController alloc] initWithViewControllers:tabs
+                                                                 andTitle:@"Preferences"];
+}
+
 void ShowPreferencesWindow()
 {
-    static const auto preferences = [=] {
-        auto tools_storage = [=]() -> ExternalToolsStorage & {
-            return NCAppDelegate.me.externalTools;
-        };
-        auto tabs = @[
-            [PreferencesWindowGeneralTab new],
-            [PreferencesWindowThemesTab new],
-            [PreferencesWindowPanelsTab new],
-            [[PreferencesWindowViewerTab alloc]
-                initWithHistory:NCAppDelegate.me.internalViewerHistory],
-            [[PreferencesWindowExternalEditorsTab alloc]
-                initWithActivationManager:NCAppDelegate.me.activationManager editorsStorage:NCAppDelegate.me.externalEditorsStorage],
-            [PreferencesWindowTerminalTab new],
-            [[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage],
-            [[PreferencesWindowToolsTab alloc] initWithToolsStorage:tools_storage]
-        ];
-        return [[RHPreferencesWindowController alloc] initWithViewControllers:tabs
-                                                                     andTitle:@"Preferences"];
-    }();
-
+    static const auto preferences = CreatePrefWindow();
     [preferences showWindow:nil];
     GA().PostScreenView("Preferences Window");
 }

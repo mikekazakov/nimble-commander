@@ -70,14 +70,17 @@ enum class SourceType
     std::vector<std::any> m_SourceNodes;
     std::vector<std::any> m_FilteredNodes;
     SourceType m_SourceType;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
 @synthesize sourceType = m_SourceType;
 
 - (id)initWithToolsStorage:(std::function<ExternalToolsStorage &()>)_tool_storage
+         activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super init];
     if( self ) {
+        m_ActivationManager = &_am;
         m_SourceType = SourceType::All;
         m_ToolsStorage = _tool_storage;
         const auto &all_shortcuts = ActionsShortcutsManager::Instance().AllShortcuts();
@@ -207,7 +210,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
     [super loadView];
     m_Tools = m_ToolsStorage().GetAllTools();
 
-    if( nc::bootstrap::ActivationManager::Instance().Sandboxed() )
+    if( m_ActivationManager->Sandboxed() )
         self.forceFnButton.hidden = true;
 
     m_ToolsObserver = m_ToolsStorage().ObserveChanges([=] {

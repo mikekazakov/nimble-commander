@@ -7,9 +7,10 @@ namespace nc::bootstrap {
 class ActivationManager;
 }
 
-@interface PreferencesWindowExternalEditorsTab : NSViewController<RHPreferencesViewControllerProtocol, NSTableViewDataSource>
+@interface PreferencesWindowExternalEditorsTab
+    : NSViewController <RHPreferencesViewControllerProtocol, NSTableViewDataSource>
 
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager&)_am editorsStorage:(ExternalEditorsStorage&)_storage;
-
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
+                           editorsStorage:(ExternalEditorsStorage &)_storage;
 
 @end

@@ -48,13 +48,16 @@ static bool AskUserToDeleteTool()
     std::function<ExternalToolsStorage &()> m_ToolsStorage;
     std::vector<std::shared_ptr<const ExternalTool>> m_Tools;
     ExternalToolsStorage::ObservationTicket m_ToolsObserver;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
 - (id)initWithToolsStorage:(std::function<ExternalToolsStorage &()>)_tool_storage
+         activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     assert(_tool_storage);
     self = [super init];
     if( self ) {
+        m_ActivationManager = &_am;
         self.anySelected = false;
         m_ToolsStorage = _tool_storage;
     }
@@ -66,7 +69,7 @@ static bool AskUserToDeleteTool()
     NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:self.identifier];
     item.image = self.toolbarItemImage;
     item.label = self.toolbarItemLabel;
-    item.enabled = nc::bootstrap::ActivationManager::Instance().HasExternalTools();
+    item.enabled = m_ActivationManager->HasExternalTools();
     return item;
 }
 
@@ -387,7 +390,7 @@ static bool AskUserToDeleteTool()
 
 - (bool)haveCommandLineTools
 {
-    return nc::bootstrap::ActivationManager::Instance().HasTerminal();
+    return m_ActivationManager->HasTerminal();
 }
 
 @end

@@ -59,14 +59,14 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     ThemesManager *m_Manager;
     std::vector<std::string> m_ThemeNames;
     int m_SelectedTheme;
-    
+    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
-
-- (id)initWithNibName:(NSString *)[[maybe_unused]]nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
 {
-    self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
+    self = [super init];
     if (self) {
+        m_ActivationManager = &_am;
         m_Manager = &NCAppDelegate.me.themesManager;
         [self loadThemesNames];
         [self loadSelectedDocument];
@@ -102,8 +102,8 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 {
     [super viewDidLoad];
     // Do view setup here.
-    self.importButton.enabled = nc::bootstrap::ActivationManager::Instance().HasThemesManipulation();
-    self.exportButton.enabled = nc::bootstrap::ActivationManager::Instance().HasThemesManipulation();
+    self.importButton.enabled = m_ActivationManager->HasThemesManipulation();
+    self.exportButton.enabled = m_ActivationManager->HasThemesManipulation();
         
     [self buildThemeNamesPopup];
     [self.outlineView expandItem:nil expandChildren:true];

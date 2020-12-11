@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowTerminalTab.h"
 #include <Utility/FontExtras.h>
 #include <Config/ObjCBridge.h>
@@ -14,20 +14,19 @@ static const auto g_ConfigFont = "terminal.font";
 class ConfigBinder
 {
 public:
-    ConfigBinder( nc::config::Config &_config, const char *_config_path, id _object, NSString *_object_key ):
-        m_Config(_config),
-        m_ConfigPath(_config_path),
-        m_Ticket( _config.Observe(_config_path, [=]{ConfigChanged();}) ),
-        m_Object(_object),
-        m_ObjectKey(_object_key)
+    ConfigBinder(nc::config::Config &_config,
+                 const char *_config_path,
+                 id _object,
+                 NSString *_object_key)
+        : m_Config(_config), m_ConfigPath(_config_path),
+          m_Ticket(_config.Observe(_config_path, [=] { ConfigChanged(); })), m_Object(_object),
+          m_ObjectKey(_object_key)
     {
         ConfigChanged();
     }
-    
-    ~ConfigBinder()
-    {
-    }
-    
+
+    ~ConfigBinder() {}
+
 private:
     void ConfigChanged()
     {
@@ -39,11 +38,10 @@ private:
     nc::config::Config &m_Config;
     const char *m_ConfigPath;
     nc::config::Token m_Ticket;
-    
+
     __weak id m_Object;
     NSString *m_ObjectKey;
 };
-
 
 @interface PreferencesWindowTerminalTab()
 
@@ -57,12 +55,14 @@ private:
 {
     NSFont *m_Font;
     std::unique_ptr<ConfigBinder> m_B1;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
-- (id)initWithNibName:(NSString *)[[maybe_unused]]nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
 {
-    self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
+    self = [super init];
     if (self) {
+        m_ActivationManager = &_am;
         m_B1 = std::make_unique<ConfigBinder>( GlobalConfig(), "terminal.useDefaultLoginShell", self, @"usesDefaultLoginShell" );
     }
     return self;
@@ -88,7 +88,7 @@ private:
     NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:self.identifier];
     item.image = self.toolbarItemImage;
     item.label = self.toolbarItemLabel;
-    item.enabled = nc::bootstrap::ActivationManager::Instance().HasTerminal();
+    item.enabled = m_ActivationManager->HasTerminal();
     return item;
 }
 

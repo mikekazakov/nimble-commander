@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowViewerTab.h"
 #include <Utility/FontExtras.h>
 #include "../Bootstrap/ActivationManager.h"
@@ -46,13 +46,16 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 @implementation PreferencesWindowViewerTab
 {
     nc::viewer::History *m_History;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
 - (instancetype)initWithHistory:(nc::viewer::History&)_history
+              activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nil];
     if (self) {
         m_History = &_history;
+        m_ActivationManager = &_am;
     }
     return self;
 }
@@ -88,7 +91,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
     NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:self.identifier];
     item.image = self.toolbarItemImage;
     item.label = self.toolbarItemLabel;
-    item.enabled = nc::bootstrap::ActivationManager::Instance().HasInternalViewer();
+    item.enabled = m_ActivationManager->HasInternalViewer();
     return item;
 }
 

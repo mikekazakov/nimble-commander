@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PreferencesWindowGeneralTab.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../Core/SandboxManager.h"
 #include "../Bootstrap/AppDelegate.h"
 #include "../Bootstrap/ActivationManager.h"
-#include "PreferencesWindowGeneralTab.h"
 #include <Habanero/dispatch_cpp.h>
 
 using namespace std::literals;
@@ -16,13 +16,15 @@ using namespace std::literals;
 @end
 
 @implementation PreferencesWindowGeneralTab
-
-- (id)initWithNibName:(NSString*)[[maybe_unused]] _nibNameOrNil
-               bundle:(NSBundle*)_nibBundleOrNil
 {
-    self = [super initWithNibName:NSStringFromClass(self.class) bundle:_nibBundleOrNil];
+    nc::bootstrap::ActivationManager *m_ActivationManager;
+}
+
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
+{
+    self = [super init];
     if (self) {
-        // Initialization code here.
+        m_ActivationManager = &_am;
     }
     
     return self;
@@ -31,7 +33,7 @@ using namespace std::literals;
 - (void)loadView
 {
     [super loadView];
-    if( !nc::bootstrap::ActivationManager::Instance().Sandboxed() ) {
+    if( !m_ActivationManager->Sandboxed() ) {
         self.FSAccessResetButton.enabled = false;
     }
     [self.view layoutSubtreeIfNeeded];    

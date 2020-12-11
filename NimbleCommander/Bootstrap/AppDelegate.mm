@@ -796,7 +796,7 @@ static NCAppDelegate *g_Me = nil;
 
 - (ExternalEditorsStorage&) externalEditorsStorage
 {
-    static auto i = new ExternalEditorsStorage(g_ConfigExtEditorsList);
+    static auto i = new ExternalEditorsStorage(g_ConfigExtEditorsList, self.activationManager);
     return *i;
 }
 

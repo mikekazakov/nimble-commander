@@ -172,10 +172,12 @@ static NSString *TitleForData(const data::Model *_data);
                      panelFactory:(std::function<PanelController *()>)_panel_factory
        controllerStateJSONDecoder:(ControllerStateJSONDecoder &)_controller_json_decoder
                    QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
+                activationManager:(nc::bootstrap::ActivationManager&)_activation_manager
 {
     assert(_panel_factory);
     if( self = [super initWithFrame:frameRect] ) {
         m_PanelFactory = move(_panel_factory);
+        m_ActivationManager = &_activation_manager;
         m_ControllerStateJSONDecoder = &_controller_json_decoder;
         m_ClosedPanelsHistory = nullptr;
         m_OperationsPool = _pool.shared_from_this();
@@ -206,12 +208,14 @@ static NSString *TitleForData(const data::Model *_data);
                   panelFactory:(std::function<PanelController *()>)_panel_factory
     controllerStateJSONDecoder:(ControllerStateJSONDecoder &)_controller_json_decoder
                 QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
+            activationManager:(nc::bootstrap::ActivationManager&)_activation_manager
 {
     self = [self initBaseWithFrame:frameRect
                            andPool:_pool
                       panelFactory:move(_panel_factory)
         controllerStateJSONDecoder:_controller_json_decoder
-                    QLPanelAdaptor:_ql_panel_adaptor];
+                    QLPanelAdaptor:_ql_panel_adaptor
+                 activationManager:_activation_manager];
     if( self ) {
         if( _load_content ) {
             [self restoreDefaultPanelOptions];
@@ -306,7 +310,7 @@ static NSString *TitleForData(const data::Model *_data);
 
 - (void)loadDefaultPanelContent
 {
-    auto &am = nc::bootstrap::ActivationManager::Instance();
+    auto &am = *m_ActivationManager;
     auto left_controller = m_LeftPanelControllers.front();
     auto right_controller = m_RightPanelControllers.front();
 
@@ -386,7 +390,7 @@ static NSString *TitleForData(const data::Model *_data);
     m_MainSplitViewBottomConstraint.priority = NSLayoutPriorityDragThatCannotResizeWindow;
     [self addConstraint:m_MainSplitViewBottomConstraint];
 
-    if( nc::bootstrap::ActivationManager::Instance().HasTerminal() ) {
+    if( m_ActivationManager->HasTerminal() ) {
         m_OverlappedTerminal->terminal =
             [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
         m_OverlappedTerminal->terminal.translatesAutoresizingMaskIntoConstraints = false;
@@ -424,9 +428,8 @@ static NSString *TitleForData(const data::Model *_data);
 
     if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
         SetupRatingOverlay(m_ToolbarDelegate.operationsPoolViewController.idleView);
-    else if( nc::bootstrap::ActivationManager::Instance().Type() ==
-                 nc::bootstrap::ActivationManager::Distribution::Trial &&
-             !nc::bootstrap::ActivationManager::Instance().UserHadRegistered() )
+    else if( m_ActivationManager->Type() == nc::bootstrap::ActivationManager::Distribution::Trial &&
+             !m_ActivationManager->UserHadRegistered() )
         SetupUnregisteredLabel(m_ToolbarDelegate.operationsPoolViewController.idleView);
 }
 

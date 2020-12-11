@@ -214,7 +214,8 @@ static PanelController *PanelFactory()
                                             loadDefaultContent:true
                                                   panelFactory:PanelFactory
                                     controllerStateJSONDecoder:ctrl_state_json_decoder
-                                                QLPanelAdaptor:[self QLPanelAdaptor]];
+                                                QLPanelAdaptor:self.QLPanelAdaptor
+                                             activationManager:self.activationManager];
     } else if( _context == CreationContext::ManualRestoration ) {
         if( NCMainWindowController.canRestoreDefaultWindowStateFromLastOpenedWindow ) {
             auto state = [[MainWindowFilePanelState alloc] initWithFrame:_frame
@@ -222,7 +223,8 @@ static PanelController *PanelFactory()
                                                       loadDefaultContent:false
                                                             panelFactory:PanelFactory
                                               controllerStateJSONDecoder:ctrl_state_json_decoder
-                                                          QLPanelAdaptor:[self QLPanelAdaptor]];
+                                                          QLPanelAdaptor:self.QLPanelAdaptor
+                                                       activationManager:self.activationManager];
             RestoreFilePanelStateFromLastOpenedWindow(state);
             [state loadDefaultPanelContent];
             return state;
@@ -232,7 +234,8 @@ static PanelController *PanelFactory()
                                                       loadDefaultContent:false
                                                             panelFactory:PanelFactory
                                               controllerStateJSONDecoder:ctrl_state_json_decoder
-                                                          QLPanelAdaptor:[self QLPanelAdaptor]];
+                                                          QLPanelAdaptor:self.QLPanelAdaptor
+                                                       activationManager:self.activationManager];
             if( ![NCMainWindowController restoreDefaultWindowStateFromConfig:state] )
                 [state loadDefaultPanelContent];
             return state;
@@ -247,7 +250,8 @@ static PanelController *PanelFactory()
                                             loadDefaultContent:false
                                                   panelFactory:PanelFactory
                                     controllerStateJSONDecoder:ctrl_state_json_decoder
-                                                QLPanelAdaptor:[self QLPanelAdaptor]];
+                                                QLPanelAdaptor:self.QLPanelAdaptor
+                                             activationManager:self.activationManager];
     }
     return nil;
 }

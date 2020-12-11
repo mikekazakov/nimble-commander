@@ -17,6 +17,9 @@
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 
+// TODO: remove this, DI stuff instead
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+
 using nc::vfs::easy::CopyFileToTempStorage;
 
 namespace nc::panel {
@@ -338,7 +341,8 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 static ops::CopyingOptions::ChecksumVerification DefaultChecksumVerificationSetting()
 {
-    if( !bootstrap::ActivationManager::Instance().HasCopyVerification() )
+    // TODO: make depencies on Config and ActivationManager explicit
+    if( !NCAppDelegate.me.activationManager.HasCopyVerification() )
         return ops::CopyingOptions::ChecksumVerification::Never;
     int v = GlobalConfig().GetInt(g_ConfigDefaultVerificationSetting);
     if( v == (int)ops::CopyingOptions::ChecksumVerification::Always )

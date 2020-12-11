@@ -10,6 +10,10 @@
 #include "PanelControllerPersistency.h"
 #include <Utility/MIMResponder.h>
 
+namespace nc::bootstrap {
+    class ActivationManager;
+}
+
 namespace nc::ops {
     class Pool;
 }
@@ -66,6 +70,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     std::shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
     nc::panel::ControllerStateJSONDecoder *m_ControllerStateJSONDecoder;
     NCPanelQLPanelAdaptor *m_QLPanelAdaptor;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
 #pragma clang diagnostic pop    
 }
 
@@ -86,7 +91,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
             loadDefaultContent:(bool)_load_content
                   panelFactory:(std::function<PanelController*()>)_panel_factory
     controllerStateJSONDecoder:(nc::panel::ControllerStateJSONDecoder&)_controller_json_decoder
-                QLPanelAdaptor:(NCPanelQLPanelAdaptor*)_ql_panel_adaptor;
+                QLPanelAdaptor:(NCPanelQLPanelAdaptor*)_ql_panel_adaptor
+             activationManager:(nc::bootstrap::ActivationManager&)_activation_manager;
 
 - (void) loadDefaultPanelContent;
 

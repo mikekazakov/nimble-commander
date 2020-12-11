@@ -3,7 +3,7 @@
 #include "AppDelegate+Migration.h"
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate+ViewerCreation.h"
-#include "ActivationManager.h"
+#include "ActivationManagerImpl.h"
 #include "ConfigWiring.h"
 #include "VFSInit.h"
 #include "Interactions.h"

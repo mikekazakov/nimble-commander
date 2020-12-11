@@ -348,6 +348,10 @@
 		CF5C1D4F255EE6CD00ADE703 /* ViewerResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1D4E255EE6CD00ADE703 /* ViewerResources.bundle */; };
 		CF5C8BE222D0F9A200619F45 /* libViewer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A7821F65A540043A26D /* libViewer.a */; };
 		CF5C8BFA22D0FBDF00619F45 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8400FF21A2A8DE007FEF7B /* TrialWindowController.xib */; };
+		CF5DE0742583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */; };
+		CF5DE0752583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */; };
+		CF5DE0762583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */; };
+		CF5DE0772583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */; };
 		CF5E9A381FCBC521005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
 		CF5E9A481FCBC66A005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
 		CF5E9A491FCBC66B005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
@@ -1752,6 +1756,8 @@
 		CF56C2D41DC43C7E00F0DF0F /* PanelListViewDateTimeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewDateTimeView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewDateTimeView.h; sourceTree = SOURCE_ROOT; };
 		CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewDateTimeView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewDateTimeView.mm; sourceTree = SOURCE_ROOT; };
 		CF5A0B291C9E7D76005839B7 /* libunrar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libunrar.a; path = 3rd_Party/unrar/built/libunrar.a; sourceTree = SOURCE_ROOT; };
+		CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActivationManagerImpl.cpp; path = NimbleCommander/Bootstrap/ActivationManagerImpl.cpp; sourceTree = "<group>"; };
+		CF5DE0732583DFB900604DEE /* ActivationManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivationManagerImpl.h; path = NimbleCommander/Bootstrap/ActivationManagerImpl.h; sourceTree = "<group>"; };
 		CF5E9A361FCBC521005608F5 /* ViewFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewFile.h; path = NimbleCommander/States/FilePanels/Actions/ViewFile.h; sourceTree = SOURCE_ROOT; };
 		CF5E9A371FCBC521005608F5 /* ViewFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewFile.mm; path = NimbleCommander/States/FilePanels/Actions/ViewFile.mm; sourceTree = SOURCE_ROOT; };
 		CF5E9A4B1FCBDD37005608F5 /* RefreshPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RefreshPanel.h; path = NimbleCommander/States/FilePanels/Actions/RefreshPanel.h; sourceTree = SOURCE_ROOT; };
@@ -2806,6 +2812,8 @@
 				CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */,
 				CF28B2F721A393A60004D697 /* ActivationManagerBase.cpp */,
 				CF28B2E321A393A50004D697 /* ActivationManagerBase.h */,
+				CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */,
+				CF5DE0732583DFB900604DEE /* ActivationManagerImpl.h */,
 				CFDAC2371DFBDEBA0039A104 /* AppDelegate.h */,
 				CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */,
 				CFA1716420196CF600F507D5 /* AppDelegate.Private.h */,
@@ -4168,6 +4176,7 @@
 				CF4E56CA1D50693C00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF1FBF261E8F57D000D3569C /* FavoriteComposing.mm in Sources */,
 				CF9F4AFB1ECC8DBD00E0AF82 /* OpenFile.mm in Sources */,
+				CF5DE0762583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */,
 				CFFA95141F45A3050035E606 /* UserNotificationsCenter.mm in Sources */,
 				CF818B561EA0610D00BC28E6 /* DefaultAction.mm in Sources */,
 				CF4D98C9202BEC6800ECE06D /* StateActionsDispatcher.mm in Sources */,
@@ -4415,6 +4424,7 @@
 				CFD726FB1E42E2E900603077 /* PanelListViewTableView.mm in Sources */,
 				CFD726B81E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
 				CF4E56CB1D50693D00452912 /* PreferencesWindowViewerTab.mm in Sources */,
+				CF5DE0742583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */,
 				CF1E3D1C1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
 				CFBA63B61FC1A51200077682 /* ShowTabs.mm in Sources */,
 				CFD726EF1E42E2DA00603077 /* PanelListViewRowView.mm in Sources */,
@@ -4631,6 +4641,7 @@
 				CFFA953D1F4A759E0035E606 /* PanelViewFieldEditor.mm in Sources */,
 				CF3E6DF81E3870AB002B4AAD /* PanelViewPresentationSettings.mm in Sources */,
 				CF56C2BA1DC1934D00F0DF0F /* PanelListViewTableView.mm in Sources */,
+				CF5DE0752583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */,
 				CFDAC2AE1DFD096E0039A104 /* ConnectionsMenuDelegate.mm in Sources */,
 				CF818B711EA07A5B00BC28E6 /* Pasteboard.mm in Sources */,
 				CF20DF4E1FC694B80074ABB8 /* SyncPanels.mm in Sources */,
@@ -4815,6 +4826,7 @@
 				CFD726DA1E42E2BD00603077 /* Layout.mm in Sources */,
 				CF5E9A541FCBF5BD005608F5 /* ShowQuickLook.mm in Sources */,
 				CF6BF84121944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
+				CF5DE0772583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */,
 				CF04DDFE1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CFB66FA41D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,

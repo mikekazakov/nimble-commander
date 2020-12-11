@@ -18,7 +18,8 @@ using namespace actions;
 StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
                                      NetworkConnectionsManager &_net_mgr,
                                      nc::utility::TemporaryFileStorage &_temp_file_storage,
-                                     nc::utility::NativeFSManager &_native_fs_manager)
+                                     nc::utility::NativeFSManager &_native_fs_manager,
+                                     nc::bootstrap::ActivationManager &_activation_manager)
 {
     StateActionsMap m;
     auto add = [&](SEL _sel, actions::StateAction *_action) { m[_sel].reset(_action); };
@@ -42,10 +43,10 @@ StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
     add(@selector(OnShowTerminal:), new ShowTerminal);
     add(@selector(OnSyncPanels:), new SyncPanels);
     add(@selector(OnSwapPanels:), new SwapPanels);
-    add(@selector(OnFileCopyCommand:), new CopyTo{_global_config});
-    add(@selector(OnFileCopyAsCommand:), new CopyAs{_global_config});
-    add(@selector(OnFileRenameMoveCommand:), new MoveTo);
-    add(@selector(OnFileRenameMoveAsCommand:), new MoveAs);
+    add(@selector(OnFileCopyCommand:), new CopyTo{_global_config, _activation_manager});
+    add(@selector(OnFileCopyAsCommand:), new CopyAs{_global_config, _activation_manager});
+    add(@selector(OnFileRenameMoveCommand:), new MoveTo(_activation_manager));
+    add(@selector(OnFileRenameMoveAsCommand:), new MoveAs(_activation_manager));
     add(@selector(OnFileOpenInOppositePanel:), new RevealInOppositePanel);
     add(@selector(OnFileOpenInNewOppositePanelTab:), new RevealInOppositePanelTab);
     add(@selector(onExecuteExternalTool:), new ExecuteExternalTool{_temp_file_storage});

@@ -3,13 +3,19 @@
 
 #include "DefaultAction.h"
 
-namespace nc::config {
+namespace nc {
+
+namespace bootstrap {
+class ActivationManager;
+}
+namespace config {
 class Config;
 }
-
-namespace nc::ops {
+namespace ops {
 class Operation;
 }
+} // namespace nc
+
 
 namespace nc::panel::actions {
 
@@ -27,26 +33,40 @@ private:
     nc::config::Config &m_Config;
 };
 
-struct CopyTo final : StateAction, CopyBase {
-    CopyTo(nc::config::Config &_config);
-    virtual bool Predicate(MainWindowFilePanelState *_target) const;
-    virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
+class CopyTo final : public StateAction, CopyBase {
+public:
+    CopyTo(nc::config::Config &_config, nc::bootstrap::ActivationManager &_ac);
+    bool Predicate(MainWindowFilePanelState *_target) const override;
+    void Perform(MainWindowFilePanelState *_target, id _sender) const override;
+private:
+    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
-struct CopyAs final : StateAction, CopyBase {
-    CopyAs(nc::config::Config &_config);
-    virtual bool Predicate(MainWindowFilePanelState *_target) const;
-    virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
+class CopyAs final : public StateAction, CopyBase {
+public:
+    CopyAs(nc::config::Config &_config, nc::bootstrap::ActivationManager &_ac);
+    bool Predicate(MainWindowFilePanelState *_target) const override;
+    void Perform(MainWindowFilePanelState *_target, id _sender) const override;
+private:
+    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
-struct MoveTo final : StateAction {
-    virtual bool Predicate(MainWindowFilePanelState *_target) const;
-    virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
+class MoveTo final : public StateAction {
+public:
+    MoveTo(nc::bootstrap::ActivationManager &_ac);
+    bool Predicate(MainWindowFilePanelState *_target) const override;
+    void Perform(MainWindowFilePanelState *_target, id _sender) const override;
+private:
+    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
-struct MoveAs final : StateAction {
-    virtual bool Predicate(MainWindowFilePanelState *_target) const;
-    virtual void Perform(MainWindowFilePanelState *_target, id _sender) const;
+class MoveAs final : public StateAction {
+public:
+    MoveAs(nc::bootstrap::ActivationManager &_ac);
+    bool Predicate(MainWindowFilePanelState *_target) const override;
+    void Perform(MainWindowFilePanelState *_target, id _sender) const override;
+public:
+    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
 } // namespace nc::panel::actions

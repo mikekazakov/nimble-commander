@@ -421,7 +421,7 @@
         "tools_v1": [
             {
                 "title": "Open System Terminal Here",
-                "path": "/Applications/Utilities/Terminal.app",
+                "path": "/System/Applications/Utilities/Terminal.app",
                 "parameters": "%r",
                 "shortcut": ""
             },
@@ -445,7 +445,7 @@
                        },
                        {
                        "name": "TextEdit",
-                       "path": "/Applications/TextEdit.app",
+                       "path": "/System/Applications/TextEdit.app",
                        "args": "",
                        "mask": "*",
                        "openInTerminal": false

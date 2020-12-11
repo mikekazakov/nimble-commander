@@ -1,5 +1,5 @@
 // Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include "PreferencesWindowExternalEditorsTab.h"
@@ -38,14 +38,18 @@ static bool AskUserToDeleteEditor()
 
 @implementation PreferencesWindowExternalEditorsTab {
     NSMutableArray *m_Editors;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
+    ExternalEditorsStorage* m_ExternalEditorsStorage;
 }
 
-- (id)initWithNibName:(NSString *) [[maybe_unused]] nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager&)_am
+                           editorsStorage:(ExternalEditorsStorage&)_storage
 {
-    self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
+    self = [super init];
     if( self ) {
-
-        auto v = NCAppDelegate.me.externalEditorsStorage.AllExternalEditors();
+        m_ActivationManager = &_am;
+        m_ExternalEditorsStorage = &_storage;
+        auto v = m_ExternalEditorsStorage->AllExternalEditors();
         m_Editors = [NSMutableArray new];
         for( auto i : v ) {
             ExternalEditorInfo *ed = [ExternalEditorInfo new];
@@ -99,13 +103,20 @@ static bool AskUserToDeleteEditor()
     for( ExternalEditorInfo *i in m_Editors )
         eds.emplace_back([i toStartupInfo]);
 
-    NCAppDelegate.me.externalEditorsStorage.SetExternalEditors(eds);
+    m_ExternalEditorsStorage->SetExternalEditors(eds);
+}
+
+- (PreferencesWindowExternalEditorsTabNewEditorSheet *)createEditor
+{
+    PreferencesWindowExternalEditorsTabNewEditorSheet *sheet =
+        [PreferencesWindowExternalEditorsTabNewEditorSheet new];
+    sheet.hasTerminal = m_ActivationManager->HasTerminal();
+    return sheet;
 }
 
 - (IBAction)OnNewEditor:(id) [[maybe_unused]] sender
 {
-    PreferencesWindowExternalEditorsTabNewEditorSheet *sheet =
-        [PreferencesWindowExternalEditorsTabNewEditorSheet new];
+    auto sheet = [self createEditor];
     sheet.Info = [ExternalEditorInfo new];
     sheet.Info.mask = @"*";
     [sheet beginSheetForWindow:self.view.window
@@ -122,8 +133,7 @@ static bool AskUserToDeleteEditor()
         return;
 
     ExternalEditorInfo *item = [self.ExtEditorsController.arrangedObjects objectAtIndex:row];
-    PreferencesWindowExternalEditorsTabNewEditorSheet *sheet =
-        [PreferencesWindowExternalEditorsTabNewEditorSheet new];
+    auto sheet = [self createEditor];
     sheet.Info = [item copy];
     [sheet beginSheetForWindow:self.view.window
              completionHandler:^(NSModalResponse returnCode) {

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/SheetController.h>
@@ -8,7 +8,7 @@
 @interface PreferencesWindowExternalEditorsTabNewEditorSheet : SheetController
 
 @property (nonatomic, strong) ExternalEditorInfo *Info;
-@property (nonatomic, readonly) bool hasTerminal;
+@property (nonatomic, readwrite) bool hasTerminal;
 
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnOK:(id)sender;

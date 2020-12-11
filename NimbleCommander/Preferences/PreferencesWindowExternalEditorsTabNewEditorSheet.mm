@@ -1,7 +1,6 @@
 // Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include <Utility/FileMask.h>
-#include "../Bootstrap/ActivationManager.h"
 #include <Utility/StringExtras.h>
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty : NSValueTransformer
@@ -27,10 +26,7 @@
 
 @implementation PreferencesWindowExternalEditorsTabNewEditorSheet
 
-- (bool)hasTerminal
-{
-    return nc::bootstrap::ActivationManager::Instance().HasTerminal();
-}
+@synthesize hasTerminal;
 
 - (IBAction)OnClose:(id) [[maybe_unused]] _sender
 {

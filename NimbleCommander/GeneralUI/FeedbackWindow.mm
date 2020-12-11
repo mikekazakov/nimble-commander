@@ -15,15 +15,16 @@ using namespace std::literals;
 @implementation FeedbackWindow
 {
     FeedbackWindow *m_Self;
-    
+    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
 @synthesize rating;
 
-- (id) init
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager&)_am
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if( self ) {
+        m_ActivationManager = &_am;
         self.rating = 1;
     }
     return self;
@@ -36,7 +37,7 @@ using namespace std::literals;
     
     if( self.rating == 5 || self.rating == 4) {
         // positive branch
-        if( nc::bootstrap::ActivationManager::Instance().ForAppStore() )
+        if( m_ActivationManager->ForAppStore() )
             [self.tabView selectTabViewItemAtIndex:0];
         else
             [self.tabView selectTabViewItemAtIndex:1];

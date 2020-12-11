@@ -51,6 +51,7 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
     MainWindowFilePanelState    *m_PanelState;
     NCTermShellState     *m_Terminal;
     MainWindowInternalViewerState *m_Viewer;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
     
     SerialQueue                  m_BigFileViewLoadingQ;
     bool                         m_ToolbarVisible;
@@ -68,6 +69,7 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
 }
 
 - (instancetype) initWithWindow:(NCMainWindow*)window
+              activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     if( !window )
         return nil;
@@ -76,6 +78,7 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
     if( !self )
         return nil;
 
+    m_ActivationManager = &_am;
     window.delegate = self;
     
     
@@ -461,7 +464,7 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
 
 - (IBAction)onMainMenuPerformShowRegistrationInfo:(id)[[maybe_unused]]sender
 {
-    RegistrationInfoWindow *w = [[RegistrationInfoWindow alloc] init];
+    RegistrationInfoWindow *w = [[RegistrationInfoWindow alloc] initWithActivationManager:*m_ActivationManager];
     [self.window beginSheet:w.window completionHandler:^(NSModalResponse){}];    
 }
 

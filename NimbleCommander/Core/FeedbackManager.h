@@ -4,6 +4,10 @@
 #include <optional>
 #include <time.h>
 
+namespace nc::bootstrap {
+class ActivationManager;
+}
+
 class FeedbackManager
 {
 public:
@@ -36,7 +40,7 @@ public:
     void RateOnAppStore();
     
 private:
-    FeedbackManager();
+    FeedbackManager(nc::bootstrap::ActivationManager& _am);
     bool IsEligibleForRatingOverlay() const;
     
     const int       m_ApplicationRunsCount;
@@ -44,6 +48,7 @@ private:
     const time_t    m_StartupTime;
     const time_t    m_FirstRunTime;
     bool            m_ShownRatingOverlay = false;
+    nc::bootstrap::ActivationManager &m_ActivationManager;
     
     std::optional<int>   m_LastRating; // 0 - discarded, [1-5] - rating
     std::optional<time_t>m_LastRatingTime;

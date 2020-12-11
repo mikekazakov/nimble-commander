@@ -164,7 +164,6 @@
 		CF36DBFC1F6C1B63004A018E /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
 		CF36DBFD1F6C1C09004A018E /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF39A0E21F70C1E1005A4583 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* libOperations.a */; };
-		CF39A0E61F70C20C005A4583 /* libRoutedIO.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF39A0EB1F70C5CA005A4583 /* libRoutedIO.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF3B7F70201F20D300BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
 		CF3B7F71201F212F00BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
@@ -563,6 +562,10 @@
 		CF84C8DF1DB74B3A00B4E888 /* PanelViewHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */; };
 		CF84C8F81DBB2AC300B4E888 /* PanelListView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */; };
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
+		CF8681A325837A7E00D87746 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; };
+		CF8681A425837A9900D87746 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; };
+		CF8681E925837D1B00D87746 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF8681E825837D1B00D87746 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF8681EC25837D2E00D87746 /* LetsMove.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF8681EB25837D2E00D87746 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF8B24381E6FC68D008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
 		CF8B24401E6FC695008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
 		CF8B24411E6FC696008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
@@ -1338,6 +1341,20 @@
 			remoteGlobalIDString = CF20CC20215BB0CE006716F6;
 			remoteInfo = ConfigUT;
 		};
+		CF8681C425837C2300D87746 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD79AD821FE29420043A26D /* CUI.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF46016B25612B020095FC73;
+			remoteInfo = CUIResources;
+		};
+		CF8681C625837C2800D87746 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF46FF31255FCA770095FC73;
+			remoteInfo = OperationsResources;
+		};
 		CF8BDD0F2147D60800F14C3E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF8BDD0B2147D60800F14C3E /* VFSIcon.xcodeproj */;
@@ -1470,7 +1487,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CF39A0E61F70C20C005A4583 /* libRoutedIO.a in CopyFiles */,
+				CF8681EC25837D2E00D87746 /* LetsMove.framework in CopyFiles */,
+				CF8681E925837D1B00D87746 /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1845,6 +1863,8 @@
 		CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListView.mm; path = NimbleCommander/States/FilePanels/List/PanelListView.mm; sourceTree = SOURCE_ROOT; };
 		CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DetailedVolumeInformationSheetController.h; path = NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DetailedVolumeInformationSheetController.mm; path = NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.mm; sourceTree = SOURCE_ROOT; };
+		CF8681E825837D1B00D87746 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_Party/Sparkle/Sparkle.framework; sourceTree = "<group>"; };
+		CF8681EB25837D2E00D87746 /* LetsMove.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LetsMove.framework; path = 3rd_Party/LetsMove/LetsMove.framework; sourceTree = "<group>"; };
 		CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FavoritesImpl.cpp; path = NimbleCommander/States/FilePanels/FavoritesImpl.cpp; sourceTree = SOURCE_ROOT; };
 		CF8B24371E6FC68D008EB447 /* Favorites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Favorites.h; path = NimbleCommander/States/FilePanels/Favorites.h; sourceTree = SOURCE_ROOT; };
 		CF8BDD0B2147D60800F14C3E /* VFSIcon.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VFSIcon.xcodeproj; path = VFSIcon/VFSIcon.xcodeproj; sourceTree = "<group>"; };
@@ -2245,6 +2265,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF8681A425837A9900D87746 /* LetsMove.framework in Frameworks */,
+				CF8681A325837A7E00D87746 /* Sparkle.framework in Frameworks */,
 				CF46022825630EC20095FC73 /* libHabanero.a in Frameworks */,
 				CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */,
 				CF7C7CE51E5D3521002DB0E2 /* libVFS.a in Frameworks */,
@@ -3024,6 +3046,8 @@
 		CFC5120816C4BD3D00D247EE = {
 			isa = PBXGroup;
 			children = (
+				CF8681EB25837D2E00D87746 /* LetsMove.framework */,
+				CF8681E825837D1B00D87746 /* Sparkle.framework */,
 				CF19B4872546250000838B45 /* XCConfig */,
 				CF19B4A4254DD43700838B45 /* Nimble Commander.entitlements */,
 				CF20CC01215A258F006716F6 /* Config.xcodeproj */,
@@ -3342,6 +3366,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				CF8681C725837C2800D87746 /* PBXTargetDependency */,
+				CF8681C525837C2300D87746 /* PBXTargetDependency */,
 				CF46FF24255FC8B50095FC73 /* PBXTargetDependency */,
 				CFDAC8492169D32400DEBA2A /* PBXTargetDependency */,
 				CFDAC84C2169D32A00DEBA2A /* PBXTargetDependency */,
@@ -4913,6 +4939,16 @@
 			isa = PBXTargetDependency;
 			name = Config;
 			targetProxy = CF6BF8382194444B0017CECB /* PBXContainerItemProxy */;
+		};
+		CF8681C525837C2300D87746 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CUIResources;
+			targetProxy = CF8681C425837C2300D87746 /* PBXContainerItemProxy */;
+		};
+		CF8681C725837C2800D87746 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OperationsResources;
+			targetProxy = CF8681C625837C2800D87746 /* PBXContainerItemProxy */;
 		};
 		CFA53A731D433F8A00C562A7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

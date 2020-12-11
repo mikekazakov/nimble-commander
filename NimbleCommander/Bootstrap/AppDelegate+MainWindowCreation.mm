@@ -255,7 +255,9 @@ static PanelController *PanelFactory()
     const auto window = [self allocateMainWindow];
     const auto frame = window.contentView.frame;
     const auto operations_pool = nc::ops::Pool::Make();
-    const auto window_controller = [[NCMainWindowController alloc] initWithWindow:window];
+    const auto window_controller =
+        [[NCMainWindowController alloc] initWithWindow:window
+                                     activationManager:self.activationManager];
     window_controller.operationsPool = *operations_pool;
     self.operationsProgressTracker.AddPool(*operations_pool);
 

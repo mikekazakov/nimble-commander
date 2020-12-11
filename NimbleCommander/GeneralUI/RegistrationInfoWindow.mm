@@ -1,8 +1,8 @@
 // Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "RegistrationInfoWindow.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
 #include "../Bootstrap/ActivationManager.h"
-#include "RegistrationInfoWindow.h"
 #include <Utility/StringExtras.h>
 
 @interface RegistrationInfoWindow ()
@@ -16,12 +16,14 @@
 @implementation RegistrationInfoWindow
 {
     RegistrationInfoWindow *m_Self;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
-- (id) init
+- (instancetype) initWithActivationManager:(nc::bootstrap::ActivationManager&)_am
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if( self ) {
+        m_ActivationManager = &_am;
     }
     return self;
 }
@@ -32,17 +34,17 @@
     nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     m_Self = self;
     
-    if( nc::bootstrap::ActivationManager::Instance().ForAppStore() ) { // MAS version
+    if( m_ActivationManager->ForAppStore() ) { // MAS version
         [self.tabView selectTabViewItemAtIndex:0];
     }
     else { // standalone version
-        if( nc::bootstrap::ActivationManager::Instance().UserHadRegistered() ) {
-            if( nc::bootstrap::ActivationManager::Instance().UserHasProVersionInstalled() ) { // Pro version
+        if( m_ActivationManager->UserHadRegistered() ) {
+            if( m_ActivationManager->UserHasProVersionInstalled() ) { // Pro version
                 [self.tabView selectTabViewItemAtIndex:0];
             }
             else { // License
                 [self.tabView selectTabViewItemAtIndex:1];
-                auto &info = nc::bootstrap::ActivationManager::Instance().LicenseInformation();
+                auto &info = m_ActivationManager->LicenseInformation();
                 if( info.count("Company") )
                     self.apCompany.stringValue = [NSString stringWithUTF8StdString:info.at("Company")];
                 if( info.count("Email") )

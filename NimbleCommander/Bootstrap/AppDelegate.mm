@@ -206,7 +206,7 @@ static NCAppDelegate *g_Me = nil;
         m_ViewerWindowDelegateBridge = [[NCViewerWindowDelegateBridge alloc] init];
         m_NativeFSManager = std::make_unique<nc::utility::NativeFSManagerImpl>();
         m_NativeHost = std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager);
-        m_ActivationManager = &ActivationManager::Instance();
+        m_ActivationManager = &ActivationManagerImpl::Instance();
         [self checkMASReceipt];
         CheckDefaultsReset();
         m_SupportDirectory =

@@ -90,7 +90,7 @@ static std::string AquaticPrimePublicKey()
     return key;
 }
 
-ActivationManager &ActivationManager::Instance()
+ActivationManagerImpl &ActivationManagerImpl::Instance()
 {
     [[clang::no_destroy]] static auto ext_license_support =
         ActivationManagerBase::ExternalLicenseSupport{AquaticPrimePublicKey(),
@@ -98,11 +98,11 @@ ActivationManager &ActivationManager::Instance()
     [[clang::no_destroy]] static auto trial_period_support =
         ActivationManagerBase::TrialPeriodSupport{g_DefaultsTrialExpireDate};
     [[clang::no_destroy]] static auto inst =
-        ActivationManager{ext_license_support, trial_period_support, GA()};
+    ActivationManagerImpl{ext_license_support, trial_period_support, GA()};
     return inst;
 }
 
-ActivationManager::ActivationManager(
+ActivationManagerImpl::ActivationManagerImpl(
     ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
     ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
     GoogleAnalytics &_ga)
@@ -144,127 +144,127 @@ ActivationManager::ActivationManager(
     }
 }
 
-const std::string &ActivationManager::AppStoreID() const noexcept
+const std::string &ActivationManagerImpl::AppStoreID() const noexcept
 {
     return m_AppStoreIdentifier;
 }
 
-bool ActivationManager::HasPSFS() const noexcept
+bool ActivationManagerImpl::HasPSFS() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasXAttrFS() const noexcept
+bool ActivationManagerImpl::HasXAttrFS() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasTerminal() const noexcept
+bool ActivationManagerImpl::HasTerminal() const noexcept
 {
     return !Sandboxed() && m_IsActivated;
 }
 
-bool ActivationManager::HasRoutedIO() const noexcept
+bool ActivationManagerImpl::HasRoutedIO() const noexcept
 {
     return !Sandboxed() && m_IsActivated;
 }
 
-bool ActivationManager::HasBriefSystemOverview() const noexcept
+bool ActivationManagerImpl::HasBriefSystemOverview() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasExternalTools() const noexcept
+bool ActivationManagerImpl::HasExternalTools() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasUnixAttributesEditing() const noexcept
+bool ActivationManagerImpl::HasUnixAttributesEditing() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasDetailedVolumeInformation() const noexcept
+bool ActivationManagerImpl::HasDetailedVolumeInformation() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasInternalViewer() const noexcept
+bool ActivationManagerImpl::HasInternalViewer() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasCompressionOperation() const noexcept
+bool ActivationManagerImpl::HasCompressionOperation() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasArchivesBrowsing() const noexcept
+bool ActivationManagerImpl::HasArchivesBrowsing() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasLinksManipulation() const noexcept
+bool ActivationManagerImpl::HasLinksManipulation() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasNetworkConnectivity() const noexcept
+bool ActivationManagerImpl::HasNetworkConnectivity() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasLANSharesMounting() const noexcept
+bool ActivationManagerImpl::HasLANSharesMounting() const noexcept
 {
     return !m_IsSandBoxed && m_IsActivated;
 }
 
-bool ActivationManager::HasChecksumCalculation() const noexcept
+bool ActivationManagerImpl::HasChecksumCalculation() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasBatchRename() const noexcept
+bool ActivationManagerImpl::HasBatchRename() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasCopyVerification() const noexcept
+bool ActivationManagerImpl::HasCopyVerification() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasTemporaryPanels() const noexcept
+bool ActivationManagerImpl::HasTemporaryPanels() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasSpotlightSearch() const noexcept
+bool ActivationManagerImpl::HasSpotlightSearch() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::HasThemesManipulation() const noexcept
+bool ActivationManagerImpl::HasThemesManipulation() const noexcept
 {
     return m_IsActivated;
 }
 
-bool ActivationManager::IsTrialPeriod() const noexcept
+bool ActivationManagerImpl::IsTrialPeriod() const noexcept
 {
     return m_IsTrialPeriod;
 }
 
-int ActivationManager::TrialDaysLeft() const noexcept
+int ActivationManagerImpl::TrialDaysLeft() const noexcept
 {
     return m_TrialDaysLeft;
 }
 
-const std::string &ActivationManager::LicenseFileExtension() const noexcept
+const std::string &ActivationManagerImpl::LicenseFileExtension() const noexcept
 {
     return g_LicenseExtension;
 }
 
-bool ActivationManager::ProcessLicenseFile(const std::string &_path)
+bool ActivationManagerImpl::ProcessLicenseFile(const std::string &_path)
 {
     if( Type() != ActivationManager::Distribution::Trial )
         return false;
@@ -288,18 +288,18 @@ bool ActivationManager::ProcessLicenseFile(const std::string &_path)
     return m_UserHadRegistered;
 }
 
-bool ActivationManager::UserHadRegistered() const noexcept
+bool ActivationManagerImpl::UserHadRegistered() const noexcept
 {
     return m_UserHadRegistered;
 }
 
-bool ActivationManager::ShouldShowTrialNagScreen() const noexcept
+bool ActivationManagerImpl::ShouldShowTrialNagScreen() const noexcept
 {
     return Type() == ActivationManager::Distribution::Trial && !m_UserHadRegistered &&
            TrialDaysLeft() <= g_TrialNagScreenMinDays;
 }
 
-bool ActivationManager::ReCheckProFeaturesInAppPurchased()
+bool ActivationManagerImpl::ReCheckProFeaturesInAppPurchased()
 {
     if( Type() != ActivationManager::Distribution::Free )
         return false;
@@ -307,33 +307,33 @@ bool ActivationManager::ReCheckProFeaturesInAppPurchased()
     return m_IsActivated;
 }
 
-bool ActivationManager::UsedHadPurchasedProFeatures() const noexcept
+bool ActivationManagerImpl::UsedHadPurchasedProFeatures() const noexcept
 {
     return Type() == Distribution::Free && m_IsActivated == true;
 }
 
 const std::unordered_map<std::string, std::string> &
-ActivationManager::LicenseInformation() const noexcept
+ActivationManagerImpl::LicenseInformation() const noexcept
 {
     return m_LicenseInfo;
 }
 
-bool ActivationManager::UserHasProVersionInstalled() const noexcept
+bool ActivationManagerImpl::UserHasProVersionInstalled() const noexcept
 {
     return m_UserHasProVersionInstalled;
 }
 
-ActivationManager::Distribution ActivationManager::Type() const noexcept
+ActivationManager::Distribution ActivationManagerImpl::Type() const noexcept
 {
     return m_Type;
 }
 
-bool ActivationManager::Sandboxed() const noexcept
+bool ActivationManagerImpl::Sandboxed() const noexcept
 {
     return m_IsSandBoxed;
 }
 
-bool ActivationManager::ForAppStore() const noexcept
+bool ActivationManagerImpl::ForAppStore() const noexcept
 {
     return Sandboxed();
 }

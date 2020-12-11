@@ -29,51 +29,96 @@ public:
          */
         Trial
     };
+    
+    virtual ~ActivationManager() = default;
 
-    ActivationManager(ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
-                      ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
-                      GoogleAnalytics &_ga);
-    ActivationManager(const ActivationManager&)=delete;
-    static ActivationManager &Instance();
-    Distribution Type() const noexcept;
-    bool Sandboxed() const noexcept;
-    bool ForAppStore() const noexcept;
-    const std::string &AppStoreID() const noexcept;
-    bool HasPSFS() const noexcept;
-    bool HasXAttrFS() const noexcept;
-    bool HasTerminal() const noexcept;
-    bool HasExternalTools() const noexcept;
-    bool HasBriefSystemOverview() const noexcept;
-    bool HasUnixAttributesEditing() const noexcept;
-    bool HasDetailedVolumeInformation() const noexcept;
-    bool HasInternalViewer() const noexcept;
-    bool HasCompressionOperation() const noexcept;
-    bool HasArchivesBrowsing() const noexcept;
-    bool HasLinksManipulation() const noexcept;
-    bool HasNetworkConnectivity() const noexcept;
-    bool HasLANSharesMounting() const noexcept;
-    bool HasChecksumCalculation() const noexcept;
-    bool HasBatchRename() const noexcept;
-    bool HasCopyVerification() const noexcept;
-    bool HasRoutedIO() const noexcept;
-    bool HasTemporaryPanels() const noexcept;
-    bool HasSpotlightSearch() const noexcept;
-    bool HasThemesManipulation() const noexcept;
+    // Queries
+    virtual Distribution Type() const noexcept = 0;
+    virtual bool Sandboxed() const noexcept = 0;
+    virtual bool ForAppStore() const noexcept = 0;
+    virtual const std::string &AppStoreID() const noexcept = 0;
+    virtual bool HasPSFS() const noexcept = 0;
+    virtual bool HasXAttrFS() const noexcept = 0;
+    virtual bool HasTerminal() const noexcept = 0;
+    virtual bool HasExternalTools() const noexcept = 0;
+    virtual bool HasBriefSystemOverview() const noexcept = 0;
+    virtual bool HasUnixAttributesEditing() const noexcept = 0;
+    virtual bool HasDetailedVolumeInformation() const noexcept = 0;
+    virtual bool HasInternalViewer() const noexcept = 0;
+    virtual bool HasCompressionOperation() const noexcept = 0;
+    virtual bool HasArchivesBrowsing() const noexcept = 0;
+    virtual bool HasLinksManipulation() const noexcept = 0;
+    virtual bool HasNetworkConnectivity() const noexcept = 0;
+    virtual bool HasLANSharesMounting() const noexcept = 0;
+    virtual bool HasChecksumCalculation() const noexcept = 0;
+    virtual bool HasBatchRename() const noexcept = 0;
+    virtual bool HasCopyVerification() const noexcept = 0;
+    virtual bool HasRoutedIO() const noexcept = 0;
+    virtual bool HasTemporaryPanels() const noexcept = 0;
+    virtual bool HasSpotlightSearch() const noexcept = 0;
+    virtual bool HasThemesManipulation() const noexcept = 0;
 
     // Trial NonMAS version stuff
-    bool UserHadRegistered() const noexcept;
-    bool UserHasProVersionInstalled() const noexcept;
-    bool IsTrialPeriod() const noexcept;
-    int TrialDaysLeft() const noexcept; // zero means that trial has expired
-    bool ShouldShowTrialNagScreen() const noexcept;
-    const std::string &LicenseFileExtension() const noexcept; // currently it's "nimblecommanderlicense"
-    bool ProcessLicenseFile(const std::string &_path);
-    const std::unordered_map<std::string, std::string> &LicenseInformation() const noexcept;
+    virtual bool UserHadRegistered() const noexcept = 0;
+    virtual bool UserHasProVersionInstalled() const noexcept = 0;
+    virtual bool IsTrialPeriod() const noexcept = 0;
+    virtual int TrialDaysLeft() const noexcept = 0; // zero means that trial has expired
+    virtual bool ShouldShowTrialNagScreen() const noexcept = 0;
+    virtual const std::string &LicenseFileExtension() const noexcept = 0;
+    virtual bool ProcessLicenseFile(const std::string &_path) = 0;
+    virtual const std::unordered_map<std::string, std::string> &LicenseInformation() const noexcept = 0;
 
     // Free MAS version stuff
-    bool ReCheckProFeaturesInAppPurchased(); // will recheck receipt file and return true if in-app
-                                             // was purchased
-    bool UsedHadPurchasedProFeatures() const noexcept;
+    virtual bool ReCheckProFeaturesInAppPurchased() = 0; // will recheck receipt file and return true if in-app was purchased
+    virtual bool UsedHadPurchasedProFeatures() const noexcept = 0;
+};
+
+class ActivationManagerImpl : public ActivationManager
+{
+public:
+    ActivationManagerImpl(ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
+                      ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
+                      GoogleAnalytics &_ga);
+    ActivationManagerImpl(const ActivationManagerImpl&)=delete;
+    static ActivationManagerImpl &Instance();
+    Distribution Type() const noexcept override;
+    bool Sandboxed() const noexcept override;
+    bool ForAppStore() const noexcept override;
+    const std::string &AppStoreID() const noexcept override;
+    bool HasPSFS() const noexcept override;
+    bool HasXAttrFS() const noexcept override;
+    bool HasTerminal() const noexcept override;
+    bool HasExternalTools() const noexcept override;
+    bool HasBriefSystemOverview() const noexcept override;
+    bool HasUnixAttributesEditing() const noexcept override;
+    bool HasDetailedVolumeInformation() const noexcept override;
+    bool HasInternalViewer() const noexcept override;
+    bool HasCompressionOperation() const noexcept override;
+    bool HasArchivesBrowsing() const noexcept override;
+    bool HasLinksManipulation() const noexcept override;
+    bool HasNetworkConnectivity() const noexcept override;
+    bool HasLANSharesMounting() const noexcept override;
+    bool HasChecksumCalculation() const noexcept override;
+    bool HasBatchRename() const noexcept override;
+    bool HasCopyVerification() const noexcept override;
+    bool HasRoutedIO() const noexcept override;
+    bool HasTemporaryPanels() const noexcept override;
+    bool HasSpotlightSearch() const noexcept override;
+    bool HasThemesManipulation() const noexcept override;
+
+    // Trial NonMAS version stuff
+    bool UserHadRegistered() const noexcept override;
+    bool UserHasProVersionInstalled() const noexcept override;
+    bool IsTrialPeriod() const noexcept override;
+    int TrialDaysLeft() const noexcept override;
+    bool ShouldShowTrialNagScreen() const noexcept override;
+    const std::string &LicenseFileExtension() const noexcept override;
+    bool ProcessLicenseFile(const std::string &_path) override;
+    const std::unordered_map<std::string, std::string> &LicenseInformation() const noexcept  override;
+
+    // Free MAS version stuff
+    bool ReCheckProFeaturesInAppPurchased() override;
+    bool UsedHadPurchasedProFeatures() const noexcept override;
 
 private:
 #if defined(__NC_VERSION_FREE__)

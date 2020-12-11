@@ -382,14 +382,17 @@ static void GoToConnection(PanelController *_target,
         });
 }
 
-OpenNetworkConnections::OpenNetworkConnections(NetworkConnectionsManager &_net_mgr):
-    OpenConnectionBase(_net_mgr)
+OpenNetworkConnections::OpenNetworkConnections(NetworkConnectionsManager &_net_mgr,
+                                               nc::bootstrap::ActivationManager &_ac):
+    OpenConnectionBase(_net_mgr),
+    m_ActivationManager(_ac)
 {
 }
     
 void OpenNetworkConnections::Perform( PanelController *_target, id ) const
 {
-    const auto sheet = [[ConnectToServer alloc] initWithNetworkConnectionsManager:m_NetMgr];
+    const auto sheet = [[ConnectToServer alloc] initWithNetworkConnectionsManager:m_NetMgr
+                                                                activationManager:m_ActivationManager];
     const auto window = _target.window;
     [sheet beginSheetForWindow:window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )

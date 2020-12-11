@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectToServer.h"
 #include "FTPConnectionSheetController.h"
 #include "SFTPConnectionSheetController.h"
@@ -84,6 +84,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 @implementation ConnectToServer
 {
     NetworkConnectionsManager                       *m_Manager;
+    nc::bootstrap::ActivationManager                *m_ActivationManager;
     std::vector<NetworkConnectionsManager::Connection>   m_Connections;
     std::optional<NetworkConnectionsManager::Connection> m_OutputConnection;
     bool                                            m_Shown;
@@ -92,11 +93,13 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 @synthesize connection = m_OutputConnection;
 
 - (instancetype) initWithNetworkConnectionsManager:(NetworkConnectionsManager&)_manager
+                                 activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super init];
     if( self ) {
         m_Shown = false;
         m_Manager = &_manager;
+        m_ActivationManager = &_am;
     }
     return self;
 }
@@ -360,7 +363,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 
 - (bool) LANSharesEnabled
 {
-    return nc::bootstrap::ActivationManager::Instance().HasLANSharesMounting();
+    return m_ActivationManager->HasLANSharesMounting();
 }
 
 @end

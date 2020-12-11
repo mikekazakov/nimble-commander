@@ -1,9 +1,13 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
 
 class NetworkConnectionsManager;
+
+namespace nc::bootstrap {
+class ActivationManager;
+}
 
 namespace nc::panel::actions {
 
@@ -46,8 +50,11 @@ struct OpenNewLANShare final : OpenConnectionBase
 
 struct OpenNetworkConnections final : OpenConnectionBase
 {
-    OpenNetworkConnections(NetworkConnectionsManager &_net_mgr);
+    OpenNetworkConnections(NetworkConnectionsManager &_net_mgr,
+                           nc::bootstrap::ActivationManager &_ac);
     void Perform( PanelController *_target, id _sender ) const override;
+private:
+    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
 // will extract additional context from _sender.representedObject

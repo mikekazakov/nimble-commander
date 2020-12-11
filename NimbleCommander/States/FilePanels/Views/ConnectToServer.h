@@ -1,14 +1,18 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/SheetController.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 
-@interface ConnectToServer : SheetController<NSTableViewDataSource, NSTableViewDelegate>
+namespace nc::bootstrap {
+class ActivationManager;
+}
 
-- (instancetype) initWithNetworkConnectionsManager:(NetworkConnectionsManager&)_manager;
+@interface ConnectToServer : SheetController <NSTableViewDataSource, NSTableViewDelegate>
 
-@property (readonly, nonatomic) std::optional<NetworkConnectionsManager::Connection> connection;
+- (instancetype)initWithNetworkConnectionsManager:(NetworkConnectionsManager &)_manager
+                            activationManager:(nc::bootstrap::ActivationManager &)_am;
 
+@property(readonly, nonatomic) std::optional<NetworkConnectionsManager::Connection> connection;
 
 @end

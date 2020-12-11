@@ -34,8 +34,6 @@
 #include "Actions/RefreshPanel.h"
 #include "Actions/ShowQuickLook.h"
 #include "Actions/ShowSystemOverview.h"
-
-// Temp dependency:
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 namespace nc::panel {
@@ -61,6 +59,7 @@ PanelActionsMap BuildPanelActionsMap
     nc::config::Config &_global_config,
     NetworkConnectionsManager& _net_mgr,
      utility::NativeFSManager& _native_fs_mgr,
+     nc::bootstrap::ActivationManager &_activation_manager,
      nc::vfs::NativeHost &_native_host,
      FileOpener &_file_opener,
      NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
@@ -72,7 +71,7 @@ PanelActionsMap BuildPanelActionsMap
         m[_sel].reset( _action );
     };
 
-    const auto has_archive_support = bootstrap::ActivationManager::Instance().HasArchivesBrowsing();
+    const auto has_archive_support = _activation_manager.HasArchivesBrowsing();
 
     add(@selector(OnOpenNatively:),
         new OpenFilesWithDefaultHandler{_file_opener});
@@ -82,7 +81,7 @@ PanelActionsMap BuildPanelActionsMap
         new Enter{has_archive_support, *m[@selector(OnOpenNatively:)]} );
     add( @selector(onAlwaysOpenFileWith:),           new AlwaysOpenFileWithSubmenu{_open_with_menu_delegate});
     add(@selector(onMainMenuPerformFindAction:),
-        new FindFiles{_make_viewer,_make_viewer_controller});
+        new FindFiles{_make_viewer,_make_viewer_controller, _activation_manager});
     add( @selector(OnSpotlightSearch:),              new SpotlightSearch);
     add( @selector(OnDuplicate:),                    new Duplicate{_global_config});
     add( @selector(OnAddToFavorites:),               new AddToFavorites);
@@ -139,7 +138,7 @@ PanelActionsMap BuildPanelActionsMap
     add( @selector(onGoToWebDAV:),               new OpenNewWebDAVConnection{_net_mgr});
     add( @selector(OnGoToNetworkShare:),         new OpenNewLANShare{_net_mgr});
     add( @selector(OnGoToDropboxStorage:),       new OpenNewDropboxStorage{_net_mgr});
-    add( @selector(OnConnectToNetworkServer:),   new OpenNetworkConnections{_net_mgr});
+    add( @selector(OnConnectToNetworkServer:),   new OpenNetworkConnections{_net_mgr, _activation_manager});
     add( @selector(OnGoToSavedConnectionItem:),  new OpenExistingNetworkConnection{_net_mgr});
     add( @selector(OnGoToQuickListsParents:),   
         new ShowParentFoldersQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(0)});

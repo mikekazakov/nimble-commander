@@ -18,9 +18,11 @@ static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
 namespace nc::panel::actions {
 
 FindFiles::FindFiles(std::function<NCViewerView*(NSRect)> _make_viewer,
-                     std::function<NCViewerViewController*()> _make_controller) :
+                     std::function<NCViewerViewController*()> _make_controller,
+                     nc::bootstrap::ActivationManager &_activation_manager) :
     m_MakeViewer{ std::move(_make_viewer) },
-    m_MakeController{ std::move(_make_controller) }
+    m_MakeController{ std::move(_make_controller) },
+    m_ActivationManager{_activation_manager}
 {
 }
 
@@ -54,7 +56,8 @@ static VFSListingPtr
 
 void FindFiles::Perform( PanelController *_target, id ) const
 {
-    FindFilesSheetController *sheet = [FindFilesSheetController new];
+    FindFilesSheetController *sheet = [[FindFilesSheetController alloc]
+                                       initWithActivationManager:m_ActivationManager];
     sheet.vfsInstanceManager = &_target.vfsInstanceManager;
     sheet.host = _target.isUniform ?
         _target.vfs :

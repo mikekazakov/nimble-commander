@@ -84,6 +84,7 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
         self.globalConfig,
         *self.networkConnectionsManager,
         self.nativeFSManager,
+        self.activationManager,
         self.nativeHost,
         self.fileOpener,
         self.panelOpenWithMenuDelegate,
@@ -327,7 +328,8 @@ static PanelController *PanelFactory()
         return [[NCPanelContextMenu alloc] initWithItems:std::move(_items)
                                                  ofPanel:_panel
                                           withFileOpener:self.fileOpener
-                                               withUTIDB:self.utiDB];
+                                               withUTIDB:self.utiDB
+                                   withActivationManager:self.activationManager];
     };
     return nc::panel::ContextMenuProvider{std::move(provider)};
 }

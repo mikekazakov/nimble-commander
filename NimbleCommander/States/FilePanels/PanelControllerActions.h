@@ -11,6 +11,10 @@ class NetworkConnectionsManager;
 @class NCViewerView;
 @class NCViewerViewController;
 
+namespace nc::bootstrap {
+class ActivationManager;
+}
+
 namespace nc::vfs {
 class NativeHost;
 }
@@ -23,7 +27,8 @@ using PanelActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::P
 PanelActionsMap
 BuildPanelActionsMap(nc::config::Config &_global_config,
                      NetworkConnectionsManager &_net_mgr,
-                     utility::NativeFSManager &_native_fs_mgr,
+                     nc::utility::NativeFSManager &_native_fs_mgr,
+                     nc::bootstrap::ActivationManager &_activation_manager,
                      nc::vfs::NativeHost &_native_host,
                      FileOpener &_file_opener,
                      NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,

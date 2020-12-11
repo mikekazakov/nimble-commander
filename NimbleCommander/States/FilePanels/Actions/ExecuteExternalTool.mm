@@ -46,10 +46,13 @@ static std::string BuildParametersStringForExternalTool
      nc::utility::TemporaryFileStorage &_temp_storage);
 static void RunExtTool(const ExternalTool &_tool,
                        const std::string& _cooked_params,
-                       MainWindowFilePanelState *_target);
+                       MainWindowFilePanelState *_target,
+                       nc::bootstrap::ActivationManager &_activation_manager);
 
-ExecuteExternalTool::ExecuteExternalTool(nc::utility::TemporaryFileStorage &_temp_storage):
-    m_TempFileStorage{_temp_storage}
+ExecuteExternalTool::ExecuteExternalTool(nc::utility::TemporaryFileStorage &_temp_storage,
+                                         nc::bootstrap::ActivationManager &_ac):
+    m_TempFileStorage{_temp_storage},
+    m_ActivationManager{_ac}
 {
 }
 
@@ -84,7 +87,7 @@ void ExecuteExternalTool::Execute(const ExternalTool &_tool,
                                                                              {},
                                                                              _target,
                                                                              m_TempFileStorage);
-        RunExtTool(_tool, cooked_parameters, _target);
+        RunExtTool(_tool, cooked_parameters, _target, m_ActivationManager);
     }
     else {
         auto sheet = [[ExternalToolParameterValueSheetController alloc]
@@ -95,7 +98,7 @@ void ExecuteExternalTool::Execute(const ExternalTool &_tool,
                                                                               sheet.values,
                                                                               _target,
                                                                               m_TempFileStorage);
-                RunExtTool(_tool, cooked_parameters, _target);
+                RunExtTool(_tool, cooked_parameters, _target, m_ActivationManager);
             }
         }];
     }
@@ -239,7 +242,8 @@ static bool IsRunnableExecutable( const std::string &_path )
 
 static void RunExtTool(const ExternalTool &_tool,
                        const std::string& _cooked_params,
-                       MainWindowFilePanelState *_target)
+                       MainWindowFilePanelState *_target,
+                       nc::bootstrap::ActivationManager &_activation_manager)
 {
     dispatch_assert_main_queue();
     auto startup_mode = _tool.m_StartupMode;
@@ -253,7 +257,7 @@ static void RunExtTool(const ExternalTool &_tool,
     }
     
     if( startup_mode == ExternalTool::StartupMode::RunInTerminal ) {
-        if( !bootstrap::ActivationManager::Instance().HasTerminal() )
+        if( !_activation_manager.HasTerminal() )
             return;
         
         if( tool_is_bundle ) {

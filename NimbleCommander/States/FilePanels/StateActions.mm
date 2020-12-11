@@ -49,7 +49,7 @@ StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
     add(@selector(OnFileRenameMoveAsCommand:), new MoveAs(_activation_manager));
     add(@selector(OnFileOpenInOppositePanel:), new RevealInOppositePanel);
     add(@selector(OnFileOpenInNewOppositePanelTab:), new RevealInOppositePanelTab);
-    add(@selector(onExecuteExternalTool:), new ExecuteExternalTool{_temp_file_storage});
+    add(@selector(onExecuteExternalTool:), new ExecuteExternalTool{_temp_file_storage, _activation_manager});
 
     return m;
 }

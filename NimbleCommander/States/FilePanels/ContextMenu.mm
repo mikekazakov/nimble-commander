@@ -25,6 +25,7 @@ using namespace nc::panel;
     PanelController *m_Panel;
     NSMutableArray *m_ShareItemsURLs;
     NCPanelOpenWithMenuDelegate *m_OpenWithDelegate;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
     std::unique_ptr<actions::PanelAction> m_CopyAction;
     std::unique_ptr<actions::PanelAction> m_MoveToTrashAction;
     std::unique_ptr<actions::PanelAction> m_DeletePermanentlyAction;
@@ -38,6 +39,7 @@ using namespace nc::panel;
                       ofPanel:(PanelController *)_panel
                withFileOpener:(nc::panel::FileOpener &)_file_opener
                     withUTIDB:(const nc::utility::UTIDB &)_uti_db
+        withActivationManager:(nc::bootstrap::ActivationManager&)_activation_manager
 {
     if( _items.empty() )
         throw std::invalid_argument("NCPanelContextMenu.initWithData - there's no items");
@@ -45,6 +47,7 @@ using namespace nc::panel;
     if( self ) {
         m_Panel = _panel;
         m_Items = move(_items);
+        m_ActivationManager = &_activation_manager;
 
         self.delegate = self;
         self.minimumWidth = 230; // hardcoding is bad!
@@ -154,8 +157,7 @@ using namespace nc::panel;
 
     //////////////////////////////////////////////////////////////////////
     // Compression stuff
-    const auto compression_enabled =
-        nc::bootstrap::ActivationManager::Instance().HasCompressionOperation();
+    const auto compression_enabled = m_ActivationManager->HasCompressionOperation();
 
     const auto compress_here_item = [NSMenuItem new];
     compress_here_item.title = NSLocalizedStringFromTable(

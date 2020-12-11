@@ -258,6 +258,17 @@ bool GoIntoFolder::Predicate( PanelController *_target ) const
         return IsItemInArchivesWhitelist(item);
 }
 
+bool GoIntoFolder::ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const
+{
+    if( auto vfs_item = _target.view.item ) {
+        _item.title = [NSString stringWithFormat:
+                       NSLocalizedString(@"Enter \u201c%@\u201d", "Enter a directory"),
+                       vfs_item.DisplayNameNS()];
+    }
+    
+    return Predicate(_target);
+}
+
 void GoIntoFolder::Perform( PanelController *_target, id ) const
 {
     const auto item = _target.view.item;

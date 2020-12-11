@@ -2,6 +2,8 @@
 #pragma once
 
 #include "DefaultAction.h"
+#include "GoToFolder.h"
+#include "ExecuteInTerminal.h"
 
 namespace nc::bootstrap {
 class ActivationManager;
@@ -18,6 +20,8 @@ struct Enter final : PanelAction
 private:
     nc::bootstrap::ActivationManager &m_ActivationManager;
     const PanelAction &m_OpenFilesAction;
+    GoIntoFolder m_GoIntoFolder;
+    ExecuteInTerminal m_ExecuteInTerminal;
 };
 
 }

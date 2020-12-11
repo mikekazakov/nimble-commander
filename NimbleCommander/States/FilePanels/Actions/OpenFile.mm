@@ -89,6 +89,18 @@ bool OpenFilesWithDefaultHandler::Predicate( PanelController *_target ) const
     return (bool)_target.view.item;
 }
 
+bool OpenFilesWithDefaultHandler::ValidateMenuItem(PanelController *_target,
+                                                   NSMenuItem *_item) const
+{
+    if( auto vfs_item = _target.view.item ) {
+        _item.title = [NSString stringWithFormat:
+                       NSLocalizedString(@"Open \u201c%@\u201d", "Open an item"),
+                       vfs_item.DisplayNameNS()];
+    }
+    
+    return Predicate(_target);
+}
+
 void OpenFilesWithDefaultHandler::Perform( PanelController *_target, id ) const
 {
     if( !Predicate(_target) ) {

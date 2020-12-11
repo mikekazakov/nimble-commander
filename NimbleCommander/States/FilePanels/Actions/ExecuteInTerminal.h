@@ -13,6 +13,7 @@ struct ExecuteInTerminal final : PanelAction
 {
     ExecuteInTerminal(nc::bootstrap::ActivationManager &_am);
     bool Predicate( PanelController *_target ) const override;
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 private:
     nc::bootstrap::ActivationManager &m_ActivationManager;

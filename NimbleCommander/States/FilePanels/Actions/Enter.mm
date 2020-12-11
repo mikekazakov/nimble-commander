@@ -10,40 +10,44 @@
 
 namespace nc::panel::actions {
 
-Enter::Enter(nc::bootstrap::ActivationManager &_am,
-             const PanelAction &_open_files_action):
-    m_ActivationManager(_am),
-    m_OpenFilesAction(_open_files_action)
+Enter::Enter(nc::bootstrap::ActivationManager &_am, const PanelAction &_open_files_action)
+    : m_ActivationManager(_am), m_OpenFilesAction(_open_files_action),
+      m_GoIntoFolder(m_ActivationManager.HasArchivesBrowsing(), false),
+      m_ExecuteInTerminal(m_ActivationManager)
 {
 }
-    
-bool Enter::Predicate( PanelController *_target ) const
+
+bool Enter::Predicate(PanelController *_target) const
 {
     return _target.view.item;
 }
 
-bool Enter::ValidateMenuItem( PanelController *_target, [[maybe_unused]] NSMenuItem *_item ) const
+bool Enter::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
 {
-    // TODO: add a proper title like:
-    // Enter "Directory"
-    // Execute "uptime"
-    // Open "abra.h" ???
-    return Predicate(_target);
+    if( m_GoIntoFolder.Predicate(_target) ) {
+        return m_GoIntoFolder.ValidateMenuItem(_target, _item);
+    }
+
+    if( m_ExecuteInTerminal.Predicate(_target) ) {
+        return m_ExecuteInTerminal.ValidateMenuItem(_target, _item);
+    }
+
+    return m_OpenFilesAction.ValidateMenuItem(_target, _item);
 }
 
-void Enter::Perform( PanelController *_target, id _sender ) const
+void Enter::Perform(PanelController *_target, id _sender) const
 {
-    if( actions::GoIntoFolder{m_ActivationManager.HasArchivesBrowsing(), false}.Predicate(_target) ) {
-        actions::GoIntoFolder{m_ActivationManager.HasArchivesBrowsing(), false}.Perform(_target, _sender);
+    if( m_GoIntoFolder.Predicate(_target) ) {
+        m_GoIntoFolder.Perform(_target, _sender);
         return;
     }
-    
-    if( actions::ExecuteInTerminal{m_ActivationManager}.Predicate(_target) ) {
-        actions::ExecuteInTerminal{m_ActivationManager}.Perform(_target, _sender);
+
+    if( m_ExecuteInTerminal.Predicate(_target) ) {
+        m_ExecuteInTerminal.Perform(_target, _sender);
         return;
     }
-    
+
     m_OpenFilesAction.Perform(_target, _sender);
 }
 
-}
+} // namespace nc::panel::actions

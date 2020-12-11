@@ -26,6 +26,16 @@ bool ExecuteInTerminal::Predicate(PanelController *_target) const
     return IsEligbleToTryToExecuteInConsole(item);
 }
 
+bool ExecuteInTerminal::ValidateMenuItem(PanelController *_target, NSMenuItem *_item) const
+{
+    if( auto vfs_item = _target.view.item ) {
+        _item.title = [NSString
+            stringWithFormat:NSLocalizedString(@"Execute \u201c%@\u201d", "Execute a binary"),
+                             vfs_item.DisplayNameNS()];
+    }
+    return Predicate(_target);
+}
+
 void ExecuteInTerminal::Perform(PanelController *_target, id) const
 {
     if( !Predicate(_target) )

@@ -78,7 +78,7 @@ PanelActionsMap BuildPanelActionsMap
     add(@selector(onOpenFileWith:),
         new OpenFileWithSubmenu{_open_with_menu_delegate});
     add(@selector(OnOpen:),
-        new Enter{has_archive_support, *m[@selector(OnOpenNatively:)]} );
+        new Enter{_activation_manager, *m[@selector(OnOpenNatively:)]} );
     add( @selector(onAlwaysOpenFileWith:),           new AlwaysOpenFileWithSubmenu{_open_with_menu_delegate});
     add(@selector(onMainMenuPerformFindAction:),
         new FindFiles{_make_viewer,_make_viewer_controller, _activation_manager});

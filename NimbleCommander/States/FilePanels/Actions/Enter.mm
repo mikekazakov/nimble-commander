@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Enter.h"
 #include "GoToFolder.h"
 #include "ExecuteInTerminal.h"
@@ -6,12 +6,13 @@
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include <VFS/VFS.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 namespace nc::panel::actions {
 
-Enter::Enter(bool _support_archives,
+Enter::Enter(nc::bootstrap::ActivationManager &_am,
              const PanelAction &_open_files_action):
-    m_SupportArchives(_support_archives),
+    m_ActivationManager(_am),
     m_OpenFilesAction(_open_files_action)
 {
 }
@@ -32,13 +33,13 @@ bool Enter::ValidateMenuItem( PanelController *_target, [[maybe_unused]] NSMenuI
 
 void Enter::Perform( PanelController *_target, id _sender ) const
 {
-    if( actions::GoIntoFolder{m_SupportArchives, false}.Predicate(_target) ) {
-        actions::GoIntoFolder{m_SupportArchives, false}.Perform(_target, _sender);
+    if( actions::GoIntoFolder{m_ActivationManager.HasArchivesBrowsing(), false}.Predicate(_target) ) {
+        actions::GoIntoFolder{m_ActivationManager.HasArchivesBrowsing(), false}.Perform(_target, _sender);
         return;
     }
     
-    if( actions::ExecuteInTerminal{}.Predicate(_target) ) {
-        actions::ExecuteInTerminal{}.Perform(_target, _sender);
+    if( actions::ExecuteInTerminal{m_ActivationManager}.Predicate(_target) ) {
+        actions::ExecuteInTerminal{m_ActivationManager}.Perform(_target, _sender);
         return;
     }
     

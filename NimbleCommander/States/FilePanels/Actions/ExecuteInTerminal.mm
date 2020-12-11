@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExecuteInTerminal.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
@@ -9,26 +9,30 @@
 
 namespace nc::panel::actions {
 
-bool ExecuteInTerminal::Predicate( PanelController *_target ) const
+ExecuteInTerminal::ExecuteInTerminal(nc::bootstrap::ActivationManager &_am)
+    : m_ActivationManager(_am)
 {
-    if( !bootstrap::ActivationManager::Instance().HasTerminal() )
+}
+
+bool ExecuteInTerminal::Predicate(PanelController *_target) const
+{
+    if( !m_ActivationManager.HasTerminal() )
         return false;
 
     const auto item = _target.view.item;
     if( !item || !item.Host()->IsNativeFS() )
         return false;
-    
+
     return IsEligbleToTryToExecuteInConsole(item);
 }
 
-void ExecuteInTerminal::Perform( PanelController *_target, id ) const
+void ExecuteInTerminal::Perform(PanelController *_target, id) const
 {
     if( !Predicate(_target) )
         return;
 
     const auto item = _target.view.item;
-    [_target.state requestTerminalExecution:item.Filename()
-                                         at:item.Directory()];
+    [_target.state requestTerminalExecution:item.Filename() at:item.Directory()];
 }
 
 }

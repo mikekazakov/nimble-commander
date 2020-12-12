@@ -8,3 +8,5 @@ LD_RUNPATH_SEARCH_PATHS = @executable_path/../Frameworks
 FRAMEWORK_SEARCH_PATHS = $(PROJECT_DIR)/3rd_Party/Sparkle $(PROJECT_DIR)/3rd_Party/LetsMove
 
 WRAPPER_EXTENSION = app
+
+LIBRARY_SEARCH_PATHS = $(inherited) $(BUILD_DIR)/$(CONFIGURATION)

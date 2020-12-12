@@ -35,7 +35,7 @@ OTHER_CFLAGS = -fvisibility=hidden
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include -cxx-isystem$(THRDPTY)/googletest/include
 
 // Linker
-OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -framework StoreKit -larchive -lboost_system -lboost_filesystem -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv -lctrail -lAppAuth-macOS
+OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -framework StoreKit -framework NetFS -larchive -lboost_system -lboost_filesystem -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv -lctrail -lAppAuth-macOS -lAquaticPrime
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Search paths

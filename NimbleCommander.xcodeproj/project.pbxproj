@@ -105,7 +105,6 @@
 		CF27408E1E594C46000D4365 /* TabsManagement.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabsManagement.mm */; };
 		CF27F9391E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */; };
 		CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */; };
-		CF28B2FD21A3BAF60004D697 /* ActivationManager_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF28B2FC21A3BAF60004D697 /* ActivationManager_Tests.mm */; };
 		CF2A3CE91E667F9A00E6C6F0 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2A3CDF1E667F5E00E6C6F0 /* libssh2.a */; };
 		CF2A3CEA1E667FAF00E6C6F0 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF2A3CDF1E667F5E00E6C6F0 /* libssh2.a */; };
 		CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
@@ -1615,7 +1614,6 @@
 		CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewCollectionView.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewCollectionView.mm; sourceTree = SOURCE_ROOT; };
 		CF28B2E321A393A50004D697 /* ActivationManagerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivationManagerBase.h; path = NimbleCommander/Bootstrap/ActivationManagerBase.h; sourceTree = "<group>"; };
 		CF28B2F721A393A60004D697 /* ActivationManagerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActivationManagerBase.cpp; path = NimbleCommander/Bootstrap/ActivationManagerBase.cpp; sourceTree = "<group>"; };
-		CF28B2FC21A3BAF60004D697 /* ActivationManager_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActivationManager_Tests.mm; path = NimbleCommander/Bootstrap/ActivationManager_Tests.mm; sourceTree = "<group>"; };
 		CF2A3CDF1E667F5E00E6C6F0 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = 3rd_Party/libssh2/built/libssh2.a; sourceTree = SOURCE_ROOT; };
 		CF2B2B3B1D825BEC00E4E8CB /* libcorecrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcorecrypto.tbd; path = usr/lib/system/libcorecrypto.tbd; sourceTree = SDKROOT; };
 		CF2B2B3D1D825C0A00E4E8CB /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
@@ -2808,7 +2806,6 @@
 		CF876D161D51DFD0009C0CCE /* Bootstrap */ = {
 			isa = PBXGroup;
 			children = (
-				CF28B2FC21A3BAF60004D697 /* ActivationManager_Tests.mm */,
 				CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */,
 				CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */,
 				CF28B2F721A393A60004D697 /* ActivationManagerBase.cpp */,
@@ -4090,7 +4087,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF28B2FD21A3BAF60004D697 /* ActivationManager_Tests.mm in Sources */,
 				CF6BF843219518690017CECB /* PanelBriefViewDynamicWidthLayoutEngine_Tests.mm in Sources */,
 				CF6BF833219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm in Sources */,
 				CFD7889F23944036003ED616 /* DragSender_Tests.mm in Sources */,

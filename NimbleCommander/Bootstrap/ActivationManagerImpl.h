@@ -11,11 +11,11 @@ namespace nc::bootstrap {
 class ActivationManagerImpl : public ActivationManager
 {
 public:
-    ActivationManagerImpl(ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
+    ActivationManagerImpl(Distribution _type,
+                          ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
                           ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
                           GoogleAnalytics &_ga);
-    ActivationManagerImpl(const ActivationManagerImpl &) = delete;
-    static ActivationManagerImpl &Instance();
+    
     Distribution Type() const noexcept override;
     bool Sandboxed() const noexcept override;
     bool ForAppStore() const noexcept override;
@@ -55,24 +55,15 @@ public:
     // Free MAS version stuff
     bool ReCheckProFeaturesInAppPurchased() override;
     bool UsedHadPurchasedProFeatures() const noexcept override;
+    
+    // Helper functions
+    static const std::string &DefaultLicenseFilename() noexcept;
+    static CFStringRef DefaultsTrialExpireDate() noexcept;
 
 private:
-#if defined(__NC_VERSION_FREE__)
-    static const Distribution m_Type = Distribution::Free;
-    static const bool m_IsSandBoxed = true;
-    const std::string m_AppStoreIdentifier = "905202937";
-#elif defined(__NC_VERSION_PAID__)
-    static const Distribution m_Type = Distribution::Paid;
-    static const bool m_IsSandBoxed = true;
-    const std::string m_AppStoreIdentifier = "942443942";
-#elif defined(__NC_VERSION_TRIAL__)
-    static const Distribution m_Type = Distribution::Trial;
-    static const bool m_IsSandBoxed = false;
-    const std::string m_AppStoreIdentifier = "";
-#else
-#error Invalid build configuration - no version type specified
-#endif
-
+    const Distribution m_Type;
+    const bool m_IsSandBoxed;
+    const std::string m_AppStoreIdentifier;
     bool m_IsActivated = false;
     bool m_UserHadRegistered = false;
     int m_TrialDaysLeft = 0;
@@ -83,5 +74,7 @@ private:
     ActivationManagerBase::TrialPeriodSupport &m_TrialPeriodSupport;
     GoogleAnalytics &m_GA;
 };
+
+std::string CFBundleGetAppStoreReceiptPath(CFBundleRef _bundle);
 
 } // namespace nc::bootstrap

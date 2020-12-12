@@ -1,5 +1,6 @@
 // Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate.h"
+#include "AppDelegateCPP.h"
 #include "AppDelegate+Migration.h"
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate+ViewerCreation.h"
@@ -172,7 +173,6 @@ static NCAppDelegate *g_Me = nil;
     std::vector<NCMainWindowController *>       m_MainWindows;
     std::vector<InternalViewerWindowController*>m_ViewerWindows;
     spinlock                                    m_ViewerWindowsLock;
-    bool                m_IsRunningTests;
     std::string         m_SupportDirectory;
     std::string         m_ConfigDirectory;
     std::string         m_StateDirectory;
@@ -186,10 +186,9 @@ static NCAppDelegate *g_Me = nil;
     std::shared_ptr<nc::vfs::NativeHost> m_NativeHost;
     std::optional<ctrail::DashboardImpl> m_CTrailDashboard;    
     std::unique_ptr<ctrail::OneShotMonitor> m_CTrailMonitor;
-    nc::bootstrap::ActivationManager *m_ActivationManager; // non-owned for now (Instance())
+    std::unique_ptr<nc::bootstrap::ActivationManager> m_ActivationManager;
 }
 
-@synthesize isRunningTests = m_IsRunningTests;
 @synthesize mainWindowControllers = m_MainWindows;
 @synthesize configDirectory = m_ConfigDirectory;
 @synthesize stateDirectory = m_StateDirectory;
@@ -201,12 +200,11 @@ static NCAppDelegate *g_Me = nil;
     self = [super init];
     if(self) {
         g_Me = self;
-        m_IsRunningTests = NSClassFromString(@"XCTestCase") != nullptr;
         m_FilesToOpen = [[NSMutableArray alloc] init];
         m_ViewerWindowDelegateBridge = [[NCViewerWindowDelegateBridge alloc] init];
         m_NativeFSManager = std::make_unique<nc::utility::NativeFSManagerImpl>();
         m_NativeHost = std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager);
-        m_ActivationManager = &ActivationManagerImpl::Instance();
+        m_ActivationManager = [self createActivationManager];
         [self checkMASReceipt];
         CheckDefaultsReset();
         m_SupportDirectory =
@@ -220,6 +218,74 @@ static NCAppDelegate *g_Me = nil;
 + (NCAppDelegate*) me
 {
     return g_Me;
+}
+
+static std::string InstalledAquaticLicensePath()
+{
+    return nc::AppDelegate::SupportDirectory() +
+        nc::bootstrap::ActivationManagerImpl::DefaultLicenseFilename();
+}
+
+static std::string AquaticPrimePublicKey()
+{
+    std::string key;
+    key += NCE(nc::env::aqp_pk_00);
+    key += NCE(nc::env::aqp_pk_01);
+    key += NCE(nc::env::aqp_pk_02);
+    key += NCE(nc::env::aqp_pk_03);
+    key += NCE(nc::env::aqp_pk_04);
+    key += NCE(nc::env::aqp_pk_05);
+    key += NCE(nc::env::aqp_pk_06);
+    key += NCE(nc::env::aqp_pk_07);
+    key += NCE(nc::env::aqp_pk_08);
+    key += NCE(nc::env::aqp_pk_09);
+    key += NCE(nc::env::aqp_pk_10);
+    key += NCE(nc::env::aqp_pk_11);
+    key += NCE(nc::env::aqp_pk_12);
+    key += NCE(nc::env::aqp_pk_13);
+    key += NCE(nc::env::aqp_pk_14);
+    key += NCE(nc::env::aqp_pk_15);
+    key += NCE(nc::env::aqp_pk_16);
+    key += NCE(nc::env::aqp_pk_17);
+    key += NCE(nc::env::aqp_pk_18);
+    key += NCE(nc::env::aqp_pk_19);
+    key += NCE(nc::env::aqp_pk_20);
+    key += NCE(nc::env::aqp_pk_21);
+    key += NCE(nc::env::aqp_pk_22);
+    key += NCE(nc::env::aqp_pk_23);
+    key += NCE(nc::env::aqp_pk_24);
+    key += NCE(nc::env::aqp_pk_25);
+    key += NCE(nc::env::aqp_pk_26);
+    key += NCE(nc::env::aqp_pk_27);
+    key += NCE(nc::env::aqp_pk_28);
+    key += NCE(nc::env::aqp_pk_29);
+    key += NCE(nc::env::aqp_pk_30);
+    key += NCE(nc::env::aqp_pk_31);
+    key += NCE(nc::env::aqp_pk_32);
+    return key;
+}
+
+- (std::unique_ptr<nc::bootstrap::ActivationManager>)createActivationManager
+{
+    [[clang::no_destroy]] static auto ext_license_support =
+        ActivationManagerBase::ExternalLicenseSupport{AquaticPrimePublicKey(),
+                                                      InstalledAquaticLicensePath()};
+    [[clang::no_destroy]] static auto trial_period_support =
+        ActivationManagerBase::TrialPeriodSupport{ActivationManagerImpl::DefaultsTrialExpireDate()};
+
+    const ActivationManager::Distribution type =
+#if defined(__NC_VERSION_FREE__)
+        ActivationManager::Distribution::Free;
+#elif defined(__NC_VERSION_PAID__)
+        ActivationManager::Distribution::Paid;
+#elif defined(__NC_VERSION_TRIAL__)
+        ActivationManager::Distribution::Trial;
+#else
+#error Invalid build configuration - no version type specified
+#endif
+
+    return std::make_unique<nc::bootstrap::ActivationManagerImpl>(
+        type, ext_license_support, trial_period_support, GA());
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)[[maybe_unused]]_notification
@@ -251,10 +317,9 @@ static NCAppDelegate *g_Me = nil;
     }
     
     // if no option already set - ask user to provide anonymous usage statistics
-    // ask him only on 5th startup or later
+    // ask them only on 5th startup or later
     // ask only if there were no modal dialogs before
-    if( !m_IsRunningTests &&
-        !showed_modal_dialog &&
+    if( !showed_modal_dialog &&
         !CFDefaultsGetOptionalBool(GoogleAnalytics::g_DefaultsTrackingEnabledKey) &&
         FeedbackManager::Instance().ApplicationRunsCount() >= 5 ) {
         CFDefaultsSetBool( GoogleAnalytics::g_DefaultsTrackingEnabledKey, AskUserToProvideUsageStatistics() );
@@ -382,7 +447,7 @@ static NCAppDelegate *g_Me = nil;
 {
     m_FinishedLaunching.toggle();
     
-    if( !m_IsRunningTests && self.mainWindowControllers.empty() )
+    if( self.mainWindowControllers.empty() )
         [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a freshly new one
     
     NSApp.servicesProvider = self;
@@ -405,7 +470,7 @@ static NCAppDelegate *g_Me = nil;
     auto &am = self.activationManager;
     
     // Non-MAS version stuff below:
-    if( !am.ForAppStore() && !self.isRunningTests ) {
+    if( !am.ForAppStore() ) {
         if( am.ShouldShowTrialNagScreen() ) // check if we should show a nag screen
             dispatch_to_main_queue_after(500ms, [self]{ [self showTrialWindow]; });
 
@@ -440,7 +505,7 @@ static NCAppDelegate *g_Me = nil;
         am.IsTrialPeriod() == false )
         self.dock.SetUnregisteredBadge( true );
 
-    if( !am.ForAppStore() && !self.isRunningTests )
+    if( !am.ForAppStore() )
         PFMoveToApplicationsFolderIfNecessary();
     
     ConfigWiring{GlobalConfig()}.Wire();
@@ -522,11 +587,6 @@ static NCAppDelegate *g_Me = nil;
                               state:(NSCoder *)[[maybe_unused]]_state
                   completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
 {
-    if( NCAppDelegate.me.isRunningTests ) {
-        completionHandler(nil, nil);
-        return;
-    }
-
     NSWindow *window = nil;
     if( [identifier isEqualToString:NCMainWindow.defaultIdentifier] )
         window = [g_Me allocateMainWindowRestoredBySystem].window;
@@ -604,7 +664,7 @@ static NCAppDelegate *g_Me = nil;
 
 - (BOOL)applicationOpenUntitledFile:(NSApplication *)sender
 {
-    if( !m_FinishedLaunching || m_IsRunningTests )
+    if( !m_FinishedLaunching )
         return false;
     
     if( !self.mainWindowControllers.empty() )

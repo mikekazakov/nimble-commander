@@ -176,6 +176,9 @@
 		CF3E2F7B1F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
 		CF3E2F7C1F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
 		CF3E6DF81E3870AB002B4AAD /* PanelViewPresentationSettings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */; };
+		CF3ED49C2584DCF900D67AF2 /* ActivationManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */; };
+		CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED4C425855EF600D67AF2 /* ActivationManagerImpl.mm */; };
+		CF3ED4CC25855F5B00D67AF2 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CF1DFD105A0039A104 /* MASAppInstalledChecker.cpp */; };
 		CF4135201F890709007429B6 /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
 		CF44D32B202D63100083FAF5 /* ExecuteExternalTool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF44D32A202D63100083FAF5 /* ExecuteExternalTool.mm */; };
 		CF44D33B202D632F0083FAF5 /* ExecuteExternalTool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF44D32A202D63100083FAF5 /* ExecuteExternalTool.mm */; };
@@ -340,10 +343,6 @@
 		CF5C1D4F255EE6CD00ADE703 /* ViewerResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1D4E255EE6CD00ADE703 /* ViewerResources.bundle */; };
 		CF5C8BE222D0F9A200619F45 /* libViewer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A7821F65A540043A26D /* libViewer.a */; };
 		CF5C8BFA22D0FBDF00619F45 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8400FF21A2A8DE007FEF7B /* TrialWindowController.xib */; };
-		CF5DE0742583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */; };
-		CF5DE0752583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */; };
-		CF5DE0762583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */; };
-		CF5DE0772583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */; };
 		CF5DE08E25840CC100604DEE /* ActivationManagerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF28B2F721A393A60004D697 /* ActivationManagerBase.cpp */; };
 		CF5DE09925840D3E00604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
 		CF5DE0A325840E9200604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
@@ -834,7 +833,6 @@
 		CFD726391E42E0D900603077 /* LaunchServices.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2D71DFD11970039A104 /* LaunchServices.mm */; };
 		CFD7263A1E42E0D900603077 /* LaunchServices.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2D71DFD11970039A104 /* LaunchServices.mm */; };
 		CFD7263B1E42E0E100603077 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */; };
-		CFD7263C1E42E0E700603077 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CF1DFD105A0039A104 /* MASAppInstalledChecker.cpp */; };
 		CFD7263D1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */; };
 		CFD7263E1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */; };
 		CFD7263F1E42E0EE00603077 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */; };
@@ -1074,7 +1072,6 @@
 		CFDAC2B21DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFDAC2B61DFD0B7D0039A104 /* AppStoreHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B41DFD0B330039A104 /* AppStoreHelper.mm */; };
 		CFDAC2C31DFD0DE40039A104 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C01DFD0DE40039A104 /* PanelAux.mm */; };
-		CFDAC2D11DFD105A0039A104 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CF1DFD105A0039A104 /* MASAppInstalledChecker.cpp */; };
 		CFDAC2D81DFD11970039A104 /* LaunchServices.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2D71DFD11970039A104 /* LaunchServices.mm */; };
 		CFDAC2DB1DFD12EF0039A104 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */; };
 		CFDAC2DE1DFD137F0039A104 /* QuickLookOverlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */; };
@@ -1660,6 +1657,7 @@
 		CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDAVConnectionSheetController.mm; path = NimbleCommander/States/FilePanels/Views/WebDAVConnectionSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF3E6DF61E3870AB002B4AAD /* PanelViewPresentationSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationSettings.h; path = NimbleCommander/States/FilePanels/PanelViewPresentationSettings.h; sourceTree = SOURCE_ROOT; };
 		CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationSettings.mm; path = NimbleCommander/States/FilePanels/PanelViewPresentationSettings.mm; sourceTree = SOURCE_ROOT; };
+		CF3ED4C425855EF600D67AF2 /* ActivationManagerImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActivationManagerImpl.mm; path = NimbleCommander/Bootstrap/ActivationManagerImpl.mm; sourceTree = "<group>"; };
 		CF41351E1F890709007429B6 /* SettingsAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsAdaptor.h; path = NimbleCommander/States/Terminal/SettingsAdaptor.h; sourceTree = SOURCE_ROOT; };
 		CF41351F1F890709007429B6 /* SettingsAdaptor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SettingsAdaptor.mm; path = NimbleCommander/States/Terminal/SettingsAdaptor.mm; sourceTree = SOURCE_ROOT; };
 		CF44D329202D63100083FAF5 /* ExecuteExternalTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExecuteExternalTool.h; path = NimbleCommander/States/FilePanels/Actions/ExecuteExternalTool.h; sourceTree = SOURCE_ROOT; };
@@ -2817,6 +2815,7 @@
 				CF28B2E321A393A50004D697 /* ActivationManagerBase.h */,
 				CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */,
 				CF5DE0732583DFB900604DEE /* ActivationManagerImpl.h */,
+				CF3ED4C425855EF600D67AF2 /* ActivationManagerImpl.mm */,
 				CFDAC2371DFBDEBA0039A104 /* AppDelegate.h */,
 				CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */,
 				CFA1716420196CF600F507D5 /* AppDelegate.Private.h */,
@@ -4106,6 +4105,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF5DE08E25840CC100604DEE /* ActivationManagerBase.cpp in Sources */,
+				CF3ED49C2584DCF900D67AF2 /* ActivationManagerImpl.cpp in Sources */,
+				CF3ED4CC25855F5B00D67AF2 /* MASAppInstalledChecker.cpp in Sources */,
+				CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4251,7 +4253,6 @@
 				CF4E56CA1D50693C00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF1FBF261E8F57D000D3569C /* FavoriteComposing.mm in Sources */,
 				CF9F4AFB1ECC8DBD00E0AF82 /* OpenFile.mm in Sources */,
-				CF5DE0762583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */,
 				CFFA95141F45A3050035E606 /* UserNotificationsCenter.mm in Sources */,
 				CF818B561EA0610D00BC28E6 /* DefaultAction.mm in Sources */,
 				CF4D98C9202BEC6800ECE06D /* StateActionsDispatcher.mm in Sources */,
@@ -4497,7 +4498,6 @@
 				CFD726FB1E42E2E900603077 /* PanelListViewTableView.mm in Sources */,
 				CFD726B81E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
 				CF4E56CB1D50693D00452912 /* PreferencesWindowViewerTab.mm in Sources */,
-				CF5DE0742583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */,
 				CF1E3D1C1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
 				CFBA63B61FC1A51200077682 /* ShowTabs.mm in Sources */,
 				CFD726EF1E42E2DA00603077 /* PanelListViewRowView.mm in Sources */,
@@ -4533,7 +4533,6 @@
 				CFD726D31E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CF6BF821219140360017CECB /* PanelBriefViewFixedWidthLayout.mm in Sources */,
 				CFA1715D20174C9A00F507D5 /* LocationFormatter.mm in Sources */,
-				CFD7263C1E42E0E700603077 /* MASAppInstalledChecker.cpp in Sources */,
 				CF4D98B5202BE89700ECE06D /* StateActions.mm in Sources */,
 				CFD7270D1E42E30900603077 /* QuickLookOverlay.mm in Sources */,
 				CF5E9A661FCE735C005608F5 /* QuickLookVFSBridge.mm in Sources */,
@@ -4713,7 +4712,6 @@
 				CFFA953D1F4A759E0035E606 /* PanelViewFieldEditor.mm in Sources */,
 				CF3E6DF81E3870AB002B4AAD /* PanelViewPresentationSettings.mm in Sources */,
 				CF56C2BA1DC1934D00F0DF0F /* PanelListViewTableView.mm in Sources */,
-				CF5DE0752583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */,
 				CFDAC2AE1DFD096E0039A104 /* ConnectionsMenuDelegate.mm in Sources */,
 				CF818B711EA07A5B00BC28E6 /* Pasteboard.mm in Sources */,
 				CF20DF4E1FC694B80074ABB8 /* SyncPanels.mm in Sources */,
@@ -4729,7 +4727,6 @@
 				CF4E56411D5064FE00452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF2F10B22567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
 				CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
-				CFDAC2D11DFD105A0039A104 /* MASAppInstalledChecker.cpp in Sources */,
 				CFDC07CB2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */,
 				CF5FE8041E14A08500CD83B4 /* ThemesManager.mm in Sources */,
@@ -4898,7 +4895,6 @@
 				CFD726DA1E42E2BD00603077 /* Layout.mm in Sources */,
 				CF5E9A541FCBF5BD005608F5 /* ShowQuickLook.mm in Sources */,
 				CF6BF84121944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
-				CF5DE0772583DFB900604DEE /* ActivationManagerImpl.cpp in Sources */,
 				CF04DDFE1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CFB66FA41D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,

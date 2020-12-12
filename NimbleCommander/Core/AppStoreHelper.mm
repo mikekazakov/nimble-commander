@@ -12,22 +12,6 @@ static const auto g_PrefsPriceString    = @"proFeaturesIAPPriceString";
 static const auto g_PrefsPFDontShow     = CFSTR("proFeaturesIAPDontShow");
 static const auto g_PrefsPFNextTime     = CFSTR("proFeaturesIAPNextShowTime");
 
-std::string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
-{
-    if( !_bundle )
-        return "";
-    
-    CFURLRef url = CFBundleCopyBundleURL( _bundle );
-    if( !url )
-        return "";
-    
-    NSBundle *bundle = [NSBundle bundleWithURL:(NSURL*)CFBridgingRelease(url)];
-    if( !bundle )
-        return "";
-    
-    return bundle.appStoreReceiptURL.fileSystemRepresentation;
-}
-
 @implementation AppStoreHelper
 {
     SKProductsRequest                  *m_ProductRequest;

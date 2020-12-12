@@ -32,4 +32,3 @@ class ActivationManager;
 
 #endif
 
-std::string CFBundleGetAppStoreReceiptPath(CFBundleRef _bundle);

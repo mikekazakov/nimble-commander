@@ -46,68 +46,26 @@ static bool AppStoreReceiptContainsProFeaturesInApp()
                   g_ProFeaturesInAppID.length()) != nullptr;
 }
 
-static std::string InstalledAquaticLicensePath()
+static const char *AppStoreIdentifier(ActivationManager::Distribution _type) noexcept
 {
-    return nc::AppDelegate::SupportDirectory() + g_LicenseFilename;
-}
-
-static std::string AquaticPrimePublicKey()
-{
-    std::string key;
-    key += NCE(nc::env::aqp_pk_00);
-    key += NCE(nc::env::aqp_pk_01);
-    key += NCE(nc::env::aqp_pk_02);
-    key += NCE(nc::env::aqp_pk_03);
-    key += NCE(nc::env::aqp_pk_04);
-    key += NCE(nc::env::aqp_pk_05);
-    key += NCE(nc::env::aqp_pk_06);
-    key += NCE(nc::env::aqp_pk_07);
-    key += NCE(nc::env::aqp_pk_08);
-    key += NCE(nc::env::aqp_pk_09);
-    key += NCE(nc::env::aqp_pk_10);
-    key += NCE(nc::env::aqp_pk_11);
-    key += NCE(nc::env::aqp_pk_12);
-    key += NCE(nc::env::aqp_pk_13);
-    key += NCE(nc::env::aqp_pk_14);
-    key += NCE(nc::env::aqp_pk_15);
-    key += NCE(nc::env::aqp_pk_16);
-    key += NCE(nc::env::aqp_pk_17);
-    key += NCE(nc::env::aqp_pk_18);
-    key += NCE(nc::env::aqp_pk_19);
-    key += NCE(nc::env::aqp_pk_20);
-    key += NCE(nc::env::aqp_pk_21);
-    key += NCE(nc::env::aqp_pk_22);
-    key += NCE(nc::env::aqp_pk_23);
-    key += NCE(nc::env::aqp_pk_24);
-    key += NCE(nc::env::aqp_pk_25);
-    key += NCE(nc::env::aqp_pk_26);
-    key += NCE(nc::env::aqp_pk_27);
-    key += NCE(nc::env::aqp_pk_28);
-    key += NCE(nc::env::aqp_pk_29);
-    key += NCE(nc::env::aqp_pk_30);
-    key += NCE(nc::env::aqp_pk_31);
-    key += NCE(nc::env::aqp_pk_32);
-    return key;
-}
-
-ActivationManagerImpl &ActivationManagerImpl::Instance()
-{
-    [[clang::no_destroy]] static auto ext_license_support =
-        ActivationManagerBase::ExternalLicenseSupport{AquaticPrimePublicKey(),
-                                                      InstalledAquaticLicensePath()};
-    [[clang::no_destroy]] static auto trial_period_support =
-        ActivationManagerBase::TrialPeriodSupport{g_DefaultsTrialExpireDate};
-    [[clang::no_destroy]] static auto inst =
-    ActivationManagerImpl{ext_license_support, trial_period_support, GA()};
-    return inst;
+    switch( _type ) {
+    case ActivationManager::Distribution::Paid:
+        return "942443942";
+    case ActivationManager::Distribution::Free:
+        return "905202937";
+    default:
+        return "";
+    }
 }
 
 ActivationManagerImpl::ActivationManagerImpl(
+    Distribution _type,
     ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
     ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
     GoogleAnalytics &_ga)
-    : m_ExtLicenseSupport(_ext_license_support), m_TrialPeriodSupport(_trial_period_support),
-      m_GA(_ga)
+    : m_Type(_type), m_IsSandBoxed(_type != ActivationManager::Distribution::Trial),
+      m_AppStoreIdentifier(AppStoreIdentifier(_type)), m_ExtLicenseSupport(_ext_license_support),
+      m_TrialPeriodSupport(_trial_period_support), m_GA(_ga)
 {
     if( m_Type == Distribution::Paid ) {
         m_IsActivated = true;
@@ -336,6 +294,16 @@ bool ActivationManagerImpl::Sandboxed() const noexcept
 bool ActivationManagerImpl::ForAppStore() const noexcept
 {
     return Sandboxed();
+}
+
+const std::string &ActivationManagerImpl::DefaultLicenseFilename() noexcept
+{
+    return g_LicenseFilename;
+}
+
+CFStringRef ActivationManagerImpl::DefaultsTrialExpireDate() noexcept
+{
+    return g_DefaultsTrialExpireDate;
 }
 
 static std::optional<std::string> Load(const std::string &_filepath)

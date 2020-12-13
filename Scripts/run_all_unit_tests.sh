@@ -50,3 +50,6 @@ $BINARY_PATH
 
 build_target PanelUT
 $BINARY_PATH
+
+build_target NimbleCommanderUT
+$BINARY_PATH

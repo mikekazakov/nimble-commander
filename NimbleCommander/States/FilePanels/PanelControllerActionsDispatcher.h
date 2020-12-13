@@ -3,7 +3,7 @@
 
 #include <Utility/MIMResponder.h>
 #include <unordered_map>
-#include "PanelViewKeystrokeSink.h"
+#include <Panel/PanelViewKeystrokeSink.h>
 
 @class PanelController;
 

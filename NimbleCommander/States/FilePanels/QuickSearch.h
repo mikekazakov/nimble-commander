@@ -2,7 +2,7 @@
 #pragma once
 
 #include <Config/Config.h>
-#include "PanelViewKeystrokeSink.h"
+#include <Panel/PanelViewKeystrokeSink.h>
 
 
 namespace nc::panel {

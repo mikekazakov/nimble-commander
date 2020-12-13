@@ -3,7 +3,7 @@
 #include <boost/container/static_vector.hpp>
 #include <Panel/PanelDataFilter.h>
 #include <Panel/PanelData.h>
-#include "CursorBackup.h"
+#include <Panel/CursorBackup.h>
 #include <Utility/ObjCpp.h>
 #include <Habanero/mach_time.h>
 

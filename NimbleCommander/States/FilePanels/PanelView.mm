@@ -16,7 +16,7 @@
 #include "DragReceiver.h"
 #include "DragSender.h"
 #include "PanelViewFieldEditor.h"
-#include "PanelViewKeystrokeSink.h"
+#include <Panel/PanelViewKeystrokeSink.h>
 #include "PanelViewDummyPresentation.h"
 #include "PanelControllerActionsDispatcher.h"
 

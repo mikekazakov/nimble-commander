@@ -5,7 +5,7 @@
 #include "Views/FilePanelOverlappedTerminal.h"
 #include "Views/FilePanelMainSplitView.h"
 #include "PanelView.h"
-#include "PanelViewKeystrokeSink.h"
+#include <Panel/PanelViewKeystrokeSink.h>
 #include "PanelController.h"
 #include "PanelAux.h"
 #include "PanelHistory.h"

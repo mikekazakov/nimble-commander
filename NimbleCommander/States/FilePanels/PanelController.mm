@@ -27,7 +27,7 @@
 #include "Actions/GoToFolder.h"
 #include "Actions/Enter.h"
 #include <Operations/Copying.h>
-#include "CursorBackup.h"
+#include <Panel/CursorBackup.h>
 #include "QuickSearch.h"
 #include "PanelViewHeader.h"
 #include "Counters.h"

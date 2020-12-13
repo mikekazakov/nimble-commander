@@ -4,7 +4,7 @@
 #include <Utility/MIMResponder.h>
 
 #include "PanelViewDelegate.h"
-#include "PanelViewKeystrokeSink.h"
+#include <Panel/PanelViewKeystrokeSink.h>
 #include "QuickSearch.h"
 #include <VFS/VFS.h>
 

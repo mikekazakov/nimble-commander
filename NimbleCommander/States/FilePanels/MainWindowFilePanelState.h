@@ -5,7 +5,7 @@
 #import <MMTabBarView/MMTabBarView.h>
 #include "../MainWindowStateProtocol.h"
 #include <Config/Config.h>
-#include "PanelViewKeystrokeSink.h"
+#include <Panel/PanelViewKeystrokeSink.h>
 #include "PanelPreview.h"
 #include "PanelControllerPersistency.h"
 #include <Utility/MIMResponder.h>

@@ -360,6 +360,31 @@ TEST_CASE(PREFIX "HardFiltering")
     CHECK(data.SortedDirectoryEntries().size() == count);
 }
 
+TEST_CASE(PREFIX "HardFiltering, edge case - emply panel")
+{
+    const auto strings = std::vector<std::string>{"aaa", "bbb"};
+    const auto listing = ProduceDummyListing(strings);
+
+    data::Model data;
+    auto sorting = data.SortMode();
+    sorting.sort = data::SortMode::SortByName;
+    data.SetSortMode(sorting);
+
+    auto filtering = data.HardFiltering();
+    filtering.show_hidden = true;
+    data.SetHardFiltering(filtering);
+
+    data.Load(listing, data::Model::PanelType::Directory);
+    CHECK(data.SortedIndexForName("aaa") == 0);
+    CHECK(data.SortedIndexForName("bbb") == 1);
+    
+    filtering.text.text = @"nonsense";
+    data.SetHardFiltering(filtering);
+    CHECK(data.SortedEntriesCount() == 0);
+    CHECK(data.SortedIndexForName("aaa") == -1);
+    CHECK(data.SortedIndexForName("bbb") == -1);
+}
+
 TEST_CASE(PREFIX "SelectionWithExtension")
 {
     data::Model data;

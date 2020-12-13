@@ -690,6 +690,7 @@ HardFilter Model::HardFiltering() const
 void Model::DoSortWithHardFiltering()
 {
     m_EntriesByCustomSort.clear();
+    m_ReverseToCustomSort.clear();
 
     const unsigned size = m_Listing->Count();
 

@@ -28,7 +28,7 @@
 #include "Actions/Enter.h"
 #include <Operations/Copying.h>
 #include <Panel/CursorBackup.h>
-#include "QuickSearch.h"
+#include <Panel/QuickSearch.h>
 #include "PanelViewHeader.h"
 #include "Counters.h"
 #include <Config/RapidJSON.h>

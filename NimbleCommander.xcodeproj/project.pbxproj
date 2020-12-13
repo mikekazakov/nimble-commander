@@ -170,7 +170,6 @@
 		CF3ED49C2584DCF900D67AF2 /* ActivationManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE05A2583DFB900604DEE /* ActivationManagerImpl.cpp */; };
 		CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED4C425855EF600D67AF2 /* ActivationManagerImpl.mm */; };
 		CF3ED4CC25855F5B00D67AF2 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CF1DFD105A0039A104 /* MASAppInstalledChecker.cpp */; };
-		CF3ED4D925860BC000D67AF2 /* QuickSearch.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F76202163BF00BF2090 /* QuickSearch.mm */; };
 		CF4135201F890709007429B6 /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
 		CF44D32B202D63100083FAF5 /* ExecuteExternalTool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF44D32A202D63100083FAF5 /* ExecuteExternalTool.mm */; };
 		CF44D33B202D632F0083FAF5 /* ExecuteExternalTool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF44D32A202D63100083FAF5 /* ExecuteExternalTool.mm */; };
@@ -1636,8 +1635,6 @@
 		CF36DBE61F6BCF5B004A018E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/WebDAVConnectionSheetController.strings; sourceTree = "<group>"; };
 		CF3B7F6E201F20D300BF2090 /* PanelControllerActionsDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelControllerActionsDispatcher.h; path = NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h; sourceTree = SOURCE_ROOT; };
 		CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelControllerActionsDispatcher.mm; path = NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.mm; sourceTree = SOURCE_ROOT; };
-		CF3B7F75202163BF00BF2090 /* QuickSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickSearch.h; path = NimbleCommander/States/FilePanels/QuickSearch.h; sourceTree = SOURCE_ROOT; };
-		CF3B7F76202163BF00BF2090 /* QuickSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QuickSearch.mm; path = NimbleCommander/States/FilePanels/QuickSearch.mm; sourceTree = SOURCE_ROOT; };
 		CF3B7F8120218D6000BF2090 /* QuickSearch_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QuickSearch_Tests.mm; path = NimbleCommander/States/FilePanels/QuickSearch_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInit.h; path = NimbleCommander/Bootstrap/VFSInit.h; sourceTree = SOURCE_ROOT; };
 		CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSInit.mm; path = NimbleCommander/Bootstrap/VFSInit.mm; sourceTree = SOURCE_ROOT; };
@@ -2451,8 +2448,6 @@
 				CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */,
 				CFDAC2151DFBBD3D0039A104 /* PanelViewTypes.h */,
 				CF3B7F8120218D6000BF2090 /* QuickSearch_Tests.mm */,
-				CF3B7F75202163BF00BF2090 /* QuickSearch.h */,
-				CF3B7F76202163BF00BF2090 /* QuickSearch.mm */,
 				CF4D98B3202BE89700ECE06D /* StateActions.h */,
 				CF4D98B4202BE89700ECE06D /* StateActions.mm */,
 				CF4D98C5202BEA2700ECE06D /* StateActionsDispatcher.h */,
@@ -4089,7 +4084,6 @@
 			files = (
 				CF5DE08E25840CC100604DEE /* ActivationManagerBase.cpp in Sources */,
 				CF3ED49C2584DCF900D67AF2 /* ActivationManagerImpl.cpp in Sources */,
-				CF3ED4D925860BC000D67AF2 /* QuickSearch.mm in Sources */,
 				CF3ED4CC25855F5B00D67AF2 /* MASAppInstalledChecker.cpp in Sources */,
 				CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */,
 			);

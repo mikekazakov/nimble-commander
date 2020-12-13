@@ -5,7 +5,7 @@
 
 #include "PanelViewDelegate.h"
 #include <Panel/PanelViewKeystrokeSink.h>
-#include "QuickSearch.h"
+#include <Panel/QuickSearch.h>
 #include <VFS/VFS.h>
 
 @class PanelController;

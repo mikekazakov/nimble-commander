@@ -7,6 +7,7 @@
 #include "../source/Compression/Compression.h"
 #include "Environment.h"
 #include <sys/stat.h>
+#include <vector>
 
 using namespace nc;
 using namespace nc::ops;
@@ -18,13 +19,13 @@ using namespace std::literals;
     std::string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
 [[clang::no_destroy]] static const std::string g_Adium = g_Preffix + "adium.app.zip";
 [[clang::no_destroy]] static const std::string g_Files = g_Preffix + "files-1.1.0(1341).zip";
-[[clang::no_destroy]] static const std::string g_FileWithXAttr = "Leopard WaR3z.icns";
 
 static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
                              const VFSHostPtr &_file1_host,
                              const std::filesystem::path &_file2_full_path,
                              const VFSHostPtr &_file2_host,
                              int &_result);
+static std::vector<std::byte> MakeNoise(size_t _size);
 
 static std::vector<VFSListingItem> FetchItems(const std::string &_directory_path,
                                               const std::vector<std::string> &_filenames,
@@ -96,36 +97,32 @@ TEST_CASE(PREFIX "extracted Files - signature")
     REQUIRE(system(command.c_str()) == 0);
 }
 
-TEST_CASE(PREFIX "Compressing items with big xattrs")
+TEST_CASE(PREFIX "Compressing an item with big xattrs")
 {
-    if( !std::filesystem::exists(g_Preffix + g_FileWithXAttr) ) {
-        std::cout << "skipping test: no " << g_FileWithXAttr << std::endl;
-        return;
-    }
-
     TempTestDir tmp_dir;
-    auto item = FetchItems(g_Preffix, {g_FileWithXAttr}, *TestEnv().vfs_native);
+    const auto source_fn = "file";
+    const auto xattr_name = "some_xattr";
+    const auto source_path = tmp_dir.directory/source_fn;
+    const auto xattr_size = size_t(543210);
+    const auto orig_noise = MakeNoise(xattr_size);
+    REQUIRE( close( creat(source_path.c_str(), 0755) ) == 0 );
+    REQUIRE( setxattr(source_path.c_str(), xattr_name, orig_noise.data(), xattr_size, 0, 0) == 0);
+    auto item = FetchItems(tmp_dir.directory, {source_fn}, *TestEnv().vfs_native);
 
     Compression operation{item, tmp_dir.directory.native(), TestEnv().vfs_native};
     operation.Start();
     operation.Wait();
 
-    std::shared_ptr<vfs::ArchiveHost> host;
-    try {
-        host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
-                                                  TestEnv().vfs_native);
-    } catch( VFSErrorException &e ) {
-        REQUIRE(e.code() == 0);
-        return;
-    }
-
-    int result = 0;
-    REQUIRE(VFSCompareEntries("/" + g_FileWithXAttr,
-                              host,
-                              g_Preffix + g_FileWithXAttr,
-                              TestEnv().vfs_native,
-                              result) == 0);
-    REQUIRE(result == 0);
+    const auto host =
+    std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), TestEnv().vfs_native);
+    VFSFilePtr file;
+    REQUIRE( host->CreateFile(("/"s + source_fn).c_str(), file, {}) == 0 );
+    REQUIRE( file != nullptr );
+    REQUIRE( file->Open(nc::vfs::Flags::OF_Read) == 0 );
+    CHECK( file->Size() == 0 );
+    std::vector<std::byte> unpacked_noise(xattr_size);
+    REQUIRE( file->XAttrGet(xattr_name, unpacked_noise.data(), xattr_size) == xattr_size);
+    CHECK( orig_noise == unpacked_noise );
 }
 
 static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
@@ -174,4 +171,12 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
             });
     }
     return 0;
+}
+
+static std::vector<std::byte> MakeNoise(size_t _size)
+{
+    std::vector<std::byte> bytes(_size);
+    for( auto &b: bytes )
+        b = static_cast<std::byte>(std::rand() % 256);
+    return bytes;
 }

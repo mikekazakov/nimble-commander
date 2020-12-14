@@ -291,4 +291,10 @@ static bool HasNoModifiers( NSEvent *_event )
     return _position.x <= std::max(rc.size.width, 32.) + text_rect.origin.x;
 }
 
+- (NSMenu *)menuForEvent:(NSEvent *)_event
+{
+    // TODO: mb switch to defaultMenu with a delegate instead of these shenanigans?
+    return [self.row menuForEvent:_event];
+}
+
 @end

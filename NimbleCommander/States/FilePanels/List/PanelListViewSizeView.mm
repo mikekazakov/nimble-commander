@@ -157,4 +157,13 @@ static NSParagraphStyle *PStyle()
     }
 }
 
+- (NSMenu *)menuForEvent:(NSEvent *)_event
+{
+    // TODO: mb switch to defaultMenu with a delegate instead of these shenanigans?
+    if( auto rv = m_RowView )
+        return [rv menuForEvent:_event];
+    else
+        return nil;
+}
+
 @end

@@ -980,7 +980,6 @@
 		CFD7271F1E42E33000603077 /* ShellState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC27A1DFBF9260039A104 /* ShellState.mm */; };
 		CFD727381E42E3E300603077 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
 		CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
-		CFD7889F23944036003ED616 /* DragSender_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD7889E23944035003ED616 /* DragSender_Tests.mm */; };
 		CFD799EF21F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
 		CFD799F021F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
 		CFD799F121F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
@@ -1980,7 +1979,6 @@
 		CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListWindowController.mm; path = NimbleCommander/GeneralUI/VFSListWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowFilePanelsStateToolbarDelegate.h; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h; sourceTree = SOURCE_ROOT; };
 		CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowFilePanelsStateToolbarDelegate.mm; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.mm; sourceTree = SOURCE_ROOT; };
-		CFD7889E23944035003ED616 /* DragSender_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DragSender_Tests.mm; path = NimbleCommander/States/FilePanels/DragSender_Tests.mm; sourceTree = "<group>"; };
 		CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "AppDelegate+ViewerCreation.mm"; path = "NimbleCommander/Bootstrap/AppDelegate+ViewerCreation.mm"; sourceTree = "<group>"; };
 		CFD799EE21F48F140043A26D /* AppDelegate+ViewerCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+ViewerCreation.h"; path = "NimbleCommander/Bootstrap/AppDelegate+ViewerCreation.h"; sourceTree = "<group>"; };
 		CFD799F921F50B010043A26D /* ThemeAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThemeAdaptor.h; path = NimbleCommander/Viewer/ThemeAdaptor.h; sourceTree = "<group>"; };
@@ -2390,7 +2388,6 @@
 				CF66597F2394075A005BF071 /* Counters.h */,
 				CFFA95231F47CA760035E606 /* DragReceiver.h */,
 				CFFA95241F47CA760035E606 /* DragReceiver.mm */,
-				CFD7889E23944035003ED616 /* DragSender_Tests.mm */,
 				CFFA952D1F4930BA0035E606 /* DragSender.h */,
 				CFFA952E1F4930BA0035E606 /* DragSender.mm */,
 				CFDAC2FE1DFD1D7C0039A104 /* ExternalEditorInfo.h */,
@@ -4066,7 +4063,6 @@
 			files = (
 				CF6BF843219518690017CECB /* PanelBriefViewDynamicWidthLayoutEngine_Tests.mm in Sources */,
 				CF6BF833219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm in Sources */,
-				CFD7889F23944036003ED616 /* DragSender_Tests.mm in Sources */,
 				CF6BF8512197F1420017CECB /* PanelBriefViewFixedNumberLayoutEngine_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

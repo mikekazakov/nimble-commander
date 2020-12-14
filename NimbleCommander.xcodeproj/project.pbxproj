@@ -143,9 +143,6 @@
 		CF36DBF81F6C1987004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF36DBF91F6C1988004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF36DBFA1F6C1988004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
-		CF36DBFB1F6C1B60004A018E /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
-		CF36DBFC1F6C1B63004A018E /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
-		CF36DBFD1F6C1C09004A018E /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF39A0E21F70C1E1005A4583 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* libOperations.a */; };
 		CF39A0EB1F70C5CA005A4583 /* libRoutedIO.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF3B7F70201F20D300BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
@@ -197,7 +194,6 @@
 		CF46FF27255FC8D20095FC73 /* ViewerResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1D4E255EE6CD00ADE703 /* ViewerResources.bundle */; };
 		CF46FF29255FC8D80095FC73 /* ViewerResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1D4E255EE6CD00ADE703 /* ViewerResources.bundle */; };
 		CF46FFA4255FCD500095FC73 /* OperationsResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF46FFA3255FCD320095FC73 /* OperationsResources.bundle */; };
-		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
 		CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
 		CF4D98A720284C1500ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
 		CF4D98A82028500300ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
@@ -364,7 +360,6 @@
 		CF614AEA1F9D92A20005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
 		CF614AEB1F9D92A30005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
 		CF614AEC1F9D92A40005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
-		CF614AED1F9D92B30005F2DB /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.a */; };
 		CF614AF01F9D932B0005F2DB /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.a */; };
 		CF6237241EB4444B00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF6237251EB4444C00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
@@ -390,27 +385,7 @@
 		CF6BF829219402DD0017CECB /* PanelBriefViewDynamicWidthLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF826219402DC0017CECB /* PanelBriefViewDynamicWidthLayout.mm */; };
 		CF6BF82A219402DD0017CECB /* PanelBriefViewDynamicWidthLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF826219402DC0017CECB /* PanelBriefViewDynamicWidthLayout.mm */; };
 		CF6BF82B219402DD0017CECB /* PanelBriefViewDynamicWidthLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF826219402DC0017CECB /* PanelBriefViewDynamicWidthLayout.mm */; };
-		CF6BF82E21941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */; };
-		CF6BF82F21941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */; };
-		CF6BF83021941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */; };
-		CF6BF83121941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */; };
-		CF6BF833219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF832219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm */; };
 		CF6BF83A219444A90017CECB /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
-		CF6BF83B219445F00017CECB /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
-		CF6BF83E21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */; };
-		CF6BF83F21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */; };
-		CF6BF84021944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */; };
-		CF6BF84121944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */; };
-		CF6BF843219518690017CECB /* PanelBriefViewDynamicWidthLayoutEngine_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF842219518680017CECB /* PanelBriefViewDynamicWidthLayoutEngine_Tests.mm */; };
-		CF6BF8462196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF8452196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm */; };
-		CF6BF8472196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF8452196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm */; };
-		CF6BF8482196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF8452196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm */; };
-		CF6BF8492196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF8452196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm */; };
-		CF6BF84C2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF84B2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm */; };
-		CF6BF84D2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF84B2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm */; };
-		CF6BF84E2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF84B2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm */; };
-		CF6BF84F2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF84B2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm */; };
-		CF6BF8512197F1420017CECB /* PanelBriefViewFixedNumberLayoutEngine_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF8502197F1420017CECB /* PanelBriefViewFixedNumberLayoutEngine_Tests.mm */; };
 		CF6BF8542197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF8532197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm */; };
 		CF6BF8552197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF8532197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm */; };
 		CF6BF8562197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF8532197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm */; };
@@ -458,6 +433,14 @@
 		CF764CF6258766E500D7ED17 /* DragSender.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA952E1F4930BA0035E606 /* DragSender.mm */; };
 		CF764D002587671A00D7ED17 /* FilesDraggingSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */; };
 		CF764D102587673000D7ED17 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* libOperations.a */; };
+		CF764D1D258782C900D7ED17 /* PanelBriefViewLayoutEngineBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF84B2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm */; };
+		CF764D21258782D100D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */; };
+		CF764D2E258782D900D7ED17 /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF8452196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm */; };
+		CF764D3E258782E300D7ED17 /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */; };
+		CF764D432587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF764D422587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm */; };
+		CF764D4A258783E700D7ED17 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
+		CF764D4F258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF764D4E258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm */; };
+		CF764D572587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF764D562587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm */; };
 		CF7A09961EC2B37000533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
 		CF7A09AE1EC2DF5C00533B07 /* Delete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7E02C1EB97B60001FE66C /* Delete.mm */; };
 		CF7A09AF1EC2DF5C00533B07 /* Delete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7E02C1EB97B60001FE66C /* Delete.mm */; };
@@ -1332,13 +1315,6 @@
 			remoteGlobalIDString = CF38BEC22148AE5D005E336C;
 			remoteInfo = VFSIconIntegrationTests;
 		};
-		CFA53A721D433F8A00C562A7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFA539591D433E2A00C562A7;
-			remoteInfo = "NimbleCommander NonMAS CI";
-		};
 		CFACF9D01E24AAD800FD6AB6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
@@ -1640,7 +1616,6 @@
 		CF45CA381D3E433D0074F04C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ExternalToolParameterValueSheetController.strings; sourceTree = "<group>"; };
 		CF46C23420317FD700A91E2F /* ServicesHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServicesHandler.h; path = NimbleCommander/Core/ServicesHandler.h; sourceTree = SOURCE_ROOT; };
 		CF46C23520317FD700A91E2F /* ServicesHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ServicesHandler.mm; path = NimbleCommander/Core/ServicesHandler.mm; sourceTree = SOURCE_ROOT; };
-		CF47A980186C607C00745C4C /* Nimble Commander.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nimble Commander.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTPConnectionSheetController.h; path = NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FTPConnectionSheetController.mm; path = NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.mm; sourceTree = SOURCE_ROOT; };
@@ -1765,15 +1740,12 @@
 		CF6BF827219402DD0017CECB /* PanelBriefViewDynamicWidthLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewDynamicWidthLayout.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewDynamicWidthLayout.h; sourceTree = "<group>"; };
 		CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedWidthLayoutEngine.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedWidthLayoutEngine.mm; sourceTree = "<group>"; };
 		CF6BF82D21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewFixedWidthLayoutEngine.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedWidthLayoutEngine.h; sourceTree = "<group>"; };
-		CF6BF832219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedWidthLayoutEngine_Tests.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedWidthLayoutEngine_Tests.mm; sourceTree = "<group>"; };
 		CF6BF83C21944FF00017CECB /* PanelBriefViewDynamicWidthLayoutEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewDynamicWidthLayoutEngine.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewDynamicWidthLayoutEngine.h; sourceTree = "<group>"; };
 		CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewDynamicWidthLayoutEngine.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewDynamicWidthLayoutEngine.mm; sourceTree = "<group>"; };
-		CF6BF842219518680017CECB /* PanelBriefViewDynamicWidthLayoutEngine_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewDynamicWidthLayoutEngine_Tests.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewDynamicWidthLayoutEngine_Tests.mm; sourceTree = "<group>"; };
 		CF6BF8442196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewFixedNumberLayoutEngine.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayoutEngine.h; sourceTree = "<group>"; };
 		CF6BF8452196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedNumberLayoutEngine.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayoutEngine.mm; sourceTree = "<group>"; };
 		CF6BF84A2197C6690017CECB /* PanelBriefViewLayoutEngineBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewLayoutEngineBase.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewLayoutEngineBase.h; sourceTree = "<group>"; };
 		CF6BF84B2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewLayoutEngineBase.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewLayoutEngineBase.mm; sourceTree = "<group>"; };
-		CF6BF8502197F1420017CECB /* PanelBriefViewFixedNumberLayoutEngine_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedNumberLayoutEngine_Tests.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayoutEngine_Tests.mm; sourceTree = "<group>"; };
 		CF6BF8522197F5C80017CECB /* PanelBriefViewFixedNumberLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewFixedNumberLayout.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayout.h; sourceTree = "<group>"; };
 		CF6BF8532197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedNumberLayout.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedNumberLayout.mm; sourceTree = "<group>"; };
 		CF6D997D196675290077B146 /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1808,6 +1780,9 @@
 		CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DropboxAccountSheetController.mm; path = NimbleCommander/States/FilePanels/Views/DropboxAccountSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF764CAC2587632A00D7ED17 /* ExternalToolsSupport_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport_UT.mm; path = NimbleCommander/Tests/ExternalToolsSupport_UT.mm; sourceTree = "<group>"; };
 		CF764CE62587661300D7ED17 /* DragSender_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DragSender_UT.mm; path = NimbleCommander/Tests/DragSender_UT.mm; sourceTree = "<group>"; };
+		CF764D422587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewDynamicWidthLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewDynamicWidthLayoutEngine_UT.mm; sourceTree = "<group>"; };
+		CF764D4E258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedNumberLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewFixedNumberLayoutEngine_UT.mm; sourceTree = "<group>"; };
+		CF764D562587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedWidthLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewFixedWidthLayoutEngine_UT.mm; sourceTree = "<group>"; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CF7A09941EC2B37000533B07 /* Duplicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Duplicate.h; path = NimbleCommander/States/FilePanels/Actions/Duplicate.h; sourceTree = SOURCE_ROOT; };
 		CF7A09951EC2B37000533B07 /* Duplicate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Duplicate.mm; path = NimbleCommander/States/FilePanels/Actions/Duplicate.mm; sourceTree = SOURCE_ROOT; };
@@ -2124,19 +2099,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CF47A97D186C607B00745C4C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CF6BF83B219445F00017CECB /* libConfig.a in Frameworks */,
-				CF614AED1F9D92B30005F2DB /* libTerm.a in Frameworks */,
-				CF36DBFD1F6C1C09004A018E /* libUtility.a in Frameworks */,
-				CF36DBFC1F6C1B63004A018E /* libHabanero.a in Frameworks */,
-				CF36DBFB1F6C1B60004A018E /* libVFS.a in Frameworks */,
-				CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CF5DE07C2583E73300604DEE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2148,6 +2110,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF764D4A258783E700D7ED17 /* libRoutedIO.a in Frameworks */,
 				CF764D102587673000D7ED17 /* libOperations.a in Frameworks */,
 				CF764CF2258766BB00D7ED17 /* libVFS.a in Frameworks */,
 				CF764CEE258766AD00D7ED17 /* libPanel.a in Frameworks */,
@@ -2558,17 +2521,14 @@
 				CF56C2C71DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm */,
 				CF6BF827219402DD0017CECB /* PanelBriefViewDynamicWidthLayout.h */,
 				CF6BF826219402DC0017CECB /* PanelBriefViewDynamicWidthLayout.mm */,
-				CF6BF842219518680017CECB /* PanelBriefViewDynamicWidthLayoutEngine_Tests.mm */,
 				CF6BF83C21944FF00017CECB /* PanelBriefViewDynamicWidthLayoutEngine.h */,
 				CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */,
 				CF6BF8522197F5C80017CECB /* PanelBriefViewFixedNumberLayout.h */,
 				CF6BF8532197F5C80017CECB /* PanelBriefViewFixedNumberLayout.mm */,
-				CF6BF8502197F1420017CECB /* PanelBriefViewFixedNumberLayoutEngine_Tests.mm */,
 				CF6BF8442196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.h */,
 				CF6BF8452196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm */,
 				CF6BF820219140360017CECB /* PanelBriefViewFixedWidthLayout.h */,
 				CF6BF80C219140360017CECB /* PanelBriefViewFixedWidthLayout.mm */,
-				CF6BF832219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm */,
 				CF6BF82D21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.h */,
 				CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */,
 				CF2437651DEC268A00245C14 /* PanelBriefViewItemCarrier.h */,
@@ -2588,6 +2548,9 @@
 				CF5DE0D5258415D500604DEE /* ActivationManager_UT.cpp */,
 				CF764CE62587661300D7ED17 /* DragSender_UT.mm */,
 				CF764CAC2587632A00D7ED17 /* ExternalToolsSupport_UT.mm */,
+				CF764D422587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm */,
+				CF764D4E258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm */,
+				CF764D562587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm */,
 				CF5DE0C12584157B00604DEE /* Tests.cpp */,
 				CF5DE0C02584157B00604DEE /* Tests.h */,
 			);
@@ -3054,7 +3017,6 @@
 			isa = PBXGroup;
 			children = (
 				CFC5121116C4BD3D00D247EE /* Nimble Commander.app */,
-				CF47A980186C607C00745C4C /* Nimble Commander.xctest */,
 				CF6D997D196675290077B146 /* Nimble Commander.app */,
 				CFF6F3A11A13567C00011177 /* Nimble Commander Pro.app */,
 				CFA53A6D1D433E2A00C562A7 /* NimbleCommander-Unsigned.app */,
@@ -3262,24 +3224,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		CF47A97F186C607B00745C4C /* NimbleCommander-Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "NimbleCommander-Tests" */;
-			buildPhases = (
-				CF47A97C186C607B00745C4C /* Sources */,
-				CF47A97D186C607B00745C4C /* Frameworks */,
-				CF47A97E186C607B00745C4C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				CFA53A731D433F8A00C562A7 /* PBXTargetDependency */,
-			);
-			name = "NimbleCommander-Tests";
-			productName = "Files Tests";
-			productReference = CF47A980186C607C00745C4C /* Nimble Commander.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		CF5DE07D2583E73300604DEE /* NimbleCommanderCommon */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF5DE07F2583E73300604DEE /* Build configuration list for PBXNativeTarget "NimbleCommanderCommon" */;
@@ -3414,11 +3358,6 @@
 				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
-					CF47A97F186C607B00745C4C = {
-						DevelopmentTeam = AC5SJT236H;
-						ProvisioningStyle = Manual;
-						TestTargetID = CFA539591D433E2A00C562A7;
-					};
 					CF5DE07D2583E73300604DEE = {
 						CreatedOnToolsVersion = 12.2;
 					};
@@ -3531,7 +3470,6 @@
 				CFC5121016C4BD3D00D247EE /* NimbleCommander-NonMAS */,
 				CF6D997C196675290077B146 /* NimbleCommander-MAS-Free */,
 				CFF6F2391A13567C00011177 /* NimbleCommander-MAS-Paid */,
-				CF47A97F186C607B00745C4C /* NimbleCommander-Tests */,
 				CF5DE0B1258414CA00604DEE /* NimbleCommanderUT */,
 			);
 		};
@@ -3744,13 +3682,6 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		CF47A97E186C607B00745C4C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CF6D997B196675290077B146 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4057,16 +3988,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		CF47A97C186C607B00745C4C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CF6BF843219518690017CECB /* PanelBriefViewDynamicWidthLayoutEngine_Tests.mm in Sources */,
-				CF6BF833219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm in Sources */,
-				CF6BF8512197F1420017CECB /* PanelBriefViewFixedNumberLayoutEngine_Tests.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CF5DE07B2583E73300604DEE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4075,11 +3996,15 @@
 				CF764D002587671A00D7ED17 /* FilesDraggingSource.mm in Sources */,
 				CF764CBE258763DA00D7ED17 /* ActionsShortcutsManager.mm in Sources */,
 				CF764CE2258765E600D7ED17 /* DragReceiver.mm in Sources */,
+				CF764D2E258782D900D7ED17 /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */,
 				CF3ED49C2584DCF900D67AF2 /* ActivationManagerImpl.cpp in Sources */,
+				CF764D1D258782C900D7ED17 /* PanelBriefViewLayoutEngineBase.mm in Sources */,
 				CF764CF6258766E500D7ED17 /* DragSender.mm in Sources */,
+				CF764D21258782D100D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
 				CF3ED4CC25855F5B00D67AF2 /* MASAppInstalledChecker.cpp in Sources */,
 				CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */,
 				CF764CB4258763B100D7ED17 /* ExternalToolsSupport.mm in Sources */,
+				CF764D3E258782E300D7ED17 /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4088,7 +4013,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF5DE0D6258415D500604DEE /* ActivationManager_UT.cpp in Sources */,
+				CF764D572587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm in Sources */,
+				CF764D4F258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm in Sources */,
 				CF5DE0C22584157B00604DEE /* Tests.cpp in Sources */,
+				CF764D432587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm in Sources */,
 				CF764CAD2587632A00D7ED17 /* ExternalToolsSupport_UT.mm in Sources */,
 				CF764CE72587661300D7ED17 /* DragSender_UT.mm in Sources */,
 			);
@@ -4227,7 +4155,6 @@
 				CFFA95141F45A3050035E606 /* UserNotificationsCenter.mm in Sources */,
 				CF818B561EA0610D00BC28E6 /* DefaultAction.mm in Sources */,
 				CF4D98C9202BEC6800ECE06D /* StateActionsDispatcher.mm in Sources */,
-				CF6BF8482196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */,
 				CF9721F3214FD43100A1B19E /* IconRepositoryCleaner.mm in Sources */,
 				CFD8CDB41E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
 				CF04DE081E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
@@ -4261,7 +4188,6 @@
 				CFD726B11E42E26200603077 /* CopyFilePaths.mm in Sources */,
 				CF44D33C202D632F0083FAF5 /* ExecuteExternalTool.mm in Sources */,
 				CF7D7D5D21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */,
-				CF6BF84021944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
 				CFDC07CC2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CFD8CDD21E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,
 				CF9F4B011ECC8DD000E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
@@ -4283,8 +4209,6 @@
 				CFD726E81E42E2D200603077 /* PanelListViewGeometry.mm in Sources */,
 				CF5E9A4A1FCBC66B005608F5 /* ViewFile.mm in Sources */,
 				CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
-				CF6BF83021941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,
-				CF6BF84E2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm in Sources */,
 				CF4E569E1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF818B6A1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
 				CF6BF82A219402DD0017CECB /* PanelBriefViewDynamicWidthLayout.mm in Sources */,
@@ -4372,7 +4296,6 @@
 				CF4E56A51D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CFBA63B31FC1A50C00077682 /* ToggleSingleOrDualMode.mm in Sources */,
 				CFA539B91D433E2A00C562A7 /* AskForPasswordWindowController.mm in Sources */,
-				CF6BF82E21941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,
 				CFD726B51E42E27A00603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFD7271C1E42E32D00603077 /* ExternalEditorState.mm in Sources */,
 				CFD7261B1E42E09500603077 /* Theme.mm in Sources */,
@@ -4396,7 +4319,6 @@
 				CF9F4B051ECC8DE300E0AF82 /* ExecuteInTerminal.mm in Sources */,
 				CFD8CDCB1E8CE65600E4DC53 /* OpenXAttr.mm in Sources */,
 				CFD726D91E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */,
-				CF6BF8462196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */,
 				CFD7263F1E42E0EE00603077 /* GoogleAnalytics.mm in Sources */,
 				CFB2AB5C21560CDB0009EB81 /* PanelViewFooterTheme.mm in Sources */,
 				CF4E56C51D50692000452912 /* PreferencesWindowTerminalTab.mm in Sources */,
@@ -4405,7 +4327,6 @@
 				CF818B491EA0610C00BC28E6 /* BatchRename.mm in Sources */,
 				CFA6C85C2015944D00CD7681 /* PanelControllerPersistency.mm in Sources */,
 				CFFA95151F45A3050035E606 /* UserNotificationsCenter.mm in Sources */,
-				CF6BF83E21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
 				CFA539D11D433E2A00C562A7 /* SFTPConnectionSheetController.mm in Sources */,
 				CFD726CD1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */,
 				CFD727131E42E31E00603077 /* ConnectionsMenuDelegate.mm in Sources */,
@@ -4499,7 +4420,6 @@
 				CF36DBEC1F6C1807004A018E /* PanelViewFieldEditor.mm in Sources */,
 				CF1FBF241E8F57CD00D3569C /* FavoritesMenuDelegate.mm in Sources */,
 				CF818B7C1EA4573500BC28E6 /* Pasteboard.mm in Sources */,
-				CF6BF84C2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm in Sources */,
 				CF3B7F70201F20D300BF2090 /* PanelControllerActionsDispatcher.mm in Sources */,
 				CF75E88B1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
 				CF7A09B01EC2DF5D00533B07 /* Delete.mm in Sources */,
@@ -4581,7 +4501,6 @@
 				CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF4D98CA202BEC6900ECE06D /* StateActionsDispatcher.mm in Sources */,
-				CF6BF82F21941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,
 				CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */,
 				CF0260CA1E9DF45D0025B50F /* BatchRename.mm in Sources */,
 				CFDAC3001DFD1D7C0039A104 /* ExternalEditorInfo.mm in Sources */,
@@ -4604,7 +4523,6 @@
 				CFDAC2481DFBEE340039A104 /* MainWindow.mm in Sources */,
 				CFD8CDBE1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
 				CFA7E02D1EB97B60001FE66C /* Delete.mm in Sources */,
-				CF6BF8472196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */,
 				CFB2AB5D21560CDB0009EB81 /* PanelViewFooterTheme.mm in Sources */,
 				CF9F4AF01ECC015700E0AF82 /* ExecuteInTerminal.mm in Sources */,
 				CFA2D6041E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
@@ -4612,7 +4530,6 @@
 				CF4E563F1D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CFD8CDD61E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CFF695721E20C6CF0069EEA4 /* TabBarStyle.mm in Sources */,
-				CF6BF83F21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
 				CFA6C86E20159C7200CD7681 /* PanelControllerPersistency.mm in Sources */,
 				CFDAC23C1DFBDEBA0039A104 /* AppDelegateCPP.mm in Sources */,
 				CF04DDF51E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
@@ -4706,7 +4623,6 @@
 				CFDAC2141DFBBD110039A104 /* PanelView.mm in Sources */,
 				CF9F4AD31ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
 				CF3B7F72201F213000BF2090 /* PanelControllerActionsDispatcher.mm in Sources */,
-				CF6BF84D2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm in Sources */,
 				CFBEF9011F6781A100C63816 /* TextWidthsCache.mm in Sources */,
 				CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */,
 				CFDAC2211DFBCA290039A104 /* PanelDataPersistency.cpp in Sources */,
@@ -4790,7 +4706,6 @@
 				CFD726ED1E42E2D900603077 /* PanelListViewRowView.mm in Sources */,
 				CFD726F91E42E2E800603077 /* PanelListViewTableView.mm in Sources */,
 				CF6BF824219140360017CECB /* PanelBriefViewFixedWidthLayout.mm in Sources */,
-				CF6BF84F2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm in Sources */,
 				CFD727021E42E2FC00603077 /* FilePanelMainSplitView.mm in Sources */,
 				CFD726761E42E1FE00603077 /* PanelAux.mm in Sources */,
 				CF818B751EA4572C00BC28E6 /* CopyToPasteboard.mm in Sources */,
@@ -4830,7 +4745,6 @@
 				CF5E9A4E1FCBDE29005608F5 /* RefreshPanel.mm in Sources */,
 				CF1FBF2B1E8F57E800D3569C /* AddToFavorites.mm in Sources */,
 				CFFA951B1F45A3410035E606 /* ConfigWiring.mm in Sources */,
-				CF6BF8492196A8B40017CECB /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */,
 				CF4D98C8202BEC6700ECE06D /* StateActionsDispatcher.mm in Sources */,
 				CF509274201C3DB7004D9CF5 /* VFSInstanceManager.cpp in Sources */,
 				CF818B611EA0610E00BC28E6 /* DefaultAction.mm in Sources */,
@@ -4842,7 +4756,6 @@
 				CFD726191E42E09300603077 /* Theme.mm in Sources */,
 				CFD726DA1E42E2BD00603077 /* Layout.mm in Sources */,
 				CF5E9A541FCBF5BD005608F5 /* ShowQuickLook.mm in Sources */,
-				CF6BF84121944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
 				CF04DDFE1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CFB66FA41D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,
@@ -4901,7 +4814,6 @@
 				CFB2AB6B2157399E0009EB81 /* PanelViewHeaderTheme.mm in Sources */,
 				CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */,
 				CFD726D71E42E2B600603077 /* PanelBriefViewItemCarrier.mm in Sources */,
-				CF6BF83121941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,
 				CF7A09B11EC2DF6200533B07 /* Duplicate.mm in Sources */,
 				CFD7270E1E42E30C00603077 /* BriefSystemOverview.mm in Sources */,
 				CF1E3D1E1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
@@ -4974,11 +4886,6 @@
 			isa = PBXTargetDependency;
 			name = OperationsResources;
 			targetProxy = CF8681C625837C2800D87746 /* PBXContainerItemProxy */;
-		};
-		CFA53A731D433F8A00C562A7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFA539591D433E2A00C562A7 /* NimbleCommander-Unsigned */;
-			targetProxy = CFA53A721D433F8A00C562A7 /* PBXContainerItemProxy */;
 		};
 		CFDAC8492169D32400DEBA2A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5395,48 +5302,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		CF47A98F186C607C00745C4C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "";
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_Unsigned";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"__NC_VERSION_TRIAL__=1",
-				);
-				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander Tests-Info.plist";
-				PRODUCT_NAME = "Nimble Commander";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NimbleCommander-Unsigned.app/Contents/MacOS/NimbleCommander-Unsigned";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		CF47A990186C607C00745C4C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "";
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_Unsigned";
-				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
-				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander Tests-Info.plist";
-				PRODUCT_NAME = "Nimble Commander";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NimbleCommander-Unsigned.app/Contents/MacOS/NimbleCommander-Unsigned";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
 		CF5DE0802583E73300604DEE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5625,15 +5490,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "NimbleCommander-Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CF47A98F186C607C00745C4C /* Debug */,
-				CF47A990186C607C00745C4C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		CF5DE07F2583E73300604DEE /* Build configuration list for PBXNativeTarget "NimbleCommanderCommon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

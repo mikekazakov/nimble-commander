@@ -3,6 +3,7 @@
 #include <VFS/Native.h>
 #include <Utility/StringExtras.h>
 #include <Operations/Deletion.h>
+#include <Operations/Copying.h>
 #include <Habanero/dispatch_cpp.h>
 #include "PanelController.h"
 #include "MainWindowFilePanelState.h"
@@ -168,26 +169,39 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
 // "com.apple.pasteboard.promised-file-url"
 - (void)provideURLPromisePasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item
 {
-    if( auto drop_url = ExtractPromiseDropLocation(sender) ) {
-        const auto dest = std::filesystem::path(drop_url.path.fileSystemRepresentation)
-            / item.item.Filename();
-
-        // retrieve item itself
-        const auto  ret = VFSEasyCopyNode(item.item.Path().c_str(),
-                                          item.item.Host(),
-                                          dest.c_str(),
-                                          m_NativeVFS );
-        
-        if( ret == 0 ) {
-            // write result url into pasteboard
-            const auto url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:dest.c_str()]
-                                        isDirectory:item.item.IsDir()
-                                      relativeToURL:nil];
-            if( url ) {
-                // NB! keep this in dumb form!
-                // [url writeToPasteboard:sender] doesn't work.
-                [sender writeObjects:@[url]];
-            }
+    auto drop_url = ExtractPromiseDropLocation(sender);
+    if( drop_url == nil )
+        return;
+                
+    nc::ops::CopyingOptions opts;
+    opts.docopy = true;
+    opts.copy_file_times = true;
+    opts.copy_unix_flags = true;
+    opts.copy_unix_owners = true;
+    opts.preserve_symlinks = true;
+    opts.exist_behavior = nc::ops::CopyingOptions::ExistBehavior::Stop;
+    
+    const auto dest = std::filesystem::path(drop_url.path.fileSystemRepresentation)
+        / item.item.Filename();
+    
+    auto operation = std::make_shared<nc::ops::Copying>(std::vector<VFSListingItem>{item.item},
+                                                        dest,
+                                                        m_NativeVFS,
+                                                        opts);
+    
+    operation->Start();
+    operation->Wait();
+    const bool success = operation->State() == nc::ops::OperationState::Completed;
+    
+    if( success ) {
+        // write result url into pasteboard
+        const auto url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:dest.c_str()]
+                                    isDirectory:item.item.IsDir()
+                                  relativeToURL:nil];
+        if( url ) {
+            // NB! keep this in dumb form!
+            // [url writeToPasteboard:sender] doesn't work.
+            [sender writeObjects:@[url]];
         }
     }
 }

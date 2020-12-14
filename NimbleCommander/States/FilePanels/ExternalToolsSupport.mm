@@ -1,6 +1,6 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalToolsSupport.h"
-#include <NimbleCommander/Bootstrap/Config.h>
+#include <Config/Config.h>
 #include <Config/RapidJSON.h>
 #include <any>
 #include <Foundation/Foundation.h>
@@ -367,12 +367,13 @@ static std::optional<ExternalTool> LoadTool( const nc::config::Value& _from )
     return et;
 }
 
-ExternalToolsStorage::ExternalToolsStorage(const char*_config_path):
-    m_ConfigPath(_config_path)
+ExternalToolsStorage::ExternalToolsStorage(const char*_config_path, nc::config::Config &_config):
+    m_ConfigPath(_config_path),
+    m_Config(_config)
 {
     LoadToolsFromConfig();
   
-    m_ConfigObservations.emplace_back( GlobalConfig().Observe(_config_path, [=]{
+    m_ConfigObservations.emplace_back( m_Config.Observe(_config_path, [=]{
         LoadToolsFromConfig();
         FireObservers();
     }) );
@@ -380,7 +381,7 @@ ExternalToolsStorage::ExternalToolsStorage(const char*_config_path):
 
 void ExternalToolsStorage::LoadToolsFromConfig()
 {
-    auto tools = GlobalConfig().Get(m_ConfigPath);
+    auto tools = m_Config.Get(m_ConfigPath);
     if( !tools.IsArray())
         return;
     
@@ -425,7 +426,7 @@ void ExternalToolsStorage::WriteToolsToConfig() const
     nc::config::Value json_tools{ rapidjson::kArrayType };
     for( auto &t: tools )
         json_tools.PushBack( SaveTool(*t), nc::config::g_CrtAllocator );
-    GlobalConfig().Set( m_ConfigPath, json_tools );
+    m_Config.Set( m_ConfigPath, json_tools );
 }
 
 void ExternalToolsStorage::CommitChanges()

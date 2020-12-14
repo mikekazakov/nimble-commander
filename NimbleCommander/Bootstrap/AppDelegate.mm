@@ -835,10 +835,11 @@ static std::string AquaticPrimePublicKey()
     return *g_State;
 }
 
-- (ExternalToolsStorage&) externalTools
+- (ExternalToolsStorage &)externalTools
 {
-    static auto i = new ExternalToolsStorage(g_ConfigExternalToolsList);
-    return *i;
+    [[clang::no_destroy]] static ExternalToolsStorage storage{g_ConfigExternalToolsList,
+                                                              self.globalConfig};
+    return storage;
 }
 
 - (const std::shared_ptr<nc::panel::PanelViewLayoutsStorage> &)panelLayouts

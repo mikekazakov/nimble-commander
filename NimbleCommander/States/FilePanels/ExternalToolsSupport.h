@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 /**
@@ -140,7 +140,7 @@ public:
 class ExternalToolsStorage : public ObservableBase
 {
 public:
-    ExternalToolsStorage(const char*_config_path);
+    ExternalToolsStorage(const char*_config_path, nc::config::Config &_config);
     
     size_t                                  ToolsCount() const;
     std::shared_ptr<const ExternalTool>     GetTool(size_t _no) const; // will return nullptr on invalid index
@@ -162,6 +162,7 @@ private:
     mutable spinlock                                m_ToolsLock;
     std::vector<std::shared_ptr<const ExternalTool>>m_Tools;
     const char*                                     m_ConfigPath;
+    nc::config::Config&                             m_Config;
     std::vector<nc::config::Token>                  m_ConfigObservations;
 };
 

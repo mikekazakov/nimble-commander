@@ -5,7 +5,6 @@
 #include <VFS/ArcLA.h>
 #include "../source/Copying/Copying.h"
 #include "../source/Compression/Compression.h"
-#include "Environment.h"
 #include <sys/stat.h>
 #include <vector>
 
@@ -15,10 +14,7 @@ using namespace std::literals;
 
 #define PREFIX "Archive Tests: "
 
-[[clang::no_destroy]] static const std::string g_Preffix =
-    std::string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
-[[clang::no_destroy]] static const std::string g_Adium = g_Preffix + "adium.app.zip";
-[[clang::no_destroy]] static const std::string g_Files = g_Preffix + "files-1.1.0(1341).zip";
+// TODO: are these Compression or Copying tests in the end? need to decide.
 
 static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
                              const VFSHostPtr &_file1_host,
@@ -36,64 +32,36 @@ static std::vector<VFSListingItem> FetchItems(const std::string &_directory_path
     return items;
 }
 
-TEST_CASE(PREFIX "adium.zip - copy from VFS")
+TEST_CASE(PREFIX "valid signature after extracting an application")
 {
-    if( !std::filesystem::exists(g_Adium) ) {
-        std::cout << "skipping test: no " << g_Adium << std::endl;
-        return;
-    }
-
     TempTestDir tmp_dir;
-    std::shared_ptr<vfs::ArchiveHost> host;
-    try {
-        host = std::make_shared<vfs::ArchiveHost>(g_Adium.c_str(), TestEnv().vfs_native);
-    } catch( VFSErrorException &e ) {
-        REQUIRE(e.code() == 0);
-        return;
-    }
+    const auto source_fn = "Chess.app";
+    const auto source_dir = std::filesystem::path("/System/Applications");
+    const auto source_path = source_dir/source_fn;
+    auto item = FetchItems(source_dir, {source_fn}, *TestEnv().vfs_native);
+    Compression comp_operation{item, tmp_dir.directory.native(), TestEnv().vfs_native};
+    comp_operation.Start();
+    comp_operation.Wait();
+    REQUIRE( comp_operation.State() == nc::ops::OperationState::Completed );
+    const auto archive_path = comp_operation.ArchivePath();
+    const auto host = std::make_shared<vfs::ArchiveHost>(archive_path.c_str(),
+                                                         TestEnv().vfs_native);
+    int cmp_result = 0;
+    REQUIRE(VFSCompareEntries("/"s + source_fn, host, source_path, TestEnv().vfs_native, cmp_result)
+            == 0);
+    REQUIRE(cmp_result == 0);
 
-    CopyingOptions opts;
-    Copying op(FetchItems("/", {"Adium.app"}, *host),
+    CopyingOptions copy_opts;
+    Copying copy_operation(FetchItems("/", {source_fn}, *host),
                tmp_dir.directory.native(),
                TestEnv().vfs_native,
-               opts);
-    op.Start();
-    op.Wait();
-
-    int result = 0;
-    REQUIRE(
-        VFSCompareEntries(
-            "/Adium.app", host, tmp_dir.directory / "Adium.app", TestEnv().vfs_native, result) ==
-        0);
-    REQUIRE(result == 0);
-}
-
-TEST_CASE(PREFIX "extracted Files - signature")
-{
-    if( !std::filesystem::exists(g_Files) ) {
-        std::cout << "skipping test: no " << g_Files << std::endl;
-        return;
-    }
-
-    TempTestDir tmp_dir;
-    std::shared_ptr<vfs::ArchiveHost> host;
-    try {
-        host = std::make_shared<vfs::ArchiveHost>(g_Files.c_str(), TestEnv().vfs_native);
-    } catch( VFSErrorException &e ) {
-        REQUIRE(e.code() == 0);
-        return;
-    }
-
-    CopyingOptions opts;
-    Copying op(FetchItems("/", {"Files.app"}, *host),
-               tmp_dir.directory.native(),
-               TestEnv().vfs_native,
-               opts);
-    op.Start();
-    op.Wait();
+               copy_opts);
+    copy_operation.Start();
+    copy_operation.Wait();
+    REQUIRE( copy_operation.State() == nc::ops::OperationState::Completed );
 
     const auto command =
-        "/usr/bin/codesign --verify "s + (tmp_dir.directory / "Files.app").native();
+        "/usr/bin/codesign --verify --no-strict "s + (tmp_dir.directory / source_fn).native();
     REQUIRE(system(command.c_str()) == 0);
 }
 
@@ -112,6 +80,7 @@ TEST_CASE(PREFIX "Compressing an item with big xattrs")
     Compression operation{item, tmp_dir.directory.native(), TestEnv().vfs_native};
     operation.Start();
     operation.Wait();
+    REQUIRE( operation.State() == nc::ops::OperationState::Completed );
 
     const auto host =
     std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), TestEnv().vfs_native);

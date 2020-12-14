@@ -58,16 +58,19 @@ struct StateStorage {
     NCPanelViewFooter *m_FooterView;
 
     std::unique_ptr<IconRepository> m_IconRepository;
+    std::shared_ptr<nc::vfs::NativeHost> m_NativeHost;
 
     int m_CursorPos;
     nc::utility::NSEventModifierFlagsHolder m_KeyboardModifierFlags;
     CursorSelectionType m_KeyboardCursorSelectionType;
+        
 }
 
 @synthesize headerView = m_HeaderView;
 
 - (id)initWithFrame:(NSRect)frame
      iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository
+          nativeVFS:(nc::vfs::NativeHost&)_native_vfs
              header:(NCPanelViewHeader *)_header
              footer:(NCPanelViewFooter *)_footer
 {
@@ -77,6 +80,7 @@ struct StateStorage {
         m_CursorPos = -1;
         m_HeaderTitle = @"";
         m_IconRepository = std::move(_icon_repository);
+        m_NativeHost = _native_vfs.SharedPtr();
 
         m_ItemsView =
             [[NCPanelViewDummyPresentation alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
@@ -1018,7 +1022,7 @@ struct StateStorage {
             return m_IconRepository->AvailableIconForListingItem(_item);
     }};
 
-    DragSender sender{self.controller, move(icon_producer)};
+    DragSender sender{self.controller, move(icon_producer), *m_NativeHost};
     sender.Start(self, _event, _sorted_index);
 }
 

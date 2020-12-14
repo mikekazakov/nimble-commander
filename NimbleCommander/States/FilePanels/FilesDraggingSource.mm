@@ -7,7 +7,6 @@
 #include "PanelController.h"
 #include "MainWindowFilePanelState.h"
 #include "../MainWindowController.h"
-#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 
 static const auto g_PrivateDragUTI = @"com.magnumbytes.nimblecommander.filespanelsdraganddrop";
 
@@ -59,6 +58,7 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(
     VFSHostPtr                  m_CommonHost;
     bool                        m_AreAllHostsWriteable;
     bool                        m_AreAllHostsNative;
+    VFSHostPtr                  m_NativeVFS;
 }
 
 @synthesize areAllHostsWriteable = m_AreAllHostsWriteable;
@@ -73,12 +73,14 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(
 + (NSString*) filenamesPBoardDragUTI    { return g_PasteboardFilenamesUTI;      }
 
 - (FilesDraggingSource*) initWithSourceController:(PanelController*)_controller
+                                       nativeHost:(nc::vfs::NativeHost&)_native_vfs
 {
     self = [super init];
     if(self) {
         m_SourceController = _controller;
         m_AreAllHostsWriteable = false;
         m_AreAllHostsNative = false;
+        m_NativeVFS = _native_vfs.SharedPtr();
     }
     return self;
 }
@@ -167,14 +169,14 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
 - (void)provideURLPromisePasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item
 {
     if( auto drop_url = ExtractPromiseDropLocation(sender) ) {
-        const auto dest = boost::filesystem::path(drop_url.path.fileSystemRepresentation)
+        const auto dest = std::filesystem::path(drop_url.path.fileSystemRepresentation)
             / item.item.Filename();
 
         // retrieve item itself
         const auto  ret = VFSEasyCopyNode(item.item.Path().c_str(),
                                           item.item.Host(),
                                           dest.c_str(),
-                                          nc::bootstrap::NativeVFSHostInstance().SharedPtr() );
+                                          m_NativeVFS );
         
         if( ret == 0 ) {
             // write result url into pasteboard

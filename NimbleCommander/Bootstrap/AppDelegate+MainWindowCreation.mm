@@ -174,6 +174,7 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
     const auto pv_rect = NSMakeRect(0, 0, 100, 100);
     return [[PanelView alloc] initWithFrame:pv_rect
                              iconRepository:[self allocateIconRepository]
+                                  nativeVFS:self.nativeHost
                                      header:header
                                      footer:footer];
 }

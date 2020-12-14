@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -16,6 +16,10 @@
 @class PanelView;
 @class NCPanelViewHeader;
 @class NCPanelViewFooter;
+
+namespace nc::vfs {
+class NativeHost;
+}
 
 namespace nc::panel {
     struct PanelViewLayout;
@@ -44,6 +48,7 @@ namespace nc::panel {
 
 - (id)initWithFrame:(NSRect)frame
      iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository
+          nativeVFS:(nc::vfs::NativeHost&)_native_vfs // this dependency is weird
              header:(NCPanelViewHeader*)_header
              footer:(NCPanelViewFooter*)_footer;
 

@@ -50,7 +50,6 @@ enum class SourceType
 @interface PreferencesWindowHotkeysTab ()
 
 @property(nonatomic) IBOutlet NSTableView *Table;
-@property(nonatomic) IBOutlet GTMHotKeyTextField *HotKeyEditFieldTempl;
 @property(nonatomic) IBOutlet NSButton *forceFnButton;
 @property(nonatomic) IBOutlet NSTextField *filterTextField;
 @property(nonatomic) IBOutlet NSButton *sourceAllButton;
@@ -246,12 +245,18 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
 
 - (GTMHotKeyTextField *)makeDefaultGTMHotKeyTextField
 {
-    const auto data = [NSKeyedArchiver archivedDataWithRootObject:self.HotKeyEditFieldTempl
-                                            requiringSecureCoding:false
-                                                            error:nil];
-    return [NSKeyedUnarchiver unarchivedObjectOfClass:GTMHotKeyTextField.class
-                                             fromData:data
-                                                error:nil];
+    auto text_field = [[GTMHotKeyTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    text_field.drawsBackground = false;
+    text_field.bordered = false;
+    text_field.font =
+        [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeRegular]];
+    [text_field.cell setSendsActionOnEndEditing:true];
+    text_field.editable = true;
+    text_field.allowsEditingTextAttributes = false;
+    text_field.alignment = NSTextAlignmentNatural;
+    text_field.lineBreakMode = NSLineBreakByClipping;
+    text_field.enabled = true;
+    return text_field;
 }
 
 static NSTextField *SpawnLabelForAction(const ActionShortcutNode &_action)
@@ -294,6 +299,7 @@ static NSImageView *SpawnCautionSign()
             }
             if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
                 const auto key_text_field = [self makeDefaultGTMHotKeyTextField];
+                assert(key_text_field);
                 key_text_field.action = @selector(onHKChanged:);
                 key_text_field.target = self;
                 key_text_field.tag = node->tag.second;
@@ -324,6 +330,7 @@ static NSImageView *SpawnCautionSign()
             if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
                 const auto &tool = *node->tool;
                 const auto key_text_field = [self makeDefaultGTMHotKeyTextField];
+                assert(key_text_field);
                 key_text_field.action = @selector(onToolHKChanged:);
                 key_text_field.target = self;
                 key_text_field.tag = node->tool_index;

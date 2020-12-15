@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
@@ -118,5 +118,6 @@ using PanelActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::P
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender;
 - (IBAction)OnCreateHardLinkCommand:(id)sender;
 - (IBAction)OnFileViewCommand:(id)sender;
+- (IBAction)onFollowSymlink:(id)sender;
 
 @end

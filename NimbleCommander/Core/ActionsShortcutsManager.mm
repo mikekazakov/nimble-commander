@@ -95,6 +95,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"menu.go.forward",                                 14'010},
     {"menu.go.enclosing_folder",                        14'020},
     {"menu.go.into_folder",                             14'030},
+    {"menu.go.follow_symlink",                          14'300},
     {"menu.go.left_panel",                              14'260},
     {"menu.go.right_panel",                             14'270},
     {"menu.go.documents",                               14'040},
@@ -294,6 +295,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"menu.go.forward",                                     u8"⌘]"      }, // cmd+]
     {"menu.go.enclosing_folder",                            u8"⌘\uF700" }, // cmd+↑
     {"menu.go.into_folder",                                 u8"⌘\uF701" }, // cmd+↓
+    {"menu.go.follow_symlink",                              u8"⌘\uF703" },
     {"menu.go.left_panel",                                  u8"\uF704"  }, // F1
     {"menu.go.right_panel",                                 u8"\uF705"  }, // F2
     {"menu.go.documents",                                   u8"⇧⌘o"     }, // shift+cmd+o

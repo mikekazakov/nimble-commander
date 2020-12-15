@@ -275,7 +275,7 @@ public:
     gid_t           UnixGID()           const;
     
     bool            HasSymlink()        const;
-    const char     *Symlink()           const;
+    const std::string& Symlink()        const;
     
     bool            IsDir()             const;
     bool            IsReg()             const;
@@ -865,9 +865,9 @@ inline bool ListingItem::HasSymlink() const
     return L->HasSymlink(I);
 }
 
-inline const char *ListingItem::Symlink() const
+inline const std::string& ListingItem::Symlink() const
 {
-    return L->Symlink(I).c_str();
+    return L->Symlink(I);
 }
 
 inline bool ListingItem::IsDir() const

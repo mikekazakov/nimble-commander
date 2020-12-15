@@ -202,10 +202,6 @@ struct KeycodesHardcode
   return copy;
 }
 
-- (void)logBadValueAccess {
-  NSLog(@"Hot key fields want hot key dictionaries as object values.");
-}
-
 - (id)objectValue {
   return hotKey_;
 }
@@ -221,7 +217,6 @@ struct KeycodesHardcode
 - (void)setObjectValue:(id)object {
     // Sanity only if set, nil is OK
     if (object && ![object isKindOfClass:GTMHotKey.class]) {
-        [self logBadValueAccess];
         return;
     }
     if (![hotKey_ isEqual:object]) {
@@ -236,13 +231,7 @@ struct KeycodesHardcode
     return value ? value : @"";
 }
 
-- (void)setStringValue:(NSString *)string {
-    // Since we are a text cell, lots of AppKit objects will attempt to
-    // set out string value. Our Field editor should already have done
-    // that for us, so check to make sure what AppKit is setting us to is
-    // what we expect.
-    if (![string isEqual:self.stringValue])
-        [self logBadValueAccess];
+- (void)setStringValue:(NSString *)[[maybe_unused]]string {
 }
 
 - (NSAttributedString *)attributedStringValue {
@@ -252,7 +241,6 @@ struct KeycodesHardcode
 }
 
 - (void)setAttributedStringValue:(NSAttributedString *)[[maybe_unused]]string {
-  [self logBadValueAccess];
 }
 
 - (id)formatter {

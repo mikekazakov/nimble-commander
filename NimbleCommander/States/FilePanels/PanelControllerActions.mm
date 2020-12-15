@@ -34,6 +34,7 @@
 #include "Actions/RefreshPanel.h"
 #include "Actions/ShowQuickLook.h"
 #include "Actions/ShowSystemOverview.h"
+#include "Actions/FollowSymlink.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 namespace nc::panel {
@@ -121,6 +122,7 @@ PanelActionsMap BuildPanelActionsMap
     add( @selector(OnRefreshPanel:),     new RefreshPanel);
     add( @selector(OnGoToUpperDirectory:),new GoToEnclosingFolder);
     add( @selector(OnGoIntoDirectory:),  new GoIntoFolder{has_archive_support, true});
+    add( @selector(onFollowSymlink:),    new FollowSymlink);
     add( @selector(OnGoBack:),           new GoBack);
     add( @selector(OnGoForward:),        new GoForward);
     add( @selector(OnGoToHome:),         new GoToHomeFolder);

@@ -142,7 +142,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
             return action->ValidateMenuItem(m_PC, item);
         return true;
     }
-    catch( std::exception &e ) {
+    catch( const std::exception &e ) {
         std::cerr << "validateMenuItem has caught an exception: " << e.what() << std::endl;
     }
     catch(...) {
@@ -157,7 +157,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         try {
             return action->Predicate(m_PC);
         }
-        catch(std::exception &e) {
+        catch(const std::exception &e) {
             std::cerr << "validateActionBySelector has caught an exception: " << e.what() << std::endl;
         }
         catch(...) {
@@ -299,6 +299,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender { PERFORM; }
 - (IBAction)OnCreateHardLinkCommand:(id)sender { PERFORM; }
 - (IBAction)OnFileViewCommand:(id)sender { PERFORM; }
+- (IBAction)onFollowSymlink:(id)sender { PERFORM; }
 #undef PERFORM
 
 @end

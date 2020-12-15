@@ -334,8 +334,8 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
         // we're on non-uniform panel like temporary, will return full path
         return [NSString stringWithUTF8StdString:_dirent.Path()];
     }
-    else if(_dirent.Symlink() != 0) {
-        const auto link = [NSString stringWithUTF8String:_dirent.Symlink()];
+    else if( _dirent.HasSymlink() ) {
+        const auto link = [NSString stringWithUTF8StdString:_dirent.Symlink()];
         if( link != nil )
             return [@"->" stringByAppendingString:link];
     }

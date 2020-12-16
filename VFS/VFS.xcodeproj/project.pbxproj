@@ -85,6 +85,7 @@
 		CFAB6D38258A1B6600397DB5 /* VFSPS_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF18470C1E41C8A5008B7C9F /* VFSPS_IT.cpp */; };
 		CFAB6D49258A215200397DB5 /* VFSDropbox_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */; };
 		CFAB6D62258A555A00397DB5 /* FileWindow_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE0E21CFA2CC003F0E93 /* FileWindow_UT.mm */; };
+		CFAB6D6F258A58D300397DB5 /* WebDAV_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95571F4E65A60035E606 /* WebDAV_IT.mm */; };
 		CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */; };
 		CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */; };
 		CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847171E41C9F9008B7C9F /* Security.framework */; };
@@ -98,7 +99,6 @@
 		CFE08AEC23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
 		CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
 		CFE08AFA23CFB5A4007E99B8 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E51F4544F90035E606 /* libUtility.dylib */; };
-		CFFA95581F4E65A60035E606 /* WebDAV_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95571F4E65A60035E606 /* WebDAV_Tests.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -287,7 +287,7 @@
 		CFFA94EB1F4546480035E606 /* DirectoryService.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DirectoryService.framework; path = System/Library/Frameworks/DirectoryService.framework; sourceTree = SDKROOT; };
 		CFFA95531F4E60850035E606 /* WebDAVHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDAVHost.h; path = source/NetWebDAV/WebDAVHost.h; sourceTree = "<group>"; };
 		CFFA95541F4E60850035E606 /* WebDAVHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebDAVHost.cpp; path = source/NetWebDAV/WebDAVHost.cpp; sourceTree = "<group>"; };
-		CFFA95571F4E65A60035E606 /* WebDAV_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDAV_Tests.mm; path = tests/WebDAV_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CFFA95571F4E65A60035E606 /* WebDAV_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDAV_IT.mm; path = tests/WebDAV_IT.mm; sourceTree = SOURCE_ROOT; };
 		CFFA95591F4EA7200035E606 /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/NetWebDAV/Internal.h; sourceTree = "<group>"; };
 		CFFA955A1F4EA7200035E606 /* Internal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Internal.cpp; path = source/NetWebDAV/Internal.cpp; sourceTree = "<group>"; };
 		CFFA955D1F528A7B0035E606 /* DateTimeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DateTimeParser.h; path = source/NetWebDAV/DateTimeParser.h; sourceTree = "<group>"; };
@@ -391,7 +391,7 @@
 				CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */,
 				CF18470C1E41C8A5008B7C9F /* VFSPS_IT.cpp */,
 				CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */,
-				CFFA95571F4E65A60035E606 /* WebDAV_Tests.mm */,
+				CFFA95571F4E65A60035E606 /* WebDAV_IT.mm */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -801,7 +801,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFFA95581F4E65A60035E606 /* WebDAV_Tests.mm in Sources */,
 				CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */,
 				CFE08AEC23CFAFD8007E99B8 /* TestEnv.mm in Sources */,
 				CF18472E1E41CF6B008B7C9F /* VFSArchive_Tests.mm in Sources */,
@@ -896,6 +895,7 @@
 				CFAB6D38258A1B6600397DB5 /* VFSPS_IT.cpp in Sources */,
 				CFAB6D49258A215200397DB5 /* VFSDropbox_IT.mm in Sources */,
 				CFAB6D1D258A1AF000397DB5 /* TestEnv.mm in Sources */,
+				CFAB6D6F258A58D300397DB5 /* WebDAV_IT.mm in Sources */,
 				CFAB6D1F258A1AF000397DB5 /* Tests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

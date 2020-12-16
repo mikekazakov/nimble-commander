@@ -331,67 +331,85 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
                                        VFSListingPtr &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker)
-{ // TODO: process ListFolderResult.has_more
+{
     WarnAboutUsingInMainThread();
 
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
-    
+
     std::string path = _path;
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::ListFolder];
-    req.HTTPMethod = @"POST";
-    FillAuth(req);
-    InsertHTTPBodyPathspec(req, path);
-    
-    auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
-    if( rc == VFSError::Ok  ) {
+    std::string cursor_token = "";
+    using nc::base::variable_container;
+
+    ListingInput listing_source;
+    listing_source.hosts[0] = shared_from_this();
+    listing_source.directories[0] = EnsureTrailingSlash(_path);
+    listing_source.sizes.reset(variable_container<>::type::sparse);
+    listing_source.atimes.reset(variable_container<>::type::sparse);
+    listing_source.btimes.reset(variable_container<>::type::sparse);
+    listing_source.ctimes.reset(variable_container<>::type::sparse);
+    listing_source.mtimes.reset(variable_container<>::type::sparse);
+    int listing_index = 0;
+    if( !(_flags & VFSFlags::F_NoDotDot) && path != "" ) {
+        listing_source.filenames.emplace_back("..");
+        listing_source.unix_modes.emplace_back(DirectoryAccessMode);
+        listing_source.unix_types.emplace_back(DT_DIR);
+        listing_index++;
+    }
+
+    do {
+
+        NSMutableURLRequest *req = [[NSMutableURLRequest alloc]
+            initWithURL:cursor_token.empty() ? api::ListFolder : api::ListFolderContinue];
+        req.HTTPMethod = @"POST";
+        FillAuth(req);
+        if( cursor_token.empty() )
+            InsertHTTPBodyPathspec(req, path);
+        else
+            InsertHTTPBodyCursor(req, cursor_token);
+
+        auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
+        if( rc != VFSError::Ok )
+            return rc;
+
         auto json_opt = ParseJSON(data);
         if( !json_opt )
             return VFSError::GenericError;
         auto &json = *json_opt;
-        
+
         auto entries = ExtractMetadataEntries(json);
-        
-        using nc::base::variable_container;
-        ListingInput listing_source;
-        listing_source.hosts[0] = shared_from_this();
-        listing_source.directories[0] =  EnsureTrailingSlash(_path);
-        listing_source.sizes.reset( variable_container<>::type::sparse );
-        listing_source.atimes.reset( variable_container<>::type::sparse );
-        listing_source.btimes.reset( variable_container<>::type::sparse );
-        listing_source.ctimes.reset( variable_container<>::type::sparse );
-        listing_source.mtimes.reset( variable_container<>::type::sparse );
-    
-        int index = 0;
-        if( !(_flags & VFSFlags::F_NoDotDot) && path != "" ) {
-            listing_source.filenames.emplace_back( ".." );
-            listing_source.unix_modes.emplace_back( DirectoryAccessMode );
-            listing_source.unix_types.emplace_back( DT_DIR );
-            index++;
-        }
-    
-        for( auto &e: entries ) {
-            listing_source.filenames.emplace_back( e.name );
-            listing_source.unix_modes.emplace_back( e.is_directory ?
-                DirectoryAccessMode :
-                RegularFileAccessMode );
-            listing_source.unix_types.emplace_back( e.is_directory ? DT_DIR : DT_REG );
-            if( e.size >= 0  )
-                listing_source.sizes.insert( index, e.size );
+        for( auto &e : entries ) {
+            listing_source.filenames.emplace_back(e.name);
+            listing_source.unix_modes.emplace_back(e.is_directory ? DirectoryAccessMode
+                                                                  : RegularFileAccessMode);
+            listing_source.unix_types.emplace_back(e.is_directory ? DT_DIR : DT_REG);
+            if( e.size >= 0 )
+                listing_source.sizes.insert(listing_index, e.size);
             if( e.chg_time >= 0 ) {
-                listing_source.btimes.insert( index, e.chg_time );
-                listing_source.ctimes.insert( index, e.chg_time );
-                listing_source.mtimes.insert( index, e.chg_time );
+                listing_source.btimes.insert(listing_index, e.chg_time);
+                listing_source.ctimes.insert(listing_index, e.chg_time);
+                listing_source.mtimes.insert(listing_index, e.chg_time);
             }
-            index++;
+            listing_index++;
         }
-    
-        _target = VFSListing::Build(std::move(listing_source));
-    }
-    return rc;
+
+        cursor_token.clear();
+        const auto has_more = json.FindMember("has_more");
+        if( has_more != json.MemberEnd() && has_more->value.IsBool() &&
+            has_more->value.GetBool() ) {
+            const auto cursor = json.FindMember("cursor");
+            if( cursor != json.MemberEnd() && cursor->value.IsString() ) {
+                cursor_token = cursor->value.GetString();
+            }
+        }
+    } while( not cursor_token.empty() );
+
+    _target = VFSListing::Build(std::move(listing_source));
+
+    return VFSError::Ok;
 }
 
 int DropboxHost::CreateFile(const char* _path,

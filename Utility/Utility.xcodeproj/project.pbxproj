@@ -67,6 +67,7 @@
 		CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C39922B974210043E825 /* UTIImpl_UT.cpp */; };
 		CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */; };
 		CF88363925716F9300BAC081 /* VersionCompare_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF88363825716F9300BAC081 /* VersionCompare_UT.cpp */; };
+		CFAB6D11258A086100397DB5 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFAB6D10258A086100397DB5 /* Log.cpp */; };
 		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
 		CFC41DAB257159630037677B /* VersionCompare.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC41DAA257159630037677B /* VersionCompare.mm */; };
 		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
@@ -171,6 +172,8 @@
 		CF960E261C992F35001D8B02 /* PathManip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PathManip.cpp; path = source/PathManip.cpp; sourceTree = "<group>"; };
 		CF960E271C992F35001D8B02 /* SystemInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation.mm; path = source/SystemInformation.mm; sourceTree = "<group>"; };
 		CF960E281C992F35001D8B02 /* VolumeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeInformation.cpp; path = source/VolumeInformation.cpp; sourceTree = "<group>"; };
+		CFAB6D0F258A084700397DB5 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Log.h; path = include/Utility/Log.h; sourceTree = "<group>"; };
+		CFAB6D10258A086100397DB5 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = source/Log.cpp; sourceTree = "<group>"; };
 		CFB0F235215A076F0088C18E /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMask.h; path = include/Utility/FileMask.h; sourceTree = "<group>"; };
 		CFB0F237215A07770088C18E /* FileMask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask.cpp; path = source/FileMask.cpp; sourceTree = "<group>"; };
 		CFB0F239215A07830088C18E /* FileMask_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask_UT.cpp; path = tests/FileMask_UT.cpp; sourceTree = "<group>"; };
@@ -332,6 +335,7 @@
 				CF960E181C992F2C001D8B02 /* HexadecimalColor.h */,
 				CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */,
 				CF84C8E61DB867F200B4E888 /* Layout.h */,
+				CFAB6D0F258A084700397DB5 /* Log.h */,
 				CF3B7F6A201F141C00BF2090 /* MIMResponder.h */,
 				CFD62C151C9AEC9D0021EE7F /* NativeFSManager.h */,
 				CFE08B2423DBA7AD007E99B8 /* NativeFSManagerImpl.h */,
@@ -391,6 +395,7 @@
 				CF960E251C992F35001D8B02 /* HexadecimalColor.mm */,
 				CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */,
 				CF84C8E81DB867FC00B4E888 /* Layout.mm */,
+				CFAB6D10258A086100397DB5 /* Log.cpp */,
 				CF3B7F6C201F167200BF2090 /* MIMResponder.mm */,
 				CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */,
 				CFE08B2623DBA7BC007E99B8 /* NativeFSManagerImpl.mm */,
@@ -559,6 +564,7 @@
 				CF46015B256125E50095FC73 /* TemporaryFileStorageImpl.cpp in Sources */,
 				CF460159256125E50095FC73 /* VolumeInformation.cpp in Sources */,
 				CF460163256125E50095FC73 /* NSMenu+Hierarchical.mm in Sources */,
+				CFAB6D11258A086100397DB5 /* Log.cpp in Sources */,
 				CF46015C256125E50095FC73 /* NativeFSManager.mm in Sources */,
 				CF460149256125E50095FC73 /* FPSLimitedDrawer.mm in Sources */,
 				CF460143256125E50095FC73 /* NativeFSManagerVolumeLookup.cpp in Sources */,

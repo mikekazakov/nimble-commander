@@ -14,6 +14,8 @@
 
 #include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <LetsMove/PFMoveApplication.h>
+#include <spdlog/sinks/stdout_sinks.h>
+#include <magic_enum.hpp>
 
 #include <Habanero/CommonPaths.h>
 #include <Habanero/CFDefaultsCPP.h>
@@ -34,6 +36,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/UTIImpl.h>
 #include <Utility/SystemInformation.h>
+#include <Utility/Log.h>
 
 #include <RoutedIO/RoutedIO.h>
 
@@ -76,6 +79,8 @@
 #include <Viewer/History.h>
 #include <Viewer/ViewerViewController.h>
 #include <Viewer/InternalViewerWindowController.h>
+
+#include <Term/Log.h>
 
 #include <filesystem>
 
@@ -151,6 +156,30 @@ static void CheckDefaultsReset()
         }
 }
 
+static void SetupLogs()
+{
+    spdlog::level::level_enum level = spdlog::level::off;
+    const auto defaults = NSUserDefaults.standardUserDefaults;
+    const auto args = [defaults volatileDomainForName:NSArgumentDomain];
+    if( const auto arg_level = objc_cast<NSString>([args objectForKey:@"NCLogLevel"]) ) {
+        const auto casted = magic_enum::enum_cast<spdlog::level::level_enum>(arg_level.UTF8String);
+        level = casted.value_or(spdlog::level::off);
+    }
+    
+    if( level < spdlog::level::off ) {
+        auto stdout_sink = std::make_shared<spdlog::sinks::stdout_sink_mt>();
+
+        auto setup = [=](auto log) {
+            using T = decltype(log);
+            T::Set(std::make_shared<spdlog::logger>(T::Name(), stdout_sink));
+            T::Get().set_level(level);
+        };
+        
+        setup(nc::utility::Log{});
+        setup(nc::term::Log{});
+    }
+}
+
 static NCAppDelegate *g_Me = nil;
 
 @interface NCAppDelegate()
@@ -199,6 +228,7 @@ static NCAppDelegate *g_Me = nil;
 {
     self = [super init];
     if(self) {
+        SetupLogs();
         g_Me = self;
         m_FilesToOpen = [[NSMutableArray alloc] init];
         m_ViewerWindowDelegateBridge = [[NCViewerWindowDelegateBridge alloc] init];

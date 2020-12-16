@@ -10,6 +10,7 @@
 #include <Utility/FSEventsDirUpdate.h>
 #include <Utility/StringExtras.h>
 #include <Utility/PathManip.h>
+#include <Utility/Log.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/algo.h>
 #include <Habanero/StringViewZBuf.h>
@@ -48,6 +49,7 @@ static std::vector<FirmlinksMappingParser::Firmlink> FetchFirmlinks() noexcept;
 
 NativeFSManagerImpl::NativeFSManagerImpl()
 {
+    Log::Debug(SPDLOC, "Started initializing NativeFSManagerImpl {}", (void*)this);
     // it takes ~150ms, so this delay can be shaved off by running it async
     auto apfstree_promise = std::async(std::launch::async, []{ return FetchAPFSTree(); });
 
@@ -66,6 +68,8 @@ NativeFSManagerImpl::NativeFSManagerImpl()
     m_NotificationsReceiver = [[NCUtilityNativeFSManagerNotificationsReceiver alloc] init];
     
     SubscribeToWorkspaceNotifications();
+    
+    Log::Debug(SPDLOC, "Finished initializing NativeFSManagerImpl {}", (void*)this);
 }
 
 NativeFSManagerImpl::~NativeFSManagerImpl()
@@ -123,6 +127,7 @@ void NativeFSManagerImpl::UnsubscribeFromWorkspaceNotifications()
 
 static void GetAllInfos(NativeFileSystemInfo &_volume)
 {
+    Log::Info(SPDLOC, "Gatherning info about {}", _volume.mounted_at_path);
     if( !GetBasicInfo(_volume) )
         std::cerr << "failed to GetBasicInfo() on the volume: " << _volume.mounted_at_path << std::endl;
     if( !GetFormatInfo(_volume) )

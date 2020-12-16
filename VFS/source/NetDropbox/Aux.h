@@ -81,7 +81,5 @@ std::optional<rapidjson::Document> ParseJSON( NSData *_data );
     
 bool IsNormalJSONResponse( NSURLResponse *_response );
     
-void WarnAboutUsingInMainThread();
-    
 };
 

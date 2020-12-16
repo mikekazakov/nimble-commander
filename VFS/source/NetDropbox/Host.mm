@@ -178,8 +178,6 @@ int DropboxHost::StatFS([[maybe_unused]] const char *_path,
                         VFSStatFS &_stat,
                         const VFSCancelChecker &_cancel_checker)
 {
-    WarnAboutUsingInMainThread();
-    
     _stat = VFSStatFS{};
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::GetSpaceUsage];
@@ -210,8 +208,6 @@ int DropboxHost::Stat(const char *_path,
                       [[maybe_unused]] unsigned long _flags,
                       const VFSCancelChecker &_cancel_checker)
 {
-    WarnAboutUsingInMainThread();
-
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
@@ -266,8 +262,6 @@ int DropboxHost::IterateDirectoryListing(
     const char *_path,
     const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    WarnAboutUsingInMainThread();
-
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
 
@@ -332,8 +326,6 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker)
 {
-    WarnAboutUsingInMainThread();
-
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
 
@@ -430,8 +422,6 @@ const std::string &DropboxHost::Token() const
 
 int DropboxHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker )
 {
-   WarnAboutUsingInMainThread();
-
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
@@ -446,8 +436,6 @@ int DropboxHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_check
 
 int DropboxHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker )
 {
-    WarnAboutUsingInMainThread();
-
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
@@ -468,8 +456,6 @@ int DropboxHost::CreateDirectory(const char* _path,
                                  [[maybe_unused]] int _mode,
                                  const VFSCancelChecker &_cancel_checker )
 {
-    WarnAboutUsingInMainThread();
-    
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
@@ -495,8 +481,6 @@ int DropboxHost::Rename(const char *_old_path,
                               const char *_new_path,
                               const VFSCancelChecker &_cancel_checker)
 {
-    WarnAboutUsingInMainThread();
-
     if( !_old_path || _old_path[0] != '/' || !_new_path || _new_path[0] != '/' )
         return VFSError::InvalidCall;
     

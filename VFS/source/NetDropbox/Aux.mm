@@ -302,14 +302,6 @@ bool IsNormalJSONResponse( NSURLResponse *_response )
     return false;
 }
 
-void WarnAboutUsingInMainThread()
-{
-    auto msg = "usage of the net_dropbox vfs in the main thread may reduce responsiveness "
-               "and should be avoided!";
-    if( dispatch_is_main_queue() )
-        std::cout << msg << std::endl;
-}
-
 AccountInfo ParseAccountInfo( const rapidjson::Value &_value )
 {
     if( !_value.IsObject() )

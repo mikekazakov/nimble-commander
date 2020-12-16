@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF1168871E91FE9300CC515A /* VFSDropbox_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */; };
 		CF18471C1E41CA19008B7C9F /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18471B1E41CA19008B7C9F /* ServiceManagement.framework */; };
 		CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */; };
 		CF18472C1E41CC7B008B7C9F /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847281E41CC4C008B7C9F /* libcrypto.a */; };
@@ -84,7 +83,8 @@
 		CFAB6D1F258A1AF000397DB5 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE2021D2864D003F0E93 /* Tests.cpp */; };
 		CFAB6D21258A1AF000397DB5 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E51F4544F90035E606 /* libUtility.dylib */; };
 		CFAB6D22258A1AF000397DB5 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E71F4544FB0035E606 /* libHabanero.dylib */; };
-		CFAB6D38258A1B6600397DB5 /* VFSPS_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470C1E41C8A5008B7C9F /* VFSPS_IT.mm */; };
+		CFAB6D38258A1B6600397DB5 /* VFSPS_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF18470C1E41C8A5008B7C9F /* VFSPS_IT.cpp */; };
+		CFAB6D49258A215200397DB5 /* VFSDropbox_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */; };
 		CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */; };
 		CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */; };
 		CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847171E41C9F9008B7C9F /* Security.framework */; };
@@ -128,13 +128,13 @@
 		CF11687E1E91FAAA00CC515A /* Host.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Host.mm; path = source/NetDropbox/Host.mm; sourceTree = "<group>"; };
 		CF1168811E91FB4A00CC515A /* Aux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Aux.h; path = source/NetDropbox/Aux.h; sourceTree = "<group>"; };
 		CF1168821E91FB4A00CC515A /* Aux.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Aux.mm; path = source/NetDropbox/Aux.mm; sourceTree = "<group>"; };
-		CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSDropbox_Tests.mm; path = tests/VFSDropbox_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSDropbox_IT.mm; path = tests/VFSDropbox_IT.mm; sourceTree = SOURCE_ROOT; };
 		CF1846FE1E41C86D008B7C9F /* VFS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "VFS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF1847021E41C86D008B7C9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF1847091E41C8A5008B7C9F /* tests_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tests_common.h; path = tests/tests_common.h; sourceTree = SOURCE_ROOT; };
 		CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchive_Tests.mm; path = tests/VFSArchive_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSFTP_Tests.mm; path = tests/VFSFTP_Tests.mm; sourceTree = SOURCE_ROOT; };
-		CF18470C1E41C8A5008B7C9F /* VFSPS_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSPS_IT.mm; path = tests/VFSPS_IT.mm; sourceTree = SOURCE_ROOT; };
+		CF18470C1E41C8A5008B7C9F /* VFSPS_IT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSPS_IT.cpp; path = tests/VFSPS_IT.cpp; sourceTree = SOURCE_ROOT; };
 		CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSSFTP_Tests.mm; path = tests/VFSSFTP_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF1847171E41C9F9008B7C9F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CF1847191E41CA0B008B7C9F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -386,10 +386,10 @@
 				CF26DE2021D2864D003F0E93 /* Tests.cpp */,
 				CF26DE1F21D2864D003F0E93 /* Tests.h */,
 				CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */,
-				CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */,
+				CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */,
 				CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */,
 				CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */,
-				CF18470C1E41C8A5008B7C9F /* VFSPS_IT.mm */,
+				CF18470C1E41C8A5008B7C9F /* VFSPS_IT.cpp */,
 				CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */,
 				CFFA95571F4E65A60035E606 /* WebDAV_Tests.mm */,
 			);
@@ -802,7 +802,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF26DE0F21CFA2CC003F0E93 /* FileWindow_Tests.mm in Sources */,
-				CF1168871E91FE9300CC515A /* VFSDropbox_Tests.mm in Sources */,
 				CFFA95581F4E65A60035E606 /* WebDAV_Tests.mm in Sources */,
 				CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */,
 				CFE08AEC23CFAFD8007E99B8 /* TestEnv.mm in Sources */,
@@ -894,7 +893,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFAB6D38258A1B6600397DB5 /* VFSPS_IT.mm in Sources */,
+				CFAB6D38258A1B6600397DB5 /* VFSPS_IT.cpp in Sources */,
+				CFAB6D49258A215200397DB5 /* VFSDropbox_IT.mm in Sources */,
 				CFAB6D1D258A1AF000397DB5 /* TestEnv.mm in Sources */,
 				CFAB6D1F258A1AF000397DB5 /* Tests.cpp in Sources */,
 			);

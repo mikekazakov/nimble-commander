@@ -76,7 +76,7 @@ NSURLRequest *File::BuildDownloadRequest() const
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Download];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
-    InsetHTTPHeaderPathspec(request, Path());
+    InsertHTTPHeaderPathspec(request, Path());
     return request;
 }
 

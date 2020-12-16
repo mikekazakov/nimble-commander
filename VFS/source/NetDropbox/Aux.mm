@@ -15,6 +15,8 @@ NSURL* const api::GetMetadata =
     [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/get_metadata"];
 NSURL* const api::ListFolder =
     [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/list_folder"];
+NSURL* const api::ListFolderContinue =
+    [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/list_folder/continue"];
 NSURL* const api::Delete =
     [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/delete"];
 NSURL* const api::CreateFolder =
@@ -341,7 +343,7 @@ std::optional<rapidjson::Document> ParseJSON( NSData *_data )
     return std::move(json);
 }
 
-void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const std::string &_path)
+void InsertHTTPBodyPathspec(NSMutableURLRequest *_request, const std::string &_path)
 {
     [_request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     const std::string path_spec = "{ \"path\": \"" + EscapeString(_path) + "\" }";
@@ -349,7 +351,15 @@ void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const std::string &_pa
         length:size(path_spec)]];
 }
 
-void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const std::string &_path)
+void InsertHTTPBodyCursor(NSMutableURLRequest *_request, const std::string &_cursor)
+{
+    [_request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    const std::string cursor_spec = "{ \"cursor\": \"" + EscapeString(_cursor) + "\" }";
+    [_request setHTTPBody:[NSData dataWithBytes:data(cursor_spec)
+        length:size(cursor_spec)]];
+}
+
+void InsertHTTPHeaderPathspec(NSMutableURLRequest *_request, const std::string &_path)
 {
     const std::string path_spec = "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(_path) + "\" }";
     [_request setValue:[NSString stringWithUTF8String:path_spec.c_str()]

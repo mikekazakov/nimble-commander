@@ -231,7 +231,7 @@ int DropboxHost::Stat(const char *_path,
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::GetMetadata];
     req.HTTPMethod = @"POST";
     FillAuth(req);
-    InsetHTTPBodyPathspec(req, path);
+    InsertHTTPBodyPathspec(req, path);
     
     auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
     if( rc == VFSError::Ok ) {
@@ -262,31 +262,39 @@ int DropboxHost::Stat(const char *_path,
     return rc;
 }
 
-int DropboxHost::IterateDirectoryListing(const char *_path,
-                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
-{ // TODO: process ListFolderResult.has_more
+int DropboxHost::IterateDirectoryListing(
+    const char *_path,
+    const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+{
     WarnAboutUsingInMainThread();
 
-  if( !_path || _path[0] != '/' )
+    if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
-    
+
     std::string path = _path;
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
-    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::ListFolder];
-    req.HTTPMethod = @"POST";
-    FillAuth(req);
-    InsetHTTPBodyPathspec(req, path);
-    
-    auto [rc, data] = SendSynchronousRequest(GenericSession(), req);
-    
-    if( rc == VFSError::Ok ) {
+    std::string cursor_token = "";
+    do {
+        NSMutableURLRequest *req = [[NSMutableURLRequest alloc]
+            initWithURL:cursor_token.empty() ? api::ListFolder : api::ListFolderContinue];
+        req.HTTPMethod = @"POST";
+        FillAuth(req);
+        if( cursor_token.empty() )
+            InsertHTTPBodyPathspec(req, path);
+        else
+            InsertHTTPBodyCursor(req, cursor_token);
+
+        auto [rc, data] = SendSynchronousRequest(GenericSession(), req);
+        if( rc != VFSError::Ok )
+            return rc;
+
         auto json_opt = ParseJSON(data);
         if( !json_opt )
             return VFSError::GenericError;
         auto &json = *json_opt;
-        
+
         auto entries = json.FindMember("entries");
         if( entries != json.MemberEnd() ) {
             for( int i = 0, e = entries->value.Size(); i != e; ++i ) {
@@ -296,7 +304,7 @@ int DropboxHost::IterateDirectoryListing(const char *_path,
                 if( !metadata.name.empty() ) {
                     VFSDirEnt dirent;
                     dirent.type = metadata.is_directory ? VFSDirEnt::Dir : VFSDirEnt::Reg;
-                    strcpy( dirent.name, metadata.name.c_str() );
+                    strcpy(dirent.name, metadata.name.c_str());
                     dirent.name_len = uint16_t(metadata.name.length());
                     bool goon = _handler(dirent);
                     if( !goon )
@@ -304,9 +312,19 @@ int DropboxHost::IterateDirectoryListing(const char *_path,
                 }
             }
         }
-    }
-    
-    return rc;
+
+        cursor_token.clear();
+        const auto has_more = json.FindMember("has_more");
+        if( has_more != json.MemberEnd() && has_more->value.IsBool() &&
+            has_more->value.GetBool() ) {
+            const auto cursor = json.FindMember("cursor");
+            if( cursor != json.MemberEnd() && cursor->value.IsString() ) {
+                cursor_token = cursor->value.GetString();
+            }
+        }
+    } while( not cursor_token.empty() );
+
+    return VFSError::Ok;
 }
 
 int DropboxHost::FetchDirectoryListing(const char *_path,
@@ -326,7 +344,7 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::ListFolder];
     req.HTTPMethod = @"POST";
     FillAuth(req);
-    InsetHTTPBodyPathspec(req, path);
+    InsertHTTPBodyPathspec(req, path);
     
     auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
     if( rc == VFSError::Ok  ) {
@@ -402,7 +420,7 @@ int DropboxHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_check
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
     req.HTTPMethod = @"POST";
     FillAuth(req);
-    InsetHTTPBodyPathspec(req, _path);
+    InsertHTTPBodyPathspec(req, _path);
     
     auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
     return rc;
@@ -422,7 +440,7 @@ int DropboxHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_can
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Delete];
     req.HTTPMethod = @"POST";
     FillAuth(req);
-    InsetHTTPBodyPathspec(req, path);
+    InsertHTTPBodyPathspec(req, path);
     
     auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
     return rc;
@@ -444,7 +462,7 @@ int DropboxHost::CreateDirectory(const char* _path,
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::CreateFolder];
     req.HTTPMethod = @"POST";
     FillAuth(req);
-    InsetHTTPBodyPathspec(req, path);
+    InsertHTTPBodyPathspec(req, path);
     
     auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
     return rc;

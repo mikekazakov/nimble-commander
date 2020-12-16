@@ -26,6 +26,7 @@ struct api
     static NSURL* const GetSpaceUsage;
     static NSURL* const GetMetadata;
     static NSURL* const ListFolder;
+    static NSURL* const ListFolderContinue;
     static NSURL* const Delete;
     static NSURL* const CreateFolder;
     static NSURL* const Move;
@@ -39,8 +40,9 @@ struct api
 constexpr uint16_t DirectoryAccessMode = S_IRUSR | S_IWUSR | S_IFDIR | S_IXUSR;
 constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
     
-void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const std::string &_path);
-void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const std::string &_path);
+void InsertHTTPBodyPathspec(NSMutableURLRequest *_request, const std::string &_path);
+void InsertHTTPBodyCursor(NSMutableURLRequest *_request, const std::string &_cursor);
+void InsertHTTPHeaderPathspec(NSMutableURLRequest *_request, const std::string &_path);
     
 int ExtractVFSErrorFromJSON( NSData *_response_data );
 int VFSErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response, NSData*_data);

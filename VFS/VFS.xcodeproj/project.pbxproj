@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF18471C1E41CA19008B7C9F /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18471B1E41CA19008B7C9F /* ServiceManagement.framework */; };
-		CF18472C1E41CC7B008B7C9F /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847281E41CC4C008B7C9F /* libcrypto.a */; };
-		CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847261E41CC49008B7C9F /* libssl.a */; };
-		CF1847301E41CFB7008B7C9F /* libarchive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18472F1E41CFB7008B7C9F /* libarchive.a */; };
 		CF22F08B258B7F280033E850 /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */; };
 		CF22F094258CC0230033E850 /* VFSFTP_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470B1E41C8A5008B7C9F /* VFSFTP_IT.mm */; };
 		CF2343EF22CD321300F516CB /* KeyValidator_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2343EE22CD321300F516CB /* KeyValidator_UT.cpp */; };
@@ -77,7 +73,6 @@
 		CF4600C0256057EC0095FC73 /* Host.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0721DA2353000992B84 /* Host.mm */; };
 		CF4600C4256057F10095FC73 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D05F1DA233F700992B84 /* AppleDoubleEA.cpp */; };
 		CF4600C5256057F10095FC73 /* xattr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0301DA231EA00992B84 /* xattr.cpp */; };
-		CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D8E1E659D33002DB0E2 /* libssh2.a */; };
 		CFAB6D1D258A1AF000397DB5 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
 		CFAB6D1F258A1AF000397DB5 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE2021D2864D003F0E93 /* Tests.cpp */; };
 		CFAB6D21258A1AF000397DB5 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E51F4544F90035E606 /* libUtility.dylib */; };
@@ -87,18 +82,9 @@
 		CFAB6D62258A555A00397DB5 /* FileWindow_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE0E21CFA2CC003F0E93 /* FileWindow_UT.mm */; };
 		CFAB6D6F258A58D300397DB5 /* WebDAV_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95571F4E65A60035E606 /* WebDAV_IT.mm */; };
 		CFAB6D87258B6B1F00397DB5 /* VFSArchive_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */; };
-		CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */; };
-		CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847171E41C9F9008B7C9F /* Security.framework */; };
-		CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FF1E42DD6000603077 /* LDAP.framework */; };
-		CFD7273C1E42EC7B00603077 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */; };
-		CFD7273E1E42EC8E00603077 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273D1E42EC8E00603077 /* Carbon.framework */; };
-		CFD727401E42EC9A00603077 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273F1E42EC9A00603077 /* Foundation.framework */; };
-		CFD727421E42EC9D00603077 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD727411E42EC9D00603077 /* AppKit.framework */; };
 		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
 		CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */; };
-		CFE08AEC23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
 		CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
-		CFE08AFA23CFB5A4007E99B8 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E51F4544F90035E606 /* libUtility.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -129,7 +115,6 @@
 		CF1168811E91FB4A00CC515A /* Aux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Aux.h; path = source/NetDropbox/Aux.h; sourceTree = "<group>"; };
 		CF1168821E91FB4A00CC515A /* Aux.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Aux.mm; path = source/NetDropbox/Aux.mm; sourceTree = "<group>"; };
 		CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSDropbox_IT.mm; path = tests/VFSDropbox_IT.mm; sourceTree = SOURCE_ROOT; };
-		CF1846FE1E41C86D008B7C9F /* VFS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "VFS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF1847021E41C86D008B7C9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF1847091E41C8A5008B7C9F /* tests_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tests_common.h; path = tests/tests_common.h; sourceTree = SOURCE_ROOT; };
 		CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchive_IT.mm; path = tests/VFSArchive_IT.mm; sourceTree = SOURCE_ROOT; };
@@ -303,26 +288,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CF1846FB1E41C86D008B7C9F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CFE08AFA23CFB5A4007E99B8 /* libUtility.dylib in Frameworks */,
-				CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */,
-				CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */,
-				CF18471C1E41CA19008B7C9F /* ServiceManagement.framework in Frameworks */,
-				CFD7273E1E42EC8E00603077 /* Carbon.framework in Frameworks */,
-				CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */,
-				CFD7273C1E42EC7B00603077 /* DiskArbitration.framework in Frameworks */,
-				CFD727401E42EC9A00603077 /* Foundation.framework in Frameworks */,
-				CFD727421E42EC9D00603077 /* AppKit.framework in Frameworks */,
-				CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */,
-				CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */,
-				CF18472C1E41CC7B008B7C9F /* libcrypto.a in Frameworks */,
-				CF1847301E41CFB7008B7C9F /* libarchive.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CF26DE1521D285A6003F0E93 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -455,7 +420,6 @@
 		CF69CFD01DA224E200992B84 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF1846FE1E41C86D008B7C9F /* VFS Tests.xctest */,
 				CF26DE1821D285A6003F0E93 /* VFSUT */,
 				CF460065256057250095FC73 /* libVFS.a */,
 				CFAB6D27258A1AF000397DB5 /* VFSIT */,
@@ -675,23 +639,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		CF1846FD1E41C86D008B7C9F /* VFS Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CF1847081E41C86D008B7C9F /* Build configuration list for PBXNativeTarget "VFS Tests" */;
-			buildPhases = (
-				CF1846FA1E41C86D008B7C9F /* Sources */,
-				CF1846FB1E41C86D008B7C9F /* Frameworks */,
-				CF1846FC1E41C86D008B7C9F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "VFS Tests";
-			productName = Tests;
-			productReference = CF1846FE1E41C86D008B7C9F /* VFS Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		CF26DE1721D285A6003F0E93 /* VFSUT */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF26DE1C21D285A6003F0E93 /* Build configuration list for PBXNativeTarget "VFSUT" */;
@@ -752,10 +699,6 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
-					CF1846FD1E41C86D008B7C9F = {
-						CreatedOnToolsVersion = 8.1;
-						ProvisioningStyle = Automatic;
-					};
 					CF26DE1721D285A6003F0E93 = {
 						CreatedOnToolsVersion = 10.1;
 						ProvisioningStyle = Automatic;
@@ -779,32 +722,13 @@
 			projectRoot = "";
 			targets = (
 				CF460064256057250095FC73 /* VFS */,
-				CF1846FD1E41C86D008B7C9F /* VFS Tests */,
 				CF26DE1721D285A6003F0E93 /* VFSUT */,
 				CFAB6D16258A1AF000397DB5 /* VFSIT */,
 			);
 		};
 /* End PBXProject section */
 
-/* Begin PBXResourcesBuildPhase section */
-		CF1846FC1E41C86D008B7C9F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
-		CF1846FA1E41C86D008B7C9F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CFE08AEC23CFAFD8007E99B8 /* TestEnv.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CF26DE1421D285A6003F0E93 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -903,28 +827,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		CF1847061E41C86D008B7C9F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Logovo.Tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		CF1847071E41C86D008B7C9F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Logovo.Tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		CF26DE1D21D285A6003F0E93 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF26DE2221D28699003F0E93 /* tests.xcconfig */;
@@ -994,15 +896,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CF1847081E41C86D008B7C9F /* Build configuration list for PBXNativeTarget "VFS Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CF1847061E41C86D008B7C9F /* Debug */,
-				CF1847071E41C86D008B7C9F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		CF26DE1C21D285A6003F0E93 /* Build configuration list for PBXNativeTarget "VFSUT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

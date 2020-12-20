@@ -6,7 +6,7 @@
 
 using namespace nc::vfs;
 using namespace nc::vfs::native;
-#define PREFIX "[nc::vfs::native] "
+#define PREFIX "VFSNative "
 
 static VFSNativeHost& host()
 {

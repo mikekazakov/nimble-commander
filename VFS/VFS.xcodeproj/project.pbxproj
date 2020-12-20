@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		CF22F08B258B7F280033E850 /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */; };
 		CF22F094258CC0230033E850 /* VFSFTP_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470B1E41C8A5008B7C9F /* VFSFTP_IT.mm */; };
+		CF22F0A7258DF7990033E850 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF22F0A5258DF7990033E850 /* Host.cpp */; };
+		CF22F0A8258DF7990033E850 /* Host.h in Headers */ = {isa = PBXBuildFile; fileRef = CF22F0A6258DF7990033E850 /* Host.h */; };
+		CF22F0AD258DF9260033E850 /* VFSMem_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF22F0AC258DF9260033E850 /* VFSMem_UT.cpp */; };
+		CF22F0B9258DFA480033E850 /* Internal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF22F0B7258DFA480033E850 /* Internal.cpp */; };
 		CF2343EF22CD321300F516CB /* KeyValidator_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2343EE22CD321300F516CB /* KeyValidator_UT.cpp */; };
 		CF24E1FF2290200800C166FA /* SearchForFiles_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1FD2290200400C166FA /* SearchForFiles_IT.cpp */; };
 		CF26DE2121D2864D003F0E93 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE2021D2864D003F0E93 /* Tests.cpp */; };
@@ -141,6 +145,11 @@
 		CF22A1111E9751A800149C44 /* FileUploadStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileUploadStream.mm; path = source/NetDropbox/FileUploadStream.mm; sourceTree = "<group>"; };
 		CF22A1141E97755000149C44 /* FileUploadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileUploadDelegate.h; path = source/NetDropbox/FileUploadDelegate.h; sourceTree = "<group>"; };
 		CF22A1151E97755000149C44 /* FileUploadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileUploadDelegate.mm; path = source/NetDropbox/FileUploadDelegate.mm; sourceTree = "<group>"; };
+		CF22F0A5258DF7990033E850 /* Host.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Host.cpp; path = source/Mem/Host.cpp; sourceTree = "<group>"; };
+		CF22F0A6258DF7990033E850 /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/Mem/Host.h; sourceTree = "<group>"; };
+		CF22F0AC258DF9260033E850 /* VFSMem_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSMem_UT.cpp; path = tests/VFSMem_UT.cpp; sourceTree = SOURCE_ROOT; };
+		CF22F0B7258DFA480033E850 /* Internal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Internal.cpp; path = source/Mem/Internal.cpp; sourceTree = "<group>"; };
+		CF22F0B8258DFA480033E850 /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/Mem/Internal.h; sourceTree = "<group>"; };
 		CF2343EE22CD321300F516CB /* KeyValidator_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyValidator_UT.cpp; path = tests/NetSFTP/KeyValidator_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CF24E1F922901C6800C166FA /* SearchForFiles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchForFiles.cpp; path = source/SearchForFiles.cpp; sourceTree = "<group>"; };
 		CF24E1FB22901C7800C166FA /* SearchForFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchForFiles.h; path = include/VFS/SearchForFiles.h; sourceTree = "<group>"; };
@@ -345,14 +354,15 @@
 				CF2343ED22CD31F300F516CB /* NetSFTP */,
 				CF24E1FD2290200400C166FA /* SearchForFiles_IT.cpp */,
 				CF26DE2321D28754003F0E93 /* SearchInFile_UT.cpp */,
-				CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */,
 				CFE08AEA23CFAFD8007E99B8 /* TestEnv.h */,
+				CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */,
 				CF1847091E41C8A5008B7C9F /* tests_common.h */,
 				CF26DE2021D2864D003F0E93 /* Tests.cpp */,
 				CF26DE1F21D2864D003F0E93 /* Tests.h */,
 				CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */,
 				CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */,
 				CF18470B1E41C8A5008B7C9F /* VFSFTP_IT.mm */,
+				CF22F0AC258DF9260033E850 /* VFSMem_UT.cpp */,
 				CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */,
 				CF18470C1E41C8A5008B7C9F /* VFSPS_IT.cpp */,
 				CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */,
@@ -384,6 +394,17 @@
 				CF1847171E41C9F9008B7C9F /* Security.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CF22F0A4258DF7550033E850 /* Mem */ = {
+			isa = PBXGroup;
+			children = (
+				CF22F0A5258DF7990033E850 /* Host.cpp */,
+				CF22F0A6258DF7990033E850 /* Host.h */,
+				CF22F0B7258DFA480033E850 /* Internal.cpp */,
+				CF22F0B8258DFA480033E850 /* Internal.h */,
+			);
+			name = Mem;
 			sourceTree = "<group>";
 		};
 		CF2343ED22CD31F300F516CB /* NetSFTP */ = {
@@ -466,8 +487,28 @@
 		CF69CFDF1DA227C100992B84 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF26DE0C21CFA2BF003F0E93 /* FileWindow.cpp */,
+				CF69D0081DA2281E00992B84 /* Host.cpp */,
+				CF69D0131DA22BE800992B84 /* Listing.cpp */,
+				CF24E1F922901C6800C166FA /* SearchForFiles.cpp */,
+				CF26DE1121D266EA003F0E93 /* SearchInFile.cpp */,
+				CFCE73161F972B7A009E2FD7 /* Stat.cpp */,
+				CF69D00D1DA22BE800992B84 /* VFSConfiguration.cpp */,
+				CF69D0101DA22BE800992B84 /* VFSFactory.cpp */,
+				CF69D0111DA22BE800992B84 /* VFSFile.cpp */,
+				CF69D0121DA22BE800992B84 /* VFSGenericMemReadOnlyFile.cpp */,
+				CF69D0151DA22BE800992B84 /* VFSPath.cpp */,
+				CF69D0161DA22BE800992B84 /* VFSSeqToRandomWrapper.cpp */,
+				CFCE73141F972623009E2FD7 /* Listing.h */,
+				CF69D0141DA22BE800992B84 /* ListingInput.h */,
+				CFC4F92F1F0B5E250000B3EE /* ListingObjC.mm */,
+				CF69D00C1DA22BE800992B84 /* VFSArchiveProxy.mm */,
+				CF69D00E1DA22BE800992B84 /* VFSEasyOps.mm */,
+				CF69D00F1DA22BE800992B84 /* VFSError.mm */,
+				CF69D00A1DA228C800992B84 /* VFS-prefix.pch */,
 				CF69D0501DA2335700992B84 /* ArcLA */,
 				CF69D0611DA2343700992B84 /* ArcUnRAR */,
+				CF22F0A4258DF7550033E850 /* Mem */,
 				CF69D0221DA2304B00992B84 /* Native */,
 				CF11687C1E91FA9D00CC515A /* NetDropbox */,
 				CF69D0341DA2323400992B84 /* NetFTP */,
@@ -475,25 +516,6 @@
 				CFFA95521F4E604D0035E606 /* NetWebDAV */,
 				CF69D06E1DA2352000992B84 /* PS */,
 				CF69D02F1DA231DA00992B84 /* XAttr */,
-				CF26DE1121D266EA003F0E93 /* SearchInFile.cpp */,
-				CF24E1F922901C6800C166FA /* SearchForFiles.cpp */,
-				CF26DE0C21CFA2BF003F0E93 /* FileWindow.cpp */,
-				CF69D00A1DA228C800992B84 /* VFS-prefix.pch */,
-				CF69D00C1DA22BE800992B84 /* VFSArchiveProxy.mm */,
-				CF69D00D1DA22BE800992B84 /* VFSConfiguration.cpp */,
-				CF69D00E1DA22BE800992B84 /* VFSEasyOps.mm */,
-				CF69D00F1DA22BE800992B84 /* VFSError.mm */,
-				CF69D0101DA22BE800992B84 /* VFSFactory.cpp */,
-				CF69D0111DA22BE800992B84 /* VFSFile.cpp */,
-				CF69D0121DA22BE800992B84 /* VFSGenericMemReadOnlyFile.cpp */,
-				CF69D0081DA2281E00992B84 /* Host.cpp */,
-				CFCE73161F972B7A009E2FD7 /* Stat.cpp */,
-				CFCE73141F972623009E2FD7 /* Listing.h */,
-				CF69D0131DA22BE800992B84 /* Listing.cpp */,
-				CFC4F92F1F0B5E250000B3EE /* ListingObjC.mm */,
-				CF69D0141DA22BE800992B84 /* ListingInput.h */,
-				CF69D0151DA22BE800992B84 /* VFSPath.cpp */,
-				CF69D0161DA22BE800992B84 /* VFSSeqToRandomWrapper.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -633,6 +655,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF22F0A8258DF7990033E850 /* Host.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -738,7 +761,9 @@
 				CF2343EF22CD321300F516CB /* KeyValidator_UT.cpp in Sources */,
 				CF26DE2421D28754003F0E93 /* SearchInFile_UT.cpp in Sources */,
 				CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */,
+				CF22F0B9258DFA480033E850 /* Internal.cpp in Sources */,
 				CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */,
+				CF22F0AD258DF9260033E850 /* VFSMem_UT.cpp in Sources */,
 				CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */,
 				CF24E1FF2290200800C166FA /* SearchForFiles_IT.cpp in Sources */,
 				CF26DE2121D2864D003F0E93 /* Tests.cpp in Sources */,
@@ -780,6 +805,7 @@
 				CF4600B7256057E80095FC73 /* Requests.cpp in Sources */,
 				CF46008D256057B00095FC73 /* File.cpp in Sources */,
 				CF46009E256057C80095FC73 /* FileUploadStream.mm in Sources */,
+				CF22F0A7258DF7990033E850 /* Host.cpp in Sources */,
 				CF46009C256057C80095FC73 /* File.mm in Sources */,
 				CF460085256057A90095FC73 /* Internal.cpp in Sources */,
 				CF46007C2560579F0095FC73 /* SearchInFile.cpp in Sources */,

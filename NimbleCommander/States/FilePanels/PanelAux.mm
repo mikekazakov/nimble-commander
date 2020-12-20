@@ -16,6 +16,7 @@
 #include <Operations/Copying.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
+#include <robin_hood.h>
 
 // TODO: remove this, DI stuff instead
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -304,38 +305,43 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
-    [[clang::no_destroy]] static const std::vector<std::string> extensions = []{
+    [[clang::no_destroy]] static const robin_hood::unordered_flat_set<std::string> extensions = [] {
+        auto &lowercase_cmp = ExtensionLowercaseComparison::Instance();
         std::vector<std::string> v;
         auto exts_string = GlobalConfig().GetString(g_ConfigExecutableExtensionsWhitelist);
-        if( auto extensions_array = [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","] )
-            for( NSString *s: extensions_array )
+        auto exts_array =
+            [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","];
+        if( exts_array != nil ) {
+            for( NSString *s : exts_array ) {
+                auto whitespaces = NSCharacterSet.whitespaceAndNewlineCharacterSet;
                 if( s != nil && s.length > 0 )
-                    if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )
+                    if( auto trimmed = [s stringByTrimmingCharactersInSet:whitespaces] ) {
                         if( auto utf8 = trimmed.UTF8String )
-                            v.emplace_back( ExtensionLowercaseComparison::Instance().ExtensionToLowercase(utf8) );
-        return v;
+                            v.emplace_back(lowercase_cmp.ExtensionToLowercase(utf8));
+                    }
+            }
+        }
+        return robin_hood::unordered_flat_set<std::string>(v.begin(), v.end());
     }();
-    
+
     if( _item.IsDir() )
         return false;
-    
+
     // TODO: need more sophisticated executable handling here
     // THIS IS WRONG!
-    bool uexec = (_item.UnixMode() & S_IXUSR) ||
-    (_item.UnixMode() & S_IXGRP) ||
-    (_item.UnixMode() & S_IXOTH) ;
-    
-    if(!uexec) return false;
-    
+    bool uexec = (_item.UnixMode() & S_IXUSR) || (_item.UnixMode() & S_IXGRP) ||
+                 (_item.UnixMode() & S_IXOTH);
+
+    if( !uexec )
+        return false;
+
     if( !_item.HasExtension() )
         return true; // if file has no extension and had execute rights - let's try it
-    
-    
-    const auto extension = ExtensionLowercaseComparison::Instance().ExtensionToLowercase( _item.Extension() );
-    for(auto &s: extensions)
-        if( s == extension )
-            return true;
-    
+
+    const auto extension =
+        ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_item.Extension());
+    return extensions.contains(extension);
+
     return false;
 }
 

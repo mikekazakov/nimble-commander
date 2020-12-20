@@ -391,6 +391,25 @@ struct NativeFileSystemInfo
          * When set, the volume does not support setting permissions.
          */
         bool no_permissions: 1 = false;
+                
+        /**
+         * When set, the volume supports sharing space with other filesystems i.e. multiple logical filesystems can exist in the same
+         * "partition". An implication of this is that the filesystem which sets this capability treats waitfor arguments to VFS_SYNC as
+         * bit flags.
+         */
+        bool shared_space: 1 = false;
+        
+        /**
+         * When set, this volume is part of a volume-group that implies multiple volumes must be mounted in order to boot and root
+         * the operating system. Typically, this means a read-only system volume and a writable data volume.
+         */
+        bool volume_groups: 1 = false;
+        
+        /**
+         * When set, this volume is cryptographically sealed. Any modifications to volume data or metadata will be detected and
+         * may render the volume unusable.
+         */
+        bool sealed: 1 = false;        
     } format;
     
     struct

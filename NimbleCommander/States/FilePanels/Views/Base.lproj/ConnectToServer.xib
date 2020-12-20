@@ -22,6 +22,8 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="611" height="483"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <value key="minSize" type="size" width="611" height="483"/>
+            <value key="maxSize" type="size" width="1000" height="800"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="611" height="483"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -52,7 +54,7 @@
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
                                                 <tableCellView id="X8z-N7-VrJ">
-                                                    <rect key="frame" x="1" y="1" width="121" height="17"/>
+                                                    <rect key="frame" x="11" y="1" width="121" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iSo-pj-cwG">
@@ -71,7 +73,7 @@
                                                 </tableCellView>
                                             </prototypeCellViews>
                                         </tableColumn>
-                                        <tableColumn identifier="Connection Path" width="438" minWidth="40" maxWidth="1000" id="9Kk-bR-qif">
+                                        <tableColumn identifier="Connection Path" width="409" minWidth="40" maxWidth="1000" id="9Kk-bR-qif">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Connection Path">
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -84,11 +86,11 @@
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <prototypeCellViews>
                                                 <tableCellView id="ok3-qw-HMF">
-                                                    <rect key="frame" x="125" y="1" width="442" height="17"/>
+                                                    <rect key="frame" x="135" y="1" width="413" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XY3-4F-HLX">
-                                                            <rect key="frame" x="0.0" y="0.0" width="442" height="17"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="413" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" id="hfx-Bm-cvJ">
                                                                 <font key="font" metaFont="system"/>

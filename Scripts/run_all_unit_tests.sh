@@ -36,7 +36,13 @@ $BINARY_PATH
 build_target VFSUT
 $BINARY_PATH
 
+build_target VFSIT
+$BINARY_PATH
+
 build_target ViewerUT
+$BINARY_PATH
+
+build_target OperationsUT
 $BINARY_PATH
 
 build_target OperationsIT

@@ -25,6 +25,7 @@ NSString *StringByTruncatingToWidth(NSString *str, double inWidth, ETruncationTy
 - (const char *)fileSystemRepresentationSafe;
 - (NSString*)stringByTrimmingLeadingWhitespace;
 + (instancetype)stringWithUTF8StdString:(const std::string&)stdstring;
++ (instancetype)stringWithUTF8StdStringView:(std::string_view)_string_view;
 + (instancetype)stringWithUTF8StdStringFallback:(const std::string&)stdstring;
 + (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString;
 + (instancetype)stringWithUTF8StdStringNoCopy:(const std::string&)stdstring;

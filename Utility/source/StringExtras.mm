@@ -135,6 +135,12 @@ NSString *StringByTruncatingToWidth(NSString *str, double inWidth, ETruncationTy
                                                                  false));
 }
 
++ (instancetype)stringWithUTF8StdStringView:(std::string_view)_string_view
+{
+    return (NSString *)CFBridgingRelease(CFStringCreateWithBytes(
+        0, (UInt8 *)_string_view.data(), _string_view.length(), kCFStringEncodingUTF8, false));
+}
+
 + (instancetype)stringWithUTF8StdStringFallback:(const std::string&)stdstring
 {
     if( auto s = CFStringCreateWithBytes(0,

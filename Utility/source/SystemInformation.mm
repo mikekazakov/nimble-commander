@@ -7,7 +7,9 @@
 #include <mutex>
 #include <Utility/ObjCpp.h>
 #include <Utility/SystemInformation.h>
+#include <Utility/StringExtras.h>
 #include <Habanero/CFString.h>
+#include <Habanero/CommonPaths.h>
 
 namespace nc::utility {
 
@@ -224,60 +226,117 @@ OSXVersion GetOSXVersion() noexcept
     return g_Version;
 }
 
+static std::string ExtractReadableModelNameFromFrameworks(std::string_view _coded_name)
+{
+    NSDictionary *dict;
+
+    // 1st attempt: ServerInformation.framework
+    const auto server_information_framework =
+        @"/System/Library/PrivateFrameworks/ServerInformation.framework";
+    if( auto bundle = [NSBundle bundleWithPath:server_information_framework] )
+        if( auto path = [bundle pathForResource:@"SIMachineAttributes" ofType:@"plist"] )
+            dict = [NSDictionary dictionaryWithContentsOfFile:path];
+
+    // 2nd attempt: ServerKit.framework
+    const auto server_kit_framework = @"/System/Library/PrivateFrameworks/ServerKit.framework";
+    if( dict == nil )
+        if( auto bundle = [NSBundle bundleWithPath:server_kit_framework] )
+            if( auto path = [bundle pathForResource:@"XSMachineAttributes" ofType:@"plist"] )
+                dict = [NSDictionary dictionaryWithContentsOfFile:path];
+
+    if( dict == nil )
+        return {};
+
+    const auto coded_name = [NSString stringWithUTF8StdStringView:_coded_name];
+    if( coded_name == nil )
+        return {};
+
+    const auto info = objc_cast<NSDictionary>(dict[coded_name]);
+    if( info == nil )
+        return {};
+
+    const auto localizable = objc_cast<NSDictionary>(info[@"_LOCALIZABLE_"]);
+    if( localizable == nil )
+        return {};
+
+    const auto loc_model = objc_cast<NSString>(localizable[@"model"]);
+    if( loc_model == nil )
+        return {};
+
+    auto human_model = loc_model;
+    if( auto market_model = objc_cast<NSString>(localizable[@"marketingModel"]) ) {
+        const auto cs = [NSCharacterSet characterSetWithCharactersInString:@"()"];
+        const auto splitted = [market_model componentsSeparatedByCharactersInSet:cs];
+        if( splitted.count == 3 )
+            human_model = [NSString stringWithFormat:@"%@ (%@)", loc_model, splitted[1]];
+    }
+
+    return human_model.UTF8String;
+}
+
+static std::string ExtractReadableModelNameFromSystemProfiler()
+{
+    const auto path = base::CommonPaths::Library() + "Preferences/com.apple.SystemProfiler.plist";
+    const auto url = [NSURL fileURLWithFileSystemRepresentation:path.c_str()
+                                                    isDirectory:false
+                                                  relativeToURL:nil];
+    if( url == nil )
+        return {};
+
+    const auto prefs = [NSDictionary dictionaryWithContentsOfURL:url];
+    if( prefs == nil )
+        return {};
+
+    const auto names = objc_cast<NSDictionary>(prefs[@"CPU Names"]);
+    if( names == nil )
+        return {};
+
+    const auto country_id = NSLocale.autoupdatingCurrentLocale.countryCode;
+    for( const id key in names.allKeys ) {
+        if( [objc_cast<NSString>(key) hasSuffix:country_id] ) {
+            if( const auto name = objc_cast<NSString>(names[key]) ) {
+                return name.UTF8String;
+            }
+        }
+    }
+    return {};
+}
+
 bool GetSystemOverview(SystemOverview &_overview)
 {
     // get machine name everytime
     if( auto computer_name = SCDynamicStoreCopyComputerName(nullptr, nullptr) ) {
-        _overview.computer_name =  ((__bridge NSString*)computer_name).UTF8String;
+        _overview.computer_name = ((__bridge NSString *)computer_name).UTF8String;
         CFRelease(computer_name);
     }
-    
+
     // get user name everytime
     _overview.user_name = NSUserName().UTF8String;
-    
+
     // get full user name everytime
     _overview.user_full_name = NSFullUserName().UTF8String;
-    
+
     // get machine model once
     [[clang::no_destroy]] static std::string coded_model = "unknown";
-    static NSString *human_model = @"N/A";
+    [[clang::no_destroy]] static std::string human_model = "N/A";
     static std::once_flag once;
-    call_once(once, []{
-        char model[256];
+    call_once(once, [] {
+        char hw_model[256];
         size_t len = 256;
-        if( sysctlbyname("hw.model", model, &len, NULL, 0) != 0)
+        if( sysctlbyname("hw.model", hw_model, &len, NULL, 0) != 0 )
             return;
-        coded_model = model;
-        NSDictionary *dict;
-        if( auto bundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/ServerInformation.framework/"] )
-            if( auto path = [bundle pathForResource:@"SIMachineAttributes" ofType:@"plist"] )
-                dict = [NSDictionary dictionaryWithContentsOfFile:path];
-        if( !dict )
-            if( auto bundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/ServerKit.framework/"] )
-                if( auto path = [bundle pathForResource:@"XSMachineAttributes" ofType:@"plist"] )
-                    dict = [NSDictionary dictionaryWithContentsOfFile:path];
-        if( !dict )
-            return;
-        
-        if( auto info = objc_cast<NSDictionary>(dict[[NSString stringWithUTF8String:model]]) ) {
-            if( auto localizable = objc_cast<NSDictionary>(info[@"_LOCALIZABLE_"]) ) {
-                auto loc_model = objc_cast<NSString>(localizable[@"model"]);
-                if( loc_model ) {
-                    human_model = loc_model;
-                    if( auto market_model = objc_cast<NSString>(localizable[@"marketingModel"]) ) {
-                        auto cs = [NSCharacterSet characterSetWithCharactersInString:@"()"];
-                        auto splitted = [market_model componentsSeparatedByCharactersInSet:cs];
-                        if( splitted.count == 3)
-                            human_model = [NSString stringWithFormat:@"%@ (%@)", loc_model, splitted[1]];
-                    }
-                }
-            }
+        coded_model = hw_model;
+
+        if( auto name1 = ExtractReadableModelNameFromFrameworks(coded_model); name1 != "" ) {
+            human_model = name1;
+        } else if( auto name2 = ExtractReadableModelNameFromSystemProfiler(); name2 != "" ) {
+            human_model = name2;
         }
     });
-    
-    _overview.human_model = human_model.UTF8String;
+
+    _overview.human_model = human_model;
     _overview.coded_model = coded_model;
-    
+
     return true;
 }
 

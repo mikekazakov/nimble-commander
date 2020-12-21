@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Foundation/Foundation.h>
@@ -12,6 +12,7 @@ class DiskUtility
 public: 
     NSDictionary *ListAPFSObjects();
     
+    static NSDictionary *DiskUtilityOutputToDictionary(std::string_view _text);    
 };
     
 // RTFM: https://developer.apple.com/support/downloads/Apple-File-System-Reference.pdf
@@ -31,6 +32,11 @@ public:
         Data        = 0x0040,
         Baseband    = 0x0080
     };
+    
+    /**
+     * Returns an unordered list of APFS containers.
+     */
+    std::vector<std::string> ContainersNames() const;
 
     /**
      * Returns BSD name if was found.
@@ -43,19 +49,19 @@ public:
      * applied.
      */    
     std::optional<std::vector<std::string>>
-        FindVolumesOfContainer( std::string_view _bsd_container_name ) const;
+        FindVolumesOfContainer( std::string_view _container_name ) const;
 
     /**
      * Returns BSD names if were found.
      */    
     std::optional<std::vector<std::string>>
-        FindPhysicalStoresOfContainer( std::string_view _bsd_container_name ) const;
+        FindPhysicalStoresOfContainer( std::string_view _container_name ) const;
     
     /**
      * Returns BSD names if were found.
      */         
     std::optional<std::vector<std::string>> FindVolumesInContainerWithRole(
-        std::string_view _bsd_container_name, Role _role ) const;
+        std::string_view _container_name, Role _role ) const;
         
 private:
     static bool DoesContainerContainVolume(NSDictionary *_container,

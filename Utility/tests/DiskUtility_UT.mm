@@ -1,19 +1,19 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "DiskUtility.h"
 #include "ObjCpp.h"
 
 using namespace nc::utility;
 
-
-static NSDictionary *DictionaryFromPListString(std::string_view _str);
+#define PREFIX "nc::utility::DiskUtility "
 
 extern const std::string_view g_APFSListExample10_14;
 extern const std::string_view g_APFSListExample10_15;
+extern const std::string_view g_APFSListExample11_1;
 
 // This not really a unit test - it's an integration test and it should be moved to 
 // another test suite later.
-TEST_CASE("DiskUtility::ListAPFSObjects returns a valid nonempty NSDictionary tree")
+TEST_CASE(PREFIX"ListAPFSObjects returns a valid nonempty NSDictionary tree")
 {
     DiskUtility du;
     const auto dict = du.ListAPFSObjects();
@@ -22,9 +22,9 @@ TEST_CASE("DiskUtility::ListAPFSObjects returns a valid nonempty NSDictionary tr
     REQUIRE( objc_cast<NSArray>(dict[@"Containers"]) != nil );
 }
 
-TEST_CASE("APFSTree can find a container name from its volume")
+TEST_CASE(PREFIX"APFSTree can find a container name from its volume")
 {
-    APFSTree tree{DictionaryFromPListString(g_APFSListExample10_14)};
+    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
     
     CHECK( tree.FindContainerOfVolume("disk1s1") == "disk1" );
     CHECK( tree.FindContainerOfVolume("disk1s2") == "disk1" );
@@ -40,9 +40,9 @@ TEST_CASE("APFSTree can find a container name from its volume")
     CHECK( tree.FindContainerOfVolume("ushdfisuhfoihsdf") == std::nullopt );    
 }
 
-TEST_CASE("APFSTree can find volumes from their container name")
+TEST_CASE(PREFIX"APFSTree can find volumes from their container name")
 {
-    APFSTree tree{DictionaryFromPListString(g_APFSListExample10_14)};
+    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
 
     const auto disk1_volumes = std::vector<std::string>{"disk1s1", "disk1s2", "disk1s3", "disk1s4"};
     CHECK( tree.FindVolumesOfContainer("disk1") == disk1_volumes );
@@ -58,9 +58,9 @@ TEST_CASE("APFSTree can find volumes from their container name")
     CHECK( tree.FindVolumesOfContainer("piuoivuhovhs") == std::nullopt );    
 }
 
-TEST_CASE("APFSTree can find physical stores from a container name")
+TEST_CASE(PREFIX"APFSTree can find physical stores from a container name")
 {
-    APFSTree tree{DictionaryFromPListString(g_APFSListExample10_14)};
+    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
 
     const auto disk1_stores = std::vector<std::string>{"disk0s2"};
     CHECK( tree.FindPhysicalStoresOfContainer("disk1") == disk1_stores );
@@ -76,9 +76,9 @@ TEST_CASE("APFSTree can find physical stores from a container name")
     CHECK( tree.FindPhysicalStoresOfContainer("piuoivuhovhs") == std::nullopt );      
 }
 
-TEST_CASE("APFSTree can find volumes by role from a container name (10_14)" )
+TEST_CASE(PREFIX"APFSTree can find volumes by role from a container name (10_14)" )
 {
-    APFSTree tree{DictionaryFromPListString(g_APFSListExample10_14)};
+    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_14)};
     
     const auto disk1_none = tree.FindVolumesInContainerWithRole("disk1", APFSTree::Role::None);
     REQUIRE( disk1_none );
@@ -130,9 +130,9 @@ TEST_CASE("APFSTree can find volumes by role from a container name (10_14)" )
     CHECK( disk6_data->size() == 0 );
 }
 
-TEST_CASE("APFSTree can find volumes by role from a container name (10_15)" )
+TEST_CASE(PREFIX"APFSTree can find volumes by role from a container name (10_15)" )
 {
-    APFSTree tree{DictionaryFromPListString(g_APFSListExample10_15)};
+    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample10_15)};
     
     const auto disk1_data = tree.FindVolumesInContainerWithRole("disk1", APFSTree::Role::Data);
     REQUIRE( disk1_data );
@@ -145,32 +145,49 @@ TEST_CASE("APFSTree can find volumes by role from a container name (10_15)" )
     CHECK( (*disk1_system)[0] == "disk1s5" );
 }
 
-TEST_CASE("The system has volumes for both Data and System roles" )
+TEST_CASE(PREFIX"APFSTree can find volumes by role from a container name (11_1)" )
+{
+    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample11_1)};
+
+    const auto disk1_data = tree.FindVolumesInContainerWithRole("disk3", APFSTree::Role::Data);
+    REQUIRE( disk1_data );
+    REQUIRE( disk1_data->size() == 1 );
+    CHECK( (*disk1_data)[0] == "disk3s5" );
+    
+    const auto disk1_system = tree.FindVolumesInContainerWithRole("disk3", APFSTree::Role::System);
+    REQUIRE( disk1_system );
+    REQUIRE( disk1_system->size() == 1 );
+    CHECK( (*disk1_system)[0] == "disk3s1" );
+}
+
+TEST_CASE(PREFIX"APFSTree can list containers names (11_1)" )
+{
+    APFSTree tree{DiskUtility::DiskUtilityOutputToDictionary(g_APFSListExample11_1)};
+
+    const auto names = tree.ContainersNames();
+    std::set<std::string> ordered_names(names.begin(), names.end());
+    CHECK( ordered_names == std::set<std::string>{"disk1", "disk2", "disk3", "disk5" } );
+}
+
+TEST_CASE(PREFIX"The system has volumes for both Data and System roles" )
 {
     DiskUtility du;
     APFSTree tree{du.ListAPFSObjects()};
-
-    const auto disk1_data = tree.FindVolumesInContainerWithRole("disk1", APFSTree::Role::Data);
-    REQUIRE( disk1_data );
-    CHECK( disk1_data->size() != 0 );
     
-    const auto disk1_system = tree.FindVolumesInContainerWithRole("disk1", APFSTree::Role::System);
-    REQUIRE( disk1_system );
-    CHECK( disk1_system->size() != 0 );
-}
-
-static NSDictionary *DictionaryFromPListString(std::string_view _str)
-{
-    const auto data = [[NSData alloc] initWithBytesNoCopy:(void*)_str.data()
-                                                   length:_str.length()
-                                             freeWhenDone:false];
+    bool has_data = false;
+    bool has_system = false;
     
-    const id root = [NSPropertyListSerialization propertyListWithData:data
-                                                              options:NSPropertyListImmutable
-                                                               format:nil
-                                                                error:nil];
-    
-    return objc_cast<NSDictionary>(root);
+    for( auto container_name: tree.ContainersNames() ) {
+        const auto data = tree.FindVolumesInContainerWithRole(container_name, APFSTree::Role::Data);
+        if( data && !data->empty() )
+            has_data = true;
+        
+        const auto system = tree.FindVolumesInContainerWithRole(container_name, APFSTree::Role::System);
+        if( system && !system->empty() )
+            has_system = true;
+    }
+    CHECK(has_data);
+    CHECK(has_system);
 }
 
 const std::string_view g_APFSListExample10_14 = 
@@ -664,3 +681,465 @@ const std::string_view g_APFSListExample10_15 =
 "	</array>"
 "</dict>"
 "</plist>";
+
+const std::string_view g_APFSListExample11_1 =
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+"<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"
+"<plist version=\"1.0\">"
+"<dict>"
+"    <key>Containers</key>"
+"    <array>"
+"        <dict>"
+"            <key>APFSContainerUUID</key>"
+"            <string>36CF3DCA-CFC3-4D92-BC91-76E00A104716</string>"
+"            <key>CapacityCeiling</key>"
+"            <integer>524288000</integer>"
+"            <key>CapacityFree</key>"
+"            <integer>505155584</integer>"
+"            <key>ContainerReference</key>"
+"            <string>disk1</string>"
+"            <key>DesignatedPhysicalStore</key>"
+"            <string>disk0s1</string>"
+"            <key>Fusion</key>"
+"            <false/>"
+"            <key>PhysicalStores</key>"
+"            <array>"
+"                <dict>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk0s1</string>"
+"                    <key>DiskUUID</key>"
+"                    <string>273C4F98-C6A2-458A-97D4-C24542BFC424</string>"
+"                    <key>Size</key>"
+"                    <integer>524288000</integer>"
+"                </dict>"
+"            </array>"
+"            <key>Volumes</key>"
+"            <array>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>851469E3-C3AD-4158-9B1F-2ADB47C04076</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>7352320</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk1s1</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>iSCPreboot</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>Preboot</string>"
+"                    </array>"
+"                </dict>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>AFCCFE13-FD7B-4F92-8796-63A52508A1F6</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>6311936</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk1s2</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>xART</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>xART</string>"
+"                    </array>"
+"                </dict>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>A2EF8238-954C-4DA0-9244-E7605F8258DF</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>491520</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk1s3</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>Hardware</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>Hardware</string>"
+"                    </array>"
+"                </dict>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>CE41F665-4F8C-484B-9B08-6F2A8C7123B5</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>20480</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk1s4</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>Recovery</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>Recovery</string>"
+"                    </array>"
+"                </dict>"
+"            </array>"
+"        </dict>"
+"        <dict>"
+"            <key>APFSContainerUUID</key>"
+"            <string>28FC466C-D6AA-4BC6-8CB8-5E11FA5A1974</string>"
+"            <key>CapacityCeiling</key>"
+"            <integer>5368664064</integer>"
+"            <key>CapacityFree</key>"
+"            <integer>2445828096</integer>"
+"            <key>ContainerReference</key>"
+"            <string>disk2</string>"
+"            <key>DesignatedPhysicalStore</key>"
+"            <string>disk0s3</string>"
+"            <key>Fusion</key>"
+"            <false/>"
+"            <key>PhysicalStores</key>"
+"            <array>"
+"                <dict>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk0s3</string>"
+"                    <key>DiskUUID</key>"
+"                    <string>F04234DB-2BDC-4454-A367-F6B60BF00B5B</string>"
+"                    <key>Size</key>"
+"                    <integer>5368664064</integer>"
+"                </dict>"
+"            </array>"
+"            <key>Volumes</key>"
+"            <array>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>4F6ECAB9-2231-443D-872A-7E44CD67B761</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>2902458368</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk2s1</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>Recovery</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>Recovery</string>"
+"                    </array>"
+"                </dict>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>03A7F52A-1342-45A0-BA30-DFC5355E5068</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>630784</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk2s2</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>Update</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>Update</string>"
+"                    </array>"
+"                </dict>"
+"            </array>"
+"        </dict>"
+"        <dict>"
+"            <key>APFSContainerUUID</key>"
+"            <string>08DCC4C7-B202-4B09-8646-5AAA1E2FA661</string>"
+"            <key>CapacityCeiling</key>"
+"            <integer>994662584320</integer>"
+"            <key>CapacityFree</key>"
+"            <integer>643200086016</integer>"
+"            <key>ContainerReference</key>"
+"            <string>disk3</string>"
+"            <key>DesignatedPhysicalStore</key>"
+"            <string>disk0s2</string>"
+"            <key>Fusion</key>"
+"            <false/>"
+"            <key>PhysicalStores</key>"
+"            <array>"
+"                <dict>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk0s2</string>"
+"                    <key>DiskUUID</key>"
+"                    <string>CE95D1AD-DF91-4FE6-BEBB-F9BA231A14D9</string>"
+"                    <key>Size</key>"
+"                    <integer>994662584320</integer>"
+"                </dict>"
+"            </array>"
+"            <key>Volumes</key>"
+"            <array>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>8B2A7F55-5828-49B8-800B-F21702E222F9</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>15046225920</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk3s1</string>"
+"                    <key>Encryption</key>"
+"                    <true/>"
+"                    <key>FileVault</key>"
+"                    <true/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>Macintosh HD</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>System</string>"
+"                    </array>"
+"                </dict>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>9C68A008-C476-49F8-B7F0-E5C7DF45A065</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>337395712</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk3s2</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>Preboot</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>Preboot</string>"
+"                    </array>"
+"                </dict>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>6B009DC4-A137-4B7C-B745-439677B9CE49</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>1072377856</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk3s3</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>Recovery</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>Recovery</string>"
+"                    </array>"
+"                </dict>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>10D69CB9-B24B-4EBE-8B0A-3C27D10D22D0</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>2236416</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk3s4</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>Update</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>Update</string>"
+"                    </array>"
+"                </dict>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>605E7432-4280-4C17-9D04-458EBF958EA3</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>331576295424</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk3s5</string>"
+"                    <key>Encryption</key>"
+"                    <true/>"
+"                    <key>FileVault</key>"
+"                    <true/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>Data</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>Data</string>"
+"                    </array>"
+"                </dict>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>DBFE7432-8A61-493D-9B72-DFAF2FAC83B3</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>3221245952</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk3s6</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>VM</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>VM</string>"
+"                    </array>"
+"                </dict>"
+"            </array>"
+"        </dict>"
+"        <dict>"
+"            <key>APFSContainerUUID</key>"
+"            <string>66512AAA-CB46-4592-BD25-9EB26B18DC27</string>"
+"            <key>CapacityCeiling</key>"
+"            <integer>8412272971776</integer>"
+"            <key>CapacityFree</key>"
+"            <integer>8062311170048</integer>"
+"            <key>ContainerReference</key>"
+"            <string>disk5</string>"
+"            <key>DesignatedPhysicalStore</key>"
+"            <string>disk4s2</string>"
+"            <key>Fusion</key>"
+"            <false/>"
+"            <key>PhysicalStores</key>"
+"            <array>"
+"                <dict>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk4s2</string>"
+"                    <key>DiskUUID</key>"
+"                    <string>BBA83370-0EF1-4524-BEA8-87F348E54770</string>"
+"                    <key>Size</key>"
+"                    <integer>8412272971776</integer>"
+"                </dict>"
+"            </array>"
+"            <key>Volumes</key>"
+"            <array>"
+"                <dict>"
+"                    <key>APFSVolumeUUID</key>"
+"                    <string>B4FD7721-0256-49B9-894E-923C9A1EB70A</string>"
+"                    <key>CapacityInUse</key>"
+"                    <integer>349067743232</integer>"
+"                    <key>CapacityQuota</key>"
+"                    <integer>0</integer>"
+"                    <key>CapacityReserve</key>"
+"                    <integer>0</integer>"
+"                    <key>CryptoMigrationOn</key>"
+"                    <false/>"
+"                    <key>DeviceIdentifier</key>"
+"                    <string>disk5s1</string>"
+"                    <key>Encryption</key>"
+"                    <false/>"
+"                    <key>FileVault</key>"
+"                    <false/>"
+"                    <key>Locked</key>"
+"                    <false/>"
+"                    <key>Name</key>"
+"                    <string>Backups of Michael’s MBP_13_2020</string>"
+"                    <key>Roles</key>"
+"                    <array>"
+"                        <string>Backup</string>"
+"                    </array>"
+"                </dict>"
+"            </array>"
+"        </dict>"
+"    </array>"
+"</dict>"
+"</plist>";
+

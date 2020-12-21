@@ -525,8 +525,6 @@
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF8681A325837A7E00D87746 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; };
 		CF8681A425837A9900D87746 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; };
-		CF8681E925837D1B00D87746 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF8681E825837D1B00D87746 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CF8681EC25837D2E00D87746 /* LetsMove.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF8681EB25837D2E00D87746 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF8B24381E6FC68D008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
 		CF8B24401E6FC695008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
 		CF8B24411E6FC696008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
@@ -686,6 +684,8 @@
 		CFB44F0C1F35F0B900E7555E /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
 		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
+		CFB63CD02590D8C50038502E /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; };
+		CFB63CD12590D8C90038502E /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; };
 		CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
 		CFB66F961D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
@@ -1313,6 +1313,13 @@
 			remoteGlobalIDString = CFACF9BA1E24AAB800FD6AB6;
 			remoteInfo = MMTabBarViewLib;
 		};
+		CFB63CBE2590D8AA0038502E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF22F0D5258F43610033E850;
+			remoteInfo = OperationsUT;
+		};
 		CFC8F2BB23E5FEAC00A25046 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */;
@@ -1326,13 +1333,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = CFD62B721C99C19A0021EE7F;
 			remoteInfo = Habanero;
-		};
-		CFD725F21E42DBD900603077 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CF1846FE1E41C86D008B7C9F;
-			remoteInfo = "VFS Tests";
 		};
 		CFD79A7721F65A540043A26D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1426,8 +1426,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CF8681EC25837D2E00D87746 /* LetsMove.framework in CopyFiles */,
-				CF8681E925837D1B00D87746 /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1558,8 +1556,6 @@
 		CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewCollectionView.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewCollectionView.mm; sourceTree = SOURCE_ROOT; };
 		CF28B2E321A393A50004D697 /* ActivationManagerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivationManagerBase.h; path = NimbleCommander/Bootstrap/ActivationManagerBase.h; sourceTree = "<group>"; };
 		CF28B2F721A393A60004D697 /* ActivationManagerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActivationManagerBase.cpp; path = NimbleCommander/Bootstrap/ActivationManagerBase.cpp; sourceTree = "<group>"; };
-		CF2B2B3B1D825BEC00E4E8CB /* libcorecrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcorecrypto.tbd; path = usr/lib/system/libcorecrypto.tbd; sourceTree = SDKROOT; };
-		CF2B2B3D1D825C0A00E4E8CB /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
 		CF2C4DEB1C57A00400DEC75A /* AskForPasswordWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AskForPasswordWindowController.h; path = NimbleCommander/GeneralUI/AskForPasswordWindowController.h; sourceTree = SOURCE_ROOT; };
 		CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AskForPasswordWindowController.mm; path = NimbleCommander/GeneralUI/AskForPasswordWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CF2F10972567DF2500622405 /* NCHelpMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NCHelpMenuDelegate.mm; path = NimbleCommander/Bootstrap/NCHelpMenuDelegate.mm; sourceTree = "<group>"; };
@@ -1780,8 +1776,6 @@
 		CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListView.mm; path = NimbleCommander/States/FilePanels/List/PanelListView.mm; sourceTree = SOURCE_ROOT; };
 		CF859A8C16FC100F0081183E /* DetailedVolumeInformationSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DetailedVolumeInformationSheetController.h; path = NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DetailedVolumeInformationSheetController.mm; path = NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.mm; sourceTree = SOURCE_ROOT; };
-		CF8681E825837D1B00D87746 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_Party/Sparkle/Sparkle.framework; sourceTree = "<group>"; };
-		CF8681EB25837D2E00D87746 /* LetsMove.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LetsMove.framework; path = 3rd_Party/LetsMove/LetsMove.framework; sourceTree = "<group>"; };
 		CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FavoritesImpl.cpp; path = NimbleCommander/States/FilePanels/FavoritesImpl.cpp; sourceTree = SOURCE_ROOT; };
 		CF8B24371E6FC68D008EB447 /* Favorites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Favorites.h; path = NimbleCommander/States/FilePanels/Favorites.h; sourceTree = SOURCE_ROOT; };
 		CF8BDD0B2147D60800F14C3E /* VFSIcon.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VFSIcon.xcodeproj; path = VFSIcon/VFSIcon.xcodeproj; sourceTree = "<group>"; };
@@ -2099,6 +2093,8 @@
 				CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */,
 				CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.a in Frameworks */,
 				CFF33FC22556964A00B3C92C /* libPanel.a in Frameworks */,
+				CFB63CD12590D8C90038502E /* Sparkle.framework in Frameworks */,
+				CFB63CD02590D8C50038502E /* LetsMove.framework in Frameworks */,
 				CF7C7CEC1E5D39AD002DB0E2 /* ServiceManagement.framework in Frameworks */,
 				CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */,
 				CF4E556523114AC400F607D7 /* libViewer.a in Frameworks */,
@@ -2626,7 +2622,6 @@
 			isa = PBXGroup;
 			children = (
 				CF69CFDB1DA2250C00992B84 /* libVFS.a */,
-				CFD725F31E42DBD900603077 /* VFS Tests.xctest */,
 				CF26DE3421D92135003F0E93 /* VFSUT */,
 				CFAB6D7A258A5AC700397DB5 /* VFSIT */,
 			);
@@ -2941,8 +2936,6 @@
 			children = (
 				CF19B4872546250000838B45 /* XCConfig */,
 				CF19B4A4254DD43700838B45 /* Nimble Commander.entitlements */,
-				CF8681EB25837D2E00D87746 /* LetsMove.framework */,
-				CF8681E825837D1B00D87746 /* Sparkle.framework */,
 				CF20CC01215A258F006716F6 /* Config.xcodeproj */,
 				CFD79AD821FE29420043A26D /* CUI.xcodeproj */,
 				CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */,
@@ -2980,8 +2973,6 @@
 			children = (
 				CF55F80E254F2BAB00CC415D /* LetsMove.framework */,
 				CF36DBDD1F6BA76B004A018E /* Sparkle.framework */,
-				CF2B2B3D1D825C0A00E4E8CB /* libSystem.tbd */,
-				CF2B2B3B1D825BEC00E4E8CB /* libcorecrypto.tbd */,
 				CFC5121616C4BD3D00D247EE /* System Frameworks */,
 			);
 			name = Frameworks;
@@ -3105,8 +3096,9 @@
 			children = (
 				CFF53B611EDD19A400F567C4 /* libOperations.a */,
 				CFF53B631EDD19A400F567C4 /* OperationsTests.xctest */,
-				CF52C3BD22BE5B2D0043E825 /* OperationsIT */,
 				CF46FFA3255FCD320095FC73 /* OperationsResources.bundle */,
+				CFB63CBF2590D8AA0038502E /* OperationsUT */,
+				CF52C3BD22BE5B2D0043E825 /* OperationsIT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3526,6 +3518,13 @@
 			remoteRef = CFACF9D01E24AAD800FD6AB6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		CFB63CBF2590D8AA0038502E /* OperationsUT */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = OperationsUT;
+			remoteRef = CFB63CBE2590D8AA0038502E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CFC8F2BC23E5FEAC00A25046 /* TermUT */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -3538,13 +3537,6 @@
 			fileType = archive.ar;
 			path = libHabanero.a;
 			remoteRef = CFD62B821C99C1CA0021EE7F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CFD725F31E42DBD900603077 /* VFS Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "VFS Tests.xctest";
-			remoteRef = CFD725F21E42DBD900603077 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CFD79A7821F65A540043A26D /* libViewer.a */ = {

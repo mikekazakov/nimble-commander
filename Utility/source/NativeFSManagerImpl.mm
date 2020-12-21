@@ -562,16 +562,31 @@ void NativeFSManagerImpl::PerformUnmounting(const Info &_volume)
 
 void NativeFSManagerImpl::InjectRootFirmlinks(const APFSTree &_tree)
 {
+    // get volume info for the root mount point
     const auto root = VolumeFromMountPoint_Unlocked("/");
     if( root == nullptr )
         return;
 
-    const auto root_bsd_name = GetBSDName(*root);
+    // get BSD name of that volume
+    auto root_bsd_name = GetBSDName(*root);
     if( root_bsd_name == std::nullopt )
         return;
 
+    // remove snapshot information - BigSur (+?)
+    const auto root_snapshot_pattern = std::string_view("diskXsYsZ");
+    if( root_bsd_name->length() == root_snapshot_pattern.length() ) {
+        // e.g. disk3s1s1 -> disk3s1
+        auto pattern = *root_bsd_name;
+        pattern[4] = root_snapshot_pattern[4];
+        pattern[6] = root_snapshot_pattern[6];
+        pattern[8] = root_snapshot_pattern[8];
+        if( pattern == root_snapshot_pattern ) {
+            root_bsd_name->resize(root_snapshot_pattern.length() - 2);
+        }
+    }
+
     // pick the APFS container of the root volume
-    auto container = _tree.FindContainerOfVolume(*root_bsd_name);
+    const auto container = _tree.FindContainerOfVolume(*root_bsd_name);
     if( container == std::nullopt )
         return;
 

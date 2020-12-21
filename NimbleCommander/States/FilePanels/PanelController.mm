@@ -477,38 +477,41 @@ static void HeatUpConfigValues()
     }
 }
 
-- (void) calculateSizesOfItems:(const std::vector<VFSListingItem>&) _items
+- (void)calculateSizesOfItems:(const std::vector<VFSListingItem> &)_items
 {
     if( _items.empty() )
         return;
-    m_DirectorySizeCountingQ.Run([=]{
-        for(auto &i:_items) {
+
+    auto calc_task = [=] {
+        for( auto &i : _items ) {
             if( !i.IsDir() )
                 continue;
             if( m_DirectorySizeCountingQ.IsStopped() )
                 return;
-            
-            auto result = i.Host()->CalculateDirectorySize(
+
+            const auto result = i.Host()->CalculateDirectorySize(
                 !i.IsDotDot() ? i.Path().c_str() : i.Directory().c_str(),
-                [=]{ return m_DirectorySizeCountingQ.IsStopped(); }
-                );
+                [=] { return m_DirectorySizeCountingQ.IsStopped(); });
+
             if( result < 0 )
-                return;
-                
-            dispatch_to_main_queue([=]{
+                continue; // silently skip items that caused erros while calculating size
+
+            auto commit_task = [=] {
                 const auto pers = CursorBackup{m_View.curpos, m_Data};
                 // may cause re-sorting if current sorting is by size
-                const auto changed = m_Data.SetCalculatedSizeForDirectory(i.FilenameC(),
-                                                                          i.Directory().c_str(),
-                                                                          result);
+                const auto changed = m_Data.SetCalculatedSizeForDirectory(
+                    i.FilenameC(), i.Directory().c_str(), result);
                 if( changed ) {
                     [m_View dataUpdated];
                     [m_View volatileDataChanged];
                     m_View.curpos = pers.RestoredCursorPosition();
                 }
-            });
+            };
+            dispatch_to_main_queue(std::move(commit_task));
         }
-    });
+    };
+
+    m_DirectorySizeCountingQ.Run(std::move(calc_task));
 }
 
 - (void) CancelBackgroundOperations

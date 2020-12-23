@@ -1357,14 +1357,14 @@ TEST_CASE(PREFIX"CSI t")
         auto r = parser.Parse(to_bytes("\x1B[22;1t"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::manipulate_title );
-        CHECK( as_title_manipulation(r[0]).target == TitleManipulation::IconTitle );
+        CHECK( as_title_manipulation(r[0]).target == TitleManipulation::Icon );
         CHECK( as_title_manipulation(r[0]).operation == TitleManipulation::Save );
     }
     SECTION( "ESC [ 22 ; 2 t" ) {
         auto r = parser.Parse(to_bytes("\x1B[22;2t"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::manipulate_title );
-        CHECK( as_title_manipulation(r[0]).target == TitleManipulation::WindowTitle );
+        CHECK( as_title_manipulation(r[0]).target == TitleManipulation::Window );
         CHECK( as_title_manipulation(r[0]).operation == TitleManipulation::Save );
     }
     SECTION( "ESC [ 23 ; 0 t" ) {
@@ -1378,14 +1378,14 @@ TEST_CASE(PREFIX"CSI t")
         auto r = parser.Parse(to_bytes("\x1B[23;1t"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::manipulate_title );
-        CHECK( as_title_manipulation(r[0]).target == TitleManipulation::IconTitle );
+        CHECK( as_title_manipulation(r[0]).target == TitleManipulation::Icon );
         CHECK( as_title_manipulation(r[0]).operation == TitleManipulation::Restore );
     }
     SECTION( "ESC [ 23 ; 2 t" ) {
         auto r = parser.Parse(to_bytes("\x1B[23;2t"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::manipulate_title );
-        CHECK( as_title_manipulation(r[0]).target == TitleManipulation::WindowTitle );
+        CHECK( as_title_manipulation(r[0]).target == TitleManipulation::Window );
         CHECK( as_title_manipulation(r[0]).operation == TitleManipulation::Restore );
     }
     SECTION( "Bogus input" ) {

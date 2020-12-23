@@ -240,8 +240,8 @@ struct TitleManipulation {
     enum Kind
     {
         Both,
-        IconTitle,
-        WindowTitle
+        Icon,
+        Window
     };
     enum Operation
     {

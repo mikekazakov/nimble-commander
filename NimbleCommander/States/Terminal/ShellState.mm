@@ -35,7 +35,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
     NSLayoutConstraint *m_TopLayoutConstraint;
     nc::utility::NativeFSManager *m_NativeFSManager;
     std::string m_InitalWD;
-    std::string m_Title;
+    std::string m_WindowTitle;
+    std::string m_IconTitle;
     bool m_SpamVT100Input;
     bool m_SpamRawInput;
 }
@@ -63,11 +64,11 @@ static const auto g_CustomPath = "terminal.customShellPath";
                                                      options:0
                                                      metrics:nil
                                                        views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                                                     @"V:|-(==0@250)-[m_TermScrollView]-(==0)-|"
-                                                                     options:0
-                                                                     metrics:nil
-                                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint
+                                 constraintsWithVisualFormat:@"V:|-(==0@250)-[m_TermScrollView]-(==0)-|"
+                                                     options:0
+                                                     metrics:nil
+                                                       views:views]];
 
         m_Task = std::make_unique<ShellTask>();
         if( !GlobalConfig().GetBool(g_UseDefault) )
@@ -89,11 +90,15 @@ static const auto g_CustomPath = "terminal.customShellPath";
             task_ptr->WriteChildInput(std::string_view((const char *)_bytes.data(), _bytes.size()));
         });
         m_Interpreter->SetBell([] { NSBeep(); });
-        m_Interpreter->SetTitle([weak_self](const std::string &_title, bool, bool) {
-            dispatch_to_main_queue([weak_self, _title] {
-                NCTermShellState *me = weak_self;
-                me->m_Title = _title;
-                [me updateTitle];
+        m_Interpreter->SetTitle([weak_self](const std::string &_title, Interpreter::TitleKind _kind) {
+            dispatch_to_main_queue([weak_self, _title, _kind] {
+                if( NCTermShellState *me = weak_self ) {
+                    if( _kind == Interpreter::TitleKind::Icon )
+                        me->m_IconTitle = _title;
+                    if( _kind == Interpreter::TitleKind::Window )
+                        me->m_WindowTitle = _title;
+                    [me updateTitle];
+                }
             });
         });
         m_Interpreter->SetInputTranslator(m_InputTranslator.get());
@@ -117,14 +122,13 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
         self.wantsLayer = true;
 
-        [NSWorkspace.sharedWorkspace.notificationCenter
-            addObserver:self
-               selector:@selector(volumeWillUnmount:)
-                   name:NSWorkspaceWillUnmountNotification
-                 object:nil];
+        [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self
+                                                           selector:@selector(volumeWillUnmount:)
+                                                               name:NSWorkspaceWillUnmountNotification
+                                                             object:nil];
     }
     return self;
-}
+    }
 
 - (void)dealloc
 {
@@ -213,13 +217,6 @@ static const auto g_CustomPath = "terminal.customShellPath";
         });
     });
 
-    m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const char *_cwd, [[maybe_unused]] bool _changed) {
-        if( auto strongself = weakself ) {
-            strongself->m_Title = "";
-            [strongself updateTitle];
-        }
-    });
-
     // need right CWD here
     if( m_Task->State() == ShellTask::TaskState::Inactive ||
         m_Task->State() == ShellTask::TaskState::Dead ) {
@@ -241,11 +238,26 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
 - (void)updateTitle
 {
-    const auto &screen_title = m_Title;
-    const auto title =
-        [NSString stringWithUTF8StdString:screen_title.empty() ? EnsureTrailingSlash(m_Task->CWD())
-                                                               : screen_title];
-    dispatch_or_run_in_main_queue([=] { self.window.title = title; });
+    NSString *const new_title = [=] {
+        if( not m_IconTitle.empty() or not m_WindowTitle.empty() ) {
+            if( not m_IconTitle.empty() and not m_WindowTitle.empty() ) {
+                return [NSString stringWithFormat:@"%@ - %@",
+                                                  [NSString stringWithUTF8StdString:m_WindowTitle],
+                                                  [NSString stringWithUTF8StdString:m_IconTitle]];
+            }
+            else if( not m_IconTitle.empty() ) {
+                return [NSString stringWithUTF8StdString:m_IconTitle];
+            }
+            else if( not m_WindowTitle.empty() ) {
+                return [NSString stringWithUTF8StdString:m_WindowTitle];
+            }
+        }
+        else {
+            return [NSString stringWithUTF8StdString:EnsureTrailingSlash(m_Task->CWD())];
+        }
+        return @"";
+    }();
+    dispatch_or_run_in_main_queue([=] { self.window.title = new_title; });
 }
 
 - (void)chDir:(const std::string &)_new_dir

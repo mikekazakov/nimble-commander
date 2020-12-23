@@ -19,7 +19,7 @@ public:
     void Interpret( const input::Command& _command );
     void SetOuput( Output _output ) override;
     void SetBell( Bell _bell ) override;
-    void SetTitle( Title _title ) override;
+    void SetTitle( TitleChanged _title ) override;
     bool ScreenResizeAllowed() override;
     void SetScreenResizeAllowed( bool _allow ) override;
     void SetInputTranslator( InputTranslator *_input_translator ) override;
@@ -59,6 +59,7 @@ private:
     void ProcessDeleteCharacters( unsigned _characters );
     void ProcessInsertCharacters( unsigned _characters );
     void ProcessChangeTitle( const input::Title &_title );
+    void ProcessTitleManipulation( const input::TitleManipulation &_title_manipulation );
     void Response(std::string_view _text);
     void UpdateCharacterAttributes();
     void UpdateMouseReporting();
@@ -94,11 +95,18 @@ private:
         CharacterSets character_sets;
         const unsigned short *translate_map = nullptr;
     };
+    
+    struct Titles {
+        std::string icon;
+        std::string window;
+        std::vector<std::string> saved_icon;
+        std::vector<std::string> saved_window;
+    };
 
     Screen &m_Screen;
     Output m_Output = [](Bytes){};
     Bell m_Bell = []{};
-    Title m_Title = [](const std::string&, bool, bool){};
+    TitleChanged m_OnTitleChanged = [](const std::string&, TitleKind){};
     ShownCursorChanged m_OnShowCursorChanged = [](bool){};
     RequstedMouseEventsChanged m_OnRequestedMouseEventsChanged = [](RequestedMouseEvents){};
     InputTranslator *m_InputTranslator = nullptr;
@@ -116,6 +124,7 @@ private:
     Rendition m_Rendition;
     RequestedMouseEvents m_RequestedMouseEvents = RequestedMouseEvents::None;
     std::optional<SavedState> m_SavedState;
+    Titles m_Titles;
 };
 
 }

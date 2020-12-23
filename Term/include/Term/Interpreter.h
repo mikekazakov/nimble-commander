@@ -19,12 +19,16 @@ public:
         ButtonTracking, // press->drag->release
         Any             // press/release/drag/motion
     };
+    enum class TitleKind {
+        Icon,
+        Window
+    };
     
     using Bytes = std::span<const std::byte>;
     using Input = std::span<const input::Command>;
     using Output = std::function<void(Bytes _bytes)>;
     using Bell = std::function<void()>;
-    using Title = std::function<void(const std::string &_title, bool _icon, bool _window)>;
+    using TitleChanged = std::function<void(const std::string &_title, TitleKind _kind)>;
     using ShownCursorChanged = std::function<void(bool _shown)>;
     using RequstedMouseEventsChanged = std::function<void(RequestedMouseEvents _events)>;
 
@@ -34,7 +38,7 @@ public:
     virtual void SetInputTranslator( InputTranslator *_input_translator ) = 0;
     virtual void SetOuput( Output _output ) = 0;
     virtual void SetBell( Bell _bell ) = 0;
-    virtual void SetTitle( Title _title ) = 0;
+    virtual void SetTitle( TitleChanged _title ) = 0;
     virtual void SetShowCursorChanged( ShownCursorChanged _on_show_cursor_changed ) = 0;
     virtual void SetRequstedMouseEventsChanged( RequstedMouseEventsChanged _on_events_changed ) = 0;
 

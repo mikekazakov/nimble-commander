@@ -89,7 +89,7 @@ static const auto g_LongProcessDelay = 100ms;
             task_ptr->WriteChildInput(std::string_view((const char *)_bytes.data(), _bytes.size()));
         });
         m_Interpreter->SetBell([] { NSBeep(); });
-        m_Interpreter->SetTitle([](const std::string &, bool, bool) { /* deliberately nothing*/ });
+        m_Interpreter->SetTitle([](const std::string &, Interpreter::TitleKind) { /* deliberately nothing*/ });
         m_Interpreter->SetInputTranslator(m_InputTranslator.get());
         m_Interpreter->SetShowCursorChanged([weak_self](bool _show) {
             FilePanelOverlappedTerminal *me = weak_self;

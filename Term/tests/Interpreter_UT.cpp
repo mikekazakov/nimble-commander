@@ -462,36 +462,119 @@ TEST_CASE(PREFIX"Change title")
     Screen screen(2, 2);
     InterpreterImpl interpreter(screen);
     
-    std::string title;
-    bool icon = false;
-    bool window = false;
-    auto callback = [&](const std::string& _title, bool _icon, bool _window) {
-        title = _title;
-        icon = _icon;
-        window = _window;
+    std::vector<std::string> title;
+    std::vector<Interpreter::TitleKind> kind;
+    auto callback = [&](const std::string& _title, Interpreter::TitleKind _kind) {
+        title.emplace_back(_title);
+        kind.emplace_back(_kind);
     };
     interpreter.SetTitle( callback );
 
     SECTION( "IconAndWindow" ) {
         Title t{Title::IconAndWindow, "Hi1"};
         interpreter.Interpret(Command(Type::change_title, t));
-        CHECK(title == "Hi1");
-        CHECK(icon == true);
-        CHECK(window == true);
+        REQUIRE(title.size() == 2);
+        CHECK(title[0] == "Hi1" );
+        CHECK(title[1] == "Hi1" );
+        REQUIRE(kind.size() == 2);
+        CHECK(kind[0] == Interpreter::TitleKind::Icon);
+        CHECK(kind[1] == Interpreter::TitleKind::Window);
     }
     SECTION( "Icon" ) {
         Title t{Title::Icon, "Hi2"};
         interpreter.Interpret(Command(Type::change_title, t));
-        CHECK(title == "Hi2");
-        CHECK(icon == true);
-        CHECK(window == false);
+        REQUIRE(title.size() == 1);
+        CHECK(title[0] == "Hi2");
+        REQUIRE(kind.size() == 1);
+        CHECK(kind[0] == Interpreter::TitleKind::Icon);
     }
     SECTION( "Window" ) {
         Title t{Title::Window, "Hi3"};
         interpreter.Interpret(Command(Type::change_title, t));
-        CHECK(title == "Hi3");
-        CHECK(icon == false);
-        CHECK(window == true);
+        REQUIRE(title.size() == 1);
+        CHECK(title[0] == "Hi3");
+        REQUIRE(kind.size() == 1);
+        CHECK(kind[0] == Interpreter::TitleKind::Window);
+    }
+    SECTION( "Called only on actual changes") {
+        interpreter.Interpret(Command(Type::change_title, Title{Title::Window, "A"}));
+        REQUIRE(title.size() == 1);
+        interpreter.Interpret(Command(Type::change_title, Title{Title::Window, "A"}));
+        REQUIRE(title.size() == 1);
+        interpreter.Interpret(Command(Type::change_title, Title{Title::Icon, "A"}));
+        REQUIRE(title.size() == 2);
+        interpreter.Interpret(Command(Type::change_title, Title{Title::Icon, "A"}));
+        REQUIRE(title.size() == 2);
+        interpreter.Interpret(Command(Type::change_title, Title{Title::IconAndWindow, "A"}));
+        REQUIRE(title.size() == 2);
+        interpreter.Interpret(Command(Type::change_title, Title{Title::IconAndWindow, "B"}));
+        REQUIRE(title.size() == 4);
+    }
+}
+
+TEST_CASE(PREFIX "Supports saving/restoring titles")
+{
+    using namespace input;
+    Screen screen(2, 2);
+    InterpreterImpl interpreter(screen);
+
+    std::vector<std::string> title;
+    std::vector<Interpreter::TitleKind> kind;
+    auto callback = [&](const std::string &_title, Interpreter::TitleKind _kind) {
+        title.emplace_back(_title);
+        kind.emplace_back(_kind);
+    };
+    interpreter.SetTitle(callback);
+
+    SECTION("Save and restore both")
+    {
+        interpreter.Interpret(Command(Type::change_title, Title{Title::IconAndWindow, "Cat"}));
+        interpreter.Interpret(
+            Command(Type::manipulate_title,
+                    TitleManipulation{TitleManipulation::Both, TitleManipulation::Save}));
+        interpreter.Interpret(Command(Type::change_title, Title{Title::IconAndWindow, "Dog"}));
+        interpreter.Interpret(
+            Command(Type::manipulate_title,
+                    TitleManipulation{TitleManipulation::Both, TitleManipulation::Restore}));
+        CHECK(title == std::vector<std::string>{"Cat", "Cat", "Dog", "Dog", "Cat", "Cat"});
+        CHECK(kind == std::vector<Interpreter::TitleKind>{Interpreter::TitleKind::Icon,
+                                                          Interpreter::TitleKind::Window,
+                                                          Interpreter::TitleKind::Icon,
+                                                          Interpreter::TitleKind::Window,
+                                                          Interpreter::TitleKind::Icon,
+                                                          Interpreter::TitleKind::Window});
+    }
+    SECTION("Restore with no saved titles does nothing")
+    {
+        interpreter.Interpret(
+            Command(Type::manipulate_title,
+                    TitleManipulation{TitleManipulation::Both, TitleManipulation::Restore}));
+        CHECK(title.empty());
+        CHECK(kind.empty());
+    }
+    SECTION("Uses a LIFO")
+    {
+        interpreter.Interpret(Command(Type::change_title, Title{Title::Icon, "Cat"}));
+        interpreter.Interpret(
+            Command(Type::manipulate_title,
+                    TitleManipulation{TitleManipulation::Icon, TitleManipulation::Save}));
+        interpreter.Interpret(Command(Type::change_title, Title{Title::Icon, "Dog"}));
+        interpreter.Interpret(
+            Command(Type::manipulate_title,
+                    TitleManipulation{TitleManipulation::Icon, TitleManipulation::Save}));
+        interpreter.Interpret(Command(Type::change_title, Title{Title::Icon, "Fox"}));
+        interpreter.Interpret(
+            Command(Type::manipulate_title,
+                    TitleManipulation{TitleManipulation::Icon, TitleManipulation::Restore}));
+        interpreter.Interpret(
+            Command(Type::manipulate_title,
+                    TitleManipulation{TitleManipulation::Icon, TitleManipulation::Restore}));
+        CHECK(title == std::vector<std::string>{"Cat", "Dog", "Fox", "Dog", "Cat"});
+        CHECK(kind == std::vector<Interpreter::TitleKind>{Interpreter::TitleKind::Icon,
+                                                          Interpreter::TitleKind::Icon,
+                                                          Interpreter::TitleKind::Icon,
+                                                          Interpreter::TitleKind::Icon,
+                                                          Interpreter::TitleKind::Icon});
     }
 }
 

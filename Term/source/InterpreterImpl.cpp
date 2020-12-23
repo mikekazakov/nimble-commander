@@ -123,6 +123,9 @@ void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
         case Type::change_title:
             ProcessChangeTitle( *std::get_if<input::Title>(&_command.payload) );
             break;
+        case Type::manipulate_title:
+            ProcessTitleManipulation( *std::get_if<input::TitleManipulation>(&_command.payload) );
+            break;
         default:
             break;
     }
@@ -872,21 +875,72 @@ void InterpreterImpl::NotifyScreenResized()
     m_Extent.top = std::min( old_extent.top, m_Extent.height - 1 );
 }
 
-void InterpreterImpl::SetTitle( Title _title )
+void InterpreterImpl::SetTitle( TitleChanged _title )
 {
     assert(_title);
-    m_Title = std::move(_title);
+    m_OnTitleChanged = std::move(_title);
 }
 
 void InterpreterImpl::ProcessChangeTitle( const input::Title &_title )
 {
-    assert(m_Title);
-    if( _title.kind == input::Title::Icon )
-        m_Title(_title.title, true, false);
-    else if( _title.kind == input::Title::Window )
-        m_Title(_title.title, false, true);
-    else if( _title.kind == input::Title::IconAndWindow )
-        m_Title(_title.title, true, true);
+    assert(m_OnTitleChanged);
+    auto &new_title = _title.title;
+    if( _title.kind == input::Title::Icon ) {
+        if( m_Titles.icon == new_title )
+            return;
+        m_Titles.icon = new_title;
+        m_OnTitleChanged(new_title, TitleKind::Icon);        
+    }
+    else if( _title.kind == input::Title::Window ) {
+        if( m_Titles.window == new_title )
+            return;
+        m_Titles.window = new_title;
+        m_OnTitleChanged(new_title, TitleKind::Window);
+    }
+    else if( _title.kind == input::Title::IconAndWindow ) {
+        if( m_Titles.icon != new_title ) {
+            m_Titles.icon = new_title;
+            m_OnTitleChanged(new_title, TitleKind::Icon);
+        }
+        if( m_Titles.window != new_title ) {
+            m_Titles.window = new_title;
+            m_OnTitleChanged(_title.title, TitleKind::Window);
+        }
+    }
+}
+
+void InterpreterImpl::ProcessTitleManipulation(const input::TitleManipulation &_title_manipulation)
+{
+    if( _title_manipulation.operation == input::TitleManipulation::Save ) {
+        if( _title_manipulation.target == input::TitleManipulation::Icon ) {
+            m_Titles.saved_icon.emplace_back(m_Titles.icon);
+        }
+        else if( _title_manipulation.target == input::TitleManipulation::Window ) {
+            m_Titles.saved_window.emplace_back(m_Titles.window);
+        }
+        else if( _title_manipulation.target == input::TitleManipulation::Both ) {
+            m_Titles.saved_icon.emplace_back(m_Titles.icon);
+            m_Titles.saved_window.emplace_back(m_Titles.window);
+        }
+    }
+    else if( _title_manipulation.operation == input::TitleManipulation::Restore ) {
+        if( _title_manipulation.target == input::TitleManipulation::Icon ||
+            _title_manipulation.target == input::TitleManipulation::Both ) {
+            if( not m_Titles.saved_icon.empty() ) {
+                const input::Title cmd{input::Title::Icon, m_Titles.saved_icon.back()};
+                m_Titles.saved_icon.pop_back();
+                ProcessChangeTitle(cmd);
+            }
+        }
+        if( _title_manipulation.target == input::TitleManipulation::Window ||
+            _title_manipulation.target == input::TitleManipulation::Both ) {
+            if( not m_Titles.saved_window.empty() ) {
+                const input::Title cmd{input::Title::Window, m_Titles.saved_window.back()};
+                m_Titles.saved_window.pop_back();
+                ProcessChangeTitle(cmd);
+            }
+        }
+    }
 }
 
 bool InterpreterImpl::ShowCursor()

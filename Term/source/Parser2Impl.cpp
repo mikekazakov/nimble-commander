@@ -1193,9 +1193,9 @@ static std::optional<input::TitleManipulation> ComposeWindowTitleManipulation(un
     if( pt == 0 )
         m.target = TitleManipulation::Both;
     else if( pt == 1 )
-        m.target = TitleManipulation::IconTitle;
+        m.target = TitleManipulation::Icon;
     else if( pt == 2 )
-        m.target = TitleManipulation::WindowTitle;
+        m.target = TitleManipulation::Window;
     else
         return {};
 

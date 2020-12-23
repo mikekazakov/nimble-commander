@@ -90,8 +90,8 @@ using namespace nc::term;
         m_Interpreter->SetBell([]{
             NSBeep();
         });
-        m_Interpreter->SetTitle([weak_self](const std::string &_title, bool, bool){
-            dispatch_to_main_queue( [weak_self, _title]{
+        m_Interpreter->SetTitle([weak_self](const std::string &_title, Interpreter::TitleKind) {
+            dispatch_to_main_queue([weak_self, _title] {
                 NCTermExternalEditorState *me = weak_self;
                 me->m_Title = _title;
                 [me updateTitle];

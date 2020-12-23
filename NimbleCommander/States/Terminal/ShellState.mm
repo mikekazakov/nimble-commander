@@ -216,6 +216,14 @@ static const auto g_CustomPath = "terminal.customShellPath";
             [strongself->m_TermScrollView.view adjustSizes:false];
         });
     });
+    
+    m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const char *_cwd, [[maybe_unused]] bool _changed) {
+        if( auto strongself = weakself ) {
+            strongself->m_IconTitle = "";
+            strongself->m_WindowTitle = "";
+            [strongself updateTitle];
+        }
+    });
 
     // need right CWD here
     if( m_Task->State() == ShellTask::TaskState::Inactive ||
@@ -240,7 +248,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
 {
     NSString *const new_title = [=] {
         if( not m_IconTitle.empty() or not m_WindowTitle.empty() ) {
-            if( not m_IconTitle.empty() and not m_WindowTitle.empty() ) {
+            if( not m_IconTitle.empty() and not m_WindowTitle.empty() and
+                m_IconTitle != m_WindowTitle ) {
                 return [NSString stringWithFormat:@"%@ - %@",
                                                   [NSString stringWithUTF8StdString:m_WindowTitle],
                                                   [NSString stringWithUTF8StdString:m_IconTitle]];

@@ -11,75 +11,75 @@
 namespace nc::term {
 
 namespace input {
- 
-enum class Type {
-    noop,                    // no operation, defined only for conviniency
-    text,                    // clean unicode text without any control characters, both escaped
-                             // and unescaped. payload type - UTF8Text
-    line_feed,               // line feed or new line
-    horizontal_tab,          // move cursor to next horizontal tab stop.
-                             // negative values means backward direction.
-                             // payload type - signed
-    carriage_return,         // move cursor to the beginning of the horizontal line
-    back_space,              // move cursor left by one space
-    bell,                    // generates a bell tone
-    reverse_index,           // move cursor up, scroll if needed
-    reset,                   // reset the terminal to its initial state
-    save_state,              // save cursor position and graphic rendition
-    restore_state,           // restore cursor position and graphic rendition
-    screen_alignment_test,   // DECALN — screen alignment pattern
-    change_title,            // payload type - Title
-    move_cursor,             // payload type - CursorMovement
-    erase_in_display,        // payload type - DisplayErasure
-    erase_in_line,           // payload type - LineErasure
-    insert_lines,            // insert the indicated number of blank lines
-                             // payload type - unsigned
-    delete_lines,            // delete the indicated number of lines
-                             // payload type - unsigned
-    delete_characters,       // delete the indicated number of characters from the cursor position
-                             // to the right. payload type - unsigned
-    insert_characters,       // insert blank characters.
-                             // payload type - unsigned
-    scroll_lines,            // scroll up(positive) or down(negative) the indicated number of lines
-                             // payload type - signed
-    erase_characters,        // erase the indicated number of characters on current line,
-                             // from the cursor position to the right. payload type - unsigned
-    repeat_last_character,   // repeat the last output character the indicated number of times.
-                             // payload type - unsigned
-    report,                  // ask for the terminal's status
-                             // payload type - DeviceReport
-    change_mode,             // payload type - ModeChange
-    set_scrolling_region,    // payload type - ScrollingRegion
-    clear_tab,               // payload type - TabClear
-    set_tab,                 // set one horizontal stop at the active position.
-    set_character_attributes,// payload type - CharacterAttributes
-    select_character_set,    // payload type unsigned (0 - G0, 1 - G1, 2 - G2, 3 - G3)
-    designate_character_set  // payload type - CharacterSetDesignation
+
+enum class Type
+{
+    noop,                     // no operation, defined only for conviniency
+    text,                     // clean unicode text without any control characters, both escaped
+                              // and unescaped. payload type - UTF8Text
+    line_feed,                // line feed or new line
+    horizontal_tab,           // move cursor to next horizontal tab stop.
+                              // negative values means backward direction.
+                              // payload type - signed
+    carriage_return,          // move cursor to the beginning of the horizontal line
+    back_space,               // move cursor left by one space
+    bell,                     // generates a bell tone
+    reverse_index,            // move cursor up, scroll if needed
+    reset,                    // reset the terminal to its initial state
+    save_state,               // save cursor position and graphic rendition
+    restore_state,            // restore cursor position and graphic rendition
+    screen_alignment_test,    // DECALN — screen alignment pattern
+    change_title,             // payload type - Title
+    manipulate_title,         // payload type - WindowTitleManipulation
+    move_cursor,              // payload type - CursorMovement
+    erase_in_display,         // payload type - DisplayErasure
+    erase_in_line,            // payload type - LineErasure
+    insert_lines,             // insert the indicated number of blank lines
+                              // payload type - unsigned
+    delete_lines,             // delete the indicated number of lines
+                              // payload type - unsigned
+    delete_characters,        // delete the indicated number of characters from the cursor position
+                              // to the right. payload type - unsigned
+    insert_characters,        // insert blank characters.
+                              // payload type - unsigned
+    scroll_lines,             // scroll up(positive) or down(negative) the indicated number of lines
+                              // payload type - signed
+    erase_characters,         // erase the indicated number of characters on current line,
+                              // from the cursor position to the right. payload type - unsigned
+    repeat_last_character,    // repeat the last output character the indicated number of times.
+                              // payload type - unsigned
+    report,                   // ask for the terminal's status
+                              // payload type - DeviceReport
+    change_mode,              // payload type - ModeChange
+    set_scrolling_region,     // payload type - ScrollingRegion
+    clear_tab,                // payload type - TabClear
+    set_tab,                  // set one horizontal stop at the active position.
+    set_character_attributes, // payload type - CharacterAttributes
+    select_character_set,     // payload type unsigned (0 - G0, 1 - G1, 2 - G2, 3 - G3)
+    designate_character_set   // payload type - CharacterSetDesignation
 };
 
-struct None
-{
+struct None {
 };
 
-struct Title
-{
-    enum Kind {
+struct Title {
+    enum Kind
+    {
         IconAndWindow,
         Icon,
         Window
     };
     Kind kind = IconAndWindow;
-    std::string title; 
+    std::string title;
 };
 
-struct UTF8Text
-{
+struct UTF8Text {
     std::string characters;
 };
 
-struct CursorMovement
-{
-    enum Positioning {
+struct CursorMovement {
+    enum Positioning
+    {
         Absolute,
         Relative
     };
@@ -88,9 +88,9 @@ struct CursorMovement
     std::optional<int> y;
 };
 
-struct DisplayErasure
-{
-    enum Area {
+struct DisplayErasure {
+    enum Area
+    {
         FromCursorToDisplayEnd,
         FromDisplayStartToCursor,
         WholeDisplay,
@@ -99,9 +99,9 @@ struct DisplayErasure
     Area what_to_erase = FromCursorToDisplayEnd;
 };
 
-struct LineErasure
-{
-    enum Area {
+struct LineErasure {
+    enum Area
+    {
         FromCursorToLineEnd,
         FromLineStartToCursor,
         WholeLine
@@ -109,37 +109,38 @@ struct LineErasure
     Area what_to_erase = FromCursorToLineEnd;
 };
 
-struct ModeChange
-{
-    enum Kind {
-        Insert, // Insert Mode / Replace Mode [IRM]
-        NewLine, // New Line Mode / Line Feed Mode [LNM]
-        Column132, // 132 Column Mode / 80 Column Mode [DECCOLM]
-        Origin, // Origin Cursor Mode / Normal Cursor Mode [DECOM]
-        AutoWrap, // Auto-wrap Mode / No Auto-wrap Mode [DECAWM]
-        ReverseVideo, // Reverse Video / Normal Video [DECSCNM]
-        SmoothScroll, // Smooth (Slow) Scroll / Jump (Fast) Scroll [DECSCLM]
-        ApplicationCursorKeys, // Application Cursor Keys / Normal Cursor Keys [DECCKM]
-        AlternateScreenBuffer, // Alternate Screen Buffer / Normal Screen Buffer
-        AlternateScreenBuffer1049, // as AlternateScreenBuffer, but clears alternate screen
-        BlinkingCursor, // Start Blinking Cursor / Stop Blinking Cursor
-        ShowCursor, // Show Cursor / Hide Cursor [DECTCEM]
-        AutoRepeatKeys, // Auto-repeat Keys / No Auto-repeat Keys [DECARM]
-        SendMouseXYOnPress, // Do send / don't send (X10 compatibility - xterm)
-        SendMouseXYOnPressAndRelease, // Do send / don't send (xterm)
+struct ModeChange {
+    enum Kind
+    {
+        Insert,                           // Insert Mode / Replace Mode [IRM]
+        NewLine,                          // New Line Mode / Line Feed Mode [LNM]
+        Column132,                        // 132 Column Mode / 80 Column Mode [DECCOLM]
+        Origin,                           // Origin Cursor Mode / Normal Cursor Mode [DECOM]
+        AutoWrap,                         // Auto-wrap Mode / No Auto-wrap Mode [DECAWM]
+        ReverseVideo,                     // Reverse Video / Normal Video [DECSCNM]
+        SmoothScroll,                     // Smooth (Slow) Scroll / Jump (Fast) Scroll [DECSCLM]
+        ApplicationCursorKeys,            // Application Cursor Keys / Normal Cursor Keys [DECCKM]
+        AlternateScreenBuffer,            // Alternate Screen Buffer / Normal Screen Buffer
+        AlternateScreenBuffer1049,        // as AlternateScreenBuffer, but clears alternate screen
+        BlinkingCursor,                   // Start Blinking Cursor / Stop Blinking Cursor
+        ShowCursor,                       // Show Cursor / Hide Cursor [DECTCEM]
+        AutoRepeatKeys,                   // Auto-repeat Keys / No Auto-repeat Keys [DECARM]
+        SendMouseXYOnPress,               // Do send / don't send (X10 compatibility - xterm)
+        SendMouseXYOnPressAndRelease,     // Do send / don't send (xterm)
         SendMouseXYOnPressDragAndRelease, // Do send / don't send (xterm)
-        SendMouseXYAnyEvent, // Use All Motion Mouse Tracking / Don't use All Motion Mouse Tracking (xterm)
+        SendMouseXYAnyEvent, // Use All Motion Mouse Tracking / Don't use All Motion Mouse Tracking
+                             // (xterm)
         SendMouseReportUFT8, // Enable UTF-8 Mouse Mode / Disable UTF-8 Mouse Mode (xterm)
-        SendMouseReportSGR, // Enable SGR Mouse Mode / Disable SGR Mouse Mode (xterm)
-        BracketedPaste, // Enable bracketed paste mode/ Disable bracketed paste mode (xterm)
+        SendMouseReportSGR,  // Enable SGR Mouse Mode / Disable SGR Mouse Mode (xterm)
+        BracketedPaste,      // Enable bracketed paste mode/ Disable bracketed paste mode (xterm)
     };
     Kind mode = Insert;
     bool status = false;
 };
 
-struct DeviceReport
-{
-    enum Kind {
+struct DeviceReport {
+    enum Kind
+    {
         TerminalId,
         DeviceStatus,
         CursorPosition
@@ -147,18 +148,17 @@ struct DeviceReport
     Kind mode = TerminalId;
 };
 
-struct ScrollingRegion
-{
+struct ScrollingRegion {
     struct Range {
-        int top; // closed range end, [
+        int top;    // closed range end, [
         int bottom; // open range end, )
     };
     std::optional<Range> range;
 };
 
-struct TabClear
-{
-    enum Kind {
+struct TabClear {
+    enum Kind
+    {
         All,
         CurrentColumn
     };
@@ -166,7 +166,8 @@ struct TabClear
 };
 
 struct CharacterAttributes {
-    enum Kind {
+    enum Kind
+    {
         Normal,
         Bold,
         Faint,
@@ -223,63 +224,87 @@ struct CharacterAttributes {
 };
 
 struct CharacterSetDesignation {
-    enum Set {
-        DECSpecialGraphics, // '0'
+    enum Set
+    {
+        DECSpecialGraphics,                      // '0'
         AlternateCharacterROMStandardCharacters, // '1'
-        AlternateCharacterROMSpecialGraphics, // '2'
-        UK,                 // 'A'
-        USASCII             // 'B'
+        AlternateCharacterROMSpecialGraphics,    // '2'
+        UK,                                      // 'A'
+        USASCII                                  // 'B'
     };
     unsigned target = 0; // 0 - G0, 1 - G1 etc
     Set set = DECSpecialGraphics;
 };
 
-struct Command
-{
-    using Payload = std::variant<None, signed, unsigned, UTF8Text, Title, CursorMovement,
-    DisplayErasure, LineErasure, ModeChange, DeviceReport, ScrollingRegion, TabClear,
-    CharacterAttributes, CharacterSetDesignation>;
-    Command() noexcept; 
+struct TitleManipulation {
+    enum Kind
+    {
+        Both,
+        IconTitle,
+        WindowTitle
+    };
+    enum Operation
+    {
+        Save,
+        Restore
+    };
+    Kind target = Both;
+    Operation operation = Save;
+};
+
+struct Command {
+    using Payload = std::variant<None,
+                                 signed,
+                                 unsigned,
+                                 UTF8Text,
+                                 Title,
+                                 CursorMovement,
+                                 DisplayErasure,
+                                 LineErasure,
+                                 ModeChange,
+                                 DeviceReport,
+                                 ScrollingRegion,
+                                 TabClear,
+                                 CharacterAttributes,
+                                 CharacterSetDesignation,
+                                 TitleManipulation>;
+    Command() noexcept;
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;
-    
+
     Type type;
     Payload payload;
 };
 
-std::string VerboseDescription(const Command & _command);
+std::string VerboseDescription(const Command &_command);
 void PrintCommands(std::span<const Command> _commands, std::ostream &_out = std::cout);
 std::string FormatRawInput(std::span<const std::byte> _input);
 
-}
+} // namespace input
 
 class Parser2
 {
-public: 
+public:
     using Bytes = std::span<const std::byte>;
     virtual ~Parser2() = default;
-    virtual std::vector<input::Command> Parse( Bytes _to_parse ) = 0;
+    virtual std::vector<input::Command> Parse(Bytes _to_parse) = 0;
 };
-
 
 namespace input {
 
-inline Command::Command() noexcept :
-    Command(Type::noop)
+inline Command::Command() noexcept : Command(Type::noop)
 {
 }
 
-inline Command::Command(Type _type) noexcept:
-    type{_type}
+inline Command::Command(Type _type) noexcept : type{_type}
 {
 }
 
-inline Command::Command(Type _type, Payload _payload) noexcept:
-    type{_type},
-    payload{std::move(_payload)}
+inline Command::Command(Type _type, Payload _payload) noexcept
+    : type{_type}, payload{std::move(_payload)}
 {
 }
 
-}
+} // namespace input
 
-}
+} // namespace nc::term

@@ -9,6 +9,7 @@ ColumnLimit: 100
 AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: InlineOnly
 AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortEnumsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
 BinPackParameters: false
@@ -16,7 +17,8 @@ BreakBeforeBraces: Custom
 BraceWrapping:
     AfterFunction: true
     AfterClass: true
-    AfterEnum: true
+    AfterStruct: false
+    AfterEnum: false
 BreakStringLiterals: true
 FixNamespaceComments: true
 SortIncludes: false
@@ -32,6 +34,7 @@ ColumnLimit: 100
 AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: InlineOnly
 AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortEnumsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
 BinPackParameters: false
@@ -39,7 +42,8 @@ BreakBeforeBraces: Custom
 BraceWrapping:
     AfterFunction: true
     AfterClass: true
-    AfterEnum: true
+    AfterStruct: false
+    AfterEnum: false
 BreakStringLiterals: true
 FixNamespaceComments: true
 SortIncludes: false

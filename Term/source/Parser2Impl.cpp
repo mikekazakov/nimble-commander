@@ -567,6 +567,7 @@ void Parser2Impl::SSCSISubmit() noexcept
         case 'm': CSI_m(); break;
         case 'n': CSI_n(); break;
         case 'r': CSI_r(); break;
+        case 't': CSI_t(); break;
         case '`': CSI_Accent(); break;
         case '@': CSI_At(); break;
         default: LogMissedCSIRequest( m_CSIState.buffer ); break;
@@ -1174,7 +1175,54 @@ void Parser2Impl::CSI_r() noexcept
     }
     else {
         LogMissedCSIRequest(m_CSIState.buffer);
+    }
+}
+
+static std::optional<input::TitleManipulation> ComposeWindowTitleManipulation(unsigned ps,
+                                                                              unsigned pt)
+{
+    using input::TitleManipulation;
+    TitleManipulation m;
+    if( ps == 22 )
+        m.operation = TitleManipulation::Save;
+    else if( ps == 23 )
+        m.operation = TitleManipulation::Restore;
+    else
+        return {};
+
+    if( pt == 0 )
+        m.target = TitleManipulation::Both;
+    else if( pt == 1 )
+        m.target = TitleManipulation::IconTitle;
+    else if( pt == 2 )
+        m.target = TitleManipulation::WindowTitle;
+    else
+        return {};
+
+    return m;
+}
+
+void Parser2Impl::CSI_t() noexcept
+{
+    // CSI Ps ; Ps ; Ps t
+    const auto p = CSIParamsScanner::Parse(m_CSIState.buffer);
+    if( p.count < 1 )
         return;
+    const unsigned ps = p.values[0];
+
+    using namespace input;
+    if( (ps == 22 || ps == 23) && p.count == 2 ) {
+        // Ps = 2 2 ; 0  ⇒  Save xterm icon and window title on stack.
+        // Ps = 2 2 ; 1  ⇒  Save xterm icon title on stack.
+        // Ps = 2 2 ; 2  ⇒  Save xterm window title on stack.
+        // Ps = 2 3 ; 0  ⇒  Restore xterm icon and window title from stack.
+        // Ps = 2 3 ; 1  ⇒  Restore xterm icon title from stack.
+        // Ps = 2 3 ; 2  ⇒  Restore xterm window title from stack.
+        const unsigned pt = p.values[1];
+        if( const auto m = ComposeWindowTitleManipulation(ps, pt) )
+            m_Output.emplace_back(Type::manipulate_title, *m);
+    } else {
+        LogMissedCSIRequest(m_CSIState.buffer);
     }
 }
 

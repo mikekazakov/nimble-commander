@@ -46,7 +46,7 @@ using namespace std::literals;
 
 static std::string NextName( const std::string& _initial, int _index )
 {
-    boost::filesystem::path p = _initial;
+    std::filesystem::path p = _initial;
     if( p.has_extension() ) {
         auto ext = p.extension();
         p.replace_extension();
@@ -56,24 +56,38 @@ static std::string NextName( const std::string& _initial, int _index )
         return p.native() + " " + std::to_string(_index);
 }
 
-static bool HasEntry( const std::string &_name, const VFSListing &_listing )
+static bool HasEntry(const std::string &_name, const VFSListing &_listing, bool _case_sensitive)
 {
     // naive O(n) implementation, may cause troubles on huge listings
-    for( int i = 0, e = _listing.Count(); i != e; ++i )
-        if( _listing.Filename(i) == _name )
-            return true;
+    unsigned size = _listing.Count();
+    if( _case_sensitive ) {
+        for( unsigned i = 0; i != size; ++i ) {
+            if( _listing.Filename(i) == _name )
+                return true;
+        }
+    }
+    else {
+        auto name = [NSString stringWithUTF8StdString:_name];
+        for( unsigned i = 0; i != size; ++i ) {
+            if( [name compare:_listing.FilenameNS(i)
+                      options:NSCaseInsensitiveSearch] == NSOrderedSame )
+                return true;
+        }
+    }
     return false;
 }
 
-static std::string FindSuitableName( const std::string& _initial, const VFSListing &_listing )
+static std::string FindSuitableName(const std::string& _initial,
+                                    const VFSListing &_listing,
+                                    bool _case_sensitive )
 {
     auto name = _initial;
-    if( !HasEntry(name, _listing) )
+    if( !HasEntry(name, _listing, _case_sensitive) )
         return name;
     
     for( int i = 2; ; ++i ) {
         name = NextName(_initial, i);
-        if( !HasEntry(name, _listing) )
+        if( !HasEntry(name, _listing, _case_sensitive) )
             break;
         if( i >= 100 )
             return ""; // we're full of such filenames, no reason to go on
@@ -109,14 +123,15 @@ bool MakeNewFile::Predicate( PanelController *_target ) const
 
 void MakeNewFile::Perform( PanelController *_target, id ) const
 {
-    const boost::filesystem::path dir = _target.currentDirectoryPath;
+    const std::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
     const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *weak_panel = _target;
     
     dispatch_to_background([=]{
-        auto name = FindSuitableName(g_InitialFileName, *listing);
+        const bool case_sensitive = vfs->IsCaseSensitiveAtPath(dir.c_str());
+        auto name = FindSuitableName(g_InitialFileName, *listing, case_sensitive);
         if( name.empty() )
             return;
         
@@ -150,13 +165,14 @@ bool MakeNewFolder::Predicate( PanelController *_target ) const
 
 void MakeNewFolder::Perform( PanelController *_target, id ) const
 {
-    const boost::filesystem::path dir = _target.currentDirectoryPath;
+    const std::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
     const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
+    const bool case_sensitive = vfs->IsCaseSensitiveAtPath(dir.c_str());
     __weak PanelController *weak_panel = _target;
 
-    const auto name = FindSuitableName(g_InitialFolderName, *listing);
+    const auto name = FindSuitableName(g_InitialFolderName, *listing, case_sensitive);
     if( name.empty() )
         return;
 
@@ -189,13 +205,14 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id ) const
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
     const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
+    const bool case_sensitive = vfs->IsCaseSensitiveAtPath(dir.c_str());
     __weak PanelController *weak_panel = _target;
     const auto files = _target.selectedEntriesOrFocusedEntry;
     
     if( files.empty() )
         return;
     
-    const auto name = FindSuitableName(g_InitialFolderWithItemsName, *listing);
+    const auto name = FindSuitableName(g_InitialFolderWithItemsName, *listing, case_sensitive);
     if( name.empty() )
         return;
     

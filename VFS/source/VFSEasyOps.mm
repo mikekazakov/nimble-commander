@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
 #include <Habanero/SerialQueue.h>
@@ -395,7 +395,8 @@ int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr & _vfs)
         return ret;
     
     ret = file->Open(VFSFlags::OF_IRUsr | VFSFlags::OF_IRGrp | VFSFlags::OF_IROth |
-                    VFSFlags::OF_IWUsr | VFSFlags::OF_Write | VFSFlags::OF_Create);
+                    VFSFlags::OF_IWUsr | VFSFlags::OF_Write | VFSFlags::OF_Create |
+                     VFSFlags::OF_NoExist);
     if( ret != 0 )
         return ret;
     

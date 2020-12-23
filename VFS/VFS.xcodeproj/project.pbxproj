@@ -86,6 +86,7 @@
 		CFAB6D62258A555A00397DB5 /* FileWindow_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE0E21CFA2CC003F0E93 /* FileWindow_UT.mm */; };
 		CFAB6D6F258A58D300397DB5 /* WebDAV_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95571F4E65A60035E606 /* WebDAV_IT.mm */; };
 		CFAB6D87258B6B1F00397DB5 /* VFSArchive_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */; };
+		CFB63CD525939A630038502E /* VFSNative_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB63CD425939A630038502E /* VFSNative_IT.mm */; };
 		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
 		CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */; };
 		CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
@@ -253,6 +254,7 @@
 		CF818B7E1EA715ED00BC28E6 /* FileDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDownloadDelegate.mm; path = source/NetDropbox/FileDownloadDelegate.mm; sourceTree = "<group>"; };
 		CFAB6D27258A1AF000397DB5 /* VFSIT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VFSIT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
+		CFB63CD425939A630038502E /* VFSNative_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNative_IT.mm; path = tests/VFSNative_IT.mm; sourceTree = SOURCE_ROOT; };
 		CFC4F92F1F0B5E250000B3EE /* ListingObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ListingObjC.mm; path = source/ListingObjC.mm; sourceTree = "<group>"; };
 		CFC4F9F31F1719860000B3EE /* OSDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OSDetector.cpp; path = source/NetSFTP/OSDetector.cpp; sourceTree = "<group>"; };
 		CFC4F9F41F1719860000B3EE /* OSDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSDetector.h; path = source/NetSFTP/OSDetector.h; sourceTree = "<group>"; };
@@ -363,6 +365,7 @@
 				CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */,
 				CF18470B1E41C8A5008B7C9F /* VFSFTP_IT.mm */,
 				CF22F0AC258DF9260033E850 /* VFSMem_UT.cpp */,
+				CFB63CD425939A630038502E /* VFSNative_IT.mm */,
 				CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */,
 				CF18470C1E41C8A5008B7C9F /* VFSPS_IT.cpp */,
 				CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */,
@@ -846,6 +849,7 @@
 				CFAB6D1D258A1AF000397DB5 /* TestEnv.mm in Sources */,
 				CF22F08B258B7F280033E850 /* VFSSFTP_Tests.mm in Sources */,
 				CFAB6D6F258A58D300397DB5 /* WebDAV_IT.mm in Sources */,
+				CFB63CD525939A630038502E /* VFSNative_IT.mm in Sources */,
 				CFAB6D1F258A1AF000397DB5 /* Tests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

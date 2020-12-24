@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../Tests.h"
 #include <VFS/NetSFTP.h>
 
@@ -202,16 +202,15 @@ static const std::string_view g_OpenSSHECDSAEncrypted =
 "BjSL5BHpAY\n"
 "-----END OPENSSH PRIVATE KEY-----";
 
-//doesn't work now
-//static const std::string_view g_OpenSSHED25519Encrypted =
-//"-----BEGIN OPENSSH PRIVATE KEY-----\n"
-//"b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABCcSyGLZI\n"
-//"LnBpYVPrV3NSNvAAAAEAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAILZ5P3lQGLGj6rLw\n"
-//"8QFzaeIJbbLcDP7d++3i1vGmsMc1AAAAoMs1H0kSwXkCIdIq9knOz7R2Ph5SkU3x71Djl5\n"
-//"45EabaIASgWZlh0HJsumkZtTad7qufk6O5bwoTu7fBtOrQMSA5mqQ0X7KLGjjJaAvUsZbn\n"
-//"Zo2p/Oel9MfXk/y8KBatCs6SDCp36mYJeVAP7zu1YP/qnZwcKhjYiomwstsyjxk1SS06lD\n"
-//"9D25BkEY8ZF4OVl3PtjJgv9/DM5mOPnVJleF8=\n"
-//"-----END OPENSSH PRIVATE KEY-----";
+static const std::string_view g_OpenSSHED25519Encrypted =
+"-----BEGIN OPENSSH PRIVATE KEY-----\n"
+"b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABCcSyGLZI\n"
+"LnBpYVPrV3NSNvAAAAEAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAILZ5P3lQGLGj6rLw\n"
+"8QFzaeIJbbLcDP7d++3i1vGmsMc1AAAAoMs1H0kSwXkCIdIq9knOz7R2Ph5SkU3x71Djl5\n"
+"45EabaIASgWZlh0HJsumkZtTad7qufk6O5bwoTu7fBtOrQMSA5mqQ0X7KLGjjJaAvUsZbn\n"
+"Zo2p/Oel9MfXk/y8KBatCs6SDCp36mYJeVAP7zu1YP/qnZwcKhjYiomwstsyjxk1SS06lD\n"
+"9D25BkEY8ZF4OVl3PtjJgv9/DM5mOPnVJleF8=\n"
+"-----END OPENSSH PRIVATE KEY-----";
 
 #define PREFIX "nc::vfs::sftp::KeyValidator "
 using nc::vfs::sftp::KeyValidator;
@@ -299,17 +298,16 @@ TEST_CASE(PREFIX"validates an existing encrypted OpenSSH-ECDSA key")
     CHECK( KeyValidator{path, "qwerty"}.Validate() == true );
 }
 
-// doesn't work now
-//TEST_CASE(PREFIX"validates an existing encrypted OpenSSH-ED25519 key")
-//{
-//    TestDir test_dir;
-//    const auto path = test_dir.directory + "key"; 
-//    Save(path, std::string{g_OpenSSHED25519Encrypted});
-//    CHECK( KeyValidator{path, ""}.Validate() == false );
-//    CHECK( KeyValidator{path, "1231321232"}.Validate() == false );
-//    CHECK( KeyValidator{path, "some jibberish"}.Validate() == false );
-//    CHECK( KeyValidator{path, "qwerty"}.Validate() == true );
-//}
+TEST_CASE(PREFIX"validates an existing encrypted OpenSSH-ED25519 key")
+{
+    TestDir test_dir;
+    const auto path = test_dir.directory + "key";
+    Save(path, std::string{g_OpenSSHED25519Encrypted});
+    CHECK( KeyValidator{path, ""}.Validate() == false );
+    CHECK( KeyValidator{path, "1231321232"}.Validate() == false );
+    CHECK( KeyValidator{path, "some jibberish"}.Validate() == false );
+    CHECK( KeyValidator{path, "qwerty"}.Validate() == true );
+}
 
 static bool Save(const std::string &_filepath, const std::string &_content)
 {

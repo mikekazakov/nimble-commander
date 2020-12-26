@@ -45,6 +45,7 @@ private:
     void ProcessScreenAlignment();
     void ProcessEraseInDisplay( input::DisplayErasure _display_erasure );
     void ProcessEraseInLine( input::LineErasure _line_erasure );
+    void ProcessEraseCharacters( unsigned _amount );
     void ProcessSetScrollingRegion( input::ScrollingRegion _scrolling_region );
     void ProcessChangeMode( input::ModeChange _mode_change );
     void ProcessChangeColumnMode132( bool _on );

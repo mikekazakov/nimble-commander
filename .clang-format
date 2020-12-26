@@ -22,6 +22,7 @@ BraceWrapping:
     BeforeElse: true
 BreakStringLiterals: true
 FixNamespaceComments: true
+IndentCaseLabels: true
 SortIncludes: false
 SpaceBeforeParens: Never
 SpacesInConditionalStatement: true
@@ -48,6 +49,7 @@ BraceWrapping:
     BeforeElse: true
 BreakStringLiterals: true
 FixNamespaceComments: true
+IndentCaseLabels: true
 SortIncludes: false
 SpaceBeforeParens: Never
 SpacesInConditionalStatement: true

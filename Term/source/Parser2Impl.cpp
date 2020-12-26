@@ -830,11 +830,12 @@ void Parser2Impl::CSI_T() noexcept
     
 void Parser2Impl::CSI_X() noexcept
 {
-// CSI Ps X  Erase Ps Character(s) (default = 1) (ECH).
+    // CSI Ps X  Erase Ps Character(s) (default = 1) (ECH).
     const std::string_view s = m_CSIState.buffer;
     unsigned ps = 1; // default value
     std::from_chars(s.data(), s.data() + s.size(), ps);
-    m_Output.emplace_back( input::Type::erase_characters, ps );
+    ps = std::max(ps, 1u);
+    m_Output.emplace_back(input::Type::erase_characters, ps);
 }
     
 void Parser2Impl::CSI_Z() noexcept

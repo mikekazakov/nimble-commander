@@ -3,6 +3,7 @@
 #include <Habanero/CFString.h>
 #include <Habanero/CFPtr.h>
 #include <Utility/CharInfo.h>
+#include <magic_enum.hpp>
 #include "OrthodoxMonospace.h"
 #include "TranslateMaps.h"
 
@@ -40,13 +41,13 @@ void InterpreterImpl::Interpret( const input::Command& _command )
     InterpretSingleCommand(_command);
 }
 
-void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
+void InterpreterImpl::InterpretSingleCommand(const input::Command &_command)
 {
     using namespace input;
     const auto type = _command.type;
-    switch (type) {
+    switch( type ) {
         case Type::text:
-            ProcessText( *std::get_if<UTF8Text>(&_command.payload) );
+            ProcessText(*std::get_if<UTF8Text>(&_command.payload));
             break;
         case Type::line_feed:
             ProcessLF();
@@ -61,13 +62,13 @@ void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
             ProcessRI();
             break;
         case Type::move_cursor:
-            ProcessMC( *std::get_if<CursorMovement>(&_command.payload) );
+            ProcessMC(*std::get_if<CursorMovement>(&_command.payload));
             break;
         case Type::horizontal_tab:
-            ProcessHT( *std::get_if<signed>(&_command.payload) );
+            ProcessHT(*std::get_if<signed>(&_command.payload));
             break;
         case Type::report:
-            ProcessReport( *std::get_if<DeviceReport>(&_command.payload) );
+            ProcessReport(*std::get_if<DeviceReport>(&_command.payload));
             break;
         case Type::bell:
             ProcessBell();
@@ -76,31 +77,34 @@ void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
             ProcessScreenAlignment();
             break;
         case Type::erase_in_display:
-            ProcessEraseInDisplay( *std::get_if<DisplayErasure>(&_command.payload) );
+            ProcessEraseInDisplay(*std::get_if<DisplayErasure>(&_command.payload));
             break;
         case Type::erase_in_line:
-            ProcessEraseInLine( *std::get_if<LineErasure>(&_command.payload) );
+            ProcessEraseInLine(*std::get_if<LineErasure>(&_command.payload));
+            break;
+        case Type::erase_characters:
+            ProcessEraseCharacters(*std::get_if<unsigned>(&_command.payload));
             break;
         case Type::set_scrolling_region:
-            ProcessSetScrollingRegion( *std::get_if<ScrollingRegion>(&_command.payload) );
+            ProcessSetScrollingRegion(*std::get_if<ScrollingRegion>(&_command.payload));
             break;
         case Type::change_mode:
-            ProcessChangeMode( *std::get_if<ModeChange>(&_command.payload) );
+            ProcessChangeMode(*std::get_if<ModeChange>(&_command.payload));
             break;
         case Type::set_tab:
             ProcessHTS();
             break;
         case Type::clear_tab:
-            ProcessClearTab( *std::get_if<TabClear>(&_command.payload) );
+            ProcessClearTab(*std::get_if<TabClear>(&_command.payload));
             break;
         case Type::set_character_attributes:
-            ProcessSetCharacterAttributes( *std::get_if<CharacterAttributes>(&_command.payload) );
+            ProcessSetCharacterAttributes(*std::get_if<CharacterAttributes>(&_command.payload));
             break;
         case Type::designate_character_set:
-            ProcessDesignateCharacterSet(*std::get_if<CharacterSetDesignation>(&_command.payload) );
+            ProcessDesignateCharacterSet(*std::get_if<CharacterSetDesignation>(&_command.payload));
             break;
         case Type::select_character_set:
-            ProcessSelectCharacterSet( *std::get_if<unsigned>(&_command.payload) );
+            ProcessSelectCharacterSet(*std::get_if<unsigned>(&_command.payload));
             break;
         case Type::save_state:
             ProcessSaveState();
@@ -109,24 +113,26 @@ void InterpreterImpl::InterpretSingleCommand( const input::Command& _command )
             ProcessRestoreState();
             break;
         case Type::insert_lines:
-            ProcessInsertLines( *std::get_if<unsigned>(&_command.payload) );
+            ProcessInsertLines(*std::get_if<unsigned>(&_command.payload));
             break;
         case Type::delete_lines:
-            ProcessDeleteLines( *std::get_if<unsigned>(&_command.payload) );
+            ProcessDeleteLines(*std::get_if<unsigned>(&_command.payload));
             break;
         case Type::delete_characters:
-            ProcessDeleteCharacters( *std::get_if<unsigned>(&_command.payload) );
+            ProcessDeleteCharacters(*std::get_if<unsigned>(&_command.payload));
             break;
         case Type::insert_characters:
-            ProcessInsertCharacters( *std::get_if<unsigned>(&_command.payload) );
+            ProcessInsertCharacters(*std::get_if<unsigned>(&_command.payload));
             break;
         case Type::change_title:
-            ProcessChangeTitle( *std::get_if<input::Title>(&_command.payload) );
+            ProcessChangeTitle(*std::get_if<input::Title>(&_command.payload));
             break;
         case Type::manipulate_title:
-            ProcessTitleManipulation( *std::get_if<input::TitleManipulation>(&_command.payload) );
+            ProcessTitleManipulation(*std::get_if<input::TitleManipulation>(&_command.payload));
             break;
         default:
+            std::cerr << "Interpreter::InterpretSingleCommand: missed "
+                      << magic_enum::enum_name(type) << std::endl;
             break;
     }
 }
@@ -344,6 +350,13 @@ void InterpreterImpl::ProcessEraseInLine( const input::LineErasure _line_erasure
             m_Screen.EraseInLine(2);
             break;
     }
+}
+
+void InterpreterImpl::ProcessEraseCharacters( unsigned _amount )
+{
+    if( _amount == 0 )
+        return;
+    m_Screen.EraseAt(m_Screen.CursorX(), m_Screen.CursorY(), _amount);
 }
 
 void InterpreterImpl::ProcessSetScrollingRegion( const input::ScrollingRegion _scrolling_region )

@@ -757,13 +757,19 @@ TEST_CASE(PREFIX"CSI X")
 {
     Parser2Impl parser;
     SECTION( "ESC [ X" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[X"));
+        auto r = parser.Parse(to_bytes("\x1B[X"));
+        REQUIRE( r.size() == 1 );
+        CHECK( r[0].type == Type::erase_characters );
+        CHECK( as_unsigned(r[0]) == 1 );
+    }
+    SECTION( "ESC [ 0 X" ) {
+        auto r = parser.Parse(to_bytes("\x1B[0X"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::erase_characters );
         CHECK( as_unsigned(r[0]) == 1 );
     }
     SECTION( "ESC [ 67 X" ) {
-        auto r = parser.Parse(to_bytes("\x1B""[67X"));
+        auto r = parser.Parse(to_bytes("\x1B[67X"));
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::erase_characters );
         CHECK( as_unsigned(r[0]) == 67 );

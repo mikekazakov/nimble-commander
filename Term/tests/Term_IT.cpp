@@ -372,6 +372,15 @@ const static std::pair<const char*, const char*> g_SimpleCases[] =
         "          "
         "          "
     },
+    {
+        "AAAA\x1b[3D\x1b[2XB",
+        "AB A      "
+        "          "
+        "          "
+        "          "
+        "          "
+        "          "
+    },
 };
 
 const static std::pair<const char*, const char*> g_ResponseCases[] = 

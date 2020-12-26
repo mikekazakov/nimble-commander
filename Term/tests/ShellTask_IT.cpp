@@ -656,3 +656,82 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
     for( auto &ctx : shells )
         REQUIRE(ctx.shell_state.wait_to_become(5s, TaskState::Inactive));
 }
+
+TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
+{
+    AtomicHolder<std::string> buffer_dump;
+    Screen screen(20, 6);
+    Parser2Impl parser;
+    InterpreterImpl interpreter(screen);
+
+    ShellTask shell;
+    shell.ResizeWindow(20, 6);
+    SECTION("bash")
+    {
+        shell.SetShellPath("/bin/bash");
+        shell.SetEnvVar("PS1", ">");
+        shell.AddCustomShellArgument("bash");
+    }
+    SECTION("zsh")
+    {
+        shell.SetShellPath("/bin/zsh");
+        shell.SetEnvVar("PS1", ">");
+        shell.AddCustomShellArgument("zsh");
+        shell.AddCustomShellArgument("-f");
+    }
+    // [t]csh is out of equation - no such option exists (?)
+    shell.SetOnChildOutput([&](const void *_d, int _sz) {
+        if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
+            if( auto lock = screen.AcquireLock() ) {
+                interpreter.Interpret(cmds);
+                buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
+            }
+        }
+    });
+    REQUIRE(shell.Launch("/bin"));
+
+    shell.WriteChildInput("echo 123\r");
+    const std::string expected1 = ">echo 123           "
+                                  "123                 "
+                                  ">                   "
+                                  "                    "
+                                  "                    "
+                                  "                    ";
+    REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected1));
+
+    shell.ChDir("/");
+    const std::string expected2 = ">echo 123           "
+                                  "123                 "
+                                  ">                   "
+                                  ">                   "
+                                  "                    "
+                                  "                    ";
+    REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected2));
+
+    shell.WriteChildInput("echo 456\r");
+    const std::string expected3 = ">echo 123           "
+                                  "123                 "
+                                  ">                   "
+                                  ">echo 456           "
+                                  "456                 "
+                                  ">                   ";
+    REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected3));
+
+    shell.WriteChildInput("\e[A");
+    const std::string expected4 = ">echo 123           "
+                                  "123                 "
+                                  ">                   "
+                                  ">echo 456           "
+                                  "456                 "
+                                  ">echo 456           ";
+    REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected4));
+
+    shell.WriteChildInput("\e[A");
+    const std::string expected5 = ">echo 123           "
+                                  "123                 "
+                                  ">                   "
+                                  ">echo 456           "
+                                  "456                 "
+                                  ">echo 123           ";
+    REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected5));
+}

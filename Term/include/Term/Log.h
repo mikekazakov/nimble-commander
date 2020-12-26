@@ -19,37 +19,38 @@ struct Log {
     static void Set(std::shared_ptr<spdlog::logger> _logger) noexcept;
 
     template <typename... Args>
-    static void Trace(spdlog::source_loc _loc, std::string_view _fmt, const Args &... args)
+    static void Trace(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args) noexcept
     {
         Get().log(_loc, spdlog::level::trace, _fmt, args...);
     }
 
     template <typename... Args>
-    static void Debug(spdlog::source_loc _loc, std::string_view _fmt, const Args &... args)
+    static void Debug(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args) noexcept
     {
         Get().log(_loc, spdlog::level::debug, _fmt, args...);
     }
 
     template <typename... Args>
-    static void Info(spdlog::source_loc _loc, std::string_view _fmt, const Args &... args)
+    static void Info(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args) noexcept
     {
         Get().log(_loc, spdlog::level::info, _fmt, args...);
     }
 
     template <typename... Args>
-    static void Warn(spdlog::source_loc _loc, std::string_view _fmt, const Args &... args)
+    static void Warn(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args) noexcept
     {
         Get().log(_loc, spdlog::level::warn, _fmt, args...);
     }
 
     template <typename... Args>
-    static void Error(spdlog::source_loc _loc, std::string_view _fmt, const Args &... args)
+    static void Error(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args) noexcept
     {
         Get().log(_loc, spdlog::level::err, _fmt, args...);
     }
 
     template <typename... Args>
-    static void Critical(spdlog::source_loc _loc, std::string_view _fmt, const Args &... args)
+    static void
+    Critical(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args) noexcept
     {
         Get().log(_loc, spdlog::level::critical, _fmt, args...);
     }

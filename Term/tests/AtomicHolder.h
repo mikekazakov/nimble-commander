@@ -4,6 +4,7 @@
 #include <atomic>
 #include <queue>
 #include <chrono>
+#include <iostream>
 #include <Habanero/mach_time.h>
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -14,7 +15,8 @@ struct AtomicHolder {
     bool wait_to_become(std::chrono::nanoseconds _timeout, const T &_new_value);
     bool wait_to_become_with_runloop(std::chrono::nanoseconds _timeout,
                                      std::chrono::nanoseconds _slice,
-                                     const T &_new_value);
+                                     const T &_new_value,
+                                     bool _dump_on_fail = false);
     void store(const T &_new_value);
     T value;
 
@@ -61,7 +63,8 @@ bool AtomicHolder<T>::wait_to_become(std::chrono::nanoseconds _timeout, const T 
 template <class T>
 bool AtomicHolder<T>::wait_to_become_with_runloop(std::chrono::nanoseconds _timeout,
                                                   std::chrono::nanoseconds _slice,
-                                                  const T &_new_value)
+                                                  const T &_new_value,
+                                                  bool _dump_on_fail)
 {
     const auto deadline = machtime() + _timeout;
     do {
@@ -74,6 +77,10 @@ bool AtomicHolder<T>::wait_to_become_with_runloop(std::chrono::nanoseconds _time
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(),
                            false);
     } while( deadline > machtime() );
+    if( _dump_on_fail ) {
+        auto lg = std::lock_guard{mutex};
+        std::cerr << value << std::endl;
+    }
     return false;
 }
 

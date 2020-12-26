@@ -37,6 +37,9 @@ static char *g_ZSHParams[3] = {(char *)"-Z", (char *)"-g", 0};
 static char *g_TCSH[2] = {(char *)"tcsh", 0};
 static char **g_ShellParams[3] = {g_BashParams, g_ZSHParams, g_TCSH};
 
+static char g_BashHistControlEnv[] = "HISTCONTROL=ignorespace";
+static const char *g_ZSHHistControlCmd = "setopt HIST_IGNORE_SPACE\n";
+
 static bool IsDirectoryAvailableForBrowsing(const char *_path);
 static bool IsDirectoryAvailableForBrowsing(const std::string &_path);
 static std::string GetDefaultShell();
@@ -181,6 +184,7 @@ static void KillAndReap(int _pid,
 struct ShellTask::Impl {
     // accessible from any thread:
     std::mutex lock;
+    std::mutex cleanup_lock;
     TaskState state = TaskState::Inactive;
     int master_fd = -1;
     std::atomic_int shell_pid{-1};
@@ -389,6 +393,20 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
             return false;
         }
 
+        if ( I->shell_type == ShellType::ZSH ) {
+            // say ZSH to not put into history any commands starting with space character
+            auto cmd = std::string_view(g_ZSHHistControlCmd);
+            I->master_write_lock.lock();
+            const ssize_t write_res = write(I->master_fd, cmd.data(), cmd.length() );
+            I->master_write_lock.unlock();
+            if( write_res != static_cast<ssize_t>(cmd.length()) ) {
+                Log::Warn(
+                    SPDLOC, "failed to write histctrl cmd, errno: {} ({})", errno, strerror(errno));
+                CleanUp(); // Well, RIP
+                return false;
+            }
+        }
+        
         // write prompt setup to the shell
         const std::string prompt_setup = ComposePromptCommand();
         Log::Debug(SPDLOC, "prompt_setup: {}", prompt_setup);
@@ -432,9 +450,11 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
                 exit(-1);
         }
 
-        // say BASH to not put into history any command starting with space character
-        putenv((char *)"HISTCONTROL=ignorespace");
-
+        if( I->shell_type == ShellType::Bash ) {
+            // say BASH to not put into history any commands starting with space character
+            putenv(g_BashHistControlEnv);
+        }
+        
         // close all file descriptors except [0], [1], [2] and [g_PromptPipe][g_SemaphorePipe]
         nc::base::CloseFromExcept(3, std::array<int, 2>{g_PromptPipe, g_SemaphorePipe});
 
@@ -589,6 +609,19 @@ void ShellTask::WriteChildInput(std::string_view _data)
 
 void ShellTask::CleanUp()
 {
+    auto cleanup_lg = std::unique_lock{I->cleanup_lock, std::defer_lock};
+    if( I->input_thread.get_id() == std::this_thread::get_id() ) {
+        if( cleanup_lg.try_lock() == false ) {
+            // already doing a cleanup from either.
+            // return immediately to avoid deadlocking on input_thread.join().
+            return;
+        }
+    }
+    else {
+        // main thread should always wait for this mutex
+        cleanup_lg.lock();
+    }
+    
     std::lock_guard lock{I->lock};
 
     if( I->shell_pid > 0 ) {

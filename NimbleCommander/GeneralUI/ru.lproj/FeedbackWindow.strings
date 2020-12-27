@@ -1,12 +1,8 @@
 /* Class = "NSTextFieldCell"; title = "We strive to make the best software possible. We would appreciate it if you could share your positive experience with us and other users."; ObjectID = "2LV-5v-Msp"; */
-"2LV-5v-Msp.title" = "Вы поставили нам высокую оценку – покажите её другим пользователям. Это займёт несколько секунд.
-
-Спасибо ещё раз!";
+"2LV-5v-Msp.title" = "Вы поставили нам высокую оценку – покажите её другим пользователям. Это займёт несколько секунд.\n\nСпасибо ещё раз!";
 
 /* Class = "NSTextFieldCell"; title = "We strive to make the best software possible. We would appreciate it if you could share your positive experience with us and other users."; ObjectID = "6XR-CU-qa6"; */
-"6XR-CU-qa6.title" = "И Вы можете повлиять на это! Всё просто. Вы только что поставили нам высокую оценку – покажите её друзьям и коллегам. Это займёт несколько секунд.
-
-Спасибо ещё раз!";
+"6XR-CU-qa6.title" = "И Вы можете повлиять на это! Всё просто. Вы только что поставили нам высокую оценку – покажите её друзьям и коллегам. Это займёт несколько секунд.\n\nСпасибо ещё раз!";
 
 /* Class = "NSTextFieldCell"; title = "If you could take a moment to rate Nimble Commander on the Mac App Store, we’d really appreciate it."; ObjectID = "21T-EA-38h"; */
 "21T-EA-38h.title" = "Ресурсы, выделяемые на разработку Nimble Commander, зависят от оценки в MAS. Чем она выше – тем больше функций мы добавляем и быстрей обновляемся.";

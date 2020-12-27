@@ -29,6 +29,9 @@
 "Copy “%@”" = "Копировать “%@”";
 
 /* Copy many items */
+"Copy %d Items" = "Скопировать %d объектов";
+
+/* Copy many items */
 "Copy %lu Items" = "Копировать %lu объектов";
 
 /* Menu item postfix marker for default apps to open with, for English is 'default' */

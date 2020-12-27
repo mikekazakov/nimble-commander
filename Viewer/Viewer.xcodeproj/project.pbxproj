@@ -394,7 +394,7 @@
 		CFD79A5921F65A000043A26D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CF5C1D1C255ED68200ADE703 = {
@@ -597,6 +597,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFD79A7D21F65A980043A26D /* debug.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 			};
 			name = Debug;
@@ -605,6 +606,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFD79A7E21F65A980043A26D /* release.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 			};
 			name = Release;

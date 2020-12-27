@@ -803,7 +803,7 @@
 		CFF53B261EDD197300F567C4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CF2C101022A072BE00A5359D = {
@@ -1224,6 +1224,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF62B7C121B3D703009972DE /* debug.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Debug;
 		};
@@ -1231,6 +1232,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF62B7C221B3D703009972DE /* release.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Release;
 		};

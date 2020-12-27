@@ -722,7 +722,7 @@
 		CF69CFC71DA224E200992B84 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CF26DE1721D285A6003F0E93 = {

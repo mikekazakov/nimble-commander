@@ -439,6 +439,9 @@
 /* Class = "NSMenuItem"; title = "Open Extended Attributes"; ObjectID = "o44-xu-Cyg"; */
 "o44-xu-Cyg.title" = "Показать расширенные атрибуты";
 
+/* Class = "NSMenuItem"; title = "Follow Symlink"; ObjectID = "Ob2-ob-NxB"; */
+"Ob2-ob-NxB.title" = "Следовать за ссылкой";
+
 /* Class = "NSMenuItem"; title = "Activate License..."; ObjectID = "Obg-B8-YTv"; */
 "Obg-B8-YTv.title" = "Активировать лицензию...";
 

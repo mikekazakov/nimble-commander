@@ -217,6 +217,9 @@
 /* Class = "NSButtonCell"; title = "Equalize widths"; ObjectID = "StD-Qd-tVh"; */
 "StD-Qd-tVh.title" = "Уравнять ширины";
 
+/* Class = "NSButtonCell"; title = "Deselect items after file operations"; ObjectID = "T3Z-SO-RF9"; */
+"T3Z-SO-RF9.title" = "Снимать выделение после файловых операций";
+
 /* Class = "NSMenuItem"; title = "1"; ObjectID = "tBZ-Qz-rwE"; */
 "tBZ-Qz-rwE.title" = "1";
 

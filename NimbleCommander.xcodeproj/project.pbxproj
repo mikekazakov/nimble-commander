@@ -3304,10 +3304,9 @@
 			};
 			buildConfigurationList = CFC5120C16C4BD3D00D247EE /* Build configuration list for PBXProject "NimbleCommander" */;
 			compatibilityVersion = "Xcode 6.3";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 				ru,

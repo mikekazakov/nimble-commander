@@ -303,11 +303,11 @@
 			};
 			buildConfigurationList = CFACF9B51E24AAB800FD6AB6 /* Build configuration list for PBXProject "MMTabBarViewLib" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = CFACF9B11E24AAB800FD6AB6;
 			productRefGroup = CFACF9BB1E24AAB800FD6AB6 /* Products */;

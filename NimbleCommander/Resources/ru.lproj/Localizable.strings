@@ -19,6 +19,12 @@
 /* (No Comment) */
 "__PANELVIEW_LIST_COLUMN_TITLE_SIZE" = "Размер";
 
+/* (No Comment) */
+"__PANELVIEW_TEMPORARY_PANEL_WITH_TITLE" = "Временная панель: %@";
+
+/* (No Comment) */
+"__PANELVIEW_TEMPORARY_PANEL_WITHOUT_TITLE" = "Временная панель";
+
 /* Informative text to thank user for buying */
 "__THANKS_FOR_REGISTER_INFORMATIVE" = "Спасибо за использование зарегистрированной копии Nimble Commander!";
 
@@ -26,13 +32,7 @@
 "__THANKS_FOR_REGISTER_MESSAGE" = "Успешная активация";
 
 /* Nag screen text about test period */
-"__TRIAL_WINDOW_NOTE" = "Это пробная версия Nimble Commander.
-Чтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно купить лицензию или установить платную версию из Mac App Store.
-Это окно появляется только в пробной версии.";
-
-"__PANELVIEW_TEMPORARY_PANEL_WITHOUT_TITLE" = "Временная панель";
-
-"__PANELVIEW_TEMPORARY_PANEL_WITH_TITLE" = "Временная панель: %@";
+"__TRIAL_WINDOW_NOTE" = "Это пробная версия Nimble Commander.\nЧтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно купить лицензию или установить платную версию из Mac App Store.\nЭто окно появляется только в пробной версии.";
 
 /* Panels bottom volume bar, showing amount of bytes available */
 "%@ available" = "%@ доступно";
@@ -121,6 +121,12 @@
 
 /* Menu item title for enabling an admin mode */
 "Enable Admin Mode" = "Включить режим администратора";
+
+/* Enter a directory */
+"Enter “%@”" = "Войти в “%@”";
+
+/* Execute a binary */
+"Execute “%@”" = "Запустить “%@”";
 
 /* Information that toggling admin mode on has failed */
 "Failed to access the privileged helper." = "Не удалось связаться с привилегированным помощником.";
@@ -296,8 +302,8 @@
 /* No comment provided by engineer. */
 "OK" = "ОК";
 
-/* Title for process sheet when opening a vfs file */
-"Opening file..." = "Открытие файла...";
+/* Open an item */
+"Open “%@”" = "Открыть “%@”";
 
 /* Notification text */
 "Operation is complete" = "Операция завершена";
@@ -492,3 +498,5 @@
 /* Asking user for confirmation on erasing custom theme - informative text */
 "You can’t undo this action." = "Вы не сможете отменить эту операцию.";
 
+/* Follow a symlink */
+"Follow “%@”" = "Следовать за “%@”";

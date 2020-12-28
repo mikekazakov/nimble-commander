@@ -91,11 +91,7 @@
 		CF46FFFD255FD0590095FC73 /* DirectoryCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */; };
 		CF46FFFE255FD0590095FC73 /* DirectoryCreationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.cpp */; };
 		CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */; };
-		CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */; };
-		CFE08AFD23D3719B007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 		CFE08AFE23D3719B007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
-		CFE08AFF23D374B5007E99B8 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBEF9081F67E56A00C63816 /* libUtility.dylib */; };
-		CFFA95431F4C17CC0035E606 /* Info-TestsPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95451F4C17CC0035E606 /* Info-TestsPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -197,7 +193,6 @@
 		CFAAF0721FA9D8B8009230B3 /* CopyingTitleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingTitleBuilder.h; path = source/Copying/CopyingTitleBuilder.h; sourceTree = "<group>"; };
 		CFAAF0731FA9D8B8009230B3 /* CopyingTitleBuilder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyingTitleBuilder.mm; path = source/Copying/CopyingTitleBuilder.mm; sourceTree = "<group>"; };
 		CFAB6D7D258A742D00397DB5 /* CopyingFindNonExistingItemPath_UT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CopyingFindNonExistingItemPath_UT.cpp; sourceTree = "<group>"; };
-		CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Copying_Tests.mm; path = tests/Copying_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFBEF9061F67E56A00C63816 /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFBEF9071F67E56A00C63816 /* libRoutedIO.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libRoutedIO.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFBEF9081F67E56A00C63816 /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -302,7 +297,6 @@
 		CFE08AFC23D3719B007E99B8 /* TestEnv.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestEnv.mm; sourceTree = "<group>"; };
 		CFF340462557E21E00B3C92C /* ItemStateReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ItemStateReport.h; path = source/ItemStateReport.h; sourceTree = "<group>"; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
-		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B3F1EDD197300F567C4 /* Info-Tests.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Tests.plist"; path = "resources/Info-Tests.plist"; sourceTree = "<group>"; };
 		CFF53B721EDD401900F567C4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CFF53B741EDE53E800F567C4 /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operation.h; path = source/Operation.h; sourceTree = SOURCE_ROOT; };
@@ -357,14 +351,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFF53B351EDD197300F567C4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CFE08AFF23D374B5007E99B8 /* libUtility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -594,7 +580,6 @@
 		CFF53B301EDD197300F567C4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFF53B381EDD197300F567C4 /* OperationsTests.xctest */,
 				CF2C101122A072BE00A5359D /* OperationsIT */,
 				CF46FF32255FCA770095FC73 /* OperationsResources.bundle */,
 				CF46FFAD255FCF690095FC73 /* libOperations.a */,
@@ -612,7 +597,6 @@
 				CF2F1152256C528400622405 /* BatchRenaming_UT.mm */,
 				CFF53B951EE252F200F567C4 /* Compression_IT.mm */,
 				CF3ABD8023BA1B1A00D1878B /* Copying_IT.mm */,
-				CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */,
 				CFAB6D7D258A742D00397DB5 /* CopyingFindNonExistingItemPath_UT.cpp */,
 				CFC4F9211F09DFD80000B3EE /* Deletion_IT.mm */,
 				CF22F0F4258F43A80033E850 /* Deletion_UT.cpp */,
@@ -780,23 +764,6 @@
 			productReference = CF46FFAD255FCF690095FC73 /* libOperations.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		CFF53B371EDD197300F567C4 /* OperationsTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CFF53B461EDD197300F567C4 /* Build configuration list for PBXNativeTarget "OperationsTests" */;
-			buildPhases = (
-				CFF53B341EDD197300F567C4 /* Sources */,
-				CFF53B351EDD197300F567C4 /* Frameworks */,
-				CFF53B361EDD197300F567C4 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = OperationsTests;
-			productName = OperationsTests;
-			productReference = CFF53B381EDD197300F567C4 /* OperationsTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -815,10 +782,6 @@
 					CF46FFAC255FCF690095FC73 = {
 						CreatedOnToolsVersion = 12.0;
 					};
-					CFF53B371EDD197300F567C4 = {
-						CreatedOnToolsVersion = 8.3.2;
-						ProvisioningStyle = Automatic;
-					};
 				};
 			};
 			buildConfigurationList = CFF53B291EDD197300F567C4 /* Build configuration list for PBXProject "Operations" */;
@@ -836,7 +799,6 @@
 			projectRoot = "";
 			targets = (
 				CF46FFAC255FCF690095FC73 /* Operations */,
-				CFF53B371EDD197300F567C4 /* OperationsTests */,
 				CF46FF31255FCA770095FC73 /* OperationsResources */,
 				CF22F0C0258F43610033E850 /* OperationsUT */,
 				CF2C101022A072BE00A5359D /* OperationsIT */,
@@ -868,14 +830,6 @@
 				CF46FF7C255FCC8C0095FC73 /* CopyingDialogDisclosedView.xib in Resources */,
 				CF46FF54255FCC500095FC73 /* HaltReasonDialog.xib in Resources */,
 				CF46FF4A255FCC390095FC73 /* Localizable.stringsdict in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFF53B361EDD197300F567C4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CFFA95431F4C17CC0035E606 /* Info-TestsPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -971,15 +925,6 @@
 				CF46FFDB255FD0390095FC73 /* BatchRenamingDialog.mm in Sources */,
 				CF46FFE8255FD04D0095FC73 /* CopyingJob.cpp in Sources */,
 				CF46FFFD255FD0590095FC73 /* DirectoryCreation.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFF53B341EDD197300F567C4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */,
-				CFE08AFD23D3719B007E99B8 /* TestEnv.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1236,36 +1181,6 @@
 			};
 			name = Release;
 		};
-		CFF53B471EDD197300F567C4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "resources/Info-Tests.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.OperationsTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		CFF53B481EDD197300F567C4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "resources/Info-Tests.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.OperationsTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1310,15 +1225,6 @@
 			buildConfigurations = (
 				CFF53B411EDD197300F567C4 /* Debug */,
 				CFF53B421EDD197300F567C4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CFF53B461EDD197300F567C4 /* Build configuration list for PBXNativeTarget "OperationsTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CFF53B471EDD197300F567C4 /* Debug */,
-				CFF53B481EDD197300F567C4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

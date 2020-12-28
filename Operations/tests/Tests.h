@@ -13,4 +13,6 @@ struct TempTestDir
     TempTestDir();
     ~TempTestDir();
     std::filesystem::path directory;
+    operator const std::filesystem::path&() const noexcept { return directory;}
+    operator const std::string&() const noexcept { return directory.native(); }
 };

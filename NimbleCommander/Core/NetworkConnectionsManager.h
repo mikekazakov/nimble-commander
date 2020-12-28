@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <boost/uuid/uuid.hpp>
@@ -144,7 +144,8 @@ public:
     std::string user;
     std::string host;
     std::string path;
-    long   port;
+    long port = 21;
+    bool active = false;
     bool operator==(const FTP&_rhs) const noexcept;
 };
 

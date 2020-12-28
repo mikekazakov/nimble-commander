@@ -28,6 +28,7 @@ public:
     const std::string &ServerUrl() const noexcept;
     const std::string &User() const noexcept;
     long Port() const noexcept;
+    bool Active() const noexcept;
     
     // core VFSHost methods
     virtual int FetchDirectoryListing(const char *_path,

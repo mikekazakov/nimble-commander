@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
@@ -14,6 +14,7 @@
 @property (nonatomic) NSString *path;
 @property (nonatomic) NSString *port;
 @property (nonatomic) IBOutlet NSButton *connectButton;
+@property (nonatomic) BOOL active;
 @property (nonatomic) bool isValid;
 @end
 
@@ -51,6 +52,7 @@
         self.username = [NSString stringWithUTF8StdString:c.user];
         self.path = [NSString stringWithUTF8StdString:c.path];
         self.port = [NSString stringWithFormat:@"%li", c.port];
+        self.active = c.active;
     }
     [self validate];
 }
@@ -71,6 +73,7 @@
     m_Connection.port = 21;
     if(self.port.intValue != 0)
         m_Connection.port = self.port.intValue;
+    m_Connection.active = self.active;
     
     [self endSheet:NSModalResponseOK];
 }

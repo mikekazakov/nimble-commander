@@ -68,6 +68,7 @@ static config::Value ConnectionToJSONObject( NetworkConnectionsManager::Connecti
         o.AddMember("host", value(c.host.c_str(), alloc), alloc);
         o.AddMember("path", value(c.path.c_str(), alloc), alloc);
         o.AddMember("port", value((int)c.port), alloc);
+        o.AddMember("active", value(c.active), alloc);
         return o;
     }
     if( _c.IsType<NetworkConnectionsManager::SFTP>() ) {
@@ -149,6 +150,7 @@ static std::optional<NetworkConnectionsManager::Connection>
         c.host = _object["host"].GetString();
         c.path = _object["path"].GetString();
         c.port = _object["port"].GetInt();
+        c.active = has_bool("active") ? _object["active"].GetBool() : false;
         
         return NetworkConnectionsManager::Connection( std::move(c) );
     }
@@ -449,7 +451,8 @@ std::optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnecti
             if( auto p = i.Cast<FTP>() )
                 return p->host == ftp->ServerUrl() &&
                     p->user == ftp->User() &&
-                    p->port == ftp->Port();
+                    p->port == ftp->Port() &&
+                    p->active == ftp->Active();
             return false;
         };
     else if( auto sftp = dynamic_cast<const vfs::SFTPHost*>(&_vfs) )
@@ -501,7 +504,7 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection
     
     VFSHostPtr host;
     if( auto ftp = _connection.Cast<FTP>() )
-        host = std::make_shared<vfs::FTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port );
+        host = std::make_shared<vfs::FTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port, ftp->active );
     else if( auto sftp = _connection.Cast<SFTP>() )
         host = std::make_shared<vfs::SFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
     else if( auto dropbox = _connection.Cast<Dropbox>() )

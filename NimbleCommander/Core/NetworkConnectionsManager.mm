@@ -155,7 +155,8 @@ bool NetworkConnectionsManager::FTP::operator==(const FTP&_rhs) const noexcept
         user == _rhs.user &&
         host == _rhs.host &&
         path == _rhs.path &&
-        port == _rhs.port;
+        port == _rhs.port &&
+        active == _rhs.active;
 }
 
 bool NetworkConnectionsManager::SFTP::operator==(const SFTP&_rhs) const noexcept

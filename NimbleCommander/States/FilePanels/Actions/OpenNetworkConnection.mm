@@ -38,7 +38,8 @@ static bool GoToFTP(PanelController *_target,
                                                    info.user,
                                                    _passwd,
                                                    info.path,
-                                                   info.port
+                                                   info.port,
+                                                   info.active
                                                    );
         dispatch_to_main_queue([=]{
             auto request = std::make_shared<DirectoryChangeRequest>();

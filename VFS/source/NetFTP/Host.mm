@@ -723,4 +723,9 @@ long FTPHost::Port() const noexcept
     return Config().port;
 }
 
+bool FTPHost::Active() const noexcept
+{
+    return Config().active;
+}
+
 }

@@ -129,45 +129,48 @@ TEST_CASE(PREFIX "LocalFTP, rename nas")
     REQUIRE(host->RemoveDirectory((g_LocalTestPath + "DirectoryName2").c_str(), 0) == 0);
 }
 
-//TEST_CASE(PREFIX "listing, ftp.uk.debian.org")
-//{
-//    auto path = "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/";
-//    VFSHostPtr host;
-//    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("ftp.uk.debian.org", "", "", path));
-//    std::set<std::string> should_be = {
-//        "debian-installer", "gtk", "pxelinux.cfg",
-//        "xen",
-//        "mini.iso",
-//        "netboot.tar.gz","pxelinux.0"};
-//    std::set<std::string> in_fact;
-//
-//    REQUIRE(host->IterateDirectoryListing(path, [&](const VFSDirEnt &_dirent) {
-//        in_fact.emplace(_dirent.name);
-//        return true;
-//    }) == 0);
-//    REQUIRE(should_be == in_fact);
-//}
-//
-//TEST_CASE(PREFIX "seekread, utexas.edu")
-//{
-//    const auto host_name = "ftp.utexas.edu";
-//    const auto host_dir = "/pub/debian-cd/10.2.0/i386/iso-cd/";
-//    const auto host_path = "/pub/debian-cd/10.2.0/i386/iso-cd/debian-10.2.0-i386-netinst.iso";
-//    const auto offset = 0x1D79AC0;
-//    const auto length = 16;
-//    const auto expected = "\x1b\x5a\x65\x00\x55\x57\xae\xcc\x1a\xeb\xa9\xe3\x92\xb0\x98\x9c";
-//
-//    const auto host = std::make_shared<FTPHost>(host_name, "", "", host_dir);
-//
-//    // check seeking at big distance and reading an arbitrary selected known data block
-//    VFSFilePtr file;
-//    char buf[4096];
-//    REQUIRE(host->CreateFile(host_path, file, 0) == 0);
-//    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-//    REQUIRE(file->Seek(offset, VFSFile::Seek_Set) == offset);
-//    REQUIRE(file->Read(buf, length) == length);
-//    REQUIRE(memcmp(buf, expected, length) == 0);
-//}
+TEST_CASE(PREFIX "listing, ftp.uk.debian.org")
+{
+    auto path = "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/";
+    VFSHostPtr host;
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("ftp.uk.debian.org", "", "", path, 21, true));
+    std::set<std::string> should_be = {"debian-installer",
+                                       "gtk",
+                                       "pxelinux.cfg",
+                                       "xen",
+                                       "mini.iso",
+                                       "netboot.tar.gz",
+                                       "pxelinux.0"};
+    std::set<std::string> in_fact;
+
+    REQUIRE(host->IterateDirectoryListing(path, [&](const VFSDirEnt &_dirent) {
+        in_fact.emplace(_dirent.name);
+        return true;
+    }) == 0);
+    REQUIRE(should_be == in_fact);
+}
+
+TEST_CASE(PREFIX "seekread, ftp.uk.debian.org")
+{
+    const auto host_name = "ftp.uk.debian.org";
+    const auto host_dir = "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/";
+    const auto host_path =
+        "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/netboot.tar.gz";
+    const auto offset = 0x1D79AC0;
+    const auto length = 16;
+    const auto expected = "\xFA\x34\x58\xB3\x1B\x51\x25\x14\xFD\x80\x87\xB0\x08\x7A\x08\x17";
+
+    const auto host = std::make_shared<FTPHost>(host_name, "", "", host_dir, 21, true);
+
+    // check seeking at big distance and reading an arbitrary selected known data block
+    VFSFilePtr file;
+    char buf[4096];
+    REQUIRE(host->CreateFile(host_path, file, 0) == 0);
+    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+    REQUIRE(file->Seek(offset, VFSFile::Seek_Set) == offset);
+    REQUIRE(file->Read(buf, length) == length);
+    REQUIRE(memcmp(buf, expected, length) == 0);
+}
 
 TEST_CASE(PREFIX "listing, redhat.com")
 {
@@ -191,31 +194,33 @@ TEST_CASE(PREFIX "listing, redhat.com")
     REQUIRE(should_be == in_fact);
 }
 
-//TEST_CASE(PREFIX "big files reading cancellation")
-//{
-//    const auto host_name = "ftp.utexas.edu";
-//    const auto host_dir = "/pub/debian-cd/10.2.0/i386/iso-cd/";
-//    const auto host_path = "/pub/debian-cd/10.2.0/i386/iso-cd/debian-10.2.0-i386-netinst.iso";
-//
-//    VFSHostPtr host;
-//    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(host_name, "", "", host_dir));
-//
-//    std::atomic_bool finished = false;
-//    std::thread([&] {
-//        VFSFilePtr file;
-//        char buf[256];
-//        REQUIRE(host->CreateFile(host_path, file, 0) == 0);
-//        REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-//        REQUIRE(file->Read(buf, sizeof(buf)) == sizeof(buf));
-//        REQUIRE(file->Close() == 0); // at this moment we have read only a small part of file
-//                                     // and Close() should tell curl to stop reading and will wait
-//                                     // for a pending operations to be finished
-//        finished = true;
-//    }).detach();
-//
-//    const auto deadline = std::chrono::system_clock::now() + std::chrono::seconds(60);
-//    while( finished == false ) {
-//        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-//        REQUIRE(std::chrono::system_clock::now() < deadline);
-//    }
-//}
+TEST_CASE(PREFIX "big files reading cancellation")
+{
+    const auto host_name = "ftp.uk.debian.org";
+    const auto host_dir =
+        "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/gtk/";
+    const auto host_path =
+        "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/gtk/mini.iso";
+
+    VFSHostPtr host;
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(host_name, "", "", host_dir, 21, true));
+
+    std::atomic_bool finished = false;
+    std::thread([&] {
+        VFSFilePtr file;
+        char buf[256];
+        REQUIRE(host->CreateFile(host_path, file, 0) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+        REQUIRE(file->Read(buf, sizeof(buf)) == sizeof(buf));
+        REQUIRE(file->Close() == 0); // at this moment we have read only a small part of file
+                                     // and Close() should tell curl to stop reading and will wait
+                                     // for a pending operations to be finished
+        finished = true;
+    }).detach();
+
+    const auto deadline = std::chrono::system_clock::now() + std::chrono::seconds(60);
+    while( finished == false ) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        REQUIRE(std::chrono::system_clock::now() < deadline);
+    }
+}

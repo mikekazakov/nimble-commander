@@ -23,7 +23,8 @@ public:
     std::string passwd;
     std::string start_dir;
     std::string verbose; // cached only. not counted in operator ==
-    long   port;
+    long port = 21;
+    bool active = false;
     
     const char *Tag() const
     {
@@ -41,7 +42,8 @@ public:
         user       == _rhs.user &&
         passwd     == _rhs.passwd &&
         start_dir  == _rhs.start_dir &&
-        port       == _rhs.port;
+        port       == _rhs.port &&
+        active     == _rhs.active;
     }
     
     const char *VerboseJunction() const
@@ -60,7 +62,8 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
                                              const std::string &_user,
                                              const std::string &_passwd,
                                              const std::string &_start_dir,
-                                             long   _port)
+                                             long _port,
+                                             bool _active)
 {
     VFSNetFTPHostConfiguration config;
     config.server_url = _serv_url;
@@ -68,6 +71,7 @@ static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
     config.passwd = _passwd;
     config.start_dir = _start_dir;
     config.port = _port;
+    config.active = _active;
     config.verbose = "ftp://"s + (config.user.empty() ? "" : config.user + "@" ) + config.server_url;
     return VFSConfiguration( std::move(config) );
 }
@@ -76,10 +80,11 @@ FTPHost::FTPHost(const std::string &_serv_url,
                  const std::string &_user,
                  const std::string &_passwd,
                  const std::string &_start_dir,
-                 long   _port):
+                 long  _port,
+                 bool _active):
     Host(_serv_url.c_str(), nullptr, UniqueTag),    
     m_Cache(std::make_unique<ftp::Cache>()),
-    m_Configuration( ComposeConfiguration(_serv_url, _user, _passwd, _start_dir, _port) )
+    m_Configuration( ComposeConfiguration(_serv_url, _user, _passwd, _start_dir, _port, _active) )
 {
     int rc = DoInit();
     if(rc < 0)
@@ -685,7 +690,9 @@ void FTPHost::BasicOptsSetup(CURLInstance *_inst)
         _inst->EasySetOpt(CURLOPT_PASSWORD, Config().passwd.c_str());
     if(Config().port > 0)
         _inst->EasySetOpt(CURLOPT_PORT, Config().port);
-
+    if(Config().active == true )
+        _inst->EasySetOpt(CURLOPT_FTPPORT, "-");
+    
     // TODO: SSL support
     // _inst->EasySetOpt(CURLOPT_USE_SSL, CURLUSESSL_TRY);
     // _inst->EasySetOpt(CURLOPT_SSL_VERIFYPEER, false);

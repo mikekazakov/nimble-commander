@@ -16,7 +16,8 @@ public:
             const std::string &_user,
             const std::string &_passwd,
             const std::string &_start_dir,
-            long   _port = 21);
+            long _port = 21,
+            bool _active = false);
     FTPHost(const VFSConfiguration &_config); // should be of type VFSNetFTPHostConfiguration
     ~FTPHost();
 

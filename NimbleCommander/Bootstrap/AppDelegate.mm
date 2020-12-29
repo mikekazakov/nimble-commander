@@ -43,7 +43,7 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/FeedbackManager.h>
+#include <NimbleCommander/Core/FeedbackManagerImpl.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>
 #include <NimbleCommander/Core/Dock.h>
 #include <NimbleCommander/Core/ServicesHandler.h>
@@ -1202,7 +1202,7 @@ static void DoTemporaryFileStoragePurge()
 - (nc::FeedbackManager &)feedbackManager
 {
     static nc::FeedbackManager *instance = [self] {
-        auto fm = new nc::FeedbackManager(*m_ActivationManager);
+        auto fm = new nc::FeedbackManagerImpl(*m_ActivationManager);
         atexit([] { instance->UpdateStatistics(); });
         return fm;
     }();

@@ -189,6 +189,9 @@
 		CF46FF29255FC8D80095FC73 /* ViewerResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF5C1D4E255EE6CD00ADE703 /* ViewerResources.bundle */; };
 		CF46FFA4255FCD500095FC73 /* OperationsResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF46FFA3255FCD320095FC73 /* OperationsResources.bundle */; };
 		CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
+		CF485C32259B5E5D002F9A05 /* FeedbackManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF485C18259B5E5D002F9A05 /* FeedbackManagerImpl.h */; };
+		CF485C33259B5E5D002F9A05 /* FeedbackManagerImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF485C31259B5E5D002F9A05 /* FeedbackManagerImpl.mm */; };
+		CF485C38259B5E79002F9A05 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
 		CF4D98A720284C1500ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
 		CF4D98A82028500300ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
 		CF4D98A92028500400ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
@@ -690,13 +693,9 @@
 		CFB63D3C2598A7B70038502E /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
 		CFB63D5F2598A8260038502E /* LetsMove.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CFB63D602598A8260038502E /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
 		CFB66F961D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
-		CFB66F991D853B1D0017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
-		CFB66F9A1D853B1D0017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
-		CFB66F9B1D853B1E0017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
 		CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
 		CFB66FA21D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
 		CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
@@ -1422,13 +1421,6 @@
 			remoteGlobalIDString = CFF53B2F1EDD197300F567C4;
 			remoteInfo = Operations;
 		};
-		CFF53B621EDD19A400F567C4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CFF53B381EDD197300F567C4;
-			remoteInfo = OperationsTests;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1634,6 +1626,8 @@
 		CF46C23520317FD700A91E2F /* ServicesHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ServicesHandler.mm; path = NimbleCommander/Core/ServicesHandler.mm; sourceTree = SOURCE_ROOT; };
 		CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTPConnectionSheetController.h; path = NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FTPConnectionSheetController.mm; path = NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.mm; sourceTree = SOURCE_ROOT; };
+		CF485C18259B5E5D002F9A05 /* FeedbackManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedbackManagerImpl.h; path = NimbleCommander/Core/FeedbackManagerImpl.h; sourceTree = "<group>"; };
+		CF485C31259B5E5D002F9A05 /* FeedbackManagerImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FeedbackManagerImpl.mm; path = NimbleCommander/Core/FeedbackManagerImpl.mm; sourceTree = "<group>"; };
 		CF4D98A520284C1500ECE06D /* PanelControllerActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelControllerActions.h; path = NimbleCommander/States/FilePanels/PanelControllerActions.h; sourceTree = SOURCE_ROOT; };
 		CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelControllerActions.mm; path = NimbleCommander/States/FilePanels/PanelControllerActions.mm; sourceTree = SOURCE_ROOT; };
 		CF4D98B3202BE89700ECE06D /* StateActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StateActions.h; path = NimbleCommander/States/FilePanels/StateActions.h; sourceTree = SOURCE_ROOT; };
@@ -2942,26 +2936,28 @@
 		CFB66F9D1D863E5B0017D2A0 /* Marketing */ = {
 			isa = PBXGroup;
 			children = (
-				CFDAC2F91DFD1C120039A104 /* TrialWindowController.h */,
-				CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */,
-				CF8400FF21A2A8DE007FEF7B /* TrialWindowController.xib */,
-				CFDAC2CF1DFD105A0039A104 /* MASAppInstalledChecker.cpp */,
-				CFDAC2D01DFD105A0039A104 /* MASAppInstalledChecker.h */,
 				CFDAC2B31DFD0B330039A104 /* AppStoreHelper.h */,
 				CFDAC2B41DFD0B330039A104 /* AppStoreHelper.mm */,
-				CFDAC2741DFBF6C10039A104 /* GoogleAnalytics.h */,
-				CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */,
 				CFB66F901D8537A90017D2A0 /* FeedbackManager.h */,
 				CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */,
+				CF485C18259B5E5D002F9A05 /* FeedbackManagerImpl.h */,
+				CF485C31259B5E5D002F9A05 /* FeedbackManagerImpl.mm */,
 				CFB66F9E1D863EDD0017D2A0 /* FeedbackWindow.h */,
 				CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */,
 				CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */,
+				CFDAC2741DFBF6C10039A104 /* GoogleAnalytics.h */,
+				CFDAC2751DFBF6C10039A104 /* GoogleAnalytics.mm */,
+				CFDAC2CF1DFD105A0039A104 /* MASAppInstalledChecker.cpp */,
+				CFDAC2D01DFD105A0039A104 /* MASAppInstalledChecker.h */,
 				CF1863F61D8B9224008628E4 /* ProFeaturesWindowController.h */,
 				CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */,
 				CF8D0CF11D96244900ADFF14 /* ProFeaturesWindowController.xib */,
 				CFB66FC71D88F9D40017D2A0 /* RegistrationInfoWindow.h */,
 				CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */,
 				CF8D0CEE1D9623E000ADFF14 /* RegistrationInfoWindow.xib */,
+				CFDAC2F91DFD1C120039A104 /* TrialWindowController.h */,
+				CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */,
+				CF8400FF21A2A8DE007FEF7B /* TrialWindowController.xib */,
 			);
 			name = Marketing;
 			sourceTree = "<group>";
@@ -3129,7 +3125,6 @@
 			isa = PBXGroup;
 			children = (
 				CFF53B611EDD19A400F567C4 /* libOperations.a */,
-				CFF53B631EDD19A400F567C4 /* OperationsTests.xctest */,
 				CF46FFA3255FCD320095FC73 /* OperationsResources.bundle */,
 				CFB63CBF2590D8AA0038502E /* OperationsUT */,
 				CF52C3BD22BE5B2D0043E825 /* OperationsIT */,
@@ -3154,6 +3149,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFAB6CE32587C38800397DB5 /* FollowSymlink.h in Headers */,
+				CF485C32259B5E5D002F9A05 /* FeedbackManagerImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3619,13 +3615,6 @@
 			remoteRef = CFF53B601EDD19A400F567C4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CFF53B631EDD19A400F567C4 /* OperationsTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = OperationsTests.xctest;
-			remoteRef = CFF53B621EDD19A400F567C4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -3946,6 +3935,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF485C33259B5E5D002F9A05 /* FeedbackManagerImpl.mm in Sources */,
 				CFAB6CE42587C38800397DB5 /* FollowSymlink.mm in Sources */,
 				CF5DE08E25840CC100604DEE /* ActivationManagerBase.cpp in Sources */,
 				CF764D002587671A00D7ED17 /* FilesDraggingSource.mm in Sources */,
@@ -3956,6 +3946,7 @@
 				CF764D1D258782C900D7ED17 /* PanelBriefViewLayoutEngineBase.mm in Sources */,
 				CF764CF6258766E500D7ED17 /* DragSender.mm in Sources */,
 				CF764D21258782D100D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
+				CF485C38259B5E79002F9A05 /* FeedbackManager.mm in Sources */,
 				CFAB6CE72588B70900397DB5 /* GTMHotKeyTextField.mm in Sources */,
 				CF3ED4CC25855F5B00D67AF2 /* MASAppInstalledChecker.cpp in Sources */,
 				CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */,
@@ -4176,7 +4167,6 @@
 				CF6D9BD6196677CA0077B146 /* RHPreferencesWindowController.m in Sources */,
 				CF6D9BD7196677CA0077B146 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF6BF823219140360017CECB /* PanelBriefViewFixedWidthLayout.mm in Sources */,
-				CFB66F9A1D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4223,7 +4213,6 @@
 				CFD726DF1E42E2C300603077 /* PanelListView.mm in Sources */,
 				CF04DE071E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CFBA63AD1FC1A4ED00077682 /* RevealInOppositePanel.mm in Sources */,
-				CFB66F9B1D853B1E0017D2A0 /* FeedbackManager.mm in Sources */,
 				CFA539911D433E2A00C562A7 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CFD726B21E42E26200603077 /* CopyFilePaths.mm in Sources */,
 				CFD7267E1E42E20900603077 /* PanelController+DataAccess.mm in Sources */,
@@ -4451,7 +4440,6 @@
 				CF5E9A5B1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */,
 				CFB2AB692157399E0009EB81 /* PanelViewHeaderTheme.mm in Sources */,
 				CF56C2B81DC1934D00F0DF0F /* PanelListViewNameView.mm in Sources */,
-				CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF4D98CA202BEC6900ECE06D /* StateActionsDispatcher.mm in Sources */,
 				CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */,
@@ -4637,7 +4625,6 @@
 				CF818B5D1EA0610E00BC28E6 /* ChangeAttributes.mm in Sources */,
 				CF7A09AE1EC2DF5C00533B07 /* Delete.mm in Sources */,
 				CF7D7D5E21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */,
-				CFB66F991D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
 				CF624C0621A6B7E200B3A595 /* TrialWindowController.mm in Sources */,
 				CFD8CDBB1E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
 				CFA171652019700000F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,

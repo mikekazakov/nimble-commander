@@ -1,64 +1,44 @@
 // Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <optional>
-#include <time.h>
-
-namespace nc::bootstrap {
-class ActivationManager;
-}
-
 namespace nc {
 
 class FeedbackManager
 {
 public:
-    FeedbackManager(nc::bootstrap::ActivationManager &_am);
+    virtual ~FeedbackManager() = default;
     
     /**
-     * Decided if rating overlay need to be shown, based on usage statistics.
+     * Decides if a rating overlay needs to be shown, based on usage statistics.
      * Can return true only once per run - assumes that this function is called only once per
      * window.
      */
-    bool ShouldShowRatingOverlayView();
+    virtual bool ShouldShowRatingOverlayView() = 0;
 
     /**
      * 0: discard button was clicked (default).
      * [1-5]: amount of stars assigned.
      */
-    void CommitRatingOverlayResult(int _result);
+    virtual void CommitRatingOverlayResult(int _result) = 0;
 
     /**
-     * Amount of time application was started, updated on every startup.
+     * Amount of times application was started, updated on every startup.
      */
-    int ApplicationRunsCount() const noexcept;
+    virtual int ApplicationRunsCount() = 0;
 
     /**
      * Will reset any information about application usage.
      */
-    void ResetStatistics();
+    virtual void ResetStatistics() = 0;
     
     /**
      * Store any updated usage statics in a backend storage.
      */
-    void UpdateStatistics();    
+    virtual void UpdateStatistics() = 0;
 
-    void EmailFeedback();
-    void EmailSupport();
-    void RateOnAppStore();
-
-private:
-    bool IsEligibleForRatingOverlay() const;
-
-    const int m_ApplicationRunsCount;
-    const double m_TotalHoursUsed;
-    const time_t m_StartupTime;
-    const time_t m_FirstRunTime;
-    bool m_ShownRatingOverlay = false;
-    nc::bootstrap::ActivationManager &m_ActivationManager;
-
-    std::optional<int> m_LastRating; // 0 - discarded, [1-5] - rating
-    std::optional<time_t> m_LastRatingTime;
+    virtual void EmailFeedback() = 0;
+    virtual void EmailSupport() = 0;
+    virtual void RateOnAppStore() = 0;
 };
 
 } // namespace nc

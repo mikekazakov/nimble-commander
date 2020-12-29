@@ -2,56 +2,21 @@
 #include "FeedbackManagerImpl.h"
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <Habanero/CFDefaultsCPP.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <Habanero/GoogleAnalytics.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "../GeneralUI/FeedbackWindow.h"
 #include <Habanero/dispatch_cpp.h>
 
 namespace nc {
 
-static const auto g_RunsKey = CFSTR("feedbackApplicationRunsCount");
-static const auto g_HoursKey = CFSTR("feedbackHoursUsedCount");
-static const auto g_FirstRunKey = CFSTR("feedbackFirstRun");
-static const auto g_LastRatingKey = CFSTR("feedbackLastRating");
-static const auto g_LastRatingTimeKey = CFSTR("feedbackLastRating");
-
-static int GetAndUpdateRunsCount()
-{
-    if( auto runs = CFDefaultsGetOptionalInt(g_RunsKey) ) {
-        int v = *runs;
-        if( v < 1 ) {
-            v = 1;
-            CFDefaultsSetInt(g_RunsKey, v);
-        }
-        else {
-            dispatch_to_background([=] { CFDefaultsSetInt(g_RunsKey, v + 1); });
-        }
-        return v;
-    }
-    else {
-        dispatch_to_background([=] { CFDefaultsSetInt(g_RunsKey, 1); });
-        return 1;
-    }
-}
-
-static double GetTotalHoursUsed()
-{
-    double v = CFDefaultsGetDouble(g_HoursKey);
-    if( v < 0 )
-        v = 0;
-    return v;
-}
-
-static time_t GetOrSetFirstRunTime()
-{
-    const auto now = time(nullptr);
-    if( auto t = CFDefaultsGetOptionalLong(g_FirstRunKey) ) {
-        if( *t < now )
-            return *t;
-    }
-    CFDefaultsSetLong(g_FirstRunKey, now);
-    return now;
-}
+const CFStringRef FeedbackManagerImpl::g_RunsKey = CFSTR("feedbackApplicationRunsCount");
+const CFStringRef FeedbackManagerImpl::g_HoursKey = CFSTR("feedbackHoursUsedCount");
+const CFStringRef FeedbackManagerImpl::g_FirstRunKey = CFSTR("feedbackFirstRun");
+const CFStringRef FeedbackManagerImpl::g_LastRatingKey = CFSTR("feedbackLastRating");
+const CFStringRef FeedbackManagerImpl::g_LastRatingTimeKey = CFSTR("feedbackLastRatingTime");
+[[clang::no_destroy]] const std::function<time_t()> FeedbackManagerImpl::g_DefaultTimeSource = [] {
+    return std::time(nullptr);
+};
 
 // http://stackoverflow.com/questions/7627058/how-to-determine-internet-connection-in-cocoa
 static bool HasInternetConnection()
@@ -67,8 +32,8 @@ static bool HasInternetConnection()
             SCNetworkReachabilityCreateWithAddress(NULL, (const struct sockaddr *)&zeroAddress) ) {
         SCNetworkReachabilityFlags flags = 0;
         if( SCNetworkReachabilityGetFlags(reachabilityRef, &flags) ) {
-            BOOL isReachable = ((flags & kSCNetworkFlagsReachable) != 0);
-            BOOL connectionRequired = ((flags & kSCNetworkFlagsConnectionRequired) != 0);
+            bool isReachable = ((flags & kSCNetworkFlagsReachable) != 0);
+            bool connectionRequired = ((flags & kSCNetworkFlagsConnectionRequired) != 0);
             returnValue = (isReachable && !connectionRequired) ? true : false;
         }
         CFRelease(reachabilityRef);
@@ -76,12 +41,15 @@ static bool HasInternetConnection()
     return returnValue;
 }
 
-FeedbackManagerImpl::FeedbackManagerImpl(nc::bootstrap::ActivationManager &_am)
+FeedbackManagerImpl::FeedbackManagerImpl(nc::bootstrap::ActivationManager &_am,
+                                         GoogleAnalytics &_ga,
+                                         std::function<time_t()> _time_source)
     : m_ApplicationRunsCount(GetAndUpdateRunsCount()), m_TotalHoursUsed(GetTotalHoursUsed()),
-      m_StartupTime(time(nullptr)), m_FirstRunTime(GetOrSetFirstRunTime()),
-      m_ActivationManager(_am), m_LastRating(CFDefaultsGetOptionalInt(g_LastRatingKey)),
-      m_LastRatingTime(CFDefaultsGetOptionalLong(g_LastRatingKey))
+      m_StartupTime(_time_source()), m_ActivationManager(_am), m_GA(_ga),
+      m_TimeSource(_time_source), m_LastRating(CFDefaultsGetOptionalInt(g_LastRatingKey)),
+      m_LastRatingTime(CFDefaultsGetOptionalLong(g_LastRatingTimeKey))
 {
+    m_FirstRunTime = GetOrSetFirstRunTime();
 }
 
 void FeedbackManagerImpl::CommitRatingOverlayResult(int _result)
@@ -92,15 +60,15 @@ void FeedbackManagerImpl::CommitRatingOverlayResult(int _result)
         return;
 
     const char *labels[] = {"Discard", "1 Star", "2 Stars", "3 Stars", "4 Stars", "5 Stars"};
-    GA().PostEvent("Feedback", "Rating Overlay Choice", labels[_result]);
+    m_GA.PostEvent("Feedback", "Rating Overlay Choice", labels[_result]);
 
     m_LastRating = _result;
-    m_LastRatingTime = time(nullptr);
+    m_LastRatingTime = m_TimeSource();
 
     CFDefaultsSetInt(g_LastRatingKey, *m_LastRating);
     CFDefaultsSetLong(g_LastRatingTimeKey, *m_LastRatingTime);
 
-    if( _result > 0 ) {
+    if( m_HasUI && _result > 0 ) {
         // used clicked at some star - lets show a window then
         FeedbackWindow *w = [[FeedbackWindow alloc] initWithActivationManager:m_ActivationManager
                                                               feedbackManager:*this];
@@ -111,12 +79,9 @@ void FeedbackManagerImpl::CommitRatingOverlayResult(int _result)
 
 bool FeedbackManagerImpl::ShouldShowRatingOverlayView()
 {
-    if( m_ShownRatingOverlay )
-        return false; // show only once per run anyway
-
     if( IsEligibleForRatingOverlay() )
         if( HasInternetConnection() ) {
-            GA().PostEvent("Feedback", "Rating Overlay Shown", "Shown");
+            m_GA.PostEvent("Feedback", "Rating Overlay Shown", "Shown");
             return m_ShownRatingOverlay = true;
         }
 
@@ -125,11 +90,14 @@ bool FeedbackManagerImpl::ShouldShowRatingOverlayView()
 
 bool FeedbackManagerImpl::IsEligibleForRatingOverlay() const
 {
-    const auto now = time(nullptr);
-    const auto repeated_show_delay_on_result = 90l * 24l * 3600l; // 90 days
-    const auto repeated_show_delay_on_discard = 7l * 24l * 3600l; // 7 days
+    if( m_ShownRatingOverlay )
+        return false; // show only once per run anyway
+    
+    const auto now = m_TimeSource();
+    const auto repeated_show_delay_on_result = 365l * 24l * 3600l; // 365 days
+    const auto repeated_show_delay_on_discard = 14l * 24l * 3600l; // 14 days
     const auto min_runs = 20;
-    const auto min_hours = 10;
+    const auto min_hours = 10.;
     const auto min_days = 10;
 
     if( m_LastRating ) {
@@ -137,14 +105,14 @@ bool FeedbackManagerImpl::IsEligibleForRatingOverlay() const
         const auto when = m_LastRatingTime.value_or(0);
         if( *m_LastRating == 0 ) {
             // user has discarded question
-            if( now - when > repeated_show_delay_on_discard ) {
+            if( now - when >= repeated_show_delay_on_discard ) {
                 // we can let ourselves to try to bother user again
                 return true;
             }
         }
         else {
             // used has clicked to some star
-            if( now - when > repeated_show_delay_on_result ) {
+            if( now - when >= repeated_show_delay_on_result ) {
                 // it was a long time ago, we can ask for rating again
                 return true;
             }
@@ -155,7 +123,7 @@ bool FeedbackManagerImpl::IsEligibleForRatingOverlay() const
         // time to show
         const auto runs = m_ApplicationRunsCount;
         const auto hours_used = m_TotalHoursUsed;
-        const auto days_since_first_run = (time(nullptr) - m_FirstRunTime) / (24l * 3600l);
+        const auto days_since_first_run = (m_TimeSource() - m_FirstRunTime) / (24l * 3600l);
 
         if( runs >= min_runs && hours_used >= min_hours && days_since_first_run >= min_days )
             return true;
@@ -175,7 +143,7 @@ void FeedbackManagerImpl::ResetStatistics()
 
 void FeedbackManagerImpl::UpdateStatistics()
 {
-    auto d = time(nullptr) - m_StartupTime;
+    auto d = m_TimeSource() - m_StartupTime;
     if( d < 0 )
         d = 0;
     CFDefaultsSetDouble(g_HoursKey, m_TotalHoursUsed + (double)d / 3600.);
@@ -183,14 +151,14 @@ void FeedbackManagerImpl::UpdateStatistics()
 
 void FeedbackManagerImpl::EmailFeedback()
 {
-    GA().PostEvent("Feedback", "Action", "Email Feedback");
+    m_GA.PostEvent("Feedback", "Action", "Email Feedback");
+    const auto info = NSBundle.mainBundle.infoDictionary;
     NSString *toAddress = @"feedback@magnumbytes.com";
     NSString *subject = [NSString
         stringWithFormat:@"Feedback on %@ version %@ (%@)",
-                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
-                         [NSBundle.mainBundle.infoDictionary
-                             objectForKey:@"CFBundleShortVersionString"],
-                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
+                         [info objectForKey:@"CFBundleName"],
+                         [info objectForKey:@"CFBundleShortVersionString"],
+                         [info objectForKey:@"CFBundleVersion"]];
     NSString *bodyText = @"Please write your feedback here.";
     NSString *mailtoAddress =
         [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
@@ -203,14 +171,14 @@ void FeedbackManagerImpl::EmailFeedback()
 
 void FeedbackManagerImpl::EmailSupport()
 {
-    GA().PostEvent("Feedback", "Action", "Email Support");
+    m_GA.PostEvent("Feedback", "Action", "Email Support");
+    const auto info = NSBundle.mainBundle.infoDictionary;
     NSString *toAddress = @"support@magnumbytes.com";
     NSString *subject = [NSString
-        stringWithFormat:@"Support on %@ version %@ (%@)",
-                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleName"],
-                         [NSBundle.mainBundle.infoDictionary
-                             objectForKey:@"CFBundleShortVersionString"],
-                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"]];
+        stringWithFormat:@"Support for %@ version %@ (%@)",
+                         [info objectForKey:@"CFBundleName"],
+                         [info objectForKey:@"CFBundleShortVersionString"],
+                         [info objectForKey:@"CFBundleVersion"]];
     NSString *bodyText = @"Please describle your issues with Nimble Commander here.";
     NSString *mailtoAddress =
         [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
@@ -222,15 +190,65 @@ void FeedbackManagerImpl::EmailSupport()
 
 void FeedbackManagerImpl::RateOnAppStore()
 {
-    GA().PostEvent("Feedback", "Action", "Rate on AppStore");
-    NSString *mas_url = [NSString stringWithFormat:@"macappstore://itunes.apple.com/app/id%s",
-                                                   m_ActivationManager.AppStoreID().c_str()];
-    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
+    // https://developer.apple.com/documentation/storekit/skstorereviewcontroller/requesting_app_store_reviews
+    m_GA.PostEvent("Feedback", "Action", "Rate on AppStore");
+    const auto fmt = @"https://apps.apple.com/app/id%s?action=write-review";
+    const auto review_url =
+        [NSString stringWithFormat:fmt, m_ActivationManager.AppStoreID().c_str()];
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:review_url]];
 }
 
 int FeedbackManagerImpl::ApplicationRunsCount()
 {
     return m_ApplicationRunsCount;
+}
+
+int FeedbackManagerImpl::GetAndUpdateRunsCount()
+{
+    if( auto runs = CFDefaultsGetOptionalInt(g_RunsKey) ) {
+        int v = *runs;
+        if( v < 1 ) {
+            v = 1;
+            CFDefaultsSetInt(g_RunsKey, v);
+        }
+        else {
+            CFDefaultsSetInt(g_RunsKey, v + 1);
+        }
+        return v;
+    }
+    else {
+        CFDefaultsSetInt(g_RunsKey, 1);
+        return 1;
+    }
+}
+
+double FeedbackManagerImpl::GetTotalHoursUsed()
+{
+    double v = CFDefaultsGetDouble(g_HoursKey);
+    if( v < 0 )
+        v = 0;
+    return v;
+}
+
+time_t FeedbackManagerImpl::GetOrSetFirstRunTime() const
+{
+    const auto now = m_TimeSource();
+    if( auto t = CFDefaultsGetOptionalLong(g_FirstRunKey) ) {
+        if( *t < now )
+            return *t;
+    }
+    CFDefaultsSetLong(g_FirstRunKey, now);
+    return now;
+}
+
+double FeedbackManagerImpl::TotalHoursUsed() const noexcept
+{
+    return m_TotalHoursUsed;
+}
+
+void FeedbackManagerImpl::SetHasUI(bool _has_ui)
+{
+    m_HasUI = _has_ui;
 }
 
 }

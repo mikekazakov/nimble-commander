@@ -1202,7 +1202,7 @@ static void DoTemporaryFileStoragePurge()
 - (nc::FeedbackManager &)feedbackManager
 {
     static nc::FeedbackManager *instance = [self] {
-        auto fm = new nc::FeedbackManagerImpl(*m_ActivationManager);
+        auto fm = new nc::FeedbackManagerImpl(*m_ActivationManager, GA());
         atexit([] { instance->UpdateStatistics(); });
         return fm;
     }();

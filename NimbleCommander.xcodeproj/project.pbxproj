@@ -192,6 +192,8 @@
 		CF485C32259B5E5D002F9A05 /* FeedbackManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF485C18259B5E5D002F9A05 /* FeedbackManagerImpl.h */; };
 		CF485C33259B5E5D002F9A05 /* FeedbackManagerImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF485C31259B5E5D002F9A05 /* FeedbackManagerImpl.mm */; };
 		CF485C38259B5E79002F9A05 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
+		CF485C40259B6462002F9A05 /* FeedbackManager_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF485C3F259B6462002F9A05 /* FeedbackManager_UT.mm */; };
+		CF485C43259B68ED002F9A05 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
 		CF4D98A720284C1500ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
 		CF4D98A82028500300ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
 		CF4D98A92028500400ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
@@ -696,10 +698,6 @@
 		CFB66F961D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
-		CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
-		CFB66FA21D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
-		CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
-		CFB66FA41D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F9F1D863EDD0017D2A0 /* FeedbackWindow.mm */; };
 		CFB66FCA1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */; };
 		CFB66FCB1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */; };
 		CFB66FCC1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */; };
@@ -1628,6 +1626,7 @@
 		CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FTPConnectionSheetController.mm; path = NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF485C18259B5E5D002F9A05 /* FeedbackManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedbackManagerImpl.h; path = NimbleCommander/Core/FeedbackManagerImpl.h; sourceTree = "<group>"; };
 		CF485C31259B5E5D002F9A05 /* FeedbackManagerImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FeedbackManagerImpl.mm; path = NimbleCommander/Core/FeedbackManagerImpl.mm; sourceTree = "<group>"; };
+		CF485C3F259B6462002F9A05 /* FeedbackManager_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FeedbackManager_UT.mm; path = NimbleCommander/Tests/FeedbackManager_UT.mm; sourceTree = "<group>"; };
 		CF4D98A520284C1500ECE06D /* PanelControllerActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelControllerActions.h; path = NimbleCommander/States/FilePanels/PanelControllerActions.h; sourceTree = SOURCE_ROOT; };
 		CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelControllerActions.mm; path = NimbleCommander/States/FilePanels/PanelControllerActions.mm; sourceTree = SOURCE_ROOT; };
 		CF4D98B3202BE89700ECE06D /* StateActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StateActions.h; path = NimbleCommander/States/FilePanels/StateActions.h; sourceTree = SOURCE_ROOT; };
@@ -2516,6 +2515,7 @@
 		CF5DE0BF2584153B00604DEE /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF485C3F259B6462002F9A05 /* FeedbackManager_UT.mm */,
 				CF5DE0D5258415D500604DEE /* ActivationManager_UT.cpp */,
 				CF764CE62587661300D7ED17 /* DragSender_UT.mm */,
 				CF764CAC2587632A00D7ED17 /* ExternalToolsSupport_UT.mm */,
@@ -3937,6 +3937,7 @@
 			files = (
 				CF485C33259B5E5D002F9A05 /* FeedbackManagerImpl.mm in Sources */,
 				CFAB6CE42587C38800397DB5 /* FollowSymlink.mm in Sources */,
+				CF485C43259B68ED002F9A05 /* FeedbackWindow.mm in Sources */,
 				CF5DE08E25840CC100604DEE /* ActivationManagerBase.cpp in Sources */,
 				CF764D002587671A00D7ED17 /* FilesDraggingSource.mm in Sources */,
 				CF764CBE258763DA00D7ED17 /* ActionsShortcutsManager.mm in Sources */,
@@ -3964,6 +3965,7 @@
 				CF764D4F258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm in Sources */,
 				CF5DE0C22584157B00604DEE /* Tests.cpp in Sources */,
 				CF764D432587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm in Sources */,
+				CF485C40259B6462002F9A05 /* FeedbackManager_UT.mm in Sources */,
 				CF764CAD2587632A00D7ED17 /* ExternalToolsSupport_UT.mm in Sources */,
 				CF764CE72587661300D7ED17 /* DragSender_UT.mm in Sources */,
 			);
@@ -4105,7 +4107,6 @@
 				CFD8CDB41E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
 				CF04DE081E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CFD7260E1E42E07900603077 /* main.cpp in Sources */,
-				CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF6659822394075A005BF071 /* Counters.cpp in Sources */,
 				CFFA951D1F45A3580035E606 /* Link.mm in Sources */,
 				CF7C7CB21E5ACDBD002DB0E2 /* TabsManagement.mm in Sources */,
@@ -4254,7 +4255,6 @@
 				CF3E2F7A1F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */,
 				CFD726661E42E1E400603077 /* MainWindowFilePanelState.mm in Sources */,
 				CF5BB35F258170AB00486C49 /* AppStoreHelper.mm in Sources */,
-				CFB66FA21D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF6659802394075A005BF071 /* Counters.cpp in Sources */,
 				CFD8CDD11E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,
 				CF50925C201C3025004D9CF5 /* VFSInstancePromise.cpp in Sources */,
@@ -4483,7 +4483,6 @@
 				CFB9F112201AEE8400FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CF0139B21E99EC4A00E44F2D /* DefaultAction.mm in Sources */,
 				CF197C431FB81ACB009F6C59 /* ToggleSingleOrDualMode.mm in Sources */,
-				CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF5FE80E1E16461600CD83B4 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF5FE7D51E120A4900CD83B4 /* CopyFilePaths.mm in Sources */,
 				CFDAC2FC1DFD1C120039A104 /* TrialWindowController.mm in Sources */,
@@ -4696,7 +4695,6 @@
 				CFD726DA1E42E2BD00603077 /* Layout.mm in Sources */,
 				CF5E9A541FCBF5BD005608F5 /* ShowQuickLook.mm in Sources */,
 				CF04DDFE1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
-				CFB66FA41D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,
 				CF2F43591EAF395900AA031A /* NetworkConnectionsManager.mm in Sources */,
 				CFB9F110201AEE8300FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,

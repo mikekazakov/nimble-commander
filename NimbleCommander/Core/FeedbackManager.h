@@ -8,10 +8,19 @@ class FeedbackManager
 public:
     virtual ~FeedbackManager() = default;
     
+    enum Rate {
+        RatingDiscard = 0,
+        Rating1Star = 1,
+        Rating2Stars = 2,
+        Rating3Stars = 3,
+        Rating4Stars = 4,
+        Rating5Stars = 5
+    };
+    
     /**
      * Decides if a rating overlay needs to be shown, based on usage statistics.
      * Can return true only once per run - assumes that this function is called only once per
-     * window.
+     * window. This function has a side effect - it memorizes that an overlay was shown.           
      */
     virtual bool ShouldShowRatingOverlayView() = 0;
 

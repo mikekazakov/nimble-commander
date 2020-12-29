@@ -540,8 +540,10 @@ static std::string AquaticPrimePublicKey()
         am.IsTrialPeriod() == false )
         self.dock.SetUnregisteredBadge(true);
 
+#ifdef __NC_VERSION_TRIAL__
     if( !am.ForAppStore() )
         PFMoveToApplicationsFolderIfNecessary();
+#endif
 
     ConfigWiring{GlobalConfig()}.Wire();
 

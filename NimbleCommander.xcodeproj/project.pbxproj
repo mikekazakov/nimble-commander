@@ -526,8 +526,6 @@
 		CF84C8DF1DB74B3A00B4E888 /* PanelViewHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */; };
 		CF84C8F81DBB2AC300B4E888 /* PanelListView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */; };
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
-		CF8681A325837A7E00D87746 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; };
-		CF8681A425837A9900D87746 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; };
 		CF8B24381E6FC68D008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
 		CF8B24401E6FC695008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
 		CF8B24411E6FC696008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
@@ -687,14 +685,8 @@
 		CFB44F0C1F35F0B900E7555E /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
 		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
-		CFB63CD02590D8C50038502E /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; };
-		CFB63CD12590D8C90038502E /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; };
 		CFB63D2B2598A5AE0038502E /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
-		CFB63D322598A6410038502E /* LetsMove.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CFB63D352598A6440038502E /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CFB63D3C2598A7B70038502E /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
-		CFB63D5F2598A8260038502E /* LetsMove.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF55F80E254F2BAB00CC415D /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CFB63D602598A8260038502E /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CFB66F961D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
@@ -1442,28 +1434,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		CF955EF71B8DC08E004A25AF /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				CFB63D322598A6410038502E /* LetsMove.framework in CopyFiles */,
-				CFB63D352598A6440038502E /* Sparkle.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CF955EFE1B8DC0A8004A25AF /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				CFB63D5F2598A8260038502E /* LetsMove.framework in CopyFiles */,
-				CFB63D602598A8260038502E /* Sparkle.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CFA53A661D433E2A00C562A7 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2120,8 +2090,6 @@
 				CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */,
 				CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.a in Frameworks */,
 				CFF33FC22556964A00B3C92C /* libPanel.a in Frameworks */,
-				CFB63CD12590D8C90038502E /* Sparkle.framework in Frameworks */,
-				CFB63CD02590D8C50038502E /* LetsMove.framework in Frameworks */,
 				CF7C7CEC1E5D39AD002DB0E2 /* ServiceManagement.framework in Frameworks */,
 				CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */,
 				CF4E556523114AC400F607D7 /* libViewer.a in Frameworks */,
@@ -2177,8 +2145,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFB63D2B2598A5AE0038502E /* libNimbleCommanderCommon.a in Frameworks */,
-				CF8681A425837A9900D87746 /* LetsMove.framework in Frameworks */,
-				CF8681A325837A7E00D87746 /* Sparkle.framework in Frameworks */,
 				CF46022825630EC20095FC73 /* libHabanero.a in Frameworks */,
 				CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */,
 				CF7C7CE51E5D3521002DB0E2 /* libVFS.a in Frameworks */,
@@ -3199,7 +3165,6 @@
 				CF6D997A196675290077B146 /* Frameworks */,
 				CF6D997B196675290077B146 /* Resources */,
 				CFEB6F7C19694639000FD09D /* ShellScript */,
-				CF955EFE1B8DC0A8004A25AF /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -3270,7 +3235,6 @@
 				CFF6F3531A13567C00011177 /* Frameworks */,
 				CFF6F36A1A13567C00011177 /* Resources */,
 				CFF6F39D1A13567C00011177 /* ShellScript */,
-				CF955EF71B8DC08E004A25AF /* CopyFiles */,
 			);
 			buildRules = (
 			);

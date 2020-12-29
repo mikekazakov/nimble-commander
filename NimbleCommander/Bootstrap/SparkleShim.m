@@ -5,7 +5,11 @@
 
 SUUpdater *NCBootstrapSharedSUUpdaterInstance()
 {
+#ifdef __NC_VERSION_TRIAL__
     return [SUUpdater sharedUpdater];
+#else
+    return nil;
+#endif
 }
 
 SEL NCBootstrapSUUpdaterAction()

@@ -4,6 +4,10 @@
 #include <functional>
 #include <string>
 
+namespace nc {
+class FeedbackManager;
+}
+
 namespace nc::bootstrap {
 
 class ActivationManager;
@@ -17,7 +21,8 @@ class ActivationManager;
 @interface AppStoreHelper : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager&)_am;
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
+                          feedbackManager:(nc::FeedbackManager &)_fm;
 
 @property(nonatomic) std::function<void(const std::string &_id)> onProductPurchased;
 @property(nonatomic, readonly) NSString *priceString;
@@ -31,4 +36,3 @@ class ActivationManager;
 @end
 
 #endif
-

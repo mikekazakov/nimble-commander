@@ -15,6 +15,9 @@ class ExternalEditorsStorage;
 class NetworkConnectionsManager;
 
 namespace nc {
+
+class FeedbackManager;
+
 namespace config {
 class Config;
 }
@@ -51,6 +54,7 @@ class History;
 namespace vfs {
 class NativeHost;
 }
+
 }
 
 @interface NCAppDelegate : NSObject <NSApplicationDelegate>
@@ -142,5 +146,7 @@ class NativeHost;
 @property(nonatomic, readonly) const std::shared_ptr<nc::vfs::NativeHost> &nativeHostPtr;
 
 @property(nonatomic, readonly) nc::bootstrap::ActivationManager &activationManager;
+
+@property(nonatomic, readonly) nc::FeedbackManager &feedbackManager;
 
 @end

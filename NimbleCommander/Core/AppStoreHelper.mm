@@ -7,38 +7,40 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 
-static const auto g_ProFeaturesInAppID  = @"com.magnumbytes.nimblecommander.paid_features";
-static const auto g_PrefsPriceString    = @"proFeaturesIAPPriceString";
-static const auto g_PrefsPFDontShow     = CFSTR("proFeaturesIAPDontShow");
-static const auto g_PrefsPFNextTime     = CFSTR("proFeaturesIAPNextShowTime");
+static const auto g_ProFeaturesInAppID = @"com.magnumbytes.nimblecommander.paid_features";
+static const auto g_PrefsPriceString = @"proFeaturesIAPPriceString";
+static const auto g_PrefsPFDontShow = CFSTR("proFeaturesIAPDontShow");
+static const auto g_PrefsPFNextTime = CFSTR("proFeaturesIAPNextShowTime");
 
-@implementation AppStoreHelper
-{
-    SKProductsRequest                  *m_ProductRequest;
-    SKProduct                          *m_ProFeaturesProduct;
+@implementation AppStoreHelper {
+    SKProductsRequest *m_ProductRequest;
+    SKProduct *m_ProFeaturesProduct;
     std::function<void(const std::string &_id)> m_PurchaseCallback;
-    NSString                           *m_PriceString;
-    std::function<void()>              m_OnProFeaturesProductFetched;
-    nc::bootstrap::ActivationManager  *m_ActivationManager;
+    NSString *m_PriceString;
+    std::function<void()> m_OnProFeaturesProductFetched;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
+    nc::FeedbackManager *m_FeedbackManager;
 }
 
 @synthesize onProductPurchased = m_PurchaseCallback;
 @synthesize priceString = m_PriceString;
 @synthesize proFeaturesProduct = m_ProFeaturesProduct;
 
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager&)_am
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
+                          feedbackManager:(nc::FeedbackManager &)_fm
 {
-    if(self = [super init]) {
+    if( self = [super init] ) {
         m_ActivationManager = &_am;
+        m_FeedbackManager = &_fm;
         m_ProFeaturesProduct = nil;
         m_ProductRequest = nil;
-        
+
         [SKPaymentQueue.defaultQueue addTransactionObserver:self];
         const auto products = [NSSet setWithObject:g_ProFeaturesInAppID];
         m_ProductRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:products];
         m_ProductRequest.delegate = self;
         [m_ProductRequest start];
-        
+
         m_PriceString = [NSUserDefaults.standardUserDefaults objectForKey:g_PrefsPriceString];
         if( !m_PriceString )
             m_PriceString = @"";
@@ -47,13 +49,13 @@ static const auto g_PrefsPFNextTime     = CFSTR("proFeaturesIAPNextShowTime");
 }
 
 // background thread
-- (void)productsRequest:(SKProductsRequest *)[[maybe_unused]]request
+- (void)productsRequest:(SKProductsRequest *) [[maybe_unused]] request
      didReceiveResponse:(SKProductsResponse *)response
 {
-    for( SKProduct* p in response.products ) {
+    for( SKProduct *p in response.products ) {
         if( [p.productIdentifier isEqualToString:g_ProFeaturesInAppID] ) {
             m_ProFeaturesProduct = p;
-            
+
             NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
             formatter.formatterBehavior = NSNumberFormatterBehavior10_4;
             formatter.numberStyle = NSNumberFormatterCurrencyStyle;
@@ -66,24 +68,24 @@ static const auto g_PrefsPFNextTime     = CFSTR("proFeaturesIAPNextShowTime");
             }
         }
     }
-    
+
     if( m_ProFeaturesProduct != nil ) {
-        dispatch_to_main_queue([self]{
+        dispatch_to_main_queue([self] {
             if( m_OnProFeaturesProductFetched )
                 m_OnProFeaturesProductFetched();
-        });        
+        });
     }
 }
 
 // background thread
-- (void)request:(SKRequest *)[[maybe_unused]]request
-didFailWithError:(NSError *)[[maybe_unused]]error
+- (void)request:(SKRequest *) [[maybe_unused]] request
+    didFailWithError:(NSError *) [[maybe_unused]] error
 {
 }
 
 // background thread
-- (void) paymentQueue:(SKPaymentQueue *)queue
-  updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions
+- (void)paymentQueue:(SKPaymentQueue *)queue
+    updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions
 {
     for( SKPaymentTransaction *pt in transactions ) {
         switch( pt.transactionState ) {
@@ -92,7 +94,7 @@ didFailWithError:(NSError *)[[maybe_unused]]error
                 std::string identifier = pt.payment.productIdentifier.UTF8String;
                 auto callback = m_PurchaseCallback;
                 if( callback )
-                    dispatch_to_main_queue([=]{ callback(identifier); } );                
+                    dispatch_to_main_queue([=] { callback(identifier); });
                 [queue finishTransaction:pt];
                 break;
             }
@@ -106,15 +108,15 @@ didFailWithError:(NSError *)[[maybe_unused]]error
     }
 }
 
-- (void) askUserToBuyProFeatures
+- (void)askUserToBuyProFeatures
 {
-    dispatch_assert_main_queue();    
+    dispatch_assert_main_queue();
     if( m_ProFeaturesProduct != nil ) {
         [self doAskUserToBuyProFeatures];
     }
     else {
         const auto timeout = time(nullptr) + 60;
-        m_OnProFeaturesProductFetched = [self, timeout]{
+        m_OnProFeaturesProductFetched = [self, timeout] {
             if( time(nullptr) < timeout )
                 [self doAskUserToBuyProFeatures];
         };
@@ -123,68 +125,68 @@ didFailWithError:(NSError *)[[maybe_unused]]error
 
 - (void)doAskUserToBuyProFeatures
 {
-    assert( m_ProFeaturesProduct != nil );
+    assert(m_ProFeaturesProduct != nil);
     dispatch_assert_main_queue();
     GA().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
     SKPayment *payment = [SKPayment paymentWithProduct:m_ProFeaturesProduct];
     [SKPaymentQueue.defaultQueue addPayment:payment];
 }
 
-- (void) askUserToRestorePurchases
+- (void)askUserToRestorePurchases
 {
     if( !m_ProFeaturesProduct )
         return;
-    
+
     GA().PostEvent("Licensing", "Buy", "Restore IAP purchases");
     [SKPaymentQueue.defaultQueue restoreCompletedTransactions];
 }
 
-- (void) showProFeaturesWindow
+- (void)showProFeaturesWindow
 {
     dispatch_assert_main_queue();
     ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
     w.suppressDontShowAgain = true;
     GA().PostEvent("Licensing", "Buy", "Show Pro features IAP");
-    
+
     const auto result = [NSApp runModalForWindow:w.window];
-    
+
     if( result == NSModalResponseOK )
         [self askUserToBuyProFeatures];
 }
 
-- (void) showProFeaturesWindowIfNeededAsNagScreen
+- (void)showProFeaturesWindowIfNeededAsNagScreen
 {
     dispatch_assert_main_queue();
     const auto min_runs = 10;
-    const auto next_show_delay = 60l * 60l* 24l * 14l; // every 14 days
+    const auto next_show_delay = 60l * 60l * 24l * 14l; // every 14 days
 
-    if( m_ActivationManager->UsedHadPurchasedProFeatures() ||      // don't show nag screen if user has already bought pro features
-        FeedbackManager::Instance().ApplicationRunsCount() < min_runs ||    // don't show nag screen if user didn't use software for long enough
-        CFDefaultsGetBool(g_PrefsPFDontShow) )                              // don't show nag screen it user has opted to
+    if( m_ActivationManager->UsedHadPurchasedProFeatures() || // don't show nag screen if user has
+                                                              // already bought pro features
+        m_FeedbackManager->ApplicationRunsCount() <
+            min_runs || // don't show nag screen if user didn't use software for long enough
+        CFDefaultsGetBool(g_PrefsPFDontShow) ) // don't show nag screen it user has opted to
         return;
-    
+
     const auto next_time = CFDefaultsGetOptionalLong(g_PrefsPFNextTime);
     if( next_time && *next_time > time(0) )
         return; // it's not time yet
-    
+
     // setup next show time
     CFDefaultsSetLong(g_PrefsPFNextTime, time(0) + next_show_delay);
-    
+
     // let's show a nag screen
     GA().PostEvent("Licensing", "Buy", "Show Pro features IAP As Nagscreen");
 
     ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
     w.priceText = self.priceString;
     const auto result = [NSApp runModalForWindow:w.window];
-    
+
     if( w.dontShowAgain ) {
         CFDefaultsSetBool(g_PrefsPFDontShow, true);
         GA().PostEvent("Licensing", "Buy", "User has turned off IAP Nagscreen");
     }
     if( result == NSModalResponseOK ) {
-        dispatch_to_main_queue([self] {
-            [self askUserToBuyProFeatures];
-        });
+        dispatch_to_main_queue([self] { [self askUserToBuyProFeatures]; });
     }
 }
 

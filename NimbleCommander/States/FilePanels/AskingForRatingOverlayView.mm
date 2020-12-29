@@ -55,12 +55,15 @@
     NSTextField                             *m_Annotation;
     NSButton                                *m_DiscardButton;
     int                                     m_Rating;
+    nc::FeedbackManager *m_FeedbackManager;
 }
 
 - (instancetype) initWithFrame:(NSRect)frameRect
+               feedbackManager:(nc::FeedbackManager&)_fm
 {
     self = [super initWithFrame:frameRect];
     if(self) {
+        m_FeedbackManager = &_fm;
         self.mouseHover = false;
         m_Rating = 0;
         
@@ -186,7 +189,7 @@
  
     const auto result = m_Rating;
     dispatch_to_main_queue([=]{
-        FeedbackManager::Instance().CommitRatingOverlayResult(result);
+        m_FeedbackManager->CommitRatingOverlayResult(result);
     });
     
    v = nil; // at this moment ARC should kill us

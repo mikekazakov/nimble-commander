@@ -322,7 +322,7 @@ static std::string AquaticPrimePublicKey()
 {
     RegisterAvailableVFS();
     
-    FeedbackManager::Instance();
+    nc::FeedbackManager::Instance();
     [self themesManager];
     [self favoriteLocationsStorage];
     
@@ -351,7 +351,7 @@ static std::string AquaticPrimePublicKey()
     // ask only if there were no modal dialogs before
     if( !showed_modal_dialog &&
         !CFDefaultsGetOptionalBool(GoogleAnalytics::g_DefaultsTrackingEnabledKey) &&
-        FeedbackManager::Instance().ApplicationRunsCount() >= 5 ) {
+       self.feedbackManager.ApplicationRunsCount() >= 5 ) {
         CFDefaultsSetBool( GoogleAnalytics::g_DefaultsTrackingEnabledKey, AskUserToProvideUsageStatistics() );
         GA().UpdateEnabledStatus();
     }
@@ -473,73 +473,78 @@ static std::string AquaticPrimePublicKey()
     enable( "menu.command.open_xattr",          am.HasXAttrFS() );
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)[[maybe_unused]]_notification
+- (void)applicationDidFinishLaunching:(NSNotification *) [[maybe_unused]] _notification
 {
     m_FinishedLaunching.toggle();
-    
+
     if( self.mainWindowControllers.empty() )
-        [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a freshly new one
-    
+        [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a
+                                                  // freshly new one
+
     NSApp.servicesProvider = self;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL]
-                             returnTypes:@[]]; // pasteboard types provided by PanelController
+    [NSApp
+        registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL]
+                          returnTypes:@[]]; // pasteboard types provided by PanelController
 #pragma clang diagnostic pop
     NSUpdateDynamicServices();
-    
+
     // Since we have different app names (Nimble Commander and Nimble Commander Pro) and one
     // fixed menu, we have to emplace the right title upon startup in some menu elements.
-    UpdateMenuItemsPlaceholders( "menu.nimble_commander.about" );
-    UpdateMenuItemsPlaceholders( "menu.nimble_commander.hide" );
-    UpdateMenuItemsPlaceholders( "menu.nimble_commander.quit" );
-    UpdateMenuItemsPlaceholders( 17000 ); // Menu->Help
-    
+    UpdateMenuItemsPlaceholders("menu.nimble_commander.about");
+    UpdateMenuItemsPlaceholders("menu.nimble_commander.hide");
+    UpdateMenuItemsPlaceholders("menu.nimble_commander.quit");
+    UpdateMenuItemsPlaceholders(17000); // Menu->Help
+
     [self temporaryFileStorage]; // implicitly runs the background temp storage purging
-    
+
     auto &am = self.activationManager;
-    
+
     // Non-MAS version stuff below:
     if( !am.ForAppStore() ) {
         if( am.ShouldShowTrialNagScreen() ) // check if we should show a nag screen
-            dispatch_to_main_queue_after(500ms, [self]{ [self showTrialWindow]; });
+            dispatch_to_main_queue_after(500ms, [self] { [self showTrialWindow]; });
 
         // setup Sparkle updater stuff
         NSMenuItem *item = [[NSMenuItem alloc] init];
-        item.title = NSLocalizedString(@"Check for Updates...", "Menu item title for check if any Nimble Commander updates are available");
+        item.title = NSLocalizedString(
+            @"Check for Updates...",
+            "Menu item title for check if any Nimble Commander updates are available");
         item.target = NCBootstrapSharedSUUpdaterInstance();
         item.action = NCBootstrapSUUpdaterAction();
         [[NSApp.mainMenu itemAtIndex:0].submenu insertItem:item atIndex:1];
     }
-    
+
     // initialize stuff related with in-app purchases
     if( am.Type() == ActivationManager::Distribution::Free ) {
-        m_AppStoreHelper = [[AppStoreHelper alloc] initWithActivationManager:am];
-        m_AppStoreHelper.onProductPurchased = [=, &am]([[maybe_unused]] const std::string &_id){
+        m_AppStoreHelper = [[AppStoreHelper alloc] initWithActivationManager:am
+                                                             feedbackManager:self.feedbackManager];
+        m_AppStoreHelper.onProductPurchased = [=, &am]([[maybe_unused]] const std::string &_id) {
             if( am.ReCheckProFeaturesInAppPurchased() ) {
                 [self updateMainMenuFeaturesByVersionAndState];
                 GA().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
             }
         };
-        dispatch_to_main_queue_after(500ms, [=]{ [m_AppStoreHelper showProFeaturesWindowIfNeededAsNagScreen]; });
+        dispatch_to_main_queue_after(
+            500ms, [=] { [m_AppStoreHelper showProFeaturesWindowIfNeededAsNagScreen]; });
     }
-    
+
     // accessibility stuff for NonMAS version
     if( am.Type() == ActivationManager::Distribution::Trial &&
         GlobalConfig().GetBool(g_ConfigForceFn) ) {
         nc::utility::FunctionalKeysPass::Instance().Enable();
     }
-    
-    if( am.Type() == ActivationManager::Distribution::Trial &&
-        am.UserHadRegistered() == false &&
+
+    if( am.Type() == ActivationManager::Distribution::Trial && am.UserHadRegistered() == false &&
         am.IsTrialPeriod() == false )
-        self.dock.SetUnregisteredBadge( true );
+        self.dock.SetUnregisteredBadge(true);
 
     if( !am.ForAppStore() )
         PFMoveToApplicationsFolderIfNecessary();
-    
+
     ConfigWiring{GlobalConfig()}.Wire();
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(windowWillClose:)
                                                  name:NSWindowWillCloseNotification
@@ -684,7 +689,7 @@ static std::string AquaticPrimePublicKey()
 
 - (IBAction)OnMenuSendFeedback:(id)[[maybe_unused]]_sender
 {
-    FeedbackManager::Instance().EmailFeedback();
+    self.feedbackManager.EmailFeedback();
 }
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)[[maybe_unused]]_sender
@@ -1192,6 +1197,11 @@ static void DoTemporaryFileStoragePurge()
 - (nc::bootstrap::ActivationManager&) activationManager
 {
     return *m_ActivationManager;
+}
+
+- (nc::FeedbackManager&) feedbackManager
+{
+    return nc::FeedbackManager::Instance();
 }
 
 - (void) checkMASReceipt

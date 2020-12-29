@@ -8,6 +8,8 @@
 #include "../GeneralUI/FeedbackWindow.h"
 #include <Habanero/dispatch_cpp.h>
 
+namespace nc {
+
 static const auto g_RunsKey = CFSTR("feedbackApplicationRunsCount");
 static const auto g_HoursKey = CFSTR("feedbackHoursUsedCount");
 static const auto g_FirstRunKey = CFSTR("feedbackFirstRun");
@@ -21,11 +23,13 @@ static int GetAndUpdateRunsCount()
         if( v < 1 ) {
             v = 1;
             CFDefaultsSetInt(g_RunsKey, v);
-        } else {
+        }
+        else {
             dispatch_to_background([=] { CFDefaultsSetInt(g_RunsKey, v + 1); });
         }
         return v;
-    } else {
+    }
+    else {
         dispatch_to_background([=] { CFDefaultsSetInt(g_RunsKey, 1); });
         return 1;
     }
@@ -76,8 +80,7 @@ static bool HasInternetConnection()
 FeedbackManager::FeedbackManager(nc::bootstrap::ActivationManager &_am)
     : m_ApplicationRunsCount(GetAndUpdateRunsCount()), m_TotalHoursUsed(GetTotalHoursUsed()),
       m_StartupTime(time(nullptr)), m_FirstRunTime(GetOrSetFirstRunTime()),
-      m_ActivationManager(_am),
-      m_LastRating(CFDefaultsGetOptionalInt(g_LastRatingKey)),
+      m_ActivationManager(_am), m_LastRating(CFDefaultsGetOptionalInt(g_LastRatingKey)),
       m_LastRatingTime(CFDefaultsGetOptionalLong(g_LastRatingKey))
 {
     atexit([] {
@@ -114,12 +117,13 @@ void FeedbackManager::CommitRatingOverlayResult(int _result)
 
     if( _result > 0 ) {
         // used clicked at some star - lets show a window then
-        FeedbackWindow *w =
-            [[FeedbackWindow alloc] initWithActivationManager:m_ActivationManager];
+        FeedbackWindow *w = [[FeedbackWindow alloc] initWithActivationManager:m_ActivationManager
+                                                              feedbackManager:*this];
         w.rating = _result;
         [w showWindow:nil];
     }
 }
+
 bool FeedbackManager::ShouldShowRatingOverlayView()
 {
     if( m_ShownRatingOverlay )
@@ -152,14 +156,16 @@ bool FeedbackManager::IsEligibleForRatingOverlay() const
                 // we can let ourselves to try to bother user again
                 return true;
             }
-        } else {
+        }
+        else {
             // used has clicked to some star
             if( now - when > repeated_show_delay_on_result ) {
                 // it was a long time ago, we can ask for rating again
                 return true;
             }
         }
-    } else {
+    }
+    else {
         // nope, user did never reacted to rating overlay - just check input params to find if it's
         // time to show
         const auto runs = m_ApplicationRunsCount;
@@ -224,13 +230,14 @@ void FeedbackManager::EmailSupport()
 void FeedbackManager::RateOnAppStore()
 {
     GA().PostEvent("Feedback", "Action", "Rate on AppStore");
-    NSString *mas_url = [NSString
-        stringWithFormat:@"macappstore://itunes.apple.com/app/id%s",
-                         m_ActivationManager.AppStoreID().c_str()];
+    NSString *mas_url = [NSString stringWithFormat:@"macappstore://itunes.apple.com/app/id%s",
+                                                   m_ActivationManager.AppStoreID().c_str()];
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
 }
 
 int FeedbackManager::ApplicationRunsCount() const noexcept
 {
     return m_ApplicationRunsCount;
+}
+
 }

@@ -110,10 +110,11 @@ static void SetupUnregisteredLabel(NSView *_background_view)
     [_background_view layoutSubtreeIfNeeded];
 }
 
-static void SetupRatingOverlay(NSView *_background_view)
+static void SetupRatingOverlay(NSView *_background_view, nc::FeedbackManager &_feedback_manager)
 {
     AskingForRatingOverlayView *v =
-        [[AskingForRatingOverlayView alloc] initWithFrame:_background_view.bounds];
+        [[AskingForRatingOverlayView alloc] initWithFrame:_background_view.bounds
+                                          feedbackManager:_feedback_manager];
     v.translatesAutoresizingMaskIntoConstraints = false;
     [_background_view addSubview:v];
     [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:v
@@ -173,11 +174,13 @@ static NSString *TitleForData(const data::Model *_data);
        controllerStateJSONDecoder:(ControllerStateJSONDecoder &)_controller_json_decoder
                    QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
                 activationManager:(nc::bootstrap::ActivationManager&)_activation_manager
+                  feedbackManager:(nc::FeedbackManager&)_feedback_manager
 {
     assert(_panel_factory);
     if( self = [super initWithFrame:frameRect] ) {
         m_PanelFactory = move(_panel_factory);
         m_ActivationManager = &_activation_manager;
+        m_FeedbackManager = &_feedback_manager;
         m_ControllerStateJSONDecoder = &_controller_json_decoder;
         m_ClosedPanelsHistory = nullptr;
         m_OperationsPool = _pool.shared_from_this();
@@ -209,13 +212,15 @@ static NSString *TitleForData(const data::Model *_data);
     controllerStateJSONDecoder:(ControllerStateJSONDecoder &)_controller_json_decoder
                 QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
             activationManager:(nc::bootstrap::ActivationManager&)_activation_manager
+              feedbackManager:(nc::FeedbackManager&)_feedback_manager
 {
     self = [self initBaseWithFrame:frameRect
                            andPool:_pool
                       panelFactory:move(_panel_factory)
         controllerStateJSONDecoder:_controller_json_decoder
                     QLPanelAdaptor:_ql_panel_adaptor
-                 activationManager:_activation_manager];
+                 activationManager:_activation_manager
+                   feedbackManager:_feedback_manager];
     if( self ) {
         if( _load_content ) {
             [self restoreDefaultPanelOptions];
@@ -426,8 +431,9 @@ static NSString *TitleForData(const data::Model *_data);
                                                        views:views]];
     }
 
-    if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
-        SetupRatingOverlay(m_ToolbarDelegate.operationsPoolViewController.idleView);
+    if( m_FeedbackManager->ShouldShowRatingOverlayView() )
+        SetupRatingOverlay(m_ToolbarDelegate.operationsPoolViewController.idleView,
+                           *m_FeedbackManager);
     else if( m_ActivationManager->Type() == nc::bootstrap::ActivationManager::Distribution::Trial &&
              !m_ActivationManager->UserHadRegistered() )
         SetupUnregisteredLabel(m_ToolbarDelegate.operationsPoolViewController.idleView);

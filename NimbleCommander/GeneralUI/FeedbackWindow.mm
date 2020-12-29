@@ -8,23 +8,25 @@
 using namespace std::literals;
 
 @interface FeedbackWindow ()
-@property (nonatomic) IBOutlet NSTabView *tabView;
+@property(nonatomic) IBOutlet NSTabView *tabView;
 
 @end
 
-@implementation FeedbackWindow
-{
+@implementation FeedbackWindow {
     FeedbackWindow *m_Self;
     nc::bootstrap::ActivationManager *m_ActivationManager;
+    nc::FeedbackManager *m_FeedbackManager;
 }
 
 @synthesize rating;
 
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager&)_am
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
+                          feedbackManager:(nc::FeedbackManager &)_fm
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if( self ) {
         m_ActivationManager = &_am;
+        m_FeedbackManager = &_fm;
         self.rating = 1;
     }
     return self;
@@ -34,8 +36,8 @@ using namespace std::literals;
 {
     [super windowDidLoad];
     m_Self = self;
-    
-    if( self.rating == 5 || self.rating == 4) {
+
+    if( self.rating == 5 || self.rating == 4 ) {
         // positive branch
         if( m_ActivationManager->ForAppStore() )
             [self.tabView selectTabViewItemAtIndex:0];
@@ -52,26 +54,24 @@ using namespace std::literals;
     }
 }
 
-- (void)windowWillClose:(NSNotification *)[[maybe_unused]]_notification
+- (void)windowWillClose:(NSNotification *) [[maybe_unused]] _notification
 {
-    dispatch_to_main_queue_after(10ms, [=]{
-        m_Self = nil;
-    });
+    dispatch_to_main_queue_after(10ms, [=] { m_Self = nil; });
 }
 
-- (IBAction)onEmailFeedback:(id)[[maybe_unused]]_sender
+- (IBAction)onEmailFeedback:(id) [[maybe_unused]] _sender
 {
-    FeedbackManager::Instance().EmailFeedback();
+    m_FeedbackManager->EmailFeedback();
 }
 
-- (IBAction)onHelp:(id)[[maybe_unused]]_sender
+- (IBAction)onHelp:(id) [[maybe_unused]] _sender
 {
-    FeedbackManager::Instance().EmailSupport();
+    m_FeedbackManager->EmailSupport();
 }
 
-- (IBAction)onRate:(id)[[maybe_unused]]_sender
+- (IBAction)onRate:(id) [[maybe_unused]] _sender
 {
-    FeedbackManager::Instance().RateOnAppStore();
+    m_FeedbackManager->RateOnAppStore();
 }
 
 @end

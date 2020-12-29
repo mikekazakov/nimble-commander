@@ -350,96 +350,114 @@ int NativeHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-// return false on error or cancellation
+// return VFSError on error or cancellation
 static int CalculateDirectoriesSizesHelper(char *_path,
-                                      size_t _path_len,
-                                      bool &_iscancelling,
-                                      const VFSCancelChecker &_checker,
-                                      dispatch_queue &_stat_queue,
-                                      int64_t &_size_stock)
+                                           size_t _path_len,
+                                           std::atomic_bool &_iscancelling,
+                                           const VFSCancelChecker &_checker,
+                                           dispatch_queue &_stat_queue,
+                                           std::atomic_int64_t &_size_stock)
 {
-    if(_checker && _checker())
-    {
+    if( _checker && _checker() ) {
         _iscancelling = true;
         return VFSError::Cancelled;
     }
-    
-    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
-    
-    const auto dirp = io.opendir(_path);
-    if( dirp == 0 )
+
+    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK); // <-- sync IO operation
+
+    const auto dirp = io.opendir(_path); // <-- sync IO operation
+    if( dirp == nullptr )
         return VFSError::FromErrno();
-    
-    dirent *entp;
-    
+
     _path[_path_len] = '/';
-    _path[_path_len+1] = 0;
+    _path[_path_len + 1] = 0;
     char *var = _path + _path_len + 1;
-    
-    while((entp = io.readdir(dirp)) != NULL) {
+
+    dirent *entp = nullptr;
+    while( (entp = io.readdir(dirp)) != NULL ) { // <-- sync IO operation
         if( _checker && _checker() ) {
             _iscancelling = true;
             goto cleanup;
         }
-        
+
         if( entp->d_ino == 0 )
             continue; // apple's documentation suggest to skip such files
         if( entp->d_namlen == 1 && entp->d_name[0] == '.' )
             continue; // do not process self entry
         if( entp->d_namlen == 2 && entp->d_name[0] == '.' && entp->d_name[1] == '.' )
             continue; // do not process parent entry
-        
-        memcpy(var, entp->d_name, entp->d_namlen+1);
+
+        memcpy(var, entp->d_name, entp->d_namlen + 1);
         if( entp->d_type == DT_DIR ) {
             CalculateDirectoriesSizesHelper(_path,
-                                      _path_len + entp->d_namlen + 1,
-                                      _iscancelling,
-                                      _checker,
-                                      _stat_queue,
-                                      _size_stock);
-            if(_iscancelling)
+                                            _path_len + entp->d_namlen + 1,
+                                            _iscancelling,
+                                            _checker,
+                                            _stat_queue,
+                                            _size_stock);
+            if( _iscancelling )
                 goto cleanup;
         }
         else if( entp->d_type == DT_REG || entp->d_type == DT_LNK ) {
             std::string full_path = _path;
-            _stat_queue.async([&,full_path = move(full_path)]{
+            _stat_queue.async([&, full_path = move(full_path)] {
                 if( _iscancelling )
                     return;
-                
+
                 struct stat st;
-                if( io.lstat(full_path.c_str(), &st) == 0 )
+                if( io.lstat(full_path.c_str(), &st) == 0 ) // <-- sync IO operation
                     _size_stock += st.st_size;
             });
         }
+        else if ( entp->d_type == DT_UNKNOWN ) {
+            // some filesystems (e.g. ftp) might provide DT_UNKNOWN via readdir, so need to check
+            // them via lstat() before doing further processing
+            struct stat st;
+            if( io.lstat(_path, &st) == 0 ) { // <-- sync IO operation
+                if( S_ISDIR(st.st_mode) ) {
+                    CalculateDirectoriesSizesHelper(_path,
+                                                    _path_len + entp->d_namlen + 1,
+                                                    _iscancelling,
+                                                    _checker,
+                                                    _stat_queue,
+                                                    _size_stock);
+                    if( _iscancelling )
+                        goto cleanup;
+                }
+                else if( S_ISREG(st.st_mode) || S_ISLNK(st.st_mode) ) {
+                    _size_stock += st.st_size;
+                    
+                }
+            }
+        }
     }
-    
+
 cleanup:
-    io.closedir(dirp);
+    io.closedir(dirp); // <-- sync IO operation
     _path[_path_len] = 0;
     return VFSError::Ok;
 }
 
-
 ssize_t NativeHost::CalculateDirectorySize(const char *_path,
                                            const VFSCancelChecker &_cancel_checker)
 {
-    if(_cancel_checker && _cancel_checker())
+    if( _cancel_checker && _cancel_checker() )
         return VFSError::Cancelled;
-    
-    if(_path == 0 ||
-       _path[0] != '/')
+
+    if( _path == 0 || _path[0] != '/' )
         return VFSError::InvalidCall;
-    
-    bool iscancelling = false;
+
+    std::atomic_bool iscancelling{false};
     char path[MAXPATHLEN];
     strcpy(path, _path);
-    
+
     dispatch_queue stat_queue("VFSNativeHost.CalculateDirectoriesSizes");
-    
-    int64_t size = 0;
-    int result = CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
-    stat_queue.sync([]{});
-    if(result >= 0)
+
+    std::atomic_int64_t size{0};
+    int result = CalculateDirectoriesSizesHelper(
+        path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
+    stat_queue.sync([] {});
+    if( result >= 0 )
         return size;
     else
         return result;

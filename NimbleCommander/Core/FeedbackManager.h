@@ -13,8 +13,8 @@ namespace nc {
 class FeedbackManager
 {
 public:
-    static FeedbackManager &Instance();
-
+    FeedbackManager(nc::bootstrap::ActivationManager &_am);
+    
     /**
      * Decided if rating overlay need to be shown, based on usage statistics.
      * Can return true only once per run - assumes that this function is called only once per
@@ -37,13 +37,17 @@ public:
      * Will reset any information about application usage.
      */
     void ResetStatistics();
+    
+    /**
+     * Store any updated usage statics in a backend storage.
+     */
+    void UpdateStatistics();    
 
     void EmailFeedback();
     void EmailSupport();
     void RateOnAppStore();
 
 private:
-    FeedbackManager(nc::bootstrap::ActivationManager &_am);
     bool IsEligibleForRatingOverlay() const;
 
     const int m_ApplicationRunsCount;

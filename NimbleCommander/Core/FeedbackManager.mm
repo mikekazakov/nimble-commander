@@ -4,7 +4,6 @@
 #include <Habanero/CFDefaultsCPP.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h> // TODO: remove this dependency
 #include "../GeneralUI/FeedbackWindow.h"
 #include <Habanero/dispatch_cpp.h>
 
@@ -83,20 +82,6 @@ FeedbackManager::FeedbackManager(nc::bootstrap::ActivationManager &_am)
       m_ActivationManager(_am), m_LastRating(CFDefaultsGetOptionalInt(g_LastRatingKey)),
       m_LastRatingTime(CFDefaultsGetOptionalLong(g_LastRatingKey))
 {
-    atexit([] {
-        auto &i = FeedbackManager::Instance();
-        auto d = time(nullptr) - i.m_StartupTime;
-        if( d < 0 )
-            d = 0;
-        CFDefaultsSetDouble(g_HoursKey, i.m_TotalHoursUsed + (double)d / 3600.);
-    });
-}
-
-FeedbackManager &FeedbackManager::Instance()
-{
-    // TODO: kill with fire
-    static FeedbackManager instance(NCAppDelegate.me.activationManager);
-    return instance;
 }
 
 void FeedbackManager::CommitRatingOverlayResult(int _result)
@@ -186,6 +171,14 @@ void FeedbackManager::ResetStatistics()
     CFDefaultsRemoveValue(g_FirstRunKey);
     CFDefaultsRemoveValue(g_LastRatingKey);
     CFDefaultsRemoveValue(g_LastRatingTimeKey);
+}
+
+void FeedbackManager::UpdateStatistics()
+{
+    auto d = time(nullptr) - m_StartupTime;
+    if( d < 0 )
+        d = 0;
+    CFDefaultsSetDouble(g_HoursKey, m_TotalHoursUsed + (double)d / 3600.);
 }
 
 void FeedbackManager::EmailFeedback()

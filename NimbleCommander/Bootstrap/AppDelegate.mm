@@ -322,7 +322,7 @@ static std::string AquaticPrimePublicKey()
 {
     RegisterAvailableVFS();
     
-    nc::FeedbackManager::Instance();
+    [self feedbackManager];
     [self themesManager];
     [self favoriteLocationsStorage];
     
@@ -1199,9 +1199,14 @@ static void DoTemporaryFileStoragePurge()
     return *m_ActivationManager;
 }
 
-- (nc::FeedbackManager&) feedbackManager
+- (nc::FeedbackManager &)feedbackManager
 {
-    return nc::FeedbackManager::Instance();
+    static nc::FeedbackManager *instance = [self] {
+        auto fm = new nc::FeedbackManager(*m_ActivationManager);
+        atexit([] { instance->UpdateStatistics(); });
+        return fm;
+    }();
+    return *instance;
 }
 
 - (void) checkMASReceipt

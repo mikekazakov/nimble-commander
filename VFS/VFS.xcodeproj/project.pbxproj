@@ -17,8 +17,6 @@
 		CF24E1FF2290200800C166FA /* SearchForFiles_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1FD2290200400C166FA /* SearchForFiles_IT.cpp */; };
 		CF26DE2121D2864D003F0E93 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE2021D2864D003F0E93 /* Tests.cpp */; };
 		CF26DE2421D28754003F0E93 /* SearchInFile_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE2321D28754003F0E93 /* SearchInFile_UT.cpp */; };
-		CF26DE2521D2A260003F0E93 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E71F4544FB0035E606 /* libHabanero.dylib */; };
-		CF26DE2721D2A268003F0E93 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E51F4544F90035E606 /* libUtility.dylib */; };
 		CF26DE3621E297AE003F0E93 /* EasyOps_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE3521E297AE003F0E93 /* EasyOps_UT.mm */; };
 		CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0111DA22BE800992B84 /* VFSFile.cpp */; };
 		CF4600732560579F0095FC73 /* Listing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0131DA22BE800992B84 /* Listing.cpp */; };
@@ -79,8 +77,6 @@
 		CF4600C5256057F10095FC73 /* xattr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0301DA231EA00992B84 /* xattr.cpp */; };
 		CFAB6D1D258A1AF000397DB5 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
 		CFAB6D1F258A1AF000397DB5 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE2021D2864D003F0E93 /* Tests.cpp */; };
-		CFAB6D21258A1AF000397DB5 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E51F4544F90035E606 /* libUtility.dylib */; };
-		CFAB6D22258A1AF000397DB5 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E71F4544FB0035E606 /* libHabanero.dylib */; };
 		CFAB6D38258A1B6600397DB5 /* VFSPS_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF18470C1E41C8A5008B7C9F /* VFSPS_IT.cpp */; };
 		CFAB6D49258A215200397DB5 /* VFSDropbox_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */; };
 		CFAB6D62258A555A00397DB5 /* FileWindow_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE0E21CFA2CC003F0E93 /* FileWindow_UT.mm */; };
@@ -90,6 +86,14 @@
 		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
 		CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */; };
 		CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
+		CFEADD61259D2C03009ECA14 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF460065256057250095FC73 /* libVFS.a */; };
+		CFEADD62259D2C07009ECA14 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF460065256057250095FC73 /* libVFS.a */; };
+		CFEADD67259D2C19009ECA14 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEADD66259D2C19009ECA14 /* libHabanero.a */; };
+		CFEADD69259D2C20009ECA14 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEADD68259D2C20009ECA14 /* libRoutedIO.a */; };
+		CFEADD6B259D2C24009ECA14 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEADD6A259D2C24009ECA14 /* libUtility.a */; };
+		CFEADD6C259D2C2B009ECA14 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEADD66259D2C19009ECA14 /* libHabanero.a */; };
+		CFEADD6D259D2C2F009ECA14 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEADD68259D2C20009ECA14 /* libRoutedIO.a */; };
+		CFEADD6E259D2C3C009ECA14 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEADD6A259D2C24009ECA14 /* libUtility.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -276,6 +280,9 @@
 		CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ListingInput_UT.cpp; path = tests/ListingInput_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CFE08AEA23CFAFD8007E99B8 /* TestEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestEnv.h; path = tests/TestEnv.h; sourceTree = SOURCE_ROOT; };
 		CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestEnv.mm; path = tests/TestEnv.mm; sourceTree = SOURCE_ROOT; };
+		CFEADD66259D2C19009ECA14 /* libHabanero.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libHabanero.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFEADD68259D2C20009ECA14 /* libRoutedIO.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRoutedIO.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFEADD6A259D2C24009ECA14 /* libUtility.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libUtility.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF3403F2556DD3A00B3C92C /* VFSListing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VFSListing.h; path = include/VFS/VFSListing.h; sourceTree = "<group>"; };
 		CFFA94E31F4544F60035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libRoutedIO.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.dylib"; sourceTree = "<group>"; };
 		CFFA94E51F4544F90035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
@@ -303,8 +310,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF26DE2721D2A268003F0E93 /* libUtility.dylib in Frameworks */,
-				CF26DE2521D2A260003F0E93 /* libHabanero.dylib in Frameworks */,
+				CFEADD6B259D2C24009ECA14 /* libUtility.a in Frameworks */,
+				CFEADD69259D2C20009ECA14 /* libRoutedIO.a in Frameworks */,
+				CFEADD67259D2C19009ECA14 /* libHabanero.a in Frameworks */,
+				CFEADD62259D2C07009ECA14 /* libVFS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,8 +328,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFAB6D21258A1AF000397DB5 /* libUtility.dylib in Frameworks */,
-				CFAB6D22258A1AF000397DB5 /* libHabanero.dylib in Frameworks */,
+				CFEADD6E259D2C3C009ECA14 /* libUtility.a in Frameworks */,
+				CFEADD6D259D2C2F009ECA14 /* libRoutedIO.a in Frameworks */,
+				CFEADD6C259D2C2B009ECA14 /* libHabanero.a in Frameworks */,
+				CFEADD61259D2C03009ECA14 /* libVFS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,6 +388,9 @@
 		CF1847121E41C9C0008B7C9F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFEADD6A259D2C24009ECA14 /* libUtility.a */,
+				CFEADD68259D2C20009ECA14 /* libRoutedIO.a */,
+				CFEADD66259D2C19009ECA14 /* libHabanero.a */,
 				CFDE716C21526799005449C8 /* libiconv.tbd */,
 				CFFA94EB1F4546480035E606 /* DirectoryService.framework */,
 				CFFA94E71F4544FB0035E606 /* libHabanero.dylib */,

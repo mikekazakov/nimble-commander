@@ -1038,6 +1038,10 @@
 		CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
 		CFDF44A11D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
 		CFDF44A21D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
+		CFEADD48259CF60D009ECA14 /* ChangePanelsPosition.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEADD2E259CF60D009ECA14 /* ChangePanelsPosition.mm */; };
+		CFEADD49259CF60D009ECA14 /* ChangePanelsPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = CFEADD47259CF60D009ECA14 /* ChangePanelsPosition.h */; };
+		CFEADD54259D01AD009ECA14 /* FocusOverlappedTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = CFEADD52259D01AD009ECA14 /* FocusOverlappedTerminal.h */; };
+		CFEADD55259D01AD009ECA14 /* FocusOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFEADD53259D01AD009ECA14 /* FocusOverlappedTerminal.mm */; };
 		CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E391A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
@@ -2024,6 +2028,10 @@
 		CFDC07C92159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationItemsColoringFilterPersistence.mm; path = NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilterPersistence.mm; sourceTree = "<group>"; };
 		CFDF449F1D2B990A0062F7AD /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = NimbleCommander/Resources/Media.xcassets; sourceTree = SOURCE_ROOT; };
 		CFE08B0C23D4BE3D007E99B8 /* NativeVFSHostInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeVFSHostInstance.h; path = NimbleCommander/Bootstrap/NativeVFSHostInstance.h; sourceTree = "<group>"; };
+		CFEADD2E259CF60D009ECA14 /* ChangePanelsPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ChangePanelsPosition.mm; path = NimbleCommander/States/FilePanels/Actions/ChangePanelsPosition.mm; sourceTree = "<group>"; };
+		CFEADD47259CF60D009ECA14 /* ChangePanelsPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChangePanelsPosition.h; path = NimbleCommander/States/FilePanels/Actions/ChangePanelsPosition.h; sourceTree = "<group>"; };
+		CFEADD52259D01AD009ECA14 /* FocusOverlappedTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FocusOverlappedTerminal.h; path = NimbleCommander/States/FilePanels/Actions/FocusOverlappedTerminal.h; sourceTree = "<group>"; };
+		CFEADD53259D01AD009ECA14 /* FocusOverlappedTerminal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FocusOverlappedTerminal.mm; path = NimbleCommander/States/FilePanels/Actions/FocusOverlappedTerminal.mm; sourceTree = "<group>"; };
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFF33F842556929300B3C92C /* Panel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Panel.xcodeproj; path = Panel/Panel.xcodeproj; sourceTree = "<group>"; };
 		CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Operations.xcodeproj; path = Operations/Operations.xcodeproj; sourceTree = "<group>"; };
@@ -2507,6 +2515,8 @@
 				CF0260C61E9DEC380025B50F /* CalculateSizes.mm */,
 				CF6ECDA71E9F4776008FA79E /* ChangeAttributes.h */,
 				CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */,
+				CFEADD47259CF60D009ECA14 /* ChangePanelsPosition.h */,
+				CFEADD2E259CF60D009ECA14 /* ChangePanelsPosition.mm */,
 				CF9F4A901EC9442C00E0AF82 /* Compress.h */,
 				CF9F4A911EC9442C00E0AF82 /* Compress.mm */,
 				CF197C471FB92E80009F6C59 /* CopyFile.h */,
@@ -2531,6 +2541,8 @@
 				CF9F4AEF1ECC015700E0AF82 /* ExecuteInTerminal.mm */,
 				CF0139B31E99F7C200E44F2D /* FindFiles.h */,
 				CF0139B41E99F7C200E44F2D /* FindFiles.mm */,
+				CFEADD52259D01AD009ECA14 /* FocusOverlappedTerminal.h */,
+				CFEADD53259D01AD009ECA14 /* FocusOverlappedTerminal.mm */,
 				CFAB6CC92587C38700397DB5 /* FollowSymlink.h */,
 				CFAB6CE22587C38700397DB5 /* FollowSymlink.mm */,
 				CFD8CDB01E8CCD0A00E4DC53 /* GoToFolder.h */,
@@ -3114,6 +3126,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFEADD49259CF60D009ECA14 /* ChangePanelsPosition.h in Headers */,
+				CFEADD54259D01AD009ECA14 /* FocusOverlappedTerminal.h in Headers */,
 				CFAB6CE32587C38800397DB5 /* FollowSymlink.h in Headers */,
 				CF485C32259B5E5D002F9A05 /* FeedbackManagerImpl.h in Headers */,
 			);
@@ -3907,7 +3921,9 @@
 				CF764CBE258763DA00D7ED17 /* ActionsShortcutsManager.mm in Sources */,
 				CF764CE2258765E600D7ED17 /* DragReceiver.mm in Sources */,
 				CF764D2E258782D900D7ED17 /* PanelBriefViewFixedNumberLayoutEngine.mm in Sources */,
+				CFEADD55259D01AD009ECA14 /* FocusOverlappedTerminal.mm in Sources */,
 				CF3ED49C2584DCF900D67AF2 /* ActivationManagerImpl.cpp in Sources */,
+				CFEADD48259CF60D009ECA14 /* ChangePanelsPosition.mm in Sources */,
 				CF764D1D258782C900D7ED17 /* PanelBriefViewLayoutEngineBase.mm in Sources */,
 				CF764CF6258766E500D7ED17 /* DragSender.mm in Sources */,
 				CF764D21258782D100D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,

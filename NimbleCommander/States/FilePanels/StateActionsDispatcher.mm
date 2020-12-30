@@ -150,10 +150,9 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
 {
     PERFORM;
 }
-
 - (IBAction)OnViewPanelsPositionMoveUp:(id)sender
 {
-    
+    PERFORM;
 }
 - (IBAction)OnViewPanelsPositionMoveDown:(id)sender
 {

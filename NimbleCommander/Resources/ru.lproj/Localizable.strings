@@ -500,3 +500,15 @@
 
 /* Follow a symlink */
 "Follow “%@”" = "Следовать за “%@”";
+
+/* Menu item for showing panels */
+"Show Panels" = "Показать панели";
+
+/* Menu item for hiding panels */
+"Hide Panels" = "Скрыть панели";
+
+/* Menu item for focusing an overlapped terminal */
+"Focus Overlapped Terminal" = "Фокус на терминал";
+
+/* Menu item for focusing file panels */
+"Focus File Panels" = "Фокус на файловые панели";

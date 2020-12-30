@@ -46,9 +46,20 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
            (s != ShellTask::TaskState::Dead );
 }
 
-- (void) increaseBottomTerminalGap
+- (bool) canIncreaseBootomTerminalGap
 {
     if( !m_OverlappedTerminal->terminal || self.isPanelsSplitViewHidden )
+        return false;
+    
+    if( m_OverlappedTerminal->bottom_gap >= m_OverlappedTerminal->terminal.totalScreenLines )
+        return false;
+    
+    return true;
+}
+
+- (void) increaseBottomTerminalGap
+{
+    if( !self.canIncreaseBootomTerminalGap )
         return;
     m_OverlappedTerminal->bottom_gap++;
     m_OverlappedTerminal->bottom_gap = std::min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
@@ -57,6 +68,15 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     if(m_OverlappedTerminal->bottom_gap == 1) {
         [self moveFocusToOverlappedTerminal];
     }
+}
+
+- (bool) canDecreaseBottomTerminalGap
+{
+    if( !m_OverlappedTerminal->terminal || self.isPanelsSplitViewHidden )
+        return false;
+    if( m_OverlappedTerminal->bottom_gap == 0 )
+        return false;
+    return true;
 }
 
 - (void) decreaseBottomTerminalGap
@@ -133,15 +153,30 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
 
 - (void) hidePanelsSplitView
 {
-    [self activateOverlappedTerminal];
-    [self moveFocusToOverlappedTerminal];
+    [self activateOverlappedTerminal];    
     m_SplitView.hidden = true;
+    [self updateOverlappedTerminalVisibility];
+    [self moveFocusToOverlappedTerminal];
 }
 
 - (void) showPanelsSplitView
 {
     m_SplitView.hidden = false;
+    [self updateOverlappedTerminalVisibility];
     [self moveFocusBackToPanels];
+}
+
+- (void)updateOverlappedTerminalVisibility
+{
+    if( m_OverlappedTerminal->terminal == nullptr )
+        return;
+    
+    if( m_OverlappedTerminal->bottom_gap == 0 && m_SplitView.hidden == false ) {
+        m_OverlappedTerminal->terminal.hidden = true;
+    }
+    else {
+        m_OverlappedTerminal->terminal.hidden = false;
+    }
 }
 
 - (bool) overlappedTerminalVisible

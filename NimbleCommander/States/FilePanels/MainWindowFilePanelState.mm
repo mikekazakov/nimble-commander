@@ -1010,10 +1010,7 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
     auto gap = [m_OverlappedTerminal->terminal bottomGapForLines:m_OverlappedTerminal->bottom_gap];
     m_MainSplitViewBottomConstraint.constant = -gap;
 
-    if( m_OverlappedTerminal->bottom_gap == 0 )
-        m_OverlappedTerminal->terminal.hidden = true;
-    else
-        m_OverlappedTerminal->terminal.hidden = false;
+    [self updateOverlappedTerminalVisibility];
 }
 
 - (bool)isPanelsSplitViewHidden

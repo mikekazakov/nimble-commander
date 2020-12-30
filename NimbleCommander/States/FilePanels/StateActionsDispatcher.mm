@@ -38,7 +38,7 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
         if( const auto action = ActionBySel(item.action, *m_AM) )
             return action->ValidateMenuItem(m_FS, item);
         return true;
-    } catch( std::exception &e ) {
+    } catch( const std::exception &e ) {
         std::cerr << "validateMenuItem has caught an exception: " << e.what() << std::endl;
     } catch( ... ) {
         std::cerr << "validateMenuItem has caught an unknown exception!" << std::endl;
@@ -51,7 +51,7 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
     if( const auto action = ActionBySel(_selector, *m_AM) ) {
         try {
             return action->Predicate(m_FS);
-        } catch( std::exception &e ) {
+        } catch( const std::exception &e ) {
             std::cerr << "validateActionBySelector has caught an exception: " << e.what()
                       << std::endl;
         } catch( ... ) {
@@ -98,22 +98,26 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
              "menu.view.panels_position.showpanels", "menu.view.panels_position.focusterminal"});
 
         if( hk_move_up.IsKeyDown(unicode, mod) ) {
-            [self OnViewPanelsPositionMoveUp:self];
+            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveUp:)
+                                      withSender:self];
             return true;
         }
 
         if( hk_move_down.IsKeyDown(unicode, mod) ) {
-            [self OnViewPanelsPositionMoveDown:self];
+            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveDown:)
+                                      withSender:self];
             return true;
         }
 
         if( hk_showhide.IsKeyDown(unicode, mod) ) {
-            [self OnViewPanelsPositionShowHidePanels:self];
+            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionShowHidePanels:)
+                                      withSender:self];
             return true;
         }
 
         if( hk_focus.IsKeyDown(unicode, mod) ) {
-            [self OnViewPanelsPositionFocusOverlappedTerminal:self];
+            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionFocusOverlappedTerminal:)
+                                      withSender:self];
             return true;
         }
     }
@@ -121,27 +125,13 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
     return [super performKeyEquivalent:theEvent];
 }
 
-- (IBAction)OnViewPanelsPositionMoveUp:(id) [[maybe_unused]] _sender
+- (void)executeBySelectorIfValidOrBeep:(SEL)_selector withSender:(id)_sender
 {
-    [m_FS increaseBottomTerminalGap];
-}
-
-- (IBAction)OnViewPanelsPositionMoveDown:(id) [[maybe_unused]] _sender
-{
-    [m_FS decreaseBottomTerminalGap];
-}
-
-- (IBAction)OnViewPanelsPositionShowHidePanels:(id) [[maybe_unused]] _sender
-{
-    if( m_FS.isPanelsSplitViewHidden )
-        [m_FS showPanelsSplitView];
+    const auto is_valid = [self validateActionBySelector:_selector];
+    if( is_valid )
+        Perform(_selector, *m_AM, m_FS, _sender);
     else
-        [m_FS hidePanelsSplitView];
-}
-
-- (IBAction)OnViewPanelsPositionFocusOverlappedTerminal:(id) [[maybe_unused]] _sender
-{
-    [m_FS handleCtrlAltTab];
+        NSBeep();
 }
 
 - (IBAction)OnFileFeedFilenameToTerminal:(id) [[maybe_unused]] _sender
@@ -156,6 +146,23 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
 
 #define PERFORM Perform(_cmd, *m_AM, m_FS, sender)
 
+- (IBAction)OnViewPanelsPositionFocusOverlappedTerminal:(id)sender
+{
+    PERFORM;
+}
+
+- (IBAction)OnViewPanelsPositionMoveUp:(id)sender
+{
+    
+}
+- (IBAction)OnViewPanelsPositionMoveDown:(id)sender
+{
+    PERFORM;
+}
+- (IBAction)OnViewPanelsPositionShowHidePanels:(id) sender
+{
+    PERFORM;
+}
 - (IBAction)OnSwapPanels:(id)sender
 {
     PERFORM;

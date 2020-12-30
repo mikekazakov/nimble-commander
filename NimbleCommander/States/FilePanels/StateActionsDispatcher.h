@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
@@ -41,5 +41,9 @@ namespace nc::panel {
 - (IBAction)OnFileOpenInOppositePanel:(id)sender;
 - (IBAction)OnFileOpenInNewOppositePanelTab:(id)sender;
 - (IBAction)onExecuteExternalTool:(id)sender;
+- (IBAction)OnViewPanelsPositionMoveUp:(id)sender;
+- (IBAction)OnViewPanelsPositionMoveDown:(id)sender;
+- (IBAction)OnViewPanelsPositionShowHidePanels:(id)sender;
+- (IBAction)OnViewPanelsPositionFocusOverlappedTerminal:(id)sender;
 
 @end

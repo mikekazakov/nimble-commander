@@ -9,6 +9,8 @@
 #include "Actions/ShowTerminal.h"
 #include "Actions/SyncPanels.h"
 #include "Actions/ExecuteExternalTool.h"
+#include "Actions/ChangePanelsPosition.h"
+#include "Actions/FocusOverlappedTerminal.h"
 #include "StateActionsDispatcher.h"
 
 namespace nc::panel {
@@ -49,7 +51,12 @@ StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
     add(@selector(OnFileRenameMoveAsCommand:), new MoveAs(_activation_manager));
     add(@selector(OnFileOpenInOppositePanel:), new RevealInOppositePanel);
     add(@selector(OnFileOpenInNewOppositePanelTab:), new RevealInOppositePanelTab);
-    add(@selector(onExecuteExternalTool:), new ExecuteExternalTool{_temp_file_storage, _activation_manager});
+    add(@selector(onExecuteExternalTool:),
+        new ExecuteExternalTool{_temp_file_storage, _activation_manager});
+    add(@selector(OnViewPanelsPositionMoveUp:), new MovePanelsUp);
+    add(@selector(OnViewPanelsPositionMoveDown:), new MovePanelsDown);
+    add(@selector(OnViewPanelsPositionShowHidePanels:), new ShowHidePanels);
+    add(@selector(OnViewPanelsPositionFocusOverlappedTerminal:), new FocusOverlappedTerminal);
 
     return m;
 }

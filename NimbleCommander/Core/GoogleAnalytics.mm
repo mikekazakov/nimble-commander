@@ -3,6 +3,7 @@
 #include <NimbleCommander/Bootstrap/NCE.h>
 #include "GoogleAnalytics.h"
 #include <Habanero/dispatch_cpp.h>
+#include <Cocoa/Cocoa.h>
 
 static void PostStartupInfo()
 {

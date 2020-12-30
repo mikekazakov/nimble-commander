@@ -2,6 +2,7 @@
 #pragma once
 
 #include "FeedbackManager.h"
+#include <CoreFoundation/CoreFoundation.h>
 #include <optional>
 #include <functional>
 #include <ctime>

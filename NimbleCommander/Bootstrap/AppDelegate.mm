@@ -11,6 +11,7 @@
 #include "NCHelpMenuDelegate.h"
 #include "SparkleShim.h"
 #include "NativeVFSHostInstance.h"
+#include "NCE.h"
 
 #include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <LetsMove/PFMoveApplication.h>

@@ -13,6 +13,9 @@
 /* Class = "NSTextFieldCell"; placeholderString = "ftp.example.com"; ObjectID = "FdQ-zx-5B7"; */
 "FdQ-zx-5B7.placeholderString" = "ftp.example.com";
 
+/* Class = "NSButtonCell"; title = "Active mode"; ObjectID = "HKG-Fq-wzu"; */
+"HKG-Fq-wzu.title" = "Активный режим";
+
 /* Class = "NSTextFieldCell"; title = "Remote path:"; ObjectID = "hUY-J5-Twm"; */
 "hUY-J5-Twm.title" = "Удаленный путь:";
 

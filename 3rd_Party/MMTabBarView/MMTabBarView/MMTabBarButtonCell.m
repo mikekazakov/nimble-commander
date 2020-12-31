@@ -53,16 +53,17 @@ NS_ASSUME_NONNULL_BEGIN
 	return self;
 }
 
-- (MMTabBarButton *)controlView {
-    return (MMTabBarButton *)[super controlView];
+- (nullable MMTabBarButton *)controlView {
+  return _tabBarButton;
 }
 
-- (void)setControlView:(MMTabBarButton *)aView {
-    [super setControlView:aView];
+- (void)setControlView:(nullable NSView *)aView {
+  _tabBarButton = (MMTabBarButton*) aView;
+  [super setControlView:aView];
 }
 
-- (MMTabBarView *)tabBarView {
-    return [[self controlView] tabBarView];
+- (nullable MMTabBarView *)tabBarView {
+    return _tabBarButton.tabBarView;
 }
 
 - (void)calcDrawInfo:(NSRect)aRect {
@@ -183,15 +184,15 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 #pragma mark Progress Indicator Support
 
-- (MMProgressIndicator *)indicator {
-    return [[self controlView] indicator];
+- (nullable MMProgressIndicator *)indicator {
+    return self.tabBarButton.indicator;
 }
 
 #pragma mark -
 #pragma mark Close Button Support
 
-- (MMRolloverButton *)closeButton {
-    return [[self controlView] closeButton];
+- (nullable MMRolloverButton *)closeButton {
+    return self.tabBarButton.closeButton;
 }
 
 - (NSImage *)closeButtonImageOfType:(MMCloseButtonImageType)type {
@@ -594,7 +595,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)_updateCloseButton {
 
     MMTabBarView *tabBarView = [self tabBarView];
-    MMTabBarButton *button = [self controlView];
+    MMTabBarButton *button = self.tabBarButton;
     MMRolloverButton *closeButton = [button closeButton];
 
     [self _updateCloseButtonImages];
@@ -625,7 +626,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)_updateIndicator {
 
     MMTabBarView *tabBarView = [self tabBarView];
-    MMTabBarButton *button = [self controlView];
+    MMTabBarButton *button = self.tabBarButton;
     MMProgressIndicator *indicator = [button indicator];
 
         // adjust visibility and position of process indicator

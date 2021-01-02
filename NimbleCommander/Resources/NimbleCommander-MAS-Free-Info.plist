@@ -29,7 +29,7 @@
 	<key>NSAppleScriptEnabled</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2013-2020 Michael Kazakov. All rights reserved.</string>
+	<string>Copyright © 2013-2021 Michael Kazakov. All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

@@ -223,7 +223,7 @@ Value PanelDataPersisency::LocationToJSON( const PersistentLocation &_location )
                        nc::config::g_CrtAllocator);
     
     json.AddMember(Value(g_StackPathKey, nc::config::g_CrtAllocator),
-                   Value(_location.path, nc::config::g_CrtAllocator),
+                   Value(_location.path.c_str(), nc::config::g_CrtAllocator),
                    nc::config::g_CrtAllocator);
     
     return json;

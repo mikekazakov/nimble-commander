@@ -295,6 +295,7 @@
 		CFDE716E215267BB005449C8 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		CFE08AFB23D3719B007E99B8 /* TestEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestEnv.h; sourceTree = "<group>"; };
 		CFE08AFC23D3719B007E99B8 /* TestEnv.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestEnv.mm; sourceTree = "<group>"; };
+		CFE0D33525A08DC200EFF0EB /* OperationsResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = OperationsResources.plist; path = resources/OperationsResources.plist; sourceTree = "<group>"; };
 		CFF340462557E21E00B3C92C /* ItemStateReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ItemStateReport.h; path = source/ItemStateReport.h; sourceTree = "<group>"; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B3F1EDD197300F567C4 /* Info-Tests.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Tests.plist"; path = "resources/Info-Tests.plist"; sourceTree = "<group>"; };
@@ -411,6 +412,7 @@
 		CFC4F8E11EFCD9B40000B3EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CFE0D33525A08DC200EFF0EB /* OperationsResources.plist */,
 				CFFA95501F4C17CE0035E606 /* Localizable.strings */,
 				CFFA954B1F4C17CD0035E606 /* Info-FrameworkPlist.strings */,
 				CFFA95451F4C17CC0035E606 /* Info-TestsPlist.strings */,

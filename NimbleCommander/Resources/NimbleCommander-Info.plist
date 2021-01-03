@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Click OK to allow Nimble Commander to display and manage the contents of the Documents folder.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Click OK to allow Nimble Commander to display and manage the contents of the Downloads folder.</string>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>Click OK to allow Nimble Commander to display and manage the contents of the Desktop folder.</string>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>An application in Nimble Commander wants to use AppleScript.</string>
 	<key>NSAppleScriptEnabled</key>

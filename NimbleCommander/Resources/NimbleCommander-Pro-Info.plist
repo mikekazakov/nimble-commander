@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>Click OK to allow Nimble Commander to display and manage the contents of the Desktop folder.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Click OK to allow Nimble Commander to display and manage the contents of the Downloads folder.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Click OK to allow Nimble Commander to display and manage the contents of the Documents folder.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>

@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>NSDesktopFolderUsageDescription</key>
-	<string>Click OK to allow Nimble Commander to display and manage the contents of the Desktop folder.</string>
+	<string>The access is needed in order to allow you to browse and manage the items in this folder with Nimble Commander. This application will not use any of your personal data without your actions.</string>
 	<key>NSDownloadsFolderUsageDescription</key>
-	<string>Click OK to allow Nimble Commander to display and manage the contents of the Downloads folder.</string>
+	<string>The access is needed in order to allow you to browse and manage the items in this folder with Nimble Commander. This application will not use any of your personal data without your actions.</string>
 	<key>NSDocumentsFolderUsageDescription</key>
-	<string>Click OK to allow Nimble Commander to display and manage the contents of the Documents folder.</string>
+	<string>The access is needed in order to allow you to browse and manage the items in this folder with Nimble Commander. This application will not use any of your personal data without your actions.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>

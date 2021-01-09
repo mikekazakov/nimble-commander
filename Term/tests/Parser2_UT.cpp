@@ -2,6 +2,8 @@
 #include <Parser2Impl.h>
 #include "Tests.h"
 
+#pragma clang diagnostic ignored "-Wframe-larger-than="
+
 using namespace nc::term;
 using namespace nc::term::input;
 #define PREFIX "nc::term::Parser2 "

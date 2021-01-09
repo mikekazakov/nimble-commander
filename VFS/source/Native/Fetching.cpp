@@ -287,8 +287,8 @@ int Fetching::ReadDirAttributesBulk(
                             ATTR_CMN_FILEID;
     attr_list.fileattr    = ATTR_FILE_DATALENGTH;
     
-    const auto attr_buf_size = 65536;
-    char attr_buf[attr_buf_size];
+    constexpr size_t attr_buf_size = 65536;
+    std::unique_ptr<char[]> attr_buf = std::make_unique<char[]>(attr_buf_size);
     CallbackParams params;
     while( true ) {
         const int retcount = getattrlistbulk(_dir_fd, &attr_list, &attr_buf[0], attr_buf_size, 0);

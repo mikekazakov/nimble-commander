@@ -468,8 +468,8 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
 
 void ShellTask::ReadChildOutput()
 {
-    constexpr int input_sz = 65536;
-    char input[65536];
+    constexpr size_t input_sz = 65536;
+    std::unique_ptr<char[]> input = std::make_unique<char[]>(input_sz);
     fd_set fd_in, fd_err;
 
     while( true ) {
@@ -506,16 +506,16 @@ void ShellTask::ReadChildOutput()
         // shell's semaphore.
         if( FD_ISSET(I->master_fd, &fd_in) ) {
             // try to read a bit more - wait 1usec to see if any additional data will come in
-            unsigned have_read = ReadInputAsMuchAsAvailable(I->master_fd, input, input_sz);
+            unsigned have_read = ReadInputAsMuchAsAvailable(I->master_fd, input.get(), input_sz);
             if( !I->temporary_suppressed )
-                DoCalloutOnChildOutput(input, have_read);
+                DoCalloutOnChildOutput(input.get(), have_read);
         }
 
         // check prompt's output
         if( FD_ISSET(I->cwd_pipe[0], &fd_in) ) {
-            const int read_rc = (int)read(I->cwd_pipe[0], input, input_sz);
+            const int read_rc = (int)read(I->cwd_pipe[0], input.get(), input_sz);
             if( read_rc > 0 )
-                ProcessPwdPrompt(input, read_rc);
+                ProcessPwdPrompt(input.get(), read_rc);
         }
 
         // check if child process died

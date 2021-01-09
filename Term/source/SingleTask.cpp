@@ -159,8 +159,8 @@ void SingleTask::ReadChildOutput()
     // just for cases when select() don't catch child death - we force to ask it for every 2 seconds
     struct timeval timeout = {2, 0};
     
-    static const int input_sz = 65536;
-    char input[65536];
+    constexpr size_t input_sz = 65536;
+    std::unique_ptr<char[]> input = std::make_unique<char[]>(input_sz);
     
     while(1)
     {
@@ -179,9 +179,9 @@ void SingleTask::ReadChildOutput()
 
         // If data on master side of PTY (some child's output)
         if(FD_ISSET(m_MasterFD, &fd_in)) {
-            rc = (int)read(m_MasterFD, input, input_sz);
+            rc = (int)read(m_MasterFD, input.get(), input_sz);
             if (rc > 0) {
-                DoCalloutOnChildOutput(input, rc);
+                DoCalloutOnChildOutput(input.get(), rc);
             }
             else if(rc < 0) {
                 std::cerr << "Error " << errno << " on read master PTY" << std::endl;
@@ -193,7 +193,7 @@ void SingleTask::ReadChildOutput()
         if(FD_ISSET(m_MasterFD, &fd_err))
         {
             // is that right - that we treat any err output as signal that task is dead?
-            read(m_MasterFD, input, input_sz);
+            read(m_MasterFD, input.get(), input_sz);
             goto end_of_all;
         }
     }

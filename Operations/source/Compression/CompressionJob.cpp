@@ -319,16 +319,16 @@ CompressionJob::StepResult CompressionJob::ProcessRegularItem(int _index,
         Stop();
     }
 
-    int buf_sz = 256 * 1024; // Why 256Kb?
-    char buf[buf_sz];
+    constexpr int buf_sz = 256 * 1024; // Why 256Kb?
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
     ssize_t source_read_rc;
-    while( (source_read_rc = src_file->Read(buf, buf_sz)) > 0 ) { // reading and compressing itself
+    while( (source_read_rc = src_file->Read(buf.get(), buf_sz)) > 0 ) { // reading and compressing itself
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stopped;
 
         ssize_t to_write = source_read_rc, la_rc = 0;
         do {
-            la_rc = archive_write_data(m_Archive, buf, to_write);
+            la_rc = archive_write_data(m_Archive, buf.get(), to_write);
             if( la_rc >= 0 )
                 to_write -= la_rc;
             else

@@ -58,20 +58,22 @@ static bool TurnOffBlockingMode( int _fd ) noexcept
     return true;
 }
 
-static int EnumerateAttrs( int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs )
+static int EnumerateAttrs(int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs)
 {
-    const auto buf_sz = 65536;
-    char buf[buf_sz];
-    auto used_size = flistxattr(_fd, buf, buf_sz, 0);
-    if( used_size < 0) // need to process ERANGE later. if somebody wanna mess with 65536/XATTR_MAXNAMELEN=512 xattrs per entry...
+    constexpr size_t buf_sz = 65536;
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(buf_sz);
+    ssize_t used_size = flistxattr(_fd, buf.get(), buf_sz, 0);
+    if( used_size < 0 ) // need to process ERANGE later. if somebody wanna mess with
+                        // 65536/XATTR_MAXNAMELEN=512 xattrs per entry...
         return VFSError::FromErrno();
 
-    for( auto s = buf, e = buf + used_size; s < e; s += strlen(s) + 1 ) { // iterate thru xattr names..
+    for( auto s = buf.get(), e = buf.get() + used_size; s < e;
+         s += strlen(s) + 1 ) { // iterate thru xattr names..
         auto xattr_size = fgetxattr(_fd, s, nullptr, 0, 0, 0);
         if( xattr_size >= 0 )
             _attrs.emplace_back(s, xattr_size);
     }
-    
+
     return 0;
 }
 

@@ -44,18 +44,18 @@ static int CopyNodeAttrs(const char *_src_full_path,
 
 static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
 {
-    uint64_t bufsz = 256*1024;
-    char buf[bufsz];
+    constexpr uint64_t bufsz = 256*1024;
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     const uint64_t src_size = _src->Size();
     uint64_t left_read = src_size;
     ssize_t res_read = 0, total_wrote = 0;
     
-    while ( (res_read = _src->Read(buf, std::min(bufsz, left_read))) > 0 )
+    while ( (res_read = _src->Read(buf.get(), std::min(bufsz, left_read))) > 0 )
     {
         ssize_t res_write = 0;
         while(res_read > 0)
         {
-            res_write = _dst->Write(buf, res_read);
+            res_write = _dst->Write(buf.get(), res_read);
             if(res_write >= 0)
             {
                 res_read -= res_write;
@@ -478,10 +478,10 @@ std::optional<std::string> CopyFileToTempStorage( const std::string &_vfs_filepa
         return std::nullopt;
     auto do_unlink = at_scope_end([&]{ unlink(native_file->path.c_str()); });
     
-    const size_t bufsz = 256*1024;
-    char buf[bufsz];
+    constexpr size_t bufsz = 256*1024;
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     ssize_t res_read;
-    while( (res_read = vfs_file->Read(buf, bufsz)) > 0 ) {
+    while( (res_read = vfs_file->Read(buf.get(), bufsz)) > 0 ) {
         ssize_t res_write;
         auto bufp = &buf[0];
         while(res_read > 0) {
@@ -498,9 +498,9 @@ std::optional<std::string> CopyFileToTempStorage( const std::string &_vfs_filepa
         return std::nullopt;
     
     vfs_file->XAttrIterateNames([&](const char *_name){
-        ssize_t res = vfs_file->XAttrGet(_name, buf, bufsz);
+        ssize_t res = vfs_file->XAttrGet(_name, buf.get(), bufsz);
         if( res >= 0 )
-            fsetxattr(native_file->file_descriptor, _name, buf, res, 0, 0);
+            fsetxattr(native_file->file_descriptor, _name, buf.get(), res, 0, 0);
         return true;
     });
     
@@ -613,12 +613,12 @@ static int ExtractRegFile(const std::string &_vfs_path,
     
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
     
-    const size_t bufsz = 256*1024;
-    char buf[bufsz];
+    constexpr size_t bufsz = 256*1024;
+    std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
     ssize_t res_read;
-    while( (res_read = vfs_file->Read(buf, bufsz)) > 0 ) {
+    while( (res_read = vfs_file->Read(buf.get(), bufsz)) > 0 ) {
         while( res_read > 0 ) {
-            ssize_t res_write = write(fd, buf, res_read);
+            ssize_t res_write = write(fd, buf.get(), res_read);
             if( res_write >= 0 )
                 res_read -= res_write;
             else {
@@ -631,9 +631,9 @@ static int ExtractRegFile(const std::string &_vfs_path,
     }
     
     vfs_file->XAttrIterateNames([&](const char *name) -> bool{
-        ssize_t res = vfs_file->XAttrGet(name, buf, bufsz);
+        ssize_t res = vfs_file->XAttrGet(name, buf.get(), bufsz);
         if( res >= 0 )
-            fsetxattr(fd, name, buf, res, 0, 0);
+            fsetxattr(fd, name, buf.get(), res, 0, 0);
         return true;
     });
     

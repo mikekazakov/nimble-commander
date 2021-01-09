@@ -29,7 +29,7 @@ CLANG_ENABLE_OBJC_ARC = YES
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // C
-OTHER_CFLAGS = -fvisibility=hidden
+OTHER_CFLAGS = -fvisibility=hidden -Wframe-larger-than=32768
 
 // C++
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include -cxx-isystem$(THRDPTY)/googletest/include

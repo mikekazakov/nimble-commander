@@ -15,6 +15,8 @@
 #include <sys/param.h>
 #include <unordered_map>
 
+#pragma clang diagnostic ignored "-Wframe-larger-than="
+
 using namespace nc;
 using namespace nc::term;
 using nc::base::CommonPaths;

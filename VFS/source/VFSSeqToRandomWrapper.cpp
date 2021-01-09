@@ -114,20 +114,19 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         backend->m_FD = fd;
         backend->m_Size = m_SeqFile->Size();
         
-        size_t bufsz = 256*1024;
-
-        char buf[bufsz];
+        constexpr uint64_t bufsz = 256*1024;
+        std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufsz);
         uint64_t left_read = backend->m_Size;
         ssize_t res_read;
         ssize_t total_wrote = 0 ;
         
-        while ( (res_read = m_SeqFile->Read(buf, MIN(bufsz, left_read))) > 0 ) {
+        while ( (res_read = m_SeqFile->Read(buf.get(), std::min(bufsz, left_read))) > 0 ) {
             if(_cancel_checker && _cancel_checker())
                 return VFSError::Cancelled;
             
             ssize_t res_write;
             while(res_read > 0) {
-                res_write = write(backend->m_FD, buf, res_read);
+                res_write = write(backend->m_FD, buf.get(), res_read);
                 if(res_write >= 0) {
                     res_read -= res_write;
                     total_wrote += res_write;

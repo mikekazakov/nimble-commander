@@ -4,6 +4,9 @@
 #include <VFS/VFS.h>
 #include <VFS/ArcLA.h>
 #include <VFS/Native.h>
+#include <sys/stat.h>
+#include <thread>
+#include "NCE.h"
 
 using namespace nc::vfs;
 

@@ -6,6 +6,7 @@
 #include "../source/Copying/Copying.h"
 #include "../source/Compression/Compression.h"
 #include <sys/stat.h>
+#include <sys/xattr.h>
 #include <vector>
 
 using namespace nc;

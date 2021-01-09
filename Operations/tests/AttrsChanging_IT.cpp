@@ -5,6 +5,7 @@
 #include "../source/AttrsChanging/AttrsChanging.h"
 #include <VFS/Native.h>
 #include <chrono>
+#include <set>
 
 using namespace nc;
 using namespace nc::ops;

@@ -7,6 +7,7 @@
 #include "../source/DirectoryCreation/DirectoryCreation.h"
 #include "Environment.h"
 #include <sys/stat.h>
+#include <iostream>
 
 static const auto g_LocalFTP = NCE(nc::env::test::ftp_qnap_nas_host);
 

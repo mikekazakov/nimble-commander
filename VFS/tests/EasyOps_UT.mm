@@ -6,6 +6,8 @@
 #include <Habanero/algo.h>
 #include <Utility/TemporaryFileStorageImpl.h>
 #include <Utility/PathManip.h>
+#include <sys/stat.h>
+#include <ftw.h>
 
 static int RMRF(const std::string& _path);
 static auto g_TestDirPrefix = "_nc__vfs__easy_ops__test_";

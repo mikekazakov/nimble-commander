@@ -3,6 +3,7 @@
 #include "TestEnv.h"
 #include <Operations/FilenameTextControl.h>
 #include <VFS/Native.h>
+#include <sys/stat.h>
 
 #define PREFIX "DirectoryPathAutoCompletionImpl "
 

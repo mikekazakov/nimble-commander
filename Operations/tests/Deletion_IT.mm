@@ -7,6 +7,7 @@
 #include "../source/Deletion/Deletion.h"
 #include "Environment.h"
 #include <sys/stat.h>
+#include <iostream>
 
 using namespace nc;
 using namespace nc::ops;

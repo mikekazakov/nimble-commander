@@ -4,6 +4,8 @@
 #include "../source/NetWebDAV/WebDAVHost.h"
 #include <VFS/VFSEasyOps.h>
 #include <VFS/Native.h>
+#include "NCE.h"
+#include <sys/stat.h>
 
 #define PREFIX "WebDAV "
 

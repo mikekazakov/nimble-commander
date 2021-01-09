@@ -8,6 +8,7 @@
 
 #include "Tests.h"
 #include <Habanero/CommonPaths.h>
+#include <ftw.h>
 
 static auto g_TestDirPrefix = "_nc__vfs__test_";
 

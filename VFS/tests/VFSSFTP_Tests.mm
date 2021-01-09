@@ -4,6 +4,7 @@
 #include <VFS/NetSFTP.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/DispatchGroup.h>
+#include "NCE.h"
 
 using namespace nc::vfs;
 

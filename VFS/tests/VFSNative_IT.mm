@@ -2,6 +2,7 @@
 #include "Tests.h"
 #include "TestEnv.h"
 #include <Habanero/algo.h>
+#include <Habanero/dispatch_cpp.h>
 #include <boost/process.hpp>
 
 using namespace nc::vfs;

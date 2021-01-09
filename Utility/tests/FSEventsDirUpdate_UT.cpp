@@ -1,6 +1,8 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsDirUpdate.h"
 #include "UnitTests_main.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <fcntl.h>
 
 using nc::utility::FSEventsDirUpdate; 
 

@@ -3,6 +3,7 @@
 #include "TestEnv.h"
 #include <boost/filesystem.hpp>
 #include <sys/stat.h>
+#include <set>
 
 #include "../source/Compression/Compression.h"
 #include "../source/Statistics.h"

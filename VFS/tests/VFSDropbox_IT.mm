@@ -1,8 +1,10 @@
 // Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
+#include "NCE.h"
 #include <VFS/NetDropbox.h>
 #include <VFS/../../source/NetDropbox/File.h>
+#include <set>
 
 using namespace nc::vfs;
 using namespace std::string_literals;

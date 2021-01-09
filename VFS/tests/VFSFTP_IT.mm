@@ -1,9 +1,12 @@
 // Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
+#include "NCE.h"
 #include <VFS/VFS.h>
 #include <VFS/NetFTP.h>
 #include <VFS/Native.h>
+#include <set>
+#include <thread>
 
 using namespace nc::vfs;
 

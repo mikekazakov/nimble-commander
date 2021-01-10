@@ -575,7 +575,7 @@ static std::string AquaticPrimePublicKey()
     const auto config_defaults = Load(config_defaults_path);
     if( config_defaults == std::nullopt ) {
         std::cerr << "Failed to read the main config file: " << config_defaults_path << std::endl;
-        exit(0);
+        exit(-1);
     }
         
     const auto state_defaults_path = [bundle pathForResource:@"State"
@@ -583,7 +583,7 @@ static std::string AquaticPrimePublicKey()
     const auto state_defaults = Load(state_defaults_path);
     if( state_defaults == std::nullopt ) {
         std::cerr << "Failed to read the state config file: " << state_defaults_path << std::endl;
-        exit(0);
+        exit(-1);
     }
     
     const auto write_delay = std::chrono::seconds{30};

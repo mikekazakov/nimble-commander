@@ -2,6 +2,10 @@
 
 set -o pipefail
 
+SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+BUILD_DIR=$(mktemp -d ${SCRIPTS_DIR}/build.XXXXXXXXX)
+echo "a directory: $BUILD_DIR"
+
 build_target()
 {
     TARGET=$1
@@ -11,6 +15,8 @@ build_target()
         -project ../NimbleCommander.xcodeproj \
         -scheme ${TARGET} \
         -configuration ${CONFIGURATION} \
+        CONFIGURATION_BUILD_DIR=${BUILD_DIR} \
+        CONFIGURATION_TEMP_DIR=${BUILD_DIR} \
         -parallelizeTargets \
         -quiet"
     BINARY_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//')
@@ -42,3 +48,5 @@ for configuration in ${configurations[@]}; do
     $BINARY_PATH
   done
 done
+
+rm -rf ${BUILD_DIR}

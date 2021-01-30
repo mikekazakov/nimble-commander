@@ -70,6 +70,7 @@ constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
     
 int ToVFSError( int _curl_rc, int _http_rc ) noexcept;
 int CurlRCToVFSError( int _curl_rc ) noexcept;
+int HTTPRCToVFSError( int _http_rc ) noexcept;
     
 int curl_easy_get_response_code(CURL *_handle);
 

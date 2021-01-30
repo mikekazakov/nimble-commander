@@ -9,6 +9,7 @@
 #include <span>
 #include <VFS/VFSError.h>
 #include "ReadBuffer.h"
+#include "WriteBuffer.h"
 
 namespace nc::vfs::webdav {
 
@@ -17,6 +18,11 @@ class HostConfiguration;
 class Connection
 {
 public:
+    struct BlockRequestResult {
+        int vfs_error = VFSError::Ok; // error code for the underlying transport
+        int http_code = 0;            // actual protocol result
+    };
+
     Connection(const HostConfiguration &_config);
     ~Connection();
 
@@ -27,13 +33,16 @@ public:
     void AttachMultiHandle();
     void DetachMultiHandle();
 
-    // Setting a request up
+    // Setting a request up. All these functions copy the input data
     int SetCustomRequest(std::string_view _request);
     int SetURL(std::string_view _url);
     int SetHeader(std::span<const std::string_view> _header);
-    
+    int SetBody(std::span<const std::byte> _body);
+
     // Queries
-    ReadBuffer &ResponseBody() noexcept;
+    BlockRequestResult PerformBlockingRequest();
+    ReadBuffer &ResponseBody();
+    std::string_view ResponseHeader();
 
     using ProgressCallback =
         std::function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
@@ -52,8 +61,10 @@ private:
     bool m_MultiHandleAttached = false;
     ProgressCallback m_ProgressCallback;
 
-    SlistPtr m_Header;
+    SlistPtr m_RequestHeader;
+    WriteBuffer m_RequestBody;
     ReadBuffer m_ResponseBody;
+    std::string m_ResponseHeader;
 };
 
 class ConnectionsPool
@@ -79,4 +90,5 @@ struct ConnectionsPool::AR {
     std::unique_ptr<Connection> connection;
     ConnectionsPool &pool;
 };
-}
+
+} // namespace nc::vfs::webdav

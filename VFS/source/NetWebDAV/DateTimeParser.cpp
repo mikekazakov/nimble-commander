@@ -1,7 +1,7 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DateTimeParser.h"
 #include <Habanero/CFStackAllocator.h>
-#include <Habanero/spinlock.h>
+#include <mutex>
 
 namespace nc::vfs::webdav {
 
@@ -22,7 +22,7 @@ time_t DateTimeFromRFC1123( const char *_date_time )
         CFRelease(locale);
         return f;
     }();
-    static spinlock formatter_lock;
+    [[clang::no_destroy]] static std::mutex formatter_lock;
     const auto lock = std::lock_guard{formatter_lock};
     return ParseUnlocked(formatter, _date_time);
 }
@@ -42,7 +42,7 @@ time_t DateTimeFromRFC850( const char *_date_time )
         CFRelease(locale);
         return f;
     }();
-    static spinlock formatter_lock;
+    [[clang::no_destroy]] static std::mutex formatter_lock;
     const auto lock = std::lock_guard{formatter_lock};
     return ParseUnlocked(formatter, _date_time);
 }
@@ -62,7 +62,7 @@ time_t DateTimeFromASCTime( const char *_date_time )
         CFRelease(locale);
         return f;
     }();
-    static spinlock formatter_lock;
+    [[clang::no_destroy]] static std::mutex formatter_lock;
     const auto lock = std::lock_guard{formatter_lock};
     return ParseUnlocked(formatter, _date_time);
 }
@@ -82,7 +82,7 @@ time_t DateTimeFromRFC3339( const char *_date_time )
         CFRelease(locale);
         return f;
     }();
-    static spinlock formatter_lock;
+    [[clang::no_destroy]] static std::mutex formatter_lock;
     const auto lock = std::lock_guard{formatter_lock};
     return ParseUnlocked(formatter, _date_time);
 }

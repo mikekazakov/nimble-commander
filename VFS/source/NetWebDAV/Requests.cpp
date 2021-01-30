@@ -10,131 +10,96 @@
 #include <CFNetwork/CFNetworkErrors.h>
 
 namespace nc::vfs::webdav {
-    
+
 using namespace std::literals;
-    
-struct CURLInputStringContext
-{
-    CURLInputStringContext(){};
-    CURLInputStringContext(const std::string &_str):data(_str){};
-    CURLInputStringContext(const char   *_str):data(_str){};
 
-    std::string_view data;
-    ssize_t offset = 0;
-    
-    static size_t Read(void *_buf, size_t _size, size_t _nmemb, void *_userp)
-    {
-        auto &context = *(CURLInputStringContext*)_userp;
-        const auto to_read = std::min( context.data.size() - context.offset, _size * _nmemb );
-        memcpy( _buf, context.data.data() + context.offset, to_read );
-        context.offset += to_read;
-        return to_read;
-    }
-    
-    static int Seek(void *_userp, curl_off_t _offset, int _origin)
-    {
-        auto &context = *(CURLInputStringContext*)_userp;
-        if( _origin == SEEK_SET ) {
-            if( _offset >= 0 && _offset <= (ssize_t)context.data.size() ) {
-                context.offset = _offset;
-                return CURL_SEEKFUNC_OK;
-            }
-        }
-        if( _origin == SEEK_CUR ) {
-            const auto pos = context.offset + _offset;
-            if( pos >= 0 && pos <= (ssize_t)context.data.size() ) {
-                context.offset = pos;
-                return CURL_SEEKFUNC_OK;
-            }
-        }
-        if( _origin == SEEK_END ) {
-            const auto pos = (ssize_t)context.data.size() + _offset;
-            if( pos >= 0 && pos <= (ssize_t)context.data.size() ) {
-                context.offset = pos;
-                return CURL_SEEKFUNC_OK;
-            }
-        }
-        return CURL_SEEKFUNC_CANTSEEK;
-    }
-};
-
-static bool IsOkHTTPRC( const int _rc )
+static bool IsOkHTTPRC(const int _rc)
 {
     return _rc >= 200 & _rc < 300;
 }
 
-static size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp)
-{
-    const auto sz = size * nmemb;
-    auto &str = *(std::string*)userp;
-    str.insert( str.size(), (const char *)buffer, sz );
-    return sz;
-}
-
-static HTTPRequests::Mask ParseSupportedRequests( const std::string &_options_response_header )
+static HTTPRequests::Mask ParseSupportedRequests(std::string_view _options_response_header)
 {
     std::vector<std::string> lines;
-    boost::split(lines, _options_response_header,
-                 [](char _c){ return _c == '\r' || _c == '\n'; }, boost::token_compress_on);
+    boost::split(
+        lines,
+        _options_response_header,
+        [](char _c) { return _c == '\r' || _c == '\n'; },
+        boost::token_compress_on);
 
     HTTPRequests::Mask mask = HTTPRequests::None;
-    
+
     const std::string_view allowed_prefix = "Allow: ";
-    const auto allowed = find_if(begin(lines), end(lines), [allowed_prefix](const auto &_line){
+    const auto allowed = find_if(begin(lines), end(lines), [allowed_prefix](const auto &_line) {
         return _line.starts_with(allowed_prefix);
     });
     if( allowed != end(lines) ) {
-        const auto requests_set = allowed->substr( allowed_prefix.size() );
+        const auto requests_set = allowed->substr(allowed_prefix.size());
         std::vector<std::string> requests;
-        boost::split(requests, requests_set,
-                     [](char _c){ return _c == ',' || _c == ' '; },
-                     boost::token_compress_on);
-        for( const auto &request: requests ) {
-            if( request == "GET" )          mask |= HTTPRequests::Get;
-            if( request == "HEAD" )         mask |= HTTPRequests::Head;
-            if( request == "POST" )         mask |= HTTPRequests::Post;
-            if( request == "PUT" )          mask |= HTTPRequests::Put;
-            if( request == "DELETE" )       mask |= HTTPRequests::Delete;
-            if( request == "CONNECT" )      mask |= HTTPRequests::Connect;
-            if( request == "OPTIONS" )      mask |= HTTPRequests::Options;
-            if( request == "TRACE" )        mask |= HTTPRequests::Trace;
-            if( request == "COPY" )         mask |= HTTPRequests::Copy;
-            if( request == "LOCK" )         mask |= HTTPRequests::Lock;
-            if( request == "MKCOL" )        mask |= HTTPRequests::Mkcol;
-            if( request == "MOVE" )         mask |= HTTPRequests::Move;
-            if( request == "PROPFIND" )     mask |= HTTPRequests::PropFind;
-            if( request == "PROPPATCH" )    mask |= HTTPRequests::PropPatch;
-            if( request == "UNLOCK" )       mask |= HTTPRequests::Unlock;
+        boost::split(
+            requests,
+            requests_set,
+            [](char _c) { return _c == ',' || _c == ' '; },
+            boost::token_compress_on);
+        for( const auto &request : requests ) {
+            if( request == "GET" )
+                mask |= HTTPRequests::Get;
+            if( request == "HEAD" )
+                mask |= HTTPRequests::Head;
+            if( request == "POST" )
+                mask |= HTTPRequests::Post;
+            if( request == "PUT" )
+                mask |= HTTPRequests::Put;
+            if( request == "DELETE" )
+                mask |= HTTPRequests::Delete;
+            if( request == "CONNECT" )
+                mask |= HTTPRequests::Connect;
+            if( request == "OPTIONS" )
+                mask |= HTTPRequests::Options;
+            if( request == "TRACE" )
+                mask |= HTTPRequests::Trace;
+            if( request == "COPY" )
+                mask |= HTTPRequests::Copy;
+            if( request == "LOCK" )
+                mask |= HTTPRequests::Lock;
+            if( request == "MKCOL" )
+                mask |= HTTPRequests::Mkcol;
+            if( request == "MOVE" )
+                mask |= HTTPRequests::Move;
+            if( request == "PROPFIND" )
+                mask |= HTTPRequests::PropFind;
+            if( request == "PROPPATCH" )
+                mask |= HTTPRequests::PropPatch;
+            if( request == "UNLOCK" )
+                mask |= HTTPRequests::Unlock;
         }
     }
 
     return mask;
 }
 
-std::pair<int, HTTPRequests::Mask> RequestServerOptions(const HostConfiguration& _options,
-                                                        Connection &_connection )
+std::pair<int, HTTPRequests::Mask> RequestServerOptions(const HostConfiguration &_options,
+                                                        Connection &_connection)
 {
-    const auto curl = _connection.EasyHandle();
-    
     _connection.SetCustomRequest("OPTIONS");
     _connection.SetURL(_options.full_url);
-    
-    std::string headers;
-    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
-    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
 
-    const auto curl_rc = curl_easy_perform(curl);
-    const auto http_rc = curl_easy_get_response_code(curl);
-    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) ) {
-        const auto requests = ParseSupportedRequests(headers);
+    const auto result = _connection.PerformBlockingRequest();
+
+    if( result.vfs_error != VFSError::Ok )
+        return {result.vfs_error, HTTPRequests::None};
+
+    if( IsOkHTTPRC(result.http_code) ) {
+        const auto header = _connection.ResponseHeader();
+        const auto requests = ParseSupportedRequests(header);
         return {VFSError::Ok, requests};
     }
     else {
-        return {ToVFSError(curl_rc, http_rc), HTTPRequests::None};
+        return {HTTPRCToVFSError(result.http_code), HTTPRequests::None};
     }
 }
 
-static time_t ParseModDate( const char *_date_time )
+static time_t ParseModDate(const char *_date_time)
 {
     if( const auto t = DateTimeFromRFC1123(_date_time); t >= 0 )
         return t;
@@ -190,21 +155,21 @@ static std::optional<PropFindResponse> ParseResponseNode(pugi::xml_node _node)
     return std::optional<PropFindResponse>{std::move(response)};
 }
 
-static std::vector<PropFindResponse> ParseDAVListing( const std::string &_xml_listing )
+static std::vector<PropFindResponse> ParseDAVListing(const std::string &_xml_listing)
 {
     using namespace pugi;
 
     xml_document doc;
-    xml_parse_result result = doc.load_string( _xml_listing.c_str() );
+    xml_parse_result result = doc.load_string(_xml_listing.c_str());
     if( !result )
         return {};
 
     std::vector<PropFindResponse> items;
     const auto response_nodes = doc.select_nodes("/*/*[local-name()='response']");
-    for( const auto &response: response_nodes )
+    for( const auto &response : response_nodes )
         if( auto item = ParseResponseNode(response.node()) )
-            items.emplace_back( std::move(*item) );
-    
+            items.emplace_back(std::move(*item));
+
     return items;
 }
 
@@ -213,96 +178,91 @@ static std::vector<PropFindResponse> PruneFilepaths(std::vector<PropFindResponse
 {
     if( _base_path.front() != '/' || _base_path.back() != '/' )
         throw std::invalid_argument("PruneFilepaths need a path with heading and trailing slashes");
-    
-    const auto base_path_len = _base_path.length();
-    _items.erase(remove_if(begin(_items), end(_items), [&](auto &_item){
-            if( !_item.filename.starts_with(_base_path ) )
-                return true;
 
-            _item.filename.erase(0, base_path_len);
-        
-            if( _item.filename.empty() ) {
-                _item.filename = "..";
-            }
-            else if( _item.filename.back() == '/' ) {
-                if( !_item.is_directory )
-                    return true;
-                _item.filename.pop_back();
-            }
-        
-            _item.filename = _item.filename;
-     
-            return false;
-    }), end(_items));
+    const auto base_path_len = _base_path.length();
+    auto pred = [&](auto &_item) {
+        if( !_item.filename.starts_with(_base_path) )
+            return true;
+
+        _item.filename.erase(0, base_path_len);
+
+        if( _item.filename.empty() ) {
+            _item.filename = "..";
+        }
+        else if( _item.filename.back() == '/' ) {
+            if( !_item.is_directory )
+                return true;
+            _item.filename.pop_back();
+        }
+
+        _item.filename = _item.filename;
+
+        return false;
+    };
+    _items.erase(std::remove_if(std::begin(_items), std::end(_items), pred), std::end(_items));
     return _items;
 }
 
 [[maybe_unused]]
 // macOS server doesn't prefix filepaths with "webdav" prefix, but I didn't manage to get it
 // to work properly anyway. Maybe later.
-static bool FilepathsHavePathPrefix(const std::vector<PropFindResponse> &_items,
-                                    const std::string &_path)
+static bool
+FilepathsHavePathPrefix(const std::vector<PropFindResponse> &_items, const std::string &_path)
 {
     if( _path.empty() )
         return false;
-    
+
     const auto base_path = "/" + _path;
-    const auto server_uses_prefixes = all_of(begin(_items), end(_items), [&](const auto &_item){
+    const auto server_uses_prefixes = all_of(begin(_items), end(_items), [&](const auto &_item) {
         return _item.filename.starts_with(base_path);
     });
     return server_uses_prefixes;
 }
 
-std::pair<int, std::vector<PropFindResponse>> RequestDAVListing(const HostConfiguration& _options,
+std::pair<int, std::vector<PropFindResponse>> RequestDAVListing(const HostConfiguration &_options,
                                                                 Connection &_connection,
-                                                                const std::string &_path )
+                                                                const std::string &_path)
 {
     if( _path.back() != '/' )
         throw std::invalid_argument("FetchDAVListing: path must contain a trailing slash");
 
-    const auto curl = _connection.EasyHandle();
-    
     _connection.SetCustomRequest("PROPFIND");
-    
+
     _connection.SetHeader(std::initializer_list<std::string_view>{
-        "Depth: 1",
-        "translate: f",
-        "Content-Type: application/xml; charset=\"utf-8\""});
+        "Depth: 1", "translate: f", "Content-Type: application/xml; charset=\"utf-8\""});
 
     const auto url = URIForPath(_options, _path);
     _connection.SetURL(url);
 
-    const auto g_PropfindMessage =
-        "<?xml version=\"1.0\"?>"
-        "<a:propfind xmlns:a=\"DAV:\">"
-            "<a:prop>"
-                "<a:resourcetype/>"
-                "<a:getcontentlength/>"
-                "<a:getlastmodified/>"
-                "<a:creationdate/>"
-            "</a:prop>"
-        "</a:propfind>";
-    CURLInputStringContext context{g_PropfindMessage};
-    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(curl, CURLOPT_READFUNCTION, CURLInputStringContext::Read);
-    curl_easy_setopt(curl, CURLOPT_READDATA, &context);
-    curl_easy_setopt(curl, CURLOPT_SEEKFUNCTION, CURLInputStringContext::Seek);
-    curl_easy_setopt(curl, CURLOPT_SEEKDATA, &context);
-    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, context.data.size());
-        
-    const auto curl_rc = curl_easy_perform(curl);
-    const auto http_rc = curl_easy_get_response_code(curl);
-    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) ) {
+    const auto g_PropfindMessage = "<?xml version=\"1.0\"?>"
+                                   "<a:propfind xmlns:a=\"DAV:\">"
+                                   "<a:prop>"
+                                   "<a:resourcetype/>"
+                                   "<a:getcontentlength/>"
+                                   "<a:getlastmodified/>"
+                                   "<a:creationdate/>"
+                                   "</a:prop>"
+                                   "</a:propfind>";
+    _connection.SetBody({reinterpret_cast<const std::byte *>(g_PropfindMessage),
+                         std::string_view(g_PropfindMessage).length()});
+
+    const auto result = _connection.PerformBlockingRequest();
+    if( result.vfs_error != VFSError::Ok )
+        return {result.vfs_error, {}};
+
+    if( IsOkHTTPRC(result.http_code) ) {
         const auto response = _connection.ResponseBody().ReadAllAsString();
         auto items = ParseDAVListing(response);
+        // TODO: clarify use_prefix
         const auto use_prefix = true /* FilepathsHavePathPrefix(items, _options.path) */;
-        const auto base_path = use_prefix ?
-            ((_options.path.empty() ? "" :  "/" + _options.path) + _path) :
-            _path;
+        const auto base_path =
+            use_prefix ? ((_options.path.empty() ? "" : "/" + _options.path) + _path) : _path;
         items = PruneFilepaths(move(items), base_path);
         return {VFSError::Ok, move(items)};
     }
-    return {ToVFSError(curl_rc, http_rc), {}};
+    else {
+        return {HTTPRCToVFSError(result.http_code), {}};
+    }
 }
 
 // free space, used space
@@ -334,105 +294,93 @@ static std::pair<long, long> ParseSpaceQouta(const std::string &_xml)
     return {free, used};
 }
 
-std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration& _options,
-                                              Connection &_connection )
+std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration &_options,
+                                              Connection &_connection)
 {
-    const auto g_QuotaMessage =
-        "<?xml version=\"1.0\"?>"
-        "<a:propfind xmlns:a=\"DAV:\">"
-            "<a:prop>"
-                "<a:quota-available-bytes/>"
-                "<a:quota-used-bytes/>"
-            "</a:prop>"
-        "</a:propfind>";
-    
-    const auto curl = _connection.EasyHandle();
-    
+    const auto g_QuotaMessage = "<?xml version=\"1.0\"?>"
+                                "<a:propfind xmlns:a=\"DAV:\">"
+                                "<a:prop>"
+                                "<a:quota-available-bytes/>"
+                                "<a:quota-used-bytes/>"
+                                "</a:prop>"
+                                "</a:propfind>";
+
     _connection.SetCustomRequest("PROPFIND");
     _connection.SetHeader(std::initializer_list<std::string_view>{
-        "Depth: 0",
-        "Content-Type: application/xml; charset=\"utf-8\""});
+        "Depth: 0", "Content-Type: application/xml; charset=\"utf-8\""});
     _connection.SetURL(_options.full_url);
 
-    CURLInputStringContext context{g_QuotaMessage};
-    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(curl, CURLOPT_READFUNCTION, CURLInputStringContext::Read);
-    curl_easy_setopt(curl, CURLOPT_READDATA, &context);
-    curl_easy_setopt(curl, CURLOPT_SEEKFUNCTION, CURLInputStringContext::Seek);
-    curl_easy_setopt(curl, CURLOPT_SEEKDATA, &context);
-    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, context.data.size());
-    
-    const auto curl_rc = curl_easy_perform(curl);
-    const auto http_rc = curl_easy_get_response_code(curl);
-    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) ) {
+    _connection.SetBody({reinterpret_cast<const std::byte *>(g_QuotaMessage),
+                         std::string_view(g_QuotaMessage).length()});
+
+    const auto result = _connection.PerformBlockingRequest();
+    if( result.vfs_error != VFSError::Ok )
+        return {result.vfs_error, -1, -1};
+
+    if( IsOkHTTPRC(result.http_code) ) {
         const auto response = _connection.ResponseBody().ReadAllAsString();
         const auto [free, used] = ParseSpaceQouta(response);
         return {VFSError::Ok, free, used};
     }
-    else
-        return {ToVFSError(curl_rc, http_rc), -1, -1};
+    else {
+        return {HTTPRCToVFSError(result.http_code), -1, -1};
+    }
 }
 
-int RequestMKCOL(const HostConfiguration& _options,
+int RequestMKCOL(const HostConfiguration &_options,
                  Connection &_connection,
-                 const std::string &_path )
+                 const std::string &_path)
 {
     if( _path.back() != '/' )
         throw std::invalid_argument("RequestMKCOL: path must contain a trailing slash");
 
-    const auto curl = _connection.EasyHandle();
-    
     _connection.SetCustomRequest("MKCOL");
-    
+
     const auto header_host = "Host: "s + _options.server_url;
     _connection.SetHeader(std::initializer_list<std::string_view>{header_host});
-    
+
     const auto url = URIForPath(_options, _path);
     _connection.SetURL(url);
-    
-    const auto curl_rc = curl_easy_perform(curl);
-    const auto http_rc = curl_easy_get_response_code(curl);
-    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) )
-        return VFSError::Ok;
+
+    const auto result = _connection.PerformBlockingRequest();
+    if( result.vfs_error != VFSError::Ok )
+        return result.vfs_error;
     else
-        return ToVFSError(curl_rc, http_rc);
+        return HTTPRCToVFSError(result.http_code);
 }
 
-int RequestDelete(const HostConfiguration& _options,
+int RequestDelete(const HostConfiguration &_options,
                   Connection &_connection,
-                  const std::string &_path )
+                  const std::string &_path)
 {
     if( _path == "/" )
         return VFSError::FromErrno(EPERM);
-    
-    const auto curl = _connection.EasyHandle();
+
     _connection.SetCustomRequest("DELETE");
-    
+
     const auto header_host = "Host: "s + _options.server_url;
     _connection.SetHeader(std::initializer_list<std::string_view>{header_host});
-        
+
     const auto url = URIForPath(_options, _path);
     _connection.SetURL(url);
-    
-    const auto curl_rc = curl_easy_perform(curl);
-    const auto http_rc = curl_easy_get_response_code(curl);
-    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) )
-        return VFSError::Ok;
+
+    const auto result = _connection.PerformBlockingRequest();
+    if( result.vfs_error != VFSError::Ok )
+        return result.vfs_error;
     else
-        return ToVFSError(curl_rc, http_rc);
+        return HTTPRCToVFSError(result.http_code);
 }
 
-int RequestMove(const HostConfiguration& _options,
+int RequestMove(const HostConfiguration &_options,
                 Connection &_connection,
                 const std::string &_src,
-                const std::string &_dst )
+                const std::string &_dst)
 {
     if( _src == "/" )
         return VFSError::FromErrno(EPERM);
 
-    const auto curl = _connection.EasyHandle();
     _connection.SetCustomRequest("MOVE");
-    
+
     const auto header_host = "Host: " + _options.server_url;
     const auto header_dest = "Destination: " + URIForPath(_options, _dst);
     _connection.SetHeader(std::initializer_list<std::string_view>{header_host, header_dest});
@@ -440,12 +388,11 @@ int RequestMove(const HostConfiguration& _options,
     const auto url = URIForPath(_options, _src);
     _connection.SetURL(url);
 
-    const auto curl_rc = curl_easy_perform(curl);
-    const auto http_rc = curl_easy_get_response_code(curl);
-    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) )
-        return VFSError::Ok;
+    const auto result = _connection.PerformBlockingRequest();
+    if( result.vfs_error != VFSError::Ok )
+        return result.vfs_error;
     else
-        return ToVFSError(curl_rc, http_rc);
+        return HTTPRCToVFSError(result.http_code);
 }
 
-}
+} // namespace nc::vfs::webdav

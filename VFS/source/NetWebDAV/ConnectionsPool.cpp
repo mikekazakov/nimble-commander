@@ -13,9 +13,17 @@ static CURL *SpawnOrThrow()
     return curl;
 }
 
+static size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+    const auto sz = size * nmemb;
+    auto &str = *reinterpret_cast<std::string *>(userp);
+    str.insert(str.size(),  reinterpret_cast<const char *>(buffer), sz);
+    return sz;
+}
+
 Connection::Connection( const HostConfiguration& _config ):
     m_EasyHandle(SpawnOrThrow()),
-    m_Header(nullptr, &curl_slist_free_all)
+    m_RequestHeader(nullptr, &curl_slist_free_all)
 {
     const auto auth_methods = CURLAUTH_BASIC | CURLAUTH_DIGEST;
     const auto ua = "Nimble Commander";
@@ -34,6 +42,8 @@ Connection::Connection( const HostConfiguration& _config ):
     curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ReadBuffer::Write);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &m_ResponseBody);
+    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
+    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &m_ResponseHeader);
 }
 
 Connection::~Connection()
@@ -109,11 +119,11 @@ void Connection::Clear()
     curl_easy_setopt(m_EasyHandle, CURLOPT_SEEKFUNCTION, nullptr);
     curl_easy_setopt(m_EasyHandle, CURLOPT_SEEKDATA, nullptr);
     curl_easy_setopt(m_EasyHandle, CURLOPT_INFILESIZE_LARGE, -1l);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_HEADERFUNCTION, nullptr);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_HEADERDATA, nullptr);
     curl_easy_setopt(m_EasyHandle, CURLOPT_NOBODY, 0);
     m_ProgressCallback = nullptr;
-    m_Header.reset();
+    m_RequestHeader.reset();
+    m_RequestBody.Clear();    
+    m_ResponseHeader.clear();
     m_ResponseBody.Clear();
 }
 
@@ -140,14 +150,40 @@ int Connection::SetHeader(std::span<const std::string_view> _header)
         chunk = curl_slist_append(chunk, element_nt.c_str());
     }
 
-    m_Header.reset(chunk);
-    const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_HTTPHEADER, m_Header.get());
+    m_RequestHeader.reset(chunk);
+    const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_HTTPHEADER, m_RequestHeader.get());
     return CurlRCToVFSError(rc);
 }
 
-ReadBuffer &Connection::ResponseBody() noexcept
+int Connection::SetBody(std::span<const std::byte> _body)
+{
+    m_RequestBody.Write(_body.data(), _body.size_bytes());
+
+    curl_easy_setopt(m_EasyHandle, CURLOPT_UPLOAD, 1L);
+    curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, WriteBuffer::Read);
+    curl_easy_setopt(m_EasyHandle, CURLOPT_READDATA, &m_RequestBody);
+    curl_easy_setopt(
+        m_EasyHandle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(m_RequestBody.Size()));
+
+    // TODO: mb check rcs from curl?
+    return VFSError::Ok;
+}
+
+ReadBuffer &Connection::ResponseBody()
 {
     return m_ResponseBody;
+}
+
+std::string_view Connection::ResponseHeader()
+{
+    return m_ResponseHeader;
+}
+
+Connection::BlockRequestResult Connection::PerformBlockingRequest()
+{
+    const auto curl_rc = curl_easy_perform(m_EasyHandle);
+    const auto http_rc = curl_easy_get_response_code(m_EasyHandle);
+    return {CurlRCToVFSError(curl_rc), http_rc};
 }
 
 ConnectionsPool::ConnectionsPool(const HostConfiguration &_config):

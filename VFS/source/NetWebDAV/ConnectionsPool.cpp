@@ -1,6 +1,7 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectionsPool.h"
 #include "Internal.h"
+#include <Habanero/StringViewZBuf.h>
 
 namespace nc::vfs::webdav {
 
@@ -13,7 +14,8 @@ static CURL *SpawnOrThrow()
 }
 
 Connection::Connection( const HostConfiguration& _config ):
-    m_EasyHandle(SpawnOrThrow())
+    m_EasyHandle(SpawnOrThrow()),
+    m_Header(nullptr, &curl_slist_free_all)
 {
     const auto auth_methods = CURLAUTH_BASIC | CURLAUTH_DIGEST;
     const auto ua = "Nimble Commander";
@@ -30,6 +32,8 @@ Connection::Connection( const HostConfiguration& _config ):
     curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 30L);
     curl_easy_setopt(curl, CURLOPT_PORT, long(_config.port));
     curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ReadBuffer::Write);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &m_ResponseBody);
 }
 
 Connection::~Connection()
@@ -105,12 +109,45 @@ void Connection::Clear()
     curl_easy_setopt(m_EasyHandle, CURLOPT_SEEKFUNCTION, nullptr);
     curl_easy_setopt(m_EasyHandle, CURLOPT_SEEKDATA, nullptr);
     curl_easy_setopt(m_EasyHandle, CURLOPT_INFILESIZE_LARGE, -1l);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_WRITEFUNCTION, nullptr);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_WRITEDATA, stdout);
     curl_easy_setopt(m_EasyHandle, CURLOPT_HEADERFUNCTION, nullptr);
     curl_easy_setopt(m_EasyHandle, CURLOPT_HEADERDATA, nullptr);
     curl_easy_setopt(m_EasyHandle, CURLOPT_NOBODY, 0);
     m_ProgressCallback = nullptr;
+    m_Header.reset();
+    m_ResponseBody.Clear();
+}
+
+int Connection::SetCustomRequest(std::string_view _request)
+{
+    base::StringViewZBuf<64> request(_request);
+    const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_CUSTOMREQUEST, request.c_str());
+    return CurlRCToVFSError(rc);
+}
+
+int Connection::SetURL(std::string_view _url)
+{
+    base::StringViewZBuf<512> url(_url);
+    const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_URL, url.c_str());
+    return CurlRCToVFSError(rc);
+}
+
+int Connection::SetHeader(std::span<const std::string_view> _header)
+{
+    struct curl_slist *chunk = nullptr;
+
+    for( const auto &element : _header ) {
+        base::StringViewZBuf<512> element_nt(element);
+        chunk = curl_slist_append(chunk, element_nt.c_str());
+    }
+
+    m_Header.reset(chunk);
+    const auto rc = curl_easy_setopt(m_EasyHandle, CURLOPT_HTTPHEADER, m_Header.get());
+    return CurlRCToVFSError(rc);
+}
+
+ReadBuffer &Connection::ResponseBody() noexcept
+{
+    return m_ResponseBody;
 }
 
 ConnectionsPool::ConnectionsPool(const HostConfiguration &_config):

@@ -1,8 +1,9 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string>
 
 namespace nc::vfs::webdav {
 
@@ -17,6 +18,7 @@ public:
     
     void Clear();
     size_t Read(void* _buffer, size_t _bytes) noexcept;
+    std::string ReadAllAsString();
     size_t Discard(size_t _bytes) noexcept;
     static size_t Write(void *_buffer, size_t _size, size_t _nmemb, void *_userp);
     

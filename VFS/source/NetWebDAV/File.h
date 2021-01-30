@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "WebDAVHost.h"
@@ -33,7 +33,6 @@ private:
     void SpawnUploadConnectionIfNeeded();
 
     WebDAVHost &m_Host;
-    ReadBuffer  m_ReadBuffer;
     WriteBuffer m_WriteBuffer;
     std::unique_ptr<Connection> m_Conn;
     unsigned long m_OpenFlags = 0;

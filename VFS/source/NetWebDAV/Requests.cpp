@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Requests.h"
 #include "WebDAVHost.h"
 #include <boost/algorithm/string/split.hpp>
@@ -116,11 +116,9 @@ std::pair<int, HTTPRequests::Mask> RequestServerOptions(const HostConfiguration&
 {
     const auto curl = _connection.EasyHandle();
     
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "OPTIONS");
-    curl_easy_setopt(curl, CURLOPT_URL, _options.full_url.c_str());
-    std::string response;
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+    _connection.SetCustomRequest("OPTIONS");
+    _connection.SetURL(_options.full_url);
+    
     std::string headers;
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
@@ -264,19 +262,15 @@ std::pair<int, std::vector<PropFindResponse>> RequestDAVListing(const HostConfig
 
     const auto curl = _connection.EasyHandle();
     
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PROPFIND");
+    _connection.SetCustomRequest("PROPFIND");
     
-    static const auto headers = []{
-        struct curl_slist *chunk = nullptr;
-        chunk = curl_slist_append(chunk, "Depth: 1");
-        chunk = curl_slist_append(chunk, "translate: f");
-        chunk = curl_slist_append(chunk, "Content-Type: application/xml; charset=\"utf-8\"");
-        return chunk;
-    }();
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    _connection.SetHeader(std::initializer_list<std::string_view>{
+        "Depth: 1",
+        "translate: f",
+        "Content-Type: application/xml; charset=\"utf-8\""});
 
     const auto url = URIForPath(_options, _path);
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    _connection.SetURL(url);
 
     const auto g_PropfindMessage =
         "<?xml version=\"1.0\"?>"
@@ -295,23 +289,11 @@ std::pair<int, std::vector<PropFindResponse>> RequestDAVListing(const HostConfig
     curl_easy_setopt(curl, CURLOPT_SEEKFUNCTION, CURLInputStringContext::Seek);
     curl_easy_setopt(curl, CURLOPT_SEEKDATA, &context);
     curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, context.data.size());
-    
-    std::string response;
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-    
-    
-    
-//    string headers;
-//    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
-//    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
-    
+        
     const auto curl_rc = curl_easy_perform(curl);
     const auto http_rc = curl_easy_get_response_code(curl);
     if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) ) {
-//        cout << headers << endl;
-//        cout << response << endl;    
-    
+        const auto response = _connection.ResponseBody().ReadAllAsString();
         auto items = ParseDAVListing(response);
         const auto use_prefix = true /* FilepathsHavePathPrefix(items, _options.path) */;
         const auto base_path = use_prefix ?
@@ -366,16 +348,11 @@ std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration& _options,
     
     const auto curl = _connection.EasyHandle();
     
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PROPFIND");
-    
-    struct curl_slist *chunk = nullptr;
-    chunk = curl_slist_append(chunk, "Depth: 0");
-    chunk = curl_slist_append(chunk, "Content-Type: application/xml; charset=\"utf-8\"");
-    const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
-
-    auto url = _options.full_url;
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    _connection.SetCustomRequest("PROPFIND");
+    _connection.SetHeader(std::initializer_list<std::string_view>{
+        "Depth: 0",
+        "Content-Type: application/xml; charset=\"utf-8\""});
+    _connection.SetURL(_options.full_url);
 
     CURLInputStringContext context{g_QuotaMessage};
     curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
@@ -385,13 +362,10 @@ std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration& _options,
     curl_easy_setopt(curl, CURLOPT_SEEKDATA, &context);
     curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, context.data.size());
     
-    std::string response;
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-
     const auto curl_rc = curl_easy_perform(curl);
     const auto http_rc = curl_easy_get_response_code(curl);
     if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) ) {
+        const auto response = _connection.ResponseBody().ReadAllAsString();
         const auto [free, used] = ParseSpaceQouta(response);
         return {VFSError::Ok, free, used};
     }
@@ -408,20 +382,14 @@ int RequestMKCOL(const HostConfiguration& _options,
 
     const auto curl = _connection.EasyHandle();
     
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "MKCOL");
+    _connection.SetCustomRequest("MKCOL");
     
-    struct curl_slist *chunk = nullptr;
-    chunk = curl_slist_append(chunk, ("Host: "s + _options.server_url).c_str());
-    const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
-
+    const auto header_host = "Host: "s + _options.server_url;
+    _connection.SetHeader(std::initializer_list<std::string_view>{header_host});
+    
     const auto url = URIForPath(_options, _path);
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    _connection.SetURL(url);
     
-    std::string response;
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-
     const auto curl_rc = curl_easy_perform(curl);
     const auto http_rc = curl_easy_get_response_code(curl);
     if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) )
@@ -438,20 +406,14 @@ int RequestDelete(const HostConfiguration& _options,
         return VFSError::FromErrno(EPERM);
     
     const auto curl = _connection.EasyHandle();
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+    _connection.SetCustomRequest("DELETE");
     
-    struct curl_slist *chunk = nullptr;
-    chunk = curl_slist_append(chunk, ("Host: "s + _options.server_url).c_str());
-    const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
-
+    const auto header_host = "Host: "s + _options.server_url;
+    _connection.SetHeader(std::initializer_list<std::string_view>{header_host});
+        
     const auto url = URIForPath(_options, _path);
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    _connection.SetURL(url);
     
-    std::string response;
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-
     const auto curl_rc = curl_easy_perform(curl);
     const auto http_rc = curl_easy_get_response_code(curl);
     if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) )
@@ -469,20 +431,14 @@ int RequestMove(const HostConfiguration& _options,
         return VFSError::FromErrno(EPERM);
 
     const auto curl = _connection.EasyHandle();
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "MOVE");
+    _connection.SetCustomRequest("MOVE");
     
-    struct curl_slist *chunk = nullptr;
-    chunk = curl_slist_append(chunk, ("Host: " + _options.server_url).c_str());
-    chunk = curl_slist_append(chunk, ("Destination: " + URIForPath(_options, _dst)).c_str());
-    const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+    const auto header_host = "Host: " + _options.server_url;
+    const auto header_dest = "Destination: " + URIForPath(_options, _dst);
+    _connection.SetHeader(std::initializer_list<std::string_view>{header_host, header_dest});
 
     const auto url = URIForPath(_options, _src);
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-
-    std::string response;
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+    _connection.SetURL(url);
 
     const auto curl_rc = curl_easy_perform(curl);
     const auto http_rc = curl_easy_get_response_code(curl);

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <curl/curl.h>
@@ -69,6 +69,7 @@ constexpr uint16_t DirectoryAccessMode = S_IRUSR | S_IWUSR | S_IFDIR | S_IXUSR;
 constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
     
 int ToVFSError( int _curl_rc, int _http_rc ) noexcept;
+int CurlRCToVFSError( int _curl_rc ) noexcept;
     
 int curl_easy_get_response_code(CURL *_handle);
 

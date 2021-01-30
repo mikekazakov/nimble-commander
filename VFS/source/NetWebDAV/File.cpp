@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Internal.h"
 #include "Cache.h"
@@ -93,14 +93,20 @@ ssize_t File::Read(void *_buf, size_t _size)
 
     int vfs_error = VFSError::Ok;
     
-    if( m_ReadBuffer.Size() < _size ) {
+    if( !m_Conn ) {
         SpawnDownloadConnectionIfNeeded();
+        assert(m_Conn);
+    }
+    
+    auto &read_buffer = m_Conn->ResponseBody();
+    
+    if( read_buffer.Size() < _size ) {
         const auto multi = m_Conn->MultiHandle();
         
         int running_handles = 0;
         while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
         
-        while( m_ReadBuffer.Size() < _size && running_handles) {
+        while( read_buffer.Size() < _size && running_handles) {
             if( !SelectMulti(multi) ) {
                 vfs_error = VFSError::FromErrno();
                 break;
@@ -115,7 +121,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     if( vfs_error != VFSError::Ok )
         return SetLastError(vfs_error);
 
-    const auto has_read = m_ReadBuffer.Read(_buf, _size);
+    const auto has_read = read_buffer.Read(_buf, _size);
     m_Pos += has_read;
 
     return has_read;
@@ -159,14 +165,6 @@ ssize_t File::Write(const void *_buf, size_t _size)
     return has_written;
 }
 
-static size_t NullWrite([[maybe_unused]] void *_buffer,
-                        size_t _size,
-                        size_t _nmemb,
-                        [[maybe_unused]] void *_userp)
-{
-    return _size * _nmemb;
-}
-
 void File::SpawnUploadConnectionIfNeeded()
 {
     if( m_Conn )
@@ -176,12 +174,10 @@ void File::SpawnUploadConnectionIfNeeded()
     assert(m_Conn);
     const auto curl = m_Conn->EasyHandle();
     const auto url = URIForPath(m_Host.Config(), Path());
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    m_Conn->SetURL(url);
     curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, WriteBuffer::Read);
     curl_easy_setopt(curl, CURLOPT_READDATA, &m_WriteBuffer);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NullWrite);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, nullptr);
     curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, m_Size);
     
     m_Conn->AttachMultiHandle();
@@ -194,12 +190,9 @@ void File::SpawnDownloadConnectionIfNeeded()
     
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
-    const auto curl = m_Conn->EasyHandle();
     const auto url = URIForPath(m_Host.Config(), Path());
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ReadBuffer::Write);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &m_ReadBuffer);
+    m_Conn->SetURL(url);
+    m_Conn->SetCustomRequest("GET");
     
     m_Conn->AttachMultiHandle();
 }
@@ -272,7 +265,6 @@ int File::Close()
         m_Host.Cache().CommitMkFile(Path());
     }
     
-    m_ReadBuffer.Clear();
     m_WriteBuffer.Clear();
     
     m_OpenFlags = 0;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ReadBuffer.h"
 #include <stdlib.h>
 #include <algorithm>
@@ -59,6 +59,13 @@ size_t ReadBuffer::Read(void* _buffer, size_t _bytes) noexcept
     memcpy( _buffer, m_Bytes, to_read );
     PopFront((int)to_read);
     return to_read;
+}
+
+std::string ReadBuffer::ReadAllAsString()
+{
+    std::string output(reinterpret_cast<const char *>(m_Bytes), m_Size);
+    Clear();
+    return output;
 }
 
 void ReadBuffer::PopFront(int _size) noexcept

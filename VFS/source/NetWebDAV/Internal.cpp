@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Internal.h"
 #include "WebDAVHost.h"
 #include <CFNetwork/CFNetworkErrors.h>
@@ -114,6 +114,11 @@ int ToVFSError( const int _curl_rc, const int _http_rc ) noexcept
             case CURLE_SSL_CACERT:              return VFSError::FromCFNetwork(kCFURLErrorSecureConnectionFailed);
             default:                            return VFSError::FromErrno(EIO);
         }
+}
+
+int CurlRCToVFSError( int _curl_rc ) noexcept
+{
+    return ToVFSError( _curl_rc, 200 );
 }
 
 int curl_easy_get_response_code(CURL *_handle)

@@ -737,3 +737,27 @@ TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
                                   ">echo 123           ";
     REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected5));
 }
+
+TEST_CASE(PREFIX "Launches when shell is a symlink to a real binary")
+{
+    const TempTestDir dir;
+    ShellTask shell;
+    
+    std::filesystem::path shell_path;
+    SECTION("/bin/bash") {
+        std::filesystem::create_symlink("/bin/bash", shell_path = dir.directory / "bash");
+    }
+    SECTION("/bin/zsh") {
+        std::filesystem::create_symlink("/bin/zsh", shell_path = dir.directory / "zsh");
+    }
+    SECTION("/bin/tcsh") {
+        std::filesystem::create_symlink("/bin/tcsh", shell_path = dir.directory / "tcsh");
+    }
+    SECTION("/bin/csh") {
+        std::filesystem::create_symlink("/bin/csh", shell_path = dir.directory / "csh");
+    }
+        
+    shell.SetShellPath(shell_path);
+    REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()) == true);
+    REQUIRE(shell.State() == ShellTask::TaskState::Shell);
+}

@@ -55,6 +55,7 @@ static void KillAndReap(int _pid,
                         std::chrono::nanoseconds _brutal_deadline);
 static void TurnOffSigPipe();
 static bool IsProcessDead(int _pid) noexcept;
+static std::optional<std::filesystem::path> TryToResolve(const std::filesystem::path &_path);
 
 static bool IsDirectoryAvailableForBrowsing(const char *_path)
 {
@@ -181,6 +182,21 @@ static void KillAndReap(int _pid,
     }
 }
 
+static std::optional<std::filesystem::path> TryToResolve(const std::filesystem::path &_path)
+{
+    std::error_code ec;
+    const bool exists = std::filesystem::exists(_path, ec);
+    if( ec == std::error_code{} && exists ) {
+        const bool is_symlink = std::filesystem::is_symlink(_path, ec);
+        if( ec == std::error_code{} && is_symlink ) {
+            const auto symlink = std::filesystem::read_symlink(_path, ec);
+            if( ec == std::error_code{} )
+                return symlink;
+        }
+    }
+    return {};
+}
+
 struct ShellTask::Impl {
     // accessible from any thread:
     std::mutex lock;
@@ -202,7 +218,8 @@ struct ShellTask::Impl {
     // accessible from main thread only (presumably)
     int term_sx = 80;
     int term_sy = 25;
-    std::string shell_path = "";
+    std::filesystem::path shell_path;
+    std::filesystem::path shell_resolved_path; // may differ from shell_path if that's a symlink
     ShellType shell_type = ShellType::Unknown;
     std::vector<std::pair<std::string, std::string>> custom_env_vars;
     std::vector<std::string> custom_shell_args;
@@ -239,6 +256,8 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
 
     I->cwd = _work_dir.generic_string();
     Log::Info(SPDLOC, "Starting a new shell: {}", I->shell_path);
+    if( I->shell_resolved_path != I->shell_path )
+        Log::Info(SPDLOC, "{} -> {}", I->shell_path, I->shell_resolved_path);
     Log::Info(SPDLOC, "Initial work directory: {}", I->cwd);
 
     // remember current locale and stuff
@@ -369,7 +388,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         I->temporary_suppressed = true; /// HACKY!!!
 
         // wait until either the forked process becomes an expected shell or dies
-        const bool became_shell = WaitUntilBecomes(I->shell_pid, I->shell_path, 5s, 1ms);
+        const bool became_shell = WaitUntilBecomes(I->shell_pid, I->shell_resolved_path.native(), 5s, 1ms);
         if( !became_shell ) {
             Log::Warn(SPDLOC, "forked process failed to become a shell!");
             CleanUp(); // Well, RIP
@@ -459,7 +478,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         nc::base::CloseFromExcept(3, std::array<int, 2>{g_PromptPipe, g_SemaphorePipe});
 
         // execution of the program
-        execv(I->shell_path.c_str(), BuildShellArgs());
+        execv(I->shell_resolved_path.c_str(), BuildShellArgs());
 
         // we never get here in normal condition
         exit(-1);
@@ -927,8 +946,19 @@ ShellTask::TaskState ShellTask::State() const
 
 void ShellTask::SetShellPath(const std::string &_path)
 {
+    // that's the raw shell path
     I->shell_path = _path;
+    
+    // for now we decude a shell type from the raw input
     I->shell_type = DetectShellType(_path);
+    
+    // try to resolve it in case it's a symlink. Sync I/O here!
+    if( auto symlink = TryToResolve(I->shell_path) ) {
+        I->shell_resolved_path = std::move(*symlink);
+    }
+    else {
+        I->shell_resolved_path = I->shell_path;
+    }
 }
 
 void ShellTask::SetEnvVar(const std::string &_var, const std::string &_value)

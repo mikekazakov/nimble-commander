@@ -133,10 +133,11 @@ ssize_t File::Write(const void *_buf, size_t _size)
         !(m_OpenFlags & VFSFlags::OF_Write) ||
         m_Size < 0 )
         return SetLastError(VFSError::FromErrno(EINVAL));
-
-    m_WriteBuffer.Write(_buf, _size);
-
+    
     SpawnUploadConnectionIfNeeded();
+    
+    auto &write_buffer = m_Conn->RequestBody();
+    write_buffer.Write(_buf, _size);
 
     int vfs_error = VFSError::Ok;
     
@@ -150,7 +151,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
             break;
         }
         while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
-    } while( !m_WriteBuffer.Empty() && running_handles );
+    } while( !write_buffer.Empty() && running_handles );
 
     if( running_handles == 0 )
         vfs_error = ErrorIfAny(multi);
@@ -158,9 +159,9 @@ ssize_t File::Write(const void *_buf, size_t _size)
     if( vfs_error != VFSError::Ok )
         return SetLastError(vfs_error);
 
-    const auto has_written = _size - m_WriteBuffer.Size();
+    const auto has_written = _size - write_buffer.Size();
     m_Pos += has_written;
-    m_WriteBuffer.Discard( _size - has_written );
+    write_buffer.Discard( _size - has_written );
 
     return has_written;
 }
@@ -172,13 +173,9 @@ void File::SpawnUploadConnectionIfNeeded()
     
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
-    const auto curl = m_Conn->EasyHandle();
     const auto url = URIForPath(m_Host.Config(), Path());
     m_Conn->SetURL(url);
-    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(curl, CURLOPT_READFUNCTION, WriteBuffer::Read);
-    curl_easy_setopt(curl, CURLOPT_READDATA, &m_WriteBuffer);
-    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, m_Size);
+    m_Conn->SetNonBlockingUpload(m_Size);
     
     m_Conn->AttachMultiHandle();
 }
@@ -264,8 +261,6 @@ int File::Close()
         
         m_Host.Cache().CommitMkFile(Path());
     }
-    
-    m_WriteBuffer.Clear();
     
     m_OpenFlags = 0;
     m_Pos = 0;

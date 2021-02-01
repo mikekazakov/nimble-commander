@@ -54,11 +54,6 @@ Connection::~Connection()
         curl_multi_cleanup(m_MultiHandle);
 }
 
-CURL *Connection::EasyHandle()
-{
-    return m_EasyHandle;
-}
-
 int Connection::Progress(void *_clientp, long _dltotal, long _dlnow, long _ultotal, long _ulnow)
 {
     const auto &connection = *(Connection*)_clientp;
@@ -167,6 +162,22 @@ int Connection::SetBody(std::span<const std::byte> _body)
 
     // TODO: mb check rcs from curl?
     return VFSError::Ok;
+}
+
+int Connection::SetNonBlockingUpload(size_t _upload_size)
+{
+    curl_easy_setopt(m_EasyHandle, CURLOPT_UPLOAD, 1L);
+    curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, WriteBuffer::Read);
+    curl_easy_setopt(m_EasyHandle, CURLOPT_READDATA, &m_RequestBody);
+    curl_easy_setopt(m_EasyHandle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(_upload_size));
+    
+    // TODO: mb check rcs from curl?
+    return VFSError::Ok;
+}
+
+WriteBuffer &Connection::RequestBody()
+{
+    return m_RequestBody;
 }
 
 ReadBuffer &Connection::ResponseBody()

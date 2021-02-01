@@ -33,7 +33,6 @@ private:
     void SpawnUploadConnectionIfNeeded();
 
     WebDAVHost &m_Host;
-    WriteBuffer m_WriteBuffer;
     std::unique_ptr<Connection> m_Conn;
     unsigned long m_OpenFlags = 0;
     long        m_Pos = 0;

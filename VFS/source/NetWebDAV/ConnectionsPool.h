@@ -26,7 +26,6 @@ public:
     Connection(const HostConfiguration &_config);
     ~Connection();
 
-    CURL *EasyHandle();
     CURLM *MultiHandle();
 
     bool IsMultiHandleAttached() const;
@@ -38,16 +37,20 @@ public:
     int SetURL(std::string_view _url);
     int SetHeader(std::span<const std::string_view> _header);
     int SetBody(std::span<const std::byte> _body);
+    int SetNonBlockingUpload(size_t _upload_size);
 
     // Queries
     BlockRequestResult PerformBlockingRequest();
+    WriteBuffer &RequestBody();
     ReadBuffer &ResponseBody();
     std::string_view ResponseHeader();
 
     using ProgressCallback =
         std::function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
     void SetProgreessCallback(ProgressCallback _callback);
-    void Clear();
+    
+    
+    void Clear(); // Resets the connection to a pristine state regarding settings
 
 private:
     using SlistPtr = std::unique_ptr<struct curl_slist, decltype(&curl_slist_free_all)>;

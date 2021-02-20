@@ -5,8 +5,7 @@
 
 namespace nc::vfs::webdav {
 
-constexpr static const struct timeval g_SelectTimeout = {0, 600 * 1000}; // 600ms
-constexpr static const struct timeval g_SelectWait = {0, 100 * 1000};    // 100ms
+constexpr static int g_CurlTimeoutMs = 5000; // 5s
 
 static CURL *SpawnOrThrow()
 {
@@ -22,30 +21,6 @@ static size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, v
     auto &str = *reinterpret_cast<std::string *>(userp);
     str.insert(str.size(), reinterpret_cast<const char *>(buffer), sz);
     return sz;
-}
-
-static bool SelectMulti(CURLM *_multi)
-{
-    fd_set fdread, fdwrite, fdexcep;
-    int maxfd = -1;
-    FD_ZERO(&fdread);
-    FD_ZERO(&fdwrite);
-    FD_ZERO(&fdexcep);
-    const CURLMcode mc = curl_multi_fdset(_multi, &fdread, &fdwrite, &fdexcep, &maxfd);
-    if( mc != CURLM_OK ) {
-        return false;
-    }
-
-    int select_rc = -1;
-    if( maxfd == -1 ) {
-        struct timeval timeout = g_SelectWait;
-        select_rc = select(0, NULL, NULL, NULL, &timeout);
-    }
-    else {
-        struct timeval timeout = g_SelectTimeout;
-        select_rc = select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
-    }
-    return select_rc != -1;
 }
 
 static int ErrorIfAny(CURLM *_multi)
@@ -259,9 +234,8 @@ int Connection::ReadBodyUpToSize(size_t _target)
         ;
 
     while( m_ResponseBody.Size() < _target && running_handles != 0 ) {
-        if( SelectMulti(multi) == false ) {
-            return VFSError::FromErrno();
-        }
+        if( CURLM_OK != curl_multi_poll(multi, nullptr, 0, g_CurlTimeoutMs, nullptr) )
+            break;
         while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
             ;
     }
@@ -308,9 +282,8 @@ int Connection::WriteBodyUpToSize(size_t _target)
         ;
 
     do {
-        if( SelectMulti(multi) == false ) {
-            return VFSError::FromErrno();
-        }
+        if( CURLM_OK != curl_multi_poll(multi, nullptr, 0, g_CurlTimeoutMs, nullptr) )
+            break;
         while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
             ;
     } while( m_RequestBody.Size() > target_buffer_size && running_handles != 0 );

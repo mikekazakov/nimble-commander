@@ -5,7 +5,8 @@
 
 namespace nc::vfs::webdav {
 
-constexpr static int g_CurlTimeoutMs = 5000; // 5s
+//constexpr static int g_CurlTimeoutMs = 5000; // 5s
+constexpr static int g_CurlTimeoutMs = 30000; // 30s
 
 static CURL *SpawnOrThrow()
 {
@@ -264,6 +265,36 @@ int Connection::WriteBodyUpToSize(size_t _target)
 {
     if( m_MultiHandle == nullptr || m_MultiHandleAttached == false )
         return VFSError::InvalidCall;
+
+    if( _target == ConcludeBodyWrite || _target == AbortBodyWrite ) {
+        if( _target == AbortBodyWrite )
+            SetProgreessCallback([](long, long, long, long) { return false; });
+
+        if( m_Paused == true ) {
+            curl_easy_pause(m_EasyHandle, CURLPAUSE_CONT);
+            m_Paused = false;
+        }
+
+        const auto multi = m_MultiHandle;
+        int running_handles = 0;
+        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
+            ;
+
+        if( running_handles == 0 )
+            return ErrorIfAny(multi);
+
+        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
+            ;
+
+        while( running_handles ) {
+            if( CURLM_OK != curl_multi_poll(multi, nullptr, 0, g_CurlTimeoutMs, nullptr) )
+                break;
+            while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
+                ;
+        }
+        return ErrorIfAny(multi);
+    }
+    
 
     if( m_RequestBody.Size() < _target )
         return VFSError::InvalidCall;

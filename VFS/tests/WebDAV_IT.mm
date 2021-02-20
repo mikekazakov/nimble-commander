@@ -7,6 +7,7 @@
 #include "NCE.h"
 #include <sys/stat.h>
 #include <span>
+#include <functional>
 
 #define PREFIX "WebDAV "
 
@@ -41,6 +42,26 @@ static std::shared_ptr<WebDAVHost> spawnYandexDiskHost()
     return std::shared_ptr<WebDAVHost>(
         new WebDAVHost("webdav.yandex.com", g_YandexDiskUsername, g_YandexDiskPassword, "", true));
 }
+
+[[clang::no_destroy]] static std::array<std::function<std::shared_ptr<WebDAVHost>()>, 1>
+    g_AllFactories = {spawnYandexDiskHost};
+
+[[clang::no_destroy]] static std::array<std::function<std::shared_ptr<WebDAVHost>()>, 2>
+    g_AllFactoriesButYandex = {spawnBoxComHost, spawnNASHost};
+
+static std::shared_ptr<WebDAVHost> Spawn(const std::string &_server)
+{
+    if( _server == "nas" )
+        return spawnNASHost();
+    if( _server == "box.com" )
+        return spawnBoxComHost();
+    if( _server == "yandex.com" )
+        return spawnYandexDiskHost();
+    return nullptr;
+}
+
+#define INSTANTIATE_TEST(Name, Function, Server)                                                   \
+    TEST_CASE(PREFIX Name " - " Server) { Function(Spawn(Server)); }
 
 TEST_CASE(PREFIX "can connect to local NAS")
 {
@@ -189,21 +210,24 @@ TEST_CASE(PREFIX "file read on box.com")
     REQUIRE(data->at(65038) == 0);
 }
 
-TEST_CASE(PREFIX "simple file write on box.com")
+/*==================================================================================================
+ simple file write
+==================================================================================================*/
+static void TestSimpleFileWrite(VFSHostPtr _host)
 {
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
+    const auto path = "/temp_file";
+    if( _host->Exists(path) )
+        VFSEasyDelete(path, _host);
 
     VFSFilePtr file;
-    const auto path = "/temp_file";
-    const auto filecr_rc = host->CreateFile(path, file, nullptr);
+    const auto filecr_rc = _host->CreateFile(path, file, nullptr);
     REQUIRE(filecr_rc == VFSError::Ok);
 
     const auto open_rc = file->Open(VFSFlags::OF_Write);
     REQUIRE(open_rc == VFSError::Ok);
 
     std::string_view str{"Hello, world!"};
-    file->SetUploadSize(str.size());
+    REQUIRE(file->SetUploadSize(str.size()) == VFSError::Ok);
     const auto write_rc = file->WriteFile(str.data(), str.size());
     REQUIRE(write_rc == VFSError::Ok);
 
@@ -221,19 +245,23 @@ TEST_CASE(PREFIX "simple file write on box.com")
 
     REQUIRE(file->Close() == VFSError::Ok);
 
-    VFSEasyDelete(path, host);
+    VFSEasyDelete(path, _host);
 }
+INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "nas");
+INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "box.com");
+INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "yandex.com");
 
-TEST_CASE(PREFIX "various complete writes on box.com")
+/*==================================================================================================
+ various complete writes
+==================================================================================================*/
+static void TestVariousCompleteWrites(VFSHostPtr _host)
 {
-    VFSHostPtr host = spawnBoxComHost();
-
     const auto path = "/temp_file";
-    if( host->Exists(path) )
-        VFSEasyDelete(path, host);
+    if( _host->Exists(path) )
+        VFSEasyDelete(path, _host);
 
     VFSFilePtr file;
-    const auto filecr_rc = host->CreateFile(path, file, nullptr);
+    const auto filecr_rc = _host->CreateFile(path, file, nullptr);
     REQUIRE(filecr_rc == VFSError::Ok);
 
     const auto open_rc = file->Open(VFSFlags::OF_Write);
@@ -267,98 +295,158 @@ TEST_CASE(PREFIX "various complete writes on box.com")
 
     REQUIRE(file->Close() == VFSError::Ok);
 
-    VerifyFileContent(*host, path, noise);
-    
-    VFSEasyDelete(path, host);
+    VerifyFileContent(*_host, path, noise);
+
+    VFSEasyDelete(path, _host);
 }
+INSTANTIATE_TEST("various complete writes", TestVariousCompleteWrites, "nas");
+INSTANTIATE_TEST("various complete writes", TestVariousCompleteWrites, "box.com");
+// Yandex.disk doesn't like big uploads via WebDAV and imposes huge wait time, which fails at
+// timeouts, so skip it.
 
-TEST_CASE(PREFIX "edge case - 1b writes on box.com")
+/*==================================================================================================
+ edge case - 1b writes
+==================================================================================================*/
+static void TestEdgeCase1bWrites(VFSHostPtr _host)
 {
-    VFSHostPtr host = spawnBoxComHost();
-
     const auto path = "/temp_file";
-    if( host->Exists(path) )
-        VFSEasyDelete(path, host);
+    if( _host->Exists(path) )
+        VFSEasyDelete(path, _host);
 
     VFSFilePtr file;
-    const auto filecr_rc = host->CreateFile(path, file, nullptr);
+    const auto filecr_rc = _host->CreateFile(path, file, nullptr);
     REQUIRE(filecr_rc == VFSError::Ok);
 
     const auto open_rc = file->Open(VFSFlags::OF_Write);
     REQUIRE(open_rc == VFSError::Ok);
 
     constexpr size_t file_size = 9;
-    char data[file_size+1] = "012345678";
+    char data[file_size + 1] = "012345678";
     file->SetUploadSize(file_size);
-    for(int i = 0; i != file_size; ++i)
+    for( int i = 0; i != file_size; ++i )
         REQUIRE(file->Write(data + i, 1) == 1);
-    
-    REQUIRE(file->Close() == VFSError::Ok);
-    
-    VerifyFileContent(*host, path, {reinterpret_cast<std::byte*>(data), file_size});
-    
-    VFSEasyDelete(path, host);
-}
 
-TEST_CASE(PREFIX "empty file creation on box.com")
+    REQUIRE(file->Close() == VFSError::Ok);
+
+    VerifyFileContent(*_host, path, {reinterpret_cast<std::byte *>(data), file_size});
+
+    VFSEasyDelete(path, _host);
+}
+INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "nas");
+INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "box.com");
+INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "yandex.com");
+
+/*==================================================================================================
+ aborts pending uploads
+==================================================================================================*/
+static void TestAbortsPendingUploads(VFSHostPtr _host)
 {
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
+    const auto path = "/temp_file";
+    if( _host->Exists(path) )
+        VFSEasyDelete(path, _host);
 
     VFSFilePtr file;
-    const auto path = "/empty_file";
-    const auto filecr_rc = host->CreateFile(path, file, nullptr);
+    const auto filecr_rc = _host->CreateFile(path, file, nullptr);
     REQUIRE(filecr_rc == VFSError::Ok);
 
     const auto open_rc = file->Open(VFSFlags::OF_Write);
     REQUIRE(open_rc == VFSError::Ok);
 
-    file->SetUploadSize(0);
+    const size_t file_size = 1000;
+    const auto noise = MakeNoise(file_size);
+    REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
+
+    REQUIRE(file->WriteFile(noise.data(), file_size - 1) == VFSError::Ok);
 
     REQUIRE(file->Close() == VFSError::Ok);
 
-    REQUIRE(host->Exists(path));
-
-    VFSEasyDelete(path, host);
+    REQUIRE(_host->Exists(path) == false);
 }
+INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "nas");
+INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "box.com");
+INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "yandex.com");
 
-TEST_CASE(PREFIX "complex copy to box.com")
+/*==================================================================================================
+empty file creation
+==================================================================================================*/
+static void TestEmptyFileCreation(VFSHostPtr _host)
 {
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
+    const auto path = "/empty_file";
+    if( _host->Exists(path) )
+        VFSEasyDelete(path, _host);
 
-    VFSEasyDelete("/Test2", host);
+    VFSFilePtr file;
+    const auto filecr_rc = _host->CreateFile(path, file, nullptr);
+    REQUIRE(filecr_rc == VFSError::Ok);
+
+    const auto open_rc = file->Open(VFSFlags::OF_Write);
+    REQUIRE(open_rc == VFSError::Ok);
+
+    REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
+
+    REQUIRE(file->Close() == VFSError::Ok);
+
+    REQUIRE(_host->Exists(path));
+
+    VFSEasyDelete(path, _host);
+}
+INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "nas");
+INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "box.com");
+INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "yandex.com");
+
+/*==================================================================================================
+complex copy
+==================================================================================================*/
+static void TestComplexCopy(VFSHostPtr _host)
+{
+    VFSEasyDelete("/Test2", _host);
     const auto copy_rc = VFSEasyCopyDirectory(
-        "/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", host);
+        "/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host);
     REQUIRE(copy_rc == VFSError::Ok);
 
     int res = 0;
     int cmp_rc = VFSCompareNodes(
-        "/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", host, res);
+        "/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host, res);
 
     CHECK(cmp_rc == VFSError::Ok);
     CHECK(res == 0);
 
-    VFSEasyDelete("/Test2", host);
+    VFSEasyDelete("/Test2", _host);
 }
+INSTANTIATE_TEST("complex copy", TestComplexCopy, "nas");
+INSTANTIATE_TEST("complex copy", TestComplexCopy, "box.com");
+INSTANTIATE_TEST("complex copy", TestComplexCopy, "yandex.com");
 
-TEST_CASE(PREFIX "rename on box.com")
+#if 0
+/*==================================================================================================
+rename
+==================================================================================================*/
+static void TestRename(VFSHostPtr _host)
 {
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
-
     const auto p1 = "/new_empty_file";
-    const auto creat_rc = VFSEasyCreateEmptyFile(p1, host);
-    CHECK(creat_rc == VFSError::Ok);
+    const auto p2 = "/new_empty_file_1";
+    VFSEasyDelete(p1, _host);
+    VFSEasyDelete(p2, _host);
 
-    const auto p2 = reinterpret_cast<const char *>(u8"/new_empty_file_тест_ееёёё");
-    const auto rename_rc = host->Rename(p1, p2, nullptr);
-    CHECK(rename_rc == VFSError::Ok);
+    // create empty file (p1)
+    const auto creat_rc = VFSEasyCreateEmptyFile(p1, _host);
+    REQUIRE(creat_rc == VFSError::Ok);
 
-    CHECK(host->Exists(p2));
+    // p1 -> p2
+    const auto rename1_rc = _host->Rename(p1, p2, nullptr);
+    REQUIRE(rename1_rc == VFSError::Ok);
+    REQUIRE(_host->Exists(p2));
 
-    VFSEasyDelete(p2, host);
+    //    const auto p2 = reinterpret_cast<const char *>(u8"/new_empty_file_тест_ееёёё");
+    //    const auto rename_rc = _host->Rename(p1, p2, nullptr);
+    //    CHECK(rename_rc == VFSError::Ok);
+    //
+    //    CHECK(_host->Exists(p2));
+    //
+    VFSEasyDelete(p2, _host);
 }
+INSTANTIATE_TEST("rename", TestRename, "box.com");
+#endif
 
 TEST_CASE(PREFIX "statfs on box.com")
 {
@@ -407,26 +495,6 @@ TEST_CASE(PREFIX "simple download from yandex disk")
     REQUIRE(data->size() == 1'555'830);
     REQUIRE(data->at(1'555'828) == 255);
     REQUIRE(data->at(1'555'829) == 217);
-}
-
-TEST_CASE(PREFIX "complex copy to yandex disk")
-{
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnYandexDiskHost());
-
-    VFSEasyDelete("/Test2", host);
-    const auto copy_rc = VFSEasyCopyDirectory(
-        "/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", host);
-    REQUIRE(copy_rc == VFSError::Ok);
-
-    int res = 0;
-    int cmp_rc = VFSCompareNodes(
-        "/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", host, res);
-
-    REQUIRE(cmp_rc == VFSError::Ok);
-    REQUIRE(res == 0);
-
-    VFSEasyDelete("/Test2", host);
 }
 
 static std::vector<std::byte> MakeNoise(size_t size)

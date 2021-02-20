@@ -6,11 +6,8 @@
 
 namespace nc::vfs::webdav {
 
-constexpr static const struct timeval g_SelectTimeout = {0, 10000};
-
-File::File(const char* _relative_path, const std::shared_ptr<WebDAVHost> &_host):
-    VFSFile(_relative_path, _host),
-    m_Host(*_host)
+File::File(const char *_relative_path, const std::shared_ptr<WebDAVHost> &_host)
+    : VFSFile(_relative_path, _host), m_Host(*_host)
 {
 }
 
@@ -29,10 +26,10 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
         const auto stat_rc = m_Host.Stat(Path(), st, 0, _cancel_checker);
         if( stat_rc != VFSError::Ok )
             return stat_rc;
-        
+
         if( !S_ISREG(st.mode) )
             return VFSError::FromErrno(EPERM);
-    
+
         m_Size = st.size;
         m_OpenFlags = _open_flags;
         return VFSError::Ok;
@@ -50,49 +47,15 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     return VFSError::FromErrno(EINVAL);
 }
 
-static bool SelectMulti( CURLM *_multi )
-{
-    struct timeval timeout = g_SelectTimeout;
-    
-    fd_set fdread, fdwrite, fdexcep;
-    int maxfd;
-    
-    FD_ZERO(&fdread);
-    FD_ZERO(&fdwrite);
-    FD_ZERO(&fdexcep);
-    curl_multi_fdset(_multi, &fdread, &fdwrite, &fdexcep, &maxfd);
-    
-    const auto rc = select(maxfd+1, &fdread, &fdwrite, &fdexcep, &timeout);
-    return rc != -1;
-}
-
-static int ErrorIfAny( CURLM *_multi )
-{
-    CURLMsg *msg;
-    int msgs_left = 0;
-    while( (msg = curl_multi_info_read(_multi, &msgs_left)) != nullptr ) {
-        if( msg->msg == CURLMSG_DONE ) {
-            const auto curle_rc = msg->data.result;
-            if( curle_rc != CURLE_OK )
-                return ToVFSError(curle_rc, 0);
-
-            const auto http_rc = curl_easy_get_response_code(msg->easy_handle);
-            if( http_rc >= 300 )
-                return ToVFSError(curle_rc, http_rc);
-        }
-    }
-    return VFSError::Ok;
-}
-
 ssize_t File::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() || !(m_OpenFlags & VFSFlags::OF_Read) )
         return SetLastError(VFSError::FromErrno(EINVAL));
     if( _size == 0 || Eof() )
         return 0;
-    
+
     SpawnDownloadConnectionIfNeeded();
-        
+
     const int vfs_error = m_Conn->ReadBodyUpToSize(_size);
     if( vfs_error != VFSError::Ok )
         return SetLastError(vfs_error);
@@ -136,13 +99,13 @@ void File::SpawnUploadConnectionIfNeeded()
 {
     if( m_Conn )
         return;
-    
+
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
     const auto url = URIForPath(m_Host.Config(), Path());
     m_Conn->SetURL(url);
     m_Conn->SetNonBlockingUpload(m_Size);
-    
+
     m_Conn->AttachMultiHandle();
 }
 
@@ -150,13 +113,13 @@ void File::SpawnDownloadConnectionIfNeeded()
 {
     if( m_Conn )
         return;
-    
+
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
     const auto url = URIForPath(m_Host.Config(), Path());
     m_Conn->SetURL(url);
     m_Conn->SetCustomRequest("GET");
-    
+
     m_Conn->AttachMultiHandle();
 }
 
@@ -167,71 +130,53 @@ bool File::IsOpened() const
 
 static void AbortPendingDownload(Connection &_conn)
 {
-    _conn.SetProgreessCallback([](long, long, long, long){
-        return false;
-    });
+    _conn.SetProgreessCallback([](long, long, long, long) { return false; });
     const auto multi = _conn.MultiHandle();
     int running_handles = 0;
     do {
-        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
-    } while(running_handles);
-}
-
-static int ConcludePendingUpload( Connection &_conn, bool _abort)
-{
-    if( _abort )
-        _conn.SetProgreessCallback([](long, long, long, long){
-            return false;
-        });
-
-    const auto multi = _conn.MultiHandle();
-    int running_handles = 0;
-    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
-    
-    if( running_handles == 0)
-        return ErrorIfAny(multi);
-    
-    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
-    
-    while( running_handles ) {
-        if( !SelectMulti( multi ) )
-            return VFSError::FromErrno();
-        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
-    }
-    return ErrorIfAny(multi);
+        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
+            ;
+    } while( running_handles );
 }
 
 int File::Close()
 {
     if( !IsOpened() )
         return VFSError::FromErrno(EINVAL);
-    
+
     int result = VFSError::Ok;
-    
+
     if( m_OpenFlags & VFSFlags::OF_Read ) {
         if( m_Conn ) {
             AbortPendingDownload(*m_Conn);
-            m_Host.ConnectionsPool().Return( move(m_Conn) );
+            m_Host.ConnectionsPool().Return(std::move(m_Conn));
         }
     }
     else if( m_OpenFlags & VFSFlags::OF_Write ) {
-        if( !m_Conn )
-            Write("", 0);
-        
-        if( m_Conn ) {
-            result = ConcludePendingUpload( *m_Conn, m_Pos < m_Size );
-            m_Host.ConnectionsPool().Return( move(m_Conn) );
+        if( m_Size >= 0 ) {
+            if( m_Conn == nullptr )
+                Write("", 0); // force a connection to appear, needed for zero-byte uploads
+
+            assert(m_Conn);
+
+            if( m_Pos < m_Size ) {
+                result = m_Conn->WriteBodyUpToSize(Connection::AbortBodyWrite);
+                if( result == VFSError::FromErrno(ECANCELED) )
+                    result = VFSError::Ok; // explicitly eat ECANCELED as we do cancel the upload
+            }
+            else {
+                result = m_Conn->WriteBodyUpToSize(Connection::ConcludeBodyWrite);
+                m_Host.Cache().CommitMkFile(Path());
+            }
+
+            m_Host.ConnectionsPool().Return(std::move(m_Conn));
         }
-        
-        m_Conn.reset();
-        
-        m_Host.Cache().CommitMkFile(Path());
     }
-    
+
     m_OpenFlags = 0;
     m_Pos = 0;
     m_Size = -1;
-        
+
     return SetLastError(result);
 }
 
@@ -266,10 +211,10 @@ int File::SetUploadSize(size_t _size)
 {
     if( !IsOpened() || m_Size >= 0 )
         return SetLastError(VFSError::FromErrno(EINVAL));
-    
+
     m_Size = _size;
-    
+
     return VFSError::Ok;
 }
 
-}
+} // namespace nc::vfs::webdav

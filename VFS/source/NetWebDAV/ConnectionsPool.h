@@ -7,6 +7,7 @@
 #include <memory>
 #include <string_view>
 #include <span>
+#include <limits>
 #include <VFS/VFSError.h>
 #include "ReadBuffer.h"
 #include "WriteBuffer.h"
@@ -23,6 +24,8 @@ public:
         int vfs_error = VFSError::Ok; // error code for the underlying transport
         int http_code = 0;            // actual protocol result
     };
+    static constexpr size_t ConcludeBodyWrite = std::numeric_limits<size_t>::max() - 1;
+    static constexpr size_t AbortBodyWrite = std::numeric_limits<size_t>::max() - 2;
 
     Connection(const HostConfiguration &_config);
     ~Connection();
@@ -48,7 +51,13 @@ public:
 
     // "Multi" interface
     int ReadBodyUpToSize(size_t _target);
-    int WriteBodyUpToSize(size_t _target); // assumes the data is already in RequestBody
+    
+    // assumes the data is already in RequestBody
+    // ConcludeBodyWrite and AbortBodyWrite are special 'sizes' that make the function behave
+    // differently.
+    // ConcludeBodyWrite makes the connection to perform pending operations without stopping once a
+    // buffer was drained. AbortBodyWrite makes the connection to softly abort pending operations.
+    int WriteBodyUpToSize(size_t _target);
     
     using ProgressCallback =
         std::function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;

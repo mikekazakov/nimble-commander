@@ -5,7 +5,6 @@
 
 namespace nc::vfs::webdav {
 
-//constexpr static int g_CurlTimeoutMs = 5000; // 5s
 constexpr static int g_CurlTimeoutMs = 30000; // 30s
 
 static CURL *SpawnOrThrow()
@@ -86,11 +85,6 @@ int Connection::Progress(void *_clientp, long _dltotal, long _dlnow, long _ultot
 void Connection::SetProgreessCallback(ProgressCallback _callback)
 {
     m_ProgressCallback = _callback;
-}
-
-CURLM *Connection::MultiHandle()
-{
-    return m_MultiHandle;
 }
 
 bool Connection::IsMultiHandleAttached() const
@@ -188,8 +182,6 @@ int Connection::SetBody(std::span<const std::byte> _body)
 int Connection::SetNonBlockingUpload(size_t _upload_size)
 {
     curl_easy_setopt(m_EasyHandle, CURLOPT_UPLOAD, 1L);
-    //    curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, WriteBuffer::Read);
-    //    curl_easy_setopt(m_EasyHandle, CURLOPT_READDATA, &m_RequestBody);
     curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, ReadFromWriteBuffer);
     curl_easy_setopt(m_EasyHandle, CURLOPT_READDATA, this);
     curl_easy_setopt(m_EasyHandle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(_upload_size));
@@ -225,10 +217,20 @@ int Connection::ReadBodyUpToSize(size_t _target)
     if( m_MultiHandle == nullptr || m_MultiHandleAttached == false )
         return VFSError::InvalidCall;
 
+    const auto multi = m_MultiHandle;
+
+    if( _target == AbortBodyRead ) {
+        SetProgreessCallback([](long, long, long, long) { return false; });
+        int running_handles = 0;
+        do {
+            while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
+                ;
+        } while( running_handles );
+        return VFSError::Ok;
+    }
+
     if( m_ResponseBody.Size() >= _target )
         return VFSError::Ok;
-
-    const auto multi = m_MultiHandle;
 
     int running_handles = 0;
     while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
@@ -266,6 +268,8 @@ int Connection::WriteBodyUpToSize(size_t _target)
     if( m_MultiHandle == nullptr || m_MultiHandleAttached == false )
         return VFSError::InvalidCall;
 
+    const auto multi = m_MultiHandle;
+
     if( _target == ConcludeBodyWrite || _target == AbortBodyWrite ) {
         if( _target == AbortBodyWrite )
             SetProgreessCallback([](long, long, long, long) { return false; });
@@ -275,7 +279,6 @@ int Connection::WriteBodyUpToSize(size_t _target)
             m_Paused = false;
         }
 
-        const auto multi = m_MultiHandle;
         int running_handles = 0;
         while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
             ;
@@ -294,14 +297,11 @@ int Connection::WriteBodyUpToSize(size_t _target)
         }
         return ErrorIfAny(multi);
     }
-    
 
     if( m_RequestBody.Size() < _target )
         return VFSError::InvalidCall;
 
     const size_t target_buffer_size = m_RequestBody.Size() - _target;
-
-    const auto multi = m_MultiHandle;
 
     if( m_Paused == true ) {
         curl_easy_pause(m_EasyHandle, CURLPAUSE_CONT);

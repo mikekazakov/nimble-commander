@@ -128,17 +128,6 @@ bool File::IsOpened() const
     return m_OpenFlags != 0;
 }
 
-static void AbortPendingDownload(Connection &_conn)
-{
-    _conn.SetProgreessCallback([](long, long, long, long) { return false; });
-    const auto multi = _conn.MultiHandle();
-    int running_handles = 0;
-    do {
-        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
-            ;
-    } while( running_handles );
-}
-
 int File::Close()
 {
     if( !IsOpened() )
@@ -148,7 +137,7 @@ int File::Close()
 
     if( m_OpenFlags & VFSFlags::OF_Read ) {
         if( m_Conn ) {
-            AbortPendingDownload(*m_Conn);
+            m_Conn->ReadBodyUpToSize(Connection::AbortBodyRead);
             m_Host.ConnectionsPool().Return(std::move(m_Conn));
         }
     }

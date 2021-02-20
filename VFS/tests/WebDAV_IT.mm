@@ -367,6 +367,38 @@ INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "box.com");
 INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "yandex.com");
 
 /*==================================================================================================
+aborts pending downloads
+==================================================================================================*/
+static void TestAbortsPendingDownloads(VFSHostPtr _host)
+{
+    const auto path = "/temp_file";
+    if( _host->Exists(path) )
+        VFSEasyDelete(path, _host);
+    {
+        const size_t file_size = 100000; // 100Kb
+        const auto noise = MakeNoise(file_size);
+        VFSFilePtr file;
+        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
+        REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
+        REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
+        REQUIRE(file->Close() == VFSError::Ok);
+    }
+    {
+        std::array<std::byte, 1000> buf; // 1Kb
+        VFSFilePtr file;
+        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
+        REQUIRE(file->Read(buf.data(), buf.size()) == buf.size());
+        REQUIRE(file->Close() == VFSError::Ok);
+    }
+    VFSEasyDelete(path, _host);
+}
+INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "nas");
+INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "box.com");
+INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "yandex.com");
+
+/*==================================================================================================
 empty file creation
 ==================================================================================================*/
 static void TestEmptyFileCreation(VFSHostPtr _host)
@@ -393,6 +425,33 @@ static void TestEmptyFileCreation(VFSHostPtr _host)
 INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "nas");
 INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "box.com");
 INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "yandex.com");
+
+/*==================================================================================================
+can download empty file :-|
+==================================================================================================*/
+static void TestEmptyFileDownload(VFSHostPtr _host)
+{
+    const auto path = "/temp_file";
+    if( _host->Exists(path) )
+        VFSEasyDelete(path, _host);
+    {
+        VFSFilePtr file;
+        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
+        REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
+        REQUIRE(file->Close() == VFSError::Ok);
+    }
+    {
+        VFSFilePtr file;
+        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
+        REQUIRE(file->Close() == VFSError::Ok);
+    }
+    VFSEasyDelete(path, _host);
+}
+INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "nas");
+INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "box.com");
+INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "yandex.com");
 
 /*==================================================================================================
 complex copy

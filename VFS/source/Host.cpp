@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "ListingInput.h"
 #include "../include/VFS/Host.h"
@@ -362,7 +362,7 @@ VFSConfiguration Host::Configuration() const
 bool Host::Exists(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
-    return Stat(_path, st, 0, _cancel_checker) == 0;
+    return Stat(_path, st, 0, _cancel_checker) == VFSError::Ok;
 }
 
 bool Host::IsImmutableFS() const noexcept

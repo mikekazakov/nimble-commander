@@ -26,11 +26,10 @@ public:
     };
     static constexpr size_t ConcludeBodyWrite = std::numeric_limits<size_t>::max() - 1;
     static constexpr size_t AbortBodyWrite = std::numeric_limits<size_t>::max() - 2;
+    static constexpr size_t AbortBodyRead = std::numeric_limits<size_t>::max() - 1;
 
     Connection(const HostConfiguration &_config);
     ~Connection();
-
-    CURLM *MultiHandle();
 
     bool IsMultiHandleAttached() const;
     void AttachMultiHandle();
@@ -50,6 +49,7 @@ public:
     std::string_view ResponseHeader();
 
     // "Multi" interface
+    // AbortBodyRead size abort a pending download
     int ReadBodyUpToSize(size_t _target);
     
     // assumes the data is already in RequestBody
@@ -59,18 +59,17 @@ public:
     // buffer was drained. AbortBodyWrite makes the connection to softly abort pending operations.
     int WriteBodyUpToSize(size_t _target);
     
-    using ProgressCallback =
-        std::function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
-    void SetProgreessCallback(ProgressCallback _callback);
-    
     
     void Clear(); // Resets the connection to a pristine state regarding settings
 
 private:
     using SlistPtr = std::unique_ptr<struct curl_slist, decltype(&curl_slist_free_all)>;
-
+    using ProgressCallback =
+        std::function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
+    
     void operator=(const Connection &) = delete;
     Connection(const Connection &) = delete;
+    void SetProgreessCallback(ProgressCallback _callback);
     static int Progress(void *_clientp, long _dltotal, long _dlnow, long _ultotal, long _ulnow);
     static size_t ReadFromWriteBuffer(void *_ptr, size_t _size, size_t _nmemb, void *_userp);
 

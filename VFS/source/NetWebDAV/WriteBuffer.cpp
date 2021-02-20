@@ -1,12 +1,12 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WriteBuffer.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 
 namespace nc::vfs::webdav {
 
-static const auto g_DefaultCapacity = 32768;
+static const size_t g_DefaultCapacity = 32768;
 
 WriteBuffer::WriteBuffer()
 {
@@ -27,38 +27,38 @@ size_t WriteBuffer::Size() const noexcept
     return m_Size;
 }
 
-void WriteBuffer::Grow(int _new_size) noexcept
+void WriteBuffer::Grow(size_t _new_size) noexcept
 {
     _new_size = std::max(_new_size, g_DefaultCapacity);
-    assert( m_Size < _new_size );
+    assert(m_Size < _new_size);
     m_Capacity = _new_size;
-    m_Bytes = (uint8_t*)realloc(m_Bytes, m_Capacity);
+    m_Bytes = (uint8_t *)realloc(m_Bytes, m_Capacity);
 }
 
-void WriteBuffer::PushBack(const void *_data, int _size) noexcept
+void WriteBuffer::PushBack(const void *_data, size_t _size) noexcept
 {
-    if( m_Capacity < m_Size + _size)
-        Grow( m_Size + _size );
-    
-    memcpy( m_Bytes + m_Size, _data, _size);
+    if( m_Capacity < m_Size + _size )
+        Grow(m_Size + _size);
+
+    std::memcpy(m_Bytes + m_Size, _data, _size);
     m_Size += _size;
 }
 
-void WriteBuffer::PopFront(int _size) noexcept
+void WriteBuffer::PopFront(size_t _size) noexcept
 {
     if( _size == 0 )
         return;
-    assert(_size  <= m_Size );
-    memmove(m_Bytes, m_Bytes + _size, m_Size - _size);
+    assert(_size <= m_Size);
+    std::memmove(m_Bytes, m_Bytes + _size, m_Size - _size);
     m_Size = m_Size - _size;
 }
 
-void WriteBuffer::Clear()
+void WriteBuffer::Clear() noexcept
 {
     m_Size = 0;
 }
 
-void WriteBuffer::Write(const void* _buffer, size_t _bytes) noexcept
+void WriteBuffer::Write(const void *_buffer, size_t _bytes) noexcept
 {
     assert(_buffer != nullptr);
     PushBack(_buffer, (int)_bytes);
@@ -66,26 +66,30 @@ void WriteBuffer::Write(const void* _buffer, size_t _bytes) noexcept
 
 size_t WriteBuffer::Discard(size_t _bytes) noexcept
 {
-    const auto to_discard = std::min( size_t(m_Size), _bytes );
+    const auto to_discard = std::min(size_t(m_Size), _bytes);
     PopFront((int)to_discard);
     return to_discard;
 }
 
-size_t WriteBuffer::Read(void *_ptr, size_t _size, size_t _nmemb, void *_userp)
+size_t WriteBuffer::ReadCURL(void *_ptr, size_t _size, size_t _nmemb, void *_userp) noexcept
 {
-    WriteBuffer &buffer = *(WriteBuffer*)_userp;
+    WriteBuffer &buffer = *(WriteBuffer *)_userp;
 
     const auto total_bytes = _size * _nmemb;
-    const auto to_read = std::min( size_t(buffer.m_Size), total_bytes );
+
+    return buffer.Read(_ptr, total_bytes);
+}
+
+size_t WriteBuffer::Read(void *_ptr, size_t _size_bytes) noexcept
+{
+    const auto to_read = std::min(size_t(m_Size), _size_bytes);
     if( to_read == 0 )
         return 0;
-    
-    memcpy( _ptr, buffer.m_Bytes, to_read );
-    buffer.PopFront((int)to_read);
-    
+
+    std::memcpy(_ptr, m_Bytes, to_read);
+    PopFront((int)to_read);
+
     return to_read;
 }
-    
 
-
-}
+} // namespace nc::vfs::webdav

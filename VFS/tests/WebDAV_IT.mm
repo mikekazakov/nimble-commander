@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "../source/NetWebDAV/WebDAVHost.h"
@@ -6,6 +6,7 @@
 #include <VFS/Native.h>
 #include "NCE.h"
 #include <sys/stat.h>
+#include <span>
 
 #define PREFIX "WebDAV "
 
@@ -18,6 +19,10 @@ static const auto g_BoxComUsername = NCE(nc::env::test::webdav_boxcom_username);
 static const auto g_BoxComPassword = NCE(nc::env::test::webdav_boxcom_password);
 static const auto g_YandexDiskUsername = NCE(nc::env::test::webdav_yandexdisk_username);
 static const auto g_YandexDiskPassword = NCE(nc::env::test::webdav_yandexdisk_password);
+
+static std::vector<std::byte> MakeNoise(size_t size);
+static void
+VerifyFileContent(VFSHost &_host, std::filesystem::path _path, std::span<const std::byte> _content);
 
 static std::shared_ptr<WebDAVHost> spawnNASHost()
 {
@@ -219,6 +224,82 @@ TEST_CASE(PREFIX "simple file write on box.com")
     VFSEasyDelete(path, host);
 }
 
+TEST_CASE(PREFIX "various complete writes on box.com")
+{
+    VFSHostPtr host = spawnBoxComHost();
+
+    const auto path = "/temp_file";
+    if( host->Exists(path) )
+        VFSEasyDelete(path, host);
+
+    VFSFilePtr file;
+    const auto filecr_rc = host->CreateFile(path, file, nullptr);
+    REQUIRE(filecr_rc == VFSError::Ok);
+
+    const auto open_rc = file->Open(VFSFlags::OF_Write);
+    REQUIRE(open_rc == VFSError::Ok);
+
+    const size_t file_size = 12'345'678; // ~12MB
+    const auto noise = MakeNoise(file_size);
+
+    file->SetUploadSize(file_size);
+
+    size_t write_chunk = std::numeric_limits<size_t>::max();
+    SECTION("") { write_chunk = 439; }
+    SECTION("") { write_chunk = 1234; }
+    SECTION("") { write_chunk = 2000; }
+    SECTION("") { write_chunk = 2048; }
+    SECTION("") { write_chunk = 5000; }
+    SECTION("") { write_chunk = 77777; }
+    SECTION("") { write_chunk = file_size / 2; }
+    SECTION("") { write_chunk = file_size; }
+    SECTION("") { write_chunk = file_size * 2; }
+
+    ssize_t left_to_write = file_size;
+    const std::byte *read_from = noise.data();
+    while( left_to_write > 0 ) {
+        const auto write_now = std::min(write_chunk, static_cast<size_t>(left_to_write));
+        const auto write_rc = file->Write(read_from, write_now);
+        REQUIRE(write_rc >= 0);
+        read_from += write_rc;
+        left_to_write -= write_rc;
+    }
+
+    REQUIRE(file->Close() == VFSError::Ok);
+
+    VerifyFileContent(*host, path, noise);
+    
+    VFSEasyDelete(path, host);
+}
+
+TEST_CASE(PREFIX "edge case - 1b writes on box.com")
+{
+    VFSHostPtr host = spawnBoxComHost();
+
+    const auto path = "/temp_file";
+    if( host->Exists(path) )
+        VFSEasyDelete(path, host);
+
+    VFSFilePtr file;
+    const auto filecr_rc = host->CreateFile(path, file, nullptr);
+    REQUIRE(filecr_rc == VFSError::Ok);
+
+    const auto open_rc = file->Open(VFSFlags::OF_Write);
+    REQUIRE(open_rc == VFSError::Ok);
+
+    constexpr size_t file_size = 9;
+    char data[file_size+1] = "012345678";
+    file->SetUploadSize(file_size);
+    for(int i = 0; i != file_size; ++i)
+        REQUIRE(file->Write(data + i, 1) == 1);
+    
+    REQUIRE(file->Close() == VFSError::Ok);
+    
+    VerifyFileContent(*host, path, {reinterpret_cast<std::byte*>(data), file_size});
+    
+    VFSEasyDelete(path, host);
+}
+
 TEST_CASE(PREFIX "empty file creation on box.com")
 {
     VFSHostPtr host;
@@ -346,4 +427,29 @@ TEST_CASE(PREFIX "complex copy to yandex disk")
     REQUIRE(res == 0);
 
     VFSEasyDelete("/Test2", host);
+}
+
+static std::vector<std::byte> MakeNoise(size_t size)
+{
+    std::vector<std::byte> noise(size);
+    std::srand((int)time(0));
+    for( size_t i = 0; i < size; ++i )
+        noise[i] = static_cast<std::byte>(std::rand() % 256); // yes, I know that rand() is harmful!
+    return noise;
+}
+
+static void
+VerifyFileContent(VFSHost &_host, std::filesystem::path _path, std::span<const std::byte> _content)
+{
+    VFSFilePtr file;
+    const auto createfile_rc = _host.CreateFile(_path.c_str(), file, nullptr);
+    REQUIRE(createfile_rc == VFSError::Ok);
+
+    const auto open_rc = file->Open(VFSFlags::OF_Read);
+    REQUIRE(open_rc == VFSError::Ok);
+    const auto d = file->ReadFile();
+    REQUIRE(d);
+    REQUIRE(d->size() == _content.size());
+    REQUIRE(memcmp(d->data(), _content.data(), _content.size()) == 0);
+    REQUIRE(file->Close() == VFSError::Ok);
 }

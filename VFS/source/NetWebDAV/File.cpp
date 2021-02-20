@@ -90,37 +90,14 @@ ssize_t File::Read(void *_buf, size_t _size)
         return SetLastError(VFSError::FromErrno(EINVAL));
     if( _size == 0 || Eof() )
         return 0;
-
-    int vfs_error = VFSError::Ok;
     
-    if( !m_Conn ) {
-        SpawnDownloadConnectionIfNeeded();
-        assert(m_Conn);
-    }
-    
-    auto &read_buffer = m_Conn->ResponseBody();
-    
-    if( read_buffer.Size() < _size ) {
-        const auto multi = m_Conn->MultiHandle();
+    SpawnDownloadConnectionIfNeeded();
         
-        int running_handles = 0;
-        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
-        
-        while( read_buffer.Size() < _size && running_handles) {
-            if( !SelectMulti(multi) ) {
-                vfs_error = VFSError::FromErrno();
-                break;
-            }
-            while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
-        }
-
-        if( running_handles == 0 )
-            vfs_error = ErrorIfAny(multi);
-    }
-
+    const int vfs_error = m_Conn->ReadBodyUpToSize(_size);
     if( vfs_error != VFSError::Ok )
         return SetLastError(vfs_error);
 
+    auto &read_buffer = m_Conn->ResponseBody();
     const auto has_read = read_buffer.Read(_buf, _size);
     m_Pos += has_read;
 
@@ -129,39 +106,28 @@ ssize_t File::Read(void *_buf, size_t _size)
 
 ssize_t File::Write(const void *_buf, size_t _size)
 {
-    if( !IsOpened() ||
-        !(m_OpenFlags & VFSFlags::OF_Write) ||
-        m_Size < 0 )
+    if( !IsOpened() || !(m_OpenFlags & VFSFlags::OF_Write) || m_Size < 0 )
         return SetLastError(VFSError::FromErrno(EINVAL));
-    
+
     SpawnUploadConnectionIfNeeded();
-    
+
     auto &write_buffer = m_Conn->RequestBody();
+
+    // assuming it should be empty at this point?
+    assert(write_buffer.Empty());
+
     write_buffer.Write(_buf, _size);
 
-    int vfs_error = VFSError::Ok;
-    
-    const auto multi = m_Conn->MultiHandle();
-    int running_handles = 0;
-    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) ) ;
-    
-    do  {
-        if( !SelectMulti(multi) ) {
-            vfs_error = VFSError::FromErrno();
-            break;
-        }
-        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
-    } while( !write_buffer.Empty() && running_handles );
-
-    if( running_handles == 0 )
-        vfs_error = ErrorIfAny(multi);
-
+    const int vfs_error = m_Conn->WriteBodyUpToSize(_size);
     if( vfs_error != VFSError::Ok )
         return SetLastError(vfs_error);
 
+    //    TODO: clarify what File should return for partially written blocks - error code or number
+    //    of bytes written?
+
     const auto has_written = _size - write_buffer.Size();
     m_Pos += has_written;
-    write_buffer.Discard( _size - has_written );
+    write_buffer.Discard(_size - has_written);
 
     return has_written;
 }

@@ -15,6 +15,7 @@ namespace nc::vfs::webdav {
 
 class HostConfiguration;
 
+// TODO: "NonBlocking" is a lie - it's blocking. Need to find a better term
 class Connection
 {
 public:
@@ -45,6 +46,10 @@ public:
     ReadBuffer &ResponseBody();
     std::string_view ResponseHeader();
 
+    // "Multi" interface
+    int ReadBodyUpToSize(size_t _target);
+    int WriteBodyUpToSize(size_t _target); // assumes the data is already in RequestBody
+    
     using ProgressCallback =
         std::function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
     void SetProgreessCallback(ProgressCallback _callback);
@@ -58,10 +63,12 @@ private:
     void operator=(const Connection &) = delete;
     Connection(const Connection &) = delete;
     static int Progress(void *_clientp, long _dltotal, long _dlnow, long _ultotal, long _ulnow);
+    static size_t ReadFromWriteBuffer(void *_ptr, size_t _size, size_t _nmemb, void *_userp);
 
     CURL *const m_EasyHandle = nullptr;
     CURLM *m_MultiHandle = nullptr;
     bool m_MultiHandleAttached = false;
+    bool m_Paused = false;
     ProgressCallback m_ProgressCallback;
 
     SlistPtr m_RequestHeader;

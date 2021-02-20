@@ -5,6 +5,9 @@
 
 namespace nc::vfs::webdav {
 
+constexpr static const struct timeval g_SelectTimeout = {0, 600 * 1000}; // 600ms
+constexpr static const struct timeval g_SelectWait = {0, 100 * 1000};    // 100ms
+
 static CURL *SpawnOrThrow()
 {
     const auto curl = curl_easy_init();
@@ -17,13 +20,54 @@ static size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, v
 {
     const auto sz = size * nmemb;
     auto &str = *reinterpret_cast<std::string *>(userp);
-    str.insert(str.size(),  reinterpret_cast<const char *>(buffer), sz);
+    str.insert(str.size(), reinterpret_cast<const char *>(buffer), sz);
     return sz;
 }
 
-Connection::Connection( const HostConfiguration& _config ):
-    m_EasyHandle(SpawnOrThrow()),
-    m_RequestHeader(nullptr, &curl_slist_free_all)
+static bool SelectMulti(CURLM *_multi)
+{
+    fd_set fdread, fdwrite, fdexcep;
+    int maxfd = -1;
+    FD_ZERO(&fdread);
+    FD_ZERO(&fdwrite);
+    FD_ZERO(&fdexcep);
+    const CURLMcode mc = curl_multi_fdset(_multi, &fdread, &fdwrite, &fdexcep, &maxfd);
+    if( mc != CURLM_OK ) {
+        return false;
+    }
+
+    int select_rc = -1;
+    if( maxfd == -1 ) {
+        struct timeval timeout = g_SelectWait;
+        select_rc = select(0, NULL, NULL, NULL, &timeout);
+    }
+    else {
+        struct timeval timeout = g_SelectTimeout;
+        select_rc = select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
+    }
+    return select_rc != -1;
+}
+
+static int ErrorIfAny(CURLM *_multi)
+{
+    CURLMsg *msg;
+    int msgs_left = 0;
+    while( (msg = curl_multi_info_read(_multi, &msgs_left)) != nullptr ) {
+        if( msg->msg == CURLMSG_DONE ) {
+            const auto curle_rc = msg->data.result;
+            if( curle_rc != CURLE_OK )
+                return ToVFSError(curle_rc, 0);
+
+            const auto http_rc = curl_easy_get_response_code(msg->easy_handle);
+            if( http_rc >= 300 )
+                return ToVFSError(curle_rc, http_rc);
+        }
+    }
+    return VFSError::Ok;
+}
+
+Connection::Connection(const HostConfiguration &_config)
+    : m_EasyHandle(SpawnOrThrow()), m_RequestHeader(nullptr, &curl_slist_free_all)
 {
     const auto auth_methods = CURLAUTH_BASIC | CURLAUTH_DIGEST;
     const auto ua = "Nimble Commander";
@@ -49,21 +93,21 @@ Connection::Connection( const HostConfiguration& _config ):
 Connection::~Connection()
 {
     curl_easy_cleanup(m_EasyHandle);
-    
+
     if( m_MultiHandle )
         curl_multi_cleanup(m_MultiHandle);
 }
 
 int Connection::Progress(void *_clientp, long _dltotal, long _dlnow, long _ultotal, long _ulnow)
 {
-    const auto &connection = *(Connection*)_clientp;
+    const auto &connection = *(Connection *)_clientp;
     if( !connection.m_ProgressCallback )
         return 0;
     const auto go_on = connection.m_ProgressCallback(_dltotal, _dlnow, _ultotal, _ulnow);
     return go_on ? 0 : 1;
 }
 
-void Connection::SetProgreessCallback( ProgressCallback _callback )
+void Connection::SetProgreessCallback(ProgressCallback _callback)
 {
     m_ProgressCallback = _callback;
 }
@@ -82,7 +126,7 @@ void Connection::AttachMultiHandle()
 {
     if( m_MultiHandleAttached )
         return;
-    
+
     if( !m_MultiHandle )
         m_MultiHandle = curl_multi_init();
 
@@ -95,7 +139,7 @@ void Connection::DetachMultiHandle()
 {
     if( !m_MultiHandleAttached )
         return;
-    
+
     const auto e = curl_multi_remove_handle(m_MultiHandle, m_EasyHandle);
     if( e == CURLM_OK )
         m_MultiHandleAttached = false;
@@ -116,8 +160,9 @@ void Connection::Clear()
     curl_easy_setopt(m_EasyHandle, CURLOPT_INFILESIZE_LARGE, -1l);
     curl_easy_setopt(m_EasyHandle, CURLOPT_NOBODY, 0);
     m_ProgressCallback = nullptr;
+    m_Paused = false;
     m_RequestHeader.reset();
-    m_RequestBody.Clear();    
+    m_RequestBody.Clear();
     m_ResponseHeader.clear();
     m_ResponseBody.Clear();
 }
@@ -155,7 +200,7 @@ int Connection::SetBody(std::span<const std::byte> _body)
     m_RequestBody.Write(_body.data(), _body.size_bytes());
 
     curl_easy_setopt(m_EasyHandle, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, WriteBuffer::Read);
+    curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, WriteBuffer::ReadCURL);
     curl_easy_setopt(m_EasyHandle, CURLOPT_READDATA, &m_RequestBody);
     curl_easy_setopt(
         m_EasyHandle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(m_RequestBody.Size()));
@@ -167,10 +212,12 @@ int Connection::SetBody(std::span<const std::byte> _body)
 int Connection::SetNonBlockingUpload(size_t _upload_size)
 {
     curl_easy_setopt(m_EasyHandle, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, WriteBuffer::Read);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_READDATA, &m_RequestBody);
+    //    curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, WriteBuffer::Read);
+    //    curl_easy_setopt(m_EasyHandle, CURLOPT_READDATA, &m_RequestBody);
+    curl_easy_setopt(m_EasyHandle, CURLOPT_READFUNCTION, ReadFromWriteBuffer);
+    curl_easy_setopt(m_EasyHandle, CURLOPT_READDATA, this);
     curl_easy_setopt(m_EasyHandle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(_upload_size));
-    
+
     // TODO: mb check rcs from curl?
     return VFSError::Ok;
 }
@@ -197,8 +244,84 @@ Connection::BlockRequestResult Connection::PerformBlockingRequest()
     return {CurlRCToVFSError(curl_rc), http_rc};
 }
 
-ConnectionsPool::ConnectionsPool(const HostConfiguration &_config):
-    m_Config(_config)
+int Connection::ReadBodyUpToSize(size_t _target)
+{
+    if( m_MultiHandle == nullptr || m_MultiHandleAttached == false )
+        return VFSError::InvalidCall;
+
+    if( m_ResponseBody.Size() >= _target )
+        return VFSError::Ok;
+
+    const auto multi = m_MultiHandle;
+
+    int running_handles = 0;
+    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
+        ;
+
+    while( m_ResponseBody.Size() < _target && running_handles != 0 ) {
+        if( SelectMulti(multi) == false ) {
+            return VFSError::FromErrno();
+        }
+        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
+            ;
+    }
+
+    if( running_handles == 0 )
+        return ErrorIfAny(multi);
+    else
+        return VFSError::Ok;
+}
+
+size_t Connection::ReadFromWriteBuffer(void *_ptr, size_t _size, size_t _nmemb, void *_userp)
+{
+    auto &connection = *reinterpret_cast<Connection *>(_userp);
+
+    auto &write_buffer = connection.m_RequestBody;
+    if( write_buffer.Empty() ) {
+        connection.m_Paused = true;
+        return CURL_READFUNC_PAUSE;
+    }
+
+    const auto bytes = _size * _nmemb;
+    return write_buffer.Read(_ptr, bytes);
+}
+
+int Connection::WriteBodyUpToSize(size_t _target)
+{
+    if( m_MultiHandle == nullptr || m_MultiHandleAttached == false )
+        return VFSError::InvalidCall;
+
+    if( m_RequestBody.Size() < _target )
+        return VFSError::InvalidCall;
+
+    const size_t target_buffer_size = m_RequestBody.Size() - _target;
+
+    const auto multi = m_MultiHandle;
+
+    if( m_Paused == true ) {
+        curl_easy_pause(m_EasyHandle, CURLPAUSE_CONT);
+        m_Paused = false;
+    }
+
+    int running_handles = 0;
+    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
+        ;
+
+    do {
+        if( SelectMulti(multi) == false ) {
+            return VFSError::FromErrno();
+        }
+        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) )
+            ;
+    } while( m_RequestBody.Size() > target_buffer_size && running_handles != 0 );
+
+    if( running_handles == 0 )
+        return ErrorIfAny(multi);
+    else
+        return VFSError::Ok;
+}
+
+ConnectionsPool::ConnectionsPool(const HostConfiguration &_config) : m_Config(_config)
 {
 }
 
@@ -231,19 +354,18 @@ void ConnectionsPool::Return(std::unique_ptr<Connection> _connection)
         throw std::invalid_argument("ConnectionsPool::Return accepts only valid connections");
 
     _connection->Clear();
-    m_Connections.emplace_back( std::move(_connection) );
+    m_Connections.emplace_back(std::move(_connection));
 }
 
-ConnectionsPool::AR::AR(std::unique_ptr<Connection> _c, ConnectionsPool& _p):
-    connection( std::move(_c) ),
-    pool(_p)
+ConnectionsPool::AR::AR(std::unique_ptr<Connection> _c, ConnectionsPool &_p)
+    : connection(std::move(_c)), pool(_p)
 {
 }
 
 ConnectionsPool::AR::~AR()
 {
     if( connection )
-        pool.Return( std::move(connection) );
+        pool.Return(std::move(connection));
 }
 
-}
+} // namespace nc::vfs::webdav

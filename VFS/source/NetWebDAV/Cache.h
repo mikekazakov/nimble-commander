@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <chrono>
@@ -44,7 +44,7 @@ private:
         std::chrono::nanoseconds fetch_time = std::chrono::nanoseconds{0};
         bool has_dirty_items = false;
         
-        std::vector<PropFindResponse> items; // sorted by .path
+        std::vector<PropFindResponse> items; // sorted by .filename
         std::vector<bool> dirty_marks;
     };
     struct Observer

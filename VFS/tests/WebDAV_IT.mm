@@ -476,36 +476,68 @@ INSTANTIATE_TEST("complex copy", TestComplexCopy, "nas");
 INSTANTIATE_TEST("complex copy", TestComplexCopy, "box.com");
 INSTANTIATE_TEST("complex copy", TestComplexCopy, "yandex.com");
 
-#if 0
 /*==================================================================================================
 rename
 ==================================================================================================*/
 static void TestRename(VFSHostPtr _host)
 {
-    const auto p1 = "/new_empty_file";
-    const auto p2 = "/new_empty_file_1";
-    VFSEasyDelete(p1, _host);
-    VFSEasyDelete(p2, _host);
-
-    // create empty file (p1)
-    const auto creat_rc = VFSEasyCreateEmptyFile(p1, _host);
-    REQUIRE(creat_rc == VFSError::Ok);
-
-    // p1 -> p2
-    const auto rename1_rc = _host->Rename(p1, p2, nullptr);
-    REQUIRE(rename1_rc == VFSError::Ok);
-    REQUIRE(_host->Exists(p2));
-
-    //    const auto p2 = reinterpret_cast<const char *>(u8"/new_empty_file_тест_ееёёё");
-    //    const auto rename_rc = _host->Rename(p1, p2, nullptr);
-    //    CHECK(rename_rc == VFSError::Ok);
-    //
-    //    CHECK(_host->Exists(p2));
-    //
-    VFSEasyDelete(p2, _host);
+    SECTION("simple reg -> reg in the same dir")
+    {
+        const auto p1 = "/new_empty_file";
+        const auto p2 = "/new_empty_file_1";
+        VFSEasyDelete(p1, _host);
+        VFSEasyDelete(p2, _host);
+        REQUIRE(VFSEasyCreateEmptyFile(p1, _host) == VFSError::Ok);
+        REQUIRE(_host->Rename(p1, p2, nullptr) == VFSError::Ok);
+        REQUIRE(_host->Exists(p1) == false);
+        REQUIRE(_host->Exists(p2) == true);
+        VFSEasyDelete(p2, _host);
+    }
+    SECTION("simple reg -> reg in other dir")
+    {
+        const auto p1 = "/new_empty_file";
+        const auto p2 = std::filesystem::path("/TestTestDir/new_empty_file_1");
+        VFSEasyDelete(p1, _host);
+        VFSEasyDelete(p2.parent_path().c_str(), _host);
+        REQUIRE(VFSEasyCreateEmptyFile(p1, _host) == VFSError::Ok);
+        REQUIRE(_host->CreateDirectory(p2.parent_path().c_str(), 0) == VFSError::Ok);
+        REQUIRE(_host->Rename(p1, p2.c_str()) == VFSError::Ok);
+        REQUIRE(_host->Exists(p1) == false);
+        REQUIRE(_host->Exists(p2.c_str()) == true);
+        VFSEasyDelete(p2.parent_path().c_str(), _host);
+    }
+    SECTION("simple dir -> dir in the same dir")
+    {
+        const auto p1 = "/TestTestDir1";
+        const auto p2 = "/TestTestDir2";
+        VFSEasyDelete(p1, _host);
+        VFSEasyDelete(p2, _host);
+        REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
+        REQUIRE(_host->Rename(p1, p2) == VFSError::Ok);
+        REQUIRE(_host->Exists(p1) == false);
+        REQUIRE(_host->Exists(p2) == true);
+        REQUIRE(_host->IsDirectory(p2, 0) == true);
+        VFSEasyDelete(p2, _host);
+    }
+    SECTION("simple dir -> dir in other dir")
+    {
+        const auto p1 = "/TestTestDir1";
+        const auto p2 = "/TestTestDir2";
+        const auto p3 = "/TestTestDir2/NestedDir";
+        VFSEasyDelete(p1, _host);
+        VFSEasyDelete(p2, _host);
+        REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
+        REQUIRE(_host->CreateDirectory(p2, 0) == VFSError::Ok);
+        REQUIRE(_host->Rename(p1, p3) == VFSError::Ok);
+        REQUIRE(_host->Exists(p1) == false);
+        REQUIRE(_host->Exists(p3) == true);
+        REQUIRE(_host->IsDirectory(p3, 0) == true);
+        VFSEasyDelete(p2, _host);
+    }
 }
+//INSTANTIATE_TEST("rename", TestRename, "nas"); // QNAP NAS doesn't like renaming
 INSTANTIATE_TEST("rename", TestRename, "box.com");
-#endif
+INSTANTIATE_TEST("rename", TestRename, "yandex.com");
 
 TEST_CASE(PREFIX "statfs on box.com")
 {

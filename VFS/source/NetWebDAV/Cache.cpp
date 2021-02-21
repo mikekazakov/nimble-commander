@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Cache.h"
 #include <Utility/PathManip.h>
 #include "Internal.h"
@@ -270,6 +270,7 @@ void Cache::CommitMove( const std::string &_old_path, const std::string &_new_pa
         listing.has_dirty_items = true;
         
         if( entry ) {
+            entry->filename = new_filename;
             const auto item_it = std::lower_bound(std::begin(listing.items),
                                                   std::end(listing.items),
                                                   new_filename,

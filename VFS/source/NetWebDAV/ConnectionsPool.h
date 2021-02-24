@@ -30,25 +30,29 @@ public:
 
     Connection(const HostConfiguration &_config);
     ~Connection();
+    
+    // Resets the connection to a pristine state regarding settings
+    void Clear();
 
-    bool IsMultiHandleAttached() const;
-    void AttachMultiHandle();
-    void DetachMultiHandle();
-
+    //==============================================================================================
     // Setting a request up. All these functions copy the input data
     int SetCustomRequest(std::string_view _request);
     int SetURL(std::string_view _url);
     int SetHeader(std::span<const std::string_view> _header);
     int SetBody(std::span<const std::byte> _body);
     int SetNonBlockingUpload(size_t _upload_size);
+    void MakeNonBlocking();
 
+    //==============================================================================================
     // Queries
     BlockRequestResult PerformBlockingRequest();
     WriteBuffer &RequestBody();
     ReadBuffer &ResponseBody();
     std::string_view ResponseHeader();
 
-    // "Multi" interface
+    //==============================================================================================
+    // "Multi" queries
+    
     // AbortBodyRead size abort a pending download
     int ReadBodyUpToSize(size_t _target);
     
@@ -58,9 +62,6 @@ public:
     // ConcludeBodyWrite makes the connection to perform pending operations without stopping once a
     // buffer was drained. AbortBodyWrite makes the connection to softly abort pending operations.
     int WriteBodyUpToSize(size_t _target);
-    
-    
-    void Clear(); // Resets the connection to a pristine state regarding settings
 
 private:
     using SlistPtr = std::unique_ptr<struct curl_slist, decltype(&curl_slist_free_all)>;
@@ -69,6 +70,7 @@ private:
     
     void operator=(const Connection &) = delete;
     Connection(const Connection &) = delete;
+    void DetachMultiHandle();
     void SetProgreessCallback(ProgressCallback _callback);
     static int Progress(void *_clientp, long _dltotal, long _dlnow, long _ultotal, long _ulnow);
     static size_t ReadFromWriteBuffer(void *_ptr, size_t _size, size_t _nmemb, void *_userp);

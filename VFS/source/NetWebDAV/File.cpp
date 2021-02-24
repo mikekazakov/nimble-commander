@@ -105,8 +105,7 @@ void File::SpawnUploadConnectionIfNeeded()
     const auto url = URIForPath(m_Host.Config(), Path());
     m_Conn->SetURL(url);
     m_Conn->SetNonBlockingUpload(m_Size);
-
-    m_Conn->AttachMultiHandle();
+    m_Conn->MakeNonBlocking();
 }
 
 void File::SpawnDownloadConnectionIfNeeded()
@@ -119,8 +118,7 @@ void File::SpawnDownloadConnectionIfNeeded()
     const auto url = URIForPath(m_Host.Config(), Path());
     m_Conn->SetURL(url);
     m_Conn->SetCustomRequest("GET");
-
-    m_Conn->AttachMultiHandle();
+    m_Conn->MakeNonBlocking();
 }
 
 bool File::IsOpened() const

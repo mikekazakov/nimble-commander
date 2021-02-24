@@ -87,12 +87,7 @@ void Connection::SetProgreessCallback(ProgressCallback _callback)
     m_ProgressCallback = _callback;
 }
 
-bool Connection::IsMultiHandleAttached() const
-{
-    return m_MultiHandleAttached;
-}
-
-void Connection::AttachMultiHandle()
+void Connection::MakeNonBlocking()
 {
     if( m_MultiHandleAttached )
         return;

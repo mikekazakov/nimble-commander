@@ -230,7 +230,7 @@ static void TestSimpleFileWrite(VFSHostPtr _host)
     const auto filecr_rc = _host->CreateFile(path, file, nullptr);
     REQUIRE(filecr_rc == VFSError::Ok);
 
-    const auto open_rc = file->Open(VFSFlags::OF_Write);
+    const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
 
     std::string_view str{"Hello, world!"};
@@ -271,7 +271,7 @@ static void TestVariousCompleteWrites(VFSHostPtr _host)
     const auto filecr_rc = _host->CreateFile(path, file, nullptr);
     REQUIRE(filecr_rc == VFSError::Ok);
 
-    const auto open_rc = file->Open(VFSFlags::OF_Write);
+    const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
 
     const size_t file_size = 12'345'678; // ~12MB
@@ -324,7 +324,7 @@ static void TestEdgeCase1bWrites(VFSHostPtr _host)
     const auto filecr_rc = _host->CreateFile(path, file, nullptr);
     REQUIRE(filecr_rc == VFSError::Ok);
 
-    const auto open_rc = file->Open(VFSFlags::OF_Write);
+    const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
 
     constexpr size_t file_size = 9;
@@ -356,7 +356,7 @@ static void TestAbortsPendingUploads(VFSHostPtr _host)
     const auto filecr_rc = _host->CreateFile(path, file, nullptr);
     REQUIRE(filecr_rc == VFSError::Ok);
 
-    const auto open_rc = file->Open(VFSFlags::OF_Write);
+    const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
 
     const size_t file_size = 1000;
@@ -386,7 +386,7 @@ static void TestAbortsPendingDownloads(VFSHostPtr _host)
         const auto noise = MakeNoise(file_size);
         VFSFilePtr file;
         REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
-        REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
         REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
         REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
         REQUIRE(file->Close() == VFSError::Ok);
@@ -418,7 +418,7 @@ static void TestEmptyFileCreation(VFSHostPtr _host)
     const auto filecr_rc = _host->CreateFile(path, file, nullptr);
     REQUIRE(filecr_rc == VFSError::Ok);
 
-    const auto open_rc = file->Open(VFSFlags::OF_Write);
+    const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
     REQUIRE(open_rc == VFSError::Ok);
 
     REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
@@ -444,7 +444,7 @@ static void TestEmptyFileDownload(VFSHostPtr _host)
     {
         VFSFilePtr file;
         REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
-        REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
         REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
         REQUIRE(file->Close() == VFSError::Ok);
     }
@@ -542,7 +542,7 @@ static void TestRename(VFSHostPtr _host)
         VFSEasyDelete(p2, _host);
     }
 }
-//INSTANTIATE_TEST("rename", TestRename, "nas"); // QNAP NAS doesn't like renaming
+// INSTANTIATE_TEST("rename", TestRename, "nas"); // QNAP NAS doesn't like renaming
 INSTANTIATE_TEST("rename", TestRename, "box.com");
 INSTANTIATE_TEST("rename", TestRename, "yandex.com");
 
@@ -551,12 +551,12 @@ statfs
 ==================================================================================================*/
 static void TestStatFS(VFSHostPtr _host)
 {
-        VFSStatFS st;
-        const auto statfs_rc = _host->StatFS("/", st, nullptr);
-        CHECK(statfs_rc == VFSError::Ok);
-        CHECK(st.total_bytes > 1'000'000'000L);
+    VFSStatFS st;
+    const auto statfs_rc = _host->StatFS("/", st, nullptr);
+    CHECK(statfs_rc == VFSError::Ok);
+    CHECK(st.total_bytes > 1'000'000'000L);
 }
-//INSTANTIATE_TEST("statfs", TestStatFS, "nas"); // QNAP NAS doesn't provide stafs
+// INSTANTIATE_TEST("statfs", TestStatFS, "nas"); // QNAP NAS doesn't provide stafs
 INSTANTIATE_TEST("statfs", TestStatFS, "box.com");
 INSTANTIATE_TEST("statfs", TestStatFS, "yandex.com");
 
@@ -576,7 +576,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
-            REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
             REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
             REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
             REQUIRE(file->Close() == VFSError::Ok);
@@ -604,7 +604,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
-            REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
             REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
             REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
             REQUIRE(file->Close() == VFSError::Ok);
@@ -634,7 +634,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
-            REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
             REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
             REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
             REQUIRE(file->Close() == VFSError::Ok);
@@ -657,6 +657,85 @@ static void TestSimpleDownload(VFSHostPtr _host)
 INSTANTIATE_TEST("simple download", TestSimpleDownload, "nas");
 INSTANTIATE_TEST("simple download", TestSimpleDownload, "box.com");
 INSTANTIATE_TEST("simple download", TestSimpleDownload, "yandex.com");
+
+/*==================================================================================================
+write flags semantics
+==================================================================================================*/
+static void TestWriteFlagsSemantics(VFSHostPtr _host)
+{
+    const auto config = _host->Configuration();
+    const auto path = "/SomeTestFile.extensiondoesntmatter";
+    VFSEasyDelete(path, _host);
+    SECTION("Specifying both OF_Read and OF_Write is not supported")
+    {
+        VFSFilePtr file;
+        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Read) == VFSError::FromErrno(EPERM));
+    }
+    SECTION("OF_NoExist forces to fail when a file already exist")
+    {
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(0) == VFSError::Ok);
+            REQUIRE(file->Close() == VFSError::Ok);
+        }
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_NoExist) ==
+                    VFSError::FromErrno(EEXIST));
+        }
+    }
+    SECTION("Open a non-existing file for writing without OF_Create fails")
+    {
+        VFSFilePtr file;
+        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::FromErrno(ENOENT));
+    }
+    SECTION("Opening an existing directory for writing fails")
+    {
+        REQUIRE(_host->CreateDirectory(path, 0, nullptr) == VFSError::Ok);
+        VFSFilePtr file;
+        REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+        REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::FromErrno(EISDIR));
+    }
+    SECTION("Opening an existing file for writing overwrites it")
+    {
+        const std::string old_data = "123456", new_data = "0987654321";
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(old_data.size()) == VFSError::Ok);
+            REQUIRE(file->WriteFile(old_data.data(), old_data.size()) == VFSError::Ok);
+            REQUIRE(file->Close() == VFSError::Ok);
+        }
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(new_data.size()) == VFSError::Ok);
+            REQUIRE(file->WriteFile(new_data.data(), new_data.size()) == VFSError::Ok);
+            REQUIRE(file->Close() == VFSError::Ok);
+        }
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
+            const auto data = file->ReadFile();
+            REQUIRE(file->Close() == VFSError::Ok);
+            REQUIRE(data);
+            REQUIRE(data->size() == new_data.size());
+            REQUIRE(std::memcmp(data->data(), new_data.data(), new_data.size()) == 0);
+        }
+    }
+    VFSEasyDelete(path, _host);
+}
+INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "nas");
+INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "box.com");
+INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "yandex.com");
 
 //==================================================================================================
 

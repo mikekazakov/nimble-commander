@@ -22,6 +22,10 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     if( _open_flags & VFSFlags::OF_Append )
         return VFSError::FromErrno(EPERM);
 
+    if( (_open_flags & (VFSFlags::OF_Read | VFSFlags::OF_Write)) ==
+        (VFSFlags::OF_Read | VFSFlags::OF_Write) )
+        return VFSError::FromErrno(EPERM);
+
     if( _open_flags & VFSFlags::OF_Read ) {
         VFSStat st;
         const auto stat_rc = m_Host.Stat(Path(), st, 0, _cancel_checker);
@@ -29,19 +33,42 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
             return stat_rc;
 
         if( !S_ISREG(st.mode) )
-            return VFSError::FromErrno(EPERM);
+            return VFSError::FromErrno(EPERM); // TODO: test for this
 
         m_Size = st.size;
         m_OpenFlags = _open_flags;
         return VFSError::Ok;
     }
     if( _open_flags & VFSFlags::OF_Write ) {
+        VFSStat st;
+        const auto stat_rc = m_Host.Stat(Path(), st, 0, _cancel_checker);
+
+        // Refuse if the file does exist and OF_NoExist was specified
         if( _open_flags & VFSFlags::OF_NoExist ) {
-            VFSStat st;
-            const auto stat_rc = m_Host.Stat(Path(), st, 0, _cancel_checker);
             if( stat_rc == VFSError::Ok )
                 return VFSError::FromErrno(EEXIST);
         }
+
+        // Refuse if the file does not exist but OF_Create was not specified
+        if( (_open_flags & VFSFlags::OF_Create) == 0 ) {
+            if( stat_rc != VFSError::Ok )
+                return VFSError::FromErrno(ENOENT);
+        }
+
+        // If file already exist, but it is actually a directory
+        if( stat_rc == VFSError::Ok ) {
+            if( st.mode_bits.dir )
+                return VFSError::FromErrno(EISDIR);
+        }
+
+        // If file already exist - remove it
+        if( stat_rc == VFSError::Ok ) {
+            const auto unlink_rc = m_Host.Unlink(Path(), _cancel_checker);
+            if( unlink_rc != VFSError::Ok )
+                return unlink_rc;
+        }
+
+        // Finally verified and ready to go
         m_OpenFlags = _open_flags;
         return VFSError::Ok;
     }

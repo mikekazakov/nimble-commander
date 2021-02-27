@@ -79,6 +79,13 @@ TEST_CASE(PREFIX "can connect to box.com")
     REQUIRE_NOTHROW(host = spawnBoxComHost());
 }
 
+TEST_CASE(PREFIX "invalid credentials")
+{
+    REQUIRE_THROWS_AS(
+        new WebDAVHost("dav.box.com", g_BoxComUsername, "SomeRandomGibberish", "dav", true),
+        VFSErrorException);
+}
+
 TEST_CASE(PREFIX "can fetch box.com listing")
 {
     VFSHostPtr host;
@@ -539,54 +546,119 @@ static void TestRename(VFSHostPtr _host)
 INSTANTIATE_TEST("rename", TestRename, "box.com");
 INSTANTIATE_TEST("rename", TestRename, "yandex.com");
 
-TEST_CASE(PREFIX "statfs on box.com")
+/*==================================================================================================
+statfs
+==================================================================================================*/
+static void TestStatFS(VFSHostPtr _host)
 {
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
-
-    VFSStatFS st;
-    const auto statfs_rc = host->StatFS("/", st, nullptr);
-    CHECK(statfs_rc == VFSError::Ok);
-    CHECK(st.total_bytes > 1'000'000'000L);
+        VFSStatFS st;
+        const auto statfs_rc = _host->StatFS("/", st, nullptr);
+        CHECK(statfs_rc == VFSError::Ok);
+        CHECK(st.total_bytes > 1'000'000'000L);
 }
+//INSTANTIATE_TEST("statfs", TestStatFS, "nas"); // QNAP NAS doesn't provide stafs
+INSTANTIATE_TEST("statfs", TestStatFS, "box.com");
+INSTANTIATE_TEST("statfs", TestStatFS, "yandex.com");
 
-TEST_CASE(PREFIX "invalid credentials")
+/*==================================================================================================
+simple download
+==================================================================================================*/
+static void TestSimpleDownload(VFSHostPtr _host)
 {
-    REQUIRE_THROWS_AS(
-        new WebDAVHost("dav.box.com", g_BoxComUsername, "SomeRandomGibberish", "dav", true),
-        VFSErrorException);
+    const auto config = _host->Configuration();
+    const size_t file_size = 147'839;
+    const auto noise = MakeNoise(file_size);
+
+    SECTION("File at root")
+    {
+        const auto path = "/SomeTestFile.extensiondoesntmatter";
+        VFSEasyDelete(path, _host);
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
+            REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
+            REQUIRE(file->Close() == VFSError::Ok);
+        }
+        SECTION("reusing same host") {}
+        SECTION("using a fresh host") { _host.reset(new WebDAVHost(config)); }
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
+            const auto data = file->ReadFile();
+            REQUIRE(file->Close() == VFSError::Ok);
+            REQUIRE(data);
+            REQUIRE(data->size() == file_size);
+            REQUIRE(std::memcmp(data->data(), noise.data(), file_size) == 0);
+        }
+        VFSEasyDelete(path, _host);
+    }
+    SECTION("File at one dir below root")
+    {
+        const auto dir = "/TestDirWithNonsenseName";
+        const auto path = "/TestDirWithNonsenseName/SomeTestFile.extensiondoesntmatter";
+        VFSEasyDelete(dir, _host);
+        REQUIRE(_host->CreateDirectory(dir, 0, nullptr) == VFSError::Ok);
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
+            REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
+            REQUIRE(file->Close() == VFSError::Ok);
+        }
+        SECTION("reusing same host") {}
+        SECTION("using a fresh host") { _host.reset(new WebDAVHost(config)); }
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
+            const auto data = file->ReadFile();
+            REQUIRE(file->Close() == VFSError::Ok);
+            REQUIRE(data);
+            REQUIRE(data->size() == file_size);
+            REQUIRE(std::memcmp(data->data(), noise.data(), file_size) == 0);
+        }
+        VFSEasyDelete(dir, _host);
+    }
+    SECTION("File at two dirs below root")
+    {
+        const auto dir1 = "/TestDirWithNonsenseName";
+        const auto dir2 = "/TestDirWithNonsenseName/MoreStuff";
+        const auto path = "/TestDirWithNonsenseName/MoreStuff/SomeTestFile.extensiondoesntmatter";
+        VFSEasyDelete(dir1, _host);
+        REQUIRE(_host->CreateDirectory(dir1, 0, nullptr) == VFSError::Ok);
+        REQUIRE(_host->CreateDirectory(dir2, 0, nullptr) == VFSError::Ok);
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
+            REQUIRE(file->SetUploadSize(file_size) == VFSError::Ok);
+            REQUIRE(file->WriteFile(noise.data(), file_size) == VFSError::Ok);
+            REQUIRE(file->Close() == VFSError::Ok);
+        }
+        SECTION("reusing same host") {}
+        SECTION("using a fresh host") { _host.reset(new WebDAVHost(config)); }
+        {
+            VFSFilePtr file;
+            REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
+            REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
+            const auto data = file->ReadFile();
+            REQUIRE(file->Close() == VFSError::Ok);
+            REQUIRE(data);
+            REQUIRE(data->size() == file_size);
+            REQUIRE(std::memcmp(data->data(), noise.data(), file_size) == 0);
+        }
+        VFSEasyDelete(dir1, _host);
+    }
 }
+INSTANTIATE_TEST("simple download", TestSimpleDownload, "nas");
+INSTANTIATE_TEST("simple download", TestSimpleDownload, "box.com");
+INSTANTIATE_TEST("simple download", TestSimpleDownload, "yandex.com");
 
-TEST_CASE(PREFIX "yandex disk acccess")
-{
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnYandexDiskHost());
-
-    VFSStatFS st;
-    const auto statfs_rc = host->StatFS("/", st, nullptr);
-    REQUIRE(statfs_rc == VFSError::Ok);
-    CHECK(st.total_bytes > 5'000'000'000L);
-}
-
-TEST_CASE(PREFIX "simple download from yandex disk")
-{
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnYandexDiskHost());
-
-    VFSFilePtr file;
-    const auto path = "/Bears.jpg";
-    const auto filecr_rc = host->CreateFile(path, file, nullptr);
-    REQUIRE(filecr_rc == VFSError::Ok);
-
-    const auto open_rc = file->Open(VFSFlags::OF_Read);
-    REQUIRE(open_rc == VFSError::Ok);
-
-    auto data = file->ReadFile();
-    REQUIRE(data);
-    REQUIRE(data->size() == 1'555'830);
-    REQUIRE(data->at(1'555'828) == 255);
-    REQUIRE(data->at(1'555'829) == 217);
-}
+//==================================================================================================
 
 static std::vector<std::byte> MakeNoise(size_t size)
 {

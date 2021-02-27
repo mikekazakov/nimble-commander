@@ -271,6 +271,8 @@ int WebDAVHost::StatFS([[maybe_unused]] const char *_path,
     if( rc != VFSError::Ok )
         return rc;
     
+    _stat = nc::vfs::StatFS{};
+    
     if( free >= 0 ) {
         _stat.free_bytes = free;
         _stat.avail_bytes = free;

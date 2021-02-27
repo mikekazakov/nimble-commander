@@ -5,7 +5,8 @@
 #include <Habanero/algo.h>
 #include <pugixml/pugixml.hpp>
 #include "DateTimeParser.h"
-#include "ConnectionsPool.h"
+#include "Connection.h"
+#include "ReadBuffer.h"
 #include "PathRoutines.h"
 #include <CFNetwork/CFNetworkErrors.h>
 

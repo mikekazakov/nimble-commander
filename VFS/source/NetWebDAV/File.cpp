@@ -3,6 +3,7 @@
 #include "Internal.h"
 #include "Cache.h"
 #include "PathRoutines.h"
+#include "ConnectionsPool.h"
 
 namespace nc::vfs::webdav {
 

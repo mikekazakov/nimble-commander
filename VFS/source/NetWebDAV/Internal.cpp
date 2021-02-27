@@ -3,6 +3,7 @@
 #include "WebDAVHost.h"
 #include <CFNetwork/CFNetworkErrors.h>
 #include <iostream>
+#include <curl/curl.h>
 
 namespace nc::vfs::webdav {
 
@@ -180,14 +181,6 @@ int HTTPRCToVFSError(int _http_rc) noexcept
         default:
             return VFSError::FromErrno(EIO);
     }
-}
-
-int curl_easy_get_response_code(CURL *_handle)
-{
-    assert(_handle != nullptr);
-    long code = 0;
-    curl_easy_getinfo(_handle, CURLINFO_RESPONSE_CODE, &code);
-    return (int)code;
 }
 
 } // namespace nc::vfs::webdav

@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <frozen/unordered_map.h>
 #include <frozen/string.h>
-#include <Habanero/CFPtr.h>
+#include "Trash.h"
 
 // requires that identifier is right and binary is signed by me
 static const char *g_SignatureRequirement =
@@ -440,34 +440,17 @@ static bool HandleTrash(xpc_object_t _event) noexcept
     const char *const path = xpc_string_get_string_ptr(xpc_path);
     assert(path != nullptr);
 
-    const auto url = nc::base::CFPtr<CFURLRef>::adopt(
-        CFURLCreateFromFileSystemRepresentation(0, (const UInt8 *)path, strlen(path), false));
-    if( !url )
-        return false;
-    
-    NSError *error;
-    const auto result = [NSFileManager.defaultManager trashItemAtURL:(__bridge NSURL*)url
-                                                    resultingItemURL:nil
-                                                               error:&error];
-    CFRelease(url);
-    
-    if( result )
-        return VFSError::Ok;
-    else
-        return VFSError::FromNSError(error);
-    
-//    int result = killpg(pid, signal);
-//    if( result == 0 ) {
-//        send_reply_ok(_event);
-//    }
-//    else {
-//        send_reply_error(_event, errno);
-//    }
+    const int result = nc::routedio::TrashItemAtPath(path);
+    if( result == 0 ) {
+        send_reply_ok(_event);
+    }
+    else {
+        send_reply_error(_event, errno);
+    }
     return true;
 }
 
-
-static constexpr frozen::unordered_map<frozen::string, bool (*)(xpc_object_t), 21> g_Handlers{
+static constexpr frozen::unordered_map<frozen::string, bool (*)(xpc_object_t), 22> g_Handlers{
     {"heartbeat", HandleHeartbeat}, //
     {"uninstall", HandleUninstall}, //
     {"exit", HandleExit},           //
@@ -488,7 +471,8 @@ static constexpr frozen::unordered_map<frozen::string, bool (*)(xpc_object_t), 2
     {"readlink", HandleReadLink},   //
     {"symlink", HandleSymlink},     //
     {"link", HandleLink},           //
-    {"killpg", HandleKillPG}        //
+    {"killpg", HandleKillPG},       //
+    {"trash", HandleTrash}          //
 };
 
 static bool ProcessOperation(const char *_operation, xpc_object_t _event)
@@ -496,7 +480,7 @@ static bool ProcessOperation(const char *_operation, xpc_object_t _event)
     // return true if has replied with something
 
     const auto handler = g_Handlers.find(frozen::string(_operation));
-    if( handler != end(g_Handlers) )
+    if( handler != std::end(g_Handlers) )
         return handler->second(_event);
 
     return false;

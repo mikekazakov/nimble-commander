@@ -13,6 +13,8 @@
 		CF69CFBB1DA20A1E00992B84 /* PrivilegedIOHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69CFAC1DA2099C00992B84 /* PrivilegedIOHelper.cpp */; };
 		CF69CFBE1DA20B4F00992B84 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFBD1DA20B4F00992B84 /* Foundation.framework */; };
 		CF69CFC01DA20B5500992B84 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFBF1DA20B5500992B84 /* Security.framework */; };
+		CF8E4CC825F43A3800F0881B /* Trash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E4CC725F43A3800F0881B /* Trash.mm */; };
+		CF8E4CCF25F441DF00F0881B /* Trash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E4CC725F43A3800F0881B /* Trash.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +46,8 @@
 		CF69CFB41DA209F000992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = info.filesmanager.Files.PrivilegedIOHelperV2; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF69CFBD1DA20B4F00992B84 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CF69CFBF1DA20B5500992B84 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		CF8E4CC625F43A3800F0881B /* Trash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Trash.h; path = source/Trash.h; sourceTree = "<group>"; };
+		CF8E4CC725F43A3800F0881B /* Trash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Trash.mm; path = source/Trash.mm; sourceTree = "<group>"; };
 		CFFA94A21F4541B00035E606 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		CFFA94A51F4541D20035E606 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		CFFA94A71F4541E30035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
@@ -94,6 +98,8 @@
 			isa = PBXGroup;
 			children = (
 				CF69CFAC1DA2099C00992B84 /* PrivilegedIOHelper.cpp */,
+				CF8E4CC625F43A3800F0881B /* Trash.h */,
+				CF8E4CC725F43A3800F0881B /* Trash.mm */,
 				CF69CFA21DA200E300992B84 /* RoutedIO.cpp */,
 				CF69CFA31DA200E300992B84 /* RoutedIOInterfaces.cpp */,
 			);
@@ -234,6 +240,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF8E4CCF25F441DF00F0881B /* Trash.mm in Sources */,
 				CF4602382563125C0095FC73 /* RoutedIOInterfaces.cpp in Sources */,
 				CF4602372563125C0095FC73 /* RoutedIO.cpp in Sources */,
 			);
@@ -244,6 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF69CFBB1DA20A1E00992B84 /* PrivilegedIOHelper.cpp in Sources */,
+				CF8E4CC825F43A3800F0881B /* Trash.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

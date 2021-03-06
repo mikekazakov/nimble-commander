@@ -159,14 +159,19 @@ static void StartStream(FSEventStreamRef _stream)
         dispatch_to_main_queue( schedule_and_run );
 }
 
+// Stops and deletes the _stream
 static void StopStream(FSEventStreamRef _stream)
 {
     assert(_stream != nullptr);
     dispatch_assert_main_queue();
     FSEventStreamStop(_stream);
     FSEventStreamUnscheduleFromRunLoop(_stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-    FSEventStreamInvalidate(_stream);
-    FSEventStreamRelease(_stream);
+    
+    // FSEventStreamInvalidate can be blocking, so let's do that in a background thread
+    dispatch_to_background([_stream]{
+        FSEventStreamInvalidate(_stream);
+        FSEventStreamRelease(_stream);
+    });
 }
 
 uint64_t FSEventsDirUpdate::AddWatchPath(const char *_path, function<void()> _handler)

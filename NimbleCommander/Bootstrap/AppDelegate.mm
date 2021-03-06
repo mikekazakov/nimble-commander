@@ -827,6 +827,7 @@ static std::string AquaticPrimePublicKey()
 
 - (IBAction)OnMenuToggleAdminMode:(id)[[maybe_unused]]_sender
 {
+    using nc::routedio::RoutedIO;
     if( RoutedIO::Instance().Enabled() )
         RoutedIO::Instance().TurnOff();
     else {
@@ -845,7 +846,7 @@ static std::string AquaticPrimePublicKey()
     auto tag = item.tag;
     
     IF_MENU_TAG("menu.nimble_commander.toggle_admin_mode") {
-        bool enabled = RoutedIO::Instance().Enabled();
+        bool enabled = nc::routedio::RoutedIO::Instance().Enabled();
         item.title = enabled ?
             NSLocalizedString(@"Disable Admin Mode", "Menu item title for disabling an admin mode") :
             NSLocalizedString(@"Enable Admin Mode", "Menu item title for enabling an admin mode");

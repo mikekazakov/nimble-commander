@@ -89,7 +89,7 @@ int NativeHost::FetchDirectoryListing(const char *_path,
     
     const auto need_to_add_dot_dot = !(_flags & VFSFlags::F_NoDotDot) &&
                                      strcmp(_path, "/") != 0;
-    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
+    auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
     const bool is_native_io = !io.isrouted();
     const int fd = io.open(_path, O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
     if( fd < 0 )
@@ -257,7 +257,7 @@ int NativeHost::FetchSingleItemListing(const char *_path,
         !GetFilenameFromPath(path, filename) )
         return VFSError::InvalidCall;
     
-    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
+    auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
 
     using nc::base::variable_container;
     ListingInput listing_source;
@@ -363,7 +363,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
         return VFSError::Cancelled;
     }
 
-    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK); // <-- sync IO operation
+    auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK); // <-- sync IO operation
 
     const auto dirp = io.opendir(_path); // <-- sync IO operation
     if( dirp == nullptr )
@@ -489,7 +489,7 @@ int NativeHost::Stat(const char *_path,
                      unsigned long _flags,
                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
+    auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
     memset(&_st, 0, sizeof(_st));
     
     struct stat st;
@@ -507,7 +507,7 @@ int NativeHost::Stat(const char *_path,
 int NativeHost::IterateDirectoryListing(const char *_path,
                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
+    auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
     
     DIR *dirp = io.opendir(_path);
     if(dirp == 0)
@@ -559,7 +559,7 @@ int NativeHost::StatFS(const char *_path,
 int NativeHost::Unlink(const char *_path,
                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     int ret = io.unlink(_path);
     if(ret == 0)
         return 0;
@@ -575,7 +575,7 @@ int NativeHost::CreateDirectory(const char* _path,
                                 int _mode,
                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     int ret = io.mkdir(_path, mode_t(_mode));
     if(ret == 0)
         return 0;
@@ -585,7 +585,7 @@ int NativeHost::CreateDirectory(const char* _path,
 int NativeHost::RemoveDirectory(const char *_path,
                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     int ret = io.rmdir(_path);
     if(ret == 0)
         return 0;
@@ -597,7 +597,7 @@ int NativeHost::ReadSymlink(const char *_path,
                             size_t _buffer_size,
                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     ssize_t sz = io.readlink(_path, _buffer, _buffer_size);
     if(sz < 0)
         return VFSError::FromErrno();
@@ -613,7 +613,7 @@ int NativeHost::CreateSymlink(const char *_symlink_path,
                               const char *_symlink_value,
                               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     int result = io.symlink(_symlink_value, _symlink_path);
     if(result < 0)
         return VFSError::FromErrno();
@@ -635,7 +635,7 @@ int NativeHost::SetTimes(const char *_path,
     if( !_birth_time  && !_mod_time && !_chg_time  && !_acc_time )
         return VFSError::Ok;
     
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     if( _birth_time && io.chbtime(_path, *_birth_time) != 0 )
         return VFSError::FromErrno();
     if( _mod_time && io.chmtime(_path, *_mod_time) != 0 )
@@ -652,7 +652,7 @@ int NativeHost::Rename(const char *_old_path,
                        const char *_new_path,
                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     int ret = io.rename(_old_path, _new_path);
     if(ret == 0)
         return VFSError::Ok;
@@ -676,23 +676,11 @@ int NativeHost::Trash(const char *_path,
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);
     
-    CFURLRef url = CFURLCreateFromFileSystemRepresentation(0,
-                                                           (const UInt8*)_path,
-                                                           strlen(_path),
-                                                           false);
-    if( !url )
-        return VFSError::FromErrno(EINVAL);
-    
-    NSError *error;
-    const auto result = [NSFileManager.defaultManager trashItemAtURL:(__bridge NSURL*)url
-                                                    resultingItemURL:nil
-                                                               error:&error];
-    CFRelease(url);
-    
-    if( result )
+    auto &io = routedio::RoutedIO::Default;
+    const auto ret = io.trash(_path);
+    if( ret == 0 )
         return VFSError::Ok;
-    else
-        return VFSError::FromNSError(error);
+    return VFSError::FromErrno();    
 }
 
 int NativeHost::SetPermissions(const char *_path,
@@ -702,7 +690,7 @@ int NativeHost::SetPermissions(const char *_path,
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);
     
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     const auto ret = io.chmod(_path, _mode);
     if( ret == 0 )
         return VFSError::Ok;
@@ -716,7 +704,7 @@ int NativeHost::SetFlags(const char *_path,
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);
     
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     const auto ret = io.chflags(_path, _flags);
     if( ret == 0 )
         return VFSError::Ok;
@@ -731,7 +719,7 @@ int NativeHost::SetOwnership(const char *_path,
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);
 
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     const auto ret = io.chown(_path, _uid, _gid);
     if( ret == 0 )
         return VFSError::Ok;

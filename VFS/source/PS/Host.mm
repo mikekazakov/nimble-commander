@@ -689,7 +689,7 @@ int PSHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &_
     }
 
     // 1st try - being gentle, sending SIGTERM
-    int ret = RoutedIO::Default.killpg(gid, SIGTERM);
+    int ret = routedio::RoutedIO::Default.killpg(gid, SIGTERM);
     if( ret == -1 ) {
         if( errno == ESRCH )
             return VFSError::Ok;
@@ -704,7 +704,7 @@ int PSHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &_
         else {
             // 2nd try - process refused to kill itself in 5 seconds by SIGTERM, well, send SIGKILL
             // to him...
-            ret = RoutedIO::Default.killpg(gid, SIGKILL);
+            ret = routedio::RoutedIO::Default.killpg(gid, SIGKILL);
             if( ret == -1 ) {
                 if( errno == ESRCH )
                     return VFSError::Ok;

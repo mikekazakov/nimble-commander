@@ -732,7 +732,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(
      const SourceDataFeedback &_source_data_feedback,
      const RequestNonexistentDst &_new_dst_callback)
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     
     // we initially try to open a source file in non-blocking mode, so we can fail early.
     int source_fd = -1;
@@ -1085,7 +1085,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile
      const SourceDataFeedback& _source_data_feedback,
      const RequestNonexistentDst &_new_dst_callback)
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     
     // get information about the source file
     VFSStat src_stat_buffer;
@@ -1745,7 +1745,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(vfs::Nat
                                                                         const std::string& _src_path,
                                                                         const std::string& _dst_path) const
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     
     struct stat src_stat_buf;
     if( io.stat(_dst_path.c_str(), &src_stat_buf) != -1 ) {
@@ -1812,7 +1812,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
                                                                      vfs::NativeHost &_dst_host,
                                                                      const std::string& _dst_path) const
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     
     struct stat src_stat_buf;
     if( io.stat(_dst_path.c_str(), &src_stat_buf) != -1 ) {
@@ -1923,7 +1923,7 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
                                   const std::string& _src_path,
                                   const std::string& _dst_path) const
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     
     // check if destination file already exist
     struct stat dst_stat_buffer;
@@ -2191,7 +2191,7 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile
      const std::string& _dst_path,
      const RequestNonexistentDst &_new_dst_callback) const
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     
     // check if destination file already exist
     struct stat dst_stat_buffer;
@@ -2395,7 +2395,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative
      const std::string& _dst_path,
      const RequestNonexistentDst &_new_dst_callback) const
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     
     char linkpath[MAXPATHLEN];
     while( true ) {
@@ -2453,9 +2453,8 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative
                 return StepResult::Stop;
         }
         
-        if( new_path == false ) {        
-            // NEED something like io.trash()!
-            if( _native_host.Trash(_dst_path.c_str(), nullptr) != VFSError::Ok ) {
+        if( new_path == false ) {
+            if( io.trash(_dst_path.c_str()) != 0 ) {
                 while( true ) {
                     const auto rc = S_ISDIR(dst_stat_buffer.st_mode) ?
                     io.rmdir(_dst_path.c_str()) :
@@ -2493,7 +2492,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative
      const std::string& _dst_path,
      const RequestNonexistentDst &_new_dst_callback) const
 {
-    auto &io = RoutedIO::Default;
+    auto &io = routedio::RoutedIO::Default;
     
     char linkpath[MAXPATHLEN];
     while( true ) {
@@ -2546,8 +2545,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative
         }
         
         if( new_dst_path == false ) {
-        // NEED something like io.trash()!
-            if( _dst_host.Trash(_dst_path.c_str(), nullptr) != VFSError::Ok ) {
+            if( io.trash(_dst_path.c_str()) != 0 ) {
                 while( true ) {
                     const auto rc = S_ISDIR(dst_stat_buffer.st_mode) ?
                     io.rmdir(_dst_path.c_str()) :

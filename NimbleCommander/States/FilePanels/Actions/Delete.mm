@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Delete.h"
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
@@ -9,44 +9,42 @@
 #include <Operations/Deletion.h>
 #include <Operations/DeletionDialog.h>
 #include "../../MainWindowController.h"
-#include <unordered_set>
+#include <robin_hood.h>
 #include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 
-static bool CommonDeletePredicate( PanelController *_target );
-static bool AllAreNative(const std::vector<VFSListingItem>& _c);
-static std::unordered_set<std::string> ExtractDirectories(const std::vector<VFSListingItem>& _c);
-static bool AllHaveTrash(const std::vector<VFSListingItem>& _c, utility::NativeFSManager& _fsman);
+static bool CommonDeletePredicate(PanelController *_target);
+static bool AllAreNative(const std::vector<VFSListingItem> &_c);
+static robin_hood::unordered_set<std::string>
+ExtractDirectories(const std::vector<VFSListingItem> &_c);
+static bool TryTrash(const std::vector<VFSListingItem> &_c, utility::NativeFSManager &_fsman);
 static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
-                                          const std::shared_ptr<nc::ops::Operation> &_operation );
+                                          const std::shared_ptr<nc::ops::Operation> &_operation);
 
-Delete::Delete(nc::utility::NativeFSManager& _nat_fsman, bool _permanently ):
-    m_NativeFSManager{_nat_fsman},
-    m_Permanently(_permanently)
+Delete::Delete(nc::utility::NativeFSManager &_nat_fsman, bool _permanently)
+    : m_NativeFSManager{_nat_fsman}, m_Permanently(_permanently)
 {
 }
 
-bool Delete::Predicate( PanelController *_target ) const
+bool Delete::Predicate(PanelController *_target) const
 {
     return CommonDeletePredicate(_target);
 }
 
-void Delete::Perform( PanelController *_target, id ) const
+void Delete::Perform(PanelController *_target, id) const
 {
     auto items = to_shared_ptr(_target.selectedEntriesOrFocusedEntry);
     if( items->empty() )
         return;
-    
+
     const auto sheet = [[NCOpsDeletionDialog alloc] initWithItems:items];
     if( AllAreNative(*items) ) {
-        const auto all_have_trash = AllHaveTrash(*items, m_NativeFSManager);
-        sheet.allowMoveToTrash = all_have_trash;
-        sheet.defaultType = m_Permanently ?
-            nc::ops::DeletionType::Permanent :
-            (all_have_trash ?
-                nc::ops::DeletionType::Trash :
-                nc::ops::DeletionType::Permanent);
+        const auto try_trash = TryTrash(*items, m_NativeFSManager);
+        sheet.allowMoveToTrash = try_trash;
+        sheet.defaultType = m_Permanently ? nc::ops::DeletionType::Permanent
+                                          : (try_trash ? nc::ops::DeletionType::Trash
+                                                       : nc::ops::DeletionType::Permanent);
     }
     else {
         sheet.allowMoveToTrash = false;
@@ -54,32 +52,30 @@ void Delete::Perform( PanelController *_target, id ) const
     }
 
     auto sheet_handler = ^(NSModalResponse returnCode) {
-        if( returnCode == NSModalResponseOK ){
-            const auto operation = std::make_shared<nc::ops::Deletion>(
-                move(*items),
-                sheet.resultType);
-            AddPanelRefreshEpilogIfNeeded(_target, operation);
-            [_target.mainWindowController enqueueOperation:operation];
-        }
+      if( returnCode == NSModalResponseOK ) {
+          const auto operation =
+              std::make_shared<nc::ops::Deletion>(move(*items), sheet.resultType);
+          AddPanelRefreshEpilogIfNeeded(_target, operation);
+          [_target.mainWindowController enqueueOperation:operation];
+      }
     };
-    
+
     [_target.mainWindowController beginSheet:sheet.window completionHandler:sheet_handler];
 }
 
-MoveToTrash::MoveToTrash(nc::utility::NativeFSManager& _nat_fsman):
-    m_NativeFSManager{_nat_fsman}
+MoveToTrash::MoveToTrash(nc::utility::NativeFSManager &_nat_fsman) : m_NativeFSManager{_nat_fsman}
 {
 }
 
-bool MoveToTrash::Predicate( PanelController *_target ) const
+bool MoveToTrash::Predicate(PanelController *_target) const
 {
     return CommonDeletePredicate(_target);
 }
 
-void MoveToTrash::Perform( PanelController *_target, id _sender ) const
+void MoveToTrash::Perform(PanelController *_target, id _sender) const
 {
     auto items = _target.selectedEntriesOrFocusedEntry;
-    
+
     if( !AllAreNative(items) ) {
         // instead of trying to silently reap files on VFS like FTP
         // (that means we'll erase it, not move to trash),
@@ -87,61 +83,59 @@ void MoveToTrash::Perform( PanelController *_target, id _sender ) const
         Delete{m_NativeFSManager, false}.Perform(_target, _sender);
         return;
     }
-    
-    if( !AllHaveTrash(items, m_NativeFSManager) ) {
+
+    if( !TryTrash(items, m_NativeFSManager) ) {
         // if user called MoveToTrash by cmd+backspace but there's no trash on this volume:
         // show a dialog and ask him to delete a file permanently
         Delete{m_NativeFSManager, true}.Perform(_target, _sender);
         return;
     }
 
-    const auto operation = std::make_shared<nc::ops::Deletion>(move(items),
-                                                          nc::ops::DeletionType::Trash);
+    const auto operation =
+        std::make_shared<nc::ops::Deletion>(move(items), nc::ops::DeletionType::Trash);
     AddPanelRefreshEpilogIfNeeded(_target, operation);
     [_target.mainWindowController enqueueOperation:operation];
 }
 
-context::MoveToTrash::MoveToTrash(const std::vector<VFSListingItem> &_items):
-    m_Items(_items)
+context::MoveToTrash::MoveToTrash(const std::vector<VFSListingItem> &_items) : m_Items(_items)
 {
     m_AllAreNative = AllAreNative(m_Items);
 }
 
-bool context::MoveToTrash::Predicate( PanelController * ) const
+bool context::MoveToTrash::Predicate(PanelController *) const
 {
     return m_AllAreNative;
 }
 
-void context::MoveToTrash::Perform( PanelController *_target, id ) const
+void context::MoveToTrash::Perform(PanelController *_target, id) const
 {
-    const auto operation = std::make_shared<nc::ops::Deletion>(m_Items,
-                                                          nc::ops::DeletionType::Trash);
+    const auto operation =
+        std::make_shared<nc::ops::Deletion>(m_Items, nc::ops::DeletionType::Trash);
     AddPanelRefreshEpilogIfNeeded(_target, operation);
     [_target.mainWindowController enqueueOperation:operation];
 }
 
-context::DeletePermanently::DeletePermanently(const std::vector<VFSListingItem> &_items):
-    m_Items(_items)
+context::DeletePermanently::DeletePermanently(const std::vector<VFSListingItem> &_items)
+    : m_Items(_items)
 {
-    m_AllWriteable = all_of(begin(m_Items), end(m_Items), [](const auto &i){
-        return i.Host()->IsWritable();
-    });
+    m_AllWriteable =
+        all_of(begin(m_Items), end(m_Items), [](const auto &i) { return i.Host()->IsWritable(); });
 }
 
-bool context::DeletePermanently::Predicate( PanelController * ) const
+bool context::DeletePermanently::Predicate(PanelController *) const
 {
     return m_AllWriteable;
 }
 
-void context::DeletePermanently::Perform( PanelController *_target, id ) const
+void context::DeletePermanently::Perform(PanelController *_target, id) const
 {
-    const auto operation = std::make_shared<nc::ops::Deletion>(m_Items,
-                                                          nc::ops::DeletionType::Permanent);
+    const auto operation =
+        std::make_shared<nc::ops::Deletion>(m_Items, nc::ops::DeletionType::Permanent);
     AddPanelRefreshEpilogIfNeeded(_target, operation);
     [_target.mainWindowController enqueueOperation:operation];
 }
 
-static bool CommonDeletePredicate( PanelController *_target )
+static bool CommonDeletePredicate(PanelController *_target)
 {
     auto i = _target.view.item;
     if( !i || !i.Host()->IsWritable() )
@@ -149,45 +143,55 @@ static bool CommonDeletePredicate( PanelController *_target )
     return !i.IsDotDot() || _target.data.Stats().selected_entries_amount > 0;
 }
 
-static bool AllAreNative(const std::vector<VFSListingItem>& _c)
+static bool AllAreNative(const std::vector<VFSListingItem> &_c)
 {
-    return all_of(begin(_c), end(_c), [&](auto &i){
-        return i.Host()->IsNativeFS();
-    });
+    return std::all_of(
+        std::begin(_c), std::end(_c), [&](auto &i) { return i.Host()->IsNativeFS(); });
 }
 
-static std::unordered_set<std::string> ExtractDirectories(const std::vector<VFSListingItem>& _c)
+static robin_hood::unordered_set<std::string>
+ExtractDirectories(const std::vector<VFSListingItem> &_c)
 {
-    std::unordered_set<std::string> directories;
-    for(const auto &i: _c)
-        directories.emplace( i.Directory() );
+    robin_hood::unordered_set<std::string> directories;
+    for( const auto &i : _c )
+        directories.emplace(i.Directory());
     return directories;
 }
 
-static bool AllHaveTrash(const std::vector<VFSListingItem>& _c, utility::NativeFSManager& _fsman)
+static bool TryTrash(const std::vector<VFSListingItem> &_c, utility::NativeFSManager &_fsman)
 {
     const auto directories = ExtractDirectories(_c);
-    return std::all_of(std::begin(directories), std::end(directories), [&](auto &i){
-        if( auto vol = _fsman.VolumeFromPath(i) )
-            if( vol->interfaces.has_trash )
+
+    const bool all_have_trash =
+        std::all_of(std::begin(directories), std::end(directories), [&](const std::string &dir) {
+            if( auto vol = _fsman.VolumeFromPath(dir); vol && vol->interfaces.has_trash )
                 return true;
-        return false;
-    });
+            return false;
+        });
+
+    // if we already know that each volume have a trash folder - just say yes
+    if( all_have_trash )
+        return true;
+
+    // otherwise, speculate a bit and try doing trash on locally-mounted volumes as well
+    const bool all_are_local =
+        std::all_of(std::begin(directories), std::end(directories), [&](const std::string &dir) {
+            if( auto vol = _fsman.VolumeFromPath(dir); vol && vol->mount_flags.local )
+                return true;
+            return false;
+        });
+    return all_are_local;
 }
 
-
 static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
-                                          const std::shared_ptr<nc::ops::Operation> &_operation )
+                                          const std::shared_ptr<nc::ops::Operation> &_operation)
 {
     if( !_target.receivesUpdateNotifications ) {
         __weak PanelController *weak_panel = _target;
-        _operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=]{
-            dispatch_to_main_queue( [=]{
-                [(PanelController*)weak_panel refreshPanel];
-            });
+        _operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
+            dispatch_to_main_queue([=] { [(PanelController *)weak_panel refreshPanel]; });
         });
     }
 }
-
 
 }

@@ -24,3 +24,4 @@ export MACOSX_DEPLOYMENT_TARGET="10.15"
 ./LetsMove/bootstrap.sh
 ./AquaticPrime/bootstrap.sh
 ./frozen/bootstrap.sh
+./expected/bootstrap.sh

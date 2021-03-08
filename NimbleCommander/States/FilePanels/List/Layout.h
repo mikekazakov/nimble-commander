@@ -11,7 +11,8 @@ enum class PanelListViewColumns : signed char
     Size = 2,
     DateCreated = 3,
     DateAdded = 4,
-    DateModified = 5
+    DateModified = 5,
+    DateAccessed = 6
 };
 
 struct PanelListViewColumnsLayout {

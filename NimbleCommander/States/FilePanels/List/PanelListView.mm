@@ -36,6 +36,7 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
 // E - Date modified
 
 static PanelListViewColumns IdentifierToKind( unsigned char _letter );
+//static unsigned char ToKindIdentifier( PanelListViewColumns _kind );
 
 void DrawTableVerticalSeparatorForView(NSView *v)
 {

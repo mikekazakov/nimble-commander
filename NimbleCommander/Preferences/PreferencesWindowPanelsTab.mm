@@ -181,6 +181,8 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
         return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED", "");
     case PanelListViewColumns::DateModified:
         return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED", "");
+    case PanelListViewColumns::DateAccessed:
+        return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ACCESSED", "");
     default:
         return @"";
     }
@@ -383,7 +385,7 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
         static const auto columns_order = {
             PanelListViewColumns::Filename, PanelListViewColumns::Size,
             PanelListViewColumns::DateCreated, PanelListViewColumns::DateModified,
-            PanelListViewColumns::DateAdded};
+            PanelListViewColumns::DateAdded, PanelListViewColumns::DateAccessed};
         m_LayoutListColumns.clear();
         for( auto c : list->columns )
             m_LayoutListColumns.emplace_back(c, true);

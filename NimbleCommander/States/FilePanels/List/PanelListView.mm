@@ -64,6 +64,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 @property(nonatomic) AdaptiveDateFormatting::Style dateCreatedFormattingStyle;
 @property(nonatomic) AdaptiveDateFormatting::Style dateAddedFormattingStyle;
 @property(nonatomic) AdaptiveDateFormatting::Style dateModifiedFormattingStyle;
+@property(nonatomic) AdaptiveDateFormatting::Style dateAccessedFormattingStyle;
 
 @end
 
@@ -79,9 +80,11 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     NSTableColumn *m_DateCreatedColumn;
     NSTableColumn *m_DateAddedColumn;
     NSTableColumn *m_DateModifiedColumn;
+    NSTableColumn *m_DateAccessedColumn;
     AdaptiveDateFormatting::Style m_DateCreatedFormattingStyle;
     AdaptiveDateFormatting::Style m_DateAddedFormattingStyle;
     AdaptiveDateFormatting::Style m_DateModifiedFormattingStyle;
+    AdaptiveDateFormatting::Style m_DateAccessedFormattingStyle;
 
     std::stack<PanelListViewRowView *> m_RowsStash;
 
@@ -95,6 +98,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 @synthesize dateCreatedFormattingStyle = m_DateCreatedFormattingStyle;
 @synthesize dateAddedFormattingStyle = m_DateAddedFormattingStyle;
 @synthesize dateModifiedFormattingStyle = m_DateModifiedFormattingStyle;
+@synthesize dateAccessedFormattingStyle = m_DateAccessedFormattingStyle;
 @synthesize sortMode = m_SortMode;
 @synthesize sortModeChangeCallback = m_SortModeChangeCallback;
 
@@ -237,6 +241,19 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     m_DateModifiedColumn.resizingMask = NSTableColumnUserResizingMask;
     [m_DateModifiedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
     [self widthDidChangeForColumn:m_DateModifiedColumn];
+
+    m_DateAccessedColumn = [[NSTableColumn alloc]
+        initWithIdentifier:ToKindIdentifier(PanelListViewColumns::DateAccessed)];
+    m_DateAccessedColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
+    m_DateAccessedColumn.title =
+        NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ACCESSED", "");
+    m_DateAccessedColumn.width = 90;
+    m_DateAccessedColumn.minWidth = 75;
+    m_DateAccessedColumn.maxWidth = 300;
+    m_DateAccessedColumn.headerCell.alignment = NSTextAlignmentLeft;
+    m_DateAccessedColumn.resizingMask = NSTableColumnUserResizingMask;
+    [m_DateAccessedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    [self widthDidChangeForColumn:m_DateAccessedColumn];
 }
 
 - (void)dealloc
@@ -248,6 +265,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     [m_DateCreatedColumn removeObserver:self forKeyPath:@"width"];
     [m_DateAddedColumn removeObserver:self forKeyPath:@"width"];
     [m_DateModifiedColumn removeObserver:self forKeyPath:@"width"];
+    [m_DateAccessedColumn removeObserver:self forKeyPath:@"width"];
 }
 
 - (void)viewDidMoveToSuperview
@@ -292,6 +310,10 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     if( _column == m_DateModifiedColumn ) {
         const auto style = df.SuitableStyleForWidth((int)m_DateModifiedColumn.width, self.font);
         self.dateModifiedFormattingStyle = style;
+    }
+    if( _column == m_DateAccessedColumn ) {
+        const auto style = df.SuitableStyleForWidth((int)m_DateAccessedColumn.width, self.font);
+        self.dateAccessedFormattingStyle = style;
     }
     [self notifyLastColumnToRedraw];
 }
@@ -360,41 +382,48 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         return nil;
 
     const auto abstract_row_view = [m_TableView rowViewAtRow:row makeIfNecessary:false];
-    if( const auto row_view = objc_cast<PanelListViewRowView>(abstract_row_view) ) {
-        if( const auto vfs_item = row_view.item ) {
-            const auto identifier = tableColumn.identifier;
-            const auto kind = IdentifierToKind(static_cast<char>([identifier characterAtIndex:0]));
-            if( kind == PanelListViewColumns::Filename ) {
-                auto nv = RetrieveOrSpawnView<PanelListViewNameView>(tableView, identifier);
-                if( m_Data->IsValidSortPosition((int)row) ) {
-                    auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
-                    [self fillDataForNameView:nv withItem:vfs_item andVD:vd];
-                }
-                return nv;
+    const auto row_view = objc_cast<PanelListViewRowView>(abstract_row_view);
+    if( row_view == nil )
+        return nil;
+
+    if( const auto vfs_item = row_view.item ) {
+        const auto identifier = tableColumn.identifier;
+        const auto kind = IdentifierToKind(static_cast<char>([identifier characterAtIndex:0]));
+        if( kind == PanelListViewColumns::Filename ) {
+            auto nv = RetrieveOrSpawnView<PanelListViewNameView>(tableView, identifier);
+            if( m_Data->IsValidSortPosition((int)row) ) {
+                auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
+                [self fillDataForNameView:nv withItem:vfs_item andVD:vd];
             }
-            if( kind == PanelListViewColumns::Size ) {
-                auto sv = RetrieveOrSpawnView<PanelListViewSizeView>(tableView, identifier);
-                if( m_Data->IsValidSortPosition((int)row) ) {
-                    auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
-                    [self fillDataForSizeView:sv withItem:vfs_item andVD:vd];
-                }
-                return sv;
+            return nv;
+        }
+        if( kind == PanelListViewColumns::Size ) {
+            auto sv = RetrieveOrSpawnView<PanelListViewSizeView>(tableView, identifier);
+            if( m_Data->IsValidSortPosition((int)row) ) {
+                auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
+                [self fillDataForSizeView:sv withItem:vfs_item andVD:vd];
             }
-            if( kind == PanelListViewColumns::DateCreated ) {
-                auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
-                [self fillDataForDateCreatedView:dv withItem:vfs_item];
-                return dv;
-            }
-            if( kind == PanelListViewColumns::DateAdded ) {
-                auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
-                [self fillDataForDateAddedView:dv withItem:vfs_item];
-                return dv;
-            }
-            if( kind == PanelListViewColumns::DateModified ) {
-                auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
-                [self fillDataForDateModifiedView:dv withItem:vfs_item];
-                return dv;
-            }
+            return sv;
+        }
+        if( kind == PanelListViewColumns::DateCreated ) {
+            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+            [self fillDataForDateCreatedView:dv withItem:vfs_item];
+            return dv;
+        }
+        if( kind == PanelListViewColumns::DateAdded ) {
+            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+            [self fillDataForDateAddedView:dv withItem:vfs_item];
+            return dv;
+        }
+        if( kind == PanelListViewColumns::DateModified ) {
+            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+            [self fillDataForDateModifiedView:dv withItem:vfs_item];
+            return dv;
+        }
+        if( kind == PanelListViewColumns::DateAccessed ) {
+            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+            [self fillDataForDateAccessedView:dv withItem:vfs_item];
+            return dv;
         }
     }
     return nil;
@@ -490,20 +519,27 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     _view.style = m_DateModifiedFormattingStyle;
 }
 
+- (void)fillDataForDateAccessedView:(PanelListViewDateTimeView *)_view
+                           withItem:(const VFSListingItem &)_item
+{
+    _view.time = _item.ATime();
+    _view.style = m_DateAccessedFormattingStyle;
+}
+
 - (void)dataChanged
 {
+    data::Model * const data = m_Data;
     const auto old_rows_count = (int)m_TableView.numberOfRows;
-    const auto new_rows_count = m_Data->SortedEntriesCount();
+    const auto new_rows_count = data->SortedEntriesCount();
 
     IconRepositoryCleaner{*m_IconRepository, *m_Data}.SweepUnusedSlots();
-
-    [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *row_view,
-                                                        NSInteger row) {
+    
+    auto block = ^(PanelListViewRowView *row_view, NSInteger row) {
       if( row >= new_rows_count )
           return;
 
-      if( auto item = m_Data->EntryAtSortPosition((int)row) ) {
-          auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
+      if( auto item = data->EntryAtSortPosition((int)row) ) {
+          auto &vd = data->VolatileDataAtSortPosition((int)row);
           row_view.item = item;
           row_view.vd = vd;
           for( NSView *v in row_view.subviews ) {
@@ -522,9 +558,12 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                   [self fillDataForDateAddedView:(PanelListViewDateTimeView *)v withItem:item];
               if( col_type == PanelListViewColumns::DateModified )
                   [self fillDataForDateModifiedView:(PanelListViewDateTimeView *)v withItem:item];
+              if( col_type == PanelListViewColumns::DateAccessed )
+                  [self fillDataForDateAccessedView:(PanelListViewDateTimeView *)v withItem:item];
           }
       }
-    }];
+    };
+    [m_TableView enumerateAvailableRowViewsUsingBlock:block];
 
     if( old_rows_count < new_rows_count ) {
         const auto to_add = NSMakeRange(old_rows_count, new_rows_count - old_rows_count);
@@ -537,7 +576,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                            withAnimation:NSTableViewAnimationEffectNone];
     }
 }
-
 - (void)syncVolatileData
 {
     [m_TableView
@@ -644,6 +682,15 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     }
 }
 
+- (void)setDateAccessedFormattingStyle:(AdaptiveDateFormatting::Style)dateAccessedFormattingStyle
+{
+    if( m_DateAccessedFormattingStyle != dateAccessedFormattingStyle ) {
+        m_DateAccessedFormattingStyle = dateAccessedFormattingStyle;
+        [self updateDateTimeViewAtColumn:m_DateAccessedColumn
+                               withStyle:dateAccessedFormattingStyle];
+    }
+}
+
 - (NSTableColumn *)columnByType:(PanelListViewColumns)_type
 {
     switch( _type ) {
@@ -657,6 +704,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             return m_DateAddedColumn;
         case PanelListViewColumns::DateModified:
             return m_DateModifiedColumn;
+        case PanelListViewColumns::DateAccessed:
+            return m_DateAccessedColumn;
         default:
             return nil;
     }
@@ -674,6 +723,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         return PanelListViewColumns::DateAdded;
     if( _col == m_DateModifiedColumn )
         return PanelListViewColumns::DateModified;
+    if( _col == m_DateAccessedColumn )
+        return PanelListViewColumns::DateAccessed;
     return PanelListViewColumns::Empty;
 }
 

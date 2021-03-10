@@ -26,7 +26,7 @@ struct PanelListViewColumnsLayout {
         bool operator!=(const Column &_rhs) const noexcept;
     };
 
-    boost::container::static_vector<Column, 5> columns;
+    boost::container::static_vector<Column, 6> columns;
     unsigned char icon_scale; // = 1
 
     PanelListViewColumnsLayout() noexcept;

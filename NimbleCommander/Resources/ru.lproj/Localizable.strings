@@ -14,6 +14,9 @@
 "__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" = "Дата изменения";
 
 /* (No Comment) */
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ACCESSED" = "Дата доступа";
+
+/* (No Comment) */
 "__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Имя";
 
 /* (No Comment) */

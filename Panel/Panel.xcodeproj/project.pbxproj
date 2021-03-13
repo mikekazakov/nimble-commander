@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF349B1125FCAEA1009735DC /* Comparators_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF349B0D25FCAE9B009735DC /* Comparators_UT.mm */; };
 		CF3ED4E725860BFE00D67AF2 /* PanelViewKeystrokeSink.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ED4E625860BFE00D67AF2 /* PanelViewKeystrokeSink.h */; };
 		CF3ED4EB25860C8000D67AF2 /* CursorBackup.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ED4EA25860C8000D67AF2 /* CursorBackup.h */; };
 		CF3ED4F225860C8900D67AF2 /* CursorBackup.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3ED4F125860C8900D67AF2 /* CursorBackup.mm */; };
@@ -57,6 +58,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CF349B0D25FCAE9B009735DC /* Comparators_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Comparators_UT.mm; path = tests/Comparators_UT.mm; sourceTree = "<group>"; };
 		CF3ED4E625860BFE00D67AF2 /* PanelViewKeystrokeSink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewKeystrokeSink.h; path = include/Panel/PanelViewKeystrokeSink.h; sourceTree = "<group>"; };
 		CF3ED4EA25860C8000D67AF2 /* CursorBackup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorBackup.h; path = include/Panel/CursorBackup.h; sourceTree = "<group>"; };
 		CF3ED4F125860C8900D67AF2 /* CursorBackup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CursorBackup.mm; path = source/CursorBackup.mm; sourceTree = "<group>"; };
@@ -181,8 +183,9 @@
 		CFF33FEF25569DBE00B3C92C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF3ED50825860E1000D67AF2 /* QuickSearch_UT.mm */,
+				CF349B0D25FCAE9B009735DC /* Comparators_UT.mm */,
 				CFF3401525569EC600B3C92C /* PanelData_UT.mm */,
+				CF3ED50825860E1000D67AF2 /* QuickSearch_UT.mm */,
 				CFF33FF025569DF200B3C92C /* Tests.cpp */,
 				CFF33FF125569DF200B3C92C /* Tests.h */,
 			);
@@ -312,6 +315,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF349B1125FCAEA1009735DC /* Comparators_UT.mm in Sources */,
 				CF3ED50925860E1000D67AF2 /* QuickSearch_UT.mm in Sources */,
 				CFF3401625569EC600B3C92C /* PanelData_UT.mm in Sources */,
 				CFF33FF225569DF300B3C92C /* Tests.cpp in Sources */,

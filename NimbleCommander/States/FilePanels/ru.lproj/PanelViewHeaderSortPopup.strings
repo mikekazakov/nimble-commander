@@ -5,7 +5,7 @@
 "1AJ-eC-Yem.title" = "Времени создания ↑";
 
 /* Class = "NSMenuItem"; title = "Added Time ↑"; ObjectID = "9QW-2S-sOs"; */
-"9QW-2S-sOs.title" = "Времени добавления ↓";
+"9QW-2S-sOs.title" = "Времени добавления ↑";
 
 /* Class = "NSMenuItem"; title = "Options"; ObjectID = "cz9-Bn-pwk"; */
 "cz9-Bn-pwk.title" = "Настройки";
@@ -44,7 +44,7 @@
 "uNn-d9-xaM.title" = "Сортировать по";
 
 /* Class = "NSMenuItem"; title = "Added Time ↓"; ObjectID = "UsI-k2-dKl"; */
-"UsI-k2-dKl.title" = "Времени добавления ↑";
+"UsI-k2-dKl.title" = "Времени добавления ↓";
 
 /* Class = "NSMenuItem"; title = "Name ↓"; ObjectID = "VRa-0i-JUb"; */
 "VRa-0i-JUb.title" = "Имени ↓";

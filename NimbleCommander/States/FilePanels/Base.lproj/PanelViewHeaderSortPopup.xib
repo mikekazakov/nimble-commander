@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PanelViewHeader">
@@ -87,6 +87,18 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuSortByClicked:" target="-2" id="l4g-rc-ufv"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Accessed Time ↓" tag="13" indentationLevel="1" id="TSt-Ua-nI1">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="aNy-Yi-scl"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Accessed Time ↑" tag="14" indentationLevel="1" id="ehv-BQ-xXY">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuSortByClicked:" target="-2" id="4g1-Im-yQh"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Options" enabled="NO" id="cz9-Bn-pwk">

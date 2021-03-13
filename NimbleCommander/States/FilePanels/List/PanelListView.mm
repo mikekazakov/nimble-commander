@@ -805,6 +805,10 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                 return {g_SortDescImage, m_DateAddedColumn};
             case _::SortByAddTimeRev:
                 return {g_SortAscImage, m_DateAddedColumn};
+            case _::SortByAccessTime:
+                return {g_SortDescImage, m_DateAccessedColumn};
+            case _::SortByAccessTimeRev:
+                return {g_SortAscImage, m_DateAccessedColumn};
             default:
                 return std::make_pair(nil, nil);
         }
@@ -832,6 +836,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         swp(data::SortMode::SortByModTime, data::SortMode::SortByModTimeRev);
     if( tableColumn == m_DateAddedColumn )
         swp(data::SortMode::SortByAddTime, data::SortMode::SortByAddTimeRev);
+    if( tableColumn == m_DateAccessedColumn )
+        swp(data::SortMode::SortByAccessTime, data::SortMode::SortByAccessTimeRev);
 
     if( proposed != m_SortMode && m_SortModeChangeCallback )
         m_SortModeChangeCallback(proposed);

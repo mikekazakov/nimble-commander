@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewHeader.h"
 #include <Utility/Layout.h>
 #include <Utility/ObjCpp.h>
@@ -377,8 +377,12 @@ static bool IsDark(NSColor *_color);
 - (IBAction)onSortPopupMenuSortByClicked:(id)sender
 {
     if( auto item = objc_cast<NSMenuItem>(sender) ) {
+        const auto new_sort_mode = static_cast<data::SortMode::Mode>(item.tag);
+        if( !data::SortMode::validate(new_sort_mode) )
+            return;
+        
         auto proposed = m_SortMode;
-        proposed.sort = (data::SortMode::Mode)item.tag;
+        proposed.sort = new_sort_mode;
 
         if( proposed != m_SortMode && m_SortModeChangeCallback )
             m_SortModeChangeCallback(proposed);
@@ -475,6 +479,10 @@ static NSString *SortLetter(data::SortMode _mode) noexcept
         return @"a";
     case data::SortMode::SortByAddTimeRev:
         return @"A";
+    case data::SortMode::SortByAccessTime:
+        return @"x";
+    case data::SortMode::SortByAccessTimeRev:
+        return @"X";
     default:
         return @"?";
     }

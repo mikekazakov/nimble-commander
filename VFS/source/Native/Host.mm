@@ -1,8 +1,9 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <OpenDirectory/OpenDirectory.h>
 #include <sys/attr.h>
 #include <sys/errno.h>
 #include <sys/vnode.h>
+#include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
 #include <Utility/FSEventsDirUpdate.h>
@@ -213,7 +214,7 @@ int NativeHost::FetchDirectoryListing(const char *_path,
             }
             
             // stat the target file
-            struct stat stat_buffer;
+            struct ::stat stat_buffer;
             const auto stat_ret = is_native_io ?
                 fstatat(fd,
                         listing_source.filenames[n].c_str(),

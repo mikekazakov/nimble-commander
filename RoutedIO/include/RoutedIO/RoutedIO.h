@@ -3,6 +3,7 @@
 
 #include <xpc/xpc.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 namespace nc::routedio {
 
@@ -24,8 +25,8 @@ public:
     virtual DIR *opendir(const char *_path) noexcept = 0;
     virtual dirent *readdir(DIR *_dir) noexcept = 0;
     virtual int closedir(DIR *_dir) noexcept = 0;
-    virtual int stat(const char *_path, struct stat *_st) noexcept = 0;
-    virtual int lstat(const char *_path, struct stat *_st) noexcept = 0;
+    virtual int stat(const char *_path, struct ::stat *_st) noexcept = 0;
+    virtual int lstat(const char *_path, struct ::stat *_st) noexcept = 0;
     virtual int mkdir(const char *_path, mode_t _mode) noexcept = 0;
     virtual int rmdir(const char *_path) noexcept = 0;
     virtual int unlink(const char *_path) noexcept = 0;

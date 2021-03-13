@@ -71,12 +71,12 @@ dirent *PosixIOInterfaceNative::readdir(DIR *_dir) noexcept
     return ::_readdir_unlocked(_dir, 1);
 }
 
-int PosixIOInterfaceNative::stat(const char *_path, struct stat *_st) noexcept
+int PosixIOInterfaceNative::stat(const char *_path, struct ::stat *_st) noexcept
 {
     return ::stat(_path, _st);
 }
 
-int PosixIOInterfaceNative::lstat(const char *_path, struct stat *_st) noexcept
+int PosixIOInterfaceNative::lstat(const char *_path, struct ::stat *_st) noexcept
 {
     return ::lstat(_path, _st);
 }
@@ -197,7 +197,7 @@ int PosixIOInterfaceRouted::open(const char *_path, int _flags, int _mode) noexc
     if( (_flags & O_CREAT) != 0 ) {
         // need to check if call will create a new file. if so - we'll need to later chown it to
         // ourselves to mimic this call
-        struct stat st;
+        struct ::stat st;
         if( this->stat(_path, &st) != 0 )
             need_owner_fixup = true;
     }
@@ -232,7 +232,7 @@ int PosixIOInterfaceRouted::open(const char *_path, int _flags, int _mode) noexc
     return fd;
 }
 
-int PosixIOInterfaceRouted::stat(const char *_path, struct stat *_st) noexcept
+int PosixIOInterfaceRouted::stat(const char *_path, struct ::stat *_st) noexcept
 {
     xpc_connection_t conn = Connection();
     if( !conn ) // fallback to native on disabled routing or on helper connectity problems
@@ -259,7 +259,7 @@ int PosixIOInterfaceRouted::stat(const char *_path, struct stat *_st) noexcept
 
     size_t st_size;
     const void *v = xpc_dictionary_get_data(reply, "st", &st_size);
-    if( v == nullptr || st_size != sizeof(struct stat) ) {
+    if( v == nullptr || st_size != sizeof(struct ::stat) ) {
         // invalid reply, return
         xpc_release(reply);
         errno = EIO;
@@ -270,7 +270,7 @@ int PosixIOInterfaceRouted::stat(const char *_path, struct stat *_st) noexcept
     return 0;
 }
 
-int PosixIOInterfaceRouted::lstat(const char *_path, struct stat *_st) noexcept
+int PosixIOInterfaceRouted::lstat(const char *_path, struct ::stat *_st) noexcept
 {
     xpc_connection_t conn = Connection();
     if( !conn ) // fallback to native on disabled routing or on helper connectity problems
@@ -297,7 +297,7 @@ int PosixIOInterfaceRouted::lstat(const char *_path, struct stat *_st) noexcept
 
     size_t st_size;
     const void *v = xpc_dictionary_get_data(reply, "st", &st_size);
-    if( v == nullptr || st_size != sizeof(struct stat) ) {
+    if( v == nullptr || st_size != sizeof(struct ::stat) ) {
         // invalid reply, return
         xpc_release(reply);
         errno = EIO;

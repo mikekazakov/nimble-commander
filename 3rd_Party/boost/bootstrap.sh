@@ -16,7 +16,8 @@ cd boost_1_74_0
 
 ./b2 \
   cxxflags="-fvisibility=hidden -fvisibility-inlines-hidden -std=c++17 -mmacosx-version-min=10.15 -arch x86_64 -arch arm64" \
-  link=static
+  link=static \
+  lto=on
  
 cd ../..
 

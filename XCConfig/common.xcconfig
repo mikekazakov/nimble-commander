@@ -24,6 +24,7 @@ CLANG_X86_VECTOR_INSTRUCTIONS[arch=x86_64] = sse4.2
 GCC_NO_COMMON_BLOCKS = YES
 ENABLE_STRICT_OBJC_MSGSEND = YES
 CLANG_ENABLE_OBJC_ARC = YES
+DEBUG_INFORMATION_FORMAT = dwarf
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Toolchain flags
@@ -36,7 +37,7 @@ OTHER_CFLAGS = -fvisibility=hidden -Wframe-larger-than=32768
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include -cxx-isystem$(THRDPTY)/googletest/include
 
 // Linker
-OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -framework StoreKit -framework NetFS -larchive -lboost_system -lboost_filesystem -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv -lctrail -lAppAuth-macOS -lAquaticPrime
+OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -framework StoreKit -framework NetFS -larchive -lboost_system -lboost_filesystem -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv -lctrail -lAppAuth-macOS -lAquaticPrime -v
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Search paths

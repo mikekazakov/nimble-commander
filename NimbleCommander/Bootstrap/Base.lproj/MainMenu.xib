@@ -673,9 +673,9 @@ DQ
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="Frequenty Visited" id="IqU-xO-cHh">
+                            <menuItem title="Frequently Visited" id="IqU-xO-cHh">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Frequenty Visited" id="qAf-7b-Sdi">
+                                <menu key="submenu" title="Frequently Visited" id="qAf-7b-Sdi">
                                     <items>
                                         <menuItem isSeparatorItem="YES" id="Jlu-SB-jda"/>
                                         <menuItem title="Clear Menu" tag="14220" id="loz-WF-lIp">

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -38,6 +38,12 @@ struct ToggleSortingByCreatedTime final : PanelAction
 };
 
 struct ToggleSortingByAddedTime final : PanelAction
+{
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
+    void Perform( PanelController *_target, id _sender ) const override;
+};
+
+struct ToggleSortingByAccessedTime final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;

@@ -465,7 +465,13 @@ DQ
                                         <menuItem title="Sort by Added Time" tag="13131" id="v7Z-Jf-aho">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="ToggleSortByATime:" target="-1" id="qsA-MF-KaY"/>
+                                                <action selector="ToggleSortByAddTime:" target="-1" id="ez6-Qt-c1J"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Sort by Accessed Time" tag="13132" id="9lw-Of-6DT">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="ToggleSortByATime:" target="-1" id="RkS-KO-wlK"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="878"/>

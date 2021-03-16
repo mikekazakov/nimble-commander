@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "ActionsShortcutsManager.h"
@@ -76,6 +76,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"menu.view.sorting_by_size",                       13'120},
     {"menu.view.sorting_by_creation_time",              13'130},
     {"menu.view.sorting_by_added_time",                 13'131},
+    {"menu.view.sorting_by_accessed_time",              13'132},
     {"menu.view.sorting_view_hidden",                   13'140},
     {"menu.view.sorting_separate_folders",              13'150},
     {"menu.view.sorting_extensionless_folders",         13'270},
@@ -276,6 +277,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"menu.view.sorting_by_size",                           u8"^⌘4"     }, // ctrl+cmd+4
     {"menu.view.sorting_by_creation_time",                  u8"^⌘5"     }, // ctrl+cmd+5
     {"menu.view.sorting_by_added_time",                     u8"^⌘6"     }, // ctrl+cmd+6
+    {"menu.view.sorting_by_accessed_time",                  u8"^⌘7"     }, // ctrl+cmd+7
     {"menu.view.sorting_view_hidden",                       u8"⇧⌘."     }, // shift+cmd+.
     {"menu.view.sorting_separate_folders",                  u8""        },
     {"menu.view.sorting_extensionless_folders",             u8""        },

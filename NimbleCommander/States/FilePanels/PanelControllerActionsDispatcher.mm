@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActionsDispatcher.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/Alert.h>
@@ -275,6 +275,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 - (IBAction)ToggleSortByMTime:(id)sender { PERFORM; }
 - (IBAction)ToggleSortBySize:(id)sender { PERFORM; }
 - (IBAction)ToggleSortByBTime:(id)sender { PERFORM; }
+- (IBAction)ToggleSortByAddTime:(id)sender { PERFORM; }
 - (IBAction)ToggleSortByATime:(id)sender { PERFORM; }
 - (IBAction)onToggleViewLayout1:(id)sender { PERFORM; }
 - (IBAction)onToggleViewLayout2:(id)sender { PERFORM; }

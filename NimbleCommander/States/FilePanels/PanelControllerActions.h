@@ -1,10 +1,11 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Actions/DefaultAction.h"
 #include <Utility/NativeFSManager.h>
 #include <Config/Config.h>
-#include <unordered_map>
+#include <functional>
+#include <robin_hood.h>
 
 class NetworkConnectionsManager;
 @class NCPanelOpenWithMenuDelegate;
@@ -22,7 +23,8 @@ class NativeHost;
 namespace nc::panel {
 class FileOpener;
 
-using PanelActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::PanelAction>>;
+using PanelActionsMap =
+    robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::PanelAction>>;
 
 PanelActionsMap
 BuildPanelActionsMap(nc::config::Config &_global_config,

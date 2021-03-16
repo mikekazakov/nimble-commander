@@ -4,6 +4,7 @@
 #include <Utility/MIMResponder.h>
 #include <unordered_map>
 #include <Panel/PanelViewKeystrokeSink.h>
+#include <robin_hood.h>
 
 @class PanelController;
 
@@ -11,8 +12,9 @@ namespace nc::panel {
 namespace actions{
     struct PanelAction;
 }
-    
-using PanelActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::PanelAction> >;
+
+using PanelActionsMap =
+    robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::PanelAction>>;
 }
 
 @interface NCPanelControllerActionsDispatcher : AttachedResponder<NCPanelViewKeystrokeSink>

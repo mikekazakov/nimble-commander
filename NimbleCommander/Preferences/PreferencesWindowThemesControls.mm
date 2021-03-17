@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <Utility/HexadecimalColor.h>
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
@@ -6,6 +6,7 @@
 #include "PreferencesWindowThemesControls.h"
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <cmath>
 
 @interface NCPreferencesAlphaColorWell : NSColorWell
 @end

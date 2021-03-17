@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Habanero/algo.h>
 #include <Utility/SheetWithHotkeys.h>
@@ -14,6 +14,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <Habanero/dispatch_cpp.h>
+#include <unordered_map>
 
 using namespace nc::panel;
 using namespace std::literals;

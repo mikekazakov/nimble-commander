@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DragSender.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
@@ -6,6 +6,7 @@
 #include <Panel/PanelDataItemVolatileData.h>
 #include <Utility/FontExtras.h>
 #include <VFS/Native.h>
+#include <cmath>
 
 /*//////////////////////////////////////////////////////////////////////////////////////////////////
 This is the most obscure Cocoa usage in NC.

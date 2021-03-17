@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Listing.h"
 #include "../include/VFS/Host.h"
 #include "ListingInput.h"
@@ -27,14 +27,14 @@ static void Validate(const ListingInput& _source)
     if( _source.hosts.mode() == variable_container<>::type::sparse )
         throw std::logic_error("VFSListingInput validation failed: hosts can't be sparse");
     
-    for( auto i = 0u, e = _source.hosts.size(); i != e; ++i )
+    for( auto i = size_t(0), e = _source.hosts.size(); i != e; ++i )
         if( _source.hosts[i] == nullptr )
             throw std::logic_error("VFSListingInput validation failed: host can't be nullptr");
     
     if( _source.directories.mode() == variable_container<>::type::sparse )
         throw std::logic_error("VFSListingInput validation failed: directories can't be sparse");
 
-    for( auto i = 0u, e = _source.directories.size(); i != e; ++i )
+    for( auto i = size_t(0), e = _source.directories.size(); i != e; ++i )
         if( !BasicDirectoryCheck( _source.directories[i] ) )
             throw std::logic_error("VFSListingInput validation failed: invalid directory");
     

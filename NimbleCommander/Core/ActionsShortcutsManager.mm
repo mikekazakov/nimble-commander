@@ -608,7 +608,7 @@ void ActionsShortcutsManager::WriteOverridesToConfig() const
     GlobalConfig().Set( g_OverridesConfigPath, overrides );
 }
 
-const std::vector<std::pair<const char*,int>>& ActionsShortcutsManager::AllShortcuts() const
+std::span<const std::pair<const char *, int>> ActionsShortcutsManager::AllShortcuts() const
 {
     return g_ActionsTags;
 }

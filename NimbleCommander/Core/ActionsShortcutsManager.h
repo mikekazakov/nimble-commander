@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <robin_hood.h>
 #include <vector>
+#include <span>
 #include <Cocoa/Cocoa.h>
 
 class ActionsShortcutsManager : ObservableBase
@@ -57,7 +58,7 @@ public:
 
     void SetMenuShortCuts(NSMenu *_menu) const;
 
-    const std::vector<std::pair<const char *, int>> &AllShortcuts() const;
+    std::span<const std::pair<const char *, int>> AllShortcuts() const;
 
     using ObservationTicket = ObservableBase::ObservationTicket;
     ObservationTicket ObserveChanges(std::function<void()> _callback);

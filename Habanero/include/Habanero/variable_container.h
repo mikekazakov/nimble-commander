@@ -202,7 +202,7 @@ const variable_container<T> &variable_container<T>::operator=(const variable_con
             Common() = _rhs.Common();
         else if( m_Type == type::sparse )
             Sparse() = _rhs.Sparse();
-        else if( m_Type == type::dense )
+        else // if( m_Type == type::dense )
             Dense() = _rhs.Dense();
     }
     return *this;
@@ -221,7 +221,7 @@ const variable_container<T> &variable_container<T>::operator=(variable_container
             Common() = std::move(_rhs.Common());
         else if( m_Type == type::sparse )
             Sparse() = std::move(_rhs.Sparse());
-        else if( m_Type == type::dense )
+        else // if( m_Type == type::dense )
             Dense() = std::move(_rhs.Dense());
     }
     return *this;
@@ -270,7 +270,7 @@ void variable_container<T>::Construct()
         new(&Common()) common_type;
     else if( m_Type == type::sparse )
         new(&Sparse()) sparse_type;
-    else if( m_Type == type::dense )
+    else // if( m_Type == type::dense )
         new(&Dense()) dense_type;
 }
 
@@ -283,7 +283,7 @@ void variable_container<T>::ConstructCopy(const variable_container<T> &_rhs)
         new(&Common()) common_type(_rhs.Common());
     else if( m_Type == type::sparse )
         new(&Sparse()) sparse_type(_rhs.Sparse());
-    else if( m_Type == type::dense )
+    else // if( m_Type == type::dense )
         new(&Dense()) dense_type(_rhs.Dense());
 }
 
@@ -296,7 +296,7 @@ void variable_container<T>::ConstructMove(variable_container<T> &&_rhs)
         new(&Common()) common_type(std::move(_rhs.Common()));
     else if( m_Type == type::sparse )
         new(&Sparse()) sparse_type(std::move(_rhs.Sparse()));
-    else if( m_Type == type::dense )
+    else // if( m_Type == type::dense )
         new(&Dense()) dense_type(std::move(_rhs.Dense()));
 }
 
@@ -307,7 +307,7 @@ void variable_container<T>::Destruct()
         Common().~common_type();
     else if( m_Type == type::sparse )
         Sparse().~sparse_type();
-    else if( m_Type == type::dense )
+    else // if( m_Type == type::dense )
         Dense().~dense_type();
 }
 
@@ -318,7 +318,7 @@ T &variable_container<T>::at(size_t _at)
         return Common();
     else if( m_Type == type::dense )
         return Dense().at(_at);
-    else if( m_Type == type::sparse )
+    else // if( m_Type == type::sparse )
         return Sparse().at(_at);
 }
 
@@ -385,7 +385,7 @@ void variable_container<T>::insert(size_t _at, const T &_value)
             Dense().resize(_at + 1);
         Dense()[_at] = _value;
     }
-    else if( m_Type == type::sparse ) {
+    else { // if( m_Type == type::sparse )
         auto r = Sparse().insert(typename sparse_type::value_type(_at, _value));
         if( !r.second )
             r.first->second = _value;
@@ -403,7 +403,7 @@ void variable_container<T>::insert(size_t _at, T &&_value)
             Dense().resize(_at + 1);
         Dense()[_at] = std::move(_value);
     }
-    else if( m_Type == type::sparse ) {
+    else { // if( m_Type == type::sparse )
         auto i = Sparse().find((unsigned)_at);
         if( i == std::end(Sparse()) )
             Sparse().insert(typename sparse_type::value_type((unsigned)_at, std::move(_value)));

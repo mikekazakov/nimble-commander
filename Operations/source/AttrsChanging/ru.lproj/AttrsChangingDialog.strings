@@ -4,6 +4,9 @@
 /* Class = "NSTextFieldCell"; title = "Additional access rights"; ObjectID = "5pT-eE-xwu"; */
 "5pT-eE-xwu.title" = "Дополнительные права";
 
+/* Class = "NSButton"; ibShadowedToolTip = "SF_FIRMLINK"; ObjectID = "8em-yX-fmG"; */
+"8em-yX-fmG.ibShadowedToolTip" = "SF_FIRMLINK";
+
 /* Class = "NSButtonCell"; title = "Tracked"; ObjectID = "8ox-Pt-X4E"; */
 "8ox-Pt-X4E.title" = "Tracked";
 
@@ -15,6 +18,9 @@
 
 /* Class = "NSButtonCell"; title = "Set UID on execution"; ObjectID = "adJ-Cc-COj"; */
 "adJ-Cc-COj.title" = "Set UID on execution";
+
+/* Class = "NSButtonCell"; title = "Firmlink"; ObjectID = "aR6-pI-ZLw"; */
+"aR6-pI-ZLw.title" = "Firmlink";
 
 /* Class = "NSButtonCell"; title = "←"; ObjectID = "bEE-2e-LTs"; */
 "bEE-2e-LTs.title" = "←";
@@ -45,6 +51,9 @@
 
 /* Class = "NSButton"; ibShadowedToolTip = "SF_NOUNLINK"; ObjectID = "hg0-pi-4jU"; */
 "hg0-pi-4jU.ibShadowedToolTip" = "SF_NOUNLINK";
+
+/* Class = "NSButtonCell"; title = "Dataless"; ObjectID = "ImI-6s-nFO"; */
+"ImI-6s-nFO.title" = "Dataless";
 
 /* Class = "NSTextFieldCell"; title = "Modify time:"; ObjectID = "itv-6O-TUZ"; */
 "itv-6O-TUZ.title" = "Время модификации:";
@@ -102,6 +111,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Write"; ObjectID = "sMS-nE-WFJ"; */
 "sMS-nE-WFJ.title" = "Запись";
+
+/* Class = "NSButton"; ibShadowedToolTip = "SF_DATALESS"; ObjectID = "tdv-2i-RjR"; */
+"tdv-2i-RjR.ibShadowedToolTip" = "SF_DATALESS";
 
 /* Class = "NSButton"; ibShadowedToolTip = "UF_OPAQUE"; ObjectID = "tJw-H2-oKI"; */
 "tJw-H2-oKI.ibShadowedToolTip" = "UF_OPAQUE";

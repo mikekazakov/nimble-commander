@@ -7,6 +7,9 @@
 /* Class = "NSMenuItem"; title = "Date Modified"; ObjectID = "fAK-5J-yak"; */
 "fAK-5J-yak.title" = "Дата изменения";
 
+/* Class = "NSMenuItem"; title = "Date Accessed"; ObjectID = "N2S-KG-c0L"; */
+"N2S-KG-c0L.title" = "Дате открытия";
+
 /* Class = "NSMenuItem"; title = "Size"; ObjectID = "oMg-KM-AN0"; */
 "oMg-KM-AN0.title" = "Размер";
 

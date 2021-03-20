@@ -13,6 +13,9 @@
 /* Class = "NSMenuItem"; title = "Extension ↓"; ObjectID = "eaf-hX-ZwB"; */
 "eaf-hX-ZwB.title" = "Расширению ↓";
 
+/* Class = "NSMenuItem"; title = "Accessed Time ↑"; ObjectID = "ehv-BQ-xXY"; */
+"ehv-BQ-xXY.title" = "Времени открытия ↑";
+
 /* Class = "NSMenuItem"; title = "Case-Sensitive Comparison"; ObjectID = "fpg-oA-HmO"; */
 "fpg-oA-HmO.title" = "Сравнение с учетом регистра";
 
@@ -36,6 +39,9 @@
 
 /* Class = "NSMenuItem"; title = "Separate Folders from Files"; ObjectID = "RYi-mW-ybA"; */
 "RYi-mW-ybA.title" = "Отделять папки от файлов";
+
+/* Class = "NSMenuItem"; title = "Accessed Time ↓"; ObjectID = "TSt-Ua-nI1"; */
+"TSt-Ua-nI1.title" = "Времени открытия ↓";
 
 /* Class = "NSMenuItem"; title = "Extension ↑"; ObjectID = "tzp-Uh-dub"; */
 "tzp-Uh-dub.title" = "Расширению ↑";

@@ -13,6 +13,9 @@
 /* Class = "NSMenuItem"; title = "Always Open With"; ObjectID = "1jU-gS-pnI"; */
 "1jU-gS-pnI.title" = "Всегда открывать в программе";
 
+/* Class = "NSMenuItem"; title = "Debug"; ObjectID = "3aO-vj-hIL"; */
+"3aO-vj-hIL.title" = "Отладка";
+
 /* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "5"; */
 "5.title" = "Все окна - на передний план";
 
@@ -51,6 +54,9 @@
 
 /* Class = "NSMenuItem"; title = "Help"; ObjectID = "9Iz-2J-FE9"; */
 "9Iz-2J-FE9.title" = "Справка";
+
+/* Class = "NSMenuItem"; title = "Sort by Accessed Time"; ObjectID = "9lw-Of-6DT"; */
+"9lw-Of-6DT.title" = "Сортировать по времени открытия";
 
 /* Class = "NSMenuItem"; title = "Window"; ObjectID = "19"; */
 "19.title" = "Окно";
@@ -375,6 +381,9 @@
 
 /* Class = "NSMenuItem"; title = "Right Panel..."; ObjectID = "IVa-S3-AXL"; */
 "IVa-S3-AXL.title" = "Правая панель...";
+
+/* Class = "NSMenu"; title = "Debug"; ObjectID = "J1h-Qq-hWI"; */
+"J1h-Qq-hWI.title" = "Отладка";
 
 /* Class = "NSMenuItem"; title = "Find with Spotlight..."; ObjectID = "jg2-rC-cAS"; */
 "jg2-rC-cAS.title" = "Найти с помощью Spotlight...";

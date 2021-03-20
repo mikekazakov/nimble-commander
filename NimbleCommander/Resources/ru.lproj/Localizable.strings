@@ -5,6 +5,9 @@
 "__MODERNPRESENTATION_UP_WORD" = "Наверх";
 
 /* (No Comment) */
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ACCESSED" = "Дата доступа";
+
+/* (No Comment) */
 "__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED" = "Дата добавления";
 
 /* (No Comment) */
@@ -12,9 +15,6 @@
 
 /* (No Comment) */
 "__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" = "Дата изменения";
-
-/* (No Comment) */
-"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ACCESSED" = "Дата доступа";
 
 /* (No Comment) */
 "__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Имя";
@@ -131,6 +131,9 @@
 /* Execute a binary */
 "Execute “%@”" = "Запустить “%@”";
 
+/* Showing error when failed to access the dragged items */
+"Failed to access the dragged item:" = "Не удалось получить доступ к перетащенному объекту:";
+
 /* Information that toggling admin mode on has failed */
 "Failed to access the privileged helper." = "Не удалось связаться с привилегированным помощником.";
 
@@ -239,11 +242,14 @@
 /* No comment provided by engineer. */
 "File Panels ▶ Toggle Selection and Move Down" = "Файловые панели ▶ Изменить выделение и переместиться вниз";
 
-/* Window title for internal file viewer */
-"File View - %@" = "Просмотр файла - %@";
+/* Menu item for focusing file panels */
+"Focus File Panels" = "Фокус на файловые панели";
 
-/* Menu item option in internal viewer search */
-"Find whole phrase" = "Искать фразу целиком";
+/* Menu item for focusing an overlapped terminal */
+"Focus Overlapped Terminal" = "Фокус на терминал";
+
+/* Follow a symlink */
+"Follow “%@”" = "Следовать за “%@”";
 
 /* Brief System Information free bytes label title */
 "Free Bytes:" = "Свободно байт:";
@@ -259,6 +265,9 @@
 
 /* Goto popup menu title */
 "Go to" = "Перейти к";
+
+/* Menu item for hiding panels */
+"Hide Panels" = "Скрыть панели";
 
 /* Menu item title for hiding tab bar */
 "Hide Tab Bar" = "Скрыть панель вкладок";
@@ -326,20 +335,11 @@
 /* Brief System Information ram box title */
 "RAM" = "Память";
 
-/* Menu item title in internal viewer search */
-"Recent Searches" = "Недавние поиски";
-
 /* No comment provided by engineer. */
 "Recently Closed" = "Недавно закрытые";
 
-/* Menu item title in internal viewer search */
-"Recents" = "Последние";
-
 /* Toolbar palette */
 "Right GoTo" = "Правый Переход";
-
-/* Placeholder for search text field in internal viewer */
-"Search in file" = "Искать в файле";
 
 /* Title for selection by mask popup */
 "Select files by mask:" = "Выделить по маске:";
@@ -379,6 +379,9 @@
 
 /* Showing error when connecting to SFTP server */
 "SFTP connection error:" = "Ошибка подключения SFTP:";
+
+/* Menu item for showing panels */
+"Show Panels" = "Показать панели";
 
 /* Menu item title for showing tab bar */
 "Show Tab Bar" = "Показать панель вкладок";
@@ -501,17 +504,3 @@
 /* Asking user for confirmation on erasing custom theme - informative text */
 "You can’t undo this action." = "Вы не сможете отменить эту операцию.";
 
-/* Follow a symlink */
-"Follow “%@”" = "Следовать за “%@”";
-
-/* Menu item for showing panels */
-"Show Panels" = "Показать панели";
-
-/* Menu item for hiding panels */
-"Hide Panels" = "Скрыть панели";
-
-/* Menu item for focusing an overlapped terminal */
-"Focus Overlapped Terminal" = "Фокус на терминал";
-
-/* Menu item for focusing file panels */
-"Focus File Panels" = "Фокус на файловые панели";

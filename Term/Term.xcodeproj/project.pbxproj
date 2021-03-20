@@ -86,7 +86,6 @@
 		CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenBuffer.h; path = include/Term/ScreenBuffer.h; sourceTree = "<group>"; };
 		CF1ADE371F7E7370003E9B76 /* Screen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Screen.h; path = include/Term/Screen.h; sourceTree = "<group>"; };
 		CF1ADE391F7E7379003E9B76 /* Screen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Screen.cpp; path = source/Screen.cpp; sourceTree = SOURCE_ROOT; };
-		CF1ADE3C1F7E742D003E9B76 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-anoqrbggulscaqdgumhicyupwnaj/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CF1ADE3E1F7E7587003E9B76 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = include/Term/Parser.h; sourceTree = "<group>"; };
 		CF1ADE401F7E7593003E9B76 /* Parser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Parser.mm; path = source/Parser.mm; sourceTree = SOURCE_ROOT; };
 		CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -102,7 +101,6 @@
 		CF4135111F846CF2007429B6 /* ShellTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShellTask.cpp; path = source/ShellTask.cpp; sourceTree = SOURCE_ROOT; };
 		CF4135121F846CF2007429B6 /* SingleTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SingleTask.cpp; path = source/SingleTask.cpp; sourceTree = SOURCE_ROOT; };
 		CF4135131F846CF2007429B6 /* Task.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Task.cpp; path = source/Task.cpp; sourceTree = SOURCE_ROOT; };
-		CF4135181F846D48007429B6 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-anoqrbggulscaqdgumhicyupwnaj/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 		CF41351A1F8666B4007429B6 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = include/Term/Settings.h; sourceTree = "<group>"; };
 		CF41351C1F8666BF007429B6 /* Settings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Settings.mm; path = source/Settings.mm; sourceTree = SOURCE_ROOT; };
 		CF4135221F890BC8007429B6 /* CursorMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorMode.h; path = include/Term/CursorMode.h; sourceTree = "<group>"; };
@@ -114,8 +112,6 @@
 		CF50996F1F948400000AFDE7 /* FlippableHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlippableHolder.h; path = source/FlippableHolder.h; sourceTree = SOURCE_ROOT; };
 		CF5099701F948400000AFDE7 /* FlippableHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FlippableHolder.mm; path = source/FlippableHolder.mm; sourceTree = SOURCE_ROOT; };
 		CF50997B1F948E7C000AFDE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../tests/Info.plist; sourceTree = "<group>"; };
-		CF50998F1F948FDD000AFDE7 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
-		CF5099911F948FFA000AFDE7 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 		CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter.cpp; sourceTree = "<group>"; };
 		CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InterpreterImpl.cpp; sourceTree = "<group>"; };
 		CF5F3930242F7FC6004DF1F8 /* InterpreterImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterpreterImpl.h; path = include/Term/InterpreterImpl.h; sourceTree = "<group>"; };
@@ -246,12 +242,8 @@
 		CF1ADE3B1F7E742D003E9B76 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CF5099911F948FFA000AFDE7 /* libHabanero.dylib */,
-				CF50998F1F948FDD000AFDE7 /* libUtility.dylib */,
-				CF4135181F846D48007429B6 /* libHabanero.dylib */,
 				CF1ADE441F7E76C4003E9B76 /* Carbon.framework */,
 				CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */,
-				CF1ADE3C1F7E742D003E9B76 /* libUtility.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

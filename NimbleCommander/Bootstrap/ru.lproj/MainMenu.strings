@@ -370,7 +370,7 @@
 /* Class = "NSMenuItem"; title = "Copy Item Directory"; ObjectID = "iLX-OF-n8U"; */
 "iLX-OF-n8U.title" = "Копировать директорию файла";
 
-/* Class = "NSMenuItem"; title = "Frequenty Visited"; ObjectID = "IqU-xO-cHh"; */
+/* Class = "NSMenuItem"; title = "Frequently Visited"; ObjectID = "IqU-xO-cHh"; */
 "IqU-xO-cHh.title" = "Часто посещаемые";
 
 /* Class = "NSMenuItem"; title = "Right Panel..."; ObjectID = "IVa-S3-AXL"; */
@@ -469,7 +469,7 @@
 /* Class = "NSMenuItem"; title = "Calculate All Folders Sizes"; ObjectID = "Pq6-25-hPh"; */
 "Pq6-25-hPh.title" = "Вычислить размер всех папок";
 
-/* Class = "NSMenu"; title = "Frequenty Visited"; ObjectID = "qAf-7b-Sdi"; */
+/* Class = "NSMenu"; title = "Frequently Visited"; ObjectID = "qAf-7b-Sdi"; */
 "qAf-7b-Sdi.title" = "Часто посещаемые";
 
 /* Class = "NSMenu"; title = "Panels Position"; ObjectID = "QN7-b6-kdr"; */

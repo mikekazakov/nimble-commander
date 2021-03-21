@@ -13,13 +13,6 @@ public:
     void unlock() noexcept;
 };
 
-#define __LOCK_GUARD_TOKENPASTE(x, y) x ## y
-#define __LOCK_GUARD_TOKENPASTE2(x, y) __LOCK_GUARD_TOKENPASTE(x, y)
-#define LOCK_GUARD(lock_object)\
-if( std::lock_guard<decltype(lock_object)> __LOCK_GUARD_TOKENPASTE2(__lock_guard_, __LINE__)(lock_object); false) { } \
-else
-
-
 template <typename _Lock, typename _Callable>
 auto call_locked( _Lock &_lock, _Callable _callable )
 {

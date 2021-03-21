@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FindFilesSheetController.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/DispatchGroup.h>
@@ -519,8 +519,8 @@ private:
     };
     auto lookin_in_callback = [=](const char *_path, VFSHost& _in_host) {
         auto verbose_path = _in_host.MakePathVerbose(_path);
-        LOCK_GUARD(m_LookingInPathGuard)
-            m_LookingInPath = move(verbose_path);
+        auto lock = std::lock_guard{m_LookingInPathGuard};
+        m_LookingInPath = move(verbose_path);
     };
     auto spawn_archive_callback = [=](const char*_for_path, VFSHost& _in_host)->VFSHostPtr {
         return [self spawnArchiveFromPath:_for_path inVFS:_in_host.SharedPtr()];
@@ -579,8 +579,10 @@ private:
 - (void)updateLookingInByTimer:(NSTimer*)[[maybe_unused]]theTimer
 {
     NSString *new_title;
-    LOCK_GUARD(m_LookingInPathGuard)
+    {
+        auto lock = std::lock_guard{m_LookingInPathGuard};
         new_title = [NSString stringWithUTF8StdString:m_LookingInPath];
+    }
     self.LookingIn.stringValue = new_title;
 }
 

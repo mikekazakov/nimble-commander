@@ -4,6 +4,7 @@
 
 namespace nc::panel {
 
+// these values are used in serializaition, don't change existing.
 enum class PanelListViewColumns : signed char
 {
     Empty = 0,

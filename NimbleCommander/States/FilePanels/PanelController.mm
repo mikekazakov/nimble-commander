@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelController.h"
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
@@ -759,7 +759,8 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
 
 - (void) finishExtActivityWithTicket:(uint64_t)_ticket
 {
-    LOCK_GUARD(m_ActivitiesTicketsLock) {
+    {
+        auto lock = std::lock_guard{m_ActivitiesTicketsLock};
         auto i = find(begin(m_ActivitiesTickets), end(m_ActivitiesTickets), _ticket);
         if( i == end(m_ActivitiesTickets) )
             return;

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewLayoutSupport.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
@@ -6,7 +6,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 
-//struct PanelViewLayout
+// struct PanelViewLayout
 //{
 //    string name; // for the future
 //    any layout; // perhaps switch to variant?
@@ -41,26 +41,29 @@ const PanelListViewColumnsLayout *PanelViewLayout::list() const
     return std::any_cast<PanelListViewColumnsLayout>(&layout);
 }
 
-bool PanelViewLayout::operator==(const PanelViewLayout& _rhs) const
+bool PanelViewLayout::operator==(const PanelViewLayout &_rhs) const
 {
     if( this == &_rhs )
         return true;
-    
-    if( name != _rhs.name)
+
+    if( name != _rhs.name )
         return false;
-    
+
     const auto mytype = type();
     if( mytype != _rhs.type() )
         return false;
-    
+
     switch( mytype ) {
-        case Type::Brief:   return *brief() == *_rhs.brief();
-        case Type::List:    return *list() == *_rhs.list();
-        default:            return true;
+        case Type::Brief:
+            return *brief() == *_rhs.brief();
+        case Type::List:
+            return *list() == *_rhs.list();
+        default:
+            return true;
     }
 }
 
-bool PanelViewLayout::operator!=(const PanelViewLayout& _rhs) const
+bool PanelViewLayout::operator!=(const PanelViewLayout &_rhs) const
 {
     return !(*this == _rhs);
 }
@@ -83,25 +86,23 @@ static const auto g_ListColumMinWidth = "min_width";
 static const auto g_ListIconScale = "icon_scale";
 static const auto g_DisabledKey = "disabled";
 
-static config::Value SaveLayout( const PanelViewLayout& _l )
+static config::Value SaveLayout(const PanelViewLayout &_l)
 {
     using namespace rapidjson;
     using namespace nc::config;
     config::Value v{kObjectType};
-    
-    v.AddMember( MakeStandaloneString(g_TitleKey), MakeStandaloneString(_l.name), g_CrtAllocator );
+
+    v.AddMember(MakeStandaloneString(g_TitleKey), MakeStandaloneString(_l.name), g_CrtAllocator);
     if( auto list = _l.list() ) {
         config::Value d{kObjectType};
-        config::Value columns{ rapidjson::kArrayType };
-        for( auto &c: list->columns ) {
+        config::Value columns{rapidjson::kArrayType};
+        for( auto &c : list->columns ) {
             config::Value col{kObjectType};
-            col.AddMember(MakeStandaloneString(g_ListColumKind),
-                          config::Value((int)c.kind),
-                          g_CrtAllocator);
+            col.AddMember(
+                MakeStandaloneString(g_ListColumKind), config::Value((int)c.kind), g_CrtAllocator);
             if( c.width >= 0 )
-                col.AddMember(MakeStandaloneString(g_ListColumWidth),
-                              config::Value(c.width),
-                              g_CrtAllocator);
+                col.AddMember(
+                    MakeStandaloneString(g_ListColumWidth), config::Value(c.width), g_CrtAllocator);
             if( c.min_width >= 0 )
                 col.AddMember(MakeStandaloneString(g_ListColumMinWidth),
                               config::Value(c.min_width),
@@ -110,21 +111,17 @@ static config::Value SaveLayout( const PanelViewLayout& _l )
                 col.AddMember(MakeStandaloneString(g_ListColumMaxWidth),
                               config::Value(c.max_width),
                               g_CrtAllocator);
-            columns.PushBack( std::move(col), g_CrtAllocator );
+            columns.PushBack(std::move(col), g_CrtAllocator);
         }
-        d.AddMember(MakeStandaloneString(g_ListColumns),
-                    std::move(columns),
-                    g_CrtAllocator);
-        d.AddMember(MakeStandaloneString(g_ListIconScale),
-                    config::Value(list->icon_scale),
-                    g_CrtAllocator);
-        v.AddMember( MakeStandaloneString(g_ListKey), std::move(d), g_CrtAllocator );
+        d.AddMember(MakeStandaloneString(g_ListColumns), std::move(columns), g_CrtAllocator);
+        d.AddMember(
+            MakeStandaloneString(g_ListIconScale), config::Value(list->icon_scale), g_CrtAllocator);
+        v.AddMember(MakeStandaloneString(g_ListKey), std::move(d), g_CrtAllocator);
     }
     else if( auto brief = _l.brief() ) {
         config::Value d{kObjectType};
-        d.AddMember(MakeStandaloneString(g_BriefModeKey),
-                    config::Value((int)brief->mode),
-                    g_CrtAllocator);
+        d.AddMember(
+            MakeStandaloneString(g_BriefModeKey), config::Value((int)brief->mode), g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_BriefFixedModeWidthKey),
                     config::Value(brief->fixed_mode_width),
                     g_CrtAllocator);
@@ -143,18 +140,16 @@ static config::Value SaveLayout( const PanelViewLayout& _l )
         d.AddMember(MakeStandaloneString(g_BriefIconScale),
                     config::Value(brief->icon_scale),
                     g_CrtAllocator);
-        v.AddMember( MakeStandaloneString(g_BriefKey), std::move(d), g_CrtAllocator );
+        v.AddMember(MakeStandaloneString(g_BriefKey), std::move(d), g_CrtAllocator);
     }
     else if( _l.is_disabled() ) {
-        v.AddMember(MakeStandaloneString(g_DisabledKey),
-                    config::Value{kNullType},
-                    g_CrtAllocator);
+        v.AddMember(MakeStandaloneString(g_DisabledKey), config::Value{kNullType}, g_CrtAllocator);
     }
-    
+
     return v;
 }
 
-static std::optional<PanelViewLayout> LoadLayout( const config::Value& _from )
+static std::optional<PanelViewLayout> LoadLayout(const config::Value &_from)
 {
     using namespace rapidjson;
     if( !_from.IsObject() )
@@ -165,23 +160,23 @@ static std::optional<PanelViewLayout> LoadLayout( const config::Value& _from )
         l.name = _from[g_TitleKey].GetString();
     else
         return std::nullopt;
-    
+
     if( _from.HasMember(g_BriefKey) && _from[g_BriefKey].IsObject() ) {
         auto &o = _from[g_BriefKey];
         PanelBriefViewColumnsLayout brief;
         if( o.HasMember(g_BriefModeKey) && o[g_BriefModeKey].IsNumber() )
             brief.mode = (PanelBriefViewColumnsLayout::Mode)o[g_BriefModeKey].GetInt();
-        if( o.HasMember(g_BriefFixedModeWidthKey) && o[g_BriefFixedModeWidthKey].IsNumber())
+        if( o.HasMember(g_BriefFixedModeWidthKey) && o[g_BriefFixedModeWidthKey].IsNumber() )
             brief.fixed_mode_width = (short)o[g_BriefFixedModeWidthKey].GetInt();
-        if( o.HasMember(g_BriefFixedAmountValueKey) && o[g_BriefFixedAmountValueKey].IsNumber())
+        if( o.HasMember(g_BriefFixedAmountValueKey) && o[g_BriefFixedAmountValueKey].IsNumber() )
             brief.fixed_amount_value = (short)o[g_BriefFixedAmountValueKey].GetInt();
-        if( o.HasMember(g_BriefDynamicWidthMinKey) && o[g_BriefDynamicWidthMinKey].IsNumber())
+        if( o.HasMember(g_BriefDynamicWidthMinKey) && o[g_BriefDynamicWidthMinKey].IsNumber() )
             brief.dynamic_width_min = (short)o[g_BriefDynamicWidthMinKey].GetInt();
-        if( o.HasMember(g_BriefDynamicWidthMaxKey) && o[g_BriefDynamicWidthMaxKey].IsNumber())
+        if( o.HasMember(g_BriefDynamicWidthMaxKey) && o[g_BriefDynamicWidthMaxKey].IsNumber() )
             brief.dynamic_width_max = (short)o[g_BriefDynamicWidthMaxKey].GetInt();
-        if( o.HasMember(g_BriefDynamicWidthEqualKey) && o[g_BriefDynamicWidthEqualKey].IsBool())
+        if( o.HasMember(g_BriefDynamicWidthEqualKey) && o[g_BriefDynamicWidthEqualKey].IsBool() )
             brief.dynamic_width_equal = o[g_BriefDynamicWidthEqualKey].GetBool();
-        if( o.HasMember(g_BriefIconScale) && o[g_BriefIconScale].IsInt())
+        if( o.HasMember(g_BriefIconScale) && o[g_BriefIconScale].IsInt() )
             brief.icon_scale = (uint8_t)o[g_BriefIconScale].GetInt();
         l.layout = brief;
     }
@@ -191,7 +186,7 @@ static std::optional<PanelViewLayout> LoadLayout( const config::Value& _from )
         if( !o.HasMember(g_ListColumns) || !o[g_ListColumns].IsArray() )
             return std::nullopt;
         for( auto i = o[g_ListColumns].Begin(), e = o[g_ListColumns].End(); i != e; ++i ) {
-            if( !i->IsObject()  )
+            if( !i->IsObject() )
                 return std::nullopt;
             PanelListViewColumnsLayout::Column col;
             if( i->HasMember(g_ListColumKind) && (*i)[g_ListColumKind].IsNumber() )
@@ -204,7 +199,7 @@ static std::optional<PanelViewLayout> LoadLayout( const config::Value& _from )
                 col.max_width = (short)(*i)[g_ListColumMaxWidth].GetInt();
             list.columns.emplace_back(col);
         }
-        if( o.HasMember(g_ListIconScale) && o[g_ListIconScale].IsInt())
+        if( o.HasMember(g_ListIconScale) && o[g_ListIconScale].IsInt() )
             list.icon_scale = (uint8_t)o[g_ListIconScale].GetInt();
         l.layout = list;
     }
@@ -212,13 +207,13 @@ static std::optional<PanelViewLayout> LoadLayout( const config::Value& _from )
         l.layout = PanelViewDisabledLayout{};
     else
         return std::nullopt;
-    
+
     return l;
 }
 
 static PanelViewLayout L1()
 {
-    
+
     //    struct PanelBriefViewColumnsLayout
     //    {
     //        enum class Mode : short {
@@ -232,19 +227,19 @@ static PanelViewLayout L1()
     //        short   dynamic_width_min   = 100;
     //        short   dynamic_width_max   = 300;
     //        bool    dynamic_width_equal = false;
-    
+
     PanelBriefViewColumnsLayout cl;
     cl.mode = PanelBriefViewColumnsLayout::Mode::FixedAmount;
     cl.fixed_amount_value = 3;
-    
+
     PanelViewLayout ret;
     ret.layout = cl;
     ret.name = "Short";
     return ret;
 }
 
-PanelViewLayoutsStorage::PanelViewLayoutsStorage(const char*_config_path):
-    m_ConfigPath( _config_path )
+PanelViewLayoutsStorage::PanelViewLayoutsStorage(const char *_config_path)
+    : m_ConfigPath(_config_path)
 {
     LoadLayoutsFromConfig();
 }
@@ -255,12 +250,10 @@ int PanelViewLayoutsStorage::LayoutsCount() const
     return (int)m_Layouts.size();
 }
 
-std::shared_ptr<const PanelViewLayout>  PanelViewLayoutsStorage::GetLayout( int _index ) const
+std::shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::GetLayout(int _index) const
 {
     std::lock_guard<spinlock> lock(m_LayoutsLock);
-    return (_index >= 0 && _index < (int)m_Layouts.size()) ?
-        m_Layouts[_index] :
-        nullptr;
+    return (_index >= 0 && _index < (int)m_Layouts.size()) ? m_Layouts[_index] : nullptr;
 }
 
 std::vector<std::shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::GetAllLayouts() const
@@ -294,87 +287,88 @@ int PanelViewLayoutsStorage::DefaultLayoutIndex() const
     return -1;
 }
 
-void PanelViewLayoutsStorage::ReplaceLayout( PanelViewLayout _layout, int _at_index )
+void PanelViewLayoutsStorage::ReplaceLayout(PanelViewLayout _layout, int _at_index)
 {
-    ReplaceLayout( std::move(_layout), _at_index, false );
+    ReplaceLayout(std::move(_layout), _at_index, false);
 }
 
-void PanelViewLayoutsStorage::ReplaceLayoutWithMandatoryNotification
-    (PanelViewLayout _layout, int _at_index)
+void PanelViewLayoutsStorage::ReplaceLayoutWithMandatoryNotification(PanelViewLayout _layout,
+                                                                     int _at_index)
 {
-    ReplaceLayout( std::move(_layout), _at_index, true );
+    ReplaceLayout(std::move(_layout), _at_index, true);
 }
 
 void PanelViewLayoutsStorage::ReplaceLayout(PanelViewLayout _layout, int _at_index, bool _mandatory)
 {
-    LOCK_GUARD(m_LayoutsLock) {
+    {
+        auto lock = std::lock_guard{m_LayoutsLock};
         if( _at_index < 0 || _at_index >= (int)m_Layouts.size() )
             return;
         if( *m_Layouts[_at_index] == _layout )
             return; // nothing to do - equal layouts
-        m_Layouts[_at_index] = std::make_shared<PanelViewLayout>( std::move(_layout) );
+        m_Layouts[_at_index] = std::make_shared<PanelViewLayout>(std::move(_layout));
     }
-    
+
     CommitChanges(_mandatory);
 }
 
 PanelViewLayoutsStorage::ObservationTicket
-    PanelViewLayoutsStorage::ObserveChanges( std::function<void()> _callback )
+PanelViewLayoutsStorage::ObserveChanges(std::function<void()> _callback)
 {
-    return AddObserver( move(_callback) );
+    return AddObserver(move(_callback));
 }
 
 void PanelViewLayoutsStorage::LoadLayoutsFromConfig()
 {
     auto layouts = GlobalConfig().Get(m_ConfigPath);
-    if( !layouts.IsArray())
+    if( !layouts.IsArray() )
         return;
-    
-    LOCK_GUARD(m_LayoutsLock) {
-        m_Layouts.clear();
-        for( auto i = layouts.Begin(), e = layouts.End(); i != e; ++i )
-            if( auto l = LoadLayout( *i ) )
-                m_Layouts.emplace_back( std::make_shared<PanelViewLayout>(std::move(*l)) );
-            else
-                m_Layouts.emplace_back( LastResortLayout() );
-    }
+
+    auto lock = std::lock_guard{m_LayoutsLock};
+    m_Layouts.clear();
+    for( auto i = layouts.Begin(), e = layouts.End(); i != e; ++i )
+        if( auto l = LoadLayout(*i) )
+            m_Layouts.emplace_back(std::make_shared<PanelViewLayout>(std::move(*l)));
+        else
+            m_Layouts.emplace_back(LastResortLayout());
 }
 
 void PanelViewLayoutsStorage::WriteLayoutsToConfig() const
 {
     std::vector<std::shared_ptr<const PanelViewLayout>> layouts;
-    LOCK_GUARD(m_LayoutsLock)
+    {
+        auto lock = std::lock_guard{m_LayoutsLock};
         layouts = m_Layouts;
-    
-    config::Value json_layouts{ rapidjson::kArrayType };
-    for( auto &l: layouts )
-        json_layouts.PushBack( SaveLayout(*l), config::g_CrtAllocator );
-    GlobalConfig().Set( m_ConfigPath, json_layouts );
+    }
+
+    config::Value json_layouts{rapidjson::kArrayType};
+    for( auto &l : layouts )
+        json_layouts.PushBack(SaveLayout(*l), config::g_CrtAllocator);
+    GlobalConfig().Set(m_ConfigPath, json_layouts);
 }
 
 void PanelViewLayoutsStorage::CommitChanges(bool _fire_observers)
 {
-    if(_fire_observers)
+    if( _fire_observers )
         FireObservers();
-    dispatch_to_background([=]{ WriteLayoutsToConfig(); });
+    dispatch_to_background([=] { WriteLayoutsToConfig(); });
 }
 
 }
 
-@implementation PanelViewLayoutsMenuDelegate
-{
+@implementation PanelViewLayoutsMenuDelegate {
     bool m_IsDirty;
     PanelViewLayoutsStorage *m_Storage;
     PanelViewLayoutsStorage::ObservationTicket m_Ticket;
 }
 
-- (id) initWithStorage:(PanelViewLayoutsStorage&)_storage
+- (id)initWithStorage:(PanelViewLayoutsStorage &)_storage
 {
     self = [super init];
     if( self ) {
         m_IsDirty = true;
         m_Storage = &_storage;
-        m_Ticket = m_Storage->ObserveChanges( objc_callback(self, @selector(layoutsHaveChanged)) );
+        m_Ticket = m_Storage->ObserveChanges(objc_callback(self, @selector(layoutsHaveChanged)));
     }
     return self;
 }
@@ -384,15 +378,14 @@ void PanelViewLayoutsStorage::CommitChanges(bool _fire_observers)
     m_IsDirty = true;
 }
 
-- (void)menuNeedsUpdate:(NSMenu*)menu
+- (void)menuNeedsUpdate:(NSMenu *)menu
 {
     if( m_IsDirty && (menu.propertiesToUpdate & NSMenuPropertyItemTitle) ) {
         int index = 0;
         for( NSMenuItem *item in menu.itemArray ) {
             if( auto l = m_Storage->GetLayout((int)index) ) {
-                item.title = l->name.empty() ?
-                [NSString stringWithFormat:@"Layout #%d", index+1] :
-                [NSString stringWithUTF8StdString:l->name];
+                item.title = l->name.empty() ? [NSString stringWithFormat:@"Layout #%d", index + 1]
+                                             : [NSString stringWithUTF8StdString:l->name];
             }
             index++;
         }

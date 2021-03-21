@@ -47,7 +47,8 @@ static spinlock                         g_InitialMaskLock;
     self.comboBox.usesDataSource = true;
     self.comboBox.dataSource = m_MaskHistory;
     
-    LOCK_GUARD(g_InitialMaskLock) {
+    {
+        auto lock = std::lock_guard{g_InitialMaskLock};
         auto i = g_InitialMask.find(m_TargetWnd);
         self.comboBox.stringValue = i != end(g_InitialMask) ? (*i).second : @"*.*";
     }
@@ -69,8 +70,10 @@ static spinlock                         g_InitialMaskLock;
          [mask isEqualToString:@"*.*"] ) )
         [m_MaskHistory reportEnteredItem:mask];
     
-    LOCK_GUARD(g_InitialMaskLock)
+    {
+        auto lock = std::lock_guard{g_InitialMaskLock};
         g_InitialMask[m_TargetWnd] = mask;
+    }
     
     if( m_Handler )
         m_Handler( mask );

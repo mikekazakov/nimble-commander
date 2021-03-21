@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/spinlock.h>
@@ -50,6 +50,6 @@ private:
     void BackgroundItemCheck( std::shared_ptr<Meta> _meta );
     void ScheduleItemDrop( const std::shared_ptr<Meta> &_meta );
 
-    spinlock                    m_WatchesLock;
+    nc::spinlock                    m_WatchesLock;
     std::vector<std::shared_ptr<Meta>> m_Watches;
 };

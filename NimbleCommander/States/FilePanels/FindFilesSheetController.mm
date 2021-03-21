@@ -234,7 +234,7 @@ private:
     SerialQueue                 m_StatQueue; // for custom VFS
 
     std::string                 m_LookingInPath;
-    spinlock                    m_LookingInPathGuard;
+    nc::spinlock                m_LookingInPathGuard;
     NSTimer                    *m_LookingInPathUpdateTimer;
     
     FindFilesSheetFoundItem    *m_DoubleClickedItem;

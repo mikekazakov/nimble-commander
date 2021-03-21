@@ -426,19 +426,19 @@ void ExternalToolsStorage::LoadToolsFromConfig()
 
 size_t ExternalToolsStorage::ToolsCount() const
 {
-    std::lock_guard<spinlock> guard(m_ToolsLock);
+    auto guard = std::lock_guard{m_ToolsLock};
     return m_Tools.size();
 }
 
 std::shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(size_t _no) const
 {
-    std::lock_guard<spinlock> guard(m_ToolsLock);
+    auto guard = std::lock_guard{m_ToolsLock};
     return _no < m_Tools.size() ? m_Tools[_no] : nullptr;
 }
 
 std::vector<std::shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
 {
-    std::lock_guard<spinlock> guard(m_ToolsLock);
+    auto guard = std::lock_guard{m_ToolsLock};
     return m_Tools;
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate.h"
 #include "AppDelegateCPP.h"
 #include "AppDelegate+Migration.h"
@@ -202,7 +202,7 @@ static NCAppDelegate *g_Me = nil;
 {
     std::vector<NCMainWindowController *>       m_MainWindows;
     std::vector<InternalViewerWindowController*>m_ViewerWindows;
-    spinlock                                    m_ViewerWindowsLock;
+    nc::spinlock                                m_ViewerWindowsLock;
     std::string         m_SupportDirectory;
     std::string         m_ConfigDirectory;
     std::string         m_StateDirectory;

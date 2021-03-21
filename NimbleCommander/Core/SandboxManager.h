@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -65,5 +65,5 @@ private:
     bool HasAccessToFolder_Unlocked(const std::string &_p) const;
     
     std::vector<Bookmark>   m_Bookmarks;
-    mutable spinlock        m_Lock;
+    mutable nc::spinlock        m_Lock;
 };

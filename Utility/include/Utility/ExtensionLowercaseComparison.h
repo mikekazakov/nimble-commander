@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -29,5 +29,5 @@ public:
 private:
     enum {                                          m_MaxLength = 16 };
     std::unordered_map<std::string, std::string>    m_Data;
-    spinlock                                        m_Lock;
+    nc::spinlock                                    m_Lock;
 };

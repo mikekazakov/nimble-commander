@@ -1,4 +1,4 @@
-/* Copyright (c) 2014-2016 Michael G. Kazakov
+/* Copyright (c) 2014-2021 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -97,7 +97,7 @@ private:
     dispatch_queue_t m_Queue;
     dispatch_group_t m_Group;
     mutable std::atomic_int m_Count{0};
-    mutable spinlock m_CallbackLock;
+    mutable nc::spinlock m_CallbackLock;
     std::shared_ptr< std::function<void()> > m_OnDry;
     std::shared_ptr< std::function<void()> > m_OnWet;
     std::shared_ptr< std::function<void()> > m_OnChange;

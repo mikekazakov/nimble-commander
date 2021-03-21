@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkConnectionsManager.h"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
@@ -12,10 +12,10 @@ using namespace std::literals;
 
 boost::uuids::uuid NetworkConnectionsManager::MakeUUID()
 {
-    static spinlock lock;
+    static nc::spinlock lock;
     [[clang::no_destroy]] static boost::uuids::basic_random_generator<boost::mt19937> gen;
 
-    std::lock_guard<spinlock> guard(lock);
+    auto guard = std::lock_guard{lock};
     return gen();
 }
 

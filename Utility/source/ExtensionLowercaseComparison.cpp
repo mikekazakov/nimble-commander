@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <string_view>
 #include <sys/param.h>
 #include <Habanero/CFStackAllocator.h>
@@ -56,7 +56,7 @@ string ExtensionLowercaseComparison::ExtensionToLowercase(const string &_extensi
         // we don't cache long extensions
         return ProduceFormCLowercase(_extension);
     
-    lock_guard<spinlock> lock(m_Lock);
+    auto lock = lock_guard{m_Lock};
     auto it = m_Data.find( _extension );
     if( it != end(m_Data) )
         return it->second;
@@ -72,7 +72,7 @@ string ExtensionLowercaseComparison::ExtensionToLowercase(const char *_extension
         // we don't cache long extensions
         return ProduceFormCLowercase(_extension);
     
-    lock_guard<spinlock> lock(m_Lock);
+    auto lock = lock_guard{m_Lock};
     auto it = m_Data.find( _extension );
     if( it != end(m_Data) )
         return it->second;
@@ -84,7 +84,7 @@ string ExtensionLowercaseComparison::ExtensionToLowercase(const char *_extension
 
 bool ExtensionLowercaseComparison::Equal( const string &_filename_ext, const string &_compare_to_formc_lc )
 {
-    lock_guard<spinlock> lock(m_Lock);
+    auto lock = lock_guard{m_Lock};
     auto it = m_Data.find( _filename_ext );
     if( it != end(m_Data) )
         return it->second == _compare_to_formc_lc;
@@ -97,7 +97,7 @@ bool ExtensionLowercaseComparison::Equal( const string &_filename_ext, const str
 
 bool ExtensionLowercaseComparison::Equal( const char *_filename_ext, const string &_compare_to_formc_lc )
 {
-    lock_guard<spinlock> lock(m_Lock);
+    auto lock = lock_guard{m_Lock};
     auto it = m_Data.find( _filename_ext );
     if( it != end(m_Data) )
         return it->second == _compare_to_formc_lc;

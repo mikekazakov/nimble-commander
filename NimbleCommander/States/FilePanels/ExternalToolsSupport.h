@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 /**
@@ -159,7 +159,7 @@ private:
     void WriteToolsToConfig() const;
     void CommitChanges();
     
-    mutable spinlock                                m_ToolsLock;
+    mutable nc::spinlock                            m_ToolsLock;
     std::vector<std::shared_ptr<const ExternalTool>>m_Tools;
     const char*                                     m_ConfigPath;
     nc::config::Config&                             m_Config;

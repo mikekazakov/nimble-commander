@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <memory>
@@ -86,7 +86,7 @@ private:
     dispatch_queue_t            m_Queue;
     mutable std::atomic_int     m_Length = {0};
     mutable std::atomic_bool    m_Stopped = {false};
-    mutable spinlock            m_CallbackLock;
+    mutable nc::spinlock        m_CallbackLock;
     std::shared_ptr<std::function<void()>>  m_OnDry;
     std::shared_ptr<std::function<void()>>  m_OnWet;
     std::shared_ptr<std::function<void()>>  m_OnChange;

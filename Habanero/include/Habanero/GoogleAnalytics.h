@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -53,7 +53,7 @@ private:
     void MarkDirty();
     
     std::atomic_flag            m_SendingScheduled{ false };
-    spinlock                    m_MessagesLock;
+    nc::spinlock                m_MessagesLock;
     std::vector<std::string>    m_Messages;
     
     const std::string           m_TrackingID;

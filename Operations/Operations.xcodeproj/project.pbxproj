@@ -27,7 +27,6 @@
 		CF460006255FD0600095FC73 /* Linkage.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9871F0F22850000B3EE /* Linkage.mm */; };
 		CF460007255FD0600095FC73 /* CreateSymlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9B31F10890B0000B3EE /* CreateSymlinkDialog.mm */; };
 		CF46000C255FD0640095FC73 /* FilenameTextControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C101F22A2F00F00A5359D /* FilenameTextControl.mm */; };
-		CF46FF40255FCC230095FC73 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95501F4C17CE0035E606 /* Localizable.strings */; };
 		CF46FF45255FCC350095FC73 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8DF1EFCD9A50000B3EE /* Media.xcassets */; };
 		CF46FF4A255FCC390095FC73 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8FD1F04AF2B0000B3EE /* Localizable.stringsdict */; };
 		CF46FF4F255FCC4C0095FC73 /* PoolViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8CB1EFA05DA0000B3EE /* PoolViewController.xib */; };
@@ -89,6 +88,8 @@
 		CF46FFFD255FD0590095FC73 /* DirectoryCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */; };
 		CF46FFFE255FD0590095FC73 /* DirectoryCreationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.cpp */; };
 		CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */; };
+		CFB7BD142606AC6700E2EA4D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95501F4C17CE0035E606 /* Localizable.strings */; };
+		CFB7BD1A2606ACC500E2EA4D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95501F4C17CE0035E606 /* Localizable.strings */; };
 		CFE08AFE23D3719B007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 /* End PBXBuildFile section */
 
@@ -743,6 +744,7 @@
 				CF46FFA9255FCF690095FC73 /* Headers */,
 				CF46FFAA255FCF690095FC73 /* Sources */,
 				CF46FFAB255FCF690095FC73 /* Frameworks */,
+				CFB7BD192606ACBD00E2EA4D /* Resources */,
 			);
 			buildRules = (
 			);
@@ -810,7 +812,6 @@
 				CF46FF59255FCC540095FC73 /* GenericErrorDialog.xib in Resources */,
 				CF46FF9A255FCCAF0095FC73 /* CreateSymlinkDialog.xib in Resources */,
 				CF46FF8B255FCCA20095FC73 /* DirectoryCreationDialog.xib in Resources */,
-				CF46FF40255FCC230095FC73 /* Localizable.strings in Resources */,
 				CF46FF5E255FCC590095FC73 /* BriefOperationViewController.xib in Resources */,
 				CF46FF95255FCCAD0095FC73 /* CreateHardlinkDialog.xib in Resources */,
 				CF46FF77255FCC890095FC73 /* CopyingDialog.xib in Resources */,
@@ -818,8 +819,17 @@
 				CF46FF68255FCC770095FC73 /* BatchRenamingDialog.xib in Resources */,
 				CF46FF63255FCC6B0095FC73 /* AttrsChangingDialog.xib in Resources */,
 				CF46FF7C255FCC8C0095FC73 /* CopyingDialogDisclosedView.xib in Resources */,
+				CFB7BD142606AC6700E2EA4D /* Localizable.strings in Resources */,
 				CF46FF54255FCC500095FC73 /* HaltReasonDialog.xib in Resources */,
 				CF46FF4A255FCC390095FC73 /* Localizable.stringsdict in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFB7BD192606ACBD00E2EA4D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFB7BD1A2606ACC500E2EA4D /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1066,7 +1076,7 @@
 			);
 			name = Localizable.strings;
 			path = resources;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXVariantGroup section */
 

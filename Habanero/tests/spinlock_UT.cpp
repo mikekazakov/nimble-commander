@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "spinlock.h"
 #include "UnitTests_main.h"
 #include <string>
@@ -10,7 +10,7 @@
 TEST_CASE(PREFIX"non-contested passage")
 {    
     bool flag = false;
-    spinlock lock;
+    nc::spinlock lock;
     {
         auto guard = std::lock_guard{lock};
         flag = true;
@@ -21,7 +21,7 @@ TEST_CASE(PREFIX"non-contested passage")
 TEST_CASE(PREFIX"contested passage")
 {    
     std::atomic_int value = 0;
-    spinlock lock;
+    nc::spinlock lock;
     
     auto th1 = std::thread{ [&]{
         auto guard = std::lock_guard{lock};

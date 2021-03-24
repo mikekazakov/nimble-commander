@@ -30,15 +30,17 @@ void FollowSymlink::Perform(PanelController *_target, [[maybe_unused]] id _sende
     const auto item = _target.view.item;
     if( !item )
         return;
-    
+
     if( item.IsSymlink() == false || item.HasSymlink() == false )
         return;
-    
-    const auto symlink_target = std::filesystem::path(item.Directory()) /
-                 std::filesystem::path(item.Symlink()).lexically_normal();
+
+    // poor man's symlink resolution:
+    const auto symlink_target =
+        (std::filesystem::path(item.Directory()) / std::filesystem::path(item.Symlink()))
+            .lexically_normal();
     if( symlink_target.empty() )
         return;
-    
+
     auto request = std::make_shared<DirectoryChangeRequest>();
     request->VFS = item.Host();
     request->LoadPreviousViewState = false;
@@ -46,7 +48,7 @@ void FollowSymlink::Perform(PanelController *_target, [[maybe_unused]] id _sende
     request->InitiatedByUser = true;
     request->RequestedDirectory = symlink_target.parent_path();
     request->RequestFocusedEntry = symlink_target.filename();
-    [_target GoToDirWithContext:request];    
+    [_target GoToDirWithContext:request];
 }
 
 } // namespace nc::panel::actions

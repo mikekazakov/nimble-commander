@@ -1,5 +1,6 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingScheme.h"
+#include <Utility/StringExtras.h>
 
 namespace nc::ops {
 
@@ -179,6 +180,24 @@ bool BatchRenamingScheme::ParsePlaceholder(NSString *_ph)
                 position += v->second;
                 continue;
             }
+            case 'P': {
+                position++;
+                auto v = ParsePlaceholder_TextExtraction(_ph, position);
+                if( !v )
+                    break;
+                AddInsertParent(v->first);
+                position += v->second;
+                continue;
+            }
+            case 'G': {
+                position++;
+                auto v = ParsePlaceholder_TextExtraction(_ph, position);
+                if( !v )
+                    break;
+                AddInsertGrandparent(v->first);
+                position += v->second;
+                continue;
+            }
             case 'C': {
                 position++;
                 auto v = ParsePlaceholder_Counter(_ph,
@@ -282,14 +301,14 @@ EatIntWithPreffix(NSString *s, const unsigned long pos, char prefix)
 //[N] old file name, WITHOUT extension
 //[N1] The first character of the original name
 //[N2-5] Characters 2 to 5 from the old name (totals to 4 characters). Double byte characters (e.g.
-//Chinese, Japanese) are counted as 1 character! The first letter is accessed with '1'. [N2,5] 5
-//characters starting at character 2 [N2-] All characters starting at character 2 [N02-9] Characters
-//2-9, fill from left with zeroes if name shorter than requested (8 in this example): "abc" ->
-//"000000bc" [N 2-9] Characters 2-9, fill from left with spaces if name shorter than requested (8 in
-//this example): "abc" -> "      bc" [N-8,5] 5 characters starting at the 8-last character (counted
-//from the end of the name) [N-8-5] Characters from the 8th-last to the 5th-last character [N-5-]
-//Characters from the 5th-last character to the end of the name [N2--5] Characters from the 2nd to
-//the 5th-last character
+// Chinese, Japanese) are counted as 1 character! The first letter is accessed with '1'. [N2,5] 5
+// characters starting at character 2 [N2-] All characters starting at character 2 [N02-9]
+// Characters 2-9, fill from left with zeroes if name shorter than requested (8 in this example):
+// "abc" -> "000000bc" [N 2-9] Characters 2-9, fill from left with spaces if name shorter than
+//requested (8 in this example): "abc" -> "      bc" [N-8,5] 5 characters starting at the 8-last
+// character (counted from the end of the name) [N-8-5] Characters from the 8th-last to the 5th-last
+// character [N-5-] Characters from the 5th-last character to the end of the name [N2--5] Characters
+// from the 2nd to the 5th-last character
 std::optional<std::pair<BatchRenamingScheme::TextExtraction, int>>
 BatchRenamingScheme::ParsePlaceholder_TextExtraction(NSString *_ph, unsigned long _pos)
 {
@@ -447,16 +466,16 @@ BatchRenamingScheme::ParsePlaceholder_TextExtraction(NSString *_ph, unsigned lon
 // maximum possible construction: [C10+1/15:5]
 //[C] Paste counter, as defined in Define counter field
 //[C10+5:3] Paste counter, define counter settings directly. In this example, start at 10, step by
-//5, use 3 digits width. Partial definitions like [C10] or [C+5] or [C:3] are also accepted. Hint:
+// 5, use 3 digits width. Partial definitions like [C10] or [C+5] or [C:3] are also accepted. Hint:
 // The fields in Define counter will be ignored if you specify options directly in the [C] field.
 //[C+1/100] New: Fractional number: Paste counter, but increase it only every n files (in this
-//example: every 100 files). Can be used to move a specific number of files to a subdirectory,e.g.
+// example: every 100 files). Can be used to move a specific number of files to a subdirectory,e.g.
 // [C+1/100]\[N]
 
 // not yet:
 //[Caa+1] Paste counter, define counter settings directly. In this example, start at aa, step 1
-//letter, use 2 digits (defined by 'aa' width) [C:a] Paste counter, determine digits width
-//automatically, depending on the number of files. Combinations like [C10+10:a] are also allowed.
+// letter, use 2 digits (defined by 'aa' width) [C:a] Paste counter, determine digits width
+// automatically, depending on the number of files. Combinations like [C10+10:a] are also allowed.
 std::optional<std::pair<BatchRenamingScheme::Counter, int>>
 BatchRenamingScheme::ParsePlaceholder_Counter(NSString *_ph,
                                               unsigned long _pos,
@@ -779,6 +798,42 @@ NSString *BatchRenamingScheme::DoSearchReplace(const ReplaceOptions &_opts, NSSt
     return result;
 }
 
+void BatchRenamingScheme::AddStaticText(NSString *s)
+{
+    m_Steps.emplace_back(ActionType::Static, m_ActionsStatic.size());
+    m_ActionsStatic.emplace_back(s);
+}
+
+void BatchRenamingScheme::AddInsertName(const TextExtraction &t)
+{
+    m_Steps.emplace_back(ActionType::Name, m_ActionsTextExtraction.size());
+    m_ActionsTextExtraction.emplace_back(t);
+}
+
+void BatchRenamingScheme::AddInsertExtension(const TextExtraction &t)
+{
+    m_Steps.emplace_back(ActionType::Extension, m_ActionsTextExtraction.size());
+    m_ActionsTextExtraction.emplace_back(t);
+}
+
+void BatchRenamingScheme::AddInsertCounter(const Counter &t)
+{
+    m_Steps.emplace_back(ActionType::Counter, m_ActionsCounter.size());
+    m_ActionsCounter.emplace_back(t);
+}
+
+void BatchRenamingScheme::AddInsertParent(const TextExtraction &t)
+{
+    m_Steps.emplace_back(ActionType::ParentName, m_ActionsTextExtraction.size());
+    m_ActionsTextExtraction.emplace_back(t);
+}
+
+void BatchRenamingScheme::AddInsertGrandparent(const TextExtraction &t)
+{
+    m_Steps.emplace_back(ActionType::GrandparentName, m_ActionsTextExtraction.size());
+    m_ActionsTextExtraction.emplace_back(t);
+}
+
 NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
 {
     NSMutableString *str = [[NSMutableString alloc] initWithCapacity:64];
@@ -792,10 +847,16 @@ NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
                 next = m_ActionsStatic[step.index];
                 break;
             case ActionType::Name:
-                next = ExtractText(_fi.name, m_ActionsName[step.index]);
+                next = ExtractText(_fi.name, m_ActionsTextExtraction[step.index]);
                 break;
             case ActionType::Extension:
-                next = ExtractText(_fi.extension, m_ActionsExtension[step.index]);
+                next = ExtractText(_fi.extension, m_ActionsTextExtraction[step.index]);
+                break;
+            case ActionType::ParentName:
+                next = ExtractText(_fi.ParentName(), m_ActionsTextExtraction[step.index]);
+                break;
+            case ActionType::GrandparentName:
+                next = ExtractText(_fi.GrandparentName(), m_ActionsTextExtraction[step.index]);
                 break;
             case ActionType::Counter:
                 next = FormatCounter(m_ActionsCounter[step.index], _number);
@@ -861,6 +922,46 @@ NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
     NSString *after_case_trans =
         StringByTransform(after_replacing, m_CaseTransform, m_CaseTransformWithExt);
     return after_case_trans;
+}
+
+BatchRenamingScheme::FileInfo::FileInfo(VFSListingItem _item)
+{
+    item = _item;
+    mod_time = _item.MTime();
+    localtime_r(&mod_time, &mod_time_tm);
+    filename = _item.FilenameNS();
+
+    if( _item.HasExtension() ) {
+        name = [NSString stringWithUTF8StdString:_item.FilenameWithoutExt()];
+        extension = [NSString stringWithUTF8String:_item.Extension()];
+    }
+    else {
+        name = filename;
+        extension = @"";
+    }
+}
+
+NSString *BatchRenamingScheme::FileInfo::ParentName() const
+{
+    std::filesystem::path parent_path(item.Directory());
+    if( parent_path.filename().empty() ) { // play around trailing slash
+        if( parent_path.has_parent_path() == false )
+            return @""; // wtf?
+        parent_path = parent_path.parent_path();
+    }
+    return [NSString stringWithUTF8StdString:parent_path.filename().native()];
+}
+
+NSString *BatchRenamingScheme::FileInfo::GrandparentName() const
+{
+    std::filesystem::path parent_path(item.Directory());
+    if( parent_path.filename().empty() ) { // play around trailing slash
+        if( parent_path.has_parent_path() == false )
+            return @""; // wtf?
+        parent_path = parent_path.parent_path();
+    }
+    parent_path = parent_path.parent_path();    
+    return [NSString stringWithUTF8StdString:parent_path.filename().native()];
 }
 
 }

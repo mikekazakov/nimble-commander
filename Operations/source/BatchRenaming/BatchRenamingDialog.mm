@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 #include "BatchRenamingDialog.h"
@@ -105,28 +105,9 @@ static auto g_MyPrivateTableViewDataType =
         if(_items.empty())
             throw std::logic_error("empty files list");
         
-        for( auto &e: _items ) {
-            
-            BatchRenamingScheme::FileInfo fi;
-            fi.item = e;
-            fi.mod_time = e.MTime();
-            localtime_r(&fi.mod_time, &fi.mod_time_tm);
-            fi.filename = e.FilenameNS();
-            
-            static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
-            auto r = [fi.filename rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
-            bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != fi.filename.length - 1);
-            if(has_ext) {
-                fi.name = [fi.filename substringWithRange:NSMakeRange(0, r.location)];
-                fi.extension = [fi.filename substringWithRange:NSMakeRange( r.location + 1, fi.filename.length - r.location - 1)];
-            }
-            else {
-                fi.name = fi.filename;
-                fi.extension = @"";
-            }
-            
-            m_FileInfos.emplace_back( std::move(fi) );
-            m_ResultSource.emplace_back( e.Directory() + e.Filename() );
+        for( auto &entry: _items ) {
+            m_FileInfos.emplace_back( BatchRenamingScheme::FileInfo(entry) );
+            m_ResultSource.emplace_back( entry.Directory() + entry.Filename() );
         }
         
         

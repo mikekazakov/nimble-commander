@@ -46,8 +46,12 @@ public:
     };
 
     struct FileInfo {
-        VFSListingItem
-            item; // this dependency looks very bad and redundant, it must be removed later
+        FileInfo() = default;
+        FileInfo(VFSListingItem _item);
+        NSString *ParentName() const;
+        NSString *GrandparentName() const;
+        
+        VFSListingItem item;
         NSString *filename;  // filename.txt
         NSString *name;      // filename
         NSString *extension; // txt
@@ -65,9 +69,11 @@ public:
 
     static std::optional<std::vector<MaskDecomposition>>
     DecomposeMaskIntoPlaceholders(NSString *_mask);
+    
     static std::optional<std::pair<TextExtraction, int>> ParsePlaceholder_TextExtraction(
         NSString *_ph,
         unsigned long _pos); // action and number of chars eaten if no errors
+    
     static std::optional<std::pair<Counter, int>> ParsePlaceholder_Counter(
         NSString *_ph,
         unsigned long _pos,
@@ -75,17 +81,22 @@ public:
         long _default_step,
         int _default_width,
         unsigned _default_stripe); // action and number of chars eaten if no errors
+    
     static NSString *ExtractText(NSString *_from, const TextExtraction &_te);
+    
     static NSString *FormatCounter(const Counter &_c, int _file_number);
 
     bool BuildActionsScript(NSString *_mask);
+    
     void SetReplacingOptions(NSString *_search_for,
                              NSString *_replace_with,
                              bool _case_sensitive,
                              bool _only_first,
                              bool _search_in_ext,
                              bool _use_regexp);
+    
     void SetCaseTransform(CaseTransform _ct, bool _apply_to_ext);
+    
     void SetDefaultCounter(long _start, long _step, unsigned _stripe, unsigned _width);
 
     NSString *Rename(const FileInfo &_fi, int _number) const;
@@ -94,9 +105,11 @@ private:
     enum class ActionType : short
     {
         Static,
-        Filename,
-        Name,
-        Extension,
+        Filename, // full file name
+        Name, // name without extension and dot
+        Extension, // just extension
+        ParentName, // name of a parent dir, i.e. /foo/bar/baz.txt -> bar
+        GrandparentName, // name of a grandparent dir, i.e. /foo/bar/baz.txt -> foo
         OpenBracket,
         CloseBracket,
         UnchangedCase,
@@ -121,42 +134,7 @@ private:
         Step(ActionType t, short i) : type(t), index(i) {}
         Step(ActionType t) : type(t), index(-1) {}
     };
-
-    void AddStaticText(NSString *s)
-    {
-        m_Steps.emplace_back(ActionType::Static, m_ActionsStatic.size());
-        m_ActionsStatic.emplace_back(s);
-    }
-
-    void AddInsertName(const TextExtraction &t)
-    {
-        m_Steps.emplace_back(ActionType::Name, m_ActionsName.size());
-        m_ActionsName.emplace_back(t);
-    }
-
-    void AddInsertExtension(const TextExtraction &t)
-    {
-        m_Steps.emplace_back(ActionType::Extension, m_ActionsExtension.size());
-        m_ActionsExtension.emplace_back(t);
-    }
-
-    void AddInsertCounter(const Counter &t)
-    {
-        m_Steps.emplace_back(ActionType::Counter, m_ActionsCounter.size());
-        m_ActionsCounter.emplace_back(t);
-    }
-
-    struct ReplaceOptions;
-    static NSString *DoSearchReplace(const ReplaceOptions &_opts, NSString *_source);
-
-    bool ParsePlaceholder(NSString *_ph);
-
-    std::vector<Step> m_Steps;
-    std::vector<NSString *> m_ActionsStatic;
-    std::vector<TextExtraction> m_ActionsName;
-    std::vector<TextExtraction> m_ActionsExtension;
-    std::vector<Counter> m_ActionsCounter;
-
+    
     struct ReplaceOptions {
         NSString *search_for = @"";
         NSString *replace_with = @"";
@@ -164,17 +142,32 @@ private:
         bool only_first = false;
         bool search_in_ext = true;
         bool use_regexp = false;
-    } m_SearchReplace;
-
-    CaseTransform m_CaseTransform = CaseTransform::Unchanged;
-    bool m_CaseTransformWithExt = false;
-
-    struct {
+    };
+    
+    struct DefaultCounter {
         long start = 1;
         long step = 1;
         unsigned stripe = 1;
         unsigned width = 1;
-    } m_DefaultCounter;
+    };
+
+    void AddStaticText(NSString *s);
+    void AddInsertName(const TextExtraction &t);
+    void AddInsertExtension(const TextExtraction &t);
+    void AddInsertParent(const TextExtraction &t);
+    void AddInsertGrandparent(const TextExtraction &t);
+    void AddInsertCounter(const Counter &t);
+    bool ParsePlaceholder(NSString *_ph);
+    static NSString *DoSearchReplace(const ReplaceOptions &_opts, NSString *_source);
+
+    std::vector<Step> m_Steps;
+    std::vector<NSString *> m_ActionsStatic;
+    std::vector<TextExtraction> m_ActionsTextExtraction;
+    std::vector<Counter> m_ActionsCounter;
+    ReplaceOptions m_SearchReplace;
+    CaseTransform m_CaseTransform = CaseTransform::Unchanged;
+    bool m_CaseTransformWithExt = false;
+    DefaultCounter m_DefaultCounter;
 };
 
 inline BatchRenamingScheme::Range::Range() : location(0), length(0)

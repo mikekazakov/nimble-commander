@@ -1,12 +1,15 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
-
+#include "TestEnv.h"
 #include "../source/BatchRenaming/BatchRenamingScheme.h"
 
 #define PREFIX "Operations::BatchRenaming "
 
 using namespace nc::ops;
+
+static VFSListingItem GetRegListingItem(const std::string &_filename,
+                                        const std::filesystem::path &_at);
 
 // [N] old file name, WITHOUT extension
 // [N1] The first character of the original name
@@ -53,7 +56,7 @@ TEST_CASE(PREFIX "Name placeholders")
             REQUIRE(v->second == 3);
             auto a = v->first;
             REQUIRE(a.direct_range);
-            REQUIRE(a.direct_range->location == 363 ); 
+            REQUIRE(a.direct_range->location == 363);
             REQUIRE(a.direct_range->length == 1);
         }
     }
@@ -66,7 +69,7 @@ TEST_CASE(PREFIX "Name placeholders")
             REQUIRE(v->second == 7);
             auto a = v->first;
             REQUIRE(a.direct_range);
-            REQUIRE(a.direct_range->location == 363 );
+            REQUIRE(a.direct_range->location == 363);
             REQUIRE(a.direct_range->length == 2);
         }
     }
@@ -118,7 +121,7 @@ TEST_CASE(PREFIX "Name placeholders")
         if( v ) {
             REQUIRE(v->second == 5);
             auto a = v->first;
-            REQUIRE(!a.direct_range); 
+            REQUIRE(!a.direct_range);
             REQUIRE(a.reverse_range);
             REQUIRE(a.reverse_range->location == 9);
             REQUIRE(a.reverse_range->length == 3);
@@ -132,9 +135,9 @@ TEST_CASE(PREFIX "Name placeholders")
         if( v ) {
             REQUIRE(v->second == 6);
             auto a = v->first;
-            REQUIRE(!a.direct_range); 
+            REQUIRE(!a.direct_range);
             REQUIRE(!a.reverse_range);
-            REQUIRE(a.from_first == 11 );
+            REQUIRE(a.from_first == 11);
             REQUIRE(a.to_last == 14);
         }
     }
@@ -347,4 +350,59 @@ TEST_CASE(PREFIX "Text extraction")
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         REQUIRE([r isEqualToString:@""]);
     }
+}
+
+TEST_CASE(PREFIX "Renaming - simple cases")
+{
+    TempTestDir tmp_dir;
+    auto item_dir = tmp_dir.directory / "grandparent_dir" / "parent_dir";
+    REQUIRE( std::filesystem::create_directories(item_dir) );
+    const auto item = GetRegListingItem("filename.txt", item_dir);
+    struct Case {
+        NSString *pattern;
+        bool parsed;
+        NSString *expected;
+    };
+    const Case test_cases[] = {
+        {@"", false, @"" },
+        {@"[A]", true, @"filename.txt" },
+        {@"[N]", true, @"filename" },
+        {@"[N2-]", true, @"ilename" },
+        {@"[N2-3]", true, @"il" },
+        {@"[N-4-]", true, @"name" },
+        {@"[N5]", true, @"n" },
+        {@"[N-5,4]", true, @"enam" },
+        {@"[E]", true, @"txt" },
+        {@"[E-2-]", true, @"xt" },
+        {@"[P]", true, @"parent_dir" },
+        {@"[P1-6]", true, @"parent" },
+        {@"[G]", true, @"grandparent_dir" },
+        {@"[G1-5]", true, @"grand" },
+    };
+    
+    const BatchRenamingScheme::FileInfo file_info(item);
+    for( const auto &test_case: test_cases ) {
+        INFO(test_case.pattern.UTF8String);
+        BatchRenamingScheme scheme;
+        const bool parsed = scheme.BuildActionsScript(test_case.pattern);
+        REQUIRE(parsed == test_case.parsed);
+        if( parsed ) {
+            NSString *renamed = scheme.Rename(file_info, 0);
+            INFO(test_case.expected.UTF8String);
+            INFO(renamed.UTF8String);
+            REQUIRE( [renamed isEqualToString:test_case.expected] );
+        }
+    }
+}
+
+static VFSListingItem GetRegListingItem(const std::string &_filename,
+                                        const std::filesystem::path &_at)
+{
+    REQUIRE(close(creat((_at / _filename).c_str(), 0755)) == 0);
+    std::vector<VFSListingItem> items;
+    const int vfs_error =
+        TestEnv().vfs_native->FetchFlexibleListingItems(_at, {_filename}, 0, items, nullptr);
+    REQUIRE(vfs_error == VFSError::Ok);
+    REQUIRE(items.size() == 1);
+    return items[0];
 }

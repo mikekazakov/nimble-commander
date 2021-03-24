@@ -31,6 +31,7 @@ ConfigUT \
 UtilityUT \
 VFSIconUnitTests \
 VFSUT \
+OperationsUT \
 ViewerUT \
 TermUT \
 PanelUT \

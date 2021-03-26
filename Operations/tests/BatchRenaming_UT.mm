@@ -18,11 +18,13 @@ static VFSListingItem GetRegListingItem(const std::string &_filename,
 // [N2,5] 5 characters starting at character 2
 // [N2-] All characters starting at character 2
 // [N02-9] Characters 2-9, fill from left with zeroes if name shorter than requested (8 in this
-// example): "abc" -> "000000bc" [N 2-9] Characters 2-9, fill from left with spaces if name shorter
-// than requested (8 in this example): "abc" -> "      bc" [N-8,5] 5 characters starting at the
-// 8-last character (counted from the end of the name) [N-8-5] Characters from the 8th-last to the
-// 5th-last character [N2--5] Characters from the 2nd to the 5th-last character [N-5-] Characters
-// from the 5th-last character to the end of the name
+// example): "abc" -> "000000bc"
+// [N 2-9] Characters 2-9, fill from left with spaces if name shorter
+// than requested (8 in this example): "abc" -> "      bc"
+// [N-8,5] 5 characters starting at the 8-last character (counted from the end of the name)
+// [N-8-5] Characters from the 8th-last to the 5th-last character
+// [N2--5] Characters from the 2nd to the 5th-last character
+// [N-5-] Characters from the 5th-last character to the end of the name
 TEST_CASE(PREFIX "Name placeholders")
 { // [N.....
     {
@@ -139,6 +141,21 @@ TEST_CASE(PREFIX "Name placeholders")
             REQUIRE(!a.reverse_range);
             REQUIRE(a.from_first == 11);
             REQUIRE(a.to_last == 14);
+        }
+    }
+    
+    {
+        const auto v =
+            BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"02,8", 0); // [N02,8]
+        REQUIRE(v);
+        if( v ) {
+            REQUIRE(v->second == 4);
+            auto a = v->first;
+            REQUIRE(a.direct_range);
+            REQUIRE(a.direct_range->location == 1);
+            REQUIRE(a.direct_range->length == 8);
+            REQUIRE(a.zero_flag == true);
+            REQUIRE(a.space_flag == false);
         }
     }
 }
@@ -369,6 +386,8 @@ TEST_CASE(PREFIX "Renaming - simple cases")
         {@"[A]", true, @"filename.txt" },
         {@"[A-5-2]", true, @"e.tx" },
         {@"[A-5,100]", true, @"e.txt" },
+        {@"[A05-14]", true, @"00name.txt" },
+        {@"[A 5-14]", true, @"  name.txt" },
         // N - name
         {@"[N]", true, @"filename" },
         {@"[N2-]", true, @"ilename" },

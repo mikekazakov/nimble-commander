@@ -8,11 +8,91 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include "../Internal.h"
+#include <robin_hood.h>
 
 using namespace nc::ops;
 
 static auto g_MyPrivateTableViewDataType =
     @"com.magnumbytes.nc.ops.BatchRenameSheetControllerPrivateTableViewDataType";
+
+[[clang::no_destroy]] static const robin_hood::unordered_map<long, NSString *> g_InsertSnippets = {
+    {101, @"[N]"},        //
+    {102, @"[N1]"},       //
+    {103, @"[N2-5]"},     //
+    {104, @"[N2,5]"},     //
+    {105, @"[N2-]"},      //
+    {106, @"[N02-9]"},    //
+    {107, @"[N 2-9]"},    //
+    {108, @"[N-8,5]"},    //
+    {109, @"[N-8-5]"},    //
+    {110, @"[N2--5]"},    //
+    {111, @"[N-5-]"},     //
+    {201, @"[E]"},        //
+    {202, @"[E1]"},       //
+    {203, @"[E2-5]"},     //
+    {204, @"[E2,5]"},     //
+    {205, @"[E2-]"},      //
+    {206, @"[E02-9]"},    //
+    {207, @"[E 2-9]"},    //
+    {208, @"[E-8,5]"},    //
+    {209, @"[E-8-5]"},    //
+    {210, @"[E2--5]"},    //
+    {211, @"[E-5-]"},     //
+    {301, @"[d]"},        //
+    {302, @"[Y]"},        //
+    {303, @"[y]"},        //
+    {304, @"[M]"},        //
+    {305, @"[D]"},        //
+    {306, @"[t]"},        //
+    {307, @"[h]"},        //
+    {308, @"[m]"},        //
+    {309, @"[s]"},        //
+    {401, @"[U]"},        //
+    {402, @"[L]"},        //
+    {403, @"[F]"},        //
+    {404, @"[n]"},        //
+    {501, @"[C]"},        //
+    {502, @"[C10]"},      //
+    {503, @"[C10+2]"},    //
+    {504, @"[C10+2/1]"},  //
+    {505, @"[C10+2/1:5"}, //
+    {601, @"[A]"},        //
+    {602, @"[[]"},        //
+    {603, @"[]]"},        //
+    {701, @"[A]"},        //
+    {702, @"[A1]"},       //
+    {703, @"[A2-5]"},     //
+    {704, @"[A2,5]"},     //
+    {705, @"[A2-]"},      //
+    {706, @"[A02-9]"},    //
+    {707, @"[A 2-9]"},    //
+    {708, @"[A-8,5]"},    //
+    {709, @"[A-8-5]"},    //
+    {710, @"[A2--5]"},    //
+    {711, @"[A-5-]"},     //
+    {801, @"[P]"},        //
+    {802, @"[P1]"},       //
+    {803, @"[P2-5]"},     //
+    {804, @"[P2,5]"},     //
+    {805, @"[P2-]"},      //
+    {806, @"[P02-9]"},    //
+    {807, @"[P 2-9]"},    //
+    {808, @"[P-8,5]"},    //
+    {809, @"[P-8-5]"},    //
+    {810, @"[P2--5]"},    //
+    {811, @"[P-5-]"},     //
+    {901, @"[G]"},        //
+    {902, @"[G1]"},       //
+    {903, @"[G2-5]"},     //
+    {904, @"[G2,5]"},     //
+    {905, @"[G2-]"},      //
+    {906, @"[G02-9]"},    //
+    {907, @"[G 2-9]"},    //
+    {908, @"[G-8,5]"},    //
+    {909, @"[G-8-5]"},    //
+    {910, @"[G2--5]"},    //
+    {911, @"[G-5-]"},     //
+};
 
 @interface BatchRenameSheetControllerNilNumberValueTransformer : NSValueTransformer
 @end
@@ -356,94 +436,10 @@ static auto g_MyPrivateTableViewDataType =
 
 - (IBAction)OnInsertPlaceholderFromMenu:(id)sender
 {
-    // turn this into a hash map, FFS!
-    if(auto item = objc_cast<NSMenuItem>(sender))
-        switch (item.tag) {
-            case 101: [self InsertStringIntoMask:@"[N]"];       break;
-            case 102: [self InsertStringIntoMask:@"[N1]"];      break;
-            case 103: [self InsertStringIntoMask:@"[N2-5]"];    break;
-            case 104: [self InsertStringIntoMask:@"[N2,5]"];    break;
-            case 105: [self InsertStringIntoMask:@"[N2-]"];     break;
-            case 106: [self InsertStringIntoMask:@"[N02-9]"];   break;
-            case 107: [self InsertStringIntoMask:@"[N 2-9]"];   break;
-            case 108: [self InsertStringIntoMask:@"[N-8,5]"];   break;
-            case 109: [self InsertStringIntoMask:@"[N-8-5]"];   break;
-            case 110: [self InsertStringIntoMask:@"[N2--5]"];   break;
-            case 111: [self InsertStringIntoMask:@"[N-5-]"];    break;
-            // ----
-            case 201: [self InsertStringIntoMask:@"[E]"];       break;
-            case 202: [self InsertStringIntoMask:@"[E1]"];      break;
-            case 203: [self InsertStringIntoMask:@"[E2-5]"];    break;
-            case 204: [self InsertStringIntoMask:@"[E2,5]"];    break;
-            case 205: [self InsertStringIntoMask:@"[E2-]"];     break;
-            case 206: [self InsertStringIntoMask:@"[E02-9]"];   break;
-            case 207: [self InsertStringIntoMask:@"[E 2-9]"];   break;
-            case 208: [self InsertStringIntoMask:@"[E-8,5]"];   break;
-            case 209: [self InsertStringIntoMask:@"[E-8-5]"];   break;
-            case 210: [self InsertStringIntoMask:@"[E2--5]"];   break;
-            case 211: [self InsertStringIntoMask:@"[E-5-]"];    break;
-            // ----
-            case 301: [self InsertStringIntoMask:@"[d]"];       break;
-            case 302: [self InsertStringIntoMask:@"[Y]"];       break;
-            case 303: [self InsertStringIntoMask:@"[y]"];       break;
-            case 304: [self InsertStringIntoMask:@"[M]"];       break;
-            case 305: [self InsertStringIntoMask:@"[D]"];       break;
-            case 306: [self InsertStringIntoMask:@"[t]"];       break;
-            case 307: [self InsertStringIntoMask:@"[h]"];       break;
-            case 308: [self InsertStringIntoMask:@"[m]"];       break;
-            case 309: [self InsertStringIntoMask:@"[s]"];       break;
-            // ----
-            case 401: [self InsertStringIntoMask:@"[U]"];       break;
-            case 402: [self InsertStringIntoMask:@"[L]"];       break;
-            case 403: [self InsertStringIntoMask:@"[F]"];       break;
-            case 404: [self InsertStringIntoMask:@"[n]"];       break;
-            // ----
-            case 501: [self InsertStringIntoMask:@"[C]"];       break;
-            case 502: [self InsertStringIntoMask:@"[C10]"];     break;
-            case 503: [self InsertStringIntoMask:@"[C10+2]"];   break;
-            case 504: [self InsertStringIntoMask:@"[C10+2/1]"]; break;
-            case 505:[self InsertStringIntoMask:@"[C10+2/1:5]"];break;
-            // ----
-            case 601: [self InsertStringIntoMask:@"[A]"];       break;
-            case 602: [self InsertStringIntoMask:@"[[]"];       break;
-            case 603: [self InsertStringIntoMask:@"[]]"];       break;
-            // ----
-            case 701: [self InsertStringIntoMask:@"[A]"];       break;
-            case 702: [self InsertStringIntoMask:@"[A1]"];      break;
-            case 703: [self InsertStringIntoMask:@"[A2-5]"];    break;
-            case 704: [self InsertStringIntoMask:@"[A2,5]"];    break;
-            case 705: [self InsertStringIntoMask:@"[A2-]"];     break;
-            case 706: [self InsertStringIntoMask:@"[A02-9]"];   break;
-            case 707: [self InsertStringIntoMask:@"[A 2-9]"];   break;
-            case 708: [self InsertStringIntoMask:@"[A-8,5]"];   break;
-            case 709: [self InsertStringIntoMask:@"[A-8-5]"];   break;
-            case 710: [self InsertStringIntoMask:@"[A2--5]"];   break;
-            case 711: [self InsertStringIntoMask:@"[A-5-]"];    break;
-            // ----
-            case 801: [self InsertStringIntoMask:@"[P]"];       break;
-            case 802: [self InsertStringIntoMask:@"[P1]"];      break;
-            case 803: [self InsertStringIntoMask:@"[P2-5]"];    break;
-            case 804: [self InsertStringIntoMask:@"[P2,5]"];    break;
-            case 805: [self InsertStringIntoMask:@"[P2-]"];     break;
-            case 806: [self InsertStringIntoMask:@"[P02-9]"];   break;
-            case 807: [self InsertStringIntoMask:@"[P 2-9]"];   break;
-            case 808: [self InsertStringIntoMask:@"[P-8,5]"];   break;
-            case 809: [self InsertStringIntoMask:@"[P-8-5]"];   break;
-            case 810: [self InsertStringIntoMask:@"[P2--5]"];   break;
-            case 811: [self InsertStringIntoMask:@"[P-5-]"];    break;
-            // ----
-            case 901: [self InsertStringIntoMask:@"[G]"];       break;
-            case 902: [self InsertStringIntoMask:@"[G1]"];      break;
-            case 903: [self InsertStringIntoMask:@"[G2-5]"];    break;
-            case 904: [self InsertStringIntoMask:@"[G2,5]"];    break;
-            case 905: [self InsertStringIntoMask:@"[G2-]"];     break;
-            case 906: [self InsertStringIntoMask:@"[G02-9]"];   break;
-            case 907: [self InsertStringIntoMask:@"[G 2-9]"];   break;
-            case 908: [self InsertStringIntoMask:@"[G-8,5]"];   break;
-            case 909: [self InsertStringIntoMask:@"[G-8-5]"];   break;
-            case 910: [self InsertStringIntoMask:@"[G2--5]"];   break;
-            case 911: [self InsertStringIntoMask:@"[G-5-]"];    break;
-        }
+    if( auto item = objc_cast<NSMenuItem>(sender) ) {
+        if( g_InsertSnippets.contains(item.tag) )
+            [self InsertStringIntoMask:g_InsertSnippets.at(item.tag)];
+    }
 }
 
 - (IBAction)OnSearchForChanged:(id)[[maybe_unused]]_sender

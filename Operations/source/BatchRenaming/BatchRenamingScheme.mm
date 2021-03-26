@@ -122,10 +122,6 @@ bool BatchRenamingScheme::ParsePlaceholder(NSString *_ph)
                 position++;
                 m_Steps.emplace_back(ActionType::UnchangedCase);
                 continue;
-            case 'A':
-                position++;
-                m_Steps.emplace_back(ActionType::Filename);
-                continue;
             case 's':
                 position++;
                 m_Steps.emplace_back(ActionType::TimeSeconds);
@@ -177,6 +173,15 @@ bool BatchRenamingScheme::ParsePlaceholder(NSString *_ph)
                 if( !v )
                     break;
                 AddInsertExtension(v->first);
+                position += v->second;
+                continue;
+            }
+            case 'A': {
+                position++;
+                auto v = ParsePlaceholder_TextExtraction(_ph, position);
+                if( !v )
+                    break;
+                AddInsertFilename(v->first);
                 position += v->second;
                 continue;
             }
@@ -816,6 +821,12 @@ void BatchRenamingScheme::AddInsertExtension(const TextExtraction &t)
     m_ActionsTextExtraction.emplace_back(t);
 }
 
+void BatchRenamingScheme::AddInsertFilename(const TextExtraction &t)
+{
+    m_Steps.emplace_back(ActionType::Filename, m_ActionsTextExtraction.size());
+    m_ActionsTextExtraction.emplace_back(t);
+}
+
 void BatchRenamingScheme::AddInsertCounter(const Counter &t)
 {
     m_Steps.emplace_back(ActionType::Counter, m_ActionsCounter.size());
@@ -824,13 +835,13 @@ void BatchRenamingScheme::AddInsertCounter(const Counter &t)
 
 void BatchRenamingScheme::AddInsertParent(const TextExtraction &t)
 {
-    m_Steps.emplace_back(ActionType::ParentName, m_ActionsTextExtraction.size());
+    m_Steps.emplace_back(ActionType::ParentFilename, m_ActionsTextExtraction.size());
     m_ActionsTextExtraction.emplace_back(t);
 }
 
 void BatchRenamingScheme::AddInsertGrandparent(const TextExtraction &t)
 {
-    m_Steps.emplace_back(ActionType::GrandparentName, m_ActionsTextExtraction.size());
+    m_Steps.emplace_back(ActionType::GrandparentFilename, m_ActionsTextExtraction.size());
     m_ActionsTextExtraction.emplace_back(t);
 }
 
@@ -852,11 +863,14 @@ NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
             case ActionType::Extension:
                 next = ExtractText(_fi.extension, m_ActionsTextExtraction[step.index]);
                 break;
-            case ActionType::ParentName:
-                next = ExtractText(_fi.ParentName(), m_ActionsTextExtraction[step.index]);
+            case ActionType::Filename:
+                next = ExtractText(_fi.filename, m_ActionsTextExtraction[step.index]);
                 break;
-            case ActionType::GrandparentName:
-                next = ExtractText(_fi.GrandparentName(), m_ActionsTextExtraction[step.index]);
+            case ActionType::ParentFilename:
+                next = ExtractText(_fi.ParentFilename(), m_ActionsTextExtraction[step.index]);
+                break;
+            case ActionType::GrandparentFilename:
+                next = ExtractText(_fi.GrandparentFilename(), m_ActionsTextExtraction[step.index]);
                 break;
             case ActionType::Counter:
                 next = FormatCounter(m_ActionsCounter[step.index], _number);
@@ -866,9 +880,6 @@ NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
                 break;
             case ActionType::CloseBracket:
                 next = @"]";
-                break;
-            case ActionType::Filename:
-                next = _fi.filename;
                 break;
             case ActionType::TimeSeconds:
                 next = FormatTimeSeconds(_fi.mod_time_tm);
@@ -941,7 +952,7 @@ BatchRenamingScheme::FileInfo::FileInfo(VFSListingItem _item)
     }
 }
 
-NSString *BatchRenamingScheme::FileInfo::ParentName() const
+NSString *BatchRenamingScheme::FileInfo::ParentFilename() const
 {
     std::filesystem::path parent_path(item.Directory());
     if( parent_path.filename().empty() ) { // play around trailing slash
@@ -952,7 +963,7 @@ NSString *BatchRenamingScheme::FileInfo::ParentName() const
     return [NSString stringWithUTF8StdString:parent_path.filename().native()];
 }
 
-NSString *BatchRenamingScheme::FileInfo::GrandparentName() const
+NSString *BatchRenamingScheme::FileInfo::GrandparentFilename() const
 {
     std::filesystem::path parent_path(item.Directory());
     if( parent_path.filename().empty() ) { // play around trailing slash

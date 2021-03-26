@@ -365,17 +365,26 @@ TEST_CASE(PREFIX "Renaming - simple cases")
     };
     const Case test_cases[] = {
         {@"", false, @"" },
+        // A - filename
         {@"[A]", true, @"filename.txt" },
+        {@"[A-5-2]", true, @"e.tx" },
+        {@"[A-5,100]", true, @"e.txt" },
+        // N - name
         {@"[N]", true, @"filename" },
         {@"[N2-]", true, @"ilename" },
         {@"[N2-3]", true, @"il" },
         {@"[N-4-]", true, @"name" },
         {@"[N5]", true, @"n" },
         {@"[N-5,4]", true, @"enam" },
+        // E - extension
         {@"[E]", true, @"txt" },
         {@"[E-2-]", true, @"xt" },
+        {@"[E3-]", true, @"t" },
+        {@"[E4-]", true, @"" },
+        // E - parent filename
         {@"[P]", true, @"parent_dir" },
         {@"[P1-6]", true, @"parent" },
+        // E - grandparent filename
         {@"[G]", true, @"grandparent_dir" },
         {@"[G1-5]", true, @"grand" },
     };

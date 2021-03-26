@@ -48,8 +48,8 @@ public:
     struct FileInfo {
         FileInfo() = default;
         FileInfo(VFSListingItem _item);
-        NSString *ParentName() const;
-        NSString *GrandparentName() const;
+        NSString *ParentFilename() const;
+        NSString *GrandparentFilename() const;
         
         VFSListingItem item;
         NSString *filename;  // filename.txt
@@ -108,8 +108,8 @@ private:
         Filename, // full file name
         Name, // name without extension and dot
         Extension, // just extension
-        ParentName, // name of a parent dir, i.e. /foo/bar/baz.txt -> bar
-        GrandparentName, // name of a grandparent dir, i.e. /foo/bar/baz.txt -> foo
+        ParentFilename, // name of a parent dir, i.e. /foo/bar/baz.txt -> bar
+        GrandparentFilename, // name of a grandparent dir, i.e. /foo/bar/baz.txt -> foo
         OpenBracket,
         CloseBracket,
         UnchangedCase,
@@ -154,6 +154,7 @@ private:
     void AddStaticText(NSString *s);
     void AddInsertName(const TextExtraction &t);
     void AddInsertExtension(const TextExtraction &t);
+    void AddInsertFilename(const TextExtraction &t);
     void AddInsertParent(const TextExtraction &t);
     void AddInsertGrandparent(const TextExtraction &t);
     void AddInsertCounter(const Counter &t);

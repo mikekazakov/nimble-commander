@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -12,7 +12,7 @@ class DeletionJob;
 class Deletion final : public Operation
 {
 public:
-    Deletion( std::vector<VFSListingItem> _items, DeletionType _type );
+    Deletion( std::vector<VFSListingItem> _items, DeletionOptions _options );
     ~Deletion();
 
 private:
@@ -34,6 +34,7 @@ private:
     std::unique_ptr<DeletionJob> m_Job;
     bool m_SkipAll = false;
     bool m_DeleteAllOnTrashError = false;
+    const DeletionOptions m_OrigOptions;
 };
 
 }

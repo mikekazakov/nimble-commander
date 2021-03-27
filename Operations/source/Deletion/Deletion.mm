@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Deletion.h"
 #include "DeletionJob.h"
 #include "../Internal.h"
@@ -13,11 +13,12 @@ static NSString *Caption(const std::vector<VFSListingItem> &_files);
 
 using Callbacks = DeletionJobCallbacks;
 
-Deletion::Deletion( std::vector<VFSListingItem> _items, DeletionType _type )
+Deletion::Deletion( std::vector<VFSListingItem> _items, DeletionOptions _options ):
+    m_OrigOptions(_options)
 {
     SetTitle(Caption(_items).UTF8String);
     
-    m_Job.reset( new DeletionJob(move(_items), _type) );
+    m_Job.reset( new DeletionJob(move(_items), _options.type) );
     m_Job->m_OnReadDirError = [this](int _err, const std::string &_path, VFSHost &_vfs){
         return (Callbacks::ReadDirErrorResolution)OnReadDirError(_err, _path, _vfs);
     };

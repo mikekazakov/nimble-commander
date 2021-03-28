@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -34,6 +34,46 @@ TEST_CASE(PREFIX "Regular removal")
     REQUIRE(operation.State() == OperationState::Completed);
     REQUIRE(!host->Exists((dir.directory / "regular_file").c_str()));
 }
+
+TEST_CASE(PREFIX "Reg removal - locked file")
+{
+    TempTestDir dir;
+    const auto host = TestEnv().vfs_native;
+    REQUIRE(close(creat((dir.directory / "regular_file").c_str(), 0755)) == 0);
+    REQUIRE(chflags((dir.directory / "regular_file").c_str(), UF_IMMUTABLE) == 0);
+    DeletionOptions options;
+    options.type = DeletionType::Permanent;
+    SECTION("Default: ask => fail")
+    {
+        Deletion operation{FetchItems(dir.directory.native(), {"regular_file"}, *host), options};
+        operation.Start();
+        operation.Wait();
+        REQUIRE(operation.State() == OperationState::Stopped);
+        REQUIRE(host->Exists((dir.directory / "regular_file").c_str()));
+        REQUIRE(chflags((dir.directory / "regular_file").c_str(), 0) == 0);
+    }
+    SECTION("Skip: skipped")
+    {
+        options.locked_items_behaviour = DeletionOptions::LockedItemBehavior::SkipAll;
+        Deletion operation{FetchItems(dir.directory.native(), {"regular_file"}, *host), options};
+        operation.Start();
+        operation.Wait();
+        REQUIRE(operation.State() == OperationState::Completed);
+        REQUIRE(host->Exists((dir.directory / "regular_file").c_str()));
+        REQUIRE(chflags((dir.directory / "regular_file").c_str(), 0) == 0);
+    }
+    SECTION("Unlock: removed")
+    {
+        options.locked_items_behaviour = DeletionOptions::LockedItemBehavior::UnlockAll;
+        Deletion operation{FetchItems(dir.directory.native(), {"regular_file"}, *host), options};
+        operation.Start();
+        operation.Wait();
+        REQUIRE(operation.State() == OperationState::Completed);
+        REQUIRE(!host->Exists((dir.directory / "regular_file").c_str()));
+    }
+}
+
+// TODO: tests for locked dirs and locked trash
 
 TEST_CASE(PREFIX "Directory removal")
 {

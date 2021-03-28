@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionJob.h"
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>
@@ -58,7 +58,8 @@ void DeletionJob::DoScan()
                 bool(item.Host()->Features() & vfs::HostFeatures::NonEmptyRmDir);
             if( m_Type == DeletionType::Permanent && nonempty_rm == false )
                 ScanDirectory(item.Path(), i, si.filename);
-        } else {
+        }
+        else {
             const auto is_ea_storage =
                 IsEAStorage(*item.Host(), item.Directory(), item.FilenameC(), item.UnixType());
             if( !is_ea_storage ) {
@@ -87,24 +88,24 @@ void DeletionJob::ScanDirectory(const std::string &_path,
     while( true ) {
         if( BlockIfPaused(); IsStopped() )
             return;
-        
+
         if( auto rc = vfs.IterateDirectoryListing(_path.c_str(), it_callback); rc == VFSError::Ok )
             break;
         else
             switch( m_OnReadDirError(rc, _path, vfs) ) {
-            case ReadDirErrorResolution::Retry:
-                continue;
-            case ReadDirErrorResolution::Stop:
-                Stop();
-            case ReadDirErrorResolution::Skip:
-                return;
+                case ReadDirErrorResolution::Retry:
+                    continue;
+                case ReadDirErrorResolution::Stop:
+                    Stop();
+                case ReadDirErrorResolution::Skip:
+                    return;
             }
     }
 
     for( const auto &e : dir_entries ) {
         if( BlockIfPaused(); IsStopped() )
             return;
-        
+
         Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
         if( e.type == DT_DIR ) {
             m_Paths.push_back(EnsureTrailingSlash(e.name), _prefix);
@@ -115,7 +116,8 @@ void DeletionJob::ScanDirectory(const std::string &_path,
             m_Script.emplace(si);
 
             ScanDirectory(EnsureTrailingSlash(_path) + e.name, _listing_item_index, si.filename);
-        } else {
+        }
+        else {
             const auto is_ea_storage =
                 IsEAStorage(vfs, _path, e.name, static_cast<uint8_t>(e.type));
             if( !is_ea_storage ) {
@@ -150,7 +152,8 @@ void DeletionJob::DoDelete()
                 DoRmDir(path, *vfs);
             else
                 DoUnlink(path, *vfs);
-        } else {
+        }
+        else {
             DoTrash(path, *vfs, entry);
         }
     }
@@ -163,17 +166,35 @@ void DeletionJob::DoUnlink(const std::string &_path, VFSHost &_vfs)
         if( rc == VFSError::Ok ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
             break;
-        } else
-            switch( m_OnUnlinkError(rc, _path, _vfs) ) {
-            case UnlinkErrorResolution::Retry:
-                continue;
-            case UnlinkErrorResolution::Skip:
-                Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
-                return;
-            case UnlinkErrorResolution::Stop:
-                Stop();
-                return;
+        }
+        else if( IsNativeLockedItem(rc, _path, _vfs) ) {
+            switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Permanent) ) {
+                case LockedItemResolution::Unlock: {
+                    UnlockItem(_path, _vfs);
+                    continue;
+                }
+                case LockedItemResolution::Retry:
+                    continue;
+                case LockedItemResolution::Skip:
+                    Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                    return;
+                case LockedItemResolution::Stop:
+                    Stop();
+                    return;
             }
+        }
+        else {
+            switch( m_OnUnlinkError(rc, _path, _vfs) ) {
+                case UnlinkErrorResolution::Retry:
+                    continue;
+                case UnlinkErrorResolution::Skip:
+                    Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                    return;
+                case UnlinkErrorResolution::Stop:
+                    Stop();
+                    return;
+            }
+        }
     }
 }
 
@@ -184,17 +205,35 @@ void DeletionJob::DoRmDir(const std::string &_path, VFSHost &_vfs)
         if( rc == VFSError::Ok ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
             break;
-        } else
-            switch( m_OnRmdirError(rc, _path, _vfs) ) {
-            case RmdirErrorResolution::Retry:
-                continue;
-            case RmdirErrorResolution::Skip:
-                Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
-                return;
-            case RmdirErrorResolution::Stop:
-                Stop();
-                return;
+        }
+        else if( IsNativeLockedItem(rc, _path, _vfs) ) {
+            switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Permanent) ) {
+                case LockedItemResolution::Unlock: {
+                    UnlockItem(_path, _vfs);
+                    continue;
+                }
+                case LockedItemResolution::Retry:
+                    continue;
+                case LockedItemResolution::Skip:
+                    Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                    return;
+                case LockedItemResolution::Stop:
+                    Stop();
+                    return;
             }
+        }
+        else {
+            switch( m_OnRmdirError(rc, _path, _vfs) ) {
+                case RmdirErrorResolution::Retry:
+                    continue;
+                case RmdirErrorResolution::Skip:
+                    Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                    return;
+                case RmdirErrorResolution::Stop:
+                    Stop();
+                    return;
+            }
+        }
     }
 }
 
@@ -204,20 +243,40 @@ void DeletionJob::DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _s
         const auto rc = _vfs.Trash(_path.c_str());
         if( rc == VFSError::Ok ) {
             Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
-        } else {
+        }
+        else if( IsNativeLockedItem(rc, _path, _vfs) ) {
+            switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Trash) ) {
+                case LockedItemResolution::Unlock: {
+                    UnlockItem(_path, _vfs);
+                    continue;
+                }
+                case LockedItemResolution::Retry:
+                    continue;
+                case LockedItemResolution::Skip:
+                    Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                    return;
+                case LockedItemResolution::Stop:
+                    Stop();
+                    return;
+            }
+        }
+        else {
             const auto resolution = m_OnTrashError(rc, _path, _vfs);
             if( resolution == TrashErrorResolution::Retry ) {
                 continue;
-            } else if( resolution == TrashErrorResolution::Skip ) {
+            }
+            else if( resolution == TrashErrorResolution::Skip ) {
                 Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
-            } else if( resolution == TrashErrorResolution::DeletePermanently ) {
+            }
+            else if( resolution == TrashErrorResolution::DeletePermanently ) {
                 SourceItem si = _src;
                 si.type = DeletionType::Permanent;
                 m_Script.emplace(si);
                 const auto is_dir = IsPathWithTrailingSlash(_path);
                 if( is_dir )
                     ScanDirectory(_path, si.listing_item_index, si.filename);
-            } else {
+            }
+            else {
                 Stop();
             }
         }
@@ -228,6 +287,36 @@ void DeletionJob::DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _s
 int DeletionJob::ItemsInScript() const
 {
     return (int)m_Script.size();
+}
+
+bool DeletionJob::IsNativeLockedItem(int vfs_err, const std::string &_path, VFSHost &_vfs) const
+{
+    if( vfs_err != VFSError::FromErrno(EPERM) )
+        return false;
+    
+    if( _vfs.IsNativeFS() == false )
+        return false;
+
+    VFSStat st;
+    const int stat_rc = _vfs.Stat(_path.c_str(), st, nc::vfs::Flags::F_NoFollow);
+    if( stat_rc != VFSError::Ok )
+        return false;
+
+    return st.flags & UF_IMMUTABLE;
+}
+
+int DeletionJob::UnlockItem(const std::string &_path, VFSHost &_vfs) const
+{
+    // this is kind of stupid to call stat() essentially twice :-|
+
+    VFSStat st;
+    const int stat_rc = _vfs.Stat(_path.c_str(), st, nc::vfs::Flags::F_NoFollow);
+    if( stat_rc != VFSError::Ok )
+        return false;
+
+    st.flags = (st.flags & ~UF_IMMUTABLE);
+    const int chflags_rc = _vfs.SetFlags(_path.c_str(), st.flags);
+    return chflags_rc;
 }
 
 static bool IsEAStorage(VFSHost &_host,

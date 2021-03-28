@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GenericErrorDialog.h"
 #include <VFS/VFS.h>
 #include "Internal.h"
@@ -9,25 +9,25 @@
 using namespace nc::ops;
 
 @interface NCOpsGenericErrorDialog ()
-@property (strong, nonatomic) IBOutlet NSTextField *pathLabel;
-@property (strong, nonatomic) IBOutlet NSTextField *errorLabel;
-@property (strong, nonatomic) IBOutlet NSTextField *messageLabel;
-@property (strong, nonatomic) IBOutlet NSImageView *appIcon;
-@property (strong, nonatomic) IBOutlet NSImageView *dialogIcon;
-@property (strong, nonatomic) IBOutlet NSButton *applyToAllCheckBox;
+@property(strong, nonatomic) IBOutlet NSTextField *pathLabel;
+@property(strong, nonatomic) IBOutlet NSTextField *errorLabel;
+@property(strong, nonatomic) IBOutlet NSTextField *errorLabelPrompt;
+@property(strong, nonatomic) IBOutlet NSTextField *messageLabel;
+@property(strong, nonatomic) IBOutlet NSImageView *appIcon;
+@property(strong, nonatomic) IBOutlet NSImageView *dialogIcon;
+@property(strong, nonatomic) IBOutlet NSButton *applyToAllCheckBox;
 
 @end
 
-@implementation NCOpsGenericErrorDialog
-{
+@implementation NCOpsGenericErrorDialog {
     GenericErrorDialogStyle m_Style;
     NSModalResponse m_EscapeButtonResponse;
-    NSString* m_Message;
-    NSString* m_Path;
-    NSString* m_Error;
+    NSString *m_Message;
+    NSString *m_Path;
+    NSString *m_Error;
     int m_ErrorNo;
     bool m_ShowApplyToAll;
-    std::vector<std::pair<NSString*,NSModalResponse>> m_Buttons;
+    std::vector<std::pair<NSString *, NSModalResponse>> m_Buttons;
     std::shared_ptr<nc::ops::AsyncDialogResponse> m_Context;
 }
 
@@ -48,7 +48,6 @@ using namespace nc::ops;
         m_Style = GenericErrorDialogStyle::Caution;
         m_EscapeButtonResponse = nc::ops::NSModalResponseCancel;
         m_ErrorNo = VFSError::Ok;
-    
     }
     return self;
 }
@@ -58,17 +57,21 @@ using namespace nc::ops;
     return [self initWithContext:nullptr];
 }
 
-- (void)windowDidLoad {
+- (void)windowDidLoad
+{
     [super windowDidLoad];
 
     [self placeButtons];
-    
-    self.dialogIcon.image = m_Style == GenericErrorDialogStyle::Caution ?
-        [Bundle() imageForResource:@"AlertCautionBig"] :
-        [Bundle() imageForResource:@"AlertStopBig"];
+
+    self.dialogIcon.image = m_Style == GenericErrorDialogStyle::Caution
+                                ? [Bundle() imageForResource:@"AlertCautionBig"]
+                                : [Bundle() imageForResource:@"AlertStopBig"];
     self.appIcon.image = NSApp.applicationIconImage;
     self.pathLabel.stringValue = m_Path ? m_Path : @"";
     self.errorLabel.stringValue = m_Error ? m_Error : @"";
+    self.errorLabel.toolTip =
+        [NSString stringWithUTF8StdString:VFSError::FormatErrorCode(m_ErrorNo)];
+    self.errorLabelPrompt.hidden = self.errorLabel.stringValue.length == 0;
     self.messageLabel.stringValue = m_Message ? m_Message : @"";
     [self.window recalculateKeyViewLoop];
     NSBeep();
@@ -83,7 +86,7 @@ using namespace nc::ops;
 
     NSButton *last = nil;
     const auto content_view = self.window.contentView;
-    for( auto p: m_Buttons ) {
+    for( auto p : m_Buttons ) {
         NSButton *button = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
         button.translatesAutoresizingMaskIntoConstraints = false;
         button.buttonType = NSButtonTypeMomentaryPushIn;
@@ -94,46 +97,59 @@ using namespace nc::ops;
         button.action = @selector(onButtonClick:);
         button.keyEquivalent = !last ? @"\r" : @"";
         [content_view addSubview:button];
-        
+
         if( last ) {
             NSDictionary *views = NSDictionaryOfVariableBindings(button, last);
-            [content_view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                @"[button(>=80)]-[last]" options:0 metrics:nil views:views]];
-            [content_view addConstraint:[NSLayoutConstraint
-                                         constraintWithItem:button
-                                         attribute:NSLayoutAttributeCenterY
-                                         relatedBy:NSLayoutRelationEqual
-                                         toItem:last
-                                         attribute:NSLayoutAttributeCenterY
-                                         multiplier:1
-                                         constant:0]];
+            [content_view addConstraints:[NSLayoutConstraint
+                                             constraintsWithVisualFormat:@"[button(>=80)]-[last]"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+            [content_view
+                addConstraint:[NSLayoutConstraint constraintWithItem:button
+                                                           attribute:NSLayoutAttributeCenterY
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:last
+                                                           attribute:NSLayoutAttributeCenterY
+                                                          multiplier:1
+                                                            constant:0]];
         }
         else {
             const auto bottom = m_ShowApplyToAll ? self.applyToAllCheckBox : self.errorLabel;
             NSDictionary *views = NSDictionaryOfVariableBindings(button, bottom);
-            [content_view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                @"[button(>=80)]-|" options:0 metrics:nil views:views]];
-            [content_view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                @"V:[bottom]-(==16)-[button]-|" options:0 metrics:nil views:views]];
+            [content_view
+                addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[button(>=80)]-|"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:views]];
+            [content_view
+                addConstraints:[NSLayoutConstraint
+                                   constraintsWithVisualFormat:@"V:[bottom]-(==16)-[button]-|"
+                                                       options:0
+                                                       metrics:nil
+                                                         views:views]];
             self.window.initialFirstResponder = button;
         }
         last = button;
     }
     NSDictionary *views = NSDictionaryOfVariableBindings(last);
-    [content_view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                                             @"|-(>=20)-[last]" options:0 metrics:nil views:views]];
+    [content_view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(>=20)-[last]"
+                                                                         options:0
+                                                                         metrics:nil
+                                                                           views:views]];
 }
 
 - (void)onButtonClick:(id)sender
 {
     if( auto b = objc_cast<NSButton>(sender) ) {
         if( m_ShowApplyToAll && m_Context )
-            m_Context->messages["apply_to_all"] = self.applyToAllCheckBox.state == NSControlStateValueOn;
+            m_Context->messages["apply_to_all"] =
+                self.applyToAllCheckBox.state == NSControlStateValueOn;
         [self.window.sheetParent endSheet:self.window returnCode:b.tag];
     }
 }
 
-- (void) setStyle:(GenericErrorDialogStyle)style
+- (void)setStyle:(GenericErrorDialogStyle)style
 {
     m_Style = style;
 }
@@ -143,17 +159,18 @@ using namespace nc::ops;
     return m_Style;
 }
 
-- (void) setErrorNo:(int)errorNo
+- (void)setErrorNo:(int)errorNo
 {
+    m_ErrorNo = errorNo;
     self.error = VFSError::ToNSError(errorNo).localizedDescription;
 }
 
-- (int) errorNo
+- (int)errorNo
 {
     return m_ErrorNo;
 }
 
-- (void) addButtonWithTitle:(NSString*)_title responseCode:(NSModalResponse)_response
+- (void)addButtonWithTitle:(NSString *)_title responseCode:(NSModalResponse)_response
 {
     m_Buttons.emplace_back(std::make_pair(_title, _response));
 }
@@ -168,19 +185,19 @@ using namespace nc::ops;
     [self.window selectPreviousKeyView:sender];
 }
 
-- (void) addAbortButton
+- (void)addAbortButton
 {
     auto title = NSLocalizedString(@"Abort", "");
     [self addButtonWithTitle:title responseCode:nc::ops::NSModalResponseStop];
 }
 
-- (void) addSkipButton
+- (void)addSkipButton
 {
     auto title = NSLocalizedString(@"Skip", "");
     [self addButtonWithTitle:title responseCode:nc::ops::NSModalResponseSkip];
 }
 
-- (void) addSkipAllButton
+- (void)addSkipAllButton
 {
     auto title = NSLocalizedString(@"Skip All", "");
     [self addButtonWithTitle:title responseCode:nc::ops::NSModalResponseSkipAll];
@@ -192,9 +209,9 @@ using namespace nc::ops;
 @end
 
 @implementation NCOpsGenericErrorDialogWindow
-- (void)cancelOperation:(id)[[maybe_unused]]_sender
+- (void)cancelOperation:(id) [[maybe_unused]] _sender
 {
-    const auto response = ((NCOpsGenericErrorDialog*)(self.windowController)).escapeButtonResponse;
+    const auto response = ((NCOpsGenericErrorDialog *)(self.windowController)).escapeButtonResponse;
     [self.sheetParent endSheet:self returnCode:response];
 }
 

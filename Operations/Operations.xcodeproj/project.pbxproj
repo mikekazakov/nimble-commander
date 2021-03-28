@@ -90,6 +90,8 @@
 		CF86D5E2255E8AF00049F7F8 /* AttrsChanging_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF86D5E1255E8AF00049F7F8 /* AttrsChanging_IT.cpp */; };
 		CFB7BD142606AC6700E2EA4D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95501F4C17CE0035E606 /* Localizable.strings */; };
 		CFB7BD1A2606ACC500E2EA4D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95501F4C17CE0035E606 /* Localizable.strings */; };
+		CFB7BD42260F696C00E2EA4D /* DeletionJobCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB7BD40260F696C00E2EA4D /* DeletionJobCallbacks.cpp */; };
+		CFB7BD43260F696C00E2EA4D /* DeletionJobCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB7BD41260F696C00E2EA4D /* DeletionJobCallbacks.h */; };
 		CFE08AFE23D3719B007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 /* End PBXBuildFile section */
 
@@ -192,6 +194,8 @@
 		CFAAF0721FA9D8B8009230B3 /* CopyingTitleBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingTitleBuilder.h; path = source/Copying/CopyingTitleBuilder.h; sourceTree = "<group>"; };
 		CFAAF0731FA9D8B8009230B3 /* CopyingTitleBuilder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyingTitleBuilder.mm; path = source/Copying/CopyingTitleBuilder.mm; sourceTree = "<group>"; };
 		CFAB6D7D258A742D00397DB5 /* CopyingFindNonExistingItemPath_UT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CopyingFindNonExistingItemPath_UT.cpp; sourceTree = "<group>"; };
+		CFB7BD40260F696C00E2EA4D /* DeletionJobCallbacks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeletionJobCallbacks.cpp; path = source/Deletion/DeletionJobCallbacks.cpp; sourceTree = "<group>"; };
+		CFB7BD41260F696C00E2EA4D /* DeletionJobCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeletionJobCallbacks.h; path = source/Deletion/DeletionJobCallbacks.h; sourceTree = "<group>"; };
 		CFC4F8C31EFA05B00000B3EE /* PoolView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoolView.h; path = source/PoolView.h; sourceTree = "<group>"; };
 		CFC4F8C41EFA05B00000B3EE /* PoolView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoolView.mm; path = source/PoolView.mm; sourceTree = "<group>"; };
 		CFC4F8C51EFA05B00000B3EE /* PoolViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoolViewController.h; path = source/PoolViewController.h; sourceTree = "<group>"; };
@@ -485,6 +489,8 @@
 				CFC4F9581F0CB07A0000B3EE /* DeletionDialog.xib */,
 				CFC4F9191F09D9740000B3EE /* DeletionJob.cpp */,
 				CFC4F91A1F09D9740000B3EE /* DeletionJob.h */,
+				CFB7BD40260F696C00E2EA4D /* DeletionJobCallbacks.cpp */,
+				CFB7BD41260F696C00E2EA4D /* DeletionJobCallbacks.h */,
 				CFC4F91F1F09DCC80000B3EE /* Options.h */,
 			);
 			name = Deletion;
@@ -680,6 +686,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFB7BD43260F696C00E2EA4D /* DeletionJobCallbacks.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -916,6 +923,7 @@
 				CF46FFC4255FD0260095FC73 /* Operation.mm in Sources */,
 				CF46000C255FD0640095FC73 /* FilenameTextControl.mm in Sources */,
 				CF46FFE9255FD04D0095FC73 /* FileAlreadyExistDialog.mm in Sources */,
+				CFB7BD42260F696C00E2EA4D /* DeletionJobCallbacks.cpp in Sources */,
 				CF46FFE2255FD03F0095FC73 /* CompressionJob.cpp in Sources */,
 				CF46FFC0255FD0260095FC73 /* PoolViewController.mm in Sources */,
 				CF46FFBD255FD0260095FC73 /* Progress.cpp in Sources */,

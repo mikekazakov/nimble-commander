@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2018 Michael G. Kazakov
+/* Copyright (c) 2016-2021 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -37,7 +37,7 @@ optional<int> CFDefaultsGetOptionalInt(CFStringRef _key) noexcept
     auto release_val = at_scope_end([=]{ CFRelease(val); });
     
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
-        CFNumberRef num = (CFNumberRef)val;
+        CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberIntType, &result);
     }
     
@@ -54,7 +54,7 @@ optional<long> CFDefaultsGetOptionalLong(CFStringRef _key) noexcept
     auto release_val = at_scope_end([=]{ CFRelease(val); });
     
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
-        CFNumberRef num = (CFNumberRef)val;
+        CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberLongType, &result);
     }
     
@@ -71,7 +71,7 @@ optional<double> CFDefaultsGetOptionalDouble(CFStringRef _key) noexcept
     auto release_val = at_scope_end([=]{ CFRelease(val); });
     
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
-        CFNumberRef num = (CFNumberRef)val;
+        CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberDoubleType, &result);
     }
     
@@ -107,7 +107,7 @@ double CFDefaultsGetDouble(CFStringRef _key) noexcept
     auto release_val = at_scope_end([=]{ CFRelease(val); });
     
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
-        CFNumberRef num = (CFNumberRef)val;
+        CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberDoubleType, &result);
     }
     
@@ -124,7 +124,7 @@ int CFDefaultsGetInt(CFStringRef _key) noexcept
     auto release_val = at_scope_end([=]{ CFRelease(val); });
     
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
-        CFNumberRef num = (CFNumberRef)val;
+        CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberIntType, &result);
     }
     
@@ -141,7 +141,7 @@ long CFDefaultsGetLong(CFStringRef _key) noexcept
     auto release_val = at_scope_end([=]{ CFRelease(val); });
     
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
-        CFNumberRef num = (CFNumberRef)val;
+        CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberLongType, &result);
     }
     
@@ -183,7 +183,7 @@ string CFDefaultsGetString(CFStringRef _key)
     auto release_val = at_scope_end([=]{ CFRelease(val); });
     
     if( CFGetTypeID(val) ==  CFStringGetTypeID() )
-        return CFStringGetUTF8StdString( (CFStringRef)val );
+        return CFStringGetUTF8StdString( static_cast<CFStringRef>(val) );
     
     return "";
 }
@@ -196,7 +196,7 @@ optional<string> CFDefaultsGetOptionalString(CFStringRef _key)
     auto release_val = at_scope_end([=]{ CFRelease(val); });
     
     if( CFGetTypeID(val) ==  CFStringGetTypeID() )
-        return CFStringGetUTF8StdString( (CFStringRef)val );
+        return CFStringGetUTF8StdString( static_cast<CFStringRef>(val) );
     
     return nullopt;
 }

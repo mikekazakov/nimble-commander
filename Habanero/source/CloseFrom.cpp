@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CloseFrom.h>
 #include <unistd.h>
 #include <libproc.h>
@@ -7,7 +7,7 @@
 
 namespace nc::base {
 
-static const int g_MaxFD = (int)sysconf(_SC_OPEN_MAX);
+static const int g_MaxFD = static_cast<int>(sysconf(_SC_OPEN_MAX));
 
 static std::optional<std::vector<proc_fdinfo>> GetFDs()
 {
@@ -15,27 +15,27 @@ static std::optional<std::vector<proc_fdinfo>> GetFDs()
     const int size = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, nullptr, 0);
     if( size < 0 )
         return std::nullopt;
-    
-    assert( size % sizeof(proc_fdinfo) == 0 );
-    
+
+    assert(size % sizeof(proc_fdinfo) == 0);
+
     std::vector<proc_fdinfo> buf;
     buf.resize(size / sizeof(proc_fdinfo));
-    
+
     const int result = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, buf.data(), size);
     if( result < 0 )
         return std::nullopt;
-    assert( result % sizeof(proc_fdinfo) == 0 );
-    buf.resize( result / sizeof(proc_fdinfo) );
-    
+    assert(result % sizeof(proc_fdinfo) == 0);
+    buf.resize(result / sizeof(proc_fdinfo));
+
     return buf;
 }
 
 void CloseFrom(int _lowfd) noexcept
 {
     if( const auto fds = GetFDs() ) {
-        for( auto &info: *fds ) {
+        for( auto &info : *fds ) {
             if( info.proc_fd >= _lowfd )
-                close( info.proc_fd );
+                close(info.proc_fd);
         }
     }
     else {
@@ -47,9 +47,9 @@ void CloseFrom(int _lowfd) noexcept
 void CloseFromExcept(int _lowfd, int _except) noexcept
 {
     if( const auto fds = GetFDs() ) {
-        for( auto &info: *fds ) {
+        for( auto &info : *fds ) {
             if( info.proc_fd >= _lowfd && info.proc_fd != _except )
-                close( info.proc_fd );
+                close(info.proc_fd);
         }
     }
     else {
@@ -65,9 +65,9 @@ void CloseFromExcept(int _lowfd, std::span<const int> _except) noexcept
         return std::find(_except.begin(), _except.end(), _fd) != _except.end();
     };
     if( const auto fds = GetFDs() ) {
-        for( auto &info: *fds ) {
+        for( auto &info : *fds ) {
             if( info.proc_fd >= _lowfd && !skip(info.proc_fd) )
-                close( info.proc_fd );
+                close(info.proc_fd);
         }
     }
     else {
@@ -77,4 +77,4 @@ void CloseFromExcept(int _lowfd, std::span<const int> _except) noexcept
     }
 }
 
-}
+} // namespace nc::base

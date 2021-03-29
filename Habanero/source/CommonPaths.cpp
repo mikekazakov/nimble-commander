@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael G. Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael G. Kazakov. Subject to GNU General Public License version 3.
 #include <CoreFoundation/CoreFoundation.h>
 #include <sys/param.h>
 #include <pwd.h>
@@ -8,21 +8,22 @@
 namespace nc::base {
 
 static std::string cwd();
-static std::string ensure_tr_slash( std::string _str );
+static std::string ensure_tr_slash(std::string _str);
 static std::string GetMainBundlePath();
 
-[[clang::no_destroy]] static const std::string g_StartupCWD = ensure_tr_slash( cwd() );
+[[clang::no_destroy]] static const std::string g_StartupCWD = ensure_tr_slash(cwd());
 
 static std::string GetMainBundlePath()
 {
     CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
     char path[MAXPATHLEN];
-    bool result = CFURLGetFileSystemRepresentation(url, true, (UInt8*)path, MAXPATHLEN);
+    bool result =
+        CFURLGetFileSystemRepresentation(url, true, reinterpret_cast<UInt8 *>(path), MAXPATHLEN);
     CFRelease(url);
     return result ? std::string(path) : std::string("");
 }
 
-static std::string ensure_tr_slash( std::string _str )
+static std::string ensure_tr_slash(std::string _str)
 {
     if( _str.empty() || _str.back() != '/' )
         _str += '/';
@@ -112,5 +113,5 @@ const std::string &CommonPaths::StartupCWD() noexcept
 {
     return g_StartupCWD;
 }
-    
-}
+
+} // namespace nc::base

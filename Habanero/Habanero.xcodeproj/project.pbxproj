@@ -20,7 +20,6 @@
 		CF4601EE25630DE80095FC73 /* PosixFilesystemImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */; };
 		CF4601EF25630DE80095FC73 /* StringsBulk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */; };
 		CF4601F025630DE80095FC73 /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA71C99C2AE0021EE7F /* Hash.cpp */; };
-		CF4601F125630DE80095FC73 /* KVO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA91C99C2AE0021EE7F /* KVO.cpp */; };
 		CF4601F225630DE80095FC73 /* CommonPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */; };
 		CF4601F325630DE80095FC73 /* CommonPaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */; };
 		CF4601F425630DE80095FC73 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */; };
@@ -60,7 +59,6 @@
 		CF0A49F125252C40008EC7B0 /* CloseFrom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CloseFrom.cpp; path = source/CloseFrom.cpp; sourceTree = "<group>"; };
 		CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CloseFrom_UT.cpp; sourceTree = "<group>"; };
 		CF19B3ED2544B94800838B45 /* ScopedObservable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScopedObservable.cpp; path = source/ScopedObservable.cpp; sourceTree = "<group>"; };
-		CF19B3F72544B9E400838B45 /* KVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KVO.h; path = include/Habanero/KVO.h; sourceTree = "<group>"; };
 		CF19B3F82544B9E400838B45 /* CFRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFRange.h; path = include/Habanero/CFRange.h; sourceTree = "<group>"; };
 		CF19B3F92544B9E400838B45 /* PosixFilesystemMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PosixFilesystemMock.h; path = include/Habanero/PosixFilesystemMock.h; sourceTree = "<group>"; };
 		CF19B3FA2544B9E400838B45 /* fixed_eytzinger_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed_eytzinger_map.h; path = include/Habanero/fixed_eytzinger_map.h; sourceTree = "<group>"; };
@@ -124,7 +122,6 @@
 		CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dispatch_cpp.cpp; path = source/dispatch_cpp.cpp; sourceTree = "<group>"; };
 		CFD62BA71C99C2AE0021EE7F /* Hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Hash.cpp; path = source/Hash.cpp; sourceTree = "<group>"; };
 		CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IdleSleepPreventer.cpp; path = source/IdleSleepPreventer.cpp; sourceTree = "<group>"; };
-		CFD62BA91C99C2AE0021EE7F /* KVO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KVO.cpp; path = source/KVO.cpp; sourceTree = "<group>"; };
 		CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mach_time.cpp; path = source/mach_time.cpp; sourceTree = "<group>"; };
 		CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tiny_string.cpp; path = source/tiny_string.cpp; sourceTree = "<group>"; };
 		CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chained_strings.cpp; path = source/chained_strings.cpp; sourceTree = "<group>"; };
@@ -230,7 +227,6 @@
 				CF19B3FC2544B9E500838B45 /* Hash.h */,
 				CF19B4152544B9E700838B45 /* IdleSleepPreventer.h */,
 				CF19B4052544B9E500838B45 /* intrusive_ptr.h */,
-				CF19B3F72544B9E400838B45 /* KVO.h */,
 				CF19B4172544B9E700838B45 /* LRUCache.h */,
 				CF19B4012544B9E500838B45 /* mach_time.h */,
 				CF19B40A2544B9E600838B45 /* Observable.h */,
@@ -266,7 +262,6 @@
 				CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */,
 				CFD62BA71C99C2AE0021EE7F /* Hash.cpp */,
 				CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */,
-				CFD62BA91C99C2AE0021EE7F /* KVO.cpp */,
 				CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */,
 				CFD6DD211D6C44C1006B94C2 /* Observable.cpp */,
 				CF308F48213B755F00915730 /* PosixFilesystem.cpp */,
@@ -403,7 +398,6 @@
 				CF46020025630DE80095FC73 /* SerialQueue.cpp in Sources */,
 				CF4601EF25630DE80095FC73 /* StringsBulk.cpp in Sources */,
 				CF4601F625630DE80095FC73 /* CFString.cpp in Sources */,
-				CF4601F125630DE80095FC73 /* KVO.cpp in Sources */,
 				CF4601F925630DE80095FC73 /* chained_strings.cpp in Sources */,
 				CF4601FF25630DE80095FC73 /* ScopedObservable.cpp in Sources */,
 				CF46020325630DE80095FC73 /* Observable.cpp in Sources */,

@@ -404,9 +404,10 @@ void variable_container<T>::insert(size_t _at, T &&_value)
         Dense()[_at] = std::move(_value);
     }
     else { // if( m_Type == type::sparse )
-        auto i = Sparse().find((unsigned)_at);
+        auto i = Sparse().find(static_cast<unsigned>(_at));
         if( i == std::end(Sparse()) )
-            Sparse().insert(typename sparse_type::value_type((unsigned)_at, std::move(_value)));
+            Sparse().insert(
+                typename sparse_type::value_type(static_cast<unsigned>(_at), std::move(_value)));
         else
             i->second = std::move(_value);
     }
@@ -447,7 +448,7 @@ bool variable_container<T>::is_contiguous() const noexcept
         return true;
 
     auto &sparse = Sparse();
-    
+
     for( size_t i = 0, e = size(); i != e; ++i )
         if( !sparse.contains(i) )
             return false;

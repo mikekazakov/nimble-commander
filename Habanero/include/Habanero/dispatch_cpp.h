@@ -1,16 +1,4 @@
-/* Copyright (c) 2014-2018 Michael G. Kazakov
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the "Software"), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <dispatch/dispatch.h>
@@ -151,7 +139,7 @@ inline void dispatch_apply( size_t _iterations, dispatch_queue_t _queue, const T
 {
     dispatch_apply_f(_iterations,
                      _queue,
-                     (void*)&_f,
+                     static_cast<void*>(&_f),
                      [](void *_p, size_t _it) {
                          auto f = static_cast<const T*>(_p);
                          (*f)(_it);
@@ -163,7 +151,7 @@ inline void dispatch_apply( size_t _iterations, const T &_f )
 {
     dispatch_apply_f(_iterations,
                      DISPATCH_APPLY_AUTO,
-                     (void*)&_f,
+                     static_cast<void*>(&_f),
                      [](void *_p, size_t _it) {
                          auto f = static_cast<const T*>(_p);
                          (*f)(_it);

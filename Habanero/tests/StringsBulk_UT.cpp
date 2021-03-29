@@ -60,7 +60,7 @@ TEST_CASE(PREFIX"random strings")
         const auto l = rand() % 1000;
         string s(l, ' ');
         for( int j = 0; j < l; ++j)
-            s[j] = (unsigned char)( j % 255 + 1 );
+            s[j] = static_cast<unsigned char>( j % 255 + 1 );
         v.emplace_back(s);
     }
     StringsBulk::Builder sbb;
@@ -87,7 +87,7 @@ TEST_CASE(PREFIX"non-owning builder")
         const auto l = rand() % 1000;
         string s(l, ' ');
         for( int j = 0; j < l; ++j)
-            s[j] = (unsigned char)( j % 255 + 1 );
+            s[j] = static_cast<unsigned char>( j % 255 + 1 );
         v.emplace_back(s);
     }
     StringsBulk::NonOwningBuilder sbb;

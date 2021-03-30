@@ -4,6 +4,7 @@
 #include <vector>
 #include <codecvt>
 #include <unordered_map>
+#include <robin_hood.h>
 #include <Carbon/Carbon.h>
 
 namespace nc::utility {
@@ -125,44 +126,46 @@ static NSString *StringForModifierFlags(uint64_t flags)
     return [NSString stringWithCharacters:modChars length:charCount];
 }
 
-[[clang::no_destroy]] static const std::unordered_map<uint16_t, NSString *> g_UnicodeToNiceString =
-    {{NSLeftArrowFunctionKey, @"←"},
-     {NSRightArrowFunctionKey, @"→"},
-     {NSDownArrowFunctionKey, @"↓"},
-     {NSUpArrowFunctionKey, @"↑"},
-     {NSF1FunctionKey, @"F1"},
-     {NSF2FunctionKey, @"F2"},
-     {NSF3FunctionKey, @"F3"},
-     {NSF4FunctionKey, @"F4"},
-     {NSF5FunctionKey, @"F5"},
-     {NSF6FunctionKey, @"F6"},
-     {NSF7FunctionKey, @"F7"},
-     {NSF8FunctionKey, @"F8"},
-     {NSF9FunctionKey, @"F9"},
-     {NSF10FunctionKey, @"F10"},
-     {NSF11FunctionKey, @"F11"},
-     {NSF12FunctionKey, @"F12"},
-     {NSF13FunctionKey, @"F13"},
-     {NSF14FunctionKey, @"F14"},
-     {NSF15FunctionKey, @"F15"},
-     {NSF16FunctionKey, @"F16"},
-     {NSF17FunctionKey, @"F17"},
-     {NSF18FunctionKey, @"F18"},
-     {NSF19FunctionKey, @"F19"},
-     {0x2326, @"⌦"},
-     {'\r', @"↩"},
-     {0x3, @"⌅"},
-     {0x9, @"⇥"},
-     {0x2423, @"Space"},
-     {0x0020, @"Space"},
-     {0x8, @"⌫"},
-     {NSClearDisplayFunctionKey, @"Clear"},
-     {0x1B, @"⎋"},
-     {NSHomeFunctionKey, @"↖"},
-     {NSPageUpFunctionKey, @"⇞"},
-     {NSEndFunctionKey, @"↘"},
-     {NSPageDownFunctionKey, @"⇟"},
-     {NSHelpFunctionKey, @"Help"}};
+[[clang::no_destroy]] static const robin_hood::unordered_flat_map<uint32_t, NSString *>
+    g_UnicodeToNiceString = {
+        {NSLeftArrowFunctionKey, @"←"},        //
+        {NSRightArrowFunctionKey, @"→"},       //
+        {NSDownArrowFunctionKey, @"↓"},        //
+        {NSUpArrowFunctionKey, @"↑"},          //
+        {NSF1FunctionKey, @"F1"},              //
+        {NSF2FunctionKey, @"F2"},              //
+        {NSF3FunctionKey, @"F3"},              //
+        {NSF4FunctionKey, @"F4"},              //
+        {NSF5FunctionKey, @"F5"},              //
+        {NSF6FunctionKey, @"F6"},              //
+        {NSF7FunctionKey, @"F7"},              //
+        {NSF8FunctionKey, @"F8"},              //
+        {NSF9FunctionKey, @"F9"},              //
+        {NSF10FunctionKey, @"F10"},            //
+        {NSF11FunctionKey, @"F11"},            //
+        {NSF12FunctionKey, @"F12"},            //
+        {NSF13FunctionKey, @"F13"},            //
+        {NSF14FunctionKey, @"F14"},            //
+        {NSF15FunctionKey, @"F15"},            //
+        {NSF16FunctionKey, @"F16"},            //
+        {NSF17FunctionKey, @"F17"},            //
+        {NSF18FunctionKey, @"F18"},            //
+        {NSF19FunctionKey, @"F19"},            //
+        {0x2326, @"⌦"},                        //
+        {'\r', @"↩"},                          //
+        {0x3, @"⌅"},                           //
+        {0x9, @"⇥"},                           //
+        {0x2423, @"Space"},                    //
+        {0x0020, @"Space"},                    //
+        {0x8, @"⌫"},                           //
+        {NSClearDisplayFunctionKey, @"Clear"}, //
+        {0x1B, @"⎋"},                          //
+        {NSHomeFunctionKey, @"↖"},             //
+        {NSPageUpFunctionKey, @"⇞"},           //
+        {NSEndFunctionKey, @"↘"},              //
+        {NSPageDownFunctionKey, @"⇟"},         //
+        {NSHelpFunctionKey, @"Help"}           //
+};
 
 NSString *ActionShortcut::PrettyString() const noexcept
 {

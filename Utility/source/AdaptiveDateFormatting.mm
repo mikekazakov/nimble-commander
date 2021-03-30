@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AdaptiveDateFormatting.h"
 #include <Cocoa/Cocoa.h>
 #include <Habanero/spinlock.h>
@@ -167,11 +167,11 @@ static NSString *Long( time_t _time )
                                    kCFBooleanTrue);
         return f;
     }();
-    const auto time = (double)_time - kCFAbsoluteTimeIntervalSince1970;    
+    const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
     auto lock = std::lock_guard{formatter_lock};
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
-    return (NSString*)CFBridgingRelease(str);
+    return static_cast<NSString*>(CFBridgingRelease(str));
 }
 
 static NSString *Medium( time_t _time )
@@ -188,11 +188,11 @@ static NSString *Medium( time_t _time )
                                    kCFBooleanTrue);
         return f;
     }();
-    const auto time = (double)_time - kCFAbsoluteTimeIntervalSince1970;
+    const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
     auto lock = std::lock_guard{formatter_lock};
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
-    return (NSString*)CFBridgingRelease(str);
+    return static_cast<NSString*>(CFBridgingRelease(str));
 }
 
 static NSString *Short( time_t _time )
@@ -209,11 +209,11 @@ static NSString *Short( time_t _time )
                                    kCFBooleanTrue);
         return f;
     }();
-    const auto time = (double)_time - kCFAbsoluteTimeIntervalSince1970;
+    const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
     auto lock = std::lock_guard{formatter_lock};
     CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
-    return (NSString*)CFBridgingRelease(str);
+    return static_cast<NSString*>(CFBridgingRelease(str));
 }
 
 static NSString *Tiny( time_t _time )
@@ -244,13 +244,13 @@ static NSString *Tiny( time_t _time )
     }();
     const auto date = [NSDate dateWithTimeIntervalSince1970:_time];
     const auto is_today = [NSCalendar.currentCalendar isDateInToday:date];
-    const auto time = (double)_time - kCFAbsoluteTimeIntervalSince1970;
+    const auto time = static_cast<double>(_time) - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
     auto lock = std::lock_guard{formatter_lock};
     auto str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr,
                                                            is_today ? today : general,
                                                            time);
-    return (NSString*)CFBridgingRelease(str);
+    return static_cast<NSString*>(CFBridgingRelease(str));
 }
 
 NSString *AdaptiveDateFormatting::Format( Style _style, time_t _time )
@@ -267,7 +267,7 @@ NSString *AdaptiveDateFormatting::Format( Style _style, time_t _time )
 AdaptiveDateFormatting::Style
     AdaptiveDateFormatting::SuitableStyleForWidth( int _width, NSFont *_font )
 {
-    return StyleForWidthHardcodedLikeFinder( _width, (int)_font.pointSize );
+    return StyleForWidthHardcodedLikeFinder( _width, static_cast<int>(_font.pointSize) );
 }
 
 }

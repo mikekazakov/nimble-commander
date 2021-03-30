@@ -151,7 +151,7 @@ inline void dispatch_apply( size_t _iterations, const T &_f )
 {
     dispatch_apply_f(_iterations,
                      DISPATCH_APPLY_AUTO,
-                     static_cast<void*>(&_f),
+                     const_cast<void*>(static_cast<const void*>(&_f)),
                      [](void *_p, size_t _it) {
                          auto f = static_cast<const T*>(_p);
                          (*f)(_it);

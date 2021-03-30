@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <IOKit/IOKitLib.h>
@@ -13,24 +13,24 @@
 
 namespace nc::utility {
 
-//CPU_STATE_USER
-//processor_info_array_t
+// CPU_STATE_USER
+// processor_info_array_t
 int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
 {
-    int                 err;
-    kinfo_proc *        result;
-    bool                done;
-    static const int    name[] = { CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0 };
+    int err;
+    kinfo_proc *result;
+    bool done;
+    static const int name[] = {CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0};
     // Declaring name as const requires us to cast it when passing it to
     // sysctl because the prototype doesn't include the const modifier.
-    size_t              length;
-    
+    size_t length;
+
     //    assert( procList != NULL);
     //    assert(*procList == NULL);
     //    assert(procCount != NULL);
-    
+
     *procCount = 0;
-    
+
     // We start by calling sysctl with result == NULL and length == 0.
     // That will succeed, and set length to the appropriate length.
     // We then allocate a buffer of that size and call sysctl again
@@ -40,96 +40,101 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
     // is necessary because the ENOMEM failure case sets length to
     // the amount of data returned, not the amount of data that
     // could have been returned.
-    
+
     result = NULL;
     done = false;
     do {
         assert(result == NULL);
-        
+
         // Call sysctl with a NULL buffer.
-        
+
         length = 0;
-        err = sysctl( (int *) name, (sizeof(name) / sizeof(*name)) - 1,
-                     NULL, &length,
-                     NULL, 0);
-        if (err == -1) {
+        err = sysctl(
+            const_cast<int *>(name), (sizeof(name) / sizeof(*name)) - 1, NULL, &length, NULL, 0);
+        if( err == -1 ) {
             err = errno;
         }
-        
+
         // Allocate an appropriately sized buffer based on the results
         // from the previous call.
-        
-        if (err == 0) {
-            result = (kinfo_proc *) malloc(length);
-            if (result == NULL) {
+
+        if( err == 0 ) {
+            result = static_cast<kinfo_proc *>(malloc(length));
+            if( result == NULL ) {
                 err = ENOMEM;
             }
         }
-        
+
         // Call sysctl again with the new buffer.  If we get an ENOMEM
         // error, toss away our buffer and start again.
-        
-        if (err == 0) {
-            err = sysctl( (int *) name, (sizeof(name) / sizeof(*name)) - 1,
-                         result, &length,
-                         NULL, 0);
-            if (err == -1) {
+
+        if( err == 0 ) {
+            err = sysctl(const_cast<int *>(name),
+                         (sizeof(name) / sizeof(*name)) - 1,
+                         result,
+                         &length,
+                         NULL,
+                         0);
+            if( err == -1 ) {
                 err = errno;
             }
-            if (err == 0) {
+            if( err == 0 ) {
                 done = true;
-            } else if (err == ENOMEM) {
+            }
+            else if( err == ENOMEM ) {
                 assert(result != NULL);
                 free(result);
                 result = NULL;
                 err = 0;
             }
         }
-    } while (err == 0 && ! done);
-    
+    } while( err == 0 && !done );
+
     // Clean up and establish post conditions.
-    
-    if (err != 0 && result != NULL) {
+
+    if( err != 0 && result != NULL ) {
         free(result);
         result = NULL;
     }
     *procList = result;
-    if (err == 0) {
+    if( err == 0 ) {
         *procCount = length / sizeof(kinfo_proc);
     }
-    
-    assert( (err == 0) == (*procList != NULL) );
-    
+
+    assert((err == 0) == (*procList != NULL));
+
     return err;
 }
-    
+
 bool GetMemoryInfo(MemoryInfo &_mem) noexcept
 {
     static int pagesize = 0;
     static uint64_t memsize = 0;
-    
+
     // get page size and hardware memory size (only once)
     static std::once_flag once;
-    call_once(once, []{
+    call_once(once, [] {
         int psmib[2] = {CTL_HW, HW_PAGESIZE};
-        size_t length = sizeof (pagesize);
+        size_t length = sizeof(pagesize);
         sysctl(psmib, 2, &pagesize, &length, NULL, 0);
-        
-        int memsizemib[2] = {CTL_HW,HW_MEMSIZE};
+
+        int memsizemib[2] = {CTL_HW, HW_MEMSIZE};
         length = sizeof(memsize);
         sysctl(memsizemib, 2, &memsize, &length, NULL, 0);
     });
-    
+
     // get general memory info
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics_data_t vmstat;
-    if (host_statistics (mach_host_self (), HOST_VM_INFO, (host_info_t) &vmstat, &count) != KERN_SUCCESS)
+    if( host_statistics(
+            mach_host_self(), HOST_VM_INFO, reinterpret_cast<host_info_t>(&vmstat), &count) !=
+        KERN_SUCCESS )
         return false;
 
-    uint64_t wired_memory = (uint64_t)vmstat.wire_count * pagesize;
-    uint64_t active_memory = (uint64_t)vmstat.active_count * pagesize;
-    uint64_t inactive_memory = (uint64_t)vmstat.inactive_count * pagesize;
-    uint64_t free_memory = (uint64_t)vmstat.free_count * pagesize;
+    uint64_t wired_memory = static_cast<uint64_t>(vmstat.wire_count) * pagesize;
+    uint64_t active_memory = static_cast<uint64_t>(vmstat.active_count) * pagesize;
+    uint64_t inactive_memory = static_cast<uint64_t>(vmstat.inactive_count) * pagesize;
+    uint64_t free_memory = static_cast<uint64_t>(vmstat.free_count) * pagesize;
     uint64_t total_memory = wired_memory + active_memory + inactive_memory + free_memory;
     // NOT "memory used" in activity monitor in 10.9
     // 10.9 "memory used" = "app memory" + "file cache" + "wired memory"
@@ -141,20 +146,20 @@ bool GetMemoryInfo(MemoryInfo &_mem) noexcept
     _mem.inactive = inactive_memory;
     _mem.free = free_memory;
     _mem.used = used_memory;
-    
-    //get the swap size
-	int swapmib[2] = {CTL_VM,VM_SWAPUSAGE};
+
+    // get the swap size
+    int swapmib[2] = {CTL_VM, VM_SWAPUSAGE};
     struct xsw_usage swap_info;
-	size_t length = sizeof(swap_info);
-    if( sysctl(swapmib, 2, &swap_info, &length, NULL, 0) < 0)
+    size_t length = sizeof(swap_info);
+    if( sysctl(swapmib, 2, &swap_info, &length, NULL, 0) < 0 )
         return false;
     _mem.swap = swap_info.xsu_used;
-    
+
     _mem.total_hw = memsize;
 
     return true;
 }
-    
+
 bool GetCPULoad(CPULoad &_load) noexcept
 {
     unsigned int *cpuInfo;
@@ -163,26 +168,26 @@ bool GetCPULoad(CPULoad &_load) noexcept
     kern_return_t err = host_processor_info(mach_host_self(),
                                             PROCESSOR_CPU_LOAD_INFO,
                                             &numCPUs,
-                                            (processor_info_array_t*)&cpuInfo,
+                                            reinterpret_cast<processor_info_array_t *>(&cpuInfo),
                                             &numCpuInfo);
-    if(err != KERN_SUCCESS)
+    if( err != KERN_SUCCESS )
         return false;
 
     double system = 0.;
     double user = 0.;
     double idle = 0.;
-    
-    static unsigned int *prior = (unsigned int*) calloc(CPU_STATE_MAX * numCPUs, sizeof(unsigned int));
+
+    static unsigned int *prior =
+        static_cast<unsigned int *>(calloc(CPU_STATE_MAX * numCPUs, sizeof(unsigned int)));
     static const unsigned int alloc_cpus = numCPUs;
     assert(alloc_cpus == numCPUs);
-    
-    for(unsigned i = 0; i < numCPUs; ++i)
-    {
+
+    for( unsigned i = 0; i < numCPUs; ++i ) {
         system += cpuInfo[(CPU_STATE_MAX * i) + CPU_STATE_SYSTEM];
         system += cpuInfo[(CPU_STATE_MAX * i) + CPU_STATE_NICE];
         user += cpuInfo[(CPU_STATE_MAX * i) + CPU_STATE_USER];
         idle += cpuInfo[(CPU_STATE_MAX * i) + CPU_STATE_IDLE];
-        
+
         system -= prior[(CPU_STATE_MAX * i) + CPU_STATE_SYSTEM];
         system -= prior[(CPU_STATE_MAX * i) + CPU_STATE_NICE];
         user -= prior[(CPU_STATE_MAX * i) + CPU_STATE_USER];
@@ -190,33 +195,42 @@ bool GetCPULoad(CPULoad &_load) noexcept
     }
 
     memcpy(prior, cpuInfo, sizeof(integer_t) * numCpuInfo);
-    vm_deallocate(mach_task_self(), (vm_address_t)cpuInfo, sizeof(unsigned int) * numCpuInfo);
-        
+    vm_deallocate(mach_task_self(),
+                  reinterpret_cast<vm_address_t>(cpuInfo),
+                  sizeof(unsigned int) * numCpuInfo);
+
     double total = system + user + idle;
     system /= total;
     user /= total;
     idle /= total;
-    
+
     _load.system = system;
     _load.user = user;
     _load.idle = idle;
-    
+
     return true;
 }
 
-static const OSXVersion g_Version = []{
+static const OSXVersion g_Version = [] {
     const auto sys_ver = NSProcessInfo.processInfo.operatingSystemVersion;
     if( sys_ver.majorVersion == 11 )
         return OSXVersion::macOS_11;
     if( sys_ver.majorVersion == 10 )
         switch( sys_ver.minorVersion ) {
-            case 15:    return OSXVersion::OSX_15;
-            case 14:    return OSXVersion::OSX_14;
-            case 13:    return OSXVersion::OSX_13;
-            case 12:    return OSXVersion::OSX_12;
-            case 11:    return OSXVersion::OSX_11;
-            case 10:    return OSXVersion::OSX_10;
-            case 9:     return OSXVersion::OSX_9;
+            case 15:
+                return OSXVersion::OSX_15;
+            case 14:
+                return OSXVersion::OSX_14;
+            case 13:
+                return OSXVersion::OSX_13;
+            case 12:
+                return OSXVersion::OSX_12;
+            case 11:
+                return OSXVersion::OSX_11;
+            case 10:
+                return OSXVersion::OSX_10;
+            case 9:
+                return OSXVersion::OSX_9;
         }
     return OSXVersion::OSX_Unknown;
 }();
@@ -329,7 +343,8 @@ bool GetSystemOverview(SystemOverview &_overview)
 
         if( auto name1 = ExtractReadableModelNameFromFrameworks(coded_model); name1 != "" ) {
             human_model = name1;
-        } else if( auto name2 = ExtractReadableModelNameFromSystemProfiler(); name2 != "" ) {
+        }
+        else if( auto name2 = ExtractReadableModelNameFromSystemProfiler(); name2 != "" ) {
             human_model = name2;
         }
     });
@@ -345,11 +360,11 @@ bool IsThisProcessSandboxed() noexcept
     static const bool is_sandboxed = getenv("APP_SANDBOX_CONTAINER_ID") != nullptr;
     return is_sandboxed;
 }
-    
-const std::string& GetBundleID() noexcept
+
+const std::string &GetBundleID() noexcept
 {
     using namespace std::string_literals;
-    [[clang::no_destroy]] static const std::string bundle_id = []{
+    [[clang::no_destroy]] static const std::string bundle_id = [] {
         if( CFStringRef bid = CFBundleGetIdentifier(CFBundleGetMainBundle()) )
             return CFStringGetUTF8StdString(bid);
         else
@@ -357,5 +372,5 @@ const std::string& GetBundleID() noexcept
     }();
     return bundle_id;
 }
-    
+
 }

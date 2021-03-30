@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NativeFSManagerImpl.h"
 #include <AppKit/AppKit.h>
 #include <DiskArbitration/DiskArbitration.h>
@@ -50,11 +50,11 @@ static std::vector<FirmlinksMappingParser::Firmlink> FetchFirmlinks() noexcept;
 
 NativeFSManagerImpl::NativeFSManagerImpl()
 {
-    Log::Debug(SPDLOC, "Started initializing NativeFSManagerImpl {}", (void *)this);
+    Log::Debug(SPDLOC, "Started initializing NativeFSManagerImpl {}", static_cast<void *>(this));
     // it takes ~150ms, so this delay can be shaved off by running it async
     auto apfstree_promise = std::async(std::launch::async, [] { return FetchAPFSTree(); });
 
-    Log::Trace(SPDLOC, "Gathering info about all native filesystems {}", (void *)this);
+    Log::Trace(SPDLOC, "Gathering info about all native filesystems {}", static_cast<void *>(this));
     for( const auto &mount_path : GetFullFSList() ) {
         const auto volume = std::make_shared<NativeFileSystemInfo>();
         volume->mounted_at_path = mount_path;
@@ -64,10 +64,10 @@ NativeFSManagerImpl::NativeFSManagerImpl()
         m_VolumeLookup.Insert(volume, EnsureTrailingSlash(mount_path));
     }
 
-    Log::Trace(SPDLOC, "Getting APFSTree {}", (void *)this);
+    Log::Trace(SPDLOC, "Getting APFSTree {}", static_cast<void *>(this));
     m_StartupAPFSTree = apfstree_promise.get();
 
-    Log::Trace(SPDLOC, "Getting firmlinks {}", (void *)this);
+    Log::Trace(SPDLOC, "Getting firmlinks {}", static_cast<void *>(this));
     m_RootFirmlinks = FetchFirmlinks();
 
     if( m_StartupAPFSTree )
@@ -76,7 +76,7 @@ NativeFSManagerImpl::NativeFSManagerImpl()
 
     SubscribeToWorkspaceNotifications();
 
-    Log::Debug(SPDLOC, "Finished initializing NativeFSManagerImpl {}", (void *)this);
+    Log::Debug(SPDLOC, "Finished initializing NativeFSManagerImpl {}", static_cast<void *>(this));
 }
 
 NativeFSManagerImpl::~NativeFSManagerImpl()
@@ -143,20 +143,20 @@ void NativeFSManagerImpl::UnsubscribeFromWorkspaceNotifications()
 static void GetAllInfos(NativeFileSystemInfo &_volume)
 {
     Log::Info(SPDLOC, "Gatherning info about {}", _volume.mounted_at_path);
-    
+
     if( !GetBasicInfo(_volume) )
         Log::Error(SPDLOC, "failed to GetBasicInfo() on the volume {}", _volume.mounted_at_path);
-    
+
     if( !GetFormatInfo(_volume) )
         Log::Error(SPDLOC, "failed to GetFormatInfo() on the volume {}", _volume.mounted_at_path);
-    
+
     if( !GetInterfacesInfo(_volume) )
         Log::Error(
             SPDLOC, "failed to GetInterfacesInfo() on the volume {}", _volume.mounted_at_path);
-    
+
     if( !GetVerboseInfo(_volume) )
         Log::Error(SPDLOC, "failed to GetVerboseInfo() on the volume {}", _volume.mounted_at_path);
-    
+
     if( !UpdateSpaceInfo(_volume) )
         Log::Error(SPDLOC, "failed to UpdateSpaceInfo() on the volume {}", _volume.mounted_at_path);
 }
@@ -418,7 +418,8 @@ void NativeFSManagerImpl::OnDidRename(const std::string &_old_path, const std::s
             GetVerboseInfo(*volume.get());
             m_VolumeLookup.Remove(EnsureTrailingSlash(_old_path));
             m_VolumeLookup.Insert(volume, EnsureTrailingSlash(_new_path));
-        } else {
+        }
+        else {
             OnDidMount(_new_path);
         }
     }
@@ -465,7 +466,7 @@ NativeFSManager::Info NativeFSManagerImpl::VolumeFromFD(int _fd) const noexcept
     if( fstatfs(_fd, &info) < 0 )
         return nullptr;
 
-    return VolumeFromMountPoint((const char *)info.f_mntonname);
+    return VolumeFromMountPoint(info.f_mntonname);
 }
 
 NativeFSManager::Info NativeFSManagerImpl::VolumeFromPathFast(std::string_view _path) const noexcept
@@ -520,7 +521,7 @@ NativeFSManager::Info NativeFSManagerImpl::VolumeFromPath(std::string_view _path
     if( statfs(path.c_str(), &info) < 0 )
         return nullptr;
 
-    return VolumeFromMountPoint((const char *)info.f_mntonname);
+    return VolumeFromMountPoint(info.f_mntonname);
 }
 
 bool NativeFSManagerImpl::IsVolumeContainingPathEjectable(const std::string &_path)
@@ -555,7 +556,8 @@ void NativeFSManagerImpl::PerformUnmounting(const Info &_volume)
 
     if( _volume->fs_type_name == "apfs" ) {
         PerformAPFSUnmounting(_volume);
-    } else {
+    }
+    else {
         PerformGenericUnmounting(_volume);
     }
 }
@@ -643,7 +645,8 @@ void NativeFSManagerImpl::PerformGenericUnmounting(const Info &_volume)
 
     if( _volume->mount_flags.ejectable ) {
         DADiskUnmount(disk, kDADiskUnmountOptionForce, GenericDiskUnmountCallback, nullptr);
-    } else {
+    }
+    else {
         DADiskUnmount(disk, kDADiskUnmountOptionForce, nullptr, nullptr);
     }
 }
@@ -662,7 +665,8 @@ struct APFSUnmountingContext {
 static void
 APFSUnmountCallback([[maybe_unused]] DADiskRef _disk, DADissenterRef _dissenter, void *_context)
 {
-    const auto context = std::unique_ptr<APFSUnmountingContext>{(APFSUnmountingContext *)_context};
+    const auto context =
+        std::unique_ptr<APFSUnmountingContext>{static_cast<APFSUnmountingContext *>(_context)};
 
     if( _dissenter != nullptr )
         return;
@@ -717,7 +721,8 @@ void NativeFSManagerImpl::PerformAPFSUnmounting(const Info &_volume)
             std::make_unique<APFSUnmountingContext>(nc::utility::APFSTree{apfs_plist}, _volume);
 
         DADiskUnmount(disk, kDADiskUnmountOptionForce, APFSUnmountCallback, context.release());
-    } else {
+    }
+    else {
         DADiskUnmount(disk, kDADiskUnmountOptionForce, nullptr, nullptr);
     }
 }
@@ -725,7 +730,10 @@ void NativeFSManagerImpl::PerformAPFSUnmounting(const Info &_volume)
 static bool VolumeHasTrash(const std::string &_volume_path)
 {
     const auto url = base::CFPtr<CFURLRef>::adopt(CFURLCreateFromFileSystemRepresentation(
-        kCFAllocatorDefault, (const UInt8 *)_volume_path.c_str(), _volume_path.length(), true));
+        kCFAllocatorDefault,
+        reinterpret_cast<const UInt8 *>(_volume_path.c_str()),
+        _volume_path.length(),
+        true));
     if( !url )
         return false;
 
@@ -743,7 +751,7 @@ static std::vector<std::string> GetFullFSList()
     struct statfs *mounts_ptr = nullptr;
     const int num_mounts = getmntinfo_r_np(&mounts_ptr, MNT_NOWAIT);
     std::unique_ptr<struct statfs[], decltype(&std::free)> mounts(mounts_ptr, &std::free);
-        
+
     std::vector<std::string> result;
     for( int i = 0; i < num_mounts; i++ ) {
         struct stat st;

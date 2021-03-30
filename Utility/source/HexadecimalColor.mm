@@ -1,14 +1,13 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/HexadecimalColor.h>
 #include <unordered_map>
 #include <Utility/SystemInformation.h>
-
-using namespace std;
+#include <robin_hood.h>
 
 // In some contexts, primarily OpenGL, the term "RGBA" actually means the colors are stored in
-// memory such that R is at the lowest address, G after it, B after that, and A last. This is not the
-// format described above. OpenGL describes the above format as "BGRA" on a little-endian machine and
-// "ARGB" on a big-endian machine.
+// memory such that R is at the lowest address, G after it, B after that, and A last. This is not
+// the format described above. OpenGL describes the above format as "BGRA" on a little-endian
+// machine and "ARGB" on a big-endian machine.
 
 // RGBA format:
 // RRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA
@@ -35,7 +34,7 @@ static inline int DupHex(int _h) noexcept
     return _h * 16 + _h;
 }
 
-uint32_t HexadecimalColorStringToRGBA(string_view _string) noexcept
+uint32_t HexadecimalColorStringToRGBA(std::string_view _string) noexcept
 {
     if( _string.length() < 4 || _string[0] != '#' )
         return g_BlackColor;
@@ -49,7 +48,7 @@ uint32_t HexadecimalColorStringToRGBA(string_view _string) noexcept
         return MakeRGBA(static_cast<uint8_t>(HexToInt(_string[1]) * 16 + HexToInt(_string[2])),
                         static_cast<uint8_t>(HexToInt(_string[3]) * 16 + HexToInt(_string[4])),
                         static_cast<uint8_t>(HexToInt(_string[5]) * 16 + HexToInt(_string[6])),
-                                             255);
+                        255);
     if( _string.length() >= 5 ) // #RGBA
         return MakeRGBA(static_cast<uint8_t>(DupHex(HexToInt(_string[1]))),
                         static_cast<uint8_t>(DupHex(HexToInt(_string[2]))),
@@ -58,7 +57,8 @@ uint32_t HexadecimalColorStringToRGBA(string_view _string) noexcept
     if( _string.length() >= 4 ) // #RGB
         return MakeRGBA(static_cast<uint8_t>(DupHex(HexToInt(_string[1]))),
                         static_cast<uint8_t>(DupHex(HexToInt(_string[2]))),
-                        static_cast<uint8_t>(DupHex(HexToInt(_string[3]))), 255);
+                        static_cast<uint8_t>(DupHex(HexToInt(_string[3]))),
+                        255);
 
     return g_BlackColor;
 }
@@ -82,88 +82,93 @@ void HexadecimalColorRGBAToString(uint32_t _rgba, char _string[10]) noexcept
         _string[7] = hex[a >> 4];
         _string[8] = hex[a & 0xF];
         _string[9] = 0;
-    } else {
+    }
+    else {
         _string[7] = 0;
     }
 }
 
-[[clang::no_destroy]] static const std::unordered_map<std::string, NSColor *> g_SystemColors = {
-    {"@blackColor", NSColor.blackColor},
-    {"@darkGrayColor", NSColor.darkGrayColor},
-    {"@lightGrayColor", NSColor.lightGrayColor},
-    {"@whiteColor", NSColor.whiteColor},
-    {"@grayColor", NSColor.grayColor},
-    {"@redColor", NSColor.redColor},
-    {"@greenColor", NSColor.greenColor},
-    {"@blueColor", NSColor.blueColor},
-    {"@cyanColor", NSColor.cyanColor},
-    {"@yellowColor", NSColor.yellowColor},
-    {"@magentaColor", NSColor.magentaColor},
-    {"@orangeColor", NSColor.orangeColor},
-    {"@brownColor", NSColor.brownColor},
-    {"@clearColor", NSColor.clearColor},
-    {"@controlShadowColor", NSColor.controlShadowColor},
-    {"@controlDarkShadowColor", NSColor.controlDarkShadowColor},
-    {"@controlColor", NSColor.controlColor},
-    {"@controlHighlightColor", NSColor.controlHighlightColor},
-    {"@controlLightHighlightColor", NSColor.controlLightHighlightColor},
-    {"@controlTextColor", NSColor.controlTextColor},
-    {"@controlBackgroundColor", NSColor.controlBackgroundColor},
-    {"@selectedControlColor", NSColor.selectedControlColor},
-    {"@secondarySelectedControlColor", NSColor.secondarySelectedControlColor},
-    {"@selectedControlTextColor", NSColor.selectedControlTextColor},
-    {"@disabledControlTextColor", NSColor.disabledControlTextColor},
-    {"@textColor", NSColor.textColor},
-    {"@textBackgroundColor", NSColor.textBackgroundColor},
-    {"@selectedTextColor", NSColor.selectedTextColor},
-    {"@selectedTextBackgroundColor", NSColor.selectedTextBackgroundColor},
-    {"@gridColor", NSColor.gridColor},
-    {"@keyboardFocusIndicatorColor", NSColor.keyboardFocusIndicatorColor},
-    {"@windowBackgroundColor", NSColor.windowBackgroundColor},
-    {"@underPageBackgroundColor", NSColor.underPageBackgroundColor},
-    {"@labelColor", NSColor.labelColor},
-    {"@secondaryLabelColor", NSColor.secondaryLabelColor},
-    {"@tertiaryLabelColor", NSColor.tertiaryLabelColor},
-    {"@quaternaryLabelColor", NSColor.quaternaryLabelColor},
-    {"@scrollBarColor", NSColor.scrollBarColor},
-    {"@knobColor", NSColor.knobColor},
-    {"@selectedKnobColor", NSColor.selectedKnobColor},
-    {"@windowFrameColor", NSColor.windowFrameColor},
-    {"@windowFrameTextColor", NSColor.windowFrameTextColor},
-    {"@selectedMenuItemColor", NSColor.selectedMenuItemColor},
-    {"@selectedMenuItemTextColor", NSColor.selectedMenuItemTextColor},
-    {"@highlightColor", NSColor.highlightColor},
-    {"@shadowColor", NSColor.shadowColor},
-    {"@headerColor", NSColor.headerColor},
-    {"@headerTextColor", NSColor.headerTextColor},
-    {"@alternateSelectedControlColor", NSColor.alternateSelectedControlColor},
-    {"@alternateSelectedControlTextColor", NSColor.alternateSelectedControlTextColor},
-    {"@controlAlternatingRowBackgroundColors0", NSColor.controlAlternatingRowBackgroundColors[0]},
-    {"@controlAlternatingRowBackgroundColors1", NSColor.controlAlternatingRowBackgroundColors[1]},
-    {"@linkColor", NSColor.linkColor},
-    {"@placeholderTextColor", NSColor.placeholderTextColor},
-    {"@systemRedColor", NSColor.systemRedColor},
-    {"@systemGreenColor", NSColor.systemGreenColor},
-    {"@systemBlueColor", NSColor.systemBlueColor},
-    {"@systemOrangeColor", NSColor.systemOrangeColor},
-    {"@systemYellowColor", NSColor.systemYellowColor},
-    {"@systemBrownColor", NSColor.systemBrownColor},
-    {"@systemPinkColor", NSColor.systemPinkColor},
-    {"@systemPurpleColor", NSColor.systemPurpleColor},
-    {"@systemGrayColor", NSColor.systemGrayColor},
-    {"@findHighlightColor", NSColor.findHighlightColor},
-    {"@separatorColor", NSColor.separatorColor},
-    {"@selectedContentBackgroundColor", NSColor.selectedContentBackgroundColor},
-    {"@unemphasizedSelectedContentBackgroundColor",
-     NSColor.unemphasizedSelectedContentBackgroundColor},
-    {"@alternatingContentBackgroundColors0", NSColor.alternatingContentBackgroundColors[0]},
-    {"@alternatingContentBackgroundColors1", NSColor.alternatingContentBackgroundColors[1]},
-    {"@unemphasizedSelectedTextBackgroundColor", NSColor.unemphasizedSelectedTextBackgroundColor},
-    {"@unemphasizedSelectedTextColor", NSColor.unemphasizedSelectedTextColor},
-    {"@controlAccentColor", NSColor.controlAccentColor},
+[[clang::no_destroy]] static const robin_hood::unordered_map<std::string, NSColor *>
+    g_SystemColors = {
+        {"@blackColor", NSColor.blackColor},
+        {"@darkGrayColor", NSColor.darkGrayColor},
+        {"@lightGrayColor", NSColor.lightGrayColor},
+        {"@whiteColor", NSColor.whiteColor},
+        {"@grayColor", NSColor.grayColor},
+        {"@redColor", NSColor.redColor},
+        {"@greenColor", NSColor.greenColor},
+        {"@blueColor", NSColor.blueColor},
+        {"@cyanColor", NSColor.cyanColor},
+        {"@yellowColor", NSColor.yellowColor},
+        {"@magentaColor", NSColor.magentaColor},
+        {"@orangeColor", NSColor.orangeColor},
+        {"@brownColor", NSColor.brownColor},
+        {"@clearColor", NSColor.clearColor},
+        {"@controlShadowColor", NSColor.controlShadowColor},
+        {"@controlDarkShadowColor", NSColor.controlDarkShadowColor},
+        {"@controlColor", NSColor.controlColor},
+        {"@controlHighlightColor", NSColor.controlHighlightColor},
+        {"@controlLightHighlightColor", NSColor.controlLightHighlightColor},
+        {"@controlTextColor", NSColor.controlTextColor},
+        {"@controlBackgroundColor", NSColor.controlBackgroundColor},
+        {"@selectedControlColor", NSColor.selectedControlColor},
+        {"@secondarySelectedControlColor", NSColor.secondarySelectedControlColor},
+        {"@selectedControlTextColor", NSColor.selectedControlTextColor},
+        {"@disabledControlTextColor", NSColor.disabledControlTextColor},
+        {"@textColor", NSColor.textColor},
+        {"@textBackgroundColor", NSColor.textBackgroundColor},
+        {"@selectedTextColor", NSColor.selectedTextColor},
+        {"@selectedTextBackgroundColor", NSColor.selectedTextBackgroundColor},
+        {"@gridColor", NSColor.gridColor},
+        {"@keyboardFocusIndicatorColor", NSColor.keyboardFocusIndicatorColor},
+        {"@windowBackgroundColor", NSColor.windowBackgroundColor},
+        {"@underPageBackgroundColor", NSColor.underPageBackgroundColor},
+        {"@labelColor", NSColor.labelColor},
+        {"@secondaryLabelColor", NSColor.secondaryLabelColor},
+        {"@tertiaryLabelColor", NSColor.tertiaryLabelColor},
+        {"@quaternaryLabelColor", NSColor.quaternaryLabelColor},
+        {"@scrollBarColor", NSColor.scrollBarColor},
+        {"@knobColor", NSColor.knobColor},
+        {"@selectedKnobColor", NSColor.selectedKnobColor},
+        {"@windowFrameColor", NSColor.windowFrameColor},
+        {"@windowFrameTextColor", NSColor.windowFrameTextColor},
+        {"@selectedMenuItemColor", NSColor.selectedMenuItemColor},
+        {"@selectedMenuItemTextColor", NSColor.selectedMenuItemTextColor},
+        {"@highlightColor", NSColor.highlightColor},
+        {"@shadowColor", NSColor.shadowColor},
+        {"@headerColor", NSColor.headerColor},
+        {"@headerTextColor", NSColor.headerTextColor},
+        {"@alternateSelectedControlColor", NSColor.alternateSelectedControlColor},
+        {"@alternateSelectedControlTextColor", NSColor.alternateSelectedControlTextColor},
+        {"@controlAlternatingRowBackgroundColors0",
+         NSColor.controlAlternatingRowBackgroundColors[0]},
+        {"@controlAlternatingRowBackgroundColors1",
+         NSColor.controlAlternatingRowBackgroundColors[1]},
+        {"@linkColor", NSColor.linkColor},
+        {"@placeholderTextColor", NSColor.placeholderTextColor},
+        {"@systemRedColor", NSColor.systemRedColor},
+        {"@systemGreenColor", NSColor.systemGreenColor},
+        {"@systemBlueColor", NSColor.systemBlueColor},
+        {"@systemOrangeColor", NSColor.systemOrangeColor},
+        {"@systemYellowColor", NSColor.systemYellowColor},
+        {"@systemBrownColor", NSColor.systemBrownColor},
+        {"@systemPinkColor", NSColor.systemPinkColor},
+        {"@systemPurpleColor", NSColor.systemPurpleColor},
+        {"@systemGrayColor", NSColor.systemGrayColor},
+        {"@findHighlightColor", NSColor.findHighlightColor},
+        {"@separatorColor", NSColor.separatorColor},
+        {"@selectedContentBackgroundColor", NSColor.selectedContentBackgroundColor},
+        {"@unemphasizedSelectedContentBackgroundColor",
+         NSColor.unemphasizedSelectedContentBackgroundColor},
+        {"@alternatingContentBackgroundColors0", NSColor.alternatingContentBackgroundColors[0]},
+        {"@alternatingContentBackgroundColors1", NSColor.alternatingContentBackgroundColors[1]},
+        {"@unemphasizedSelectedTextBackgroundColor",
+         NSColor.unemphasizedSelectedTextBackgroundColor},
+        {"@unemphasizedSelectedTextColor", NSColor.unemphasizedSelectedTextColor},
+        {"@controlAccentColor", NSColor.controlAccentColor},
 };
 
-static NSColor *DecodeSystemColor(const string &_color)
+static NSColor *DecodeSystemColor(const std::string &_color)
 {
     if( _color.empty() || _color.front() != '@' )
         return nil;
@@ -192,7 +197,7 @@ static NSColor *DecodeSystemColor(const string &_color)
         return [NSColor colorWithRGBA:HexadecimalColorStringToRGBA(_hex ? _hex : "")];
 }
 
-+ (NSColor *)colorWithHexStdString:(const string &)_hex
++ (NSColor *)colorWithHexStdString:(const std::string &)_hex
 {
     if( auto sc = DecodeSystemColor(_hex) )
         return sc;
@@ -216,17 +221,19 @@ static bool is_named(NSColor *_color)
                                                                          blue:&b
                                                                         alpha:&a];
 
-    return MakeRGBA(
-        (uint8_t)(MIN(1.0f, MAX(0.0f, r)) * 255.), (uint8_t)(MIN(1.0f, MAX(0.0f, g)) * 255.),
-        (uint8_t)(MIN(1.0f, MAX(0.0f, b)) * 255.), (uint8_t)(MIN(1.0f, MAX(0.0f, a)) * 255.));
+    return MakeRGBA(static_cast<uint8_t>(std::min(1.0, std::max(0.0, r)) * 255.),
+                    static_cast<uint8_t>(std::min(1.0, std::max(0.0, g)) * 255.),
+                    static_cast<uint8_t>(std::min(1.0, std::max(0.0, b)) * 255.),
+                    static_cast<uint8_t>(std::min(1.0, std::max(0.0, a)) * 255.));
 }
 
 - (NSString *)toHexString
 {
     if( is_named(self) ) {
-        auto i = find_if(begin(g_SystemColors), end(g_SystemColors),
-                         [&](auto &v) { return v.second == self; });
-        if( i != end(g_SystemColors) )
+        auto i = std::find_if(std::begin(g_SystemColors), std::end(g_SystemColors), [&](auto &v) {
+            return v.second == self;
+        });
+        if( i != std::end(g_SystemColors) )
             return [NSString stringWithUTF8String:i->first.c_str()];
     }
 
@@ -235,18 +242,19 @@ static bool is_named(NSColor *_color)
     return [NSString stringWithUTF8String:buf];
 }
 
-- (string)toHexStdString
+- (std::string)toHexStdString
 {
     if( is_named(self) ) {
-        auto i = find_if(begin(g_SystemColors), end(g_SystemColors),
-                         [&](auto &v) { return v.second == self; });
+        auto i = std::find_if(std::begin(g_SystemColors), std::end(g_SystemColors), [&](auto &v) {
+            return v.second == self;
+        });
         if( i != end(g_SystemColors) )
             return i->first;
     }
 
     char buf[16];
     HexadecimalColorRGBAToString([self toRGBA], buf);
-    return string(buf);
+    return buf;
 }
 
 @end

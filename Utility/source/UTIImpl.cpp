@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/UTIImpl.h>
 #include <CoreServices/CoreServices.h>
 #include <Habanero/CFPtr.h>
@@ -61,12 +61,12 @@ static void TraverseConformingUTIs(const std::string &_uti,
     if( conforms_to == nullptr )
         return;
     else if (CFGetTypeID(conforms_to) == CFArrayGetTypeID()) {
-        const CFArrayRef array = (CFArrayRef)conforms_to;
+        const CFArrayRef array = static_cast<CFArrayRef>(conforms_to);
         const auto number = CFArrayGetCount(array);
         for (auto i = 0; i < number; ++i) {
             const auto object = CFArrayGetValueAtIndex(array, i);
             if (object != nullptr && CFGetTypeID(object) == CFStringGetTypeID()) {
-                const auto conforming_cf_string = (CFStringRef)object;
+                const auto conforming_cf_string = static_cast<CFStringRef>(object);
                 const auto conforming_std_string = CFStringGetUTF8StdString(conforming_cf_string);
                 if( _target.count(conforming_std_string) == 0 ) {
                     _target.emplace(conforming_std_string);
@@ -76,7 +76,7 @@ static void TraverseConformingUTIs(const std::string &_uti,
         }
     }
     else if( CFGetTypeID(conforms_to) == CFStringGetTypeID()) {
-        const auto conforming_cf_string = (CFStringRef)conforms_to;
+        const auto conforming_cf_string = static_cast<CFStringRef>(conforms_to);
         const auto conforming_std_string = CFStringGetUTF8StdString(conforming_cf_string);
         if( _target.count(conforming_std_string) == 0 ) {
             _target.emplace(conforming_std_string);

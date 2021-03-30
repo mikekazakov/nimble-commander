@@ -1,15 +1,15 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DiskUtility.h"
 #include <boost/process.hpp>
 #include <iostream>
 #include "SystemInformation.h"
 #include "ObjCpp.h"
 
-static const auto g_APFSListCommand = "/usr/sbin/diskutil apfs list -plist"; 
+static const auto g_APFSListCommand = "/usr/sbin/diskutil apfs list -plist";
 
 namespace nc::utility {
 
-static std::string Execute(const std::string &_command); 
+static std::string Execute(const std::string &_command);
 static std::string_view RoleToDiskUtilRepr(APFSTree::Role _role) noexcept;
 
 NSDictionary *DiskUtility::ListAPFSObjects()
@@ -18,15 +18,15 @@ NSDictionary *DiskUtility::ListAPFSObjects()
         return nil;
 
     const auto plist = Execute(g_APFSListCommand);
-    
+
     if( plist.empty() )
         return nil;
-    
+
     return DiskUtilityOutputToDictionary(plist);
 }
 
-APFSTree::APFSTree( NSDictionary *_objects_list_from_disk_utility ) :
-    m_Root(_objects_list_from_disk_utility)
+APFSTree::APFSTree(NSDictionary *_objects_list_from_disk_utility)
+    : m_Root(_objects_list_from_disk_utility)
 {
     if( m_Root == nil )
         throw std::invalid_argument("APFSTree: object list can't be nil");
@@ -43,27 +43,27 @@ std::vector<std::string> APFSTree::ContainersNames() const
         const auto dict = objc_cast<NSDictionary>(container);
         if( dict == nil )
             continue;
-        
+
         const auto reference = objc_cast<NSString>(dict[@"ContainerReference"]);
         if( reference == nil )
             continue;
-        
+
         names.emplace_back(reference.UTF8String);
     }
-    
+
     return names;
 }
 
-std::optional<std::string> APFSTree::FindContainerOfVolume( std::string_view _bsd_volume_name ) const
+std::optional<std::string> APFSTree::FindContainerOfVolume(std::string_view _bsd_volume_name) const
 {
     if( _bsd_volume_name.empty() )
         return {};
-    
+
     for( const id container in m_Containers ) {
         const auto dict = objc_cast<NSDictionary>(container);
         if( dict == nil )
             continue;
-        
+
         if( DoesContainerContainVolume(dict, _bsd_volume_name) ) {
             if( const auto reference = objc_cast<NSString>(dict[@"ContainerReference"]) ) {
                 return std::make_optional(reference.UTF8String);
@@ -73,17 +73,17 @@ std::optional<std::string> APFSTree::FindContainerOfVolume( std::string_view _bs
                 return {};
             }
         }
-    }    
-    
+    }
+
     return {};
 }
-    
+
 std::optional<std::vector<std::string>>
-    APFSTree::FindVolumesOfContainer( std::string_view _container_name ) const
+APFSTree::FindVolumesOfContainer(std::string_view _container_name) const
 {
     if( _container_name.empty() )
         return {};
-    
+
     for( const id container in m_Containers ) {
         const auto dict = objc_cast<NSDictionary>(container);
         if( dict == nil )
@@ -92,34 +92,34 @@ std::optional<std::vector<std::string>>
         const auto reference = objc_cast<NSString>(dict[@"ContainerReference"]);
         if( reference == nil )
             continue;
-        
+
         if( _container_name == reference.UTF8String )
             return VolumesOfContainer(dict);
     }
 
     return {};
 }
-    
+
 std::optional<std::vector<std::string>>
-    APFSTree::FindPhysicalStoresOfContainer( std::string_view _container_name ) const
+APFSTree::FindPhysicalStoresOfContainer(std::string_view _container_name) const
 {
     if( _container_name.empty() )
         return {};
-    
+
     for( const id container in m_Containers ) {
         const auto dict = objc_cast<NSDictionary>(container);
         if( dict == nil )
             continue;
-        
+
         const auto reference = objc_cast<NSString>(dict[@"ContainerReference"]);
         if( reference == nil )
             continue;
-        
+
         if( _container_name == reference.UTF8String )
             return StoresOfContainer(dict);
     }
-    
-    return {};        
+
+    return {};
 }
 
 bool APFSTree::DoesContainerContainVolume(NSDictionary *_container,
@@ -127,11 +127,11 @@ bool APFSTree::DoesContainerContainVolume(NSDictionary *_container,
 {
     if( _bsd_volume_name.empty() || objc_cast<NSDictionary>(_container) == nil )
         return false;
-    
+
     const auto volumes = objc_cast<NSArray>(_container[@"Volumes"]);
     if( volumes == nil )
         return false;
-    
+
     for( const id volume in volumes ) {
         if( const auto volume_dict = objc_cast<NSDictionary>(volume) ) {
             if( const auto identifier = objc_cast<NSString>(volume_dict[@"DeviceIdentifier"]) ) {
@@ -140,41 +140,41 @@ bool APFSTree::DoesContainerContainVolume(NSDictionary *_container,
                 }
             }
         }
-    } 
+    }
     return false;
 }
 
-std::optional<std::vector<std::string>> APFSTree::FindVolumesInContainerWithRole(
-    std::string_view _container_name, Role _role ) const
+std::optional<std::vector<std::string>>
+APFSTree::FindVolumesInContainerWithRole(std::string_view _container_name, Role _role) const
 {
     if( _container_name.empty() )
         return {};
-    
+
     for( const id container in m_Containers ) {
         const auto dict = objc_cast<NSDictionary>(container);
         if( dict == nil )
             continue;
-        
+
         const auto reference = objc_cast<NSString>(dict[@"ContainerReference"]);
         if( reference == nil )
             continue;
-        
+
         if( _container_name == reference.UTF8String )
             return VolumesOfContainerWithRole(dict, _role);
     }
-    
-    return {};        
+
+    return {};
 }
 
 std::vector<std::string> APFSTree::VolumesOfContainer(NSDictionary *_container)
 {
     if( objc_cast<NSDictionary>(_container) == nil )
         return {};
-    
+
     const auto volumes = objc_cast<NSArray>(_container[@"Volumes"]);
     if( volumes == nil )
         return {};
-    
+
     std::vector<std::string> volumes_bsd_names;
     for( const id volume in volumes ) {
         if( const auto volume_dict = objc_cast<NSDictionary>(volume) ) {
@@ -185,16 +185,16 @@ std::vector<std::string> APFSTree::VolumesOfContainer(NSDictionary *_container)
     }
     return volumes_bsd_names;
 }
-    
+
 std::vector<std::string> APFSTree::StoresOfContainer(NSDictionary *_container)
 {
     if( objc_cast<NSDictionary>(_container) == nil )
-        return {};    
+        return {};
 
     const auto stores = objc_cast<NSArray>(_container[@"PhysicalStores"]);
     if( stores == nil )
         return {};
-    
+
     std::vector<std::string> stores_bsd_names;
     for( const id store in stores ) {
         if( const auto store_dict = objc_cast<NSDictionary>(store) ) {
@@ -203,19 +203,18 @@ std::vector<std::string> APFSTree::StoresOfContainer(NSDictionary *_container)
             }
         }
     }
-    return stores_bsd_names;    
+    return stores_bsd_names;
 }
 
-std::vector<std::string> APFSTree::VolumesOfContainerWithRole(NSDictionary *_container,
-                                                              Role _role)
+std::vector<std::string> APFSTree::VolumesOfContainerWithRole(NSDictionary *_container, Role _role)
 {
     if( objc_cast<NSDictionary>(_container) == nil )
         return {};
-    
+
     const auto volumes = objc_cast<NSArray>(_container[@"Volumes"]);
     if( volumes == nil )
         return {};
-    
+
     std::vector<std::string> volumes_bsd_names;
     for( const id volume in volumes ) {
         if( const auto volume_dict = objc_cast<NSDictionary>(volume) ) {
@@ -223,16 +222,16 @@ std::vector<std::string> APFSTree::VolumesOfContainerWithRole(NSDictionary *_con
             if( identifier == nil ) {
                 continue;
             }
-            
+
             const std::string bsd_id = identifier.UTF8String;
-            
+
             if( const auto roles = objc_cast<NSArray>(volume_dict[@"Roles"]) ) {
                 if( _role == Role::None ) {
                     if( roles.count == 0 ) {
                         volumes_bsd_names.emplace_back(bsd_id);
                     }
                 }
-                else {                    
+                else {
                     for( const id role in roles ) {
                         if( const auto role_str = objc_cast<NSString>(role) ) {
                             const auto utf8 = role_str.UTF8String;
@@ -245,19 +244,20 @@ std::vector<std::string> APFSTree::VolumesOfContainerWithRole(NSDictionary *_con
             }
         }
     }
-    
-    std::sort( volumes_bsd_names.begin(), volumes_bsd_names.end() );
+
+    std::sort(volumes_bsd_names.begin(), volumes_bsd_names.end());
     volumes_bsd_names.erase(std::unique(volumes_bsd_names.begin(), volumes_bsd_names.end()),
-                            volumes_bsd_names.end() );
+                            volumes_bsd_names.end());
     return volumes_bsd_names;
 }
 
 NSDictionary *DiskUtility::DiskUtilityOutputToDictionary(std::string_view _str)
 {
-    const auto data = [[NSData alloc] initWithBytesNoCopy:(void*)_str.data()
-                                                   length:_str.length()
-                                             freeWhenDone:false];
-    
+    const auto data = [[NSData alloc]
+        initWithBytesNoCopy:const_cast<void *>(static_cast<const void *>(_str.data()))
+                     length:_str.length()
+               freeWhenDone:false];
+
     NSError *error = nil;
     const id root = [NSPropertyListSerialization propertyListWithData:data
                                                               options:NSPropertyListImmutable
@@ -266,14 +266,14 @@ NSDictionary *DiskUtility::DiskUtilityOutputToDictionary(std::string_view _str)
 
     return objc_cast<NSDictionary>(root);
 }
-    
+
 static std::string Execute(const std::string &_command)
 {
     using namespace boost::process;
-    
+
     ipstream pipe_stream;
     child c(_command, std_out > pipe_stream);
-    
+
     std::string buffer;
     std::string line;
     while( c.running() && pipe_stream ) {
@@ -282,8 +282,8 @@ static std::string Execute(const std::string &_command)
             buffer += "\n";
         }
     }
-        
-    c.wait(); 
+
+    c.wait();
     return buffer;
 }
 
@@ -299,17 +299,26 @@ static std::string_view RoleToDiskUtilRepr(APFSTree::Role _role) noexcept
     static const std::string_view data = "Data";
     static const std::string_view baseband = "Baseband";
     using _ = APFSTree::Role;
-    switch(_role) {
-        case _::System: return system;
-        case _::User: return user;
-        case _::Recovery: return recovery;
-        case _::VM: return vm;
-        case _::Preboot: return preboot;
-        case _::Installer: return installer;
-        case _::Data: return data;
-        case _::Baseband: return baseband;
-        default: return none;
+    switch( _role ) {
+        case _::System:
+            return system;
+        case _::User:
+            return user;
+        case _::Recovery:
+            return recovery;
+        case _::VM:
+            return vm;
+        case _::Preboot:
+            return preboot;
+        case _::Installer:
+            return installer;
+        case _::Data:
+            return data;
+        case _::Baseband:
+            return baseband;
+        default:
+            return none;
     }
 }
-    
+
 }

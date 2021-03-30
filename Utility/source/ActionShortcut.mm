@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ActionShortcut.h"
 #include <locale>
 #include <vector>
@@ -38,7 +38,7 @@ ActionShortcut::ActionShortcut(const char *_from) noexcept
             else if( v == u"\\t" )
                 unicode = '\t';
             else
-                unicode = (uint16_t)towlower(v.front());
+                unicode = static_cast<uint16_t>(std::towlower(v.front()));
             break;
         }
         v.remove_prefix(1);
@@ -126,44 +126,43 @@ static NSString *StringForModifierFlags(uint64_t flags)
 }
 
 [[clang::no_destroy]] static const std::unordered_map<uint16_t, NSString *> g_UnicodeToNiceString =
-{
-    {NSLeftArrowFunctionKey, @"←"},
-    {NSRightArrowFunctionKey, @"→"},
-    {NSDownArrowFunctionKey, @"↓"},
-    {NSUpArrowFunctionKey, @"↑"},
-    {NSF1FunctionKey, @"F1"},
-    {NSF2FunctionKey, @"F2"},
-    {NSF3FunctionKey, @"F3"},
-    {NSF4FunctionKey, @"F4"},
-    {NSF5FunctionKey, @"F5"},
-    {NSF6FunctionKey, @"F6"},
-    {NSF7FunctionKey, @"F7"},
-    {NSF8FunctionKey, @"F8"},
-    {NSF9FunctionKey, @"F9"},
-    {NSF10FunctionKey, @"F10"},
-    {NSF11FunctionKey, @"F11"},
-    {NSF12FunctionKey, @"F12"},
-    {NSF13FunctionKey, @"F13"},
-    {NSF14FunctionKey, @"F14"},
-    {NSF15FunctionKey, @"F15"},
-    {NSF16FunctionKey, @"F16"},
-    {NSF17FunctionKey, @"F17"},
-    {NSF18FunctionKey, @"F18"},
-    {NSF19FunctionKey, @"F19"},
-    {0x2326, @"⌦"},
-    {'\r', @"↩"},
-    {0x3, @"⌅"},
-    {0x9, @"⇥"},
-    {0x2423, @"Space"},
-    {0x0020, @"Space"},
-    {0x8, @"⌫"},
-    {NSClearDisplayFunctionKey, @"Clear"},
-    {0x1B, @"⎋"},
-    {NSHomeFunctionKey, @"↖"},
-    {NSPageUpFunctionKey, @"⇞"},
-    {NSEndFunctionKey, @"↘"},
-    {NSPageDownFunctionKey, @"⇟"},
-    {NSHelpFunctionKey, @"Help"}};
+    {{NSLeftArrowFunctionKey, @"←"},
+     {NSRightArrowFunctionKey, @"→"},
+     {NSDownArrowFunctionKey, @"↓"},
+     {NSUpArrowFunctionKey, @"↑"},
+     {NSF1FunctionKey, @"F1"},
+     {NSF2FunctionKey, @"F2"},
+     {NSF3FunctionKey, @"F3"},
+     {NSF4FunctionKey, @"F4"},
+     {NSF5FunctionKey, @"F5"},
+     {NSF6FunctionKey, @"F6"},
+     {NSF7FunctionKey, @"F7"},
+     {NSF8FunctionKey, @"F8"},
+     {NSF9FunctionKey, @"F9"},
+     {NSF10FunctionKey, @"F10"},
+     {NSF11FunctionKey, @"F11"},
+     {NSF12FunctionKey, @"F12"},
+     {NSF13FunctionKey, @"F13"},
+     {NSF14FunctionKey, @"F14"},
+     {NSF15FunctionKey, @"F15"},
+     {NSF16FunctionKey, @"F16"},
+     {NSF17FunctionKey, @"F17"},
+     {NSF18FunctionKey, @"F18"},
+     {NSF19FunctionKey, @"F19"},
+     {0x2326, @"⌦"},
+     {'\r', @"↩"},
+     {0x3, @"⌅"},
+     {0x9, @"⇥"},
+     {0x2423, @"Space"},
+     {0x0020, @"Space"},
+     {0x8, @"⌫"},
+     {NSClearDisplayFunctionKey, @"Clear"},
+     {0x1B, @"⎋"},
+     {NSHomeFunctionKey, @"↖"},
+     {NSPageUpFunctionKey, @"⇞"},
+     {NSEndFunctionKey, @"↘"},
+     {NSPageDownFunctionKey, @"⇟"},
+     {NSHelpFunctionKey, @"Help"}};
 
 NSString *ActionShortcut::PrettyString() const noexcept
 {
@@ -225,5 +224,5 @@ bool ActionShortcut::operator!=(const ActionShortcut &_rhs) const noexcept
 size_t std::hash<nc::utility::ActionShortcut>::operator()(
     const nc::utility::ActionShortcut &_ac) const noexcept
 {
-    return ((size_t)_ac.unicode) | (((size_t)_ac.modifiers.flags) << 16);
+    return static_cast<size_t>(_ac.unicode) | (static_cast<size_t>(_ac.modifiers.flags) << 16);
 }

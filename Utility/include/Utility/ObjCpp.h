@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -28,7 +28,7 @@ inline std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
     return [weak_obj, _sel]{
         if( __strong T *strong_obj = weak_obj ) {
             typedef void (*func_type)(id, SEL);
-            func_type func = (func_type)[T instanceMethodForSelector:_sel];
+            func_type func = static_cast<func_type>([T instanceMethodForSelector:_sel]);
             func(strong_obj, _sel);
         }
     };
@@ -43,7 +43,7 @@ inline std::function<void()> objc_callback_to_main_queue(T *_obj, SEL _sel) noex
             dispatch_to_main_queue([weak_obj, _sel]{
                 if( __strong T *strong_obj = weak_obj ) {
                     typedef void (*func_type)(id, SEL);
-                    func_type func = (func_type)[T instanceMethodForSelector:_sel];
+                    func_type func = static_cast<func_type>([T instanceMethodForSelector:_sel]);
                     func(strong_obj, _sel);
                 }
             });

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -7,9 +7,6 @@
 #include <mutex>
 
 #include <Utility/Encodings.h>
-//#import <Foundation/Foundation.h>
-//#import <Quartz/Quartz.h>
-
 
 namespace encodings
 {
@@ -283,8 +280,8 @@ const std::vector< std::pair<int, CFStringRef> >& LiteralEncodingsList()
     [[clang::no_destroy]] static std::vector< std::pair<int, CFStringRef> > encodings;
     static std::once_flag token;
     std::call_once(token, []{
-#define _(a) encodings.emplace_back(a, (CFStringRef)CFBridgingRetain(\
-    [NSString localizedNameOfStringEncoding:CFStringConvertEncodingToNSStringEncoding(ToCFStringEncoding(a))]))
+#define _(a) encodings.emplace_back(a, static_cast<CFStringRef>(CFBridgingRetain(\
+    [NSString localizedNameOfStringEncoding:CFStringConvertEncodingToNSStringEncoding(ToCFStringEncoding(a))])))
         _(ENCODING_MACOS_ROMAN_WESTERN);
         _(ENCODING_UTF8);
         _(ENCODING_UTF16LE);

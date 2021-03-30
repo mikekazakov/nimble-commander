@@ -1,8 +1,9 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <string>
 #include <array>
 #include <Utility/FontExtras.h>
 #include <Habanero/dispatch_cpp.h>
+#include <cmath>
 
 @implementation NSFont (StringDescription)
 
@@ -51,7 +52,7 @@ static bool IsSystemFont( NSFont *_font )
 {
     static const auto max_sz = 100;
     [[clang::no_destroy]] static std::array<NSString*, max_sz> descriptions;
-    const auto pt = (int)floor(_font.pointSize + 0.5);
+    const auto pt = static_cast<int>(std::floor(_font.pointSize + 0.5));
     if( pt < 0 || pt >= max_sz )
         return false;
     
@@ -66,7 +67,7 @@ static bool IsSystemFont( NSFont *_font )
 
 - (NSString*) toStringDescription
 {
-    const auto pt = (int)floor(self.pointSize + 0.5);
+    const auto pt = static_cast<int>(std::floor(self.pointSize + 0.5));
     if( IsSystemFont(self) )
         return [NSString stringWithFormat:@"%@, %s", @"@systemFont", std::to_string(pt).c_str()];
     /* check for another system fonts flavours */
@@ -90,9 +91,9 @@ static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
                                          short *_out_width_last,
                                          CFDictionaryRef _attributes)
 {
-    const auto strings_amount = (int)(_str_last - _str_first);
+    const auto strings_amount = static_cast<int>(_str_last - _str_first);
     assert( strings_amount > 0 );
-    assert( strings_amount == (int)(_out_width_last - _out_width_first) );
+    assert( strings_amount == static_cast<int>(_out_width_last - _out_width_first) );
     
     const auto initial_capacity = strings_amount * 64;
     const auto storage = CFStringCreateMutable(NULL, initial_capacity);
@@ -115,7 +116,7 @@ static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
     for( id item in lines ) {
         const auto line = (__bridge CTLineRef)item;
         const double original_width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
-        const short rounded_width = (short)floor( original_width + 0.5 );
+        const short rounded_width = static_cast<short>(std::floor( original_width + 0.5 ));
         _out_width_first[ line_index++ ] = rounded_width; 
     }
     CFRelease(frame);
@@ -127,14 +128,14 @@ static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
 std::vector<short> FontGeometryInfo::
     CalculateStringsWidths(const std::vector<CFStringRef> &_strings, NSFont *_font )
 {
-    const auto count = (int)_strings.size();
+    const auto count = _strings.size();
     if( count == 0 )
         return {};
 
     const auto items_per_chunk = [&]{
-        if( count <= 512 )          return 128; 
-        else if( count <= 2048 )    return 256;
-        else                        return 512; 
+        if( count <= 512 )          return size_t(128);
+        else if( count <= 2048 )    return size_t(256);
+        else                        return size_t(512);
     }();
     
     std::vector<short> widths( count );
@@ -145,7 +146,7 @@ std::vector<short> FontGeometryInfo::
     if( count > items_per_chunk ) {
         const auto iterations = (count / items_per_chunk) + (count % items_per_chunk ? 1 : 0);
         const auto block = [&](size_t _chunk_index) {
-            const auto index_first = (int)_chunk_index * items_per_chunk;
+            const auto index_first = _chunk_index * items_per_chunk;
             const auto index_last = std::min(index_first + items_per_chunk, count); 
             CalculateWidthsOfStringsBulk(_strings.data() + index_first,
                                          _strings.data() + index_last,

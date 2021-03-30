@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <atomic>
 #include <Habanero/mach_time.h>
 #include <Habanero/dispatch_cpp.h>
@@ -11,19 +11,18 @@ using namespace std::chrono;
 
 static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
 
-@implementation FPSLimitedDrawer
-{
+@implementation FPSLimitedDrawer {
     __weak NSView *m_View;
-    unsigned       m_FPS;
-    nanoseconds    m_LastDrawedTime;
-    atomic_bool    m_Dirty;
-    NSTimer       *m_DrawTimer;
+    unsigned m_FPS;
+    nanoseconds m_LastDrawedTime;
+    atomic_bool m_Dirty;
+    NSTimer *m_DrawTimer;
 }
 
-- (id) initWithView:(NSView*)_view
+- (id)initWithView:(NSView *)_view
 {
     self = [super init];
-    if(self) {
+    if( self ) {
         assert(dispatch_is_main_queue());
         m_FPS = 60;
         m_Dirty = false;
@@ -34,58 +33,58 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
     return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     [self cleanupTimer];
 }
 
-- (unsigned) fps
+- (unsigned)fps
 {
     return m_FPS;
 }
 
-- (void) setFps:(unsigned)_fps
+- (void)setFps:(unsigned)_fps
 {
     assert(dispatch_is_main_queue());
-    if(_fps == m_FPS)
+    if( _fps == m_FPS )
         return;
     m_FPS = _fps;
     [self cleanupTimer];
-    if(_fps > 0)
+    if( _fps > 0 )
         [self setupTimer];
 }
 
-- (NSView*)view
+- (NSView *)view
 {
-    return (NSView*)m_View;
+    return static_cast<NSView *>(m_View);
 }
 
-- (void) invalidate
+- (void)invalidate
 {
-    if(m_FPS > 0) {
+    if( m_FPS > 0 ) {
         m_Dirty = true;
-        if(m_DrawTimer == nil) {
-            if(dispatch_is_main_queue())
+        if( m_DrawTimer == nil ) {
+            if( dispatch_is_main_queue() )
                 [self setupTimer];
             else
-                dispatch_to_main_queue([=]{ [self setupTimer]; });
+                dispatch_to_main_queue([=] { [self setupTimer]; });
         }
     }
     else
         [self.view setNeedsDisplay];
 }
 
-- (void) UpdateByTimer:(NSTimer*)[[maybe_unused]]theTimer
+- (void)UpdateByTimer:(NSTimer *) [[maybe_unused]] theTimer
 {
-    if(self.view) {
-        if(m_Dirty) {
+    if( self.view ) {
+        if( m_Dirty ) {
             self.view.needsDisplay = true;
             m_Dirty = false;
             m_LastDrawedTime = machtime();
         }
         else {
             // timer invalidation by max inactivity time
-            if(machtime() - m_LastDrawedTime > m_MaxTimeBeforeInvalidation)
+            if( machtime() - m_LastDrawedTime > m_MaxTimeBeforeInvalidation )
                 [self cleanupTimer];
         }
     }
@@ -94,11 +93,11 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
     }
 }
 
-- (void) setupTimer
+- (void)setupTimer
 {
-    if(m_DrawTimer)
+    if( m_DrawTimer )
         return;
-    m_DrawTimer = [NSTimer scheduledTimerWithTimeInterval:1./m_FPS
+    m_DrawTimer = [NSTimer scheduledTimerWithTimeInterval:1. / m_FPS
                                                    target:self
                                                  selector:@selector(UpdateByTimer:)
                                                  userInfo:nil
@@ -107,7 +106,7 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
     m_LastDrawedTime = machtime();
 }
 
-- (void) cleanupTimer
+- (void)cleanupTimer
 {
     assert(dispatch_is_main_queue());
     [m_DrawTimer invalidate];

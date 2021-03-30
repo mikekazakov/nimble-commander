@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <assert.h>
 #include <stdlib.h>
 
@@ -6,6 +6,7 @@
 
 using namespace encodings;
 
+// clang-format off
 static const unsigned short g_CP_OEM437_To_Unicode[256] = {
     /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */
     /*00*/ 0x0000,0x0001,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,0x0008,0x0009,0x000A,0x000B,0x000C,0x000D,0x000E,0x000F, /*00*/
@@ -45,7 +46,7 @@ static const unsigned short g_CP_OEM737_To_Unicode[256] = {
     /*D0*/ 0x2568,0x2564,0x2565,0x2559,0x2558,0x2552,0x2553,0x256B,0x256A,0x2518,0x250C,0x2588,0x2584,0x258C,0x2590,0x2580, /*D0*/
     /*E0*/ 0x03C9,0x03AC,0x03AD,0x03AE,0x03CA,0x03AF,0x03CC,0x03CD,0x03CB,0x03CE,0x0386,0x0388,0x0389,0x038A,0x038C,0x038E, /*E0*/
     /*F0*/ 0x038F,0x00B1,0x2265,0x2264,0x03AA,0x03AB,0x00F7,0x2248,0x00B0,0x2219,0x00B7,0x221A,0x207F,0x00B2,0x25A0,0x00A0  /*F0*/
-    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */    
+    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */
 };
 
 static const unsigned short g_CP_OEM775_To_Unicode[256] = {
@@ -130,7 +131,7 @@ static const unsigned short g_CP_OEM852_To_Unicode[256] = {
     /*D0*/ 0x0111,0x0110,0x010E,0x00CB,0x010F,0x0147,0x00CD,0x00CE,0x011B,0x2518,0x250C,0x2588,0x2584,0x0162,0x016E,0x2580, /*D0*/
     /*E0*/ 0x00D3,0x00DF,0x00D4,0x0143,0x0144,0x0148,0x0160,0x0161,0x0154,0x00DA,0x0155,0x0170,0x00FD,0x00DD,0x0163,0x00B4, /*E0*/
     /*F0*/ 0x00AD,0x02DD,0x02DB,0x02C7,0x02D8,0x00A7,0x00F7,0x00B8,0x00B0,0x00A8,0x02D9,0x0171,0x0158,0x0159,0x25A0,0x00A0  /*F0*/
-    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */    
+    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */
 };
 
 static const unsigned short g_CP_OEM855_To_Unicode[256] = {
@@ -367,7 +368,7 @@ static const unsigned short g_CP_WIN1250_To_Unicode[256] = {
 static const unsigned short g_CP_WIN1251_To_Unicode[256] = {
     /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */
     /*00*/ 0x0000,0x0001,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,0x0008,0x0009,0x000A,0x000B,0x000C,0x000D,0x000E,0x000F, /*00*/
-    /*10*/ 0x0010,0x0011,0x0012,0x0013,0x0014,0x0015,0x0016,0x0017,0x0018,0x0019,0x001A,0x001B,0x001C,0x001D,0x001E,0x001F, /*10*/    
+    /*10*/ 0x0010,0x0011,0x0012,0x0013,0x0014,0x0015,0x0016,0x0017,0x0018,0x0019,0x001A,0x001B,0x001C,0x001D,0x001E,0x001F, /*10*/
     /*20*/ 0x0020,0x0021,0x0022,0x0023,0x0024,0x0025,0x0026,0x0027,0x0028,0x0029,0x002A,0x002B,0x002C,0x002D,0x002E,0x002F, /*20*/
     /*30*/ 0x0030,0x0031,0x0032,0x0033,0x0034,0x0035,0x0036,0x0037,0x0038,0x0039,0x003A,0x003B,0x003C,0x003D,0x003E,0x003F, /*30*/
     /*40*/ 0x0040,0x0041,0x0042,0x0043,0x0044,0x0045,0x0046,0x0047,0x0048,0x0049,0x004A,0x004B,0x004C,0x004D,0x004E,0x004F, /*40*/
@@ -377,7 +378,7 @@ static const unsigned short g_CP_WIN1251_To_Unicode[256] = {
     /*80*/ 0x0402,0x0403,0x201A,0x0453,0x201F,0x2026,0x2020,0x2021,0x20AC,0x2030,0x0409,0x2039,0x040A,0x040C,0x040B,0x040F, /*80*/
     /*90*/ 0x0452,0x2018,0x2019,0x201C,0x201D,0x2022,0x2013,0x2014,0x0000,0x2122,0x0459,0x203A,0x045A,0x045C,0x045B,0x045F, /*90*/
     /*A0*/ 0x00A0,0x040E,0x045E,0x0408,0x00A4,0x0490,0x00A6,0x00A7,0x0401,0x00A9,0x0404,0x00AB,0x00AC,0x00AD,0x00AE,0x0407, /*A0*/
-    /*B0*/ 0x00B0,0x00B1,0x0406,0x0456,0x0491,0x00B5,0x00B6,0x00B7,0x0451,0x2116,0x0454,0x00BB,0x0458,0x0405,0x0455,0x0457, /*B0*/    
+    /*B0*/ 0x00B0,0x00B1,0x0406,0x0456,0x0491,0x00B5,0x00B6,0x00B7,0x0451,0x2116,0x0454,0x00BB,0x0458,0x0405,0x0455,0x0457, /*B0*/
     /*C0*/ 0x0410,0x0411,0x0412,0x0413,0x0414,0x0415,0x0416,0x0417,0x0418,0x0419,0x041A,0x041B,0x041C,0x041D,0x041E,0x041F, /*C0*/
     /*D0*/ 0x0420,0x0421,0x0422,0x0423,0x0424,0x0425,0x0426,0x0427,0x0428,0x0429,0x042A,0x042B,0x042C,0x042D,0x042E,0x042F, /*D0*/
     /*E0*/ 0x0430,0x0431,0x0432,0x0433,0x0434,0x0435,0x0436,0x0437,0x0438,0x0439,0x043A,0x043B,0x043C,0x043D,0x043E,0x043F, /*E0*/
@@ -550,7 +551,7 @@ static const unsigned short g_CP_MACOSROMANWEST_To_UniChar[256] = {
     /*D0*/ 0x2013,0x2014,0x201C,0x201D,0x2018,0x2019,0x00F7,0x25CA,0x00FF,0x0178,0x2044,0x20AC,0x2039,0x203A,0xFB01,0xFB02, /*D0*/
     /*E0*/ 0x2021,0x00B7,0x201A,0x201E,0x2030,0x00C2,0x00CA,0x00C1,0x00CB,0x00C8,0x00CD,0x00CE,0x00CF,0x00CC,0x00D3,0x00D4, /*E0*/
     /*F0*/ 0xF8FF,0x00D2,0x00DA,0x00DB,0x00D9,0x0131,0x02C6,0x02DC,0x00AF,0x02D8,0x02D9,0x02DA,0x00B8,0x02DD,0x02DB,0x02C7  /*F0*/
-    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */    
+    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */
 };
 
 static const unsigned short g_CP_ISO_8859_1_To_UniChar[256] = {
@@ -571,7 +572,7 @@ static const unsigned short g_CP_ISO_8859_1_To_UniChar[256] = {
     /*D0*/ 0x00D0,0x00D1,0x00D2,0x00D3,0x00D4,0x00D5,0x00D6,0x00D7,0x00D8,0x00D9,0x00DA,0x00DB,0x00DC,0x00DD,0x00DE,0x00DF, /*D0*/
     /*E0*/ 0x00E0,0x00E1,0x00E2,0x00E3,0x00E4,0x00E5,0x00E6,0x00E7,0x00E8,0x00E9,0x00EA,0x00EB,0x00EC,0x00ED,0x00EE,0x00EF, /*E0*/
     /*F0*/ 0x00F0,0x00F1,0x00F2,0x00F3,0x00F4,0x00F5,0x00F6,0x00F7,0x00F8,0x00F9,0x00FA,0x00FB,0x00FC,0x00FD,0x00FE,0x00FF, /*F0*/
-    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */        
+    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */
 };
 
 static const unsigned short g_CP_ISO_8859_2_To_UniChar[256] = {
@@ -592,7 +593,7 @@ static const unsigned short g_CP_ISO_8859_2_To_UniChar[256] = {
     /*D0*/ 0x0110,0x0143,0x0147,0x00D3,0x00D4,0x0150,0x00D6,0x00D7,0x0158,0x016E,0x00DA,0x0170,0x00DC,0x00DD,0x0162,0x00DF, /*D0*/
     /*E0*/ 0x0155,0x00E1,0x00E2,0x0103,0x00E4,0x013A,0x0107,0x00E7,0x010D,0x00E9,0x0119,0x00EB,0x011B,0x00ED,0x00EE,0x010F, /*E0*/
     /*F0*/ 0x0111,0x0144,0x0148,0x00F3,0x00F4,0x0151,0x00F6,0x00F7,0x0159,0x016F,0x00FA,0x0171,0x00FC,0x00FD,0x0163,0x02D9  /*F0*/
-    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */    
+    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */
 };
 
 static const unsigned short g_CP_ISO_8859_3_To_UniChar[256] = {
@@ -654,7 +655,7 @@ static const unsigned short g_CP_ISO_8859_5_To_UniChar[256] = {
     /*C0*/ 0x0420,0x0421,0x0422,0x0423,0x0424,0x0425,0x0426,0x0427,0x0428,0x0429,0x042A,0x042B,0x042C,0x042D,0x042E,0x042F, /*C0*/
     /*D0*/ 0x0430,0x0431,0x0432,0x0433,0x0434,0x0435,0x0436,0x0437,0x0438,0x0439,0x043A,0x043B,0x043C,0x043D,0x043E,0x043F, /*D0*/
     /*E0*/ 0x0440,0x0441,0x0442,0x0443,0x0444,0x0445,0x0446,0x0447,0x0448,0x0449,0x044A,0x044B,0x044C,0x044D,0x044E,0x044F, /*E0*/
-    /*F0*/ 0x2116,0x0451,0x0452,0x0453,0x0454,0x0455,0x0456,0x0457,0x0458,0x0459,0x045A,0x045B,0x045C,0x00A7,0x045E,0x045F  /*F0*/    
+    /*F0*/ 0x2116,0x0451,0x0452,0x0453,0x0454,0x0455,0x0456,0x0457,0x0458,0x0459,0x045A,0x045B,0x045C,0x00A7,0x045E,0x045F  /*F0*/
     /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */
 };
 
@@ -802,7 +803,7 @@ static const unsigned short g_CP_ISO_8859_13_To_UniChar[256] = {
     /*D0*/ 0x0160,0x0143,0x0145,0x00D3,0x014C,0x00D5,0x00D6,0x00D7,0x0172,0x0141,0x015A,0x016A,0x00DC,0x017B,0x017D,0x00DF, /*D0*/
     /*E0*/ 0x0105,0x012F,0x0101,0x0107,0x00E4,0x00E5,0x0119,0x0113,0x010D,0x00E9,0x017A,0x0117,0x0123,0x0137,0x012B,0x013C, /*E0*/
     /*F0*/ 0x0161,0x0144,0x0146,0x00F3,0x014D,0x00F5,0x00F6,0x00F7,0x0173,0x0142,0x015B,0x016B,0x00FC,0x017C,0x017E,0x2019  /*F0*/
-    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */        
+    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */
 };
 
 static const unsigned short g_CP_ISO_8859_14_To_UniChar[256] = {
@@ -865,7 +866,7 @@ static const unsigned short g_CP_ISO_8859_16_To_UniChar[256] = {
     /*D0*/ 0x0110,0x0143,0x00D2,0x00D3,0x00D4,0x0150,0x00D6,0x015A,0x0170,0x00D9,0x00DA,0x00DB,0x00DC,0x0118,0x021A,0x00DF, /*D0*/
     /*E0*/ 0x00E0,0x00E1,0x00E2,0x0103,0x00E4,0x0107,0x00E6,0x00E7,0x00E8,0x00E9,0x00EA,0x00EB,0x00EC,0x00ED,0x00EE,0x00EF, /*E0*/
     /*F0*/ 0x0111,0x0144,0x00F2,0x00F3,0x00F4,0x0151,0x00F6,0x015B,0x0171,0x00F9,0x00FA,0x00FB,0x00FC,0x0119,0x021B,0x00FF  /*F0*/
-    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */    
+    /*     00     01     02     03     04     05     06     07     08     09     0A     0B     0C     0D     0E     0F          */
 };
 
 static const unsigned short g_NonPrintedSymbsVisualization[32] = {
@@ -917,118 +918,116 @@ static const unsigned short* g_SingleBytesTable[] = {
     g_CP_WIN1256_To_Unicode,
     g_CP_WIN1257_To_Unicode,
     g_CP_WIN1258_To_Unicode,
-    g_CP_MACOSROMANWEST_To_UniChar,    
-    
+    g_CP_MACOSROMANWEST_To_UniChar,
 };
+// clang-format on
 
-static_assert(sizeof(g_SingleBytesTable) / sizeof(unsigned short*) == ENCODING_SINGLE_BYTES_LAST__ + 1, "");
+static_assert(sizeof(g_SingleBytesTable) / sizeof(unsigned short *) ==
+                  ENCODING_SINGLE_BYTES_LAST__ + 1,
+              "");
 
-#define Endian16_Swap(value) \
-    ((((uint16_t)((value) & 0x00FF)) << 8) | \
-    (((uint16_t)((value) & 0xFF00)) >> 8))
+#define Endian16_Swap(value)                                                                       \
+    (((static_cast<uint16_t>((value)&0x00FF)) << 8) |                                              \
+     ((static_cast<uint16_t>((value)&0xFF00)) >> 8))
 
 static const uint16_t g_ReplacementCharacter = 0xFFFD; //  � character
 
 void InterpretSingleByteBufferAsUniCharPreservingBufferSize(
-                                                            const unsigned char* _input,
-                                                            size_t _input_size,
-                                                            unsigned short *_output, // should be at least _input_size 16b words long
-                                                            int _codepage
-                                                            )
+    const unsigned char *_input,
+    size_t _input_size,
+    unsigned short *_output, // should be at least _input_size 16b words long
+    int _codepage)
 {
-    if(_codepage < ENCODING_SINGLE_BYTES_FIRST__ || _codepage > ENCODING_SINGLE_BYTES_LAST__) {
+    if( _codepage < ENCODING_SINGLE_BYTES_FIRST__ || _codepage > ENCODING_SINGLE_BYTES_LAST__ ) {
         memset(_output, 0, sizeof(unsigned short) * _input_size);
         return;
     }
-    
+
     auto *t = g_SingleBytesTable[_codepage];
     const unsigned char *end = _input + _input_size;
-    while(_input < end)
+    while( _input < end )
         *(_output++) = t[*(_input++)];
 }
 
 void InterpretUTF8BufferAsUniCharPreservingBufferSize(
-                                                const unsigned char* _input,
-                                                size_t _input_size,
-                                                unsigned short *_output, // should be at least _input_size 16b words long,
-                                                unsigned short _stuffing_symb,
-                                                unsigned short _bad_symb
-                                                )
+    const unsigned char *_input,
+    size_t _input_size,
+    unsigned short *_output, // should be at least _input_size 16b words long,
+    unsigned short _stuffing_symb,
+    unsigned short _bad_symb)
 {
     const unsigned char *end = _input + _input_size;
-    
-    while(_input < end)
-    {
+
+    while( _input < end ) {
         unsigned char current = *_input;
 
         int sz = 0;
-        
+
         // get symbol size in bytes
-        if((current & 0x80) == 0)           sz = 1; // single-byte
-        else if((current & 0xE0) == 0xC0)   sz = 2; // two-byte
-        else if((current & 0xF0) == 0xE0)   sz = 3; // three-byte
-        else if((current & 0xF8) == 0xF0)   sz = 4; // four-byte
-        else
-        {
+        if( (current & 0x80) == 0 )
+            sz = 1; // single-byte
+        else if( (current & 0xE0) == 0xC0 )
+            sz = 2; // two-byte
+        else if( (current & 0xF0) == 0xE0 )
+            sz = 3; // three-byte
+        else if( (current & 0xF8) == 0xF0 )
+            sz = 4; // four-byte
+        else {
             // malformed!
-            
-            //skip current character and move further
+
+            // skip current character and move further
             *_output = _bad_symb;
             ++_input;
             ++_output;
             continue;
         }
-        
-        if(sz == 1)
-        {
+
+        if( sz == 1 ) {
             // just out current symbol
-            if (current >= 32)  *_output = current;
-            else                *_output = g_NonPrintedSymbsVisualization[current];
+            if( current >= 32 )
+                *_output = current;
+            else
+                *_output = g_NonPrintedSymbsVisualization[current];
             ++_input;
             ++_output;
             continue;
         }
-            
+
         // try to extract a sequence
 
-        for(int i = 1; i < sz; ++i)
-        {
+        for( int i = 1; i < sz; ++i ) {
             // check for an unexpected end of buffer
-            if(_input + i == end)
-            {
-                // just fill output as bad 
-                for(int z = 0; z < i; ++z)
-                {
+            if( _input + i == end ) {
+                // just fill output as bad
+                for( int z = 0; z < i; ++z ) {
                     ++_input;
                     *_output = _bad_symb;
                     ++_output;
                 }
-                goto goon;                
+                goto goon;
             }
-            
-            current = *(_input+i);
-            
+
+            current = *(_input + i);
+
             // check for malformed sequence
-            if( (current & 0xC0) != 0x80 )
-            {
+            if( (current & 0xC0) != 0x80 ) {
                 // bad, bad sequence!
-                
-                //skip the heading character and move further
+
+                // skip the heading character and move further
                 *_output = _bad_symb;
                 ++_input;
                 ++_output;
                 goto goon;
             }
-            
         }
-        
+
         // seems that sequence is ok
-        if(sz == 2)
-        {
+        if( sz == 2 ) {
             unsigned char high = *_input;
             unsigned char low = *(_input + 1);
-            unsigned short out = static_cast<unsigned short> ((((unsigned short)(high & 0x1F)) << 6) | (low & 0x3F) );
-            
+            unsigned short out = static_cast<unsigned short>(
+                ((static_cast<unsigned short>(high & 0x1F)) << 6) | (low & 0x3F));
+
             *_output = out;
             ++_output;
             *_output = _stuffing_symb;
@@ -1036,12 +1035,14 @@ void InterpretUTF8BufferAsUniCharPreservingBufferSize(
             _input += 2;
             continue;
         }
-        else if(sz == 3)
-        {
+        else if( sz == 3 ) {
             unsigned char _1 = *_input;
             unsigned char _2 = *(_input + 1);
             unsigned char _3 = *(_input + 2);
-            unsigned short out = static_cast<unsigned short>( (((unsigned short)(_1 & 0xF)) << 12) | (((unsigned short)(_2 & 0x3F)) << 6) | ((unsigned short)(_3 & 0x3F)) );
+            unsigned short out =
+                static_cast<unsigned short>((static_cast<unsigned short>(_1 & 0xF) << 12) |
+                                            (static_cast<unsigned short>(_2 & 0x3F) << 6) |
+                                            (static_cast<unsigned short>(_3 & 0x3F)));
             *_output = out;
             ++_output;
             *_output = _stuffing_symb;
@@ -1051,46 +1052,49 @@ void InterpretUTF8BufferAsUniCharPreservingBufferSize(
             _input += 3;
             continue;
         }
-        else
-        {
+        else {
             // toooooo long for current implementation
 
             *_output = _bad_symb; // symbols that didn't fit into 16bits
             ++_output;
             ++_input;
-            for(int i = 1; i < sz; ++i)
-            {
+            for( int i = 1; i < sz; ++i ) {
                 *_output = _stuffing_symb;
                 ++_output;
                 ++_input;
             }
             continue;
         }
-        goon:;
+    goon:;
     }
 }
 
-void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
-                                size_t _input_size,
-                                uint16_t *_output_buf, // should be at least _input_size 16b words long
-                                size_t *_output_sz, // size of an output
-                                uint16_t _bad_symb // something like '?' or U+FFFD
-                                )
+void InterpretUTF8BufferAsUTF16(
+    const uint8_t *_input,
+    size_t _input_size,
+    uint16_t *_output_buf, // should be at least _input_size 16b words long
+    size_t *_output_sz,    // size of an output
+    uint16_t _bad_symb     // something like '?' or U+FFFD
+)
 {
     const unsigned char *end = _input + _input_size;
-    
+
     size_t total = 0;
-    
-    while(_input < end) {
+
+    while( _input < end ) {
         unsigned char current = *_input;
-        
+
         int sz = 0;
-        
+
         // get symbol size in bytes
-        if((current & 0x80) == 0)           sz = 1; // single-byte
-        else if((current & 0xE0) == 0xC0)   sz = 2; // two-byte
-        else if((current & 0xF0) == 0xE0)   sz = 3; // three-byte
-        else if((current & 0xF8) == 0xF0)   sz = 4; // four-byte
+        if( (current & 0x80) == 0 )
+            sz = 1; // single-byte
+        else if( (current & 0xE0) == 0xC0 )
+            sz = 2; // two-byte
+        else if( (current & 0xF0) == 0xE0 )
+            sz = 3; // three-byte
+        else if( (current & 0xF8) == 0xF0 )
+            sz = 4; // four-byte
         else {
             // malformed! - skip current character and move further
             *_output_buf = _bad_symb;
@@ -1099,23 +1103,23 @@ void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
             ++total;
             continue;
         }
-        
-        if(sz == 1) { // just out current symbol
+
+        if( sz == 1 ) { // just out current symbol
             *_output_buf = current;
             ++_input;
             ++_output_buf;
             ++total;
             continue;
         }
-        
+
         // try to extract a sequence
-        
+
         // validate sequence
-        for(int i = 1; i < sz; ++i) {
+        for( int i = 1; i < sz; ++i ) {
             // check for an unexpected end of buffer
-            if(_input + i == end) {
+            if( _input + i == end ) {
                 // just fill output as bad
-                for(int z = 0; z < i; ++z) {
+                for( int z = 0; z < i; ++z ) {
                     ++_input;
                     *_output_buf = _bad_symb;
                     ++_output_buf;
@@ -1123,7 +1127,7 @@ void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
                 }
                 goto goon;
             }
-            
+
             // check for malformed sequence
             if( (_input[i] & 0xC0) != 0x80 ) {
                 // bad, bad sequence! - skip the heading character and move further
@@ -1134,9 +1138,9 @@ void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
                 goto goon;
             }
         }
-        
+
         // seems that sequence is ok
-        if(sz == 2) {
+        if( sz == 2 ) {
             unsigned short _1 = _input[0] & 0x1F;
             unsigned short _2 = _input[1] & 0x3F;
             unsigned short out = static_cast<unsigned short>((_1 << 6) | _2);
@@ -1145,7 +1149,7 @@ void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
             _input += 2;
             continue;
         }
-        else if(sz == 3) {
+        else if( sz == 3 ) {
             uint16_t _1 = _input[0] & 0x0F;
             uint16_t _2 = _input[1] & 0x3F;
             uint16_t _3 = _input[2] & 0x3F;
@@ -1155,14 +1159,14 @@ void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
             _input += 3;
             continue;
         }
-        else if(sz == 4) {
+        else if( sz == 4 ) {
             uint32_t out;
             uint32_t _1 = _input[0] & 0x07;
             uint32_t _2 = _input[1] & 0x3F;
             uint32_t _3 = _input[2] & 0x3F;
             uint32_t _4 = _input[3] & 0x3F;
             out = (_1 << 18) | (_2 << 12) | (_3 << 6) | _4;
-            if(out < 0x10000) { // possibly malformed UTF8 (?)
+            if( out < 0x10000 ) { // possibly malformed UTF8 (?)
                 *(_output_buf++) = uint16_t(out);
                 total += 1;
             }
@@ -1180,74 +1184,71 @@ void InterpretUTF8BufferAsUTF16(const uint8_t* _input,
             assert(0);
     goon:;
     }
-    
+
     *_output_sz = total;
 }
 
-
 void InterpretUTF8BufferAsIndexedUTF16(
-                                         const unsigned char* _input,
-                                         size_t _input_size,
-                                         unsigned short *_output_buf, // should be at least _input_size 16b words long
-                                         uint32_t       *_indexes_buf, // should be at least _input_size 32b words long
-                                         size_t *_output_sz, // size of an output
-                                         unsigned short _bad_symb // something like '?' or U+FFFD
-                                         )
+    const unsigned char *_input,
+    size_t _input_size,
+    unsigned short *_output_buf, // should be at least _input_size 16b words long
+    uint32_t *_indexes_buf,      // should be at least _input_size 32b words long
+    size_t *_output_sz,          // size of an output
+    unsigned short _bad_symb     // something like '?' or U+FFFD
+)
 {
     const unsigned char *end = _input + _input_size, *start = _input;
-    
+
     size_t total = 0;
-    
-    while(_input < end)
-    {
+
+    while( _input < end ) {
         unsigned char current = *_input;
-        
+
         int sz = 0;
-        
+
         // get symbol size in bytes
-        if((current & 0x80) == 0)           sz = 1; // single-byte
-        else if((current & 0xE0) == 0xC0)   sz = 2; // two-byte
-        else if((current & 0xF0) == 0xE0)   sz = 3; // three-byte
-        else if((current & 0xF8) == 0xF0)   sz = 4; // four-byte
-        else
-        {
+        if( (current & 0x80) == 0 )
+            sz = 1; // single-byte
+        else if( (current & 0xE0) == 0xC0 )
+            sz = 2; // two-byte
+        else if( (current & 0xF0) == 0xE0 )
+            sz = 3; // three-byte
+        else if( (current & 0xF8) == 0xF0 )
+            sz = 4; // four-byte
+        else {
             // malformed!
-            
-            //skip current character and move further
+
+            // skip current character and move further
             *_output_buf = _bad_symb;
-            *_indexes_buf = (uint32_t)(_input - start);
+            *_indexes_buf = static_cast<uint32_t>(_input - start);
             ++_indexes_buf;
             ++_input;
             ++_output_buf;
             ++total;
             continue;
         }
-        
-        if(sz == 1)
-        {
+
+        if( sz == 1 ) {
             // just out current symbol
             *_output_buf = current;
-            *_indexes_buf = (uint32_t)(_input - start);
+            *_indexes_buf = static_cast<uint32_t>(_input - start);
             ++_indexes_buf;
             ++_input;
             ++_output_buf;
             ++total;
-            
+
             continue;
         }
-        
+
         // try to extract a sequence
-        
-        for(int i = 1; i < sz; ++i)
-        {
+
+        for( int i = 1; i < sz; ++i ) {
             // check for an unexpected end of buffer
-            if(_input + i == end)
-            {
+            if( _input + i == end ) {
                 // just fill output as bad
-                for(int z = 0; z < i; ++z)
-                {
+                for( int z = 0; z < i; ++z ) {
                     *_output_buf = _bad_symb;
-                    *_indexes_buf = (uint32_t)(_input - start);
+                    *_indexes_buf = static_cast<uint32_t>(_input - start);
                     ++_indexes_buf;
                     ++_input;
                     ++_output_buf;
@@ -1255,65 +1256,62 @@ void InterpretUTF8BufferAsIndexedUTF16(
                 }
                 goto goon;
             }
-            
-            current = *(_input+i);
-            
+
+            current = *(_input + i);
+
             // check for malformed sequence
-            if( (current & 0xC0) != 0x80 )
-            {
+            if( (current & 0xC0) != 0x80 ) {
                 // bad, bad sequence!
-                
-                //skip the heading character and move further
+
+                // skip the heading character and move further
                 *_output_buf = _bad_symb;
-                *_indexes_buf = (uint32_t)(_input - start);
+                *_indexes_buf = static_cast<uint32_t>(_input - start);
                 ++_indexes_buf;
                 ++_input;
                 ++_output_buf;
                 ++total;
                 goto goon;
             }
-            
         }
-        
+
         // seems that sequence is ok
-        if(sz == 2)
-        {
+        if( sz == 2 ) {
             unsigned short high = *_input;
             unsigned short low = *(_input + 1);
             unsigned short out = static_cast<unsigned short>((((high & 0x1F)) << 6) | (low & 0x3F));
-            
+
             *_output_buf = out;
-            *_indexes_buf = (uint32_t)(_input - start);
+            *_indexes_buf = static_cast<uint32_t>(_input - start);
             ++_indexes_buf;
             ++_output_buf;
             ++total;
             _input += 2;
             continue;
         }
-        else if(sz == 3)
-        {
+        else if( sz == 3 ) {
             unsigned short _1 = *_input;
             unsigned short _2 = *(_input + 1);
             unsigned short _3 = *(_input + 2);
-            unsigned short out = static_cast<unsigned short>((((_1 & 0xF)) << 12) | (((_2 & 0x3F)) << 6) | (_3 & 0x3F));
+            unsigned short out = static_cast<unsigned short>((((_1 & 0xF)) << 12) |
+                                                             (((_2 & 0x3F)) << 6) | (_3 & 0x3F));
             *_output_buf = out;
-            *_indexes_buf = (uint32_t)(_input - start);
+            *_indexes_buf = static_cast<uint32_t>(_input - start);
             ++_indexes_buf;
             ++_output_buf;
             ++total;
             _input += 3;
             continue;
         }
-        else if(sz == 4) {
+        else if( sz == 4 ) {
             const uint32_t _1 = _input[0] & 0x07;
             const uint32_t _2 = _input[1] & 0x3F;
             const uint32_t _3 = _input[2] & 0x3F;
             const uint32_t _4 = _input[3] & 0x3F;
             const uint32_t out = (_1 << 18) | (_2 << 12) | (_3 << 6) | _4;
-            if( out < 0x10000 || // possibly malformed UTF8 (?) 
-               ( out >= 0x30000U && out < 0xE0000U ) ) { 
+            if( out < 0x10000 || // possibly malformed UTF8 (?)
+                (out >= 0x30000U && out < 0xE0000U) ) {
                 *(_output_buf++) = _bad_symb;
-                *(_indexes_buf++) = (uint32_t)(_input - start);
+                *(_indexes_buf++) = static_cast<uint32_t>(_input - start);
                 total += 1;
             }
             else {
@@ -1321,8 +1319,10 @@ void InterpretUTF8BufferAsIndexedUTF16(
                 uint16_t ts = static_cast<unsigned short>(0xDC00 + ((out - 0x010000) & 0x3FF));
                 *(_output_buf++) = ls;
                 *(_output_buf++) = ts;
-                *(_indexes_buf++) = (uint32_t)(_input - start); // lead and trailing surrpairs chars will point at same byte position
-                *(_indexes_buf++) = (uint32_t)(_input - start);
+                *(_indexes_buf++) = static_cast<uint32_t>(
+                    _input -
+                    start); // lead and trailing surrpairs chars will point at same byte position
+                *(_indexes_buf++) = static_cast<uint32_t>(_input - start);
                 total += 2;
             }
 
@@ -1333,63 +1333,56 @@ void InterpretUTF8BufferAsIndexedUTF16(
             assert(0);
     goon:;
     }
-    
+
     *_output_sz = total;
-//    *_output_buf = 0;
+    //    *_output_buf = 0;
 }
 
 void InterpretUTF16LEBufferAsUniChar(
-                                     const unsigned char* _input,
-                                     size_t _input_size,
-                                     unsigned short *_output_buf, // should be at least _input_size/2 16b words long
-                                     size_t *_output_sz,          // size of an output
-                                     unsigned short _bad_symb     // something like '?' or U+FFFD
-                                     )
+    const unsigned char *_input,
+    size_t _input_size,
+    unsigned short *_output_buf, // should be at least _input_size/2 16b words long
+    size_t *_output_sz,          // size of an output
+    unsigned short _bad_symb     // something like '?' or U+FFFD
+)
 {
-    uint16_t *cur = (uint16_t *) _input;
-    uint16_t *end   = cur + _input_size / sizeof(uint16_t);
- 
+    const uint16_t *cur = reinterpret_cast<const uint16_t *>(_input);
+    const uint16_t *end = cur + _input_size / sizeof(uint16_t);
+
     unsigned total = 0;
-    
-    while(cur < end)
-    {
+
+    while( cur < end ) {
         uint16_t val = *cur;
-        
-        if(val <= 0xD7FF || val >= 0xE000)
-        { // BMP - just use it
+
+        if( val <= 0xD7FF || val >= 0xE000 ) { // BMP - just use it
             *_output_buf++ = *cur++;
             total++;
         }
-        else
-        { // need to check suggorate pair
-            if(val >= 0xD800 && val <= 0xDBFF)
-            { // leading surrogate
-                if(cur + 1 < end && *(cur+1) >= 0xDC00 && *(cur+1) <= 0xDFFF)
-                {
-                    const uint32_t code_point = (((uint32_t)val - 0xD800U) << 10) +
-                        uint32_t(*(cur+1)) - 0xDC00U + 0x0010000U;
+        else {                                     // need to check suggorate pair
+            if( val >= 0xD800 && val <= 0xDBFF ) { // leading surrogate
+                if( cur + 1 < end && *(cur + 1) >= 0xDC00 && *(cur + 1) <= 0xDFFF ) {
+                    const uint32_t code_point = ((uint32_t(val) - 0xD800U) << 10) +
+                                                uint32_t(*(cur + 1)) - 0xDC00U + 0x0010000U;
                     if( code_point >= 0x30000U && code_point < 0xE0000U ) {
                         // unassigned code point - treat as corrupted
                         *_output_buf++ = _bad_symb;
                         ++cur;
-                        total++;                        
+                        total++;
                     }
-                    else {                
+                    else {
                         // ok, normal surrogate
                         *_output_buf++ = *cur++;
                         *_output_buf++ = *cur++;
                         total += 2;
                     }
                 }
-                else
-                { // corrupted surrogate
+                else { // corrupted surrogate
                     *_output_buf++ = _bad_symb;
                     ++cur;
                     total++;
                 }
             }
-            else
-            {
+            else {
                 // trailing surrogate found - invalid situation
                 *_output_buf++ = _bad_symb;
                 ++cur;
@@ -1397,44 +1390,38 @@ void InterpretUTF16LEBufferAsUniChar(
             }
         }
     }
-    
+
     *_output_sz = total;
 }
 
 void InterpretUTF16BEBufferAsUniChar(
-                                     const unsigned char* _input,
-                                     size_t _input_size,
-                                     unsigned short *_output_buf, // should be at least _input_size/2 16b words long
-                                     size_t *_output_sz,          // size of an output
-                                     unsigned short _bad_symb     // something like '?' or U+FFFD
-                                     )
+    const unsigned char *_input,
+    size_t _input_size,
+    unsigned short *_output_buf, // should be at least _input_size/2 16b words long
+    size_t *_output_sz,          // size of an output
+    unsigned short _bad_symb     // something like '?' or U+FFFD
+)
 {
-    uint16_t *cur = (uint16_t *) _input;
-    uint16_t *end = cur + _input_size / sizeof(uint16_t);
-    
+    const uint16_t *cur = reinterpret_cast<const uint16_t *>(_input);
+    const uint16_t *end = cur + _input_size / sizeof(uint16_t);
+
     unsigned total = 0;
-    
-    while(cur < end)
-    {
+
+    while( cur < end ) {
         uint16_t val = static_cast<unsigned short>(Endian16_Swap(*cur));
-        
-        if(val <= 0xD7FF || val >= 0xE000)
-        { // BMP - just use it
+
+        if( val <= 0xD7FF || val >= 0xE000 ) { // BMP - just use it
             *_output_buf++ = val;
             cur++;
             total++;
         }
-        else
-        { // need to check suggorate pair
-            if(val >= 0xD800 && val <= 0xDBFF)
-            { // leading surrogate
-                if(cur + 1 < end)
-                {
-                    uint16_t next = static_cast<unsigned short>(Endian16_Swap(*(cur+1)));
-                    if(next >= 0xDC00 && next <= 0xDFFF)
-                    { 
-                        const uint32_t code_point = (((uint32_t)val - 0xD800U) << 10) +
-                            uint32_t(next) - 0xDC00U + 0x0010000U;
+        else {                                     // need to check suggorate pair
+            if( val >= 0xD800 && val <= 0xDBFF ) { // leading surrogate
+                if( cur + 1 < end ) {
+                    uint16_t next = static_cast<unsigned short>(Endian16_Swap(*(cur + 1)));
+                    if( next >= 0xDC00 && next <= 0xDFFF ) {
+                        const uint32_t code_point = ((uint32_t(val) - 0xD800U) << 10) +
+                                                    uint32_t(next) - 0xDC00U + 0x0010000U;
                         if( code_point >= 0x30000U && code_point < 0xE0000U ) {
                             // unassigned code point - treat as corrupted
                             *_output_buf++ = _bad_symb;
@@ -1449,22 +1436,19 @@ void InterpretUTF16BEBufferAsUniChar(
                             total += 2;
                         }
                     }
-                    else
-                    { // corrupted surrogate
+                    else { // corrupted surrogate
                         *_output_buf++ = _bad_symb;
                         ++cur;
                         total++;
                     }
                 }
-                else
-                { // torn surrogate
+                else { // torn surrogate
                     *_output_buf++ = _bad_symb;
                     ++cur;
                     total++;
                 }
             }
-            else
-            {
+            else {
                 // trailing surrogate found - invalid situation
                 *_output_buf++ = _bad_symb;
                 ++cur;
@@ -1472,29 +1456,29 @@ void InterpretUTF16BEBufferAsUniChar(
             }
         }
     }
-    
+
     *_output_sz = total;
 }
 
-void InterpretUnicharsAsUTF8(const uint16_t* _input,
+void InterpretUnicharsAsUTF8(const uint16_t *_input,
                              size_t _input_chars,
-                             unsigned char* _output,
+                             unsigned char *_output,
                              size_t _output_size,
-                             size_t&_output_result,
-                             size_t*_input_chars_eaten)
+                             size_t &_output_result,
+                             size_t *_input_chars_eaten)
 {
     const uint16_t *cur = _input;
     const uint16_t *end = cur + _input_chars;
     unsigned char *output = _output;
-    
-    if(_input_chars_eaten)
+
+    if( _input_chars_eaten )
         *_input_chars_eaten = 0;
-    
+
     if( _input == nullptr || _output == nullptr ) {
         _output_result = 0;
         return;
     }
-    if( _output_size == 1) {
+    if( _output_size == 1 ) {
         _output[0] = _output_result = 0;
         return;
     }
@@ -1502,23 +1486,23 @@ void InterpretUnicharsAsUTF8(const uint16_t* _input,
         _output_result = 0;
         return;
     }
-    
+
     size_t output_sz_left = _output_size;
-    
+
     while( cur < end ) {
         uint16_t val = *cur;
         uint32_t codepoint;
         unsigned char utf8[4];
         unsigned utf8_sz, input_delta = 1;
-        
+
         // decode UTF16 aka Unichars
-        if(val <= 0xD7FF || (val >= 0xE000 && val <= 0xFFFF)) // BMP - just use it
+        if( val <= 0xD7FF || (val >= 0xE000 && val <= 0xFFFF) ) // BMP - just use it
             codepoint = val;
-        else { // process surrogates
-            if(val >= 0xD800 && val <= 0xDBFF) { // leading surrogate
-                if(cur + 1 < end) {
-                    uint16_t next = *(cur+1);
-                    if(next >= 0xDC00 && next <= 0xDFFF) { // ok, normal surrogates
+        else {                                     // process surrogates
+            if( val >= 0xD800 && val <= 0xDBFF ) { // leading surrogate
+                if( cur + 1 < end ) {
+                    uint16_t next = *(cur + 1);
+                    if( next >= 0xDC00 && next <= 0xDFFF ) { // ok, normal surrogates
                         codepoint = (((val - 0xD800) << 10) + (next - 0xDC00) + 0x0010000);
                         input_delta = 2;
                     }
@@ -1539,64 +1523,64 @@ void InterpretUnicharsAsUTF8(const uint16_t* _input,
         }
         else if( codepoint <= 0x7FF ) {
             utf8_sz = 2;
-            utf8[0] = static_cast<unsigned char>((codepoint >> 6)   + 0xC0);
+            utf8[0] = static_cast<unsigned char>((codepoint >> 6) + 0xC0);
             utf8[1] = static_cast<unsigned char>((codepoint & 0x3F) + 0x80);
         }
         else if( codepoint <= 0xFFFF ) {
             utf8_sz = 3;
-            utf8[0] = static_cast<unsigned char>((codepoint >> 12)         + 0xE0);
+            utf8[0] = static_cast<unsigned char>((codepoint >> 12) + 0xE0);
             utf8[1] = static_cast<unsigned char>(((codepoint >> 6) & 0x3F) + 0x80);
-            utf8[2] = static_cast<unsigned char>((codepoint & 0x3F)        + 0x80);
+            utf8[2] = static_cast<unsigned char>((codepoint & 0x3F) + 0x80);
         }
         else if( codepoint <= 0x10FFFF ) {
             utf8_sz = 4;
-            utf8[0] = static_cast<unsigned char>((codepoint >> 18)          + 0xF0);
+            utf8[0] = static_cast<unsigned char>((codepoint >> 18) + 0xF0);
             utf8[1] = static_cast<unsigned char>(((codepoint >> 12) & 0x3F) + 0x80);
-            utf8[2] = static_cast<unsigned char>(((codepoint >> 6)  & 0x3F) + 0x80);
-            utf8[3] = static_cast<unsigned char>((codepoint & 0x3F)         + 0x80);
+            utf8[2] = static_cast<unsigned char>(((codepoint >> 6) & 0x3F) + 0x80);
+            utf8[3] = static_cast<unsigned char>((codepoint & 0x3F) + 0x80);
         }
         else { // fallback on error
             utf8_sz = 1;
             utf8[0] = '?';
         }
-        
+
         // place UTF8 chars into output buffer
-        if( output_sz_left > utf8_sz) {
+        if( output_sz_left > utf8_sz ) {
             cur += input_delta;
             output_sz_left -= utf8_sz;
-            for(unsigned i = 0; i < utf8_sz; ++i)
+            for( unsigned i = 0; i < utf8_sz; ++i )
                 *(output++) = utf8[i];
         }
         else // we're out of output space
             break;
     }
-    
+
     assert(output_sz_left > 0);
     _output_result = output - _output;
     *output = 0; // null-terminate output utf8 string
-    if(_input_chars_eaten)
+    if( _input_chars_eaten )
         *_input_chars_eaten = cur - _input;
 }
 
-void InterpretUnicodeAsUTF8(const uint32_t* _input,
+void InterpretUnicodeAsUTF8(const uint32_t *_input,
                             size_t _input_chars,
-                            unsigned char* _output,
+                            unsigned char *_output,
                             size_t _output_size,
-                            size_t&_output_result,
-                            size_t*_input_chars_eaten)
+                            size_t &_output_result,
+                            size_t *_input_chars_eaten)
 {
     const uint32_t *cur = _input;
     const uint32_t *end = cur + _input_chars;
     unsigned char *output = _output;
-    
-    if(_input_chars_eaten)
+
+    if( _input_chars_eaten )
         *_input_chars_eaten = 0;
-    
+
     if( _input == nullptr || _output == nullptr ) {
         _output_result = 0;
         return;
     }
-    if( _output_size == 1) {
+    if( _output_size == 1 ) {
         _output[0] = _output_result = 0;
         return;
     }
@@ -1604,14 +1588,14 @@ void InterpretUnicodeAsUTF8(const uint32_t* _input,
         _output_result = 0;
         return;
     }
-    
+
     size_t output_sz_left = _output_size;
-    
+
     while( cur < end ) {
         uint32_t codepoint = *cur; // we have codepoint from start
         unsigned char utf8[4];
         unsigned utf8_sz;
-        
+
         // convert unicode code points into an array of UTF8 chars
         if( codepoint < 0x0080 ) {
             utf8_sz = 1;
@@ -1619,61 +1603,61 @@ void InterpretUnicodeAsUTF8(const uint32_t* _input,
         }
         else if( codepoint <= 0x7FF ) {
             utf8_sz = 2;
-            utf8[0] = static_cast<unsigned char>((codepoint >> 6)   + 0xC0);
+            utf8[0] = static_cast<unsigned char>((codepoint >> 6) + 0xC0);
             utf8[1] = static_cast<unsigned char>((codepoint & 0x3F) + 0x80);
         }
         else if( codepoint <= 0xFFFF ) {
             utf8_sz = 3;
-            utf8[0] = static_cast<unsigned char>((codepoint >> 12)         + 0xE0);
+            utf8[0] = static_cast<unsigned char>((codepoint >> 12) + 0xE0);
             utf8[1] = static_cast<unsigned char>(((codepoint >> 6) & 0x3F) + 0x80);
-            utf8[2] = static_cast<unsigned char>((codepoint & 0x3F)        + 0x80);
+            utf8[2] = static_cast<unsigned char>((codepoint & 0x3F) + 0x80);
         }
         else if( codepoint <= 0x10FFFF ) {
             utf8_sz = 4;
-            utf8[0] = static_cast<unsigned char>((codepoint >> 18)          + 0xF0);
+            utf8[0] = static_cast<unsigned char>((codepoint >> 18) + 0xF0);
             utf8[1] = static_cast<unsigned char>(((codepoint >> 12) & 0x3F) + 0x80);
-            utf8[2] = static_cast<unsigned char>(((codepoint >> 6)  & 0x3F) + 0x80);
-            utf8[3] = static_cast<unsigned char>((codepoint & 0x3F)         + 0x80);
+            utf8[2] = static_cast<unsigned char>(((codepoint >> 6) & 0x3F) + 0x80);
+            utf8[3] = static_cast<unsigned char>((codepoint & 0x3F) + 0x80);
         }
         else { // fallback on error
             utf8_sz = 1;
             utf8[0] = '?';
         }
-        
+
         // place UTF8 chars into output buffer
-        if( output_sz_left > utf8_sz) {
+        if( output_sz_left > utf8_sz ) {
             cur++;
             output_sz_left -= utf8_sz;
-            for(unsigned i = 0; i < utf8_sz; ++i)
+            for( unsigned i = 0; i < utf8_sz; ++i )
                 *(output++) = utf8[i];
         }
         else // we're out of output space
             break;
     }
-    
+
     assert(output_sz_left > 0);
     _output_result = output - _output;
     *output = 0; // null-terminate output utf8 string
-    if(_input_chars_eaten)
+    if( _input_chars_eaten )
         *_input_chars_eaten = cur - _input;
 }
 
 namespace encodings {
 
-size_t ScanUTF8ForValidSequenceLength(const unsigned char* _input, size_t _input_size) noexcept
+size_t ScanUTF8ForValidSequenceLength(const unsigned char *_input, size_t _input_size) noexcept
 {
     if( _input == nullptr || _input_size == 0 )
         return 0;
-        
+
     int utf8_expected = 0;
     int utf8_pending = 0;
     int length = 0;
-    
+
     for( size_t index = 0; index != _input_size; ++index ) {
         const unsigned c = _input[index];
-        if(c > 0x7f) {
-            if ( utf8_expected != 0 ) {
-                if ( (c & 0xC0) == 0x80 ) {
+        if( c > 0x7f ) {
+            if( utf8_expected != 0 ) {
+                if( (c & 0xC0) == 0x80 ) {
                     utf8_expected--;
                     utf8_pending++;
                     if( utf8_expected == 0 ) {
@@ -1686,13 +1670,13 @@ size_t ScanUTF8ForValidSequenceLength(const unsigned char* _input, size_t _input
                 }
             }
             else {
-                if ((c & 0xe0) == 0xc0) {
+                if( (c & 0xe0) == 0xc0 ) {
                     utf8_expected = 1;
                 }
-                else if ((c & 0xf0) == 0xe0) {
+                else if( (c & 0xf0) == 0xe0 ) {
                     utf8_expected = 2;
                 }
-                else if ((c & 0xf8) == 0xf0) {
+                else if( (c & 0xf8) == 0xf0 ) {
                     utf8_expected = 3;
                 }
                 else
@@ -1700,7 +1684,7 @@ size_t ScanUTF8ForValidSequenceLength(const unsigned char* _input, size_t _input
             }
         }
         else {
-            if ( utf8_expected != 0 )
+            if( utf8_expected != 0 )
                 break;
             length++;
         }
@@ -1708,4 +1692,4 @@ size_t ScanUTF8ForValidSequenceLength(const unsigned char* _input, size_t _input
     return static_cast<size_t>(length);
 }
 
-}
+} // namespace encodings

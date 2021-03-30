@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryFileStorageImpl.h"
 #include <Utility/PathManip.h>
 #include <Habanero/algo.h>
@@ -91,11 +91,11 @@ std::optional<std::string> TemporaryFileStorageImpl::
         return {};
     
     std::lock_guard guard{m_TempDirectoriesLock};
-    std::vector<int> indices_to_remove;
+    std::vector<size_t> indices_to_remove;
     std::string chosen_dir;
     
     // traverse each temp dir to check if this entry is already in there
-    for( int i = 0, e = (int)m_TempDirectories.size(); i != e; ++i ) {
+    for( size_t i = 0, e = m_TempDirectories.size(); i != e; ++i ) {
         auto &directory = m_TempDirectories[i];
         if( CheckRWAccess( directory ) == false ) {
             // either this directory was purged or tampered in some other way - so remove it
@@ -112,8 +112,8 @@ std::optional<std::string> TemporaryFileStorageImpl::
     }
     
     // purge rotten directories - erase backwards to simpify indices tracking
-    for( int i = ((int)indices_to_remove.size()) - 1; i >= 0; --i ) {
-        m_TempDirectories.erase( std::next(m_TempDirectories.begin(), i) );
+    for( long i = static_cast<long>(indices_to_remove.size()) - 1; i >= 0; --i ) {
+        m_TempDirectories.erase( std::next(m_TempDirectories.begin(), indices_to_remove[i]) );
     }
     
     if( chosen_dir.empty() )

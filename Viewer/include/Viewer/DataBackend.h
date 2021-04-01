@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/FileWindow.h>
@@ -104,7 +104,7 @@ inline const uint32_t *DataBackend::UniCharToByteIndeces() const
 
 inline uint32_t DataBackend::UniCharsSize() const
 {
-    return (uint32_t)m_DecodedBufferSize;
+    return static_cast<uint32_t>(m_DecodedBufferSize);
 }
 
 inline bool DataBackend::IsFullCoverage() const

@@ -40,8 +40,7 @@
 		CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B5822106E3C0043A26D /* Tests.cpp */; };
 		CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */; };
 		CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */; };
-		CFD79B85221991130043A26D /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA921F65BB70043A26D /* libUtility.dylib */; };
-		CFEA2D6F221CADC0008BE48C /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AAF21F65BC60043A26D /* libHabanero.dylib */; };
+		CFF54449261670F100A6C49C /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF54448261670F100A6C49C /* libHabanero.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,6 +150,7 @@
 		CFD79B702210B6DB0043A26D /* TextModeWorkingSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeWorkingSet.cpp; path = source/TextModeWorkingSet.cpp; sourceTree = "<group>"; };
 		CFD79B802214C46C0043A26D /* TextModeWorkingSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeWorkingSet.h; path = include/Viewer/TextModeWorkingSet.h; sourceTree = "<group>"; };
 		CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeWorkingSet_UT.cpp; path = tests/TextModeWorkingSet_UT.cpp; sourceTree = "<group>"; };
+		CFF54448261670F100A6C49C /* libHabanero.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libHabanero.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,8 +172,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFEA2D6F221CADC0008BE48C /* libHabanero.dylib in Frameworks */,
-				CFD79B85221991130043A26D /* libUtility.dylib in Frameworks */,
+				CFF54449261670F100A6C49C /* libHabanero.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,6 +308,7 @@
 		CFD79AA021F65BA10043A26D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFF54448261670F100A6C49C /* libHabanero.a */,
 				CFD79B0621FE4D400043A26D /* CUI.framework */,
 				CFD79AAF21F65BC60043A26D /* libHabanero.dylib */,
 				CFD79AAD21F65BC20043A26D /* libVFS.dylib */,

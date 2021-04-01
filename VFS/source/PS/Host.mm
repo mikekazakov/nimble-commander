@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libproc.h>
 #include <sys/resource.h>
 #include <sys/proc_info.h>
@@ -19,7 +19,7 @@ static NSDateFormatter *ProcDateFormatter()
 {
     static NSDateFormatter *formatter = nil;
     std::once_flag flag;
-    call_once(flag, [] {
+    std::call_once(flag, [] {
         auto fmt = [[NSDateFormatter alloc] init];
         [fmt setTimeStyle:NSDateFormatterShortStyle];
         [fmt setDateStyle:NSDateFormatterShortStyle];
@@ -60,7 +60,7 @@ static cpu_type_t ArchTypeFromPID(pid_t _pid)
         mibLen += 1;
 
         cpuTypeSize = sizeof(cpuType);
-        err = sysctl(mib, (unsigned)mibLen, &cpuType, &cpuTypeSize, 0, 0);
+        err = sysctl(mib, static_cast<unsigned>(mibLen), &cpuType, &cpuTypeSize, 0, 0);
         if( err == 0 )
             return cpuType;
     }
@@ -104,7 +104,7 @@ static void print_argv_of_pid(int pid, std::string &_out)
     }
 
     /* Allocate space for the arguments. */
-    procargs = (char *)malloc(argmax);
+    procargs = static_cast<char *>(std::malloc(argmax));
     if( procargs == NULL ) {
         goto ERROR_A;
     }
@@ -154,7 +154,7 @@ static void print_argv_of_pid(int pid, std::string &_out)
     mib[1] = KERN_PROCARGS2;
     mib[2] = pid;
 
-    size = (size_t)argmax;
+    size = static_cast<size_t>(argmax);
     if( sysctl(mib, 3, procargs, &size, NULL, 0) == -1 ) {
         goto ERROR_B;
     }
@@ -320,7 +320,8 @@ std::vector<PSHost::ProcInfo> PSHost::GetProcs()
 
         curr.rusage_avail = false;
         memset(&curr.rusage, 0, sizeof(curr.rusage));
-        if( proc_pid_rusage(curr.pid, RUSAGE_INFO_V2, (void **)&curr.rusage) == 0 )
+        if( proc_pid_rusage(curr.pid, RUSAGE_INFO_V2, reinterpret_cast<void **>(&curr.rusage)) ==
+            0 )
             curr.rusage_avail = true;
 
         char pidpath[1024] = {0};
@@ -384,7 +385,7 @@ void PSHost::CommitProcs(std::vector<ProcInfo> _procs)
     newdata->files.reserve(newdata->procs.size());
     newdata->plain_filenames.reserve(newdata->procs.size());
 
-    for( unsigned i = 0; i < (unsigned)newdata->procs.size(); ++i )
+    for( unsigned i = 0; i < static_cast<unsigned>(newdata->procs.size()); ++i )
         newdata->pid_to_index[newdata->procs[i].pid] = i;
 
     for( auto &i : newdata->procs ) {
@@ -479,7 +480,8 @@ int PSHost::FetchDirectoryListing(const char *_path,
     listing_source.mtimes.reset(variable_container<>::type::common);
     listing_source.mtimes[0] = data->taken_time;
 
-    for( int index = 0, index_e = (int)data->procs.size(); index != index_e; ++index ) {
+    for( int index = 0, index_e = static_cast<int>(data->procs.size()); index != index_e;
+         ++index ) {
         listing_source.filenames.emplace_back(data->plain_filenames[index]);
         listing_source.unix_modes.emplace_back(S_IFREG | S_IRUSR | S_IRGRP);
         listing_source.unix_types.emplace_back(DT_REG);

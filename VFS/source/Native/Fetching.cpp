@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Fetching.h"
 #include <sys/attr.h>
 #include <sys/errno.h>
@@ -117,7 +117,7 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
     CallbackParams params;
     params.filename = "";
 
-    const char *field = (const char *)&attrs.dev;
+    const char *field = reinterpret_cast<const char *>(&attrs.dev);
     if( attrs.returned.commonattr & ATTR_CMN_DEVID ) {
         params.dev = *reinterpret_cast<const dev_t *>(field);
         field += sizeof(dev_t);

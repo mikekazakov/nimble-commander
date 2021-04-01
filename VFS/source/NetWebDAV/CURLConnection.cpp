@@ -3,6 +3,9 @@
 #include "Internal.h"
 #include <Habanero/StringViewZBuf.h>
 
+// CURL is full of macros with C-style casts
+#pragma clang diagnostic ignored "-Wold-style-cast"
+
 namespace nc::vfs::webdav {
 
 constexpr static int g_CurlTimeoutMs = 30000; // 30s
@@ -28,7 +31,7 @@ static int curl_easy_get_response_code(CURL *_handle)
     assert(_handle != nullptr);
     long code = 0;
     curl_easy_getinfo(_handle, CURLINFO_RESPONSE_CODE, &code);
-    return (int)code;
+    return static_cast<int>(code);
 }
 
 static int ErrorIfAny(CURLM *_multi)

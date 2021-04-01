@@ -1,29 +1,27 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Internal.h"
 
 namespace nc::vfs::arc {
 
-ssize_t Mediator::myread([[maybe_unused]] struct archive *a,
-                         void *client_data,
-                         const void **buff)
+ssize_t Mediator::myread([[maybe_unused]] struct archive *a, void *client_data, const void **buff)
 {
-    Mediator *_this = (Mediator *)client_data;
+    Mediator *_this = static_cast<Mediator *>(client_data);
     *buff = &_this->buf[0];
-        
+
     ssize_t result = _this->file->Read(&_this->buf[0], bufsz);
-    if(result < 0)
+    if( result < 0 )
         return ARCHIVE_FATAL; // handle somehow
     return result;
 }
-    
+
 off_t Mediator::myseek([[maybe_unused]] struct archive *a,
                        void *client_data,
                        off_t offset,
                        int whence)
 {
-    Mediator *_this = (Mediator *)client_data;
+    Mediator *_this = static_cast<Mediator *>(client_data);
     off_t result = _this->file->Seek(offset, whence);
-    if(result < 0)
+    if( result < 0 )
         return ARCHIVE_FATAL; // handle somehow
     return result;
 }
@@ -37,9 +35,7 @@ void Mediator::setup(struct archive *a)
     archive_read_set_seek_callback(a, myseek);
 }
 
-State::State(const VFSFilePtr &_file, struct archive *_arc):
-    m_File(_file),
-    m_Archive(_arc)
+State::State(const VFSFilePtr &_file, struct archive *_arc) : m_File(_file), m_Archive(_arc)
 {
     assert(m_Archive);
     assert(m_File);
@@ -62,20 +58,20 @@ void State::Setup()
 
 ssize_t State::myread([[maybe_unused]] struct archive *a, void *client_data, const void **buff)
 {
-    auto _this = (State *)client_data;
+    auto _this = static_cast<State *>(client_data);
     *buff = &_this->m_Buf;
-    
+
     ssize_t result = _this->m_File->Read(&_this->m_Buf[0], BufferSize);
-    if(result < 0)
+    if( result < 0 )
         return ARCHIVE_FATAL; // handle somehow
-    return result;   
+    return result;
 }
 
 off_t State::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)
 {
-    auto _this = (State *)client_data;
+    auto _this = static_cast<State *>(client_data);
     off_t result = _this->m_File->Seek(offset, whence);
-    if(result < 0)
+    if( result < 0 )
         return ARCHIVE_FATAL; // handle somehow
     return result;
 }
@@ -99,4 +95,4 @@ int State::Errno()
     return archive_errno(m_Archive);
 }
 
-}
+} // namespace nc::vfs::arc

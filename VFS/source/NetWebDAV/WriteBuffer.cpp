@@ -32,7 +32,7 @@ void WriteBuffer::Grow(size_t _new_size) noexcept
     _new_size = std::max(_new_size, g_DefaultCapacity);
     assert(m_Size < _new_size);
     m_Capacity = _new_size;
-    m_Bytes = (uint8_t *)realloc(m_Bytes, m_Capacity);
+    m_Bytes = static_cast<uint8_t *>(std::realloc(m_Bytes, m_Capacity));
 }
 
 void WriteBuffer::PushBack(const void *_data, size_t _size) noexcept
@@ -61,19 +61,19 @@ void WriteBuffer::Clear() noexcept
 void WriteBuffer::Write(const void *_buffer, size_t _bytes) noexcept
 {
     assert(_buffer != nullptr);
-    PushBack(_buffer, (int)_bytes);
+    PushBack(_buffer, static_cast<int>(_bytes));
 }
 
 size_t WriteBuffer::Discard(size_t _bytes) noexcept
 {
     const auto to_discard = std::min(size_t(m_Size), _bytes);
-    PopFront((int)to_discard);
+    PopFront(static_cast<int>(to_discard));
     return to_discard;
 }
 
 size_t WriteBuffer::ReadCURL(void *_ptr, size_t _size, size_t _nmemb, void *_userp) noexcept
 {
-    WriteBuffer &buffer = *(WriteBuffer *)_userp;
+    WriteBuffer &buffer = *static_cast<WriteBuffer *>(_userp);
 
     const auto total_bytes = _size * _nmemb;
 
@@ -87,7 +87,7 @@ size_t WriteBuffer::Read(void *_ptr, size_t _size_bytes) noexcept
         return 0;
 
     std::memcpy(_ptr, m_Bytes, to_read);
-    PopFront((int)to_read);
+    PopFront(static_cast<int>(to_read));
 
     return to_read;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/variable_container.h>
@@ -31,7 +31,7 @@ public:
 
     static const base::intrusive_ptr<const Listing> &EmptyListing() noexcept;
     static base::intrusive_ptr<const Listing> Build(ListingInput &&_input);
-    
+
     /**
      * compose many listings into a new ListingInput.
      * it will contain only sparse-based variable containers.
@@ -39,169 +39,167 @@ public:
      */
     static ListingInput Compose(const std::vector<base::intrusive_ptr<const Listing>> &_listings);
     static ListingInput Compose(const std::vector<base::intrusive_ptr<const Listing>> &_listings,
-                                const std::vector< std::vector<unsigned> > &_items_indeces);
-    
-    
+                                const std::vector<std::vector<unsigned>> &_items_indeces);
+
     static base::intrusive_ptr<const Listing>
-        ProduceUpdatedTemporaryPanelListing(const Listing& _original,
-                                            VFSCancelChecker _cancel_checker );
-    
+    ProduceUpdatedTemporaryPanelListing(const Listing &_original, VFSCancelChecker _cancel_checker);
+
     /**
-     * Returns items amount in this listing. 
+     * Returns items amount in this listing.
      */
-    unsigned            Count               () const noexcept;
-    bool                Empty               () const noexcept;
-    bool                IsUniform           () const noexcept;
-    bool                HasCommonHost       () const noexcept;
-    bool                HasCommonDirectory  () const noexcept;
-    
+    unsigned Count() const noexcept;
+    bool Empty() const noexcept;
+    bool IsUniform() const noexcept;
+    bool HasCommonHost() const noexcept;
+    bool HasCommonDirectory() const noexcept;
+
     /**
      * Returns an optional title for this listing object.
      */
-    const std::string&  Title               () const noexcept;
+    const std::string &Title() const noexcept;
 
-    ListingItem         Item                (unsigned _ind) const;
+    ListingItem Item(unsigned _ind) const;
 
-    const std::string&  Directory           () const; // will throw if there's no common directory
-    const std::string&  Directory           (unsigned _ind) const;
-    const VFSHostPtr&   Host                () const; // will throw if there's no common host
-    const VFSHostPtr&   Host                (unsigned _ind) const;
-    
+    const std::string &Directory() const; // will throw if there's no common directory
+    const std::string &Directory(unsigned _ind) const;
+    const VFSHostPtr &Host() const; // will throw if there's no common host
+    const VFSHostPtr &Host(unsigned _ind) const;
+
     /**
      * Compose a path to specified listing item. Is case of ".." item will directory path itself.
      */
-    std::string         Path                (unsigned _ind) const;
-    
-    const std::string&  Filename            (unsigned _ind) const;
-    CFStringRef         FilenameCF          (unsigned _ind) const;
+    std::string Path(unsigned _ind) const;
+
+    const std::string &Filename(unsigned _ind) const;
+    CFStringRef FilenameCF(unsigned _ind) const;
 #ifdef __OBJC__
-    NSString*           FilenameNS          (unsigned _ind) const;
+    NSString *FilenameNS(unsigned _ind) const;
 #endif
 
-    mode_t              UnixMode            (unsigned _ind) const;
-    uint8_t             UnixType            (unsigned _ind) const;
-    
-    bool                HasExtension        (unsigned _ind) const;
-    uint16_t            ExtensionOffset     (unsigned _ind) const;
-    const char*         Extension           (unsigned _ind) const;
-    
-    std::string         FilenameWithoutExt  (unsigned _ind) const;
-    
-    bool                HasSize             (unsigned _ind) const;
-    uint64_t            Size                (unsigned _ind) const;
-    
-    bool                HasInode            (unsigned _ind) const;
-    uint64_t            Inode               (unsigned _ind) const;
-    
-    bool                HasATime            (unsigned _ind) const;
-    time_t              ATime               (unsigned _ind) const;
+    mode_t UnixMode(unsigned _ind) const;
+    uint8_t UnixType(unsigned _ind) const;
 
-    bool                HasMTime            (unsigned _ind) const;
-    time_t              MTime               (unsigned _ind) const;
+    bool HasExtension(unsigned _ind) const;
+    uint16_t ExtensionOffset(unsigned _ind) const;
+    const char *Extension(unsigned _ind) const;
 
-    bool                HasCTime            (unsigned _ind) const;
-    time_t              CTime               (unsigned _ind) const;
+    std::string FilenameWithoutExt(unsigned _ind) const;
 
-    bool                HasBTime            (unsigned _ind) const;
-    time_t              BTime               (unsigned _ind) const;
+    bool HasSize(unsigned _ind) const;
+    uint64_t Size(unsigned _ind) const;
 
-    bool                HasAddTime          (unsigned _ind) const;
-    time_t              AddTime             (unsigned _ind) const; // will return BTime if there's no AddTime
-    
-    bool                HasUID              (unsigned _ind) const;
-    uid_t               UID                 (unsigned _ind) const;
+    bool HasInode(unsigned _ind) const;
+    uint64_t Inode(unsigned _ind) const;
 
-    bool                HasGID              (unsigned _ind) const;
-    gid_t               GID                 (unsigned _ind) const;
+    bool HasATime(unsigned _ind) const;
+    time_t ATime(unsigned _ind) const;
 
-    bool                HasUnixFlags        (unsigned _ind) const;
-    uint32_t            UnixFlags           (unsigned _ind) const;
-    
-    bool                HasSymlink          (unsigned _ind) const;
-    const std::string&  Symlink             (unsigned _ind) const;
-    
-    bool                HasDisplayFilename  (unsigned _ind) const;
-    const std::string&  DisplayFilename     (unsigned _ind) const;
-    CFStringRef         DisplayFilenameCF   (unsigned _ind) const;
+    bool HasMTime(unsigned _ind) const;
+    time_t MTime(unsigned _ind) const;
+
+    bool HasCTime(unsigned _ind) const;
+    time_t CTime(unsigned _ind) const;
+
+    bool HasBTime(unsigned _ind) const;
+    time_t BTime(unsigned _ind) const;
+
+    bool HasAddTime(unsigned _ind) const;
+    time_t AddTime(unsigned _ind) const; // will return BTime if there's no AddTime
+
+    bool HasUID(unsigned _ind) const;
+    uid_t UID(unsigned _ind) const;
+
+    bool HasGID(unsigned _ind) const;
+    gid_t GID(unsigned _ind) const;
+
+    bool HasUnixFlags(unsigned _ind) const;
+    uint32_t UnixFlags(unsigned _ind) const;
+
+    bool HasSymlink(unsigned _ind) const;
+    const std::string &Symlink(unsigned _ind) const;
+
+    bool HasDisplayFilename(unsigned _ind) const;
+    const std::string &DisplayFilename(unsigned _ind) const;
+    CFStringRef DisplayFilenameCF(unsigned _ind) const;
 #ifdef __OBJC__
-    inline NSString*    DisplayFilenameNS   (unsigned _ind) const;
+    inline NSString *DisplayFilenameNS(unsigned _ind) const;
 #endif
-    
-    bool                IsDotDot            (unsigned _ind) const;
-    bool                IsDir               (unsigned _ind) const;
-    bool                IsReg               (unsigned _ind) const;
-    bool                IsSymlink           (unsigned _ind) const;
-    bool                IsHidden            (unsigned _ind) const;
-    
+
+    bool IsDotDot(unsigned _ind) const;
+    bool IsDir(unsigned _ind) const;
+    bool IsReg(unsigned _ind) const;
+    bool IsSymlink(unsigned _ind) const;
+    bool IsHidden(unsigned _ind) const;
+
     class iterator;
-    iterator            begin               () const noexcept;
-    iterator            end                 () const noexcept;
-    
+    iterator begin() const noexcept;
+    iterator end() const noexcept;
+
 private:
     Listing();
-    Listing(const Listing&) = delete;
-    Listing& operator=(const Listing&) = delete;
-    void BuildFilenames();    
-    
-    unsigned                                m_ItemsCount;
-    time_t                                  m_CreationTime;
-    std::string                             m_Title;
-    base::variable_container<VFSHostPtr>    m_Hosts;
-    base::variable_container<std::string>   m_Directories;
-    std::vector<std::string>                m_Filenames;
-    std::vector<CFString>                   m_FilenamesCF;
-    std::vector<uint16_t>                   m_ExtensionOffsets;
-    std::vector<mode_t>                     m_UnixModes;
-    std::vector<uint8_t>                    m_UnixTypes;
-    base::variable_container<uint64_t>      m_Sizes;
-    base::variable_container<uint64_t>      m_Inodes;
-    base::variable_container<time_t>        m_ATimes;
-    base::variable_container<time_t>        m_MTimes;
-    base::variable_container<time_t>        m_CTimes;
-    base::variable_container<time_t>        m_BTimes;
-    base::variable_container<time_t>        m_AddTimes;
-    base::variable_container<uid_t>         m_UIDS;
-    base::variable_container<gid_t>         m_GIDS;
-    base::variable_container<uint32_t>      m_UnixFlags;
-    base::variable_container<std::string>   m_Symlinks;
-    base::variable_container<std::string>   m_DisplayFilenames;
-    base::variable_container<CFString>      m_DisplayFilenamesCF;
-    
+    Listing(const Listing &) = delete;
+    Listing &operator=(const Listing &) = delete;
+    void BuildFilenames();
+
+    unsigned m_ItemsCount;
+    time_t m_CreationTime;
+    std::string m_Title;
+    base::variable_container<VFSHostPtr> m_Hosts;
+    base::variable_container<std::string> m_Directories;
+    std::vector<std::string> m_Filenames;
+    std::vector<CFString> m_FilenamesCF;
+    std::vector<uint16_t> m_ExtensionOffsets;
+    std::vector<mode_t> m_UnixModes;
+    std::vector<uint8_t> m_UnixTypes;
+    base::variable_container<uint64_t> m_Sizes;
+    base::variable_container<uint64_t> m_Inodes;
+    base::variable_container<time_t> m_ATimes;
+    base::variable_container<time_t> m_MTimes;
+    base::variable_container<time_t> m_CTimes;
+    base::variable_container<time_t> m_BTimes;
+    base::variable_container<time_t> m_AddTimes;
+    base::variable_container<uid_t> m_UIDS;
+    base::variable_container<gid_t> m_GIDS;
+    base::variable_container<uint32_t> m_UnixFlags;
+    base::variable_container<std::string> m_Symlinks;
+    base::variable_container<std::string> m_DisplayFilenames;
+    base::variable_container<CFString> m_DisplayFilenamesCF;
+
     // this is a copy of POSIX/BSD constants to reduce headers pollution
-    inline constexpr static const mode_t   m_S_IFMT        = 0170000;
-    inline constexpr static const mode_t   m_S_IFIFO       = 0010000;    
-    inline constexpr static const mode_t   m_S_IFCHR       = 0020000;  
-    inline constexpr static const mode_t   m_S_IFDIR       = 0040000;
-    inline constexpr static const mode_t   m_S_IFBLK       = 0060000;    
-    inline constexpr static const mode_t   m_S_IFREG       = 0100000;    
-    inline constexpr static const mode_t   m_S_IFLNK       = 0120000;
-    inline constexpr static const mode_t   m_S_IFSOCK      = 0140000;    
-    inline constexpr static const mode_t   m_S_IFWHT       = 0160000;    
-    inline constexpr static const uint8_t  m_DT_UNKNOWN    = 0;
-    inline constexpr static const uint8_t  m_DT_FIFO       = 1;    
-    inline constexpr static const uint8_t  m_DT_CHR        = 2;    
-    inline constexpr static const uint8_t  m_DT_DIR        = 4;    
-    inline constexpr static const uint8_t  m_DT_BLK        = 6;    
-    inline constexpr static const uint8_t  m_DT_REG        = 8;
-    inline constexpr static const uint8_t  m_DT_LNK        = 10;    
-    inline constexpr static const uint8_t  m_DT_SOCK       = 12;    
-    inline constexpr static const uint8_t  m_DT_WHT        = 14;
-    inline constexpr static const uint32_t m_UF_SETTABLE   = 0x0000ffff;    
-    inline constexpr static const uint32_t m_UF_NODUMP     = 0x00000001;    
-    inline constexpr static const uint32_t m_UF_IMMUTABLE  = 0x00000002;    
-    inline constexpr static const uint32_t m_UF_APPEND     = 0x00000004;
-    inline constexpr static const uint32_t m_UF_OPAQUE     = 0x00000008;    
-    inline constexpr static const uint32_t m_UF_COMPRESSED = 0x00000020;    
-    inline constexpr static const uint32_t m_UF_TRACKED    = 0x00000040;    
-    inline constexpr static const uint32_t m_UF_DATAVAULT  = 0x00000080;    
-    inline constexpr static const uint32_t m_UF_HIDDEN     = 0x00008000;    
-    inline constexpr static const uint32_t m_SF_SUPPORTED  = 0x001f0000;    
-    inline constexpr static const uint32_t m_SF_SETTABLE   = 0xffff0000;    
-    inline constexpr static const uint32_t m_SF_ARCHIVED   = 0x00010000;    
-    inline constexpr static const uint32_t m_SF_IMMUTABLE  = 0x00020000;    
-    inline constexpr static const uint32_t m_SF_APPEND     = 0x00040000;    
-    inline constexpr static const uint32_t m_SF_RESTRICTED = 0x00080000;    
-    inline constexpr static const uint32_t m_SF_NOUNLINK   = 0x00100000;    
+    inline constexpr static const mode_t m_S_IFMT = 0170000;
+    inline constexpr static const mode_t m_S_IFIFO = 0010000;
+    inline constexpr static const mode_t m_S_IFCHR = 0020000;
+    inline constexpr static const mode_t m_S_IFDIR = 0040000;
+    inline constexpr static const mode_t m_S_IFBLK = 0060000;
+    inline constexpr static const mode_t m_S_IFREG = 0100000;
+    inline constexpr static const mode_t m_S_IFLNK = 0120000;
+    inline constexpr static const mode_t m_S_IFSOCK = 0140000;
+    inline constexpr static const mode_t m_S_IFWHT = 0160000;
+    inline constexpr static const uint8_t m_DT_UNKNOWN = 0;
+    inline constexpr static const uint8_t m_DT_FIFO = 1;
+    inline constexpr static const uint8_t m_DT_CHR = 2;
+    inline constexpr static const uint8_t m_DT_DIR = 4;
+    inline constexpr static const uint8_t m_DT_BLK = 6;
+    inline constexpr static const uint8_t m_DT_REG = 8;
+    inline constexpr static const uint8_t m_DT_LNK = 10;
+    inline constexpr static const uint8_t m_DT_SOCK = 12;
+    inline constexpr static const uint8_t m_DT_WHT = 14;
+    inline constexpr static const uint32_t m_UF_SETTABLE = 0x0000ffff;
+    inline constexpr static const uint32_t m_UF_NODUMP = 0x00000001;
+    inline constexpr static const uint32_t m_UF_IMMUTABLE = 0x00000002;
+    inline constexpr static const uint32_t m_UF_APPEND = 0x00000004;
+    inline constexpr static const uint32_t m_UF_OPAQUE = 0x00000008;
+    inline constexpr static const uint32_t m_UF_COMPRESSED = 0x00000020;
+    inline constexpr static const uint32_t m_UF_TRACKED = 0x00000040;
+    inline constexpr static const uint32_t m_UF_DATAVAULT = 0x00000080;
+    inline constexpr static const uint32_t m_UF_HIDDEN = 0x00008000;
+    inline constexpr static const uint32_t m_SF_SUPPORTED = 0x001f0000;
+    inline constexpr static const uint32_t m_SF_SETTABLE = 0xffff0000;
+    inline constexpr static const uint32_t m_SF_ARCHIVED = 0x00010000;
+    inline constexpr static const uint32_t m_SF_IMMUTABLE = 0x00020000;
+    inline constexpr static const uint32_t m_SF_APPEND = 0x00040000;
+    inline constexpr static const uint32_t m_SF_RESTRICTED = 0x00080000;
+    inline constexpr static const uint32_t m_SF_NOUNLINK = 0x00100000;
 };
 
 // ListingItem class is a simple wrapper around (pointer;index)
@@ -210,107 +208,108 @@ class ListingItem
 {
 public:
     ListingItem() noexcept;
-    ListingItem(const base::intrusive_ptr<const Listing>& _listing, unsigned _ind) noexcept;
-    operator                                    bool()              const noexcept;
-    const base::intrusive_ptr<const Listing>&   Listing()           const noexcept;
-    unsigned                                    Index()             const noexcept;
-    
-    std::string         Path()          const;
-    const VFSHostPtr&   Host()          const;
-    const std::string&  Directory()     const;
-    
+    ListingItem(const base::intrusive_ptr<const Listing> &_listing, unsigned _ind) noexcept;
+    operator bool() const noexcept;
+    const base::intrusive_ptr<const Listing> &Listing() const noexcept;
+    unsigned Index() const noexcept;
+
+    std::string Path() const;
+    const VFSHostPtr &Host() const;
+    const std::string &Directory() const;
+
     // currently mimicking old VFSListingItem interface, may change methods names later
-    const std::string&  Filename()      const;
-    const char     *FilenameC()         const;
-    size_t          FilenameLen()       const;
-    CFStringRef     FilenameCF()        const;
+    const std::string &Filename() const;
+    const char *FilenameC() const;
+    size_t FilenameLen() const;
+    CFStringRef FilenameCF() const;
 #ifdef __OBJC__
-    NSString*       FilenameNS()        const;
+    NSString *FilenameNS() const;
 #endif
 
-    bool            HasDisplayName()    const;
-    const std::string&  DisplayName()   const;
-    CFStringRef     DisplayNameCF()     const;
+    bool HasDisplayName() const;
+    const std::string &DisplayName() const;
+    CFStringRef DisplayNameCF() const;
 #ifdef __OBJC__
-    NSString*       DisplayNameNS()     const;
+    NSString *DisplayNameNS() const;
 #endif
 
-    bool            HasExtension()      const;
-    uint16_t        ExtensionOffset()   const;
-    const char*     Extension()         const; // unguarded calls whout HasExtension will yeild a whole filename as a result
-    const char*     ExtensionIfAny()    const; // will return "" if there's no extension
-    std::string     FilenameWithoutExt()const;
-    
-    mode_t          UnixMode()          const; // resolved for symlinks
-    uint8_t         UnixType()          const; // type is _original_ directory entry, without symlinks resolving
+    bool HasExtension() const;
+    uint16_t ExtensionOffset() const;
+    const char *
+    Extension() const; // unguarded calls whout HasExtension will yeild a whole filename as a result
+    const char *ExtensionIfAny() const; // will return "" if there's no extension
+    std::string FilenameWithoutExt() const;
 
-    bool            HasSize()           const;
-    uint64_t        Size()              const;
+    mode_t UnixMode() const;  // resolved for symlinks
+    uint8_t UnixType() const; // type is _original_ directory entry, without symlinks resolving
 
-    bool            HasInode()          const;
-    uint64_t        Inode()             const;
+    bool HasSize() const;
+    uint64_t Size() const;
 
-    bool            HasATime()          const;
-    time_t          ATime()             const;
+    bool HasInode() const;
+    uint64_t Inode() const;
 
-    bool            HasMTime()          const;
-    time_t          MTime()             const;
-    
-    bool            HasCTime()          const;
-    time_t          CTime()             const;
+    bool HasATime() const;
+    time_t ATime() const;
 
-    bool            HasBTime()          const;
-    time_t          BTime()             const;
+    bool HasMTime() const;
+    time_t MTime() const;
 
-    bool            HasAddTime()        const;
-    time_t          AddTime()           const;
-    
-    bool            HasUnixFlags()      const;
-    uint32_t        UnixFlags()         const;
-    
-    bool            HasUnixUID()        const;
-    uid_t           UnixUID()           const;
-    
-    bool            HasUnixGID()        const;
-    gid_t           UnixGID()           const;
-    
-    bool            HasSymlink()        const;
-    const std::string& Symlink()        const;
-    
-    bool            IsDir()             const;
-    bool            IsReg()             const;
-    bool            IsSymlink()         const;
-    bool            IsDotDot()          const;
-    bool            IsHidden()          const;
-    
-    bool operator ==(const ListingItem&_) const noexcept;
-    bool operator !=(const ListingItem&_) const noexcept;
-    
+    bool HasCTime() const;
+    time_t CTime() const;
+
+    bool HasBTime() const;
+    time_t BTime() const;
+
+    bool HasAddTime() const;
+    time_t AddTime() const;
+
+    bool HasUnixFlags() const;
+    uint32_t UnixFlags() const;
+
+    bool HasUnixUID() const;
+    uid_t UnixUID() const;
+
+    bool HasUnixGID() const;
+    gid_t UnixGID() const;
+
+    bool HasSymlink() const;
+    const std::string &Symlink() const;
+
+    bool IsDir() const;
+    bool IsReg() const;
+    bool IsSymlink() const;
+    bool IsDotDot() const;
+    bool IsHidden() const;
+
+    bool operator==(const ListingItem &_) const noexcept;
+    bool operator!=(const ListingItem &_) const noexcept;
+
 private:
     nc::base::intrusive_ptr<const class Listing> L;
-    unsigned                        I;
+    unsigned I;
     friend Listing::iterator;
 };
 
 class Listing::iterator
 {
 public:
-    iterator &operator--() noexcept; // prefix decrement
-    iterator &operator++() noexcept; // prefix increment
+    iterator &operator--() noexcept;   // prefix decrement
+    iterator &operator++() noexcept;   // prefix increment
     iterator operator--(int) noexcept; // posfix decrement
     iterator operator++(int) noexcept; // posfix increment
-    
-    bool operator==(const iterator& _r) const noexcept;
-    bool operator!=(const iterator& _r) const noexcept;
-    const ListingItem& operator*() const noexcept;
+
+    bool operator==(const iterator &_r) const noexcept;
+    bool operator!=(const iterator &_r) const noexcept;
+    const ListingItem &operator*() const noexcept;
 
 private:
     ListingItem i;
     friend class Listing;
 };
 
-#define __CHECK_BOUNDS( a ) \
-    if( (a) >= m_ItemsCount ) \
+#define __CHECK_BOUNDS(a)                                                                          \
+    if( (a) >= m_ItemsCount )                                                                      \
         throw std::out_of_range(std::string(__PRETTY_FUNCTION__) + ": index out of range");
 
 inline bool Listing::HasExtension(unsigned _ind) const
@@ -363,17 +362,17 @@ inline std::string Listing::FilenameWithoutExt(unsigned _ind) const
     __CHECK_BOUNDS(_ind);
     if( m_ExtensionOffsets[_ind] == 0 )
         return m_Filenames[_ind];
-    return m_Filenames[_ind].substr(0, m_ExtensionOffsets[_ind]-1);
+    return m_Filenames[_ind].substr(0, m_ExtensionOffsets[_ind] - 1);
 }
 
-inline const VFSHostPtr& Listing::Host() const
+inline const VFSHostPtr &Listing::Host() const
 {
     if( HasCommonHost() )
         return m_Hosts[0];
     throw std::logic_error("Listing::Host() called for listing with no common host");
 }
 
-inline const VFSHostPtr& Listing::Host(unsigned _ind) const
+inline const VFSHostPtr &Listing::Host(unsigned _ind) const
 {
     if( HasCommonHost() )
         return m_Hosts[0];
@@ -383,14 +382,14 @@ inline const VFSHostPtr& Listing::Host(unsigned _ind) const
     }
 }
 
-inline const std::string& Listing::Directory() const
+inline const std::string &Listing::Directory() const
 {
     if( HasCommonDirectory() )
         return m_Directories[0];
     throw std::logic_error("Listing::Directory() called for listing with no common directory");
 }
 
-inline const std::string& Listing::Directory(unsigned _ind) const
+inline const std::string &Listing::Directory(unsigned _ind) const
 {
     if( HasCommonDirectory() ) {
         return m_Directories[0];
@@ -416,7 +415,7 @@ inline bool Listing::IsUniform() const noexcept
     return HasCommonHost() && HasCommonDirectory();
 }
 
-inline const std::string& Listing::Title() const noexcept
+inline const std::string &Listing::Title() const noexcept
 {
     return m_Title;
 }
@@ -569,7 +568,7 @@ inline bool Listing::HasSymlink(unsigned _ind) const
     return m_Symlinks.has(_ind);
 }
 
-inline const std::string& Listing::Symlink(unsigned _ind) const
+inline const std::string &Listing::Symlink(unsigned _ind) const
 {
     [[clang::no_destroy]] static const std::string st = "";
     __CHECK_BOUNDS(_ind);
@@ -582,7 +581,7 @@ inline bool Listing::HasDisplayFilename(unsigned _ind) const
     return m_DisplayFilenames.has(_ind);
 }
 
-inline const std::string& Listing::DisplayFilename(unsigned _ind) const
+inline const std::string &Listing::DisplayFilename(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_DisplayFilenames.has(_ind) ? m_DisplayFilenames[_ind] : Filename(_ind);
@@ -598,7 +597,7 @@ inline bool Listing::IsDotDot(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     auto &s = m_Filenames[_ind];
-    return s[0]=='.' && s[1] == '.' && s[2] == 0;
+    return s[0] == '.' && s[1] == '.' && s[2] == 0;
 }
 
 inline bool Listing::IsDir(unsigned _ind) const
@@ -628,7 +627,7 @@ inline bool Listing::IsHidden(unsigned _ind) const
 inline ListingItem Listing::Item(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    return ListingItem( base::intrusive_ptr{this} , _ind);
+    return ListingItem(base::intrusive_ptr{this}, _ind);
 }
 
 inline Listing::iterator Listing::begin() const noexcept
@@ -646,26 +645,23 @@ inline Listing::iterator Listing::end() const noexcept
 }
 
 #undef __CHECK_BOUNDS
-    
-inline ListingItem::ListingItem() noexcept:
-    L( nullptr ),
-    I( std::numeric_limits<unsigned>::max() )
+
+inline ListingItem::ListingItem() noexcept : L(nullptr), I(std::numeric_limits<unsigned>::max())
 {
 }
 
-inline ListingItem::ListingItem
-    (const base::intrusive_ptr<const class Listing>& _listing, unsigned _ind) noexcept:
-    L(_listing),
-    I(_ind)
+inline ListingItem::ListingItem(const base::intrusive_ptr<const class Listing> &_listing,
+                                unsigned _ind) noexcept
+    : L(_listing), I(_ind)
 {
 }
 
 inline ListingItem::operator bool() const noexcept
 {
-    return (bool)L;
+    return static_cast<bool>(L);
 }
 
-inline const base::intrusive_ptr<const Listing>& ListingItem::Listing() const noexcept
+inline const base::intrusive_ptr<const Listing> &ListingItem::Listing() const noexcept
 {
     return L;
 }
@@ -680,17 +676,17 @@ inline std::string ListingItem::Path() const
     return L->Path(I);
 }
 
-inline const VFSHostPtr& ListingItem::Host() const
+inline const VFSHostPtr &ListingItem::Host() const
 {
     return L->Host(I);
 }
 
-inline const std::string& ListingItem::Directory() const
+inline const std::string &ListingItem::Directory() const
 {
     return L->Directory(I);
 }
 
-inline const std::string& ListingItem::Filename() const
+inline const std::string &ListingItem::Filename() const
 {
     return L->Filename(I);
 }
@@ -715,7 +711,7 @@ inline bool ListingItem::HasDisplayName() const
     return L->HasDisplayFilename(I);
 }
 
-inline const std::string& ListingItem::DisplayName() const
+inline const std::string &ListingItem::DisplayName() const
 {
     return L->DisplayFilename(I);
 }
@@ -735,12 +731,12 @@ inline uint16_t ListingItem::ExtensionOffset() const
     return L->ExtensionOffset(I);
 }
 
-inline const char* ListingItem::Extension() const
+inline const char *ListingItem::Extension() const
 {
     return L->Extension(I);
 }
 
-inline const char* ListingItem::ExtensionIfAny() const
+inline const char *ListingItem::ExtensionIfAny() const
 {
     return HasExtension() ? Extension() : "";
 }
@@ -865,7 +861,7 @@ inline bool ListingItem::HasSymlink() const
     return L->HasSymlink(I);
 }
 
-inline const std::string& ListingItem::Symlink() const
+inline const std::string &ListingItem::Symlink() const
 {
     return L->Symlink(I);
 }
@@ -895,12 +891,12 @@ inline bool ListingItem::IsHidden() const
     return L->IsHidden(I);
 }
 
-inline bool ListingItem::operator ==(const ListingItem&_) const noexcept
+inline bool ListingItem::operator==(const ListingItem &_) const noexcept
 {
     return I == _.I && L == _.L;
 }
 
-inline bool ListingItem::operator !=(const ListingItem&_) const noexcept
+inline bool ListingItem::operator!=(const ListingItem &_) const noexcept
 {
     return I != _.I || L != _.L;
 }
@@ -916,7 +912,7 @@ inline Listing::iterator &Listing::iterator::operator++() noexcept // prefix inc
     i.I++;
     return *this;
 }
-    
+
 inline Listing::iterator Listing::iterator::operator--(int) noexcept // posfix decrement
 {
     auto p = *this;
@@ -930,20 +926,20 @@ inline Listing::iterator Listing::iterator::operator++(int) noexcept // posfix i
     i.I++;
     return p;
 }
-    
-inline bool Listing::iterator::operator==(const iterator& _r) const noexcept
+
+inline bool Listing::iterator::operator==(const iterator &_r) const noexcept
 {
     return i.I == _r.i.I && i.L == _r.i.L;
 }
 
-inline bool Listing::iterator::operator!=(const iterator& _r) const noexcept
+inline bool Listing::iterator::operator!=(const iterator &_r) const noexcept
 {
     return !(*this == _r);
 }
 
-inline const ListingItem& Listing::iterator::operator*() const noexcept
+inline const ListingItem &Listing::iterator::operator*() const noexcept
 {
     return i;
-}    
+}
 
 };

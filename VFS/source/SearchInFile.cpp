@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchInFile.h"
 #include <Utility/Encodings.h>
 #include <VFS/FileWindow.h>
@@ -10,9 +10,8 @@ static const unsigned g_MaximumCodeUnit = 2;
 
 static bool IsWholePhrase(CFStringRef _string, CFRange _range);
 
-SearchInFile::SearchInFile(nc::vfs::FileWindow &_file):
-    m_File(_file),
-    m_TextSearchEncoding(encodings::ENCODING_INVALID)
+SearchInFile::SearchInFile(nc::vfs::FileWindow &_file)
+    : m_File(_file), m_TextSearchEncoding(encodings::ENCODING_INVALID)
 {
     if( !m_File.FileOpened() )
         throw std::invalid_argument("SearchInFile: FileWindow should be opened");
@@ -23,9 +22,9 @@ SearchInFile::SearchInFile(nc::vfs::FileWindow &_file):
 
 SearchInFile::~SearchInFile()
 {
-    if(m_RequestedTextSearch != 0)
+    if( m_RequestedTextSearch != 0 )
         CFRelease(m_RequestedTextSearch);
-    if(m_DecodedBufferString != 0)
+    if( m_DecodedBufferString != 0 )
         CFRelease(m_DecodedBufferString);
 }
 
@@ -33,11 +32,12 @@ void SearchInFile::MoveCurrentPosition(uint64_t _pos)
 {
     const auto is_valid = (m_File.FileSize() > 0 && _pos < m_File.FileSize()) || _pos == 0;
     if( is_valid == false )
-        throw std::out_of_range("SearchInFile::MoveCurrentPosition: invalid index");;
-    
+        throw std::out_of_range("SearchInFile::MoveCurrentPosition: invalid index");
+    ;
+
     m_Position = _pos;
 
-    if(m_File.WindowSize() + m_Position > m_File.FileSize())
+    if( m_File.WindowSize() + m_Position > m_File.FileSize() )
         m_File.MoveWindow(m_File.FileSize() - m_File.WindowSize());
     else
         m_File.MoveWindow(m_Position);
@@ -45,15 +45,15 @@ void SearchInFile::MoveCurrentPosition(uint64_t _pos)
 
 void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding)
 {
-    if(m_RequestedTextSearch != 0)
+    if( m_RequestedTextSearch != 0 )
         CFRelease(m_RequestedTextSearch);
     m_RequestedTextSearch = CFStringCreateCopy(0, _string);
     m_TextSearchEncoding = _encoding;
-    
+
     m_WorkMode = WorkMode::Text;
 }
 
-SearchInFile::Result SearchInFile::Search( const CancelChecker &_checker )
+SearchInFile::Result SearchInFile::Search(const CancelChecker &_checker)
 {
     if( m_WorkMode == WorkMode::Text ) {
         uint64_t offset = 0;
@@ -76,105 +76,101 @@ bool SearchInFile::IsEOF() const
     return m_Position >= m_File.FileSize();
 }
 
-SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset,
-                                              uint64_t *_bytes_len,
-                                              CancelChecker _checker)
+SearchInFile::Response
+SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker)
 {
-    if(m_File.FileSize() == 0)
+    if( m_File.FileSize() == 0 )
         return Response::NotFound; // for singular case
-    
-    if(m_File.FileSize() < (size_t)encodings::BytesForCodeUnit(m_TextSearchEncoding))
+
+    if( m_File.FileSize() < static_cast<size_t>(encodings::BytesForCodeUnit(m_TextSearchEncoding)) )
         return Response::NotFound; // for singular case
-    
-    if(m_Position >= m_File.FileSize())
+
+    if( m_Position >= m_File.FileSize() )
         return Response::EndOfFile; // when finished searching
-    
-    if(CFStringGetLength(m_RequestedTextSearch) <= 0)
+
+    if( CFStringGetLength(m_RequestedTextSearch) <= 0 )
         return Response::Invalid;
 
-    while(true)
-    {
-        if(m_Position >= m_File.FileSize())
+    while( true ) {
+        if( m_Position >= m_File.FileSize() )
             break; // when finished searching
 
-        if(_checker && _checker())
+        if( _checker && _checker() )
             return Response::Canceled;
-        
+
         // move our load window inside a file
         size_t window_pos = m_Position;
         size_t left_window_gap = 0;
-        if(window_pos + m_File.WindowSize() > m_File.FileSize())
-        {
+        if( window_pos + m_File.WindowSize() > m_File.FileSize() ) {
             window_pos = m_File.FileSize() - m_File.WindowSize();
             left_window_gap = m_Position - window_pos;
         }
         m_File.MoveWindow(window_pos);
         assert(m_Position >= m_File.WindowPos() &&
                m_Position < m_File.WindowPos() + m_File.WindowSize()); // sanity check
-        
+
         // get UniChars from this window using given encoding
-        assert(encodings::BytesForCodeUnit(m_TextSearchEncoding) <= 2); // TODO: support for UTF-32 in the future
-        bool isodd = (encodings::BytesForCodeUnit(m_TextSearchEncoding) == 2) && ((m_File.WindowPos() & 1) == 1);
+        assert(encodings::BytesForCodeUnit(m_TextSearchEncoding) <=
+               2); // TODO: support for UTF-32 in the future
+        bool isodd = (encodings::BytesForCodeUnit(m_TextSearchEncoding) == 2) &&
+                     ((m_File.WindowPos() & 1) == 1);
         encodings::InterpretAsUnichar(m_TextSearchEncoding,
-                                      (const unsigned char*) m_File.Window() + left_window_gap  + (isodd ? 1 : 0),
-                                      m_File.WindowSize() - left_window_gap  - (isodd ? 1 : 0),
+                                      static_cast<const unsigned char *>(m_File.Window()) +
+                                          left_window_gap + (isodd ? 1 : 0),
+                                      m_File.WindowSize() - left_window_gap - (isodd ? 1 : 0),
                                       m_DecodedBuffer.get(),
                                       m_DecodedBufferIndx.get(),
                                       &m_DecodedBufferSize);
 
         assert(m_DecodedBufferSize != 0);
-        
+
         // use this UniChars to produce a regular CFString
-        if(m_DecodedBufferString != 0)
+        if( m_DecodedBufferString != 0 )
             CFRelease(m_DecodedBufferString);
-        m_DecodedBufferString = CFStringCreateWithCharactersNoCopy(0,
-                                                                   m_DecodedBuffer.get(),
-                                                                   m_DecodedBufferSize,
-                                                                   kCFAllocatorNull);
+        m_DecodedBufferString = CFStringCreateWithCharactersNoCopy(
+            0, m_DecodedBuffer.get(), m_DecodedBufferSize, kCFAllocatorNull);
 
         const auto find_flags = m_SearchOptionsBits.case_sensitive ? 0 : kCFCompareCaseInsensitive;
-        CFRange result = CFStringFind( m_DecodedBufferString, m_RequestedTextSearch, find_flags );
+        CFRange result = CFStringFind(m_DecodedBufferString, m_RequestedTextSearch, find_flags);
 
-        if(result.location == kCFNotFound)
-        {
+        if( result.location == kCFNotFound ) {
             // lets proceed further
-            if(m_File.WindowPos() + m_File.WindowSize() < m_File.FileSize())
-            { // can move on
-                // left some space in the tail to exclude situations when searched text is cut between the windows
+            if( m_File.WindowPos() + m_File.WindowSize() < m_File.FileSize() ) { // can move on
+                // left some space in the tail to exclude situations when searched text is cut
+                // between the windows
                 assert(left_window_gap == 0);
-                assert(size_t(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit) < m_File.WindowSize());
-                m_Position = m_Position + m_File.WindowSize() - CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit;
+                assert(size_t(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit) <
+                       m_File.WindowSize());
+                m_Position = m_Position + m_File.WindowSize() -
+                             CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit;
             }
-            else
-            { // this is the end (c)
+            else { // this is the end (c)
                 m_Position = m_File.FileSize();
             }
         }
-        else
-        {
+        else {
             assert(size_t(result.location + result.length) <= m_DecodedBufferSize); // sanity check
             // check for whole phrase is this option is set
             if( m_SearchOptionsBits.find_whole_phrase &&
-                !IsWholePhrase(m_DecodedBufferString, result) )
-            {
+                !IsWholePhrase(m_DecodedBufferString, result) ) {
                 // false alarm - just move position beyond found part ang go on
-                m_Position = m_Position + m_DecodedBufferIndx[result.location+result.length];
+                m_Position = m_Position + m_DecodedBufferIndx[result.location + result.length];
                 continue;
             }
-            
-            if(_offset != nullptr)
+
+            if( _offset != nullptr )
                 *_offset = m_Position + m_DecodedBufferIndx[result.location];
-            
-            if(_offset != nullptr)
-                *_bytes_len = (size_t(result.location + result.length) < m_DecodedBufferSize ?
-                               m_DecodedBufferIndx[result.location+result.length] :
-                               m_File.WindowSize() - left_window_gap )
-                                - m_DecodedBufferIndx[result.location];
-            m_Position = m_Position + m_DecodedBufferIndx[result.location+result.length];
+
+            if( _offset != nullptr )
+                *_bytes_len = (size_t(result.location + result.length) < m_DecodedBufferSize
+                                   ? m_DecodedBufferIndx[result.location + result.length]
+                                   : m_File.WindowSize() - left_window_gap) -
+                              m_DecodedBufferIndx[result.location];
+            m_Position = m_Position + m_DecodedBufferIndx[result.location + result.length];
             return Response::Found;
         }
     }
-    
+
     return Response::NotFound;
 }
 
@@ -201,24 +197,23 @@ SearchInFile::Options SearchInFile::SearchOptions()
 static bool IsWholePhrase(CFStringRef _string, CFRange _range)
 {
     static const auto alphanumeric = CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric);
-    assert( _range.length > 0 );
-    assert( _range.location >= 0 );
-    
+    assert(_range.length > 0);
+    assert(_range.location >= 0);
+
     if( _range.location > 0 ) {
         const auto character = CFStringGetCharacterAtIndex(_string, _range.location - 1);
         if( CFCharacterSetIsCharacterMember(alphanumeric, character) )
             return false;
     }
-    
+
     if( _range.location + _range.length < CFStringGetLength(_string) ) {
-        const auto character = CFStringGetCharacterAtIndex(_string,
-                                                           _range.location + _range.length);
+        const auto character =
+            CFStringGetCharacterAtIndex(_string, _range.location + _range.length);
         if( CFCharacterSetIsCharacterMember(alphanumeric, character) )
             return false;
     }
-    
+
     return true;
 }
 
-
-}
+} // namespace nc::vfs

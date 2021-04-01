@@ -19,12 +19,14 @@ static nc::config::Value EntryToJSONObject(const History::Entry &_entry)
     o.AddMember("path", MakeStandaloneString(_entry.path), g_CrtAllocator);
     o.AddMember("position", Value(_entry.position), g_CrtAllocator);
     o.AddMember("wrapping", Value(_entry.wrapping), g_CrtAllocator);
-    o.AddMember("mode", Value((int)_entry.view_mode), g_CrtAllocator);
+    o.AddMember("mode", Value(static_cast<int>(_entry.view_mode)), g_CrtAllocator);
     o.AddMember("encoding",
                 MakeStandaloneString(encodings::NameFromEncoding(_entry.encoding)),
                 g_CrtAllocator);
-    o.AddMember("selection_loc", Value((int64_t)_entry.selection.location), g_CrtAllocator);
-    o.AddMember("selection_len", Value((int64_t)_entry.selection.length), g_CrtAllocator);
+    o.AddMember(
+        "selection_loc", Value(static_cast<int64_t>(_entry.selection.location)), g_CrtAllocator);
+    o.AddMember(
+        "selection_len", Value(static_cast<int64_t>(_entry.selection.length)), g_CrtAllocator);
     return o;
 }
 
@@ -58,7 +60,7 @@ static std::optional<History::Entry> JSONObjectToEntry(const nc::config::Value &
         e.wrapping = _object["wrapping"].GetBool();
 
     if( has_number("mode") )
-        e.view_mode = (ViewMode)_object["mode"].GetInt();
+        e.view_mode = static_cast<ViewMode>(_object["mode"].GetInt());
 
     if( has_string("encoding") )
         e.encoding = encodings::EncodingFromName(_object["encoding"].GetString());

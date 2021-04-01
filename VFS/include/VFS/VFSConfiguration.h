@@ -1,10 +1,10 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #pragma once
 
 #include <memory>
 
-/** 
+/**
  * Configuration requirements synopsis
  *
  * === required:
@@ -20,15 +20,14 @@ class VFSConfiguration
 {
 public:
     template <class T>
-    VFSConfiguration(T _t):
-        m_Object( std::make_shared<Model<T>>( std::move(_t) ) )
+    VFSConfiguration(T _t) : m_Object(std::make_shared<Model<T>>(std::move(_t)))
     {
-        static_assert( std::is_class<T>::value, "configuration should be a class/struct" );
+        static_assert(std::is_class<T>::value, "configuration should be a class/struct");
     }
-    
+
     const char *Tag() const;
     const char *Junction() const;
-    
+
     /**
      * Returns readable host's address.
      * For example, for native fs it will be "".
@@ -38,20 +37,20 @@ public:
      * Default implementation returns JunctionPath()
      */
     const char *VerboseJunction() const;
-    bool Equal( const VFSConfiguration &_rhs ) const;
-    inline bool operator ==(const VFSConfiguration &_rhs) const { return  Equal(_rhs); }
-    inline bool operator !=(const VFSConfiguration &_rhs) const { return !Equal(_rhs); }
-    
+    bool Equal(const VFSConfiguration &_rhs) const;
+    inline bool operator==(const VFSConfiguration &_rhs) const { return Equal(_rhs); }
+    inline bool operator!=(const VFSConfiguration &_rhs) const { return !Equal(_rhs); }
+
     template <class T>
     bool IsType() const noexcept
     {
-        return std::dynamic_pointer_cast<const Model<T>>( m_Object ) != nullptr;
+        return std::dynamic_pointer_cast<const Model<T>>(m_Object) != nullptr;
     }
-    
+
     template <class T>
     const T &Get() const
     {
-        if( auto p = std::dynamic_pointer_cast<const Model<T>>( m_Object ) )
+        if( auto p = std::dynamic_pointer_cast<const Model<T>>(m_Object) )
             return p->obj;
         throw std::domain_error("invalid configuration request");
     }
@@ -59,63 +58,48 @@ public:
     template <class T>
     const T &GetUnchecked() const noexcept
     {
-        return static_cast<const Model<T>*>( m_Object.get() )->obj;
+        return static_cast<const Model<T> *>(m_Object.get())->obj;
     }
-    
+
 private:
-    struct Concept
-    {
+    struct Concept {
         virtual ~Concept() = default;
         virtual const char *Tag() const = 0;
         virtual const char *Junction() const = 0;
         virtual const char *VerboseJunction() const = 0;
         virtual const std::type_info &TypeID() const noexcept = 0;
-        virtual bool Equal( const Concept &_rhs ) const = 0;
+        virtual bool Equal(const Concept &_rhs) const = 0;
     };
-    
+
     template <class T>
-    struct Model final : Concept
-    {
+    struct Model final : Concept {
         T obj;
-        
-        Model(T _t):
-            obj( std::move(_t) )
-        {};
-        
-        virtual const char *Tag() const
+
+        Model(T _t) : obj(std::move(_t)){};
+
+        virtual const char *Tag() const { return obj.Tag(); }
+
+        virtual const char *Junction() const { return obj.Junction(); }
+
+        virtual const std::type_info &TypeID() const noexcept { return typeid(T); }
+
+        virtual bool Equal(const Concept &_rhs) const
         {
-            return obj.Tag();
-        }
-        
-        virtual const char *Junction() const
-        {
-            return obj.Junction();
-        }
-        
-        virtual const std::type_info &TypeID() const noexcept
-        {
-            return typeid( T );
-        }
-        
-        virtual bool Equal( const Concept &_rhs ) const
-        {
-            auto &rhs = static_cast<const Model<T>&>(_rhs);
+            auto &rhs = static_cast<const Model<T> &>(_rhs);
             return obj == rhs.obj;
         }
-        
+
         template <typename C>
-        static auto VerboseJunctionImpl(const C&t, int) ->
-        decltype( t.VerboseJunction(), (const char*)nullptr )
-        { return t.VerboseJunction(); }
-        
-        static const char* VerboseJunctionImpl(const T&t, long)
-        { return t.Junction(); }
-        
-        virtual const char *VerboseJunction() const
+        static auto VerboseJunctionImpl(const C &t, int)
+            -> decltype(t.VerboseJunction(), static_cast<const char *>(nullptr))
         {
-            return VerboseJunctionImpl(obj, 0);
+            return t.VerboseJunction();
         }
+
+        static const char *VerboseJunctionImpl(const T &t, long) { return t.Junction(); }
+
+        virtual const char *VerboseJunction() const { return VerboseJunctionImpl(obj, 0); }
     };
-    
+
     std::shared_ptr<const Concept> m_Object;
 };

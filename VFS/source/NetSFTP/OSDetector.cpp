@@ -1,5 +1,8 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OSDetector.h"
+
+// libssh2 is full of macros with C-style casts, hence disabling here
+#pragma clang diagnostic ignored "-Wold-style-cast"
 
 namespace nc::vfs::sftp {
 

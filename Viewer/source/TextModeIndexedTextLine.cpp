@@ -1,42 +1,33 @@
+// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeIndexedTextLine.h"
 #include <algorithm>
 
 namespace nc::viewer {
-    
 
 TextModeIndexedTextLine::TextModeIndexedTextLine() noexcept = default;
-    
+
 TextModeIndexedTextLine::TextModeIndexedTextLine(int _unichars_start,
-                                 int _unichars_len,
-                                 int _bytes_start,
-                                 int _bytes_len,
-                                 CTLineRef _line):
-    m_UniCharsStart(_unichars_start),
-    m_UniCharsLen(_unichars_len),
-    m_BytesStart(_bytes_start),
-    m_BytesLen(_bytes_len),
-    m_Line(_line)
+                                                 int _unichars_len,
+                                                 int _bytes_start,
+                                                 int _bytes_len,
+                                                 CTLineRef _line)
+    : m_UniCharsStart(_unichars_start), m_UniCharsLen(_unichars_len), m_BytesStart(_bytes_start),
+      m_BytesLen(_bytes_len), m_Line(_line)
 {
     // add some validation here?
-    static_assert( sizeof(TextModeIndexedTextLine) == 24 );
+    static_assert(sizeof(TextModeIndexedTextLine) == 24);
 }
-    
-TextModeIndexedTextLine::TextModeIndexedTextLine(const TextModeIndexedTextLine& _rhs) noexcept:
-    m_UniCharsStart(_rhs.m_UniCharsStart),
-    m_UniCharsLen(_rhs.m_UniCharsLen),
-    m_BytesStart(_rhs.m_BytesStart),
-    m_BytesLen(_rhs.m_BytesLen),
-    m_Line(_rhs.m_Line)
+
+TextModeIndexedTextLine::TextModeIndexedTextLine(const TextModeIndexedTextLine &_rhs) noexcept
+    : m_UniCharsStart(_rhs.m_UniCharsStart), m_UniCharsLen(_rhs.m_UniCharsLen),
+      m_BytesStart(_rhs.m_BytesStart), m_BytesLen(_rhs.m_BytesLen), m_Line(_rhs.m_Line)
 {
     CFRetain(m_Line);
 }
-    
-TextModeIndexedTextLine::TextModeIndexedTextLine(TextModeIndexedTextLine &&_rhs) noexcept:
-    m_UniCharsStart(_rhs.m_UniCharsStart),
-    m_UniCharsLen(_rhs.m_UniCharsLen),
-    m_BytesStart(_rhs.m_BytesStart),
-    m_BytesLen(_rhs.m_BytesLen),
-    m_Line(_rhs.m_Line)
+
+TextModeIndexedTextLine::TextModeIndexedTextLine(TextModeIndexedTextLine &&_rhs) noexcept
+    : m_UniCharsStart(_rhs.m_UniCharsStart), m_UniCharsLen(_rhs.m_UniCharsLen),
+      m_BytesStart(_rhs.m_BytesStart), m_BytesLen(_rhs.m_BytesLen), m_Line(_rhs.m_Line)
 {
     _rhs.m_UniCharsStart = 0;
     _rhs.m_UniCharsLen = 0;
@@ -44,14 +35,15 @@ TextModeIndexedTextLine::TextModeIndexedTextLine(TextModeIndexedTextLine &&_rhs)
     _rhs.m_BytesLen = 0;
     _rhs.m_Line = nullptr;
 }
-    
+
 TextModeIndexedTextLine::~TextModeIndexedTextLine() noexcept
 {
     if( m_Line != nullptr )
         CFRelease(m_Line);
 }
-    
-TextModeIndexedTextLine& TextModeIndexedTextLine::operator=(const TextModeIndexedTextLine& _rhs) noexcept
+
+TextModeIndexedTextLine &
+TextModeIndexedTextLine::operator=(const TextModeIndexedTextLine &_rhs) noexcept
 {
     if( this == &_rhs )
         return *this;
@@ -65,8 +57,8 @@ TextModeIndexedTextLine& TextModeIndexedTextLine::operator=(const TextModeIndexe
     CFRetain(m_Line);
     return *this;
 }
-    
-TextModeIndexedTextLine& TextModeIndexedTextLine::operator=(TextModeIndexedTextLine&& _rhs) noexcept
+
+TextModeIndexedTextLine &TextModeIndexedTextLine::operator=(TextModeIndexedTextLine &&_rhs) noexcept
 {
     if( this == &_rhs )
         return *this;
@@ -87,19 +79,19 @@ TextModeIndexedTextLine& TextModeIndexedTextLine::operator=(TextModeIndexedTextL
 
 int FindClosestLineIndex(const TextModeIndexedTextLine *_first,
                          const TextModeIndexedTextLine *_last,
-                         int _bytes_offset ) noexcept
+                         int _bytes_offset) noexcept
 {
-    assert( _first != nullptr && _last != nullptr );
-    assert( _last >= _first );
-    
+    assert(_first != nullptr && _last != nullptr);
+    assert(_last >= _first);
+
     if( _first == _last )
         return -1;
-    
-    const auto predicate = [](const TextModeIndexedTextLine &_lhs, int _rhs){
+
+    const auto predicate = [](const TextModeIndexedTextLine &_lhs, int _rhs) {
         return _lhs.BytesStart() < _rhs;
     };
-    const auto lb = std::lower_bound( _first, _last, _bytes_offset, predicate );
-    const auto index = (int)( lb - _first );
+    const auto lb = std::lower_bound(_first, _last, _bytes_offset, predicate);
+    const auto index = static_cast<int>(lb - _first);
     if( lb == _first ) {
         // return the front index
         return 0;
@@ -124,22 +116,22 @@ int FindClosestLineIndex(const TextModeIndexedTextLine *_first,
         }
     }
 }
-    
+
 int FindFloorClosestLineIndex(const TextModeIndexedTextLine *_first,
                               const TextModeIndexedTextLine *_last,
-                              int _bytes_offset ) noexcept
+                              int _bytes_offset) noexcept
 {
-    assert( _first != nullptr && _last != nullptr );
-    assert( _last >= _first );
-    
+    assert(_first != nullptr && _last != nullptr);
+    assert(_last >= _first);
+
     if( _first == _last )
         return -1;
-    
-    const auto predicate = [](const TextModeIndexedTextLine &_lhs, int _rhs){
+
+    const auto predicate = [](const TextModeIndexedTextLine &_lhs, int _rhs) {
         return _lhs.BytesStart() < _rhs;
     };
-    const auto lb = std::lower_bound( _first, _last, _bytes_offset, predicate );
-    const auto index = (int)( lb - _first );
+    const auto lb = std::lower_bound(_first, _last, _bytes_offset, predicate);
+    const auto index = static_cast<int>(lb - _first);
     if( lb == _first ) {
         // return the front index
         return 0;
@@ -157,7 +149,7 @@ int FindFloorClosestLineIndex(const TextModeIndexedTextLine *_first,
             // or otherwise return the privous one
             return index - 1;
         }
-    }        
+    }
 }
-    
-}
+
+} // namespace nc::viewer

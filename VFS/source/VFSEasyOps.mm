@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
 #include <Habanero/SerialQueue.h>
@@ -62,14 +62,14 @@ static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<
                 total_wrote += res_write;
             }
             else
-                return (int)res_write;
+                return static_cast<int>(res_write);
         }
     }
     
     if(res_read < 0)
-        return (int)res_read;
+        return static_cast<int>(res_read);
     
-    if(res_read == 0 && (uint64_t)total_wrote != src_size)
+    if(res_read == 0 && static_cast<uint64_t>(total_wrote) != src_size)
         return VFSError::UnexpectedEOF;
 
     return 0;
@@ -118,9 +118,9 @@ static int CopyFileContentsLarge(std::shared_ptr<VFSFile> _src, std::shared_ptr<
         io.Wait();
     
         if(io_nread < 0)
-            return (int)io_nread;
+            return static_cast<int>(io_nread);
         if(io_nwritten < 0)
-            return (int)io_nwritten;
+            return static_cast<int>(io_nwritten);
     
         assert(io_left_to_write == 0); // vfs sanity check
     
@@ -129,7 +129,7 @@ static int CopyFileContentsLarge(std::shared_ptr<VFSFile> _src, std::shared_ptr<
         
         io_left_to_write = io_nread;
         
-        swap(buffer_read, buffer_write);
+        std::swap(buffer_read, buffer_write);
     }
 }
 
@@ -622,12 +622,12 @@ static int ExtractRegFile(const std::string &_vfs_path,
             if( res_write >= 0 )
                 res_read -= res_write;
             else {
-                return (int)res_write;
+                return static_cast<int>(res_write);
             }
         }
     }
     if( res_read < 0 ) {
-        return (int)res_read;
+        return static_cast<int>(res_read);
     }
     
     vfs_file->XAttrIterateNames([&](const char *name) -> bool{

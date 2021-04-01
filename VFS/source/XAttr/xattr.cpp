@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include "xattr.h"
 #include <VFS/VFSFile.h>
@@ -528,7 +528,7 @@ ssize_t XAttrFile::Write(const void *_buf, size_t _size)
         return VFSError::FromErrno(EIO);
     
     if( m_Position < m_UploadSize ) {
-        ssize_t to_write = std::min( m_UploadSize - m_Position, (ssize_t)_size );
+        ssize_t to_write = std::min( m_UploadSize - m_Position, static_cast<ssize_t>(_size) );
         memcpy( m_FileBuf.get() + m_Position, _buf, to_write );
         m_Position += to_write;
         

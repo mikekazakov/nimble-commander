@@ -216,10 +216,10 @@ int PosixIOInterfaceRouted::open(const char *_path, int _flags, int _mode) noexc
         return super::open(_path, _flags, _mode);
     }
 
-    if( int err = (int)xpc_dictionary_get_int64(reply, "error") ) {
+    if( int64_t err = xpc_dictionary_get_int64(reply, "error") ) {
         // got a graceful error, propaganate it
         xpc_release(reply);
-        errno = err;
+        errno = static_cast<int>(err);
         return -1;
     }
 

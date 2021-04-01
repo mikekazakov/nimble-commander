@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerView.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
@@ -253,7 +253,7 @@ using namespace nc::viewer;
     }    
     
     if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] )    
-        [m_View scrollToGlobalBytesOffset:(int64_t)m_VerticalPositionInBytes];
+        [m_View scrollToGlobalBytesOffset:static_cast<int64_t>(m_VerticalPositionInBytes)];
     
     [self didChangeValueForKey:@"mode"];    
     
@@ -319,7 +319,7 @@ using namespace nc::viewer;
         return;
     
     if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] )
-        [m_View scrollToGlobalBytesOffset:(int64_t)_pos];
+        [m_View scrollToGlobalBytesOffset:static_cast<int64_t>(_pos)];
 }
 
 - (void)scrollToVerticalPosition:(double)_p
@@ -375,8 +375,8 @@ using namespace nc::viewer;
     
     int startindex = int(offset - m_Data->UniCharToByteIndeces());
     int endindex   = int(tail - m_Data->UniCharToByteIndeces());
-    assert(startindex >= 0 && startindex < (long)m_Data->UniCharsSize());
-    assert(endindex >= 0 && endindex <= (long)m_Data->UniCharsSize());
+    assert(startindex >= 0 && startindex < static_cast<long>(m_Data->UniCharsSize()));
+    assert(endindex >= 0 && endindex <= static_cast<long>(m_Data->UniCharsSize()));
     
     m_SelectionInWindow = CFRangeMake(start - window_pos, end - start);
     m_SelectionInWindowUnichars = CFRangeMake(startindex, endindex - startindex);
@@ -416,8 +416,8 @@ using namespace nc::viewer;
     }
     else
     {
-        if(_selection.location + _selection.length > (long)m_File->FileSize()) {
-            if(_selection.location > (long)m_File->FileSize()) {
+        if(_selection.location + _selection.length > static_cast<long>(m_File->FileSize())) {
+            if(_selection.location > static_cast<long>(m_File->FileSize())) {
                 self.selectionInFile = CFRangeMake(-1, 0); // irrecoverable
                 return;
             }
@@ -477,7 +477,7 @@ using namespace nc::viewer;
 
 -(void)setVerticalPositionInBytesFromImpl:(int64_t)_position
 {
-    if( _position != (int64_t)m_VerticalPositionInBytes ) {
+    if( _position != static_cast<int64_t>(m_VerticalPositionInBytes) ) {
         [self willChangeValueForKey:@"verticalPositionInBytes"];
         m_VerticalPositionInBytes = _position;
         [self didChangeValueForKey:@"verticalPositionInBytes"];

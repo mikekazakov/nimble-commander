@@ -248,7 +248,7 @@ static void TestSimpleFileWrite(VFSHostPtr _host)
     REQUIRE(d);
 
     REQUIRE(d->size() == str.size());
-    REQUIRE(str == std::string_view{(const char *)d->data(), d->size()});
+    REQUIRE(str == std::string_view{reinterpret_cast<const char *>(d->data()), d->size()});
 
     REQUIRE(file->Close() == VFSError::Ok);
 
@@ -742,7 +742,7 @@ INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "yandex.com")
 static std::vector<std::byte> MakeNoise(size_t size)
 {
     std::vector<std::byte> noise(size);
-    std::srand((int)time(0));
+    std::srand(static_cast<unsigned>(time(0)));
     for( size_t i = 0; i < size; ++i )
         noise[i] = static_cast<std::byte>(std::rand() % 256); // yes, I know that rand() is harmful!
     return noise;

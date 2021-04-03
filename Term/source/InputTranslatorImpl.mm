@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InputTranslatorImpl.h"
 #include <cassert>
 #include <string>
@@ -38,82 +38,82 @@ void InputTranslatorImpl::ProcessKeyDown(NSEvent *_event)
 
     const char *seq_resp = nullptr;
     switch( unicode ) {
-    case NSUpArrowFunctionKey:
-        seq_resp = m_ApplicationCursorKeys ? "\eOA" : "\e[A";
-        break;
-    case NSDownArrowFunctionKey:
-        seq_resp = m_ApplicationCursorKeys ? "\eOB" : "\e[B";
-        break;
-    case NSRightArrowFunctionKey:
-        seq_resp = m_ApplicationCursorKeys ? "\eOC" : "\e[C";
-        break;
-    case NSLeftArrowFunctionKey:
-        seq_resp = m_ApplicationCursorKeys ? "\eOD" : "\e[D";
-        break;
-    case NSF1FunctionKey:
-        seq_resp = "\eOP";
-        break;
-    case NSF2FunctionKey:
-        seq_resp = "\eOQ";
-        break;
-    case NSF3FunctionKey:
-        seq_resp = "\eOR";
-        break;
-    case NSF4FunctionKey:
-        seq_resp = "\eOS";
-        break;
-    case NSF5FunctionKey:
-        seq_resp = "\e[15~";
-        break;
-    case NSF6FunctionKey:
-        seq_resp = "\e[17~";
-        break;
-    case NSF7FunctionKey:
-        seq_resp = "\e[18~";
-        break;
-    case NSF8FunctionKey:
-        seq_resp = "\e[19~";
-        break;
-    case NSF9FunctionKey:
-        seq_resp = "\e[20~";
-        break;
-    case NSF10FunctionKey:
-        seq_resp = "\e[21~";
-        break;
-    case NSF11FunctionKey:
-        seq_resp = "\e[23~";
-        break;
-    case NSF12FunctionKey:
-        seq_resp = "\e[24~";
-        break;
-    case NSHomeFunctionKey:
-        seq_resp = "\eOH";
-        break;
-    case NSInsertFunctionKey:
-        seq_resp = "\e[2~";
-        break;
-    case NSDeleteFunctionKey:
-        seq_resp = "\e[3~";
-        break;
-    case NSEndFunctionKey:
-        seq_resp = "\eOF";
-        break;
-    case NSPageUpFunctionKey:
-        seq_resp = "\e[5~";
-        break;
-    case NSPageDownFunctionKey:
-        seq_resp = "\e[6~";
-        break;
-    case 9:                                       /* tab */
-        if( modflags & NSEventModifierFlagShift ) /* do we really getting these messages? */
-            seq_resp = "\e[Z";
-        else
-            seq_resp = "\011";
-        break;
+        case NSUpArrowFunctionKey:
+            seq_resp = m_ApplicationCursorKeys ? "\eOA" : "\e[A";
+            break;
+        case NSDownArrowFunctionKey:
+            seq_resp = m_ApplicationCursorKeys ? "\eOB" : "\e[B";
+            break;
+        case NSRightArrowFunctionKey:
+            seq_resp = m_ApplicationCursorKeys ? "\eOC" : "\e[C";
+            break;
+        case NSLeftArrowFunctionKey:
+            seq_resp = m_ApplicationCursorKeys ? "\eOD" : "\e[D";
+            break;
+        case NSF1FunctionKey:
+            seq_resp = "\eOP";
+            break;
+        case NSF2FunctionKey:
+            seq_resp = "\eOQ";
+            break;
+        case NSF3FunctionKey:
+            seq_resp = "\eOR";
+            break;
+        case NSF4FunctionKey:
+            seq_resp = "\eOS";
+            break;
+        case NSF5FunctionKey:
+            seq_resp = "\e[15~";
+            break;
+        case NSF6FunctionKey:
+            seq_resp = "\e[17~";
+            break;
+        case NSF7FunctionKey:
+            seq_resp = "\e[18~";
+            break;
+        case NSF8FunctionKey:
+            seq_resp = "\e[19~";
+            break;
+        case NSF9FunctionKey:
+            seq_resp = "\e[20~";
+            break;
+        case NSF10FunctionKey:
+            seq_resp = "\e[21~";
+            break;
+        case NSF11FunctionKey:
+            seq_resp = "\e[23~";
+            break;
+        case NSF12FunctionKey:
+            seq_resp = "\e[24~";
+            break;
+        case NSHomeFunctionKey:
+            seq_resp = "\eOH";
+            break;
+        case NSInsertFunctionKey:
+            seq_resp = "\e[2~";
+            break;
+        case NSDeleteFunctionKey:
+            seq_resp = "\e[3~";
+            break;
+        case NSEndFunctionKey:
+            seq_resp = "\eOF";
+            break;
+        case NSPageUpFunctionKey:
+            seq_resp = "\e[5~";
+            break;
+        case NSPageDownFunctionKey:
+            seq_resp = "\e[6~";
+            break;
+        case 9:                                       /* tab */
+            if( modflags & NSEventModifierFlagShift ) /* do we really getting these messages? */
+                seq_resp = "\e[Z";
+            else
+                seq_resp = "\011";
+            break;
     }
 
     if( seq_resp ) {
-        m_Output(Bytes((std::byte *)seq_resp, strlen(seq_resp)));
+        m_Output(Bytes(reinterpret_cast<const std::byte *>(seq_resp), std::strlen(seq_resp)));
         return;
     }
 
@@ -134,19 +134,19 @@ void InputTranslatorImpl::ProcessKeyDown(NSEvent *_event)
             cc = 30;
         else if( unicode == '-' || unicode == '_' )
             cc = 31;
-        m_Output(Bytes((std::byte *)&cc, 1));
+        m_Output(Bytes(reinterpret_cast<std::byte *>(&cc), 1));
         return;
     }
 
     if( modflags & NSEventModifierFlagOption )
-        character = (NSString *)CFBridgingRelease(
-            CreateModifiedCharactersForKeyPress(_event.keyCode, modflags));
+        character = static_cast<NSString *>(
+            CFBridgingRelease(CreateModifiedCharactersForKeyPress(_event.keyCode, modflags)));
     else if( (modflags & NSEventModifierFlagDeviceIndependentFlagsMask) ==
              NSEventModifierFlagCapsLock )
         character = _event.characters;
 
     const char *utf8 = character.UTF8String;
-    m_Output(Bytes((std::byte *)utf8, strlen(utf8)));
+    m_Output(Bytes(reinterpret_cast<const std::byte *>(utf8), strlen(utf8)));
 }
 
 void InputTranslatorImpl::ProcessTextInput(NSString *_str)
@@ -157,7 +157,7 @@ void InputTranslatorImpl::ProcessTextInput(NSString *_str)
     const char *utf8str = [_str UTF8String];
     size_t sz = strlen(utf8str);
 
-    m_Output(Bytes((std::byte *)utf8str, sz));
+    m_Output(Bytes(reinterpret_cast<const std::byte *>(utf8str), sz));
 }
 
 void InputTranslatorImpl::SetApplicationCursorKeys(bool _enabled)
@@ -178,9 +178,10 @@ static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode,
     // http://stackoverflow.com/questions/22566665/how-to-capture-unicode-from-key-events-without-an-nstextview
 
     TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
-    CFDataRef layoutData =
-        (CFDataRef)TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
-    const UCKeyboardLayout *keyboardLayout = (const UCKeyboardLayout *)CFDataGetBytePtr(layoutData);
+    CFDataRef layoutData = static_cast<CFDataRef>(
+        TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData));
+    const UCKeyboardLayout *keyboardLayout =
+        reinterpret_cast<const UCKeyboardLayout *>(CFDataGetBytePtr(layoutData));
     const UInt8 kbdType = LMGetKbdType();
     const UInt32 modifierKeyState = (_flags >> 16) & 0xFF;
 
@@ -189,10 +190,26 @@ static CFStringRef CreateModifiedCharactersForKeyPress(unsigned short _keycode,
     UniChar unicodeString[unicodeStringLength];
     UniCharCount realLength;
 
-    UCKeyTranslate(keyboardLayout, _keycode, kUCKeyActionDown, modifierKeyState, kbdType, 0,
-                   &deadKeyState, unicodeStringLength, &realLength, unicodeString);
-    UCKeyTranslate(keyboardLayout, _keycode, kUCKeyActionDown, modifierKeyState, kbdType, 0,
-                   &deadKeyState, unicodeStringLength, &realLength, unicodeString);
+    UCKeyTranslate(keyboardLayout,
+                   _keycode,
+                   kUCKeyActionDown,
+                   modifierKeyState,
+                   kbdType,
+                   0,
+                   &deadKeyState,
+                   unicodeStringLength,
+                   &realLength,
+                   unicodeString);
+    UCKeyTranslate(keyboardLayout,
+                   _keycode,
+                   kUCKeyActionDown,
+                   modifierKeyState,
+                   kbdType,
+                   0,
+                   &deadKeyState,
+                   unicodeStringLength,
+                   &realLength,
+                   unicodeString);
     CFRelease(currentKeyboard);
     return CFStringCreateWithCharacters(kCFAllocatorDefault, unicodeString, realLength);
 }
@@ -204,22 +221,22 @@ static std::string ReportX10(InputTranslator::MouseEvent _event) noexcept
     buf[1] = '[';
     buf[2] = 'M';
     switch( _event.type ) {
-    case InputTranslator::MouseEvent::LDown:
-        buf[3] = 32;
-        break;
-    case InputTranslator::MouseEvent::MDown:
-        buf[3] = 33;
-        break;
-    case InputTranslator::MouseEvent::RDown:
-        buf[3] = 34;
-        break;
-    case InputTranslator::MouseEvent::LUp:
-    case InputTranslator::MouseEvent::MUp:
-    case InputTranslator::MouseEvent::RUp:
-        buf[3] = 35;
-        break;
-    default:
-        return {};
+        case InputTranslator::MouseEvent::LDown:
+            buf[3] = 32;
+            break;
+        case InputTranslator::MouseEvent::MDown:
+            buf[3] = 33;
+            break;
+        case InputTranslator::MouseEvent::RDown:
+            buf[3] = 34;
+            break;
+        case InputTranslator::MouseEvent::LUp:
+        case InputTranslator::MouseEvent::MUp:
+        case InputTranslator::MouseEvent::RUp:
+            buf[3] = 35;
+            break;
+        default:
+            return {};
     }
     buf[4] = static_cast<char>(std::clamp(_event.x + 32 + 1, 33, 255));
     buf[5] = static_cast<char>(std::clamp(_event.y + 32 + 1, 33, 255));
@@ -234,32 +251,32 @@ static std::string ReportNormal(InputTranslator::MouseEvent _event) noexcept
     buf[1] = '[';
     buf[2] = 'M';
     switch( _event.type ) {
-    case InputTranslator::MouseEvent::LDown:
-        buf[3] = base + 0;
-        break;
-    case InputTranslator::MouseEvent::MDown:
-        buf[3] = base + 1;
-        break;
-    case InputTranslator::MouseEvent::RDown:
-        buf[3] = base + 2;
-        break;
-    case InputTranslator::MouseEvent::LUp:
-    case InputTranslator::MouseEvent::MUp:
-    case InputTranslator::MouseEvent::RUp:
-        buf[3] = base + 3;
-        break;
-    case InputTranslator::MouseEvent::LDrag:
-        buf[3] = base + 0 + 32;
-        break;
-    case InputTranslator::MouseEvent::MDrag:
-        buf[3] = base + 1 + 32;
-        break;
-    case InputTranslator::MouseEvent::RDrag:
-        buf[3] = base + 2 + 32;
-        break;
-    case InputTranslator::MouseEvent::Motion:
-        buf[3] = base + 3 + 32;
-        break;
+        case InputTranslator::MouseEvent::LDown:
+            buf[3] = base + 0;
+            break;
+        case InputTranslator::MouseEvent::MDown:
+            buf[3] = base + 1;
+            break;
+        case InputTranslator::MouseEvent::RDown:
+            buf[3] = base + 2;
+            break;
+        case InputTranslator::MouseEvent::LUp:
+        case InputTranslator::MouseEvent::MUp:
+        case InputTranslator::MouseEvent::RUp:
+            buf[3] = base + 3;
+            break;
+        case InputTranslator::MouseEvent::LDrag:
+            buf[3] = base + 0 + 32;
+            break;
+        case InputTranslator::MouseEvent::MDrag:
+            buf[3] = base + 1 + 32;
+            break;
+        case InputTranslator::MouseEvent::RDrag:
+            buf[3] = base + 2 + 32;
+            break;
+        case InputTranslator::MouseEvent::Motion:
+            buf[3] = base + 3 + 32;
+            break;
     }
     if( _event.shift )
         buf[3] |= 4;
@@ -290,32 +307,32 @@ static std::string ReportUTF8(InputTranslator::MouseEvent _event) noexcept
     buf += "\x1B[M";
     unsigned cb = 0;
     switch( _event.type ) {
-    case InputTranslator::MouseEvent::LDown:
-        cb = base + 0;
-        break;
-    case InputTranslator::MouseEvent::MDown:
-        cb = base + 1;
-        break;
-    case InputTranslator::MouseEvent::RDown:
-        cb = base + 2;
-        break;
-    case InputTranslator::MouseEvent::LUp:
-    case InputTranslator::MouseEvent::MUp:
-    case InputTranslator::MouseEvent::RUp:
-        cb = base + 3;
-        break;
-    case InputTranslator::MouseEvent::LDrag:
-        cb = base + 0 + 32;
-        break;
-    case InputTranslator::MouseEvent::MDrag:
-        cb = base + 1 + 32;
-        break;
-    case InputTranslator::MouseEvent::RDrag:
-        cb = base + 2 + 32;
-        break;
-    case InputTranslator::MouseEvent::Motion:
-        cb = base + 3 + 32;
-        break;
+        case InputTranslator::MouseEvent::LDown:
+            cb = base + 0;
+            break;
+        case InputTranslator::MouseEvent::MDown:
+            cb = base + 1;
+            break;
+        case InputTranslator::MouseEvent::RDown:
+            cb = base + 2;
+            break;
+        case InputTranslator::MouseEvent::LUp:
+        case InputTranslator::MouseEvent::MUp:
+        case InputTranslator::MouseEvent::RUp:
+            cb = base + 3;
+            break;
+        case InputTranslator::MouseEvent::LDrag:
+            cb = base + 0 + 32;
+            break;
+        case InputTranslator::MouseEvent::MDrag:
+            cb = base + 1 + 32;
+            break;
+        case InputTranslator::MouseEvent::RDrag:
+            cb = base + 2 + 32;
+            break;
+        case InputTranslator::MouseEvent::Motion:
+            cb = base + 3 + 32;
+            break;
     }
     if( _event.shift )
         cb |= 4;
@@ -337,30 +354,30 @@ static std::string ReportSGR(InputTranslator::MouseEvent _event) noexcept
     buf += "\x1B[<";
     unsigned cb = 0;
     switch( _event.type ) {
-    case InputTranslator::MouseEvent::LDown:
-    case InputTranslator::MouseEvent::LUp:
-        cb = 0;
-        break;
-    case InputTranslator::MouseEvent::MDown:
-    case InputTranslator::MouseEvent::MUp:
-        cb = 1;
-        break;
-    case InputTranslator::MouseEvent::RDown:
-    case InputTranslator::MouseEvent::RUp:
-        cb = 2;
-        break;
-    case InputTranslator::MouseEvent::LDrag:
-        cb = 0 + 32;
-        break;
-    case InputTranslator::MouseEvent::MDrag:
-        cb = 1 + 32;
-        break;
-    case InputTranslator::MouseEvent::RDrag:
-        cb = 2 + 32;
-        break;
-    case InputTranslator::MouseEvent::Motion:
-        cb = 3 + 32;
-        break;
+        case InputTranslator::MouseEvent::LDown:
+        case InputTranslator::MouseEvent::LUp:
+            cb = 0;
+            break;
+        case InputTranslator::MouseEvent::MDown:
+        case InputTranslator::MouseEvent::MUp:
+            cb = 1;
+            break;
+        case InputTranslator::MouseEvent::RDown:
+        case InputTranslator::MouseEvent::RUp:
+            cb = 2;
+            break;
+        case InputTranslator::MouseEvent::LDrag:
+            cb = 0 + 32;
+            break;
+        case InputTranslator::MouseEvent::MDrag:
+            cb = 1 + 32;
+            break;
+        case InputTranslator::MouseEvent::RDrag:
+            cb = 2 + 32;
+            break;
+        case InputTranslator::MouseEvent::Motion:
+            cb = 3 + 32;
+            break;
     }
     if( _event.shift )
         cb |= 4;
@@ -376,14 +393,14 @@ static std::string ReportSGR(InputTranslator::MouseEvent _event) noexcept
     buf += ";";
     buf += std::to_string(y);
     switch( _event.type ) {
-    case InputTranslator::MouseEvent::LUp:
-    case InputTranslator::MouseEvent::MUp:
-    case InputTranslator::MouseEvent::RUp:
-        buf += "m";
-        break;
-    default:
-        buf += "M";
-        break;
+        case InputTranslator::MouseEvent::LUp:
+        case InputTranslator::MouseEvent::MUp:
+        case InputTranslator::MouseEvent::RUp:
+            buf += "m";
+            break;
+        default:
+            buf += "M";
+            break;
     }
     return buf;
 }
@@ -400,18 +417,18 @@ void InputTranslatorImpl::SetMouseReportingMode(MouseReportingMode _mode)
 {
     m_ReportingMode = _mode;
     switch( m_ReportingMode ) {
-    case MouseReportingMode::X10:
-        m_MouseReportFormatter = ReportX10;
-        break;
-    case MouseReportingMode::Normal:
-        m_MouseReportFormatter = ReportNormal;
-        break;
-    case MouseReportingMode::UTF8:
-        m_MouseReportFormatter = ReportUTF8;
-        break;
-    case MouseReportingMode::SGR:
-        m_MouseReportFormatter = ReportSGR;
-        break;
+        case MouseReportingMode::X10:
+            m_MouseReportFormatter = ReportX10;
+            break;
+        case MouseReportingMode::Normal:
+            m_MouseReportFormatter = ReportNormal;
+            break;
+        case MouseReportingMode::UTF8:
+            m_MouseReportFormatter = ReportUTF8;
+            break;
+        case MouseReportingMode::SGR:
+            m_MouseReportFormatter = ReportSGR;
+            break;
     }
 }
 
@@ -429,7 +446,8 @@ void InputTranslatorImpl::ProcessPaste(std::string_view _utf8)
         m_Output(Bytes(reinterpret_cast<const std::byte *>(_utf8.data()), _utf8.size()));
         m_Output(Bytes(reinterpret_cast<const std::byte *>(bracket_postfix.data()),
                        bracket_postfix.size()));
-    } else {
+    }
+    else {
         m_Output(Bytes(reinterpret_cast<const std::byte *>(_utf8.data()), _utf8.size()));
     }
 }

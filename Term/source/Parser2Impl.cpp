@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Parser2Impl.h"
 #include <Utility/Encodings.h>
 #include <Habanero/CFPtr.h>
@@ -84,7 +84,7 @@ void Parser2Impl::ConsumeNextUTF8TextChar( unsigned char _byte )
 {
     auto &ts = m_TextState;
     if( ts.UTF8StockLen < ts.UTF8CharsStockSize ) {
-        ts.UTF8CharsStock[ts.UTF8StockLen++] = (char)_byte;
+        ts.UTF8CharsStock[ts.UTF8StockLen++] = static_cast<char>(_byte);
     }
 }
 
@@ -116,7 +116,7 @@ void Parser2Impl::FlushCompleteText()
     
     if( valid_length == 0 )
         return;
-    assert( valid_length <= (size_t)m_TextState.UTF8StockLen );
+    assert( valid_length <= static_cast<size_t>(m_TextState.UTF8StockLen) );
     
     using namespace input;
     UTF8Text payload;
@@ -210,7 +210,7 @@ void Parser2Impl::LogMissedEscChar( unsigned char _c )
 {
     if( m_ErrorLog ) {
         char buf[256];
-        sprintf(buf, "Missed an Esc char: %d(\'%c\')", (int)_c, _c);
+        sprintf(buf, "Missed an Esc char: %d(\'%c\')", static_cast<int>(_c), _c);
         m_ErrorLog(buf);
     }
 }
@@ -458,7 +458,7 @@ constexpr static std::array<bool, 256> Make8BitBoolTable( std::string_view _on )
     std::array<bool, 256> flags{};
     std::fill(flags.begin(), flags.end(), false);
     for( auto c: _on )
-        flags[(unsigned char)c] = true;
+        flags[static_cast<unsigned char>(c)] = true;
     return flags;
 }
 

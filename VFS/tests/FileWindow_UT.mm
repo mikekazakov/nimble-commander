@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -59,13 +59,13 @@ ssize_t TestGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
         return 0;
 
     // we can only deal with cache buffer now, need another branch later
-    if( m_Pos == (ssize_t)m_Size )
+    if( m_Pos == static_cast<ssize_t>(m_Size) )
         return 0;
 
     size_t to_read = MIN(m_Size - m_Pos, _size);
-    memcpy(_buf, (char *)m_Mem + m_Pos, to_read);
+    std::memcpy(_buf, static_cast<const char *>(m_Mem) + m_Pos, to_read);
     m_Pos += to_read;
-    assert(m_Pos <= (ssize_t)m_Size); // just a sanity check
+    assert(m_Pos <= static_cast<ssize_t>(m_Size)); // just a sanity check
 
     return to_read;
 }
@@ -79,11 +79,11 @@ ssize_t TestGenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
         return VFSError::InvalidCall;
 
     // we can only deal with cache buffer now, need another branch later
-    if( _pos < 0 || _pos > (ssize_t)m_Size )
+    if( _pos < 0 || _pos > static_cast<ssize_t>(m_Size) )
         return VFSError::InvalidCall;
 
     ssize_t toread = MIN(m_Size - _pos, _size);
-    memcpy(_buf, (char *)m_Mem + _pos, toread);
+    std::memcpy(_buf, static_cast<const char *>(m_Mem) + _pos, toread);
     return toread;
 }
 
@@ -107,7 +107,7 @@ off_t TestGenericMemReadOnlyFile::Seek(off_t _off, int _basis)
 
     if( req_pos < 0 )
         return VFSError::InvalidCall;
-    if( req_pos > (ssize_t)m_Size )
+    if( req_pos > static_cast<ssize_t>(m_Size) )
         req_pos = m_Size;
     m_Pos = req_pos;
 
@@ -135,7 +135,7 @@ bool TestGenericMemReadOnlyFile::Eof() const
 {
     if( !IsOpened() )
         return true;
-    return m_Pos == (ssize_t)m_Size;
+    return m_Pos == static_cast<ssize_t>(m_Size);
 }
 
 int TestGenericMemReadOnlyFile::Open([[maybe_unused]] unsigned long _open_flags,

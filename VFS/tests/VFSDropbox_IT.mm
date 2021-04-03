@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "NCE.h"
@@ -155,8 +155,8 @@ TEST_CASE(PREFIX "basic file read")
 
 TEST_CASE(PREFIX "reading file with non ASCII symbols")
 {
-    const auto filepath =
-        (const char *)u8"/TestSet03/Это фотка котега $о ВСЯкими #\"символами\"!!!.jpg";
+    const auto filepath = reinterpret_cast<const char *>(
+        u8"/TestSet03/Это фотка котега $о ВСЯкими #\"символами\"!!!.jpg");
     const std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
     std::shared_ptr<VFSFile> file;
     int rc = host->CreateFile(filepath, file);
@@ -198,7 +198,7 @@ TEST_CASE(PREFIX "simple upload")
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
-    REQUIRE(file->WriteFile(data(to_upload), (int)size(to_upload)) == VFSError::Ok);
+    REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload)) == VFSError::Ok);
     REQUIRE(file->Close() == VFSError::Ok);
 
     REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
@@ -223,7 +223,7 @@ TEST_CASE(PREFIX "upload with invalid name")
 
     bool op1 = file->Open(VFSFlags::OF_Write) == VFSError::Ok;
     bool op2 = file->SetUploadSize(to_upload.size()) == VFSError::Ok;
-    bool op3 = file->WriteFile(data(to_upload), (int)size(to_upload)) == VFSError::Ok;
+    bool op3 = file->WriteFile(std::data(to_upload), std::size(to_upload)) == VFSError::Ok;
     bool op4 = file->Close() == VFSError::Ok;
     CHECK((!op1 || !op2 || !op3 || !op4));
 }
@@ -240,19 +240,19 @@ TEST_CASE(PREFIX "simple upload with overwrite")
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
-    REQUIRE(file->WriteFile(data(to_upload), (int)size(to_upload)) == VFSError::Ok);
+    REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload)) == VFSError::Ok);
     REQUIRE(file->Close() == VFSError::Ok);
 
     const auto to_upload_new = "Hello, world, again!"s;
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Truncate) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload_new.size()) == VFSError::Ok);
-    REQUIRE(file->WriteFile(data(to_upload_new), (int)size(to_upload_new)) == VFSError::Ok);
+    REQUIRE(file->WriteFile(std::data(to_upload_new), std::size(to_upload_new)) == VFSError::Ok);
     REQUIRE(file->Close() == VFSError::Ok);
 
     REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
     auto uploaded = file->ReadFile();
     REQUIRE(uploaded);
-    REQUIRE(uploaded->size() == size(to_upload_new));
+    REQUIRE(uploaded->size() == std::size(to_upload_new));
     REQUIRE(std::equal(uploaded->begin(), uploaded->end(), to_upload_new.begin()));
     REQUIRE(file->Close() == VFSError::Ok);
 
@@ -271,7 +271,7 @@ TEST_CASE(PREFIX "UnfinishedUpload")
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
-    REQUIRE(file->WriteFile(data(to_upload), (int)size(to_upload) - 1) == VFSError::Ok);
+    REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload) - 1) == VFSError::Ok);
     REQUIRE(file->Close() != VFSError::Ok);
 
     REQUIRE(host->Exists(filepath) == false);
@@ -310,7 +310,7 @@ TEST_CASE(PREFIX "decent sized upload")
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
-    REQUIRE(file->WriteFile(data(to_upload), (int)size(to_upload)) == VFSError::Ok);
+    REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload)) == VFSError::Ok);
     REQUIRE(file->Close() == VFSError::Ok);
 
     REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
@@ -338,7 +338,7 @@ TEST_CASE(PREFIX "two-chunk upload")
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
-    REQUIRE(file->WriteFile(data(to_upload), (int)size(to_upload)) == VFSError::Ok);
+    REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload)) == VFSError::Ok);
     REQUIRE(file->Close() == VFSError::Ok);
 
     REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
@@ -367,13 +367,13 @@ TEST_CASE(PREFIX "multi-chunks upload")
 
     REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
     REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
-    REQUIRE(file->WriteFile(data(to_upload), (int)size(to_upload)) == VFSError::Ok);
+    REQUIRE(file->WriteFile(std::data(to_upload), std::size(to_upload)) == VFSError::Ok);
     REQUIRE(file->Close() == VFSError::Ok);
 
     REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
     auto uploaded = file->ReadFile();
     REQUIRE(uploaded);
-    REQUIRE(uploaded->size() == size(to_upload));
+    REQUIRE(uploaded->size() == std::size(to_upload));
     REQUIRE(equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
     REQUIRE(file->Close() == VFSError::Ok);
 
@@ -406,13 +406,13 @@ TEST_CASE(PREFIX "upload edge cases")
 
         REQUIRE(file->Open(VFSFlags::OF_Write) == VFSError::Ok);
         REQUIRE(file->SetUploadSize(to_upload.size()) == VFSError::Ok);
-        REQUIRE(file->WriteFile(data(to_upload), (int)size(to_upload)) == VFSError::Ok);
+        REQUIRE(file->WriteFile(data(to_upload), std::size(to_upload)) == VFSError::Ok);
         REQUIRE(file->Close() == VFSError::Ok);
 
         REQUIRE(file->Open(VFSFlags::OF_Read) == VFSError::Ok);
         auto uploaded = file->ReadFile();
         REQUIRE(uploaded);
-        REQUIRE(uploaded->size() == size(to_upload));
+        REQUIRE(uploaded->size() == std::size(to_upload));
         REQUIRE(equal(uploaded->begin(), uploaded->end(), to_upload.begin()));
         REQUIRE(file->Close() == VFSError::Ok);
 
@@ -436,7 +436,7 @@ TEST_CASE(PREFIX "folder creation and removal")
 static std::vector<uint8_t> MakeNoise(size_t size)
 {
     std::vector<uint8_t> noise(size);
-    std::srand((int)time(0));
+    std::srand(static_cast<unsigned>(time(0)));
     for( size_t i = 0; i < size; ++i )
         noise[i] = static_cast<uint8_t>(std::rand() % 256); // yes, I know that rand() is harmful!
     return noise;

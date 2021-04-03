@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include "Parser.h"
 #include "View.h"
@@ -11,17 +11,16 @@
 using namespace nc;
 using namespace nc::term;
 
-static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
+static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
 
-@implementation NCTermScrollView
-{
-    NCTermView                     *m_View;
-    NCTermFlippableHolder          *m_ViewHolder;
-    std::unique_ptr<term::Screen>   m_Screen;
-    std::shared_ptr<nc::term::Settings>m_Settings;
+@implementation NCTermScrollView {
+    NCTermView *m_View;
+    NCTermFlippableHolder *m_ViewHolder;
+    std::unique_ptr<term::Screen> m_Screen;
+    std::shared_ptr<nc::term::Settings> m_Settings;
     std::function<void(int sx, int sy)> m_OnScreenResized;
-    int                             m_SettingsNotificationTicket;
-    bool                            m_MouseInsideNonOverlappedArea;
+    int m_SettingsNotificationTicket;
+    bool m_MouseInsideNonOverlappedArea;
 }
 
 @synthesize view = m_View;
@@ -33,10 +32,10 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 {
     assert(settings);
     self = [super initWithFrame:frameRect];
-    if(self) {
+    if( self ) {
         m_MouseInsideNonOverlappedArea = false;
         self.customCursor = NSCursor.IBeamCursor;
-        
+
         auto rc = self.contentView.bounds;
         m_Settings = settings;
         m_View = [[NCTermView alloc] initWithFrame:rc];
@@ -56,39 +55,38 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
         self.drawsBackground = true;
         self.backgroundColor = m_Settings->BackgroundColor();
         self.verticalLineScroll = m_View.fontCache.Height();
-        
-        m_Screen = std::make_unique<term::Screen>(floor(rc.size.width / m_View.fontCache.Width()),
-                                                  floor(rc.size.height / m_View.fontCache.Height()));
-        
+
+        m_Screen =
+            std::make_unique<term::Screen>(floor(rc.size.width / m_View.fontCache.Width()),
+                                           floor(rc.size.height / m_View.fontCache.Height()));
+
         [m_View AttachToScreen:m_Screen.get()];
-        
-        [self addConstraints:
-         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_ViewHolder(>=100)]-0-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:NSDictionaryOfVariableBindings(m_ViewHolder)]];
-        
+
+        [self addConstraints:[NSLayoutConstraint
+                                 constraintsWithVisualFormat:@"H:|-0-[m_ViewHolder(>=100)]-0-|"
+                                                     options:0
+                                                     metrics:nil
+                                                       views:NSDictionaryOfVariableBindings(
+                                                                 m_ViewHolder)]];
+
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
-        
-        __weak NCTermScrollView* weak_self = self;
-        m_SettingsNotificationTicket = m_Settings->StartChangesObserving([weak_self]{
+
+        __weak NCTermScrollView *weak_self = self;
+        m_SettingsNotificationTicket = m_Settings->StartChangesObserving([weak_self] {
             if( auto strong_self = weak_self )
                 [strong_self onSettingsChanged];
         });
-        
-        const auto tracking_flags =
-            NSTrackingActiveInKeyWindow |
-            NSTrackingMouseMoved |
-            NSTrackingMouseEnteredAndExited |
-            NSTrackingInVisibleRect;
+
+        const auto tracking_flags = NSTrackingActiveInKeyWindow | NSTrackingMouseMoved |
+                                    NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect;
         const auto tracking = [[NSTrackingArea alloc] initWithRect:NSRect()
-                                                           options:tracking_flags                          
+                                                           options:tracking_flags
                                                              owner:self
                                                           userInfo:nil];
-        [self addTrackingArea:tracking];         
+        [self addTrackingArea:tracking];
     }
     return self;
 }
@@ -97,19 +95,19 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 {
     return [self initWithFrame:frameRect
                    attachToTop:top
-                   settings:DefaultSettings::SharedDefaultSettings()];
+                      settings:DefaultSettings::SharedDefaultSettings()];
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (void) mouseMoved:(NSEvent *)event
-{    
+- (void)mouseMoved:(NSEvent *)event
+{
     const auto hit_view = [self.window.contentView hitTest:event.locationInWindow];
-    const auto inside = (bool)[hit_view isDescendantOf:self]; 
-    if( inside ) {        
+    const auto inside = static_cast<bool>([hit_view isDescendantOf:self]);
+    if( inside ) {
         if( m_MouseInsideNonOverlappedArea == false ) {
             m_MouseInsideNonOverlappedArea = true;
             [self mouseEnteredNonOverlappedArea];
@@ -123,12 +121,12 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     }
 }
 
-- (void) mouseEntered:(NSEvent *)event
+- (void)mouseEntered:(NSEvent *)event
 {
     [self mouseMoved:event];
 }
 
-- (void) mouseExited:(NSEvent *)[[maybe_unused]]_event
+- (void)mouseExited:(NSEvent *) [[maybe_unused]] _event
 {
     if( m_MouseInsideNonOverlappedArea == true ) {
         m_MouseInsideNonOverlappedArea = false;
@@ -136,16 +134,16 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     }
 }
 
-- (void)cursorUpdate:(NSEvent *)[[maybe_unused]]_event
+- (void)cursorUpdate:(NSEvent *) [[maybe_unused]] _event
 {
 }
 
-- (void) mouseEnteredNonOverlappedArea
+- (void)mouseEnteredNonOverlappedArea
 {
-    [self.customCursor push];    
+    [self.customCursor push];
 }
 
-- (void) mouseExitedNonOverlappedArea
+- (void)mouseExitedNonOverlappedArea
 {
     [self.customCursor pop];
 }
@@ -158,7 +156,7 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     }
 }
 
-- (term::Screen&) screen
+- (term::Screen &)screen
 {
     assert(m_Screen);
     return *m_Screen;
@@ -185,22 +183,22 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 {
     if( m_Screen == nullptr )
         return;
-    
-    const auto full_size = self.contentView.frame.size;     
-    
+
+    const auto full_size = self.contentView.frame.size;
+
     const int sy = static_cast<int>(std::floor(full_size.height / m_View.fontCache.Height()));
     const int sx = static_cast<int>(std::floor(full_size.width / m_View.fontCache.Width()));
 
-    if(sx != m_Screen->Width() || sy != m_Screen->Height()) {
+    if( sx != m_Screen->Width() || sy != m_Screen->Height() ) {
         {
             auto lock = m_Screen->AcquireLock();
             m_Screen->ResizeScreen(sx, sy);
         }
-  
+
         if( m_OnScreenResized )
             m_OnScreenResized(sx, sy);
     }
-    
+
     [self tile];
     [m_View adjustSizes:true];
 }
@@ -210,41 +208,40 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     // is this code necessary?
     NSRect scrollRect;
     scrollRect = [self documentVisibleRect];
-    scrollRect.origin.y +=  std::floor(theEvent.deltaY) *
-                            self.verticalLineScroll *
-                            (m_ViewHolder.isFlipped ? -1 : 1);
-    [(NSView *)self.documentView scrollRectToVisible:scrollRect];
+    scrollRect.origin.y +=
+        std::floor(theEvent.deltaY) * self.verticalLineScroll * (m_ViewHolder.isFlipped ? -1 : 1);
+    [static_cast<NSView *>(self.documentView) scrollRectToVisible:scrollRect];
 }
 
-- (void) setScrollerStyle:(NSScrollerStyle)scrollerStyle
+- (void)setScrollerStyle:(NSScrollerStyle)scrollerStyle
 {
     [super setScrollerStyle:scrollerStyle];
     [self frameDidChange];
 }
 
-- (void) tile
+- (void)tile
 {
     [super tile];
-    
+
     auto rc = self.contentView.frame;
     rc.origin.y += g_Insets.top;
     rc.origin.x += g_Insets.left;
     rc.size.height -= g_Insets.top + g_Insets.bottom;
     rc.size.width -= g_Insets.left + g_Insets.right;
-    
-    const auto rest = rc.size.height -
-        std::floor(rc.size.height / m_View.fontCache.Height()) * m_View.fontCache.Height();
+
+    const auto rest = rc.size.height - std::floor(rc.size.height / m_View.fontCache.Height()) *
+                                           m_View.fontCache.Height();
     rc.size.height -= rest;
-    
+
     self.contentView.frame = rc;
 }
 
-- (NSEdgeInsets) viewInsets
+- (NSEdgeInsets)viewInsets
 {
     return g_Insets;
 }
 
-- (void) mouseDown:(NSEvent *)_event
+- (void)mouseDown:(NSEvent *)_event
 {
     [m_View mouseDown:_event];
 }

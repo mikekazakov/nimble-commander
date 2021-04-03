@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include <Utility/CharInfo.h>
 #include "Screen.h"
@@ -21,9 +21,6 @@ void Screen::PutString(const std::string &_str)
 
 void Screen::PutCh(uint32_t _char)
 {
-//    if(_char >= 32 && _char < 127)
-//        printf("%c", _char);
-    
     auto line = m_Buffer.LineFromNo(m_PosY);
     if( !line )
         return;
@@ -322,9 +319,9 @@ void Screen::ClearLine(int _ind)
 
 void Screen::ScrollDown(const unsigned _top, const unsigned _bottom, const unsigned _lines)
 {
-    const auto top = (int)_top;
-    const auto bottom = std::min((int)_bottom, Height());
-    const auto lines = (int)_lines;
+    const auto top = static_cast<int>(_top);
+    const auto bottom = std::min(static_cast<int>(_bottom), Height());
+    const auto lines = static_cast<int>(_lines);
     if(top >= Height())
         return;
     if(top >= bottom)
@@ -345,9 +342,9 @@ void Screen::ScrollDown(const unsigned _top, const unsigned _bottom, const unsig
 
 void Screen::DoScrollUp(const unsigned _top, const unsigned _bottom, const unsigned _lines)
 {
-    const auto top = (int)_top;
-    const auto bottom = std::min((int)_bottom, Height());
-    const auto lines = (int)_lines;        
+    const auto top = static_cast<int>(_top);
+    const auto bottom = std::min(static_cast<int>(_bottom), Height());
+    const auto lines = static_cast<int>(_lines);
     if(top >= Height())
         return;
     if(top >= bottom)
@@ -378,7 +375,7 @@ void Screen::DoScrollUp(const unsigned _top, const unsigned _bottom, const unsig
 
 void Screen::ResizeScreen(const unsigned _new_sx, const unsigned _new_sy)
 {
-    if(Width() == (int)_new_sx && Height() == (int)_new_sy)
+    if(Width() == static_cast<int>(_new_sx) && Height() == static_cast<int>(_new_sy))
         return;
     if( _new_sx == 0 || _new_sy == 0 )
         throw std::invalid_argument("Screen::ResizeScreen sizes can't be zero");

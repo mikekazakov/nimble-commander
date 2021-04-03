@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "AtomicHolder.h"
@@ -173,7 +173,9 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
     SECTION("tcsh") { shell.SetShellPath("/bin/tcsh"); }
     const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
+        if( auto cmds =
+                parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+            !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
@@ -238,7 +240,9 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
     SECTION("tcsh") { shell.SetShellPath("/bin/tcsh"); }
     const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
+        if( auto cmds =
+                parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+            !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
@@ -502,7 +506,9 @@ TEST_CASE(PREFIX "Test vim interaction via output")
     SECTION("csh") { shell.SetShellPath("/bin/csh"); }
     SECTION("tcsh") { shell.SetShellPath("/bin/tcsh"); }
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
+        if( auto cmds =
+                parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+            !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
@@ -606,7 +612,8 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
     for( auto &ctx : shells ) {
         ctx.shell.ResizeWindow(20, 5);
         ctx.shell.SetOnChildOutput([&](const void *_d, int _sz) {
-            if( auto cmds = ctx.parser.Parse({(const std::byte *)_d, (size_t)_sz});
+            if( auto cmds = ctx.parser.Parse(
+                    {reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
                 !cmds.empty() ) {
                 if( auto lock = ctx.screen.AcquireLock() ) {
                     ctx.interpreter.Interpret(cmds);
@@ -683,7 +690,9 @@ TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
     }
     // [t]csh is out of equation - no such option exists (?)
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds = parser.Parse({(const std::byte *)_d, (size_t)_sz}); !cmds.empty() ) {
+        if( auto cmds =
+                parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+            !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
                 buffer_dump.store(screen.Buffer().DumpScreenAsANSI());
@@ -742,21 +751,25 @@ TEST_CASE(PREFIX "Launches when shell is a symlink to a real binary")
 {
     const TempTestDir dir;
     ShellTask shell;
-    
+
     std::filesystem::path shell_path;
-    SECTION("/bin/bash") {
+    SECTION("/bin/bash")
+    {
         std::filesystem::create_symlink("/bin/bash", shell_path = dir.directory / "bash");
     }
-    SECTION("/bin/zsh") {
+    SECTION("/bin/zsh")
+    {
         std::filesystem::create_symlink("/bin/zsh", shell_path = dir.directory / "zsh");
     }
-    SECTION("/bin/tcsh") {
+    SECTION("/bin/tcsh")
+    {
         std::filesystem::create_symlink("/bin/tcsh", shell_path = dir.directory / "tcsh");
     }
-    SECTION("/bin/csh") {
+    SECTION("/bin/csh")
+    {
         std::filesystem::create_symlink("/bin/csh", shell_path = dir.directory / "csh");
     }
-        
+
     shell.SetShellPath(shell_path);
     REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()) == true);
     REQUIRE(shell.State() == ShellTask::TaskState::Shell);

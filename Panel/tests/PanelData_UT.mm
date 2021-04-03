@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <VFS/VFS.h>
 #include <VFS/VFSListingInput.h>
@@ -196,7 +196,7 @@ TEST_CASE(PREFIX "Basic")
 
     // testing raw C sorting facility
     for( unsigned i = 0; i < listing->Count(); ++i )
-        CHECK(data.RawIndexForName(listing->Filename(i).c_str()) == (int)i);
+        CHECK(data.RawIndexForName(listing->Filename(i).c_str()) == static_cast<int>(i));
 
     // testing basic sorting (direct by filename)
     auto sorting = data.SortMode();

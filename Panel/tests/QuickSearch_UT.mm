@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <VFS/VFSListingInput.h>
 #include <VFS/Host.h>
@@ -104,7 +104,7 @@ TEST_CASE("typing for hard filtering")
     QuickSearchTestsContext ctx;
     ctx.qsconfig.Set(g_ConfigIsSoftFiltering, false);
     ctx.qsconfig.Set(g_ConfigWhereToFind, data::TextualFilter::Where::Anywhere);
-    ctx.qsconfig.Set(g_ConfigKeyOption, (int)QuickSearch::KeyModif::WithoutModif);
+    ctx.qsconfig.Set(g_ConfigKeyOption, static_cast<int>(QuickSearch::KeyModif::WithoutModif));
     auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data
                                               delegate:ctx.delegate
                                                 config:ctx.qsconfig];
@@ -146,7 +146,7 @@ TEST_CASE("typing for hard filtering")
 TEST_CASE("modifiers option")
 {
     QuickSearchTestsContext ctx;
-    ctx.qsconfig.Set(g_ConfigKeyOption, (int)QuickSearch::KeyModif::WithoutModif);
+    ctx.qsconfig.Set(g_ConfigKeyOption, static_cast<int>(QuickSearch::KeyModif::WithoutModif));
     auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data
                                               delegate:ctx.delegate
                                                 config:ctx.qsconfig];
@@ -166,7 +166,7 @@ TEST_CASE("modifiers option")
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", shift|alt) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", cmd) forPanelView:nil] == skip );
 
-    ctx.qsconfig.Set(g_ConfigKeyOption, (int)QuickSearch::KeyModif::WithAlt);
+    ctx.qsconfig.Set(g_ConfigKeyOption, static_cast<int>(QuickSearch::KeyModif::WithAlt));
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", caps) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"A", caps|shift) forPanelView:nil] == skip );
@@ -176,7 +176,7 @@ TEST_CASE("modifiers option")
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", shift|alt) forPanelView:nil] != skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", cmd) forPanelView:nil] == skip );
 
-    ctx.qsconfig.Set(g_ConfigKeyOption, (int)QuickSearch::KeyModif::WithCtrlAlt);
+    ctx.qsconfig.Set(g_ConfigKeyOption, static_cast<int>(QuickSearch::KeyModif::WithCtrlAlt));
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", caps) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"A", caps|shift) forPanelView:nil] == skip );
@@ -186,7 +186,7 @@ TEST_CASE("modifiers option")
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", shift|alt) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", cmd) forPanelView:nil] == skip );
 
-    ctx.qsconfig.Set(g_ConfigKeyOption, (int)QuickSearch::KeyModif::WithShiftAlt);
+    ctx.qsconfig.Set(g_ConfigKeyOption, static_cast<int>(QuickSearch::KeyModif::WithShiftAlt));
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", caps) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"A", caps|shift) forPanelView:nil] == skip );
@@ -196,7 +196,7 @@ TEST_CASE("modifiers option")
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", shift|alt) forPanelView:nil] != skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", cmd) forPanelView:nil] == skip );
 
-    ctx.qsconfig.Set(g_ConfigKeyOption, (int)QuickSearch::KeyModif::Disabled);
+    ctx.qsconfig.Set(g_ConfigKeyOption, static_cast<int>(QuickSearch::KeyModif::Disabled));
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", caps) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"A", caps|shift) forPanelView:nil] == skip );

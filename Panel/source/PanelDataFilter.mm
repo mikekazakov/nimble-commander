@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataFilter.h"
 #include <VFS/VFS.h>
 
@@ -83,7 +83,7 @@ bool TextualFilter::IsValidItem(const VFSListingItem& _item,
         if( result.length == 0 )
             return false;
 
-        _found_range.first = (short)result.location;
+        _found_range.first = static_cast<short>(result.location);
         _found_range.second = short(result.location + result.length);
         
         return true;

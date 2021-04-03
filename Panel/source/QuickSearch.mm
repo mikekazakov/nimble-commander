@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickSearch.h"
 #include <boost/container/static_vector.hpp>
 #include <Panel/PanelDataFilter.h>
@@ -190,7 +190,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     }
 
     const auto is_in_progress = m_SoftFilteringLastAction + g_SoftFilteringTimeout >= machtime();
-    const auto current = is_in_progress ? m_Data->SoftFiltering().text : (NSString *)nil;
+    const auto current = is_in_progress ? m_Data->SoftFiltering().text : static_cast<NSString *>(nil);
     const auto replace = ModifyStringByKeyDownString(current, key);
 
     if( replace == nil || replace.length == 0 ) {
@@ -249,7 +249,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
     m_SoftFilteringLastAction = current_time;
 
-    const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
+    const auto filtered_amount = static_cast<int>(m_Data->EntriesBySoftFiltering().size());
 
     if( filtered_amount != 0 ) {
         if( m_SoftFilteringOffset >= filtered_amount )
@@ -268,7 +268,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 - (void)moveToFirstSoftFilteredItem
 {
-    const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
+    const auto filtered_amount = static_cast<int>(m_Data->EntriesBySoftFiltering().size());
     if( filtered_amount != 0 ) {
         m_SoftFilteringOffset = 0;
         const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
@@ -280,7 +280,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 - (void)moveToLastSoftFilteredItem
 {
-    const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
+    const auto filtered_amount = static_cast<int>(m_Data->EntriesBySoftFiltering().size());
     if( filtered_amount != 0 ) {
         m_SoftFilteringOffset = filtered_amount - 1;
         const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
@@ -292,7 +292,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 - (void)moveToPreviousSoftFilteredItem
 {
-    const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
+    const auto filtered_amount = static_cast<int>(m_Data->EntriesBySoftFiltering().size());
     if( filtered_amount != 0 ) {
         m_SoftFilteringOffset = std::max(0, m_SoftFilteringOffset - 1);
         const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
@@ -304,7 +304,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 - (void)moveToNextSoftFilteredItem
 {
-    const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
+    const auto filtered_amount = static_cast<int>(m_Data->EntriesBySoftFiltering().size());
     if( filtered_amount != 0 ) {
         m_SoftFilteringOffset = std::min(filtered_amount - 1, m_SoftFilteringOffset + 1);
         const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
@@ -336,7 +336,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     if( !filtering.text.text ) {
         [self setPanelHeaderPrompt:nil withMatchesCount:0];
     } else {
-        int total = (int)m_Data->SortedDirectoryEntries().size();
+        int total = static_cast<int>(m_Data->SortedDirectoryEntries().size());
         if( total > 0 && m_Data->Listing().IsDotDot(0) )
             total--;
         [self setPanelHeaderPrompt:filtering.text.text withMatchesCount:total];
@@ -388,7 +388,7 @@ static bool IsQuickSearchStringCharacter(NSString *_s)
 
         // such character simply can't appear in filename under unix
         [set removeCharactersInString:@"/"];
-        return (NSCharacterSet *)set;
+        return static_cast<NSCharacterSet *>(set);
     }();
 
     if( _s.length == 0 )
@@ -453,8 +453,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
 
 static KeyModif KeyModifFromInt(int _k)
 {
-    if( _k >= 0 && _k <= (int)KeyModif::Disabled )
-        return (KeyModif)_k;
+    if( _k >= 0 && _k <= static_cast<int>(KeyModif::Disabled) )
+        return static_cast<KeyModif>(_k);
     return KeyModif::WithAlt;
 }
 

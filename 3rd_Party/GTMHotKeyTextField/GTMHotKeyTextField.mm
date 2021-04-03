@@ -372,15 +372,15 @@ struct KeycodesHardcode
     return [NSString stringWithFormat:@"%C", key];
 
   // Everything else should be printable so look it up in the current keyboard
-  UCKeyboardLayout *uchrData = NULL;
+  const UCKeyboardLayout *uchrData = NULL;
 
   OSStatus err = noErr;
   TISInputSourceRef inputSource = TISCopyCurrentKeyboardLayoutInputSource();
   if (inputSource) {
     CFDataRef uchrDataRef
-      = (CFDataRef) TISGetInputSourceProperty(inputSource, kTISPropertyUnicodeKeyLayoutData);
+      = static_cast<CFDataRef>(TISGetInputSourceProperty(inputSource, kTISPropertyUnicodeKeyLayoutData));
     if(uchrDataRef) {
-      uchrData = (UCKeyboardLayout*)CFDataGetBytePtr(uchrDataRef);
+      uchrData = reinterpret_cast<const UCKeyboardLayout*>(CFDataGetBytePtr(uchrDataRef));
     }
     CFRelease(inputSource);
   }
@@ -467,7 +467,7 @@ struct KeycodesHardcode
         m_ClearButton.bezelStyle = NSBezelStyleCircular;
         m_ClearButton.target = self;
         m_ClearButton.action = @selector(OnClearButton:);
-        ((NSButtonCell*)m_ClearButton.cell).controlSize = NSControlSizeMini;
+        static_cast<NSButtonCell*>(m_ClearButton.cell).controlSize = NSControlSizeMini;
         [self addSubview:m_ClearButton];
     }
     
@@ -479,7 +479,7 @@ struct KeycodesHardcode
         m_RevertButton.bezelStyle = NSBezelStyleCircular;
         m_RevertButton.target = self;
         m_RevertButton.action = @selector(OnRevertButton:);
-        ((NSButtonCell*)m_RevertButton.cell).controlSize = NSControlSizeMini;
+        static_cast<NSButtonCell*>(m_RevertButton.cell).controlSize = NSControlSizeMini;
         [self addSubview:m_RevertButton];
     }
     

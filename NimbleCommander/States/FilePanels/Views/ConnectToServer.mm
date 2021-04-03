@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectToServer.h"
 #include "FTPConnectionSheetController.h"
 #include "SFTPConnectionSheetController.h"
@@ -18,41 +18,40 @@ namespace {
 class SheetsDispatcher : public NetworkConnectionsManager::ConnectionVisitor
 {
 public:
-    SheetsDispatcher( NetworkConnectionsManager::Connection _connection ):
-        m_Connection(_connection)
+    SheetsDispatcher(NetworkConnectionsManager::Connection _connection) : m_Connection(_connection)
     {
     }
 
     SheetController<ConnectionSheetProtocol> *CreateSheet()
     {
         m_Connection.Accept(*this);
-        if( m_Sheet  )
+        if( m_Sheet )
             m_Sheet.connection = m_Connection;
         return m_Sheet;
     }
 
 private:
-    virtual void Visit( const NetworkConnectionsManager::FTP & )
+    virtual void Visit(const NetworkConnectionsManager::FTP &)
     {
         m_Sheet = [[FTPConnectionSheetController alloc] init];
     }
-    
-    virtual void Visit( const NetworkConnectionsManager::SFTP & )
+
+    virtual void Visit(const NetworkConnectionsManager::SFTP &)
     {
         m_Sheet = [[SFTPConnectionSheetController alloc] init];
     }
 
-    virtual void Visit( const NetworkConnectionsManager::LANShare & )
+    virtual void Visit(const NetworkConnectionsManager::LANShare &)
     {
         m_Sheet = [[NetworkShareSheetController alloc] init];
     }
 
-    virtual void Visit( const NetworkConnectionsManager::Dropbox & )
+    virtual void Visit(const NetworkConnectionsManager::Dropbox &)
     {
         m_Sheet = [[DropboxAccountSheetController alloc] init];
     }
 
-    virtual void Visit( const NetworkConnectionsManager::WebDAV & )
+    virtual void Visit(const NetworkConnectionsManager::WebDAV &)
     {
         m_Sheet = [[WebDAVConnectionSheetController alloc] init];
     }
@@ -63,7 +62,7 @@ private:
 
 }
 
-static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
+static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 {
     if( [_control isEnabledForSegment:_segment] ) {
         _control.selectedSegment = _segment;
@@ -72,28 +71,27 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 }
 
 @interface ConnectToServer ()
-@property (nonatomic) IBOutlet NSTableView *connectionsTable;
-@property (nonatomic) IBOutlet NSSegmentedControl *controlButtons;
-@property (nonatomic) IBOutlet NSMenu *addNewConnectionMenu;
-@property (nonatomic) IBOutlet NSButton *connectButton;
+@property(nonatomic) IBOutlet NSTableView *connectionsTable;
+@property(nonatomic) IBOutlet NSSegmentedControl *controlButtons;
+@property(nonatomic) IBOutlet NSMenu *addNewConnectionMenu;
+@property(nonatomic) IBOutlet NSButton *connectButton;
 
-@property (nonatomic, readonly) bool LANSharesEnabled;
+@property(nonatomic, readonly) bool LANSharesEnabled;
 
 @end
 
-@implementation ConnectToServer
-{
-    NetworkConnectionsManager                       *m_Manager;
-    nc::bootstrap::ActivationManager                *m_ActivationManager;
-    std::vector<NetworkConnectionsManager::Connection>   m_Connections;
+@implementation ConnectToServer {
+    NetworkConnectionsManager *m_Manager;
+    nc::bootstrap::ActivationManager *m_ActivationManager;
+    std::vector<NetworkConnectionsManager::Connection> m_Connections;
     std::optional<NetworkConnectionsManager::Connection> m_OutputConnection;
-    bool                                            m_Shown;
+    bool m_Shown;
 }
 
 @synthesize connection = m_OutputConnection;
 
-- (instancetype) initWithNetworkConnectionsManager:(NetworkConnectionsManager&)_manager
-                                 activationManager:(nc::bootstrap::ActivationManager &)_am
+- (instancetype)initWithNetworkConnectionsManager:(NetworkConnectionsManager &)_manager
+                                activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super init];
     if( self ) {
@@ -107,51 +105,56 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    
+
     nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
-    
+
     GA().PostScreenView("Network Connections Management");
- 
+
     auto sheet = objc_cast<SheetWithHotkeys>(self.window);
-    sheet.onCtrlA = ^{ PeformClickIfEnabled(self.controlButtons, 0); };
+    sheet.onCtrlA = ^{
+      PeformClickIfEnabled(self.controlButtons, 0);
+    };
     sheet.onCtrlI = [sheet makeFocusHotkey:self.connectionsTable];
-    sheet.onCtrlX = ^{ PeformClickIfEnabled(self.controlButtons, 1); };
-    sheet.onCtrlE = ^{ PeformClickIfEnabled(self.controlButtons, 2); };
+    sheet.onCtrlX = ^{
+      PeformClickIfEnabled(self.controlButtons, 1);
+    };
+    sheet.onCtrlE = ^{
+      PeformClickIfEnabled(self.controlButtons, 2);
+    };
     [self.controlButtons setMenu:self.addNewConnectionMenu forSegment:0];
 
-    
     m_Connections = m_Manager->AllConnectionsByMRU();
-    
+
     [self reloadConnections];
     if( !m_Connections.empty() )
         [self focusConnection:m_Connections.front()];
 }
 
-- (void) reloadConnections
+- (void)reloadConnections
 {
-   m_Connections = m_Manager->AllConnectionsByMRU();
-   
-   int current = (int)self.connectionsTable.selectedRow;
-   [self.connectionsTable reloadData];
-   if( current >= 0 ) {
+    m_Connections = m_Manager->AllConnectionsByMRU();
+
+    int current = static_cast<int>(self.connectionsTable.selectedRow);
+    [self.connectionsTable reloadData];
+    if( current >= 0 ) {
         const auto rows = self.connectionsTable.numberOfRows;
-       if( rows > current )
-           [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:current]
-                              byExtendingSelection:false];
-       else if( rows > 0  )
-           [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:rows-1]
-                              byExtendingSelection:false];
-   }
-   
-   [self validateButtons];
+        if( rows > current )
+            [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:current]
+                               byExtendingSelection:false];
+        else if( rows > 0 )
+            [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:rows - 1]
+                               byExtendingSelection:false];
+    }
+
+    [self validateButtons];
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)[[maybe_unused]]_tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]] _tableView
 {
     return m_Connections.size();
 }
 
-- (NSView *) makeTitleTableViewForConnection:(const NetworkConnectionsManager::Connection &)_c
+- (NSView *)makeTitleTableViewForConnection:(const NetworkConnectionsManager::Connection &)_c
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     if( auto l = [NSString stringWithUTF8StdString:_c.Title()] )
@@ -164,10 +167,10 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     return tf;
 }
 
-- (NSView *) makePathTableViewForConnection:(const NetworkConnectionsManager::Connection &)_c
+- (NSView *)makePathTableViewForConnection:(const NetworkConnectionsManager::Connection &)_c
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-    if( auto l = [NSString stringWithUTF8StdString:m_Manager->MakeConnectionPath(_c) ] )
+    if( auto l = [NSString stringWithUTF8StdString:m_Manager->MakeConnectionPath(_c)] )
         tf.stringValue = l;
     tf.bordered = false;
     tf.editable = false;
@@ -178,11 +181,11 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     return tf;
 }
 
-- (nullable NSView *)tableView:(NSTableView *)[[maybe_unused]]_tableView
+- (nullable NSView *)tableView:(NSTableView *) [[maybe_unused]] _tableView
             viewForTableColumn:(nullable NSTableColumn *)tableColumn
                            row:(NSInteger)row
 {
-    if( row >= (int)m_Connections.size() )
+    if( row >= static_cast<int>(m_Connections.size()) )
         return nil;
 
     const auto c = m_Connections[row];
@@ -196,12 +199,12 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     return nil;
 }
 
-- (IBAction)onClose:(id)[[maybe_unused]]_sender
+- (IBAction)onClose:(id) [[maybe_unused]] _sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (IBAction)onConnect:(id)[[maybe_unused]]_sender
+- (IBAction)onConnect:(id) [[maybe_unused]] _sender
 {
     const auto row = self.connectionsTable.selectedRow;
     if( row >= 0 )
@@ -210,27 +213,27 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     [self endSheet:NSModalResponseOK];
 }
 
-- (void)tableViewSelectionDidChange:(NSNotification *)[[maybe_unused]]_notification
+- (void)tableViewSelectionDidChange:(NSNotification *) [[maybe_unused]] _notification
 {
     [self validateButtons];
 }
 
-- (void) validateButtons
+- (void)validateButtons
 {
     const auto row = self.connectionsTable.selectedRow;
-    const auto has_selection = row>=0;
+    const auto has_selection = row >= 0;
     [self.controlButtons setEnabled:has_selection forSegment:1];
     [self.controlButtons setEnabled:has_selection forSegment:2];
     self.connectButton.enabled = has_selection;
 }
 
-- (IBAction)onEdit:(id)[[maybe_unused]]_sender
+- (IBAction)onEdit:(id) [[maybe_unused]] _sender
 {
     const auto row = self.connectionsTable.selectedRow;
     if( row < 0 )
         return;
     auto connection = m_Connections.at(row);
-    
+
     SheetsDispatcher dispatcher{connection};
     auto sheet = dispatcher.CreateSheet();
     if( !sheet )
@@ -241,26 +244,27 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     std::string password;
     if( m_Manager->GetPassword(connection, password) )
         sheet.password = password;
-    
-    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if( returnCode == NSModalResponseOK ) {
-            const auto new_connection = sheet.connection;
-            const auto new_password = sheet.password;
-            if( new_connection != connection ) {
-                self->m_Manager->InsertConnection(new_connection);
-                [self reloadConnections];
-            }
-            if( new_password != password || new_connection != connection )
-                self->m_Manager->SetPassword(new_connection, new_password);
-        }
-    }];
+
+    [sheet beginSheetForWindow:self.window
+             completionHandler:^(NSModalResponse returnCode) {
+               if( returnCode == NSModalResponseOK ) {
+                   const auto new_connection = sheet.connection;
+                   const auto new_password = sheet.password;
+                   if( new_connection != connection ) {
+                       self->m_Manager->InsertConnection(new_connection);
+                       [self reloadConnections];
+                   }
+                   if( new_password != password || new_connection != connection )
+                       self->m_Manager->SetPassword(new_connection, new_password);
+               }
+             }];
 }
 
-- (void) focusConnection:(const NetworkConnectionsManager::Connection&)_connection
+- (void)focusConnection:(const NetworkConnectionsManager::Connection &)_connection
 {
-   const auto new_it = find( begin(m_Connections), end(m_Connections), _connection );
+    const auto new_it = find(begin(m_Connections), end(m_Connections), _connection);
     if( new_it != end(m_Connections) ) {
-        const auto new_ind = distance( begin(m_Connections), new_it );
+        const auto new_ind = distance(begin(m_Connections), new_it);
         [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:new_ind]
                            byExtendingSelection:false];
         [self.connectionsTable scrollRowToVisible:new_ind];
@@ -268,45 +272,46 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 }
 
 - (void)insertCreatedConnection:(NetworkConnectionsManager::Connection)_connection
-                   withPassword:(const std::string&)_password
+                   withPassword:(const std::string &)_password
 {
     m_Manager->InsertConnection(_connection);
     m_Manager->SetPassword(_connection, _password);
-    
+
     [self reloadConnections];
     [self focusConnection:_connection];
 }
 
-- (void) runNewConnectionSheet:(SheetController<ConnectionSheetProtocol>*)_sheet
+- (void)runNewConnectionSheet:(SheetController<ConnectionSheetProtocol> *)_sheet
 {
     _sheet.setupMode = true;
-    [_sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if( returnCode == NSModalResponseOK )
-            [self insertCreatedConnection:_sheet.connection withPassword:_sheet.password];
-    }];
+    [_sheet beginSheetForWindow:self.window
+              completionHandler:^(NSModalResponse returnCode) {
+                if( returnCode == NSModalResponseOK )
+                    [self insertCreatedConnection:_sheet.connection withPassword:_sheet.password];
+              }];
 }
 
-- (IBAction)onAddFTPServer:(id)[[maybe_unused]]_sender
+- (IBAction)onAddFTPServer:(id) [[maybe_unused]] _sender
 {
     [self runNewConnectionSheet:[[FTPConnectionSheetController alloc] init]];
 }
 
-- (IBAction)onAddSFTPServer:(id)[[maybe_unused]]_sender
+- (IBAction)onAddSFTPServer:(id) [[maybe_unused]] _sender
 {
     [self runNewConnectionSheet:[[SFTPConnectionSheetController alloc] init]];
 }
 
-- (IBAction)onAddWebDAVServer:(id)[[maybe_unused]]_sender
+- (IBAction)onAddWebDAVServer:(id) [[maybe_unused]] _sender
 {
     [self runNewConnectionSheet:[[WebDAVConnectionSheetController alloc] init]];
 }
 
-- (IBAction)onAddNetworkShare:(id)[[maybe_unused]]_sender
+- (IBAction)onAddNetworkShare:(id) [[maybe_unused]] _sender
 {
     [self runNewConnectionSheet:[[NetworkShareSheetController alloc] init]];
 }
 
-- (IBAction)onAddDropboxAccount:(id)[[maybe_unused]]_sender
+- (IBAction)onAddDropboxAccount:(id) [[maybe_unused]] _sender
 {
     [self runNewConnectionSheet:[[DropboxAccountSheetController alloc] init]];
 }
@@ -322,7 +327,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
         [self onEdit:sender];
 }
 
-- (void) showNewConnectionMenu:(id)[[maybe_unused]]_sender
+- (void)showNewConnectionMenu:(id) [[maybe_unused]] _sender
 {
     const auto origin = NSMakePoint(2, self.controlButtons.bounds.size.height + 3);
     [self.addNewConnectionMenu popUpMenuPositioningItem:nil
@@ -330,7 +335,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
                                                  inView:self.controlButtons];
 }
 
-- (void)onRemoveConnection:(id)[[maybe_unused]]_sender
+- (void)onRemoveConnection:(id) [[maybe_unused]] _sender
 {
     const auto row = self.connectionsTable.selectedRow;
     if( row < 0 )
@@ -338,7 +343,8 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     auto connection = m_Connections.at(row);
 
     Alert *alert = [[Alert alloc] init];
-    alert.messageText = NSLocalizedString(@"Are you sure you want to delete this connection?",
+    alert.messageText = NSLocalizedString(
+        @"Are you sure you want to delete this connection?",
         "Asking user if he really wants to delete information about a stored connection");
     alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "");
     [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
@@ -349,11 +355,10 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     }
 }
 
-- (void) keyDown:(NSEvent *)event
+- (void)keyDown:(NSEvent *)event
 {
-    if( event.type == NSEventTypeKeyDown &&
-        event.keyCode == kVK_Delete &&
-        self.window.firstResponder == self.connectionsTable) {
+    if( event.type == NSEventTypeKeyDown && event.keyCode == kVK_Delete &&
+        self.window.firstResponder == self.connectionsTable ) {
         PeformClickIfEnabled(self.controlButtons, 1);
         return;
     }
@@ -361,7 +366,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     return [super keyDown:event];
 }
 
-- (bool) LANSharesEnabled
+- (bool)LANSharesEnabled
 {
     return m_ActivationManager->HasLANSharesMounting();
 }

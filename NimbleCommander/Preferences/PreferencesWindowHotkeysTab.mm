@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowHotkeysTab.h"
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/FunctionKeysPass.h>
@@ -138,7 +138,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
 
         m_AllNodes.emplace_back(std::move(shortcut));
     }
-    for( int i = 0, e = (int)m_Tools.size(); i != e; ++i ) {
+    for( int i = 0, e = static_cast<int>(m_Tools.size()); i != e; ++i ) {
         const auto &v = m_Tools[i];
         ToolShortcutNode shortcut;
         shortcut.tool = v;
@@ -170,7 +170,8 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
         auto fmt = NSLocalizedString(@"Conflicts (%@)", "");
         self.sourceConflictsButton.title =
             [NSString stringWithFormat:fmt, [NSNumber numberWithInt:conflicts_amount]];
-    } else {
+    }
+    else {
         self.sourceConflictsButton.title = self.sourceConflictsButton.alternateTitle;
     }
 }
@@ -292,7 +293,7 @@ static NSImageView *SpawnCautionSign()
     viewForTableColumn:(NSTableColumn *)tableColumn
                    row:(NSInteger)row
 {
-    if( row >= 0 && row < (int)m_FilteredNodes.size() ) {
+    if( row >= 0 && row < static_cast<int>(m_FilteredNodes.size()) ) {
         if( auto node = std::any_cast<ActionShortcutNode>(&m_FilteredNodes[row]) ) {
             if( [tableColumn.identifier isEqualToString:@"action"] ) {
                 return SpawnLabelForAction(*node);
@@ -355,7 +356,7 @@ static NSImageView *SpawnCautionSign()
 
 - (nc::utility::ActionShortcut)shortcutFromGTMHotKey:(GTMHotKey *)_key
 {
-    const auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : (uint16_t)0;
+    const auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : static_cast<uint16_t>(0);
     const auto hk = ActionsShortcutsManager::ShortCut(key, _key.modifiers);
     return hk;
 }
@@ -366,7 +367,7 @@ static NSImageView *SpawnCautionSign()
         if( auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue) ) {
             const auto tool_index = tf.tag;
             const auto hk = [self shortcutFromGTMHotKey:gtm_hk];
-            if( tool_index < (long)m_Tools.size() ) {
+            if( tool_index < static_cast<long>(m_Tools.size()) ) {
                 auto &tool = m_Tools[tool_index];
                 if( hk != tool->m_Shorcut ) {
                     ExternalTool changed_tool = *tool;
@@ -397,10 +398,12 @@ static NSImageView *SpawnCautionSign()
 {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = NSLocalizedStringFromTable(
-        @"Are you sure you want to reset hotkeys to defaults?", @"Preferences",
+        @"Are you sure you want to reset hotkeys to defaults?",
+        @"Preferences",
         "Message text asking if user really wants to reset hotkeys to defaults");
     alert.informativeText =
-        NSLocalizedStringFromTable(@"This will clear any custom hotkeys.", @"Preferences",
+        NSLocalizedStringFromTable(@"This will clear any custom hotkeys.",
+                                   @"Preferences",
                                    "Informative text when user wants to reset hotkeys to defaults");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
@@ -467,7 +470,8 @@ static bool ValidateNodeForFilter(const std::any &_node, NSString *_filter)
     const auto filter = self.filterTextField.stringValue;
     if( !filter || filter.length == 0 ) {
         m_FilteredNodes = m_SourceNodes;
-    } else {
+    }
+    else {
         m_FilteredNodes.clear();
         for( auto &v : m_SourceNodes )
             if( ValidateNodeForFilter(v, filter) )

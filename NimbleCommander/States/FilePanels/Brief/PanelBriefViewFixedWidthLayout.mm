@@ -1,11 +1,10 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewFixedWidthLayout.h"
 #include "PanelBriefViewFixedWidthLayoutEngine.h"
 
 using nc::panel::view::brief::FixedWidthLayoutEngine;
 
-@implementation NCPanelBriefViewFixedWidthLayout
-{
+@implementation NCPanelBriefViewFixedWidthLayout {
     int m_ItemWidth;
     int m_ItemHeight;
     FixedWidthLayoutEngine m_Engine;
@@ -15,7 +14,7 @@ using nc::panel::view::brief::FixedWidthLayoutEngine;
 @synthesize itemHeight = m_ItemHeight;
 @synthesize layoutDelegate;
 
-- (instancetype) init
+- (instancetype)init
 {
     if( self = [super init] ) {
         m_ItemWidth = 150;
@@ -32,7 +31,7 @@ using nc::panel::view::brief::FixedWidthLayoutEngine;
 
 - (NSCollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)_index_path
 {
-    const auto index = (int)_index_path.item;
+    const auto index = static_cast<int>(_index_path.item);
     return m_Engine.AttributesForItemNumber(index);
 }
 
@@ -41,18 +40,18 @@ using nc::panel::view::brief::FixedWidthLayoutEngine;
     return m_Engine.AttributesForItemsInRect(_rect);
 }
 
-- (nullable NSCollectionViewLayoutAttributes*)
+- (nullable NSCollectionViewLayoutAttributes *)
     layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind)
                                                    [[maybe_unused]] _element_kind
-                                   atIndexPath:(NSIndexPath*)[[maybe_unused]] _index_path
+                                   atIndexPath:(NSIndexPath *) [[maybe_unused]] _index_path
 {
     return nil;
 }
 
-- (nullable NSCollectionViewLayoutAttributes*)
+- (nullable NSCollectionViewLayoutAttributes *)
     layoutAttributesForDecorationViewOfKind:(NSCollectionViewDecorationElementKind)
                                                 [[maybe_unused]] _element_kind
-                                atIndexPath:(NSIndexPath*)[[maybe_unused]] _index_path
+                                atIndexPath:(NSIndexPath *) [[maybe_unused]] _index_path
 {
     return nil;
 }
@@ -65,10 +64,11 @@ using nc::panel::view::brief::FixedWidthLayoutEngine;
 - (void)prepareLayout
 {
     const auto collection_view = self.collectionView;
-    const auto clip_bounds = collection_view.superview.bounds;    
-    const auto items_number = (int)[collection_view.dataSource collectionView:collection_view
-                                                       numberOfItemsInSection:0];
-    
+    const auto clip_bounds = collection_view.superview.bounds;
+    const auto items_number =
+        static_cast<int>([collection_view.dataSource collectionView:collection_view
+                                             numberOfItemsInSection:0]);
+
     FixedWidthLayoutEngine::Params params;
     params.item_width = m_ItemWidth;
     params.item_height = m_ItemHeight;
@@ -79,33 +79,33 @@ using nc::panel::view::brief::FixedWidthLayoutEngine;
     [self notifyDelegateAboutDoneLayout];
 }
 
-- (void) notifyDelegateAboutDoneLayout
+- (void)notifyDelegateAboutDoneLayout
 {
     if( [self.layoutDelegate respondsToSelector:@selector(collectionViewDidLayoutItems:)] )
-        [self.layoutDelegate collectionViewDidLayoutItems:self.collectionView];    
+        [self.layoutDelegate collectionViewDidLayoutItems:self.collectionView];
 }
 
-- (int) rowsNumber
+- (int)rowsNumber
 {
     return m_Engine.RowsNumber();
 }
 
-- (int) columnsNumber
+- (int)columnsNumber
 {
     return m_Engine.ColumnsNumber();
 }
 
-- (const std::vector<int>&) columnsPositions
+- (const std::vector<int> &)columnsPositions
 {
     return m_Engine.ColumnsPositions();
 }
 
-- (const std::vector<int>&) columnsWidths
+- (const std::vector<int> &)columnsWidths
 {
     return m_Engine.ColumnsWidths();
 }
 
-- (void) setItemWidth:(int)_item_width
+- (void)setItemWidth:(int)_item_width
 {
     if( m_ItemWidth == _item_width )
         return;
@@ -115,7 +115,7 @@ using nc::panel::view::brief::FixedWidthLayoutEngine;
     [self invalidateLayout];
 }
 
-- (void) setItemHeight:(int)_item_height
+- (void)setItemHeight:(int)_item_height
 {
     if( m_ItemHeight == _item_height )
         return;

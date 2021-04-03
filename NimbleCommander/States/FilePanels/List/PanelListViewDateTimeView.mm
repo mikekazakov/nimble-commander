@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
@@ -8,24 +8,23 @@
 
 using nc::utility::AdaptiveDateFormatting;
 
-@interface PanelListViewDateTimeView()
+@interface PanelListViewDateTimeView ()
 
-@property (nonatomic) NSFont *font;
+@property(nonatomic) NSFont *font;
 
 @end
 
-@implementation PanelListViewDateTimeView
-{
-    time_t          m_Time;
-    NSString       *m_String;
-    NSFont         *m_Font;
-    CTLineRef       m_Line;
-    
+@implementation PanelListViewDateTimeView {
+    time_t m_Time;
+    NSString *m_String;
+    NSFont *m_Font;
+    CTLineRef m_Line;
+
     AdaptiveDateFormatting::Style m_Style;
-    __weak PanelListViewRowView *m_RowView;    
+    __weak PanelListViewRowView *m_RowView;
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
@@ -38,30 +37,30 @@ using nc::utility::AdaptiveDateFormatting;
     return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     if( m_Line )
-        CFRelease( m_Line );
+        CFRelease(m_Line);
 }
 
-- (BOOL) acceptsFirstMouse:(NSEvent *)[[maybe_unused]]_event
+- (BOOL)acceptsFirstMouse:(NSEvent *) [[maybe_unused]] _event
 {
     /* really always??? */
     return true;
 }
 
-- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)[[maybe_unused]]_event
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *) [[maybe_unused]] _event
 {
     /* really always??? */
     return true;
 }
 
-- (BOOL) isOpaque
+- (BOOL)isOpaque
 {
     return true;
 }
 
-- (BOOL) wantsDefaultClipping
+- (BOOL)wantsDefaultClipping
 {
     return false;
 }
@@ -83,7 +82,7 @@ using nc::utility::AdaptiveDateFormatting;
     m_Font = CurrentTheme().FilePanelsListFont();
 }
 
-- (void) setTime:(time_t)time
+- (void)setTime:(time_t)time
 {
     if( m_Time != time ) {
         m_Time = time;
@@ -96,7 +95,7 @@ using nc::utility::AdaptiveDateFormatting;
     return m_Style;
 }
 
-- (void) setStyle:(AdaptiveDateFormatting::Style)style
+- (void)setStyle:(AdaptiveDateFormatting::Style)style
 {
     if( m_Style != style ) {
         m_Style = style;
@@ -104,12 +103,12 @@ using nc::utility::AdaptiveDateFormatting;
     }
 }
 
-- (NSFont*) font
+- (NSFont *)font
 {
     return m_Font;
 }
 
-- (void) setFont:(NSFont *)font
+- (void)setFont:(NSFont *)font
 {
     if( font != m_Font ) {
         m_Font = font;
@@ -117,9 +116,9 @@ using nc::utility::AdaptiveDateFormatting;
     }
 }
 
-- (void) buildString
+- (void)buildString
 {
-    const auto new_string = [&]{
+    const auto new_string = [&] {
         if( m_Time >= 0 ) {
             auto dts = AdaptiveDateFormatting{}.Format(m_Style, m_Time);
             return dts ? dts : @"";
@@ -127,7 +126,7 @@ using nc::utility::AdaptiveDateFormatting;
         else
             return @"--";
     }();
-    
+
     if( ![new_string isEqualToString:m_String] ) {
         m_String = new_string;
         [self buildLine];
@@ -135,52 +134,53 @@ using nc::utility::AdaptiveDateFormatting;
     }
 }
 
-- (void) buildLine
+- (void)buildLine
 {
-    assert( m_String );
-    const auto attrs = @{NSFontAttributeName: m_Font,
-                         (NSString*)kCTForegroundColorFromContextAttributeName: @YES};
-    NSAttributedString *as = [[NSAttributedString alloc] initWithString:m_String
-                                                             attributes:attrs];
-    
+    assert(m_String);
+    const auto attrs = @{
+        NSFontAttributeName: m_Font,
+        static_cast<NSString *>(kCTForegroundColorFromContextAttributeName): @YES
+    };
+    NSAttributedString *as = [[NSAttributedString alloc] initWithString:m_String attributes:attrs];
+
     if( m_Line )
-        CFRelease( m_Line );
-    m_Line = CTLineCreateWithAttributedString( (CFAttributedStringRef)as );
+        CFRelease(m_Line);
+    m_Line = CTLineCreateWithAttributedString(static_cast<CFAttributedStringRef>(as));
 }
 
-- (time_t) time
+- (time_t)time
 {
     return m_Time;
 }
 
-- (void) drawRect:(NSRect)[[maybe_unused]]_rect
+- (void)drawRect:(NSRect) [[maybe_unused]] _rect
 {
     if( auto rv = m_RowView ) {
         if( auto lv = rv.listView ) {
             const auto geometry = lv.geometry;
             const auto context = NSGraphicsContext.currentContext.CGContext;
-            
+
             [rv.rowBackgroundColor set];
             NSRectFill(self.bounds);
-            DrawTableVerticalSeparatorForView(self);            
-            
+            DrawTableVerticalSeparatorForView(self);
+
             if( m_Line ) {
-                CGContextSetFillColorWithColor( context, rv.rowTextColor.CGColor );
-                CGContextSetTextPosition( context, geometry.LeftInset(), geometry.TextBaseLine() );
-                CGContextSetTextDrawingMode( context, kCGTextFill );
+                CGContextSetFillColorWithColor(context, rv.rowTextColor.CGColor);
+                CGContextSetTextPosition(context, geometry.LeftInset(), geometry.TextBaseLine());
+                CGContextSetTextDrawingMode(context, kCGTextFill);
                 CTLineDraw(m_Line, context);
             }
         }
     }
 }
 
-- (void) buildPresentation
+- (void)buildPresentation
 {
     self.font = CurrentTheme().FilePanelsListFont();
     [self setNeedsDisplay:true];
 }
 
-- (void) dateChanged
+- (void)dateChanged
 {
     [self buildString];
 }

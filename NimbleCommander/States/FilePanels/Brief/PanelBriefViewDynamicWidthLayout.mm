@@ -1,12 +1,11 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewDynamicWidthLayout.h"
 #include "PanelBriefViewDynamicWidthLayoutEngine.h"
 #include <mutex>
 
 using nc::panel::view::brief::DynamicWidthLayoutEngine;
 
-@implementation NCPanelBriefViewDynamicWidthLayout
-{
+@implementation NCPanelBriefViewDynamicWidthLayout {
     int m_ItemHeight;
     int m_ItemMinWidth;
     int m_ItemMaxWidth;
@@ -16,14 +15,14 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
 @synthesize layoutDelegate;
 @synthesize itemHeight = m_ItemHeight;
 @synthesize itemMinWidth = m_ItemMinWidth;
-@synthesize itemMaxWidth = m_ItemMaxWidth; 
+@synthesize itemMaxWidth = m_ItemMaxWidth;
 
-- (instancetype) init
+- (instancetype)init
 {
     if( self = [super init] ) {
         m_ItemHeight = 20;
         m_ItemMinWidth = 140;
-        m_ItemMaxWidth = 400;        
+        m_ItemMaxWidth = 400;
         self.scrollDirection = NSCollectionViewScrollDirectionHorizontal;
     }
     return self;
@@ -36,7 +35,7 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
 
 - (NSCollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)_index_path
 {
-    const auto index = (int)_index_path.item;
+    const auto index = static_cast<int>(_index_path.item);
     return m_Engine.AttributesForItemNumber(index);
 }
 
@@ -45,18 +44,18 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
     return m_Engine.AttributesForItemsInRect(_rect);
 }
 
-- (nullable NSCollectionViewLayoutAttributes*)
+- (nullable NSCollectionViewLayoutAttributes *)
     layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind)
                                                    [[maybe_unused]] _elementKind
-                                   atIndexPath:(NSIndexPath*)[[maybe_unused]] _indexPath
+                                   atIndexPath:(NSIndexPath *) [[maybe_unused]] _indexPath
 {
     return nil;
 }
 
-- (nullable NSCollectionViewLayoutAttributes*)
+- (nullable NSCollectionViewLayoutAttributes *)
     layoutAttributesForDecorationViewOfKind:(NSCollectionViewDecorationElementKind)
                                                 [[maybe_unused]] _elementKind
-                                atIndexPath:(NSIndexPath*)[[maybe_unused]] _indexPath
+                                atIndexPath:(NSIndexPath *) [[maybe_unused]] _indexPath
 {
     return nil;
 }
@@ -70,11 +69,11 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
 {
     const auto delegate = self.layoutDelegate;
     const auto selector = @selector(collectionViewProvideIntrinsicItemsWidths:);
-    if( [delegate respondsToSelector:selector] == false) {
+    if( [delegate respondsToSelector:selector] == false ) {
         static std::once_flag once;
-        std::call_once(once, []{
+        std::call_once(once, [] {
             NSLog(@"A delegate doesn't provide collectionViewProvideIntrinsicItemsWidths:, "
-                  "NCPanelBriefViewDynamicWidthLayout can not work without it.");
+                   "NCPanelBriefViewDynamicWidthLayout can not work without it.");
         });
         return false;
     }
@@ -85,50 +84,51 @@ using nc::panel::view::brief::DynamicWidthLayoutEngine;
 {
     if( [self delegateProvidesIntrinsicWidths] == false )
         return;
-    
+
     const auto collection_view = self.collectionView;
-    const auto clip_bounds = collection_view.superview.bounds;    
-    const auto items_number = (int)[collection_view.dataSource collectionView:collection_view
-                                                       numberOfItemsInSection:0];
+    const auto clip_bounds = collection_view.superview.bounds;
+    const auto items_number =
+        static_cast<int>([collection_view.dataSource collectionView:collection_view
+                                             numberOfItemsInSection:0]);
     const auto delegate = self.layoutDelegate;
     const auto &widths = [delegate collectionViewProvideIntrinsicItemsWidths:collection_view];
-    
+
     DynamicWidthLayoutEngine::Params params;
     params.items_number = items_number;
     params.item_height = m_ItemHeight;
     params.item_min_width = m_ItemMinWidth;
-    params.item_max_width = m_ItemMaxWidth;    
+    params.item_max_width = m_ItemMaxWidth;
     params.clip_view_bounds = clip_bounds;
     params.items_intrinsic_widths = &widths;
-    
+
     m_Engine.Layout(params);
-    
+
     [self notifyDelegateAboutDoneLayout];
 }
 
-- (void) notifyDelegateAboutDoneLayout
+- (void)notifyDelegateAboutDoneLayout
 {
     if( [self.layoutDelegate respondsToSelector:@selector(collectionViewDidLayoutItems:)] )
-        [self.layoutDelegate collectionViewDidLayoutItems:self.collectionView];    
+        [self.layoutDelegate collectionViewDidLayoutItems:self.collectionView];
 }
 
 - (int)columnsNumber
-{ 
+{
     return m_Engine.ColumnsNumber();
 }
 
 - (const std::vector<int> &)columnsPositions
-{ 
+{
     return m_Engine.ColumnsPositions();
 }
 
 - (const std::vector<int> &)columnsWidths
-{ 
+{
     return m_Engine.ColumnsWidths();
 }
 
 - (int)rowsNumber
-{ 
+{
     return m_Engine.RowsNumber();
 }
 

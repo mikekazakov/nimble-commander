@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UserNotificationsCenter.h"
 #include <Cocoa/Cocoa.h>
 #include <Operations/Statistics.h>
@@ -11,14 +11,13 @@ using namespace std::literals;
 static const auto g_DefaultMinElapsedOperationTime = 30s;
 static const auto g_Window = @"window";
 
-@interface NCCoreUserNotificationCenterDelegate : NSObject<NSUserNotificationCenterDelegate>
+@interface NCCoreUserNotificationCenterDelegate : NSObject <NSUserNotificationCenterDelegate>
 @end
 
 namespace nc::core {
 
-UserNotificationsCenter::UserNotificationsCenter():
-    m_ShowWhenActive{ true },
-    m_MinElapsedOperationTime{ g_DefaultMinElapsedOperationTime }
+UserNotificationsCenter::UserNotificationsCenter()
+    : m_ShowWhenActive{true}, m_MinElapsedOperationTime{g_DefaultMinElapsedOperationTime}
 {
     static auto delegate = [[NCCoreUserNotificationCenterDelegate alloc] init];
     NSUserNotificationCenter.defaultUserNotificationCenter.delegate = delegate;
@@ -44,7 +43,7 @@ void UserNotificationsCenter::ReportCompletedOperation(const nc::ops::Operation 
     un.title = NSLocalizedString(@"Operation is complete", "Notification text");
     un.subtitle = [NSString stringWithUTF8StdString:_operation.Title()];
     un.soundName = NSUserNotificationDefaultSoundName;
-    const auto wnd_address = (unsigned long)(__bridge void*)_in_window;
+    const auto wnd_address = reinterpret_cast<unsigned long>(objc_bridge_cast<void>(_in_window));
     un.userInfo = @{ g_Window: [NSNumber numberWithUnsignedLong:wnd_address] };
 
     [NSUserNotificationCenter.defaultUserNotificationCenter deliverNotification:un];
@@ -55,7 +54,7 @@ bool UserNotificationsCenter::ShowWhenActive() const noexcept
     return m_ShowWhenActive;
 }
 
-void UserNotificationsCenter::SetShowWhenActive( bool _value )
+void UserNotificationsCenter::SetShowWhenActive(bool _value)
 {
     m_ShowWhenActive = _value;
 }
@@ -65,16 +64,16 @@ std::chrono::nanoseconds UserNotificationsCenter::MinElapsedOperationTime() cons
     return m_MinElapsedOperationTime;
 }
 
-void UserNotificationsCenter::SetMinElapsedOperationTime( std::chrono::nanoseconds _value )
+void UserNotificationsCenter::SetMinElapsedOperationTime(std::chrono::nanoseconds _value)
 {
     m_MinElapsedOperationTime = _value;
 }
 
-static void MakeWindowKey( unsigned long _wnd_adress )
+static void MakeWindowKey(unsigned long _wnd_adress)
 {
     const auto windows = NSApp.windows;
     for( NSWindow *window: windows )
-        if( (unsigned long)(__bridge void*)window == _wnd_adress ) {
+        if( reinterpret_cast<unsigned long>(objc_bridge_cast<void>(window)) == _wnd_adress ) {
             [window makeKeyAndOrderFront:nil];
             break;
         }
@@ -84,18 +83,18 @@ static void MakeWindowKey( unsigned long _wnd_adress )
 
 @implementation NCCoreUserNotificationCenterDelegate
 
-- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)[[maybe_unused]]_center 
-     shouldPresentNotification:(NSUserNotification *)[[maybe_unused]]_notification
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *) [[maybe_unused]] _center
+     shouldPresentNotification:(NSUserNotification *) [[maybe_unused]] _notification
 {
     return nc::core::UserNotificationsCenter::Instance().ShowWhenActive();
 }
 
-- (void)userNotificationCenter:(NSUserNotificationCenter *)[[maybe_unused]]_center
+- (void)userNotificationCenter:(NSUserNotificationCenter *) [[maybe_unused]] _center
        didActivateNotification:(NSUserNotification *)notification
 {
     if( notification.userInfo )
         if( const auto packed_wnd_address = objc_cast<NSNumber>(notification.userInfo[g_Window]) )
-            nc::core::MakeWindowKey( packed_wnd_address.unsignedLongValue );
+            nc::core::MakeWindowKey(packed_wnd_address.unsignedLongValue);
 }
 
 @end

@@ -1,4 +1,5 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "ShowGoToPopup.h"
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include <CUI/FilterPopUpMenu.h>
@@ -13,7 +14,6 @@
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
 #include "../MainWindowFilePanelsStateToolbarDelegate.h"
-#include "ShowGoToPopup.h"
 #include "NavigateHistory.h"
 #include "OpenNetworkConnection.h"
 #include "../PanelHistory.h"
@@ -28,32 +28,32 @@
 
 using namespace nc::panel;
 
-static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
-static const auto g_ConfigMaxNetworkConnections = "filePanel.general.maximumNetworkConnectionsInGoToMenu";
+static const auto g_ConfigShowNetworkConnections =
+    "filePanel.general.showNetworkConnectionsInGoToMenu";
+static const auto g_ConfigMaxNetworkConnections =
+    "filePanel.general.maximumNetworkConnectionsInGoToMenu";
 static const auto g_ConfigShowOthersKey = "filePanel.general.appendOtherWindowsPathsToGoToMenu";
 static const auto g_IconSize = NSMakeSize(16, 16);
 static const auto g_TextFont = [NSFont menuFontOfSize:13];
-static const auto g_TextAttributes = @{NSFontAttributeName:[NSFont menuFontOfSize:13]};
+static const auto g_TextAttributes = @{NSFontAttributeName: [NSFont menuFontOfSize:13]};
 static const auto g_MaxTextWidth = 600;
 
 @interface GoToPopupListActionMediator : NSObject
-- (instancetype) initWithState:(MainWindowFilePanelState *)_state
-                      andPanel:(PanelController*)_panel
-                    networkMgr:(NetworkConnectionsManager&)_net_mgr;
+- (instancetype)initWithState:(MainWindowFilePanelState *)_state
+                     andPanel:(PanelController *)_panel
+                   networkMgr:(NetworkConnectionsManager &)_net_mgr;
 - (void)callout:(id)sender;
 @end
 
-
-@implementation GoToPopupListActionMediator
-{
+@implementation GoToPopupListActionMediator {
     MainWindowFilePanelState *m_State;
     PanelController *m_Panel;
     NetworkConnectionsManager *m_NetMgr;
 }
 
-- (instancetype) initWithState:(MainWindowFilePanelState *)_state
-                      andPanel:(PanelController*)_panel
-                    networkMgr:(NetworkConnectionsManager&)_net_mgr
+- (instancetype)initWithState:(MainWindowFilePanelState *)_state
+                     andPanel:(PanelController *)_panel
+                   networkMgr:(NetworkConnectionsManager &)_net_mgr
 {
     self = [super init];
     if( self ) {
@@ -70,24 +70,24 @@ static const auto g_MaxTextWidth = 600;
         auto any_holder = objc_cast<AnyHolder>(menu_item.representedObject);
         if( !any_holder )
             return;
-        
+
         if( m_State ) {
             [m_State revealPanel:m_Panel];
             if( !m_Panel.isActive && m_State.goToForcesPanelActivation )
                 [m_State ActivatePanelByController:m_Panel];
         }
-        
+
         [self performGoTo:any_holder.any sender:sender];
     }
 }
 
-- (void) performGoTo:(const std::any&)_context sender:(id)sender
+- (void)performGoTo:(const std::any &)_context sender:(id)sender
 {
     if( auto favorite_ptr =
-       std::any_cast<std::shared_ptr<const FavoriteLocationsStorage::Location>>(&_context) )
+            std::any_cast<std::shared_ptr<const FavoriteLocationsStorage::Location>>(&_context) )
         [self handlePersistentLocation:(*favorite_ptr)->hosts_stack];
     else if( auto favorite = std::any_cast<FavoriteLocationsStorage::Location>(&_context) )
-        [self handlePersistentLocation:favorite->hosts_stack];     
+        [self handlePersistentLocation:favorite->hosts_stack];
     else if( auto plain_path = std::any_cast<std::string>(&_context) ) {
         auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = *plain_path;
@@ -106,7 +106,8 @@ static const auto g_MaxTextWidth = 600;
         request->InitiatedByUser = true;
         [m_Panel GoToDirWithContext:request];
     }
-    else if( auto promise = std::any_cast<std::pair<nc::core::VFSInstancePromise, std::string>>(&_context) )
+    else if( auto promise =
+                 std::any_cast<std::pair<nc::core::VFSInstancePromise, std::string>>(&_context) )
         [self handleVFSPromiseInstance:promise->first path:promise->second];
     else if( auto listing_promise = std::any_cast<nc::panel::ListingPromise>(&_context) )
         nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
@@ -114,37 +115,37 @@ static const auto g_MaxTextWidth = 600;
         std::cerr << "GoToPopupListActionMediator performGoTo: unknown context type." << std::endl;
 }
 
-- (void) handlePersistentLocation:(const PersistentLocation&)_location
+- (void)handlePersistentLocation:(const PersistentLocation &)_location
 {
     using nc::panel::actions::AsyncPersistentLocationRestorer;
     auto restorer = AsyncPersistentLocationRestorer(m_Panel, m_Panel.vfsInstanceManager);
     auto handler = [path = _location.path, panel = m_Panel](VFSHostPtr _host) {
-        dispatch_to_main_queue([=]{            
+        dispatch_to_main_queue([=] {
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = path;
             request->VFS = _host;
             request->PerformAsynchronous = true;
             request->InitiatedByUser = true;
             [panel GoToDirWithContext:request];
-        });          
+        });
     };
     restorer.Restore(_location, std::move(handler), nullptr);
 }
 
-- (void) handleVFSPromiseInstance:(const nc::core::VFSInstancePromise&)_promise
-                             path:(const std::string&)_path
+- (void)handleVFSPromiseInstance:(const nc::core::VFSInstancePromise &)_promise
+                            path:(const std::string &)_path
 {
     using nc::panel::actions::AsyncVFSPromiseRestorer;
     auto restorer = AsyncVFSPromiseRestorer(m_Panel, m_Panel.vfsInstanceManager);
     auto handler = [path = _path, panel = m_Panel](VFSHostPtr _host) {
-        dispatch_to_main_queue([=]{            
+        dispatch_to_main_queue([=] {
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = path;
             request->VFS = _host;
             request->PerformAsynchronous = true;
             request->InitiatedByUser = true;
             [panel GoToDirWithContext:request];
-        });          
+        });
     };
     restorer.Restore(_promise, std::move(handler), nullptr);
 }
@@ -152,116 +153,109 @@ static const auto g_MaxTextWidth = 600;
 @end
 
 namespace nc::panel::actions {
-    
-static void AddFakeHiddenHotkeyItem( SEL _action, NSMenu *_target_menu );
+
+static void AddFakeHiddenHotkeyItem(SEL _action, NSMenu *_target_menu);
 static NSString *ShrinkMenuItemTitle(NSString *_title);
 
-    
-static std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>> 
-    VolumesToShow(utility::NativeFSManager &_native_fs_manager)
+static std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>>
+VolumesToShow(utility::NativeFSManager &_native_fs_manager)
 {
     std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>> volumes;
-    for( auto &i: _native_fs_manager.Volumes() )
+    for( auto &i : _native_fs_manager.Volumes() )
         if( i->mount_flags.dont_browse == false )
             volumes.emplace_back(i);
     return volumes;
 }
 
-static std::vector<NetworkConnectionsManager::Connection> LimitedRecentConnections(
-    const NetworkConnectionsManager& _manager)
+static std::vector<NetworkConnectionsManager::Connection>
+LimitedRecentConnections(const NetworkConnectionsManager &_manager)
 {
     auto connections = _manager.AllConnectionsByMRU();
-    
-    auto limit = std::max( GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
-    if( (int)connections.size() > limit )
+
+    auto limit = std::max(GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
+    if( static_cast<int>(connections.size()) > limit )
         connections.resize(limit);
-    
+
     return connections;
 }
 
-static std::vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_current )
+static std::vector<VFSPath> OtherWindowsPaths(MainWindowFilePanelState *_current)
 {
     std::vector<VFSPath> current_paths;
-    for( auto &p: _current.filePanelsCurrentPaths )
-        current_paths.emplace_back( std::get<1>(p), std::get<0>(p) );
-    
+    for( auto &p : _current.filePanelsCurrentPaths )
+        current_paths.emplace_back(std::get<1>(p), std::get<0>(p));
+
     std::vector<VFSPath> other_paths;
-    for( auto ctr: NCAppDelegate.me.mainWindowControllers )
-        if( auto state = ctr.filePanelsState; state != _current)
-            for( auto &p: state.filePanelsCurrentPaths )
-                other_paths.emplace_back( std::get<1>(p), std::get<0>(p) );
-    
+    for( auto ctr : NCAppDelegate.me.mainWindowControllers )
+        if( auto state = ctr.filePanelsState; state != _current )
+            for( auto &p : state.filePanelsCurrentPaths )
+                other_paths.emplace_back(std::get<1>(p), std::get<0>(p));
+
     other_paths.erase(remove_if(begin(other_paths),
                                 end(other_paths),
                                 [&](auto &_p) {
-                                    return find(begin(current_paths),
-                                                end(current_paths),
-                                                _p)
-                                            != end(current_paths);
+                                    return find(begin(current_paths), end(current_paths), _p) !=
+                                           end(current_paths);
                                 }),
-                      end(other_paths)
-                      );
-    
-    sort( begin(other_paths), end(other_paths) );
-    
-    other_paths.erase( unique(begin(other_paths), end(other_paths)), end(other_paths) );
-    
+                      end(other_paths));
+
+    sort(begin(other_paths), end(other_paths));
+
+    other_paths.erase(unique(begin(other_paths), end(other_paths)), end(other_paths));
+
     return other_paths;
 }
 
 static std::vector<std::pair<core::VFSInstancePromise, std::string>>
-    ProduceLocationsForParentDirectories(const VFSListing &_listing,
-                                         core::VFSInstanceManager &_vfs_mgr )
+ProduceLocationsForParentDirectories(const VFSListing &_listing, core::VFSInstanceManager &_vfs_mgr)
 {
     if( !_listing.IsUniform() ) {
         auto msg = "ProduceLocationsForParentDirectories: _listing should be uniform";
         throw std::invalid_argument(msg);
     }
-    
+
     std::vector<std::pair<core::VFSInstancePromise, std::string>> result;
-    
+
     auto host = _listing.Host();
     boost::filesystem::path dir = _listing.Directory();
-    if(dir.filename() == ".")
+    if( dir.filename() == "." )
         dir.remove_filename();
     while( host ) {
-        
+
         bool brk = false;
         do {
             if( dir == "/" )
                 brk = true;
-            
+
             result.emplace_back(_vfs_mgr.TameVFS(host),
                                 dir == "/" ? dir.native() : dir.native() + "/");
-            
+
             dir = dir.parent_path();
         } while( !brk );
-    
 
         dir = host->JunctionPath();
         dir = dir.parent_path();
-        
+
         host = host->Parent();
     }
-    
+
     if( !result.empty() )
-        result.erase( begin(result) );
-    
+        result.erase(begin(result));
+
     return result;
 }
 
 namespace {
 
-
 class MenuItemBuilder
 {
 public:
-    MenuItemBuilder( const NetworkConnectionsManager &_conn_manager, id _action_target );
-    NSMenuItem *MenuItemForFavorite( const FavoriteLocationsStorage::Favorite &_f );
+    MenuItemBuilder(const NetworkConnectionsManager &_conn_manager, id _action_target);
+    NSMenuItem *MenuItemForFavorite(const FavoriteLocationsStorage::Favorite &_f);
     NSMenuItem *MenuItemForLocation(const FavoriteLocationsStorage::Location &_f);
-    NSMenuItem *MenuItemForVolume( const utility::NativeFileSystemInfo &_i );
-    NSMenuItem *MenuItemForConnection( const NetworkConnectionsManager::Connection &_c );
-    NSMenuItem *MenuItemForPath( const VFSPath &_p );
+    NSMenuItem *MenuItemForVolume(const utility::NativeFileSystemInfo &_i);
+    NSMenuItem *MenuItemForConnection(const NetworkConnectionsManager::Connection &_c);
+    NSMenuItem *MenuItemForPath(const VFSPath &_p);
     NSMenuItem *MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
                                           const std::string &_path);
     NSMenuItem *MenuItemForListingPromise(const ListingPromise &_promise);
@@ -269,90 +263,101 @@ public:
 private:
     const NetworkConnectionsManager &m_ConnectionManager;
     id m_ActionTarget;
-    loc_fmt::Formatter::RenderOptions m_FmtOpts = (loc_fmt::Formatter::RenderOptions)
-                                                    (loc_fmt::Formatter::RenderMenuTitle |
-                                                     loc_fmt::Formatter::RenderMenuTooltip |
-                                                     loc_fmt::Formatter::RenderMenuIcon);
+    loc_fmt::Formatter::RenderOptions m_FmtOpts = static_cast<loc_fmt::Formatter::RenderOptions>(
+        loc_fmt::Formatter::RenderMenuTitle | loc_fmt::Formatter::RenderMenuTooltip |
+        loc_fmt::Formatter::RenderMenuIcon);
 };
 
 }
 
 static NSString *KeyEquivalent(int _ind)
 {
-    switch(_ind) {
-        case  0: return @"1";
-        case  1: return @"2";
-        case  2: return @"3";
-        case  3: return @"4";
-        case  4: return @"5";
-        case  5: return @"6";
-        case  6: return @"7";
-        case  7: return @"8";
-        case  8: return @"9";
-        case  9: return @"0";
-        case 10: return @"-";
-        case 11: return @"=";
-        default: return @"";
+    switch( _ind ) {
+        case 0:
+            return @"1";
+        case 1:
+            return @"2";
+        case 2:
+            return @"3";
+        case 3:
+            return @"4";
+        case 4:
+            return @"5";
+        case 5:
+            return @"6";
+        case 6:
+            return @"7";
+        case 7:
+            return @"8";
+        case 8:
+            return @"9";
+        case 9:
+            return @"0";
+        case 10:
+            return @"-";
+        case 11:
+            return @"=";
+        default:
+            return @"";
     }
 }
 
-static void SetupHotkeys( NSMenu *_menu )
+static void SetupHotkeys(NSMenu *_menu)
 {
     auto items = _menu.itemArray;
     int hotkey_index = 0;
-    for( int ind = 1, e = (int)items.count; ind != e; ++ind )
+    for( int ind = 1, e = static_cast<int>(items.count); ind != e; ++ind )
         if( auto i = objc_cast<NSMenuItem>([items objectAtIndex:ind]) ) {
             if( i.separatorItem )
                 break;
-            i.keyEquivalent = KeyEquivalent( hotkey_index++ );
+            i.keyEquivalent = KeyEquivalent(hotkey_index++);
             i.keyEquivalentModifierMask = 0;
         }
 }
 
-std::tuple<NSMenu*, GoToPopupListActionMediator*> GoToPopupsBase::BuidInitialMenu(
-    MainWindowFilePanelState *_state,
-    PanelController *_panel,
-    NSString *_title) const
+std::tuple<NSMenu *, GoToPopupListActionMediator *>
+GoToPopupsBase::BuidInitialMenu(MainWindowFilePanelState *_state,
+                                PanelController *_panel,
+                                NSString *_title) const
 {
     FilterPopUpMenu *menu = [[FilterPopUpMenu alloc] initWithTitle:_title];
     menu.font = g_TextFont;
-    
+
     auto mediator = [[GoToPopupListActionMediator alloc] initWithState:_state
                                                               andPanel:_panel
                                                             networkMgr:m_NetMgr];
     [menu itemAtIndex:0].representedObject = mediator; // a hacky way to prolong longevity
-    
+
     return {menu, mediator};
 }
 
 NSMenu *GoToPopupsBase::BuildGoToMenu(MainWindowFilePanelState *_state,
                                       PanelController *_panel) const
 {
-    const auto [menu, action_target] = BuidInitialMenu(_state, _panel,
-        NSLocalizedString(@"Go to", "Goto popup menu title"));
-    
+    const auto [menu, action_target] =
+        BuidInitialMenu(_state, _panel, NSLocalizedString(@"Go to", "Goto popup menu title"));
+
     MenuItemBuilder builder{m_NetMgr, action_target};
-    
-    for( auto &f: NCAppDelegate.me.favoriteLocationsStorage->Favorites() )
+
+    for( auto &f : NCAppDelegate.me.favoriteLocationsStorage->Favorites() )
         [menu addItem:builder.MenuItemForFavorite(f)];
 
     [menu addItem:NSMenuItem.separatorItem];
-    
-    for( auto &i: VolumesToShow(m_NativeFSMgr) )
+
+    for( auto &i : VolumesToShow(m_NativeFSMgr) )
         [menu addItem:builder.MenuItemForVolume(*i)];
 
     if( GlobalConfig().GetBool(g_ConfigShowNetworkConnections) )
-        if(auto connections = LimitedRecentConnections(m_NetMgr);
-           !connections.empty() ) {
+        if( auto connections = LimitedRecentConnections(m_NetMgr); !connections.empty() ) {
             [menu addItem:NSMenuItem.separatorItem];
-            for( auto &c: connections )
+            for( auto &c : connections )
                 [menu addItem:builder.MenuItemForConnection(c)];
         }
-    
+
     if( GlobalConfig().GetBool(g_ConfigShowOthersKey) )
         if( auto paths = OtherWindowsPaths(_state); !paths.empty() ) {
             [menu addItem:NSMenuItem.separatorItem];
-            for( auto &p: paths )
+            for( auto &p : paths )
                 [menu addItem:builder.MenuItemForPath(p)];
         }
 
@@ -363,12 +368,14 @@ NSMenu *GoToPopupsBase::BuildGoToMenu(MainWindowFilePanelState *_state,
 
 NSMenu *GoToPopupsBase::BuildConnectionsQuickList(PanelController *_panel) const
 {
-    const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
+    const auto [menu, action_target] = BuidInitialMenu(
+        nil,
+        _panel,
         NSLocalizedString(@"Connections", "Connections popup menu title in file panels"));
-    
+
     MenuItemBuilder builder{m_NetMgr, action_target};
-    
-    for( auto &c: m_NetMgr.AllConnectionsByMRU() )
+
+    for( auto &c : m_NetMgr.AllConnectionsByMRU() )
         [menu addItem:builder.MenuItemForConnection(c)];
 
     SetupHotkeys(menu);
@@ -378,12 +385,14 @@ NSMenu *GoToPopupsBase::BuildConnectionsQuickList(PanelController *_panel) const
 
 NSMenu *GoToPopupsBase::BuildFavoritesQuickList(PanelController *_panel) const
 {
-    const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
+    const auto [menu, action_target] = BuidInitialMenu(
+        nil,
+        _panel,
         NSLocalizedString(@"Favorites", "Favorites popup menu subtitle in file panels"));
-    
+
     MenuItemBuilder builder{m_NetMgr, action_target};
-    
-    for( auto &f: NCAppDelegate.me.favoriteLocationsStorage->Favorites() )
+
+    for( auto &f : NCAppDelegate.me.favoriteLocationsStorage->Favorites() )
         [menu addItem:builder.MenuItemForFavorite(f)];
 
     auto frequent = NCAppDelegate.me.favoriteLocationsStorage->FrecentlyUsed(10);
@@ -391,11 +400,11 @@ NSMenu *GoToPopupsBase::BuildFavoritesQuickList(PanelController *_panel) const
         [menu addItem:NSMenuItem.separatorItem];
 
         auto frequent_header = [[NSMenuItem alloc] init];
-        frequent_header.title = NSLocalizedString(@"Frequently Visited",
-            "Frequently Visited popup menu subtitle in file panels");
+        frequent_header.title = NSLocalizedString(
+            @"Frequently Visited", "Frequently Visited popup menu subtitle in file panels");
         [menu addItem:frequent_header];
 
-        for( auto &f: frequent )
+        for( auto &f : frequent )
             [menu addItem:builder.MenuItemForLocation(*f)];
     }
 
@@ -406,12 +415,12 @@ NSMenu *GoToPopupsBase::BuildFavoritesQuickList(PanelController *_panel) const
 
 NSMenu *GoToPopupsBase::BuildVolumesQuickList(PanelController *_panel) const
 {
-    const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
-        NSLocalizedString(@"Volumes", "Volumes popup menu title in file panels"));
-    
+    const auto [menu, action_target] = BuidInitialMenu(
+        nil, _panel, NSLocalizedString(@"Volumes", "Volumes popup menu title in file panels"));
+
     MenuItemBuilder builder{m_NetMgr, action_target};
-    
-    for( auto &i: VolumesToShow(m_NativeFSMgr) )
+
+    for( auto &i : VolumesToShow(m_NativeFSMgr) )
         [menu addItem:builder.MenuItemForVolume(*i)];
 
     SetupHotkeys(menu);
@@ -421,13 +430,15 @@ NSMenu *GoToPopupsBase::BuildVolumesQuickList(PanelController *_panel) const
 
 NSMenu *GoToPopupsBase::BuildParentFoldersQuickList(PanelController *_panel) const
 {
-    const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
+    const auto [menu, action_target] = BuidInitialMenu(
+        nil,
+        _panel,
         NSLocalizedString(@"Parent Folders", "Upper-dirs popup menu title in file panels"));
 
     MenuItemBuilder builder{m_NetMgr, action_target};
 
-    for( auto &i: ProduceLocationsForParentDirectories(_panel.data.Listing(),
-                                                       _panel.vfsInstanceManager) )
+    for( auto &i :
+         ProduceLocationsForParentDirectories(_panel.data.Listing(), _panel.vfsInstanceManager) )
         [menu addItem:builder.MenuItemForPromiseAndPath(i.first, i.second)];
 
     SetupHotkeys(menu);
@@ -437,17 +448,17 @@ NSMenu *GoToPopupsBase::BuildParentFoldersQuickList(PanelController *_panel) con
 
 NSMenu *GoToPopupsBase::BuildHistoryQuickList(PanelController *_panel) const
 {
-    const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
-        NSLocalizedString(@"History", "History popup menu title in file panels"));
+    const auto [menu, action_target] = BuidInitialMenu(
+        nil, _panel, NSLocalizedString(@"History", "History popup menu title in file panels"));
 
     auto history = _panel.history.All();
     if( !history.empty() && _panel.history.IsRecording() )
         history.pop_back();
-    reverse( begin(history), end(history) );
-    
+    reverse(begin(history), end(history));
+
     MenuItemBuilder builder{m_NetMgr, action_target};
-    
-    for( auto &i: history )
+
+    for( auto &i : history )
         [menu addItem:builder.MenuItemForListingPromise(i.get())];
 
     SetupHotkeys(menu);
@@ -455,40 +466,38 @@ NSMenu *GoToPopupsBase::BuildHistoryQuickList(PanelController *_panel) const
     return menu;
 }
 
-static bool RerouteGoToEventToLeftToolbarButton( MainWindowFilePanelState *_target, id _sender )
+static bool RerouteGoToEventToLeftToolbarButton(MainWindowFilePanelState *_target, id _sender)
 {
     if( objc_cast<NSButton>(_sender) )
         return false;
-    
+
     const auto toolbar = _target.windowStateToolbar;
     const auto delegate = objc_cast<MainWindowFilePanelsStateToolbarDelegate>(toolbar.delegate);
     if( !delegate )
         return false;
-    
-    if( !delegate.leftPanelGoToButton ||
-        !delegate.leftPanelGoToButton.window )
+
+    if( !delegate.leftPanelGoToButton || !delegate.leftPanelGoToButton.window )
         return false;
 
     [delegate.leftPanelGoToButton performClick:_target];
     return true;
 }
 
-ShowLeftGoToPopup::ShowLeftGoToPopup(NetworkConnectionsManager& _net_mgr,
+ShowLeftGoToPopup::ShowLeftGoToPopup(NetworkConnectionsManager &_net_mgr,
                                      nc::utility::NativeFSManager &_native_fs_mgr,
-                                     SEL _right_popup_action):
-    GoToPopupsBase(_net_mgr, _native_fs_mgr),
-    m_RightPopupAction(_right_popup_action)
+                                     SEL _right_popup_action)
+    : GoToPopupsBase(_net_mgr, _native_fs_mgr), m_RightPopupAction(_right_popup_action)
 {
 }
-    
-void ShowLeftGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender ) const
+
+void ShowLeftGoToPopup::Perform(MainWindowFilePanelState *_target, id _sender) const
 {
     if( RerouteGoToEventToLeftToolbarButton(_target, _sender) )
         return;
 
     const auto menu = BuildGoToMenu(_target, _target.leftPanelController);
     AddFakeHiddenHotkeyItem(m_RightPopupAction, menu);
-        
+
     if( auto button = objc_cast<NSButton>(_sender) )
         [menu popUpMenuPositioningItem:nil
                             atLocation:NSMakePoint(0, button.bounds.size.height + 4)
@@ -500,40 +509,38 @@ void ShowLeftGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender )
                                 inView:_target];
 }
 
-static bool RerouteGoToEventToRightToolbarButton( MainWindowFilePanelState *_target, id _sender )
+static bool RerouteGoToEventToRightToolbarButton(MainWindowFilePanelState *_target, id _sender)
 {
     if( objc_cast<NSButton>(_sender) )
         return false;
-    
+
     const auto toolbar = _target.windowStateToolbar;
     const auto delegate = objc_cast<MainWindowFilePanelsStateToolbarDelegate>(toolbar.delegate);
     if( !delegate )
         return false;
-    
-    if( !delegate.rightPanelGoToButton ||
-        !delegate.rightPanelGoToButton.window )
+
+    if( !delegate.rightPanelGoToButton || !delegate.rightPanelGoToButton.window )
         return false;
 
     [delegate.rightPanelGoToButton performClick:_target];
     return true;
 }
 
-ShowRightGoToPopup::ShowRightGoToPopup(NetworkConnectionsManager& _net_mgr,
+ShowRightGoToPopup::ShowRightGoToPopup(NetworkConnectionsManager &_net_mgr,
                                        nc::utility::NativeFSManager &_native_fs_mgr,
-                                       SEL _left_popup_action):
-    GoToPopupsBase(_net_mgr, _native_fs_mgr),
-    m_LeftPopupAction(_left_popup_action)
+                                       SEL _left_popup_action)
+    : GoToPopupsBase(_net_mgr, _native_fs_mgr), m_LeftPopupAction(_left_popup_action)
 {
 }
 
-void ShowRightGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender ) const
+void ShowRightGoToPopup::Perform(MainWindowFilePanelState *_target, id _sender) const
 {
     if( RerouteGoToEventToRightToolbarButton(_target, _sender) )
         return;
 
     const auto menu = BuildGoToMenu(_target, _target.rightPanelController);
     AddFakeHiddenHotkeyItem(m_LeftPopupAction, menu);
-    
+
     if( auto button = objc_cast<NSButton>(_sender) )
         [menu popUpMenuPositioningItem:nil
                             atLocation:NSMakePoint(button.bounds.size.width - menu.size.width,
@@ -546,122 +553,110 @@ void ShowRightGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender 
                                 inView:_target];
 }
 
-static void PopupQuickList( NSMenu *_menu, PanelController *_target )
+static void PopupQuickList(NSMenu *_menu, PanelController *_target)
 {
     NSPoint p;
     p.x = (_target.view.bounds.size.width - _menu.size.width) / 2.;
     p.y = _target.view.bounds.size.height - _target.view.headerBarHeight - 4;
-    
-    [_menu popUpMenuPositioningItem:nil
-                         atLocation:p
-                             inView:_target.view];
+
+    [_menu popUpMenuPositioningItem:nil atLocation:p inView:_target.view];
 }
 
-ShowConnectionsQuickList::ShowConnectionsQuickList
-    (NetworkConnectionsManager&_net_mgr,
-    nc::utility::NativeFSManager &_native_fs_mgr,
-     std::vector<SEL> _other_quick_lists):
-    GoToPopupsBase(_net_mgr, _native_fs_mgr),
-    m_OtherQuickLists(std::move(_other_quick_lists))
+ShowConnectionsQuickList::ShowConnectionsQuickList(NetworkConnectionsManager &_net_mgr,
+                                                   nc::utility::NativeFSManager &_native_fs_mgr,
+                                                   std::vector<SEL> _other_quick_lists)
+    : GoToPopupsBase(_net_mgr, _native_fs_mgr), m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
-    
-void ShowConnectionsQuickList::Perform( PanelController *_target, id ) const
+
+void ShowConnectionsQuickList::Perform(PanelController *_target, id) const
 {
     const auto menu = BuildConnectionsQuickList(_target);
-    for( auto action: m_OtherQuickLists )
+    for( auto action : m_OtherQuickLists )
         AddFakeHiddenHotkeyItem(action, menu);
-    PopupQuickList(menu, _target );
+    PopupQuickList(menu, _target);
 }
-    
-ShowFavoritesQuickList::ShowFavoritesQuickList
-    (NetworkConnectionsManager&_net_mgr,
-    nc::utility::NativeFSManager &_native_fs_mgr,
-     std::vector<SEL> _other_quick_lists):
-    nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr),
-    m_OtherQuickLists(std::move(_other_quick_lists))
+
+ShowFavoritesQuickList::ShowFavoritesQuickList(NetworkConnectionsManager &_net_mgr,
+                                               nc::utility::NativeFSManager &_native_fs_mgr,
+                                               std::vector<SEL> _other_quick_lists)
+    : nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr),
+      m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
 
-void ShowFavoritesQuickList::Perform( PanelController *_target, id ) const
+void ShowFavoritesQuickList::Perform(PanelController *_target, id) const
 {
     const auto menu = BuildFavoritesQuickList(_target);
-    for( auto action: m_OtherQuickLists )
-        AddFakeHiddenHotkeyItem(action, menu);    
-    PopupQuickList( menu, _target );
+    for( auto action : m_OtherQuickLists )
+        AddFakeHiddenHotkeyItem(action, menu);
+    PopupQuickList(menu, _target);
 }
 
-ShowVolumesQuickList::ShowVolumesQuickList
-    (NetworkConnectionsManager&_net_mgr,
-    nc::utility::NativeFSManager &_native_fs_mgr,
-     std::vector<SEL> _other_quick_lists):
-    nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr),
-    m_OtherQuickLists(std::move(_other_quick_lists))
+ShowVolumesQuickList::ShowVolumesQuickList(NetworkConnectionsManager &_net_mgr,
+                                           nc::utility::NativeFSManager &_native_fs_mgr,
+                                           std::vector<SEL> _other_quick_lists)
+    : nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr),
+      m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
-    
-void ShowVolumesQuickList::Perform( PanelController *_target, id ) const
+
+void ShowVolumesQuickList::Perform(PanelController *_target, id) const
 {
     const auto menu = BuildVolumesQuickList(_target);
-    for( auto action: m_OtherQuickLists )
-        AddFakeHiddenHotkeyItem(action, menu);    
-    PopupQuickList( menu, _target );
+    for( auto action : m_OtherQuickLists )
+        AddFakeHiddenHotkeyItem(action, menu);
+    PopupQuickList(menu, _target);
 }
 
-ShowParentFoldersQuickList::ShowParentFoldersQuickList
-    (NetworkConnectionsManager&_net_mgr,
-    nc::utility::NativeFSManager &_native_fs_mgr,
-     std::vector<SEL> _other_quick_lists):
-    GoToPopupsBase(_net_mgr, _native_fs_mgr),
-    m_OtherQuickLists(std::move(_other_quick_lists))
+ShowParentFoldersQuickList::ShowParentFoldersQuickList(NetworkConnectionsManager &_net_mgr,
+                                                       nc::utility::NativeFSManager &_native_fs_mgr,
+                                                       std::vector<SEL> _other_quick_lists)
+    : GoToPopupsBase(_net_mgr, _native_fs_mgr), m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
 
-bool ShowParentFoldersQuickList::Predicate( PanelController *_target ) const
+bool ShowParentFoldersQuickList::Predicate(PanelController *_target) const
 {
-   return _target.isUniform;
+    return _target.isUniform;
 }
 
-void ShowParentFoldersQuickList::Perform( PanelController *_target, id ) const
+void ShowParentFoldersQuickList::Perform(PanelController *_target, id) const
 {
     const auto menu = BuildParentFoldersQuickList(_target);
-    for( auto action: m_OtherQuickLists )
-        AddFakeHiddenHotkeyItem(action, menu);    
-    PopupQuickList( menu, _target );
+    for( auto action : m_OtherQuickLists )
+        AddFakeHiddenHotkeyItem(action, menu);
+    PopupQuickList(menu, _target);
 }
 
-ShowHistoryQuickList::ShowHistoryQuickList
-    (NetworkConnectionsManager&_net_mgr,
-    nc::utility::NativeFSManager &_native_fs_mgr,
-     std::vector<SEL> _other_quick_lists):
-    nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr),
-    m_OtherQuickLists(std::move(_other_quick_lists))
+ShowHistoryQuickList::ShowHistoryQuickList(NetworkConnectionsManager &_net_mgr,
+                                           nc::utility::NativeFSManager &_native_fs_mgr,
+                                           std::vector<SEL> _other_quick_lists)
+    : nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr),
+      m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
-    
-void ShowHistoryQuickList::Perform( PanelController *_target, id ) const
+
+void ShowHistoryQuickList::Perform(PanelController *_target, id) const
 {
     const auto menu = BuildHistoryQuickList(_target);
-    for( auto action: m_OtherQuickLists )
-        AddFakeHiddenHotkeyItem(action, menu);    
-    PopupQuickList( menu, _target );
+    for( auto action : m_OtherQuickLists )
+        AddFakeHiddenHotkeyItem(action, menu);
+    PopupQuickList(menu, _target);
 };
-    
-GoToPopupsBase::GoToPopupsBase(NetworkConnectionsManager&_net_mgr,
-                               nc::utility::NativeFSManager &_native_fs_mgr):
-    m_NetMgr(_net_mgr),
-    m_NativeFSMgr(_native_fs_mgr)
+
+GoToPopupsBase::GoToPopupsBase(NetworkConnectionsManager &_net_mgr,
+                               nc::utility::NativeFSManager &_native_fs_mgr)
+    : m_NetMgr(_net_mgr), m_NativeFSMgr(_native_fs_mgr)
 {
 }
 
-MenuItemBuilder::MenuItemBuilder(const NetworkConnectionsManager &_conn_manager,
-                                 id _action_target ):
-    m_ConnectionManager(_conn_manager),
-    m_ActionTarget(_action_target)
+MenuItemBuilder::MenuItemBuilder(const NetworkConnectionsManager &_conn_manager, id _action_target)
+    : m_ConnectionManager(_conn_manager), m_ActionTarget(_action_target)
 {
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForFavorite( const FavoriteLocationsStorage::Favorite &_f )
+NSMenuItem *MenuItemBuilder::MenuItemForFavorite(const FavoriteLocationsStorage::Favorite &_f)
 {
     auto menu_item = [[NSMenuItem alloc] init];
     menu_item.target = m_ActionTarget;
@@ -674,8 +669,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForFavorite( const FavoriteLocationsStorage
     return menu_item;
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForLocation(
-    const FavoriteLocationsStorage::Location &_f)
+NSMenuItem *MenuItemBuilder::MenuItemForLocation(const FavoriteLocationsStorage::Location &_f)
 {
     auto menu_item = [[NSMenuItem alloc] init];
     menu_item.target = m_ActionTarget;
@@ -688,7 +682,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForLocation(
     return menu_item;
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForVolume( const utility::NativeFileSystemInfo &_volume )
+NSMenuItem *MenuItemBuilder::MenuItemForVolume(const utility::NativeFileSystemInfo &_volume)
 {
     auto menu_item = [[NSMenuItem alloc] init];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_volume.mounted_at_path}];
@@ -701,7 +695,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForVolume( const utility::NativeFileSystemI
     return menu_item;
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForConnection(const NetworkConnectionsManager::Connection &_c )
+NSMenuItem *MenuItemBuilder::MenuItemForConnection(const NetworkConnectionsManager::Connection &_c)
 {
     auto menu_item = [[NSMenuItem alloc] init];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_c}];
@@ -714,7 +708,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForConnection(const NetworkConnectionsManag
     return menu_item;
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForPath( const VFSPath &_p )
+NSMenuItem *MenuItemBuilder::MenuItemForPath(const VFSPath &_p)
 {
     auto menu_item = [[NSMenuItem alloc] init];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_p}];
@@ -727,8 +721,9 @@ NSMenuItem *MenuItemBuilder::MenuItemForPath( const VFSPath &_p )
     return menu_item;
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
-                                      const std::string &_path)
+NSMenuItem *
+MenuItemBuilder::MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
+                                           const std::string &_path)
 {
     auto menu_item = [[NSMenuItem alloc] init];
     auto data = std::pair<core::VFSInstanceManager::Promise, std::string>{_promise, _path};
@@ -751,7 +746,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForListingPromise(const ListingPromise &_pr
     auto rep = loc_fmt::ListingPromiseFormatter{}.Render(m_FmtOpts, _promise);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
-    menu_item.image = rep.menu_icon;    
+    menu_item.image = rep.menu_icon;
     return menu_item;
 }
 
@@ -760,12 +755,11 @@ static NSString *ShrinkMenuItemTitle(NSString *_title)
     return StringByTruncatingToWidth(_title, g_MaxTextWidth, kTruncateAtMiddle, g_TextAttributes);
 }
 
-static NSMenuItem *FindMenuItemBySelector( SEL _selector,
-                                          NSMenu *_menu = NSApp.mainMenu )
+static NSMenuItem *FindMenuItemBySelector(SEL _selector, NSMenu *_menu = NSApp.mainMenu)
 {
     if( _selector == nullptr || _menu == nullptr )
         return nil;
-    
+
     for( NSMenuItem *item in _menu.itemArray )
         if( item.action == _selector )
             return item;
@@ -776,22 +770,21 @@ static NSMenuItem *FindMenuItemBySelector( SEL _selector,
     return nil;
 }
 
-static void AddFakeHiddenHotkeyItem( SEL _action, NSMenu *_target_menu )
-{    
-    static const auto is_10_13_or_higher = 
-    nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_13;
+static void AddFakeHiddenHotkeyItem(SEL _action, NSMenu *_target_menu)
+{
+    static const auto is_10_13_or_higher =
+        nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_13;
     if( is_10_13_or_higher == false )
         return;
-    
+
     const auto original_item = FindMenuItemBySelector(_action);
     if( original_item == nil )
         return;
-    
-    if( original_item.hidden == true ||
-        original_item.enabled == false ||
+
+    if( original_item.hidden == true || original_item.enabled == false ||
         original_item.keyEquivalent.length == 0 )
         return;
-    
+
     const auto item = [[NSMenuItem alloc] init];
     item.title = @"";
     item.action = _action;
@@ -799,11 +792,11 @@ static void AddFakeHiddenHotkeyItem( SEL _action, NSMenu *_target_menu )
     item.keyEquivalent = original_item.keyEquivalent;
     item.keyEquivalentModifierMask = original_item.keyEquivalentModifierMask;
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"    
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     item.allowsKeyEquivalentWhenHidden = true;
-#pragma clang diagnostic pop    
+#pragma clang diagnostic pop
     item.hidden = true;
     [_target_menu addItem:item];
 }
-    
+
 }

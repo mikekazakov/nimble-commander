@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowGeneralTab.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../Core/SandboxManager.h"
@@ -8,25 +8,24 @@
 
 using namespace std::literals;
 
-@interface PreferencesWindowGeneralTab()
+@interface PreferencesWindowGeneralTab ()
 
-@property (nonatomic) IBOutlet NSButton *FSAccessResetButton;
-@property (nonatomic) IBOutlet NSTextField *FSAccessLabel;
+@property(nonatomic) IBOutlet NSButton *FSAccessResetButton;
+@property(nonatomic) IBOutlet NSTextField *FSAccessLabel;
 
 @end
 
-@implementation PreferencesWindowGeneralTab
-{
+@implementation PreferencesWindowGeneralTab {
     nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
 - (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super init];
-    if (self) {
+    if( self ) {
         m_ActivationManager = &_am;
     }
-    
+
     return self;
 }
 
@@ -36,47 +35,49 @@ using namespace std::literals;
     if( !m_ActivationManager->Sandboxed() ) {
         self.FSAccessResetButton.enabled = false;
     }
-    [self.view layoutSubtreeIfNeeded];    
+    [self.view layoutSubtreeIfNeeded];
 }
 
--(NSString*)identifier{
+- (NSString *)identifier
+{
     return NSStringFromClass(self.class);
 }
--(NSImage*)toolbarItemImage{
+- (NSImage *)toolbarItemImage
+{
     return [NSImage imageNamed:NSImageNamePreferencesGeneral];
 }
--(NSString*)toolbarItemLabel{
-    return NSLocalizedStringFromTable(@"General",
-                                      @"Preferences",
-                                      "General preferences tab title");
-}
-
-- (IBAction)ResetToDefaults:(id)[[maybe_unused]]_sender
+- (NSString *)toolbarItemLabel
 {
-    [(NCAppDelegate*)[NSApplication sharedApplication].delegate askToResetDefaults];
+    return NSLocalizedStringFromTable(@"General", @"Preferences", "General preferences tab title");
 }
 
-- (IBAction)OnFSAccessReset:(id)[[maybe_unused]]_sender
+- (IBAction)ResetToDefaults:(id) [[maybe_unused]] _sender
+{
+    [NCAppDelegate.me askToResetDefaults];
+}
+
+- (IBAction)OnFSAccessReset:(id) [[maybe_unused]] _sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedStringFromTable(@"Are you sure you want to reset granted filesystem access?",
-                                                   @"Preferences",
-                                                   "Message text asking if user really wants to reset current file system access");
-    alert.informativeText = NSLocalizedStringFromTable(@"This will cause Nimble Commander to ask you for access when necessary.",
-                                                       @"Preferences",
-                                                       "Informative text saying that Nimble Commander will ask for filesystem access when need it");
-    [alert addButtonWithTitle:NSLocalizedString(@"OK","")];
-    [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
+    alert.messageText = NSLocalizedStringFromTable(
+        @"Are you sure you want to reset granted filesystem access?",
+        @"Preferences",
+        "Message text asking if user really wants to reset current file system access");
+    alert.informativeText = NSLocalizedStringFromTable(
+        @"This will cause Nimble Commander to ask you for access when necessary.",
+        @"Preferences",
+        "Informative text saying that Nimble Commander will ask for filesystem access when need "
+        "it");
+    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
-    if([alert runModal] == NSAlertFirstButtonReturn)
+    if( [alert runModal] == NSAlertFirstButtonReturn )
         SandboxManager::Instance().ResetBookmarks();
 }
 
-- (IBAction)OnSendStatisticsChanged:(id)[[maybe_unused]]_sender
+- (IBAction)OnSendStatisticsChanged:(id) [[maybe_unused]] _sender
 {
-    dispatch_to_main_queue_after(1s, []{
-        GA().UpdateEnabledStatus();
-    });
+    dispatch_to_main_queue_after(1s, [] { GA().UpdateEnabledStatus(); });
 }
 
 @end

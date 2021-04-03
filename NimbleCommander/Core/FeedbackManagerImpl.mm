@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FeedbackManagerImpl.h"
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <Habanero/CFDefaultsCPP.h>
@@ -28,8 +28,7 @@ static bool HasInternetConnection()
     zeroAddress.sa_len = sizeof(zeroAddress);
     zeroAddress.sa_family = AF_INET;
 
-    if( auto reachabilityRef =
-            SCNetworkReachabilityCreateWithAddress(NULL, (const struct sockaddr *)&zeroAddress) ) {
+    if( auto reachabilityRef = SCNetworkReachabilityCreateWithAddress(NULL, &zeroAddress) ) {
         SCNetworkReachabilityFlags flags = 0;
         if( SCNetworkReachabilityGetFlags(reachabilityRef, &flags) ) {
             bool isReachable = ((flags & kSCNetworkFlagsReachable) != 0);
@@ -92,7 +91,7 @@ bool FeedbackManagerImpl::IsEligibleForRatingOverlay() const
 {
     if( m_ShownRatingOverlay )
         return false; // show only once per run anyway
-    
+
     const auto now = m_TimeSource();
     const auto repeated_show_delay_on_result = 365l * 24l * 3600l; // 365 days
     const auto repeated_show_delay_on_discard = 14l * 24l * 3600l; // 14 days
@@ -146,7 +145,7 @@ void FeedbackManagerImpl::UpdateStatistics()
     auto d = m_TimeSource() - m_StartupTime;
     if( d < 0 )
         d = 0;
-    CFDefaultsSetDouble(g_HoursKey, m_TotalHoursUsed + (double)d / 3600.);
+    CFDefaultsSetDouble(g_HoursKey, m_TotalHoursUsed + static_cast<double>(d) / 3600.);
 }
 
 void FeedbackManagerImpl::EmailFeedback()
@@ -154,11 +153,11 @@ void FeedbackManagerImpl::EmailFeedback()
     m_GA.PostEvent("Feedback", "Action", "Email Feedback");
     const auto info = NSBundle.mainBundle.infoDictionary;
     NSString *toAddress = @"feedback@magnumbytes.com";
-    NSString *subject = [NSString
-        stringWithFormat:@"Feedback on %@ version %@ (%@)",
-                         [info objectForKey:@"CFBundleName"],
-                         [info objectForKey:@"CFBundleShortVersionString"],
-                         [info objectForKey:@"CFBundleVersion"]];
+    NSString *subject =
+        [NSString stringWithFormat:@"Feedback on %@ version %@ (%@)",
+                                   [info objectForKey:@"CFBundleName"],
+                                   [info objectForKey:@"CFBundleShortVersionString"],
+                                   [info objectForKey:@"CFBundleVersion"]];
     NSString *bodyText = @"Please write your feedback here.";
     NSString *mailtoAddress =
         [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
@@ -174,11 +173,11 @@ void FeedbackManagerImpl::EmailSupport()
     m_GA.PostEvent("Feedback", "Action", "Email Support");
     const auto info = NSBundle.mainBundle.infoDictionary;
     NSString *toAddress = @"support@magnumbytes.com";
-    NSString *subject = [NSString
-        stringWithFormat:@"Support for %@ version %@ (%@)",
-                         [info objectForKey:@"CFBundleName"],
-                         [info objectForKey:@"CFBundleShortVersionString"],
-                         [info objectForKey:@"CFBundleVersion"]];
+    NSString *subject =
+        [NSString stringWithFormat:@"Support for %@ version %@ (%@)",
+                                   [info objectForKey:@"CFBundleName"],
+                                   [info objectForKey:@"CFBundleShortVersionString"],
+                                   [info objectForKey:@"CFBundleVersion"]];
     NSString *bodyText = @"Please describle your issues with Nimble Commander here.";
     NSString *mailtoAddress =
         [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];

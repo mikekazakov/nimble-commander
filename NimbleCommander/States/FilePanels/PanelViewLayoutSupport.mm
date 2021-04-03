@@ -98,8 +98,9 @@ static config::Value SaveLayout(const PanelViewLayout &_l)
         config::Value columns{rapidjson::kArrayType};
         for( auto &c : list->columns ) {
             config::Value col{kObjectType};
-            col.AddMember(
-                MakeStandaloneString(g_ListColumKind), config::Value((int)c.kind), g_CrtAllocator);
+            col.AddMember(MakeStandaloneString(g_ListColumKind),
+                          config::Value(static_cast<int>(c.kind)),
+                          g_CrtAllocator);
             if( c.width >= 0 )
                 col.AddMember(
                     MakeStandaloneString(g_ListColumWidth), config::Value(c.width), g_CrtAllocator);
@@ -120,8 +121,9 @@ static config::Value SaveLayout(const PanelViewLayout &_l)
     }
     else if( auto brief = _l.brief() ) {
         config::Value d{kObjectType};
-        d.AddMember(
-            MakeStandaloneString(g_BriefModeKey), config::Value((int)brief->mode), g_CrtAllocator);
+        d.AddMember(MakeStandaloneString(g_BriefModeKey),
+                    config::Value(static_cast<int>(brief->mode)),
+                    g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_BriefFixedModeWidthKey),
                     config::Value(brief->fixed_mode_width),
                     g_CrtAllocator);
@@ -165,19 +167,19 @@ static std::optional<PanelViewLayout> LoadLayout(const config::Value &_from)
         auto &o = _from[g_BriefKey];
         PanelBriefViewColumnsLayout brief;
         if( o.HasMember(g_BriefModeKey) && o[g_BriefModeKey].IsNumber() )
-            brief.mode = (PanelBriefViewColumnsLayout::Mode)o[g_BriefModeKey].GetInt();
+            brief.mode = static_cast<PanelBriefViewColumnsLayout::Mode>(o[g_BriefModeKey].GetInt());
         if( o.HasMember(g_BriefFixedModeWidthKey) && o[g_BriefFixedModeWidthKey].IsNumber() )
-            brief.fixed_mode_width = (short)o[g_BriefFixedModeWidthKey].GetInt();
+            brief.fixed_mode_width = static_cast<short>(o[g_BriefFixedModeWidthKey].GetInt());
         if( o.HasMember(g_BriefFixedAmountValueKey) && o[g_BriefFixedAmountValueKey].IsNumber() )
-            brief.fixed_amount_value = (short)o[g_BriefFixedAmountValueKey].GetInt();
+            brief.fixed_amount_value = static_cast<short>(o[g_BriefFixedAmountValueKey].GetInt());
         if( o.HasMember(g_BriefDynamicWidthMinKey) && o[g_BriefDynamicWidthMinKey].IsNumber() )
-            brief.dynamic_width_min = (short)o[g_BriefDynamicWidthMinKey].GetInt();
+            brief.dynamic_width_min = static_cast<short>(o[g_BriefDynamicWidthMinKey].GetInt());
         if( o.HasMember(g_BriefDynamicWidthMaxKey) && o[g_BriefDynamicWidthMaxKey].IsNumber() )
-            brief.dynamic_width_max = (short)o[g_BriefDynamicWidthMaxKey].GetInt();
+            brief.dynamic_width_max = static_cast<short>(o[g_BriefDynamicWidthMaxKey].GetInt());
         if( o.HasMember(g_BriefDynamicWidthEqualKey) && o[g_BriefDynamicWidthEqualKey].IsBool() )
             brief.dynamic_width_equal = o[g_BriefDynamicWidthEqualKey].GetBool();
         if( o.HasMember(g_BriefIconScale) && o[g_BriefIconScale].IsInt() )
-            brief.icon_scale = (uint8_t)o[g_BriefIconScale].GetInt();
+            brief.icon_scale = static_cast<uint8_t>(o[g_BriefIconScale].GetInt());
         l.layout = brief;
     }
     else if( _from.HasMember(g_ListKey) && _from[g_ListKey].IsObject() ) {
@@ -190,17 +192,17 @@ static std::optional<PanelViewLayout> LoadLayout(const config::Value &_from)
                 return std::nullopt;
             PanelListViewColumnsLayout::Column col;
             if( i->HasMember(g_ListColumKind) && (*i)[g_ListColumKind].IsNumber() )
-                col.kind = (PanelListViewColumns)(*i)[g_ListColumKind].GetInt();
+                col.kind = static_cast<PanelListViewColumns>((*i)[g_ListColumKind].GetInt());
             if( i->HasMember(g_ListColumWidth) && (*i)[g_ListColumWidth].IsNumber() )
-                col.width = (short)(*i)[g_ListColumWidth].GetInt();
+                col.width = static_cast<short>((*i)[g_ListColumWidth].GetInt());
             if( i->HasMember(g_ListColumMinWidth) && (*i)[g_ListColumMinWidth].IsNumber() )
-                col.min_width = (short)(*i)[g_ListColumMinWidth].GetInt();
+                col.min_width = static_cast<short>((*i)[g_ListColumMinWidth].GetInt());
             if( i->HasMember(g_ListColumMaxWidth) && (*i)[g_ListColumMaxWidth].IsNumber() )
-                col.max_width = (short)(*i)[g_ListColumMaxWidth].GetInt();
+                col.max_width = static_cast<short>((*i)[g_ListColumMaxWidth].GetInt());
             list.columns.emplace_back(col);
         }
         if( o.HasMember(g_ListIconScale) && o[g_ListIconScale].IsInt() )
-            list.icon_scale = (uint8_t)o[g_ListIconScale].GetInt();
+            list.icon_scale = static_cast<uint8_t>(o[g_ListIconScale].GetInt());
         l.layout = list;
     }
     else if( _from.HasMember(g_DisabledKey) )
@@ -247,13 +249,14 @@ PanelViewLayoutsStorage::PanelViewLayoutsStorage(const char *_config_path)
 int PanelViewLayoutsStorage::LayoutsCount() const
 {
     std::lock_guard<spinlock> lock(m_LayoutsLock);
-    return (int)m_Layouts.size();
+    return static_cast<int>(m_Layouts.size());
 }
 
 std::shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::GetLayout(int _index) const
 {
     std::lock_guard<spinlock> lock(m_LayoutsLock);
-    return (_index >= 0 && _index < (int)m_Layouts.size()) ? m_Layouts[_index] : nullptr;
+    return (_index >= 0 && _index < static_cast<int>(m_Layouts.size())) ? m_Layouts[_index]
+                                                                        : nullptr;
 }
 
 std::vector<std::shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::GetAllLayouts() const
@@ -302,7 +305,7 @@ void PanelViewLayoutsStorage::ReplaceLayout(PanelViewLayout _layout, int _at_ind
 {
     {
         auto lock = std::lock_guard{m_LayoutsLock};
-        if( _at_index < 0 || _at_index >= (int)m_Layouts.size() )
+        if( _at_index < 0 || _at_index >= static_cast<int>(m_Layouts.size()) )
             return;
         if( *m_Layouts[_at_index] == _layout )
             return; // nothing to do - equal layouts
@@ -383,7 +386,7 @@ void PanelViewLayoutsStorage::CommitChanges(bool _fire_observers)
     if( m_IsDirty && (menu.propertiesToUpdate & NSMenuPropertyItemTitle) ) {
         int index = 0;
         for( NSMenuItem *item in menu.itemArray ) {
-            if( auto l = m_Storage->GetLayout((int)index) ) {
+            if( auto l = m_Storage->GetLayout(static_cast<int>(index)) ) {
                 item.title = l->name.empty() ? [NSString stringWithFormat:@"Layout #%d", index + 1]
                                              : [NSString stringWithUTF8StdString:l->name];
             }

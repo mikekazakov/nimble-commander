@@ -189,7 +189,8 @@ static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
     if( !_target.receivesUpdateNotifications ) {
         __weak PanelController *weak_panel = _target;
         _operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
-            dispatch_to_main_queue([=] { [(PanelController *)weak_panel refreshPanel]; });
+            dispatch_to_main_queue(
+                [=] { [static_cast<PanelController *>(weak_panel) refreshPanel]; });
         });
     }
 }

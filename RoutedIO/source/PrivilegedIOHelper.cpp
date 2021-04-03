@@ -94,12 +94,12 @@ static bool HandleOpen(xpc_object_t _event) noexcept
     xpc_object_t xpc_flags = xpc_dictionary_get_value(_event, "flags");
     if( xpc_flags == nullptr || xpc_get_type(xpc_flags) != XPC_TYPE_INT64 )
         return false;
-    int flags = (int)xpc_int64_get_value(xpc_flags);
+    int flags = static_cast<int>(xpc_int64_get_value(xpc_flags));
 
     xpc_object_t xpc_mode = xpc_dictionary_get_value(_event, "mode");
     if( xpc_mode == nullptr || xpc_get_type(xpc_mode) != XPC_TYPE_INT64 )
         return false;
-    int mode = (int)xpc_int64_get_value(xpc_mode);
+    int mode = static_cast<int>(xpc_int64_get_value(xpc_mode));
 
     int fd = open(path, flags, mode);
     if( fd >= 0 ) {
@@ -166,9 +166,9 @@ static bool HandleMkDir(xpc_object_t _event) noexcept
     xpc_object_t xpc_mode = xpc_dictionary_get_value(_event, "mode");
     if( xpc_mode == nullptr || xpc_get_type(xpc_mode) != XPC_TYPE_INT64 )
         return false;
-    int mode = (int)xpc_int64_get_value(xpc_mode);
+    int mode = static_cast<int>(xpc_int64_get_value(xpc_mode));
 
-    int result = mkdir(path, (mode_t)mode);
+    int result = mkdir(path, static_cast<mode_t>(mode));
     if( result == 0 ) {
         send_reply_ok(_event);
     }
@@ -188,12 +188,12 @@ static bool HandleChOwn(xpc_object_t _event) noexcept
     xpc_object_t xpc_uid = xpc_dictionary_get_value(_event, "uid");
     if( xpc_uid == nullptr || xpc_get_type(xpc_uid) != XPC_TYPE_INT64 )
         return false;
-    uid_t uid = (uid_t)xpc_int64_get_value(xpc_uid);
+    uid_t uid = static_cast<uid_t>(xpc_int64_get_value(xpc_uid));
 
     xpc_object_t xpc_gid = xpc_dictionary_get_value(_event, "gid");
     if( xpc_gid == nullptr || xpc_get_type(xpc_gid) != XPC_TYPE_INT64 )
         return false;
-    gid_t gid = (gid_t)xpc_int64_get_value(xpc_gid);
+    gid_t gid = static_cast<gid_t>(xpc_int64_get_value(xpc_gid));
 
     int result = chown(path, uid, gid);
     if( result == 0 ) {
@@ -215,7 +215,7 @@ static bool HandleChFlags(xpc_object_t _event) noexcept
     xpc_object_t xpc_flags = xpc_dictionary_get_value(_event, "flags");
     if( xpc_flags == nullptr || xpc_get_type(xpc_flags) != XPC_TYPE_INT64 )
         return false;
-    u_int flags = (u_int)xpc_int64_get_value(xpc_flags);
+    u_int flags = static_cast<u_int>(xpc_int64_get_value(xpc_flags));
 
     int result = chflags(path, flags);
     if( result == 0 ) {
@@ -237,7 +237,7 @@ static bool HandleChMod(xpc_object_t _event) noexcept
     xpc_object_t xpc_mode = xpc_dictionary_get_value(_event, "mode");
     if( xpc_mode == nullptr || xpc_get_type(xpc_mode) != XPC_TYPE_INT64 )
         return false;
-    mode_t mode = (mode_t)xpc_int64_get_value(xpc_mode);
+    mode_t mode = static_cast<mode_t>(xpc_int64_get_value(xpc_mode));
 
     int result = chmod(path, mode);
     if( result == 0 ) {
@@ -261,7 +261,7 @@ static bool HandleChTime(xpc_object_t _event) noexcept
     xpc_object_t xpc_time = xpc_dictionary_get_value(_event, "time");
     if( xpc_time == nullptr || xpc_get_type(xpc_time) != XPC_TYPE_INT64 )
         return false;
-    time_t timesec = (time_t)xpc_int64_get_value(xpc_time);
+    time_t timesec = static_cast<time_t>(xpc_int64_get_value(xpc_time));
 
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
@@ -415,12 +415,12 @@ static bool HandleKillPG(xpc_object_t _event) noexcept
     xpc_object_t xpc_pid = xpc_dictionary_get_value(_event, "pid");
     if( xpc_pid == nullptr || xpc_get_type(xpc_pid) != XPC_TYPE_INT64 )
         return false;
-    pid_t pid = (pid_t)xpc_int64_get_value(xpc_pid);
+    pid_t pid = static_cast<pid_t>(xpc_int64_get_value(xpc_pid));
 
     xpc_object_t xpc_signal = xpc_dictionary_get_value(_event, "signal");
     if( xpc_signal == nullptr || xpc_get_type(xpc_signal) != XPC_TYPE_INT64 )
         return false;
-    int signal = (int)xpc_int64_get_value(xpc_signal);
+    int signal = static_cast<int>(xpc_int64_get_value(xpc_signal));
 
     int result = killpg(pid, signal);
     if( result == 0 ) {
@@ -506,7 +506,8 @@ static void XPC_Peer_Event_Handler(xpc_connection_t _peer, xpc_object_t _event)
         //        xpc_release(_peer);
     }
     else if( type == XPC_TYPE_DICTIONARY ) {
-        ConnectionContext *context = (ConnectionContext *)xpc_connection_get_context(_peer);
+        ConnectionContext *context =
+            static_cast<ConnectionContext *>(xpc_connection_get_context(_peer));
         if( !context ) {
             send_reply_error(_event, EINVAL);
             return;
@@ -560,8 +561,8 @@ static bool CheckSignature(const char *_bin_path)
 
     OSStatus status = 0;
 
-    CFURLRef url =
-        CFURLCreateFromFileSystemRepresentation(0, (UInt8 *)_bin_path, strlen(_bin_path), false);
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(
+        0, reinterpret_cast<const UInt8 *>(_bin_path), std::strlen(_bin_path), false);
     if( !url )
         return false;
 
@@ -613,7 +614,7 @@ static void XPC_Connection_Handler(xpc_connection_t _connection)
     ConnectionContext *cc = new ConnectionContext;
     xpc_connection_set_context(_connection, cc);
     xpc_connection_set_finalizer_f(_connection, [](void *_value) {
-        ConnectionContext *context = (ConnectionContext *)_value;
+        ConnectionContext *context = static_cast<ConnectionContext *>(_value);
         delete context;
     });
     xpc_connection_set_event_handler(_connection, ^(xpc_object_t event) {
@@ -642,7 +643,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
 
     syslog_notice("Configuring connection event handler for helper");
     xpc_connection_set_event_handler(service, ^(xpc_object_t connection) {
-      XPC_Connection_Handler((xpc_connection_t)connection);
+      XPC_Connection_Handler(static_cast<xpc_connection_t>(connection));
     });
 
     xpc_connection_resume(service);

@@ -93,7 +93,7 @@ TextWidthsCache::Cache &TextWidthsCache::ForFont(NSFont *_font)
 {
     char buf[1024];
     const auto name = _font.fontName.UTF8String;
-    const auto size = (int)std::floor(_font.pointSize + 0.5);
+    const auto size = static_cast<int>(std::floor(_font.pointSize + 0.5));
     snprintf(buf, sizeof(buf), "%s%d", name, size);
 
     auto lock = std::lock_guard{m_Lock};

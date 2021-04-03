@@ -4,32 +4,31 @@
 #include "SelectionWithMaskPopupViewController.h"
 #include <unordered_map>
 
-static const auto                       g_ConfigHistoryPath = "filePanel.selectWithMaskPopup.masks";
-[[clang::no_destroy]] static std::unordered_map<void*, NSString*> g_InitialMask;
-static nc::spinlock                         g_InitialMaskLock;
+static const auto g_ConfigHistoryPath = "filePanel.selectWithMaskPopup.masks";
+[[clang::no_destroy]] static std::unordered_map<void *, NSString *> g_InitialMask;
+static nc::spinlock g_InitialMaskLock;
 
-@interface SelectionWithMaskPopupViewController()
+@interface SelectionWithMaskPopupViewController ()
 
-@property (nonatomic) IBOutlet NSComboBox *comboBox;
-@property (nonatomic) IBOutlet NSTextField *titleLabel;
+@property(nonatomic) IBOutlet NSComboBox *comboBox;
+@property(nonatomic) IBOutlet NSTextField *titleLabel;
 
 @end
 
-@implementation SelectionWithMaskPopupViewController
-{
-    void                               *m_TargetWnd;
+@implementation SelectionWithMaskPopupViewController {
+    void *m_TargetWnd;
     SimpleComboBoxPersistentDataSource *m_MaskHistory;
     std::function<void(NSString *mask)> m_Handler;
-    bool                                m_DoesSelect;
+    bool m_DoesSelect;
 }
 
 @synthesize handler = m_Handler;
 
-- (instancetype) initForWindow:(NSWindow*)_wnd doesSelect:(bool)_select
+- (instancetype)initForWindow:(NSWindow *)_wnd doesSelect:(bool)_select
 {
     self = [super init];
     if( self ) {
-        m_TargetWnd = (__bridge void*)_wnd;
+        m_TargetWnd = (__bridge void *)_wnd;
         m_DoesSelect = _select;
     }
     return self;
@@ -39,51 +38,51 @@ static nc::spinlock                         g_InitialMaskLock;
 {
     [super viewDidLoad];
 
-    self.titleLabel.stringValue = m_DoesSelect ?
-        NSLocalizedString(@"Select files by mask:", "Title for selection by mask popup") :
-        NSLocalizedString(@"Deselect files by mask:", "Title for deselection by mask popup");
-    
-    m_MaskHistory = [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigHistoryPath];
+    self.titleLabel.stringValue =
+        m_DoesSelect
+            ? NSLocalizedString(@"Select files by mask:", "Title for selection by mask popup")
+            : NSLocalizedString(@"Deselect files by mask:", "Title for deselection by mask popup");
+
+    m_MaskHistory =
+        [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigHistoryPath];
     self.comboBox.usesDataSource = true;
     self.comboBox.dataSource = m_MaskHistory;
-    
+
     {
         auto lock = std::lock_guard{g_InitialMaskLock};
         auto i = g_InitialMask.find(m_TargetWnd);
         self.comboBox.stringValue = i != end(g_InitialMask) ? (*i).second : @"*.*";
     }
-    
+
     GA().PostScreenView("Mask Selection Popup");
 }
 
-- (IBAction)OnComboBox:(id)[[maybe_unused]]_sender
+- (IBAction)OnComboBox:(id) [[maybe_unused]] _sender
 {
     NSString *mask = self.comboBox.stringValue;
     if( mask == nil || mask.length == 0 )
         return;
-    
+
     // exclude meaningless masks - don't store them
-    if(!([mask isEqualToString:@""]    ||
-         [mask isEqualToString:@"."]   ||
-         [mask isEqualToString:@".."]  ||
-         [mask isEqualToString:@"*"]   ||
-         [mask isEqualToString:@"*.*"] ) )
+    if( !([mask isEqualToString:@""] || [mask isEqualToString:@"."] ||
+          [mask isEqualToString:@".."] || [mask isEqualToString:@"*"] ||
+          [mask isEqualToString:@"*.*"]) )
         [m_MaskHistory reportEnteredItem:mask];
-    
+
     {
         auto lock = std::lock_guard{g_InitialMaskLock};
         g_InitialMask[m_TargetWnd] = mask;
     }
-    
+
     if( m_Handler )
-        m_Handler( mask );
+        m_Handler(mask);
 
     [self.view.window performClose:nil];
 }
 
 - (void)popoverDidClose:(NSNotification *)notification
 {
-    ((NSPopover*)notification.object).contentViewController = nil; // here we are
+    static_cast<NSPopover *>(notification.object).contentViewController = nil; // here we are
 }
 
 @end

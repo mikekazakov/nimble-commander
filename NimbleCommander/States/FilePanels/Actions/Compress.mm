@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Compress.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
@@ -78,7 +78,7 @@ void CompressHere::Perform(PanelController *_target, id) const
       const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
       __weak PanelController *weak_target = _target;
       op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
-          FocusResult((PanelController *)weak_target, weak_op.lock());
+          FocusResult(static_cast<PanelController *>(weak_target), weak_op.lock());
       });
 
       AddDeselectorIfNeeded(*op, _target);
@@ -131,7 +131,7 @@ void CompressToOpposite::Perform(PanelController *_target, id) const
       const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
       __weak PanelController *weak_target = opposite_panel;
       op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
-          FocusResult((PanelController *)weak_target, weak_op.lock());
+          FocusResult(static_cast<PanelController *>(weak_target), weak_op.lock());
       });
 
       AddDeselectorIfNeeded(*op, _target);
@@ -180,7 +180,7 @@ void context::CompressHere::Perform(PanelController *_target, id) const
     const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = _target;
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
-        FocusResult((PanelController *)weak_target, weak_op.lock());
+        FocusResult(static_cast<PanelController *>(weak_target), weak_op.lock());
     });
 
     AddDeselectorIfNeeded(*op, _target);
@@ -234,7 +234,7 @@ void context::CompressToOpposite::Perform(PanelController *_target, id) const
     const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = opposite_panel;
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
-        FocusResult((PanelController *)weak_target, weak_op.lock());
+        FocusResult(static_cast<PanelController *>(weak_target), weak_op.lock());
     });
 
     AddDeselectorIfNeeded(*op, _target);
@@ -269,7 +269,8 @@ static void FocusResult(PanelController *_target, const std::shared_ptr<nc::ops:
             req.filename = filename;
             [_target scheduleDelayedFocusing:req];
         }
-    } else
+    }
+    else
         dispatch_to_main_queue([_target, _op] { FocusResult(_target, _op); });
 }
 

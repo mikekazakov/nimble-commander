@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ChangeAttributes.h"
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
@@ -42,7 +42,8 @@ void ChangeAttributes::Perform(PanelController *_target, [[maybe_unused]] id _se
       if( !_target.receivesUpdateNotifications ) {
           __weak PanelController *weak_panel = _target;
           op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
-              dispatch_to_main_queue([=] { [(PanelController *)weak_panel refreshPanel]; });
+              dispatch_to_main_queue(
+                  [=] { [static_cast<PanelController *>(weak_panel) refreshPanel]; });
           });
       }
 

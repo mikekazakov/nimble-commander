@@ -139,7 +139,7 @@
         m_Custom.title = @"Custom";
         m_Custom.buttonType = NSButtonTypeMomentaryLight;
         m_Custom.bezelStyle = NSBezelStyleRecessed;
-        ((NSButtonCell *)m_Custom.cell).controlSize = NSControlSizeMini;
+        static_cast<NSButtonCell *>(m_Custom.cell).controlSize = NSControlSizeMini;
         m_Custom.target = self;
         m_Custom.action = @selector(onSetCustomFont:);
         [self addSubview:m_Custom];
@@ -149,7 +149,7 @@
         m_System.title = @"Standard";
         m_System.buttonType = NSButtonTypeMomentaryLight;
         m_System.bezelStyle = NSBezelStyleRecessed;
-        ((NSButtonCell *)m_System.cell).controlSize = NSControlSizeMini;
+        static_cast<NSButtonCell *>(m_System.cell).controlSize = NSControlSizeMini;
         m_System.target = self;
         m_System.action = @selector(onSetStandardFont:);
         [self addSubview:m_System];
@@ -251,7 +251,7 @@
         item.tag = s;
         item.target = self;
         item.action = @selector(standardFontClicked:);
-        if( (int)std::floor(m_Font.pointSize + 0.5) == s )
+        if( static_cast<int>(std::floor(m_Font.pointSize + 0.5)) == s )
             item.state = NSControlStateValueOn;
         [menu addItem:item];
     }
@@ -360,7 +360,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     viewForTableColumn:(NSTableColumn *)tableColumn
                    row:(NSInteger)row
 {
-    if( row >= (int)m_Rules.size() )
+    if( row >= static_cast<int>(m_Rules.size()) )
         return nil;
     auto &r = m_Rules[row];
     if( [tableColumn.identifier isEqualToString:@"name"] ) {
@@ -392,7 +392,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
             NSLocalizedStringFromTable(@"edit", @"Preferences", "Coloring rules edit button title");
         bt.buttonType = NSButtonTypeMomentaryLight;
         bt.bezelStyle = NSBezelStyleRecessed;
-        ((NSButtonCell *)bt.cell).controlSize = NSControlSizeMini;
+        static_cast<NSButtonCell *>(bt.cell).controlSize = NSControlSizeMini;
         bt.target = self;
         bt.action = @selector(onColoringFilterClicked:);
         return bt;
@@ -436,7 +436,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 {
     if( auto button = objc_cast<NSButton>(sender) )
         if( auto rv = objc_cast<NSTableRowView>(button.superview) ) {
-            long row_no = [((NSTableView *)rv.superview) rowForView:rv];
+            long row_no = [static_cast<NSTableView *>(rv.superview) rowForView:rv];
             auto sheet = [[PreferencesWindowPanelsTabColoringFilterSheet alloc]
                 initWithFilter:m_Rules.at(row_no).filter];
             [sheet beginSheetForWindow:self.window
@@ -486,13 +486,13 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         drag_to == drag_from + 1 ) // same index, below
         return false;
 
-    assert(drag_from < (int)m_Rules.size());
+    assert(drag_from < static_cast<int>(m_Rules.size()));
 
-    auto i = begin(m_Rules);
+    auto i = std::begin(m_Rules);
     if( drag_from < drag_to )
-        rotate(i + drag_from, i + drag_from + 1, i + drag_to);
+        std::rotate(i + drag_from, i + drag_from + 1, i + drag_to);
     else
-        rotate(i + drag_to, i + drag_from, i + drag_from + 1);
+        std::rotate(i + drag_to, i + drag_from, i + drag_from + 1);
     [self.table reloadData];
     [self commit];
     return true;
@@ -505,7 +505,8 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         m_Rules.emplace_back();
         [self.table reloadData];
         [self commit];
-    } else if( segment == 1 ) {
+    }
+    else if( segment == 1 ) {
         const auto row = self.table.selectedRow;
         if( row < 0 )
             return;
@@ -533,12 +534,12 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         m_ThemeAppearance = ThemeAppearance::Light;
         m_Button = [[NSPopUpButton alloc] initWithFrame:NSRect()];
         m_Button.translatesAutoresizingMaskIntoConstraints = false;
-        ((NSPopUpButtonCell *)m_Button.cell).controlSize = NSControlSizeSmall;
+        static_cast<NSPopUpButtonCell *>(m_Button.cell).controlSize = NSControlSizeSmall;
         [m_Button addItemWithTitle:@"Aqua"];
-        m_Button.lastItem.tag = (int)ThemeAppearance::Light;
+        m_Button.lastItem.tag = static_cast<int>(ThemeAppearance::Light);
         [m_Button addItemWithTitle:@"Dark"];
-        m_Button.lastItem.tag = (int)ThemeAppearance::Dark;
-        [m_Button selectItemWithTag:(int)m_ThemeAppearance];
+        m_Button.lastItem.tag = static_cast<int>(ThemeAppearance::Dark);
+        [m_Button selectItemWithTag:static_cast<int>(m_ThemeAppearance)];
         m_Button.target = self;
         m_Button.action = @selector(onSelectionChanged:);
         [self addSubview:m_Button];
@@ -561,7 +562,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 
 - (void)onSelectionChanged:(id) [[maybe_unused]] sender
 {
-    auto new_value = (ThemeAppearance)m_Button.selectedTag;
+    auto new_value = static_cast<ThemeAppearance>(m_Button.selectedTag);
     if( new_value != m_ThemeAppearance ) {
         m_ThemeAppearance = new_value;
         [self sendAction:self.action to:self.target];
@@ -572,7 +573,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 {
     if( m_ThemeAppearance != themeAppearance ) {
         m_ThemeAppearance = themeAppearance;
-        [m_Button selectItemWithTag:(int)m_ThemeAppearance];
+        [m_Button selectItemWithTag:static_cast<int>(m_ThemeAppearance)];
     }
 }
 

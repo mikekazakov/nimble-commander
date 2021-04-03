@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../../Core/FeedbackManager.h"
 #include "AskingForRatingOverlayView.h"
 #include <cmath>
@@ -13,31 +13,32 @@
 {
     while( self.trackingAreas.count )
         [self removeTrackingArea:self.trackingAreas[0]];
-    
-    NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:self.bounds
-                                                                options:NSTrackingMouseEnteredAndExited|NSTrackingMouseMoved|NSTrackingActiveInActiveApp
-                                                                  owner:self
-                                                               userInfo:nil
-                                    ];
+
+    NSTrackingArea *trackingArea =
+        [[NSTrackingArea alloc] initWithRect:self.bounds
+                                     options:NSTrackingMouseEnteredAndExited |
+                                             NSTrackingMouseMoved | NSTrackingActiveInActiveApp
+                                       owner:self
+                                    userInfo:nil];
     [self addTrackingArea:trackingArea];
 }
 
-- (void)mouseMoved:(NSEvent *)[[maybe_unused]]event
+- (void)mouseMoved:(NSEvent *) [[maybe_unused]] event
 {
     NSPoint mouseLocation = self.window.mouseLocationOutsideOfEventStream;
-    mouseLocation = [self convertPoint:mouseLocation fromView: nil];
-    
+    mouseLocation = [self convertPoint:mouseLocation fromView:nil];
+
     auto f = mouseLocation.x / self.bounds.size.width;
-    int n = (int)std::floor( f * self.maxValue );
-    self.integerValue = n+1;
+    int n = static_cast<int>(std::floor(f * self.maxValue));
+    self.integerValue = n + 1;
 }
 
-- (void)mouseEntered:(NSEvent *)[[maybe_unused]]theEvent
+- (void)mouseEntered:(NSEvent *) [[maybe_unused]] theEvent
 {
     self.highlighted = true;
 }
 
-- (void)mouseExited:(NSEvent *)[[maybe_unused]]theEvent
+- (void)mouseExited:(NSEvent *) [[maybe_unused]] theEvent
 {
     self.highlighted = false;
     self.integerValue = 5;
@@ -46,28 +47,27 @@
 @end
 
 @interface AskingForRatingOverlayView ()
-@property (nonatomic) bool mouseHover;
+@property(nonatomic) bool mouseHover;
 @end
 
-@implementation AskingForRatingOverlayView
-{
-    AskingForRatingOverlayLevelIndicator    *m_LevelIndicator;
-    NSTextField                             *m_Annotation;
-    NSButton                                *m_DiscardButton;
-    int                                     m_Rating;
+@implementation AskingForRatingOverlayView {
+    AskingForRatingOverlayLevelIndicator *m_LevelIndicator;
+    NSTextField *m_Annotation;
+    NSButton *m_DiscardButton;
+    int m_Rating;
     nc::FeedbackManager *m_FeedbackManager;
 }
 
-- (instancetype) initWithFrame:(NSRect)frameRect
-               feedbackManager:(nc::FeedbackManager&)_fm
+- (instancetype)initWithFrame:(NSRect)frameRect feedbackManager:(nc::FeedbackManager &)_fm
 {
     self = [super initWithFrame:frameRect];
-    if(self) {
+    if( self ) {
         m_FeedbackManager = &_fm;
         self.mouseHover = false;
         m_Rating = 0;
-        
-        m_LevelIndicator = [[AskingForRatingOverlayLevelIndicator alloc] initWithFrame:NSMakeRect(0, 0, 50, 20)];
+
+        m_LevelIndicator =
+            [[AskingForRatingOverlayLevelIndicator alloc] initWithFrame:NSMakeRect(0, 0, 50, 20)];
         m_LevelIndicator.translatesAutoresizingMaskIntoConstraints = false;
         m_LevelIndicator.minValue = 0;
         m_LevelIndicator.maxValue = 5;
@@ -93,7 +93,7 @@
                                                          attribute:NSLayoutAttributeCenterX
                                                         multiplier:1
                                                           constant:0]];
-        
+
         m_Annotation = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 50, 20)];
         m_Annotation.translatesAutoresizingMaskIntoConstraints = false;
         m_Annotation.bordered = false;
@@ -101,7 +101,8 @@
         m_Annotation.drawsBackground = false;
         m_Annotation.font = [NSFont labelFontOfSize:11];
         m_Annotation.textColor = NSColor.secondaryLabelColor;
-        m_Annotation.stringValue = NSLocalizedString(@"How are we doing?", "Asking user to provide a rating");
+        m_Annotation.stringValue =
+            NSLocalizedString(@"How are we doing?", "Asking user to provide a rating");
         [self addSubview:m_Annotation];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_Annotation
                                                          attribute:NSLayoutAttributeBottom
@@ -117,7 +118,7 @@
                                                          attribute:NSLayoutAttributeCenterX
                                                         multiplier:1
                                                           constant:0]];
-        
+
         m_DiscardButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
         m_DiscardButton.translatesAutoresizingMaskIntoConstraints = false;
         m_DiscardButton.image = [NSImage imageNamed:NSImageNameStopProgressFreestandingTemplate];
@@ -126,7 +127,8 @@
         m_DiscardButton.bordered = false;
         m_DiscardButton.target = self;
         m_DiscardButton.action = @selector(discardClicked:);
-        ((NSButtonCell*)m_DiscardButton.cell).imageScaling = NSImageScaleProportionallyUpOrDown;
+        static_cast<NSButtonCell *>(m_DiscardButton.cell).imageScaling =
+            NSImageScaleProportionallyUpOrDown;
         [self addSubview:m_DiscardButton];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_DiscardButton
                                                          attribute:NSLayoutAttributeCenterY
@@ -156,7 +158,7 @@
                                                          attribute:NSLayoutAttributeNotAnAttribute
                                                         multiplier:1
                                                           constant:14]];
-        
+
         [self layoutSubtreeIfNeeded];
     }
     return self;
@@ -165,54 +167,57 @@
 - (void)viewDidMoveToSuperview
 {
     if( self.superview )
-        [m_DiscardButton bind:@"hidden" toObject:self withKeyPath:@"mouseHover" options:@{NSValueTransformerNameBindingOption:NSNegateBooleanTransformerName}];
+        [m_DiscardButton
+                   bind:@"hidden"
+               toObject:self
+            withKeyPath:@"mouseHover"
+                options:@{NSValueTransformerNameBindingOption: NSNegateBooleanTransformerName}];
     else
         [m_DiscardButton unbind:@"hidden"];
 }
 
-- (void)ratingClicked:(id)[[maybe_unused]]sender
+- (void)ratingClicked:(id) [[maybe_unused]] sender
 {
-    m_Rating = (int)m_LevelIndicator.integerValue;
+    m_Rating = static_cast<int>(m_LevelIndicator.integerValue);
     [self commit];
 }
 
-- (void)discardClicked:(id)[[maybe_unused]]sender
+- (void)discardClicked:(id) [[maybe_unused]] sender
 {
     m_Rating = 0;
     [self commit];
 }
 
-- (void) commit
+- (void)commit
 {
     AskingForRatingOverlayView *v = self;
     [v removeFromSuperview];
- 
+
     const auto result = m_Rating;
-    dispatch_to_main_queue([=]{
-        m_FeedbackManager->CommitRatingOverlayResult(result);
-    });
-    
-   v = nil; // at this moment ARC should kill us
+    dispatch_to_main_queue([=] { m_FeedbackManager->CommitRatingOverlayResult(result); });
+
+    v = nil; // at this moment ARC should kill us
 }
 
 - (void)updateTrackingAreas
 {
     while( self.trackingAreas.count )
         [self removeTrackingArea:self.trackingAreas[0]];
-    
-    NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:self.bounds
-                                                                options:NSTrackingMouseEnteredAndExited|NSTrackingActiveInActiveApp
-                                                                  owner:self
-                                                               userInfo:nil];
+
+    NSTrackingArea *trackingArea = [[NSTrackingArea alloc]
+        initWithRect:self.bounds
+             options:NSTrackingMouseEnteredAndExited | NSTrackingActiveInActiveApp
+               owner:self
+            userInfo:nil];
     [self addTrackingArea:trackingArea];
 }
 
-- (void)mouseEntered:(NSEvent *)[[maybe_unused]]theEvent
+- (void)mouseEntered:(NSEvent *) [[maybe_unused]] theEvent
 {
     self.mouseHover = true;
 }
 
-- (void)mouseExited:(NSEvent *)[[maybe_unused]]theEvent
+- (void)mouseExited:(NSEvent *) [[maybe_unused]] theEvent
 {
     self.mouseHover = false;
 }

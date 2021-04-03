@@ -86,7 +86,7 @@ OpenFilesWithDefaultHandler::OpenFilesWithDefaultHandler(FileOpener &_file_opene
     
 bool OpenFilesWithDefaultHandler::Predicate( PanelController *_target ) const
 {
-    return (bool)_target.view.item;
+    return static_cast<bool>(_target.view.item);
 }
 
 bool OpenFilesWithDefaultHandler::ValidateMenuItem(PanelController *_target,

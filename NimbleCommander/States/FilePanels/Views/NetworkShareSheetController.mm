@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkShareSheetController.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
@@ -6,37 +6,36 @@
 
 @interface NetworkShareSheetController ()
 
-@property (nonatomic) NSString *title;
-@property (nonatomic) NSString *server;
-@property (nonatomic) NSString *share;
-@property (nonatomic) NSString *username;
-@property (nonatomic) NSString *passwordEntered;
-@property (nonatomic) NSString *mountpath;
-@property (nonatomic) IBOutlet NSPopUpButton *protocol;
-@property (nonatomic) IBOutlet NSButton *connectButton;
+@property(nonatomic) NSString *title;
+@property(nonatomic) NSString *server;
+@property(nonatomic) NSString *share;
+@property(nonatomic) NSString *username;
+@property(nonatomic) NSString *passwordEntered;
+@property(nonatomic) NSString *mountpath;
+@property(nonatomic) IBOutlet NSPopUpButton *protocol;
+@property(nonatomic) IBOutlet NSButton *connectButton;
 
-@property (nonatomic) bool valid;
-@property (nonatomic) bool nfsSelected;
+@property(nonatomic) bool valid;
+@property(nonatomic) bool nfsSelected;
 @end
 
-@implementation NetworkShareSheetController
-{
+@implementation NetworkShareSheetController {
     std::optional<NetworkConnectionsManager::Connection> m_Original;
-    NetworkConnectionsManager::LANShare m_Connection;    
+    NetworkConnectionsManager::LANShare m_Connection;
 }
 
-- (instancetype) init
+- (instancetype)init
 {
-    if(self = [super init]) {
+    if( self = [super init] ) {
         self.valid = true;
         self.nfsSelected = false;
     }
     return self;
 }
 
-- (instancetype) initWithConnection:(NetworkConnectionsManager::Connection)_connection
+- (instancetype)initWithConnection:(NetworkConnectionsManager::Connection)_connection
 {
-    if(self = [self init]) {
+    if( self = [self init] ) {
         m_Original = _connection;
     }
     return self;
@@ -45,14 +44,14 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    
+
     nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
-    
+
     GA().PostScreenView("LANShare Connection");
-    
+
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;
-    
+
     if( m_Original ) {
         auto &c = m_Original->Get<NetworkConnectionsManager::LANShare>();
         self.title = [NSString stringWithUTF8StdString:c.title];
@@ -60,39 +59,39 @@
         self.username = [NSString stringWithUTF8StdString:c.user];
         self.share = [NSString stringWithUTF8StdString:c.share];
         self.mountpath = [NSString stringWithUTF8StdString:c.mountpoint];
-        [self.protocol selectItemWithTag:(int)c.proto];
+        [self.protocol selectItemWithTag:static_cast<int>(c.proto)];
     }
-    
+
     [self validate];
 }
 
-- (IBAction)onClose:(id)[[maybe_unused]]_sender
+- (IBAction)onClose:(id) [[maybe_unused]] _sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (IBAction)onConnect:(id)[[maybe_unused]]_sender
+- (IBAction)onConnect:(id) [[maybe_unused]] _sender
 {
-    if( m_Original)
+    if( m_Original )
         m_Connection.uuid = m_Original->Uuid();
     else
         m_Connection.uuid = NetworkConnectionsManager::MakeUUID();
-    
-    auto extract_string = [](NSString *s){ return s.UTF8String ? s.UTF8String : ""; };
-    
+
+    auto extract_string = [](NSString *s) { return s.UTF8String ? s.UTF8String : ""; };
+
     m_Connection.title = extract_string(self.title);
     m_Connection.share = extract_string(self.share);
     m_Connection.host = extract_string(self.server);
     m_Connection.user = extract_string(self.username);
     m_Connection.mountpoint = extract_string(self.mountpath);
     m_Connection.proto = NetworkConnectionsManager::LANShare::Protocol(self.protocol.selectedTag);
-    
+
     [self endSheet:NSModalResponseOK];
 }
 
-- (NetworkConnectionsManager::Connection) connection
+- (NetworkConnectionsManager::Connection)connection
 {
-    return NetworkConnectionsManager::Connection( m_Connection );
+    return NetworkConnectionsManager::Connection(m_Connection);
 }
 
 - (void)setConnection:(NetworkConnectionsManager::Connection)connection
@@ -100,7 +99,7 @@
     m_Original = connection;
 }
 
-- (NSString*) providedPassword
+- (NSString *)providedPassword
 {
     return self.passwordEntered ? self.passwordEntered : @"";
 }
@@ -115,7 +114,7 @@
     self.passwordEntered = [NSString stringWithUTF8StdString:password];
 }
 
-- (IBAction)onChooseMountPath:(id)[[maybe_unused]]_sender
+- (IBAction)onChooseMountPath:(id) [[maybe_unused]] _sender
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.resolvesAliases = false;
@@ -131,46 +130,44 @@
     }
 }
 
-- (IBAction)onServerChanged:(id)[[maybe_unused]]_sender
+- (IBAction)onServerChanged:(id) [[maybe_unused]] _sender
 {
     [self validate];
 }
 
-- (IBAction)onShareChanged:(id)[[maybe_unused]]_sender
+- (IBAction)onShareChanged:(id) [[maybe_unused]] _sender
 {
     [self validate];
 }
 
-- (IBAction)onMountPathChanged:(id)[[maybe_unused]]_sender
+- (IBAction)onMountPathChanged:(id) [[maybe_unused]] _sender
 {
     [self validate];
 }
 
-- (void)controlTextDidChange:(NSNotification *)[[maybe_unused]]_notification
+- (void)controlTextDidChange:(NSNotification *) [[maybe_unused]] _notification
 {
     [self validate];
 }
 
-- (IBAction)onProtocolChanged:(id)[[maybe_unused]]_sender
+- (IBAction)onProtocolChanged:(id) [[maybe_unused]] _sender
 {
     [self validate];
 }
 
-- (void) validate
+- (void)validate
 {
     self.valid = [self isValid];
     self.nfsSelected = self.protocol.selectedTag ==
-        (int)NetworkConnectionsManager::LANShare::Protocol::NFS;
+                       static_cast<int>(NetworkConnectionsManager::LANShare::Protocol::NFS);
 }
 
-- (bool) isValid
+- (bool)isValid
 {
-    if( self.server == nil ||
-        self.server.length == 0 ||
-       [self.server containsString:@"/"] ||
-       [self.server containsString:@":"] )
+    if( self.server == nil || self.server.length == 0 || [self.server containsString:@"/"] ||
+        [self.server containsString:@":"] )
         return false;
-    
+
     if( self.share == nil || self.share.length == 0 )
         return false;
 

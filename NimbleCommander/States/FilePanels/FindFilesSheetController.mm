@@ -26,35 +26,34 @@ static const int g_MaximumSearchResults = 262144;
 using namespace nc::panel;
 using nc::vfs::SearchForFiles;
 
-static std::string ensure_tr_slash( std::string _str )
+static std::string ensure_tr_slash(std::string _str)
 {
-    if(_str.empty() || _str.back() != '/')
+    if( _str.empty() || _str.back() != '/' )
         _str += '/';
     return _str;
 }
 
-static std::string ensure_no_tr_slash( std::string _str )
+static std::string ensure_no_tr_slash(std::string _str)
 {
     if( _str.empty() || _str == "/" )
         return _str;
-    
+
     if( _str.back() == '/' )
         _str.pop_back();
-    
+
     return _str;
 }
 
-static std::string to_relative_path(const VFSHostPtr &_in_host,
-                                    std::string _path,
-                                    const std::string& _base_path )
+static std::string
+to_relative_path(const VFSHostPtr &_in_host, std::string _path, const std::string &_base_path)
 {
     VFSHostPtr a = _in_host;
     while( a ) {
         _path.insert(0, a->JunctionPath());
         a = a->Parent();
     }
-    
-    if( _base_path.length() > 1 && _path.find(_base_path) == 0)
+
+    if( _base_path.length() > 1 && _path.find(_base_path) == 0 )
         _path.replace(0, _base_path.length(), "./");
     return _path;
 }
@@ -62,51 +61,47 @@ static std::string to_relative_path(const VFSHostPtr &_in_host,
 class FindFilesSheetComboHistory : public std::vector<std::string>
 {
 public:
-    FindFilesSheetComboHistory(int _max, const char *_config_path):
-        m_Max(_max),
-        m_Path(_config_path)
+    FindFilesSheetComboHistory(int _max, const char *_config_path)
+        : m_Max(_max), m_Path(_config_path)
     {
         auto arr = StateConfig().Get(m_Path);
         if( arr.GetType() == rapidjson::kArrayType )
             for( auto i = arr.Begin(), e = arr.End(); i != e; ++i )
                 if( i->GetType() == rapidjson::kStringType )
-                    emplace_back( i->GetString() );
+                    emplace_back(i->GetString());
     }
-    
+
     ~FindFilesSheetComboHistory()
     {
         nc::config::Value arr(rapidjson::kArrayType);
-        for( auto &s: *this )
+        for( auto &s : *this )
             arr.PushBack(nc::config::Value(s.c_str(), nc::config::g_CrtAllocator),
-                         nc::config::g_CrtAllocator );
+                         nc::config::g_CrtAllocator);
         StateConfig().Set(m_Path, arr);
     }
-    
-    void insert_unique( const std::string &_value )
+
+    void insert_unique(const std::string &_value)
     {
-        erase(std::remove_if(begin(),
-                             end(),
-                             [&](auto &_s) { return _s == _value; }),
-              end() );
-        insert( begin(), _value );
-        while( size() > (size_t)m_Max ) pop_back();
+        erase(std::remove_if(begin(), end(), [&](auto &_s) { return _s == _value; }), end());
+        insert(begin(), _value);
+        while( size() > static_cast<size_t>(m_Max) )
+            pop_back();
     }
-    
+
 private:
-    const int   m_Max;
+    const int m_Max;
     const char *m_Path;
 };
 
 @interface FindFilesSheetFoundItem : NSObject
-@property (nonatomic, readonly) const FindFilesSheetControllerFoundItem &data;
-@property (nonatomic, readonly) NSString *location;
-@property (nonatomic, readonly) NSString *filename;
-@property (nonatomic, readonly) uint64_t size;
-@property (nonatomic, readonly) uint64_t mdate;
+@property(nonatomic, readonly) const FindFilesSheetControllerFoundItem &data;
+@property(nonatomic, readonly) NSString *location;
+@property(nonatomic, readonly) NSString *filename;
+@property(nonatomic, readonly) uint64_t size;
+@property(nonatomic, readonly) uint64_t mdate;
 @end
 
-@implementation FindFilesSheetFoundItem
-{
+@implementation FindFilesSheetFoundItem {
     FindFilesSheetControllerFoundItem m_Data;
     NSString *m_Location;
     NSString *m_Filename;
@@ -115,10 +110,10 @@ private:
 @synthesize location = m_Location;
 @synthesize filename = m_Filename;
 
-- (id) initWithFoundItem:(FindFilesSheetControllerFoundItem&&)_item
+- (id)initWithFoundItem:(FindFilesSheetControllerFoundItem &&)_item
 {
     self = [super init];
-    if(self) {
+    if( self ) {
         m_Data = std::move(_item);
         m_Location = [NSString stringWithUTF8StdString:m_Data.rel_path];
         m_Filename = [NSString stringWithUTF8StdString:m_Data.filename];
@@ -126,15 +121,18 @@ private:
     return self;
 }
 
-- (uint64_t) size {
+- (uint64_t)size
+{
     return m_Data.st.size;
 }
 
-- (uint64_t) mdate {
+- (uint64_t)mdate
+{
     return m_Data.st.mtime.tv_sec;
 }
 
-- (const FindFilesSheetControllerFoundItem&) data {
+- (const FindFilesSheetControllerFoundItem &)data
+{
     return m_Data;
 }
 
@@ -145,7 +143,7 @@ private:
 @implementation FindFilesSheetSizeToStringTransformer
 + (Class)transformedValueClass
 {
-	return NSString.class;
+    return NSString.class;
 }
 - (id)transformedValue:(id)value
 {
@@ -161,86 +159,84 @@ private:
 @implementation FindFilesSheetTimeToStringTransformer
 + (Class)transformedValueClass
 {
-	return NSString.class;
+    return NSString.class;
 }
 - (id)transformedValue:(id)value
 {
     static NSDateFormatter *formatter;
     static std::once_flag once;
-    std::call_once(once, []{
+    std::call_once(once, [] {
         formatter = [NSDateFormatter new];
         formatter.locale = NSLocale.currentLocale;
         formatter.dateStyle = NSDateFormatterShortStyle;
     });
-    
-    if(value == nil)
+
+    if( value == nil )
         return nil;
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:[value unsignedLongLongValue]];
     return [formatter stringFromDate:date];
 }
 @end
 
+@interface FindFilesSheetController ()
 
-@interface FindFilesSheetController()
+@property(nonatomic) bool didAnySearchStarted;
+@property(nonatomic) bool searchingNow;
 
-@property (nonatomic) bool didAnySearchStarted;
-@property (nonatomic) bool searchingNow;
-
-@property (nonatomic) IBOutlet NSButton            *CloseButton;
-@property (nonatomic) IBOutlet NSButton            *SearchButton;
-@property (nonatomic) IBOutlet NSButton            *GoToButton;
-@property (nonatomic) IBOutlet NSButton            *ViewButton;
-@property (nonatomic) IBOutlet NSButton            *PanelButton;
-@property (nonatomic) IBOutlet NSComboBox          *MaskComboBox;
-@property (nonatomic)          NSString            *MaskComboBoxValue;
-@property (nonatomic) IBOutlet NSComboBox          *TextComboBox;
-@property (nonatomic)          NSString            *TextComboBoxValue;
-@property (nonatomic) IBOutlet NSTextField         *LookingIn;
-@property (nonatomic) IBOutlet NSTableView         *TableView;
-@property (nonatomic) IBOutlet NSButton            *CaseSensitiveButton;
-@property (nonatomic) IBOutlet NSButton            *WholePhraseButton;
-@property (nonatomic) IBOutlet NSButton            *NotContainingButton;
-@property (nonatomic) IBOutlet NSArrayController   *ArrayController;
-@property (nonatomic) IBOutlet NSPopUpButton       *SizeRelationPopUp;
-@property (nonatomic) IBOutlet NSTextField         *SizeTextField;
-@property (nonatomic)          NSString            *SizeTextFieldValue;
-@property (nonatomic) IBOutlet NSPopUpButton       *SizeMetricPopUp;
-@property (nonatomic) IBOutlet NSButton            *SearchInSubDirsButton;
-@property (nonatomic) IBOutlet NSButton            *SearchInArchivesButton;
-@property (nonatomic) IBOutlet NSPopUpButton       *EncodingsPopUp;
-@property (nonatomic) IBOutlet NSPopUpButton       *searchForPopup;
-@property (nonatomic) NSMutableArray            *FoundItems;
-@property (nonatomic) FindFilesSheetFoundItem   *focusedItem; // may be nullptr
-@property (nonatomic) bool                       focusedItemIsReg;
+@property(nonatomic) IBOutlet NSButton *CloseButton;
+@property(nonatomic) IBOutlet NSButton *SearchButton;
+@property(nonatomic) IBOutlet NSButton *GoToButton;
+@property(nonatomic) IBOutlet NSButton *ViewButton;
+@property(nonatomic) IBOutlet NSButton *PanelButton;
+@property(nonatomic) IBOutlet NSComboBox *MaskComboBox;
+@property(nonatomic) NSString *MaskComboBoxValue;
+@property(nonatomic) IBOutlet NSComboBox *TextComboBox;
+@property(nonatomic) NSString *TextComboBoxValue;
+@property(nonatomic) IBOutlet NSTextField *LookingIn;
+@property(nonatomic) IBOutlet NSTableView *TableView;
+@property(nonatomic) IBOutlet NSButton *CaseSensitiveButton;
+@property(nonatomic) IBOutlet NSButton *WholePhraseButton;
+@property(nonatomic) IBOutlet NSButton *NotContainingButton;
+@property(nonatomic) IBOutlet NSArrayController *ArrayController;
+@property(nonatomic) IBOutlet NSPopUpButton *SizeRelationPopUp;
+@property(nonatomic) IBOutlet NSTextField *SizeTextField;
+@property(nonatomic) NSString *SizeTextFieldValue;
+@property(nonatomic) IBOutlet NSPopUpButton *SizeMetricPopUp;
+@property(nonatomic) IBOutlet NSButton *SearchInSubDirsButton;
+@property(nonatomic) IBOutlet NSButton *SearchInArchivesButton;
+@property(nonatomic) IBOutlet NSPopUpButton *EncodingsPopUp;
+@property(nonatomic) IBOutlet NSPopUpButton *searchForPopup;
+@property(nonatomic) NSMutableArray *FoundItems;
+@property(nonatomic) FindFilesSheetFoundItem *focusedItem; // may be nullptr
+@property(nonatomic) bool focusedItemIsReg;
 
 @end
 
-@implementation FindFilesSheetController
-{
-    std::shared_ptr<VFSHost>    m_Host;
-    std::string                 m_Path;
+@implementation FindFilesSheetController {
+    std::shared_ptr<VFSHost> m_Host;
+    std::string m_Path;
     std::unique_ptr<SearchForFiles> m_FileSearch;
-    NSDateFormatter            *m_DateFormatter;
-    
-    bool                        m_UIChanged;
-    NSMutableArray             *m_FoundItems; // is controlled by ArrayController
+    NSDateFormatter *m_DateFormatter;
+
+    bool m_UIChanged;
+    NSMutableArray *m_FoundItems; // is controlled by ArrayController
     std::unique_ptr<FindFilesSheetComboHistory> m_MaskHistory;
     std::unique_ptr<FindFilesSheetComboHistory> m_TextHistory;
-    
-    NSMutableArray             *m_FoundItemsBatch;
-    NSTimer                    *m_BatchDrainTimer;
-    SerialQueue                 m_BatchQueue;
-    DispatchGroup               m_StatGroup; // for native VFS
-    SerialQueue                 m_StatQueue; // for custom VFS
 
-    std::string                 m_LookingInPath;
-    nc::spinlock                m_LookingInPathGuard;
-    NSTimer                    *m_LookingInPathUpdateTimer;
-    
-    FindFilesSheetFoundItem    *m_DoubleClickedItem;
+    NSMutableArray *m_FoundItemsBatch;
+    NSTimer *m_BatchDrainTimer;
+    SerialQueue m_BatchQueue;
+    DispatchGroup m_StatGroup; // for native VFS
+    SerialQueue m_StatQueue;   // for custom VFS
+
+    std::string m_LookingInPath;
+    nc::spinlock m_LookingInPathGuard;
+    NSTimer *m_LookingInPathUpdateTimer;
+
+    FindFilesSheetFoundItem *m_DoubleClickedItem;
     std::function<void(const std::vector<VFSPath> &_filepaths)> m_OnPanelize;
-    std::function<void(const nc::panel::FindFilesSheetViewRequest&)> m_OnView;
-    
+    std::function<void(const nc::panel::FindFilesSheetViewRequest &)> m_OnView;
+
     nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
@@ -253,7 +249,7 @@ private:
 - (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super init];
-    if(self){
+    if( self ) {
         m_ActivationManager = &_am;
         m_FileSearch = std::make_unique<SearchForFiles>();
         m_FoundItems = [[NSMutableArray alloc] initWithCapacity:4096];
@@ -261,7 +257,7 @@ private:
 
         m_MaskHistory = std::make_unique<FindFilesSheetComboHistory>(16, g_StateMaskHistory);
         m_TextHistory = std::make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory);
-        
+
         self.focusedItem = nil;
         self.focusedItemIsReg = false;
         self.didAnySearchStarted = false;
@@ -275,37 +271,38 @@ private:
 {
     [super windowDidLoad];
     nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
-    
+
     self.TableView.columnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
     [self.TableView sizeToFit];
-    
+
     self.ArrayController.sortDescriptors = @[
-                                             [NSSortDescriptor sortDescriptorWithKey:@"location" ascending:YES],
-                                             [NSSortDescriptor sortDescriptorWithKey:@"filename" ascending:YES],
-                                             [NSSortDescriptor sortDescriptorWithKey:@"size" ascending:YES],
-                                             [NSSortDescriptor sortDescriptorWithKey:@"mdate" ascending:YES]
-                                             ];
-    
-    for(const auto &i: encodings::LiteralEncodingsList()) {
+        [NSSortDescriptor sortDescriptorWithKey:@"location" ascending:YES],
+        [NSSortDescriptor sortDescriptorWithKey:@"filename" ascending:YES],
+        [NSSortDescriptor sortDescriptorWithKey:@"size" ascending:YES],
+        [NSSortDescriptor sortDescriptorWithKey:@"mdate" ascending:YES]
+    ];
+
+    for( const auto &i : encodings::LiteralEncodingsList() ) {
         NSMenuItem *item = [NSMenuItem new];
-        item.title = (__bridge NSString*)i.second;
+        item.title = (__bridge NSString *)i.second;
         item.tag = i.first;
         [self.EncodingsPopUp.menu addItem:item];
     }
     [self.EncodingsPopUp selectItemWithTag:encodings::ENCODING_UTF8];
-    
-    self.MaskComboBox.stringValue = m_MaskHistory->empty() ? @"*" : [NSString stringWithUTF8StdString:m_MaskHistory->front()];
+
+    self.MaskComboBox.stringValue =
+        m_MaskHistory->empty() ? @"*" : [NSString stringWithUTF8StdString:m_MaskHistory->front()];
     self.TextComboBox.stringValue = @"";
-    
+
     // wire up hotkeys
-    SheetWithHotkeys *sheet = (SheetWithHotkeys *)self.window;
+    SheetWithHotkeys *sheet = static_cast<SheetWithHotkeys *>(self.window);
     sheet.onCtrlT = [sheet makeFocusHotkey:self.TextComboBox];
     sheet.onCtrlM = [sheet makeFocusHotkey:self.MaskComboBox];
     sheet.onCtrlS = [sheet makeFocusHotkey:self.SizeTextField];
     sheet.onCtrlP = [sheet makeClickHotkey:self.PanelButton];
     sheet.onCtrlG = [sheet makeClickHotkey:self.GoToButton];
     sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
-    
+
     if( !m_ActivationManager->HasTemporaryPanels() ) {
         [self.PanelButton unbind:@"enabled2"];
         [self.PanelButton unbind:@"enabled"];
@@ -317,28 +314,26 @@ private:
         self.ViewButton.enabled = false;
     }
     if( !m_ActivationManager->HasArchivesBrowsing() ) {
-        [self.SearchInArchivesButton  unbind:@"enabled"];
+        [self.SearchInArchivesButton unbind:@"enabled"];
         self.SearchInArchivesButton.enabled = false;
     }
-    
+
     GA().PostScreenView("Find Files");
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (BOOL) validateMenuItem:(NSMenuItem *)item
+- (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     try {
         if( item.action == @selector(OnFileInternalBigViewCommand:) )
             return [self Predicate_OnFileInternalBigViewCommand];
-    }
-    catch(std::exception &e) {
+    } catch( std::exception &e ) {
         std::cout << "Exception caught: " << e.what() << std::endl;
-    }
-    catch(...) {
+    } catch( ... ) {
         std::cout << "Caught an unhandled exception!" << std::endl;
     }
     return true;
@@ -346,31 +341,32 @@ private:
 
 - (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox
 {
-    if(aComboBox == self.MaskComboBox)
+    if( aComboBox == self.MaskComboBox )
         return m_MaskHistory->size();
-    if(aComboBox == self.TextComboBox)
+    if( aComboBox == self.TextComboBox )
         return m_TextHistory->size();
     return 0;
 }
 
 - (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)index
 {
-    if(aComboBox == self.MaskComboBox)
+    if( aComboBox == self.MaskComboBox )
         return [NSString stringWithUTF8StdString:m_MaskHistory->at(index)];
-    if(aComboBox == self.TextComboBox)
+    if( aComboBox == self.TextComboBox )
         return [NSString stringWithUTF8StdString:m_TextHistory->at(index)];
     return 0;
 }
 
-- (IBAction)OnClose:(id)[[maybe_unused]]_sender
+- (IBAction)OnClose:(id) [[maybe_unused]] _sender
 {
     if( NSEvent *ev = NSApp.currentEvent )
         if( ev.type == NSEventTypeKeyDown && m_FileSearch->IsRunning() ) {
-            // Close was triggered by Esc hotkey. just stop current search and don't close the dialog
+            // Close was triggered by Esc hotkey. just stop current search and don't close the
+            // dialog
             m_FileSearch->Stop();
             return;
         }
- 
+
     m_FileSearch->Stop();
     m_FileSearch->Wait();
     m_OnPanelize = nullptr;
@@ -386,61 +382,74 @@ private:
     [self UpdateByTimer:m_BatchDrainTimer];
     m_BatchQueue.Wait();
     m_StatQueue.Wait();
-    
-    dispatch_to_main_queue([=]{
+
+    dispatch_to_main_queue([=] {
         [m_BatchDrainTimer invalidate];
         m_BatchDrainTimer = nil;
         self.searchingNow = false;
-  
+
         [m_LookingInPathUpdateTimer invalidate];
         m_LookingInPathUpdateTimer = nil;
         self.LookingIn.stringValue = @"";
-        
+
         if( m_FoundItems.count > 0 ) {
             [self.window makeFirstResponder:self.TableView];
-            [self.TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:false];
+            [self.TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0]
+                        byExtendingSelection:false];
         }
-        
+
         [self setupReturnKey];
     });
 }
 
-- (int) searchOptionsFromUI
+- (int)searchOptionsFromUI
 {
     int search_options = 0;
     if( self.SearchInSubDirsButton.intValue )
         search_options |= SearchForFiles::Options::GoIntoSubDirs;
     switch( self.searchForPopup.selectedTag ) {
-        case 1:     search_options |= SearchForFiles::Options::SearchForFiles;  break;
-        case 2:     search_options |= SearchForFiles::Options::SearchForDirs;   break;
-        default:    search_options |= SearchForFiles::Options::SearchForDirs |
-                                      SearchForFiles::Options::SearchForFiles;
+        case 1:
+            search_options |= SearchForFiles::Options::SearchForFiles;
+            break;
+        case 2:
+            search_options |= SearchForFiles::Options::SearchForDirs;
+            break;
+        default:
+            search_options |=
+                SearchForFiles::Options::SearchForDirs | SearchForFiles::Options::SearchForFiles;
     }
     if( self.SearchInArchivesButton.intValue )
         search_options |= SearchForFiles::Options::LookInArchives;
     return search_options;
 }
 
-- (SearchForFiles::FilterSize) searchFilterSizeFromUI
+- (SearchForFiles::FilterSize)searchFilterSizeFromUI
 {
     uint64_t value = self.SizeTextFieldValue.integerValue;
     switch( self.SizeMetricPopUp.selectedTag ) {
-        case 1: value *= 1024; break;
-        case 2: value *= 1024*1024; break;
-        case 3: value *= 1024*1024*1024; break;
-        default: break;
+        case 1:
+            value *= 1024;
+            break;
+        case 2:
+            value *= 1024 * 1024;
+            break;
+        case 3:
+            value *= 1024 * 1024 * 1024;
+            break;
+        default:
+            break;
     }
     SearchForFiles::FilterSize filter_size;
-    if(self.SizeRelationPopUp.selectedTag == 0) // "≥"
+    if( self.SizeRelationPopUp.selectedTag == 0 ) // "≥"
         filter_size.min = value;
-    else if(self.SizeRelationPopUp.selectedTag == 2) // "≤"
+    else if( self.SizeRelationPopUp.selectedTag == 2 ) // "≤"
         filter_size.max = value;
-    else if(self.SizeRelationPopUp.selectedTag == 1) // "="
+    else if( self.SizeRelationPopUp.selectedTag == 1 ) // "="
         filter_size.min = filter_size.max = value;
     return filter_size;
 }
 
-- (IBAction)OnSearch:(id)[[maybe_unused]]_sender
+- (IBAction)OnSearch:(id) [[maybe_unused]] _sender
 {
     if( m_FileSearch->IsRunning() ) {
         m_FileSearch->Stop();
@@ -448,27 +457,27 @@ private:
     }
 
     NSRange range_all = NSMakeRange(0, [self.ArrayController.arrangedObjects count]);
-    [self.ArrayController removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range_all]];
-    
+    [self.ArrayController
+        removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range_all]];
+
     m_FileSearch->ClearFilters();
 
     const auto mask = self.MaskComboBoxValue;
-    if(mask != nil &&
-       [mask isEqualToString:@""] == false &&
-       [mask isEqualToString:@"*"] == false) {
+    if( mask != nil && [mask isEqualToString:@""] == false &&
+        [mask isEqualToString:@"*"] == false ) {
         SearchForFiles::FilterName filter_name;
         filter_name.mask = mask.UTF8String;
         m_FileSearch->SetFilterName(filter_name);
-        m_MaskHistory->insert_unique( mask.UTF8String );
+        m_MaskHistory->insert_unique(mask.UTF8String);
     }
     else
         m_MaskHistory->insert_unique("*");
-    
+
     const auto text_query = self.TextComboBoxValue;
     if( text_query.length ) {
         SearchForFiles::FilterContent filter_content;
         filter_content.text = text_query.UTF8String;
-        filter_content.encoding = (int)self.EncodingsPopUp.selectedTag;
+        filter_content.encoding = static_cast<int>(self.EncodingsPopUp.selectedTag);
         filter_content.case_sensitive = self.CaseSensitiveButton.intValue;
         filter_content.whole_phrase = self.WholePhraseButton.intValue;
         filter_content.not_containing = self.NotContainingButton.intValue;

@@ -44,7 +44,7 @@ const ExternalToolsParameters::Step &ExternalToolsParameters::StepNo(unsigned _n
 
 unsigned ExternalToolsParameters::StepsAmount() const
 {
-    return (unsigned)m_Steps.size();
+    return static_cast<unsigned>(m_Steps.size());
 }
 
 const ExternalToolsParameters::UserDefined &
@@ -367,7 +367,7 @@ static nc::config::Value SaveTool(const ExternalTool &_et)
                 MakeStandaloneString(_et.m_Shorcut.ToPersString()),
                 g_CrtAllocator);
     v.AddMember(MakeStandaloneString(g_StartupKey),
-                nc::config::Value((int)_et.m_StartupMode),
+                nc::config::Value(static_cast<int>(_et.m_StartupMode)),
                 g_CrtAllocator);
 
     return v;
@@ -395,7 +395,7 @@ static std::optional<ExternalTool> LoadTool(const nc::config::Value &_from)
         et.m_Shorcut = nc::utility::ActionShortcut(_from[g_ShortcutKey].GetString());
 
     if( _from.HasMember(g_StartupKey) && _from[g_StartupKey].IsInt() )
-        et.m_StartupMode = (ExternalTool::StartupMode)_from[g_StartupKey].GetInt();
+        et.m_StartupMode = static_cast<ExternalTool::StartupMode>(_from[g_StartupKey].GetInt());
 
     return et;
 }

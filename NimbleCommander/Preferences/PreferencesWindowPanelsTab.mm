@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTab.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
@@ -13,7 +13,7 @@ using namespace nc::panel;
 
 static const auto g_LayoutColumnsDDType =
     @"com.magnumbytes.nc.pref.PreferencesWindowPanelsTabPrivateTableViewDataColumns";
-    
+
 @interface PreferencesToNumberValueTransformer : NSValueTransformer
 @end
 
@@ -137,11 +137,11 @@ static const auto g_LayoutColumnsDDType =
 
     uint64_t magic_size = 2597065;
     for( NSMenuItem *it in self.fileSizeFormatCombo.itemArray )
-        it.title =
-            ByteCountFormatter::Instance().ToNSString(magic_size, (ByteCountFormatter::Type)it.tag);
+        it.title = ByteCountFormatter::Instance().ToNSString(
+            magic_size, static_cast<ByteCountFormatter::Type>(it.tag));
     for( NSMenuItem *it in self.selectionSizeFormatCombo.itemArray )
-        it.title =
-            ByteCountFormatter::Instance().ToNSString(magic_size, (ByteCountFormatter::Type)it.tag);
+        it.title = ByteCountFormatter::Instance().ToNSString(
+            magic_size, static_cast<ByteCountFormatter::Type>(it.tag));
 
     [self.view layoutSubtreeIfNeeded];
 }
@@ -171,20 +171,20 @@ static const auto g_LayoutColumnsDDType =
 static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
 {
     switch( _c ) {
-    case PanelListViewColumns::Filename:
-        return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_NAME", "");
-    case PanelListViewColumns::Size:
-        return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_SIZE", "");
-    case PanelListViewColumns::DateCreated:
-        return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED", "");
-    case PanelListViewColumns::DateAdded:
-        return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED", "");
-    case PanelListViewColumns::DateModified:
-        return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED", "");
-    case PanelListViewColumns::DateAccessed:
-        return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ACCESSED", "");
-    default:
-        return @"";
+        case PanelListViewColumns::Filename:
+            return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_NAME", "");
+        case PanelListViewColumns::Size:
+            return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_SIZE", "");
+        case PanelListViewColumns::DateCreated:
+            return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED", "");
+        case PanelListViewColumns::DateAdded:
+            return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED", "");
+        case PanelListViewColumns::DateModified:
+            return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED", "");
+        case PanelListViewColumns::DateAccessed:
+            return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ACCESSED", "");
+        default:
+            return @"";
     }
 }
 
@@ -194,7 +194,7 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
 {
     if( tableView == self.layoutsTable ) {
         if( [tableColumn.identifier isEqualToString:@"name"] ) {
-            if( auto l = m_LayoutsStorage->GetLayout((int)row) ) {
+            if( auto l = m_LayoutsStorage->GetLayout(static_cast<int>(row)) ) {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
                 tf.stringValue = l->name.empty() ? [NSString stringWithFormat:@"Layout #%ld", row]
                                                  : [NSString stringWithUTF8StdString:l->name];
@@ -208,7 +208,7 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
     if( tableView == self.layoutsListColumnsTable ) {
         if( auto layout = self.selectedLayout ) {
             if( auto list = layout->list() ) {
-                if( row < (int)m_LayoutListColumns.size() ) {
+                if( row < static_cast<int>(m_LayoutListColumns.size()) ) {
                     auto &col = m_LayoutListColumns[row];
 
                     if( [tableColumn.identifier isEqualToString:@"enabled"] ) {
@@ -278,7 +278,7 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
             drag_to == 0 )              // first item should be filename
             return false;
 
-        assert(drag_from < (int)m_LayoutListColumns.size());
+        assert(drag_from < static_cast<int>(m_LayoutListColumns.size()));
         auto i = begin(m_LayoutListColumns);
         if( drag_from < drag_to )
             rotate(i + drag_from, i + drag_from + 1, i + drag_to);
@@ -294,13 +294,13 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
 - (std::shared_ptr<const PanelViewLayout>)selectedLayout
 {
     const auto row = self.layoutsTable.selectedRow;
-    return m_LayoutsStorage->GetLayout((int)row);
+    return m_LayoutsStorage->GetLayout(static_cast<int>(row));
 }
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
     if( notification.object == self.layoutsTable ) {
-        const auto row = (int)self.layoutsTable.selectedRow;
+        const auto row = static_cast<int>(self.layoutsTable.selectedRow);
         self.anyLayoutSelected = row >= 0;
         if( row >= 0 )
             [self fillLayoutFields];
@@ -317,7 +317,7 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
         auto new_layout = *l;
         new_layout.name = self.layoutTitle.stringValue.UTF8String;
 
-        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Brief ) {
+        if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::Brief) ) {
             PanelBriefViewColumnsLayout l1;
             l1.mode = PanelBriefViewColumnsLayout::Mode::DynamicWidth;
             l1.dynamic_width_min = 140;
@@ -325,18 +325,18 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
             l1.dynamic_width_equal = false;
             new_layout.layout = l1;
         }
-        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::List ) {
+        if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::List) ) {
             PanelListViewColumnsLayout l1;
             PanelListViewColumnsLayout::Column col;
             col.kind = PanelListViewColumns::Filename;
             l1.columns.emplace_back(col);
             new_layout.layout = l1;
         }
-        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Disabled )
+        if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::Disabled) )
             new_layout.layout = PanelViewDisabledLayout{};
 
         if( new_layout != *l ) {
-            const auto row = (int)self.layoutsTable.selectedRow;
+            const auto row = static_cast<int>(self.layoutsTable.selectedRow);
             m_LayoutsStorage->ReplaceLayoutWithMandatoryNotification(std::move(new_layout), row);
             [self fillLayoutFields];
         }
@@ -346,12 +346,12 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
 static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 {
     switch( _t ) {
-    case PanelViewLayout::Type::Brief:
-        return @"Brief";
-    case PanelViewLayout::Type::List:
-        return @"List";
-    default:
-        return @"Disabled";
+        case PanelViewLayout::Type::Brief:
+            return @"Brief";
+        case PanelViewLayout::Type::List:
+            return @"List";
+        default:
+            return @"Disabled";
     }
 }
 
@@ -361,7 +361,7 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
     assert(l);
     self.layoutTitle.stringValue = [NSString stringWithUTF8StdString:l->name];
     const auto t = l->type();
-    [self.layoutType selectItemWithTag:(int)t];
+    [self.layoutType selectItemWithTag:static_cast<int>(t)];
     [self.layoutDetailsTabView selectTabViewItemWithIdentifier:LayoutTypeToTabIdentifier(t)];
 
     if( auto brief = l->brief() ) {
@@ -382,16 +382,19 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
     }
 
     if( auto list = l->list() ) {
-        static const auto columns_order = {
-            PanelListViewColumns::Filename, PanelListViewColumns::Size,
-            PanelListViewColumns::DateCreated, PanelListViewColumns::DateModified,
-            PanelListViewColumns::DateAdded, PanelListViewColumns::DateAccessed};
+        static const auto columns_order = {PanelListViewColumns::Filename,
+                                           PanelListViewColumns::Size,
+                                           PanelListViewColumns::DateCreated,
+                                           PanelListViewColumns::DateModified,
+                                           PanelListViewColumns::DateAdded,
+                                           PanelListViewColumns::DateAccessed};
         m_LayoutListColumns.clear();
         for( auto c : list->columns )
             m_LayoutListColumns.emplace_back(c, true);
         for( auto c : columns_order )
-            if( !any_of(begin(m_LayoutListColumns), end(m_LayoutListColumns),
-                        [=](auto v) { return v.first.kind == c; }) ) {
+            if( !any_of(begin(m_LayoutListColumns), end(m_LayoutListColumns), [=](auto v) {
+                    return v.first.kind == c;
+                }) ) {
                 PanelListViewColumnsLayout::Column dummy;
                 dummy.kind = c;
 
@@ -407,7 +410,7 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 - (void)clearLayoutFields
 {
     self.layoutTitle.stringValue = @"";
-    [self.layoutType selectItemWithTag:(int)PanelViewLayout::Type::Disabled];
+    [self.layoutType selectItemWithTag:static_cast<int>(PanelViewLayout::Type::Disabled)];
     [self.layoutDetailsTabView
         selectTabViewItemWithIdentifier:LayoutTypeToTabIdentifier(PanelViewLayout::Type::Disabled)];
 }
@@ -422,9 +425,11 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 
 - (IBAction)onLayoutListColumnEnabledClicked:(id)sender
 {
-    int row = (int)[self.layoutsListColumnsTable rowForView:(NSView *)sender];
-    if( row >= 0 && row < (int)m_LayoutListColumns.size() ) {
-        m_LayoutListColumns[row].second = ((NSButton *)sender).state == NSControlStateValueOn;
+    int row =
+        static_cast<int>([self.layoutsListColumnsTable rowForView:static_cast<NSView *>(sender)]);
+    if( row >= 0 && row < static_cast<int>(m_LayoutListColumns.size()) ) {
+        m_LayoutListColumns[row].second =
+            static_cast<NSButton *>(sender).state == NSControlStateValueOn;
         [self commitLayoutChanges];
     }
 }
@@ -442,8 +447,9 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
     [self commitLayoutChanges];
     [self.layoutsTable
         reloadDataForRowIndexes:[NSIndexSet
-                                    indexSetWithIndexesInRange:NSMakeRange(0, m_LayoutsStorage
-                                                                                  ->LayoutsCount())]
+                                    indexSetWithIndexesInRange:NSMakeRange(0,
+                                                                           m_LayoutsStorage
+                                                                               ->LayoutsCount())]
                   columnIndexes:[NSIndexSet indexSetWithIndex:0]];
 }
 
@@ -482,15 +488,15 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
         auto new_layout = *l;
         new_layout.name = self.layoutTitle.stringValue.UTF8String;
 
-        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Brief )
+        if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::Brief) )
             new_layout.layout = [self gatherBriefLayoutInfo];
-        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::List )
+        if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::List) )
             new_layout.layout = [self gatherListLayoutInfo];
-        if( self.layoutType.selectedTag == (int)PanelViewLayout::Type::Disabled )
+        if( self.layoutType.selectedTag == static_cast<int>(PanelViewLayout::Type::Disabled) )
             new_layout.layout = PanelViewDisabledLayout{};
 
         if( new_layout != *l ) {
-            const auto row = (int)self.layoutsTable.selectedRow;
+            const auto row = static_cast<int>(self.layoutsTable.selectedRow);
             m_LayoutsStorage->ReplaceLayoutWithMandatoryNotification(std::move(new_layout), row);
         }
     }
@@ -526,16 +532,16 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
     if( self.layoutsBriefDynamicRadioChoosen )
         l.mode = PanelBriefViewColumnsLayout::Mode::DynamicWidth;
 
-    l.fixed_mode_width = (short)self.layoutsBriefFixedValueTextField.intValue;
+    l.fixed_mode_width = static_cast<short>(self.layoutsBriefFixedValueTextField.intValue);
     if( l.fixed_mode_width < 40 )
         l.fixed_mode_width = 40;
-    l.fixed_amount_value = (short)self.layoutsBriefAmountValueTextField.intValue;
+    l.fixed_amount_value = static_cast<short>(self.layoutsBriefAmountValueTextField.intValue);
     if( l.fixed_amount_value < 1 )
         l.fixed_amount_value = 1;
-    l.dynamic_width_min = (short)self.layoutsBriefDynamicMinValueTextField.intValue;
+    l.dynamic_width_min = static_cast<short>(self.layoutsBriefDynamicMinValueTextField.intValue);
     if( l.dynamic_width_min < 40 )
         l.dynamic_width_min = 40;
-    l.dynamic_width_max = (short)self.layoutsBriefDynamicMaxValueTextField.intValue;
+    l.dynamic_width_max = static_cast<short>(self.layoutsBriefDynamicMaxValueTextField.intValue);
     if( l.dynamic_width_max < 40 )
         l.dynamic_width_max = 40;
     if( l.dynamic_width_max < l.dynamic_width_min )

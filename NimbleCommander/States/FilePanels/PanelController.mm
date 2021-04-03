@@ -225,7 +225,7 @@ static void HeatUpConfigValues()
         __weak PanelController* weakself = self;
         auto on_change = [=]{
             dispatch_to_main_queue([=]{
-                [(PanelController*)weakself updateSpinningIndicator];
+                [static_cast<PanelController*>(weakself) updateSpinningIndicator];
             });
         };
         m_DirectorySizeCountingQ.SetOnChange(on_change);
@@ -307,7 +307,7 @@ static void HeatUpConfigValues()
 
 - (NCMainWindowController *)mainWindowController
 {
-    return (NCMainWindowController*)self.window.delegate;
+    return static_cast<NCMainWindowController*>(self.window.delegate);
 }
 
 - (bool) isUniform
@@ -317,7 +317,7 @@ static void HeatUpConfigValues()
 
 - (bool) receivesUpdateNotifications
 {
-    return (bool)m_UpdatesObservationTicket;
+    return static_cast<bool>(m_UpdatesObservationTicket);
 }
 
 - (bool) ignoreDirectoriesOnSelectionByMask
@@ -580,7 +580,7 @@ static void HeatUpConfigValues()
     if( self.isUniform ) {
         auto dir_change_callback = [=]{
             dispatch_to_main_queue([=]{
-                [(PanelController *)weakself refreshPanel];
+                [static_cast<PanelController *>(weakself) refreshPanel];
             });
         };
         m_UpdatesObservationTicket = self.vfs->DirChangeObserve(self.currentDirectoryPath.c_str(),

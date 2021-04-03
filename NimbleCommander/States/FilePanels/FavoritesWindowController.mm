@@ -59,7 +59,8 @@ static const auto g_FavoritesWindowControllerDragDataType =
     GA().PostScreenView("Favorites");
 
     [self.table registerForDraggedTypes:@[
-        FilesDraggingSource.fileURLsDragUTI, FilesDraggingSource.privateDragUTI,
+        FilesDraggingSource.fileURLsDragUTI,
+        FilesDraggingSource.privateDragUTI,
         g_FavoritesWindowControllerDragDataType
     ]];
 
@@ -93,9 +94,9 @@ static const auto g_FavoritesWindowControllerDragDataType =
             viewForTableColumn:(nullable NSTableColumn *)tableColumn
                            row:(NSInteger)row
 {
-    if( row >= (int)m_Favorites.size() )
+    if( row >= static_cast<int>(m_Favorites.size()) )
         return nil;
-    ;
+
     auto &f = m_Favorites[row];
 
     if( [tableColumn.identifier isEqualToString:@"Location"] ) {
@@ -156,7 +157,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
     if( auto rv = objc_cast<NSTableRowView>(tf.superview) )
         if( rv.superview == self.table ) {
             long row_no = [self.table rowForView:rv];
-            if( row_no >= 0 && row_no < (int)m_Favorites.size() ) {
+            if( row_no >= 0 && row_no < static_cast<int>(m_Favorites.size()) ) {
                 auto new_value = tf.stringValue ? tf.stringValue.UTF8String : "";
                 if( m_Favorites[row_no].title != new_value ) {
                     m_Favorites[row_no].title = new_value;
@@ -181,7 +182,6 @@ static const auto g_FavoritesWindowControllerDragDataType =
     return external_drag ? NSDragOperationCopy : NSDragOperationMove;
 }
 
-
 - (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view
                        pasteboardWriterForRow:(NSInteger)_row
 {
@@ -195,8 +195,9 @@ static const auto g_FavoritesWindowControllerDragDataType =
 
 - (bool)hasFavorite:(const FavoriteLocationsStorage::Favorite &)_f
 {
-    return any_of(begin(m_Favorites), end(m_Favorites),
-                  [&](auto &_i) { return _i.footprint == _f.footprint; });
+    return any_of(begin(m_Favorites), end(m_Favorites), [&](auto &_i) {
+        return _i.footprint == _f.footprint;
+    });
 }
 
 - (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
@@ -217,7 +218,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
             drag_to == drag_from + 1 ) // same index, below
             return false;
 
-        assert(drag_from < (int)m_Favorites.size());
+        assert(drag_from < static_cast<int>(m_Favorites.size()));
 
         auto i = begin(m_Favorites);
         if( drag_from < drag_to )
@@ -226,7 +227,8 @@ static const auto g_FavoritesWindowControllerDragDataType =
             rotate(i + drag_to, i + drag_from, i + drag_from + 1);
         [self loadData];
         [self commit];
-    } else {
+    }
+    else {
         std::vector<FavoriteLocationsStorage::Favorite> addition;
         auto &storage = m_Storage();
         if( auto source = objc_cast<FilesDraggingSource>(info.draggingSource) ) {
@@ -235,7 +237,8 @@ static const auto g_FavoritesWindowControllerDragDataType =
                 if( auto f = FavoriteComposing{storage}.FromListingItem(item.item) )
                     if( ![self hasFavorite:*f] )
                         addition.emplace_back(std::move(*f));
-        } else if( [pasteboard.types containsObject:FilesDraggingSource.fileURLsDragUTI] ) {
+        }
+        else if( [pasteboard.types containsObject:FilesDraggingSource.fileURLsDragUTI] ) {
             // dragging from outside
             static const auto read_opts = @{NSPasteboardURLReadingFileURLsOnlyKey: @YES};
             auto fileURLs = [pasteboard readObjectsForClasses:@[NSURL.class] options:read_opts];
@@ -267,7 +270,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
     const auto row = self.table.selectedRow;
     if( row < 0 )
         return;
-    assert(row < (int)m_Favorites.size());
+    assert(row < static_cast<int>(m_Favorites.size()));
     m_Favorites.erase(begin(m_Favorites) + row);
 
     [self loadData];
@@ -338,8 +341,8 @@ static const auto g_FavoritesWindowControllerDragDataType =
 - (IBAction)onAddFavoriteMenuItemClicked:(id)sender
 {
     if( auto it = objc_cast<NSMenuItem>(sender) ) {
-        const auto ind = (int)it.tag;
-        if( ind < (int)m_PopupMenuFavorites.size() ) {
+        const auto ind = static_cast<int>(it.tag);
+        if( ind < static_cast<int>(m_PopupMenuFavorites.size()) ) {
             m_Favorites.emplace_back(m_PopupMenuFavorites[ind]);
             [self loadData];
             [self commit];

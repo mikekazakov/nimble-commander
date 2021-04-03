@@ -300,19 +300,23 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 {
     auto df = AdaptiveDateFormatting{};
     if( _column == m_DateCreatedColumn ) {
-        const auto style = df.SuitableStyleForWidth((int)m_DateCreatedColumn.width, self.font);
+        const auto style =
+            df.SuitableStyleForWidth(static_cast<int>(m_DateCreatedColumn.width), self.font);
         self.dateCreatedFormattingStyle = style;
     }
     if( _column == m_DateAddedColumn ) {
-        const auto style = df.SuitableStyleForWidth((int)m_DateAddedColumn.width, self.font);
+        const auto style =
+            df.SuitableStyleForWidth(static_cast<int>(m_DateAddedColumn.width), self.font);
         self.dateAddedFormattingStyle = style;
     }
     if( _column == m_DateModifiedColumn ) {
-        const auto style = df.SuitableStyleForWidth((int)m_DateModifiedColumn.width, self.font);
+        const auto style =
+            df.SuitableStyleForWidth(static_cast<int>(m_DateModifiedColumn.width), self.font);
         self.dateModifiedFormattingStyle = style;
     }
     if( _column == m_DateAccessedColumn ) {
-        const auto style = df.SuitableStyleForWidth((int)m_DateAccessedColumn.width, self.font);
+        const auto style =
+            df.SuitableStyleForWidth(static_cast<int>(m_DateAccessedColumn.width), self.font);
         self.dateAccessedFormattingStyle = style;
     }
     [self notifyLastColumnToRedraw];
@@ -376,10 +380,12 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (nullable NSView *)tableView:(NSTableView *)tableView
             viewForTableColumn:(nullable NSTableColumn *)tableColumn
-                           row:(NSInteger)row
+                           row:(NSInteger)rowIndex
 {
     if( !m_Data )
         return nil;
+
+    const int row = static_cast<int>(rowIndex);
 
     const auto abstract_row_view = [m_TableView rowViewAtRow:row makeIfNecessary:false];
     const auto row_view = objc_cast<PanelListViewRowView>(abstract_row_view);
@@ -391,16 +397,16 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         const auto kind = IdentifierToKind(static_cast<char>([identifier characterAtIndex:0]));
         if( kind == PanelListViewColumns::Filename ) {
             auto nv = RetrieveOrSpawnView<PanelListViewNameView>(tableView, identifier);
-            if( m_Data->IsValidSortPosition((int)row) ) {
-                auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
+            if( m_Data->IsValidSortPosition(row) ) {
+                auto &vd = m_Data->VolatileDataAtSortPosition(row);
                 [self fillDataForNameView:nv withItem:vfs_item andVD:vd];
             }
             return nv;
         }
         if( kind == PanelListViewColumns::Size ) {
             auto sv = RetrieveOrSpawnView<PanelListViewSizeView>(tableView, identifier);
-            if( m_Data->IsValidSortPosition((int)row) ) {
-                auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
+            if( m_Data->IsValidSortPosition(row) ) {
+                auto &vd = m_Data->VolatileDataAtSortPosition(row);
                 [self fillDataForSizeView:sv withItem:vfs_item andVD:vd];
             }
             return sv;
@@ -435,7 +441,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     if( !m_Data )
         return nil;
 
-    const auto row = (int)rowIndex;
+    const auto row = static_cast<int>(rowIndex);
     if( auto item = m_Data->EntryAtSortPosition(row) ) {
         auto &vd = m_Data->VolatileDataAtSortPosition(row);
 
@@ -528,18 +534,19 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (void)dataChanged
 {
-    data::Model * const data = m_Data;
-    const auto old_rows_count = (int)m_TableView.numberOfRows;
+    data::Model *const data = m_Data;
+    const auto old_rows_count = static_cast<int>(m_TableView.numberOfRows);
     const auto new_rows_count = data->SortedEntriesCount();
 
     IconRepositoryCleaner{*m_IconRepository, *m_Data}.SweepUnusedSlots();
-    
-    auto block = ^(PanelListViewRowView *row_view, NSInteger row) {
+
+    auto block = ^(PanelListViewRowView *row_view, NSInteger rowIndex) {
+      const int row = static_cast<int>(rowIndex);
       if( row >= new_rows_count )
           return;
 
-      if( auto item = data->EntryAtSortPosition((int)row) ) {
-          auto &vd = data->VolatileDataAtSortPosition((int)row);
+      if( auto item = data->EntryAtSortPosition(row) ) {
+          auto &vd = data->VolatileDataAtSortPosition(row);
           row_view.item = item;
           row_view.vd = vd;
           for( NSView *v in row_view.subviews ) {
@@ -549,17 +556,25 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
               const auto col_id = [v.identifier characterAtIndex:0];
               const auto col_type = IdentifierToKind(static_cast<char>(col_id));
               if( col_type == PanelListViewColumns::Filename )
-                  [self fillDataForNameView:(PanelListViewNameView *)v withItem:item andVD:vd];
+                  [self fillDataForNameView:static_cast<PanelListViewNameView *>(v)
+                                   withItem:item
+                                      andVD:vd];
               if( col_type == PanelListViewColumns::Size )
-                  [self fillDataForSizeView:(PanelListViewSizeView *)v withItem:item andVD:vd];
+                  [self fillDataForSizeView:static_cast<PanelListViewSizeView *>(v)
+                                   withItem:item
+                                      andVD:vd];
               if( col_type == PanelListViewColumns::DateCreated )
-                  [self fillDataForDateCreatedView:(PanelListViewDateTimeView *)v withItem:item];
+                  [self fillDataForDateCreatedView:static_cast<PanelListViewDateTimeView *>(v)
+                                          withItem:item];
               if( col_type == PanelListViewColumns::DateAdded )
-                  [self fillDataForDateAddedView:(PanelListViewDateTimeView *)v withItem:item];
+                  [self fillDataForDateAddedView:static_cast<PanelListViewDateTimeView *>(v)
+                                        withItem:item];
               if( col_type == PanelListViewColumns::DateModified )
-                  [self fillDataForDateModifiedView:(PanelListViewDateTimeView *)v withItem:item];
+                  [self fillDataForDateModifiedView:static_cast<PanelListViewDateTimeView *>(v)
+                                           withItem:item];
               if( col_type == PanelListViewColumns::DateAccessed )
-                  [self fillDataForDateAccessedView:(PanelListViewDateTimeView *)v withItem:item];
+                  [self fillDataForDateAccessedView:static_cast<PanelListViewDateTimeView *>(v)
+                                           withItem:item];
           }
       }
     };
@@ -580,8 +595,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 {
     [m_TableView
         enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
-          if( m_Data->IsValidSortPosition((int)row) )
-              rowView.vd = m_Data->VolatileDataAtSortPosition((int)row);
+          if( m_Data->IsValidSortPosition(static_cast<int>(row)) )
+              rowView.vd = m_Data->VolatileDataAtSortPosition(static_cast<int>(row));
         }];
 }
 
@@ -603,7 +618,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (int)cursorPosition
 {
-    return (int)m_TableView.selectedRow;
+    return static_cast<int>(m_TableView.selectedRow);
 }
 
 - (void)setCursorPosition:(int)cursorPosition
@@ -633,7 +648,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     dispatch_assert_main_queue();
     [m_TableView
         enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
-          const auto index = (int)row;
+          const auto index = static_cast<int>(row);
           if( m_Data->IsValidSortPosition(index) ) {
               auto &vd = m_Data->VolatileDataAtSortPosition(index);
               if( vd.icon == _icon_no )
@@ -849,7 +864,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     if( !cn )
         return;
 
-    for( int i = 0, e = (int)m_TableView.numberOfRows; i != e; ++i )
+    for( int i = 0, e = static_cast<int>(m_TableView.numberOfRows); i != e; ++i )
         [m_TableView viewAtColumn:cn - 1 row:i makeIfNecessary:false].needsDisplay = true;
 }
 

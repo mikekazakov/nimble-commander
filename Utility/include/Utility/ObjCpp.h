@@ -21,6 +21,15 @@ inline T* objc_cast(id from) noexcept
     return nil;
 }
 
+template<typename T, typename U>
+inline T* objc_bridge_cast(U *from) noexcept
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+    return (__bridge T*)from;
+#pragma clang diagnostic pop
+}
+
 template<typename T>
 inline std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
 {

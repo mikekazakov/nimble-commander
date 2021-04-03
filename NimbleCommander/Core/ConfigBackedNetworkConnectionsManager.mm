@@ -67,7 +67,7 @@ static config::Value ConnectionToJSONObject(NetworkConnectionsManager::Connectio
         o.AddMember("user", value(c.user.c_str(), alloc), alloc);
         o.AddMember("host", value(c.host.c_str(), alloc), alloc);
         o.AddMember("path", value(c.path.c_str(), alloc), alloc);
-        o.AddMember("port", value((int)c.port), alloc);
+        o.AddMember("port", value(static_cast<int>(c.port)), alloc);
         o.AddMember("active", value(c.active), alloc);
         return o;
     }
@@ -77,7 +77,7 @@ static config::Value ConnectionToJSONObject(NetworkConnectionsManager::Connectio
         o.AddMember("user", value(c.user.c_str(), alloc), alloc);
         o.AddMember("host", value(c.host.c_str(), alloc), alloc);
         o.AddMember("keypath", value(c.keypath.c_str(), alloc), alloc);
-        o.AddMember("port", value((int)c.port), alloc);
+        o.AddMember("port", value(static_cast<int>(c.port)), alloc);
         return o;
     }
     if( _c.IsType<NetworkConnectionsManager::LANShare>() ) {
@@ -87,7 +87,7 @@ static config::Value ConnectionToJSONObject(NetworkConnectionsManager::Connectio
         o.AddMember("host", value(c.host.c_str(), alloc), alloc);
         o.AddMember("share", value(c.share.c_str(), alloc), alloc);
         o.AddMember("mountpoint", value(c.mountpoint.c_str(), alloc), alloc);
-        o.AddMember("proto", value((int)c.proto), alloc);
+        o.AddMember("proto", value(static_cast<int>(c.proto)), alloc);
         return o;
     }
     if( _c.IsType<NetworkConnectionsManager::Dropbox>() ) {
@@ -181,7 +181,8 @@ JSONObjectToConnection(const config::Value &_object)
         c.host = _object["host"].GetString();
         c.share = _object["share"].GetString();
         c.mountpoint = _object["mountpoint"].GetString();
-        c.proto = (NetworkConnectionsManager::LANShare::Protocol)_object["proto"].GetInt();
+        c.proto =
+            static_cast<NetworkConnectionsManager::LANShare::Protocol>(_object["proto"].GetInt());
 
         return NetworkConnectionsManager::Connection(std::move(c));
     }
@@ -744,11 +745,11 @@ bool ConfigBackedNetworkConnectionsManager::MountShareAsync(
     auto mountpoint = CookMountPointForLANShare(share);
     auto username = share.user.empty() ? nil : [NSString stringWithUTF8StdString:share.user];
     auto passwd = _password.empty() ? nil : [NSString stringWithUTF8StdString:_password];
-    auto open_options = (NSMutableDictionary *)[@{@"UIOption": @"NoUI"} mutableCopy];
+    auto open_options = static_cast<NSMutableDictionary *>([@{@"UIOption": @"NoUI"} mutableCopy]);
     auto mount_options = (!mountpoint || !IsEmptyDirectory(share.mountpoint))
                              ? nil
-                             : (NSMutableDictionary *)
-                                   [@{@"MountAtMountDir": @true} mutableCopy];
+                             : static_cast<NSMutableDictionary *>(
+                                   [@{@"MountAtMountDir": @true} mutableCopy]);
 
     auto callback = [this](int status, AsyncRequestID requestID, CFArrayRef mountpoints) {
         NetFSCallback(status, requestID, mountpoints);

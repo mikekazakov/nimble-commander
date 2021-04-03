@@ -409,7 +409,7 @@ ActionsShortcutsManager::ShortCutsUpdater::
         throw std::logic_error("_hotkeys.size() != _actions.size()");
     
     auto &am = ActionsShortcutsManager::Instance();
-    for( int i = 0, e = (int)_hotkeys.size(); i != e; ++i )
+    for( int i = 0, e = static_cast<int>(_hotkeys.size()); i != e; ++i )
         m_Pets.emplace_back( _hotkeys.begin()[i], am.TagFromAction(_actions.begin()[i]) );
     m_Ticket = am.ObserveChanges( [this]{ CheckAndUpdate(); } );
     
@@ -481,7 +481,7 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
             SetMenuShortCuts(i.submenu);
         }
         else {
-            int tag = (int)i.tag;
+            int tag = static_cast<int>(i.tag);
 
             auto scover = m_ShortCutsOverrides.find(tag);
             if( scover != m_ShortCutsOverrides.end() ) {

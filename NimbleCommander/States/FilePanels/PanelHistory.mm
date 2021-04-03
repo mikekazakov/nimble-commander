@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelHistory.h"
 #include "../../Core/VFSInstanceManager.h"
 
@@ -11,18 +11,18 @@ bool History::IsRecording() const noexcept
 
 bool History::CanMoveForth() const noexcept
 {
-    if(m_IsRecording)
+    if( m_IsRecording )
         return false;
-    if(m_History.size() < 2)
+    if( m_History.size() < 2 )
         return false;
     return m_PlayingPosition < m_History.size() - 1;
 }
 
 bool History::CanMoveBack() const noexcept
 {
-    if(m_History.size() < 2)
+    if( m_History.size() < 2 )
         return false;
-    if(m_IsRecording)
+    if( m_IsRecording )
         return true;
     return m_PlayingPosition > 0;
 }
@@ -31,10 +31,12 @@ void History::MoveForth()
 {
     if( !CanMoveForth() )
         throw std::logic_error("PanelHistory::MoveForth called when CanMoveForth()==false");
-    
-    if(m_IsRecording) return;
-    if(m_History.size() < 2) return;
-    if(m_PlayingPosition < m_History.size() - 1)
+
+    if( m_IsRecording )
+        return;
+    if( m_History.size() < 2 )
+        return;
+    if( m_PlayingPosition < m_History.size() - 1 )
         m_PlayingPosition++;
 }
 
@@ -42,24 +44,24 @@ void History::MoveBack()
 {
     if( !CanMoveBack() )
         throw std::logic_error("PanelHistory::MoveBack called when CanMoveBack()==false");
-    
-    if(m_IsRecording) {
+
+    if( m_IsRecording ) {
         m_IsRecording = false;
-        m_PlayingPosition = (unsigned)m_History.size() - 2;
+        m_PlayingPosition = static_cast<unsigned>(m_History.size()) - 2;
     }
     else {
         m_PlayingPosition--;
     }
 }
 
-const History::Path* History::CurrentPlaying() const
+const History::Path *History::CurrentPlaying() const
 {
     if( m_IsRecording )
         return nullptr;
     return &*next(begin(m_History), m_PlayingPosition);
 }
-    
-const History::Path* History::MostRecent() const
+
+const History::Path *History::MostRecent() const
 {
     if( m_IsRecording ) {
         if( !m_History.empty() )
@@ -72,22 +74,22 @@ const History::Path* History::MostRecent() const
     }
 }
 
-void History::Put(const VFSListing &_listing )
+void History::Put(const VFSListing &_listing)
 {
     if( _listing.IsUniform() && _listing.Host()->IsNativeFS() )
         m_LastNativeDirectory = _listing.Directory();
-    
-    const auto adapter = [this](const std::shared_ptr<VFSHost>&_host) -> core::VFSInstancePromise {
+
+    const auto adapter = [this](const std::shared_ptr<VFSHost> &_host) -> core::VFSInstancePromise {
         if( !m_VFSMgr )
             return {};
         return m_VFSMgr->TameVFS(_host);
     };
     ListingPromise promise{_listing, adapter};
-    
+
     if( m_IsRecording ) {
         if( !m_History.empty() && m_History.back() == promise )
             return;
-        m_History.emplace_back( std::move(promise) );
+        m_History.emplace_back(std::move(promise));
         if( m_History.size() > m_HistoryLength )
             m_History.pop_front();
     }
@@ -99,37 +101,37 @@ void History::Put(const VFSListing &_listing )
             m_IsRecording = true;
             while( m_History.size() > m_PlayingPosition + 1 )
                 m_History.pop_back();
-            m_History.emplace_back( std:: move(promise) );
+            m_History.emplace_back(std::move(promise));
         }
     }
 }
 
 unsigned History::Length() const noexcept
 {
-    return (unsigned)m_History.size();
+    return static_cast<unsigned>(m_History.size());
 }
 
 bool History::Empty() const noexcept
 {
     return m_History.empty();
 }
-    
+
 std::vector<std::reference_wrapper<const History::Path>> History::All() const
 {
     std::vector<std::reference_wrapper<const Path>> res;
-    for( auto &i:m_History )
-        res.emplace_back( std::cref(i) );
+    for( auto &i : m_History )
+        res.emplace_back(std::cref(i));
     return res;
 }
 
-const History::Path* History::RewindAt(size_t _indx)
+const History::Path *History::RewindAt(size_t _indx)
 {
-    if(_indx >= m_History.size())
+    if( _indx >= m_History.size() )
         return nullptr;
-    
+
     m_IsRecording = false;
-    m_PlayingPosition = (unsigned)_indx;
-    
+    m_PlayingPosition = static_cast<unsigned>(_indx);
+
     return CurrentPlaying();
 }
 
@@ -142,5 +144,5 @@ void History::SetVFSInstanceManager(core::VFSInstanceManager &_mgr)
 {
     m_VFSMgr = &_mgr;
 }
-    
-}
+
+} // namespace nc::panel

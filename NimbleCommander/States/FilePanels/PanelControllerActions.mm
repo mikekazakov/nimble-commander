@@ -49,7 +49,7 @@ static std::vector<SEL> QuickListsBut(int but)
             @selector(OnGoToQuickListsFavorites:), @selector(OnGoToQuickListsVolumes:),
             @selector(OnGoToQuickListsConnections:)
     };
-    assert(but >= 0 && but < (int)lists.size());
+    assert(but >= 0 && but < static_cast<int>(lists.size()));
     lists.erase(lists.begin() + but);
     return lists;
 }

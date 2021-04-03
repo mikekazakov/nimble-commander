@@ -1,24 +1,23 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewCollectionView.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
 #include <Utility/ObjCpp.h>
 
-@implementation PanelBriefViewCollectionView
-{
+@implementation PanelBriefViewCollectionView {
     bool m_IsDropTarget;
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
         self.selectable = true;
-        
+
         if( [self respondsToSelector:@selector(setBackgroundViewScrollsWithContent:)] ) {
             self.backgroundViewScrollsWithContent = true;
         }
-       [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
+        [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
     }
     return self;
 }
@@ -33,12 +32,12 @@
     return true;
 }
 
-- (PanelView*)panelView
+- (PanelView *)panelView
 {
     NSView *sv = self.superview;
     while( sv != nil && objc_cast<PanelView>(sv) == nil )
         sv = sv.superview;
-    return (PanelView*)sv;
+    return static_cast<PanelView *>(sv);
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -47,7 +46,7 @@
         [pv keyDown:event];
 }
 
-- (BOOL)acceptsFirstMouse:(nullable NSEvent *)[[maybe_unused]]_event
+- (BOOL)acceptsFirstMouse:(nullable NSEvent *) [[maybe_unused]] _event
 {
     return false;
 }
@@ -57,19 +56,19 @@
     [self.panelView panelItem:-1 mouseDown:event];
 }
 
-- (void)mouseUp:(NSEvent *)[[maybe_unused]]_event
+- (void)mouseUp:(NSEvent *) [[maybe_unused]] _event
 {
 }
 
-static NSEvent *SwapScrollAxis( NSEvent *_event )
+static NSEvent *SwapScrollAxis(NSEvent *_event)
 {
     const auto cg_event = CGEventCreateCopy(_event.CGEvent);
     if( !cg_event )
         return nil;
-    
+
     CGEventSetDoubleValueField(cg_event, kCGScrollWheelEventFixedPtDeltaAxis2, _event.deltaY);
     CGEventSetDoubleValueField(cg_event, kCGScrollWheelEventFixedPtDeltaAxis1, 0.0);
-    
+
     const auto new_event = [NSEvent eventWithCGEvent:cg_event];
     CFRelease(cg_event);
 
@@ -78,22 +77,19 @@ static NSEvent *SwapScrollAxis( NSEvent *_event )
 
 - (void)scrollWheel:(NSEvent *)event
 {
-    if(event.phase == NSEventPhaseNone &&
-       event.momentumPhase == NSEventPhaseNone &&
-       event.hasPreciseScrollingDeltas == false &&
-       event.deltaX == 0.0 &&
-       event.deltaY != 0.0 ) {
-       // for vertical scroll coming from USB PC mice we swap the scroll asix, so user
-       // can use mouse wheel without holding a Shift button
-       if( auto new_event = SwapScrollAxis(event) )
-           [super scrollWheel:new_event];
+    if( event.phase == NSEventPhaseNone && event.momentumPhase == NSEventPhaseNone &&
+        event.hasPreciseScrollingDeltas == false && event.deltaX == 0.0 && event.deltaY != 0.0 ) {
+        // for vertical scroll coming from USB PC mice we swap the scroll asix, so user
+        // can use mouse wheel without holding a Shift button
+        if( auto new_event = SwapScrollAxis(event) )
+            [super scrollWheel:new_event];
         return;
     }
 
     [super scrollWheel:event];
 }
 
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+- (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
 {
     auto op = [self.panelView panelItem:-1 operationForDragging:sender];
     if( op != NSDragOperationNone ) {
@@ -102,23 +98,23 @@ static NSEvent *SwapScrollAxis( NSEvent *_event )
     return op;
 }
 
-- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender
 {
     return [self draggingEntered:sender];
 }
 
-- (void)draggingExited:(id <NSDraggingInfo>)[[maybe_unused]]_sender
+- (void)draggingExited:(id<NSDraggingInfo>) [[maybe_unused]] _sender
 {
     self.isDropTarget = false;
 }
 
-- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)[[maybe_unused]]_sender
+- (BOOL)prepareForDragOperation:(id<NSDraggingInfo>) [[maybe_unused]] _sender
 {
     // possibly add some checking stage here later
     return YES;
 }
 
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+- (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
 {
     if( self.isDropTarget ) {
         self.isDropTarget = false;
@@ -128,12 +124,12 @@ static NSEvent *SwapScrollAxis( NSEvent *_event )
         return false;
 }
 
-- (bool) isDropTarget
+- (bool)isDropTarget
 {
     return m_IsDropTarget;
 }
 
-- (void) setIsDropTarget:(bool)isDropTarget
+- (void)setIsDropTarget:(bool)isDropTarget
 {
     if( m_IsDropTarget != isDropTarget ) {
         m_IsDropTarget = isDropTarget;
@@ -146,7 +142,7 @@ static NSEvent *SwapScrollAxis( NSEvent *_event )
     }
 }
 
-- (void)prepareContentInRect:(NSRect)[[maybe_unused]]_rect
+- (void)prepareContentInRect:(NSRect) [[maybe_unused]] _rect
 {
     // Disabling the responsive scrolling/prefetching for now on 10.13+.
     // It destroys the loading time, need to fix it later somehow

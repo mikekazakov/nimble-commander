@@ -30,7 +30,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
 - (void) moveFocusBackToPanels
 {
     if( !self.isPanelActive) {
-        if( auto p = (PanelController*)m_LastFocusedPanelController )
+        if( auto p = static_cast<PanelController*>(m_LastFocusedPanelController) )
             [self ActivatePanelByController:p];
         else
             [self ActivatePanelByController:self.leftPanelController];
@@ -103,19 +103,16 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
         
         [m_OverlappedTerminal->terminal runShell:wd];
         
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
         __weak MainWindowFilePanelState *weakself = self;
         m_OverlappedTerminal->terminal.onShellCWDChanged = [=]{
-            [(MainWindowFilePanelState*)weakself onOverlappedTerminalShellCWDChanged];
+            [static_cast<MainWindowFilePanelState*>(weakself) onOverlappedTerminalShellCWDChanged];
         };
         m_OverlappedTerminal->terminal.onLongTaskStarted = [=]{
-            [(MainWindowFilePanelState*)weakself onOverlappedTerminalLongTaskStarted];
+            [static_cast<MainWindowFilePanelState*>(weakself) onOverlappedTerminalLongTaskStarted];
         };
         m_OverlappedTerminal->terminal.onLongTaskFinished = [=]{
-            [(MainWindowFilePanelState*)weakself onOverlappedTerminalLongTaskFinished];
+            [static_cast<MainWindowFilePanelState*>(weakself) onOverlappedTerminalLongTaskFinished];
         };
-#pragma clang diagnostic pop
     }
 }
 

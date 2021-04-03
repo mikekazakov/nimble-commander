@@ -294,7 +294,7 @@ VFSHostPtr VFSInstanceManagerImpl::RetrieveVFS(const Promise &_promise,
 unsigned VFSInstanceManagerImpl::KnownVFSCount()
 {
     auto lock = std::lock_guard{m_MemoryLock};
-    return (unsigned)m_Memory.size();
+    return static_cast<unsigned>(m_Memory.size());
 }
 
 VFSInstanceManager::Promise VFSInstanceManagerImpl::GetVFSPromiseByPosition(unsigned _at)

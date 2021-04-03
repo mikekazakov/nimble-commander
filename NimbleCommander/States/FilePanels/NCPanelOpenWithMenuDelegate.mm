@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
 #include <Utility/SystemInformation.h>
@@ -25,12 +25,12 @@ struct FetchResult {
 
 static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_handlers)
 {
-    sort(begin(_handlers), end(_handlers), [](const auto &_1st, const auto &_2nd) {
+    std::sort(std::begin(_handlers), std::end(_handlers), [](const auto &_1st, const auto &_2nd) {
         return [_1st.Name() localizedCompare:_2nd.Name()] < 0;
     });
 
     nc::utility::VersionCompare ver_cmp;
-    for( int i = 0; i < (int)_handlers.size() - 1; ) {
+    for( int i = 0; i < static_cast<int>(_handlers.size()) - 1; ) {
         auto &first = _handlers[i];
         auto &second = _handlers[i + 1];
         if( [first.Name() isEqualToString:second.Name()] &&
@@ -39,8 +39,8 @@ static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_ha
             if( ver_cmp.Compare(first.Version(), second.Version()) >= 0 ) {
                 // _handlers[i] has later version or they are the same, remove the second
                 _handlers.erase(_handlers.begin() + i + 1);
-
-            } else {
+            }
+            else {
                 // _handlers[i+1] has later version, remove the first
                 _handlers.erase(_handlers.begin() + i);
                 continue;
@@ -167,8 +167,10 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 {
     const auto item = [NSMenuItem new];
     item.title = [NSString
-        stringWithFormat:@"%@ (%@)", _handler.Name(),
-                         NSLocalizedStringFromTable(@"default", @"FilePanelsContextMenu",
+        stringWithFormat:@"%@ (%@)",
+                         _handler.Name(),
+                         NSLocalizedStringFromTable(@"default",
+                                                    @"FilePanelsContextMenu",
                                                     "Menu item postfix marker for default apps to "
                                                     "open with, for English is 'default'")];
     item.image = [_handler.Icon() copy];
@@ -202,15 +204,16 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
             start++;
         }
 
-        for( int i = start; i < (int)m_OpenWithHandlers.size(); ++i ) {
+        for( int i = start; i < static_cast<int>(m_OpenWithHandlers.size()); ++i ) {
             auto menu_item = [self makeRegularHandlerItem:m_OpenWithHandlers[i]];
             menu_item.tag = i;
             [menu addItem:menu_item];
         }
 
-        if( start < (int)m_OpenWithHandlers.size() )
+        if( start < static_cast<int>(m_OpenWithHandlers.size()) )
             [menu addItem:NSMenuItem.separatorItem];
-    } else {
+    }
+    else {
         [menu addItem:[self makeNoneStubItem]];
         [menu addItem:NSMenuItem.separatorItem];
     }
@@ -241,8 +244,8 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 - (NSMenuItem *)makeSearchInMASItem
 {
     auto item = [NSMenuItem new];
-    item.title = NSLocalizedStringFromTable(@"App Store...", @"FilePanelsContextMenu",
-                                            "Menu item to choose an app from MAS");
+    item.title = NSLocalizedStringFromTable(
+        @"App Store...", @"FilePanelsContextMenu", "Menu item to choose an app from MAS");
     item.target = self;
     item.action = @selector(OnSearchInMAS:);
     return item;
@@ -252,7 +255,8 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 {
     auto item = [NSMenuItem new];
     item.title = NSLocalizedStringFromTable(
-        @"Other...", @"FilePanelsContextMenu",
+        @"Other...",
+        @"FilePanelsContextMenu",
         "Menu item to choose other app to open with, for English is 'Other...'");
     item.target = self;
     item.action = @selector(OnOpenWithOther:);
@@ -262,7 +266,8 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 - (NSMenuItem *)makeNoneStubItem
 {
     auto title = NSLocalizedStringFromTable(
-        @"<None>", @"FilePanelsContextMenu",
+        @"<None>",
+        @"FilePanelsContextMenu",
         "Menu item for case when no handlers are available, for English is '<None>'");
     auto item = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
     item.enabled = false;
@@ -272,7 +277,8 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 - (NSMenuItem *)makeFetchingStubItem
 {
     auto title =
-        NSLocalizedStringFromTable(@"Fetching...", @"FilePanelsContextMenu",
+        NSLocalizedStringFromTable(@"Fetching...",
+                                   @"FilePanelsContextMenu",
                                    "Menu item for indicating that fetching process is in progress");
     return [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
 }
@@ -287,7 +293,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 {
     if( const auto menu_item = objc_cast<NSMenuItem>(sender) ) {
         const auto app_no = menu_item.tag;
-        assert(app_no >= 0 && app_no < (long)m_OpenWithHandlers.size());
+        assert(app_no >= 0 && app_no < static_cast<long>(m_OpenWithHandlers.size()));
         const auto &handler = m_OpenWithHandlers[app_no];
         [self openItemsWithHandler:handler];
         if( [self isAlwaysOpenWith:menu_item.menu] )
@@ -346,12 +352,13 @@ static void ShowOpenPanel(NSOpenPanel *_panel,
             std::vector<std::string> items;
             for( auto &i : source_items )
                 items.emplace_back(i.Path());
-            m_FileOpener->Open(items, source_items.front().Host(), _handler.Identifier(),
-                               self.target);
+            m_FileOpener->Open(
+                items, source_items.front().Host(), _handler.Identifier(), self.target);
         }
-    } else if( source_items.size() == 1 ) {
-        m_FileOpener->Open(source_items.front().Path(), source_items.front().Host(),
-                           _handler.Path(), self.target);
+    }
+    else if( source_items.size() == 1 ) {
+        m_FileOpener->Open(
+            source_items.front().Path(), source_items.front().Host(), _handler.Path(), self.target);
     }
 }
 

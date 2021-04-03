@@ -350,7 +350,7 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
 {
     frame.size.height -= 1; // for horizontal divider drawn by drawBezelOfTabBarView
     
-    MMAttachedTabBarButton *button = (MMAttachedTabBarButton *)controlView;
+    MMAttachedTabBarButton *button = objc_cast<MMAttachedTabBarButton>(controlView);
     
     const NSColor *bg_color = [&]{
         const MMTabBarView *tabBarView = [controlView enclosingTabBarView];

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
@@ -173,8 +173,8 @@ static NSString *TitleForData(const data::Model *_data);
                      panelFactory:(std::function<PanelController *()>)_panel_factory
        controllerStateJSONDecoder:(ControllerStateJSONDecoder &)_controller_json_decoder
                    QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
-                activationManager:(nc::bootstrap::ActivationManager&)_activation_manager
-                  feedbackManager:(nc::FeedbackManager&)_feedback_manager
+                activationManager:(nc::bootstrap::ActivationManager &)_activation_manager
+                  feedbackManager:(nc::FeedbackManager &)_feedback_manager
 {
     assert(_panel_factory);
     if( self = [super initWithFrame:frameRect] ) {
@@ -211,8 +211,8 @@ static NSString *TitleForData(const data::Model *_data);
                   panelFactory:(std::function<PanelController *()>)_panel_factory
     controllerStateJSONDecoder:(ControllerStateJSONDecoder &)_controller_json_decoder
                 QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
-            activationManager:(nc::bootstrap::ActivationManager&)_activation_manager
-              feedbackManager:(nc::FeedbackManager&)_feedback_manager
+             activationManager:(nc::bootstrap::ActivationManager &)_activation_manager
+               feedbackManager:(nc::FeedbackManager &)_feedback_manager
 {
     self = [self initBaseWithFrame:frameRect
                            andPool:_pool
@@ -413,7 +413,8 @@ static NSString *TitleForData(const data::Model *_data);
                                                                    options:0
                                                                    metrics:nil
                                                                      views:views]];
-    } else {
+    }
+    else {
         /* Fixing bugs in NSISEngine, kinda */
         NSView *dummy = [[NSView alloc] initWithFrame:self.bounds];
         dummy.translatesAutoresizingMaskIntoConstraints = false;
@@ -454,7 +455,8 @@ static NSString *TitleForData(const data::Model *_data);
         // if we already were active and have some focused view - restore it
         [self.window makeFirstResponder:m_LastResponder];
         m_LastResponder = nil;
-    } else {
+    }
+    else {
         // if we don't know which view should be active - make left panel a first responder
         [self.window makeFirstResponder:m_SplitView.leftTabbedHolder.current];
     }
@@ -564,8 +566,8 @@ static bool Has(const std::vector<PanelController *> &_c, PanelController *_p) n
     // this is called very often, so in order to help optimizer I manually removed all
     // Objective-C / ARC related semantics by casting everything to raw void*.
     // the difference between assembly outputs is huge.
-    const void **first = (const void **)(const void *)_c.data();
-    const void **last = first + _c.size();
+    const void *const *first = reinterpret_cast<const void *const*>(static_cast<const void *>(_c.data()));
+    const void *const *last = first + _c.size();
     const void *value = (__bridge const void *)_p;
     return std::find(first, last, value) != last;
 }
@@ -605,7 +607,8 @@ static bool Has(const std::vector<PanelController *> &_c, PanelController *_p) n
                 [self.window makeFirstResponder:controller.view];
                 return;
             }
-    } else if( [self isRightController:controller] ) {
+    }
+    else if( [self isRightController:controller] ) {
         if( m_SplitView.rightTabbedHolder.current == controller.view ) {
             [self.window makeFirstResponder:m_SplitView.rightTabbedHolder.current];
             return;
@@ -714,7 +717,8 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
                         [self attachPanel:pc];
                         [self addNewControllerOnLeftPane:pc];
                         m_ControllerStateJSONDecoder->Decode(*i, pc);
-                    } else
+                    }
+                    else
                         m_ControllerStateJSONDecoder->Decode(*i, m_LeftPanelControllers.front());
                 }
 
@@ -726,7 +730,8 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
                         [self attachPanel:pc];
                         [self addNewControllerOnRightPane:pc];
                         m_ControllerStateJSONDecoder->Decode(*i, pc);
-                    } else
+                    }
+                    else
                         m_ControllerStateJSONDecoder->Decode(*i, m_RightPanelControllers.front());
                 }
         }
@@ -781,7 +786,7 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
     if( !right_panel )
         return;
 
-    const auto to_encode = (ControllerStateEncoding::Options)(
+    const auto to_encode = static_cast<ControllerStateEncoding::Options>(
         ControllerStateEncoding::EncodeDataOptions | ControllerStateEncoding::EncodeViewOptions);
 
     auto left_panel_options = ControllerStateJSONEncoder{left_panel}.Encode(to_encode);
@@ -831,7 +836,8 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
                                                selector:@selector(windowDidResize)
                                                    name:NSWindowDidResizeNotification
                                                  object:self.window];
-    } else {
+    }
+    else {
         [NSNotificationCenter.defaultCenter removeObserver:self
                                                       name:NSWindowDidResizeNotification
                                                     object:nil];
@@ -919,7 +925,8 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
 
         [QLPreviewPanel.sharedPreviewPanel makeKeyAndOrderFront:nil];
         return m_QLPanelAdaptor.owner == self ? m_QLPanelAdaptor : nil;
-    } else {
+    }
+    else {
         if( [self isLeftController:_panel] )
             if( const auto ql = objc_cast<NCPanelQLOverlay>(m_SplitView.rightOverlay) )
                 return ql;
@@ -1031,7 +1038,7 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
 - (void)requestTerminalExecution:(const std::string &)_filename at:(const std::string &)_cwd
 {
     if( ![self executeInOverlappedTerminalIfPossible:_filename at:_cwd] ) {
-        const auto ctrl = (NCMainWindowController *)self.window.delegate;
+        const auto ctrl = static_cast<NCMainWindowController *>(self.window.delegate);
         [ctrl requestTerminalExecution:_filename.c_str() at:_cwd.c_str()];
     }
 }
@@ -1060,7 +1067,8 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
             [m_SplitView expandRightView];
         m_SplitView.rightOverlay =
             nil; // may cause bad situations with weak pointers inside panel controller here
-    } else if( [self isLeftController:panel] ) {
+    }
+    else if( [self isLeftController:panel] ) {
 
         if( m_SplitView.isLeftCollapsed )
             [m_SplitView expandLeftView];
@@ -1090,7 +1098,7 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
 
 - (NCMainWindowController *)mainWindowController
 {
-    return (NCMainWindowController *)self.window.delegate;
+    return static_cast<NCMainWindowController *>(self.window.delegate);
 }
 
 - (void)swapPanels
@@ -1194,7 +1202,8 @@ static NSString *TrimmedTitleForWindow(NSString *_title, NSWindow *_window)
     const auto right = _window.frame.size.width;
     const auto padding = 8.;
     const auto width = right - left - 2 * padding;
-    return StringByTruncatingToWidth(_title, (float)width, kTruncateAtStart, attributes);
+    return StringByTruncatingToWidth(
+        _title, static_cast<float>(width), kTruncateAtStart, attributes);
 }
 
 static NSString *TitleForData(const data::Model *_data)

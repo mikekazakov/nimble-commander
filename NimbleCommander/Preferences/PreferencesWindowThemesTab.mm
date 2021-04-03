@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowThemesTab.h"
 #include <Config/RapidJSON.h>
 #include <fstream>
@@ -20,7 +20,7 @@
 
 using namespace std::literals;
 
-static NSTextField *SpawnSectionTitle( NSString *_title )
+static NSTextField *SpawnSectionTitle(NSString *_title)
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     tf.stringValue = _title;
@@ -31,7 +31,7 @@ static NSTextField *SpawnSectionTitle( NSString *_title )
     return tf;
 }
 
-static NSTextField *SpawnEntryTitle( NSString *_title )
+static NSTextField *SpawnEntryTitle(NSString *_title)
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     tf.stringValue = _title;
@@ -44,16 +44,15 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 }
 
 @interface PreferencesWindowThemesTab ()
-@property (nonatomic) IBOutlet NSOutlineView *outlineView;
-@property (nonatomic) IBOutlet NSPopUpButton *themesPopUp;
-@property (nonatomic) IBOutlet NSButton *importButton;
-@property (nonatomic) IBOutlet NSButton *exportButton;
-@property (nonatomic) bool selectedThemeCanBeRemoved;
-@property (nonatomic) bool selectedThemeCanBeReverted;
+@property(nonatomic) IBOutlet NSOutlineView *outlineView;
+@property(nonatomic) IBOutlet NSPopUpButton *themesPopUp;
+@property(nonatomic) IBOutlet NSButton *importButton;
+@property(nonatomic) IBOutlet NSButton *exportButton;
+@property(nonatomic) bool selectedThemeCanBeRemoved;
+@property(nonatomic) bool selectedThemeCanBeReverted;
 @end
 
-@implementation PreferencesWindowThemesTab
-{
+@implementation PreferencesWindowThemesTab {
     NSArray *m_Nodes;
     nc::config::Document m_Doc;
     ThemesManager *m_Manager;
@@ -65,32 +64,32 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 - (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super init];
-    if (self) {
+    if( self ) {
         m_ActivationManager = &_am;
         m_Manager = &NCAppDelegate.me.themesManager;
         [self loadThemesNames];
         [self loadSelectedDocument];
-        
+
         m_Nodes = BuildThemeSettingsNodesTree();
     }
-    
+
     return self;
 }
 
-- (void) loadThemesNames
+- (void)loadThemesNames
 {
     m_ThemeNames = m_Manager->ThemeNames();
-    assert( !m_ThemeNames.empty() ); // there should be at least 3 default themes!
+    assert(!m_ThemeNames.empty()); // there should be at least 3 default themes!
     m_SelectedTheme = 0;
     auto it = find(begin(m_ThemeNames), end(m_ThemeNames), m_Manager->SelectedThemeName());
     if( it != end(m_ThemeNames) )
-        m_SelectedTheme = (int)distance( begin(m_ThemeNames), it );
+        m_SelectedTheme = static_cast<int>(std::distance(std::begin(m_ThemeNames), it));
 }
 
-- (void) buildThemeNamesPopup
+- (void)buildThemeNamesPopup
 {
     [self.themesPopUp removeAllItems];
-    for( int i = 0, e = (int)m_ThemeNames.size(); i != e; ++i ) {
+    for( int i = 0, e = static_cast<int>(m_ThemeNames.size()); i != e; ++i ) {
         auto &name = m_ThemeNames[i];
         [self.themesPopUp addItemWithTitle:[NSString stringWithUTF8StdString:name]];
         self.themesPopUp.lastItem.tag = i;
@@ -104,31 +103,29 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     // Do view setup here.
     self.importButton.enabled = m_ActivationManager->HasThemesManipulation();
     self.exportButton.enabled = m_ActivationManager->HasThemesManipulation();
-        
+
     [self buildThemeNamesPopup];
     [self.outlineView expandItem:nil expandChildren:true];
 }
 
--(NSString*)identifier
+- (NSString *)identifier
 {
     return NSStringFromClass(self.class);
 }
 
--(NSImage*)toolbarItemImage
+- (NSImage *)toolbarItemImage
 {
-    return [[NSImage alloc] initWithContentsOfFile:
-     @"/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/ProfileFontAndColor.icns"];
+    return [[NSImage alloc] initWithContentsOfFile:@"/System/Library/CoreServices/CoreTypes.bundle/"
+                                                   @"Contents/Resources/ProfileFontAndColor.icns"];
 }
 
--(NSString*)toolbarItemLabel
+- (NSString *)toolbarItemLabel
 {
-    return NSLocalizedStringFromTable(@"Themes",
-                                      @"Preferences",
-                                      "General preferences tab title");
+    return NSLocalizedStringFromTable(@"Themes", @"Preferences", "General preferences tab title");
 }
 
-- (NSInteger)outlineView:(NSOutlineView *)[[maybe_unused]]outlineView
-numberOfChildrenOfItem:(nullable id)item
+- (NSInteger)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView
+    numberOfChildrenOfItem:(nullable id)item
 {
     if( item == nil )
         return m_Nodes.count;
@@ -137,56 +134,55 @@ numberOfChildrenOfItem:(nullable id)item
     return 0;
 }
 
-- (id)outlineView:(NSOutlineView *)[[maybe_unused]]outlineView
-child:(NSInteger)index ofItem:(nullable id)item
+- (id)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView
+            child:(NSInteger)index
+           ofItem:(nullable id)item
 {
     if( auto n = objc_cast<PreferencesWindowThemesTabGroupNode>(item) )
         return n.children[index];
     return m_Nodes[index];
 }
 
-- (BOOL)outlineView:(NSOutlineView *)[[maybe_unused]]outlineView isItemExpandable:(id)item
+- (BOOL)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView isItemExpandable:(id)item
 {
     return objc_cast<PreferencesWindowThemesTabGroupNode>(item) != nil;
 }
 
-- (nullable NSView *)outlineView:(NSOutlineView *)[[maybe_unused]]outlineView
+- (nullable NSView *)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView
               viewForTableColumn:(nullable NSTableColumn *)tableColumn
                             item:(id)item
 {
     if( auto n = objc_cast<PreferencesWindowThemesTabGroupNode>(item) ) {
         if( [tableColumn.identifier isEqualToString:@"title"] )
             return SpawnSectionTitle(n.title);
-        
-    
+
         return nil;
     }
     if( auto i = objc_cast<PreferencesWindowThemesTabItemNode>(item) ) {
         if( [tableColumn.identifier isEqualToString:@"title"] )
             return SpawnEntryTitle(i.title);
-    
+
         if( [tableColumn.identifier isEqualToString:@"value"] ) {
             if( i.type == PreferencesWindowThemesTabItemType::Color ) {
                 auto v = [[PreferencesWindowThemesTabColorControl alloc] initWithFrame:NSRect{}];
-                v.color = ThemePersistence::ExtractColor(self.selectedThemeFrontend,
-                                                         i.entry.c_str());
+                v.color =
+                    ThemePersistence::ExtractColor(self.selectedThemeFrontend, i.entry.c_str());
                 v.action = @selector(onColorChanged:);
                 v.target = self;
                 return v;
             }
             if( i.type == PreferencesWindowThemesTabItemType::Font ) {
                 auto v = [[PreferencesWindowThemesTabFontControl alloc] initWithFrame:NSRect{}];
-                v.font = ThemePersistence::ExtractFont(self.selectedThemeFrontend,
-                                                       i.entry.c_str());
+                v.font = ThemePersistence::ExtractFont(self.selectedThemeFrontend, i.entry.c_str());
                 v.action = @selector(onFontChanged:);
                 v.target = self;
                 return v;
             }
             if( i.type == PreferencesWindowThemesTabItemType::ColoringRules ) {
-                auto v = [[PreferencesWindowThemesTabColoringRulesControl alloc]
-                          initWithFrame:NSRect{}];
-                v.rules = ThemePersistence::ExtractRules(self.selectedThemeFrontend,
-                                                       i.entry.c_str());
+                auto v =
+                    [[PreferencesWindowThemesTabColoringRulesControl alloc] initWithFrame:NSRect{}];
+                v.rules =
+                    ThemePersistence::ExtractRules(self.selectedThemeFrontend, i.entry.c_str());
                 v.action = @selector(onColoringRulesChanged:);
                 v.target = self;
                 return v;
@@ -203,13 +199,13 @@ child:(NSInteger)index ofItem:(nullable id)item
                  theme instead of choosing a needed theme instead.
                  */
                 v.enabled = self.selectedThemeCanBeReverted == false;
-                
+
                 return v;
             }
             if( i.type == PreferencesWindowThemesTabItemType::ThemeTitle ) {
                 NSTextField *v = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-                v.stringValue = [NSString stringWithUTF8String:
-                    self.selectedThemeFrontend[i.entry.c_str()].GetString()];
+                v.stringValue = [NSString
+                    stringWithUTF8String:self.selectedThemeFrontend[i.entry.c_str()].GetString()];
                 v.bordered = false;
                 v.editable = true;
                 v.enabled = self.selectedThemeCanBeRemoved;
@@ -220,7 +216,7 @@ child:(NSInteger)index ofItem:(nullable id)item
             }
         }
     }
-    
+
     return nil;
 }
 
@@ -241,8 +237,7 @@ child:(NSInteger)index ofItem:(nullable id)item
         const auto row = [self.outlineView rowForView:v];
         const id item = [self.outlineView itemAtRow:row];
         if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
-            [self commitChangedValue:ThemePersistence::EncodeRules(v.rules)
-                              forKey:node.entry];
+            [self commitChangedValue:ThemePersistence::EncodeRules(v.rules) forKey:node.entry];
     }
 }
 
@@ -252,8 +247,7 @@ child:(NSInteger)index ofItem:(nullable id)item
         const auto row = [self.outlineView rowForView:v];
         const id item = [self.outlineView itemAtRow:row];
         if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
-            [self commitChangedValue:ThemePersistence::EncodeColor(v.color)
-                              forKey:node.entry];
+            [self commitChangedValue:ThemePersistence::EncodeColor(v.color) forKey:node.entry];
     }
 }
 
@@ -263,25 +257,24 @@ child:(NSInteger)index ofItem:(nullable id)item
         const auto row = [self.outlineView rowForView:v];
         const id item = [self.outlineView itemAtRow:row];
         if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
-            [self commitChangedValue:ThemePersistence::EncodeFont(v.font)
-                              forKey:node.entry];
+            [self commitChangedValue:ThemePersistence::EncodeFont(v.font) forKey:node.entry];
     }
 }
 
-- (const nc::config::Document &) selectedThemeFrontend
+- (const nc::config::Document &)selectedThemeFrontend
 {
     return m_Doc; // possibly some more logic here
 }
 /* also theme backend if any */
 
-- (void) commitChangedValue:(const nc::config::Value&)_value forKey:(const std::string&)_key
+- (void)commitChangedValue:(const nc::config::Value &)_value forKey:(const std::string &)_key
 {
     // CHECKS!!!
     const auto &theme_name = m_ThemeNames[m_SelectedTheme];
-    m_Manager->SetThemeValue( theme_name, _key, _value );
+    m_Manager->SetThemeValue(theme_name, _key, _value);
 }
 
-- (CGFloat)outlineView:(NSOutlineView *)[[maybe_unused]]outlineView heightOfRowByItem:(id)item
+- (CGFloat)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView heightOfRowByItem:(id)item
 {
     if( auto i = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
         if( i.type == PreferencesWindowThemesTabItemType::ColoringRules )
@@ -290,10 +283,10 @@ child:(NSInteger)index ofItem:(nullable id)item
     return 18;
 }
 
-- (IBAction)onThemesPopupChange:(id)[[maybe_unused]]sender
+- (IBAction)onThemesPopupChange:(id) [[maybe_unused]] sender
 {
-    int selected_ind = (int)self.themesPopUp.selectedTag;
-    if( selected_ind >= 0 && selected_ind < (int)m_ThemeNames.size() )
+    int selected_ind = static_cast<int>(self.themesPopUp.selectedTag);
+    if( selected_ind >= 0 && selected_ind < static_cast<int>(m_ThemeNames.size()) )
         if( m_Manager->SelectTheme(m_ThemeNames[selected_ind]) ) {
             m_SelectedTheme = selected_ind;
             [self loadSelectedDocument];
@@ -301,18 +294,17 @@ child:(NSInteger)index ofItem:(nullable id)item
         }
 }
 
-- (void) loadSelectedDocument
+- (void)loadSelectedDocument
 {
     // CHECKS!!!
     const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
-    m_Doc.CopyFrom( *m_Manager->ThemeData(theme_name), nc::config::g_CrtAllocator );
-    
-    
+    m_Doc.CopyFrom(*m_Manager->ThemeData(theme_name), nc::config::g_CrtAllocator);
+
     self.selectedThemeCanBeRemoved = m_Manager->CanBeRemoved(theme_name);
     self.selectedThemeCanBeReverted = m_Manager->HasDefaultSettings(theme_name);
 }
 
-- (IBAction)onRevertClicked:(id)[[maybe_unused]]sender
+- (IBAction)onRevertClicked:(id) [[maybe_unused]] sender
 {
     const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
     if( m_Manager->DiscardThemeChanges(theme_name) ) {
@@ -321,14 +313,14 @@ child:(NSInteger)index ofItem:(nullable id)item
     }
 }
 
-- (IBAction)onExportClicked:(id)[[maybe_unused]]sender
+- (IBAction)onExportClicked:(id) [[maybe_unused]] sender
 {
     const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
     if( auto v = m_Manager->ThemeData(theme_name) ) {
         rapidjson::StringBuffer buffer;
         rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
         v->Accept(writer);
-        
+
         NSSavePanel *panel = [NSSavePanel savePanel];
         panel.nameFieldStringValue = [NSString stringWithUTF8StdString:theme_name];
         panel.allowedFileTypes = @[@"json"];
@@ -340,8 +332,7 @@ child:(NSInteger)index ofItem:(nullable id)item
                                                                      error:nil];
         if( [panel runModal] == NSModalResponseOK )
             if( panel.URL != nil ) {
-                auto data = [NSData dataWithBytes:buffer.GetString()
-                                           length:buffer.GetSize()];
+                auto data = [NSData dataWithBytes:buffer.GetString() length:buffer.GetSize()];
                 [data writeToURL:panel.URL atomically:true];
             }
     }
@@ -350,7 +341,7 @@ child:(NSInteger)index ofItem:(nullable id)item
 - (void)importThemeWithURL:(NSURL *)url
 {
     if( auto d = [NSData dataWithContentsOfURL:url] ) {
-        std::string str{(const char *)d.bytes, d.length};
+        std::string str{static_cast<const char *>(d.bytes), d.length};
 
         auto doc = std::make_shared<rapidjson::Document>();
         rapidjson::ParseResult ok = doc->Parse<rapidjson::kParseCommentsFlag>(str.c_str());
@@ -382,20 +373,18 @@ child:(NSInteger)index ofItem:(nullable id)item
     }
 }
 
-- (IBAction)onImportClicked:(id)[[maybe_unused]]sender
+- (IBAction)onImportClicked:(id) [[maybe_unused]] sender
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.allowedFileTypes = @[@"json"];
     panel.allowsOtherFileTypes = false;
-    if( [panel runModal] == NSModalResponseOK && panel.URL != nil) {
+    if( [panel runModal] == NSModalResponseOK && panel.URL != nil ) {
         NSURL *url = panel.URL;
-        dispatch_to_main_queue_after(200ms, [=]{
-            [self importThemeWithURL:url];
-        });
+        dispatch_to_main_queue_after(200ms, [=] { [self importThemeWithURL:url]; });
     }
 }
 
-- (IBAction)onDuplicateClicked:(id)[[maybe_unused]]sender
+- (IBAction)onDuplicateClicked:(id) [[maybe_unused]] sender
 {
     const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
     const auto new_name = m_Manager->SuitableNameForNewTheme(theme_name);
@@ -405,7 +394,7 @@ child:(NSInteger)index ofItem:(nullable id)item
     }
 }
 
-- (void) reloadAll
+- (void)reloadAll
 {
     [self loadThemesNames];
     [self loadSelectedDocument];
@@ -413,12 +402,14 @@ child:(NSInteger)index ofItem:(nullable id)item
     [self.outlineView reloadData];
 }
 
-- (IBAction)onRemoveClicked:(id)[[maybe_unused]]sender
+- (IBAction)onRemoveClicked:(id) [[maybe_unused]] sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedString(@"Are you sure you want to remove this theme?",
-        "Asking user for confirmation on erasing custom theme - message");
-    alert.informativeText = NSLocalizedString(@"You can’t undo this action.",
+    alert.messageText =
+        NSLocalizedString(@"Are you sure you want to remove this theme?",
+                          "Asking user for confirmation on erasing custom theme - message");
+    alert.informativeText = NSLocalizedString(
+        @"You can’t undo this action.",
         "Asking user for confirmation on erasing custom theme - informative text");
     [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
@@ -429,12 +420,12 @@ child:(NSInteger)index ofItem:(nullable id)item
     }
 }
 
-- (void) controlTextDidEndEditing:(NSNotification *)obj
+- (void)controlTextDidEndEditing:(NSNotification *)obj
 {
     NSTextField *tf = obj.object;
     if( !tf )
         return;
-    
+
     const auto row = [self.outlineView rowForView:tf];
     const id item = [self.outlineView itemAtRow:row];
     if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) ) {

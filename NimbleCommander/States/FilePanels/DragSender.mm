@@ -84,7 +84,7 @@ void DragSender::Start(NSView *_from_view, NSEvent *_via_event, int _dragged_pan
 
         __weak PanelDraggingItem *weak_pb_item = pasterboard_item;
         drag_item.imageComponentsProvider = ^{
-          return BuildImageComponentsForItem((PanelDraggingItem *)weak_pb_item);
+          return BuildImageComponentsForItem(static_cast<PanelDraggingItem *>(weak_pb_item));
         };
 
         [drag_items addObject:drag_item];
@@ -123,7 +123,7 @@ static NSDraggingImageComponent *BuildIconComponent(PanelDraggingItem *_item)
 {
     if( _item.icon == nil )
         return nil;
-    const auto icon_image = (NSImage *)(_item.icon.copy);
+    const auto icon_image = static_cast<NSImage *>(_item.icon.copy);
     const auto key = NSDraggingImageComponentIconKey;
     icon_image.size = NSMakeSize(16, 16);
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include "PanelListViewGeometry.h"
 #include <array>
@@ -43,7 +43,7 @@ static std::tuple<short, short, short> GrabGeometryFromSystemFont(NSFont *_font,
     short icon_size = 16;
     short line_height = 20;
     short text_baseline = 4;
-    const int font_size = (int)std::floor(_font.pointSize + 0.5);
+    const int font_size = static_cast<int>(std::floor(_font.pointSize + 0.5));
 
     // check predefined values
     auto pit = find_if(begin(g_FixedLayoutData), end(g_FixedLayoutData), [&](auto &l) {

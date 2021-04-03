@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
 #include "StateActionsDispatcher.h"
 #include "../../Core/ActionsShortcutsManager.h"
@@ -17,28 +17,27 @@ static auto g_ToolbarIdentifier = @"FilePanelsToolbar";
 static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
 static const auto g_MaxPoolViewWith = 540.;
 
-@interface MainWindowFilePanelsStateToolbarDelegate()
+@interface MainWindowFilePanelsStateToolbarDelegate ()
 
-@property (nonatomic, readonly) MainWindowFilePanelState* state;
+@property(nonatomic, readonly) MainWindowFilePanelState *state;
 
 @end
 
-@implementation MainWindowFilePanelsStateToolbarDelegate
-{
+@implementation MainWindowFilePanelsStateToolbarDelegate {
     __weak MainWindowFilePanelState *m_State;
-    NSToolbar                       *m_Toolbar;
-    NSButton                        *m_LeftPanelGoToButton;
-    NSButton                        *m_RightPanelGoToButton;
+    NSToolbar *m_Toolbar;
+    NSButton *m_LeftPanelGoToButton;
+    NSButton *m_RightPanelGoToButton;
 
-    NCOpsPoolViewController         *m_PoolViewController;
-    NSToolbarItem                   *m_PoolViewToolbarItem;
-    
-    NSArray                         *m_AllowedToolbarItemsIdentifiers;
+    NCOpsPoolViewController *m_PoolViewController;
+    NSToolbarItem *m_PoolViewToolbarItem;
+
+    NSArray *m_AllowedToolbarItemsIdentifiers;
     ExternalToolsStorage::ObservationTicket m_ToolsChangesTicket;
-    
+
     bool m_SetUpWindowSizeObservation;
-    
-    id                              m_RepresentedObject;
+
+    id m_RepresentedObject;
 }
 
 @synthesize toolbar = m_Toolbar;
@@ -46,38 +45,39 @@ static const auto g_MaxPoolViewWith = 540.;
 @synthesize rightPanelGoToButton = m_RightPanelGoToButton;
 @synthesize operationsPoolViewController = m_PoolViewController;
 
-- (instancetype) initWithFilePanelsState:(MainWindowFilePanelState*)_state
+- (instancetype)initWithFilePanelsState:(MainWindowFilePanelState *)_state
 {
     assert(_state != nil);
     self = [super init];
     if( self ) {
         m_SetUpWindowSizeObservation = false;
         m_State = _state;
-        
+
         [self buildBasicControls];
         [self buildToolbar];
         [self buildAllowedIdentifiers];
-        
-        __weak MainWindowFilePanelsStateToolbarDelegate* weak_self = self;
-        m_ToolsChangesTicket = _state.externalToolsStorage.ObserveChanges([=]{
-            dispatch_to_main_queue([=]{
-                [(MainWindowFilePanelsStateToolbarDelegate*)weak_self externalToolsChanged];
+
+        __weak MainWindowFilePanelsStateToolbarDelegate *weak_self = self;
+        m_ToolsChangesTicket = _state.externalToolsStorage.ObserveChanges([=] {
+            dispatch_to_main_queue([=] {
+                [static_cast<MainWindowFilePanelsStateToolbarDelegate *>(weak_self)
+                    externalToolsChanged];
             });
         });
-        
-        m_PoolViewController = [[NCOpsPoolViewController alloc] initWithPool:
-                                self.state.operationsPool];
+
+        m_PoolViewController =
+            [[NCOpsPoolViewController alloc] initWithPool:self.state.operationsPool];
         [m_PoolViewController loadView];
     }
     return self;
 }
 
-- (MainWindowFilePanelState*) state
+- (MainWindowFilePanelState *)state
 {
-    return (MainWindowFilePanelState*)m_State;
+    return static_cast<MainWindowFilePanelState *>(m_State);
 }
 
-- (void) buildBasicControls
+- (void)buildBasicControls
 {
     m_LeftPanelGoToButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
     m_LeftPanelGoToButton.bezelStyle = NSBezelStyleTexturedRounded;
@@ -86,17 +86,17 @@ static const auto g_MaxPoolViewWith = 540.;
     m_LeftPanelGoToButton.image = [NSImage imageNamed:NSImageNamePathTemplate];
     m_LeftPanelGoToButton.target = nil;
     m_LeftPanelGoToButton.action = @selector(onLeftPanelGoToButtonAction:);
-    
+
     m_RightPanelGoToButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
     m_RightPanelGoToButton.bezelStyle = NSBezelStyleTexturedRounded;
     m_RightPanelGoToButton.refusesFirstResponder = true;
     m_RightPanelGoToButton.title = @"";
-    m_RightPanelGoToButton.image = [NSImage imageNamed:NSImageNamePathTemplate];    
+    m_RightPanelGoToButton.image = [NSImage imageNamed:NSImageNamePathTemplate];
     m_RightPanelGoToButton.target = nil;
     m_RightPanelGoToButton.action = @selector(onRightPanelGoToButtonAction:);
 }
 
-- (void) buildToolbar
+- (void)buildToolbar
 {
     m_Toolbar = [[NSToolbar alloc] initWithIdentifier:g_ToolbarIdentifier];
     m_Toolbar.delegate = self;
@@ -106,22 +106,23 @@ static const auto g_MaxPoolViewWith = 540.;
     m_Toolbar.showsBaselineSeparator = false;
 }
 
-static NSImage *ImageForTool( const ExternalTool &_et)
+static NSImage *ImageForTool(const ExternalTool &_et)
 {
-    NSURL *exec_url = [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:_et.m_ExecutablePath]];
+    NSURL *exec_url =
+        [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:_et.m_ExecutablePath]];
     if( !exec_url )
         return nil;
-    
+
     NSImage *img;
     [exec_url getResourceValue:&img forKey:NSURLEffectiveIconKey error:nil];
     if( !img )
         return nil;
-        
+
     img.size = NSMakeSize(24, 24);
     return img;
 }
 
-- (void)setupExternalToolItem:(NSToolbarItem*)_item forTool:(const ExternalTool&)_et no:(int)_no
+- (void)setupExternalToolItem:(NSToolbarItem *)_item forTool:(const ExternalTool &)_et no:(int)_no
 {
     const auto title = [NSString stringWithUTF8StdString:_et.m_Title];
     _item.image = ImageForTool(_et);
@@ -130,7 +131,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     _item.target = self;
     _item.action = @selector(onExternalToolAction:);
     _item.tag = _no;
-    _item.toolTip = [&]{
+    _item.toolTip = [&] {
         const auto hotkey = _et.m_Shorcut.PrettyString();
         if( hotkey.length == 0 )
             return title;
@@ -139,9 +140,9 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     }();
 }
 
-- (NSToolbarItem *)toolbar:(NSToolbar *)[[maybe_unused]]_toolbar
-     itemForItemIdentifier:(NSString *)itemIdentifier
- willBeInsertedIntoToolbar:(BOOL)[[maybe_unused]]_flag
+- (NSToolbarItem *)toolbar:(NSToolbar *) [[maybe_unused]] _toolbar
+        itemForItemIdentifier:(NSString *)itemIdentifier
+    willBeInsertedIntoToolbar:(BOOL) [[maybe_unused]] _flag
 {
     const auto &actman = ActionsShortcutsManager::Instance();
     if( [itemIdentifier isEqualToString:@"filepanels_left_goto_button"] ) {
@@ -168,20 +169,18 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         return item;
     }
     if( [itemIdentifier hasPrefix:g_ExternalToolsIdentifiersPrefix] ) {
-        const int n = atoi( itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length );
+        const int n = atoi(itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length);
         if( const auto tool = self.state.externalToolsStorage.GetTool(n) ) {
             NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
             [self setupExternalToolItem:item forTool:*tool no:n];
             return item;
         }
     }
-    
-    
-    
+
     return nil;
 }
 
-- (void) notifyStateWasAssigned
+- (void)notifyStateWasAssigned
 {
     if( !m_SetUpWindowSizeObservation ) {
         [NSNotificationCenter.defaultCenter addObserver:self
@@ -197,13 +196,13 @@ static NSImage *ImageForTool( const ExternalTool &_et)
 {
     if( !m_PoolViewToolbarItem )
         return;
-    
+
     if( const auto wnd = m_PoolViewController.view.window ) {
         const auto sz = m_PoolViewController.view.window.frame.size;
         const auto max_width = std::min(sz.width / 2.4, g_MaxPoolViewWith);
         const auto clipped_max_wdith = std::max(m_PoolViewToolbarItem.minSize.width, max_width);
-        m_PoolViewToolbarItem.maxSize = NSMakeSize(clipped_max_wdith,
-                                                   m_PoolViewToolbarItem.maxSize.height );
+        m_PoolViewToolbarItem.maxSize =
+            NSMakeSize(clipped_max_wdith, m_PoolViewToolbarItem.maxSize.height);
     }
 }
 
@@ -222,61 +221,64 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         }
 }
 
-- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)[[maybe_unused]]_toolbar
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *) [[maybe_unused]] _toolbar
 {
-    static NSArray *allowed_items =
-    @[ @"filepanels_left_goto_button",
-       NSToolbarFlexibleSpaceItemIdentifier,
-       @"operations_pool",
-       NSToolbarFlexibleSpaceItemIdentifier,
-       @"filepanels_right_goto_button"];
-    
+    static NSArray *allowed_items = @[
+        @"filepanels_left_goto_button",
+        NSToolbarFlexibleSpaceItemIdentifier,
+        @"operations_pool",
+        NSToolbarFlexibleSpaceItemIdentifier,
+        @"filepanels_right_goto_button"
+    ];
+
     return allowed_items;
 }
 
-- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)[[maybe_unused]]_toolbar
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *) [[maybe_unused]] _toolbar
 {
     return m_AllowedToolbarItemsIdentifiers;
 }
 
--(void) buildAllowedIdentifiers
+- (void)buildAllowedIdentifiers
 {
-    // this is a bit redundant, since we're building this list for _every_ window, and this list is the same for them
+    // this is a bit redundant, since we're building this list for _every_ window, and this list is
+    // the same for them
     NSMutableArray *a = [[NSMutableArray alloc] init];
     [a addObject:@"filepanels_left_goto_button"];
     [a addObject:@"filepanels_right_goto_button"];
     [a addObject:@"operations_pool"];
-    
+
     auto tools = m_State.externalToolsStorage.GetAllTools();
-    for( int i = 0, e = (int)tools.size(); i != e; ++i )
-        [a addObject:[NSString stringWithFormat:@"%@%d", g_ExternalToolsIdentifiersPrefix, i] ];
-    
+    for( int i = 0, e = static_cast<int>(tools.size()); i != e; ++i )
+        [a addObject:[NSString stringWithFormat:@"%@%d", g_ExternalToolsIdentifiersPrefix, i]];
+
     [a addObject:NSToolbarFlexibleSpaceItemIdentifier];
     [a addObject:NSToolbarSpaceItemIdentifier];
-    
+
     m_AllowedToolbarItemsIdentifiers = a;
 }
 
-- (void) externalToolsChanged
+- (void)externalToolsChanged
 {
     dispatch_assert_main_queue();
     std::deque<int> to_remove;
     for( NSToolbarItem *i in m_Toolbar.items ) {
         if( [i.itemIdentifier hasPrefix:g_ExternalToolsIdentifiersPrefix] ) {
-            const int n = atoi( i.itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length );
+            const int n =
+                atoi(i.itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length);
             if( const auto tool = self.state.externalToolsStorage.GetTool(n) ) {
                 [self setupExternalToolItem:i forTool:*tool no:n];
             }
             else
-                to_remove.push_front( (int)[m_Toolbar.items indexOfObject:i] );
+                to_remove.push_front(static_cast<int>([m_Toolbar.items indexOfObject:i]));
         }
     }
 
     // this will immediately trigger removing of same elements from other windows' toolbars.
     // this is intended and should work fine.
-    for( auto i: to_remove )
+    for( auto i : to_remove )
         [m_Toolbar removeItemAtIndex:i];
-    
+
     [self buildAllowedIdentifiers];
 }
 

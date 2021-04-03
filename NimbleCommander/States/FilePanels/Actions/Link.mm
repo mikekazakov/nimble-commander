@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Link.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
@@ -75,7 +75,7 @@ void CreateSymlink::Perform( PanelController *_target, id ) const
         const bool force_refresh = !weak_panel.receivesUpdateNotifications;
         operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion,
                                      [weak_panel, dest, force_refresh]{
-            FocusResult((PanelController *)weak_panel, dest, force_refresh);
+            FocusResult(static_cast<PanelController *>(weak_panel), dest, force_refresh);
         });
         [_target.mainWindowController enqueueOperation:operation];
     };
@@ -108,7 +108,7 @@ void AlterSymlink::Perform( PanelController *_target, id ) const
         if( force_refresh ) {
             __weak PanelController *weak_panel = _target;
             operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_panel]{
-                Refresh((PanelController*)weak_panel);
+                Refresh(static_cast<PanelController*>(weak_panel));
             });
         }
         [_target.mainWindowController enqueueOperation:operation];
@@ -148,7 +148,7 @@ void CreateHardlink::Perform( PanelController *_target, id ) const
         __weak PanelController *weak_panel = _target;
         operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion,
                                      [weak_panel, dest, force_refresh]{
-            FocusResult((PanelController*)weak_panel, dest,force_refresh );
+            FocusResult(static_cast<PanelController*>(weak_panel), dest,force_refresh );
         });
 
         [_target.mainWindowController enqueueOperation:operation];

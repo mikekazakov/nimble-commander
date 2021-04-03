@@ -68,7 +68,7 @@ static bool IsDark(NSColor *_color);
         m_SearchTextField.focusRingType = NSFocusRingTypeNone;
         m_SearchTextField.alignment = NSTextAlignmentCenter;
         m_SearchTextField.delegate = self;
-        auto search_tf_cell = (NSSearchFieldCell *)m_SearchTextField.cell;
+        auto search_tf_cell = static_cast<NSSearchFieldCell *>(m_SearchTextField.cell);
         search_tf_cell.cancelButtonCell.target = self;
         search_tf_cell.cancelButtonCell.action = @selector(onSearchFieldDiscardButton:);
         [self addSubview:m_SearchTextField];
@@ -488,10 +488,10 @@ static NSString *SortLetter(data::SortMode _mode) noexcept
     }
 }
 
-static float Brightness(NSColor *_color)
+static double Brightness(NSColor *_color)
 {
     const auto c = [_color colorUsingColorSpace:NSColorSpace.genericRGBColorSpace];
-    return (float)c.brightnessComponent;
+    return c.brightnessComponent;
 }
 
 static bool IsDark(NSColor *_color)

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Duplicate.h"
 #include "../PanelController.h"
 #include <VFS/VFS.h>
@@ -171,12 +171,13 @@ static std::string ProduceFormCLowercase(std::string_view _string)
 {
     CFStackAllocator allocator;
 
-    CFStringRef original = CFStringCreateWithBytesNoCopy(allocator.Alloc(),
-                                                         (UInt8 *)_string.data(),
-                                                         _string.length(),
-                                                         kCFStringEncodingUTF8,
-                                                         false,
-                                                         kCFAllocatorNull);
+    CFStringRef original =
+        CFStringCreateWithBytesNoCopy(allocator.Alloc(),
+                                      reinterpret_cast<const UInt8 *>(_string.data()),
+                                      _string.length(),
+                                      kCFStringEncodingUTF8,
+                                      false,
+                                      kCFAllocatorNull);
 
     if( !original )
         return "";
@@ -196,7 +197,7 @@ static std::string ProduceFormCLowercase(std::string_view _string)
                      kCFStringEncodingUTF8,
                      0,
                      false,
-                     (UInt8 *)utf8,
+                     reinterpret_cast<UInt8 *>(utf8),
                      MAXPATHLEN - 1,
                      &used);
     utf8[used] = 0;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyFile.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
@@ -179,7 +179,7 @@ void CopyAs::Perform(MainWindowFilePanelState *_target, id) const
                           boost::filesystem::path(path).parent_path().native() + "/" ) {
                       nc::panel::DelayedFocusing req;
                       req.filename = boost::filesystem::path(path).filename().native();
-                      [(PanelController *)panel scheduleDelayedFocusing:req];
+                      [panel scheduleDelayedFocusing:req];
                   }
               }
           });
@@ -326,7 +326,7 @@ void MoveAs::Perform(MainWindowFilePanelState *_target, id) const
           dispatch_to_main_queue([=] {
               nc::panel::DelayedFocusing req;
               req.filename = boost::filesystem::path(path).filename().native();
-              [(PanelController *)cur scheduleDelayedFocusing:req];
+              [static_cast<PanelController *>(cur) scheduleDelayedFocusing:req];
           });
       });
 
@@ -340,7 +340,7 @@ static std::function<void()> RefreshCurrentActiveControllerLambda(MainWindowFile
 {
     __weak PanelController *cur = _target.activePanelController;
     auto update_current = [=] {
-        dispatch_to_main_queue([=] { [(PanelController *)cur refreshPanel]; });
+        dispatch_to_main_queue([=] { [static_cast<PanelController *>(cur) refreshPanel]; });
     };
     return update_current;
 }
@@ -351,8 +351,8 @@ static std::function<void()> RefreshBothCurrentControllersLambda(MainWindowFileP
     __weak PanelController *opp = _target.oppositePanelController;
     auto update_both_panels = [=] {
         dispatch_to_main_queue([=] {
-            [(PanelController *)cur refreshPanel];
-            [(PanelController *)opp refreshPanel];
+            [static_cast<PanelController *>(cur) refreshPanel];
+            [static_cast<PanelController *>(opp) refreshPanel];
         });
     };
     return update_both_panels;

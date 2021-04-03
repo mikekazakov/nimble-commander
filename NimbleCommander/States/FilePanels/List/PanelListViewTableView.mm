@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -7,37 +7,36 @@
 #include "PanelListViewTableView.h"
 #include <Utility/ObjCpp.h>
 
-@interface PanelListViewTableView()
+@interface PanelListViewTableView ()
 
-@property (nonatomic)  NSColor *alternateBackgroundColor;
-@property (nonatomic) bool isDropTarget;
+@property(nonatomic) NSColor *alternateBackgroundColor;
+@property(nonatomic) bool isDropTarget;
 
 @end
 
-@implementation PanelListViewTableView
-{
+@implementation PanelListViewTableView {
     bool m_IsDropTarget;
-    ThemesManager::ObservationTicket    m_ThemeObservation;
+    ThemesManager::ObservationTicket m_ThemeObservation;
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
         [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
         [self setupColors];
-        
-        __weak PanelListViewTableView* weak_self = self;
+
+        __weak PanelListViewTableView *weak_self = self;
         m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-            ThemesManager::Notifications::FilePanelsList, [weak_self]{
-            if( auto strong_self = weak_self )
-                [strong_self setupColors];
-        });
+            ThemesManager::Notifications::FilePanelsList, [weak_self] {
+                if( auto strong_self = weak_self )
+                    [strong_self setupColors];
+            });
     }
     return self;
 }
 
-- (void) setupColors
+- (void)setupColors
 {
     self.backgroundColor = CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
     self.alternateBackgroundColor = CurrentTheme().FilePanelsListRegularOddRowBackgroundColor();
@@ -49,16 +48,17 @@
     return false;
 }
 
-- (BOOL)isOpaque {
+- (BOOL)isOpaque
+{
     return true;
 }
 
-- (PanelView*)panelView
+- (PanelView *)panelView
 {
     NSView *sv = self.superview;
     while( sv != nil && objc_cast<PanelView>(sv) == nil )
         sv = sv.superview;
-    return (PanelView*)sv;
+    return static_cast<PanelView *>(sv);
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -67,7 +67,7 @@
         [pv keyDown:event];
 }
 
-- (BOOL)acceptsFirstMouse:(nullable NSEvent *)[[maybe_unused]]_event
+- (BOOL)acceptsFirstMouse:(nullable NSEvent *) [[maybe_unused]] _event
 {
     return false;
 }
@@ -77,14 +77,14 @@
     [self.panelView panelItem:-1 mouseDown:event];
 }
 
-- (void)mouseUp:(NSEvent *)[[maybe_unused]]_event
+- (void)mouseUp:(NSEvent *) [[maybe_unused]] _event
 {
 }
 
 //- (void)drawBackgroundInClipRect:(NSRect)clipRect
 //{
-//    
-//    
+//
+//
 //}
 
 //- (void)drawRow:(NSInteger)row clipRect:(NSRect)clipRect {}
@@ -103,8 +103,7 @@
 //- (void)drawRect:(NSRect)dirtyRect{}
 //- (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(NSGraphicsContext *)context{}
 
-
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+- (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
 {
     auto op = [self.panelView panelItem:-1 operationForDragging:sender];
     if( op != NSDragOperationNone ) {
@@ -113,23 +112,23 @@
     return op;
 }
 
-- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender
 {
     return [self draggingEntered:sender];
 }
 
-- (void)draggingExited:(id <NSDraggingInfo>)[[maybe_unused]]_sender
+- (void)draggingExited:(id<NSDraggingInfo>) [[maybe_unused]] _sender
 {
     self.isDropTarget = false;
 }
 
-- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)[[maybe_unused]]_sender
+- (BOOL)prepareForDragOperation:(id<NSDraggingInfo>) [[maybe_unused]] _sender
 {
     // possibly add some checking stage here later
     return YES;
 }
 
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+- (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
 {
     if( self.isDropTarget ) {
         self.isDropTarget = false;
@@ -139,12 +138,12 @@
         return false;
 }
 
-- (bool) isDropTarget
+- (bool)isDropTarget
 {
     return m_IsDropTarget;
 }
 
-- (void) setIsDropTarget:(bool)isDropTarget
+- (void)setIsDropTarget:(bool)isDropTarget
 {
     if( m_IsDropTarget != isDropTarget ) {
         m_IsDropTarget = isDropTarget;
@@ -157,18 +156,20 @@
     }
 }
 
-- (void) drawBackgroundInClipRect:(NSRect)clipRect {
+- (void)drawBackgroundInClipRect:(NSRect)clipRect
+{
 
     if( [self alternateBackgroundColor] == nil ) {
         // If we didn't set the alternate colour, fall back to the default behaviour
         [super drawBackgroundInClipRect:clipRect];
-    } else {
+    }
+    else {
         // Fill in the background colour
         [[self backgroundColor] set];
         NSRectFill(clipRect);
-        
+
         // Check if we should be drawing alternating coloured rows
-        if([self alternateBackgroundColor] && [self usesAlternatingRowBackgroundColors]) {
+        if( [self alternateBackgroundColor] && [self usesAlternatingRowBackgroundColors] ) {
             // Set the alternating background colour
             [[self alternateBackgroundColor] set];
 
@@ -178,8 +179,8 @@
             checkRect.size.height = clipRect.size.height;
             NSRange rowsToDraw = [self rowsInRect:checkRect];
             NSUInteger curRow = rowsToDraw.location;
-            while(curRow < rowsToDraw.location + rowsToDraw.length) {
-                if(curRow % 2 != 0) {
+            while( curRow < rowsToDraw.location + rowsToDraw.length ) {
+                if( curRow % 2 != 0 ) {
                     // This is an alternate row
                     NSRect rowRect = [self rectOfRow:curRow];
                     rowRect.origin.x = clipRect.origin.x;
@@ -192,22 +193,25 @@
 
             // Figure out the height of "off the table" rows
             CGFloat rowHeight = [self rowHeight];
-            if( ([self gridStyleMask] & NSTableViewSolidHorizontalGridLineMask) == NSTableViewSolidHorizontalGridLineMask
-               || ([self gridStyleMask] & NSTableViewDashedHorizontalGridLineMask) == NSTableViewDashedHorizontalGridLineMask) {
+            if( ([self gridStyleMask] & NSTableViewSolidHorizontalGridLineMask) ==
+                    NSTableViewSolidHorizontalGridLineMask ||
+                ([self gridStyleMask] & NSTableViewDashedHorizontalGridLineMask) ==
+                    NSTableViewDashedHorizontalGridLineMask ) {
                 rowHeight += 2.0f; // Compensate for a grid
             }
 
             // Draw fake rows below the table's last row
             CGFloat virtualRowOrigin = 0.0f;
             NSInteger virtualRowNumber = [self numberOfRows];
-            if([self numberOfRows] > 0) {
-                NSRect finalRect = [self rectOfRow:[self numberOfRows]-1];
+            if( [self numberOfRows] > 0 ) {
+                NSRect finalRect = [self rectOfRow:[self numberOfRows] - 1];
                 virtualRowOrigin = finalRect.origin.y + finalRect.size.height;
             }
-            while(virtualRowOrigin < clipRect.origin.y + clipRect.size.height) {
-                if(virtualRowNumber % 2 != 0) {
+            while( virtualRowOrigin < clipRect.origin.y + clipRect.size.height ) {
+                if( virtualRowNumber % 2 != 0 ) {
                     // This is an alternate row
-                    NSRect virtualRowRect = NSMakeRect(clipRect.origin.x,virtualRowOrigin,clipRect.size.width,rowHeight);
+                    NSRect virtualRowRect = NSMakeRect(
+                        clipRect.origin.x, virtualRowOrigin, clipRect.size.width, rowHeight);
                     NSRectFill(virtualRowRect);
                 }
 
@@ -218,10 +222,11 @@
             // Draw fake rows above the table's first row
             virtualRowOrigin = -1 * rowHeight;
             virtualRowNumber = -1;
-            while(virtualRowOrigin + rowHeight > clipRect.origin.y) {
-                if(abs(virtualRowNumber) % 2 != 0) {
+            while( virtualRowOrigin + rowHeight > clipRect.origin.y ) {
+                if( abs(virtualRowNumber) % 2 != 0 ) {
                     // This is an alternate row
-                    NSRect virtualRowRect = NSMakeRect(clipRect.origin.x,virtualRowOrigin,clipRect.size.width,rowHeight);
+                    NSRect virtualRowRect = NSMakeRect(
+                        clipRect.origin.x, virtualRowOrigin, clipRect.size.width, rowHeight);
                     NSRectFill(virtualRowRect);
                 }
 
@@ -231,6 +236,5 @@
         }
     }
 }
-
 
 @end

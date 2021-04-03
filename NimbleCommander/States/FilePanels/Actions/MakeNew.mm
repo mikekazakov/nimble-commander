@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"
@@ -18,33 +18,32 @@ namespace nc::panel::actions {
 using namespace std::literals;
 
 [[clang::no_destroy]] static const auto g_InitialFileName = []() -> std::string {
-    NSString *stub = NSLocalizedString(@"untitled.txt",
-                                       "Name for freshly created file by hotkey");
-    if( stub && stub.length  )
+    NSString *stub = NSLocalizedString(@"untitled.txt", "Name for freshly created file by hotkey");
+    if( stub && stub.length )
         return stub.fileSystemRepresentationSafe;
-    
+
     return "untitled.txt";
 }();
 
 [[clang::no_destroy]] static const auto g_InitialFolderName = []() -> std::string {
-    NSString *stub = NSLocalizedString(@"untitled folder",
-                                       "Name for freshly create folder by hotkey");
-    if( stub && stub.length  )
+    NSString *stub =
+        NSLocalizedString(@"untitled folder", "Name for freshly create folder by hotkey");
+    if( stub && stub.length )
         return stub.fileSystemRepresentationSafe;
-    
+
     return "untitled folder";
 }();
 
 [[clang::no_destroy]] static const auto g_InitialFolderWithItemsName = []() -> std::string {
     NSString *stub = NSLocalizedString(@"New Folder with Items",
                                        "Name for freshly created folder by hotkey with items");
-    if( stub && stub.length  )
+    if( stub && stub.length )
         return stub.fileSystemRepresentationSafe;
-    
+
     return "New Folder with Items";
 }();
 
-static std::string NextName( const std::string& _initial, int _index )
+static std::string NextName(const std::string &_initial, int _index)
 {
     std::filesystem::path p = _initial;
     if( p.has_extension() ) {
@@ -77,15 +76,14 @@ static bool HasEntry(const std::string &_name, const VFSListing &_listing, bool 
     return false;
 }
 
-static std::string FindSuitableName(const std::string& _initial,
-                                    const VFSListing &_listing,
-                                    bool _case_sensitive )
+static std::string
+FindSuitableName(const std::string &_initial, const VFSListing &_listing, bool _case_sensitive)
 {
     auto name = _initial;
     if( !HasEntry(name, _listing, _case_sensitive) )
         return name;
-    
-    for( int i = 2; ; ++i ) {
+
+    for( int i = 2;; ++i ) {
         name = NextName(_initial, i);
         if( !HasEntry(name, _listing, _case_sensitive) )
             break;
@@ -95,20 +93,20 @@ static std::string FindSuitableName(const std::string& _initial,
     return name;
 }
 
-static void ScheduleRenaming( const std::string& _filename, PanelController *_panel )
+static void ScheduleRenaming(const std::string &_filename, PanelController *_panel)
 {
     __weak PanelController *weak_panel = _panel;
     DelayedFocusing req;
     req.filename = _filename;
     req.timeout = 2s;
-    req.done = [=]{
-        [((PanelController*)weak_panel).view discardFieldEditor];
-        [((PanelController*)weak_panel).view startFieldEditorRenaming];
+    req.done = [=] {
+        [static_cast<PanelController *>(weak_panel).view discardFieldEditor];
+        [static_cast<PanelController *>(weak_panel).view startFieldEditorRenaming];
     };
     [_panel scheduleDelayedFocusing:req];
 }
 
-static void ScheduleFocus( const std::string& _filename, PanelController *_panel )
+static void ScheduleFocus(const std::string &_filename, PanelController *_panel)
 {
     DelayedFocusing req;
     req.filename = _filename;
@@ -116,37 +114,38 @@ static void ScheduleFocus( const std::string& _filename, PanelController *_panel
     [_panel scheduleDelayedFocusing:req];
 }
 
-bool MakeNewFile::Predicate( PanelController *_target ) const
+bool MakeNewFile::Predicate(PanelController *_target) const
 {
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
-void MakeNewFile::Perform( PanelController *_target, id ) const
+void MakeNewFile::Perform(PanelController *_target, id) const
 {
     const std::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
     const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *weak_panel = _target;
-    
-    dispatch_to_background([=]{
+
+    dispatch_to_background([=] {
         const bool case_sensitive = vfs->IsCaseSensitiveAtPath(dir.c_str());
         auto name = FindSuitableName(g_InitialFileName, *listing, case_sensitive);
         if( name.empty() )
             return;
-        
-        int ret = VFSEasyCreateEmptyFile( (dir / name).c_str(), vfs );
-        if( ret != 0)
-            return dispatch_to_main_queue([=]{
+
+        int ret = VFSEasyCreateEmptyFile((dir / name).c_str(), vfs);
+        if( ret != 0 )
+            return dispatch_to_main_queue([=] {
                 Alert *alert = [[Alert alloc] init];
-                alert.messageText = NSLocalizedString(@"Failed to create an empty file:",
-                    "Showing error when trying to create an empty file");
+                alert.messageText =
+                    NSLocalizedString(@"Failed to create an empty file:",
+                                      "Showing error when trying to create an empty file");
                 alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
                 [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
                 [alert runModal];
             });
-        
-        dispatch_to_main_queue([=]{
+
+        dispatch_to_main_queue([=] {
             if( PanelController *panel = weak_panel ) {
                 if( force_reload )
                     [panel refreshPanel];
@@ -157,13 +156,12 @@ void MakeNewFile::Perform( PanelController *_target, id ) const
     });
 }
 
-
-bool MakeNewFolder::Predicate( PanelController *_target ) const
+bool MakeNewFolder::Predicate(PanelController *_target) const
 {
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
-void MakeNewFolder::Perform( PanelController *_target, id ) const
+void MakeNewFolder::Perform(PanelController *_target, id) const
 {
     const std::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
@@ -177,8 +175,8 @@ void MakeNewFolder::Perform( PanelController *_target, id ) const
         return;
 
     const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir.native(), *vfs);
-    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
-        dispatch_to_main_queue([=]{
+    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
+        dispatch_to_main_queue([=] {
             if( PanelController *panel = weak_panel ) {
                 if( force_reload )
                     [panel refreshPanel];
@@ -190,16 +188,14 @@ void MakeNewFolder::Perform( PanelController *_target, id ) const
     [_target.mainWindowController enqueueOperation:op];
 }
 
-bool MakeNewFolderWithSelection::Predicate( PanelController *_target ) const
+bool MakeNewFolderWithSelection::Predicate(PanelController *_target) const
 {
     auto item = _target.view.item;
-    return _target.isUniform &&
-            _target.vfs->IsWritable() &&
-            item &&
-            (!item.IsDotDot() || _target.data.Stats().selected_entries_amount > 0);
+    return _target.isUniform && _target.vfs->IsWritable() && item &&
+           (!item.IsDotDot() || _target.data.Stats().selected_entries_amount > 0);
 }
 
-void MakeNewFolderWithSelection::Perform( PanelController *_target, id ) const
+void MakeNewFolderWithSelection::Perform(PanelController *_target, id) const
 {
     const boost::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
@@ -208,33 +204,33 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id ) const
     const bool case_sensitive = vfs->IsCaseSensitiveAtPath(dir.c_str());
     __weak PanelController *weak_panel = _target;
     const auto files = _target.selectedEntriesOrFocusedEntry;
-    
+
     if( files.empty() )
         return;
-    
+
     const auto name = FindSuitableName(g_InitialFolderWithItemsName, *listing, case_sensitive);
     if( name.empty() )
         return;
-    
+
     const boost::filesystem::path destination = dir / name / "/";
-    
+
     const auto options = MakeDefaultFileMoveOptions();
     const auto op = std::make_shared<nc::ops::Copying>(files, destination.native(), vfs, options);
-    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=]{
-        dispatch_to_main_queue([=]{
+    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
+        dispatch_to_main_queue([=] {
             if( PanelController *panel = weak_panel ) {
                 if( force_reload )
                     [panel refreshPanel];
-                
+
                 ScheduleRenaming(name, panel);
             }
         });
     });
-    
+
     [_target.mainWindowController enqueueOperation:op];
 }
 
-bool MakeNewNamedFolder::Predicate( PanelController *_target ) const
+bool MakeNewNamedFolder::Predicate(PanelController *_target) const
 {
     return _target.isUniform && _target.vfs->IsWritable();
 }
@@ -247,8 +243,8 @@ static bool ValidateDirectoryInput(const std::string &_text)
     static const auto invalid_chars = ":\\\r\t\n";
     return _text.find_first_of(invalid_chars) == std::string::npos;
 }
-    
-void MakeNewNamedFolder::Perform( PanelController *_target, id ) const
+
+void MakeNewNamedFolder::Perform(PanelController *_target, id) const
 {
     const auto cd = [[NCOpsDirectoryCreationDialog alloc] init];
     if( const auto item = _target.view.item )
@@ -256,34 +252,35 @@ void MakeNewNamedFolder::Perform( PanelController *_target, id ) const
             cd.suggestion = item.Filename();
 
     cd.validationCallback = ValidateDirectoryInput;
-    
-    [_target.mainWindowController beginSheet:cd.window
-                           completionHandler:^(NSModalResponse returnCode) {
-        if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
-            const std::string name = cd.result;
-            const std::string dir = _target.currentDirectoryPath;
-            const auto vfs = _target.vfs;
-            const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
-            __weak PanelController *weak_panel = _target;
-            
-            const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
-            const auto weak_op = std::weak_ptr<nc::ops::DirectoryCreation>{op};
-            op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
-                const auto &dir_names = weak_op.lock()->DirectoryNames();
-                const std::string to_focus = dir_names.empty() ? ""s : dir_names.front();
-                dispatch_to_main_queue([=]{
-                    if( PanelController *panel = weak_panel ) {
-                        if( force_reload )
-                            [panel refreshPanel];
-                        
-                        ScheduleFocus(to_focus, panel);
-                    }
-                });
-            });
-            
-            [_target.mainWindowController enqueueOperation:op];
-        }
-    }];
+
+    [_target.mainWindowController
+               beginSheet:cd.window
+        completionHandler:^(NSModalResponse returnCode) {
+          if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
+              const std::string name = cd.result;
+              const std::string dir = _target.currentDirectoryPath;
+              const auto vfs = _target.vfs;
+              const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
+              __weak PanelController *weak_panel = _target;
+
+              const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
+              const auto weak_op = std::weak_ptr<nc::ops::DirectoryCreation>{op};
+              op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
+                  const auto &dir_names = weak_op.lock()->DirectoryNames();
+                  const std::string to_focus = dir_names.empty() ? ""s : dir_names.front();
+                  dispatch_to_main_queue([=] {
+                      if( PanelController *panel = weak_panel ) {
+                          if( force_reload )
+                              [panel refreshPanel];
+
+                          ScheduleFocus(to_focus, panel);
+                      }
+                  });
+              });
+
+              [_target.mainWindowController enqueueOperation:op];
+          }
+        }];
 }
 
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
 #include "../Core/VFSInstanceManager.h"
@@ -10,19 +10,18 @@
 using namespace std::literals;
 
 @interface VFSListWindowController ()
-@property (nonatomic) IBOutlet NSTableView *vfsTable;
-@property (nonatomic) IBOutlet NSSegmentedControl *listType;
+@property(nonatomic) IBOutlet NSTableView *vfsTable;
+@property(nonatomic) IBOutlet NSSegmentedControl *listType;
 
 @end
 
-@implementation VFSListWindowController
-{
+@implementation VFSListWindowController {
     VFSListWindowController *m_Self;
     std::vector<nc::core::VFSInstanceManager::ObservationTicket> m_Observations;
     nc::core::VFSInstanceManager *m_Manager;
 }
 
-- (instancetype)initWithVFSManager:(nc::core::VFSInstanceManager&)_manager
+- (instancetype)initWithVFSManager:(nc::core::VFSInstanceManager &)_manager
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if( self ) {
@@ -35,33 +34,33 @@ using namespace std::literals;
 {
     [super windowDidLoad];
     nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
-    
+
     __weak VFSListWindowController *weak_self = self;
-    auto cb = [=]{
-        dispatch_to_main_queue([=]{
-            if( VFSListWindowController* me = weak_self )
+    auto cb = [=] {
+        dispatch_to_main_queue([=] {
+            if( VFSListWindowController *me = weak_self )
                 [me updateData];
         });
     };
-    m_Observations.emplace_back( m_Manager->ObserveAliveVFSListChanged(cb));
-    m_Observations.emplace_back( m_Manager->ObserveKnownVFSListChanged(cb));
-    
+    m_Observations.emplace_back(m_Manager->ObserveAliveVFSListChanged(cb));
+    m_Observations.emplace_back(m_Manager->ObserveKnownVFSListChanged(cb));
+
     [self updateData];
 }
 
-- (void) show
+- (void)show
 {
     [self showWindow:self];
     m_Self = self;
     GA().PostScreenView("VFS List Window");
 }
 
-- (void) updateData
+- (void)updateData
 {
     [self.vfsTable reloadData];
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)[[maybe_unused]]tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]] tableView
 {
     if( self.listType.selectedSegment == 0 )
         return m_Manager->AliveHosts().size();
@@ -69,21 +68,21 @@ using namespace std::literals;
         return m_Manager->KnownVFSCount();
 }
 
-- (nullable NSView *)tableView:(NSTableView *)[[maybe_unused]]tableView
+- (nullable NSView *)tableView:(NSTableView *) [[maybe_unused]] tableView
             viewForTableColumn:(nullable NSTableColumn *)tableColumn
                            row:(NSInteger)row
 {
     nc::core::VFSInstanceManager::Promise info;
-    
+
     if( self.listType.selectedSegment == 0 ) {
         auto snapshot = m_Manager->AliveHosts();
-        if( row >= 0 && row < (int)snapshot.size() )
-            info = m_Manager->PreserveVFS( snapshot.at(row) );
+        if( row >= 0 && row < static_cast<int>(snapshot.size()) )
+            info = m_Manager->PreserveVFS(snapshot.at(row));
     }
     else {
-        info = m_Manager->GetVFSPromiseByPosition((unsigned)row);
+        info = m_Manager->GetVFSPromiseByPosition(static_cast<unsigned>(row));
     }
-    
+
     if( !info )
         return nil;
 
@@ -112,7 +111,7 @@ using namespace std::literals;
         tf.drawsBackground = false;
         return tf;
     }
-    
+
     if( [tableColumn.identifier isEqualToString:@"junction"] ) {
         NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
         tf.stringValue = [NSString stringWithUTF8StdString:info.verbose_title()];
@@ -125,14 +124,12 @@ using namespace std::literals;
     return nil;
 }
 
-- (void)windowWillClose:(NSNotification *)[[maybe_unused]]_notification
+- (void)windowWillClose:(NSNotification *) [[maybe_unused]] _notification
 {
-    dispatch_to_main_queue_after(10ms, [=]{
-        m_Self = nil;
-    });
+    dispatch_to_main_queue_after(10ms, [=] { m_Self = nil; });
 }
 
-- (IBAction)onTypeChanged:(id)[[maybe_unused]]_sender
+- (IBAction)onTypeChanged:(id) [[maybe_unused]] _sender
 {
     [self updateData];
 }

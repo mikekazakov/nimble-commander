@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMTabBarView.h>
 #import <MMTabBarView/MMTabBarItem.h>
 #include "FilePanelsTabbedHolder.h"
@@ -10,7 +10,7 @@
 
 @interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
 
-@property (atomic, assign) BOOL hasCloseButton;
+@property(atomic, assign) BOOL hasCloseButton;
 
 @end
 
@@ -19,7 +19,7 @@
 - (id)init
 {
     self = [super init];
-    if(self) {
+    if( self ) {
         self.hasCloseButton = true;
     }
     return self;
@@ -27,46 +27,45 @@
 
 @end
 
-@implementation FilePanelsTabbedHolder
-{
-    MMTabBarView    *m_TabBar;
-    NSTabView       *m_TabView;
+@implementation FilePanelsTabbedHolder {
+    MMTabBarView *m_TabBar;
+    NSTabView *m_TabView;
     bool m_TabBarShown;
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect
 {
     static std::once_flag once;
-    std::call_once(once, []{
-        [MMTabBarView registerTabStyleClass:TabBarStyle.class];
-    });
-    
+    std::call_once(once, [] { [MMTabBarView registerTabStyleClass:TabBarStyle.class]; });
+
     self = [super initWithFrame:frameRect];
-    if(self) {
+    if( self ) {
         m_TabBarShown = false;
-        
+
         m_TabView = [[NSTabView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabView.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabView.tabViewType = NSNoTabsNoBorder;
-        [m_TabView addConstraint:[NSLayoutConstraint constraintWithItem:m_TabView
-                                                              attribute:NSLayoutAttributeWidth
-                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                 toItem:nil
-                                                              attribute:NSLayoutAttributeNotAnAttribute
-                                                             multiplier:1.0
-                                                               constant:50]];
-        
-        NSLayoutConstraint *c = [NSLayoutConstraint constraintWithItem:m_TabView
-                                                             attribute:NSLayoutAttributeHeight
-                                                             relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                toItem:nil
-                                                             attribute:NSLayoutAttributeNotAnAttribute
-                                                            multiplier:1.0
-                                                              constant:50];
+        [m_TabView
+            addConstraint:[NSLayoutConstraint constraintWithItem:m_TabView
+                                                       attribute:NSLayoutAttributeWidth
+                                                       relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                          toItem:nil
+                                                       attribute:NSLayoutAttributeNotAnAttribute
+                                                      multiplier:1.0
+                                                        constant:50]];
+
+        NSLayoutConstraint *c =
+            [NSLayoutConstraint constraintWithItem:m_TabView
+                                         attribute:NSLayoutAttributeHeight
+                                         relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                            toItem:nil
+                                         attribute:NSLayoutAttributeNotAnAttribute
+                                        multiplier:1.0
+                                          constant:50];
         c.priority = NSLayoutPriorityDefaultLow;
         [m_TabView addConstraint:c];
         [self addSubview:m_TabView];
-        
+
         m_TabBar = [[MMTabBarView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabBar.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabBar.tabView = m_TabView;
@@ -80,13 +79,14 @@
         m_TabBar.buttonMaxWidth = 2000;
         m_TabBar.buttonOptimumWidth = 2000;
         [m_TabBar setStyleNamed:@"NC"];
-        [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
-                                                             attribute:NSLayoutAttributeWidth
-                                                             relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                toItem:nil
-                                                             attribute:NSLayoutAttributeNotAnAttribute
-                                                            multiplier:1.0
-                                                              constant:50]];
+        [m_TabBar
+            addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
+                                                       attribute:NSLayoutAttributeWidth
+                                                       relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                          toItem:nil
+                                                       attribute:NSLayoutAttributeNotAnAttribute
+                                                      multiplier:1.0
+                                                        constant:50]];
         c = [NSLayoutConstraint constraintWithItem:m_TabBar
                                          attribute:NSLayoutAttributeHeight
                                          relatedBy:NSLayoutRelationEqual
@@ -94,10 +94,10 @@
                                          attribute:NSLayoutAttributeNotAnAttribute
                                         multiplier:1.0
                                           constant:m_TabBar.heightOfTabBarButtons];
-        c.priority = NSLayoutPriorityDefaultLow+1;
+        c.priority = NSLayoutPriorityDefaultLow + 1;
         [m_TabBar addConstraint:c];
         m_TabView.delegate = m_TabBar;
-        
+
         [self doLayoutTabless];
     }
     return self;
@@ -108,99 +108,116 @@
     return true;
 }
 
-- (void) doLayoutTabless
+- (void)doLayoutTabless
 {
     [self removeConstraints:self.constraints];
     NSDictionary *views = NSDictionaryOfVariableBindings(m_TabView);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_TabView]-(0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TabView]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_TabView]-(0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint
+                             constraintsWithVisualFormat:@"V:|-(==0)-[m_TabView]-(==0)-|"
+                                                 options:0
+                                                 metrics:nil
+                                                   views:views]];
 }
 
-- (void) doLayoutWithTabs
+- (void)doLayoutWithTabs
 {
     [self removeConstraints:self.constraints];
     NSDictionary *views = NSDictionaryOfVariableBindings(m_TabView, m_TabBar);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_TabView]-(0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_TabBar]-(0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TabBar]-(==0)-[m_TabView]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_TabView]-(0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_TabBar]-(0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                                                 @"V:|-(==0)-[m_TabBar]-(==0)-[m_TabView]-(==0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
 }
 
-- (MMTabBarView*) tabBar
+- (MMTabBarView *)tabBar
 {
     return m_TabBar;
 }
 
-- (NSTabView*) tabView
+- (NSTabView *)tabView
 {
     return m_TabView;
 }
 
-- (void) addPanel:(PanelView*)_panel
+- (void)addPanel:(PanelView *)_panel
 {
     FilePanelsTabbedBarItem *bar_item = [FilePanelsTabbedBarItem new];
     bar_item.hasCloseButton = true;
-    
+
     NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:bar_item];
     item.view = _panel;
     item.initialFirstResponder = _panel;
     [m_TabView addTabViewItem:item];
 }
 
-- (PanelView*) current
+- (PanelView *)current
 {
     NSTabViewItem *it = m_TabView.selectedTabViewItem;
-    if(!it)
+    if( !it )
         return nil;
-    
-    assert( objc_cast<PanelView>(it.view) );
-    
-    return (PanelView*)it.view;
+
+    assert(objc_cast<PanelView>(it.view));
+
+    return static_cast<PanelView *>(it.view);
 }
 
-- (unsigned) tabsCount
+- (unsigned)tabsCount
 {
-    return (unsigned)m_TabView.numberOfTabViewItems;
+    return static_cast<unsigned>(m_TabView.numberOfTabViewItems);
 }
 
-- (NSTabViewItem*) tabViewItemForController:(PanelController*)_controller
+- (NSTabViewItem *)tabViewItemForController:(PanelController *)_controller
 {
     PanelView *v = _controller.view;
-    for(NSTabViewItem *it in m_TabView.tabViewItems)
-        if(it.view == v)
+    for( NSTabViewItem *it in m_TabView.tabViewItems )
+        if( it.view == v )
             return it;
     return nil;
 }
 
-- (void) doShowTabBar
+- (void)doShowTabBar
 {
-    if(!m_TabBarShown) {
+    if( !m_TabBarShown ) {
         [self addSubview:m_TabBar];
         [self doLayoutWithTabs];
         m_TabBarShown = true;
     }
 }
 
-- (void) doHideTabBar
+- (void)doHideTabBar
 {
-    if(m_TabBarShown) {
+    if( m_TabBarShown ) {
         [m_TabBar removeFromSuperview];
         [self doLayoutTabless];
         m_TabBarShown = false;
     }
 }
 
-- (bool) tabBarShown
+- (bool)tabBarShown
 {
     return m_TabBarShown;
 }
 
-- (void) setTabBarShown:(bool)tabBarShown
+- (void)setTabBarShown:(bool)tabBarShown
 {
-    if(m_TabBarShown == tabBarShown)
+    if( m_TabBarShown == tabBarShown )
         return;
-    if(m_TabBarShown && !tabBarShown)
+    if( m_TabBarShown && !tabBarShown )
         [self doHideTabBar];
-    else if(!m_TabBarShown && tabBarShown)
+    else if( !m_TabBarShown && tabBarShown )
         [self doShowTabBar];
 }
 
@@ -209,23 +226,42 @@
     const auto resp_view = objc_cast<NSView>(self.window.firstResponder);
     if( !resp_view || ![resp_view isDescendantOf:m_TabView] )
         return [super performKeyEquivalent:theEvent];
-    
+
     const auto characters = theEvent.charactersIgnoringModifiers;
-    if ( characters.length != 1 )
+    if( characters.length != 1 )
         return [super performKeyEquivalent:theEvent];
-    
+
     const auto mod = theEvent.modifierFlags;
     const auto unicode = [characters characterAtIndex:0];
-    
-    static ActionsShortcutsManager::ShortCut hk_prev, hk_next,
-        hk_t1, hk_t2, hk_t3, hk_t4, hk_t5, hk_t6, hk_t7, hk_t8, hk_t9, hk_t10;
+
+    static ActionsShortcutsManager::ShortCut hk_prev, hk_next, hk_t1, hk_t2, hk_t3, hk_t4, hk_t5,
+        hk_t6, hk_t7, hk_t8, hk_t9, hk_t10;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-        {&hk_prev, &hk_next, &hk_t1, &hk_t2, &hk_t3, &hk_t4, &hk_t5,
-        &hk_t6, &hk_t7, &hk_t8, &hk_t9, &hk_t10},
-        {"panel.show_previous_tab", "panel.show_next_tab", "panel.show_tab_no_1", "panel.show_tab_no_2",
-        "panel.show_tab_no_3", "panel.show_tab_no_4", "panel.show_tab_no_5", "panel.show_tab_no_6",
-        "panel.show_tab_no_7", "panel.show_tab_no_8", "panel.show_tab_no_9", "panel.show_tab_no_10"});
-    
+        {&hk_prev,
+         &hk_next,
+         &hk_t1,
+         &hk_t2,
+         &hk_t3,
+         &hk_t4,
+         &hk_t5,
+         &hk_t6,
+         &hk_t7,
+         &hk_t8,
+         &hk_t9,
+         &hk_t10},
+        {"panel.show_previous_tab",
+         "panel.show_next_tab",
+         "panel.show_tab_no_1",
+         "panel.show_tab_no_2",
+         "panel.show_tab_no_3",
+         "panel.show_tab_no_4",
+         "panel.show_tab_no_5",
+         "panel.show_tab_no_6",
+         "panel.show_tab_no_7",
+         "panel.show_tab_no_8",
+         "panel.show_tab_no_9",
+         "panel.show_tab_no_10"});
+
     if( hk_prev.IsKeyDown(unicode, mod) ) {
         [self selectPreviousFilePanelTab];
         return true;
@@ -274,39 +310,39 @@
         [self selectTabAtIndex:9];
         return true;
     }
-    
+
     return [super performKeyEquivalent:theEvent];
 }
 
-- (void) selectPreviousFilePanelTab
+- (void)selectPreviousFilePanelTab
 {
     unsigned long tabs = [m_TabBar numberOfTabViewItems];
-    if(tabs == 1)
+    if( tabs == 1 )
         return;
-    
+
     unsigned long now = [m_TabBar indexOfTabViewItem:m_TabBar.selectedTabViewItem];
-    if(now == NSNotFound)
+    if( now == NSNotFound )
         return;
-    
+
     unsigned long willbe = now >= 1 ? now - 1 : tabs - 1;
     [m_TabBar selectTabViewItem:m_TabBar.tabView.tabViewItems[willbe]];
 }
 
-- (void) selectNextFilePanelTab
+- (void)selectNextFilePanelTab
 {
     unsigned long tabs = [m_TabBar numberOfTabViewItems];
-    if(tabs == 1)
+    if( tabs == 1 )
         return;
-    
+
     unsigned long now = [m_TabBar indexOfTabViewItem:m_TabBar.selectedTabViewItem];
-    if(now == NSNotFound)
+    if( now == NSNotFound )
         return;
-    
+
     unsigned long willbe = now + 1 < tabs ? now + 1 : 0;
     [m_TabBar selectTabViewItem:m_TabBar.tabView.tabViewItems[willbe]];
 }
 
-- (int) selectedIndex
+- (int)selectedIndex
 {
     auto it = m_TabView.selectedTabViewItem;
     if( !it )
@@ -315,23 +351,23 @@
     auto ind = [m_TabView indexOfTabViewItem:it];
     if( ind == NSNotFound )
         return -1;
-    
-    return (int)ind;
+
+    return static_cast<int>(ind);
 }
 
-- (void) selectTabAtIndex:(int)_index
+- (void)selectTabAtIndex:(int)_index
 {
     if( _index < 0 )
         return;
 
-    const auto tabs = (int)[m_TabBar numberOfTabViewItems];
+    const auto tabs = static_cast<int>([m_TabBar numberOfTabViewItems]);
     if( _index >= tabs )
         return;
-    
-    const auto now = (int)[m_TabBar indexOfTabViewItem:m_TabBar.selectedTabViewItem];
+
+    const auto now = static_cast<int>([m_TabBar indexOfTabViewItem:m_TabBar.selectedTabViewItem]);
     if( now == _index )
         return;
-    
+
     [m_TabBar selectTabViewItem:m_TabBar.tabView.tabViewItems[_index]];
 }
 

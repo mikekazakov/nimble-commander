@@ -115,7 +115,7 @@ bool DragReceiver::Receive()
 std::pair<NSDragOperation, int> DragReceiver::ScanLocalSource(FilesDraggingSource *_source,
                                                               const VFSPath &_dest) const
 {
-    const auto valid_items = (int)_source.items.size();
+    const auto valid_items = static_cast<int>(_source.items.size());
     NSDragOperation operation = NSDragOperationNone;
     if( _source.sourceController == m_Target && !m_DraggingOverDirectory )
         operation = NSDragOperationNone; // we can't drag into the same dir on the same panel
@@ -151,7 +151,7 @@ std::pair<NSDragOperation, int> DragReceiver::ScanURLsSource(NSArray<NSURL *> *_
     if( !_urls )
         return {NSDragOperationNone, 0};
 
-    const auto valid_items = (int)_urls.count;
+    const auto valid_items = static_cast<int>(_urls.count);
     NSDragOperation operation = BuildOperationForURLs(_urls, _destination);
 
     if( operation != NSDragOperationNone && _destination.Host()->IsNativeFS() ) {
@@ -324,17 +324,18 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source, const VFSPat
         // failed to fetch the source items.
         // refuse the drag and show an error message asynchronously.
         const int vfs_error = source_items.error();
-        dispatch_to_main_queue([vfs_error]{
+        dispatch_to_main_queue([vfs_error] {
             Alert *alert = [[Alert alloc] init];
-            alert.messageText = NSLocalizedString(@"Failed to access the dragged item:",
-                "Showing error when failed to access the dragged items");
+            alert.messageText =
+                NSLocalizedString(@"Failed to access the dragged item:",
+                                  "Showing error when failed to access the dragged items");
             alert.informativeText = VFSError::ToNSError(vfs_error).localizedDescription;
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
         });
         return false;
     }
-    
+
     if( operation == NSDragOperationCopy ) {
         const auto opts = MakeDefaultFileCopyOptions();
         const auto op = std::make_shared<nc::ops::Copying>(

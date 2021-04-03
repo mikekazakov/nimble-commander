@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SettingsAdaptor.h"
 #include <Term/Settings.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -12,28 +12,26 @@ namespace nc::term {
 static const auto g_ConfigMaxFPS = "terminal.maxFPS";
 static const auto g_ConfigCursorMode = "terminal.cursorMode";
 static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
-    
+
 class SettingsImpl : public DefaultSettings
 {
     ThemesManager::ObservationTicket m_ThemeObservation;
     std::vector<config::Token> m_ConfigObservationTickets;
     std::vector<std::pair<int, std::function<void()>>> m_Callbacks;
     int m_LastTicket = 1;
+
 public:
     SettingsImpl()
     {
         m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-            ThemesManager::Notifications::Terminal,
-            []{ DispatchNotification();
-        });
+            ThemesManager::Notifications::Terminal, [] { DispatchNotification(); });
         GlobalConfig().ObserveMany(
             m_ConfigObservationTickets,
-            []{ DispatchNotification(); },
-            std::initializer_list<const char*>{g_ConfigCursorMode}
-        );
+            [] { DispatchNotification(); },
+            std::initializer_list<const char *>{g_ConfigCursorMode});
     }
-    
-    int StartChangesObserving( std::function<void()> _callback ) override
+
+    int StartChangesObserving(std::function<void()> _callback) override
     {
         dispatch_assert_main_queue();
         if( !_callback )
@@ -42,41 +40,40 @@ public:
         m_Callbacks.emplace_back(ticket, move(_callback));
         return ticket;
     }
-    
-    void StopChangesObserving( int _ticket ) override
+
+    void StopChangesObserving(int _ticket) override
     {
         dispatch_assert_main_queue();
         if( _ticket > 0 )
-            m_Callbacks.erase(
-                remove_if(
-                    begin(m_Callbacks),
-                    end(m_Callbacks),
-                    [_ticket](const auto &v) { return v.first == _ticket; }
-                    ),
-                end(m_Callbacks)
-            );
+            m_Callbacks.erase(remove_if(begin(m_Callbacks),
+                                        end(m_Callbacks),
+                                        [_ticket](const auto &v) { return v.first == _ticket; }),
+                              end(m_Callbacks));
     }
-    
+
     void FireNotification() const
     {
         dispatch_assert_main_queue();
-        for( const auto &c: m_Callbacks )
+        for( const auto &c : m_Callbacks )
             c.second();
     }
-    
+
     static void DispatchNotification()
     {
         if( dispatch_is_main_queue() )
             std::dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification();
         else
-            dispatch_to_main_queue([]{
+            dispatch_to_main_queue([] {
                 std::dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification();
             });
     }
-    
-    NSFont  *Font() const override { return CurrentTheme().TerminalFont(); }
+
+    NSFont *Font() const override { return CurrentTheme().TerminalFont(); }
     NSColor *ForegroundColor() const override { return CurrentTheme().TerminalForegroundColor(); }
-    NSColor *BoldForegroundColor() const override { return CurrentTheme().TerminalBoldForegroundColor(); };
+    NSColor *BoldForegroundColor() const override
+    {
+        return CurrentTheme().TerminalBoldForegroundColor();
+    };
     NSColor *BackgroundColor() const override { return CurrentTheme().TerminalBackgroundColor(); }
     NSColor *SelectionColor() const override { return CurrentTheme().TerminalSelectionColor(); }
     NSColor *CursorColor() const override { return CurrentTheme().TerminalCursorColor(); }
@@ -97,18 +94,17 @@ public:
     NSColor *AnsiColorE() const override { return CurrentTheme().TerminalAnsiColorE(); }
     NSColor *AnsiColorF() const override { return CurrentTheme().TerminalAnsiColorF(); }
     int MaxFPS() const override { return GlobalConfig().GetInt(g_ConfigMaxFPS); }
-    enum CursorMode CursorMode() const override {
-        return  (enum CursorMode)GlobalConfig().GetInt(g_ConfigCursorMode);
+    enum CursorMode CursorMode() const override
+    {
+        return static_cast<enum CursorMode>(GlobalConfig().GetInt(g_ConfigCursorMode));
     }
-    bool HideScrollbar() const override {
-        return GlobalConfig().GetBool(g_ConfigHideScrollbar);
-    }
+    bool HideScrollbar() const override { return GlobalConfig().GetBool(g_ConfigHideScrollbar); }
 };
-    
+
 std::shared_ptr<Settings> TerminalSettings()
 {
     [[clang::no_destroy]] static const auto settings = std::make_shared<SettingsImpl>();
     return settings;
 }
 
-}
+} // namespace nc::term

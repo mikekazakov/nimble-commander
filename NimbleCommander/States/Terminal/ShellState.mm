@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShellState.h"
 #include <Habanero/CommonPaths.h>
 #include <Utility/NativeFSManager.h>
@@ -64,11 +64,11 @@ static const auto g_CustomPath = "terminal.customShellPath";
                                                      options:0
                                                      metrics:nil
                                                        views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                                 constraintsWithVisualFormat:@"V:|-(==0@250)-[m_TermScrollView]-(==0)-|"
-                                                     options:0
-                                                     metrics:nil
-                                                       views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                                                     @"V:|-(==0@250)-[m_TermScrollView]-(==0)-|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
 
         m_Task = std::make_unique<ShellTask>();
         if( !GlobalConfig().GetBool(g_UseDefault) )
@@ -78,7 +78,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
         m_InputTranslator = std::make_unique<InputTranslatorImpl>();
         m_InputTranslator->SetOuput([task_ptr](std::span<const std::byte> _bytes) {
-            task_ptr->WriteChildInput(std::string_view((const char *)_bytes.data(), _bytes.size()));
+            task_ptr->WriteChildInput(
+                std::string_view(reinterpret_cast<const char *>(_bytes.data()), _bytes.size()));
         });
 
         Parser2Impl::Params parser_params;
@@ -87,20 +88,22 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
         m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);
         m_Interpreter->SetOuput([=](std::span<const std::byte> _bytes) {
-            task_ptr->WriteChildInput(std::string_view((const char *)_bytes.data(), _bytes.size()));
+            task_ptr->WriteChildInput(
+                std::string_view(reinterpret_cast<const char *>(_bytes.data()), _bytes.size()));
         });
         m_Interpreter->SetBell([] { NSBeep(); });
-        m_Interpreter->SetTitle([weak_self](const std::string &_title, Interpreter::TitleKind _kind) {
-            dispatch_to_main_queue([weak_self, _title, _kind] {
-                if( NCTermShellState *me = weak_self ) {
-                    if( _kind == Interpreter::TitleKind::Icon )
-                        me->m_IconTitle = _title;
-                    if( _kind == Interpreter::TitleKind::Window )
-                        me->m_WindowTitle = _title;
-                    [me updateTitle];
-                }
+        m_Interpreter->SetTitle(
+            [weak_self](const std::string &_title, Interpreter::TitleKind _kind) {
+                dispatch_to_main_queue([weak_self, _title, _kind] {
+                    if( NCTermShellState *me = weak_self ) {
+                        if( _kind == Interpreter::TitleKind::Icon )
+                            me->m_IconTitle = _title;
+                        if( _kind == Interpreter::TitleKind::Window )
+                            me->m_WindowTitle = _title;
+                        [me updateTitle];
+                    }
+                });
             });
-        });
         m_Interpreter->SetInputTranslator(m_InputTranslator.get());
         m_Interpreter->SetShowCursorChanged([weak_self](bool _show) {
             NCTermShellState *me = weak_self;
@@ -122,13 +125,14 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
         self.wantsLayer = true;
 
-        [NSWorkspace.sharedWorkspace.notificationCenter addObserver:self
-                                                           selector:@selector(volumeWillUnmount:)
-                                                               name:NSWorkspaceWillUnmountNotification
-                                                             object:nil];
+        [NSWorkspace.sharedWorkspace.notificationCenter
+            addObserver:self
+               selector:@selector(volumeWillUnmount:)
+                   name:NSWorkspaceWillUnmountNotification
+                 object:nil];
     }
     return self;
-    }
+}
 
 - (void)dealloc
 {
@@ -199,7 +203,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
         if( !strongself )
             return;
 
-        const std::span<const std::byte> bytes{(const std::byte *)_d, (size_t)_sz};
+        const std::span<const std::byte> bytes{static_cast<const std::byte *>(_d),
+                                               static_cast<size_t>(_sz)};
         [strongself dumpRawInputIfRequired:bytes];
 
         auto cmds = strongself->m_Parser->Parse(bytes);
@@ -216,7 +221,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
             [strongself->m_TermScrollView.view adjustSizes:false];
         });
     });
-    
+
     m_Task->SetOnPwdPrompt([=]([[maybe_unused]] const char *_cwd, [[maybe_unused]] bool _changed) {
         if( auto strongself = weakself ) {
             strongself->m_IconTitle = "";
@@ -309,9 +314,9 @@ static const auto g_CustomPath = "terminal.customShellPath";
     [cap appendString:NSLocalizedString(
                           @"Closing this window will terminate the running processes: ",
                           "Informing when closing with running terminal processes")];
-    for( int i = 0, e = (int)children.size(); i != e; ++i ) {
+    for( int i = 0, e = static_cast<int>(children.size()); i != e; ++i ) {
         [cap appendString:[NSString stringWithUTF8String:children[i].c_str()]];
-        if( i != (int)children.size() - 1 )
+        if( i != static_cast<int>(children.size()) - 1 )
             [cap appendString:@", "];
     }
     [cap appendString:@"."];
@@ -351,7 +356,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
 - (IBAction)OnShowTerminal:(id) [[maybe_unused]] _sender
 {
-    [(NCMainWindowController *)self.window.delegate ResignAsWindowState:self];
+    [static_cast<NCMainWindowController *>(self.window.delegate) ResignAsWindowState:self];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item

@@ -41,7 +41,6 @@
     #include <Habanero/dispatch_cpp.h>
     #include <Habanero/mach_time.h>
     #include <Habanero/spinlock.h>
-    #include <Habanero/fixed_eytzinger_map.h>
 
     #include <boost/filesystem.hpp>
 

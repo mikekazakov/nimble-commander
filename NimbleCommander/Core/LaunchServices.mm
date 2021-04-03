@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "LaunchServices.h"
 #include <sys/stat.h>
 #include <VFS/VFS.h>
@@ -16,37 +16,33 @@ using namespace std::literals;
  * Otherwise, return _default
  */
 template <class InputIterator, class UnaryPredicate, class T>
-inline T all_equal_or_default(InputIterator _first,
-                      InputIterator _last,
-                      UnaryPredicate _pred,
-                      T&& _default)
+inline T
+all_equal_or_default(InputIterator _first, InputIterator _last, UnaryPredicate _pred, T &&_default)
 {
     if( _first == _last )
         return std::move(_default);
 
-    T&& val = _pred(*_first);
+    T &&val = _pred(*_first);
     _first++;
 
     while( _first != _last ) {
-        if ( _pred(*_first) != val )
+        if( _pred(*_first) != val )
             return std::move(_default);
         ++_first;
     }
     return std::move(val);
 }
 
-static std::string GetDefaultHandlerPathForNativeItem( const std::string &_path )
+static std::string GetDefaultHandlerPathForNativeItem(const std::string &_path)
 {
     std::string result;
-    const auto url = CFURLCreateFromFileSystemRepresentation(0,
-                                                             (const UInt8*)_path.c_str(),
-                                                             _path.length(),
-                                                             false);
+    const auto url = CFURLCreateFromFileSystemRepresentation(
+        0, reinterpret_cast<const UInt8 *>(_path.c_str()), _path.length(), false);
     if( url ) {
         const auto handler_url = LSCopyDefaultApplicationURLForURL(url, kLSRolesAll, nullptr);
-    
+
         if( handler_url ) {
-            result = ((__bridge NSURL*)handler_url).path.fileSystemRepresentation;
+            result = ((__bridge NSURL *)handler_url).path.fileSystemRepresentation;
             CFRelease(handler_url);
         }
         CFRelease(url);
@@ -54,51 +50,48 @@ static std::string GetDefaultHandlerPathForNativeItem( const std::string &_path 
     return result;
 }
 
-static std::vector<std::string> GetHandlersPathsForNativeItem( const std::string &_path )
+static std::vector<std::string> GetHandlersPathsForNativeItem(const std::string &_path)
 {
     std::vector<std::string> result;
-    const auto url = CFURLCreateFromFileSystemRepresentation(0,
-                                                             (const UInt8*)_path.c_str(),
-                                                             _path.length(),
-                                                             false);
+    const auto url = CFURLCreateFromFileSystemRepresentation(
+        0, reinterpret_cast<const UInt8 *>(_path.c_str()), _path.length(), false);
     if( url ) {
-        auto apps = (__bridge_transfer NSArray *) LSCopyApplicationURLsForURL(url, kLSRolesAll);
+        auto apps = (__bridge_transfer NSArray *)LSCopyApplicationURLsForURL(url, kLSRolesAll);
         for( NSURL *app_url in apps )
-            result.emplace_back( app_url.path.fileSystemRepresentation );
+            result.emplace_back(app_url.path.fileSystemRepresentation);
         CFRelease(url);
     }
     return result;
 }
 
-static std::string GetDefaultHandlerPathForUTI( const std::string &_uti )
+static std::string GetDefaultHandlerPathForUTI(const std::string &_uti)
 {
     NSString *uti = [NSString stringWithUTF8StdString:_uti];
     if( !uti )
         return {};
-    
-    NSString *bundle = (__bridge_transfer NSString*)
-        LSCopyDefaultRoleHandlerForContentType((__bridge CFStringRef)uti,
-                                               kLSRolesAll);
+
+    NSString *bundle = (__bridge_transfer NSString *)LSCopyDefaultRoleHandlerForContentType(
+        (__bridge CFStringRef)uti, kLSRolesAll);
     auto path = [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle];
     if( path )
         return path.fileSystemRepresentation;
     return "";
 }
 
-static std::vector<std::string> GetHandlersPathsForUTI( const std::string &_uti )
+static std::vector<std::string> GetHandlersPathsForUTI(const std::string &_uti)
 {
     NSString *uti = [NSString stringWithUTF8StdString:_uti];
     if( !uti )
         return {};
 
-    NSArray *bundles = (__bridge_transfer NSArray *)
-        LSCopyAllRoleHandlersForContentType((__bridge CFStringRef)uti,
-                                            kLSRolesAll);
-    
+    NSArray *bundles = (__bridge_transfer NSArray *)LSCopyAllRoleHandlersForContentType(
+        (__bridge CFStringRef)uti, kLSRolesAll);
+
     std::vector<std::string> result;
-    for( NSString* bundle in bundles )
-        if( auto path = [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle] )
-            result.emplace_back( path.fileSystemRepresentation );
+    for( NSString *bundle in bundles )
+        if( auto path =
+                [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle] )
+            result.emplace_back(path.fileSystemRepresentation);
 
     return result;
 }
@@ -107,8 +100,8 @@ LauchServicesHandlers::LauchServicesHandlers()
 {
 }
 
-LauchServicesHandlers::LauchServicesHandlers( const VFSListingItem &_item,
-    const nc::utility::UTIDB &_uti_db  )
+LauchServicesHandlers::LauchServicesHandlers(const VFSListingItem &_item,
+                                             const nc::utility::UTIDB &_uti_db)
 {
     if( _item.Host()->IsNativeFS() ) {
         m_UTI = _item.HasExtension() ? _uti_db.UTIForExtension(_item.Extension()) : "public.data";
@@ -123,40 +116,37 @@ LauchServicesHandlers::LauchServicesHandlers( const VFSListingItem &_item,
     }
 }
 
-LauchServicesHandlers::LauchServicesHandlers
-    ( const std::vector<LauchServicesHandlers>& _handlers_to_merge )
+LauchServicesHandlers::LauchServicesHandlers(
+    const std::vector<LauchServicesHandlers> &_handlers_to_merge)
 {
     // empty handler path means that there's no default handler available
     const auto default_handler = all_equal_or_default(
         begin(_handlers_to_merge),
         end(_handlers_to_merge),
-        [](auto &i){ return i.m_DefaultHandlerPath; },
+        [](auto &i) { return i.m_DefaultHandlerPath; },
         ""s);
-    
+
     m_UTI = all_equal_or_default(
-        begin(_handlers_to_merge),
-        end(_handlers_to_merge),
-        [](auto &i){ return i.m_UTI; },
-        ""s);
-    
+        begin(_handlers_to_merge), end(_handlers_to_merge), [](auto &i) { return i.m_UTI; }, ""s);
+
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)
     std::unordered_map<std::string, int> handlers_count;
-    for( auto &i:_handlers_to_merge ) {
+    for( auto &i : _handlers_to_merge ) {
         // a very inefficient approach, should be rewritten if will cause lags on UI
         std::unordered_set<std::string> inserted;
-        for( auto &p:i.m_Paths )
+        for( auto &p : i.m_Paths )
             // here we exclude multiple counting for repeating handlers for one content type
             if( !inserted.count(p) ) {
                 handlers_count[p]++;
                 inserted.insert(p);
             }
     }
-    
-    for( auto &i: handlers_count )
-        if( i.second == (int)_handlers_to_merge.size() ) {
+
+    for( auto &i : handlers_count )
+        if( i.second == static_cast<int>(_handlers_to_merge.size()) ) {
             m_Paths.emplace_back(i.first);
-            if(i.first == default_handler)
+            if( i.first == default_handler )
                 m_DefaultHandlerPath = default_handler;
         }
 }
@@ -176,44 +166,43 @@ const std::string &LauchServicesHandlers::CommonUTI() const noexcept
     return m_UTI;
 }
 
-struct CachedLaunchServiceHandler
-{
+struct CachedLaunchServiceHandler {
     std::string path;
-    time_t      mtime;
-    NSString   *name;
-    NSImage    *icon;
-    NSString   *version;
-    NSString   *identifier;
-    
-    static CachedLaunchServiceHandler GetLaunchHandlerInfo( const std::string &_handler_path )
+    time_t mtime;
+    NSString *name;
+    NSImage *icon;
+    NSString *version;
+    NSString *identifier;
+
+    static CachedLaunchServiceHandler GetLaunchHandlerInfo(const std::string &_handler_path)
     {
         std::lock_guard<std::mutex> lock{g_HandlersByPathLock};
         if( auto i = g_HandlersByPath.find(_handler_path);
-           i != end(g_HandlersByPath) && !IsOutdated(i->second.path, i->second.mtime) ) {
+            i != end(g_HandlersByPath) && !IsOutdated(i->second.path, i->second.mtime) ) {
             return i->second;
         }
         else {
-            auto h = BuildLaunchHandler( _handler_path );
+            auto h = BuildLaunchHandler(_handler_path);
             g_HandlersByPath[_handler_path] = h;
             return h;
         }
     }
 
 private:
-    static CachedLaunchServiceHandler BuildLaunchHandler( const std::string &_handler_path )
+    static CachedLaunchServiceHandler BuildLaunchHandler(const std::string &_handler_path)
     {
         NSString *path = [NSString stringWithUTF8StdString:_handler_path];
         if( !path )
             throw std::domain_error("malformed path");
-        
+
         NSBundle *handler_bundle = [NSBundle bundleWithPath:path];
         if( handler_bundle == nil )
             throw std::domain_error("can't open NSBundle");
-        
+
         struct stat st;
         if( stat(_handler_path.c_str(), &st) != 0 )
             throw std::domain_error("stat() failed");
-        
+
         CachedLaunchServiceHandler h;
         h.path = _handler_path;
         h.name = [NSFileManager.defaultManager displayNameAtPath:path];
@@ -221,26 +210,26 @@ private:
         h.version = [handler_bundle.infoDictionary objectForKey:@"CFBundleVersion"];
         h.identifier = handler_bundle.bundleIdentifier;
         h.mtime = st.st_mtime;
-        
+
         return h;
     }
 
-    static bool IsOutdated( const std::string &_path, time_t _mtime )
+    static bool IsOutdated(const std::string &_path, time_t _mtime)
     {
         struct stat st;
         if( stat(_path.c_str(), &st) != 0 )
             return true;
         return _mtime != st.st_mtime;
     }
-    
-    static NSImage *CropHiResRepresentations( NSImage *_image )
+
+    static NSImage *CropHiResRepresentations(NSImage *_image)
     {
         const auto representations = _image.representations;
-        std::vector<NSImageRep*> to_remove;
+        std::vector<NSImageRep *> to_remove;
         for( NSImageRep *representation in representations )
             if( representation.pixelsHigh > 32 && representation.pixelsWide > 32 )
                 to_remove.emplace_back(representation);
-        for( NSImageRep *representation: to_remove )
+        for( NSImageRep *representation : to_remove )
             [_image removeRepresentation:representation];
         return _image;
     }
@@ -253,7 +242,7 @@ private:
     CachedLaunchServiceHandler::g_HandlersByPath;
 [[clang::no_destroy]] std::mutex CachedLaunchServiceHandler::g_HandlersByPathLock;
 
-LaunchServiceHandler::LaunchServiceHandler( const std::string &_handler_path )
+LaunchServiceHandler::LaunchServiceHandler(const std::string &_handler_path)
 {
     auto handler = CachedLaunchServiceHandler::GetLaunchHandlerInfo(_handler_path);
     m_AppID = handler.identifier;
@@ -292,14 +281,13 @@ bool LaunchServiceHandler::SetAsDefaultHandlerForUTI(const std::string &_uti) co
 {
     if( _uti.empty() )
         return false;
-    
+
     NSString *uti = [NSString stringWithUTF8StdString:_uti];
     if( !uti )
         return false;
-    
-    OSStatus ret = LSSetDefaultRoleHandlerForContentType((__bridge CFStringRef)uti,
-                                                         kLSRolesAll,
-                                                         (__bridge CFStringRef)m_AppID);
+
+    OSStatus ret = LSSetDefaultRoleHandlerForContentType(
+        (__bridge CFStringRef)uti, kLSRolesAll, (__bridge CFStringRef)m_AppID);
     return ret == noErr;
 }
 

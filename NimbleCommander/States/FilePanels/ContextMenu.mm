@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ContextMenu.h"
 #include "PanelController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
@@ -39,7 +39,7 @@ using namespace nc::panel;
                       ofPanel:(PanelController *)_panel
                withFileOpener:(nc::panel::FileOpener &)_file_opener
                     withUTIDB:(const nc::utility::UTIDB &)_uti_db
-        withActivationManager:(nc::bootstrap::ActivationManager&)_activation_manager
+        withActivationManager:(nc::bootstrap::ActivationManager &)_activation_manager
 {
     if( _items.empty() )
         throw std::invalid_argument("NCPanelContextMenu.initWithData - there's no items");
@@ -57,8 +57,7 @@ using namespace nc::panel;
         m_MoveToTrashAction.reset(new actions::context::MoveToTrash{m_Items});
         m_DeletePermanentlyAction.reset(new actions::context::DeletePermanently{m_Items});
         m_DuplicateAction.reset(new actions::context::Duplicate{global_config, m_Items});
-        m_CompressHereAction.reset(
-            new actions::context::CompressHere{global_config, m_Items});
+        m_CompressHereAction.reset(new actions::context::CompressHere{global_config, m_Items});
         m_CompressToOppositeAction.reset(
             new actions::context::CompressToOpposite{global_config, m_Items});
         m_OpenFileAction.reset(
@@ -289,7 +288,7 @@ using namespace nc::panel;
     auto delegate = [[NCPanelContextMenuSharingDelegate alloc] init];
     delegate.sourceWindow = m_Panel.window;
 
-    NSSharingService *service = ((NSMenuItem *)sender).representedObject;
+    NSSharingService *service = static_cast<NSMenuItem *>(sender).representedObject;
     service.delegate = delegate;
     [service performWithItems:m_ShareItemsURLs];
 }

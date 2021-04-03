@@ -61,7 +61,6 @@
 		CF19B3ED2544B94800838B45 /* ScopedObservable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScopedObservable.cpp; path = source/ScopedObservable.cpp; sourceTree = "<group>"; };
 		CF19B3F82544B9E400838B45 /* CFRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFRange.h; path = include/Habanero/CFRange.h; sourceTree = "<group>"; };
 		CF19B3F92544B9E400838B45 /* PosixFilesystemMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PosixFilesystemMock.h; path = include/Habanero/PosixFilesystemMock.h; sourceTree = "<group>"; };
-		CF19B3FA2544B9E400838B45 /* fixed_eytzinger_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed_eytzinger_map.h; path = include/Habanero/fixed_eytzinger_map.h; sourceTree = "<group>"; };
 		CF19B3FB2544B9E500838B45 /* GoogleAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoogleAnalytics.h; path = include/Habanero/GoogleAnalytics.h; sourceTree = "<group>"; };
 		CF19B3FC2544B9E500838B45 /* Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hash.h; path = include/Habanero/Hash.h; sourceTree = "<group>"; };
 		CF19B3FD2544B9E500838B45 /* variable_container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = variable_container.h; path = include/Habanero/variable_container.h; sourceTree = "<group>"; };
@@ -222,7 +221,6 @@
 				CF19B4032544B9E500838B45 /* dispatch_cpp.h */,
 				CF19B4002544B9E500838B45 /* DispatchGroup.h */,
 				CF19B40B2544B9E600838B45 /* ExecutionDeadline.h */,
-				CF19B3FA2544B9E400838B45 /* fixed_eytzinger_map.h */,
 				CF19B3FB2544B9E500838B45 /* GoogleAnalytics.h */,
 				CF19B3FC2544B9E500838B45 /* Hash.h */,
 				CF19B4152544B9E700838B45 /* IdleSleepPreventer.h */,

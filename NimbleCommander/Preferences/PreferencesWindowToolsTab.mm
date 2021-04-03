@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowToolsTab.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
@@ -96,7 +96,7 @@ static bool AskUserToDeleteTool()
         dispatch_to_main_queue([=] {
             m_Tools = m_ToolsStorage().GetAllTools();
 
-            if( (long)m_Tools.size() != self.toolsTable.numberOfRows )
+            if( static_cast<long>(m_Tools.size()) != self.toolsTable.numberOfRows )
                 [self.toolsTable noteNumberOfRowsChanged];
             [self.toolsTable
                 reloadDataForRowIndexes:[NSIndexSet
@@ -108,7 +108,7 @@ static bool AskUserToDeleteTool()
         });
     });
 
-    [self.toolsTable registerForDraggedTypes:@[ g_MyPrivateTableViewDataType ]];
+    [self.toolsTable registerForDraggedTypes:@[g_MyPrivateTableViewDataType]];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]] tableView
@@ -120,7 +120,7 @@ static bool AskUserToDeleteTool()
     viewForTableColumn:(NSTableColumn *) [[maybe_unused]] tableColumn
                    row:(NSInteger)row
 {
-    if( row >= (long)m_Tools.size() )
+    if( row >= static_cast<long>(m_Tools.size()) )
         return nil;
 
     auto &tool = m_Tools[row];
@@ -151,7 +151,7 @@ static bool AskUserToDeleteTool()
     self.toolTitle.stringValue = [NSString stringWithUTF8StdString:t->m_Title];
     self.toolPath.stringValue = [NSString stringWithUTF8StdString:t->m_ExecutablePath];
     self.toolParameters.stringValue = [NSString stringWithUTF8StdString:t->m_Parameters];
-    [self.toolStartupMode selectItemWithTag:(int)t->m_StartupMode];
+    [self.toolStartupMode selectItemWithTag:static_cast<int>(t->m_StartupMode)];
 }
 
 - (void)clearFields
@@ -159,13 +159,13 @@ static bool AskUserToDeleteTool()
     self.toolTitle.stringValue = @"";
     self.toolPath.stringValue = @"";
     self.toolParameters.stringValue = @"";
-    [self.toolStartupMode selectItemWithTag:(int)ExternalTool::StartupMode::Automatic];
+    [self.toolStartupMode selectItemWithTag:static_cast<int>(ExternalTool::StartupMode::Automatic)];
 }
 
 - (std::shared_ptr<const ExternalTool>)selectedTool
 {
     NSInteger row = self.toolsTable.selectedRow;
-    return row < (long)m_Tools.size() ? m_Tools[row] : nullptr;
+    return row < static_cast<long>(m_Tools.size()) ? m_Tools[row] : nullptr;
 }
 
 - (void)commitToolChanges:(const ExternalTool &)_et
@@ -237,7 +237,8 @@ static bool AskUserToDeleteTool()
                 [self.view.window makeFirstResponder:self.toolTitle];
             }
         });
-    } else if( segment == 1 ) {
+    }
+    else if( segment == 1 ) {
         const auto row = self.toolsTable.selectedRow;
         if( row < 0 )
             return;
@@ -264,10 +265,10 @@ static bool AskUserToDeleteTool()
 - (IBAction)onStartupModeChanged:(id) [[maybe_unused]] sender
 {
     if( auto t = self.selectedTool ) {
-        if( t->m_StartupMode != (ExternalTool::StartupMode)self.toolStartupMode.selectedTag ) {
+        const auto mode = static_cast<ExternalTool::StartupMode>(self.toolStartupMode.selectedTag);
+        if( t->m_StartupMode != mode ) {
             ExternalTool changed_tool = *t;
-            changed_tool.m_StartupMode =
-                (ExternalTool::StartupMode)self.toolStartupMode.selectedTag;
+            changed_tool.m_StartupMode = mode;
             [self commitToolChanges:changed_tool];
         }
     }
@@ -281,7 +282,8 @@ static bool AskUserToDeleteTool()
         NSRange range = self.toolParameters.currentEditor.selectedRange;
         current_parameters = [current_parameters stringByReplacingCharactersInRange:range
                                                                          withString:_str];
-    } else
+    }
+    else
         current_parameters = [current_parameters stringByAppendingString:_str];
 
     [self setNewParametersString:current_parameters];

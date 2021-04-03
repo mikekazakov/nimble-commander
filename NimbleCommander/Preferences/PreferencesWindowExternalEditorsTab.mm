@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
@@ -39,11 +39,11 @@ static bool AskUserToDeleteEditor()
 @implementation PreferencesWindowExternalEditorsTab {
     NSMutableArray *m_Editors;
     nc::bootstrap::ActivationManager *m_ActivationManager;
-    ExternalEditorsStorage* m_ExternalEditorsStorage;
+    ExternalEditorsStorage *m_ExternalEditorsStorage;
 }
 
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager&)_am
-                           editorsStorage:(ExternalEditorsStorage&)_storage
+- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
+                           editorsStorage:(ExternalEditorsStorage &)_storage
 {
     self = [super init];
     if( self ) {
@@ -129,7 +129,7 @@ static bool AskUserToDeleteEditor()
 - (void)OnTableDoubleClick:(id) [[maybe_unused]] table
 {
     NSInteger row = [self.TableView clickedRow];
-    if( row >= (int)[self.ExtEditorsController.arrangedObjects count] )
+    if( row >= static_cast<int>([self.ExtEditorsController.arrangedObjects count]) )
         return;
 
     ExternalEditorInfo *item = [self.ExtEditorsController.arrangedObjects objectAtIndex:row];
@@ -177,7 +177,7 @@ static bool AskUserToDeleteEditor()
         drag_to == drag_from + 1 ) // same index, below
         return false;
 
-    assert(drag_from < (long)[self.ExtEditorsController.arrangedObjects count]);
+    assert(drag_from < static_cast<long>([self.ExtEditorsController.arrangedObjects count]));
     if( drag_from < drag_to )
         drag_to--;
 
@@ -192,7 +192,8 @@ static bool AskUserToDeleteEditor()
     const auto segment = self.addRemove.selectedSegment;
     if( segment == 0 ) {
         [self OnNewEditor:sender];
-    } else if( segment == 1 ) {
+    }
+    else if( segment == 1 ) {
         if( self.ExtEditorsController.canRemove )
             if( AskUserToDeleteEditor() )
                 [self.ExtEditorsController remove:sender];

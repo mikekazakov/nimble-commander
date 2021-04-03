@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RecentlyClosedMenuDelegate.h"
 #include "../ListingPromise.h"
 #include "LocationFormatter.h"
@@ -12,25 +12,24 @@
 
 using namespace nc::panel;
 
-@implementation NCPanelsRecentlyClosedMenuDelegate
-{
+@implementation NCPanelsRecentlyClosedMenuDelegate {
     NSMenu *m_Menu;
     NSMenuItem *m_RestoreLast;
     std::shared_ptr<nc::panel::ClosedPanelsHistory> m_Storage;
-    std::function<MainWindowFilePanelState*()> m_Locator;
+    std::function<MainWindowFilePanelState *()> m_Locator;
 }
 
-- (instancetype) initWithMenu:(NSMenu*)_menu
-                      storage:(std::shared_ptr<nc::panel::ClosedPanelsHistory>)_storage
-                panelsLocator:(std::function<MainWindowFilePanelState*()>)_locator
+- (instancetype)initWithMenu:(NSMenu *)_menu
+                     storage:(std::shared_ptr<nc::panel::ClosedPanelsHistory>)_storage
+               panelsLocator:(std::function<MainWindowFilePanelState *()>)_locator
 {
-    assert( _menu );
-    assert( _storage );
-    assert( _locator );
+    assert(_menu);
+    assert(_storage);
+    assert(_locator);
     if( self = [super init] ) {
         m_Menu = _menu;
         m_Menu.delegate = self;
-        
+
         m_Storage = move(_storage);
         m_Locator = move(_locator);
         m_RestoreLast = [_menu itemAtIndex:0];
@@ -40,10 +39,10 @@ using namespace nc::panel;
     return self;
 }
 
-- (BOOL)menuHasKeyEquivalent:(NSMenu*)[[maybe_unused]]_menu
-                    forEvent:(NSEvent*)event
-                      target:(__nullable id* __nonnull)target
-                      action:(__nullable SEL* __nonnull)action
+- (BOOL)menuHasKeyEquivalent:(NSMenu *) [[maybe_unused]] _menu
+                    forEvent:(NSEvent *)event
+                      target:(__nullable id *__nonnull)target
+                      action:(__nullable SEL *__nonnull)action
 {
     if( m_RestoreLast.keyEquivalentModifierMask == event.modifierFlags &&
         [m_RestoreLast.keyEquivalent isEqualToString:event.charactersIgnoringModifiers] ) {
@@ -56,17 +55,17 @@ using namespace nc::panel;
 static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 {
     static const auto text_font = [NSFont menuFontOfSize:13];
-    static const auto text_attributes = @{NSFontAttributeName:text_font};
+    static const auto text_attributes = @{NSFontAttributeName: text_font};
     static const auto max_width = 450;
     return StringByTruncatingToWidth(_title, max_width, kTruncateAtMiddle, text_attributes);
 }
 
-- (NSMenuItem*)buildMenuItem:(const ListingPromise &)_listing_promise
+- (NSMenuItem *)buildMenuItem:(const ListingPromise &)_listing_promise
 {
-    const auto options = (loc_fmt::Formatter::RenderOptions)
-        (loc_fmt::Formatter::RenderMenuTitle | loc_fmt::Formatter::RenderMenuTooltip);
+    const auto options = static_cast<loc_fmt::Formatter::RenderOptions>(
+        loc_fmt::Formatter::RenderMenuTitle | loc_fmt::Formatter::RenderMenuTooltip);
     const auto rep = loc_fmt::ListingPromiseFormatter{}.Render(options, _listing_promise);
-    
+
     NSMenuItem *item = [[NSMenuItem alloc] init];
     item.title = ShrinkTitleForRecentlyClosedMenu(rep.menu_title);
     item.toolTip = rep.menu_tooltip;
@@ -77,7 +76,7 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
 {
     if( !_state )
         return RestoreClosedTabRequest::Side::Left;
-    
+
     if( _state.activePanelController == _state.rightPanelController )
         return RestoreClosedTabRequest::Side::Right;
     else
@@ -90,30 +89,29 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
         [m_Menu removeItemAtIndex:m_Menu.numberOfItems - 1];
 }
 
-- (void)menuNeedsUpdate:(NSMenu*)menu
+- (void)menuNeedsUpdate:(NSMenu *)menu
 {
     auto current_state = m_Locator();
     auto side = CurrentSide(current_state);
-    
-    auto records = m_Storage->FrontElements( m_Storage->Size() );
-    
+
+    auto records = m_Storage->FrontElements(m_Storage->Size());
+
     [self purgeMenu];
-    
-    for( auto &listing_promise: records ) {
+
+    for( auto &listing_promise : records ) {
         auto item = [self buildMenuItem:listing_promise];
         if( current_state ) {
             item.target = current_state;
             item.action = @selector(respawnRecentlyClosedCallout:);
-            item.representedObject = [[AnyHolder alloc] initWithAny:std::any{
-                RestoreClosedTabRequest(side, listing_promise)
-            }];
+            item.representedObject = [[AnyHolder alloc]
+                initWithAny:std::any{RestoreClosedTabRequest(side, listing_promise)}];
         }
-        
+
         [menu addItem:item];
     }
 }
 
-- (void)menuDidClose:(NSMenu *)[[maybe_unused]]_menu
+- (void)menuDidClose:(NSMenu *) [[maybe_unused]] _menu
 {
     [self purgeMenu];
 }
@@ -125,22 +123,21 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
         NSBeep();
         return;
     }
-    
+
     auto records = m_Storage->FrontElements(1);
     if( records.empty() ) {
         NSBeep();
         return;
     }
-    
-    auto payload = [[AnyHolder alloc] initWithAny:std::any{
-        RestoreClosedTabRequest(CurrentSide(current_state), records.front())
-    }];
+
+    auto payload = [[AnyHolder alloc]
+        initWithAny:std::any{RestoreClosedTabRequest(CurrentSide(current_state), records.front())}];
     objc_cast<NSMenuItem>(_sender).representedObject = payload;
     [current_state respawnRecentlyClosedCallout:_sender];
     objc_cast<NSMenuItem>(_sender).representedObject = nil;
 }
 
-- (BOOL) validateMenuItem:(NSMenuItem *)_item
+- (BOOL)validateMenuItem:(NSMenuItem *)_item
 {
     if( _item == m_RestoreLast ) {
         auto current_state = m_Locator();
@@ -148,7 +145,7 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
             return false;
         return m_Storage->Size() != 0;
     }
-    
+
     return true;
 }
 

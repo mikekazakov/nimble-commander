@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
@@ -8,11 +8,10 @@
 
 using namespace nc::panel;
 
-@implementation PanelBriefViewItem
-{
-    VFSListingItem                  m_Item;
-    data::ItemVolatileData          m_VD;
-    bool                            m_PanelActive;
+@implementation PanelBriefViewItem {
+    VFSListingItem m_Item;
+    data::ItemVolatileData m_VD;
+    bool m_PanelActive;
 }
 
 @synthesize panelActive = m_PanelActive;
@@ -28,8 +27,8 @@ using namespace nc::panel;
     self.carrier.qsHighlight = {0, 0};
 }
 
-- (instancetype)initWithNibName:(nullable NSString *)[[maybe_unused]]nibNameOrNil
-                         bundle:(nullable NSBundle *)[[maybe_unused]]nibBundleOrNil
+- (instancetype)initWithNibName:(nullable NSString *) [[maybe_unused]] nibNameOrNil
+                         bundle:(nullable NSBundle *) [[maybe_unused]] nibBundleOrNil
 {
     self = [super initWithNibName:nil bundle:nil];
     if( self ) {
@@ -42,9 +41,9 @@ using namespace nc::panel;
     return self;
 }
 
-- (PanelBriefViewItemCarrier*) carrier
+- (PanelBriefViewItemCarrier *)carrier
 {
-    return (PanelBriefViewItemCarrier*)self.view;
+    return static_cast<PanelBriefViewItemCarrier *>(self.view);
 }
 
 - (VFSListingItem)item
@@ -52,28 +51,28 @@ using namespace nc::panel;
     return m_Item;
 }
 
-- (void) setItem:(VFSListingItem)_item
+- (void)setItem:(VFSListingItem)_item
 {
     m_Item = _item;
     self.carrier.filename = m_Item.DisplayNameNS();
-    self.carrier.isSymlink = m_Item.IsSymlink();    
+    self.carrier.isSymlink = m_Item.IsSymlink();
     [self updateItemLayout];
 }
 
-- (void) updateItemLayout
+- (void)updateItemLayout
 {
     if( auto *bv = self.briefView )
         self.carrier.layoutConstants = bv.layoutConstants;
 }
 
-- (void) setPanelActive:(bool)_active
+- (void)setPanelActive:(bool)_active
 {
     if( m_PanelActive == _active )
         return;
-    
+
     m_PanelActive = _active;
-    
-    if( self.selected  ) {
+
+    if( self.selected ) {
         [self updateBackgroundColor];
         [self updateForegroundColor];
     }
@@ -84,12 +83,12 @@ using namespace nc::panel;
     if( self.selected == selected )
         return;
     [super setSelected:selected];
-    
+
     [self updateBackgroundColor];
     [self updateForegroundColor];
 }
 
-- (NSColor*) selectedBackgroundColor
+- (NSColor *)selectedBackgroundColor
 {
     if( m_PanelActive )
         return CurrentTheme().FilePanelsBriefFocusedActiveItemBackgroundColor();
@@ -97,41 +96,41 @@ using namespace nc::panel;
         return CurrentTheme().FilePanelsBriefFocusedInactiveItemBackgroundColor();
 }
 
-- (PanelBriefView*)briefView
+- (PanelBriefView *)briefView
 {
-    return (PanelBriefView*)self.collectionView.delegate;
+    return static_cast<PanelBriefView *>(self.collectionView.delegate);
 }
 
-- (int) itemIndex
+- (int)itemIndex
 {
     if( auto c = self.collectionView )
         if( auto p = [c indexPathForItem:self] )
-            return (int)p.item;
+            return static_cast<int>(p.item);
     return -1;
 }
 
-- (int) columnIndex
+- (int)columnIndex
 {
     const auto index = self.itemIndex;
     if( index < 0 )
         return -1;
-    
+
     const auto items_per_column = self.briefView.itemsInColumn;
     if( items_per_column == 0 )
         return -1;
-    
+
     return index / items_per_column;
 }
 
-- (void) updateForegroundColor
+- (void)updateForegroundColor
 {
     if( !m_Item )
         return;
-    
+
     if( self.briefView ) {
         const auto &rules = CurrentTheme().FilePanelsItemsColoringRules();
         const bool focus = self.selected && m_PanelActive;
-        for( const auto &i: rules )
+        for( const auto &i : rules )
             if( i.filter.Filter(m_Item, m_VD) ) {
                 self.carrier.filenameColor = focus ? i.focused : i.regular;
                 break;
@@ -139,7 +138,7 @@ using namespace nc::panel;
     }
 }
 
-- (void) updateBackgroundColor
+- (void)updateBackgroundColor
 {
     if( self.selected ) {
         self.carrier.background = self.selectedBackgroundColor;
@@ -154,7 +153,7 @@ using namespace nc::panel;
     }
 }
 
-- (void) setVD:(data::ItemVolatileData)_vd
+- (void)setVD:(data::ItemVolatileData)_vd
 {
     if( m_VD == _vd )
         return;
@@ -165,12 +164,12 @@ using namespace nc::panel;
     self.carrier.highlighted = _vd.is_highlighted();
 }
 
-- (void) setIcon:(NSImage*)_icon
+- (void)setIcon:(NSImage *)_icon
 {
     self.carrier.icon = _icon;
 }
 
-- (void) setupFieldEditor:(NSScrollView*)_editor
+- (void)setupFieldEditor:(NSScrollView *)_editor
 {
     [self.carrier setupFieldEditor:_editor];
 }

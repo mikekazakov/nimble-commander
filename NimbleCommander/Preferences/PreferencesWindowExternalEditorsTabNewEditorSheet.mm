@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include <Utility/FileMask.h>
 #include <Utility/StringExtras.h>
@@ -17,7 +17,7 @@
 }
 - (id)transformedValue:(id)value
 {
-    if( value == nil || ((NSString *)value).length == 0 )
+    if( value == nil || objc_cast<NSString>(value).length == 0 )
         return [NSNumber numberWithBool:false];
 
     return [NSNumber numberWithBool:true];

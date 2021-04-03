@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -50,7 +50,7 @@ public:
         FileInfo(VFSListingItem _item);
         NSString *ParentFilename() const;
         NSString *GrandparentFilename() const;
-        
+
         VFSListingItem item;
         NSString *filename;  // filename.txt
         NSString *name;      // filename
@@ -69,11 +69,11 @@ public:
 
     static std::optional<std::vector<MaskDecomposition>>
     DecomposeMaskIntoPlaceholders(NSString *_mask);
-    
+
     static std::optional<std::pair<TextExtraction, int>> ParsePlaceholder_TextExtraction(
         NSString *_ph,
         unsigned long _pos); // action and number of chars eaten if no errors
-    
+
     static std::optional<std::pair<Counter, int>> ParsePlaceholder_Counter(
         NSString *_ph,
         unsigned long _pos,
@@ -81,22 +81,22 @@ public:
         long _default_step,
         int _default_width,
         unsigned _default_stripe); // action and number of chars eaten if no errors
-    
+
     static NSString *ExtractText(NSString *_from, const TextExtraction &_te);
-    
+
     static NSString *FormatCounter(const Counter &_c, int _file_number);
 
     bool BuildActionsScript(NSString *_mask);
-    
+
     void SetReplacingOptions(NSString *_search_for,
                              NSString *_replace_with,
                              bool _case_sensitive,
                              bool _only_first,
                              bool _search_in_ext,
                              bool _use_regexp);
-    
+
     void SetCaseTransform(CaseTransform _ct, bool _apply_to_ext);
-    
+
     void SetDefaultCounter(long _start, long _step, unsigned _stripe, unsigned _width);
 
     NSString *Rename(const FileInfo &_fi, int _number) const;
@@ -105,10 +105,10 @@ private:
     enum class ActionType : short
     {
         Static,
-        Filename, // full file name
-        Name, // name without extension and dot
-        Extension, // just extension
-        ParentFilename, // name of a parent dir, i.e. /foo/bar/baz.txt -> bar
+        Filename,            // full file name
+        Name,                // name without extension and dot
+        Extension,           // just extension
+        ParentFilename,      // name of a parent dir, i.e. /foo/bar/baz.txt -> bar
         GrandparentFilename, // name of a grandparent dir, i.e. /foo/bar/baz.txt -> foo
         OpenBracket,
         CloseBracket,
@@ -134,7 +134,7 @@ private:
         Step(ActionType t, short i) : type(t), index(i) {}
         Step(ActionType t) : type(t), index(-1) {}
     };
-    
+
     struct ReplaceOptions {
         NSString *search_for = @"";
         NSString *replace_with = @"";
@@ -143,7 +143,7 @@ private:
         bool search_in_ext = true;
         bool use_regexp = false;
     };
-    
+
     struct DefaultCounter {
         long start = 1;
         long step = 1;
@@ -200,7 +200,7 @@ inline BatchRenamingScheme::Range BatchRenamingScheme::Range::intersection(const
     if( max_v > max_length() )
         return {min_v, max_length()};
     else
-        return {min_v, (unsigned short)max_v};
+        return {min_v, static_cast<unsigned short>(max_v)};
 }
 
 inline bool BatchRenamingScheme::Range::intersects(const Range _rhs) const

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingJob.h"
 #include <Utility/StringExtras.h>
 
@@ -23,7 +23,7 @@ void BatchRenamingJob::Perform()
 {
     Statistics().CommitEstimated(Statistics::SourceType::Items, m_Source.size());
     
-    for( int i = 0, e = (int)m_Source.size(); i != e; ++i ) {
+    for( int i = 0, e = static_cast<int>(m_Source.size()); i != e; ++i ) {
         if( BlockIfPaused(); IsStopped() )
             return;
 

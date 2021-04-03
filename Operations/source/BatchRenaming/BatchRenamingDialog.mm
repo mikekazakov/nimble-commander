@@ -98,36 +98,38 @@ static auto g_MyPrivateTableViewDataType =
 @end
 
 @implementation BatchRenameSheetControllerNilNumberValueTransformer
-+(Class)transformedValueClass {
++ (Class)transformedValueClass
+{
     return [NSNumber class];
 }
--(id)transformedValue:(id)value {
-    if (value == nil)
+- (id)transformedValue:(id)value
+{
+    if( value == nil )
         return @0;
     else
         return value;
 }
 @end
 
-@interface NCOpsBatchRenamingDialog()
+@interface NCOpsBatchRenamingDialog ()
 
-@property (strong, nonatomic) IBOutlet NSTableView *FilenamesTable;
-@property (strong, nonatomic) IBOutlet NSComboBox *FilenameMask;
-@property (strong, nonatomic) IBOutlet NSComboBox *SearchForComboBox;
-@property (strong, nonatomic) IBOutlet NSComboBox *ReplaceWithComboBox;
-@property (strong, nonatomic) IBOutlet NSButton *SearchCaseSensitive;
-@property (strong, nonatomic) IBOutlet NSButton *SearchOnlyOnce;
-@property (strong, nonatomic) IBOutlet NSButton *SearchInExtension;
-@property (strong, nonatomic) IBOutlet NSButton *SearchWithRegExp;
-@property (strong, nonatomic) IBOutlet NSPopUpButton *CaseProcessing;
-@property (strong, nonatomic) IBOutlet NSButton *CaseProcessingWithExtension;
-@property (strong, nonatomic) IBOutlet NSPopUpButton *CounterDigits;
-@property (strong, nonatomic) IBOutlet NSButton *InsertNameRangePlaceholderButton;
-@property (strong, nonatomic) IBOutlet NSButton *InsertPlaceholderMenuButton;
-@property (strong, nonatomic) IBOutlet NSMenu *InsertPlaceholderMenu;
-@property (strong, nonatomic) IBOutlet NSButton *OkButton;
-@property (nonatomic, readwrite) int CounterStartsAt;
-@property (nonatomic, readwrite) int CounterStepsBy;
+@property(strong, nonatomic) IBOutlet NSTableView *FilenamesTable;
+@property(strong, nonatomic) IBOutlet NSComboBox *FilenameMask;
+@property(strong, nonatomic) IBOutlet NSComboBox *SearchForComboBox;
+@property(strong, nonatomic) IBOutlet NSComboBox *ReplaceWithComboBox;
+@property(strong, nonatomic) IBOutlet NSButton *SearchCaseSensitive;
+@property(strong, nonatomic) IBOutlet NSButton *SearchOnlyOnce;
+@property(strong, nonatomic) IBOutlet NSButton *SearchInExtension;
+@property(strong, nonatomic) IBOutlet NSButton *SearchWithRegExp;
+@property(strong, nonatomic) IBOutlet NSPopUpButton *CaseProcessing;
+@property(strong, nonatomic) IBOutlet NSButton *CaseProcessingWithExtension;
+@property(strong, nonatomic) IBOutlet NSPopUpButton *CounterDigits;
+@property(strong, nonatomic) IBOutlet NSButton *InsertNameRangePlaceholderButton;
+@property(strong, nonatomic) IBOutlet NSButton *InsertPlaceholderMenuButton;
+@property(strong, nonatomic) IBOutlet NSMenu *InsertPlaceholderMenu;
+@property(strong, nonatomic) IBOutlet NSButton *OkButton;
+@property(nonatomic, readwrite) int CounterStartsAt;
+@property(nonatomic, readwrite) int CounterStepsBy;
 
 - (IBAction)OnFilenameMaskChanged:(id)sender;
 - (IBAction)OnInsertNamePlaceholder:(id)sender;
@@ -150,20 +152,19 @@ static auto g_MyPrivateTableViewDataType =
 
 @end
 
-@implementation NCOpsBatchRenamingDialog
-{
-    std::vector<BatchRenamingScheme::FileInfo>   m_FileInfos;
-    
-    std::vector<NSTextField*>            m_LabelsBefore;
-    std::vector<NSTextField*>            m_LabelsAfter;
-    
-    NSPopover                      *m_Popover;
-    int                             m_CounterStartsAt;
-    int                             m_CounterStepsBy;
-    
-    std::vector<std::string>                  m_ResultSource;
-    std::vector<std::string>                  m_ResultDestination;
-    
+@implementation NCOpsBatchRenamingDialog {
+    std::vector<BatchRenamingScheme::FileInfo> m_FileInfos;
+
+    std::vector<NSTextField *> m_LabelsBefore;
+    std::vector<NSTextField *> m_LabelsAfter;
+
+    NSPopover *m_Popover;
+    int m_CounterStartsAt;
+    int m_CounterStepsBy;
+
+    std::vector<std::string> m_ResultSource;
+    std::vector<std::string> m_ResultDestination;
+
     NCUtilSimpleComboBoxPersistentDataSource *m_RenamePatternDataSource;
     NCUtilSimpleComboBoxPersistentDataSource *m_SearchForDataSource;
     NCUtilSimpleComboBoxPersistentDataSource *m_ReplaceWithDataSource;
@@ -177,60 +178,58 @@ static auto g_MyPrivateTableViewDataType =
 @synthesize searchForDataSource = m_SearchForDataSource;
 @synthesize replaceWithDataSource = m_ReplaceWithDataSource;
 
-- (instancetype) initWithItems:(std::vector<VFSListingItem>)_items
+- (instancetype)initWithItems:(std::vector<VFSListingItem>)_items
 {
     const auto nib_path = [Bundle() pathForResource:@"BatchRenamingDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
-    if(self) {
-        if(_items.empty())
+    if( self ) {
+        if( _items.empty() )
             throw std::logic_error("empty files list");
-        
-        for( auto &entry: _items ) {
-            m_FileInfos.emplace_back( BatchRenamingScheme::FileInfo(entry) );
-            m_ResultSource.emplace_back( entry.Directory() + entry.Filename() );
+
+        for( auto &entry : _items ) {
+            m_FileInfos.emplace_back(BatchRenamingScheme::FileInfo(entry));
+            m_ResultSource.emplace_back(entry.Directory() + entry.Filename());
         }
-        
-        
-        for(auto &e: _items) {
-            
+
+        for( auto &e : _items ) {
+
             {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
                 tf.stringValue = e.FilenameNS();
                 tf.bordered = false;
                 tf.editable = false;
                 tf.drawsBackground = false;
-                ((NSTextFieldCell*)tf.cell).lineBreakMode = NSLineBreakByTruncatingTail;
+                static_cast<NSTextFieldCell *>(tf.cell).lineBreakMode = NSLineBreakByTruncatingTail;
                 m_LabelsBefore.emplace_back(tf);
             }
-            
+
             {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
                 tf.stringValue = e.FilenameNS();
                 tf.bordered = false;
                 tf.editable = false;
                 tf.drawsBackground = false;
-                ((NSTextFieldCell*)tf.cell).lineBreakMode = NSLineBreakByTruncatingTail;
+                static_cast<NSTextFieldCell *>(tf.cell).lineBreakMode = NSLineBreakByTruncatingTail;
                 m_LabelsAfter.emplace_back(tf);
             }
-            
-            
         }
-        
+
         m_CounterStartsAt = 1;
         m_CounterStepsBy = 1;
     }
     return self;
-    
 }
-- (void)windowDidLoad {
+- (void)windowDidLoad
+{
     [super windowDidLoad];
-    
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+
+    // Implement this method to handle any initialization after your window controller's window has
+    // been loaded from its nib file.
     [self InsertStringIntoMask:@"[N].[E]"];
     self.isValidRenaming = true;
 
     [self.FilenamesTable registerForDraggedTypes:@[g_MyPrivateTableViewDataType]];
-    
+
     // set up data sources for comboboxes
     if( !m_RenamePatternDataSource )
         m_RenamePatternDataSource = [NCUtilSimpleComboBoxPersistentDataSource new];
@@ -241,13 +240,13 @@ static auto g_MyPrivateTableViewDataType =
         m_SearchForDataSource = [NCUtilSimpleComboBoxPersistentDataSource new];
     self.SearchForComboBox.usesDataSource = true;
     self.SearchForComboBox.dataSource = m_SearchForDataSource;
-    
+
     if( !m_ReplaceWithDataSource )
         m_ReplaceWithDataSource = [NCUtilSimpleComboBoxPersistentDataSource new];
     self.ReplaceWithComboBox.usesDataSource = true;
     self.ReplaceWithComboBox.dataSource = m_ReplaceWithDataSource;
-    
-    SheetWithHotkeys *sheet = (SheetWithHotkeys *)self.window;
+
+    SheetWithHotkeys *sheet = static_cast<SheetWithHotkeys *>(self.window);
     sheet.onCtrlA = [sheet makeActionHotkey:@selector(OnInsertMenu:)];
     sheet.onCtrlC = [sheet makeActionHotkey:@selector(OnInsertCounterPlaceholder:)];
     sheet.onCtrlD = [sheet makeActionHotkey:@selector(OnInsertDatePlaceholder:)];
@@ -265,7 +264,7 @@ static auto g_MyPrivateTableViewDataType =
     sheet.onCtrlW = [sheet makeFocusHotkey:self.ReplaceWithComboBox];
 }
 
-- (IBAction)OnCancel:(id)[[maybe_unused]]_sender
+- (IBAction)OnCancel:(id) [[maybe_unused]] _sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
 }
@@ -278,80 +277,83 @@ static auto g_MyPrivateTableViewDataType =
 }
 
 - (NSView *)tableView:(NSTableView *)tableView
-   viewForTableColumn:(NSTableColumn *)tableColumn
-                  row:(NSInteger)row
+    viewForTableColumn:(NSTableColumn *)tableColumn
+                   row:(NSInteger)row
 {
     if( tableView == self.FilenamesTable ) {
         if( [tableColumn.identifier isEqualToString:@"original"] ) {
-            assert( row >= 0 && row < (int)m_LabelsBefore.size() );
+            assert(row >= 0 && row < static_cast<int>(m_LabelsBefore.size()));
             return m_LabelsBefore[row];
         }
         if( [tableColumn.identifier isEqualToString:@"renamed"] ) {
-            assert( row >= 0 && row < (int)m_LabelsAfter.size() );
+            assert(row >= 0 && row < static_cast<int>(m_LabelsAfter.size()));
             return m_LabelsAfter[row];
         }
-        
     }
-    
+
     return nil;
 }
 
-- (IBAction)OnFilenameMaskChanged:(id)[[maybe_unused]]_sender
+- (IBAction)OnFilenameMaskChanged:(id) [[maybe_unused]] _sender
 {
     [self UpdateRename];
 }
 
-- (void) UpdateRename
+- (void)UpdateRename
 {
     NSString *filename_mask = self.FilenameMask.stringValue ? self.FilenameMask.stringValue : @"";
 
-    NSString *search_for = self.SearchForComboBox.stringValue ? self.SearchForComboBox.stringValue : @"";
-    NSString *replace_with = self.ReplaceWithComboBox.stringValue ? self.ReplaceWithComboBox.stringValue : @"";
+    NSString *search_for =
+        self.SearchForComboBox.stringValue ? self.SearchForComboBox.stringValue : @"";
+    NSString *replace_with =
+        self.ReplaceWithComboBox.stringValue ? self.ReplaceWithComboBox.stringValue : @"";
     bool search_case_sens = self.SearchCaseSensitive.state == NSControlStateValueOn;
     bool search_once = self.SearchOnlyOnce.state == NSControlStateValueOn;
     bool search_in_ext = self.SearchInExtension.state == NSControlStateValueOn;
     bool search_regexp = self.SearchWithRegExp.state == NSControlStateValueOn;
-    BatchRenamingScheme::CaseTransform ct = (BatchRenamingScheme::CaseTransform)self.CaseProcessing.selectedTag;
+    BatchRenamingScheme::CaseTransform ct =
+        static_cast<BatchRenamingScheme::CaseTransform>(self.CaseProcessing.selectedTag);
     bool ct_with_ext = self.CaseProcessingWithExtension.state == NSControlStateValueOn;
-    
+
     BatchRenamingScheme br;
-    br.SetReplacingOptions(search_for, replace_with, search_case_sens, search_once, search_in_ext, search_regexp);
+    br.SetReplacingOptions(
+        search_for, replace_with, search_case_sens, search_once, search_in_ext, search_regexp);
     br.SetCaseTransform(ct, ct_with_ext);
-    br.SetDefaultCounter(m_CounterStartsAt, m_CounterStepsBy, 1, (unsigned)self.CounterDigits.selectedTag);
-    
-    if(!br.BuildActionsScript(filename_mask))
-    {
-        for(auto &l:m_LabelsAfter)
+    br.SetDefaultCounter(m_CounterStartsAt,
+                         m_CounterStepsBy,
+                         1,
+                         static_cast<unsigned>(self.CounterDigits.selectedTag));
+
+    if( !br.BuildActionsScript(filename_mask) ) {
+        for( auto &l : m_LabelsAfter )
             l.stringValue = @"<Error!>";
         self.isValidRenaming = false;
         return;
     }
     else {
-        std::vector<NSString*> newnames;
-        
-//        MachTimeBenchmark mtb;
-        for(size_t i = 0, e = m_FileInfos.size(); i!=e; ++i)
-            newnames.emplace_back(br.Rename(m_FileInfos[i], (int)i));
-//        mtb.ResetMicro();
-        
-        for(size_t i = 0, e = newnames.size(); i!=e; ++i)
+        std::vector<NSString *> newnames;
+
+        for( size_t i = 0, e = m_FileInfos.size(); i != e; ++i )
+            newnames.emplace_back(br.Rename(m_FileInfos[i], static_cast<int>(i)));
+
+        for( size_t i = 0, e = newnames.size(); i != e; ++i )
             m_LabelsAfter[i].stringValue = newnames[i];
     }
-    
+
     self.isValidRenaming = true;
-    
+
     // check duplicate names here
-    for(size_t i = 0, e = m_FileInfos.size(); i!=e; ++i) {
-        
+    for( size_t i = 0, e = m_FileInfos.size(); i != e; ++i ) {
+
         bool is_valid = true;
-        
+
         NSString *fn1 = m_LabelsAfter[i].stringValue;
-        if(fn1.length == 0) {
+        if( fn1.length == 0 ) {
             is_valid = false;
         }
         else { // very inefficient duplicates search
-            for(size_t j = 0; j!=e; ++j)
-                if(i != j) {
+            for( size_t j = 0; j != e; ++j )
+                if( i != j ) {
                     if( [fn1 isEqualToString:m_LabelsAfter[j].stringValue] ) {
                         is_valid = false;
                         break;
@@ -362,7 +364,7 @@ static auto g_MyPrivateTableViewDataType =
                     }
                 }
         }
-        
+
         if( !is_valid ) {
             m_LabelsAfter[i].textColor = NSColor.redColor;
             self.isValidRenaming = false;
@@ -373,28 +375,27 @@ static auto g_MyPrivateTableViewDataType =
     }
 }
 
-- (IBAction)OnInsertNamePlaceholder:(id)[[maybe_unused]]_sender
+- (IBAction)OnInsertNamePlaceholder:(id) [[maybe_unused]] _sender
 {
     [self InsertStringIntoMask:@"[N]"];
 }
 
-- (IBAction)OnInsertNameRangePlaceholder:(id)[[maybe_unused]]_sender
+- (IBAction)OnInsertNameRangePlaceholder:(id) [[maybe_unused]] _sender
 {
     auto *pc = [NCOpsBatchRenamingRangeSelectionPopover new];
     auto curr_sel = self.currentMaskSelection;
-    pc.handler = ^(NSRange _range){
-        if(_range.length == 0)
-            return;
-        NSString *ph = [NSString stringWithFormat:@"[N%lu-%lu]", _range.location + 1, _range.location + _range.length];
-        dispatch_to_main_queue([=]{
-            [self InsertStringIntoMask:ph withSelection:curr_sel];
-        });
+    pc.handler = ^(NSRange _range) {
+      if( _range.length == 0 )
+          return;
+      NSString *ph = [NSString
+          stringWithFormat:@"[N%lu-%lu]", _range.location + 1, _range.location + _range.length];
+      dispatch_to_main_queue([=] { [self InsertStringIntoMask:ph withSelection:curr_sel]; });
     };
-    if( self.FilenamesTable.selectedRow >= 0  )
+    if( self.FilenamesTable.selectedRow >= 0 )
         pc.string = m_FileInfos[self.FilenamesTable.selectedRow].name;
     else
         pc.string = m_FileInfos[0].name;
-    
+
     m_Popover = [NSPopover new];
     m_Popover.contentViewController = pc;
     m_Popover.delegate = pc;
@@ -405,33 +406,32 @@ static auto g_MyPrivateTableViewDataType =
                     preferredEdge:NSMaxXEdge];
 }
 
-- (IBAction)OnInsertCounterPlaceholder:(id)[[maybe_unused]]_sender
+- (IBAction)OnInsertCounterPlaceholder:(id) [[maybe_unused]] _sender
 {
     [self InsertStringIntoMask:@"[C]"];
 }
 
-- (IBAction)OnInsertExtensionPlaceholder:(id)[[maybe_unused]]_sender
+- (IBAction)OnInsertExtensionPlaceholder:(id) [[maybe_unused]] _sender
 {
     [self InsertStringIntoMask:@"[E]"];
 }
 
-- (IBAction)OnInsertDatePlaceholder:(id)[[maybe_unused]]_sender
+- (IBAction)OnInsertDatePlaceholder:(id) [[maybe_unused]] _sender
 {
     [self InsertStringIntoMask:@"[YMD]"];
 }
 
-- (IBAction)OnInsertTimePlaceholder:(id)[[maybe_unused]]_sender
+- (IBAction)OnInsertTimePlaceholder:(id) [[maybe_unused]] _sender
 {
     [self InsertStringIntoMask:@"[hms]"];
 }
 
-- (IBAction)OnInsertMenu:(id)[[maybe_unused]]_sender
+- (IBAction)OnInsertMenu:(id) [[maybe_unused]] _sender
 {
     const auto r = self.InsertPlaceholderMenuButton.bounds;
     [self.InsertPlaceholderMenu popUpMenuPositioningItem:nil
                                               atLocation:NSMakePoint(NSMaxX(r), NSMinY(r))
-                                                  inView:self.InsertPlaceholderMenuButton
-     ];
+                                                  inView:self.InsertPlaceholderMenuButton];
 }
 
 - (IBAction)OnInsertPlaceholderFromMenu:(id)sender
@@ -442,27 +442,27 @@ static auto g_MyPrivateTableViewDataType =
     }
 }
 
-- (IBAction)OnSearchForChanged:(id)[[maybe_unused]]_sender
+- (IBAction)OnSearchForChanged:(id) [[maybe_unused]] _sender
 {
     [self UpdateRename];
 }
 
-- (IBAction)OnReplaceWithChanged:(id)[[maybe_unused]]_sender
+- (IBAction)OnReplaceWithChanged:(id) [[maybe_unused]] _sender
 {
     [self UpdateRename];
 }
 
-- (IBAction)OnSearchReplaceOptionsChanged:(id)[[maybe_unused]]_sender
+- (IBAction)OnSearchReplaceOptionsChanged:(id) [[maybe_unused]] _sender
 {
     [self UpdateRename];
 }
 
-- (IBAction)OnCaseProcessingChanged:(id)[[maybe_unused]]_sender
+- (IBAction)OnCaseProcessingChanged:(id) [[maybe_unused]] _sender
 {
     [self UpdateRename];
 }
 
-- (IBAction)OnCounterSettingsChanged:(id)[[maybe_unused]]_sender
+- (IBAction)OnCounterSettingsChanged:(id) [[maybe_unused]] _sender
 {
     [self UpdateRename];
 }
@@ -475,7 +475,7 @@ static auto g_MyPrivateTableViewDataType =
         return NSMakeRange(NSNotFound, 0);
 }
 
-- (void)InsertStringIntoMask:(NSString*)_str
+- (void)InsertStringIntoMask:(NSString *)_str
 {
     NSString *current_mask = self.FilenameMask.stringValue ? self.FilenameMask.stringValue : @"";
     if( self.FilenameMask.currentEditor ) {
@@ -484,22 +484,22 @@ static auto g_MyPrivateTableViewDataType =
     }
     else
         current_mask = [current_mask stringByAppendingString:_str];
-    
+
     [self SetNewMask:current_mask];
 }
 
-- (void)InsertStringIntoMask:(NSString*)_str withSelection:(NSRange)_r
+- (void)InsertStringIntoMask:(NSString *)_str withSelection:(NSRange)_r
 {
     NSString *current_mask = self.FilenameMask.stringValue ? self.FilenameMask.stringValue : @"";
-    if( _r.location != NSNotFound)
+    if( _r.location != NSNotFound )
         current_mask = [current_mask stringByReplacingCharactersInRange:_r withString:_str];
     else
         current_mask = [current_mask stringByAppendingString:_str];
-    
+
     [self SetNewMask:current_mask];
 }
 
-- (void)SetNewMask:(NSString*)_str
+- (void)SetNewMask:(NSString *)_str
 {
     [self.FilenameMask.undoManager registerUndoWithTarget:self
                                                  selector:@selector(SetNewMask:)
@@ -518,12 +518,12 @@ static auto g_MyPrivateTableViewDataType =
     else if( objc_cast<NSTextField>(notification.object) == self.SearchForComboBox )
         [self OnSearchForChanged:self.SearchForComboBox];
     else
-        [self UpdateRename];        
+        [self UpdateRename];
 }
 
-- (NSDragOperation)tableView:(NSTableView *)[[maybe_unused]]aTableView
-                validateDrop:(id < NSDraggingInfo >)[[maybe_unused]]info
-                 proposedRow:(NSInteger)[[maybe_unused]]row
+- (NSDragOperation)tableView:(NSTableView *) [[maybe_unused]] aTableView
+                validateDrop:(id<NSDraggingInfo>) [[maybe_unused]] info
+                 proposedRow:(NSInteger) [[maybe_unused]] row
        proposedDropOperation:(NSTableViewDropOperation)operation
 {
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
@@ -540,73 +540,72 @@ static auto g_MyPrivateTableViewDataType =
     return pbitem;
 }
 
-- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
+- (BOOL)tableView:(NSTableView *) [[maybe_unused]] aTableView
        acceptDrop:(id<NSDraggingInfo>)info
               row:(NSInteger)drag_to
-    dropOperation:(NSTableViewDropOperation)[[maybe_unused]]operation
+    dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
-    NSData* data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];    
-    NSNumber* ind = [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+    NSData *data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];
+    NSNumber *ind =
+        [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
     NSInteger drag_from = ind.integerValue;
-    
-    if(drag_to == drag_from || // same index, above
-       drag_to == drag_from + 1) // same index, below
+
+    if( drag_to == drag_from ||    // same index, above
+        drag_to == drag_from + 1 ) // same index, below
         return false;
-    
+
     if( drag_from < drag_to )
         drag_to--;
-    if( drag_to >= (int)m_LabelsBefore.size()  ||
-        drag_from >= (int)m_LabelsBefore.size() )
+    if( drag_to >= static_cast<int>(m_LabelsBefore.size()) ||
+        drag_from >= static_cast<int>(m_LabelsBefore.size()) )
         return false;
-    
+
     // don't forget to swap items in ALL containers!
-    std::swap(m_FileInfos[drag_to],          m_FileInfos[drag_from]);
-    std::swap(m_LabelsBefore[drag_to],       m_LabelsBefore[drag_from]);
-    std::swap(m_LabelsAfter[drag_to],        m_LabelsAfter[drag_from]);
-    std::swap(m_ResultSource[drag_to],       m_ResultSource[drag_from]);
-    
+    std::swap(m_FileInfos[drag_to], m_FileInfos[drag_from]);
+    std::swap(m_LabelsBefore[drag_to], m_LabelsBefore[drag_from]);
+    std::swap(m_LabelsAfter[drag_to], m_LabelsAfter[drag_from]);
+    std::swap(m_ResultSource[drag_to], m_ResultSource[drag_from]);
+
     [self.FilenamesTable reloadData];
-    
-    dispatch_to_main_queue([=]{
-        [self UpdateRename];
-    });
-    
+
+    dispatch_to_main_queue([=] { [self UpdateRename]; });
+
     return true;
 }
 
-- (void) buildResultDestinations
+- (void)buildResultDestinations
 {
     m_ResultDestination.clear();
     for( size_t i = 0, e = m_FileInfos.size(); i != e; ++i )
-        m_ResultDestination.emplace_back(m_FileInfos[i].item.Directory() + m_LabelsAfter[i].stringValue.fileSystemRepresentationSafe);
+        m_ResultDestination.emplace_back(m_FileInfos[i].item.Directory() +
+                                         m_LabelsAfter[i].stringValue.fileSystemRepresentationSafe);
 }
 
-- (IBAction)OnOK:(id)[[maybe_unused]]_sender
+- (IBAction)OnOK:(id) [[maybe_unused]] _sender
 {
     [self UpdateRename];
     [self buildResultDestinations];
-    
+
     [m_RenamePatternDataSource reportEnteredItem:self.FilenameMask.stringValue];
     [m_SearchForDataSource reportEnteredItem:self.SearchForComboBox.stringValue];
     [m_ReplaceWithDataSource reportEnteredItem:self.ReplaceWithComboBox.stringValue];
-    
+
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (void) keyDown:(NSEvent *)event
+- (void)keyDown:(NSEvent *)event
 {
-    if( event.type == NSEventTypeKeyDown &&
-        event.keyCode == kVK_Delete &&
+    if( event.type == NSEventTypeKeyDown && event.keyCode == kVK_Delete &&
         self.window.firstResponder == self.FilenamesTable &&
-        self.FilenamesTable.selectedRow != -1) {
-        [self removeItemAtIndex:(int)self.FilenamesTable.selectedRow];
+        self.FilenamesTable.selectedRow != -1 ) {
+        [self removeItemAtIndex:static_cast<int>(self.FilenamesTable.selectedRow)];
         return;
     }
 
     return [super keyDown:event];
 }
 
-- (BOOL) validateMenuItem:(NSMenuItem *)item
+- (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     if( item.menu == self.FilenamesTable.menu ) {
         auto clicked_row = self.FilenamesTable.clickedRow;
@@ -615,37 +614,38 @@ static auto g_MyPrivateTableViewDataType =
         else
             return false;
     }
-    
+
     return true;
 }
 
-- (void) removeItemAtIndex:(int)_index
+- (void)removeItemAtIndex:(int)_index
 {
     // don't forget to erase items in ALL containers!
-    m_FileInfos.erase( next(begin(m_FileInfos), _index) );
-    m_LabelsBefore.erase( next(begin(m_LabelsBefore), _index) );
-    m_LabelsAfter.erase( next(begin(m_LabelsAfter), _index) );
-    m_ResultSource.erase( next(begin(m_ResultSource), _index) );
-    
+    m_FileInfos.erase(next(begin(m_FileInfos), _index));
+    m_LabelsBefore.erase(next(begin(m_LabelsBefore), _index));
+    m_LabelsAfter.erase(next(begin(m_LabelsAfter), _index));
+    m_ResultSource.erase(next(begin(m_ResultSource), _index));
+
     [self.FilenamesTable reloadData];
 
     if( _index < self.FilenamesTable.numberOfRows )
-        [self.FilenamesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:_index] byExtendingSelection:false];
+        [self.FilenamesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:_index]
+                         byExtendingSelection:false];
     else if( self.FilenamesTable.numberOfRows > 0 )
-        [self.FilenamesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:self.FilenamesTable.numberOfRows - 1] byExtendingSelection:false];
-    
-    dispatch_to_main_queue([=]{
-        [self UpdateRename];
-    });
+        [self.FilenamesTable
+                selectRowIndexes:[NSIndexSet indexSetWithIndex:self.FilenamesTable.numberOfRows - 1]
+            byExtendingSelection:false];
+
+    dispatch_to_main_queue([=] { [self UpdateRename]; });
 }
 
-- (IBAction)onContextMenuRemoveItem:(id)[[maybe_unused]]_sender
+- (IBAction)onContextMenuRemoveItem:(id) [[maybe_unused]] _sender
 {
     auto clicked_row = self.FilenamesTable.clickedRow;
     if( clicked_row < 0 && clicked_row >= self.FilenamesTable.numberOfRows )
         return;
-    
-    [self removeItemAtIndex:(int)clicked_row];
- }
+
+    [self removeItemAtIndex:static_cast<int>(clicked_row)];
+}
 
 @end

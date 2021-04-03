@@ -211,7 +211,8 @@ using namespace nc::ops;
 @implementation NCOpsGenericErrorDialogWindow
 - (void)cancelOperation:(id) [[maybe_unused]] _sender
 {
-    const auto response = ((NCOpsGenericErrorDialog *)(self.windowController)).escapeButtonResponse;
+    auto dialog = static_cast<NCOpsGenericErrorDialog *>(self.windowController);
+    const auto response = dialog.escapeButtonResponse;
     [self.sheetParent endSheet:self returnCode:response];
 }
 

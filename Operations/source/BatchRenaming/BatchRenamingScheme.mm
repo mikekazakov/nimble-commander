@@ -524,7 +524,7 @@ BatchRenamingScheme::ParsePlaceholder_Counter(NSString *_ph,
 
 NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction &_te)
 {
-    auto length = (unsigned short)_from.length;
+    auto length = static_cast<unsigned short>(_from.length);
     if( length == 0 )
         return @"";
 
@@ -586,7 +586,7 @@ NSString *BatchRenamingScheme::FormatCounter(const Counter &_c, int _file_number
     if( _c.stripe == 0 )
         return @"";
 
-    char *buf = (char *)alloca(_c.width + 32); // no heap allocs, for great justice!
+    char *buf = static_cast<char *>(alloca(_c.width + 32)); // no heap allocs, for great justice!
     if( !buf )
         return @"";
 

@@ -6,6 +6,9 @@
 #include "../ModalDialogResponses.h"
 #include "../GenericErrorDialog.h"
 
+// TODO: remove once callback results are no longer wrapped into 'int'
+#pragma clang diagnostic ignored "-Wold-style-cast"
+
 namespace nc::ops {
 
 using Callbacks = AttrsChangingJobCallbacks;

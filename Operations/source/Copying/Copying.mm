@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Copying.h"
 #include "CopyingJob.h"
 #include "../AsyncDialogResponse.h"
@@ -7,21 +7,21 @@
 #include "CopyingTitleBuilder.h"
 #include <sys/stat.h>
 
+// TODO: remove once callback results are no longer wrapped into 'int'
+#pragma clang diagnostic ignored "-Wold-style-cast"
+
 namespace nc::ops {
 
 using Callbacks = CopyingJobCallbacks;
 
 Copying::Copying(std::vector<VFSListingItem> _source_files,
-                 const std::string& _destination_path,
+                 const std::string &_destination_path,
                  const std::shared_ptr<VFSHost> &_destination_host,
                  const CopyingOptions &_options)
 {
     m_ExistBehavior = _options.exist_behavior;
-    
-    m_Job.reset( new CopyingJob(_source_files,
-                                _destination_path,
-                                _destination_host,
-                                _options) );
+
+    m_Job.reset(new CopyingJob(_source_files, _destination_path, _destination_host, _options));
     SetupCallbacks();
     OnStageChanged();
 }
@@ -36,13 +36,13 @@ void Copying::SetupCallbacks()
     auto &j = *m_Job;
     using С = CopyingJobCallbacks;
     j.m_OnCopyDestinationAlreadyExists =
-    [this](const struct stat &_src, const struct stat &_dst, const std::string &_path) {
-        return (С::CopyDestExistsResolution)OnCopyDestExists(_src, _dst, _path);
-    };
+        [this](const struct stat &_src, const struct stat &_dst, const std::string &_path) {
+            return (С::CopyDestExistsResolution)OnCopyDestExists(_src, _dst, _path);
+        };
     j.m_OnRenameDestinationAlreadyExists =
-    [this](const struct stat &_src, const struct stat &_dst, const std::string &_path) {
-        return (С::RenameDestExistsResolution)OnRenameDestExists(_src, _dst, _path);
-    };
+        [this](const struct stat &_src, const struct stat &_dst, const std::string &_path) {
+            return (С::RenameDestExistsResolution)OnRenameDestExists(_src, _dst, _path);
+        };
     j.m_OnCantAccessSourceItem = [this](int _1, const std::string &_2, VFSHost &_3) {
         return (С::CantAccessSourceItemResolution)OnCantAccessSourceItem(_1, _2, _3);
     };
@@ -59,7 +59,8 @@ void Copying::SetupCallbacks()
         return (С::DestinationFileWriteErrorResolution)OnDestinationFileWriteError(_1, _2, _3);
     };
     j.m_OnCantCreateDestinationRootDir = [this](int _1, const std::string &_2, VFSHost &_3) {
-        return (С::CantCreateDestinationRootDirResolution)OnCantCreateDestinationRootDir(_1, _2, _3);
+        return (С::CantCreateDestinationRootDirResolution)OnCantCreateDestinationRootDir(
+            _1, _2, _3);
     };
     j.m_OnCantCreateDestinationDir = [this](int _1, const std::string &_2, VFSHost &_3) {
         return (С::CantCreateDestinationDirResolution)OnCantCreateDestinationDir(_1, _2, _3);
@@ -76,9 +77,7 @@ void Copying::SetupCallbacks()
     j.m_OnFileVerificationFailed = [this](const std::string &_1, VFSHost &_2) {
         OnFileVerificationFailed(_1, _2);
     };
-    j.m_OnStageChanged = [this]() {
-        OnStageChanged();
-    };
+    j.m_OnStageChanged = [this]() { OnStageChanged(); };
 }
 
 Job *Copying::GetJob() noexcept
@@ -86,7 +85,9 @@ Job *Copying::GetJob() noexcept
     return m_Job.get();
 }
 
-int Copying::OnCopyDestExists(const struct stat &_src, const struct stat &_dst, const std::string &_path)
+int Copying::OnCopyDestExists(const struct stat &_src,
+                              const struct stat &_dst,
+                              const std::string &_path)
 {
     switch( m_ExistBehavior ) {
         case CopyingOptions::ExistBehavior::SkipAll:
@@ -107,11 +108,11 @@ int Copying::OnCopyDestExists(const struct stat &_src, const struct stat &_dst, 
 
     if( !IsInteractive() )
         return (int)Callbacks::CopyDestExistsResolution::Stop;
-    
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=]{ OnCopyDestExistsUI(_src, _dst, _path, ctx); });
+    dispatch_to_main_queue([=] { OnCopyDestExistsUI(_src, _dst, _path, ctx); });
     WaitForDialogResponse(ctx);
-    
+
     if( ctx->response == NSModalResponseSkip ) {
         if( ctx->IsApplyToAllSet() )
             m_ExistBehavior = CopyingOptions::ExistBehavior::SkipAll;
@@ -136,7 +137,7 @@ int Copying::OnCopyDestExists(const struct stat &_src, const struct stat &_dst, 
         if( ctx->IsApplyToAllSet() )
             m_ExistBehavior = CopyingOptions::ExistBehavior::KeepBoth;
         return (int)Callbacks::CopyDestExistsResolution::KeepBoth;
-    }    
+    }
     return (int)Callbacks::CopyDestExistsResolution::Stop;
 }
 
@@ -155,7 +156,8 @@ void Copying::OnCopyDestExistsUI(const struct stat &_src,
     Show(sheet.window, _ctx);
 }
 
-int Copying::OnRenameDestExists(const struct stat &_src, const struct stat &_dst,
+int Copying::OnRenameDestExists(const struct stat &_src,
+                                const struct stat &_dst,
                                 const std::string &_path)
 {
     switch( m_ExistBehavior ) {
@@ -172,12 +174,12 @@ int Copying::OnRenameDestExists(const struct stat &_src, const struct stat &_dst
         default:
             break;
     }
-    
+
     if( !IsInteractive() )
         return (int)Callbacks::RenameDestExistsResolution::Stop;
-    
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=]{ OnRenameDestExistsUI(_src, _dst, _path, ctx); });
+    dispatch_to_main_queue([=] { OnRenameDestExistsUI(_src, _dst, _path, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip ) {
@@ -199,7 +201,7 @@ int Copying::OnRenameDestExists(const struct stat &_src, const struct stat &_dst
         if( ctx->IsApplyToAllSet() )
             m_ExistBehavior = CopyingOptions::ExistBehavior::KeepBoth;
         return (int)Callbacks::RenameDestExistsResolution::KeepBoth;
-    }        
+    }
     return (int)Callbacks::RenameDestExistsResolution::Stop;
 }
 
@@ -218,19 +220,19 @@ void Copying::OnRenameDestExistsUI(const struct stat &_src,
     Show(sheet.window, _ctx);
 }
 
-int Copying::OnCantAccessSourceItem(int _err,
-                                    const std::string &_path,
-                                    VFSHost &_vfs)
+int Copying::OnCantAccessSourceItem(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll )
         return (int)Callbacks::CantAccessSourceItemResolution::Skip;
     if( !IsInteractive() )
         return (int)Callbacks::CantAccessSourceItemResolution::Stop;
-    
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to access a file", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -251,11 +253,13 @@ int Copying::OnCantOpenDestinationFile(int _err, const std::string &_path, VFSHo
         return (int)Callbacks::CantOpenDestinationFileResolution::Skip;
     if( !IsInteractive() )
         return (int)Callbacks::CantOpenDestinationFileResolution::Stop;
-    
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to open a destination file", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -276,11 +280,13 @@ int Copying::OnSourceFileReadError(int _err, const std::string &_path, VFSHost &
         return (int)Callbacks::SourceFileReadErrorResolution::Skip;
     if( !IsInteractive() )
         return (int)Callbacks::SourceFileReadErrorResolution::Stop;
-    
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to read a source file", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -301,11 +307,13 @@ int Copying::OnDestinationFileReadError(int _err, const std::string &_path, VFSH
         return (int)Callbacks::DestinationFileReadErrorResolution::Skip;
     if( !IsInteractive() )
         return (int)Callbacks::DestinationFileReadErrorResolution::Stop;
-    
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
                       NSLocalizedString(@"Failed to read a destination file", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -324,11 +332,13 @@ int Copying::OnDestinationFileWriteError(int _err, const std::string &_path, VFS
         return (int)Callbacks::DestinationFileWriteErrorResolution::Skip;
     if( !IsInteractive() )
         return (int)Callbacks::DestinationFileWriteErrorResolution::Stop;
-    
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to write a file", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -348,9 +358,11 @@ int Copying::OnCantCreateDestinationRootDir(int _err, const std::string &_path, 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortRetry,
                       NSLocalizedString(@"Failed to create a directory", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
-    
+
     if( ctx->response == NSModalResponseRetry )
         return (int)Callbacks::CantCreateDestinationRootDirResolution::Retry;
     else
@@ -363,11 +375,13 @@ int Copying::OnCantCreateDestinationDir(int _err, const std::string &_path, VFSH
         return (int)Callbacks::CantCreateDestinationDirResolution::Skip;
     if( !IsInteractive() )
         return (int)Callbacks::CantCreateDestinationDirResolution::Stop;
-    
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to create a directory", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -388,13 +402,15 @@ int Copying::OnCantDeleteDestinationFile(int _err, const std::string &_path, VFS
         return (int)Callbacks::CantDeleteDestinationFileResolution::Skip;
     if( !IsInteractive() )
         return (int)Callbacks::CantDeleteDestinationFileResolution::Stop;
-    
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to delete a destination file", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
-    
+
     if( ctx->response == NSModalResponseSkip )
         return (int)Callbacks::CantDeleteDestinationFileResolution::Skip;
     else if( ctx->response == NSModalResponseSkipAll ) {
@@ -406,29 +422,33 @@ int Copying::OnCantDeleteDestinationFile(int _err, const std::string &_path, VFS
     else
         return (int)Callbacks::CantDeleteDestinationFileResolution::Stop;
 }
-    
+
 void Copying::OnFileVerificationFailed(const std::string &_path, VFSHost &_vfs)
 {
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::Continue,
                       NSLocalizedString(@"Checksum verification failed", ""),
-                      VFSError::FromErrno(EIO), {_vfs, _path}, ctx);
+                      VFSError::FromErrno(EIO),
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
 }
 
 int Copying::OnCantDeleteSourceItem(int _err, const std::string &_path, VFSHost &_vfs)
 {
-     if( m_SkipAll )
+    if( m_SkipAll )
         return (int)Callbacks::CantDeleteSourceFileResolution::Skip;
     if( !IsInteractive() )
         return (int)Callbacks::CantDeleteSourceFileResolution::Stop;
-    
+
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to delete a source item", ""),
-                      _err, {_vfs, _path}, ctx);
+                      _err,
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
-    
+
     if( ctx->response == NSModalResponseSkip )
         return (int)Callbacks::CantDeleteSourceFileResolution::Skip;
     else if( ctx->response == NSModalResponseSkipAll ) {
@@ -440,7 +460,7 @@ int Copying::OnCantDeleteSourceItem(int _err, const std::string &_path, VFSHost 
     else
         return (int)Callbacks::CantDeleteSourceFileResolution::Stop;
 }
-    
+
 int Copying::OnNotADirectory(const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll )
@@ -453,9 +473,11 @@ int Copying::OnNotADirectory(const std::string &_path, VFSHost &_vfs)
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortSkipSkipAllOverwrite,
                       NSLocalizedString(@"Item is not a directory", ""),
-                      VFSError::FromErrno(EEXIST), {_vfs, _path}, ctx);
+                      VFSError::FromErrno(EEXIST),
+                      {_vfs, _path},
+                      ctx);
     WaitForDialogResponse(ctx);
-    
+
     if( ctx->response == NSModalResponseSkip )
         return (int)Callbacks::NotADirectoryResolution::Skip;
     else if( ctx->response == NSModalResponseSkipAll ) {
@@ -470,18 +492,24 @@ int Copying::OnNotADirectory(const std::string &_path, VFSHost &_vfs)
 
 void Copying::OnStageChanged()
 {
-    CopyingTitleBuilder b{m_Job->SourceItems(),
-                          m_Job->DestinationPath(),
-                          m_Job->Options()};
+    CopyingTitleBuilder b{m_Job->SourceItems(), m_Job->DestinationPath(), m_Job->Options()};
     std::string title = "";
     switch( m_Job->Stage() ) {
         case CopyingJob::Stage::Default:
-        case CopyingJob::Stage::Process:    title = b.TitleForProcessing(); break;
-        case CopyingJob::Stage::Preparing:  title = b.TitleForPreparing();  break;
-        case CopyingJob::Stage::Verify:     title = b.TitleForVerifying();  break;
-        case CopyingJob::Stage::Cleaning:   title = b.TitleForCleanup();    break;
+        case CopyingJob::Stage::Process:
+            title = b.TitleForProcessing();
+            break;
+        case CopyingJob::Stage::Preparing:
+            title = b.TitleForPreparing();
+            break;
+        case CopyingJob::Stage::Verify:
+            title = b.TitleForVerifying();
+            break;
+        case CopyingJob::Stage::Cleaning:
+            title = b.TitleForCleanup();
+            break;
     }
-    SetTitle( std::move(title) );
+    SetTitle(std::move(title));
 }
 
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PoolViewController.h"
 #include "Pool.h"
 #include "Internal.h"
@@ -11,24 +11,22 @@ using namespace std::literals;
 
 static const auto g_ViewAppearTimeout = 100ms;
 
-@interface NCOpsPoolViewController()
-@property (strong, nonatomic) IBOutlet NSView *idleViewHolder;
-@property (strong, nonatomic) IBOutlet NSView *briefViewHolder;
-@property (strong, nonatomic) IBOutlet NSButton *upButton;
-@property (strong, nonatomic) IBOutlet NSButton *downButton;
-
+@interface NCOpsPoolViewController ()
+@property(strong, nonatomic) IBOutlet NSView *idleViewHolder;
+@property(strong, nonatomic) IBOutlet NSView *briefViewHolder;
+@property(strong, nonatomic) IBOutlet NSButton *upButton;
+@property(strong, nonatomic) IBOutlet NSButton *downButton;
 
 @end
 
-@implementation NCOpsPoolViewController
-{
+@implementation NCOpsPoolViewController {
     std::shared_ptr<Pool> m_Pool;
-    std::vector<NCOpsBriefOperationViewController*> m_BriefViews;
+    std::vector<NCOpsBriefOperationViewController *> m_BriefViews;
     int m_IndexToShow;
     std::shared_ptr<Operation> m_ShownOperation;
 }
 
-- (instancetype) initWithPool:(Pool&)_pool
+- (instancetype)initWithPool:(Pool &)_pool
 {
     dispatch_assert_main_queue();
     self = [super initWithNibName:@"PoolViewController" bundle:Bundle()];
@@ -43,9 +41,7 @@ static const auto g_ViewAppearTimeout = 100ms;
 
 - (void)poolDidChangeCallback
 {
-    dispatch_to_main_queue([=]{
-        [self poolDidChange];
-    });
+    dispatch_to_main_queue([=] { [self poolDidChange]; });
 }
 
 - (void)poolDidChange
@@ -54,20 +50,18 @@ static const auto g_ViewAppearTimeout = 100ms;
     [self updateButtonsState];
 }
 
-- (void)syncWithOperations:(const std::vector<std::shared_ptr<Operation>>&)_operations
+- (void)syncWithOperations:(const std::vector<std::shared_ptr<Operation>> &)_operations
 {
-    const auto find_existing = [=](const std::shared_ptr<Operation>&_op){
+    const auto find_existing = [=](const std::shared_ptr<Operation> &_op) {
         const auto existing = std::find_if(std::begin(m_BriefViews),
                                            std::end(m_BriefViews),
-                                           [_op](auto &v){
-            return v.operation == _op;
-        });
+                                           [_op](auto &v) { return v.operation == _op; });
         return existing != end(m_BriefViews) ? *existing : nullptr;
     };
-    
-    std::vector<NCOpsBriefOperationViewController*> new_views;
+
+    std::vector<NCOpsBriefOperationViewController *> new_views;
     new_views.reserve(_operations.size());
-    for( auto o: _operations )
+    for( auto o : _operations )
         if( const auto existing = find_existing(o) ) {
             new_views.emplace_back(existing);
         }
@@ -75,18 +69,18 @@ static const auto g_ViewAppearTimeout = 100ms;
             new_views.emplace_back([[NCOpsBriefOperationViewController alloc] initWithOperation:o]);
             new_views.back().shouldDelayAppearance = _operations.size() == 1;
         }
- 
-    const auto index_of = [=](const std::shared_ptr<Operation>&_op)->int{
+
+    const auto index_of = [=](const std::shared_ptr<Operation> &_op) -> int {
         const auto it = std::find_if(std::begin(m_BriefViews),
-                                     end(m_BriefViews),
-                                     [_op](auto &v){
-            return v.operation == _op;
-        });
-        return it != end(m_BriefViews) ? (int)distance(begin(m_BriefViews), it) : -1;
+                                     std::end(m_BriefViews),
+                                     [_op](auto &v) { return v.operation == _op; });
+        return it != std::end(m_BriefViews)
+                   ? static_cast<int>(std::distance(std::begin(m_BriefViews), it))
+                   : -1;
     };
-    
+
     m_BriefViews = new_views;
-    
+
     if( m_ShownOperation ) {
         if( const auto ind = index_of(m_ShownOperation); ind >= 0 )
             m_IndexToShow = ind;
@@ -95,16 +89,17 @@ static const auto g_ViewAppearTimeout = 100ms;
     }
 
     if( !m_ShownOperation ) {
-        m_IndexToShow = std::min(std::max(m_IndexToShow, 0), (int)m_BriefViews.size() - 1);
+        m_IndexToShow =
+            std::min(std::max(m_IndexToShow, 0), static_cast<int>(m_BriefViews.size()) - 1);
         if( m_IndexToShow >= 0 )
             m_ShownOperation = m_BriefViews[m_IndexToShow].operation;
     }
- 
+
     if( m_IndexToShow < 0 )
         [self hideBriefView];
     else
         [self showBriefView:m_BriefViews[m_IndexToShow]];
-    
+
     [self updateIdleViewVisibility];
 }
 
@@ -113,13 +108,13 @@ static const auto g_ViewAppearTimeout = 100ms;
     if( self.idleView.hidden && m_ShownOperation == nil )
         self.idleView.hidden = false;
     else if( !self.idleView.hidden && m_ShownOperation != nil )
-        dispatch_to_main_queue_after(g_ViewAppearTimeout, [=]{
+        dispatch_to_main_queue_after(g_ViewAppearTimeout, [=] {
             if( m_ShownOperation )
                 self.idleView.hidden = true;
         });
 }
 
-- (void)showBriefView:(NCOpsBriefOperationViewController*)_view
+- (void)showBriefView:(NCOpsBriefOperationViewController *)_view
 {
     const auto bv = _view.view;
 
@@ -129,21 +124,19 @@ static const auto g_ViewAppearTimeout = 100ms;
 
     [self hideBriefView];
     [self.briefViewHolder addSubview:bv];
-    bv.frame = NSMakeRect(0,
-                          0,
-                          self.briefViewHolder.bounds.size.width,
-                          self.briefViewHolder.bounds.size.height);
+    bv.frame = NSMakeRect(
+        0, 0, self.briefViewHolder.bounds.size.width, self.briefViewHolder.bounds.size.height);
 }
 
 - (void)hideBriefView
 {
-    for( NSView* v in self.briefViewHolder.subviews )
+    for( NSView *v in self.briefViewHolder.subviews )
         [v removeFromSuperview];
 }
 
 - (void)updateButtonsState
 {
-    const auto op_num = (int)m_BriefViews.size();
+    const auto op_num = static_cast<int>(m_BriefViews.size());
     self.upButton.hidden = op_num < 2;
     self.downButton.hidden = op_num < 2;
     if( op_num >= 2 ) {
@@ -152,9 +145,9 @@ static const auto g_ViewAppearTimeout = 100ms;
     }
 }
 
-- (IBAction)onUpButtonClicked:(id)[[maybe_unused]]_sender
+- (IBAction)onUpButtonClicked:(id) [[maybe_unused]] _sender
 {
-    if( m_BriefViews.size() >= 2 && m_IndexToShow > 0) {
+    if( m_BriefViews.size() >= 2 && m_IndexToShow > 0 ) {
         m_IndexToShow--;
         const auto v = m_BriefViews[m_IndexToShow];
         m_ShownOperation = v.operation;
@@ -163,9 +156,9 @@ static const auto g_ViewAppearTimeout = 100ms;
     }
 }
 
-- (IBAction)onDownButtonClicked:(id)[[maybe_unused]]_sender
+- (IBAction)onDownButtonClicked:(id) [[maybe_unused]] _sender
 {
-    if( m_BriefViews.size() >= 2 && m_IndexToShow < (int)m_BriefViews.size() - 1 ) {
+    if( m_BriefViews.size() >= 2 && m_IndexToShow < static_cast<int>(m_BriefViews.size() - 1) ) {
         m_IndexToShow++;
         const auto v = m_BriefViews[m_IndexToShow];
         m_ShownOperation = v.operation;
@@ -174,7 +167,7 @@ static const auto g_ViewAppearTimeout = 100ms;
     }
 }
 
-- (NSView*)idleView
+- (NSView *)idleView
 {
     return self.idleViewHolder;
 }

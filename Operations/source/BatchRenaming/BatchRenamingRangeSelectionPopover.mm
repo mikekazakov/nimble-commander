@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingRangeSelectionPopover.h"
 #include "../Internal.h"
 
@@ -33,13 +33,13 @@ using namespace nc::ops;
     if(self.handler)
         self.handler(m_Selection);
     
-    if(auto v = (NSPopover*)self.enclosingPopover)
+    if(auto v = self.enclosingPopover)
         [v close];
 }
 
 - (IBAction)OnCancel:(id)[[maybe_unused]]_sender
 {
-    if(auto v = (NSPopover*)self.enclosingPopover)
+    if(auto v = self.enclosingPopover)
         [v close];
 }
 
@@ -50,7 +50,7 @@ using namespace nc::ops;
 
 - (void)popoverDidClose:(NSNotification *)notification
 {
-    ((NSPopover*)notification.object).contentViewController = nil; // here we are
+    static_cast<NSPopover*>(notification.object).contentViewController = nil; // here we are
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)[[maybe_unused]]_notification

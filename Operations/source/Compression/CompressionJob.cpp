@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressionJob.h"
 #include <Habanero/algo.h>
 #include <libarchive/archive.h>
@@ -34,12 +34,12 @@ struct CompressionJob::Source {
 
     uint16_t FindOrInsertHost(const VFSHostPtr &_h)
     {
-        return (uint16_t)linear_find_or_insert(base_hosts, _h);
+        return static_cast<uint16_t>(linear_find_or_insert(base_hosts, _h));
     }
 
     unsigned FindOrInsertBasePath(const std::string &_path)
     {
-        return (unsigned)linear_find_or_insert(base_paths, _path);
+        return static_cast<unsigned>(linear_find_or_insert(base_paths, _path));
     }
 };
 
@@ -155,9 +155,9 @@ void CompressionJob::ProcessItem(const base::chained_strings::node &_node, int _
         EnsureNoTrailingSlash(m_Source->base_paths[meta.base_path_indx] + rel_path);
 
     StepResult result = StepResult::Stopped;
-    if( meta.flags & (int)Source::ItemFlags::is_dir )
+    if( meta.flags & static_cast<int>(Source::ItemFlags::is_dir) )
         result = ProcessDirectoryItem(_index, rel_path, full_path);
-    else if( meta.flags & (int)Source::ItemFlags::symlink )
+    else if( meta.flags & static_cast<int>(Source::ItemFlags::symlink) )
         result = ProcessSymlinkItem(_index, rel_path, full_path);
     else
         result = ProcessRegularItem(_index, rel_path, full_path);
@@ -345,7 +345,7 @@ CompressionJob::StepResult CompressionJob::ProcessRegularItem(int _index,
     }
 
     if( source_read_rc < 0 )
-        switch( m_SourceReadError((int)source_read_rc, _full_path, vfs) ) {
+        switch( m_SourceReadError(static_cast<int>(source_read_rc), _full_path, vfs) ) {
         case SourceReadErrorResolution::Stop:
             Stop();
             return StepResult::Stopped;
@@ -400,7 +400,7 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item, Source &_ctx)
         Source::ItemMeta meta;
         meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
         meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
-        meta.flags = (uint16_t)Source::ItemFlags::no_flags;
+        meta.flags = static_cast<uint16_t>(Source::ItemFlags::no_flags);
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_item.Filename(), nullptr);
         Statistics().CommitEstimated(Statistics::SourceType::Bytes, _item.Size());
@@ -408,14 +408,14 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item, Source &_ctx)
         Source::ItemMeta meta;
         meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
         meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
-        meta.flags = (uint16_t)Source::ItemFlags::symlink;
+        meta.flags = static_cast<uint16_t>(Source::ItemFlags::symlink);
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_item.Filename(), nullptr);
     } else if( _item.IsDir() ) {
         Source::ItemMeta meta;
         meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
         meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
-        meta.flags = (uint16_t)Source::ItemFlags::is_dir;
+        meta.flags = static_cast<uint16_t>(Source::ItemFlags::is_dir);
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_item.Filename() + "/", nullptr);
         auto &host = *_item.Host();
@@ -486,7 +486,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
         Source::ItemMeta meta;
         meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
-        meta.flags = (uint16_t)Source::ItemFlags::no_flags;
+        meta.flags = static_cast<uint16_t>(Source::ItemFlags::no_flags);
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_filename, _prefix);
         Statistics().CommitEstimated(Statistics::SourceType::Bytes, stat_buffer.size);
@@ -494,14 +494,14 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
         Source::ItemMeta meta;
         meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
-        meta.flags = (uint16_t)Source::ItemFlags::symlink;
+        meta.flags = static_cast<uint16_t>(Source::ItemFlags::symlink);
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_filename, _prefix);
     } else if( S_ISDIR(stat_buffer.mode) ) {
         Source::ItemMeta meta;
         meta.base_vfs_indx = static_cast<uint16_t>(_vfs_no);
         meta.base_path_indx = _basepath_no;
-        meta.flags = (uint16_t)Source::ItemFlags::is_dir;
+        meta.flags = static_cast<uint16_t>(Source::ItemFlags::is_dir);
         _ctx.metas.emplace_back(meta);
         _ctx.filenames.push_back(_filename + "/", _prefix);
 
@@ -544,7 +544,7 @@ ssize_t CompressionJob::WriteCallback(struct archive *,
                                       const void *_buffer,
                                       size_t _length)
 {
-    const auto me = (CompressionJob *)_client_data;
+    const auto me = static_cast<CompressionJob *>(_client_data);
     ssize_t ret = me->m_TargetFile->Write(_buffer, _length);
     if( ret >= 0 )
         return ret;
@@ -589,7 +589,7 @@ WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char *_path, const c
     ssize_t ret = archive_write_data(_a, _md, _md_s); // we may need cycle here
     archive_entry_free(entry);
 
-    return ret == (ssize_t)_md_s;
+    return ret == static_cast<ssize_t>(_md_s);
 }
 
 static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source_fn)

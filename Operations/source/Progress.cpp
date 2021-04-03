@@ -41,7 +41,7 @@ void Progress::CommitProcessed(uint64_t _delta)
     m_TimepointsLock.unlock();
 
     const auto fp_bytes = double(_delta);
-    const auto fp_delta_time = ((double)delta_time.count()) / 1000000000.;
+    const auto fp_delta_time = static_cast<double>(delta_time.count()) / 1000000000.;
     auto fp_left_delta_time = fp_delta_time;
     if( !m_Timeline.empty() && m_Timeline.back().fraction < 1. ) {
         auto &last = m_Timeline.back();
@@ -108,7 +108,7 @@ double Progress::DoneFraction() const noexcept
 {
     if( m_Estimated == 0 || m_Processed == 0 )
         return 0.;
-    return double(m_Processed) / (double)m_Estimated;
+    return double(m_Processed) / double(m_Estimated);
 }
 
 std::optional<std::chrono::nanoseconds> Progress::ETA() const noexcept
@@ -121,7 +121,7 @@ std::optional<std::chrono::nanoseconds> Progress::ETA() const noexcept
         return 0ns;
     const auto left = double(m_Estimated - m_Processed);
     const auto eta = left / double(speed);
-    return std::chrono::nanoseconds{(long long)(eta * 1000000000.)};
+    return std::chrono::nanoseconds{static_cast<long long>(eta * 1000000000.)};
 }
 
 const std::vector<Progress::TimePoint> &Progress::Data() const

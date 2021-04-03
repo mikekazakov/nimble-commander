@@ -39,7 +39,7 @@ void DeletionJob::Perform()
 
 void DeletionJob::DoScan()
 {
-    for( int i = 0, e = (int)m_SourceItems.size(); i != e; ++i ) {
+    for( int i = 0, e = static_cast<int>(m_SourceItems.size()); i != e; ++i ) {
         if( BlockIfPaused(); IsStopped() )
             return;
 
@@ -286,7 +286,7 @@ void DeletionJob::DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _s
 
 int DeletionJob::ItemsInScript() const
 {
-    return (int)m_Script.size();
+    return static_cast<int>(m_Script.size());
 }
 
 bool DeletionJob::IsNativeLockedItem(int vfs_err, const std::string &_path, VFSHost &_vfs) const

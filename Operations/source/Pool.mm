@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Pool.h"
 #include "Operation.h"
 #include <Habanero/dispatch_cpp.h>
@@ -9,9 +9,9 @@ namespace nc::ops {
 std::atomic_int Pool::m_ConcurrencyPerPool{5};
 
 template <class C, class T>
-void erase_from(C &_c, const T& _t)
+void erase_from(C &_c, const T &_t)
 {
-    _c.erase( remove( begin(_c), end(_c), _t ), end(_c) );
+    _c.erase(remove(begin(_c), end(_c), _t), end(_c));
 }
 
 std::shared_ptr<Pool> Pool::Make()
@@ -27,54 +27,55 @@ Pool::~Pool()
 {
 }
 
-void Pool::Enqueue( std::shared_ptr<Operation> _operation )
+void Pool::Enqueue(std::shared_ptr<Operation> _operation)
 {
     if( !_operation || _operation->State() != OperationState::Cold )
         return;
 
     const auto weak_this = std::weak_ptr<Pool>{shared_from_this()};
     const auto weak_operation = std::weak_ptr<Operation>{_operation};
-    _operation->ObserveUnticketed(Operation::NotifyAboutFinish, [weak_this, weak_operation]{
+    _operation->ObserveUnticketed(Operation::NotifyAboutFinish, [weak_this, weak_operation] {
         const auto pool = weak_this.lock();
         const auto op = weak_operation.lock();
         if( pool && op )
             pool->OperationDidFinish(op);
     });
-    _operation->ObserveUnticketed(Operation::NotifyAboutStart, [weak_this, weak_operation]{
+    _operation->ObserveUnticketed(Operation::NotifyAboutStart, [weak_this, weak_operation] {
         const auto pool = weak_this.lock();
         const auto op = weak_operation.lock();
         if( pool && op )
             pool->OperationDidStart(op);
     });
-    _operation->SetDialogCallback([weak_this](NSWindow* _dlg, std::function<void(NSModalResponse)>_cb){
-        if( const auto pool = weak_this.lock() )
-            return pool->ShowDialog(_dlg, _cb);
-        return false;
-    });
+    _operation->SetDialogCallback(
+        [weak_this](NSWindow *_dlg, std::function<void(NSModalResponse)> _cb) {
+            if( const auto pool = weak_this.lock() )
+                return pool->ShowDialog(_dlg, _cb);
+            return false;
+        });
 
     {
         const auto guard = std::lock_guard{m_Lock};
-        m_PendingOperations.push_back( _operation );
+        m_PendingOperations.push_back(_operation);
     }
-    
-    FireObservers( NotifyAboutAddition );
+
+    FireObservers(NotifyAboutAddition);
     StartPendingOperations();
 }
 
-void Pool::OperationDidStart( [[maybe_unused]] const std::shared_ptr<Operation> &_operation )
+void Pool::OperationDidStart([[maybe_unused]] const std::shared_ptr<Operation> &_operation)
 {
 }
 
-void Pool::OperationDidFinish( [[maybe_unused]] const std::shared_ptr<Operation> &_operation )
+void Pool::OperationDidFinish([[maybe_unused]] const std::shared_ptr<Operation> &_operation)
 {
     {
         const auto guard = std::lock_guard{m_Lock};
         erase_from(m_RunningOperations, _operation);
         erase_from(m_PendingOperations, _operation);
     }
-    FireObservers( NotifyAboutRemoval );
+    FireObservers(NotifyAboutRemoval);
     StartPendingOperations();
-    
+
     if( _operation->State() == OperationState::Completed && m_OperationCompletionCallback )
         m_OperationCompletionCallback(_operation);
 }
@@ -85,47 +86,47 @@ void Pool::StartPendingOperations()
 
     {
         const auto guard = std::lock_guard{m_Lock};
-        const auto running_now = (int)m_RunningOperations.size();
-        while( running_now + (int)to_start.size() < m_ConcurrencyPerPool &&
+        const auto running_now = static_cast<int>(m_RunningOperations.size());
+        while( running_now + static_cast<int>(to_start.size()) < m_ConcurrencyPerPool &&
                !m_PendingOperations.empty() ) {
             const auto op = m_PendingOperations.front();
             m_PendingOperations.pop_front();
-            to_start.emplace_back( op  );
-            m_RunningOperations.emplace_back( op );
+            to_start.emplace_back(op);
+            m_RunningOperations.emplace_back(op);
         }
     }
-    
-    for( const auto &op: to_start )
+
+    for( const auto &op : to_start )
         op->Start();
 }
 
-Pool::ObservationTicket Pool::Observe( uint64_t _notification_mask, std::function<void()> _callback )
+Pool::ObservationTicket Pool::Observe(uint64_t _notification_mask, std::function<void()> _callback)
 {
-    return AddTicketedObserver( move(_callback), _notification_mask );
+    return AddTicketedObserver(move(_callback), _notification_mask);
 }
 
-void Pool::ObserveUnticketed( uint64_t _notification_mask, std::function<void()> _callback )
+void Pool::ObserveUnticketed(uint64_t _notification_mask, std::function<void()> _callback)
 {
-    AddUnticketedObserver( move(_callback), _notification_mask );
+    AddUnticketedObserver(move(_callback), _notification_mask);
 }
 
 int Pool::RunningOperationsCount() const
 {
     const auto guard = std::lock_guard{m_Lock};
-    return (int)m_RunningOperations.size();
+    return static_cast<int>(m_RunningOperations.size());
 }
 
 int Pool::OperationsCount() const
 {
     const auto guard = std::lock_guard{m_Lock};
-    return (int)m_RunningOperations.size() + (int)m_PendingOperations.size();
+    return static_cast<int>(m_RunningOperations.size() + m_PendingOperations.size());
 }
 
 std::vector<std::shared_ptr<Operation>> Pool::Operations() const
 {
     const auto guard = std::lock_guard{m_Lock};
     auto v = m_RunningOperations;
-    v.insert( end(v), begin(m_PendingOperations), end(m_PendingOperations) );
+    v.insert(end(v), begin(m_PendingOperations), end(m_PendingOperations));
     return v;
 }
 
@@ -135,12 +136,14 @@ std::vector<std::shared_ptr<Operation>> Pool::RunningOperations() const
     return m_RunningOperations;
 }
 
-void Pool::SetDialogCallback(std::function<void(NSWindow*, std::function<void(NSModalResponse)>)> _callback)
+void Pool::SetDialogCallback(
+    std::function<void(NSWindow *, std::function<void(NSModalResponse)>)> _callback)
 {
     m_DialogPresentation = std::move(_callback);
 }
 
-void Pool::SetOperationCompletionCallback(std::function<void(const std::shared_ptr<Operation>&)> _callback)
+void Pool::SetOperationCompletionCallback(
+    std::function<void(const std::shared_ptr<Operation> &)> _callback)
 {
     m_OperationCompletionCallback = std::move(_callback);
 }
@@ -150,10 +153,10 @@ bool Pool::IsInteractive() const
     return m_DialogPresentation != nullptr;
 }
 
-bool Pool::ShowDialog(NSWindow *_dialog, std::function<void (NSModalResponse)> _callback)
+bool Pool::ShowDialog(NSWindow *_dialog, std::function<void(NSModalResponse)> _callback)
 {
     dispatch_assert_main_queue();
-    if( !m_DialogPresentation  )
+    if( !m_DialogPresentation )
         return false;
     m_DialogPresentation(_dialog, move(_callback));
     return true;
@@ -164,7 +167,7 @@ int Pool::ConcurrencyPerPool()
     return m_ConcurrencyPerPool;
 }
 
-void Pool::SetConcurrencyPerPool( int _maximum_current_operations )
+void Pool::SetConcurrencyPerPool(int _maximum_current_operations)
 {
     if( _maximum_current_operations < 1 )
         _maximum_current_operations = 1;
@@ -181,9 +184,9 @@ void Pool::StopAndWaitForShutdown()
 {
     {
         const auto guard = std::lock_guard{m_Lock};
-        for( auto &o: m_PendingOperations )
+        for( auto &o : m_PendingOperations )
             o->Stop();
-        for( auto &o: m_RunningOperations )
+        for( auto &o : m_RunningOperations )
             o->Stop();
     }
 
@@ -192,4 +195,4 @@ void Pool::StopAndWaitForShutdown()
         std::this_thread::sleep_for(10ms);
 }
 
-}
+} // namespace nc::ops

@@ -7,14 +7,14 @@ namespace nc::routedio {
 
 int TrashItemAtPath(const char *_path) noexcept
 {
-    const auto url = nc::base::CFPtr<CFURLRef>::adopt(
-        CFURLCreateFromFileSystemRepresentation(0, (const UInt8 *)_path, strlen(_path), false));
-    
+    const auto url = nc::base::CFPtr<CFURLRef>::adopt(CFURLCreateFromFileSystemRepresentation(
+        0, reinterpret_cast<const UInt8 *>(_path), std::strlen(_path), false));
+
     if( !url ) {
         errno = ENOENT;
         return -1;
     }
-    
+
     NSError *error;
     const auto result = [NSFileManager.defaultManager trashItemAtURL:(__bridge NSURL *)url.get()
                                                     resultingItemURL:nil

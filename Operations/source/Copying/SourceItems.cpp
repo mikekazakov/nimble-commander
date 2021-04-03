@@ -1,8 +1,8 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "SourceItems.h"
 #include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
-#include "SourceItems.h"
 
 namespace nc::ops::copying {
 
@@ -14,7 +14,7 @@ int SourceItems::InsertItem(uint16_t _host_index,
 {
     if( _host_index >= m_SourceItemsHosts.size() ||
        _base_dir_index >= m_SourceItemsBaseDirectories.size() ||
-       (_parent_index >= 0 && _parent_index >= (int)m_Items.size() ) )
+       (_parent_index >= 0 && _parent_index >= static_cast<int>(m_Items.size()) ) )
         throw std::invalid_argument("SourceItems::InsertItem: invalid index");
     
     if( S_ISREG(_stat.mode) )
@@ -66,7 +66,7 @@ std::string SourceItems::ComposeRelativePath( int _item_no ) const
 
 int SourceItems::ItemsAmount() const noexcept
 {
-    return (int)m_Items.size();
+    return static_cast<int>(m_Items.size());
 }
 
 uint64_t SourceItems::TotalRegBytes() const noexcept
@@ -96,12 +96,12 @@ VFSHost &SourceItems::ItemHost( int _item_no ) const
 
 uint16_t SourceItems::InsertOrFindHost( const VFSHostPtr &_host )
 {
-    return (uint16_t)linear_find_or_insert(m_SourceItemsHosts, _host);
+    return static_cast<uint16_t>(linear_find_or_insert(m_SourceItemsHosts, _host));
 }
 
 unsigned SourceItems::InsertOrFindBaseDir( const std::string &_dir )
 {
-    return (unsigned)linear_find_or_insert(m_SourceItemsBaseDirectories, _dir);
+    return static_cast<unsigned>(linear_find_or_insert(m_SourceItemsBaseDirectories, _dir));
 }
 
 const std::string &SourceItems::BaseDir( unsigned _ind ) const

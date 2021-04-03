@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingJob.h"
 #include <Utility/PathManip.h>
 #include <sys/stat.h>
@@ -49,7 +49,7 @@ void AttrsChangingJob::Perform()
 
 void AttrsChangingJob::DoScan()
 {
-    for( int i = 0, e = (int)m_Command.items.size(); i != e; ++i ) {
+    for( int i = 0, e = static_cast<int>(m_Command.items.size()); i != e; ++i ) {
         if( BlockIfPaused(); IsStopped() )
             return;
         ScanItem(i);

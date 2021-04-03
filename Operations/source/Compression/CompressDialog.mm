@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
@@ -8,22 +8,21 @@
 using namespace nc::ops;
 
 @interface NCOpsCompressDialog ()
-@property (weak, nonatomic) IBOutlet NSButton *compressButton;
-@property (weak, nonatomic) IBOutlet NSButton *cancelButton;
-@property (weak, nonatomic) IBOutlet NSButton *protectWithPasswordCheckbox;
-@property (weak, nonatomic) IBOutlet NSSecureTextField *passwordTextField;
-@property (weak, nonatomic) IBOutlet NSTextField *destinationTextField;
-@property (weak, nonatomic) IBOutlet NSTextField *destinationTitleTextField;
-@property (nonatomic) bool protectWithPassword;
-@property (nonatomic) bool validInput;
-@property (nonatomic) NSString *destinationString;
-@property (nonatomic) NSString *passwordString;
+@property(weak, nonatomic) IBOutlet NSButton *compressButton;
+@property(weak, nonatomic) IBOutlet NSButton *cancelButton;
+@property(weak, nonatomic) IBOutlet NSButton *protectWithPasswordCheckbox;
+@property(weak, nonatomic) IBOutlet NSSecureTextField *passwordTextField;
+@property(weak, nonatomic) IBOutlet NSTextField *destinationTextField;
+@property(weak, nonatomic) IBOutlet NSTextField *destinationTitleTextField;
+@property(nonatomic) bool protectWithPassword;
+@property(nonatomic) bool validInput;
+@property(nonatomic) NSString *destinationString;
+@property(nonatomic) NSString *passwordString;
 
 @end
 
-@implementation NCOpsCompressDialog
-{
-    std::vector<VFSListingItem> m_SourceItems;    
+@implementation NCOpsCompressDialog {
+    std::vector<VFSListingItem> m_SourceItems;
     VFSHostPtr m_DestinationHost;
     std::string m_InitialDestination;
     std::string m_FinalDestination;
@@ -35,20 +34,20 @@ using namespace nc::ops;
 @synthesize destination = m_FinalDestination;
 @synthesize password = m_FinalPassword;
 
-- (instancetype) initWithItems:(const std::vector<VFSListingItem>&)_source_items
-                destinationVFS:(const VFSHostPtr&)_destination_host
-            initialDestination:(const std::string&)_initial_destination
+- (instancetype)initWithItems:(const std::vector<VFSListingItem> &)_source_items
+               destinationVFS:(const VFSHostPtr &)_destination_host
+           initialDestination:(const std::string &)_initial_destination
 {
     const auto nib_path = [Bundle() pathForResource:@"CompressDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
         m_SourceItems = _source_items;
         m_DestinationHost = _destination_host;
-        m_InitialDestination = _initial_destination;      
+        m_InitialDestination = _initial_destination;
         self.protectWithPassword = false;
         self.destinationString = [NSString stringWithUTF8StdString:m_InitialDestination];
         self.validInput = false;
-        m_AutoCompletion = 
+        m_AutoCompletion =
             std::make_shared<nc::ops::DirectoryPathAutoCompletionImpl>(m_DestinationHost);
         m_AutoCompletionDelegate = [[NCFilepathAutoCompletionDelegate alloc] init];
         m_AutoCompletionDelegate.completion = m_AutoCompletion;
@@ -61,17 +60,19 @@ using namespace nc::ops;
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    const auto amount = (int)m_SourceItems.size();
+    const auto amount = static_cast<int>(m_SourceItems.size());
     if( amount > 1 )
         self.destinationTitleTextField.stringValue =
-        [NSString stringWithFormat:NSLocalizedString(@"Compress %@ items to:",
-                                                     "Compress files sheet prompt, compressing many files"),
-         [NSNumber numberWithInt:amount]];
+            [NSString stringWithFormat:NSLocalizedString(
+                                           @"Compress %@ items to:",
+                                           "Compress files sheet prompt, compressing many files"),
+                                       [NSNumber numberWithInt:amount]];
     else
         self.destinationTitleTextField.stringValue =
-        [NSString stringWithFormat:NSLocalizedString(@"Compress \u201c%@\u201d to:",
-                                                     "Compress files sheet prompt, compressing single file"),
-         m_SourceItems.front().FilenameNS()];
+            [NSString stringWithFormat:NSLocalizedString(
+                                           @"Compress \u201c%@\u201d to:",
+                                           "Compress files sheet prompt, compressing single file"),
+                                       m_SourceItems.front().FilenameNS()];
 }
 
 - (void)validate
@@ -84,17 +85,17 @@ using namespace nc::ops;
     self.validInput = valid;
 }
 
-- (IBAction)onCompress:(id)[[maybe_unused]]_sender
+- (IBAction)onCompress:(id) [[maybe_unused]] _sender
 {
     m_FinalDestination = self.destinationString.decomposedStringWithCanonicalMapping.UTF8String;
-    
+
     if( self.protectWithPassword )
         m_FinalPassword = self.passwordString.UTF8String;
-    
+
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (IBAction)onCancel:(id)[[maybe_unused]]_sender
+- (IBAction)onCancel:(id) [[maybe_unused]] _sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }
@@ -102,23 +103,23 @@ using namespace nc::ops;
 - (void)controlTextDidChange:(NSNotification *)notification
 {
     if( objc_cast<NSTextField>(notification.object) == self.destinationTextField ||
-       objc_cast<NSTextField>(notification.object) == self.passwordTextField )
+        objc_cast<NSTextField>(notification.object) == self.passwordTextField )
         [self validate];
 }
 
-- (IBAction)onProtectWithPassword:(id)[[maybe_unused]]_sender
+- (IBAction)onProtectWithPassword:(id) [[maybe_unused]] _sender
 {
     [self validate];
 }
 
 - (BOOL)control:(NSControl *)_control
-       textView:(NSTextView *)_text_view
-doCommandBySelector:(SEL)_command_selector
+               textView:(NSTextView *)_text_view
+    doCommandBySelector:(SEL)_command_selector
 {
-    if( _control == self.destinationTextField && _command_selector == @selector(complete:)) {
+    if( _control == self.destinationTextField && _command_selector == @selector(complete:) ) {
         return [m_AutoCompletionDelegate control:_control
-                                 textView:_text_view
-                      doCommandBySelector:_command_selector];
+                                        textView:_text_view
+                             doCommandBySelector:_command_selector];
     }
     return false;
 }

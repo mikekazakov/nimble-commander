@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Operation.h"
 #include "Job.h"
 #include "AsyncDialogResponse.h"
@@ -21,7 +21,7 @@ Operation::Operation()
 Operation::~Operation()
 {
     if( IsWaitingForUIResponse() )
-        std::cerr << "Warning: an operation at address " << (void*)this <<
+        std::cerr << "Warning: an operation at address " << reinterpret_cast<void*>(this) <<
             " was destroyed while it was waiting for a UI response!" << std::endl;
 }
 

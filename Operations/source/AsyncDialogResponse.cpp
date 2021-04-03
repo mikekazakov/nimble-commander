@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AsyncDialogResponse.h"
 #include "ModalDialogResponses.h"
 #include <Habanero/spinlock.h>
@@ -26,7 +26,7 @@ void AsyncDialogResponse::Commit(long _response) noexcept
 void AsyncDialogResponse::Wait() noexcept
 {
     const auto pred = [this]{
-        return (bool)response;
+        return static_cast<bool>(response);
     };
     if( pred() )
         return;

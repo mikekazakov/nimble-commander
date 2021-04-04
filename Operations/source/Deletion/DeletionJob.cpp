@@ -4,6 +4,7 @@
 #include <Utility/NativeFSManager.h>
 #include <dirent.h>
 #include <sys/param.h>
+#include <sys/stat.h>
 
 namespace nc::ops {
 

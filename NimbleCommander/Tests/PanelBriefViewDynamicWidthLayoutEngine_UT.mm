@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <NimbleCommander/States/FilePanels/Brief/PanelBriefViewDynamicWidthLayoutEngine.h>
 
@@ -143,13 +143,13 @@ TEST_CASE(PREFIX "finds items by rect")
     {
         auto items = engine.AttributesForItemsInRect(NSMakeRect(150., 0., 500., 500.));
         REQUIRE(items != nil);
-        REQUIRE((int)items.count == 1);
+        REQUIRE(items.count == 1);
         CHECK(items[0].indexPath.item == 9);
     }
     {
         auto items = engine.AttributesForItemsInRect(NSMakeRect(55., 0., 50., 500.));
         REQUIRE(items != nil);
-        REQUIRE((int)items.count == 6);
+        REQUIRE(items.count == 6);
         CHECK(items[0].indexPath.item == 3);
         CHECK(items[1].indexPath.item == 4);
         CHECK(items[2].indexPath.item == 5);
@@ -160,7 +160,7 @@ TEST_CASE(PREFIX "finds items by rect")
     {
         auto items = engine.AttributesForItemsInRect(NSMakeRect(10, 0., 10., 500.));
         REQUIRE(items != nil);
-        REQUIRE((int)items.count == 3);
+        REQUIRE(items.count == 3);
         CHECK(items[0].indexPath.item == 0);
         CHECK(items[1].indexPath.item == 1);
         CHECK(items[2].indexPath.item == 2);
@@ -168,13 +168,13 @@ TEST_CASE(PREFIX "finds items by rect")
     {
         auto items = engine.AttributesForItemsInRect(NSMakeRect(10, 0., 10., 20.));
         REQUIRE(items != nil);
-        REQUIRE((int)items.count == 1);
+        REQUIRE(items.count == 1);
         CHECK(items[0].indexPath.item == 0);
     }
     {
         auto items = engine.AttributesForItemsInRect(NSMakeRect(10, 0., 10., 30.));
         REQUIRE(items != nil);
-        REQUIRE((int)items.count == 2);
+        REQUIRE(items.count == 2);
         CHECK(items[0].indexPath.item == 0);
         CHECK(items[1].indexPath.item == 1);
     }

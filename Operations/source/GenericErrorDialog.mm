@@ -5,6 +5,7 @@
 #include "ModalDialogResponses.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 
 using namespace nc::ops;
 

@@ -62,6 +62,16 @@ struct DeletionJobCallbacks {
         m_OnLockedItem = [](int, const std::string &, VFSHost &, DeletionType) {
             return LockedItemResolution::Stop;
         };
+    
+    enum class UnlockErrorResolution
+    {
+        Stop,
+        Skip,
+        Retry
+    };
+    std::function<UnlockErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
+        m_OnUnlockError =
+            [](int, const std::string &, VFSHost &) { return UnlockErrorResolution::Stop; };
 };
 
 } // namespace nc::ops

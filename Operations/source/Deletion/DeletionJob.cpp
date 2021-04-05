@@ -160,6 +160,26 @@ void DeletionJob::DoDelete()
     }
 }
 
+bool DeletionJob::DoUnlock(const std::string &_path, VFSHost &_vfs)
+{
+    while( true ) {
+        const int unlock_rc = UnlockItem(_path, _vfs);
+        if( unlock_rc == VFSError::Ok )
+            return true;
+        switch( m_OnUnlockError(unlock_rc, _path, _vfs) ) {
+            case DeletionJobCallbacks::UnlockErrorResolution::Retry:
+                continue;
+            case DeletionJobCallbacks::UnlockErrorResolution::Skip:
+                Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                return false;
+            case DeletionJobCallbacks::UnlockErrorResolution::Stop:
+                Stop();
+                return false;
+        }
+    }
+    return true;
+}
+
 void DeletionJob::DoUnlink(const std::string &_path, VFSHost &_vfs)
 {
     while( true ) {
@@ -171,7 +191,8 @@ void DeletionJob::DoUnlink(const std::string &_path, VFSHost &_vfs)
         else if( IsNativeLockedItem(rc, _path, _vfs) ) {
             switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Permanent) ) {
                 case LockedItemResolution::Unlock: {
-                    UnlockItem(_path, _vfs);
+                    if( DoUnlock(_path, _vfs) == false )
+                        return;
                     continue;
                 }
                 case LockedItemResolution::Retry:
@@ -210,7 +231,8 @@ void DeletionJob::DoRmDir(const std::string &_path, VFSHost &_vfs)
         else if( IsNativeLockedItem(rc, _path, _vfs) ) {
             switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Permanent) ) {
                 case LockedItemResolution::Unlock: {
-                    UnlockItem(_path, _vfs);
+                    if( DoUnlock(_path, _vfs) == false )
+                        return;
                     continue;
                 }
                 case LockedItemResolution::Retry:
@@ -248,7 +270,8 @@ void DeletionJob::DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _s
         else if( IsNativeLockedItem(rc, _path, _vfs) ) {
             switch( m_OnLockedItem(rc, _path, _vfs, DeletionType::Trash) ) {
                 case LockedItemResolution::Unlock: {
-                    UnlockItem(_path, _vfs);
+                    if( DoUnlock(_path, _vfs) == false )
+                        return;
                     continue;
                 }
                 case LockedItemResolution::Retry:
@@ -294,7 +317,7 @@ bool DeletionJob::IsNativeLockedItem(int vfs_err, const std::string &_path, VFSH
 {
     if( vfs_err != VFSError::FromErrno(EPERM) )
         return false;
-    
+
     if( _vfs.IsNativeFS() == false )
         return false;
 

@@ -30,6 +30,7 @@ private:
     void DoRmDir(const std::string &_path, VFSHost &_vfs);
     void DoUnlink(const std::string &_path, VFSHost &_vfs);
     void DoTrash(const std::string &_path, VFSHost &_vfs, SourceItem _src);
+    bool DoUnlock(const std::string &_path, VFSHost &_vfs);
     void ScanDirectory(const std::string &_path,
                        int _listing_item_index,
                        const base::chained_strings::node *_prefix);

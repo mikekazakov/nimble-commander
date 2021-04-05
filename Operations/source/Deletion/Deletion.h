@@ -51,16 +51,22 @@ private:
                         std::shared_ptr<VFSHost> _vfs,
                         std::shared_ptr<AsyncDialogResponse> _ctx);
 
-    DeletionJobCallbacks::LockedItemResolution OnLockedItem(int _err,
-                                                            const std::string &_path,
-                                                            VFSHost &_vfs,
-                                                            DeletionType _type);
-    
+    DeletionJobCallbacks::LockedItemResolution
+    OnLockedItem(int _err, const std::string &_path, VFSHost &_vfs, DeletionType _type);
+
     void OnLockedItemUI(int _err,
                         const std::string &_path,
                         std::shared_ptr<VFSHost> _vfs,
                         DeletionType _type,
                         std::shared_ptr<AsyncDialogResponse> _ctx);
+
+    DeletionJobCallbacks::UnlockErrorResolution
+    OnUnlockError(int _err, const std::string &_path, VFSHost &_vfs);
+
+    void OnUnlockErrorUI(int _err,
+                         const std::string &_path,
+                         std::shared_ptr<VFSHost> _vfs,
+                         std::shared_ptr<AsyncDialogResponse> _ctx);
 
     std::unique_ptr<DeletionJob> m_Job;
     bool m_SkipAll = false;

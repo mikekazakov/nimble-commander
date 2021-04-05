@@ -36,6 +36,9 @@ Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
         [this](int _err, const std::string &_path, VFSHost &_vfs, DeletionType _type) {
             return OnLockedItem(_err, _path, _vfs, _type);
         };
+    m_Job->m_OnUnlockError =[this](int _err, const std::string &_path, VFSHost &_vfs) {
+        return OnUnlockError(_err, _path, _vfs);
+    };
 }
 
 Deletion::~Deletion()
@@ -291,6 +294,51 @@ void Deletion::OnLockedItemUI(int _err,
     [sheet addButtonWithTitle:NSLocalizedString(@"Unlock", "") responseCode:NSModalResponseUnlock];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
     [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+    Show(sheet.window, _ctx);
+}
+
+DeletionJobCallbacks::UnlockErrorResolution
+Deletion::OnUnlockError(int _err, const std::string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll || !IsInteractive() )
+        return m_SkipAll ? Callbacks::UnlockErrorResolution::Skip
+                         : Callbacks::UnlockErrorResolution::Stop;
+
+    const auto ctx = std::make_shared<AsyncDialogResponse>();
+    dispatch_to_main_queue(
+        [=, vfs = _vfs.shared_from_this()] { OnUnlockErrorUI(_err, _path, vfs, ctx); });
+    WaitForDialogResponse(ctx);
+
+    if( ctx->response == NSModalResponseSkip )
+        return Callbacks::UnlockErrorResolution::Skip;
+    else if( ctx->response == NSModalResponseRetry )
+        return Callbacks::UnlockErrorResolution::Retry;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return Callbacks::UnlockErrorResolution::Skip;
+    }
+    else
+        return Callbacks::UnlockErrorResolution::Stop;
+}
+
+void Deletion::OnUnlockErrorUI(int _err,
+                               const std::string &_path,
+                               [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
+                               std::shared_ptr<AsyncDialogResponse> _ctx)
+{
+    const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
+
+    sheet.style = GenericErrorDialogStyle::Caution;
+    sheet.message = NSLocalizedString(@"Failed to unlock an item", "");
+    sheet.path = [NSString stringWithUTF8String:_path.c_str()];
+    sheet.errorNo = _err;
+    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
+    if( m_Job->ItemsInScript() > 0 )
+        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
+                     responseCode:NSModalResponseSkipAll];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+
     Show(sheet.window, _ctx);
 }
 

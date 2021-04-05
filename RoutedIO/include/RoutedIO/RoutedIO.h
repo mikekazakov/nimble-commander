@@ -34,6 +34,7 @@ public:
     virtual int chown(const char *_path, uid_t _uid, gid_t _gid) noexcept = 0;
     virtual int chmod(const char *_path, mode_t _mode) noexcept = 0;
     virtual int chflags(const char *_path, u_int _flags) noexcept = 0;
+    virtual int lchflags(const char *_path, u_int _flags) noexcept = 0;
     virtual int chmtime(const char *_path, time_t _time) noexcept = 0;
     virtual int chctime(const char *_path, time_t _time) noexcept = 0;
     virtual int chbtime(const char *_path, time_t _time) noexcept = 0;

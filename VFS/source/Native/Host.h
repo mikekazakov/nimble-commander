@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/Host.h>
@@ -80,9 +80,11 @@ public:
     int SetPermissions(const char *_path,
                        uint16_t _mode,
                        const VFSCancelChecker &_cancel_checker) override;
-    
-    int
-    SetFlags(const char *_path, uint32_t _flags, const VFSCancelChecker &_cancel_checker) override;
+
+    int SetFlags(const char *_path,
+                 uint32_t _flags,
+                 uint64_t _vfs_options,
+                 const VFSCancelChecker &_cancel_checker) override;
 
     int SetOwnership(const char *_path,
                      unsigned _uid,

@@ -674,13 +674,15 @@ int NativeHost::SetPermissions(const char *_path,
 
 int NativeHost::SetFlags(const char *_path,
                          uint32_t _flags,
+                         uint64_t _vfs_options,
                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);
 
     auto &io = routedio::RoutedIO::Default;
-    const auto ret = io.chflags(_path, _flags);
+    const bool no_follow = _vfs_options & Flags::F_NoFollow;
+    const auto ret = no_follow ? io.lchflags(_path, _flags) : io.chflags(_path, _flags);
     if( ret == 0 )
         return VFSError::Ok;
     return VFSError::FromErrno();

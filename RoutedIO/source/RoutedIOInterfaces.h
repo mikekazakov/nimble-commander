@@ -27,6 +27,7 @@ public:
     ssize_t readlink(const char *_path, char *_symlink, size_t _buf_sz) noexcept override;
     int symlink(const char *_value, const char *_symlink_path) noexcept override;
     int chflags(const char *_path, u_int _flags) noexcept override;
+    int lchflags(const char *_path, u_int _flags) noexcept override;
     int link(const char *_path_exist, const char *_path_newnode) noexcept override;
     int chmod(const char *_path, mode_t _mode) noexcept override;
     int chmtime(const char *_path, time_t _time) noexcept override;
@@ -53,6 +54,7 @@ public:
     int mkdir(const char *_path, mode_t _mode) noexcept override;
     int chown(const char *_path, uid_t _uid, gid_t _gid) noexcept override;
     int chflags(const char *_path, u_int _flags) noexcept override;
+    int lchflags(const char *_path, u_int _flags) noexcept override;
     int rmdir(const char *_path) noexcept override;
     int unlink(const char *_path) noexcept override;
     int rename(const char *_old, const char *_new) noexcept override;

@@ -530,6 +530,7 @@ int Host::FetchGroups([[maybe_unused]] std::vector<VFSGroup> &_target,
 
 int Host::SetFlags([[maybe_unused]] const char *_path,
                    [[maybe_unused]] uint32_t _flags,
+                   [[maybe_unused]] uint64_t _vfs_options,
                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker )
 {
     return VFSError::NotSupported;

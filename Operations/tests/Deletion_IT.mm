@@ -35,45 +35,140 @@ TEST_CASE(PREFIX "Regular removal")
     REQUIRE(!host->Exists((dir.directory / "regular_file").c_str()));
 }
 
-TEST_CASE(PREFIX "Reg removal - locked file")
+TEST_CASE(PREFIX "Regular file removal - locked file")
 {
     TempTestDir dir;
     const auto host = TestEnv().vfs_native;
-    REQUIRE(close(creat((dir.directory / "regular_file").c_str(), 0755)) == 0);
-    REQUIRE(chflags((dir.directory / "regular_file").c_str(), UF_IMMUTABLE) == 0);
+    const auto path = dir.directory / "regular_file";
+    REQUIRE(close(creat(path.c_str(), 0755)) == 0);
+    REQUIRE(chflags(path.c_str(), UF_IMMUTABLE) == 0);
     DeletionOptions options;
-    options.type = DeletionType::Permanent;
+    auto set_type = [&]() {
+        SECTION("Permanent") { options.type = DeletionType::Permanent; }
+        SECTION("Trash") { options.type = DeletionType::Trash; }
+    };
     SECTION("Default: ask => fail")
     {
+        set_type();
         Deletion operation{FetchItems(dir.directory.native(), {"regular_file"}, *host), options};
         operation.Start();
         operation.Wait();
         REQUIRE(operation.State() == OperationState::Stopped);
-        REQUIRE(host->Exists((dir.directory / "regular_file").c_str()));
-        REQUIRE(chflags((dir.directory / "regular_file").c_str(), 0) == 0);
+        REQUIRE(host->Exists(path.c_str()));
+        REQUIRE(chflags(path.c_str(), 0) == 0);
     }
     SECTION("Skip: skipped")
     {
+        set_type();
         options.locked_items_behaviour = DeletionOptions::LockedItemBehavior::SkipAll;
         Deletion operation{FetchItems(dir.directory.native(), {"regular_file"}, *host), options};
         operation.Start();
         operation.Wait();
         REQUIRE(operation.State() == OperationState::Completed);
-        REQUIRE(host->Exists((dir.directory / "regular_file").c_str()));
-        REQUIRE(chflags((dir.directory / "regular_file").c_str(), 0) == 0);
+        REQUIRE(host->Exists(path.c_str()));
+        REQUIRE(chflags(path.c_str(), 0) == 0);
     }
     SECTION("Unlock: removed")
     {
+        set_type();
         options.locked_items_behaviour = DeletionOptions::LockedItemBehavior::UnlockAll;
         Deletion operation{FetchItems(dir.directory.native(), {"regular_file"}, *host), options};
         operation.Start();
         operation.Wait();
         REQUIRE(operation.State() == OperationState::Completed);
-        REQUIRE(!host->Exists((dir.directory / "regular_file").c_str()));
+        REQUIRE(!host->Exists(path.c_str()));
     }
 }
 
-// TODO: tests for locked dirs and locked trash
+TEST_CASE(PREFIX "Directory removal - locked file")
+{
+    TempTestDir dir;
+    const auto host = TestEnv().vfs_native;
+    const auto path = dir.directory / "directory";
+    REQUIRE_NOTHROW( std::filesystem::create_directory(path));
+    REQUIRE(chflags(path.c_str(), UF_IMMUTABLE) == 0);
+    DeletionOptions options;
+    auto set_type = [&]() {
+        SECTION("Permanent") { options.type = DeletionType::Permanent; }
+        SECTION("Trash") { options.type = DeletionType::Trash; }
+    };
+    SECTION("Default: ask => fail")
+    {
+        set_type();
+        Deletion operation{FetchItems(dir.directory.native(), {"directory"}, *host), options};
+        operation.Start();
+        operation.Wait();
+        REQUIRE(operation.State() == OperationState::Stopped);
+        REQUIRE(host->Exists(path.c_str()));
+        REQUIRE(chflags(path.c_str(), 0) == 0);
+    }
+    SECTION("Skip: skipped")
+    {
+        set_type();
+        options.locked_items_behaviour = DeletionOptions::LockedItemBehavior::SkipAll;
+        Deletion operation{FetchItems(dir.directory.native(), {"directory"}, *host), options};
+        operation.Start();
+        operation.Wait();
+        REQUIRE(operation.State() == OperationState::Completed);
+        REQUIRE(host->Exists(path.c_str()));
+        REQUIRE(chflags(path.c_str(), 0) == 0);
+    }
+    SECTION("Unlock: removed")
+    {
+        set_type();
+        options.locked_items_behaviour = DeletionOptions::LockedItemBehavior::UnlockAll;
+        Deletion operation{FetchItems(dir.directory.native(), {"directory"}, *host), options};
+        operation.Start();
+        operation.Wait();
+        REQUIRE(operation.State() == OperationState::Completed);
+        REQUIRE(!host->Exists(path.c_str()));
+    }
+}
+
+TEST_CASE(PREFIX "Symlink removal - locked file")
+{
+    TempTestDir dir;
+    const auto host = TestEnv().vfs_native;
+    const auto path = dir.directory / "symlink";
+    REQUIRE_NOTHROW( std::filesystem::create_symlink("/bin/sh", path) );
+    REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+    DeletionOptions options;
+    auto set_type = [&]() {
+        SECTION("Permanent") { options.type = DeletionType::Permanent; }
+        SECTION("Trash") { options.type = DeletionType::Trash; }
+    };
+    SECTION("Default: ask => fail")
+    {
+        set_type();
+        Deletion operation{FetchItems(dir.directory.native(), {"symlink"}, *host), options};
+        operation.Start();
+        operation.Wait();
+        REQUIRE(operation.State() == OperationState::Stopped);
+        REQUIRE(host->Exists(path.c_str()));
+        REQUIRE(lchflags(path.c_str(), 0) == 0);
+    }
+    SECTION("Skip: skipped")
+    {
+        set_type();
+        options.locked_items_behaviour = DeletionOptions::LockedItemBehavior::SkipAll;
+        Deletion operation{FetchItems(dir.directory.native(), {"symlink"}, *host), options};
+        operation.Start();
+        operation.Wait();
+        REQUIRE(operation.State() == OperationState::Completed);
+        REQUIRE(host->Exists(path.c_str()));
+        REQUIRE(lchflags(path.c_str(), 0) == 0);
+    }
+    SECTION("Unlock: removed")
+    {
+        set_type();
+        options.locked_items_behaviour = DeletionOptions::LockedItemBehavior::UnlockAll;
+        Deletion operation{FetchItems(dir.directory.native(), {"symlink"}, *host), options};
+        operation.Start();
+        operation.Wait();
+        REQUIRE(operation.State() == OperationState::Completed);
+        REQUIRE(!host->Exists(path.c_str()));
+    }
+}
 
 TEST_CASE(PREFIX "Directory removal")
 {

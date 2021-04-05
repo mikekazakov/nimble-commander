@@ -316,7 +316,7 @@ int DeletionJob::UnlockItem(const std::string &_path, VFSHost &_vfs) const
         return false;
 
     st.flags = (st.flags & ~UF_IMMUTABLE);
-    const int chflags_rc = _vfs.SetFlags(_path.c_str(), st.flags);
+    const int chflags_rc = _vfs.SetFlags(_path.c_str(), st.flags, vfs::Flags::F_NoFollow);
     return chflags_rc;
 }
 

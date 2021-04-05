@@ -96,6 +96,11 @@ int PosixIOInterfaceNative::chflags(const char *_path, u_int _flags) noexcept
     return ::chflags(_path, _flags);
 }
 
+int PosixIOInterfaceNative::lchflags(const char *_path, u_int _flags) noexcept
+{
+    return ::lchflags(_path, _flags);
+}
+
 int PosixIOInterfaceNative::rmdir(const char *_path) noexcept
 {
     return ::rmdir(_path);
@@ -420,6 +425,42 @@ int PosixIOInterfaceRouted::chflags(const char *_path, u_int _flags) noexcept
     if( xpc_get_type(reply) == XPC_TYPE_ERROR ) {
         xpc_release(reply); // connection broken, faling back to native
         return super::chflags(_path, _flags);
+    }
+
+    if( auto err = xpc_dictionary_get_int64(reply, "error") ) {
+        // got a graceful error, propaganate it
+        xpc_release(reply);
+        errno = static_cast<int>(err);
+        return -1;
+    }
+
+    if( xpc_dictionary_get_bool(reply, "ok") != true ) {
+        xpc_release(reply);
+        errno = EIO;
+        return -1;
+    }
+
+    xpc_release(reply);
+    return 0;
+}
+
+int PosixIOInterfaceRouted::lchflags(const char *_path, u_int _flags) noexcept
+{
+    xpc_connection_t conn = Connection();
+    if( !conn ) // fallback to native on disabled routing or on helper connectity problems
+        return super::lchflags(_path, _flags);
+
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    xpc_dictionary_set_string(message, "operation", "lchflags");
+    xpc_dictionary_set_string(message, "path", _path);
+    xpc_dictionary_set_int64(message, "flags", _flags);
+
+    xpc_object_t reply = xpc_connection_send_message_with_reply_sync(conn, message);
+    xpc_release(message);
+
+    if( xpc_get_type(reply) == XPC_TYPE_ERROR ) {
+        xpc_release(reply); // connection broken, faling back to native
+        return super::lchflags(_path, _flags);
     }
 
     if( auto err = xpc_dictionary_get_int64(reply, "error") ) {

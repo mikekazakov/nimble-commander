@@ -1,10 +1,13 @@
 #!/bin/sh
 
+set -e
 set -o pipefail
 
+# get current directory
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+# allocate a temp dir for build artifacts
 BUILD_DIR=$(mktemp -d ${SCRIPTS_DIR}/build.XXXXXXXXX)
-echo "a directory: $BUILD_DIR"
 
 build_target()
 {
@@ -25,6 +28,7 @@ build_target()
     $XC build
 }
 
+# list of targets to build
 tests=(\
 HabaneroUT \
 ConfigUT \
@@ -38,16 +42,22 @@ PanelUT \
 NimbleCommanderUT \
 )
 
+# list of configurations to build the targets with
 configurations=(\
 Debug \
 Release \
 )
 
+# run N * M binaries
 for configuration in ${configurations[@]}; do
   for test in ${tests[@]}; do
+    # build the binary
     build_target $test $configuration
+    
+    # execute the binary
     $BINARY_PATH
   done
 done
 
+# cleanup
 rm -rf ${BUILD_DIR}

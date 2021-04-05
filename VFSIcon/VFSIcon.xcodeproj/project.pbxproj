@@ -61,7 +61,7 @@
 		CF38BEBB2148AB1B005E336C /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CF38BEBC2148AB1B005E336C /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF38BEBD2148AD64005E336C /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
-		CF38BEC22148AE5D005E336C /* VFSIconIntegrationTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VFSIconIntegrationTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF38BEC22148AE5D005E336C /* VFSIconIT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VFSIconIT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCacheImpl_IntegrationTests.mm; path = tests/QLThumbnailsCacheImpl_IntegrationTests.mm; sourceTree = "<group>"; };
 		CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm; path = tests/WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm; sourceTree = "<group>"; };
 		CF460020256051B10095FC73 /* libVFSIcon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVFSIcon.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -104,7 +104,7 @@
 		CF8BDD502147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCacheImpl.mm; path = source/WorkspaceIconsCacheImpl.mm; sourceTree = "<group>"; };
 		CF8BDD512147E8B600F14C3E /* QLThumbnailsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCacheImpl.mm; path = source/QLThumbnailsCacheImpl.mm; sourceTree = "<group>"; };
 		CF8BDD522147E8B600F14C3E /* IconRepository.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconRepository.mm; path = source/IconRepository.mm; sourceTree = "<group>"; };
-		CF8BDD5F2147EB3F00F14C3E /* VFSIconUnitTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VFSIconUnitTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF8BDD5F2147EB3F00F14C3E /* VFSIconUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VFSIconUT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF8BDD662147EC7900F14C3E /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
 		CF8BDD672147EC7900F14C3E /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
 		CF8BDD6B2147ECA900F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCacheImpl_UnitTests.mm; path = tests/WorkspaceIconsCacheImpl_UnitTests.mm; sourceTree = "<group>"; };
@@ -161,8 +161,8 @@
 		CF8BDCFA2147D50300F14C3E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF8BDD5F2147EB3F00F14C3E /* VFSIconUnitTests */,
-				CF38BEC22148AE5D005E336C /* VFSIconIntegrationTests */,
+				CF8BDD5F2147EB3F00F14C3E /* VFSIconUT */,
+				CF38BEC22148AE5D005E336C /* VFSIconIT */,
 				CF460020256051B10095FC73 /* libVFSIcon.a */,
 			);
 			name = Products;
@@ -255,9 +255,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		CF38BEC12148AE5D005E336C /* VFSIconIntegrationTests */ = {
+		CF38BEC12148AE5D005E336C /* VFSIconIT */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF38BEC62148AE5D005E336C /* Build configuration list for PBXNativeTarget "VFSIconIntegrationTests" */;
+			buildConfigurationList = CF38BEC62148AE5D005E336C /* Build configuration list for PBXNativeTarget "VFSIconIT" */;
 			buildPhases = (
 				CF38BEBE2148AE5D005E336C /* Sources */,
 				CF38BEBF2148AE5D005E336C /* Frameworks */,
@@ -267,9 +267,9 @@
 			);
 			dependencies = (
 			);
-			name = VFSIconIntegrationTests;
+			name = VFSIconIT;
 			productName = VFSIconIntegrationTests;
-			productReference = CF38BEC22148AE5D005E336C /* VFSIconIntegrationTests */;
+			productReference = CF38BEC22148AE5D005E336C /* VFSIconIT */;
 			productType = "com.apple.product-type.tool";
 		};
 		CF46001F256051B10095FC73 /* VFSIcon */ = {
@@ -289,9 +289,9 @@
 			productReference = CF460020256051B10095FC73 /* libVFSIcon.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		CF8BDD5E2147EB3F00F14C3E /* VFSIconUnitTests */ = {
+		CF8BDD5E2147EB3F00F14C3E /* VFSIconUT */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF8BDD632147EB4000F14C3E /* Build configuration list for PBXNativeTarget "VFSIconUnitTests" */;
+			buildConfigurationList = CF8BDD632147EB4000F14C3E /* Build configuration list for PBXNativeTarget "VFSIconUT" */;
 			buildPhases = (
 				CF8BDD5B2147EB3F00F14C3E /* Sources */,
 				CF8BDD5C2147EB3F00F14C3E /* Frameworks */,
@@ -301,9 +301,9 @@
 			);
 			dependencies = (
 			);
-			name = VFSIconUnitTests;
+			name = VFSIconUT;
 			productName = VFSIconUnitTests;
-			productReference = CF8BDD5F2147EB3F00F14C3E /* VFSIconUnitTests */;
+			productReference = CF8BDD5F2147EB3F00F14C3E /* VFSIconUT */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -340,8 +340,8 @@
 			projectRoot = "";
 			targets = (
 				CF46001F256051B10095FC73 /* VFSIcon */,
-				CF8BDD5E2147EB3F00F14C3E /* VFSIconUnitTests */,
-				CF38BEC12148AE5D005E336C /* VFSIconIntegrationTests */,
+				CF8BDD5E2147EB3F00F14C3E /* VFSIconUT */,
+				CF38BEC12148AE5D005E336C /* VFSIconIT */,
 			);
 		};
 /* End PBXProject section */
@@ -460,7 +460,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CF38BEC62148AE5D005E336C /* Build configuration list for PBXNativeTarget "VFSIconIntegrationTests" */ = {
+		CF38BEC62148AE5D005E336C /* Build configuration list for PBXNativeTarget "VFSIconIT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CF38BEC72148AE5D005E336C /* Debug */,
@@ -487,7 +487,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CF8BDD632147EB4000F14C3E /* Build configuration list for PBXNativeTarget "VFSIconUnitTests" */ = {
+		CF8BDD632147EB4000F14C3E /* Build configuration list for PBXNativeTarget "VFSIconUT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CF8BDD642147EB4000F14C3E /* Debug */,

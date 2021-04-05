@@ -29,7 +29,7 @@ tests=(\
 HabaneroUT \
 ConfigUT \
 UtilityUT \
-VFSIconUnitTests \
+VFSIconUT \
 VFSUT \
 OperationsUT \
 ViewerUT \

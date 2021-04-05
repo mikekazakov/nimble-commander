@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 
 // basic C defines
 #include <stddef.h>
@@ -41,8 +41,6 @@
     #include <Habanero/dispatch_cpp.h>
     #include <Habanero/mach_time.h>
     #include <Habanero/spinlock.h>
-
-    #include <boost/filesystem.hpp>
 
     #include <Utility/StringExtras.h>
 

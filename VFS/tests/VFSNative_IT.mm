@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <Habanero/algo.h>
@@ -18,11 +18,11 @@ static bool WaitUntilNativeFSManSeesVolumeAtPath(const std::filesystem::path &vo
 TEST_CASE(PREFIX "Reports case-insensitive on directory path")
 {
     TestDir tmp_dir;
-    const auto dmg_path = tmp_dir.directory + "tmp_image.dmg";
+    const auto dmg_path = tmp_dir.directory / "tmp_image.dmg";
     const auto create_cmd =
         "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " +
-        dmg_path;
-    const auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path;
+        dmg_path.native();
+    const auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
     const auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes12345";
     const std::filesystem::path volume_path = "/Volumes/SomethingWickedThisWayComes12345";
     REQUIRE(Execute(create_cmd) == 0);
@@ -43,7 +43,7 @@ TEST_CASE(PREFIX "Reports case-insensitive on directory path")
 TEST_CASE(PREFIX "Reports case-sensitive on directory path")
 {
     TestDir tmp_dir;
-    const auto dmg_path = tmp_dir.directory + "tmp_image.dmg";
+    const auto dmg_path = tmp_dir.directory / "tmp_image.dmg";
     const auto bin = "/usr/bin/hdiutil";
     const auto create_args = std::vector<std::string>{"create",
                                                       "-size",
@@ -53,7 +53,7 @@ TEST_CASE(PREFIX "Reports case-sensitive on directory path")
                                                       "-volname",
                                                       "SomethingWickedThisWayComes12345",
                                                       dmg_path};
-    const auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path;
+    const auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path.native();
     const auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes12345";
     const std::filesystem::path volume_path = "/Volumes/SomethingWickedThisWayComes12345";
     REQUIRE(Execute(bin, create_args) == 0);
@@ -71,6 +71,54 @@ TEST_CASE(PREFIX "Reports case-sensitive on directory path")
     CHECK(vfs.IsCaseSensitiveAtPath((volume_path / "Dir1/Dir2/reg").c_str()) == true);
 }
 
+TEST_CASE(PREFIX "SetFlags")
+{
+    TestDir dir;
+    const auto host = TestEnv().vfs_native;
+    struct ::stat st;
+    SECTION("Regular file")
+    {
+        uint64_t vfs_flags = 0;
+        SECTION("Flags::None") { vfs_flags = Flags::None; }
+        SECTION("Flags::F_NoFollow") { vfs_flags = Flags::F_NoFollow; }
+        const auto path = dir.directory / "regular_file";
+        REQUIRE(close(creat(path.c_str(), 0755)) == 0);
+        REQUIRE(host->SetFlags(path.c_str(), UF_HIDDEN, vfs_flags, nullptr) == VFSError::Ok);
+        REQUIRE(::lstat(path.c_str(), &st) == 0);
+        CHECK(st.st_flags & UF_HIDDEN);
+    }
+    SECTION("Symlink")
+    {
+        const auto path_reg = dir.directory / "regular_file";
+        const auto path_sym = dir.directory / "symlink";
+        REQUIRE(close(creat(path_reg.c_str(), 0755)) == 0);
+        REQUIRE_NOTHROW(std::filesystem::create_symlink(path_reg, path_sym));
+        SECTION("Flags::None")
+        {
+            REQUIRE(host->SetFlags(path_sym.c_str(), UF_HIDDEN, Flags::None, nullptr) ==
+                    VFSError::Ok);
+            REQUIRE(::lstat(path_sym.c_str(), &st) == 0);
+            CHECK_FALSE(st.st_flags & UF_HIDDEN);
+            REQUIRE(::lstat(path_reg.c_str(), &st) == 0);
+            CHECK(st.st_flags & UF_HIDDEN);
+        }
+        SECTION("Flags::F_NoFollow")
+        {
+            REQUIRE(host->SetFlags(path_sym.c_str(), UF_HIDDEN, Flags::F_NoFollow, nullptr) ==
+                    VFSError::Ok);
+            REQUIRE(::lstat(path_sym.c_str(), &st) == 0);
+            CHECK(st.st_flags & UF_HIDDEN);
+            REQUIRE(::lstat(path_reg.c_str(), &st) == 0);
+            CHECK_FALSE(st.st_flags & UF_HIDDEN);
+        }
+    }
+    SECTION("Non-existent")
+    {
+        const auto path = dir.directory / "blah";
+        CHECK(host->SetFlags(path.c_str(), UF_HIDDEN, Flags::None, nullptr) ==
+              VFSError::FromErrno(ENOENT));
+    }
+}
 static int Execute(const std::string &_command)
 {
     using namespace boost::process;

@@ -315,6 +315,7 @@
 		CFF53BAD1EEA840600F567C4 /* Statistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Statistics.cpp; path = source/Statistics.cpp; sourceTree = "<group>"; };
 		CFF53BCC1EF3913B00F567C4 /* Progress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Progress.cpp; path = source/Progress.cpp; sourceTree = "<group>"; };
 		CFF53BCD1EF3913B00F567C4 /* Progress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Progress.h; path = source/Progress.h; sourceTree = "<group>"; };
+		CFF544942620F2BC00A6C49C /* CopyingJobCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CopyingJobCallbacks.h; path = source/Copying/CopyingJobCallbacks.h; sourceTree = "<group>"; };
 		CFFA953F1F4C0C390035E606 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AttrsChangingDialog.xib; sourceTree = "<group>"; };
 		CFFA95441F4C17CC0035E606 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Info-TestsPlist.strings"; sourceTree = "<group>"; };
 		CFFA95461F4C17CD0035E606 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/AttrsChangingDialog.strings; sourceTree = "<group>"; };
@@ -377,6 +378,7 @@
 				CF197C271FB4381E009F6C59 /* CopyingDialogDisclosedView.xib */,
 				CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */,
 				CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */,
+				CFF544942620F2BC00A6C49C /* CopyingJobCallbacks.h */,
 				CFAAF0721FA9D8B8009230B3 /* CopyingTitleBuilder.h */,
 				CFAAF0731FA9D8B8009230B3 /* CopyingTitleBuilder.mm */,
 				CF4BCF561F2F1508005F8414 /* DisclosureViewController.h */,

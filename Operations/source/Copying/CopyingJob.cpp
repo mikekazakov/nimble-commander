@@ -77,7 +77,7 @@ FindFirstFSInfoUpToRoot(const nc::utility::NativeFSManager &_fs_man, const std::
 
     auto p = std::filesystem::path(_path).parent_path();
     while( true ) {
-        info = _fs_man.VolumeFromPath(p);
+        info = _fs_man.VolumeFromPath(p.native());
         if( info )
             return info;
         if( p == "/" )
@@ -402,7 +402,7 @@ CopyingJob::ProcessSymlinkItem(VFSHost &_source_host,
         }
         else {
             const auto item_fs_info = m_NativeFSManager->VolumeFromPath(
-                std::filesystem::path{_source_path}.parent_path());
+                std::filesystem::path{_source_path}.parent_path().native());
             const auto is_same_native_volume = item_fs_info == m_DestinationNativeFSInfo;
             if( is_same_native_volume ) {
                 return RenameNativeFile(dynamic_cast<vfs::NativeHost &>(_source_host),

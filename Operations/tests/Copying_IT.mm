@@ -993,21 +993,40 @@ TEST_CASE(PREFIX "Copy to local FTP, part4")
     REQUIRE(host->Unlink(fn3, 0) == 0);
 }
 
-TEST_CASE(PREFIX "Renaming a locked native regular file")
+TEST_CASE(PREFIX "Renaming a locked native regular item")
 {
     TempTestDir dir;
     const auto host = TestEnv().vfs_native;
-    const auto filename = "regular_file";
-    const auto filename_new = "regular_file_2";
+    const auto filename = "old_name";
+    const auto filename_new = "new_name";
     const auto path = dir.directory / filename;
-    REQUIRE(close(creat(path.c_str(), 0755)) == 0);
-    REQUIRE(chflags(path.c_str(), UF_IMMUTABLE) == 0);
+    auto exists = [](const std::string &_path) -> bool {
+        struct stat st;
+        return lstat(_path.c_str(), &st) == 0;
+    };
+    auto setup = [&] {
+        SECTION("Regular file")
+        {
+            REQUIRE(close(creat(path.c_str(), 0755)) == 0);
+            REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+        }
+        SECTION("Symlink")
+        {
+            REQUIRE_NOTHROW(std::filesystem::create_symlink("some nonsense", path));
+            REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+        }
+        SECTION("Directory")
+        {
+            REQUIRE_NOTHROW(std::filesystem::create_directory(path));
+            REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+        }
+    };
 
     CopyingOptions opts;
     opts.docopy = false;
-    
+
     std::unique_ptr<Copying> op;
-    auto run = [&]{
+    auto run = [&] {
         op = std::make_unique<Copying>(
             FetchItems(dir.directory, {filename}, *host), dir.directory / filename_new, host, opts);
         op->Start();
@@ -1015,34 +1034,38 @@ TEST_CASE(PREFIX "Renaming a locked native regular file")
     };
     SECTION("Default - ask")
     {
+        setup();
         run();
         REQUIRE(op->State() == OperationState::Stopped);
-        REQUIRE(host->Exists(path.c_str()));
-        REQUIRE(chflags(path.c_str(), 0) == 0);
+        REQUIRE(exists(path));
+        REQUIRE(lchflags(path.c_str(), 0) == 0);
     }
     SECTION("Default - skip")
     {
+        setup();
         opts.locked_items_behaviour = CopyingOptions::LockedItemBehavior::SkipAll;
         run();
         REQUIRE(op->State() == OperationState::Completed);
-        REQUIRE(host->Exists(path.c_str()));
-        REQUIRE(chflags(path.c_str(), 0) == 0);
+        REQUIRE(exists(path));
+        REQUIRE(lchflags(path.c_str(), 0) == 0);
     }
     SECTION("Default - stop")
     {
+        setup();
         opts.locked_items_behaviour = CopyingOptions::LockedItemBehavior::Stop;
         run();
         REQUIRE(op->State() == OperationState::Stopped);
-        REQUIRE(host->Exists(path.c_str()));
-        REQUIRE(chflags(path.c_str(), 0) == 0);
+        REQUIRE(exists(path));
+        REQUIRE(lchflags(path.c_str(), 0) == 0);
     }
     SECTION("Default - unlock")
     {
+        setup();
         opts.locked_items_behaviour = CopyingOptions::LockedItemBehavior::UnlockAll;
         run();
         REQUIRE(op->State() == OperationState::Completed);
-        REQUIRE(host->Exists(path.c_str()) == false);
-        REQUIRE(host->Exists((dir.directory / filename_new).c_str()) == true);
+        REQUIRE(exists(path) == false);
+        REQUIRE(exists(dir.directory / filename_new) == true);
     }
 }
 

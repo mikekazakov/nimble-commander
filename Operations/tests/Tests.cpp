@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
 
@@ -36,6 +36,11 @@ TempTestDir::TempTestDir()
 
 TempTestDir::~TempTestDir()
 {
-    std::filesystem::remove_all(directory);
+    try {
+        std::filesystem::remove_all(directory);
+    }
+    catch(const std::exception &ex){
+        std::cerr << ex.what() << std::endl;
+    }
 }
 

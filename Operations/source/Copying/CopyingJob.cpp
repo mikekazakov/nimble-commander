@@ -2183,6 +2183,23 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
         const auto rc = io.rename(_src_path.c_str(), _dst_path.c_str());
         if( rc == 0 )
             break;
+        const int vfs_error = VFSError::FromErrno();
+        if( IsNativeLockedItemNoFollow(vfs_error, _src_path) ) {
+            switch( m_OnCantRenameLockedItem(vfs_error, _src_path, _native_host) ) {
+                case LockedItemResolution::Unlock:
+                    if( const auto step_result = UnlockNativeItemNoFollow(_src_path, _native_host);
+                        step_result == StepResult::Ok )
+                        continue;
+                    else
+                        return {step_result, SourceItemAftermath::NoChanges};
+                case LockedItemResolution::Retry:
+                    continue;
+                case LockedItemResolution::Skip:
+                    return {StepResult::Skipped, SourceItemAftermath::NoChanges};
+                case LockedItemResolution::Stop:
+                    return {StepResult::Stop, SourceItemAftermath::NoChanges};
+            }
+        }
         switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _native_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return {StepResult::Skipped, SourceItemAftermath::NoChanges};
@@ -2402,7 +2419,7 @@ CopyingJob::RenameNativeFile(vfs::NativeHost &_native_host,
                     return StepResult::Stop;
             }
         }
-        else switch( m_OnDestinationFileWriteError(vfs_error, _dst_path, _native_host) ) {
+        switch( m_OnDestinationFileWriteError(vfs_error, _dst_path, _native_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop:

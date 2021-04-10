@@ -159,6 +159,29 @@ struct CopyingJobCallbacks {
     std::function<NotADirectoryResolution(const std::string &_path, VFSHost &_vfs)>
         m_OnNotADirectory =
             [](const std::string &, VFSHost &) { return NotADirectoryResolution::Stop; };
+    
+    enum class LockedItemResolution
+    {
+        Stop,
+        Skip,
+        Unlock,
+        Retry
+    };
+    std::function<
+        LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantRenameLockedItem = [](int, const std::string &, VFSHost &) {
+            return LockedItemResolution::Stop;
+        };
+    
+    enum class UnlockErrorResolution
+    {
+        Stop,
+        Skip,
+        Retry
+    };
+    std::function<UnlockErrorResolution(int _err, const std::string &_path, VFSHost &_vfs)>
+        m_OnUnlockError =
+            [](int, const std::string &, VFSHost &) { return UnlockErrorResolution::Stop; };
 
     std::function<void(const std::string &_path, VFSHost &_vfs)> m_OnFileVerificationFailed =
         [](const std::string &, VFSHost &) {};

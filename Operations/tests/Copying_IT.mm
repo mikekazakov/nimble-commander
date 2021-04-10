@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <Operations/Copying.h>
@@ -991,6 +991,59 @@ TEST_CASE(PREFIX "Copy to local FTP, part4")
 
     REQUIRE(host->Unlink(fn2, 0) == 0);
     REQUIRE(host->Unlink(fn3, 0) == 0);
+}
+
+TEST_CASE(PREFIX "Renaming a locked native regular file")
+{
+    TempTestDir dir;
+    const auto host = TestEnv().vfs_native;
+    const auto filename = "regular_file";
+    const auto filename_new = "regular_file_2";
+    const auto path = dir.directory / filename;
+    REQUIRE(close(creat(path.c_str(), 0755)) == 0);
+    REQUIRE(chflags(path.c_str(), UF_IMMUTABLE) == 0);
+
+    CopyingOptions opts;
+    opts.docopy = false;
+    
+    std::unique_ptr<Copying> op;
+    auto run = [&]{
+        op = std::make_unique<Copying>(
+            FetchItems(dir.directory, {filename}, *host), dir.directory / filename_new, host, opts);
+        op->Start();
+        op->Wait();
+    };
+    SECTION("Default - ask")
+    {
+        run();
+        REQUIRE(op->State() == OperationState::Stopped);
+        REQUIRE(host->Exists(path.c_str()));
+        REQUIRE(chflags(path.c_str(), 0) == 0);
+    }
+    SECTION("Default - skip")
+    {
+        opts.locked_items_behaviour = CopyingOptions::LockedItemBehavior::SkipAll;
+        run();
+        REQUIRE(op->State() == OperationState::Completed);
+        REQUIRE(host->Exists(path.c_str()));
+        REQUIRE(chflags(path.c_str(), 0) == 0);
+    }
+    SECTION("Default - stop")
+    {
+        opts.locked_items_behaviour = CopyingOptions::LockedItemBehavior::Stop;
+        run();
+        REQUIRE(op->State() == OperationState::Stopped);
+        REQUIRE(host->Exists(path.c_str()));
+        REQUIRE(chflags(path.c_str(), 0) == 0);
+    }
+    SECTION("Default - unlock")
+    {
+        opts.locked_items_behaviour = CopyingOptions::LockedItemBehavior::UnlockAll;
+        run();
+        REQUIRE(op->State() == OperationState::Completed);
+        REQUIRE(host->Exists(path.c_str()) == false);
+        REQUIRE(host->Exists((dir.directory / filename_new).c_str()) == true);
+    }
 }
 
 static std::vector<std::byte> MakeNoise(size_t _size)

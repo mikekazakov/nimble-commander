@@ -3,6 +3,7 @@
 #include "CopyingJob.h"
 #include "../AsyncDialogResponse.h"
 #include "../Internal.h"
+#include "../GenericErrorDialog.h"
 #include "FileAlreadyExistDialog.h"
 #include "CopyingTitleBuilder.h"
 #include <sys/stat.h>
@@ -17,6 +18,7 @@ Copying::Copying(std::vector<VFSListingItem> _source_files,
                  const CopyingOptions &_options)
 {
     m_ExistBehavior = _options.exist_behavior;
+    m_LockedBehaviour = _options.locked_items_behaviour;
 
     m_Job.reset(new CopyingJob(_source_files, _destination_path, _destination_host, _options));
     SetupCallbacks();
@@ -66,6 +68,10 @@ void Copying::SetupCallbacks()
     j.m_OnCantDeleteSourceItem = [this](int _1, const std::string &_2, VFSHost &_3) {
         return OnCantDeleteSourceItem(_1, _2, _3);
     };
+    j.m_OnCantRenameLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
+        return OnCantRenameLockedItem(_1, _2, _3);
+    };
+    // TODO: m_OnUnlockError
     j.m_OnNotADirectory = [this](const std::string &_1, VFSHost &_2) {
         return OnNotADirectory(_1, _2);
     };
@@ -494,6 +500,66 @@ CB::NotADirectoryResolution Copying::OnNotADirectory(const std::string &_path, V
         return CB::NotADirectoryResolution::Stop;
 }
 
+CB::LockedItemResolution
+Copying::OnCantRenameLockedItem(int _err, const std::string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll )
+        return CB::LockedItemResolution::Skip;
+    switch( m_LockedBehaviour ) {
+        case CopyingOptions::LockedItemBehavior::UnlockAll:
+            return CB::LockedItemResolution::Unlock;
+        case CopyingOptions::LockedItemBehavior::SkipAll:
+            return CB::LockedItemResolution::Skip;
+        case CopyingOptions::LockedItemBehavior::Stop:
+            return CB::LockedItemResolution::Stop;
+        case CopyingOptions::LockedItemBehavior::Ask:
+            break;
+    }
+    if( !IsInteractive() )
+        return CB::LockedItemResolution::Stop;
+
+    const auto ctx = std::make_shared<AsyncDialogResponse>();
+    dispatch_to_main_queue(
+        [=, vfs = _vfs.shared_from_this()] { OnCantRenameLockedItemUI(_err, _path, vfs, ctx); });
+    WaitForDialogResponse(ctx);
+
+    if( ctx->response == NSModalResponseSkip ) {
+        if( ctx->IsApplyToAllSet() )
+            m_LockedBehaviour = CopyingOptions::LockedItemBehavior::SkipAll;
+        return CB::LockedItemResolution::Skip;
+    }
+    else if( ctx->response == NSModalResponseRetry ) {
+        return CB::LockedItemResolution::Retry;
+    }
+    else if( ctx->response == NSModalResponseUnlock ) {
+        if( ctx->IsApplyToAllSet() )
+            m_LockedBehaviour = CopyingOptions::LockedItemBehavior::UnlockAll;
+        return CB::LockedItemResolution::Unlock;
+    }
+    else {
+        return CB::LockedItemResolution::Stop;
+    }
+}
+
+void Copying::OnCantRenameLockedItemUI(int _err,
+                                       const std::string &_path,
+                                       [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
+                                       std::shared_ptr<AsyncDialogResponse> _ctx)
+{
+    const auto sheet = [[NCOpsGenericErrorDialog alloc] initWithContext:_ctx];
+
+    sheet.style = GenericErrorDialogStyle::Caution;
+    sheet.message = NSLocalizedString(@"Cannot rename a locked item", "");
+    sheet.path = [NSString stringWithUTF8String:_path.c_str()];
+    sheet.showApplyToAll = m_Job->IsSingleScannedItemProcessing() == false;
+    sheet.errorNo = _err;
+    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Unlock", "") responseCode:NSModalResponseUnlock];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
+    Show(sheet.window, _ctx);
+}
+
 void Copying::OnStageChanged()
 {
     CopyingTitleBuilder b{m_Job->SourceItems(), m_Job->DestinationPath(), m_Job->Options()};
@@ -515,5 +581,4 @@ void Copying::OnStageChanged()
     }
     SetTitle(std::move(title));
 }
-
 }

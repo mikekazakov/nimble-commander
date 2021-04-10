@@ -2384,7 +2384,25 @@ CopyingJob::RenameNativeFile(vfs::NativeHost &_native_host,
         const auto rc = io.rename(_src_path.c_str(), _dst_path.c_str());
         if( rc == 0 )
             break;
-        switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, _native_host) ) {
+        const auto vfs_error = VFSError::FromErrno();
+        if( IsNativeLockedItemNoFollow(vfs_error, _src_path) ) {
+            switch( m_OnCantRenameLockedItem(vfs_error, _src_path, _native_host) ) {
+                case LockedItemResolution::Unlock: {
+                    const auto step_result = UnlockNativeItemNoFollow(_src_path, _native_host);
+                    if( step_result == StepResult::Ok )
+                        continue;
+                    else
+                        return step_result;
+                }
+                case LockedItemResolution::Retry:
+                    continue;
+                case LockedItemResolution::Skip:
+                    return StepResult::Skipped;
+                case LockedItemResolution::Stop:
+                    return StepResult::Stop;
+            }
+        }
+        else switch( m_OnDestinationFileWriteError(vfs_error, _dst_path, _native_host) ) {
             case DestinationFileWriteErrorResolution::Skip:
                 return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop:
@@ -2883,6 +2901,45 @@ const std::string &CopyingJob::DestinationPath() const noexcept
 const CopyingOptions &CopyingJob::Options() const noexcept
 {
     return m_Options;
+}
+
+bool CopyingJob::IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path) const
+{
+    if( vfs_error != VFSError::FromErrno(EPERM) )
+        return false;
+
+    struct stat item_stat;
+    auto &io = routedio::RoutedIO::Default;
+    if( io.lstat(_path.c_str(), &item_stat) != 0 )
+        return false;
+
+    return item_stat.st_flags & UF_IMMUTABLE;
+}
+
+CopyingJob::StepResult CopyingJob::UnlockNativeItemNoFollow(const std::string &_path,
+                                                            vfs::NativeHost &_native_host) const
+{
+    auto unlock = [&]() -> int {
+        VFSStat st;
+        const int stat_rc = _native_host.Stat(_path.c_str(), st, VFSFlags::F_NoFollow, {});
+        if( stat_rc != VFSError::Ok )
+            return stat_rc;
+        st.flags = (st.flags & ~UF_IMMUTABLE);
+        return _native_host.SetFlags(_path.c_str(), st.flags, VFSFlags::F_NoFollow, {});        
+    };
+    while( true ) {
+        const int unlock_rc = unlock();
+        if( unlock_rc == VFSError::Ok )
+            return StepResult::Ok;
+        switch( m_OnUnlockError(unlock_rc, _path, _native_host) ) {
+            case UnlockErrorResolution::Retry:
+                continue;
+            case UnlockErrorResolution::Skip:
+                return StepResult::Skipped;
+            case UnlockErrorResolution::Stop:
+                return StepResult::Stop;
+        }
+    }
 }
 
 static bool EntryIsOlder(const struct stat &_1st, const struct stat &_2nd)

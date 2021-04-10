@@ -67,11 +67,21 @@ private:
     OnCantDeleteSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     CB::NotADirectoryResolution OnNotADirectory(const std::string &_path, VFSHost &_vfs);
+
+    CB::LockedItemResolution
+    OnCantRenameLockedItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    
+    void OnCantRenameLockedItemUI(int _err,
+                                  const std::string &_path,
+                                  std::shared_ptr<VFSHost> _vfs,
+                                  std::shared_ptr<AsyncDialogResponse> _ctx);
+
     void OnFileVerificationFailed(const std::string &_path, VFSHost &_vfs);
     void OnStageChanged();
 
     std::unique_ptr<CopyingJob> m_Job;
     CopyingOptions::ExistBehavior m_ExistBehavior;
+    CopyingOptions::LockedItemBehavior m_LockedBehaviour;
     bool m_SkipAll = false;
 };
 

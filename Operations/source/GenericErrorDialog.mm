@@ -140,12 +140,17 @@ using namespace nc::ops;
                                                                            views:views]];
 }
 
+static bool IsShiftPressed() noexcept
+{
+    return (NSEvent.modifierFlags & NSEventModifierFlagShift) != 0;
+}
+
 - (void)onButtonClick:(id)sender
 {
     if( auto b = objc_cast<NSButton>(sender) ) {
         if( m_ShowApplyToAll && m_Context )
-            m_Context->messages["apply_to_all"] =
-                self.applyToAllCheckBox.state == NSControlStateValueOn;
+            m_Context->SetApplyToAll(self.applyToAllCheckBox.state == NSControlStateValueOn ||
+                                     IsShiftPressed());
         [self.window.sheetParent endSheet:self.window returnCode:b.tag];
     }
 }

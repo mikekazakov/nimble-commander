@@ -24,7 +24,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="450" height="137"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="450" height="137"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -88,7 +88,7 @@
                         </constraints>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="Oup-na-cea"/>
                     </imageView>
-                    <button translatesAutoresizingMaskIntoConstraints="NO" id="tzy-X0-qSC">
+                    <button toolTip="Hold Shift to apply to all" translatesAutoresizingMaskIntoConstraints="NO" id="tzy-X0-qSC">
                         <rect key="frame" x="102" y="18" width="328" height="18"/>
                         <buttonCell key="cell" type="check" title="Apply to all" bezelStyle="regularSquare" imagePosition="left" inset="2" id="A77-je-gKj">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>

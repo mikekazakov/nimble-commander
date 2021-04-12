@@ -2521,6 +2521,28 @@ void CopyingJob::ClearSourceItem(const std::string &_path, mode_t _mode, VFSHost
         if( vfs_rc == VFSError::Ok )
             break;
 
+        if( _host.IsNativeFS() && IsNativeLockedItemNoFollow(vfs_rc, _path) ) {
+            switch( m_OnCantDeleteLockedItem(vfs_rc, _path, _host) ) {
+                case LockedItemResolution::Unlock:
+                    switch(
+                        UnlockNativeItemNoFollow(_path, dynamic_cast<VFSNativeHost &>(_host)) ) {
+                        case StepResult::Ok:
+                            continue;
+                        case StepResult::Skipped:
+                            return;
+                        case StepResult::Stop:
+                            Stop();
+                            return;
+                    }
+                case LockedItemResolution::Retry:
+                    continue;
+                case LockedItemResolution::Skip:
+                    return;
+                case LockedItemResolution::Stop:
+                    Stop();
+                    return;
+            }
+        }
         switch( m_OnCantDeleteSourceItem(vfs_rc, _path, _host) ) {
             case CantDeleteSourceFileResolution::Skip:
                 return;

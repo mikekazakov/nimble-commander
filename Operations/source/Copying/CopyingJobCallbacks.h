@@ -172,6 +172,11 @@ struct CopyingJobCallbacks {
         m_OnCantRenameLockedItem = [](int, const std::string &, VFSHost &) {
             return LockedItemResolution::Stop;
         };
+    std::function<
+        LockedItemResolution(int _vfs_error, const std::string &_path, VFSHost &_vfs)>
+        m_OnCantDeleteLockedItem = [](int, const std::string &, VFSHost &) {
+            return LockedItemResolution::Stop;
+        };
     
     enum class UnlockErrorResolution
     {

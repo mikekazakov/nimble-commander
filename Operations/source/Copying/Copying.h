@@ -22,6 +22,12 @@ public:
 private:
     using CB = CopyingJobCallbacks;
 
+    enum class LockedItemCause
+    {
+        Moving,
+        Deletion
+    };
+
     virtual Job *GetJob() noexcept override;
     void SetupCallbacks();
 
@@ -68,13 +74,16 @@ private:
 
     CB::NotADirectoryResolution OnNotADirectory(const std::string &_path, VFSHost &_vfs);
 
-    CB::LockedItemResolution
-    OnCantRenameLockedItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
-    
-    void OnCantRenameLockedItemUI(int _err,
-                                  const std::string &_path,
-                                  std::shared_ptr<VFSHost> _vfs,
-                                  std::shared_ptr<AsyncDialogResponse> _ctx);
+    CB::LockedItemResolution OnLockedItemIssue(int _vfs_error,
+                                               const std::string &_path,
+                                               VFSHost &_vfs,
+                                               LockedItemCause _cause);
+
+    void OnLockedItemIssueUI(int _err,
+                             const std::string &_path,
+                             std::shared_ptr<VFSHost> _vfs,
+                             LockedItemCause _cause,
+                             std::shared_ptr<AsyncDialogResponse> _ctx);
 
     void OnFileVerificationFailed(const std::string &_path, VFSHost &_vfs);
     void OnStageChanged();

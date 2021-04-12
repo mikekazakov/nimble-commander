@@ -69,7 +69,10 @@ void Copying::SetupCallbacks()
         return OnCantDeleteSourceItem(_1, _2, _3);
     };
     j.m_OnCantRenameLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
-        return OnCantRenameLockedItem(_1, _2, _3);
+        return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Moving);
+    };
+    j.m_OnCantDeleteLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
+        return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Deletion);
     };
     // TODO: m_OnUnlockError
     j.m_OnNotADirectory = [this](const std::string &_1, VFSHost &_2) {
@@ -500,8 +503,10 @@ CB::NotADirectoryResolution Copying::OnNotADirectory(const std::string &_path, V
         return CB::NotADirectoryResolution::Stop;
 }
 
-CB::LockedItemResolution
-Copying::OnCantRenameLockedItem(int _err, const std::string &_path, VFSHost &_vfs)
+CB::LockedItemResolution Copying::OnLockedItemIssue(int _err,
+                                                    const std::string &_path,
+                                                    VFSHost &_vfs,
+                                                    LockedItemCause _cause)
 {
     if( m_SkipAll )
         return CB::LockedItemResolution::Skip;
@@ -520,7 +525,7 @@ Copying::OnCantRenameLockedItem(int _err, const std::string &_path, VFSHost &_vf
 
     const auto ctx = std::make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue(
-        [=, vfs = _vfs.shared_from_this()] { OnCantRenameLockedItemUI(_err, _path, vfs, ctx); });
+        [=, vfs = _vfs.shared_from_this()] { OnLockedItemIssueUI(_err, _path, vfs, _cause, ctx); });
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip ) {
@@ -541,15 +546,22 @@ Copying::OnCantRenameLockedItem(int _err, const std::string &_path, VFSHost &_vf
     }
 }
 
-void Copying::OnCantRenameLockedItemUI(int _err,
-                                       const std::string &_path,
-                                       [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
-                                       std::shared_ptr<AsyncDialogResponse> _ctx)
+void Copying::OnLockedItemIssueUI(int _err,
+                                  const std::string &_path,
+                                  [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
+                                  LockedItemCause _cause,
+                                  std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     const auto sheet = [[NCOpsGenericErrorDialog alloc] initWithContext:_ctx];
-
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = NSLocalizedString(@"Cannot rename a locked item", "");
+    switch( _cause ) {
+        case LockedItemCause::Moving:
+            sheet.message = NSLocalizedString(@"Cannot rename a locked item", "");
+            break;
+        case LockedItemCause::Deletion:
+            sheet.message = NSLocalizedString(@"Cannot delete a locked item", "");
+            break;
+    }
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.showApplyToAll = m_Job->IsSingleScannedItemProcessing() == false;
     sheet.errorNo = _err;

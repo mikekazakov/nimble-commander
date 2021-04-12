@@ -1069,6 +1069,89 @@ TEST_CASE(PREFIX "Renaming a locked native regular item")
     }
 }
 
+TEST_CASE(PREFIX "Moving a locked native regular item to a separate volume")
+{
+    // creating/mounting a .dmg is rather slow, so this is a sequential test instead of multiple
+    // sections.
+    TempTestDir dir;
+    TempTestDmg dmg(dir);
+    const auto host = TestEnv().vfs_native;
+    const auto filename = "old_name", new_filename = "old_name";
+    const auto path = dir.directory / filename, new_path = dmg.directory / new_filename;
+
+    auto exists = [](const std::string &_path) -> bool {
+        struct stat st;
+        return ::lstat(_path.c_str(), &st) == 0;
+    };
+    auto remove = [](const std::string &_path) -> bool {
+        return ::lchflags(_path.c_str(), 0) == 0 && ::remove(_path.c_str()) == 0;
+    };
+    auto run = [&](CopyingOptions &opts) -> std::unique_ptr<Copying> {
+        auto op = std::make_unique<Copying>(
+            FetchItems(dir.directory, {filename}, *host), new_path, host, opts);
+        op->Start();
+        op->Wait();
+        return op;
+    };
+    std::vector<std::function<void()>> setups{
+        [&] {
+            REQUIRE(close(creat(path.c_str(), 0755)) == 0);
+            REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+        },
+        [&] {
+            REQUIRE_NOTHROW(std::filesystem::create_symlink("some nonsense", path));
+            REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+        },
+        [&] {
+            REQUIRE_NOTHROW(std::filesystem::create_directory(path));
+            REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+        }};
+    for( auto &setup : setups ) {
+        CopyingOptions opts;
+        opts.docopy = false;
+
+        {
+            opts.locked_items_behaviour = CopyingOptions::LockedItemBehavior::Ask;
+            setup();
+            auto op = run(opts);
+            REQUIRE(op->State() == OperationState::Stopped);
+            REQUIRE(exists(path));
+            REQUIRE(exists(new_path));
+            REQUIRE(remove(path));
+            REQUIRE(remove(new_path));
+        }
+        {
+            opts.locked_items_behaviour = CopyingOptions::LockedItemBehavior::SkipAll;
+            setup();
+            auto op = run(opts);
+            REQUIRE(op->State() == OperationState::Completed);
+            REQUIRE(exists(path));
+            REQUIRE(exists(new_path));
+            REQUIRE(remove(path));
+            REQUIRE(remove(new_path));
+        }
+        {
+            opts.locked_items_behaviour = CopyingOptions::LockedItemBehavior::Stop;
+            setup();
+            auto op = run(opts);
+            REQUIRE(op->State() == OperationState::Stopped);
+            REQUIRE(exists(path));
+            REQUIRE(exists(new_path));
+            REQUIRE(remove(path));
+            REQUIRE(remove(new_path));
+        }
+        {
+            opts.locked_items_behaviour = CopyingOptions::LockedItemBehavior::UnlockAll;
+            setup();
+            auto op = run(opts);
+            REQUIRE(op->State() == OperationState::Completed);
+            REQUIRE(exists(path) == false);
+            REQUIRE(exists(new_path));
+            REQUIRE(remove(new_path));
+        }
+    }
+}
+
 static std::vector<std::byte> MakeNoise(size_t _size)
 {
     std::vector<std::byte> bytes(_size);

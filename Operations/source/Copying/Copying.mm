@@ -74,7 +74,9 @@ void Copying::SetupCallbacks()
     j.m_OnCantDeleteLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
         return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Deletion);
     };
-    // TODO: m_OnUnlockError
+    j.m_OnUnlockError = [this](int _1, const std::string &_2, VFSHost &_3) {
+        return OnUnlockError(_1, _2, _3);
+    };
     j.m_OnNotADirectory = [this](const std::string &_1, VFSHost &_2) {
         return OnNotADirectory(_1, _2);
     };
@@ -570,6 +572,34 @@ void Copying::OnLockedItemIssueUI(int _err,
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
     [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "") responseCode:NSModalResponseRetry];
     Show(sheet.window, _ctx);
+}
+
+CB::UnlockErrorResolution
+Copying::OnUnlockError(int _err, const std::string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll )
+        return CB::UnlockErrorResolution::Skip;
+    if( !IsInteractive() )
+        return CB::UnlockErrorResolution::Stop;
+
+    const auto ctx = std::make_shared<AsyncDialogResponse>();
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
+                      NSLocalizedString(@"Failed to unlock an item", ""),
+                      _err,
+                      {_vfs, _path},
+                      ctx);
+    WaitForDialogResponse(ctx);
+
+    if( ctx->response == NSModalResponseSkip )
+        return CB::UnlockErrorResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return CB::UnlockErrorResolution::Skip;
+    }
+    else if( ctx->response == NSModalResponseRetry )
+        return CB::UnlockErrorResolution::Retry;
+    else
+        return CB::UnlockErrorResolution::Stop;
 }
 
 void Copying::OnStageChanged()

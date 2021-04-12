@@ -73,6 +73,9 @@ private:
     OnCantDeleteSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     CB::NotADirectoryResolution OnNotADirectory(const std::string &_path, VFSHost &_vfs);
+    
+    CB::UnlockErrorResolution
+    OnUnlockError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     CB::LockedItemResolution OnLockedItemIssue(int _vfs_error,
                                                const std::string &_path,

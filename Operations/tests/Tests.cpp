@@ -9,6 +9,7 @@
 #include "Tests.h"
 #include "TestEnv.h"
 #include <Habanero/CommonPaths.h>
+#include <Habanero/dispatch_cpp.h>
 #include <boost/process.hpp>
 
 static auto g_TestDirPrefix = "_nc__operations__test_";

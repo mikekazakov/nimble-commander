@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "NCE.h"
@@ -132,9 +132,9 @@ TEST_CASE(PREFIX "LocalFTP, rename nas")
     REQUIRE(host->RemoveDirectory((g_LocalTestPath + "DirectoryName2").c_str(), 0) == 0);
 }
 
-TEST_CASE(PREFIX "listing, ftp.uk.debian.org")
+TEST_CASE(PREFIX "listing - ftp.uk.debian.org")
 {
-    auto path = "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/";
+    auto path = "/debian/dists/Debian10.9/main/installer-i386/20190702/images/netboot/";
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("ftp.uk.debian.org", "", "", path, 21, true));
     std::set<std::string> should_be = {"debian-installer",
@@ -153,12 +153,13 @@ TEST_CASE(PREFIX "listing, ftp.uk.debian.org")
     REQUIRE(should_be == in_fact);
 }
 
-TEST_CASE(PREFIX "seekread, ftp.uk.debian.org")
+TEST_CASE(PREFIX "seekread - ftp.uk.debian.org")
 {
     const auto host_name = "ftp.uk.debian.org";
-    const auto host_dir = "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/";
+    const auto host_dir = "/debian/dists/Debian10.9/main/installer-i386/20190702/images/netboot/";
     const auto host_path =
-        "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/netboot.tar.gz";
+        "/debian/dists/Debian10.9/main/installer-i386/20190702/images/netboot/netboot.tar.gz";
+
     const auto offset = 0x1D79AC0;
     const auto length = 16;
     const auto expected = "\xFA\x34\x58\xB3\x1B\x51\x25\x14\xFD\x80\x87\xB0\x08\x7A\x08\x17";
@@ -201,9 +202,9 @@ TEST_CASE(PREFIX "big files reading cancellation")
 {
     const auto host_name = "ftp.uk.debian.org";
     const auto host_dir =
-        "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/gtk/";
+        "/debian/dists/Debian10.9/main/installer-i386/20190702/images/netboot/gtk/";
     const auto host_path =
-        "/debian/dists/Debian10.7/main/installer-i386/20190702/images/netboot/gtk/mini.iso";
+        "/debian/dists/Debian10.9/main/installer-i386/20190702/images/netboot/gtk/mini.iso";
 
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(host_name, "", "", host_dir, 21, true));

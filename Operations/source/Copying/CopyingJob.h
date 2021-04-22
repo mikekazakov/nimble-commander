@@ -167,6 +167,9 @@ private:
     bool IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path) const;
     StepResult UnlockNativeItemNoFollow(const std::string &_path,
                                         vfs::NativeHost &_native_host) const;
+    
+    StepResult
+    OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     const std::vector<VFSListingItem> m_VFSListingItems;
     copying::SourceItems m_SourceItems;

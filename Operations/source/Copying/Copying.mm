@@ -74,6 +74,9 @@ void Copying::SetupCallbacks()
     j.m_OnCantDeleteLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
         return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Deletion);
     };
+    j.m_OnCantOpenLockedItem = [this](int _1, const std::string &_2, VFSHost &_3) {
+        return OnLockedItemIssue(_1, _2, _3, LockedItemCause::Opening);
+    };
     j.m_OnUnlockError = [this](int _1, const std::string &_2, VFSHost &_3) {
         return OnUnlockError(_1, _2, _3);
     };
@@ -562,6 +565,9 @@ void Copying::OnLockedItemIssueUI(int _err,
             break;
         case LockedItemCause::Deletion:
             sheet.message = NSLocalizedString(@"Cannot delete a locked item", "");
+            break;
+        case LockedItemCause::Opening:
+            sheet.message = NSLocalizedString(@"Cannot open a locked item", "");
             break;
     }
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];

@@ -1069,6 +1069,80 @@ TEST_CASE(PREFIX "Renaming a locked native regular item")
     }
 }
 
+TEST_CASE(PREFIX "Overwriting a locked native regular item")
+{
+    using LockedItemBehavior = CopyingOptions::LockedItemBehavior;
+    
+    TempTestDir dir;
+    const auto host = TestEnv().vfs_native;
+    const auto filename_src = "source";
+    const auto filename_dst = "destination";
+    const auto path_src = dir.directory / filename_src;
+    const auto path_dst = dir.directory / filename_dst;
+    const auto old_sz = ssize_t(76);
+    const auto new_sz = ssize_t(33);
+    
+    auto exists = [](const std::filesystem::path &_path) -> bool {
+        struct stat st;
+        return lstat(_path.c_str(), &st) == 0;
+    };
+    auto file_size = [](const std::filesystem::path &_path) -> ssize_t {
+        struct stat st;
+        return (lstat(_path.c_str(), &st) == 0 ) ? st.st_size : -1;
+    };
+    
+    struct TestCase {
+        bool do_copy;
+        CopyingOptions::LockedItemBehavior locked_behaviour;
+        OperationState state;
+        bool src_exist;
+        bool dst_exist;
+        ssize_t dst_size;
+    } test_cases[] = {
+        { true, LockedItemBehavior::Ask, OperationState::Stopped, true, true, old_sz  },
+        { true, LockedItemBehavior::SkipAll, OperationState::Completed, true, true, old_sz  },
+        { true, LockedItemBehavior::UnlockAll, OperationState::Completed, true, true, new_sz  },
+        { true, LockedItemBehavior::Stop, OperationState::Stopped, true, true, old_sz },
+        { false, LockedItemBehavior::Ask, OperationState::Stopped, true, true, old_sz  },
+        { false, LockedItemBehavior::SkipAll, OperationState::Completed, true, true, old_sz  },
+        { false, LockedItemBehavior::UnlockAll, OperationState::Completed, false, true, new_sz  },
+        { false, LockedItemBehavior::Stop, OperationState::Stopped, true, true, old_sz },
+    };
+    
+    for( const auto test_case: test_cases ) {
+        // create files to tinker with
+        REQUIRE(close(creat(path_src.c_str(), 0755)) == 0);
+        REQUIRE_NOTHROW(std::filesystem::resize_file(path_src, new_sz));
+        REQUIRE(close(creat(path_dst.c_str(), 0755)) == 0);
+        REQUIRE_NOTHROW(std::filesystem::resize_file(path_dst, old_sz));
+        REQUIRE(lchflags(path_dst.c_str(), UF_IMMUTABLE) == 0);
+
+        // perform an operation
+        CopyingOptions opts;
+        opts.docopy = test_case.do_copy;
+        opts.locked_items_behaviour = test_case.locked_behaviour;
+        opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
+        Copying op(FetchItems(dir.directory, {filename_src}, *host), path_dst, host, opts);
+        op.Start();
+        op.Wait();
+
+        // check what happened
+        REQUIRE(op.State() == test_case.state);
+        REQUIRE(exists(path_src) == test_case.src_exist);
+        REQUIRE(exists(path_dst) == test_case.dst_exist);
+        REQUIRE(file_size(path_dst) == test_case.dst_size);
+                        
+        // cleanup
+        if(exists(path_src)) {
+            REQUIRE(remove(path_src.c_str()) == 0);
+        }
+        if(exists(path_dst)) {
+            REQUIRE(lchflags(path_dst.c_str(), 0) == 0);
+            REQUIRE(remove(path_dst.c_str()) == 0);
+        }
+    }
+}
+
 TEST_CASE(PREFIX "Moving a locked native regular item to a separate volume")
 {
     // creating/mounting a .dmg is rather slow, so this is a sequential test instead of multiple

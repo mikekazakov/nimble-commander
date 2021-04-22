@@ -25,7 +25,8 @@ private:
     enum class LockedItemCause
     {
         Moving,
-        Deletion
+        Deletion,
+        Opening
     };
 
     virtual Job *GetJob() noexcept override;

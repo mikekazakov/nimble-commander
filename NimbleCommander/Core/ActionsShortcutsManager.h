@@ -9,11 +9,11 @@
 
 #include <Habanero/Observable.h>
 #include <Utility/ActionShortcut.h>
-#include <unordered_map>
 #include <robin_hood.h>
 #include <vector>
 #include <span>
 #include <string_view>
+#include <Cocoa/Cocoa.h>
 
 class ActionsShortcutsManager : ObservableBase
 {
@@ -38,13 +38,13 @@ public:
      * Return default if can't be found.
      * Overrides has priority over defaults.
      */
-    ShortCut ShortCutFromAction(const std::string &_action) const;
+    ShortCut ShortCutFromAction(std::string_view _action) const noexcept;
 
     /**
      * Return default if can't be found.
      * Overrides has priority over defaults.
      */
-    ShortCut ShortCutFromTag(int _tag) const;
+    ShortCut ShortCutFromTag(int _tag) const noexcept;
 
     /**
      * Return default if can't be found.
@@ -78,10 +78,10 @@ private:
     void ReadOverrideFromConfig();
     void WriteOverridesToConfig() const;
 
-    robin_hood::unordered_map<int, const char *> m_TagToAction;
-    robin_hood::unordered_map<std::string, int, StringHash, StringEqual> m_ActionToTag;
-    robin_hood::unordered_map<int, ShortCut> m_ShortCutsDefaults;
-    robin_hood::unordered_map<int, ShortCut> m_ShortCutsOverrides;
+    robin_hood::unordered_flat_map<int, const char *> m_TagToAction;
+    robin_hood::unordered_flat_map<std::string, int, StringHash, StringEqual> m_ActionToTag;
+    robin_hood::unordered_flat_map<int, ShortCut> m_ShortCutsDefaults;
+    robin_hood::unordered_flat_map<int, ShortCut> m_ShortCutsOverrides;
 };
 
 class ActionsShortcutsManager::ShortCutsUpdater

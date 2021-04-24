@@ -207,7 +207,8 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"viewer.toggle_hex",                               101'001},
     {"viewer.toggle_preview",                           101'002},
     {"viewer.show_settings",                            101'003},
-    {"viewer.show_goto",                                101'004}
+    {"viewer.show_goto",                                101'004},
+    {"viewer.refresh",                                  101'005}
 };
 
 [[clang::no_destroy]] static const std::vector<std::pair<const char*, const char8_t*>> g_DefaultShortcuts = {
@@ -395,11 +396,13 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"panel.show_tab_no_8",                                 u8""        },
     {"panel.show_tab_no_9",                                 u8""        },
     {"panel.show_tab_no_10",                                u8""        },
+    
     {"viewer.toggle_text",                                  u8"⌘1"      }, // cmd+1
     {"viewer.toggle_hex",                                   u8"⌘2"      }, // cmd+2
     {"viewer.toggle_preview",                               u8"⌘3"      }, // cmd+3
     {"viewer.show_settings",                                u8"⌘0"      }, // cmd+0
-    {"viewer.show_goto",                                    u8"⌘l"      }  // cmd+l
+    {"viewer.show_goto",                                    u8"⌘l"      }, // cmd+l
+    {"viewer.refresh",                                      u8"⌘r"      }, // cmd+r
 };
 // clang-format on
  
@@ -526,7 +529,7 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
 }
 
 ActionsShortcutsManager::ShortCut
-ActionsShortcutsManager::ShortCutFromAction(const std::string &_action) const
+ActionsShortcutsManager::ShortCutFromAction(std::string_view _action) const noexcept
 {
     int tag = TagFromAction(_action);
     if( tag <= 0 )
@@ -534,7 +537,7 @@ ActionsShortcutsManager::ShortCutFromAction(const std::string &_action) const
     return ShortCutFromTag(tag);
 }
 
-ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromTag(int _tag) const
+ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromTag(int _tag) const noexcept
 {
     auto sc_override = m_ShortCutsOverrides.find(_tag);
     if( sc_override != m_ShortCutsOverrides.end() )

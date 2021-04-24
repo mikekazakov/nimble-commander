@@ -7,7 +7,8 @@
 // this key should not exist in config defaults
 static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
 
- // the persistance holy grail is below, change ids only in emergency case:
+// clang-format off
+// the persistance holy grail is below, change ids only in emergency case:
 [[clang::no_destroy]] static const std::vector<std::pair<const char*,int>> g_ActionsTags = {
     {"menu.nimble_commander.about",                     10'000},
     {"menu.nimble_commander.preferences",               10'010},
@@ -42,7 +43,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"menu.file.add_to_favorites",                      11'140},
     {"menu.file.close_window",                          11'041},
     {"menu.file.close",                                 11'040},
-    {"menu.file.close_other_tabs",                      11'180},        
+    {"menu.file.close_other_tabs",                      11'180},
     {"menu.file.find",                                  11'050},
     {"menu.file.find_next",                             11'051},
     {"menu.file.find_with_spotlight",                   11'130},
@@ -206,7 +207,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"viewer.toggle_hex",                               101'001},
     {"viewer.toggle_preview",                           101'002},
     {"viewer.show_settings",                            101'003},
-    {"viewer.show_goto",                                101'004}        
+    {"viewer.show_goto",                                101'004}
 };
 
 [[clang::no_destroy]] static const std::vector<std::pair<const char*, const char8_t*>> g_DefaultShortcuts = {
@@ -243,7 +244,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"menu.file.add_to_favorites",                          u8"⌘b"      }, // cmd+b
     {"menu.file.close_window",                              u8"⇧⌘w"     }, // shift+cmd+w
     {"menu.file.close",                                     u8"⌘w"      }, // cmd+w
-    {"menu.file.close_other_tabs",                          u8"⌥⌘w"     }, // alt+cmd+w   
+    {"menu.file.close_other_tabs",                          u8"⌥⌘w"     }, // alt+cmd+w
     {"menu.file.find",                                      u8"⌘f"      }, // cmd+f
     {"menu.file.find_next",                                 u8"⌘g"      }, // cmd+g
     {"menu.file.find_with_spotlight",                       u8"⌥⌘f"     }, // alt+cmd+f
@@ -261,7 +262,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"menu.view.swap_panels",                               u8"⌘u"      }, // cmd+u
     {"menu.view.sync_panels",                               u8"⌥⌘u"     }, // alt+cmd+u
     {"menu.view.refresh",                                   u8"⌘r"      }, // cmd+r
-    {"menu.view.toggle_layout_1",                       	u8"^1"      }, // ctrl+1
+    {"menu.view.toggle_layout_1",                           u8"^1"      }, // ctrl+1
     {"menu.view.toggle_layout_2",                           u8"^2"      }, // ctrl+2
     {"menu.view.toggle_layout_3",                           u8"^3"      }, // ctrl+3
     {"menu.view.toggle_layout_4",                           u8"^4"      }, // ctrl+4
@@ -329,7 +330,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"menu.command.file_attributes",                        u8"^a"      }, // ctrl+a
     {"menu.command.copy_file_name",                         u8"⇧⌘c"     }, // shift+cmd+c
     {"menu.command.copy_file_path",                         u8"⌥⌘c"     }, // alt+cmd+c
-    {"menu.command.copy_file_directory",                    u8"⇧⌥⌘c"    }, // shift+alt+cmd+c    
+    {"menu.command.copy_file_directory",                    u8"⇧⌥⌘c"    }, // shift+alt+cmd+c
     {"menu.command.select_with_mask",                       u8"⌘="      }, // cmd+=
     {"menu.command.select_with_extension",                  u8"⌥⌘="     }, // alt+cmd+=
     {"menu.command.deselect_with_mask",                     u8"⌘-"      }, // cmd+-
@@ -400,46 +401,58 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"viewer.show_settings",                                u8"⌘0"      }, // cmd+0
     {"viewer.show_goto",                                    u8"⌘l"      }  // cmd+l
 };
+// clang-format on
+ 
+size_t ActionsShortcutsManager::StringHash::operator()(std::string_view _str) const noexcept
+{
+    return robin_hood::hash_bytes(_str.data(), _str.size());
+}
 
-ActionsShortcutsManager::ShortCutsUpdater::
-        ShortCutsUpdater(std::initializer_list<ShortCut*> _hotkeys,
-                         std::initializer_list<const char*> _actions )
+bool ActionsShortcutsManager::StringEqual::operator()(std::string_view _lhs,
+                                                      std::string_view _rhs) const noexcept
+{
+    return _lhs == _rhs;
+}
+
+ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(
+    std::initializer_list<ShortCut *> _hotkeys,
+    std::initializer_list<const char *> _actions)
 {
     if( _hotkeys.size() != _actions.size() )
         throw std::logic_error("_hotkeys.size() != _actions.size()");
-    
+
     auto &am = ActionsShortcutsManager::Instance();
     for( int i = 0, e = static_cast<int>(_hotkeys.size()); i != e; ++i )
-        m_Pets.emplace_back( _hotkeys.begin()[i], am.TagFromAction(_actions.begin()[i]) );
-    m_Ticket = am.ObserveChanges( [this]{ CheckAndUpdate(); } );
-    
+        m_Pets.emplace_back(_hotkeys.begin()[i], am.TagFromAction(_actions.begin()[i]));
+    m_Ticket = am.ObserveChanges([this] { CheckAndUpdate(); });
+
     CheckAndUpdate();
 }
 
 void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
 {
     auto &am = ActionsShortcutsManager::Instance();
-    for( auto &i: m_Pets )
+    for( auto &i : m_Pets )
         *i.first = am.ShortCutFromTag(i.second);
 }
 
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
-    for( auto &p: g_ActionsTags) {
+    for( auto &p : g_ActionsTags ) {
         // safety checks against malformed g_ActionsTags
-        assert( m_TagToAction.count(p.second) == 0 );   
-        assert( m_ActionToTag.count(p.first) == 0 );
-        
+        assert(m_TagToAction.count(p.second) == 0);
+        assert(m_ActionToTag.count(p.first) == 0);
+
         m_TagToAction[p.second] = p.first;
         m_ActionToTag[p.first] = p.second;
     }
 
-    for( auto &d: g_DefaultShortcuts) {
-        auto i = m_ActionToTag.find( d.first );
+    for( auto &d : g_DefaultShortcuts ) {
+        auto i = m_ActionToTag.find(d.first);
         if( i != end(m_ActionToTag) )
-            m_ShortCutsDefaults[i->second] = reinterpret_cast<const char*>(d.second);
+            m_ShortCutsDefaults[i->second] = reinterpret_cast<const char *>(d.second);
     }
-    
+
     ReadOverrideFromConfig();
 }
 
@@ -449,18 +462,10 @@ ActionsShortcutsManager &ActionsShortcutsManager::Instance()
     return *manager;
 }
 
-int ActionsShortcutsManager::TagFromAction(const std::string &_action) const
+int ActionsShortcutsManager::TagFromAction(std::string_view _action) const noexcept
 {
     auto it = m_ActionToTag.find(_action);
-    if( it != end(m_ActionToTag) )
-        return it->second;
-    return -1;
-}
-
-int ActionsShortcutsManager::TagFromAction(const char *_action) const
-{
-    auto it = m_ActionToTag.find(_action);
-    if( it != end(m_ActionToTag) )
+    if( it != std::end(m_ActionToTag) )
         return it->second;
     return -1;
 }
@@ -476,7 +481,7 @@ std::string ActionsShortcutsManager::ActionFromTag(int _tag) const
 void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
 {
     NSArray *array = _menu.itemArray;
-    for( NSMenuItem *i: array ) {
+    for( NSMenuItem *i : array ) {
         if( i.submenu != nil ) {
             SetMenuShortCuts(i.submenu);
         }
@@ -507,24 +512,24 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
 {
     using namespace rapidjson;
 
-    auto v = GlobalConfig().Get( g_OverridesConfigPath );
+    auto v = GlobalConfig().Get(g_OverridesConfigPath);
     if( v.GetType() != kObjectType )
         return;
-    
+
     m_ShortCutsOverrides.clear();
     for( auto i = v.MemberBegin(), e = v.MemberEnd(); i != e; ++i )
         if( i->name.GetType() == kStringType && i->value.GetType() == kStringType ) {
-            auto att = m_ActionToTag.find( i->name.GetString() );
+            auto att = m_ActionToTag.find(i->name.GetString());
             if( att != m_ActionToTag.end() )
                 m_ShortCutsOverrides[att->second] = i->value.GetString();
         }
 }
 
-ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction
-        (const std::string &_action) const
+ActionsShortcutsManager::ShortCut
+ActionsShortcutsManager::ShortCutFromAction(const std::string &_action) const
 {
     int tag = TagFromAction(_action);
-    if(tag <= 0)
+    if( tag <= 0 )
         return {};
     return ShortCutFromTag(tag);
 }
@@ -532,37 +537,37 @@ ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction
 ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromTag(int _tag) const
 {
     auto sc_override = m_ShortCutsOverrides.find(_tag);
-    if(sc_override != m_ShortCutsOverrides.end())
+    if( sc_override != m_ShortCutsOverrides.end() )
         return sc_override->second;
-    
+
     auto sc_default = m_ShortCutsDefaults.find(_tag);
-    if(sc_default != m_ShortCutsDefaults.end())
+    if( sc_default != m_ShortCutsDefaults.end() )
         return sc_default->second;
-    
+
     return {};
 }
 
 ActionsShortcutsManager::ShortCut ActionsShortcutsManager::DefaultShortCutFromTag(int _tag) const
 {
     auto sc_default = m_ShortCutsDefaults.find(_tag);
-    if(sc_default != m_ShortCutsDefaults.end())
+    if( sc_default != m_ShortCutsDefaults.end() )
         return sc_default->second;
-    
+
     return {};
 }
 
-bool ActionsShortcutsManager::SetShortCutOverride(const std::string &_action, const ShortCut& _sc)
+bool ActionsShortcutsManager::SetShortCutOverride(const std::string &_action, const ShortCut &_sc)
 {
     const auto tag = TagFromAction(_action);
     if( tag <= 0 )
         return false;
-    
+
     if( m_ShortCutsDefaults[tag] == _sc ) {
         // hotkey is same as the default one
         if( m_ShortCutsOverrides.count(tag) ) {
             // if something was written as override - erase it
-            m_ShortCutsOverrides.erase( tag );
-            
+            m_ShortCutsOverrides.erase(tag);
+
             // immediately write to config file
             WriteOverridesToConfig();
             FireObservers();
@@ -570,14 +575,14 @@ bool ActionsShortcutsManager::SetShortCutOverride(const std::string &_action, co
         }
         return false;
     }
-    
+
     const auto current_override = m_ShortCutsOverrides.find(tag);
     if( current_override != end(m_ShortCutsOverrides) )
         if( current_override->second == _sc )
             return false; // nothing new, it's the same as currently in overrides
 
     m_ShortCutsOverrides[tag] = _sc;
-    
+
     // immediately write to config file
     WriteOverridesToConfig();
     FireObservers();
@@ -594,18 +599,17 @@ void ActionsShortcutsManager::RevertToDefaults()
 void ActionsShortcutsManager::WriteOverridesToConfig() const
 {
     using namespace rapidjson;
-    nc::config::Value overrides{ kObjectType };
-    
-    for( auto &i: g_ActionsTags ) {
+    nc::config::Value overrides{kObjectType};
+
+    for( auto &i : g_ActionsTags ) {
         auto scover = m_ShortCutsOverrides.find(i.second);
         if( scover != end(m_ShortCutsOverrides) )
-            overrides.AddMember(
-                                nc::config::MakeStandaloneString(i.first),
+            overrides.AddMember(nc::config::MakeStandaloneString(i.first),
                                 nc::config::MakeStandaloneString(scover->second.ToPersString()),
                                 nc::config::g_CrtAllocator);
     }
-    
-    GlobalConfig().Set( g_OverridesConfigPath, overrides );
+
+    GlobalConfig().Set(g_OverridesConfigPath, overrides);
 }
 
 std::span<const std::pair<const char *, int>> ActionsShortcutsManager::AllShortcuts() const
@@ -613,8 +617,8 @@ std::span<const std::pair<const char *, int>> ActionsShortcutsManager::AllShortc
     return g_ActionsTags;
 }
 
-ActionsShortcutsManager::ObservationTicket ActionsShortcutsManager::
-    ObserveChanges(std::function<void()> _callback)
+ActionsShortcutsManager::ObservationTicket
+ActionsShortcutsManager::ObserveChanges(std::function<void()> _callback)
 {
     return ObservableBase::AddObserver(_callback);
 }

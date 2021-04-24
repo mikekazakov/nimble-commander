@@ -13,7 +13,7 @@
 #include <robin_hood.h>
 #include <vector>
 #include <span>
-#include <Cocoa/Cocoa.h>
+#include <string_view>
 
 class ActionsShortcutsManager : ObservableBase
 {
@@ -27,8 +27,7 @@ public:
     /**
      * Return -1 on if tag corresponing _action wasn't found.
      */
-    int TagFromAction(const std::string &_action) const;
-    int TagFromAction(const char *_action) const;
+    int TagFromAction(std::string_view _action) const noexcept;
 
     /**
      * return "" on if action corresponing _tag wasn't found.
@@ -64,6 +63,15 @@ public:
     ObservationTicket ObserveChanges(std::function<void()> _callback);
 
 private:
+    struct StringHash {
+        using is_transparent = void;
+        size_t operator()(std::string_view _str) const noexcept;
+    };
+    struct StringEqual {
+        using is_transparent = void;
+        bool operator()(std::string_view _lhs, std::string_view _rhs) const noexcept;
+    };
+
     ActionsShortcutsManager();
     ActionsShortcutsManager(const ActionsShortcutsManager &) = delete;
 
@@ -71,7 +79,7 @@ private:
     void WriteOverridesToConfig() const;
 
     robin_hood::unordered_map<int, const char *> m_TagToAction;
-    robin_hood::unordered_map<std::string, int> m_ActionToTag;
+    robin_hood::unordered_map<std::string, int, StringHash, StringEqual> m_ActionToTag;
     robin_hood::unordered_map<int, ShortCut> m_ShortCutsDefaults;
     robin_hood::unordered_map<int, ShortCut> m_ShortCutsOverrides;
 };

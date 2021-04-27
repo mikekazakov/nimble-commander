@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ProcessSheetController.h"
 #include <Utility/CocoaAppearanceManager.h>
 #include <Habanero/dispatch_cpp.h>
@@ -31,13 +31,12 @@ static NSBundle *Bundle() noexcept
     return bundle;
 }
 
-@interface ProcessSheetController()
-@property (nonatomic) IBOutlet NSTextField *titleTextField;
-@property (nonatomic) IBOutlet NSProgressIndicator *progressIndicator;
+@interface ProcessSheetController ()
+@property(nonatomic) IBOutlet NSTextField *titleTextField;
+@property(nonatomic) IBOutlet NSProgressIndicator *progressIndicator;
 @end
 
-@implementation ProcessSheetController
-{
+@implementation ProcessSheetController {
     bool m_Running;
     bool m_UserCancelled;
     bool m_ClientClosed;
@@ -49,7 +48,7 @@ static NSBundle *Bundle() noexcept
 - (id)init
 {
     // NEED EVEN MOAR GCD HACKS!!
-    if(dispatch_is_main_queue()) {
+    if( dispatch_is_main_queue() ) {
         const auto nib_path = [Bundle() pathForResource:@"ProcessSheetController" ofType:@"nib"];
         self = [super initWithWindowNibPath:nib_path owner:self];
         (void)self.window;
@@ -57,33 +56,32 @@ static NSBundle *Bundle() noexcept
     else {
         __block ProcessSheetController *me = self;
         dispatch_sync(dispatch_get_main_queue(), ^{
-            const auto nib_path = [Bundle() pathForResource:@"ProcessSheetController" ofType:@"nib"];
-            me = [super initWithWindowNibPath:nib_path owner:me];
-            (void)me.window;
+          const auto nib_path = [Bundle() pathForResource:@"ProcessSheetController" ofType:@"nib"];
+          me = [super initWithWindowNibPath:nib_path owner:me];
+          (void)me.window;
         });
         self = me;
     }
-    if(self) {
+    if( self ) {
         m_Progress = 0.;
-        self.window.movableByWindowBackground = true;
         m_Running = false;
         m_UserCancelled = false;
         m_ClientClosed = false;
     }
-    return self;    
+    return self;
 }
 
-- (void) windowDidLoad
+- (void)windowDidLoad
 {
     [super windowDidLoad];
+    self.window.movableByWindowBackground = true;
     nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 }
 
-
-- (IBAction)OnCancel:(id)[[maybe_unused]]_sender
+- (IBAction)OnCancel:(id) [[maybe_unused]] _sender
 {
     m_UserCancelled = true;
-    if(self.OnCancelOperation)
+    if( self.OnCancelOperation )
         self.OnCancelOperation();
 
     [self Discard];
@@ -92,11 +90,11 @@ static NSBundle *Bundle() noexcept
 - (void)Show
 {
     // consider using modal dialog here.
-    
-    if(m_Running == true)
+
+    if( m_Running == true )
         return;
-    dispatch_to_main_queue_after(g_ShowDelay,[=]{
-        if(m_ClientClosed)
+    dispatch_to_main_queue_after(g_ShowDelay, [=] {
+        if( m_ClientClosed )
             return;
         [self showWindow:self];
         m_Running = true;
@@ -109,37 +107,34 @@ static NSBundle *Bundle() noexcept
     [self Discard];
 }
 
-- (void) Discard
+- (void)Discard
 {
-    if(m_Running == false)
+    if( m_Running == false )
         return;
-    
-    dispatch_to_main_queue([=]{ [self.window close]; });
+
+    dispatch_to_main_queue([=] { [self.window close]; });
     m_Running = false;
 }
 
-- (void) setTitle:(NSString *)title
+- (void)setTitle:(NSString *)title
 {
     if( dispatch_is_main_queue() ) {
         self.titleTextField.stringValue = title;
     }
     else {
-        dispatch_async(dispatch_get_main_queue(), [=]{
-            self.titleTextField.stringValue = title;    
-        });
+        dispatch_async(dispatch_get_main_queue(), [=] { self.titleTextField.stringValue = title; });
     }
 }
 
-- (NSString*) title
+- (NSString *)title
 {
     if( dispatch_is_main_queue() ) {
         return self.titleTextField.stringValue;
     }
     else {
         NSString *result = nil;
-        dispatch_sync(dispatch_get_main_queue(), [=, &result]{
-            result = self.titleTextField.stringValue; 
-        });        
+        dispatch_sync(dispatch_get_main_queue(),
+                      [=, &result] { result = self.titleTextField.stringValue; });
         return result;
     }
 }
@@ -148,14 +143,13 @@ static NSBundle *Bundle() noexcept
 {
     if( progress == m_Progress )
         return;
-    m_Progress = progress; 
+    m_Progress = progress;
     if( dispatch_is_main_queue() ) {
-        self.progressIndicator.doubleValue = m_Progress; 
+        self.progressIndicator.doubleValue = m_Progress;
     }
     else {
-        dispatch_async(dispatch_get_main_queue(), [=]{
-            self.progressIndicator.doubleValue = m_Progress;    
-        });
+        dispatch_async(dispatch_get_main_queue(),
+                       [=] { self.progressIndicator.doubleValue = m_Progress; });
     }
 }
 

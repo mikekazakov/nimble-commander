@@ -1,3 +1,4 @@
+// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "TextModeWorkingSet.h"

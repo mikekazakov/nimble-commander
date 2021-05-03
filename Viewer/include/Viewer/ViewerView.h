@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/Encodings.h>
@@ -6,6 +6,7 @@
 #include "Modes.h"
 #include "TextModeViewDelegate.h"
 #include "HexModeViewDelegate.h"
+#include <memory>
 
 namespace nc::utility {
     class TemporaryFileStorage;
@@ -26,10 +27,14 @@ namespace nc::viewer {
                         config:(const nc::config::Config&)_config
                          theme:(std::unique_ptr<nc::viewer::Theme>)_theme;
 
-- (void) SetFile:(nc::vfs::FileWindow*) _file;
-- (void) SetKnownFile:(nc::vfs::FileWindow*) _file
+- (void) setFile:(std::shared_ptr<nc::vfs::FileWindow>) _file;
+- (void) setKnownFile:(std::shared_ptr<nc::vfs::FileWindow>) _file
              encoding:(int)_encoding
                  mode:(nc::viewer::ViewMode)_mode;
+
+// informs NCViewerView that a file window was changed completely, presumably reloaded afresh.
+// the view should try to preserve its current visual state while rebuilding its backend structures.
+- (void)replaceFile:(std::shared_ptr<nc::vfs::FileWindow>) _file;
 
 /**
  * This will reset the current viewer state.

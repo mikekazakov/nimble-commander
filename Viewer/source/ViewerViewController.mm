@@ -51,6 +51,24 @@ static int InvertBitFlag(int _value, int _flag)
 }
 @end
 
+namespace nc::viewer {
+
+struct BackgroundFileOpener {
+    int Open(VFSHostPtr _vfs,
+             const std::string &_path,
+             const nc::config::Config &_config,
+             int _window_size);
+
+    VFSFilePtr original_file;
+    VFSSeqToRandomROWrapperFilePtr seq_wrapper;
+    VFSFilePtr work_file;
+    std::shared_ptr<nc::vfs::FileWindow> viewer_file_window;
+    std::shared_ptr<nc::vfs::FileWindow> search_file_window;
+    std::shared_ptr<nc::vfs::SearchInFile> search_in_file;
+};
+
+}
+
 @interface NCViewerViewController ()
 
 @property(nonatomic) IBOutlet NSPopover *goToPositionPopover;
@@ -67,13 +85,13 @@ static int InvertBitFlag(int _value, int _flag)
     VFSFilePtr m_OriginalFile;                   // may be not opened if SeqWrapper is used
     VFSSeqToRandomROWrapperFilePtr m_SeqWrapper; // may be nullptr if underlying VFS supports ReadAt
     VFSFilePtr m_WorkFile;                       // the one actually used
-    std::unique_ptr<nc::vfs::FileWindow> m_ViewerFileWindow;
-    std::unique_ptr<nc::vfs::FileWindow> m_SearchFileWindow;
-    std::unique_ptr<nc::vfs::SearchInFile> m_SearchInFile;
+    std::shared_ptr<nc::vfs::FileWindow> m_ViewerFileWindow;
+    std::shared_ptr<nc::vfs::FileWindow> m_SearchFileWindow;
+    std::shared_ptr<nc::vfs::SearchInFile> m_SearchInFile;
     SerialQueue m_SearchInFileQueue;
     nc::viewer::History *m_History;
     nc::config::Config *m_Config;
-    std::function<nc::utility::ActionShortcut(const std::string &_name)> m_Shortcuts;
+    std::function<nc::utility::ActionShortcut(std::string_view _name)> m_Shortcuts;
 
     // UI
     NCViewerView *m_View;
@@ -102,7 +120,7 @@ static int InvertBitFlag(int _value, int _flag)
 - (instancetype)initWithHistory:(nc::viewer::History &)_history
                          config:(nc::config::Config &)_config
               shortcutsProvider:
-                  (std::function<nc::utility::ActionShortcut(const std::string &_name)>)_shortcuts
+                  (std::function<nc::utility::ActionShortcut(std::string_view _name)>)_shortcuts
 {
     self = [super init];
     if( self ) {
@@ -160,134 +178,19 @@ static int InvertBitFlag(int _value, int _flag)
 {
     dispatch_assert_background_queue();
 
-    VFSFilePtr origin_file;
-    if( m_VFS->CreateFile(m_Path.c_str(), origin_file, 0) < 0 )
+    BackgroundFileOpener opener;
+    const int open_err = opener.Open(m_VFS, m_Path, *m_Config, self.fileWindowSize);
+    if( open_err != VFSError::Ok )
         return false;
-
-    VFSFilePtr work_file;
-    if( origin_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {
-        // we need to read a file into temporary mem/file storage to access it randomly
-        ProcessSheetController *proc = [ProcessSheetController new];
-        proc.title = NSLocalizedString(@"Opening file...",
-                                       "Title for process sheet when opening a vfs file");
-        [proc Show];
-
-        auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(origin_file);
-        int res = wrapper->Open(
-            VFSFlags::OF_Read | VFSFlags::OF_ShLock,
-            [=] { return proc.userCancelled; },
-            [=](uint64_t _bytes, uint64_t _total) {
-                proc.progress = double(_bytes) / double(_total);
-            });
-        [proc Close];
-        if( res != 0 )
-            return false;
-
-        m_SeqWrapper = wrapper;
-        work_file = wrapper;
-    }
-    else { // just open input file
-        if( origin_file->Open(VFSFlags::OF_Read) < 0 )
-            return false;
-        work_file = origin_file;
-    }
-    m_OriginalFile = origin_file;
-    m_WorkFile = work_file;
-    m_GlobalFilePath = work_file->ComposeVerbosePath();
-
-    auto window = std::make_unique<nc::vfs::FileWindow>();
-    if( window->Attach(work_file, [self fileWindowSize]) != 0 )
-        return false;
-    m_ViewerFileWindow = std::move(window);
-
-    window = std::make_unique<nc::vfs::FileWindow>();
-    if( window->Attach(work_file) != 0 )
-        return false;
-    m_SearchFileWindow = move(window);
-
-    using nc::vfs::SearchInFile;
-    m_SearchInFile = std::make_unique<SearchInFile>(*m_SearchFileWindow);
-
-    const auto search_options = [&] {
-        using Options = SearchInFile::Options;
-        auto opts = Options::None;
-        if( m_Config->GetBool(g_ConfigSearchCaseSensitive) )
-            opts |= Options::CaseSensitive;
-        if( m_Config->GetBool(g_ConfigSearchForWholePhrase) )
-            opts |= Options::FindWholePhrase;
-        return opts;
-    }();
-    m_SearchInFile->SetSearchOptions(search_options);
-
+    m_OriginalFile = std::move(opener.original_file);
+    m_SeqWrapper = std::move(opener.seq_wrapper);
+    m_WorkFile = std::move(opener.work_file);
+    m_ViewerFileWindow = std::move(opener.viewer_file_window);
+    m_SearchFileWindow = std::move(opener.search_file_window);
+    m_SearchInFile = std::move(opener.search_in_file);
+    m_GlobalFilePath = m_WorkFile->ComposeVerbosePath();
     [self buildTitle];
-
-    return true;
-}
-
-- (bool)performSyncOpening
-{
-    dispatch_assert_main_queue();
-    VFSFilePtr origin_file;
-    if( m_VFS->CreateFile(m_Path.c_str(), origin_file, 0) < 0 )
-        return false;
-
-    VFSFilePtr work_file;
-    if( origin_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {
-        // we need to read a file into temporary mem/file storage to access it randomly
-        ProcessSheetController *proc = [ProcessSheetController new];
-        proc.title = NSLocalizedString(@"Opening file...",
-                                       "Title for process sheet when opening a vfs file");
-        [proc Show];
-
-        auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(origin_file);
-        int res = wrapper->Open(
-            VFSFlags::OF_Read | VFSFlags::OF_ShLock,
-            [=] { return proc.userCancelled; },
-            [=](uint64_t _bytes, uint64_t _total) {
-                proc.progress = double(_bytes) / double(_total);
-            });
-        [proc Close];
-        if( res != 0 )
-            return false;
-
-        m_SeqWrapper = wrapper;
-        work_file = wrapper;
-    }
-    else { // just open input file
-        if( origin_file->Open(VFSFlags::OF_Read) < 0 )
-            return false;
-        work_file = origin_file;
-    }
-    m_OriginalFile = origin_file;
-    m_WorkFile = work_file;
-    m_GlobalFilePath = work_file->ComposeVerbosePath();
-
-    auto window = std::make_unique<nc::vfs::FileWindow>();
-    if( window->Attach(work_file, [self fileWindowSize]) != 0 )
-        return false;
-    m_ViewerFileWindow = move(window);
-
-    window = std::make_unique<nc::vfs::FileWindow>();
-    if( window->Attach(work_file) != 0 )
-        return false;
-    m_SearchFileWindow = move(window);
-
-    using nc::vfs::SearchInFile;
-    m_SearchInFile = std::make_unique<SearchInFile>(*m_SearchFileWindow);
-
-    const auto search_options = [&] {
-        using Options = SearchInFile::Options;
-        auto opts = Options::None;
-        if( m_Config->GetBool(g_ConfigSearchCaseSensitive) )
-            opts |= Options::CaseSensitive;
-        if( m_Config->GetBool(g_ConfigSearchForWholePhrase) )
-            opts |= Options::FindWholePhrase;
-        return opts;
-    }();
-    m_SearchInFile->SetSearchOptions(search_options);
-
-    [self buildTitle];
-
+        
     return true;
 }
 
@@ -300,12 +203,12 @@ static int InvertBitFlag(int _value, int _flag)
     if( auto info = m_History->EntryByPath(m_GlobalFilePath) ) {
         auto options = m_History->Options();
         if( options.encoding && options.mode ) {
-            [m_View SetKnownFile:m_ViewerFileWindow.get()
+            [m_View setKnownFile:m_ViewerFileWindow
                         encoding:info->encoding
                             mode:info->view_mode];
         }
         else {
-            [m_View SetFile:m_ViewerFileWindow.get()];
+            [m_View setFile:m_ViewerFileWindow];
             if( options.encoding )
                 m_View.encoding = info->encoding;
             if( options.mode )
@@ -320,7 +223,7 @@ static int InvertBitFlag(int _value, int _flag)
             m_View.selectionInFile = info->selection;
     }
     else {
-        [m_View SetFile:m_ViewerFileWindow.get()];
+        [m_View setFile:m_ViewerFileWindow];
         int encoding = 0;
         if( m_Config->GetBool(g_ConfigRespectComAppleTextEncoding) &&
             (encoding = EncodingFromXAttr(m_OriginalFile)) != encodings::ENCODING_INVALID )
@@ -715,12 +618,54 @@ static int InvertBitFlag(int _value, int _flag)
     return m_WorkFile != nullptr;
 }
 
+- (void) commitRefresh:(BackgroundFileOpener&)_opener
+{
+    dispatch_assert_main_queue();
+          
+    [m_View replaceFile:_opener.viewer_file_window];
+        
+    m_OriginalFile = std::move(_opener.original_file);
+    m_SeqWrapper = std::move(_opener.seq_wrapper);
+    m_WorkFile = std::move(_opener.work_file);
+    m_ViewerFileWindow = std::move(_opener.viewer_file_window);
+    m_SearchFileWindow = std::move(_opener.search_file_window);
+    m_SearchInFile = std::move(_opener.search_in_file);
+
+    m_FileSizeLabel.stringValue = ByteCountFormatter::Instance().ToNSString(
+        m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
+}
+
+- (void)onRefresh
+{
+    __weak NCViewerViewController *weak_self = self;
+    dispatch_to_background([weak_self] {
+        NCViewerViewController *strong_self = weak_self;
+        if( !strong_self )
+            return;
+
+        auto opener = std::make_unique<BackgroundFileOpener>();
+        const int open_err = opener->Open(strong_self->m_VFS,
+                                          strong_self->m_Path,
+                                          *strong_self->m_Config,
+                                          strong_self.fileWindowSize);
+        if( open_err != VFSError::Ok )
+            return;
+
+        dispatch_to_main_queue([weak_self, opener = std::move(opener)] {
+            NCViewerViewController *strong_self = weak_self;
+            if( !strong_self )
+                return;
+            [strong_self commitRefresh:*opener];
+        });
+    });
+}
+
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
     if( const auto chars = [_event charactersIgnoringModifiers]; chars.length == 1 ) {
         const auto unicode = [chars characterAtIndex:0];
         const auto modifiers = [_event modifierFlags];
-        const auto is = [&](const std::string &_action_name) {
+        const auto is = [&](std::string_view _action_name) {
             return m_Shortcuts(_action_name).IsKeyDown(unicode, modifiers);
         };
         if( is("viewer.toggle_text") ) {
@@ -743,8 +688,78 @@ static int InvertBitFlag(int _value, int _flag)
             [self.positionButton performClick:self];
             return true;
         }
+        if( is("viewer.refresh") ) {
+            [self onRefresh];
+            return true;
+        }
     }
     return false;
 }
 
 @end
+
+namespace nc::viewer {
+
+int BackgroundFileOpener::Open(VFSHostPtr _vfs,
+                               const std::string &_path,
+                               const nc::config::Config &_config,
+                               int _window_size)
+{
+    dispatch_assert_background_queue();
+
+    if( int vfs_err = _vfs->CreateFile(_path.c_str(), original_file, 0); vfs_err != VFSError::Ok )
+        return vfs_err;
+
+    if( original_file->GetReadParadigm() < VFSFile::ReadParadigm::Random ) {
+        // we need to read a file into temporary mem/file storage to access it randomly
+        ProcessSheetController *proc = [ProcessSheetController new];
+        proc.title = NSLocalizedString(@"Opening file...",
+                                       "Title for process sheet when opening a vfs file");
+        [proc Show];
+
+        auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(original_file);
+        const int open_err = wrapper->Open(
+            VFSFlags::OF_Read | VFSFlags::OF_ShLock,
+            [=] { return proc.userCancelled; },
+            [=](uint64_t _bytes, uint64_t _total) {
+                proc.progress = double(_bytes) / double(_total);
+            });
+        [proc Close];
+        if( open_err != VFSError::Ok )
+            return open_err;
+
+        seq_wrapper = wrapper;
+        work_file = wrapper;
+    }
+    else { // just open input file
+        if( int open_err = original_file->Open(VFSFlags::OF_Read); open_err != VFSError::Ok )
+            return open_err;
+        work_file = original_file;
+    }
+    viewer_file_window = std::make_shared<nc::vfs::FileWindow>();
+    if( int attach_err = viewer_file_window->Attach(work_file, _window_size);
+        attach_err != VFSError::Ok )
+        return attach_err;
+
+    search_file_window = std::make_shared<nc::vfs::FileWindow>();
+    if( int attach_err = search_file_window->Attach(work_file); attach_err != 0 )
+        return attach_err;
+
+    using nc::vfs::SearchInFile;
+    search_in_file = std::make_shared<SearchInFile>(*search_file_window);
+
+    const auto search_options = [&] {
+        using Options = SearchInFile::Options;
+        auto opts = Options::None;
+        if( _config.GetBool(g_ConfigSearchCaseSensitive) )
+            opts |= Options::CaseSensitive;
+        if( _config.GetBool(g_ConfigSearchForWholePhrase) )
+            opts |= Options::FindWholePhrase;
+        return opts;
+    }();
+    search_in_file->SetSearchOptions(search_options);
+
+    return VFSError::Ok;
+}
+
+}

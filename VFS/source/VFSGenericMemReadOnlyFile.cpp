@@ -127,4 +127,9 @@ int GenericMemReadOnlyFile::Close()
     return 0;
 }
 
+std::shared_ptr<VFSFile> GenericMemReadOnlyFile::Clone() const
+{
+    return std::make_shared<GenericMemReadOnlyFile>(Path(), Host(), m_Mem, m_Size);
+}
+
 } // namespace nc::vfs

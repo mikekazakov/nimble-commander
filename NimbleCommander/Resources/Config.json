@@ -381,7 +381,12 @@
         "saveFilePosition":     true,
         "saveFileWrapping":     true,
         "saveFileSelection":    true,
-        "maximumHistoryEntries": 256
+        "maximumHistoryEntries": 256,
+        
+        /**
+         * Should keep the scroll at the bottom when a file is reloaded.
+         */
+        "stickToBottomOnRefresh": true
     },
     
     /**

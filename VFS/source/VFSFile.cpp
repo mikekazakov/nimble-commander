@@ -90,7 +90,7 @@ bool VFSFile::Eof() const
 }
 std::shared_ptr<VFSFile> VFSFile::Clone() const
 {
-    return 0;
+    return {};
 }
 
 std::string VFSFile::ComposeVerbosePath() const

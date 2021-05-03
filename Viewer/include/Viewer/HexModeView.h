@@ -11,7 +11,7 @@
 
 - (instancetype)initWithFrame:(NSRect)_frame NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)_frame
-                      backend:(const nc::viewer::DataBackend&)_backend
+                      backend:(std::shared_ptr<const nc::viewer::DataBackend>)_backend
                         theme:(const nc::viewer::Theme&)_theme;
 
 @property (nonatomic) id<NCViewerHexModeViewDelegate> delegate;

@@ -21,7 +21,7 @@ static std::shared_ptr<const TextModeWorkingSet>
 BuildWorkingSetForBackendState(const DataBackend &_backend);
 
 @implementation NCViewerHexModeView {
-    const DataBackend *m_Backend;
+    std::shared_ptr<const nc::viewer::DataBackend> m_Backend;
     const Theme *m_Theme;
     NSScrollView *m_ScrollView;
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
@@ -32,12 +32,12 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
 }
 
 - (instancetype)initWithFrame:(NSRect)_frame
-                      backend:(const DataBackend &)_backend
+                      backend:(std::shared_ptr<const nc::viewer::DataBackend>)_backend
                         theme:(const nc::viewer::Theme &)_theme
 {
     if( self = [super initWithFrame:_frame] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
-        m_Backend = &_backend;
+        m_Backend = _backend;
         m_Theme = &_theme;
         m_FontInfo = FontGeometryInfo{(__bridge CTFontRef)m_Theme->Font()};
         m_WorkingSet = MakeEmptyWorkingSet();
@@ -103,12 +103,19 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
     [self rebuildWorkingSetAndFrame];
 }
 
+- (void)attachToNewBackend:(std::shared_ptr<const nc::viewer::DataBackend>)_backend
+{
+    m_Backend = _backend;
+    [self rebuildWorkingSetAndFrame];
+}
+
 - (void)rebuildWorkingSetAndFrame
 {
     m_WorkingSet = BuildWorkingSetForBackendState(*m_Backend);
 
     m_Frame = [self buildFrame];
 
+    m_Layout->SetFileSize(m_Backend->FileSize());
     m_Layout->SetFrame(m_Frame);
     [self setNeedsDisplay:true];
     [self scrollPositionDidChange];
@@ -345,8 +352,6 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
             return false;
         }
     }
-
-    return false;
 }
 
 - (void)scrollPositionDidChange
@@ -371,6 +376,11 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
     return m_Layout->GetOffset().row > 0 || m_WorkingSet->GlobalOffset() > 0;
 }
 
+- (bool)isAtTheBeginning
+{
+    return ![self canScrollUp];
+}
+
 /**
  * Returns true if either the backend is not positioned at the bottom of the file or
  * there's something to show in the backend below current screen position.
@@ -379,6 +389,11 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
 {
     return (m_Backend->FilePos() + m_Backend->RawSize() < m_Backend->FileSize()) ||
            (m_Layout->GetOffset().row + m_Layout->RowsInView() < m_Frame->NumberOfRows());
+}
+
+- (bool)isAtTheEnd
+{
+    return ![self canScrollDown];
 }
 
 - (bool)canMoveFileWindowUp

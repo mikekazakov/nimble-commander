@@ -58,6 +58,8 @@ public:
     /** Number of bytes that can theoretically be presented in the view without being clipped */
     int BytesInView() const noexcept;
     
+    void SetFileSize( int64_t _file_size );
+    
     void SetFrame( std::shared_ptr<const HexModeFrame> _new_frame );
     
     void SetViewSize( CGSize _new_view_size );

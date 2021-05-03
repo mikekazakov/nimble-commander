@@ -64,7 +64,8 @@ std::optional<int>
 HexModeLayout::FindRowToScrollWithGlobalOffset(int64_t _global_offset) const noexcept
 {
     if( m_Frame->Empty() ) {
-        return std::nullopt;
+        // let's pretend that an empty frame should always yeild a zero row position
+        return 0;
     }
     const auto rows_in_view = RowsInView();
     const auto working_set_pos = m_Frame->WorkingSet().GlobalOffset();
@@ -388,6 +389,11 @@ std::pair<int, int> HexModeLayout::MergeSelection(const CFRange _existing_select
         return {std::min(_first_mouse_hit_index, _current_mouse_hit_index),
                 std::max(_first_mouse_hit_index, _current_mouse_hit_index)};
     }
+}
+
+void HexModeLayout::SetFileSize( int64_t _file_size )
+{
+    m_FileSize = _file_size;    
 }
 
 }

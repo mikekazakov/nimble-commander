@@ -1,16 +1,17 @@
+// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreviewModeView.h"
 #include <Quartz/Quartz.h>
 #include <Utility/StringExtras.h>
 
 @implementation NCViewerPreviewModeView
 {
-    std::string m_Path;
+    std::filesystem::path m_Path;
     const nc::viewer::Theme *m_Theme;
     QLPreviewView *m_Preview;
 }
 
 - (instancetype)initWithFrame:(NSRect)_frame
-                         path:(const std::string&)_path
+                         path:(const std::filesystem::path&)_path
                         theme:(const nc::viewer::Theme&)_theme
 {
     if( self = [super initWithFrame:_frame] ) {
@@ -29,6 +30,15 @@
             m_Preview.previewItem = url;
     }
     return self;
+}
+
+- (void)attachToNewFilepath:(std::filesystem::path)_path
+{
+    m_Path = _path;
+    if( const auto url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:m_Path]] ) {
+        m_Preview.previewItem = nil;
+        m_Preview.previewItem = url;
+    }
 }
 
 - (void) addFillingSubview:(NSView*)_view

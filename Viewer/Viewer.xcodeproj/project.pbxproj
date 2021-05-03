@@ -35,6 +35,7 @@
 		CF5C1D8E255EEA6A00ADE703 /* InternalViewerWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */; };
 		CF5C1D8F255EEA6A00ADE703 /* TextModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255A2222B6D40097F9A1 /* TextModeFrame.cpp */; };
 		CF5C1D90255EEA6A00ADE703 /* TextModeFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF13256322287F250097F9A1 /* TextModeFrame.mm */; };
+		CF61F2FC263D610A009FF900 /* TextMoveView_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF61F2FB263D610A009FF900 /* TextMoveView_UT.mm */; };
 		CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */; };
 		CF9BF90D226CF99000AD36D9 /* HexModeFrame_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF90C226CF99000AD36D9 /* HexModeFrame_UT.cpp */; };
 		CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B5822106E3C0043A26D /* Tests.cpp */; };
@@ -84,6 +85,7 @@
 		CF5C1D1D255ED68200ADE703 /* ViewerResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViewerResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF5C1D2C255ED7D300ADE703 /* ViewerResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ViewerResources.plist; path = resources/ViewerResources.plist; sourceTree = "<group>"; };
 		CF5C1D70255EEA5200ADE703 /* libViewer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libViewer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF61F2FB263D610A009FF900 /* TextMoveView_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextMoveView_UT.mm; path = tests/TextMoveView_UT.mm; sourceTree = "<group>"; };
 		CF9BF8FF2269E4CD00AD36D9 /* HexModeProcessing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeProcessing.h; path = include/Viewer/HexModeProcessing.h; sourceTree = "<group>"; };
 		CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeProcessing.cpp; path = source/HexModeProcessing.cpp; sourceTree = "<group>"; };
 		CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeProcessing_UT.cpp; path = tests/HexModeProcessing_UT.cpp; sourceTree = "<group>"; };
@@ -100,18 +102,14 @@
 		CFD79A7D21F65A980043A26D /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CFD79A7E21F65A980043A26D /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerViewPreviewMode.mm; path = source/InternalViewerViewPreviewMode.mm; sourceTree = "<group>"; };
-		CFD79A8721F65B4E0043A26D /* BigFileViewText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewText.mm; path = source/BigFileViewText.mm; sourceTree = "<group>"; };
 		CFD79A8821F65B4F0043A26D /* Theme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Theme.mm; path = source/Theme.mm; sourceTree = "<group>"; };
 		CFD79A8921F65B4F0043A26D /* ViewerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerView.mm; path = source/ViewerView.mm; sourceTree = "<group>"; };
-		CFD79A8A21F65B4F0043A26D /* BigFileViewHex.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewHex.mm; path = source/BigFileViewHex.mm; sourceTree = "<group>"; };
 		CFD79A8B21F65B4F0043A26D /* DataBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DataBackend.cpp; path = source/DataBackend.cpp; sourceTree = "<group>"; };
 		CFD79A9221F65B570043A26D /* ViewerImplementationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewerImplementationProtocol.h; path = include/Viewer/ViewerImplementationProtocol.h; sourceTree = "<group>"; };
 		CFD79A9321F65B570043A26D /* Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Theme.h; path = include/Viewer/Theme.h; sourceTree = "<group>"; wrapsLines = 0; };
 		CFD79A9421F65B570043A26D /* DataBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataBackend.h; path = include/Viewer/DataBackend.h; sourceTree = "<group>"; };
 		CFD79A9521F65B570043A26D /* InternalViewerViewPreviewMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerViewPreviewMode.h; path = include/Viewer/InternalViewerViewPreviewMode.h; sourceTree = "<group>"; };
-		CFD79A9621F65B570043A26D /* BigFileViewText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileViewText.h; path = include/Viewer/BigFileViewText.h; sourceTree = "<group>"; };
 		CFD79A9721F65B570043A26D /* ViewerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewerView.h; path = include/Viewer/ViewerView.h; sourceTree = "<group>"; };
-		CFD79A9821F65B570043A26D /* BigFileViewHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileViewHex.h; path = include/Viewer/BigFileViewHex.h; sourceTree = "<group>"; };
 		CFD79AA121F65BA10043A26D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CFD79AA321F65BA60043A26D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		CFD79AA521F65BAA0043A26D /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -229,8 +227,6 @@
 		CFD79A8321F65AA60043A26D /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79A9821F65B570043A26D /* BigFileViewHex.h */,
-				CFD79A9621F65B570043A26D /* BigFileViewText.h */,
 				CF46FF03255EF4690095FC73 /* Bundle.h */,
 				CFD79A9421F65B570043A26D /* DataBackend.h */,
 				CF9BF907226B2B0400AD36D9 /* HexModeFrame.h */,
@@ -262,8 +258,6 @@
 		CFD79A8421F65AB00043A26D /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79A8A21F65B4F0043A26D /* BigFileViewHex.mm */,
-				CFD79A8721F65B4E0043A26D /* BigFileViewText.mm */,
 				CFD79A8B21F65B4F0043A26D /* DataBackend.cpp */,
 				CF9BF908226B2B0C00AD36D9 /* HexModeFrame.cpp */,
 				CF9BF91C2275FD9500AD36D9 /* HexModeLayout.cpp */,
@@ -300,6 +294,7 @@
 				CFD79B5722106E3B0043A26D /* Tests.h */,
 				CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */,
 				CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */,
+				CF61F2FB263D610A009FF900 /* TextMoveView_UT.mm */,
 				CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */,
 			);
 			name = Tests;
@@ -484,6 +479,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF9BF90D226CF99000AD36D9 /* HexModeFrame_UT.cpp in Sources */,
+				CF61F2FC263D610A009FF900 /* TextMoveView_UT.mm in Sources */,
 				CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */,
 				CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */,
 				CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */,

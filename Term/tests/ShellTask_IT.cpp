@@ -531,7 +531,7 @@ TEST_CASE(PREFIX "Test vim interaction via output")
                            "~                                       "
                            "~                                       "
                            "~                                       "
-                           "\"vim_test\" [New File]                   ";
+                           "\"vim_test\" [New]                        ";
     REQUIRE(buffer_dump.wait_to_become_with_runloop(5s, 1ms, expected1));
 
     shell.WriteChildInput("i1\r2\r3\r4\r5\r\eOA\eOA\r"); // i 1 Return 2 Return 3 Return 4 Return 5

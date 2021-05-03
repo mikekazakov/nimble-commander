@@ -11,14 +11,12 @@
 
 namespace nc::utility {
 
-using namespace std;
-
 static const CFAbsoluteTime g_FSEventsLatency = 0.05; // 50ms
 
 // ask FS about real file path - case sensitive etc
 // also we're getting rid of symlinks - it will be a real file
 // return path with trailing slash
-static string GetRealPath(const char *_path_in)
+static std::string GetRealPath(const char *_path_in)
 {
     int tfd = open(_path_in, O_RDONLY);
     if( tfd == -1 )
@@ -29,7 +27,7 @@ static string GetRealPath(const char *_path_in)
     if( ret == -1 )
         return {};
 
-    string path_out(path_buf);
+    std::string path_out(path_buf);
     if( !path_out.empty() && path_out.back() != '/' )
         path_out += '/';
 
@@ -41,13 +39,13 @@ struct FSEventsDirUpdate::Impl {
         /**
          * canonical fs representation, should include a trailing slash.
          */
-        string path;
+        std::string path;
         FSEventStreamRef stream;
-        vector<pair<uint64_t, function<void()>>> handlers;
+        std::vector<std::pair<uint64_t, std::function<void()>>> handlers;
     };
     spinlock m_Lock;
-    unordered_map<string, unique_ptr<WatchData>> m_Watches; // path -> watch data
-    atomic_ulong m_LastTicket{1};                           // no #0 ticket, it'is an error code
+    std::unordered_map<std::string, std::unique_ptr<WatchData>> m_Watches; // path -> watch data
+    std::atomic_ulong m_LastTicket{1}; // no #0 ticket, it'is an error code
 
     uint64_t AddWatchPath(const char *_path, std::function<void()> _handler);
     void RemoveWatchPathWithTicket(uint64_t _ticket);
@@ -60,10 +58,10 @@ struct FSEventsDirUpdate::Impl {
                                           void *eventPaths,
                                           const FSEventStreamEventFlags eventFlags[],
                                           const FSEventStreamEventId eventIds[]);
-    static FSEventStreamRef CreateEventStream(const string &path, void *context);
+    static FSEventStreamRef CreateEventStream(const std::string &path, void *context);
 };
 
-FSEventsDirUpdate::FSEventsDirUpdate() : me(make_unique<Impl>())
+FSEventsDirUpdate::FSEventsDirUpdate() : me(std::make_unique<Impl>())
 {
 }
 
@@ -73,7 +71,7 @@ FSEventsDirUpdate &FSEventsDirUpdate::Instance()
     return *inst;
 }
 
-static bool ShouldFire(string_view _watched_path,
+static bool ShouldFire(std::string_view _watched_path,
                        const size_t _num_events,
                        const char *_event_paths[],
                        const FSEventStreamEventFlags _event_flags[])
@@ -86,7 +84,7 @@ static bool ShouldFire(string_view _watched_path,
         else {
             // this checking should be blazing fast, since we can get A LOT of events here
             // (from all sub-dirs) and we need only events from current-level directory
-            const auto path = string_view{_event_paths[i]};
+            const auto path = std::string_view{_event_paths[i]};
             if( path == _watched_path )
                 return true;
         }
@@ -109,7 +107,8 @@ void FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback(
     }
 }
 
-FSEventStreamRef FSEventsDirUpdate::Impl::CreateEventStream(const string &path, void *context_ptr)
+FSEventStreamRef FSEventsDirUpdate::Impl::CreateEventStream(const std::string &path,
+                                                            void *context_ptr)
 {
     auto cf_path = CFStringCreateWithUTF8StdString(path);
     if( !cf_path )
@@ -171,12 +170,12 @@ static void StopStream(FSEventStreamRef _stream)
     });
 }
 
-uint64_t FSEventsDirUpdate::AddWatchPath(const char *_path, function<void()> _handler)
+uint64_t FSEventsDirUpdate::AddWatchPath(const char *_path, std::function<void()> _handler)
 {
     return me->AddWatchPath(_path, move(_handler));
 }
 
-uint64_t FSEventsDirUpdate::Impl::AddWatchPath(const char *_path, function<void()> _handler)
+uint64_t FSEventsDirUpdate::Impl::AddWatchPath(const char *_path, std::function<void()> _handler)
 {
     if( !_path || !_handler )
         return no_ticket;
@@ -189,7 +188,7 @@ uint64_t FSEventsDirUpdate::Impl::AddWatchPath(const char *_path, function<void(
     // monotonically increase current ticket to get a next unique one
     const auto ticket = m_LastTicket++;
 
-    auto lock = lock_guard{m_Lock};
+    auto lock = std::lock_guard{m_Lock};
 
     // check if this path already presents in watched paths
     if( auto it = m_Watches.find(dir_path); it != m_Watches.end() ) {
@@ -198,7 +197,7 @@ uint64_t FSEventsDirUpdate::Impl::AddWatchPath(const char *_path, function<void(
     }
 
     // create a new watch stream
-    auto w = make_unique<WatchData>();
+    auto w = std::make_unique<WatchData>();
     w->path = dir_path;
     w->handlers.emplace_back(ticket, move(_handler));
     w->stream = CreateEventStream(dir_path, w.get());
@@ -237,7 +236,7 @@ void FSEventsDirUpdate::Impl::RemoveWatchPathWithTicket(uint64_t _ticket)
         return;
     }
 
-    auto lock = lock_guard{m_Lock};
+    auto lock = std::lock_guard{m_Lock};
 
     for( auto i = begin(m_Watches), e = end(m_Watches); i != e; ++i ) {
         auto &watch = *(i->second);
@@ -253,17 +252,17 @@ void FSEventsDirUpdate::Impl::RemoveWatchPathWithTicket(uint64_t _ticket)
     }
 }
 
-void FSEventsDirUpdate::OnVolumeDidUnmount(const string &_on_path)
+void FSEventsDirUpdate::OnVolumeDidUnmount(const std::string &_on_path)
 {
     me->OnVolumeDidUnmount(_on_path);
 }
 
-static bool StartsWith(string_view string, string_view prefix)
+static bool StartsWith(std::string_view string, std::string_view prefix)
 {
     return string.size() >= prefix.size() && string.compare(0, prefix.size(), prefix) == 0;
 }
 
-void FSEventsDirUpdate::Impl::OnVolumeDidUnmount(const string &_on_path)
+void FSEventsDirUpdate::Impl::OnVolumeDidUnmount(const std::string &_on_path)
 {
     // when a volume is removed from the system we force every relevant panel to reload its data
     dispatch_assert_main_queue();

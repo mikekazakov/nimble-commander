@@ -26,14 +26,14 @@ TEST_CASE(PREFIX"Registers event listeners")
     const auto ticket0 = inst.AddWatchPath(tmp_dir.directory.c_str(),
                                            [&]{ ++call_count[0]; });
 
-    touch( tmp_dir.directory + "something.txt" );    
+    touch( tmp_dir.directory / "something.txt" );
     run_event_loop();    
     CHECK( call_count[0] == 1 );
 
     const auto ticket1 = inst.AddWatchPath(tmp_dir.directory.c_str(),
                                            [&]{ ++call_count[1]; });
 
-    touch( tmp_dir.directory + "something else.txt" );
+    touch( tmp_dir.directory / "something else.txt" );
     run_event_loop();
     CHECK( call_count[0] == 2 );
     CHECK( call_count[1] == 1 );
@@ -41,7 +41,7 @@ TEST_CASE(PREFIX"Registers event listeners")
     const auto ticket2 = inst.AddWatchPath(tmp_dir.directory.c_str(),
                                            [&]{ ++call_count[2]; });
 
-    touch( tmp_dir.directory + "another something else.txt" );
+    touch( tmp_dir.directory / "another something else.txt" );
     run_event_loop();
     CHECK( call_count[0] == 3 );
     CHECK( call_count[1] == 2 );
@@ -61,7 +61,7 @@ TEST_CASE(PREFIX"Removes event listeners")
     const auto ticket0 = inst.AddWatchPath(tmp_dir.directory.c_str(),
                                            [&]{ ++call_count[0]; });
     
-    touch( tmp_dir.directory + "something.txt" );    
+    touch( tmp_dir.directory / "something.txt" );
     run_event_loop();    
     CHECK( call_count[0] == 1 );
     
@@ -69,7 +69,7 @@ TEST_CASE(PREFIX"Removes event listeners")
     const auto ticket1 = inst.AddWatchPath(tmp_dir.directory.c_str(),
                                            [&]{ ++call_count[1]; });
     
-    touch( tmp_dir.directory + "something else.txt" );
+    touch( tmp_dir.directory / "something else.txt" );
     run_event_loop();
     CHECK( call_count[0] == 1 );
     CHECK( call_count[1] == 1 );
@@ -77,7 +77,7 @@ TEST_CASE(PREFIX"Removes event listeners")
     const auto ticket2 = inst.AddWatchPath(tmp_dir.directory.c_str(),
                                            [&]{ ++call_count[2]; });
     
-    touch( tmp_dir.directory + "another something else.txt" );
+    touch( tmp_dir.directory / "another something else.txt" );
     run_event_loop();
     CHECK( call_count[0] == 1 );
     CHECK( call_count[1] == 2 );

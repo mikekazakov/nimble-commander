@@ -65,8 +65,12 @@
 		CF460163256125E50095FC73 /* NSMenu+Hierarchical.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */; };
 		CF460164256125E50095FC73 /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E271C992F35001D8B02 /* SystemInformation.mm */; };
 		CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C39922B974210043E825 /* UTIImpl_UT.cpp */; };
+		CF61F305264048F6009FF900 /* FSEventsFileUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF61F304264048F6009FF900 /* FSEventsFileUpdate.cpp */; };
+		CF61F30B26404962009FF900 /* FSEventsFileUpdateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */; };
+		CF61F30F26404971009FF900 /* FSEventsFileUpdateImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF61F30E26404971009FF900 /* FSEventsFileUpdateImpl.cpp */; };
 		CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */; };
 		CF88363925716F9300BAC081 /* VersionCompare_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF88363825716F9300BAC081 /* VersionCompare_UT.cpp */; };
+		CFA999652644888C00F72E93 /* FSEventsFileUpdate_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA999642644888C00F72E93 /* FSEventsFileUpdate_UT.cpp */; };
 		CFAB6D11258A086100397DB5 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFAB6D10258A086100397DB5 /* Log.cpp */; };
 		CFB062452590BB4E0095C748 /* SystemInformation_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB062442590BB4E0095C748 /* SystemInformation_UT.mm */; };
 		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
@@ -148,6 +152,10 @@
 		CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter_UT.mm; path = tests/ByteCountFormatter_UT.mm; sourceTree = SOURCE_ROOT; };
 		CF614AA91F9D871D0005F2DB /* Encodings_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Encodings_UT.mm; path = tests/Encodings_UT.mm; sourceTree = SOURCE_ROOT; };
 		CF614AAA1F9D871D0005F2DB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = tests/Info.plist; sourceTree = SOURCE_ROOT; };
+		CF61F303264048EA009FF900 /* FSEventsFileUpdate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FSEventsFileUpdate.h; path = include/Utility/FSEventsFileUpdate.h; sourceTree = "<group>"; };
+		CF61F304264048F6009FF900 /* FSEventsFileUpdate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FSEventsFileUpdate.cpp; path = source/FSEventsFileUpdate.cpp; sourceTree = "<group>"; };
+		CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FSEventsFileUpdateImpl.h; path = include/Utility/FSEventsFileUpdateImpl.h; sourceTree = "<group>"; };
+		CF61F30E26404971009FF900 /* FSEventsFileUpdateImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FSEventsFileUpdateImpl.cpp; path = source/FSEventsFileUpdateImpl.cpp; sourceTree = "<group>"; };
 		CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FontGeometryInfo_PT.mm; path = tests/FontGeometryInfo_PT.mm; sourceTree = "<group>"; };
 		CF6E493523B79BB50081DCF8 /* FirmlinksMappingParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FirmlinksMappingParser.h; path = include/Utility/FirmlinksMappingParser.h; sourceTree = "<group>"; };
 		CF6E493723B79BC90081DCF8 /* FirmlinksMappingParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FirmlinksMappingParser.cpp; path = source/FirmlinksMappingParser.cpp; sourceTree = "<group>"; };
@@ -173,6 +181,7 @@
 		CF960E261C992F35001D8B02 /* PathManip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PathManip.cpp; path = source/PathManip.cpp; sourceTree = "<group>"; };
 		CF960E271C992F35001D8B02 /* SystemInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation.mm; path = source/SystemInformation.mm; sourceTree = "<group>"; };
 		CF960E281C992F35001D8B02 /* VolumeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeInformation.cpp; path = source/VolumeInformation.cpp; sourceTree = "<group>"; };
+		CFA999642644888C00F72E93 /* FSEventsFileUpdate_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FSEventsFileUpdate_UT.cpp; path = tests/FSEventsFileUpdate_UT.cpp; sourceTree = "<group>"; };
 		CFAB6D0F258A084700397DB5 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Log.h; path = include/Utility/Log.h; sourceTree = "<group>"; };
 		CFAB6D10258A086100397DB5 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = source/Log.cpp; sourceTree = "<group>"; };
 		CFB062442590BB4E0095C748 /* SystemInformation_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation_UT.mm; path = tests/SystemInformation_UT.mm; sourceTree = "<group>"; };
@@ -275,6 +284,7 @@
 				CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */,
 				CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */,
 				CF2C102822A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp */,
+				CFA999642644888C00F72E93 /* FSEventsFileUpdate_UT.cpp */,
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
 				CF3ABD7E23B8DBFF00D1878B /* NativeFSManager_UT.mm */,
 				CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */,
@@ -334,6 +344,8 @@
 				CFD62BD91C9A6BE30021EE7F /* FontExtras.h */,
 				CFD62BE71C9A709C0021EE7F /* FPSLimitedDrawer.h */,
 				CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */,
+				CF61F303264048EA009FF900 /* FSEventsFileUpdate.h */,
+				CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */,
 				CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */,
 				CF960E181C992F2C001D8B02 /* HexadecimalColor.h */,
 				CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */,
@@ -394,6 +406,8 @@
 				CFD62C001C9A87170021EE7F /* FontExtras.mm */,
 				CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */,
 				CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */,
+				CF61F304264048F6009FF900 /* FSEventsFileUpdate.cpp */,
+				CF61F30E26404971009FF900 /* FSEventsFileUpdateImpl.cpp */,
 				CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */,
 				CF960E251C992F35001D8B02 /* HexadecimalColor.mm */,
 				CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */,
@@ -449,6 +463,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF460144256125E50095FC73 /* PrecompiledHeaders.pch in Headers */,
+				CF61F30B26404962009FF900 /* FSEventsFileUpdateImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,6 +552,7 @@
 				CF460156256125E50095FC73 /* HexadecimalColor.mm in Sources */,
 				CF460154256125E50095FC73 /* TemporaryFileStorage.cpp in Sources */,
 				CFC41DAB257159630037677B /* VersionCompare.mm in Sources */,
+				CF61F30F26404971009FF900 /* FSEventsFileUpdateImpl.cpp in Sources */,
 				CF460137256125E50095FC73 /* SyncMessageBox.mm in Sources */,
 				CF460148256125E50095FC73 /* CocoaAppearanceManager.mm in Sources */,
 				CF46014A256125E50095FC73 /* BriefOnDiskStorage.cpp in Sources */,
@@ -565,6 +581,7 @@
 				CF460157256125E50095FC73 /* NSTimer+Tolerance.mm in Sources */,
 				CF46015A256125E50095FC73 /* ByteCountFormatter.mm in Sources */,
 				CF46015B256125E50095FC73 /* TemporaryFileStorageImpl.cpp in Sources */,
+				CF61F305264048F6009FF900 /* FSEventsFileUpdate.cpp in Sources */,
 				CF460159256125E50095FC73 /* VolumeInformation.cpp in Sources */,
 				CF460163256125E50095FC73 /* NSMenu+Hierarchical.mm in Sources */,
 				CFAB6D11258A086100397DB5 /* Log.cpp in Sources */,
@@ -603,6 +620,7 @@
 				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
 				CF3ABD7D23B8AC0A00D1878B /* NativeFSManagerVolumeLookup_UT.cpp in Sources */,
+				CFA999652644888C00F72E93 /* FSEventsFileUpdate_UT.cpp in Sources */,
 				CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */,
 				CFE3F1C522932EAA009D6AB4 /* FileMask_UT.cpp in Sources */,
 				CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */,

@@ -100,6 +100,8 @@ void FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback(
     const FSEventStreamEventFlags _flags[],
     [[maybe_unused]] const FSEventStreamEventId _ids[])
 {
+    // WTF this data access is not locked????
+    
     const WatchData &watch = *static_cast<const WatchData *>(_user_data);
     if( ShouldFire(watch.path, _num, reinterpret_cast<const char **>(_paths), _flags) ) {
         for( auto &h : watch.handlers )
@@ -218,10 +220,10 @@ template <class Container, class Iterator>
 static inline void unordered_erase(Container &c, Iterator i)
 {
     // can do this since erase() requires a valid iterator => thus c is not empty.
-    auto last = prev(end(c));
+    auto last = std::prev(std::end(c));
 
     if( last != i )
-        iter_swap(i, last);
+        std::iter_swap(i, last);
 
     c.erase(last);
 }

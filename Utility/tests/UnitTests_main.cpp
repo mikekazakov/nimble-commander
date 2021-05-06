@@ -25,7 +25,7 @@ static std::string MakeTempFilesStorage()
     const auto base_path = nc::base::CommonPaths::AppTemporaryDirectory();
     const auto tmp_path = base_path + g_TestDirPrefix + "/";
     if( access(tmp_path.c_str(), F_OK) == 0 )
-        std::filesystem::remove(tmp_path);
+        std::filesystem::remove_all(tmp_path);
     if( mkdir(tmp_path.c_str(), S_IRWXU) != 0 )
         throw std::runtime_error("mkdir failed");
     return tmp_path;
@@ -38,5 +38,5 @@ TempTestDir::TempTestDir()
 
 TempTestDir::~TempTestDir()
 {
-    std::filesystem::remove(directory);
+    std::filesystem::remove_all(directory);
 }

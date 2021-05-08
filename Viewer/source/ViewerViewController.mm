@@ -19,6 +19,7 @@ static const auto g_ConfigRespectComAppleTextEncoding = "viewer.respectComAppleT
 static const auto g_ConfigSearchCaseSensitive = "viewer.searchCaseSensitive";
 static const auto g_ConfigSearchForWholePhrase = "viewer.searchForWholePhrase";
 static const auto g_ConfigWindowSize = "viewer.fileWindowSize";
+static const auto g_ConfigAutomaticRefresh = "viewer.automaticRefresh";
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
@@ -85,6 +86,7 @@ struct BackgroundFileOpener {
     VFSFilePtr m_OriginalFile;                   // may be not opened if SeqWrapper is used
     VFSSeqToRandomROWrapperFilePtr m_SeqWrapper; // may be nullptr if underlying VFS supports ReadAt
     VFSFilePtr m_WorkFile;                       // the one actually used
+    nc::vfs::FileObservationToken m_FileObservationToken;
     std::shared_ptr<nc::vfs::FileWindow> m_ViewerFileWindow;
     std::shared_ptr<nc::vfs::FileWindow> m_SearchFileWindow;
     std::shared_ptr<nc::vfs::SearchInFile> m_SearchInFile;
@@ -189,7 +191,17 @@ struct BackgroundFileOpener {
     m_SearchFileWindow = std::move(opener.search_file_window);
     m_SearchInFile = std::move(opener.search_in_file);
     m_GlobalFilePath = m_WorkFile->ComposeVerbosePath();
+    
     [self buildTitle];
+    
+    if( m_Config->GetBool(g_ConfigAutomaticRefresh) ) {
+        assert(m_VFS);
+        __weak NCViewerViewController *weak_self = self;
+        m_FileObservationToken = m_VFS->ObserveFileChanges(m_Path.c_str(), [weak_self]{
+            if( NCViewerViewController *strong_self = weak_self )
+                [strong_self onFileChanged];
+        });
+    }
         
     return true;
 }
@@ -658,6 +670,11 @@ struct BackgroundFileOpener {
             [strong_self commitRefresh:*opener];
         });
     });
+}
+
+- (void)onFileChanged
+{
+    [self onRefresh];
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event

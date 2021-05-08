@@ -382,6 +382,11 @@
         "saveFileWrapping":     true,
         "saveFileSelection":    true,
         "maximumHistoryEntries": 256,
+
+        /**
+         * Automatically refresh Viewer whenever its file is changed.
+         */
+        "automaticRefresh": true,
         
         /**
          * Should keep the scroll at the bottom when a file is reloaded.

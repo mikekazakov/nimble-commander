@@ -1,5 +1,6 @@
 // Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerViewController.h"
+#include <Viewer/Log.h>
 #include <VFS/VFS.h>
 #include <CUI/ProcessSheetController.h>
 #include <Config/Config.h>
@@ -191,18 +192,18 @@ struct BackgroundFileOpener {
     m_SearchFileWindow = std::move(opener.search_file_window);
     m_SearchInFile = std::move(opener.search_in_file);
     m_GlobalFilePath = m_WorkFile->ComposeVerbosePath();
-    
+
     [self buildTitle];
-    
+
     if( m_Config->GetBool(g_ConfigAutomaticRefresh) ) {
         assert(m_VFS);
         __weak NCViewerViewController *weak_self = self;
-        m_FileObservationToken = m_VFS->ObserveFileChanges(m_Path.c_str(), [weak_self]{
+        m_FileObservationToken = m_VFS->ObserveFileChanges(m_Path.c_str(), [weak_self] {
             if( NCViewerViewController *strong_self = weak_self )
                 [strong_self onFileChanged];
         });
     }
-        
+
     return true;
 }
 
@@ -215,9 +216,7 @@ struct BackgroundFileOpener {
     if( auto info = m_History->EntryByPath(m_GlobalFilePath) ) {
         auto options = m_History->Options();
         if( options.encoding && options.mode ) {
-            [m_View setKnownFile:m_ViewerFileWindow
-                        encoding:info->encoding
-                            mode:info->view_mode];
+            [m_View setKnownFile:m_ViewerFileWindow encoding:info->encoding mode:info->view_mode];
         }
         else {
             [m_View setFile:m_ViewerFileWindow];
@@ -630,12 +629,12 @@ struct BackgroundFileOpener {
     return m_WorkFile != nullptr;
 }
 
-- (void) commitRefresh:(BackgroundFileOpener&)_opener
+- (void)commitRefresh:(BackgroundFileOpener &)_opener
 {
     dispatch_assert_main_queue();
-          
+
     [m_View replaceFile:_opener.viewer_file_window];
-        
+
     m_OriginalFile = std::move(_opener.original_file);
     m_SeqWrapper = std::move(_opener.seq_wrapper);
     m_WorkFile = std::move(_opener.work_file);
@@ -649,6 +648,7 @@ struct BackgroundFileOpener {
 
 - (void)onRefresh
 {
+    Log::Debug(SPDLOC, "refresh called");
     __weak NCViewerViewController *weak_self = self;
     dispatch_to_background([weak_self] {
         NCViewerViewController *strong_self = weak_self;
@@ -660,8 +660,11 @@ struct BackgroundFileOpener {
                                           strong_self->m_Path,
                                           *strong_self->m_Config,
                                           strong_self.fileWindowSize);
-        if( open_err != VFSError::Ok )
+        if( open_err != VFSError::Ok ) {
+            Log::Warn(
+                SPDLOC, "failed to open a path {}, vfs_error: {}", strong_self->m_Path, open_err);
             return;
+        }
 
         dispatch_to_main_queue([weak_self, opener = std::move(opener)] {
             NCViewerViewController *strong_self = weak_self;
@@ -723,7 +726,7 @@ int BackgroundFileOpener::Open(VFSHostPtr _vfs,
                                int _window_size)
 {
     dispatch_assert_background_queue();
-
+    assert(_vfs);
     if( int vfs_err = _vfs->CreateFile(_path.c_str(), original_file, 0); vfs_err != VFSError::Ok )
         return vfs_err;
 

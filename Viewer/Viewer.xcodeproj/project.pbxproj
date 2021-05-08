@@ -38,6 +38,7 @@
 		CF61F2FC263D610A009FF900 /* TextMoveView_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF61F2FB263D610A009FF900 /* TextMoveView_UT.mm */; };
 		CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */; };
 		CF9BF90D226CF99000AD36D9 /* HexModeFrame_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF90C226CF99000AD36D9 /* HexModeFrame_UT.cpp */; };
+		CFA9998D26468A4300F72E93 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA9998C26468A4300F72E93 /* Log.cpp */; };
 		CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B5822106E3C0043A26D /* Tests.cpp */; };
 		CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */; };
 		CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */; };
@@ -97,6 +98,8 @@
 		CF9BF91B22724A3D00AD36D9 /* HexModeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeViewDelegate.h; path = include/Viewer/HexModeViewDelegate.h; sourceTree = "<group>"; };
 		CF9BF91C2275FD9500AD36D9 /* HexModeLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeLayout.cpp; path = source/HexModeLayout.cpp; sourceTree = "<group>"; };
 		CF9BF91E2275FD9E00AD36D9 /* HexModeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeLayout.h; path = include/Viewer/HexModeLayout.h; sourceTree = "<group>"; };
+		CFA9998B26468A3900F72E93 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Log.h; path = include/Viewer/Log.h; sourceTree = "<group>"; };
+		CFA9998C26468A4300F72E93 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = source/Log.cpp; sourceTree = "<group>"; };
 		CFD79A7B21F65A980043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CFD79A7C21F65A980043A26D /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CFD79A7D21F65A980043A26D /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
@@ -238,6 +241,7 @@
 				CFD79B172205DE3D0043A26D /* InternalViewerToolbarProtocol.h */,
 				CFD79A9521F65B570043A26D /* InternalViewerViewPreviewMode.h */,
 				CFD79B1F2205DE9C0043A26D /* InternalViewerWindowController.h */,
+				CFA9998B26468A3900F72E93 /* Log.h */,
 				CFD79AB721FCA8900043A26D /* Modes.h */,
 				CF24E1D82286E24300C166FA /* PreviewModeView.h */,
 				CF13255C2222B6DD0097F9A1 /* TextModeFrame.h */,
@@ -269,6 +273,7 @@
 				CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */,
 				CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */,
 				CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */,
+				CFA9998C26468A4300F72E93 /* Log.cpp */,
 				CF24E1D62286E23800C166FA /* PreviewModeView.mm */,
 				CF13255A2222B6D40097F9A1 /* TextModeFrame.cpp */,
 				CF13256322287F250097F9A1 /* TextModeFrame.mm */,
@@ -469,6 +474,7 @@
 				CF5C1D90255EEA6A00ADE703 /* TextModeFrame.mm in Sources */,
 				CF5C1D80255EEA6A00ADE703 /* HexModeProcessing.cpp in Sources */,
 				CF5C1D7A255EEA6A00ADE703 /* TextModeView.mm in Sources */,
+				CFA9998D26468A4300F72E93 /* Log.cpp in Sources */,
 				CF5C1D86255EEA6A00ADE703 /* PreviewModeView.mm in Sources */,
 				CF5C1D7F255EEA6A00ADE703 /* HexModeView.mm in Sources */,
 			);

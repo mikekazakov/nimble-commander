@@ -3,15 +3,16 @@
 
 #include <Habanero/SpdlogFacade.h>
 #include <string>
+#include <string_view>
 
-namespace nc::utility {
+namespace nc::viewer {
 
 struct Log : base::SpdlogFacade<Log> {
     Log() = delete;
-    
+
     static const std::string &Name() noexcept;
     static spdlog::logger &Get() noexcept;
     static void Set(std::shared_ptr<spdlog::logger> _logger) noexcept;
 };
 
-} // namespace nc::utility
+} // namespace nc::viewer

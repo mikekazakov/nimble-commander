@@ -79,6 +79,7 @@
 #include <Config/Executor.h>
 
 #include <Viewer/History.h>
+#include <Viewer/Log.h>
 #include <Viewer/ViewerViewController.h>
 #include <Viewer/InternalViewerWindowController.h>
 
@@ -180,6 +181,7 @@ static void SetupLogs()
         const auto stdout_sink = std::make_shared<spdlog::sinks::stdout_sink_mt>();
         AttachToSink<nc::utility::Log>(level, stdout_sink);
         AttachToSink<nc::term::Log>(level, stdout_sink);
+        AttachToSink<nc::viewer::Log>(level, stdout_sink);
     }
 }
 

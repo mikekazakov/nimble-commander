@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #pragma once
 
@@ -27,6 +27,7 @@ class ActivationManager;
 }
 
 namespace utility {
+class FSEventsFileUpdate;
 class NativeFSManager;
 class TemporaryFileStorage;
 class UTIDB;
@@ -148,5 +149,7 @@ class NativeHost;
 @property(nonatomic, readonly) nc::bootstrap::ActivationManager &activationManager;
 
 @property(nonatomic, readonly) nc::FeedbackManager &feedbackManager;
+
+@property(nonatomic, readonly) nc::utility::FSEventsFileUpdate &fsEventsFileUpdate;
 
 @end

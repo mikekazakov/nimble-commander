@@ -38,6 +38,7 @@
 #include <Utility/UTIImpl.h>
 #include <Utility/SystemInformation.h>
 #include <Utility/Log.h>
+#include <Utility/FSEventsFileUpdateImpl.h>
 
 #include <RoutedIO/RoutedIO.h>
 
@@ -157,6 +158,14 @@ static void CheckDefaultsReset()
         }
 }
 
+template <typename Log>
+static void AttachToSink(spdlog::level::level_enum _level,
+                         std::shared_ptr<spdlog::sinks::sink> _sink)
+{
+    Log::Set(std::make_shared<spdlog::logger>(Log::Name(), _sink));
+    Log::Get().set_level(_level);
+}
+
 static void SetupLogs()
 {
     spdlog::level::level_enum level = spdlog::level::off;
@@ -168,16 +177,9 @@ static void SetupLogs()
     }
 
     if( level < spdlog::level::off ) {
-        auto stdout_sink = std::make_shared<spdlog::sinks::stdout_sink_mt>();
-
-        auto setup = [=](auto log) {
-            using T = decltype(log);
-            T::Set(std::make_shared<spdlog::logger>(T::Name(), stdout_sink));
-            T::Get().set_level(level);
-        };
-
-        setup(nc::utility::Log{});
-        setup(nc::term::Log{});
+        const auto stdout_sink = std::make_shared<spdlog::sinks::stdout_sink_mt>();
+        AttachToSink<nc::utility::Log>(level, stdout_sink);
+        AttachToSink<nc::term::Log>(level, stdout_sink);
     }
 }
 
@@ -216,6 +218,7 @@ static NCAppDelegate *g_Me = nil;
     std::optional<ctrail::DashboardImpl> m_CTrailDashboard;
     std::unique_ptr<ctrail::OneShotMonitor> m_CTrailMonitor;
     std::unique_ptr<nc::bootstrap::ActivationManager> m_ActivationManager;
+    std::unique_ptr<nc::utility::FSEventsFileUpdateImpl> m_FSEventsFileUpdate;
 }
 
 @synthesize mainWindowControllers = m_MainWindows;
@@ -232,8 +235,10 @@ static NCAppDelegate *g_Me = nil;
         g_Me = self;
         m_FilesToOpen = [[NSMutableArray alloc] init];
         m_ViewerWindowDelegateBridge = [[NCViewerWindowDelegateBridge alloc] init];
+        m_FSEventsFileUpdate = std::make_unique<nc::utility::FSEventsFileUpdateImpl>();
         m_NativeFSManager = std::make_unique<nc::utility::NativeFSManagerImpl>();
-        m_NativeHost = std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager);
+        m_NativeHost =
+            std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager, *m_FSEventsFileUpdate);
         m_ActivationManager = [self createActivationManager];
         [self checkMASReceipt];
         CheckDefaultsReset();
@@ -1201,6 +1206,11 @@ static void DoTemporaryFileStoragePurge()
 - (const std::shared_ptr<nc::vfs::NativeHost> &)nativeHostPtr
 {
     return m_NativeHost;
+}
+
+- (nc::utility::FSEventsFileUpdate &)fsEventsFileUpdate
+{
+    return *m_FSEventsFileUpdate;
 }
 
 - (nc::bootstrap::ActivationManager &)activationManager

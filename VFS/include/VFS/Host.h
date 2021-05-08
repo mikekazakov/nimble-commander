@@ -30,6 +30,26 @@ private:
     std::weak_ptr<Host> m_Host;
 };
 
+class FileObservationToken
+{
+public:
+    FileObservationToken() noexcept = default;
+    FileObservationToken(unsigned long _token, std::weak_ptr<Host> _host) noexcept;
+    FileObservationToken(const FileObservationToken &_rhs) = delete;
+    FileObservationToken(FileObservationToken &&_rhs) noexcept;
+    ~FileObservationToken();
+
+    FileObservationToken &operator=(const FileObservationToken &_rhs) = delete;
+    FileObservationToken &operator=(FileObservationToken &&_rhs) noexcept;
+    
+    operator bool() const noexcept;
+    void reset() noexcept;
+
+private:
+    unsigned long m_Token = 0;
+    std::weak_ptr<Host> m_Host;
+};
+
 struct HostFeatures {
     enum Features : uint64_t
     {
@@ -340,11 +360,20 @@ public:
     virtual HostDirObservationTicket DirChangeObserve(const char *_path,
                                                       std::function<void()> _handler);
 
+    /**
+     * Will fire _handler whenever a file identified by '_path' is changed.
+     * Can return an empty token if observation is unavailable.
+     */
+    virtual FileObservationToken ObserveFileChanges(const char *_path,
+                                                    std::function<void()> _handler);
+
 protected:
     void SetFeatures(uint64_t _features_bitset);
     void AddFeatures(uint64_t _features_bitset);
 
     virtual void StopDirChangeObserving(unsigned long _ticket);
+    
+    virtual void StopObservingFileChanges(unsigned long _token);
 
 private:
     const std::string m_JunctionPath; // path in Parent VFS, relative to it's root
@@ -357,6 +386,7 @@ private:
     Host(const Host &_r) = delete;
     void operator=(const Host &_r) = delete;
     friend class HostDirObservationTicket;
+    friend class FileObservationToken;
 };
 
 } // namespace nc::vfs

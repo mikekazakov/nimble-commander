@@ -8,9 +8,10 @@
 
 namespace nc::utility {
 
-class FSEventsFileUpdateImpl : FSEventsFileUpdate
+class FSEventsFileUpdateImpl : public FSEventsFileUpdate
 {
 public:
+    FSEventsFileUpdateImpl();
     ~FSEventsFileUpdateImpl();
     uint64_t AddWatchPath(const std::filesystem::path &_path,
                           std::function<void()> _handler) override;

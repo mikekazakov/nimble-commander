@@ -7,6 +7,7 @@
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
 #include <Utility/FSEventsDirUpdate.h>
+#include <Utility/FSEventsFileUpdate.h>
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
 #include "DisplayNamesCache.h"
@@ -54,8 +55,10 @@ VFSMeta NativeHost::Meta()
     return m;
 }
 
-NativeHost::NativeHost(nc::utility::NativeFSManager &_native_fs_man)
-    : Host("", 0, UniqueTag), m_NativeFSManager(_native_fs_man)
+NativeHost::NativeHost(nc::utility::NativeFSManager &_native_fs_man,
+                       nc::utility::FSEventsFileUpdate &_fsevents_file_update)
+    : Host("", 0, UniqueTag), m_NativeFSManager(_native_fs_man),
+      m_FSEventsFileUpdate(_fsevents_file_update)
 {
     AddFeatures(HostFeatures::FetchUsers | HostFeatures::FetchGroups | HostFeatures::SetOwnership |
                 HostFeatures::SetFlags | HostFeatures::SetPermissions | HostFeatures::SetTimes);
@@ -461,6 +464,20 @@ void NativeHost::StopDirChangeObserving(unsigned long _ticket)
 {
     auto &inst = nc::utility::FSEventsDirUpdate::Instance();
     inst.RemoveWatchPathWithTicket(_ticket);
+}
+
+FileObservationToken NativeHost::ObserveFileChanges(const char *_path,
+                                        std::function<void()> _handler)
+{
+    assert(_path != nullptr);
+    const auto token = m_FSEventsFileUpdate.AddWatchPath(_path, std::move(_handler));
+    return FileObservationToken(token, SharedPtr());
+}
+
+void NativeHost::StopObservingFileChanges(unsigned long _token)
+{
+    assert(_token != utility::FSEventsFileUpdate::empty_token);
+    m_FSEventsFileUpdate.RemoveWatchPathWithToken(_token);
 }
 
 int NativeHost::Stat(const char *_path,

@@ -5,6 +5,7 @@
 
 namespace nc::utility {
 class NativeFSManager;
+class FSEventsFileUpdate;
 }
 
 namespace nc::vfs {
@@ -12,7 +13,8 @@ namespace nc::vfs {
 class NativeHost : public Host
 {
 public:
-    NativeHost(nc::utility::NativeFSManager &_native_fs_man);
+    NativeHost(nc::utility::NativeFSManager &_native_fs_man,
+               nc::utility::FSEventsFileUpdate &_fsevents_file_update);
 
     static const char *UniqueTag;
     VFSConfiguration Configuration() const override;
@@ -55,7 +57,13 @@ public:
     bool IsDirChangeObservingAvailable(const char *_path) override;
     HostDirObservationTicket DirChangeObserve(const char *_path,
                                               std::function<void()> _handler) override;
+    
     void StopDirChangeObserving(unsigned long _ticket) override;
+    
+    FileObservationToken ObserveFileChanges(const char *_path,
+                                            std::function<void()> _handler) override;
+    
+    void StopObservingFileChanges(unsigned long _token) override;
 
     ssize_t CalculateDirectorySize(const char *_path,
                                    const VFSCancelChecker &_cancel_checker) override;
@@ -119,6 +127,7 @@ public:
 
 private:
     nc::utility::NativeFSManager &m_NativeFSManager;
+    [[maybe_unused]] nc::utility::FSEventsFileUpdate &m_FSEventsFileUpdate;
 };
 
 } // namespace nc::vfs

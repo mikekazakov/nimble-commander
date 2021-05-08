@@ -1,6 +1,7 @@
 // Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsFileUpdateImpl.h"
 #include <Utility/StringExtras.h>
+#include <Utility/Log.h>
 #include <Habanero/CFPtr.h>
 #include <Habanero/dispatch_cpp.h>
 #include <iostream>
@@ -20,6 +21,11 @@ size_t FSEventsFileUpdateImpl::PathHash::operator()(const std::string_view &_pat
     return robin_hood::hash_bytes(_path.data(), _path.size());
 }
 
+FSEventsFileUpdateImpl::FSEventsFileUpdateImpl()
+{
+    Log::Trace(SPDLOC, "FSEventsFileUpdateImpl created");
+}
+
 FSEventsFileUpdateImpl::~FSEventsFileUpdateImpl()
 {
     dispatch_is_main_queue();
@@ -27,11 +33,13 @@ FSEventsFileUpdateImpl::~FSEventsFileUpdateImpl()
     for( auto &watch : m_Watches ) {
         DeleteEventStream(watch.second.stream);
     }
+    Log::Trace(SPDLOC, "FSEventsFileUpdateImpl destroyed");
 }
 
 uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path,
                                               std::function<void()> _handler)
 {
+    Log::Debug(SPDLOC, "Adding for path: {}", _path);
     assert(_handler);
     auto lock = std::lock_guard{m_Lock};
 
@@ -55,6 +63,7 @@ uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path
 
 void FSEventsFileUpdateImpl::RemoveWatchPathWithToken(uint64_t _token)
 {
+    Log::Debug(SPDLOC, "Removing a watch for token: {}", _token);
     auto lock = std::lock_guard{m_Lock};
     for( auto watch_it = m_Watches.begin(), watch_end = m_Watches.end(); watch_it != watch_end;
          ++watch_it ) {
@@ -94,10 +103,14 @@ FSEventStreamRef FSEventsFileUpdateImpl::CreateEventStream(const std::filesystem
                                      kFSEventStreamEventIdSinceNow,
                                      g_FSEventsLatency,
                                      flags);
-        if( stream == nullptr )
+        if( stream == nullptr ) {
+            Log::Warn(SPDLOC, "Failed to create a stream for {}", _path);
             return;
+        }
         FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
         FSEventStreamStart(stream);
+        
+        Log::Debug(SPDLOC, "Started a stream for {}", _path);
     };
 
     if( dispatch_is_main_queue() )
@@ -131,8 +144,10 @@ void FSEventsFileUpdateImpl::Callback([[maybe_unused]] ConstFSEventStreamRef _st
     auto lock = std::lock_guard{m_Lock};
     auto paths = reinterpret_cast<const char **>(_paths);
     for( size_t i = 0; i != _num; ++i ) {
-        assert(paths[i]);
-        auto watches_it = m_Watches.find(paths[i]);
+        const auto path = paths[i];
+        assert(path);
+        Log::Debug(SPDLOC, "Callback fired for {}", path);
+        auto watches_it = m_Watches.find(path);
         if( watches_it != m_Watches.end() ) {
             for( auto &handler : watches_it->second.handlers ) {
                 // NB! no copy here => this call is NOT reenterant!

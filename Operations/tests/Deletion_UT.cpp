@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -20,7 +20,8 @@ static std::vector<VFSListingItem> FetchItems(const std::string &_directory_path
 TEST_CASE(PREFIX "Allows cancellation on the phase of source items scanning")
 {
     struct MyHost : vfs::NativeHost {
-        MyHost(nc::utility::NativeFSManager &_native_fs_man) : NativeHost(_native_fs_man) {}
+//        MyHost(nc::utility::NativeFSManager &_native_fs_man) : NativeHost(_native_fs_man) {}
+        using NativeHost::NativeHost;
         int IterateDirectoryListing(
             const char *_path,
             const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override
@@ -31,7 +32,8 @@ TEST_CASE(PREFIX "Allows cancellation on the phase of source items scanning")
         }
         std::function<void(const char *_path)> on_iterate_directorying_listing;
     };
-    auto native_host = std::make_shared<MyHost>(*TestEnv().native_fs_man);
+    auto native_host = std::make_shared<MyHost>(*TestEnv().native_fs_man,
+                                                *TestEnv().fsevents_file_update);
     TempTestDir tmp_dir;
     const auto &d = tmp_dir.directory;
     std::filesystem::create_directories(d / "top/first/second");

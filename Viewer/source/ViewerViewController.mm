@@ -75,7 +75,6 @@ struct BackgroundFileOpener {
 
 @property(nonatomic) IBOutlet NSPopover *goToPositionPopover;
 @property(nonatomic) IBOutlet NSTextField *goToPositionValueTextField;
-@property(nonatomic) IBOutlet NSString *goToPositionValueTextFieldValue;
 @property(nonatomic) IBOutlet NSPopUpButton *goToPositionKindButton;
 
 @end
@@ -127,6 +126,7 @@ struct BackgroundFileOpener {
 {
     self = [super init];
     if( self ) {
+        Log::Debug(SPDLOC, "created new NCViewerViewController {}", objc_bridge_cast<void>(self));
         m_History = &_history;
         m_Config = &_config;
         m_Shortcuts = _shortcuts;
@@ -144,6 +144,7 @@ struct BackgroundFileOpener {
 - (void)dealloc
 {
     dispatch_assert_main_queue();
+    Log::Debug(SPDLOC, "deallocating NCViewerViewController {}", objc_bridge_cast<void>(self));
     [self clear];
 }
 
@@ -163,6 +164,7 @@ struct BackgroundFileOpener {
     m_VFS.reset();
     m_Path.clear();
     m_GlobalFilePath.clear();
+    m_FileObservationToken.reset();
 }
 
 - (void)setFile:(std::string)path at:(VFSHostPtr)vfs
@@ -561,7 +563,7 @@ struct BackgroundFileOpener {
 - (IBAction)onGoToPositionActionClicked:(id) [[maybe_unused]] _sender
 {
     [self.goToPositionPopover close];
-    const auto string = self.goToPositionValueTextFieldValue;
+    const auto string = [self.goToPositionValueTextField stringValue];
     if( self.goToPositionKindButton.selectedTag == 0 ) {
         const double pos = string.doubleValue / 100.;
         [m_View scrollToVerticalPosition:std::clamp(pos, 0., 1.)];

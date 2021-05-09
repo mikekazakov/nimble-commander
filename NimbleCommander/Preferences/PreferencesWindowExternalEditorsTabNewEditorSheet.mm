@@ -2,6 +2,7 @@
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include <Utility/FileMask.h>
 #include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty : NSValueTransformer
 @end

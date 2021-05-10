@@ -57,6 +57,7 @@ struct KeycodesHardcode
     {49,    0x0020,                     @"Space"},
     {49,    0x2423,                     @"Space"},
     {51,    0x8,                        @"⌫"},
+    {51,    0x7f,                       @"⌫"},
     {71,    NSClearDisplayFunctionKey,  @"Clear"},
     {53,    0x1B,                       @"⎋"},
     {115,   NSHomeFunctionKey,          @"↖"},

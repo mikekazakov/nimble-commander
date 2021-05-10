@@ -56,7 +56,6 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
     
     const auto modif = _event.modifierFlags;
     const auto unicode = [character characterAtIndex:0];
-    const auto keycode = _event.keyCode;
     
     static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root,
                                              hk_go_home, hk_preview, hk_go_into, kh_go_outside;
@@ -119,15 +118,6 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
     if( hk_file_open_native.IsKeyDown(unicode, modif) ) {
         if( _handle ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnOpenNatively:) withSender:self];
-        }
-        return view::BiddingPriority::Default;
-    }
-    
-    if(keycode == 51 && // backspace
-       (modif & (NSEventModifierFlagShift|NSEventModifierFlagControl|NSEventModifierFlagOption|NSEventModifierFlagCommand)) == 0 ) {
-        // treat not-processed by QuickSearch backspace as a GoToUpperLevel command
-        if( _handle ) {
-            actions::GoToEnclosingFolder{}.Perform(m_PC, m_PC);
         }
         return view::BiddingPriority::Default;
     }

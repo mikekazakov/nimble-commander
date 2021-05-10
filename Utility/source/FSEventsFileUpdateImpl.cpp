@@ -39,11 +39,12 @@ FSEventsFileUpdateImpl::~FSEventsFileUpdateImpl()
 uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path,
                                               std::function<void()> _handler)
 {
-    Log::Debug(SPDLOC, "Adding for path: {}", _path);
     assert(_handler);
     auto lock = std::lock_guard{m_Lock};
 
     const auto token = m_NextTicket++;
+    Log::Debug(SPDLOC, "Adding for path: {}, token: {}", _path, token);
+    
     if( auto existing = m_Watches.find(_path); existing != m_Watches.end() ) {
         auto &watch = existing->second;
         assert(watch.handlers.contains(token) == false);

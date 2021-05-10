@@ -379,7 +379,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"panel.scroll_prev_page",                              u8"⌥\uF72C" }, // alt+page up
     {"panel.move_next_and_invert_selection",                u8"\u0003"  }, // insert
     {"panel.invert_item_selection",                         u8""        },
-    {"panel.go_into_enclosing_folder",                      u8""        },
+    {"panel.go_into_enclosing_folder",                      u8"\u007f"  }, // backspace
     {"panel.go_into_folder",                                u8""        },
     {"panel.go_root",                                       u8"/"       }, // slash
     {"panel.go_home",                                       u8"~"       }, // tilde

@@ -654,6 +654,8 @@
 		CFA7E02D1EB97B60001FE66C /* Delete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7E02C1EB97B60001FE66C /* Delete.mm */; };
 		CFA7FA741C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA7FA751C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
+		CFA999F3264F17A800F72E93 /* Usage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA999D9264F17A800F72E93 /* Usage.cpp */; };
+		CFA999F4264F17A800F72E93 /* Usage.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA999F2264F17A800F72E93 /* Usage.h */; };
 		CFA9DD8D1FD668370099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
 		CFA9DD9D1FD6694E0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
 		CFA9DD9E1FD6694F0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
@@ -1841,6 +1843,8 @@
 		CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenNetworkConnection.mm; path = NimbleCommander/States/FilePanels/Actions/OpenNetworkConnection.mm; sourceTree = SOURCE_ROOT; };
 		CFA7E02B1EB97B60001FE66C /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delete.h; path = NimbleCommander/States/FilePanels/Actions/Delete.h; sourceTree = SOURCE_ROOT; };
 		CFA7E02C1EB97B60001FE66C /* Delete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Delete.mm; path = NimbleCommander/States/FilePanels/Actions/Delete.mm; sourceTree = SOURCE_ROOT; };
+		CFA999D9264F17A800F72E93 /* Usage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Usage.cpp; path = NimbleCommander/Bootstrap/Usage.cpp; sourceTree = "<group>"; wrapsLines = 0; };
+		CFA999F2264F17A800F72E93 /* Usage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Usage.h; path = NimbleCommander/Bootstrap/Usage.h; sourceTree = "<group>"; };
 		CFA9DD8B1FD668370099DD91 /* Interactions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interactions.h; path = NimbleCommander/Bootstrap/Interactions.h; sourceTree = SOURCE_ROOT; };
 		CFA9DD8C1FD668370099DD91 /* Interactions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Interactions.mm; path = NimbleCommander/Bootstrap/Interactions.mm; sourceTree = SOURCE_ROOT; };
 		CFAB6CC92587C38700397DB5 /* FollowSymlink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FollowSymlink.h; path = NimbleCommander/States/FilePanels/Actions/FollowSymlink.h; sourceTree = "<group>"; };
@@ -2725,6 +2729,8 @@
 				CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */,
 				CF0B78F825739F79003061D0 /* SparkleShim.h */,
 				CF0B78D925739F61003061D0 /* SparkleShim.m */,
+				CFA999D9264F17A800F72E93 /* Usage.cpp */,
+				CFA999F2264F17A800F72E93 /* Usage.h */,
 				CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */,
 				CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */,
 			);
@@ -2750,8 +2756,8 @@
 			isa = PBXGroup;
 			children = (
 				CF8BDD102147D60800F14C3E /* libVFSIcon.a */,
-				CF38BEB82148A959005E336C /* VFSIconUnitTests */,
-				CF9721EF214FD43100A1B19E /* VFSIconIntegrationTests */,
+				CF38BEB82148A959005E336C /* VFSIconUT */,
+				CF9721EF214FD43100A1B19E /* VFSIconIT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3128,6 +3134,7 @@
 				CFEADD54259D01AD009ECA14 /* FocusOverlappedTerminal.h in Headers */,
 				CFAB6CE32587C38800397DB5 /* FollowSymlink.h in Headers */,
 				CF485C32259B5E5D002F9A05 /* FeedbackManagerImpl.h in Headers */,
+				CFA999F4264F17A800F72E93 /* Usage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3430,10 +3437,10 @@
 			remoteRef = CF308F42213ADAD800915730 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF38BEB82148A959005E336C /* VFSIconUnitTests */ = {
+		CF38BEB82148A959005E336C /* VFSIconUT */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			path = VFSIconUnitTests;
+			path = VFSIconUT;
 			remoteRef = CF38BEB72148A959005E336C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -3507,10 +3514,10 @@
 			remoteRef = CF8BDD0F2147D60800F14C3E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF9721EF214FD43100A1B19E /* VFSIconIntegrationTests */ = {
+		CF9721EF214FD43100A1B19E /* VFSIconIT */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			path = VFSIconIntegrationTests;
+			path = VFSIconIT;
 			remoteRef = CF9721EE214FD43100A1B19E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -3933,6 +3940,7 @@
 				CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */,
 				CF764CB4258763B100D7ED17 /* ExternalToolsSupport.mm in Sources */,
 				CF764D3E258782E300D7ED17 /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,
+				CFA999F3264F17A800F72E93 /* Usage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

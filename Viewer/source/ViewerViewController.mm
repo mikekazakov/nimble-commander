@@ -21,6 +21,7 @@ static const auto g_ConfigSearchCaseSensitive = "viewer.searchCaseSensitive";
 static const auto g_ConfigSearchForWholePhrase = "viewer.searchForWholePhrase";
 static const auto g_ConfigWindowSize = "viewer.fileWindowSize";
 static const auto g_ConfigAutomaticRefresh = "viewer.automaticRefresh";
+static const auto g_AutomaticRefreshDelay = std::chrono::milliseconds(200);
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
@@ -87,6 +88,7 @@ struct BackgroundFileOpener {
     VFSSeqToRandomROWrapperFilePtr m_SeqWrapper; // may be nullptr if underlying VFS supports ReadAt
     VFSFilePtr m_WorkFile;                       // the one actually used
     nc::vfs::FileObservationToken m_FileObservationToken;
+    std::atomic_bool m_AutomaticFileRefreshScheduled;
     std::shared_ptr<nc::vfs::FileWindow> m_ViewerFileWindow;
     std::shared_ptr<nc::vfs::FileWindow> m_SearchFileWindow;
     std::shared_ptr<nc::vfs::SearchInFile> m_SearchInFile;
@@ -130,6 +132,7 @@ struct BackgroundFileOpener {
         m_History = &_history;
         m_Config = &_config;
         m_Shortcuts = _shortcuts;
+        m_AutomaticFileRefreshScheduled = false;
         __weak NCViewerViewController *weak_self = self;
         m_SearchInFileQueue.SetOnChange([=] {
             [static_cast<NCViewerViewController *>(weak_self) onSearchInFileQueueStateChanged];
@@ -679,7 +682,16 @@ struct BackgroundFileOpener {
 
 - (void)onFileChanged
 {
-    [self onRefresh];
+    if( m_AutomaticFileRefreshScheduled )
+        return;
+    m_AutomaticFileRefreshScheduled = true;
+    __weak NCViewerViewController *weak_self = self;
+    dispatch_to_main_queue_after(g_AutomaticRefreshDelay, [weak_self]{
+        if( NCViewerViewController *strong_self = weak_self ) {
+            strong_self->m_AutomaticFileRefreshScheduled = false;
+            [strong_self onRefresh];
+        }
+    });
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event

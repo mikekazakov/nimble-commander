@@ -9,7 +9,7 @@
 namespace nc::utility {
 
 static const CFAbsoluteTime g_FSEventsLatency = 0.05; // 50ms
-static const std::chrono::nanoseconds g_ScanInterval = std::chrono::seconds(1); // 2s
+static const std::chrono::nanoseconds g_ScanInterval = std::chrono::seconds(2);
 static const std::chrono::nanoseconds g_StaleInterval  = g_ScanInterval / 2;
 
 static std::optional<struct stat> GetStat(const std::filesystem::path &_path) noexcept;

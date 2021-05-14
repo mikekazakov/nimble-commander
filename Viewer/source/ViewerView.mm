@@ -170,9 +170,7 @@ using namespace nc::viewer;
     const uint64_t current_position = self.verticalPositionInBytes;
     const bool attach_to_bottom = m_Config->GetBool(g_ConfigStickToBottomOnRefresh) &&
                                   [m_View respondsToSelector:@selector(isAtTheEnd)] &&
-                                  [m_View isAtTheEnd] &&
-                                  [m_View respondsToSelector:@selector(isAtTheBeginning)] &&
-                                  [m_View isAtTheBeginning] == false;
+                                  [m_View isAtTheEnd];
 
     m_File = _file;
     m_Data = std::make_shared<DataBackend>(m_File, m_Data->Encoding());

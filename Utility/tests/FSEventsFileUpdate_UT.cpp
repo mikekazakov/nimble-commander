@@ -5,6 +5,7 @@
 #include <Habanero/mach_time.h>
 #include <fcntl.h>
 #include <chrono>
+#include <thread>
 
 using nc::utility::FSEventsFileUpdateImpl;
 using namespace std::chrono_literals;
@@ -54,39 +55,78 @@ TEST_CASE(PREFIX "Notify from file events")
 {
     TempTestDir tmp_dir;
     FSEventsFileUpdateImpl file_update;
-    const auto path = tmp_dir.directory / "file.txt";
     bool fired = false;
     auto callback = [&] { fired = true; };
-
     SECTION("File created")
     {
+        const auto path = tmp_dir.directory / "file_0.txt";
         file_update.AddWatchPath(path, callback);
         close(open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU));
     }
     SECTION("File deleted")
     {
+        const auto path = tmp_dir.directory / "file_1.txt";
         close(open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU));
         file_update.AddWatchPath(path, callback);
         unlink(path.c_str());
     }
     SECTION("File renamed")
     {
+        const auto path = tmp_dir.directory / "file_2.txt";
         close(open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU));
         file_update.AddWatchPath(path, callback);
         std::filesystem::rename(path, tmp_dir.directory / "new_filename.txt");
     }
     SECTION("Existing file contents changed")
     {
+        const auto path = tmp_dir.directory / "file_3.txt";
         int file = open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU);
         file_update.AddWatchPath(path, callback);
         write(file, "hello", 5);
         close(file);
     }
-    SECTION("Existing file handle closed")
+    SECTION("Existing file contents changed, existing content")
     {
+        const auto path = tmp_dir.directory / "file_4.txt";
         int file = open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU);
+        write(file, "hello", 5);
         file_update.AddWatchPath(path, callback);
+        write(file, "hello", 5);
         close(file);
+    }
+    SECTION("Existing file contents changed, O_SHLOCK")
+    {
+        const auto path = tmp_dir.directory / "file_5.txt";
+        int file = open(path.c_str(), O_CREAT | O_RDWR | O_SHLOCK, S_IRWXU);
+        file_update.AddWatchPath(path, callback);
+        write(file, "hello", 5);
+        close(file);
+    }
+    SECTION("Existing file contents changed, O_EXLOCK")
+    {
+        const auto path = tmp_dir.directory / "file_6.txt";
+        int file = open(path.c_str(), O_CREAT | O_RDWR | O_EXLOCK, S_IRWXU);
+        file_update.AddWatchPath(path, callback);
+        write(file, "hello", 5);
+        close(file);
+    }
+    //    SECTION("Existing file handle closed")
+    //    {
+    //        // THIS IS NOT CAUGHT
+    //        const auto path = tmp_dir.directory / "file_7.txt";
+    //        int file = open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU);
+    //        file_update.AddWatchPath(path, callback);
+    //        close(file);
+    //    }
+    SECTION("Existing file contents changed, no closure")
+    {
+        const auto path = tmp_dir.directory / "file_8.txt";
+        int file = open(path.c_str(), O_CREAT | O_RDWR, S_IRWXU);
+        write(file, "hello", 5);
+        file_update.AddWatchPath(path, callback);
+        std::vector<unsigned char> nonsense(1'000);
+        write(file, nonsense.data(), nonsense.size());
+        // deliberately leaking the file handle
     }
     REQUIRE(run_until_timeout_or_predicate(5s, 10ms, [&] { return fired; }));
 }

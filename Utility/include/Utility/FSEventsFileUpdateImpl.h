@@ -5,6 +5,7 @@
 #include <robin_hood.h>
 #include <vector>
 #include <mutex>
+#include <sys/stat.h>
 
 namespace nc::utility {
 
@@ -12,7 +13,10 @@ class FSEventsFileUpdateImpl : public FSEventsFileUpdate
 {
 public:
     FSEventsFileUpdateImpl();
+    FSEventsFileUpdateImpl(const FSEventsFileUpdateImpl &) = delete;
     ~FSEventsFileUpdateImpl();
+    void operator=(const FSEventsFileUpdateImpl &) = delete;
+
     uint64_t AddWatchPath(const std::filesystem::path &_path,
                           std::function<void()> _handler) override;
 
@@ -23,14 +27,27 @@ public:
 private:
     struct Watch {
         FSEventStreamRef stream;
+        std::optional<struct stat> stat;
+        std::chrono::nanoseconds snapshot_time;
         robin_hood::unordered_flat_map<uint64_t, std::function<void()>> handlers;
     };
-
+    struct AsyncContext {
+        FSEventsFileUpdateImpl *me = nullptr;
+    };
     struct PathHash {
         using is_transparent = void;
         size_t operator()(const std::filesystem::path &_path) const noexcept;
         size_t operator()(const std::string_view &_path) const noexcept;
     };
+    
+    void ScheduleScannerKickstart();
+    void KickstartBackgroundScanner();
+    void AcceptScannedStats(const std::vector<std::filesystem::path> &_paths,
+                            const std::vector<std::optional<struct stat>> &_stats);
+    static void BackgroundScanner(std::vector<std::filesystem::path> _paths,
+                                  std::weak_ptr<AsyncContext> _context) noexcept;
+    static bool DidChange(const std::optional<struct stat>& _was,
+                          const std::optional<struct stat>& _now ) noexcept;
 
     FSEventStreamRef CreateEventStream(const std::filesystem::path &_path) const;
     static void DeleteEventStream(FSEventStreamRef _stream);
@@ -38,7 +55,7 @@ private:
                   size_t _num,
                   void *_paths,
                   const FSEventStreamEventFlags _flags[],
-                  const FSEventStreamEventId _ids[]) const;
+                  const FSEventStreamEventId _ids[]);
     static void CallbackFFI(ConstFSEventStreamRef _stream_ref,
                             void *_user_data,
                             size_t _num,
@@ -49,6 +66,9 @@ private:
     robin_hood::unordered_map<std::filesystem::path, Watch, PathHash> m_Watches;
     mutable std::mutex m_Lock;
     uint64_t m_NextTicket = 1;
+    bool m_KickstartIsOnline = false;
+    std::shared_ptr<AsyncContext> m_AsyncContext; // the only strong ownership
+    std::weak_ptr<AsyncContext> m_WeakAsyncContext; // 'points' at m_AsyncContext
 };
 
 } // namespace nc::utility

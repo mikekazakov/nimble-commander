@@ -4,6 +4,7 @@
 #include <CoreServices/CoreServices.h>
 #include <robin_hood.h>
 #include <vector>
+#include <optional>
 #include <mutex>
 #include <sys/stat.h>
 

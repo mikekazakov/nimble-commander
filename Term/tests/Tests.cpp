@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
 #include <Habanero/CommonPaths.h>
@@ -16,7 +16,7 @@ using namespace nc::term;
 static auto g_TestDirPrefix = "_nc__term__test_";
 [[clang::no_destroy]] static auto g_LogSink =
     std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(1000);
-[[clang::no_destroy]] static auto g_Log = std::make_shared<spdlog::logger>(Log::Name(), g_LogSink);
+[[clang::no_destroy]] static auto g_Log = std::make_shared<spdlog::logger>("term", g_LogSink);
 
 static void DumpLog()
 {

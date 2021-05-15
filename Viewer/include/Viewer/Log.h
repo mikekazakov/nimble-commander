@@ -2,17 +2,13 @@
 #pragma once
 
 #include <Habanero/SpdlogFacade.h>
-#include <string>
-#include <string_view>
 
 namespace nc::viewer {
 
-struct Log : base::SpdlogFacade<Log> {
-    Log() = delete;
-
-    static const std::string &Name() noexcept;
-    static spdlog::logger &Get() noexcept;
-    static void Set(std::shared_ptr<spdlog::logger> _logger) noexcept;
+class Log : public base::SpdlogFacade<Log>
+{
+    static nc::base::SpdLogger m_Logger;
+    friend SpdlogFacade;
 };
 
 } // namespace nc::viewer

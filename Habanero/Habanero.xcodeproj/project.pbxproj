@@ -40,6 +40,7 @@
 		CF46020325630DE80095FC73 /* Observable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD211D6C44C1006B94C2 /* Observable.cpp */; };
 		CF46020425630DE80095FC73 /* ExecutionDeadline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5338682532512100022EE8 /* ExecutionDeadline.cpp */; };
 		CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */; };
+		CFA99A022650661300F72E93 /* SpdlogFacade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A012650661300F72E93 /* SpdlogFacade.cpp */; };
 		CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +115,7 @@
 		CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = spinlock.cpp; path = source/spinlock.cpp; sourceTree = "<group>"; };
 		CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFDefaultsCPP.cpp; path = source/CFDefaultsCPP.cpp; sourceTree = "<group>"; };
 		CFA9999426468BBA00F72E93 /* SpdlogFacade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpdlogFacade.h; path = include/Habanero/SpdlogFacade.h; sourceTree = "<group>"; };
+		CFA99A012650661300F72E93 /* SpdlogFacade.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpdlogFacade.cpp; path = source/SpdlogFacade.cpp; sourceTree = "<group>"; };
 		CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LRUCache_Tests.cpp; path = ../habanero/tests/LRUCache_Tests.cpp; sourceTree = SOURCE_ROOT; };
 		CFD62BA01C99C2AE0021EE7F /* CFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFString.cpp; path = source/CFString.cpp; sourceTree = "<group>"; };
 		CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommonPaths.cpp; path = source/CommonPaths.cpp; sourceTree = "<group>"; };
@@ -268,6 +270,7 @@
 				CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */,
 				CF19B3ED2544B94800838B45 /* ScopedObservable.cpp */,
 				CF19B4392544BD2400838B45 /* SerialQueue.cpp */,
+				CFA99A012650661300F72E93 /* SpdlogFacade.cpp */,
 				CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */,
 				CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */,
 				CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */,
@@ -387,6 +390,7 @@
 				CF4601FA25630DE80095FC73 /* GoogleAnalytics.mm in Sources */,
 				CF4601FD25630DE80095FC73 /* mach_time.cpp in Sources */,
 				CF4601F025630DE80095FC73 /* Hash.cpp in Sources */,
+				CFA99A022650661300F72E93 /* SpdlogFacade.cpp in Sources */,
 				CF4601F325630DE80095FC73 /* CommonPaths.mm in Sources */,
 				CF4601FE25630DE80095FC73 /* PosixFilesystem.cpp in Sources */,
 				CF4601F525630DE80095FC73 /* spinlock.cpp in Sources */,

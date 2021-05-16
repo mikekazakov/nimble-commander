@@ -77,6 +77,7 @@
 #include <Config/ObjCBridge.h>
 #include <Config/FileOverwritesStorage.h>
 #include <Config/Executor.h>
+#include <Config/Log.h>
 
 #include <Viewer/History.h>
 #include <Viewer/Log.h>
@@ -182,6 +183,7 @@ static void SetupLogs()
         AttachToSink<nc::utility::Log>(level, stdout_sink);
         AttachToSink<nc::term::Log>(level, stdout_sink);
         AttachToSink<nc::viewer::Log>(level, stdout_sink);
+        AttachToSink<nc::config::Log>(level, stdout_sink);
     }
 }
 

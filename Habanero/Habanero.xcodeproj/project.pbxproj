@@ -41,6 +41,7 @@
 		CF46020425630DE80095FC73 /* ExecutionDeadline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5338682532512100022EE8 /* ExecutionDeadline.cpp */; };
 		CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */; };
 		CFA99A022650661300F72E93 /* SpdlogFacade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A012650661300F72E93 /* SpdlogFacade.cpp */; };
+		CFA99A1026512D4400F72E93 /* WriteAtomically.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */; };
 		CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */; };
 /* End PBXBuildFile section */
 
@@ -116,6 +117,8 @@
 		CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFDefaultsCPP.cpp; path = source/CFDefaultsCPP.cpp; sourceTree = "<group>"; };
 		CFA9999426468BBA00F72E93 /* SpdlogFacade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpdlogFacade.h; path = include/Habanero/SpdlogFacade.h; sourceTree = "<group>"; };
 		CFA99A012650661300F72E93 /* SpdlogFacade.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpdlogFacade.cpp; path = source/SpdlogFacade.cpp; sourceTree = "<group>"; };
+		CFA99A0E26512D3700F72E93 /* WriteAtomically.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WriteAtomically.h; path = include/Habanero/WriteAtomically.h; sourceTree = "<group>"; };
+		CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WriteAtomically.cpp; path = source/WriteAtomically.cpp; sourceTree = "<group>"; };
 		CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LRUCache_Tests.cpp; path = ../habanero/tests/LRUCache_Tests.cpp; sourceTree = SOURCE_ROOT; };
 		CFD62BA01C99C2AE0021EE7F /* CFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFString.cpp; path = source/CFString.cpp; sourceTree = "<group>"; };
 		CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommonPaths.cpp; path = source/CommonPaths.cpp; sourceTree = "<group>"; };
@@ -243,6 +246,7 @@
 				CF19B4062544B9E500838B45 /* tiny_string.h */,
 				CF19B40C2544B9E600838B45 /* tribool.h */,
 				CF19B3FD2544B9E500838B45 /* variable_container.h */,
+				CFA99A0E26512D3700F72E93 /* WriteAtomically.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -274,6 +278,7 @@
 				CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */,
 				CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */,
 				CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */,
+				CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -398,6 +403,7 @@
 				CF4601F825630DE80095FC73 /* CFStackAllocator.cpp in Sources */,
 				CF4601FC25630DE80095FC73 /* CloseFrom.cpp in Sources */,
 				CF4601ED25630DE80095FC73 /* DispatchGroup.cpp in Sources */,
+				CFA99A1026512D4400F72E93 /* WriteAtomically.cpp in Sources */,
 				CF4601F725630DE80095FC73 /* debug.cpp in Sources */,
 				CF46020025630DE80095FC73 /* SerialQueue.cpp in Sources */,
 				CF4601EF25630DE80095FC73 /* StringsBulk.cpp in Sources */,

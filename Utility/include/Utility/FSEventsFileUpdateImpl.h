@@ -40,15 +40,21 @@ private:
         size_t operator()(const std::filesystem::path &_path) const noexcept;
         size_t operator()(const std::string_view &_path) const noexcept;
     };
-    
+    struct PathEqual {
+        using is_transparent = void;
+        bool operator()(const std::filesystem::path &_lhs,
+                        const std::filesystem::path &_rhs) const noexcept;
+        bool operator()(std::string_view _lhs, const std::filesystem::path &_rhs) const noexcept;
+    };
+
     void ScheduleScannerKickstart();
     void KickstartBackgroundScanner();
     void AcceptScannedStats(const std::vector<std::filesystem::path> &_paths,
                             const std::vector<std::optional<struct stat>> &_stats);
     static void BackgroundScanner(std::vector<std::filesystem::path> _paths,
                                   std::weak_ptr<AsyncContext> _context) noexcept;
-    static bool DidChange(const std::optional<struct stat>& _was,
-                          const std::optional<struct stat>& _now ) noexcept;
+    static bool DidChange(const std::optional<struct stat> &_was,
+                          const std::optional<struct stat> &_now) noexcept;
 
     FSEventStreamRef CreateEventStream(const std::filesystem::path &_path) const;
     static void DeleteEventStream(FSEventStreamRef _stream);
@@ -64,11 +70,11 @@ private:
                             const FSEventStreamEventFlags _flags[],
                             const FSEventStreamEventId _ids[]);
 
-    robin_hood::unordered_map<std::filesystem::path, Watch, PathHash> m_Watches;
+    robin_hood::unordered_map<std::filesystem::path, Watch, PathHash, PathEqual> m_Watches;
     mutable std::mutex m_Lock;
     uint64_t m_NextTicket = 1;
     bool m_KickstartIsOnline = false;
-    std::shared_ptr<AsyncContext> m_AsyncContext; // the only strong ownership
+    std::shared_ptr<AsyncContext> m_AsyncContext;   // the only strong ownership
     std::weak_ptr<AsyncContext> m_WeakAsyncContext; // 'points' at m_AsyncContext
 };
 

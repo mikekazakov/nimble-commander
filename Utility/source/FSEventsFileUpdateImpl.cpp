@@ -11,7 +11,7 @@ namespace nc::utility {
 
 static const CFAbsoluteTime g_FSEventsLatency = 0.05; // 50ms
 static const std::chrono::nanoseconds g_ScanInterval = std::chrono::seconds(2);
-static const std::chrono::nanoseconds g_StaleInterval  = g_ScanInterval / 2;
+static const std::chrono::nanoseconds g_StaleInterval = g_ScanInterval / 2;
 
 static std::optional<struct stat> GetStat(const std::filesystem::path &_path) noexcept;
 
@@ -24,6 +24,18 @@ FSEventsFileUpdateImpl::PathHash::operator()(const std::filesystem::path &_path)
 size_t FSEventsFileUpdateImpl::PathHash::operator()(const std::string_view &_path) const noexcept
 {
     return robin_hood::hash_bytes(_path.data(), _path.size());
+}
+
+bool FSEventsFileUpdateImpl::PathEqual::operator()(const std::filesystem::path &_lhs,
+                                                   const std::filesystem::path &_rhs) const noexcept
+{
+    return _lhs.native() == _rhs.native();
+}
+
+bool FSEventsFileUpdateImpl::PathEqual::operator()(std::string_view _lhs,
+                                                   const std::filesystem::path &_rhs) const noexcept
+{
+    return _lhs == _rhs.native();
 }
 
 FSEventsFileUpdateImpl::FSEventsFileUpdateImpl()
@@ -71,10 +83,10 @@ uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path
         watch.snapshot_time = machtime();
         m_Watches.emplace(_path, std::move(watch));
     }
-    
+
     if( was_empty == true && m_KickstartIsOnline == false )
         ScheduleScannerKickstart();
-    
+
     return token;
 }
 
@@ -161,7 +173,7 @@ void FSEventsFileUpdateImpl::Callback([[maybe_unused]] ConstFSEventStreamRef _st
 {
     // remove any adjacent duplicates if any. we don't care about flags and ids.
     auto cpaths = reinterpret_cast<const char **>(_paths);
-    std::vector<std::string_view> paths( cpaths, cpaths + _num);
+    std::vector<std::string_view> paths(cpaths, cpaths + _num);
     paths.erase(std::unique(paths.begin(), paths.end()), paths.end());
 
     auto lock = std::lock_guard{m_Lock};
@@ -196,7 +208,7 @@ void FSEventsFileUpdateImpl::ScheduleScannerKickstart()
     // no dispatch_assert_main_queue here - can be scheduled from any thread
     m_KickstartIsOnline = true;
     // schedule the next scanner execution after g_ScanInterval
-    dispatch_to_main_queue_after(g_ScanInterval, [context = m_WeakAsyncContext]{
+    dispatch_to_main_queue_after(g_ScanInterval, [context = m_WeakAsyncContext] {
         if( auto instance = context.lock() )
             instance->me->KickstartBackgroundScanner();
     });
@@ -235,18 +247,18 @@ void FSEventsFileUpdateImpl::AcceptScannedStats(
     dispatch_assert_main_queue();
     auto lock = std::lock_guard{m_Lock};
     ScheduleScannerKickstart();
-    
-    assert( _paths.size() == _stats.size() );
+
+    assert(_paths.size() == _stats.size());
     const auto now = machtime();
     for( size_t i = 0; i != _paths.size(); ++i ) {
         auto it = m_Watches.find(_paths[i]);
         if( it == m_Watches.end() )
             continue; // _paths[i] was removed in the meantime
-        
+
         const auto changed = DidChange(it->second.stat, _stats[i]);
         it->second.stat = _stats[i];
         it->second.snapshot_time = now;
-        
+
         if( changed ) {
             Log::Debug(SPDLOC, "Callback fired for {}", _paths[i]);
             for( auto &handler : it->second.handlers ) {
@@ -257,8 +269,8 @@ void FSEventsFileUpdateImpl::AcceptScannedStats(
     }
 }
 
-bool FSEventsFileUpdateImpl::DidChange(const std::optional<struct stat>& _was,
-                                       const std::optional<struct stat>& _now ) noexcept
+bool FSEventsFileUpdateImpl::DidChange(const std::optional<struct stat> &_was,
+                                       const std::optional<struct stat> &_now) noexcept
 {
     if( _was == std::nullopt && _now != std::nullopt )
         return true;
@@ -266,10 +278,10 @@ bool FSEventsFileUpdateImpl::DidChange(const std::optional<struct stat>& _was,
         return true;
     if( _was == std::nullopt && _now == std::nullopt )
         return false;
-    
+
     if( _was->st_size != _now->st_size )
         return true;
-    
+
     // TODO: check other fields. and decide what to even consider a 'change'...
 
     return false;

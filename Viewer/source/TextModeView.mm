@@ -585,13 +585,19 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     const auto delta_y = _event.hasPreciseScrollingDeltas
                              ? _event.scrollingDeltaY
                              : _event.scrollingDeltaY * m_FontInfo.LineHeight();
-    [self scrollWheelVertical:delta_y];
-
     const auto delta_x = _event.hasPreciseScrollingDeltas
                              ? _event.scrollingDeltaX
                              : _event.scrollingDeltaX * m_FontInfo.MonospaceWidth();
-    [self scrollWheelHorizontal:delta_x];
 
+    // Emulate 'predominant axis scrolling' by picking only the greatest magnitude.
+    // The implementation in NSScrollView is probably much more complex, but it's unclear
+    // how it works under the hood.
+    if( std::abs(delta_y) > std::abs(delta_x)  ) {
+        [self scrollWheelVertical:delta_y];
+    }
+    else {
+        [self scrollWheelHorizontal:delta_x];
+    }
     assert(std::abs(m_PxOffset.y) <= m_FontInfo.LineHeight());
     [self scrollPositionDidChange];
 }

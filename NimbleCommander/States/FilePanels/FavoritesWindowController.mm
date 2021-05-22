@@ -64,7 +64,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
         g_FavoritesWindowControllerDragDataType
     ]];
 
-    auto sheet = objc_cast<SheetWithHotkeys>(self.window);
+    auto sheet = objc_cast<NCSheetWithHotkeys>(self.window);
 
     sheet.onCtrlV = [sheet makeActionHotkey:@selector(showAvailableLocationsToAdd:)];
     sheet.onCtrlX = [sheet makeActionHotkey:@selector(removeFavorite:)];
@@ -390,7 +390,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
 
 @end
 
-@interface FavoritesWindow : SheetWithHotkeys
+@interface FavoritesWindow : NCSheetWithHotkeys
 @end
 
 @implementation FavoritesWindow

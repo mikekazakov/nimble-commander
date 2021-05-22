@@ -1,7 +1,7 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 
-@interface SheetWithHotkeys : NSWindow
+@interface NCSheetWithHotkeys : NSWindow
 
 @property (strong, nonatomic) void (^onCtrlA)();
 @property (strong, nonatomic) void (^onCtrlB)();

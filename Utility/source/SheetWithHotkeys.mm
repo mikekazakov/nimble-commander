@@ -1,8 +1,8 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 
-@implementation SheetWithHotkeys
+@implementation NCSheetWithHotkeys
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event
 {
@@ -46,9 +46,9 @@
 
 - (void (^)()) makeActionHotkey:(SEL)_action
 {
-    __weak SheetWithHotkeys* wself = self;
+    __weak NCSheetWithHotkeys* wself = self;
     auto l = ^{
-        if( SheetWithHotkeys* sself = wself ) {
+        if( NCSheetWithHotkeys* sself = wself ) {
             id ctrl = sself.windowController;
             if( ctrl && [ctrl respondsToSelector:_action] ) {
 #pragma clang diagnostic push
@@ -63,10 +63,10 @@
 
 - (void (^)()) makeFocusHotkey:(NSView*)_target
 {
-    __weak SheetWithHotkeys* wself = self;
+    __weak NCSheetWithHotkeys* wself = self;
     __weak NSView *wtarget = _target;
     auto l = ^{
-        if( SheetWithHotkeys* sself = wself ) {
+        if( NCSheetWithHotkeys* sself = wself ) {
             if( NSView *starget = wtarget ) {
                 [sself makeFirstResponder:starget];
             }
@@ -77,10 +77,10 @@
 
 - (void (^)()) makeClickHotkey:(NSControl*)_target
 {
-    __weak SheetWithHotkeys* wself = self;
+    __weak NCSheetWithHotkeys* wself = self;
     __weak NSControl *wtarget = _target;
     auto l = ^{
-        if( SheetWithHotkeys* sself = wself ) {
+        if( NCSheetWithHotkeys* sself = wself ) {
             if( NSControl *starget = wtarget ) {
                 [starget performClick:sself];
             }

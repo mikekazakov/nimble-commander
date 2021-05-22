@@ -1,14 +1,15 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Carbon/Carbon.h>
 #include "FileAlreadyExistDialog.h"
 #include "../ModalDialogResponses.h"
 #include "../Internal.h"
 #include <Utility/StringExtras.h>
+#include <Utility/SheetWithHotkeys.h>
 
 using namespace nc::ops;
 
-@interface NCOpsFileAlreadyExistWindow : NSWindow
+@interface NCOpsFileAlreadyExistWindow : NCSheetWithHotkeys
 @end
 
 @implementation NCOpsFileAlreadyExistWindow
@@ -43,6 +44,11 @@ using namespace nc::ops;
 @property (strong, nonatomic) IBOutlet NSTextField *NewFileTime;
 @property (strong, nonatomic) IBOutlet NSTextField *ExistingFileTime;
 @property (strong, nonatomic) IBOutlet NSButton *RememberCheck;
+@property (strong, nonatomic) IBOutlet NSButton *overwriteButton;
+@property (strong, nonatomic) IBOutlet NSButton *skipButton;
+@property (strong, nonatomic) IBOutlet NSButton *keepBothButton;
+@property (strong, nonatomic) IBOutlet NSButton *appendButton;
+@property (strong, nonatomic) IBOutlet NSButton *abortButton;
 
 @end
 
@@ -96,6 +102,13 @@ static bool IsShiftPressed()
     self.NewFileSize.integerValue = m_SourceStat.st_size;
     self.ExistingFileSize.integerValue = m_DestinationStat.st_size;
     self.RememberCheck.state = NSControlStateValueOff;
+        
+    NCSheetWithHotkeys *sheet = objc_cast<NCSheetWithHotkeys>(self.window);
+    sheet.onCtrlA = [sheet makeClickHotkey:self.RememberCheck];
+    sheet.onCtrlK = [sheet makeClickHotkey:self.keepBothButton];
+    sheet.onCtrlO = [sheet makeClickHotkey:self.overwriteButton];
+    sheet.onCtrlP = [sheet makeClickHotkey:self.appendButton];
+    sheet.onCtrlS = [sheet makeClickHotkey:self.skipButton];
 }
 
 - (IBAction)OnOverwrite:(id)[[maybe_unused]]_sender

@@ -110,7 +110,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 
     GA().PostScreenView("Network Connections Management");
 
-    auto sheet = objc_cast<SheetWithHotkeys>(self.window);
+    auto sheet = objc_cast<NCSheetWithHotkeys>(self.window);
     sheet.onCtrlA = ^{
       PeformClickIfEnabled(self.controlButtons, 0);
     };

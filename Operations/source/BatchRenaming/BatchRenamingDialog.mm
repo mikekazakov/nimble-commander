@@ -219,6 +219,7 @@ static auto g_MyPrivateTableViewDataType =
     }
     return self;
 }
+
 - (void)windowDidLoad
 {
     [super windowDidLoad];
@@ -246,7 +247,7 @@ static auto g_MyPrivateTableViewDataType =
     self.ReplaceWithComboBox.usesDataSource = true;
     self.ReplaceWithComboBox.dataSource = m_ReplaceWithDataSource;
 
-    SheetWithHotkeys *sheet = static_cast<SheetWithHotkeys *>(self.window);
+    NCSheetWithHotkeys *sheet = static_cast<NCSheetWithHotkeys *>(self.window);
     sheet.onCtrlA = [sheet makeActionHotkey:@selector(OnInsertMenu:)];
     sheet.onCtrlC = [sheet makeActionHotkey:@selector(OnInsertCounterPlaceholder:)];
     sheet.onCtrlD = [sheet makeActionHotkey:@selector(OnInsertDatePlaceholder:)];

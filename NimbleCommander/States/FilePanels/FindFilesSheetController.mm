@@ -295,7 +295,7 @@ private:
     self.TextComboBox.stringValue = @"";
 
     // wire up hotkeys
-    SheetWithHotkeys *sheet = static_cast<SheetWithHotkeys *>(self.window);
+    NCSheetWithHotkeys *sheet = static_cast<NCSheetWithHotkeys *>(self.window);
     sheet.onCtrlT = [sheet makeFocusHotkey:self.TextComboBox];
     sheet.onCtrlM = [sheet makeFocusHotkey:self.MaskComboBox];
     sheet.onCtrlS = [sheet makeFocusHotkey:self.SizeTextField];

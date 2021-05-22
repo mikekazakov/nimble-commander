@@ -26,7 +26,7 @@
 "31.title" = "Отменить";
 
 /* Class = "NSButton"; ibShadowedToolTip = "Hold Shift to apply to all"; ObjectID = "37"; */
-"37.ibShadowedToolTip" = "Удерживайте Shift чтобы применить ко всем";
+"37.ibShadowedToolTip" = "Удерживайте Shift чтобы применить ко всем (^A)";
 
 /* Class = "NSButtonCell"; title = "Apply to all"; ObjectID = "38"; */
 "38.title" = "Применить ко всем";

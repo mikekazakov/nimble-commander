@@ -13,8 +13,7 @@ static const auto g_MidGuideGap = 24.;
 static const auto g_MinPanelWidth = 120;
 static const auto g_ResizingGran = 14.;
 
-@implementation FilePanelMainSplitView
-{
+@implementation FilePanelMainSplitView {
     // if there's no overlays - these will be nils
     // if any part becomes overlayed - basic view is backed up in this array
     FilePanelsTabbedHolder *m_BasicViews[2];
@@ -24,21 +23,23 @@ static const auto g_ResizingGran = 14.;
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
-    if (self) {
+    if( self ) {
         // Initialization code here.
         self.vertical = true;
         self.dividerStyle = NSSplitViewDividerStyleThin;
         self.delegate = self;
-        
-        FilePanelsTabbedHolder *th1 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+
+        FilePanelsTabbedHolder *th1 =
+            [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:th1];
-        FilePanelsTabbedHolder *th2 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        FilePanelsTabbedHolder *th2 =
+            [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:th2];
 
-        __weak FilePanelMainSplitView* weak_self = self;
+        __weak FilePanelMainSplitView *weak_self = self;
         m_ThemeChangesObservation = NCAppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::FilePanelsGeneral,
-            [=]{ [weak_self setNeedsDisplay:true];});
+            [=] { [weak_self setNeedsDisplay:true]; });
     }
     return self;
 }
@@ -53,7 +54,7 @@ static const auto g_ResizingGran = 14.;
     return true;
 }
 
-- (CGFloat)splitView:(NSSplitView*)[[maybe_unused]] splitView
+- (CGFloat)splitView:(NSSplitView *) [[maybe_unused]] splitView
     constrainSplitPosition:(CGFloat)proposedPosition
                ofSubviewAt:(NSInteger) [[maybe_unused]] dividerIndex
 {
@@ -64,16 +65,25 @@ static const auto g_ResizingGran = 14.;
     return proposedPosition;
 }
 
--(CGFloat)splitView:(NSSplitView *)splitView
-constrainMaxCoordinate:(CGFloat)[[maybe_unused]]proposedMaximumPosition
-ofSubviewAt:(NSInteger)[[maybe_unused]]dividerIndex
+- (void)viewDidChangeBackingProperties
+{
+    [super viewDidChangeBackingProperties];
+    // I've no idea why this isn't triggered automatically.
+    // Without this adjustment the subviews sometimes end up with .5 coords when switching between
+    // Retina and non-Retina.
+    [self adjustSubviews];
+}
+
+- (CGFloat)splitView:(NSSplitView *)splitView
+    constrainMaxCoordinate:(CGFloat) [[maybe_unused]] proposedMaximumPosition
+               ofSubviewAt:(NSInteger) [[maybe_unused]] dividerIndex
 {
     return splitView.frame.size.width - g_MinPanelWidth;
 }
 
--(CGFloat)splitView:(NSSplitView *)[[maybe_unused]]splitView
-constrainMinCoordinate:(CGFloat)[[maybe_unused]]proposedMinimumPosition
-ofSubviewAt:(NSInteger)[[maybe_unused]]dividerIndex
+- (CGFloat)splitView:(NSSplitView *) [[maybe_unused]] splitView
+    constrainMinCoordinate:(CGFloat) [[maybe_unused]] proposedMinimumPosition
+               ofSubviewAt:(NSInteger) [[maybe_unused]] dividerIndex
 {
     return g_MinPanelWidth;
 }
@@ -91,51 +101,53 @@ ofSubviewAt:(NSInteger)[[maybe_unused]]dividerIndex
         NSDrawWindowBackground(rect);
 }
 
-- (BOOL)splitView:(NSSplitView *)[[maybe_unused]]splitView
-canCollapseSubview:(NSView *)[[maybe_unused]]subview
+- (BOOL)splitView:(NSSplitView *) [[maybe_unused]] splitView
+    canCollapseSubview:(NSView *) [[maybe_unused]] subview
 {
     return true;
 }
 
-- (bool) isLeftCollapsed
+- (bool)isLeftCollapsed
 {
-    if(self.subviews.count == 0) return false;
+    if( self.subviews.count == 0 )
+        return false;
     return [self isSubviewCollapsed:[self.subviews objectAtIndex:0]];
 }
 
-- (bool) isRightCollapsed
+- (bool)isRightCollapsed
 {
-    if(self.subviews.count < 2) return false;
+    if( self.subviews.count < 2 )
+        return false;
     return [self isSubviewCollapsed:[self.subviews objectAtIndex:1]];
 }
 
-- (bool) anyCollapsed
+- (bool)anyCollapsed
 {
-    if(self.subviews.count == 0)
+    if( self.subviews.count == 0 )
         return false;
     return [self isSubviewCollapsed:self.subviews[0]] || [self isSubviewCollapsed:self.subviews[1]];
 }
 
-- (bool) anyCollapsedOrOverlayed
+- (bool)anyCollapsedOrOverlayed
 {
-    if(m_BasicViews[0] != nil || m_BasicViews[1] != nil)
+    if( m_BasicViews[0] != nil || m_BasicViews[1] != nil )
         return true;
-    
-    if(self.subviews.count == 0)
+
+    if( self.subviews.count == 0 )
         return false;
     return [self isSubviewCollapsed:self.subviews[0]] || [self isSubviewCollapsed:self.subviews[1]];
 }
 
-- (void) swapViews
+- (void)swapViews
 {
     NSView *left = self.subviews[0];
     NSView *right = self.subviews[1];
 
     NSRect leftrect = left.frame;
     NSRect rightrect = right.frame;
-    
+
     self.subviews = @[right, left];
-    
+
     left.frame = rightrect;
     right.frame = leftrect;
 
@@ -144,44 +156,44 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
     m_BasicViews[1].frame = rightrect;
 }
 
-- (FilePanelsTabbedHolder*) leftTabbedHolder
+- (FilePanelsTabbedHolder *)leftTabbedHolder
 {
-    if(m_BasicViews[0])
+    if( m_BasicViews[0] )
         return m_BasicViews[0];
-    assert( self.subviews.count == 2 );
-    assert( objc_cast<FilePanelsTabbedHolder>(self.subviews[0]) );
+    assert(self.subviews.count == 2);
+    assert(objc_cast<FilePanelsTabbedHolder>(self.subviews[0]));
     return self.subviews[0];
 }
 
-- (FilePanelsTabbedHolder*) rightTabbedHolder
+- (FilePanelsTabbedHolder *)rightTabbedHolder
 {
-    if(m_BasicViews[1])
+    if( m_BasicViews[1] )
         return m_BasicViews[1];
-    assert( self.subviews.count == 2 );
-    assert( objc_cast<FilePanelsTabbedHolder>(self.subviews[1]) );
+    assert(self.subviews.count == 2);
+    assert(objc_cast<FilePanelsTabbedHolder>(self.subviews[1]));
     return self.subviews[1];
 }
 
-- (NSView*)leftOverlay
+- (NSView *)leftOverlay
 {
-    if(m_BasicViews[0] == nil)
+    if( m_BasicViews[0] == nil )
         return nil;
     return self.subviews[0];
 }
 
-- (NSView*)rightOverlay
+- (NSView *)rightOverlay
 {
-    if(m_BasicViews[1] == nil)
+    if( m_BasicViews[1] == nil )
         return nil;
     return self.subviews[1];
 }
 
-- (void)setLeftOverlay:(NSView*)_o
+- (void)setLeftOverlay:(NSView *)_o
 {
     NSRect leftRect = [self.subviews[0] frame];
-    if(_o != nil) {
+    if( _o != nil ) {
         _o.frame = leftRect;
-        if(m_BasicViews[0]) {
+        if( m_BasicViews[0] ) {
             [self replaceSubview:self.subviews[0] with:_o];
         }
         else {
@@ -190,7 +202,7 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
         }
     }
     else {
-        if(m_BasicViews[0] != nil) {
+        if( m_BasicViews[0] != nil ) {
             m_BasicViews[0].frame = leftRect;
             [self replaceSubview:self.subviews[0] with:m_BasicViews[0]];
             m_BasicViews[0] = nil;
@@ -198,13 +210,13 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
     }
 }
 
-- (void)setRightOverlay:(NSView*)_o
+- (void)setRightOverlay:(NSView *)_o
 {
     NSRect rightRect = [self.subviews[1] frame];
-    if(_o != nil) {
+    if( _o != nil ) {
         _o.frame = rightRect;
-        
-        if(m_BasicViews[1]) {
+
+        if( m_BasicViews[1] ) {
             [self replaceSubview:self.subviews[1] with:_o];
         }
         else {
@@ -213,7 +225,7 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
         }
     }
     else {
-        if(m_BasicViews[1] != nil) {
+        if( m_BasicViews[1] != nil ) {
             m_BasicViews[1].frame = rightRect;
             [self replaceSubview:self.subviews[1] with:m_BasicViews[1]];
             m_BasicViews[1] = nil;
@@ -221,26 +233,26 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
     }
 }
 
-- (bool) anyOverlayed
+- (bool)anyOverlayed
 {
     return m_BasicViews[0] != nil || m_BasicViews[1] != nil;
 }
 
-- (bool) isLeftOverlayed
+- (bool)isLeftOverlayed
 {
     return m_BasicViews[0] != nil;
 }
 
-- (bool) isRightOverlayed
+- (bool)isRightOverlayed
 {
     return m_BasicViews[1] != nil;
 }
 
-- (bool) isViewCollapsedOrOverlayed:(NSView*)_v
+- (bool)isViewCollapsedOrOverlayed:(NSView *)_v
 {
-    if(m_BasicViews[0] == _v || m_BasicViews[1] == _v)
+    if( m_BasicViews[0] == _v || m_BasicViews[1] == _v )
         return true;
-    
+
     return [self isSubviewCollapsed:_v];
 }
 
@@ -271,7 +283,7 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
     return [super performKeyEquivalent:theEvent];
 }
 
-- (IBAction)OnViewPanelsPositionMoveLeft:(id)[[maybe_unused]]sender
+- (IBAction)OnViewPanelsPositionMoveLeft:(id) [[maybe_unused]] sender
 {
     dispatch_assert_main_queue();
     if( self.isLeftCollapsed ) {
@@ -282,18 +294,18 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
         [self expandRightView];
         return;
     }
-    
+
     NSView *v1 = self.subviews[0];
     NSView *v2 = self.subviews[1];
-    NSRect left  = v1.frame;
+    NSRect left = v1.frame;
     NSRect right = v2.frame;
-    
+
     auto gran = g_ResizingGran;
-    
+
     left.size.width -= gran;
     right.origin.x -= gran;
     right.size.width += gran;
-    if(left.size.width < 0) {
+    if( left.size.width < 0 ) {
         right.origin.x -= left.size.width;
         right.size.width += left.size.width;
         left.size.width = 0;
@@ -313,7 +325,7 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
     [self setNeedsLayout:true];
 }
 
-- (IBAction)OnViewPanelsPositionMoveRight:(id)[[maybe_unused]]sender
+- (IBAction)OnViewPanelsPositionMoveRight:(id) [[maybe_unused]] sender
 {
     dispatch_assert_main_queue();
     if( self.isRightCollapsed ) {
@@ -324,23 +336,23 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
         [self expandLeftView];
         return;
     }
-    
+
     NSView *v1 = self.subviews[0];
     NSView *v2 = self.subviews[1];
-    NSRect left  = v1.frame;
+    NSRect left = v1.frame;
     NSRect right = v2.frame;
-    
+
     auto gran = g_ResizingGran;
-    
+
     left.size.width += gran;
     right.origin.x += gran;
     right.size.width -= gran;
-    if(right.size.width < 0) {
+    if( right.size.width < 0 ) {
         left.size.width += right.size.width;
         right.origin.x -= right.size.width;
         right.size.width = 0;
     }
-    
+
     if( right.size.width < g_MinPanelWidth ) {
         [self collapseRightView];
         if( auto h = objc_cast<FilePanelsTabbedHolder>(v1) )
@@ -349,31 +361,31 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
             [self.window makeFirstResponder:v1];
         return;
     }
-    
+
     v1.frame = left;
     v2.frame = right;
     [self setNeedsLayout:true];
 }
 
-- (void) collapseLeftView
+- (void)collapseLeftView
 {
-    dispatch_assert_main_queue();    
+    dispatch_assert_main_queue();
     if( self.isLeftCollapsed )
         return;
     NSView *right = [self.subviews objectAtIndex:1];
-    NSView *left  = [self.subviews objectAtIndex:0];
+    NSView *left = [self.subviews objectAtIndex:0];
     left.hidden = true;
     right.frameSize = NSMakeSize(self.frame.size.width, right.frame.size.height);
     [self display];
 }
 
-- (void) expandLeftView
+- (void)expandLeftView
 {
     dispatch_assert_main_queue();
     if( !self.isLeftCollapsed )
         return;
 
-    NSView *left  = [self.subviews objectAtIndex:0];
+    NSView *left = [self.subviews objectAtIndex:0];
     NSView *right = [self.subviews objectAtIndex:1];
     left.hidden = false;
     CGFloat dividerThickness = self.dividerThickness;
@@ -385,24 +397,24 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
     [self display];
 }
 
-- (void) collapseRightView
+- (void)collapseRightView
 {
     dispatch_assert_main_queue();
     if( self.isRightCollapsed )
         return;
     NSView *right = [self.subviews objectAtIndex:1];
-    NSView *left  = [self.subviews objectAtIndex:0];
+    NSView *left = [self.subviews objectAtIndex:0];
     right.hidden = true;
     left.frameSize = NSMakeSize(self.frame.size.width, left.frame.size.height);
     [self display];
 }
 
-- (void) expandRightView
+- (void)expandRightView
 {
     dispatch_assert_main_queue();
     if( !self.isRightCollapsed )
         return;
-    NSView *left  = [self.subviews objectAtIndex:0];
+    NSView *left = [self.subviews objectAtIndex:0];
     NSView *right = [self.subviews objectAtIndex:1];
     right.hidden = false;
     CGFloat dividerThickness = self.dividerThickness;
@@ -417,11 +429,11 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
 
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)_item
 {
-    static const long move_left_tag = ActionsShortcutsManager::Instance().
-        TagFromAction("menu.view.panels_position.move_left");
-    static const long move_right_tag = ActionsShortcutsManager::Instance().
-        TagFromAction("menu.view.panels_position.move_right");
-    
+    static const long move_left_tag =
+        ActionsShortcutsManager::Instance().TagFromAction("menu.view.panels_position.move_left");
+    static const long move_right_tag =
+        ActionsShortcutsManager::Instance().TagFromAction("menu.view.panels_position.move_right");
+
     const long item_tag = _item.tag;
     if( item_tag == move_left_tag ) {
         return self.isLeftCollapsed == false;
@@ -429,9 +441,8 @@ canCollapseSubview:(NSView *)[[maybe_unused]]subview
     if( item_tag == move_right_tag ) {
         return self.isRightCollapsed == false;
     }
-    
+
     return true;
 }
 
 @end
-

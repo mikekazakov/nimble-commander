@@ -11,6 +11,7 @@
 #include "../PanelView.h"
 #include "Layout.h"
 #include "PanelListViewNameView.h"
+#include "PanelListViewExtensionView.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewTableView.h"
 #include "PanelListViewTableHeaderView.h"
@@ -30,6 +31,7 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
 
 // identifiers legenda:
 // A - Name
+// G - Extension
 // B - Size
 // C - Date created
 // D - Date added
@@ -76,6 +78,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     PanelListViewGeometry m_Geometry;
     IconRepository *m_IconRepository;
     NSTableColumn *m_NameColumn;
+    NSTableColumn *m_ExtensionColumn;
     NSTableColumn *m_SizeColumn;
     NSTableColumn *m_DateCreatedColumn;
     NSTableColumn *m_DateAddedColumn;
@@ -192,6 +195,17 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     m_NameColumn.headerCell.alignment = NSTextAlignmentLeft;
     m_NameColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
     [m_NameColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    
+    m_ExtensionColumn =
+        [[NSTableColumn alloc] initWithIdentifier:ToKindIdentifier(PanelListViewColumns::Extension)];
+    m_ExtensionColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
+    m_ExtensionColumn.title = NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_EXTENSION", "");
+    m_ExtensionColumn.width = 60;
+    m_ExtensionColumn.minWidth = 50;
+    m_ExtensionColumn.maxWidth = 200;
+    m_ExtensionColumn.headerCell.alignment = NSTextAlignmentLeft;
+    m_ExtensionColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
+    [m_ExtensionColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
 
     m_SizeColumn =
         [[NSTableColumn alloc] initWithIdentifier:ToKindIdentifier(PanelListViewColumns::Size)];
@@ -261,6 +275,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     [NSNotificationCenter.defaultCenter removeObserver:self];
     [m_PanelView removeObserver:self forKeyPath:@"active"];
     [m_NameColumn removeObserver:self forKeyPath:@"width"];
+    [m_ExtensionColumn removeObserver:self forKeyPath:@"width"];
     [m_SizeColumn removeObserver:self forKeyPath:@"width"];
     [m_DateCreatedColumn removeObserver:self forKeyPath:@"width"];
     [m_DateAddedColumn removeObserver:self forKeyPath:@"width"];
@@ -403,6 +418,13 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             }
             return nv;
         }
+        if( kind == PanelListViewColumns::Extension ) {
+            auto ev = RetrieveOrSpawnView<NCPanelListViewExtensionView>(tableView, identifier);
+            if( auto item = m_Data->EntryAtSortPosition(row) ) {
+                [self fillDataForDateExensionView:ev withItem:item];
+            }
+            return ev;
+        }
         if( kind == PanelListViewColumns::Size ) {
             auto sv = RetrieveOrSpawnView<PanelListViewSizeView>(tableView, identifier);
             if( m_Data->IsValidSortPosition(row) ) {
@@ -497,6 +519,15 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     }
 }
 
+- (void)fillDataForDateExensionView:(NCPanelListViewExtensionView *)_view
+                           withItem:(const VFSListingItem &)_item
+{
+    if( _item.HasExtension() )
+        [_view setExtension:[NSString stringWithUTF8String:_item.Extension()]];
+    else
+        [_view setExtension:nil];
+}
+
 - (void)fillDataForSizeView:(PanelListViewSizeView *)_view
                    withItem:(const VFSListingItem &)_item
                       andVD:(const data::ItemVolatileData &)_vd
@@ -559,6 +590,9 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                   [self fillDataForNameView:static_cast<PanelListViewNameView *>(v)
                                    withItem:item
                                       andVD:vd];
+              if( col_type == PanelListViewColumns::Extension )
+                  [self fillDataForDateExensionView:static_cast<NCPanelListViewExtensionView *>(v)
+                                           withItem:item];
               if( col_type == PanelListViewColumns::Size )
                   [self fillDataForSizeView:static_cast<PanelListViewSizeView *>(v)
                                    withItem:item
@@ -711,6 +745,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     switch( _type ) {
         case PanelListViewColumns::Filename:
             return m_NameColumn;
+        case PanelListViewColumns::Extension:
+            return m_ExtensionColumn;
         case PanelListViewColumns::Size:
             return m_SizeColumn;
         case PanelListViewColumns::DateCreated:
@@ -730,6 +766,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 {
     if( _col == m_NameColumn )
         return PanelListViewColumns::Filename;
+    if( _col == m_ExtensionColumn )
+        return PanelListViewColumns::Extension;
     if( _col == m_SizeColumn )
         return PanelListViewColumns::Size;
     if( _col == m_DateCreatedColumn )
@@ -804,6 +842,10 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                 return {g_SortAscImage, m_NameColumn};
             case _::SortByNameRev:
                 return {g_SortDescImage, m_NameColumn};
+            case _::SortByExt:
+                return {g_SortAscImage, m_ExtensionColumn};
+            case _::SortByExtRev:
+                return {g_SortDescImage, m_ExtensionColumn};
             case _::SortBySize:
                 return {g_SortDescImage, m_SizeColumn};
             case _::SortBySizeRev:
@@ -843,15 +885,17 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
     if( tableColumn == m_NameColumn )
         swp(data::SortMode::SortByName, data::SortMode::SortByNameRev);
-    if( tableColumn == m_SizeColumn )
+    else if( tableColumn == m_ExtensionColumn )
+        swp(data::SortMode::SortByExt, data::SortMode::SortByExtRev);
+    else if( tableColumn == m_SizeColumn )
         swp(data::SortMode::SortBySize, data::SortMode::SortBySizeRev);
-    if( tableColumn == m_DateCreatedColumn )
+    else if( tableColumn == m_DateCreatedColumn )
         swp(data::SortMode::SortByBirthTime, data::SortMode::SortByBirthTimeRev);
-    if( tableColumn == m_DateModifiedColumn )
+    else if( tableColumn == m_DateModifiedColumn )
         swp(data::SortMode::SortByModTime, data::SortMode::SortByModTimeRev);
-    if( tableColumn == m_DateAddedColumn )
+    else if( tableColumn == m_DateAddedColumn )
         swp(data::SortMode::SortByAddTime, data::SortMode::SortByAddTimeRev);
-    if( tableColumn == m_DateAccessedColumn )
+    else if( tableColumn == m_DateAccessedColumn )
         swp(data::SortMode::SortByAccessTime, data::SortMode::SortByAccessTimeRev);
 
     if( proposed != m_SortMode && m_SortModeChangeCallback )
@@ -1058,6 +1102,8 @@ static PanelListViewColumns IdentifierToKind(char _letter) noexcept
             return PanelListViewColumns::DateModified;
         case 'F':
             return PanelListViewColumns::DateAccessed;
+        case 'G':
+            return PanelListViewColumns::Extension;
         default:
             return PanelListViewColumns::Empty;
     }
@@ -1070,6 +1116,8 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept
             return @" ";
         case PanelListViewColumns::Filename:
             return @"A";
+        case PanelListViewColumns::Extension:
+            return @"G";
         case PanelListViewColumns::Size:
             return @"B";
         case PanelListViewColumns::DateCreated:

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner"/>
@@ -10,6 +10,12 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <menu id="OnG-Yb-xGF">
             <items>
+                <menuItem title="Extension" identifier="G" id="dmJ-ex-4dW">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onToggleColumnVisibilty:" target="-1" id="iHx-Hf-aiz"/>
+                    </connections>
+                </menuItem>
                 <menuItem title="Date Modified" identifier="E" id="fAK-5J-yak">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>

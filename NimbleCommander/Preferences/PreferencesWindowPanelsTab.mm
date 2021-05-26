@@ -173,6 +173,8 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
     switch( _c ) {
         case PanelListViewColumns::Filename:
             return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_NAME", "");
+        case PanelListViewColumns::Extension:
+            return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_EXTENSION", "");
         case PanelListViewColumns::Size:
             return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_SIZE", "");
         case PanelListViewColumns::DateCreated:
@@ -383,6 +385,7 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 
     if( auto list = l->list() ) {
         static const auto columns_order = {PanelListViewColumns::Filename,
+                                           PanelListViewColumns::Extension,
                                            PanelListViewColumns::Size,
                                            PanelListViewColumns::DateCreated,
                                            PanelListViewColumns::DateModified,

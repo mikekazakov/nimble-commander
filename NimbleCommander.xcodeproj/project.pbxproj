@@ -656,6 +656,8 @@
 		CFA7FA751C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA999F3264F17A800F72E93 /* Usage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA999D9264F17A800F72E93 /* Usage.cpp */; };
 		CFA999F4264F17A800F72E93 /* Usage.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA999F2264F17A800F72E93 /* Usage.h */; };
+		CFA99A68265EE01E00F72E93 /* PanelListViewExtensionView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA99A4E265EE01E00F72E93 /* PanelListViewExtensionView.h */; };
+		CFA99A69265EE01E00F72E93 /* PanelListViewExtensionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */; };
 		CFA9DD8D1FD668370099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
 		CFA9DD9D1FD6694E0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
 		CFA9DD9E1FD6694F0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
@@ -1845,6 +1847,8 @@
 		CFA7E02C1EB97B60001FE66C /* Delete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Delete.mm; path = NimbleCommander/States/FilePanels/Actions/Delete.mm; sourceTree = SOURCE_ROOT; };
 		CFA999D9264F17A800F72E93 /* Usage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Usage.cpp; path = NimbleCommander/Bootstrap/Usage.cpp; sourceTree = "<group>"; wrapsLines = 0; };
 		CFA999F2264F17A800F72E93 /* Usage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Usage.h; path = NimbleCommander/Bootstrap/Usage.h; sourceTree = "<group>"; };
+		CFA99A4E265EE01E00F72E93 /* PanelListViewExtensionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewExtensionView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewExtensionView.h; sourceTree = "<group>"; };
+		CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewExtensionView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewExtensionView.mm; sourceTree = "<group>"; };
 		CFA9DD8B1FD668370099DD91 /* Interactions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interactions.h; path = NimbleCommander/Bootstrap/Interactions.h; sourceTree = SOURCE_ROOT; };
 		CFA9DD8C1FD668370099DD91 /* Interactions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Interactions.mm; path = NimbleCommander/Bootstrap/Interactions.mm; sourceTree = SOURCE_ROOT; };
 		CFAB6CC92587C38700397DB5 /* FollowSymlink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FollowSymlink.h; path = NimbleCommander/States/FilePanels/Actions/FollowSymlink.h; sourceTree = "<group>"; };
@@ -2672,8 +2676,11 @@
 				CF94CF931DD4418000EEA420 /* Layout.mm */,
 				CF84C8F61DBB2AC300B4E888 /* PanelListView.h */,
 				CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */,
+				CF9F4B151ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib */,
 				CF56C2D41DC43C7E00F0DF0F /* PanelListViewDateTimeView.h */,
 				CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */,
+				CFA99A4E265EE01E00F72E93 /* PanelListViewExtensionView.h */,
+				CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */,
 				CF56C2C11DC1A33300F0DF0F /* PanelListViewGeometry.h */,
 				CF56C2C21DC1A33300F0DF0F /* PanelListViewGeometry.mm */,
 				CF56C2B21DC1934C00F0DF0F /* PanelListViewNameView.h */,
@@ -2688,7 +2695,6 @@
 				CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */,
 				CF56C2B61DC1934D00F0DF0F /* PanelListViewTableView.h */,
 				CF56C2B71DC1934D00F0DF0F /* PanelListViewTableView.mm */,
-				CF9F4B151ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib */,
 			);
 			name = List;
 			sourceTree = "<group>";
@@ -3133,6 +3139,7 @@
 				CFEADD49259CF60D009ECA14 /* ChangePanelsPosition.h in Headers */,
 				CFEADD54259D01AD009ECA14 /* FocusOverlappedTerminal.h in Headers */,
 				CFAB6CE32587C38800397DB5 /* FollowSymlink.h in Headers */,
+				CFA99A68265EE01E00F72E93 /* PanelListViewExtensionView.h in Headers */,
 				CF485C32259B5E5D002F9A05 /* FeedbackManagerImpl.h in Headers */,
 				CFA999F4264F17A800F72E93 /* Usage.h in Headers */,
 			);
@@ -3937,6 +3944,7 @@
 				CF485C38259B5E79002F9A05 /* FeedbackManager.mm in Sources */,
 				CFAB6CE72588B70900397DB5 /* GTMHotKeyTextField.mm in Sources */,
 				CF3ED4CC25855F5B00D67AF2 /* MASAppInstalledChecker.cpp in Sources */,
+				CFA99A69265EE01E00F72E93 /* PanelListViewExtensionView.mm in Sources */,
 				CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */,
 				CF764CB4258763B100D7ED17 /* ExternalToolsSupport.mm in Sources */,
 				CF764D3E258782E300D7ED17 /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,

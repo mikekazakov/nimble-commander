@@ -9,6 +9,7 @@ enum class PanelListViewColumns : signed char
 {
     Empty = 0,
     Filename = 1,
+    Extension = 7,
     Size = 2,
     DateCreated = 3,
     DateAdded = 4,
@@ -27,7 +28,7 @@ struct PanelListViewColumnsLayout {
         bool operator!=(const Column &_rhs) const noexcept;
     };
 
-    boost::container::static_vector<Column, 6> columns;
+    boost::container::static_vector<Column, 7> columns;
     unsigned char icon_scale; // = 1
 
     PanelListViewColumnsLayout() noexcept;

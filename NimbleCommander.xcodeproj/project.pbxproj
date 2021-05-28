@@ -657,7 +657,10 @@
 		CFA999F3264F17A800F72E93 /* Usage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA999D9264F17A800F72E93 /* Usage.cpp */; };
 		CFA999F4264F17A800F72E93 /* Usage.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA999F2264F17A800F72E93 /* Usage.h */; };
 		CFA99A68265EE01E00F72E93 /* PanelListViewExtensionView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA99A4E265EE01E00F72E93 /* PanelListViewExtensionView.h */; };
-		CFA99A69265EE01E00F72E93 /* PanelListViewExtensionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */; };
+		CFA99A76266188B400F72E93 /* PanelListViewExtensionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */; };
+		CFA99A7B266188B400F72E93 /* PanelListViewExtensionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */; };
+		CFA99A80266188B500F72E93 /* PanelListViewExtensionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */; };
+		CFA99A85266188B500F72E93 /* PanelListViewExtensionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */; };
 		CFA9DD8D1FD668370099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
 		CFA9DD9D1FD6694E0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
 		CFA9DD9E1FD6694F0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
@@ -2075,10 +2078,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF764CEE258766AD00D7ED17 /* libPanel.a in Frameworks */,
 				CF764D4A258783E700D7ED17 /* libRoutedIO.a in Frameworks */,
 				CF764D102587673000D7ED17 /* libOperations.a in Frameworks */,
 				CF764CF2258766BB00D7ED17 /* libVFS.a in Frameworks */,
-				CF764CEE258766AD00D7ED17 /* libPanel.a in Frameworks */,
 				CF764CD22587640B00D7ED17 /* libConfig.a in Frameworks */,
 				CF764CCE258763FE00D7ED17 /* libUtility.a in Frameworks */,
 				CF5DE0DB2584186900604DEE /* libHabanero.a in Frameworks */,
@@ -3944,7 +3947,6 @@
 				CF485C38259B5E79002F9A05 /* FeedbackManager.mm in Sources */,
 				CFAB6CE72588B70900397DB5 /* GTMHotKeyTextField.mm in Sources */,
 				CF3ED4CC25855F5B00D67AF2 /* MASAppInstalledChecker.cpp in Sources */,
-				CFA99A69265EE01E00F72E93 /* PanelListViewExtensionView.mm in Sources */,
 				CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */,
 				CF764CB4258763B100D7ED17 /* ExternalToolsSupport.mm in Sources */,
 				CF764D3E258782E300D7ED17 /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,
@@ -4078,6 +4080,7 @@
 				CFB9F111201AEE8300FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CF36DBF41F6C18F4004A018E /* TextWidthsCache.mm in Sources */,
 				CF509272201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */,
+				CFA99A7B266188B400F72E93 /* PanelListViewExtensionView.mm in Sources */,
 				CF4E56D61D506B9700452912 /* FindFilesSheetController.mm in Sources */,
 				CFD726681E42E1E700603077 /* ContextMenu.mm in Sources */,
 				CF50926D201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */,
@@ -4277,6 +4280,7 @@
 				CFB2AB6E21573BE40009EB81 /* PanelViewHeaderThemeImpl.mm in Sources */,
 				CFD726561E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFD7260C1E42E07400603077 /* Application.mm in Sources */,
+				CFA99A85266188B500F72E93 /* PanelListViewExtensionView.mm in Sources */,
 				CF818B4E1EA0610C00BC28E6 /* ShowGoToPopup.mm in Sources */,
 				CFD799FB21F50B010043A26D /* ThemeAdaptor.mm in Sources */,
 				CF818B481EA0610C00BC28E6 /* ToggleLayout.mm in Sources */,
@@ -4476,6 +4480,7 @@
 				CFB9F112201AEE8400FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CF0139B21E99EC4A00E44F2D /* DefaultAction.mm in Sources */,
 				CF197C431FB81ACB009F6C59 /* ToggleSingleOrDualMode.mm in Sources */,
+				CFA99A80266188B500F72E93 /* PanelListViewExtensionView.mm in Sources */,
 				CF5FE80E1E16461600CD83B4 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF5FE7D51E120A4900CD83B4 /* CopyFilePaths.mm in Sources */,
 				CFDAC2FC1DFD1C120039A104 /* TrialWindowController.mm in Sources */,
@@ -4675,6 +4680,7 @@
 				CF5E9A4E1FCBDE29005608F5 /* RefreshPanel.mm in Sources */,
 				CF1FBF2B1E8F57E800D3569C /* AddToFavorites.mm in Sources */,
 				CFFA951B1F45A3410035E606 /* ConfigWiring.mm in Sources */,
+				CFA99A76266188B400F72E93 /* PanelListViewExtensionView.mm in Sources */,
 				CF4D98C8202BEC6700ECE06D /* StateActionsDispatcher.mm in Sources */,
 				CF509274201C3DB7004D9CF5 /* VFSInstanceManager.cpp in Sources */,
 				CF818B611EA0610E00BC28E6 /* DefaultAction.mm in Sources */,

@@ -6,6 +6,7 @@
 #include "../Internal.h"
 #include <Utility/StringExtras.h>
 #include <Utility/SheetWithHotkeys.h>
+#include <Utility/ObjCpp.h>
 
 using namespace nc::ops;
 

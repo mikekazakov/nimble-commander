@@ -94,6 +94,30 @@ static auto g_MyPrivateTableViewDataType =
     {911, @"[G-5-]"},     //
 };
 
+namespace {
+
+struct StringEqHash {
+    using is_transparent = void;
+    size_t operator()(const std::string &_str) const noexcept
+    {
+        return robin_hood::hash_bytes(_str.data(), _str.length());
+    }
+    size_t operator()(std::string_view _str) const noexcept
+    {
+        return robin_hood::hash_bytes(_str.data(), _str.length());
+    }
+    size_t operator()(const char *_str) const noexcept
+    {
+        return robin_hood::hash_bytes(_str, std::strlen(_str));
+    }
+    bool operator()(std::string_view _lhs, std::string_view _rhs) const noexcept
+    {
+        return _lhs == _rhs;
+    }
+};
+
+}
+
 @interface BatchRenameSheetControllerNilNumberValueTransformer : NSValueTransformer
 @end
 
@@ -154,6 +178,8 @@ static auto g_MyPrivateTableViewDataType =
 
 @implementation NCOpsBatchRenamingDialog {
     std::vector<BatchRenamingScheme::FileInfo> m_FileInfos;
+    robin_hood::unordered_flat_map<std::string, size_t, StringEqHash, StringEqHash>
+        m_SourceReverseMapping;
 
     std::vector<NSTextField *> m_LabelsBefore;
     std::vector<NSTextField *> m_LabelsAfter;
@@ -190,6 +216,9 @@ static auto g_MyPrivateTableViewDataType =
             m_FileInfos.emplace_back(BatchRenamingScheme::FileInfo(entry));
             m_ResultSource.emplace_back(entry.Directory() + entry.Filename());
         }
+
+        for( size_t i = 0; i != m_FileInfos.size(); ++i )
+            m_SourceReverseMapping.emplace(m_FileInfos[i].filename.UTF8String, i);
 
         for( auto &e : _items ) {
 
@@ -297,10 +326,10 @@ static auto g_MyPrivateTableViewDataType =
 
 - (IBAction)OnFilenameMaskChanged:(id) [[maybe_unused]] _sender
 {
-    [self UpdateRename];
+    [self updateRenamedFilenames];
 }
 
-- (void)UpdateRename
+- (void)updateRenamedFilenames
 {
     NSString *filename_mask = self.FilenameMask.stringValue ? self.FilenameMask.stringValue : @"";
 
@@ -331,47 +360,60 @@ static auto g_MyPrivateTableViewDataType =
         self.isValidRenaming = false;
         return;
     }
-    else {
-        std::vector<NSString *> newnames;
 
-        for( size_t i = 0, e = m_FileInfos.size(); i != e; ++i )
-            newnames.emplace_back(br.Rename(m_FileInfos[i], static_cast<int>(i)));
-
-        for( size_t i = 0, e = newnames.size(); i != e; ++i )
-            m_LabelsAfter[i].stringValue = newnames[i];
+    // apply the renaming scheme to the source filenames
+    std::vector<NSString *> renamed_names;
+    renamed_names.reserve(m_FileInfos.size());
+    for( size_t index = 0, e = m_FileInfos.size(); index != e; ++index ) {
+        NSString *renamed_name = br.Rename(m_FileInfos[index], static_cast<int>(index));
+        renamed_names.emplace_back(renamed_name);
     }
+
+    // build the reverse mapping to check for duplicates later
+    robin_hood::unordered_flat_map<std::string, size_t, StringEqHash, StringEqHash>
+        dest_reverse_mapping;
+    dest_reverse_mapping.reserve(m_FileInfos.size());
+    for( size_t index = 0, e = renamed_names.size(); index != e; ++index )
+        dest_reverse_mapping.emplace(renamed_names[index].UTF8String, index);
+
+    // transfer the results to the labels
+    for( size_t index = 0, e = renamed_names.size(); index != e; ++index )
+        m_LabelsAfter[index].stringValue = renamed_names[index];
 
     self.isValidRenaming = true;
 
-    // check duplicate names here
-    for( size_t i = 0, e = m_FileInfos.size(); i != e; ++i ) {
-
+    // validate the resulting filenames
+    for( size_t index = 0, e = m_FileInfos.size(); index != e; ++index ) {
         bool is_valid = true;
-
-        NSString *fn1 = m_LabelsAfter[i].stringValue;
-        if( fn1.length == 0 ) {
+        NSString *renamed_into = renamed_names[index];
+        if( renamed_into.length == 0 ) {
+            // don't allow empty filenames
             is_valid = false;
         }
-        else { // very inefficient duplicates search
-            for( size_t j = 0; j != e; ++j )
-                if( i != j ) {
-                    if( [fn1 isEqualToString:m_LabelsAfter[j].stringValue] ) {
-                        is_valid = false;
-                        break;
-                    }
-                    if( [fn1 isEqualToString:m_LabelsBefore[j].stringValue] ) {
-                        is_valid = false;
-                        break;
-                    }
-                }
+        else {
+            // now check for duplicates
+            const char *utf8 = renamed_into.UTF8String;
+            const auto source_reverse_it = m_SourceReverseMapping.find(utf8);
+            if( source_reverse_it != m_SourceReverseMapping.end() &&
+                source_reverse_it->second != index ) {
+                // prohibit renaming into filenames which might already exist initially.
+                is_valid = false;
+            }
+
+            const auto dest_reverse_it = dest_reverse_mapping.find(utf8);
+            assert(dest_reverse_it != dest_reverse_mapping.end());
+            if( dest_reverse_it->second != index ) {
+                // prohibit the renamed set from having duplicates
+                is_valid = false;
+            }
         }
 
         if( !is_valid ) {
-            m_LabelsAfter[i].textColor = NSColor.redColor;
+            m_LabelsAfter[index].textColor = NSColor.redColor;
             self.isValidRenaming = false;
         }
         else {
-            m_LabelsAfter[i].textColor = NSColor.labelColor;
+            m_LabelsAfter[index].textColor = NSColor.labelColor;
         }
     }
 }
@@ -445,27 +487,27 @@ static auto g_MyPrivateTableViewDataType =
 
 - (IBAction)OnSearchForChanged:(id) [[maybe_unused]] _sender
 {
-    [self UpdateRename];
+    [self updateRenamedFilenames];
 }
 
 - (IBAction)OnReplaceWithChanged:(id) [[maybe_unused]] _sender
 {
-    [self UpdateRename];
+    [self updateRenamedFilenames];
 }
 
 - (IBAction)OnSearchReplaceOptionsChanged:(id) [[maybe_unused]] _sender
 {
-    [self UpdateRename];
+    [self updateRenamedFilenames];
 }
 
 - (IBAction)OnCaseProcessingChanged:(id) [[maybe_unused]] _sender
 {
-    [self UpdateRename];
+    [self updateRenamedFilenames];
 }
 
 - (IBAction)OnCounterSettingsChanged:(id) [[maybe_unused]] _sender
 {
-    [self UpdateRename];
+    [self updateRenamedFilenames];
 }
 
 - (NSRange)currentMaskSelection
@@ -519,7 +561,7 @@ static auto g_MyPrivateTableViewDataType =
     else if( objc_cast<NSTextField>(notification.object) == self.SearchForComboBox )
         [self OnSearchForChanged:self.SearchForComboBox];
     else
-        [self UpdateRename];
+        [self updateRenamedFilenames];
 }
 
 - (NSDragOperation)tableView:(NSTableView *) [[maybe_unused]] aTableView
@@ -569,7 +611,7 @@ static auto g_MyPrivateTableViewDataType =
 
     [self.FilenamesTable reloadData];
 
-    dispatch_to_main_queue([=] { [self UpdateRename]; });
+    dispatch_to_main_queue([=] { [self updateRenamedFilenames]; });
 
     return true;
 }
@@ -584,7 +626,7 @@ static auto g_MyPrivateTableViewDataType =
 
 - (IBAction)OnOK:(id) [[maybe_unused]] _sender
 {
-    [self UpdateRename];
+    [self updateRenamedFilenames];
     [self buildResultDestinations];
 
     [m_RenamePatternDataSource reportEnteredItem:self.FilenameMask.stringValue];
@@ -637,7 +679,7 @@ static auto g_MyPrivateTableViewDataType =
                 selectRowIndexes:[NSIndexSet indexSetWithIndex:self.FilenamesTable.numberOfRows - 1]
             byExtendingSelection:false];
 
-    dispatch_to_main_queue([=] { [self UpdateRename]; });
+    dispatch_to_main_queue([=] { [self updateRenamedFilenames]; });
 }
 
 - (IBAction)onContextMenuRemoveItem:(id) [[maybe_unused]] _sender

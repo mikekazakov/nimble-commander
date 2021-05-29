@@ -207,7 +207,12 @@
              * 3 - no modifiers required
              * 4 - quick search is disabled
              */
-            "keyOption": 3            
+            "keyOption": 3,
+            
+            /**
+             * A set of characters to ignore when processing input, regradless of their position
+             */
+            "ignoreCharacters": " "
         },
   
         /**

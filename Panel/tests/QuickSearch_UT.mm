@@ -21,7 +21,8 @@ static const auto g_ConfigJSON =
     \"typingView\": true,\
     \"softFiltering\": false,\
     \"whereToFind\": 0,\
-    \"keyOption\": 3\
+    \"keyOption\": 3,\
+    \"ignoreCharacters\": \" \"\
 }}}";
 
 static VFSListingPtr ProduceDummyListing
@@ -205,6 +206,29 @@ TEST_CASE("modifiers option")
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl|alt) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", shift|alt) forPanelView:nil] == skip );
     CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", cmd) forPanelView:nil] == skip );
+}
+
+TEST_CASE("ignoring characters")
+{
+    QuickSearchTestsContext ctx;
+    ctx.qsconfig.Set(g_ConfigKeyOption, static_cast<int>(QuickSearch::KeyModif::WithoutModif));
+    ctx.qsconfig.Set(g_ConfigIgnoreCharacters, "a ");
+    auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data
+                                              delegate:ctx.delegate
+                                                config:ctx.qsconfig];
+    const auto skip = view::BiddingPriority::Skip;
+    CHECK( [qs bidForHandlingKeyDown:KeyDown(@" ", 0) forPanelView:nil] == skip );
+    CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:nil] == skip );
+    CHECK( [qs bidForHandlingKeyDown:KeyDown(@"A", 0) forPanelView:nil] == skip );
+    CHECK( [qs bidForHandlingKeyDown:KeyDown(@"b", 0) forPanelView:nil] != skip );
+    CHECK( [qs bidForHandlingKeyDown:KeyDown(@"B", 0) forPanelView:nil] != skip );
+    
+    ctx.qsconfig.Set(g_ConfigIgnoreCharacters, "b");
+    CHECK( [qs bidForHandlingKeyDown:KeyDown(@" ", 0) forPanelView:nil] != skip );
+    CHECK( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:nil] != skip );
+    CHECK( [qs bidForHandlingKeyDown:KeyDown(@"A", 0) forPanelView:nil] != skip );
+    CHECK( [qs bidForHandlingKeyDown:KeyDown(@"b", 0) forPanelView:nil] == skip );
+    CHECK( [qs bidForHandlingKeyDown:KeyDown(@"B", 0) forPanelView:nil] == skip );
 }
 
 TEST_CASE("Underscoring")

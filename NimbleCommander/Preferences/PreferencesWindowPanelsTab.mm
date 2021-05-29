@@ -63,6 +63,21 @@ static const auto g_LayoutColumnsDDType =
 
 @end
 
+@interface NCPreferencesToNonNilStringValueTransformer : NSValueTransformer
+@end
+@implementation NCPreferencesToNonNilStringValueTransformer
++ (Class)transformedValueClass
+{
+    return [NSString class];
+}
+- (id)transformedValue:(id)value
+{
+    if( auto s = objc_cast<NSString>(value) )
+        return s;
+    return @"";
+}
+@end
+
 @interface PreferencesWindowPanelsTabFlippedStackView : NSStackView
 @end
 @implementation PreferencesWindowPanelsTabFlippedStackView

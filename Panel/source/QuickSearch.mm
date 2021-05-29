@@ -1,11 +1,12 @@
 // Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickSearch.h"
-#include <boost/container/static_vector.hpp>
 #include <Panel/PanelDataFilter.h>
 #include <Panel/PanelData.h>
 #include <Panel/CursorBackup.h>
 #include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 #include <Habanero/mach_time.h>
+#include <array>
 
 using namespace nc::panel;
 using namespace nc::panel::QuickSearch;
@@ -23,7 +24,6 @@ static bool IsRight(NSString *_s);
 static bool IsUp(NSString *_s);
 static bool IsDown(NSString *_s);
 static bool IsBackspace(NSString *_s);
-static bool IsSpace(NSString *_s);
 static NSString *RemoveLastCharacterWithNormalization(NSString *_s);
 static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
@@ -39,7 +39,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     KeyModif m_Modifier;
     data::TextualFilter::Where m_WhereToSearch;
     nc::config::Config *m_Config;
-    boost::container::static_vector<nc::config::Token, 4> m_ConfigObservers;
+    std::array<nc::config::Token, 5> m_ConfigObservers;
+    NSCharacterSet *m_IgnoreCharacters;
 }
 
 - (instancetype)initWithData:(nc::panel::data::Model &)_data
@@ -53,14 +54,15 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     m_Config = &_config;
 
     // wire up config changing notifications
-    auto add_co = [&](const char *_path, SEL _sel) {
-        m_ConfigObservers.emplace_back(m_Config->Observe(_path, objc_callback(self, _sel)));
+    auto wire = [&](std::string_view _path) {
+        auto sel = @selector(configQuickSearchSettingsChanged);
+        return m_Config->Observe(_path, objc_callback(self, sel));
     };
-    add_co(g_ConfigWhereToFind, @selector(configQuickSearchSettingsChanged));
-    add_co(g_ConfigIsSoftFiltering, @selector(configQuickSearchSettingsChanged));
-    add_co(g_ConfigTypingView, @selector(configQuickSearchSettingsChanged));
-    add_co(g_ConfigKeyOption, @selector(configQuickSearchSettingsChanged));
-
+    m_ConfigObservers[0] = wire(g_ConfigWhereToFind);
+    m_ConfigObservers[1] = wire(g_ConfigIsSoftFiltering);
+    m_ConfigObservers[2] = wire(g_ConfigTypingView);
+    m_ConfigObservers[3] = wire(g_ConfigKeyOption);
+    m_ConfigObservers[4] = wire(g_ConfigIgnoreCharacters);
     [self configQuickSearchSettingsChanged];
 
     return self;
@@ -72,7 +74,17 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     m_IsSoftFiltering = m_Config->GetBool(g_ConfigIsSoftFiltering);
     m_ShowTyping = m_Config->GetBool(g_ConfigTypingView);
     m_Modifier = KeyModifFromInt(m_Config->GetInt(g_ConfigKeyOption));
+    [self rebuildIgnoreCharacters];
     [self discardFiltering];
+}
+
+- (void)rebuildIgnoreCharacters
+{
+    auto set = [NSMutableCharacterSet new];
+    auto chars = [NSString stringWithUTF8StdString:m_Config->GetString(g_ConfigIgnoreCharacters)];
+    [set addCharactersInString:[chars lowercaseString]];
+    [set addCharactersInString:[chars uppercaseString]];
+    m_IgnoreCharacters = set;
 }
 
 - (void)setSearchCriteria:(NSString *)_request
@@ -107,6 +119,13 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     }
 }
 
+- (bool)isIgnored:(NSString*)_character
+{
+    assert( _character.length > 0 );
+    const auto utf16 = [_character characterAtIndex:0]; // consider uing UTF-32 here ?
+    return [m_IgnoreCharacters characterIsMember:utf16];
+}
+
 - (int)bidForHandlingKeyDown:(NSEvent *)_event
                 forPanelView:(PanelView *) [[maybe_unused]] _panel_view
 {
@@ -117,6 +136,9 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     const auto character = _event.charactersIgnoringModifiers;
     if( character.length == 0 )
         return view::BiddingPriority::Skip;
+    
+    if( [self isIgnored:character] )
+        return view::BiddingPriority::Skip;
 
     if( IsQuickSearchStringCharacter(character) )
         return view::BiddingPriority::Default;
@@ -125,8 +147,6 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
                                        : m_Data->HardFiltering().text.text.length == 0;
 
     if( !empty_now ) {
-        if( IsSpace(character) )
-            return view::BiddingPriority::Default;
         if( IsBackspace(character) )
             return view::BiddingPriority::Default;
         if( m_IsSoftFiltering ) {
@@ -135,7 +155,6 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
         }
         if( _event.keyCode == 53 ) { // Esc button
             return view::BiddingPriority::Default;
-            ;
         }
     }
 
@@ -383,6 +402,7 @@ static bool IsQuickSearchStringCharacter(NSString *_s)
     static const auto chars = [] {
         auto set = [NSMutableCharacterSet new];
         [set formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
+        [set formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
         [set formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
         [set formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
 
@@ -400,11 +420,6 @@ static bool IsQuickSearchStringCharacter(NSString *_s)
 static bool IsBackspace(NSString *_s)
 {
     return _s.length == 1 && [_s characterAtIndex:0] == NSDeleteCharacter;
-}
-
-static bool IsSpace(NSString *_s)
-{
-    return _s.length == 1 && [_s characterAtIndex:0] == 0x20;
 }
 
 static bool IsLeft(NSString *_s)

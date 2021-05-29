@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Config/Config.h>
@@ -24,6 +24,7 @@ constexpr auto g_ConfigWhereToFind      = "filePanel.quickSearch.whereToFind";
 constexpr auto g_ConfigIsSoftFiltering  = "filePanel.quickSearch.softFiltering";
 constexpr auto g_ConfigTypingView       = "filePanel.quickSearch.typingView";
 constexpr auto g_ConfigKeyOption        = "filePanel.quickSearch.keyOption";
+constexpr auto g_ConfigIgnoreCharacters = "filePanel.quickSearch.ignoreCharacters";
 
 }
 }

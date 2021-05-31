@@ -402,9 +402,9 @@ static bool IsQuickSearchStringCharacter(NSString *_s)
     static const auto chars = [] {
         auto set = [NSMutableCharacterSet new];
         [set formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
-        [set formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
         [set formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
         [set formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
+        [set addCharactersInString:@" "];
 
         // such character simply can't appear in filename under unix
         [set removeCharactersInString:@"/"];

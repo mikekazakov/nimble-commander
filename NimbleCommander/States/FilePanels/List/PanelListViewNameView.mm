@@ -7,6 +7,7 @@
 #include "PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
+#include "PanelListViewTableView.h"
 
 using namespace nc::panel;
 using nc::utility::FontGeometryInfo;
@@ -115,7 +116,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 
     [row_view.rowBackgroundColor set];
     NSRectFill(self.bounds);
-    DrawTableVerticalSeparatorForView(self);
+    [PanelListViewTableView drawVerticalSeparatorForView:self];
 
     const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds
                                                             andGeometry:geometry];

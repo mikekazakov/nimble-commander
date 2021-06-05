@@ -3,6 +3,7 @@
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewDateTimeView.h"
+#include "PanelListViewTableView.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <Utility/ObjCpp.h>
 
@@ -162,7 +163,7 @@ using nc::utility::AdaptiveDateFormatting;
 
             [rv.rowBackgroundColor set];
             NSRectFill(self.bounds);
-            DrawTableVerticalSeparatorForView(self);
+            [PanelListViewTableView drawVerticalSeparatorForView:self];
 
             if( m_Line ) {
                 CGContextSetFillColorWithColor(context, rv.rowTextColor.CGColor);

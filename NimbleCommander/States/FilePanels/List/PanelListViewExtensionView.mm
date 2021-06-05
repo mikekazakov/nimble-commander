@@ -3,6 +3,7 @@
 #include "PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
+#include "PanelListViewTableView.h"
 #include <Utility/ObjCpp.h>
 #include <Habanero/CFPtr.h>
 #include <cassert>
@@ -84,7 +85,7 @@ static NSParagraphStyle *const g_Style = [] {
 
     [row_view.rowBackgroundColor set];
     NSRectFill(self.bounds);
-    DrawTableVerticalSeparatorForView(self);
+    [PanelListViewTableView drawVerticalSeparatorForView:self];
 
     if( m_Line ) {
         CGContextSetFillColorWithColor(context, row_view.rowTextColor.CGColor);

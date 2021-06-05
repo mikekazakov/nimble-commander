@@ -39,5 +39,3 @@ class Model;
 @property(nonatomic) nc::panel::PanelListViewColumnsLayout columnsLayout;
 
 @end
-
-void DrawTableVerticalSeparatorForView(NSView *v);

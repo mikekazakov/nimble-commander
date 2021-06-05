@@ -41,26 +41,6 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
 static PanelListViewColumns IdentifierToKind(char _letter) noexcept;
 static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 
-void DrawTableVerticalSeparatorForView(NSView *v)
-{
-    if( auto t = objc_cast<NSTableView>(v.superview.superview) ) {
-        if( t.gridStyleMask & NSTableViewSolidVerticalGridLineMask ) {
-            if( t.gridColor && t.gridColor != NSColor.clearColor ) {
-                const auto bounds = v.bounds;
-                const auto rc =
-                    NSMakeRect(std::ceil(bounds.size.width) - 1, 0, 1, bounds.size.height);
-
-                // don't draw vertical line near table view's edge
-                const auto trc = [t convertRect:rc fromView:v];
-                if( trc.origin.x < t.bounds.size.width - 1 ) {
-                    [t.gridColor set];
-                    NSRectFill(rc); // support alpha?
-                }
-            }
-        }
-    }
-}
-
 @interface PanelListView ()
 
 @property(nonatomic) AdaptiveDateFormatting::Style dateCreatedFormattingStyle;
@@ -149,10 +129,13 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_TableView.rowHeight = m_Geometry.LineHeight();
         m_TableView.intercellSpacing = NSMakeSize(0, 0);
         m_TableView.columnAutoresizingStyle = NSTableViewFirstColumnOnlyAutoresizingStyle;
-        m_TableView.gridStyleMask = NSTableViewSolidVerticalGridLineMask;
+        // we don't allow NSTableView to draw the grid since it goes haywire when custom drawing
+        // is enabled, so instead the PanelListViewTableView draws it manually in
+        // drawBackgroundInClipRect:
+        m_TableView.gridStyleMask = NSTableViewGridNone;
+        m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
         if( @available(macOS 11.0, *) )
             m_TableView.style = NSTableViewStylePlain;
-        m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
         m_TableView.headerView = [[PanelListViewTableHeaderView alloc] init];
         [self setupColumns];
 
@@ -335,6 +318,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         self.dateAccessedFormattingStyle = style;
     }
     [self notifyLastColumnToRedraw];
+    [m_TableView setNeedsDisplay:true];
 }
 
 - (void)tableViewColumnDidResize:(NSNotification *) [[maybe_unused]] _notification
@@ -343,11 +327,13 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         return;
 
     [self.panelView notifyAboutPresentationLayoutChange];
+    [m_TableView setNeedsDisplay:true];
 }
 
 - (void)tableViewColumnDidMove:(NSNotification *) [[maybe_unused]] _notification
 {
     [self.panelView notifyAboutPresentationLayoutChange];
+    [m_TableView setNeedsDisplay:true];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]] _tableView

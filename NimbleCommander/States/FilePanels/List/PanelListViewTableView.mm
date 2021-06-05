@@ -5,7 +5,11 @@
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "../PanelView.h"
 #include "PanelListViewTableView.h"
+#include "Layout.h"
 #include <Utility/ObjCpp.h>
+#include <magic_enum.hpp>
+
+using namespace nc::panel;
 
 @interface PanelListViewTableView ()
 
@@ -53,6 +57,22 @@
     return true;
 }
 
+- (void)addSubview:(NSView *)view
+{
+    if( [NSStringFromClass(view.class) isEqualToString:@"NSTableBackgroundView"] )
+        return; // nope.
+    [super addSubview:view];
+}
+
+- (void)addSubview:(NSView *) [[maybe_unused]] view
+        positioned:(NSWindowOrderingMode) [[maybe_unused]] place
+        relativeTo:(nullable NSView *) [[maybe_unused]] otherView
+{
+    if( [NSStringFromClass(view.class) isEqualToString:@"NSTableBackgroundView"] )
+        return; // nope.
+    [super addSubview:view positioned:place relativeTo:otherView];
+}
+
 - (PanelView *)panelView
 {
     NSView *sv = self.superview;
@@ -80,28 +100,6 @@
 - (void)mouseUp:(NSEvent *) [[maybe_unused]] _event
 {
 }
-
-//- (void)drawBackgroundInClipRect:(NSRect)clipRect
-//{
-//
-//
-//}
-
-//- (void)drawRow:(NSInteger)row clipRect:(NSRect)clipRect {}
-//- (void)highlightSelectionInClipRect:(NSRect)clipRect {}
-//- (void)drawGridInClipRect:(NSRect)clipRect {}
-//- (void)drawBackgroundInClipRect:(NSRect)clipRect {}
-//
-//
-//- (void)display{}
-//- (void)displayIfNeeded{}
-//- (void)displayIfNeededIgnoringOpacity{}
-//- (void)displayRect:(NSRect)rect{}
-//- (void)displayIfNeededInRect:(NSRect)rect{}
-//- (void)displayRectIgnoringOpacity:(NSRect)rect{}
-//- (void)displayIfNeededInRectIgnoringOpacity:(NSRect)rect{}
-//- (void)drawRect:(NSRect)dirtyRect{}
-//- (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(NSGraphicsContext *)context{}
 
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
 {
@@ -158,7 +156,6 @@
 
 - (void)drawBackgroundInClipRect:(NSRect)clipRect
 {
-
     if( [self alternateBackgroundColor] == nil ) {
         // If we didn't set the alternate colour, fall back to the default behaviour
         [super drawBackgroundInClipRect:clipRect];
@@ -233,6 +230,58 @@
                 virtualRowNumber--;
                 virtualRowOrigin -= rowHeight;
             }
+        }
+    }
+
+    // now manually draw the vertical separator lines
+    const auto separator_color = self.gridColor;
+    if( separator_color && separator_color != NSColor.clearColor ) {
+        std::array<double, magic_enum::enum_count<PanelListViewColumns>() + 1> x_offset;
+        size_t columns_number = 0;
+        for( NSTableColumn *column in self.tableColumns ) {
+            assert(columns_number < x_offset.size());
+            x_offset[columns_number] = columns_number == 0
+                                           ? column.width - 1.
+                                           : x_offset[columns_number - 1] + column.width;
+            ++columns_number;
+        }
+        if( columns_number != 0 && x_offset[columns_number - 1] >= self.bounds.size.width - 1 ) {
+            // don't draw the last column separator if it's exactly next to end of the table view
+            // (just looks ugly)
+            --columns_number;
+        }
+
+        [separator_color set];
+        for( size_t i = 0; i != columns_number; ++i ) {
+            NSRect rc;
+            rc.origin.x = x_offset[i];
+            rc.origin.y = clipRect.origin.y;
+            rc.size.width = 1.;
+            rc.size.height = clipRect.size.height;
+            rc = NSIntersectionRect(rc, clipRect);
+            if( !NSIsEmptyRect(rc) )
+                NSRectFill(rc);
+        }
+    }
+}
+
++ (void)drawVerticalSeparatorForView:(NSView *)_view
+{
+    const auto table = objc_cast<NSTableView>(_view.superview.superview);
+    if( !table )
+        return;
+
+    const auto color = table.gridColor;
+
+    if( color && color != NSColor.clearColor ) {
+        const auto bounds = _view.bounds;
+        const auto rc = NSMakeRect(std::ceil(bounds.size.width) - 1, 0, 1, bounds.size.height);
+
+        // don't draw vertical line near table view's edge
+        const auto trc = [table convertRect:rc fromView:_view];
+        if( trc.origin.x < table.bounds.size.width - 1 ) {
+            [color set];
+            NSRectFill(rc); // support alpha?
         }
     }
 }

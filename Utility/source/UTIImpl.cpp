@@ -46,8 +46,11 @@ bool UTIDBImpl::IsDynamicUTI(const std::string &_uti) const
     return std::string_view{_uti}.starts_with(prefix);
 }
 
-static void TraverseConformingUTIs(const std::string &_uti,
-                                   robin_hood::unordered_flat_set<std::string> &_target)
+static void
+TraverseConformingUTIs(const std::string &_uti,
+                       robin_hood::unordered_flat_set<std::string,
+                                                      RHTransparentStringHashEqual,
+                                                      RHTransparentStringHashEqual> &_target)
 {
     const auto uti = CFPtr<CFStringRef>::adopt(CFStringCreateWithUTF8StdString(_uti));
     if( !uti )
@@ -92,7 +95,9 @@ bool UTIDBImpl::ConformsTo(const std::string &_uti, const std::string &_conforms
         const auto &conforming = it->second;
         return conforming.count(_conforms_to) != 0;
     }
-    robin_hood::unordered_flat_set<std::string> conforming_utis;
+    robin_hood::
+        unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>
+            conforming_utis;
     TraverseConformingUTIs(_uti, conforming_utis);
     m_ConformsTo[_uti] = std::move(conforming_utis);
     return conforming_utis.count(_conforms_to) != 0;

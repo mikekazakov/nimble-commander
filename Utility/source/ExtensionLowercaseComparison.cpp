@@ -4,10 +4,12 @@
 #include <Habanero/CFStackAllocator.h>
 #include "../include/Utility/ExtensionLowercaseComparison.h"
 
-ExtensionLowercaseComparison& ExtensionLowercaseComparison::Instance() noexcept
+namespace nc::utility {
+
+ExtensionLowercaseComparison &ExtensionLowercaseComparison::Instance() noexcept
 {
-    static auto inst = new ExtensionLowercaseComparison;
-    return *inst;
+    [[clang::no_destroy]] static ExtensionLowercaseComparison inst;
+    return inst;
 }
 
 static std::string ProduceFormCLowercase(std::string_view _string)
@@ -108,3 +110,5 @@ bool ExtensionLowercaseComparison::Equal(const char *_filename_ext,
         m_Data.emplace(_filename_ext, cl);
     return cl == _compare_to_formc_lc;
 }
+
+} // namespace nc::utility

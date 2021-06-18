@@ -8,6 +8,7 @@
 // ⌘ - NSCommandKeyMask
 
 #include <Habanero/Observable.h>
+#include <Habanero/RobinHoodUtil.h>
 #include <Utility/ActionShortcut.h>
 #include <robin_hood.h>
 #include <vector>
@@ -63,15 +64,6 @@ public:
     ObservationTicket ObserveChanges(std::function<void()> _callback);
 
 private:
-    struct StringHash {
-        using is_transparent = void;
-        size_t operator()(std::string_view _str) const noexcept;
-    };
-    struct StringEqual {
-        using is_transparent = void;
-        bool operator()(std::string_view _lhs, std::string_view _rhs) const noexcept;
-    };
-
     ActionsShortcutsManager();
     ActionsShortcutsManager(const ActionsShortcutsManager &) = delete;
 
@@ -79,7 +71,11 @@ private:
     void WriteOverridesToConfig() const;
 
     robin_hood::unordered_flat_map<int, const char *> m_TagToAction;
-    robin_hood::unordered_flat_map<std::string, int, StringHash, StringEqual> m_ActionToTag;
+    robin_hood::unordered_flat_map<std::string,
+                                   int,
+                                   nc::RHTransparentStringHashEqual,
+                                   nc::RHTransparentStringHashEqual>
+        m_ActionToTag;
     robin_hood::unordered_flat_map<int, ShortCut> m_ShortCutsDefaults;
     robin_hood::unordered_flat_map<int, ShortCut> m_ShortCutsOverrides;
 };

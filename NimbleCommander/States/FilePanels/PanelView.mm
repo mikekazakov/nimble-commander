@@ -5,6 +5,7 @@
 #include <Utility/MIMResponder.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <Habanero/RobinHoodUtil.h>
 #include "PanelViewLayoutSupport.h"
 #include <Panel/PanelData.h>
 #include "PanelController.h"
@@ -48,7 +49,7 @@ struct StateStorage {
     data::Model *m_Data;
     std::vector<std::pair<__weak id<NCPanelViewKeystrokeSink>, int>> m_KeystrokeSinks;
 
-    std::unordered_map<uint64_t, StateStorage> m_States;
+    robin_hood::unordered_flat_map<uint64_t, StateStorage> m_States;
     NSString *m_HeaderTitle;
     NCPanelViewFieldEditor *m_RenamingEditor;
 

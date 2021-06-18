@@ -20,6 +20,7 @@
 #include "PanelBriefViewDynamicWidthLayout.h"
 #include "PanelBriefViewFixedNumberLayout.h"
 #include <Utility/ObjCpp.h>
+#include <robin_hood.h>
 
 using namespace ::nc::panel;
 using namespace ::nc::panel::brief;
@@ -124,7 +125,7 @@ bool PanelBriefViewItemLayoutConstants::operator!=(
     data::Model *m_Data;
     std::vector<short> m_IntrinsicItemsWidths;
     IconRepository *m_IconsRepository;
-    std::unordered_map<IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping;
+    robin_hood::unordered_map<IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping;
     PanelBriefViewItemLayoutConstants m_ItemLayout;
     PanelBriefViewColumnsLayout m_ColumnsLayout;
     __weak PanelView *m_PanelView;

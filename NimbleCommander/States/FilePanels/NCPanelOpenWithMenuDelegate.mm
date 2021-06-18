@@ -9,7 +9,7 @@
 #include "PanelAux.h"
 #include "PanelController.h"
 #include <Habanero/SerialQueue.h>
-#include <set>
+#include <robin_hood.h>
 
 using namespace nc::core;
 using namespace nc::panel;
@@ -86,7 +86,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
     std::string m_DefaultHandlerPath;
     std::string m_ItemsUTI;
     SerialQueue m_FetchQueue;
-    std::set<NSMenu *> m_ManagedMenus;
+    robin_hood::unordered_set<NSMenu *> m_ManagedMenus;
     FileOpener *m_FileOpener;
     const UTIDB *m_UTIDB;
 }

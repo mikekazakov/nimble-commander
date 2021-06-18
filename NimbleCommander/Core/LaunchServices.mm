@@ -5,7 +5,7 @@
 #include <Utility/StringExtras.h>
 #include <Cocoa/Cocoa.h>
 #include <unordered_map>
-#include <unordered_set>
+#include <robin_hood.h>
 
 namespace nc::core {
 
@@ -131,10 +131,10 @@ LauchServicesHandlers::LauchServicesHandlers(
 
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)
-    std::unordered_map<std::string, int> handlers_count;
+    robin_hood::unordered_map<std::string, int> handlers_count;
     for( auto &i : _handlers_to_merge ) {
         // a very inefficient approach, should be rewritten if will cause lags on UI
-        std::unordered_set<std::string> inserted;
+        robin_hood::unordered_set<std::string> inserted;
         for( auto &p : i.m_Paths )
             // here we exclude multiple counting for repeating handlers for one content type
             if( !inserted.count(p) ) {

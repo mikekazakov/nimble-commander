@@ -1,13 +1,13 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "TabContextMenu.h"
 #include "Actions/TabsManagement.h"
 #include <NimbleCommander/Core/Alert.h>
-#include <unordered_map>
+#include <Habanero/RobinHoodUtil.h>
 #include <iostream>
 
 using namespace nc::panel;
-using ActionsT = std::unordered_map<SEL, std::unique_ptr<actions::StateAction>>;
+using ActionsT = robin_hood::unordered_flat_map<SEL, std::unique_ptr<actions::StateAction>>;
 
 static const actions::StateAction* ActionBySelector(const ActionsT &_actions, SEL _sel);
 static void Perform(const ActionsT &_actions,

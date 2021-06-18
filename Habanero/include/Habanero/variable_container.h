@@ -116,7 +116,6 @@ public:
 
 private:
     using common_type = value_type;
-    //    using sparse_type = std::unordered_map<unsigned, T>;
     using sparse_type = robin_hood::unordered_map<size_t, T>;
     using dense_type = std::vector<T>;
     static constexpr std::size_t m_StorageSize =

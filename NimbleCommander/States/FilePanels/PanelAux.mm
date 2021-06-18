@@ -296,7 +296,7 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)
 {
     [[clang::no_destroy]] static const robin_hood::unordered_flat_set<std::string> extensions = [] {
-        auto &lowercase_cmp = ExtensionLowercaseComparison::Instance();
+        auto &lowercase_cmp = utility::ExtensionLowercaseComparison::Instance();
         std::vector<std::string> v;
         auto exts_string = GlobalConfig().GetString(g_ConfigExecutableExtensionsWhitelist);
         auto exts_array =
@@ -329,7 +329,7 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)
         return true; // if file has no extension and had execute rights - let's try it
 
     const auto extension =
-        ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_item.Extension());
+        utility::ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_item.Extension());
     return extensions.contains(extension);
 
     return false;
@@ -382,13 +382,13 @@ bool IsExtensionInArchivesWhitelist(const char *_ext) noexcept
                             stringByTrimmingCharactersInSet:NSCharacterSet
                                                                 .whitespaceAndNewlineCharacterSet] )
                         if( auto utf8 = trimmed.UTF8String )
-                            v.emplace_back(
-                                ExtensionLowercaseComparison::Instance().ExtensionToLowercase(
-                                    utf8));
+                            v.emplace_back(utility::ExtensionLowercaseComparison::Instance()
+                                               .ExtensionToLowercase(utf8));
         return v;
     }();
 
-    const auto extension = ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_ext);
+    const auto extension =
+        utility::ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_ext);
     return any_of(begin(archive_extensions), end(archive_extensions), [&](auto &_) {
         return extension == _;
     });

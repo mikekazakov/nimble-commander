@@ -406,17 +406,6 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
 };
 // clang-format on
  
-size_t ActionsShortcutsManager::StringHash::operator()(std::string_view _str) const noexcept
-{
-    return robin_hood::hash_bytes(_str.data(), _str.size());
-}
-
-bool ActionsShortcutsManager::StringEqual::operator()(std::string_view _lhs,
-                                                      std::string_view _rhs) const noexcept
-{
-    return _lhs == _rhs;
-}
-
 ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(
     std::initializer_list<ShortCut *> _hotkeys,
     std::initializer_list<const char *> _actions)

@@ -8,7 +8,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include "../Internal.h"
-#include <robin_hood.h>
+#include <Habanero/RobinHoodUtil.h>
 
 using namespace nc::ops;
 
@@ -94,30 +94,6 @@ static auto g_MyPrivateTableViewDataType =
     {911, @"[G-5-]"},     //
 };
 
-namespace {
-
-struct StringEqHash {
-    using is_transparent = void;
-    size_t operator()(const std::string &_str) const noexcept
-    {
-        return robin_hood::hash_bytes(_str.data(), _str.length());
-    }
-    size_t operator()(std::string_view _str) const noexcept
-    {
-        return robin_hood::hash_bytes(_str.data(), _str.length());
-    }
-    size_t operator()(const char *_str) const noexcept
-    {
-        return robin_hood::hash_bytes(_str, std::strlen(_str));
-    }
-    bool operator()(std::string_view _lhs, std::string_view _rhs) const noexcept
-    {
-        return _lhs == _rhs;
-    }
-};
-
-}
-
 @interface BatchRenameSheetControllerNilNumberValueTransformer : NSValueTransformer
 @end
 
@@ -176,10 +152,11 @@ struct StringEqHash {
 
 @end
 
+using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, size_t, nc::RHTransparentStringHashEqual, nc::RHTransparentStringHashEqual>;
+
 @implementation NCOpsBatchRenamingDialog {
     std::vector<BatchRenamingScheme::FileInfo> m_FileInfos;
-    robin_hood::unordered_flat_map<std::string, size_t, StringEqHash, StringEqHash>
-        m_SourceReverseMapping;
+    SourceReverseMappingStorage m_SourceReverseMapping;
 
     std::vector<NSTextField *> m_LabelsBefore;
     std::vector<NSTextField *> m_LabelsAfter;
@@ -370,8 +347,7 @@ struct StringEqHash {
     }
 
     // build the reverse mapping to check for duplicates later
-    robin_hood::unordered_flat_map<std::string, size_t, StringEqHash, StringEqHash>
-        dest_reverse_mapping;
+    SourceReverseMappingStorage dest_reverse_mapping;
     dest_reverse_mapping.reserve(m_FileInfos.size());
     for( size_t index = 0, e = renamed_names.size(); index != e; ++index )
         dest_reverse_mapping.emplace(renamed_names[index].UTF8String, index);

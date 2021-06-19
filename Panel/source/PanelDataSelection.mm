@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataSelection.h"
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Utility/FileMask.h>
@@ -17,7 +17,7 @@ SelectionBuilder::SelectionBuilder(const Model &_pd, bool _ignore_dirs_on_mask):
 std::vector<bool> SelectionBuilder::SelectionByExtension(const std::string &_extension,
                                                          bool _result_selection ) const
 {
-    auto &comparison = ExtensionLowercaseComparison::Instance();
+    auto &comparison = utility::ExtensionLowercaseComparison::Instance();
     const auto extension = comparison.ExtensionToLowercase( _extension );
     const auto empty = extension.empty();
     const auto count = m_Data.SortedEntriesCount();

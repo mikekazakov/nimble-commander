@@ -71,7 +71,7 @@ TraverseConformingUTIs(const std::string &_uti,
             if( object != nullptr && CFGetTypeID(object) == CFStringGetTypeID() ) {
                 const auto conforming_cf_string = static_cast<CFStringRef>(object);
                 const auto conforming_std_string = CFStringGetUTF8StdString(conforming_cf_string);
-                if( _target.count(conforming_std_string) == 0 ) {
+                if( _target.contains(conforming_std_string) == false ) {
                     _target.emplace(conforming_std_string);
                     TraverseConformingUTIs(conforming_std_string, _target);
                 }
@@ -81,7 +81,7 @@ TraverseConformingUTIs(const std::string &_uti,
     else if( CFGetTypeID(conforms_to) == CFStringGetTypeID() ) {
         const auto conforming_cf_string = static_cast<CFStringRef>(conforms_to);
         const auto conforming_std_string = CFStringGetUTF8StdString(conforming_cf_string);
-        if( _target.count(conforming_std_string) == 0 ) {
+        if( _target.contains(conforming_std_string) == false ) {
             _target.emplace(conforming_std_string);
             TraverseConformingUTIs(conforming_std_string, _target);
         }
@@ -93,14 +93,15 @@ bool UTIDBImpl::ConformsTo(const std::string &_uti, const std::string &_conforms
     std::lock_guard lock{m_ConformsToLock};
     if( const auto it = m_ConformsTo.find(_uti); it != m_ConformsTo.end() ) {
         const auto &conforming = it->second;
-        return conforming.count(_conforms_to) != 0;
+        return conforming.contains(_conforms_to);
     }
     robin_hood::
         unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>
             conforming_utis;
     TraverseConformingUTIs(_uti, conforming_utis);
+    const bool does_conform = conforming_utis.contains(_conforms_to);
     m_ConformsTo[_uti] = std::move(conforming_utis);
-    return conforming_utis.count(_conforms_to) != 0;
+    return does_conform;
 }
 
 } // namespace nc::utility

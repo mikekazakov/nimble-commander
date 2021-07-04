@@ -88,7 +88,7 @@ void ExecuteExternalTool::Execute(const ExternalTool &_tool,
     }
     else {
         auto sheet = [[ExternalToolParameterValueSheetController alloc]
-            initWithValueNames:enter_values_names];
+            initWithValueNames:enter_values_names toolName:_tool.m_Title];
         [sheet beginSheetForWindow:_target.window
                  completionHandler:^(NSModalResponse returnCode) {
                    if( returnCode == NSModalResponseOK ) {

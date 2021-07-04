@@ -9,22 +9,27 @@
 @property(nonatomic) IBOutlet NSLayoutConstraint *buttonConstraint;
 @property(nonatomic) IBOutlet NSView *valueBlockView;
 @property(nonatomic) IBOutlet NSButton *okButton;
+@property(nonatomic, strong) IBOutlet NSStackView *stackView;
+@property(nonatomic, strong) IBOutlet NSTextField *promptLabel;
 
 @end
 
 @implementation ExternalToolParameterValueSheetController {
     std::vector<std::string> m_ValueNames;
     std::vector<std::string> m_Values;
+    std::vector<NSTextField *> m_ValueFields;
+    std::string m_ToolName;
 }
 
 @synthesize values = m_Values;
 
-- (id)initWithValueNames:(std::vector<std::string>)_names
+- (id)initWithValueNames:(std::vector<std::string>)_names toolName:(const std::string &)_name
 {
     self = [super init];
     if( self ) {
         assert(!_names.empty());
-        m_ValueNames = move(_names);
+        m_ValueNames = std::move(_names);
+        m_ToolName = _name;
     }
     return self;
 }
@@ -34,79 +39,48 @@
     [super windowDidLoad];
     nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
+    auto prompt_fmt = NSLocalizedString(@"Please provide parameters to run \"%@\"", "");
+    self.promptLabel.stringValue = [NSString
+        localizedStringWithFormat:prompt_fmt, [NSString stringWithUTF8StdString:m_ToolName]];
+
     m_Values.resize(m_ValueNames.size());
+    int index = 0;
+    for( auto &value_name : m_ValueNames ) {
+        const auto label = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+        label.stringValue = !value_name.empty()
+                                ? [NSString stringWithUTF8StdString:(value_name + ":")]
+                                : [NSString stringWithFormat:@"Parameter #%d:", index];
+        label.bordered = false;
+        label.editable = false;
+        label.drawsBackground = false;
+        [self.stackView addView:label inGravity:NSStackViewGravityBottom];
 
-    NSView *prev_block = nil;
-    int number = 0;
-    for( auto &s : m_ValueNames ) {
-        auto data = [NSKeyedArchiver archivedDataWithRootObject:self.valueBlockView
-                                          requiringSecureCoding:false
-                                                          error:nil];
-        NSView *v =
-            [NSKeyedUnarchiver unarchivedObjectOfClass:NSView.class fromData:data error:nil];
+        const auto value = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+        value.stringValue = @"";
+        value.bordered = true;
+        value.editable = true;
+        value.drawsBackground = true;
+        value.continuous = true;
+        m_ValueFields.emplace_back(value);
+        [self.stackView addView:value inGravity:NSStackViewGravityBottom];
 
-        NSTextField *tf1 = [v viewWithTag:1];
-        if( !s.empty() )
-            tf1.stringValue = [NSString stringWithUTF8StdString:s + ":"];
-        else
-            tf1.stringValue = [NSString stringWithFormat:@"Parameter #%d:", number];
-
-        NSTextField *tf2 = [v viewWithTag:2];
-        tf2.target = self;
-        tf2.tag = number;
-
-        auto views = NSDictionaryOfVariableBindings(v);
-        [self.window.contentView addSubview:v];
-        [self.window.contentView
-            addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[v]-|"
-                                                                   options:0
-                                                                   metrics:nil
-                                                                     views:views]];
-        if( !prev_block )
-            [self.window.contentView
-                addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[v]"
-                                                                       options:0
-                                                                       metrics:nil
-                                                                         views:views]];
-        else {
-            views = NSDictionaryOfVariableBindings(v, prev_block);
-            [self.window.contentView
-                addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[prev_block]-[v]"
-                                                                       options:0
-                                                                       metrics:nil
-                                                                         views:views]];
-        }
-
-        prev_block = v;
-        number++;
+        [self.stackView setCustomSpacing:4. afterView:label];
+        ++index;
     }
-
-    auto button = self.okButton;
-    auto views = NSDictionaryOfVariableBindings(prev_block, button);
-    [self.window.contentView
-        addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[prev_block]-[button]"
-                                                               options:0
-                                                               metrics:nil
-                                                                 views:views]];
-    [self.window.contentView layoutSubtreeIfNeeded];
 }
 
 - (IBAction)onOK:(id) [[maybe_unused]] _sender
 {
+    for( size_t index = 0; index != m_Values.size(); ++index ) {
+        m_Values[index] = m_ValueFields[index].stringValue.UTF8String;
+    }
+
     [self endSheet:NSModalResponseOK];
 }
 
 - (IBAction)onCancel:(id) [[maybe_unused]] _sender
 {
     [self endSheet:NSModalResponseCancel];
-}
-
-- (IBAction)onValueChanged:(id)sender
-{
-    if( auto tf = objc_cast<NSTextField>(sender) ) {
-        assert(tf.tag < static_cast<int>(m_Values.size()));
-        m_Values[tf.tag] = tf.stringValue.UTF8String;
-    }
 }
 
 @end

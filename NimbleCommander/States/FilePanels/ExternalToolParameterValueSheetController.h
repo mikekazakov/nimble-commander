@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/SheetController.h>
@@ -7,7 +7,7 @@
 
 @interface ExternalToolParameterValueSheetController : SheetController
 
-- (id) initWithValueNames:(std::vector<std::string>)_names;
+- (id) initWithValueNames:(std::vector<std::string>)_names toolName:(const std::string&)_name;
 
 @property (nonatomic, readonly) const std::vector<std::string>& values;
 

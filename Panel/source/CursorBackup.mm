@@ -1,12 +1,14 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CursorBackup.h"
 #include <Panel/PanelData.h>
+#include <Panel/Log.h>
 
 namespace nc::panel {
 
-CursorBackup::CursorBackup(int _current_cursor_pos, const data::Model &_data):
+CursorBackup::CursorBackup(int _current_cursor_pos, const data::Model &_data) noexcept:
     m_Data(_data)
 {
+    Log::Trace(SPDLOC, "Saving cursor position: {}", _current_cursor_pos);
     if( _current_cursor_pos >= 0 ) {
         assert( _current_cursor_pos < _data.SortedEntriesCount() );
         auto item = _data.EntryAtSortPosition(_current_cursor_pos);
@@ -16,7 +18,14 @@ CursorBackup::CursorBackup(int _current_cursor_pos, const data::Model &_data):
     }
 }
 
-int CursorBackup::RestoredCursorPosition() const
+int CursorBackup::RestoredCursorPosition() const noexcept
+{
+    const int restored_pos = FindRestoredCursorPosition();
+    Log::Trace(SPDLOC, "Restored cursor position: {}", restored_pos);
+    return restored_pos;
+}
+
+int CursorBackup::FindRestoredCursorPosition() const noexcept
 {
     if( m_OldCursorName.empty() ) {
         return m_Data.SortedEntriesCount() > 0 ? 0 : -1;        

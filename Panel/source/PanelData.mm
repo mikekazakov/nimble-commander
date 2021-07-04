@@ -5,7 +5,9 @@
 #include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
 #include "PanelDataExternalEntryKey.h"
+#include "Log.h"
 #include <numeric>
+#include <magic_enum.hpp>
 
 namespace nc::panel::data {
 
@@ -106,6 +108,12 @@ void Model::Load(const VFSListingPtr &_listing, PanelType _type)
     if( !_listing )
         throw std::logic_error("PanelData::Load: listing can't be nullptr");
 
+    Log::Info(SPDLOC,
+              "Loading {} listing, {} entries, {}",
+              magic_enum::enum_name(_type),
+              _listing->Count(),
+              _listing->IsUniform() ? _listing->Directory().c_str() : "N/A");
+
     m_Listing = _listing;
     m_Type = _type;
     InitVolatileDataWithListing(m_VolatileData, *m_Listing);
@@ -138,6 +146,11 @@ static void UpdateWithExisingVD(ItemVolatileData &_new_vd, const ItemVolatileDat
 void Model::ReLoad(const VFSListingPtr &_listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
+    
+    Log::Info(SPDLOC,
+              "ReLoading listing, {} entries, {}",
+              _listing->Count(),
+              _listing->IsUniform() ? _listing->Directory().c_str() : "N/A");
 
     // sort new entries by raw c name for sync-swapping needs
     std::vector<unsigned> dirbyrawcname;

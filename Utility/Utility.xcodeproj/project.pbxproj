@@ -64,6 +64,7 @@
 		CF460162256125E50095FC73 /* ColoredSeparatorLine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */; };
 		CF460163256125E50095FC73 /* NSMenu+Hierarchical.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */; };
 		CF460164256125E50095FC73 /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E271C992F35001D8B02 /* SystemInformation.mm */; };
+		CF46524F269103D90085840A /* ObjCpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46524E269103D90085840A /* ObjCpp.mm */; };
 		CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C39922B974210043E825 /* UTIImpl_UT.cpp */; };
 		CF61F305264048F6009FF900 /* FSEventsFileUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF61F304264048F6009FF900 /* FSEventsFileUpdate.cpp */; };
 		CF61F30B26404962009FF900 /* FSEventsFileUpdateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */; };
@@ -146,6 +147,7 @@
 		CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSEventModifierFlagsHolder.h; path = include/Utility/NSEventModifierFlagsHolder.h; sourceTree = "<group>"; };
 		CF3F587B255B38A20027B69A /* PathManip_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PathManip_UT.cpp; path = tests/PathManip_UT.cpp; sourceTree = "<group>"; };
 		CF46012C256125A30095FC73 /* libUtility.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUtility.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF46524E269103D90085840A /* ObjCpp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ObjCpp.mm; path = source/ObjCpp.mm; sourceTree = "<group>"; };
 		CF52C39922B974210043E825 /* UTIImpl_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UTIImpl_UT.cpp; path = tests/UTIImpl_UT.cpp; sourceTree = "<group>"; };
 		CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ByteCountFormatter.h; path = include/Utility/ByteCountFormatter.h; sourceTree = "<group>"; };
 		CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter.mm; path = source/ByteCountFormatter.mm; sourceTree = "<group>"; };
@@ -421,6 +423,7 @@
 				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.mm */,
 				CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.mm */,
 				CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */,
+				CF46524E269103D90085840A /* ObjCpp.mm */,
 				CF960E261C992F35001D8B02 /* PathManip.cpp */,
 				CF233B13219E94B300693E1A /* PrecompiledHeaders.pch */,
 				CFD62C1B1C9AFF280021EE7F /* SheetController.mm */,
@@ -562,6 +565,7 @@
 				CF460139256125E50095FC73 /* ActionShortcut.mm in Sources */,
 				CF460135256125E50095FC73 /* BriefOnDiskStorageImpl.cpp in Sources */,
 				CF460136256125E50095FC73 /* EncodingsAdditions.mm in Sources */,
+				CF46524F269103D90085840A /* ObjCpp.mm in Sources */,
 				CF460134256125E50095FC73 /* Layout.mm in Sources */,
 				CF46014D256125E50095FC73 /* Encodings.cpp in Sources */,
 				CF460151256125E50095FC73 /* NSObject+MassObserving.mm in Sources */,

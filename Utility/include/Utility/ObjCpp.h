@@ -30,6 +30,9 @@ inline T* objc_bridge_cast(U *from) noexcept
 #pragma clang diagnostic pop
 }
 
+// Returns a C string with a name of a concrete class that _object has.
+const char *obc_class_c_str(id _object) noexcept;
+
 template<typename T>
 inline std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
 {

@@ -29,8 +29,8 @@
 #include <Operations/Copying.h>
 #include <Panel/CursorBackup.h>
 #include <Panel/QuickSearch.h>
+#include <Panel/Log.h>
 #include "PanelViewHeader.h"
-#include "Counters.h"
 #include <Config/RapidJSON.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
@@ -369,20 +369,28 @@ static void HeatUpConfigValues()
     }
 }
 
-- (void) ReLoadRefreshedListing:(const VFSListingPtr &)_ptr
+- (void)reloadRefreshedListing:(const VFSListingPtr &)_ptr
 {
     assert(dispatch_is_main_queue());
-    
+    Log::Info(SPDLOC,
+              "Reloading refreshed listing, {}",
+              _ptr->IsUniform() ? _ptr->Directory().c_str() : "uniform");
+
     const auto pers = CursorBackup{m_View.curpos, m_Data};
-    
+
     m_Data.ReLoad(_ptr);
     [m_View dataUpdated];
-    
-    if(![self checkAgainstRequestedFocusing])
+
+    if( [self checkAgainstRequestedFocusing] ) {
+        Log::Trace(
+            SPDLOC,
+            "Cursor position was changed by requested focusing, skipping RestoredCursorPosition()");
+    }
+    else {
         m_View.curpos = pers.RestoredCursorPosition();
-    
+    }
+
     [self onCursorChanged];
-//    [self QuickSearchUpdate]; // ??????????
     [m_View setNeedsDisplay];
 }
 
@@ -412,7 +420,7 @@ static void HeatUpConfigValues()
                                                  );
             if(ret >= 0)
                 dispatch_to_main_queue( [=]{
-                    [self ReLoadRefreshedListing:listing];
+                    [self reloadRefreshedListing:listing];
                 });
             else
                 dispatch_to_main_queue( [=]{
@@ -428,7 +436,7 @@ static void HeatUpConfigValues()
                 );
             if( listing )
                 dispatch_to_main_queue( [=]{
-                    [self ReLoadRefreshedListing:listing];
+                    [self reloadRefreshedListing:listing];
                 });
         });
     }
@@ -436,13 +444,11 @@ static void HeatUpConfigValues()
 
 - (void) refreshPanel
 {
-   nc::panel::Counters::Ctrl::RefreshPanel++;
    [self refreshPanelDiscardingCaches:false];
 }
 
 - (void) forceRefreshPanel
 {
-    nc::panel::Counters::Ctrl::ForceRefreshPanel++;
     [self refreshPanelDiscardingCaches:true];
 }
 
@@ -572,8 +578,6 @@ static void HeatUpConfigValues()
 
 - (void) onPathChanged
 {
-    panel::Counters::Ctrl::OnPathChanged++;
-
     // update directory changes notification ticket
     __weak PanelController *weakself = self;
     m_UpdatesObservationTicket.reset();    
@@ -884,8 +888,6 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
 
 - (int) GoToDirWithContext:(std::shared_ptr<DirectoryChangeRequest>)_request
 {
-    panel::Counters::Ctrl::GoToDirWithContext++;
-
     if( _request == nullptr )
         return VFSError::InvalidCall;
     
@@ -983,27 +985,31 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
         [self checkAgainstRequestedFocusing];
 }
 
+// This function checks if a requested focusing can be satisfied and if so - changes the cursor.
+// The check is destructive/has side effects - it clears a focus request if either it was satisfied
+// or if it became outdated.
+// Returns true if the request was satisfied and the cursor position was changed.
 - (bool) checkAgainstRequestedFocusing
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     if( m_DelayedSelection.filename.empty() )
         return false;
-    
+
     if( machtime() > m_DelayedSelection.request_end ) {
         [self clearFocusingRequest];
         return false;
     }
-    
+
     // now try to find it
     int raw_index = m_Data.RawIndexForName(m_DelayedSelection.filename.c_str());
     if( raw_index < 0 )
         return false;
-        
+
     // we found this entry. regardless of appearance of this entry in current directory presentation
     // there's no reason to search for it again
-    auto done = move(m_DelayedSelection.done);
-    
-    int sort_index = m_Data.SortedIndexForRawIndex(raw_index);
+    auto done = std::move(m_DelayedSelection.done);
+
+    const int sort_index = m_Data.SortedIndexForRawIndex(raw_index);
     if( sort_index >= 0 ) {
         m_View.curpos = sort_index;
         if( !self.isActive )
@@ -1011,11 +1017,13 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
         if( done )
             done();
     }
-    
+
     // focus requests are one-shot
-    [self clearFocusingRequest];  
-    
-    return true;
+    [self clearFocusingRequest];
+
+    // return 'true' only if the entry was actually focused, regardless if it is present in raw
+    // listing.
+    return sort_index >= 0;
 }
 
 - (void) clearFocusingRequest

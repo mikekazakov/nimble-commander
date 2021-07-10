@@ -153,7 +153,12 @@ static void GoToDropboxStorage(PanelController *_target,
     dispatch_assert_background_queue();
     auto &info = _connection.Get<NetworkConnectionsManager::Dropbox>();
     try {
-        auto host = std::make_shared<vfs::DropboxHost>(info.account, _passwd);
+        vfs::DropboxHost::Params params;
+        params.account = info.account;
+        params.access_token = _passwd;
+        params.client_id = NCE(env::dropbox_client_id);
+        params.client_secret = NCE(env::dropbox_client_secret);
+        auto host = std::make_shared<vfs::DropboxHost>(params);
         dispatch_to_main_queue([=]{
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = "/";

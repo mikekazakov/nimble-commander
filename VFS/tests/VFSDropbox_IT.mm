@@ -15,10 +15,19 @@ static std::vector<uint8_t> MakeNoise(size_t size);
 
 #define PREFIX "VFSDropbox "
 
+static std::shared_ptr<DropboxHost> Spawn()
+{
+    DropboxHost::Params params;
+    params.account = g_Account;
+    params.access_token = g_Token;
+    params.client_id = NCE(nc::env::dropbox_client_id);
+    params.client_secret = NCE(nc::env::dropbox_client_secret);
+    return std::make_shared<DropboxHost>(params);
+}
+
 TEST_CASE(PREFIX "statfs")
 {
-    const std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
-
+    const std::shared_ptr<VFSHost> host = Spawn();
     VFSStatFS statfs;
     REQUIRE(host->StatFS("/", statfs) == 0);
     CHECK(statfs.total_bytes == 2147483648);
@@ -30,13 +39,18 @@ TEST_CASE(PREFIX "statfs")
 TEST_CASE(PREFIX "invalid credentials")
 {
     auto token = "-SupposingThisWillNeverBecameAValidAccessTokeForDropboxOAuth2AAA";
-    CHECK_THROWS_AS(std::make_shared<DropboxHost>(g_Account, token), VFSErrorException);
+    DropboxHost::Params params;
+    params.account = g_Account;
+    params.access_token = token;
+    params.client_id = NCE(nc::env::dropbox_client_id);
+    params.client_secret = NCE(nc::env::dropbox_client_secret);
+    CHECK_THROWS_AS(std::make_shared<DropboxHost>(params), VFSErrorException);
 }
 
 TEST_CASE(PREFIX "stat on existing file")
 {
     auto filepath = "/TestSet01/11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg";
-    const std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    const std::shared_ptr<VFSHost> host = Spawn();
 
     VFSStat stat;
     REQUIRE(host->Stat(filepath, stat, 0) == 0);
@@ -57,7 +71,7 @@ TEST_CASE(PREFIX "stat on existing file")
 TEST_CASE(PREFIX "stat on non existing file")
 {
     const auto filepath = "/TestSet01/this_file_does_not_exist!!!.jpg";
-    const std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    const std::shared_ptr<VFSHost> host = Spawn();
 
     VFSStat stat;
     CHECK(host->Stat(filepath, stat, 0) != 0);
@@ -66,7 +80,7 @@ TEST_CASE(PREFIX "stat on non existing file")
 TEST_CASE(PREFIX "stat on existing folder")
 {
     const auto filepath = "/TestSet01/";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
 
     VFSStat stat;
     REQUIRE(host->Stat(filepath, stat, 0) == 0);
@@ -86,7 +100,7 @@ TEST_CASE(PREFIX "directory iterating")
                                "f447bd6f4f6a47e6a355b7b44f2a326f.jpg",
                                "kvxnws0o3i3g.jpg",
                                "vw1yzox23csh.jpg"}};
-    const std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    const std::shared_ptr<VFSHost> host = Spawn();
 
     std::set<std::string> filenames;
     int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e) {
@@ -100,7 +114,7 @@ TEST_CASE(PREFIX "directory iterating")
 TEST_CASE(PREFIX "large directory iterating")
 {
     const auto filepath = "/TestSet02/";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     std::set<std::string> filenames;
     int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e) {
         filenames.emplace(_e.name);
@@ -114,7 +128,7 @@ TEST_CASE(PREFIX "large directory iterating")
 
 TEST_CASE(PREFIX "directory listing")
 {
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     VFSListingPtr listing;
     CHECK(host->FetchDirectoryListing("/", listing, 0) == VFSError::Ok);
 }
@@ -122,7 +136,7 @@ TEST_CASE(PREFIX "directory listing")
 TEST_CASE(PREFIX "large directory listing")
 {
     const auto dirpath = "/TestSet02/";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     VFSListingPtr listing;
     REQUIRE(host->FetchDirectoryListing(dirpath, listing, Flags::F_NoDotDot) == VFSError::Ok);
 
@@ -138,7 +152,7 @@ TEST_CASE(PREFIX "large directory listing")
 TEST_CASE(PREFIX "basic file read")
 {
     const auto filepath = "/TestSet01/11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     std::shared_ptr<VFSFile> file;
     int rc = host->CreateFile(filepath, file);
     REQUIRE(rc == VFSError::Ok);
@@ -157,7 +171,7 @@ TEST_CASE(PREFIX "reading file with non ASCII symbols")
 {
     const auto filepath = reinterpret_cast<const char *>(
         u8"/TestSet03/Это фотка котега $о ВСЯкими #\"символами\"!!!.jpg");
-    const std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    const std::shared_ptr<VFSHost> host = Spawn();
     std::shared_ptr<VFSFile> file;
     int rc = host->CreateFile(filepath, file);
     REQUIRE(rc == VFSError::Ok);
@@ -176,7 +190,7 @@ TEST_CASE(PREFIX "reading file with non ASCII symbols")
 TEST_CASE(PREFIX "reading non-existing file")
 {
     const auto filepath = "/TestSet01/jggweofgewufygweufguwefg.jpg";
-    const std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    const std::shared_ptr<VFSHost> host = Spawn();
     std::shared_ptr<VFSFile> file;
     int rc = host->CreateFile(filepath, file);
     REQUIRE(rc == VFSError::Ok);
@@ -190,7 +204,7 @@ TEST_CASE(PREFIX "simple upload")
 {
     const auto to_upload = "Hello, world!"s;
     const auto filepath = "/FolderToModify/test.txt";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -216,7 +230,7 @@ TEST_CASE(PREFIX "upload with invalid name")
     const auto to_upload = "Hello, world!"s;
     const auto filepath =
         "/FolderToModify/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/test.txt";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
 
     std::shared_ptr<VFSFile> file;
     REQUIRE(host->CreateFile(filepath, file) == VFSError::Ok);
@@ -232,7 +246,7 @@ TEST_CASE(PREFIX "simple upload with overwrite")
 {
     const auto to_upload = "Hello, world!"s;
     const auto filepath = "/FolderToModify/test.txt";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -263,7 +277,7 @@ TEST_CASE(PREFIX "UnfinishedUpload")
 {
     const auto to_upload = "Hello, world!"s;
     const auto filepath = "/FolderToModify/test.txt";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -280,7 +294,7 @@ TEST_CASE(PREFIX "UnfinishedUpload")
 TEST_CASE(PREFIX "zero sized upload")
 {
     const auto filepath = "/FolderToModify/zero.txt";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -300,7 +314,7 @@ TEST_CASE(PREFIX "decent sized upload")
 {
     const auto length = 5 * 1024 * 1024; // 5Mb upload / download
     const auto filepath = "/FolderToModify/SomeRubbish.bin";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -327,7 +341,7 @@ TEST_CASE(PREFIX "two-chunk upload")
 {
     const auto length = 17 * 1024 * 1024; // 17MB upload / download
     const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -356,7 +370,7 @@ TEST_CASE(PREFIX "multi-chunks upload")
     const auto length = 17 * 1024 * 1024; // 17MB upload / download
 
     const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     std::shared_ptr<VFSFile> file;
@@ -394,7 +408,7 @@ TEST_CASE(PREFIX "upload edge cases")
                            3'000'001};
     const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
 
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     host->Unlink(filepath);
 
     for( auto length : lengths ) {
@@ -423,7 +437,7 @@ TEST_CASE(PREFIX "upload edge cases")
 TEST_CASE(PREFIX "folder creation and removal")
 {
     const auto filepath = "/FolderToModify/NewDirectory/";
-    std::shared_ptr<VFSHost> host = std::make_shared<DropboxHost>(g_Account, g_Token);
+    std::shared_ptr<VFSHost> host = Spawn();
     host->RemoveDirectory(filepath);
 
     REQUIRE(host->CreateDirectory(filepath, 0) == VFSError::Ok);

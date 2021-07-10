@@ -520,8 +520,14 @@ ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection(const Connection 
     else if( auto sftp = _connection.Cast<SFTP>() )
         host = std::make_shared<vfs::SFTPHost>(
             sftp->host, sftp->user, passwd, sftp->keypath, sftp->port);
-    else if( auto dropbox = _connection.Cast<Dropbox>() )
-        host = std::make_shared<vfs::DropboxHost>(dropbox->account, passwd);
+    else if( auto dropbox = _connection.Cast<Dropbox>() ) {
+        vfs::DropboxHost::Params params;
+        params.account = dropbox->account;
+        params.access_token = passwd;
+        params.client_id = NCE(env::dropbox_client_id);
+        params.client_secret = NCE(env::dropbox_client_secret);
+        host = std::make_shared<vfs::DropboxHost>(params);
+    }
     else if( auto w = _connection.Cast<WebDAV>() )
         host =
             std::make_shared<vfs::WebDAVHost>(w->host, w->user, passwd, w->path, w->https, w->port);

@@ -62,19 +62,14 @@ struct DropboxHost::State {
 
 DropboxHost::DropboxHost(const Params &_params)
     : Host("", nullptr, DropboxHost::UniqueTag),
-      I(std::make_unique<State>()), m_Config{Compose(_params.account, _params.access_token, _params.client_id, _params.client_secret)}
+      I(std::make_unique<State>()), m_Config{Compose(_params.account,
+                                                     _params.access_token,
+                                                     _params.client_id,
+                                                     _params.client_secret)}
 {
     I->m_SessionCreator = _params.session_creator ? _params.session_creator
-                                              : &dropbox::URLSessionFactory::DefaultFactory();
-    
-    Init();
-}
+                                                  : &dropbox::URLSessionFactory::DefaultFactory();
 
-DropboxHost::DropboxHost(const std::string &_account, const std::string &_access_token)
-    : Host("", nullptr, DropboxHost::UniqueTag),
-      I(std::make_unique<State>()), m_Config{Compose(_account, _access_token, "", "")}
-{
-    I->m_SessionCreator = &dropbox::URLSessionFactory::DefaultFactory();
     Init();
 }
 
@@ -574,6 +569,16 @@ DropboxHost::SendSynchronousPostRequest(NSMutableURLRequest *_request,
     // try again, but with a renewed access token
     [_request setValue:I->m_AuthString forHTTPHeaderField:@"Authorization"];
     return SendSynchronousRequest(GenericSession(), _request, _cancel_checker);
+}
+
+std::shared_ptr<const DropboxHost> DropboxHost::SharedPtr() const noexcept
+{
+    return std::static_pointer_cast<const DropboxHost>(Host::SharedPtr());
+}
+
+std::shared_ptr<DropboxHost> DropboxHost::SharedPtr() noexcept
+{
+    return std::static_pointer_cast<DropboxHost>(Host::SharedPtr());
 }
 
 }

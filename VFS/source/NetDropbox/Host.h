@@ -34,7 +34,6 @@ public:
         dropbox::URLSessionCreator *session_creator = nullptr;
     };
     DropboxHost(const Params &_params);
-    DropboxHost(const std::string &_account, const std::string &_access_token);
     DropboxHost(const VFSConfiguration &_config);
     ~DropboxHost();
 
@@ -76,14 +75,8 @@ public:
                        const char *_new_path,
                        const VFSCancelChecker &_cancel_checker) override;
 
-    std::shared_ptr<const DropboxHost> SharedPtr() const
-    {
-        return std::static_pointer_cast<const DropboxHost>(Host::SharedPtr());
-    }
-    std::shared_ptr<DropboxHost> SharedPtr()
-    {
-        return std::static_pointer_cast<DropboxHost>(Host::SharedPtr());
-    }
+    std::shared_ptr<const DropboxHost> SharedPtr() const noexcept;
+    std::shared_ptr<DropboxHost> SharedPtr() noexcept;
 
     const std::string &Account() const;
     const std::string &Token() const;

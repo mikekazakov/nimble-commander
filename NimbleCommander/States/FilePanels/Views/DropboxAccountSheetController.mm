@@ -1,8 +1,5 @@
 // Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DropboxAccountSheetController.h"
-#import <AppAuth/AppAuth.h>
-#import <AppAuth/OIDRedirectHTTPHandler.h>
-#import <AppAuth/OIDAuthorizationRequest.h>
 #include <VFS/NetDropbox.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
@@ -11,15 +8,7 @@
 #include <Habanero/dispatch_cpp.h>
 
 using namespace nc;
-
-static const auto kClientID = [NSString stringWithUTF8String:NCE(env::dropbox_client_id)];
-static const auto kClientSecret = [NSString stringWithUTF8String:NCE(env::dropbox_client_secret)];
-static const auto g_LoopbackPort = static_cast<uint16_t>(56789);
-static const auto g_SuccessURL =
-    [NSURL URLWithString:@"http://magnumbytes.com/static/dropbox_oauth_redirect.html"];
-static const auto g_AuthorizationEndpoint =
-    [NSURL URLWithString:@"https://www.dropbox.com/oauth2/authorize"];
-static const auto g_TokenEndpoint = [NSURL URLWithString:@"https://api.dropbox.com/1/oauth2/token"];
+using vfs::dropbox::Authenticator;
 
 namespace {
 
@@ -49,7 +38,7 @@ enum class State
 @end
 
 @implementation DropboxAccountSheetController {
-    OIDRedirectHTTPHandler *m_RedirectHTTPHandler;
+    std::shared_ptr<Authenticator> m_Authenticator;
     std::string m_Token;
     std::optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::Dropbox m_Connection;
@@ -101,60 +90,38 @@ enum class State
 
 - (IBAction)onRequestAccess:(id) [[maybe_unused]] _sender
 {
-    m_RedirectHTTPHandler = [[OIDRedirectHTTPHandler alloc] initWithSuccessURL:g_SuccessURL];
-    const auto redirectURI = [m_RedirectHTTPHandler startHTTPListener:nil withPort:g_LoopbackPort];
-
-    const auto configuration =
-        [[OIDServiceConfiguration alloc] initWithAuthorizationEndpoint:g_AuthorizationEndpoint
-                                                         tokenEndpoint:g_TokenEndpoint];
-
-    const auto request = [[OIDAuthorizationRequest alloc] initWithConfiguration:configuration
-                                                                       clientId:kClientID
-                                                                   clientSecret:kClientSecret
-                                                                          scope:nil
-                                                                    redirectURL:redirectURI
-                                                                   responseType:OIDResponseTypeCode
-                                                                          state:nil
-                                                                          nonce:nil
-                                                                   codeVerifier:nil
-                                                                  codeChallenge:nil
-                                                            codeChallengeMethod:nil
-                                                           additionalParameters:nil];
-
-    auto callback = ^(OIDAuthState *_Nullable authState, NSError *_Nullable error) {
-      [self processAuthRespone:authState error:error];
-    };
-    auto state = [OIDAuthState authStateByPresentingAuthorizationRequest:request callback:callback];
-    m_RedirectHTTPHandler.currentAuthorizationFlow = state;
+    m_Authenticator = vfs::dropbox::MakeAuthenticator();
+    Authenticator::Request request;
+    request.client_id = NCE(env::dropbox_client_id);
+    request.client_secret = NCE(env::dropbox_client_secret);
+    request.loopback_port = static_cast<uint16_t>(56789);
+    request.success_url = "https://magnumbytes.com/static/dropbox_oauth_redirect.html";
+    __weak DropboxAccountSheetController *weak_self = self;
+    m_Authenticator->PerformRequest(
+        request,
+        [weak_self](const Authenticator::Token &_token) {
+            if( DropboxAccountSheetController *me = weak_self )
+                [me processAuthToken:_token];
+        },
+        [weak_self](int _vfs_error) {
+            if( DropboxAccountSheetController *me = weak_self )
+                [me processAuthError:_vfs_error];
+        });
 }
 
-- (void)processAuthRespone:(OIDAuthState *)_auth error:(NSError *)_error
+- (void)processAuthToken:(const Authenticator::Token &)_token
 {
     // Brings this app to the foreground.
     [NSRunningApplication.currentApplication
         activateWithOptions:(NSApplicationActivateAllWindows |
                              NSApplicationActivateIgnoringOtherApps)];
-
-    // Processes the authorization response.
-    if( _auth ) {
-        [self acceptAccessToken:_auth.lastTokenResponse.accessToken];
-    }
-    else {
-        self.state = State::Failure;
-        if( _error == nil || [_error.domain isEqualToString:OIDOAuthAuthorizationErrorDomain] )
-            self.failureReasonField.stringValue = NSLocalizedString(@"Unable to authorize", "");
-        else
-            self.failureReasonField.stringValue = _error.localizedDescription;
-    }
-}
-
-- (void)acceptAccessToken:(NSString *)_token
-{
-    m_Token = _token.UTF8String;
+    
+    m_Token = vfs::dropbox::TokenMangler::ToMangledRefreshToken(_token.refresh_token);
     self.state = State::Validating;
 
+    const auto access_token = _token.access_token;
     dispatch_to_background([=] {
-        auto res = vfs::DropboxHost::CheckTokenAndRetrieveAccountEmail(_token.UTF8String);
+        auto res = vfs::DropboxHost::CheckTokenAndRetrieveAccountEmail(access_token);
         auto rc = res.first;
         auto email = res.second;
         dispatch_to_main_queue([=] {
@@ -171,6 +138,17 @@ enum class State
             }
         });
     });
+    
+}
+
+- (void)processAuthError:(int)_vfs_error
+{
+    // Brings this app to the foreground.
+    [NSRunningApplication.currentApplication
+        activateWithOptions:(NSApplicationActivateAllWindows |
+                             NSApplicationActivateIgnoringOtherApps)];
+    self.state = State::Failure;
+    self.failureReasonField.stringValue = VFSError::ToNSError(_vfs_error).localizedDescription;
 }
 
 - (void)setPassword:(std::string)password

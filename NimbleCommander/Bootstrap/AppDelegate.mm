@@ -22,12 +22,6 @@
 #include <Habanero/CFDefaultsCPP.h>
 #include <Habanero/algo.h>
 
-#include <ctrail/OneShotMonitor.h>
-#include <ctrail/RegistryImpl.h>
-#include <ctrail/DashboardImpl.h>
-#include <ctrail/MonotonicValuesStorage.h>
-#include <ctrail/ChromeTraceExporter.h>
-
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/NativeFSManagerImpl.h>
 #include <Utility/TemporaryFileStorageImpl.h>
@@ -56,7 +50,6 @@
 #include <NimbleCommander/States/Terminal/ShellState.h>
 #include <NimbleCommander/States/MainWindow.h>
 #include <NimbleCommander/States/MainWindowController.h>
-#include <NimbleCommander/States/FilePanels/Counters.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include <NimbleCommander/States/FilePanels/ExternalToolsSupport.h>
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
@@ -85,6 +78,10 @@
 #include <Viewer/InternalViewerWindowController.h>
 
 #include <Term/Log.h>
+
+#include <VFS/Log.h>
+
+#include <Panel/Log.h>
 
 #include <filesystem>
 
@@ -184,6 +181,8 @@ static void SetupLogs()
         AttachToSink<nc::term::Log>(level, stdout_sink);
         AttachToSink<nc::viewer::Log>(level, stdout_sink);
         AttachToSink<nc::config::Log>(level, stdout_sink);
+        AttachToSink<nc::vfs::Log>(level, stdout_sink);
+        AttachToSink<nc::panel::Log>(level, stdout_sink);
     }
 }
 
@@ -219,8 +218,6 @@ static NCAppDelegate *g_Me = nil;
     NCViewerWindowDelegateBridge *m_ViewerWindowDelegateBridge;
     std::unique_ptr<nc::utility::NativeFSManager> m_NativeFSManager;
     std::shared_ptr<nc::vfs::NativeHost> m_NativeHost;
-    std::optional<ctrail::DashboardImpl> m_CTrailDashboard;
-    std::unique_ptr<ctrail::OneShotMonitor> m_CTrailMonitor;
     std::unique_ptr<nc::bootstrap::ActivationManager> m_ActivationManager;
     std::unique_ptr<nc::utility::FSEventsFileUpdateImpl> m_FSEventsFileUpdate;
 }
@@ -1029,25 +1026,6 @@ static std::string AquaticPrimePublicKey()
 
     [window show];
     existing_window = window;
-}
-
-- (IBAction)onDebugGatherCountersFor30s:(id) [[maybe_unused]] _sender
-{
-    ctrail::RegistryImpl registry;
-    nc::panel::Counters::Register(registry);
-    m_CTrailDashboard = ctrail::DashboardImpl{registry.bake()};
-
-    ctrail::OneShotMonitor::Params params;
-    params.dashboard = &(*m_CTrailDashboard);
-    params.duration = std::chrono::seconds{30};
-    params.period = std::chrono::milliseconds{500};
-    params.export_options = ctrail::ValuesStorageExporter::Options::differential;
-    params.exporter = ctrail::ValuesStorageExporter{ctrail::ChromeTraceExporter{}};
-    params.save = [](std::string _exported) {
-        std::ofstream(nc::base::CommonPaths::Desktop() + "NimbleCommander.json") << _exported;
-    };
-
-    m_CTrailMonitor = std::make_unique<ctrail::OneShotMonitor>(std::move(params));
 }
 
 - (const std::shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager

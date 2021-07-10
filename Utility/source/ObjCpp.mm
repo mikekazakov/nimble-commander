@@ -2,7 +2,7 @@
 #include <Utility/ObjCpp.h>
 #include <Foundation/Foundation.h>
 
-const char *obc_class_c_str(id _object) noexcept
+const char *objc_class_c_str(id _object) noexcept
 {
     if( _object == nil )
         return "";

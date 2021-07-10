@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <rapidjson/rapidjson.h>
@@ -35,6 +35,8 @@ struct api
     static NSURL* const UploadSessionStart;
     static NSURL* const UploadSessionAppend;
     static NSURL* const UploadSessionFinish;
+    static NSURL* const OAuth2Token;
+    static NSURL* const OAuth2Authorize;    
 };
     
 constexpr uint16_t DirectoryAccessMode = S_IRUSR | S_IWUSR | S_IFDIR | S_IXUSR;
@@ -69,6 +71,9 @@ struct AccountInfo
     /* others later */
 };
 AccountInfo ParseAccountInfo( const rapidjson::Value &_value );
+
+// returns an access token if the response was successfully parsed
+std::optional<std::string> ParseRefreshTokenReponse( const rapidjson::Value &_value );
     
 const char *GetString( const rapidjson::Value &_doc, const char *_key );
 std::optional<long> GetLong( const rapidjson::Value &_doc, const char *_key );

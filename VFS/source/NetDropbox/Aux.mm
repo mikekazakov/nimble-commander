@@ -2,6 +2,7 @@
 #include <Cocoa/Cocoa.h>
 #include <VFS/VFSError.h>
 #include "Aux.h"
+#include <VFS/Log.h>
 #include <Utility/ObjCpp.h>
 #include <vector>
 
@@ -30,6 +31,9 @@ NSURL *const api::UploadSessionAppend =
 NSURL *const api::UploadSessionFinish =
     [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload_session/finish"];
 NSURL *const api::Move = [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/move"];
+NSURL *const api::OAuth2Token = [NSURL URLWithString:@"https://api.dropbox.com/oauth2/token"];
+NSURL *const api::OAuth2Authorize =
+    [NSURL URLWithString:@"https://www.dropbox.com/oauth2/authorize"];
 
 const char *GetString(const rapidjson::Value &_doc, const char *_key)
 {
@@ -135,9 +139,13 @@ int VFSErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response
     return vfs_error;
 }
 
-static std::pair<int, NSData *> SendInifiniteSynchronousRequest(NSURLSession *_session,
-                                                                NSURLRequest *_request)
+static std::pair<int, NSData *> SendInfiniteSynchronousRequest(NSURLSession *_session,
+                                                               NSURLRequest *_request)
 {
+    assert(_session != nil);
+    assert(_request != nil);
+    Log::Debug(
+        SPDLOC, "Sending infinite sync request at {}", _request.URL.absoluteString.UTF8String);
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     __block NSData *data = nil;
     __block NSURLResponse *response = nil;
@@ -169,9 +177,12 @@ std::pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
                                                 NSURLRequest *_request,
                                                 const VFSCancelChecker &_cancel_checker)
 {
+    assert(_session != nil);
+    assert(_request != nil);
     if( !_cancel_checker )
-        return SendInifiniteSynchronousRequest(_session, _request);
+        return SendInfiniteSynchronousRequest(_session, _request);
 
+    Log::Debug(SPDLOC, "Sending finite sync request at {}", _request.URL.absoluteString.UTF8String);
     const auto timeout = 100 * NSEC_PER_MSEC; // wake up every 100ms
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
     __block NSData *data = nil;
@@ -332,6 +343,22 @@ AccountInfo ParseAccountInfo(const rapidjson::Value &_value)
     ai.email = email;
 
     return ai;
+}
+
+std::optional<std::string> ParseRefreshTokenReponse(const rapidjson::Value &_value)
+{
+    if( !_value.IsObject() )
+        return {};
+
+    const auto token = GetString(_value, "token_type");
+    if( token == nullptr || std::string_view("bearer") != token )
+        return {};
+
+    const auto access_token = GetString(_value, "access_token");
+    if( access_token == nullptr )
+        return {};
+
+    return std::string(access_token);
 }
 
 std::optional<rapidjson::Document> ParseJSON(NSData *_data)

@@ -1,15 +1,14 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFieldEditor.h"
 #include <Operations/FilenameTextControl.h>
 #include <Utility/StringExtras.h>
 
-static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_selection );
+static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_selection);
 
-@implementation NCPanelViewFieldEditor
-{
-    NSTextView      *m_TextView;
-    NSUndoManager   *m_UndoManager;
-    VFSListingItem   m_OriginalItem;
+@implementation NCPanelViewFieldEditor {
+    NSTextView *m_TextView;
+    NSUndoManager *m_UndoManager;
+    VFSListingItem m_OriginalItem;
 }
 
 @synthesize originalItem = m_OriginalItem;
@@ -21,9 +20,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     if( self ) {
         m_OriginalItem = _item;
         m_UndoManager = [[NSUndoManager alloc] init];
-        
+
         [self buildTextView];
-        
+
         self.borderType = NSNoBorder;
         self.hasVerticalScroller = false;
         self.hasHorizontalScroller = false;
@@ -35,9 +34,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     return self;
 }
 
-- (void) buildTextView
+- (void)buildTextView
 {
-   static const auto ps = []()-> NSParagraphStyle* {
+    static const auto ps = []() -> NSParagraphStyle * {
         NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
         style.lineBreakMode = NSLineBreakByClipping;
         return style;
@@ -45,10 +44,10 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     const auto tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     [tv.layoutManager replaceTextStorage:[[NCFilenameTextStorage alloc] init]];
     tv.delegate = self;
-    tv.fieldEditor = true;
+    tv.fieldEditor = false;
     tv.allowsUndo = true;
     tv.string = [NSString stringWithUTF8StdString:m_OriginalItem.Filename()];
-    tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
+    tv.selectedRange = NextFilenameSelectionRange(tv.string, tv.selectedRange);
     tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
     tv.verticallyResizable = tv.horizontallyResizable = true;
     tv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
@@ -70,42 +69,48 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void)markNextFilenamePart
 {
-    m_TextView.selectedRange = NextFilenameSelectionRange(m_TextView.string,
-                                                          m_TextView.selectedRange );
+    m_TextView.selectedRange =
+        NextFilenameSelectionRange(m_TextView.string, m_TextView.selectedRange);
 }
 
-- (BOOL)textShouldEndEditing:(NSText *)[[maybe_unused]]textObject
+- (BOOL)textShouldEndEditing:(NSText *) [[maybe_unused]] textObject
 {
     [self finishEditing];
     return true;
 }
 
-- (void)textDidEndEditing:(NSNotification *)[[maybe_unused]]notification
+- (void)textDidEndEditing:(NSNotification *) [[maybe_unused]] notification
 {
     [self cancelEditing];
 }
 
-- (NSArray *)textView:(NSTextView *)[[maybe_unused]]textView
-          completions:(NSArray *)[[maybe_unused]]words
-  forPartialWordRange:(NSRange)[[maybe_unused]]charRange
-  indexOfSelectedItem:(NSInteger *)[[maybe_unused]]index
+- (NSArray *)textView:(NSTextView *) [[maybe_unused]] textView
+            completions:(NSArray *) [[maybe_unused]] words
+    forPartialWordRange:(NSRange) [[maybe_unused]] charRange
+    indexOfSelectedItem:(NSInteger *) [[maybe_unused]] index
 {
     return @[];
 }
 
-- (BOOL)textView:(NSTextView *)[[maybe_unused]]textView doCommandBySelector:(SEL)commandSelector
+- (BOOL)textView:(NSTextView *) [[maybe_unused]] textView doCommandBySelector:(SEL)commandSelector
 {
     static const auto cancel = NSSelectorFromString(@"cancelOperation:");
+    static const auto insert_new_line = NSSelectorFromString(@"insertNewline:");
+    static const auto insert_tab = NSSelectorFromString(@"insertTab:");
     if( commandSelector == cancel ) {
         [self cancelEditing];
+        return true;
+    }
+    if( commandSelector == insert_new_line || commandSelector == insert_tab ) {
+        [self finishEditing];
         return true;
     }
     return false;
 }
 
-- (void) finishEditing
+- (void)finishEditing
 {
-    if( m_TextView.string && m_TextView.string.length > 0)
+    if( m_TextView.string && m_TextView.string.length > 0 )
         if( const auto utf8 = m_TextView.string.fileSystemRepresentation ) {
             auto enter_handler = self.onTextEntered;
             self.onTextEntered = nil;
@@ -121,7 +126,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     }
 }
 
-- (void) cancelEditing
+- (void)cancelEditing
 {
     self.onTextEntered = nil;
     auto finish_handler = self.onEditingFinished;
@@ -131,7 +136,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     }
 }
 
-- (nullable NSUndoManager *)undoManagerForTextView:(NSTextView *)[[maybe_unused]]view
+- (nullable NSUndoManager *)undoManagerForTextView:(NSTextView *) [[maybe_unused]] view
 {
     return m_UndoManager;
 }
@@ -142,25 +147,25 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     if( self.window ) {
         [notify_center removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
         [notify_center removeObserver:self name:NSWindowDidResignMainNotification object:nil];
-    }    
+    }
     if( _wnd ) {
         [notify_center addObserver:self
-                   selector:@selector(windowStatusDidChange)
-                       name:NSWindowDidResignKeyNotification
-                     object:_wnd];
+                          selector:@selector(windowStatusDidChange)
+                              name:NSWindowDidResignKeyNotification
+                            object:_wnd];
         [notify_center addObserver:self
-                   selector:@selector(windowStatusDidChange)
-                       name:NSWindowDidResignMainNotification
-                     object:_wnd];
-    } 
+                          selector:@selector(windowStatusDidChange)
+                              name:NSWindowDidResignMainNotification
+                            object:_wnd];
+    }
 }
 
-- (void) windowStatusDidChange
+- (void)windowStatusDidChange
 {
     [self finishEditing];
 }
 
-static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_selection )
+static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_selection)
 {
     static auto dot = [NSCharacterSet characterSetWithCharactersInString:@"."];
 
@@ -169,9 +174,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     const NSRange whole = NSMakeRange(0, length);
     NSRange name;
     std::optional<NSRange> extension;
-    
+
     const NSRange r = [_string rangeOfCharacterFromSet:dot options:NSBackwardsSearch];
-    if( r.location > 0 && r.location < length - 1) { // has extension
+    if( r.location > 0 && r.location < length - 1 ) { // has extension
         name = NSMakeRange(0, r.location);
         extension = NSMakeRange(r.location + 1, length - r.location - 1);
     }

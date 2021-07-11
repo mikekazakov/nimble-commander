@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include <functional>
+#include <string>
+#include <string_view>
 
 namespace nc::vfs::dropbox {
 

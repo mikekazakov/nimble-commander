@@ -132,7 +132,7 @@ TEST_CASE(PREFIX "LocalFTP, rename nas")
     REQUIRE(host->RemoveDirectory((g_LocalTestPath + "DirectoryName2").c_str(), 0) == 0);
 }
 
-TEST_CASE(PREFIX "listing - ftp.uk.debian.org")
+TEST_CASE(PREFIX "listing - ftp.uk.debian.org", "[!mayfail]")
 {
     auto path = "/debian/dists/Debian10.9/main/installer-i386/20190702/images/netboot/";
     VFSHostPtr host;
@@ -153,7 +153,7 @@ TEST_CASE(PREFIX "listing - ftp.uk.debian.org")
     REQUIRE(should_be == in_fact);
 }
 
-TEST_CASE(PREFIX "seekread - ftp.uk.debian.org")
+TEST_CASE(PREFIX "seekread - ftp.uk.debian.org", "[!mayfail]")
 {
     const auto host_name = "ftp.uk.debian.org";
     const auto host_dir = "/debian/dists/Debian10.9/main/installer-i386/20190702/images/netboot/";
@@ -198,7 +198,7 @@ TEST_CASE(PREFIX "listing, redhat.com")
     REQUIRE(should_be == in_fact);
 }
 
-TEST_CASE(PREFIX "big files reading cancellation")
+TEST_CASE(PREFIX "big files reading cancellation", "[!mayfail]")
 {
     const auto host_name = "ftp.uk.debian.org";
     const auto host_dir =

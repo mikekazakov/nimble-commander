@@ -6,6 +6,7 @@
 #import <AppAuth/OIDRedirectHTTPHandler.h>
 #import <AppAuth/OIDAuthorizationRequest.h>
 #include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 #include "Aux.h"
 
 namespace nc::vfs::dropbox {

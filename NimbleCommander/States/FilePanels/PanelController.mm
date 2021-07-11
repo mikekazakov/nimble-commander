@@ -380,6 +380,7 @@ static void HeatUpConfigValues()
 
     m_Data.ReLoad(_ptr);
     [m_View dataUpdated];
+    [m_QuickSearch dataUpdated];
 
     if( [self checkAgainstRequestedFocusing] ) {
         Log::Trace(

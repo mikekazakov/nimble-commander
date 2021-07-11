@@ -53,4 +53,8 @@ wantsToSetSearchPrompt:(NSString*)_prompt
 - (void)setSearchCriteria:(NSString*)_request; // pass nil to discard filtering
 - (NSString*)searchCriteria; // will return nil if there's no filtering
 
+// Notifies the QuickSearch that the associated Model has reloaded its data.
+// Potentially causes to update the search prompt UI
+- (void)dataUpdated;
+
 @end

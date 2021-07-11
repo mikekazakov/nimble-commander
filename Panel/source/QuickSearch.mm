@@ -240,7 +240,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     [m_Delegate quickSearch:self wantsToSetCursorPosition:pers.RestoredCursorPosition()];
 
     [m_Delegate quickSearchHasUpdatedData:self];
-    [self updateTypingUIForHardFiltering];
+    [self updateTypingUI];
 
     // for convinience - if we have ".." and cursor is on it - move it to the first element after
     if( [m_Delegate quickSearchNeedsCursorPosition:self] == 0 &&
@@ -278,9 +278,9 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     }
 
     if( m_ShowTyping ) {
-        [self setPanelHeaderPrompt:m_Data->SoftFiltering().text withMatchesCount:filtered_amount];
         [m_Delegate quickSearchHasChangedVolatileData:self];
     }
+    [self updateTypingUI];
 
     [self scheduleSoftFilteringCleanup];
 }
@@ -346,25 +346,44 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     dispatch_to_main_queue_after(g_SoftFilteringTimeout + 1000ns, std::move(clear_filtering));
 }
 
-- (void)updateTypingUIForHardFiltering
+- (void)setPanelHeaderPrompt:(NSString *)_text withMatchesCount:(int)_count
+{
+    [m_Delegate quickSearch:self wantsToSetSearchPrompt:_text withMatchesCount:_count];
+}
+
+- (void)dataUpdated
+{
+    // TODO: test this in UT
+    [self updateTypingUI];
+}
+
+- (void)updateTypingUI
 {
     if( !m_ShowTyping )
         return;
 
-    auto filtering = m_Data->HardFiltering();
-    if( !filtering.text.text ) {
-        [self setPanelHeaderPrompt:nil withMatchesCount:0];
-    } else {
-        int total = static_cast<int>(m_Data->SortedDirectoryEntries().size());
-        if( total > 0 && m_Data->Listing().IsDotDot(0) )
-            total--;
-        [self setPanelHeaderPrompt:filtering.text.text withMatchesCount:total];
+    if( m_IsSoftFiltering ) {
+        const auto filtering = m_Data->SoftFiltering();
+        if( filtering.text ) {
+            const auto filtered_amount = static_cast<int>(m_Data->EntriesBySoftFiltering().size());
+            [self setPanelHeaderPrompt:filtering.text withMatchesCount:filtered_amount];
+        }
+        else {
+            [self setPanelHeaderPrompt:nil withMatchesCount:0];
+        }
     }
-}
-
-- (void)setPanelHeaderPrompt:(NSString *)_text withMatchesCount:(int)_count
-{
-    [m_Delegate quickSearch:self wantsToSetSearchPrompt:_text withMatchesCount:_count];
+    else {
+        const auto filtering = m_Data->HardFiltering();
+        if( filtering.text.text ) {
+            int total = static_cast<int>(m_Data->SortedDirectoryEntries().size());
+            if( total > 0 && m_Data->Listing().IsDotDot(0) )
+                total--;
+            [self setPanelHeaderPrompt:filtering.text.text withMatchesCount:total];
+        }
+        else {
+            [self setPanelHeaderPrompt:nil withMatchesCount:0];
+        }
+    }
 }
 
 @end

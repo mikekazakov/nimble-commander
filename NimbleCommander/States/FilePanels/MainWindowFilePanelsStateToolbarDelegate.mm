@@ -15,7 +15,6 @@
 // do not change these strings, they are used for persistency in NSUserDefaults
 static auto g_ToolbarIdentifier = @"FilePanelsToolbar";
 static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
-static const auto g_MaxPoolViewWith = 540.;
 
 @interface MainWindowFilePanelsStateToolbarDelegate ()
 
@@ -35,8 +34,6 @@ static const auto g_MaxPoolViewWith = 540.;
     NSArray *m_AllowedToolbarItemsIdentifiers;
     ExternalToolsStorage::ObservationTicket m_ToolsChangesTicket;
 
-    bool m_SetUpWindowSizeObservation;
-
     id m_RepresentedObject;
 }
 
@@ -50,7 +47,6 @@ static const auto g_MaxPoolViewWith = 540.;
     assert(_state != nil);
     self = [super init];
     if( self ) {
-        m_SetUpWindowSizeObservation = false;
         m_State = _state;
 
         [self buildBasicControls];
@@ -106,17 +102,29 @@ static const auto g_MaxPoolViewWith = 540.;
     m_Toolbar.showsBaselineSeparator = false;
 }
 
+static NSImage *MakeBackupToolImage()
+{
+    const auto path = @"/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/"
+                      @"GenericQuestionMarkIcon.icns";
+    auto image = [[NSImage alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path
+                                                                   isDirectory:false]];
+    if( !image )
+        return nil;
+    image.size = NSMakeSize(24, 24);
+    return image;
+}
+
 static NSImage *ImageForTool(const ExternalTool &_et)
 {
     NSURL *exec_url =
         [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:_et.m_ExecutablePath]];
     if( !exec_url )
-        return nil;
+        return MakeBackupToolImage();
 
     NSImage *img;
     [exec_url getResourceValue:&img forKey:NSURLEffectiveIconKey error:nil];
     if( !img )
-        return nil;
+        return MakeBackupToolImage();
 
     img.size = NSMakeSize(24, 24);
     return img;
@@ -162,8 +170,6 @@ static NSImage *ImageForTool(const ExternalTool &_et)
     if( [itemIdentifier isEqualToString:@"operations_pool"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_PoolViewController.view;
-        item.minSize = m_PoolViewController.view.bounds.size;
-        item.maxSize = NSMakeSize(g_MaxPoolViewWith, item.minSize.height);
         item.paletteLabel = item.label = NSLocalizedString(@"Operations", "Toolbar palette");
         m_PoolViewToolbarItem = item;
         return item;
@@ -178,32 +184,6 @@ static NSImage *ImageForTool(const ExternalTool &_et)
     }
 
     return nil;
-}
-
-- (void)notifyStateWasAssigned
-{
-    if( !m_SetUpWindowSizeObservation ) {
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(windowDidResize)
-                                                   name:NSWindowDidResizeNotification
-                                                 object:m_State.window];
-        m_SetUpWindowSizeObservation = true;
-        [self windowDidResize];
-    }
-}
-
-- (void)windowDidResize
-{
-    if( !m_PoolViewToolbarItem )
-        return;
-
-    if( const auto wnd = m_PoolViewController.view.window ) {
-        const auto sz = m_PoolViewController.view.window.frame.size;
-        const auto max_width = std::min(sz.width / 2.4, g_MaxPoolViewWith);
-        const auto clipped_max_wdith = std::max(m_PoolViewToolbarItem.minSize.width, max_width);
-        m_PoolViewToolbarItem.maxSize =
-            NSMakeSize(clipped_max_wdith, m_PoolViewToolbarItem.maxSize.height);
-    }
 }
 
 - (id)representedObject

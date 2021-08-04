@@ -124,8 +124,17 @@ static const auto g_ViewAppearTimeout = 100ms;
 
     [self hideBriefView];
     [self.briefViewHolder addSubview:bv];
-    bv.frame = NSMakeRect(
-        0, 0, self.briefViewHolder.bounds.size.width, self.briefViewHolder.bounds.size.height);
+    NSDictionary *views = NSDictionaryOfVariableBindings(bv);
+    [self.briefViewHolder addConstraints:[NSLayoutConstraint
+                                     constraintsWithVisualFormat:@"|-(==0)-[bv]-(==0)-|"
+                                                         options:0
+                                                         metrics:nil
+                                                           views:views]];
+    [self.briefViewHolder addConstraints:[NSLayoutConstraint
+                                     constraintsWithVisualFormat:@"V:|-(==0)-[bv]-(==0)-|"
+                                                         options:0
+                                                         metrics:nil
+                                                           views:views]];
 }
 
 - (void)hideBriefView

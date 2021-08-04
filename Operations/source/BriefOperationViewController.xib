@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -19,15 +19,14 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="q3u-dT-qj9" customClass="NCOpsBriefOperationView">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="38"/>
-            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+        <customView horizontalHuggingPriority="200" translatesAutoresizingMaskIntoConstraints="NO" id="q3u-dT-qj9" customClass="NCOpsBriefOperationView">
+            <rect key="frame" x="0.0" y="0.0" width="500" height="38"/>
             <subviews>
-                <progressIndicator wantsLayer="YES" maxValue="1" indeterminate="YES" controlSize="small" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="HVc-VI-uc1">
-                    <rect key="frame" x="9" y="11" width="279" height="16"/>
+                <progressIndicator wantsLayer="YES" horizontalHuggingPriority="100" maxValue="1" indeterminate="YES" controlSize="small" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="HVc-VI-uc1">
+                    <rect key="frame" x="9" y="11" width="459" height="16"/>
                 </progressIndicator>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="u1r-Ni-BYr">
-                    <rect key="frame" x="305" y="12" width="14" height="15"/>
+                    <rect key="frame" x="485" y="12" width="14" height="15"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="14" id="aaZ-ft-0zo"/>
                     </constraints>
@@ -44,16 +43,16 @@
                         </binding>
                     </connections>
                 </button>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XAR-0B-qc5">
-                    <rect key="frame" x="-2" y="-1" width="301" height="13"/>
+                <textField horizontalHuggingPriority="100" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XAR-0B-qc5">
+                    <rect key="frame" x="-2" y="-1" width="481" height="13"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="CR9-6H-mVg">
                         <font key="font" metaFont="system" size="10"/>
                         <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbb-24-X5f">
-                    <rect key="frame" x="-2" y="24" width="300" height="14"/>
+                <textField horizontalHuggingPriority="100" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbb-24-X5f">
+                    <rect key="frame" x="-2" y="24" width="480" height="14"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingMiddle" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="ezh-Od-Adz">
                         <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -61,7 +60,7 @@
                     </textFieldCell>
                 </textField>
                 <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ATK-3S-9FN">
-                    <rect key="frame" x="289" y="12" width="14" height="15"/>
+                    <rect key="frame" x="469" y="12" width="14" height="15"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="14" id="EAE-TQ-w4h"/>
                     </constraints>
@@ -88,7 +87,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rVN-yV-10b">
-                    <rect key="frame" x="289" y="12" width="14" height="14"/>
+                    <rect key="frame" x="469" y="12" width="14" height="14"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="14" id="Gyh-Fb-JZZ"/>
                     </constraints>

@@ -463,8 +463,6 @@ static NSString *TitleForData(const data::Model *_data);
 
     [self updateTitle];
 
-    [m_ToolbarDelegate notifyStateWasAssigned];
-
     // think it's a bad idea to post messages on every new window created
     GA().PostScreenView("File Panels State");
 }

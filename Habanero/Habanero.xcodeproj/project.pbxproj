@@ -42,6 +42,8 @@
 		CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */; };
 		CFA99A022650661300F72E93 /* SpdlogFacade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A012650661300F72E93 /* SpdlogFacade.cpp */; };
 		CFA99A1026512D4400F72E93 /* WriteAtomically.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */; };
+		CFDE36E426BA5F2400EB1B0D /* WhereIs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */; };
+		CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */; };
 		CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */; };
 /* End PBXBuildFile section */
 
@@ -132,6 +134,9 @@
 		CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tiny_string.cpp; path = source/tiny_string.cpp; sourceTree = "<group>"; };
 		CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chained_strings.cpp; path = source/chained_strings.cpp; sourceTree = "<group>"; };
 		CFD6DD211D6C44C1006B94C2 /* Observable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Observable.cpp; path = source/Observable.cpp; sourceTree = "<group>"; };
+		CFDE36E226BA5F0A00EB1B0D /* WhereIs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WhereIs.h; path = include/Habanero/WhereIs.h; sourceTree = "<group>"; };
+		CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WhereIs.cpp; path = source/WhereIs.cpp; sourceTree = "<group>"; };
+		CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WhereIs_UT.cpp; sourceTree = "<group>"; };
 		CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intrusive_ptr_UT.cpp; sourceTree = "<group>"; };
 		CFE8F90321A27F3000300019 /* spinlock_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spinlock_UT.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -186,6 +191,7 @@
 				CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */,
 				CF24E20B2291777D00C166FA /* UnitTests_main.cpp */,
 				CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */,
+				CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */,
 			);
 			name = Tests;
 			path = tests;
@@ -248,6 +254,7 @@
 				CF19B4062544B9E500838B45 /* tiny_string.h */,
 				CF19B40C2544B9E600838B45 /* tribool.h */,
 				CF19B3FD2544B9E500838B45 /* variable_container.h */,
+				CFDE36E226BA5F0A00EB1B0D /* WhereIs.h */,
 				CFA99A0E26512D3700F72E93 /* WriteAtomically.h */,
 			);
 			name = Headers;
@@ -280,6 +287,7 @@
 				CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */,
 				CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */,
 				CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */,
+				CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */,
 				CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */,
 			);
 			name = Source;
@@ -383,6 +391,7 @@
 				CF24E21C2291B0E500C166FA /* chained_strings_UT.cpp in Sources */,
 				CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */,
 				CF24E21A2291A61F00C166FA /* Hash_UT.cpp in Sources */,
+				CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */,
 				CF24E21B2291ABAD00C166FA /* StringsBulk_UT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -416,6 +425,7 @@
 				CF46020125630DE80095FC73 /* CFDefaultsCPP.cpp in Sources */,
 				CF46020225630DE80095FC73 /* tiny_string.cpp in Sources */,
 				CF4601F225630DE80095FC73 /* CommonPaths.cpp in Sources */,
+				CFDE36E426BA5F2400EB1B0D /* WhereIs.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

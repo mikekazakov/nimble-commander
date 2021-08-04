@@ -442,7 +442,7 @@
             },
             {
                 "title": "XCode Merge",
-                "path": "/Applications/Xcode.app/Contents/Developer/usr/bin/opendiff",
+                "path": "/usr/bin/opendiff",
                 "parameters": "%p %-p",
                 "shortcut": ""
             }

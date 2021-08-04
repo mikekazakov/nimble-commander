@@ -9,6 +9,7 @@
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "ExternalToolsSupport.h"
 #include <Habanero/dispatch_cpp.h>
+#include <Habanero/WhereIs.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 
@@ -116,8 +117,17 @@ static NSImage *MakeBackupToolImage()
 
 static NSImage *ImageForTool(const ExternalTool &_et)
 {
+    std::filesystem::path tool_path = _et.m_ExecutablePath;
+    if( std::filesystem::exists(tool_path) == false ) {
+        // presumably this is a short name of a CLI tool, i.e. 'zip'. let's resolve it
+        const auto paths = nc::base::WhereIs(_et.m_ExecutablePath);
+        if( paths.empty() )
+            return MakeBackupToolImage(); // sorry, can't find, give up
+        tool_path = paths.front();
+    }
+
     NSURL *exec_url =
-        [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:_et.m_ExecutablePath]];
+        [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:tool_path.native()]];
     if( !exec_url )
         return MakeBackupToolImage();
 

@@ -40,10 +40,12 @@
 
     self = [super initWithFrame:frameRect];
     if( self ) {
+        self.translatesAutoresizingMaskIntoConstraints = false;
+        
         m_TabBarShown = false;
 
         m_TabView = [[NSTabView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-        m_TabView.translatesAutoresizingMaskIntoConstraints = NO;
+        m_TabView.translatesAutoresizingMaskIntoConstraints = false;
         m_TabView.tabViewType = NSNoTabsNoBorder;
         [m_TabView
             addConstraint:[NSLayoutConstraint constraintWithItem:m_TabView

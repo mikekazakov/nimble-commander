@@ -211,6 +211,9 @@
 /* Class = "NSTextFieldCell"; title = "Maximum width:"; ObjectID = "rfE-oo-e8a"; */
 "rfE-oo-e8a.title" = "Макс. ширина:";
 
+/* Class = "NSTextFieldCell"; title = "Ignore characters:"; ObjectID = "rGW-yI-Ikj"; */
+"rGW-yI-Ikj.title" = "Игнорировать символы:";
+
 /* Class = "NSMenuItem"; title = "0"; ObjectID = "s4p-4L-S6N"; */
 "s4p-4L-S6N.title" = "0";
 

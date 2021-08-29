@@ -61,3 +61,6 @@
 /* Class = "NSTextFieldCell"; title = "Show viewer in:"; ObjectID = "R3d-db-TY3"; */
 "R3d-db-TY3.title" = "Показывать просмотрщик в:";
 
+/* Class = "NSButtonCell"; title = "Reload automatically"; ObjectID = "UJD-ca-RTx"; */
+"UJD-ca-RTx.title" = "Обновлять автоматически";
+

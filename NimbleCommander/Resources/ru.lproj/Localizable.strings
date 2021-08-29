@@ -43,6 +43,9 @@
 /* Asking user for granting file system access for NC - button title */
 "Allow Access" = "Разрешить доступ";
 
+/* Brief System Information app label title */
+"App:" = "Приложения:";
+
 /* Asking user if he really wants to delete information about a stored connection */
 "Are you sure you want to delete this connection?" = "Вы действительно хотите удалить это соединение?";
 
@@ -60,6 +63,9 @@
 
 /* Brief System Information overlay title */
 "Brief System Information" = "Краткий обзор системы";
+
+/* Brief System Information cache label title */
+"Cache:" = "Кэш:";
 
 /* No comment provided by engineer. */
 "Cancel" = "Отмена";
@@ -94,6 +100,9 @@
 
 /* Informing when closing with running terminal processes */
 "Closing this window will terminate the running processes: " = "Закрытие этого окна прервет следующие процессы: ";
+
+/* Brief System Information compressed label title */
+"Compressed:" = "Сжато:";
 
 /* Brief System Information computer name label title */
 "Computer Name:" = "Имя компьютера:";
@@ -296,6 +305,9 @@
 /* Toolbar palette */
 "Left GoTo" = "Левый Переход";
 
+/* Brief System Information load label title */
+"Load:" = "Загрузка:";
+
 /* Brief System Information mac model label title */
 "Mac Model:" = "Модель Mac:";
 
@@ -330,7 +342,13 @@
 "Please help us to improve the product" = "Помогите нам улучшить продукт";
 
 /* No comment provided by engineer. */
+"Please provide parameters to run \"%@\"" = "Пожалуйста введите параметры для запуска \"%@\"";
+
+/* No comment provided by engineer. */
 "Please select your license file (.nimblecommanderlicense)" = "Пожалуйста, выберите Ваш файл лицензии (.nimblecommanderlicense)";
+
+/* Brief System Information processes label title */
+"Processes:" = "Процессы:";
 
 /* Brief System Information ram box title */
 "RAM" = "Память";
@@ -429,6 +447,9 @@
 /* Asking user for confirmation on erasing custom settings - informative text */
 "This will erase all your custom settings." = "Это удалит ваши собственные настройки.";
 
+/* Brief System Information threads label title */
+"Threads:" = "Потоки:";
+
 /* Menu item title for switching to dual-pane mode */
 "Toggle Dual-Pane Mode" = "Включить двухпанельный режим";
 
@@ -462,6 +483,9 @@
 /* Name for freshly created file by hotkey */
 "untitled.txt" = "новый файл.txt";
 
+/* Brief System Information uptime label title */
+"Uptime:" = "Аптайм:";
+
 /* Brief System Information used label title */
 "Used:" = "Используемая:";
 
@@ -494,6 +518,9 @@
 
 /* Showing error when connecting to WebDAV server */
 "WebDAV connection error:" = "Ошибка подключения WebDAV:";
+
+/* Brief System Information wired label title */
+"Wired:" = "Зарезервировано:";
 
 /* Asking user to provide anonymous usage information - informative text */
 "Would you like to send anonymous usage statistics to the developer? None of your personal data would be collected." = "Хотели бы Вы отправлять разработчику анонимную статистику об использовании? Никакая личная информация о Вас не будет собираться.";

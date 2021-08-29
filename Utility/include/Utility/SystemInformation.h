@@ -1,22 +1,42 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
+#include <optional>
+#include <chrono>
 
 typedef struct kinfo_proc kinfo_proc;
 
 namespace nc::utility {
     
-struct MemoryInfo
-{
-    uint64_t total;    // this is calculated from a sum of amounts of pages
-    uint64_t total_hw; // actual installed memory, will be greater than total
-    uint64_t wired;
+struct MemoryInfo {
+    // this is calculated from a sum of amounts of pages
+    uint64_t total;
+    
+    // actual installed memory, can be *less* than total due to compression
+    uint64_t total_hw;
+    
     uint64_t active;
     uint64_t inactive;
     uint64_t free;
+    
+    // physical memory containing data that cannot be compressed or swapped to disk
+    uint64_t wired;
+    
+    // = applications + wired + compressed
     uint64_t used;
+    
+    // amount of compressed data temporarily moved to disk to make room for recently used data
     uint64_t swap;
+    
+    // size of files cached by the system into unused memory to improve performance
+    uint64_t file_cache;
+    
+    // physical memory allocated by apps and system processes
+    uint64_t applications;
+    
+    // physical memory used to store a compressed version of data that has not been used recently
+    uint64_t compressed;
 };
     
 struct CPULoad
@@ -25,6 +45,9 @@ struct CPULoad
     double user;
     double idle;
     // system + user + idle = 1.0
+    double history[3]; // 'uptime'-style load - last 1, 5 and 15 minutes
+    int processes;
+    int threads;
 };
     
 struct SystemOverview
@@ -49,15 +72,12 @@ enum class OSXVersion
     OSX_Unknown = 999999
 };
     
-bool GetMemoryInfo(MemoryInfo &_mem) noexcept;
+std::optional<MemoryInfo> GetMemoryInfo() noexcept;
     
 /**
- * Synchronously reads current CPU load, divided in system, user and idle
- *
- * @param _load - CPULoad structure to fill
- * @return true on success
+ * Synchronously reads the current CPU load, divided in system, user and idle
  */
-bool GetCPULoad(CPULoad &_load) noexcept;
+std::optional<CPULoad> GetCPULoad() noexcept;
     
 /**
  * Returns currently running OSX Version or 
@@ -85,5 +105,7 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount);
 bool IsThisProcessSandboxed() noexcept;
 
 const std::string& GetBundleID() noexcept;
+
+std::chrono::seconds GetUptime() noexcept;
     
 }

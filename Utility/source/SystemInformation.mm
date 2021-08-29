@@ -3,6 +3,7 @@
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <IOKit/IOKitLib.h>
 #include <sys/sysctl.h>
+#include <libproc.h>
 #include <mach/mach.h>
 #include <mutex>
 #include <Utility/ObjCpp.h>
@@ -106,7 +107,7 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount)
     return err;
 }
 
-bool GetMemoryInfo(MemoryInfo &_mem) noexcept
+std::optional<MemoryInfo> GetMemoryInfo() noexcept
 {
     static int pagesize = 0;
     static uint64_t memsize = 0;
@@ -124,43 +125,59 @@ bool GetMemoryInfo(MemoryInfo &_mem) noexcept
     });
 
     // get general memory info
-    mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
-    vm_statistics_data_t vmstat;
-    if( host_statistics(
-            mach_host_self(), HOST_VM_INFO, reinterpret_cast<host_info_t>(&vmstat), &count) !=
+    mach_msg_type_number_t count = HOST_VM_INFO64_COUNT;
+    vm_statistics64 vmstat;
+    if( host_statistics64(
+            mach_host_self(), HOST_VM_INFO64, reinterpret_cast<host_info_t>(&vmstat), &count) !=
         KERN_SUCCESS )
-        return false;
+        return {};
 
-    uint64_t wired_memory = static_cast<uint64_t>(vmstat.wire_count) * pagesize;
-    uint64_t active_memory = static_cast<uint64_t>(vmstat.active_count) * pagesize;
-    uint64_t inactive_memory = static_cast<uint64_t>(vmstat.inactive_count) * pagesize;
-    uint64_t free_memory = static_cast<uint64_t>(vmstat.free_count) * pagesize;
-    uint64_t total_memory = wired_memory + active_memory + inactive_memory + free_memory;
-    // NOT "memory used" in activity monitor in 10.9
-    // 10.9 "memory used" = "app memory" + "file cache" + "wired memory"
-    // have no ideas how to get "app memory" and "file cache"
-    uint64_t used_memory = total_memory - free_memory;
-    _mem.total = total_memory;
-    _mem.wired = wired_memory;
-    _mem.active = active_memory;
-    _mem.inactive = inactive_memory;
-    _mem.free = free_memory;
-    _mem.used = used_memory;
+    const uint64_t wired_memory = static_cast<uint64_t>(vmstat.wire_count) * pagesize;
+    const uint64_t active_memory = static_cast<uint64_t>(vmstat.active_count) * pagesize;
+    const uint64_t inactive_memory = static_cast<uint64_t>(vmstat.inactive_count) * pagesize;
+    const uint64_t free_memory = static_cast<uint64_t>(vmstat.free_count) * pagesize;
+    const uint64_t file_cache_memory =
+        static_cast<uint64_t>(vmstat.external_page_count + vmstat.purgeable_count) * pagesize;
+    const uint64_t app_memory =
+        static_cast<uint64_t>(vmstat.internal_page_count - vmstat.purgeable_count) * pagesize;
+    const uint64_t compressed = static_cast<uint64_t>(vmstat.compressor_page_count) * pagesize;
+    const uint64_t total_memory = wired_memory + active_memory + inactive_memory + free_memory;
+    // Activity monitor shows higher values for "used memory", no idea how these numbers are
+    // calculated
+    const uint64_t used_memory =
+        (static_cast<uint64_t>(vmstat.active_count) + static_cast<uint64_t>(vmstat.inactive_count) +
+         static_cast<uint64_t>(vmstat.speculative_count) +
+         static_cast<uint64_t>(vmstat.wire_count) +
+         static_cast<uint64_t>(vmstat.compressor_page_count) -
+         static_cast<uint64_t>(vmstat.purgeable_count) -
+         static_cast<uint64_t>(vmstat.external_page_count)) *
+        pagesize;
+
+    MemoryInfo mem;
+    mem.total = total_memory;
+    mem.wired = wired_memory;
+    mem.active = active_memory;
+    mem.inactive = inactive_memory;
+    mem.free = free_memory;
+    mem.used = used_memory;
+    mem.file_cache = file_cache_memory;
+    mem.applications = app_memory;
+    mem.compressed = compressed;
 
     // get the swap size
     int swapmib[2] = {CTL_VM, VM_SWAPUSAGE};
     struct xsw_usage swap_info;
     size_t length = sizeof(swap_info);
     if( sysctl(swapmib, 2, &swap_info, &length, NULL, 0) < 0 )
-        return false;
-    _mem.swap = swap_info.xsu_used;
+        return {};
+    mem.swap = swap_info.xsu_used;
 
-    _mem.total_hw = memsize;
+    mem.total_hw = memsize;
 
-    return true;
+    return mem;
 }
 
-bool GetCPULoad(CPULoad &_load) noexcept
+std::optional<CPULoad> GetCPULoad() noexcept
 {
     unsigned int *cpuInfo;
     mach_msg_type_number_t numCpuInfo;
@@ -171,7 +188,7 @@ bool GetCPULoad(CPULoad &_load) noexcept
                                             reinterpret_cast<processor_info_array_t *>(&cpuInfo),
                                             &numCpuInfo);
     if( err != KERN_SUCCESS )
-        return false;
+        return {};
 
     double system = 0.;
     double user = 0.;
@@ -199,16 +216,63 @@ bool GetCPULoad(CPULoad &_load) noexcept
                   reinterpret_cast<vm_address_t>(cpuInfo),
                   sizeof(unsigned int) * numCpuInfo);
 
-    double total = system + user + idle;
+    const double total = system + user + idle;
     system /= total;
     user /= total;
     idle /= total;
 
-    _load.system = system;
-    _load.user = user;
-    _load.idle = idle;
+    // get historic load values
+    int mib[2];
+    mib[0] = CTL_VM;
+    mib[1] = VM_LOADAVG;
+    loadavg history = {};
+    size_t len = sizeof(history);
+    if( sysctl(mib, 2, &history, &len, NULL, 0) != 0 )
+        return {};
+    assert(history.fscale != 0);
 
-    return true;
+    // get number of processes and threads currently running
+    static const processor_set_name_port_t processors_set = [] {
+        processor_set_name_port_t pset;
+        processor_set_default(mach_host_self(), &pset);
+        return pset;
+    }();
+    struct processor_set_load_info ps_load_info = {};
+    mach_msg_type_number_t count = PROCESSOR_SET_LOAD_INFO_COUNT;
+    const kern_return_t ss_err =
+        processor_set_statistics(processors_set,
+                                 PROCESSOR_SET_LOAD_INFO,
+                                 reinterpret_cast<processor_set_info_t>(&ps_load_info),
+                                 &count);
+    if( ss_err != KERN_SUCCESS )
+        return {};
+
+    CPULoad load;
+    load.system = system;
+    load.user = user;
+    load.idle = idle;
+    load.history[0] = static_cast<double>(history.ldavg[0]) / history.fscale;
+    load.history[1] = static_cast<double>(history.ldavg[1]) / history.fscale;
+    load.history[2] = static_cast<double>(history.ldavg[2]) / history.fscale;
+    load.processes = ps_load_info.task_count;
+    load.threads = ps_load_info.thread_count;
+
+    return load;
+}
+
+std::chrono::seconds GetUptime() noexcept
+{
+    int mib[2];
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_BOOTTIME;
+    struct timeval boottime_raw;
+    size_t len = sizeof(boottime_raw);
+    if( sysctl(mib, 2, &boottime_raw, &len, nullptr, 0) != 0 )
+        return {};
+    const auto boottime = std::chrono::system_clock::time_point(
+        std::chrono::microseconds(boottime_raw.tv_usec + boottime_raw.tv_sec * 1000000));
+    const auto uptime = std::chrono::system_clock::now() - boottime;
+    return std::chrono::duration_cast<std::chrono::seconds>(uptime);
 }
 
 static const OSXVersion g_Version = [] {

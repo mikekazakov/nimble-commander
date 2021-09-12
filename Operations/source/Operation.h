@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/ScopedObservable.h>
@@ -30,6 +30,12 @@ enum class OperationState
     Stopped = 3,
     Completed = 4
 };
+#if 0
+ Cold ---> Running -----------> Stopped
+          ^    |      ^   |
+          |    v      |   |---> Completed
+          --Paused ---|
+#endif
 
 class Operation : private ScopedObservableBase
 {

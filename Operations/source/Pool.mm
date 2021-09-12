@@ -6,8 +6,6 @@
 
 namespace nc::ops {
 
-std::atomic_int Pool::m_ConcurrencyPerPool{5};
-
 template <class C, class T>
 void erase_from(C &_c, const T &_t)
 {
@@ -16,16 +14,14 @@ void erase_from(C &_c, const T &_t)
 
 std::shared_ptr<Pool> Pool::Make()
 {
-    return std::shared_ptr<Pool>{new Pool};
+    struct workaround : public Pool {
+    };
+    return std::make_shared<workaround>();
 }
 
-Pool::Pool()
-{
-}
+Pool::Pool() = default;
 
-Pool::~Pool()
-{
-}
+Pool::~Pool() = default;
 
 void Pool::Enqueue(std::shared_ptr<Operation> _operation)
 {
@@ -84,18 +80,35 @@ void Pool::StartPendingOperations()
 {
     std::vector<std::shared_ptr<Operation>> to_start;
 
+    // 1st - gather all pending operations for which the EnqueuingCallback tells 'false'
+    if( m_ShouldBeQueuedCallback ) {
+        const auto guard = std::lock_guard{m_Lock};
+        for( auto &operation : m_PendingOperations ) {
+            assert(operation != nullptr);
+            if( m_ShouldBeQueuedCallback(operation) == false ) {
+                to_start.emplace_back(operation);
+                m_RunningOperations.emplace_back(operation);
+                operation.reset();
+            }
+        }
+        std::erase_if(m_PendingOperations, [](const auto &_op) { return _op == nullptr; });
+    }
+
+    // 2nd - gather any other operations until the pool has enough running operations
     {
         const auto guard = std::lock_guard{m_Lock};
         const auto running_now = static_cast<int>(m_RunningOperations.size());
-        while( running_now + static_cast<int>(to_start.size()) < m_ConcurrencyPerPool &&
-               !m_PendingOperations.empty() ) {
+        auto gathered = 0;
+        while( running_now + gathered < m_Concurrency && !m_PendingOperations.empty() ) {
             const auto op = m_PendingOperations.front();
             m_PendingOperations.pop_front();
             to_start.emplace_back(op);
             m_RunningOperations.emplace_back(op);
+            ++gathered;
         }
     }
 
+    // now kickstart all these operations
     for( const auto &op : to_start )
         op->Start();
 }
@@ -162,16 +175,21 @@ bool Pool::ShowDialog(NSWindow *_dialog, std::function<void(NSModalResponse)> _c
     return true;
 }
 
-int Pool::ConcurrencyPerPool()
+int Pool::Concurrency()
 {
-    return m_ConcurrencyPerPool;
+    return m_Concurrency;
 }
 
-void Pool::SetConcurrencyPerPool(int _maximum_current_operations)
+void Pool::SetConcurrency(int _maximum_current_operations)
 {
-    if( _maximum_current_operations < 1 )
-        _maximum_current_operations = 1;
-    m_ConcurrencyPerPool = _maximum_current_operations;
+    m_Concurrency = std::max(_maximum_current_operations, 1);
+}
+
+void Pool::SetEnqueuingCallback(
+    std::function<bool(const std::shared_ptr<const Operation> &_operation)> _should_be_queued)
+{
+    assert(Empty());
+    m_ShouldBeQueuedCallback = std::move(_should_be_queued);
 }
 
 bool Pool::Empty() const
@@ -192,7 +210,7 @@ void Pool::StopAndWaitForShutdown()
 
     using namespace std::literals;
     while( !Empty() )
-        std::this_thread::sleep_for(10ms);
+        std::this_thread::sleep_for(10ms); // TODO: wtf is this???
 }
 
 } // namespace nc::ops

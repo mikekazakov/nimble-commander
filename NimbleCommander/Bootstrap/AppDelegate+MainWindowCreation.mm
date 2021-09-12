@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate.Private.h"
 #include <VFSIcon/IconRepositoryImpl.h>
@@ -151,7 +151,8 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
 
 - (nc::panel::DirectoryAccessProvider &)directoryAccessProvider
 {
-    [[clang::no_destroy]] static auto provider = DirectoryAccessProviderImpl{self.activationManager};
+    [[clang::no_destroy]] static auto provider =
+        DirectoryAccessProviderImpl{self.activationManager};
     return provider;
 }
 
@@ -218,7 +219,8 @@ static PanelController *PanelFactory()
                                                 QLPanelAdaptor:self.QLPanelAdaptor
                                              activationManager:self.activationManager
                                                feedbackManager:self.feedbackManager];
-    } else if( _context == CreationContext::ManualRestoration ) {
+    }
+    else if( _context == CreationContext::ManualRestoration ) {
         if( NCMainWindowController.canRestoreDefaultWindowStateFromLastOpenedWindow ) {
             auto state = [[MainWindowFilePanelState alloc] initWithFrame:_frame
                                                                  andPool:_operations_pool
@@ -231,7 +233,8 @@ static PanelController *PanelFactory()
             RestoreFilePanelStateFromLastOpenedWindow(state);
             [state loadDefaultPanelContent];
             return state;
-        } else if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) ) {
+        }
+        else if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) ) {
             auto state = [[MainWindowFilePanelState alloc] initWithFrame:_frame
                                                                  andPool:_operations_pool
                                                       loadDefaultContent:false
@@ -243,12 +246,14 @@ static PanelController *PanelFactory()
             if( ![NCMainWindowController restoreDefaultWindowStateFromConfig:state] )
                 [state loadDefaultPanelContent];
             return state;
-        } else { // if we can't restore a window - fall back into a default creation context
+        }
+        else { // if we can't restore a window - fall back into a default creation context
             return [self allocateFilePanelsWithFrame:_frame
                                            inContext:CreationContext::Default
                                          withOpsPool:_operations_pool];
         }
-    } else if( _context == CreationContext::SystemRestoration ) {
+    }
+    else if( _context == CreationContext::SystemRestoration ) {
         return [[MainWindowFilePanelState alloc] initWithFrame:_frame
                                                        andPool:_operations_pool
                                             loadDefaultContent:false
@@ -266,6 +271,9 @@ static PanelController *PanelFactory()
     const auto window = [self allocateMainWindow];
     const auto frame = window.contentView.frame;
     const auto operations_pool = nc::ops::Pool::Make();
+    operations_pool->SetConcurrency(
+        self.globalConfig.GetInt("filePanel.operations.concurrencyPerWindow"));
+
     const auto window_controller =
         [[NCMainWindowController alloc] initWithWindow:window
                                      activationManager:self.activationManager];

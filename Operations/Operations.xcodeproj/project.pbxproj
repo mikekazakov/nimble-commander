@@ -13,6 +13,7 @@
 		CF22F0C9258F43610033E850 /* CopyingFindNonExistingItemPath_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFAB6D7D258A742D00397DB5 /* CopyingFindNonExistingItemPath_UT.cpp */; };
 		CF22F0CA258F43610033E850 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 		CF22F0F5258F43A80033E850 /* Deletion_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF22F0F4258F43A80033E850 /* Deletion_UT.cpp */; };
+		CF287FDC26EE0A5600FC24B5 /* Pool_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF287FDB26EE0A5600FC24B5 /* Pool_UT.mm */; };
 		CF2C101A22A0731500A5359D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2C101822A0731500A5359D /* Tests.cpp */; };
 		CF2C102622A4116F00A5359D /* DirectoryPathAutoCompetion_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */; };
 		CF2C102722A4128500A5359D /* Compression_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B951EE252F200F567C4 /* Compression_IT.mm */; };
@@ -133,6 +134,7 @@
 		CF22F0F4258F43A80033E850 /* Deletion_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Deletion_UT.cpp; sourceTree = "<group>"; };
 		CF238E0E21A1948800569809 /* Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Helpers.cpp; path = source/Copying/Helpers.cpp; sourceTree = "<group>"; };
 		CF238E0F21A1948800569809 /* Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Helpers.h; path = source/Copying/Helpers.h; sourceTree = "<group>"; };
+		CF287FDB26EE0A5600FC24B5 /* Pool_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Pool_UT.mm; sourceTree = "<group>"; };
 		CF2C1005229F16E400A5359D /* CompressDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CompressDialog.h; path = source/Compression/CompressDialog.h; sourceTree = "<group>"; };
 		CF2C1006229F16E400A5359D /* CompressDialog.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = CompressDialog.mm; path = source/Compression/CompressDialog.mm; sourceTree = "<group>"; };
 		CF2C100B229F1B9B00A5359D /* CompressDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompressDialog.h; path = include/Operations/CompressDialog.h; sourceTree = "<group>"; };
@@ -607,6 +609,7 @@
 				CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */,
 				CF3ABD8223BA1B2800D1878B /* Environment.h */,
 				CF40237B256D9F1A0028E0B3 /* Linkage_IT.mm */,
+				CF287FDB26EE0A5600FC24B5 /* Pool_UT.mm */,
 				CFE08AFB23D3719B007E99B8 /* TestEnv.h */,
 				CFE08AFC23D3719B007E99B8 /* TestEnv.mm */,
 				CF2C101822A0731500A5359D /* Tests.cpp */,
@@ -855,6 +858,7 @@
 				CF22F0C9258F43610033E850 /* CopyingFindNonExistingItemPath_UT.cpp in Sources */,
 				CF22F0F5258F43A80033E850 /* Deletion_UT.cpp in Sources */,
 				CF22F0CA258F43610033E850 /* TestEnv.mm in Sources */,
+				CF287FDC26EE0A5600FC24B5 /* Pool_UT.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

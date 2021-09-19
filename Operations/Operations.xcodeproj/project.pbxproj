@@ -14,6 +14,8 @@
 		CF22F0CA258F43610033E850 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.mm */; };
 		CF22F0F5258F43A80033E850 /* Deletion_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF22F0F4258F43A80033E850 /* Deletion_UT.cpp */; };
 		CF287FDC26EE0A5600FC24B5 /* Pool_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF287FDB26EE0A5600FC24B5 /* Pool_UT.mm */; };
+		CF287FF326F6876200FC24B5 /* PoolEnqueueFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF287FF126F6876200FC24B5 /* PoolEnqueueFilter.cpp */; };
+		CF287FF426F6876200FC24B5 /* PoolEnqueueFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = CF287FF226F6876200FC24B5 /* PoolEnqueueFilter.h */; };
 		CF2C101A22A0731500A5359D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2C101822A0731500A5359D /* Tests.cpp */; };
 		CF2C102622A4116F00A5359D /* DirectoryPathAutoCompetion_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */; };
 		CF2C102722A4128500A5359D /* Compression_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B951EE252F200F567C4 /* Compression_IT.mm */; };
@@ -135,6 +137,8 @@
 		CF238E0E21A1948800569809 /* Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Helpers.cpp; path = source/Copying/Helpers.cpp; sourceTree = "<group>"; };
 		CF238E0F21A1948800569809 /* Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Helpers.h; path = source/Copying/Helpers.h; sourceTree = "<group>"; };
 		CF287FDB26EE0A5600FC24B5 /* Pool_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Pool_UT.mm; sourceTree = "<group>"; };
+		CF287FF126F6876200FC24B5 /* PoolEnqueueFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PoolEnqueueFilter.cpp; path = source/PoolEnqueueFilter.cpp; sourceTree = "<group>"; };
+		CF287FF226F6876200FC24B5 /* PoolEnqueueFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoolEnqueueFilter.h; path = source/PoolEnqueueFilter.h; sourceTree = "<group>"; };
 		CF2C1005229F16E400A5359D /* CompressDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CompressDialog.h; path = source/Compression/CompressDialog.h; sourceTree = "<group>"; };
 		CF2C1006229F16E400A5359D /* CompressDialog.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = CompressDialog.mm; path = source/Compression/CompressDialog.mm; sourceTree = "<group>"; };
 		CF2C100B229F1B9B00A5359D /* CompressDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompressDialog.h; path = include/Operations/CompressDialog.h; sourceTree = "<group>"; };
@@ -468,6 +472,8 @@
 				CFF53B871EE1577100F567C4 /* Operations-prefix.pch */,
 				CF7084D61EF7CC770072F0F6 /* Pool.h */,
 				CF7084D71EF7CC770072F0F6 /* Pool.mm */,
+				CF287FF126F6876200FC24B5 /* PoolEnqueueFilter.cpp */,
+				CF287FF226F6876200FC24B5 /* PoolEnqueueFilter.h */,
 				CFC4F8C31EFA05B00000B3EE /* PoolView.h */,
 				CFC4F8C41EFA05B00000B3EE /* PoolView.mm */,
 				CFC4F8C51EFA05B00000B3EE /* PoolViewController.h */,
@@ -692,6 +698,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFB7BD43260F696C00E2EA4D /* DeletionJobCallbacks.h in Headers */,
+				CF287FF426F6876200FC24B5 /* PoolEnqueueFilter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -904,6 +911,7 @@
 				CF46FFBF255FD0260095FC73 /* Statistics.cpp in Sources */,
 				CF46FFC3255FD0260095FC73 /* BriefOperationViewController.mm in Sources */,
 				CF46FFFC255FD0590095FC73 /* DirectoryCreationDialog.mm in Sources */,
+				CF287FF326F6876200FC24B5 /* PoolEnqueueFilter.cpp in Sources */,
 				CF46FFC9255FD0260095FC73 /* PoolView.mm in Sources */,
 				CF46FFCB255FD0260095FC73 /* StatisticsFormatter.mm in Sources */,
 				CF46FFED255FD04D0095FC73 /* DisclosureViewController.m in Sources */,

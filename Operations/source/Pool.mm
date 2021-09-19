@@ -85,7 +85,7 @@ void Pool::StartPendingOperations()
         const auto guard = std::lock_guard{m_Lock};
         for( auto &operation : m_PendingOperations ) {
             assert(operation != nullptr);
-            if( m_ShouldBeQueuedCallback(operation) == false ) {
+            if( m_ShouldBeQueuedCallback(*operation) == false ) {
                 to_start.emplace_back(operation);
                 m_RunningOperations.emplace_back(operation);
                 operation.reset();
@@ -186,7 +186,7 @@ void Pool::SetConcurrency(int _maximum_current_operations)
 }
 
 void Pool::SetEnqueuingCallback(
-    std::function<bool(const std::shared_ptr<const Operation> &_operation)> _should_be_queued)
+    std::function<bool(const Operation &_operation)> _should_be_queued)
 {
     assert(Empty());
     m_ShouldBeQueuedCallback = std::move(_should_be_queued);

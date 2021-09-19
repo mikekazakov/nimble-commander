@@ -222,10 +222,10 @@ TEST_CASE(PREFIX "Does enqueueing as the callback says")
     auto op2 = std::make_shared<MyOperation>();
     bool enqueue_1st = true;
     bool enqueue_2nd = true;
-    pool->SetEnqueuingCallback([&](const std::shared_ptr<const Operation> &_operation) {
-        if( _operation == op1 )
+    pool->SetEnqueuingCallback([&](const Operation &_operation) {
+        if( &_operation == op1.get() )
             return enqueue_1st;
-        if( _operation == op2 )
+        if( &_operation == op2.get() )
             return enqueue_2nd;
         throw std::logic_error("");
     });

@@ -41,8 +41,7 @@ public:
     void SetConcurrency(int _maximum_current_operations);
     // By default all operation are assumed to be queued and obey the concurrency limits.
     // A client can customise this behaviour and decide it on a per-operation level.
-    void SetEnqueuingCallback(
-        std::function<bool(const std::shared_ptr<const Operation> &_operation)> _should_be_queued);
+    void SetEnqueuingCallback(std::function<bool(const Operation &_operation)> _should_be_queued);
 
     bool IsInteractive() const;
     void SetDialogCallback(
@@ -63,8 +62,7 @@ private:
     mutable std::mutex m_Lock;
     std::atomic_int m_Concurrency{5};
 
-    std::function<bool(const std::shared_ptr<const Operation> &_operation)>
-        m_ShouldBeQueuedCallback;
+    std::function<bool(const Operation &_operation)> m_ShouldBeQueuedCallback;
 
     std::function<void(NSWindow *dialog, std::function<void(NSModalResponse response)>)>
         m_DialogPresentation;

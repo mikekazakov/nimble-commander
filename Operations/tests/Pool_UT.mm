@@ -4,6 +4,8 @@
 #include "../source/Pool.h"
 #include "../source/Job.h"
 #include "../source/Operation.h"
+#include <Habanero/mach_time.h>
+#include <chrono>
 
 using namespace nc;
 using namespace nc::ops;

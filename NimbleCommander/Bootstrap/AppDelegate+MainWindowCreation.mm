@@ -30,6 +30,7 @@
 #include <NimbleCommander/States/FilePanels/Views/QuickLookPanel.h>
 #include <NimbleCommander/States/FilePanels/Views/QuickLookVFSBridge.h>
 #include <Operations/Pool.h>
+#include <Operations/PoolEnqueueFilter.h>
 #include <Operations/AggregateProgressTracker.h>
 #include "Config.h"
 #include "ActivationManager.h"
@@ -273,6 +274,10 @@ static PanelController *PanelFactory()
     const auto operations_pool = nc::ops::Pool::Make();
     operations_pool->SetConcurrency(
         self.globalConfig.GetInt("filePanel.operations.concurrencyPerWindow"));
+    operations_pool->SetEnqueuingCallback(
+        [filter = &NCAppDelegate.me.poolEnqueueFilter](const nc::ops::Operation &_operation) {
+            return filter->ShouldEnqueue(_operation);
+        });
 
     const auto window_controller =
         [[NCMainWindowController alloc] initWithWindow:window

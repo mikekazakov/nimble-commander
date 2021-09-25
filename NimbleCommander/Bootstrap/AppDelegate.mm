@@ -64,6 +64,7 @@
 #include <NimbleCommander/GeneralUI/VFSListWindowController.h>
 
 #include <Operations/Pool.h>
+#include <Operations/PoolEnqueueFilter.h>
 #include <Operations/AggregateProgressTracker.h>
 
 #include <Config/ConfigImpl.h>
@@ -220,6 +221,8 @@ static NCAppDelegate *g_Me = nil;
     std::shared_ptr<nc::vfs::NativeHost> m_NativeHost;
     std::unique_ptr<nc::bootstrap::ActivationManager> m_ActivationManager;
     std::unique_ptr<nc::utility::FSEventsFileUpdateImpl> m_FSEventsFileUpdate;
+    nc::ops::PoolEnqueueFilter m_PoolEnqueueFilter;
+    std::unique_ptr<ConfigWiring> m_ConfigWiring;
 }
 
 @synthesize mainWindowControllers = m_MainWindows;
@@ -565,7 +568,8 @@ static std::string AquaticPrimePublicKey()
         PFMoveToApplicationsFolderIfNecessary();
 #endif
 
-    ConfigWiring{GlobalConfig()}.Wire();
+    m_ConfigWiring = std::make_unique<ConfigWiring>(GlobalConfig(), m_PoolEnqueueFilter);
+    m_ConfigWiring->Wire();
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(windowWillClose:)
@@ -1193,6 +1197,11 @@ static void DoTemporaryFileStoragePurge()
 - (nc::utility::FSEventsFileUpdate &)fsEventsFileUpdate
 {
     return *m_FSEventsFileUpdate;
+}
+
+- (nc::ops::PoolEnqueueFilter &)poolEnqueueFilter
+{
+    return m_PoolEnqueueFilter;
 }
 
 - (nc::bootstrap::ActivationManager &)activationManager

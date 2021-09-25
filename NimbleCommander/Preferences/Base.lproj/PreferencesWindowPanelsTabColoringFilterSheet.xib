@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
-        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTabColoringFilterSheet">
@@ -19,17 +20,16 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
-            <windowStyleMask key="styleMask" titled="YES"/>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="294" height="213"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="294" height="213"/>
+                <rect key="frame" x="0.0" y="0.0" width="294" height="223"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Oay-51-Ivb">
-                        <rect key="frame" x="188" y="13" width="92" height="32"/>
+                        <rect key="frame" x="187" y="13" width="94" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="euD-l5-tOB"/>
                         </constraints>
@@ -45,7 +45,7 @@ DQ
                         </connections>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="uZb-lm-Ykt">
-                        <rect key="frame" x="134" y="112" width="142" height="18"/>
+                        <rect key="frame" x="136" y="119" width="138" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="4hb-2v-Jz1"/>
                         </constraints>
@@ -55,7 +55,7 @@ DQ
                         </buttonCell>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="ImY-Y2-Tf4">
-                        <rect key="frame" x="134" y="94" width="142" height="18"/>
+                        <rect key="frame" x="136" y="99" width="138" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="PD6-RW-5li"/>
                         </constraints>
@@ -65,7 +65,7 @@ DQ
                         </buttonCell>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="c9N-ZL-MoZ">
-                        <rect key="frame" x="134" y="76" width="142" height="18"/>
+                        <rect key="frame" x="136" y="79" width="138" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="7Hy-P4-XZF"/>
                         </constraints>
@@ -75,18 +75,18 @@ DQ
                         </buttonCell>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tbt-Rd-vdG">
-                        <rect key="frame" x="137" y="171" width="108" height="22"/>
+                        <rect key="frame" x="137" y="182" width="108" height="21"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="108" id="LOn-qg-848"/>
                         </constraints>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="eQr-1z-eDo">
                             <font key="font" metaFont="system"/>
-                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SBy-5i-7e2">
-                        <rect key="frame" x="18" y="150" width="113" height="16"/>
+                        <rect key="frame" x="18" y="160" width="113" height="15"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="108" id="4xa-D1-IlK"/>
                         </constraints>
@@ -97,7 +97,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="nQl-I1-fjK">
-                        <rect key="frame" x="134" y="130" width="142" height="18"/>
+                        <rect key="frame" x="136" y="139" width="138" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="umg-0q-VHQ"/>
                         </constraints>
@@ -107,7 +107,7 @@ DQ
                         </buttonCell>
                     </button>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="hW0-DO-LPU">
-                        <rect key="frame" x="134" y="58" width="142" height="18"/>
+                        <rect key="frame" x="136" y="59" width="138" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="rmD-PL-yHq"/>
                         </constraints>
@@ -117,7 +117,7 @@ DQ
                         </buttonCell>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mYI-El-ng4">
-                        <rect key="frame" x="18" y="173" width="113" height="16"/>
+                        <rect key="frame" x="18" y="183" width="113" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="108" id="T4Q-QG-MHf"/>
                         </constraints>
@@ -128,7 +128,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="ws4-r0-08h">
-                        <rect key="frame" x="134" y="148" width="142" height="18"/>
+                        <rect key="frame" x="136" y="159" width="138" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="JP0-89-8i1"/>
                         </constraints>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowPanelsTabOperationsConcurrencySheet">
+            <connections>
+                <outlet property="opBatchRename" destination="SMp-H2-t29" id="w62-OH-w5L"/>
+                <outlet property="opChAttrs" destination="a1F-Xb-rzH" id="imT-43-oAM"/>
+                <outlet property="opCompress" destination="XHZ-OP-c4y" id="QJv-Ig-J4j"/>
+                <outlet property="opCopy" destination="X3t-aq-zNf" id="iwa-6F-p4P"/>
+                <outlet property="opDelete" destination="t73-33-Ayt" id="P3T-fx-EJM"/>
+                <outlet property="opLink" destination="M88-ne-its" id="P1n-yZ-E3U"/>
+                <outlet property="opMkdir" destination="BcD-B8-itB" id="DII-nb-y1x"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="364" height="266"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="364" height="266"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KZQ-E8-qHX">
+                        <rect key="frame" x="18" y="230" width="328" height="16"/>
+                        <textFieldCell key="cell" title="Choose which operation should be queued. " id="aaI-me-JuG">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HRE-YF-b23">
+                        <rect key="frame" x="18" y="210" width="328" height="16"/>
+                        <textFieldCell key="cell" title="Not checked operations will always start immediately." id="TOU-T9-KZc">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="t73-33-Ayt">
+                        <rect key="frame" x="42" y="165" width="302" height="18"/>
+                        <buttonCell key="cell" type="check" title="Delete, move to Trash" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="2Rt-fk-BWq">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <outlet property="nextKeyView" destination="BcD-B8-itB" id="lwt-2K-wfg"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BcD-B8-itB">
+                        <rect key="frame" x="42" y="143" width="302" height="18"/>
+                        <buttonCell key="cell" type="check" title="Create directory" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="BkJ-Hv-n3A">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <outlet property="nextKeyView" destination="M88-ne-its" id="Ex4-Y0-5sf"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M88-ne-its">
+                        <rect key="frame" x="42" y="121" width="302" height="18"/>
+                        <buttonCell key="cell" type="check" title="Link" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="XrZ-pW-hET">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <outlet property="nextKeyView" destination="XHZ-OP-c4y" id="qip-Rm-QST"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XHZ-OP-c4y">
+                        <rect key="frame" x="42" y="99" width="302" height="18"/>
+                        <buttonCell key="cell" type="check" title="Compress" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="EgT-Gv-JMA">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <outlet property="nextKeyView" destination="SMp-H2-t29" id="V7m-cA-3gy"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SMp-H2-t29">
+                        <rect key="frame" x="42" y="77" width="302" height="18"/>
+                        <buttonCell key="cell" type="check" title="Batch rename" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Hn9-xE-HX2">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <outlet property="nextKeyView" destination="a1F-Xb-rzH" id="oOc-RV-oCg"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a1F-Xb-rzH">
+                        <rect key="frame" x="42" y="55" width="302" height="18"/>
+                        <buttonCell key="cell" type="check" title="Change attributes" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="I7D-B5-d40">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <outlet property="nextKeyView" destination="ImI-aT-Tfl" id="lmM-e4-kjG"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ImI-aT-Tfl">
+                        <rect key="frame" x="257" y="13" width="94" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="yIx-DP-WEC"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Q0F-GA-tvs">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onOK:" target="-2" id="PvP-y5-Bm8"/>
+                            <outlet property="nextKeyView" destination="X3t-aq-zNf" id="pUG-hS-cl0"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X3t-aq-zNf">
+                        <rect key="frame" x="42" y="187" width="302" height="18"/>
+                        <buttonCell key="cell" type="check" title="Copy, move, rename" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="P0v-1A-lWs">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <outlet property="nextKeyView" destination="t73-33-Ayt" id="Glc-02-Xlw"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="XHZ-OP-c4y" secondAttribute="trailing" constant="20" symbolic="YES" id="4yM-ng-wY8"/>
+                    <constraint firstItem="M88-ne-its" firstAttribute="leading" secondItem="X3t-aq-zNf" secondAttribute="leading" id="5OF-hQ-xzc"/>
+                    <constraint firstItem="ImI-aT-Tfl" firstAttribute="top" secondItem="a1F-Xb-rzH" secondAttribute="bottom" constant="16" id="5T8-id-eQD"/>
+                    <constraint firstAttribute="bottom" secondItem="ImI-aT-Tfl" secondAttribute="bottom" constant="20" symbolic="YES" id="8Tn-ZB-9CJ"/>
+                    <constraint firstAttribute="trailing" secondItem="ImI-aT-Tfl" secondAttribute="trailing" constant="20" symbolic="YES" id="D6P-kV-3iW"/>
+                    <constraint firstItem="t73-33-Ayt" firstAttribute="top" secondItem="X3t-aq-zNf" secondAttribute="bottom" constant="6" id="IQl-Ri-O0V"/>
+                    <constraint firstItem="KZQ-E8-qHX" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="JBw-My-v4I"/>
+                    <constraint firstItem="BcD-B8-itB" firstAttribute="leading" secondItem="X3t-aq-zNf" secondAttribute="leading" id="JKB-NB-RLr"/>
+                    <constraint firstItem="XHZ-OP-c4y" firstAttribute="top" secondItem="M88-ne-its" secondAttribute="bottom" constant="6" id="LNu-xG-ZGC"/>
+                    <constraint firstItem="SMp-H2-t29" firstAttribute="top" secondItem="XHZ-OP-c4y" secondAttribute="bottom" constant="6" id="QPw-Hm-vXO"/>
+                    <constraint firstAttribute="trailing" secondItem="a1F-Xb-rzH" secondAttribute="trailing" constant="20" symbolic="YES" id="QWj-bw-ns0"/>
+                    <constraint firstAttribute="trailing" secondItem="KZQ-E8-qHX" secondAttribute="trailing" constant="20" symbolic="YES" id="R11-Xm-72H"/>
+                    <constraint firstAttribute="trailing" secondItem="BcD-B8-itB" secondAttribute="trailing" constant="20" symbolic="YES" id="R1d-jw-NDU"/>
+                    <constraint firstAttribute="trailing" secondItem="HRE-YF-b23" secondAttribute="trailing" constant="20" symbolic="YES" id="Rzj-Y9-hfT"/>
+                    <constraint firstItem="SMp-H2-t29" firstAttribute="leading" secondItem="X3t-aq-zNf" secondAttribute="leading" id="aqY-b1-X8P"/>
+                    <constraint firstItem="M88-ne-its" firstAttribute="top" secondItem="BcD-B8-itB" secondAttribute="bottom" constant="6" id="auP-5R-kMU"/>
+                    <constraint firstItem="KZQ-E8-qHX" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="ccF-dm-Yka"/>
+                    <constraint firstItem="XHZ-OP-c4y" firstAttribute="leading" secondItem="X3t-aq-zNf" secondAttribute="leading" id="fBL-Iq-pc5"/>
+                    <constraint firstItem="X3t-aq-zNf" firstAttribute="leading" secondItem="HRE-YF-b23" secondAttribute="leading" constant="24" id="fCf-q7-F80"/>
+                    <constraint firstAttribute="trailing" secondItem="M88-ne-its" secondAttribute="trailing" constant="20" symbolic="YES" id="iVV-Fv-2ng"/>
+                    <constraint firstItem="a1F-Xb-rzH" firstAttribute="top" secondItem="SMp-H2-t29" secondAttribute="bottom" constant="6" id="j5w-38-gb6"/>
+                    <constraint firstAttribute="trailing" secondItem="X3t-aq-zNf" secondAttribute="trailing" constant="20" symbolic="YES" id="jLN-f4-hBg"/>
+                    <constraint firstItem="BcD-B8-itB" firstAttribute="top" secondItem="t73-33-Ayt" secondAttribute="bottom" constant="6" id="khq-3a-Ud8"/>
+                    <constraint firstItem="HRE-YF-b23" firstAttribute="top" secondItem="KZQ-E8-qHX" secondAttribute="bottom" constant="4" id="lV9-wR-RqF"/>
+                    <constraint firstItem="t73-33-Ayt" firstAttribute="leading" secondItem="X3t-aq-zNf" secondAttribute="leading" id="lw3-Ky-Ijs"/>
+                    <constraint firstItem="X3t-aq-zNf" firstAttribute="top" secondItem="HRE-YF-b23" secondAttribute="bottom" constant="6" id="p4I-O5-HzW"/>
+                    <constraint firstAttribute="trailing" secondItem="SMp-H2-t29" secondAttribute="trailing" constant="20" symbolic="YES" id="pIA-yQ-AJS"/>
+                    <constraint firstItem="HRE-YF-b23" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="quY-cs-f8U"/>
+                    <constraint firstItem="a1F-Xb-rzH" firstAttribute="leading" secondItem="X3t-aq-zNf" secondAttribute="leading" id="snC-TG-Fu7"/>
+                    <constraint firstAttribute="trailing" secondItem="t73-33-Ayt" secondAttribute="trailing" constant="20" symbolic="YES" id="w7n-Vw-VSA"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+                <outlet property="initialFirstResponder" destination="X3t-aq-zNf" id="fcU-fj-man"/>
+            </connections>
+            <point key="canvasLocation" x="413" y="76"/>
+        </window>
+    </objects>
+</document>

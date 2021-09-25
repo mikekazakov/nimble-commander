@@ -261,7 +261,14 @@
              * Maximum amount of concurrent file operation running simultaneously in a single window.
              * Any operation added after this value is reached will wait in a queue.
              */
-             "concurrencyPerWindow": 5
+             "concurrencyPerWindow": 5,
+             
+             /**
+              * A list of operations that are not enqueued in case the concurrency limit is reached,
+              * effectively bypassing this mechanism. Comma-separated string list, possible entries
+              * are: "attrs_change", "batch_rename", "compress", "copy", "delete", "mkdir", "link".
+              */
+              "concurrencyPerWindowDoesntApplyTo": ""
         },
         
         /**

@@ -40,6 +40,7 @@ class ServicesHandler;
 
 namespace ops {
 class AggregateProgressTracker;
+class PoolEnqueueFilter;
 }
 
 namespace panel {
@@ -151,5 +152,7 @@ class NativeHost;
 @property(nonatomic, readonly) nc::FeedbackManager &feedbackManager;
 
 @property(nonatomic, readonly) nc::utility::FSEventsFileUpdate &fsEventsFileUpdate;
+
+@property(nonatomic, readonly) nc::ops::PoolEnqueueFilter &poolEnqueueFilter;
 
 @end

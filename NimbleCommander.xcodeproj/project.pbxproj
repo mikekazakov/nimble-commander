@@ -550,6 +550,15 @@
 		CF9721F2214FD43100A1B19E /* IconRepositoryCleaner.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9721F0214FD43100A1B19E /* IconRepositoryCleaner.mm */; };
 		CF9721F3214FD43100A1B19E /* IconRepositoryCleaner.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9721F0214FD43100A1B19E /* IconRepositoryCleaner.mm */; };
 		CF9721F4214FD43100A1B19E /* IconRepositoryCleaner.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9721F0214FD43100A1B19E /* IconRepositoryCleaner.mm */; };
+		CF9B07C626FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9B07C326FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h */; };
+		CF9B07D126FF0CD600D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9B07C526FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib */; };
+		CF9B07D626FF0CD600D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9B07C526FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib */; };
+		CF9B07D726FF0CD700D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9B07C526FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib */; };
+		CF9B07DC26FF0CD700D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9B07C526FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib */; };
+		CF9B07E126FF0CDA00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9B07C426FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm */; };
+		CF9B07E626FF0CDB00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9B07C426FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm */; };
+		CF9B07E726FF0CDB00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9B07C426FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm */; };
+		CF9B07EC26FF0CDC00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9B07C426FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm */; };
 		CF9F4A921EC9442C00E0AF82 /* Compress.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4A911EC9442C00E0AF82 /* Compress.mm */; };
 		CF9F4AD31ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AD21ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm */; };
 		CF9F4AF01ECC015700E0AF82 /* ExecuteInTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEF1ECC015700E0AF82 /* ExecuteInTerminal.mm */; };
@@ -1795,6 +1804,9 @@
 		CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Utility.xcodeproj; path = Utility/Utility.xcodeproj; sourceTree = "<group>"; };
 		CF9721DA214FD43100A1B19E /* IconRepositoryCleaner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconRepositoryCleaner.h; path = NimbleCommander/States/FilePanels/Helpers/IconRepositoryCleaner.h; sourceTree = "<group>"; };
 		CF9721F0214FD43100A1B19E /* IconRepositoryCleaner.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconRepositoryCleaner.mm; path = NimbleCommander/States/FilePanels/Helpers/IconRepositoryCleaner.mm; sourceTree = "<group>"; };
+		CF9B07C326FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowPanelsTabOperationsConcurrencySheet.h; path = NimbleCommander/Preferences/PreferencesWindowPanelsTabOperationsConcurrencySheet.h; sourceTree = "<group>"; };
+		CF9B07C426FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowPanelsTabOperationsConcurrencySheet.mm; path = NimbleCommander/Preferences/PreferencesWindowPanelsTabOperationsConcurrencySheet.mm; sourceTree = "<group>"; };
+		CF9B07C526FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PreferencesWindowPanelsTabOperationsConcurrencySheet.xib; path = NimbleCommander/Preferences/PreferencesWindowPanelsTabOperationsConcurrencySheet.xib; sourceTree = "<group>"; };
 		CF9F4A901EC9442C00E0AF82 /* Compress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Compress.h; path = NimbleCommander/States/FilePanels/Actions/Compress.h; sourceTree = SOURCE_ROOT; };
 		CF9F4A911EC9442C00E0AF82 /* Compress.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Compress.mm; path = NimbleCommander/States/FilePanels/Actions/Compress.mm; sourceTree = SOURCE_ROOT; };
 		CF9F4AD11ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCPanelOpenWithMenuDelegate.h; path = NimbleCommander/States/FilePanels/NCPanelOpenWithMenuDelegate.h; sourceTree = SOURCE_ROOT; };
@@ -2227,8 +2239,9 @@
 			children = (
 				CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */,
 				CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */,
-				CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */,
 				CF4E569D1D50687A00452912 /* Preferences.h */,
+				CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */,
+				CFEF4E3B1A6BB409009A1524 /* Preferences.strings */,
 				CF4E562E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.h */,
 				CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */,
 				CF4E56721D50667300452912 /* PreferencesWindowExternalEditorsTab.xib */,
@@ -2247,27 +2260,29 @@
 				CF4E56381D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.h */,
 				CF4E56391D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm */,
 				CF4E56831D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib */,
+				CF9B07C326FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h */,
+				CF9B07C426FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm */,
+				CF9B07C526FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib */,
 				CF4E563A1D5064FE00452912 /* PreferencesWindowTerminalTab.h */,
 				CF4E563B1D5064FE00452912 /* PreferencesWindowTerminalTab.mm */,
 				CF4E56861D50669C00452912 /* PreferencesWindowTerminalTab.xib */,
+				CF04DDF91E2F100C0047B1F9 /* PreferencesWindowThemesControls.h */,
+				CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */,
+				CF04DDE31E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.h */,
+				CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */,
+				CF7C7CC81E5C3EB9002DB0E2 /* PreferencesWindowThemesTab.xib */,
+				CF7C7CCE1E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib */,
+				CFA2D6011E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.h */,
+				CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */,
+				CF7C7CD41E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib */,
+				CF27F9371E31B366009A3ACF /* PreferencesWindowThemesTabModel.h */,
+				CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */,
 				CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */,
 				CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */,
 				CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */,
 				CF4E563C1D5064FE00452912 /* PreferencesWindowViewerTab.h */,
 				CF4E563D1D5064FE00452912 /* PreferencesWindowViewerTab.mm */,
 				CF4E568C1D5066A400452912 /* PreferencesWindowViewerTab.xib */,
-				CFEF4E3B1A6BB409009A1524 /* Preferences.strings */,
-				CF04DDE31E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.h */,
-				CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */,
-				CF7C7CC81E5C3EB9002DB0E2 /* PreferencesWindowThemesTab.xib */,
-				CF27F9371E31B366009A3ACF /* PreferencesWindowThemesTabModel.h */,
-				CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */,
-				CF04DDF91E2F100C0047B1F9 /* PreferencesWindowThemesControls.h */,
-				CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */,
-				CF7C7CCE1E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib */,
-				CFA2D6011E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.h */,
-				CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */,
-				CF7C7CD41E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -3129,6 +3144,7 @@
 				CFA99A68265EE01E00F72E93 /* PanelListViewExtensionView.h in Headers */,
 				CF485C32259B5E5D002F9A05 /* FeedbackManagerImpl.h in Headers */,
 				CFA999F4264F17A800F72E93 /* Usage.h in Headers */,
+				CF9B07C626FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3614,6 +3630,7 @@
 				CF4E56C71D50692400452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CF4E56B41D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF9F4B311ECD810C00E0AF82 /* FavoritesWindowController.xib in Resources */,
+				CF9B07D626FF0CD600D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib in Resources */,
 				CF4E56DC1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
 				CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
 				CFCCFBB41A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
@@ -3671,6 +3688,7 @@
 				CFA53A401D433E2A00C562A7 /* FilePanelsContextMenu.strings in Resources */,
 				CFA53A421D433E2A00C562A7 /* DetailedVolumeInformationSheetController.xib in Resources */,
 				CFA53A431D433E2A00C562A7 /* Localizable.strings in Resources */,
+				CF9B07DC26FF0CD700D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib in Resources */,
 				CFA53A441D433E2A00C562A7 /* main_icon.icns in Resources */,
 				CF4E56DB1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
 				CF4E56C21D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
@@ -3762,6 +3780,7 @@
 				CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */,
 				CF754D4D1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
+				CF9B07D726FF0CD700D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib in Resources */,
 				CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CF9F4B101ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF8D0CE91D9623E000ADFF14 /* RegistrationInfoWindow.xib in Resources */,
@@ -3796,6 +3815,7 @@
 				CF4E56C61D50692300452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFF6F3721A13567C00011177 /* MainMenu.xib in Resources */,
 				CF4E56B31D5068EB00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
+				CF9B07D126FF0CD600D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.xib in Resources */,
 				CF3120C61A510F640062185A /* Localizable.strings in Resources */,
 				CF4E56DD1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
 				CFCCFC511A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
@@ -4116,6 +4136,7 @@
 				CF44D33C202D632F0083FAF5 /* ExecuteExternalTool.mm in Sources */,
 				CF7D7D5D21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */,
 				CFDC07CC2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
+				CF9B07E626FF0CDB00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */,
 				CFD8CDD21E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,
 				CF9F4B011ECC8DD000E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
 				CFD726FA1E42E2E800603077 /* PanelListViewTableView.mm in Sources */,
@@ -4314,6 +4335,7 @@
 				CF0B78F225739F61003061D0 /* SparkleShim.m in Sources */,
 				CFD726AC1E42E25100603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CFA1716320196CB400F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
+				CF9B07EC26FF0CDC00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */,
 				CF2F10B12567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
 				CFDC07CA2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CFFA95191F45A3400035E606 /* ConfigWiring.mm in Sources */,
@@ -4512,6 +4534,7 @@
 				CF56C2CA1DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CF4E56411D5064FE00452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF2F10B22567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
+				CF9B07E726FF0CDB00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */,
 				CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFDC07CB2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */,
@@ -4710,6 +4733,7 @@
 				CFD726611E42E1DB00603077 /* ExternalEditorInfo.mm in Sources */,
 				CF0B78F525739F61003061D0 /* SparkleShim.m in Sources */,
 				CFD7263D1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
+				CF9B07E126FF0CDA00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */,
 				CF5E9A671FCE738A005608F5 /* QuickLookVFSBridge.mm in Sources */,
 				CF2F10B42567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
 				CFBA63AE1FC1A4F900077682 /* CopyFile.mm in Sources */,

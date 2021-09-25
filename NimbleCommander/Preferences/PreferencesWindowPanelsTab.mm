@@ -4,10 +4,11 @@
 #include <Utility/FontExtras.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
-#include "PreferencesWindowPanelsTabColoringFilterSheet.h"
+#include "PreferencesWindowPanelsTabOperationsConcurrencySheet.h"
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <Config/Config.h>
 
 using namespace nc::panel;
 
@@ -324,8 +325,6 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
         else
             [self clearLayoutFields];
     }
-
-    //    NSInteger row = self.toolsTable.selectedRow;
 }
 
 - (IBAction)onLayoutTypeChanged:(id) [[maybe_unused]] sender
@@ -580,6 +579,19 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 {
     NSInteger index = [sender selectedSegment];
     [self.tabParts selectTabViewItemAtIndex:index];
+}
+
+- (IBAction)onChooseOperationsConcurrency:(id)sender
+{
+    constexpr auto path = "filePanel.operations.concurrencyPerWindowDoesntApplyTo";
+    const auto orig_list = NCAppDelegate.me.globalConfig.GetString(path);
+    auto sheet = [[PreferencesWindowPanelsTabOperationsConcurrencySheet alloc]
+        initWithConcurrencyExclusionList:orig_list];
+    __weak PreferencesWindowPanelsTabOperationsConcurrencySheet *weak_sheet = sheet;
+    [sheet beginSheetForWindow:self.view.window
+             completionHandler:^([[maybe_unused]] NSModalResponse rc) {
+               NCAppDelegate.me.globalConfig.Set(path, weak_sheet.exclusionList);
+             }];
 }
 
 @end

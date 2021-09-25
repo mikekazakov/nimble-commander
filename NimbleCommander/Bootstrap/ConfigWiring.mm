@@ -1,19 +1,23 @@
 // Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigWiring.h"
 #include <Operations/Pool.h>
+#include <Operations/PoolEnqueueFilter.h>
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <boost/algorithm/string.hpp>
 
 namespace nc::bootstrap {
 
-ConfigWiring::ConfigWiring(config::Config &_config) : m_Config(_config)
+ConfigWiring::ConfigWiring(config::Config &_config, ops::PoolEnqueueFilter &_pool_filter)
+    : m_Config(_config), m_PoolFilter(_pool_filter)
 {
 }
 
 void ConfigWiring::Wire()
 {
     SetupOperationsPool();
+    SetupOperationsPoolEnqueFilter();
     SetupNotification();
 }
 
@@ -27,6 +31,24 @@ void ConfigWiring::SetupOperationsPool()
             for( auto wnd : NCAppDelegate.me.mainWindowControllers )
                 wnd.operationsPool.SetConcurrency(new_limit);
         });
+    };
+    update();
+    m_Config.ObserveForever(path, update);
+}
+
+void ConfigWiring::SetupOperationsPoolEnqueFilter()
+{
+    constexpr auto path = "filePanel.operations.concurrencyPerWindowDoesntApplyTo";
+    auto update = [this] {
+        const auto new_list = m_Config.GetString(path);
+        std::vector<std::string> entries;
+        boost::split(
+            entries, new_list, [](char _c) { return _c == ','; }, boost::token_compress_on);
+        for( auto &entry : entries )
+            boost::trim(entry);
+        m_PoolFilter.Reset();
+        for( auto &entry : entries )
+            m_PoolFilter.Set(entry, false);
     };
     update();
     m_Config.ObserveForever(path, update);

@@ -4,6 +4,9 @@
 /* Class = "NSMenuItem"; title = "Date Created"; ObjectID = "dlI-VF-x2j"; */
 "dlI-VF-x2j.title" = "Дата создания";
 
+/* Class = "NSMenuItem"; title = "Extension"; ObjectID = "dmJ-ex-4dW"; */
+"dmJ-ex-4dW.title" = "Расширение";
+
 /* Class = "NSMenuItem"; title = "Date Modified"; ObjectID = "fAK-5J-yak"; */
 "fAK-5J-yak.title" = "Дата изменения";
 

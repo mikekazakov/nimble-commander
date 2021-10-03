@@ -64,6 +64,9 @@
 /* Class = "NSMenuItem"; title = "Brief"; ObjectID = "Bs6-RN-w2G"; */
 "Bs6-RN-w2G.title" = "Краткий";
 
+/* Class = "NSButtonCell"; title = "Choose operations..."; ObjectID = "bvB-SW-l7X"; */
+"bvB-SW-l7X.title" = "Выбрать операции...";
+
 /* Class = "NSMenuItem"; title = "Show only matching items"; ObjectID = "Cf8-5j-UTT"; */
 "Cf8-5j-UTT.title" = "Показывать соответствующие объекты";
 

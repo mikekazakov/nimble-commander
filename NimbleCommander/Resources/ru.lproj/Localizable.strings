@@ -20,6 +20,9 @@
 "__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Имя";
 
 /* (No Comment) */
+"__PANELVIEW_LIST_COLUMN_TITLE_EXTENSION" = "Расширение";
+
+/* (No Comment) */
 "__PANELVIEW_LIST_COLUMN_TITLE_SIZE" = "Размер";
 
 /* (No Comment) */

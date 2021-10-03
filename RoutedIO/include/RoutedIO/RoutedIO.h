@@ -4,6 +4,7 @@
 #include <xpc/xpc.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <atomic>
 
 namespace nc::routedio {
 
@@ -62,6 +63,9 @@ public:
 
     xpc_connection_t Connection();
     bool IsHelperAlive(); // blocking I/O
+    
+    static void InstallViaRootCLI();
+    static void UninstallViaRootCLI();
 
 private:
     RoutedIO(RoutedIO &) = delete;
@@ -72,11 +76,12 @@ private:
     bool IsHelperCurrent();
     bool ConnectionAvailable();
     bool AuthenticateAsAdmin();
-    bool SayImAuthenticated(xpc_connection_t _connection);
+    bool SayImAuthenticated(xpc_connection_t _connection) noexcept;
 
-    volatile bool m_Enabled = false;
-    volatile bool m_AuthenticatedAsAdmin = false;
+    std::atomic_bool m_Enabled{false};
+    std::atomic_bool m_AuthenticatedAsAdmin{false};
     xpc_connection_t m_Connection = nullptr;
+    bool m_Sandboxed = false;
 };
 
 } // namespace nc::routedio

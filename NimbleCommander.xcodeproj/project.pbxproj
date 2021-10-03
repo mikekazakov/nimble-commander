@@ -559,6 +559,7 @@
 		CF9B07E626FF0CDB00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9B07C426FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm */; };
 		CF9B07E726FF0CDB00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9B07C426FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm */; };
 		CF9B07EC26FF0CDC00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9B07C426FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm */; };
+		CF9B082F2700662400D2842B /* RoutedIOResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF9B082E2700660300D2842B /* RoutedIOResources.bundle */; };
 		CF9F4A921EC9442C00E0AF82 /* Compress.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4A911EC9442C00E0AF82 /* Compress.mm */; };
 		CF9F4AD31ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AD21ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm */; };
 		CF9F4AF01ECC015700E0AF82 /* ExecuteInTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEF1ECC015700E0AF82 /* ExecuteInTerminal.mm */; };
@@ -656,8 +657,8 @@
 		CFA7E02D1EB97B60001FE66C /* Delete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7E02C1EB97B60001FE66C /* Delete.mm */; };
 		CFA7FA741C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA7FA751C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
-		CFA999F3264F17A800F72E93 /* Usage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA999D9264F17A800F72E93 /* Usage.cpp */; };
-		CFA999F4264F17A800F72E93 /* Usage.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA999F2264F17A800F72E93 /* Usage.h */; };
+		CFA999F3264F17A800F72E93 /* CLI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA999D9264F17A800F72E93 /* CLI.cpp */; };
+		CFA999F4264F17A800F72E93 /* CLI.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA999F2264F17A800F72E93 /* CLI.h */; };
 		CFA99A68265EE01E00F72E93 /* PanelListViewExtensionView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA99A4E265EE01E00F72E93 /* PanelListViewExtensionView.h */; };
 		CFA99A76266188B400F72E93 /* PanelListViewExtensionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */; };
 		CFA99A7B266188B400F72E93 /* PanelListViewExtensionView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */; };
@@ -1302,6 +1303,20 @@
 			remoteGlobalIDString = CF38BEC22148AE5D005E336C;
 			remoteInfo = VFSIconIntegrationTests;
 		};
+		CF9B082A2700660300D2842B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF9B081D2700650900D2842B;
+			remoteInfo = RoutedIOResources;
+		};
+		CF9B082D2700660300D2842B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF9B081E2700650900D2842B;
+			remoteInfo = RoutedIOResources;
+		};
 		CFAB6D79258A5AC700397DB5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */;
@@ -1850,8 +1865,8 @@
 		CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenNetworkConnection.mm; path = NimbleCommander/States/FilePanels/Actions/OpenNetworkConnection.mm; sourceTree = SOURCE_ROOT; };
 		CFA7E02B1EB97B60001FE66C /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delete.h; path = NimbleCommander/States/FilePanels/Actions/Delete.h; sourceTree = SOURCE_ROOT; };
 		CFA7E02C1EB97B60001FE66C /* Delete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Delete.mm; path = NimbleCommander/States/FilePanels/Actions/Delete.mm; sourceTree = SOURCE_ROOT; };
-		CFA999D9264F17A800F72E93 /* Usage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Usage.cpp; path = NimbleCommander/Bootstrap/Usage.cpp; sourceTree = "<group>"; wrapsLines = 0; };
-		CFA999F2264F17A800F72E93 /* Usage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Usage.h; path = NimbleCommander/Bootstrap/Usage.h; sourceTree = "<group>"; };
+		CFA999D9264F17A800F72E93 /* CLI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CLI.cpp; path = NimbleCommander/Bootstrap/CLI.cpp; sourceTree = "<group>"; wrapsLines = 0; };
+		CFA999F2264F17A800F72E93 /* CLI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CLI.h; path = NimbleCommander/Bootstrap/CLI.h; sourceTree = "<group>"; };
 		CFA99A4E265EE01E00F72E93 /* PanelListViewExtensionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewExtensionView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewExtensionView.h; sourceTree = "<group>"; };
 		CFA99A67265EE01E00F72E93 /* PanelListViewExtensionView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewExtensionView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewExtensionView.mm; sourceTree = "<group>"; };
 		CFA9DD8B1FD668370099DD91 /* Interactions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interactions.h; path = NimbleCommander/Bootstrap/Interactions.h; sourceTree = SOURCE_ROOT; };
@@ -2629,6 +2644,7 @@
 			children = (
 				CF69CFC31DA20DC200992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */,
 				CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */,
+				CF9B082E2700660300D2842B /* RoutedIOResources.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2737,8 +2753,8 @@
 				CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */,
 				CF0B78F825739F79003061D0 /* SparkleShim.h */,
 				CF0B78D925739F61003061D0 /* SparkleShim.m */,
-				CFA999D9264F17A800F72E93 /* Usage.cpp */,
-				CFA999F2264F17A800F72E93 /* Usage.h */,
+				CFA999D9264F17A800F72E93 /* CLI.cpp */,
+				CFA999F2264F17A800F72E93 /* CLI.h */,
 				CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */,
 				CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */,
 			);
@@ -3143,7 +3159,7 @@
 				CFAB6CE32587C38800397DB5 /* FollowSymlink.h in Headers */,
 				CFA99A68265EE01E00F72E93 /* PanelListViewExtensionView.h in Headers */,
 				CF485C32259B5E5D002F9A05 /* FeedbackManagerImpl.h in Headers */,
-				CFA999F4264F17A800F72E93 /* Usage.h in Headers */,
+				CFA999F4264F17A800F72E93 /* CLI.h in Headers */,
 				CF9B07C626FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3247,6 +3263,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CF9B082B2700660300D2842B /* PBXTargetDependency */,
 				CF46019F25612DA90095FC73 /* PBXTargetDependency */,
 				CF46FFA0255FCD320095FC73 /* PBXTargetDependency */,
 				CF5C1DF1255EEE4000ADE703 /* PBXTargetDependency */,
@@ -3531,6 +3548,13 @@
 			remoteRef = CF9721EE214FD43100A1B19E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		CF9B082E2700660300D2842B /* RoutedIOResources.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RoutedIOResources.bundle;
+			remoteRef = CF9B082D2700660300D2842B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CFAB6D7A258A5AC700397DB5 /* VFSIT */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -3793,6 +3817,7 @@
 				CF5C1D4F255EE6CD00ADE703 /* ViewerResources.bundle in Resources */,
 				CF46FFA4255FCD500095FC73 /* OperationsResources.bundle in Resources */,
 				CF46018D25612D300095FC73 /* CUIResources.bundle in Resources */,
+				CF9B082F2700662400D2842B /* RoutedIOResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3954,7 +3979,7 @@
 				CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */,
 				CF764CB4258763B100D7ED17 /* ExternalToolsSupport.mm in Sources */,
 				CF764D3E258782E300D7ED17 /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,
-				CFA999F3264F17A800F72E93 /* Usage.cpp in Sources */,
+				CFA999F3264F17A800F72E93 /* CLI.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4821,6 +4846,11 @@
 			isa = PBXTargetDependency;
 			name = OperationsResources;
 			targetProxy = CF8681C625837C2800D87746 /* PBXContainerItemProxy */;
+		};
+		CF9B082B2700660300D2842B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RoutedIOResources;
+			targetProxy = CF9B082A2700660300D2842B /* PBXContainerItemProxy */;
 		};
 		CFB63D642598A8BC0038502E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

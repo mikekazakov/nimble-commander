@@ -35,6 +35,7 @@
 #include <Utility/FSEventsFileUpdateImpl.h>
 
 #include <RoutedIO/RoutedIO.h>
+#include <RoutedIO/Log.h>
 
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
@@ -184,6 +185,7 @@ static void SetupLogs()
         AttachToSink<nc::config::Log>(level, stdout_sink);
         AttachToSink<nc::vfs::Log>(level, stdout_sink);
         AttachToSink<nc::panel::Log>(level, stdout_sink);
+        AttachToSink<nc::routedio::Log>(level, stdout_sink);
     }
 }
 
@@ -859,7 +861,7 @@ static std::string AquaticPrimePublicKey()
 
         const auto turned_on = RoutedIO::Instance().TurnOn();
         if( !turned_on )
-            WarnAboutFailingToAccessPriviledgedHelper();
+            WarnAboutFailingToAccessPrivilegedHelper();
     }
 
     self.dock.SetAdminBadge(RoutedIO::Instance().Enabled());

@@ -15,8 +15,8 @@
 		CF69CFC01DA20B5500992B84 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFBF1DA20B5500992B84 /* Security.framework */; };
 		CF8E4CC825F43A3800F0881B /* Trash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E4CC725F43A3800F0881B /* Trash.mm */; };
 		CF8E4CCF25F441DF00F0881B /* Trash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8E4CC725F43A3800F0881B /* Trash.mm */; };
+		CF92565D2709ADFF008D6E53 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF92565F2709ADFF008D6E53 /* Localizable.strings */; };
 		CF9B080326FF57F900D2842B /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9B080226FF57F900D2842B /* Log.cpp */; };
-		CF9B08442700673100D2842B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF9B08432700673100D2842B /* Localizable.strings */; };
 		CF9B084D270067CA00D2842B /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9B084B270067CA00D2842B /* Internal.mm */; };
 		CF9B084E270067CA00D2842B /* Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9B084C270067CA00D2842B /* Internal.h */; };
 /* End PBXBuildFile section */
@@ -52,11 +52,12 @@
 		CF69CFBF1DA20B5500992B84 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CF8E4CC625F43A3800F0881B /* Trash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Trash.h; path = source/Trash.h; sourceTree = "<group>"; };
 		CF8E4CC725F43A3800F0881B /* Trash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Trash.mm; path = source/Trash.mm; sourceTree = "<group>"; };
+		CF92565E2709ADFF008D6E53 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CF9256632709AE6D008D6E53 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CF9B080126FF57A000D2842B /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Log.h; path = include/RoutedIO/Log.h; sourceTree = "<group>"; };
 		CF9B080226FF57F900D2842B /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = source/Log.cpp; sourceTree = "<group>"; };
 		CF9B081E2700650900D2842B /* RoutedIOResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RoutedIOResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF9B08342700668000D2842B /* RoutedIOResources.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = RoutedIOResources.plist; path = resources/RoutedIOResources.plist; sourceTree = "<group>"; };
-		CF9B08432700673100D2842B /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = resources/Localizable.strings; sourceTree = "<group>"; };
 		CF9B084B270067CA00D2842B /* Internal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Internal.mm; path = source/Internal.mm; sourceTree = "<group>"; };
 		CF9B084C270067CA00D2842B /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/Internal.h; sourceTree = "<group>"; };
 		CFFA94A21F4541B00035E606 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -131,7 +132,7 @@
 		CF69CFAB1DA2098300992B84 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CF9B08432700673100D2842B /* Localizable.strings */,
+				CF92565F2709ADFF008D6E53 /* Localizable.strings */,
 				CF69CFAE1DA209A700992B84 /* PrivilegedIOHelper-Info.plist */,
 				CF69CFAF1DA209A700992B84 /* PrivilegedIOHelper-Launchd.plist */,
 				CF9B08342700668000D2842B /* RoutedIOResources.plist */,
@@ -269,6 +270,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = CF8D0D4F1D9E4D7400ADFF14;
 			productRefGroup = CF8D0D591D9E4D7400ADFF14 /* Products */;
@@ -287,7 +289,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF9B08442700673100D2842B /* Localizable.strings in Resources */,
+				CF92565D2709ADFF008D6E53 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,6 +325,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CF92565F2709ADFF008D6E53 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF92565E2709ADFF008D6E53 /* en */,
+				CF9256632709AE6D008D6E53 /* ru */,
+			);
+			name = Localizable.strings;
+			path = resources;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		CF460231256312190095FC73 /* Debug */ = {
@@ -383,6 +398,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF2343EA22C90A0600F516CB /* debug.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Debug;
 		};
@@ -390,6 +406,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF2343EB22C90A0600F516CB /* release.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Release;
 		};

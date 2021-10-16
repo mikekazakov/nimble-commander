@@ -156,8 +156,8 @@ static void GoToDropboxStorage(PanelController *_target,
         vfs::DropboxHost::Params params;
         params.account = info.account;
         params.access_token = _passwd;
-        params.client_id = NCE(env::dropbox_client_id);
-        params.client_secret = NCE(env::dropbox_client_secret);
+        params.client_id = NCE(nc::env::dropbox_client_id);
+        params.client_secret = NCE(nc::env::dropbox_client_secret);
         auto host = std::make_shared<vfs::DropboxHost>(params);
         dispatch_to_main_queue([=]{
             auto request = std::make_shared<DirectoryChangeRequest>();

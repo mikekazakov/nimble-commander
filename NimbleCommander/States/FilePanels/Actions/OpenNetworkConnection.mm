@@ -13,6 +13,7 @@
 #include <VFS/NetDropbox.h>
 #include <VFS/NetWebDAV.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
+#include <NimbleCommander/Bootstrap/NCE.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <Habanero/dispatch_cpp.h>

@@ -5,6 +5,7 @@
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <Habanero/dispatch_cpp.h>
 #include <boost/algorithm/string.hpp>
 
 namespace nc::bootstrap {

@@ -16,6 +16,7 @@
 #include <VFS/NetWebDAV.h>
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
+#include <NimbleCommander/Bootstrap/NCE.h>
 #include <Habanero/spinlock.h>
 #include <Habanero/dispatch_cpp.h>
 

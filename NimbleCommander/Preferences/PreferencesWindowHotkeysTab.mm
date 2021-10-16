@@ -581,6 +581,7 @@ static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action)
         {"viewer.toggle_preview", NSLocalizedString(@"Viewer ▶ Toggle Preview", "")},
         {"viewer.show_settings", NSLocalizedString(@"Viewer ▶ Show Settings", "")},
         {"viewer.show_goto", NSLocalizedString(@"Viewer ▶ Show GoTo", "")},
+        {"viewer.refresh", NSLocalizedString(@"Viewer ▶ Refresh", "")},
     };
 
     for( auto &i : titles )

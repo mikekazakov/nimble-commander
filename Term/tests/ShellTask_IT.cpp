@@ -434,7 +434,7 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     REQUIRE(shell.CWD() == dir.directory.generic_string());
 
     // the only task is running is shell itself, and is not returned by ChildrenList
-    CHECK(shell.ChildrenList().empty());
+    CHECK(shell.ChildrenList() == std::vector<std::string>());
 
     // test executing binaries within a shell
     shell.ExecuteWithFullPath("/usr/bin/top", nullptr);

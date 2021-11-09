@@ -46,7 +46,7 @@ void CopyFileName::Perform( PanelController *_source, id ) const
     const auto result = std::accumulate(std::begin(entries),
                                         std::end(entries),
                                         std::string{},
-                                        [](auto &a, auto &b){
+                                        [](const auto &a, const auto &b){
         return a + (a.empty() ? "" : Separator()) + b.Filename();
     });
     WriteSingleStringToClipboard( result );
@@ -58,7 +58,7 @@ void CopyFilePath::Perform( PanelController *_source, id ) const
     const auto result = std::accumulate(std::begin(entries),
                                         std::end(entries),
                                         std::string{},
-                                        [](auto &a, auto &b){
+                                        [](const auto &a, const auto &b){
         return a + (a.empty() ? "" : Separator()) + b.Path();
     });
     WriteSingleStringToClipboard( result );
@@ -70,7 +70,7 @@ void CopyFileDirectory::Perform( PanelController *_source, id ) const
     const auto result = std::accumulate(std::begin(entries),
                                         std::end(entries),
                                         std::string{},
-                                        [](auto &a, auto &b){
+                                        [](const auto &a, const auto &b){
         return a + (a.empty() ? "" : Separator()) + b.Directory();
     });
     WriteSingleStringToClipboard( result );

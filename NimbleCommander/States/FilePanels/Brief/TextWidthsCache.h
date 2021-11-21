@@ -1,6 +1,7 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <Cocoa/Cocoa.h>
 #include <Habanero/CFString.h>
 #include <unordered_map>
 #include <string>

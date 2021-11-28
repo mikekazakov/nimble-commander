@@ -52,7 +52,7 @@ static bool IsSystemFont( NSFont *_font )
 {
     static const auto max_sz = 100;
     [[clang::no_destroy]] static std::array<NSString*, max_sz> descriptions;
-    const auto pt = static_cast<int>(std::floor(_font.pointSize + 0.5));
+    const auto pt = static_cast<int>(std::round(_font.pointSize));
     if( pt < 0 || pt >= max_sz )
         return false;
     
@@ -65,9 +65,14 @@ static bool IsSystemFont( NSFont *_font )
     return [std_desc isEqualToString:_font.fontName];
 }
 
+- (bool)isSystemFont
+{
+    return IsSystemFont(self);
+}
+
 - (NSString*) toStringDescription
 {
-    const auto pt = static_cast<int>(std::floor(self.pointSize + 0.5));
+    const auto pt = static_cast<int>(std::round(self.pointSize));
     if( IsSystemFont(self) )
         return [NSString stringWithFormat:@"%@, %s", @"@systemFont", std::to_string(pt).c_str()];
     /* check for another system fonts flavours */

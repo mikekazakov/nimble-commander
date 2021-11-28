@@ -1,11 +1,11 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreText/CoreText.h>
 #include <vector>
 
 #ifdef __OBJC__
-    #include <Cocoa/Cocoa.h>
+#include <Cocoa/Cocoa.h>
 #endif
 
 namespace nc::utility {
@@ -18,7 +18,7 @@ public:
 #ifdef __OBJC__
     FontGeometryInfo(NSFont *_font);
 #endif
-    
+
     inline double Size() const noexcept { return m_Size; }
     inline double Ascent() const noexcept { return m_Ascent; }
     inline double Descent() const noexcept { return m_Descent; }
@@ -26,11 +26,12 @@ public:
     inline double LineHeight() const noexcept { return m_LineHeight; }
     inline double MonospaceWidth() const noexcept { return m_MonospaceWidth; }
     inline double PreciseMonospaceWidth() const noexcept { return m_PreciseMonospaceWidth; }
-    
+
 #ifdef __OBJC__
-    static std::vector<short> CalculateStringsWidths( const std::vector<CFStringRef> &_strings, NSFont *_font );
+    static std::vector<short> CalculateStringsWidths(const std::vector<CFStringRef> &_strings,
+                                                     NSFont *_font);
 #endif
-    
+
 private:
     double m_Size;
     double m_Ascent;
@@ -42,13 +43,14 @@ private:
 };
 
 }
-    
+
 #ifdef __OBJC__
 
 @interface NSFont (StringDescription)
 
-+ (NSFont*) fontWithStringDescription:(NSString*)_description;
-- (NSString*) toStringDescription;
++ (NSFont *)fontWithStringDescription:(NSString *)_description;
+- (NSString *)toStringDescription;
+- (bool)isSystemFont;
 
 @end
 

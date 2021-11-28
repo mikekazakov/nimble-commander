@@ -127,12 +127,14 @@
     NSButton *m_Custom;
     NSButton *m_System;
     NSTextField *m_Description;
+    NSFont *m_DummyCustomFont;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
 {
     if( self = [super initWithFrame:frameRect] ) {
         m_Font = [NSFont systemFontOfSize:NSFont.systemFontSize];
+        m_DummyCustomFont = [NSFont fontWithName:@"Helvetica Neue" size:NSFont.systemFontSize];
 
         m_Custom = [[NSButton alloc] initWithFrame:NSRect()];
         m_Custom.translatesAutoresizingMaskIntoConstraints = false;
@@ -227,13 +229,18 @@
     NSFontManager *fontManager = NSFontManager.sharedFontManager;
     fontManager.target = self;
     fontManager.action = @selector(fontManagerChanged:);
-    [fontManager setSelectedFont:m_Font isMultiple:NO];
+    // NSFontManager goes bananas if you ask it to customize a system font, so instead NC
+    // cheats and place a dummy font if current font is a system font.
+    if( [m_Font isSystemFont] )
+        [fontManager setSelectedFont:m_DummyCustomFont isMultiple:NO];
+    else
+        [fontManager setSelectedFont:m_Font isMultiple:NO];
     [fontManager orderFrontFontPanel:self];
 }
 
 - (void)fontManagerChanged:(id)sender
 {
-    const auto new_font = [sender convertFont:m_Font];
+    const auto new_font = [sender convertFont:(m_Font.isSystemFont ? m_DummyCustomFont : m_Font)];
     if( new_font != m_Font ) {
         m_Font = new_font;
         m_Description.stringValue = [m_Font toStringDescription];

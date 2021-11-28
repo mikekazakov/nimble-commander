@@ -1,12 +1,10 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowTerminalTab.h"
 #include <Utility/FontExtras.h>
 #include <Config/ObjCBridge.h>
 #include "../Bootstrap/Config.h"
 #include "../Bootstrap/ActivationManager.h"
 #include <Utility/StringExtras.h>
-
-static const auto g_ConfigFont = "terminal.font";
 
 // this stuff currently works only in one direction:
 // config -> ObjectiveC property
@@ -45,8 +43,6 @@ private:
 
 @interface PreferencesWindowTerminalTab()
 
-@property (nonatomic) IBOutlet NSTextField *fontVisibleName;
-
 @property (nonatomic) bool usesDefaultLoginShell;
 
 @end
@@ -76,10 +72,6 @@ private:
 - (void)loadView
 {
     [super loadView];
-    m_Font = [NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigFont)]];
-    if(!m_Font) m_Font = [NSFont fontWithName:@"Menlo-Regular" size:13];
-
-    [self updateFontVisibleName];
     [self.view layoutSubtreeIfNeeded];
 }
 
@@ -102,27 +94,6 @@ private:
     return NSLocalizedStringFromTable(@"Terminal",
                                       @"Preferences",
                                       "General preferences tab title");
-}
-
-- (void) updateFontVisibleName
-{
-    self.fontVisibleName.stringValue = [NSString stringWithFormat:@"%@ %.0f pt.", m_Font.displayName, m_Font.pointSize];
-}
-
-- (IBAction)OnSetFont:(id)[[maybe_unused]]_sender
-{
-    NSFontManager * fontManager = [NSFontManager sharedFontManager];
-    fontManager.target = self;
-    fontManager.action = @selector(changeFont:);
-    [fontManager setSelectedFont:m_Font isMultiple:NO];
-    [fontManager orderFrontFontPanel:self];
-}
-
-- (void)changeFont:(id)sender
-{
-    m_Font = [sender convertFont:m_Font];
-    GlobalConfig().Set(g_ConfigFont, m_Font.toStringDescription.UTF8String);
-    [self updateFontVisibleName];
 }
 
 @end

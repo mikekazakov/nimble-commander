@@ -6,6 +6,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Utility/NativeFSManager.h>
 #include <Utility/ObjCpp.h>
+#include <Utility/URLSecurityScopedResourceGuard.h>
 #include "PanelAux.h"
 #include <Operations/Linkage.h>
 #include <Operations/Copying.h>
@@ -14,6 +15,7 @@
 #include "../MainWindowController.h"
 #include <VFS/Native.h>
 #include <map>
+#include <filesystem>
 #include <tl/expected.hpp>
 
 namespace nc::panel {
@@ -29,11 +31,9 @@ static NSArray<NSURL *> *ExtractURLs(NSPasteboard *_source);
 static int CountItemsWithType(id<NSDraggingInfo> _sender, NSString *_type);
 static NSString *URLs_Promise_UTI();
 static NSString *URLs_UTI();
-static std::map<std::string, std::vector<std::string>>
-LayoutURLsByDirectories(NSArray<NSURL *> *_file_urls);
 static tl::expected<std::vector<VFSListingItem>, int>
-FetchDirectoriesItems(const std::map<std::string, std::vector<std::string>> &_input,
-                      VFSHost &_host);
+FetchListingItems(NSArray<NSURL *> *_items, VFSHost &_host);
+
 static void AddPanelRefreshIfNecessary(PanelController *_target, ops::Operation &_operation);
 static void AddPanelRefreshIfNecessary(PanelController *_target,
                                        PanelController *_source,
@@ -312,13 +312,17 @@ bool DragReceiver::PerformWithLocalSource(FilesDraggingSource *_source, const VF
 
 bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source, const VFSPath &_destination)
 {
-    if( !_source )
+    if( !_source || _source.count == 0 )
         return false;
 
+    // start accessing the security scoped resources identified by the urls if any there are any.
+    // this guard must be kept alive until operations finish, hence it's attached to observers.
+    const auto urls_access_guard = std::make_shared<utility::URLSecurityScopedResourceGuard>(_source);
+    
     const auto operation = BuildOperationForURLs(_source, _destination);
 
     // currently fetching listings synchronously in main thread, which is BAAAD
-    auto source_items = FetchDirectoriesItems(LayoutURLsByDirectories(_source), m_NativeHost);
+    auto source_items = FetchListingItems(_source, m_NativeHost);
 
     if( source_items.has_value() == false ) {
         // failed to fetch the source items.
@@ -340,6 +344,7 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source, const VFSPat
         const auto opts = MakeDefaultFileCopyOptions();
         const auto op = std::make_shared<nc::ops::Copying>(
             std::move(*source_items), _destination.Path(), _destination.Host(), opts);
+        op->Observe(ops::Operation::NotifyAboutFinish, [urls_access_guard]{});
         AddPanelRefreshIfNecessary(m_Target, *op);
         [m_Target.mainWindowController enqueueOperation:op];
         return true;
@@ -348,6 +353,7 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source, const VFSPat
         const auto opts = MakeDefaultFileMoveOptions();
         const auto op = std::make_shared<nc::ops::Copying>(
             std::move(*source_items), _destination.Path(), _destination.Host(), opts);
+        op->Observe(ops::Operation::NotifyAboutFinish, [urls_access_guard]{});
         AddPanelRefreshIfNecessary(m_Target, *op);
         [m_Target.mainWindowController enqueueOperation:op];
         return true;
@@ -360,6 +366,7 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL *> *_source, const VFSPat
                                                                source_path,
                                                                _destination.Host(),
                                                                nc::ops::LinkageType::CreateSymlink);
+            op->Observe(ops::Operation::NotifyAboutFinish, [urls_access_guard]{});
             AddPanelRefreshIfNecessary(m_Target, *op);
             [m_Target.mainWindowController enqueueOperation:op];
         }
@@ -476,34 +483,28 @@ static NSString *URLs_UTI()
     return uti;
 }
 
-static std::map<std::string, std::vector<std::string>>
-LayoutURLsByDirectories(NSArray<NSURL *> *_file_urls)
+static tl::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_input,
+                                                                        VFSHost &_host)
 {
-    if( !_file_urls )
-        return {};
-    std::map<std::string, std::vector<std::string>>
-        files; // directory/ -> [filename1, filename2, ...]
-    for( NSURL *url in _file_urls ) {
-        if( !objc_cast<NSURL>(url) )
-            continue; // guard agains malformed input data
-        std::filesystem::path source_path = url.path.fileSystemRepresentation;
-        std::string root = source_path.parent_path().native() + "/";
-        files[root].emplace_back(source_path.filename().native());
-    }
-    return files;
-}
-
-static tl::expected<std::vector<VFSListingItem>, int>
-FetchDirectoriesItems(const std::map<std::string, std::vector<std::string>> &_input, VFSHost &_host)
-{
+    // TODO:
+    // The current implementation uses a rather moronic approach of fetching multiple single-item
+    // listings. That is very inefficient as listings are meant to be bulky by nature.
+    // However the implementation cannot use Host::FetchFlexibleListingItems() on a per-directory
+    // basis as this might break the paranoid security model coming with NSURL. One can end up in a
+    // situation when they can access a file but cannot access a directory where this file is
+    // located. This breaks the mechanics of FetchDirectoryListing(), which
+    // FetchFlexibleListingItems() uses under the hood. Ideally FetchFlexibleListingItems needs to
+    // be made virtual so that implementation like Native can provide more efficient implementations
+    // AND this function need to imply that there might not be any access to the directories and the
+    // implementation must rely only on stat()-level functions.
     std::vector<VFSListingItem> source_items;
-    for( const auto &dir : _input ) {
-        std::vector<VFSListingItem> items_for_dir;
-        auto rc = _host.FetchFlexibleListingItems(dir.first, dir.second, 0, items_for_dir, nullptr);
-        if( rc == VFSError::Ok )
-            std::move(std::begin(items_for_dir),
-                      std::end(items_for_dir),
-                      std::back_inserter(source_items));
+    for( NSURL *url : _input ) {
+        VFSListingPtr listing;
+        auto rc = _host.FetchSingleItemListing(url.fileSystemRepresentation, listing, 0);
+        if( rc == VFSError::Ok ) {
+            assert(listing && listing->Count() == 1);
+            source_items.emplace_back(listing->Item(0));
+        }
         else
             return tl::unexpected<int>(rc);
     }

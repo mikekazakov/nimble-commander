@@ -19,7 +19,7 @@ FileOverwritesStorage::FileOverwritesStorage(std::string_view _file_path) : m_Pa
 {
     Log::Trace(SPDLOC, "Created storage with path: {}", _file_path);
     auto parent_path = std::filesystem::path{std::string{_file_path}}.parent_path();
-    Log::Trace(SPDLOC, "Setting observation for directiry: {}", parent_path);
+    Log::Trace(SPDLOC, "Setting observation for directory: {}", parent_path);
     m_DirObservationTicket = FSEventsDirUpdate::Instance().AddWatchPath(
         parent_path.c_str(), [this] { OverwritesDirChanged(); });
 }

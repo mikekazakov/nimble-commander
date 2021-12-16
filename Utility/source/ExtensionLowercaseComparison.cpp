@@ -1,8 +1,7 @@
 // Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <string_view>
-#include <sys/param.h>
+#include <Utility/ExtensionLowercaseComparison.h>
 #include <Habanero/CFStackAllocator.h>
-#include "../include/Utility/ExtensionLowercaseComparison.h"
+#include <string_view>
 
 namespace nc::utility {
 
@@ -35,7 +34,7 @@ static std::string ProduceFormCLowercase(std::string_view _string)
     CFStringLowercase(mutable_string, nullptr);
     CFStringNormalize(mutable_string, kCFStringNormalizationFormC);
 
-    char utf8[MAXPATHLEN];
+    char utf8[128];
     long used = 0;
     CFStringGetBytes(mutable_string,
                      CFRangeMake(0, CFStringGetLength(mutable_string)),
@@ -43,7 +42,7 @@ static std::string ProduceFormCLowercase(std::string_view _string)
                      0,
                      false,
                      reinterpret_cast<UInt8 *>(utf8),
-                     MAXPATHLEN - 1,
+                     sizeof(utf8) - 1,
                      &used);
     utf8[used] = 0;
 
@@ -51,7 +50,7 @@ static std::string ProduceFormCLowercase(std::string_view _string)
     return utf8;
 }
 
-std::string ExtensionLowercaseComparison::ExtensionToLowercase(const std::string &_extension)
+std::string ExtensionLowercaseComparison::ExtensionToLowercase(std::string_view _extension)
 {
     if( _extension.length() > m_MaxLength )
         // we don't cache long extensions
@@ -67,48 +66,28 @@ std::string ExtensionLowercaseComparison::ExtensionToLowercase(const std::string
     return cl;
 }
 
-std::string ExtensionLowercaseComparison::ExtensionToLowercase(const char *_extension)
+bool ExtensionLowercaseComparison::Equal(std::string_view _filename_ext,
+                                         std::string_view _compare_to_formc_lc)
 {
-    if( std::strlen(_extension) > m_MaxLength )
-        // we don't cache long extensions
-        return ProduceFormCLowercase(_extension);
-
-    auto lock = std::lock_guard{m_Lock};
-    auto it = m_Data.find(_extension);
-    if( it != std::end(m_Data) )
-        return it->second;
-
-    auto cl = ProduceFormCLowercase(_extension);
-    m_Data.emplace(_extension, cl);
-    return cl;
-}
-
-bool ExtensionLowercaseComparison::Equal(const std::string &_filename_ext,
-                                         const std::string &_compare_to_formc_lc)
-{
-    auto lock = std::lock_guard{m_Lock};
-    auto it = m_Data.find(_filename_ext);
-    if( it != std::end(m_Data) )
-        return it->second == _compare_to_formc_lc;
-
-    auto cl = ProduceFormCLowercase(_filename_ext);
-    if( _filename_ext.length() <= m_MaxLength )
-        m_Data.emplace(_filename_ext, cl);
-    return cl == _compare_to_formc_lc;
-}
-
-bool ExtensionLowercaseComparison::Equal(const char *_filename_ext,
-                                         const std::string &_compare_to_formc_lc)
-{
-    auto lock = std::lock_guard{m_Lock};
-    auto it = m_Data.find(_filename_ext);
-    if( it != std::end(m_Data) )
-        return it->second == _compare_to_formc_lc;
-
-    auto cl = ProduceFormCLowercase(_filename_ext);
-    if( std::strlen(_filename_ext) <= m_MaxLength )
-        m_Data.emplace(_filename_ext, cl);
-    return cl == _compare_to_formc_lc;
+    if( _filename_ext.empty() )
+        return _compare_to_formc_lc.empty();
+    if( _compare_to_formc_lc.empty() )
+        return _filename_ext.empty();
+    
+    if( _filename_ext.length() <= m_MaxLength  ) {
+        auto lock = std::lock_guard{m_Lock};
+        auto it = m_Data.find(_filename_ext);
+        if( it != std::end(m_Data) )
+            return it->second == _compare_to_formc_lc;
+        auto cl = ProduceFormCLowercase(_filename_ext);
+        auto equal = cl == _compare_to_formc_lc;
+        m_Data.emplace(_filename_ext, std::move(cl));
+        return equal;
+    }
+    else {
+        auto cl = ProduceFormCLowercase(_filename_ext);
+        return cl == _compare_to_formc_lc;
+    }
 }
 
 } // namespace nc::utility

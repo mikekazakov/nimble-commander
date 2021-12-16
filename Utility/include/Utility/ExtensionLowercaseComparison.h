@@ -2,6 +2,8 @@
 #pragma once
 
 #include <string>
+#include <string_view>
+
 #include <Habanero/RobinHoodUtil.h>
 #include <Habanero/spinlock.h>
 
@@ -18,16 +20,14 @@ public:
      * level. Will store result in cache and return. Will not cache extension with utf8 length more
      * than m_MaxLength
      */
-    std::string ExtensionToLowercase(const std::string &_extension);
-    std::string ExtensionToLowercase(const char *_extension);
+    std::string ExtensionToLowercase(std::string_view _extension);
 
     /**
      * Will try to find _filename_ext normalized lowercase form in cache, if can't - will produce it
      * temporary. _compare_to_formc_lc is used directly without any tranformation, so it should be
      * normalized and lowercased already
      */
-    bool Equal(const std::string &_filename_ext, const std::string &_compare_to_formc_lc);
-    bool Equal(const char *_filename_ext, const std::string &_compare_to_formc_lc);
+    bool Equal(std::string_view _filename_ext, std::string_view _compare_to_formc_lc);
 
 private:
     enum

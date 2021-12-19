@@ -309,7 +309,6 @@
 		CFF53B751EDE53E800F567C4 /* Operation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Operation.mm; path = source/Operation.mm; sourceTree = SOURCE_ROOT; };
 		CFF53B781EDEA83900F567C4 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = source/Job.h; sourceTree = SOURCE_ROOT; };
 		CFF53B791EDEA83900F567C4 /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = source/Job.cpp; sourceTree = SOURCE_ROOT; };
-		CFF53B871EE1577100F567C4 /* Operations-prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Operations-prefix.pch"; path = "source/Operations-prefix.pch"; sourceTree = "<group>"; };
 		CFF53B8C1EE24F9E00F567C4 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = include/Operations/Job.h; sourceTree = "<group>"; };
 		CFF53B8D1EE24F9E00F567C4 /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operation.h; path = include/Operations/Operation.h; sourceTree = "<group>"; };
 		CFF53B8F1EE24FEC00F567C4 /* Compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Compression.h; path = source/Compression/Compression.h; sourceTree = "<group>"; };
@@ -469,7 +468,6 @@
 				CFC4F9011F0617E20000B3EE /* ModalDialogResponses.h */,
 				CFF53B741EDE53E800F567C4 /* Operation.h */,
 				CFF53B751EDE53E800F567C4 /* Operation.mm */,
-				CFF53B871EE1577100F567C4 /* Operations-prefix.pch */,
 				CF7084D61EF7CC770072F0F6 /* Pool.h */,
 				CF7084D71EF7CC770072F0F6 /* Pool.mm */,
 				CF287FF126F6876200FC24B5 /* PoolEnqueueFilter.cpp */,

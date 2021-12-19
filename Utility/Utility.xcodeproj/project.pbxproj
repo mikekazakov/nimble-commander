@@ -31,7 +31,6 @@
 		CF460141256125E50095FC73 /* MIMResponder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6C201F167200BF2090 /* MIMResponder.mm */; };
 		CF460142256125E50095FC73 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */; };
 		CF460143256125E50095FC73 /* NativeFSManagerVolumeLookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD7723B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp */; };
-		CF460144256125E50095FC73 /* PrecompiledHeaders.pch in Headers */ = {isa = PBXBuildFile; fileRef = CF233B13219E94B300693E1A /* PrecompiledHeaders.pch */; };
 		CF460145256125E50095FC73 /* FunctionKeysPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */; };
 		CF460146256125E50095FC73 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1B1C9AFF280021EE7F /* SheetController.mm */; };
 		CF460147256125E50095FC73 /* UTIImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2B751B22B82FF0009D4160 /* UTIImpl.cpp */; };
@@ -111,7 +110,6 @@
 		CF233AF1219E7E9600693E1A /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CF233AF2219E7E9600693E1A /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CF233AF3219E7E9600693E1A /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
-		CF233B13219E94B300693E1A /* PrecompiledHeaders.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PrecompiledHeaders.pch; path = source/PrecompiledHeaders.pch; sourceTree = "<group>"; };
 		CF24E1F32288A9FB00C166FA /* ActionShortcut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActionShortcut.h; path = include/Utility/ActionShortcut.h; sourceTree = "<group>"; };
 		CF24E1F52288AA0500C166FA /* ActionShortcut.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionShortcut.mm; path = source/ActionShortcut.mm; sourceTree = "<group>"; };
 		CF24E1F7228B525000C166FA /* ActionShortcut_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionShortcut_UT.mm; path = tests/ActionShortcut_UT.mm; sourceTree = "<group>"; };
@@ -429,7 +427,6 @@
 				CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */,
 				CF46524E269103D90085840A /* ObjCpp.mm */,
 				CF960E261C992F35001D8B02 /* PathManip.cpp */,
-				CF233B13219E94B300693E1A /* PrecompiledHeaders.pch */,
 				CFD62C1B1C9AFF280021EE7F /* SheetController.mm */,
 				CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */,
 				CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */,
@@ -470,7 +467,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF460144256125E50095FC73 /* PrecompiledHeaders.pch in Headers */,
 				CF61F30B26404962009FF900 /* FSEventsFileUpdateImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

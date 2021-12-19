@@ -1981,7 +1981,6 @@
 		CFDAC2201DFBCA290039A104 /* PanelDataPersistency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataPersistency.h; path = NimbleCommander/States/FilePanels/PanelDataPersistency.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2221DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationItemsColoringFilter.h; path = NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationItemsColoringFilter.mm; path = NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.mm; sourceTree = SOURCE_ROOT; };
-		CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NimbleCommander-Prefix.pch"; path = "NimbleCommander/Bootstrap/NimbleCommander-Prefix.pch"; sourceTree = SOURCE_ROOT; };
 		CFDAC22E1DFBDBCB0039A104 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = NimbleCommander/Bootstrap/Config.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2321DFBDE2B0039A104 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = NimbleCommander/Bootstrap/main.cpp; sourceTree = SOURCE_ROOT; };
 		CFDAC2341DFBDE560039A104 /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Application.h; path = NimbleCommander/Bootstrap/Application.h; sourceTree = SOURCE_ROOT; };
@@ -2751,7 +2750,6 @@
 				CFE08B0C23D4BE3D007E99B8 /* NativeVFSHostInstance.h */,
 				CF2F10B02567DF2500622405 /* NCHelpMenuDelegate.h */,
 				CF2F10972567DF2500622405 /* NCHelpMenuDelegate.mm */,
-				CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */,
 				CF0B78F825739F79003061D0 /* SparkleShim.h */,
 				CF0B78D925739F61003061D0 /* SparkleShim.m */,
 				CFA999D9264F17A800F72E93 /* CLI.cpp */,

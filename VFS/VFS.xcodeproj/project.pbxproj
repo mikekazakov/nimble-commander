@@ -216,7 +216,6 @@
 		CF69CFF21DA227E400992B84 /* VFSPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPath.h; path = include/VFS/VFSPath.h; sourceTree = "<group>"; };
 		CF69CFF31DA227E400992B84 /* VFSSeqToRandomWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSSeqToRandomWrapper.h; path = include/VFS/VFSSeqToRandomWrapper.h; sourceTree = "<group>"; };
 		CF69D0081DA2281E00992B84 /* Host.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Host.cpp; path = source/Host.cpp; sourceTree = "<group>"; };
-		CF69D00A1DA228C800992B84 /* VFS-prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "VFS-prefix.pch"; path = "source/VFS-prefix.pch"; sourceTree = "<group>"; };
 		CF69D00C1DA22BE800992B84 /* VFSArchiveProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveProxy.mm; path = source/VFSArchiveProxy.mm; sourceTree = "<group>"; };
 		CF69D00D1DA22BE800992B84 /* VFSConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSConfiguration.cpp; path = source/VFSConfiguration.cpp; sourceTree = "<group>"; };
 		CF69D00E1DA22BE800992B84 /* VFSEasyOps.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSEasyOps.mm; path = source/VFSEasyOps.mm; sourceTree = "<group>"; };
@@ -551,7 +550,6 @@
 				CF69D00C1DA22BE800992B84 /* VFSArchiveProxy.mm */,
 				CF69D00E1DA22BE800992B84 /* VFSEasyOps.mm */,
 				CF69D00F1DA22BE800992B84 /* VFSError.mm */,
-				CF69D00A1DA228C800992B84 /* VFS-prefix.pch */,
 				CF69D0501DA2335700992B84 /* ArcLA */,
 				CF69D0611DA2343700992B84 /* ArcUnRAR */,
 				CF22F0A4258DF7550033E850 /* Mem */,

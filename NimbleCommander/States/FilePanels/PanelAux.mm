@@ -25,7 +25,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 namespace nc::panel {
 
-static const auto g_ConfigArchivesExtensionsWhieList =
+static const auto g_ConfigArchivesExtensionsWhiteList =
     "filePanel.general.archivesExtensionsWhitelist";
 static const auto g_ConfigExecutableExtensionsWhitelist =
     "filePanel.general.executableExtensionsWhitelist";
@@ -295,25 +295,6 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)
 {
-    [[clang::no_destroy]] static const robin_hood::unordered_flat_set<std::string> extensions = [] {
-        auto &lowercase_cmp = utility::ExtensionLowercaseComparison::Instance();
-        std::vector<std::string> v;
-        auto exts_string = GlobalConfig().GetString(g_ConfigExecutableExtensionsWhitelist);
-        auto exts_array =
-            [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","];
-        if( exts_array != nil ) {
-            for( NSString *s : exts_array ) {
-                auto whitespaces = NSCharacterSet.whitespaceAndNewlineCharacterSet;
-                if( s != nil && s.length > 0 )
-                    if( auto trimmed = [s stringByTrimmingCharactersInSet:whitespaces] ) {
-                        if( auto utf8 = trimmed.UTF8String )
-                            v.emplace_back(lowercase_cmp.ExtensionToLowercase(utf8));
-                    }
-            }
-        }
-        return robin_hood::unordered_flat_set<std::string>(v.begin(), v.end());
-    }();
-
     if( _item.IsDir() )
         return false;
 
@@ -328,11 +309,10 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)
     if( !_item.HasExtension() )
         return true; // if file has no extension and had execute rights - let's try it
 
-    const auto extension =
-        utility::ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_item.Extension());
-    return extensions.contains(extension);
+    [[clang::no_destroy]] static const utility::ExtensionsLowercaseList extensions(
+        GlobalConfig().GetString(g_ConfigExecutableExtensionsWhitelist));
 
-    return false;
+    return extensions.contains(_item.Extension());
 }
 
 static ops::CopyingOptions::ChecksumVerification DefaultChecksumVerificationSetting()
@@ -371,27 +351,9 @@ bool IsExtensionInArchivesWhitelist(const char *_ext) noexcept
 {
     if( !_ext )
         return false;
-    [[clang::no_destroy]] static const std::vector<std::string> archive_extensions = [] {
-        std::vector<std::string> v;
-        auto exts_string = GlobalConfig().GetString(g_ConfigArchivesExtensionsWhieList);
-        if( auto extensions_array =
-                [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","] )
-            for( NSString *s : extensions_array )
-                if( s != nil && s.length > 0 )
-                    if( auto trimmed = [s
-                            stringByTrimmingCharactersInSet:NSCharacterSet
-                                                                .whitespaceAndNewlineCharacterSet] )
-                        if( auto utf8 = trimmed.UTF8String )
-                            v.emplace_back(utility::ExtensionLowercaseComparison::Instance()
-                                               .ExtensionToLowercase(utf8));
-        return v;
-    }();
-
-    const auto extension =
-        utility::ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_ext);
-    return any_of(begin(archive_extensions), end(archive_extensions), [&](auto &_) {
-        return extension == _;
-    });
+    [[clang::no_destroy]] static const utility::ExtensionsLowercaseList archive_extensions(
+        GlobalConfig().GetString(g_ConfigArchivesExtensionsWhiteList));
+    return archive_extensions.contains(_ext);
 }
 
 bool ShowQuickLookAsFloatingPanel() noexcept

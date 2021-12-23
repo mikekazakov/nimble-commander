@@ -73,6 +73,7 @@
 		CFA999652644888C00F72E93 /* FSEventsFileUpdate_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA999642644888C00F72E93 /* FSEventsFileUpdate_UT.cpp */; };
 		CFAB6D11258A086100397DB5 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFAB6D10258A086100397DB5 /* Log.cpp */; };
 		CFAB7F1A276009E400926554 /* URLSecurityScopedResourceGuard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAB7F19276009E400926554 /* URLSecurityScopedResourceGuard.mm */; };
+		CFAB7F7A2774A50700926554 /* ExtensionLowercaseComparison_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFAB7F792774A50700926554 /* ExtensionLowercaseComparison_UT.cpp */; };
 		CFB062452590BB4E0095C748 /* SystemInformation_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB062442590BB4E0095C748 /* SystemInformation_UT.mm */; };
 		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
 		CFC41DAB257159630037677B /* VersionCompare.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC41DAA257159630037677B /* VersionCompare.mm */; };
@@ -187,6 +188,7 @@
 		CFAB6D10258A086100397DB5 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = source/Log.cpp; sourceTree = "<group>"; };
 		CFAB7F18276009BD00926554 /* URLSecurityScopedResourceGuard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = URLSecurityScopedResourceGuard.h; path = include/Utility/URLSecurityScopedResourceGuard.h; sourceTree = "<group>"; };
 		CFAB7F19276009E400926554 /* URLSecurityScopedResourceGuard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = URLSecurityScopedResourceGuard.mm; path = source/URLSecurityScopedResourceGuard.mm; sourceTree = "<group>"; };
+		CFAB7F792774A50700926554 /* ExtensionLowercaseComparison_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionLowercaseComparison_UT.cpp; path = tests/ExtensionLowercaseComparison_UT.cpp; sourceTree = "<group>"; };
 		CFB062442590BB4E0095C748 /* SystemInformation_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation_UT.mm; path = tests/SystemInformation_UT.mm; sourceTree = "<group>"; };
 		CFB0F235215A076F0088C18E /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMask.h; path = include/Utility/FileMask.h; sourceTree = "<group>"; };
 		CFB0F237215A07770088C18E /* FileMask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask.cpp; path = source/FileMask.cpp; sourceTree = "<group>"; };
@@ -282,6 +284,7 @@
 				CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */,
 				CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */,
 				CF614AA91F9D871D0005F2DB /* Encodings_UT.mm */,
+				CFAB7F792774A50700926554 /* ExtensionLowercaseComparison_UT.cpp */,
 				CFB0F239215A07830088C18E /* FileMask_UT.cpp */,
 				CF38472B2010780B00BAB3BE /* FilenameTextNavigation_UT.mm */,
 				CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */,
@@ -624,6 +627,7 @@
 				CFB062452590BB4E0095C748 /* SystemInformation_UT.mm in Sources */,
 				CF88363925716F9300BAC081 /* VersionCompare_UT.cpp in Sources */,
 				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,
+				CFAB7F7A2774A50700926554 /* ExtensionLowercaseComparison_UT.cpp in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
 				CF3ABD7D23B8AC0A00D1878B /* NativeFSManagerVolumeLookup_UT.cpp in Sources */,
 				CFA999652644888C00F72E93 /* FSEventsFileUpdate_UT.cpp in Sources */,

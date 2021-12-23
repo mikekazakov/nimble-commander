@@ -939,7 +939,8 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
 
             const auto rc = NSMakeRect(0, 0, 100, 100);
             const auto view = [[NCPanelQLOverlay alloc] initWithFrame:rc
-                                                               bridge:m_QLPanelAdaptor.bridge];
+                                                               bridge:m_QLPanelAdaptor.bridge
+                                                               config:GlobalConfig()];
 
             if( [self isLeftController:_panel] )
                 m_SplitView.rightOverlay = view;

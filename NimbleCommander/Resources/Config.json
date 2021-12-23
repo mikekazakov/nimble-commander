@@ -173,7 +173,18 @@
              * A whitelist of UTIs used to determine whether an QuickLook icon is required for a
              * file. Requires restart to take effect.
              */
-            "quickLookIconsWhitelist": "public.image, public.movie, public.audio"
+            "quickLookIconsWhitelist": "public.image, public.movie, public.audio",
+            
+            /**
+             * Due to a bug in the Apple's QuickLook framework viewing some file formats can cause
+             * the application to crash. That happens only under specific circumstances and when
+             * QuickLook is displayed as a panel overlay.
+             * As a workaround this comma-separated list controls whether QuickLook view will be
+             * reset before displaying the next item.
+             * This causes a visual flicker so is not enabled by default.
+             * Specifying "*" will enable this safe behaviour for all items.
+             */
+            "quickLookHazardousExtensionsList": "pdf"
         },
         
         /**

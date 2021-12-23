@@ -2,6 +2,8 @@
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Habanero/CFStackAllocator.h>
 #include <string_view>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 namespace nc::utility {
 
@@ -24,12 +26,12 @@ static std::string ProduceFormCLowercase(std::string_view _string)
                                       kCFAllocatorNull);
 
     if( !original )
-        return "";
+        return {};
 
     CFMutableStringRef mutable_string = CFStringCreateMutableCopy(allocator.Alloc(), 0, original);
     CFRelease(original);
     if( !mutable_string )
-        return "";
+        return {};
 
     CFStringLowercase(mutable_string, nullptr);
     CFStringNormalize(mutable_string, kCFStringNormalizationFormC);
@@ -58,7 +60,7 @@ std::string ExtensionLowercaseComparison::ExtensionToLowercase(std::string_view 
 
     auto lock = std::lock_guard{m_Lock};
     auto it = m_Data.find(_extension);
-    if( it != end(m_Data) )
+    if( it != std::end(m_Data) )
         return it->second;
 
     auto cl = ProduceFormCLowercase(_extension);
@@ -73,8 +75,8 @@ bool ExtensionLowercaseComparison::Equal(std::string_view _filename_ext,
         return _compare_to_formc_lc.empty();
     if( _compare_to_formc_lc.empty() )
         return _filename_ext.empty();
-    
-    if( _filename_ext.length() <= m_MaxLength  ) {
+
+    if( _filename_ext.length() <= m_MaxLength ) {
         auto lock = std::lock_guard{m_Lock};
         auto it = m_Data.find(_filename_ext);
         if( it != std::end(m_Data) )
@@ -88,6 +90,25 @@ bool ExtensionLowercaseComparison::Equal(std::string_view _filename_ext,
         auto cl = ProduceFormCLowercase(_filename_ext);
         return cl == _compare_to_formc_lc;
     }
+}
+
+ExtensionsLowercaseList::ExtensionsLowercaseList(std::string_view _comma_separated_list)
+{
+    auto &i = ExtensionLowercaseComparison::Instance();
+    std::vector<std::string> exts;
+    boost::split(
+        exts, _comma_separated_list, [](char _c) { return _c == ','; }, boost::token_compress_on);
+    for( auto &ext : exts ) {
+        boost::trim(ext);
+        if( ext.empty() == false )
+            m_List.emplace(i.ExtensionToLowercase(ext));
+    }
+}
+
+bool ExtensionsLowercaseList::contains(std::string_view _extension) const noexcept
+{
+    return m_List.contains(
+        ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_extension));
 }
 
 } // namespace nc::utility

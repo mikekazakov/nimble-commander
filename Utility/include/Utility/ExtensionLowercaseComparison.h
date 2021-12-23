@@ -43,4 +43,16 @@ private:
     nc::spinlock m_Lock;
 };
 
+class ExtensionsLowercaseList
+{
+public:
+    ExtensionsLowercaseList(std::string_view _comma_separated_list);
+    bool contains(std::string_view _extension) const noexcept;
+
+private:
+    using Storage = robin_hood::
+        unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
+    Storage m_List;
+};
+
 } // namespace nc::utility

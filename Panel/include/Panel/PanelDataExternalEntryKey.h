@@ -2,6 +2,7 @@
 #pragma once
 
 #include <VFS/VFS.h>
+#include <Habanero/CFPtr.h>
 
 namespace nc::panel::data {
 
@@ -12,8 +13,8 @@ struct ExternalEntryKey {
     ExternalEntryKey(const VFSListingItem &_item, const ItemVolatileData &_item_vd);
 
     std::string name;
-    NSString *display_name;
     std::string extension;
+    nc::base::CFPtr<CFStringRef> display_name;
     uint64_t size;
     time_t mtime;
     time_t btime;

@@ -5,7 +5,7 @@
 namespace nc::panel::data {
 
 ExternalEntryKey::ExternalEntryKey()
-    : name{""}, display_name{nil}, extension{""}, size{0}, mtime{0}, btime{0}, atime{0},
+    : name{""}, extension{""}, display_name{}, size{0}, mtime{0}, btime{0}, atime{0},
       add_time{-1}, is_dir{false}
 {
 }
@@ -14,7 +14,7 @@ ExternalEntryKey::ExternalEntryKey(const VFSListingItem &_item, const ItemVolati
     : ExternalEntryKey()
 {
     name = _item.Filename();
-    display_name = _item.DisplayNameNS();
+    display_name.reset(_item.DisplayNameCF());
     extension = _item.HasExtension() ? _item.Extension() : "";
     size = _item_vd.size;
     mtime = _item.MTime();
@@ -26,7 +26,7 @@ ExternalEntryKey::ExternalEntryKey(const VFSListingItem &_item, const ItemVolati
 
 bool ExternalEntryKey::is_valid() const noexcept
 {
-    return !name.empty() && display_name != nil;
+    return !name.empty() && display_name;
 }
 
 } // namespace nc::panel::data

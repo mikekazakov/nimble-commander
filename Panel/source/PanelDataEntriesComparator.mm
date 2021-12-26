@@ -271,7 +271,7 @@ bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &
     }
 
     const auto by_name = [&] {
-        return Compare(l.DisplayFilenameCF(_1), (__bridge CFStringRef)_val2.display_name);
+        return Compare(l.DisplayFilenameCF(_1), _val2.display_name.get());
     };
 
     switch( sort_mode.sort ) {

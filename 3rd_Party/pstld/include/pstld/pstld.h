@@ -122,7 +122,7 @@ struct unitialized_array : parallelism_allocator<T> {
     using allocator = parallelism_allocator<T>;
     T *m_data;
     size_t m_size;
-    unitialized_array(size_t size) : m_size(size), m_data(allocator::allocate(size)) {}
+    unitialized_array(size_t size) : m_data(allocator::allocate(size)), m_size(size) {}
 
     ~unitialized_array()
     {
@@ -1049,9 +1049,9 @@ FwdIt search_n(FwdIt first, FwdIt last, Size count2, const T &value, Pred pred) 
         return first;
 
     const auto count1 = std::distance(first, last);
-    if( count1 < count2 )
+    if( static_cast<Size>(count1) < count2 )
         return last;
-    if( count1 == count2 )
+    if( static_cast<Size>(count1) == count2 )
         return std::all_of(first, last, [&](const auto &v) { return pred(v, value); }) ? first
                                                                                        : last;
 
@@ -1892,7 +1892,7 @@ struct Sort {
         auto depth = w.depth;
         while( first != last ) {
             const auto len = last - first;
-            if( len <= insertion_sort_limit ) {
+            if( static_cast<size_t>(len) <= insertion_sort_limit ) {
                 // small len - do an insertion sort
                 insertion_sort(first, last, m_cmp);
                 m_work_counters[worker_index].commit_relaxed(len);
@@ -1968,7 +1968,7 @@ template <class RanIt, class Cmp>
 void sort(RanIt first, RanIt last, Cmp cmp) noexcept
 {
     const auto count = std::distance(first, last);
-    if( count > internal::insertion_sort_limit ) {
+    if( static_cast<size_t>(count) > internal::insertion_sort_limit ) {
         try {
             internal::Sort<RanIt, Cmp> sort(first, last, cmp);
             sort.start();
@@ -2449,7 +2449,7 @@ count_if(ExPo &&, It first, It last, Pred pred) noexcept
 
 template <class ExPo, class It1, class It2>
 execution::__enable_if_execution_policy<ExPo, std::pair<It1, It2>>
-mismatch(ExPo &&policy, It1 first1, It1 last1, It2 first2) noexcept
+mismatch(ExPo &&, It1 first1, It1 last1, It2 first2) noexcept
 {
     if constexpr( execution::__pstld_enabled<ExPo> )
         return ::pstld::mismatch(first1, last1, first2);
@@ -2459,7 +2459,7 @@ mismatch(ExPo &&policy, It1 first1, It1 last1, It2 first2) noexcept
 
 template <class ExPo, class It1, class It2, class Cmp>
 execution::__enable_if_execution_policy<ExPo, std::pair<It1, It2>>
-mismatch(ExPo &&policy, It1 first1, It1 last1, It2 first2, Cmp cmp) noexcept
+mismatch(ExPo &&, It1 first1, It1 last1, It2 first2, Cmp cmp) noexcept
 {
     if constexpr( execution::__pstld_enabled<ExPo> )
         return ::pstld::mismatch(first1, last1, first2, cmp);
@@ -2469,7 +2469,7 @@ mismatch(ExPo &&policy, It1 first1, It1 last1, It2 first2, Cmp cmp) noexcept
 
 template <class ExPo, class It1, class It2>
 execution::__enable_if_execution_policy<ExPo, std::pair<It1, It2>>
-mismatch(ExPo &&policy, It1 first1, It1 last1, It2 first2, It2 last2) noexcept
+mismatch(ExPo &&, It1 first1, It1 last1, It2 first2, It2 last2) noexcept
 {
     if constexpr( execution::__pstld_enabled<ExPo> )
         return ::pstld::mismatch(first1, last1, first2, last2);
@@ -2479,7 +2479,7 @@ mismatch(ExPo &&policy, It1 first1, It1 last1, It2 first2, It2 last2) noexcept
 
 template <class ExPo, class It1, class It2, class Cmp>
 execution::__enable_if_execution_policy<ExPo, std::pair<It1, It2>>
-mismatch(ExPo &&policy, It1 first1, It1 last1, It2 first2, It2 last2, Cmp cmp) noexcept
+mismatch(ExPo &&, It1 first1, It1 last1, It2 first2, It2 last2, Cmp cmp) noexcept
 {
     if constexpr( execution::__pstld_enabled<ExPo> )
         return ::pstld::mismatch(first1, last1, first2, last2, cmp);

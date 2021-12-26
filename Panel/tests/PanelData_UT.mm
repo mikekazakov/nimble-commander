@@ -3,6 +3,7 @@
 #include <VFS/VFS.h>
 #include <VFS/VFSListingInput.h>
 #include "PanelData.h"
+#include "PanelDataItemVolatileData.h"
 #include "PanelDataSelection.h"
 #include <memory>
 #include <set>
@@ -14,6 +15,7 @@ using namespace nc;
 using namespace nc::base;
 using namespace nc::panel;
 using data::Model;
+using data::ItemVolatileData;
 
 static VFSListingPtr ProduceDummyListing(const std::vector<std::string> &_filenames)
 {
@@ -121,8 +123,8 @@ TEST_CASE(PREFIX "SortedIndexForRawIndex")
     SECTION("Empty")
     {
         Model model;
-        CHECK( model.SortedIndexForRawIndex(-1) == -1 );
-        CHECK( model.SortedIndexForRawIndex(0) == -1 );
+        CHECK(model.SortedIndexForRawIndex(-1) == -1);
+        CHECK(model.SortedIndexForRawIndex(0) == -1);
     }
     SECTION("Filled, no hard filtering")
     {
@@ -131,22 +133,22 @@ TEST_CASE(PREFIX "SortedIndexForRawIndex")
         data::SortMode sorting;
         sorting.sort = data::SortMode::SortByName;
         sorting.case_sens = false;
-        
+
         Model model;
         model.SetSortMode(sorting);
         model.Load(listing, Model::PanelType::Directory);
-        
-        CHECK( model.SortedIndexForRawIndex(-1) == -1 );
-        CHECK( model.SortedIndexForRawIndex(0) == 0 );
-        CHECK( model.SortedIndexForRawIndex(1) == 5 );
-        CHECK( model.SortedIndexForRawIndex(2) == 7 );
-        CHECK( model.SortedIndexForRawIndex(3) == 1 );
-        CHECK( model.SortedIndexForRawIndex(4) == 2 );
-        CHECK( model.SortedIndexForRawIndex(5) == 6 );
-        CHECK( model.SortedIndexForRawIndex(6) == 3 );
-        CHECK( model.SortedIndexForRawIndex(7) == 8 );
-        CHECK( model.SortedIndexForRawIndex(8) == 4 );
-        CHECK( model.SortedIndexForRawIndex(9) == -1 );
+
+        CHECK(model.SortedIndexForRawIndex(-1) == -1);
+        CHECK(model.SortedIndexForRawIndex(0) == 0);
+        CHECK(model.SortedIndexForRawIndex(1) == 5);
+        CHECK(model.SortedIndexForRawIndex(2) == 7);
+        CHECK(model.SortedIndexForRawIndex(3) == 1);
+        CHECK(model.SortedIndexForRawIndex(4) == 2);
+        CHECK(model.SortedIndexForRawIndex(5) == 6);
+        CHECK(model.SortedIndexForRawIndex(6) == 3);
+        CHECK(model.SortedIndexForRawIndex(7) == 8);
+        CHECK(model.SortedIndexForRawIndex(8) == 4);
+        CHECK(model.SortedIndexForRawIndex(9) == -1);
     }
     SECTION("Filled, hard filtering")
     {
@@ -155,30 +157,30 @@ TEST_CASE(PREFIX "SortedIndexForRawIndex")
         data::SortMode sorting;
         sorting.sort = data::SortMode::SortByName;
         sorting.case_sens = false;
-        
+
         data::TextualFilter textual_filter;
         textual_filter.text = @"a";
         textual_filter.type = data::TextualFilter::Anywhere;
-                
+
         data::HardFilter filter;
         filter.text = textual_filter;
-        
+
         Model model;
         model.SetSortMode(sorting);
         model.SetHardFiltering(filter);
         model.Load(listing, Model::PanelType::Directory);
-        
-        CHECK( model.SortedIndexForRawIndex(-1) == -1 );
-        CHECK( model.SortedIndexForRawIndex(0) == 0 );
-        CHECK( model.SortedIndexForRawIndex(1) == -1 );
-        CHECK( model.SortedIndexForRawIndex(2) == -1 );
-        CHECK( model.SortedIndexForRawIndex(3) == 1 );
-        CHECK( model.SortedIndexForRawIndex(4) == 2 );
-        CHECK( model.SortedIndexForRawIndex(5) == -1 );
-        CHECK( model.SortedIndexForRawIndex(6) == 3 );
-        CHECK( model.SortedIndexForRawIndex(7) == -1 );
-        CHECK( model.SortedIndexForRawIndex(8) == 4 );
-        CHECK( model.SortedIndexForRawIndex(9) == -1 );
+
+        CHECK(model.SortedIndexForRawIndex(-1) == -1);
+        CHECK(model.SortedIndexForRawIndex(0) == 0);
+        CHECK(model.SortedIndexForRawIndex(1) == -1);
+        CHECK(model.SortedIndexForRawIndex(2) == -1);
+        CHECK(model.SortedIndexForRawIndex(3) == 1);
+        CHECK(model.SortedIndexForRawIndex(4) == 2);
+        CHECK(model.SortedIndexForRawIndex(5) == -1);
+        CHECK(model.SortedIndexForRawIndex(6) == 3);
+        CHECK(model.SortedIndexForRawIndex(7) == -1);
+        CHECK(model.SortedIndexForRawIndex(8) == 4);
+        CHECK(model.SortedIndexForRawIndex(9) == -1);
     }
 }
 
@@ -377,7 +379,7 @@ TEST_CASE(PREFIX "HardFiltering, edge case - emply panel")
     data.Load(listing, data::Model::PanelType::Directory);
     CHECK(data.SortedIndexForName("aaa") == 0);
     CHECK(data.SortedIndexForName("bbb") == 1);
-    
+
     filtering.text.text = @"nonsense";
     data.SetHardFiltering(filtering);
     CHECK(data.SortedEntriesCount() == 0);
@@ -499,4 +501,189 @@ TEST_CASE(PREFIX "DirectorySorting")
     CHECK(data.EntryAtSortPosition(0).Filename() == "Charlie.3");
     CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo.1");
     CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha.2");
+}
+
+// bool Model::SetCalculatedSizeForDirectory(std::string_view _filename,
+//                                          std::string_view _directory,
+//                                          uint64_t _size)
+
+//
+// TEST_CASE(PREFIX "DirectorySorting")
+//{
+//    const std::vector<std::tuple<std::string, bool>> entries = {
+//        {{"Alpha.2", true}, {"Bravo.1", true}, {"Charlie.3", true}}};
+//    auto listing = ProduceDummyListing(entries);
+//
+//    data::Model data;
+//    data.Load(listing, data::Model::PanelType::Directory);
+//
+//
+//}
+
+// bool Model::SetCalculatedSizeForDirectory(std::string_view _filename,
+//                                          std::string_view _directory,
+//                                          uint64_t _size)
+
+TEST_CASE(PREFIX "SetCalculatedSizeForDirectory")
+{
+    const std::vector<std::tuple<std::string, bool>> entries = {
+        {{"Alpha", true}, {"Bravo", true}, {"Charlie", true}}};
+    auto listing = ProduceDummyListing(entries);
+
+    data::Model data;
+    data.Load(listing, data::Model::PanelType::Directory);
+
+    auto sorting = data::SortMode{};
+    sorting.sort = data::SortMode::SortBySize;
+    data.SetSortMode(sorting);
+    CHECK(data.EntryAtSortPosition(0).Filename() == "Alpha");
+    CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
+    CHECK(data.EntryAtSortPosition(2).Filename() == "Charlie");
+    CHECK(data.VolatileDataAtRawPosition(0).size == ItemVolatileData::invalid_size);
+    CHECK(data.VolatileDataAtRawPosition(1).size == ItemVolatileData::invalid_size);
+    CHECK(data.VolatileDataAtRawPosition(2).size == ItemVolatileData::invalid_size);
+
+    SECTION("Valid")
+    {
+        CHECK(data.SetCalculatedSizeForDirectory("Bravo", "/", 10));
+        CHECK(data.VolatileDataAtRawPosition(1).size == 10);
+        CHECK(data.EntryAtSortPosition(0).Filename() == "Alpha");
+        CHECK(data.EntryAtSortPosition(1).Filename() == "Charlie");
+        CHECK(data.EntryAtSortPosition(2).Filename() == "Bravo");
+
+        CHECK(data.SetCalculatedSizeForDirectory("Alpha", "/", 20));
+        CHECK(data.VolatileDataAtRawPosition(0).size == 20);
+        CHECK(data.EntryAtSortPosition(0).Filename() == "Charlie");
+        CHECK(data.EntryAtSortPosition(1).Filename() == "Alpha");
+        CHECK(data.EntryAtSortPosition(2).Filename() == "Bravo");
+
+        CHECK(data.SetCalculatedSizeForDirectory("Charlie", "/", 30));
+        CHECK(data.VolatileDataAtRawPosition(2).size == 30);
+        CHECK(data.EntryAtSortPosition(0).Filename() == "Charlie");
+        CHECK(data.EntryAtSortPosition(1).Filename() == "Alpha");
+        CHECK(data.EntryAtSortPosition(2).Filename() == "Bravo");
+    }
+    SECTION("Invalid ")
+    {
+        CHECK(data.SetCalculatedSizeForDirectory("Blah-Blah", "/", 10) == false);
+        CHECK(data.SetCalculatedSizeForDirectory({}, "/", 10) == false);
+        CHECK(data.SetCalculatedSizeForDirectory("Alpha", {}, 10) == false);
+        CHECK(data.SetCalculatedSizeForDirectory("Charlie", "/", ItemVolatileData::invalid_size) == false);
+    }
+}
+
+TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
+{
+    const std::vector<std::tuple<std::string, bool>> entries = {
+        {{"Alpha", true}, {"Bravo", true}, {"Charlie", true}}};
+    auto listing = ProduceDummyListing(entries);
+
+    data::Model data;
+    data.Load(listing, data::Model::PanelType::Directory);
+
+    auto sorting = data::SortMode{};
+    sorting.sort = data::SortMode::SortBySize;
+    data.SetSortMode(sorting);
+    CHECK(data.EntryAtSortPosition(0).Filename() == "Alpha");
+    CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
+    CHECK(data.EntryAtSortPosition(2).Filename() == "Charlie");
+    CHECK(data.VolatileDataAtRawPosition(0).size == ItemVolatileData::invalid_size);
+    CHECK(data.VolatileDataAtRawPosition(1).size == ItemVolatileData::invalid_size);
+    CHECK(data.VolatileDataAtRawPosition(2).size == ItemVolatileData::invalid_size);
+
+    SECTION("Empty")
+    {
+        CHECK(data.SetCalculatedSizesForDirectories({},{},{}) == 0);
+        CHECK(data.EntryAtSortPosition(0).Filename() == "Alpha");
+        CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
+        CHECK(data.EntryAtSortPosition(2).Filename() == "Charlie");
+        CHECK(data.VolatileDataAtRawPosition(0).size == ItemVolatileData::invalid_size);
+        CHECK(data.VolatileDataAtRawPosition(1).size == ItemVolatileData::invalid_size);
+        CHECK(data.VolatileDataAtRawPosition(2).size == ItemVolatileData::invalid_size);
+    }
+    SECTION("Valid")
+    {
+        SECTION("1 element")
+        {
+            const std::string_view filenames[1] = {"Alpha"};
+            const std::string_view directories[1] = {"/"};
+            const uint64_t sizes[1] = {10};
+            CHECK(data.SetCalculatedSizesForDirectories(filenames,directories,sizes) == 1);
+            CHECK(data.EntryAtSortPosition(0).Filename() == "Bravo");
+            CHECK(data.EntryAtSortPosition(1).Filename() == "Charlie");
+            CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha");
+            CHECK(data.VolatileDataAtRawPosition(0).size == 10);
+            CHECK(data.VolatileDataAtRawPosition(1).size == ItemVolatileData::invalid_size);
+            CHECK(data.VolatileDataAtRawPosition(2).size == ItemVolatileData::invalid_size);
+        }
+        SECTION("3 elements")
+        {
+            const std::string_view filenames[] = {"Alpha", "Bravo", "Charlie"};
+            const std::string_view directories[] = {"/", "/", "/"};
+            const uint64_t sizes[] = {10, 20, 30};
+            CHECK(data.SetCalculatedSizesForDirectories(filenames,directories,sizes) == 3);
+            CHECK(data.EntryAtSortPosition(0).Filename() == "Charlie");
+            CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
+            CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha");
+            CHECK(data.VolatileDataAtRawPosition(0).size == 10);
+            CHECK(data.VolatileDataAtRawPosition(1).size == 20);
+            CHECK(data.VolatileDataAtRawPosition(2).size == 30);
+        }        
+    }
+    SECTION("Invalid")
+    {
+        SECTION("Wrong elements number")
+        {
+            const std::string_view filenames[] = {"Alpha", "Bravo"};
+            const std::string_view directories[] = {"/", "/", "/"};
+            const uint64_t sizes[] = {10, 20, 30};
+            CHECK(data.SetCalculatedSizesForDirectories(filenames,directories,sizes) == 0);
+            CHECK(data.EntryAtSortPosition(0).Filename() == "Alpha");
+            CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
+            CHECK(data.EntryAtSortPosition(2).Filename() == "Charlie");
+            CHECK(data.VolatileDataAtRawPosition(0).size == ItemVolatileData::invalid_size);
+            CHECK(data.VolatileDataAtRawPosition(1).size == ItemVolatileData::invalid_size);
+            CHECK(data.VolatileDataAtRawPosition(2).size == ItemVolatileData::invalid_size);
+        }
+        SECTION("Non-existing elements")
+        {
+            const std::string_view filenames[] = {"Alpha", "Bravo", "Charlie1"};
+            const std::string_view directories[] = {"/", "/", "/"};
+            const uint64_t sizes[] = {10, 20, 30};
+            CHECK(data.SetCalculatedSizesForDirectories(filenames,directories,sizes) == 2);
+            CHECK(data.EntryAtSortPosition(0).Filename() == "Charlie");
+            CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
+            CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha");
+            CHECK(data.VolatileDataAtRawPosition(0).size == 10);
+            CHECK(data.VolatileDataAtRawPosition(1).size == 20);
+            CHECK(data.VolatileDataAtRawPosition(2).size == ItemVolatileData::invalid_size);
+        }
+    }
+    SECTION("Valid, raw indices")
+    {
+        SECTION("1 element")
+        {
+            const unsigned indices[1] = {0};
+            const uint64_t sizes[1] = {10};
+            CHECK(data.SetCalculatedSizesForDirectories(indices,sizes) == 1);
+            CHECK(data.EntryAtSortPosition(0).Filename() == "Bravo");
+            CHECK(data.EntryAtSortPosition(1).Filename() == "Charlie");
+            CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha");
+            CHECK(data.VolatileDataAtRawPosition(0).size == 10);
+            CHECK(data.VolatileDataAtRawPosition(1).size == ItemVolatileData::invalid_size);
+            CHECK(data.VolatileDataAtRawPosition(2).size == ItemVolatileData::invalid_size);
+        }
+        SECTION("3 elements")
+        {
+            const unsigned indices[3] = {0, 1, 2};
+            const uint64_t sizes[] = {10, 20, 30};
+            CHECK(data.SetCalculatedSizesForDirectories(indices,sizes) == 3);
+            CHECK(data.EntryAtSortPosition(0).Filename() == "Charlie");
+            CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
+            CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha");
+            CHECK(data.VolatileDataAtRawPosition(0).size == 10);
+            CHECK(data.VolatileDataAtRawPosition(1).size == 20);
+            CHECK(data.VolatileDataAtRawPosition(2).size == 30);
+        }
+    }
 }

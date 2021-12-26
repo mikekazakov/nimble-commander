@@ -41,6 +41,8 @@ using namespace nc::core;
 using namespace nc::panel;
 using namespace std::literals;
 
+static constexpr size_t g_MaxSizeCalculationCommitBatches = 40;
+
 static const auto g_ConfigShowDotDotEntry
     = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection
@@ -92,7 +94,12 @@ void ActivityTicket::Reset()
     panel = nil;
     ticket = 0;
 }
-    
+
+struct CalculatedSizesBatch {
+    std::vector<VFSListingItem> items;
+    std::vector<uint64_t> sizes;
+};
+
 }
 
 #define MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE( _name, _path )\
@@ -486,15 +493,38 @@ static void HeatUpConfigValues()
 
 - (void)calculateSizesOfItems:(const std::vector<VFSListingItem> &)_items
 {
-    if( _items.empty() )
-        return;
+    if( !_items.empty() ) {
+        m_DirectorySizeCountingQ.Run([=] { [self doCalculateSizesOfItems:_items]; });
+    }
+}
 
-    auto calc_task = [=] {
-        for( auto &i : _items ) {
-            if( !i.IsDir() )
-                continue;
+- (void)doCalculateSizesOfItems:(const std::vector<VFSListingItem> &)_items
+{
+    dispatch_assert_background_queue();
+    assert(!_items.empty());
+
+    // divide all items into maximum of g_MaxSizeCalculationCommitBatches batches as equally as
+    // possible
+    const size_t items_count = _items.size();
+    const size_t batches = std::min(g_MaxSizeCalculationCommitBatches, items_count);
+    const size_t items_per_batch = items_count / batches;
+    const size_t items_leftover = items_count - items_per_batch * batches;
+
+    for( size_t batch = 0, items_first = 0, items_last = 0; batch != batches; ++batch ) {
+        items_first = items_last;
+        items_last += items_per_batch + (batch < items_leftover ? 1 : 0);
+
+        panel::CalculatedSizesBatch calculated;
+        calculated.items.reserve(items_last - items_first);
+        calculated.sizes.reserve(items_last - items_first);
+
+        for( size_t item_index = items_first; item_index != items_last; ++item_index ) {
             if( m_DirectorySizeCountingQ.IsStopped() )
                 return;
+
+            auto &i = _items[item_index];
+            if( !i.IsDir() )
+                continue;
 
             const auto result = i.Host()->CalculateDirectorySize(
                 !i.IsDotDot() ? i.Path().c_str() : i.Directory().c_str(),
@@ -503,22 +533,52 @@ static void HeatUpConfigValues()
             if( result < 0 )
                 continue; // silently skip items that caused erros while calculating size
 
-            auto commit_task = [=] {
-                const auto pers = CursorBackup{m_View.curpos, m_Data};
-                // may cause re-sorting if current sorting is by size
-                const auto changed = m_Data.SetCalculatedSizeForDirectory(
-                    i.FilenameC(), i.Directory().c_str(), result);
-                if( changed ) {
-                    [m_View dataUpdated];
-                    [m_View volatileDataChanged];
-                    m_View.curpos = pers.RestoredCursorPosition();
-                }
-            };
-            dispatch_to_main_queue(std::move(commit_task));
+            calculated.items.emplace_back(i);
+            calculated.sizes.emplace_back(static_cast<uint64_t>(result));
         }
-    };
 
-    m_DirectorySizeCountingQ.Run(std::move(calc_task));
+        if( calculated.items.empty() )
+            continue;
+
+        auto commit_batch = [=, calculated = std::move(calculated)] {
+            assert(!calculated.items.empty());
+
+            // may cause re-sorting if current sorting is by size so save the cursor
+            const auto pers = CursorBackup{m_View.curpos, m_Data};
+
+            size_t num_set = 0;
+            if( &m_Data.Listing() == calculated.items.front().Listing().get() ) {
+                // the listing is the same, can use indices directly
+                std::vector<unsigned> raw_indices(calculated.items.size());
+                std::transform(calculated.items.begin(),
+                               calculated.items.end(),
+                               raw_indices.begin(),
+                               [](auto &i) { return i.Index(); });
+                num_set = m_Data.SetCalculatedSizesForDirectories(raw_indices, calculated.sizes);
+            }
+            else {
+                // the listing has changed, need to use indirects: filename and directory
+                std::vector<std::string_view> filenames(calculated.items.size());
+                std::vector<std::string_view> directories(calculated.items.size());
+                std::transform(calculated.items.begin(),
+                               calculated.items.end(),
+                               filenames.begin(),
+                               [](auto &i) { return std::string_view{i.Filename()}; });
+                std::transform(calculated.items.begin(),
+                               calculated.items.end(),
+                               directories.begin(),
+                               [](auto &i) { return std::string_view{i.Directory()}; });
+                num_set = m_Data.SetCalculatedSizesForDirectories(
+                    filenames, directories, calculated.sizes);
+            }
+            if( num_set != 0 ) {
+                [m_View dataUpdated];
+                [m_View volatileDataChanged];
+                m_View.curpos = pers.RestoredCursorPosition();
+            }
+        };
+        dispatch_to_main_queue(std::move(commit_batch));
+    }
 }
 
 - (void) CancelBackgroundOperations

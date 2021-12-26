@@ -8,8 +8,12 @@
 #include "Log.h"
 #include <numeric>
 #include <magic_enum.hpp>
+#include <pstld/pstld.h>
 
 namespace nc::panel::data {
+
+// Don't bother with parallelism unless we have at least 10'000 items in a listing
+constexpr inline size_t g_ParallelSortThresh = 10'000;
 
 static void DoRawSort(const VFSListing &_from, std::vector<unsigned> &_to);
 
@@ -254,20 +258,22 @@ const std::vector<unsigned> &Model::SortedDirectoryEntries() const noexcept
 
 ItemVolatileData &Model::VolatileDataAtRawPosition(int _pos)
 {
-    if( _pos < 0 || _pos >= static_cast<int>(m_VolatileData.size()) )
+    const size_t pos = _pos;
+    if( pos >= m_VolatileData.size() ) // assuming we won't have more than 2^31 elements
         throw std::out_of_range(
             "PanelData::VolatileDataAtRawPosition: index can't be out of range");
 
-    return m_VolatileData[_pos];
+    return m_VolatileData[pos];
 }
 
 const ItemVolatileData &Model::VolatileDataAtRawPosition(int _pos) const
 {
-    if( _pos < 0 || _pos >= static_cast<int>(m_VolatileData.size()) )
+    const size_t pos = _pos;
+    if( pos >= m_VolatileData.size() ) // assuming we won't have more than 2^31 elements
         throw std::out_of_range(
             "PanelData::VolatileDataAtRawPosition: index can't be out of range");
 
-    return m_VolatileData[_pos];
+    return m_VolatileData[pos];
 }
 
 ItemVolatileData &Model::VolatileDataAtSortPosition(int _pos)
@@ -330,8 +336,8 @@ std::span<const unsigned> Model::RawIndicesForName(std::string_view _filename) c
 
     struct Cmp {
         const VFSListing *listing;
-        bool operator()(unsigned _i, std::string_view _s) { return listing->Filename(_i) < _s; }
-        bool operator()(std::string_view _s, unsigned _i) { return _s < listing->Filename(_i); }
+        bool operator()(unsigned _i, std::string_view _s) const noexcept { return listing->Filename(_i) < _s; }
+        bool operator()(std::string_view _s, unsigned _i) const noexcept { return _s < listing->Filename(_i); }
     };
 
     const auto begin = m_EntriesByRawName.begin(), end = m_EntriesByRawName.end();
@@ -602,59 +608,116 @@ std::vector<VFSListingItem> Model::SelectedEntriesSorted() const
     return list;
 }
 
-bool Model::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size)
+bool Model::SetCalculatedSizeForDirectory(std::string_view _filename,
+                                          std::string_view _directory,
+                                          uint64_t _size)
 {
-    if( _entry == nullptr || _entry[0] == 0 || _size == ItemVolatileData::invalid_size )
+    if( _filename.empty() || _directory.empty() || _size == ItemVolatileData::invalid_size )
         return false;
-
-    int n = RawIndexForName(_entry);
-    if( n >= 0 ) {
-        if( m_Listing->IsDir(n) ) {
-            auto &vd = m_VolatileData[n];
+    
+    // O(logN) - binary search over all elements
+    const auto raw_indices = RawIndicesForName(_filename);
+    
+    // O(N) over the items with the same filename, usually N=1
+    for( const auto raw_index: raw_indices ) {
+        assert( m_Listing->Filename(raw_index) == _filename );
+        if( m_Listing->IsDir(raw_index) && m_Listing->Directory(raw_index) == _directory ) {
+            auto &vd = m_VolatileData[raw_index];
             if( vd.size == _size )
                 return true;
-
+            
             vd.size = _size;
-
-            // double-check me
-            DoSortWithHardFiltering();
-            ClearSelectedFlagsFromHiddenElements();
-            BuildSoftFilteringIndeces();
-            UpdateStatictics();
-
+            
+            FinalizeSettingCalculatedSizes();
             return true;
         }
     }
+    
     return false;
 }
 
-bool Model::SetCalculatedSizeForDirectory(const char *_filename,
-                                          const char *_directory,
-                                          uint64_t _size)
+size_t Model::SetCalculatedSizesForDirectories(std::span<const std::string_view> _filenames,
+                                               std::span<const std::string_view> _directories,
+                                               std::span<const uint64_t> _sizes)
 {
-    if( _filename == nullptr || _filename[0] == 0 || _directory == nullptr || _directory[0] == 0 ||
-        _size == ItemVolatileData::invalid_size )
-        return false;
+    if( _filenames.size() != _directories.size() || _filenames.size() != _sizes.size() )
+        return 0;
+    
+    size_t num_set = 0;
+    size_t num_changed = 0;
+    const auto listing = m_Listing.get();
+        
+    // O(N) iterate over the entire input set
+    for(size_t ind = 0; ind != _filenames.size(); ++ind) {
+        const auto filename = _filenames[ind];
+        const auto directory = _directories[ind];
+        const auto size = _sizes[ind];
+        
+        // O(logN) - binary search over all elements in the listing
+        const auto raw_indices = RawIndicesForName(filename);
 
-    // dumb linear search here
-    for( unsigned i = 0, e = m_Listing->Count(); i != e; ++i )
-        if( m_Listing->IsDir(i) && m_Listing->Filename(i) == _filename &&
-            m_Listing->Directory(i) == _directory ) {
-            auto &vd = m_VolatileData[i];
-            if( vd.size == _size )
-                return true;
-
-            vd.size = _size;
-
-            // double-check me
-            DoSortWithHardFiltering();
-            ClearSelectedFlagsFromHiddenElements();
-            BuildSoftFilteringIndeces();
-            UpdateStatictics();
-
-            return true;
+        // O(N) over the items with the same filename, usually N=1
+        for( const auto raw_index: raw_indices ) {
+            assert( listing->Filename(raw_index) == filename );
+            if( listing->IsDir(raw_index) && listing->Directory(raw_index) == directory ) {
+                ++num_set;
+                auto &vd = m_VolatileData[raw_index];
+                if( vd.size != size ) {
+                    vd.size = size;
+                    ++num_changed;
+                }
+                break;
+            }
         }
-    return false;
+    }
+    
+    if( num_changed != 0 )
+        FinalizeSettingCalculatedSizes();
+    
+    return num_set;
+}
+
+size_t Model::SetCalculatedSizesForDirectories(std::span<const unsigned> _raw_items_indices,
+                                               std::span<const uint64_t> _sizes)
+{
+    if( _raw_items_indices.size() != _sizes.size() )
+        return 0;
+    
+    size_t num_set = 0;
+    size_t num_changed = 0;
+    const auto listing = m_Listing.get();
+    const auto items_count = listing->Count();
+        
+    // O(N) iterate over the entire input set
+    for(size_t ind = 0; ind != _raw_items_indices.size(); ++ind) {
+        const unsigned raw_index = _raw_items_indices[ind];
+        const uint64_t size = _sizes[ind];
+        if( raw_index >= items_count )
+            throw std::out_of_range("SetCalculatedSizesForDirectories: invalid index");
+        
+        if( listing->IsDir(raw_index) ) {
+            ++num_set;
+            auto &vd = m_VolatileData[raw_index];
+            if( vd.size != size ) {
+                vd.size = size;
+                ++num_changed;
+            }
+        }
+    }
+        
+    if( num_changed != 0 )
+        FinalizeSettingCalculatedSizes();
+    
+    return num_set;
+}
+
+void Model::FinalizeSettingCalculatedSizes()
+{
+    // double-check me
+    DoSortWithHardFiltering();
+    ClearSelectedFlagsFromHiddenElements();
+    BuildSoftFilteringIndeces();
+    UpdateStatictics();
 }
 
 void Model::CustomIconClearAll()
@@ -755,7 +818,11 @@ void Model::DoSortWithHardFiltering()
     // no dotdot dir. also assumes that no filtering will exclude dotdot dir
     const auto first = std::next(m_EntriesByCustomSort.begin(), m_Listing->IsDotDot(0) ? 1 : 0);
     const auto last = std::end(m_EntriesByCustomSort);
-    std::sort(first, last, IndirectListingComparator{*m_Listing, m_VolatileData, m_CustomSortMode});
+    
+    if( m_EntriesByCustomSort.size() < g_ParallelSortThresh )
+        std::sort(first, last, IndirectListingComparator{*m_Listing, m_VolatileData, m_CustomSortMode});
+    else
+        pstld::sort(first, last, IndirectListingComparator{*m_Listing, m_VolatileData, m_CustomSortMode});
 
     m_ReverseToCustomSort.resize(size);
     std::fill(m_ReverseToCustomSort.begin(),

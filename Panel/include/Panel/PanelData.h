@@ -7,6 +7,7 @@
 #include "PanelDataFilter.h"
 
 #include <vector>
+#include <string_view>
 #include <span>
 
 namespace nc::panel::data {
@@ -150,8 +151,8 @@ public:
      * Performs a binary case-sensivitive search.
      * Return -1 if didn't found.
      * Returning value is in raw land, that is DirectoryEntries[N], not sorted ones.
-     * TODO: (?) remove this one, it has issues with non-uniform listings - it can return only the first entry
-     * * Complexity: O(logN ), N - total number of items in the listing.
+     * NB! it has issues with non-uniform listings - it can return only the first entry.
+     * Complexity: O(logN ), N - total number of items in the listing.
      */
     int RawIndexForName(std::string_view _filename) const noexcept;
 
@@ -237,13 +238,29 @@ public:
     void CustomFlagsClearHighlights();
 
     /**
-     * Searches for _entry using binary search with case-sensitive comparison,
-     * return true if changed something, false otherwise.
+     * Searches for a directory named '_filename' in '_directory' using binary search with case-sensitive comparison and sets its size.
+     * Return true if the entry was found and the size was set, false otherwise.
      * _size should be less than uint64_t(-1).
+     * Automatically rebuilds search/sort indices and statistics.
      */
-    bool SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size);
-    bool
-    SetCalculatedSizeForDirectory(const char *_filename, const char *_directory, uint64_t _size);
+    bool SetCalculatedSizeForDirectory(std::string_view _filename,
+                                       std::string_view _directory,
+                                       uint64_t _size);
+    
+    /**
+     * A batch version of SetCalculatedSizeForDirectory.
+     * Returns a number of entries found and set.
+     */
+    size_t SetCalculatedSizesForDirectories(std::span<const std::string_view> _filenames,
+                                            std::span<const std::string_view> _directories,
+                                            std::span<const uint64_t> _sizes);
+    
+    /**
+     * A batch version of SetCalculatedSizeForDirectory that accepts raw item indices.
+     * Returns a number of entries found and set.
+     */
+    size_t SetCalculatedSizesForDirectories(std::span<const unsigned> _raw_items_indices,
+                                            std::span<const uint64_t> _sizes);
 
     /**
      * Call it in emergency case.
@@ -256,6 +273,7 @@ private:
     void ClearSelectedFlagsFromHiddenElements();
     void UpdateStatictics();
     void BuildSoftFilteringIndeces();
+    void FinalizeSettingCalculatedSizes();
 
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's

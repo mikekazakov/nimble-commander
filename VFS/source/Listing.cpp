@@ -8,10 +8,11 @@ namespace nc::vfs {
 
 using nc::base::variable_container;
 
+static_assert(sizeof(Listing) <= 816);
 static_assert(std::is_move_constructible<ListingItem>::value, "");
 static_assert(std::is_move_constructible<Listing::iterator>::value, "");
 
-static bool BasicDirectoryCheck(const std::string &_str)
+static bool BasicDirectoryCheck(std::string_view _str) noexcept
 {
     if( _str.empty() )
         return false;
@@ -100,19 +101,40 @@ Listing::Listing() = default;
 
 Listing::~Listing() = default;
 
+template <class It>
+static std::unique_ptr<typename std::iterator_traits<It>::value_type[]> CopyToUniquePtr(It first,
+                                                                                        It last)
+{
+    using T = typename std::iterator_traits<It>::value_type;
+    auto count = std::distance(first, last);
+    auto ptr = std::make_unique<T[]>(count);
+    std::copy(first, last, ptr.get());
+    return ptr;
+}
+
+template <class It>
+static std::unique_ptr<typename std::iterator_traits<It>::value_type[]> MoveToUniquePtr(It first,
+                                                                                        It last)
+{
+    using T = typename std::iterator_traits<It>::value_type;
+    auto count = std::distance(first, last);
+    auto ptr = std::make_unique<T[]>(count);
+    std::move(first, last, ptr.get());
+    return ptr;
+}
+
 base::intrusive_ptr<const Listing> Listing::Build(ListingInput &&_input)
 {
     Validate(_input); // will throw an exception on error
     Compress(_input);
 
     auto l = base::intrusive_ptr<Listing>{new Listing};
+    l->m_ItemsCount = static_cast<unsigned>(_input.filenames.size());
     l->m_Title = std::move(_input.title);
     l->m_Hosts = std::move(_input.hosts);
     l->m_Directories = std::move(_input.directories);
-    l->m_Filenames = std::move(_input.filenames);
+    l->m_Filenames = MoveToUniquePtr(_input.filenames.begin(), _input.filenames.end());
     l->m_DisplayFilenames = std::move(_input.display_filenames);
-    l->BuildFilenames();
-
     l->m_Sizes = std::move(_input.sizes);
     l->m_Inodes = std::move(_input.inodes);
     l->m_ATimes = std::move(_input.atimes);
@@ -120,13 +142,14 @@ base::intrusive_ptr<const Listing> Listing::Build(ListingInput &&_input)
     l->m_CTimes = std::move(_input.ctimes);
     l->m_MTimes = std::move(_input.mtimes);
     l->m_AddTimes = std::move(_input.add_times);
-    l->m_UnixModes = std::move(_input.unix_modes);
-    l->m_UnixTypes = std::move(_input.unix_types);
+    l->m_UnixModes = CopyToUniquePtr(_input.unix_modes.begin(), _input.unix_modes.end());
+    l->m_UnixTypes = CopyToUniquePtr(_input.unix_types.begin(), _input.unix_types.end());
     l->m_UIDS = std::move(_input.uids);
     l->m_GIDS = std::move(_input.gids);
     l->m_UnixFlags = std::move(_input.unix_flags);
     l->m_Symlinks = std::move(_input.symlinks);
     l->m_CreationTime = time(0);
+    l->BuildFilenames();
 
     return l;
 }
@@ -352,12 +375,10 @@ static CFString UTF8WithFallback(const std::string &_s)
 
 void Listing::BuildFilenames()
 {
-    size_t i = 0, e = m_Filenames.size();
-    m_ItemsCount = static_cast<unsigned>(e);
+    size_t i = 0, e = m_ItemsCount;
 
-    m_FilenamesCF.resize(e);
-    m_ExtensionOffsets.resize(e);
-
+    m_FilenamesCF = std::make_unique<CFString[]>(e);
+    m_ExtensionOffsets = std::make_unique<uint16_t[]>(e);
     m_DisplayFilenamesCF = variable_container<CFString>(variable_container<>::type::sparse);
 
     for( ; i != e; ++i ) {

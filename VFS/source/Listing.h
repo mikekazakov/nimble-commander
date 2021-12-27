@@ -144,13 +144,13 @@ private:
     unsigned m_ItemsCount;
     time_t m_CreationTime;
     std::string m_Title;
+    std::unique_ptr<std::string[]> m_Filenames;
+    std::unique_ptr<CFString[]> m_FilenamesCF;
+    std::unique_ptr<uint16_t[]> m_ExtensionOffsets;
+    std::unique_ptr<mode_t[]> m_UnixModes;
+    std::unique_ptr<uint8_t[]> m_UnixTypes;
     base::variable_container<VFSHostPtr> m_Hosts;
     base::variable_container<std::string> m_Directories;
-    std::vector<std::string> m_Filenames;
-    std::vector<CFString> m_FilenamesCF;
-    std::vector<uint16_t> m_ExtensionOffsets;
-    std::vector<mode_t> m_UnixModes;
-    std::vector<uint8_t> m_UnixTypes;
     base::variable_container<uint64_t> m_Sizes;
     base::variable_container<uint64_t> m_Inodes;
     base::variable_container<time_t> m_ATimes;
@@ -333,14 +333,12 @@ inline const char *Listing::Extension(unsigned _ind) const
 inline const std::string &Listing::Filename(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    assert(_ind < m_Filenames.size());
     return m_Filenames[_ind];
 }
 
 inline CFStringRef Listing::FilenameCF(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    assert(_ind < m_FilenamesCF.size());
     return *m_FilenamesCF[_ind];
 }
 

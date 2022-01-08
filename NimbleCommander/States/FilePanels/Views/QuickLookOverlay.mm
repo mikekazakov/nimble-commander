@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickLookOverlay.h"
 #include <Quartz/Quartz.h>
 #include <Utility/SystemInformation.h>
@@ -219,7 +219,8 @@ static const auto g_HazardousExtensionsList =
     m_QL = ql;
 }
 
-- (void)previewVFSItem:(const VFSPath &)_path forPanel:(PanelController *) [[maybe_unused]] _panel
+- (void)previewVFSItem:(const nc::vfs::VFSPath &)_path
+              forPanel:(PanelController *) [[maybe_unused]] _panel
 {
     if( !_path )
         return;

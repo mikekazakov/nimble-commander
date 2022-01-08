@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/ScopedObservable.h>
@@ -13,7 +13,7 @@
 @class NCOpsGenericErrorDialog;
 #else
 #include <Utility/NSCppDeclarations.h>
-using NCOpsGenericErrorDialog = void*;
+using NCOpsGenericErrorDialog = void *;
 #endif
 
 namespace nc::ops {
@@ -73,7 +73,7 @@ public:
     void SetDialogCallback(std::function<bool(NSWindow *, std::function<void(long)>)> _callback);
     bool IsWaitingForUIResponse() const noexcept;
     void AbortUIWaiting() noexcept;
-    
+
     // This callback will be fired from a background job thread.
     void SetItemStatusCallback(ItemStateReportCallback _callback);
 
@@ -99,7 +99,7 @@ protected:
     void ShowGenericDialog(GenericDialog _dialog_type,
                            NSString *_message,
                            int _err,
-                           VFSPath _path,
+                           vfs::VFSPath _path,
                            std::shared_ptr<AsyncDialogResponse> _ctx);
     void WaitForDialogResponse(std::shared_ptr<AsyncDialogResponse> _response);
     void ReportHaltReason(NSString *_message, int _error, const std::string &_path, VFSHost &_vfs);

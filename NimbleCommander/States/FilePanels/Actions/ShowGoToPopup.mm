@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShowGoToPopup.h"
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
@@ -98,7 +98,7 @@ static const auto g_MaxTextWidth = 600;
     }
     else if( auto connection = std::any_cast<NetworkConnectionsManager::Connection>(&_context) )
         nc::panel::actions::OpenExistingNetworkConnection(*m_NetMgr).Perform(m_Panel, sender);
-    else if( auto vfs_path = std::any_cast<VFSPath>(&_context) ) {
+    else if( auto vfs_path = std::any_cast<nc::vfs::VFSPath>(&_context) ) {
         auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = vfs_path->Path();
         request->VFS = vfs_path->Host();
@@ -179,13 +179,13 @@ LimitedRecentConnections(const NetworkConnectionsManager &_manager)
     return connections;
 }
 
-static std::vector<VFSPath> OtherWindowsPaths(MainWindowFilePanelState *_current)
+static std::vector<vfs::VFSPath> OtherWindowsPaths(MainWindowFilePanelState *_current)
 {
-    std::vector<VFSPath> current_paths;
+    std::vector<vfs::VFSPath> current_paths;
     for( auto &p : _current.filePanelsCurrentPaths )
         current_paths.emplace_back(std::get<1>(p), std::get<0>(p));
 
-    std::vector<VFSPath> other_paths;
+    std::vector<vfs::VFSPath> other_paths;
     for( auto ctr : NCAppDelegate.me.mainWindowControllers )
         if( auto state = ctr.filePanelsState; state != _current )
             for( auto &p : state.filePanelsCurrentPaths )
@@ -255,7 +255,7 @@ public:
     NSMenuItem *MenuItemForLocation(const FavoriteLocationsStorage::Location &_f);
     NSMenuItem *MenuItemForVolume(const utility::NativeFileSystemInfo &_i);
     NSMenuItem *MenuItemForConnection(const NetworkConnectionsManager::Connection &_c);
-    NSMenuItem *MenuItemForPath(const VFSPath &_p);
+    NSMenuItem *MenuItemForPath(const vfs::VFSPath &_p);
     NSMenuItem *MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
                                           const std::string &_path);
     NSMenuItem *MenuItemForListingPromise(const ListingPromise &_promise);
@@ -708,7 +708,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForConnection(const NetworkConnectionsManag
     return menu_item;
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForPath(const VFSPath &_p)
+NSMenuItem *MenuItemBuilder::MenuItemForPath(const vfs::VFSPath &_p)
 {
     auto menu_item = [[NSMenuItem alloc] init];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_p}];

@@ -1,16 +1,18 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/Host.h"
 #include "../include/VFS/VFSPath.h"
 
-VFSPath::VFSPath()
+namespace nc::vfs {
+
+VFSPath::VFSPath() noexcept = default;
+
+VFSPath::VFSPath(const VFSHostPtr &_host, std::filesystem::path _path)
+    : m_Host(_host), m_Path(std::move(_path))
 {
 }
 
-VFSPath::VFSPath(const VFSHostPtr &_host, std::string _path) : m_Host(_host), m_Path(move(_path))
-{
-}
-
-VFSPath::VFSPath(VFSHost &_host, std::string _path) : VFSPath(_host.shared_from_this(), move(_path))
+VFSPath::VFSPath(VFSHost &_host, std::filesystem::path _path)
+    : VFSPath(_host.shared_from_this(), std::move(_path))
 {
 }
 
@@ -18,9 +20,10 @@ const VFSHostPtr &VFSPath::Host() const noexcept
 {
     return m_Host;
 }
+
 const std::string &VFSPath::Path() const noexcept
 {
-    return m_Path;
+    return m_Path.native();
 }
 
 VFSPath::operator bool() const noexcept
@@ -152,8 +155,10 @@ const std::string &VFSPathStack::path() const
     return m_Path;
 }
 
-std::hash<VFSPathStack>::value_type
-std::hash<VFSPathStack>::operator()(hash<VFSPathStack>::argument_type const &_v) const
+} // namespace nc::vfs
+
+std::hash<nc::vfs::VFSPathStack>::value_type std::hash<nc::vfs::VFSPathStack>::operator()(
+    hash<nc::vfs::VFSPathStack>::argument_type const &_v) const
 {
     std::string str;
     for( auto &i : _v.m_Stack ) {

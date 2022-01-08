@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FindFilesSheetController.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/DispatchGroup.h>
@@ -234,7 +234,7 @@ private:
     NSTimer *m_LookingInPathUpdateTimer;
 
     FindFilesSheetFoundItem *m_DoubleClickedItem;
-    std::function<void(const std::vector<VFSPath> &_filepaths)> m_OnPanelize;
+    std::function<void(const std::vector<nc::vfs::VFSPath> &_filepaths)> m_OnPanelize;
     std::function<void(const nc::panel::FindFilesSheetViewRequest &)> m_OnView;
 
     nc::bootstrap::ActivationManager *m_ActivationManager;
@@ -483,55 +483,49 @@ private:
         filter_content.not_containing = self.NotContainingButton.intValue;
         m_FileSearch->SetFilterContent(filter_content);
     }
-    m_TextHistory->insert_unique( text_query ? text_query.UTF8String : "" );
-    
-    m_FileSearch->SetFilterSize( self.searchFilterSizeFromUI );
-    
-    auto found_callback = [=](const char *_filename,
-                              const char *_in_path,
-                              VFSHost& _in_host,
-                              CFRange _cont_pos){
-        FindFilesSheetControllerFoundItem it;
-        it.host = _in_host.SharedPtr();
-        it.filename = _filename;
-        it.dir_path = ensure_no_tr_slash(_in_path);
-        it.full_filename = ensure_tr_slash(_in_path) + it.filename;
-        it.content_pos = _cont_pos;
-        it.rel_path = to_relative_path(it.host,
-                                       ensure_tr_slash(_in_path),
-                                       std::string(m_Host->JunctionPath()) + m_Path);
-        
-        
-        // TODO: need some decent cancelling mechanics here
-        auto stat_block = [=, it=std::move(it)]()mutable{
-            // doing stat()'ing item in async background thread
-            it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
-            
-            FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc]
-                                             initWithFoundItem:std::move(it)];
-            m_BatchQueue.Run([self, item]{
-                // dumping result entry into batch array in BatchQueue
-                [m_FoundItemsBatch addObject:item];
-            });
+    m_TextHistory->insert_unique(text_query ? text_query.UTF8String : "");
+
+    m_FileSearch->SetFilterSize(self.searchFilterSizeFromUI);
+
+    auto found_callback =
+        [=](const char *_filename, const char *_in_path, VFSHost &_in_host, CFRange _cont_pos) {
+            FindFilesSheetControllerFoundItem it;
+            it.host = _in_host.SharedPtr();
+            it.filename = _filename;
+            it.dir_path = ensure_no_tr_slash(_in_path);
+            it.full_filename = ensure_tr_slash(_in_path) + it.filename;
+            it.content_pos = _cont_pos;
+            it.rel_path = to_relative_path(
+                it.host, ensure_tr_slash(_in_path), std::string(m_Host->JunctionPath()) + m_Path);
+
+            // TODO: need some decent cancelling mechanics here
+            auto stat_block = [=, it = std::move(it)]() mutable {
+                // doing stat()'ing item in async background thread
+                it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
+
+                FindFilesSheetFoundItem *item =
+                    [[FindFilesSheetFoundItem alloc] initWithFoundItem:std::move(it)];
+                m_BatchQueue.Run([self, item] {
+                    // dumping result entry into batch array in BatchQueue
+                    [m_FoundItemsBatch addObject:item];
+                });
+            };
+
+            if( _in_host.IsNativeFS() )
+                m_StatGroup.Run(std::move(stat_block));
+            else
+                m_StatQueue.Run(std::move(stat_block));
+
+            if( m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults )
+                m_FileSearch->Stop(); // gorshochek, ne vari!!!
         };
-        
-        if( _in_host.IsNativeFS() )
-            m_StatGroup.Run( std::move(stat_block) );
-        else
-            m_StatQueue.Run( std::move(stat_block) );
-        
-        if(m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults)
-            m_FileSearch->Stop(); // gorshochek, ne vari!!!
-    };
-    auto finish_callback = [=]{
-        [self onSearchFinished];
-    };
-    auto lookin_in_callback = [=](const char *_path, VFSHost& _in_host) {
+    auto finish_callback = [=] { [self onSearchFinished]; };
+    auto lookin_in_callback = [=](const char *_path, VFSHost &_in_host) {
         auto verbose_path = _in_host.MakePathVerbose(_path);
         auto lock = std::lock_guard{m_LookingInPathGuard};
         m_LookingInPath = move(verbose_path);
     };
-    auto spawn_archive_callback = [=](const char*_for_path, VFSHost& _in_host)->VFSHostPtr {
+    auto spawn_archive_callback = [=](const char *_for_path, VFSHost &_in_host) -> VFSHostPtr {
         return [self spawnArchiveFromPath:_for_path inVFS:_in_host.SharedPtr()];
     };
     const bool started = m_FileSearch->Go(m_Path,
@@ -540,10 +534,9 @@ private:
                                           std::move(found_callback),
                                           std::move(finish_callback),
                                           std::move(lookin_in_callback),
-                                          std::move(spawn_archive_callback)
-                                          );
+                                          std::move(spawn_archive_callback));
     self.searchingNow = started;
-    if(started) {
+    if( started ) {
         self.didAnySearchStarted = true;
         m_UIChanged = false;
         m_BatchDrainTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 // 0.5 sec update
@@ -553,39 +546,38 @@ private:
                                                             repeats:YES];
         [m_BatchDrainTimer setDefaultTolerance];
 
-        m_LookingInPathUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 // 0.1 sec update
-                                                             target:self
-                                                           selector:@selector(updateLookingInByTimer:)
-                                                           userInfo:nil
-                                                            repeats:YES];
+        m_LookingInPathUpdateTimer =
+            [NSTimer scheduledTimerWithTimeInterval:0.1 // 0.1 sec update
+                                             target:self
+                                           selector:@selector(updateLookingInByTimer:)
+                                           userInfo:nil
+                                            repeats:YES];
         [m_LookingInPathUpdateTimer setDefaultTolerance];
     }
 }
 
-- (VFSHostPtr)spawnArchiveFromPath:(const char*)_path inVFS:(const VFSHostPtr&)_host
+- (VFSHostPtr)spawnArchiveFromPath:(const char *)_path inVFS:(const VFSHostPtr &)_host
 {
     if( !m_ActivationManager->HasArchivesBrowsing() )
         return nullptr;
-    
+
     char extension[MAXPATHLEN];
     if( !GetExtensionFromPath(_path, extension) )
         return nullptr;
-    
+
     if( !nc::panel::IsExtensionInArchivesWhitelist(extension) )
         return nullptr;
-    
-    auto host = VFSArchiveProxy::OpenFileAsArchive(_path,
-                                                   _host,
-                                                   nullptr,
-                                                   [&]{ return m_FileSearch->IsStopped(); } );
+
+    auto host = VFSArchiveProxy::OpenFileAsArchive(
+        _path, _host, nullptr, [&] { return m_FileSearch->IsStopped(); });
     if( host )
         if( self.vfsInstanceManager )
             self.vfsInstanceManager->TameVFS(host);
-    
+
     return host;
 }
 
-- (void)updateLookingInByTimer:(NSTimer*)[[maybe_unused]]theTimer
+- (void)updateLookingInByTimer:(NSTimer *) [[maybe_unused]] theTimer
 {
     NSString *new_title;
     {
@@ -595,16 +587,16 @@ private:
     self.LookingIn.stringValue = new_title;
 }
 
-- (void) UpdateByTimer:(NSTimer*)[[maybe_unused]]theTimer
+- (void)UpdateByTimer:(NSTimer *) [[maybe_unused]] theTimer
 {
-    m_BatchQueue.Run([=]{
+    m_BatchQueue.Run([=] {
         if( m_FoundItemsBatch.count == 0 )
             return; // nothing to add
-        
+
         NSArray *temp = m_FoundItemsBatch;
         m_FoundItemsBatch = [[NSMutableArray alloc] initWithCapacity:4096];
-        
-        dispatch_to_main_queue([=]{
+
+        dispatch_to_main_queue([=] {
             NSMutableArray *new_objects = [m_FoundItems mutableCopy];
             [new_objects addObjectsFromArray:temp];
             self.FoundItems = new_objects;
@@ -612,24 +604,24 @@ private:
     });
 }
 
-- (const FindFilesSheetControllerFoundItem*) selectedItem
+- (const FindFilesSheetControllerFoundItem *)selectedItem
 {
-    if(m_DoubleClickedItem == nil)
+    if( m_DoubleClickedItem == nil )
         return nullptr;
     return &m_DoubleClickedItem.data;
 }
 
-- (IBAction)doubleClick:(id)[[maybe_unused]]table
+- (IBAction)doubleClick:(id) [[maybe_unused]] table
 {
     NSInteger row = [self.TableView clickedRow];
-    if(row < 0 || row >= self.TableView.numberOfRows)
+    if( row < 0 || row >= self.TableView.numberOfRows )
         return;
     FindFilesSheetFoundItem *item = [self.ArrayController.arrangedObjects objectAtIndex:row];
     m_DoubleClickedItem = item;
     [self OnClose:self];
 }
 
-- (void)tableViewSelectionDidChange:(NSNotification *)[[maybe_unused]]aNotification
+- (void)tableViewSelectionDidChange:(NSNotification *) [[maybe_unused]] aNotification
 {
     NSInteger row = [self.TableView selectedRow];
     if( row >= 0 ) {
@@ -639,7 +631,7 @@ private:
     else {
         self.focusedItem = nil;
     }
-    
+
     if( self.focusedItem ) {
         self.focusedItemIsReg = (self.focusedItem.data.st.mode & S_IFMT) == S_IFREG;
     }
@@ -648,7 +640,7 @@ private:
     }
 }
 
-- (IBAction)OnGoToFile:(id)[[maybe_unused]]sender
+- (IBAction)OnGoToFile:(id) [[maybe_unused]] sender
 {
     if( self.focusedItem ) {
         m_DoubleClickedItem = self.focusedItem;
@@ -666,21 +658,21 @@ private:
     [self OnFileView:sender];
 }
 
-- (IBAction)OnFileView:(id)[[maybe_unused]]sender
+- (IBAction)OnFileView:(id) [[maybe_unused]] sender
 {
     dispatch_assert_main_queue();
     if( m_OnView == nullptr )
         return;
-     
+
     const auto row_index = self.TableView.selectedRow;
     if( row_index < 0 )
         return;
-    
-    const auto found_item = objc_cast<FindFilesSheetFoundItem>
-        ([self.ArrayController.arrangedObjects objectAtIndex:row_index]);
-    
+
+    const auto found_item = objc_cast<FindFilesSheetFoundItem>(
+        [self.ArrayController.arrangedObjects objectAtIndex:row_index]);
+
     const FindFilesSheetControllerFoundItem &data = found_item.data;
-    
+
     auto request = FindFilesSheetViewRequest{};
     request.vfs = data.host;
     request.path = data.full_filename;
@@ -691,21 +683,19 @@ private:
         request.content_mark->bytes_length = data.content_pos.length;
         request.content_mark->search_term = self.TextComboBox.stringValue.UTF8String;
     }
-    m_OnView( request );
+    m_OnView(request);
 }
 
 // Workaround about combox' menu forcing Search by selecting item from list with Return key
-- (void)comboBoxWillPopUp:(NSNotification *)[[maybe_unused]]notification
+- (void)comboBoxWillPopUp:(NSNotification *) [[maybe_unused]] notification
 {
     [self clearReturnKey];
 }
 
-- (void)comboBoxWillDismiss:(NSNotification *)[[maybe_unused]]notification
+- (void)comboBoxWillDismiss:(NSNotification *) [[maybe_unused]] notification
 {
     using namespace std::literals;
-    dispatch_to_main_queue_after(10ms, [=]{
-        [self setupReturnKey];
-    });
+    dispatch_to_main_queue_after(10ms, [=] { [self setupReturnKey]; });
 }
 
 - (void)controlTextDidChange:(NSNotification *)obj
@@ -713,34 +703,34 @@ private:
     [self onSearchSettingsUIChanged:obj.object];
 }
 
-- (IBAction)onSearchSettingsUIChanged:(id)[[maybe_unused]]sender
+- (IBAction)onSearchSettingsUIChanged:(id) [[maybe_unused]] sender
 {
     m_UIChanged = true;
     [self setupReturnKey];
 }
 
-- (IBAction)OnPanelize:(id)[[maybe_unused]]sender
+- (IBAction)OnPanelize:(id) [[maybe_unused]] sender
 {
     if( m_OnPanelize ) {
-        std::vector<VFSPath> results;
+        std::vector<nc::vfs::VFSPath> results;
         for( FindFilesSheetFoundItem *item in self.ArrayController.arrangedObjects ) {
             auto &data = item.data;
-            results.emplace_back( data.host, data.full_filename );
+            results.emplace_back(data.host, data.full_filename);
         }
 
         if( !results.empty() )
-            m_OnPanelize( results );
+            m_OnPanelize(results);
     }
-    
+
     [self OnClose:self];
 }
 
-- (void) setupReturnKey
+- (void)setupReturnKey
 {
     dispatch_assert_main_queue();
-    
+
     [self clearReturnKey];
-    
+
     if( m_FoundItems.count > 0 && !m_UIChanged ) {
         self.GoToButton.keyEquivalent = @"\r";
     }
@@ -750,23 +740,21 @@ private:
     }
 }
 
-- (void) clearReturnKey
+- (void)clearReturnKey
 {
     dispatch_assert_main_queue();
     self.SearchButton.keyEquivalent = @"";
     self.GoToButton.keyEquivalent = @"";
 }
 
-- (BOOL)tableView:(NSTableView *)[[maybe_unused]]tableView
-shouldTypeSelectForEvent:(NSEvent *)event
-withCurrentSearchString:(NSString *)[[maybe_unused]]searchString
+- (BOOL)tableView:(NSTableView *) [[maybe_unused]] tableView
+    shouldTypeSelectForEvent:(NSEvent *)event
+     withCurrentSearchString:(NSString *) [[maybe_unused]] searchString
 {
     if( event.charactersIgnoringModifiers.length == 1 &&
         [event.charactersIgnoringModifiers characterAtIndex:0] == 0x20 ) {
         // treat Spacebar as View button
-        dispatch_to_main_queue([=]{
-            [self OnFileView:self];
-        });
+        dispatch_to_main_queue([=] { [self OnFileView:self]; });
         return false;
     }
     return true;

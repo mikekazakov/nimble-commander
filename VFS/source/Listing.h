@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/variable_container.h>
@@ -309,7 +309,7 @@ private:
 };
 
 #define __CHECK_BOUNDS(a)                                                                          \
-    if( (a) >= m_ItemsCount )                                                                      \
+    if( (a) >= m_ItemsCount ) [[unlikely]]                                                         \
         throw std::out_of_range(std::string(__PRETTY_FUNCTION__) + ": index out of range");
 
 inline bool Listing::HasExtension(unsigned _ind) const

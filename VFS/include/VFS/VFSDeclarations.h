@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -172,6 +172,7 @@ struct Flags {
 class Listing;
 class ListingItem;
 class Host;
+class VFSPath;
 
 } // namespace nc::vfs
 
@@ -190,7 +191,6 @@ using VFSStatFS = nc::vfs::StatFS;
 using VFSDirEnt = nc::vfs::DirEnt;
 
 class VFSFile;
-class VFSPath;
 class VFSConfiguration;
 
 using VFSFilePtr = std::shared_ptr<VFSFile>;

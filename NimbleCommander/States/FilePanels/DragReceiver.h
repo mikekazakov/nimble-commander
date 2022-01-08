@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <VFS/VFS.h>
 #include <Cocoa/Cocoa.h>
@@ -7,11 +7,11 @@
 @class FilesDraggingSource;
 
 namespace nc::vfs {
-    class NativeHost;
+class NativeHost;
 }
 
 namespace nc::utility {
-    class NativeFSManager;
+class NativeFSManager;
 }
 
 namespace nc::panel {
@@ -21,39 +21,37 @@ class DragReceiver
 {
 public:
     DragReceiver(PanelController *_target,
-                 id <NSDraggingInfo> _dragging,
+                 id<NSDraggingInfo> _dragging,
                  int _dragging_over_index, // -1 index means "whole" panel
                  nc::utility::NativeFSManager &_native_fs_man,
-                 nc::vfs::NativeHost &_native_host ); 
+                 nc::vfs::NativeHost &_native_host);
     ~DragReceiver();
 
     NSDragOperation Validate();
     bool Receive();
-    static NSArray<NSString*> *AcceptedUTIs();
+    static NSArray<NSString *> *AcceptedUTIs();
 
 private:
-    VFSPath ComposeDestination() const;
+    vfs::VFSPath ComposeDestination() const;
     std::pair<NSDragOperation, int> ScanLocalSource(FilesDraggingSource *_source,
-                                                const VFSPath& _dest) const;
-    std::pair<NSDragOperation, int> ScanURLsSource(NSArray<NSURL*> *_source,
-                                              const VFSPath& _dest) const;
-    std::pair<NSDragOperation, int> ScanURLsPromiseSource(const VFSPath& _dest) const;
+                                                    const vfs::VFSPath &_dest) const;
+    std::pair<NSDragOperation, int> ScanURLsSource(NSArray<NSURL *> *_source,
+                                                   const vfs::VFSPath &_dest) const;
+    std::pair<NSDragOperation, int> ScanURLsPromiseSource(const vfs::VFSPath &_dest) const;
     NSDragOperation BuildOperationForLocal(FilesDraggingSource *_source,
-                                           const VFSPath &_destination ) const;
-    NSDragOperation BuildOperationForURLs(NSArray<NSURL*> *_source,
-                                          const VFSPath &_destination ) const;
-    bool PerformWithLocalSource(FilesDraggingSource *_source,
-                                const VFSPath& _dest);
-    bool PerformWithURLsSource(NSArray<NSURL*> *_source,
-                               const VFSPath& _dest);
-    bool PerformWithURLsPromiseSource(const VFSPath& _dest);
+                                           const vfs::VFSPath &_destination) const;
+    NSDragOperation BuildOperationForURLs(NSArray<NSURL *> *_source,
+                                          const vfs::VFSPath &_destination) const;
+    bool PerformWithLocalSource(FilesDraggingSource *_source, const vfs::VFSPath &_dest);
+    bool PerformWithURLsSource(NSArray<NSURL *> *_source, const vfs::VFSPath &_dest);
+    bool PerformWithURLsPromiseSource(const vfs::VFSPath &_dest);
 
-    PanelController     *m_Target;
-    id<NSDraggingInfo>   m_Dragging;
-    NSDragOperation      m_DraggingOperationsMask;
-    int                  m_DraggingOverIndex;
-    VFSListingItem       m_ItemUnderDrag; // may be nullptr for whole panel
-    bool                 m_DraggingOverDirectory;
+    PanelController *m_Target;
+    id<NSDraggingInfo> m_Dragging;
+    NSDragOperation m_DraggingOperationsMask;
+    int m_DraggingOverIndex;
+    VFSListingItem m_ItemUnderDrag; // may be nullptr for whole panel
+    bool m_DraggingOverDirectory;
     nc::utility::NativeFSManager &m_NativeFSManager;
     nc::vfs::NativeHost &m_NativeHost;
 };

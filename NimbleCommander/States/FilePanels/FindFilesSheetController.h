@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/SheetController.h>
@@ -42,12 +42,13 @@ struct FindFilesSheetViewRequest {
                                                        NSComboBoxDataSource,
                                                        NSComboBoxDelegate>
 
-- (instancetype) init NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am;
 
 @property(nonatomic) VFSHostPtr host;
 @property(nonatomic) std::string path;
-@property(nonatomic) std::function<void(const std::vector<VFSPath> &_filepaths)> onPanelize;
+@property(nonatomic) std::function<void(const std::vector<nc::vfs::VFSPath> &_filepaths)>
+    onPanelize;
 @property(nonatomic) std::function<void(const nc::panel::FindFilesSheetViewRequest &)> onView;
 @property(nonatomic) nc::core::VFSInstanceManager *vfsInstanceManager;
 - (const nc::panel::FindFilesSheetControllerFoundItem *)selectedItem; // may be nullptr

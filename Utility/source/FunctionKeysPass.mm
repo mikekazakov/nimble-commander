@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <FunctionKeysPass.h>
 #include <Carbon/Carbon.h>
 #include <AppKit/AppKit.h>
@@ -29,10 +29,10 @@ FunctionalKeysPass::FunctionalKeysPass() : m_Port(nullptr), m_Enabled(false)
                     }];
 }
 
-FunctionalKeysPass &FunctionalKeysPass::Instance()
+FunctionalKeysPass &FunctionalKeysPass::Instance() noexcept
 {
-    static FunctionalKeysPass *i = new FunctionalKeysPass;
-    return *i;
+    [[clang::no_destroy]] static FunctionalKeysPass inst;
+    return inst;
 }
 
 bool FunctionalKeysPass::Enabled() const

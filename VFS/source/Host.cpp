@@ -1,9 +1,11 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "ListingInput.h"
 #include "../include/VFS/Host.h"
 #include <sys/param.h>
 #include <queue>
+#include <algorithm>
+#include <numeric>
 #include <boost/filesystem.hpp>
 #include <sys/dirent.h>
 #include <sys/stat.h>
@@ -619,20 +621,31 @@ uint64_t Host::FullHashForPath(const char *_path) const noexcept
 
 std::string Host::MakePathVerbose(const char *_path) const
 {
-    std::array<const Host *, 8> hosts;
-    int hosts_n = 0;
+    constexpr size_t max_depth = 64;
+    std::array<std::string_view, max_depth> strings;
+    size_t strings_n = 0;
+    strings[strings_n++] = _path;
 
-    auto cur = this;
-    while( cur && hosts_n < 8 ) {
-        hosts[hosts_n++] = cur;
-        cur = cur->Parent().get();
+    auto current_host = this;
+    while( current_host ) {
+        const auto cfg = current_host->Configuration();
+        const auto junction = std::string_view(cfg.VerboseJunction());
+        if( strings_n == max_depth )
+            return {}; // abuse?
+        strings[strings_n++] = junction;
+        current_host = current_host->Parent().get();
     }
 
+    // make one and only one memory allocation
+    const size_t total_len =
+        std::accumulate(&strings[0], &strings[0] + strings_n, size_t(0), [](auto sum, auto string) {
+            return sum + string.length();
+        });
     std::string verbose_path;
-    while( hosts_n > 0 )
-        verbose_path += hosts[--hosts_n]->Configuration().VerboseJunction();
+    verbose_path.reserve(total_len);
+    for( size_t index = strings_n - 1; index < strings_n; --index )
+        verbose_path += strings[index];
 
-    verbose_path += _path;
     return verbose_path;
 }
 

@@ -82,6 +82,9 @@
 		CF465211268721BF0085840A /* NSURLShims.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46520F268721BF0085840A /* NSURLShims.mm */; };
 		CF465212268721BF0085840A /* NSURLShims.h in Headers */ = {isa = PBXBuildFile; fileRef = CF465210268721BF0085840A /* NSURLShims.h */; };
 		CF465221268728F20085840A /* VFSDropbox_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF465220268728F20085840A /* VFSDropbox_UT.mm */; };
+		CF824F66279F564800C4F29C /* Host.h in Headers */ = {isa = PBXBuildFile; fileRef = CF824F64279F564800C4F29C /* Host.h */; };
+		CF824F67279F564800C4F29C /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF824F65279F564800C4F29C /* Host.cpp */; };
+		CF824F69279F622900C4F29C /* VFSArchiveRaw_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF824F68279F622900C4F29C /* VFSArchiveRaw_UT.cpp */; };
 		CFA99A91266F887100F72E93 /* Authenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA99A8F266F887100F72E93 /* Authenticator.h */; };
 		CFA99A92266F887100F72E93 /* Authenticator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A90266F887100F72E93 /* Authenticator.mm */; };
 		CFA99A9A266FC16800F72E93 /* Log.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA99A99266FC16800F72E93 /* Log.h */; };
@@ -273,6 +276,9 @@
 		CF7C7D8E1E659D33002DB0E2 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = ../3rd_Party/libssh2/built/libssh2.a; sourceTree = "<group>"; };
 		CF818B7D1EA715ED00BC28E6 /* FileDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDownloadDelegate.h; path = source/NetDropbox/FileDownloadDelegate.h; sourceTree = "<group>"; };
 		CF818B7E1EA715ED00BC28E6 /* FileDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDownloadDelegate.mm; path = source/NetDropbox/FileDownloadDelegate.mm; sourceTree = "<group>"; };
+		CF824F64279F564800C4F29C /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/ArcLARaw/Host.h; sourceTree = "<group>"; };
+		CF824F65279F564800C4F29C /* Host.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Host.cpp; path = source/ArcLARaw/Host.cpp; sourceTree = "<group>"; };
+		CF824F68279F622900C4F29C /* VFSArchiveRaw_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveRaw_UT.cpp; path = tests/VFSArchiveRaw_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CFA99A8F266F887100F72E93 /* Authenticator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Authenticator.h; path = source/NetDropbox/Authenticator.h; sourceTree = "<group>"; };
 		CFA99A90266F887100F72E93 /* Authenticator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Authenticator.mm; path = source/NetDropbox/Authenticator.mm; sourceTree = "<group>"; };
 		CFA99A99266FC16800F72E93 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Log.h; path = source/Log.h; sourceTree = "<group>"; };
@@ -398,6 +404,7 @@
 				CF26DE2021D2864D003F0E93 /* Tests.cpp */,
 				CF26DE1F21D2864D003F0E93 /* Tests.h */,
 				CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */,
+				CF824F68279F622900C4F29C /* VFSArchiveRaw_UT.cpp */,
 				CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */,
 				CF465220268728F20085840A /* VFSDropbox_UT.mm */,
 				CF18470B1E41C8A5008B7C9F /* VFSFTP_IT.mm */,
@@ -551,6 +558,7 @@
 				CF69D00E1DA22BE800992B84 /* VFSEasyOps.mm */,
 				CF69D00F1DA22BE800992B84 /* VFSError.mm */,
 				CF69D0501DA2335700992B84 /* ArcLA */,
+				CF824F63279F563300C4F29C /* ArcLARaw */,
 				CF69D0611DA2343700992B84 /* ArcUnRAR */,
 				CF22F0A4258DF7550033E850 /* Mem */,
 				CF69D0221DA2304B00992B84 /* Native */,
@@ -665,6 +673,15 @@
 			name = PS;
 			sourceTree = "<group>";
 		};
+		CF824F63279F563300C4F29C /* ArcLARaw */ = {
+			isa = PBXGroup;
+			children = (
+				CF824F65279F564800C4F29C /* Host.cpp */,
+				CF824F64279F564800C4F29C /* Host.h */,
+			);
+			name = ArcLARaw;
+			sourceTree = "<group>";
+		};
 		CFFA95521F4E604D0035E606 /* NetWebDAV */ = {
 			isa = PBXGroup;
 			children = (
@@ -707,6 +724,7 @@
 				CFA99A9A266FC16800F72E93 /* Log.h in Headers */,
 				CF1F6FC625E70982003A2497 /* CURLConnection.h in Headers */,
 				CF1F6FC525E70982003A2497 /* Connection.h in Headers */,
+				CF824F66279F564800C4F29C /* Host.h in Headers */,
 				CF465212268721BF0085840A /* NSURLShims.h in Headers */,
 				CF22F0A8258DF7990033E850 /* Host.h in Headers */,
 			);
@@ -812,6 +830,7 @@
 				CF26DE3621E297AE003F0E93 /* EasyOps_UT.mm in Sources */,
 				CFAB6D62258A555A00397DB5 /* FileWindow_UT.mm in Sources */,
 				CF2343EF22CD321300F516CB /* KeyValidator_UT.cpp in Sources */,
+				CF824F69279F622900C4F29C /* VFSArchiveRaw_UT.cpp in Sources */,
 				CF26DE2421D28754003F0E93 /* SearchInFile_UT.cpp in Sources */,
 				CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */,
 				CF22F0B9258DFA480033E850 /* Internal.cpp in Sources */,
@@ -851,6 +870,7 @@
 				CF46009B256057C80095FC73 /* Aux.mm in Sources */,
 				CF4600A3256057D00095FC73 /* Host.mm in Sources */,
 				CF46007E2560579F0095FC73 /* Stat.cpp in Sources */,
+				CF824F67279F564800C4F29C /* Host.cpp in Sources */,
 				CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */,
 				CF4600BB256057E80095FC73 /* ReadBuffer.cpp in Sources */,
 				CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */,

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <Habanero/CFStackAllocator.h>
 #include <Utility/PathManip.h>
@@ -18,7 +18,7 @@ namespace nc::vfs {
 using namespace arc;
 using namespace std::literals;
 
-const char *ArchiveHost::UniqueTag = "arc_libarchive";
+const char *const ArchiveHost::UniqueTag = "arc_libarchive";
 
 class VFSArchiveHostConfiguration
 {
@@ -896,7 +896,19 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
 struct archive *ArchiveHost::SpawnLibarchive()
 {
     archive *arc = archive_read_new();
-    archive_read_support_filter_all(arc);
+    auto require = []( int rc ) { if (rc != 0) abort(); };
+    require( archive_read_support_filter_bzip2(arc) );
+    require( archive_read_support_filter_compress(arc) );
+    require( archive_read_support_filter_gzip(arc) );
+    require( archive_read_support_filter_lzip(arc) );
+    require( archive_read_support_filter_lzma(arc) );
+    require( archive_read_support_filter_xz(arc) );
+    require( archive_read_support_filter_uu(arc) );
+    require( archive_read_support_filter_rpm(arc) );
+    require( archive_read_support_filter_lzop(arc) );
+    require( archive_read_support_filter_lz4(arc) );
+    require( archive_read_support_filter_zstd(arc) );
+    
     archive_read_support_format_ar(arc);
     archive_read_support_format_cpio(arc);
     archive_read_support_format_lha(arc);
@@ -908,7 +920,7 @@ struct archive *ArchiveHost::SpawnLibarchive()
     archive_read_support_format_iso9660(arc);
     archive_read_support_format_warc(arc);
     archive_read_support_format_xar(arc);
-    archive_read_support_format_zip_seekable(arc);
+    archive_read_support_format_zip(arc);
     if( Config().password )
         archive_read_add_passphrase(arc, Config().password->c_str());
     return arc;

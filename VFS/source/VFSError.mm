@@ -1,6 +1,6 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/errno.h>
-#include <libarchive/archive_platform.h>
+#include <libarchive/archive.h>
 #include "../include/VFS/VFSError.h"
 #include "../include/VFS/VFSDeclarations.h"
 #include <Foundation/Foundation.h>
@@ -168,11 +168,11 @@ int FromErrno()
 
 int FromLibarchive(int _errno)
 {
-    if( _errno == ARCHIVE_ERRNO_FILE_FORMAT )
+    if( _errno == EFTYPE )
         return VFSError::ArclibFileFormat;
-    else if( _errno == ARCHIVE_ERRNO_PROGRAMMER )
+    else if( _errno == EINVAL )
         return VFSError::ArclibProgError;
-    else if( _errno == ARCHIVE_ERRNO_MISC )
+    else if( _errno == -1 )
         return VFSError::ArclibMiscError;
 
     return FromErrno(_errno); // if error is none of listed above - treat it as unix error code

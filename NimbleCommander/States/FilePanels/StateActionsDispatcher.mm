@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StateActionsDispatcher.h"
 #include "Actions/DefaultAction.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
@@ -20,6 +20,13 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
 @implementation NCPanelsStateActionsDispatcher {
     __unsafe_unretained MainWindowFilePanelState *m_FS;
     const nc::panel::StateActionsMap *m_AM;
+    ActionsShortcutsManager::ShortCut m_HKFocusLeft;
+    ActionsShortcutsManager::ShortCut m_HKFocusRight;
+    ActionsShortcutsManager::ShortCut m_HKMoveUp;
+    ActionsShortcutsManager::ShortCut m_HKMoveDown;
+    ActionsShortcutsManager::ShortCut m_HKShow;
+    ActionsShortcutsManager::ShortCut m_HKFocusTerminal;
+    std::unique_ptr<ActionsShortcutsManager::ShortCutsUpdater> m_ShortCutsUpdater;
 }
 
 - (instancetype)initWithState:(MainWindowFilePanelState *)_state
@@ -28,6 +35,14 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
     if( self = [super init] ) {
         m_FS = _state;
         m_AM = &_actions_map;
+        m_ShortCutsUpdater = std::make_unique<ActionsShortcutsManager::ShortCutsUpdater>(
+            std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
+                {&m_HKFocusLeft, "panel.focus_left_panel"},
+                {&m_HKFocusRight, "panel.focus_right_panel"},
+                {&m_HKMoveUp, "menu.view.panels_position.move_up"},
+                {&m_HKMoveDown, "menu.view.panels_position.move_down"},
+                {&m_HKShow, "menu.view.panels_position.showpanels"},
+                {&m_HKFocusTerminal, "menu.view.panels_position.focusterminal"}});
     }
     return self;
 }
@@ -89,34 +104,39 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
         return true;
     }
 
+    if( m_HKFocusLeft.IsKeyDown(unicode, mod) ) {
+        [self executeBySelectorIfValidOrBeep:@selector(onFocusLeftPanel:) withSender:self];
+        return true;
+    }
+
+    if( m_HKFocusRight.IsKeyDown(unicode, mod) ) {
+        [self executeBySelectorIfValidOrBeep:@selector(onFocusRightPanel:) withSender:self];
+        return true;
+    }
+
     // overlapped terminal stuff
     if( _hasTerminal ) {
-        static ActionsShortcutsManager::ShortCut hk_move_up, hk_move_down, hk_showhide, hk_focus;
-        [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-            {&hk_move_up, &hk_move_down, &hk_showhide, &hk_focus},
-            {"menu.view.panels_position.move_up", "menu.view.panels_position.move_down",
-             "menu.view.panels_position.showpanels", "menu.view.panels_position.focusterminal"});
-
-        if( hk_move_up.IsKeyDown(unicode, mod) ) {
+        if( m_HKMoveUp.IsKeyDown(unicode, mod) ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveUp:)
                                       withSender:self];
             return true;
         }
 
-        if( hk_move_down.IsKeyDown(unicode, mod) ) {
+        if( m_HKMoveDown.IsKeyDown(unicode, mod) ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveDown:)
                                       withSender:self];
             return true;
         }
 
-        if( hk_showhide.IsKeyDown(unicode, mod) ) {
+        if( m_HKShow.IsKeyDown(unicode, mod) ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionShowHidePanels:)
                                       withSender:self];
             return true;
         }
 
-        if( hk_focus.IsKeyDown(unicode, mod) ) {
-            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionFocusOverlappedTerminal:)
+        if( m_HKFocusTerminal.IsKeyDown(unicode, mod) ) {
+            [self executeBySelectorIfValidOrBeep:@selector
+                  (OnViewPanelsPositionFocusOverlappedTerminal:)
                                       withSender:self];
             return true;
         }
@@ -158,7 +178,7 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
 {
     PERFORM;
 }
-- (IBAction)OnViewPanelsPositionShowHidePanels:(id) sender
+- (IBAction)OnViewPanelsPositionShowHidePanels:(id)sender
 {
     PERFORM;
 }
@@ -242,7 +262,14 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
 {
     PERFORM;
 }
-
+- (IBAction)onFocusLeftPanel:(id)sender
+{
+    PERFORM;
+}
+- (IBAction)onFocusRightPanel:(id)sender
+{
+    PERFORM;
+}
 #undef PERFORM
 
 @end
@@ -262,12 +289,13 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
     if( const auto action = ActionBySel(_sel, _map) ) {
         try {
             action->Perform(_target, _sender);
-        } catch( std::exception &e ) {
+        } catch( const std::exception &e ) {
             ShowExceptionAlert(e);
         } catch( ... ) {
             ShowExceptionAlert();
         }
-    } else {
+    }
+    else {
         std::cerr << "warning - unrecognized selector: " << NSStringFromSelector(_sel).UTF8String
                   << std::endl;
     }

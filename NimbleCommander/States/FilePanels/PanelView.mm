@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelView.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
@@ -536,34 +536,21 @@ struct StateStorage {
     static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last,
         hk_pgdown, hk_pgup, hk_inv_and_move, hk_inv, hk_scrdown, hk_scrup, hk_scrhome, hk_scrend;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-        {&hk_up,
-         &hk_down,
-         &hk_left,
-         &hk_right,
-         &hk_first,
-         &hk_last,
-         &hk_pgdown,
-         &hk_pgup,
-         &hk_inv_and_move,
-         &hk_inv,
-         &hk_scrdown,
-         &hk_scrup,
-         &hk_scrhome,
-         &hk_scrend},
-        {"panel.move_up",
-         "panel.move_down",
-         "panel.move_left",
-         "panel.move_right",
-         "panel.move_first",
-         "panel.move_last",
-         "panel.move_next_page",
-         "panel.move_prev_page",
-         "panel.move_next_and_invert_selection",
-         "panel.invert_item_selection",
-         "panel.scroll_next_page",
-         "panel.scroll_prev_page",
-         "panel.scroll_first",
-         "panel.scroll_last"});
+        std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
+            {&hk_up, "panel.move_up"},
+            {&hk_down, "panel.move_down"},
+            {&hk_left, "panel.move_left"},
+            {&hk_right, "panel.move_right"},
+            {&hk_first, "panel.move_first"},
+            {&hk_last, "panel.move_last"},
+            {&hk_pgdown, "panel.move_next_page"},
+            {&hk_pgup, "panel.move_prev_page"},
+            {&hk_inv_and_move, "panel.move_next_and_invert_selection"},
+            {&hk_inv, "panel.invert_item_selection"},
+            {&hk_scrdown, "panel.scroll_next_page"},
+            {&hk_scrup, "panel.scroll_prev_page"},
+            {&hk_scrhome, "panel.scroll_first"},
+            {&hk_scrend, "panel.scroll_last"}});
 
     if( hk_up.IsKeyDown(unicode, modifiers & ~NSEventModifierFlagShift) )
         [self HandlePrevFile];

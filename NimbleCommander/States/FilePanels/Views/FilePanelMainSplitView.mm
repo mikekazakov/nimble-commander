@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -61,7 +61,7 @@ static const auto g_ResizingGran = 14.;
     auto mid = std::floor(self.frame.size.width / 2.);
     if( proposedPosition > mid - g_MidGuideGap && proposedPosition < mid + g_MidGuideGap )
         return mid;
-    
+
     return proposedPosition;
 }
 
@@ -267,8 +267,9 @@ static const auto g_ResizingGran = 14.;
 
     static ActionsShortcutsManager::ShortCut hk_move_left, hk_move_right;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-        {&hk_move_left, &hk_move_right},
-        {"menu.view.panels_position.move_left", "menu.view.panels_position.move_right"});
+        std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
+            {&hk_move_left, "menu.view.panels_position.move_left"},
+            {&hk_move_right, "menu.view.panels_position.move_right"}});
 
     if( hk_move_left.IsKeyDown(unicode, mod) ) {
         [self OnViewPanelsPositionMoveLeft:self];

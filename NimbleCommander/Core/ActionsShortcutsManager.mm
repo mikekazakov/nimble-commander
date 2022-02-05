@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "ActionsShortcutsManager.h"
@@ -202,6 +202,8 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"panel.show_tab_no_8",                             100'167},
     {"panel.show_tab_no_9",                             100'168},
     {"panel.show_tab_no_10",                            100'169},
+    {"panel.focus_left_panel",                          100'170},
+    {"panel.focus_right_panel",                         100'171},
         
     {"viewer.toggle_text",                              101'000},
     {"viewer.toggle_hex",                               101'001},
@@ -396,6 +398,8 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"panel.show_tab_no_8",                                 u8""        },
     {"panel.show_tab_no_9",                                 u8""        },
     {"panel.show_tab_no_10",                                u8""        },
+    {"panel.focus_left_panel",                              u8"⇧⌘\uF702"}, // shift+cmd+left
+    {"panel.focus_right_panel",                             u8"⇧⌘\uF703"}, // shift+cmd+right
     
     {"viewer.toggle_text",                                  u8"⌘1"      }, // cmd+1
     {"viewer.toggle_hex",                                   u8"⌘2"      }, // cmd+2
@@ -405,17 +409,13 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"viewer.refresh",                                      u8"⌘r"      }, // cmd+r
 };
 // clang-format on
- 
-ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(
-    std::initializer_list<ShortCut *> _hotkeys,
-    std::initializer_list<const char *> _actions)
-{
-    if( _hotkeys.size() != _actions.size() )
-        throw std::logic_error("_hotkeys.size() != _actions.size()");
 
+ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(std::span<const UpdateTarget> _targets)
+{
     auto &am = ActionsShortcutsManager::Instance();
-    for( int i = 0, e = static_cast<int>(_hotkeys.size()); i != e; ++i )
-        m_Pets.emplace_back(_hotkeys.begin()[i], am.TagFromAction(_actions.begin()[i]));
+    m_Targets.reserve(_targets.size());
+    for( auto target : _targets )
+        m_Targets.emplace_back(target.shortcut, am.TagFromAction(target.action));
     m_Ticket = am.ObserveChanges([this] { CheckAndUpdate(); });
 
     CheckAndUpdate();
@@ -424,7 +424,7 @@ ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(
 void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
 {
     auto &am = ActionsShortcutsManager::Instance();
-    for( auto &i : m_Pets )
+    for( auto &i : m_Targets )
         *i.first = am.ShortCutFromTag(i.second);
 }
 

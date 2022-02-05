@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StateActions.h"
 #include "Actions/TabsManagement.h"
 #include "Actions/ShowGoToPopup.h"
@@ -11,6 +11,7 @@
 #include "Actions/ExecuteExternalTool.h"
 #include "Actions/ChangePanelsPosition.h"
 #include "Actions/FocusOverlappedTerminal.h"
+#include "Actions/FocusPanel.h"
 #include "StateActionsDispatcher.h"
 
 namespace nc::panel {
@@ -57,7 +58,8 @@ StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
     add(@selector(OnViewPanelsPositionMoveDown:), new MovePanelsDown);
     add(@selector(OnViewPanelsPositionShowHidePanels:), new ShowHidePanels);
     add(@selector(OnViewPanelsPositionFocusOverlappedTerminal:), new FocusOverlappedTerminal);
-
+    add(@selector(onFocusLeftPanel:), new FocusLeftPanel);
+    add(@selector(onFocusRightPanel:), new FocusRightPanel);
     return m;
 }
 

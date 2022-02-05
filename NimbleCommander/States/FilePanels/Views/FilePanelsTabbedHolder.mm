@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMTabBarView.h>
 #import <MMTabBarView/MMTabBarItem.h>
 #include "FilePanelsTabbedHolder.h"
@@ -41,7 +41,7 @@
     self = [super initWithFrame:frameRect];
     if( self ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
-        
+
         m_TabBarShown = false;
 
         m_TabView = [[NSTabView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
@@ -239,30 +239,19 @@
     static ActionsShortcutsManager::ShortCut hk_prev, hk_next, hk_t1, hk_t2, hk_t3, hk_t4, hk_t5,
         hk_t6, hk_t7, hk_t8, hk_t9, hk_t10;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
-        {&hk_prev,
-         &hk_next,
-         &hk_t1,
-         &hk_t2,
-         &hk_t3,
-         &hk_t4,
-         &hk_t5,
-         &hk_t6,
-         &hk_t7,
-         &hk_t8,
-         &hk_t9,
-         &hk_t10},
-        {"panel.show_previous_tab",
-         "panel.show_next_tab",
-         "panel.show_tab_no_1",
-         "panel.show_tab_no_2",
-         "panel.show_tab_no_3",
-         "panel.show_tab_no_4",
-         "panel.show_tab_no_5",
-         "panel.show_tab_no_6",
-         "panel.show_tab_no_7",
-         "panel.show_tab_no_8",
-         "panel.show_tab_no_9",
-         "panel.show_tab_no_10"});
+        std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
+            {&hk_prev, "panel.show_previous_tab"},
+            {&hk_next, "panel.show_next_tab"},
+            {&hk_t1, "panel.show_tab_no_1"},
+            {&hk_t2, "panel.show_tab_no_2"},
+            {&hk_t3, "panel.show_tab_no_3"},
+            {&hk_t4, "panel.show_tab_no_4"},
+            {&hk_t5, "panel.show_tab_no_5"},
+            {&hk_t6, "panel.show_tab_no_6"},
+            {&hk_t7, "panel.show_tab_no_7"},
+            {&hk_t8, "panel.show_tab_no_8"},
+            {&hk_t9, "panel.show_tab_no_9"},
+            {&hk_t10, "panel.show_tab_no_10"}});
 
     if( hk_prev.IsKeyDown(unicode, mod) ) {
         [self selectPreviousFilePanelTab];

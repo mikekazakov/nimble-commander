@@ -515,6 +515,10 @@
 		CF818B7A1EA4573400BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
 		CF818B7B1EA4573400BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
 		CF818B7C1EA4573500BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
+		CF824F9C27AE9E4300C4F29C /* FocusPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF824F9B27AE9E4300C4F29C /* FocusPanel.mm */; };
+		CF824F9D27AE9E4300C4F29C /* FocusPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF824F9B27AE9E4300C4F29C /* FocusPanel.mm */; };
+		CF824F9E27AE9E4300C4F29C /* FocusPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF824F9B27AE9E4300C4F29C /* FocusPanel.mm */; };
+		CF824F9F27AE9E4300C4F29C /* FocusPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF824F9B27AE9E4300C4F29C /* FocusPanel.mm */; };
 		CF8400FD21A2A8DE007FEF7B /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8400FF21A2A8DE007FEF7B /* TrialWindowController.xib */; };
 		CF84C8DF1DB74B3A00B4E888 /* PanelViewHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */; };
 		CF84C8F81DBB2AC300B4E888 /* PanelListView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */; };
@@ -1787,6 +1791,8 @@
 		CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pasteboard.mm; path = NimbleCommander/States/FilePanels/Helpers/Pasteboard.mm; sourceTree = SOURCE_ROOT; };
 		CF818B721EA0830400BC28E6 /* CopyToPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyToPasteboard.h; path = NimbleCommander/States/FilePanels/Actions/CopyToPasteboard.h; sourceTree = SOURCE_ROOT; };
 		CF818B731EA0830400BC28E6 /* CopyToPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyToPasteboard.mm; path = NimbleCommander/States/FilePanels/Actions/CopyToPasteboard.mm; sourceTree = SOURCE_ROOT; };
+		CF824F9A27AE9E4300C4F29C /* FocusPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FocusPanel.h; path = NimbleCommander/States/FilePanels/Actions/FocusPanel.h; sourceTree = "<group>"; };
+		CF824F9B27AE9E4300C4F29C /* FocusPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FocusPanel.mm; path = NimbleCommander/States/FilePanels/Actions/FocusPanel.mm; sourceTree = "<group>"; };
 		CF8400FE21A2A8DE007FEF7B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/TrialWindowController.xib; sourceTree = "<group>"; };
 		CF84010121A2A8E5007FEF7B /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/TrialWindowController.strings; sourceTree = "<group>"; };
 		CF84C8DD1DB74B3A00B4E888 /* PanelViewHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeader.h; path = NimbleCommander/States/FilePanels/PanelViewHeader.h; sourceTree = SOURCE_ROOT; };
@@ -2566,6 +2572,8 @@
 				CF0139B41E99F7C200E44F2D /* FindFiles.mm */,
 				CFEADD52259D01AD009ECA14 /* FocusOverlappedTerminal.h */,
 				CFEADD53259D01AD009ECA14 /* FocusOverlappedTerminal.mm */,
+				CF824F9A27AE9E4300C4F29C /* FocusPanel.h */,
+				CF824F9B27AE9E4300C4F29C /* FocusPanel.mm */,
 				CFAB6CC92587C38700397DB5 /* FollowSymlink.h */,
 				CFAB6CE22587C38700397DB5 /* FollowSymlink.mm */,
 				CFD8CDB01E8CCD0A00E4DC53 /* GoToFolder.h */,
@@ -4107,6 +4115,7 @@
 				CFB9F111201AEE8300FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CF36DBF41F6C18F4004A018E /* TextWidthsCache.mm in Sources */,
 				CF509272201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */,
+				CF824F9E27AE9E4300C4F29C /* FocusPanel.mm in Sources */,
 				CFA99A7B266188B400F72E93 /* PanelListViewExtensionView.mm in Sources */,
 				CF4E56D61D506B9700452912 /* FindFilesSheetController.mm in Sources */,
 				CFD726681E42E1E700603077 /* ContextMenu.mm in Sources */,
@@ -4306,6 +4315,7 @@
 				CFB2AB6E21573BE40009EB81 /* PanelViewHeaderThemeImpl.mm in Sources */,
 				CFD726561E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFD7260C1E42E07400603077 /* Application.mm in Sources */,
+				CF824F9C27AE9E4300C4F29C /* FocusPanel.mm in Sources */,
 				CFA99A85266188B500F72E93 /* PanelListViewExtensionView.mm in Sources */,
 				CF818B4E1EA0610C00BC28E6 /* ShowGoToPopup.mm in Sources */,
 				CFD799FB21F50B010043A26D /* ThemeAdaptor.mm in Sources */,
@@ -4505,6 +4515,7 @@
 				CFB9F112201AEE8400FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CF0139B21E99EC4A00E44F2D /* DefaultAction.mm in Sources */,
 				CF197C431FB81ACB009F6C59 /* ToggleSingleOrDualMode.mm in Sources */,
+				CF824F9D27AE9E4300C4F29C /* FocusPanel.mm in Sources */,
 				CFA99A80266188B500F72E93 /* PanelListViewExtensionView.mm in Sources */,
 				CF5FE80E1E16461600CD83B4 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF5FE7D51E120A4900CD83B4 /* CopyFilePaths.mm in Sources */,
@@ -4704,6 +4715,7 @@
 				CF5E9A4E1FCBDE29005608F5 /* RefreshPanel.mm in Sources */,
 				CF1FBF2B1E8F57E800D3569C /* AddToFavorites.mm in Sources */,
 				CFFA951B1F45A3410035E606 /* ConfigWiring.mm in Sources */,
+				CF824F9F27AE9E4300C4F29C /* FocusPanel.mm in Sources */,
 				CFA99A76266188B400F72E93 /* PanelListViewExtensionView.mm in Sources */,
 				CF4D98C8202BEC6700ECE06D /* StateActionsDispatcher.mm in Sources */,
 				CF509274201C3DB7004D9CF5 /* VFSInstanceManager.cpp in Sources */,

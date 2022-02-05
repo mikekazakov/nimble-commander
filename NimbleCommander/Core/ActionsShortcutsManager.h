@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 // ⇧ - NSShiftKeyMask
@@ -83,12 +83,16 @@ private:
 class ActionsShortcutsManager::ShortCutsUpdater
 {
 public:
-    ShortCutsUpdater(std::initializer_list<ShortCut *> _hotkeys,
-                     std::initializer_list<const char *> _actions);
+    struct UpdateTarget {
+        ShortCut *shortcut;
+        const char *action;
+    };
+
+    ShortCutsUpdater(std::span<const UpdateTarget> _targets);
 
 private:
     void CheckAndUpdate() const;
-    std::vector<std::pair<ShortCut *, int>> m_Pets;
+    std::vector<std::pair<ShortCut *, int>> m_Targets;
     ObservationTicket m_Ticket;
 };
 

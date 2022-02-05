@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
@@ -9,22 +9,24 @@
 @class MainWindowFilePanelState;
 
 namespace nc::panel {
-    namespace actions{
-        struct StateAction;
-    }
-    
-    using StateActionsMap =
-        robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::StateAction>>;
+namespace actions {
+struct StateAction;
+}
+
+using StateActionsMap =
+    robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::StateAction>>;
 }
 
 @interface NCPanelsStateActionsDispatcher : AttachedResponder
-@property (nonatomic, readwrite) bool hasTerminal;
+@property(nonatomic, readwrite) bool hasTerminal;
 
-- (instancetype)initWithState:(MainWindowFilePanelState*)_state
-                andActionsMap:(const nc::panel::StateActionsMap&)_actions_map;
+- (instancetype)initWithState:(MainWindowFilePanelState *)_state
+                andActionsMap:(const nc::panel::StateActionsMap &)_actions_map;
 
 - (IBAction)OnSwapPanels:(id)sender;
 - (IBAction)OnSyncPanels:(id)sender;
+- (IBAction)onFocusLeftPanel:(id)sender;
+- (IBAction)onFocusRightPanel:(id)sender;
 - (IBAction)OnShowTerminal:(id)sender;
 - (IBAction)performClose:(id)sender;
 - (IBAction)OnFileCloseWindow:(id)sender;

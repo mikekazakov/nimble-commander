@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/NSEventModifierFlagsHolder.h>
@@ -14,7 +14,7 @@ namespace nc::utility {
 
 struct ActionShortcut
 {
-    ActionShortcut() noexcept = default;
+    constexpr ActionShortcut() noexcept = default;
     
     // construct from persistency string, utf8
     ActionShortcut(const std::string& _from) noexcept; 

@@ -1,7 +1,8 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFieldEditor.h"
 #include <Operations/FilenameTextControl.h>
 #include <Utility/StringExtras.h>
+#include <Utility/NSEventModifierFlagsHolder.h>
 
 static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_selection);
 
@@ -106,6 +107,20 @@ static NSRange NextFilenameSelectionRange(NSString *_string, NSRange _current_se
         return true;
     }
     return false;
+}
+
+- (BOOL)performKeyEquivalent:(NSEvent *)_event
+{
+    // manually process Cmd+Backspace that should processed here instead of going into the menu
+    // where Move To Trash could pick it.
+    using nc::utility::NSEventModifierFlagsHolder;
+    const auto keycode = _event.keyCode;
+    const auto flags = NSEventModifierFlagsHolder(_event.modifierFlags);
+    if( keycode == 51 && flags == NSEventModifierFlagsHolder(NSEventModifierFlagCommand) ) {
+        [m_TextView doCommandBySelector:@selector(deleteToBeginningOfLine:)];
+        return true;
+    }
+    return [super performKeyEquivalent:_event];
 }
 
 - (void)finishEditing

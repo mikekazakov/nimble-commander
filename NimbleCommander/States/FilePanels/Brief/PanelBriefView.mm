@@ -426,27 +426,41 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     if( _item_index < 0 )
         return;
 
+    // the existing scroll state and item's position
     const auto visible_rect = m_ScrollView.documentVisibleRect;
     const auto item_rect = [m_CollectionView frameForItemAtIndex:_item_index];
-    if( !NSContainsRect(visible_rect, item_rect) ) {
-        const auto index_path = [NSIndexPath indexPathForItem:_item_index inSection:0];
-        const auto indices = [NSSet setWithObject:index_path];
-        if( visible_rect.size.width >= item_rect.size.width ) {
-            const auto scroll_mode = [&] {
-                if( item_rect.origin.x < visible_rect.origin.x )
-                    return NSCollectionViewScrollPositionLeft;
-                if( NSMaxX(item_rect) > NSMaxX(visible_rect) )
-                    return NSCollectionViewScrollPositionRight;
-                return NSCollectionViewScrollPositionCenteredHorizontally;
-            }();
-            [m_CollectionView scrollToItemsAtIndexPaths:indices scrollPosition:scroll_mode];
+
+    // check if the item is already visible - nothing to do in that case
+    if( NSContainsRect(visible_rect, item_rect) )
+        return;
+
+    // NB! scrollToItemsAtIndexPaths is NOT used here because at some version of macOS it decided to
+    // add gaps to the items it's been asked to scroll to. That looks very buggy. Hence this custom
+    // logic
+    if( visible_rect.size.width >= item_rect.size.width ) {
+        // normal case - scroll to the item, aligning depending on its location
+        if( item_rect.origin.x < visible_rect.origin.x ) {
+            // align left
+            const auto new_pos = NSMakePoint(item_rect.origin.x, 0.);
+            [m_ScrollView.contentView setBoundsOrigin:new_pos];
+        }
+        else if( NSMaxX(item_rect) > NSMaxX(visible_rect) ) {
+            // align right
+            const auto new_pos = NSMakePoint(
+                item_rect.origin.x + item_rect.size.width - visible_rect.size.width, 0.);
+            [m_ScrollView.contentView setBoundsOrigin:new_pos];
         }
         else {
-            // TODO: this call can be redundant.
-            // Need to check whether the scroll position is already optimal
-            [m_CollectionView scrollToItemsAtIndexPaths:indices
-                                         scrollPosition:NSCollectionViewScrollPositionLeft];
+            // center
+            const auto new_pos = NSMakePoint(
+                item_rect.origin.x - (visible_rect.size.width - item_rect.size.width) / 2., 0.);
+            [m_ScrollView.contentView setBoundsOrigin:new_pos];
         }
+    }
+    else {
+        // singular case - just try to show as much as possible
+        const auto new_pos = NSMakePoint(item_rect.origin.x, 0.);
+        [m_ScrollView.contentView setBoundsOrigin:new_pos];
     }
 }
 

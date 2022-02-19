@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListViewTableHeaderView.h"
 #include "PanelListView.h"
 #include <Utility/ObjCpp.h>
@@ -14,6 +14,16 @@
             return menu;
         }
     return nil;
+}
+
+- (BOOL) isOpaque
+{
+    return true;
+}
+
+- (BOOL) allowsVibrancy
+{
+    return false;
 }
 
 @end

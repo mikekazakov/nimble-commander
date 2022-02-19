@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExecuteExternalTool.h"
 #include "../ExternalToolsSupport.h"
 #include <boost/algorithm/string/replace.hpp>
@@ -12,6 +12,7 @@
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Core/AnyHolder.h>
+#include <Panel/ExternalTools.h>
 #include <Term/Task.h>
 #include "../ExternalToolParameterValueSheetController.h"
 #include <Utility/ObjCpp.h>

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowHotkeysTab.h"
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/FunctionKeysPass.h>
@@ -576,6 +576,8 @@ static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action)
         {"panel.show_tab_no_8", NSLocalizedString(@"File Panels ▶ Show Tab №8", "")},
         {"panel.show_tab_no_9", NSLocalizedString(@"File Panels ▶ Show Tab №9", "")},
         {"panel.show_tab_no_10", NSLocalizedString(@"File Panels ▶ Show Tab №10", "")},
+        {"panel.focus_left_panel", NSLocalizedString(@"File Panels ▶ Focus Left Panel", "")},
+        {"panel.focus_right_panel", NSLocalizedString(@"File Panels ▶ Focus Right Panel", "")},
         {"viewer.toggle_text", NSLocalizedString(@"Viewer ▶ Toggle Text", "")},
         {"viewer.toggle_hex", NSLocalizedString(@"Viewer ▶ Toggle Hex", "")},
         {"viewer.toggle_preview", NSLocalizedString(@"Viewer ▶ Toggle Preview", "")},

@@ -1,7 +1,8 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowToolsTab.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
+#include <Panel/ExternalTools.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
@@ -207,7 +208,7 @@ static bool AskUserToDeleteTool()
             [self commitToolChanges:changed_tool];
 
             std::string error;
-            ExternalToolsParametersParser().Parse(changed_tool.m_Parameters,
+            nc::panel::ExternalToolsParametersParser().Parse(changed_tool.m_Parameters,
                                                   [&](std::string _err) { error = _err; });
             if( !error.empty() ) {
                 NSHelpManager *helpManager = [NSHelpManager sharedHelpManager];

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewPresentationItemsColoringFilterPersistence.h"
 #include <Utility/HexadecimalColor.h>
 #include <Config/RapidJSON.h>
@@ -29,7 +29,7 @@ static config::Value to_json(tribool _b)
     
 static NSColor *ColorFromJSON(const config::Value& _v)
 {
-    return [NSColor colorWithHexStdString:_v.IsString() ? _v.GetString() : ""];
+    return [NSColor colorWithHexString:_v.IsString() ? _v.GetString() : ""];
 }
 
 config::Value

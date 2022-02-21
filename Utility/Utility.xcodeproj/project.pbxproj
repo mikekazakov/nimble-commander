@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CF0A49B3250D685D008EC7B0 /* BlinkScheduler_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49B2250D685D008EC7B0 /* BlinkScheduler_UT.cpp */; };
+		CF22060B27C2644B008EDE3A /* HexadecimalColor_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22060A27C2644B008EDE3A /* HexadecimalColor_UT.mm */; };
 		CF24E1F8228B525000C166FA /* ActionShortcut_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1F7228B525000C166FA /* ActionShortcut_UT.mm */; };
 		CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE3021D5685A003F0E93 /* TemporaryFileStorageImpl_UT.mm */; };
 		CF2C102922A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2C102822A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp */; };
@@ -107,6 +108,7 @@
 		CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VerticallyCenteredTextFieldCell.mm; path = source/VerticallyCenteredTextFieldCell.mm; sourceTree = "<group>"; };
 		CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ButtonWithTextColor.h; path = include/Utility/ButtonWithTextColor.h; sourceTree = "<group>"; };
 		CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ButtonWithTextColor.mm; path = source/ButtonWithTextColor.mm; sourceTree = "<group>"; };
+		CF22060A27C2644B008EDE3A /* HexadecimalColor_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HexadecimalColor_UT.mm; path = tests/HexadecimalColor_UT.mm; sourceTree = "<group>"; };
 		CF233AF0219E7E9500693E1A /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF233AF1219E7E9600693E1A /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CF233AF2219E7E9600693E1A /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
@@ -291,6 +293,7 @@
 				CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */,
 				CF2C102822A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp */,
 				CFA999642644888C00F72E93 /* FSEventsFileUpdate_UT.cpp */,
+				CF22060A27C2644B008EDE3A /* HexadecimalColor_UT.mm */,
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
 				CF3ABD7E23B8DBFF00D1878B /* NativeFSManager_UT.mm */,
 				CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */,
@@ -620,6 +623,7 @@
 				CF3ABD7F23B8DBFF00D1878B /* NativeFSManager_UT.mm in Sources */,
 				CF0A49B3250D685D008EC7B0 /* BlinkScheduler_UT.cpp in Sources */,
 				CFE3F1C7229332FB009D6AB4 /* Encodings_UT.mm in Sources */,
+				CF22060B27C2644B008EDE3A /* HexadecimalColor_UT.mm in Sources */,
 				CFE3F1C622933058009D6AB4 /* FilenameTextNavigation_UT.mm in Sources */,
 				CF2C102922A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp in Sources */,
 				CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */,

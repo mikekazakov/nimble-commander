@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemePersistence.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
@@ -14,7 +14,7 @@ NSColor *ThemePersistence::ExtractColor(const Value &_doc, const char *_path)
     if( !cr->value.IsString() )
         return nil;
 
-    return [NSColor colorWithHexStdString:cr->value.GetString()];
+    return [NSColor colorWithHexString:cr->value.GetString()];
 }
 
 NSFont *ThemePersistence::ExtractFont(const Value &_doc, const char *_path)

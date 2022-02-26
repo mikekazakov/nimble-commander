@@ -401,7 +401,6 @@
 		CF75E88B1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
 		CF75E88C1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
 		CF75E88D1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
-		CF764CAD2587632A00D7ED17 /* ExternalToolsSupport_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF764CAC2587632A00D7ED17 /* ExternalToolsSupport_UT.mm */; };
 		CF764CBE258763DA00D7ED17 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
 		CF764CCE258763FE00D7ED17 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF764CD22587640B00D7ED17 /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
@@ -1764,7 +1763,6 @@
 		CF75E87F1EAF7DC70028C108 /* ConnectionSheetProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionSheetProtocol.h; path = NimbleCommander/States/FilePanels/Views/ConnectionSheetProtocol.h; sourceTree = SOURCE_ROOT; };
 		CF75E8871EB0EFDC0028C108 /* DropboxAccountSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DropboxAccountSheetController.h; path = NimbleCommander/States/FilePanels/Views/DropboxAccountSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DropboxAccountSheetController.mm; path = NimbleCommander/States/FilePanels/Views/DropboxAccountSheetController.mm; sourceTree = SOURCE_ROOT; };
-		CF764CAC2587632A00D7ED17 /* ExternalToolsSupport_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport_UT.mm; path = NimbleCommander/Tests/ExternalToolsSupport_UT.mm; sourceTree = "<group>"; };
 		CF764CE62587661300D7ED17 /* DragSender_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DragSender_UT.mm; path = NimbleCommander/Tests/DragSender_UT.mm; sourceTree = "<group>"; };
 		CF764D422587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewDynamicWidthLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewDynamicWidthLayoutEngine_UT.mm; sourceTree = "<group>"; };
 		CF764D4E258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedNumberLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewFixedNumberLayoutEngine_UT.mm; sourceTree = "<group>"; };
@@ -2516,7 +2514,6 @@
 				CF485C3F259B6462002F9A05 /* FeedbackManager_UT.mm */,
 				CF5DE0D5258415D500604DEE /* ActivationManager_UT.cpp */,
 				CF764CE62587661300D7ED17 /* DragSender_UT.mm */,
-				CF764CAC2587632A00D7ED17 /* ExternalToolsSupport_UT.mm */,
 				CF764D422587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm */,
 				CF764D4E258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm */,
 				CF764D562587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm */,
@@ -3994,7 +3991,6 @@
 				CF5DE0C22584157B00604DEE /* Tests.cpp in Sources */,
 				CF764D432587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm in Sources */,
 				CF485C40259B6462002F9A05 /* FeedbackManager_UT.mm in Sources */,
-				CF764CAD2587632A00D7ED17 /* ExternalToolsSupport_UT.mm in Sources */,
 				CF764CE72587661300D7ED17 /* DragSender_UT.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

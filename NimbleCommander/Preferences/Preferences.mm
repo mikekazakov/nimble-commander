@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "PreferencesWindowGeneralTab.h"
@@ -13,7 +13,7 @@
 
 static RHPreferencesWindowController *CreatePrefWindow()
 {
-    auto tools_storage = []() -> ExternalToolsStorage & { return NCAppDelegate.me.externalTools; };
+    auto tools_storage = []() -> nc::panel::ExternalToolsStorage & { return NCAppDelegate.me.externalTools; };
     auto app_del = NCAppDelegate.me;
     auto &am = app_del.activationManager;
     auto tabs = @[

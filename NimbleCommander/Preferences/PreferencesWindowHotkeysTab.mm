@@ -4,12 +4,14 @@
 #include <Utility/FunctionKeysPass.h>
 #import <3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.h>
 #include "../Core/ActionsShortcutsManager.h"
-#include "../States/FilePanels/ExternalToolsSupport.h"
+#include <Panel/ExternalTools.h>
 #include "../Bootstrap/ActivationManager.h"
 #include <any>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+
+using nc::panel::ExternalTool;
 
 static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item);
 static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action);
@@ -62,8 +64,8 @@ enum class SourceType
 
 @implementation PreferencesWindowHotkeysTab {
     std::vector<std::pair<std::string, int>> m_Shortcuts;
-    std::function<ExternalToolsStorage &()> m_ToolsStorage;
-    ExternalToolsStorage::ObservationTicket m_ToolsObserver;
+    std::function<nc::panel::ExternalToolsStorage &()> m_ToolsStorage;
+    nc::panel::ExternalToolsStorage::ObservationTicket m_ToolsObserver;
     std::vector<std::shared_ptr<const ExternalTool>> m_Tools;
     std::vector<std::any> m_AllNodes;
     std::vector<std::any> m_SourceNodes;
@@ -74,7 +76,7 @@ enum class SourceType
 
 @synthesize sourceType = m_SourceType;
 
-- (id)initWithToolsStorage:(std::function<ExternalToolsStorage &()>)_tool_storage
+- (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage
          activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super init];

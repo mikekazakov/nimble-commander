@@ -1,13 +1,13 @@
 // Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowToolsTab.h"
 #include "../Bootstrap/ActivationManager.h"
-#include "../States/FilePanels/ExternalToolsSupport.h"
 #include <Panel/ExternalTools.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 
 using namespace std::literals;
+using nc::panel::ExternalTool;
 
 @interface PreferencesWindowToolsTab ()
 
@@ -46,13 +46,13 @@ static bool AskUserToDeleteTool()
 }
 
 @implementation PreferencesWindowToolsTab {
-    std::function<ExternalToolsStorage &()> m_ToolsStorage;
+    std::function<nc::panel::ExternalToolsStorage &()> m_ToolsStorage;
     std::vector<std::shared_ptr<const ExternalTool>> m_Tools;
-    ExternalToolsStorage::ObservationTicket m_ToolsObserver;
+    nc::panel::ExternalToolsStorage::ObservationTicket m_ToolsObserver;
     nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
-- (id)initWithToolsStorage:(std::function<ExternalToolsStorage &()>)_tool_storage
+- (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage
          activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     assert(_tool_storage);

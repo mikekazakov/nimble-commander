@@ -1,10 +1,11 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate.h"
 #include "AppDelegateCPP.h"
 #include "AppDelegate+Migration.h"
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate+ViewerCreation.h"
 #include "ActivationManagerImpl.h"
+#include "Config.h"
 #include "ConfigWiring.h"
 #include "VFSInit.h"
 #include "Interactions.h"
@@ -52,7 +53,6 @@
 #include <NimbleCommander/States/MainWindow.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
-#include <NimbleCommander/States/FilePanels/ExternalToolsSupport.h>
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
 #include <NimbleCommander/States/FilePanels/FavoritesImpl.h>
@@ -84,6 +84,7 @@
 #include <VFS/Log.h>
 
 #include <Panel/Log.h>
+#include <Panel/ExternalTools.h>
 
 #include <filesystem>
 
@@ -902,10 +903,10 @@ static std::string AquaticPrimePublicKey()
     return *g_State;
 }
 
-- (ExternalToolsStorage &)externalTools
+- (nc::panel::ExternalToolsStorage &)externalTools
 {
-    [[clang::no_destroy]] static ExternalToolsStorage storage{g_ConfigExternalToolsList,
-                                                              self.globalConfig};
+    [[clang::no_destroy]] static //
+    nc::panel::ExternalToolsStorage storage{g_ConfigExternalToolsList, self.globalConfig};
     return storage;
 }
 

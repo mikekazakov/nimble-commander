@@ -1,6 +1,5 @@
 // Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExecuteExternalTool.h"
-#include "../ExternalToolsSupport.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <VFS/VFS.h>
 #include <VFS/Native.h>

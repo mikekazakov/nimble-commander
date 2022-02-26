@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #pragma once
 
@@ -9,7 +9,6 @@
 @class NCMainWindowController;
 @class InternalViewerWindowController;
 @class AppStoreHelper;
-class ExternalToolsStorage;
 class ThemesManager;
 class ExternalEditorsStorage;
 class NetworkConnectionsManager;
@@ -47,6 +46,7 @@ namespace panel {
 class PanelViewLayoutsStorage;
 class FavoriteLocationsStorage;
 class ClosedPanelsHistory;
+class ExternalToolsStorage;
 }
 
 namespace viewer {
@@ -109,7 +109,7 @@ class NativeHost;
 
 @property(nonatomic, readonly) nc::config::Config &stateConfig;
 
-@property(nonatomic, readonly) ExternalToolsStorage &externalTools;
+@property(nonatomic, readonly) nc::panel::ExternalToolsStorage &externalTools;
 
 @property(nonatomic, readonly)
     const std::shared_ptr<nc::panel::PanelViewLayoutsStorage> &panelLayouts;

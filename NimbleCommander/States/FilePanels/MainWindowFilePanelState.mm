@@ -1,10 +1,11 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <VFS/Native.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <Config/RapidJSON.h>

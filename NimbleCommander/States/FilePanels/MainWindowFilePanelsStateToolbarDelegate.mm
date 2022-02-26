@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
 #include "StateActionsDispatcher.h"
 #include "../../Core/ActionsShortcutsManager.h"
@@ -7,7 +7,7 @@
 #include <Operations/PoolViewController.h>
 #include "Actions/ExecuteExternalTool.h"
 #include <NimbleCommander/Core/AnyHolder.h>
-#include "ExternalToolsSupport.h"
+#include <Panel/ExternalTools.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/WhereIs.h>
 #include <Utility/StringExtras.h>
@@ -33,7 +33,7 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
     NSToolbarItem *m_PoolViewToolbarItem;
 
     NSArray *m_AllowedToolbarItemsIdentifiers;
-    ExternalToolsStorage::ObservationTicket m_ToolsChangesTicket;
+    nc::panel::ExternalToolsStorage::ObservationTicket m_ToolsChangesTicket;
 
     id m_RepresentedObject;
 }
@@ -115,7 +115,7 @@ static NSImage *MakeBackupToolImage()
     return image;
 }
 
-static NSImage *ImageForTool(const ExternalTool &_et)
+static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
 {
     std::filesystem::path tool_path = _et.m_ExecutablePath;
     if( std::filesystem::exists(tool_path) == false ) {
@@ -140,7 +140,7 @@ static NSImage *ImageForTool(const ExternalTool &_et)
     return img;
 }
 
-- (void)setupExternalToolItem:(NSToolbarItem *)_item forTool:(const ExternalTool &)_et no:(int)_no
+- (void)setupExternalToolItem:(NSToolbarItem *)_item forTool:(const nc::panel::ExternalTool &)_et no:(int)_no
 {
     const auto title = [NSString stringWithUTF8StdString:_et.m_Title];
     _item.image = ImageForTool(_et);

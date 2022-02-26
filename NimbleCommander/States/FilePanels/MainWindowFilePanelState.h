@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -25,12 +25,12 @@ class Pool;
 namespace nc::panel {
 class FavoriteLocationsStorage;
 class ClosedPanelsHistory;
+class ExternalToolsStorage;
 namespace data {
 class Model;
 }
 }
 
-class ExternalToolsStorage;
 @class NCMainWindowController;
 @class Operation;
 @class PanelView;
@@ -79,7 +79,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 @property(nonatomic, readonly) NCMainWindowController *mainWindowController;
 @property(nonatomic, readonly) FilePanelMainSplitView *splitView;
-@property(nonatomic, readonly) ExternalToolsStorage &externalToolsStorage;
+@property(nonatomic, readonly) nc::panel::ExternalToolsStorage &externalToolsStorage;
 @property(nonatomic, readonly) nc::ops::Pool &operationsPool;
 @property(nonatomic, readonly) bool isPanelActive;
 @property(nonatomic, readonly) bool goToForcesPanelActivation;

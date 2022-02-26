@@ -11,15 +11,21 @@ namespace nc::panel {
 
 using namespace std::literals;
 
-bool operator==(ExternalToolsParameters::SelectedItems _lhs,
-                ExternalToolsParameters::SelectedItems _rhs) noexcept
+static const auto g_TitleKey = "title";
+static const auto g_PathKey = "path";
+static const auto g_ParametersKey = "parameters";
+static const auto g_ShortcutKey = "shortcut";
+static const auto g_StartupKey = "startup";
+
+bool operator==(ExternalToolsParameters::SelectedItems _lhs, ExternalToolsParameters::SelectedItems _rhs) noexcept
 {
-    return _lhs.what == _rhs.what && _lhs.location == _rhs.location && _lhs.max == _rhs.max &&
+    return _lhs.what == _rhs.what &&         //
+           _lhs.location == _rhs.location && //
+           _lhs.max == _rhs.max &&           //
            _lhs.as_parameters == _rhs.as_parameters;
 }
 
-bool operator!=(ExternalToolsParameters::SelectedItems _lhs,
-                ExternalToolsParameters::SelectedItems _rhs) noexcept
+bool operator!=(ExternalToolsParameters::SelectedItems _lhs, ExternalToolsParameters::SelectedItems _rhs) noexcept
 {
     return !(_lhs == _rhs);
 }
@@ -77,26 +83,22 @@ size_t ExternalToolsParameters::StepsAmount() const
     return m_Steps.size();
 }
 
-const ExternalToolsParameters::UserDefined &
-ExternalToolsParameters::GetUserDefined(size_t _index) const
+const ExternalToolsParameters::UserDefined &ExternalToolsParameters::GetUserDefined(size_t _index) const
 {
     return m_UserDefined.at(_index);
 }
 
-const ExternalToolsParameters::EnterValue &
-ExternalToolsParameters::GetEnterValue(size_t _index) const
+const ExternalToolsParameters::EnterValue &ExternalToolsParameters::GetEnterValue(size_t _index) const
 {
     return m_EnterValues.at(_index);
 }
 
-const ExternalToolsParameters::CurrentItem &
-ExternalToolsParameters::GetCurrentItem(size_t _index) const
+const ExternalToolsParameters::CurrentItem &ExternalToolsParameters::GetCurrentItem(size_t _index) const
 {
     return m_CurrentItems.at(_index);
 }
 
-const ExternalToolsParameters::SelectedItems &
-ExternalToolsParameters::GetSelectedItems(size_t _index) const
+const ExternalToolsParameters::SelectedItems &ExternalToolsParameters::GetSelectedItems(size_t _index) const
 {
     return m_SelectedItems.at(_index);
 }
@@ -160,15 +162,13 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
                     number = number * 10 + c - '0';
                 }
                 else if( c == '"' ) {
-                    const auto right_quote = [_source
-                        rangeOfCharacterFromSet:quote
-                                        options:0
-                                          range:NSMakeRange(position + 1,
-                                                            _source.length - (position + 1))];
+                    const auto right_quote =
+                        [_source rangeOfCharacterFromSet:quote
+                                                 options:0
+                                                   range:NSMakeRange(position + 1, _source.length - (position + 1))];
                     if( right_quote.location != NSNotFound ) {
-                        NSString *substr = [_source
-                            substringWithRange:NSMakeRange(position + 1,
-                                                           right_quote.location - position - 1)];
+                        NSString *substr =
+                            [_source substringWithRange:NSMakeRange(position + 1, right_quote.location - position - 1)];
                         prompt_text = substr.UTF8String;
                         position = right_quote.location + 1;
                         continue;
@@ -202,8 +202,7 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
                                 return make_pair(std::any(), 0); // malformed string, aborting
                             ExternalToolsParameters::EnterValue result;
                             result.name = move(prompt_text);
-                            return make_pair(std::any(std::move(result)),
-                                             position - _range.location + 1);
+                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
                         }
                         case 'r': { // terminal - directory path
                             if( number != 0 || !prompt_text.empty() || list_flag != false )
@@ -211,8 +210,7 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
                             ExternalToolsParameters::CurrentItem result;
                             result.what = ExternalToolsParameters::FileInfo::DirectoryPath;
                             result.location = produce_location();
-                            return make_pair(std::any(std::move(result)),
-                                             position - _range.location + 1);
+                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
                         }
                         case 'p': { // terminal - current path
                             if( number != 0 || !prompt_text.empty() || list_flag != false )
@@ -220,8 +218,7 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
                             ExternalToolsParameters::CurrentItem result;
                             result.what = ExternalToolsParameters::FileInfo::Path;
                             result.location = produce_location();
-                            return make_pair(std::any(std::move(result)),
-                                             position - _range.location + 1);
+                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
                         }
                         case 'f': { // terminal - current filename
                             if( number != 0 || !prompt_text.empty() || list_flag != false )
@@ -229,18 +226,15 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
                             ExternalToolsParameters::CurrentItem result;
                             result.what = ExternalToolsParameters::FileInfo::Filename;
                             result.location = produce_location();
-                            return make_pair(std::any(std::move(result)),
-                                             position - _range.location + 1);
+                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
                         }
                         case 'n': { // terminal - current filename w/o ext
                             if( number != 0 || !prompt_text.empty() || list_flag != false )
                                 return make_pair(std::any(), 0); // malformed string, aborting
                             ExternalToolsParameters::CurrentItem result;
-                            result.what =
-                                ExternalToolsParameters::FileInfo::FilenameWithoutExtension;
+                            result.what = ExternalToolsParameters::FileInfo::FilenameWithoutExtension;
                             result.location = produce_location();
-                            return make_pair(std::any(std::move(result)),
-                                             position - _range.location + 1);
+                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
                         }
                         case 'e': { // terminal - current filename extension
                             if( number != 0 || !prompt_text.empty() || list_flag != false )
@@ -248,8 +242,7 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
                             ExternalToolsParameters::CurrentItem result;
                             result.what = ExternalToolsParameters::FileInfo::FileExtension;
                             result.location = produce_location();
-                            return make_pair(std::any(std::move(result)),
-                                             position - _range.location + 1);
+                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
                         }
                         case 'F': { // terminal - selected filenames
                             if( !prompt_text.empty() )
@@ -259,8 +252,7 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
                             result.location = produce_location();
                             result.as_parameters = !list_flag;
                             result.max = number;
-                            return make_pair(std::any(std::move(result)),
-                                             position - _range.location + 1);
+                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
                         }
                         case 'P': { // terminal - selected filepaths
                             if( !prompt_text.empty() )
@@ -270,8 +262,7 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
                             result.location = produce_location();
                             result.as_parameters = !list_flag;
                             result.max = number;
-                            return make_pair(std::any(std::move(result)),
-                                             position - _range.location + 1);
+                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
                         }
                         case 'T': {
                             if( minus_sign != false || list_flag != false != !prompt_text.empty() )
@@ -294,9 +285,8 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
         else {
             // % symbol is somewhere next
             ExternalToolsParameters::UserDefined result;
-            result.text = [_source substringWithRange:NSMakeRange(_range.location,
-                                                                  r.location - _range.location)]
-                              .UTF8String;
+            result.text =
+                [_source substringWithRange:NSMakeRange(_range.location, r.location - _range.location)].UTF8String;
             return make_pair(std::any(std::move(result)), r.location - _range.location);
         }
     }
@@ -309,9 +299,8 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
     return make_pair(std::any(), 0);
 }
 
-ExternalToolsParameters
-ExternalToolsParametersParser::Parse(const std::string &_source,
-                                     std::function<void(std::string)> _parse_error)
+ExternalToolsParameters ExternalToolsParametersParser::Parse(const std::string &_source,
+                                                             std::function<void(std::string)> _parse_error)
 {
     ExternalToolsParameters result;
 
@@ -325,8 +314,7 @@ ExternalToolsParametersParser::Parse(const std::string &_source,
         if( res.second == 0 ) {
             if( _parse_error ) {
                 NSString *left = [source substringFromIndex:range.location];
-                std::string error =
-                    "Parse error nearby the following symbols:\n"s + left.UTF8String;
+                std::string error = "Parse error nearby the following symbols:\n"s + left.UTF8String;
                 _parse_error(move(error));
             }
             break;
@@ -360,6 +348,183 @@ ExternalToolsParametersParser::Parse(const std::string &_source,
     }
 
     return result;
+}
+
+bool operator==(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept
+{
+    return _lhs.m_Title == _rhs.m_Title &&                   //
+           _lhs.m_ExecutablePath == _rhs.m_ExecutablePath && //
+           _lhs.m_Parameters == _rhs.m_Parameters &&         //
+           _lhs.m_Shorcut == _rhs.m_Shorcut &&               //
+           _lhs.m_StartupMode == _rhs.m_StartupMode;
+}
+
+bool operator!=(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept
+{
+    return !(_lhs == _rhs);
+}
+
+static nc::config::Value SaveTool(const ExternalTool &_et)
+{
+    using namespace rapidjson;
+    using nc::config::MakeStandaloneString;
+    using nc::config::g_CrtAllocator;
+    nc::config::Value v(kObjectType);
+
+    v.AddMember(MakeStandaloneString(g_TitleKey), MakeStandaloneString(_et.m_Title), g_CrtAllocator);
+    v.AddMember(MakeStandaloneString(g_PathKey), MakeStandaloneString(_et.m_ExecutablePath), g_CrtAllocator);
+    v.AddMember(MakeStandaloneString(g_ParametersKey), MakeStandaloneString(_et.m_Parameters), g_CrtAllocator);
+    v.AddMember(
+        MakeStandaloneString(g_ShortcutKey), MakeStandaloneString(_et.m_Shorcut.ToPersString()), g_CrtAllocator);
+    v.AddMember(
+        MakeStandaloneString(g_StartupKey), nc::config::Value(static_cast<int>(_et.m_StartupMode)), g_CrtAllocator);
+
+    return v;
+}
+
+static std::optional<ExternalTool> LoadTool(const nc::config::Value &_from)
+{
+    using namespace rapidjson;
+    if( !_from.IsObject() )
+        return std::nullopt;
+
+    ExternalTool et;
+    if( _from.HasMember(g_PathKey) && _from[g_PathKey].IsString() )
+        et.m_ExecutablePath = _from[g_PathKey].GetString();
+    else
+        return std::nullopt;
+
+    if( _from.HasMember(g_TitleKey) && _from[g_TitleKey].IsString() )
+        et.m_Title = _from[g_TitleKey].GetString();
+
+    if( _from.HasMember(g_ParametersKey) && _from[g_ParametersKey].IsString() )
+        et.m_Parameters = _from[g_ParametersKey].GetString();
+
+    if( _from.HasMember(g_ShortcutKey) && _from[g_ShortcutKey].IsString() )
+        et.m_Shorcut = nc::utility::ActionShortcut(_from[g_ShortcutKey].GetString());
+
+    if( _from.HasMember(g_StartupKey) && _from[g_StartupKey].IsInt() )
+        et.m_StartupMode = static_cast<ExternalTool::StartupMode>(_from[g_StartupKey].GetInt());
+
+    return et;
+}
+
+ExternalToolsStorage::ExternalToolsStorage(const char *_config_path, nc::config::Config &_config)
+    : m_ConfigPath(_config_path), m_Config(_config)
+{
+    LoadToolsFromConfig();
+
+    m_ConfigObservations.emplace_back(m_Config.Observe(_config_path, [=] {
+        LoadToolsFromConfig();
+        FireObservers();
+    }));
+}
+
+void ExternalToolsStorage::LoadToolsFromConfig()
+{
+    auto tools = m_Config.Get(m_ConfigPath);
+    if( !tools.IsArray() )
+        return;
+
+    auto lock = std::lock_guard{m_ToolsLock};
+    m_Tools.clear();
+    for( auto i = tools.Begin(), e = tools.End(); i != e; ++i )
+        if( auto et = LoadTool(*i) )
+            m_Tools.emplace_back(std::make_shared<ExternalTool>(std::move(*et)));
+}
+
+size_t ExternalToolsStorage::ToolsCount() const
+{
+    auto guard = std::lock_guard{m_ToolsLock};
+    return m_Tools.size();
+}
+
+std::shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(size_t _no) const
+{
+    auto guard = std::lock_guard{m_ToolsLock};
+    return _no < m_Tools.size() ? m_Tools[_no] : nullptr;
+}
+
+std::vector<std::shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
+{
+    auto guard = std::lock_guard{m_ToolsLock};
+    return m_Tools;
+}
+
+ExternalToolsStorage::ObservationTicket ExternalToolsStorage::ObserveChanges(std::function<void()> _callback)
+{
+    return AddObserver(move(_callback));
+}
+
+void ExternalToolsStorage::WriteToolsToConfig() const
+{
+    std::vector<std::shared_ptr<const ExternalTool>> tools;
+    {
+        auto lock = std::lock_guard{m_ToolsLock};
+        tools = m_Tools;
+    }
+
+    nc::config::Value json_tools{rapidjson::kArrayType};
+    for( auto &t : tools )
+        json_tools.PushBack(SaveTool(*t), nc::config::g_CrtAllocator);
+    m_Config.Set(m_ConfigPath, json_tools);
+}
+
+void ExternalToolsStorage::CommitChanges()
+{
+    FireObservers();
+    dispatch_to_background([=] { WriteToolsToConfig(); });
+}
+
+void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index)
+{
+    {
+        auto lock = std::lock_guard{m_ToolsLock};
+        if( _at_index >= m_Tools.size() )
+            return;
+        if( *m_Tools[_at_index] == _tool )
+            return; // do nothing if _tool is equal
+        m_Tools[_at_index] = std::make_shared<ExternalTool>(std::move(_tool));
+    }
+    CommitChanges();
+}
+
+void ExternalToolsStorage::InsertTool(ExternalTool _tool)
+{
+    {
+        auto lock = std::lock_guard{m_ToolsLock};
+        m_Tools.emplace_back(std::make_shared<ExternalTool>(std::move(_tool)));
+    }
+    CommitChanges();
+}
+
+void ExternalToolsStorage::MoveTool(const size_t _at_index, const size_t _to_index)
+{
+    if( _at_index == _to_index )
+        return;
+
+    {
+        auto lock = std::lock_guard{m_ToolsLock};
+        if( _at_index >= m_Tools.size() || _to_index >= m_Tools.size() )
+            return;
+        auto v = m_Tools[_at_index];
+        m_Tools.erase(next(begin(m_Tools), _at_index));
+        m_Tools.insert(next(begin(m_Tools), _to_index), v);
+    }
+
+    CommitChanges();
+}
+
+void ExternalToolsStorage::RemoveTool(size_t _at_index)
+{
+    {
+        auto lock = std::lock_guard{m_ToolsLock};
+        if( _at_index >= m_Tools.size() )
+            return;
+
+        m_Tools.erase(next(begin(m_Tools), _at_index));
+    }
+    CommitChanges();
 }
 
 }

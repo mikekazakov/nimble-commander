@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ToolsMenuDelegate.h"
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/AnyHolder.h>
@@ -6,8 +6,9 @@
 #include "StateActionsDispatcher.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include <Panel/ExternalTools.h>
 
-static NSMenuItem *ItemForTool(const std::shared_ptr<const ExternalTool> &_tool, int _ind)
+static NSMenuItem *ItemForTool(const std::shared_ptr<const nc::panel::ExternalTool> &_tool, int _ind)
 {
     NSMenuItem *item = [[NSMenuItem alloc] init];
     item.title = _tool->m_Title.empty()
@@ -25,7 +26,7 @@ static NSMenuItem *ItemForTool(const std::shared_ptr<const ExternalTool> &_tool,
 
 @implementation ToolsMenuDelegate {
     bool m_IsDirty;
-    ExternalToolsStorage::ObservationTicket m_ToolsObserver;
+    nc::panel::ExternalToolsStorage::ObservationTicket m_ToolsObserver;
     __weak NSMenu *m_MyMenu;
 }
 

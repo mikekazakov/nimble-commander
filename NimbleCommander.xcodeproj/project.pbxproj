@@ -402,7 +402,6 @@
 		CF75E88C1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
 		CF75E88D1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
 		CF764CAD2587632A00D7ED17 /* ExternalToolsSupport_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF764CAC2587632A00D7ED17 /* ExternalToolsSupport_UT.mm */; };
-		CF764CB4258763B100D7ED17 /* ExternalToolsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */; };
 		CF764CBE258763DA00D7ED17 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
 		CF764CCE258763FE00D7ED17 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF764CD22587640B00D7ED17 /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
@@ -1529,8 +1528,6 @@
 		CF04DDFA1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesControls.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesControls.mm; sourceTree = SOURCE_ROOT; };
 		CF04DE041E3086DE0047B1F9 /* ThemePersistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThemePersistence.h; path = NimbleCommander/Core/Theming/ThemePersistence.h; sourceTree = SOURCE_ROOT; };
 		CF04DE051E3086E90047B1F9 /* ThemePersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ThemePersistence.mm; path = NimbleCommander/Core/Theming/ThemePersistence.mm; sourceTree = SOURCE_ROOT; };
-		CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolsSupport.h; path = NimbleCommander/States/FilePanels/ExternalToolsSupport.h; sourceTree = SOURCE_ROOT; };
-		CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolsSupport.mm; path = NimbleCommander/States/FilePanels/ExternalToolsSupport.mm; sourceTree = SOURCE_ROOT; };
 		CF09394B1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolParameterValueSheetController.h; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolParameterValueSheetController.mm; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF0B78D925739F61003061D0 /* SparkleShim.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SparkleShim.m; path = NimbleCommander/Bootstrap/SparkleShim.m; sourceTree = "<group>"; };
@@ -2331,8 +2328,6 @@
 				CFDAC2FE1DFD1D7C0039A104 /* ExternalEditorInfo.h */,
 				CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */,
 				CF51D11E1FD512A70026CC00 /* ExternalEditorInfoPrivate.h */,
-				CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */,
-				CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */,
 				CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */,
 				CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */,
 				CF2083ED1FEFAAA00014D6AD /* ListingPromise.cpp */,
@@ -3984,7 +3979,6 @@
 				CFAB6CE72588B70900397DB5 /* GTMHotKeyTextField.mm in Sources */,
 				CF3ED4CC25855F5B00D67AF2 /* MASAppInstalledChecker.cpp in Sources */,
 				CF3ED4C525855EF600D67AF2 /* ActivationManagerImpl.mm in Sources */,
-				CF764CB4258763B100D7ED17 /* ExternalToolsSupport.mm in Sources */,
 				CF764D3E258782E300D7ED17 /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */,
 				CFA999F3264F17A800F72E93 /* CLI.cpp in Sources */,
 			);

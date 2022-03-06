@@ -184,7 +184,12 @@
              * This causes a visual flicker so is not enabled by default.
              * Specifying "*" will enable this safe behaviour for all items.
              */
-            "quickLookHazardousExtensionsList": "pdf"
+            "quickLookHazardousExtensionsList": "pdf",
+            
+            /**
+             * Controls whether the panels should be scrolled instantly (default) or with a smooth animation.
+             */
+            "smoothScrolling": false
         },
         
         /**

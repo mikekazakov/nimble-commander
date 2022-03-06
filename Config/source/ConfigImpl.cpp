@@ -1,5 +1,6 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigImpl.h"
+#include "Log.h"
 #include <rapidjson/error/en.h>
 #include <rapidjson/memorystream.h>
 #include <rapidjson/stringbuffer.h>
@@ -11,14 +12,11 @@ namespace nc::config {
 static rapidjson::Document ParseDefaultsOrThrow(std::string_view _default_document);
 static rapidjson::Document ParseOverwritesOrReturnNull(std::string_view _overwrites_document);
 
-static const rapidjson::Value *FindNode(std::string_view _path,
-                                        const rapidjson::Value &_root) noexcept;
-static std::pair<const rapidjson::Value *, std::string_view>
-FindParentNode(std::string_view _path, const rapidjson::Value &_root) noexcept;
-static rapidjson::Document MergeDocuments(const rapidjson::Document &_main,
-                                          const rapidjson::Document &_overwrites);
-rapidjson::Document BuildOverwrites(const rapidjson::Document &_defaults,
-                                    const rapidjson::Document &_staging);
+static const rapidjson::Value *FindNode(std::string_view _path, const rapidjson::Value &_root) noexcept;
+static std::pair<const rapidjson::Value *, std::string_view> FindParentNode(std::string_view _path,
+                                                                            const rapidjson::Value &_root) noexcept;
+static rapidjson::Document MergeDocuments(const rapidjson::Document &_main, const rapidjson::Document &_overwrites);
+rapidjson::Document BuildOverwrites(const rapidjson::Document &_defaults, const rapidjson::Document &_staging);
 static std::vector<std::string> ListDifferences(const rapidjson::Document &_original_document,
                                                 const rapidjson::Document &_new_document);
 static std::string Serialize(const rapidjson::Document &_document);
@@ -65,46 +63,65 @@ bool ConfigImpl::Has(std::string_view _path) const
     return FindInDocument_Unlocked(_path) != nullptr;
 }
 
-const rapidjson::Value *ConfigImpl::FindInDocument_Unlocked(std::string_view _path) const
+const rapidjson::Value *ConfigImpl::FindInDocument_Unlocked(std::string_view _path) const noexcept
 {
     return FindNode(_path, m_Document);
 }
 
-const rapidjson::Value *ConfigImpl::FindInDefaults_Unlocked(std::string_view _path) const
+const rapidjson::Value *ConfigImpl::FindInDefaults_Unlocked(std::string_view _path) const noexcept
 {
     return FindNode(_path, m_Defaults);
 }
 
 Value ConfigImpl::Get(std::string_view _path) const
 {
-    const auto lock = std::lock_guard{m_DocumentLock};
-    if( const auto value = FindInDocument_Unlocked(_path) )
-        return Value{*value, g_CrtAllocator};
+    {
+        const auto lock = std::lock_guard{m_DocumentLock};
+        if( const auto value = FindInDocument_Unlocked(_path) )
+            return Value{*value, g_CrtAllocator};
+    }
+    Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
     return Value{rapidjson::kNullType};
 }
 
 Value ConfigImpl::GetDefault(std::string_view _path) const
 {
-    const auto lock = std::lock_guard{m_DocumentLock};
-    if( const auto value = FindInDefaults_Unlocked(_path) )
-        return Value{*value, g_CrtAllocator};
+    {
+        const auto lock = std::lock_guard{m_DocumentLock};
+        if( const auto value = FindInDefaults_Unlocked(_path) )
+            return Value{*value, g_CrtAllocator};
+    }
+    Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
     return Value{rapidjson::kNullType};
 }
 
-std::string ConfigImpl::GetString(std::string_view _path) const
+std::string ConfigImpl::GetString(std::string_view _path) const noexcept
 {
-    const auto lock = std::lock_guard{m_DocumentLock};
-    if( const auto value = FindInDocument_Unlocked(_path) )
-        if( value->GetType() == rapidjson::kStringType )
-            return std::string{value->GetString(), value->GetStringLength()};
+    {
+        const auto lock = std::lock_guard{m_DocumentLock};
+        if( const auto value = FindInDocument_Unlocked(_path) ) {
+            if( value->GetType() == rapidjson::kStringType ) {
+                return std::string{value->GetString(), value->GetStringLength()};
+            }
+            else {
+                Log::Error(SPDLOC, "Config path doesn't contain a string: {}", _path);
+            }
+        }
+        else {
+            Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+        }
+    }
     return {};
 }
 
-bool ConfigImpl::GetBool(std::string_view _path) const
+bool ConfigImpl::GetBool(std::string_view _path) const noexcept
 {
-    const auto lock = std::lock_guard{m_DocumentLock};
-    if( const auto value = FindInDocument_Unlocked(_path) )
-        return value->GetType() == rapidjson::kTrueType;
+    {
+        const auto lock = std::lock_guard{m_DocumentLock};
+        if( const auto value = FindInDocument_Unlocked(_path) )
+            return value->GetType() == rapidjson::kTrueType;
+    }
+    Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
     return false;
 }
 
@@ -125,48 +142,88 @@ inline T ExtractNumericAs(const rapidjson::Value &_value) noexcept
         return T{};
 }
 
-int ConfigImpl::GetInt(std::string_view _path) const
+int ConfigImpl::GetInt(std::string_view _path) const noexcept
 {
     const auto lock = std::lock_guard{m_DocumentLock};
-    if( const auto value = FindInDocument_Unlocked(_path) )
-        if( value->GetType() == rapidjson::kNumberType )
+    if( const auto value = FindInDocument_Unlocked(_path) ) {
+        if( value->GetType() == rapidjson::kNumberType ) {
             return ExtractNumericAs<int>(*value);
+        }
+        else {
+            Log::Error(SPDLOC, "Config path doesn't contain a number: {}", _path);
+        }
+    }
+    else {
+        Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+    }
     return 0;
 }
 
-unsigned int ConfigImpl::GetUInt(std::string_view _path) const
+unsigned int ConfigImpl::GetUInt(std::string_view _path) const noexcept
 {
     const auto lock = std::lock_guard{m_DocumentLock};
-    if( const auto value = FindInDocument_Unlocked(_path) )
-        if( value->GetType() == rapidjson::kNumberType )
+    if( const auto value = FindInDocument_Unlocked(_path) ) {
+        if( value->GetType() == rapidjson::kNumberType ) {
             return ExtractNumericAs<unsigned int>(*value);
+        }
+        else {
+            Log::Error(SPDLOC, "Config path doesn't contain a number: {}", _path);
+        }
+    }
+    else {
+        Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+    }
     return 0;
 }
 
-long ConfigImpl::GetLong(std::string_view _path) const
+long ConfigImpl::GetLong(std::string_view _path) const noexcept
 {
     const auto lock = std::lock_guard{m_DocumentLock};
-    if( const auto value = FindInDocument_Unlocked(_path) )
-        if( value->GetType() == rapidjson::kNumberType )
+    if( const auto value = FindInDocument_Unlocked(_path) ) {
+        if( value->GetType() == rapidjson::kNumberType ) {
             return ExtractNumericAs<long>(*value);
+        }
+        else {
+            Log::Error(SPDLOC, "Config path doesn't contain a number: {}", _path);
+        }
+    }
+    else {
+        Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+    }
     return 0;
 }
 
-unsigned long ConfigImpl::GetULong(std::string_view _path) const
+unsigned long ConfigImpl::GetULong(std::string_view _path) const noexcept
 {
     const auto lock = std::lock_guard{m_DocumentLock};
-    if( const auto value = FindInDocument_Unlocked(_path) )
-        if( value->GetType() == rapidjson::kNumberType )
+    if( const auto value = FindInDocument_Unlocked(_path) ) {
+        if( value->GetType() == rapidjson::kNumberType ) {
             return ExtractNumericAs<unsigned long>(*value);
+        }
+        else {
+            Log::Error(SPDLOC, "Config path doesn't contain a number: {}", _path);
+        }
+    }
+    else {
+        Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+    }
     return 0;
 }
 
-double ConfigImpl::GetDouble(std::string_view _path) const
+double ConfigImpl::GetDouble(std::string_view _path) const noexcept
 {
     const auto lock = std::lock_guard{m_DocumentLock};
-    if( const auto value = FindInDocument_Unlocked(_path) )
-        if( value->GetType() == rapidjson::kNumberType )
+    if( const auto value = FindInDocument_Unlocked(_path) ) {
+        if( value->GetType() == rapidjson::kNumberType ) {
             return ExtractNumericAs<double>(*value);
+        }
+        else {
+            Log::Error(SPDLOC, "Config path doesn't contain a number: {}", _path);
+        }
+    }
+    else {
+        Log::Error(SPDLOC, "Couldn't find config path: {}", _path);
+    }
     return 0.;
 }
 
@@ -214,8 +271,7 @@ void ConfigImpl::Set(std::string_view _path, const char *_value)
 
 void ConfigImpl::Set(std::string_view _path, std::string_view _value)
 {
-    SetInternal(_path,
-                Value(_value.data(), static_cast<unsigned>(_value.length()), g_CrtAllocator));
+    SetInternal(_path, Value(_value.data(), static_cast<unsigned>(_value.length()), g_CrtAllocator));
 }
 
 void ConfigImpl::SetInternal(std::string_view _path, const Value &_value)
@@ -238,8 +294,7 @@ bool ConfigImpl::ReplaceOrInsert(std::string_view _path, const Value &_value)
         return false;
 
     const auto node = const_cast<rapidjson::Value *>(const_node);
-    const auto leaf_name =
-        rapidjson::Value{rapidjson::StringRef(path_left.data(), path_left.length())};
+    const auto leaf_name = rapidjson::Value{rapidjson::StringRef(path_left.data(), path_left.length())};
 
     if( const auto member_it = node->FindMember(leaf_name); member_it != node->MemberEnd() ) {
         if( member_it->value == _value )
@@ -248,8 +303,8 @@ bool ConfigImpl::ReplaceOrInsert(std::string_view _path, const Value &_value)
         member_it->value.CopyFrom(_value, m_Document.GetAllocator());
     }
     else {
-        auto key = rapidjson::Value{
-            path_left.data(), static_cast<unsigned>(path_left.length()), m_Document.GetAllocator()};
+        auto key =
+            rapidjson::Value{path_left.data(), static_cast<unsigned>(path_left.length()), m_Document.GetAllocator()};
         auto value = rapidjson::Value{_value, m_Document.GetAllocator()};
         node->AddMember(key, value, m_Document.GetAllocator());
     }
@@ -278,13 +333,11 @@ void ConfigImpl::ObserveForever(std::string_view _path, std::function<void()> _o
     InsertObserver(_path, std::move(observer));
 }
 
-void ConfigImpl::InsertObserver(std::string_view _path,
-                                base::intrusive_ptr<const Observer> _observer)
+void ConfigImpl::InsertObserver(std::string_view _path, base::intrusive_ptr<const Observer> _observer)
 {
     const auto path = std::string{_path};
     const auto lock = std::lock_guard{m_ObserversLock};
-    if( auto current_observers_it = m_Observers.find(path);
-        current_observers_it != std::end(m_Observers) ) {
+    if( auto current_observers_it = m_Observers.find(path); current_observers_it != std::end(m_Observers) ) {
         // somebody is already watching this path
         auto new_observers = base::intrusive_ptr{new Observers};
         new_observers->observers.reserve(current_observers_it->second->observers.size() + 1);
@@ -306,16 +359,13 @@ void ConfigImpl::DropToken(unsigned long _number)
         return;
 
     const auto lock = std::lock_guard{m_ObserversLock};
-    for( auto observers_it = m_Observers.begin(), observers_end = m_Observers.end();
-         observers_it != observers_end;
+    for( auto observers_it = m_Observers.begin(), observers_end = m_Observers.end(); observers_it != observers_end;
          ++observers_it ) {
         auto &path = *observers_it;
         auto &observers = path.second->observers;
 
-        const auto to_drop_it =
-            std::find_if(begin(observers), end(observers), [_number](auto &observer) {
-                return observer->token == _number;
-            });
+        const auto to_drop_it = std::find_if(
+            begin(observers), end(observers), [_number](auto &observer) { return observer->token == _number; });
         if( to_drop_it != end(observers) ) {
             const auto observer = *to_drop_it; // holding by a *strong* shared pointer
 
@@ -332,11 +382,8 @@ void ConfigImpl::DropToken(unsigned long _number)
             if( observers.size() > 1 ) {
                 auto new_observers = base::intrusive_ptr{new Observers};
                 new_observers->observers.reserve(observers.size() - 1);
-                std::copy(
-                    observers.begin(), to_drop_it, std::back_inserter(new_observers->observers));
-                std::copy(std::next(to_drop_it),
-                          observers.end(),
-                          std::back_inserter(new_observers->observers));
+                std::copy(observers.begin(), to_drop_it, std::back_inserter(new_observers->observers));
+                std::copy(std::next(to_drop_it), observers.end(), std::back_inserter(new_observers->observers));
                 path.second = std::move(new_observers);
             }
             else {
@@ -360,8 +407,7 @@ void ConfigImpl::FireObservers(std::string_view _path) const
     }
 }
 
-base::intrusive_ptr<const ConfigImpl::Observers>
-ConfigImpl::FindObservers(std::string_view _path) const
+base::intrusive_ptr<const ConfigImpl::Observers> ConfigImpl::FindObservers(std::string_view _path) const
 {
     const auto path = std::string{_path};
     const auto lock = std::lock_guard{m_ObserversLock};
@@ -457,8 +503,7 @@ static rapidjson::Document ParseDefaultsOrThrow(std::string_view _default_docume
     }
 
     rapidjson::Document defaults;
-    rapidjson::ParseResult ok =
-        defaults.Parse<g_ParseFlags>(_default_document.data(), _default_document.length());
+    rapidjson::ParseResult ok = defaults.Parse<g_ParseFlags>(_default_document.data(), _default_document.length());
     if( !ok ) {
         throw std::invalid_argument{rapidjson::GetParseError_En(ok.Code())};
     }
@@ -483,8 +528,7 @@ static rapidjson::Document ParseOverwritesOrReturnNull(std::string_view _overwri
     return overwrites;
 }
 
-static const rapidjson::Value *FindNode(const std::string_view _path,
-                                        const rapidjson::Value &_root) noexcept
+static const rapidjson::Value *FindNode(const std::string_view _path, const rapidjson::Value &_root) noexcept
 {
     auto root = &_root;
     auto path = _path;
@@ -511,8 +555,8 @@ static const rapidjson::Value *FindNode(const std::string_view _path,
     return &(*leaf_it).value;
 }
 
-static std::pair<const rapidjson::Value *, std::string_view>
-FindParentNode(std::string_view _path, const rapidjson::Value &_root) noexcept
+static std::pair<const rapidjson::Value *, std::string_view> FindParentNode(std::string_view _path,
+                                                                            const rapidjson::Value &_root) noexcept
 {
     auto root = &_root;
     auto path = _path;
@@ -559,8 +603,7 @@ static void MergeObjectsRecursively(rapidjson::Value &_target,
     assert(_main.GetType() == rapidjson::kObjectType);
     assert(_overwrites.GetType() == rapidjson::kObjectType);
 
-    for( auto main_it = _main.MemberBegin(), main_e = _main.MemberEnd(); main_it != main_e;
-         ++main_it ) {
+    for( auto main_it = _main.MemberBegin(), main_e = _main.MemberEnd(); main_it != main_e; ++main_it ) {
         const auto &member_name = main_it->name;
         rapidjson::Value key(member_name, _allocator);
 
@@ -618,8 +661,7 @@ static void MergeObjectsRecursively(rapidjson::Value &_target,
     }
 }
 
-static rapidjson::Document MergeDocuments(const rapidjson::Document &_main,
-                                          const rapidjson::Document &_overwrites)
+static rapidjson::Document MergeDocuments(const rapidjson::Document &_main, const rapidjson::Document &_overwrites)
 {
     assert(_main.GetType() == rapidjson::kObjectType);
     assert(_overwrites.GetType() == rapidjson::kObjectType);
@@ -650,15 +692,13 @@ static void BuildOverwritesRecursive(const rapidjson::Value &_defaults,
         }
         else {
             auto &defaults_val = defaults_it->value;
-            if( defaults_val.GetType() == staging_val.GetType() &&
-                defaults_val.GetType() == rapidjson::kObjectType ) {
+            if( defaults_val.GetType() == staging_val.GetType() && defaults_val.GetType() == rapidjson::kObjectType ) {
                 // adding an empty object.
                 rapidjson::Value key(staging_name, _allocator);
                 rapidjson::Value val(rapidjson::kObjectType);
                 _overwrites.AddMember(key, val, _allocator);
 
-                BuildOverwritesRecursive(
-                    defaults_val, staging_val, _overwrites[staging_name], _allocator);
+                BuildOverwritesRecursive(defaults_val, staging_val, _overwrites[staging_name], _allocator);
             }
             else if( defaults_val != staging_val ) {
                 rapidjson::Value key(staging_name, _allocator);
@@ -669,11 +709,9 @@ static void BuildOverwritesRecursive(const rapidjson::Value &_defaults,
     }
 }
 
-rapidjson::Document BuildOverwrites(const rapidjson::Document &_defaults,
-                                    const rapidjson::Document &_staging)
+rapidjson::Document BuildOverwrites(const rapidjson::Document &_defaults, const rapidjson::Document &_staging)
 {
-    if( _defaults.GetType() != rapidjson::kObjectType ||
-        _staging.GetType() != rapidjson::kObjectType )
+    if( _defaults.GetType() != rapidjson::kObjectType || _staging.GetType() != rapidjson::kObjectType )
         return rapidjson::Document{rapidjson::Type::kObjectType};
 
     auto overwrites = rapidjson::Document{rapidjson::Type::kObjectType};
@@ -689,8 +727,7 @@ static void ListDifferencesRecursively(const rapidjson::Value &_original,
     assert(_original.GetType() == rapidjson::kObjectType);
     assert(_new.GetType() == rapidjson::kObjectType);
 
-    for( auto original_it = _original.MemberBegin(), original_e = _original.MemberEnd();
-         original_it != original_e;
+    for( auto original_it = _original.MemberBegin(), original_e = _original.MemberEnd(); original_it != original_e;
          ++original_it ) {
         const auto &name = original_it->name;
 
@@ -706,10 +743,8 @@ static void ListDifferencesRecursively(const rapidjson::Value &_original,
             if( original_it->value.GetType() == new_it->value.GetType() ) {
                 const auto common_type = original_it->value.GetType();
                 if( common_type == rapidjson::kObjectType ) {
-                    ListDifferencesRecursively(original_it->value,
-                                               new_it->value,
-                                               _path_prefix + name.GetString() + ".",
-                                               _changes);
+                    ListDifferencesRecursively(
+                        original_it->value, new_it->value, _path_prefix + name.GetString() + ".", _changes);
                 }
                 else {
                     if( original_it->value != new_it->value )
@@ -737,8 +772,7 @@ static void ListDifferencesRecursively(const rapidjson::Value &_original,
 
         _changes.emplace_back(_path_prefix + name.GetString());
         if( new_it->value.GetType() == rapidjson::Type::kObjectType )
-            TraverseRecursivelyAndMarkEachMember(
-                new_it->value, _path_prefix + name.GetString() + ".", _changes);
+            TraverseRecursivelyAndMarkEachMember(new_it->value, _path_prefix + name.GetString() + ".", _changes);
     }
 }
 

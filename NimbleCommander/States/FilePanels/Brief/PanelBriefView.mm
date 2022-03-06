@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefView.h"
 #include <VFS/VFS.h>
 #include <Habanero/algo.h>
@@ -434,6 +434,17 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     if( NSContainsRect(visible_rect, item_rect) )
         return;
 
+    // NB! not updated automatically, initialized only once per run
+    static const bool smooth_scroll = GlobalConfig().GetBool("filePanel.presentation.smoothScrolling");
+    auto scroll_to = [&](NSPoint _pt) {
+        if( smooth_scroll ) {
+            [m_ScrollView.contentView scrollPoint:_pt];
+        }
+        else {
+            [m_ScrollView.contentView setBoundsOrigin:_pt];
+        }
+    };
+
     // NB! scrollToItemsAtIndexPaths is NOT used here because at some version of macOS it decided to
     // add gaps to the items it's been asked to scroll to. That looks very buggy. Hence this custom
     // logic
@@ -441,26 +452,20 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
         // normal case - scroll to the item, aligning depending on its location
         if( item_rect.origin.x < visible_rect.origin.x ) {
             // align left
-            const auto new_pos = NSMakePoint(item_rect.origin.x, 0.);
-            [m_ScrollView.contentView setBoundsOrigin:new_pos];
+            scroll_to(NSMakePoint(item_rect.origin.x, 0.));
         }
         else if( NSMaxX(item_rect) > NSMaxX(visible_rect) ) {
             // align right
-            const auto new_pos = NSMakePoint(
-                item_rect.origin.x + item_rect.size.width - visible_rect.size.width, 0.);
-            [m_ScrollView.contentView setBoundsOrigin:new_pos];
+            scroll_to(NSMakePoint(item_rect.origin.x + item_rect.size.width - visible_rect.size.width, 0.));
         }
         else {
             // center
-            const auto new_pos = NSMakePoint(
-                item_rect.origin.x - (visible_rect.size.width - item_rect.size.width) / 2., 0.);
-            [m_ScrollView.contentView setBoundsOrigin:new_pos];
+            scroll_to(NSMakePoint(item_rect.origin.x - (visible_rect.size.width - item_rect.size.width) / 2., 0.));
         }
     }
     else {
         // singular case - just try to show as much as possible
-        const auto new_pos = NSMakePoint(item_rect.origin.x, 0.);
-        [m_ScrollView.contentView setBoundsOrigin:new_pos];
+        scroll_to(NSMakePoint(item_rect.origin.x, 0.));
     }
 }
 

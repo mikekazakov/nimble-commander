@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Config.h"
@@ -28,13 +28,13 @@ public:
     Value Get(std::string_view _path) const override;
     Value GetDefault(std::string_view _path) const override;
 
-    std::string GetString(std::string_view _path) const override;
-    bool GetBool(std::string_view _path) const override;
-    int GetInt(std::string_view _path) const override;
-    unsigned int GetUInt(std::string_view _path) const override;
-    long GetLong(std::string_view _path) const override;
-    unsigned long GetULong(std::string_view _path) const override;
-    double GetDouble(std::string_view _path) const override;
+    std::string GetString(std::string_view _path) const noexcept override;
+    bool GetBool(std::string_view _path) const noexcept override;
+    int GetInt(std::string_view _path) const noexcept override;
+    unsigned int GetUInt(std::string_view _path) const noexcept override;
+    long GetLong(std::string_view _path) const noexcept override;
+    unsigned long GetULong(std::string_view _path) const noexcept override;
+    double GetDouble(std::string_view _path) const noexcept override;
 
     void Set(std::string_view _path, const Value &_value) override;
     void Set(std::string_view _path, int _value) override;
@@ -78,8 +78,8 @@ private:
     using ObserversPtr = base::intrusive_ptr<const Observers>;
 
     void DropToken(unsigned long _number) override;
-    const rapidjson::Value *FindInDocument_Unlocked(std::string_view _path) const;
-    const rapidjson::Value *FindInDefaults_Unlocked(std::string_view _path) const;
+    const rapidjson::Value *FindInDocument_Unlocked(std::string_view _path) const noexcept;
+    const rapidjson::Value *FindInDefaults_Unlocked(std::string_view _path) const noexcept;
     void SetInternal(std::string_view _path, const Value &_value);
     bool ReplaceOrInsert(std::string_view _path, const Value &_value);
     void InsertObserver(std::string_view _path, ObserverPtr _observer);

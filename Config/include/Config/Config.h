@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string_view>
@@ -33,37 +33,37 @@ public:
     /**
      * Returns "" when a value can't be found.
      */    
-    virtual std::string GetString(std::string_view _path) const = 0;
+    virtual std::string GetString(std::string_view _path) const noexcept = 0;
     
     /**
      * Returns false when a value can't be found.
      */
-    virtual bool GetBool(std::string_view _path) const = 0;
+    virtual bool GetBool(std::string_view _path) const noexcept = 0;
     
     /**
      * Returns 0 when a value can't be found.
      */
-    virtual int GetInt(std::string_view _path) const = 0;
+    virtual int GetInt(std::string_view _path) const noexcept = 0;
 
     /**
      * Returns 0 when a value can't be found.
      */
-    virtual unsigned int GetUInt(std::string_view _path) const = 0;
+    virtual unsigned int GetUInt(std::string_view _path) const noexcept = 0;
     
     /**
      * Returns 0 when a value can't be found.
      */    
-    virtual long GetLong(std::string_view _path) const = 0;
+    virtual long GetLong(std::string_view _path) const noexcept = 0;
 
     /**
      * Returns 0 when a value can't be found.
      */
-    virtual unsigned long GetULong(std::string_view _path) const = 0;
+    virtual unsigned long GetULong(std::string_view _path) const noexcept = 0;
     
     /**
      * Returns 0. when a value can't be found.
      */     
-    virtual double GetDouble(std::string_view _path) const = 0;
+    virtual double GetDouble(std::string_view _path) const noexcept = 0;
 
     virtual void Set(std::string_view _path, const Value &_value) = 0;
     virtual void Set(std::string_view _path, int _value) = 0;

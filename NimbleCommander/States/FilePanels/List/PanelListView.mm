@@ -1,7 +1,8 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
 #include <Habanero/algo.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <Utility/AdaptiveDateFormatting.h>
@@ -646,10 +647,47 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     if( cursorPosition >= 0 ) {
         [m_TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:cursorPosition]
                  byExtendingSelection:false];
-        dispatch_to_main_queue([=] { [m_TableView scrollRowToVisible:cursorPosition]; });
+        [self ensureItemIsVisible:cursorPosition];
     }
     else {
         [m_TableView selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:false];
+    }
+}
+
+- (void)ensureItemIsVisible:(int)_item_index
+{
+    if( _item_index < 0 )
+        return;
+
+    const auto item_rect = [m_TableView rectOfRow:_item_index];
+    if( NSEqualRects(item_rect, NSZeroRect) )
+        return; // failsafe if the invariant is broken
+
+    const auto visible_rect = m_ScrollView.documentVisibleRect;
+    const auto header_height = m_TableView.headerView.bounds.size.height;
+    const auto visible_rect_without_headers = NSMakeRect(visible_rect.origin.x,
+                                                         visible_rect.origin.y + header_height,
+                                                         visible_rect.size.width,
+                                                         visible_rect.size.height - header_height);
+
+    // check the item is visible now
+    if( NSContainsRect(visible_rect_without_headers, item_rect) )
+        return; // already visible, nothing to do
+
+    // decide which direction to scroll and how to place the item
+    if( item_rect.origin.y < visible_rect_without_headers.origin.y ) {
+        // scroll up
+        const auto rc = NSMakeRect(
+            item_rect.origin.x, item_rect.origin.y - header_height, item_rect.size.width, item_rect.size.height);
+        [self doScrollRectToVisible:rc];
+    }
+    else if( NSMaxY(item_rect) > NSMaxY(visible_rect_without_headers) ) {
+        // scroll down
+        const auto rc = NSMakeRect(item_rect.origin.x,
+                                   item_rect.origin.y - visible_rect.size.height + item_rect.size.height,
+                                   item_rect.size.width,
+                                   item_rect.size.height);
+        [self doScrollRectToVisible:rc];
     }
 }
 
@@ -922,7 +960,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     NSRect rect;
     rect = m_TableView.visibleRect;
     rect.origin.y -= rect.size.height - m_TableView.headerView.bounds.size.height;
-    [m_TableView scrollRectToVisible:rect];
+    [self doScrollRectToVisible:rect];
 }
 
 - (void)onPageDown:(NSEvent *) [[maybe_unused]] _event
@@ -930,7 +968,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     NSRect rect;
     rect = m_TableView.visibleRect;
     rect.origin.y += rect.size.height;
-    [m_TableView scrollRectToVisible:rect];
+    [self doScrollRectToVisible:rect];
 }
 
 - (void)onScrollToBeginning:(NSEvent *) [[maybe_unused]] _event
@@ -938,7 +976,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     NSRect rect;
     rect = m_TableView.visibleRect;
     rect.origin.y = -m_TableView.headerView.bounds.size.height;
-    [m_TableView scrollRectToVisible:rect];
+    [self doScrollRectToVisible:rect];
 }
 
 - (void)onScrollToEnd:(NSEvent *) [[maybe_unused]] _event
@@ -947,7 +985,17 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     rect = m_TableView.visibleRect;
     rect.origin.y = m_TableView.bounds.size.height - m_TableView.visibleRect.size.height +
                     m_TableView.headerView.bounds.size.height;
-    [m_TableView scrollRectToVisible:rect];
+    [self doScrollRectToVisible:rect];
+}
+
+- (void)doScrollRectToVisible:(NSRect)_rc
+{
+    // NB! not updated automatically, initialized only once per run
+    static const bool smooth_scroll = GlobalConfig().GetBool("filePanel.presentation.smoothScrolling");
+    if( smooth_scroll )
+        [m_ScrollView.contentView scrollPoint:_rc.origin];
+    else
+        [m_ScrollView.contentView setBoundsOrigin:_rc.origin];
 }
 
 - (int)sortedItemPosAtPoint:(NSPoint)_window_point

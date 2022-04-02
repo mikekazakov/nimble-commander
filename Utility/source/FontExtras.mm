@@ -1,21 +1,22 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+#include <Utility/FontExtras.h>
 #include <string>
 #include <array>
-#include <Utility/FontExtras.h>
 #include <Habanero/dispatch_cpp.h>
+#include <Habanero/CFPtr.h>
 #include <cmath>
 
 @implementation NSFont (StringDescription)
 
-+ (NSFont*) fontWithStringDescription:(NSString*)_description
++ (NSFont *)fontWithStringDescription:(NSString *)_description
 {
     if( !_description )
         return nil;
-    
+
     NSArray *arr = [_description componentsSeparatedByString:@","];
     if( !arr || arr.count != 2 )
         return nil;
-    
+
     NSString *family = arr[0];
     NSString *size = [arr[1] stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
     const auto sz = size.intValue;
@@ -48,15 +49,15 @@
     }
 }
 
-static bool IsSystemFont( NSFont *_font )
+static bool IsSystemFont(NSFont *_font)
 {
     static const auto max_sz = 100;
-    [[clang::no_destroy]] static std::array<NSString*, max_sz> descriptions;
+    [[clang::no_destroy]] static std::array<NSString *, max_sz> descriptions;
     const auto pt = static_cast<int>(std::round(_font.pointSize));
     if( pt < 0 || pt >= max_sz )
         return false;
-    
-    const auto std_desc = [&]{
+
+    const auto std_desc = [&] {
         if( !descriptions[pt] )
             descriptions[pt] = [NSFont systemFontOfSize:pt].fontName;
         return descriptions[pt];
@@ -70,7 +71,7 @@ static bool IsSystemFont( NSFont *_font )
     return IsSystemFont(self);
 }
 
-- (NSString*) toStringDescription
+- (NSString *)toStringDescription
 {
     const auto pt = static_cast<int>(std::round(self.pointSize));
     if( IsSystemFont(self) )
@@ -83,13 +84,38 @@ static bool IsSystemFont( NSFont *_font )
 
 namespace nc::utility {
 
-FontGeometryInfo::FontGeometryInfo(NSFont *_font):
-    FontGeometryInfo( (__bridge CTFontRef)_font )
+FontGeometryInfo::FontGeometryInfo(NSFont *_font) : FontGeometryInfo((__bridge CTFontRef)_font)
 {
 }
 
-static const auto g_InfiniteRectPath = 
-    CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), nullptr);
+static base::CFPtr<CFStringRef> ReplaceNewlines(CFStringRef _src, CFStringRef _with) noexcept
+{
+    static const auto newline_cs = CFCharacterSetGetPredefined(kCFCharacterSetNewline);
+
+    auto str = base::CFPtr<CFMutableStringRef>::adopt(CFStringCreateMutableCopy(kCFAllocatorDefault, 0, _src));
+    const auto replacement_length = CFStringGetLength(_with);
+    CFRange search_range = CFRangeMake(0, CFStringGetLength(str.get()));
+    while( search_range.length > 0 ) {
+        CFRange found_range;
+        const bool found = CFStringFindCharacterFromSet(str.get(), newline_cs, search_range, 0, &found_range);
+        if( found == false )
+            break;
+        CFStringReplace(str.get(), found_range, _with);
+        search_range.location = found_range.location + replacement_length;
+        search_range.length = CFStringGetLength(str.get()) - search_range.location;
+    }
+
+    return str;
+}
+
+static bool HasNewlines(CFStringRef _src) noexcept
+{
+    static const auto newline_cs = CFCharacterSetGetPredefined(kCFCharacterSetNewline);
+    CFRange r;
+    return CFStringFindCharacterFromSet(_src, newline_cs, CFRangeMake(0, CFStringGetLength(_src)), 0, &r);
+}
+
+static const auto g_InfiniteRectPath = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), nullptr);
 static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
                                          CFStringRef const *_str_last,
                                          short *_out_width_first,
@@ -97,62 +123,70 @@ static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
                                          CFDictionaryRef _attributes)
 {
     const auto strings_amount = static_cast<int>(_str_last - _str_first);
-    assert( strings_amount > 0 );
-    assert( strings_amount == static_cast<int>(_out_width_last - _out_width_first) );
-    
+    assert(strings_amount > 0);
+    assert(strings_amount == static_cast<int>(_out_width_last - _out_width_first));
+
     const auto initial_capacity = strings_amount * 64;
-    const auto storage = CFStringCreateMutable(NULL, initial_capacity);
-    
+    const auto storage =
+        base::CFPtr<CFMutableStringRef>::adopt(CFStringCreateMutable(kCFAllocatorDefault, initial_capacity));
+
     for( int i = 0; i < strings_amount; ++i ) {
-        CFStringAppend(storage, _str_first[i]);
-        CFStringAppend(storage, CFSTR("\n"));
+        const auto str = _str_first[i];
+        if( HasNewlines(str) ) {
+            auto replaced = ReplaceNewlines(str, CFSTR(" "));
+            CFStringAppend(storage.get(), replaced.get());
+        }
+        else {
+            CFStringAppend(storage.get(), str);
+        }
+        CFStringAppend(storage.get(), CFSTR("\n"));
     }
-            
-    const auto storage_length = CFStringGetLength(storage);
-    const auto attr_string = CFAttributedStringCreate(nullptr, storage, _attributes);
-    const auto framesetter = CTFramesetterCreateWithAttributedString(attr_string);
-    const auto frame = CTFramesetterCreateFrame(framesetter,
-                                                CFRangeMake(0, storage_length),
-                                                g_InfiniteRectPath,
-                                                nullptr);
-    
-    const auto lines = (__bridge NSArray*)CTFrameGetLines(frame);
-    int line_index = 0;
-    for( id item in lines ) {
-        const auto line = (__bridge CTLineRef)item;
-        const double original_width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
-        const short rounded_width = static_cast<short>(std::floor( original_width + 0.5 ));
-        _out_width_first[ line_index++ ] = rounded_width; 
+
+    const auto storage_length = CFStringGetLength(storage.get());
+    const auto attr_string =
+        base::CFPtr<CFAttributedStringRef>::adopt(CFAttributedStringCreate(nullptr, storage.get(), _attributes));
+    const auto framesetter =
+        base::CFPtr<CTFramesetterRef>::adopt(CTFramesetterCreateWithAttributedString(attr_string.get()));
+    const auto frame = base::CFPtr<CTFrameRef>::adopt(
+        CTFramesetterCreateFrame(framesetter.get(), CFRangeMake(0, storage_length), g_InfiniteRectPath, nullptr));
+
+    const auto lines = CTFrameGetLines(frame.get());
+    const auto lines_cnt = CFArrayGetCount(lines);
+    for( long idx = 0; idx < lines_cnt; ++idx ) {
+        const auto line = static_cast<CTLineRef>(CFArrayGetValueAtIndex(lines, idx));
+        const double original_width = CTLineGetTypographicBounds(line, nullptr, nullptr, nullptr);
+        const short rounded_width = static_cast<short>(std::floor(original_width + 0.5));
+        _out_width_first[idx++] = rounded_width;
+        assert(idx <= strings_amount);
     }
-    CFRelease(frame);
-    CFRelease(framesetter);
-    CFRelease(attr_string);
-    CFRelease(storage);        
 }
 
-std::vector<short> FontGeometryInfo::
-    CalculateStringsWidths(const std::vector<CFStringRef> &_strings, NSFont *_font )
+// TODO: unit tests ffs!!!
+std::vector<short> FontGeometryInfo::CalculateStringsWidths(std::span<const CFStringRef> _strings, NSFont *_font)
 {
     const auto count = _strings.size();
     if( count == 0 )
         return {};
 
-    const auto items_per_chunk = [&]{
-        if( count <= 512 )          return size_t(128);
-        else if( count <= 2048 )    return size_t(256);
-        else                        return size_t(512);
+    const auto items_per_chunk = [&] {
+        if( count <= 512 )
+            return size_t(128);
+        else if( count <= 2048 )
+            return size_t(256);
+        else
+            return size_t(512);
     }();
-    
-    std::vector<short> widths( count );
-    
-    const auto attributes = @{NSFontAttributeName:_font};    
+
+    std::vector<short> widths(count);
+
+    const auto attributes = @{NSFontAttributeName: _font};
     const auto cf_attributes = (__bridge CFDictionaryRef)attributes;
-    
+
     if( count > items_per_chunk ) {
         const auto iterations = (count / items_per_chunk) + (count % items_per_chunk ? 1 : 0);
         const auto block = [&](size_t _chunk_index) {
             const auto index_first = _chunk_index * items_per_chunk;
-            const auto index_last = std::min(index_first + items_per_chunk, count); 
+            const auto index_last = std::min(index_first + items_per_chunk, count);
             CalculateWidthsOfStringsBulk(_strings.data() + index_first,
                                          _strings.data() + index_last,
                                          widths.data() + index_first,
@@ -162,13 +196,10 @@ std::vector<short> FontGeometryInfo::
         dispatch_apply(iterations, block);
     }
     else {
-        CalculateWidthsOfStringsBulk(_strings.data(),
-                                     _strings.data() + count,
-                                     widths.data(),
-                                     widths.data() + count,
-                                     cf_attributes);
+        CalculateWidthsOfStringsBulk(
+            _strings.data(), _strings.data() + count, widths.data(), widths.data() + count, cf_attributes);
     }
-    
+
     return widths;
 }
 

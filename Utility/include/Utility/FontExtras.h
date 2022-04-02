@@ -1,8 +1,9 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreText/CoreText.h>
 #include <vector>
+#include <span>
 
 #ifdef __OBJC__
 #include <Cocoa/Cocoa.h>
@@ -28,7 +29,7 @@ public:
     inline double PreciseMonospaceWidth() const noexcept { return m_PreciseMonospaceWidth; }
 
 #ifdef __OBJC__
-    static std::vector<short> CalculateStringsWidths(const std::vector<CFStringRef> &_strings,
+    static std::vector<short> CalculateStringsWidths(std::span<const CFStringRef> _strings,
                                                      NSFont *_font);
 #endif
 

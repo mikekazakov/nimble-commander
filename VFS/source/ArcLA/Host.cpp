@@ -262,15 +262,22 @@ int ArchiveHost::ReadArchiveListing()
     while( (ret = archive_read_next_header(m_Arc, &aentry)) == ARCHIVE_OK ) {
         aruid++;
         const struct stat *stat = archive_entry_stat(aentry);
-        char path[1024];
-        path[0] = '/';
+        if( stat == nullptr )
+            continue; // check for broken archives
 
         const auto entry_pathname = archive_entry_pathname(aentry);
+        if( entry_pathname == nullptr )
+            continue; // check for broken archives
+        
         const auto entry_pathname_len = strlen(entry_pathname);
         if( entry_pathname_len == 0 )
             continue;
+        
         const bool entry_has_heading_slash = entry_pathname[0] == '/';
 
+        char path[1024];
+        path[0] = '/';
+    
         // pathname can be represented in ANY encoding.
         // if we already have figured out it - convert from it to UTF8 immediately
         if( detected_encoding ) {

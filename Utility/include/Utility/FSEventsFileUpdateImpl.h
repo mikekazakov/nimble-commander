@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include "FSEventsFileUpdate.h"
 #include <CoreServices/CoreServices.h>
@@ -72,6 +72,7 @@ private:
 
     robin_hood::unordered_map<std::filesystem::path, Watch, PathHash, PathEqual> m_Watches;
     mutable std::mutex m_Lock;
+    dispatch_queue_t m_KickstartQueue;
     uint64_t m_NextTicket = 1;
     bool m_KickstartIsOnline = false;
     std::shared_ptr<AsyncContext> m_AsyncContext;   // the only strong ownership

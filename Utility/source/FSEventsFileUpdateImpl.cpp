@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsFileUpdateImpl.h"
 #include <Utility/StringExtras.h>
 #include <Utility/Log.h>
@@ -43,6 +43,7 @@ FSEventsFileUpdateImpl::FSEventsFileUpdateImpl()
     m_AsyncContext = std::make_shared<AsyncContext>();
     m_AsyncContext->me = this;
     m_WeakAsyncContext = m_AsyncContext;
+    m_KickstartQueue = dispatch_queue_create("FSEventsFileUpdateImpl", DISPATCH_QUEUE_SERIAL);
 
     Log::Trace(SPDLOC, "FSEventsFileUpdateImpl created");
 }
@@ -55,6 +56,7 @@ FSEventsFileUpdateImpl::~FSEventsFileUpdateImpl()
         DeleteEventStream(watch.second.stream);
     }
     Log::Trace(SPDLOC, "FSEventsFileUpdateImpl destroyed");
+    dispatch_release(m_KickstartQueue);
 }
 
 uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path,
@@ -208,7 +210,7 @@ void FSEventsFileUpdateImpl::ScheduleScannerKickstart()
     // no dispatch_assert_main_queue here - can be scheduled from any thread
     m_KickstartIsOnline = true;
     // schedule the next scanner execution after g_ScanInterval
-    dispatch_to_main_queue_after(g_ScanInterval, [context = m_WeakAsyncContext] {
+    dispatch_after(g_ScanInterval, m_KickstartQueue, [context = m_WeakAsyncContext] {
         if( auto instance = context.lock() )
             instance->me->KickstartBackgroundScanner();
     });
@@ -216,7 +218,7 @@ void FSEventsFileUpdateImpl::ScheduleScannerKickstart()
 
 void FSEventsFileUpdateImpl::KickstartBackgroundScanner()
 {
-    dispatch_assert_main_queue();
+    dispatch_assert_background_queue();
 
     auto lock = std::lock_guard{m_Lock};
 

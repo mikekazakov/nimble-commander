@@ -155,7 +155,7 @@ static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
     for( long idx = 0; idx < lines_cnt; ++idx ) {
         const auto line = static_cast<CTLineRef>(CFArrayGetValueAtIndex(lines, idx));
         const double original_width = CTLineGetTypographicBounds(line, nullptr, nullptr, nullptr);
-        const short rounded_width = static_cast<short>(std::floor(original_width + 0.5));
+        const short rounded_width = static_cast<short>(std::ceil(original_width));
         _out_width_first[idx++] = rounded_width;
         assert(idx <= strings_amount);
     }

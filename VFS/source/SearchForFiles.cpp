@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchForFiles.h"
 #include <sys/stat.h>
 #include <VFS/FileWindow.h>
@@ -35,16 +35,12 @@ SearchForFiles::~SearchForFiles()
     Wait();
 }
 
-void SearchForFiles::SetFilterName(const FilterName &_filter)
+void SearchForFiles::SetFilterName(utility::FileMask _filter)
 {
     if( IsRunning() )
         throw std::logic_error("Filters can't be changed during background search process");
-    m_FilterName = _filter;
-    // substitute simple requests, like "system" with "*system*":
-    if( !nc::utility::FileMask::IsWildCard(m_FilterName->mask) )
-        m_FilterName->mask = nc::utility::FileMask::ToFilenameWildCard(m_FilterName->mask);
-
-    m_FilterNameMask = nc::utility::FileMask(m_FilterName->mask);
+    
+    m_FilterName = std::move(_filter);
 }
 
 void SearchForFiles::SetFilterContent(const FilterContent &_filter)
@@ -67,8 +63,7 @@ void SearchForFiles::ClearFilters()
 {
     if( IsRunning() )
         throw std::logic_error("Filters can't be changed during background search process");
-    m_FilterName = std::nullopt;
-    m_FilterNameMask = std::nullopt;
+    m_FilterName = {};
     m_FilterContent = std::nullopt;
     m_FilterSize = std::nullopt;
 }
@@ -167,7 +162,7 @@ void SearchForFiles::ProcessDirent(const char *_full_path,
         failed_filtering = true;
 
     // Filter by filename
-    if( failed_filtering == false && m_FilterNameMask && !FilterByFilename(_dirent.name) )
+    if( failed_filtering == false && !m_FilterName.IsEmpty() && !FilterByFilename(_dirent.name) )
         failed_filtering = true;
 
     // Filter by filesize
@@ -257,7 +252,7 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
 
 bool SearchForFiles::FilterByFilename(const char *_filename) const
 {
-    return m_FilterNameMask->MatchName(_filename);
+    return m_FilterName.MatchName(_filename);
 }
 
 void SearchForFiles::ProcessValidEntry([[maybe_unused]] const char *_full_path,

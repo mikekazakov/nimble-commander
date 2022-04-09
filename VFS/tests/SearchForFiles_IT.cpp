@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "SearchForFiles.h"
@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 
 using nc::vfs::SearchForFiles;
+using nc::utility::FileMask;
 
 #define PREFIX "[nc::vfs::SearchForFiles] "
 
@@ -53,30 +54,27 @@ TEST_CASE(PREFIX "Test basic searching")
         CHECK( filenames == set{"Dir"} );    
     }
     SECTION("search for all entries with mask='*.txt'") {
-        auto filter = SearchForFiles::FilterName{};
-        filter.mask = "*.txt";
-        search.SetFilterName(filter);
+        search.SetFilterName(FileMask("*.txt"));
         do_search( Options::GoIntoSubDirs | Options::SearchForDirs | Options::SearchForFiles );
         CHECK( filenames == set{"filename1.txt", "filename2.txt", "filename3.txt"} );
     }
     SECTION("search for all entries with mask='*.jpg'") {
-        auto filter = SearchForFiles::FilterName{};
-        filter.mask = "*.jpg";
-        search.SetFilterName(filter);
+        search.SetFilterName(FileMask("*.jpg"));
         do_search( Options::GoIntoSubDirs | Options::SearchForDirs | Options::SearchForFiles );
         CHECK( filenames == set{} );
     }
-    SECTION("search for all entries with mask='filename'") {
-        auto filter = SearchForFiles::FilterName{};
-        filter.mask = "filename";
-        search.SetFilterName(filter);
+    SECTION("search for all entries with mask='*filename*'") {
+        search.SetFilterName(FileMask("*filename*"));
         do_search( Options::GoIntoSubDirs | Options::SearchForDirs | Options::SearchForFiles );
         CHECK( filenames == set{"filename1.txt", "filename2.txt", "filename3.txt"} );
     }
-    SECTION("search for all entries with mask='dir'") {
-        auto filter = SearchForFiles::FilterName{};
-        filter.mask = "dir";
-        search.SetFilterName(filter);
+    SECTION("search for all entries with regex='(filename1|filename3).*'") {
+        search.SetFilterName(FileMask("(filename1|filename3).*", FileMask::Type::RegEx));
+        do_search( Options::GoIntoSubDirs | Options::SearchForDirs | Options::SearchForFiles );
+        CHECK( filenames == set{"filename1.txt", "filename3.txt"} );
+    }
+    SECTION("search for all entries with mask='*dir*'") {
+        search.SetFilterName(FileMask("*dir*"));
         do_search( Options::GoIntoSubDirs | Options::SearchForDirs | Options::SearchForFiles );
         CHECK( filenames == set{"Dir"} );
     }

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/SerialQueue.h>
@@ -24,11 +24,7 @@ public:
             LookInArchives  = 0x0008,
         };
     };
-    
-    struct FilterName {
-        std::string mask;
-    };
-    
+        
     struct FilterContent {
         std::string text; //utf8-encoded
         int encoding        = encodings::ENCODING_UTF8;
@@ -58,7 +54,7 @@ public:
     /**
      * Sets filename filtering. Should not be called with background search going on.
      */
-    void SetFilterName(const FilterName &_filter);
+    void SetFilterName(utility::FileMask _filter);
     
     /**
      * Sets file content filtering. Should not be called with background search going on.
@@ -127,8 +123,7 @@ private:
     bool FilterByFilename(const char* _filename) const;
     
     SerialQueue                 m_Queue;
-    std::optional<FilterName>   m_FilterName;
-    std::optional<nc::utility::FileMask> m_FilterNameMask;
+    utility::FileMask           m_FilterName;
     std::optional<FilterContent>m_FilterContent;
     std::optional<FilterSize>   m_FilterSize;
     

@@ -5,6 +5,7 @@
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>
+#include <Utility/StringExtras.h>
 #include <Utility/PathManip.h>
 #include <VFS/SearchForFiles.h>
 #include <Utility/ByteCountFormatter.h>
@@ -19,9 +20,13 @@
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 
+// Mask like *, or *.txt, or *.txt, *.jpg
+
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
 static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";
 static const int g_MaximumSearchResults = 262144;
+
+static constexpr size_t g_MaximumMaskHistoryElements = 16;
 
 using namespace nc::panel;
 using nc::vfs::SearchForFiles;
@@ -44,8 +49,7 @@ static std::string ensure_no_tr_slash(std::string _str)
     return _str;
 }
 
-static std::string
-to_relative_path(const VFSHostPtr &_in_host, std::string _path, const std::string &_base_path)
+static std::string to_relative_path(const VFSHostPtr &_in_host, std::string _path, const std::string &_base_path)
 {
     VFSHostPtr a = _in_host;
     while( a ) {
@@ -61,8 +65,7 @@ to_relative_path(const VFSHostPtr &_in_host, std::string _path, const std::strin
 class FindFilesSheetComboHistory : public std::vector<std::string>
 {
 public:
-    FindFilesSheetComboHistory(int _max, const char *_config_path)
-        : m_Max(_max), m_Path(_config_path)
+    FindFilesSheetComboHistory(int _max, const char *_config_path) : m_Max(_max), m_Path(_config_path)
     {
         auto arr = StateConfig().Get(m_Path);
         if( arr.GetType() == rapidjson::kArrayType )
@@ -75,8 +78,7 @@ public:
     {
         nc::config::Value arr(rapidjson::kArrayType);
         for( auto &s : *this )
-            arr.PushBack(nc::config::Value(s.c_str(), nc::config::g_CrtAllocator),
-                         nc::config::g_CrtAllocator);
+            arr.PushBack(nc::config::Value(s.c_str(), nc::config::g_CrtAllocator), nc::config::g_CrtAllocator);
         StateConfig().Set(m_Path, arr);
     }
 
@@ -188,15 +190,10 @@ private:
 @property(nonatomic) IBOutlet NSButton *GoToButton;
 @property(nonatomic) IBOutlet NSButton *ViewButton;
 @property(nonatomic) IBOutlet NSButton *PanelButton;
-@property(nonatomic) IBOutlet NSComboBox *MaskComboBox;
-@property(nonatomic) NSString *MaskComboBoxValue;
-@property(nonatomic) IBOutlet NSComboBox *TextComboBox;
-@property(nonatomic) NSString *TextComboBoxValue;
+@property(nonatomic) IBOutlet NSSearchField *maskSearchField;
+@property(nonatomic) IBOutlet NSSearchField *textSearchField;
 @property(nonatomic) IBOutlet NSTextField *LookingIn;
 @property(nonatomic) IBOutlet NSTableView *TableView;
-@property(nonatomic) IBOutlet NSButton *CaseSensitiveButton;
-@property(nonatomic) IBOutlet NSButton *WholePhraseButton;
-@property(nonatomic) IBOutlet NSButton *NotContainingButton;
 @property(nonatomic) IBOutlet NSArrayController *ArrayController;
 @property(nonatomic) IBOutlet NSPopUpButton *SizeRelationPopUp;
 @property(nonatomic) IBOutlet NSTextField *SizeTextField;
@@ -204,11 +201,11 @@ private:
 @property(nonatomic) IBOutlet NSPopUpButton *SizeMetricPopUp;
 @property(nonatomic) IBOutlet NSButton *SearchInSubDirsButton;
 @property(nonatomic) IBOutlet NSButton *SearchInArchivesButton;
-@property(nonatomic) IBOutlet NSPopUpButton *EncodingsPopUp;
 @property(nonatomic) IBOutlet NSPopUpButton *searchForPopup;
 @property(nonatomic) NSMutableArray *FoundItems;
 @property(nonatomic) FindFilesSheetFoundItem *focusedItem; // may be nullptr
 @property(nonatomic) bool focusedItemIsReg;
+@property(nonatomic) bool filenameMaskIsOk;
 
 @end
 
@@ -220,7 +217,14 @@ private:
 
     bool m_UIChanged;
     NSMutableArray *m_FoundItems; // is controlled by ArrayController
-    std::unique_ptr<FindFilesSheetComboHistory> m_MaskHistory;
+
+    bool m_RegexSearch;
+    bool m_CaseSensitiveTextSearch;
+    bool m_WholePhraseTextSearch;
+    bool m_NotContainingTextSearch;
+    int m_TextSearchEncoding;
+
+    std::vector<nc::panel::FindFilesMask> m_MaskHistory;
     std::unique_ptr<FindFilesSheetComboHistory> m_TextHistory;
 
     NSMutableArray *m_FoundItemsBatch;
@@ -230,7 +234,7 @@ private:
     SerialQueue m_StatQueue;   // for custom VFS
 
     std::string m_LookingInPath;
-    nc::spinlock m_LookingInPathGuard;
+    std::mutex m_LookingInPathGuard;
     NSTimer *m_LookingInPathUpdateTimer;
 
     FindFilesSheetFoundItem *m_DoubleClickedItem;
@@ -254,17 +258,27 @@ private:
         m_FileSearch = std::make_unique<SearchForFiles>();
         m_FoundItems = [[NSMutableArray alloc] initWithCapacity:4096];
         m_FoundItemsBatch = [[NSMutableArray alloc] initWithCapacity:4096];
-
-        m_MaskHistory = std::make_unique<FindFilesSheetComboHistory>(16, g_StateMaskHistory);
+        m_RegexSearch = false;
+        m_CaseSensitiveTextSearch = false;
+        m_WholePhraseTextSearch = false;
+        m_NotContainingTextSearch = false;
+        m_TextSearchEncoding = encodings::ENCODING_UTF8;
+        m_MaskHistory = nc::panel::LoadFindFilesMasks(StateConfig(), g_StateMaskHistory);
         m_TextHistory = std::make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory);
-
+        m_UIChanged = true;
         self.focusedItem = nil;
         self.focusedItemIsReg = false;
         self.didAnySearchStarted = false;
         self.searchingNow = false;
-        m_UIChanged = true;
+        self.filenameMaskIsOk = true;
     }
     return self;
+}
+
+- (void)dealloc
+{
+    nc::panel::StoreFindFilesMasks(StateConfig(), g_StateMaskHistory, m_MaskHistory);
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (void)windowDidLoad
@@ -282,23 +296,19 @@ private:
         [NSSortDescriptor sortDescriptorWithKey:@"mdate" ascending:YES]
     ];
 
-    for( const auto &i : encodings::LiteralEncodingsList() ) {
-        NSMenuItem *item = [NSMenuItem new];
-        item.title = (__bridge NSString *)i.second;
-        item.tag = i.first;
-        [self.EncodingsPopUp.menu addItem:item];
-    }
-    [self.EncodingsPopUp selectItemWithTag:encodings::ENCODING_UTF8];
+    [self updateMasksMenu];
+    [self updateMaskSearchFieldPlaceholder];
+    objc_cast<NSSearchFieldCell>(self.maskSearchField.cell).cancelButtonCell = nil;
 
-    self.MaskComboBox.stringValue =
-        m_MaskHistory->empty() ? @"*" : [NSString stringWithUTF8StdString:m_MaskHistory->front()];
-    self.TextComboBox.stringValue = @"";
+    [self updateTextMenu];
+    objc_cast<NSSearchFieldCell>(self.textSearchField.cell).cancelButtonCell = nil;
 
-    // wire up hotkeys
+    // wire up the hotkeys
     NCSheetWithHotkeys *sheet = static_cast<NCSheetWithHotkeys *>(self.window);
-    sheet.onCtrlT = [sheet makeFocusHotkey:self.TextComboBox];
-    sheet.onCtrlM = [sheet makeFocusHotkey:self.MaskComboBox];
+    sheet.onCtrlT = [sheet makeFocusHotkey:self.textSearchField];
+    sheet.onCtrlM = [sheet makeFocusHotkey:self.maskSearchField];
     sheet.onCtrlS = [sheet makeFocusHotkey:self.SizeTextField];
+    sheet.onCtrlI = [sheet makeFocusHotkey:self.TableView];
     sheet.onCtrlP = [sheet makeClickHotkey:self.PanelButton];
     sheet.onCtrlG = [sheet makeClickHotkey:self.GoToButton];
     sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
@@ -321,40 +331,17 @@ private:
     GA().PostScreenView("Find Files");
 }
 
-- (void)dealloc
-{
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-
 - (BOOL)validateMenuItem:(NSMenuItem *)item
 {
     try {
         if( item.action == @selector(OnFileInternalBigViewCommand:) )
             return [self Predicate_OnFileInternalBigViewCommand];
-    } catch( std::exception &e ) {
+    } catch( const std::exception &e ) {
         std::cout << "Exception caught: " << e.what() << std::endl;
     } catch( ... ) {
         std::cout << "Caught an unhandled exception!" << std::endl;
     }
     return true;
-}
-
-- (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox
-{
-    if( aComboBox == self.MaskComboBox )
-        return m_MaskHistory->size();
-    if( aComboBox == self.TextComboBox )
-        return m_TextHistory->size();
-    return 0;
-}
-
-- (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)index
-{
-    if( aComboBox == self.MaskComboBox )
-        return [NSString stringWithUTF8StdString:m_MaskHistory->at(index)];
-    if( aComboBox == self.TextComboBox )
-        return [NSString stringWithUTF8StdString:m_TextHistory->at(index)];
-    return 0;
 }
 
 - (IBAction)OnClose:(id) [[maybe_unused]] _sender
@@ -394,8 +381,7 @@ private:
 
         if( m_FoundItems.count > 0 ) {
             [self.window makeFirstResponder:self.TableView];
-            [self.TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0]
-                        byExtendingSelection:false];
+            [self.TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:false];
         }
 
         [self setupReturnKey];
@@ -415,8 +401,7 @@ private:
             search_options |= SearchForFiles::Options::SearchForDirs;
             break;
         default:
-            search_options |=
-                SearchForFiles::Options::SearchForDirs | SearchForFiles::Options::SearchForFiles;
+            search_options |= SearchForFiles::Options::SearchForDirs | SearchForFiles::Options::SearchForFiles;
     }
     if( self.SearchInArchivesButton.intValue )
         search_options |= SearchForFiles::Options::LookInArchives;
@@ -451,74 +436,77 @@ private:
 
 - (IBAction)OnSearch:(id) [[maybe_unused]] _sender
 {
+    using nc::utility::FileMask;
     if( m_FileSearch->IsRunning() ) {
         m_FileSearch->Stop();
         return;
     }
 
     NSRange range_all = NSMakeRange(0, [self.ArrayController.arrangedObjects count]);
-    [self.ArrayController
-        removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range_all]];
+    [self.ArrayController removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range_all]];
 
+    // by default - clear any all filter
     m_FileSearch->ClearFilters();
 
-    const auto mask = self.MaskComboBoxValue;
-    if( mask != nil && [mask isEqualToString:@""] == false &&
-        [mask isEqualToString:@"*"] == false ) {
-        SearchForFiles::FilterName filter_name;
-        filter_name.mask = mask.UTF8String;
-        m_FileSearch->SetFilterName(filter_name);
-        m_MaskHistory->insert_unique(mask.UTF8String);
-    }
-    else
-        m_MaskHistory->insert_unique("*");
+    // set the filename filter if any is specified
+    const auto filename_mask = [self filenameEffectiveMask];
+    const auto filename_mask_type = [self filenameMaskType];
+    if( !filename_mask.empty() ) {
+        m_FileSearch->SetFilterName(FileMask{filename_mask, filename_mask_type});
 
-    const auto text_query = self.TextComboBoxValue;
+        // memorize the query
+        FindFilesMask history_entry;
+        history_entry.string = filename_mask;
+        history_entry.type = m_RegexSearch ? nc::panel::FindFilesMask::RegEx : nc::panel::FindFilesMask::Classic;
+        [self insertFindFilesMaskIntoHistory:history_entry];
+    }
+
+    const auto text_query = self.textSearchField.stringValue ? self.textSearchField.stringValue : @"";
     if( text_query.length ) {
         SearchForFiles::FilterContent filter_content;
         filter_content.text = text_query.UTF8String;
-        filter_content.encoding = static_cast<int>(self.EncodingsPopUp.selectedTag);
-        filter_content.case_sensitive = self.CaseSensitiveButton.intValue;
-        filter_content.whole_phrase = self.WholePhraseButton.intValue;
-        filter_content.not_containing = self.NotContainingButton.intValue;
+        filter_content.encoding = m_TextSearchEncoding;
+        filter_content.case_sensitive = m_CaseSensitiveTextSearch;
+        filter_content.whole_phrase = m_WholePhraseTextSearch;
+        filter_content.not_containing = m_NotContainingTextSearch;
         m_FileSearch->SetFilterContent(filter_content);
+
+        // memorize the query
+        m_TextHistory->insert_unique(filter_content.text);
     }
-    m_TextHistory->insert_unique(text_query ? text_query.UTF8String : "");
 
     m_FileSearch->SetFilterSize(self.searchFilterSizeFromUI);
 
-    auto found_callback =
-        [=](const char *_filename, const char *_in_path, VFSHost &_in_host, CFRange _cont_pos) {
-            FindFilesSheetControllerFoundItem it;
-            it.host = _in_host.SharedPtr();
-            it.filename = _filename;
-            it.dir_path = ensure_no_tr_slash(_in_path);
-            it.full_filename = ensure_tr_slash(_in_path) + it.filename;
-            it.content_pos = _cont_pos;
-            it.rel_path = to_relative_path(
-                it.host, ensure_tr_slash(_in_path), std::string(m_Host->JunctionPath()) + m_Path);
+    auto found_callback = [=](const char *_filename, const char *_in_path, VFSHost &_in_host, CFRange _cont_pos) {
+        FindFilesSheetControllerFoundItem it;
+        it.host = _in_host.SharedPtr();
+        it.filename = _filename;
+        it.dir_path = ensure_no_tr_slash(_in_path);
+        it.full_filename = ensure_tr_slash(_in_path) + it.filename;
+        it.content_pos = _cont_pos;
+        it.rel_path =
+            to_relative_path(it.host, ensure_tr_slash(_in_path), std::string(m_Host->JunctionPath()) + m_Path);
 
-            // TODO: need some decent cancelling mechanics here
-            auto stat_block = [=, it = std::move(it)]() mutable {
-                // doing stat()'ing item in async background thread
-                it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
+        // TODO: need some decent cancelling mechanics here
+        auto stat_block = [=, it = std::move(it)]() mutable {
+            // doing stat()'ing item in async background thread
+            it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
 
-                FindFilesSheetFoundItem *item =
-                    [[FindFilesSheetFoundItem alloc] initWithFoundItem:std::move(it)];
-                m_BatchQueue.Run([self, item] {
-                    // dumping result entry into batch array in BatchQueue
-                    [m_FoundItemsBatch addObject:item];
-                });
-            };
-
-            if( _in_host.IsNativeFS() )
-                m_StatGroup.Run(std::move(stat_block));
-            else
-                m_StatQueue.Run(std::move(stat_block));
-
-            if( m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults )
-                m_FileSearch->Stop(); // gorshochek, ne vari!!!
+            FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:std::move(it)];
+            m_BatchQueue.Run([self, item] {
+                // dumping result entry into batch array in BatchQueue
+                [m_FoundItemsBatch addObject:item];
+            });
         };
+
+        if( _in_host.IsNativeFS() )
+            m_StatGroup.Run(std::move(stat_block));
+        else
+            m_StatQueue.Run(std::move(stat_block));
+
+        if( m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults )
+            m_FileSearch->Stop(); // gorshochek, ne vari!!!
+    };
     auto finish_callback = [=] { [self onSearchFinished]; };
     auto lookin_in_callback = [=](const char *_path, VFSHost &_in_host) {
         auto verbose_path = _in_host.MakePathVerbose(_path);
@@ -546,12 +534,11 @@ private:
                                                             repeats:YES];
         [m_BatchDrainTimer setDefaultTolerance];
 
-        m_LookingInPathUpdateTimer =
-            [NSTimer scheduledTimerWithTimeInterval:0.1 // 0.1 sec update
-                                             target:self
-                                           selector:@selector(updateLookingInByTimer:)
-                                           userInfo:nil
-                                            repeats:YES];
+        m_LookingInPathUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 // 0.1 sec update
+                                                                      target:self
+                                                                    selector:@selector(updateLookingInByTimer:)
+                                                                    userInfo:nil
+                                                                     repeats:YES];
         [m_LookingInPathUpdateTimer setDefaultTolerance];
     }
 }
@@ -568,8 +555,7 @@ private:
     if( !nc::panel::IsExtensionInArchivesWhitelist(extension) )
         return nullptr;
 
-    auto host = VFSArchiveProxy::OpenFileAsArchive(
-        _path, _host, nullptr, [&] { return m_FileSearch->IsStopped(); });
+    auto host = VFSArchiveProxy::OpenFileAsArchive(_path, _host, nullptr, [&] { return m_FileSearch->IsStopped(); });
     if( host )
         if( self.vfsInstanceManager )
             self.vfsInstanceManager->TameVFS(host);
@@ -668,8 +654,8 @@ private:
     if( row_index < 0 )
         return;
 
-    const auto found_item = objc_cast<FindFilesSheetFoundItem>(
-        [self.ArrayController.arrangedObjects objectAtIndex:row_index]);
+    const auto found_item =
+        objc_cast<FindFilesSheetFoundItem>([self.ArrayController.arrangedObjects objectAtIndex:row_index]);
 
     const FindFilesSheetControllerFoundItem &data = found_item.data;
 
@@ -681,7 +667,7 @@ private:
         request.content_mark.emplace();
         request.content_mark->bytes_offset = data.content_pos.location;
         request.content_mark->bytes_length = data.content_pos.length;
-        request.content_mark->search_term = self.TextComboBox.stringValue.UTF8String;
+        request.content_mark->search_term = self.textSearchField.stringValue.UTF8String;
     }
     m_OnView(request);
 }
@@ -706,7 +692,36 @@ private:
 - (IBAction)onSearchSettingsUIChanged:(id) [[maybe_unused]] sender
 {
     m_UIChanged = true;
+
+    // validate the mask string
+    const auto filename_mask = [self filenameEffectiveMask];
+    const auto filename_mask_type = [self filenameMaskType];
+    self.filenameMaskIsOk = nc::utility::FileMask::Validate(filename_mask, filename_mask_type);
+
     [self setupReturnKey];
+}
+
+- (nc::utility::FileMask::Type)filenameMaskType
+{
+    return m_RegexSearch ? nc::utility::FileMask::Type::RegEx : nc::utility::FileMask::Type::Mask;
+}
+
+- (std::string)filenameEffectiveMask
+{
+    //    const auto search_fied_value = self.maskSearchFieldValue;
+
+    const auto search_fied_value = self.maskSearchField.stringValue;
+
+    const auto query = search_fied_value != nil ? std::string(search_fied_value.UTF8String) : std::string{};
+    if( query.empty() )
+        return {};
+    if( m_RegexSearch ) {
+        return query;
+    }
+    else {
+        // expand simple requests, like "system", into "*system*"
+        return nc::utility::FileMask::IsWildCard(query) ? query : nc::utility::FileMask::ToFilenameWildCard(query);
+    }
 }
 
 - (IBAction)OnPanelize:(id) [[maybe_unused]] sender
@@ -760,4 +775,323 @@ private:
     return true;
 }
 
+- (void)updateMasksMenu
+{
+    self.maskSearchField.searchMenuTemplate = [self buildMasksMenu];
+}
+
+- (void)updateTextMenu
+{
+    self.textSearchField.searchMenuTemplate = [self buildTextMenu];
+}
+
+- (NSMenu *)buildMasksMenu
+{
+    const auto menu = [[NSMenu alloc] initWithTitle:@""];
+
+    [menu addItemWithTitle:NSLocalizedString(@"Options", "") action:nil keyEquivalent:@""];
+
+    const auto regex = [menu addItemWithTitle:NSLocalizedString(@"Regular Expression", "")
+                                       action:@selector(onMaskMenuRegExOptionClicked:)
+                                keyEquivalent:@""];
+    regex.state = m_RegexSearch ? NSControlStateValueOn : NSControlStateValueOff;
+    regex.indentationLevel = 1;
+
+    if( !m_MaskHistory.empty() ) {
+        [menu addItem:NSMenuItem.separatorItem];
+        [menu addItemWithTitle:NSLocalizedString(@"Recent Searches", "") action:nil keyEquivalent:@""];
+        long query_index = 0;
+        for( const auto &query : m_MaskHistory ) {
+            NSString *title = @"";
+            if( query.type == FindFilesMask::Classic ) {
+                title = [NSString
+                    stringWithFormat:NSLocalizedString(@"Mask \u201c%@\u201d", "Find file masks history - plain mask"),
+                                     [NSString stringWithUTF8StdString:query.string]];
+            }
+            else if( query.type == FindFilesMask::RegEx ) {
+                title = [NSString
+                    stringWithFormat:NSLocalizedString(@"RegEx \u201c%@\u201d", "Find file masks history - regex"),
+                                     [NSString stringWithUTF8StdString:query.string]];
+            }
+            auto item = [menu addItemWithTitle:title
+                                        action:@selector(onMaskMenuHistoryEntryClicked:)
+                                 keyEquivalent:@""];
+            item.indentationLevel = 1;
+            item.tag = query_index;
+            ++query_index;
+        }
+        [menu addItem:NSMenuItem.separatorItem];
+        [menu addItemWithTitle:NSLocalizedString(@"Clear Recents", "")
+                        action:@selector(onMaskMenuClearRecentsClicked:)
+                 keyEquivalent:@""];
+    }
+
+    return menu;
+}
+
+- (NSMenu *)buildTextMenu
+{
+    const auto menu = [[NSMenu alloc] initWithTitle:@""];
+
+    [menu addItemWithTitle:NSLocalizedString(@"Options", "") action:nil keyEquivalent:@""];
+
+    const auto case_sensitive = [menu addItemWithTitle:NSLocalizedString(@"Case Sensitive", "")
+                                                action:@selector(onTextMenuCaseSensitiveClicked:)
+                                         keyEquivalent:@""];
+    case_sensitive.state = m_CaseSensitiveTextSearch ? NSControlStateValueOn : NSControlStateValueOff;
+    case_sensitive.indentationLevel = 1;
+
+    const auto whole_phrase = [menu addItemWithTitle:NSLocalizedString(@"Whole Phrase", "")
+                                              action:@selector(onTextMenuWholePhraseClicked:)
+                                       keyEquivalent:@""];
+    whole_phrase.state = m_WholePhraseTextSearch ? NSControlStateValueOn : NSControlStateValueOff;
+    whole_phrase.indentationLevel = 1;
+
+    const auto not_containing = [menu addItemWithTitle:NSLocalizedString(@"Not Containing", "")
+                                                action:@selector(onTextMenuNotContainingClicked:)
+                                         keyEquivalent:@""];
+    not_containing.state = m_NotContainingTextSearch ? NSControlStateValueOn : NSControlStateValueOff;
+    not_containing.indentationLevel = 1;
+
+    const auto encoding_menu = [[NSMenu alloc] initWithTitle:@""];
+    for( const auto &i : encodings::LiteralEncodingsList() ) {
+        auto item = [encoding_menu addItemWithTitle:(__bridge NSString *)i.second
+                                             action:@selector(onTextMenuEncodingClicked:)
+                                      keyEquivalent:@""];
+        item.tag = i.first;
+        if( i.first == m_TextSearchEncoding )
+            item.state = NSControlStateValueOn;
+    }
+    const auto encoding_menu_item = [[NSMenuItem alloc] initWithTitle:@"Encoding" action:nil keyEquivalent:@""];
+    encoding_menu_item.submenu = encoding_menu;
+    encoding_menu_item.indentationLevel = 1;
+    [menu addItem:encoding_menu_item];
+
+    if( !m_TextHistory->empty() ) {
+        [menu addItem:NSMenuItem.separatorItem];
+        [menu addItemWithTitle:NSLocalizedString(@"Recent Searches", "") action:nil keyEquivalent:@""];
+        long text_index = 0;
+        for( const auto &text : *m_TextHistory ) {
+            auto item = [menu addItemWithTitle:[NSString stringWithUTF8StdString:text]
+                                        action:@selector(onTextMenuHistoryEntryClicked:)
+                                 keyEquivalent:@""];
+            item.indentationLevel = 1;
+            item.tag = text_index;
+            ++text_index;
+        }
+        [menu addItem:NSMenuItem.separatorItem];
+        [menu addItemWithTitle:NSLocalizedString(@"Clear Recents", "")
+                        action:@selector(onTextMenuClearRecentsClicked:)
+                 keyEquivalent:@""];
+    }
+    return menu;
+}
+
+- (void)onTextMenuEncodingClicked:(id)_sender
+{
+    if( auto item = objc_cast<NSMenuItem>(_sender) ) {
+        m_TextSearchEncoding = static_cast<int>(item.tag);
+        [self updateTextMenu];
+        [self onSearchSettingsUIChanged:_sender];
+    }
+}
+
+- (void)onTextMenuHistoryEntryClicked:(id) [[maybe_unused]] _sender
+{
+    const auto item = objc_cast<NSMenuItem>(_sender);
+    if( !item )
+        return;
+    const auto tag = item.tag;
+    if( tag < 0 || static_cast<size_t>(tag) >= m_TextHistory->size() )
+        return;
+    const auto history_entry = m_TextHistory->at(tag);
+    [self.textSearchField setStringValue:[NSString stringWithUTF8StdString:history_entry]];
+    [self onSearchSettingsUIChanged:_sender];
+}
+
+- (void)onTextMenuClearRecentsClicked:(id) [[maybe_unused]] _sender
+{
+    m_TextHistory->clear();
+    [self updateTextMenu];
+}
+
+- (void)onTextMenuCaseSensitiveClicked:(id)_sender
+{
+    m_CaseSensitiveTextSearch = !m_CaseSensitiveTextSearch;
+    [self updateTextMenu];
+    [self onSearchSettingsUIChanged:_sender];
+}
+
+- (void)onTextMenuWholePhraseClicked:(id) [[maybe_unused]] _sender
+{
+    m_WholePhraseTextSearch = !m_WholePhraseTextSearch;
+    [self updateTextMenu];
+    [self onSearchSettingsUIChanged:_sender];
+}
+
+- (void)onTextMenuNotContainingClicked:(id) [[maybe_unused]] _sender
+{
+    m_NotContainingTextSearch = !m_NotContainingTextSearch;
+    [self updateTextMenu];
+    [self onSearchSettingsUIChanged:_sender];
+}
+
+- (void)onMaskMenuHistoryEntryClicked:(id)_sender
+{
+    const auto item = objc_cast<NSMenuItem>(_sender);
+    if( !item )
+        return;
+    const auto tag = item.tag;
+    if( tag < 0 || static_cast<size_t>(tag) >= m_MaskHistory.size() )
+        return;
+    const auto history_entry = m_MaskHistory[tag];
+    m_RegexSearch = history_entry.type == nc::panel::FindFilesMask::RegEx;
+    [self.maskSearchField setStringValue:[NSString stringWithUTF8StdString:history_entry.string]];
+
+    [self updateMasksMenu];
+    [self onSearchSettingsUIChanged:_sender];
+}
+
+- (void)onMaskMenuRegExOptionClicked:(id)_sender
+{
+    m_RegexSearch = !m_RegexSearch;
+    [self updateMasksMenu];
+    [self updateMaskSearchFieldPlaceholder];
+    [self onSearchSettingsUIChanged:_sender];
+}
+
+- (void)updateMaskSearchFieldPlaceholder
+{
+    if( m_RegexSearch )
+        self.maskSearchField.placeholderString =
+            NSLocalizedString(@"Regular expression", "Placeholder prompt for a regex");
+    else
+        self.maskSearchField.placeholderString =
+            NSLocalizedString(@"Mask: *, or *.t?t, or *.txt,*.jpg", "Placeholder prompt for a filemask");
+}
+
+- (void)onMaskMenuClearRecentsClicked:(id) [[maybe_unused]] sender
+{
+    m_MaskHistory.clear();
+    [self updateMasksMenu];
+}
+
+- (void)insertFindFilesMaskIntoHistory:(const FindFilesMask &)_mask
+{
+    // update the search history - remove the entry if it was already there
+    if( auto it = std::find(m_MaskHistory.begin(), m_MaskHistory.end(), _mask); it != m_MaskHistory.end() )
+        m_MaskHistory.erase(it);
+
+    // ... and place it to the front
+    m_MaskHistory.insert(m_MaskHistory.begin(), _mask);
+
+    // cap the history size if it grew too long
+    if( m_MaskHistory.size() > g_MaximumMaskHistoryElements )
+        m_MaskHistory.resize(g_MaximumMaskHistoryElements);
+
+    // re-rebuild the pop-up menu template
+    [self updateMasksMenu];
+}
+
+- (BOOL)control:(NSControl *)_control textView:(NSTextView *) [[maybe_unused]] _text_view doCommandBySelector:(SEL)_sel
+{
+    const auto menu_offset = 6.;
+    if( _control == self.maskSearchField && _sel == @selector(moveDown:) ) {
+        // show the mask field's combo box when the Down key is pressed
+        const auto menu = self.maskSearchField.searchMenuTemplate;
+        const auto bounds = self.maskSearchField.bounds;
+        [menu popUpMenuPositioningItem:nil
+                            atLocation:NSMakePoint(NSMinX(bounds), NSMaxY(bounds) + menu_offset)
+                                inView:self.maskSearchField];
+        return true;
+    }
+    if( _control == self.textSearchField && _sel == @selector(moveDown:) ) {
+        // show the test field's combo box when the Down key is pressed
+        const auto menu = self.textSearchField.searchMenuTemplate;
+        const auto bounds = self.textSearchField.bounds;
+        [menu popUpMenuPositioningItem:nil
+                            atLocation:NSMakePoint(NSMinX(bounds), NSMaxY(bounds) + menu_offset)
+                                inView:self.textSearchField];
+        return true;
+    }
+    if( _sel == @selector(cancelOperation:) &&
+        (_control == self.maskSearchField || _control == self.textSearchField) ) {
+        // Don't allow the search field to swallow the Esc button, instead route it to the Close button
+        [self OnClose:self];
+        return true;
+    }
+    return false;
+}
+
 @end
+
+namespace nc::panel {
+
+bool operator==(const FindFilesMask &lhs, const FindFilesMask &rhs) noexcept
+{
+    return lhs.string == rhs.string && lhs.type == rhs.type;
+}
+
+bool operator!=(const FindFilesMask &lhs, const FindFilesMask &rhs) noexcept
+{
+    return !(lhs == rhs);
+}
+
+std::vector<FindFilesMask> LoadFindFilesMasks(const nc::config::Config &_source, std::string_view _path)
+{
+    std::vector<FindFilesMask> masks;
+
+    auto arr = _source.Get(_path);
+    if( arr.GetType() == rapidjson::kArrayType )
+        for( auto i = arr.Begin(), e = arr.End(); i != e; ++i ) {
+            FindFilesMask m;
+            if( i->GetType() == rapidjson::kStringType ) {
+                // simple "classic" mask
+                m.string = i->GetString();
+                m.type = FindFilesMask::Classic;
+            }
+            else if( i->GetType() == rapidjson::kObjectType ) {
+                // masks with options encoded as a object
+                const auto query_it = i->FindMember("query");
+                if( query_it != i->MemberEnd() && query_it->value.GetType() == rapidjson::kStringType )
+                    m.string = query_it->value.GetString();
+                else
+                    continue;
+
+                const auto type_it = i->FindMember("type");
+                const auto type = (type_it != i->MemberEnd() && type_it->value.GetType() == rapidjson::kStringType)
+                                      ? std::string(type_it->value.GetString())
+                                      : std::string{};
+                if( type == "classic" )
+                    m.type = FindFilesMask::Classic;
+                if( type == "regex" )
+                    m.type = FindFilesMask::RegEx;
+            }
+
+            if( m.string.empty() )
+                continue; // refuse meaningless input
+            masks.push_back(std::move(m));
+        }
+    return masks;
+}
+
+void StoreFindFilesMasks(nc::config::Config &_dest, std::string_view _path, std::span<const FindFilesMask> _masks)
+{
+    using namespace nc::config;
+    Value arr(rapidjson::kArrayType);
+    for( const auto &mask : _masks ) {
+        if( mask.type == FindFilesMask::Classic ) {
+            arr.PushBack(Value(mask.string.c_str(), g_CrtAllocator), g_CrtAllocator);
+        }
+        else {
+            Value mask_obj(rapidjson::kObjectType);
+            mask_obj.AddMember("query", Value(mask.string.c_str(), g_CrtAllocator), g_CrtAllocator);
+            if( mask.type == FindFilesMask::RegEx )
+                mask_obj.AddMember("type", Value("regex", g_CrtAllocator), g_CrtAllocator);
+            arr.PushBack(mask_obj, g_CrtAllocator);
+        }
+    }
+    _dest.Set(_path, arr);
+}
+
+}

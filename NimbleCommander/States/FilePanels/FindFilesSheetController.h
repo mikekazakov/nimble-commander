@@ -4,11 +4,17 @@
 #include <Utility/SheetController.h>
 #include <VFS/VFS.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
+#include <vector>
+#include <span>
 
 @class FindFilesSheetController;
 
 namespace nc::bootstrap {
 class ActivationManager;
+}
+
+namespace nc::config {
+class Config;
 }
 
 namespace nc::panel {
@@ -35,20 +41,32 @@ struct FindFilesSheetViewRequest {
     FindFilesSheetController *sender;
 };
 
+struct FindFilesMask {
+    enum Type
+    {
+        Classic = 0,
+        RegEx = 1
+    };
+    std::string string;
+    Type type = Classic;
+    friend bool operator==(const FindFilesMask &lhs, const FindFilesMask &rhs) noexcept;
+    friend bool operator!=(const FindFilesMask &lhs, const FindFilesMask &rhs) noexcept;
+};
+
+std::vector<FindFilesMask> LoadFindFilesMasks(const nc::config::Config &_source, std::string_view _path);
+void StoreFindFilesMasks(nc::config::Config &_dest, std::string_view _path, std::span<const FindFilesMask> _masks);
+
 }
 
-@interface FindFilesSheetController : SheetController <NSTableViewDataSource,
-                                                       NSTableViewDelegate,
-                                                       NSComboBoxDataSource,
-                                                       NSComboBoxDelegate>
+@interface FindFilesSheetController
+    : SheetController <NSTableViewDataSource, NSTableViewDelegate, NSSearchFieldDelegate>
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am;
 
 @property(nonatomic) VFSHostPtr host;
 @property(nonatomic) std::string path;
-@property(nonatomic) std::function<void(const std::vector<nc::vfs::VFSPath> &_filepaths)>
-    onPanelize;
+@property(nonatomic) std::function<void(const std::vector<nc::vfs::VFSPath> &_filepaths)> onPanelize;
 @property(nonatomic) std::function<void(const nc::panel::FindFilesSheetViewRequest &)> onView;
 @property(nonatomic) nc::core::VFSInstanceManager *vfsInstanceManager;
 - (const nc::panel::FindFilesSheetControllerFoundItem *)selectedItem; // may be nullptr

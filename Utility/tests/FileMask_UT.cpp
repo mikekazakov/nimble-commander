@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "FileMask.h"
 
@@ -6,95 +6,175 @@ using nc::utility::FileMask;
 
 #define PREFIX "nc::utility::FileMask "
 
-TEST_CASE(PREFIX "General cases")
+static const char *ch(const char8_t *str)
 {
-    FileMask m1("*.jpg");
-    CHECK(m1.MatchName("1.jpg") == true);
-    CHECK(m1.MatchName("11.jpg") == true);
-    CHECK(m1.MatchName("1.png") == false);
-    CHECK(m1.MatchName("1png") == false);
-    CHECK(m1.MatchName(".jpg") == true);
-    CHECK(m1.MatchName("русский текст.jpg") == true);
-    CHECK(m1.MatchName("1.JPG") == true);
-    CHECK(m1.MatchName("1.jPg") == true);
-    CHECK(m1.MatchName("1.jpg1.jpg1.jpg1.jpg1.jpg1.jpg") == true);
-    CHECK(m1.MatchName("1.jpg1") == false);
-    CHECK(m1.MatchName("") == false);
-    CHECK(m1.MatchName(static_cast<char *>(nullptr)) == false);
-    CHECK(m1.MatchName("1") == false);
-    CHECK(m1.MatchName("jpg") == false);
+    return reinterpret_cast<const char *>(str);
+}
 
-    FileMask m2("*.jpg, *.png");
-    CHECK(m2.MatchName("1.png") == true);
-    CHECK(m2.MatchName("1.jpg") == true);
-    CHECK(m2.MatchName("jpg.png") == true);
+TEST_CASE(PREFIX "MatchName - old file masks")
+{
+    struct TC {
+        const char *mask;
+        const char *name;
+        bool result;
+    } cases[] = {
+        // primitive *.ext mask
+        {"*.jpg", "1.jpg", true},
+        {"*.jpg", "11.jpg", true},
+        {"*.jpg", "1.png", false},
+        {"*.jpg", "1png", false},
+        {"*.jpg", ".jpg", true},
+        {"*.jpg", "русский текст.jpg", true},
+        {"*.jpg", "1.JPG", true},
+        {"*.jpg", "1.jPg", true},
+        {"*.jpg", "1.jpg1.jpg1.jpg1.jpg1.jpg1.jpg", true},
+        {"*.jpg", "1.jpg1", false},
+        {"*.jpg", "", false},
+        {"*.jpg", "1", false},
+        {"*.jpg", "jpg", false},
 
-    FileMask m3("?.jpg");
-    CHECK(m3.MatchName("1.png") == false);
-    CHECK(m3.MatchName("1.jpg") == true);
-    CHECK(m3.MatchName("11.jpg") == false);
-    CHECK(m3.MatchName(".jpg") == false);
-    CHECK(m3.MatchName("png.jpg") == false);
+        // two primitive *.ext masks
+        {"*.jpg, *.png", ".png", true},
+        {"*.jpg, *.png", ".jpg", true},
+        {"*.jpg, *.png", "1.png", true},
+        {"*.jpg, *.png", "1.jpg", true},
+        {"*.jpg, *.png", "jpg.png", true},
+        {"*.jpg, *.png", "blah.txt", false},
+        {"*.jpg, *.png", "blah.", false},
+        {"*.jpg, *.png", "blah", false},
 
-    FileMask m4("*2?.jpg");
-    CHECK(m4.MatchName("1.png") == false);
-    CHECK(m4.MatchName("1.jpg") == false);
-    CHECK(m4.MatchName("2&.jpg") == true);
-    CHECK(m4.MatchName(".jpg") == false);
-    CHECK(m4.MatchName("png.jpg") == false);
-    CHECK(m4.MatchName("672g97d6g237fg23f2*.jpg") == true);
+        // single-character placeholder
+        {"?.jpg", "1.png", false},
+        {"?.jpg", "1.jpg", true},
+        {"?.jpg", "11.jpg", false},
+        {"?.jpg", ".jpg", false},
+        {"?.jpg", "png.jpg", false},
 
-    FileMask m5("name*");
-    CHECK(m5.MatchName("name.png") == true);
-    CHECK(m5.MatchName("name.") == true);
-    CHECK(m5.MatchName("name") == true);
-    CHECK(m5.MatchName("1.png") == false);
-    CHECK(m5.MatchName("NAME1") == true);
-    CHECK(m5.MatchName("namename") == true);
+        // wildcard + fixed + placeholder + fixed extension
+        {"*2?.jpg", "1.png", false},
+        {"*2?.jpg", "1.jpg", false},
+        {"*2?.jpg", "2&.jpg", true},
+        {"*2?.jpg", "2&.png", false},
+        {"*2?.jpg", ".jpg", false},
+        {"*2?.jpg", "png.jpg", false},
+        {"*2?.jpg", "672g97d6g237fg23f2*.jpg", true},
 
-    FileMask m6("*abra*");
-    CHECK(m6.MatchName("abra.png") == true);
-    CHECK(m6.MatchName("abra.") == true);
-    CHECK(m6.MatchName("abra") == true);
-    CHECK(m6.MatchName("1.png") == false);
-    CHECK(m6.MatchName("ABRA1") == true);
-    CHECK(m6.MatchName("1ABRA1") == true);
-    CHECK(m6.MatchName("ABRAABRAABRA") == true);
+        // fixed prefix + wildcard
+        {"name*", "name.png", true},
+        {"name*", "name.", true},
+        {"name*", "name", true},
+        {"name*", "1.png", false},
+        {"name*", "NAME1", true},
+        {"name*", "namename", true},
 
-    FileMask m7("?abra?");
-    CHECK(m7.MatchName("abra.png") == false);
-    CHECK(m7.MatchName("abra.") == false);
-    CHECK(m7.MatchName("abra") == false);
-    CHECK(m7.MatchName("1.png") == false);
-    CHECK(m7.MatchName("ABRA1") == false);
-    CHECK(m7.MatchName("1ABRA1") == true);
-    CHECK(m7.MatchName("ABRAABRAABRA") == false);
+        // wildcard + fixed part + wildcard
+        {"*abra*", "abra.png", true},
+        {"*abra*", "abra.", true},
+        {"*abra*", ".abra", true},
+        {"*abra*", "abra", true},
+        {"*abra*", "ABRA", true},
+        {"*abra*", "1.png", false},
+        {"*abra*", "abr", false},
+        {"*abra*", "bra", false},
+        {"*abra*", "ABRA1", true},
+        {"*abra*", "1ABRA1", true},
+        {"*abra*", "ABRAABRAABRA", true},
 
-    FileMask m8("jpg");
-    CHECK(m8.MatchName("abra.jpg") == false);
-    CHECK(m8.MatchName(".jpg") == false);
-    CHECK(m8.MatchName("jpg") == true);
-    CHECK(m8.MatchName("jpg1") == false);
-    CHECK(m8.MatchName("JPG") == true);
+        // fixed string
+        {"jpg", "abra.jpg", false},
+        {"jpg", ".jpg", false},
+        {"jpg", "jpg", true},
+        {"jpg", "jpg1", false},
+        {"jpg", "JPG", true},
+        {"JPG", "jpg", true},
 
-    FileMask m9("*.*");
-    CHECK(m9.MatchName("abra.jpg") == true);
-    CHECK(m9.MatchName(".") == true);
-    CHECK(m9.MatchName("128736812763.137128736.987391273") == true);
-    CHECK(m9.MatchName("13123") == false);
+        // wildcard . wildcard
+        {"*.*", "abra.jpg", true},
+        {"*.*", ".", true},
+        {"*.*", "1.", true},
+        {"*.*", ".1", true},
+        {"*.*", "128736812763.137128736.987391273", true},
+        {"*.*", "13123", false},
+        {"*.*", "blah,meow", false},
 
-    FileMask m10(u8"*.йй");
-    CHECK(m10.MatchName(u8"abra.йй") == true);
-    CHECK(m10.MatchName(u8"abra.ЙЙ") == true);
-    CHECK(m10.MatchName(u8"abra.йЙ") == true);
-    CHECK(m10.MatchName(u8"abra.Йй") == true);
+        // single wildcard
+        {"*", "a.b", true},
+        {"*", "a.", true},
+        {"*", "a", true},
+        {"*", "", false},
 
-    CHECK(FileMask::IsWildCard("*.jpg") == true);
-    CHECK(FileMask::IsWildCard("*") == true);
-    CHECK(FileMask::IsWildCard("jpg") == false);
+        // single placeholder
+        {"?", "a.b", false},
+        {"?", "a.", false},
+        {"?", "a", true},
+        {"?", "", false},
 
-    CHECK(FileMask::ToExtensionWildCard("jpg") == "*.jpg");
-    CHECK(FileMask::ToExtensionWildCard("jpg,png") == "*.jpg, *.png");
+        // non-latin cases
+        {ch(u8"*.йй"), ch(u8"abra.йй"), true},
+        {ch(u8"*.йй"), ch(u8"abra.ЙЙ"), true},
+        {ch(u8"*.йй"), ch(u8"abra.йЙ"), true},
+        {ch(u8"*.йй"), ch(u8"abra.Йй"), true},
+        {ch(u8"*.йй"), ch(u8"abra.ии"), false},
+        {ch(u8"*.йй"), ch(u8"abra.txt"), false},
+
+        // different cases
+        {"a", "a", true},
+        {"a", "A", true},
+        {"A", "a", true},
+        {"A", "A", true},
+
+        // edge cases
+        {"", "", false},
+        {"", "a", false},
+        {"", "meow.txt", false},
+        {",", "", false},
+        {",", "a", false},
+        {",", "meow.txt", false},
+        {",,", "", false},
+        {",,", "a", false},
+        {",,", "meow.txt", false},
+    };
+
+    for( auto &tc : cases ) {
+        INFO(tc.mask);
+        INFO(tc.name);
+        FileMask mask(tc.mask);
+        CHECK(mask.MatchName(tc.name) == tc.result);
+    }
+}
+
+TEST_CASE(PREFIX "MatchName - regexes")
+{
+    struct TC {
+        const char *mask;
+        const char *name;
+        bool result;
+    } cases[] = {
+        {".*", "", false},
+        {".*", "a", true},
+        {".*", "ab", true},
+        {"a.*", "a", true},
+        {"a.*", "ab", true},
+        {"a.+", "a", false},
+        {"a.+", "ab", true},
+        {"a.+", "ab", true},
+        {"(a|b)+", "a", true},
+        {"(a|b)+", "b", true},
+        {"(a|b)+", "c", false},
+        {"(a|b)+", "aa", true},
+        {"(a|b)+", "ab", true},
+        {"(a|b)+", "ac", false},
+        {"(meow|woof)\\.txt", "a", false},
+        {"(meow|woof)\\.txt", "meow.txt", true},
+        {"(meow|woof)\\.txt", "woof.txt", true},
+        {"(meow|woof)\\.txt", "blah.txt", false},
+    };
+    for( auto &tc : cases ) {
+        INFO(tc.mask);
+        INFO(tc.name);
+        FileMask mask(tc.mask, FileMask::Type::RegEx);
+        CHECK(mask.MatchName(tc.name) == tc.result);
+    }
 }
 
 TEST_CASE(PREFIX "Wildcards")
@@ -107,15 +187,4 @@ TEST_CASE(PREFIX "Wildcards")
     CHECK(FileMask::ToExtensionWildCard("jpg,png") == "*.jpg, *.png");
     CHECK(FileMask::ToFilenameWildCard("jpg") == "*jpg*");
     CHECK(FileMask::ToFilenameWildCard("jpg,png") == "*jpg*, *png*");
-}
-
-TEST_CASE(PREFIX "Cases")
-{
-    FileMask m1("a");
-    CHECK(m1.MatchName("a") == true);
-    CHECK(m1.MatchName("A") == true);
-
-    FileMask m2("A");
-    CHECK(m2.MatchName("a") == true);
-    CHECK(m2.MatchName("A") == true);
 }

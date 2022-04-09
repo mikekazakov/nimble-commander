@@ -1,16 +1,18 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileMask.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/param.h>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <optional>
 #include <regex>
 #include <Habanero/CFStackAllocator.h>
+#include <Habanero/CFPtr.h>
 
 namespace nc::utility {
 
-static inline bool strincmp2(const char *s1, const char *s2, size_t _n)
+static bool strincmp2(const char *s1, const char *s2, size_t _n)
 {
     while( _n-- > 0 ) {
         if( *s1 != tolower(*s2++) )
@@ -26,10 +28,8 @@ static std::string regex_escape(const std::string &string_to_escape)
     // do not escape "?" and "*"
     [[clang::no_destroy]] static const std::regex escape("[.^$|()\\[\\]{}+\\\\]");
     [[clang::no_destroy]] static const std::string replace("\\\\&");
-    return regex_replace(string_to_escape,
-                         escape,
-                         replace,
-                         std::regex_constants::match_default | std::regex_constants::format_sed);
+    return std::regex_replace(
+        string_to_escape, escape, replace, std::regex_constants::match_default | std::regex_constants::format_sed);
 }
 
 static void trim_leading_whitespaces(std::string &_str)
@@ -45,7 +45,7 @@ static void trim_leading_whitespaces(std::string &_str)
     _str.erase(std::begin(_str), std::next(std::begin(_str), first));
 }
 
-static std::vector<std::string> sub_masks(const std::string &_source)
+static std::vector<std::string> sub_masks(std::string_view _source)
 {
     std::vector<std::string> masks;
     boost::split(masks, _source, [](char _c) { return _c == ','; });
@@ -60,7 +60,7 @@ static std::vector<std::string> sub_masks(const std::string &_source)
     return masks;
 }
 
-static bool MaskStringNeedsNormalization(std::string_view _string)
+static bool string_needs_normalization(std::string_view _string)
 {
     for( unsigned char c : _string )
         if( c > 127 || (c >= 0x41 && c <= 0x5A) ) // >= 'A' && <= 'Z'
@@ -69,17 +69,71 @@ static bool MaskStringNeedsNormalization(std::string_view _string)
     return false;
 }
 
+class InplaceFormCLowercaseString
+{
+public:
+    InplaceFormCLowercaseString(std::string_view _string) noexcept;
+    std::string_view str() const noexcept;
+
+private:
+    char m_Buf[4096]; // strings longer than this will be truncated and possibly not matched.
+    std::string_view m_View;
+};
+
+InplaceFormCLowercaseString::InplaceFormCLowercaseString(std::string_view _string) noexcept
+{
+    if( !string_needs_normalization(_string) )
+        m_View = _string; // using the original string! The characters are not copied.
+    
+    using base::CFPtr;
+    CFStackAllocator allocator;
+
+    auto original =
+        CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(allocator.Alloc(),
+                                                                reinterpret_cast<const UInt8 *>(_string.data()),
+                                                                _string.length(),
+                                                                kCFStringEncodingUTF8,
+                                                                false,
+                                                                kCFAllocatorNull));
+
+    if( !original )
+        return;
+
+    auto mutable_string =
+        CFPtr<CFMutableStringRef>::adopt(CFStringCreateMutableCopy(allocator.Alloc(), 0, original.get()));
+    if( !mutable_string )
+        return;
+
+    CFStringLowercase(mutable_string.get(), nullptr);
+    CFStringNormalize(mutable_string.get(), kCFStringNormalizationFormC);
+    
+    long characters_used = 0;
+    CFStringGetBytes(mutable_string.get(),
+                     CFRangeMake(0, CFStringGetLength(mutable_string.get())),
+                     kCFStringEncodingUTF8,
+                     0,
+                     false,
+                     reinterpret_cast<UInt8 *>(m_Buf),
+                     sizeof(m_Buf),
+                     &characters_used);
+    m_View = {m_Buf, static_cast<size_t>(characters_used)};
+}
+
+std::string_view InplaceFormCLowercaseString::str() const noexcept
+{
+    return m_View;
+}
+
 static std::string ProduceFormCLowercase(std::string_view _string)
 {
     CFStackAllocator allocator;
 
-    CFStringRef original =
-        CFStringCreateWithBytesNoCopy(allocator.Alloc(),
-                                      reinterpret_cast<const UInt8 *>(_string.data()),
-                                      _string.length(),
-                                      kCFStringEncodingUTF8,
-                                      false,
-                                      kCFAllocatorNull);
+    CFStringRef original = CFStringCreateWithBytesNoCopy(allocator.Alloc(),
+                                                         reinterpret_cast<const UInt8 *>(_string.data()),
+                                                         _string.length(),
+                                                         kCFStringEncodingUTF8,
+                                                         false,
+                                                         kCFAllocatorNull);
 
     if( !original )
         return "";
@@ -129,35 +183,45 @@ static std::optional<std::string> GetSimpleMask(const std::string &_regexp)
     return std::string(str + 3); // store masks like .png if it is simple
 }
 
-FileMask::FileMask(const char *_mask) : FileMask(_mask ? std::string(_mask) : std::string{})
-{
-}
+FileMask::FileMask() noexcept = default;
 
-FileMask::FileMask(const char8_t *_mask) : FileMask(reinterpret_cast<const char *>(_mask))
-{
-}
-
-FileMask::FileMask(const std::string &_mask) : m_Mask(_mask)
+FileMask::FileMask(const std::string_view _mask, const Type _type) : m_Mask(_mask)
 {
     if( _mask.empty() )
         return;
 
-    auto submasks = sub_masks(_mask);
-
-    for( auto &s : submasks )
-        if( !s.empty() ) {
+    if( _type == Type::Mask ) {
+        auto submasks = sub_masks(_mask);
+        for( auto &s : submasks ) {
+            if( s.empty() )
+                continue;
             if( auto sm = GetSimpleMask(s) ) {
-                m_Masks.emplace_back(std::nullopt, move(sm));
+                m_Masks.emplace_back(std::move(*sm));
             }
             else {
-                try {
-                    m_Masks.emplace_back(
-                        std::regex(MaskStringNeedsNormalization(s) ? ProduceFormCLowercase(s) : s),
-                        std::nullopt);
-                } catch( ... ) {
-                }
+                auto regex = std::make_shared<re2::RE2>(string_needs_normalization(s) ? ProduceFormCLowercase(s) : s,
+                                                        re2::RE2::Quiet);
+                if( regex->ok() )
+                    m_Masks.emplace_back(std::move(regex));
             }
         }
+    }
+
+    if( _type == Type::RegEx ) {
+        auto regex = std::make_shared<re2::RE2>(
+            string_needs_normalization(_mask) ? ProduceFormCLowercase(_mask) : _mask, re2::RE2::Quiet);
+        if( regex->ok() )
+            m_Masks.emplace_back(std::move(regex));
+    }
+}
+
+bool FileMask::Validate(const std::string_view _mask, const Type _type)
+{
+    if( _type == Type::RegEx ) {
+        re2::RE2 regex(string_needs_normalization(_mask) ? ProduceFormCLowercase(_mask) : _mask, re2::RE2::Quiet);
+        return regex.ok();
+    }
+    return true;
 }
 
 static bool CompareAgainstSimpleMask(const std::string &_mask, std::string_view _name) noexcept
@@ -171,31 +235,21 @@ static bool CompareAgainstSimpleMask(const std::string &_mask, std::string_view 
     return strincmp2(_mask.c_str(), chars + chars_num - _mask.size(), _mask.size());
 }
 
-bool FileMask::MatchName(const std::string &_name) const
+bool FileMask::MatchName(std::string_view _name) const noexcept
 {
-    return MatchName(_name.c_str());
-}
-
-bool FileMask::MatchName(const char8_t *_name) const
-{
-    return MatchName(reinterpret_cast<const char *>(_name));
-}
-
-bool FileMask::MatchName(const char *_name) const
-{
-    if( m_Masks.empty() || !_name )
+    if( m_Masks.empty() || _name.empty() )
         return false;
-
-    std::optional<std::string> normalized_name;
+        
+    InplaceFormCLowercaseString normalized_name(_name);
     for( auto &m : m_Masks )
-        if( m.first ) {
-            if( !normalized_name )
-                normalized_name = ProduceFormCLowercase(_name);
-            if( regex_match(*normalized_name, *m.first) )
+        if( m.index() == 0 ) {
+            const auto &re = std::get<std::shared_ptr<const re2::RE2>>(m);
+            if( re2::RE2::FullMatch(normalized_name.str(), *re) )
                 return true;
         }
-        else if( m.second ) {
-            if( CompareAgainstSimpleMask(*m.second, _name) )
+        else {
+            const auto &simple_mask = std::get<std::string>(m);
+            if( CompareAgainstSimpleMask(simple_mask, _name) ) // TODO: why the original string here??
                 return true;
         }
 
@@ -204,8 +258,7 @@ bool FileMask::MatchName(const char *_name) const
 
 bool FileMask::IsWildCard(const std::string &_mask)
 {
-    return std::any_of(
-        std::begin(_mask), std::end(_mask), [](char c) { return c == '*' || c == '?'; });
+    return std::any_of(std::begin(_mask), std::end(_mask), [](char c) { return c == '*' || c == '?'; });
 }
 
 static std::string ToWildCard(const std::string &_mask, const bool _for_extension)
@@ -259,12 +312,12 @@ std::string FileMask::ToFilenameWildCard(const std::string &_mask)
     return ToWildCard(_mask, false);
 }
 
-const std::string &FileMask::Mask() const
+const std::string &FileMask::Mask() const noexcept
 {
     return m_Mask;
 }
 
-bool FileMask::IsEmpty() const
+bool FileMask::IsEmpty() const noexcept
 {
     return m_Masks.empty();
 }

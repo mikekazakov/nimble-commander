@@ -5,7 +5,7 @@ Language: Cpp
 Standard: Cpp11
 DerivePointerAlignment: false
 PointerAlignment: Right
-ColumnLimit: 100
+ColumnLimit: 120
 AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: InlineOnly
 AllowAllParametersOfDeclarationOnNextLine: false
@@ -32,7 +32,7 @@ Language: ObjC
 Standard: Cpp11
 DerivePointerAlignment: false
 PointerAlignment: Right
-ColumnLimit: 100
+ColumnLimit: 120
 AccessModifierOffset: -4
 AllowShortFunctionsOnASingleLine: InlineOnly
 AllowAllParametersOfDeclarationOnNextLine: false

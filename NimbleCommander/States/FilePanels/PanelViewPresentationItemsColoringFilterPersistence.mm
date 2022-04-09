@@ -5,8 +5,8 @@
 
 namespace nc::panel {
 
-using hbn::tribool;
-using hbn::indeterminate;
+using base::tribool;
+using base::indeterminate;
 
 static tribool to_tribool(const config::Value &_val)
 {

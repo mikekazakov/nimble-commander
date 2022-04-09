@@ -1,9 +1,9 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include <Utility/StringExtras.h>
 
-using nc::hbn::tribool;
-using nc::hbn::indeterminate;
+using nc::base::tribool;
+using nc::base::indeterminate;
 
 static NSControlStateValue tribool_to_state(tribool _val)
 {

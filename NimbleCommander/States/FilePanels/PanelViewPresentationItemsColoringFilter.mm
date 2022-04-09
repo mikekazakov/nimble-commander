@@ -1,11 +1,11 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include "PanelViewPresentationItemsColoringFilter.h"
 
 namespace nc::panel {
     
-using hbn::tribool;
-using hbn::indeterminate;
+using base::tribool;
+using base::indeterminate;
 
 bool PresentationItemsColoringFilter::IsEmpty() const
 {

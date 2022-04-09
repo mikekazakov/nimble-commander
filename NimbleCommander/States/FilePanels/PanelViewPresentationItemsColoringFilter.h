@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -11,7 +11,7 @@ namespace nc::panel {
 
 struct PresentationItemsColoringFilter
 {
-    utility::FileMask mask  = "";                 // based on VFSListingItem.NSDisplayName
+    utility::FileMask mask;                       // based on VFSListingItem.NSDisplayName
     hbn::tribool executable = hbn::indeterminate; // based on unix exec flag
     hbn::tribool hidden     = hbn::indeterminate; // based on VFSListingItem.IsHidden
     hbn::tribool directory  = hbn::indeterminate; // based on VFSListingItem.IsDir

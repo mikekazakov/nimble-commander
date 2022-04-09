@@ -74,7 +74,7 @@ static tribool state_to_tribool(NSControlStateValue _val)
         if( auto replace = [NSString stringWithUTF8StdString:wc] )
             mask = replace;
     }
-    m_Filter.mask = mask.UTF8String;
+    m_Filter.mask = nc::utility::FileMask(mask.UTF8String);
     [self endSheet:NSModalResponseOK];
 }
 

@@ -1,10 +1,18 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-@interface SelectionWithMaskPopupViewController : NSViewController<NSPopoverDelegate>
+#include <Cocoa/Cocoa.h>
+#include <functional>
+#include <Panel/FindFilesData.h>
 
-- (instancetype) initForWindow:(NSWindow*)_wnd doesSelect:(bool)_select;
+@interface SelectionWithMaskPopupViewController : NSViewController <NSPopoverDelegate, NSSearchFieldDelegate>
 
-@property (nonatomic) std::function<void(NSString *mask)> handler;
+- (instancetype)initInitialQuery:(const nc::panel::FindFilesMask &)_initial_mask
+                         history:(std::span<const nc::panel::FindFilesMask>)_masks
+                      doesSelect:(bool)_select;
+
+@property(nonatomic) std::function<void(const nc::panel::FindFilesMask &_mask)> onSelect;
+
+@property(nonatomic) std::function<void()> onClearHistory;
 
 @end

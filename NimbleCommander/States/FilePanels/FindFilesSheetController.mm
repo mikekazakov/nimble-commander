@@ -19,8 +19,7 @@
 #include <Utility/CocoaAppearanceManager.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
-
-// Mask like *, or *.txt, or *.txt, *.jpg
+#include <Panel/FindFilesData.h>
 
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
 static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";
@@ -297,7 +296,7 @@ private:
     ];
 
     [self updateMasksMenu];
-    [self updateMaskSearchFieldPlaceholder];
+    [self updateMaskSearchFieldPrompt];
     objc_cast<NSSearchFieldCell>(self.maskSearchField.cell).cancelButtonCell = nil;
 
     [self updateTextMenu];
@@ -464,7 +463,7 @@ private:
     const auto text_query = self.textSearchField.stringValue ? self.textSearchField.stringValue : @"";
     if( text_query.length ) {
         SearchForFiles::FilterContent filter_content;
-        filter_content.text = text_query.UTF8String;
+        filter_content.text = text_query.fileSystemRepresentationSafe;
         filter_content.encoding = m_TextSearchEncoding;
         filter_content.case_sensitive = m_CaseSensitiveTextSearch;
         filter_content.whole_phrase = m_WholePhraseTextSearch;
@@ -956,18 +955,27 @@ private:
 {
     m_RegexSearch = !m_RegexSearch;
     [self updateMasksMenu];
-    [self updateMaskSearchFieldPlaceholder];
+    [self updateMaskSearchFieldPrompt];
     [self onSearchSettingsUIChanged:_sender];
 }
 
-- (void)updateMaskSearchFieldPlaceholder
-{
-    if( m_RegexSearch )
-        self.maskSearchField.placeholderString =
-            NSLocalizedString(@"Regular expression", "Placeholder prompt for a regex");
-    else
-        self.maskSearchField.placeholderString =
-            NSLocalizedString(@"Mask: *, or *.t?t, or *.txt,*.jpg", "Placeholder prompt for a filemask");
+- (void)updateMaskSearchFieldPrompt
+{    
+    NSString *tt = @"";
+    NSString *ps = @"";
+    if( m_RegexSearch ) {
+        tt = NSLocalizedString(@"Specify a regular expression to match filenames with. (^M)",
+                               "Tooltip for a regex filename match");
+        ps = NSLocalizedString(@"Regular expression", "Placeholder prompt for a regex");
+    }
+    else {
+        tt = NSLocalizedString(@"Use \"*\" for multiple-character wildcard, \"?\" for single-character wildcard and "
+                               @"\",\" to specify more than one mask. (^M)",
+                               "Tooltip for mask filename match");
+        ps = NSLocalizedString(@"Mask: *, or *.t?t, or *.txt,*.jpg", "Placeholder prompt for a filemask");
+    }
+    self.maskSearchField.toolTip = tt;
+    self.maskSearchField.placeholderString = ps;
 }
 
 - (void)onMaskMenuClearRecentsClicked:(id) [[maybe_unused]] sender
@@ -1024,74 +1032,3 @@ private:
 }
 
 @end
-
-namespace nc::panel {
-
-bool operator==(const FindFilesMask &lhs, const FindFilesMask &rhs) noexcept
-{
-    return lhs.string == rhs.string && lhs.type == rhs.type;
-}
-
-bool operator!=(const FindFilesMask &lhs, const FindFilesMask &rhs) noexcept
-{
-    return !(lhs == rhs);
-}
-
-std::vector<FindFilesMask> LoadFindFilesMasks(const nc::config::Config &_source, std::string_view _path)
-{
-    std::vector<FindFilesMask> masks;
-
-    auto arr = _source.Get(_path);
-    if( arr.GetType() == rapidjson::kArrayType )
-        for( auto i = arr.Begin(), e = arr.End(); i != e; ++i ) {
-            FindFilesMask m;
-            if( i->GetType() == rapidjson::kStringType ) {
-                // simple "classic" mask
-                m.string = i->GetString();
-                m.type = FindFilesMask::Classic;
-            }
-            else if( i->GetType() == rapidjson::kObjectType ) {
-                // masks with options encoded as a object
-                const auto query_it = i->FindMember("query");
-                if( query_it != i->MemberEnd() && query_it->value.GetType() == rapidjson::kStringType )
-                    m.string = query_it->value.GetString();
-                else
-                    continue;
-
-                const auto type_it = i->FindMember("type");
-                const auto type = (type_it != i->MemberEnd() && type_it->value.GetType() == rapidjson::kStringType)
-                                      ? std::string(type_it->value.GetString())
-                                      : std::string{};
-                if( type == "classic" )
-                    m.type = FindFilesMask::Classic;
-                if( type == "regex" )
-                    m.type = FindFilesMask::RegEx;
-            }
-
-            if( m.string.empty() )
-                continue; // refuse meaningless input
-            masks.push_back(std::move(m));
-        }
-    return masks;
-}
-
-void StoreFindFilesMasks(nc::config::Config &_dest, std::string_view _path, std::span<const FindFilesMask> _masks)
-{
-    using namespace nc::config;
-    Value arr(rapidjson::kArrayType);
-    for( const auto &mask : _masks ) {
-        if( mask.type == FindFilesMask::Classic ) {
-            arr.PushBack(Value(mask.string.c_str(), g_CrtAllocator), g_CrtAllocator);
-        }
-        else {
-            Value mask_obj(rapidjson::kObjectType);
-            mask_obj.AddMember("query", Value(mask.string.c_str(), g_CrtAllocator), g_CrtAllocator);
-            if( mask.type == FindFilesMask::RegEx )
-                mask_obj.AddMember("type", Value("regex", g_CrtAllocator), g_CrtAllocator);
-            arr.PushBack(mask_obj, g_CrtAllocator);
-        }
-    }
-    _dest.Set(_path, arr);
-}
-
-}

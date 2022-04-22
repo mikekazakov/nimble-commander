@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FeedbackManagerImpl.h"
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <Habanero/CFDefaultsCPP.h>
@@ -41,7 +41,7 @@ static bool HasInternetConnection()
 }
 
 FeedbackManagerImpl::FeedbackManagerImpl(nc::bootstrap::ActivationManager &_am,
-                                         GoogleAnalytics &_ga,
+                                         base::GoogleAnalytics &_ga,
                                          std::function<time_t()> _time_source)
     : m_ApplicationRunsCount(GetAndUpdateRunsCount()), m_TotalHoursUsed(GetTotalHoursUsed()),
       m_StartupTime(_time_source()), m_ActivationManager(_am), m_GA(_ga),

@@ -41,21 +41,6 @@ struct FindFilesSheetViewRequest {
     FindFilesSheetController *sender;
 };
 
-struct FindFilesMask {
-    enum Type
-    {
-        Classic = 0,
-        RegEx = 1
-    };
-    std::string string;
-    Type type = Classic;
-    friend bool operator==(const FindFilesMask &lhs, const FindFilesMask &rhs) noexcept;
-    friend bool operator!=(const FindFilesMask &lhs, const FindFilesMask &rhs) noexcept;
-};
-
-std::vector<FindFilesMask> LoadFindFilesMasks(const nc::config::Config &_source, std::string_view _path);
-void StoreFindFilesMasks(nc::config::Config &_dest, std::string_view _path, std::span<const FindFilesMask> _masks);
-
 }
 
 @interface FindFilesSheetController

@@ -361,9 +361,9 @@ static std::string AquaticPrimePublicKey()
     // ask them only on 5th startup or later
     // ask only if there were no modal dialogs before
     if( !showed_modal_dialog &&
-        !CFDefaultsGetOptionalBool(GoogleAnalytics::g_DefaultsTrackingEnabledKey) &&
+       !CFDefaultsGetOptionalBool(nc::base::GoogleAnalytics::g_DefaultsTrackingEnabledKey) &&
         self.feedbackManager.ApplicationRunsCount() >= 5 ) {
-        CFDefaultsSetBool(GoogleAnalytics::g_DefaultsTrackingEnabledKey,
+        CFDefaultsSetBool(nc::base::GoogleAnalytics::g_DefaultsTrackingEnabledKey,
                           AskUserToProvideUsageStatistics());
         GA().UpdateEnabledStatus();
     }

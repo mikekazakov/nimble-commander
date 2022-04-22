@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "FeedbackManager.h"
@@ -7,7 +7,9 @@
 #include <functional>
 #include <ctime>
 
+namespace nc::base {
 class GoogleAnalytics;
+}
 
 namespace nc::bootstrap {
 class ActivationManager;
@@ -26,7 +28,7 @@ public:
     static const std::function<time_t()> g_DefaultTimeSource;
     
     FeedbackManagerImpl(nc::bootstrap::ActivationManager &_am,
-                        GoogleAnalytics &_ga,
+                        base::GoogleAnalytics &_ga,
                         std::function<time_t()> _time_source = g_DefaultTimeSource);
     
     /**
@@ -78,7 +80,7 @@ private:
     bool m_ShownRatingOverlay = false;
     bool m_HasUI = true;
     nc::bootstrap::ActivationManager &m_ActivationManager;
-    GoogleAnalytics &m_GA;
+    base::GoogleAnalytics &m_GA;
     std::function<time_t()> m_TimeSource;
 
     std::optional<int> m_LastRating; // 0 - discarded, [1-5] - rating

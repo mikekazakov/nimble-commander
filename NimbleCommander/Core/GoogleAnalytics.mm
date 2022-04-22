@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/SystemInformation.h>
 #include <NimbleCommander/Bootstrap/NCE.h>
 #include "GoogleAnalytics.h"
@@ -28,10 +28,10 @@ static const char *TrackingID()
 #endif
 }
 
-GoogleAnalytics &GA() noexcept
+nc::base::GoogleAnalytics &GA() noexcept
 {
-    static GoogleAnalytics *inst = [] {
-        const auto ga = new GoogleAnalytics(TrackingID());
+    static nc::base::GoogleAnalytics *inst = [] {
+        const auto ga = new nc::base::GoogleAnalytics(TrackingID());
         if( ga->IsEnabled() )
             dispatch_to_background(PostStartupInfo);
         return ga;

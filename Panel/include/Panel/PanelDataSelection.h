@@ -1,8 +1,9 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <vector>
 #include <string>
+#include <Utility/FileMask.h>
 
 namespace nc::panel::data {
 
@@ -18,7 +19,7 @@ public:
      
     std::vector<bool> SelectionByExtension(const std::string &_extension,
                                            bool _result_selection = true ) const;
-    std::vector<bool> SelectionByMask(const std::string &_mask,
+    std::vector<bool> SelectionByMask(const utility::FileMask &_mask,
                                       bool _result_selection = true ) const;
     
     std::vector<bool> InvertSelection() const;

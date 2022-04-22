@@ -1,10 +1,14 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "ActivationManager.h"
 #include "ActivationManagerBase.h"
 
+namespace nc::base {
+
 class GoogleAnalytics;
+
+}
 
 namespace nc::bootstrap {
 
@@ -14,8 +18,8 @@ public:
     ActivationManagerImpl(Distribution _type,
                           ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
                           ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
-                          GoogleAnalytics &_ga);
-    
+                          base::GoogleAnalytics &_ga);
+
     Distribution Type() const noexcept override;
     bool Sandboxed() const noexcept override;
     bool ForAppStore() const noexcept override;
@@ -49,13 +53,12 @@ public:
     bool ShouldShowTrialNagScreen() const noexcept override;
     const std::string &LicenseFileExtension() const noexcept override;
     bool ProcessLicenseFile(const std::string &_path) override;
-    const std::unordered_map<std::string, std::string> &
-    LicenseInformation() const noexcept override;
+    const std::unordered_map<std::string, std::string> &LicenseInformation() const noexcept override;
 
     // Free MAS version stuff
     bool ReCheckProFeaturesInAppPurchased() override;
     bool UsedHadPurchasedProFeatures() const noexcept override;
-    
+
     // Helper functions
     static const std::string &DefaultLicenseFilename() noexcept;
     static CFStringRef DefaultsTrialExpireDate() noexcept;
@@ -72,7 +75,7 @@ private:
     std::unordered_map<std::string, std::string> m_LicenseInfo;
     ActivationManagerBase::ExternalLicenseSupport &m_ExtLicenseSupport;
     ActivationManagerBase::TrialPeriodSupport &m_TrialPeriodSupport;
-    GoogleAnalytics &m_GA;
+    base::GoogleAnalytics &m_GA;
 };
 
 std::string CFBundleGetAppStoreReceiptPath(CFBundleRef _bundle);

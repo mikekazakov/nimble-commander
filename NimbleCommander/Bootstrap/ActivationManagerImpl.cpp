@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ActivationManagerImpl.h"
 #include <Utility/SystemInformation.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
@@ -62,7 +62,7 @@ ActivationManagerImpl::ActivationManagerImpl(
     Distribution _type,
     ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
     ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
-    GoogleAnalytics &_ga)
+    nc::base::GoogleAnalytics &_ga)
     : m_Type(_type), m_IsSandBoxed(_type != ActivationManager::Distribution::Trial),
       m_AppStoreIdentifier(AppStoreIdentifier(_type)), m_ExtLicenseSupport(_ext_license_support),
       m_TrialPeriodSupport(_trial_period_support), m_GA(_ga)

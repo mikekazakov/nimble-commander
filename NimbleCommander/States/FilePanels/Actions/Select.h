@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -29,6 +29,8 @@ private:
     bool m_ResultSelection;
 };
 
+// TODO: pass the config explicitly, stop lying
+// TODO: pass analytics explicitly, stop lying
 struct SelectAllByMask final : PanelAction
 {
     SelectAllByMask( bool _result_selection );

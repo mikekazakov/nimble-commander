@@ -118,8 +118,8 @@ static bool HasNewlines(CFStringRef _src) noexcept
 static const auto g_InfiniteRectPath = CGPathCreateWithRect(CGRectMake(0, 0, CGFLOAT_MAX, CGFLOAT_MAX), nullptr);
 static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
                                          CFStringRef const *_str_last,
-                                         short *_out_width_first,
-                                         short *_out_width_last,
+                                         unsigned short *_out_width_first,
+                                         unsigned short *_out_width_last,
                                          CFDictionaryRef _attributes)
 {
     const auto strings_amount = static_cast<int>(_str_last - _str_first);
@@ -155,14 +155,14 @@ static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
     for( long idx = 0; idx < lines_cnt; ++idx ) {
         const auto line = static_cast<CTLineRef>(CFArrayGetValueAtIndex(lines, idx));
         const double original_width = CTLineGetTypographicBounds(line, nullptr, nullptr, nullptr);
-        const short rounded_width = static_cast<short>(std::ceil(original_width));
-        _out_width_first[idx++] = rounded_width;
-        assert(idx <= strings_amount);
+        const short rounded_width = static_cast<unsigned short>(std::max(std::ceil(original_width), 0.) );
+        assert(rounded_width > 0 || CFStringGetLength(_str_first[idx]) == 0);
+        assert(idx < strings_amount);
+        _out_width_first[idx] = rounded_width;
     }
 }
 
-// TODO: unit tests ffs!!!
-std::vector<short> FontGeometryInfo::CalculateStringsWidths(std::span<const CFStringRef> _strings, NSFont *_font)
+std::vector<unsigned short> FontGeometryInfo::CalculateStringsWidths(std::span<const CFStringRef> _strings, NSFont *_font)
 {
     const auto count = _strings.size();
     if( count == 0 )
@@ -177,7 +177,7 @@ std::vector<short> FontGeometryInfo::CalculateStringsWidths(std::span<const CFSt
             return size_t(512);
     }();
 
-    std::vector<short> widths(count);
+    std::vector<unsigned short> widths(count);
 
     const auto attributes = @{NSFontAttributeName: _font};
     const auto cf_attributes = (__bridge CFDictionaryRef)attributes;

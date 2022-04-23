@@ -71,6 +71,7 @@
 		CF61F30F26404971009FF900 /* FSEventsFileUpdateImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF61F30E26404971009FF900 /* FSEventsFileUpdateImpl.cpp */; };
 		CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */; };
 		CF88363925716F9300BAC081 /* VersionCompare_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF88363825716F9300BAC081 /* VersionCompare_UT.cpp */; };
+		CFA89D86281422EF00BEA127 /* FontExtras_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA89D85281422EF00BEA127 /* FontExtras_UT.mm */; };
 		CFA999652644888C00F72E93 /* FSEventsFileUpdate_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA999642644888C00F72E93 /* FSEventsFileUpdate_UT.cpp */; };
 		CFAB6D11258A086100397DB5 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFAB6D10258A086100397DB5 /* Log.cpp */; };
 		CFAB7F1A276009E400926554 /* URLSecurityScopedResourceGuard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAB7F19276009E400926554 /* URLSecurityScopedResourceGuard.mm */; };
@@ -185,6 +186,7 @@
 		CF960E261C992F35001D8B02 /* PathManip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PathManip.cpp; path = source/PathManip.cpp; sourceTree = "<group>"; };
 		CF960E271C992F35001D8B02 /* SystemInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation.mm; path = source/SystemInformation.mm; sourceTree = "<group>"; };
 		CF960E281C992F35001D8B02 /* VolumeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeInformation.cpp; path = source/VolumeInformation.cpp; sourceTree = "<group>"; };
+		CFA89D85281422EF00BEA127 /* FontExtras_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FontExtras_UT.mm; path = tests/FontExtras_UT.mm; sourceTree = "<group>"; };
 		CFA999642644888C00F72E93 /* FSEventsFileUpdate_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FSEventsFileUpdate_UT.cpp; path = tests/FSEventsFileUpdate_UT.cpp; sourceTree = "<group>"; };
 		CFAB6D0F258A084700397DB5 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Log.h; path = include/Utility/Log.h; sourceTree = "<group>"; };
 		CFAB6D10258A086100397DB5 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Log.cpp; path = source/Log.cpp; sourceTree = "<group>"; };
@@ -290,6 +292,7 @@
 				CFB0F239215A07830088C18E /* FileMask_UT.cpp */,
 				CF38472B2010780B00BAB3BE /* FilenameTextNavigation_UT.mm */,
 				CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */,
+				CFA89D85281422EF00BEA127 /* FontExtras_UT.mm */,
 				CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */,
 				CF2C102822A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp */,
 				CFA999642644888C00F72E93 /* FSEventsFileUpdate_UT.cpp */,
@@ -619,6 +622,7 @@
 			files = (
 				CF24E1F8228B525000C166FA /* ActionShortcut_UT.mm in Sources */,
 				CFE3F1C422932CCF009D6AB4 /* ByteCountFormatter_UT.mm in Sources */,
+				CFA89D86281422EF00BEA127 /* FontExtras_UT.mm in Sources */,
 				CF3F587C255B38A20027B69A /* PathManip_UT.cpp in Sources */,
 				CF3ABD7F23B8DBFF00D1878B /* NativeFSManager_UT.mm in Sources */,
 				CF0A49B3250D685D008EC7B0 /* BlinkScheduler_UT.cpp in Sources */,

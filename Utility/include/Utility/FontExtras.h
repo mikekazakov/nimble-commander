@@ -29,7 +29,10 @@ public:
     inline double PreciseMonospaceWidth() const noexcept { return m_PreciseMonospaceWidth; }
 
 #ifdef __OBJC__
-    static std::vector<short> CalculateStringsWidths(std::span<const CFStringRef> _strings,
+    // Returns a list of widths of each string in the container.
+    // Widths will be rounded up to an integer.
+    // Any line-breaking characters are substituded with ' ' - inputs are treated as single-line strings.
+    static std::vector<unsigned short> CalculateStringsWidths(std::span<const CFStringRef> _strings,
                                                      NSFont *_font);
 #endif
 

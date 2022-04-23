@@ -1,8 +1,11 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+#define CATCH_CONFIG_ENABLE_BENCHMARKING
 #include "UnitTests_main.h"
 #include "FontExtras.h"
 #include <Habanero/CFString.h>
 #include <random>
+
+// NB! disable by default, include in the UtilityUT to enable
 
 using nc::utility::FontGeometryInfo;
 
@@ -21,8 +24,9 @@ static std::mt19937 g_RndGen(std::random_device{}());
 
 static CFStringRef MakeRandomString(int _length)
 {    
-    std::uniform_int_distribution<int> distribution(0, (int)g_RandomAlphabet.size() - 1);
+    std::uniform_int_distribution<int> distribution(0, static_cast<int>(g_RandomAlphabet.size() - 1));
     std::string str;
+    str.reserve(_length);
     while( _length --> 0  )
         str.push_back( g_RandomAlphabet[distribution(g_RndGen)] );
     return CFStringCreateWithUTF8StdString(str);
@@ -51,49 +55,57 @@ TEST_CASE("FontGeometryInfo::CalculateStringsWidths perf test", "[!benchmark]")
         const auto strings = MakeRandomStrings(100, length);
         BENCHMARK( "100 strings" ) {
             FontGeometryInfo::CalculateStringsWidths(strings, font);
-        }
+        };
         Free(strings);
     }
     {
         const auto strings = MakeRandomStrings(200, length);
         BENCHMARK( "200 strings" ) {
             FontGeometryInfo::CalculateStringsWidths(strings, font);
-        }
+        };
         Free(strings);
     }
     {
         const auto strings = MakeRandomStrings(300, length);
         BENCHMARK( "300 strings" ) {
             FontGeometryInfo::CalculateStringsWidths(strings, font);
-        }
+        };
         Free(strings);
     }    
     {
         const auto strings = MakeRandomStrings(400, length);
         BENCHMARK( "400 strings" ) {
             FontGeometryInfo::CalculateStringsWidths(strings, font);
-        }
+        };
         Free(strings);
     }    
     {
         const auto strings = MakeRandomStrings(500, length);
         BENCHMARK( "500 strings" ) {
             FontGeometryInfo::CalculateStringsWidths(strings, font);
-        }
+        };
         Free(strings);
     }    
     {
         const auto strings = MakeRandomStrings(1000, length);
         BENCHMARK( "1000 strings" ) {
             FontGeometryInfo::CalculateStringsWidths(strings, font);
-        }
+        };
         Free(strings);
     }
     {
         const auto strings = MakeRandomStrings(10000, length);
         BENCHMARK( "10000 strings" ) {
             FontGeometryInfo::CalculateStringsWidths(strings, font);
-        }
+        };
         Free(strings); 
     }
+    {
+        const auto strings = MakeRandomStrings(100000, length);
+        BENCHMARK( "100000 strings" ) {
+            FontGeometryInfo::CalculateStringsWidths(strings, font);
+        };
+        Free(strings);
+    }
+
 }

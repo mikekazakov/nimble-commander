@@ -5,6 +5,7 @@
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/CFPtr.h>
 #include <cmath>
+#include <pstld/pstld.h>
 
 @implementation NSFont (StringDescription)
 
@@ -155,51 +156,48 @@ static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
     for( long idx = 0; idx < lines_cnt; ++idx ) {
         const auto line = static_cast<CTLineRef>(CFArrayGetValueAtIndex(lines, idx));
         const double original_width = CTLineGetTypographicBounds(line, nullptr, nullptr, nullptr);
-        const short rounded_width = static_cast<unsigned short>(std::max(std::ceil(original_width), 0.) );
+        const unsigned short rounded_width = static_cast<unsigned short>(std::max(std::ceil(original_width), 0.));
         assert(rounded_width > 0 || CFStringGetLength(_str_first[idx]) == 0);
         assert(idx < strings_amount);
         _out_width_first[idx] = rounded_width;
     }
 }
 
-std::vector<unsigned short> FontGeometryInfo::CalculateStringsWidths(std::span<const CFStringRef> _strings, NSFont *_font)
+std::vector<unsigned short> FontGeometryInfo::CalculateStringsWidths(std::span<const CFStringRef> _strings,
+                                                                     NSFont *_font)
 {
+    if( _font == nil )
+        throw std::invalid_argument("FontGeometryInfo::CalculateStringsWidths: _font can't be empty");
+
     const auto count = _strings.size();
     if( count == 0 )
         return {};
 
-    const auto items_per_chunk = [&] {
-        if( count <= 512 )
-            return size_t(128);
-        else if( count <= 2048 )
-            return size_t(256);
-        else
-            return size_t(512);
-    }();
-
     std::vector<unsigned short> widths(count);
-
     const auto attributes = @{NSFontAttributeName: _font};
     const auto cf_attributes = (__bridge CFDictionaryRef)attributes;
-
-    if( count > items_per_chunk ) {
-        const auto iterations = (count / items_per_chunk) + (count % items_per_chunk ? 1 : 0);
+    const size_t parallel_threshold = 1024;
+    if( count < parallel_threshold ) {
+        // don't bother with parallelism, just calculate everything here
+        CalculateWidthsOfStringsBulk(
+            _strings.data(), _strings.data() + count, widths.data(), widths.data() + count, cf_attributes);
+    }
+    else {
+        // distribute equally into chunks so that each CPU core has 2 batches to process
+        // TODO: stop using the 'internal' namespace! Absorb these routines instead
+        const size_t chunks = ::pstld::internal::max_hw_threads() * 2;
+        ::pstld::internal::Partition<size_t, true> par(0, count, chunks);
         const auto block = [&](size_t _chunk_index) {
-            const auto index_first = _chunk_index * items_per_chunk;
-            const auto index_last = std::min(index_first + items_per_chunk, count);
+            const auto index_first = par.at(_chunk_index).first;
+            const auto index_last = par.at(_chunk_index).last;
             CalculateWidthsOfStringsBulk(_strings.data() + index_first,
                                          _strings.data() + index_last,
                                          widths.data() + index_first,
                                          widths.data() + index_last,
                                          cf_attributes);
         };
-        dispatch_apply(iterations, block);
+        dispatch_apply(chunks, block);
     }
-    else {
-        CalculateWidthsOfStringsBulk(
-            _strings.data(), _strings.data() + count, widths.data(), widths.data() + count, cf_attributes);
-    }
-
     return widths;
 }
 

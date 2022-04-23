@@ -19,9 +19,9 @@ static void ClearAll()
     CFDefaultsRemoveValue(FeedbackManagerImpl::g_LastRatingTimeKey);
 }
 
-static GoogleAnalytics &GA()
+static nc::base::GoogleAnalytics &GA()
 {
-    [[clang::no_destroy]] static GoogleAnalytics ga;
+    [[clang::no_destroy]] static nc::base::GoogleAnalytics ga;
     return ga;
 }
 

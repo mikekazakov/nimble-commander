@@ -1,7 +1,8 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextWidthsCache.h"
 #include <Utility/FontExtras.h>
 #include <Habanero/dispatch_cpp.h>
+#include <charconv>
 
 namespace nc::panel::brief {
 
@@ -30,12 +31,13 @@ TextWidthsCache &TextWidthsCache::Instance()
     return *inst;
 }
 
-std::vector<short> TextWidthsCache::Widths(const std::vector<CFStringRef> &_strings, NSFont *_font)
+// TODO: cleanup!
+std::vector<unsigned short> TextWidthsCache::Widths(const std::vector<CFStringRef> &_strings, NSFont *_font)
 {
     assert(_font != nullptr);
     auto &cache = ForFont(_font);
 
-    std::vector<short> widths(_strings.size(), 0);
+    std::vector<unsigned short> widths(_strings.size(), 0);
     std::vector<int> result_indices;
     std::vector<CFStringRef> cf_strings;
 
@@ -67,6 +69,7 @@ std::vector<short> TextWidthsCache::Widths(const std::vector<CFStringRef> &_stri
                 int index = 0;
                 for( auto w : new_widths ) {
                     const auto result_index = result_indices[index];
+                    assert(w > 0 || CFStringGetLength(_strings[result_index]) == 0);
                     cache.widths[CFString{_strings[result_index]}] = w;
                     ++index;
                 }
@@ -91,13 +94,21 @@ std::vector<short> TextWidthsCache::Widths(const std::vector<CFStringRef> &_stri
 
 TextWidthsCache::Cache &TextWidthsCache::ForFont(NSFont *_font)
 {
+    // compose e.g. "12Times New Roman Regular" as a key
     char buf[1024];
     const auto name = _font.fontName.UTF8String;
-    const auto size = static_cast<int>(std::floor(_font.pointSize + 0.5));
-    snprintf(buf, sizeof(buf), "%s%d", name, size);
-
+    const auto font_size = static_cast<int>(std::floor(_font.pointSize + 0.5));
+    const auto rc = std::to_chars(std::begin(buf), std::end(buf), font_size);
+    strcpy(rc.ptr, name);
+    const std::string_view key(buf);
+    
     auto lock = std::lock_guard{m_Lock};
-    return m_CachesPerFont[buf];
+    if( auto it = m_CachesPerFont.find(key); it != m_CachesPerFont.end() ) {
+        return it->second;
+    }
+    else {
+        return m_CachesPerFont[buf];
+    }
 }
 
 void TextWidthsCache::PurgeIfNeeded(Cache &_cache)

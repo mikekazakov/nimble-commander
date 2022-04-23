@@ -123,7 +123,7 @@ bool PanelBriefViewItemLayoutConstants::operator!=(
 
     PanelBriefViewCollectionViewBackground *m_Background;
     data::Model *m_Data;
-    std::vector<short> m_IntrinsicItemsWidths;
+    std::vector<unsigned short> m_IntrinsicItemsWidths;
     IconRepository *m_IconsRepository;
     robin_hood::unordered_map<IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping;
     PanelBriefViewItemLayoutConstants m_ItemLayout;
@@ -302,10 +302,10 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     assert(static_cast<int>(widths.size()) == count);
 
     const auto &layout = m_ItemLayout;
-    const short width_addition = 2 * layout.inset_left + layout.icon_size + layout.inset_right;
+    const unsigned short width_addition = 2 * layout.inset_left + layout.icon_size + layout.inset_right;
     if( m_ColumnsLayout.dynamic_width_equal ) {
         const auto max_width = *std::max_element(widths.begin(), widths.begin());
-        const short width = max_width + width_addition;
+        const unsigned short width = max_width + width_addition;
         std::fill(widths.begin(), widths.end(), width);
     }
     else {
@@ -316,7 +316,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     m_IntrinsicItemsWidths = std::move(widths);
 }
 
-- (std::vector<short> &)collectionViewProvideIntrinsicItemsWidths:
+- (std::vector<unsigned short> &)collectionViewProvideIntrinsicItemsWidths:
     (NSCollectionView *) [[maybe_unused]] _collectionView
 {
     return m_IntrinsicItemsWidths;

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <vector>
@@ -10,7 +10,7 @@
 - (void)collectionViewDidLayoutItems:(NSCollectionView *)collectionView;
 
 // this breaks abstraction a bit, since this part only relates to the "DynamicWidth" layout
-- (std::vector<short>&)collectionViewProvideIntrinsicItemsWidths:(NSCollectionView *)collectionView;
+- (std::vector<unsigned short>&)collectionViewProvideIntrinsicItemsWidths:(NSCollectionView *)collectionView;
 
 @end
 

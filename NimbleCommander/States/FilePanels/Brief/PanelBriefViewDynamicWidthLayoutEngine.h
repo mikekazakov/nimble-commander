@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "PanelBriefViewLayoutEngineBase.h"
@@ -13,7 +13,7 @@ public:
         int item_height = 20;
         int item_min_width = 50;
         int item_max_width = 200;
-        const std::vector<short> *items_intrinsic_widths;
+        const std::vector<unsigned short> *items_intrinsic_widths;
         NSRect clip_view_bounds = {{0.0, 0.0}, {0.0, 0.0}};
     };
 

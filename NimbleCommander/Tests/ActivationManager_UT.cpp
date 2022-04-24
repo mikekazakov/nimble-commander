@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <NimbleCommander/Bootstrap/ActivationManagerImpl.h>
 #include <NimbleCommander/Bootstrap/ActivationManagerBase.h>
@@ -6,6 +6,7 @@
 #include <Habanero/CFDefaultsCPP.h>
 #include <Habanero/GoogleAnalytics.h>
 #include <ftw.h>
+#include <fstream>
 
 using ExternalLicenseSupport = nc::bootstrap::ActivationManagerBase::ExternalLicenseSupport;
 using TrialPeriodSupport = nc::bootstrap::ActivationManagerBase::TrialPeriodSupport;

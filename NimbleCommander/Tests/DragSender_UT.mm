@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <NimbleCommander/States/FilePanels/DragSender.h>
 #include <VFS/VFS.h>
@@ -10,10 +10,6 @@ using namespace nc;
 using namespace nc::base;
 using namespace nc::panel;
 
-//@interface DragSender_Tests : XCTestCase
-//
-//@end
-//
 static VFSListingPtr ProduceDummyListing( const std::vector<std::string> &_filenames )
 {
     vfs::ListingInput l;
@@ -32,8 +28,6 @@ static VFSListingPtr ProduceDummyListing( const std::vector<std::string> &_filen
     
     return VFSListing::Build(std::move(l));
 }
-
-//@implementation DragSender_Tests
 
 TEST_CASE("DragSender::ComposeItemsForDragging")
 {
@@ -62,7 +56,7 @@ TEST_CASE("DragSender::ComposeItemsForDragging")
     { // dragging two selected items
         data::Model data;
         data.Load(ProduceDummyListing({"..", "a", "b"}), data::Model::PanelType::Directory);
-        data.CustomFlagsSelectSorted( data::SelectionBuilder{data}.SelectionByMask("*") );
+        data.CustomFlagsSelectSorted( data::SelectionBuilder{data}.SelectionByMask(utility::FileMask("*")) );
         auto items1 = DragSender::Impl::ComposeItemsForDragging(1, data);
         REQUIRE( items1.size() == 2 );
         CHECK( items1[0].Filename() == "a" );
@@ -89,7 +83,7 @@ TEST_CASE("DragSender::ComposeItemsForDragging")
     { // dragging two selected items according to the sort method 
         data::Model data;
         data.Load(ProduceDummyListing({"..", "b", "a"}), data::Model::PanelType::Directory);
-        data.CustomFlagsSelectSorted( data::SelectionBuilder{data}.SelectionByMask("*") );
+        data.CustomFlagsSelectSorted( data::SelectionBuilder{data}.SelectionByMask(utility::FileMask("*")));
         auto items1 = DragSender::Impl::ComposeItemsForDragging(1, data);
         REQUIRE( items1.size() == 2 );
         CHECK( items1[0].Filename() == "a" );

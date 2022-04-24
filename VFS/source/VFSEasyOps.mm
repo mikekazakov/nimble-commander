@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
 #include <Habanero/SerialQueue.h>
@@ -10,6 +10,7 @@
 #include <sys/dirent.h>
 #include <sys/xattr.h>
 #include <numeric>
+#include <stack>
 
 using namespace nc::vfs;
 

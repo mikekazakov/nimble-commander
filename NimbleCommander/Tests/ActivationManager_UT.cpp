@@ -335,7 +335,7 @@ struct ActivationManagerContext {
     std::string temp_license_path = tmpdir.directory / "test.nimblecommanderlicense";
     ExternalLicenseSupport license{g_TestPublicKey, installed_license_path};
     TrialPeriodSupportWithFakeTime trial{g_DefaultsTrialExpireDate};
-    GoogleAnalytics ga;
+    nc::base::GoogleAnalytics ga;
     ActivationManagerContext() { trial.m_Time = g_Y2018; }
     ~ActivationManagerContext() { CFDefaultsRemoveValue(g_DefaultsTrialExpireDate); }
 };

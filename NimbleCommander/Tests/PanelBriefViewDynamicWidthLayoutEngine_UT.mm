@@ -20,7 +20,7 @@ TEST_CASE(PREFIX "empty by default")
 
 TEST_CASE(PREFIX "rounds number of rows down")
 {
-    auto widths = std::vector<short>();
+    auto widths = std::vector<unsigned short>();
     DynamicWidthLayoutEngine::Params params;
     params.item_height = 20;
     params.clip_view_bounds = NSMakeRect(0.0, 0.0, 100, 65);
@@ -34,7 +34,7 @@ TEST_CASE(PREFIX "rounds number of rows down")
 
 TEST_CASE(PREFIX "handle cases when number of items divises by number of rows")
 {
-    auto widths = std::vector<short>(30, 50);
+    auto widths = std::vector<unsigned short>(30, 50);
     DynamicWidthLayoutEngine::Params params;
     params.items_number = 30;
     params.item_height = 20;
@@ -50,7 +50,7 @@ TEST_CASE(PREFIX "handle cases when number of items divises by number of rows")
 
 TEST_CASE(PREFIX "handle cases when number ofI items doesnt divide by number of rows")
 {
-    auto widths = std::vector<short>(31, 50);
+    auto widths = std::vector<unsigned short>(31, 50);
     DynamicWidthLayoutEngine::Params params;
     params.items_number = 31;
     params.item_height = 20;
@@ -72,7 +72,7 @@ TEST_CASE(PREFIX "gets maximum width for every column")
     params.item_min_width = 1;
     params.item_max_width = 1000;
     params.clip_view_bounds = NSMakeRect(0.0, 0.0, 100, 65);
-    auto widths = std::vector<short>(10, 30);
+    auto widths = std::vector<unsigned short>(10, 30);
     widths[2] = 50;
     widths[5] = 50;
     widths[8] = 50;
@@ -101,7 +101,7 @@ TEST_CASE(PREFIX "does width clamping")
     params.item_min_width = 35;
     params.item_max_width = 45;
     params.clip_view_bounds = NSMakeRect(0.0, 0.0, 100, 65);
-    auto widths = std::vector<short>(10, 30);
+    auto widths = std::vector<unsigned short>(10, 30);
     widths[2] = 50;
     widths[5] = 50;
     widths[8] = 50;
@@ -124,7 +124,7 @@ TEST_CASE(PREFIX "does width clamping")
 
 TEST_CASE(PREFIX "finds items by rect")
 {
-    auto widths = std::vector<short>(10, 30);
+    auto widths = std::vector<unsigned short>(10, 30);
     widths[2] = 50;
     widths[5] = 50;
     widths[8] = 50;

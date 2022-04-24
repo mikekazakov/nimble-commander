@@ -20,7 +20,7 @@ namespace boost { namespace spirit { namespace x3
     template <typename Encoding>
     struct char_class_base
     {
-        typedef typename Encoding::char_type char_type;
+        typedef typename Encoding::classify_type char_type;
 
 #define BOOST_SPIRIT_X3_CLASSIFY(name)                                          \
         template <typename Char>                                                \

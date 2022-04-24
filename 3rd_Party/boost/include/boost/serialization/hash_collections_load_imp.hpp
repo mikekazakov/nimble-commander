@@ -22,6 +22,7 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/collection_size_type.hpp>
 #include <boost/serialization/item_version_type.hpp>
+#include <boost/serialization/library_version_type.hpp>
 
 namespace boost{
 namespace serialization {

@@ -37,6 +37,7 @@
 #include <boost/intrusive/pointer_traits.hpp>
 #include <boost/interprocess/mem_algo/detail/mem_algo_common.hpp>
 #include <boost/move/detail/type_traits.hpp> //make_unsigned, alignment_of
+#include <boost/move/detail/force_ptr.hpp>
 #include <boost/intrusive/detail/minimal_pair_header.hpp>
 #include <cstring>
 #include <boost/assert.hpp>
@@ -91,6 +92,7 @@ class simple_seq_fit_impl
    class block_ctrl
    {
       public:
+      static const size_type size_mask = size_type(-1);
       //!Offset pointer to the next block.
       block_ctrl_ptr m_next;
       //!This block's memory size (including block_ctrl
@@ -329,7 +331,7 @@ inline simple_seq_fit_impl<MutexFamily, VoidPointer>::
    //Initialize pointers
    size_type block1_off = priv_first_block_offset(this, extra_hdr_bytes);
 
-   m_header.m_root.m_next  = reinterpret_cast<block_ctrl*>
+   m_header.m_root.m_next  = move_detail::force_ptr<block_ctrl*>
       ((reinterpret_cast<char*>(this) + block1_off));
    algo_impl_t::assert_alignment(ipcdetail::to_raw_pointer(m_header.m_root.m_next));
    m_header.m_root.m_next->m_size  = (segment_size - block1_off)/Alignment;
@@ -360,7 +362,7 @@ inline void simple_seq_fit_impl<MutexFamily, VoidPointer>::grow(size_type extra_
 
    //We'll create a new free block with extra_size bytes
 
-   block_ctrl *new_block = reinterpret_cast<block_ctrl*>
+   block_ctrl *new_block = move_detail::force_ptr<block_ctrl*>
       (reinterpret_cast<char*>(this) + old_end);
 
    algo_impl_t::assert_alignment(new_block);
@@ -438,7 +440,7 @@ inline
 typename simple_seq_fit_impl<MutexFamily, VoidPointer>::block_ctrl *
    simple_seq_fit_impl<MutexFamily, VoidPointer>::priv_get_block(const void *ptr)
 {
-   return const_cast<block_ctrl*>(reinterpret_cast<const block_ctrl*>
+   return const_cast<block_ctrl*>(move_detail::force_ptr<const block_ctrl*>
       (reinterpret_cast<const char*>(ptr) - AllocatedCtrlBytes));
 }
 
@@ -707,7 +709,7 @@ void* simple_seq_fit_impl<MutexFamily, VoidPointer>::
 
          //We need a minimum size to split the previous one
          if((prev->get_user_bytes() - needs_backwards) > 2*BlockCtrlBytes){
-             block_ctrl *new_block = reinterpret_cast<block_ctrl*>
+             block_ctrl *new_block = move_detail::force_ptr<block_ctrl*>
                   (reinterpret_cast<char*>(reuse) - needs_backwards - BlockCtrlBytes);
 
             new_block->m_next = 0;
@@ -850,7 +852,7 @@ inline typename simple_seq_fit_impl<MutexFamily, VoidPointer>::block_ctrl *
          (typename simple_seq_fit_impl<MutexFamily, VoidPointer>::block_ctrl *ptr)
 {
    //Take the address where the next block should go
-   block_ctrl *next_block = reinterpret_cast<block_ctrl*>
+   block_ctrl *next_block = move_detail::force_ptr<block_ctrl*>
       (reinterpret_cast<char*>(ptr) + ptr->m_size*Alignment);
 
    //Check if the adjacent block is in the managed segment
@@ -912,7 +914,7 @@ inline bool simple_seq_fit_impl<MutexFamily, VoidPointer>::
 {
    size_type preferred_size = received_size;
    //Obtain the real size of the block
-   block_ctrl *block = reinterpret_cast<block_ctrl*>(priv_get_block(ptr));
+   block_ctrl *block = move_detail::force_ptr<block_ctrl*>(priv_get_block(ptr));
    size_type old_block_size = block->m_size;
 
    //All used blocks' next is marked with 0 so check it
@@ -995,7 +997,7 @@ void* simple_seq_fit_impl<MutexFamily, VoidPointer>::priv_check_and_allocate
       size_type total_size = block->m_size;
       block->m_size  = nunits;
 
-      block_ctrl *new_block = reinterpret_cast<block_ctrl*>
+      block_ctrl *new_block = move_detail::force_ptr<block_ctrl*>
          (reinterpret_cast<char*>(block) + Alignment*nunits);
       new_block->m_size  = total_size - nunits;
       new_block->m_next  = block->m_next;
@@ -1044,7 +1046,7 @@ void simple_seq_fit_impl<MutexFamily, VoidPointer>::priv_deallocate(void* addr)
    //(lower address) block
    block_ctrl * prev  = &m_header.m_root;
    block_ctrl * pos   = ipcdetail::to_raw_pointer(m_header.m_root.m_next);
-   block_ctrl * block = reinterpret_cast<block_ctrl*>(priv_get_block(addr));
+   block_ctrl * block = move_detail::force_ptr<block_ctrl*>(priv_get_block(addr));
 
    //All used blocks' next is marked with 0 so check it
    BOOST_ASSERT(block->m_next == 0);

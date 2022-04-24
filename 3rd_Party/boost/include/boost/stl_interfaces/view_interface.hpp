@@ -9,7 +9,7 @@
 #include <boost/stl_interfaces/fwd.hpp>
 
 
-namespace boost { namespace stl_interfaces { inline namespace v1 {
+namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V1 {
 
     /** A CRTP template that one may derive from to make it easier to define
         `std::ranges::view`-like types with a container-like interface.  This
@@ -201,17 +201,14 @@ namespace boost { namespace stl_interfaces { inline namespace v1 {
 }}}
 
 
-#if 201703L < __cplusplus && defined(__cpp_lib_concepts) ||                    \
-    defined(BOOST_STL_INTERFACES_DOXYGEN)
+#if defined(BOOST_STL_INTERFACES_DOXYGEN) || BOOST_STL_INTERFACES_USE_CONCEPTS
 
-#include <ranges>
+namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V2 {
 
-namespace boost { namespace stl_interfaces { namespace v2 {
-
-    /** A template alias for `std::view_interface`.  This only exists to make
-        migration from Boost.STLInterfaces to C++20 easier; switch to the one
-        in `std` as soon as you can. */
-    template<typename D, bool = false>
+    /** A template alias for `std::ranges::view_interface`.  This only exists
+        to make migration from Boost.STLInterfaces to C++20 easier; switch to
+        the one in `std` as soon as you can. */
+    template<typename D, element_layout = element_layout::discontiguous>
     using view_interface = std::ranges::view_interface<D>;
 
 }}}

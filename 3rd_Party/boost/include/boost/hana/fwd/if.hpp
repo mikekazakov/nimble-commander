@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Conditionally return one of two values based on a condition.
     //! @ingroup group-Logical
     //!
@@ -50,8 +50,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr decltype(auto) operator()(Cond&& cond, Then&& then, Else&& else_) const;
     };
 
-    constexpr if_t if_{};
+    BOOST_HANA_INLINE_VARIABLE constexpr if_t if_{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_IF_HPP

@@ -47,6 +47,8 @@ public:
 
     virtual void notify() noexcept = 0;
 
+    #if !defined(BOOST_EMBTC)
+      
     friend void intrusive_ptr_add_ref( algorithm * algo) noexcept {
         BOOST_ASSERT( nullptr != algo);
         algo->use_count_.fetch_add( 1, std::memory_order_relaxed);
@@ -59,8 +61,33 @@ public:
             delete algo;
         }
     }
+    
+    #else
+      
+    friend void intrusive_ptr_add_ref( algorithm * algo) noexcept;
+    friend void intrusive_ptr_release( algorithm * algo) noexcept;
+    
+    #endif
+      
 };
 
+#if defined(BOOST_EMBTC)
+
+    inline void intrusive_ptr_add_ref( algorithm * algo) noexcept {
+        BOOST_ASSERT( nullptr != algo);
+        algo->use_count_.fetch_add( 1, std::memory_order_relaxed);
+    }
+
+    inline void intrusive_ptr_release( algorithm * algo) noexcept {
+        BOOST_ASSERT( nullptr != algo);
+        if ( 1 == algo->use_count_.fetch_sub( 1, std::memory_order_release) ) {
+            std::atomic_thread_fence( std::memory_order_acquire);
+            delete algo;
+        }
+    }
+    
+#endif
+    
 class BOOST_FIBERS_DECL algorithm_with_properties_base : public algorithm {
 public:
     // called by fiber_properties::notify() -- don't directly call

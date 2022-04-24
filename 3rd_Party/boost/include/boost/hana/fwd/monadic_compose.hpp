@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Composition of monadic functions.
     //! @ingroup group-Monad
     //!
@@ -68,8 +68,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr auto operator()(F&& f, G&& g) const;
     };
 
-    constexpr monadic_compose_t monadic_compose{};
+    BOOST_HANA_INLINE_VARIABLE constexpr monadic_compose_t monadic_compose{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_MONADIC_COMPOSE_HPP

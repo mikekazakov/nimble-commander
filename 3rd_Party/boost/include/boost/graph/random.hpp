@@ -38,7 +38,7 @@ typename graph_traits< Graph >::vertex_descriptor random_vertex(
 {
     if (num_vertices(g) > 1)
     {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x581))
+#if BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x581))
         std::size_t n = std::random(num_vertices(g));
 #else
         uniform_int<> distrib(0, num_vertices(g) - 1);
@@ -59,7 +59,7 @@ typename graph_traits< Graph >::edge_descriptor random_edge(
 {
     if (num_edges(g) > 1)
     {
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x581))
+#if BOOST_WORKAROUND(BOOST_BORLANDC, BOOST_TESTED_AT(0x581))
         typename graph_traits< Graph >::edges_size_type n
             = std::random(num_edges(g));
 #else

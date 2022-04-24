@@ -136,7 +136,7 @@ struct limit_handles_ : handler_base_ext
                 [&](::boost::winapi::HANDLE_ handle)
                 {
                     auto itr = std::find(all_handles.begin(), all_handles .end(), handle);
-                    DWORD flags = 0u;
+                    ::boost::winapi::DWORD_ flags = 0u;
                     if (itr != all_handles.end())
                         *itr = ::boost::winapi::INVALID_HANDLE_VALUE_;
                     else if ((::boost::winapi::GetHandleInformation(*itr, &flags) != 0)

@@ -3,8 +3,8 @@
 // Copyright (c) 2012-2020 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2016, 2018.
-// Modifications copyright (c) 2016-2018 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2016-2022.
+// Modifications copyright (c) 2016-2022 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -21,6 +21,7 @@
 #include <boost/geometry/algorithms/covered_by.hpp>
 #include <boost/geometry/algorithms/detail/disjoint/point_box.hpp>
 #include <boost/geometry/algorithms/detail/disjoint/box_box.hpp>
+#include <boost/geometry/algorithms/detail/dummy_geometries.hpp>
 #include <boost/geometry/algorithms/detail/buffer/buffer_policies.hpp>
 #include <boost/geometry/geometries/box.hpp>
 
@@ -38,7 +39,8 @@ template
     typename CsTag,
     typename Turns,
     typename Pieces,
-    typename DistanceStrategy
+    typename DistanceStrategy,
+    typename UmbrellaStrategy
 
 >
 class turn_in_piece_visitor
@@ -46,6 +48,7 @@ class turn_in_piece_visitor
     Turns& m_turns; // because partition is currently operating on const input only
     Pieces const& m_pieces; // to check for piece-type
     DistanceStrategy const& m_distance_strategy; // to check if point is on original or one_sided
+    UmbrellaStrategy const& m_umbrella_strategy;
 
     template <typename Operation, typename Piece>
     inline bool skip(Operation const& op, Piece const& piece) const
@@ -94,10 +97,12 @@ class turn_in_piece_visitor
 public:
 
     inline turn_in_piece_visitor(Turns& turns, Pieces const& pieces,
-                                 DistanceStrategy const& distance_strategy)
+                                 DistanceStrategy const& distance_strategy,
+                                 UmbrellaStrategy const& umbrella_strategy)
         : m_turns(turns)
         , m_pieces(pieces)
         , m_distance_strategy(distance_strategy)
+        , m_umbrella_strategy(umbrella_strategy)        
     {}
 
     template <typename Turn, typename Piece>
@@ -127,7 +132,7 @@ public:
     template <typename Turn, typename Piece, typename Border>
     inline bool apply(Turn const& turn, Piece const& piece, Border const& border)
     {
-        if (! geometry::covered_by(turn.point, border.m_envelope))
+        if (! geometry::covered_by(turn.point, border.m_envelope, m_umbrella_strategy))
         {
             // Easy check: if turn is not in the (expanded) envelope
             return true;
@@ -138,9 +143,8 @@ public:
             // Optimization for a buffer around points: if distance from center
             // is not between min/max radius, it is either inside or outside,
             // and more expensive checks are not necessary.
-            typedef typename Border::radius_type radius_type;
-
-            radius_type const d = geometry::comparable_distance(piece.m_center, turn.point);
+            auto const d = geometry::comparable_distance(piece.m_center, turn.point,
+                                                         m_umbrella_strategy);
 
             if (d < border.m_min_comparable_radius)
             {
@@ -159,7 +163,8 @@ public:
         bool const one_sided = has_zero_distance_at(turn.point);
 
         typename Border::state_type state;
-        if (! border.point_on_piece(turn.point, one_sided, turn.is_linear_end_point, state))
+        if (! border.point_on_piece(turn.point, m_umbrella_strategy, one_sided,
+                                    turn.is_linear_end_point, state))
         {
             return true;
         }
@@ -175,7 +180,7 @@ public:
             // unit tests of hard cases start to fail (5 in multi_polygon)
             // But it is acknowlegded that such a threshold depends on the
             // scale of the input.
-            if (state.m_min_distance > 1.0e-5 || ! state.m_close_to_offset)
+            if (state.m_min_distance > 1.0e-4 || ! state.m_close_to_offset)
             {
                 Turn& mutable_turn = m_turns[turn.turn_index];
                 mutable_turn.is_turn_traversable = false;

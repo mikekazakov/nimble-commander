@@ -8,6 +8,7 @@
 
 #include <boost/process/detail/handler.hpp>
 #include <boost/process/detail/used_handles.hpp>
+#include <memory>
 
 #if defined(BOOST_WINDOWS_API)
 #include <boost/process/detail/windows/executor.hpp>

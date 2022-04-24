@@ -1,5 +1,5 @@
 /* Finaliser for a very simple result type
-(C) 2017-2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2017-2022 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Oct 2017
 
 
@@ -72,7 +72,7 @@ namespace detail
       }
       if(this->_state._status.have_error() && o._state._status.have_error())
       {
-        return this->_error == o._error;
+        return this->_state._error == o._state._error;
       }
       return false;
     }
@@ -99,7 +99,7 @@ namespace detail
     {
       if(this->_state._status.have_error())
       {
-        return this->_error == o.error();
+        return this->_state._error == o.error();
       }
       return false;
     }
@@ -115,7 +115,7 @@ namespace detail
       }
       if(this->_state._status.have_error() && o._state._status.have_error())
       {
-        return this->_error != o._error;
+        return this->_state._error != o._state._error;
       }
       return true;
     }
@@ -142,7 +142,7 @@ namespace detail
     {
       if(this->_state._status.have_error())
       {
-        return this->_error != o.error();
+        return this->_state._error != o.error();
       }
       return true;
     }

@@ -42,8 +42,6 @@ namespace detail { namespace relate {
 template <typename Result, typename BoundaryChecker, bool TransposeResult>
 class disjoint_linestring_pred
 {
-    typedef typename BoundaryChecker::equals_strategy_type equals_strategy_type;
-
 public:
     disjoint_linestring_pred(Result & res,
                              BoundaryChecker const& boundary_checker)
@@ -83,7 +81,7 @@ public:
         if ( count == 2
           && equals::equals_point_point(range::front(linestring),
                                         range::back(linestring),
-                                        equals_strategy_type()) )
+                                        m_boundary_checker.strategy()) )
         {
             update<interior, exterior, '0', TransposeResult>(m_result);
         }
@@ -122,12 +120,12 @@ struct linear_linear
     typedef typename geometry::point_type<Geometry1>::type point1_type;
     typedef typename geometry::point_type<Geometry2>::type point2_type;
 
-    template <typename Result, typename IntersectionStrategy>
+    template <typename Result, typename Strategy>
     static inline void apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
                              Result & result,
-                             IntersectionStrategy const& intersection_strategy)
+                             Strategy const& strategy)
     {
-        typedef typename IntersectionStrategy::cs_tag cs_tag;
+        typedef typename Strategy::cs_tag cs_tag;
 
         // The result should be FFFFFFFFF
         relate::set<exterior, exterior, result_dimension<Geometry1>::value>(result);// FFFFFFFFd, d in [1,9] or T
@@ -138,7 +136,7 @@ struct linear_linear
         typedef typename turns::get_turns
             <
                 Geometry1, Geometry2
-            >::template turn_info_type<IntersectionStrategy>::type turn_type;
+            >::template turn_info_type<Strategy>::type turn_type;
         std::vector<turn_type> turns;
 
         interrupt_policy_linear_linear<Result> interrupt_policy(result);
@@ -148,28 +146,20 @@ struct linear_linear
                 Geometry1,
                 Geometry2,
                 detail::get_turns::get_turn_info_type<Geometry1, Geometry2, turns::assign_policy<true> >
-            >::apply(turns, geometry1, geometry2, interrupt_policy, intersection_strategy);
+            >::apply(turns, geometry1, geometry2, interrupt_policy, strategy);
 
         if ( BOOST_GEOMETRY_CONDITION( result.interrupt ) )
             return;
 
-        typedef boundary_checker
-            <
-                Geometry1,
-                typename IntersectionStrategy::point_in_point_strategy_type
-            > boundary_checker1_type;
-        boundary_checker1_type boundary_checker1(geometry1);
+        typedef boundary_checker<Geometry1, Strategy> boundary_checker1_type;
+        boundary_checker1_type boundary_checker1(geometry1, strategy);
         disjoint_linestring_pred<Result, boundary_checker1_type, false> pred1(result, boundary_checker1);
         for_each_disjoint_geometry_if<0, Geometry1>::apply(turns.begin(), turns.end(), geometry1, pred1);
         if ( BOOST_GEOMETRY_CONDITION( result.interrupt ) )
             return;
 
-        typedef boundary_checker
-            <
-                Geometry2,
-                typename IntersectionStrategy::point_in_point_strategy_type
-            > boundary_checker2_type;
-        boundary_checker2_type boundary_checker2(geometry2);
+        typedef boundary_checker<Geometry2, Strategy> boundary_checker2_type;
+        boundary_checker2_type boundary_checker2(geometry2, strategy);
         disjoint_linestring_pred<Result, boundary_checker2_type, true> pred2(result, boundary_checker2);
         for_each_disjoint_geometry_if<1, Geometry2>::apply(turns.begin(), turns.end(), geometry2, pred2);
         if ( BOOST_GEOMETRY_CONDITION( result.interrupt ) )
@@ -292,8 +282,6 @@ struct linear_linear
                    BoundaryChecker const& boundary_checker,
                    OtherBoundaryChecker const& other_boundary_checker)
         {
-            typedef typename BoundaryChecker::equals_strategy_type equals_strategy_type;
-
             overlay::operation_type const op = it->operations[op_id].operation;
 
             segment_identifier const& seg_id = it->operations[op_id].seg_id;
@@ -345,7 +333,7 @@ struct linear_linear
                 // we know that we entered and now we exit
                 if ( ! turn_on_the_same_ip<op_id>(m_exit_watcher.get_exit_turn(),
                                                   *it,
-                                                  equals_strategy_type()) )
+                                                  boundary_checker.strategy()) )
                 {
                     m_exit_watcher.reset_detected_exit();
                     
@@ -368,7 +356,7 @@ struct linear_linear
                 if ( op == overlay::operation_intersection
                   && turn_on_the_same_ip<op_id>(m_exit_watcher.get_exit_turn(),
                                                 *it,
-                                                equals_strategy_type()) )
+                                                boundary_checker.strategy()) )
                 {
                     fake_enter_detected = true;
                 }
@@ -668,14 +656,9 @@ struct linear_linear
                                 Geometry const& geometry,
                                 OtherGeometry const& other_geometry,
                                 BoundaryChecker const& boundary_checker,
-                                OtherBoundaryChecker const& /*other_boundary_checker*/,
+                                OtherBoundaryChecker const& other_boundary_checker,
                                 bool first_in_range)
         {
-            typedef typename BoundaryChecker::equals_strategy_type
-                equals_strategy1_type;
-            typedef typename OtherBoundaryChecker::equals_strategy_type
-                equals_strategy2_type;
-
             typename detail::single_geometry_return_type<Geometry const>::type
                 ls1_ref = detail::single_geometry(geometry, turn.operations[op_id].seg_id);
             typename detail::single_geometry_return_type<OtherGeometry const>::type
@@ -745,11 +728,11 @@ struct linear_linear
                 bool const is_point1 = boost::size(ls1_ref) == 2
                                     && equals::equals_point_point(range::front(ls1_ref),
                                                                   range::back(ls1_ref),
-                                                                  equals_strategy1_type());
+                                                                  boundary_checker.strategy());
                 bool const is_point2 = boost::size(ls2_ref) == 2
                                     && equals::equals_point_point(range::front(ls2_ref),
                                                                   range::back(ls2_ref),
-                                                                  equals_strategy2_type());
+                                                                  other_boundary_checker.strategy());
 
                 // if the second one is degenerated
                 if ( !is_point1 && is_point2 )

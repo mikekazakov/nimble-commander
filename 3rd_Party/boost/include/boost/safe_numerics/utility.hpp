@@ -37,14 +37,12 @@ struct [[deprecated]] print_types {};
 // display value of constexpr during compilation
 // usage print_value(N) pn;
 template<int N> 
-struct print_value
-{
+struct print_value {
     enum test : char {
         value = N < 0 ? N - 256 : N + 256
     };
 };
 
-#if 0
 // static warning - same as static_assert but doesn't
 // stop compilation. 
 template <typename T>
@@ -56,12 +54,7 @@ struct static_test<std::false_type>{
 };
 
 template<typename T>
-constexpr void static_warning(const T){
-   //using x = static_test<T>;
-   const static_test<T> x;
-}
-
-#endif
+using static_warning = static_test<T>;
 
 /*
 // can be called by constexpr to produce a compile time
@@ -116,12 +109,15 @@ Using int table elements may be faster, depending on your architecture.
 
 namespace ilog2_detail {
 
-    // I've "improved" the above and recast as C++ code which depends upon
-    // the optimizer to minimize the operations.  This should result in
-    // nine operations to calculate the position of the highest order
-    // bit in a 64 bit number. RR
-
-    constexpr static unsigned int ilog2(const boost::uint_t<8>::exact & t){
+    template<int N>
+    constexpr inline unsigned int ilog2(const typename boost::uint_t<N>::exact & t){
+        using half_type = typename boost::uint_t<N/2>::exact;
+        const half_type upper_half = static_cast<half_type>(t >> N/2);
+        const half_type lower_half = static_cast<half_type>(t);
+        return upper_half == 0 ? ilog2<N/2>(lower_half) : N/2 + ilog2<N/2>(upper_half);
+    }
+    template<>
+    constexpr inline unsigned int ilog2<8>(const typename boost::uint_t<8>::exact & t){
         #define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
         const char LogTable256[256] = {
             static_cast<char>(-1), 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -130,34 +126,16 @@ namespace ilog2_detail {
         };
         return LogTable256[t];
     }
-    constexpr static unsigned int ilog2(const boost::uint_t<16>::exact & t){
-        const boost::uint_t<8>::exact upper_half = (t >> 8);
-        return upper_half == 0
-            ? ilog2(static_cast<boost::uint_t<8>::exact>(t))
-            : 8 + ilog2(upper_half);
-    }
-    constexpr static unsigned int ilog2(const boost::uint_t<32>::exact & t){
-        const boost::uint_t<16>::exact upper_half = (t >> 16);
-        return upper_half == 0
-            ? ilog2(static_cast<boost::uint_t<16>::exact>(t))
-            : 16 + ilog2(upper_half);
-    }
-    constexpr static unsigned int ilog2(const boost::uint_t<64>::exact & t){
-        const boost::uint_t<32>::exact upper_half = (t >> 32);
-        return upper_half == 0
-            ? ilog2(static_cast<boost::uint_t<32>::exact>(t))
-            : 32 + ilog2(upper_half);
-    }
 
 } // ilog2_detail
 
 template<typename T>
-constexpr unsigned int ilog2(const T & t){
+constexpr inline unsigned int ilog2(const T & t){
 //  log not defined for negative numbers
 //    assert(t > 0);
     if(t == 0)
         return 0;
-    return ilog2_detail::ilog2(
+    return ilog2_detail::ilog2<bits_type<T>::value>(
         static_cast<
             typename boost::uint_t<
                 bits_type<T>::value
@@ -169,7 +147,7 @@ constexpr unsigned int ilog2(const T & t){
 // the number of bits required to render the value in x
 // including sign bit
 template<typename T>
-constexpr unsigned int significant_bits(const T & t){
+constexpr inline unsigned int significant_bits(const T & t){
     return 1 + ((t < 0) ? ilog2(~t) : ilog2(t));
 }
 
@@ -198,7 +176,7 @@ template <class T>
 // turns out this problem crashes all versions of gcc compilers.  So
 // make sure we return by value
 //constexpr const T & max(
-constexpr T max(
+constexpr inline T max(
     const T & lhs,
     const T & rhs
 ){
@@ -236,8 +214,8 @@ using unsigned_stored_type = typename boost::uint_t<
 // a) is not constexpr
 // b) is not guarenteed to handle non-assignable types
 template<typename T>
-constexpr std::pair<T, T>
-minmax(const std::initializer_list<T> l){
+constexpr inline std::pair<T, T>
+minmax(const std::initializer_list<T> & l){
     assert(l.size() > 0);
     const T * minimum = l.begin();
     const T * maximum = l.begin();
@@ -258,7 +236,7 @@ minmax(const std::initializer_list<T> l){
 // 3 == round_out(2) because
 // 2 == 10 and 3 == 11
 template<typename T>
-constexpr T round_out(const T & t){
+constexpr inline T round_out(const T & t){
     if(t >= 0){
         const std::uint8_t sb = utility::significant_bits(t);
         return (sb < sizeof(T) * 8)

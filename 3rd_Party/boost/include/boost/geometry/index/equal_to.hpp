@@ -2,8 +2,8 @@
 //
 // Copyright (c) 2011-2016 Adam Wulkiewicz, Lodz, Poland.
 //
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2020.
+// Modifications copyright (c) 2019-2020 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -39,9 +39,9 @@ struct equals<Geometry, point_tag>
     }
 
     template <typename Strategy>
-    inline static bool apply(Geometry const& g1, Geometry const& g2, Strategy const&)
+    inline static bool apply(Geometry const& g1, Geometry const& g2, Strategy const& s)
     {
-        return geometry::equals(g1, g2, typename Strategy::within_point_point_strategy_type());
+        return geometry::equals(g1, g2, s);
     }
 };
 
@@ -54,11 +54,9 @@ struct equals<Geometry, box_tag>
     }
 
     template <typename Strategy>
-    inline static bool apply(Geometry const& g1, Geometry const& g2, Strategy const&)
+    inline static bool apply(Geometry const& g1, Geometry const& g2, Strategy const& s)
     {
-        // NOTE: there is no strategy for equals(box, box) so pass dummy variable
-        // TODO: there should be a strategy even if it is the same for all CSes in case undefined_cs was used
-        return geometry::equals(g1, g2, 0);
+        return geometry::equals(g1, g2, s);
     }
 };
 
@@ -73,7 +71,7 @@ struct equals<Geometry, segment_tag>
     template <typename Strategy>
     inline static bool apply(Geometry const& g1, Geometry const& g2, Strategy const& s)
     {
-        return geometry::equals(g1, g2, s.get_relate_segment_segment_strategy());
+        return geometry::equals(g1, g2, s);
     }
 };
 

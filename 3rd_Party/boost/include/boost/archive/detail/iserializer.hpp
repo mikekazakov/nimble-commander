@@ -2,14 +2,16 @@
 #define BOOST_ARCHIVE_DETAIL_ISERIALIZER_HPP
 
 // MS compatible compilers support #pragma once
-#if defined(_MSC_VER)
+#if defined(BOOST_MSVC)
 # pragma once
-#pragma inline_depth(511)
+#if !defined(__clang__)
+#pragma inline_depth(255)
 #pragma inline_recursion(on)
+#endif
 #endif
 
 #if defined(__MWERKS__)
-#pragma inline_depth(511)
+#pragma inline_depth(255)
 #endif
 
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8

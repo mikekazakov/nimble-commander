@@ -91,19 +91,19 @@ class basic_managed_global_memory
 
    public: //functions
 
-   basic_managed_global_memory (open_or_create_t open_or_create,
+   basic_managed_global_memory (open_or_create_t,
                               const char *name, size_type size,
                               const void *addr = 0, const permissions& perm = permissions())
       : base_t()
-      , base2_t(open_or_create, name, size, read_write, addr,
+      , base2_t(open_or_create_t(), name, size, read_write, addr,
                 create_open_func_t(get_this_pointer(),
                 DoOpenOrCreate), perm)
    {}
 
-   basic_managed_global_memory (open_only_t open_only, const char* name,
+   basic_managed_global_memory (open_only_t , const char* name,
                                 const void *addr = 0)
       : base_t()
-      , base2_t(open_only, name, read_write, addr,
+      , base2_t(open_only_t(), name, read_write, addr,
                 create_open_func_t(get_this_pointer(),
                 DoOpen))
    {}

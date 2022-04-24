@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014-2019.
-// Modifications copyright (c) 2014-2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2021.
+// Modifications copyright (c) 2014-2021 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -16,6 +16,7 @@
 
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/access.hpp>
+#include <boost/geometry/core/coordinate_promotion.hpp>
 #include <boost/geometry/core/radian_access.hpp>
 #include <boost/geometry/core/radius.hpp>
 
@@ -23,17 +24,16 @@
 
 #include <boost/geometry/srs/spheroid.hpp>
 
-#include <boost/geometry/util/math.hpp>
-#include <boost/geometry/util/promote_floating_point.hpp>
-#include <boost/geometry/util/select_calculation_type.hpp>
-
+//#include <boost/geometry/strategies/concepts/side_concept.hpp>
 #include <boost/geometry/strategies/geographic/disjoint_segment_box.hpp>
-#include <boost/geometry/strategies/geographic/envelope.hpp>
 #include <boost/geometry/strategies/geographic/parameters.hpp>
 #include <boost/geometry/strategies/side.hpp>
 #include <boost/geometry/strategies/spherical/point_in_point.hpp>
-//#include <boost/geometry/strategies/concepts/side_concept.hpp>
 
+#include <boost/geometry/strategy/geographic/envelope.hpp>
+
+#include <boost/geometry/util/math.hpp>
+#include <boost/geometry/util/select_calculation_type.hpp>
 
 namespace boost { namespace geometry
 {
@@ -67,38 +67,7 @@ class geographic
 public:
     typedef geographic_tag cs_tag;
 
-    typedef strategy::envelope::geographic
-        <
-            FormulaPolicy,
-            Spheroid,
-            CalculationType
-        > envelope_strategy_type;
-
-    inline envelope_strategy_type get_envelope_strategy() const
-    {
-        return envelope_strategy_type(m_model);
-    }
-
-    typedef strategy::disjoint::segment_box_geographic
-        <
-            FormulaPolicy,
-            Spheroid,
-            CalculationType
-        > disjoint_strategy_type;
-
-    inline disjoint_strategy_type get_disjoint_strategy() const
-    {
-        return disjoint_strategy_type(m_model);
-    }
-
-    typedef strategy::within::spherical_point_point equals_point_point_strategy_type;
-    static inline equals_point_point_strategy_type get_equals_point_point_strategy()
-    {
-        return equals_point_point_strategy_type();
-    }
-
-    geographic()
-    {}
+    geographic() = default;
 
     explicit geographic(Spheroid const& model)
         : m_model(model)
@@ -107,6 +76,14 @@ public:
     template <typename P1, typename P2, typename P>
     inline int apply(P1 const& p1, P2 const& p2, P const& p) const
     {
+        typedef strategy::within::spherical_point_point equals_point_point_strategy_type;
+        if (equals_point_point_strategy_type::apply(p, p1)
+            || equals_point_point_strategy_type::apply(p, p2)
+            || equals_point_point_strategy_type::apply(p1, p2))
+        {
+            return 0;
+        }
+
         typedef typename promote_floating_point
             <
                 typename select_calculation_type_alt

@@ -1,4 +1,4 @@
-// Copyright 2011 John Maddock. Distributed under the Boost
+// Copyright 2011 John Maddock.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -9,8 +9,8 @@
 template <class T>
 void calc_log2(T& num, unsigned digits)
 {
-   typedef typename boost::multiprecision::detail::canonical<boost::uint32_t, T>::type ui_type;
-   typedef typename mpl::front<typename T::signed_types>::type                         si_type;
+   using ui_type = typename boost::multiprecision::detail::canonical<std::uint32_t, T>::type;
+   using si_type = typename std::tuple_element<0, typename T::signed_types>::type                        ;
 
    //
    // String value with 1100 digits:
@@ -80,7 +80,7 @@ void calc_log2(T& num, unsigned digits)
 template <class T>
 void calc_e(T& result, unsigned digits)
 {
-   typedef typename mpl::front<typename T::unsigned_types>::type ui_type;
+   using ui_type = typename std::tuple_element<0, typename T::unsigned_types>::type;
    //
    // 1100 digits in string form:
    //
@@ -129,8 +129,8 @@ void calc_e(T& result, unsigned digits)
 template <class T>
 void calc_pi(T& result, unsigned digits)
 {
-   typedef typename mpl::front<typename T::unsigned_types>::type ui_type;
-   typedef typename mpl::front<typename T::float_types>::type    real_type;
+   using ui_type = typename std::tuple_element<0, typename T::unsigned_types>::type;
+   using real_type = typename std::tuple_element<0, typename T::float_types>::type   ;
    //
    // 1100 digits in string form:
    //
@@ -166,7 +166,7 @@ void calc_pi(T& result, unsigned digits)
 
    T lim;
    lim = ui_type(1);
-   eval_ldexp(lim, lim, -(int)digits);
+   eval_ldexp(lim, lim, -static_cast<int>(digits));
 
    //
    // This algorithm is from:
@@ -216,45 +216,14 @@ void calc_pi(T& result, unsigned digits)
    eval_divide(result, B, D);
 }
 
-template <class T, const T& (*F)(void)>
-struct constant_initializer
-{
-   static void do_nothing()
-   {
-      init.do_nothing();
-   }
-
- private:
-   struct initializer
-   {
-      initializer()
-      {
-         F();
-      }
-      void do_nothing() const {}
-   };
-   static const initializer init;
-};
-
-template <class T, const T& (*F)(void)>
-typename constant_initializer<T, F>::initializer const constant_initializer<T, F>::init;
-
 template <class T>
 const T& get_constant_ln2()
 {
    static BOOST_MP_THREAD_LOCAL T    result;
    static BOOST_MP_THREAD_LOCAL long digits = 0;
-#ifndef BOOST_MP_USING_THREAD_LOCAL
-   static BOOST_MP_THREAD_LOCAL bool b = false;
-   constant_initializer<T, &get_constant_ln2<T> >::do_nothing();
-
-   if (!b || (digits != boost::multiprecision::detail::digits2<number<T> >::value()))
-   {
-      b = true;
-#else
    if ((digits != boost::multiprecision::detail::digits2<number<T> >::value()))
    {
-#endif
+      boost::multiprecision::detail::maybe_promote_precision(&result);
       calc_log2(result, boost::multiprecision::detail::digits2<number<T, et_on> >::value());
       digits = boost::multiprecision::detail::digits2<number<T> >::value();
    }
@@ -267,17 +236,9 @@ const T& get_constant_e()
 {
    static BOOST_MP_THREAD_LOCAL T    result;
    static BOOST_MP_THREAD_LOCAL long digits = 0;
-#ifndef BOOST_MP_USING_THREAD_LOCAL
-   static BOOST_MP_THREAD_LOCAL bool b = false;
-   constant_initializer<T, &get_constant_e<T> >::do_nothing();
-
-   if (!b || (digits != boost::multiprecision::detail::digits2<number<T> >::value()))
-   {
-      b = true;
-#else
    if ((digits != boost::multiprecision::detail::digits2<number<T> >::value()))
    {
-#endif
+      boost::multiprecision::detail::maybe_promote_precision(&result);
       calc_e(result, boost::multiprecision::detail::digits2<number<T, et_on> >::value());
       digits = boost::multiprecision::detail::digits2<number<T> >::value();
    }
@@ -288,46 +249,40 @@ const T& get_constant_e()
 template <class T>
 const T& get_constant_pi()
 {
-   static BOOST_MP_THREAD_LOCAL T    result;
+   static BOOST_MP_THREAD_LOCAL T             result;
    static BOOST_MP_THREAD_LOCAL long digits = 0;
-#ifndef BOOST_MP_USING_THREAD_LOCAL
-   static BOOST_MP_THREAD_LOCAL bool b = false;
-   constant_initializer<T, &get_constant_pi<T> >::do_nothing();
-
-   if (!b || (digits != boost::multiprecision::detail::digits2<number<T> >::value()))
-   {
-      b = true;
-#else
    if ((digits != boost::multiprecision::detail::digits2<number<T> >::value()))
    {
-#endif
+      boost::multiprecision::detail::maybe_promote_precision(&result);
       calc_pi(result, boost::multiprecision::detail::digits2<number<T, et_on> >::value());
       digits = boost::multiprecision::detail::digits2<number<T> >::value();
    }
 
    return result;
 }
-
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4127) // conditional expression is constant
+#endif
 template <class T>
 const T& get_constant_one_over_epsilon()
 {
-   static BOOST_MP_THREAD_LOCAL T    result;
+   static BOOST_MP_THREAD_LOCAL T             result;
    static BOOST_MP_THREAD_LOCAL long digits = 0;
-#ifndef BOOST_MP_USING_THREAD_LOCAL
-   static BOOST_MP_THREAD_LOCAL bool b = false;
-   constant_initializer<T, &get_constant_one_over_epsilon<T> >::do_nothing();
-
-   if (!b || (digits != boost::multiprecision::detail::digits2<number<T> >::value()))
-   {
-      b = true;
-#else
    if ((digits != boost::multiprecision::detail::digits2<number<T> >::value()))
    {
-#endif
-      typedef typename mpl::front<typename T::unsigned_types>::type ui_type;
+      using ui_type = typename std::tuple_element<0, typename T::unsigned_types>::type;
+      boost::multiprecision::detail::maybe_promote_precision(&result);
       result = static_cast<ui_type>(1u);
-      eval_divide(result, std::numeric_limits<number<T> >::epsilon().backend());
+      BOOST_IF_CONSTEXPR(std::numeric_limits<number<T> >::is_specialized)
+         eval_divide(result, std::numeric_limits<number<T> >::epsilon().backend());
+      else
+         eval_ldexp(result, result, boost::multiprecision::detail::digits2<number<T> >::value() - 1);
+      digits = boost::multiprecision::detail::digits2<number<T> >::value();
    }
 
    return result;
 }
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif

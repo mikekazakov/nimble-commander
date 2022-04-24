@@ -13,10 +13,10 @@
 #ifndef BOOST_INCREMENTAL_COMPONENTS_HPP
 #define BOOST_INCREMENTAL_COMPONENTS_HPP
 
-#include <boost/detail/iterator.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/graph/detail/incremental_components.hpp>
 #include <boost/iterator/counting_iterator.hpp>
-#include <boost/make_shared.hpp>
+#include <boost/smart_ptr/make_shared.hpp>
 #include <boost/pending/disjoint_sets.hpp>
 #include <iterator>
 
@@ -69,7 +69,7 @@ void compress_components(ParentIterator first, ParentIterator last)
 }
 
 template < class ParentIterator >
-typename boost::detail::iterator_traits< ParentIterator >::difference_type
+typename std::iterator_traits< ParentIterator >::difference_type
 component_count(ParentIterator first, ParentIterator last)
 {
     std::ptrdiff_t count = 0;

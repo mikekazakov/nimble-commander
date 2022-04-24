@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Returns the second element of a pair.
     //! @ingroup group-Product
     //!
@@ -41,8 +41,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr decltype(auto) operator()(Pair&& pair) const;
     };
 
-    constexpr second_t second{};
+    BOOST_HANA_INLINE_VARIABLE constexpr second_t second{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_SECOND_HPP

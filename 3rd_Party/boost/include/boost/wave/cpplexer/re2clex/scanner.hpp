@@ -74,6 +74,7 @@ struct Scanner {
     bool enable_import_keyword;  /* recognize import as a keyword */
     bool single_line_only;       /* don't report missing eol's in C++ comments */
     bool act_in_cpp0x_mode;      /* lexer works in C++11 mode */
+    bool act_in_cpp2a_mode;      /* lexer works in C++20 mode */
 };
 
 ///////////////////////////////////////////////////////////////////////////////

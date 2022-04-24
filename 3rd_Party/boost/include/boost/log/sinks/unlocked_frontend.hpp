@@ -39,20 +39,20 @@ namespace sinks {
 
 #ifndef BOOST_LOG_DOXYGEN_PASS
 
-#define BOOST_LOG_SINK_CTOR_FORWARD_INTERNAL_1(n, data)\
+#define BOOST_LOG_SINK_CTOR_FORWARD_INTERNAL_1(z, n, data)\
     template< typename T0 >\
     explicit unlocked_sink(T0 const& arg0, typename boost::log::aux::enable_if_named_parameters< T0, boost::log::aux::sfinae_dummy >::type = boost::log::aux::sfinae_dummy()) :\
         base_type(false),\
         m_pBackend(boost::make_shared< sink_backend_type >(arg0)) {}
 
-#define BOOST_LOG_SINK_CTOR_FORWARD_INTERNAL_N(n, data)\
-    template< BOOST_PP_ENUM_PARAMS(n, typename T) >\
-    explicit unlocked_sink(BOOST_PP_ENUM_BINARY_PARAMS(n, T, const& arg)) :\
+#define BOOST_LOG_SINK_CTOR_FORWARD_INTERNAL_N(z, n, data)\
+    template< BOOST_PP_ENUM_PARAMS_Z(z, n, typename T) >\
+    explicit unlocked_sink(BOOST_PP_ENUM_BINARY_PARAMS_Z(z, n, T, const& arg)) :\
         base_type(false),\
-        m_pBackend(boost::make_shared< sink_backend_type >(BOOST_PP_ENUM_PARAMS(n, arg))) {}
+        m_pBackend(boost::make_shared< sink_backend_type >(BOOST_PP_ENUM_PARAMS_Z(z, n, arg))) {}
 
 #define BOOST_LOG_SINK_CTOR_FORWARD_INTERNAL(z, n, data)\
-    BOOST_PP_IF(BOOST_PP_EQUAL(n, 1), BOOST_LOG_SINK_CTOR_FORWARD_INTERNAL_1, BOOST_LOG_SINK_CTOR_FORWARD_INTERNAL_N)(n, data)
+    BOOST_PP_IF(BOOST_PP_EQUAL(n, 1), BOOST_LOG_SINK_CTOR_FORWARD_INTERNAL_1, BOOST_LOG_SINK_CTOR_FORWARD_INTERNAL_N)(z, n, data)
 
 #endif // BOOST_LOG_DOXYGEN_PASS
 

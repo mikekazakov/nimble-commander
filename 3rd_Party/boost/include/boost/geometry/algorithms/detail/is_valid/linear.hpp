@@ -1,7 +1,8 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2019, Oracle and/or its affiliates.
+// Copyright (c) 2014-2021, Oracle and/or its affiliates.
 
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -13,23 +14,24 @@
 
 #include <cstddef>
 
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/empty.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/size.hpp>
+
+#include <boost/geometry/algorithms/equals.hpp>
+#include <boost/geometry/algorithms/validity_failure_type.hpp>
+#include <boost/geometry/algorithms/detail/is_valid/has_invalid_coordinate.hpp>
+#include <boost/geometry/algorithms/detail/is_valid/has_spikes.hpp>
+#include <boost/geometry/algorithms/detail/num_distinct_consecutive_points.hpp>
+
+#include <boost/geometry/algorithms/dispatch/is_valid.hpp>
 
 #include <boost/geometry/core/closure.hpp>
 #include <boost/geometry/core/point_type.hpp>
 #include <boost/geometry/core/tags.hpp>
 
 #include <boost/geometry/util/condition.hpp>
-#include <boost/geometry/util/range.hpp>
-
-#include <boost/geometry/algorithms/equals.hpp>
-#include <boost/geometry/algorithms/validity_failure_type.hpp>
-#include <boost/geometry/algorithms/detail/check_iterator_range.hpp>
-#include <boost/geometry/algorithms/detail/is_valid/has_invalid_coordinate.hpp>
-#include <boost/geometry/algorithms/detail/is_valid/has_spikes.hpp>
-#include <boost/geometry/algorithms/detail/num_distinct_consecutive_points.hpp>
-
-#include <boost/geometry/algorithms/dispatch/is_valid.hpp>
 
 
 namespace boost { namespace geometry
@@ -48,6 +50,8 @@ struct is_valid_linestring
                              VisitPolicy& visitor,
                              Strategy const& strategy)
     {
+        // TODO: Consider checking coordinates based on coordinate system
+        //       Right now they are only checked for infinity in all systems.
         if (has_invalid_coordinate<Linestring>::apply(linestring, visitor))
         {
             return false;
@@ -60,15 +64,8 @@ struct is_valid_linestring
 
         std::size_t num_distinct = detail::num_distinct_consecutive_points
             <
-                Linestring,
-                3u,
-                true,
-                not_equal_to
-                    <
-                        typename point_type<Linestring>::type,
-                        typename Strategy::equals_point_point_strategy_type
-                    >
-            >::apply(linestring);
+                Linestring, 3u, true
+            >::apply(linestring, strategy);
 
         if (num_distinct < 2u)
         {
@@ -81,11 +78,12 @@ struct is_valid_linestring
             return visitor.template apply<no_failure>();
         }
 
-        return ! has_spikes
-                    <
-                        Linestring, closed
-                    >::apply(linestring, visitor,
-                             strategy.get_side_strategy());
+        // TODO: This algorithm iterates over the linestring until a spike is
+        //   found and only then the decision about the validity is made. This
+        //   is done regardless of VisitPolicy.
+        //   An obvious improvement is to avoid calling the algorithm at all if
+        //   spikes are allowed which is the default.
+        return ! has_spikes<Linestring>::apply(linestring, visitor, strategy);
     }
 };
 
@@ -133,7 +131,6 @@ class is_valid
         MultiLinestring, multi_linestring_tag, AllowEmptyMultiGeometries
     >
 {
-private:
     template <typename VisitPolicy, typename Strategy>
     struct per_linestring
     {
@@ -143,7 +140,7 @@ private:
         {}
 
         template <typename Linestring>
-        inline bool apply(Linestring const& linestring) const
+        inline bool operator()(Linestring const& linestring) const
         {
             return detail::is_valid::is_valid_linestring
                 <
@@ -167,15 +164,11 @@ public:
             return visitor.template apply<no_failure>();
         }
 
-        typedef per_linestring<VisitPolicy, Strategy> per_ls;
+        using per_ls = per_linestring<VisitPolicy, Strategy>;
 
-        return detail::check_iterator_range
-            <
-                per_ls,
-                false // do not check for empty multilinestring (done above)
-            >::apply(boost::begin(multilinestring),
-                     boost::end(multilinestring),
-                     per_ls(visitor, strategy));
+        return std::all_of(boost::begin(multilinestring), 
+                           boost::end(multilinestring),
+                           per_ls(visitor, strategy));
     }
 };
 

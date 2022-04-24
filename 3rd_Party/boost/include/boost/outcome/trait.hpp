@@ -1,5 +1,5 @@
 /* Traits for Outcome
-(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (8 commits)
+(C) 2018-2022 Niall Douglas <http://www.nedproductions.biz/> (8 commits)
 File Created: March 2018
 
 
@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 
 #include "config.hpp"
 
-BOOST_OUTCOME_V2_NAMESPACE_BEGIN
+BOOST_OUTCOME_V2_NAMESPACE_EXPORT_BEGIN
 
 namespace trait
 {
@@ -50,6 +50,14 @@ SIGNATURE NOT RECOGNISED
    && (std::is_void<R>::value || (std::is_object<R>::value                       //
                                   && std::is_destructible<R>::value))            //
   );
+
+  /*! AWAITING HUGO JSON CONVERSION TOOL
+type definition  is_error_type. Potential doc page: NOT FOUND
+*/
+  template <class T> struct is_move_bitcopying
+  {
+    static constexpr bool value = false;
+  };
 
   /*! AWAITING HUGO JSON CONVERSION TOOL
 type definition  is_error_type. Potential doc page: NOT FOUND

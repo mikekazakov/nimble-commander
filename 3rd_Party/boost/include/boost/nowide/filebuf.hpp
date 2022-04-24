@@ -43,7 +43,7 @@ namespace nowide {
     /// it is implemented and specialized for CharType = char, it
     /// implements std::filebuf over standard C I/O
     ///
-    template<typename CharType, typename Traits = std::char_traits<CharType> >
+    template<typename CharType, typename Traits = std::char_traits<CharType>>
     class basic_filebuf;
 
     ///
@@ -55,7 +55,7 @@ namespace nowide {
     template<>
     class basic_filebuf<char> : public std::basic_streambuf<char>
     {
-        typedef std::char_traits<char> Traits;
+        using Traits = std::char_traits<char>;
 
     public:
 #ifdef BOOST_MSVC
@@ -83,6 +83,7 @@ namespace nowide {
         }
         basic_filebuf& operator=(basic_filebuf&& other) noexcept
         {
+            close();
             swap(other);
             return *this;
         }
@@ -96,17 +97,19 @@ namespace nowide {
             swap(owns_buffer_, rhs.owns_buffer_);
             swap(last_char_[0], rhs.last_char_[0]);
             swap(mode_, rhs.mode_);
+
             // Fixup last_char references
-            if(epptr() == rhs.last_char_)
-                setp(last_char_, last_char_);
-            if(egptr() == rhs.last_char_)
-                rhs.setg(last_char_, gptr() == rhs.last_char_ ? last_char_ : last_char_ + 1, last_char_ + 1);
-            if(rhs.epptr() == last_char_)
-                setp(rhs.last_char_, rhs.last_char_);
-            if(rhs.egptr() == rhs.last_char_)
+            if(pbase() == rhs.last_char_)
+                setp(last_char_, (pptr() == epptr()) ? last_char_ : last_char_ + 1);
+            if(eback() == rhs.last_char_)
+                setg(last_char_, (gptr() == rhs.last_char_) ? last_char_ : last_char_ + 1, last_char_ + 1);
+
+            if(rhs.pbase() == last_char_)
+                rhs.setp(rhs.last_char_, (rhs.pptr() == rhs.epptr()) ? rhs.last_char_ : rhs.last_char_ + 1);
+            if(rhs.eback() == last_char_)
             {
                 rhs.setg(rhs.last_char_,
-                         rhs.gptr() == last_char_ ? rhs.last_char_ : rhs.last_char_ + 1,
+                         (rhs.gptr() == last_char_) ? rhs.last_char_ : rhs.last_char_ + 1,
                          rhs.last_char_ + 1);
             }
         }
@@ -172,6 +175,8 @@ namespace nowide {
                 buffer_ = NULL;
                 owns_buffer_ = false;
             }
+            setg(0, 0, 0);
+            setp(0, 0);
             return res ? this : NULL;
         }
         ///
@@ -195,7 +200,7 @@ namespace nowide {
         }
         void validate_cvt(const std::locale& loc)
         {
-            if(!std::use_facet<std::codecvt<char, char, std::mbstate_t> >(loc).always_noconv())
+            if(!std::use_facet<std::codecvt<char, char, std::mbstate_t>>(loc).always_noconv())
                 throw std::runtime_error("Converting codecvts are not supported");
         }
 
@@ -208,7 +213,10 @@ namespace nowide {
             setg(NULL, NULL, NULL);
             setp(NULL, NULL);
             if(owns_buffer_)
+            {
                 delete[] buffer_;
+                owns_buffer_ = false;
+            }
             buffer_ = s;
             buffer_size_ = (n >= 0) ? static_cast<size_t>(n) : 0;
             return this;
@@ -216,7 +224,7 @@ namespace nowide {
 
         int overflow(int c = EOF) override
         {
-            if(!(mode_ & std::ios_base::out))
+            if(!(mode_ & (std::ios_base::out | std::ios_base::app)))
                 return EOF;
 
             if(!stop_reading())
@@ -226,7 +234,7 @@ namespace nowide {
             if(n > 0)
             {
                 if(std::fwrite(pbase(), 1, n, file_) != n)
-                    return -1;
+                    return EOF;
                 setp(buffer_, buffer_ + buffer_size_);
                 if(c != EOF)
                 {
@@ -275,7 +283,11 @@ namespace nowide {
                 return EOF;
             if(!stop_writing())
                 return EOF;
-            if(buffer_size_ == 0)
+            // In text mode we cannot use a buffer size of more than 1 (i.e. single char only)
+            // This is due to the need to seek back in case of a sync to "put back" unread chars.
+            // However determining the number of chars to seek back is impossible in case there are newlines
+            // as we cannot know if those were converted.
+            if(buffer_size_ == 0 || !(mode_ & std::ios_base::binary))
             {
                 const int c = std::fgetc(file_);
                 if(c == EOF)
@@ -461,7 +473,14 @@ namespace nowide {
     ///
     /// \brief Convenience typedef
     ///
-    typedef basic_filebuf<char> filebuf;
+    using filebuf = basic_filebuf<char>;
+
+    /// Swap the basic_filebuf instances
+    template<typename CharType, typename Traits>
+    void swap(basic_filebuf<CharType, Traits>& lhs, basic_filebuf<CharType, Traits>& rhs)
+    {
+        lhs.swap(rhs);
+    }
 
 #endif // windows
 

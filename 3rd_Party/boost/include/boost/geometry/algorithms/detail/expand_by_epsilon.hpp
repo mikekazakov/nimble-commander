@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2015-2019, Oracle and/or its affiliates.
+// Copyright (c) 2015-2020, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -11,10 +11,9 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_EXPAND_EXPAND_BY_EPSILON_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_EXPAND_EXPAND_BY_EPSILON_HPP
 
-#include <cstddef>
 #include <algorithm>
-
-#include <boost/type_traits/is_integral.hpp>
+#include <cstddef>
+#include <type_traits>
 
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/coordinate_dimension.hpp>
@@ -79,7 +78,7 @@ struct corner_by_epsilon<Point, PlusOrMinus, D, D>
 template
 <
     typename Box,
-    bool Enable = ! boost::is_integral<typename coordinate_type<Box>::type>::value
+    bool Enable = ! std::is_integral<typename coordinate_type<Box>::type>::value
 >
 struct expand_by_epsilon
 {

@@ -9,17 +9,20 @@
 #if !defined(BOOST_SPIRIT_UTREE_DETAIL2)
 #define BOOST_SPIRIT_UTREE_DETAIL2
 
-#if defined(BOOST_MSVC)
-# pragma warning(push)
-# pragma warning(disable: 4800)
-#endif
-
 #include <boost/type_traits/remove_pointer.hpp>
 #include <boost/type_traits/is_pointer.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/throw_exception.hpp>
 #include <boost/iterator/iterator_traits.hpp>
 #include <cstring> // for std::memcpy
+
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable: 4800) // forcing value to bool 'true' or 'false'
+# if _MSC_VER < 1800
+#  pragma warning(disable: 4702) // unreachable code
+# endif
+#endif
 
 namespace boost { namespace spirit { namespace detail
 {
@@ -1629,7 +1632,7 @@ namespace boost { namespace spirit
     }
 }}
 
-#if defined(BOOST_MSVC)
+#ifdef _MSC_VER
 # pragma warning(pop)
 #endif
 #endif

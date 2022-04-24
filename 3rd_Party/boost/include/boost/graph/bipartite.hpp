@@ -20,7 +20,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/one_bit_color_map.hpp>
-#include <boost/bind.hpp>
 
 namespace boost
 {

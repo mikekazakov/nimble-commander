@@ -5,8 +5,8 @@
 // Copyright (c) 2011-2013 Adam Wulkiewicz, Lodz, Poland.
 // Copyright (c) 2013 Mateusz Loskot, London, UK.
 //
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2020.
+// Modifications copyright (c) 2019-2020 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -17,7 +17,7 @@
 #define BOOST_GEOMETRY_INDEX_DETAIL_RTREE_UTILITIES_STATISTICS_HPP
 
 #include <algorithm>
-#include <boost/tuple/tuple.hpp>
+#include <tuple>
 
 namespace boost { namespace geometry { namespace index { namespace detail { namespace rtree { namespace utilities {
 
@@ -87,7 +87,7 @@ struct statistics
 } // namespace visitors
 
 template <typename Rtree> inline
-boost::tuple<std::size_t, std::size_t, std::size_t, std::size_t, std::size_t, std::size_t>
+std::tuple<std::size_t, std::size_t, std::size_t, std::size_t, std::size_t, std::size_t>
 statistics(Rtree const& tree)
 {
     typedef utilities::view<Rtree> RTV;
@@ -99,7 +99,7 @@ statistics(Rtree const& tree)
 
     rtv.apply_visitor(stats_v);
     
-    return boost::make_tuple(stats_v.levels, stats_v.nodes, stats_v.leaves, stats_v.values, stats_v.values_min, stats_v.values_max);
+    return std::make_tuple(stats_v.levels, stats_v.nodes, stats_v.leaves, stats_v.values, stats_v.values_min, stats_v.values_max);
 }
 
 }}}}}} // namespace boost::geometry::index::detail::rtree::utilities

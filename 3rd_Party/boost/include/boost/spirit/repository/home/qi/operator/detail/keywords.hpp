@@ -10,9 +10,11 @@
 #if defined(_MSC_VER)
 #pragma once
 #endif
-#include <boost/fusion/include/nview.hpp>
+#include <boost/spirit/repository/home/qi/directive/kwd.hpp> // for skipper_keyword_marker
 #include <boost/spirit/home/qi/string/lit.hpp>
 #include <boost/fusion/include/at.hpp>
+#include <boost/fusion/include/any.hpp>
+
 namespace boost { namespace spirit { namespace repository { namespace qi { namespace detail {
     // Variant visitor class which handles dispatching the parsing to the selected parser
     // This also handles passing the correct attributes and flags/counters to the subject parsers
@@ -82,7 +84,9 @@ namespace boost { namespace spirit { namespace repository { namespace qi { names
                     Iterator save = first;
                     skipper_keyword_marker<Skipper,NoCasePass> 
                         marked_skipper(skipper,flags[Index::value],counters[Index::value]);
-                    if(subject.parse(first,last,context,marked_skipper,fusion::at_c<Index::value>(attr)))
+                    typename fusion::result_of::at_c<typename remove_reference<Attribute>::type, Index::value>::type
+                        attr_ = fusion::at_c<Index::value>(attr);
+                    if(subject.parse(first,last,context,marked_skipper,attr_))
                     {
                         return true;
                     }
@@ -482,7 +486,7 @@ namespace boost { namespace spirit { namespace repository { namespace qi { names
             return true;
                     }
                     // Second pass case insensitive
-                    else if(parser_index_type* val_ptr
+                    if(parser_index_type* val_ptr
                             = lookup->find(saved_first,last,nc_filter()))
                     {
                         first = saved_first;

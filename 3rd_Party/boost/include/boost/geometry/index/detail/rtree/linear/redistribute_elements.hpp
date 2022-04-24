@@ -5,8 +5,8 @@
 // Copyright (c) 2008 Federico J. Fernandez.
 // Copyright (c) 2011-2014 Adam Wulkiewicz, Lodz, Poland.
 //
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2020.
+// Modifications copyright (c) 2019-2020 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -16,8 +16,11 @@
 #ifndef BOOST_GEOMETRY_INDEX_DETAIL_RTREE_LINEAR_REDISTRIBUTE_ELEMENTS_HPP
 #define BOOST_GEOMETRY_INDEX_DETAIL_RTREE_LINEAR_REDISTRIBUTE_ELEMENTS_HPP
 
+#include <type_traits>
+
 #include <boost/core/ignore_unused.hpp>
-#include <boost/type_traits/is_unsigned.hpp>
+
+#include <boost/geometry/core/static_assert.hpp>
 
 #include <boost/geometry/index/detail/algorithms/bounds.hpp>
 #include <boost/geometry/index/detail/algorithms/content.hpp>
@@ -34,13 +37,13 @@ namespace detail { namespace rtree {
 namespace linear {
 
 template <typename R, typename T>
-inline R difference_dispatch(T const& from, T const& to, ::boost::mpl::bool_<false> const& /*is_unsigned*/)
+inline R difference_dispatch(T const& from, T const& to, std::false_type /*is_unsigned*/)
 {
     return to - from;
 }
 
 template <typename R, typename T>
-inline R difference_dispatch(T const& from, T const& to, ::boost::mpl::bool_<true> const& /*is_unsigned*/)
+inline R difference_dispatch(T const& from, T const& to, std::true_type /*is_unsigned*/)
 {
     return from <= to ? R(to - from) : -R(from - to);
 }
@@ -48,13 +51,11 @@ inline R difference_dispatch(T const& from, T const& to, ::boost::mpl::bool_<tru
 template <typename R, typename T>
 inline R difference(T const& from, T const& to)
 {
-    BOOST_MPL_ASSERT_MSG(!boost::is_unsigned<R>::value, RESULT_CANT_BE_UNSIGNED, (R));
+    BOOST_GEOMETRY_STATIC_ASSERT((! std::is_unsigned<R>::value),
+        "Result can not be an unsigned type.",
+        R);
 
-    typedef ::boost::mpl::bool_<
-        boost::is_unsigned<T>::value
-    > is_unsigned;
-
-    return difference_dispatch<R>(from, to, is_unsigned());
+    return difference_dispatch<R>(from, to, std::is_unsigned<T>());
 }
 
 // TODO: awulkiew
@@ -87,11 +88,12 @@ struct find_greatest_normalized_separation
     typedef typename rtree::element_indexable_type<element_type, Translator>::type indexable_type;
     typedef typename coordinate_type<indexable_type>::type coordinate_type;
 
-    typedef typename boost::mpl::if_c<
-        boost::is_integral<coordinate_type>::value,
-        double,
-        coordinate_type
-    >::type separation_type;
+    typedef std::conditional_t
+        <
+            std::is_integral<coordinate_type>::value,
+            double,
+            coordinate_type
+        > separation_type;
 
     typedef typename geometry::point_type<indexable_type>::type point_type;
     typedef geometry::model::box<point_type> bounds_type;

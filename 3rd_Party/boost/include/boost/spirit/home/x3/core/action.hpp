@@ -1,5 +1,5 @@
 /*=============================================================================
-    Copyright (arg) 2001-2014 Joel de Guzman
+    Copyright (c) 2001-2014 Joel de Guzman
 
     Distributed under the Boost Software License, Version 1.0. (See accompanying
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -83,8 +83,8 @@ namespace boost { namespace spirit { namespace x3
             attribute_type;
 
             // synthesize the attribute since one is not supplied
-            attribute_type attr{};
-            return parse_main(first, last, context, rcontext, attr);
+            attribute_type attribute{};
+            return parse_main(first, last, context, rcontext, attribute);
         }
         
         // main parse function

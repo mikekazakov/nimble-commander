@@ -1,8 +1,10 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2015, Oracle and/or its affiliates.
+// Copyright (c) 2015-2021, Oracle and/or its affiliates.
 
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -10,23 +12,24 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_IS_EMPTY_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_IS_EMPTY_HPP
 
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/empty.hpp>
+#include <boost/range/end.hpp>
 
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant_fwd.hpp>
+#include <boost/geometry/algorithms/not_implemented.hpp>
+#include <boost/geometry/algorithms/detail/visit.hpp>
 
 #include <boost/geometry/core/exterior_ring.hpp>
+#include <boost/geometry/core/geometry_types.hpp>
 #include <boost/geometry/core/interior_rings.hpp>
 #include <boost/geometry/core/tag.hpp>
 #include <boost/geometry/core/tags.hpp>
+#include <boost/geometry/core/visit.hpp>
 
-#include <boost/geometry/algorithms/not_implemented.hpp>
-
-#include <boost/geometry/algorithms/detail/check_iterator_range.hpp>
-
+#include <boost/geometry/geometries/adapted/boost_variant.hpp> // For backward compatibility
 #include <boost/geometry/geometries/concepts/check.hpp>
 
+#include <boost/geometry/util/type_traits_std.hpp>
 
 namespace boost { namespace geometry
 {
@@ -59,10 +62,8 @@ class polygon_is_empty
     template <typename InteriorRings>
     static inline bool check_interior_rings(InteriorRings const& interior_rings)
     {
-        return check_iterator_range
-            <
-                range_is_empty, true // allow empty range
-            >::apply(boost::begin(interior_rings), boost::end(interior_rings));
+        return std::all_of(boost::begin(interior_rings), boost::end(interior_rings),
+                           []( auto const& range ){ return boost::empty(range); });
     }
 
 public:
@@ -80,12 +81,10 @@ struct multi_is_empty
     template <typename MultiGeometry>
     static inline bool apply(MultiGeometry const& multigeometry)
     {
-        return check_iterator_range
-            <
-                Policy, true // allow empty range
-            >::apply(boost::begin(multigeometry), boost::end(multigeometry));
+        return std::all_of(boost::begin(multigeometry), 
+                           boost::end(multigeometry), 
+                           []( auto const& range ){ return Policy::apply(range); });
     }
-    
 };
 
 }} // namespace detail::is_empty
@@ -149,10 +148,10 @@ struct is_empty<Geometry, multi_polygon_tag>
 #endif // DOXYGEN_NO_DISPATCH
 
 
-namespace resolve_variant
+namespace resolve_dynamic
 {
 
-template <typename Geometry>
+template <typename Geometry, typename Tag = typename tag<Geometry>::type>
 struct is_empty
 {
     static inline bool apply(Geometry const& geometry)
@@ -163,26 +162,36 @@ struct is_empty
     }
 };
 
-template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
-struct is_empty<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+template <typename Geometry>
+struct is_empty<Geometry, dynamic_geometry_tag>
 {
-    struct visitor : boost::static_visitor<bool>
+    static inline bool apply(Geometry const& geometry)
     {
-        template <typename Geometry>
-        inline bool operator()(Geometry const& geometry) const
+        bool result = true;
+        traits::visit<Geometry>::apply([&](auto const& g)
         {
-            return is_empty<Geometry>::apply(geometry);
-        }
-    };
-
-    static bool
-    apply(boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry)
-    {
-        return boost::apply_visitor(visitor(), geometry);
+            result = is_empty<util::remove_cref_t<decltype(g)>>::apply(g);
+        }, geometry);
+        return result;
     }
 };
 
-} // namespace resolve_variant
+template <typename Geometry>
+struct is_empty<Geometry, geometry_collection_tag>
+{
+    static inline bool apply(Geometry const& geometry)
+    {
+        bool result = true;
+        detail::visit_breadth_first([&](auto const& g)
+        {
+            result = is_empty<util::remove_cref_t<decltype(g)>>::apply(g);
+            return result;
+        }, geometry);
+        return result;
+    }
+};
+
+} // namespace resolve_dynamic
 
 
 /*!
@@ -197,7 +206,7 @@ struct is_empty<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
 template <typename Geometry>
 inline bool is_empty(Geometry const& geometry)
 {
-    return resolve_variant::is_empty<Geometry>::apply(geometry);
+    return resolve_dynamic::is_empty<Geometry>::apply(geometry);
 }
 
 

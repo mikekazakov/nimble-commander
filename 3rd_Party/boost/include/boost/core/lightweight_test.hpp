@@ -27,9 +27,12 @@
 #include <exception>
 #include <iostream>
 #include <iterator>
+#include <string>
 #include <cstdlib>
 #include <cstring>
 #include <cstddef>
+#include <cctype>
+#include <cstdio>
 
 #if defined(_MSC_VER) && defined(_CPPLIB_VER) && defined(_DEBUG)
 # include <crtdbg.h>
@@ -171,6 +174,51 @@ template<class T> inline const void* test_output_impl(T volatile* v) { return co
 
 #if !defined( BOOST_NO_CXX11_NULLPTR )
 inline const void* test_output_impl(std::nullptr_t) { return nullptr; }
+#endif
+
+// print chars as numeric
+
+inline int test_output_impl( signed char const& v ) { return v; }
+inline unsigned test_output_impl( unsigned char const& v ) { return v; }
+
+// Whether wchar_t is signed is implementation-defined
+
+template<bool Signed> struct lwt_long_type {};
+template<> struct lwt_long_type<true> { typedef long type; };
+template<> struct lwt_long_type<false> { typedef unsigned long type; };
+
+inline lwt_long_type<(static_cast<wchar_t>(-1) < static_cast<wchar_t>(0))>::type test_output_impl( wchar_t const& v ) { return v; }
+
+#if !defined( BOOST_NO_CXX11_CHAR16_T )
+inline unsigned long test_output_impl( char16_t const& v ) { return v; }
+#endif
+
+#if !defined( BOOST_NO_CXX11_CHAR32_T )
+inline unsigned long test_output_impl( char32_t const& v ) { return v; }
+#endif
+
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4996)
+#endif
+
+inline std::string test_output_impl( char const& v )
+{
+    if( std::isprint( static_cast<unsigned char>( v ) ) )
+    {
+        return std::string( 1, v );
+    }
+    else
+    {
+        char buffer[ 8 ];
+        std::sprintf( buffer, "\\x%02X", static_cast<unsigned char>( v ) );
+
+        return buffer;
+    }
+}
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
 #endif
 
 // predicates

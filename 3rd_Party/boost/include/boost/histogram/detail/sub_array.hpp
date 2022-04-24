@@ -8,6 +8,7 @@
 #define BOOST_HISTOGRAM_DETAIL_SUB_ARRAY_HPP
 
 #include <algorithm>
+#include <boost/throw_exception.hpp>
 #include <stdexcept>
 
 namespace boost {
@@ -42,12 +43,12 @@ public:
   }
 
   reference at(size_type pos) noexcept {
-    if (pos >= size()) throw std::out_of_range{"pos is out of range"};
+    if (pos >= size()) BOOST_THROW_EXCEPTION(std::out_of_range{"pos is out of range"});
     return data_[pos];
   }
 
   const_reference at(size_type pos) const noexcept {
-    if (pos >= size()) throw std::out_of_range{"pos is out of range"};
+    if (pos >= size()) BOOST_THROW_EXCEPTION(std::out_of_range{"pos is out of range"});
     return data_[pos];
   }
 

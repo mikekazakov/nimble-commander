@@ -7,36 +7,35 @@
 #ifndef BOOST_MT_ATOMIC_DETAIL_HPP
 #define BOOST_MT_ATOMIC_DETAIL_HPP
 
-#include <boost/config.hpp>
+#include <boost/multiprecision/detail/standalone_config.hpp>
 
 #ifdef BOOST_HAS_THREADS
 
-#ifndef BOOST_NO_CXX11_HDR_ATOMIC
 #  include <atomic>
 #  define BOOST_MATH_ATOMIC_NS std
 namespace boost {
    namespace multiprecision {
       namespace detail {
 #if ATOMIC_INT_LOCK_FREE == 2
-         typedef std::atomic<int> atomic_counter_type;
-         typedef std::atomic<unsigned> atomic_unsigned_type;
-         typedef int atomic_integer_type;
-         typedef unsigned atomic_unsigned_integer_type;
+         using atomic_counter_type = std::atomic<int>;
+         using atomic_unsigned_type = std::atomic<unsigned>;
+         using atomic_integer_type = int;
+         using atomic_unsigned_integer_type = unsigned;
 #elif ATOMIC_SHORT_LOCK_FREE == 2
-         typedef std::atomic<short> atomic_counter_type;
-         typedef std::atomic<unsigned short> atomic_unsigned_type;
-         typedef short atomic_integer_type;
-         typedef unsigned short atomic_unsigned_integer_type;
+         using atomic_counter_type = std::atomic<short>;
+         using atomic_unsigned_type = std::atomic<unsigned short>;
+         using atomic_integer_type = short;
+         using atomic_unsigned_integer_type = unsigned short;
 #elif ATOMIC_LONG_LOCK_FREE == 2
-         typedef std::atomic<long> atomic_unsigned_integer_type;
-         typedef std::atomic<unsigned long> atomic_unsigned_type;
-         typedef unsigned long atomic_unsigned_integer_type;
-         typedef long atomic_integer_type;
+         using atomic_unsigned_integer_type = std::atomic<long>;
+         using atomic_unsigned_type = std::atomic<unsigned long>;
+         using atomic_unsigned_integer_type = unsigned long;
+         using atomic_integer_type = long;
 #elif ATOMIC_LLONG_LOCK_FREE == 2
-         typedef std::atomic<long long> atomic_unsigned_integer_type;
-         typedef std::atomic<unsigned long long> atomic_unsigned_type;
-         typedef long long atomic_integer_type;
-         typedef unsigned long long atomic_unsigned_integer_type;
+         using atomic_unsigned_integer_type = std::atomic<long long>;
+         using atomic_unsigned_type = std::atomic<unsigned long long>;
+         using atomic_integer_type = long long;
+         using atomic_unsigned_integer_type = unsigned long long;
 #else
 
 #define BOOST_MT_NO_ATOMIC_INT
@@ -44,48 +43,6 @@ namespace boost {
 #endif
       }
    }}
-#else // BOOST_NO_CXX11_HDR_ATOMIC
-//
-// We need Boost.Atomic, but on any platform that supports auto-linking we do
-// not need to link against a separate library:
-//
-#define BOOST_ATOMIC_NO_LIB
-#include <boost/atomic.hpp>
-#  define BOOST_MATH_ATOMIC_NS boost
-
-namespace boost{ namespace multiprecision{ namespace detail{
-
-//
-// We need a type to use as an atomic counter:
-//
-#if BOOST_ATOMIC_INT_LOCK_FREE == 2
-typedef boost::atomic<int> atomic_counter_type;
-typedef boost::atomic<unsigned> atomic_unsigned_type;
-typedef int atomic_integer_type;
-typedef unsigned atomic_unsigned_integer_type;
-#elif BOOST_ATOMIC_SHORT_LOCK_FREE == 2
-typedef boost::atomic<short> atomic_counter_type;
-typedef boost::atomic<unsigned short> atomic_unsigned_type;
-typedef short atomic_integer_type;
-typedef unsigned short atomic_unsigned_integer_type;
-#elif BOOST_ATOMIC_LONG_LOCK_FREE == 2
-typedef boost::atomic<long> atomic_counter_type;
-typedef boost::atomic<unsigned long> atomic_unsigned_type;
-typedef long atomic_integer_type;
-typedef unsigned long atomic_unsigned_integer_type;
-#elif BOOST_ATOMIC_LLONG_LOCK_FREE == 2
-typedef boost::atomic<long long> atomic_counter_type;
-typedef boost::atomic<unsigned long long> atomic_unsigned_type;
-typedef long long atomic_integer_type;
-typedef unsigned long long atomic_unsigned_integer_type;
-#else
-#  define BOOST_MT_NO_ATOMIC_INT
-#endif
-
-}}} // namespaces
-
-#endif  // BOOST_NO_CXX11_HDR_ATOMIC
-
 #else // BOOST_HAS_THREADS
 
 #define BOOST_MT_NO_ATOMIC_INT
@@ -95,9 +52,9 @@ typedef unsigned long long atomic_unsigned_integer_type;
 namespace boost { namespace multiprecision { namespace detail {
 
 #ifdef BOOST_MT_NO_ATOMIC_INT
-typedef unsigned precision_type;
+using precision_type = unsigned;
 #else
-typedef atomic_unsigned_type precision_type;
+using precision_type = atomic_unsigned_type;
 #endif
 
 } } }

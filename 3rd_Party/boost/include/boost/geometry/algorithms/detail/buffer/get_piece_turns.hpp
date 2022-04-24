@@ -3,8 +3,8 @@
 // Copyright (c) 2012-2014 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2017, 2018.
-// Modifications copyright (c) 2017-2018 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2020.
+// Modifications copyright (c) 2017-2020 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -15,7 +15,9 @@
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_BUFFER_GET_PIECE_TURNS_HPP
 
 #include <boost/core/ignore_unused.hpp>
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/core/assert.hpp>
 #include <boost/geometry/algorithms/equals.hpp>
@@ -115,7 +117,7 @@ template
     typename Pieces,
     typename Rings,
     typename Turns,
-    typename IntersectionStrategy,
+    typename Strategy,
     typename RobustPolicy
 >
 class piece_turn_visitor
@@ -123,7 +125,7 @@ class piece_turn_visitor
     Pieces const& m_pieces;
     Rings const& m_rings;
     Turns& m_turns;
-    IntersectionStrategy const& m_intersection_strategy;
+    Strategy const& m_strategy;
     RobustPolicy const& m_robust_policy;
 
     template <typename Piece>
@@ -148,7 +150,6 @@ class piece_turn_visitor
 
         return ! m_rings[piece1.first_seg_id.multi_index].has_concave;
     }
-
 
     template <std::size_t Dimension, typename Iterator, typename Box>
     inline void move_begin_iterator(Iterator& it_begin, Iterator it_beyond,
@@ -265,12 +266,12 @@ class piece_turn_visitor
 
                 typedef detail::overlay::get_turn_info
                     <
-                        detail::overlay::assign_null_policy
+                        detail::overlay::assign_policy_only_start_turns
                     > turn_policy;
 
                 turn_policy::apply(unique_sub_range1, unique_sub_range2,
                                    the_model,
-                                   m_intersection_strategy,
+                                   m_strategy,
                                    m_robust_policy,
                                    std::back_inserter(m_turns));
             }
@@ -282,12 +283,12 @@ public:
     piece_turn_visitor(Pieces const& pieces,
             Rings const& ring_collection,
             Turns& turns,
-            IntersectionStrategy const& intersection_strategy,
+            Strategy const& strategy,
             RobustPolicy const& robust_policy)
         : m_pieces(pieces)
         , m_rings(ring_collection)
         , m_turns(turns)
-        , m_intersection_strategy(intersection_strategy)
+        , m_strategy(strategy)
         , m_robust_policy(robust_policy)
     {}
 
@@ -306,7 +307,7 @@ public:
           || is_on_same_convex_ring(piece1, piece2)
           || detail::disjoint::disjoint_box_box(section1.bounding_box,
                                                 section2.bounding_box,
-                                                m_intersection_strategy.get_disjoint_box_box_strategy()) )
+                                                m_strategy) )
         {
             return true;
         }

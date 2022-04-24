@@ -13,19 +13,19 @@
 # pragma warning( disable: 4521 4522 ) // multiple copy operators
 #endif
 
-#ifndef BOOST_MP11_HPP_INCLUDED
 #include <boost/mp11.hpp>
-#endif
+#include <boost/assert.hpp>
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
 #include <boost/cstdint.hpp>
 #include <cstddef>
 #include <type_traits>
 #include <exception>
-#include <cassert>
 #include <initializer_list>
 #include <utility>
 #include <functional> // std::hash
+#include <cstdint>
+#include <iosfwd>
 
 //
 
@@ -37,6 +37,8 @@ namespace boost
 BOOST_NORETURN void throw_exception( std::exception const & e ); // user defined
 
 #endif
+
+template<class T> struct hash;
 
 namespace variant2
 {
@@ -81,12 +83,25 @@ struct monostate
 {
 };
 
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1940)
+
 constexpr bool operator<(monostate, monostate) noexcept { return false; }
 constexpr bool operator>(monostate, monostate) noexcept { return false; }
 constexpr bool operator<=(monostate, monostate) noexcept { return true; }
 constexpr bool operator>=(monostate, monostate) noexcept { return true; }
 constexpr bool operator==(monostate, monostate) noexcept { return true; }
 constexpr bool operator!=(monostate, monostate) noexcept { return false; }
+
+#else
+
+constexpr bool operator<(monostate const&, monostate const&) noexcept { return false; }
+constexpr bool operator>(monostate const&, monostate const&) noexcept { return false; }
+constexpr bool operator<=(monostate const&, monostate const&) noexcept { return true; }
+constexpr bool operator>=(monostate const&, monostate const&) noexcept { return true; }
+constexpr bool operator==(monostate const&, monostate const&) noexcept { return true; }
+constexpr bool operator!=(monostate const&, monostate const&) noexcept { return false; }
+
+#endif
 
 // variant forward declaration
 
@@ -351,36 +366,49 @@ template<std::size_t I, class... T> constexpr variant_alternative_t<I, variant<T
 #endif
 }
 
-// detail::unsafe_get (for visit)
+// unsafe_get
 
-namespace detail
-{
+#if !defined(BOOST_NO_CXX14_CONSTEXPR)
+# define BOOST_VARIANT2_CX14_ASSERT(expr) BOOST_ASSERT(expr);
+#else
+# define BOOST_VARIANT2_CX14_ASSERT(expr)
+#endif
 
 template<std::size_t I, class... T> constexpr variant_alternative_t<I, variant<T...>>& unsafe_get(variant<T...>& v)
 {
     static_assert( I < sizeof...(T), "Index out of bounds" );
+
+    BOOST_VARIANT2_CX14_ASSERT( v.index() == I )
+
     return v._get_impl( mp11::mp_size_t<I>() );
 }
 
 template<std::size_t I, class... T> constexpr variant_alternative_t<I, variant<T...>>&& unsafe_get(variant<T...>&& v)
 {
     static_assert( I < sizeof...(T), "Index out of bounds" );
+
+    BOOST_VARIANT2_CX14_ASSERT( v.index() == I )
+
     return std::move( v._get_impl( mp11::mp_size_t<I>() ) );
 }
 
 template<std::size_t I, class... T> constexpr variant_alternative_t<I, variant<T...>> const& unsafe_get(variant<T...> const& v)
 {
     static_assert( I < sizeof...(T), "Index out of bounds" );
+
+    BOOST_VARIANT2_CX14_ASSERT( v.index() == I )
+
     return v._get_impl( mp11::mp_size_t<I>() );
 }
 
 template<std::size_t I, class... T> constexpr variant_alternative_t<I, variant<T...>> const&& unsafe_get(variant<T...> const&& v)
 {
     static_assert( I < sizeof...(T), "Index out of bounds" );
+
+    BOOST_VARIANT2_CX14_ASSERT( v.index() == I )
+
     return std::move( v._get_impl( mp11::mp_size_t<I>() ) );
 }
-
-} // namespace detail
 
 // get (type)
 
@@ -520,11 +548,11 @@ template<class T1, class... T> union variant_storage_impl<mp11::mp_false, T1, T.
     T1 first_;
     variant_storage<T...> rest_;
 
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<0>, A&&... a ): first_( std::forward<A>(a)... )
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<0>, A&&... a ): first_( std::forward<A>(a)... )
     {
     }
 
-    template<std::size_t I, class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<I>, A&&... a ): rest_( mp11::mp_size_t<I-1>(), std::forward<A>(a)... )
+    template<std::size_t I, class... A> constexpr variant_storage_impl( mp11::mp_size_t<I>, A&&... a ): rest_( mp11::mp_size_t<I-1>(), std::forward<A>(a)... )
     {
     }
 
@@ -564,18 +592,18 @@ template<class T0, class T1, class T2, class T3, class T4, class T5, class T6, c
 
     variant_storage<T...> rest_;
 
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<0>, A&&... a ): t0_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<1>, A&&... a ): t1_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<2>, A&&... a ): t2_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<3>, A&&... a ): t3_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<4>, A&&... a ): t4_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<5>, A&&... a ): t5_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<6>, A&&... a ): t6_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<7>, A&&... a ): t7_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<8>, A&&... a ): t8_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<9>, A&&... a ): t9_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<0>, A&&... a ): t0_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<1>, A&&... a ): t1_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<2>, A&&... a ): t2_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<3>, A&&... a ): t3_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<4>, A&&... a ): t4_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<5>, A&&... a ): t5_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<6>, A&&... a ): t6_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<7>, A&&... a ): t7_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<8>, A&&... a ): t8_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<9>, A&&... a ): t9_( std::forward<A>(a)... ) {}
 
-    template<std::size_t I, class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<I>, A&&... a ): rest_( mp11::mp_size_t<I-10>(), std::forward<A>(a)... ) {}
+    template<std::size_t I, class... A> constexpr variant_storage_impl( mp11::mp_size_t<I>, A&&... a ): rest_( mp11::mp_size_t<I-10>(), std::forward<A>(a)... ) {}
 
     ~variant_storage_impl()
     {
@@ -637,11 +665,11 @@ template<class T1, class... T> union variant_storage_impl<mp11::mp_true, T1, T..
     T1 first_;
     variant_storage<T...> rest_;
 
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<0>, A&&... a ): first_( std::forward<A>(a)... )
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<0>, A&&... a ): first_( std::forward<A>(a)... )
     {
     }
 
-    template<std::size_t I, class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<I>, A&&... a ): rest_( mp11::mp_size_t<I-1>(), std::forward<A>(a)... )
+    template<std::size_t I, class... A> constexpr variant_storage_impl( mp11::mp_size_t<I>, A&&... a ): rest_( mp11::mp_size_t<I-1>(), std::forward<A>(a)... )
     {
     }
 
@@ -687,18 +715,18 @@ template<class T0, class T1, class T2, class T3, class T4, class T5, class T6, c
 
     variant_storage<T...> rest_;
 
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<0>, A&&... a ): t0_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<1>, A&&... a ): t1_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<2>, A&&... a ): t2_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<3>, A&&... a ): t3_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<4>, A&&... a ): t4_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<5>, A&&... a ): t5_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<6>, A&&... a ): t6_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<7>, A&&... a ): t7_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<8>, A&&... a ): t8_( std::forward<A>(a)... ) {}
-    template<class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<9>, A&&... a ): t9_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<0>, A&&... a ): t0_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<1>, A&&... a ): t1_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<2>, A&&... a ): t2_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<3>, A&&... a ): t3_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<4>, A&&... a ): t4_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<5>, A&&... a ): t5_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<6>, A&&... a ): t6_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<7>, A&&... a ): t7_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<8>, A&&... a ): t8_( std::forward<A>(a)... ) {}
+    template<class... A> constexpr variant_storage_impl( mp11::mp_size_t<9>, A&&... a ): t9_( std::forward<A>(a)... ) {}
 
-    template<std::size_t I, class... A> constexpr explicit variant_storage_impl( mp11::mp_size_t<I>, A&&... a ): rest_( mp11::mp_size_t<I-10>(), std::forward<A>(a)... ) {}
+    template<std::size_t I, class... A> constexpr variant_storage_impl( mp11::mp_size_t<I>, A&&... a ): rest_( mp11::mp_size_t<I-10>(), std::forward<A>(a)... ) {}
 
     template<class... A> void emplace_impl( mp11::mp_false, mp11::mp_size_t<0>, A&&... a ) { ::new( &t0_ ) T0( std::forward<A>(a)... ); }
     template<class... A> void emplace_impl( mp11::mp_false, mp11::mp_size_t<1>, A&&... a ) { ::new( &t1_ ) T1( std::forward<A>(a)... ); }
@@ -814,21 +842,21 @@ struct none {};
 // trivially destructible, single buffered
 template<class... T> struct variant_base_impl<true, true, T...>
 {
-    int ix_;
-    variant_storage<none, T...> st1_;
+    variant_storage<none, T...> st_;
+    unsigned ix_;
 
-    constexpr variant_base_impl(): ix_( 0 ), st1_( mp11::mp_size_t<0>() )
+    constexpr variant_base_impl(): st_( mp11::mp_size_t<0>() ), ix_( 0 )
     {
     }
 
-    template<class I, class... A> constexpr explicit variant_base_impl( I, A&&... a ): ix_( I::value + 1 ), st1_( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... )
+    template<class I, class... A> constexpr explicit variant_base_impl( I, A&&... a ): st_( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... ), ix_( I::value + 1 )
     {
     }
 
     // requires: ix_ == 0
     template<class I, class... A> void _replace( I, A&&... a )
     {
-        ::new( &st1_ ) variant_storage<none, T...>( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... );
+        ::new( &st_ ) variant_storage<none, T...>( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... );
         ix_ = I::value + 1;
     }
 
@@ -841,24 +869,25 @@ template<class... T> struct variant_base_impl<true, true, T...>
     {
         size_t const J = I+1;
 
-        assert( ix_ == J );
+        BOOST_ASSERT( ix_ == J );
 
-        return st1_.get( mp11::mp_size_t<J>() );
+        return st_.get( mp11::mp_size_t<J>() );
     }
 
     template<std::size_t I> constexpr mp11::mp_at_c<variant<T...>, I> const& _get_impl( mp11::mp_size_t<I> ) const noexcept
     {
         // size_t const J = I+1;
-        // assert( ix_ == I+1 );
 
-        return st1_.get( mp11::mp_size_t<I+1>() );
+        BOOST_VARIANT2_CX14_ASSERT( ix_ == I+1 )
+
+        return st_.get( mp11::mp_size_t<I+1>() );
     }
 
     template<std::size_t J, class U, class... A> BOOST_CXX14_CONSTEXPR void emplace_impl( mp11::mp_true, A&&... a )
     {
         static_assert( std::is_nothrow_constructible<U, A&&...>::value, "Logic error: U must be nothrow constructible from A&&..." );
 
-        st1_.emplace( mp11::mp_size_t<J>(), std::forward<A>(a)... );
+        st_.emplace( mp11::mp_size_t<J>(), std::forward<A>(a)... );
         ix_ = J;
     }
 
@@ -868,7 +897,7 @@ template<class... T> struct variant_base_impl<true, true, T...>
 
         U tmp( std::forward<A>(a)... );
 
-        st1_.emplace( mp11::mp_size_t<J>(), std::move(tmp) );
+        st_.emplace( mp11::mp_size_t<J>(), std::move(tmp) );
         ix_ = J;
     }
 
@@ -884,84 +913,79 @@ template<class... T> struct variant_base_impl<true, true, T...>
 // trivially destructible, double buffered
 template<class... T> struct variant_base_impl<true, false, T...>
 {
-    int ix_;
-    variant_storage<none, T...> st1_;
-    variant_storage<none, T...> st2_;
+    variant_storage<none, T...> st_[ 2 ];
+    unsigned ix_;
 
-    constexpr variant_base_impl(): ix_( 0 ), st1_( mp11::mp_size_t<0>() ), st2_( mp11::mp_size_t<0>() )
+    constexpr variant_base_impl(): st_{ { mp11::mp_size_t<0>() }, { mp11::mp_size_t<0>() } }, ix_( 0 )
     {
     }
 
-    template<class I, class... A> constexpr explicit variant_base_impl( I, A&&... a ): ix_( I::value + 1 ), st1_( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... ), st2_( mp11::mp_size_t<0>() )
+    template<class I, class... A> constexpr explicit variant_base_impl( I, A&&... a ): st_{ { mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... }, { mp11::mp_size_t<0>() } }, ix_( ( I::value + 1 ) * 2 )
     {
     }
 
     // requires: ix_ == 0
     template<class I, class... A> void _replace( I, A&&... a )
     {
-        ::new( &st1_ ) variant_storage<none, T...>( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... );
-        ix_ = I::value + 1;
+        ::new( &st_[ 0 ] ) variant_storage<none, T...>( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... );
+        ix_ = ( I::value + 1 ) * 2;
     }
 
     constexpr std::size_t index() const noexcept
     {
-        return ix_ >= 0? ix_ - 1: -ix_ - 1;
+        return ix_ / 2 - 1;
     }
 
     template<std::size_t I> BOOST_CXX14_CONSTEXPR mp11::mp_at_c<variant<T...>, I>& _get_impl( mp11::mp_size_t<I> ) noexcept
     {
+        BOOST_ASSERT( index() == I );
+
         size_t const J = I+1;
 
-        assert( ix_ == J || -ix_ == J );
-
         constexpr mp11::mp_size_t<J> j{};
-        return ix_ >= 0? st1_.get( j ): st2_.get( j );
+        return st_[ ix_ & 1 ].get( j );
     }
 
     template<std::size_t I> constexpr mp11::mp_at_c<variant<T...>, I> const& _get_impl( mp11::mp_size_t<I> ) const noexcept
     {
+        BOOST_VARIANT2_CX14_ASSERT( index() == I )
+
         // size_t const J = I+1;
-        // assert( ix_ == J || -ix_ == J );
         // constexpr mp_size_t<J> j{};
 
-        return ix_ >= 0? st1_.get( mp11::mp_size_t<I+1>() ): st2_.get( mp11::mp_size_t<I+1>() );
+        return st_[ ix_ & 1 ].get( mp11::mp_size_t<I+1>() );
     }
 
     template<std::size_t I, class... A> BOOST_CXX14_CONSTEXPR void emplace( A&&... a )
     {
         size_t const J = I+1;
 
-        if( ix_ >= 0 )
-        {
-            st2_.emplace( mp11::mp_size_t<J>(), std::forward<A>(a)... );
-            ix_ = -static_cast<int>( J );
-        }
-        else
-        {
-            st1_.emplace( mp11::mp_size_t<J>(), std::forward<A>(a)... );
-            ix_ = J;
-        }
+        unsigned i2 = 1 - ( ix_ & 1 );
+
+        st_[ i2 ].emplace( mp11::mp_size_t<J>(), std::forward<A>(a)... );
+
+        ix_ = J * 2 + i2;
     }
 };
 
 // not trivially destructible, single buffered
 template<class... T> struct variant_base_impl<false, true, T...>
 {
-    int ix_;
-    variant_storage<none, T...> st1_;
+    variant_storage<none, T...> st_;
+    unsigned ix_;
 
-    constexpr variant_base_impl(): ix_( 0 ), st1_( mp11::mp_size_t<0>() )
+    constexpr variant_base_impl(): st_( mp11::mp_size_t<0>() ), ix_( 0 )
     {
     }
 
-    template<class I, class... A> constexpr explicit variant_base_impl( I, A&&... a ): ix_( I::value + 1 ), st1_( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... )
+    template<class I, class... A> constexpr explicit variant_base_impl( I, A&&... a ): st_( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... ), ix_( I::value + 1 )
     {
     }
 
     // requires: ix_ == 0
     template<class I, class... A> void _replace( I, A&&... a )
     {
-        ::new( &st1_ ) variant_storage<none, T...>( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... );
+        ::new( &st_ ) variant_storage<none, T...>( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... );
         ix_ = I::value + 1;
     }
 
@@ -977,7 +1001,7 @@ template<class... T> struct variant_base_impl<false, true, T...>
         template<class I> void operator()( I ) const noexcept
         {
             using U = mp11::mp_at<mp11::mp_list<none, T...>, I>;
-            this_->st1_.get( I() ).~U();
+            this_->st_.get( I() ).~U();
         }
     };
 
@@ -1003,17 +1027,18 @@ template<class... T> struct variant_base_impl<false, true, T...>
     {
         size_t const J = I+1;
 
-        assert( ix_ == J );
+        BOOST_ASSERT( ix_ == J );
 
-        return st1_.get( mp11::mp_size_t<J>() );
+        return st_.get( mp11::mp_size_t<J>() );
     }
 
     template<std::size_t I> constexpr mp11::mp_at_c<variant<T...>, I> const& _get_impl( mp11::mp_size_t<I> ) const noexcept
     {
         // size_t const J = I+1;
-        // assert( ix_ == J );
 
-        return st1_.get( mp11::mp_size_t<I+1>() );
+        BOOST_VARIANT2_CX14_ASSERT( ix_ == I+1 )
+
+        return st_.get( mp11::mp_size_t<I+1>() );
     }
 
     template<std::size_t I, class... A> void emplace( A&&... a )
@@ -1028,7 +1053,7 @@ template<class... T> struct variant_base_impl<false, true, T...>
 
         _destroy();
 
-        st1_.emplace( mp11::mp_size_t<J>(), std::move(tmp) );
+        st_.emplace( mp11::mp_size_t<J>(), std::move(tmp) );
         ix_ = J;
     }
 };
@@ -1036,23 +1061,61 @@ template<class... T> struct variant_base_impl<false, true, T...>
 // not trivially destructible, double buffered
 template<class... T> struct variant_base_impl<false, false, T...>
 {
-    int ix_;
-    variant_storage<none, T...> st1_;
-    variant_storage<none, T...> st2_;
+#if defined(__GNUC__) && __GNUC__ < 11 && !defined(__clang__) && !defined(__INTEL_COMPILER)
 
-    constexpr variant_base_impl(): ix_( 0 ), st1_( mp11::mp_size_t<0>() ), st2_( mp11::mp_size_t<0>() )
+    // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63707 :-(
+
+    variant_storage<none, T...> st1_, st2_;
+    unsigned ix_;
+
+    constexpr variant_base_impl(): st1_( mp11::mp_size_t<0>() ), st2_( mp11::mp_size_t<0>() ), ix_( 0 )
     {
     }
 
-    template<class I, class... A> constexpr explicit variant_base_impl( I, A&&... a ): ix_( I::value + 1 ), st1_( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... ), st2_( mp11::mp_size_t<0>() )
+    template<class I, class... A> constexpr explicit variant_base_impl( I, A&&... a ): st1_( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... ), st2_( mp11::mp_size_t<0>() ), ix_( ( I::value + 1 ) * 2 )
     {
     }
+
+    BOOST_CXX14_CONSTEXPR variant_storage<none, T...>& storage( unsigned i2 ) noexcept
+    {
+        return i2 == 0? st1_: st2_;
+    }
+
+    constexpr variant_storage<none, T...> const& storage( unsigned i2 ) const noexcept
+    {
+        return i2 == 0? st1_: st2_;
+    }
+
+#else
+
+    variant_storage<none, T...> st_[ 2 ];
+    unsigned ix_;
+
+    constexpr variant_base_impl(): st_{ { mp11::mp_size_t<0>() }, { mp11::mp_size_t<0>() } }, ix_( 0 )
+    {
+    }
+
+    template<class I, class... A> constexpr explicit variant_base_impl( I, A&&... a ): st_{ { mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... }, { mp11::mp_size_t<0>() } }, ix_( ( I::value + 1 ) * 2 )
+    {
+    }
+
+    BOOST_CXX14_CONSTEXPR variant_storage<none, T...>& storage( unsigned i2 ) noexcept
+    {
+        return st_[ i2 ];
+    }
+
+    constexpr variant_storage<none, T...> const& storage( unsigned i2 ) const noexcept
+    {
+        return st_[ i2 ];
+    }
+
+#endif
 
     // requires: ix_ == 0
     template<class I, class... A> void _replace( I, A&&... a )
     {
-        ::new( &st1_ ) variant_storage<none, T...>( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... );
-        ix_ = I::value + 1;
+        ::new( &storage( 0 ) ) variant_storage<none, T...>( mp11::mp_size_t<I::value + 1>(), std::forward<A>(a)... );
+        ix_ = ( I::value + 1 ) * 2;
     }
 
     //[&]( auto I ){
@@ -1063,35 +1126,18 @@ template<class... T> struct variant_base_impl<false, false, T...>
     struct _destroy_L1
     {
         variant_base_impl * this_;
+        unsigned i2_;
 
         template<class I> void operator()( I ) const noexcept
         {
             using U = mp11::mp_at<mp11::mp_list<none, T...>, I>;
-            this_->st1_.get( I() ).~U();
-        }
-    };
-
-    struct _destroy_L2
-    {
-        variant_base_impl * this_;
-
-        template<class I> void operator()( I ) const noexcept
-        {
-            using U = mp11::mp_at<mp11::mp_list<none, T...>, I>;
-            this_->st2_.get( I() ).~U();
+            this_->storage( i2_ ).get( I() ).~U();
         }
     };
 
     void _destroy() noexcept
     {
-        if( ix_ > 0 )
-        {
-            mp11::mp_with_index<1 + sizeof...(T)>( ix_, _destroy_L1{ this } );
-        }
-        else if( ix_ < 0 )
-        {
-            mp11::mp_with_index<1 + sizeof...(T)>( -ix_, _destroy_L2{ this } );
-        }
+        mp11::mp_with_index<1 + sizeof...(T)>( ix_ / 2, _destroy_L1{ this, ix_ & 1 } );
     }
 
     ~variant_base_impl() noexcept
@@ -1101,46 +1147,39 @@ template<class... T> struct variant_base_impl<false, false, T...>
 
     constexpr std::size_t index() const noexcept
     {
-        return ix_ >= 0? ix_ - 1: -ix_ - 1;
+        return ix_ / 2 - 1;
     }
 
     template<std::size_t I> BOOST_CXX14_CONSTEXPR mp11::mp_at_c<variant<T...>, I>& _get_impl( mp11::mp_size_t<I> ) noexcept
     {
+        BOOST_ASSERT( index() == I );
+
         size_t const J = I+1;
 
-        assert( ix_ == J || -ix_ == J );
-
         constexpr mp11::mp_size_t<J> j{};
-        return ix_ >= 0? st1_.get( j ): st2_.get( j );
+        return storage( ix_ & 1 ).get( j );
     }
 
     template<std::size_t I> constexpr mp11::mp_at_c<variant<T...>, I> const& _get_impl( mp11::mp_size_t<I> ) const noexcept
     {
+        BOOST_VARIANT2_CX14_ASSERT( index() == I )
+
         // size_t const J = I+1;
-        // assert( ix_ == J || -ix_ == J );
         // constexpr mp_size_t<J> j{};
 
-        return ix_ >= 0? st1_.get( mp11::mp_size_t<I+1>() ): st2_.get( mp11::mp_size_t<I+1>() );
+        return storage( ix_ & 1 ).get( mp11::mp_size_t<I+1>() );
     }
 
     template<std::size_t I, class... A> void emplace( A&&... a )
     {
         size_t const J = I+1;
 
-        if( ix_ >= 0 )
-        {
-            st2_.emplace( mp11::mp_size_t<J>(), std::forward<A>(a)... );
-            _destroy();
+        unsigned i2 = 1 - ( ix_ & 1 );
 
-            ix_ = -static_cast<int>( J );
-        }
-        else
-        {
-            st1_.emplace( mp11::mp_size_t<J>(), std::forward<A>(a)... );
-            _destroy();
+        storage( i2 ).emplace( mp11::mp_size_t<J>(), std::forward<A>(a)... );
+        _destroy();
 
-            ix_ = J;
-        }
+        ix_ = J * 2 + i2;
     }
 };
 
@@ -1561,7 +1600,7 @@ public:
 
     template<class U,
         class Ud = typename std::decay<U>::type,
-        class E1 = typename std::enable_if< !std::is_same<Ud, variant>::value && !detail::is_in_place_index<Ud>::value && !detail::is_in_place_type<Ud>::value >::type,
+        class E1 = typename std::enable_if< !std::is_same<Ud, variant>::value && !std::is_base_of<variant, Ud>::value && !detail::is_in_place_index<Ud>::value && !detail::is_in_place_type<Ud>::value >::type,
         class V = detail::resolve_overload_type<U&&, T...>,
         class E2 = typename std::enable_if<std::is_constructible<V, U&&>::value>::type
         >
@@ -2085,7 +2124,7 @@ template<class R, class F, class V1, class V2> struct visit_L2
     template<class I> auto operator()( I ) const -> Vret<R, F, V1, V2>
     {
         auto f2 = bind_front( std::forward<F>(f), unsafe_get<I::value>( std::forward<V1>(v1) ) );
-		return visit<R>( f2, std::forward<V2>(v2) );
+        return visit<R>( f2, std::forward<V2>(v2) );
     }
 };
 
@@ -2153,7 +2192,7 @@ template<class R = detail::deduced, class F, class V1, class V2, class... V> con
 {
     return mp11::mp_with_index<detail::variant_base_size<V1>>( v1.index(), [&]( auto I ){
 
-        auto f2 = [&]( auto&&... a ){ return std::forward<F>(f)( detail::unsafe_get<I.value>( std::forward<V1>(v1) ), std::forward<decltype(a)>(a)... ); };
+        auto f2 = [&]( auto&&... a ){ return std::forward<F>(f)( unsafe_get<I.value>( std::forward<V1>(v1) ), std::forward<decltype(a)>(a)... ); };
         return visit<R>( f2, std::forward<V2>(v2), std::forward<V>(v)... );
 
     });
@@ -2170,35 +2209,132 @@ void swap( variant<T...> & v, variant<T...> & w )
     v.swap( w );
 }
 
+// visit_by_index
+
+namespace detail
+{
+
+template<class R, class V, class... F> using Vret2 = mp11::mp_eval_if_not< std::is_same<R, deduced>, R, front_if_same, mp11::mp_transform<mp11::mp_invoke_q, mp11::mp_list<Qret<F>...>, apply_cv_ref<V>> >;
+
+template<class R, class V, class... F> struct visit_by_index_L
+{
+    V&& v;
+    std::tuple<F&&...> tp;
+
+    template<class I> constexpr detail::Vret2<R, V, F...> operator()( I ) const
+    {
+        return std::get<I::value>( std::move(tp) )( unsafe_get<I::value>( std::forward<V>(v) ) );
+    }
+};
+
+} // namespace detail
+
+template<class R = detail::deduced, class V, class... F> constexpr auto visit_by_index( V&& v, F&&... f ) -> detail::Vret2<R, V, F...>
+{
+    static_assert( variant_size<V>::value == sizeof...(F), "Incorrect number of function objects" );
+
+    return mp11::mp_with_index<variant_size<V>::value>( v.index(),
+        detail::visit_by_index_L<R, V, F...>{ std::forward<V>(v), std::tuple<F&&...>( std::forward<F>(f)... ) } );
+}
+
+// output streaming
+
+namespace detail
+{
+
+template<class Ch, class Tr, class... T> struct ostream_insert_L
+{
+    std::basic_ostream<Ch, Tr>& os;
+    variant<T...> const& v;
+
+    template<class I> std::basic_ostream<Ch, Tr>& operator()( I ) const
+    {
+        return os << unsafe_get<I::value>( v );
+    }
+};
+
+template<class Os, class T, class E = void> struct is_output_streamable: std::false_type
+{
+};
+
+template<class Os, class T> struct is_output_streamable<Os, T, decltype( std::declval<Os&>() << std::declval<T const&>(), (void)0 )>: std::true_type
+{
+};
+
+} // namespace detail
+
+template<class Ch, class Tr>
+std::basic_ostream<Ch, Tr>& operator<<( std::basic_ostream<Ch, Tr>& os, monostate const& )
+{
+    os << "monostate";
+    return os;
+}
+
+template<class Ch, class Tr, class T1, class... T,
+    class E = typename std::enable_if< mp11::mp_all< detail::is_output_streamable<std::basic_ostream<Ch, Tr>, T>... >::value >::type >
+std::basic_ostream<Ch, Tr>& operator<<( std::basic_ostream<Ch, Tr>& os, variant<T1, T...> const& v )
+{
+    return mp11::mp_with_index<1 + sizeof...(T)>( v.index(),
+        detail::ostream_insert_L<Ch, Tr, T1, T...>{ os, v } );
+}
+
 // hashing support
 
 namespace detail
 {
 
-template<class V> struct hash_value_L
+inline std::size_t hash_value_impl_( mp11::mp_true, std::size_t index, std::size_t value )
+{
+    boost::ulong_long_type hv = ( boost::ulong_long_type( 0xCBF29CE4 ) << 32 ) + 0x84222325;
+    boost::ulong_long_type const prime = ( boost::ulong_long_type( 0x00000100 ) << 32 ) + 0x000001B3;
+
+    hv ^= index;
+    hv *= prime;
+
+    hv ^= value;
+    hv *= prime;
+
+    return static_cast<std::size_t>( hv );
+}
+
+inline std::size_t hash_value_impl_( mp11::mp_false, std::size_t index, std::size_t value )
+{
+    std::size_t hv = 0x811C9DC5;
+    std::size_t const prime = 0x01000193;
+
+    hv ^= index;
+    hv *= prime;
+
+    hv ^= value;
+    hv *= prime;
+
+    return hv;
+}
+
+inline std::size_t hash_value_impl( std::size_t index, std::size_t value )
+{
+    return hash_value_impl_( mp11::mp_bool< (SIZE_MAX > UINT32_MAX) >(), index, value );
+}
+
+template<template<class> class H, class V> struct hash_value_L
 {
     V const & v;
 
     template<class I> std::size_t operator()( I ) const
     {
-        boost::ulong_long_type hv = ( boost::ulong_long_type( 0xCBF29CE4 ) << 32 ) + 0x84222325;
-        boost::ulong_long_type const prime = ( boost::ulong_long_type( 0x00000100 ) << 32 ) + 0x000001B3;
-
-        // index
-
-        hv ^= I::value;
-        hv *= prime;
-
-        // value
-
         auto const & t = unsafe_get<I::value>( v );
 
-        hv ^= std::hash<remove_cv_ref_t<decltype(t)>>()( t );
-        hv *= prime;
+        std::size_t index = I::value;
+        std::size_t value = H<remove_cv_ref_t<decltype(t)>>()( t );
 
-        return static_cast<std::size_t>( hv );
+        return hash_value_impl( index, value );
     }
 };
+
+template<class... T> std::size_t hash_value_std( variant<T...> const & v )
+{
+    return mp11::mp_with_index<sizeof...(T)>( v.index(), detail::hash_value_L< std::hash, variant<T...> >{ v } );
+}
 
 } // namespace detail
 
@@ -2209,7 +2345,7 @@ inline std::size_t hash_value( monostate const & )
 
 template<class... T> std::size_t hash_value( variant<T...> const & v )
 {
-    return mp11::mp_with_index<sizeof...(T)>( v.index(), detail::hash_value_L< variant<T...> >{ v } );
+    return mp11::mp_with_index<sizeof...(T)>( v.index(), detail::hash_value_L< boost::hash, variant<T...> >{ v } );
 }
 
 namespace detail
@@ -2230,7 +2366,7 @@ template<class V> struct std_hash_impl<V, true>
 {
     std::size_t operator()( V const & v ) const
     {
-        return hash_value( v );
+        return detail::hash_value_std( v );
     }
 };
 
@@ -2255,6 +2391,8 @@ template<> struct hash< ::boost::variant2::monostate >
 };
 
 } // namespace std
+
+#undef BOOST_VARIANT2_CX14_ASSERT
 
 #if defined(_MSC_VER) && _MSC_VER < 1910
 # pragma warning( pop )

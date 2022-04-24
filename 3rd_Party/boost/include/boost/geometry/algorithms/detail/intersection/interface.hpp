@@ -2,9 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014, 2017, 2019.
-// Modifications copyright (c) 2014-2019, Oracle and/or its affiliates.
-
+// This file was modified by Oracle on 2014-2020.
+// Modifications copyright (c) 2014-2020, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -23,6 +22,8 @@
 #include <boost/geometry/algorithms/detail/tupled_output.hpp>
 #include <boost/geometry/policies/robustness/get_rescale_policy.hpp>
 #include <boost/geometry/strategies/default_strategy.hpp>
+#include <boost/geometry/strategies/detail.hpp>
+#include <boost/geometry/strategies/relate/services.hpp>
 #include <boost/geometry/util/range.hpp>
 
 
@@ -108,14 +109,18 @@ struct intersection
 
 namespace resolve_strategy {
 
+template
+<
+    typename Strategy,
+    bool IsUmbrella = strategies::detail::is_umbrella_strategy<Strategy>::value
+>
 struct intersection
 {
     template
     <
         typename Geometry1,
         typename Geometry2,
-        typename GeometryOut,
-        typename Strategy
+        typename GeometryOut
     >
     static inline bool apply(Geometry1 const& geometry1,
                              Geometry2 const& geometry2,
@@ -140,7 +145,34 @@ struct intersection
             >::apply(geometry1, geometry2, robust_policy, geometry_out,
                      strategy);
     }
+};
 
+template <typename Strategy>
+struct intersection<Strategy, false>
+{
+    template
+    <
+        typename Geometry1,
+        typename Geometry2,
+        typename GeometryOut
+    >
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             GeometryOut & geometry_out,
+                             Strategy const& strategy)
+    {
+        using strategies::relate::services::strategy_converter;
+        return intersection
+            <
+                decltype(strategy_converter<Strategy>::get(strategy))
+            >::apply(geometry1, geometry2, geometry_out,
+                     strategy_converter<Strategy>::get(strategy));
+    }
+};
+
+template <>
+struct intersection<default_strategy, false>
+{
     template
     <
         typename Geometry1,
@@ -152,28 +184,15 @@ struct intersection
                              GeometryOut & geometry_out,
                              default_strategy)
     {
-        typedef typename geometry::rescale_overlay_policy_type
-            <
-                Geometry1,
-                Geometry2,
-                typename geometry::cs_tag<Geometry1>::type
-            >::type rescale_policy_type;
-        
-        typename strategy::relate::services::default_strategy
+        typedef typename strategies::relate::services::default_strategy
             <
                 Geometry1, Geometry2
-            >::type strategy;
+            >::type strategy_type;
 
-        rescale_policy_type robust_policy
-            = geometry::get_rescale_policy<rescale_policy_type>(
-                    geometry1, geometry2, strategy);
-
-        return dispatch::intersection
+        return intersection
             <
-                Geometry1,
-                Geometry2
-            >::apply(geometry1, geometry2, robust_policy, geometry_out,
-                     strategy);
+                strategy_type
+            >::apply(geometry1, geometry2, geometry_out, strategy_type());
     }
 };
 
@@ -195,10 +214,10 @@ struct intersection
         concepts::check<Geometry1 const>();
         concepts::check<Geometry2 const>();
         
-        return resolve_strategy::intersection::apply(geometry1,
-                                                     geometry2,
-                                                     geometry_out,
-                                                     strategy);
+        return resolve_strategy::intersection
+            <
+                Strategy
+            >::apply(geometry1, geometry2, geometry_out, strategy);
     }
 };
 

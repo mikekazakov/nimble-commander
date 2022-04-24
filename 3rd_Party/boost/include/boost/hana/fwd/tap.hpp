@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Tap inside a monadic chain.
     //! @ingroup group-Monad
     //!
@@ -61,8 +61,8 @@ BOOST_HANA_NAMESPACE_BEGIN
     };
 
     template <typename M>
-    constexpr tap_t<M> tap{};
+    BOOST_HANA_INLINE_VARIABLE constexpr tap_t<M> tap{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_TAP_HPP

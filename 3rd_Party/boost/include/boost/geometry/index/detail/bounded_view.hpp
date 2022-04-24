@@ -5,8 +5,8 @@
 //
 // Copyright (c) 2014-2015 Adam Wulkiewicz, Lodz, Poland.
 //
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2020.
+// Modifications copyright (c) 2019-2020 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -16,11 +16,12 @@
 #ifndef BOOST_GEOMETRY_INDEX_DETAIL_BOUNDED_VIEW_HPP
 #define BOOST_GEOMETRY_INDEX_DETAIL_BOUNDED_VIEW_HPP
 
-#include <boost/mpl/assert.hpp>
 
 #include <boost/geometry/algorithms/envelope.hpp>
+#include <boost/geometry/core/static_assert.hpp>
+#include <boost/geometry/strategies/default_strategy.hpp>
+#include <boost/geometry/strategies/index/services.hpp>
 
-#include <boost/geometry/strategies/index.hpp>
 
 namespace boost { namespace geometry {
 
@@ -53,10 +54,9 @@ template
 >
 struct bounded_view_base
 {
-    BOOST_MPL_ASSERT_MSG(
-        (false),
-        NOT_IMPLEMENTED_FOR_THOSE_GEOMETRIES,
-        (types<Tag, BoundingTag, CSTag>));
+    BOOST_GEOMETRY_STATIC_ASSERT_FALSE(
+        "Not implemented for these Geometries.",
+        Geometry, BoundingGeometry, Strategy, Tag, BoundingTag, CSTag);
 };
 
 
@@ -95,24 +95,11 @@ private:
 template <typename Segment, typename Box, typename Strategy, typename CSTag>
 struct bounded_view_base<Segment, Box, Strategy, segment_tag, box_tag, CSTag>
 {
-    template <typename S>
-    inline void envelope(Segment const& segment, S const& strategy)
-    {
-        geometry::envelope(segment, m_box,
-                           strategy.get_envelope_segment_strategy());
-    }
-
-    inline void envelope(Segment const& segment, default_strategy const& )
-    {
-        geometry::envelope(segment, m_box);
-    }
-
-public:
     typedef typename geometry::coordinate_type<Box>::type coordinate_type;
 
     bounded_view_base(Segment const& segment, Strategy const& strategy)
     {
-        envelope(segment, strategy);
+        geometry::envelope(segment, m_box, strategy);
     }
 
     template <std::size_t Dimension>
@@ -216,10 +203,10 @@ struct bounded_view<Geometry, BoundingGeometry, default_strategy, Tag, BoundingT
         <
             Geometry,
             BoundingGeometry,
-            typename strategy::index::services::default_strategy<Geometry>::type
+            typename strategies::index::services::default_strategy<Geometry>::type
         >
 {
-    typedef typename strategy::index::services::default_strategy
+    typedef typename strategies::index::services::default_strategy
         <
             Geometry
         >::type strategy_type;

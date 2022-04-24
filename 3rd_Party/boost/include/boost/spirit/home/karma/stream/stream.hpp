@@ -21,6 +21,7 @@
 #include <boost/spirit/home/karma/delimit_out.hpp>
 #include <boost/spirit/home/karma/auxiliary/lazy.hpp>
 #include <boost/spirit/home/karma/stream/detail/format_manip.hpp>
+#include <boost/spirit/home/karma/detail/generate_to.hpp>
 #include <boost/spirit/home/karma/detail/get_casetag.hpp>
 #include <boost/spirit/home/karma/detail/extract_from.hpp>
 #include <boost/fusion/include/at.hpp>

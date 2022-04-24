@@ -1,8 +1,8 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014, Oracle and/or its affiliates.
-
+// Copyright (c) 2014-2021, Oracle and/or its affiliates.
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -11,9 +11,7 @@
 #define BOOST_GEOMETRY_ITERATORS_POINT_REVERSE_ITERATOR_HPP
 
 #include <iterator>
-
-#include <boost/mpl/assert.hpp>
-#include <boost/type_traits/is_convertible.hpp>
+#include <type_traits>
 
 #include <boost/geometry/iterators/point_iterator.hpp>
 
@@ -40,23 +38,24 @@ private:
         : base_type(base_it) {}
 
 public:
-    inline point_reverse_iterator() {}
+    inline point_reverse_iterator() = default;
 
-    template <typename OtherGeometry>
-    inline
-    point_reverse_iterator(point_reverse_iterator<OtherGeometry> const& other)
-        : base_type(other.base())
-    {
-        static const bool is_conv = boost::is_convertible
+    template
+    <
+        typename OtherGeometry,
+        std::enable_if_t
             <
-                std::reverse_iterator<point_iterator<Geometry> >,
-                std::reverse_iterator<point_iterator<OtherGeometry> >
-            >::value;
-
-        BOOST_MPL_ASSERT_MSG((is_conv),
-                             NOT_CONVERTIBLE,
-                             (point_reverse_iterator<OtherGeometry>));
-    }
+                std::is_convertible
+                    <
+                        std::reverse_iterator<point_iterator<OtherGeometry> >,
+                        std::reverse_iterator<point_iterator<Geometry> >
+                    >::value,
+                int
+            > = 0
+    >
+    inline point_reverse_iterator(point_reverse_iterator<OtherGeometry> const& other)
+        : base_type(other.base())
+    {}
 };
 
 

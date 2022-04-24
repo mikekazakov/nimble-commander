@@ -6,10 +6,10 @@
 // Copyright (c) 2013-2015 Adam Wulkiewicz, Lodz, Poland.
 // Copyright (c) 2014-2015 Samuel Debionne, Grenoble, France.
 
-// This file was modified by Oracle on 2014, 2015.
-// Modifications copyright (c) 2014-2015, Oracle and/or its affiliates.
-
+// This file was modified by Oracle on 2014-2021.
+// Modifications copyright (c) 2014-2021, Oracle and/or its affiliates.
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
 // (geolib/GGL), copyright (c) 1995-2010 Geodan, Amsterdam, the Netherlands.
@@ -21,22 +21,17 @@
 #ifndef BOOST_GEOMETRY_STRATEGIES_DISTANCE_RESULT_HPP
 #define BOOST_GEOMETRY_STRATEGIES_DISTANCE_RESULT_HPP
 
-#include <boost/mpl/always.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/vector.hpp>
 
-#include <boost/variant/variant_fwd.hpp>
-
+#include <boost/geometry/algorithms/detail/select_geometry_type.hpp>
 #include <boost/geometry/core/point_type.hpp>
-
+#include <boost/geometry/core/reverse_dispatch.hpp>
 #include <boost/geometry/strategies/default_strategy.hpp>
+#include <boost/geometry/strategies/detail.hpp>
 #include <boost/geometry/strategies/distance.hpp>
-
-#include <boost/geometry/util/compress_variant.hpp>
-#include <boost/geometry/util/transform_variant.hpp>
-#include <boost/geometry/util/combine_if.hpp>
-
-#include <boost/geometry/algorithms/detail/distance/default_strategies.hpp>
+#include <boost/geometry/strategies/distance/services.hpp>
+#include <boost/geometry/util/select_most_precise.hpp>
+#include <boost/geometry/util/sequence.hpp>
+#include <boost/geometry/util/type_traits.hpp>
 
 
 namespace boost { namespace geometry
@@ -46,11 +41,48 @@ namespace boost { namespace geometry
 namespace resolve_strategy
 {
 
+
+// TODO: This utility could be entirely implemented as:
+//       decltype(geometry::distance(std::declval<Geometry1>(), std::declval<Geometry2>(), std::declval<Strategy>()))
+//       however then the algorithm would have to be compiled.
+
+template
+<
+    typename Geometry1, typename Geometry2, typename Strategy,
+    bool IsUmbrella = strategies::detail::is_umbrella_strategy<Strategy>::value
+>
+struct distance_result_strategy2_type
+{
+    typedef decltype(std::declval<Strategy>().distance(
+        std::declval<Geometry1>(), std::declval<Geometry2>())) type;
+};
+
+template <typename Geometry1, typename Geometry2, typename Strategy>
+struct distance_result_strategy2_type<Geometry1, Geometry2, Strategy, false>
+{
+    typedef Strategy type;
+};
+
+template
+<
+    typename Geometry1, typename Geometry2, typename Strategy,
+    bool Reverse = reverse_dispatch<Geometry1, Geometry2>::value
+>
+struct distance_result_strategy_type
+    : distance_result_strategy2_type<Geometry1, Geometry2, Strategy>
+{};
+
+template <typename Geometry1, typename Geometry2, typename Strategy>
+struct distance_result_strategy_type<Geometry1, Geometry2, Strategy, true>
+    : distance_result_strategy_type<Geometry2, Geometry1, Strategy, false>
+{};
+
+
 template <typename Geometry1, typename Geometry2, typename Strategy>
 struct distance_result
     : strategy::distance::services::return_type
         <
-            Strategy,
+            typename distance_result_strategy_type<Geometry1, Geometry2, Strategy>::type,
             typename point_type<Geometry1>::type,
             typename point_type<Geometry2>::type
         >
@@ -62,20 +94,68 @@ struct distance_result<Geometry1, Geometry2, default_strategy>
         <
             Geometry1,
             Geometry2,
-            typename detail::distance::default_strategy
+            typename strategies::distance::services::default_strategy
                 <
                     Geometry1, Geometry2
                 >::type
         >
 {};
 
+
 } // namespace resolve_strategy
 
 
-namespace resolve_variant
+#ifndef DOXYGEN_NO_DETAIL
+namespace detail { namespace distance
 {
 
-template <typename Geometry1, typename Geometry2, typename Strategy>
+template <typename Strategy = geometry::default_strategy>
+struct more_precise_distance_result
+{
+    template <typename Curr, typename Next>
+    struct predicate
+        : std::is_same
+            <
+                typename resolve_strategy::distance_result
+                    <
+                        typename util::sequence_element<0, Curr>::type,
+                        typename util::sequence_element<1, Curr>::type,
+                        Strategy
+                    >::type,
+                typename geometry::select_most_precise
+                    <
+                        typename resolve_strategy::distance_result
+                            <
+                                typename util::sequence_element<0, Curr>::type,
+                                typename util::sequence_element<1, Curr>::type,
+                                Strategy
+                            >::type,
+                        typename resolve_strategy::distance_result
+                            <
+                                typename util::sequence_element<0, Next>::type,
+                                typename util::sequence_element<1, Next>::type,
+                                Strategy
+                            >::type
+                    >::type
+            >
+    {};
+};
+
+}} // namespace detail::distance
+#endif //DOXYGEN_NO_DETAIL
+
+
+namespace resolve_dynamic
+{
+
+template
+<
+    typename Geometry1, typename Geometry2, typename Strategy,
+    bool IsDynamicOrCollection = util::is_dynamic_geometry<Geometry1>::value
+                              || util::is_dynamic_geometry<Geometry2>::value
+                              || util::is_geometry_collection<Geometry1>::value
+                              || util::is_geometry_collection<Geometry2>::value
+>
 struct distance_result
     : resolve_strategy::distance_result
         <
@@ -86,102 +166,29 @@ struct distance_result
 {};
 
 
-template
-<
-    typename Geometry1,
-    BOOST_VARIANT_ENUM_PARAMS(typename T),
-    typename Strategy
->
-struct distance_result
-    <
-        Geometry1, boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>, Strategy
-    >
+template <typename Geometry1, typename Geometry2, typename Strategy>
+struct distance_result<Geometry1, Geometry2, Strategy, true>
 {
-    // A set of all variant type combinations that are compatible and
-    // implemented
-    typedef typename util::combine_if<
-        typename boost::mpl::vector1<Geometry1>,
-        typename boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>::types,
-        // Here we want should remove most of the combinations that
-        // are not valid, mostly to limit the size of the resulting MPL set.
-        // But is_implementedn is not ready for prime time
-        //
-        // util::is_implemented2<boost::mpl::_1, boost::mpl::_2, dispatch::distance<boost::mpl::_1, boost::mpl::_2> >
-        boost::mpl::always<boost::mpl::true_>
-    >::type possible_input_types;
+    // Select the most precise distance strategy result type
+    //   for all variant type combinations.
+    // TODO: We should ignore the combinations that are not valid
+    //   but is_implemented is not ready for prime time.
+    using selected_types = typename detail::select_geometry_types
+        <
+            Geometry1, Geometry2,
+            detail::distance::more_precise_distance_result<Strategy>::template predicate
+        >::type;
 
-    // The (possibly variant) result type resulting from these combinations
-    typedef typename compress_variant<
-        typename transform_variant<
-            possible_input_types,
-            resolve_strategy::distance_result<
-                boost::mpl::first<boost::mpl::_>,
-                boost::mpl::second<boost::mpl::_>,
-                Strategy
-            >,
-            boost::mpl::back_inserter<boost::mpl::vector0<> >
-        >::type
-    >::type type;
+    using type = typename resolve_strategy::distance_result
+        <
+            typename util::sequence_element<0, selected_types>::type,
+            typename util::sequence_element<1, selected_types>::type,
+            Strategy
+        >::type;
 };
 
 
-// Distance arguments are commutative
-template
-<
-    BOOST_VARIANT_ENUM_PARAMS(typename T),
-    typename Geometry2,
-    typename Strategy
->
-struct distance_result
-    <
-        boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>,
-        Geometry2,
-        Strategy
-    > : public distance_result
-        <
-            Geometry2, boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>, Strategy
-        >
-{};
-
-
-template <BOOST_VARIANT_ENUM_PARAMS(typename T), typename Strategy>
-struct distance_result
-    <
-        boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>,
-        boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>,
-        Strategy
-    >
-{
-    // A set of all variant type combinations that are compatible and
-    // implemented
-    typedef typename util::combine_if
-        <
-            typename boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>::types,
-            typename boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>::types,
-            // Here we want to try to remove most of the combinations
-            // that are not valid, mostly to limit the size of the
-            // resulting MPL vector.
-            // But is_implemented is not ready for prime time
-            //
-            // util::is_implemented2<boost::mpl::_1, boost::mpl::_2, dispatch::distance<boost::mpl::_1, boost::mpl::_2> >
-            boost::mpl::always<boost::mpl::true_>
-        >::type possible_input_types;
-
-    // The (possibly variant) result type resulting from these combinations
-    typedef typename compress_variant<
-        typename transform_variant<
-            possible_input_types,
-            resolve_strategy::distance_result<
-                boost::mpl::first<boost::mpl::_>,
-                boost::mpl::second<boost::mpl::_>,
-                Strategy
-            >,
-            boost::mpl::back_inserter<boost::mpl::vector0<> >
-        >::type
-    >::type type;
-};
-
-} // namespace resolve_variant
+} // namespace resolve_dynamic
 
 
 /*!
@@ -197,7 +204,7 @@ template
     typename Strategy = void
 >
 struct distance_result
-    : resolve_variant::distance_result<Geometry1, Geometry2, Strategy>
+    : resolve_dynamic::distance_result<Geometry1, Geometry2, Strategy>
 {};
 
 

@@ -3,8 +3,8 @@
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 // Copyright (c) 2009-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2015.
-// Modifications copyright (c) 2015, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015-2021.
+// Modifications copyright (c) 2015-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -21,16 +21,16 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <boost/geometry/algorithms/detail/distance/interface.hpp>
-#include <boost/geometry/algorithms/detail/distance/point_to_geometry.hpp>
 #include <boost/geometry/arithmetic/arithmetic.hpp>
-#include <boost/geometry/util/for_each_coordinate.hpp>
-#include <boost/geometry/util/select_most_precise.hpp>
-#include <boost/geometry/strategies/centroid.hpp>
-#include <boost/geometry/strategies/default_distance_result.hpp>
 
 // Helper geometry
 #include <boost/geometry/geometries/point.hpp>
+
+#include <boost/geometry/strategies/cartesian/distance_pythagoras.hpp>
+#include <boost/geometry/strategies/centroid.hpp>
+
+#include <boost/geometry/util/algorithm.hpp>
+#include <boost/geometry/util/select_most_precise.hpp>
 
 
 namespace boost { namespace geometry
@@ -39,66 +39,85 @@ namespace boost { namespace geometry
 namespace strategy { namespace centroid
 {
 
-namespace detail
-{
-
-template <typename Type, std::size_t DimensionCount>
-struct weighted_length_sums
-{
-    typedef typename geometry::model::point
-        <
-            Type, DimensionCount,
-            cs::cartesian
-        > work_point;
-
-    Type length;
-    work_point average_sum;
-
-    inline weighted_length_sums()
-        : length(Type())
-    {
-        geometry::assign_zero(average_sum);
-    }
-};
-}
-
 template
 <
-    typename Point,
-    typename PointOfSegment = Point
+    typename Ignored1 = void,
+    typename Ignored2 = void,
+    typename CalculationType = void
 >
 class weighted_length
 {
 private :
-    typedef typename select_most_precise
-        <
-            typename default_distance_result<Point>::type,
-            typename default_distance_result<PointOfSegment>::type
-        >::type distance_type;
+    typedef geometry::strategy::distance::pythagoras<CalculationType> pythagoras_strategy;
+
+    template <typename GeometryPoint, typename ResultPoint>
+    struct calculation_type
+    {
+        // Below the distance between two GeometryPoints is calculated.
+        // ResultPoint is taken into account by passing them together here.
+        typedef typename pythagoras_strategy::template calculation_type
+            <
+                GeometryPoint, ResultPoint
+            >::type type;
+    };
+
+    template <typename GeometryPoint, typename ResultPoint>
+    class sums
+    {
+        friend class weighted_length;
+        template <typename, typename> friend struct set_sum_div_length;
+
+        typedef typename calculation_type<GeometryPoint, ResultPoint>::type calc_type;
+        typedef typename geometry::model::point
+            <
+                calc_type,
+                geometry::dimension<ResultPoint>::value,
+                cs::cartesian
+            > work_point;
+
+        calc_type length;
+        work_point average_sum;
+
+    public:
+        inline sums()
+            : length(calc_type())
+        {
+            geometry::assign_zero(average_sum);
+        }
+    };
 
 public :
-    typedef detail::weighted_length_sums
-        <
-            distance_type,
-            geometry::dimension<Point>::type::value
-        > state_type;
-
-    static inline void apply(PointOfSegment const& p1,
-            PointOfSegment const& p2, state_type& state)
+    template <typename GeometryPoint, typename ResultPoint>
+    struct state_type
     {
-        distance_type const d = geometry::distance(p1, p2);
+        typedef sums<GeometryPoint, ResultPoint> type;
+    };
+
+    template <typename GeometryPoint, typename ResultPoint>
+    static inline void apply(GeometryPoint const& p1, GeometryPoint const& p2,
+                             sums<GeometryPoint, ResultPoint>& state)
+    {
+        typedef typename calculation_type<GeometryPoint, ResultPoint>::type distance_type;
+
+        distance_type const d = pythagoras_strategy::apply(p1, p2);
         state.length += d;
 
-        typename state_type::work_point weighted_median;
-        geometry::assign_zero(weighted_median);
-        geometry::add_point(weighted_median, p1);
-        geometry::add_point(weighted_median, p2);
-        geometry::multiply_value(weighted_median, d/2);
-        geometry::add_point(state.average_sum, weighted_median);
+        distance_type const d_half = d / distance_type(2);
+        geometry::detail::for_each_dimension<ResultPoint>([&](auto dimension)
+        {
+            distance_type const coord1 = get<dimension>(p1);
+            distance_type const coord2 = get<dimension>(p2);
+            distance_type const wm = (coord1 + coord2) * d_half; // weighted median
+            set<dimension>(state.average_sum, get<dimension>(state.average_sum) + wm);
+        });
     }
 
-    static inline bool result(state_type const& state, Point& centroid)
+    template <typename GeometryPoint, typename ResultPoint>
+    static inline bool result(sums<GeometryPoint, ResultPoint> const& state,
+                              ResultPoint& centroid)
     {
+        typedef typename calculation_type<GeometryPoint, ResultPoint>::type distance_type;
+
         distance_type const zero = distance_type();
         if (! geometry::math::equals(state.length, zero)
             && boost::math::isfinite(state.length)) // Prevent NaN centroid coordinates
@@ -106,31 +125,21 @@ public :
             // NOTE: above distance_type is checked, not the centroid coordinate_type
             // which means that the centroid can still be filled with INF
             // if e.g. distance_type is double and centroid contains floats
-            geometry::for_each_coordinate(centroid, set_sum_div_length(state));
+            geometry::detail::for_each_dimension<ResultPoint>([&](auto dimension)
+            {
+                typedef typename geometry::coordinate_type<ResultPoint>::type coordinate_type;
+                geometry::set<dimension>(
+                    centroid,
+                    boost::numeric_cast<coordinate_type>(
+                        geometry::get<dimension>(state.average_sum) / state.length
+                    )
+                );
+            });
             return true;
         }
 
         return false;
     }
-
-    struct set_sum_div_length
-    {
-        state_type const& m_state;
-        set_sum_div_length(state_type const& state)
-            : m_state(state)
-        {}
-        template <typename Pt, std::size_t Dimension>
-        void apply(Pt & centroid) const
-        {
-            typedef typename geometry::coordinate_type<Pt>::type coordinate_type;
-            geometry::set<Dimension>(
-                centroid,
-                boost::numeric_cast<coordinate_type>(
-                    geometry::get<Dimension>(m_state.average_sum) / m_state.length
-                )
-            );
-        }
-    };
 };
 
 #ifndef DOXYGEN_NO_STRATEGY_SPECIALIZATIONS

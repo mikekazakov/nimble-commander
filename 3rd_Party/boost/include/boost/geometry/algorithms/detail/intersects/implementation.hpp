@@ -4,8 +4,8 @@
 // Copyright (c) 2008-2014 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2014 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2013-2017.
-// Modifications copyright (c) 2013-2017, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2020.
+// Modifications copyright (c) 2013-2020, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -30,7 +30,7 @@
 #include <boost/geometry/policies/disjoint_interrupt_policy.hpp>
 #include <boost/geometry/policies/robustness/no_rescale_policy.hpp>
 
-#include <boost/geometry/strategies/relate.hpp>
+#include <boost/geometry/strategies/relate/services.hpp>
 
 
 namespace boost { namespace geometry
@@ -48,7 +48,7 @@ struct self_intersects
         concepts::check<Geometry const>();
 
         typedef typename geometry::point_type<Geometry>::type point_type;
-        typedef typename strategy::relate::services::default_strategy
+        typedef typename strategies::relate::services::default_strategy
                 <
                     Geometry, Geometry
                 >::type strategy_type;

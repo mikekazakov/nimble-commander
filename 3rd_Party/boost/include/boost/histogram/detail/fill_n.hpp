@@ -101,12 +101,18 @@ struct index_visitor {
   template <class T>
   void call_1(std::true_type, const T& value) const {
     // T is compatible value; fill single value N times
-    index_type idx{*begin_};
-    call_2(IsGrowing{}, &idx, value);
-    if (is_valid(idx)) {
+
+    // Optimization: We call call_2 only once and then add the index shift onto the
+    // whole array of indices, because it is always the same. This also works if the
+    // axis grows during this operation. There are no shifts to apply if the zero-point
+    // changes.
+    const auto before = *begin_;
+    call_2(IsGrowing{}, begin_, value);
+    if (is_valid(*begin_)) {
+      // since index can be std::size_t or optional_index, must do conversion here
       const auto delta =
-          static_cast<std::intptr_t>(idx) - static_cast<std::intptr_t>(*begin_);
-      for (auto&& i : make_span(begin_, size_)) i += delta;
+          static_cast<std::intptr_t>(*begin_) - static_cast<std::intptr_t>(before);
+      for (auto it = begin_ + 1; it != begin_ + size_; ++it) *it += delta;
     } else
       std::fill(begin_, begin_ + size_, invalid_index);
   }
@@ -129,7 +135,9 @@ void fill_n_indices(Index* indices, const std::size_t start, const std::size_t s
     *eit++ = axis::traits::extent(a);
   }); // LCOV_EXCL_LINE: gcc-8 is missing this line for no reason
 
-  // offset must be zero for growing axes
+  // TODO this seems to always take the path for growing axes, even if Axes is vector
+  // of variant and types actually held are not growing axes?
+  // index offset must be zero for growing axes
   using IsGrowing = has_growing_axis<Axes>;
   std::fill(indices, indices + size, IsGrowing::value ? 0 : offset);
   for_each_axis(axes, [&, stride = static_cast<std::size_t>(1),
@@ -234,6 +242,7 @@ void fill_n_1(const std::size_t offset, S& storage, A& axes, const std::size_t v
   for_each_axis(axes,
                 [&](const auto& ax) { all_inclusive &= axis::traits::inclusive(ax); });
   if (axes_rank(axes) == 1) {
+    // Optimization: benchmark shows that this makes filling dynamic 1D histogram faster
     axis::visit(
         [&](auto& ax) {
           std::tuple<decltype(ax)> axes{ax};

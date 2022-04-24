@@ -4,8 +4,8 @@
 // Contributed and/or modified by Yaghyavardhan Singh Khangarot,
 //   as part of Google Summer of Code 2018 program.
 
-// This file was modified by Oracle on 2018.
-// Modifications copyright (c) 2018, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2018-2021.
+// Modifications copyright (c) 2018-2021, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -26,15 +26,21 @@
 #include <vector>
 #include <limits>
 
+#include <boost/geometry/algorithms/detail/dummy_geometries.hpp>
 #include <boost/geometry/algorithms/detail/throw_on_empty_input.hpp>
 #include <boost/geometry/algorithms/not_implemented.hpp>
 #include <boost/geometry/core/point_type.hpp>
 #include <boost/geometry/core/tag.hpp>
 #include <boost/geometry/core/tags.hpp>
-#include <boost/geometry/strategies/distance.hpp>
+#include <boost/geometry/strategies/detail.hpp>
+#include <boost/geometry/strategies/discrete_distance/cartesian.hpp>
+#include <boost/geometry/strategies/discrete_distance/geographic.hpp>
+#include <boost/geometry/strategies/discrete_distance/spherical.hpp>
 #include <boost/geometry/strategies/distance_result.hpp>
 #include <boost/geometry/util/range.hpp>
 
+// Note that in order for this to work umbrella strategy has to contain
+// index strategies.
 #ifdef BOOST_GEOMETRY_ENABLE_SIMILARITY_RTREE
 #include <boost/geometry/index/rtree.hpp>
 #endif // BOOST_GEOMETRY_ENABLE_SIMILARITY_RTREE
@@ -46,25 +52,26 @@ namespace boost { namespace geometry
 namespace detail { namespace discrete_hausdorff_distance
 {
 
+// TODO: The implementation should calculate comparable distances
+
 struct point_range
 {
-    template <typename Point, typename Range, typename Strategy>
-    static inline
-    typename distance_result
-        <
-            typename point_type<Point>::type,
-            typename point_type<Range>::type,
-            Strategy
-        >::type
-    apply(Point const& pnt, Range const& rng, Strategy const& strategy)
+    template <typename Point, typename Range, typename Strategies>
+    static inline auto apply(Point const& pnt, Range const& rng,
+                             Strategies const& strategies)
     {
         typedef typename distance_result
             <
-                typename point_type<Point>::type,
+                Point,
                 typename point_type<Range>::type,
-                Strategy
+                Strategies
             >::type result_type;
+
         typedef typename boost::range_size<Range>::type size_type;
+
+        boost::geometry::detail::throw_on_empty_input(rng);
+
+        auto const strategy = strategies.distance(dummy_point(), dummy_point());
 
         size_type const n = boost::size(rng);
         result_type dis_min = 0;
@@ -85,22 +92,15 @@ struct point_range
 
 struct range_range
 {
-    template <typename Range1, typename Range2, typename Strategy>
-    static inline
-    typename distance_result
-        <
-            typename point_type<Range1>::type,
-            typename point_type<Range2>::type,
-            Strategy
-        >::type
-    apply(Range1 const& r1, Range2 const& r2, Strategy const& strategy)
+    template <typename Range1, typename Range2, typename Strategies>
+    static inline auto apply(Range1 const& r1, Range2 const& r2,
+                             Strategies const& strategies)
     {
-
         typedef typename distance_result
             <
                 typename point_type<Range1>::type,
                 typename point_type<Range2>::type,
-                Strategy
+                Strategies
             >::type result_type;
 
         typedef typename boost::range_size<Range1>::type size_type;
@@ -125,7 +125,7 @@ struct range_range
             size_type found = rtree.query(bgi::nearest(range::at(r1, i), 1), &res);
             result_type dis_min = strategy.apply(range::at(r1,i), res);
 #else
-            result_type dis_min = point_range::apply(range::at(r1, i), r2, strategy);
+            result_type dis_min = point_range::apply(range::at(r1, i), r2, strategies);
 #endif
             if (dis_min > dis_max )
             {
@@ -139,21 +139,15 @@ struct range_range
 
 struct range_multi_range
 {
-    template <typename Range, typename Multi_range, typename Strategy>
-    static inline
-    typename distance_result
-        <
-            typename point_type<Range>::type,
-            typename point_type<Multi_range>::type,
-            Strategy
-        >::type
-    apply(Range const& rng, Multi_range const& mrng, Strategy const& strategy)
+    template <typename Range, typename Multi_range, typename Strategies>
+    static inline auto apply(Range const& rng, Multi_range const& mrng,
+                             Strategies const& strategies)
     {
         typedef typename distance_result
             <
                 typename point_type<Range>::type,
                 typename point_type<Multi_range>::type,
-                Strategy
+                Strategies
             >::type result_type;
         typedef typename boost::range_size<Multi_range>::type size_type;
 
@@ -165,7 +159,7 @@ struct range_multi_range
 
         for (size_type j = 0 ; j < b ; j++)
         {
-            result_type dis_max = range_range::apply(rng, range::at(mrng, j), strategy);
+            result_type dis_max = range_range::apply(rng, range::at(mrng, j), strategies);
             if (dis_max > haus_dis)
             {
                 haus_dis = dis_max;
@@ -179,21 +173,15 @@ struct range_multi_range
 
 struct multi_range_multi_range
 {
-    template <typename Multi_Range1, typename Multi_range2, typename Strategy>
-    static inline
-    typename distance_result
-        <
-            typename point_type<Multi_Range1>::type,
-            typename point_type<Multi_range2>::type,
-            Strategy
-        >::type
-    apply(Multi_Range1 const& mrng1, Multi_range2 const& mrng2, Strategy const& strategy)
+    template <typename Multi_Range1, typename Multi_range2, typename Strategies>
+    static inline auto apply(Multi_Range1 const& mrng1, Multi_range2 const& mrng2,
+                             Strategies const& strategies)
     {
         typedef typename distance_result
             <
                 typename point_type<Multi_Range1>::type,
                 typename point_type<Multi_range2>::type,
-                Strategy
+                Strategies
             >::type result_type;
         typedef typename boost::range_size<Multi_Range1>::type size_type;
 
@@ -205,7 +193,7 @@ struct multi_range_multi_range
 
         for (size_type i = 0 ; i < n ; i++)
         {
-            result_type dis_max = range_multi_range::apply(range::at(mrng1, i), mrng2, strategy);
+            result_type dis_max = range_multi_range::apply(range::at(mrng1, i), mrng2, strategies);
             if (dis_max > haus_dis)
             {
                 haus_dis = dis_max;
@@ -264,7 +252,64 @@ struct discrete_hausdorff_distance<MultiLinestring1, MultiLinestring2, multi_lin
 } // namespace dispatch
 #endif // DOXYGEN_NO_DISPATCH
 
-// Algorithm overload using explicitly passed Pt-Pt distance strategy
+
+namespace resolve_strategy {
+
+template
+<
+    typename Strategies,
+    bool IsUmbrella = strategies::detail::is_umbrella_strategy<Strategies>::value
+>
+struct discrete_hausdorff_distance
+{
+    template <typename Geometry1, typename Geometry2>
+    static inline auto apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             Strategies const& strategies)
+    {
+        return dispatch::discrete_hausdorff_distance
+            <
+                Geometry1, Geometry2
+            >::apply(geometry1, geometry2, strategies);
+    }
+};
+
+template <typename Strategy>
+struct discrete_hausdorff_distance<Strategy, false>
+{
+    template <typename Geometry1, typename Geometry2>
+    static inline auto apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        using strategies::discrete_distance::services::strategy_converter;
+        return dispatch::discrete_hausdorff_distance
+            <
+                Geometry1, Geometry2
+            >::apply(geometry1, geometry2,
+                     strategy_converter<Strategy>::get(strategy));
+    }
+};
+
+template <>
+struct discrete_hausdorff_distance<default_strategy, false>
+{
+    template <typename Geometry1, typename Geometry2>
+    static inline auto apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             default_strategy const&)
+    {
+        typedef typename strategies::discrete_distance::services::default_strategy
+            <
+                Geometry1, Geometry2
+            >::type strategies_type;
+
+        return dispatch::discrete_hausdorff_distance
+            <
+                Geometry1, Geometry2
+            >::apply(geometry1, geometry2, strategies_type());
+    }
+};
+
+} // namespace resolve_strategy
+
 
 /*!
 \brief Calculate discrete Hausdorff distance between two geometries (currently
@@ -293,20 +338,13 @@ struct discrete_hausdorff_distance<MultiLinestring1, MultiLinestring2, multi_lin
 }
 */
 template <typename Geometry1, typename Geometry2, typename Strategy>
-inline
-typename distance_result
-    <
-        typename point_type<Geometry1>::type,
-        typename point_type<Geometry2>::type,
-        Strategy
-    >::type
-discrete_hausdorff_distance(Geometry1 const& geometry1,
-                            Geometry2 const& geometry2,
-                            Strategy const& strategy)
+inline auto discrete_hausdorff_distance(Geometry1 const& geometry1,
+                                        Geometry2 const& geometry2,
+                                        Strategy const& strategy)
 {
-    return dispatch::discrete_hausdorff_distance
+    return resolve_strategy::discrete_hausdorff_distance
         <
-            Geometry1, Geometry2
+            Strategy
         >::apply(geometry1, geometry2, strategy);
 }
 
@@ -329,23 +367,13 @@ discrete_hausdorff_distance(Geometry1 const& geometry1,
 }
 */
 template <typename Geometry1, typename Geometry2>
-inline
-typename distance_result
-    <
-        typename point_type<Geometry1>::type,
-        typename point_type<Geometry2>::type
-    >::type
-discrete_hausdorff_distance(Geometry1 const& geometry1,
-                            Geometry2 const& geometry2)
+inline auto discrete_hausdorff_distance(Geometry1 const& geometry1,
+                                        Geometry2 const& geometry2)
 {
-    typedef typename strategy::distance::services::default_strategy
+    return resolve_strategy::discrete_hausdorff_distance
         <
-            point_tag, point_tag,
-            typename point_type<Geometry1>::type,
-            typename point_type<Geometry2>::type
-        >::type strategy_type;
-
-    return discrete_hausdorff_distance(geometry1, geometry2, strategy_type());
+            default_strategy
+        >::apply(geometry1, geometry2, default_strategy());
 }
 
 }} // namespace boost::geometry

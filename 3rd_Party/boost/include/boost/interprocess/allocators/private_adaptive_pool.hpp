@@ -97,7 +97,7 @@ class private_adaptive_pool_base
    typedef typename ipcdetail::add_reference
                      <const value_type>::type            const_reference;
    typedef typename segment_manager::size_type           size_type;
-   typedef typename segment_manager::size_type           difference_type;
+   typedef typename segment_manager::difference_type     difference_type;
    typedef boost::interprocess::version_type
       <private_adaptive_pool_base, Version>              version;
    typedef boost::container::dtl::transform_multiallocation_chain

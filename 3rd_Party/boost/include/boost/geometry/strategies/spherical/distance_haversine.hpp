@@ -17,6 +17,7 @@
 
 
 #include <boost/geometry/core/access.hpp>
+#include <boost/geometry/core/coordinate_promotion.hpp>
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/radian_access.hpp>
 
@@ -26,7 +27,6 @@
 #include <boost/geometry/strategies/spherical/get_radius.hpp>
 
 #include <boost/geometry/util/math.hpp>
-#include <boost/geometry/util/promote_floating_point.hpp>
 #include <boost/geometry/util/select_calculation_type.hpp>
 
 

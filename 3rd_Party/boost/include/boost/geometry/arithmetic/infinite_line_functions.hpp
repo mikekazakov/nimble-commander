@@ -9,7 +9,9 @@
 #ifndef BOOST_GEOMETRY_ARITHMETIC_LINE_FUNCTIONS_HPP
 #define BOOST_GEOMETRY_ARITHMETIC_LINE_FUNCTIONS_HPP
 
+#include <boost/geometry/arithmetic/determinant.hpp>
 #include <boost/geometry/core/access.hpp>
+#include <boost/geometry/core/assert.hpp>
 #include <boost/geometry/core/config.hpp>
 #include <boost/geometry/geometries/infinite_line.hpp>
 #include <boost/geometry/util/math.hpp>
@@ -21,25 +23,43 @@ namespace boost { namespace geometry
 namespace arithmetic
 {
 
+template <typename Line, typename Line::type Line::* member1, typename Line::type Line::* member2>
+inline auto determinant(Line const& p, Line const& q)
+{
+    return geometry::detail::determinant<typename Line::type>(p.*member1, p.*member2,
+                                                              q.*member1, q.*member2);
+}
+
+template <typename Point, typename Line, typename Type>
+inline Point assign_intersection_point(Line const& p, Line const& q, Type const& denominator)
+{
+    BOOST_ASSERT(denominator != Type(0));
+
+    // x = | pb pc | / d  and y = | pc pa | / d
+    //     | qb qc |              | qc qa |
+
+    Point result;
+    geometry::set<0>(result, determinant<Line, &Line::b, &Line::c>(p, q) / denominator);
+    geometry::set<1>(result, determinant<Line, &Line::c, &Line::a>(p, q) / denominator);
+    return result;
+}
+
 // Calculates intersection point of two infinite lines.
 // Returns true if the lines intersect.
 // Returns false if lines are parallel (or collinear, possibly opposite)
-template <typename Point, typename Type>
-inline bool intersection_point(model::infinite_line<Type> const& p,
-    model::infinite_line<Type> const& q, Point& ip)
+template <typename Line, typename Point>
+inline bool intersection_point(Line const& p, Line const& q, Point& ip)
 {
-    Type const denominator = p.b * q.a - p.a * q.b;
+    auto const denominator = determinant<Line, &Line::a, &Line::b>(p, q);
+    constexpr decltype(denominator) const zero = 0;
 
-    static Type const zero = 0;
     if (math::equals(denominator, zero))
     {
         // Lines are parallel
         return false;
     }
 
-    // Calculate the intersection coordinates
-    geometry::set<0>(ip, (p.c * q.b - p.b * q.c) / denominator);
-    geometry::set<1>(ip, (p.a * q.c - p.c * q.a) / denominator);
+    ip = assign_intersection_point<Point>(p, q, denominator);
 
     return true;
 }

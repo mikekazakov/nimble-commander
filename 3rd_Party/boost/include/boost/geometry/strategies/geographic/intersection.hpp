@@ -2,7 +2,7 @@
 
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// Copyright (c) 2016-2019, Oracle and/or its affiliates.
+// Copyright (c) 2016-2021, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -13,6 +13,7 @@
 #define BOOST_GEOMETRY_STRATEGIES_GEOGRAPHIC_INTERSECTION_HPP
 
 #include <algorithm>
+#include <type_traits>
 
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/access.hpp>
@@ -31,19 +32,22 @@
 
 #include <boost/geometry/geometries/concepts/point_concept.hpp>
 #include <boost/geometry/geometries/concepts/segment_concept.hpp>
+#include <boost/geometry/geometries/segment.hpp>
 
 #include <boost/geometry/policies/robustness/segment_ratio.hpp>
 
 #include <boost/geometry/srs/spheroid.hpp>
 
-#include <boost/geometry/strategies/geographic/area.hpp>
+#include <boost/geometry/strategy/geographic/area.hpp>
+#include <boost/geometry/strategy/geographic/envelope.hpp>
+#include <boost/geometry/strategy/geographic/expand_segment.hpp>
+#include <boost/geometry/strategy/spherical/expand_box.hpp>
+
 #include <boost/geometry/strategies/geographic/disjoint_segment_box.hpp>
 #include <boost/geometry/strategies/geographic/distance.hpp>
-#include <boost/geometry/strategies/geographic/envelope.hpp>
 #include <boost/geometry/strategies/geographic/parameters.hpp>
 #include <boost/geometry/strategies/geographic/point_in_poly_winding.hpp>
 #include <boost/geometry/strategies/geographic/side.hpp>
-#include <boost/geometry/strategies/spherical/expand_box.hpp>
 #include <boost/geometry/strategies/spherical/disjoint_box_box.hpp>
 #include <boost/geometry/strategies/spherical/point_in_point.hpp>
 #include <boost/geometry/strategies/intersection.hpp>
@@ -68,137 +72,13 @@ namespace strategy { namespace intersection
 template
 <
     typename FormulaPolicy = strategy::andoyer,
-    unsigned int Order = strategy::default_order<FormulaPolicy>::value,
+    std::size_t Order = strategy::default_order<FormulaPolicy>::value,
     typename Spheroid = srs::spheroid<double>,
     typename CalculationType = void
 >
 struct geographic_segments
 {
     typedef geographic_tag cs_tag;
-
-    typedef side::geographic
-        <
-            FormulaPolicy, Spheroid, CalculationType
-        > side_strategy_type;
-
-    inline side_strategy_type get_side_strategy() const
-    {
-        return side_strategy_type(m_spheroid);
-    }
-
-    template <typename Geometry1, typename Geometry2>
-    struct point_in_geometry_strategy
-    {
-        typedef strategy::within::geographic_winding
-            <
-                typename point_type<Geometry1>::type,
-                typename point_type<Geometry2>::type,
-                FormulaPolicy,
-                Spheroid,
-                CalculationType
-            > type;
-    };
-
-    template <typename Geometry1, typename Geometry2>
-    inline typename point_in_geometry_strategy<Geometry1, Geometry2>::type
-        get_point_in_geometry_strategy() const
-    {
-        typedef typename point_in_geometry_strategy
-            <
-                Geometry1, Geometry2
-            >::type strategy_type;
-        return strategy_type(m_spheroid);
-    }
-
-    template <typename Geometry>
-    struct area_strategy
-    {
-        typedef area::geographic
-            <
-                FormulaPolicy,
-                Order,
-                Spheroid,
-                CalculationType
-            > type;
-    };
-
-    template <typename Geometry>
-    inline typename area_strategy<Geometry>::type get_area_strategy() const
-    {
-        typedef typename area_strategy<Geometry>::type strategy_type;
-        return strategy_type(m_spheroid);
-    }
-
-    template <typename Geometry>
-    struct distance_strategy
-    {
-        typedef distance::geographic
-            <
-                FormulaPolicy,
-                Spheroid,
-                CalculationType
-            > type;
-    };
-
-    template <typename Geometry>
-    inline typename distance_strategy<Geometry>::type get_distance_strategy() const
-    {
-        typedef typename distance_strategy<Geometry>::type strategy_type;
-        return strategy_type(m_spheroid);
-    }
-
-    typedef envelope::geographic<FormulaPolicy, Spheroid, CalculationType>
-        envelope_strategy_type;
-
-    inline envelope_strategy_type get_envelope_strategy() const
-    {
-        return envelope_strategy_type(m_spheroid);
-    }
-
-    typedef expand::geographic_segment<FormulaPolicy, Spheroid, CalculationType>
-        expand_strategy_type;
-
-    inline expand_strategy_type get_expand_strategy() const
-    {
-        return expand_strategy_type(m_spheroid);
-    }
-
-    typedef within::spherical_point_point point_in_point_strategy_type;
-
-    static inline point_in_point_strategy_type get_point_in_point_strategy()
-    {
-        return point_in_point_strategy_type();
-    }
-
-    typedef within::spherical_point_point equals_point_point_strategy_type;
-
-    static inline equals_point_point_strategy_type get_equals_point_point_strategy()
-    {
-        return equals_point_point_strategy_type();
-    }
-
-    typedef disjoint::spherical_box_box disjoint_box_box_strategy_type;
-
-    static inline disjoint_box_box_strategy_type get_disjoint_box_box_strategy()
-    {
-        return disjoint_box_box_strategy_type();
-    }
-
-    typedef disjoint::segment_box_geographic
-        <
-            FormulaPolicy, Spheroid, CalculationType
-        > disjoint_segment_box_strategy_type;
-
-    inline disjoint_segment_box_strategy_type get_disjoint_segment_box_strategy() const
-    {
-        return disjoint_segment_box_strategy_type(m_spheroid);
-    }
-
-    typedef covered_by::spherical_point_box disjoint_point_box_strategy_type;
-    typedef covered_by::spherical_point_box covered_by_point_box_strategy_type;
-    typedef within::spherical_point_box within_point_box_strategy_type;
-    typedef envelope::spherical_box envelope_box_strategy_type;
-    typedef expand::spherical_box expand_box_strategy_type;
 
     enum intersection_point_flag { ipi_inters = 0, ipi_at_a1, ipi_at_a2, ipi_at_b1, ipi_at_b2 };
 
@@ -243,6 +123,11 @@ struct geographic_segments
         : m_spheroid(spheroid)
     {}
 
+    Spheroid model() const
+    {
+        return m_spheroid;
+    }
+
     // Relate segments a and b
     template
     <
@@ -273,16 +158,21 @@ struct geographic_segments
         bool is_b_reversed = b1_lon > b2_lon || b1_lon == b2_lon && get<1>(b1) > get<1>(b2);
         */
 
-        bool const is_p_reversed = get<1>(range_p.at(0)) > get<1>(range_p.at(1));
-        bool const is_q_reversed = get<1>(range_q.at(0)) > get<1>(range_q.at(1));
+        point1_type const& p0 = range_p.at(0);
+        point1_type const& p1 = range_p.at(1);
+        point2_type const& q0 = range_q.at(0);
+        point2_type const& q1 = range_q.at(1);
+
+        bool const is_p_reversed = get<1>(p0) > get<1>(p1);
+        bool const is_q_reversed = get<1>(q0) > get<1>(q1);
 
         // Call apply with original segments and ordered points
-        return apply<Policy>(segment_type1(range_p.at(0), range_p.at(1)),
-                             segment_type2(range_q.at(0), range_q.at(1)),
-                             range_p.at(is_p_reversed ? 1 : 0),
-                             range_p.at(is_p_reversed ? 0 : 1),
-                             range_q.at(is_q_reversed ? 1 : 0),
-                             range_q.at(is_q_reversed ? 0 : 1),
+        return apply<Policy>(segment_type1(p0, p1),
+                             segment_type2(q0, q1),
+                             (is_p_reversed ? p1 : p0),
+                             (is_p_reversed ? p0 : p1),
+                             (is_q_reversed ? q1 : q0),
+                             (is_q_reversed ? q0 : q1),
                              is_p_reversed, is_q_reversed);
     }
 
@@ -928,7 +818,7 @@ private:
     static inline bool is_near(CalcT const& dist)
     {
         // NOTE: This strongly depends on the Inverse method
-        CalcT const small_number = CalcT(boost::is_same<CalcT, float>::value ? 0.0001 : 0.00000001);
+        CalcT const small_number = CalcT(std::is_same<CalcT, float>::value ? 0.0001 : 0.00000001);
         return math::abs(dist) <= small_number;
     }
 
@@ -983,8 +873,7 @@ private:
     template <typename Point1, typename Point2>
     static inline bool equals_point_point(Point1 const& point1, Point2 const& point2)
     {
-        return detail::equals::equals_point_point(point1, point2,
-                                                  point_in_point_strategy_type());
+        return strategy::within::spherical_point_point::apply(point1, point2);
     }
 
 private:

@@ -12,6 +12,7 @@
 #define BOOST_TYPE_ERASURE_DETAIL_MEMBER11_HPP_INCLUDED
 
 #include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 
 #if !defined(BOOST_NO_CXX11_TEMPLATE_ALIASES) && \
     !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) && \

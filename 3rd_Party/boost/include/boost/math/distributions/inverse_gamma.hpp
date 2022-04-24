@@ -122,6 +122,13 @@ typedef inverse_gamma_distribution<double> inverse_gamma;
 // but there is a typedef for gamma
 //   typedef boost::math::gamma_distribution<Type, Policy> gamma;
 
+#ifdef __cpp_deduction_guides
+template <class RealType>
+inverse_gamma_distribution(RealType)->inverse_gamma_distribution<typename boost::math::tools::promote_args<RealType>::type>;
+template <class RealType>
+inverse_gamma_distribution(RealType,RealType)->inverse_gamma_distribution<typename boost::math::tools::promote_args<RealType>::type>;
+#endif
+
 // Allow random variable x to be zero, treated as a special case (unlike some definitions).
 
 template <class RealType, class Policy>

@@ -41,7 +41,7 @@ namespace monomorphic {
 template<typename T>
 class init_list {
 public:
-    enum { arity = 1 };
+    static const int arity = 1;
 
     typedef typename std::vector<T>::const_iterator iterator;
 
@@ -75,7 +75,7 @@ class init_list<bool> {
 public:
     typedef bool sample;
 
-    enum { arity = 1 };
+    static const int arity = 1;
 
     //! Constructor copies content of initializer_list
     init_list( std::initializer_list<bool>&& il )

@@ -108,7 +108,7 @@ public:
      */
     basic_channel_logger(basic_channel_logger const& that) :
         base_type(static_cast< base_type const& >(that)),
-        m_ChannelAttr(that.m_ChannelAttr)
+        m_ChannelAttr(that.m_ChannelAttr.get())
     {
         // Our attributes must refer to our channel attribute
         base_type::attributes()[boost::log::aux::default_attribute_names::channel()] = m_ChannelAttr;

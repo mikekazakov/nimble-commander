@@ -5,8 +5,8 @@
 // Copyright (c) 2011-2017 Adam Wulkiewicz, Lodz, Poland.
 // Copyright (c) 2020 Caian Benedicto, Campinas, Brazil.
 //
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2021.
+// Modifications copyright (c) 2019-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -18,12 +18,15 @@
 
 #include <boost/core/ignore_unused.hpp>
 
+#include <boost/geometry/algorithms/detail/expand_by_epsilon.hpp>
 #include <boost/geometry/algorithms/expand.hpp>
+
+#include <boost/geometry/index/detail/algorithms/content.hpp>
 #include <boost/geometry/index/detail/algorithms/bounds.hpp>
 #include <boost/geometry/index/detail/algorithms/nth_element.hpp>
+#include <boost/geometry/index/detail/rtree/node/node_elements.hpp>
 #include <boost/geometry/index/detail/rtree/node/subtree_destroyer.hpp>
-
-#include <boost/geometry/algorithms/detail/expand_by_epsilon.hpp>
+#include <boost/geometry/index/parameters.hpp>
 
 namespace boost { namespace geometry { namespace index { namespace detail { namespace rtree {
 
@@ -196,8 +199,10 @@ public:
 
         values_count = static_cast<size_type>(diff);
         entries.reserve(values_count);
+
+        auto const& strategy = index::detail::get_strategy(parameters);
         
-        expandable_box<box_type, strategy_type> hint_box(detail::get_strategy(parameters));
+        expandable_box<box_type, strategy_type> hint_box(strategy);
         for ( ; first != last ; ++first )
         {
             // NOTE: support for iterators not returning true references adapted
@@ -214,7 +219,7 @@ public:
             hint_box.expand(indexable);
 
             point_type pt;
-            geometry::centroid(indexable, pt);
+            geometry::centroid(indexable, pt, strategy);
             entries.push_back(std::make_pair(pt, first));
         }
 

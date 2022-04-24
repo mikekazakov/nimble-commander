@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2016-2019, Oracle and/or its affiliates.
+// Copyright (c) 2016-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -18,11 +18,10 @@
 #include <boost/algorithm/minmax.hpp>
 #include <boost/config.hpp>
 #include <boost/concept_check.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_void.hpp>
 
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/access.hpp>
+#include <boost/geometry/core/coordinate_promotion.hpp>
 #include <boost/geometry/core/radian_access.hpp>
 #include <boost/geometry/core/tags.hpp>
 
@@ -39,7 +38,6 @@
 #include <boost/geometry/formulas/vincenty_direct.hpp>
 
 #include <boost/geometry/util/math.hpp>
-#include <boost/geometry/util/promote_floating_point.hpp>
 #include <boost/geometry/util/select_calculation_type.hpp>
 #include <boost/geometry/util/normalize_spheroidal_coordinates.hpp>
 
@@ -64,9 +62,37 @@ namespace boost { namespace geometry
 
 namespace strategy { namespace distance
 {
-
 namespace detail
 {
+
+template <bool EnableClosestPoint>
+struct set_result
+{
+    template <typename CT, typename ResultType>
+    static void apply(CT const& distance,
+                      CT const&,
+                      CT const&,
+                      ResultType& result)
+    {
+        result.distance = distance;
+    }
+};
+
+template<>
+struct set_result<true>
+{
+    template <typename CT, typename ResultType>
+    static void apply(CT const&,
+                      CT const& lon,
+                      CT const& lat,
+                      ResultType& result)
+    {
+        result.lon = lon;
+        result.lat = lat;
+    }
+};
+
+
 /*!
 \brief Strategy functor for distance point to segment calculation on ellipsoid
        Algorithm uses direct and inverse geodesic problems as subroutines.
@@ -91,30 +117,18 @@ template
 >
 class geographic_cross_track
 {
-public :
-    typedef within::spherical_point_point equals_point_point_strategy_type;
 
-    typedef intersection::geographic_segments
-        <
-            FormulaPolicy,
-            strategy::default_order<FormulaPolicy>::value,
-            Spheroid,
-            CalculationType
-        > relate_segment_segment_strategy_type;
+public:
 
-    inline relate_segment_segment_strategy_type get_relate_segment_segment_strategy() const
+    geographic_cross_track() = default;
+
+    explicit geographic_cross_track(Spheroid const& spheroid)
+        : m_spheroid(spheroid)
+    {}
+
+    Spheroid const& model() const
     {
-        return relate_segment_segment_strategy_type(m_spheroid);
-    }
-
-    typedef within::geographic_winding
-        <
-            void, void, FormulaPolicy, Spheroid, CalculationType
-        > point_in_geometry_strategy_type;
-
-    inline point_in_geometry_strategy_type get_point_in_geometry_strategy() const
-    {
-        return point_in_geometry_strategy_type(m_spheroid);
+        return m_spheroid;
     }
 
     template <typename Point, typename PointOfSegment>
@@ -130,86 +144,48 @@ public :
           >
     {};
 
-    explicit geographic_cross_track(Spheroid const& spheroid = Spheroid())
-        : m_spheroid(spheroid)
-    {}
-
     template <typename Point, typename PointOfSegment>
-    inline typename return_type<Point, PointOfSegment>::type
-    apply(Point const& p, PointOfSegment const& sp1, PointOfSegment const& sp2) const
+    auto apply(Point const& p,
+               PointOfSegment const& sp1,
+               PointOfSegment const& sp2) const
     {
-        typedef typename geometry::detail::cs_angular_units<Point>::type units_type;
-
-        return (apply<units_type>(get_as_radian<0>(sp1), get_as_radian<1>(sp1),
-                                  get_as_radian<0>(sp2), get_as_radian<1>(sp2),
-                                  get_as_radian<0>(p), get_as_radian<1>(p),
-                                  m_spheroid)).distance;
+        return apply(get_as_radian<0>(sp1), get_as_radian<1>(sp1),
+                     get_as_radian<0>(sp2), get_as_radian<1>(sp2),
+                     get_as_radian<0>(p), get_as_radian<1>(p),
+                     m_spheroid).distance;
     }
-
+    
     // points on a meridian not crossing poles
     template <typename CT>
     inline CT vertical_or_meridian(CT const& lat1, CT const& lat2) const
     {
-        typedef typename formula::meridian_inverse
+        using meridian_inverse = typename formula::meridian_inverse
         <
             CT,
             strategy::default_order<FormulaPolicy>::value
-        > meridian_inverse;
+        >;
 
-        return meridian_inverse::meridian_not_crossing_pole_dist(lat1, lat2,
-                                                                 m_spheroid);
+        return meridian_inverse::meridian_not_crossing_pole_dist(lat1, lat2, m_spheroid);
     }
 
-    Spheroid const& model() const
-    {
-        return m_spheroid;
-    }
-
-private :
+private: 
 
     template <typename CT>
-    struct result_distance_point_segment
+    struct result_type
     {
-        result_distance_point_segment()
+        result_type()
             : distance(0)
-            , closest_point_lon(0)
-            , closest_point_lat(0)
+            , lon(0)
+            , lat(0)
         {}
 
         CT distance;
-        CT closest_point_lon;
-        CT closest_point_lat;
+        CT lon;
+        CT lat;
     };
 
     template <typename CT>
-    result_distance_point_segment<CT>
-    static inline non_iterative_case(CT const& lon, CT const& lat, CT const& distance)
-    {
-        result_distance_point_segment<CT> result;
-        result.distance = distance;
-
-        if (EnableClosestPoint)
-        {
-            result.closest_point_lon = lon;
-            result.closest_point_lat = lat;
-        }
-        return result;
-    }
-
-    template <typename CT>
-    result_distance_point_segment<CT>
-    static inline non_iterative_case(CT const& lon1, CT const& lat1, //p1
-                                     CT const& lon2, CT const& lat2, //p2
-                                     Spheroid const& spheroid)
-    {
-        CT distance = geometry::strategy::distance::geographic<FormulaPolicy, Spheroid, CT>
-                              ::apply(lon1, lat1, lon2, lat2, spheroid);
-
-        return non_iterative_case(lon1, lat1, distance);
-    }
-
-    template <typename CT>
-    CT static inline normalize(CT const& g4, CT& der)
+    auto static inline normalize(CT const& g4, CT& der)
     {
         CT const pi = math::pi<CT>();
         if (g4 < -1.25*pi)//close to -270
@@ -238,18 +214,19 @@ private :
         return g4 - pi/2;
     }
 
+
     template <typename CT>
     static void bisection(CT const& lon1, CT const& lat1, //p1
                           CT const& lon2, CT const& lat2, //p2
                           CT const& lon3, CT const& lat3, //query point p3
                           Spheroid const& spheroid,
                           CT const& s14_start, CT const& a12,
-                          result_distance_point_segment<CT>& result)
+                          result_type<CT>& result)
     {
-        typedef typename FormulaPolicy::template direct<CT, true, false, false, false>
-                direct_distance_type;
-        typedef typename FormulaPolicy::template inverse<CT, true, false, false, false, false>
-                inverse_distance_type;
+        using direct_distance_type = 
+            typename FormulaPolicy::template direct<CT, true, false, false, false>;
+        using inverse_distance_type = 
+            typename FormulaPolicy::template inverse<CT, true, false, false, false, false>;
 
         geometry::formula::result_direct<CT> res14;
 
@@ -263,53 +240,57 @@ private :
 
         CT s14 = s14_start;
 
-        do{
+        do {
             // Solve the direct problem to find p4 (GEO)
             res14 = direct_distance_type::apply(lon1, lat1, s14, a12, spheroid);
 
 #ifdef BOOST_GEOMETRY_DEBUG_GEOGRAPHIC_CROSS_TRACK
             std::cout << "dist(pl,p3)="
-                      << inverse_distance_type::apply(lon3, lat3,
-                                                      pr_lon, pr_lat,
-                                                      spheroid).distance
+                      << inverse_distance_type::apply(lon3, lat3, pr_lon, pr_lat, spheroid).distance
                       << std::endl;
             std::cout << "dist(pr,p3)="
-                      << inverse_distance_type::apply(lon3, lat3,
-                                                      pr_lon, pr_lat,
-                                                      spheroid).distance
+                      << inverse_distance_type::apply(lon3, lat3, pr_lon, pr_lat, spheroid).distance
                       << std::endl;
 #endif
-            if (inverse_distance_type::apply(lon3, lat3, pl_lon, pl_lat, spheroid).distance
-                < inverse_distance_type::apply(lon3, lat3, pr_lon, pr_lat, spheroid).distance)
+            CT const dist_l = 
+                inverse_distance_type::apply(lon3, lat3, pl_lon, pl_lat, spheroid).distance;
+            CT const dist_r = 
+                inverse_distance_type::apply(lon3, lat3, pr_lon, pr_lat, spheroid).distance;
+            
+            if (dist_l < dist_r)
             {
-                s14 -= inverse_distance_type::apply(res14.lon2, res14.lat2, pl_lon, pl_lat,
-                                                    spheroid).distance/2;
+                s14 -= inverse_distance_type::apply(res14.lon2, res14.lat2, pl_lon, 
+                    pl_lat, spheroid).distance/2;
                 pr_lon = res14.lon2;
                 pr_lat = res14.lat2;
             }
             else
             {
-                s14 += inverse_distance_type::apply(res14.lon2, res14.lat2, pr_lon, pr_lat,
-                                                    spheroid).distance/2;
+                s14 += inverse_distance_type::apply(res14.lon2, res14.lat2, pr_lon, 
+                    pr_lat, spheroid).distance/2;
                 pl_lon = res14.lon2;
                 pl_lat = res14.lat2;
             }
 
-            CT new_distance = inverse_distance_type::apply(lon3, lat3,
-                                                           res14.lon2, res14.lat2,
-                                                           spheroid).distance;
+            CT new_distance = inverse_distance_type::apply(lon3, lat3, res14.lon2, res14.lat2,
+                spheroid).distance;
 
             dist_improve = new_distance != result.distance;
 
 #ifdef BOOST_GEOMETRY_DEBUG_GEOGRAPHIC_CROSS_TRACK
             std::cout << "p4=" << res14.lon2 * math::r2d<CT>() <<
                          "," << res14.lat2 * math::r2d<CT>() << std::endl;
-            std::cout << "pl=" << pl_lon * math::r2d<CT>() << "," << pl_lat * math::r2d<CT>()<< std::endl;
-            std::cout << "pr=" << pr_lon * math::r2d<CT>() << "," << pr_lat * math::r2d<CT>() << std::endl;
+            std::cout << "pl=" << pl_lon * math::r2d<CT>() << ","
+                      << pl_lat * math::r2d<CT>()<< std::endl;
+            std::cout << "pr=" << pr_lon * math::r2d<CT>() << ","
+                      << pr_lat * math::r2d<CT>() << std::endl;
             std::cout << "new_s14=" << s14 << std::endl;
-            std::cout << std::setprecision(16) << "result.distance =" << result.distance << std::endl;
-            std::cout << std::setprecision(16) << "new_distance =" << new_distance << std::endl;
-            std::cout << "---------end of step " << counter << std::endl<< std::endl;
+            std::cout << std::setprecision(16) << "result.distance ="
+                      << result.distance << std::endl;
+            std::cout << std::setprecision(16) << "new_distance ="
+                      << new_distance << std::endl;
+            std::cout << "---------end of step " << counter
+                      << std::endl<< std::endl;
             if (!dist_improve)
             {
                 std::cout << "Stop msg: res34.distance >= prev_distance" << std::endl;
@@ -319,11 +300,10 @@ private :
                 std::cout << "Stop msg: counter" << std::endl;
             }
 #endif
+            set_result<EnableClosestPoint>::apply(new_distance, res14.lon2, res14.lat2, result);
 
-            result.distance = new_distance;
-
-        } while (dist_improve
-                 && counter++ < BOOST_GEOMETRY_DETAIL_POINT_SEGMENT_DISTANCE_MAX_STEPS);
+        } while (dist_improve && counter++
+                 < BOOST_GEOMETRY_DETAIL_POINT_SEGMENT_DISTANCE_MAX_STEPS);
     }
 
     template <typename CT>
@@ -332,17 +312,18 @@ private :
                        CT const& lon3, CT const& lat3, //query point p3
                        Spheroid const& spheroid,
                        CT const& s14_start, CT const& a12,
-                       result_distance_point_segment<CT>& result)
+                       result_type<CT>& result)
     {
-        typedef typename FormulaPolicy::template inverse<CT, true, true, false, true, true>
-                inverse_distance_azimuth_quantities_type;
-        typedef typename FormulaPolicy::template inverse<CT, false, true, false, false, false>
-                inverse_dist_azimuth_type;
-        typedef typename FormulaPolicy::template direct<CT, true, false, false, false>
-                direct_distance_type;
+        using inverse_distance_azimuth_quantities_type = 
+            typename FormulaPolicy::template inverse<CT, true, true, false, true, true>;
+    
+        using inverse_dist_azimuth_type = 
+            typename FormulaPolicy::template inverse<CT, false, true, false, false, false>;
+
+        using direct_distance_type = 
+            typename FormulaPolicy::template direct<CT, true, false, false, false>;
 
         CT const half_pi = math::pi<CT>() / CT(2);
-        CT prev_distance;
         geometry::formula::result_direct<CT> res14;
         geometry::formula::result_inverse<CT> res34;
         res34.distance = -1;
@@ -353,22 +334,25 @@ private :
         bool dist_improve = true;
         CT s14 = s14_start;
 
-        do{
-            prev_distance = res34.distance;
+        do {
+            auto prev_distance = res34.distance;
+            auto prev_res = res14;
 
             // Solve the direct problem to find p4 (GEO)
             res14 = direct_distance_type::apply(lon1, lat1, s14, a12, spheroid);
 
             // Solve an inverse problem to find g4
-            // g4 is the angle between segment (p1,p2) and segment (p3,p4) that meet on p4 (GEO)
+            // g4 is the angle between segment (p1,p2) and segment (p3,p4)
+            // that meet on p4 (GEO)
 
-            CT a4 = inverse_dist_azimuth_type::apply(res14.lon2, res14.lat2,
-                                                lon2, lat2, spheroid).azimuth;
-            res34 = inverse_distance_azimuth_quantities_type::apply(res14.lon2, res14.lat2,
+            CT a4 = inverse_dist_azimuth_type::apply(res14.lon2, res14.lat2, 
+                                                     lon2, lat2, spheroid).azimuth;
+            res34 = inverse_distance_azimuth_quantities_type::apply(res14.lon2, res14.lat2, 
                                                                     lon3, lat3, spheroid);
             g4 = res34.azimuth - a4;
 
-            CT M43 = res34.geodesic_scale; // cos(s14/earth_radius) is the spherical limit
+            // cos(s14/earth_radius) is the spherical limit
+            CT M43 = res34.geodesic_scale;
             CT m34 = res34.reduced_length;
 
             if (m34 != 0)
@@ -378,12 +362,17 @@ private :
                 s14 -= der != 0 ? delta_g4 / der : 0;
             }
 
-            result.distance = res34.distance;
-
             dist_improve = prev_distance > res34.distance || prev_distance == -1;
-            if (!dist_improve)
+
+            if (dist_improve)
             {
-                result.distance = prev_distance;
+                set_result<EnableClosestPoint>::apply(res34.distance, res14.lon2, res14.lat2, 
+                                                      result);
+            }
+            else
+            {
+                set_result<EnableClosestPoint>::apply(prev_distance, prev_res.lon2, prev_res.lat2, 
+                                                      result);
             }
 
 #ifdef BOOST_GEOMETRY_DEBUG_GEOGRAPHIC_CROSS_TRACK
@@ -393,12 +382,13 @@ private :
             std::cout << "a4=" << a4 * math::r2d<CT>() << std::endl;
             std::cout << "g4(normalized)=" << g4 * math::r2d<CT>() << std::endl;
             std::cout << "delta_g4=" << delta_g4 * math::r2d<CT>()  << std::endl;
-            std::cout << "der=" << der  << std::endl;
             std::cout << "M43=" << M43 << std::endl;
             std::cout << "m34=" << m34 << std::endl;
             std::cout << "new_s14=" << s14 << std::endl;
-            std::cout << std::setprecision(16) << "dist     =" << res34.distance << std::endl;
-            std::cout << "---------end of step " << counter << std::endl<< std::endl;
+            std::cout << std::setprecision(16) << "dist     ="
+                      << res34.distance << std::endl;
+            std::cout << "---------end of step " << counter
+                      << std::endl<< std::endl;
             if (g4 == half_pi)
             {
                 std::cout << "Stop msg: g4 == half_pi" << std::endl;
@@ -425,24 +415,40 @@ private :
         std::cout << "distance=" << res34.distance << std::endl;
 
         std::cout << "s34(geo) ="
-                  << inverse_distance_azimuth_quantities_type::apply(res14.lon2, res14.lat2, lon3, lat3, spheroid).distance
-                  << ", p4=(" << res14.lon2 * math::r2d<double>() << ","
-                              << res14.lat2 * math::r2d<double>() << ")"
+                  << inverse_distance_azimuth_quantities_type
+                     ::apply(res14.lon2, res14.lat2,
+                             lon3, lat3, spheroid).distance
+                  << ", p4=(" << res14.lon2 * math::r2d<CT>() << ","
+                              << res14.lat2 * math::r2d<CT>() << ")"
                   << std::endl;
 
-        CT s31 = inverse_distance_azimuth_quantities_type::apply(lon3, lat3, lon1, lat1, spheroid).distance;
-        CT s32 = inverse_distance_azimuth_quantities_type::apply(lon3, lat3, lon2, lat2, spheroid).distance;
+        CT s31 = inverse_distance_azimuth_quantities_type::apply(lon3, lat3, lon1, lat1, spheroid)
+            .distance;
+        CT s32 = inverse_distance_azimuth_quantities_type::apply(lon3, lat3, lon2, lat2, spheroid)
+            .distance;
 
-        CT a4 = inverse_dist_azimuth_type::apply(res14.lon2, res14.lat2, lon2, lat2, spheroid).azimuth;
-        geometry::formula::result_direct<CT> res4 = direct_distance_type::apply(res14.lon2, res14.lat2, .04, a4, spheroid);
-        CT p4_plus = inverse_distance_azimuth_quantities_type::apply(res4.lon2, res4.lat2, lon3, lat3, spheroid).distance;
+        CT a4 = inverse_dist_azimuth_type::apply(res14.lon2, res14.lat2, lon2, lat2, spheroid)
+            .azimuth;
+        
+        geometry::formula::result_direct<CT> res4 =
+            direct_distance_type::apply(res14.lon2, res14.lat2, .04, a4, spheroid);
+        
+        CT p4_plus = inverse_distance_azimuth_quantities_type::apply(res4.lon2, res4.lat2, lon3, 
+            lat3, spheroid).distance;
 
-        geometry::formula::result_direct<CT> res1 = direct_distance_type::apply(lon1, lat1, s14-.04, a12, spheroid);
-        CT p4_minus = inverse_distance_azimuth_quantities_type::apply(res1.lon2, res1.lat2, lon3, lat3, spheroid).distance;
+        geometry::formula::result_direct<CT> res1 = 
+            direct_distance_type::apply(lon1, lat1, s14-.04, a12, spheroid);
+        
+        CT p4_minus = inverse_distance_azimuth_quantities_type::apply(res1.lon2, res1.lat2, lon3, 
+            lat3, spheroid).distance;
 
         std::cout << "s31=" << s31 << "\ns32=" << s32
-                  << "\np4_plus=" << p4_plus << ", p4=(" << res4.lon2 * math::r2d<double>() << "," << res4.lat2 * math::r2d<double>() << ")"
-                  << "\np4_minus=" << p4_minus << ", p4=(" << res1.lon2 * math::r2d<double>() << "," << res1.lat2 * math::r2d<double>() << ")"
+                  << "\np4_plus=" << p4_plus << ", p4=("
+                  << res4.lon2 * math::r2d<CT>() << ","
+                  << res4.lat2 * math::r2d<CT>() << ")"
+                  << "\np4_minus=" << p4_minus << ", p4=("
+                  << res1.lon2 * math::r2d<CT>() << ","
+                  << res1.lat2 * math::r2d<CT>() << ")"
                   << std::endl;
 
         if (res34.distance <= p4_plus && res34.distance <= p4_minus)
@@ -456,21 +462,59 @@ private :
 #endif
     }
 
-    template <typename Units, typename CT>
-    result_distance_point_segment<CT>
-    static inline apply(CT const& lo1, CT const& la1, //p1
-                        CT const& lo2, CT const& la2, //p2
-                        CT const& lo3, CT const& la3, //query point p3
-                        Spheroid const& spheroid)
+    
+    template <typename CT>
+    static inline auto non_iterative_case(CT const& lon1, CT const& lat1, //p1
+                                          CT const& lon2, CT const& lat2, //p2
+                                          CT const& distance)
     {
-        typedef typename FormulaPolicy::template inverse<CT, true, true, false, false, false>
-                inverse_dist_azimuth_type;
-        typedef typename FormulaPolicy::template inverse<CT, true, true, true, false, false>
-                inverse_dist_azimuth_reverse_type;
+        result_type<CT> result;
+
+        set_result<EnableClosestPoint>::apply(distance, lon2, lat2, result);
+
+        return result;
+    }
+
+    template <typename CT>
+    static inline auto non_iterative_case(CT const& lon1, CT const& lat1, //p1
+                                          CT const& lon2, CT const& lat2, //p2
+                                          Spheroid const& spheroid)
+    {
+        CT distance = geometry::strategy::distance::geographic
+            <
+                FormulaPolicy, 
+                Spheroid, 
+                CT
+            >::apply(lon1, lat1, lon2, lat2, spheroid);
+
+        return non_iterative_case(lon1, lat1, lon2, lat2, distance);
+    }
+
+protected:
+
+    template <typename CT>
+    static inline auto apply(CT const& lo1, CT const& la1, //p1
+                             CT const& lo2, CT const& la2, //p2
+                             CT const& lo3, CT const& la3, //query point p3
+                             Spheroid const& spheroid)
+    {
+        using inverse_dist_azimuth_type = 
+            typename FormulaPolicy::template inverse<CT, true, true, false, false, false>;
+
+        using inverse_dist_azimuth_reverse_type = 
+            typename FormulaPolicy::template inverse<CT, true, true, true, false, false>;
 
         CT const earth_radius = geometry::formula::mean_radius<CT>(spheroid);
 
-        result_distance_point_segment<CT> result;
+        result_type<CT> result;
+
+        // if the query points coincide with one of segments' endpoints
+        if ((lo1 == lo3 && la1 == la3) || (lo2 == lo3 && la2 == la3))
+        {
+            result.lon = lo3;
+            result.lat = la3;
+            return result;
+        }
 
         // Constants
         //CT const f = geometry::formula::flattening<CT>(spheroid);
@@ -506,17 +550,16 @@ private :
         //but pass by the pole
         CT diff = geometry::math::longitude_distance_signed<geometry::radian>(lon1, lon2);
 
-        typedef typename formula::meridian_inverse<CT>
-                                            meridian_inverse;
+        using meridian_inverse = typename formula::meridian_inverse<CT>;
 
         bool meridian_not_crossing_pole =
-              meridian_inverse::meridian_not_crossing_pole
-                                                            (lat1, lat2, diff);
+            meridian_inverse::meridian_not_crossing_pole(lat1, lat2, diff);
 
         bool meridian_crossing_pole =
-              meridian_inverse::meridian_crossing_pole(diff);
+            meridian_inverse::meridian_crossing_pole(diff);
 
-        if (math::equals(lat1, c0) && math::equals(lat2, c0) && !meridian_crossing_pole)
+        if (math::equals(lat1, c0) && math::equals(lat2, c0)
+            && !meridian_crossing_pole)
         {
 #ifdef BOOST_GEOMETRY_DEBUG_GEOGRAPHIC_CROSS_TRACK
             std::cout << "Equatorial segment" << std::endl;
@@ -529,16 +572,17 @@ private :
 #endif
             if (lon3 <= lon1)
             {
-                return non_iterative_case(lon1, lat1, lon3, lat3, spheroid);
+                return non_iterative_case(lon3, lat3, lon1, lat1, spheroid);
             }
             if (lon3 >= lon2)
             {
-                return non_iterative_case(lon2, lat2, lon3, lat3, spheroid);
+                return non_iterative_case(lon3, lat3, lon2, lat2, spheroid);
             }
-            return non_iterative_case(lon3, lat1, lon3, lat3, spheroid);
+            return non_iterative_case(lon3, lat3, lon3, lat1, spheroid);
         }
 
-        if ( (meridian_not_crossing_pole || meridian_crossing_pole ) && std::abs(lat1) > std::abs(lat2))
+        if ( (meridian_not_crossing_pole || meridian_crossing_pole )
+            && std::abs(lat1) > std::abs(lat2))
         {
 #ifdef BOOST_GEOMETRY_DEBUG_GEOGRAPHIC_CROSS_TRACK
             std::cout << "Meridian segment not crossing pole" << std::endl;
@@ -552,40 +596,29 @@ private :
             std::cout << "Meridian segment crossing pole" << std::endl;
 #endif
             CT sign_non_zero = lat3 >= c0 ? 1 : -1;
-            result_distance_point_segment<CT> res13 =
-                    apply<geometry::radian>(lon1, lat1,
-                                            lon1, half_pi * sign_non_zero,
-                                            lon3, lat3, spheroid);
-            result_distance_point_segment<CT> res23 =
-                    apply<geometry::radian>(lon2, lat2,
-                                            lon2, half_pi * sign_non_zero,
-                                            lon3, lat3, spheroid);
-            if (res13.distance < res23.distance)
-            {
-                return res13;
-            }
-            else
-            {
-                return res23;
-            }
+            
+            auto res13 = apply(lon1, lat1, lon1, half_pi * sign_non_zero, lon3, lat3, spheroid);
+            
+            auto res23 = apply(lon2, lat2, lon2, half_pi * sign_non_zero, lon3, lat3, spheroid);
+
+            return (res13.distance) < (res23.distance) ? res13 : res23;
         }
 
-        geometry::formula::result_inverse<CT> res12 =
-                inverse_dist_azimuth_reverse_type::apply(lon1, lat1, lon2, lat2, spheroid);
-        geometry::formula::result_inverse<CT> res13 =
-                inverse_dist_azimuth_type::apply(lon1, lat1, lon3, lat3, spheroid);
+        auto res12 = inverse_dist_azimuth_reverse_type::apply(lon1, lat1, lon2, lat2, spheroid);
+        
+        auto res13 = inverse_dist_azimuth_type::apply(lon1, lat1, lon3, lat3, spheroid);
 
         if (geometry::math::equals(res12.distance, c0))
         {
 #ifdef BOOST_GEOMETRY_DEBUG_GEOGRAPHIC_CROSS_TRACK
             std::cout << "Degenerate segment" << std::endl;
-            std::cout << "distance between points=" << res13.distance << std::endl;
+            std::cout << "distance between points="
+                      << res13.distance << std::endl;
 #endif
-            typename meridian_inverse::result res =
-                     meridian_inverse::apply(lon1, lat1, lon3, lat3, spheroid);
+            auto res = meridian_inverse::apply(lon1, lat1, lon3, lat3, spheroid);
 
-            return non_iterative_case(lon1, lat2,
-                                      res.meridian ? res.distance : res13.distance);
+            return non_iterative_case(lon3, lat3, lon1, lat2, 
+                res.meridian ? res.distance : res13.distance);
         }
 
         // Compute a12 (GEO)
@@ -594,14 +627,15 @@ private :
         // TODO: meridian case optimization
         if (geometry::math::equals(a312, c0) && meridian_not_crossing_pole)
         {
-            boost::tuple<CT,CT> minmax_elem = boost::minmax(lat1, lat2);
-            if (lat3 >= minmax_elem.template get<0>() &&
-                lat3 <= minmax_elem.template get<1>())
+            auto const minmax_elem = std::minmax(lat1, lat2);
+            
+            if (lat3 >= std::get<0>(minmax_elem) &&
+                lat3 <= std::get<1>(minmax_elem))
             {
 #ifdef BOOST_GEOMETRY_DEBUG_GEOGRAPHIC_CROSS_TRACK
                 std::cout << "Point on meridian segment" << std::endl;
 #endif
-                return non_iterative_case(lon3, lat3, c0);
+                return non_iterative_case(lon3, lat3, lon3, lat3, c0);
             }
         }
 
@@ -623,17 +657,17 @@ private :
             // projection of p3 on geodesic spanned by segment (p1,p2) fall
             // outside of segment on the side of p1
 
-            return non_iterative_case(lon1, lat1, lon3, lat3, spheroid);
+            return non_iterative_case(lon3, lat3, lon1, lat1, spheroid);
         }
 
-        geometry::formula::result_inverse<CT> res23 =
-                inverse_dist_azimuth_type::apply(lon2, lat2, lon3, lat3, spheroid);
+        auto res23 = inverse_dist_azimuth_type::apply(lon2, lat2, lon3, lat3, spheroid);
 
         CT a321 = res23.azimuth - res12.reverse_azimuth + pi;
         CT projection2 = cos( a321 ) * res23.distance / res12.distance;
 
 #ifdef BOOST_GEOMETRY_DEBUG_GEOGRAPHIC_CROSS_TRACK
-        std::cout << "a21=" << res12.reverse_azimuth * math::r2d<CT>() << std::endl;
+        std::cout << "a21=" << res12.reverse_azimuth * math::r2d<CT>()
+                  << std::endl;
         std::cout << "a23=" << res23.azimuth * math::r2d<CT>() << std::endl;
         std::cout << "a321=" << a321 * math::r2d<CT>() << std::endl;
         std::cout << "cos(a321)=" << cos(a321) << std::endl;
@@ -647,15 +681,16 @@ private :
 #endif
             // projection of p3 on geodesic spanned by segment (p1,p2) fall
             // outside of segment on the side of p2
-            return non_iterative_case(lon2, lat2, lon3, lat3, spheroid);
+            return non_iterative_case(lon3, lat3, lon2, lat2, spheroid);
         }
 
         // Guess s14 (SPHERICAL) aka along-track distance
-        typedef geometry::model::point
-                <
-                    CT, 2,
-                    geometry::cs::spherical_equatorial<geometry::radian>
-                > point;
+        using point = geometry::model::point
+            <
+                CT, 
+                2,
+                geometry::cs::spherical_equatorial<geometry::radian>
+            >;
 
         point p1 = point(lon1, lat1);
         point p2 = point(lon2, lat2);
@@ -670,14 +705,13 @@ private :
         //CT s14 = acos( cos(s13/earth_radius) / cos(s34/earth_radius) ) * earth_radius;
         CT cos_frac = cos(s13_sph / earth_radius) / cos(s34_sph / earth_radius);
         CT s14_sph = cos_frac >= 1 ? CT(0)
-                     : cos_frac <= -1 ? pi * earth_radius
-                     : acos(cos_frac) * earth_radius;
+            : cos_frac <= -1 ? pi * earth_radius
+            : acos(cos_frac) * earth_radius;
 
-        CT a12_sph = geometry::formula::spherical_azimuth<>(lon1, lat1, lon2, lat2);
+        CT const a12_sph = geometry::formula::spherical_azimuth<>(lon1, lat1, lon2, lat2);
 
-        geometry::formula::result_direct<CT> res
-                = geometry::formula::spherical_direct<true, false>
-                  (lon1, lat1, s14_sph, a12_sph, srs::sphere<CT>(earth_radius));
+        auto res = geometry::formula::spherical_direct<true, false>(lon1, lat1, 
+            s14_sph, a12_sph, srs::sphere<CT>(earth_radius));
 
         // this is what postgis (version 2.5) returns
         // geometry::strategy::distance::geographic<FormulaPolicy, Spheroid, CT>
@@ -694,21 +728,24 @@ private :
 
         if (Bisection)
         {
-            bisection<CT>(lon1, lat1, lon2, lat2, lon3, lat3,
-                          spheroid, res12.distance/2, res12.azimuth, result);
+            bisection(lon1, lat1, lon2, lat2, lon3, lat3, spheroid, 
+                res12.distance/2, res12.azimuth, result);
         }
         else
         {
-            CT s14_start = geometry::strategy::distance::geographic<FormulaPolicy, Spheroid, CT>
-                           ::apply(lon1, lat1, res.lon2, res.lat2, spheroid);
+            CT s14_start = geometry::strategy::distance::geographic
+                <
+                    FormulaPolicy, 
+                    Spheroid, 
+                    CT
+                >::apply(lon1, lat1, res.lon2, res.lat2, spheroid);
 
-            newton<CT>(lon1, lat1, lon2, lat2, lon3, lat3,
-                              spheroid, s14_start, res12.azimuth, result);
+            newton(lon1, lat1, lon2, lat2, lon3, lat3, spheroid, s14_start, res12.azimuth, result);
         }
 
         return result;
     }
-
+    
     Spheroid m_spheroid;
 };
 
@@ -730,18 +767,19 @@ class geographic_cross_track
             false
         >
 {
+    using base_t = detail::geographic_cross_track
+        <
+            FormulaPolicy,
+            Spheroid,
+            CalculationType,
+            false,
+            false
+        >;
+
 public :
     explicit geographic_cross_track(Spheroid const& spheroid = Spheroid())
-        :
-        detail::geographic_cross_track<
-                FormulaPolicy,
-                Spheroid,
-                CalculationType,
-                false,
-                false
-            >(spheroid)
+        : base_t(spheroid)
         {}
-
 };
 
 #ifndef DOXYGEN_NO_STRATEGY_SPECIALIZATIONS
@@ -767,9 +805,9 @@ struct tag<geographic_cross_track<FormulaPolicy, Spheroid> >
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType
 >
 struct tag<geographic_cross_track<FormulaPolicy, Spheroid, CalculationType> >
 {
@@ -778,12 +816,13 @@ struct tag<geographic_cross_track<FormulaPolicy, Spheroid, CalculationType> >
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType,
-        bool Bisection
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    bool Bisection,
+    bool EnableClosestPoint
 >
-struct tag<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection> >
+struct tag<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint> >
 {
     typedef strategy_tag_distance_point_segment type;
 };
@@ -796,10 +835,10 @@ struct return_type<geographic_cross_track<FormulaPolicy>, P, PS>
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename P,
-        typename PS
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename P,
+    typename PS
 >
 struct return_type<geographic_cross_track<FormulaPolicy, Spheroid>, P, PS>
     : geographic_cross_track<FormulaPolicy, Spheroid>::template return_type<P, PS>
@@ -807,11 +846,11 @@ struct return_type<geographic_cross_track<FormulaPolicy, Spheroid>, P, PS>
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType,
-        typename P,
-        typename PS
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    typename P,
+    typename PS
 >
 struct return_type<geographic_cross_track<FormulaPolicy, Spheroid, CalculationType>, P, PS>
     : geographic_cross_track<FormulaPolicy, Spheroid, CalculationType>::template return_type<P, PS>
@@ -819,23 +858,24 @@ struct return_type<geographic_cross_track<FormulaPolicy, Spheroid, CalculationTy
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType,
-        bool Bisection,
-        typename P,
-        typename PS
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    bool Bisection,
+    bool EnableClosestPoint,
+    typename P,
+    typename PS
 >
-struct return_type<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection>, P, PS>
-    : detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection>::template return_type<P, PS>
+struct return_type<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint>, P, PS>
+    : detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint>::template return_type<P, PS>
 {};
 
 //comparable types
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType
 >
 struct comparable_type<geographic_cross_track<FormulaPolicy, Spheroid, CalculationType> >
 {
@@ -848,24 +888,25 @@ struct comparable_type<geographic_cross_track<FormulaPolicy, Spheroid, Calculati
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType,
-        bool Bisection
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    bool Bisection,
+    bool EnableClosestPoint
 >
-struct comparable_type<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection> >
+struct comparable_type<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint> >
 {
     typedef detail::geographic_cross_track
         <
-            FormulaPolicy, Spheroid, CalculationType, Bisection
+            FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint
         >  type;
 };
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType
 >
 struct get_comparable<geographic_cross_track<FormulaPolicy, Spheroid, CalculationType> >
 {
@@ -879,43 +920,22 @@ public :
 
 template
 <
-        typename FormulaPolicy,
-        typename Spheroid,
-        typename CalculationType,
-        bool Bisection
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    bool Bisection,
+    bool EnableClosestPoint
 >
-struct get_comparable<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection> >
+struct get_comparable<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint> >
 {
 public :
-    static inline detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection>
-    apply(detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection> const& strategy)
+    static inline detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint>
+    apply(detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint> const& strategy)
     {
         return strategy;
     }
 };
 
-
-template
-<
-    typename FormulaPolicy,
-    typename P,
-    typename PS
->
-struct result_from_distance<geographic_cross_track<FormulaPolicy>, P, PS>
-{
-private :
-    typedef typename geographic_cross_track
-        <
-            FormulaPolicy
-        >::template return_type<P, PS>::type return_type;
-public :
-    template <typename T>
-    static inline return_type
-    apply(geographic_cross_track<FormulaPolicy> const& , T const& distance)
-    {
-        return distance;
-    }
-};
 
 template
 <
@@ -936,6 +956,32 @@ public :
     template <typename T>
     static inline return_type
     apply(geographic_cross_track<FormulaPolicy, Spheroid, CalculationType> const& , T const& distance)
+    {
+        return distance;
+    }
+};
+
+template
+<
+    typename FormulaPolicy,
+    typename Spheroid,
+    typename CalculationType,
+    bool Bisection,
+    bool EnableClosestPoint,
+    typename P,
+    typename PS
+>
+struct result_from_distance<detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint>, P, PS>
+{
+private :
+    typedef typename detail::geographic_cross_track
+        <
+            FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint
+        >::template return_type<P, PS>::type return_type;
+public :
+    template <typename T>
+    static inline return_type
+    apply(detail::geographic_cross_track<FormulaPolicy, Spheroid, CalculationType, Bisection, EnableClosestPoint> const& , T const& distance)
     {
         return distance;
     }

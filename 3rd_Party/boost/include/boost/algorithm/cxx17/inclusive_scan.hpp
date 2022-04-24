@@ -9,8 +9,8 @@
 /// \brief Combine the (transformed) elements of a sequence (or two) into a single value.
 /// \author Marshall Clow
 
-#ifndef BOOST_ALGORITHM_TRANSFORM_REDUCE_HPP
-#define BOOST_ALGORITHM_TRANSFORM_REDUCE_HPP
+#ifndef BOOST_ALGORITHM_INCLUSIVE_SCAN_HPP
+#define BOOST_ALGORITHM_INCLUSIVE_SCAN_HPP
 
 #include <functional>     // for std::plus
 #include <iterator>       // for std::iterator_traits
@@ -58,4 +58,4 @@ OutputIterator inclusive_scan(InputIterator first, InputIterator last,
 
 }} // namespace boost and algorithm
 
-#endif // BOOST_ALGORITHM_TRANSFORM_REDUCE_HPP
+#endif // BOOST_ALGORITHM_INCLUSIVE_SCAN_HPP

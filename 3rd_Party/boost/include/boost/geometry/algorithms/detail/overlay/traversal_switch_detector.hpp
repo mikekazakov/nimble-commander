@@ -2,8 +2,8 @@
 
 // Copyright (c) 2015-2016 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2018.
-// Modifications copyright (c) 2018 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2018-2020.
+// Modifications copyright (c) 2018-2020 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -14,10 +14,7 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_TRAVERSAL_SWITCH_DETECTOR_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_TRAVERSAL_SWITCH_DETECTOR_HPP
 
-#include <cstddef>
-#include <map>
-
-#include <boost/range.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/algorithms/detail/ring_identifier.hpp>
 #include <boost/geometry/algorithms/detail/overlay/copy_segments.hpp>
@@ -25,8 +22,10 @@
 #include <boost/geometry/algorithms/detail/overlay/is_self_turn.hpp>
 #include <boost/geometry/algorithms/detail/overlay/turn_info.hpp>
 #include <boost/geometry/core/access.hpp>
-#include <boost/geometry/core/assert.hpp>
 #include <boost/geometry/util/condition.hpp>
+
+#include <cstddef>
+#include <map>
 
 namespace boost { namespace geometry
 {
@@ -35,6 +34,42 @@ namespace boost { namespace geometry
 namespace detail { namespace overlay
 {
 
+// The switch detector, the first phase in traversal, inspects UU and II turns.
+// Suppose you have these two polygons in a union. There is one UU turn.
+// +-------+
+// |       |
+// |   A   |
+// |       |
+// +-------U---------+       U = UU turn
+//         |         |
+//         |    B    |
+//         |         |
+//         +---------+
+// It first assigns region ids, A gets id 1 and B gets id 2.
+// Because of that, it should NOT switch sources in traversal at U.
+// So coming from upper left, it follows A, and also at U it keeps following A.
+// The result is two rings. (See for example testcase "case_31" or others.)
+//
+// But suppose you have two larger input polygons, partially overlapping:
+// +-----------------+
+// |                 |
+// |   A   +-----T---C       I = interior in output
+// |       |  I  | O |       O = overlap A & B (included in output)
+// +-------U-----T---C       U = UU turn
+//         |         |       T = normal turn (u/i)
+//         |    B    |       C = collinear turn (c/c)
+//         |         |
+//         +---------+
+// Rings A and B will be connected (by inspecting turn information)
+// and there will be one region 1.
+// Because of that, it will switch sources in traversal at U.
+// So coming from lower right, it follows B but at U it will switch to A.
+// Also for the generated interior ring, coming from the top via A it will at U
+// switch to B and go to the right, generating I. (See for example "case_91")
+// Switching using region_id is only relevant for UU or II turns.
+// In all T turns it will follow "u" for union or "i" for intersection,
+// and in C turns it will follow either direction (they are the same).
+// There is also "isolated", making it more complex, and documented below.
 template
 <
     bool Reverse1,
@@ -51,72 +86,54 @@ struct traversal_switch_detector
 {
     static const operation_type target_operation
             = operation_from_overlay<OverlayType>::value;
-    static const operation_type opposite_operation
-            = target_operation == operation_union
-            ? operation_intersection
-            : operation_union;
 
     enum isolation_type
     {
-        isolation_unknown = -1,
         isolation_no = 0,
         isolation_yes = 1,
         isolation_multiple = 2
     };
 
-    typedef typename boost::range_value<Turns>::type turn_type;
-    typedef typename turn_type::turn_operation_type turn_operation_type;
-    typedef std::set<signed_size_type> set_type;
+    using turn_type = typename boost::range_value<Turns>::type;
+    using set_type= std::set<signed_size_type>;
 
     // Per ring, first turns are collected (in turn_indices), and later
     // a region_id is assigned
     struct merged_ring_properties
     {
-        signed_size_type region_id;
+        signed_size_type region_id = -1;
         set_type turn_indices;
-
-        merged_ring_properties()
-            : region_id(-1)
-        {}
     };
 
     struct connection_properties
     {
-        std::size_t count;
-        // Contains turn-index OR, if clustered, minus-cluster_id
+        std::size_t count = 0;
+        // Set with turn-index OR (if clustered) the negative cluster_id
         set_type unique_turn_ids;
-        connection_properties()
-            : count(0)
-        {}
     };
 
-    typedef std::map<signed_size_type, connection_properties> connection_map;
+    // Maps region_id -> properties
+    using connection_map = std::map<signed_size_type, connection_properties>;
 
     // Per region, a set of properties is maintained, including its connections
     // to other regions
     struct region_properties
     {
-        signed_size_type region_id;
-        isolation_type isolated;
+        signed_size_type region_id = -1;
+        isolation_type isolated = isolation_no;
         set_type unique_turn_ids;
-
-        // Maps from connected region_id to their properties
         connection_map connected_region_counts;
-
-        region_properties()
-            : region_id(-1)
-            , isolated(isolation_unknown)
-        {}
     };
 
-    // Keeps turn indices per ring
-    typedef std::map<ring_identifier, merged_ring_properties > merge_map;
-    typedef std::map<signed_size_type, region_properties> region_connection_map;
+    // Maps ring -> properties
+    using merge_map = std::map<ring_identifier, merged_ring_properties>;
 
-    typedef set_type::const_iterator set_iterator;
+    // Maps region_id -> properties
+    using region_connection_map = std::map<signed_size_type, region_properties>;
 
-    inline traversal_switch_detector(Geometry1 const& geometry1, Geometry2 const& geometry2,
-            Turns& turns, Clusters& clusters,
+    inline traversal_switch_detector(Geometry1 const& geometry1,
+            Geometry2 const& geometry2,
+            Turns& turns, Clusters const& clusters,
             RobustPolicy const& robust_policy, Visitor& visitor)
         : m_geometry1(geometry1)
         , m_geometry2(geometry2)
@@ -140,7 +157,7 @@ struct traversal_switch_detector
 
         if (region.connected_region_counts.size() == 1)
         {
-            connection_properties const& cprop = region.connected_region_counts.begin()->second;
+            auto const& cprop = region.connected_region_counts.begin()->second;
             return cprop.count <= 1;
         }
         return region.connected_region_counts.empty();
@@ -163,7 +180,7 @@ struct traversal_switch_detector
 
         if (region.connected_region_counts.size() == 1)
         {
-            connection_properties const& cprop = region.connected_region_counts.begin()->second;
+            auto const& cprop = region.connected_region_counts.begin()->second;
             return cprop.count > 1;
         }
         return false;
@@ -182,16 +199,15 @@ struct traversal_switch_detector
 
         bool first = true;
         signed_size_type first_turn_id = 0;
-        for (typename connection_map::const_iterator it = region.connected_region_counts.begin();
-             it != region.connected_region_counts.end(); ++it)
+        for (auto const& key_val : region.connected_region_counts)
         {
-            connection_properties const& cprop = it->second;
+            auto const& cprop = key_val.second;
 
             if (cprop.count != 1)
             {
                 return false;
             }
-            signed_size_type const unique_turn_id = *cprop.unique_turn_ids.begin();
+            auto const unique_turn_id = *cprop.unique_turn_ids.begin();
             if (first)
             {
                 first_turn_id = unique_turn_id;
@@ -233,10 +249,9 @@ struct traversal_switch_detector
 
         // First step: compare turns of regions with turns of connected region
         set_type turn_ids = region.unique_turn_ids;
-        for (set_iterator sit = connected_region.unique_turn_ids.begin();
-             sit != connected_region.unique_turn_ids.end(); ++sit)
+        for (auto turn_id : connected_region.unique_turn_ids)
         {
-            turn_ids.erase(*sit);
+            turn_ids.erase(turn_id);
         }
 
         // There should be one connection (turn or cluster) left
@@ -245,10 +260,8 @@ struct traversal_switch_detector
             return false;
         }
 
-        for (set_iterator sit = connected_region.unique_turn_ids.begin();
-             sit != connected_region.unique_turn_ids.end(); ++sit)
+        for (auto id_or_index : connected_region.unique_turn_ids)
         {
-            signed_size_type const id_or_index = *sit;
             if (id_or_index >= 0)
             {
                 if (! ii_turn_connects_two_regions(region, connected_region, id_or_index))
@@ -259,14 +272,13 @@ struct traversal_switch_detector
             else
             {
                 signed_size_type const cluster_id = -id_or_index;
-                typename Clusters::const_iterator it = m_clusters.find(cluster_id);
+                auto it = m_clusters.find(cluster_id);
                 if (it != m_clusters.end())
                 {
                     cluster_info const& cinfo = it->second;
-                    for (set_iterator cit = cinfo.turn_indices.begin();
-                         cit != cinfo.turn_indices.end(); ++cit)
+                    for (auto turn_index : cinfo.turn_indices)
                     {
-                        if (! ii_turn_connects_two_regions(region, connected_region, *cit))
+                        if (! ii_turn_connects_two_regions(region, connected_region, turn_index))
                         {
                             return false;
                         }
@@ -283,13 +295,12 @@ struct traversal_switch_detector
         bool first_with_turn = true;
         signed_size_type first_turn_id = 0;
 
-        for (typename connection_map::const_iterator it = region.connected_region_counts.begin();
-             it != region.connected_region_counts.end(); ++it)
+        for (auto const& key_val : region.connected_region_counts)
         {
-            signed_size_type const region_id = it->first;
-            connection_properties const& cprop = it->second;
+            signed_size_type const region_id = key_val.first;
+            connection_properties const& cprop = key_val.second;
 
-            typename region_connection_map::const_iterator mit = m_connected_regions.find(region_id);
+            auto mit = m_connected_regions.find(region_id);
             if (mit == m_connected_regions.end())
             {
                 // Should not occur
@@ -330,16 +341,13 @@ struct traversal_switch_detector
 
     void get_isolated_regions()
     {
-        typedef typename region_connection_map::iterator it_type;
-
         // First time: check regions isolated (one connection only),
         // semi-isolated (multiple connections between same region),
         // and complex isolated (connection with multiple rings but all
         // at same point)
-        for (it_type it = m_connected_regions.begin();
-             it != m_connected_regions.end(); ++it)
+        for (auto& key_val : m_connected_regions)
         {
-            region_properties& properties = it->second;
+            region_properties& properties = key_val.second;
             if (one_connection_to_another_region(properties))
             {
                 properties.isolated = isolation_yes;
@@ -361,12 +369,11 @@ struct traversal_switch_detector
         while (changed && defensive_check++ < m_connected_regions.size())
         {
             changed = false;
-            for (it_type it = m_connected_regions.begin();
-                 it != m_connected_regions.end(); ++it)
+            for (auto& key_val : m_connected_regions)
             {
-                region_properties& properties = it->second;
+                region_properties& properties = key_val.second;
 
-                if (properties.isolated == isolation_unknown
+                if (properties.isolated == isolation_no
                         && has_only_isolated_children(properties))
                 {
                     properties.isolated = isolation_yes;
@@ -376,37 +383,55 @@ struct traversal_switch_detector
         }
     }
 
-    void assign_isolation()
+    void assign_isolation_to_enriched()
     {
-        for (std::size_t turn_index = 0; turn_index < m_turns.size(); ++turn_index)
+        for (turn_type& turn : m_turns)
         {
-            turn_type& turn = m_turns[turn_index];
+            // For difference, for the input walked through in reverse,
+            // the meaning is reversed: what is isolated is actually not,
+            // and vice versa.
+            bool const reverseMeaningInTurn
+                    = (Reverse1 || Reverse2)
+                      && ! turn.is_self()
+                      && ! turn.is_clustered()
+                      && uu_or_ii(turn)
+                      && turn.operations[0].enriched.region_id
+                         != turn.operations[1].enriched.region_id;
 
-            for (int op_index = 0; op_index < 2; op_index++)
+            for (auto& op : turn.operations)
             {
-                turn_operation_type& op = turn.operations[op_index];
-                typename region_connection_map::const_iterator mit = m_connected_regions.find(op.enriched.region_id);
+                auto mit = m_connected_regions.find(op.enriched.region_id);
                 if (mit != m_connected_regions.end())
                 {
+                    bool const reverseMeaningInOp
+                        = reverseMeaningInTurn
+                          && ((op.seg_id.source_index == 0 && Reverse1)
+                               || (op.seg_id.source_index == 1 && Reverse2));
+
+                    // It is assigned to isolated if it's property is "Yes",
+                    // (one connected interior, or chained).
+                    // "Multiple" doesn't count for isolation,
+                    // neither for intersection, neither for difference.
                     region_properties const& prop = mit->second;
-                    op.enriched.isolated = prop.isolated == isolation_yes;
+                    op.enriched.isolated
+                            = reverseMeaningInOp
+                            ? false
+                            : prop.isolated == isolation_yes;
                 }
             }
         }
     }
 
-    void assign_region_ids()
+    void assign_region_ids_to_enriched()
     {
-        for (typename merge_map::const_iterator it
-             = m_turns_per_ring.begin(); it != m_turns_per_ring.end(); ++it)
+        for (auto const& key_val : m_turns_per_ring)
         {
-            ring_identifier const& ring_id = it->first;
-            merged_ring_properties const& properties = it->second;
+            ring_identifier const& ring_id = key_val.first;
+            merged_ring_properties const& properties = key_val.second;
 
-            for (set_iterator sit = properties.turn_indices.begin();
-                 sit != properties.turn_indices.end(); ++sit)
+            for (auto turn_index : properties.turn_indices)
             {
-                turn_type& turn = m_turns[*sit];
+                turn_type& turn = m_turns[turn_index];
 
                 if (! acceptable(turn))
                 {
@@ -414,9 +439,8 @@ struct traversal_switch_detector
                     continue;
                 }
 
-                for (int i = 0; i < 2; i++)
+                for (auto& op : turn.operations)
                 {
-                    turn_operation_type& op = turn.operations[i];
                     if (ring_id_by_seg_id(op.seg_id) == ring_id)
                     {
                         op.enriched.region_id = properties.region_id;
@@ -435,11 +459,8 @@ struct traversal_switch_detector
             signed_size_type const unique_turn_id
                     = turn.is_clustered() ? -turn.cluster_id : turn_index;
 
-            turn_operation_type op0 = turn.operations[0];
-            turn_operation_type op1 = turn.operations[1];
-
-            signed_size_type const& id0 = op0.enriched.region_id;
-            signed_size_type const& id1 = op1.enriched.region_id;
+            signed_size_type const& id0 = turn.operations[0].enriched.region_id;
+            signed_size_type const& id1 = turn.operations[1].enriched.region_id;
 
             // Add region (by assigning) and add involved turns
             if (id0 != -1)
@@ -479,8 +500,12 @@ struct traversal_switch_detector
         // Discarded turns don't connect rings to the same region
         // Also xx are not relevant
         // (otherwise discarded colocated uu turn could make a connection)
-        return ! turn.discarded
-            && ! turn.both(operation_blocked);
+        return ! turn.discarded && ! turn.both(operation_blocked);
+    }
+
+    inline bool uu_or_ii(turn_type const& turn) const
+    {
+        return turn.both(operation_union) || turn.both(operation_intersection);
     }
 
     inline bool connects_same_region(turn_type const& turn) const
@@ -493,7 +518,7 @@ struct traversal_switch_detector
         if (! turn.is_clustered())
         {
             // If it is a uu/ii-turn (non clustered), it is never same region
-            return ! (turn.both(operation_union) || turn.both(operation_intersection));
+            return ! uu_or_ii(turn);
         }
 
         if (BOOST_GEOMETRY_CONDITION(target_operation == operation_union))
@@ -510,13 +535,6 @@ struct traversal_switch_detector
         return ! (turn.both(operation_intersection)
                   || turn.combination(operation_intersection, operation_union));
     }
-
-
-    inline signed_size_type get_region_id(turn_operation_type const& op) const
-    {
-        return op.enriched.region_id;
-    }
-
 
     void create_region(signed_size_type& new_region_id, ring_identifier const& ring_id,
                 merged_ring_properties& properties, signed_size_type region_id = -1)
@@ -537,14 +555,12 @@ struct traversal_switch_detector
         properties.region_id = region_id;
 
 #if defined(BOOST_GEOMETRY_DEBUG_TRAVERSAL_SWITCH_DETECTOR)
-        std::cout << " ADD " << ring_id << "  TO REGION " << region_id << std::endl;
+        std::cout << " ADD " << ring_id << " TO REGION " << region_id << std::endl;
 #endif
 
         // Find connecting rings, recursively
-        for (set_iterator sit = properties.turn_indices.begin();
-             sit != properties.turn_indices.end(); ++sit)
+        for (auto turn_index : properties.turn_indices)
         {
-            signed_size_type const turn_index = *sit;
             turn_type const& turn = m_turns[turn_index];
             if (! connects_same_region(turn))
             {
@@ -554,9 +570,8 @@ struct traversal_switch_detector
 
             // Union: This turn connects two rings (interior connected), create the region
             // Intersection: This turn connects two rings, set same regions for these two rings
-            for (int op_index = 0; op_index < 2; op_index++)
+            for (auto const& op : turn.operations)
             {
-                turn_operation_type const& op = turn.operations[op_index];
                 ring_identifier connected_ring_id = ring_id_by_seg_id(op.seg_id);
                 if (connected_ring_id != ring_id)
                 {
@@ -569,18 +584,90 @@ struct traversal_switch_detector
     void propagate_region(signed_size_type& new_region_id,
             ring_identifier const& ring_id, signed_size_type region_id)
     {
-        typename merge_map::iterator it = m_turns_per_ring.find(ring_id);
+        auto it = m_turns_per_ring.find(ring_id);
         if (it != m_turns_per_ring.end())
         {
             create_region(new_region_id, ring_id, it->second, region_id);
         }
     }
 
+#if defined(BOOST_GEOMETRY_DEBUG_TRAVERSAL_SWITCH_DETECTOR)
+    void debug_show_results()
+    {
+        auto isolation_to_string = [](isolation_type const& iso) -> std::string
+        {
+            switch(iso)
+            {
+                case isolation_no : return "no";
+                case isolation_yes : return "yes";
+                case isolation_multiple : return "multiple";
+            }
+            return "error";
+        };
+        auto set_to_string = [](auto const& s) -> std::string
+        {
+            std::ostringstream result;
+            for (auto item : s) { result << " " << item; }
+            return result.str();
+        };
+
+        for (auto const& kv : m_connected_regions)
+        {
+            auto const& prop = kv.second;
+
+            std::ostringstream sub;
+            sub << "[turns" << set_to_string(prop.unique_turn_ids)
+                << "] regions";
+            for (auto const& kvs : prop.connected_region_counts)
+            {
+                sub << " { " << kvs.first
+                    << " : via [" << set_to_string(kvs.second.unique_turn_ids)
+                    << " ] }";
+            }
+
+            std::cout << "REGION " << prop.region_id
+                      << " " << isolation_to_string(prop.isolated)
+                      << " " << sub.str()
+                      << std::endl;
+        }
+
+        for (std::size_t turn_index = 0; turn_index < m_turns.size(); ++turn_index)
+        {
+            turn_type const& turn = m_turns[turn_index];
+
+            if (uu_or_ii(turn) && ! turn.is_clustered())
+            {
+                std::cout << (turn.both(operation_union) ? "UU" : "II")
+                          << " " << turn_index
+                          << " (" << geometry::get<0>(turn.point)
+                          << ", " << geometry::get<1>(turn.point) << ")"
+                          << " -> " << std::boolalpha
+                          << " [" << turn.operations[0].seg_id.source_index
+                          << "/" << turn.operations[1].seg_id.source_index << "] "
+                          << "(" << turn.operations[0].enriched.region_id
+                          << " " << turn.operations[0].enriched.isolated
+                          << ") / (" << turn.operations[1].enriched.region_id
+                          << " " << turn.operations[1].enriched.isolated << ")"
+                          << std::endl;
+            }
+        }
+
+        for (auto const& key_val : m_clusters)
+        {
+            cluster_info const& cinfo = key_val.second;
+            std::cout << "CL RESULT " << key_val.first
+                         << " -> " << cinfo.open_count << std::endl;
+        }
+    }
+#endif
 
     void iterate()
     {
 #if defined(BOOST_GEOMETRY_DEBUG_TRAVERSAL_SWITCH_DETECTOR)
-        std::cout << "BEGIN ITERATION GETTING REGION_IDS" << std::endl;
+        std::cout << "BEGIN SWITCH DETECTOR (region_ids and isolation)"
+                  << (Reverse1 ? " REVERSE_1" : "")
+                  << (Reverse2 ? " REVERSE_2" : "")
+                  << std::endl;
 #endif
 
         // Collect turns per ring
@@ -598,9 +685,8 @@ struct traversal_switch_detector
                 continue;
             }
 
-            for (int op_index = 0; op_index < 2; op_index++)
+            for (auto const& op : turn.operations)
             {
-                turn_operation_type const& op = turn.operations[op_index];
                 m_turns_per_ring[ring_id_by_seg_id(op.seg_id)].turn_indices.insert(turn_index);
             }
         }
@@ -608,42 +694,20 @@ struct traversal_switch_detector
         // All rings having turns are in turns/ring map. Process them.
         {
             signed_size_type new_region_id = 1;
-            for (typename merge_map::iterator it
-                 = m_turns_per_ring.begin(); it != m_turns_per_ring.end(); ++it)
+            for (auto& key_val : m_turns_per_ring)
             {
-                create_region(new_region_id, it->first, it->second);
+                create_region(new_region_id, key_val.first, key_val.second);
             }
 
-            assign_region_ids();
+            assign_region_ids_to_enriched();
             assign_connected_regions();
             get_isolated_regions();
-            assign_isolation();
+            assign_isolation_to_enriched();
         }
 
 #if defined(BOOST_GEOMETRY_DEBUG_TRAVERSAL_SWITCH_DETECTOR)
-        std::cout << "END ITERATION GETTIN REGION_IDS" << std::endl;
-
-        for (std::size_t turn_index = 0; turn_index < m_turns.size(); ++turn_index)
-        {
-            turn_type const& turn = m_turns[turn_index];
-
-            if ((turn.both(operation_union) || turn.both(operation_intersection))
-                 && ! turn.is_clustered())
-            {
-                std::cout << "UU/II RESULT "
-                             << turn_index << " -> "
-                          << turn.operations[0].enriched.region_id
-                          << " " << turn.operations[1].enriched.region_id
-                          << std::endl;
-            }
-        }
-
-        for (typename Clusters::const_iterator it = m_clusters.begin(); it != m_clusters.end(); ++it)
-        {
-            cluster_info const& cinfo = it->second;
-            std::cout << "CL RESULT " << it->first
-                         << " -> " << cinfo.open_count << std::endl;
-        }
+        std::cout << "END SWITCH DETECTOR" << std::endl;
+        debug_show_results();
 #endif
 
     }
@@ -653,7 +717,7 @@ private:
     Geometry1 const& m_geometry1;
     Geometry2 const& m_geometry2;
     Turns& m_turns;
-    Clusters& m_clusters;
+    Clusters const& m_clusters;
     merge_map m_turns_per_ring;
     region_connection_map m_connected_regions;
     RobustPolicy const& m_robust_policy;

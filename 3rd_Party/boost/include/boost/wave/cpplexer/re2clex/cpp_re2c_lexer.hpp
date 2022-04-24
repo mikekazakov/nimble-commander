@@ -22,7 +22,6 @@
 
 #include <boost/concept_check.hpp>
 #include <boost/assert.hpp>
-#include <boost/spirit/include/classic_core.hpp>
 
 #include <boost/wave/wave_config.hpp>
 #include <boost/wave/language_support.hpp>
@@ -88,7 +87,7 @@ public:
     }
 #endif
 
-// error reporting from the re2c generated lexer
+    // error reporting from the re2c generated lexer
     static int report_error(Scanner<IteratorT> const* s, int code, char const *, ...);
 
 private:
@@ -152,6 +151,14 @@ lexer<IteratorT, PositionT, TokenT>::lexer(IteratorT const &first,
     scanner.act_in_cpp0x_mode = boost::wave::need_cpp0x(language_);
 #else
     scanner.act_in_cpp0x_mode = false;
+#endif
+
+#if BOOST_WAVE_SUPPORT_CPP2A != 0
+    scanner.act_in_cpp2a_mode = boost::wave::need_cpp2a(language_);
+    scanner.act_in_cpp0x_mode = boost::wave::need_cpp2a(language_)
+        || boost::wave::need_cpp0x(language_);
+#else
+    scanner.act_in_cpp2a_mode = false;
 #endif
 }
 
@@ -240,8 +247,8 @@ lexer<IteratorT, PositionT, TokenT>::get(TokenT& result)
         break;
 
     case T_EOF:
-    // T_EOF is returned as a valid token, the next call will return T_EOI,
-    // i.e. the actual end of input
+        // T_EOF is returned as a valid token, the next call will return T_EOI,
+        // i.e. the actual end of input
         at_eof = true;
         value.clear();
         break;
@@ -317,7 +324,7 @@ lexer<IteratorT, PositionT, TokenT>::report_error(Scanner<IteratorT> const *s, i
 
     BOOST_WAVE_LEXER_THROW_VAR(lexing_exception, errcode, buffer, s->line,
         s->column, s->file_name);
-//    BOOST_UNREACHABLE_RETURN(0);
+    //    BOOST_UNREACHABLE_RETURN(0);
     return 0;
 }
 
@@ -342,7 +349,7 @@ public:
     {}
     virtual ~lex_functor() {}
 
-// get the next token from the input stream
+    // get the next token from the input stream
     token_type& get(token_type& result) BOOST_OVERRIDE { return re2c_lexer.get(result); }
     void set_position(PositionT const &pos) BOOST_OVERRIDE { re2c_lexer.set_position(pos); }
 #if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0

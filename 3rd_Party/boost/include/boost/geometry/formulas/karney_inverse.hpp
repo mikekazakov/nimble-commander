@@ -4,9 +4,10 @@
 
 // Contributed and/or modified by Adeel Ahmad, as part of Google Summer of Code 2018 program.
 
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2021.
+// Modifications copyright (c) 2019-2021 Oracle and/or its affiliates.
 
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -35,6 +36,7 @@
 
 #include <boost/geometry/util/condition.hpp>
 #include <boost/geometry/util/math.hpp>
+#include <boost/geometry/util/precise_math.hpp>
 #include <boost/geometry/util/series_expansion.hpp>
 #include <boost/geometry/util/normalize_spheroidal_coordinates.hpp>
 
@@ -44,24 +46,26 @@
 
 namespace boost { namespace geometry { namespace math {
 
-// TODO: Moved temporarily because of C++11 is used
-
 /*!
 \brief The exact difference of two angles reduced to (-180deg, 180deg].
 */
 template<typename T>
 inline T difference_angle(T const& x, T const& y, T& e)
 {
-    T t, d = math::sum_error(std::remainder(-x, T(360)), std::remainder(y, T(360)), t);
+    auto res1 = boost::geometry::detail::precise_math::two_sum(
+        std::remainder(-x, T(360)), std::remainder(y, T(360)));
 
-    normalize_azimuth<degree, T>(d);
+    normalize_azimuth<degree, T>(res1[0]);
 
     // Here y - x = d + t (mod 360), exactly, where d is in (-180,180] and
     // abs(t) <= eps (eps = 2^-45 for doubles).  The only case where the
     // addition of t takes the result outside the range (-180,180] is d = 180
     // and t > 0.  The case, d = -180 + eps, t = -eps, can't happen, since
     // sum_error would have returned the exact result in such a case (i.e., given t = 0).
-    return math::sum_error(d == 180 && t > 0 ? -180 : d, t, e);
+    auto res2 = boost::geometry::detail::precise_math::two_sum(
+        res1[0] == 180 && res1[1] > 0 ? -180 : res1[0], res1[1]);
+    e = res2[1];
+    return res2[0];
 }
 
 }}} // namespace boost::geometry::math
@@ -72,13 +76,9 @@ namespace boost { namespace geometry { namespace formula
 
 namespace se = series_expansion;
 
-/*!
-\brief The solution of the inverse problem of geodesics on latlong coordinates,
-       after Karney (2011).
-\author See
-- Charles F.F Karney, Algorithms for geodesics, 2011
-https://arxiv.org/pdf/1109.4448.pdf
-*/
+namespace detail
+{
+
 template <
     typename CT,
     bool EnableDistance,
@@ -122,11 +122,11 @@ public:
 
         result_type result;
 
-        CT lat1 = la1;
-        CT lat2 = la2;
+        CT lat1 = la1 * r2d;
+        CT lat2 = la2 * r2d;
 
-        CT lon1 = lo1;
-        CT lon2 = lo2;
+        CT lon1 = lo1 * r2d;
+        CT lon2 = lo2 * r2d;
 
         CT const a = CT(get_radius<0>(spheroid));
         CT const b = CT(get_radius<2>(spheroid));
@@ -237,7 +237,9 @@ public:
         CT const dn2 = sqrt(c1 + ep2 * math::sqr(sin_beta2));
 
         CT sigma12;
-        CT m12x, s12x, M21;
+        CT m12x = c0;
+        CT s12x;
+        CT M21;
 
         // Index zero element of coeffs_C1 is unused.
         se::coeffs_C1<SeriesOrder, CT> const coeffs_C1(n);
@@ -316,7 +318,7 @@ public:
             // meridian and geodesic is neither meridional nor equatorial.
 
             // Find the starting point for Newton's method.
-            CT dnm;
+            CT dnm = c1;
             sigma12 = newton_start(sin_beta1, cos_beta1, dn1,
                                    sin_beta2, cos_beta2, dn2,
                                    lam12, sin_lam12, cos_lam12,
@@ -357,7 +359,7 @@ public:
                      iteration < max_iterations;
                      ++iteration)
                 {
-                    CT dv;
+                    CT dv = c0;
                     CT v = lambda12(sin_beta1, cos_beta1, dn1,
                                     sin_beta2, cos_beta2, dn2,
                                     sin_alpha1, cos_alpha1,
@@ -465,12 +467,12 @@ public:
         {
             if (BOOST_GEOMETRY_CONDITION(CalcFwdAzimuth))
             {
-                result.azimuth = atan2(sin_alpha1, cos_alpha1) * r2d;
+                result.azimuth = atan2(sin_alpha1, cos_alpha1);
             }
 
             if (BOOST_GEOMETRY_CONDITION(CalcRevAzimuth))
             {
-                result.reverse_azimuth = atan2(sin_alpha2, cos_alpha2) * r2d;
+                result.reverse_azimuth = atan2(sin_alpha2, cos_alpha2);
             }
         }
 
@@ -583,7 +585,8 @@ public:
                                   CT& sin_alpha1, CT& cos_alpha1,
                                   CT& sin_alpha2, CT& cos_alpha2,
                                   CT& dnm, CoeffsC1 const& coeffs_C1, CT const& ep2,
-                                  CT const& tol1, CT const& tol2, CT const& etol2, CT const& n, CT const& f)
+                                  CT const& tol1, CT const& tol2, CT const& etol2, CT const& n,
+                                  CT const& f)
     {
         static CT const c0 = 0;
         static CT const c0_01 = 0.01;
@@ -690,7 +693,9 @@ public:
                 CT cos_beta12a = cos_beta2 * cos_beta1 - sin_beta2 * sin_beta1;
                 CT beta12a = atan2(sin_beta12a, cos_beta12a);
 
-                CT m12b, m0, dummy;
+                CT m12b = c0;
+                CT m0 = c1;
+                CT dummy;
                 meridian_length(n, ep2, pi + beta12a,
                                 sin_beta1, -cos_beta1, dn1,
                                 sin_beta2, cos_beta2, dn2,
@@ -949,6 +954,36 @@ public:
     }
 
 };
+
+} // namespace detail
+
+/*!
+\brief The solution of the inverse problem of geodesics on latlong coordinates,
+       after Karney (2011).
+\author See
+- Charles F.F Karney, Algorithms for geodesics, 2011
+https://arxiv.org/pdf/1109.4448.pdf
+*/
+
+template <
+    typename CT,
+    bool EnableDistance,
+    bool EnableAzimuth,
+    bool EnableReverseAzimuth = false,
+    bool EnableReducedLength = false,
+    bool EnableGeodesicScale = false
+>
+struct karney_inverse
+    : detail::karney_inverse
+        <
+            CT,
+            EnableDistance,
+            EnableAzimuth,
+            EnableReverseAzimuth,
+            EnableReducedLength,
+            EnableGeodesicScale
+        >
+{};
 
 }}} // namespace boost::geometry::formula
 

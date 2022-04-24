@@ -5,10 +5,11 @@
 // Copyright (c) 2009-2014 Mateusz Loskot, London, UK.
 // Copyright (c) 2014 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2014.
-// Modifications copyright (c) 2014, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2021.
+// Modifications copyright (c) 2014-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
 // (geolib/GGL), copyright (c) 1995-2010 Geodan, Amsterdam, the Netherlands.
@@ -22,25 +23,23 @@
 
 #include <cstddef>
 
-#include <boost/mpl/size_t.hpp>
+#include <boost/range/size.hpp>
+#include <boost/range/value_type.hpp>
 
-#include <boost/range.hpp>
-
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant_fwd.hpp>
+#include <boost/geometry/algorithms/detail/counting.hpp>
+#include <boost/geometry/algorithms/detail/visit.hpp>
+#include <boost/geometry/algorithms/not_implemented.hpp>
 
 #include <boost/geometry/core/closure.hpp>
 #include <boost/geometry/core/coordinate_dimension.hpp>
 #include <boost/geometry/core/tag_cast.hpp>
 #include <boost/geometry/core/tags.hpp>
+#include <boost/geometry/core/visit.hpp>
 
-#include <boost/geometry/algorithms/not_implemented.hpp>
-
-#include <boost/geometry/algorithms/detail/counting.hpp>
-
+#include <boost/geometry/geometries/adapted/boost_variant.hpp> // For backward compatibility
 #include <boost/geometry/geometries/concepts/check.hpp>
 
+#include <boost/geometry/util/type_traits_std.hpp>
 
 namespace boost { namespace geometry
 {
@@ -140,48 +139,54 @@ struct num_points<Geometry, AddForOpen, multi_tag>
 #endif
 
 
-namespace resolve_variant
+namespace resolve_dynamic
 {
 
-template <typename Geometry>
+template <typename Geometry, typename Tag = typename tag<Geometry>::type>
 struct num_points
 {
-    static inline std::size_t apply(Geometry const& geometry,
-                                    bool add_for_open)
+    static inline std::size_t apply(Geometry const& geometry, bool add_for_open)
     {
         concepts::check<Geometry const>();
 
         return add_for_open
-            ? dispatch::num_points<Geometry, true>::apply(geometry)
-            : dispatch::num_points<Geometry, false>::apply(geometry);
+             ? dispatch::num_points<Geometry, true>::apply(geometry)
+             : dispatch::num_points<Geometry, false>::apply(geometry);
     }
 };
 
-template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
-struct num_points<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+template <typename Geometry>
+struct num_points<Geometry, dynamic_geometry_tag>
 {
-    struct visitor: boost::static_visitor<std::size_t>
+    static inline std::size_t apply(Geometry const& geometry, bool add_for_open)
     {
-        bool m_add_for_open;
-
-        visitor(bool add_for_open): m_add_for_open(add_for_open) {}
-
-        template <typename Geometry>
-        inline std::size_t operator()(Geometry const& geometry) const
+        std::size_t result = 0;
+        traits::visit<Geometry>::apply([&](auto const& g)
         {
-            return num_points<Geometry>::apply(geometry, m_add_for_open);
-        }
-    };
-
-    static inline std::size_t
-    apply(boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry,
-          bool add_for_open)
-    {
-        return boost::apply_visitor(visitor(add_for_open), geometry);
+            result = num_points<util::remove_cref_t<decltype(g)>>::apply(g, add_for_open);
+        }, geometry);
+        return result;
     }
 };
 
-} // namespace resolve_variant
+
+template <typename Geometry>
+struct num_points<Geometry, geometry_collection_tag>
+{
+    static inline std::size_t apply(Geometry const& geometry, bool add_for_open)
+    {
+        std::size_t result = 0;
+        detail::visit_breadth_first([&](auto const& g)
+        {
+            result += num_points<util::remove_cref_t<decltype(g)>>::apply(g, add_for_open);
+            return true;
+        }, geometry);
+        return result;
+    }
+};
+
+
+} // namespace resolve_dynamic
 
 
 /*!
@@ -198,7 +203,7 @@ struct num_points<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
 template <typename Geometry>
 inline std::size_t num_points(Geometry const& geometry, bool add_for_open = false)
 {
-    return resolve_variant::num_points<Geometry>::apply(geometry, add_for_open);
+    return resolve_dynamic::num_points<Geometry>::apply(geometry, add_for_open);
 }
 
 #if defined(_MSC_VER)

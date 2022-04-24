@@ -115,6 +115,13 @@ private:
 
 typedef inverse_gaussian_distribution<double> inverse_gaussian;
 
+#ifdef __cpp_deduction_guides
+template <class RealType>
+inverse_gaussian_distribution(RealType)->inverse_gaussian_distribution<typename boost::math::tools::promote_args<RealType>::type>;
+template <class RealType>
+inverse_gaussian_distribution(RealType,RealType)->inverse_gaussian_distribution<typename boost::math::tools::promote_args<RealType>::type>;
+#endif
+
 template <class RealType, class Policy>
 inline const std::pair<RealType, RealType> range(const inverse_gaussian_distribution<RealType, Policy>& /*dist*/)
 { // Range of permissible values for random variable x, zero to max.
@@ -355,7 +362,7 @@ inline RealType quantile(const inverse_gaussian_distribution<RealType, Policy>& 
   // digits used to control how accurate to try to make the result.
   // To allow user to control accuracy versus speed,
   int get_digits = policies::digits<RealType, Policy>();// get digits from policy, 
-  boost::uintmax_t m = policies::get_max_root_iterations<Policy>(); // and max iterations.
+  std::uintmax_t m = policies::get_max_root_iterations<Policy>(); // and max iterations.
   using boost::math::tools::newton_raphson_iterate;
   result =
     newton_raphson_iterate(inverse_gaussian_quantile_functor<RealType, Policy>(dist, p), guess, min, max, get_digits, m);
@@ -440,7 +447,7 @@ inline RealType quantile(const complemented2_type<inverse_gaussian_distribution<
   // int digits = std::numeric_limits<RealType>::digits; // Maximum possible binary digits accuracy for type T.
   // digits used to control how accurate to try to make the result.
   int get_digits = policies::digits<RealType, Policy>();
-  boost::uintmax_t m = policies::get_max_root_iterations<Policy>();
+  std::uintmax_t m = policies::get_max_root_iterations<Policy>();
   using boost::math::tools::newton_raphson_iterate;
   result =
     newton_raphson_iterate(inverse_gaussian_quantile_complement_functor<RealType, Policy>(c.dist, q), guess, min, max, get_digits, m);

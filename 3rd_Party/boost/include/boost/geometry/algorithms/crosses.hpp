@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 // Copyright (c) 2014 Samuel Debionne, Grenoble, France.
 
-// This file was modified by Oracle on 2014, 2017.
-// Modifications copyright (c) 2014-2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2021.
+// Modifications copyright (c) 2014-2021 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -31,6 +31,10 @@
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/geometries/concepts/check.hpp>
 #include <boost/geometry/strategies/default_strategy.hpp>
+#include <boost/geometry/strategies/detail.hpp>
+#include <boost/geometry/strategies/relate/cartesian.hpp>
+#include <boost/geometry/strategies/relate/geographic.hpp>
+#include <boost/geometry/strategies/relate/spherical.hpp>
 
 
 namespace boost { namespace geometry
@@ -65,9 +69,14 @@ struct crosses
 namespace resolve_strategy
 {
 
+template
+<
+    typename Strategy,
+    bool IsUmbrella = strategies::detail::is_umbrella_strategy<Strategy>::value
+>
 struct crosses
 {
-    template <typename Geometry1, typename Geometry2, typename Strategy>
+    template <typename Geometry1, typename Geometry2>
     static inline bool apply(Geometry1 const& geometry1,
                              Geometry2 const& geometry2,
                              Strategy const& strategy)
@@ -75,21 +84,50 @@ struct crosses
         concepts::check<Geometry1 const>();
         concepts::check<Geometry2 const>();
 
-        return dispatch::crosses<Geometry1, Geometry2>::apply(geometry1, geometry2, strategy);
+        return dispatch::crosses
+            <
+                Geometry1, Geometry2
+            >::apply(geometry1, geometry2, strategy);
     }
+};
 
+template <typename Strategy>
+struct crosses<Strategy, false>
+{
+    template <typename Geometry1, typename Geometry2>
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        //using strategies::crosses::services::strategy_converter;
+        using strategies::relate::services::strategy_converter;
+        return crosses
+            <
+                decltype(strategy_converter<Strategy>::get(strategy))
+            >::apply(geometry1, geometry2,
+                     strategy_converter<Strategy>::get(strategy));
+    }
+};
+
+template <>
+struct crosses<default_strategy, false>
+{
     template <typename Geometry1, typename Geometry2>
     static inline bool apply(Geometry1 const& geometry1,
                              Geometry2 const& geometry2,
                              default_strategy)
     {
-        typedef typename strategy::relate::services::default_strategy
+        //typedef typename strategies::crosses::services::default_strategy
+        typedef typename strategies::relate::services::default_strategy
             <
                 Geometry1,
                 Geometry2
             >::type strategy_type;
 
-        return apply(geometry1, geometry2, strategy_type());
+        return crosses
+            <
+                strategy_type
+            >::apply(geometry1, geometry2, strategy_type());
     }
 };
 
@@ -106,7 +144,10 @@ namespace resolve_variant
                                  Geometry2 const& geometry2,
                                  Strategy const& strategy)
         {
-            return resolve_strategy::crosses::apply(geometry1, geometry2, strategy);
+            return resolve_strategy::crosses
+                <
+                    Strategy
+                >::apply(geometry1, geometry2, strategy);
         }
     };
     

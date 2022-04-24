@@ -131,28 +131,28 @@ struct combine_value_to_pack;
 template <limb_type first, limb_type... ARGS, limb_type value>
 struct combine_value_to_pack<value_pack<first, ARGS...>, value>
 {
-   typedef value_pack<first | value, ARGS...> type;
+   using type = value_pack<first | value, ARGS...>;
 };
 
 template <char NextChar, char... CHARS>
 struct pack_values
 {
-   static constexpr unsigned chars_per_limb = sizeof(limb_type) * CHAR_BIT / 4;
-   static constexpr unsigned shift          = ((sizeof...(CHARS)) % chars_per_limb) * 4;
+   static constexpr std::size_t chars_per_limb = sizeof(limb_type) * CHAR_BIT / 4;
+   static constexpr std::size_t shift          = ((sizeof...(CHARS)) % chars_per_limb) * 4;
    static constexpr limb_type value_to_add  = shift ? hex_value<NextChar>::value << shift : hex_value<NextChar>::value;
 
-   typedef typename pack_values<CHARS...>::type                          recursive_packed_type;
-   typedef typename boost::mpl::if_c<shift == 0,
+   using recursive_packed_type = typename pack_values<CHARS...>::type                         ;
+   using pack_type = typename std::conditional<shift == 0,
                                      typename recursive_packed_type::next_type,
-                                     recursive_packed_type>::type        pack_type;
-   typedef typename combine_value_to_pack<pack_type, value_to_add>::type type;
+                                     recursive_packed_type>::type;
+   using type = typename combine_value_to_pack<pack_type, value_to_add>::type;
 };
 template <char NextChar>
 struct pack_values<NextChar>
 {
    static constexpr limb_type value_to_add = hex_value<NextChar>::value;
 
-   typedef value_pack<value_to_add> type;
+   using type = value_pack<value_to_add>;
 };
 
 template <class T>
@@ -160,12 +160,12 @@ struct strip_leading_zeros_from_pack;
 template <limb_type... PACK>
 struct strip_leading_zeros_from_pack<value_pack<PACK...> >
 {
-   typedef value_pack<PACK...> type;
+   using type = value_pack<PACK...>;
 };
 template <limb_type... PACK>
 struct strip_leading_zeros_from_pack<value_pack<0u, PACK...> >
 {
-   typedef typename strip_leading_zeros_from_pack<value_pack<PACK...> >::type type;
+   using type = typename strip_leading_zeros_from_pack<value_pack<PACK...> >::type;
 };
 
 template <limb_type v, class PACK>
@@ -173,7 +173,7 @@ struct append_value_to_pack;
 template <limb_type v, limb_type... PACK>
 struct append_value_to_pack<v, value_pack<PACK...> >
 {
-   typedef value_pack<PACK..., v> type;
+   using type = value_pack<PACK..., v>;
 };
 
 template <class T>
@@ -181,28 +181,28 @@ struct reverse_value_pack;
 template <limb_type v, limb_type... VALUES>
 struct reverse_value_pack<value_pack<v, VALUES...> >
 {
-   typedef typename reverse_value_pack<value_pack<VALUES...> >::type lead_values;
-   typedef typename append_value_to_pack<v, lead_values>::type       type;
+   using lead_values = typename reverse_value_pack<value_pack<VALUES...> >::type;
+   using type = typename append_value_to_pack<v, lead_values>::type      ;
 };
 template <limb_type v>
 struct reverse_value_pack<value_pack<v> >
 {
-   typedef value_pack<v> type;
+   using type = value_pack<v>;
 };
 template <>
 struct reverse_value_pack<value_pack<> >
 {
-   typedef value_pack<> type;
+   using type = value_pack<>;
 };
 
 template <char l1, char l2, char... STR>
 struct make_packed_value_from_str
 {
-   BOOST_STATIC_ASSERT_MSG(l1 == '0', "Multi-precision integer literals must be in hexadecimal notation.");
-   BOOST_STATIC_ASSERT_MSG((l2 == 'X') || (l2 == 'x'), "Multi-precision integer literals must be in hexadecimal notation.");
-   typedef typename pack_values<STR...>::type                        packed_type;
-   typedef typename strip_leading_zeros_from_pack<packed_type>::type stripped_type;
-   typedef typename reverse_value_pack<stripped_type>::type          type;
+   static_assert(l1 == '0', "Multi-precision integer literals must be in hexadecimal notation.");
+   static_assert((l2 == 'X') || (l2 == 'x'), "Multi-precision integer literals must be in hexadecimal notation.");
+   using packed_type = typename pack_values<STR...>::type                       ;
+   using stripped_type = typename strip_leading_zeros_from_pack<packed_type>::type;
+   using type = typename reverse_value_pack<stripped_type>::type         ;
 };
 
 template <class Pack, class B>
@@ -219,16 +219,16 @@ template <unsigned Digits>
 struct signed_cpp_int_literal_result_type
 {
    static constexpr unsigned                                                                               bits = Digits * 4;
-   typedef boost::multiprecision::backends::cpp_int_backend<bits, bits, signed_magnitude, unchecked, void> backend_type;
-   typedef number<backend_type, et_off>                                                                    number_type;
+   using backend_type = boost::multiprecision::backends::cpp_int_backend<bits, bits, signed_magnitude, unchecked, void>;
+   using number_type = number<backend_type, et_off>                                                                   ;
 };
 
 template <unsigned Digits>
 struct unsigned_cpp_int_literal_result_type
 {
    static constexpr unsigned                                                                                 bits = Digits * 4;
-   typedef boost::multiprecision::backends::cpp_int_backend<bits, bits, unsigned_magnitude, unchecked, void> backend_type;
-   typedef number<backend_type, et_off>                                                                      number_type;
+   using backend_type = boost::multiprecision::backends::cpp_int_backend<bits, bits, unsigned_magnitude, unchecked, void>;
+   using number_type = number<backend_type, et_off>                                                                     ;
 };
 
 } // namespace detail
@@ -236,14 +236,14 @@ struct unsigned_cpp_int_literal_result_type
 template <char... STR>
 constexpr typename boost::multiprecision::literals::detail::signed_cpp_int_literal_result_type<(sizeof...(STR)) - 2>::number_type operator"" _cppi()
 {
-   typedef typename boost::multiprecision::literals::detail::make_packed_value_from_str<STR...>::type pt;
+   using pt = typename boost::multiprecision::literals::detail::make_packed_value_from_str<STR...>::type;
    return boost::multiprecision::literals::detail::make_backend_from_pack<pt, typename boost::multiprecision::literals::detail::signed_cpp_int_literal_result_type<(sizeof...(STR)) - 2>::backend_type>::value;
 }
 
 template <char... STR>
 constexpr typename boost::multiprecision::literals::detail::unsigned_cpp_int_literal_result_type<(sizeof...(STR)) - 2>::number_type operator"" _cppui()
 {
-   typedef typename boost::multiprecision::literals::detail::make_packed_value_from_str<STR...>::type pt;
+   using pt = typename boost::multiprecision::literals::detail::make_packed_value_from_str<STR...>::type;
    return boost::multiprecision::literals::detail::make_backend_from_pack<pt, typename boost::multiprecision::literals::detail::unsigned_cpp_int_literal_result_type<(sizeof...(STR)) - 2>::backend_type>::value;
 }
 
@@ -251,7 +251,7 @@ constexpr typename boost::multiprecision::literals::detail::unsigned_cpp_int_lit
    template <char... STR>                                                                                                                                                                                                          \
    constexpr boost::multiprecision::number<boost::multiprecision::backends::cpp_int_backend<Bits, Bits, boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void> > operator"" BOOST_JOIN(_cppi, Bits)()    \
    {                                                                                                                                                                                                                               \
-      typedef typename boost::multiprecision::literals::detail::make_packed_value_from_str<STR...>::type pt;                                                                                                                       \
+      using pt = typename boost::multiprecision::literals::detail::make_packed_value_from_str<STR...>::type;                                                                                                                       \
       return boost::multiprecision::literals::detail::make_backend_from_pack<                                                                                                                                                      \
           pt,                                                                                                                                                                                                                      \
           boost::multiprecision::backends::cpp_int_backend<Bits, Bits, boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void> >::value;                                                                  \
@@ -259,7 +259,7 @@ constexpr typename boost::multiprecision::literals::detail::unsigned_cpp_int_lit
    template <char... STR>                                                                                                                                                                                                          \
    constexpr boost::multiprecision::number<boost::multiprecision::backends::cpp_int_backend<Bits, Bits, boost::multiprecision::unsigned_magnitude, boost::multiprecision::unchecked, void> > operator"" BOOST_JOIN(_cppui, Bits)() \
    {                                                                                                                                                                                                                               \
-      typedef typename boost::multiprecision::literals::detail::make_packed_value_from_str<STR...>::type pt;                                                                                                                       \
+      using pt = typename boost::multiprecision::literals::detail::make_packed_value_from_str<STR...>::type;                                                                                                                       \
       return boost::multiprecision::literals::detail::make_backend_from_pack<                                                                                                                                                      \
           pt,                                                                                                                                                                                                                      \
           boost::multiprecision::backends::cpp_int_backend<Bits, Bits, boost::multiprecision::unsigned_magnitude, boost::multiprecision::unchecked, void> >::value;                                                                \
@@ -275,13 +275,13 @@ BOOST_MP_DEFINE_SIZED_CPP_INT_LITERAL(1024)
 //
 // Overload unary minus operator for constexpr use:
 //
-template <unsigned MinBits, cpp_int_check_type Checked>
+template <std::size_t MinBits, cpp_int_check_type Checked>
 constexpr number<cpp_int_backend<MinBits, MinBits, signed_magnitude, Checked, void>, et_off>
 operator-(const number<cpp_int_backend<MinBits, MinBits, signed_magnitude, Checked, void>, et_off>& a)
 {
    return cpp_int_backend<MinBits, MinBits, signed_magnitude, Checked, void>(a.backend(), boost::multiprecision::literals::detail::make_negate_tag());
 }
-template <unsigned MinBits, cpp_int_check_type Checked>
+template <std::size_t MinBits, cpp_int_check_type Checked>
 constexpr number<cpp_int_backend<MinBits, MinBits, signed_magnitude, Checked, void>, et_off>
 operator-(number<cpp_int_backend<MinBits, MinBits, signed_magnitude, Checked, void>, et_off>&& a)
 {

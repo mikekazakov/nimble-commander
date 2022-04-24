@@ -521,10 +521,11 @@ namespace boost { namespace wave
 ///////////////////////////////////////////////////////////////////////////////
 
 #if defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) || defined(BOOST_NO_CXX11_RVALUE_REFERENCES) \
-    || defined(BOOST_NO_CXX11_HDR_MEMORY) || defined(BOOST_NO_CXX11_HDR_THREAD) \
-    || defined(BOOST_NO_CXX11_HDR_MUTEX) || defined(BOOST_NO_CXX11_HDR_REGEX)
+    || defined(BOOST_NO_CXX11_HDR_THREAD) \
+    || defined(BOOST_NO_CXX11_HDR_MUTEX) || defined(BOOST_NO_CXX11_HDR_REGEX) \
+    || defined(BOOST_NO_CXX11_CONSTEXPR)
 
-BOOST_PRAGMA_MESSAGE("C++03 support is deprecated in Boost.Wave 1.74 and will be removed in Boost.Wave 1.77.")
+#error "C++03 support is deprecated in Boost.Wave 1.74 and was removed in Boost.Wave 1.79."
 
 #endif
 
@@ -536,20 +537,11 @@ BOOST_PRAGMA_MESSAGE("C++03 support is deprecated in Boost.Wave 1.74 and will be
 ///////////////////////////////////////////////////////////////////////////////
 //  The preprocessing hook signatures changed after the Boost V1.34.0 release
 //
-//  To use the preprocessing hook signatures as released with Boost V1.34.0
-//  you need to define the BOOST_WAVE_USE_DEPRECIATED_PREPROCESSING_HOOKS
-//  constant to something not equal zero.
+//  The old hook signatures are no longer available as of Boost 1.76.
 //
-//  To force using the new interface define this constant to zero.
-//
-#if !defined(BOOST_WAVE_USE_DEPRECIATED_PREPROCESSING_HOOKS)
-#if BOOST_VERSION < 103500  // before Boost V1.35.0
-#define BOOST_WAVE_USE_DEPRECIATED_PREPROCESSING_HOOKS 1
-#else
-#define BOOST_WAVE_USE_DEPRECIATED_PREPROCESSING_HOOKS 0
-#endif
-#elif BOOST_WAVE_USE_DEPRECIATED_PREPROCESSING_HOOKS != 0
-BOOST_PRAGMA_MESSAGE("The old preprocessing hooks were deprecated in Boost 1.35 and will be removed in 1.76. See https://www.boost.org/doc/libs/1_74_0/libs/wave/doc/class_ref_ctxpolicy_depr.html for details")
+#if defined(BOOST_WAVE_USE_DEPRECIATED_PREPROCESSING_HOOKS) && \
+    BOOST_WAVE_USE_DEPRECIATED_PREPROCESSING_HOOKS != 0
+#error "The old preprocessing hooks were deprecated in Boost 1.35 and removed in 1.76."
 #endif
 
 #endif // !defined(BOOST_WAVE_CONFIG_HPP_F143F90A_A63F_4B27_AC41_9CA4F14F538D_INCLUDED)

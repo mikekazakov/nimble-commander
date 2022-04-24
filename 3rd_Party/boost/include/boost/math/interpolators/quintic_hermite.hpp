@@ -12,7 +12,9 @@
 #include <memory>
 #include <boost/math/interpolators/detail/quintic_hermite_detail.hpp>
 
-namespace boost::math::interpolators {
+namespace boost {
+namespace math {
+namespace interpolators {
 
 template<class RandomAccessContainer>
 class quintic_hermite {
@@ -134,6 +136,7 @@ private:
     std::shared_ptr<detail::cardinal_quintic_hermite_detail_aos<RandomAccessContainer>> impl_;
 };
 
-
+}
+}
 }
 #endif

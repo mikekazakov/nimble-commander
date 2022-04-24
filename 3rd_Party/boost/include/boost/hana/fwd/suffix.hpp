@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Inserts a value after each element of a monadic structure.
     //! @ingroup group-MonadPlus
     //!
@@ -65,8 +65,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr auto operator()(Xs&& xs, Sfx&& sfx) const;
     };
 
-    constexpr suffix_t suffix{};
+    BOOST_HANA_INLINE_VARIABLE constexpr suffix_t suffix{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_SUFFIX_HPP

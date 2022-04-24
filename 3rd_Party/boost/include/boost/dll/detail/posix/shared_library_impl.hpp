@@ -1,5 +1,5 @@
 // Copyright 2014 Renato Tegon Forti, Antony Polukhin.
-// Copyright 2015-2019 Antony Polukhin.
+// Copyright Antony Polukhin, 2015-2022.
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt
@@ -62,7 +62,7 @@ public:
     static boost::dll::fs::path decorate(const boost::dll::fs::path & sl) {
         boost::dll::fs::path actual_path = (
             std::strncmp(sl.filename().string().c_str(), "lib", 3)
-            ? boost::dll::fs::path((sl.has_parent_path() ? sl.parent_path() / L"lib" : L"lib").native() + sl.filename().native())
+            ? boost::dll::fs::path((sl.has_parent_path() ? sl.parent_path() / "lib" : "lib").native() + sl.filename().native())
             : sl
         );
         actual_path += suffix();

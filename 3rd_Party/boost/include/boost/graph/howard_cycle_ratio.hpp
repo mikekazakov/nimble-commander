@@ -10,9 +10,11 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <functional>
 #include <limits>
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/concept_check.hpp>
@@ -21,6 +23,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/concept/assert.hpp>
+#include <boost/algorithm/minmax_element.hpp>
 
 /** @file howard_cycle_ratio.hpp
  * @brief The implementation of the maximum/minimum cycle ratio/mean algorithm.
@@ -238,9 +241,11 @@ namespace detail
             typename graph_traits< Graph >::out_edge_iterator oei, oeie;
             for (boost::tie(vi, vie) = vertices(m_g); vi != vie; ++vi)
             {
+                using namespace boost::placeholders;
+
                 boost::tie(oei, oeie) = out_edges(*vi, m_g);
                 typename graph_traits< Graph >::out_edge_iterator mei
-                    = std::max_element(oei, oeie,
+                    = boost::first_max_element(oei, oeie,
                         boost::bind(m_cmp,
                             boost::bind(&EdgeWeight1::operator[], m_ew1m, _1),
                             boost::bind(&EdgeWeight1::operator[], m_ew1m, _2)));
@@ -351,6 +356,8 @@ namespace detail
          */
         float_t policy_mcr()
         {
+            using namespace boost::placeholders;
+
             std::fill(m_col_bfs.begin(), m_col_bfs.end(), my_white);
             color_map_t vcm_ = color_map_t(m_col_bfs.begin(), m_vim);
             typename graph_traits< Graph >::vertex_iterator uv_itr, vie;

@@ -206,7 +206,7 @@ public:
             auto p = boost::math::tools::bisect(g, lower_bound, upper_bound, tol);
 
             Real x_nk_guess = p.first + (p.second - p.first)*half<Real>();
-            boost::uintmax_t number_of_iterations = 500;
+            std::uintmax_t number_of_iterations = 500;
 
             auto f = [&] (Real x) { Real Pn = this->operator()(x);
                                     Real Pn_prime = this->prime(x);
@@ -214,11 +214,11 @@ public:
 
             const Real x_nk = boost::math::tools::newton_raphson_iterate(f, x_nk_guess,
                                                   p.first, p.second,
-                                                  2*std::numeric_limits<Real>::digits10,
+                                                  tools::digits<Real>(),
                                                   number_of_iterations);
 
-            BOOST_ASSERT(p.first < x_nk);
-            BOOST_ASSERT(x_nk < p.second);
+            BOOST_MATH_ASSERT(p.first < x_nk);
+            BOOST_MATH_ASSERT(x_nk < p.second);
             stieltjes_zeros[k] = x_nk;
             ++k;
         }

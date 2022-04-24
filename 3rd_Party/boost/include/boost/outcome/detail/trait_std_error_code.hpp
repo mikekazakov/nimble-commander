@@ -1,5 +1,5 @@
 /* Traits for Outcome
-(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (6 commits)
+(C) 2018-2022 Niall Douglas <http://www.nedproductions.biz/> (6 commits)
 File Created: March 2018
 
 

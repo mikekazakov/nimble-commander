@@ -2,7 +2,7 @@
 
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// Copyright (c) 2015-2020, Oracle and/or its affiliates.
+// Copyright (c) 2015-2022, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -308,7 +308,7 @@ public:
         BOOST_GEOMETRY_ASSERT(! math::larger(latitude, constants::max_latitude()));
 #endif // BOOST_GEOMETRY_NORMALIZE_LATITUDE
 
-        BOOST_GEOMETRY_ASSERT(math::smaller(constants::min_longitude(), longitude));
+        BOOST_GEOMETRY_ASSERT(! math::larger_or_equals(constants::min_longitude(), longitude));
         BOOST_GEOMETRY_ASSERT(! math::larger(longitude, constants::max_longitude()));
     }
 };

@@ -18,16 +18,6 @@
 #ifdef BOOST_WINDOWS_API
 
 #include <boost/system/error_code.hpp>
-
-//// Neither MinGW or Cygwin versions of winerror.h work if used alone, so on
-//// either of those platforms include the full windows.h
-//
-//#if defined(__MINGW32__) || defined(__CYGWIN__)
-//#include <windows.h>
-//#else
-//#include <winerror.h>
-//#endif
-
 #include <boost/winapi/error_codes.hpp>
 
 namespace boost
@@ -82,7 +72,8 @@ namespace boost
         wrong_disk = boost::winapi::ERROR_WRONG_DISK_,
         sharing_buffer_exceeded = boost::winapi::ERROR_SHARING_BUFFER_EXCEEDED_,
         handle_eof = boost::winapi::ERROR_HANDLE_EOF_,
-        handle_disk_full= boost::winapi::ERROR_HANDLE_DISK_FULL_,
+        handle_disk_full = boost::winapi::ERROR_HANDLE_DISK_FULL_,
+        not_supported = boost::winapi::ERROR_NOT_SUPPORTED_,
         rem_not_list = boost::winapi::ERROR_REM_NOT_LIST_,
         dup_name = boost::winapi::ERROR_DUP_NAME_,
         bad_net_path = boost::winapi::ERROR_BAD_NETPATH_,
@@ -94,7 +85,7 @@ namespace boost
         broken_pipe = boost::winapi::ERROR_BROKEN_PIPE_,
         open_failed = boost::winapi::ERROR_OPEN_FAILED_,
         buffer_overflow = boost::winapi::ERROR_BUFFER_OVERFLOW_,
-        disk_full= boost::winapi::ERROR_DISK_FULL_,
+        disk_full = boost::winapi::ERROR_DISK_FULL_,
         // ...
         lock_failed = boost::winapi::ERROR_LOCK_FAILED_,
         busy = boost::winapi::ERROR_BUSY_,

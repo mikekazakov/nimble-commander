@@ -146,23 +146,38 @@ inline wchar_t to_wchar(size_t i) {
 
 } // namespace detail
 
-inline std::string to_string(uuid const& u)
+template<class OutputIterator>
+OutputIterator to_chars(uuid const& u, OutputIterator out)
 {
-    std::string result;
-    result.reserve(36);
-
     std::size_t i=0;
     for (uuid::const_iterator it_data = u.begin(); it_data!=u.end(); ++it_data, ++i) {
         const size_t hi = ((*it_data) >> 4) & 0x0F;
-        result += detail::to_char(hi);
+        *out++ = detail::to_char(hi);
 
         const size_t lo = (*it_data) & 0x0F;
-        result += detail::to_char(lo);
+        *out++ = detail::to_char(lo);
 
         if (i == 3 || i == 5 || i == 7 || i == 9) {
-            result += '-';
+            *out++ = '-';
         }
     }
+    return out;
+}
+
+inline bool to_chars(uuid const& u, char* first, char* last)
+{
+    if (last - first < 36) {
+        return false;
+    }
+    to_chars(u, first);
+    return true;
+}
+
+inline std::string to_string(uuid const& u)
+{
+    std::string result(36, char());
+    // string::data() returns const char* before C++17
+    to_chars(u, &result[0]);
     return result;
 }
 

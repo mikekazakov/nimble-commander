@@ -245,8 +245,8 @@ public:
 
     static char const *error_text(int code)
     {
-    // error texts in this array must appear in the same order as the items in
-    // the error enum above
+        // error texts in this array must appear in the same order as the items in
+        // the error enum above
         static char const *preprocess_exception_errors[] = {
             "no error",                                 // no_error
             "unexpected error (should not happen)",     // unexpected_error

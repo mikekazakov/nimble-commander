@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2013 Mateusz Loskot, London, UK.
 // Copyright (c) 2013-2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2017, 2018.
-// Modifications copyright (c) 2017-2018 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2021.
+// Modifications copyright (c) 2017-2021 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -20,9 +20,15 @@
 
 #include <cstddef>
 
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/size.hpp>
+#include <boost/range/value_type.hpp>
 
+#include <boost/geometry/algorithms/detail/assign_box_corners.hpp>
 #include <boost/geometry/algorithms/detail/interior_iterator.hpp>
+
+#include <boost/geometry/arithmetic/arithmetic.hpp>
 
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/point_order.hpp>
@@ -32,8 +38,6 @@
 
 #include <boost/geometry/geometries/concepts/check.hpp>
 #include <boost/geometry/iterators/ever_circling_iterator.hpp>
-
-#include <boost/geometry/algorithms/detail/assign_box_corners.hpp>
 
 #include <boost/geometry/strategies/side.hpp>
 

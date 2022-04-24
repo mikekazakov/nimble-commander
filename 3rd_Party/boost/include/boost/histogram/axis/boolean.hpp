@@ -25,8 +25,8 @@ namespace axis {
 
   Binning is a pass-though operation with zero cost, making this the
   fastest possible axis. The axis has no internal state apart from the
-  optional metadata state. The axis has no under- and overflow bins. It cannot grow and
-  cannot be reduced.
+  optional metadata state. The axis has no under- and overflow bins.
+  It cannot grow and cannot be reduced.
 
   @tparam MetaData type to store meta data.
  */
@@ -40,7 +40,7 @@ class boolean : public iterator_mixin<boolean<MetaData>>,
 public:
   /** Construct a boolean axis.
    *
-   * \param meta     description of the axis.
+   * @param meta description of the axis.
    */
   explicit boolean(metadata_type meta = {}) : metadata_base(std::move(meta)) {}
 

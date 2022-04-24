@@ -16,7 +16,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <utility>
 
 
-BOOST_HANA_NAMESPACE_BEGIN namespace detail { namespace variadic {
+namespace boost { namespace hana { namespace detail { namespace variadic {
     template <std::size_t n, typename = std::make_index_sequence<n>>
     struct at_type;
 
@@ -34,7 +34,7 @@ BOOST_HANA_NAMESPACE_BEGIN namespace detail { namespace variadic {
     };
 
     template <std::size_t n>
-    constexpr at_type<n> at{};
-}} BOOST_HANA_NAMESPACE_END
+    BOOST_HANA_INLINE_VARIABLE constexpr at_type<n> at{};
+}} }} // end namespace boost::hana
 
 #endif // !BOOST_HANA_DETAIL_VARIADIC_AT_HPP

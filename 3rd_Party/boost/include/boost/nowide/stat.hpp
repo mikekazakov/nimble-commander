@@ -20,14 +20,17 @@ struct __stat64;
 namespace boost {
 namespace nowide {
 #if !defined(BOOST_WINDOWS) && !defined(BOOST_NOWIDE_DOXYGEN)
-    using stat_t = struct stat;
-    using posix_stat_t = struct stat;
+    // Note: `using x = struct ::stat` causes a bogus warning in GCC < 11
+    // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66159
+
+    typedef struct ::stat stat_t;
+    typedef struct ::stat posix_stat_t;
 
     using ::stat;
 #else
     /// \brief Typedef for the file info structure.
-    /// Able to hold 64 bit filesize and timestamps on Windows and usually also on other 64 Bit systems
-    /// This allows to write portable code with option LFS support
+    /// Able to hold 64 bit file size and timestamps on Windows and usually also on other 64 Bit systems
+    /// This allows to write portable code with optional LFS support
     typedef struct ::__stat64 stat_t;
     /// \brief Typedef for the file info structure used in the POSIX stat call
     /// Resolves to `struct _stat` on Windows and `struct stat` otherwise
@@ -36,8 +39,9 @@ namespace nowide {
 
     /// \cond INTERNAL
     namespace detail {
+        BOOST_NOWIDE_DECL int stat(const char* path, stat_t* buffer, size_t buffer_size);
         BOOST_NOWIDE_DECL int stat(const char* path, posix_stat_t* buffer, size_t buffer_size);
-    }
+    } // namespace detail
     /// \endcond
 
     ///
@@ -45,7 +49,10 @@ namespace nowide {
     ///
     /// Return information about a file from an UTF-8 encoded path
     ///
-    BOOST_NOWIDE_DECL int stat(const char* path, stat_t* buffer);
+    inline int stat(const char* path, stat_t* buffer)
+    {
+        return detail::stat(path, buffer, sizeof(*buffer));
+    }
     ///
     /// \brief UTF-8 aware stat function, returns 0 on success
     ///

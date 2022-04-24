@@ -2,7 +2,7 @@
 
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// Copyright (c) 2016-2019, Oracle and/or its affiliates.
+// Copyright (c) 2016-2021, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -13,6 +13,7 @@
 #define BOOST_GEOMETRY_STRATEGIES_SPHERICAL_INTERSECTION_HPP
 
 #include <algorithm>
+#include <type_traits>
 
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/access.hpp>
@@ -32,20 +33,23 @@
 
 #include <boost/geometry/geometries/concepts/point_concept.hpp>
 #include <boost/geometry/geometries/concepts/segment_concept.hpp>
+#include <boost/geometry/geometries/segment.hpp>
 
 #include <boost/geometry/policies/robustness/segment_ratio.hpp>
+
+#include <boost/geometry/strategy/spherical/area.hpp>
+#include <boost/geometry/strategy/spherical/envelope.hpp>
+#include <boost/geometry/strategy/spherical/expand_box.hpp>
+#include <boost/geometry/strategy/spherical/expand_segment.hpp>
 
 #include <boost/geometry/strategies/covered_by.hpp>
 #include <boost/geometry/strategies/intersection.hpp>
 #include <boost/geometry/strategies/intersection_result.hpp>
 #include <boost/geometry/strategies/side.hpp>
 #include <boost/geometry/strategies/side_info.hpp>
-#include <boost/geometry/strategies/spherical/area.hpp>
 #include <boost/geometry/strategies/spherical/disjoint_box_box.hpp>
 #include <boost/geometry/strategies/spherical/disjoint_segment_box.hpp>
 #include <boost/geometry/strategies/spherical/distance_haversine.hpp>
-#include <boost/geometry/strategies/spherical/envelope.hpp>
-#include <boost/geometry/strategies/spherical/expand_box.hpp>
 #include <boost/geometry/strategies/spherical/point_in_point.hpp>
 #include <boost/geometry/strategies/spherical/point_in_poly_winding.hpp>
 #include <boost/geometry/strategies/spherical/ssf.hpp>
@@ -91,119 +95,6 @@ template
 struct ecef_segments
 {
     typedef spherical_tag cs_tag;
-
-    typedef side::spherical_side_formula<CalculationType> side_strategy_type;
-
-    static inline side_strategy_type get_side_strategy()
-    {
-        return side_strategy_type();
-    }
-
-    template <typename Geometry1, typename Geometry2>
-    struct point_in_geometry_strategy
-    {
-        typedef strategy::within::spherical_winding
-            <
-                typename point_type<Geometry1>::type,
-                typename point_type<Geometry2>::type,
-                CalculationType
-            > type;
-    };
-
-    template <typename Geometry1, typename Geometry2>
-    static inline typename point_in_geometry_strategy<Geometry1, Geometry2>::type
-        get_point_in_geometry_strategy()
-    {
-        typedef typename point_in_geometry_strategy
-            <
-                Geometry1, Geometry2
-            >::type strategy_type;
-        return strategy_type();
-    }
-
-    template <typename Geometry>
-    struct area_strategy
-    {
-        typedef area::spherical
-            <
-                typename coordinate_type<Geometry>::type,
-                CalculationType
-            > type;
-    };
-
-    template <typename Geometry>
-    static inline typename area_strategy<Geometry>::type get_area_strategy()
-    {
-        typedef typename area_strategy<Geometry>::type strategy_type;
-        return strategy_type();
-    }
-
-    template <typename Geometry>
-    struct distance_strategy
-    {
-        typedef distance::haversine
-            <
-                typename coordinate_type<Geometry>::type,
-                CalculationType
-            > type;
-    };
-
-    template <typename Geometry>
-    static inline typename distance_strategy<Geometry>::type get_distance_strategy()
-    {
-        typedef typename distance_strategy<Geometry>::type strategy_type;
-        return strategy_type();
-    }
-
-    typedef envelope::spherical<CalculationType>
-        envelope_strategy_type;
-
-    static inline envelope_strategy_type get_envelope_strategy()
-    {
-        return envelope_strategy_type();
-    }
-
-    typedef expand::spherical_segment<CalculationType>
-        expand_strategy_type;
-
-    static inline expand_strategy_type get_expand_strategy()
-    {
-        return expand_strategy_type();
-    }
-
-    typedef within::spherical_point_point point_in_point_strategy_type;
-
-    static inline point_in_point_strategy_type get_point_in_point_strategy()
-    {
-        return point_in_point_strategy_type();
-    }
-
-    typedef within::spherical_point_point equals_point_point_strategy_type;
-
-    static inline equals_point_point_strategy_type get_equals_point_point_strategy()
-    {
-        return equals_point_point_strategy_type();
-    }
-
-    typedef disjoint::spherical_box_box disjoint_box_box_strategy_type;
-
-    static inline disjoint_box_box_strategy_type get_disjoint_box_box_strategy()
-    {
-        return disjoint_box_box_strategy_type();
-    }
-
-    typedef disjoint::segment_box_spherical disjoint_segment_box_strategy_type;
-
-    static inline disjoint_segment_box_strategy_type get_disjoint_segment_box_strategy()
-    {
-        return disjoint_segment_box_strategy_type();
-    }
-
-    typedef covered_by::spherical_point_box disjoint_point_box_strategy_type;
-    typedef covered_by::spherical_point_box covered_by_point_box_strategy_type;
-    typedef within::spherical_point_box within_point_box_strategy_type;
-    typedef envelope::spherical_box envelope_box_strategy_type;
-    typedef expand::spherical_box expand_box_strategy_type;
 
     enum intersection_point_flag { ipi_inters = 0, ipi_at_a1, ipi_at_a2, ipi_at_b1, ipi_at_b2 };
 
@@ -857,7 +748,7 @@ private:
     template <typename CalcT>
     static inline bool is_near(CalcT const& dist)
     {
-        CalcT const small_number = CalcT(boost::is_same<CalcT, float>::value ? 0.0001 : 0.00000001);
+        CalcT const small_number = CalcT(std::is_same<CalcT, float>::value ? 0.0001 : 0.00000001);
         return math::abs(dist) <= small_number;
     }
 
@@ -882,8 +773,7 @@ private:
     template <typename Point1, typename Point2>
     static inline bool equals_point_point(Point1 const& point1, Point2 const& point2)
     {
-        return detail::equals::equals_point_point(point1, point2,
-                                                  point_in_point_strategy_type());
+        return strategy::within::spherical_point_point::apply(point1, point2);
     }
 };
 
@@ -950,10 +840,12 @@ struct spherical_segments_calc_policy
         //       not checked before this function is called the length
         //       should be checked here (math::equals(len, c0))
         coord_t const len = math::sqrt(dot_product(ip1, ip1));
-        divide_value(ip1, len); // normalize i1
-
-        ip2 = ip1;
-        multiply_value(ip2, coord_t(-1));
+        geometry::detail::for_each_dimension<Point3d>([&](auto index)
+        {
+            coord_t const coord = get<index>(ip1) / len; // normalize
+            set<index>(ip1, coord);
+            set<index>(ip2, -coord);
+        });
 
         return true;
     }    

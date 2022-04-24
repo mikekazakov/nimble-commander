@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2018-2019 Oracle and/or its affiliates.
+// Copyright (c) 2018-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Vissarion Fisikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -13,11 +13,14 @@
 
 #include <boost/geometry/srs/spheroid.hpp>
 
+#include <boost/geometry/core/coordinate_promotion.hpp>
+
 #include <boost/geometry/algorithms/detail/distance/segment_to_box.hpp>
 
 #include <boost/geometry/strategies/distance.hpp>
 #include <boost/geometry/strategies/geographic/azimuth.hpp>
 #include <boost/geometry/strategies/geographic/distance_cross_track.hpp>
+#include <boost/geometry/strategies/geographic/distance_cross_track_point_box.hpp>
 #include <boost/geometry/strategies/geographic/parameters.hpp>
 #include <boost/geometry/strategies/geographic/side.hpp>
 #include <boost/geometry/strategies/normalize.hpp>
@@ -25,7 +28,6 @@
 #include <boost/geometry/strategies/spherical/distance_segment_box.hpp>
 #include <boost/geometry/strategies/spherical/point_in_point.hpp>
 
-#include <boost/geometry/util/promote_floating_point.hpp>
 #include <boost/geometry/util/select_calculation_type.hpp>
 
 namespace boost { namespace geometry
@@ -58,111 +60,39 @@ struct geographic_segment_box
 
     typedef geographic_tag cs_tag;
 
-    // point-point strategy getters
-    struct distance_pp_strategy
-    {
-        typedef geographic<FormulaPolicy, Spheroid, CalculationType> type;
-    };
-
-    inline typename distance_pp_strategy::type get_distance_pp_strategy() const
-    {
-        typedef typename distance_pp_strategy::type distance_type;
-        return distance_type(m_spheroid);
-    }
-    // point-segment strategy getters
-    struct distance_ps_strategy
-    {
-        typedef geographic_cross_track
-                <
-                    FormulaPolicy,
-                    Spheroid,
-                    CalculationType
-                > type;
-    };
-
-    inline typename distance_ps_strategy::type get_distance_ps_strategy() const
-    {
-        typedef typename distance_ps_strategy::type distance_type;
-        return distance_type(m_spheroid);
-    }
-
-    struct distance_pb_strategy
-    {
-        typedef geographic_cross_track_point_box
-                <
-                    FormulaPolicy,
-                    Spheroid,
-                    CalculationType
-                > type;
-    };
-
-    inline typename distance_pb_strategy::type get_distance_pb_strategy() const
-    {
-        return typename distance_pb_strategy::type(m_spheroid);
-    }
-
-    typedef side::geographic
-            <
-                FormulaPolicy,
-                Spheroid,
-                CalculationType
-            > side_strategy_type;
-
-    inline side_strategy_type get_side_strategy() const
-    {
-        return side_strategy_type(m_spheroid);
-    }
-
-    typedef within::spherical_point_point equals_point_point_strategy_type;
-
-    static inline equals_point_point_strategy_type get_equals_point_point_strategy()
-    {
-        return equals_point_point_strategy_type();
-    }
-
     //constructor
 
     explicit geographic_segment_box(Spheroid const& spheroid = Spheroid())
              : m_spheroid(spheroid)
     {}
 
+    Spheroid model() const
+    {
+        return m_spheroid;
+    }
+
     // methods
 
-    template <typename LessEqual, typename ReturnType,
-              typename SegmentPoint, typename BoxPoint>
+    template
+    <
+        typename LessEqual, typename ReturnType,
+        typename SegmentPoint, typename BoxPoint,
+        typename Strategies
+    >
     inline ReturnType segment_below_of_box(SegmentPoint const& p0,
-                                   SegmentPoint const& p1,
-                                   BoxPoint const& top_left,
-                                   BoxPoint const& top_right,
-                                   BoxPoint const& bottom_left,
-                                   BoxPoint const& bottom_right) const
+                                           SegmentPoint const& p1,
+                                           BoxPoint const& top_left,
+                                           BoxPoint const& top_right,
+                                           BoxPoint const& bottom_left,
+                                           BoxPoint const& bottom_right,
+                                           Strategies const& strategies) const
     {
-        typedef typename azimuth::geographic
-        <
-                FormulaPolicy,
-                Spheroid,
-                CalculationType
-        > azimuth_strategy_type;
-        azimuth_strategy_type az_strategy(m_spheroid);
-
-        typedef typename envelope::geographic_segment
-        <
-                FormulaPolicy,
-                Spheroid,
-                CalculationType
-        > envelope_segment_strategy_type;
-        envelope_segment_strategy_type es_strategy(m_spheroid);
-
         return generic_segment_box::segment_below_of_box
                <
                     LessEqual,
                     ReturnType
                >(p0,p1,top_left,top_right,bottom_left,bottom_right,
-                 geographic_segment_box<FormulaPolicy, Spheroid, CalculationType>(),
-                 az_strategy, es_strategy,
-                 normalize::spherical_point(),
-                 covered_by::spherical_point_box(),
-                 disjoint::spherical_box_box());
+                 strategies);
     }
 
     template <typename SPoint, typename BPoint>

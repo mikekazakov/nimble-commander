@@ -27,9 +27,6 @@
 #include <boost/type_traits/is_nothrow_move_constructible.hpp>
 #include <boost/preprocessor/facilities/empty.hpp>
 #include <boost/preprocessor/facilities/identity.hpp>
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/repetition/enum_binary_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #include <boost/preprocessor/seq/enum.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/parameter_tools.hpp>

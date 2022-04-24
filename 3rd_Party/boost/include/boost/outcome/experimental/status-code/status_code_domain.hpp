@@ -1,5 +1,5 @@
 /* Proposed SG14 status_code
-(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018-2022 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Feb 2018
 
 
@@ -185,7 +185,7 @@ public:
     {
     }
     //! Copy construct the derived implementation.
-    string_ref(const string_ref &o)
+    BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 string_ref(const string_ref &o)
         : _begin(o._begin)
         , _end(o._end)
         , _state{o._state[0], o._state[1], o._state[2]}
@@ -197,7 +197,7 @@ public:
       }
     }
     //! Move construct the derived implementation.
-    string_ref(string_ref &&o) noexcept
+    BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 string_ref(string_ref &&o) noexcept
         : _begin(o._begin)
         , _end(o._end)
         , _state{o._state[0], o._state[1], o._state[2]}
@@ -209,7 +209,7 @@ public:
       }
     }
     //! Copy assignment
-    string_ref &operator=(const string_ref &o)
+    BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 string_ref &operator=(const string_ref &o)
     {
       if(this != &o)
       {
@@ -233,7 +233,7 @@ public:
       return *this;
     }
     //! Move assignment
-    string_ref &operator=(string_ref &&o) noexcept
+    BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 string_ref &operator=(string_ref &&o) noexcept
     {
       if(this != &o)
       {
@@ -243,7 +243,7 @@ public:
       return *this;
     }
     //! Destruction
-    ~string_ref()
+    BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 ~string_ref()
     {
       if(_thunk != nullptr)
       {
@@ -253,25 +253,25 @@ public:
     }
 
     //! Returns whether the reference is empty or not
-    BOOST_OUTCOME_SYSTEM_ERROR2_NODISCARD bool empty() const noexcept { return _begin == _end; }
+    BOOST_OUTCOME_SYSTEM_ERROR2_NODISCARD constexpr bool empty() const noexcept { return _begin == _end; }
     //! Returns the size of the string
-    size_type size() const noexcept { return _end - _begin; }
+    constexpr size_type size() const noexcept { return _end - _begin; }
     //! Returns a null terminated C string
-    const_pointer c_str() const noexcept { return _begin; }
+    constexpr const_pointer c_str() const noexcept { return _begin; }
     //! Returns a null terminated C string
-    const_pointer data() const noexcept { return _begin; }
+    constexpr const_pointer data() const noexcept { return _begin; }
     //! Returns the beginning of the string
-    iterator begin() noexcept { return _begin; }
+    BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14 iterator begin() noexcept { return _begin; }
     //! Returns the beginning of the string
-    const_iterator begin() const noexcept { return _begin; }
+    BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14 const_iterator begin() const noexcept { return _begin; }
     //! Returns the beginning of the string
-    const_iterator cbegin() const noexcept { return _begin; }
+    constexpr const_iterator cbegin() const noexcept { return _begin; }
     //! Returns the end of the string
-    iterator end() noexcept { return _end; }
+    BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14 iterator end() noexcept { return _end; }
     //! Returns the end of the string
-    const_iterator end() const noexcept { return _end; }
+    BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14 const_iterator end() const noexcept { return _end; }
     //! Returns the end of the string
-    const_iterator cend() const noexcept { return _end; }
+    constexpr const_iterator cend() const noexcept { return _end; }
   };
 
   /*! A reference counted, threadsafe reference to a message string.
@@ -282,10 +282,10 @@ public:
     {
       mutable std::atomic<unsigned> count{1};
     };
-    _allocated_msg *&_msg() noexcept { return reinterpret_cast<_allocated_msg *&>(this->_state[0]); }                  // NOLINT
-    const _allocated_msg *_msg() const noexcept { return reinterpret_cast<const _allocated_msg *>(this->_state[0]); }  // NOLINT
+     _allocated_msg *&_msg() noexcept { return reinterpret_cast<_allocated_msg *&>(this->_state[0]); }  // NOLINT
+     const _allocated_msg *_msg() const noexcept { return reinterpret_cast<const _allocated_msg *>(this->_state[0]); }  // NOLINT
 
-    static void _refcounted_string_thunk(string_ref *_dest, const string_ref *_src, _thunk_op op) noexcept
+    static BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 void _refcounted_string_thunk(string_ref *_dest, const string_ref *_src, _thunk_op op) noexcept
     {
       auto dest = static_cast<atomic_refcounted_string_ref *>(_dest);      // NOLINT
       auto src = static_cast<const atomic_refcounted_string_ref *>(_src);  // NOLINT
@@ -394,20 +394,20 @@ public:
   //! Returns the unique id used to identify identical category instances.
   constexpr unique_id_type id() const noexcept { return _id; }
   //! Name of this category.
-  virtual string_ref name() const noexcept = 0;
+  BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 virtual string_ref name() const noexcept = 0;
 
 protected:
   //! True if code means failure.
-  virtual bool _do_failure(const status_code<void> &code) const noexcept = 0;
+  BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 virtual bool _do_failure(const status_code<void> &code) const noexcept = 0;
   //! True if code is (potentially non-transitively) equivalent to another code in another domain.
-  virtual bool _do_equivalent(const status_code<void> &code1, const status_code<void> &code2) const noexcept = 0;
+  BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 virtual bool _do_equivalent(const status_code<void> &code1, const status_code<void> &code2) const noexcept = 0;
   //! Returns the generic code closest to this code, if any.
-  virtual generic_code _generic_code(const status_code<void> &code) const noexcept = 0;
+  BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 virtual generic_code _generic_code(const status_code<void> &code) const noexcept = 0;
   //! Return a reference to a string textually representing a code.
-  virtual string_ref _do_message(const status_code<void> &code) const noexcept = 0;
+  BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 virtual string_ref _do_message(const status_code<void> &code) const noexcept = 0;
 #if defined(_CPPUNWIND) || defined(__EXCEPTIONS) || defined(BOOST_OUTCOME_STANDARDESE_IS_IN_THE_HOUSE)
   //! Throw a code as a C++ exception.
-  BOOST_OUTCOME_SYSTEM_ERROR2_NORETURN virtual void _do_throw_exception(const status_code<void> &code) const = 0;
+  BOOST_OUTCOME_SYSTEM_ERROR2_NORETURN BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 virtual void _do_throw_exception(const status_code<void> &code) const = 0;
 #else
   // Keep a vtable slot for binary compatibility
   BOOST_OUTCOME_SYSTEM_ERROR2_NORETURN virtual void _do_throw_exception(const status_code<void> & /*code*/) const { abort(); }
@@ -415,7 +415,7 @@ protected:
   // For a `status_code<erased<T>>` only, copy from `src` to `dst`. Default implementation uses `memcpy()`.
   virtual void _do_erased_copy(status_code<void> &dst, const status_code<void> &src, size_t bytes) const { memcpy(&dst, &src, bytes); }  // NOLINT
   // For a `status_code<erased<T>>` only, destroy the erased value type. Default implementation does nothing.
-  virtual void _do_erased_destroy(status_code<void> &code, size_t bytes) const noexcept  // NOLINT
+  BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 virtual void _do_erased_destroy(status_code<void> &code, size_t bytes) const noexcept  // NOLINT
   {
     (void) code;
     (void) bytes;

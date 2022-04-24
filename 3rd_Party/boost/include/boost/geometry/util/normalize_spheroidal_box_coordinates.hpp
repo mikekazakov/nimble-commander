@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2015-2017, Oracle and/or its affiliates.
+// Copyright (c) 2015-2022, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -37,8 +37,8 @@ private:
     static inline bool is_band(CoordinateType const& longitude1,
                                CoordinateType const& longitude2)
     {
-        return ! math::smaller(math::abs(longitude1 - longitude2),
-                               constants::period());
+        return math::larger_or_equals(math::abs(longitude1 - longitude2),
+                                      constants::period());
     }
 
 public:
@@ -91,8 +91,7 @@ public:
 
         BOOST_GEOMETRY_ASSERT(! math::larger(longitude1, longitude2));
         BOOST_GEOMETRY_ASSERT(! math::smaller(longitude1, constants::min_longitude()));
-        BOOST_GEOMETRY_ASSERT
-            (! math::larger(longitude2 - longitude1, constants::period()));
+        BOOST_GEOMETRY_ASSERT(! math::larger(longitude2 - longitude1, constants::period()));
     }
 
     static inline void apply(CoordinateType& longitude1,

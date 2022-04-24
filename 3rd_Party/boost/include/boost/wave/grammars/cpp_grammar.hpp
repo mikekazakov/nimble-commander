@@ -164,7 +164,7 @@ struct cpp_grammar :
     template <typename ScannerT>
     struct definition
     {
-    // non-parse_tree generating rule type
+        // non-parse_tree generating rule type
         typedef typename ScannerT::iteration_policy_t iteration_policy_t;
         typedef boost::spirit::classic::match_policy match_policy_t;
         typedef typename ScannerT::action_policy_t action_policy_t;
@@ -180,7 +180,7 @@ struct cpp_grammar :
                 non_tree_scanner_t, boost::spirit::classic::dynamic_parser_tag>
             no_tree_rule_type;
 
-    // 'normal' (parse_tree generating) rule type
+        // 'normal' (parse_tree generating) rule type
         typedef
             boost::spirit::classic::rule<
                 ScannerT, boost::spirit::classic::dynamic_parser_tag>
@@ -207,12 +207,12 @@ struct cpp_grammar :
 
         definition(cpp_grammar const &self)
         {
-        // import the spirit and cpplexer namespaces here
+            // import the spirit and cpplexer namespaces here
             using namespace boost::spirit::classic;
             using namespace boost::wave;
             using namespace boost::wave::util;
 
-        // set the rule id's for later use
+            // set the rule id's for later use
             pp_statement.set_id(BOOST_WAVE_PP_STATEMENT_ID);
 //             include_file.set_id(BOOST_WAVE_INCLUDE_FILE_ID);
 //             system_include_file.set_id(BOOST_WAVE_SYSINCLUDE_FILE_ID);
@@ -593,8 +593,8 @@ struct cpp_grammar :
             BOOST_SPIRIT_DEBUG_TRACE_RULE(ppifndef, TRACE_CPP_GRAMMAR);
             BOOST_SPIRIT_DEBUG_TRACE_RULE(ppif, TRACE_CPP_GRAMMAR);
 //             BOOST_SPIRIT_DEBUG_TRACE_RULE(ppelse, TRACE_CPP_GRAMMAR);
-//             BOOST_SPIRIT_DEBUG_TRACE_RULE(ppelif, TRACE_CPP_GRAMMAR);
-            BOOST_SPIRIT_DEBUG_TRACE_RULE(ppendif, TRACE_CPP_GRAMMAR);
+             BOOST_SPIRIT_DEBUG_TRACE_RULE(ppelif, TRACE_CPP_GRAMMAR);
+//            BOOST_SPIRIT_DEBUG_TRACE_RULE(ppendif, TRACE_CPP_GRAMMAR);
             BOOST_SPIRIT_DEBUG_TRACE_RULE(ppline, TRACE_CPP_GRAMMAR);
             BOOST_SPIRIT_DEBUG_TRACE_RULE(pperror, TRACE_CPP_GRAMMAR);
             BOOST_SPIRIT_DEBUG_TRACE_RULE(ppwarning, TRACE_CPP_GRAMMAR);
@@ -607,7 +607,7 @@ struct cpp_grammar :
 #endif
         }
 
-    // start rule of this grammar
+        // start rule of this grammar
         rule_type const& start() const
         { return pp_statement; }
     };
@@ -627,7 +627,7 @@ struct cpp_grammar :
     }
 
 #if BOOST_WAVE_DUMP_PARSE_TREE != 0
-// helper function and data to get readable names of the rules known to us
+    // helper function and data to get readable names of the rules known to us
     struct map_ruleid_to_name :
         public std::map<boost::spirit::classic::parser_id, std::string>
     {
@@ -668,7 +668,7 @@ struct cpp_grammar :
                 { 0 }
             };
 
-        // initialize parser_id to rule_name map
+            // initialize parser_id to rule_name map
             for (int i = 0; 0 != init_ruleid_name_map[i].parser_id; ++i)
                 base_type::insert(base_type::value_type(
                     boost::spirit::classic::parser_id(init_ruleid_name_map[i].parser_id),

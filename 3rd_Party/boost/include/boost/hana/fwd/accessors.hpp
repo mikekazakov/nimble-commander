@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Returns a `Sequence` of pairs representing the accessors of the
     //! data structure.
     //! @ingroup group-Struct
@@ -43,8 +43,8 @@ BOOST_HANA_NAMESPACE_BEGIN
     struct accessors_t;
 
     template <typename S>
-    constexpr accessors_t<S> accessors{};
+    BOOST_HANA_INLINE_VARIABLE constexpr accessors_t<S> accessors{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_ACCESSORS_HPP

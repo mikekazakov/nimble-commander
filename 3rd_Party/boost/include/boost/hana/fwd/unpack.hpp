@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Invoke a function with the elements of a Foldable as arguments.
     //! @ingroup group-Foldable
     //!
@@ -88,8 +88,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr decltype(auto) operator()(Xs&& xs, F&& f) const;
     };
 
-    constexpr unpack_t unpack{};
+    BOOST_HANA_INLINE_VARIABLE constexpr unpack_t unpack{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_UNPACK_HPP

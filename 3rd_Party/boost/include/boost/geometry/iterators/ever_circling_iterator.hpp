@@ -4,6 +4,10 @@
 // Copyright (c) 2008-2012 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 
+// This file was modified by Oracle on 2020-2021.
+// Modifications copyright (c) 2020-2021 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
 // (geolib/GGL), copyright (c) 1995-2010 Geodan, Amsterdam, the Netherlands.
 
@@ -14,11 +18,21 @@
 #ifndef BOOST_GEOMETRY_ITERATORS_EVER_CIRCLING_ITERATOR_HPP
 #define BOOST_GEOMETRY_ITERATORS_EVER_CIRCLING_ITERATOR_HPP
 
-#include <boost/range.hpp>
+
+#include <type_traits>
+
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/iterator/iterator_categories.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/difference_type.hpp>
+#include <boost/range/reference.hpp>
+#include <boost/range/size.hpp>
+#include <boost/range/value_type.hpp>
 
-#include <boost/geometry/iterators/base.hpp>
+#include <boost/geometry/core/assert.hpp>
+
+#include <boost/geometry/iterators/detail/iterator_base.hpp>
+
 
 namespace boost { namespace geometry
 {
@@ -41,7 +55,7 @@ struct ever_circling_iterator :
         Iterator
     >
 {
-    friend class boost::iterator_core_access;
+    ever_circling_iterator() = default;
 
     explicit inline ever_circling_iterator(Iterator begin, Iterator end,
             bool skip_first = false)
@@ -61,6 +75,17 @@ struct ever_circling_iterator :
         this->base_reference() = start;
     }
 
+    template
+    <
+        typename OtherIterator,
+        std::enable_if_t<std::is_convertible<OtherIterator, Iterator>::value, int> = 0
+    >
+    inline ever_circling_iterator(ever_circling_iterator<OtherIterator> const& other)
+        : m_begin(other.m_begin)
+        , m_end(other.m_end)
+        , m_skip_first(other.m_skip_first)
+    {}
+
     /// Navigate to a certain position, should be in [start .. end], if at end
     /// it will circle again.
     inline void moveto(Iterator it)
@@ -70,6 +95,8 @@ struct ever_circling_iterator :
     }
 
 private:
+    template <typename OtherIterator> friend struct ever_circling_iterator;
+    friend class boost::iterator_core_access;
 
     inline void increment(bool possibly_skip = true)
     {
@@ -117,8 +144,8 @@ private:
 
 public:
     /// Constructor including the range it is based on
-    explicit inline ever_circling_range_iterator(Range& range)
-        : m_range(&range)
+    explicit inline ever_circling_range_iterator(Range const& range)
+        : m_begin(boost::begin(range))
         , m_iterator(boost::begin(range))
         , m_size(boost::size(range))
         , m_index(0)
@@ -126,15 +153,35 @@ public:
 
     /// Default constructor
     explicit inline ever_circling_range_iterator()
-        : m_range(NULL)
-        , m_size(0)
+        : m_size(0)
         , m_index(0)
+    {}
+
+    template
+    <
+        typename OtherRange,
+        std::enable_if_t
+            <
+                std::is_convertible
+                    <
+                        typename boost::range_iterator<OtherRange const>::type,
+                        typename boost::range_iterator<Range const>::type
+                    >::value,
+                int
+            > = 0
+    >
+    inline ever_circling_range_iterator(ever_circling_range_iterator<OtherRange> const& other)
+        : m_begin(other.m_begin)
+        , m_iterator(other.m_iterator)
+        , m_size(other.m_size)
+        , m_index(other.m_index)
     {}
 
     typedef typename base_type::reference reference;
     typedef typename base_type::difference_type difference_type;
 
 private:
+    template <typename OtherRange> friend struct ever_circling_range_iterator;
     friend class boost::iterator_core_access;
 
     inline reference dereference() const
@@ -149,8 +196,8 @@ private:
 
     inline bool equal(ever_circling_range_iterator<Range> const& other) const
     {
-        return this->m_range == other.m_range
-            && this->m_index == other.m_index;
+        BOOST_GEOMETRY_ASSERT(m_begin == other.m_begin);
+        return this->m_index == other.m_index;
     }
 
     inline void increment()
@@ -201,11 +248,11 @@ private:
             m_index += m_size;
         }
         m_index = m_index % m_size;
-        this->m_iterator = boost::begin(*m_range) + m_index;
+        this->m_iterator = m_begin + m_index;
     }
 
-    Range* m_range;
-    typename boost::range_iterator<Range>::type m_iterator;
+    typename boost::range_iterator<Range const>::type m_begin;
+    typename boost::range_iterator<Range const>::type m_iterator;
     difference_type m_size;
     difference_type m_index;
 };

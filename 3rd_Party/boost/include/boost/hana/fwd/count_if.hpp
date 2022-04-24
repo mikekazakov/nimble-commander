@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Return the number of elements in the structure for which the
     //! `predicate` is satisfied.
     //! @ingroup group-Foldable
@@ -49,8 +49,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr auto operator()(Xs&& xs, Pred&& pred) const;
     };
 
-    constexpr count_if_t count_if{};
+    BOOST_HANA_INLINE_VARIABLE constexpr count_if_t count_if{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_COUNT_IF_HPP

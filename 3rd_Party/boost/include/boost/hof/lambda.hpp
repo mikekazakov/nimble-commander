@@ -42,9 +42,13 @@
 /// function object that contains non-capturing lambdas. It also ensures that
 /// the global function object has a unique address across translation units.
 /// This helps prevent possible ODR-violations.
-/// 
+///
 /// By default, all functions defined with `BOOST_HOF_STATIC_LAMBDA_FUNCTION` use
 /// the `boost::hof::reveal` adaptor to improve error messages.
+/// 
+/// Note: due to compiler limitations, a global function declared with
+/// `BOOST_HOF_STATIC_LAMBDA_FUNCTION` is not guaranteed to have a unique 
+/// address across translation units when compiled with pre-C++17 MSVC.
 /// 
 /// Example
 /// -------

@@ -730,7 +730,7 @@ struct expression_grammar :
             BOOST_SPIRIT_DEBUG_TRACE_RULE(constant_nocalc, TRACE_CPP_EXPR_GRAMMAR);
         }
 
-    // start rule of this grammar
+        // start rule of this grammar
         simple_rule_t const& start() const
         { return pp_expression; }
     };
@@ -782,7 +782,7 @@ expression_grammar_gen<TokenT>::evaluate(
                      ch_p(T_SPACE) | ch_p(T_CCOMMENT) | ch_p(T_CPPCOMMENT));
 
         if (!hit.hit) {
-        // expression is illformed
+            // expression is illformed
             if (if_block_status) {
                 string_type expression = as_string<string_type>(first, last);
                 if (0 == expression.size())
@@ -792,30 +792,30 @@ expression_grammar_gen<TokenT>::evaluate(
                 return false;
             }
             else {
-            //  as the if_block_status is false no errors will be reported
+                //  as the if_block_status is false no errors will be reported
                 return false;
             }
         }
     }
 #if !defined(BOOST_NO_EXCEPTIONS)
     catch (boost::wave::preprocess_exception const& e) {
-    // expression is illformed
+        // expression is illformed
         if (if_block_status) {
             boost::throw_exception(e);
             return false;
         }
         else         {
-        //  as the if_block_status is false no errors will be reported
+            //  as the if_block_status is false no errors will be reported
             return false;
         }
     }
 #endif
 
     if (!hit.full) {
-    // The token list starts with a valid expression, but there remains
-    // something. If the remainder consists out of whitespace only, the
-    // expression is still valid.
-    iterator_type next = hit.stop;
+        // The token list starts with a valid expression, but there remains
+        // something. If the remainder consists out of whitespace only, the
+        // expression is still valid.
+        iterator_type next = hit.stop;
 
         while (next != last) {
             switch (token_id(*next)) {
@@ -830,7 +830,7 @@ expression_grammar_gen<TokenT>::evaluate(
                 return as_bool(result);     // expression is valid
 
             default:
-            // expression is illformed
+                // expression is illformed
                 if (if_block_status) {
                     string_type expression = as_string<string_type>(first, last);
                     if (0 == expression.size())
@@ -840,7 +840,7 @@ expression_grammar_gen<TokenT>::evaluate(
                     return false;
                 }
                 else {
-                //  as the if_block_status is false no errors will be reported
+                    //  as the if_block_status is false no errors will be reported
                     return false;
                 }
             }
@@ -851,7 +851,7 @@ expression_grammar_gen<TokenT>::evaluate(
     if (error_noerror != result.is_valid()) // division or other error by zero occurred
         status = result.is_valid();
 
-// token sequence is a valid expression
+    // token sequence is a valid expression
     return as_bool(result);
 }
 

@@ -71,7 +71,7 @@ public:
 
     void enter_if_block(bool new_status)
     {
-    // If enclosing block is false, then this block is also false
+        // If enclosing block is false, then this block is also false
         bool enclosing_status = get_status();
         this->push (value_type (new_status && enclosing_status, enclosing_status));
     }
@@ -82,11 +82,11 @@ public:
 
         if (get_enclosing_status()) {
             if (get_status()) {
-            // entered a (false) #elif block from a true block
+                // entered a (false) #elif block from a true block
                 this->top().set_status(false);
             }
             else if (new_status && !this->top().get_some_part_status()) {
-            // Entered true #elif block and no previous block was true
+                // Entered true #elif block and no previous block was true
                 this->top().set_status(new_status);
             }
         }
@@ -99,15 +99,15 @@ public:
 
         if (get_enclosing_status()) {
             if (!this->top().get_some_part_status()) {
-            // Entered (true) #else block and no previous block was true
+                // Entered (true) #else block and no previous block was true
                 this->top().set_status(true);
             }
             else if (get_status()) {
-            // Entered (false) #else block from true block
+                // Entered (false) #else block from true block
                 this->top().set_status(false);
             }
 
-        // Set else flag
+            // Set else flag
             this->top().set_in_else();
         }
         return true;
@@ -121,7 +121,7 @@ public:
         return true;
     }
 
-// return, whether the top (innermost) condition is true or false
+    // return, whether the top (innermost) condition is true or false
     bool get_status() const
     {
         return 0 == this->size() || this->top().get_status();

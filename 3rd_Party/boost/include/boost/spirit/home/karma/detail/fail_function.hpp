@@ -30,7 +30,7 @@ namespace boost { namespace spirit { namespace karma { namespace detail
         bool operator()(Component const& component, Attribute const& attr) const
         {
 #if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1600))  
-            component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
+            (void)component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
 #endif
             // return true if any of the generators fail
             return !component.generate(sink, ctx, delim, attr);
@@ -40,7 +40,7 @@ namespace boost { namespace spirit { namespace karma { namespace detail
         bool operator()(Component const& component) const
         {
 #if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1600))  
-            component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
+            (void)component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
 #endif
             // return true if any of the generators fail
             return !component.generate(sink, ctx, delim, unused);

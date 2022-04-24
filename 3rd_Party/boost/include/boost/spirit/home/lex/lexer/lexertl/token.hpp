@@ -33,8 +33,8 @@
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/range/iterator_range_core.hpp>
-#include <boost/type_traits/integral_promotion.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/type_traits/make_unsigned.hpp>
 #include <boost/static_assert.hpp>
 
 #if defined(BOOST_SPIRIT_DEBUG)
@@ -127,12 +127,13 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
         typedef mpl::false_ has_state;
         typedef Idtype id_type;
         typedef unused_type token_value_type;
+        typedef typename make_unsigned<id_type>::type uid_type;
 
         //  default constructed tokens correspond to EOI tokens
-        token() : id_(id_type(boost::lexer::npos)) {}
+        token() : id_(boost::lexer::npos) {}
 
         //  construct an invalid token
-        explicit token(int) : id_(id_type(0)) {}
+        explicit token(int) : id_(0) {}
 
         token(id_type id, std::size_t) : id_(id) {}
 
@@ -155,17 +156,17 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
         //  this default conversion operator is needed to allow the direct 
         //  usage of tokens in conjunction with the primitive parsers defined 
         //  in Qi
-        operator id_type() const { return static_cast<id_type>(id_); }
+        operator id_type() const { return id_type(uid_type(id_)); }
 
         //  Retrieve or set the token id of this token instance. 
-        id_type id() const { return static_cast<id_type>(id_); }
-        void id(id_type newid) { id_ = newid; }
+        id_type id() const { return id_type(uid_type(id_)); }
+        void id(id_type newid) { id_ = uid_type(newid); }
 
         std::size_t state() const { return 0; }   // always '0' (INITIAL state)
 
         bool is_valid() const 
         { 
-            return 0 != id_ && id_type(boost::lexer::npos) != id_; 
+            return 0 != id_ && boost::lexer::npos != id_; 
         }
 
 #if defined(BOOST_SPIRIT_DEBUG)
@@ -187,7 +188,7 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
 #endif
 
     protected:
-        typename boost::integral_promotion<id_type>::type id_;            // token id, 0 if nothing has been matched
+        std::size_t id_;            // token id, 0 if nothing has been matched
     };
 
 #if defined(BOOST_SPIRIT_DEBUG)

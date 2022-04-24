@@ -41,7 +41,7 @@ private:
     <
         typename RTreeRangeIterator,
         typename QueryRangeIterator,
-        typename Strategy,
+        typename Strategies,
         typename RTreeValueType,
         typename Distance
     >
@@ -49,18 +49,14 @@ private:
                              RTreeRangeIterator rtree_last,
                              QueryRangeIterator queries_first,
                              QueryRangeIterator queries_last,
-                             Strategy const& strategy,
+                             Strategies const& strategies,
                              RTreeValueType& rtree_min,
                              QueryRangeIterator& qit_min,
                              Distance& dist_min)
     {
-        typedef strategy::index::services::from_strategy
-            <
-                Strategy
-            > index_strategy_from;
         typedef index::parameters
             <
-                index::linear<8>, typename index_strategy_from::type
+                index::linear<8>, Strategies
             > index_parameters_type;
         typedef index::rtree<RTreeValueType, index_parameters_type> rtree_type;
 
@@ -72,8 +68,7 @@ private:
 
         // create -- packing algorithm
         rtree_type rt(rtree_first, rtree_last,
-                      index_parameters_type(index::linear<8>(),
-                                            index_strategy_from::get(strategy)));
+                      index_parameters_type(index::linear<8>(), strategies));
 
         RTreeValueType t_v;
         bool first = true;
@@ -99,8 +94,8 @@ private:
                         <
                             QueryRangeIterator
                         >::value_type,
-                    Strategy
-                >::apply(t_v, *qit, strategy);
+                    Strategies
+                >::apply(t_v, *qit, strategies);
 
             if (first || dist < dist_min)
             {

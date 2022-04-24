@@ -60,10 +60,13 @@ class basic_managed_external_buffer
 
    //!Default constructor. Does nothing.
    //!Useful in combination with move semantics
-   basic_managed_external_buffer()
+   basic_managed_external_buffer() BOOST_NOEXCEPT
    {}
 
    //!Creates and places the segment manager. This can throw
+   //!The external memory supplied by the user shall be aligned to the maximum value between 
+   //!`alignof(std::max_align_t)` and the strictest alignment of any over-aligned type to be built
+   //!inside that memory.
    basic_managed_external_buffer
       (create_only_t, void *addr, size_type size)
    {
@@ -75,6 +78,9 @@ class basic_managed_external_buffer
    }
 
    //!Creates and places the segment manager. This can throw
+   //!The external memory supplied by the user shall be aligned to the maximum value between 
+   //!`alignof(std::max_align_t)` and the strictest alignment of any over-aligned type to be built
+   //!inside that memory.
    basic_managed_external_buffer
       (open_only_t, void *addr, size_type size)
    {
@@ -86,13 +92,13 @@ class basic_managed_external_buffer
    }
 
    //!Moves the ownership of "moved"'s managed memory to *this. Does not throw
-   basic_managed_external_buffer(BOOST_RV_REF(basic_managed_external_buffer) moved)
+   basic_managed_external_buffer(BOOST_RV_REF(basic_managed_external_buffer) moved) BOOST_NOEXCEPT
    {
       this->swap(moved);
    }
 
    //!Moves the ownership of "moved"'s managed memory to *this. Does not throw
-   basic_managed_external_buffer &operator=(BOOST_RV_REF(basic_managed_external_buffer) moved)
+   basic_managed_external_buffer &operator=(BOOST_RV_REF(basic_managed_external_buffer) moved) BOOST_NOEXCEPT
    {
       basic_managed_external_buffer tmp(boost::move(moved));
       this->swap(tmp);
@@ -104,7 +110,7 @@ class basic_managed_external_buffer
 
    //!Swaps the ownership of the managed heap memories managed by *this and other.
    //!Never throws.
-   void swap(basic_managed_external_buffer &other)
+   void swap(basic_managed_external_buffer &other) BOOST_NOEXCEPT
    {  base_t::swap(other); }
 };
 

@@ -24,10 +24,12 @@ namespace option {
 /// Holder of axis options.
 template <unsigned Bits>
 struct bitset : std::integral_constant<unsigned, Bits> {
+
   /// Returns true if all option flags in the argument are set and false otherwise.
   template <unsigned B>
   static constexpr auto test(bitset<B>) {
-    return std::integral_constant<bool, static_cast<bool>((Bits & B) == B)>{};
+    // B + 0 needed to avoid false positive -Wtautological-compare in gcc-6
+    return std::integral_constant<bool, static_cast<bool>((Bits & B) == (B + 0))>{};
   }
 };
 
@@ -55,23 +57,28 @@ constexpr auto operator-(bitset<B1>, bitset<B2>) {
   @tparam Pos position of the bit in the set.
 */
 template <unsigned Pos>
-struct bit : bitset<(1 << Pos)> {};
+#ifndef BOOST_HISTOGRAM_DOXYGEN_INVOKED
+using bit = bitset<(1 << Pos)>;
+#else
+struct bit;
+#endif
 
 /// All options off.
 using none_t = bitset<0>;
-constexpr none_t none{}; ///< Instance of `none_t`.
 /// Axis has an underflow bin. Mutually exclusive with `circular`.
 using underflow_t = bit<0>;
-constexpr underflow_t underflow{}; ///< Instance of `underflow_t`.
 /// Axis has overflow bin.
 using overflow_t = bit<1>;
-constexpr overflow_t overflow{}; ///< Instance of `overflow_t`.
 /// Axis is circular. Mutually exclusive with `growth` and `underflow`.
 using circular_t = bit<2>;
-constexpr circular_t circular{}; ///< Instance of `circular_t`.
 /// Axis can grow. Mutually exclusive with `circular`.
 using growth_t = bit<3>;
-constexpr growth_t growth{}; ///< Instance of `growth_t`.
+
+constexpr none_t none{};           ///< Instance of `none_t`.
+constexpr underflow_t underflow{}; ///< Instance of `underflow_t`.
+constexpr overflow_t overflow{};   ///< Instance of `overflow_t`.
+constexpr circular_t circular{};   ///< Instance of `circular_t`.
+constexpr growth_t growth{};       ///< Instance of `growth_t`.
 
 } // namespace option
 } // namespace axis

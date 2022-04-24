@@ -86,7 +86,7 @@ struct BOOST_WAVE_DECL cpp_grammar_gen
 //             boost::pool_allocator<boost::spirit::nil_t>
         > node_factory_type;
 
-//  parse the cpp_grammar and return the resulting parse tree
+    //  parse the cpp_grammar and return the resulting parse tree
     static boost::spirit::classic::tree_parse_info<iterator_type, node_factory_type>
     parse_cpp_grammar (iterator_type const &first, iterator_type const &last,
         position_type const &act_pos, bool &found_eof,

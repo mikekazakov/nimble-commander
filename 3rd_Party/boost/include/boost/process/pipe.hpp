@@ -279,7 +279,7 @@ private:
         else if (wrt == 0) //broken pipe
             return false;
 
-        this->pbump(-wrt);
+        this->pbump(static_cast<int>(-wrt));
 
         return true;
     }

@@ -1,4 +1,4 @@
-// Copyright 2018-2019 Antony Polukhin.
+// Copyright Antony Polukhin, 2018-2022.
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt
@@ -59,6 +59,7 @@ using std::system_category;
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/error_code.hpp>
+#include <boost/system/system_error.hpp>
 
 namespace boost { namespace dll { namespace fs {
 

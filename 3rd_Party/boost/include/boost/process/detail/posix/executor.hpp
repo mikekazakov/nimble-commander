@@ -152,11 +152,10 @@ class executor
     void write_error(const std::error_code & ec, const char * msg)
     {
         //I am the child
-        int len = ec.value();
-        ::write(_pipe_sink, &len, sizeof(int));
+        const auto len = std::strlen(msg);
+        int data[2] = {ec.value(), len + 1};
 
-        len = std::strlen(msg) + 1;
-        ::write(_pipe_sink, &len, sizeof(int));
+        ::write(_pipe_sink, &data[0], sizeof(int) * 2);
         ::write(_pipe_sink, msg, len);
     }
 
@@ -273,14 +272,15 @@ class executor
         prepare_cmd_style_fn = exe;
         if ((prepare_cmd_style_fn.find('/') == std::string::npos) && ::access(prepare_cmd_style_fn.c_str(), X_OK))
         {
-            auto e = ::environ;
+            const auto * e = ::environ;
             while ((e != nullptr) && (*e != nullptr) && !boost::starts_with(*e, "PATH="))
                 e++;
 
             if ((e != nullptr) && (*e != nullptr))
             {
                 std::vector<std::string> path;
-                boost::split(path, *e, boost::is_any_of(":"));
+                //the beginning of the string contains "PATH="
+                boost::split(path, (*e) + 5, boost::is_any_of(":"));
 
                 for (const std::string & pp : path)
                 {

@@ -1,11 +1,11 @@
-//Copyright (c) 2008-2016 Emil Dotchevski and Reverge Studios, Inc.
-//Copyright (c) 2018 agate-pris
-
-//Distributed under the Boost Software License, Version 1.0. (See accompanying
-//file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-
 #ifndef BOOST_QVM_DETAIL_VEC_REGISTER_IMPL_HPP
 #define BOOST_QVM_DETAIL_VEC_REGISTER_IMPL_HPP
+
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
+// Copyright 2018 agate-pris
+
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/assert.hpp>
 #include <boost/qvm/inline.hpp>
@@ -29,7 +29,7 @@ struct vec_register_read
 
     template<int I, int N> struct read_element_idx_detail
     {
-        static BOOST_QVM_INLINE_CRITICAL ScalarType impl(int const i, VecType const& v)
+        static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL ScalarType impl(int const i, VecType const& v)
         {
             return I == i
                 ? read_element<I>(v)
@@ -39,14 +39,14 @@ struct vec_register_read
 
     template<int N> struct read_element_idx_detail<N, N>
     {
-        static BOOST_QVM_INLINE_TRIVIAL ScalarType impl(int, VecType const& v)
+        static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL ScalarType impl(int, VecType const& v)
         {
             BOOST_QVM_ASSERT(0);
             return read_element<0>(v);
         }
     };
 
-    static BOOST_QVM_INLINE_CRITICAL ScalarType read_element_idx(int const i, VecType const& v)
+    static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL ScalarType read_element_idx(int const i, VecType const& v)
     {
         return read_element_idx_detail<0, Dim>::impl(i, v);
     }
@@ -59,7 +59,7 @@ struct vec_register_write
 
     template<int I, int N> struct write_element_idx_detail
     {
-        static BOOST_QVM_INLINE_CRITICAL ScalarType& impl(int const i, VecType& v)
+        static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL ScalarType& impl(int const i, VecType& v)
         {
             return I == i
                 ? write_element<I>(v)
@@ -69,14 +69,14 @@ struct vec_register_write
 
     template<int N> struct write_element_idx_detail<N, N>
     {
-        static BOOST_QVM_INLINE_TRIVIAL ScalarType& impl(int, VecType& v)
+        static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL ScalarType& impl(int, VecType& v)
         {
             BOOST_QVM_ASSERT(0);
             return write_element<0>(v);
         }
     };
 
-    static BOOST_QVM_INLINE_CRITICAL ScalarType& write_element_idx(int const i, VecType& v)
+    static BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL ScalarType& write_element_idx(int const i, VecType& v)
     {
         return write_element_idx_detail<0, Dim>::impl(i, v);
     }
@@ -88,7 +88,7 @@ struct vec_register_write
 namespace boost { namespace qvm {namespace qvm_detail{ \
 template<> \
 template<> \
-BOOST_QVM_INLINE_CRITICAL \
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL \
 ScalarType vec_register_read<VecType, ScalarType, Dim>::read_element<I>(VecType const& v) \
 { \
     BOOST_QVM_STATIC_ASSERT(I>=0); \
@@ -101,7 +101,7 @@ ScalarType vec_register_read<VecType, ScalarType, Dim>::read_element<I>(VecType 
 namespace boost { namespace qvm {namespace qvm_detail{ \
 template<> \
 template<> \
-BOOST_QVM_INLINE_CRITICAL \
+BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL \
 ScalarType& vec_register_write<VecType, ScalarType, Dim>::write_element<I>(VecType& v) \
 { \
     BOOST_QVM_STATIC_ASSERT(I>=0); \

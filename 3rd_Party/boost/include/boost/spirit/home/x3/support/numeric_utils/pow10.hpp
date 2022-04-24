@@ -13,6 +13,7 @@
 #include <boost/limits.hpp>
 #include <boost/spirit/home/x3/support/unused.hpp>
 #include <boost/spirit/home/x3/support/traits/numeric_traits.hpp>
+#include <cfloat>
 
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
 # pragma warning(push)

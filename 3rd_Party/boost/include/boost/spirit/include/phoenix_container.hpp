@@ -8,5 +8,8 @@
 =============================================================================*/
 #ifndef BOOST_SPIRIT_INCLUDE_PHOENIX_CONTAINER
 #define BOOST_SPIRIT_INCLUDE_PHOENIX_CONTAINER
+#include <boost/config/header_deprecated.hpp>
+BOOST_HEADER_DEPRECATED("<boost/phoenix/stl/container.hpp>")
+
 #include <boost/phoenix/stl/container.hpp>
 #endif

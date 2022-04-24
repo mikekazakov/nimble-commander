@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018.
-// Modifications copyright (c) 2017-2018 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2020.
+// Modifications copyright (c) 2017-2020 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -17,7 +17,9 @@
 #include <cstddef>
 #include <set>
 
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/algorithms/detail/overlay/cluster_info.hpp>
 #include <boost/geometry/algorithms/detail/overlay/cluster_exits.hpp>
@@ -567,28 +569,24 @@ public :
         return true;
     }
 
-
-    template <typename RankedPoint>
-    inline turn_operation_type const& operation_from_rank(RankedPoint const& rp) const
-    {
-        return m_turns[rp.turn_index].operations[rp.operation_index];
-    }
-
-    inline int select_turn_in_cluster_union(sort_by_side::rank_type selected_rank,
+    inline int priority_of_turn_in_cluster_union(sort_by_side::rank_type selected_rank,
             typename sbs_type::rp const& ranked_point,
+            std::set<signed_size_type> const& cluster_indices,
             signed_size_type start_turn_index, int start_op_index) const
     {
-        // Returns 0 if it not OK
-        // Returns 1 if it OK
-        // Returns 2 if it OK and start turn matches
-        // Returns 3 if it OK and start turn and start op both match
+        // Returns 0: not OK
+        // Returns 1: OK but next turn is in same cluster
+        // Returns 2: OK
+        // Returns 3: OK and start turn matches
+        // Returns 4: OK and start turn and start op both match
         if (ranked_point.rank != selected_rank
             || ranked_point.direction != sort_by_side::dir_to)
         {
             return 0;
         }
 
-        turn_operation_type const& op = operation_from_rank(ranked_point);
+        auto const& turn = m_turns[ranked_point.turn_index];
+        auto const& op = turn.operations[ranked_point.operation_index];
 
         // Check finalized: TODO: this should be finetuned, it is not necessary
         if (op.visited.finalized())
@@ -604,38 +602,51 @@ public :
             return 0;
         }
 
-        return ranked_point.turn_index == start_turn_index
-                && ranked_point.operation_index == start_op_index ? 3
-            : ranked_point.turn_index == start_turn_index ? 2
-            : 1
+        bool const to_start = ranked_point.turn_index == start_turn_index;
+        bool const to_start_index = ranked_point.operation_index == start_op_index;
+
+        bool const next_in_same_cluster
+                = cluster_indices.count(op.enriched.get_next_turn_index()) > 0;
+
+        return to_start && to_start_index ? 4
+            : to_start ? 3
+            : next_in_same_cluster ? 1
+            : 2
             ;
     }
 
-    inline sort_by_side::rank_type select_rank(sbs_type const& sbs,
-                                        bool skip_isolated) const
+    template <typename RankedPoint>
+    inline turn_operation_type const& operation_from_rank(RankedPoint const& rp) const
     {
+        return m_turns[rp.turn_index].operations[rp.operation_index];
+    }
+
+    inline sort_by_side::rank_type select_rank(sbs_type const& sbs) const
+    {
+        static bool const is_intersection
+                = target_operation == operation_intersection;
+
         // Take the first outgoing rank corresponding to incoming region,
         // or take another region if it is not isolated
-        turn_operation_type const& incoming_op
-                = operation_from_rank(sbs.m_ranked_points.front());
+        auto const& in_op = operation_from_rank(sbs.m_ranked_points.front());
 
         for (std::size_t i = 0; i < sbs.m_ranked_points.size(); i++)
         {
-            typename sbs_type::rp const& rp = sbs.m_ranked_points[i];
+            auto const& rp = sbs.m_ranked_points[i];
             if (rp.rank == 0 || rp.direction == sort_by_side::dir_from)
             {
                 continue;
             }
-            turn_operation_type const& op = operation_from_rank(rp);
+            auto const& out_op = operation_from_rank(rp);
 
-            if (op.operation != target_operation
-                && op.operation != operation_continue)
+            if (out_op.operation != target_operation
+                && out_op.operation != operation_continue)
             {
                 continue;
             }
 
-            if (op.enriched.region_id == incoming_op.enriched.region_id
-                || (skip_isolated && ! op.enriched.isolated))
+            if (in_op.enriched.region_id == out_op.enriched.region_id
+                || (is_intersection && ! out_op.enriched.isolated))
             {
                 // Region corresponds to incoming region, or (for intersection)
                 // there is a non-isolated other region which should be taken
@@ -646,98 +657,102 @@ public :
     }
 
     inline bool select_from_cluster_union(signed_size_type& turn_index,
+        std::set<signed_size_type> const& cluster_indices,
         int& op_index, sbs_type const& sbs,
         signed_size_type start_turn_index, int start_op_index) const
     {
-        sort_by_side::rank_type const selected_rank = select_rank(sbs, false);
+        sort_by_side::rank_type const selected_rank = select_rank(sbs);
 
-        int best_code = 0;
-        bool result = false;
+        int current_priority = 0;
         for (std::size_t i = 1; i < sbs.m_ranked_points.size(); i++)
         {
             typename sbs_type::rp const& ranked_point = sbs.m_ranked_points[i];
 
             if (ranked_point.rank > selected_rank)
             {
-                // Sorted on rank, so it makes no sense to continue
                 break;
             }
 
-            int const code
-                = select_turn_in_cluster_union(selected_rank, ranked_point,
-                    start_turn_index, start_op_index);
+            int const priority = priority_of_turn_in_cluster_union(selected_rank,
+                ranked_point, cluster_indices, start_turn_index, start_op_index);
 
-            if (code > best_code)
+            if (priority > current_priority)
             {
-                // It is 1 or higher and matching better than previous
-                best_code = code;
+                current_priority = priority;
                 turn_index = ranked_point.turn_index;
                 op_index = ranked_point.operation_index;
-                result = true;
             }
         }
-        return result;
+        return current_priority > 0;
     }
 
     inline bool analyze_cluster_intersection(signed_size_type& turn_index,
                 int& op_index, sbs_type const& sbs) const
     {
-        sort_by_side::rank_type const selected_rank = select_rank(sbs, true);
+        // Select the rank based on regions and isolation
+        sort_by_side::rank_type const selected_rank = select_rank(sbs);
 
-        if (selected_rank > 0)
+        if (selected_rank <= 0)
         {
-            typename turn_operation_type::comparable_distance_type
-                    min_remaining_distance = 0;
+            return false;
+        }
 
-            std::size_t selected_index = sbs.m_ranked_points.size();
-            for (std::size_t i = 0; i < sbs.m_ranked_points.size(); i++)
+        // From these ranks, select the index: the first, or the one with
+        // the smallest remaining distance
+        typename turn_operation_type::comparable_distance_type
+                min_remaining_distance = 0;
+
+        std::size_t selected_index = sbs.m_ranked_points.size();
+        for (std::size_t i = 0; i < sbs.m_ranked_points.size(); i++)
+        {
+            auto const& ranked_point = sbs.m_ranked_points[i];
+
+            if (ranked_point.rank > selected_rank)
             {
-                typename sbs_type::rp const& ranked_point = sbs.m_ranked_points[i];
-
-                if (ranked_point.rank == selected_rank)
-                {
-                    turn_operation_type const& op = operation_from_rank(ranked_point);
-
-                    if (op.visited.finalized())
-                    {
-                        // This direction is already traveled before, the same
-                        // cannot be traveled again
-                        continue;
-                    }
-
-                    // Take turn with the smallest remaining distance
-                    if (selected_index == sbs.m_ranked_points.size()
-                            || op.remaining_distance < min_remaining_distance)
-                    {
-                        selected_index = i;
-                        min_remaining_distance = op.remaining_distance;
-                    }
-                }
+                break;
             }
-
-            if (selected_index < sbs.m_ranked_points.size())
+            else if (ranked_point.rank == selected_rank)
             {
-                typename sbs_type::rp const& ranked_point = sbs.m_ranked_points[selected_index];
-                turn_index = ranked_point.turn_index;
-                op_index = ranked_point.operation_index;
-                return true;
+                auto const& op = operation_from_rank(ranked_point);
+
+                if (op.visited.finalized())
+                {
+                    // This direction is already traveled,
+                    // it cannot be traveled again
+                    continue;
+                }
+
+                if (selected_index == sbs.m_ranked_points.size()
+                        || op.remaining_distance < min_remaining_distance)
+                {
+                    // It was unassigned or it is better
+                    selected_index = i;
+                    min_remaining_distance = op.remaining_distance;
+                }
             }
         }
 
-        return false;
+        if (selected_index == sbs.m_ranked_points.size())
+        {
+            // Should not happen, there must be points with the selected rank
+            return false;
+        }
+
+        auto const& ranked_point = sbs.m_ranked_points[selected_index];
+        turn_index = ranked_point.turn_index;
+        op_index = ranked_point.operation_index;
+        return true;
     }
 
     inline bool fill_sbs(sbs_type& sbs,
                          signed_size_type turn_index,
-                         std::set<signed_size_type> const& ids,
+                         std::set<signed_size_type> const& cluster_indices,
                          segment_identifier const& previous_seg_id) const
     {
-        for (typename std::set<signed_size_type>::const_iterator sit = ids.begin();
-             sit != ids.end(); ++sit)
+
+        for (auto cluster_turn_index : cluster_indices)
         {
-            signed_size_type cluster_turn_index = *sit;
             turn_type const& cluster_turn = m_turns[cluster_turn_index];
-            bool const departure_turn = cluster_turn_index == turn_index;
             if (cluster_turn.discarded)
             {
                 // Defensive check, discarded turns should not be in cluster
@@ -746,10 +761,11 @@ public :
 
             for (int i = 0; i < 2; i++)
             {
-                sbs.add(cluster_turn.operations[i],
+                sbs.add(cluster_turn,
+                        cluster_turn.operations[i],
                         cluster_turn_index, i, previous_seg_id,
                         m_geometry1, m_geometry2,
-                        departure_turn);
+                        cluster_turn_index == turn_index);
             }
         }
 
@@ -777,16 +793,17 @@ public :
         BOOST_ASSERT(mit != m_clusters.end());
 
         cluster_info const& cinfo = mit->second;
-        std::set<signed_size_type> const& ids = cinfo.turn_indices;
+        std::set<signed_size_type> const& cluster_indices = cinfo.turn_indices;
 
         sbs_type sbs(m_strategy);
 
-        if (! fill_sbs(sbs, turn_index, ids, previous_seg_id))
+
+        if (! fill_sbs(sbs, turn_index, cluster_indices, previous_seg_id))
         {
             return false;
         }
 
-        cluster_exits<OverlayType, Turns, sbs_type> exits(m_turns, ids, sbs);
+        cluster_exits<OverlayType, Turns, sbs_type> exits(m_turns, cluster_indices, sbs);
 
         if (exits.apply(turn_index, op_index))
         {
@@ -797,8 +814,9 @@ public :
 
         if (is_union)
         {
-            result = select_from_cluster_union(turn_index, op_index, sbs,
-                start_turn_index, start_op_index);
+            result = select_from_cluster_union(turn_index, cluster_indices,
+                                               op_index, sbs,
+                                               start_turn_index, start_op_index);
             if (! result)
             {
                // There no way out found, try second pass in collected cluster exits
@@ -812,6 +830,7 @@ public :
         return result;
     }
 
+    // Analyzes a non-clustered "ii" intersection, as if it is clustered.
     inline bool analyze_ii_intersection(signed_size_type& turn_index, int& op_index,
                     turn_type const& current_turn,
                     segment_identifier const& previous_seg_id)
@@ -821,7 +840,8 @@ public :
         // Add this turn to the sort-by-side sorter
         for (int i = 0; i < 2; i++)
         {
-            sbs.add(current_turn.operations[i],
+            sbs.add(current_turn,
+                    current_turn.operations[i],
                     turn_index, i, previous_seg_id,
                     m_geometry1, m_geometry2,
                     true);

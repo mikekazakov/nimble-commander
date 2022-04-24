@@ -29,14 +29,13 @@ namespace boost {
 namespace histogram {
 namespace axis {
 
-/**
-  Axis for an interval of integer values with unit steps.
+/** Axis for an interval of integer values with unit steps.
 
-  Binning is a O(1) operation. This axis bins faster than a regular axis.
+   Binning is a O(1) operation. This axis bins faster than a regular axis.
 
-  @tparam Value input value type. Must be integer or floating point.
-  @tparam MetaData type to store meta data.
-  @tparam Options see boost::histogram::axis::option (all values allowed).
+   @tparam Value     input value type. Must be integer or floating point.
+   @tparam MetaData  type to store meta data.
+   @tparam Options   see boost::histogram::axis::option.
  */
 template <class Value, class MetaData, class Options>
 class integer : public iterator_mixin<integer<Value, MetaData, Options>>,
@@ -72,15 +71,18 @@ public:
   constexpr integer() = default;
 
   /** Construct over semi-open integer interval [start, stop).
-   *
-   * \param start    first integer of covered range.
-   * \param stop     one past last integer of covered range.
-   * \param meta     description of the axis.
+
+     @param start    first integer of covered range.
+     @param stop     one past last integer of covered range.
+     @param meta     description of the axis (optional).
+     @param options  see boost::histogram::axis::option (optional).
    */
-  integer(value_type start, value_type stop, metadata_type meta = {})
+  integer(value_type start, value_type stop, metadata_type meta = {},
+          options_type options = {})
       : metadata_base(std::move(meta))
       , size_(static_cast<index_type>(stop - start))
       , min_(start) {
+    (void)options;
     if (!(stop >= start))
       BOOST_THROW_EXCEPTION(std::invalid_argument("stop >= start required"));
   }
@@ -153,9 +155,14 @@ public:
 
   /// Whether the axis is inclusive (see axis::traits::is_inclusive).
   static constexpr bool inclusive() noexcept {
-    return (options() & option::underflow || options() & option::overflow) ||
-           (std::is_integral<value_type>::value &&
-            (options() & (option::growth | option::circular)));
+    // If axis has underflow and overflow, it is inclusive.
+    // If axis is growing or circular:
+    // - it is inclusive if value_type is int.
+    // - it is not inclusive if value_type is float, because of nan and inf.
+    constexpr bool full_flow =
+        options() & option::underflow && options() & option::overflow;
+    return full_flow || (std::is_integral<value_type>::value &&
+                         (options() & (option::growth | option::circular)));
   }
 
   template <class V, class M, class O>
@@ -205,12 +212,18 @@ private:
 #if __cpp_deduction_guides >= 201606
 
 template <class T>
-integer(T, T)->integer<detail::convert_integer<T, index_type>, null_type>;
+integer(T, T) -> integer<detail::convert_integer<T, index_type>, null_type>;
 
 template <class T, class M>
 integer(T, T, M)
-    ->integer<detail::convert_integer<T, index_type>,
-              detail::replace_type<std::decay_t<M>, const char*, std::string>>;
+    -> integer<detail::convert_integer<T, index_type>,
+               detail::replace_type<std::decay_t<M>, const char*, std::string>>;
+
+template <class T, class M, unsigned B>
+integer(T, T, M, const option::bitset<B>&)
+    -> integer<detail::convert_integer<T, index_type>,
+               detail::replace_type<std::decay_t<M>, const char*, std::string>,
+               option::bitset<B>>;
 
 #endif
 

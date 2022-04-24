@@ -26,8 +26,7 @@ struct is_self_turn_check
     template <typename Turn>
     static inline bool apply(Turn const& turn)
     {
-        return turn.operations[0].seg_id.source_index
-                == turn.operations[1].seg_id.source_index;
+        return turn.is_self();
     }
 };
 

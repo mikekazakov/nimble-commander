@@ -64,7 +64,8 @@ namespace boost { namespace geometry { namespace series_expansion {
     {
         CT eps2 = math::sqr(eps);
         CT t;
-        switch (SeriesOrder/2) {
+        switch (SeriesOrder/2)
+        {
         case 0:
             t = CT(0);
             break;
@@ -109,7 +110,8 @@ namespace boost { namespace geometry { namespace series_expansion {
     {
         CT const eps2 = math::sqr(eps);
         CT t;
-        switch (SeriesOrder/2) {
+        switch (SeriesOrder/2)
+        {
         case 0:
             t = CT(0);
             break;
@@ -152,7 +154,8 @@ namespace boost { namespace geometry { namespace series_expansion {
     template <typename Coeffs, typename CT>
     inline void evaluate_coeffs_A3(Coeffs &c, CT const& n)
     {
-        switch (int(Coeffs::static_size)) {
+        switch (int(Coeffs::static_size))
+        {
         case 0:
             break;
         case 1:
@@ -223,7 +226,8 @@ namespace boost { namespace geometry { namespace series_expansion {
     {
         CT eps2 = math::sqr(eps);
         CT d = eps;
-        switch (int(Coeffs::static_size) - 1) {
+        switch (int(Coeffs::static_size) - 1)
+        {
         case 0:
             break;
         case 1:
@@ -322,7 +326,8 @@ namespace boost { namespace geometry { namespace series_expansion {
     {
         CT const eps2 = math::sqr(eps);
         CT d = eps;
-        switch (int(Coeffs::static_size) - 1) {
+        switch (int(Coeffs::static_size) - 1)
+        {
         case 0:
             break;
         case 1:
@@ -421,7 +426,8 @@ namespace boost { namespace geometry { namespace series_expansion {
     {
         CT const eps2 = math::sqr(eps);
         CT d = eps;
-        switch (int(Coeffs::static_size) - 1) {
+        switch (int(Coeffs::static_size) - 1)
+        {
         case 0:
             break;
         case 1:
@@ -517,12 +523,11 @@ namespace boost { namespace geometry { namespace series_expansion {
     */
     template <size_t SeriesOrder, typename Coeffs, typename CT>
     inline void evaluate_coeffs_C3x(Coeffs &c, CT const& n) {
-        size_t const coeff_size = Coeffs::static_size;
-        size_t const expected_size = (SeriesOrder * (SeriesOrder - 1)) / 2;
-        BOOST_GEOMETRY_ASSERT((coeff_size == expected_size));
+        BOOST_GEOMETRY_ASSERT((Coeffs::static_size == (SeriesOrder * (SeriesOrder - 1)) / 2));
 
-        const CT n2 = math::sqr(n);
-        switch (SeriesOrder) {
+        CT const n2 = math::sqr(n);
+        switch (SeriesOrder)
+        {
         case 0:
             break;
         case 1:

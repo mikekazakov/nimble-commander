@@ -18,7 +18,6 @@
 
 #include <boost/config.hpp>
 
-#include <boost/property_map/property_map.hpp>
 #include <boost/bimap/unordered_set_of.hpp>
 #include <boost/bimap/support/data_type_by.hpp>
 #include <boost/bimap/support/key_type_by.hpp>
@@ -26,6 +25,9 @@
 #ifndef BOOST_BIMAP_DOXYGEN_WILL_NOT_PROCESS_THE_FOLLOWING_LINES
 
 namespace boost {
+
+template <typename PA> struct property_traits;
+struct readable_property_map_tag;
 
 template< class Tag, class Bimap >
 struct property_traits< ::boost::bimaps::views::unordered_map_view<Tag,Bimap> >

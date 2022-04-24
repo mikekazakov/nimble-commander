@@ -79,9 +79,9 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
 
         template <typename Attribute_>
         static Attribute_&
-        call(Attribute_& attr, mpl::true_)
+        call(Attribute_& attribute, mpl::true_)
         {
-            return attr;
+            return attribute;
         }
 
         template <typename Attribute_>
@@ -93,9 +93,9 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
 
         template <typename Attribute_>
         static type
-        call(Attribute_& attr)
+        call(Attribute_& attribute)
         {
-            return call(attr, is_same<Attribute_, typename remove_reference<type>::type>());
+            return call(attribute, is_same<Attribute_, typename remove_reference<type>::type>());
         }
     };
 
@@ -107,9 +107,9 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         typedef Attribute& type;
 
         static Attribute&
-        call(Attribute& attr)
+        call(Attribute& attribute)
         {
-            return attr;
+            return attribute;
         }
     };
 
@@ -170,25 +170,25 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
     struct move_if<true>
     {
         template<typename T1, typename T2>
-        static void call(T1& attr_, T2& attr)
+        static void call(T1& attr_, T2& attribute)
         {
-            traits::move_to(attr_, attr);
+            traits::move_to(attr_, attribute);
         }
     };
 
     template <typename Parser, typename Iterator, typename Context
       , typename RContext, typename Attribute>
     bool parse_alternative(Parser const& p, Iterator& first, Iterator const& last
-      , Context const& context, RContext& rcontext, Attribute& attr)
+      , Context const& context, RContext& rcontext, Attribute& attribute)
     {
         using pass = detail::pass_variant_attribute<Parser, Attribute, Context>;
         using pseudo = traits::pseudo_attribute<Context, typename pass::type, Iterator>;
 
-        typename pseudo::type attr_ = pseudo::call(first, last, pass::call(attr));
+        typename pseudo::type attr_ = pseudo::call(first, last, pass::call(attribute));
 
         if (p.parse(first, last, context, rcontext, attr_))
         {
-            move_if<!std::is_reference<decltype(attr_)>::value>::call(attr_, attr);
+            move_if<!std::is_reference<decltype(attr_)>::value>::call(attr_, attribute);
             return true;
         }
         return false;
@@ -219,29 +219,29 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
         static bool call(
             parser_type const& parser
           , Iterator& first, Iterator const& last
-          , Context const& context, RContext& rcontext, Attribute& attr, mpl::false_)
+          , Context const& context, RContext& rcontext, Attribute& attribute, mpl::false_)
         {
-            return detail::parse_into_container(parser.left, first, last, context, rcontext, attr)
-                || detail::parse_into_container(parser.right, first, last, context, rcontext, attr);
+            return detail::parse_into_container(parser.left, first, last, context, rcontext, attribute)
+                || detail::parse_into_container(parser.right, first, last, context, rcontext, attribute);
         }
 
         template <typename Iterator, typename Attribute>
         static bool call(
             parser_type const& parser
           , Iterator& first, Iterator const& last
-          , Context const& context, RContext& rcontext, Attribute& attr, mpl::true_)
+          , Context const& context, RContext& rcontext, Attribute& attribute, mpl::true_)
         {
-            return detail::parse_into_container(alternative_helper<Left>{parser.left}, first, last, context, rcontext, attr)
-                || detail::parse_into_container(alternative_helper<Right>{parser.right}, first, last, context, rcontext, attr);
+            return detail::parse_into_container(alternative_helper<Left>{parser.left}, first, last, context, rcontext, attribute)
+                || detail::parse_into_container(alternative_helper<Right>{parser.right}, first, last, context, rcontext, attribute);
         }
 
         template <typename Iterator, typename Attribute>
         static bool call(
             parser_type const& parser
           , Iterator& first, Iterator const& last
-          , Context const& context, RContext& rcontext, Attribute& attr)
+          , Context const& context, RContext& rcontext, Attribute& attribute)
         {
-            return call(parser, first, last, context, rcontext, attr,
+            return call(parser, first, last, context, rcontext, attribute,
                 typename traits::is_variant<typename traits::container_value<Attribute>::type>::type{});
         }
     };

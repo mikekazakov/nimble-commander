@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     // Note: This function is documented per datatype/concept only.
     //! @cond
     template <typename T, typename = void>
@@ -26,7 +26,7 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr auto operator()(Map&& map) const;
     };
 
-    constexpr keys_t keys{};
+    BOOST_HANA_INLINE_VARIABLE constexpr keys_t keys{};
 
     //! Returns a `Sequence` containing the name of the members of
     //! the data structure.
@@ -45,6 +45,6 @@ BOOST_HANA_NAMESPACE_BEGIN
         return implementation_defined;
     };
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_KEYS_HPP

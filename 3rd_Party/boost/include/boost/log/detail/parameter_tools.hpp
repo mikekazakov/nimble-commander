@@ -46,36 +46,36 @@
     public:\
         BOOST_PP_REPEAT_FROM_TO(1, BOOST_LOG_MAX_PARAMETER_ARGS, macro, args)
 
-#define BOOST_LOG_CTOR_FORWARD_1(n, types)\
+#define BOOST_LOG_CTOR_FORWARD_1(z, n, types)\
     template< typename T0 >\
     explicit BOOST_PP_TUPLE_ELEM(2, 0, types)(T0 const& arg0, typename boost::log::aux::enable_if_named_parameters< T0, boost::log::aux::sfinae_dummy >::type = boost::log::aux::sfinae_dummy()) :\
-        BOOST_PP_TUPLE_ELEM(2, 1, types)((BOOST_PP_ENUM_PARAMS(n, arg))) {}
+        BOOST_PP_TUPLE_ELEM(2, 1, types)((BOOST_PP_ENUM_PARAMS_Z(z, n, arg))) {}
 
-#define BOOST_LOG_CTOR_FORWARD_N(n, types)\
-    template< BOOST_PP_ENUM_PARAMS(n, typename T) >\
-    explicit BOOST_PP_TUPLE_ELEM(2, 0, types)(BOOST_PP_ENUM_BINARY_PARAMS(n, T, const& arg)) :\
-        BOOST_PP_TUPLE_ELEM(2, 1, types)((BOOST_PP_ENUM_PARAMS(n, arg))) {}
+#define BOOST_LOG_CTOR_FORWARD_N(z, n, types)\
+    template< BOOST_PP_ENUM_PARAMS_Z(z, n, typename T) >\
+    explicit BOOST_PP_TUPLE_ELEM(2, 0, types)(BOOST_PP_ENUM_BINARY_PARAMS_Z(z, n, T, const& arg)) :\
+        BOOST_PP_TUPLE_ELEM(2, 1, types)((BOOST_PP_ENUM_PARAMS_Z(z, n, arg))) {}
 
 #define BOOST_LOG_CTOR_FORWARD(z, n, types)\
-    BOOST_PP_IF(BOOST_PP_EQUAL(n, 1), BOOST_LOG_CTOR_FORWARD_1, BOOST_LOG_CTOR_FORWARD_N)(n, types)
+    BOOST_PP_IF(BOOST_PP_EQUAL(n, 1), BOOST_LOG_CTOR_FORWARD_1, BOOST_LOG_CTOR_FORWARD_N)(z, n, types)
 
 // The macro expands to a number of templated constructors that aggregate their named arguments
 // into an ArgumentsPack and pass it to the base class constructor.
 #define BOOST_LOG_PARAMETRIZED_CONSTRUCTORS_FORWARD(class_type, base_type)\
     BOOST_LOG_PARAMETRIZED_CONSTRUCTORS_GEN(BOOST_LOG_CTOR_FORWARD, (class_type, base_type))
 
-#define BOOST_LOG_CTOR_CALL_1(n, types)\
+#define BOOST_LOG_CTOR_CALL_1(z, n, types)\
     template< typename T0 >\
     explicit BOOST_PP_TUPLE_ELEM(2, 0, types)(T0 const& arg0, typename boost::log::aux::enable_if_named_parameters< T0, boost::log::aux::sfinae_dummy >::type = boost::log::aux::sfinae_dummy())\
-    { BOOST_PP_TUPLE_ELEM(2, 1, types)((BOOST_PP_ENUM_PARAMS(n, arg))); }
+    { BOOST_PP_TUPLE_ELEM(2, 1, types)((BOOST_PP_ENUM_PARAMS_Z(z, n, arg))); }
 
-#define BOOST_LOG_CTOR_CALL_N(n, types)\
-    template< BOOST_PP_ENUM_PARAMS(n, typename T) >\
-    explicit BOOST_PP_TUPLE_ELEM(2, 0, types)(BOOST_PP_ENUM_BINARY_PARAMS(n, T, const& arg))\
-    { BOOST_PP_TUPLE_ELEM(2, 1, types)((BOOST_PP_ENUM_PARAMS(n, arg))); }
+#define BOOST_LOG_CTOR_CALL_N(z, n, types)\
+    template< BOOST_PP_ENUM_PARAMS_Z(z, n, typename T) >\
+    explicit BOOST_PP_TUPLE_ELEM(2, 0, types)(BOOST_PP_ENUM_BINARY_PARAMS_Z(z, n, T, const& arg))\
+    { BOOST_PP_TUPLE_ELEM(2, 1, types)((BOOST_PP_ENUM_PARAMS_Z(z, n, arg))); }
 
 #define BOOST_LOG_CTOR_CALL(z, n, types)\
-    BOOST_PP_IF(BOOST_PP_EQUAL(n, 1), BOOST_LOG_CTOR_CALL_1, BOOST_LOG_CTOR_CALL_N)(n, types)
+    BOOST_PP_IF(BOOST_PP_EQUAL(n, 1), BOOST_LOG_CTOR_CALL_1, BOOST_LOG_CTOR_CALL_N)(z, n, types)
 
 // The macro expands to a number of templated constructors that aggregate their named arguments
 // into an ArgumentsPack and pass it to a function call.

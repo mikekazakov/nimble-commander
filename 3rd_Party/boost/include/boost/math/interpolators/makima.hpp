@@ -13,7 +13,9 @@
 #include <cmath>
 #include <boost/math/interpolators/detail/cubic_hermite_detail.hpp>
 
-namespace boost::math::interpolators {
+namespace boost {
+namespace math {
+namespace interpolators {
 
 template<class RandomAccessContainer>
 class makima {
@@ -170,5 +172,7 @@ private:
     std::shared_ptr<detail::cubic_hermite_detail<RandomAccessContainer>> impl_;
 };
 
+}
+}
 }
 #endif

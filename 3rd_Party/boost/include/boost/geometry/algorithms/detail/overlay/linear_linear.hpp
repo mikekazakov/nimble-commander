@@ -1,13 +1,11 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2019, Oracle and/or its affiliates.
-
-// Licensed under the Boost Software License version 1.0.
-// http://www.boost.org/users/license.html
-
+// Copyright (c) 2014-2020, Oracle and/or its affiliates.
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
+// Licensed under the Boost Software License version 1.0.
+// http://www.boost.org/users/license.html
 
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_LINEAR_LINEAR_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_LINEAR_LINEAR_HPP
@@ -15,7 +13,8 @@
 #include <algorithm>
 #include <vector>
 
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
 
 #include <boost/geometry/core/tag.hpp>
 #include <boost/geometry/core/tags.hpp>
@@ -139,6 +138,7 @@ protected:
         static bool const include_no_turn = false;
         static bool const include_degenerate = EnableDegenerateTurns;
         static bool const include_opposite = false;
+        static bool const include_start_turn = false;
     };
 
 
@@ -147,13 +147,13 @@ protected:
         typename Turns,
         typename LinearGeometry1,
         typename LinearGeometry2,
-        typename IntersectionStrategy,
+        typename Strategy,
         typename RobustPolicy
     >
     static inline void compute_turns(Turns& turns,
                                      LinearGeometry1 const& linear1,
                                      LinearGeometry2 const& linear2,
-                                     IntersectionStrategy const& strategy,
+                                     Strategy const& strategy,
                                      RobustPolicy const& robust_policy)
     {
         turns.clear();
@@ -182,14 +182,14 @@ protected:
         typename LinearGeometry1,
         typename LinearGeometry2,
         typename OutputIterator,
-        typename IntersectionStrategy
+        typename Strategy
     >
     static inline OutputIterator
     sort_and_follow_turns(Turns& turns,
                           LinearGeometry1 const& linear1,
                           LinearGeometry2 const& linear2,
                           OutputIterator oit,
-                          IntersectionStrategy const& strategy)
+                          Strategy const& strategy)
     {
         // remove turns that have no added value
         turns::filter_continue_turns
@@ -217,7 +217,7 @@ protected:
                 FollowIsolatedPoints,
                 !EnableFilterContinueTurns || OverlayType == overlay_intersection
             >::apply(linear1, linear2, boost::begin(turns), boost::end(turns),
-                     oit, strategy.get_side_strategy());
+                     oit, strategy);
     }
 
 public:

@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2015.
-// Modifications copyright (c) 2015 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015-2021.
+// Modifications copyright (c) 2015-2021 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -44,19 +44,20 @@ namespace strategy { namespace centroid
 */
 template
 <
-    typename PointCentroid,
-    typename Point = PointCentroid
+    typename Ignored1 = void,
+    typename Ignored2 = void
 >
 class average
 {
 private :
 
     /*! subclass to keep state */
+    template <typename GeometryPoint, typename ResultPoint>
     class sum
     {
         friend class average;
         signed_size_type count;
-        PointCentroid centroid;
+        ResultPoint centroid;
 
     public :
         inline sum()
@@ -67,17 +68,23 @@ private :
     };
 
 public :
-    typedef sum state_type;
-    typedef PointCentroid centroid_point_type;
-    typedef Point point_type;
+    template <typename GeometryPoint, typename ResultPoint>
+    struct state_type
+    {
+        typedef sum<GeometryPoint, ResultPoint> type;
+    };    
 
-    static inline void apply(Point const& p, sum& state)
+    template <typename GeometryPoint, typename ResultPoint>
+    static inline void apply(GeometryPoint const& p,
+                             sum<GeometryPoint, ResultPoint>& state)
     {
         add_point(state.centroid, p);
         state.count++;
     }
 
-    static inline bool result(sum const& state, PointCentroid& centroid)
+    template <typename GeometryPoint, typename ResultPoint>
+    static inline bool result(sum<GeometryPoint, ResultPoint> const& state,
+                              ResultPoint& centroid)
     {
         centroid = state.centroid;
         if ( state.count > 0 )

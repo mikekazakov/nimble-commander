@@ -105,16 +105,28 @@ public:
             // write HTTP request
             impl.do_pmd_config(d_.req);
             BOOST_ASIO_CORO_YIELD
-            http::async_write(impl.stream(),
-                d_.req, std::move(*this));
+            {
+                BOOST_ASIO_HANDLER_LOCATION((
+                    __FILE__, __LINE__,
+                    "websocket::async_handshake"));
+
+                http::async_write(impl.stream(),
+                    d_.req, std::move(*this));
+            }
             if(impl.check_stop_now(ec))
                 goto upcall;
 
             // read HTTP response
             BOOST_ASIO_CORO_YIELD
-            http::async_read(impl.stream(),
-                impl.rd_buf, d_.p,
-                    std::move(*this));
+            {
+                BOOST_ASIO_HANDLER_LOCATION((
+                    __FILE__, __LINE__,
+                    "websocket::async_handshake"));
+
+                http::async_read(impl.stream(),
+                    impl.rd_buf, d_.p,
+                        std::move(*this));
+            }
             if(ec == http::error::buffer_overflow)
             {
                 // If the response overflows the internal
@@ -127,8 +139,14 @@ public:
                 impl.rd_buf.clear();
 
                 BOOST_ASIO_CORO_YIELD
-                http::async_read(impl.stream(),
-                    d_.fb, d_.p, std::move(*this));
+                {
+                    BOOST_ASIO_HANDLER_LOCATION((
+                        __FILE__, __LINE__,
+                        "websocket::async_handshake"));
+
+                    http::async_read(impl.stream(),
+                        d_.fb, d_.p, std::move(*this));
+                }
 
                 if(! ec)
                 {
@@ -207,6 +225,9 @@ do_handshake(
     RequestDecorator const& decorator,
     error_code& ec)
 {
+    if(res_p)
+        res_p->result(http::status::internal_server_error);
+
     auto& impl = *impl_;
     impl.change_status(status::handshake);
     impl.reset();
@@ -257,12 +278,18 @@ do_handshake(
     if(impl.check_stop_now(ec))
         return;
 
-    impl.on_response(p.get(), key, ec);
-    if(impl.check_stop_now(ec))
-        return;
-
-    if(res_p)
+    if (res_p)
+    {
+        // If res_p is not null, move parser's response into it.
         *res_p = p.release();
+    }
+    else
+    {
+        // Otherwise point res_p at the response in the parser.
+        res_p = &p.get();
+    }
+
+    impl.on_response(*res_p, key, ec);
 }
 
 //------------------------------------------------------------------------------
@@ -307,6 +334,7 @@ async_handshake(
     detail::sec_ws_key_type key;
     auto req = impl_->build_request(
         key, host, target, &default_decorate_req);
+    res.result(http::status::internal_server_error);
     return net::async_initiate<
         HandshakeHandler,
         void(error_code)>(

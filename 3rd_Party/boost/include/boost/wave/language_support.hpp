@@ -23,26 +23,26 @@ namespace boost {
 namespace wave {
 
 enum language_support {
-//  support flags for C++98
+    //  support flags for C++98
     support_normal = 0x01,
     support_cpp = support_normal,
 
     support_option_long_long = 0x02,
 
 #if BOOST_WAVE_SUPPORT_VARIADICS_PLACEMARKERS != 0
-//  support flags for C99
+    //  support flags for C99
     support_option_variadics = 0x04,
     support_c99 = support_option_variadics | support_option_long_long | 0x08,
 #endif
 #if BOOST_WAVE_SUPPORT_CPP0X != 0
-//  support flags for C++11
+    //  support flags for C++11
     support_option_no_newline_at_end_of_file = 0x20,
 
     support_cpp0x = support_option_variadics | support_option_long_long |
         support_option_no_newline_at_end_of_file | 0x10,
     support_cpp11 = support_cpp0x,
 #if BOOST_WAVE_SUPPORT_CPP1Z != 0
-// support flags for C++17
+    // support flags for C++17
     support_option_has_include = 0x10000,
 
     support_cpp1z = support_option_variadics | support_option_long_long |
@@ -50,7 +50,7 @@ enum language_support {
         0x20000,
     support_cpp17 = support_cpp1z,
 #if BOOST_WAVE_SUPPORT_CPP2A != 0
-//  support flags for C++20
+    //  support flags for C++20
     support_option_va_opt = 0x40000,
 
     support_cpp2a = support_option_variadics | support_option_long_long |

@@ -4,9 +4,10 @@
 // Copyright (c) 2008-2017 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2017 Mateusz Loskot, London, UK.
 // Copyright (c) 2014-2017 Adam Wulkiewicz, Lodz, Poland.
+// Copyright (c) 2020 Baidyanath Kundu, Haldia, India.
 
-// This file was modified by Oracle on 2015, 2018, 2019.
-// Modifications copyright (c) 2015-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015-2021.
+// Modifications copyright (c) 2015-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -25,11 +26,10 @@
 #include <string>
 
 #include <boost/array.hpp>
-#include <boost/range.hpp>
-
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant_fwd.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/size.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/algorithms/detail/interior_iterator.hpp>
 #include <boost/geometry/algorithms/assign.hpp>
@@ -40,13 +40,20 @@
 #include <boost/geometry/core/interior_rings.hpp>
 #include <boost/geometry/core/ring_type.hpp>
 #include <boost/geometry/core/tags.hpp>
+#include <boost/geometry/core/visit.hpp>
 
+#include <boost/geometry/geometries/adapted/boost_variant.hpp> // For backward compatibility
 #include <boost/geometry/geometries/concepts/check.hpp>
 #include <boost/geometry/geometries/ring.hpp>
 
 #include <boost/geometry/io/wkt/detail/prefix.hpp>
 
+#include <boost/geometry/strategies/io/cartesian.hpp>
+#include <boost/geometry/strategies/io/geographic.hpp>
+#include <boost/geometry/strategies/io/spherical.hpp>
+
 #include <boost/geometry/util/condition.hpp>
+#include <boost/geometry/util/type_traits.hpp>
 
 
 namespace boost { namespace geometry
@@ -181,9 +188,9 @@ private:
     static inline bool disjoint(point_type const& p1, point_type const& p2)
     {
         // TODO: pass strategy
-        typedef typename strategy::disjoint::services::default_strategy
+        typedef typename strategies::io::services::default_strategy
             <
-                point_type, point_type
+                point_type
             >::type strategy_type;
 
         return detail::disjoint::disjoint_point_point(p1, p2, strategy_type());
@@ -450,44 +457,66 @@ struct wkt<Multi, multi_polygon_tag>
 
 
 template <typename Geometry>
-struct devarianted_wkt
+struct wkt<Geometry, dynamic_geometry_tag>
 {
     template <typename OutputStream>
     static inline void apply(OutputStream& os, Geometry const& geometry,
                              bool force_closure)
     {
-        wkt<Geometry>::apply(os, geometry, force_closure);
+        traits::visit<Geometry>::apply([&](auto const& g)
+        {
+            wkt<util::remove_cref_t<decltype(g)>>::apply(os, g, force_closure);
+        }, geometry);
     }
 };
 
-template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
-struct devarianted_wkt<variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+// TODO: Implement non-recursive version
+template <typename Geometry>
+struct wkt<Geometry, geometry_collection_tag>
 {
     template <typename OutputStream>
-    struct visitor: static_visitor<void>
+    static inline void apply(OutputStream& os, Geometry const& geometry,
+                             bool force_closure)
     {
-        OutputStream& m_os;
-        bool m_force_closure;
+        wkt::output_or_recursive_call(os, geometry, force_closure);
+    }
 
-        visitor(OutputStream& os, bool force_closure)
-            : m_os(os)
-            , m_force_closure(force_closure)
-        {}
+private:
+    template
+    <
+        typename OutputStream, typename Geom,
+        std::enable_if_t<util::is_geometry_collection<Geom>::value, int> = 0
+    >
+    static void output_or_recursive_call(OutputStream& os, Geom const& geom, bool force_closure)
+    {
+        os << "GEOMETRYCOLLECTION(";
 
-        template <typename Geometry>
-        inline void operator()(Geometry const& geometry) const
+        bool first = true;
+        auto const end = boost::end(geom);
+        for (auto it = boost::begin(geom); it != end; ++it)
         {
-            devarianted_wkt<Geometry>::apply(m_os, geometry, m_force_closure);
-        }
-    };
+            if (first)
+                first = false;
+            else
+                os << ',';
 
-    template <typename OutputStream>
-    static inline void apply(
-        OutputStream& os,
-        variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry,
-        bool force_closure)
+            traits::iter_visit<Geom>::apply([&](auto const& g)
+            {
+                wkt::output_or_recursive_call(os, g, force_closure);
+            }, it);
+        }
+
+        os << ')';
+    }
+
+    template
+    <
+        typename OutputStream, typename Geom,
+        std::enable_if_t<! util::is_geometry_collection<Geom>::value, int> = 0
+    >
+    static void output_or_recursive_call(OutputStream& os, Geom const& geom, bool force_closure)
     {
-        boost::apply_visitor(visitor<OutputStream>(os, force_closure), geometry);
+        wkt<Geom>::apply(os, geom, force_closure);
     }
 };
 
@@ -509,7 +538,7 @@ Small example showing how to use the wkt class
 template <typename Geometry>
 class wkt_manipulator
 {
-    static const bool is_ring = boost::is_same<typename tag<Geometry>::type, ring_tag>::value;
+    static const bool is_ring = util::is_ring<Geometry>::value;
 
 public:
 
@@ -526,7 +555,7 @@ public:
             std::basic_ostream<Char, Traits>& os,
             wkt_manipulator const& m)
     {
-        dispatch::devarianted_wkt<Geometry>::apply(os, m.m_geometry, m.m_force_closure);
+        dispatch::wkt<Geometry>::apply(os, m.m_geometry, m.m_force_closure);
         os.flush();
         return os;
     }
@@ -549,6 +578,31 @@ inline wkt_manipulator<Geometry> wkt(Geometry const& geometry)
     concepts::check<Geometry const>();
 
     return wkt_manipulator<Geometry>(geometry);
+}
+
+/*!
+\brief WKT-string formulating function
+\tparam Geometry \tparam_geometry
+\param geometry \param_geometry
+\param significant_digits Specifies the no of significant digits to use in the output wkt
+\ingroup wkt
+\qbk{[include reference/io/to_wkt.qbk]}
+*/
+template <typename Geometry>
+inline std::string to_wkt(Geometry const& geometry)
+{
+    std::stringstream ss;
+    ss << boost::geometry::wkt(geometry);
+    return ss.str();
+}
+
+template <typename Geometry>
+inline std::string to_wkt(Geometry const& geometry, int significant_digits)
+{
+    std::stringstream ss;
+    ss.precision(significant_digits);
+    ss << boost::geometry::wkt(geometry);
+    return ss.str();
 }
 
 #if defined(_MSC_VER)

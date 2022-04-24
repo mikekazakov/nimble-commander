@@ -2,8 +2,8 @@
 
 // Copyright (c) 2008-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2019.
-// Modifications copyright (c) 2017-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2020.
+// Modifications copyright (c) 2017-2020, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle.
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -44,6 +44,9 @@
 #ifndef BOOST_GEOMETRY_PROJECTIONS_AEQD_HPP
 #define BOOST_GEOMETRY_PROJECTIONS_AEQD_HPP
 
+
+#include <type_traits>
+
 #include <boost/config.hpp>
 
 #include <boost/geometry/formulas/vincenty_direct.hpp>
@@ -61,7 +64,6 @@
 
 #include <boost/math/special_functions/hypot.hpp>
 
-#include <boost/type_traits/is_same.hpp>
 
 namespace boost { namespace geometry
 {
@@ -502,21 +504,20 @@ namespace projections
         {
             typedef static_wrapper_fi
                 <
-                    typename boost::mpl::if_c
+                    std::conditional_t
                         <
-                            boost::is_same
+                            std::is_void
                                 <
                                     typename geometry::tuples::find_if
                                         <
                                             BGP,
                                             //srs::par4::detail::is_guam
                                             srs::spar::detail::is_param<srs::spar::guam>::pred
-                                        >::type,
-                                    void
+                                        >::type
                                 >::value,
                             aeqd_e<CT, P>,
                             aeqd_e_guam<CT, P>
-                        >::type
+                        >
                     , P
                 > type;
         };

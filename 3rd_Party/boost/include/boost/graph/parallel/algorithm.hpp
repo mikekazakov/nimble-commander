@@ -16,7 +16,6 @@
 #include <boost/optional.hpp>
 #include <boost/config.hpp> // for BOOST_STATIC_CONSTANT
 #include <vector>
-#include <functional>
 
 namespace boost { namespace parallel {
   template<typename BinaryOp>
@@ -26,20 +25,29 @@ namespace boost { namespace parallel {
   };
 
   template<typename T>
-  struct minimum : std::binary_function<T, T, T>
+  struct minimum
   {
+    typedef T first_argument_type;
+    typedef T second_argument_type;
+    typedef T result_type;
     const T& operator()(const T& x, const T& y) const { return x < y? x : y; }
   };
 
   template<typename T>
-  struct maximum : std::binary_function<T, T, T>
+  struct maximum
   {
+    typedef T first_argument_type;
+    typedef T second_argument_type;
+    typedef T result_type;
     const T& operator()(const T& x, const T& y) const { return x < y? y : x; }
   };
 
   template<typename T>
-  struct sum : std::binary_function<T, T, T>
+  struct sum
   {
+    typedef T first_argument_type;
+    typedef T second_argument_type;
+    typedef T result_type;
     const T operator()(const T& x, const T& y) const { return x + y; }
   };
 

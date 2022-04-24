@@ -11,7 +11,8 @@
 #  define BOOST_MATH_PFQ_MAX_B_TERMS 5
 #endif
 
-#include <boost/array.hpp>
+#include <array>
+#include <cstdint>
 #include <boost/math/special_functions/detail/hypergeometric_series.hpp>
 
   namespace boost { namespace math { namespace detail {
@@ -116,7 +117,7 @@
      }
 
      template <class Seq, class Real, class Policy, class Terminal>
-     std::pair<Real, Real> hypergeometric_pFq_checked_series_impl(const Seq& aj, const Seq& bj, const Real& z, const Policy& pol, const Terminal& termination, int& log_scale)
+     std::pair<Real, Real> hypergeometric_pFq_checked_series_impl(const Seq& aj, const Seq& bj, const Real& z, const Policy& pol, const Terminal& termination, long long& log_scale)
      {
         BOOST_MATH_STD_USING
         Real result = 1;
@@ -124,13 +125,13 @@
         Real term = 1;
         Real term0 = 0;
         Real tol = boost::math::policies::get_epsilon<Real, Policy>();
-        boost::uintmax_t k = 0;
+        std::uintmax_t k = 0;
         Real upper_limit(sqrt(boost::math::tools::max_value<Real>())), diff;
         Real lower_limit(1 / upper_limit);
-        int log_scaling_factor = itrunc(boost::math::tools::log_max_value<Real>()) - 2;
+        long long log_scaling_factor = lltrunc(boost::math::tools::log_max_value<Real>()) - 2;
         Real scaling_factor = exp(Real(log_scaling_factor));
         Real term_m1;
-        int local_scaling = 0;
+        long long local_scaling = 0;
 
         if ((aj.size() == 1) && (bj.size() == 0))
         {
@@ -274,7 +275,7 @@
               //
               Real loop_result = 0;
               Real loop_abs_result = 0;
-              int loop_scale = 0;
+              long long loop_scale = 0;
               //
               // loop_error_scale will be used to increase the size of the error
               // estimate (absolute sum), based on the errors inherent in calculating 
@@ -287,8 +288,8 @@
               // so we need to jump forward to that term and then evaluate forwards and backwards from there:
               //
               unsigned s = crossover_locations[n];
-              boost::uintmax_t backstop = k;
-              int s1(1), s2(1);
+              std::uintmax_t backstop = k;
+              long long s1(1), s2(1);
               term = 0;
               for (auto ai = aj.begin(); ai != aj.end(); ++ai)
               {
@@ -339,7 +340,7 @@
               //
               // Convert to relative error after exp:
               //
-              loop_error_scale = fabs(expm1(loop_error_scale));
+              loop_error_scale = fabs(expm1(loop_error_scale, pol));
               //
               // Convert to multiplier for the error term:
               //
@@ -351,7 +352,7 @@
               if (term <= tools::log_min_value<Real>())
               {
                  // rescale if we can:
-                 int scale = itrunc(floor(term - tools::log_min_value<Real>()) - 2);
+                 long long scale = lltrunc(floor(term - tools::log_min_value<Real>()) - 2);
                  term -= scale;
                  loop_scale += scale;
               }
@@ -367,7 +368,7 @@
                //std::cout << "loop_scale = " << loop_scale << std::endl;
                k = s;
                term0 = term;
-               int saved_loop_scale = loop_scale;
+               long long saved_loop_scale = loop_scale;
                bool terms_are_growing = true;
                bool trivial_small_series_check = false;
                do
@@ -425,7 +426,7 @@
                      Real d; 
                      if (loop_scale > local_scaling)
                      {
-                        int rescale = local_scaling - loop_scale;
+                        long long rescale = local_scaling - loop_scale;
                         if (rescale < tools::log_min_value<Real>())
                            d = 1;  // arbitrary value, we want to keep going
                         else
@@ -433,7 +434,7 @@
                      }
                      else
                      {
-                        int rescale = loop_scale - local_scaling;
+                        long long rescale = loop_scale - local_scaling;
                         if (rescale < tools::log_min_value<Real>())
                            d = 0;  // terminate this loop
                         else
@@ -450,14 +451,14 @@
                // local results we have now.  First though, rescale abs_result by loop_error_scale
                // to factor in the error in the pochhammer terms at the start of this block:
                //
-               boost::uintmax_t next_backstop = k;
+               std::uintmax_t next_backstop = k;
                loop_abs_result += loop_error_scale * fabs(loop_result);
                if (loop_scale > local_scaling)
                {
                   //
                   // Need to shrink previous result:
                   //
-                  int rescale = local_scaling - loop_scale;
+                  long long rescale = local_scaling - loop_scale;
                   local_scaling = loop_scale;
                   log_scale -= rescale;
                   Real ex = exp(Real(rescale));
@@ -471,7 +472,7 @@
                   //
                   // Need to shrink local result:
                   //
-                  int rescale = loop_scale - local_scaling;
+                  long long rescale = loop_scale - local_scaling;
                   Real ex = exp(Real(rescale));
                   loop_result *= ex;
                   loop_abs_result *= ex;
@@ -527,7 +528,7 @@
                      Real d;
                      if (loop_scale > local_scaling)
                      {
-                        int rescale = local_scaling - loop_scale;
+                        long long rescale = local_scaling - loop_scale;
                         if (rescale < tools::log_min_value<Real>())
                            d = 1;  // keep going
                         else
@@ -535,7 +536,7 @@
                      }
                      else
                      {
-                        int rescale = loop_scale - local_scaling;
+                        long long rescale = loop_scale - local_scaling;
                         if (rescale < tools::log_min_value<Real>())
                            d = 0;  // stop, underflow
                         else
@@ -576,7 +577,7 @@
                   //
                   // Need to shrink previous result:
                   //
-                  int rescale = local_scaling - loop_scale;
+                  long long rescale = local_scaling - loop_scale;
                   local_scaling = loop_scale;
                   log_scale -= rescale;
                   Real ex = exp(Real(rescale));
@@ -590,7 +591,7 @@
                   //
                   // Need to shrink local result:
                   //
-                  int rescale = loop_scale - local_scaling;
+                  long long rescale = loop_scale - local_scaling;
                   Real ex = exp(Real(rescale));
                   loop_result *= ex;
                   loop_abs_result *= ex;
@@ -614,15 +615,15 @@
 
      struct iteration_terminator
      {
-        iteration_terminator(boost::uintmax_t i) : m(i) {}
+        iteration_terminator(std::uintmax_t i) : m(i) {}
 
-        bool operator()(boost::uintmax_t v) const { return v >= m; }
+        bool operator()(std::uintmax_t v) const { return v >= m; }
 
-        boost::uintmax_t m;
+        std::uintmax_t m;
      };
 
      template <class Seq, class Real, class Policy>
-     Real hypergeometric_pFq_checked_series_impl(const Seq& aj, const Seq& bj, const Real& z, const Policy& pol, int& log_scale)
+     Real hypergeometric_pFq_checked_series_impl(const Seq& aj, const Seq& bj, const Real& z, const Policy& pol, long long& log_scale)
      {
         BOOST_MATH_STD_USING
         iteration_terminator term(boost::math::policies::get_max_series_iterations<Policy>());
@@ -639,10 +640,10 @@
      }
 
      template <class Real, class Policy>
-     inline Real hypergeometric_1F1_checked_series_impl(const Real& a, const Real& b, const Real& z, const Policy& pol, int& log_scale)
+     inline Real hypergeometric_1F1_checked_series_impl(const Real& a, const Real& b, const Real& z, const Policy& pol, long long& log_scale)
      {
-        boost::array<Real, 1> aj = { a };
-        boost::array<Real, 1> bj = { b };
+        std::array<Real, 1> aj = { a };
+        std::array<Real, 1> bj = { b };
         return hypergeometric_pFq_checked_series_impl(aj, bj, z, pol, log_scale);
      }
 

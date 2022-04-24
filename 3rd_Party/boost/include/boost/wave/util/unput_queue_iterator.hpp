@@ -88,11 +88,11 @@ public:
     void increment()
     {
         if (!unput_queue.empty()) {
-        // there exist pending tokens in the unput queue
+            // there exist pending tokens in the unput queue
             unput_queue.pop_front();
         }
         else {
-        // the unput_queue is empty, so advance the base iterator
+            // the unput_queue is empty, so advance the base iterator
             ++base_type::base_reference();
         }
     }

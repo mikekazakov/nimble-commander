@@ -165,40 +165,63 @@ struct large_int : totally_ordered<large_int<Allocator>, large_int<Allocator>>,
   }
 
   template <class U>
-  std::enable_if_t<std::is_integral<U>::value, bool> operator<(const U& o) const
-      noexcept {
+  std::enable_if_t<std::is_integral<U>::value, bool> operator<(
+      const U& o) const noexcept {
     assert(data.size() > 0u);
     return data.size() == 1 && safe_less()(data[0], o);
   }
 
   template <class U>
-  std::enable_if_t<std::is_integral<U>::value, bool> operator>(const U& o) const
-      noexcept {
+  std::enable_if_t<std::is_integral<U>::value, bool> operator>(
+      const U& o) const noexcept {
     assert(data.size() > 0u);
     assert(data.size() == 1 || data.back() > 0u); // no leading zeros allowed
     return data.size() > 1 || safe_less()(o, data[0]);
   }
 
   template <class U>
-  std::enable_if_t<std::is_integral<U>::value, bool> operator==(const U& o) const
-      noexcept {
+  std::enable_if_t<std::is_integral<U>::value, bool> operator==(
+      const U& o) const noexcept {
     assert(data.size() > 0u);
     return data.size() == 1 && safe_equal()(data[0], o);
   }
 
   template <class U>
-  std::enable_if_t<std::is_floating_point<U>::value, bool> operator<(const U& o) const
-      noexcept {
+  std::enable_if_t<std::is_floating_point<U>::value, bool> operator<(
+      const U& o) const noexcept {
     return operator double() < o;
   }
+
   template <class U>
-  std::enable_if_t<std::is_floating_point<U>::value, bool> operator>(const U& o) const
-      noexcept {
+  std::enable_if_t<std::is_floating_point<U>::value, bool> operator>(
+      const U& o) const noexcept {
     return operator double() > o;
   }
+
   template <class U>
-  std::enable_if_t<std::is_floating_point<U>::value, bool> operator==(const U& o) const
-      noexcept {
+  std::enable_if_t<std::is_floating_point<U>::value, bool> operator==(
+      const U& o) const noexcept {
+    return operator double() == o;
+  }
+
+  template <class U>
+  std::enable_if_t<
+      (!std::is_arithmetic<U>::value && std::is_convertible<U, double>::value), bool>
+  operator<(const U& o) const noexcept {
+    return operator double() < o;
+  }
+
+  template <class U>
+  std::enable_if_t<
+      (!std::is_arithmetic<U>::value && std::is_convertible<U, double>::value), bool>
+  operator>(const U& o) const noexcept {
+    return operator double() > o;
+  }
+
+  template <class U>
+  std::enable_if_t<
+      (!std::is_arithmetic<U>::value && std::is_convertible<U, double>::value), bool>
+  operator==(const U& o) const noexcept {
     return operator double() == o;
   }
 

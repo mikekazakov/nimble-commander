@@ -349,7 +349,21 @@ std::size_t bincount(const T& axes) {
   return n;
 }
 
-// initial offset for the linear index
+/** Initial offset for the linear index.
+
+  This precomputes an offset for the global index so that axis index = -1 addresses the
+  first entry in the storage. Example: one-dim. histogram. The offset is 1, stride is 1,
+  and global_index = offset + axis_index * stride == 0 addresses the first element of
+  the storage.
+
+  Using the offset makes the hot inner loop that computes the global_index simpler and
+  thus faster, because we do not have to branch for each axis to check whether it has
+  an underflow bin.
+
+  The offset is set to an invalid value when the histogram contains at least one growing
+  axis, because this optimization then cannot be used. See detail/linearize.hpp, in this
+  case linearize_growth is called.
+*/
 template <class T>
 std::size_t offset(const T& axes) {
   std::size_t n = 0;

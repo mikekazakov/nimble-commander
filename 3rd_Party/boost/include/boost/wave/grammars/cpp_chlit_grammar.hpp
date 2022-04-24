@@ -166,7 +166,7 @@ struct chlit_grammar :
 
             // the rule for a character literal
             ch_lit
-                =   eps_p[self.value = phx::val(0), self.long_lit = phx::val(false)]
+                =   eps_p[(self.value = phx::val(0), self.long_lit = phx::val(false))]
                     >> !ch_p('L')[self.long_lit = phx::val(true)]
                     >>  ch_p('\'')
                     >> +(   (
@@ -274,7 +274,7 @@ struct chlit_grammar :
             BOOST_SPIRIT_DEBUG_TRACE_RULE(ch_lit, TRACE_CHLIT_GRAMMAR);
         }
 
-    // start rule of this grammar
+        // start rule of this grammar
         rule_t const& start() const
         { return ch_lit; }
     };
@@ -316,22 +316,22 @@ parse_info<typename TokenT::string_type::const_iterator> hit =
             token_val.c_str(), token.get_position());
     }
     else {
-    // range check
+        // range check
         if ('L' == token_val[0]) {
-        // recognized wide character
+            // recognized wide character
             if (g.overflow ||
                 result > (IntegralResult)(std::numeric_limits<wchar_t>::max)())
             {
-            // out of range
+                // out of range
                 status = error_character_overflow;
             }
         }
         else {
-        // recognized narrow ('normal') character
+            // recognized narrow ('normal') character
             if (g.overflow ||
                 result > (IntegralResult)(std::numeric_limits<unsigned char>::max)())
             {
-            // out of range
+                // out of range
                 status = error_character_overflow;
             }
         }

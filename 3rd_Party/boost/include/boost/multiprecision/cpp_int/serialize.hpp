@@ -6,6 +6,8 @@
 #ifndef BOOST_MP_CPP_INT_SERIALIZE_HPP
 #define BOOST_MP_CPP_INT_SERIALIZE_HPP
 
+#ifndef BOOST_MP_STANDALONE
+
 namespace boost {
 
 namespace archive {
@@ -25,13 +27,13 @@ using namespace boost::multiprecision;
 using namespace boost::multiprecision::backends;
 
 template <class T>
-struct is_binary_archive : public mpl::false_
+struct is_binary_archive : public std::integral_constant<bool, false>
 {};
 template <>
-struct is_binary_archive<boost::archive::binary_oarchive> : public mpl::true_
+struct is_binary_archive<boost::archive::binary_oarchive> : public std::integral_constant<bool, true>
 {};
 template <>
-struct is_binary_archive<boost::archive::binary_iarchive> : public mpl::true_
+struct is_binary_archive<boost::archive::binary_iarchive> : public std::integral_constant<bool, true>
 {};
 
 //
@@ -41,7 +43,7 @@ struct is_binary_archive<boost::archive::binary_iarchive> : public mpl::true_
 // Binary or not archive.
 //
 template <class Archive, class Int>
-void do_serialize(Archive& ar, Int& val, mpl::false_ const&, mpl::false_ const&, mpl::false_ const&)
+void do_serialize(Archive& ar, Int& val, std::integral_constant<bool, false> const&, std::integral_constant<bool, false> const&, std::integral_constant<bool, false> const&)
 {
    // Load.
    // Non-trivial.
@@ -72,7 +74,7 @@ void do_serialize(Archive& ar, Int& val, mpl::false_ const&, mpl::false_ const&,
    val.normalize();
 }
 template <class Archive, class Int>
-void do_serialize(Archive& ar, Int& val, mpl::true_ const&, mpl::false_ const&, mpl::false_ const&)
+void do_serialize(Archive& ar, Int& val, std::integral_constant<bool, true> const&, std::integral_constant<bool, false> const&, std::integral_constant<bool, false> const&)
 {
    // Store.
    // Non-trivial.
@@ -97,7 +99,7 @@ void do_serialize(Archive& ar, Int& val, mpl::true_ const&, mpl::false_ const&, 
    }
 }
 template <class Archive, class Int>
-void do_serialize(Archive& ar, Int& val, mpl::false_ const&, mpl::true_ const&, mpl::false_ const&)
+void do_serialize(Archive& ar, Int& val, std::integral_constant<bool, false> const&, std::integral_constant<bool, true> const&, std::integral_constant<bool, false> const&)
 {
    // Load.
    // Trivial.
@@ -119,7 +121,7 @@ void do_serialize(Archive& ar, Int& val, mpl::false_ const&, mpl::true_ const&, 
       val.negate();
 }
 template <class Archive, class Int>
-void do_serialize(Archive& ar, Int& val, mpl::true_ const&, mpl::true_ const&, mpl::false_ const&)
+void do_serialize(Archive& ar, Int& val, std::integral_constant<bool, true> const&, std::integral_constant<bool, true> const&, std::integral_constant<bool, false> const&)
 {
    // Store.
    // Trivial.
@@ -137,7 +139,7 @@ void do_serialize(Archive& ar, Int& val, mpl::true_ const&, mpl::true_ const&, m
    }
 }
 template <class Archive, class Int>
-void do_serialize(Archive& ar, Int& val, mpl::false_ const&, mpl::false_ const&, mpl::true_ const&)
+void do_serialize(Archive& ar, Int& val, std::integral_constant<bool, false> const&, std::integral_constant<bool, false> const&, std::integral_constant<bool, true> const&)
 {
    // Load.
    // Non-trivial.
@@ -153,7 +155,7 @@ void do_serialize(Archive& ar, Int& val, mpl::false_ const&, mpl::false_ const&,
    val.normalize();
 }
 template <class Archive, class Int>
-void do_serialize(Archive& ar, Int& val, mpl::true_ const&, mpl::false_ const&, mpl::true_ const&)
+void do_serialize(Archive& ar, Int& val, std::integral_constant<bool, true> const&, std::integral_constant<bool, false> const&, std::integral_constant<bool, true> const&)
 {
    // Store.
    // Non-trivial.
@@ -165,7 +167,7 @@ void do_serialize(Archive& ar, Int& val, mpl::true_ const&, mpl::false_ const&, 
    ar.save_binary(val.limbs(), c * sizeof(limb_type));
 }
 template <class Archive, class Int>
-void do_serialize(Archive& ar, Int& val, mpl::false_ const&, mpl::true_ const&, mpl::true_ const&)
+void do_serialize(Archive& ar, Int& val, std::integral_constant<bool, false> const&, std::integral_constant<bool, true> const&, std::integral_constant<bool, true> const&)
 {
    // Load.
    // Trivial.
@@ -177,7 +179,7 @@ void do_serialize(Archive& ar, Int& val, mpl::false_ const&, mpl::true_ const&, 
       val.negate();
 }
 template <class Archive, class Int>
-void do_serialize(Archive& ar, Int& val, mpl::true_ const&, mpl::true_ const&, mpl::true_ const&)
+void do_serialize(Archive& ar, Int& val, std::integral_constant<bool, true> const&, std::integral_constant<bool, true> const&, std::integral_constant<bool, true> const&)
 {
    // Store.
    // Trivial.
@@ -189,12 +191,13 @@ void do_serialize(Archive& ar, Int& val, mpl::true_ const&, mpl::true_ const&, m
 
 } // namespace cpp_int_detail
 
-template <class Archive, unsigned MinBits, unsigned MaxBits, mp::cpp_integer_type SignType, mp::cpp_int_check_type Checked, class Allocator>
+template <class Archive, std::size_t MinBits, std::size_t MaxBits, mp::cpp_integer_type SignType, mp::cpp_int_check_type Checked, class Allocator>
 void serialize(Archive& ar, mp::cpp_int_backend<MinBits, MaxBits, SignType, Checked, Allocator>& val, const unsigned int /*version*/)
 {
-   typedef typename Archive::is_saving                                                                                               save_tag;
-   typedef mpl::bool_<mp::backends::is_trivial_cpp_int<mp::cpp_int_backend<MinBits, MaxBits, SignType, Checked, Allocator> >::value> trivial_tag;
-   typedef typename cpp_int_detail::is_binary_archive<Archive>::type                                                                 binary_tag;
+   using archive_save_tag = typename Archive::is_saving                                ;
+   using save_tag = std::integral_constant<bool, archive_save_tag::value>      ;
+   using trivial_tag = std::integral_constant<bool, mp::backends::is_trivial_cpp_int<mp::cpp_int_backend<MinBits, MaxBits, SignType, Checked, Allocator> >::value>;
+   using binary_tag = typename cpp_int_detail::is_binary_archive<Archive>::type  ;
 
    // Just dispatch to the correct method:
    cpp_int_detail::do_serialize(ar, val, save_tag(), trivial_tag(), binary_tag());
@@ -202,5 +205,7 @@ void serialize(Archive& ar, mp::cpp_int_backend<MinBits, MaxBits, SignType, Chec
 
 } // namespace serialization
 } // namespace boost
+
+#endif // BOOST_MP_STANDALONE
 
 #endif // BOOST_MP_CPP_INT_SERIALIZE_HPP

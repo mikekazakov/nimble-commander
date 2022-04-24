@@ -281,7 +281,7 @@ namespace boost { namespace spirit { namespace char_class
     template <typename CharEncoding>
     struct classify
     {
-        typedef typename CharEncoding::char_type char_type;
+        typedef typename CharEncoding::classify_type char_type;
 
 #define BOOST_SPIRIT_CLASSIFY(name, isname)                                     \
         template <typename Char>                                                \
@@ -507,7 +507,7 @@ namespace boost { namespace spirit { namespace char_class
     template <typename CharEncoding>
     struct convert
     {
-        typedef typename CharEncoding::char_type char_type;
+        typedef typename CharEncoding::classify_type char_type;
 
         template <typename Char>
         static Char

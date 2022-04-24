@@ -9,9 +9,11 @@
 #define BOOST_NOWIDE_FSTREAM_HPP_INCLUDED
 
 #include <boost/nowide/config.hpp>
+#include <boost/nowide/detail/is_path.hpp>
 #include <boost/nowide/filebuf.hpp>
 #include <istream>
 #include <ostream>
+#include <utility>
 
 namespace boost {
 namespace nowide {
@@ -24,7 +26,7 @@ namespace nowide {
             static std::ios_base::openmode mode_modifier() { return mode(); }
             template<typename CharType, typename Traits>
             struct stream_base{
-                typedef std::basic_istream<CharType, Traits> type;
+                using type = std::basic_istream<CharType, Traits>;
             };
         };
         struct StreamTypeOut
@@ -33,7 +35,7 @@ namespace nowide {
             static std::ios_base::openmode mode_modifier() { return mode(); }
             template<typename CharType, typename Traits>
             struct stream_base{
-                typedef std::basic_ostream<CharType, Traits> type;
+                using type = std::basic_ostream<CharType, Traits>;
             };
         };
         struct StreamTypeInOut
@@ -42,7 +44,7 @@ namespace nowide {
             static std::ios_base::openmode mode_modifier() { return std::ios_base::openmode(); }
             template<typename CharType, typename Traits>
             struct stream_base{
-                typedef std::basic_iostream<CharType, Traits> type;
+                using type = std::basic_iostream<CharType, Traits>;
             };
         };
         // clang-format on
@@ -60,18 +62,16 @@ namespace nowide {
                  int FileBufType = BOOST_NOWIDE_USE_FILEBUF_REPLACEMENT>
         class fstream_impl;
 
-        template<typename Path, typename Result>
-        struct enable_if_path;
     } // namespace detail
     /// \endcond
 
     ///
     /// \brief Same as std::basic_ifstream<char> but accepts UTF-8 strings under Windows
     ///
-    template<typename CharType, typename Traits = std::char_traits<CharType> >
+    template<typename CharType, typename Traits = std::char_traits<CharType>>
     class basic_ifstream : public detail::fstream_impl<CharType, Traits, detail::StreamTypeIn>
     {
-        typedef detail::fstream_impl<CharType, Traits, detail::StreamTypeIn> fstream_impl;
+        using fstream_impl = detail::fstream_impl<CharType, Traits, detail::StreamTypeIn>;
 
     public:
         basic_ifstream()
@@ -94,9 +94,8 @@ namespace nowide {
         }
 
         template<typename Path>
-        explicit basic_ifstream(
-          const Path& file_name,
-          typename detail::enable_if_path<Path, std::ios_base::openmode>::type mode = std::ios_base::in)
+        explicit basic_ifstream(const Path& file_name,
+                                detail::enable_if_path_t<Path, std::ios_base::openmode> mode = std::ios_base::in)
         {
             open(file_name, mode);
         }
@@ -120,10 +119,10 @@ namespace nowide {
     /// \brief Same as std::basic_ofstream<char> but accepts UTF-8 strings under Windows
     ///
 
-    template<typename CharType, typename Traits = std::char_traits<CharType> >
+    template<typename CharType, typename Traits = std::char_traits<CharType>>
     class basic_ofstream : public detail::fstream_impl<CharType, Traits, detail::StreamTypeOut>
     {
-        typedef detail::fstream_impl<CharType, Traits, detail::StreamTypeOut> fstream_impl;
+        using fstream_impl = detail::fstream_impl<CharType, Traits, detail::StreamTypeOut>;
 
     public:
         basic_ofstream()
@@ -143,9 +142,8 @@ namespace nowide {
             open(file_name, mode);
         }
         template<typename Path>
-        explicit basic_ofstream(
-          const Path& file_name,
-          typename detail::enable_if_path<Path, std::ios_base::openmode>::type mode = std::ios_base::out)
+        explicit basic_ofstream(const Path& file_name,
+                                detail::enable_if_path_t<Path, std::ios_base::openmode> mode = std::ios_base::out)
         {
             open(file_name, mode);
         }
@@ -173,10 +171,10 @@ namespace nowide {
     ///
     /// \brief Same as std::basic_fstream<char> but accepts UTF-8 strings under Windows
     ///
-    template<typename CharType, typename Traits = std::char_traits<CharType> >
+    template<typename CharType, typename Traits = std::char_traits<CharType>>
     class basic_fstream : public detail::fstream_impl<CharType, Traits, detail::StreamTypeInOut>
     {
-        typedef detail::fstream_impl<CharType, Traits, detail::StreamTypeInOut> fstream_impl;
+        using fstream_impl = detail::fstream_impl<CharType, Traits, detail::StreamTypeInOut>;
 
     public:
         basic_fstream()
@@ -200,8 +198,8 @@ namespace nowide {
         }
         template<typename Path>
         explicit basic_fstream(const Path& file_name,
-                               typename detail::enable_if_path<Path, std::ios_base::openmode>::type mode =
-                                 std::ios_base::in | std::ios_base::out)
+                               detail::enable_if_path_t<Path, std::ios_base::openmode> mode = std::ios_base::in
+                                                                                              | std::ios_base::out)
         {
             open(file_name, mode);
         }
@@ -221,11 +219,7 @@ namespace nowide {
             return *this;
         }
     };
-    template<typename CharType, typename Traits>
-    void swap(basic_filebuf<CharType, Traits>& lhs, basic_filebuf<CharType, Traits>& rhs)
-    {
-        lhs.swap(rhs);
-    }
+
     template<typename CharType, typename Traits>
     void swap(basic_ifstream<CharType, Traits>& lhs, basic_ifstream<CharType, Traits>& rhs)
     {
@@ -245,22 +239,22 @@ namespace nowide {
     ///
     /// Same as std::filebuf but accepts UTF-8 strings under Windows
     ///
-    typedef basic_filebuf<char> filebuf;
+    using filebuf = basic_filebuf<char>;
     ///
     /// Same as std::ifstream but accepts UTF-8 strings under Windows
     /// and *\::filesystem::path on all systems
     ///
-    typedef basic_ifstream<char> ifstream;
+    using ifstream = basic_ifstream<char>;
     ///
     /// Same as std::ofstream but accepts UTF-8 strings under Windows
     /// and *\::filesystem::path on all systems
     ///
-    typedef basic_ofstream<char> ofstream;
+    using ofstream = basic_ofstream<char>;
     ///
     /// Same as std::fstream but accepts UTF-8 strings under Windows
     /// and *\::filesystem::path on all systems
     ///
-    typedef basic_fstream<char> fstream;
+    using fstream = basic_fstream<char>;
 
     // Implementation
     namespace detail {
@@ -272,12 +266,12 @@ namespace nowide {
             T buf_;
         };
         template<typename CharType, typename Traits, typename T_StreamType, int>
-        class fstream_impl : private buf_holder<basic_filebuf<CharType, Traits> >, // must be first due to init order
+        class fstream_impl : private buf_holder<basic_filebuf<CharType, Traits>>, // must be first due to init order
                              public T_StreamType::template stream_base<CharType, Traits>::type
         {
-            typedef basic_filebuf<CharType, Traits> internal_buffer_type;
-            typedef buf_holder<internal_buffer_type> base_buf_holder;
-            typedef typename T_StreamType::template stream_base<CharType, Traits>::type stream_base;
+            using internal_buffer_type = basic_filebuf<CharType, Traits>;
+            using base_buf_holder = buf_holder<internal_buffer_type>;
+            using stream_base = typename T_StreamType::template stream_base<CharType, Traits>::type;
 
         public:
             using stream_base::setstate;
@@ -292,8 +286,8 @@ namespace nowide {
             fstream_impl& operator=(const fstream_impl&) = delete;
 
             // coverity[exn_spec_violation]
-            fstream_impl(fstream_impl&& other) noexcept : base_buf_holder(std::move(other)),
-                                                          stream_base(std::move(other))
+            fstream_impl(fstream_impl&& other) noexcept :
+                base_buf_holder(std::move(other)), stream_base(std::move(other))
             {
                 this->set_rdbuf(rdbuf());
             }
@@ -314,8 +308,8 @@ namespace nowide {
                 open(file_name.c_str(), mode);
             }
             template<typename Path>
-            typename detail::enable_if_path<Path, void>::type open(const Path& file_name,
-                                                                   std::ios_base::openmode mode = T_StreamType::mode())
+            detail::enable_if_path_t<Path, void> open(const Path& file_name,
+                                                      std::ios_base::openmode mode = T_StreamType::mode())
             {
                 open(file_name.c_str(), mode);
             }
@@ -357,41 +351,6 @@ namespace nowide {
 #ifdef BOOST_MSVC
 #pragma warning(pop)
 #endif
-        /// Trait to heuristically check for a *\::filesystem::path
-        /// Done by checking for make_preferred and filename member functions with correct signature
-        template<typename T>
-        struct is_path
-        {
-            typedef char one;
-            struct two
-            {
-                char dummy[2];
-            };
-
-            template<typename U, U& (U::*)(), U (U::*)() const>
-            struct Check;
-            template<typename U>
-            static one test(Check<U, &U::make_preferred, &U::filename>*);
-            template<typename U>
-            static two test(...);
-
-            enum
-            {
-                value = sizeof(test<T>(0)) == sizeof(one)
-            };
-        };
-        template<bool B, typename T>
-        struct enable_if
-        {};
-        template<typename T>
-        struct enable_if<true, T>
-        {
-            typedef T type;
-        };
-        /// SFINAE trait which has a member "type = Result" if the Path is a *\::filesystem::path
-        template<typename Path, typename Result>
-        struct enable_if_path : enable_if<is_path<Path>::value, Result>
-        {};
     } // namespace detail
 } // namespace nowide
 } // namespace boost

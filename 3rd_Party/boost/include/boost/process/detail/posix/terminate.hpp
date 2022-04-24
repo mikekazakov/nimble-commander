@@ -27,7 +27,7 @@ inline void terminate(const child_handle &p, std::error_code &ec) noexcept
         ec.clear();
 
     int status;
-    ::waitpid(p.pid, &status, WNOHANG); //just to clean it up
+    ::waitpid(p.pid, &status, 0); //should not be WNOHANG, since that would allow zombies.
 }
 
 inline void terminate(const child_handle &p)

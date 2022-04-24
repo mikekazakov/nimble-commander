@@ -14,15 +14,15 @@
 #include <boost/config/no_tr1/cmath.hpp>
 #include <boost/limits.hpp>
 
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/spirit/home/support/char_class.hpp>
 #include <boost/spirit/home/support/unused.hpp>
 #include <boost/spirit/home/support/numeric_traits.hpp>
 #include <boost/spirit/home/support/detail/pow10.hpp>
-#include <boost/spirit/home/support/detail/sign.hpp>
 #include <boost/spirit/home/karma/detail/generate_to.hpp>
 #include <boost/spirit/home/karma/detail/string_generate.hpp>
+
+#include <boost/core/cmath.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -120,7 +120,7 @@ namespace boost { namespace spirit { namespace traits
         typedef float type;
         static type call(float n)
         {
-            return (spirit::detail::signbit)(n) ? -n : n;
+            return (std::fabs)(n);
         }
     };
 
@@ -130,7 +130,7 @@ namespace boost { namespace spirit { namespace traits
         typedef double type;
         static type call(double n)
         {
-            return (spirit::detail::signbit)(n) ? -n : n;
+            return (std::fabs)(n);
         }
     };
 
@@ -140,7 +140,7 @@ namespace boost { namespace spirit { namespace traits
         typedef long double type;
         static type call(long double n)
         {
-            return (spirit::detail::signbit)(n) ? -n : n;
+            return (std::fabs)(n);
         }
     };
 
@@ -177,7 +177,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(float n)
         {
-            return (spirit::detail::signbit)(n) ? true : false;
+            return (core::signbit)(n) ? true : false;
         }
     };
 
@@ -186,7 +186,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(double n)
         {
-            return (spirit::detail::signbit)(n) ? true : false;
+            return (core::signbit)(n) ? true : false;
         }
     };
 
@@ -195,7 +195,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(long double n)
         {
-            return (spirit::detail::signbit)(n) ? true : false;
+            return (core::signbit)(n) ? true : false;
         }
     };
 
@@ -220,7 +220,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(float n)
         {
-            return (math::fpclassify)(n) == FP_ZERO;
+            return (core::fpclassify)(n) == core::fp_zero;
         }
     };
 
@@ -229,7 +229,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(double n)
         {
-            return (math::fpclassify)(n) == FP_ZERO;
+            return (core::fpclassify)(n) == core::fp_zero;
         }
     };
 
@@ -238,7 +238,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(long double n)
         {
-            return (math::fpclassify)(n) == FP_ZERO;
+            return (core::fpclassify)(n) == core::fp_zero;
         }
     };
 
@@ -264,7 +264,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(float n)
         {
-            return (math::fpclassify)(n) == FP_NAN;
+            return (core::fpclassify)(n) == core::fp_nan;
         }
     };
 
@@ -273,7 +273,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(double n)
         {
-            return (math::fpclassify)(n) == FP_NAN;
+            return (core::fpclassify)(n) == core::fp_nan;
         }
     };
 
@@ -282,7 +282,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(long double n)
         {
-            return (math::fpclassify)(n) == FP_NAN;
+            return (core::fpclassify)(n) == core::fp_nan;
         }
     };
 
@@ -308,7 +308,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(float n)
         {
-            return (math::fpclassify)(n) == FP_INFINITE;
+            return (core::fpclassify)(n) == core::fp_infinite;
         }
     };
 
@@ -317,7 +317,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(double n)
         {
-            return (math::fpclassify)(n) == FP_INFINITE;
+            return (core::fpclassify)(n) == core::fp_infinite;
         }
     };
 
@@ -326,7 +326,7 @@ namespace boost { namespace spirit { namespace traits
     {
         static bool call(long double n)
         {
-            return (math::fpclassify)(n) == FP_INFINITE;
+            return (core::fpclassify)(n) == core::fp_infinite;
         }
     };
 
@@ -574,12 +574,12 @@ namespace boost { namespace spirit { namespace karma
     ///////////////////////////////////////////////////////////////////////////
 #define BOOST_KARMA_NUMERICS_INNER_LOOP_PREFIX(z, x, data)                    \
         if (!traits::test_zero(n)) {                                          \
-            int ch = radix_type::call(remainder_type::call(n));               \
+            int ch_##x = radix_type::call(remainder_type::call(n));           \
             n = divide_type::call(n, num, ++exp);                             \
     /**/
 
-#define BOOST_KARMA_NUMERICS_INNER_LOOP_SUFFIX(z, x, data)                    \
-            *sink = char(ch);                                                 \
+#define BOOST_KARMA_NUMERICS_INNER_LOOP_SUFFIX(z, x, n_rolls_sub1)            \
+            *sink = char(BOOST_PP_CAT(ch_, BOOST_PP_SUB(n_rolls_sub1, x)));   \
             ++sink;                                                           \
         }                                                                     \
     /**/
@@ -610,7 +610,8 @@ namespace boost { namespace spirit { namespace karma
 
             BOOST_PP_REPEAT(
                 BOOST_KARMA_NUMERICS_LOOP_UNROLL,
-                BOOST_KARMA_NUMERICS_INNER_LOOP_SUFFIX, _);
+                BOOST_KARMA_NUMERICS_INNER_LOOP_SUFFIX,
+                BOOST_PP_DEC(BOOST_KARMA_NUMERICS_LOOP_UNROLL));
 
             *sink = char(ch);
             ++sink;

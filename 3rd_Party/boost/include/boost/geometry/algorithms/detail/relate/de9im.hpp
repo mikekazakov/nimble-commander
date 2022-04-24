@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2013, 2014, 2015, 2019.
-// Modifications copyright (c) 2013-2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2020.
+// Modifications copyright (c) 2013-2020 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -14,17 +14,13 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_RELATE_DE9IM_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_RELATE_DE9IM_HPP
 
-#include <boost/mpl/is_sequence.hpp>
-#include <boost/mpl/push_back.hpp>
-#include <boost/mpl/vector.hpp>
-#include <boost/mpl/vector_c.hpp>
-#include <boost/static_assert.hpp>
-#include <boost/tuple/tuple.hpp>
+#include <tuple>
 
 #include <boost/geometry/algorithms/detail/relate/result.hpp>
 #include <boost/geometry/core/topological_dimension.hpp>
 #include <boost/geometry/core/tag.hpp>
 
+#include <boost/geometry/util/sequence.hpp>
 #include <boost/geometry/util/tuples.hpp>
 
 namespace boost { namespace geometry
@@ -146,7 +142,7 @@ template
 class static_mask
     : public detail::relate::static_mask
         <
-            boost::mpl::vector_c
+            std::integer_sequence
                 <
                     char, II, IB, IE, BI, BB, BE, EI, EB, EE
                 >,
@@ -154,65 +150,22 @@ class static_mask
         >
 {};
 
-} // namespace de9im
-
-namespace detail { namespace de9im
-{
-
-// a small helper util for ORing static masks
-
-template
-<
-    typename Seq,
-    typename T,
-    bool IsSeq = boost::mpl::is_sequence<Seq>::value
->
-struct push_back
-{
-    typedef typename boost::mpl::push_back
-        <
-            Seq,
-            T
-        >::type type;
-};
-
-template <typename Seq, typename T>
-struct push_back<Seq, T, false>
-{};
-
-}} // namespace detail::de9im
-
-namespace de9im
-{
 
 inline
-boost::tuples::cons
-    <
-        mask,
-        boost::tuples::cons<mask, boost::tuples::null_type>
-    >
+std::tuple<mask, mask>
 operator||(mask const& m1, mask const& m2)
 {
-    namespace bt = boost::tuples;
-
-    return bt::cons<mask, bt::cons<mask, bt::null_type> >
-        ( m1, bt::cons<mask, bt::null_type>(m2, bt::null_type()) );
+    return std::tuple<mask, mask>(m1, m2);
 }
 
-template <typename Tail>
+template <typename ...Masks>
 inline
-typename geometry::tuples::push_back
-    <
-        boost::tuples::cons<mask, Tail>,
-        mask
-    >::type
-operator||(boost::tuples::cons<mask, Tail> const& t, mask const& m)
+std::tuple<Masks..., mask>
+operator||(std::tuple<Masks...> const& t, mask const& m)
 {
-    namespace bt = boost::tuples;
-
     return geometry::tuples::push_back
             <
-                bt::cons<mask, Tail>,
+                std::tuple<Masks...>,
                 mask
             >::apply(t, m);
 }
@@ -227,14 +180,15 @@ template
     char EI2, char EB2, char EE2
 >
 inline
-boost::mpl::vector<
-    static_mask<II1, IB1, IE1, BI1, BB1, BE1, EI1, EB1, EE1>,
-    static_mask<II2, IB2, IE2, BI2, BB2, BE2, EI2, EB2, EE2>
->
+util::type_sequence
+    <
+        static_mask<II1, IB1, IE1, BI1, BB1, BE1, EI1, EB1, EE1>,
+        static_mask<II2, IB2, IE2, BI2, BB2, BE2, EI2, EB2, EE2>
+    >
 operator||(static_mask<II1, IB1, IE1, BI1, BB1, BE1, EI1, EB1, EE1> const& ,
            static_mask<II2, IB2, IE2, BI2, BB2, BE2, EI2, EB2, EE2> const& )
 {
-    return boost::mpl::vector
+    return util::type_sequence
             <
                 static_mask<II1, IB1, IE1, BI1, BB1, BE1, EI1, EB1, EE1>,
                 static_mask<II2, IB2, IE2, BI2, BB2, BE2, EI2, EB2, EE2>
@@ -243,25 +197,25 @@ operator||(static_mask<II1, IB1, IE1, BI1, BB1, BE1, EI1, EB1, EE1> const& ,
 
 template
 <
-    typename Seq,
+    typename ...StaticMasks,
     char II, char IB, char IE,
     char BI, char BB, char BE,
     char EI, char EB, char EE
 >
 inline
-typename detail::de9im::push_back
-    <
-        Seq,
-        static_mask<II, IB, IE, BI, BB, BE, EI, EB, EE>
-    >::type
-operator||(Seq const& ,
+util::type_sequence
+<
+    StaticMasks...,
+    static_mask<II, IB, IE, BI, BB, BE, EI, EB, EE>
+>
+operator||(util::type_sequence<StaticMasks...> const& ,
            static_mask<II, IB, IE, BI, BB, BE, EI, EB, EE> const& )
 {
-    return typename detail::de9im::push_back
+    return util::type_sequence
             <
-                Seq,
+                StaticMasks...,
                 static_mask<II, IB, IE, BI, BB, BE, EI, EB, EE>
-            >::type();
+            >();
 }
 
 } // namespace de9im
@@ -305,7 +259,7 @@ template
 >
 struct static_mask_touches_impl
 {
-    typedef boost::mpl::vector
+    typedef util::type_sequence
         <
             geometry::de9im::static_mask<'F', 'T', '*', '*', '*', '*', '*', '*', '*'>,
             geometry::de9im::static_mask<'F', '*', '*', 'T', '*', '*', '*', '*', '*'>,
@@ -336,7 +290,7 @@ struct static_mask_within_type
 template <typename Geometry1, typename Geometry2>
 struct static_mask_covered_by_type
 {
-    typedef boost::mpl::vector
+    typedef util::type_sequence
         <
             geometry::de9im::static_mask<'T', '*', 'F', '*', '*', 'F', '*', '*', '*'>,
             geometry::de9im::static_mask<'*', 'T', 'F', '*', '*', 'F', '*', '*', '*'>,

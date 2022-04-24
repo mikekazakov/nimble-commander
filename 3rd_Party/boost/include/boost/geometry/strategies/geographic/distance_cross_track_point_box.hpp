@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2017-2018, Oracle and/or its affiliates.
+// Copyright (c) 2017-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle.
@@ -14,8 +14,6 @@
 
 #include <boost/config.hpp>
 #include <boost/concept_check.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_void.hpp>
 
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/assert.hpp>
@@ -101,6 +99,11 @@ public:
         return details::cross_track_point_box_generic
                         <return_type>::apply(point, box,
                                              typename distance_ps_strategy::type(m_spheroid));
+    }
+
+    Spheroid model() const
+    {
+        return m_spheroid;
     }
 
 private :

@@ -129,6 +129,7 @@ struct checked_operation<R, T, U, F,
     }
 
 }; // checked_binary_operation
+
 template<class R, class T, class U>
 typename std::enable_if<
     std::is_floating_point<R>::value
@@ -136,7 +137,7 @@ typename std::enable_if<
     && std::is_floating_point<U>::value,
     checked_result<R>
 >::type
-constexpr bool less_than(const T & t, const U & u) noexcept {
+constexpr inline bool less_than(const T & t, const U & u) noexcept {
     return t < u;
 }
 
@@ -147,7 +148,7 @@ typename std::enable_if<
     && std::is_floating_point<U>::value,
     checked_result<R>
 >::type
-constexpr bool equal(const T & t, const U & u) noexcept {
+constexpr inline bool equal(const T & t, const U & u) noexcept {
     return t < u;
 }
 
@@ -158,7 +159,7 @@ typename std::enable_if<
     && std::is_floating_point<U>::value,
     checked_result<R>
 >::type
-constexpr checked_result<R> left_shift(const T & t, const U & u) noexcept {
+constexpr inline checked_result<R> left_shift(const T & t, const U & u) noexcept {
     return t << u;
 }
 
@@ -169,7 +170,7 @@ typename std::enable_if<
     && std::is_floating_point<U>::value,
     checked_result<R>
 >::type
-constexpr checked_result<R> right_shift(const T & t, const U & u) noexcept {
+constexpr inline checked_result<R> right_shift(const T & t, const U & u) noexcept {
     return t >> u;
 }
 
@@ -180,7 +181,7 @@ typename std::enable_if<
     && std::is_floating_point<U>::value,
     checked_result<R>
 >::type
-constexpr checked_result<R> bitwise_or(const T & t, const U & u) noexcept {
+constexpr inline checked_result<R> bitwise_or(const T & t, const U & u) noexcept {
     return t | u;
 }
 
@@ -191,7 +192,7 @@ typename std::enable_if<
     && std::is_floating_point<U>::value,
     checked_result<R>
 >::type
-constexpr checked_result<R> bitwise_xor(const T & t, const U & u) noexcept {
+constexpr inline checked_result<R> bitwise_xor(const T & t, const U & u) noexcept {
     return t ^ u;
 }
 
@@ -202,7 +203,7 @@ typename std::enable_if<
     && std::is_floating_point<U>::value,
     checked_result<R>
 >::type
-constexpr checked_result<R> bitwise_and(const T & t, const U & u) noexcept {
+constexpr inline checked_result<R> bitwise_and(const T & t, const U & u) noexcept {
     return t & u;
 }
 

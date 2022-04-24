@@ -21,15 +21,16 @@
 
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
+
+#include <boost/interprocess/sync/cv_status.hpp>
 #include <boost/interprocess/creation_tags.hpp>
 #include <boost/interprocess/exceptions.hpp>
 #include <boost/interprocess/detail/interprocess_tester.hpp>
 #include <boost/interprocess/permissions.hpp>
-#include <boost/interprocess/detail/posix_time_types_wrk.hpp>
 #include <boost/interprocess/sync/detail/locks.hpp>
 #if !defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION) && defined (BOOST_INTERPROCESS_WINDOWS)
    #include <boost/interprocess/sync/windows/named_condition.hpp>
-   #define BOOST_INTERPROCESS_USE_WINDOWS
+   #define BOOST_INTERPROCESS_NAMED_CONDITION_USE_WINAPI
 #else
    #include <boost/interprocess/sync/shm/named_condition.hpp>
 #endif
@@ -56,9 +57,10 @@ class named_condition
    named_condition &operator=(const named_condition &);
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
    public:
+
    //!Creates a global condition with a name.
    //!If the condition can't be created throws interprocess_exception
-   named_condition(create_only_t create_only, const char *name, const permissions &perm = permissions());
+   named_condition(create_only_t, const char *name, const permissions &perm = permissions());
 
    //!Opens or creates a global condition with a name.
    //!If the condition is created, this call is equivalent to
@@ -66,12 +68,45 @@ class named_condition
    //!If the condition is already created, this call is equivalent
    //!named_condition(open_only_t, ... )
    //!Does not throw
-   named_condition(open_or_create_t open_or_create, const char *name, const permissions &perm = permissions());
+   named_condition(open_or_create_t, const char *name, const permissions &perm = permissions());
 
    //!Opens a global condition with a name if that condition is previously
    //!created. If it is not previously created this function throws
    //!interprocess_exception.
-   named_condition(open_only_t open_only, const char *name);
+   named_condition(open_only_t, const char *name);
+
+   //!Opens a global condition with a name if that condition is previously
+   //!created. If it is not previously created this function throws
+   //!interprocess_exception.
+
+   #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+   //!Creates a global condition with a name.
+   //!If the condition can't be created throws interprocess_exception
+   //! 
+   //!Note: This function is only available on operating systems with
+   //!      native wchar_t APIs (e.g. Windows).
+   named_condition(create_only_t, const wchar_t *name, const permissions &perm = permissions());
+
+   //!Opens or creates a global condition with a name.
+   //!If the condition is created, this call is equivalent to
+   //!named_condition(create_only_t, ... )
+   //!If the condition is already created, this call is equivalent
+   //!named_condition(open_only_t, ... )
+   //!Does not throw
+   //! 
+   //!Note: This function is only available on operating systems with
+   //!      native wchar_t APIs (e.g. Windows).
+   named_condition(open_or_create_t, const wchar_t *name, const permissions &perm = permissions());
+
+   //!Opens a global condition with a name if that condition is previously
+   //!created. If it is not previously created this function throws
+   //!interprocess_exception.
+   //! 
+   //!Note: This function is only available on operating systems with
+   //!      native wchar_t APIs (e.g. Windows).
+   named_condition(open_only_t, const wchar_t *name);
+
+   #endif //#if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
    //!Destroys *this and indicates that the calling process is finished using
    //!the resource. The destructor function will deallocate
@@ -105,23 +140,58 @@ class named_condition
    //!this->notify_one() or this->notify_all(), or until time abs_time is reached,
    //!and then reacquires the lock.
    //!Returns: false if time abs_time is reached, otherwise true.
-   template <typename L>
-   bool timed_wait(L& lock, const boost::posix_time::ptime &abs_time);
+   template <typename L, class TimePoint>
+   bool timed_wait(L& lock, const TimePoint &abs_time);
 
    //!The same as:   while (!pred()) {
    //!                  if (!timed_wait(lock, abs_time)) return pred();
    //!               } return true;
-   template <typename L, typename Pr>
-   bool timed_wait(L& lock, const boost::posix_time::ptime &abs_time, Pr pred);
+   template <typename L, class TimePoint, typename Pr>
+   bool timed_wait(L& lock, const TimePoint &abs_time, Pr pred);
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface.
+   template <typename L, class TimePoint>
+   cv_status wait_until(L& lock, const TimePoint &abs_time)
+   {  return this->timed_wait(lock, abs_time) ? cv_status::no_timeout : cv_status::timeout; }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface.
+   template <typename L, class TimePoint, typename Pr>
+   bool wait_until(L& lock, const TimePoint &abs_time, Pr pred)
+   {  return this->timed_wait(lock, abs_time, pred); }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface and uses relative timeouts.
+   template <typename L, class Duration>
+   cv_status wait_for(L& lock, const Duration &dur)
+   {  return this->wait_until(lock, ipcdetail::duration_to_ustime(dur)); }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface and uses relative timeouts
+   template <typename L, class Duration, typename Pr>
+   bool wait_for(L& lock, const Duration &dur, Pr pred)
+   {  return this->wait_until(lock, ipcdetail::duration_to_ustime(dur), pred); }
 
    //!Erases a named condition from the system.
    //!Returns false on error. Never throws.
    static bool remove(const char *name);
 
+   #if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+   //!Erases a named condition from the system.
+   //!Returns false on error. Never throws.
+   //! 
+   //!Note: This function is only available on operating systems with
+   //!      native wchar_t APIs (e.g. Windows).
+   static bool remove(const wchar_t *name);
+
+   #endif //defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
    private:
-   #if defined(BOOST_INTERPROCESS_USE_WINDOWS)
-   typedef ipcdetail::windows_named_condition   condition_type;
+   #if defined(BOOST_INTERPROCESS_NAMED_CONDITION_USE_WINAPI)
+   typedef ipcdetail::winapi_named_condition   condition_type;
    #else
    typedef ipcdetail::shm_named_condition       condition_type;
    #endif
@@ -150,6 +220,23 @@ inline named_condition::named_condition(open_only_t, const char *name)
    :  m_cond(open_only_t(), name)
 {}
 
+#if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+inline named_condition::named_condition(create_only_t, const wchar_t *name, const permissions &perm)
+   :  m_cond(create_only_t(), name, perm)
+{}
+
+inline named_condition::named_condition(open_or_create_t, const wchar_t *name, const permissions &perm)
+   :  m_cond(open_or_create_t(), name, perm)
+{}
+
+inline named_condition::named_condition(open_only_t, const wchar_t *name)
+   :  m_cond(open_only_t(), name)
+{}
+
+#endif //#if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+
 inline void named_condition::notify_one()
 {  m_cond.notify_one();  }
 
@@ -170,17 +257,17 @@ inline void named_condition::wait(L& lock, Pr pred)
    m_cond.wait(internal_lock, pred);
 }
 
-template <typename L>
+template <typename L, typename TimePoint>
 inline bool named_condition::timed_wait
-   (L& lock, const boost::posix_time::ptime &abs_time)
+   (L& lock, const TimePoint &abs_time)
 {
    ipcdetail::internal_mutex_lock<L> internal_lock(lock);
    return m_cond.timed_wait(internal_lock, abs_time);
 }
 
-template <typename L, typename Pr>
+template <typename L, typename TimePoint, typename Pr>
 inline bool named_condition::timed_wait
-   (L& lock, const boost::posix_time::ptime &abs_time, Pr pred)
+   (L& lock, const TimePoint &abs_time, Pr pred)
 {
    ipcdetail::internal_mutex_lock<L> internal_lock(lock);
    return m_cond.timed_wait(internal_lock, abs_time, pred);
@@ -190,6 +277,16 @@ inline bool named_condition::remove(const char *name)
 {
    return condition_type::remove(name);
 }
+
+#if defined(BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES) || defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+inline bool named_condition::remove(const wchar_t *name)
+{
+   return condition_type::remove(name);
+}
+
+#endif
+
 
 #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 

@@ -11,7 +11,6 @@
 #include <boost/spirit/home/x3/core/skip_over.hpp>
 #include <boost/spirit/home/x3/string/detail/string_parse.hpp>
 #include <boost/spirit/home/x3/support/no_case.hpp>
-#include <boost/spirit/home/x3/string/detail/no_case_string_parse.hpp>
 #include <boost/spirit/home/x3/support/utility/utf8.hpp>
 #include <boost/spirit/home/support/char_encoding/ascii.hpp>
 #include <boost/spirit/home/support/char_encoding/standard.hpp>

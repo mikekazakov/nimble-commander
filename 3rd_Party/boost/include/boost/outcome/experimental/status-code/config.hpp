@@ -1,5 +1,5 @@
 /* Proposed SG14 status_code
-(C) 2018 - 2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018 - 2021 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Feb 2018
 
 
@@ -44,6 +44,26 @@ http://www.boost.org/LICENSE_1_0.txt)
 // 0.01
 #include <initializer_list>
 
+#ifndef BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST
+#ifdef __has_include
+#if __has_include(<bit>) && (__cplusplus >= 202002L || _HAS_CXX20)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST 1
+#endif
+#elif __cplusplus >= 202002L
+#define BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST 1
+#endif
+#ifndef BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST
+#define BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST 0
+#endif
+#endif
+#if BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST
+#include <bit>
+#if __cpp_lib_bit_cast < 201806L
+#undef BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST
+#define BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST 0
+#endif
+#endif
+
 #ifndef BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14
 #if defined(BOOST_OUTCOME_STANDARDESE_IS_IN_THE_HOUSE) || __cplusplus >= 201400 || _MSC_VER >= 1910 /* VS2017 */
 //! Defined to be `constexpr` when on C++ 14 or better compilers. Usually automatic, can be overriden.
@@ -52,6 +72,16 @@ http://www.boost.org/LICENSE_1_0.txt)
 #define BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR14
 #endif
 #endif
+
+#ifndef BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20
+#if defined(BOOST_OUTCOME_STANDARDESE_IS_IN_THE_HOUSE) || __cplusplus >= 202000 || _HAS_CXX20
+//! Defined to be `constexpr` when on C++ 20 or better compilers. Usually automatic, can be overriden.
+#define BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20 constexpr
+#else
+#define BOOST_OUTCOME_SYSTEM_ERROR2_CONSTEXPR20
+#endif
+#endif
+
 
 #ifndef BOOST_OUTCOME_SYSTEM_ERROR2_NORETURN
 #if defined(BOOST_OUTCOME_STANDARDESE_IS_IN_THE_HOUSE) || (_HAS_CXX17 && _MSC_VER >= 1911 /* VS2017.3 */)
@@ -118,6 +148,54 @@ http://www.boost.org/LICENSE_1_0.txt)
 #endif
 #endif
 
+#if defined(__cpp_concepts) && !defined(BOOST_OUTCOME_SYSTEM_ERROR2_DISABLE_CONCEPTS_SUPPORT)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_GLUE(x, y) x y
+
+#define BOOST_OUTCOME_SYSTEM_ERROR2_RETURN_ARG_COUNT(_1_, _2_, _3_, _4_, _5_, _6_, _7_, _8_, count, ...) count
+#define BOOST_OUTCOME_SYSTEM_ERROR2_EXPAND_ARGS(args) BOOST_OUTCOME_SYSTEM_ERROR2_RETURN_ARG_COUNT args
+#define BOOST_OUTCOME_SYSTEM_ERROR2_COUNT_ARGS_MAX8(...) BOOST_OUTCOME_SYSTEM_ERROR2_EXPAND_ARGS((__VA_ARGS__, 8, 7, 6, 5, 4, 3, 2, 1, 0))
+
+#define BOOST_OUTCOME_SYSTEM_ERROR2_OVERLOAD_MACRO2(name, count) name##count
+#define BOOST_OUTCOME_SYSTEM_ERROR2_OVERLOAD_MACRO1(name, count) BOOST_OUTCOME_SYSTEM_ERROR2_OVERLOAD_MACRO2(name, count)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_OVERLOAD_MACRO(name, count) BOOST_OUTCOME_SYSTEM_ERROR2_OVERLOAD_MACRO1(name, count)
+
+#define BOOST_OUTCOME_SYSTEM_ERROR2_CALL_OVERLOAD(name, ...) BOOST_OUTCOME_SYSTEM_ERROR2_GLUE(BOOST_OUTCOME_SYSTEM_ERROR2_OVERLOAD_MACRO(name, BOOST_OUTCOME_SYSTEM_ERROR2_COUNT_ARGS_MAX8(__VA_ARGS__)), (__VA_ARGS__))
+
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND8(a, b, c, d, e, f, g, h) a &&BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND7(b, c, d, e, f, g, h)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND7(a, b, c, d, e, f, g) a &&BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND6(b, c, d, e, f, g)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND6(a, b, c, d, e, f) a &&BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND5(b, c, d, e, f)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND5(a, b, c, d, e) a &&BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND4(b, c, d, e)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND4(a, b, c, d) a &&BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND3(b, c, d)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND3(a, b, c) a &&BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND2(b, c)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND2(a, b) a &&BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND1(b)
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND1(a) a
+
+//! Expands into a && b && c && ...
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(...) requires BOOST_OUTCOME_SYSTEM_ERROR2_CALL_OVERLOAD(BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES_EXPAND, __VA_ARGS__)
+
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(...) template <__VA_ARGS__>
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TEXPR(...)                                                                                                                                                                                                                                                                                               \
+  requires { (__VA_ARGS__); }
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(...) (__VA_ARGS__)
+#if !defined(_MSC_VER) || _MSC_FULL_VER >= 192400000  // VS 2019 16.3 is broken here
+#define BOOST_OUTCOME_SYSTEM_ERROR2_REQUIRES(...) requires(__VA_ARGS__)
+#else
+#define BOOST_OUTCOME_SYSTEM_ERROR2_REQUIRES(...)
+#endif
+#else
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(...) template <__VA_ARGS__
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(...) , __VA_ARGS__ >
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TEXPR(...) typename = decltype(__VA_ARGS__)
+#ifdef _MSC_VER
+// MSVC gives an error if every specialisation of a template is always ill-formed, so
+// the more powerful SFINAE form below causes pukeage :(
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(...) typename = typename std::enable_if<(__VA_ARGS__)>::type
+#else
+#define BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(...) typename std::enable_if<(__VA_ARGS__), bool>::type = true
+#endif
+#define BOOST_OUTCOME_SYSTEM_ERROR2_REQUIRES(...)
+#endif
+
 #ifndef BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE
 //! The system_error2 namespace name.
 #define BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE system_error2
@@ -158,18 +236,12 @@ namespace detail
     return end - str;
   }
 #else
-  inline constexpr size_t cstrlen_(const char *str, size_t acc)
-  {
-    return (str[0] == 0) ? acc : cstrlen_(str + 1, acc + 1);
-  }
-  inline constexpr size_t cstrlen(const char *str)
-  {
-    return cstrlen_(str, 0);
-  }
+  inline constexpr size_t cstrlen_(const char *str, size_t acc) { return (str[0] == 0) ? acc : cstrlen_(str + 1, acc + 1); }
+  inline constexpr size_t cstrlen(const char *str) { return cstrlen_(str, 0); }
 #endif
 
   /* A partially compliant implementation of C++20's std::bit_cast function contributed
-  by Jesse Towner. TODO FIXME Replace with C++ 20 bit_cast when available.
+  by Jesse Towner.
 
   Our bit_cast is only guaranteed to be constexpr when both the input and output
   arguments are either integrals or enums. However, this covers most use cases
@@ -187,52 +259,67 @@ namespace detail
 
   template <class To, class From> using is_bit_castable = std::integral_constant<bool, sizeof(To) == sizeof(From) && traits::is_move_bitcopying<To>::value && traits::is_move_bitcopying<From>::value>;
 
-  template <class To, class From> union bit_cast_union {
+  template <class To, class From> union bit_cast_union
+  {
     From source;
     To target;
   };
 
-  template <class To, class From,
-            typename std::enable_if<                 //
-            is_bit_castable<To, From>::value         //
-            && is_static_castable<To, From>::value   //
-            && !is_union_castable<To, From>::value,  //
-            bool>::type = true>                      //
-  constexpr To bit_cast(const From &from) noexcept
-  {
-    return static_cast<To>(from);
-  }
+#if BOOST_OUTCOME_SYSTEM_ERROR2_HAVE_BIT_CAST
+  using std::bit_cast;  // available for all trivially copyable types
 
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-#endif
-  template <class To, class From,
-            typename std::enable_if<                 //
-            is_bit_castable<To, From>::value         //
-            && !is_static_castable<To, From>::value  //
-            && is_union_castable<To, From>::value,   //
-            bool>::type = true>                      //
+  // For move bit copying types
+  template <class To, class From>
+  requires(is_bit_castable<To, From>::value             //
+           &&is_union_castable<To, From>::value         //
+           && (!std::is_trivially_copyable_v<From>      //
+               || !std::is_trivially_copyable_v<To>) )  //
   constexpr To bit_cast(const From &from) noexcept
   {
     return bit_cast_union<To, From>{from}.target;
   }
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
-
-  template <class To, class From,
-            typename std::enable_if<                 //
-            is_bit_castable<To, From>::value         //
-            && !is_static_castable<To, From>::value  //
-            && !is_union_castable<To, From>::value,  //
-            bool>::type = true>                      //
+  template <class To, class From>
+  requires(is_bit_castable<To, From>::value             //
+           && !is_union_castable<To, From>::value       //
+           && (!std::is_trivially_copyable_v<From>      //
+               || !std::is_trivially_copyable_v<To>) )  //
   To bit_cast(const From &from) noexcept
   {
     bit_cast_union<To, From> ret;
     memmove(&ret.source, &from, sizeof(ret.source));
     return ret.target;
   }
+#else
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class To, class From, int = 5)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(is_bit_castable<To, From>::value       //
+                                              &&is_static_castable<To, From>::value  //
+                                              && !is_union_castable<To, From>::value))
+  constexpr To bit_cast(const From &from) noexcept { return static_cast<To>(from); }
+
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class To, class From, long = 5)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(is_bit_castable<To, From>::value         //
+                                              && !is_static_castable<To, From>::value  //
+                                              && is_union_castable<To, From>::value))
+  constexpr To bit_cast(const From &from) noexcept { return bit_cast_union<To, From>{from}.target; }
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
+
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class To, class From, short = 5)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(is_bit_castable<To, From>::value         //
+                                              && !is_static_castable<To, From>::value  //
+                                              && !is_union_castable<To, From>::value))
+  To bit_cast(const From &from) noexcept
+  {
+    bit_cast_union<To, From> ret;
+    memmove(&ret.source, &from, sizeof(ret.source));
+    return ret.target;
+  }
+#endif
 
   /* erasure_cast performs a bit_cast with additional rules to handle types
   of differing sizes. For integral & enum types, it may perform a narrowing
@@ -268,21 +355,20 @@ namespace detail
     }
   };
 
-  template <class To, class From, typename std::enable_if<is_erasure_castable<To, From>::value && (sizeof(To) == sizeof(From)), bool>::type = true> constexpr To erasure_cast(const From &from) noexcept { return bit_cast<To>(from); }
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class To, class From)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(is_erasure_castable<To, From>::value && (sizeof(To) == sizeof(From)))) constexpr To erasure_cast(const From &from) noexcept { return bit_cast<To>(from); }
 
-  template <class To, class From, typename std::enable_if<is_erasure_castable<To, From>::value && is_static_castable<To, From>::value && (sizeof(To) < sizeof(From)), bool>::type = true> constexpr To erasure_cast(const From &from) noexcept { return static_cast<To>(bit_cast<erasure_integer_type<From, To>>(from)); }
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class To, class From, long = 5)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(is_erasure_castable<To, From>::value &&is_static_castable<To, From>::value && (sizeof(To) < sizeof(From)))) constexpr To erasure_cast(const From &from) noexcept { return static_cast<To>(bit_cast<erasure_integer_type<From, To>>(from)); }
 
-  template <class To, class From, typename std::enable_if<is_erasure_castable<To, From>::value && is_static_castable<To, From>::value && (sizeof(To) > sizeof(From)), bool>::type = true> constexpr To erasure_cast(const From &from) noexcept { return bit_cast<To>(static_cast<erasure_integer_type<To, From>>(from)); }
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class To, class From, int = 5)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(is_erasure_castable<To, From>::value &&is_static_castable<To, From>::value && (sizeof(To) > sizeof(From)))) constexpr To erasure_cast(const From &from) noexcept { return bit_cast<To>(static_cast<erasure_integer_type<To, From>>(from)); }
 
-  template <class To, class From, typename std::enable_if<is_erasure_castable<To, From>::value && !is_static_castable<To, From>::value && (sizeof(To) < sizeof(From)), bool>::type = true> constexpr To erasure_cast(const From &from) noexcept
-  {
-    return bit_cast<padded_erasure_object<To, sizeof(From) - sizeof(To)>>(from).value;
-  }
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class To, class From, short = 5)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(is_erasure_castable<To, From>::value && !is_static_castable<To, From>::value && (sizeof(To) < sizeof(From)))) constexpr To erasure_cast(const From &from) noexcept { return bit_cast<padded_erasure_object<To, sizeof(From) - sizeof(To)>>(from).value; }
 
-  template <class To, class From, typename std::enable_if<is_erasure_castable<To, From>::value && !is_static_castable<To, From>::value && (sizeof(To) > sizeof(From)), bool>::type = true> constexpr To erasure_cast(const From &from) noexcept
-  {
-    return bit_cast<To>(padded_erasure_object<From, sizeof(To) - sizeof(From)>{from});
-  }
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class To, class From, char = 5)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(is_erasure_castable<To, From>::value && !is_static_castable<To, From>::value && (sizeof(To) > sizeof(From)))) constexpr To erasure_cast(const From &from) noexcept { return bit_cast<To>(padded_erasure_object<From, sizeof(To) - sizeof(From)>{from}); }
 }  // namespace detail
 BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE_END
 
@@ -304,10 +390,12 @@ namespace detail
     extern "C" ptrdiff_t write(int, const void *, size_t);
 #elif defined(_MSC_VER)
     extern ptrdiff_t write(int, const void *, size_t);
-#if defined(_WIN64)
+#if(defined(__x86_64__) || defined(_M_X64)) || (defined(__aarch64__) || defined(_M_ARM64)) || (defined(__arm__) || defined(_M_ARM))
 #pragma comment(linker, "/alternatename:?write@avoid_stdio_include@detail@system_error2@@YA_JHPEBX_K@Z=write")
-#else
+#elif defined(__x86__) || defined(_M_IX86) || defined(__i386__)
 #pragma comment(linker, "/alternatename:?write@avoid_stdio_include@detail@system_error2@@YAHHPBXI@Z=_write")
+#else
+#error Unknown architecture
 #endif
 #endif
   }  // namespace avoid_stdio_include

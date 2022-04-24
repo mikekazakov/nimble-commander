@@ -279,7 +279,7 @@ public:
     detail::sample_args_passed_vs_expected<sample_args_passed,
                                            typename acc_traits::args>();
     std::lock_guard<typename mutex_base::type> guard{mutex_base::get()};
-    mp11::tuple_apply(
+    mp11::tuple_apply( // LCOV_EXCL_LINE: gcc-11 is missing this line for no reason
         [&](const auto&... sargs) {
           constexpr bool sample_valid =
               std::is_convertible<sample_args_passed, typename acc_traits::args>::value;
@@ -309,7 +309,7 @@ public:
     detail::sample_args_passed_vs_expected<sample_args_passed,
                                            typename acc_traits::args>();
     std::lock_guard<typename mutex_base::type> guard{mutex_base::get()};
-    mp11::tuple_apply(
+    mp11::tuple_apply( // LCOV_EXCL_LINE: gcc-11 is missing this line for no reason
         [&](const auto&... sargs) {
           constexpr bool weight_valid = acc_traits::weight_support;
           static_assert(weight_valid, "error: accumulator does not support weights");

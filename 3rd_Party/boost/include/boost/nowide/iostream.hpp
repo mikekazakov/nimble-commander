@@ -1,11 +1,10 @@
-//
 //  Copyright (c) 2012 Artyom Beilis (Tonkikh)
-//  Copyright (c) 2020 Alexander Grund
+//  Copyright (c) 2020-2021 Alexander Grund
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE or copy at
+//  Distributed under the Boost Software License, Version 1.0.
+//  (See accompanying file LICENSE or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
-//
+
 #ifndef BOOST_NOWIDE_IOSTREAM_HPP_INCLUDED
 #define BOOST_NOWIDE_IOSTREAM_HPP_INCLUDED
 
@@ -42,11 +41,13 @@ namespace nowide {
         class BOOST_NOWIDE_DECL winconsole_ostream : public std::ostream
         {
         public:
-            winconsole_ostream(int fd, winconsole_ostream* tieStream);
+            winconsole_ostream(bool isBuffered, winconsole_ostream* tieStream);
             ~winconsole_ostream();
 
         private:
             std::unique_ptr<console_output_buffer> d;
+            // Ensure the std streams are initialized and alive during the lifetime of this instance
+            std::ios_base::Init init_;
         };
 
         class BOOST_NOWIDE_DECL winconsole_istream : public std::istream
@@ -57,6 +58,8 @@ namespace nowide {
 
         private:
             std::unique_ptr<console_input_buffer> d;
+            // Ensure the std streams are initialized and alive during the lifetime of this instance
+            std::ios_base::Init init_;
         };
     } // namespace detail
 

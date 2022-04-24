@@ -4,6 +4,10 @@
 // Copyright (c) 2008-2012 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 
+// This file was modified by Oracle on 2020-2021.
+// Modifications copyright (c) 2020-2021 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
 // (geolib/GGL), copyright (c) 1995-2010 Geodan, Amsterdam, the Netherlands.
 
@@ -15,15 +19,26 @@
 #define BOOST_GEOMETRY_VIEWS_SEGMENT_VIEW_HPP
 
 
-#include <boost/range.hpp>
+#include <array>
 
+#include <boost/geometry/algorithms/detail/assign_indexed_point.hpp>
 #include <boost/geometry/core/point_type.hpp>
-#include <boost/geometry/views/detail/points_view.hpp>
-#include <boost/geometry/algorithms/assign.hpp>
+#include <boost/geometry/core/tag.hpp>
 
 
 namespace boost { namespace geometry
 {
+
+// NOTE: This is equivalent to the previous implementation with detail::points_view.
+//       Technically this should not be called a view because it owns the elements.
+//       It's also not a borrowed_range because of dangling iterators after the
+//       destruction.
+//       It's a container or more specifically a linestring of some sort, e.g. static_linestring.
+// NOTE: It would be possible to implement a borrowed_range or a view.
+//       The iterators would have to store copies of points.
+//       Another possibility is to store the original Segment or reference/pointer
+//       to Segment and index. But then the reference would be the value type
+//       so technically they would be InputIterators not RandomAccessIterators.
 
 
 /*!
@@ -43,37 +58,24 @@ namespace boost { namespace geometry
 */
 template <typename Segment>
 struct segment_view
-    : public detail::points_view
-        <
-            typename geometry::point_type<Segment>::type,
-            2
-        >
 {
-    typedef typename geometry::point_type<Segment>::type point_type;
+    using array_t = std::array<typename geometry::point_type<Segment>::type, 2>;
+
+    using iterator = typename array_t::const_iterator;
+    using const_iterator = typename array_t::const_iterator;
 
     /// Constructor accepting the segment to adapt
     explicit segment_view(Segment const& segment)
-        : detail::points_view<point_type, 2>(copy_policy(segment))
-    {}
-
-private :
-
-    class copy_policy
     {
-    public :
-        inline copy_policy(Segment const& segment)
-            : m_segment(segment)
-        {}
+        geometry::detail::assign_point_from_index<0>(segment, m_array[0]);
+        geometry::detail::assign_point_from_index<1>(segment, m_array[1]);
+    }
 
-        inline void apply(point_type* points) const
-        {
-            geometry::detail::assign_point_from_index<0>(m_segment, points[0]);
-            geometry::detail::assign_point_from_index<1>(m_segment, points[1]);
-        }
-    private :
-        Segment const& m_segment;
-    };
+    const_iterator begin() const noexcept { return m_array.begin(); }
+    const_iterator end() const noexcept { return m_array.end(); }
 
+private:
+    array_t m_array;
 };
 
 

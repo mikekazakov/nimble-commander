@@ -25,6 +25,7 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/collection_size_type.hpp>
 #include <boost/serialization/item_version_type.hpp>
+#include <boost/serialization/library_version_type.hpp>
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/detail/stack_constructor.hpp>
 #include <boost/serialization/detail/is_default_constructible.hpp>

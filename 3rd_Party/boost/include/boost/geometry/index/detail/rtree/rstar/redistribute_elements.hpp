@@ -4,8 +4,8 @@
 //
 // Copyright (c) 2011-2017 Adam Wulkiewicz, Lodz, Poland.
 //
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2020.
+// Modifications copyright (c) 2019-2020 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -16,6 +16,8 @@
 #define BOOST_GEOMETRY_INDEX_DETAIL_RTREE_RSTAR_REDISTRIBUTE_ELEMENTS_HPP
 
 #include <boost/core/ignore_unused.hpp>
+
+#include <boost/geometry/core/static_assert.hpp>
 
 #include <boost/geometry/index/detail/algorithms/intersection_content.hpp>
 #include <boost/geometry/index/detail/algorithms/margin.hpp>
@@ -188,7 +190,7 @@ struct choose_split_axis_and_index_for_corner
 //template <typename Box, size_t AxisIndex, typename ElementIndexableTag>
 //struct choose_split_axis_and_index_for_axis
 //{
-//    BOOST_MPL_ASSERT_MSG(false, NOT_IMPLEMENTED_FOR_THIS_TAG, (ElementIndexableTag));
+//    BOOST_GEOMETRY_STATIC_ASSERT_FALSE("Not implemented for this Tag type.", ElementIndexableTag);
 //};
 
 template <typename Box, size_t AxisIndex, typename ElementIndexableTag>

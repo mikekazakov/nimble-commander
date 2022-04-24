@@ -8,5 +8,8 @@
 =============================================================================*/
 #ifndef BOOST_SPIRIT_INCLUDE_PHOENIX_FUSION
 #define BOOST_SPIRIT_INCLUDE_PHOENIX_FUSION
+#include <boost/config/header_deprecated.hpp>
+BOOST_HEADER_DEPRECATED("<boost/phoenix/fusion.hpp>")
+
 #include <boost/phoenix/fusion.hpp>
 #endif

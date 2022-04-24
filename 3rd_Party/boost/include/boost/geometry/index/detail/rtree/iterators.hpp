@@ -4,12 +4,20 @@
 //
 // Copyright (c) 2011-2015 Adam Wulkiewicz, Lodz, Poland.
 //
+// This file was modified by Oracle on 2021.
+// Modifications copyright (c) 2021 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+//
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_GEOMETRY_INDEX_DETAIL_RTREE_ITERATORS_HPP
 #define BOOST_GEOMETRY_INDEX_DETAIL_RTREE_ITERATORS_HPP
+
+#include <iterator>
+
+#include <boost/geometry/index/detail/rtree/visitors/iterator.hpp>
 
 namespace boost { namespace geometry { namespace index { namespace detail { namespace rtree { namespace iterators {
 

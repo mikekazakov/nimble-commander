@@ -3,8 +3,8 @@
 // Copyright (c) 2011-2015 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2015, 2017, 2018, 2019.
-// Modifications copyright (c) 2015-2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015-2020.
+// Modifications copyright (c) 2015-2020 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -16,14 +16,19 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_PARTITION_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_PARTITION_HPP
 
-#include <cstddef>
-#include <vector>
-#include <boost/range.hpp>
-#include <boost/type_traits/is_integral.hpp>
 
+#include <cstddef>
+#include <type_traits>
+#include <vector>
+
+#include <boost/range/begin.hpp>
+#include <boost/range/empty.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/size.hpp>
+
+#include <boost/geometry/algorithms/assign.hpp>
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/coordinate_type.hpp>
-#include <boost/geometry/algorithms/assign.hpp>
 
 
 namespace boost { namespace geometry
@@ -32,7 +37,7 @@ namespace boost { namespace geometry
 namespace detail { namespace partition
 {
 
-template <typename T, bool IsIntegral = boost::is_integral<T>::value>
+template <typename T, bool IsIntegral = std::is_integral<T>::value>
 struct divide_interval
 {
     static inline T apply(T const& mi, T const& ma)

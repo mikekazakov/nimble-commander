@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2014 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014, 2017, 2018, 2019, 2020.
-// Modifications copyright (c) 2014-2020 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2021.
+// Modifications copyright (c) 2014-2021 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -16,21 +16,25 @@
 #define BOOST_GEOMETRY_ALGORITHMS_UNION_HPP
 
 
-#include <boost/range/metafunctions.hpp>
-
-#include <boost/geometry/core/point_order.hpp>
-#include <boost/geometry/core/reverse_dispatch.hpp>
-#include <boost/geometry/geometries/concepts/check.hpp>
-#include <boost/geometry/algorithms/not_implemented.hpp>
-#include <boost/geometry/algorithms/detail/overlay/overlay.hpp>
-#include <boost/geometry/policies/robustness/get_rescale_policy.hpp>
-#include <boost/geometry/strategies/default_strategy.hpp>
-#include <boost/geometry/util/range.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/algorithms/detail/intersection/multi.hpp>
 #include <boost/geometry/algorithms/detail/overlay/intersection_insert.hpp>
 #include <boost/geometry/algorithms/detail/overlay/linear_linear.hpp>
+#include <boost/geometry/algorithms/detail/overlay/overlay.hpp>
 #include <boost/geometry/algorithms/detail/overlay/pointlike_pointlike.hpp>
+#include <boost/geometry/algorithms/not_implemented.hpp>
+#include <boost/geometry/core/point_order.hpp>
+#include <boost/geometry/core/reverse_dispatch.hpp>
+#include <boost/geometry/geometries/concepts/check.hpp>
+#include <boost/geometry/policies/robustness/get_rescale_policy.hpp>
+#include <boost/geometry/strategies/default_strategy.hpp>
+#include <boost/geometry/strategies/detail.hpp>
+#include <boost/geometry/strategies/relate/cartesian.hpp>
+#include <boost/geometry/strategies/relate/geographic.hpp>
+#include <boost/geometry/strategies/relate/spherical.hpp>
+#include <boost/geometry/util/range.hpp>
+
 
 
 namespace boost { namespace geometry
@@ -349,9 +353,9 @@ inline OutputIterator union_insert(Geometry1 const& geometry1,
     concepts::check<Geometry2 const>();
     geometry::detail::output_geometry_concept_check<GeometryOut>::apply();
 
-    typename strategy::intersection::services::default_strategy
+    typename strategies::relate::services::default_strategy
         <
-            typename cs_tag<GeometryOut>::type
+            Geometry1, Geometry2
         >::type strategy;
 
     typedef typename geometry::rescale_overlay_policy_type
@@ -377,15 +381,14 @@ inline OutputIterator union_insert(Geometry1 const& geometry1,
 
 namespace resolve_strategy {
 
+template
+<
+    typename Strategy,
+    bool IsUmbrella = strategies::detail::is_umbrella_strategy<Strategy>::value
+>
 struct union_
 {
-    template
-    <
-        typename Geometry1,
-        typename Geometry2,
-        typename Collection,
-        typename Strategy
-    >
+    template <typename Geometry1, typename Geometry2, typename Collection>
     static inline void apply(Geometry1 const& geometry1,
                              Geometry2 const& geometry2,
                              Collection & output_collection,
@@ -414,25 +417,46 @@ struct union_
                     geometry::detail::output_geometry_back_inserter(output_collection),
                     strategy);
     }
+};
 
-    template
-    <
-        typename Geometry1,
-        typename Geometry2,
-        typename Collection
-    >
+template <typename Strategy>
+struct union_<Strategy, false>
+{
+    template <typename Geometry1, typename Geometry2, typename Collection>
+    static inline void apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Collection & output_collection,
+                             Strategy const& strategy)
+    {
+        using strategies::relate::services::strategy_converter;
+
+        union_
+            <
+                decltype(strategy_converter<Strategy>::get(strategy))
+            >::apply(geometry1, geometry2, output_collection,
+                     strategy_converter<Strategy>::get(strategy));
+    }
+};
+
+template <>
+struct union_<default_strategy, false>
+{
+    template <typename Geometry1, typename Geometry2, typename Collection>
     static inline void apply(Geometry1 const& geometry1,
                              Geometry2 const& geometry2,
                              Collection & output_collection,
                              default_strategy)
     {
-        typedef typename strategy::relate::services::default_strategy
+        typedef typename strategies::relate::services::default_strategy
             <
                 Geometry1,
                 Geometry2
             >::type strategy_type;
 
-        apply(geometry1, geometry2, output_collection, strategy_type());
+        union_
+            <
+                strategy_type
+            >::apply(geometry1, geometry2, output_collection, strategy_type());
     }
 };
 
@@ -462,9 +486,10 @@ struct union_
                     >::type
             >::apply();
 
-        resolve_strategy::union_::apply(geometry1, geometry2,
-                                        output_collection,
-                                        strategy);
+        resolve_strategy::union_
+            <
+                Strategy
+            >::apply(geometry1, geometry2, output_collection, strategy);
     }
 };
 

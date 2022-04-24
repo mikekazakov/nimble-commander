@@ -21,29 +21,29 @@ template<
     typename UV
 >
 struct exception_policy {
-    static constexpr void on_arithmetic_error(
+    constexpr static void on_arithmetic_error(
         const safe_numerics_error & e,
         const char * msg
     ){
-        AE(e, msg);
+        AE()(e, msg);
     }
-    static constexpr void on_implementation_defined_behavior(
+    constexpr static void on_implementation_defined_behavior(
         const safe_numerics_error & e,
         const char * msg
     ){
-        IDB(e, msg);
+        IDB()(e, msg);
     }
-    static constexpr void on_undefined_behavior(
+    constexpr static void on_undefined_behavior(
         const safe_numerics_error & e,
         const char * msg
     ){
-        UB(e, msg);
+        UB()(e, msg);
     }
-    static constexpr void on_uninitialized_value(
+    constexpr static void on_uninitialized_value(
         const safe_numerics_error & e,
         const char * msg
     ){
-        UV(e, msg);
+        UV()(e, msg);
     }
 };
 
@@ -52,32 +52,37 @@ struct exception_policy {
 
 // ignore any error and just return.
 struct ignore_exception {
-    constexpr ignore_exception(const safe_numerics_error &, const char * ){}
+    constexpr ignore_exception() = default;
+    constexpr void operator () (
+        const boost::safe_numerics::safe_numerics_error &,
+        const char *
+    ){}
 };
 
 // emit compile time error if this is invoked.
 struct trap_exception {
-#if 1
-    //constexpr trap_exception(const safe_numerics_error & e, const char * );
-    trap_exception() = delete;
-    trap_exception(const trap_exception &) = delete;
-    trap_exception(trap_exception &&) = delete;
-#endif
+    constexpr trap_exception() = default;
+    // error will occur on operator call.
+    // hopefully this will display arguments
 };
 
 // If an exceptional condition is detected at runtime throw the exception.
 struct throw_exception {
+    constexpr throw_exception() = default;
     #ifndef BOOST_NO_EXCEPTIONS
-    throw_exception(const safe_numerics_error & e, const char * message){
+    void operator()(
+        const safe_numerics_error & e,
+        const char * message
+    ){
         throw std::system_error(std::error_code(e), message);
     }
     #else
-    trap_exception(const safe_numerics_error & e, const char * message);
+    constexpr trap_exception()(const safe_numerics_error & e, const char * message);
     #endif
 };
 
 // given an error code - return the action code which it corresponds to.
-constexpr safe_numerics_actions
+constexpr inline safe_numerics_actions
 make_safe_numerics_action(const safe_numerics_error & e){
     // we can't use standard algorithms since we want this to be constexpr
     // this brute force solution is simple and pretty fast anyway
@@ -107,65 +112,6 @@ make_safe_numerics_action(const safe_numerics_error & e){
     //include to suppress bogus warning
     return safe_numerics_actions::no_action;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// compile time error dispatcher
-
-// note slightly baroque implementation of a compile time switch statement
-// which instatiates only those cases which are actually invoked.  This is
-// motivated to implement the "trap" functionality which will generate a syntax
-// error if and only a function which might fail is called.
-
-namespace dispatch_switch {
-
-    template<class EP, safe_numerics_actions>
-    struct dispatch_case {};
-
-    template<class EP>
-    struct dispatch_case<EP, safe_numerics_actions::uninitialized_value> {
-        constexpr static void invoke(const safe_numerics_error & e, const char * msg){
-            EP::on_uninitialized_value(e, msg);
-        }
-    };
-    template<class EP>
-    struct dispatch_case<EP, safe_numerics_actions::arithmetic_error> {
-        constexpr static void invoke(const safe_numerics_error & e, const char * msg){
-            EP::on_arithmetic_error(e, msg);
-        }
-    };
-    template<class EP>
-    struct dispatch_case<EP, safe_numerics_actions::implementation_defined_behavior> {
-        constexpr static void invoke(const safe_numerics_error & e, const char * msg){
-            EP::on_implementation_defined_behavior(e, msg);
-        }
-    };
-    template<class EP>
-    struct dispatch_case<EP, safe_numerics_actions::undefined_behavior> {
-        constexpr static void invoke(const safe_numerics_error & e, const char * msg){
-            EP::on_undefined_behavior(e, msg);
-        }
-    };
-
-} // dispatch_switch
-
-template<class EP, safe_numerics_error E>
-constexpr void
-dispatch(const char * msg){
-    constexpr safe_numerics_actions a = make_safe_numerics_action(E);
-    dispatch_switch::dispatch_case<EP, a>::invoke(E, msg);
-}
-
-template<class EP, class R>
-class dispatch_and_return {
-public:
-    template<safe_numerics_error E>
-    constexpr static checked_result<R> invoke(
-        char const * const & msg
-    ) {
-        dispatch<EP, E>(msg);
-        return checked_result<R>(E, msg);
-    }
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // pre-made error policy classes

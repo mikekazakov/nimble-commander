@@ -4,6 +4,10 @@
 //
 // Copyright (c) 2011-2017 Adam Wulkiewicz, Lodz, Poland.
 //
+// This file was modified by Oracle on 2020-2021.
+// Modifications copyright (c) 2020-2021 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+//
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -12,8 +16,11 @@
 #define BOOST_GEOMETRY_INDEX_DETAIL_ALGORITHMS_PATH_INTERSECTION_HPP
 
 
+#include <boost/geometry/core/static_assert.hpp>
+
 #include <boost/geometry/index/detail/algorithms/segment_intersection.hpp>
 
+#include <boost/geometry/strategies/default_distance_result.hpp>
 #include <boost/geometry/strategies/default_length_result.hpp>
 
 
@@ -24,7 +31,9 @@ namespace dispatch {
 template <typename Indexable, typename Geometry, typename IndexableTag, typename GeometryTag>
 struct path_intersection
 {
-    BOOST_MPL_ASSERT_MSG((false), NOT_IMPLEMENTED_FOR_THIS_GEOMETRY_OR_INDEXABLE, (path_intersection));
+    BOOST_GEOMETRY_STATIC_ASSERT_FALSE(
+        "Not implemented for this Geometry or Indexable.",
+        Indexable, Geometry, IndexableTag, GeometryTag);
 };
 
 // TODO: FP type must be used as a relative distance type!

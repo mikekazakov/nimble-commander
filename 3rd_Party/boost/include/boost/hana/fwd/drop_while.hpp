@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Drop elements from an iterable up to, but excluding, the first
     //! element for which the `predicate` is not satisfied.
     //! @ingroup group-Iterable
@@ -53,8 +53,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr auto operator()(Xs&& xs, Pred&& pred) const;
     };
 
-    constexpr drop_while_t drop_while{};
+    BOOST_HANA_INLINE_VARIABLE constexpr drop_while_t drop_while{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWDDROP_WHILE_HPP

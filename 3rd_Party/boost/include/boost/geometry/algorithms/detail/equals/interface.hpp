@@ -5,9 +5,8 @@
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 // Copyright (c) 2014-2015 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2014, 2015, 2016, 2017, 2019.
-// Modifications copyright (c) 2014-2019 Oracle and/or its affiliates.
-
+// This file was modified by Oracle on 2014-2021.
+// Modifications copyright (c) 2014-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 
@@ -30,13 +29,16 @@
 
 #include <boost/geometry/core/coordinate_dimension.hpp>
 #include <boost/geometry/core/reverse_dispatch.hpp>
+#include <boost/geometry/core/tag.hpp>
+#include <boost/geometry/core/tag_cast.hpp>
 
 #include <boost/geometry/geometries/concepts/check.hpp>
 
 #include <boost/geometry/algorithms/not_implemented.hpp>
 
 #include <boost/geometry/strategies/default_strategy.hpp>
-#include <boost/geometry/strategies/relate.hpp>
+#include <boost/geometry/strategies/detail.hpp>
+#include <boost/geometry/strategies/relate/services.hpp>
 
 
 namespace boost { namespace geometry
@@ -94,9 +96,14 @@ struct equals<Geometry1, Geometry2, Tag1, Tag2, CastedTag1, CastedTag2, Dimensio
 namespace resolve_strategy
 {
 
+template
+<
+    typename Strategy,
+    bool IsUmbrella = strategies::detail::is_umbrella_strategy<Strategy>::value
+>
 struct equals
 {
-    template <typename Geometry1, typename Geometry2, typename Strategy>
+    template <typename Geometry1, typename Geometry2>
     static inline bool apply(Geometry1 const& geometry1,
                              Geometry2 const& geometry2,
                              Strategy const& strategy)
@@ -106,13 +113,35 @@ struct equals
                 Geometry1, Geometry2
             >::apply(geometry1, geometry2, strategy);
     }
+};
 
+template <typename Strategy>
+struct equals<Strategy, false>
+{
+    template <typename Geometry1, typename Geometry2>
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        using strategies::relate::services::strategy_converter;
+
+        return dispatch::equals
+            <
+                Geometry1, Geometry2
+            >::apply(geometry1, geometry2,
+                     strategy_converter<Strategy>::get(strategy));
+    }
+};
+
+template <>
+struct equals<default_strategy, false>
+{
     template <typename Geometry1, typename Geometry2>
     static inline bool apply(Geometry1 const& geometry1,
                              Geometry2 const& geometry2,
                              default_strategy)
     {
-        typedef typename strategy::relate::services::default_strategy
+        typedef typename strategies::relate::services::default_strategy
             <
                 Geometry1,
                 Geometry2
@@ -145,7 +174,9 @@ struct equals
             >();
 
         return resolve_strategy::equals
-                ::apply(geometry1, geometry2, strategy);
+            <
+                Strategy
+            >::apply(geometry1, geometry2, strategy);
     }
 };
 

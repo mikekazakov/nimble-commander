@@ -8,7 +8,9 @@
 
 #include <boost/process/detail/handler_base.hpp>
 #include <boost/process/detail/windows/async_handler.hpp>
+#include <boost/process/detail/windows/is_running.hpp>
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/post.hpp>
 #include <boost/asio/windows/object_handle.hpp>
 #include <boost/winapi/process.hpp>
 #include <boost/winapi/handles.hpp>
@@ -114,6 +116,15 @@ struct io_context_ref : boost::process::detail::handler_base
 
         wait_handler wh(std::move(funcs), ios, process_handle, exec.exit_status);
 
+        ::boost::winapi::DWORD_ code;
+        if(::boost::winapi::GetExitCodeProcess(process_handle, &code)
+            && code != still_active)
+        {
+            ::boost::asio::post(wh.handle->get_executor(), std::move(wh));
+            return;
+        }
+
+
         auto handle_p = wh.handle.get();
         handle_p->async_wait(std::move(wh));
     }
@@ -130,12 +141,13 @@ struct io_context_ref : boost::process::detail::handler_base
                      boost::asio::io_context & ios, void * handle,
                      const std::shared_ptr<std::atomic<int>> &exit_status)
                 : funcs(std::move(funcs)),
-                  handle(new boost::asio::windows::object_handle(ios.get_executor(), handle)),
+                  handle(new boost::asio::windows::object_handle(
+                          asio::prefer(ios.get_executor(), asio::execution::outstanding_work.tracked), handle)),
                   exit_status(exit_status)
         {
 
         }
-        void operator()(const boost::system::error_code & ec_in)
+        void operator()(const boost::system::error_code & ec_in = {})
         {
             std::error_code ec;
             if (ec_in)

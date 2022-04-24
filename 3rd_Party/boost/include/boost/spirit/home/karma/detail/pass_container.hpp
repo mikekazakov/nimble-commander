@@ -26,8 +26,6 @@
 #include <boost/range/iterator_range_core.hpp>
 #include <boost/fusion/include/deduce_sequence.hpp>
 
-#include <boost/mpl/print.hpp>
-
 namespace boost { namespace spirit { namespace karma { namespace detail
 {
     // Helper meta-function allowing to evaluate weak substitutability and

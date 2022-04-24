@@ -1,8 +1,8 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014, Oracle and/or its affiliates.
-
+// Copyright (c) 2014-2021, Oracle and/or its affiliates.
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -10,8 +10,9 @@
 #ifndef BOOST_GEOMETRY_ITERATORS_CONCATENATE_ITERATOR_HPP
 #define BOOST_GEOMETRY_ITERATORS_CONCATENATE_ITERATOR_HPP
 
-#include <boost/mpl/assert.hpp>
-#include <boost/type_traits/is_convertible.hpp>
+
+#include <type_traits>
+
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/iterator_categories.hpp>
 
@@ -46,7 +47,7 @@ public:
     typedef Iterator2 second_iterator_type;
 
     // default constructor
-    concatenate_iterator() {}
+    concatenate_iterator() = default;
 
     // for begin
     concatenate_iterator(Iterator1 it1, Iterator1 end1,
@@ -64,7 +65,13 @@ public:
         typename OtherIt1,
         typename OtherIt2,
         typename OtherValue,
-        typename OtherReference
+        typename OtherReference,
+        std::enable_if_t
+            <
+                std::is_convertible<OtherIt1, Iterator1>::value
+                && std::is_convertible<OtherIt2, Iterator2>::value,
+                int
+            > = 0
     >
     concatenate_iterator(concatenate_iterator
                          <
@@ -77,15 +84,11 @@ public:
         , m_end1(other.m_end1)
         , m_begin2(other.m_begin2)
         , m_it2(other.m_it2)
-    {
-        static const bool are_conv
-            = boost::is_convertible<OtherIt1, Iterator1>::value
-           && boost::is_convertible<OtherIt2, Iterator2>::value;
+    {}
 
-        BOOST_MPL_ASSERT_MSG((are_conv),
-                             NOT_CONVERTIBLE,
-                             (types<OtherIt1, OtherIt2>));
-    }
+    concatenate_iterator(concatenate_iterator const& other) = default;
+
+    concatenate_iterator& operator=(concatenate_iterator const& other) = default;
 
 private:
     friend class boost::iterator_core_access;

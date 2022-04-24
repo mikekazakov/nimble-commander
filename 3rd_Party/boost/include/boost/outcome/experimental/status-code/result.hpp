@@ -1,5 +1,5 @@
 /* A partial result based on std::variant and proposed std::error
-(C) 2020 Niall Douglas <http://www.nedproductions.biz/> (11 commits)
+(C) 2020-2022 Niall Douglas <http://www.nedproductions.biz/> (11 commits)
 File Created: Jan 2020
 
 
@@ -153,26 +153,26 @@ public:
   ~result() = default;
 
   //! Implicit result converting move constructor
-  template <class U, std::enable_if_t<std::is_convertible_v<U, T>, bool> = true>
-  constexpr result(result<U> &&o, _implicit_converting_constructor_tag = {}) noexcept(std::is_nothrow_constructible_v<T, U>)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class U)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(std::is_convertible_v<U, T>)) constexpr result(result<U> &&o, _implicit_converting_constructor_tag = {}) noexcept(std::is_nothrow_constructible_v<T, U>)
       : _base(std::move(o))
   {
   }
   //! Implicit result converting copy constructor
-  template <class U, std::enable_if_t<std::is_convertible_v<U, T>, bool> = true>
-  constexpr result(const result<U> &o, _implicit_converting_constructor_tag = {}) noexcept(std::is_nothrow_constructible_v<T, U>)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class U)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(std::is_convertible_v<U, T>)) constexpr result(const result<U> &o, _implicit_converting_constructor_tag = {}) noexcept(std::is_nothrow_constructible_v<T, U>)
       : _base(o)
   {
   }
   //! Explicit result converting move constructor
-  template <class U, std::enable_if_t<std::is_constructible_v<T, U>, bool> = true>
-  constexpr explicit result(result<U> &&o, _explicit_converting_constructor_tag = {}) noexcept(std::is_nothrow_constructible_v<T, U>)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class U)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(std::is_constructible_v<T, U>)) constexpr explicit result(result<U> &&o, _explicit_converting_constructor_tag = {}) noexcept(std::is_nothrow_constructible_v<T, U>)
       : _base(std::move(o))
   {
   }
   //! Explicit result converting copy constructor
-  template <class U, std::enable_if_t<std::is_constructible_v<T, U>, bool> = true>
-  constexpr explicit result(const result<U> &o, _explicit_converting_constructor_tag = {}) noexcept(std::is_nothrow_constructible_v<T, U>)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class U)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(std::is_constructible_v<T, U>)) constexpr explicit result(const result<U> &o, _explicit_converting_constructor_tag = {}) noexcept(std::is_nothrow_constructible_v<T, U>)
       : _base(o)
   {
   }
@@ -187,36 +187,31 @@ public:
   }
 
   //! Implicit in-place converting error constructor
-  template <class Arg1, class Arg2, class... Args,                                                                                                    //
-            std::enable_if_t<!(std::is_constructible_v<value_type, Arg1, Arg2, Args...> && std::is_constructible_v<error_type, Arg1, Arg2, Args...>)  //
-                             &&std::is_constructible_v<error_type, Arg1, Arg2, Args...>,
-                             bool> = true,
-            long = 5>
-  constexpr result(Arg1 &&arg1, Arg2 &&arg2, Args &&... args) noexcept(std::is_nothrow_constructible_v<error_type, Arg1, Arg2, Args...>)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class Arg1, class Arg2, class... Args, long = 5)                                                                                              //
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(!(std::is_constructible_v<value_type, Arg1, Arg2, Args...> && std::is_constructible_v<error_type, Arg1, Arg2, Args...>)  //
+                                              &&std::is_constructible_v<error_type, Arg1, Arg2, Args...>))
+  constexpr result(Arg1 &&arg1, Arg2 &&arg2, Args &&...args) noexcept(std::is_nothrow_constructible_v<error_type, Arg1, Arg2, Args...>)
       : _base(std::in_place_index<0>, std::forward<Arg1>(arg1), std::forward<Arg2>(arg2), std::forward<Args>(args)...)
   {
   }
 
   //! Implicit in-place converting value constructor
-  template <class Arg1, class Arg2, class... Args,                                                                                                    //
-            std::enable_if_t<!(std::is_constructible_v<value_type, Arg1, Arg2, Args...> && std::is_constructible_v<error_type, Arg1, Arg2, Args...>)  //
-                             &&std::is_constructible_v<value_type, Arg1, Arg2, Args...>,
-                             bool> = true,
-            int = 5>
-  constexpr result(Arg1 &&arg1, Arg2 &&arg2, Args &&... args) noexcept(std::is_nothrow_constructible_v<value_type, Arg1, Arg2, Args...>)
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class Arg1, class Arg2, class... Args, int = 5)                                                                                               //
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(!(std::is_constructible_v<value_type, Arg1, Arg2, Args...> && std::is_constructible_v<error_type, Arg1, Arg2, Args...>)  //
+                                              &&std::is_constructible_v<value_type, Arg1, Arg2, Args...>))
+  constexpr result(Arg1 &&arg1, Arg2 &&arg2, Args &&...args) noexcept(std::is_nothrow_constructible_v<value_type, Arg1, Arg2, Args...>)
       : _base(std::in_place_index<1>, std::forward<Arg1>(arg1), std::forward<Arg2>(arg2), std::forward<Args>(args)...)
   {
   }
 
   //! Implicit construction from any type where an ADL discovered `make_status_code(T, Args ...)` returns a `status_code`.
-  template <class U, class... Args,                                                                            //
-            class MakeStatusCodeResult = typename detail::safe_get_make_status_code_result<U, Args...>::type,  // Safe ADL lookup of make_status_code(), returns void if not found
-            typename std::enable_if<!std::is_same<typename std::decay<U>::type, result>::value                 // not copy/move of self
-                                    && !std::is_same<typename std::decay<U>::type, value_type>::value          // not copy/move of value type
-                                    && is_status_code<MakeStatusCodeResult>::value                             // ADL makes a status code
-                                    && std::is_constructible<error_type, MakeStatusCodeResult>::value,         // ADLed status code is compatible
-                                    bool>::type = true>
-  constexpr result(U &&v, Args &&... args) noexcept(noexcept(make_status_code(std::declval<U>(), std::declval<Args>()...)))  // NOLINT
+  BOOST_OUTCOME_SYSTEM_ERROR2_TEMPLATE(class U, class... Args,                                                                            //
+                         class MakeStatusCodeResult = typename detail::safe_get_make_status_code_result<U, Args...>::type)  // Safe ADL lookup of make_status_code(), returns void if not found
+  BOOST_OUTCOME_SYSTEM_ERROR2_TREQUIRES(BOOST_OUTCOME_SYSTEM_ERROR2_TPRED(!std::is_same<typename std::decay<U>::type, result>::value                    // not copy/move of self
+                                              && !std::is_same<typename std::decay<U>::type, value_type>::value             // not copy/move of value type
+                                              && is_status_code<MakeStatusCodeResult>::value                                // ADL makes a status code
+                                              && std::is_constructible<error_type, MakeStatusCodeResult>::value))           // ADLed status code is compatible
+  constexpr result(U &&v, Args &&...args) noexcept(noexcept(make_status_code(std::declval<U>(), std::declval<Args>()...)))  // NOLINT
       : _base(std::in_place_index<0>, make_status_code(static_cast<U &&>(v), static_cast<Args &&>(args)...))
   {
   }
@@ -313,7 +308,7 @@ public:
   }
 
   //! Accesses the value, being UB if none exists
-  constexpr value_type_if_enabled &assume_value() & noexcept
+  constexpr value_type_if_enabled &assume_value() &noexcept
   {
     if(!has_value())
     {
@@ -331,7 +326,7 @@ public:
     return *std::get_if<1>(this);
   }
   //! Accesses the error, being UB if none exists
-  constexpr value_type_if_enabled &&assume_value() && noexcept
+  constexpr value_type_if_enabled &&assume_value() &&noexcept
   {
     if(!has_value())
     {
@@ -350,7 +345,7 @@ public:
   }
 
   //! Accesses the error, being UB if none exists
-  constexpr error_type &assume_error() & noexcept
+  constexpr error_type &assume_error() &noexcept
   {
     if(!has_error())
     {
@@ -368,7 +363,7 @@ public:
     return *std::get_if<0>(this);
   }
   //! Accesses the error, being UB if none exists
-  constexpr error_type &&assume_error() && noexcept
+  constexpr error_type &&assume_error() &&noexcept
   {
     if(!has_error())
     {

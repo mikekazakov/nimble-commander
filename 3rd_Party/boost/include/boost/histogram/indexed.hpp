@@ -11,15 +11,26 @@
 #include <boost/config.hpp> // BOOST_ATTRIBUTE_NODISCARD
 #include <boost/histogram/axis/traits.hpp>
 #include <boost/histogram/detail/axes.hpp>
+#include <boost/histogram/detail/detect.hpp>
 #include <boost/histogram/detail/iterator_adaptor.hpp>
 #include <boost/histogram/detail/operators.hpp>
 #include <boost/histogram/fwd.hpp>
+#include <boost/histogram/unsafe_access.hpp>
 #include <iterator>
 #include <type_traits>
-#include <utility>
+#include <utility> // std::get
 
 namespace boost {
 namespace histogram {
+
+namespace detail {
+using std::get;
+
+template <std::size_t I, class T>
+auto get(T&& t) -> decltype(t[0]) {
+  return t[I];
+}
+} // namespace detail
 
 /** Coverage mode of the indexed range generator.
 
@@ -32,8 +43,7 @@ enum class coverage {
 
 /** Input iterator range over histogram bins with multi-dimensional index.
 
-  The iterator returned by begin() can only be incremented. begin() may only be called
-  once, calling it a second time returns the end() iterator. If several copies of the
+  The iterator returned by begin() can only be incremented. If several copies of the
   input iterators exist, the other copies become invalid if one of them is incremented.
 */
 template <class Histogram>
@@ -44,14 +54,19 @@ private:
       detail::buffer_size<typename std::decay_t<histogram_type>::axes_type>::value;
 
 public:
+  /// implementation detail
   using value_iterator = std::conditional_t<std::is_const<histogram_type>::value,
                                             typename histogram_type::const_iterator,
                                             typename histogram_type::iterator>;
+  /// implementation detail
   using value_reference = typename std::iterator_traits<value_iterator>::reference;
+  /// implementation detail
   using value_type = typename std::iterator_traits<value_iterator>::value_type;
 
   class iterator;
-  using range_iterator [[deprecated("use iterator instead")]] = iterator; ///< deprecated
+  using range_iterator [[deprecated("use iterator instead; "
+                                    "range_iterator will be removed in boost-1.80")]] =
+      iterator; ///< deprecated
 
   /** Lightweight view to access value and index of current cell.
 
@@ -71,7 +86,8 @@ public:
 
     public:
       using const_reference = const axis::index_type&;
-      using reference [[deprecated("use const_reference instead")]] =
+      using reference [[deprecated("use const_reference instead; "
+                                   "reference will be removed in boost-1.80")]] =
           const_reference; ///< deprecated
 
       /// implementation detail
@@ -304,31 +320,36 @@ public:
   };
 
   indexed_range(histogram_type& hist, coverage cov)
+      : indexed_range(hist, make_range(hist, cov)) {}
+
+  template <class Iterable, class = detail::requires_iterable<Iterable>>
+  indexed_range(histogram_type& hist, Iterable&& range)
       : begin_(hist.begin(), hist), end_(hist.end(), hist) {
-    begin_.indices_.hist_->for_each_axis([ca = begin_.indices_.begin(), cov,
+    auto r_begin = std::begin(range);
+    assert(std::distance(r_begin, std::end(range)) == static_cast<int>(hist.rank()));
+
+    begin_.indices_.hist_->for_each_axis([ca = begin_.indices_.begin(), r_begin,
                                           stride = std::size_t{1},
                                           this](const auto& a) mutable {
-      using opt = axis::traits::get_options<std::decay_t<decltype(a)>>;
-      constexpr axis::index_type under = opt::test(axis::option::underflow);
-      constexpr axis::index_type over = opt::test(axis::option::overflow);
       const auto size = a.size();
 
-      // -1 if underflow and cover all, else 0
-      ca->begin = cov == coverage::all ? -under : 0;
-      // size + 1 if overflow and cover all, else size
-      ca->end = cov == coverage::all ? size + over : size;
+      using opt = axis::traits::get_options<std::decay_t<decltype(a)>>;
+      constexpr axis::index_type start = opt::test(axis::option::underflow) ? -1 : 0;
+      const auto stop = size + (opt::test(axis::option::overflow) ? 1 : 0);
+
+      ca->begin = std::max(start, detail::get<0>(*r_begin));
+      ca->end = std::min(stop, detail::get<1>(*r_begin));
+      assert(ca->begin <= ca->end);
       ca->idx = ca->begin;
 
-      // if axis has *flow and coverage::all OR axis has no *flow:
-      //   begin + under == 0, size + over - end == 0
-      // if axis has *flow and coverage::inner:
-      //   begin + under == 1, size + over - end == 1
-      ca->begin_skip = static_cast<std::size_t>(ca->begin + under) * stride;
-      ca->end_skip = static_cast<std::size_t>(size + over - ca->end) * stride;
+      ca->begin_skip = static_cast<std::size_t>(ca->begin - start) * stride;
+      ca->end_skip = static_cast<std::size_t>(stop - ca->end) * stride;
       begin_.iter_ += ca->begin_skip;
 
-      stride *= size + under + over;
+      stride *= stop - start;
+
       ++ca;
+      ++r_begin;
     });
   }
 
@@ -336,6 +357,22 @@ public:
   iterator end() noexcept { return end_; }
 
 private:
+  auto make_range(histogram_type& hist, coverage cov) {
+    using range_item = std::array<axis::index_type, 2>;
+    auto b = detail::make_stack_buffer<range_item>(unsafe_access::axes(hist));
+    hist.for_each_axis([cov, it = std::begin(b)](const auto& a) mutable {
+      (*it)[0] = 0;
+      (*it)[1] = a.size();
+      if (cov == coverage::all) {
+        (*it)[0] -= 1;
+        (*it)[1] += 1;
+      } else
+        assert(cov == coverage::inner);
+      ++it;
+    });
+    return b;
+  }
+
   iterator begin_, end_;
 };
 
@@ -364,6 +401,34 @@ template <class Histogram>
 auto indexed(Histogram&& hist, coverage cov = coverage::inner) {
   return indexed_range<std::remove_reference_t<Histogram>>{std::forward<Histogram>(hist),
                                                            cov};
+}
+
+/** Generates and indexed range <a
+  href="https://en.cppreference.com/w/cpp/named_req/ForwardIterator">forward iterators</a>
+  over a rectangular region of histogram cells.
+
+  Use this in a range-based for loop. Example:
+  ```
+  auto hist = make_histogram(axis::integer<>(0, 4), axis::integer<>(2, 6));
+  axis::index_type range[2] = {{1, 3}, {0, 2}};
+  for (auto&& x : indexed(hist, range)) { ... }
+  ```
+  This skips the first and last index of the first axis, and the last two indices of the
+  second.
+
+  @returns indexed_range
+
+  @param hist  Reference to the histogram.
+  @param range Iterable over items with two axis::index_type values, which mark the
+               begin and end index of each axis. The length of the iterable must be
+               equal to the rank of the histogram. The begin index must be smaller than
+               the end index. Index ranges wider than the actual range are reduced to
+               the actual range including underflow and overflow indices.
+*/
+template <class Histogram, class Iterable, class = detail::requires_iterable<Iterable>>
+auto indexed(Histogram&& hist, Iterable&& range) {
+  return indexed_range<std::remove_reference_t<Histogram>>{std::forward<Histogram>(hist),
+                                                           std::forward<Iterable>(range)};
 }
 
 } // namespace histogram

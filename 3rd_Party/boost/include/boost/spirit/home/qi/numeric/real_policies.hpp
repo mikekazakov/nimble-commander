@@ -79,7 +79,7 @@ namespace boost { namespace spirit { namespace qi
         {
             Iterator save = first;
             if (extract_uint<unused_type, 10, 1, -1>::call(first, last, unused))
-                return std::distance(save, first);
+                return static_cast<std::size_t>(std::distance(save, first));
             return 0;
         }
 

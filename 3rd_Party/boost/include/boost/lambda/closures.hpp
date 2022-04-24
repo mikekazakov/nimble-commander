@@ -11,8 +11,8 @@
     URL: http://spirit.sourceforge.net/
 
 ==============================================================================*/
-#ifndef PHOENIX_CLOSURES_HPP
-#define PHOENIX_CLOSURES_HPP
+#ifndef BOOST_LAMBDA_CLOSURES_HPP
+#define BOOST_LAMBDA_CLOSURES_HPP
 
 ///////////////////////////////////////////////////////////////////////////////
 #include "boost/lambda/core.hpp"

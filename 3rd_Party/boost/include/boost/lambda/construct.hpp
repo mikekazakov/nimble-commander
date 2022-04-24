@@ -16,6 +16,11 @@
 
 #include "boost/type_traits/remove_cv.hpp"
 #include "boost/type_traits/is_pointer.hpp"
+#include "boost/config.hpp"
+
+#if !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) && !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
+#include <utility>
+#endif
 
 namespace boost { 
 namespace lambda {
@@ -28,6 +33,12 @@ template<class T> struct constructor {
 
   template <class U> struct sig { typedef T type; };
 
+#if !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) && !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
+  template <class... Args>
+  T operator()(Args&&... args) const {
+    return T(std::forward<Args>(args)...);
+  }
+#else
   T operator()() const {
     return T();
   }
@@ -81,6 +92,7 @@ template<class T> struct constructor {
   T operator()(A1& a1, A2& a2, A3& a3, A4& a4, A5& a5, A6& a6, A7& a7, A8& a8, A9& a9, A10& a10) const {
     return T(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
   }
+#endif
 
 };
 
@@ -137,6 +149,12 @@ template<class T> struct new_ptr {
 
   template <class U> struct sig { typedef T* type; };  
 
+#if !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) && !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
+  template <class... Args>
+  T* operator()(Args&&... args) const {
+    return new T(std::forward<Args>(args)...);
+  }
+#else
   T* operator()() const {
     return new T();
   }
@@ -190,6 +208,7 @@ template<class T> struct new_ptr {
   T* operator()(A1& a1, A2& a2, A3& a3, A4& a4, A5& a5, A6& a6, A7& a7, A8& a8, A9& a9, A10& a10) const {
     return new T(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
   }
+#endif
 
 };
 

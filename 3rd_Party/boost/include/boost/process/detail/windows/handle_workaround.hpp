@@ -12,7 +12,7 @@
 //#define BOOST_USE_WINDOWS_H 1
 
 #if defined( BOOST_USE_WINDOWS_H )
-#include <Winternl.h>
+#include <winternl.h>
 #endif
 
 
@@ -198,20 +198,20 @@ typedef struct _OBJECT_TYPE_INFORMATION_ {
 
 
 /*
-__kernel_entry NTSTATUS NtQuerySystemInformation(
+NTSTATUS NtQuerySystemInformation(
   IN SYSTEM_INFORMATION_CLASS SystemInformationClass,
   OUT PVOID                   SystemInformation,
   IN ULONG                    SystemInformationLength,
   OUT PULONG                  ReturnLength
 );
  */
-typedef ::boost::winapi::NTSTATUS_ (__kernel_entry *nt_system_query_information_p )(
+typedef ::boost::winapi::NTSTATUS_ (*nt_system_query_information_p )(
         SYSTEM_INFORMATION_CLASS_,
         void *,
         ::boost::winapi::ULONG_,
         ::boost::winapi::PULONG_);
 /*
-__kernel_entry NTSYSCALLAPI NTSTATUS NtQueryObject(
+NTSYSCALLAPI NTSTATUS NtQueryObject(
   HANDLE                   Handle,
   OBJECT_INFORMATION_CLASS ObjectInformationClass,
   PVOID                    ObjectInformation,
@@ -220,7 +220,7 @@ __kernel_entry NTSYSCALLAPI NTSTATUS NtQueryObject(
 );
  */
 
-typedef ::boost::winapi::NTSTATUS_ (__kernel_entry *nt_query_object_p )(
+typedef ::boost::winapi::NTSTATUS_ (*nt_query_object_p )(
         ::boost::winapi::HANDLE_,
         OBJECT_INFORMATION_CLASS_,
         void *,

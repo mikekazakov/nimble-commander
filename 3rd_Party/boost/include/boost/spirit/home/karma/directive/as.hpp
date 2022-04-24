@@ -13,6 +13,7 @@
 
 #include <boost/spirit/home/karma/meta_compiler.hpp>
 #include <boost/spirit/home/karma/generator.hpp>
+#include <boost/spirit/home/karma/delimit_out.hpp>
 #include <boost/spirit/home/karma/domain.hpp>
 #include <boost/spirit/home/karma/detail/output_iterator.hpp>
 #include <boost/spirit/home/karma/detail/as.hpp>

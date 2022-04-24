@@ -71,7 +71,7 @@ struct return_type : detail::return_type_impl<T> {};
 
 [heading Input/Output Examples]
 [table
-    [[`T`]                              [`return_type_t<T, std::tuple>`]]
+    [[`T`]                              [`return_type_t<T>`]]
     [[`void()`]                         [`void`]]
     [[`float(*)()`]                     [`float`]]
     [[`const char*(&)()`]               [`const char *`]]

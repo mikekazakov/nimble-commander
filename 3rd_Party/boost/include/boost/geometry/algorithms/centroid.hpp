@@ -5,9 +5,8 @@
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 // Copyright (c) 2014-2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2014, 2015.
-// Modifications copyright (c) 2014-2015 Oracle and/or its affiliates.
-
+// This file was modified by Oracle on 2014-2021.
+// Modifications copyright (c) 2014-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 
@@ -25,12 +24,10 @@
 #include <cstddef>
 
 #include <boost/core/ignore_unused.hpp>
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/size.hpp>
 #include <boost/throw_exception.hpp>
-
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant_fwd.hpp>
 
 #include <boost/geometry/core/closure.hpp>
 #include <boost/geometry/core/cs.hpp>
@@ -41,25 +38,32 @@
 #include <boost/geometry/core/tag_cast.hpp>
 #include <boost/geometry/core/tags.hpp>
 #include <boost/geometry/core/point_type.hpp>
-
-#include <boost/geometry/geometries/concepts/check.hpp>
+#include <boost/geometry/core/visit.hpp>
 
 #include <boost/geometry/algorithms/assign.hpp>
 #include <boost/geometry/algorithms/convert.hpp>
+#include <boost/geometry/algorithms/detail/centroid/translating_transformer.hpp>
 #include <boost/geometry/algorithms/detail/interior_iterator.hpp>
 #include <boost/geometry/algorithms/detail/point_on_border.hpp>
+#include <boost/geometry/algorithms/detail/visit.hpp>
+#include <boost/geometry/algorithms/is_empty.hpp>
 #include <boost/geometry/algorithms/not_implemented.hpp>
-#include <boost/geometry/strategies/centroid.hpp>
+
+#include <boost/geometry/geometries/adapted/boost_variant.hpp> // For backward compatibility
+#include <boost/geometry/geometries/concepts/check.hpp>
+
+#include <boost/geometry/strategies/centroid/cartesian.hpp>
+#include <boost/geometry/strategies/centroid/geographic.hpp>
+#include <boost/geometry/strategies/centroid/spherical.hpp>
 #include <boost/geometry/strategies/concepts/centroid_concept.hpp>
 #include <boost/geometry/strategies/default_strategy.hpp>
-#include <boost/geometry/views/closeable_view.hpp>
+#include <boost/geometry/strategies/detail.hpp>
 
-#include <boost/geometry/util/for_each_coordinate.hpp>
+#include <boost/geometry/util/algorithm.hpp>
 #include <boost/geometry/util/select_coordinate_type.hpp>
+#include <boost/geometry/util/type_traits_std.hpp>
 
-#include <boost/geometry/algorithms/is_empty.hpp>
-
-#include <boost/geometry/algorithms/detail/centroid/translating_transformer.hpp>
+#include <boost/geometry/views/closeable_view.hpp>
 
 
 namespace boost { namespace geometry
@@ -116,56 +120,24 @@ struct centroid_point
     }
 };
 
-template
-<
-    typename Indexed,
-    typename Point,
-    std::size_t Dimension = 0,
-    std::size_t DimensionCount = dimension<Indexed>::type::value
->
-struct centroid_indexed_calculator
-{
-    typedef typename select_coordinate_type
-        <
-            Indexed, Point
-        >::type coordinate_type;
-    static inline void apply(Indexed const& indexed, Point& centroid)
-    {
-        coordinate_type const c1 = get<min_corner, Dimension>(indexed);
-        coordinate_type const c2 = get<max_corner, Dimension>(indexed);
-        coordinate_type m = c1 + c2;
-        coordinate_type const two = 2;
-        m /= two;
-
-        set<Dimension>(centroid, m);
-
-        centroid_indexed_calculator
-            <
-                Indexed, Point, Dimension + 1
-            >::apply(indexed, centroid);
-    }
-};
-
-
-template<typename Indexed, typename Point, std::size_t DimensionCount>
-struct centroid_indexed_calculator<Indexed, Point, DimensionCount, DimensionCount>
-{
-    static inline void apply(Indexed const& , Point& )
-    {
-    }
-};
-
-
 struct centroid_indexed
 {
     template<typename Indexed, typename Point, typename Strategy>
     static inline void apply(Indexed const& indexed, Point& centroid,
             Strategy const&)
     {
-        centroid_indexed_calculator
+        typedef typename select_coordinate_type
             <
                 Indexed, Point
-            >::apply(indexed, centroid);
+            >::type coordinate_type;
+
+        detail::for_each_dimension<Indexed>([&](auto dimension)
+        {
+            coordinate_type const c1 = get<min_corner, dimension>(indexed);
+            coordinate_type const c2 = get<max_corner, dimension>(indexed);
+            coordinate_type const two = 2;
+            set<dimension>(centroid, (c1 + c2) / two);
+        });
     }
 };
 
@@ -201,25 +173,19 @@ inline bool range_ok(Range const& range, Point& centroid)
 /*!
     \brief Calculate the centroid of a Ring or a Linestring.
 */
-template <closure_selector Closure>
 struct centroid_range_state
 {
-    template<typename Ring, typename PointTransformer, typename Strategy>
+    template<typename Ring, typename PointTransformer, typename Strategy, typename State>
     static inline void apply(Ring const& ring,
                              PointTransformer const& transformer,
                              Strategy const& strategy,
-                             typename Strategy::state_type& state)
+                             State& state)
     {
         boost::ignore_unused(strategy);
 
-        typedef typename geometry::point_type<Ring const>::type point_type;
-        typedef typename closeable_view<Ring const, Closure>::type view_type;
-
-        typedef typename boost::range_iterator<view_type const>::type iterator_type;
-
-        view_type view(ring);
-        iterator_type it = boost::begin(view);
-        iterator_type end = boost::end(view);
+        detail::closed_view<Ring const> const view(ring);
+        auto it = boost::begin(view);
+        auto const end = boost::end(view);
 
         if (it != end)
         {
@@ -231,6 +197,7 @@ struct centroid_range_state
                 typename PointTransformer::result_type
                     pt = transformer.apply(*it);
 
+                using point_type = typename geometry::point_type<Ring const>::type;
                 strategy.apply(static_cast<point_type const&>(previous_pt),
                                static_cast<point_type const&>(pt),
                                state);
@@ -241,7 +208,6 @@ struct centroid_range_state
     }
 };
 
-template <closure_selector Closure>
 struct centroid_range
 {
     template<typename Range, typename Point, typename Strategy>
@@ -253,9 +219,13 @@ struct centroid_range
             // prepare translation transformer
             translating_transformer<Range> transformer(*boost::begin(range));
             
-            typename Strategy::state_type state;
-            centroid_range_state<Closure>::apply(range, transformer,
-                                                 strategy, state);
+            typename Strategy::template state_type
+                <
+                    typename geometry::point_type<Range>::type,
+                    Point
+                >::type state;
+
+            centroid_range_state::apply(range, transformer, strategy, state);
             
             if ( strategy.result(state, centroid) )
             {
@@ -277,16 +247,13 @@ struct centroid_range
 */
 struct centroid_polygon_state
 {
-    template<typename Polygon, typename PointTransformer, typename Strategy>
+    template<typename Polygon, typename PointTransformer, typename Strategy, typename State>
     static inline void apply(Polygon const& poly,
                              PointTransformer const& transformer,
                              Strategy const& strategy,
-                             typename Strategy::state_type& state)
+                             State& state)
     {
-        typedef typename ring_type<Polygon>::type ring_type;
-        typedef centroid_range_state<geometry::closure<ring_type>::value> per_ring;
-
-        per_ring::apply(exterior_ring(poly), transformer, strategy, state);
+        centroid_range_state::apply(exterior_ring(poly), transformer, strategy, state);
 
         typename interior_return_type<Polygon const>::type
             rings = interior_rings(poly);
@@ -294,7 +261,7 @@ struct centroid_polygon_state
         for (typename detail::interior_iterator<Polygon const>::type
                 it = boost::begin(rings); it != boost::end(rings); ++it)
         {
-            per_ring::apply(*it, transformer, strategy, state);
+            centroid_range_state::apply(*it, transformer, strategy, state);
         }
     }
 };
@@ -311,7 +278,12 @@ struct centroid_polygon
             translating_transformer<Polygon>
                 transformer(*boost::begin(exterior_ring(poly)));
             
-            typename Strategy::state_type state;
+            typename Strategy::template state_type
+                <
+                    typename geometry::point_type<Polygon>::type,
+                    Point
+                >::type state;
+
             centroid_polygon_state::apply(poly, transformer, strategy, state);
             
             if ( strategy.result(state, centroid) )
@@ -333,11 +305,11 @@ struct centroid_polygon
 */
 struct centroid_multi_point_state
 {
-    template <typename Point, typename PointTransformer, typename Strategy>
+    template <typename Point, typename PointTransformer, typename Strategy, typename State>
     static inline void apply(Point const& point,
                              PointTransformer const& transformer,
                              Strategy const& strategy,
-                             typename Strategy::state_type& state)
+                             State& state)
     {
         boost::ignore_unused(strategy);
         strategy.apply(static_cast<Point const&>(transformer.apply(point)),
@@ -374,7 +346,11 @@ struct centroid_multi
         // prepare translation transformer
         translating_transformer<Multi> transformer(multi);
 
-        typename Strategy::state_type state;
+        typename Strategy::template state_type
+            <
+                typename geometry::point_type<Multi>::type,
+                Point
+            >::type state;
 
         for (typename boost::range_iterator<Multi const>::type
                 it = boost::begin(multi);
@@ -399,15 +375,27 @@ struct centroid_multi
 template <typename Algorithm>
 struct centroid_linear_areal
 {
-    template <typename Geometry, typename Point, typename Strategy>
+    template <typename Geometry, typename Point, typename Strategies>
     static inline void apply(Geometry const& geom,
                              Point& centroid,
-                             Strategy const& strategy)
+                             Strategies const& strategies)
     {
-        if ( ! Algorithm::apply(geom, centroid, strategy) )
+        if ( ! Algorithm::apply(geom, centroid, strategies.centroid(geom)) )
         {
             geometry::point_on_border(centroid, geom);
         }
+    }
+};
+
+template <typename Algorithm>
+struct centroid_pointlike
+{
+    template <typename Geometry, typename Point, typename Strategies>
+    static inline void apply(Geometry const& geom,
+                             Point& centroid,
+                             Strategies const& strategies)
+    {
+        Algorithm::apply(geom, centroid, strategies.centroid(geom));
     }
 };
 
@@ -447,7 +435,7 @@ template <typename Ring>
 struct centroid<Ring, ring_tag>
     : detail::centroid::centroid_linear_areal
         <
-            detail::centroid::centroid_range<geometry::closure<Ring>::value>
+            detail::centroid::centroid_range
         >
 {};
 
@@ -455,7 +443,7 @@ template <typename Linestring>
 struct centroid<Linestring, linestring_tag>
     : detail::centroid::centroid_linear_areal
         <
-            detail::centroid::centroid_range<closed>
+            detail::centroid::centroid_range
         >
 {};
 
@@ -473,7 +461,7 @@ struct centroid<MultiLinestring, multi_linestring_tag>
         <
             detail::centroid::centroid_multi
             <
-                detail::centroid::centroid_range_state<closed>
+                detail::centroid::centroid_range_state
             >
         >
 {};
@@ -491,9 +479,12 @@ struct centroid<MultiPolygon, multi_polygon_tag>
 
 template <typename MultiPoint>
 struct centroid<MultiPoint, multi_point_tag>
-    : detail::centroid::centroid_multi
+    : detail::centroid::centroid_pointlike
         <
-            detail::centroid::centroid_multi_point_state
+            detail::centroid::centroid_multi
+            <
+                detail::centroid::centroid_multi_point_state
+            >
         >
 {};
 
@@ -504,84 +495,81 @@ struct centroid<MultiPoint, multi_point_tag>
 
 namespace resolve_strategy {
 
-template <typename Geometry>
+template
+<
+    typename Strategies,
+    bool IsUmbrella = strategies::detail::is_umbrella_strategy<Strategies>::value
+>
 struct centroid
 {
-    template <typename Point, typename Strategy>
+    template <typename Geometry, typename Point>
+    static inline void apply(Geometry const& geometry, Point& out, Strategies const& strategies)
+    {
+        dispatch::centroid<Geometry>::apply(geometry, out, strategies);
+    }
+};
+
+template <typename Strategy>
+struct centroid<Strategy, false>
+{
+    template <typename Geometry, typename Point>
     static inline void apply(Geometry const& geometry, Point& out, Strategy const& strategy)
     {
-        dispatch::centroid<Geometry>::apply(geometry, out, strategy);
+        using strategies::centroid::services::strategy_converter;
+        dispatch::centroid
+            <
+                Geometry
+            >::apply(geometry, out, strategy_converter<Strategy>::get(strategy));
     }
+};
 
-    template <typename Point>
+template <>
+struct centroid<default_strategy, false>
+{
+    template <typename Geometry, typename Point>
     static inline void apply(Geometry const& geometry, Point& out, default_strategy)
     {
-        typedef typename strategy::centroid::services::default_strategy
-        <
-            typename cs_tag<Geometry>::type,
-            typename tag_cast
-                <
-                    typename tag<Geometry>::type,
-                    pointlike_tag,
-                    linear_tag,
-                    areal_tag
-                >::type,
-            dimension<Geometry>::type::value,
-            Point,
-            Geometry
-        >::type strategy_type;
+        typedef typename strategies::centroid::services::default_strategy
+            <
+                Geometry
+            >::type strategies_type;
 
-        dispatch::centroid<Geometry>::apply(geometry, out, strategy_type());
+        dispatch::centroid<Geometry>::apply(geometry, out, strategies_type());
     }
 };
 
 } // namespace resolve_strategy
 
 
-namespace resolve_variant {
+namespace resolve_dynamic {
 
-template <typename Geometry>
+template <typename Geometry, typename Tag = typename tag<Geometry>::type>
 struct centroid
 {
     template <typename Point, typename Strategy>
     static inline void apply(Geometry const& geometry, Point& out, Strategy const& strategy)
     {
         concepts::check_concepts_and_equal_dimensions<Point, Geometry const>();
-        resolve_strategy::centroid<Geometry>::apply(geometry, out, strategy);
+        resolve_strategy::centroid<Strategy>::apply(geometry, out, strategy);
     }
 };
 
-template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
-struct centroid<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+template <typename Geometry>
+struct centroid<Geometry, dynamic_geometry_tag>
 {
     template <typename Point, typename Strategy>
-    struct visitor: boost::static_visitor<void>
+    static inline void apply(Geometry const& geometry,
+                             Point& out,
+                             Strategy const& strategy)
     {
-        Point& m_out;
-        Strategy const& m_strategy;
-
-        visitor(Point& out, Strategy const& strategy)
-        : m_out(out), m_strategy(strategy)
-        {}
-
-        template <typename Geometry>
-        void operator()(Geometry const& geometry) const
+        traits::visit<Geometry>::apply([&](auto const& g)
         {
-            centroid<Geometry>::apply(geometry, m_out, m_strategy);
-        }
-    };
-
-    template <typename Point, typename Strategy>
-    static inline void
-    apply(boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry,
-          Point& out,
-          Strategy const& strategy)
-    {
-        boost::apply_visitor(visitor<Point, Strategy>(out, strategy), geometry);
+            centroid<util::remove_cref_t<decltype(g)>>::apply(g, out, strategy);
+        }, geometry);
     }
 };
 
-} // namespace resolve_variant
+} // namespace resolve_dynamic
 
 
 /*!
@@ -602,10 +590,9 @@ struct centroid<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
 
 */
 template<typename Geometry, typename Point, typename Strategy>
-inline void centroid(Geometry const& geometry, Point& c,
-        Strategy const& strategy)
+inline void centroid(Geometry const& geometry, Point& c, Strategy const& strategy)
 {
-    resolve_variant::centroid<Geometry>::apply(geometry, c, strategy);
+    resolve_dynamic::centroid<Geometry>::apply(geometry, c, strategy);
 }
 
 

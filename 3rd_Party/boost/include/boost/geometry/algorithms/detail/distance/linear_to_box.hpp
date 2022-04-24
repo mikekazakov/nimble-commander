@@ -1,8 +1,9 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2018, Oracle and/or its affiliates.
+// Copyright (c) 2018-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -10,9 +11,16 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_DISTANCE_LINEAR_TO_BOX_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_DISTANCE_LINEAR_TO_BOX_HPP
 
-#include <boost/geometry/core/point_type.hpp>
+#include <iterator>
 
 #include <boost/geometry/algorithms/intersects.hpp>
+#include <boost/geometry/algorithms/detail/distance/strategy_utils.hpp>
+#include <boost/geometry/algorithms/dispatch/distance.hpp>
+
+#include <boost/geometry/iterators/segment_iterator.hpp>
+
+#include <boost/geometry/core/point_type.hpp>
+
 
 namespace boost { namespace geometry
 {
@@ -21,21 +29,16 @@ namespace boost { namespace geometry
 namespace detail { namespace distance
 {
 
-template <typename Linear, typename Box, typename Strategy>
+template <typename Linear, typename Box, typename Strategies>
 struct linear_to_box
 {
-    typedef typename strategy::distance::services::return_type
-        <
-            Strategy,
-            typename point_type<Linear>::type,
-            typename point_type<Box>::type
-        >::type return_type;
+    typedef distance::return_t<Linear, Box, Strategies> return_type;
 
     template <typename Iterator>
     static inline return_type apply(Box const& box,
                                     Iterator begin,
                                     Iterator end,
-                                    Strategy const& strategy)
+                                    Strategies const& strategies)
     {
         bool first = true;
         return_type d_min(0);
@@ -44,8 +47,8 @@ struct linear_to_box
             typedef typename std::iterator_traits<Iterator>::value_type
                     Segment;
 
-            return_type d = dispatch::distance<Segment, Box, Strategy>
-                                    ::apply(*it, box, strategy);
+            return_type d = dispatch::distance<Segment, Box, Strategies>
+                                    ::apply(*it, box, strategies);
 
             if ( first || d < d_min )
             {
@@ -57,25 +60,25 @@ struct linear_to_box
 
     static inline return_type apply(Linear const& linear,
                                     Box const& box,
-                                    Strategy const& strategy)
+                                    Strategies const& strategies)
     {
         if ( geometry::intersects(linear, box) )
         {
-            return 0;
+            return return_type(0);
         }
 
         return apply(box,
                      geometry::segments_begin(linear),
                      geometry::segments_end(linear),
-                     strategy);
+                     strategies);
     }
 
 
     static inline return_type apply(Box const& box,
                                     Linear const& linear,
-                                    Strategy const& strategy)
+                                    Strategies const& strategies)
     {
-        return apply(linear, box, strategy);
+        return apply(linear, box, strategies);
     }
 };
 

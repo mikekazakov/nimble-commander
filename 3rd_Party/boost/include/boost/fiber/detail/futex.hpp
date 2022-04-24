@@ -12,6 +12,10 @@
 
 #include <boost/fiber/detail/config.hpp>
 
+#ifndef SYS_futex
+#define SYS_futex SYS_futex_time64
+#endif
+
 #if BOOST_OS_LINUX
 extern "C" {
 #include <linux/futex.h>

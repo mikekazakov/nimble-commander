@@ -8,5 +8,8 @@
 =============================================================================*/
 #ifndef BOOST_SPIRIT_INCLUDE_PHOENIX_STATEMENT
 #define BOOST_SPIRIT_INCLUDE_PHOENIX_STATEMENT
+#include <boost/config/header_deprecated.hpp>
+BOOST_HEADER_DEPRECATED("<boost/phoenix/statement.hpp>")
+
 #include <boost/phoenix/statement.hpp>
 #endif

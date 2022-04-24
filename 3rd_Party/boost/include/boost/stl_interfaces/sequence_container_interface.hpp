@@ -27,6 +27,7 @@ namespace boost { namespace stl_interfaces { namespace detail {
         n_iter() : x_(nullptr), n_(0) {}
         n_iter(T const & x, SizeType n) : x_(&x), n_(n) {}
 
+        T const & operator*() const { return *x_; }
         constexpr std::ptrdiff_t operator-(n_iter other) const noexcept
         {
             return std::ptrdiff_t(n_) - std::ptrdiff_t(other.n_);
@@ -38,10 +39,6 @@ namespace boost { namespace stl_interfaces { namespace detail {
         }
 
     private:
-        friend access;
-        constexpr T const *& base_reference() noexcept { return x_; }
-        constexpr T const * base_reference() const noexcept { return x_; }
-
         T const * x_;
         SizeType n_;
     };
@@ -76,7 +73,7 @@ namespace boost { namespace stl_interfaces { namespace detail {
 
 }}}
 
-namespace boost { namespace stl_interfaces { inline namespace v1 {
+namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V1 {
 
     /** A CRTP template that one may derive from to make it easier to define
         container types.
@@ -300,7 +297,7 @@ namespace boost { namespace stl_interfaces { inline namespace v1 {
         template<typename D = Derived>
         constexpr auto pop_back() noexcept -> decltype(
             std::declval<D &>().emplace_back(
-                std::declval<typename D::value_type &>()),
+                std::declval<typename D::value_type>()),
             (void)std::declval<D &>().erase(
                 std::prev(std::declval<D &>().end())))
         {
@@ -672,5 +669,360 @@ namespace boost { namespace stl_interfaces { inline namespace v1 {
     }
 
 }}}
+
+#if defined(BOOST_STL_INTERFACES_DOXYGEN) || BOOST_STL_INTERFACES_USE_CONCEPTS
+
+namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V2 {
+
+    namespace v2_dtl {
+
+        // This needs to become an exposition-only snake-case template alias
+        // when standardized.
+        template<typename T>
+        using container_size_t = typename T::size_type;
+
+        template<typename T, typename I>
+        // clang-format off
+        concept range_insert =
+            requires (T t, std::ranges::iterator_t<T> t_it, I it) {
+            t.template insert<I>(t_it, it, it);
+            // clang-format on
+        };
+
+        template<typename T>
+        using n_iter_t =
+            detail::n_iter<std::ranges::range_value_t<T>, container_size_t<T>>;
+    }
+
+    // clang-format off
+
+    /** A CRTP template that one may derive from to make it easier to define
+        container types.
+
+        The template parameter `D` for `sequence_container_interface` may be
+        an incomplete type. Before any member of the resulting specialization
+        of `sequence_container_interface` other than special member functions
+        is referenced, `D` shall be complete; shall model
+        `std::derived_from<sequence_container_interface<D>>`,
+        `std::semiregular`, and `std::forward_range`; and shall contain all
+        the nested types required in Table 72: Container requirements and, for
+        those whose iterator nested type models `std::bidirectinal_iterator`,
+        those in Table 73: Reversible container requirements.
+
+        For an object `d` of type `D`, a call to `std::ranges::begin(d)` shall
+        not mutate any data members of `d`, and `d`'s destructor shall end the
+        lifetimes of the objects in `[std::ranges::begin(d),
+        std::ranges::end(d))`.
+
+        The `Contiguity` template parameter is not needed, and is unused.  It
+        only exists to make the transition from `namespace v1` to `namespace
+        v2` seamless. */
+    template<typename D,
+             element_layout Contiguity = element_layout::discontiguous>
+      requires std::is_class_v<D> && std::same_as<D, std::remove_cv_t<D>>
+    struct sequence_container_interface
+    {
+    private:
+      constexpr D& derived() noexcept {
+        return static_cast<D&>(*this);
+      }
+      constexpr const D& derived() const noexcept {
+        return static_cast<const D&>(*this);
+      }
+      constexpr D & mutable_derived() const noexcept {
+        return const_cast<D&>(static_cast<const D&>(*this));
+      }
+      static constexpr void clear_impl(D& d) noexcept {}
+      static constexpr void clear_impl(D& d) noexcept
+        requires requires { d.clear(); }
+      { d.clear(); }
+
+    public:
+      constexpr bool empty() const {
+        return std::ranges::begin(derived()) == std::ranges::end(derived());
+      }
+
+      constexpr auto data() requires std::contiguous_iterator<std::ranges::iterator_t<D>> {
+        return std::to_address(std::ranges::begin(derived()));
+      }
+      constexpr auto data() const requires std::contiguous_iterator<std::ranges::iterator_t<const D>> {
+          return std::to_address(std::ranges::begin(derived()));
+        }
+
+      template<typename C = D>
+      constexpr v2_dtl::container_size_t<C> size() const
+        requires std::sized_sentinel_for<std::ranges::sentinel_t<const C>, std::ranges::iterator_t<const C>> {
+          return v2_dtl::container_size_t<C>(
+            std::ranges::end(derived()) - std::ranges::begin(derived()));
+        }
+
+      constexpr decltype(auto) front() {
+        BOOST_ASSERT(!empty());
+        return *std::ranges::begin(derived());
+      }
+      constexpr decltype(auto) front() const {
+        BOOST_ASSERT(!empty());
+        return *std::ranges::begin(derived());
+      }
+
+      template<typename C = D>
+        constexpr void push_front(const std::ranges::range_value_t<C>& x)
+          requires requires { derived().emplace_front(x); } {
+            derived().emplace_front(x);
+          }
+      template<typename C = D>
+        constexpr void push_front(std::ranges::range_value_t<C>&& x)
+          requires requires { derived().emplace_front(std::move(x)); } {
+            derived().emplace_front(std::move(x));
+          }
+      constexpr void pop_front() noexcept
+        requires requires (const std::ranges::range_value_t<D>& x, std::ranges::iterator_t<D> position) {
+          derived().emplace_front(x);
+          derived().erase(position);
+        } {
+          return derived().erase(std::ranges::begin(derived()));
+        }
+
+      constexpr decltype(auto) back()
+        requires std::ranges::bidirectional_range<D> && std::ranges::common_range<D> {
+          BOOST_ASSERT(!empty());
+          return *std::ranges::prev(std::ranges::end(derived()));
+        }
+      constexpr decltype(auto) back() const
+        requires std::ranges::bidirectional_range<const D> && std::ranges::common_range<const D> {
+          BOOST_ASSERT(!empty());
+          return *std::ranges::prev(std::ranges::end(derived()));
+        }
+
+      template<std::ranges::bidirectional_range C = D>
+        constexpr void push_back(const std::ranges::range_value_t<C>& x)
+          requires std::ranges::common_range<C> && requires { derived().emplace_back(x); } {
+            derived().emplace_back(x);
+          }
+      template<std::ranges::bidirectional_range C = D>
+        constexpr void push_back(std::ranges::range_value_t<C>&& x)
+          requires std::ranges::common_range<C> && requires { derived().emplace_back(std::move(x)); } {
+            derived().emplace_back(std::move(x));
+          }
+      constexpr void pop_back() noexcept
+        requires std::ranges::bidirectional_range<D> && std::ranges::common_range<D> &&
+          requires (std::ranges::range_value_t<D> x, std::ranges::iterator_t<D> position) {
+          derived().emplace_back(std::move(x));
+            derived().erase(position);
+          } {
+            return derived().erase(std::ranges::prev(std::ranges::end(derived())));
+          }
+
+      template<std::ranges::random_access_range C = D>
+        constexpr decltype(auto) operator[](v2_dtl::container_size_t<C> n) {
+          return std::ranges::begin(derived())[n];
+        }
+      template<std::ranges::random_access_range C = const D>
+        constexpr decltype(auto) operator[](v2_dtl::container_size_t<C> n) const {
+          return std::ranges::begin(derived())[n];
+        }
+
+      template<std::ranges::random_access_range C = D>
+        constexpr decltype(auto) at(v2_dtl::container_size_t<C> n) {
+          if (derived().size() <= n)
+            throw std::out_of_range("Bounds check failed in sequence_container_interface::at()");
+          return std::ranges::begin(derived())[n];
+        }
+      template<std::ranges::random_access_range C = const D>
+        constexpr decltype(auto) at(v2_dtl::container_size_t<C> n) const {
+          if (derived().size() <= n)
+            throw std::out_of_range("Bounds check failed in sequence_container_interface::at()");
+          return std::ranges::begin(derived())[n];
+        }
+
+      constexpr auto begin() const {
+        return typename D::const_iterator(mutable_derived().begin());
+      }
+      constexpr auto end() const {
+        return typename D::const_iterator(mutable_derived().end());
+      }
+
+      constexpr auto cbegin() const { return derived().begin(); }
+      constexpr auto cend() const { return derived().end(); }
+
+      constexpr auto rbegin()
+        requires std::ranges::bidirectional_range<D> && std::ranges::common_range<D> {
+          return std::reverse_iterator(std::ranges::end(derived()));
+        }
+      constexpr auto rend()
+        requires std::ranges::bidirectional_range<D> && std::ranges::common_range<D> {
+          return std::reverse_iterator(std::ranges::begin(derived()));
+        }
+
+      constexpr auto rbegin() const
+        requires std::ranges::bidirectional_range<const D> &&
+          std::ranges::common_range<const D> {
+            return std::reverse_iterator(std::ranges::iterator_t<const D>(
+              mutable_derived().end()));
+          }
+      constexpr auto rend() const
+        requires std::ranges::bidirectional_range<const D> &&
+          std::ranges::common_range<const D> {
+            return std::reverse_iterator(std::ranges::iterator_t<const D>(
+              mutable_derived().begin()));
+          }
+
+      constexpr auto crbegin() const
+        requires std::ranges::bidirectional_range<const D> &&
+          std::ranges::common_range<const D> {
+            return std::reverse_iterator(std::ranges::iterator_t<const D>(
+              mutable_derived().end()));
+            }
+      constexpr auto crend() const
+        requires std::ranges::bidirectional_range<const D> &&
+          std::ranges::common_range<const D> {
+            return std::reverse_iterator(std::ranges::iterator_t<const D>(
+              mutable_derived().begin()));
+            }
+
+      template<typename C = D>
+        constexpr auto insert(std::ranges::iterator_t<const C> position,
+                              const std::ranges::range_value_t<C>& x)
+          requires requires { derived().emplace(position, x); } {
+            return derived().emplace(position, x);
+          }
+      template<typename C = D>
+        constexpr auto insert(std::ranges::iterator_t<const C> position,
+                              std::ranges::range_value_t<C>&& x)
+          requires requires { derived().emplace(position, std::move(x)); } {
+            return derived().emplace(position, std::move(x));
+          }
+      template<typename C = D>
+        constexpr auto insert(std::ranges::iterator_t<const C> position,
+                              v2_dtl::container_size_t<C> n,
+                              const std::ranges::range_value_t<C>& x)
+          requires v2_dtl::range_insert<C, v2_dtl::n_iter_t<C>> {
+            auto first = detail::make_n_iter(x, n);
+            auto last = detail::make_n_iter_end(x, n);
+            return derived().insert(
+                position, detail::make_n_iter(x, n), detail::make_n_iter_end(x, n));
+            }
+      template<typename C = D>
+        constexpr auto insert(std::ranges::iterator_t<const C> position,
+                              std::initializer_list<std::ranges::range_value_t<C>> il)
+          requires requires {
+            derived().template insert<decltype(position), decltype(il)>(
+                position, il.begin(), il.end()); } {
+              return derived().insert(position, il.begin(), il.end());
+            }
+
+      template<typename C = D>
+        constexpr void erase(C::const_iterator position)
+          requires requires { derived().erase(position, std::ranges::next(position)); } {
+            derived().erase(position, std::ranges::next(position));
+          }
+
+      template<std::input_iterator Iter, typename C = D>
+        constexpr void assign(Iter first, Iter last)
+          requires requires {
+            derived().erase(std::ranges::begin(derived()), std::ranges::end(derived()));
+            derived().insert(std::ranges::begin(derived()), first, last); } {
+              auto out = derived().begin();
+              auto const out_last = derived().end();
+              for (; out != out_last && first != last; ++first, ++out) {
+                *out = *first;
+              }
+              if (out != out_last)
+                derived().erase(out, out_last);
+              if (first != last)
+                derived().insert(derived().end(), first, last);
+            }
+      template<typename C = D>
+        constexpr void assign(v2_dtl::container_size_t<C> n,
+                              const std::ranges::range_value_t<C>& x)
+          requires requires {
+            { derived().size() } -> std::convertible_to<std::size_t>;
+            derived().erase(std::ranges::begin(derived()), std::ranges::end(derived()));
+            derived().insert(std::ranges::begin(derived()),
+                             detail::make_n_iter(x, n),
+                             detail::make_n_iter_end(x, n)); } {
+              if (detail::fake_capacity(derived()) < n) {
+                C temp(n, x);
+                derived().swap(temp);
+              } else {
+                auto const min_size = std::min<std::ptrdiff_t>(n, derived().size());
+                auto const fill_end = std::fill_n(derived().begin(), min_size, x);
+                if (min_size < (std::ptrdiff_t)derived().size()) {
+                  derived().erase(fill_end, derived().end());
+                } else {
+                  n -= min_size;
+                  derived().insert(
+                    derived().begin(),
+                    detail::make_n_iter(x, n),
+                    detail::make_n_iter_end(x, n));
+                }
+              }
+            }
+      template<typename C = D>
+        constexpr void assign(std::initializer_list<std::ranges::range_value_t<C>> il)
+          requires requires { derived().assign(il.begin(), il.end()); } {
+            derived().assign(il.begin(), il.end());
+          }
+
+      constexpr void clear() noexcept
+        requires requires {
+          derived().erase(std::ranges::begin(derived()), std::ranges::end(derived())); } {
+            derived().erase(std::ranges::begin(derived()), std::ranges::end(derived()));
+          }
+
+      template<typename C = D>
+        constexpr decltype(auto) operator=(
+            std::initializer_list<std::ranges::range_value_t<C>> il)
+          requires requires { derived().assign(il.begin(), il.end()); } {
+            derived().assign(il.begin(), il.end());
+            return *this;
+          }
+
+      friend constexpr void swap(D& lhs, D& rhs) requires requires { lhs.swap(rhs); } {
+        return lhs.swap(rhs);
+      }
+
+      friend constexpr bool operator==(const D& lhs, const D& rhs)
+        requires std::ranges::sized_range<const D> &&
+          requires { std::ranges::equal(lhs, rhs); } {
+            return lhs.size() == rhs.size() && std::ranges::equal(lhs, rhs);
+          }
+#if 0 // TODO: This appears to work, but as of this writing (and using GCC
+      // 10), op<=> is not yet being used to evaluate op==, op<, etc.
+      friend constexpr std::compare_three_way_result_t<std::ranges::range_reference_t<const D>>
+        operator<=>(const D& lhs, const D& rhs)
+        requires std::three_way_comparable<std::ranges::range_reference_t<const D>> {
+          return std::lexicographical_compare_three_way(lhs.begin(), lhs.end(),
+                                                        rhs.begin(), rhs.end());
+        }
+#else
+      friend constexpr bool operator!=(const D& lhs, const D& rhs)
+        requires requires { lhs == rhs; } {
+          return !(lhs == rhs);
+        }
+      friend constexpr bool operator<(D lhs, D rhs)
+        requires std::totally_ordered<std::ranges::range_reference_t<D>> {
+          return std::ranges::lexicographical_compare(lhs, rhs);
+        }
+      friend constexpr bool operator<=(D lhs, D rhs)
+        requires std::totally_ordered<std::ranges::range_reference_t<D>> {
+            return lhs == rhs || lhs < rhs;
+          }
+      friend constexpr bool operator>(D lhs, D rhs)
+        requires std::totally_ordered<std::ranges::range_reference_t<D>> {
+          return !(lhs <= rhs);
+        }
+      friend constexpr bool operator>=(D lhs, D rhs)
+        requires std::totally_ordered<std::ranges::range_reference_t<D>> {
+            return rhs <= lhs;
+          }
+#endif
+    };
+
+    // clang-format on
+
+}}}
+
+#endif
 
 #endif

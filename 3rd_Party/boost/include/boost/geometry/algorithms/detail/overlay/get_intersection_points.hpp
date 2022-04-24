@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017.
-// Modifications copyright (c) 2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2020.
+// Modifications copyright (c) 2017-2020 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -16,9 +16,9 @@
 
 
 #include <cstddef>
+#include <type_traits>
 
-#include <boost/mpl/if.hpp>
-#include <boost/range.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/algorithms/convert.hpp>
 #include <boost/geometry/algorithms/detail/overlay/get_turns.hpp>
@@ -59,7 +59,7 @@ struct get_turn_without_info
                 OutputIterator out)
     {
         // Make sure this is only called with no rescaling
-        BOOST_STATIC_ASSERT((boost::is_same
+        BOOST_STATIC_ASSERT((std::is_same
            <
                no_rescale_policy_tag,
                typename rescale_policy_type<RobustPolicy>::type
@@ -73,7 +73,7 @@ struct get_turn_without_info
             > policy_type;
 
         typename policy_type::return_type const result
-            = strategy.apply(range_p, range_q, policy_type());
+            = strategy.relate().apply(range_p, range_q, policy_type());
 
         for (std::size_t i = 0; i < result.count; i++)
         {
@@ -117,7 +117,7 @@ inline void get_intersection_points(Geometry1 const& geometry1,
 
     detail::get_turns::no_interrupt_policy interrupt_policy;
 
-    boost::mpl::if_c
+    std::conditional_t
         <
             reverse_dispatch<Geometry1, Geometry2>::type::value,
             dispatch::get_turns_reversed
@@ -136,12 +136,11 @@ inline void get_intersection_points(Geometry1 const& geometry1,
                 false, false,
                 TurnPolicy
             >
-        >::type::apply(
-            0, geometry1,
-            1, geometry2,
-            strategy,
-            robust_policy,
-            turns, interrupt_policy);
+        >::apply(0, geometry1,
+                 1, geometry2,
+                 strategy,
+                 robust_policy,
+                 turns, interrupt_policy);
 }
 
 

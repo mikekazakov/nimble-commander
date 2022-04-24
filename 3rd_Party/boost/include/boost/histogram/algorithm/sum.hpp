@@ -49,6 +49,7 @@ namespace algorithm {
 template <class A, class S>
 auto sum(const histogram<A, S>& hist, const coverage cov = coverage::all) {
   using T = typename histogram<A, S>::value_type;
+  // T is arithmetic, compute sum accurately with high dynamic range
   using sum_type = mp11::mp_if<std::is_arithmetic<T>, accumulators::sum<double>, T>;
   sum_type sum;
   if (cov == coverage::all)

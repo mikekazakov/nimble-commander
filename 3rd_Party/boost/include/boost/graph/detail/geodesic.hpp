@@ -55,8 +55,9 @@ namespace detail
             (ReadablePropertyMapConcept< DistanceMap, Vertex >));
         BOOST_CONCEPT_ASSERT((NumericValueConcept< Distance >));
         typedef numeric_values< Distance > DistanceNumbers;
-        BOOST_CONCEPT_ASSERT((AdaptableBinaryFunction< Combinator, Distance,
-            Distance, Distance >));
+//      NOTE: Disabled until this concept assert is fixed in Boost.ConceptCheck.
+//         BOOST_CONCEPT_ASSERT((AdaptableBinaryFunction< Combinator, Distance,
+//             Distance, Distance >));
 
         // If there's ever an infinite distance, then we simply return
         // infinity. Note that this /will/ include the a non-zero

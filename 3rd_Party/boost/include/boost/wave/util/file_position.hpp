@@ -57,7 +57,7 @@ public:
     :   file(file_), line(line_), column(column_)
     {}
 
-// accessors
+    // accessors
     string_type const &get_file() const { return file; }
     std::size_t get_line() const { return line; }
     std::size_t get_column() const { return column; }

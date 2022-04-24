@@ -2,8 +2,8 @@
 
 // Copyright (c) 2008-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2019.
-// Modifications copyright (c) 2017-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2021.
+// Modifications copyright (c) 2017-2021, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle.
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -287,7 +287,7 @@ namespace projections
 
             // Interrupted Goode Homolosine
             template <typename Params, typename Parameters, typename T>
-            inline void setup_igh(Params const& params, Parameters& par, par_igh<T, Parameters>& proj_parm)
+            inline void setup_igh(Params const& , Parameters& par, par_igh<T, Parameters>& proj_parm)
             {
                 static const T d0   =  0;
                 static const T d4044118 = igh::d4044118<T>();

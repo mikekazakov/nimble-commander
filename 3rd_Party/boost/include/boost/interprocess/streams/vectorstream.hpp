@@ -115,7 +115,7 @@ class basic_vectorbuf
             mp_high_water = base_t::pptr();
          }
          //This does not reallocate
-         m_vect.resize(mp_high_water - (m_vect.size() ? &m_vect[0] : 0));
+         m_vect.resize(std::size_t(mp_high_water - (m_vect.size() ? &m_vect[0] : 0)));
       }
       //Now swap vector
       m_vect.swap(vect);
@@ -138,7 +138,7 @@ class basic_vectorbuf
          if(m_vect.size() > high_pos){
             m_vect.resize(high_pos);
             //But we must update end write pointer because vector size is now shorter
-            int old_pos = base_t::pptr() - base_t::pbase();
+            int old_pos = (int)(base_t::pptr() - base_t::pbase());
             const_cast<basic_vectorbuf*>(this)->base_t::setp(old_ptr, old_ptr + high_pos);
             const_cast<basic_vectorbuf*>(this)->base_t::pbump(old_pos);
          }
@@ -214,7 +214,7 @@ class basic_vectorbuf
    }
 
    protected:
-   virtual int_type underflow()
+   virtual int_type underflow() BOOST_OVERRIDE
    {
       if (base_t::gptr() == 0)
          return CharTraits::eof();
@@ -229,7 +229,7 @@ class basic_vectorbuf
       return CharTraits::eof();
    }
 
-   virtual int_type pbackfail(int_type c = CharTraits::eof())
+   virtual int_type pbackfail(int_type c = CharTraits::eof()) BOOST_OVERRIDE
    {
       if(this->gptr() != this->eback()) {
          if(!CharTraits::eq_int_type(c, CharTraits::eof())) {
@@ -239,7 +239,7 @@ class basic_vectorbuf
             }
             else if(m_mode & std::ios_base::out) {
                this->gbump(-1);
-               *this->gptr() = c;
+               *this->gptr() = CharTraits::to_char_type(c);
                return c;
             }
             else
@@ -254,7 +254,7 @@ class basic_vectorbuf
          return CharTraits::eof();
    }
 
-   virtual int_type overflow(int_type c = CharTraits::eof())
+   virtual int_type overflow(int_type c = CharTraits::eof()) BOOST_OVERRIDE
    {
       if(m_mode & std::ios_base::out) {
          if(!CharTraits::eq_int_type(c, CharTraits::eof())) {
@@ -289,7 +289,7 @@ class basic_vectorbuf
 
    virtual pos_type seekoff(off_type off, std::ios_base::seekdir dir,
                               std::ios_base::openmode mode
-                                 = std::ios_base::in | std::ios_base::out)
+                                 = std::ios_base::in | std::ios_base::out) BOOST_OVERRIDE
    {
       //Get seek mode
       bool in(0 != (mode & std::ios_base::in)), out(0 != (mode & std::ios_base::out));
@@ -351,13 +351,13 @@ class basic_vectorbuf
          base_t::setg(base_t::eback(), base_t::eback() + newoff, base_t::egptr());
       if (out){
          base_t::setp(base_t::pbase(), base_t::epptr());
-         base_t::pbump(newoff);
+         base_t::pbump(static_cast<int>(newoff));
       }
       return pos_type(newoff);
    }
 
    virtual pos_type seekpos(pos_type pos, std::ios_base::openmode mode
-                                 = std::ios_base::in | std::ios_base::out)
+                                 = std::ios_base::in | std::ios_base::out) BOOST_OVERRIDE
    {  return seekoff(pos - pos_type(off_type(0)), std::ios_base::beg, mode);  }
 
    private:

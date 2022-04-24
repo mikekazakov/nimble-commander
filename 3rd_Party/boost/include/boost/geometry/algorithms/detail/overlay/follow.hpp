@@ -3,7 +3,7 @@
 // Copyright (c) 2007-2014 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2014, 2017, 2018, 2019, 2020.
+// This file was modified by Oracle on 2014-2020.
 // Modifications copyright (c) 2014-2020 Oracle and/or its affiliates.
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -16,20 +16,22 @@
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_FOLLOW_HPP
 
 #include <cstddef>
+#include <type_traits>
 
-#include <boost/range.hpp>
-#include <boost/mpl/assert.hpp>
-
-#include <boost/geometry/algorithms/detail/point_on_border.hpp>
-#include <boost/geometry/algorithms/detail/overlay/append_no_duplicates.hpp>
-#include <boost/geometry/algorithms/detail/overlay/copy_segments.hpp>
-#include <boost/geometry/algorithms/detail/overlay/turn_info.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/size.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/algorithms/covered_by.hpp>
 #include <boost/geometry/algorithms/clear.hpp>
+#include <boost/geometry/algorithms/detail/overlay/append_no_duplicates.hpp>
+#include <boost/geometry/algorithms/detail/overlay/copy_segments.hpp>
+#include <boost/geometry/algorithms/detail/overlay/turn_info.hpp>
+#include <boost/geometry/algorithms/detail/point_on_border.hpp>
 #include <boost/geometry/algorithms/detail/relate/turns.hpp>
 #include <boost/geometry/algorithms/detail/tupled_output.hpp>
-
+#include <boost/geometry/core/static_assert.hpp>
 #include <boost/geometry/util/condition.hpp>
 
 namespace boost { namespace geometry
@@ -60,11 +62,11 @@ template
     typename Operation,
     typename LineString,
     typename Polygon,
-    typename PtInPolyStrategy
+    typename Strategy
 >
 inline bool last_covered_by(Turn const& /*turn*/, Operation const& op,
                 LineString const& linestring, Polygon const& polygon,
-                PtInPolyStrategy const& strategy)
+                Strategy const& strategy)
 {
     return geometry::covered_by(range::at(linestring, op.seg_id.segment_index), polygon, strategy);
 }
@@ -76,12 +78,12 @@ template
     typename Operation,
     typename LineString,
     typename Polygon,
-    typename PtInPolyStrategy
+    typename Strategy
 >
 inline bool is_leaving(Turn const& turn, Operation const& op,
                 bool entered, bool first,
                 LineString const& linestring, Polygon const& polygon,
-                PtInPolyStrategy const& strategy)
+                Strategy const& strategy)
 {
     if (op.operation == operation_union)
     {
@@ -102,12 +104,12 @@ template
     typename Operation,
     typename LineString,
     typename Polygon,
-    typename PtInPolyStrategy
+    typename Strategy
 >
 inline bool is_staying_inside(Turn const& turn, Operation const& op,
                 bool entered, bool first,
                 LineString const& linestring, Polygon const& polygon,
-                PtInPolyStrategy const& strategy)
+                Strategy const& strategy)
 {
     if (turn.method == method_crosses)
     {
@@ -130,11 +132,11 @@ template
     typename Operation,
     typename Linestring,
     typename Polygon,
-    typename PtInPolyStrategy
+    typename Strategy
 >
 inline bool was_entered(Turn const& turn, Operation const& op, bool first,
                 Linestring const& linestring, Polygon const& polygon,
-                PtInPolyStrategy const& strategy)
+                Strategy const& strategy)
 {
     if (first && (turn.method == method_collinear || turn.method == method_equal))
     {
@@ -202,8 +204,9 @@ struct add_isolated_point<PointOut, point_tag>
 template <overlay_type OverlayType, bool RemoveSpikes = true>
 struct action_selector
 {
-    // If you get here the overlay type is not intersection or difference
-    // BOOST_MPL_ASSERT(false);
+    BOOST_GEOMETRY_STATIC_ASSERT_FALSE(
+        "If you get here the overlay type is not intersection or difference.",
+        std::integral_constant<overlay_type, OverlayType>);
 };
 
 // Specialization for intersection, containing the implementation
@@ -231,7 +234,7 @@ struct action_selector<overlay_intersection, RemoveSpikes>
     {
         // On enter, append the intersection point and remember starting point
         // TODO: we don't check on spikes for linestrings (?). Consider this.
-        detail::overlay::append_no_duplicates(current_piece, point, strategy.get_equals_point_point_strategy());
+        detail::overlay::append_no_duplicates(current_piece, point, strategy);
         segment_id = operation.seg_id;
     }
 
@@ -260,7 +263,7 @@ struct action_selector<overlay_intersection, RemoveSpikes>
             <
                 false, RemoveSpikes
             >::apply(linestring, segment_id, index, strategy, robust_policy, current_piece);
-        detail::overlay::append_no_duplicates(current_piece, point, strategy.get_equals_point_point_strategy());
+        detail::overlay::append_no_duplicates(current_piece, point, strategy);
         if (::boost::size(current_piece) > 1)
         {
             *out++ = current_piece;
@@ -428,14 +431,6 @@ public :
 
         typedef following::action_selector<OverlayType, RemoveSpikes> action;
 
-        typedef typename Strategy::cs_tag cs_tag;
-
-        typename Strategy::template point_in_geometry_strategy
-            <
-                LineString, Polygon
-            >::type const pt_in_poly_strategy
-            = strategy.template get_point_in_geometry_strategy<LineString, Polygon>();
-
         // Sort intersection points on segments-along-linestring, and distance
         // (like in enrich is done for poly/poly)
         // sort turns by Linear seg_id, then by fraction, then
@@ -443,7 +438,8 @@ public :
         // for different ring id: c, i, u, x
         typedef relate::turns::less
             <
-                0, relate::turns::less_op_linear_areal_single<0>, cs_tag
+                0, relate::turns::less_op_linear_areal_single<0>,
+                typename Strategy::cs_tag
             > turn_less;
         std::sort(boost::begin(turns), boost::end(turns), turn_less());
 
@@ -457,13 +453,13 @@ public :
         {
             turn_operation_iterator_type iit = boost::begin(it->operations);
 
-            if (following::was_entered(*it, *iit, first, linestring, polygon, pt_in_poly_strategy))
+            if (following::was_entered(*it, *iit, first, linestring, polygon, strategy))
             {
                 debug_traverse(*it, *iit, "-> Was entered");
                 entered = true;
             }
 
-            if (following::is_staying_inside(*it, *iit, entered, first, linestring, polygon, pt_in_poly_strategy))
+            if (following::is_staying_inside(*it, *iit, entered, first, linestring, polygon, strategy))
             {
                 debug_traverse(*it, *iit, "-> Staying inside");
 
@@ -479,7 +475,7 @@ public :
                     strategy, robust_policy,
                     linear::get(out));
             }
-            else if (following::is_leaving(*it, *iit, entered, first, linestring, polygon, pt_in_poly_strategy))
+            else if (following::is_leaving(*it, *iit, entered, first, linestring, polygon, strategy))
             {
                 debug_traverse(*it, *iit, "-> Leaving");
 

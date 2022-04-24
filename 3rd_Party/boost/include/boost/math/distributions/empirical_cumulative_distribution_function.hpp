@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <iterator>
 #include <stdexcept>
+#include <type_traits>
+#include <utility>
 
 namespace boost { namespace math{
 

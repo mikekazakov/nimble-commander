@@ -72,7 +72,7 @@ public:
     value_type get_type() const { return type; }
     value_error is_valid() const { return valid; }
 
-// explicit conversion
+    // explicit conversion
     friend int_literal_type as_int(closure_value const& v)
     {
         switch (v.type) {
@@ -119,7 +119,7 @@ public:
         return v.value.i != 0.0;
     }
 
-// assignment
+    // assignment
     closure_value &operator= (closure_value const &rhs)
     {
         switch (rhs.get_type()) {
@@ -177,7 +177,7 @@ public:
         return *this;
     }
 
-// arithmetics
+    // arithmetics
     closure_value &operator+= (closure_value const &rhs)
     {
         switch (type) {
@@ -431,7 +431,7 @@ public:
             case is_int:
                 if (as_long(rhs) != 0) {
                     if (value.i == -value.i && -1 == rhs.value.i) {
-                    // LONG_MIN / -1 on two's complement
+                        // LONG_MIN / -1 on two's complement
                         valid = error_integer_overflow;
                     }
                     else {
@@ -494,7 +494,7 @@ public:
             case is_int:
                 if (as_long(rhs) != 0) {
                     if (value.i == -value.i && -1 == rhs.value.i) {
-                    // LONG_MIN % -1 on two's complement
+                        // LONG_MIN % -1 on two's complement
                         valid = error_integer_overflow;
                     }
                     else {
@@ -586,7 +586,7 @@ public:
         return closure_value(!as_ulong(rhs), rhs.valid);
     }
 
-// comparison
+    // comparison
     friend closure_value
     operator== (closure_value const &lhs, closure_value const &rhs)
     {

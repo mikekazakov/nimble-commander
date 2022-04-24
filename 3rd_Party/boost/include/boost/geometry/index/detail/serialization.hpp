@@ -2,6 +2,10 @@
 //
 // Copyright (c) 2011-2015 Adam Wulkiewicz, Lodz, Poland.
 //
+// This file was modified by Oracle on 2021.
+// Modifications copyright (c) 2021 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+//
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -9,10 +13,20 @@
 #ifndef BOOST_GEOMETRY_INDEX_DETAIL_SERIALIZATION_HPP
 #define BOOST_GEOMETRY_INDEX_DETAIL_SERIALIZATION_HPP
 
+#include <boost/type_traits/alignment_of.hpp>
+#include <boost/type_traits/aligned_storage.hpp>
+
 //#include <boost/serialization/serialization.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 //#include <boost/serialization/nvp.hpp>
+
+#include <boost/geometry/geometries/point.hpp>
+#include <boost/geometry/geometries/box.hpp>
+
+#include <boost/geometry/index/parameters.hpp>
+#include <boost/geometry/index/detail/rtree/node/concept.hpp>
+#include <boost/geometry/index/detail/rtree/node/subtree_destroyer.hpp>
 
 // TODO
 // how about using the unsigned type capable of storing Max in compile-time versions?
@@ -26,7 +40,13 @@
 //   each geometry save without this info
 
 // TODO - move to index/detail/serialization.hpp
-namespace boost { namespace geometry { namespace index { namespace detail {
+namespace boost { namespace geometry { namespace index {
+
+// Forward declaration
+template <typename Value, typename Options, typename IndexableGetter, typename EqualTo, typename Allocator>
+class rtree;
+
+namespace detail {
 
 // TODO - use boost::move?
 template<typename T>
@@ -391,12 +411,16 @@ private:
         size_t elements_count;
         ar >> boost::serialization::make_nvp("s", elements_count);
 
-        if ( elements_count < parameters.get_min_elements() || parameters.get_max_elements() < elements_count )
+        // root may contain count < min but shouldn't contain count > max
+        if ( (elements_count < parameters.get_min_elements() && current_level > 0)
+                || parameters.get_max_elements() < elements_count )
+        {
             BOOST_THROW_EXCEPTION(std::runtime_error("rtree loading error"));
+        }
 
         if ( current_level < leafs_level )
         {
-            node_pointer n = rtree::create_node<Allocators, internal_node>::apply(allocators);              // MAY THROW (A)
+            node_pointer n = rtree::create_node<allocators_type, internal_node>::apply(allocators);         // MAY THROW (A)
             subtree_destroyer auto_remover(n, allocators);    
             internal_node & in = rtree::get<internal_node>(*n);
 
@@ -419,7 +443,7 @@ private:
         {
             BOOST_GEOMETRY_INDEX_ASSERT(current_level == leafs_level, "unexpected value");
 
-            node_pointer n = rtree::create_node<Allocators, leaf>::apply(allocators);                       // MAY THROW (A)
+            node_pointer n = rtree::create_node<allocators_type, leaf>::apply(allocators);                  // MAY THROW (A)
             subtree_destroyer auto_remover(n, allocators);
             leaf & l = rtree::get<leaf>(*n);
 
@@ -546,10 +570,11 @@ void load(Archive & ar, boost::geometry::index::rtree<V, P, I, E, A> & rt, unsig
     typedef typename view::options_type options_type;
     typedef typename view::box_type box_type;
     typedef typename view::allocators_type allocators_type;
+    typedef typename view::members_holder members_holder;
 
     typedef typename options_type::parameters_type parameters_type;
     typedef typename allocators_type::node_pointer node_pointer;
-    typedef detail::rtree::subtree_destroyer<value_type, options_type, translator_type, box_type, allocators_type> subtree_destroyer;
+    typedef detail::rtree::subtree_destroyer<members_holder> subtree_destroyer;
 
     view tree(rt);
 
@@ -563,7 +588,7 @@ void load(Archive & ar, boost::geometry::index::rtree<V, P, I, E, A> & rt, unsig
     if ( 0 < values_count )
     {
         size_type loaded_values_count = 0;
-        n = detail::rtree::load<value_type, options_type, translator_type, box_type, allocators_type>
+        n = detail::rtree::load<members_holder>
             ::apply(ar, version, leafs_level, loaded_values_count, params, tree.members().translator(), tree.members().allocators());                                        // MAY THROW
 
         subtree_destroyer remover(n, tree.members().allocators());

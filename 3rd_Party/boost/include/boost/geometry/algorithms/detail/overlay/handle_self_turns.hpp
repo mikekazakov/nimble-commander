@@ -3,8 +3,8 @@
 // Copyright (c) 2017 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2020.
+// Modifications copyright (c) 2019-2020 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -15,7 +15,9 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_HANDLE_SELF_TURNS_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_HANDLE_SELF_TURNS_HPP
 
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/algorithms/detail/overlay/cluster_info.hpp>
 #include <boost/geometry/algorithms/detail/overlay/is_self_turn.hpp>
@@ -30,48 +32,6 @@ namespace boost { namespace geometry
 namespace detail { namespace overlay
 {
 
-
-template
-<
-    typename Point, typename Geometry,
-    typename Tag2 = typename geometry::tag<Geometry>::type
->
-struct check_within_strategy
-{
-    template <typename Strategy>
-    static inline typename Strategy::template point_in_geometry_strategy<Point, Geometry>::type
-        within(Strategy const& strategy)
-    {
-        return strategy.template get_point_in_geometry_strategy<Point, Geometry>();
-    }
-
-    template <typename Strategy>
-    static inline typename Strategy::template point_in_geometry_strategy<Point, Geometry>::type
-        covered_by(Strategy const& strategy)
-    {
-        return strategy.template get_point_in_geometry_strategy<Point, Geometry>();
-    }
-};
-
-template <typename Point, typename Geometry>
-struct check_within_strategy<Point, Geometry, box_tag>
-{
-    template <typename Strategy>
-    static inline typename Strategy::within_point_box_strategy_type
-        within(Strategy const& )
-    {
-        return typename Strategy::within_point_box_strategy_type();
-    }
-
-    template <typename Strategy>
-    static inline typename Strategy::covered_by_point_box_strategy_type
-        covered_by(Strategy const&)
-    {
-        return typename Strategy::covered_by_point_box_strategy_type();
-    }
-};
-
-
 template <overlay_type OverlayType>
 struct check_within
 {
@@ -84,14 +44,10 @@ struct check_within
     bool apply(Turn const& turn, Geometry0 const& geometry0,
                Geometry1 const& geometry1, UmbrellaStrategy const& strategy)
     {
-        typedef typename Turn::point_type point_type;
-
         // Operations 0 and 1 have the same source index in self-turns
         return turn.operations[0].seg_id.source_index == 0
-            ? geometry::within(turn.point, geometry1,
-                check_within_strategy<point_type, Geometry1>::within(strategy))
-            : geometry::within(turn.point, geometry0,
-                check_within_strategy<point_type, Geometry0>::within(strategy));
+            ? geometry::within(turn.point, geometry1, strategy)
+            : geometry::within(turn.point, geometry0, strategy);
     }
 
 };
@@ -108,15 +64,11 @@ struct check_within<overlay_difference>
     bool apply(Turn const& turn, Geometry0 const& geometry0,
                Geometry1 const& geometry1, UmbrellaStrategy const& strategy)
     {
-        typedef typename Turn::point_type point_type;
-
         // difference = intersection(a, reverse(b))
         // therefore we should reverse the meaning of within for geometry1
         return turn.operations[0].seg_id.source_index == 0
-            ? ! geometry::covered_by(turn.point, geometry1,
-                  check_within_strategy<point_type, Geometry1>::covered_by(strategy))
-            : geometry::within(turn.point, geometry0,
-                check_within_strategy<point_type, Geometry0>::within(strategy));
+            ? ! geometry::covered_by(turn.point, geometry1, strategy)
+            : geometry::within(turn.point, geometry0, strategy);
     }
 };
 

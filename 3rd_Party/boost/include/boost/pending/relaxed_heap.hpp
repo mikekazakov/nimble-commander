@@ -6,8 +6,7 @@
 
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
-#warning \
-    "Use of relaxed_heap is depreciated; please use the standard heap functions."
+
 #ifndef BOOST_RELAXED_HEAP_HEADER
 #define BOOST_RELAXED_HEAP_HEADER
 

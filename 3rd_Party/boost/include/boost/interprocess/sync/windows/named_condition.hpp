@@ -21,13 +21,15 @@
 
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
+
+#include <boost/interprocess/sync/cv_status.hpp>
 #include <boost/interprocess/sync/windows/named_condition_any.hpp>
 
 namespace boost {
 namespace interprocess {
 namespace ipcdetail {
 
-typedef windows_named_condition_any windows_named_condition;
+typedef winapi_named_condition_any winapi_named_condition;
 
 }  //namespace ipcdetail {
 }  //namespace interprocess {

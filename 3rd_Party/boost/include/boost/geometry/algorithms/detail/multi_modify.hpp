@@ -4,8 +4,8 @@
 // Copyright (c) 2008-2012 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2017.
-// Modifications copyright (c) 2017 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2021.
+// Modifications copyright (c) 2017-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
@@ -19,7 +19,8 @@
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_MULTI_MODIFY_HPP
 
 
-#include <boost/range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
 
 
 namespace boost { namespace geometry
@@ -31,27 +32,24 @@ namespace detail
 {
 
 
-template <typename MultiGeometry, typename Policy>
+template <typename Policy>
 struct multi_modify
 {
+    template <typename MultiGeometry>
     static inline void apply(MultiGeometry& multi)
     {
-        typedef typename boost::range_iterator<MultiGeometry>::type iterator_type;
-        for (iterator_type it = boost::begin(multi);
-            it != boost::end(multi);
-            ++it)
+        auto const end = boost::end(multi);
+        for (auto it = boost::begin(multi); it != end; ++it)
         {
             Policy::apply(*it);
         }
     }
 
-    template <typename Strategy>
+    template <typename MultiGeometry, typename Strategy>
     static inline void apply(MultiGeometry& multi, Strategy const& strategy)
     {
-        typedef typename boost::range_iterator<MultiGeometry>::type iterator_type;
-        for (iterator_type it = boost::begin(multi);
-            it != boost::end(multi);
-            ++it)
+        auto const end = boost::end(multi);
+        for (auto it = boost::begin(multi); it != end; ++it)
         {
             Policy::apply(*it, strategy);
         }

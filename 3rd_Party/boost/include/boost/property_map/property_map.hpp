@@ -596,7 +596,11 @@ namespace boost {
 } // namespace boost
 
 #ifdef BOOST_GRAPH_USE_MPI
-#include <boost/property_map/parallel/parallel_property_maps.hpp>
+// Hide include from dependency trackers; the right fix
+// is not to have it at all, but who knows what'll break
+#define BOOST_PMAP_HEADER_NAME <boost/property_map/parallel/parallel_property_maps.hpp>
+#include BOOST_PMAP_HEADER_NAME
+#undef BOOST_PMAP_HEADER_NAME
 #endif
 
 #include <boost/property_map/vector_property_map.hpp>

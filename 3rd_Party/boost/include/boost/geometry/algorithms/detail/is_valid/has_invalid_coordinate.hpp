@@ -1,7 +1,8 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2018, Oracle and/or its affiliates.
+// Copyright (c) 2014-2021, Oracle and/or its affiliates.
 
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -12,10 +13,8 @@
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_IS_VALID_HAS_INVALID_COORDINATE_HPP
 
 #include <cstddef>
+#include <type_traits>
 
-#include <boost/type_traits/is_floating_point.hpp>
-
-#include <boost/geometry/algorithms/detail/check_iterator_range.hpp>
 #include <boost/geometry/algorithms/validity_failure_type.hpp>
 
 #include <boost/geometry/core/coordinate_type.hpp>
@@ -81,26 +80,19 @@ struct indexed_has_invalid_coordinate
 
 struct range_has_invalid_coordinate
 {
-    struct point_has_valid_coordinates
-    {
-        template <typename Point>
-        static inline bool apply(Point const& point)
-        {
-            return ! point_has_invalid_coordinate::apply(point);
-        }
-    };
-
     template <typename Geometry, typename VisitPolicy>
     static inline bool apply(Geometry const& geometry, VisitPolicy& visitor)
     {
         boost::ignore_unused(visitor);
 
-        bool const has_valid_coordinates = detail::check_iterator_range
-            <
-                point_has_valid_coordinates,
-                true // do not consider an empty range as problematic
-            >::apply(geometry::points_begin(geometry),
-                     geometry::points_end(geometry));
+        auto const points_end = geometry::points_end(geometry);
+        bool const has_valid_coordinates = std::none_of
+            (
+                geometry::points_begin(geometry), points_end,
+                []( auto const& point ){ 
+                    return point_has_invalid_coordinate::apply(point); 
+                }
+            );
 
         return has_valid_coordinates
             ?
@@ -115,7 +107,7 @@ template
 <
     typename Geometry,
     typename Tag = typename tag<Geometry>::type,
-    bool HasFloatingPointCoordinates = boost::is_floating_point
+    bool HasFloatingPointCoordinates = std::is_floating_point
         <
             typename coordinate_type<Geometry>::type
         >::value

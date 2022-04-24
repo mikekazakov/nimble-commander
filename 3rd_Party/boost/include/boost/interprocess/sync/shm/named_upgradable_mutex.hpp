@@ -26,7 +26,6 @@
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/detail/managed_open_or_create_impl.hpp>
 #include <boost/interprocess/sync/interprocess_upgradable_mutex.hpp>
-#include <boost/interprocess/detail/posix_time_types_wrk.hpp>
 #include <boost/interprocess/sync/shm/named_creation_functor.hpp>
 #include <boost/interprocess/permissions.hpp>
 
@@ -58,20 +57,20 @@ class named_upgradable_mutex
 
    //!Creates a global upgradable mutex with a name.
    //!If the upgradable mutex can't be created throws interprocess_exception
-   named_upgradable_mutex(create_only_t create_only, const char *name, const permissions &perm = permissions());
+   named_upgradable_mutex(create_only_t, const char *name, const permissions &perm = permissions());
 
    //!Opens or creates a global upgradable mutex with a name, and an initial count.
    //!If the upgradable mutex is created, this call is equivalent to
    //!named_upgradable_mutex(create_only_t, ...)
    //!If the upgradable mutex is already created, this call is equivalent to
    //!named_upgradable_mutex(open_only_t, ... ).
-   named_upgradable_mutex(open_or_create_t open_or_create, const char *name, const permissions &perm = permissions());
+   named_upgradable_mutex(open_or_create_t, const char *name, const permissions &perm = permissions());
 
    //!Opens a global upgradable mutex with a name if that upgradable mutex
    //!is previously.
    //!created. If it is not previously created this function throws
    //!interprocess_exception.
-   named_upgradable_mutex(open_only_t open_only, const char *name);
+   named_upgradable_mutex(open_only_t, const char *name);
 
    //!Destroys *this and indicates that the calling process is finished using
    //!the resource. The destructor function will deallocate
@@ -102,7 +101,8 @@ class named_upgradable_mutex
    //!   upgradable ownership of the mutex or abs_time is reached.
    //!Returns: If acquires exclusive ownership, returns true. Otherwise returns false.
    //!Throws: interprocess_exception on error.
-   bool timed_lock(const boost::posix_time::ptime &abs_time);
+   template<class TimePoint>
+   bool timed_lock(const TimePoint &abs_time);
 
    //!Precondition: The thread must have exclusive ownership of the mutex.
    //!Effects: The calling thread releases the exclusive ownership of the mutex.
@@ -130,7 +130,8 @@ class named_upgradable_mutex
    //!   ownership of the mutex or abs_time is reached.
    //!Returns: If acquires sharable ownership, returns true. Otherwise returns false.
    //!Throws: interprocess_exception on error.
-   bool timed_lock_sharable(const boost::posix_time::ptime &abs_time);
+   template<class TimePoint>
+   bool timed_lock_sharable(const TimePoint &abs_time);
 
    //!Precondition: The thread must have sharable ownership of the mutex.
    //!Effects: The calling thread releases the sharable ownership of the mutex.
@@ -158,7 +159,8 @@ class named_upgradable_mutex
    //!   ownership of the mutex or abs_time is reached.
    //!Returns: If acquires upgradable ownership, returns true. Otherwise returns false.
    //!Throws: interprocess_exception on error.
-   bool timed_lock_upgradable(const boost::posix_time::ptime &abs_time);
+   template<class TimePoint>
+   bool timed_lock_upgradable(const TimePoint &abs_time);
 
    //!Precondition: The thread must have upgradable ownership of the mutex.
    //!Effects: The calling thread releases the upgradable ownership of the mutex.
@@ -209,7 +211,8 @@ class named_upgradable_mutex
    //!   will maintain upgradable ownership.
    //!Returns: If acquires exclusive ownership, returns true. Otherwise returns false.
    //!Throws: An exception derived from interprocess_exception on error.
-   bool timed_unlock_upgradable_and_lock(const boost::posix_time::ptime &abs_time);
+   template<class TimePoint>
+   bool timed_unlock_upgradable_and_lock(const TimePoint &abs_time);
 
    //!Precondition: The thread must have sharable ownership of the mutex.
    //!Effects: The thread atomically releases sharable ownership and tries to acquire
@@ -246,7 +249,7 @@ inline named_upgradable_mutex::~named_upgradable_mutex()
 
 inline named_upgradable_mutex::named_upgradable_mutex
    (create_only_t, const char *name, const permissions &perm)
-   :  m_shmem  (create_only
+   :  m_shmem  (create_only_t()
                ,name
                ,sizeof(interprocess_upgradable_mutex) +
                   open_create_impl_t::ManagedOpenOrCreateUserOffset
@@ -258,7 +261,7 @@ inline named_upgradable_mutex::named_upgradable_mutex
 
 inline named_upgradable_mutex::named_upgradable_mutex
    (open_or_create_t, const char *name, const permissions &perm)
-   :  m_shmem  (open_or_create
+   :  m_shmem  (open_or_create_t()
                ,name
                ,sizeof(interprocess_upgradable_mutex) +
                   open_create_impl_t::ManagedOpenOrCreateUserOffset
@@ -270,7 +273,7 @@ inline named_upgradable_mutex::named_upgradable_mutex
 
 inline named_upgradable_mutex::named_upgradable_mutex
    (open_only_t, const char *name)
-   :  m_shmem  (open_only
+   :  m_shmem  (open_only_t()
                ,name
                ,read_write
                ,0
@@ -289,8 +292,8 @@ inline void named_upgradable_mutex::unlock()
 inline bool named_upgradable_mutex::try_lock()
 {  return this->mutex()->try_lock();  }
 
-inline bool named_upgradable_mutex::timed_lock
-   (const boost::posix_time::ptime &abs_time)
+template<class TimePoint>
+inline bool named_upgradable_mutex::timed_lock(const TimePoint &abs_time)
 {  return this->mutex()->timed_lock(abs_time);  }
 
 inline void named_upgradable_mutex::lock_upgradable()
@@ -302,8 +305,8 @@ inline void named_upgradable_mutex::unlock_upgradable()
 inline bool named_upgradable_mutex::try_lock_upgradable()
 {  return this->mutex()->try_lock_upgradable();  }
 
-inline bool named_upgradable_mutex::timed_lock_upgradable
-   (const boost::posix_time::ptime &abs_time)
+template<class TimePoint>
+inline bool named_upgradable_mutex::timed_lock_upgradable(const TimePoint &abs_time)
 {  return this->mutex()->timed_lock_upgradable(abs_time);   }
 
 inline void named_upgradable_mutex::lock_sharable()
@@ -315,8 +318,8 @@ inline void named_upgradable_mutex::unlock_sharable()
 inline bool named_upgradable_mutex::try_lock_sharable()
 {  return this->mutex()->try_lock_sharable();  }
 
-inline bool named_upgradable_mutex::timed_lock_sharable
-   (const boost::posix_time::ptime &abs_time)
+template<class TimePoint>
+inline bool named_upgradable_mutex::timed_lock_sharable(const TimePoint &abs_time)
 {  return this->mutex()->timed_lock_sharable(abs_time);  }
 
 inline void named_upgradable_mutex::unlock_and_lock_upgradable()
@@ -334,8 +337,8 @@ inline void named_upgradable_mutex::unlock_upgradable_and_lock()
 inline bool named_upgradable_mutex::try_unlock_upgradable_and_lock()
 {  return this->mutex()->try_unlock_upgradable_and_lock();  }
 
-inline bool named_upgradable_mutex::timed_unlock_upgradable_and_lock
-   (const boost::posix_time::ptime &abs_time)
+template<class TimePoint>
+inline bool named_upgradable_mutex::timed_unlock_upgradable_and_lock(const TimePoint &abs_time)
 {  return this->mutex()->timed_unlock_upgradable_and_lock(abs_time);  }
 
 inline bool named_upgradable_mutex::try_unlock_sharable_and_lock()

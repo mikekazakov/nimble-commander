@@ -1,29 +1,45 @@
 ///////////////////////////////////////////////////////////////////////////////
-//  Copyright 2011 John Maddock. Distributed under the Boost
+//  Copyright 2011 John Maddock.
+//  Copyright 2021 Matt Borland. Distributed under the Boost
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_MATH_ER_GMP_BACKEND_HPP
 #define BOOST_MATH_ER_GMP_BACKEND_HPP
 
+#include <boost/multiprecision/detail/standalone_config.hpp>
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/debug_adaptor.hpp>
 #include <boost/multiprecision/detail/integer_ops.hpp>
-#include <boost/multiprecision/detail/big_lanczos.hpp>
+#include <boost/multiprecision/detail/float128_functions.hpp>
 #include <boost/multiprecision/detail/digits.hpp>
 #include <boost/multiprecision/detail/atomic.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
-#include <boost/cstdint.hpp>
-#include <boost/functional/hash_fwd.hpp>
+#include <boost/multiprecision/detail/hash.hpp>
+#include <boost/multiprecision/detail/no_exceptions_support.hpp>
+#include <boost/multiprecision/detail/assert.hpp>
+#include <boost/multiprecision/detail/fpclassify.hpp>
+#include <type_traits>
+#include <memory>
+#include <utility>
+#include <cstdint>
+#include <cmath>
+#include <cctype>
+#include <limits>
+#include <climits>
+#include <cstdlib>
+#include <cfloat>
+
 //
 // Some includes we need from Boost.Math, since we rely on that library to provide these functions:
 //
+#ifdef BOOST_MP_MATH_AVAILABLE
 #include <boost/math/special_functions/asinh.hpp>
 #include <boost/math/special_functions/acosh.hpp>
 #include <boost/math/special_functions/atanh.hpp>
 #include <boost/math/special_functions/cbrt.hpp>
 #include <boost/math/special_functions/expm1.hpp>
 #include <boost/math/special_functions/gamma.hpp>
+#endif
 
 #ifdef BOOST_MSVC
 #pragma warning(push)
@@ -40,11 +56,6 @@
 #define BOOST_MP_MPIR_VERSION 0
 #endif
 
-#include <cctype>
-#include <cmath>
-#include <limits>
-#include <climits>
-
 namespace boost {
 namespace multiprecision {
 namespace backends {
@@ -52,7 +63,7 @@ namespace backends {
 #ifdef BOOST_MSVC
 // warning C4127: conditional expression is constant
 #pragma warning(push)
-#pragma warning(disable : 4127)
+//#pragma warning(disable : 4127)
 #endif
 
 template <unsigned digits10>
@@ -63,13 +74,13 @@ struct gmp_rational;
 } // namespace backends
 
 template <>
-struct number_category<backends::gmp_int> : public mpl::int_<number_kind_integer>
+struct number_category<backends::gmp_int> : public std::integral_constant<int, number_kind_integer>
 {};
 template <>
-struct number_category<backends::gmp_rational> : public mpl::int_<number_kind_rational>
+struct number_category<backends::gmp_rational> : public std::integral_constant<int, number_kind_rational>
 {};
 template <unsigned digits10>
-struct number_category<backends::gmp_float<digits10> > : public mpl::int_<number_kind_floating_point>
+struct number_category<backends::gmp_float<digits10> > : public std::integral_constant<int, number_kind_floating_point>
 {};
 
 namespace backends {
@@ -84,18 +95,19 @@ template <unsigned digits10>
 struct gmp_float_imp
 {
 #ifdef BOOST_HAS_LONG_LONG
-   typedef mpl::list<long, boost::long_long_type>           signed_types;
-   typedef mpl::list<unsigned long, boost::ulong_long_type> unsigned_types;
+   using signed_types = std::tuple<long, long long>          ;
+   using unsigned_types = std::tuple<unsigned long, unsigned long long>;
 #else
-   typedef mpl::list<long>          signed_types;
-   typedef mpl::list<unsigned long> unsigned_types;
+   using signed_types = std::tuple<long>         ;
+   using unsigned_types = std::tuple<unsigned long>;
 #endif
-   typedef mpl::list<double, long double> float_types;
-   typedef long                           exponent_type;
+   using float_types = std::tuple<double, long double>;
+   using exponent_type = long                          ;
 
-   gmp_float_imp() BOOST_NOEXCEPT
+   gmp_float_imp() noexcept
    {
       m_data[0]._mp_d = 0; // uninitialized m_data
+      m_data[0]._mp_prec = 1;
    }
 
    gmp_float_imp(const gmp_float_imp& o)
@@ -106,22 +118,33 @@ struct gmp_float_imp
       // to get the right value, but if it's then used in further calculations
       // things go badly wrong!!
       //
-      mpf_init2(m_data, mpf_get_prec(o.data()));
+      mpf_init2(m_data, preserve_source_precision() ? mpf_get_prec(o.data()) : boost::multiprecision::detail::digits10_2_2(get_default_precision()));
       if (o.m_data[0]._mp_d)
          mpf_set(m_data, o.m_data);
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   gmp_float_imp(gmp_float_imp&& o) BOOST_NOEXCEPT
+   // rvalue copy
+   gmp_float_imp(gmp_float_imp&& o) noexcept
    {
-      m_data[0]         = o.m_data[0];
-      o.m_data[0]._mp_d = 0;
+      if ((this->get_default_options() == variable_precision_options::preserve_target_precision) && (mpf_get_prec(o.data()) != boost::multiprecision::detail::digits10_2_2(get_default_precision())))
+      {
+         mpf_init2(m_data, boost::multiprecision::detail::digits10_2_2(get_default_precision()));
+         *this = static_cast<const gmp_float_imp&>(o);
+      }
+      else
+      {
+         m_data[0] = o.m_data[0];
+         o.m_data[0]._mp_d = 0;
+      }
    }
-#endif
+
    gmp_float_imp& operator=(const gmp_float_imp& o)
    {
       if (m_data[0]._mp_d == 0)
-         mpf_init2(m_data, mpf_get_prec(o.data()));
-      if (mpf_get_prec(data()) != mpf_get_prec(o.data()))
+      {
+         mpf_init2(m_data, preserve_source_precision() ? mpf_get_prec(o.data()) : boost::multiprecision::detail::digits10_2_2(get_default_precision()));
+         mpf_set(m_data, o.m_data);
+      }
+      else if (preserve_source_precision() && (mpf_get_prec(data()) != mpf_get_prec(o.data())))
       {
          mpf_t t;
          mpf_init2(t, mpf_get_prec(o.data()));
@@ -131,32 +154,37 @@ struct gmp_float_imp
       }
       else
       {
-         if (o.m_data[0]._mp_d)
-            mpf_set(m_data, o.m_data);
+         mpf_set(m_data, o.m_data);
       }
       return *this;
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   gmp_float_imp& operator=(gmp_float_imp&& o) BOOST_NOEXCEPT
+   // rvalue assign
+   gmp_float_imp& operator=(gmp_float_imp&& o) noexcept
    {
-      mpf_swap(m_data, o.m_data);
+      if ((this->get_default_options() == variable_precision_options::preserve_target_precision) && (mpf_get_prec(o.data()) != mpf_get_prec(data())))
+         *this = static_cast<const gmp_float_imp&>(o);
+      else
+      {
+         mpf_swap(m_data, o.m_data);
+      }
       return *this;
    }
-#endif
 
 #ifdef BOOST_HAS_LONG_LONG
 #if defined(ULLONG_MAX) && (ULLONG_MAX == ULONG_MAX)
-   gmp_float_imp& operator=(boost::ulong_long_type i)
+   gmp_float_imp& operator=(unsigned long long i)
    {
       *this = static_cast<unsigned long>(i);
       return *this;
    }
 #else
-   gmp_float_imp& operator=(boost::ulong_long_type i)
+   gmp_float_imp& operator=(unsigned long long i)
    {
       if (m_data[0]._mp_d == 0)
+      {
          mpf_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
-      boost::ulong_long_type mask  = ((((1uLL << (std::numeric_limits<unsigned long>::digits - 1)) - 1) << 1) | 1uLL);
+      }
+      unsigned long long mask  = ((((1uLL << (std::numeric_limits<unsigned long>::digits - 1)) - 1) << 1) | 1uLL);
       unsigned               shift = 0;
       mpf_t                  t;
       mpf_init2(t, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
@@ -174,12 +202,14 @@ struct gmp_float_imp
       return *this;
    }
 #endif
-   gmp_float_imp& operator=(boost::long_long_type i)
+   gmp_float_imp& operator=(long long i)
    {
       if (m_data[0]._mp_d == 0)
+      {
          mpf_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
+      }
       bool neg = i < 0;
-      *this    = static_cast<boost::ulong_long_type>(boost::multiprecision::detail::unsigned_abs(i));
+      *this    = static_cast<unsigned long long>(boost::multiprecision::detail::unsigned_abs(i));
       if (neg)
          mpf_neg(m_data, m_data);
       return *this;
@@ -188,32 +218,76 @@ struct gmp_float_imp
    gmp_float_imp& operator=(unsigned long i)
    {
       if (m_data[0]._mp_d == 0)
+      {
          mpf_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
+      }
       mpf_set_ui(m_data, i);
       return *this;
    }
    gmp_float_imp& operator=(long i)
    {
       if (m_data[0]._mp_d == 0)
+      {
          mpf_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
+      }
       mpf_set_si(m_data, i);
       return *this;
    }
+#ifdef BOOST_HAS_INT128
+   gmp_float_imp& operator=(uint128_type i)
+   {
+      if (m_data[0]._mp_d == 0)
+      {
+         mpf_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
+      }
+      unsigned long      mask  = ((((1uLL << (std::numeric_limits<unsigned long>::digits - 1)) - 1) << 1) | 1uLL);
+      unsigned           shift = 0;
+      mpf_t              t;
+      mpf_init2(t, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
+      mpf_set_ui(m_data, 0);
+      while (i)
+      {
+         mpf_set_ui(t, static_cast<unsigned long>(i & mask));
+         if (shift)
+            mpf_mul_2exp(t, t, shift);
+         mpf_add(m_data, m_data, t);
+         shift += std::numeric_limits<unsigned long>::digits;
+         i >>= std::numeric_limits<unsigned long>::digits;
+      }
+      mpf_clear(t);
+      return *this;
+   }
+   gmp_float_imp& operator=(int128_type i)
+   {
+      if (m_data[0]._mp_d == 0)
+      {
+         mpf_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
+      }
+      bool neg = i < 0;
+      *this    = static_cast<uint128_type>(boost::multiprecision::detail::unsigned_abs(i));
+      if (neg)
+         mpf_neg(m_data, m_data);
+      return *this;
+   }
+#endif
    gmp_float_imp& operator=(double d)
    {
       if (m_data[0]._mp_d == 0)
+      {
          mpf_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
+      }
       mpf_set_d(m_data, d);
       return *this;
    }
-   gmp_float_imp& operator=(long double a)
+   template <class F>
+   gmp_float_imp& assign_float(F a)
    {
-      using std::floor;
-      using std::frexp;
-      using std::ldexp;
+      BOOST_MP_FLOAT128_USING using std::floor; using std::frexp; using std::ldexp;
 
       if (m_data[0]._mp_d == 0)
+      {
          mpf_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
+      }
 
       if (a == 0)
       {
@@ -227,16 +301,16 @@ struct gmp_float_imp
          return *this;
       }
 
-      BOOST_ASSERT(!(boost::math::isinf)(a));
-      BOOST_ASSERT(!(boost::math::isnan)(a));
+      BOOST_MP_ASSERT(!BOOST_MP_ISINF(a));
+      BOOST_MP_ASSERT(!BOOST_MP_ISNAN(a));
 
       int         e;
-      long double f, term;
+      F f, term;
       mpf_set_ui(m_data, 0u);
 
       f = frexp(a, &e);
 
-      static const int shift = std::numeric_limits<int>::digits - 1;
+      constexpr const int shift = std::numeric_limits<int>::digits - 1;
 
       while (f)
       {
@@ -257,23 +331,35 @@ struct gmp_float_imp
          mpf_div_2exp(m_data, m_data, -e);
       return *this;
    }
+   gmp_float_imp& operator=(long double a)
+   {
+      return assign_float(a);
+   }
+#ifdef BOOST_HAS_FLOAT128
+   gmp_float_imp& operator= (float128_type a)
+   {
+      return assign_float(a);
+   }
+#endif
    gmp_float_imp& operator=(const char* s)
    {
       if (m_data[0]._mp_d == 0)
+      {
          mpf_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
+      }
       if (s && (*s == '+'))
          ++s;  // Leading "+" sign not supported by mpf_set_str:
       if (0 != mpf_set_str(m_data, s, 10))
-         BOOST_THROW_EXCEPTION(std::runtime_error(std::string("The string \"") + s + std::string("\"could not be interpreted as a valid floating point number.")));
+         BOOST_MP_THROW_EXCEPTION(std::runtime_error(std::string("The string \"") + s + std::string("\"could not be interpreted as a valid floating point number.")));
       return *this;
    }
-   void swap(gmp_float_imp& o) BOOST_NOEXCEPT
+   void swap(gmp_float_imp& o) noexcept
    {
       mpf_swap(m_data, o.m_data);
    }
    std::string str(std::streamsize digits, std::ios_base::fmtflags f) const
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
 
       bool            scientific = (f & std::ios_base::scientific) == std::ios_base::scientific;
       bool            fixed      = (f & std::ios_base::fixed) == std::ios_base::fixed;
@@ -300,7 +386,7 @@ struct gmp_float_imp
       {
          char* ps = mpf_get_str(0, &e, 10, static_cast<std::size_t>(digits), m_data);
          --e; // To match with what our formatter expects.
-         if (fixed && e != -1)
+         if (fixed)
          {
             // Oops we actually need a different number of digits to what we asked for:
             (*free_func_ptr)((void*)ps, std::strlen(ps) + 1);
@@ -361,6 +447,7 @@ struct gmp_float_imp
                   // happens, account for it here.
                   // example: cout << fixed << setprecision(3) << mpf_float_50("99.9809")
                   digits -= old_e - e;
+                  (*free_func_ptr)((void*)ps, std::strlen(ps) + 1);
                   ps = mpf_get_str(0, &e, 10, static_cast<std::size_t>(digits), m_data);
                   --e; // To match with what our formatter expects.
                }
@@ -380,56 +467,107 @@ struct gmp_float_imp
       boost::multiprecision::detail::format_float_string(result, e, org_digits, f, mpf_sgn(m_data) == 0);
       return result;
    }
-   ~gmp_float_imp() BOOST_NOEXCEPT
+   ~gmp_float_imp() noexcept
    {
       if (m_data[0]._mp_d)
+      {
          mpf_clear(m_data);
+      }
    }
-   void negate() BOOST_NOEXCEPT
+   void negate() noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
       mpf_neg(m_data, m_data);
    }
-   int compare(const gmp_float<digits10>& o) const BOOST_NOEXCEPT
+   int compare(const gmp_float<digits10>& o) const noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d && o.m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d && o.m_data[0]._mp_d);
       return mpf_cmp(m_data, o.m_data);
    }
-   int compare(long i) const BOOST_NOEXCEPT
+   int compare(long i) const noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
       return mpf_cmp_si(m_data, i);
    }
-   int compare(unsigned long i) const BOOST_NOEXCEPT
+   int compare(unsigned long i) const noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
       return mpf_cmp_ui(m_data, i);
    }
    template <class V>
-   typename enable_if<is_arithmetic<V>, int>::type compare(V v) const
+   typename std::enable_if<boost::multiprecision::detail::is_arithmetic<V>::value, int>::type compare(V v) const
    {
       gmp_float<digits10> d;
       d = v;
       return compare(d);
    }
-   mpf_t& data() BOOST_NOEXCEPT
+   mpf_t& data() noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
       return m_data;
    }
-   const mpf_t& data() const BOOST_NOEXCEPT
+   const mpf_t& data() const noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
       return m_data;
    }
 
  protected:
    mpf_t            m_data;
-   static boost::multiprecision::detail::precision_type& get_default_precision() BOOST_NOEXCEPT
+   static unsigned& get_default_precision() noexcept
+   {
+      static BOOST_MP_THREAD_LOCAL unsigned val(get_global_default_precision());
+      return val;
+   }
+   static boost::multiprecision::detail::precision_type& get_global_default_precision() noexcept
    {
       static boost::multiprecision::detail::precision_type val(50);
       return val;
    }
+#ifndef BOOST_MT_NO_ATOMIC_INT
+   static std::atomic<variable_precision_options>& get_global_default_options() noexcept
+#else
+   static variable_precision_options& get_global_default_options() noexcept
+#endif
+   {
+#ifndef BOOST_MT_NO_ATOMIC_INT
+      static std::atomic<variable_precision_options> val{variable_precision_options::preserve_related_precision};
+#else
+      static variable_precision_options val{variable_precision_options::preserve_related_precision};
+#endif
+      return val;
+   }
+   static variable_precision_options& get_default_options()noexcept
+   {
+      static BOOST_MP_THREAD_LOCAL variable_precision_options val(get_global_default_options());
+      return val;
+   }
+   static bool preserve_source_precision() noexcept
+   {
+      return get_default_options() >= variable_precision_options::preserve_source_precision;
+   }
+};
+
+class gmp_char_ptr
+{
+private:
+   char* ptr_val;
+   void* (*alloc_func_ptr)(size_t);
+   void* (*realloc_func_ptr)(void*, size_t, size_t);
+   void  (*free_func_ptr)(void*, size_t);
+
+public:
+   gmp_char_ptr() = delete;
+   explicit gmp_char_ptr(char* val_) : ptr_val {val_}
+   {
+      mp_get_memory_functions(&alloc_func_ptr, &realloc_func_ptr, &free_func_ptr);
+   }
+   ~gmp_char_ptr() noexcept 
+   {
+      (*free_func_ptr)((void*)ptr_val, sizeof(*ptr_val));
+      ptr_val = nullptr;
+   }
+   inline char* get() noexcept { return ptr_val; }
 };
 
 } // namespace detail
@@ -446,9 +584,9 @@ struct gmp_float : public detail::gmp_float_imp<digits10>
    }
    gmp_float(const gmp_float& o) : detail::gmp_float_imp<digits10>(o) {}
    template <unsigned D>
-   gmp_float(const gmp_float<D>& o, typename enable_if_c<D <= digits10>::type* = 0);
+   gmp_float(const gmp_float<D>& o, typename std::enable_if<D <= digits10>::type* = 0);
    template <unsigned D>
-   explicit gmp_float(const gmp_float<D>& o, typename disable_if_c<D <= digits10>::type* = 0);
+   explicit gmp_float(const gmp_float<D>& o, typename std::enable_if<!(D <= digits10)>::type* = 0);
    gmp_float(const gmp_int& o);
    gmp_float(const gmp_rational& o);
    gmp_float(const mpf_t val)
@@ -466,22 +604,19 @@ struct gmp_float : public detail::gmp_float_imp<digits10>
       mpf_init2(this->m_data, multiprecision::detail::digits10_2_2(digits10));
       mpf_set_q(this->m_data, val);
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   gmp_float(gmp_float&& o) BOOST_NOEXCEPT : detail::gmp_float_imp<digits10>(static_cast<detail::gmp_float_imp<digits10>&&>(o))
+   // rvalue copy
+   gmp_float(gmp_float&& o) noexcept : detail::gmp_float_imp<digits10>(static_cast<detail::gmp_float_imp<digits10>&&>(o))
    {}
-#endif
    gmp_float& operator=(const gmp_float& o)
    {
       *static_cast<detail::gmp_float_imp<digits10>*>(this) = static_cast<detail::gmp_float_imp<digits10> const&>(o);
       return *this;
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   gmp_float& operator=(gmp_float&& o) BOOST_NOEXCEPT
+   gmp_float& operator=(gmp_float&& o) noexcept
    {
       *static_cast<detail::gmp_float_imp<digits10>*>(this) = static_cast<detail::gmp_float_imp<digits10>&&>(o);
       return *this;
    }
-#endif
    template <unsigned D>
    gmp_float& operator=(const gmp_float<D>& o);
    gmp_float& operator=(const gmp_int& o);
@@ -508,7 +643,7 @@ struct gmp_float : public detail::gmp_float_imp<digits10>
       return *this;
    }
    template <class V>
-   gmp_float& operator=(const V& v)
+   typename std::enable_if<std::is_assignable<detail::gmp_float_imp<digits10>, V>::value, gmp_float&>::type operator=(const V& v)
    {
       *static_cast<detail::gmp_float_imp<digits10>*>(this) = v;
       return *this;
@@ -551,18 +686,17 @@ struct gmp_float<0> : public detail::gmp_float_imp<0>
       mpf_init2(this->m_data, multiprecision::detail::digits10_2_2(requested_precision));
       mpf_set_q(this->m_data, val);
    }
-   gmp_float(const gmp_float& o) : detail::gmp_float_imp<0>(o), requested_precision(o.requested_precision) {}
+   gmp_float(const gmp_float& o) : detail::gmp_float_imp<0>(o), requested_precision(preserve_source_precision() ? o.requested_precision : get_default_precision()) {}
    template <unsigned D>
    gmp_float(const gmp_float<D>& o)
    {
-      mpf_init2(this->m_data, mpf_get_prec(o.data()));
+      mpf_init2(this->m_data, preserve_related_precision() ? mpf_get_prec(o.data()) : multiprecision::detail::digits10_2_2(get_default_precision()));
       mpf_set(this->m_data, o.data());
-      requested_precision = D;
+      requested_precision = preserve_related_precision() ? D : get_default_precision();
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   gmp_float(gmp_float&& o) BOOST_NOEXCEPT : detail::gmp_float_imp<0>(static_cast<detail::gmp_float_imp<0>&&>(o)), requested_precision(o.requested_precision)
+   // rvalue copy
+   gmp_float(gmp_float&& o) noexcept : detail::gmp_float_imp<0>(static_cast<detail::gmp_float_imp<0>&&>(o)), requested_precision((this->get_default_options() != variable_precision_options::preserve_target_precision) ? o.requested_precision : get_default_precision())
    {}
-#endif
    gmp_float(const gmp_int& o);
    gmp_float(const gmp_rational& o);
    gmp_float(const gmp_float& o, unsigned digits10) : requested_precision(digits10)
@@ -592,30 +726,32 @@ struct gmp_float<0> : public detail::gmp_float_imp<0>
    gmp_float& operator=(const gmp_float& o)
    {
       *static_cast<detail::gmp_float_imp<0>*>(this) = static_cast<detail::gmp_float_imp<0> const&>(o);
-      requested_precision                           = o.requested_precision;
+      if(preserve_source_precision())
+         requested_precision = o.requested_precision;
       return *this;
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   gmp_float& operator=(gmp_float&& o) BOOST_NOEXCEPT
+   // rvalue copy
+   gmp_float& operator=(gmp_float&& o) noexcept
    {
       *static_cast<detail::gmp_float_imp<0>*>(this) = static_cast<detail::gmp_float_imp<0>&&>(o);
-      requested_precision                           = o.requested_precision;
+      if ((this->get_default_options() != variable_precision_options::preserve_target_precision))
+         requested_precision = o.requested_precision;
       return *this;
    }
-#endif
    template <unsigned D>
    gmp_float& operator=(const gmp_float<D>& o)
    {
       if (this->m_data[0]._mp_d == 0)
       {
-         mpf_init2(this->m_data, mpf_get_prec(o.data()));
+         mpf_init2(this->m_data, preserve_related_precision() ? mpf_get_prec(o.data()) : multiprecision::detail::digits10_2_2(get_default_precision()));
       }
-      else
+      else if(preserve_related_precision())
       {
          mpf_set_prec(this->m_data, mpf_get_prec(o.data()));
       }
       mpf_set(this->m_data, o.data());
-      requested_precision = D;
+      if (preserve_related_precision())
+         requested_precision = D;
       return *this;
    }
    gmp_float& operator=(const gmp_int& o);
@@ -651,28 +787,76 @@ struct gmp_float<0> : public detail::gmp_float_imp<0>
       return *this;
    }
    template <class V>
-   gmp_float& operator=(const V& v)
+   typename std::enable_if<std::is_assignable<detail::gmp_float_imp<0>, V>::value, gmp_float&>::type operator=(const V& v)
    {
+      constexpr unsigned d10 = std::is_floating_point<V>::value ?
+         std::numeric_limits<V>::digits10 :
+         std::numeric_limits<V>::digits10 ? 1 + std::numeric_limits<V>::digits10 :
+         1 + boost::multiprecision::detail::digits2_2_10(std::numeric_limits<V>::digits);
+      if((thread_default_variable_precision_options() >= variable_precision_options::preserve_all_precision) && (precision() < d10))
+         this->precision(d10);
       *static_cast<detail::gmp_float_imp<0>*>(this) = v;
       return *this;
    }
-   static unsigned default_precision() BOOST_NOEXCEPT
+   static unsigned default_precision() noexcept
+   {
+      return get_global_default_precision();
+   }
+   static void default_precision(unsigned v) noexcept
+   {
+      get_global_default_precision() = v;
+   }
+   static unsigned thread_default_precision() noexcept
    {
       return get_default_precision();
    }
-   static void default_precision(unsigned v) BOOST_NOEXCEPT
+   static void thread_default_precision(unsigned v) noexcept
    {
       get_default_precision() = v;
    }
-   unsigned precision() const BOOST_NOEXCEPT
+   unsigned precision() const noexcept
    {
       return requested_precision;
    }
-   void precision(unsigned digits10) BOOST_NOEXCEPT
+   void precision(unsigned digits10) noexcept
    {
       requested_precision = digits10;
       mpf_set_prec(this->m_data, multiprecision::detail::digits10_2_2(requested_precision));
    }
+   //
+   // Variable precision options:
+   // 
+   static variable_precision_options default_variable_precision_options()noexcept
+   {
+      return get_global_default_options();
+   }
+   static variable_precision_options thread_default_variable_precision_options()noexcept
+   {
+      return get_default_options();
+   }
+   static void default_variable_precision_options(variable_precision_options opts)
+   {
+      get_global_default_options() = opts;
+   }
+   static void thread_default_variable_precision_options(variable_precision_options opts)
+   {
+      get_default_options() = opts;
+   }
+   static bool preserve_source_precision()
+   {
+      return get_default_options() >= variable_precision_options::preserve_source_precision;
+   }
+   static bool preserve_related_precision()
+   {
+      return get_default_options() >= variable_precision_options::preserve_related_precision;
+   }
+   static bool preserve_all_precision()
+   {
+      return get_default_options() >= variable_precision_options::preserve_all_precision;
+   }
+   //
+   // swap:
+   //
    void swap(gmp_float& o)
    {
       std::swap(requested_precision, o.requested_precision);
@@ -681,17 +865,17 @@ struct gmp_float<0> : public detail::gmp_float_imp<0>
 };
 
 template <unsigned digits10, class T>
-inline typename enable_if_c<is_arithmetic<T>::value, bool>::type eval_eq(const gmp_float<digits10>& a, const T& b) BOOST_NOEXCEPT
+inline typename std::enable_if<boost::multiprecision::detail::is_arithmetic<T>::value, bool>::type eval_eq(const gmp_float<digits10>& a, const T& b) noexcept
 {
    return a.compare(b) == 0;
 }
 template <unsigned digits10, class T>
-inline typename enable_if_c<is_arithmetic<T>::value, bool>::type eval_lt(const gmp_float<digits10>& a, const T& b) BOOST_NOEXCEPT
+inline typename std::enable_if<boost::multiprecision::detail::is_arithmetic<T>::value, bool>::type eval_lt(const gmp_float<digits10>& a, const T& b) noexcept
 {
    return a.compare(b) < 0;
 }
 template <unsigned digits10, class T>
-inline typename enable_if_c<is_arithmetic<T>::value, bool>::type eval_gt(const gmp_float<digits10>& a, const T& b) BOOST_NOEXCEPT
+inline typename std::enable_if<boost::multiprecision::detail::is_arithmetic<T>::value, bool>::type eval_gt(const gmp_float<digits10>& a, const T& b) noexcept
 {
    return a.compare(b) > 0;
 }
@@ -712,7 +896,7 @@ inline void eval_multiply(gmp_float<D1>& result, const gmp_float<D2>& o)
    mpf_mul(result.data(), result.data(), o.data());
 }
 template <unsigned digits10>
-inline bool eval_is_zero(const gmp_float<digits10>& val) BOOST_NOEXCEPT
+inline bool eval_is_zero(const gmp_float<digits10>& val) noexcept
 {
    return mpf_sgn(val.data()) == 0;
 }
@@ -720,7 +904,7 @@ template <unsigned D1, unsigned D2>
 inline void eval_divide(gmp_float<D1>& result, const gmp_float<D2>& o)
 {
    if (eval_is_zero(o))
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpf_div(result.data(), result.data(), o.data());
 }
 template <unsigned digits10>
@@ -742,7 +926,7 @@ template <unsigned digits10>
 inline void eval_divide(gmp_float<digits10>& result, unsigned long i)
 {
    if (i == 0)
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpf_div_ui(result.data(), result.data(), i);
 }
 template <unsigned digits10>
@@ -772,7 +956,7 @@ template <unsigned digits10>
 inline void eval_divide(gmp_float<digits10>& result, long i)
 {
    if (i == 0)
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpf_div_ui(result.data(), result.data(), boost::multiprecision::detail::unsigned_abs(i));
    if (i < 0)
       mpf_neg(result.data(), result.data());
@@ -891,21 +1075,21 @@ template <unsigned D1, unsigned D2, unsigned D3>
 inline void eval_divide(gmp_float<D1>& a, const gmp_float<D2>& x, const gmp_float<D3>& y)
 {
    if (eval_is_zero(y))
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpf_div(a.data(), x.data(), y.data());
 }
 template <unsigned D1, unsigned D2>
 inline void eval_divide(gmp_float<D1>& a, const gmp_float<D2>& x, unsigned long y)
 {
    if (y == 0)
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpf_div_ui(a.data(), x.data(), y);
 }
 template <unsigned D1, unsigned D2>
 inline void eval_divide(gmp_float<D1>& a, const gmp_float<D2>& x, long y)
 {
    if (y == 0)
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    if (y < 0)
    {
       mpf_div_ui(a.data(), x.data(), boost::multiprecision::detail::unsigned_abs(y));
@@ -918,14 +1102,14 @@ template <unsigned D1, unsigned D2>
 inline void eval_divide(gmp_float<D1>& a, unsigned long x, const gmp_float<D2>& y)
 {
    if (eval_is_zero(y))
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpf_ui_div(a.data(), x, y.data());
 }
 template <unsigned D1, unsigned D2>
 inline void eval_divide(gmp_float<D1>& a, long x, const gmp_float<D2>& y)
 {
    if (eval_is_zero(y))
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    if (x < 0)
    {
       mpf_ui_div(a.data(), boost::multiprecision::detail::unsigned_abs(x), y.data());
@@ -936,21 +1120,21 @@ inline void eval_divide(gmp_float<D1>& a, long x, const gmp_float<D2>& y)
 }
 
 template <unsigned digits10>
-inline int eval_get_sign(const gmp_float<digits10>& val) BOOST_NOEXCEPT
+inline int eval_get_sign(const gmp_float<digits10>& val) noexcept
 {
    return mpf_sgn(val.data());
 }
 
 template <unsigned digits10>
-inline void eval_convert_to(unsigned long* result, const gmp_float<digits10>& val) BOOST_NOEXCEPT
+inline void eval_convert_to(unsigned long* result, const gmp_float<digits10>& val) noexcept
 {
    if (0 == mpf_fits_ulong_p(val.data()))
       *result = (std::numeric_limits<unsigned long>::max)();
    else
-      *result = (unsigned long)mpf_get_ui(val.data());
+      *result = static_cast<unsigned long>(mpf_get_ui(val.data()));
 }
 template <unsigned digits10>
-inline void eval_convert_to(long* result, const gmp_float<digits10>& val) BOOST_NOEXCEPT
+inline void eval_convert_to(long* result, const gmp_float<digits10>& val) noexcept
 {
    if (0 == mpf_fits_slong_p(val.data()))
    {
@@ -958,22 +1142,50 @@ inline void eval_convert_to(long* result, const gmp_float<digits10>& val) BOOST_
       *result *= mpf_sgn(val.data());
    }
    else
-      *result = (long)mpf_get_si(val.data());
+      *result = static_cast<long>(mpf_get_si(val.data()));
 }
+#ifdef BOOST_MP_STANDALONE
 template <unsigned digits10>
-inline void eval_convert_to(double* result, const gmp_float<digits10>& val) BOOST_NOEXCEPT
+inline void eval_convert_to(long double* result, const gmp_float<digits10>& val) noexcept
+{
+   mp_exp_t exp = 0;
+
+   detail::gmp_char_ptr val_char_ptr {mpf_get_str(nullptr, &exp, 10, LDBL_DIG, val.data())};
+
+   auto temp_string = std::string(val_char_ptr.get());
+   if(exp > 0 && static_cast<std::size_t>(exp) < temp_string.size())
+   {
+      if(temp_string.front() == '-')
+      {
+         ++exp;
+      }
+
+      temp_string.insert(exp, 1, '.');
+   }
+
+   *result = std::strtold(temp_string.c_str(), nullptr);
+
+   if((temp_string.size() == 2ul && *result < 0.0l) ||
+      (static_cast<std::size_t>(exp) > temp_string.size()))
+   {
+      *result *= std::pow(10l, exp-1);
+   }
+}
+#endif // BOOST_MP_STANDALONE
+template <unsigned digits10>
+inline void eval_convert_to(double* result, const gmp_float<digits10>& val) noexcept
 {
    *result = mpf_get_d(val.data());
 }
 #ifdef BOOST_HAS_LONG_LONG
 template <unsigned digits10>
-inline void eval_convert_to(boost::long_long_type* result, const gmp_float<digits10>& val)
+inline void eval_convert_to(long long* result, const gmp_float<digits10>& val)
 {
    gmp_float<digits10> t(val);
    if (eval_get_sign(t) < 0)
       t.negate();
 
-   long digits = std::numeric_limits<boost::long_long_type>::digits - std::numeric_limits<long>::digits;
+   long digits = std::numeric_limits<long long>::digits - std::numeric_limits<long>::digits;
 
    if (digits > 0)
       mpf_div_2exp(t.data(), t.data(), digits);
@@ -981,9 +1193,9 @@ inline void eval_convert_to(boost::long_long_type* result, const gmp_float<digit
    if (!mpf_fits_slong_p(t.data()))
    {
       if (eval_get_sign(val) < 0)
-         *result = (std::numeric_limits<boost::long_long_type>::min)();
+         *result = (std::numeric_limits<long long>::min)();
       else
-         *result = (std::numeric_limits<boost::long_long_type>::max)();
+         *result = (std::numeric_limits<long long>::max)();
       return;
    };
 
@@ -993,7 +1205,7 @@ inline void eval_convert_to(boost::long_long_type* result, const gmp_float<digit
       *result <<= digits;
       digits -= std::numeric_limits<unsigned long>::digits;
       mpf_mul_2exp(t.data(), t.data(), digits >= 0 ? std::numeric_limits<unsigned long>::digits : std::numeric_limits<unsigned long>::digits + digits);
-      unsigned long l = (unsigned long)mpf_get_ui(t.data());
+      unsigned long l = static_cast<unsigned long>(mpf_get_ui(t.data()));
       if (digits < 0)
          l >>= -digits;
       *result |= l;
@@ -1002,18 +1214,18 @@ inline void eval_convert_to(boost::long_long_type* result, const gmp_float<digit
       *result = -*result;
 }
 template <unsigned digits10>
-inline void eval_convert_to(boost::ulong_long_type* result, const gmp_float<digits10>& val)
+inline void eval_convert_to(unsigned long long* result, const gmp_float<digits10>& val)
 {
    gmp_float<digits10> t(val);
 
-   long digits = std::numeric_limits<boost::long_long_type>::digits - std::numeric_limits<long>::digits;
+   long digits = std::numeric_limits<long long>::digits - std::numeric_limits<long>::digits;
 
    if (digits > 0)
       mpf_div_2exp(t.data(), t.data(), digits);
 
    if (!mpf_fits_ulong_p(t.data()))
    {
-      *result = (std::numeric_limits<boost::long_long_type>::max)();
+      *result = (std::numeric_limits<long long>::max)();
       return;
    }
 
@@ -1023,13 +1235,23 @@ inline void eval_convert_to(boost::ulong_long_type* result, const gmp_float<digi
       *result <<= digits;
       digits -= std::numeric_limits<unsigned long>::digits;
       mpf_mul_2exp(t.data(), t.data(), digits >= 0 ? std::numeric_limits<unsigned long>::digits : std::numeric_limits<unsigned long>::digits + digits);
-      unsigned long l = (unsigned long)mpf_get_ui(t.data());
+      unsigned long l = static_cast<unsigned long>(mpf_get_ui(t.data()));
       if (digits < 0)
          l >>= -digits;
       *result |= l;
    }
 }
 #endif
+
+
+#ifdef BOOST_HAS_FLOAT128
+template <unsigned digits10>
+inline void eval_convert_to(float128_type* result, const gmp_float<digits10>& val)
+{
+   *result = float128_procs::strtoflt128(val.str(0, std::ios_base::scientific).c_str(), nullptr);
+}
+#endif
+
 
 //
 // Native non-member operations:
@@ -1108,22 +1330,21 @@ inline std::size_t hash_value(const gmp_float<Digits10>& val)
 {
    std::size_t result = 0;
    for (int i = 0; i < std::abs(val.data()[0]._mp_size); ++i)
-      boost::hash_combine(result, val.data()[0]._mp_d[i]);
-   boost::hash_combine(result, val.data()[0]._mp_exp);
-   boost::hash_combine(result, val.data()[0]._mp_size);
+      boost::multiprecision::detail::hash_combine(result, val.data()[0]._mp_d[i]);
+   boost::multiprecision::detail::hash_combine(result, val.data()[0]._mp_exp, val.data()[0]._mp_size);
    return result;
 }
 
 struct gmp_int
 {
 #ifdef BOOST_HAS_LONG_LONG
-   typedef mpl::list<long, boost::long_long_type>           signed_types;
-   typedef mpl::list<unsigned long, boost::ulong_long_type> unsigned_types;
+   using signed_types = std::tuple<long, long long>          ;
+   using unsigned_types = std::tuple<unsigned long, unsigned long long>;
 #else
-   typedef mpl::list<long>          signed_types;
-   typedef mpl::list<unsigned long> unsigned_types;
+   using signed_types = std::tuple<long>         ;
+   using unsigned_types = std::tuple<unsigned long>;
 #endif
-   typedef mpl::list<double, long double> float_types;
+   using float_types = std::tuple<double, long double>;
 
    gmp_int()
    {
@@ -1136,13 +1357,12 @@ struct gmp_int
       else
          mpz_init(this->m_data);
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   gmp_int(gmp_int&& o) BOOST_NOEXCEPT
+   // rvalue
+   gmp_int(gmp_int&& o) noexcept
    {
       m_data[0]         = o.m_data[0];
       o.m_data[0]._mp_d = 0;
    }
-#endif
    explicit gmp_int(const mpf_t val)
    {
       mpz_init(this->m_data);
@@ -1151,6 +1371,14 @@ struct gmp_int
    gmp_int(const mpz_t val)
    {
       mpz_init_set(this->m_data, val);
+   }
+   gmp_int(long i)
+   {
+      mpz_init_set_si(this->m_data, i);
+   }
+   gmp_int(unsigned long i)
+   {
+      mpz_init_set_ui(this->m_data, i);
    }
    explicit gmp_int(const mpq_t val)
    {
@@ -1171,26 +1399,25 @@ struct gmp_int
       mpz_set(m_data, o.m_data);
       return *this;
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   gmp_int& operator=(gmp_int&& o) BOOST_NOEXCEPT
+   // rvalue copy
+   gmp_int& operator=(gmp_int&& o) noexcept
    {
       mpz_swap(m_data, o.m_data);
       return *this;
    }
-#endif
 #ifdef BOOST_HAS_LONG_LONG
 #if defined(ULLONG_MAX) && (ULLONG_MAX == ULONG_MAX)
-   gmp_int& operator=(boost::ulong_long_type i)
+   gmp_int& operator=(unsigned long long i)
    {
       *this = static_cast<unsigned long>(i);
       return *this;
    }
 #else
-   gmp_int& operator=(boost::ulong_long_type i)
+   gmp_int& operator=(unsigned long long i)
    {
       if (m_data[0]._mp_d == 0)
          mpz_init(this->m_data);
-      boost::ulong_long_type mask  = ((((1uLL << (std::numeric_limits<unsigned long>::digits - 1)) - 1) << 1) | 1uLL);
+      unsigned long long mask  = ((((1uLL << (std::numeric_limits<unsigned long>::digits - 1)) - 1) << 1) | 1uLL);
       unsigned               shift = 0;
       mpz_t                  t;
       mpz_set_ui(m_data, 0);
@@ -1208,7 +1435,40 @@ struct gmp_int
       return *this;
    }
 #endif
-   gmp_int& operator=(boost::long_long_type i)
+   gmp_int& operator=(long long i)
+   {
+      if (m_data[0]._mp_d == 0)
+         mpz_init(this->m_data);
+      bool neg = i < 0;
+      *this    = boost::multiprecision::detail::unsigned_abs(i);
+      if (neg)
+         mpz_neg(m_data, m_data);
+      return *this;
+   }
+#endif
+#ifdef BOOST_HAS_INT128
+   gmp_int& operator=(uint128_type i)
+   {
+      if (m_data[0]._mp_d == 0)
+         mpz_init(this->m_data);
+      uint128_type mask  = ((((1uLL << (std::numeric_limits<unsigned long>::digits - 1)) - 1) << 1) | 1uLL);
+      unsigned               shift = 0;
+      mpz_t                  t;
+      mpz_set_ui(m_data, 0);
+      mpz_init_set_ui(t, 0);
+      while (i)
+      {
+         mpz_set_ui(t, static_cast<unsigned long>(i & mask));
+         if (shift)
+            mpz_mul_2exp(t, t, shift);
+         mpz_add(m_data, m_data, t);
+         shift += std::numeric_limits<unsigned long>::digits;
+         i >>= std::numeric_limits<unsigned long>::digits;
+      }
+      mpz_clear(t);
+      return *this;
+   }
+   gmp_int& operator=(int128_type i)
    {
       if (m_data[0]._mp_d == 0)
          mpz_init(this->m_data);
@@ -1240,11 +1500,10 @@ struct gmp_int
       mpz_set_d(m_data, d);
       return *this;
    }
-   gmp_int& operator=(long double a)
+   template <class F>
+   gmp_int& assign_float(F a)
    {
-      using std::floor;
-      using std::frexp;
-      using std::ldexp;
+      BOOST_MP_FLOAT128_USING using std::floor; using std::frexp; using std::ldexp;
 
       if (m_data[0]._mp_d == 0)
          mpz_init(this->m_data);
@@ -1261,16 +1520,16 @@ struct gmp_int
          return *this;
       }
 
-      BOOST_ASSERT(!(boost::math::isinf)(a));
-      BOOST_ASSERT(!(boost::math::isnan)(a));
+      BOOST_MP_ASSERT(!BOOST_MP_ISINF(a));
+      BOOST_MP_ASSERT(!BOOST_MP_ISNAN(a));
 
       int         e;
-      long double f, term;
+      F f, term;
       mpz_set_ui(m_data, 0u);
 
       f = frexp(a, &e);
 
-      static const int shift = std::numeric_limits<int>::digits - 1;
+      constexpr const int shift = std::numeric_limits<int>::digits - 1;
 
       while (f)
       {
@@ -1290,6 +1549,10 @@ struct gmp_int
       else if (e < 0)
          mpz_div_2exp(m_data, m_data, -e);
       return *this;
+   }
+   gmp_int& operator=(long double a)
+   {
+      return assign_float(a);
    }
    gmp_int& operator=(const char* s)
    {
@@ -1314,12 +1577,18 @@ struct gmp_int
       if (n)
       {
          if (0 != mpz_set_str(m_data, s, radix))
-            BOOST_THROW_EXCEPTION(std::runtime_error(std::string("The string \"") + s + std::string("\"could not be interpreted as a valid integer.")));
+            BOOST_MP_THROW_EXCEPTION(std::runtime_error(std::string("The string \"") + s + std::string("\"could not be interpreted as a valid integer.")));
       }
       else
          mpz_set_ui(m_data, 0);
       return *this;
    }
+#ifdef BOOST_HAS_FLOAT128
+   gmp_int& operator=(float128_type a)
+   {
+      return assign_float(a);
+   }
+#endif
    gmp_int& operator=(const mpf_t val)
    {
       if (m_data[0]._mp_d == 0)
@@ -1356,7 +1625,7 @@ struct gmp_int
    }
    std::string str(std::streamsize /*digits*/, std::ios_base::fmtflags f) const
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
 
       int base = 10;
       if ((f & std::ios_base::oct) == std::ios_base::oct)
@@ -1367,7 +1636,7 @@ struct gmp_int
       // sanity check, bases 8 and 16 are only available for positive numbers:
       //
       if ((base != 10) && (mpz_sgn(m_data) < 0))
-         BOOST_THROW_EXCEPTION(std::runtime_error("Formatted output in bases 8 or 16 is only available for positive numbers"));
+         BOOST_MP_THROW_EXCEPTION(std::runtime_error("Formatted output in bases 8 or 16 is only available for positive numbers"));
       void* (*alloc_func_ptr)(size_t);
       void* (*realloc_func_ptr)(void*, size_t, size_t);
       void (*free_func_ptr)(void*, size_t);
@@ -1377,7 +1646,7 @@ struct gmp_int
       (*free_func_ptr)((void*)ps, std::strlen(ps) + 1);
       if (f & std::ios_base::uppercase)
          for (size_t i = 0; i < s.length(); ++i)
-            s[i] = std::toupper(s[i]);
+            s[i] = static_cast<char>(std::toupper(s[i]));
       if ((base != 10) && (f & std::ios_base::showbase))
       {
          int         pos = s[0] == '-' ? 1 : 0;
@@ -1389,29 +1658,29 @@ struct gmp_int
 
       return s;
    }
-   ~gmp_int() BOOST_NOEXCEPT
+   ~gmp_int() noexcept
    {
       if (m_data[0]._mp_d)
          mpz_clear(m_data);
    }
-   void negate() BOOST_NOEXCEPT
+   void negate() noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
       mpz_neg(m_data, m_data);
    }
-   int compare(const gmp_int& o) const BOOST_NOEXCEPT
+   int compare(const gmp_int& o) const noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d && o.m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d && o.m_data[0]._mp_d);
       return mpz_cmp(m_data, o.m_data);
    }
-   int compare(long i) const BOOST_NOEXCEPT
+   int compare(long i) const noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
       return mpz_cmp_si(m_data, i);
    }
-   int compare(unsigned long i) const BOOST_NOEXCEPT
+   int compare(unsigned long i) const noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
       return mpz_cmp_ui(m_data, i);
    }
    template <class V>
@@ -1421,14 +1690,14 @@ struct gmp_int
       d = v;
       return compare(d);
    }
-   mpz_t& data() BOOST_NOEXCEPT
+   mpz_t& data() noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
       return m_data;
    }
-   const mpz_t& data() const BOOST_NOEXCEPT
+   const mpz_t& data() const noexcept
    {
-      BOOST_ASSERT(m_data[0]._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_d);
       return m_data;
    }
 
@@ -1437,17 +1706,17 @@ struct gmp_int
 };
 
 template <class T>
-inline typename enable_if<is_arithmetic<T>, bool>::type eval_eq(const gmp_int& a, const T& b)
+inline typename std::enable_if<boost::multiprecision::detail::is_arithmetic<T>::value, bool>::type eval_eq(const gmp_int& a, const T& b)
 {
    return a.compare(b) == 0;
 }
 template <class T>
-inline typename enable_if<is_arithmetic<T>, bool>::type eval_lt(const gmp_int& a, const T& b)
+inline typename std::enable_if<boost::multiprecision::detail::is_arithmetic<T>::value, bool>::type eval_lt(const gmp_int& a, const T& b)
 {
    return a.compare(b) < 0;
 }
 template <class T>
-inline typename enable_if<is_arithmetic<T>, bool>::type eval_gt(const gmp_int& a, const T& b)
+inline typename std::enable_if<boost::multiprecision::detail::is_arithmetic<T>::value, bool>::type eval_gt(const gmp_int& a, const T& b)
 {
    return a.compare(b) > 0;
 }
@@ -1479,7 +1748,7 @@ inline void eval_multiply(gmp_int& t, const gmp_int& o)
 inline void eval_divide(gmp_int& t, const gmp_int& o)
 {
    if (eval_is_zero(o))
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpz_tdiv_q(t.data(), t.data(), o.data());
 }
 inline void eval_modulus(gmp_int& t, const gmp_int& o)
@@ -1513,7 +1782,7 @@ inline void eval_modulus(gmp_int& t, unsigned long i)
 inline void eval_divide(gmp_int& t, unsigned long i)
 {
    if (i == 0)
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpz_tdiv_q_ui(t.data(), t.data(), i);
 }
 inline void eval_add(gmp_int& t, long i)
@@ -1557,7 +1826,7 @@ inline void eval_modulus(gmp_int& t, long i)
 inline void eval_divide(gmp_int& t, long i)
 {
    if (i == 0)
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpz_tdiv_q_ui(t.data(), t.data(), boost::multiprecision::detail::unsigned_abs(i));
    if (i < 0)
       mpz_neg(t.data(), t.data());
@@ -1613,7 +1882,7 @@ inline void eval_multiply(gmp_int& t, const gmp_int& p, const gmp_int& o)
 inline void eval_divide(gmp_int& t, const gmp_int& p, const gmp_int& o)
 {
    if (eval_is_zero(o))
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpz_tdiv_q(t.data(), p.data(), o.data());
 }
 inline void eval_modulus(gmp_int& t, const gmp_int& p, const gmp_int& o)
@@ -1639,7 +1908,7 @@ inline void eval_modulus(gmp_int& t, const gmp_int& p, unsigned long i)
 inline void eval_divide(gmp_int& t, const gmp_int& p, unsigned long i)
 {
    if (i == 0)
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpz_tdiv_q_ui(t.data(), p.data(), i);
 }
 inline void eval_add(gmp_int& t, const gmp_int& p, long i)
@@ -1669,7 +1938,7 @@ inline void eval_modulus(gmp_int& t, const gmp_int& p, long i)
 inline void eval_divide(gmp_int& t, const gmp_int& p, long i)
 {
    if (i == 0)
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpz_tdiv_q_ui(t.data(), p.data(), boost::multiprecision::detail::unsigned_abs(i));
    if (i < 0)
       mpz_neg(t.data(), t.data());
@@ -1703,10 +1972,10 @@ inline void eval_convert_to(unsigned long* result, const gmp_int& val)
 {
    if (mpz_sgn(val.data()) < 0)
    {
-      BOOST_THROW_EXCEPTION(std::range_error("Conversion from negative integer to an unsigned type results in undefined behaviour"));
+      BOOST_MP_THROW_EXCEPTION(std::range_error("Conversion from negative integer to an unsigned type results in undefined behaviour"));
    }
    else
-      *result = (unsigned long)mpz_get_ui(val.data());
+      *result = static_cast<unsigned long>(mpz_get_ui(val.data()));
 }
 inline void eval_convert_to(long* result, const gmp_int& val)
 {
@@ -1715,12 +1984,154 @@ inline void eval_convert_to(long* result, const gmp_int& val)
       *result = mpz_sgn(val.data()) < 0 ? (std::numeric_limits<long>::min)() : (std::numeric_limits<long>::max)();
    }
    else
-      *result = (signed long)mpz_get_si(val.data());
+      *result = static_cast<long>(mpz_get_si(val.data()));
+}
+inline void eval_convert_to(long double* result, const gmp_int& val)
+{
+   detail::gmp_char_ptr val_char_ptr {mpz_get_str(nullptr, 10, val.data())};
+   *result = std::strtold(val_char_ptr.get(), nullptr);
 }
 inline void eval_convert_to(double* result, const gmp_int& val)
 {
    *result = mpz_get_d(val.data());
 }
+#ifdef BOOST_HAS_LONG_LONG
+inline void eval_convert_to(unsigned long long* result, const gmp_int& val)
+{
+   if (mpz_sgn(val.data()) < 0)
+   {
+      BOOST_MP_THROW_EXCEPTION(std::range_error("Conversion from negative integer to an unsigned type results in undefined behaviour"));
+   }
+   *result = 0;
+   gmp_int t(val);
+   unsigned parts = sizeof(unsigned long long) / sizeof(unsigned long);
+
+   for (unsigned i = 0; i < parts; ++i)
+   {
+      unsigned long long part = mpz_get_ui(t.data());
+      if (i)
+         *result |= part << (i * sizeof(unsigned long) * CHAR_BIT);
+      else
+         *result = part;
+      mpz_tdiv_q_2exp(t.data(), t.data(), sizeof(unsigned long) * CHAR_BIT);
+   }
+}
+inline void eval_convert_to(long long* result, const gmp_int& val)
+{
+   int s = mpz_sgn(val.data());
+   *result = 0;
+   gmp_int t(val);
+   unsigned parts = sizeof(unsigned long long) / sizeof(unsigned long);
+   unsigned long long unsigned_result = 0;
+
+   for (unsigned i = 0; i < parts; ++i)
+   {
+      unsigned long long part = mpz_get_ui(t.data());
+      if (i)
+         unsigned_result |= part << (i * sizeof(unsigned long) * CHAR_BIT);
+      else
+         unsigned_result = part;
+      mpz_tdiv_q_2exp(t.data(), t.data(), sizeof(unsigned long) * CHAR_BIT);
+   }
+   //
+   // Overflow check:
+   //
+   bool overflow = false;
+   if (mpz_sgn(t.data()))
+   {
+      overflow = true;
+   }
+   if ((s > 0) && (unsigned_result > static_cast<unsigned long long>((std::numeric_limits<long long>::max)())))
+      overflow = true;
+   if((s < 0) && (unsigned_result > 1u - static_cast<unsigned long long>((std::numeric_limits<long long>::min)() + 1)))
+      overflow = true;
+   if(overflow)
+      *result = s < 0 ? (std::numeric_limits<long long>::min)() : (std::numeric_limits<long long>::max)();
+   else
+      *result = s < 0 ? -static_cast<long long>(unsigned_result - 1) - 1 : unsigned_result;
+}
+#endif
+#ifdef BOOST_HAS_INT128
+inline void eval_convert_to(uint128_type* result, const gmp_int& val)
+{
+   if (mpz_sgn(val.data()) < 0)
+   {
+      BOOST_MP_THROW_EXCEPTION(std::range_error("Conversion from negative integer to an unsigned type results in undefined behaviour"));
+   }
+   *result = 0;
+   gmp_int t(val);
+   unsigned parts = sizeof(uint128_type) / sizeof(unsigned long);
+
+   for (unsigned i = 0; i < parts; ++i)
+   {
+      uint128_type part = mpz_get_ui(t.data());
+      if (i)
+         *result |= part << (i * sizeof(unsigned long) * CHAR_BIT);
+      else
+         *result = part;
+      mpz_tdiv_q_2exp(t.data(), t.data(), sizeof(unsigned long) * CHAR_BIT);
+   }
+}
+inline void eval_convert_to(int128_type* result, const gmp_int& val)
+{
+   int s = mpz_sgn(val.data());
+   *result = 0;
+   gmp_int t(val);
+   unsigned parts = sizeof(uint128_type) / sizeof(unsigned long);
+   uint128_type unsigned_result = 0;
+
+   for (unsigned i = 0; i < parts; ++i)
+   {
+      uint128_type part = mpz_get_ui(t.data());
+      if (i)
+         unsigned_result |= part << (i * sizeof(unsigned long) * CHAR_BIT);
+      else
+         unsigned_result = part;
+      mpz_tdiv_q_2exp(t.data(), t.data(), sizeof(unsigned long) * CHAR_BIT);
+   }
+   //
+   // Overflow check:
+   //
+   constexpr const int128_type int128_max = static_cast<int128_type>((static_cast<uint128_type>(1u) << 127) - 1);
+   constexpr const int128_type int128_min = (static_cast<uint128_type>(1u) << 127);
+   bool overflow = false;
+   if (mpz_sgn(t.data()))
+   {
+      overflow = true;
+   }
+   if ((s > 0) && (unsigned_result > static_cast<uint128_type>(int128_max)))
+      overflow = true;
+   if ((s < 0) && (unsigned_result > 1u - static_cast<uint128_type>(int128_min + 1)))
+      overflow = true;
+   if (overflow)
+      *result = s < 0 ? int128_min : int128_max;
+   else
+      *result = s < 0 ? -int128_type(unsigned_result - 1) - 1 : unsigned_result;
+}
+
+template <unsigned digits10>
+inline void eval_convert_to(int128_type* result, const gmp_float<digits10>& val)
+{
+   gmp_int i;
+   mpz_set_f(i.data(), val.data());
+   eval_convert_to(result, i);
+}
+template <unsigned digits10>
+inline void eval_convert_to(uint128_type* result, const gmp_float<digits10>& val)
+{
+   gmp_int i;
+   mpz_set_f(i.data(), val.data());
+   eval_convert_to(result, i);
+}
+
+#endif
+
+#ifdef BOOST_HAS_FLOAT128
+inline void eval_convert_to(float128_type* result, const gmp_int& val)
+{
+   *result = float128_procs::strtoflt128(val.str(0, std::ios_base::fixed).c_str(), nullptr);
+}
+#endif
 
 inline void eval_abs(gmp_int& result, const gmp_int& val)
 {
@@ -1736,22 +2147,22 @@ inline void eval_lcm(gmp_int& result, const gmp_int& a, const gmp_int& b)
    mpz_lcm(result.data(), a.data(), b.data());
 }
 template <class I>
-inline typename enable_if_c<(is_unsigned<I>::value && (sizeof(I) <= sizeof(unsigned long)))>::type eval_gcd(gmp_int& result, const gmp_int& a, const I b)
+inline typename std::enable_if<(boost::multiprecision::detail::is_unsigned<I>::value && (sizeof(I) <= sizeof(unsigned long)))>::type eval_gcd(gmp_int& result, const gmp_int& a, const I b)
 {
    mpz_gcd_ui(result.data(), a.data(), b);
 }
 template <class I>
-inline typename enable_if_c<(is_unsigned<I>::value && (sizeof(I) <= sizeof(unsigned long)))>::type eval_lcm(gmp_int& result, const gmp_int& a, const I b)
+inline typename std::enable_if<(boost::multiprecision::detail::is_unsigned<I>::value && (sizeof(I) <= sizeof(unsigned long)))>::type eval_lcm(gmp_int& result, const gmp_int& a, const I b)
 {
    mpz_lcm_ui(result.data(), a.data(), b);
 }
 template <class I>
-inline typename enable_if_c<(is_signed<I>::value && (sizeof(I) <= sizeof(long)))>::type eval_gcd(gmp_int& result, const gmp_int& a, const I b)
+inline typename std::enable_if<(boost::multiprecision::detail::is_signed<I>::value && boost::multiprecision::detail::is_integral<I>::value && (sizeof(I) <= sizeof(long)))>::type eval_gcd(gmp_int& result, const gmp_int& a, const I b)
 {
    mpz_gcd_ui(result.data(), a.data(), boost::multiprecision::detail::unsigned_abs(b));
 }
 template <class I>
-inline typename enable_if_c<is_signed<I>::value && ((sizeof(I) <= sizeof(long)))>::type eval_lcm(gmp_int& result, const gmp_int& a, const I b)
+inline typename std::enable_if<boost::multiprecision::detail::is_signed<I>::value && boost::multiprecision::detail::is_integral<I>::value && ((sizeof(I) <= sizeof(long)))>::type eval_lcm(gmp_int& result, const gmp_int& a, const I b)
 {
    mpz_lcm_ui(result.data(), a.data(), boost::multiprecision::detail::unsigned_abs(b));
 }
@@ -1761,50 +2172,50 @@ inline void eval_integer_sqrt(gmp_int& s, gmp_int& r, const gmp_int& x)
    mpz_sqrtrem(s.data(), r.data(), x.data());
 }
 
-inline unsigned eval_lsb(const gmp_int& val)
+inline std::size_t eval_lsb(const gmp_int& val)
 {
    int c = eval_get_sign(val);
    if (c == 0)
    {
-      BOOST_THROW_EXCEPTION(std::range_error("No bits were set in the operand."));
+      BOOST_MP_THROW_EXCEPTION(std::domain_error("No bits were set in the operand."));
    }
    if (c < 0)
    {
-      BOOST_THROW_EXCEPTION(std::range_error("Testing individual bits in negative values is not supported - results are undefined."));
+      BOOST_MP_THROW_EXCEPTION(std::domain_error("Testing individual bits in negative values is not supported - results are undefined."));
    }
    return static_cast<unsigned>(mpz_scan1(val.data(), 0));
 }
 
-inline unsigned eval_msb(const gmp_int& val)
+inline std::size_t eval_msb(const gmp_int& val)
 {
    int c = eval_get_sign(val);
    if (c == 0)
    {
-      BOOST_THROW_EXCEPTION(std::range_error("No bits were set in the operand."));
+      BOOST_MP_THROW_EXCEPTION(std::domain_error("No bits were set in the operand."));
    }
    if (c < 0)
    {
-      BOOST_THROW_EXCEPTION(std::range_error("Testing individual bits in negative values is not supported - results are undefined."));
+      BOOST_MP_THROW_EXCEPTION(std::domain_error("Testing individual bits in negative values is not supported - results are undefined."));
    }
    return static_cast<unsigned>(mpz_sizeinbase(val.data(), 2) - 1);
 }
 
-inline bool eval_bit_test(const gmp_int& val, unsigned index)
+inline bool eval_bit_test(const gmp_int& val, std::size_t index)
 {
    return mpz_tstbit(val.data(), index) ? true : false;
 }
 
-inline void eval_bit_set(gmp_int& val, unsigned index)
+inline void eval_bit_set(gmp_int& val, std::size_t index)
 {
    mpz_setbit(val.data(), index);
 }
 
-inline void eval_bit_unset(gmp_int& val, unsigned index)
+inline void eval_bit_unset(gmp_int& val, std::size_t index)
 {
    mpz_clrbit(val.data(), index);
 }
 
-inline void eval_bit_flip(gmp_int& val, unsigned index)
+inline void eval_bit_flip(gmp_int& val, std::size_t index)
 {
    mpz_combit(val.data(), index);
 }
@@ -1816,7 +2227,7 @@ inline void eval_qr(const gmp_int& x, const gmp_int& y,
 }
 
 template <class Integer>
-inline typename enable_if<is_unsigned<Integer>, Integer>::type eval_integer_modulus(const gmp_int& x, Integer val)
+inline typename std::enable_if<boost::multiprecision::detail::is_unsigned<Integer>::value, Integer>::type eval_integer_modulus(const gmp_int& x, Integer val)
 {
 #if defined(__MPIR_VERSION) && (__MPIR_VERSION >= 3)
    if ((sizeof(Integer) <= sizeof(mpir_ui)) || (val <= (std::numeric_limits<mpir_ui>::max)()))
@@ -1832,7 +2243,7 @@ inline typename enable_if<is_unsigned<Integer>, Integer>::type eval_integer_modu
    }
 }
 template <class Integer>
-inline typename enable_if<is_signed<Integer>, Integer>::type eval_integer_modulus(const gmp_int& x, Integer val)
+inline typename std::enable_if<boost::multiprecision::detail::is_signed<Integer>::value && boost::multiprecision::detail::is_integral<Integer>::value, Integer>::type eval_integer_modulus(const gmp_int& x, Integer val)
 {
    return eval_integer_modulus(x, boost::multiprecision::detail::unsigned_abs(val));
 }
@@ -1840,30 +2251,25 @@ inline void eval_powm(gmp_int& result, const gmp_int& base, const gmp_int& p, co
 {
    if (eval_get_sign(p) < 0)
    {
-      BOOST_THROW_EXCEPTION(std::runtime_error("powm requires a positive exponent."));
+      BOOST_MP_THROW_EXCEPTION(std::runtime_error("powm requires a positive exponent."));
    }
    mpz_powm(result.data(), base.data(), p.data(), m.data());
 }
 
 template <class Integer>
-inline typename enable_if<
-    mpl::and_<
-        is_unsigned<Integer>,
-        mpl::bool_<sizeof(Integer) <= sizeof(unsigned long)> > >::type
+inline typename std::enable_if<
+    boost::multiprecision::detail::is_unsigned<Integer>::value && (sizeof(Integer) <= sizeof(unsigned long))>::type
 eval_powm(gmp_int& result, const gmp_int& base, Integer p, const gmp_int& m)
 {
    mpz_powm_ui(result.data(), base.data(), p, m.data());
 }
 template <class Integer>
-inline typename enable_if<
-    mpl::and_<
-        is_signed<Integer>,
-        mpl::bool_<sizeof(Integer) <= sizeof(unsigned long)> > >::type
+inline typename std::enable_if<boost::multiprecision::detail::is_signed<Integer>::value && boost::multiprecision::detail::is_integral<Integer>::value && (sizeof(Integer) <= sizeof(unsigned long))>::type
 eval_powm(gmp_int& result, const gmp_int& base, Integer p, const gmp_int& m)
 {
    if (p < 0)
    {
-      BOOST_THROW_EXCEPTION(std::runtime_error("powm requires a positive exponent."));
+      BOOST_MP_THROW_EXCEPTION(std::runtime_error("powm requires a positive exponent."));
    }
    mpz_powm_ui(result.data(), base.data(), p, m.data());
 }
@@ -1873,8 +2279,8 @@ inline std::size_t hash_value(const gmp_int& val)
    // We should really use mpz_limbs_read here, but that's unsupported on older versions:
    std::size_t result = 0;
    for (int i = 0; i < std::abs(val.data()[0]._mp_size); ++i)
-      boost::hash_combine(result, val.data()[0]._mp_d[i]);
-   boost::hash_combine(result, val.data()[0]._mp_size);
+      boost::multiprecision::detail::hash_combine(result, val.data()[0]._mp_d[i]);
+   boost::multiprecision::detail::hash_combine(result, val.data()[0]._mp_size);
    return result;
 }
 
@@ -1884,13 +2290,13 @@ void eval_add(gmp_rational& t, const gmp_rational& o);
 struct gmp_rational
 {
 #ifdef BOOST_HAS_LONG_LONG
-   typedef mpl::list<long, boost::long_long_type>           signed_types;
-   typedef mpl::list<unsigned long, boost::ulong_long_type> unsigned_types;
+   using signed_types = std::tuple<long, long long>          ;
+   using unsigned_types = std::tuple<unsigned long, unsigned long long>;
 #else
-   typedef mpl::list<long>          signed_types;
-   typedef mpl::list<unsigned long> unsigned_types;
+   using signed_types = std::tuple<long>         ;
+   using unsigned_types = std::tuple<unsigned long>;
 #endif
-   typedef mpl::list<double, long double> float_types;
+   using float_types = std::tuple<double, long double>;
 
    gmp_rational()
    {
@@ -1904,17 +2310,107 @@ struct gmp_rational
    }
    gmp_rational(const gmp_int& o)
    {
-      mpq_init(m_data);
-      mpq_set_z(m_data, o.data());
+      mpz_init_set(&m_data[0]._mp_num, o.data());
+      mpz_init_set_ui(&m_data[0]._mp_den, 1u);
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   gmp_rational(gmp_rational&& o) BOOST_NOEXCEPT
+   gmp_rational(long i)
+   {
+      mpz_init_set_si(&m_data[0]._mp_num, i);
+      mpz_init_set_ui(&m_data[0]._mp_den, 1u);
+   }
+   gmp_rational(unsigned long ui)
+   {
+      mpz_init_set_ui(&m_data[0]._mp_num, ui);
+      mpz_init_set_ui(&m_data[0]._mp_den, 1u);
+   }
+   // 2-arg constructors:
+   template <class T, class U>
+   gmp_rational(const T& a, const U& b, typename std::enable_if<std::is_constructible<gmp_int, T>::value && std::is_constructible<gmp_int, U>::value>::type* = nullptr)
+   {
+      gmp_int i(a), j(b);
+      m_data[0]._mp_num = i.data()[0];
+      m_data[0]._mp_den = j.data()[0];
+      mpq_canonicalize(m_data);
+      i.data()[0]._mp_d = nullptr;
+      j.data()[0]._mp_d = nullptr;
+   }
+   template <class U>
+   gmp_rational(const gmp_int& a, const U& b, typename std::enable_if<std::is_constructible<gmp_int, U>::value>::type* = nullptr)
+   {
+      gmp_int j(b);
+      mpz_init_set(&m_data[0]._mp_num, a.data());
+      m_data[0]._mp_den = j.data()[0];
+      if (boost::multiprecision::detail::unsigned_abs(b) > 1)
+         mpq_canonicalize(m_data);
+      j.data()[0]._mp_d = nullptr;
+   }
+   template <class U>
+   gmp_rational(gmp_int&& a, const U& b, typename std::enable_if<std::is_constructible<gmp_int, U>::value>::type* = nullptr)
+   {
+      gmp_int j(b);
+      m_data[0]._mp_num = a.data()[0];
+      m_data[0]._mp_den = j.data()[0];
+      if (boost::multiprecision::detail::unsigned_abs(b) > 1)
+         mpq_canonicalize(m_data);
+      a.data()[0]._mp_d = nullptr;
+      j.data()[0]._mp_d = nullptr;
+   }
+   template <class T>
+   gmp_rational(const T& a, const gmp_int& b, typename std::enable_if<std::is_constructible<gmp_int, T>::value>::type* = nullptr)
+   {
+      gmp_int i(a);
+      m_data[0]._mp_num = i.data()[0];
+      mpz_init_set(&m_data[0]._mp_den, b.data());
+      if(boost::multiprecision::detail::unsigned_abs(a) > 1)
+         mpq_canonicalize(m_data);
+      i.data()[0]._mp_d = nullptr;
+   }
+   template <class T>
+   gmp_rational(const T& a, gmp_int&& b, typename std::enable_if<std::is_constructible<gmp_int, T>::value>::type* = nullptr)
+   {
+      gmp_int i(a);
+      m_data[0]._mp_num = i.data()[0];
+      m_data[0]._mp_den = b.data()[0];
+      if(boost::multiprecision::detail::unsigned_abs(a) > 1)
+         mpq_canonicalize(m_data);
+      i.data()[0]._mp_d = nullptr;
+      b.data()[0]._mp_d = nullptr;
+   }
+   gmp_rational(const gmp_int& a, const gmp_int& b)
+   {
+      mpz_init_set(&m_data[0]._mp_num, a.data());
+      mpz_init_set(&m_data[0]._mp_den, b.data());
+      mpq_canonicalize(m_data);
+   }
+   gmp_rational(const gmp_int& a, gmp_int&& b)
+   {
+      mpz_init_set(&m_data[0]._mp_num, a.data());
+      m_data[0]._mp_den = b.data()[0];
+      mpq_canonicalize(m_data);
+      b.data()[0]._mp_d = nullptr;
+   }
+   gmp_rational(gmp_int&& a, const gmp_int& b)
+   {
+      m_data[0]._mp_num = a.data()[0];
+      mpz_init_set(&m_data[0]._mp_den, b.data());
+      mpq_canonicalize(m_data);
+      a.data()[0]._mp_d = nullptr;
+   }
+   gmp_rational(gmp_int&& a, gmp_int&& b)
+   {
+      m_data[0]._mp_num = a.data()[0];
+      m_data[0]._mp_den = b.data()[0];
+      mpq_canonicalize(m_data);
+      a.data()[0]._mp_d = nullptr;
+      b.data()[0]._mp_d = nullptr;
+   }
+   // rvalue copy
+   gmp_rational(gmp_rational&& o) noexcept
    {
       m_data[0]                 = o.m_data[0];
       o.m_data[0]._mp_num._mp_d = 0;
       o.m_data[0]._mp_den._mp_d = 0;
    }
-#endif
    gmp_rational(const mpq_t o)
    {
       mpq_init(m_data);
@@ -1932,22 +2428,21 @@ struct gmp_rational
       mpq_set(m_data, o.m_data);
       return *this;
    }
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
-   gmp_rational& operator=(gmp_rational&& o) BOOST_NOEXCEPT
+   // rvalue assign
+   gmp_rational& operator=(gmp_rational&& o) noexcept
    {
       mpq_swap(m_data, o.m_data);
       return *this;
    }
-#endif
 #ifdef BOOST_HAS_LONG_LONG
 #if defined(ULLONG_MAX) && (ULLONG_MAX == ULONG_MAX)
-   gmp_rational& operator=(boost::ulong_long_type i)
+   gmp_rational& operator=(unsigned long long i)
    {
       *this = static_cast<unsigned long>(i);
       return *this;
    }
 #else
-   gmp_rational& operator=(boost::ulong_long_type i)
+   gmp_rational& operator=(unsigned long long i)
    {
       if (m_data[0]._mp_den._mp_d == 0)
          mpq_init(m_data);
@@ -1956,7 +2451,7 @@ struct gmp_rational
       mpq_set_z(m_data, zi.data());
       return *this;
    }
-   gmp_rational& operator=(boost::long_long_type i)
+   gmp_rational& operator=(long long i)
    {
       if (m_data[0]._mp_den._mp_d == 0)
          mpq_init(m_data);
@@ -1989,13 +2484,12 @@ struct gmp_rational
       mpq_set_d(m_data, d);
       return *this;
    }
-   gmp_rational& operator=(long double a)
+   template <class F>
+   gmp_rational& assign_float(F a)
    {
       using default_ops::eval_add;
       using default_ops::eval_subtract;
-      using std::floor;
-      using std::frexp;
-      using std::ldexp;
+      BOOST_MP_FLOAT128_USING using std::floor; using std::frexp; using std::ldexp;
 
       if (m_data[0]._mp_den._mp_d == 0)
          mpq_init(m_data);
@@ -2012,18 +2506,18 @@ struct gmp_rational
          return *this;
       }
 
-      BOOST_ASSERT(!(boost::math::isinf)(a));
-      BOOST_ASSERT(!(boost::math::isnan)(a));
+      BOOST_MP_ASSERT(!BOOST_MP_ISINF(a));
+      BOOST_MP_ASSERT(!BOOST_MP_ISNAN(a));
 
       int         e;
-      long double f, term;
+      F f, term;
       mpq_set_ui(m_data, 0, 1);
       mpq_set_ui(m_data, 0u, 1);
       gmp_rational t;
 
       f = frexp(a, &e);
 
-      static const int shift = std::numeric_limits<int>::digits - 1;
+      constexpr const int shift = std::numeric_limits<int>::digits - 1;
 
       while (f)
       {
@@ -2042,12 +2536,36 @@ struct gmp_rational
          mpq_div_2exp(m_data, m_data, -e);
       return *this;
    }
+   gmp_rational& operator=(long double a)
+   {
+      return assign_float(a);
+   }
+#ifdef BOOST_HAS_FLOAT128
+   gmp_rational& operator=(float128_type a)
+   {
+      return assign_float(a);
+   }
+#endif
+#ifdef BOOST_HAS_INT128
+   gmp_rational& operator=(uint128_type i)
+   {
+      gmp_int gi;
+      gi = i;
+      return *this = gi;
+   }
+   gmp_rational& operator=(int128_type i)
+   {
+      gmp_int gi;
+      gi = i;
+      return *this = gi;
+   }
+#endif
    gmp_rational& operator=(const char* s)
    {
       if (m_data[0]._mp_den._mp_d == 0)
          mpq_init(m_data);
       if (0 != mpq_set_str(m_data, s, 10))
-         BOOST_THROW_EXCEPTION(std::runtime_error(std::string("The string \"") + s + std::string("\"could not be interpreted as a valid rational number.")));
+         BOOST_MP_THROW_EXCEPTION(std::runtime_error(std::string("The string \"") + s + std::string("\"could not be interpreted as a valid rational number.")));
       return *this;
    }
    gmp_rational& operator=(const gmp_int& o)
@@ -2077,7 +2595,7 @@ struct gmp_rational
    }
    std::string str(std::streamsize /*digits*/, std::ios_base::fmtflags /*f*/) const
    {
-      BOOST_ASSERT(m_data[0]._mp_num._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_num._mp_d);
       // TODO make a better job of this including handling of f!!
       void* (*alloc_func_ptr)(size_t);
       void* (*realloc_func_ptr)(void*, size_t, size_t);
@@ -2095,12 +2613,12 @@ struct gmp_rational
    }
    void negate()
    {
-      BOOST_ASSERT(m_data[0]._mp_num._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_num._mp_d);
       mpq_neg(m_data, m_data);
    }
    int compare(const gmp_rational& o) const
    {
-      BOOST_ASSERT(m_data[0]._mp_num._mp_d && o.m_data[0]._mp_num._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_num._mp_d && o.m_data[0]._mp_num._mp_d);
       return mpq_cmp(m_data, o.m_data);
    }
    template <class V>
@@ -2112,22 +2630,22 @@ struct gmp_rational
    }
    int compare(unsigned long v) const
    {
-      BOOST_ASSERT(m_data[0]._mp_num._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_num._mp_d);
       return mpq_cmp_ui(m_data, v, 1);
    }
    int compare(long v) const
    {
-      BOOST_ASSERT(m_data[0]._mp_num._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_num._mp_d);
       return mpq_cmp_si(m_data, v, 1);
    }
    mpq_t& data()
    {
-      BOOST_ASSERT(m_data[0]._mp_num._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_num._mp_d);
       return m_data;
    }
    const mpq_t& data() const
    {
-      BOOST_ASSERT(m_data[0]._mp_num._mp_d);
+      BOOST_MP_ASSERT(m_data[0]._mp_num._mp_d);
       return m_data;
    }
 
@@ -2170,7 +2688,7 @@ inline void eval_multiply(gmp_rational& t, const gmp_rational& o)
 inline void eval_divide(gmp_rational& t, const gmp_rational& o)
 {
    if (eval_is_zero(o))
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpq_div(t.data(), t.data(), o.data());
 }
 inline void eval_add(gmp_rational& t, const gmp_rational& p, const gmp_rational& o)
@@ -2188,8 +2706,189 @@ inline void eval_multiply(gmp_rational& t, const gmp_rational& p, const gmp_rati
 inline void eval_divide(gmp_rational& t, const gmp_rational& p, const gmp_rational& o)
 {
    if (eval_is_zero(o))
-      BOOST_THROW_EXCEPTION(std::overflow_error("Division by zero."));
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Division by zero."));
    mpq_div(t.data(), p.data(), o.data());
+}
+//
+// operator with scalars:
+//
+inline void eval_add(gmp_rational& result, gmp_rational const& a, gmp_int const& b)
+{
+   // we allow result and a to be the same object here:
+   if (&a != &result)
+   {
+      mpz_set(mpq_numref(result.data()), mpq_numref(a.data()));
+      mpz_set(mpq_denref(result.data()), mpq_denref(a.data()));
+   }
+   mpz_addmul(mpq_numref(result.data()), mpq_denref(a.data()), b.data());
+   // no need to normalize, there can be no common divisor as long as a is already normalized.
+}
+inline void eval_add(gmp_rational& result, gmp_rational const& a, unsigned long b)
+{
+   // we allow result and a to be the same object here:
+   if (&a != &result)
+   {
+      mpz_set(mpq_numref(result.data()), mpq_numref(a.data()));
+      mpz_set(mpq_denref(result.data()), mpq_denref(a.data()));
+   }
+   mpz_addmul_ui(mpq_numref(result.data()), mpq_denref(a.data()), b);
+   // no need to normalize, there can be no common divisor as long as a is already normalized.
+}
+inline void eval_add(gmp_rational& result, gmp_rational const& a, long b)
+{
+   // we allow result and a to be the same object here:
+   if (&a != &result)
+   {
+      mpz_set(mpq_numref(result.data()), mpq_numref(a.data()));
+      mpz_set(mpq_denref(result.data()), mpq_denref(a.data()));
+   }
+   if(b > 0)
+      mpz_addmul_ui(mpq_numref(result.data()), mpq_denref(a.data()), b);
+   else
+      mpz_submul_ui(mpq_numref(result.data()), mpq_denref(a.data()), boost::multiprecision::detail::unsigned_abs(b));
+   // no need to normalize, there can be no common divisor as long as a is already normalized.
+}
+template <class T>
+inline typename std::enable_if<boost::multiprecision::detail::is_integral<T>::value>::type eval_add(gmp_rational& result, gmp_rational const& a, const T& b)
+{
+   gmp_int t;
+   t = b;
+   eval_add(result, a, t);
+}
+template <class T>
+inline typename std::enable_if<boost::multiprecision::detail::is_integral<T>::value>::type eval_add(gmp_rational& result, const T& b, gmp_rational const& a)
+{
+   eval_add(result, a, b);
+}
+template <class T>
+inline typename std::enable_if<boost::multiprecision::detail::is_integral<T>::value>::type eval_add(gmp_rational& result, const T& b)
+{
+   eval_add(result, result, b);
+}
+inline void eval_subtract(gmp_rational& result, gmp_rational const& a, gmp_int const& b)
+{
+   // we allow result and a to be the same object here:
+   if (&a != &result)
+   {
+      mpz_set(mpq_numref(result.data()), mpq_numref(a.data()));
+      mpz_set(mpq_denref(result.data()), mpq_denref(a.data()));
+   }
+   mpz_submul(mpq_numref(result.data()), mpq_denref(a.data()), b.data());
+   // no need to normalize, there can be no common divisor as long as a is already normalized.
+}
+inline void eval_subtract(gmp_rational& result, gmp_rational const& a, unsigned long b)
+{
+   // we allow result and a to be the same object here:
+   if (&a != &result)
+   {
+      mpz_set(mpq_numref(result.data()), mpq_numref(a.data()));
+      mpz_set(mpq_denref(result.data()), mpq_denref(a.data()));
+   }
+   mpz_submul_ui(mpq_numref(result.data()), mpq_denref(a.data()), b);
+   // no need to normalize, there can be no common divisor as long as a is already normalized.
+}
+inline void eval_subtract(gmp_rational& result, gmp_rational const& a, long b)
+{
+   // we allow result and a to be the same object here:
+   if (&a != &result)
+   {
+      mpz_set(mpq_numref(result.data()), mpq_numref(a.data()));
+      mpz_set(mpq_denref(result.data()), mpq_denref(a.data()));
+   }
+   if(b > 0)
+      mpz_submul_ui(mpq_numref(result.data()), mpq_denref(a.data()), b);
+   else
+      mpz_addmul_ui(mpq_numref(result.data()), mpq_denref(a.data()), boost::multiprecision::detail::unsigned_abs(b));
+   // no need to normalize, there can be no common divisor as long as a is already normalized.
+}
+template <class T>
+inline typename std::enable_if<boost::multiprecision::detail::is_integral<T>::value>::type eval_subtract(gmp_rational& result, gmp_rational const& a, const T& b)
+{
+   gmp_int t;
+   t = b;
+   eval_subtract(result, a, t);
+}
+template <class T>
+inline typename std::enable_if<boost::multiprecision::detail::is_integral<T>::value>::type eval_subtract(gmp_rational& result, const T& b, gmp_rational const& a)
+{
+   eval_subtract(result, a, b);
+   result.negate();
+}
+template <class T>
+inline typename std::enable_if<boost::multiprecision::detail::is_integral<T>::value>::type eval_subtract(gmp_rational& result, const T& b)
+{
+   eval_subtract(result, result, b);
+}
+
+inline void eval_multiply(gmp_rational& result, gmp_rational const& a, gmp_int const& b)
+{
+   gmp_int g, t;
+   mpz_gcd(g.data(), mpq_denref(a.data()), b.data());
+   if (!mpz_fits_uint_p(g.data()) || (mpz_get_ui(g.data()) != 1))
+   {
+      // We get here if the gcd is not unity, this is true if the number is
+      // too large for an unsigned long, or if we get an unsigned long and check against 1.
+      eval_divide(t, b, g);
+      mpz_mul(mpq_numref(result.data()), t.data(), mpq_numref(a.data()));
+      mpz_divexact(mpq_denref(result.data()), mpq_denref(a.data()), g.data());
+   }
+   else
+   {
+      // gcd is 1.
+      mpz_mul(mpq_numref(result.data()), mpq_numref(a.data()), b.data());
+      if (&result != &a)
+         mpz_set(mpq_denref(result.data()), mpq_denref(a.data()));
+   }
+}
+inline void eval_multiply(gmp_rational& result, gmp_rational const& a, unsigned long b)
+{
+   if (b == 0)
+   {
+      mpq_set_ui(result.data(), b, 1);
+      return;
+   }
+   if (mpz_sgn(mpq_numref(a.data())) == 0)
+   {
+      result = a;
+      return;
+   }
+   unsigned long g = mpz_gcd_ui(nullptr, mpq_denref(a.data()), b);
+   if (g != 1)
+   {
+      BOOST_MP_ASSERT(g);
+      b /= g;
+      mpz_mul_ui(mpq_numref(result.data()), mpq_numref(a.data()), b);
+      mpz_divexact_ui(mpq_denref(result.data()), mpq_denref(a.data()), g);
+   }
+   else
+   {
+      mpz_mul_ui(mpq_numref(result.data()), mpq_numref(a.data()), b);
+      if (&result != &a)
+         mpz_set(mpq_denref(result.data()), mpq_denref(a.data()));
+   }
+}
+inline void eval_multiply(gmp_rational& result, gmp_rational const& a, long b)
+{
+   eval_multiply(result, a, boost::multiprecision::detail::unsigned_abs(b));
+   if (b < 0)
+      result.negate();
+}
+template <class T>
+inline typename std::enable_if<boost::multiprecision::detail::is_integral<T>::value>::type eval_multiply(gmp_rational& result, gmp_rational const& a, const T& b)
+{
+   gmp_int t;
+   t = b;
+   eval_multiply(result, a, t);
+}
+template <class T>
+inline typename std::enable_if<boost::multiprecision::detail::is_integral<T>::value>::type eval_multiply(gmp_rational& result, const T& b, gmp_rational const& a)
+{
+   eval_multiply(result, a, b);
+}
+template <class T>
+inline typename std::enable_if<boost::multiprecision::detail::is_integral<T>::value>::type eval_multiply(gmp_rational& result, const T& b)
+{
+   eval_multiply(result, result, b);
 }
 
 inline int eval_get_sign(const gmp_rational& val)
@@ -2197,7 +2896,7 @@ inline int eval_get_sign(const gmp_rational& val)
    return mpq_sgn(val.data());
 }
 template <class R>
-inline typename enable_if_c<number_category<R>::value == number_kind_floating_point>::type eval_convert_to(R* result, const gmp_rational& backend)
+inline typename std::enable_if<number_category<R>::value == number_kind_floating_point>::type eval_convert_to(R* result, const gmp_rational& backend)
 {
    //
    // The generic conversion is as good as anything we can write here:
@@ -2211,12 +2910,12 @@ inline typename enable_if_c<number_category<R>::value == number_kind_floating_po
    ::boost::multiprecision::detail::generic_convert_rational_to_float(*result, backend);
 }
 #ifdef BOOST_HAS_FLOAT128
-inline void eval_convert_to(__float128* result, const gmp_rational& val)
+inline void eval_convert_to(float128_type* result, const gmp_rational& val)
 {
    using default_ops::eval_convert_to;
 
    gmp_int n, d;
-   __float128 fn, fd;
+   float128_type fn, fd;
    mpz_set(n.data(), mpq_numref(val.data()));
    mpz_set(d.data(), mpq_denref(val.data()));
 
@@ -2227,18 +2926,15 @@ inline void eval_convert_to(__float128* result, const gmp_rational& val)
 }
 #endif
 
-inline void eval_convert_to(long* result, const gmp_rational& val)
+template <class R>
+inline typename std::enable_if<number_category<R>::value == number_kind_integer>::type eval_convert_to(R* result, const gmp_rational& backend)
 {
-   double r;
-   eval_convert_to(&r, val);
-   *result = static_cast<long>(r);
-}
-
-inline void eval_convert_to(unsigned long* result, const gmp_rational& val)
-{
-   double r;
-   eval_convert_to(&r, val);
-   *result = static_cast<long>(r);
+   gmp_int n(mpq_numref(backend.data()));
+   gmp_int d(mpq_denref(backend.data()));
+   using default_ops::eval_divide;
+   eval_divide(n, d);
+   using default_ops::eval_convert_to;
+   eval_convert_to(result, n);
 }
 
 inline void eval_abs(gmp_rational& result, const gmp_rational& val)
@@ -2262,16 +2958,59 @@ inline void assign_components(gmp_rational& result, gmp_int const& v1, gmp_int c
    mpz_set(mpq_denref(result.data()), v2.data());
    mpq_canonicalize(result.data());
 }
+template <class T, class U>
+void assign_components(gmp_rational& result, const T& a, const U& b)
+{
+   gmp_int x, y;
+   x = a;
+   y = b;
+   std::swap(result.data()[0]._mp_num, x.data()[0]);
+   std::swap(result.data()[0]._mp_den, y.data()[0]);
+   mpq_canonicalize(result.data());
+}
+template <class U>
+void assign_components(gmp_rational& result, const gmp_int& a, const U& b)
+{
+   gmp_int y;
+   y = b;
+   mpz_set(&result.data()[0]._mp_num, a.data());
+   std::swap(result.data()[0]._mp_den, y.data()[0]);
+   mpq_canonicalize(result.data());
+}
+template <class T>
+void assign_components(gmp_rational& result, const T& a, const gmp_int& b)
+{
+   gmp_int x;
+   x = a;
+   std::swap(result.data()[0]._mp_num, x.data()[0]);
+   mpz_set(&result.data()[0]._mp_den, b.data());
+   mpq_canonicalize(result.data());
+}
+
 
 inline std::size_t hash_value(const gmp_rational& val)
 {
    std::size_t result = 0;
    for (int i = 0; i < std::abs(val.data()[0]._mp_num._mp_size); ++i)
-      boost::hash_combine(result, val.data()[0]._mp_num._mp_d[i]);
+      boost::multiprecision::detail::hash_combine(result, val.data()[0]._mp_num._mp_d[i]);
    for (int i = 0; i < std::abs(val.data()[0]._mp_den._mp_size); ++i)
-      boost::hash_combine(result, val.data()[0]._mp_den._mp_d[i]);
-   boost::hash_combine(result, val.data()[0]._mp_num._mp_size);
+      boost::multiprecision::detail::hash_combine(result, val.data()[0]._mp_den._mp_d[i]);
+   boost::multiprecision::detail::hash_combine(result, val.data()[0]._mp_num._mp_size);
    return result;
+}
+
+//
+// Some useful helpers:
+//
+inline std::size_t used_gmp_int_bits(const gmp_int& val)
+{
+   return eval_msb(val) - eval_lsb(val) + 1;
+}
+inline std::size_t used_gmp_rational_bits(const gmp_rational& val)
+{
+   unsigned d2_d = static_cast<unsigned>(mpz_sizeinbase(mpq_denref(val.data()), 2) - mpz_scan1(mpq_denref(val.data()), 0));
+   unsigned d2_n = static_cast<unsigned>(mpz_sizeinbase(mpq_numref(val.data()), 2) - mpz_scan1(mpq_numref(val.data()), 0));
+   return (std::max)(d2_d, d2_n);
 }
 
 //
@@ -2279,14 +3018,14 @@ inline std::size_t hash_value(const gmp_rational& val)
 //
 template <unsigned Digits10>
 template <unsigned D>
-inline gmp_float<Digits10>::gmp_float(const gmp_float<D>& o, typename enable_if_c<D <= Digits10>::type*)
+inline gmp_float<Digits10>::gmp_float(const gmp_float<D>& o, typename std::enable_if<D <= Digits10>::type*)
 {
    mpf_init2(this->m_data, multiprecision::detail::digits10_2_2(Digits10 ? Digits10 : (unsigned)this->get_default_precision()));
    mpf_set(this->m_data, o.data());
 }
 template <unsigned Digits10>
 template <unsigned D>
-inline gmp_float<Digits10>::gmp_float(const gmp_float<D>& o, typename disable_if_c<D <= Digits10>::type*)
+inline gmp_float<Digits10>::gmp_float(const gmp_float<D>& o, typename std::enable_if< !(D <= Digits10)>::type*)
 {
    mpf_init2(this->m_data, multiprecision::detail::digits10_2_2(Digits10 ? Digits10 : (unsigned)this->get_default_precision()));
    mpf_set(this->m_data, o.data());
@@ -2330,11 +3069,24 @@ inline gmp_float<Digits10>& gmp_float<Digits10>::operator=(const gmp_rational& o
 }
 inline gmp_float<0>::gmp_float(const gmp_int& o) : requested_precision(get_default_precision())
 {
+   if (thread_default_variable_precision_options() >= variable_precision_options::preserve_all_precision)
+   {
+      std::size_t d2 = used_gmp_int_bits(o);
+      std::size_t d10 = 1 + multiprecision::detail::digits2_2_10(d2);
+      if (d10 > requested_precision)
+         requested_precision = static_cast<unsigned>(d10);
+   }
    mpf_init2(this->m_data, multiprecision::detail::digits10_2_2(requested_precision));
    mpf_set_z(this->data(), o.data());
 }
 inline gmp_float<0>::gmp_float(const gmp_rational& o) : requested_precision(get_default_precision())
 {
+   if (thread_default_variable_precision_options() >= variable_precision_options::preserve_all_precision)
+   {
+      std::size_t d10 = 1 + multiprecision::detail::digits2_2_10(used_gmp_rational_bits(o));
+      if (d10 > requested_precision)
+         requested_precision = static_cast<unsigned>(d10);
+   }
    mpf_init2(this->m_data, multiprecision::detail::digits10_2_2(requested_precision));
    mpf_set_q(this->data(), o.data());
 }
@@ -2343,7 +3095,21 @@ inline gmp_float<0>& gmp_float<0>::operator=(const gmp_int& o)
    if (this->m_data[0]._mp_d == 0)
    {
       requested_precision = this->get_default_precision();
+      if (thread_default_variable_precision_options() >= variable_precision_options::preserve_all_precision)
+      {
+         std::size_t d2 = used_gmp_int_bits(o);
+         std::size_t d10 = 1 + multiprecision::detail::digits2_2_10(d2);
+         if (d10 > requested_precision)
+            requested_precision = static_cast<unsigned>(d10);
+      }
       mpf_init2(this->m_data, multiprecision::detail::digits10_2_2(requested_precision));
+   }
+   else if (thread_default_variable_precision_options() >= variable_precision_options::preserve_all_precision)
+   {
+      std::size_t d2 = used_gmp_int_bits(o);
+      std::size_t d10 = 1 + multiprecision::detail::digits2_2_10(d2);
+      if (d10 > requested_precision)
+         this->precision(static_cast<unsigned>(d10));
    }
    mpf_set_z(this->data(), o.data());
    return *this;
@@ -2353,7 +3119,19 @@ inline gmp_float<0>& gmp_float<0>::operator=(const gmp_rational& o)
    if (this->m_data[0]._mp_d == 0)
    {
       requested_precision = this->get_default_precision();
+      if (thread_default_variable_precision_options() >= variable_precision_options::preserve_all_precision)
+      {
+         std::size_t d10 = 1 + multiprecision::detail::digits2_2_10(used_gmp_rational_bits(o));
+         if (d10 > requested_precision)
+            requested_precision = static_cast<unsigned>(d10);
+      }
       mpf_init2(this->m_data, multiprecision::detail::digits10_2_2(requested_precision));
+   }
+   else if (thread_default_variable_precision_options() >= variable_precision_options::preserve_all_precision)
+   {
+      std::size_t d10 = 1 + multiprecision::detail::digits2_2_10(used_gmp_rational_bits(o));
+      if (d10 > requested_precision)
+         this->precision(static_cast<unsigned>(d10));
    }
    mpf_set_q(this->data(), o.data());
    return *this;
@@ -2380,7 +3158,7 @@ using boost::multiprecision::backends::gmp_rational;
 template <expression_template_option ExpressionTemplates>
 struct component_type<number<gmp_rational, ExpressionTemplates> >
 {
-   typedef number<gmp_int, ExpressionTemplates> type;
+   using type = number<gmp_int, ExpressionTemplates>;
 };
 
 template <expression_template_option ET>
@@ -2400,32 +3178,12 @@ inline number<gmp_int, ET> denominator(const number<gmp_rational, ET>& val)
 
 namespace detail {
 
-#ifdef BOOST_NO_SFINAE_EXPR
-
-template <>
-struct is_explicitly_convertible<canonical<mpf_t, gmp_int>::type, gmp_int> : public mpl::true_
-{};
-template <>
-struct is_explicitly_convertible<canonical<mpq_t, gmp_int>::type, gmp_int> : public mpl::true_
-{};
-template <unsigned Digits10>
-struct is_explicitly_convertible<gmp_float<Digits10>, gmp_int> : public mpl::true_
-{};
-template <>
-struct is_explicitly_convertible<gmp_rational, gmp_int> : public mpl::true_
-{};
-template <unsigned D1, unsigned D2>
-struct is_explicitly_convertible<gmp_float<D1>, gmp_float<D2> > : public mpl::true_
-{};
-
-#endif
-
 template <>
 struct digits2<number<gmp_float<0>, et_on> >
 {
    static long value()
    {
-      return multiprecision::detail::digits10_2_2(gmp_float<0>::default_precision());
+      return multiprecision::detail::digits10_2_2(gmp_float<0>::thread_default_precision());
    }
 };
 
@@ -2434,7 +3192,7 @@ struct digits2<number<gmp_float<0>, et_off> >
 {
    static long value()
    {
-      return multiprecision::detail::digits10_2_2(gmp_float<0>::default_precision());
+      return multiprecision::detail::digits10_2_2(gmp_float<0>::thread_default_precision());
    }
 };
 
@@ -2443,7 +3201,7 @@ struct digits2<number<debug_adaptor<gmp_float<0> >, et_on> >
 {
    static long value()
    {
-      return multiprecision::detail::digits10_2_2(gmp_float<0>::default_precision());
+      return multiprecision::detail::digits10_2_2(gmp_float<0>::thread_default_precision());
    }
 };
 
@@ -2452,55 +3210,89 @@ struct digits2<number<debug_adaptor<gmp_float<0> >, et_off> >
 {
    static long value()
    {
-      return multiprecision::detail::digits10_2_2(gmp_float<0>::default_precision());
+      return multiprecision::detail::digits10_2_2(gmp_float<0>::thread_default_precision());
    }
 };
+
+template <unsigned Digits10>
+struct transcendental_reduction_type<boost::multiprecision::backends::gmp_float<Digits10> >
+{
+   //
+   // The type used for trigonometric reduction needs 3 times the precision of the base type.
+   // This is double the precision of the original type, plus the largest exponent supported.
+   // As a practical measure the largest argument supported is 1/eps, as supporting larger
+   // arguments requires the division of argument by PI/2 to also be done at higher precision,
+   // otherwise the result (an integer) can not be represented exactly.
+   // 
+   // See ARGUMENT REDUCTION FOR HUGE ARGUMENTS. K C Ng.
+   //
+   using type = boost::multiprecision::backends::gmp_float<Digits10 * 3>;
+};
+
 
 } // namespace detail
 
 template <>
-struct number_category<detail::canonical<mpz_t, gmp_int>::type> : public mpl::int_<number_kind_integer>
+struct number_category<detail::canonical<mpz_t, gmp_int>::type> : public std::integral_constant<int, number_kind_integer>
 {};
 template <>
-struct number_category<detail::canonical<mpq_t, gmp_rational>::type> : public mpl::int_<number_kind_rational>
+struct number_category<detail::canonical<mpq_t, gmp_rational>::type> : public std::integral_constant<int, number_kind_rational>
 {};
 template <>
-struct number_category<detail::canonical<mpf_t, gmp_float<0> >::type> : public mpl::int_<number_kind_floating_point>
+struct number_category<detail::canonical<mpf_t, gmp_float<0> >::type> : public std::integral_constant<int, number_kind_floating_point>
 {};
 
 namespace detail {
 template <>
-struct is_variable_precision<backends::gmp_float<0> > : public true_type
+struct is_variable_precision<backends::gmp_float<0> > : public std::integral_constant<bool, true>
 {};
 } // namespace detail
 
-typedef number<gmp_float<50> >   mpf_float_50;
-typedef number<gmp_float<100> >  mpf_float_100;
-typedef number<gmp_float<500> >  mpf_float_500;
-typedef number<gmp_float<1000> > mpf_float_1000;
-typedef number<gmp_float<0> >    mpf_float;
-typedef number<gmp_int>          mpz_int;
-typedef number<gmp_rational>     mpq_rational;
+using mpf_float_50 = number<gmp_float<50> >  ;
+using mpf_float_100 = number<gmp_float<100> > ;
+using mpf_float_500 = number<gmp_float<500> > ;
+using mpf_float_1000 = number<gmp_float<1000> >;
+using mpf_float = number<gmp_float<0> >   ;
+using mpz_int = number<gmp_int>         ;
+using mpq_rational = number<gmp_rational>    ;
 
 } // namespace multiprecision
 
 namespace math { namespace tools {
 
+#ifndef BOOST_MP_MATH_AVAILABLE
+
+template <typename T>
+inline int digits();
+
+template <typename T>
+inline T max_value();
+
+template <typename T>
+inline T min_value();
+
+#endif // BOOST_MP_MATH_AVAILABLE
+
+inline void set_output_precision(const boost::multiprecision::mpf_float& val, std::ostream& os)
+{
+   os << std::setprecision(val.precision());
+}
+
 template <>
 inline int digits<boost::multiprecision::mpf_float>()
 #ifdef BOOST_MATH_NOEXCEPT
-    BOOST_NOEXCEPT
+    noexcept
 #endif
 {
-   return multiprecision::detail::digits10_2_2(boost::multiprecision::mpf_float::default_precision());
+   return multiprecision::detail::digits10_2_2(boost::multiprecision::mpf_float::thread_default_precision());
 }
 template <>
 inline int digits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, boost::multiprecision::et_off> >()
 #ifdef BOOST_MATH_NOEXCEPT
-    BOOST_NOEXCEPT
+    noexcept
 #endif
 {
-   return multiprecision::detail::digits10_2_2(boost::multiprecision::mpf_float::default_precision());
+   return multiprecision::detail::digits10_2_2(boost::multiprecision::mpf_float::thread_default_precision());
 }
 
 template <>
@@ -2517,7 +3309,7 @@ inline boost::multiprecision::mpf_float
 min_value<boost::multiprecision::mpf_float>()
 {
    boost::multiprecision::mpf_float result(0.5);
-   mpf_div_2exp(result.backend().data(), result.backend().data(), (std::numeric_limits<mp_exp_t>::min)() / 64 + 1);
+   mpf_div_2exp(result.backend().data(), result.backend().data(), (std::numeric_limits<mp_exp_t>::max)() / 64 + 1);
    return result;
 }
 
@@ -2542,18 +3334,18 @@ min_value<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, boo
 template <>
 inline int digits<boost::multiprecision::number<boost::multiprecision::debug_adaptor<boost::multiprecision::mpf_float::backend_type> > >()
 #ifdef BOOST_MATH_NOEXCEPT
-    BOOST_NOEXCEPT
+    noexcept
 #endif
 {
-   return multiprecision::detail::digits10_2_2(boost::multiprecision::number<boost::multiprecision::debug_adaptor<boost::multiprecision::mpf_float::backend_type> >::default_precision());
+   return multiprecision::detail::digits10_2_2(boost::multiprecision::number<boost::multiprecision::debug_adaptor<boost::multiprecision::mpf_float::backend_type> >::thread_default_precision());
 }
 template <>
 inline int digits<boost::multiprecision::number<boost::multiprecision::debug_adaptor<boost::multiprecision::gmp_float<0> >, boost::multiprecision::et_off> >()
 #ifdef BOOST_MATH_NOEXCEPT
-    BOOST_NOEXCEPT
+    noexcept
 #endif
 {
-   return multiprecision::detail::digits10_2_2(boost::multiprecision::number<boost::multiprecision::debug_adaptor<boost::multiprecision::mpf_float::backend_type> >::default_precision());
+   return multiprecision::detail::digits10_2_2(boost::multiprecision::number<boost::multiprecision::debug_adaptor<boost::multiprecision::mpf_float::backend_type> >::thread_default_precision());
 }
 
 template <>
@@ -2596,259 +3388,226 @@ namespace std {
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
 class numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >
 {
-   typedef boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> number_type;
+   using number_type = boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates>;
 
- public:
-   BOOST_STATIC_CONSTEXPR bool is_specialized = true;
    //
    // min and max values chosen so as to not cause segfaults when calling
    // mpf_get_str on 64-bit Linux builds.  Possibly we could use larger
    // exponent values elsewhere.
    //
+   static number_type calc_min()
+   {
+      number_type result(1);
+      mpf_div_2exp(result.backend().data(), result.backend().data(), (std::numeric_limits<mp_exp_t>::max)() / 64 + 1);
+      return result;
+   }
+   static number_type calc_max()
+   {
+      number_type result(1);
+      mpf_mul_2exp(result.backend().data(), result.backend().data(), (std::numeric_limits<mp_exp_t>::max)() / 64 + 1);
+      return result;
+   }
+   static number_type calc_epsilon()
+   {
+      number_type result(1);
+      mpf_div_2exp(result.backend().data(), result.backend().data(), std::numeric_limits<number_type>::digits - 1);
+      return result;
+   }
+
+
+ public:
+   static constexpr bool is_specialized = true;
    static number_type(min)()
    {
-      initializer.do_nothing();
-      static std::pair<bool, number_type> value;
-      if (!value.first)
-      {
-         value.first  = true;
-         value.second = 1;
-         mpf_div_2exp(value.second.backend().data(), value.second.backend().data(), (std::numeric_limits<mp_exp_t>::max)() / 64 + 1);
-      }
-      return value.second;
+      // rely on C++11 thread safe initialization of statics:
+      static const number_type value{calc_min()};
+      return value;
    }
    static number_type(max)()
    {
-      initializer.do_nothing();
-      static std::pair<bool, number_type> value;
-      if (!value.first)
-      {
-         value.first  = true;
-         value.second = 1;
-         mpf_mul_2exp(value.second.backend().data(), value.second.backend().data(), (std::numeric_limits<mp_exp_t>::max)() / 64 + 1);
-      }
-      return value.second;
+      static number_type value{calc_max()};
+      return value;
    }
-   BOOST_STATIC_CONSTEXPR number_type lowest()
+   static constexpr number_type lowest()
    {
       return -(max)();
    }
-   BOOST_STATIC_CONSTEXPR int digits   = static_cast<int>((Digits10 * 1000L) / 301L + ((Digits10 * 1000L) % 301L ? 2 : 1));
-   BOOST_STATIC_CONSTEXPR int digits10 = Digits10;
+   static constexpr int digits   = static_cast<int>((Digits10 * 1000L) / 301L + ((Digits10 * 1000L) % 301L ? 2 : 1));
+   static constexpr int digits10 = Digits10;
    // Have to allow for a possible extra limb inside the gmp data structure:
-   BOOST_STATIC_CONSTEXPR int  max_digits10 = Digits10 + 3 + ((GMP_LIMB_BITS * 301L) / 1000L);
-   BOOST_STATIC_CONSTEXPR bool is_signed    = true;
-   BOOST_STATIC_CONSTEXPR bool is_integer   = false;
-   BOOST_STATIC_CONSTEXPR bool is_exact     = false;
-   BOOST_STATIC_CONSTEXPR int  radix        = 2;
+   static constexpr int  max_digits10 = Digits10 + 3 + ((GMP_LIMB_BITS * 301L) / 1000L);
+   static constexpr bool is_signed    = true;
+   static constexpr bool is_integer   = false;
+   static constexpr bool is_exact     = false;
+   static constexpr int  radix        = 2;
    static number_type          epsilon()
    {
-      initializer.do_nothing();
-      static std::pair<bool, number_type> value;
-      if (!value.first)
-      {
-         value.first  = true;
-         value.second = 1;
-         mpf_div_2exp(value.second.backend().data(), value.second.backend().data(), std::numeric_limits<number_type>::digits - 1);
-      }
-      return value.second;
+      static const number_type value{calc_epsilon()};
+      return value;
    }
    // What value should this be????
    static number_type round_error()
    {
-      // returns epsilon/2
-      initializer.do_nothing();
-      static std::pair<bool, number_type> value;
-      if (!value.first)
-      {
-         value.first  = true;
-         value.second = 1;
-      }
-      return value.second;
+      return 1;
    }
-   BOOST_STATIC_CONSTEXPR long               min_exponent      = LONG_MIN;
-   BOOST_STATIC_CONSTEXPR long               min_exponent10    = (LONG_MIN / 1000) * 301L;
-   BOOST_STATIC_CONSTEXPR long               max_exponent      = LONG_MAX;
-   BOOST_STATIC_CONSTEXPR long               max_exponent10    = (LONG_MAX / 1000) * 301L;
-   BOOST_STATIC_CONSTEXPR bool               has_infinity      = false;
-   BOOST_STATIC_CONSTEXPR bool               has_quiet_NaN     = false;
-   BOOST_STATIC_CONSTEXPR bool               has_signaling_NaN = false;
-   BOOST_STATIC_CONSTEXPR float_denorm_style has_denorm        = denorm_absent;
-   BOOST_STATIC_CONSTEXPR bool               has_denorm_loss   = false;
-   BOOST_STATIC_CONSTEXPR number_type        infinity() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR number_type        quiet_NaN() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR number_type        signaling_NaN() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR number_type        denorm_min() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR bool               is_iec559       = false;
-   BOOST_STATIC_CONSTEXPR bool               is_bounded      = true;
-   BOOST_STATIC_CONSTEXPR bool               is_modulo       = false;
-   BOOST_STATIC_CONSTEXPR bool               traps           = true;
-   BOOST_STATIC_CONSTEXPR bool               tinyness_before = false;
-   BOOST_STATIC_CONSTEXPR float_round_style  round_style     = round_indeterminate;
-
- private:
-   struct data_initializer
-   {
-      data_initializer()
-      {
-         std::numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<digits10> > >::epsilon();
-         std::numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<digits10> > >::round_error();
-         (std::numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<digits10> > >::min)();
-         (std::numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<digits10> > >::max)();
-      }
-      void do_nothing() const {}
-   };
-   static const data_initializer initializer;
+   static constexpr long               min_exponent      = LONG_MIN;
+   static constexpr long               min_exponent10    = (LONG_MIN / 1000) * 301L;
+   static constexpr long               max_exponent      = LONG_MAX;
+   static constexpr long               max_exponent10    = (LONG_MAX / 1000) * 301L;
+   static constexpr bool               has_infinity      = false;
+   static constexpr bool               has_quiet_NaN     = false;
+   static constexpr bool               has_signaling_NaN = false;
+   static constexpr float_denorm_style has_denorm        = denorm_absent;
+   static constexpr bool               has_denorm_loss   = false;
+   static constexpr number_type        infinity() { return number_type(); }
+   static constexpr number_type        quiet_NaN() { return number_type(); }
+   static constexpr number_type        signaling_NaN() { return number_type(); }
+   static constexpr number_type        denorm_min() { return number_type(); }
+   static constexpr bool               is_iec559       = false;
+   static constexpr bool               is_bounded      = true;
+   static constexpr bool               is_modulo       = false;
+   static constexpr bool               traps           = true;
+   static constexpr bool               tinyness_before = false;
+   static constexpr float_round_style  round_style     = round_indeterminate;
 };
 
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-const typename numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::data_initializer numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::initializer;
-
-#ifndef BOOST_NO_INCLASS_MEMBER_INITIALIZATION
-
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::digits;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::digits;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::digits10;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::digits10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::max_digits10;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::max_digits10;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_signed;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_signed;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_integer;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_integer;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_exact;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_exact;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::radix;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::radix;
+constexpr long numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::min_exponent;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST long numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::min_exponent;
+constexpr long numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::min_exponent10;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST long numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::min_exponent10;
+constexpr long numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::max_exponent;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST long numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::max_exponent;
+constexpr long numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::max_exponent10;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST long numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::max_exponent10;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::has_infinity;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::has_infinity;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::has_quiet_NaN;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::has_quiet_NaN;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::has_signaling_NaN;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::has_signaling_NaN;
+constexpr float_denorm_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::has_denorm;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST float_denorm_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::has_denorm;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::has_denorm_loss;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::has_denorm_loss;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_iec559;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_iec559;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_bounded;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_bounded;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_modulo;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::is_modulo;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::traps;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::traps;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::tinyness_before;
 template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::tinyness_before;
-template <unsigned Digits10, boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST float_round_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::round_style;
-
-#endif
+constexpr float_round_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<Digits10>, ExpressionTemplates> >::round_style;
 
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
 class numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >
 {
-   typedef boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> number_type;
+   using number_type = boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates>;
 
  public:
-   BOOST_STATIC_CONSTEXPR bool is_specialized = false;
+   static constexpr bool is_specialized = false;
    static number_type(min)() { return number_type(); }
    static number_type(max)() { return number_type(); }
    static number_type                        lowest() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR int                digits       = 0;
-   BOOST_STATIC_CONSTEXPR int                digits10     = 0;
-   BOOST_STATIC_CONSTEXPR int                max_digits10 = 0;
-   BOOST_STATIC_CONSTEXPR bool               is_signed    = false;
-   BOOST_STATIC_CONSTEXPR bool               is_integer   = false;
-   BOOST_STATIC_CONSTEXPR bool               is_exact     = false;
-   BOOST_STATIC_CONSTEXPR int                radix        = 0;
+   static constexpr int                digits       = 0;
+   static constexpr int                digits10     = 0;
+   static constexpr int                max_digits10 = 0;
+   static constexpr bool               is_signed    = false;
+   static constexpr bool               is_integer   = false;
+   static constexpr bool               is_exact     = false;
+   static constexpr int                radix        = 0;
    static number_type                        epsilon() { return number_type(); }
    static number_type                        round_error() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR int                min_exponent      = 0;
-   BOOST_STATIC_CONSTEXPR int                min_exponent10    = 0;
-   BOOST_STATIC_CONSTEXPR int                max_exponent      = 0;
-   BOOST_STATIC_CONSTEXPR int                max_exponent10    = 0;
-   BOOST_STATIC_CONSTEXPR bool               has_infinity      = false;
-   BOOST_STATIC_CONSTEXPR bool               has_quiet_NaN     = false;
-   BOOST_STATIC_CONSTEXPR bool               has_signaling_NaN = false;
-   BOOST_STATIC_CONSTEXPR float_denorm_style has_denorm        = denorm_absent;
-   BOOST_STATIC_CONSTEXPR bool               has_denorm_loss   = false;
+   static constexpr int                min_exponent      = 0;
+   static constexpr int                min_exponent10    = 0;
+   static constexpr int                max_exponent      = 0;
+   static constexpr int                max_exponent10    = 0;
+   static constexpr bool               has_infinity      = false;
+   static constexpr bool               has_quiet_NaN     = false;
+   static constexpr bool               has_signaling_NaN = false;
+   static constexpr float_denorm_style has_denorm        = denorm_absent;
+   static constexpr bool               has_denorm_loss   = false;
    static number_type                        infinity() { return number_type(); }
    static number_type                        quiet_NaN() { return number_type(); }
    static number_type                        signaling_NaN() { return number_type(); }
    static number_type                        denorm_min() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR bool               is_iec559       = false;
-   BOOST_STATIC_CONSTEXPR bool               is_bounded      = false;
-   BOOST_STATIC_CONSTEXPR bool               is_modulo       = false;
-   BOOST_STATIC_CONSTEXPR bool               traps           = false;
-   BOOST_STATIC_CONSTEXPR bool               tinyness_before = false;
-   BOOST_STATIC_CONSTEXPR float_round_style  round_style     = round_indeterminate;
+   static constexpr bool               is_iec559       = false;
+   static constexpr bool               is_bounded      = false;
+   static constexpr bool               is_modulo       = false;
+   static constexpr bool               traps           = false;
+   static constexpr bool               tinyness_before = false;
+   static constexpr float_round_style  round_style     = round_indeterminate;
 };
 
-#ifndef BOOST_NO_INCLASS_MEMBER_INITIALIZATION
-
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::digits;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::digits;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::digits10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::digits10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::max_digits10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::max_digits10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_signed;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_signed;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_integer;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_integer;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_exact;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_exact;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::radix;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::radix;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::min_exponent;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::min_exponent;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::min_exponent10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::min_exponent10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::max_exponent;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::max_exponent;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::max_exponent10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::max_exponent10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::has_infinity;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::has_infinity;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::has_quiet_NaN;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::has_quiet_NaN;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::has_signaling_NaN;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::has_signaling_NaN;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST float_denorm_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::has_denorm;
+constexpr float_denorm_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::has_denorm;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::has_denorm_loss;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::has_denorm_loss;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_iec559;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_iec559;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_bounded;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_bounded;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_modulo;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::is_modulo;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::traps;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::traps;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::tinyness_before;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::tinyness_before;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST float_round_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::round_style;
-
-#endif
+constexpr float_round_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >::round_style;
 
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
 class numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >
 {
-   typedef boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> number_type;
+   using number_type = boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates>;
 
  public:
-   BOOST_STATIC_CONSTEXPR bool is_specialized = true;
+   static constexpr bool is_specialized = true;
    //
    // Largest and smallest numbers are bounded only by available memory, set
    // to zero:
@@ -2862,92 +3621,88 @@ class numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_in
       return number_type();
    }
    static number_type                        lowest() { return (min)(); }
-   BOOST_STATIC_CONSTEXPR int                digits       = INT_MAX;
-   BOOST_STATIC_CONSTEXPR int                digits10     = (INT_MAX / 1000) * 301L;
-   BOOST_STATIC_CONSTEXPR int                max_digits10 = digits10 + 3;
-   BOOST_STATIC_CONSTEXPR bool               is_signed    = true;
-   BOOST_STATIC_CONSTEXPR bool               is_integer   = true;
-   BOOST_STATIC_CONSTEXPR bool               is_exact     = true;
-   BOOST_STATIC_CONSTEXPR int                radix        = 2;
+   static constexpr int                digits       = INT_MAX;
+   static constexpr int                digits10     = (INT_MAX / 1000) * 301L;
+   static constexpr int                max_digits10 = digits10 + 3;
+   static constexpr bool               is_signed    = true;
+   static constexpr bool               is_integer   = true;
+   static constexpr bool               is_exact     = true;
+   static constexpr int                radix        = 2;
    static number_type                        epsilon() { return number_type(); }
    static number_type                        round_error() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR int                min_exponent      = 0;
-   BOOST_STATIC_CONSTEXPR int                min_exponent10    = 0;
-   BOOST_STATIC_CONSTEXPR int                max_exponent      = 0;
-   BOOST_STATIC_CONSTEXPR int                max_exponent10    = 0;
-   BOOST_STATIC_CONSTEXPR bool               has_infinity      = false;
-   BOOST_STATIC_CONSTEXPR bool               has_quiet_NaN     = false;
-   BOOST_STATIC_CONSTEXPR bool               has_signaling_NaN = false;
-   BOOST_STATIC_CONSTEXPR float_denorm_style has_denorm        = denorm_absent;
-   BOOST_STATIC_CONSTEXPR bool               has_denorm_loss   = false;
+   static constexpr int                min_exponent      = 0;
+   static constexpr int                min_exponent10    = 0;
+   static constexpr int                max_exponent      = 0;
+   static constexpr int                max_exponent10    = 0;
+   static constexpr bool               has_infinity      = false;
+   static constexpr bool               has_quiet_NaN     = false;
+   static constexpr bool               has_signaling_NaN = false;
+   static constexpr float_denorm_style has_denorm        = denorm_absent;
+   static constexpr bool               has_denorm_loss   = false;
    static number_type                        infinity() { return number_type(); }
    static number_type                        quiet_NaN() { return number_type(); }
    static number_type                        signaling_NaN() { return number_type(); }
    static number_type                        denorm_min() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR bool               is_iec559       = false;
-   BOOST_STATIC_CONSTEXPR bool               is_bounded      = false;
-   BOOST_STATIC_CONSTEXPR bool               is_modulo       = false;
-   BOOST_STATIC_CONSTEXPR bool               traps           = false;
-   BOOST_STATIC_CONSTEXPR bool               tinyness_before = false;
-   BOOST_STATIC_CONSTEXPR float_round_style  round_style     = round_toward_zero;
+   static constexpr bool               is_iec559       = false;
+   static constexpr bool               is_bounded      = false;
+   static constexpr bool               is_modulo       = false;
+   static constexpr bool               traps           = false;
+   static constexpr bool               tinyness_before = false;
+   static constexpr float_round_style  round_style     = round_toward_zero;
 };
 
-#ifndef BOOST_NO_INCLASS_MEMBER_INITIALIZATION
-
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::digits;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::digits;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::digits10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::digits10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::max_digits10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::max_digits10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_signed;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_signed;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_integer;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_integer;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_exact;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_exact;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::radix;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::radix;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::min_exponent;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::min_exponent;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::min_exponent10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::min_exponent10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::max_exponent;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::max_exponent;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::max_exponent10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::max_exponent10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::has_infinity;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::has_infinity;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::has_quiet_NaN;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::has_quiet_NaN;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::has_signaling_NaN;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::has_signaling_NaN;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST float_denorm_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::has_denorm;
+constexpr float_denorm_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::has_denorm;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::has_denorm_loss;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::has_denorm_loss;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_iec559;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_iec559;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_bounded;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_bounded;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_modulo;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::is_modulo;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::traps;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::traps;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::tinyness_before;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::tinyness_before;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST float_round_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::round_style;
-
-#endif
+constexpr float_round_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_int, ExpressionTemplates> >::round_style;
 
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
 class numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >
 {
-   typedef boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> number_type;
+   using number_type = boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates>;
 
  public:
-   BOOST_STATIC_CONSTEXPR bool is_specialized = true;
+   static constexpr bool is_specialized = true;
    //
    // Largest and smallest numbers are bounded only by available memory, set
    // to zero:
@@ -2962,89 +3717,155 @@ class numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_ra
    }
    static number_type lowest() { return (min)(); }
    // Digits are unbounded, use zero for now:
-   BOOST_STATIC_CONSTEXPR int                digits       = INT_MAX;
-   BOOST_STATIC_CONSTEXPR int                digits10     = (INT_MAX / 1000) * 301L;
-   BOOST_STATIC_CONSTEXPR int                max_digits10 = digits10 + 3;
-   BOOST_STATIC_CONSTEXPR bool               is_signed    = true;
-   BOOST_STATIC_CONSTEXPR bool               is_integer   = false;
-   BOOST_STATIC_CONSTEXPR bool               is_exact     = true;
-   BOOST_STATIC_CONSTEXPR int                radix        = 2;
+   static constexpr int                digits       = INT_MAX;
+   static constexpr int                digits10     = (INT_MAX / 1000) * 301L;
+   static constexpr int                max_digits10 = digits10 + 3;
+   static constexpr bool               is_signed    = true;
+   static constexpr bool               is_integer   = false;
+   static constexpr bool               is_exact     = true;
+   static constexpr int                radix        = 2;
    static number_type                        epsilon() { return number_type(); }
    static number_type                        round_error() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR int                min_exponent      = 0;
-   BOOST_STATIC_CONSTEXPR int                min_exponent10    = 0;
-   BOOST_STATIC_CONSTEXPR int                max_exponent      = 0;
-   BOOST_STATIC_CONSTEXPR int                max_exponent10    = 0;
-   BOOST_STATIC_CONSTEXPR bool               has_infinity      = false;
-   BOOST_STATIC_CONSTEXPR bool               has_quiet_NaN     = false;
-   BOOST_STATIC_CONSTEXPR bool               has_signaling_NaN = false;
-   BOOST_STATIC_CONSTEXPR float_denorm_style has_denorm        = denorm_absent;
-   BOOST_STATIC_CONSTEXPR bool               has_denorm_loss   = false;
+   static constexpr int                min_exponent      = 0;
+   static constexpr int                min_exponent10    = 0;
+   static constexpr int                max_exponent      = 0;
+   static constexpr int                max_exponent10    = 0;
+   static constexpr bool               has_infinity      = false;
+   static constexpr bool               has_quiet_NaN     = false;
+   static constexpr bool               has_signaling_NaN = false;
+   static constexpr float_denorm_style has_denorm        = denorm_absent;
+   static constexpr bool               has_denorm_loss   = false;
    static number_type                        infinity() { return number_type(); }
    static number_type                        quiet_NaN() { return number_type(); }
    static number_type                        signaling_NaN() { return number_type(); }
    static number_type                        denorm_min() { return number_type(); }
-   BOOST_STATIC_CONSTEXPR bool               is_iec559       = false;
-   BOOST_STATIC_CONSTEXPR bool               is_bounded      = false;
-   BOOST_STATIC_CONSTEXPR bool               is_modulo       = false;
-   BOOST_STATIC_CONSTEXPR bool               traps           = false;
-   BOOST_STATIC_CONSTEXPR bool               tinyness_before = false;
-   BOOST_STATIC_CONSTEXPR float_round_style  round_style     = round_toward_zero;
+   static constexpr bool               is_iec559       = false;
+   static constexpr bool               is_bounded      = false;
+   static constexpr bool               is_modulo       = false;
+   static constexpr bool               traps           = false;
+   static constexpr bool               tinyness_before = false;
+   static constexpr float_round_style  round_style     = round_toward_zero;
 };
 
-#ifndef BOOST_NO_INCLASS_MEMBER_INITIALIZATION
-
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::digits;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::digits;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::digits10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::digits10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::max_digits10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::max_digits10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_signed;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_signed;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_integer;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_integer;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_exact;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_exact;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::radix;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::radix;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::min_exponent;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::min_exponent;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::min_exponent10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::min_exponent10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::max_exponent;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::max_exponent;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::max_exponent10;
+constexpr int numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::max_exponent10;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::has_infinity;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::has_infinity;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::has_quiet_NaN;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::has_quiet_NaN;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::has_signaling_NaN;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::has_signaling_NaN;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST float_denorm_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::has_denorm;
+constexpr float_denorm_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::has_denorm;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::has_denorm_loss;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::has_denorm_loss;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_iec559;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_iec559;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_bounded;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_bounded;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_modulo;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::is_modulo;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::traps;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::traps;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::tinyness_before;
+constexpr bool numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::tinyness_before;
 template <boost::multiprecision::expression_template_option ExpressionTemplates>
-BOOST_CONSTEXPR_OR_CONST float_round_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::round_style;
-
-#endif
+constexpr float_round_style numeric_limits<boost::multiprecision::number<boost::multiprecision::gmp_rational, ExpressionTemplates> >::round_style;
 
 #ifdef BOOST_MSVC
 #pragma warning(pop)
 #endif
 
 } // namespace std
+
+namespace Eigen
+{
+
+   template <class B1, class B2>
+   struct NumTraitsImp;
+
+   template <boost::multiprecision::expression_template_option ExpressionTemplates>
+   struct NumTraitsImp<boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates>, boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates> >
+   {
+      using self_type = boost::multiprecision::number<boost::multiprecision::gmp_float<0>, ExpressionTemplates>;
+      using Real = typename boost::multiprecision::scalar_result_from_possible_complex<self_type>::type;
+      using NonInteger = self_type; // Not correct but we can't do much better??
+      using Literal = double;
+      using Nested = self_type;
+      enum
+      {
+         IsComplex = boost::multiprecision::number_category<self_type>::value == boost::multiprecision::number_kind_complex,
+         IsInteger = boost::multiprecision::number_category<self_type>::value == boost::multiprecision::number_kind_integer,
+         ReadCost = 1,
+         AddCost = 4,
+         MulCost = 8,
+         IsSigned = std::numeric_limits<self_type>::is_specialized ? std::numeric_limits<self_type>::is_signed : true,
+         RequireInitialization = 1,
+      };
+
+      static Real highest() noexcept
+      {
+         return boost::math::tools::max_value<Real>();
+      }
+      static Real lowest() noexcept
+      {
+         return boost::math::tools::min_value<Real>();
+      }
+      static int digits() noexcept
+      {
+         return boost::math::tools::digits<Real>();
+      }
+      static int digits10()
+      {
+         return Real::thread_default_precision();
+      }
+      static Real epsilon()
+      {
+         return ldexp(Real(1), 1 - digits());
+      }
+      static Real dummy_precision()
+      {
+         return 1000 * epsilon();
+      }
+      static constexpr long min_exponent() noexcept
+      {
+         return LONG_MIN;
+      }
+      static constexpr long max_exponent() noexcept
+      {
+         return LONG_MAX;
+      }
+      static Real infinity()
+      {
+         return Real();
+      }
+      static Real quiet_NaN()
+      {
+         return Real();
+      }
+   };
+
+}
+
 
 #endif

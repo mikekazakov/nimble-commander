@@ -6,7 +6,8 @@
 #ifndef BOOST_MP_CONSTEXPR_HPP
 #define BOOST_MP_CONSTEXPR_HPP
 
-#include <boost/config.hpp>
+#include <cstring>
+#include <boost/multiprecision/detail/standalone_config.hpp>
 
 namespace boost {
 
@@ -25,13 +26,44 @@ inline BOOST_CXX14_CONSTEXPR void swap(T& a, T& b)
 template <class InputIterator, class OutputIterator>
 inline BOOST_CXX14_CONSTEXPR OutputIterator copy(InputIterator first, InputIterator last, OutputIterator result)
 {
-   while (first != last)
+   //
+   // There are 3 branches here, only one of which is selected at compile time:
+   //
+#ifndef BOOST_MP_NO_CONSTEXPR_DETECTION
+   if (BOOST_MP_IS_CONST_EVALUATED(*first))
    {
-      *result = *first;
-      ++first;
-      ++result;
+      // constexpr safe code, never generates runtime code:
+      while (first != last)
+      {
+         *result = *first;
+         ++first;
+         ++result;
+      }
+      return result;
    }
-   return result;
+   else
+#endif
+   {
+#ifndef BOOST_NO_CXX17_IF_CONSTEXPR
+      if constexpr (std::is_pointer<InputIterator>::value && std::is_pointer<OutputIterator>::value && std::is_trivially_copyable<typename std::remove_reference<decltype(*first)>::type>::value)
+      {
+         // The normal runtime branch:
+         std::memcpy(result, first, (last - first) * sizeof(*first));
+         return result + (last - first);
+      }
+      else
+#endif
+      {
+         // Alternate runtime branch:
+         while (first != last)
+         {
+            *result = *first;
+            ++first;
+            ++result;
+         }
+         return result;
+      }
+   }
 }
 
 template <class I>

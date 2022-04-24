@@ -52,7 +52,11 @@
 #define BOOST_HOF_IS_BASE_OF(...) std::is_base_of<__VA_ARGS__>::value
 #define BOOST_HOF_IS_CLASS(...) std::is_class<__VA_ARGS__>::value
 #define BOOST_HOF_IS_EMPTY(...) std::is_empty<__VA_ARGS__>::value
+#ifdef _MSC_VER
+#define BOOST_HOF_IS_LITERAL(...) __is_literal_type(__VA_ARGS__)
+#else
 #define BOOST_HOF_IS_LITERAL(...) std::is_literal_type<__VA_ARGS__>::value
+#endif
 #define BOOST_HOF_IS_POLYMORPHIC(...) std::is_polymorphic<__VA_ARGS__>::value
 #if defined(_MSC_VER)
 #define BOOST_HOF_IS_NOTHROW_COPY_CONSTRUCTIBLE(...) (std::is_nothrow_copy_constructible<__VA_ARGS__>::value || std::is_reference<__VA_ARGS__>::value)

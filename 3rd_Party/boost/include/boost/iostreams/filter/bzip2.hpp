@@ -195,7 +195,7 @@ private:
 template<typename Alloc = std::allocator<char> >
 class bzip2_compressor_impl 
     : public bzip2_base, 
-      #if BOOST_WORKAROUND(__BORLANDC__, < 0x600)
+      #if BOOST_WORKAROUND(BOOST_BORLANDC, < 0x600)
           public
       #endif
       bzip2_allocator<Alloc> 
@@ -219,7 +219,7 @@ private:
 template<typename Alloc = std::allocator<char> >
 class bzip2_decompressor_impl 
     : public bzip2_base, 
-      #if BOOST_WORKAROUND(__BORLANDC__, < 0x600)
+      #if BOOST_WORKAROUND(BOOST_BORLANDC, < 0x600)
           public
       #endif
       bzip2_allocator<Alloc> 

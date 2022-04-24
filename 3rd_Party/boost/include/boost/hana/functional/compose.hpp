@@ -17,7 +17,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <utility>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! @ingroup group-functional
     //! Return the composition of two functions or more.
     //!
@@ -101,8 +101,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         }
     };
 
-    constexpr _make_compose compose{};
+    BOOST_HANA_INLINE_VARIABLE constexpr _make_compose compose{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FUNCTIONAL_COMPOSE_HPP

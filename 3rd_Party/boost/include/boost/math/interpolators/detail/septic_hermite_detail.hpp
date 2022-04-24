@@ -9,9 +9,13 @@
 #include <algorithm>
 #include <stdexcept>
 #include <sstream>
+#include <limits>
 #include <cmath>
 
-namespace boost::math::interpolators::detail {
+namespace boost {
+namespace math {
+namespace interpolators {
+namespace detail {
 
 template<class RandomAccessContainer>
 class septic_hermite_detail {
@@ -169,7 +173,7 @@ public:
         return dydx;
     }
 
-    inline Real double_prime(Real x) const
+    inline Real double_prime(Real) const
     {
         return std::numeric_limits<Real>::quiet_NaN();
     }
@@ -641,6 +645,8 @@ private:
     Real inv_dx_;
 };
 
-
+}
+}
+}
 }
 #endif

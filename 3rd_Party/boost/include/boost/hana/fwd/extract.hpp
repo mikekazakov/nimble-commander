@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Extract a value in a given comonadic context.
     //! @ingroup group-Comonad
     //!
@@ -51,8 +51,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr decltype(auto) operator()(W_&& w) const;
     };
 
-    constexpr extract_t extract{};
+    BOOST_HANA_INLINE_VARIABLE constexpr extract_t extract{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_EXTRACT_HPP

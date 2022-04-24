@@ -3,9 +3,8 @@
 // Copyright (c) 2007-2015 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2013-2017 Adam Wulkiewicz, Lodz, Poland
 
-// This file was modified by Oracle on 2015, 2017, 2019.
-// Modifications copyright (c) 2015-2019, Oracle and/or its affiliates.
-
+// This file was modified by Oracle on 2015-2020.
+// Modifications copyright (c) 2015-2020, Oracle and/or its affiliates.
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -20,9 +19,9 @@
 #include <deque>
 #include <map>
 
-#include <boost/range.hpp>
-#include <boost/mpl/assert.hpp>
-
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/algorithms/detail/overlay/cluster_info.hpp>
 #include <boost/geometry/algorithms/detail/overlay/enrich_intersection_points.hpp>
@@ -198,20 +197,13 @@ inline OutputIterator return_if_one_input_is_empty(Geometry1 const& geometry1,
             Geometry2 const& geometry2,
             OutputIterator out, Strategy const& strategy)
 {
-    typedef std::deque
-        <
-            typename geometry::ring_type<GeometryOut>::type
-        > ring_container_type;
-
-    typedef typename geometry::point_type<Geometry1>::type point_type1;
+    typedef typename geometry::ring_type<GeometryOut>::type ring_type;
+    typedef std::deque<ring_type> ring_container_type;
 
     typedef ring_properties
         <
-            point_type1,
-            typename Strategy::template area_strategy
-                <
-                    point_type1
-                >::type::template result_type<point_type1>::type
+            typename geometry::point_type<ring_type>::type,
+            typename geometry::area_result<ring_type, Strategy>::type
         > properties;
 
 // Silence warning C4127: conditional expression is constant
@@ -240,8 +232,7 @@ inline OutputIterator return_if_one_input_is_empty(Geometry1 const& geometry1,
     select_rings<OverlayType>(geometry1, geometry2, empty, all_of_one_of_them, strategy);
     ring_container_type rings;
     assign_parents<OverlayType>(geometry1, geometry2, rings, all_of_one_of_them, strategy);
-    return add_rings<GeometryOut>(all_of_one_of_them, geometry1, geometry2, rings, out,
-                                  strategy.template get_area_strategy<point_type1>());
+    return add_rings<GeometryOut>(all_of_one_of_them, geometry1, geometry2, rings, out, strategy);
 }
 
 
@@ -286,10 +277,8 @@ struct overlay
         > turn_info;
         typedef std::deque<turn_info> turn_container_type;
 
-        typedef std::deque
-            <
-                typename geometry::ring_type<GeometryOut>::type
-            > ring_container_type;
+        typedef typename geometry::ring_type<GeometryOut>::type ring_type;
+        typedef std::deque<ring_type> ring_container_type;
 
         // Define the clusters, mapping cluster_id -> turns
         typedef std::map
@@ -307,7 +296,7 @@ std::cout << "get turns" << std::endl;
         geometry::get_turns
             <
                 Reverse1, Reverse2,
-                detail::overlay::assign_null_policy
+                assign_policy_only_start_turns
             >(geometry1, geometry2, strategy, robust_policy, turns, policy);
 
         visitor.visit_turns(1, turns);
@@ -319,12 +308,12 @@ std::cout << "get turns" << std::endl;
             // and if necessary (e.g.: multi-geometry, polygon with interior rings)
             if (needs_self_turns<Geometry1>::apply(geometry1))
             {
-                self_get_turn_points::self_turns<Reverse1, assign_null_policy>(geometry1,
+                self_get_turn_points::self_turns<Reverse1, assign_policy_only_start_turns>(geometry1,
                     strategy, robust_policy, turns, policy, 0);
             }
             if (needs_self_turns<Geometry2>::apply(geometry2))
             {
-                self_get_turn_points::self_turns<Reverse2, assign_null_policy>(geometry2,
+                self_get_turn_points::self_turns<Reverse2, assign_policy_only_start_turns>(geometry2,
                     strategy, robust_policy, turns, policy, 1);
             }
         }
@@ -349,8 +338,8 @@ std::cout << "enrich" << std::endl;
 std::cout << "traverse" << std::endl;
 #endif
         // Traverse through intersection/turn points and create rings of them.
-        // Note that these rings are always in clockwise order, even in CCW polygons,
-        // and are marked as "to be reversed" below
+        // These rings are always in clockwise order.
+        // In CCW polygons they are marked as "to be reversed" below.
         ring_container_type rings;
         traverse<Reverse1, Reverse2, Geometry1, Geometry2, OverlayType>::apply
                 (
@@ -366,12 +355,10 @@ std::cout << "traverse" << std::endl;
 
         get_ring_turn_info<OverlayType>(turn_info_per_ring, turns, clusters);
 
-        typedef typename Strategy::template area_strategy<point_type>::type area_strategy_type;
-
         typedef ring_properties
             <
                 point_type,
-                typename area_strategy_type::template result_type<point_type>::type
+                typename geometry::area_result<ring_type, Strategy>::type
             > properties;
 
         // Select all rings which are NOT touched by any intersection point
@@ -380,15 +367,11 @@ std::cout << "traverse" << std::endl;
                 selected_ring_properties, strategy);
 
         // Add rings created during traversal
-        area_strategy_type const area_strategy = strategy.template get_area_strategy<point_type>();
         {
             ring_identifier id(2, 0, -1);
-            for (typename boost::range_iterator<ring_container_type>::type
-                    it = boost::begin(rings);
-                 it != boost::end(rings);
-                 ++it)
+            for (auto const& ring : rings)
             {
-                selected_ring_properties[id] = properties(*it, area_strategy);
+                selected_ring_properties[id] = properties(ring, strategy);
                 selected_ring_properties[id].reversed = ReverseOut;
                 id.multi_index++;
             }
@@ -405,7 +388,7 @@ std::cout << "traverse" << std::endl;
         // The result may be too big, so the area is negative. In this case either
         // it can be returned or an exception can be thrown.
         return add_rings<GeometryOut>(selected_ring_properties, geometry1, geometry2, rings, out,
-                                      area_strategy,
+                                      strategy,
                                       OverlayType == overlay_union ? 
 #if defined(BOOST_GEOMETRY_UNION_THROW_INVALID_OUTPUT_EXCEPTION)
                                       add_rings_throw_if_reversed

@@ -1,4 +1,4 @@
-// Copyright (c) 2106 Klemens D. Morgenstern
+// Copyright (c) 2016 Klemens D. Morgenstern
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -7,6 +7,7 @@
 #define BOOST_PROCESS_WINDOWS_IS_RUNNING_HPP
 
 #include <boost/process/detail/config.hpp>
+#include <boost/process/detail/windows/child_handle.hpp>
 #include <system_error>
 #include <cstdlib>
 #include <boost/winapi/process.hpp>

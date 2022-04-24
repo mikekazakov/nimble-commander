@@ -15,7 +15,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/fwd/integral_constant.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
 #ifdef BOOST_HANA_DOXYGEN_INVOKED
     //! @ingroup group-datatypes
     //! Compile-time half-open interval of `hana::integral_constant`s.
@@ -112,7 +112,7 @@ BOOST_HANA_NAMESPACE_BEGIN
 
     //! Alias to `make<range_tag>`; provided for convenience.
     //! @relates hana::range
-    constexpr auto make_range = make<range_tag>;
+    BOOST_HANA_INLINE_VARIABLE constexpr auto make_range = make<range_tag>;
 
     //! Shorthand to create a `hana::range` with the given bounds.
     //! @relates hana::range
@@ -143,8 +143,8 @@ BOOST_HANA_NAMESPACE_BEGIN
     constexpr auto range_c = make_range(integral_c<T, from>, integral_c<T, to>);
 #else
     template <typename T, T from, T to>
-    constexpr range<T, from, to> range_c{};
+    BOOST_HANA_INLINE_VARIABLE constexpr range<T, from, to> range_c{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_RANGE_HPP

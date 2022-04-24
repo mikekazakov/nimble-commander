@@ -45,7 +45,7 @@ struct predefined_macros_grammar :
     template <typename ScannerT>
     struct definition
     {
-    // 'normal' (parse_tree generating) rule type
+        // 'normal' (parse_tree generating) rule type
         typedef boost::spirit::classic::rule<
                 ScannerT, boost::spirit::classic::dynamic_parser_tag>
             rule_type;
@@ -54,26 +54,26 @@ struct predefined_macros_grammar :
 
         definition(predefined_macros_grammar const &/*self*/)
         {
-        // import the spirit and cpplexer namespaces here
+            // import the spirit and cpplexer namespaces here
             using namespace boost::spirit::classic;
             using namespace boost::wave;
             using namespace boost::wave::util;
 
-        // set the rule id's for later use
+            // set the rule id's for later use
             plain_define.set_id(BOOST_WAVE_PLAIN_DEFINE_ID);
             macro_parameters.set_id(BOOST_WAVE_MACRO_PARAMETERS_ID);
             macro_definition.set_id(BOOST_WAVE_MACRO_DEFINITION_ID);
 
-        // recognizes command line defined macro syntax, i.e.
-        //  -DMACRO
-        //  -DMACRO=
-        //  -DMACRO=value
-        //  -DMACRO(x)
-        //  -DMACRO(x)=
-        //  -DMACRO(x)=value
+            // recognizes command line defined macro syntax, i.e.
+            //  -DMACRO
+            //  -DMACRO=
+            //  -DMACRO=value
+            //  -DMACRO(x)
+            //  -DMACRO(x)=
+            //  -DMACRO(x)=value
 
-        // This grammar resembles the overall structure of the cpp_grammar to
-        // make it possible to reuse the parse tree traversal code
+            // This grammar resembles the overall structure of the cpp_grammar to
+            // make it possible to reuse the parse tree traversal code
             plain_define
                 =   (   ch_p(T_IDENTIFIER)
                     |   pattern_p(KeywordTokenType,
@@ -87,7 +87,7 @@ struct predefined_macros_grammar :
                     >>  !macro_definition
                 ;
 
-        // parameter list
+            // parameter list
             macro_parameters
                 =   confix_p(
                         no_node_d[ch_p(T_LEFTPAREN) >> *ch_p(T_SPACE)],
@@ -99,6 +99,7 @@ struct predefined_macros_grammar :
                                     ExtTokenTypeMask|PPTokenFlag)   // and, bit_and etc.
                             |   pattern_p(BoolLiteralTokenType,
                                     TokenTypeMask|PPTokenFlag)  // true/false
+
 #if BOOST_WAVE_SUPPORT_VARIADICS_PLACEMARKERS != 0
                             |   ch_p(T_ELLIPSIS)
 #endif
@@ -112,7 +113,7 @@ struct predefined_macros_grammar :
                     )
                 ;
 
-        // macro body (anything left until eol)
+            // macro body (anything left until eol)
             macro_definition
                 =   no_node_d[ch_p(T_ASSIGN)]
                     >> *anychar_p
@@ -123,7 +124,7 @@ struct predefined_macros_grammar :
             BOOST_SPIRIT_DEBUG_TRACE_RULE(macro_parameters, TRACE_PREDEF_MACROS_GRAMMAR);
         }
 
-    // start rule of this grammar
+        // start rule of this grammar
         rule_type const& start() const
         { return plain_define; }
     };

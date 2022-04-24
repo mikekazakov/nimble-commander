@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2020, Oracle and/or its affiliates.
+// Copyright (c) 2020-2021, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
@@ -109,10 +109,6 @@ struct intersection_areal_areal_<TupledOut, tupled_output_tag>
             <
                 areal::index, TupledOut
             >::type areal_out_type;
-        typedef typename geometry::tuples::element
-            <
-                pointlike::index, TupledOut
-            >::type pointlike_out_type;
 
         // NOTE: The same robust_policy is used in each call of
         //   intersection_insert. Is that correct?
@@ -157,11 +153,7 @@ struct intersection_areal_areal_<TupledOut, tupled_output_tag>
                             areal_out_boundary,
                             robust_policy,
                             pointlike::get(geometry_out),
-                            strategy.template get_point_in_geometry_strategy
-                                <
-                                    pointlike_out_type,
-                                    areal_out_boundary_type
-                                >());
+                            strategy);
         }
         
         return;

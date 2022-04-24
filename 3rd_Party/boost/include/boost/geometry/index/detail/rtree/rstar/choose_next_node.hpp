@@ -4,8 +4,8 @@
 //
 // Copyright (c) 2011-2019 Adam Wulkiewicz, Lodz, Poland.
 //
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2021.
+// Modifications copyright (c) 2019-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -27,6 +27,8 @@
 #include <boost/geometry/index/detail/algorithms/union_content.hpp>
 
 #include <boost/geometry/index/detail/rtree/node/node.hpp>
+#include <boost/geometry/index/detail/rtree/options.hpp>
+#include <boost/geometry/index/detail/rtree/visitors/insert.hpp>
 #include <boost/geometry/index/detail/rtree/visitors/is_leaf.hpp>
 
 namespace boost { namespace geometry { namespace index {

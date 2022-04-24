@@ -83,6 +83,12 @@ std::size_t count_nodes(const Node * n)
     return 1 + count_list_nodes<Node, typename Node::child_list>(n->children);
 }
 
+template<class Node>
+void destroy_node(Node& node)
+{
+    node.~Node();
+}
+
 
 /* node cloner
  *
@@ -142,7 +148,7 @@ struct node_disposer
     {
         node_pointer n = static_cast<node_pointer>(base);
         n->clear_subtree(alloc_);
-        n->~Node();
+        boost::heap::detail::destroy_node(*n);
         alloc_.deallocate(n, 1);
     }
 

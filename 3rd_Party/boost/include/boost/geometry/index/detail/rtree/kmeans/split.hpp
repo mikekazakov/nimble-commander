@@ -4,6 +4,10 @@
 //
 // Copyright (c) 2011-2013 Adam Wulkiewicz, Lodz, Poland.
 //
+// This file was modified by Oracle on 2021.
+// Modifications copyright (c) 2021 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+//
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -11,12 +15,16 @@
 #ifndef BOOST_GEOMETRY_INDEX_DETAIL_RTREE_KMEANS_SPLIT_HPP
 #define BOOST_GEOMETRY_INDEX_DETAIL_RTREE_KMEANS_SPLIT_HPP
 
-#include <boost/geometry/index/rtree/node/node.hpp>
-#include <boost/geometry/index/rtree/visitors/insert.hpp>
+#include <boost/geometry/index/detail/rtree/node/concept.hpp>
+#include <boost/geometry/index/detail/rtree/visitors/insert.hpp>
 
 namespace boost { namespace geometry { namespace index {
 
 namespace detail { namespace rtree {
+
+// TODO: This should be defined in options.hpp
+// For now it's defined here to satisfy Boost header policy
+struct split_kmeans_tag {};
 
 namespace kmeans {
 
@@ -56,25 +64,34 @@ namespace kmeans {
 // 4. Pamietac o parametryzacji kontenera z nadmiarowymi elementami
 // PS. Z R* reinsertami moze byc masakra
 
-template <typename Value, typename Options, typename Translator, typename Box, typename Allocators>
-class split<Value, Options, Translator, Box, Allocators, split_kmeans_tag>
+template <typename MembersHolder>
+class split<MembersHolder, split_kmeans_tag>
 {
 protected:
-    typedef typename rtree::node<Value, typename Options::parameters_type, Box, Allocators, typename Options::node_tag>::type node;
-    typedef typename rtree::internal_node<Value, typename Options::parameters_type, Box, Allocators, typename Options::node_tag>::type internal_node;
-    typedef typename rtree::leaf<Value, typename Options::parameters_type, Box, Allocators, typename Options::node_tag>::type leaf;
+    typedef typename MembersHolder::parameters_type parameters_type;
+    typedef typename MembersHolder::box_type box_type;
+    typedef typename MembersHolder::translator_type translator_type;
+    typedef typename MembersHolder::allocators_type allocators_type;
+    typedef typename MembersHolder::size_type size_type;
 
-    typedef typename Options::parameters_type parameters_type;
+    typedef typename MembersHolder::node node;
+    typedef typename MembersHolder::internal_node internal_node;
+    typedef typename MembersHolder::leaf leaf;
 
 public:
+    typedef index::detail::varray
+        <
+            typename rtree::elements_type<internal_node>::type::value_type,
+            1
+        > nodes_container_type;
+
     template <typename Node>
-    static inline void apply(node* & root_node,
-                             size_t & leafs_level,
+    static inline void apply(nodes_container_type & additional_nodes,
                              Node & n,
-                             internal_node *parent_node,
-                             size_t current_child_index,
-                             Translator const& tr,
-                             Allocators & allocators)
+                             box_type & n_box,
+                             parameters_type const& parameters,
+                             translator_type const& translator,
+                             allocators_type & allocators)
     {
 
     }

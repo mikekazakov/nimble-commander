@@ -30,9 +30,9 @@ using common_axes = mp11::mp_cond<
 
 // Non-PODs rank highest, then floats, than integers; types with more capacity are higher
 template <class Storage>
-static constexpr std::size_t type_rank() {
+constexpr std::size_t type_rank() {
   using T = typename Storage::value_type;
-  return !std::is_pod<T>::value * 10000 + std::is_floating_point<T>::value * 100 +
+  return !std::is_arithmetic<T>::value * 10000 + std::is_floating_point<T>::value * 100 +
          10 * sizeof(T) + 2 * is_array_like<Storage>::value +
          is_vector_like<Storage>::value;
   ;

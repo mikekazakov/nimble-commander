@@ -79,11 +79,11 @@ struct macro_definition {
         using namespace boost::wave;
 
         if (!replaced_parameters) {
-        typename definition_container_type::iterator end = macrodefinition.end();
-        typename definition_container_type::iterator it = macrodefinition.begin();
+            typename definition_container_type::iterator end = macrodefinition.end();
+            typename definition_container_type::iterator it = macrodefinition.begin();
 
             for (/**/; it != end; ++it) {
-            token_id id = *it;
+                token_id id = *it;
 
                 if (T_IDENTIFIER == id ||
                     IS_CATEGORY(id, KeywordTokenType) ||
@@ -125,7 +125,7 @@ struct macro_definition {
             }
 
 #if BOOST_WAVE_SUPPORT_VARIADICS_PLACEMARKERS != 0
-        // we need to know, if the last of the formal arguments is an ellipsis
+            // we need to know, if the last of the formal arguments is an ellipsis
             if (macroparameters.size() > 0 &&
                 T_ELLIPSIS == token_id(macroparameters.back()))
             {

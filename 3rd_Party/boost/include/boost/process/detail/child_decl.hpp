@@ -60,7 +60,7 @@ public:
     explicit child(child_handle &&ch, const std::shared_ptr<std::atomic<int>> &ptr) : _child_handle(std::move(ch)), _exit_status(ptr) {}
     explicit child(child_handle &&ch) : _child_handle(std::move(ch)) {}
 
-    explicit child(pid_t & pid) : _child_handle(pid), _attached(false) {};
+    explicit child(pid_t pid) : _child_handle(pid), _attached(false) {};
     child(const child&) = delete;
     child(child && lhs) noexcept
         : _child_handle(std::move(lhs._child_handle)),

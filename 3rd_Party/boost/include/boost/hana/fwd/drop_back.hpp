@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Drop the last `n` elements of a finite sequence, and return the rest.
     //! @ingroup group-Sequence
     //!
@@ -56,8 +56,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr auto operator()(Xs&& xs) const;
     };
 
-    constexpr drop_back_t drop_back{};
+    BOOST_HANA_INLINE_VARIABLE constexpr drop_back_t drop_back{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_DROP_BACK_HPP

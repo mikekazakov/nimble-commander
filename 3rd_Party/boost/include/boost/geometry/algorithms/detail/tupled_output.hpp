@@ -9,23 +9,18 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_TUPLED_OUTPUT_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_TUPLED_OUTPUT_HPP
 
+#include <boost/range/value_type.hpp>
+
 #include <boost/geometry/algorithms/convert.hpp>
 #include <boost/geometry/core/config.hpp>
+#include <boost/geometry/core/static_assert.hpp>
 #include <boost/geometry/core/tag.hpp>
 #include <boost/geometry/core/tag_cast.hpp>
 #include <boost/geometry/core/tags.hpp>
 #include <boost/geometry/geometries/concepts/check.hpp>
 #include <boost/geometry/util/range.hpp>
 #include <boost/geometry/util/tuples.hpp>
-
-#include <boost/mpl/and.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/range/value_type.hpp>
-#include <boost/type_traits/detail/yes_no_type.hpp>
-#include <boost/type_traits/integral_constant.hpp>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/is_void.hpp>
+#include <boost/geometry/util/type_traits.hpp>
 
 namespace boost { namespace geometry
 {
@@ -35,76 +30,21 @@ namespace boost { namespace geometry
 namespace detail
 {
 
-// true for any geometry
-template <typename T>
-struct is_geometry
-    : boost::integral_constant
-        <
-            bool,
-            (! boost::is_void<typename geometry::tag<T>::type>::value)
-        >
-{};
 
-// true for multi-point, multi-linestring or multi-polygon
-template <typename Geometry>
-struct is_multi_geometry
-    : boost::is_base_of
-        <
-            geometry::multi_tag,
-            typename geometry::tag<Geometry>::type
-        >
-{};
-
-// true for point, linestring or polygon
-template <typename T>
-struct is_multi_geometry_element
-    : boost::integral_constant
-        <
-            bool,
-            ((boost::is_same<typename geometry::tag<T>::type, point_tag>::value)
-            || (boost::is_same<typename geometry::tag<T>::type, linestring_tag>::value)
-            || (boost::is_same<typename geometry::tag<T>::type, polygon_tag>::value))
-        >
-{};
-
-
-template <typename T>
-struct is_range_impl
-{
-    typedef boost::type_traits::yes_type yes_type;
-    typedef boost::type_traits::no_type no_type;
-
-    template <typename U>
-    static yes_type test(typename boost::range_iterator<U>::type*);
-
-    template <typename U>
-    static no_type test(...);
-
-    static const bool value = (sizeof(test<T>(0)) == sizeof(yes_type));
-};
-
-// true if T is range (boost::range_iterator<T>::type is defined)
-template <typename T>
-struct is_range
-    : boost::integral_constant<bool, is_range_impl<T>::value>
-{};
-
-
-template <typename T, bool IsRange = is_range<T>::value>
+template <typename T, bool IsRange = range::detail::is_range<T>::value>
 struct is_tupled_output_element_base
-    : boost::integral_constant<bool, false>
+    : util::bool_constant<false>
 {};
 
 template <typename T>
 struct is_tupled_output_element_base<T, true>
-    : boost::integral_constant
+    : util::bool_constant
         <
-            bool,
-            (is_multi_geometry<T>::value
+            (util::is_multi<T>::value
                 ||
-                ((! is_geometry<T>::value)
+                (util::is_not_geometry<T>::value
                     &&
-                    is_multi_geometry_element
+                    util::is_multi_element
                         <
                             typename boost::range_value<T>::type
                         >::value))
@@ -125,11 +65,10 @@ struct is_tupled_output_element
 // a range of points, linestrings or polygons
 template <typename Output>
 struct is_tupled_output_check
-    : boost::mpl::and_
+    : util::bool_constant
         <
-            boost::is_same<typename geometry::tag<Output>::type, void>,
-            //geometry::tuples::exists_if<Output, is_multi_geometry>
-            geometry::tuples::exists_if<Output, is_tupled_output_element>
+            (util::is_not_geometry<Output>::value
+          && geometry::tuples::exists_if<Output, is_tupled_output_element>::value)
         >
 {};
 
@@ -139,55 +78,20 @@ struct is_tupled_output_check
 // or polygon
 template <typename T>
 struct is_tupled_single_output_check
-    : boost::mpl::and_
+    : util::bool_constant
         <
-            boost::is_same<typename geometry::tag<T>::type, void>,
-            geometry::tuples::exists_if<T, is_multi_geometry_element>
+            (util::is_not_geometry<T>::value
+          && geometry::tuples::exists_if<T, util::is_multi_element>::value)
         >
 {};
-
-
-// true if Output is boost::tuple, boost::tuples::cons, std::pair or std::tuple
-template <typename T>
-struct is_tupled
-    : boost::integral_constant<bool, false>
-{};
-
-template
-<
-    class T0, class T1, class T2, class T3, class T4,
-    class T5, class T6, class T7, class T8, class T9
->
-struct is_tupled<boost::tuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> >
-    : boost::integral_constant<bool, true>
-{};
-
-template <typename HT, typename TT>
-struct is_tupled<boost::tuples::cons<HT, TT> >
-    : boost::integral_constant<bool, true>
-{};
-
-template <typename F, typename S>
-struct is_tupled<std::pair<F, S> >
-    : boost::integral_constant<bool, true>
-{};
-
-#ifdef BOOST_GEOMETRY_CXX11_TUPLE
-
-template <typename ...Ts>
-struct is_tupled<std::tuple<Ts...> >
-    : boost::integral_constant<bool, true>
-{};
-
-#endif // BOOST_GEOMETRY_CXX11_TUPLE
 
 
 
 // true if Output is boost::tuple, boost::tuples::cons, std::pair or std::tuple
 // and is_tupled_output_check defiend above passes
-template <typename Output, bool IsTupled = is_tupled<Output>::value>
+template <typename Output, bool IsTupled = tuples::is_tuple<Output>::value>
 struct is_tupled_output
-    : boost::integral_constant<bool, false>
+    : util::bool_constant<false>
 {};
 
 template <typename Output>
@@ -198,9 +102,9 @@ struct is_tupled_output<Output, true>
 
 // true if T is boost::tuple, boost::tuples::cons, std::pair or std::tuple
 // and is_tupled_single_output_check defiend above passes
-template <typename T, bool IsTupled = is_tupled<T>::value>
+template <typename T, bool IsTupled = tuples::is_tuple<T>::value>
 struct is_tupled_single_output
-    : boost::integral_constant<bool, false>
+    : util::bool_constant<false>
 {};
 
 template <typename T>
@@ -214,7 +118,7 @@ struct tupled_output_find_index_pred
 {
     template <typename T>
     struct pred
-        : boost::is_same<typename geometry::tag<T>::type, Tag>
+        : std::is_same<typename geometry::tag<T>::type, Tag>
     {};
 };
 
@@ -236,14 +140,13 @@ template
     bool IsTupledOutput = is_tupled_output<Output>::value
 >
 struct tupled_output_has
-    : boost::integral_constant<bool, false>
+    : util::bool_constant<false>
 {};
 
 template <typename Output, typename Tag>
 struct tupled_output_has<Output, Tag, true>
-    : boost::integral_constant
+    : util::bool_constant
         <
-            bool,
             ((tupled_output_find_index<Output, Tag>::value)
                 < (geometry::tuples::size<Output>::value))
         >
@@ -266,34 +169,14 @@ tupled_output_get(Output & output)
 // defines a tuple-type holding value-types of ranges being elements of
 // Output pair/tuple
 
-template
-<
-    typename Tuple,
-    size_t I = 0,
-    size_t N = geometry::tuples::size<Tuple>::value
->
-struct tupled_range_values_bt
-{
-    typedef boost::tuples::cons
-        <
-            typename boost::range_value
-                <
-                    typename geometry::tuples::element<I, Tuple>::type
-                >::type,
-            typename tupled_range_values_bt<Tuple, I+1, N>::type
-        > type;
-};
+template <typename Tuple>
+struct tupled_range_values;
 
-template <typename Tuple, size_t N>
-struct tupled_range_values_bt<Tuple, N, N>
+template <typename ...Ts>
+struct tupled_range_values<std::tuple<Ts...> >
 {
-    typedef boost::tuples::null_type type;
+    typedef std::tuple<typename boost::range_value<Ts>::type...> type;
 };
-
-template <typename Output>
-struct tupled_range_values
-    : tupled_range_values_bt<Output>
-{};
 
 template <typename F, typename S>
 struct tupled_range_values<std::pair<F, S> >
@@ -305,55 +188,68 @@ struct tupled_range_values<std::pair<F, S> >
         > type;
 };
 
-#ifdef BOOST_GEOMETRY_CXX11_TUPLE
-
-template <typename ...Ts>
-struct tupled_range_values<std::tuple<Ts...> >
+template
+<
+    typename Tuple,
+    size_t I = 0,
+    size_t N = boost::tuples::length<Tuple>::value
+>
+struct tupled_range_values_bt
 {
-    typedef std::tuple<typename boost::range_value<Ts>::type...> type;
+    typedef boost::tuples::cons
+        <
+            typename boost::range_value
+                <
+                    typename boost::tuples::element<I, Tuple>::type
+                >::type,
+            typename tupled_range_values_bt<Tuple, I+1, N>::type
+        > type;
 };
 
-#endif // BOOST_GEOMETRY_CXX11_TUPLE
+template <typename Tuple, size_t N>
+struct tupled_range_values_bt<Tuple, N, N>
+{
+    typedef boost::tuples::null_type type;
+};
+
+template <typename ...Ts>
+struct tupled_range_values<boost::tuples::tuple<Ts...>>
+    : tupled_range_values_bt<boost::tuples::tuple<Ts...>>
+{};
+
+template <typename HT, typename TT>
+struct tupled_range_values<boost::tuples::cons<HT, TT>>
+    : tupled_range_values_bt<boost::tuples::cons<HT, TT>>
+{};
 
 
 // util defining a type and creating a tuple holding back-insert-iterators to
 // ranges being elements of Output pair/tuple
 
-template <typename Tuple,
-          size_t I = 0,
-          size_t N = geometry::tuples::size<Tuple>::value>
-struct tupled_back_inserters_bt
-{
-    typedef boost::tuples::cons
-        <
-            geometry::range::back_insert_iterator
-                <
-                    typename geometry::tuples::element<I, Tuple>::type
-                >,
-            typename tupled_back_inserters_bt<Tuple, I+1, N>::type
-        > type;
-
-    static type apply(Tuple & tup)
-    {
-        return type(geometry::range::back_inserter(geometry::tuples::get<I>(tup)),
-                    tupled_back_inserters_bt<Tuple, I+1, N>::apply(tup));
-    }
-};
-
-template <typename Tuple, size_t N>
-struct tupled_back_inserters_bt<Tuple, N, N>
-{
-    typedef boost::tuples::null_type type;
-
-    static type apply(Tuple const&)
-    {
-        return type();
-    }
-};
-
 template <typename Tuple>
-struct tupled_back_inserters
-    : tupled_back_inserters_bt<Tuple>
+struct tupled_back_inserters;
+
+template <typename Is, typename Tuple>
+struct tupled_back_inserters_st;
+
+template <std::size_t ...Is, typename ...Ts>
+struct tupled_back_inserters_st<std::index_sequence<Is...>, std::tuple<Ts...> >
+{
+    typedef std::tuple<geometry::range::back_insert_iterator<Ts>...> type;
+
+    static type apply(std::tuple<Ts...> & tup)
+    {
+        return type(geometry::range::back_inserter(std::get<Is>(tup))...);
+    }
+};
+
+template <typename ...Ts>
+struct tupled_back_inserters<std::tuple<Ts...> >
+    : tupled_back_inserters_st
+        <
+            std::make_index_sequence<sizeof...(Ts)>,
+            std::tuple<Ts...>
+        >
 {};
 
 template <typename F, typename S>
@@ -372,34 +268,47 @@ struct tupled_back_inserters<std::pair<F, S> >
     }
 };
 
-#ifdef BOOST_GEOMETRY_CXX11_TUPLE
-
-// NOTE: In C++14 std::integer_sequence and std::make_integer_sequence could be used
-
-template <typename Is, typename Tuple>
-struct tupled_back_inserters_st;
-
-template <int ...Is, typename ...Ts>
-struct tupled_back_inserters_st<geometry::tuples::int_sequence<Is...>, std::tuple<Ts...> >
+template <typename Tuple,
+          size_t I = 0,
+          size_t N = boost::tuples::length<Tuple>::value>
+struct tupled_back_inserters_bt
 {
-    typedef std::tuple<geometry::range::back_insert_iterator<Ts>...> type;
+    typedef boost::tuples::cons
+        <
+            geometry::range::back_insert_iterator
+                <
+                    typename boost::tuples::element<I, Tuple>::type
+                >,
+            typename tupled_back_inserters_bt<Tuple, I+1, N>::type
+        > type;
 
-    static type apply(std::tuple<Ts...> & tup)
+    static type apply(Tuple & tup)
     {
-        return type(geometry::range::back_inserter(std::get<Is>(tup))...);
+        return type(geometry::range::back_inserter(boost::get<I>(tup)),
+                    tupled_back_inserters_bt<Tuple, I+1, N>::apply(tup));
+    }
+};
+
+template <typename Tuple, size_t N>
+struct tupled_back_inserters_bt<Tuple, N, N>
+{
+    typedef boost::tuples::null_type type;
+
+    static type apply(Tuple const&)
+    {
+        return type();
     }
 };
 
 template <typename ...Ts>
-struct tupled_back_inserters<std::tuple<Ts...> >
-    : tupled_back_inserters_st
-        <
-            typename geometry::tuples::make_int_sequence<sizeof...(Ts)>::type,
-            std::tuple<Ts...>
-        >
+struct tupled_back_inserters<boost::tuples::tuple<Ts...>>
+    : tupled_back_inserters_bt<boost::tuples::tuple<Ts...>>
 {};
 
-#endif // BOOST_GEOMETRY_CXX11_TUPLE
+template <typename HT, typename TT>
+struct tupled_back_inserters<boost::tuples::cons<HT, TT>>
+    : tupled_back_inserters_bt<boost::tuples::cons<HT, TT>>
+{};
 
 
 template
@@ -452,7 +361,7 @@ struct is_tag_same_as_pred
 {
     template <typename T>
     struct pred
-        : boost::is_same<typename geometry::tag<T>::type, Tag>
+        : std::is_same<typename geometry::tag<T>::type, Tag>
     {};
 };
 
@@ -540,13 +449,14 @@ struct output_geometry_concept_check_t<Tuple, N, N>
     {}
 };
 
-template
-<
-    class T0, class T1, class T2, class T3, class T4,
-    class T5, class T6, class T7, class T8, class T9
->
-struct output_geometry_concept_check<boost::tuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> >
-    : output_geometry_concept_check_t<boost::tuple<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> >
+template <typename ...Ts>
+struct output_geometry_concept_check<std::tuple<Ts...> >
+    : output_geometry_concept_check_t<std::tuple<Ts...> >
+{};
+
+template <typename ...Ts>
+struct output_geometry_concept_check<boost::tuple<Ts...> >
+    : output_geometry_concept_check_t<boost::tuple<Ts...> >
 {};
 
 template <typename HT, typename TT>
@@ -554,22 +464,13 @@ struct output_geometry_concept_check<boost::tuples::cons<HT, TT> >
     : output_geometry_concept_check_t<boost::tuples::cons<HT, TT> >
 {};
 
-#ifdef BOOST_GEOMETRY_CXX11_TUPLE
-
-template <typename ...Ts>
-struct output_geometry_concept_check<std::tuple<Ts...> >
-    : output_geometry_concept_check_t<std::tuple<Ts...> >
-{};
-
-#endif // BOOST_GEOMETRY_CXX11_TUPLE
-
 
 struct tupled_output_tag {};
 
 
 template <typename GeometryOut>
 struct setop_insert_output_tag
-    : boost::mpl::if_c
+    : std::conditional
         <
             geometry::detail::is_tupled_single_output<GeometryOut>::value,
             tupled_output_tag,
@@ -584,31 +485,28 @@ struct expect_output_assert_base;
 template <typename Geometry1, typename Geometry2, typename TupledOut, bool IsFound>
 struct expect_output_assert_base<Geometry1, Geometry2, TupledOut, IsFound, pointlike_tag>
 {
-    BOOST_MPL_ASSERT_MSG
-        (
-            IsFound, POINTLIKE_GEOMETRY_EXPECTED_IN_TUPLED_OUTPUT,
-            (types<Geometry1, Geometry2, TupledOut>)
-        );
+    BOOST_GEOMETRY_STATIC_ASSERT(
+        IsFound,
+        "PointLike Geometry expected in tupled output.",
+        Geometry1, Geometry2, TupledOut);
 };
 
 template <typename Geometry1, typename Geometry2, typename TupledOut, bool IsFound>
 struct expect_output_assert_base<Geometry1, Geometry2, TupledOut, IsFound, linear_tag>
 {
-    BOOST_MPL_ASSERT_MSG
-    (
-        IsFound, LINEAR_GEOMETRY_EXPECTED_IN_TUPLED_OUTPUT,
-        (types<Geometry1, Geometry2, TupledOut>)
-    );
+    BOOST_GEOMETRY_STATIC_ASSERT(
+        IsFound,
+        "Linear Geometry expected in tupled output.",
+        Geometry1, Geometry2, TupledOut);
 };
 
 template <typename Geometry1, typename Geometry2, typename TupledOut, bool IsFound>
 struct expect_output_assert_base<Geometry1, Geometry2, TupledOut, IsFound, areal_tag>
 {
-    BOOST_MPL_ASSERT_MSG
-    (
-        IsFound, AREAL_GEOMETRY_EXPECTED_IN_TUPLED_OUTPUT,
-        (types<Geometry1, Geometry2, TupledOut>)
-    );
+    BOOST_GEOMETRY_STATIC_ASSERT(
+        IsFound,
+        "Areal Geometry expected in tupled output.",
+        Geometry1, Geometry2, TupledOut);
 };
 
 
@@ -636,33 +534,10 @@ struct expect_output_assert<Geometry1, Geometry2, TupledOut, void>
 template
 <
     typename Geometry1, typename Geometry2, typename TupledOut,
-    typename Tag1,
-    typename Tag2 = void,
-    typename Tag3 = void
+    typename ...Tags
 >
 struct expect_output
-    : expect_output_assert<Geometry1, Geometry2, TupledOut, Tag1>
-    , expect_output_assert<Geometry1, Geometry2, TupledOut, Tag2>
-    , expect_output_assert<Geometry1, Geometry2, TupledOut, Tag3>
-{};
-
-template
-<
-    typename Geometry1, typename Geometry2, typename TupledOut,
-    typename Tag1, typename Tag2
->
-struct expect_output<Geometry1, Geometry2, TupledOut, Tag1, Tag2, void>
-    : expect_output_assert<Geometry1, Geometry2, TupledOut, Tag1>
-    , expect_output_assert<Geometry1, Geometry2, TupledOut, Tag2>
-{};
-
-template
-<
-    typename Geometry1, typename Geometry2, typename TupledOut,
-    typename Tag1
->
-struct expect_output<Geometry1, Geometry2, TupledOut, Tag1, void, void>
-    : expect_output_assert<Geometry1, Geometry2, TupledOut, Tag1>
+    : expect_output_assert<Geometry1, Geometry2, TupledOut, Tags>...
 {};
 
 
@@ -692,7 +567,7 @@ template
 <
     typename Geometry,
     typename SingleOut,
-    bool IsMulti = geometry::detail::is_multi_geometry<Geometry>::value
+    bool IsMulti = util::is_multi<Geometry>::value
 >
 struct convert_to_output
 {

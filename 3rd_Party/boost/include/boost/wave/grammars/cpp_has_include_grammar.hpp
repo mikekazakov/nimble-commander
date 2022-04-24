@@ -68,6 +68,9 @@ struct has_include_grammar :
         rule_t has_include_op;
         rule_t system_include;
         rule_t nonsystem_include;
+
+        rule_t nonparen;
+        rule_t parenthesized_exp;
         rule_t computed_include;
 
         definition(has_include_grammar const & self)
@@ -77,13 +80,10 @@ struct has_include_grammar :
             using namespace boost::wave::util;
 
             has_include_op
-                =   ch_p(T_IDENTIFIER)      // token contains '__has_include'
-                    >>  (
-                        ch_p(T_LEFTPAREN) >>
-                        (system_include | nonsystem_include | computed_include)
-                        // final right paren removed by caller
-                        )
-                    >> end_p
+                =   ch_p(T_IDENTIFIER) >>     // token contains '__has_include'
+                    ch_p(T_LEFTPAREN)  >>
+                    (system_include | nonsystem_include | computed_include) >>
+                    ch_p(T_RIGHTPAREN)
                 ;
 
             system_include
@@ -113,22 +113,38 @@ struct has_include_grammar :
                 ]
                 ;
 
+            // an action to store a sequence of parsed tokens
+            auto append_seq = [&](typename ScannerT::iterator_t first,
+                                  typename ScannerT::iterator_t last) {
+                for (;first != last;++first) {
+                    self.tokens_seq.push_back(*first);
+                };
+            };
+
             // if neither of the above match we take everything between
             // the parentheses and evaluate it ("computed include")
-            computed_include = * anychar_p
-                [
-                    spirit_append_actor(self.tokens_seq)
-                ]
-                ;
+            // supported expressions are "implementation defined" per the gcc manual
+            // we've tried to be fairly generous in Wave
+            // here we accept any set of non-whitespace characters with
+            // properly nested parentheses:
+            nonparen = (anychar_p - ch_p(T_LEFTPAREN) - ch_p(T_RIGHTPAREN)) [ append_seq ] ;
+
+            parenthesized_exp =
+                        ch_p(T_LEFTPAREN)[ spirit_append_actor(self.tokens_seq) ] >>
+                        computed_include >>
+                        ch_p(T_RIGHTPAREN)[ spirit_append_actor(self.tokens_seq) ] ;
+            computed_include = * (nonparen | parenthesized_exp) ;
 
 
             BOOST_SPIRIT_DEBUG_TRACE_RULE(has_include_op, TRACE_CPP_HAS_INCLUDE_GRAMMAR);
             BOOST_SPIRIT_DEBUG_TRACE_RULE(system_include, TRACE_CPP_HAS_INCLUDE_GRAMMAR);
             BOOST_SPIRIT_DEBUG_TRACE_RULE(nonsystem_include, TRACE_CPP_HAS_INCLUDE_GRAMMAR);
             BOOST_SPIRIT_DEBUG_TRACE_RULE(computed_include, TRACE_CPP_HAS_INCLUDE_GRAMMAR);
+            BOOST_SPIRIT_DEBUG_TRACE_RULE(parenthesized_exp, TRACE_CPP_HAS_INCLUDE_GRAMMAR);
+            BOOST_SPIRIT_DEBUG_TRACE_RULE(nonparen, TRACE_CPP_HAS_INCLUDE_GRAMMAR);
         }
 
-    // start rule of this grammar
+        // start rule of this grammar
         rule_t const& start() const
         { return has_include_op; }
     };

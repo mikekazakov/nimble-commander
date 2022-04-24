@@ -51,9 +51,15 @@ template <class R, class T, class... Ts>
 accumulator_traits_holder<false, Ts...> accumulator_traits_impl_call_op(R (T::*)(Ts...));
 
 template <class T>
-auto accumulator_traits_impl(T&, priority<1>)
+auto accumulator_traits_impl(T&, priority<2>)
     -> decltype(accumulator_traits_impl_call_op(&T::operator()));
 
+template <class T>
+auto accumulator_traits_impl(T&, priority<2>)
+    -> decltype(std::declval<T&>() += std::declval<boost::histogram::weight_type<int>>(),
+                accumulator_traits_holder<true>{});
+
+// fallback for simple arithmetic types that do not implement adding a weight_type
 template <class T>
 auto accumulator_traits_impl(T&, priority<1>)
     -> decltype(std::declval<T&>() += 0, accumulator_traits_holder<true>{});
@@ -64,7 +70,7 @@ auto accumulator_traits_impl(T&, priority<0>) -> accumulator_traits_holder<false
 // for boost.accumulators compatibility
 template <class S, class F, class W>
 accumulator_traits_holder<false, S> accumulator_traits_impl(
-    boost::accumulators::accumulator_set<S, F, W>&, priority<1>) {
+    boost::accumulators::accumulator_set<S, F, W>&, priority<2>) {
   static_assert(std::is_same<W, void>::value,
                 "accumulator_set with weights is not directly supported, please use "
                 "a wrapper class that implements the Accumulator concept");
@@ -72,7 +78,7 @@ accumulator_traits_holder<false, S> accumulator_traits_impl(
 
 template <class T>
 using accumulator_traits =
-    decltype(accumulator_traits_impl(std::declval<T&>(), priority<1>{}));
+    decltype(accumulator_traits_impl(std::declval<T&>(), priority<2>{}));
 
 } // namespace detail
 } // namespace histogram

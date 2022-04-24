@@ -14,7 +14,6 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/spirit/home/x3/support/unused.hpp>
 #include <boost/spirit/home/x3/support/numeric_utils/pow10.hpp>
-#include <boost/spirit/home/x3/support/numeric_utils/sign.hpp>
 #include <boost/spirit/home/x3/support/traits/move_to.hpp>
 #include <boost/assert.hpp>
 
@@ -89,19 +88,19 @@ namespace boost { namespace spirit { namespace x3 { namespace extension
     inline float
     negate(bool neg, float n)
     {
-        return neg ? x3::changesign(n) : n;
+        return neg ? (std::copysignf)(n, -1.f) : n;
     }
 
     inline double
     negate(bool neg, double n)
     {
-        return neg ? x3::changesign(n) : n;
+        return neg ? (std::copysign)(n, -1.) : n;
     }
 
     inline long double
     negate(bool neg, long double n)
     {
-        return neg ? x3::changesign(n) : n;
+        return neg ? (std::copysignl)(n, -1.) : n;
     }
 
     template <typename T>

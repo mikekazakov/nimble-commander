@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 // Copyright (c) 2013-2015 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2015, 2016, 2017, 2019.
-// Modifications copyright (c) 2016-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015-2020.
+// Modifications copyright (c) 2016-2020, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -186,11 +186,6 @@ struct relate_box_box_loop<SubStrategy, CSTag, DimensionCount, DimensionCount>
 };
 
 
-} // namespace detail
-#endif // DOXYGEN_NO_DETAIL
-
-
-// for backward compatibility
 template <typename Geometry, std::size_t Dimension, typename CSTag>
 struct box_within_range
     : within::detail::box_within_coord
@@ -226,31 +221,8 @@ struct box_covered_by_range<Geometry, 0, spherical_tag>
 {};
 
 
-// for backward compatibility
-template
-<
-    typename B1,
-    typename B2,
-    template <typename, std::size_t, typename> class SubStrategy = box_within_range
->
-struct box_in_box
-{
-    template <typename Box1, typename Box2>
-    static inline bool apply(Box1 const& box1, Box2 const& box2)
-    {
-        typedef typename tag_cast
-            <
-                typename geometry::cs_tag<Box1>::type,
-                spherical_tag
-            >::type cs_tag;
-
-        return within::detail::relate_box_box_loop
-            <
-                SubStrategy, cs_tag,
-                0, dimension<Box1>::type::value
-            >::apply(box1, box2);
-    }
-};
+} // namespace detail
+#endif // DOXYGEN_NO_DETAIL
 
 
 struct cartesian_box_box
@@ -260,7 +232,7 @@ struct cartesian_box_box
     {
         return within::detail::relate_box_box_loop
             <
-                box_within_range,
+                within::detail::box_within_range,
                 cartesian_tag,
                 0, dimension<Box1>::type::value
             >::apply(box1, box2);
@@ -274,7 +246,7 @@ struct spherical_box_box
     {
         return within::detail::relate_box_box_loop
             <
-                box_within_range,
+                within::detail::box_within_range,
                 spherical_tag,
                 0, dimension<Box1>::type::value
             >::apply(box1, box2);
@@ -296,7 +268,7 @@ struct cartesian_box_box
     {
         return within::detail::relate_box_box_loop
             <
-                strategy::within::box_covered_by_range,
+                within::detail::box_covered_by_range,
                 cartesian_tag,
                 0, dimension<Box1>::type::value
             >::apply(box1, box2);
@@ -310,7 +282,7 @@ struct spherical_box_box
     {
         return within::detail::relate_box_box_loop
             <
-                strategy::within::box_covered_by_range,
+                within::detail::box_covered_by_range,
                 spherical_tag,
                 0, dimension<Box1>::type::value
             >::apply(box1, box2);

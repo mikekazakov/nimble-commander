@@ -1,7 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2018, 2019 Oracle and/or its affiliates.
-
+// Copyright (c) 2018-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -13,22 +12,30 @@
 #define BOOST_GEOMETRY_ALGORITHMS_LINE_INTERPOLATE_HPP
 
 #include <iterator>
+#include <type_traits>
 
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/range/iterator.hpp>
 #include <boost/range/value_type.hpp>
+#include <boost/variant/static_visitor.hpp>
+#include <boost/variant/variant_fwd.hpp>
+
+#include <boost/geometry/algorithms/detail/convert_point_to_point.hpp>
+#include <boost/geometry/algorithms/detail/dummy_geometries.hpp>
 
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/closure.hpp>
+#include <boost/geometry/core/static_assert.hpp>
 #include <boost/geometry/core/tags.hpp>
 
 #include <boost/geometry/geometries/concepts/check.hpp>
 
-#include <boost/geometry/algorithms/assign.hpp>
-#include <boost/geometry/algorithms/length.hpp>
 #include <boost/geometry/strategies/default_strategy.hpp>
-#include <boost/geometry/strategies/line_interpolate.hpp>
+#include <boost/geometry/strategies/detail.hpp>
+#include <boost/geometry/strategies/line_interpolate/cartesian.hpp>
+#include <boost/geometry/strategies/line_interpolate/geographic.hpp>
+#include <boost/geometry/strategies/line_interpolate/spherical.hpp>
 
 namespace boost { namespace geometry
 {
@@ -41,7 +48,7 @@ namespace detail { namespace line_interpolate
 struct convert_and_push_back
 {
     template <typename Range, typename Point>
-    inline void apply(Point const& p, Range& range)
+    static inline void apply(Point const& p, Range& range)
     {
         typename boost::range_value<Range>::type p2;
         geometry::detail::conversion::convert_point_to_point(p, p2);
@@ -52,7 +59,7 @@ struct convert_and_push_back
 struct convert_and_assign
 {
     template <typename Point1, typename Point2>
-    inline void apply(Point1 const& p1, Point2& p2)
+    static inline void apply(Point1 const& p1, Point2& p2)
     {
         geometry::detail::conversion::convert_point_to_point(p1, p2);
     }
@@ -72,15 +79,13 @@ struct interpolate_range
         typename Range,
         typename Distance,
         typename PointLike,
-        typename Strategy
+        typename Strategies
     >
     static inline void apply(Range const& range,
                              Distance const& max_distance,
                              PointLike & pointlike,
-                             Strategy const& strategy)
+                             Strategies const& strategies)
     {
-        Policy policy;
-
         typedef typename boost::range_iterator<Range const>::type iterator_t;
         typedef typename boost::range_value<Range const>::type point_t;
 
@@ -94,32 +99,38 @@ struct interpolate_range
         }
         if (max_distance <= 0) //non positive distance
         {
-            policy.apply(*it, pointlike);
+            Policy::apply(*it, pointlike);
             return;
         }
 
+        auto const pp_strategy = strategies.distance(dummy_point(), dummy_point());
+        auto const strategy = strategies.line_interpolate(range);
+
+        typedef decltype(pp_strategy.apply(
+                    std::declval<point_t>(), std::declval<point_t>())) distance_type;
+
         iterator_t prev = it++;
-        Distance repeated_distance = max_distance;
-        Distance prev_distance = 0;
-        Distance current_distance = 0;
+        distance_type repeated_distance = max_distance;
+        distance_type prev_distance = 0;
+        distance_type current_distance = 0;
         point_t start_p = *prev;
 
         for ( ; it != end ; ++it)
         {
-            Distance dist = strategy.get_distance_pp_strategy().apply(*prev, *it);
+            distance_type dist = pp_strategy.apply(*prev, *it);
             current_distance = prev_distance + dist;
 
             while (current_distance >= repeated_distance)
             {
                 point_t p;
-                Distance diff_distance = current_distance - prev_distance;
-                BOOST_ASSERT(diff_distance != Distance(0));
+                distance_type diff_distance = current_distance - prev_distance;
+                BOOST_ASSERT(diff_distance != distance_type(0));
                 strategy.apply(start_p, *it,
                                (repeated_distance - prev_distance)/diff_distance,
                                p,
                                diff_distance);
-                policy.apply(p, pointlike);
-                if (boost::is_same<PointLike, point_t>::value)
+                Policy::apply(p, pointlike);
+                if (std::is_same<PointLike, point_t>::value)
                 {
                     return;
                 }
@@ -136,7 +147,7 @@ struct interpolate_range
         // return the last point in range (range is not empty)
         if (repeated_distance == max_distance)
         {
-            policy.apply(*(end-1), pointlike);
+            Policy::apply(*(end-1), pointlike);
         }
     }
 };
@@ -173,11 +184,9 @@ template
 >
 struct line_interpolate
 {
-    BOOST_MPL_ASSERT_MSG
-        (
-            false, NOT_IMPLEMENTED_FOR_THIS_GEOMETRY_TYPE
-            , (types<Geometry>)
-        );
+    BOOST_GEOMETRY_STATIC_ASSERT_FALSE(
+        "Not implemented for this Geometry type.",
+        Geometry, Pointlike);
 };
 
 
@@ -219,41 +228,63 @@ struct line_interpolate<Geometry, Pointlike, segment_tag, multi_point_tag>
 
 namespace resolve_strategy {
 
+template
+<
+    typename Strategies,
+    bool IsUmbrella = strategies::detail::is_umbrella_strategy<Strategies>::value
+>
 struct line_interpolate
 {
-    template
-    <
-        typename Geometry,
-        typename Distance,
-        typename Pointlike,
-        typename Strategy
-    >
+    template <typename Geometry, typename Distance, typename Pointlike>
+    static inline void apply(Geometry const& geometry,
+                             Distance const& max_distance,
+                             Pointlike & pointlike,
+                             Strategies const& strategies)
+    {
+        dispatch::line_interpolate
+            <
+                Geometry, Pointlike
+            >::apply(geometry, max_distance, pointlike, strategies);
+    }
+};
+
+template <typename Strategy>
+struct line_interpolate<Strategy, false>
+{
+    template <typename Geometry, typename Distance, typename Pointlike>
     static inline void apply(Geometry const& geometry,
                              Distance const& max_distance,
                              Pointlike & pointlike,
                              Strategy const& strategy)
-    {
-        dispatch::line_interpolate<Geometry, Pointlike>::apply(geometry,
-                                                               max_distance,
-                                                               pointlike,
-                                                               strategy);
-    }
+    {        
+        using strategies::line_interpolate::services::strategy_converter;
 
+        dispatch::line_interpolate
+            <
+                Geometry, Pointlike
+            >::apply(geometry, max_distance, pointlike,
+                     strategy_converter<Strategy>::get(strategy));
+    }
+};
+
+template <>
+struct line_interpolate<default_strategy, false>
+{
     template <typename Geometry, typename Distance, typename Pointlike>
     static inline void apply(Geometry const& geometry,
                              Distance const& max_distance,
                              Pointlike & pointlike,
                              default_strategy)
     {        
-        typedef typename strategy::line_interpolate::services::default_strategy
+        typedef typename strategies::line_interpolate::services::default_strategy
             <
-                typename cs_tag<Geometry>::type
+                Geometry
             >::type strategy_type;
 
-        dispatch::line_interpolate<Geometry, Pointlike>::apply(geometry,
-                                                               max_distance,
-                                                               pointlike,
-                                                               strategy_type());
+        dispatch::line_interpolate
+            <
+                Geometry, Pointlike
+            >::apply(geometry, max_distance, pointlike, strategy_type());
     }
 };
 
@@ -271,10 +302,10 @@ struct line_interpolate
                              Pointlike & pointlike,
                              Strategy const& strategy)
     {
-        return resolve_strategy::line_interpolate::apply(geometry,
-                                                         max_distance,
-                                                         pointlike,
-                                                         strategy);
+        return resolve_strategy::line_interpolate
+                <
+                    Strategy
+                >::apply(geometry, max_distance, pointlike, strategy);
     }
 };
 
@@ -303,7 +334,7 @@ struct line_interpolate<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
     template <typename Distance, typename Pointlike, typename Strategy>
     static inline void
     apply(boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry,
-          double const& max_distance,
+          Distance const& max_distance,
           Pointlike & pointlike,
           Strategy const& strategy)
     {
@@ -318,7 +349,7 @@ struct line_interpolate<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
 } // namespace resolve_variant
 
 /*!
-\brief 	Returns one or more points interpolated along a LineString \brief_strategy
+\brief     Returns one or more points interpolated along a LineString \brief_strategy
 \ingroup line_interpolate
 \tparam Geometry Any type fulfilling a LineString concept
 \tparam Distance A numerical distance measure
@@ -372,7 +403,7 @@ inline void line_interpolate(Geometry const& geometry,
 
 
 /*!
-\brief 	Returns one or more points interpolated along a LineString.
+\brief     Returns one or more points interpolated along a LineString.
 \ingroup line_interpolate
 \tparam Geometry Any type fulfilling a LineString concept
 \tparam Distance A numerical distance measure

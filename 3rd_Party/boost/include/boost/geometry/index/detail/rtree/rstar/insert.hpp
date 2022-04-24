@@ -4,8 +4,8 @@
 //
 // Copyright (c) 2011-2015 Adam Wulkiewicz, Lodz, Poland.
 //
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2021.
+// Modifications copyright (c) 2019-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -15,9 +15,16 @@
 #ifndef BOOST_GEOMETRY_INDEX_DETAIL_RTREE_RSTAR_INSERT_HPP
 #define BOOST_GEOMETRY_INDEX_DETAIL_RTREE_RSTAR_INSERT_HPP
 
+#include <type_traits>
+
 #include <boost/core/ignore_unused.hpp>
 
+#include <boost/geometry/algorithms/detail/comparable_distance/interface.hpp>
+
 #include <boost/geometry/index/detail/algorithms/content.hpp>
+#include <boost/geometry/index/detail/rtree/node/concept.hpp>
+#include <boost/geometry/index/detail/rtree/node/node_elements.hpp>
+#include <boost/geometry/index/detail/rtree/visitors/insert.hpp>
 
 namespace boost { namespace geometry { namespace index {
 
@@ -27,32 +34,30 @@ namespace rstar {
 
 // Utility to distinguish between default and non-default index strategy
 template <typename Point1, typename Point2, typename Strategy>
-struct comparable_distance_point_point
+struct comparable_distance
 {
-    typedef typename Strategy::comparable_distance_point_point_strategy_type strategy_type;
     typedef typename geometry::comparable_distance_result
         <
-            Point1, Point2, strategy_type
+            Point1, Point2, Strategy
         >::type result_type;
 
-    static inline strategy_type get_strategy(Strategy const& strategy)
+    static inline result_type call(Point1 const& p1, Point2 const& p2, Strategy const& s)
     {
-        return strategy.get_comparable_distance_point_point_strategy();
+        return geometry::comparable_distance(p1, p2, s);
     }
 };
 
 template <typename Point1, typename Point2>
-struct comparable_distance_point_point<Point1, Point2, default_strategy>
+struct comparable_distance<Point1, Point2, default_strategy>
 {
-    typedef default_strategy strategy_type;
     typedef typename geometry::default_comparable_distance_result
         <
             Point1, Point2
         >::type result_type;
 
-    static inline strategy_type get_strategy(default_strategy const& )
+    static inline result_type call(Point1 const& p1, Point2 const& p2, default_strategy const& )
     {
-        return strategy_type();
+        return geometry::comparable_distance(p1, p2);
     }
 };
 
@@ -86,7 +91,7 @@ public:
         typedef typename geometry::point_type<box_type>::type point_type;
         typedef typename index::detail::strategy_type<parameters_type>::type strategy_type;
         // TODO: awulkiew - change second point_type to the point type of the Indexable?
-        typedef rstar::comparable_distance_point_point
+        typedef rstar::comparable_distance
             <
                 point_type, point_type, strategy_type
             > comparable_distance_pp;
@@ -101,9 +106,12 @@ public:
         BOOST_GEOMETRY_INDEX_ASSERT(elements.size() == elements_count, "unexpected elements number");
         BOOST_GEOMETRY_INDEX_ASSERT(0 < reinserted_elements_count, "wrong value of elements to reinsert");
 
+        auto const& strategy = index::detail::get_strategy(parameters);
+
         // calculate current node's center
         point_type node_center;
-        geometry::centroid(rtree::elements(*parent)[current_child_index].first, node_center);
+        geometry::centroid(rtree::elements(*parent)[current_child_index].first, node_center,
+                           strategy);
 
         // fill the container of centers' distances of children from current node's center
         typedef typename index::detail::rtree::container_from_elements_type<
@@ -115,16 +123,14 @@ public:
         // If constructor is used instead of resize() MS implementation leaks here
         sorted_elements.reserve(elements_count);                                                         // MAY THROW, STRONG (V, E: alloc, copy)
         
-        typename comparable_distance_pp::strategy_type
-            cdist_strategy = comparable_distance_pp::get_strategy(index::detail::get_strategy(parameters));
-
         for ( typename elements_type::const_iterator it = elements.begin() ;
               it != elements.end() ; ++it )
         {
             point_type element_center;
-            geometry::centroid( rtree::element_indexable(*it, translator), element_center);
+            geometry::centroid(rtree::element_indexable(*it, translator), element_center,
+                               strategy);
             sorted_elements.push_back(std::make_pair(
-                geometry::comparable_distance(node_center, element_center, cdist_strategy),
+                comparable_distance_pp::call(node_center, element_center, strategy),
                 *it));                                                                                  // MAY THROW (V, E: copy)
         }
 
@@ -195,7 +201,7 @@ template
     size_t InsertIndex,
     typename Element,
     typename MembersHolder,
-    bool IsValue = boost::is_same<Element, typename MembersHolder::value_type>::value
+    bool IsValue = std::is_same<Element, typename MembersHolder::value_type>::value
 >
 struct level_insert_elements_type
 {
@@ -333,7 +339,7 @@ template
     size_t InsertIndex,
     typename Element,
     typename MembersHolder,
-    bool IsValue = boost::is_same<Element, typename MembersHolder::value_type>::value
+    bool IsValue = std::is_same<Element, typename MembersHolder::value_type>::value
 >
 struct level_insert
     : public level_insert_base<InsertIndex, Element, MembersHolder>

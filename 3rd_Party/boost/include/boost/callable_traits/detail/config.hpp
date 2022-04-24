@@ -1,5 +1,5 @@
 /*
-@Copyright Barrett Adair 2016-2017
+@Copyright Barrett Adair 2016-2021
 
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
@@ -57,11 +57,12 @@ Distributed under the Boost Software License, Version 1.0.
 #endif // #ifndef __clang__
 
 #ifdef _MSC_VER
-#  ifdef __clang__
-#    define BOOST_CLBL_TRTS_CLANG_C2
-#  else
+#  if !defined( __clang__ )
 #    define BOOST_CLBL_TRTS_MSVC
-#  endif // #ifdef __clang__
+#    if _MSC_VER < 1920
+#      define BOOST_CLBL_TRTS_OLD_MSVC
+#    endif // #if _MSC_VER < 1920
+#  endif // #if !defined( __clang__ )
 #endif // #ifdef _MSC_VER
 
 #define BOOST_CLBL_TRTS_IX_SEQ(...) ::std::index_sequence< __VA_ARGS__ >

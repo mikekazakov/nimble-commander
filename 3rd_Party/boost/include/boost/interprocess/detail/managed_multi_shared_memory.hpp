@@ -126,7 +126,7 @@ class basic_managed_multi_shared_memory
       group_services(frontend_t *const frontend)
          :  mp_frontend(frontend), m_group(0), m_min_segment_size(0){}
 
-      virtual std::pair<void *, size_type> create_new_segment(size_type alloc_size)
+      virtual std::pair<void *, size_type> create_new_segment(size_type alloc_size) BOOST_OVERRIDE
       {  (void)alloc_size;
          /*
          //We should allocate an extra byte so that the
@@ -144,10 +144,10 @@ class basic_managed_multi_shared_memory
          return result_type(static_cast<void *>(0), 0);
       }
 
-      virtual bool update_segments ()
+      virtual bool update_segments BOOST_OVERRIDE ()
       {  return true;   }
 
-      virtual ~group_services(){}
+      virtual ~group_services() BOOST_OVERRIDE{}
 
       void set_group(segment_group_id group)
          {  m_group = group;  }

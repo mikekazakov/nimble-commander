@@ -15,18 +15,21 @@
 #include <algorithm>
 #include <vector>
 
-#include <boost/range.hpp>
-
-#include <boost/geometry/core/assert.hpp>
-#include <boost/geometry/core/point_type.hpp>
-#include <boost/geometry/core/tag.hpp>
-#include <boost/geometry/core/tags.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/size.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/algorithms/convert.hpp>
 #include <boost/geometry/algorithms/not_implemented.hpp>
 
 #include <boost/geometry/algorithms/detail/equals/point_point.hpp>
 #include <boost/geometry/algorithms/detail/overlay/overlay_type.hpp>
+
+#include <boost/geometry/core/assert.hpp>
+#include <boost/geometry/core/point_type.hpp>
+#include <boost/geometry/core/tag.hpp>
+#include <boost/geometry/core/tags.hpp>
 
 #include <boost/geometry/policies/compare.hpp>
 

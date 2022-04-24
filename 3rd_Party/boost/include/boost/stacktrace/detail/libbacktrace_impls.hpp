@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2020.
+// Copyright Antony Polukhin, 2016-2022.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -94,7 +94,7 @@ BOOST_SYMBOL_VISIBLE inline ::backtrace_state* construct_state(const program_loc
 
 #   ifndef BOOST_NO_CXX11_THREAD_LOCAL
     thread_local
-#   elif defined(__GNUC__)
+#   elif defined(__GNUC__) && !defined(__clang__)
     static __thread
 #   else
     /* just a local variable */

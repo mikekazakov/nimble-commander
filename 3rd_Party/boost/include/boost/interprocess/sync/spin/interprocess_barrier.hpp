@@ -9,7 +9,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include<boost/interprocess/exceptions.hpp>
-#include <boost/interprocess/detail/posix_time_types_wrk.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 
 #ifndef BOOST_CONFIG_HPP

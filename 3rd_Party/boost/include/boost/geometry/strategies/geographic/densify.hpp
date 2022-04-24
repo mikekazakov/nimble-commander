@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2017-2018, Oracle and/or its affiliates.
+// Copyright (c) 2017-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -106,6 +106,11 @@ public:
 
             policy.apply(p);
         }
+    }
+
+    inline Spheroid const& model() const
+    {
+        return m_spheroid;
     }
 
 private:

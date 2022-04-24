@@ -105,7 +105,7 @@ namespace boost { namespace spirit { namespace karma
             unsigned int const maxwidth, Rest& restdest) 
         {
 #if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1600))
-            e; // suppresses warning: C4100: 'e' : unreferenced formal parameter
+            (void)e; // suppresses warning: C4100: 'e' : unreferenced formal parameter
 #endif
             // wrap the given output iterator to allow buffering, but disable 
             // counting

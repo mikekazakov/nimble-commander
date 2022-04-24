@@ -1,5 +1,5 @@
 /* Says how to convert value, error and exception types
-(C) 2017-2020 Niall Douglas <http://www.nedproductions.biz/> (12 commits)
+(C) 2017-2022 Niall Douglas <http://www.nedproductions.biz/> (12 commits)
 File Created: Nov 2017
 
 
@@ -38,10 +38,10 @@ BOOST_OUTCOME_V2_NAMESPACE_EXPORT_BEGIN
 namespace concepts
 {
 #if defined(__cpp_concepts)
-#if !defined(_MSC_VER) && !defined(__clang__) && __GNUC__ < 10
-#define BOOST_OUTCOME_GCC6_CONCEPT_BOOL bool
-#else
+#if (defined(_MSC_VER) || defined(__clang__) || (defined(__GNUC__) && __cpp_concepts >= 201707) || BOOST_OUTCOME_FORCE_STD_BOOST_OUTCOME_C_CONCEPTS) && !BOOST_OUTCOME_FORCE_LEGACY_GCC_BOOST_OUTCOME_C_CONCEPTS
 #define BOOST_OUTCOME_GCC6_CONCEPT_BOOL
+#else
+#define BOOST_OUTCOME_GCC6_CONCEPT_BOOL bool
 #endif
   namespace detail
   {

@@ -8,7 +8,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <limits>
-#include <type_traits> // is_integral, enable_if, conditional
+#include <type_traits> // is_integral, enable_if, conditional is_convertible
 #include <boost/config.hpp> // BOOST_CLANG
 #include "concept/exception_policy.hpp"
 #include "concept/promotion_policy.hpp"
@@ -107,6 +107,12 @@ class safe_literal_impl;
 /////////////////////////////////////////////////////////////////
 // Main implementation
 
+// note in the current version of the library, it is a requirement than type
+// type "Stored" be a scalar type.  Problem is when violates this rule, the error message (on clang)
+// is "A non-type template parameter cannot have type ... " where ... is some non-scalar type
+// The example which triggered this investigation is safe<safe<int>> .  It was difficult to make
+// the trip from the error message to the source of the problem, hence we're including this
+// comment here.
 template<
     class Stored,
     Stored Min,
@@ -120,24 +126,8 @@ private:
     BOOST_CONCEPT_ASSERT((ExceptionPolicy<E>));
     Stored m_t;
 
-    template<
-        class StoredX,
-        StoredX MinX,
-        StoredX MaxX,
-        class PX, // promotion polic
-        class EX  // exception policy
-    >
-    friend class safe_base;
-
-    friend class std::numeric_limits<safe_base>;
-
     template<class T>
     constexpr Stored validated_cast(const T & t) const;
-
-    template<typename T, T N, class P1, class E1>
-    constexpr Stored validated_cast(
-        const safe_literal_impl<T, N, P1, E1> & t
-    ) const;
 
     // stream support
 
@@ -179,37 +169,25 @@ public:
     ////////////////////////////////////////////////////////////
     // constructors
 
+    constexpr safe_base();
+
     struct skip_validation{};
 
     constexpr explicit safe_base(const Stored & rhs, skip_validation);
 
-    constexpr safe_base();
-
-    // construct an instance of a safe type
-    // from an instance of a convertible underlying type.
-
-    template<class T>
-    constexpr /*explicit*/ safe_base(
-        const T & t,
+    // construct an instance of a safe type from an instance of a convertible underlying type.
+    template<
+        class T,
         typename std::enable_if<
-            is_safe<T>::value,
+            std::is_convertible<T, Stored>::value,
             bool
-        >::type = true
-    );
+        >::type = 0
+    >
+    constexpr /*explicit*/ safe_base(const T & t);
 
-    template<class T>
-    constexpr /*explicit*/ safe_base(
-        const T & t,
-        typename std::enable_if<
-            std::is_integral<T>::value,
-            bool
-        >::type = true
-    );
-
-    template<class T, T value>
-    constexpr /*explicit*/ safe_base(
-        const std::integral_constant<T, value> &
-    );
+    // construct an instance of a safe type from a literal value
+    template<typename T, T N, class Px, class Ex>
+    constexpr /*explicit*/ safe_base(const safe_literal_impl<T, N, Px, Ex> & t);
 
     // note: Rule of Five. Supply all or none of the following
     // a) user-defined destructor
@@ -238,8 +216,6 @@ public:
     >
     constexpr /*explicit*/ operator R () const;
 
-    constexpr /*explicit*/ operator Stored () const;
-
     /////////////////////////////////////////////////////////////////
     // modification binary operators
     template<class T>
@@ -249,26 +225,19 @@ public:
         return *this;
     }
 
-    // required to passify VS2017
-    constexpr safe_base &
-    operator=(const Stored & rhs){
-        m_t = validated_cast(rhs);
-        return *this;
-    }
-
     // mutating unary operators
-    safe_base & operator++(){      // pre increment
+    constexpr safe_base & operator++(){      // pre increment
         return *this = *this + 1;
     }
-    safe_base & operator--(){      // pre decrement
+    constexpr safe_base & operator--(){      // pre decrement
         return *this = *this - 1;
     }
-    safe_base operator++(int){   // post increment
+    constexpr safe_base operator++(int){   // post increment
         safe_base old_t = *this;
         ++(*this);
         return old_t;
     }
-    safe_base operator--(int){ // post decrement
+    constexpr safe_base operator--(int){ // post decrement
         safe_base old_t = *this;
         --(*this);
         return old_t;

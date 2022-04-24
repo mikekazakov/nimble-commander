@@ -1,8 +1,9 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014, Oracle and/or its affiliates.
+// Copyright (c) 2014-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -29,23 +30,17 @@ namespace dispatch
 {
 
 
-template <typename Box1, typename Box2, typename Strategy>
+template <typename Box1, typename Box2, typename Strategies>
 struct distance
     <
-        Box1, Box2, Strategy, box_tag, box_tag,
+        Box1, Box2, Strategies, box_tag, box_tag,
         strategy_tag_distance_box_box, false
     >
 {
-    static inline typename strategy::distance::services::return_type
-        <
-            Strategy,
-            typename point_type<Box1>::type,
-            typename point_type<Box2>::type
-        >::type
-    apply(Box1 const& box1, Box2 const& box2, Strategy const& strategy)
+    static inline auto apply(Box1 const& box1, Box2 const& box2, Strategies const& strategies)
     {
-        boost::ignore_unused(strategy);
-        return strategy.apply(box1, box2);
+        boost::ignore_unused(strategies);
+        return strategies.distance(box1, box2).apply(box1, box2);
     }
 };
 

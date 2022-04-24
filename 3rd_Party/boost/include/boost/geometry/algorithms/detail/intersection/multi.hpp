@@ -14,9 +14,10 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_INTERSECTION_MULTI_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_INTERSECTION_MULTI_HPP
 
+#include <type_traits>
+
 #include <boost/geometry/core/closure.hpp>
 #include <boost/geometry/core/geometry_id.hpp>
-#include <boost/geometry/core/is_areal.hpp>
 #include <boost/geometry/core/point_order.hpp>
 #include <boost/geometry/core/tags.hpp>
 #include <boost/geometry/geometries/concepts/check.hpp>
@@ -446,12 +447,12 @@ struct intersection_insert
                 MultiLinestring, Ring, TupledOut,
                 // NOTE: points can be the result only in case of intersection.
                 // TODO: union should require L and A
-                typename boost::mpl::if_c
+                std::conditional_t
                     <
                         (OverlayType == overlay_intersection),
                         point_tag,
                         void
-                    >::type,
+                    >,
                 linestring_tag
             >
 {};
@@ -484,12 +485,12 @@ struct intersection_insert
                 MultiLinestring, Polygon, TupledOut,
                 // NOTE: points can be the result only in case of intersection.
                 // TODO: union should require L and A
-                typename boost::mpl::if_c
+                std::conditional_t
                     <
                         (OverlayType == overlay_intersection),
                         point_tag,
                         void
-                    >::type,
+                    >,
                 linestring_tag
             >
 {};
@@ -524,12 +525,12 @@ struct intersection_insert
                 // TODO: in general the result of difference should depend on the first argument
                 //       but this specialization calls L/A in reality so the first argument is linear.
                 //       So expect only L for difference?
-                typename boost::mpl::if_c
+                std::conditional_t
                     <
                         (OverlayType == overlay_intersection),
                         point_tag,
                         void
-                    >::type,
+                    >,
                 linestring_tag
             >
 {};
@@ -561,12 +562,12 @@ struct intersection_insert
                 MultiLinestring, MultiPolygon, TupledOut,
                 // NOTE: points can be the result only in case of intersection.
                 // TODO: union should require L and A
-                typename boost::mpl::if_c
+                std::conditional_t
                     <
                         (OverlayType == overlay_intersection),
                         point_tag,
                         void
-                    >::type,
+                    >,
                 linestring_tag
             >
 {};

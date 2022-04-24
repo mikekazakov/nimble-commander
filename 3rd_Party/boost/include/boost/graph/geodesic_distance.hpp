@@ -27,8 +27,9 @@ struct mean_geodesic_measure
         BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
         BOOST_CONCEPT_ASSERT((NumericValueConcept< DistanceType >));
         BOOST_CONCEPT_ASSERT((NumericValueConcept< ResultType >));
-        BOOST_CONCEPT_ASSERT((AdaptableBinaryFunctionConcept< Divides,
-            ResultType, ResultType, ResultType >));
+//      NOTE: Disabled until this concept assert is fixed in Boost.ConceptCheck.
+//         BOOST_CONCEPT_ASSERT((AdaptableBinaryFunctionConcept< Divides,
+//             ResultType, ResultType, ResultType >));
 
         return (d == base_type::infinite_distance())
             ? base_type::infinite_result()

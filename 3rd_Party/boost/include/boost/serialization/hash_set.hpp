@@ -23,6 +23,7 @@
 #include <boost/serialization/hash_collections_save_imp.hpp>
 #include <boost/serialization/hash_collections_load_imp.hpp>
 #include <boost/serialization/split_free.hpp>
+#include <boost/serialization/detail/stack_constructor.hpp>
 #include <boost/move/utility_core.hpp>
 
 namespace boost {

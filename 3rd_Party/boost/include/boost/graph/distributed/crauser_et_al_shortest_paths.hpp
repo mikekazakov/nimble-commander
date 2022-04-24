@@ -37,7 +37,7 @@
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/property_map/property_map_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <algorithm>
+#include <boost/algorithm/minmax_element.hpp>
 #include <boost/property_map/parallel/caching_property_map.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/distributed/detail/remote_update_set.hpp>
@@ -45,6 +45,7 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/parallel/container_traits.hpp>
+#include <boost/pending/relaxed_heap.hpp>
 
 #ifdef PBGL_ACCOUNTING
 #  include <boost/graph/accounting.hpp>
@@ -95,8 +96,10 @@ namespace detail {
   template<typename Vertex, typename DistanceMap, typename MinInWeightMap,
            typename Combine, typename Compare>
   struct min_in_distance_compare
-    : std::binary_function<Vertex, Vertex, bool>
   {
+    typedef Vertex first_argument_type;
+    typedef Vertex second_argument_type;
+    typedef bool result_type;
     min_in_distance_compare(DistanceMap d, MinInWeightMap m,
                             Combine combine, Compare compare)
       : distance_map(d), min_in_weight(m), combine(combine),
@@ -120,8 +123,10 @@ namespace detail {
   template<typename Vertex, typename DistanceMap, typename MinOutWeightMap,
            typename Combine, typename Compare>
   struct min_out_distance_compare
-    : std::binary_function<Vertex, Vertex, bool>
   {
+    typedef Vertex first_argument_type;
+    typedef Vertex second_argument_type;
+    typedef bool result_type;
     min_out_distance_compare(DistanceMap d, MinOutWeightMap m,
                              Combine combine, Compare compare)
       : distance_map(d), min_out_weight(m), combine(combine),
@@ -471,7 +476,7 @@ namespace detail {
         }
         std::cerr << std::endl;
         put(min_in_weight, v,
-            *std::min_element
+            *boost::first_min_element
             (make_property_map_iterator(weight, in_edges(v, g).first),
              make_property_map_iterator(weight, in_edges(v, g).second),
              compare));
@@ -513,7 +518,7 @@ namespace detail {
     BGL_FORALL_VERTICES_T(v, g, Graph) {
       if (out_edges(v, g).first != out_edges(v, g).second) {
         put(min_out_weight, v,
-            *std::min_element
+            *boost::first_min_element
             (make_property_map_iterator(weight, out_edges(v, g).first),
              make_property_map_iterator(weight, out_edges(v, g).second),
              compare));

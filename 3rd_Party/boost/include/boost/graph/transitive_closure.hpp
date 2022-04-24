@@ -13,7 +13,7 @@
 #include <algorithm> // for std::min and std::max
 #include <functional>
 #include <boost/config.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -131,6 +131,8 @@ void transitive_closure(const Graph& g, GraphTC& tc,
     std::vector< std::vector< cg_vertex > > CG_vec(num_vertices(CG));
     for (size_type i = 0; i < num_vertices(CG); ++i)
     {
+        using namespace boost::placeholders;
+
         typedef typename boost::graph_traits< CG_t >::adjacency_iterator
             cg_adj_iter;
         std::pair< cg_adj_iter, cg_adj_iter > pr = adjacent_vertices(i, CG);
@@ -156,9 +158,16 @@ void transitive_closure(const Graph& g, GraphTC& tc,
                 {
                     chain.push_back(v);
                     in_a_chain[v] = true;
+
                     typename std::vector< cg_vertex >::const_iterator next
+                    #ifdef __cpp_lib_not_fn
                         = std::find_if(CG_vec[v].begin(), CG_vec[v].end(),
-                            std::not1(detail::subscript(in_a_chain)));
+                                       std::not_fn(detail::subscript(in_a_chain)));
+                    #else
+                        = std::find_if(CG_vec[v].begin(), CG_vec[v].end(),
+                                       std::not1(detail::subscript(in_a_chain)));
+                    #endif
+
                     if (next != CG_vec[v].end())
                         v = *next;
                     else

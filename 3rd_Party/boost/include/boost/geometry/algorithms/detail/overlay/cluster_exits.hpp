@@ -2,6 +2,10 @@
 
 // Copyright (c) 2020 Barend Gehrels, Amsterdam, the Netherlands.
 
+// This file was modified by Oracle on 2020.
+// Modifications copyright (c) 2020 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -9,18 +13,17 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_CLUSTER_EXITS_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_CLUSTER_EXITS_HPP
 
-#include <boost/geometry/core/access.hpp>
-#include <boost/geometry/core/assert.hpp>
-#include <boost/geometry/util/condition.hpp>
-#include <boost/geometry/algorithms/detail/overlay/overlay_type.hpp>
-#include <boost/geometry/algorithms/detail/signed_size_type.hpp>
-
 #include <cstddef>
 #include <set>
 #include <vector>
 
-#include <boost/range.hpp>
+#include <boost/range/value_type.hpp>
 
+#include <boost/geometry/core/access.hpp>
+#include <boost/geometry/core/assert.hpp>
+#include <boost/geometry/algorithms/detail/overlay/overlay_type.hpp>
+#include <boost/geometry/algorithms/detail/signed_size_type.hpp>
+#include <boost/geometry/util/condition.hpp>
 
 #if defined(BOOST_GEOMETRY_DEBUG_INTERSECTION) \
     || defined(BOOST_GEOMETRY_OVERLAY_REPORT_WKT) \

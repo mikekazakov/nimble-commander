@@ -16,7 +16,7 @@ namespace boost{ namespace math{ namespace detail{
    template <class T, class Policy>
    T hypergeometric_cdf_imp(unsigned x, unsigned r, unsigned n, unsigned N, bool invert, const Policy& pol)
    {
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 #  pragma warning(push)
 #  pragma warning(disable:4267)
 #endif
@@ -63,7 +63,7 @@ namespace boost{ namespace math{ namespace detail{
       if(invert)
          result = 1 - result;
       return result;
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 #  pragma warning(pop)
 #endif
    }

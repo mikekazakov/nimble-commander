@@ -21,6 +21,8 @@
 
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
+
+#include <boost/interprocess/sync/cv_status.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/interprocess/detail/type_traits.hpp>
 #include <boost/interprocess/creation_tags.hpp>
@@ -28,7 +30,6 @@
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <boost/interprocess/detail/managed_open_or_create_impl.hpp>
-#include <boost/interprocess/detail/posix_time_types_wrk.hpp>
 #include <boost/interprocess/sync/shm/named_creation_functor.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
 #include <boost/interprocess/permissions.hpp>
@@ -61,8 +62,9 @@ class shm_named_condition_any
    public:
    //!Creates a global condition with a name.
    //!If the condition can't be created throws interprocess_exception
-   shm_named_condition_any(create_only_t create_only, const char *name, const permissions &perm = permissions())
-      :  m_shmem  (create_only
+   template <class CharT>
+   shm_named_condition_any(create_only_t, const CharT *name, const permissions &perm = permissions())
+      :  m_shmem  (create_only_t()
                   ,name
                   ,sizeof(internal_condition) +
                      open_create_impl_t::ManagedOpenOrCreateUserOffset
@@ -78,8 +80,9 @@ class shm_named_condition_any
    //!If the condition is already created, this call is equivalent
    //!shm_named_condition_any(open_only_t, ... )
    //!Does not throw
-   shm_named_condition_any(open_or_create_t open_or_create, const char *name, const permissions &perm = permissions())
-      :  m_shmem  (open_or_create
+   template <class CharT>
+   shm_named_condition_any(open_or_create_t, const CharT *name, const permissions &perm = permissions())
+      :  m_shmem  (open_or_create_t()
                   ,name
                   ,sizeof(internal_condition) +
                      open_create_impl_t::ManagedOpenOrCreateUserOffset
@@ -92,8 +95,9 @@ class shm_named_condition_any
    //!Opens a global condition with a name if that condition is previously
    //!created. If it is not previously created this function throws
    //!interprocess_exception.
-   shm_named_condition_any(open_only_t open_only, const char *name)
-      :  m_shmem  (open_only
+   template <class CharT>
+   shm_named_condition_any(open_only_t, const CharT *name)
+      :  m_shmem  (open_only_t()
                   ,name
                   ,read_write
                   ,0
@@ -137,20 +141,45 @@ class shm_named_condition_any
    //!this->notify_one() or this->notify_all(), or until time abs_time is reached,
    //!and then reacquires the lock.
    //!Returns: false if time abs_time is reached, otherwise true.
-   template <typename L>
-   bool timed_wait(L& lock, const boost::posix_time::ptime &abs_time)
+   template <typename L, typename TimePoint>
+   bool timed_wait(L& lock, const TimePoint &abs_time)
    {  return this->internal_cond().timed_wait(lock, abs_time); }
 
    //!The same as:   while (!pred()) {
    //!                  if (!timed_wait(lock, abs_time)) return pred();
    //!               } return true;
-   template <typename L, typename Pr>
-   bool timed_wait(L& lock, const boost::posix_time::ptime &abs_time, Pr pred)
+   template <typename L, typename TimePoint, typename Pr>
+   bool timed_wait(L& lock, const TimePoint &abs_time, Pr pred)
    {  return this->internal_cond().timed_wait(lock, abs_time, pred); }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface.
+   template <typename L, class TimePoint>
+   cv_status wait_until(L& lock, const TimePoint &abs_time)
+   {  return this->timed_wait(lock, abs_time) ? cv_status::no_timeout : cv_status::timeout; }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface.
+   template <typename L, class TimePoint, typename Pr>
+   bool wait_until(L& lock, const TimePoint &abs_time, Pr pred)
+   {  return this->timed_wait(lock, abs_time, pred); }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface and uses relative timeouts.
+   template <typename L, class Duration>
+   cv_status wait_for(L& lock, const Duration &dur)
+   {  return this->wait_until(lock, ipcdetail::duration_to_ustime(dur)); }
+
+   //!Same as `timed_wait`, but this function is modeled after the
+   //!standard library interface and uses relative timeouts
+   template <typename L, class Duration, typename Pr>
+   bool wait_for(L& lock, const Duration &dur, Pr pred)
+   {  return this->wait_until(lock, ipcdetail::duration_to_ustime(dur), pred); }
 
    //!Erases a named condition from the system.
    //!Returns false on error. Never throws.
-   static bool remove(const char *name)
+   template <class CharT>
+   static bool remove(const CharT *name)
    {  return shared_memory_object::remove(name); }
 
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)

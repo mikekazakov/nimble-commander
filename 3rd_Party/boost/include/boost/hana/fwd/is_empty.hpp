@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Returns whether the iterable is empty.
     //! @ingroup group-Iterable
     //!
@@ -42,8 +42,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr auto operator()(Xs const& xs) const;
     };
 
-    constexpr is_empty_t is_empty{};
+    BOOST_HANA_INLINE_VARIABLE constexpr is_empty_t is_empty{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_IS_EMPTY_HPP

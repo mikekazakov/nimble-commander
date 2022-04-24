@@ -4,6 +4,10 @@
 // Copyright (c) 2008-2012 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 
+// This file was modified by Oracle on 2020-2021.
+// Modifications copyright (c) 2020-2021 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
 // (geolib/GGL), copyright (c) 1995-2010 Geodan, Amsterdam, the Netherlands.
 
@@ -15,15 +19,29 @@
 #define BOOST_GEOMETRY_VIEWS_BOX_VIEW_HPP
 
 
-#include <boost/range.hpp>
+#include <array>
 
+#include <boost/geometry/algorithms/detail/assign_box_corners.hpp>
+#include <boost/geometry/core/point_order.hpp>
 #include <boost/geometry/core/point_type.hpp>
-#include <boost/geometry/views/detail/points_view.hpp>
-#include <boost/geometry/algorithms/assign.hpp>
+#include <boost/geometry/core/tag.hpp>
 
 
 namespace boost { namespace geometry
 {
+
+// NOTE: This is equivalent to the previous implementation with detail::points_view.
+//       Technically this should not be called a view because it owns the elements.
+//       It's also not a borrowed_range because of dangling iterators after the
+//       destruction.
+//       It's a container or more specifically a ring of some sort, e.g. static_ring.
+// NOTE: It would be possible to implement a borrowed_range or a view.
+//       The iterators would have to store copies of points.
+//       Another possibility is to store the original Box or reference/pointer
+//       to Box and index. But then the reference would be the value type
+//       so technically they would be InputIterators not RandomAccessIterators.
+// NOTE: This object can not represent a Box correctly in all coordinates systems.
+//       It's correct only in cartesian CS so maybe it should be removed entirely.
 
 
 /*!
@@ -44,41 +62,24 @@ namespace boost { namespace geometry
 */
 template <typename Box, bool Clockwise = true>
 struct box_view
-    : public detail::points_view
-        <
-            typename geometry::point_type<Box>::type,
-            5
-        >
 {
-    typedef typename geometry::point_type<Box>::type point_type;
+    using array_t = std::array<typename geometry::point_type<Box>::type, 5>;
+
+    using iterator = typename array_t::const_iterator;
+    using const_iterator = typename array_t::const_iterator;
 
     /// Constructor accepting the box to adapt
     explicit box_view(Box const& box)
-        : detail::points_view<point_type, 5>(copy_policy(box))
-    {}
-
-private :
-
-    class copy_policy
     {
-    public :
-        inline copy_policy(Box const& box)
-            : m_box(box)
-        {}
+        detail::assign_box_corners_oriented<!Clockwise>(box, m_array);
+        m_array[4] = m_array[0];
+    }
 
-        inline void apply(point_type* points) const
-        {
-            // assign_box_corners_oriented requires a range
-            // an alternative for this workaround would be to pass a range here,
-            // e.g. use boost::array in points_view instead of c-array
-            std::pair<point_type*, point_type*> rng = std::make_pair(points, points + 5);
-            detail::assign_box_corners_oriented<!Clockwise>(m_box, rng);
-            points[4] = points[0];
-        }
-    private :
-        Box const& m_box;
-    };
+    const_iterator begin() const noexcept { return m_array.begin(); }
+    const_iterator end() const noexcept { return m_array.end(); }
 
+private:
+    array_t m_array;
 };
 
 

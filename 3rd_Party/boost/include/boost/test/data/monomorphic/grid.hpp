@@ -90,7 +90,7 @@ public:
     };
 
 public:
-    enum { arity = boost::decay<DataSet1>::type::arity + boost::decay<DataSet2>::type::arity };
+    static const int arity = boost::decay<DataSet1>::type::arity + boost::decay<DataSet2>::type::arity;
 
     //! Constructor
     grid( DataSet1&& ds1, DataSet2&& ds2 )

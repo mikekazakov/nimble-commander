@@ -10,6 +10,7 @@
 #ifndef BOOST_FIBERS_PROPERTIES_HPP
 #define BOOST_FIBERS_PROPERTIES_HPP
 
+#include <boost/assert.hpp>
 #include <boost/fiber/detail/config.hpp>
 
 #ifdef BOOST_HAS_ABI_HEADERS
@@ -50,6 +51,9 @@ public:
 
     // fiber_properties, and by implication every subclass, must accept a back
     // pointer to its context.
+
+    // For fiber_properties passed to fiber constructors, nullptr must be
+    // used here.
     explicit fiber_properties( context * ctx) noexcept :
         ctx_{ ctx } {
     }
@@ -63,6 +67,14 @@ public:
     // must be able to call this
     void set_algorithm( algo::algorithm * algo) noexcept {
         algo_ = algo;
+    }
+
+    // not really intended for public use, but required to set properties
+    // on fiber/context construction.
+    void set_context( context* ctx ) noexcept {
+        BOOST_ASSERT( ctx_ == nullptr );
+        BOOST_ASSERT( ctx != nullptr );
+        ctx_ = ctx;
     }
 };
 

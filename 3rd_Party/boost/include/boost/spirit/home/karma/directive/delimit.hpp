@@ -16,6 +16,7 @@
 #include <boost/spirit/home/karma/detail/unused_delimiter.hpp>
 #include <boost/spirit/home/karma/delimit_out.hpp>
 #include <boost/spirit/home/karma/auxiliary/lazy.hpp>
+#include <boost/spirit/home/karma/char/char.hpp>
 #include <boost/spirit/home/support/unused.hpp>
 #include <boost/spirit/home/support/common_terminals.hpp>
 #include <boost/spirit/home/support/has_semantic_action.hpp>

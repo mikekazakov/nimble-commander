@@ -7,7 +7,9 @@
 #define BOOST_MATH_TOOLS_NORMS_HPP
 #include <algorithm>
 #include <iterator>
-#include <boost/assert.hpp>
+#include <complex>
+#include <cmath>
+#include <boost/math/tools/assert.hpp>
 #include <boost/math/tools/complex.hpp>
 
 
@@ -19,7 +21,7 @@ auto total_variation(ForwardIterator first, ForwardIterator last)
 {
     using T = typename std::iterator_traits<ForwardIterator>::value_type;
     using std::abs;
-    BOOST_ASSERT_MSG(first != last && std::next(first) != last, "At least two samples are required to compute the total variation.");
+    BOOST_MATH_ASSERT_MSG(first != last && std::next(first) != last, "At least two samples are required to compute the total variation.");
     auto it = first;
     if constexpr (std::is_unsigned<T>::value)
     {
@@ -74,7 +76,7 @@ inline auto total_variation(Container const & v)
 template<class ForwardIterator>
 auto sup_norm(ForwardIterator first, ForwardIterator last)
 {
-    BOOST_ASSERT_MSG(first != last, "At least one value is required to compute the sup norm.");
+    BOOST_MATH_ASSERT_MSG(first != last, "At least one value is required to compute the sup norm.");
     using T = typename std::iterator_traits<ForwardIterator>::value_type;
     using std::abs;
     if constexpr (boost::math::tools::is_complex_type<T>::value)
@@ -157,6 +159,7 @@ auto l2_norm(ForwardIterator first, ForwardIterator last)
     using std::norm;
     using std::sqrt;
     using std::is_floating_point;
+    using std::isfinite;
     if constexpr (boost::math::tools::is_complex_type<T>::value)
     {
         typedef typename T::value_type Real;
@@ -299,7 +302,7 @@ auto lp_norm(ForwardIterator first, ForwardIterator last, unsigned p)
     }
     else if constexpr (is_floating_point<RealOrComplex>::value || std::numeric_limits<RealOrComplex>::max_exponent)
     {
-        BOOST_ASSERT_MSG(p >= 0, "For p < 0, the lp norm is not a norm");
+        BOOST_MATH_ASSERT_MSG(p >= 0, "For p < 0, the lp norm is not a norm");
         RealOrComplex lp = 0;
 
         for (auto it = first; it != last; ++it)
@@ -466,7 +469,7 @@ auto l1_distance(ForwardIterator first1, ForwardIterator last1, ForwardIterator 
     }
     else
     {
-        BOOST_ASSERT_MSG(false, "Could not recognize type.");
+        BOOST_MATH_ASSERT_MSG(false, "Could not recognize type.");
     }
 
 }
@@ -475,7 +478,7 @@ template<class Container>
 auto l1_distance(Container const & v, Container const & w)
 {
     using std::size;
-    BOOST_ASSERT_MSG(size(v) == size(w),
+    BOOST_MATH_ASSERT_MSG(size(v) == size(w),
                      "L1 distance requires both containers to have the same number of elements");
     return l1_distance(v.cbegin(), v.cend(), w.begin());
 }
@@ -548,7 +551,7 @@ template<class Container>
 auto l2_distance(Container const & v, Container const & w)
 {
     using std::size;
-    BOOST_ASSERT_MSG(size(v) == size(w),
+    BOOST_MATH_ASSERT_MSG(size(v) == size(w),
                      "L2 distance requires both containers to have the same number of elements");
     return l2_distance(v.cbegin(), v.cend(), w.begin());
 }
@@ -617,7 +620,7 @@ template<class Container>
 auto sup_distance(Container const & v, Container const & w)
 {
     using std::size;
-    BOOST_ASSERT_MSG(size(v) == size(w),
+    BOOST_MATH_ASSERT_MSG(size(v) == size(w),
                      "sup distance requires both containers to have the same number of elements");
     return sup_distance(v.cbegin(), v.cend(), w.begin());
 }

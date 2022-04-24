@@ -11,7 +11,9 @@
 #include <boost/histogram/accumulators/ostream.hpp>
 #include <boost/histogram/axis/ostream.hpp>
 #include <boost/histogram/detail/counting_streambuf.hpp>
+#include <boost/histogram/detail/detect.hpp>
 #include <boost/histogram/detail/priority.hpp>
+#include <boost/histogram/detail/term_info.hpp>
 #include <boost/histogram/indexed.hpp>
 #include <cmath>
 #include <iomanip>
@@ -162,19 +164,14 @@ void ostream_bin(OStream& os, const Axis&, axis::index_type i, B, priority<0>) {
   os << i;
 }
 
-template <class CharT>
-struct line_t {
-  CharT ch;
-  int size;
+struct line {
+  const char* ch;
+  const int size;
+  line(const char* a, int b) : ch{a}, size{std::max(b, 0)} {}
 };
 
-template <class CharT>
-auto line(CharT c, int n) {
-  return line_t<CharT>{c, n};
-}
-
-template <class C, class T>
-std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& os, line_t<C>&& l) {
+template <class T>
+std::basic_ostream<char, T>& operator<<(std::basic_ostream<char, T>& os, line&& l) {
   for (int i = 0; i < l.size; ++i) os << l.ch;
   return os;
 }
@@ -191,13 +188,50 @@ void ostream_head(OStream& os, const Axis& ax, int index, double val) {
       ax);
 }
 
+template <class OStream>
+void ostream_bar(OStream& os, int zero_offset, double z, int width, bool utf8) {
+  int k = static_cast<int>(std::lround(z * width));
+  if (utf8) {
+    os << " │";
+    if (z > 0) {
+      const char* scale[8] = {" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"};
+      int j = static_cast<int>(std::lround(8 * (z * width - k)));
+      if (j < 0) {
+        --k;
+        j += 8;
+      }
+      os << line(" ", zero_offset) << line("█", k);
+      os << scale[j];
+      os << line(" ", width - zero_offset - k);
+    } else if (z < 0) {
+      os << line(" ", zero_offset + k) << line("█", -k)
+         << line(" ", width - zero_offset + 1);
+    } else {
+      os << line(" ", width + 1);
+    }
+    os << "│\n";
+  } else {
+    os << " |";
+    if (z >= 0) {
+      os << line(" ", zero_offset) << line("=", k) << line(" ", width - zero_offset - k);
+    } else {
+      os << line(" ", zero_offset + k) << line("=", -k) << line(" ", width - zero_offset);
+    }
+    os << " |\n";
+  }
+}
+
 // cannot display generalized histograms yet; line not reachable by coverage tests
 template <class OStream, class Histogram>
-void ascii_plot(OStream&, const Histogram&, int, std::false_type) {} // LCOV_EXCL_LINE
+void plot(OStream&, const Histogram&, int, std::false_type) {} // LCOV_EXCL_LINE
 
 template <class OStream, class Histogram>
-void ascii_plot(OStream& os, const Histogram& h, int w_total, std::true_type) {
-  if (w_total == 0) w_total = 78; // TODO detect actual width of terminal
+void plot(OStream& os, const Histogram& h, int w_total, std::true_type) {
+  if (w_total == 0) {
+    w_total = term_info::width();
+    if (w_total == 0 || w_total > 78) w_total = 78;
+  }
+  bool utf8 = term_info::utf8();
 
   const auto& ax = h.axis();
 
@@ -207,9 +241,10 @@ void ascii_plot(OStream& os, const Histogram& h, int w_total, std::true_type) {
   tabular_ostream_wrapper<OStream, 7> tos(os);
   // first pass to get widths
   for (auto&& v : indexed(h, coverage::all)) {
-    ostream_head(tos.row(), ax, v.index(), *v);
-    vmin = std::min(vmin, static_cast<double>(*v));
-    vmax = std::max(vmax, static_cast<double>(*v));
+    auto w = static_cast<double>(*v);
+    ostream_head(tos.row(), ax, v.index(), w);
+    vmin = std::min(vmin, w);
+    vmax = std::max(vmax, w);
   }
   tos.complete();
   if (vmax == 0) vmax = 1;
@@ -217,29 +252,31 @@ void ascii_plot(OStream& os, const Histogram& h, int w_total, std::true_type) {
   // calculate width useable by bar (notice extra space at top)
   // <-- head --> |<--- bar ---> |
   // w_head + 2 + 2
-  const auto w_head = std::accumulate(tos.begin(), tos.end(), 0);
-  const auto w_bar = w_total - 4 - w_head;
+  const int w_head = std::accumulate(tos.begin(), tos.end(), 0);
+  const int w_bar = w_total - 4 - w_head;
   if (w_bar < 0) return;
 
   // draw upper line
-  os << '\n' << line(' ', w_head + 1) << '+' << line('-', w_bar + 1) << "+\n";
+  os << '\n' << line(" ", w_head + 1);
+  if (utf8)
+    os << "┌" << line("─", w_bar + 1) << "┐\n";
+  else
+    os << '+' << line("-", w_bar + 1) << "+\n";
 
   const int zero_offset = static_cast<int>(std::lround((-vmin) / (vmax - vmin) * w_bar));
   for (auto&& v : indexed(h, coverage::all)) {
-    ostream_head(tos.row(), ax, v.index(), *v);
+    auto w = static_cast<double>(*v);
+    ostream_head(tos.row(), ax, v.index(), w);
     // rest uses os, not tos
-    os << " |";
-    const int k = static_cast<int>(std::lround(*v / (vmax - vmin) * w_bar));
-    if (k < 0) {
-      os << line(' ', zero_offset + k) << line('=', -k) << line(' ', w_bar - zero_offset);
-    } else {
-      os << line(' ', zero_offset) << line('=', k) << line(' ', w_bar - zero_offset - k);
-    }
-    os << " |\n";
+    ostream_bar(os, zero_offset, w / (vmax - vmin), w_bar, utf8);
   }
 
   // draw lower line
-  os << line(' ', w_head + 1) << '+' << line('-', w_bar + 1) << "+\n";
+  os << line(" ", w_head + 1);
+  if (utf8)
+    os << "└" << line("─", w_bar + 1) << "┘\n";
+  else
+    os << '+' << line("-", w_bar + 1) << "+\n";
 }
 
 template <class OStream, class Histogram>
@@ -300,11 +337,12 @@ std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>&
 
   using value_type = typename histogram<A, S>::value_type;
 
+  using convertible = detail::is_explicitly_convertible<value_type, double>;
   // must be non-const to avoid a msvc warning about possible use of if constexpr
-  bool show_ascii = std::is_convertible<value_type, double>::value && h.rank() == 1;
-  if (show_ascii) {
+  bool show_plot = convertible::value && h.rank() == 1;
+  if (show_plot) {
     detail::ostream(os, h, false);
-    detail::ascii_plot(os, h, w, std::is_convertible<value_type, double>{});
+    detail::plot(os, h, w, convertible{});
   } else {
     detail::ostream(os, h);
   }
@@ -314,9 +352,9 @@ std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>&
   return os;
 }
 
+#endif // BOOST_HISTOGRAM_DOXYGEN_INVOKED
+
 } // namespace histogram
 } // namespace boost
-
-#endif // BOOST_HISTOGRAM_DOXYGEN_INVOKED
 
 #endif

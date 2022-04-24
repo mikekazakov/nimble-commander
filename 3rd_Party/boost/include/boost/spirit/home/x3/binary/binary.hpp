@@ -24,15 +24,14 @@
 
 namespace boost { namespace spirit { namespace x3
 {
-    template <typename V, typename T
-      , boost::endian::order endian, std::size_t bits>
+    template <typename T, boost::endian::order endian, std::size_t bits>
     struct binary_lit_parser
-      : parser<binary_lit_parser<V, T, endian, bits> >
+      : parser<binary_lit_parser<T, endian, bits> >
     {
         static bool const has_attribute = false;
         typedef unused_type attribute_type;
 
-        constexpr binary_lit_parser(V n_)
+        constexpr binary_lit_parser(T n_)
           : n(n_) {}
 
         template <typename Iterator, typename Context, typename Attribute>
@@ -95,8 +94,7 @@ namespace boost { namespace spirit { namespace x3
             return true;
         }
 
-        template <typename V>
-        constexpr binary_lit_parser< V, T, endian, bits> operator()(V n) const
+        constexpr binary_lit_parser<T, endian, bits> operator()(T n) const
         {
             return {n};
         }
@@ -149,21 +147,21 @@ namespace boost { namespace spirit { namespace x3
         }
     };
 
-    template <typename V, typename T, std::size_t bits>
-    struct get_info<binary_lit_parser<V, T, endian::order::little, bits>>
+    template <typename T, std::size_t bits>
+    struct get_info<binary_lit_parser<T, endian::order::little, bits>>
     {
         typedef std::string result_type;
-        std::string operator()(binary_lit_parser<V, T, endian::order::little, bits> const&) const
+        std::string operator()(binary_lit_parser<T, endian::order::little, bits> const&) const
         {
             return "little-endian binary";
         }
     };
 
-    template <typename V, typename T, std::size_t bits>
-    struct get_info<binary_lit_parser<V, T, endian::order::big, bits>>
+    template <typename T, std::size_t bits>
+    struct get_info<binary_lit_parser<T, endian::order::big, bits>>
     {
         typedef std::string result_type;
-        std::string operator()(binary_lit_parser<V, T, endian::order::big, bits> const&) const
+        std::string operator()(binary_lit_parser<T, endian::order::big, bits> const&) const
         {
             return "big-endian binary";
         }

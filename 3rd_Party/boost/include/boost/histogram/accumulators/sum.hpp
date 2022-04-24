@@ -43,11 +43,11 @@ public:
 
   /// Allow implicit conversion from sum<T>
   template <class T>
-  sum(const sum<T>& s) noexcept : sum(s.large(), s.small()) {}
+  sum(const sum<T>& s) noexcept : sum(s.large_part(), s.small_part()) {}
 
   /// Initialize sum explicitly with large and small parts
-  sum(const_reference large, const_reference small) noexcept
-      : large_(large), small_(small) {}
+  sum(const_reference large_part, const_reference small_part) noexcept
+      : large_(large_part), small_(small_part) {}
 
   /// Increment sum by one
   sum& operator++() noexcept { return operator+=(1); }
@@ -66,8 +66,8 @@ public:
       s = large_;
     }
     large_ += value;
-    l -= large_;
-    l += s;
+    l = l - large_;
+    l = l + s;
     small_ += l;
     return *this;
   }
@@ -96,10 +96,10 @@ public:
   value_type value() const noexcept { return large_ + small_; }
 
   /// Return large part of the sum.
-  const_reference large() const noexcept { return large_; }
+  const_reference large_part() const noexcept { return large_; }
 
   /// Return small part of the sum.
-  const_reference small() const noexcept { return small_; }
+  const_reference small_part() const noexcept { return small_; }
 
   // lossy conversion to value type must be explicit
   explicit operator value_type() const noexcept { return value(); }
@@ -155,6 +155,25 @@ public:
   }
 
   // end: extra operators
+
+  // windows.h illegially uses `#define small char` which breaks this now deprecated API
+#if !defined(small)
+
+  /// Return large part of the sum.
+  [[deprecated("use large_part() instead; "
+               "large() will be removed in boost-1.80")]] const_reference
+  large() const noexcept {
+    return large_;
+  }
+
+  /// Return small part of the sum.
+  [[deprecated("use small_part() instead; "
+               "small() will be removed in boost-1.80")]] const_reference
+  small() const noexcept {
+    return small_;
+  }
+
+#endif
 
 private:
   value_type large_{};

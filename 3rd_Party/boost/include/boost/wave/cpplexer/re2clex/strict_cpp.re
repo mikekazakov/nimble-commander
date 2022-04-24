@@ -53,13 +53,20 @@ NonDigit           = [a-zA-Z_] | UniversalChar;
     "case"          { BOOST_WAVE_RET(T_CASE); }
     "catch"         { BOOST_WAVE_RET(T_CATCH); }
     "char"          { BOOST_WAVE_RET(T_CHAR); }
+    "char8_t"       { BOOST_WAVE_RET(s->act_in_cpp2a_mode ? T_CHAR8_T : T_IDENTIFIER); }
     "char16_t"      { BOOST_WAVE_RET(s->act_in_cpp0x_mode ? T_CHAR16_T : T_IDENTIFIER); }
     "char32_t"      { BOOST_WAVE_RET(s->act_in_cpp0x_mode ? T_CHAR32_T : T_IDENTIFIER); }
     "class"         { BOOST_WAVE_RET(T_CLASS); }
+    "concept"       { BOOST_WAVE_RET(s->act_in_cpp2a_mode ? T_CONCEPT : T_IDENTIFIER); }
     "const"         { BOOST_WAVE_RET(T_CONST); }
+    "consteval"     { BOOST_WAVE_RET(s->act_in_cpp2a_mode ? T_CONSTEVAL : T_IDENTIFIER); }
     "constexpr"     { BOOST_WAVE_RET(s->act_in_cpp0x_mode ? T_CONSTEXPR : T_IDENTIFIER); }
+    "constinit"     { BOOST_WAVE_RET(s->act_in_cpp2a_mode ? T_CONSTINIT : T_IDENTIFIER); }
     "const_cast"    { BOOST_WAVE_RET(T_CONSTCAST); }
     "continue"      { BOOST_WAVE_RET(T_CONTINUE); }
+    "co_await"      { BOOST_WAVE_RET(s->act_in_cpp2a_mode ? T_CO_AWAIT : T_IDENTIFIER); }
+    "co_return"     { BOOST_WAVE_RET(s->act_in_cpp2a_mode ? T_CO_RETURN : T_IDENTIFIER); }
+    "co_yield"      { BOOST_WAVE_RET(s->act_in_cpp2a_mode ? T_CO_YIELD : T_IDENTIFIER); }
     "decltype"      { BOOST_WAVE_RET(s->act_in_cpp0x_mode ? T_DECLTYPE : T_IDENTIFIER); }
     "default"       { BOOST_WAVE_RET(T_DEFAULT); }
     "delete"        { BOOST_WAVE_RET(T_DELETE); }
@@ -92,6 +99,7 @@ NonDigit           = [a-zA-Z_] | UniversalChar;
     "public"        { BOOST_WAVE_RET(T_PUBLIC); }
     "register"      { BOOST_WAVE_RET(T_REGISTER); }
     "reinterpret_cast" { BOOST_WAVE_RET(T_REINTERPRETCAST); }
+    "requires"      { BOOST_WAVE_RET(s->act_in_cpp2a_mode ? T_REQUIRES : T_IDENTIFIER); }
     "return"        { BOOST_WAVE_RET(T_RETURN); }
     "short"         { BOOST_WAVE_RET(T_SHORT); }
     "signed"        { BOOST_WAVE_RET(T_SIGNED); }
@@ -223,6 +231,16 @@ NonDigit           = [a-zA-Z_] | UniversalChar;
     "=="            { BOOST_WAVE_RET(T_EQUAL); }
     "!="            { BOOST_WAVE_RET(T_NOTEQUAL); }
     "not_eq"        { BOOST_WAVE_RET(s->act_in_c99_mode ? T_IDENTIFIER : T_NOTEQUAL_ALT); }
+    "<=>"
+        {
+            if (s->act_in_cpp2a_mode) {
+                BOOST_WAVE_RET(T_SPACESHIP);
+            }
+            else {
+                --YYCURSOR;
+                BOOST_WAVE_RET(T_LESSEQUAL);
+            }
+        }
     "<="            { BOOST_WAVE_RET(T_LESSEQUAL); }
     ">="            { BOOST_WAVE_RET(T_GREATEREQUAL); }
     "&&"            { BOOST_WAVE_RET(T_ANDAND); }

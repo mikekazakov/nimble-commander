@@ -31,10 +31,12 @@ namespace mp11
 namespace detail
 {
 
+using std::get;
+
 template<class F, class Tp, std::size_t... J> BOOST_MP11_CONSTEXPR auto tuple_apply_impl( F && f, Tp && tp, integer_sequence<std::size_t, J...> )
-    -> decltype( std::forward<F>(f)( std::get<J>(std::forward<Tp>(tp))... ) )
+    -> decltype( std::forward<F>(f)( get<J>(std::forward<Tp>(tp))... ) )
 {
-    return std::forward<F>(f)( std::get<J>(std::forward<Tp>(tp))... );
+    return std::forward<F>(f)( get<J>(std::forward<Tp>(tp))... );
 }
 
 } // namespace detail
@@ -53,7 +55,7 @@ namespace detail
 
 template<class T, class Tp, std::size_t... J> BOOST_MP11_CONSTEXPR T construct_from_tuple_impl( Tp && tp, integer_sequence<std::size_t, J...> )
 {
-    return T( std::get<J>(std::forward<Tp>(tp))... );
+    return T( get<J>(std::forward<Tp>(tp))... );
 }
 
 } // namespace detail
@@ -72,7 +74,7 @@ namespace detail
 template<class Tp, std::size_t... J, class F> BOOST_MP11_CONSTEXPR F tuple_for_each_impl( Tp && tp, integer_sequence<std::size_t, J...>, F && f )
 {
     using A = int[sizeof...(J)];
-    return (void)A{ ((void)f(std::get<J>(std::forward<Tp>(tp))), 0)... }, std::forward<F>(f);
+    return (void)A{ ((void)f(get<J>(std::forward<Tp>(tp))), 0)... }, std::forward<F>(f);
 }
 
 template<class Tp, class F> BOOST_MP11_CONSTEXPR F tuple_for_each_impl( Tp && /*tp*/, integer_sequence<std::size_t>, F && f )
@@ -106,9 +108,9 @@ template<class... T> BOOST_MP11_CONSTEXPR auto tp_forward_v( T&&... t ) -> std::
 
 template<std::size_t J, class... Tp>
 BOOST_MP11_CONSTEXPR auto tp_extract( Tp&&... tp )
-    -> decltype( tp_forward_r( std::get<J>( std::forward<Tp>( tp ) )... ) )
+    -> decltype( tp_forward_r( get<J>( std::forward<Tp>( tp ) )... ) )
 {
-    return tp_forward_r( std::get<J>( std::forward<Tp>( tp ) )... );
+    return tp_forward_r( get<J>( std::forward<Tp>( tp ) )... );
 }
 
 #if !BOOST_MP11_WORKAROUND( BOOST_MP11_MSVC, < 1900 )
@@ -124,23 +126,23 @@ BOOST_MP11_CONSTEXPR auto tuple_transform_impl( integer_sequence<std::size_t, J.
 
 template<class F, class Tp1, std::size_t... J>
 BOOST_MP11_CONSTEXPR auto tuple_transform_impl( integer_sequence<std::size_t, J...>, F const& f, Tp1&& tp1 )
-    -> decltype( tp_forward_v( f( std::get<J>( std::forward<Tp1>(tp1) ) )... ) )
+    -> decltype( tp_forward_v( f( get<J>( std::forward<Tp1>(tp1) ) )... ) )
 {
-    return tp_forward_v( f( std::get<J>( std::forward<Tp1>(tp1) ) )... );
+    return tp_forward_v( f( get<J>( std::forward<Tp1>(tp1) ) )... );
 }
 
 template<class F, class Tp1, class Tp2, std::size_t... J>
 BOOST_MP11_CONSTEXPR auto tuple_transform_impl( integer_sequence<std::size_t, J...>, F const& f, Tp1&& tp1, Tp2&& tp2 )
-    -> decltype( tp_forward_v( f( std::get<J>( std::forward<Tp1>(tp1) ), std::get<J>( std::forward<Tp2>(tp2) ) )... ) )
+    -> decltype( tp_forward_v( f( get<J>( std::forward<Tp1>(tp1) ), get<J>( std::forward<Tp2>(tp2) ) )... ) )
 {
-    return tp_forward_v( f( std::get<J>( std::forward<Tp1>(tp1) ), std::get<J>( std::forward<Tp2>(tp2) ) )... );
+    return tp_forward_v( f( get<J>( std::forward<Tp1>(tp1) ), get<J>( std::forward<Tp2>(tp2) ) )... );
 }
 
 template<class F, class Tp1, class Tp2, class Tp3, std::size_t... J>
 BOOST_MP11_CONSTEXPR auto tuple_transform_impl( integer_sequence<std::size_t, J...>, F const& f, Tp1&& tp1, Tp2&& tp2, Tp3&& tp3 )
-    -> decltype( tp_forward_v( f( std::get<J>( std::forward<Tp1>(tp1) ), std::get<J>( std::forward<Tp2>(tp2) ), std::get<J>( std::forward<Tp3>(tp3) ) )... ) )
+    -> decltype( tp_forward_v( f( get<J>( std::forward<Tp1>(tp1) ), get<J>( std::forward<Tp2>(tp2) ), get<J>( std::forward<Tp3>(tp3) ) )... ) )
 {
-    return tp_forward_v( f( std::get<J>( std::forward<Tp1>(tp1) ), std::get<J>( std::forward<Tp2>(tp2) ), std::get<J>( std::forward<Tp3>(tp3) ) )... );
+    return tp_forward_v( f( get<J>( std::forward<Tp1>(tp1) ), get<J>( std::forward<Tp2>(tp2) ), get<J>( std::forward<Tp3>(tp3) ) )... );
 }
 
 #endif // !BOOST_MP11_WORKAROUND( BOOST_MP11_MSVC, < 1900 )

@@ -8,6 +8,7 @@
 #define BOOST_HISTOGRAM_ACCUMULATORS_WEIGHTED_SUM_HPP
 
 #include <boost/core/nvp.hpp>
+#include <boost/histogram/detail/square.hpp>
 #include <boost/histogram/fwd.hpp> // for weighted_sum<>
 #include <type_traits>
 
@@ -44,10 +45,9 @@ public:
   }
 
   /// Increment by weight.
-  template <class T>
-  weighted_sum& operator+=(const weight_type<T>& w) {
+  weighted_sum& operator+=(const weight_type<value_type>& w) {
     sum_of_weights_ += w.value;
-    sum_of_weights_squared_ += w.value * w.value;
+    sum_of_weights_squared_ += detail::square(w.value);
     return *this;
   }
 
@@ -55,6 +55,20 @@ public:
   weighted_sum& operator+=(const weighted_sum& rhs) {
     sum_of_weights_ += rhs.sum_of_weights_;
     sum_of_weights_squared_ += rhs.sum_of_weights_squared_;
+    return *this;
+  }
+
+  /// Divide by another weighted sum.
+  weighted_sum& operator/=(const weighted_sum& rhs) {
+    const auto v = sum_of_weights_;
+    const auto w = sum_of_weights_squared_;
+    const auto rv = rhs.sum_of_weights_;
+    const auto rw = rhs.sum_of_weights_squared_;
+    sum_of_weights_ /= rv;
+    // error propagation for independent a, b:
+    // c = a / b: var(c) = (var(a)/a^2 + var(b)/b^2) c^2
+    using detail::square;
+    sum_of_weights_squared_ = (w / square(v) + rw / square(rv)) * square(sum_of_weights_);
     return *this;
   }
 

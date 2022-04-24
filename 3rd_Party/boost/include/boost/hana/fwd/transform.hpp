@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Map a function over a `Functor`.
     //! @ingroup group-Functor
     //!
@@ -50,8 +50,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr auto operator()(Xs&& xs, F&& f) const;
     };
 
-    constexpr transform_t transform{};
+    BOOST_HANA_INLINE_VARIABLE constexpr transform_t transform{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_TRANSFORM_HPP

@@ -8,6 +8,7 @@
 #define BOOST_HISTOGRAM_ACCUMULATORS_MEAN_HPP
 
 #include <boost/core/nvp.hpp>
+#include <boost/histogram/detail/square.hpp>
 #include <boost/histogram/fwd.hpp> // for mean<>
 #include <boost/throw_exception.hpp>
 #include <cassert>
@@ -31,16 +32,16 @@ public:
 
   mean() = default;
 
-  /// Allow implicit conversion from mean<T>
+  /// Allow implicit conversion from mean<T>.
   template <class T>
   mean(const mean<T>& o) noexcept
       : sum_{o.sum_}, mean_{o.mean_}, sum_of_deltas_squared_{o.sum_of_deltas_squared_} {}
 
-  /// Initialize to external count, mean, and variance
+  /// Initialize to external count, mean, and variance.
   mean(const_reference n, const_reference mean, const_reference variance) noexcept
       : sum_(n), mean_(mean), sum_of_deltas_squared_(variance * (n - 1)) {}
 
-  /// Insert sample x
+  /// Insert sample x.
   void operator()(const_reference x) noexcept {
     sum_ += static_cast<value_type>(1);
     const auto delta = x - mean_;
@@ -48,7 +49,7 @@ public:
     sum_of_deltas_squared_ += delta * (x - mean_);
   }
 
-  /// Insert sample x with weight w
+  /// Insert sample x with weight w.
   void operator()(const weight_type<value_type>& w, const_reference x) noexcept {
     sum_ += w.value;
     const auto delta = x - mean_;
@@ -56,18 +57,43 @@ public:
     sum_of_deltas_squared_ += w.value * delta * (x - mean_);
   }
 
-  /// Add another mean accumulator
+  /// Add another mean accumulator.
   mean& operator+=(const mean& rhs) noexcept {
-    if (sum_ != 0 || rhs.sum_ != 0) {
-      const auto tmp = mean_ * sum_ + rhs.mean_ * rhs.sum_;
-      sum_ += rhs.sum_;
-      mean_ = tmp / sum_;
-    }
+    if (rhs.sum_ == 0) return *this;
+
+    /*
+      sum_of_deltas_squared
+        = sum_i (x_i - mu)^2
+        = sum_i (x_i - mu)^2 + sum_k (x_k - mu)^2
+        = sum_i (x_i - mu1 + (mu1 - mu))^2 + sum_k (x_k - mu2 + (mu2 - mu))^2
+
+      first part:
+      sum_i (x_i - mu1 + (mu1 - mu))^2
+        = sum_i (x_i - mu1)^2 + n1 (mu1 - mu))^2 + 2 (mu1 - mu) sum_i (x_i - mu1)
+        = sum_i (x_i - mu1)^2 + n1 (mu1 - mu))^2
+      since sum_i (x_i - mu1) = n1 mu1 - n1 mu1 = 0
+
+      Putting it together:
+      sum_of_deltas_squared
+        = sum_of_deltas_squared_1 + n1 (mu1 - mu))^2
+        + sum_of_deltas_squared_2 + n2 (mu2 - mu))^2
+    */
+
+    const auto n1 = sum_;
+    const auto mu1 = mean_;
+    const auto n2 = rhs.sum_;
+    const auto mu2 = rhs.mean_;
+
+    sum_ += rhs.sum_;
+    mean_ = (n1 * mu1 + n2 * mu2) / sum_;
     sum_of_deltas_squared_ += rhs.sum_of_deltas_squared_;
+    sum_of_deltas_squared_ += n1 * detail::square(mean_ - mu1);
+    sum_of_deltas_squared_ += n2 * detail::square(mean_ - mu2);
+
     return *this;
   }
 
-  /** Scale by value
+  /** Scale by value.
 
    This acts as if all samples were scaled by the value.
   */
@@ -84,13 +110,24 @@ public:
 
   bool operator!=(const mean& rhs) const noexcept { return !operator==(rhs); }
 
-  /// Return how many samples were accumulated
+  /** Return how many samples were accumulated.
+
+    count() should be used to check whether value() and variance() are defined,
+    see documentation of value() and variance(). count() can be used to compute
+    the variance of the mean by dividing variance() by count().
+  */
   const_reference count() const noexcept { return sum_; }
 
-  /// Return mean value of accumulated samples
+  /** Return mean value of accumulated samples.
+
+    The result is undefined, if `count() < 1`.
+  */
   const_reference value() const noexcept { return mean_; }
 
-  /// Return variance of accumulated samples
+  /** Return variance of accumulated samples.
+
+    The result is undefined, if `count() < 2`.
+  */
   value_type variance() const noexcept { return sum_of_deltas_squared_ / (sum_ - 1); }
 
   template <class Archive>

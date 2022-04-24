@@ -13,7 +13,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/config.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! @ingroup group-core
     //! Returns whether the tag of an object matches a given tag.
     //!
@@ -43,7 +43,7 @@ BOOST_HANA_NAMESPACE_BEGIN
     struct is_a_t;
 
     template <typename Tag, typename ...T>
-    constexpr is_a_t<Tag, T...> is_a{};
+    BOOST_HANA_INLINE_VARIABLE constexpr is_a_t<Tag, T...> is_a{};
 #endif
 
     //! @ingroup group-core
@@ -54,8 +54,8 @@ BOOST_HANA_NAMESPACE_BEGIN
     constexpr auto is_an = is_a<Tag, T...>;
 #else
     template <typename Tag, typename ...T>
-    constexpr is_a_t<Tag, T...> is_an{};
+    BOOST_HANA_INLINE_VARIABLE constexpr is_a_t<Tag, T...> is_an{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_CORE_IS_A_HPP

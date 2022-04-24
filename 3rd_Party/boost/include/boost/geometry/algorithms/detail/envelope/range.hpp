@@ -4,8 +4,8 @@
 // Copyright (c) 2008-2015 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2015, 2016, 2018.
-// Modifications copyright (c) 2015-2018, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015-2021.
+// Modifications copyright (c) 2015-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -28,7 +28,7 @@
 #include <boost/range/end.hpp>
 
 #include <boost/geometry/algorithms/is_empty.hpp>
-
+#include <boost/geometry/algorithms/detail/dummy_geometries.hpp>
 #include <boost/geometry/algorithms/detail/envelope/initialize.hpp>
 #include <boost/geometry/algorithms/detail/expand/box.hpp>
 #include <boost/geometry/algorithms/detail/expand/point.hpp>
@@ -47,40 +47,10 @@ namespace detail { namespace envelope
 // implementation for simple ranges
 struct envelope_range
 {
-    template <typename Iterator, typename Box, typename Strategy>
-    static inline void apply(Iterator it,
-                             Iterator last,
-                             Box& mbr,
-                             Strategy const& strategy)
+    template <typename Range, typename Box, typename Strategies>
+    static inline void apply(Range const& range, Box& mbr, Strategies const& strategies)
     {
-        typedef typename std::iterator_traits<Iterator>::value_type value_type;
-
-        // initialize MBR
-        initialize<Box, 0, dimension<Box>::value>::apply(mbr);
-
-        if (it != last)
-        {
-            // initialize box with first element in range
-            dispatch::envelope
-                <
-                    value_type
-                >::apply(*it, mbr, strategy.get_element_envelope_strategy());
-
-            // consider now the remaining elements in the range (if any)
-            for (++it; it != last; ++it)
-            {
-                dispatch::expand
-                    <
-                        Box, value_type
-                    >::apply(mbr, *it, strategy.get_element_expand_strategy());
-            }
-        }
-    }
-
-    template <typename Range, typename Box, typename Strategy>
-    static inline void apply(Range const& range, Box& mbr, Strategy const& strategy)
-    {
-        return apply(Strategy::begin(range), Strategy::end(range), mbr, strategy);
+        strategies.envelope(range, mbr).apply(range, mbr);
     }
 };
 
@@ -89,31 +59,32 @@ struct envelope_range
 template <typename EnvelopePolicy>
 struct envelope_multi_range
 {
-    template <typename MultiRange, typename Box, typename Strategy>
+    template <typename MultiRange, typename Box, typename Strategies>
     static inline void apply(MultiRange const& multirange,
                              Box& mbr,
-                             Strategy const& strategy)
+                             Strategies const& strategies)
     {
-        apply(boost::begin(multirange), boost::end(multirange), mbr, strategy);
+        using strategy_t = decltype(strategies.envelope(multirange, mbr));
+        apply<strategy_t>(multirange, mbr, strategies);
     }
 
-    template <typename Iter, typename Box, typename Strategy>
-    static inline void apply(Iter it,
-                             Iter last,
+    template <typename Strategy, typename MultiRange, typename Box, typename Strategies>
+    static inline void apply(MultiRange const& multirange,
                              Box& mbr,
-                             Strategy const& strategy)
+                             Strategies const& strategies)
     {
-        typename Strategy::template multi_state<Box> state;
-        for (; it != last; ++it)
+        typename Strategy::template state<Box> state;
+        auto const end = boost::end(multirange);
+        for (auto it = boost::begin(multirange); it != end; ++it)
         {
             if (! geometry::is_empty(*it))
             {
                 Box helper_mbr;
-                EnvelopePolicy::apply(*it, helper_mbr, strategy);
-                state.apply(helper_mbr);
+                EnvelopePolicy::apply(*it, helper_mbr, strategies);
+                Strategy::apply(state, helper_mbr);
             }
         }
-        state.result(mbr);
+        Strategy::result(state, mbr);
     }
 };
 

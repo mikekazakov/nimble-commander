@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Apply a function to an initial state while some predicate is satisfied.
     //! @ingroup group-Logical
     //!
@@ -64,8 +64,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr decltype(auto) operator()(Pred&& pred, State&& state, F&& f) const;
     };
 
-    constexpr while_t while_{};
+    BOOST_HANA_INLINE_VARIABLE constexpr while_t while_{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_WHILE_HPP

@@ -55,7 +55,7 @@ namespace boost { namespace spirit { namespace karma { namespace detail
           , Delimiter const& d, unused_type, bool&)
         {
 #if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1600))
-            component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
+            (void)component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
 #endif
             // return true if any of the generators succeed
             return component.generate(sink, ctx, d, unused);
@@ -87,7 +87,7 @@ namespace boost { namespace spirit { namespace karma { namespace detail
           , Context& ctx, Delimiter const& d, Attribute const& attr, bool&)
         {
 #if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1600))
-            component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
+            (void)component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
 #endif
             return call(component, sink, ctx, d, attr
               , spirit::traits::not_is_variant_or_variant_in_optional<Attribute, karma::domain>());
@@ -99,7 +99,7 @@ namespace boost { namespace spirit { namespace karma { namespace detail
           , Context& ctx, Delimiter const& d, Attribute const& attr, mpl::true_)
         {
 #if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1600))
-            component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
+            (void)component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
 #endif
             return component.generate(sink, ctx, d, attr);
         }
@@ -110,7 +110,7 @@ namespace boost { namespace spirit { namespace karma { namespace detail
           , Context& ctx, Delimiter const& d, Attribute const& attr, mpl::false_)
         {
 #if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1600))
-            component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
+            (void)component; // suppresses warning: C4100: 'component' : unreferenced formal parameter
 #endif
             typedef
                 traits::compute_compatible_component<Expected, Attribute, domain>

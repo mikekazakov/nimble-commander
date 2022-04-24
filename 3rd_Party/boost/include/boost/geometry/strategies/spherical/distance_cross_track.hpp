@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2014 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014-2019.
-// Modifications copyright (c) 2014-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2021.
+// Modifications copyright (c) 2014-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -17,14 +17,14 @@
 #define BOOST_GEOMETRY_STRATEGIES_SPHERICAL_DISTANCE_CROSS_TRACK_HPP
 
 #include <algorithm>
+#include <type_traits>
 
 #include <boost/config.hpp>
 #include <boost/concept_check.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_void.hpp>
 
 #include <boost/geometry/core/cs.hpp>
 #include <boost/geometry/core/access.hpp>
+#include <boost/geometry/core/coordinate_promotion.hpp>
 #include <boost/geometry/core/radian_access.hpp>
 #include <boost/geometry/core/tags.hpp>
 
@@ -37,7 +37,6 @@
 #include <boost/geometry/strategies/spherical/intersection.hpp>
 
 #include <boost/geometry/util/math.hpp>
-#include <boost/geometry/util/promote_floating_point.hpp>
 #include <boost/geometry/util/select_calculation_type.hpp>
 
 #ifdef BOOST_GEOMETRY_DEBUG_CROSS_TRACK
@@ -50,6 +49,82 @@ namespace boost { namespace geometry
 
 namespace strategy { namespace distance
 {
+
+#ifndef DOXYGEN_NO_DETAIL
+namespace detail
+{
+    template <typename CalculationType>
+    struct compute_cross_track_pair
+    {
+        template <typename Point, typename PointOfSegment>
+        static inline auto apply(Point const& p, 
+                                 PointOfSegment const& sp1, 
+                                 PointOfSegment const& sp2)
+        {            
+            CalculationType lon1 = geometry::get_as_radian<0>(sp1);
+            CalculationType lat1 = geometry::get_as_radian<1>(sp1);
+            CalculationType lon2 = geometry::get_as_radian<0>(sp2);
+            CalculationType lat2 = geometry::get_as_radian<1>(sp2);
+            CalculationType lon = geometry::get_as_radian<0>(p);
+            CalculationType lat = geometry::get_as_radian<1>(p);
+
+            CalculationType const crs_AD = geometry::formula::spherical_azimuth
+                <
+                    CalculationType, 
+                    false
+                >(lon1, lat1, lon, lat).azimuth;
+
+            auto result = geometry::formula::spherical_azimuth
+                <
+                    CalculationType, 
+                    true
+                >(lon1, lat1, lon2, lat2);
+
+            CalculationType crs_AB = result.azimuth;
+            CalculationType crs_BA = result.reverse_azimuth - 
+                geometry::math::pi<CalculationType>();
+
+            CalculationType crs_BD = geometry::formula::spherical_azimuth
+                <
+                    CalculationType, 
+                    false
+                >(lon2, lat2, lon, lat).azimuth;
+
+            CalculationType d_crs1 = crs_AD - crs_AB;
+            CalculationType d_crs2 = crs_BD - crs_BA;
+
+            return std::pair<CalculationType, CalculationType>(d_crs1, d_crs2);
+        }
+    };
+
+    struct compute_cross_track_distance
+    {
+        template <typename CalculationType>
+        static inline auto apply(CalculationType const& d_crs1, 
+                                 CalculationType const& d1)
+        {       
+            CalculationType const half(0.5);
+            CalculationType const quarter(0.25);
+
+            CalculationType sin_d_crs1 = sin(d_crs1);
+            /*
+              This is the straightforward obvious way to continue:
+              
+              return_type discriminant
+                  = 1.0 - 4.0 * (d1 - d1 * d1) * sin_d_crs1 * sin_d_crs1;
+              return 0.5 - 0.5 * math::sqrt(discriminant);
+            
+              Below we optimize the number of arithmetic operations
+              and account for numerical robustness:
+            */
+            CalculationType d1_x_sin = d1 * sin_d_crs1;
+            CalculationType d = d1_x_sin * (sin_d_crs1 - d1_x_sin);
+            return d / (half + math::sqrt(quarter - d));
+        }
+    };
+
+} 
+#endif // DOXYGEN_NO_DETAIL
 
 
 namespace comparable
@@ -330,29 +405,7 @@ template
 >
 class cross_track
 {
-public :
-    typedef within::spherical_point_point equals_point_point_strategy_type;
-
-    typedef intersection::spherical_segments
-        <
-            CalculationType
-        > relate_segment_segment_strategy_type;
-
-    static inline relate_segment_segment_strategy_type get_relate_segment_segment_strategy()
-    {
-        return relate_segment_segment_strategy_type();
-    }
-
-    typedef within::spherical_winding
-        <
-            void, void, CalculationType
-        > point_in_geometry_strategy_type;
-
-    static inline point_in_geometry_strategy_type get_point_in_geometry_strategy()
-    {
-        return point_in_geometry_strategy_type();
-    }
-
+public:
     template <typename Point, typename PointOfSegment>
     struct return_type
         : promote_floating_point
@@ -366,10 +419,9 @@ public :
           >
     {};
 
-    typedef typename Strategy::radius_type radius_type;
+    using radius_type = typename Strategy::radius_type;
 
-    inline cross_track()
-    {}
+    cross_track() = default;
 
     explicit inline cross_track(typename Strategy::radius_type const& r)
         : m_strategy(r)
@@ -396,7 +448,7 @@ public :
             );
 #endif
 
-        typedef typename return_type<Point, PointOfSegment>::type return_type;
+        using return_type = typename return_type<Point, PointOfSegment>::type;
 
         // http://williams.best.vwh.net/avform.htm#XTE
         return_type d1 = m_strategy.apply(sp1, p);
@@ -410,31 +462,12 @@ public :
 
         return_type d2 = m_strategy.apply(sp2, p);
 
-        return_type lon1 = geometry::get_as_radian<0>(sp1);
-        return_type lat1 = geometry::get_as_radian<1>(sp1);
-        return_type lon2 = geometry::get_as_radian<0>(sp2);
-        return_type lat2 = geometry::get_as_radian<1>(sp2);
-        return_type lon = geometry::get_as_radian<0>(p);
-        return_type lat = geometry::get_as_radian<1>(p);
-
-        return_type crs_AD = geometry::formula::spherical_azimuth<return_type, false>
-                             (lon1, lat1, lon, lat).azimuth;
-
-        geometry::formula::result_spherical<return_type> result =
-                geometry::formula::spherical_azimuth<return_type, true>
-                    (lon1, lat1, lon2, lat2);
-        return_type crs_AB = result.azimuth;
-        return_type crs_BA = result.reverse_azimuth - geometry::math::pi<return_type>();
-
-        return_type crs_BD = geometry::formula::spherical_azimuth<return_type, false>
-                             (lon2, lat2, lon, lat).azimuth;
-
-        return_type d_crs1 = crs_AD - crs_AB;
-        return_type d_crs2 = crs_BD - crs_BA;
+        auto d_crs_pair = detail::compute_cross_track_pair<return_type>::apply(
+            p, sp1, sp2);
 
         // d1, d2, d3 are in principle not needed, only the sign matters
-        return_type projection1 = cos( d_crs1 ) * d1 / d3;
-        return_type projection2 = cos( d_crs2 ) * d2 / d3;
+        return_type projection1 = cos(d_crs_pair.first) * d1 / d3;
+        return_type projection2 = cos(d_crs_pair.second) * d2 / d3;
 
 #ifdef BOOST_GEOMETRY_DEBUG_CROSS_TRACK
         std::cout << "Course " << dsv(sp1) << " to " << dsv(p) << " "
@@ -465,30 +498,14 @@ public :
                       << " d2: " << (d2 * radius())
                       << std::endl;
 #endif
-            return_type const half(0.5);
-            return_type const quarter(0.25);
-
-            return_type sin_d_crs1 = sin(d_crs1);
-            /*
-              This is the straightforward obvious way to continue:
-              
-              return_type discriminant
-                  = 1.0 - 4.0 * (d1 - d1 * d1) * sin_d_crs1 * sin_d_crs1;
-              return 0.5 - 0.5 * math::sqrt(discriminant);
-            
-              Below we optimize the number of arithmetic operations
-              and account for numerical robustness:
-            */
-            return_type d1_x_sin = d1 * sin_d_crs1;
-            return_type d = d1_x_sin * (sin_d_crs1 - d1_x_sin);
-            return d / (half + math::sqrt(quarter - d));
+            return detail::compute_cross_track_distance::apply(
+                d_crs_pair.first, d1);
         }
         else
         {
 #ifdef BOOST_GEOMETRY_DEBUG_CROSS_TRACK
             std::cout << "Projection OUTSIDE the segment" << std::endl;
 #endif
-
             // Return shortest distance, project either on point sp1 or sp2
             return return_type( (std::min)( d1 , d2 ) );
         }
@@ -532,28 +549,7 @@ template
 class cross_track
 {
 public :
-    typedef within::spherical_point_point equals_point_point_strategy_type;
-
-    typedef intersection::spherical_segments
-        <
-            CalculationType
-        > relate_segment_segment_strategy_type;
-
-    static inline relate_segment_segment_strategy_type get_relate_segment_segment_strategy()
-    {
-        return relate_segment_segment_strategy_type();
-    }
-
-    typedef within::spherical_winding
-        <
-            void, void, CalculationType
-        > point_in_geometry_strategy_type;
-
-    static inline point_in_geometry_strategy_type get_point_in_geometry_strategy()
-    {
-        return point_in_geometry_strategy_type();
-    }
-
+    
     template <typename Point, typename PointOfSegment>
     struct return_type
         : promote_floating_point
@@ -567,7 +563,7 @@ public :
           >
     {};
 
-    typedef typename Strategy::radius_type radius_type;
+    using radius_type = typename Strategy::radius_type;
 
     inline cross_track()
     {}
@@ -586,8 +582,9 @@ public :
 
 
     template <typename Point, typename PointOfSegment>
-    inline typename return_type<Point, PointOfSegment>::type
-    apply(Point const& p, PointOfSegment const& sp1, PointOfSegment const& sp2) const
+    inline auto apply(Point const& p, 
+                      PointOfSegment const& sp1, 
+                      PointOfSegment const& sp2) const
     {
 
 #if !defined(BOOST_MSVC)
@@ -596,13 +593,13 @@ public :
                 (concepts::PointDistanceStrategy<Strategy, Point, PointOfSegment>)
             );
 #endif
-        typedef typename return_type<Point, PointOfSegment>::type return_type;
-        typedef cross_track<CalculationType, Strategy> this_type;
+        using return_type = typename return_type<Point, PointOfSegment>::type;
+        using this_type = cross_track<CalculationType, Strategy>;
 
-        typedef typename services::comparable_type
+        using comparable_type = typename services::comparable_type
             <
                 this_type
-            >::type comparable_type;
+            >::type;
 
         comparable_type cstrategy
             = services::get_comparable<this_type>::apply(m_strategy);
@@ -635,7 +632,7 @@ namespace services
 template <typename CalculationType, typename Strategy>
 struct tag<cross_track<CalculationType, Strategy> >
 {
-    typedef strategy_tag_distance_point_segment type;
+    using type = strategy_tag_distance_point_segment;
 };
 
 
@@ -648,10 +645,10 @@ struct return_type<cross_track<CalculationType, Strategy>, P, PS>
 template <typename CalculationType, typename Strategy>
 struct comparable_type<cross_track<CalculationType, Strategy> >
 {
-    typedef comparable::cross_track
+    using type = comparable::cross_track
         <
             CalculationType, typename comparable_type<Strategy>::type
-        >  type;
+        > ;
 };
 
 
@@ -662,10 +659,10 @@ template
 >
 struct get_comparable<cross_track<CalculationType, Strategy> >
 {
-    typedef typename comparable_type
+    using comparable_type = typename comparable_type
         <
             cross_track<CalculationType, Strategy>
-        >::type comparable_type;
+        >::type;
 public :
     static inline comparable_type
     apply(cross_track<CalculationType, Strategy> const& strategy)
@@ -685,10 +682,10 @@ template
 struct result_from_distance<cross_track<CalculationType, Strategy>, P, PS>
 {
 private :
-    typedef typename cross_track
+    using return_type = typename cross_track
         <
             CalculationType, Strategy
-        >::template return_type<P, PS>::type return_type;
+        >::template return_type<P, PS>::type;
 public :
     template <typename T>
     static inline return_type
@@ -703,7 +700,7 @@ public :
 template <typename RadiusType, typename CalculationType>
 struct tag<comparable::cross_track<RadiusType, CalculationType> >
 {
-    typedef strategy_tag_distance_point_segment type;
+    using type = strategy_tag_distance_point_segment;
 };
 
 
@@ -725,7 +722,7 @@ struct return_type<comparable::cross_track<RadiusType, CalculationType>, P, PS>
 template <typename RadiusType, typename CalculationType>
 struct comparable_type<comparable::cross_track<RadiusType, CalculationType> >
 {
-    typedef comparable::cross_track<RadiusType, CalculationType> type;
+    using type = comparable::cross_track<RadiusType, CalculationType>;
 };
 
 
@@ -733,7 +730,7 @@ template <typename RadiusType, typename CalculationType>
 struct get_comparable<comparable::cross_track<RadiusType, CalculationType> >
 {
 private :
-    typedef comparable::cross_track<RadiusType, CalculationType> this_type;
+    using this_type = comparable::cross_track<RadiusType, CalculationType>;
 public :
     static inline this_type apply(this_type const& input)
     {
@@ -755,8 +752,8 @@ struct result_from_distance
     >
 {
 private :
-    typedef comparable::cross_track<RadiusType, CalculationType> strategy_type;
-    typedef typename return_type<strategy_type, P, PS>::type return_type;
+    using strategy_type = comparable::cross_track<RadiusType, CalculationType>;
+    using return_type = typename return_type<strategy_type, P, PS>::type;
 public :
     template <typename T>
     static inline return_type apply(strategy_type const& strategy,
@@ -785,16 +782,16 @@ struct default_strategy
     typedef cross_track
         <
             void,
-            typename boost::mpl::if_
+            std::conditional_t
                 <
-                    boost::is_void<Strategy>,
+                    std::is_void<Strategy>::value,
                     typename default_strategy
                         <
                             point_tag, Point, PointOfSegment,
                             spherical_polar_tag, spherical_polar_tag
                         >::type,
                     Strategy
-                >::type
+                >
         > type;
 };
 */
@@ -807,20 +804,20 @@ struct default_strategy
         Strategy
     >
 {
-    typedef cross_track
+    using type = cross_track
         <
             void,
-            typename boost::mpl::if_
+            std::conditional_t
                 <
-                    boost::is_void<Strategy>,
+                    std::is_void<Strategy>::value,
                     typename default_strategy
                         <
                             point_tag, point_tag, Point, PointOfSegment,
                             spherical_equatorial_tag, spherical_equatorial_tag
                         >::type,
                     Strategy
-                >::type
-        > type;
+                >
+        >;
 };
 
 
@@ -832,12 +829,12 @@ struct default_strategy
         Strategy
     >
 {
-    typedef typename default_strategy
+    using type = typename default_strategy
         <
             point_tag, segment_tag, Point, PointOfSegment,
             spherical_equatorial_tag, spherical_equatorial_tag,
             Strategy
-        >::type type;
+        >::type;
 };
 
 

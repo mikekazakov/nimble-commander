@@ -101,16 +101,16 @@ struct intlit_grammar :
                             (ch_p('X') | ch_p('x'))
                         >>  uint_parser<uint_literal_type, 16>()
                             [
-                                self.val = phx::arg1,
-                                phx::var(self.is_unsigned) = true
+                                (self.val = phx::arg1,
+                                 phx::var(self.is_unsigned) = true)
                             ]
                     ,
 
                     oct_lit =
                        !uint_parser<uint_literal_type, 8>()
                         [
-                            self.val = phx::arg1,
-                            phx::var(self.is_unsigned) = true
+                            (self.val = phx::arg1,
+                             phx::var(self.is_unsigned) = true)
                         ]
                     ,
 
@@ -129,7 +129,7 @@ struct intlit_grammar :
             BOOST_SPIRIT_DEBUG_TRACE_RULE(dec_lit, TRACE_INTLIT_GRAMMAR);
         }
 
-    // start rule of this grammar
+        // start rule of this grammar
         rule_t const& start() const
         { return int_lit; }
     };
@@ -158,13 +158,12 @@ uint_literal_type
 intlit_grammar_gen<TokenT>::evaluate(TokenT const &token,
     bool &is_unsigned)
 {
-    using namespace boost::spirit::classic;
-
-intlit_grammar g(is_unsigned);
-uint_literal_type result = 0;
-typename TokenT::string_type const &token_val = token.get_value();
-parse_info<typename TokenT::string_type::const_iterator> hit =
-    parse(token_val.begin(), token_val.end(), g[spirit_assign_actor(result)]);
+    intlit_grammar g(is_unsigned);
+    uint_literal_type result = 0;
+    typename TokenT::string_type const &token_val = token.get_value();
+    using boost::spirit::classic::parse_info;
+    parse_info<typename TokenT::string_type::const_iterator> hit =
+        parse(token_val.begin(), token_val.end(), g[spirit_assign_actor(result)]);
 
     if (!hit.hit) {
         BOOST_WAVE_THROW(preprocess_exception, ill_formed_integer_literal,

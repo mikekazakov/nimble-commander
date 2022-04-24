@@ -118,7 +118,7 @@ struct base_iteration_context
         type(type_)
     {}
 
-// the actual input stream
+    // the actual input stream
     IteratorT first;            // actual input stream position
     IteratorT last;             // end of input stream
     BOOST_WAVE_STRINGTYPE real_filename;  // real name of the current file

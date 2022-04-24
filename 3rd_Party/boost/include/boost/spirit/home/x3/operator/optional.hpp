@@ -21,6 +21,7 @@ namespace boost { namespace spirit { namespace x3
     struct optional : proxy<Subject, optional<Subject>>
     {
         typedef proxy<Subject, optional<Subject>> base_type;
+        static bool const is_pass_through_unary = false;
         static bool const handles_container = true;
 
         constexpr optional(Subject const& subject)

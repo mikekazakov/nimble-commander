@@ -9,7 +9,9 @@
 #include <memory>
 #include <boost/math/interpolators/detail/cubic_hermite_detail.hpp>
 
-namespace boost::math::interpolators {
+namespace boost {
+namespace math {
+namespace interpolators {
 
 template<class RandomAccessContainer>
 class pchip {
@@ -20,6 +22,7 @@ public:
           Real left_endpoint_derivative = std::numeric_limits<Real>::quiet_NaN(),
           Real right_endpoint_derivative = std::numeric_limits<Real>::quiet_NaN())
     {
+        using std::isnan;
         if (x.size() < 4)
         {
             throw std::domain_error("Must be at least four data points.");
@@ -115,5 +118,7 @@ private:
     std::shared_ptr<detail::cubic_hermite_detail<RandomAccessContainer>> impl_;
 };
 
+}
+}
 }
 #endif

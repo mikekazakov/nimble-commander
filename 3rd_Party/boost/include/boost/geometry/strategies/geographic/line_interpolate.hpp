@@ -1,8 +1,9 @@
 // Boost.Geometry
 
-// Copyright (c) 2018, Oracle and/or its affiliates.
+// Copyright (c) 2018-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -49,25 +50,11 @@ template
 class geographic
 {
 public:
-    geographic()
-        : m_spheroid()
-    {}
+    geographic() = default;
 
     explicit geographic(Spheroid const& spheroid)
         : m_spheroid(spheroid)
     {}
-
-    // point-point strategy getters
-    struct distance_pp_strategy
-    {
-        typedef distance::geographic<FormulaPolicy, Spheroid, CalculationType> type;
-    };
-
-    inline typename distance_pp_strategy::type get_distance_pp_strategy() const
-    {
-        typedef typename distance_pp_strategy::type distance_type;
-        return distance_type(m_spheroid);
-    }
 
     template <typename Point, typename Fraction, typename Distance>
     inline void apply(Point const& p0,
@@ -99,6 +86,11 @@ public:
 
         set_from_radian<0>(p, dir_r.lon2);
         set_from_radian<1>(p, dir_r.lat2);
+    }
+
+    inline Spheroid model() const
+    {
+        return m_spheroid;
     }
 
 private:

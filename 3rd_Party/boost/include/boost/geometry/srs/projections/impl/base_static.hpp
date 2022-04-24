@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2019.
-// Modifications copyright (c) 2017-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2020.
+// Modifications copyright (c) 2017-2020, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -22,12 +22,11 @@
 #include <string>
 
 #include <boost/geometry/core/assert.hpp>
+#include <boost/geometry/core/static_assert.hpp>
 #include <boost/geometry/core/tags.hpp>
 
 #include <boost/geometry/srs/projections/impl/pj_fwd.hpp>
 #include <boost/geometry/srs/projections/impl/pj_inv.hpp>
-
-#include <boost/mpl/assert.hpp>
 
 
 namespace boost { namespace geometry { namespace projections
@@ -41,9 +40,9 @@ namespace detail
 template <typename Prj, typename CSTag, typename SP, typename CT, typename P>
 struct static_projection_type
 {
-    BOOST_MPL_ASSERT_MSG((false),
-        NOT_IMPLEMENTED_FOR_THIS_PROJECTION_OR_CSTAG,
-        (Prj, CSTag));
+    BOOST_GEOMETRY_STATIC_ASSERT_FALSE(
+        "Not implemented for this projection or coordinate system.",
+        Prj, CSTag, SP, CT, P);
 };
 
 #define BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PROJECTION_F(PROJ, P_SPHXXX) \
@@ -129,9 +128,9 @@ public:
     template <typename XY, typename LL>
     inline bool inverse(XY const&, LL&) const
     {
-        BOOST_MPL_ASSERT_MSG((false),
-            PROJECTION_IS_NOT_INVERTABLE,
-            (Prj));
+        BOOST_GEOMETRY_STATIC_ASSERT_FALSE(
+            "This projection is not invertable.",
+            Prj);
         return false;
     }
 };

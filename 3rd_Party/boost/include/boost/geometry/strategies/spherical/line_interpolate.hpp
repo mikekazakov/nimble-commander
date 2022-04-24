@@ -1,8 +1,9 @@
 // Boost.Geometry
 
-// Copyright (c) 2018, Oracle and/or its affiliates.
+// Copyright (c) 2018-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -51,8 +52,7 @@ public:
 
     typedef typename DistanceStrategy::radius_type radius_type;
 
-    inline spherical()
-    {}
+    spherical() = default;
 
     explicit inline spherical(typename DistanceStrategy::radius_type const& r)
         : m_strategy(r)
@@ -61,17 +61,6 @@ public:
     inline spherical(DistanceStrategy const& s)
         : m_strategy(s)
     {}
-
-    // point-point strategy getters
-    struct distance_pp_strategy
-    {
-        typedef DistanceStrategy type;
-    };
-
-    inline typename distance_pp_strategy::type get_distance_pp_strategy() const
-    {
-        return m_strategy;
-    }
 
     template <typename Point, typename Fraction, typename Distance>
     inline void apply(Point const& p0,
@@ -95,6 +84,12 @@ public:
         calc_t a = angle01 * fraction;
         formula.compute_point(a, p);
     }
+
+    inline radius_type radius() const
+    {
+        return m_strategy.radius();
+    }
+
 private :
     DistanceStrategy m_strategy;
 };

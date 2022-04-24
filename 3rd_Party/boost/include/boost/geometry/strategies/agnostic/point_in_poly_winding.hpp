@@ -3,8 +3,8 @@
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2013 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2013, 2014, 2016, 2017, 2019.
-// Modifications copyright (c) 2013-2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2020.
+// Modifications copyright (c) 2013-2020 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
@@ -18,9 +18,8 @@
 #define BOOST_GEOMETRY_STRATEGY_AGNOSTIC_POINT_IN_POLY_WINDING_HPP
 
 
-#include <boost/mpl/assert.hpp>
-
 #include <boost/geometry/core/cs.hpp>
+#include <boost/geometry/core/static_assert.hpp>
 #include <boost/geometry/core/tag_cast.hpp>
 #include <boost/geometry/core/tags.hpp>
 
@@ -54,9 +53,9 @@ template
 >
 struct winding_base_type
 {
-    BOOST_MPL_ASSERT_MSG(false,
-                         NOT_IMPLEMENTED_FOR_THIS_COORDINATE_SYSTEM,
-                         (CSTag));
+    BOOST_GEOMETRY_STATIC_ASSERT_FALSE(
+        "Not implemented for this coordinate system.",
+        Point, PointOfSegment, CSTag);
 };
 
 template <typename Point, typename PointOfSegment, typename CalculationType>

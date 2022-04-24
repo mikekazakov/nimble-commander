@@ -1,5 +1,5 @@
 /* Proposed SG14 status_code
-(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
+(C) 2018-2022 Niall Douglas <http://www.nedproductions.biz/> (5 commits)
 File Created: Feb 2018
 
 
@@ -75,7 +75,7 @@ class _posix_code_domain : public status_code_domain
     char *s = strerror_r(c, buffer, sizeof(buffer));  // NOLINT
     if(s != nullptr)
     {
-      strncpy(buffer, s, sizeof(buffer));  // NOLINT
+      strncpy(buffer, s, sizeof(buffer) - 1);  // NOLINT
       buffer[1023] = 0;
     }
 #else

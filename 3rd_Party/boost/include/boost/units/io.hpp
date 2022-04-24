@@ -25,7 +25,7 @@
 #include <sstream>
 
 #include <boost/assert.hpp>
-#include <boost/serialization/nvp.hpp>
+#include <boost/core/nvp.hpp>
 
 #include <boost/units/units_fwd.hpp>
 #include <boost/units/heterogeneous_system.hpp>

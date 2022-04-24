@@ -15,6 +15,7 @@
 #endif
 
 #include <boost/assert.hpp>
+#include <boost/core/uncaught_exceptions.hpp>
 #include <boost/graph/named_graph.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/variant.hpp>
@@ -376,7 +377,7 @@ BGL_NAMED_GRAPH::lazy_add_vertex::~lazy_add_vertex()
   /// If this vertex has already been created or will be created by
   /// someone else, or if someone threw an exception, we will not
   /// create the vertex now.
-  if (committed || std::uncaught_exception())
+  if (committed || boost::core::uncaught_exceptions() > 0)
     return;
 
   committed = true;
@@ -486,7 +487,7 @@ BGL_NAMED_GRAPH::lazy_add_edge::~lazy_add_edge()
   /// If this edge has already been created or will be created by
   /// someone else, or if someone threw an exception, we will not
   /// create the edge now.
-  if (committed || std::uncaught_exception())
+  if (committed || boost::core::uncaught_exceptions() > 0)
     return;
 
   committed = true;
@@ -682,7 +683,7 @@ BGL_NAMED_GRAPH::lazy_add_edge_with_property::~lazy_add_edge_with_property()
   /// If this edge has already been created or will be created by
   /// someone else, or if someone threw an exception, we will not
   /// create the edge now.
-  if (committed || std::uncaught_exception())
+  if (committed || boost::core::uncaught_exceptions() > 0)
     return;
 
   committed = true;

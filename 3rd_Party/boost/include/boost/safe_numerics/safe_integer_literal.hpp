@@ -216,7 +216,7 @@ template<
         int
     >::type = 0
 >
-constexpr auto make_safe_literal_impl() {
+constexpr auto inline make_safe_literal_impl() {
     return boost::safe_numerics::safe_unsigned_literal<N, P, E>();
 }
 

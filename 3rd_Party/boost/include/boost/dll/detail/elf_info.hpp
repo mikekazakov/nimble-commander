@@ -1,5 +1,5 @@
 // Copyright 2014 Renato Tegon Forti, Antony Polukhin.
-// Copyright 2015-2019 Antony Polukhin.
+// Copyright Antony Polukhin, 2015-2022.
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt
@@ -17,6 +17,7 @@
 #include <cstring>
 #include <fstream>
 #include <limits>
+#include <vector>
 
 #include <boost/cstdint.hpp>
 #include <boost/throw_exception.hpp>
@@ -100,6 +101,7 @@ class elf_info {
 
     BOOST_STATIC_CONSTANT(boost::uint32_t, SHT_SYMTAB_ = 2);
     BOOST_STATIC_CONSTANT(boost::uint32_t, SHT_STRTAB_ = 3);
+    BOOST_STATIC_CONSTANT(boost::uint32_t, SHT_DYNSYM_ = 11);
 
     BOOST_STATIC_CONSTANT(unsigned char, STB_LOCAL_ = 0);   /* Local symbol */
     BOOST_STATIC_CONSTANT(unsigned char, STB_GLOBAL_ = 1);  /* Global symbol */
@@ -133,13 +135,17 @@ public:
         std::vector<std::string> ret;
         std::vector<char> names;
         sections_names_raw(fs, names);
-        
+
         const char* name_begin = &names[0];
         const char* const name_end = name_begin + names.size();
         ret.reserve(header(fs).e_shnum);
         do {
-            ret.push_back(name_begin);
-            name_begin += ret.back().size() + 1;
+            if (*name_begin) {
+                ret.push_back(name_begin);
+                name_begin += ret.back().size() + 1;
+            } else {
+                ++name_begin;
+            }
         } while (name_begin != name_end);
 
         return ret;
@@ -180,41 +186,85 @@ private:
         checked_seekg(fs, elf.e_shoff + elf.e_shstrndx * sizeof(section_t));
         read_raw(fs, section_names_section);
 
-        sections.resize(static_cast<std::size_t>(section_names_section.sh_size));
+        sections.resize(static_cast<std::size_t>(section_names_section.sh_size) + 1, '\0');
         checked_seekg(fs, section_names_section.sh_offset);
         read_raw(fs, sections[0], static_cast<std::size_t>(section_names_section.sh_size));
     }
 
     static void symbols_text(std::ifstream& fs, std::vector<symbol_t>& symbols, std::vector<char>& text) {
+        std::vector<char> names;
+        sections_names_raw(fs, names);
+        symbols_text(fs, symbols, text, names);
+    }
+
+    static void symbols_text(std::ifstream& fs, std::vector<symbol_t>& symbols, std::vector<char>& text, const std::vector<char>& names) {
         const header_t elf = header(fs);
         checked_seekg(fs, elf.e_shoff);
+
+        // ".dynsym" section may not have info on symbols that could be used while self loading an executable,
+        // so we prefer ".symtab" section.
+        AddressOffsetT symtab_size = 0;
+        AddressOffsetT symtab_offset = 0;
+        AddressOffsetT strtab_size = 0;
+        AddressOffsetT strtab_offset = 0;
+
+        AddressOffsetT dynsym_size = 0;
+        AddressOffsetT dynsym_offset = 0;
+        AddressOffsetT dynstr_size = 0;
+        AddressOffsetT dynstr_offset = 0;
 
         for (std::size_t i = 0; i < elf.e_shnum; ++i) {
             section_t section;
             read_raw(fs, section);
+            if (section.sh_name >= names.size()) {
+                continue;
+            }
+            const char* name = &names[section.sh_name];
 
-            if (section.sh_type == SHT_SYMTAB_) {
-                symbols.resize(static_cast<std::size_t>(section.sh_size / sizeof(symbol_t)));
-
-                const std::ifstream::pos_type pos = fs.tellg();
-                checked_seekg(fs, section.sh_offset);
-                read_raw(fs, symbols[0], static_cast<std::size_t>(section.sh_size - (section.sh_size % sizeof(symbol_t))) );
-                checked_seekg(fs, pos);
+            if (section.sh_type == SHT_SYMTAB_ && !std::strcmp(name, ".symtab")) {
+                symtab_size = section.sh_size;
+                symtab_offset = section.sh_offset;
             } else if (section.sh_type == SHT_STRTAB_) {
-                text.resize(static_cast<std::size_t>(section.sh_size));
-
-                const std::ifstream::pos_type pos = fs.tellg();
-                checked_seekg(fs, section.sh_offset);
-                read_raw(fs, text[0], static_cast<std::size_t>(section.sh_size));
-                checked_seekg(fs, pos);
+                if (!std::strcmp(name, ".dynstr")) {
+                    dynstr_size = section.sh_size;
+                    dynstr_offset = section.sh_offset;
+                } else if (!std::strcmp(name, ".strtab")) {
+                    strtab_size = section.sh_size;
+                    strtab_offset = section.sh_offset;
+                }
+            } else if (section.sh_type == SHT_DYNSYM_ && !std::strcmp(name, ".dynsym")) {
+                dynsym_size = section.sh_size;
+                dynsym_offset = section.sh_offset;
             }
         }
+
+        if (!symtab_size || !strtab_size) {
+            // ".symtab" stripped from the binary and we have to fallback to ".dynsym"
+            symtab_size = dynsym_size;
+            symtab_offset = dynsym_offset;
+            strtab_size = dynstr_size;
+            strtab_offset = dynstr_offset;
+        }
+
+        if (!symtab_size || !strtab_size) {
+            return;
+        }
+
+        text.resize(static_cast<std::size_t>(strtab_size) + 1, '\0');
+        checked_seekg(fs, strtab_offset);
+        read_raw(fs, text[0], static_cast<std::size_t>(strtab_size));
+
+        symbols.resize(static_cast<std::size_t>(symtab_size / sizeof(symbol_t)));
+        checked_seekg(fs, symtab_offset);
+        read_raw(fs, symbols[0], static_cast<std::size_t>(symtab_size - (symtab_size % sizeof(symbol_t))) );
     }
 
     static bool is_visible(const symbol_t& sym) BOOST_NOEXCEPT {
+        const unsigned char visibility = (sym.st_other & 0x03);
         // `(sym.st_info >> 4) != STB_LOCAL_ && !!sym.st_size` check also workarounds the
         // GCC's issue https://sourceware.org/bugzilla/show_bug.cgi?id=13621
-        return (sym.st_other & 0x03) == STV_DEFAULT_ && (sym.st_info >> 4) != STB_LOCAL_ && !!sym.st_size;
+        return (visibility == STV_DEFAULT_ || visibility == STV_PROTECTED_)
+                && (sym.st_info >> 4) != STB_LOCAL_ && !!sym.st_size;
     }
 
 public:
@@ -227,8 +277,8 @@ public:
 
         ret.reserve(symbols.size());
         for (std::size_t i = 0; i < symbols.size(); ++i) {
-            if (is_visible(symbols[i])) {
-                ret.push_back(&text[0] + symbols[i].st_name);
+            if (is_visible(symbols[i]) && symbols[i].st_name < text.size()) {
+                ret.push_back(&text[symbols[i].st_name]);
                 if (ret.back().empty()) {
                     ret.pop_back(); // Do not show empty names
                 }
@@ -243,30 +293,29 @@ public:
         
         std::size_t index = 0;
         std::size_t ptrs_in_section_count = 0;
-        {
-            std::vector<char> names;
-            sections_names_raw(fs, names);
 
-            const header_t elf = header(fs);
+        std::vector<char> names;
+        sections_names_raw(fs, names);
 
-            for (; index < elf.e_shnum; ++index) {
-                section_t section;
-                checked_seekg(fs, elf.e_shoff + index * sizeof(section_t));
-                read_raw(fs, section);
-            
-                if (!std::strcmp(&names[0] + section.sh_name, section_name)) {
-                    if (!section.sh_entsize) {
-                        section.sh_entsize = 1;
-                    }
-                    ptrs_in_section_count = static_cast<std::size_t>(section.sh_size / section.sh_entsize);
-                    break;
+        const header_t elf = header(fs);
+
+        for (; index < elf.e_shnum; ++index) {
+            section_t section;
+            checked_seekg(fs, elf.e_shoff + index * sizeof(section_t));
+            read_raw(fs, section);
+
+            if (!std::strcmp(&names.at(section.sh_name), section_name)) {
+                if (!section.sh_entsize) {
+                    section.sh_entsize = 1;
                 }
-            }                        
+                ptrs_in_section_count = static_cast<std::size_t>(section.sh_size / section.sh_entsize);
+                break;
+            }
         }
 
         std::vector<symbol_t> symbols;
-        std::vector<char>   text;
-        symbols_text(fs, symbols, text);
+        std::vector<char> text;
+        symbols_text(fs, symbols, text, names);
     
         if (ptrs_in_section_count < symbols.size()) {
             ret.reserve(ptrs_in_section_count);
@@ -275,8 +324,8 @@ public:
         }
 
         for (std::size_t i = 0; i < symbols.size(); ++i) {
-            if (symbols[i].st_shndx == index && is_visible(symbols[i])) {
-                ret.push_back(&text[0] + symbols[i].st_name);
+            if (symbols[i].st_shndx == index && is_visible(symbols[i]) && symbols[i].st_name < text.size()) {
+                ret.push_back(&text[symbols[i].st_name]);
                 if (ret.back().empty()) {
                     ret.pop_back(); // Do not show empty names
                 }

@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2016-2017, Oracle and/or its affiliates.
+// Copyright (c) 2016-2021, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -202,7 +202,9 @@ inline Point3d projected_to_surface(Point3d const& direction, Spheroid const& sp
 }
 
 template <typename Point3d, typename Spheroid>
-inline bool projected_to_surface(Point3d const& origin, Point3d const& direction, Point3d & result1, Point3d & result2, Spheroid const& spheroid)
+inline bool projected_to_surface(Point3d const& origin, Point3d const& direction,
+                                 Point3d & result1, Point3d & result2,
+                                 Spheroid const& spheroid)
 {
     typedef typename coordinate_type<Point3d>::type coord_t;
 
@@ -247,14 +249,12 @@ inline bool projected_to_surface(Point3d const& origin, Point3d const& direction
     coord_t const two_a = c2 * param_a;
 
     coord_t const t1 = (-param_b + sqrt_delta) / two_a;
-    result1 = direction;
-    multiply_value(result1, t1);
-    add_point(result1, origin);
-
     coord_t const t2 = (-param_b - sqrt_delta) / two_a;
-    result2 = direction;
-    multiply_value(result2, t2);
-    add_point(result2, origin);
+    geometry::detail::for_each_dimension<Point3d>([&](auto index)
+    {
+        set<index>(result1, get<index>(origin) + get<index>(direction) * t1);
+        set<index>(result2, get<index>(origin) + get<index>(direction) * t2);
+    });
 
     return true;
 }
@@ -360,12 +360,11 @@ inline bool planes_spheroid_intersection(Point3d const& o1, Point3d const& n1,
     coord_t C2 = (h2 - h1 * dot_n1_n2) / denom;
 
     // C1 * n1 + C2 * n2
-    Point3d C1_n1 = n1;
-    multiply_value(C1_n1, C1);
-    Point3d C2_n2 = n2;
-    multiply_value(C2_n2, C2);
-    Point3d io = C1_n1;
-    add_point(io, C2_n2);
+    Point3d io;
+    geometry::detail::for_each_dimension<Point3d>([&](auto index)
+    {
+        set<index>(io, C1 * get<index>(n1) + C2 * get<index>(n2));
+    });
 
     if (! projected_to_surface(io, id, ip1, ip2, spheroid))
     {
@@ -388,16 +387,16 @@ inline void experimental_elliptic_plane(Point3d const& p1, Point3d const& p2,
     Point3d xy2 = projected_to_xy(p2, spheroid);
 
     // origin = (xy1 + xy2) / 2
-    origin = xy1;
-    add_point(origin, xy2);
-    multiply_value(origin, coord_t(0.5));
-
     // v1 = p1 - origin
-    v1 = p1;
-    subtract_point(v1, origin);
     // v2 = p2 - origin
-    v2 = p2;
-    subtract_point(v2, origin);
+    coord_t const half = coord_t(0.5);
+    geometry::detail::for_each_dimension<Point3d>([&](auto index)
+    {
+        coord_t const o = (get<index>(xy1) + get<index>(xy2)) * half;
+        set<index>(origin, o);
+        set<index>(v1, get<index>(p1) - o);
+        set<index>(v2, get<index>(p1) - o);
+    });
 
     normal = cross_product(v1, v2);
 }
@@ -427,7 +426,7 @@ inline bool experimental_elliptic_intersection(Point3d const& a1, Point3d const&
     Point3d b1v, b2v, o2, n2;
     experimental_elliptic_plane(b1, b2, b1v, b2v, o2, n2, spheroid);
 
-    if (! detail::vec_normalize(n1) || ! detail::vec_normalize(n2))
+    if (! geometry::detail::vec_normalize(n1) || ! geometry::detail::vec_normalize(n2))
     {
         return false;
     }

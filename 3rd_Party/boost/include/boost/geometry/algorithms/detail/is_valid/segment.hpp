@@ -45,10 +45,8 @@ template <typename Segment>
 struct is_valid<Segment, segment_tag>
 {
     template <typename VisitPolicy, typename Strategy>
-    static inline bool apply(Segment const& segment, VisitPolicy& visitor, Strategy const&)
+    static inline bool apply(Segment const& segment, VisitPolicy& visitor, Strategy const& strategy)
     {
-        typedef typename Strategy::equals_point_point_strategy_type eq_pp_strategy_type;
-
         boost::ignore_unused(visitor);
 
         typename point_type<Segment>::type p[2];
@@ -62,8 +60,7 @@ struct is_valid<Segment, segment_tag>
         {
             return false;
         }
-        else if (! geometry::detail::equals::equals_point_point(
-                        p[0], p[1], eq_pp_strategy_type()))
+        else if (! detail::equals::equals_point_point(p[0], p[1], strategy))
         {
             return visitor.template apply<no_failure>();
         }

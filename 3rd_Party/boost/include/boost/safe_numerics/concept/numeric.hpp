@@ -1,27 +1,21 @@
 #ifndef BOOST_NUMERIC_CONCEPT_NUMERIC_HPP
 #define BOOST_NUMERIC_CONCEPT_NUMERIC_HPP
 
-//  Copyright (c) 2012 Robert Ramey
+//  Copyright (c) 2021 Robert Ramey
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <limits>
+#include <cstdint>
+#include <type_traits>
 
 namespace boost {
 namespace safe_numerics {
 
 template<class T>
-struct Numeric {
-    // if your program traps here, you need to create a
-    // std::numeric_limits class for your type T.  see
-    // see C++ standard 18.3.2.2
-    static_assert(
-        std::numeric_limits<T>::is_specialized,
-        "std::numeric_limits<T> has not been specialized for this type"
-    );
-};
+using Numeric = std::integral_constant<bool, std::numeric_limits<T>::is_specialized>;
 
 } // safe_numerics
 } // boost

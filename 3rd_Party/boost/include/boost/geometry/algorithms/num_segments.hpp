@@ -1,8 +1,9 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014, Oracle and/or its affiliates.
+// Copyright (c) 2014-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Licensed under the Boost Software License version 1.0.
 // http://www.boost.org/users/license.html
@@ -12,27 +13,22 @@
 
 #include <cstddef>
 
-#include <boost/mpl/size_t.hpp>
-#include <boost/mpl/times.hpp>
+#include <boost/range/size.hpp>
+#include <boost/range/value_type.hpp>
 
-#include <boost/range.hpp>
-
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant_fwd.hpp>
+#include <boost/geometry/algorithms/detail/counting.hpp>
+#include <boost/geometry/algorithms/detail/visit.hpp>
+#include <boost/geometry/algorithms/not_implemented.hpp>
 
 #include <boost/geometry/core/closure.hpp>
 #include <boost/geometry/core/tag.hpp>
 #include <boost/geometry/core/tags.hpp>
+#include <boost/geometry/core/visit.hpp>
 
-#include <boost/geometry/util/range.hpp>
-
+#include <boost/geometry/geometries/adapted/boost_variant.hpp> // For backward compatibility
 #include <boost/geometry/geometries/concepts/check.hpp>
 
-#include <boost/geometry/algorithms/not_implemented.hpp>
-
-#include <boost/geometry/algorithms/detail/counting.hpp>
-
+#include <boost/geometry/util/range.hpp>
 
 namespace boost { namespace geometry
 {
@@ -141,11 +137,11 @@ struct num_segments<Geometry, multi_polygon_tag>
 
 
 
-namespace resolve_variant
+namespace resolve_dynamic
 {
 
 
-template <typename Geometry>
+template <typename Geometry, typename Tag = typename tag<Geometry>::type>
 struct num_segments
 {
     static inline std::size_t apply(Geometry const& geometry)
@@ -157,27 +153,38 @@ struct num_segments
 };
 
 
-template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
-struct num_segments<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+template <typename Geometry>
+struct num_segments<Geometry, dynamic_geometry_tag>
 {
-    struct visitor: boost::static_visitor<std::size_t>
+    static inline std::size_t apply(Geometry const& geometry)
     {
-        template <typename Geometry>
-        inline std::size_t operator()(Geometry const& geometry) const
+        std::size_t result = 0;
+        traits::visit<Geometry>::apply([&](auto const& g)
         {
-            return num_segments<Geometry>::apply(geometry);
-        }
-    };
-
-    static inline std::size_t
-    apply(boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry)
-    {
-        return boost::apply_visitor(visitor(), geometry);
+            result = num_segments<util::remove_cref_t<decltype(g)>>::apply(g);
+        }, geometry);
+        return result;
     }
 };
 
 
-} // namespace resolve_variant
+template <typename Geometry>
+struct num_segments<Geometry, geometry_collection_tag>
+{
+    static inline std::size_t apply(Geometry const& geometry)
+    {
+        std::size_t result = 0;
+        detail::visit_breadth_first([&](auto const& g)
+        {
+            result += num_segments<util::remove_cref_t<decltype(g)>>::apply(g);
+            return true;
+        }, geometry);
+        return result;
+    }
+};
+
+
+} // namespace resolve_dynamic
 
 
 
@@ -194,7 +201,7 @@ struct num_segments<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
 template <typename Geometry>
 inline std::size_t num_segments(Geometry const& geometry)
 {
-    return resolve_variant::num_segments<Geometry>::apply(geometry);
+    return resolve_dynamic::num_segments<Geometry>::apply(geometry);
 }
 
 

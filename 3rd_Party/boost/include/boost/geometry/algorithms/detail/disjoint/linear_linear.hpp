@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2014 Mateusz Loskot, London, UK.
 // Copyright (c) 2013-2014 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2013-2017.
-// Modifications copyright (c) 2013-2017, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2020.
+// Modifications copyright (c) 2013-2020, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -23,9 +23,6 @@
 
 #include <cstddef>
 #include <deque>
-
-#include <boost/range.hpp>
-#include <boost/geometry/util/range.hpp>
 
 #include <boost/geometry/core/point_type.hpp>
 #include <boost/geometry/core/tag.hpp>
@@ -68,8 +65,8 @@ struct disjoint_segment
 
         detail::segment_as_subrange<Segment1> sub_range1(segment1);
         detail::segment_as_subrange<Segment2> sub_range2(segment2);
-        intersection_return_type is = strategy.apply(sub_range1, sub_range2,
-                                                     intersection_policy());
+        intersection_return_type is = strategy.relate().apply(sub_range1, sub_range2,
+                                                              intersection_policy());
 
         return is.count == 0;
     }
@@ -82,6 +79,7 @@ struct assign_disjoint_policy
     static bool const include_no_turn = true;
     static bool const include_degenerate = true;
     static bool const include_opposite = true;
+    static bool const include_start_turn = false;
 };
 
 

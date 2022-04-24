@@ -1,5 +1,5 @@
 /* A very simple result type
-(C) 2017-2020 Niall Douglas <http://www.nedproductions.biz/> (14 commits)
+(C) 2017-2022 Niall Douglas <http://www.nedproductions.biz/> (14 commits)
 File Created: June 2017
 
 
@@ -217,26 +217,6 @@ namespace hooks
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-  template <class T, class U> constexpr inline void hook_result_construction(T * /*unused*/, U && /*unused*/) noexcept {}
-  /*! AWAITING HUGO JSON CONVERSION TOOL
-SIGNATURE NOT RECOGNISED
-*/
-  template <class T, class U> constexpr inline void hook_result_copy_construction(T * /*unused*/, U && /*unused*/) noexcept {}
-  /*! AWAITING HUGO JSON CONVERSION TOOL
-SIGNATURE NOT RECOGNISED
-*/
-  template <class T, class U> constexpr inline void hook_result_move_construction(T * /*unused*/, U && /*unused*/) noexcept {}
-  /*! AWAITING HUGO JSON CONVERSION TOOL
-SIGNATURE NOT RECOGNISED
-*/
-  template <class T, class U, class... Args>
-  constexpr inline void hook_result_in_place_construction(T * /*unused*/, in_place_type_t<U> /*unused*/, Args &&... /*unused*/) noexcept
-  {
-  }
-
-  /*! AWAITING HUGO JSON CONVERSION TOOL
-SIGNATURE NOT RECOGNISED
-*/
   template <class R, class S, class NoValuePolicy> constexpr inline uint16_t spare_storage(const detail::basic_result_storage<R, S, NoValuePolicy> *r) noexcept
   {
     return r->_state._status.spare_storage_value;
@@ -259,7 +239,6 @@ class BOOST_OUTCOME_NODISCARD basic_result : public detail::basic_result_final<R
 {
   static_assert(trait::type_can_be_used_in_basic_result<R>, "The type R cannot be used in a basic_result");
   static_assert(trait::type_can_be_used_in_basic_result<S>, "The type S cannot be used in a basic_result");
-  static_assert(std::is_void<S>::value || std::is_default_constructible<S>::value, "The type S must be void or default constructible");
 
   using base = detail::basic_result_final<R, S, NoValuePolicy>;
 
@@ -434,8 +413,7 @@ SIGNATURE NOT RECOGNISED
   detail::is_nothrow_constructible<value_type, T>)  // NOLINT
       : base{in_place_type<typename base::value_type>, static_cast<T &&>(t)}
   {
-    using namespace hooks;
-    hook_result_construction(this, static_cast<T &&>(t));
+    no_value_policy_type::on_result_construction(this, static_cast<T &&>(t));
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -446,8 +424,7 @@ SIGNATURE NOT RECOGNISED
   detail::is_nothrow_constructible<error_type, T>)  // NOLINT
       : base{in_place_type<typename base::error_type>, static_cast<T &&>(t)}
   {
-    using namespace hooks;
-    hook_result_construction(this, static_cast<T &&>(t));
+    no_value_policy_type::on_result_construction(this, static_cast<T &&>(t));
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -459,8 +436,7 @@ SIGNATURE NOT RECOGNISED
   noexcept(error_type(make_error_code(static_cast<ErrorCondEnum &&>(t)))))  // NOLINT
       : base{in_place_type<typename base::error_type>, make_error_code(t)}
   {
-    using namespace hooks;
-    hook_result_construction(this, static_cast<ErrorCondEnum &&>(t));
+    no_value_policy_type::on_result_construction(this, static_cast<ErrorCondEnum &&>(t));
   }
 
   /*! AWAITING HUGO JSON CONVERSION TOOL
@@ -485,8 +461,7 @@ SIGNATURE NOT RECOGNISED
   explicit_compatible_copy_conversion_tag()) noexcept(detail::is_nothrow_constructible<value_type, T> &&detail::is_nothrow_constructible<error_type, U>)
       : base{typename base::compatible_conversion_tag(), o}
   {
-    using namespace hooks;
-    hook_result_copy_construction(this, o);
+    no_value_policy_type::on_result_copy_construction(this, o);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -499,8 +474,7 @@ SIGNATURE NOT RECOGNISED
   explicit_compatible_move_conversion_tag()) noexcept(detail::is_nothrow_constructible<value_type, T> &&detail::is_nothrow_constructible<error_type, U>)
       : base{typename base::compatible_conversion_tag(), static_cast<basic_result<T, U, V> &&>(o)}
   {
-    using namespace hooks;
-    hook_result_move_construction(this, static_cast<basic_result<T, U, V> &&>(o));
+    no_value_policy_type::on_result_move_construction(this, static_cast<basic_result<T, U, V> &&>(o));
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -513,8 +487,7 @@ SIGNATURE NOT RECOGNISED
                                                                                                       &&noexcept(make_error_code(std::declval<U>())))
       : base{typename base::make_error_code_compatible_conversion_tag(), o}
   {
-    using namespace hooks;
-    hook_result_copy_construction(this, o);
+    no_value_policy_type::on_result_copy_construction(this, o);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -527,8 +500,7 @@ SIGNATURE NOT RECOGNISED
                                                                                                       &&noexcept(make_error_code(std::declval<U>())))
       : base{typename base::make_error_code_compatible_conversion_tag(), static_cast<basic_result<T, U, V> &&>(o)}
   {
-    using namespace hooks;
-    hook_result_move_construction(this, static_cast<basic_result<T, U, V> &&>(o));
+    no_value_policy_type::on_result_move_construction(this, static_cast<basic_result<T, U, V> &&>(o));
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -541,8 +513,7 @@ SIGNATURE NOT RECOGNISED
                                                                                                          &&noexcept(make_exception_ptr(std::declval<U>())))
       : base{typename base::make_exception_ptr_compatible_conversion_tag(), o}
   {
-    using namespace hooks;
-    hook_result_copy_construction(this, o);
+    no_value_policy_type::on_result_copy_construction(this, o);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -555,8 +526,7 @@ SIGNATURE NOT RECOGNISED
                                                                                                          &&noexcept(make_exception_ptr(std::declval<U>())))
       : base{typename base::make_exception_ptr_compatible_conversion_tag(), static_cast<basic_result<T, U, V> &&>(o)}
   {
-    using namespace hooks;
-    hook_result_move_construction(this, static_cast<basic_result<T, U, V> &&>(o));
+    no_value_policy_type::on_result_move_construction(this, static_cast<basic_result<T, U, V> &&>(o));
   }
 
   /*! AWAITING HUGO JSON CONVERSION TOOL
@@ -567,8 +537,7 @@ SIGNATURE NOT RECOGNISED
   constexpr explicit basic_result(in_place_type_t<value_type_if_enabled> _, Args &&... args) noexcept(detail::is_nothrow_constructible<value_type, Args...>)
       : base{_, static_cast<Args &&>(args)...}
   {
-    using namespace hooks;
-    hook_result_in_place_construction(this, in_place_type<value_type>, static_cast<Args &&>(args)...);
+    no_value_policy_type::on_result_in_place_construction(this, in_place_type<value_type>, static_cast<Args &&>(args)...);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -579,8 +548,7 @@ SIGNATURE NOT RECOGNISED
                                   Args &&... args) noexcept(detail::is_nothrow_constructible<value_type, std::initializer_list<U>, Args...>)
       : base{_, il, static_cast<Args &&>(args)...}
   {
-    using namespace hooks;
-    hook_result_in_place_construction(this, in_place_type<value_type>, il, static_cast<Args &&>(args)...);
+    no_value_policy_type::on_result_in_place_construction(this, in_place_type<value_type>, il, static_cast<Args &&>(args)...);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -590,8 +558,7 @@ SIGNATURE NOT RECOGNISED
   constexpr explicit basic_result(in_place_type_t<error_type_if_enabled> _, Args &&... args) noexcept(detail::is_nothrow_constructible<error_type, Args...>)
       : base{_, static_cast<Args &&>(args)...}
   {
-    using namespace hooks;
-    hook_result_in_place_construction(this, in_place_type<error_type>, static_cast<Args &&>(args)...);
+    no_value_policy_type::on_result_in_place_construction(this, in_place_type<error_type>, static_cast<Args &&>(args)...);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -602,8 +569,7 @@ SIGNATURE NOT RECOGNISED
                                   Args &&... args) noexcept(detail::is_nothrow_constructible<error_type, std::initializer_list<U>, Args...>)
       : base{_, il, static_cast<Args &&>(args)...}
   {
-    using namespace hooks;
-    hook_result_in_place_construction(this, in_place_type<error_type>, il, static_cast<Args &&>(args)...);
+    no_value_policy_type::on_result_in_place_construction(this, in_place_type<error_type>, il, static_cast<Args &&>(args)...);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -615,11 +581,6 @@ SIGNATURE NOT RECOGNISED
       : basic_result(in_place_type<typename predicate::template choose_inplace_value_error_constructor<A1, A2, Args...>>, static_cast<A1 &&>(a1),
                      static_cast<A2 &&>(a2), static_cast<Args &&>(args)...)
   {
-    /* I was a little surprised that the below is needed given that we forward to another constructor.
-    But it turns out that ADL only fires on the first constructor for some reason.
-    */
-    using namespace hooks;
-    // hook_result_in_place_construction(in_place_type<typename predicate::template choose_inplace_value_error_constructor<A1, A2, Args...>>, this);
   }
 
   /*! AWAITING HUGO JSON CONVERSION TOOL
@@ -628,8 +589,8 @@ SIGNATURE NOT RECOGNISED
   constexpr basic_result(const success_type<void> &o) noexcept(std::is_nothrow_default_constructible<value_type>::value)  // NOLINT
       : base{in_place_type<value_type_if_enabled>}
   {
-    using namespace hooks;
-    hook_result_copy_construction(this, o);
+    hooks::set_spare_storage(this, o.spare_storage());
+    no_value_policy_type::on_result_copy_construction(this, o);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -639,8 +600,8 @@ SIGNATURE NOT RECOGNISED
   constexpr basic_result(const success_type<T> &o) noexcept(detail::is_nothrow_constructible<value_type, T>)  // NOLINT
       : base{in_place_type<value_type_if_enabled>, detail::extract_value_from_success<value_type>(o)}
   {
-    using namespace hooks;
-    hook_result_copy_construction(this, o);
+    hooks::set_spare_storage(this, o.spare_storage());
+    no_value_policy_type::on_result_copy_construction(this, o);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -650,8 +611,8 @@ SIGNATURE NOT RECOGNISED
   constexpr basic_result(success_type<T> &&o) noexcept(detail::is_nothrow_constructible<value_type, T>)  // NOLINT
       : base{in_place_type<value_type_if_enabled>, detail::extract_value_from_success<value_type>(static_cast<success_type<T> &&>(o))}
   {
-    using namespace hooks;
-    hook_result_move_construction(this, static_cast<success_type<T> &&>(o));
+    hooks::set_spare_storage(this, o.spare_storage());
+    no_value_policy_type::on_result_move_construction(this, static_cast<success_type<T> &&>(o));
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -662,8 +623,8 @@ SIGNATURE NOT RECOGNISED
   detail::is_nothrow_constructible<error_type, T>)  // NOLINT
       : base{in_place_type<error_type_if_enabled>, detail::extract_error_from_failure<error_type>(o)}
   {
-    using namespace hooks;
-    hook_result_copy_construction(this, o);
+    hooks::set_spare_storage(this, o.spare_storage());
+    no_value_policy_type::on_result_copy_construction(this, o);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -674,8 +635,8 @@ SIGNATURE NOT RECOGNISED
   detail::is_nothrow_constructible<error_type, T>)  // NOLINT
       : base{in_place_type<error_type_if_enabled>, detail::extract_error_from_failure<error_type>(static_cast<failure_type<T> &&>(o))}
   {
-    using namespace hooks;
-    hook_result_move_construction(this, static_cast<failure_type<T> &&>(o));
+    hooks::set_spare_storage(this, o.spare_storage());
+    no_value_policy_type::on_result_move_construction(this, static_cast<failure_type<T> &&>(o));
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -687,8 +648,8 @@ SIGNATURE NOT RECOGNISED
                          explicit_make_error_code_compatible_copy_conversion_tag()) noexcept(noexcept(make_error_code(std::declval<T>())))  // NOLINT
       : base{in_place_type<error_type_if_enabled>, make_error_code(detail::extract_error_from_failure<error_type>(o))}
   {
-    using namespace hooks;
-    hook_result_copy_construction(this, o);
+    hooks::set_spare_storage(this, o.spare_storage());
+    no_value_policy_type::on_result_copy_construction(this, o);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -700,8 +661,8 @@ SIGNATURE NOT RECOGNISED
                          explicit_make_error_code_compatible_move_conversion_tag()) noexcept(noexcept(make_error_code(std::declval<T>())))  // NOLINT
       : base{in_place_type<error_type_if_enabled>, make_error_code(detail::extract_error_from_failure<error_type>(static_cast<failure_type<T> &&>(o)))}
   {
-    using namespace hooks;
-    hook_result_move_construction(this, static_cast<failure_type<T> &&>(o));
+    hooks::set_spare_storage(this, o.spare_storage());
+    no_value_policy_type::on_result_move_construction(this, static_cast<failure_type<T> &&>(o));
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -713,8 +674,8 @@ SIGNATURE NOT RECOGNISED
                          explicit_make_exception_ptr_compatible_copy_conversion_tag()) noexcept(noexcept(make_exception_ptr(std::declval<T>())))  // NOLINT
       : base{in_place_type<error_type_if_enabled>, make_exception_ptr(detail::extract_error_from_failure<error_type>(o))}
   {
-    using namespace hooks;
-    hook_result_copy_construction(this, o);
+    hooks::set_spare_storage(this, o.spare_storage());
+    no_value_policy_type::on_result_copy_construction(this, o);
   }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
@@ -726,8 +687,8 @@ SIGNATURE NOT RECOGNISED
                          explicit_make_exception_ptr_compatible_move_conversion_tag()) noexcept(noexcept(make_exception_ptr(std::declval<T>())))  // NOLINT
       : base{in_place_type<error_type_if_enabled>, make_exception_ptr(detail::extract_error_from_failure<error_type>(static_cast<failure_type<T> &&>(o)))}
   {
-    using namespace hooks;
-    hook_result_move_construction(this, static_cast<failure_type<T> &&>(o));
+    hooks::set_spare_storage(this, o.spare_storage());
+    no_value_policy_type::on_result_move_construction(this, static_cast<failure_type<T> &&>(o));
   }
 
   /*! AWAITING HUGO JSON CONVERSION TOOL
@@ -736,19 +697,21 @@ SIGNATURE NOT RECOGNISED
   constexpr void swap(basic_result &o) noexcept((std::is_void<value_type>::value || detail::is_nothrow_swappable<value_type>::value)  //
                                                 && (std::is_void<error_type>::value || detail::is_nothrow_swappable<error_type>::value))
   {
-    constexpr bool value_throws = !std::is_void<value_type>::value && !detail::is_nothrow_swappable<value_type>::value;
-    constexpr bool error_throws = !std::is_void<error_type>::value && !detail::is_nothrow_swappable<error_type>::value;
-    detail::basic_result_storage_swap<value_throws, error_throws>(*this, o);
+    this->_state.swap(o._state);
   }
 
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-  auto as_failure() const & { return failure(this->assume_error()); }
+  auto as_failure() const & { return failure(this->assume_error(), hooks::spare_storage(this)); }
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-  auto as_failure() && { return failure(static_cast<basic_result &&>(*this).assume_error()); }
+  auto as_failure() &&
+  {
+    this->_state._status.set_have_moved_from(true);
+    return failure(static_cast<basic_result &&>(*this).assume_error(), hooks::spare_storage(this));
+  }
 
 #ifdef __APPLE__
   failure_type<error_type> _xcode_workaround_as_failure() &&;

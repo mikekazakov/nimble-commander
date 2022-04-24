@@ -32,30 +32,30 @@
 #include <strstream>
 #define BOOST_WAVE_LEXER_THROW(cls, code, msg, line, column, name)            \
     {                                                                         \
-    using namespace boost::wave;                                              \
-    std::strstream stream;                                                    \
+        using namespace boost::wave;                                          \
+        std::strstream stream;                                                \
         stream << cls::severity_text(cls::code) << ": "                       \
-        << cls::error_text(cls::code);                                        \
-    if ((msg)[0] != 0) stream << ": " << (msg);                               \
-    stream << std::ends;                                                      \
-    std::string throwmsg = stream.str(); stream.freeze(false);                \
-    boost::throw_exception(cls(throwmsg.c_str(), cls::code, line, column,     \
-        name));                                                               \
+               << cls::error_text(cls::code);                                 \
+        if ((msg)[0] != 0) stream << ": " << (msg);                           \
+        stream << std::ends;                                                  \
+        std::string throwmsg = stream.str(); stream.freeze(false);            \
+        boost::throw_exception(cls(throwmsg.c_str(), cls::code, line, column, \
+            name));                                                           \
     }                                                                         \
     /**/
 #else
 #include <sstream>
-#define BOOST_WAVE_LEXER_THROW(cls, code, msg, line, column, name)            \
-    {                                                                         \
-    using namespace boost::wave;                                              \
-    std::stringstream stream;                                                 \
-        stream << cls::severity_text(cls::code) << ": "                       \
-        << cls::error_text(cls::code);                                        \
-    if ((msg)[0] != 0) stream << ": " << (msg);                               \
-    stream << std::ends;                                                      \
-    boost::throw_exception(cls(stream.str().c_str(), cls::code, line, column, \
-        name));                                                               \
-    }                                                                         \
+#define BOOST_WAVE_LEXER_THROW(cls, code, msg, line, column, name)                \
+    {                                                                             \
+        using namespace boost::wave;                                              \
+        std::stringstream stream;                                                 \
+        stream << cls::severity_text(cls::code) << ": "                           \
+               << cls::error_text(cls::code);                                     \
+        if ((msg)[0] != 0) stream << ": " << (msg);                               \
+        stream << std::ends;                                                      \
+        boost::throw_exception(cls(stream.str().c_str(), cls::code, line, column, \
+            name));                                                               \
+    }                                                                             \
     /**/
 #endif // BOOST_NO_STRINGSTREAM
 #endif // BOOST_WAVE_LEXER_THROW
@@ -63,34 +63,34 @@
 #if !defined(BOOST_WAVE_LEXER_THROW_VAR)
 #ifdef BOOST_NO_STRINGSTREAM
 #include <strstream>
-#define BOOST_WAVE_LEXER_THROW_VAR(cls, codearg, msg, line, column, name)     \
-    {                                                                         \
-    using namespace boost::wave;                                              \
-    cls::error_code code = static_cast<cls::error_code>(codearg);             \
-    std::strstream stream;                                                    \
-        stream << cls::severity_text(code) << ": "                            \
-        << cls::error_text(code);                                             \
-    if ((msg)[0] != 0) stream << ": " << (msg);                               \
-    stream << std::ends;                                                      \
-    std::string throwmsg = stream.str(); stream.freeze(false);                \
-    boost::throw_exception(cls(throwmsg.c_str(), code, line, column,          \
-        name));                                                               \
-    }                                                                         \
+#define BOOST_WAVE_LEXER_THROW_VAR(cls, codearg, msg, line, column, name) \
+    {                                                                     \
+        using namespace boost::wave;                                      \
+        cls::error_code code = static_cast<cls::error_code>(codearg);     \
+        std::strstream stream;                                            \
+        stream << cls::severity_text(code) << ": "                        \
+               << cls::error_text(code);                                  \
+        if ((msg)[0] != 0) stream << ": " << (msg);                       \
+        stream << std::ends;                                              \
+        std::string throwmsg = stream.str(); stream.freeze(false);        \
+        boost::throw_exception(cls(throwmsg.c_str(), code, line, column,  \
+            name));                                                       \
+    }                                                                     \
     /**/
 #else
 #include <sstream>
-#define BOOST_WAVE_LEXER_THROW_VAR(cls, codearg, msg, line, column, name)     \
-    {                                                                         \
-    using namespace boost::wave;                                              \
-    cls::error_code code = static_cast<cls::error_code>(codearg);             \
-    std::stringstream stream;                                                 \
-        stream << cls::severity_text(code) << ": "                            \
-        << cls::error_text(code);                                             \
-    if ((msg)[0] != 0) stream << ": " << (msg);                               \
-    stream << std::ends;                                                      \
-    boost::throw_exception(cls(stream.str().c_str(), code, line, column,      \
-        name));                                                               \
-    }                                                                         \
+#define BOOST_WAVE_LEXER_THROW_VAR(cls, codearg, msg, line, column, name)    \
+    {                                                                        \
+        using namespace boost::wave;                                         \
+        cls::error_code code = static_cast<cls::error_code>(codearg);        \
+        std::stringstream stream;                                            \
+        stream << cls::severity_text(code) << ": "                           \
+               << cls::error_text(code);                                     \
+        if ((msg)[0] != 0) stream << ": " << (msg);                          \
+        stream << std::ends;                                                 \
+        boost::throw_exception(cls(stream.str().c_str(), code, line, column, \
+            name));                                                          \
+    }                                                                        \
     /**/
 #endif // BOOST_NO_STRINGSTREAM
 #endif // BOOST_WAVE_LEXER_THROW

@@ -1,5 +1,5 @@
 /* Configure Boost.Outcome with Boost
-(C) 2015-2020 Niall Douglas <http://www.nedproductions.biz/> (7 commits)
+(C) 2015-2022 Niall Douglas <http://www.nedproductions.biz/> (7 commits)
 File Created: August 2015
 
 
@@ -118,7 +118,7 @@ DEALINGS IN THE SOFTWARE.
 #endif
 
 #ifndef BOOST_OUTCOME_ENABLE_LEGACY_SUPPORT_FOR
-#define BOOST_OUTCOME_ENABLE_LEGACY_SUPPORT_FOR 210  // the v2.1 Outcome release
+#define BOOST_OUTCOME_ENABLE_LEGACY_SUPPORT_FOR 220  // the v2.2 Outcome release
 #endif
 
 namespace boost

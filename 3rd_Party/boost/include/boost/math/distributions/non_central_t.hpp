@@ -33,7 +33,7 @@ namespace boost
             //
             // Variables come first:
             //
-            boost::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
+            std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
             T errtol = policies::get_epsilon<T, Policy>();
             T d2 = delta * delta / 2;
             //
@@ -67,7 +67,7 @@ namespace boost
             // Backwards recursion first, this is the stable
             // direction for recursion:
             //
-            boost::uintmax_t count = 0;
+            std::uintmax_t count = 0;
             T last_term = 0;
             for(int i = k; i >= 0; --i)
             {
@@ -111,7 +111,7 @@ namespace boost
             //
             // Variables come first:
             //
-            boost::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
+            std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
             T errtol = boost::math::policies::get_epsilon<T, Policy>();
             T d2 = delta * delta / 2;
             //
@@ -169,7 +169,7 @@ namespace boost
             //
             // Fused forward and backwards recursion:
             //
-            boost::uintmax_t count = 0;
+            std::uintmax_t count = 0;
             T last_term = 0;
             for(int i = k + 1, j = k; ; ++i, --j)
             {
@@ -379,7 +379,7 @@ namespace boost
             //
             // Variables come first:
             //
-            boost::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
+            std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
             T errtol = boost::math::policies::get_epsilon<T, Policy>();
             T d2 = delta * delta / 2;
             //
@@ -407,7 +407,7 @@ namespace boost
             // Backwards recursion first, this is the stable
             // direction for recursion:
             //
-            boost::uintmax_t count = 0;
+            std::uintmax_t count = 0;
             for(int i = k; i >= 0; --i)
             {
                T term = xterm * pois;
@@ -637,7 +637,7 @@ namespace boost
             }
             t_degrees_of_freedom_finder<RealType, Policy> f(delta, x, p < q ? p : q, p < q ? false : true);
             tools::eps_tolerance<RealType> tol(policies::digits<RealType, Policy>());
-            boost::uintmax_t max_iter = policies::get_max_root_iterations<Policy>();
+            std::uintmax_t max_iter = policies::get_max_root_iterations<Policy>();
             //
             // Pick an initial guess:
             //
@@ -690,7 +690,7 @@ namespace boost
             }
             t_non_centrality_finder<RealType, Policy> f(v, x, p < q ? p : q, p < q ? false : true);
             tools::eps_tolerance<RealType> tol(policies::digits<RealType, Policy>());
-            boost::uintmax_t max_iter = policies::get_max_root_iterations<Policy>();
+            std::uintmax_t max_iter = policies::get_max_root_iterations<Policy>();
             //
             // Pick an initial guess that we know is the right side of
             // zero:
@@ -837,6 +837,11 @@ namespace boost
       }; // template <class RealType, class Policy> class non_central_t_distribution
 
       typedef non_central_t_distribution<double> non_central_t; // Reserved name of type double.
+
+      #ifdef __cpp_deduction_guides
+      template <class RealType>
+      non_central_t_distribution(RealType,RealType)->non_central_t_distribution<typename boost::math::tools::promote_args<RealType>::type>;
+      #endif
 
       // Non-member functions to give properties of the distribution.
 

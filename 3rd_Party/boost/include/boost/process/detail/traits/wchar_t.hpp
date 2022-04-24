@@ -7,6 +7,8 @@
 #ifndef BOOST_PROCESS_DETAIL_TRAITS_WCHAR_T_HPP_
 #define BOOST_PROCESS_DETAIL_TRAITS_WCHAR_T_HPP_
 
+#include <algorithm>
+
 #include <boost/process/detail/traits/decl.hpp>
 #include <boost/process/detail/traits/cmd_or_exe.hpp>
 #include <boost/process/detail/traits/env.hpp>

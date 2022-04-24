@@ -1,10 +1,10 @@
-//Copyright (c) 2008-2016 Emil Dotchevski and Reverge Studios, Inc.
+#ifndef BOOST_QVM_MAP_HPP_INCLUDED
+#define BOOST_QVM_MAP_HPP_INCLUDED
 
-//Distributed under the Boost Software License, Version 1.0. (See accompanying
-//file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+// Copyright 2008-2022 Emil Dotchevski and Reverge Studios, Inc.
 
-#ifndef BOOST_QVM_74318C76B4ED11E58A3AE198BB8E7F8B
-#define BOOST_QVM_74318C76B4ED11E58A3AE198BB8E7F8B
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/qvm/map_vec_mat.hpp>
 #include <boost/qvm/map_mat_vec.hpp>

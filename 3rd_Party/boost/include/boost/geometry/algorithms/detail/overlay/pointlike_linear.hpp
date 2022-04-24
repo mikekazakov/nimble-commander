@@ -17,13 +17,9 @@
 #include <iterator>
 #include <vector>
 
-#include <boost/range.hpp>
-
-#include <boost/geometry/core/tags.hpp>
-
-#include <boost/geometry/geometries/box.hpp>
-
-#include <boost/geometry/iterators/segment_iterator.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <boost/geometry/algorithms/disjoint.hpp>
 #include <boost/geometry/algorithms/envelope.hpp>
@@ -36,6 +32,17 @@
 #include <boost/geometry/algorithms/detail/equals/point_point.hpp>
 #include <boost/geometry/algorithms/detail/overlay/overlay_type.hpp>
 #include <boost/geometry/algorithms/detail/overlay/pointlike_pointlike.hpp>
+
+#include <boost/geometry/core/tags.hpp>
+
+#include <boost/geometry/geometries/box.hpp>
+
+#include <boost/geometry/iterators/segment_iterator.hpp>
+
+// TEMP
+#include <boost/geometry/strategies/envelope/cartesian.hpp>
+#include <boost/geometry/strategies/envelope/geographic.hpp>
+#include <boost/geometry/strategies/envelope/spherical.hpp>
 
 
 namespace boost { namespace geometry
@@ -120,20 +127,26 @@ class multipoint_linear_point
 {
 private:
     // structs for partition -- start
-    template <typename ExpandPointStrategy>
+    template <typename Strategy>
     struct expand_box_point
     {
+        expand_box_point(Strategy const& strategy)
+            : m_strategy(strategy)
+        {}
+
         template <typename Box, typename Point>
-        static inline void apply(Box& total, Point const& point)
+        inline void apply(Box& total, Point const& point) const
         {
-            geometry::expand(total, point, ExpandPointStrategy());
+            geometry::expand(total, point, m_strategy);
         }
+
+        Strategy const& m_strategy;
     };
 
-    template <typename EnvelopeStrategy>
+    template <typename Strategy>
     struct expand_box_segment
     {
-        explicit expand_box_segment(EnvelopeStrategy const& strategy)
+        explicit expand_box_segment(Strategy const& strategy)
             : m_strategy(strategy)
         {}
 
@@ -142,26 +155,32 @@ private:
         {
             geometry::expand(total,
                              geometry::return_envelope<Box>(segment, m_strategy),
-                             m_strategy.get_box_expand_strategy());
+                             m_strategy);
         }
 
-        EnvelopeStrategy const& m_strategy;
+        Strategy const& m_strategy;
     };
 
-    template <typename DisjointPointBoxStrategy>
+    template <typename Strategy>
     struct overlaps_box_point
     {
+        explicit overlaps_box_point(Strategy const& strategy)
+            : m_strategy(strategy)
+        {}
+
         template <typename Box, typename Point>
-        static inline bool apply(Box const& box, Point const& point)
+        inline bool apply(Box const& box, Point const& point) const
         {
-            return ! geometry::disjoint(point, box, DisjointPointBoxStrategy());
+            return ! geometry::disjoint(point, box, m_strategy);
         }
+
+        Strategy const& m_strategy;
     };
 
-    template <typename DisjointStrategy>
+    template <typename Strategy>
     struct overlaps_box_segment
     {
-        explicit overlaps_box_segment(DisjointStrategy const& strategy)
+        explicit overlaps_box_segment(Strategy const& strategy)
             : m_strategy(strategy)
         {}
 
@@ -171,7 +190,7 @@ private:
             return ! geometry::disjoint(segment, box, m_strategy);
         }
 
-        DisjointStrategy const& m_strategy;
+        Strategy const& m_strategy;
     };
 
     template <typename OutputIterator, typename Strategy>
@@ -206,7 +225,7 @@ private:
         typedef geometry::segment_iterator<Linear const> const_iterator;
         typedef const_iterator iterator;
 
-        segment_range(Linear const& linear)
+        explicit segment_range(Linear const& linear)
             : m_linear(linear)
         {}
 
@@ -232,11 +251,6 @@ private:
     {
         item_visitor_type<OutputIterator, Strategy> item_visitor(oit, strategy);
 
-        typedef typename Strategy::envelope_strategy_type envelope_strategy_type;
-        typedef typename Strategy::disjoint_strategy_type disjoint_strategy_type;
-        typedef typename Strategy::disjoint_point_box_strategy_type disjoint_point_box_strategy_type;
-        typedef typename Strategy::expand_point_strategy_type expand_point_strategy_type;
-
         // TODO: disjoint Segment/Box may be called in partition multiple times
         // possibly for non-cartesian segments which could be slow. We should consider
         // passing a range of bounding boxes of segments after calculating them once.
@@ -249,10 +263,10 @@ private:
                         typename boost::range_value<MultiPoint>::type
                     >
             >::apply(multipoint, segment_range(linear), item_visitor,
-                     expand_box_point<expand_point_strategy_type>(),
-                     overlaps_box_point<disjoint_point_box_strategy_type>(),
-                     expand_box_segment<envelope_strategy_type>(strategy.get_envelope_strategy()),
-                     overlaps_box_segment<disjoint_strategy_type>(strategy.get_disjoint_strategy()));
+                     expand_box_point<Strategy>(strategy),
+                     overlaps_box_point<Strategy>(strategy),
+                     expand_box_segment<Strategy>(strategy),
+                     overlaps_box_segment<Strategy>(strategy));
 
         return oit;
     }

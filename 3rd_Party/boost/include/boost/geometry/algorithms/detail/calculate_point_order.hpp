@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2019, Oracle and/or its affiliates.
+// Copyright (c) 2019-2021, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -13,11 +13,10 @@
 
 #include <vector>
 
-#include <boost/mpl/assert.hpp>
-
 #include <boost/geometry/algorithms/area.hpp>
 #include <boost/geometry/core/point_order.hpp>
 #include <boost/geometry/core/radian_access.hpp>
+#include <boost/geometry/core/static_assert.hpp>
 #include <boost/geometry/strategies/geographic/point_order.hpp>
 #include <boost/geometry/util/math.hpp>
 #include <boost/geometry/util/range.hpp>
@@ -286,20 +285,15 @@ struct calculate_point_order_by_area
     template <typename Ring, typename Strategy>
     static geometry::order_selector apply(Ring const& ring, Strategy const& strategy)
     {
-        typedef detail::area::ring_area
-            <
-                geometry::order_as_direction<geometry::point_order<Ring>::value>::value,
-                geometry::closure<Ring>::value
-            > ring_area_type;
+        auto const result = detail::area::ring_area::apply(
+                                ring,
+                                // TEMP - in the future (umbrella) strategy will be passed
+                                geometry::strategies::area::services::strategy_converter
+                                    <
+                                        decltype(strategy.get_area_strategy())
+                                    >::get(strategy.get_area_strategy()));
 
-        typedef typename area_result
-            <
-                Ring, Strategy
-            >::type result_type;
-
-        result_type const result = ring_area_type::apply(ring, strategy);
-
-        result_type const zero = 0;
+        decltype(result) const zero = 0;
         return result == zero ? geometry::order_undetermined
              : result > zero  ? geometry::clockwise
                               : geometry::counterclockwise;
@@ -318,10 +312,9 @@ template
 >
 struct calculate_point_order
 {
-    BOOST_MPL_ASSERT_MSG
-    (
-        false, NOT_IMPLEMENTED_FOR_THIS_TAG, (types<VersionTag>)
-    );
+    BOOST_GEOMETRY_STATIC_ASSERT_FALSE(
+        "Not implemented for this VersionTag.",
+        VersionTag);
 };
 
 template <typename Strategy>

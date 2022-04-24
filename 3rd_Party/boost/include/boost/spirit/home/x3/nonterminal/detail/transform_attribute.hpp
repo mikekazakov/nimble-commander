@@ -25,9 +25,9 @@ namespace boost { namespace spirit { namespace x3
 
         static Transformed pre(Exposed&) { return Transformed(); }
 
-        static void post(Exposed& val, Transformed&& attr)
+        static void post(Exposed& val, Transformed&& attribute)
         {
-            traits::move_to(std::forward<Transformed>(attr), val);
+            traits::move_to(std::forward<Transformed>(attribute), val);
         }
     };
 

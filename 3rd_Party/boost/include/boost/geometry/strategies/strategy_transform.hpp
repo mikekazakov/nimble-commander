@@ -30,10 +30,10 @@
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/radian_access.hpp>
 #include <boost/geometry/core/coordinate_dimension.hpp>
+#include <boost/geometry/core/coordinate_promotion.hpp>
 #include <boost/geometry/strategies/transform.hpp>
 
 #include <boost/geometry/util/math.hpp>
-#include <boost/geometry/util/promote_floating_point.hpp>
 #include <boost/geometry/util/select_coordinate_type.hpp>
 
 namespace boost { namespace geometry
@@ -191,7 +191,7 @@ namespace detail
 
         // Phi = first, theta is second, r is third, see documentation on cs::spherical
 
-        // (calculations are splitted to implement ttmath)
+        // (calculations are splitted to implement user defined types)
 
         T r_sin_theta = r;
         T r_cos_theta = r;

@@ -59,6 +59,10 @@ namespace boost { namespace fusion
         filter_iterator(First const& in_first)
             : first(filter::iter_call(first_converter::call(in_first))) {}
 
+        BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+        filter_iterator(filter_iterator const& rhs)
+            : first(rhs.first) {}
+
         first_type first;
 
         // silence MSVC warning C4512: assignment operator could not be generated

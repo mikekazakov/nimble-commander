@@ -58,7 +58,7 @@ struct BOOST_WAVE_DECL has_include_grammar_gen
             LexIteratorT, token_type, token_sequence_type>
         iterator2_type;
 
-//  parse the operator has_include and return the found qualified name
+    //  parse the operator has_include and return the found qualified name
     static boost::spirit::classic::parse_info<iterator1_type>
     parse_operator_has_include (iterator1_type const &first,
         iterator1_type const &last, token_sequence_type &found_qualified_name,

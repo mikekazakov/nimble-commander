@@ -4,6 +4,10 @@
 // Copyright (c) 2008-2012 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 
+// This file was modified by Oracle on 2021.
+// Modifications copyright (c) 2021 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
 // (geolib/GGL), copyright (c) 1995-2010 Geodan, Amsterdam, the Netherlands.
 
@@ -14,13 +18,15 @@
 #ifndef BOOST_GEOMETRY_GEOMETRIES_CONCEPTS_SEGMENT_CONCEPT_HPP
 #define BOOST_GEOMETRY_GEOMETRIES_CONCEPTS_SEGMENT_CONCEPT_HPP
 
+
 #include <boost/concept_check.hpp>
 #include <boost/core/ignore_unused.hpp>
 
-#include <boost/geometry/geometries/concepts/point_concept.hpp>
-
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/point_type.hpp>
+
+#include <boost/geometry/geometries/concepts/concept_type.hpp>
+#include <boost/geometry/geometries/concepts/point_concept.hpp>
 
 
 namespace boost { namespace geometry { namespace concepts
@@ -126,6 +132,19 @@ public :
         dimension_checker<1, 0, n>::apply();
     }
 #endif
+};
+
+
+template <typename Geometry>
+struct concept_type<Geometry, segment_tag>
+{
+    using type = Segment<Geometry>;
+};
+
+template <typename Geometry>
+struct concept_type<Geometry const, segment_tag>
+{
+    using type = ConstSegment<Geometry>;
 };
 
 

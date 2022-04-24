@@ -11,7 +11,6 @@
 #include <boost/property_map/parallel/distributed_property_map.hpp>
 #include <boost/property_map/parallel/detail/untracked_pair.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
-#include <boost/bind.hpp>
 #include <boost/property_map/parallel/simple_trigger.hpp>
 
 namespace boost { namespace parallel {

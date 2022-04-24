@@ -49,7 +49,7 @@ class join {
 
 public:
 
-    enum { arity = dataset1_decay::arity };
+    static const int arity = dataset1_decay::arity;
   
     using sample_t = typename std::conditional<
         std::is_reference<iter1_ret>::value && std::is_reference<iter2_ret>::value && std::is_same<iter1_ret, iter2_ret>::value,

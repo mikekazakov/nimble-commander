@@ -13,7 +13,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/config.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! @ingroup group-functional
     //! Invokes a Callable with the given arguments.
     //!
@@ -78,8 +78,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         }
     };
 
-    constexpr apply_t apply{};
+    BOOST_HANA_INLINE_VARIABLE constexpr apply_t apply{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FUNCTIONAL_APPLY_HPP

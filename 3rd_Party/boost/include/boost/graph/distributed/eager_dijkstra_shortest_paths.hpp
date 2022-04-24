@@ -31,6 +31,7 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/parallel/container_traits.hpp>
+#include <boost/pending/relaxed_heap.hpp>
 
 #ifdef PBGL_ACCOUNTING
 #  include <boost/graph/accounting.hpp>

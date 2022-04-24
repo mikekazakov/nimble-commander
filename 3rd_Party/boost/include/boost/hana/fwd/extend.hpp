@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Comonadic application of a function to a comonadic value.
     //! @ingroup group-Comonad
     //!
@@ -55,8 +55,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr decltype(auto) operator()(W_&& w, F&& f) const;
     };
 
-    constexpr extend_t extend{};
+    BOOST_HANA_INLINE_VARIABLE constexpr extend_t extend{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_EXTEND_HPP

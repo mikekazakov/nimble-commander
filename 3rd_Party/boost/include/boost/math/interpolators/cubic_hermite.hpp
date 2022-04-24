@@ -9,7 +9,9 @@
 #include <memory>
 #include <boost/math/interpolators/detail/cubic_hermite_detail.hpp>
 
-namespace boost::math::interpolators {
+namespace boost {
+namespace math {
+namespace interpolators {
 
 template<class RandomAccessContainer>
 class cubic_hermite {
@@ -133,6 +135,7 @@ private:
     std::shared_ptr<detail::cardinal_cubic_hermite_detail_aos<RandomAccessContainer>> impl_;
 };
 
-
+}
+}
 }
 #endif

@@ -17,17 +17,14 @@
 #include <boost/config.hpp>
 
 #include <boost/optional.hpp>
-#include <boost/move/utility_core.hpp>
 
 #include <boost/serialization/item_version_type.hpp>
-#include <boost/serialization/split_free.hpp>
-#include <boost/serialization/level.hpp>
-#include <boost/serialization/nvp.hpp>
 #include <boost/serialization/library_version_type.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/split_free.hpp>
+#include <boost/serialization/nvp.hpp>
 #include <boost/type_traits/is_pointer.hpp>
-#include <boost/serialization/detail/stack_constructor.hpp>
 #include <boost/serialization/detail/is_default_constructible.hpp>
-#include <boost/serialization/force_include.hpp>
 
 // function specializations must be defined in the appropriate
 // namespace - boost::serialization

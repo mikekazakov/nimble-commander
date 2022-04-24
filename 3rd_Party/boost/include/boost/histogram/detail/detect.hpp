@@ -27,33 +27,40 @@ namespace boost {
 namespace histogram {
 namespace detail {
 
-#define BOOST_HISTOGRAM_DETAIL_DETECT(name, cond)                                 \
-  template <class U>                                                              \
-  struct name##_impl {                                                            \
-    typedef char yes[1];                                                          \
-    typedef char no[2];                                                           \
-    template <class T>                                                            \
-    static yes& test(T& t, decltype(cond, 0));                                    \
-    template <class T>                                                            \
-    static no& test(T&, float);                                                   \
-    using type =                                                                  \
-        std::integral_constant<bool, (sizeof(test(std::declval<U&>(), 0)) == 1)>; \
-  };                                                                              \
-  template <class T>                                                              \
+template <class...>
+using void_t = void;
+
+struct detect_base {
+  template <class T>
+  static T&& val();
+  template <class T>
+  static T& ref();
+  template <class T>
+  static T const& cref();
+};
+
+#define BOOST_HISTOGRAM_DETAIL_DETECT(name, cond)       \
+  template <class U>                                    \
+  struct name##_impl : detect_base {                    \
+    template <class T>                                  \
+    static mp11::mp_true test(T& t, decltype(cond, 0)); \
+    template <class T>                                  \
+    static mp11::mp_false test(T&, float);              \
+    using type = decltype(test<U>(ref<U>(), 0));        \
+  };                                                    \
+  template <class T>                                    \
   using name = typename name##_impl<T>::type
 
-#define BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(name, cond)                     \
-  template <class V, class W>                                                \
-  struct name##_impl {                                                       \
-    typedef char yes[1];                                                     \
-    typedef char no[2];                                                      \
-    template <class T, class U>                                              \
-    static yes& test(decltype(cond, 0));                                     \
-    template <class, class>                                                  \
-    static no& test(float);                                                  \
-    using type = std::integral_constant<bool, (sizeof(test<V, W>(0)) == 1)>; \
-  };                                                                         \
-  template <class T, class U = T>                                            \
+#define BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(name, cond)      \
+  template <class V, class W>                                 \
+  struct name##_impl : detect_base {                          \
+    template <class T, class U>                               \
+    static mp11::mp_true test(T& t, U& u, decltype(cond, 0)); \
+    template <class T, class U>                               \
+    static mp11::mp_false test(T&, U&, float);                \
+    using type = decltype(test<V, W>(ref<V>(), ref<W>(), 0)); \
+  };                                                          \
+  template <class T, class U = T>                             \
   using name = typename name##_impl<T, U>::type
 
 // reset has overloads, trying to get pmf in this case always fails
@@ -61,9 +68,7 @@ BOOST_HISTOGRAM_DETAIL_DETECT(has_method_reset, t.reset(0));
 
 BOOST_HISTOGRAM_DETAIL_DETECT(is_indexable, t[0]);
 
-BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(
-    is_transform,
-    (std::declval<T&>().inverse(std::declval<T&>().forward(std::declval<U>()))));
+BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(is_transform, (t.inverse(t.forward(u))));
 
 BOOST_HISTOGRAM_DETAIL_DETECT(is_indexable_container,
                               (t[0], t.size(), std::begin(t), std::end(t)));
@@ -90,25 +95,24 @@ BOOST_HISTOGRAM_DETAIL_DETECT(is_streamable, (std::declval<std::ostream&>() << t
 
 BOOST_HISTOGRAM_DETAIL_DETECT(has_operator_preincrement, ++t);
 
-BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_operator_equal, (std::declval<const T&>() ==
-                                                          std::declval<const U>()));
+BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_operator_equal, (cref<T>() == u));
 
-BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_operator_radd,
-                                     (std::declval<T&>() += std::declval<U>()));
+BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_operator_radd, (t += u));
 
-BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_operator_rsub,
-                                     (std::declval<T&>() -= std::declval<U>()));
+BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_operator_rsub, (t -= u));
 
-BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_operator_rmul,
-                                     (std::declval<T&>() *= std::declval<U>()));
+BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_operator_rmul, (t *= u));
 
-BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_operator_rdiv,
-                                     (std::declval<T&>() /= std::declval<U>()));
+BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_operator_rdiv, (t /= u));
 
-BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(
-    has_method_eq, (std::declval<const T>().operator==(std::declval<const U>())));
+BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(has_method_eq, (cref<T>().operator==(u)));
 
 BOOST_HISTOGRAM_DETAIL_DETECT(has_threading_support, (T::has_threading_support));
+
+// stronger form of std::is_convertible that works with explicit operator T and ctors
+BOOST_HISTOGRAM_DETAIL_DETECT_BINARY(is_explicitly_convertible, static_cast<U>(t));
+
+BOOST_HISTOGRAM_DETAIL_DETECT(is_complete, sizeof(T));
 
 template <class T>
 using is_storage = mp11::mp_and<is_indexable_container<T>, has_method_reset<T>,

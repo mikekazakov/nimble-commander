@@ -2,8 +2,8 @@
 //
 // Copyright (c) 2011-2013 Adam Wulkiewicz, Lodz, Poland.
 //
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2021.
+// Modifications copyright (c) 2019-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -12,6 +12,10 @@
 
 #ifndef BOOST_GEOMETRY_INDEX_DETAIL_TRANSLATOR_HPP
 #define BOOST_GEOMETRY_INDEX_DETAIL_TRANSLATOR_HPP
+
+#include <type_traits>
+
+#include <boost/geometry/strategies/default_strategy.hpp>
 
 namespace boost { namespace geometry { namespace index {
 
@@ -77,8 +81,8 @@ struct result_type
 template <typename IndexableGetter>
 struct indexable_type
 {
-    typedef typename boost::remove_const<
-        typename boost::remove_reference<
+    typedef typename std::remove_const<
+        typename std::remove_reference<
             typename result_type<IndexableGetter>::type
         >::type
     >::type type;

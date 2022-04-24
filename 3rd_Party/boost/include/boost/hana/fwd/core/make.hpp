@@ -13,7 +13,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/config.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! @ingroup group-core
     //! Create an object of the given tag with the given arguments.
     //!
@@ -63,8 +63,8 @@ BOOST_HANA_NAMESPACE_BEGIN
     };
 
     template <typename Tag>
-    constexpr make_t<Tag> make{};
+    BOOST_HANA_INLINE_VARIABLE constexpr make_t<Tag> make{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_CORE_MAKE_HPP

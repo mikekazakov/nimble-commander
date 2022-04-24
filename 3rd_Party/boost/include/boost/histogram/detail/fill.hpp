@@ -88,7 +88,7 @@ struct storage_grower {
     auto new_storage = make_default(storage);
     new_storage.reset(new_size_);
     const auto dlast = data_ + axes_rank(axes_) - 1;
-    for (const auto& x : storage) {
+    for (auto&& x : storage) {
       auto ns = new_storage.begin();
       auto sit = shifts;
       auto dit = data_;
@@ -250,7 +250,7 @@ template <class ArgTraits, class Storage, class Axes, class Args>
 auto fill_2(ArgTraits, mp11::mp_true, const std::size_t, Storage& st, Axes& axes,
             const Args& args) {
   std::array<axis::index_type, ArgTraits::nargs::value> shifts;
-  // offset must be zero for linearize_growth
+  // offset must be zero for linearize_growth (value of offset argument is ignored)
   mp11::mp_if<has_non_inclusive_axis<Axes>, optional_index, std::size_t> idx{0};
   std::size_t stride = 1;
   bool update_needed = false;

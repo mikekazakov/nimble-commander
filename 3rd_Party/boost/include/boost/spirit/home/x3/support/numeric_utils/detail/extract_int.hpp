@@ -298,6 +298,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
 # pragma warning(push)
 # pragma warning(disable: 4127)   // conditional expression is constant
+# pragma warning(disable: 4459)   // declaration hides global declaration
 #endif
         template <typename Iterator, typename Attribute>
         inline static bool
@@ -396,6 +397,7 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
 #if BOOST_WORKAROUND(BOOST_MSVC, >= 1400)
 # pragma warning(push)
 # pragma warning(disable: 4127)   // conditional expression is constant
+# pragma warning(disable: 4459)   // declaration hides global declaration
 #endif
         template <typename Iterator, typename Attribute>
         inline static bool

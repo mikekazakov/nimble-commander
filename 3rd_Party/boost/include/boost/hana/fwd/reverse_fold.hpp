@@ -13,7 +13,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/config.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Equivalent to `reverse_fold` in Boost.Fusion and Boost.MPL.
     //! @ingroup group-Foldable
     //!
@@ -77,8 +77,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr decltype(auto) operator()(Xs&& xs, F&& f) const;
     };
 
-    constexpr reverse_fold_t reverse_fold{};
+    BOOST_HANA_INLINE_VARIABLE constexpr reverse_fold_t reverse_fold{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_REVERSE_FOLD_HPP

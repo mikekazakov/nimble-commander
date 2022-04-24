@@ -34,6 +34,7 @@ enum method_type
     method_touch_interior,
     method_collinear,
     method_equal,
+    method_start,
     method_error
 };
 
@@ -136,6 +137,11 @@ struct turn_info
     inline bool is_clustered() const
     {
         return cluster_id > 0;
+    }
+    inline bool is_self() const
+    {
+        return operations[0].seg_id.source_index
+                == operations[1].seg_id.source_index;
     }
 
 private :

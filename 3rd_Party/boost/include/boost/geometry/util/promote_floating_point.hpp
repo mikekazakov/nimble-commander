@@ -4,6 +4,10 @@
 // Copyright (c) 2008-2012 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 
+// This file was modified by Oracle on 2020.
+// Modifications copyright (c) 2020 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
 // (geolib/GGL), copyright (c) 1995-2010 Geodan, Amsterdam, the Netherlands.
 
@@ -14,37 +18,9 @@
 #ifndef BOOST_GEOMETRY_UTIL_PROMOTE_FLOATING_POINT_HPP
 #define BOOST_GEOMETRY_UTIL_PROMOTE_FLOATING_POINT_HPP
 
+#include <boost/config/header_deprecated.hpp>
+BOOST_HEADER_DEPRECATED("boost/geometry/core/coordinate_promotion.hpp")
 
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_integral.hpp>
-
-
-namespace boost { namespace geometry
-{
-
-
-/*!
-    \brief Meta-function converting, if necessary, to "a floating point" type
-    \details
-        - if input type is integer, type is double
-        - else type is input type
-    \ingroup utility
- */
-
-template <typename T, typename PromoteIntegerTo = double>
-struct promote_floating_point
-{
-    typedef typename
-        boost::mpl::if_
-        <
-            boost::is_integral<T>,
-            PromoteIntegerTo,
-            T
-        >::type type;
-};
-
-
-}} // namespace boost::geometry
-
+#include <boost/geometry/core/coordinate_promotion.hpp>
 
 #endif // BOOST_GEOMETRY_UTIL_PROMOTE_FLOATING_POINT_HPP

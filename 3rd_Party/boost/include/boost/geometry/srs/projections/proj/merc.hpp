@@ -2,8 +2,9 @@
 
 // Copyright (c) 2008-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2019.
-// Modifications copyright (c) 2017-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017, 2018, 2019, 2022.
+// Modifications copyright (c) 2017-2022, Oracle and/or its affiliates.
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle.
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -206,19 +207,46 @@ namespace projections
         }
     };
 
+    /*!
+        \brief Web Mercator projection
+        \ingroup projections
+        \tparam Geographic latlong point type
+        \tparam Cartesian xy point type
+        \tparam Parameters parameter type
+        \par Projection characteristics
+         - Cylindrical
+         - Spheroid
+         - Ellipsoid
+    */
+    template <typename T, typename Parameters>
+    struct webmerc_spheroid : public detail::merc::base_merc_spheroid<T, Parameters>
+    {
+        template <typename Params>
+        inline webmerc_spheroid(Params const&, Parameters & par)
+        {
+            par.k0 = 1;
+        }
+    };
+
     #ifndef DOXYGEN_NO_DETAIL
     namespace detail
     {
 
         // Static projection
-        BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PROJECTION_FI2(srs::spar::proj_merc, merc_spheroid, merc_ellipsoid)
+        BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PROJECTION_FI2(srs::spar::proj_merc, merc_spheroid, 
+            merc_ellipsoid)
+        BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PROJECTION_FI(srs::spar::proj_webmerc,
+            webmerc_spheroid)
 
         // Factory entry(s)
-        BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_ENTRY_FI2(merc_entry, merc_spheroid, merc_ellipsoid)
-        
+        BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_ENTRY_FI2(merc_entry, merc_spheroid, 
+            merc_ellipsoid)
+        BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_ENTRY_FI(webmerc_entry, webmerc_spheroid)
+
         BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_INIT_BEGIN(merc_init)
         {
             BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_INIT_ENTRY(merc, merc_entry)
+            BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_INIT_ENTRY(webmerc, webmerc_entry)
         }
 
     } // namespace detail
@@ -229,4 +257,3 @@ namespace projections
 }} // namespace boost::geometry
 
 #endif // BOOST_GEOMETRY_PROJECTIONS_MERC_HPP
-

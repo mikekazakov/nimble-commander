@@ -226,6 +226,6 @@ public:
 }
 
 #include <boost/property_map/vector_property_map.hpp>
+#include <boost/property_map/parallel/vector_property_map.hpp>
 
 #endif /* BOOST_PROPERTY_MAP_PARALLEL_PROPERTY_MAPS_HPP */
-

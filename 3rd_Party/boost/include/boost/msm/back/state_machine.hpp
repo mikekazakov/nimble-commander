@@ -17,7 +17,7 @@
 #include <numeric>
 #include <utility>
 
-#include <boost/detail/no_exceptions_support.hpp>
+#include <boost/core/no_exceptions_support.hpp>
 
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/deref.hpp>
@@ -41,7 +41,7 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/function.hpp>
 #ifndef BOOST_NO_RTTI
 #include <boost/any.hpp>
@@ -1590,7 +1590,7 @@ private:
      }
 
      // Construct with the default initial states
-     state_machine<A0,A1,A2,A3,A4 >()
+     state_machine()
          :Derived()
          ,m_events_queue()
          ,m_deferred_events_queue()
@@ -1608,7 +1608,7 @@ private:
          fill_states(this);
      }
      template <class Expr>
-     state_machine<A0,A1,A2,A3,A4 >
+     state_machine
          (Expr const& expr,typename ::boost::enable_if<typename ::boost::proto::is_expr<Expr>::type >::type* =0)
          :Derived()
          ,m_events_queue()
@@ -1686,8 +1686,7 @@ private:
 
 #else
     template <class ARG0,class... ARG,class=typename ::boost::disable_if<typename ::boost::proto::is_expr<ARG0>::type >::type>
-    state_machine<A0,A1,A2,A3,A4
-    >(ARG0&& t0,ARG&&... t)
+    state_machine(ARG0&& t0,ARG&&... t)
     :Derived(std::forward<ARG0>(t0), std::forward<ARG>(t)...)
      ,m_events_queue()
      ,m_deferred_events_queue()
@@ -1703,8 +1702,7 @@ private:
          fill_states(this);
      }
     template <class Expr,class... ARG,class=typename ::boost::enable_if<typename ::boost::proto::is_expr<Expr>::type >::type>
-    state_machine<A0,A1,A2,A3,A4
-    >(Expr const& expr,ARG&&... t)
+    state_machine(Expr const& expr,ARG&&... t)
     :Derived(std::forward<ARG>(t)...)
      ,m_events_queue()
      ,m_deferred_events_queue()
@@ -1737,8 +1735,7 @@ private:
          }
         return *this;
      }
-     state_machine<A0,A1,A2,A3,A4>
-         (library_sm const& rhs)
+     state_machine(library_sm const& rhs)
          : Derived(rhs)
      {
         if (this != &rhs)
@@ -2302,7 +2299,7 @@ private:
         template <class StateType,int ARGS>
         struct visitor_args;
 
-#define MSM_VISITOR_ARGS_SUB(z, n, unused) BOOST_PP_CAT(_,BOOST_PP_ADD(n,1))
+#define MSM_VISITOR_ARGS_SUB(z, n, unused) BOOST_PP_CAT(::boost::placeholders::_,BOOST_PP_ADD(n,1))
 #define MSM_VISITOR_ARGS_TYPEDEF_SUB(z, n, unused) typename StateType::accept_sig::argument ## n
 
 #define MSM_VISITOR_ARGS_EXECUTE(z, n, unused)                                              \
@@ -2384,7 +2381,7 @@ BOOST_PP_REPEAT(BOOST_PP_ADD(BOOST_MSM_VISITOR_ARG_SIZE,1), MSM_VISITOR_ARGS_EXE
             execute_return (ContainingSM::*pf) (typename StateType::event const& evt)=
                 &ContainingSM::process_event;
             ::boost::function<execute_return (typename StateType::event const&)> fct =
-                ::boost::bind(pf,containing_sm,_1);
+                ::boost::bind(pf,containing_sm,::boost::placeholders::_1);
             ::boost::fusion::at_key<StateType>(self->m_substate_list).set_forward_fct(fct);
         }
         // for every defined state in the sm

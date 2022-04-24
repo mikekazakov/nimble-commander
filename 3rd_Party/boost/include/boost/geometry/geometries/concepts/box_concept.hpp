@@ -24,6 +24,8 @@
 #include <boost/geometry/core/coordinate_dimension.hpp>
 #include <boost/geometry/core/point_type.hpp>
 
+#include <boost/geometry/geometries/concepts/concept_type.hpp>
+
 
 namespace boost { namespace geometry { namespace concepts
 {
@@ -128,6 +130,20 @@ public :
     }
 #endif
 };
+
+
+template <typename Geometry>
+struct concept_type<Geometry, box_tag>
+{
+    using type = Box<Geometry>;
+};
+
+template <typename Geometry>
+struct concept_type<Geometry const, box_tag>
+{
+    using type = ConstBox<Geometry>;
+};
+
 
 }}} // namespace boost::geometry::concepts
 

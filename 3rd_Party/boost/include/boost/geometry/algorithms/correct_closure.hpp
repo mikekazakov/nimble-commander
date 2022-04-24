@@ -2,6 +2,10 @@
 
 // Copyright (c) 2017 Barend Gehrels, Amsterdam, the Netherlands.
 
+// This file was modified by Oracle on 2020-2021.
+// Modifications copyright (c) 2020-2021 Oracle and/or its affiliates.
+// Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
+
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -11,13 +15,9 @@
 
 #include <cstddef>
 
-#include <boost/range.hpp>
-
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant_fwd.hpp>
-
 #include <boost/geometry/algorithms/detail/interior_iterator.hpp>
+#include <boost/geometry/algorithms/detail/multi_modify.hpp>
+#include <boost/geometry/algorithms/disjoint.hpp>
 
 #include <boost/geometry/core/closure.hpp>
 #include <boost/geometry/core/exterior_ring.hpp>
@@ -25,10 +25,11 @@
 #include <boost/geometry/core/ring_type.hpp>
 #include <boost/geometry/core/tags.hpp>
 
+#include <boost/geometry/geometries/adapted/boost_variant.hpp>
 #include <boost/geometry/geometries/concepts/check.hpp>
 
-#include <boost/geometry/algorithms/disjoint.hpp>
-#include <boost/geometry/algorithms/detail/multi_modify.hpp>
+#include <boost/geometry/util/range.hpp>
+#include <boost/geometry/util/type_traits.hpp>
 
 namespace boost { namespace geometry
 {
@@ -43,59 +44,55 @@ namespace boost { namespace geometry
 namespace detail { namespace correct_closure
 {
 
-template <typename Geometry>
 struct nop
 {
+    template <typename Geometry>
     static inline void apply(Geometry& )
     {}
 };
 
-
 // Close a ring, if not closed, or open it
-template <typename Ring>
 struct close_or_open_ring
 {
+    template <typename Ring>
     static inline void apply(Ring& r)
     {
-        if (boost::size(r) <= 2)
+        auto size = boost::size(r);
+        if (size <= 2)
         {
             return;
         }
 
-        bool const disjoint = geometry::disjoint(*boost::begin(r),
-                                                 *(boost::end(r) - 1));
-        closure_selector const s = geometry::closure<Ring>::value;
+        // TODO: This requires relate(pt, pt) strategy
+        bool const disjoint = geometry::disjoint(*boost::begin(r), *(boost::end(r) - 1));
+        closure_selector const closure = geometry::closure<Ring>::value;
 
-        if (disjoint && s == closed)
+        if (disjoint && closure == closed)
         {
             // Close it by adding first point
             geometry::append(r, *boost::begin(r));
         }
-        else if (! disjoint && s != closed)
+        else if (! disjoint && closure == open)
         {
             // Open it by removing last point
-            geometry::traits::resize<Ring>::apply(r, boost::size(r) - 1);
+            range::resize(r, size - 1);
         }
     }
 };
 
 // Close/open exterior ring and all its interior rings
-template <typename Polygon>
 struct close_or_open_polygon
 {
-    typedef typename ring_type<Polygon>::type ring_type;
-
+    template <typename Polygon>
     static inline void apply(Polygon& poly)
     {
-        close_or_open_ring<ring_type>::apply(exterior_ring(poly));
+        close_or_open_ring::apply(exterior_ring(poly));
 
-        typename interior_return_type<Polygon>::type
-            rings = interior_rings(poly);
-
-        for (typename detail::interior_iterator<Polygon>::type
-                it = boost::begin(rings); it != boost::end(rings); ++it)
+        auto&& rings = interior_rings(poly);
+        auto const end = boost::end(rings);
+        for (auto it = boost::begin(rings); it != end; ++it)
         {
-            close_or_open_ring<ring_type>::apply(*it);
+            close_or_open_ring::apply(*it);
         }
     }
 };
@@ -114,45 +111,45 @@ struct correct_closure: not_implemented<Tag>
 
 template <typename Point>
 struct correct_closure<Point, point_tag>
-    : detail::correct_closure::nop<Point>
+    : detail::correct_closure::nop
 {};
 
 template <typename LineString>
 struct correct_closure<LineString, linestring_tag>
-    : detail::correct_closure::nop<LineString>
+    : detail::correct_closure::nop
 {};
 
 template <typename Segment>
 struct correct_closure<Segment, segment_tag>
-    : detail::correct_closure::nop<Segment>
+    : detail::correct_closure::nop
 {};
 
 
 template <typename Box>
 struct correct_closure<Box, box_tag>
-    : detail::correct_closure::nop<Box>
+    : detail::correct_closure::nop
 {};
 
 template <typename Ring>
 struct correct_closure<Ring, ring_tag>
-    : detail::correct_closure::close_or_open_ring<Ring>
+    : detail::correct_closure::close_or_open_ring
 {};
 
 template <typename Polygon>
 struct correct_closure<Polygon, polygon_tag>
-    : detail::correct_closure::close_or_open_polygon<Polygon>
+    : detail::correct_closure::close_or_open_polygon
 {};
 
 
 template <typename MultiPoint>
 struct correct_closure<MultiPoint, multi_point_tag>
-    : detail::correct_closure::nop<MultiPoint>
+    : detail::correct_closure::nop
 {};
 
 
 template <typename MultiLineString>
 struct correct_closure<MultiLineString, multi_linestring_tag>
-    : detail::correct_closure::nop<MultiLineString>
+    : detail::correct_closure::nop
 {};
 
 
@@ -160,11 +157,7 @@ template <typename Geometry>
 struct correct_closure<Geometry, multi_polygon_tag>
     : detail::multi_modify
         <
-            Geometry,
             detail::correct_closure::close_or_open_polygon
-                <
-                    typename boost::range_value<Geometry>::type
-                >
         >
 {};
 
@@ -176,7 +169,7 @@ struct correct_closure<Geometry, multi_polygon_tag>
 namespace resolve_variant
 {
 
-template <typename Geometry>
+template <typename Geometry, typename Tag = typename tag<Geometry>::type>
 struct correct_closure
 {
     static inline void apply(Geometry& geometry)
@@ -186,27 +179,35 @@ struct correct_closure
     }
 };
 
-template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
-struct correct_closure<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+template <typename Geometry>
+struct correct_closure<Geometry, dynamic_geometry_tag>
 {
-    struct visitor: boost::static_visitor<void>
+    static void apply(Geometry& geometry)
     {
-        template <typename Geometry>
-        void operator()(Geometry& geometry) const
+        traits::visit<Geometry>::apply([](auto & g)
         {
-            correct_closure<Geometry>::apply(geometry);
-        }
-    };
+            correct_closure<util::remove_cref_t<decltype(g)>>::apply(g);
+        }, geometry);
+    }
+};
 
-    static inline void
-    apply(boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>& geometry)
+template <typename Geometry>
+struct correct_closure<Geometry, geometry_collection_tag>
+{
+    static void apply(Geometry& geometry)
     {
-        visitor vis;
-        boost::apply_visitor(vis, geometry);
+        detail::visit_breadth_first([](auto & g)
+        {
+            correct_closure<util::remove_cref_t<decltype(g)>>::apply(g);
+            return true;
+        }, geometry);
     }
 };
 
 } // namespace resolve_variant
+
+
+// TODO: This algorithm should use relate(pt, pt) strategy
 
 
 /*!

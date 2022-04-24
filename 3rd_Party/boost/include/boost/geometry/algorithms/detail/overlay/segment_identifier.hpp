@@ -27,11 +27,11 @@ namespace boost { namespace geometry
 {
 
 
-
 // Internal struct to uniquely identify a segment
 // on a linestring,ring
 // or polygon (needs ring_index)
 // or multi-geometry (needs multi_index)
+// It is always used for clockwise indication (even if the original is anticlockwise)
 struct segment_identifier
 {
     inline segment_identifier()

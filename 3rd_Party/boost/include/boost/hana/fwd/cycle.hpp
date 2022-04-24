@@ -14,7 +14,7 @@ Distributed under the Boost Software License, Version 1.0.
 #include <boost/hana/core/when.hpp>
 
 
-BOOST_HANA_NAMESPACE_BEGIN
+namespace boost { namespace hana {
     //! Combine a monadic structure with itself `n` times.
     //! @ingroup group-MonadPlus
     //!
@@ -69,8 +69,8 @@ BOOST_HANA_NAMESPACE_BEGIN
         constexpr auto operator()(Xs&& xs, N const& n) const;
     };
 
-    constexpr cycle_t cycle{};
+    BOOST_HANA_INLINE_VARIABLE constexpr cycle_t cycle{};
 #endif
-BOOST_HANA_NAMESPACE_END
+}} // end namespace boost::hana
 
 #endif // !BOOST_HANA_FWD_CYCLE_HPP

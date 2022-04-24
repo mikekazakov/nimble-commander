@@ -48,9 +48,22 @@ public:
                     int status;
                     auto pid_res = ::waitpid(pid, &status, WNOHANG);
                     if (pid_res < 0)
-                        h(-1, get_last_error());
+                    {
+                        auto ec = get_last_error();
+                        boost::asio::post(
+                                _strand,
+                                [pid_res, ec, h]
+                                {
+                                    h(pid_res, ec);
+                                });
+                    }
                     else if ((pid_res == pid) && (WIFEXITED(status) || WIFSIGNALED(status)))
-                        h(status, {}); //successfully exited already
+                        boost::asio::post(
+                                _strand,
+                                [status, h]
+                                {
+                                    h(status, {}); //successfully exited already
+                                });
                     else //still running
                     {
                         if (_receivers.empty())

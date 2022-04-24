@@ -1,6 +1,6 @@
 
 // Copyright Christopher Kormanyos 2002 - 2013.
-// Copyright 2011 - 2013 John Maddock. Distributed under the Boost
+// Copyright 2011 - 2013 John Maddock.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -15,12 +15,17 @@
 #ifdef BOOST_MSVC
 #pragma warning(push)
 #pragma warning(disable : 6326) // comparison of two constants
+#pragma warning(disable : 4127) // conditional expression is constant
 #endif
+
+#include <boost/multiprecision/detail/standalone_config.hpp>
+#include <boost/multiprecision/detail/no_exceptions_support.hpp>
+#include <boost/multiprecision/detail/assert.hpp>
 
 namespace detail {
 
 template <typename T, typename U>
-inline void pow_imp(T& result, const T& t, const U& p, const mpl::false_&)
+inline void pow_imp(T& result, const T& t, const U& p, const std::integral_constant<bool, false>&)
 {
    // Compute the pure power of typename T t^p.
    // Use the S-and-X binary method, as described in
@@ -28,12 +33,12 @@ inline void pow_imp(T& result, const T& t, const U& p, const mpl::false_&)
    // Section 4.6.3 . The resulting computational complexity
    // is order log2[abs(p)].
 
-   typedef typename boost::multiprecision::detail::canonical<U, T>::type int_type;
+   using int_type = typename boost::multiprecision::detail::canonical<U, T>::type;
 
    if (&result == &t)
    {
       T temp;
-      pow_imp(temp, t, p, mpl::false_());
+      pow_imp(temp, t, p, std::integral_constant<bool, false>());
       result = temp;
       return;
    }
@@ -67,30 +72,30 @@ inline void pow_imp(T& result, const T& t, const U& p, const mpl::false_&)
 }
 
 template <typename T, typename U>
-inline void pow_imp(T& result, const T& t, const U& p, const mpl::true_&)
+inline void pow_imp(T& result, const T& t, const U& p, const std::integral_constant<bool, true>&)
 {
    // Signed integer power, just take care of the sign then call the unsigned version:
-   typedef typename boost::multiprecision::detail::canonical<U, T>::type int_type;
-   typedef typename make_unsigned<U>::type                               ui_type;
+   using int_type = typename boost::multiprecision::detail::canonical<U, T>::type;
+   using ui_type = typename boost::multiprecision::detail::make_unsigned<U>::type                         ;
 
    if (p < 0)
    {
       T temp;
       temp = static_cast<int_type>(1);
       T denom;
-      pow_imp(denom, t, static_cast<ui_type>(-p), mpl::false_());
+      pow_imp(denom, t, static_cast<ui_type>(-p), std::integral_constant<bool, false>());
       eval_divide(result, temp, denom);
       return;
    }
-   pow_imp(result, t, static_cast<ui_type>(p), mpl::false_());
+   pow_imp(result, t, static_cast<ui_type>(p), std::integral_constant<bool, false>());
 }
 
 } // namespace detail
 
 template <typename T, typename U>
-inline typename enable_if_c<is_integral<U>::value>::type eval_pow(T& result, const T& t, const U& p)
+inline typename std::enable_if<boost::multiprecision::detail::is_integral<U>::value>::type eval_pow(T& result, const T& t, const U& p)
 {
-   detail::pow_imp(result, t, p, boost::is_signed<U>());
+   detail::pow_imp(result, t, p, boost::multiprecision::detail::is_signed<U>());
 }
 
 template <class T>
@@ -100,9 +105,9 @@ void hyp0F0(T& H0F0, const T& x)
    // http://functions.wolfram.com/HypergeometricFunctions/Hypergeometric0F0/06/01/
    // There are no checks on input range or parameter boundaries.
 
-   typedef typename mpl::front<typename T::unsigned_types>::type ui_type;
+   using ui_type = typename std::tuple_element<0, typename T::unsigned_types>::type;
 
-   BOOST_ASSERT(&H0F0 != &x);
+   BOOST_MP_ASSERT(&H0F0 != &x);
    long tol = boost::multiprecision::detail::digits2<number<T, et_on> >::value();
    T    t;
 
@@ -136,7 +141,7 @@ void hyp0F0(T& H0F0, const T& x)
          x_pow_n_div_n_fact.negate();
    }
    if (n >= series_limit)
-      BOOST_THROW_EXCEPTION(std::runtime_error("H0F0 failed to converge"));
+      BOOST_MP_THROW_EXCEPTION(std::runtime_error("H0F0 failed to converge"));
 }
 
 template <class T>
@@ -147,10 +152,10 @@ void hyp1F0(T& H1F0, const T& a, const T& x)
    // and also see the corresponding section for the power function (i.e. x^a).
    // There are no checks on input range or parameter boundaries.
 
-   typedef typename boost::multiprecision::detail::canonical<int, T>::type si_type;
+   using si_type = typename boost::multiprecision::detail::canonical<int, T>::type;
 
-   BOOST_ASSERT(&H1F0 != &x);
-   BOOST_ASSERT(&H1F0 != &a);
+   BOOST_MP_ASSERT(&H1F0 != &x);
+   BOOST_MP_ASSERT(&H1F0 != &a);
 
    T x_pow_n_div_n_fact(x);
    T pochham_a(a);
@@ -185,13 +190,13 @@ void hyp1F0(T& H1F0, const T& a, const T& x)
          break;
    }
    if (n >= series_limit)
-      BOOST_THROW_EXCEPTION(std::runtime_error("H1F0 failed to converge"));
+      BOOST_MP_THROW_EXCEPTION(std::runtime_error("H1F0 failed to converge"));
 }
 
 template <class T>
 void eval_exp(T& result, const T& x)
 {
-   BOOST_STATIC_ASSERT_MSG(number_category<T>::value == number_kind_floating_point, "The exp function is only valid for floating point types.");
+   static_assert(number_category<T>::value == number_kind_floating_point, "The exp function is only valid for floating point types.");
    if (&x == &result)
    {
       T temp;
@@ -199,21 +204,21 @@ void eval_exp(T& result, const T& x)
       result = temp;
       return;
    }
-   typedef typename boost::multiprecision::detail::canonical<unsigned, T>::type ui_type;
-   typedef typename boost::multiprecision::detail::canonical<int, T>::type      si_type;
-   typedef typename T::exponent_type                                            exp_type;
-   typedef typename boost::multiprecision::detail::canonical<exp_type, T>::type canonical_exp_type;
+   using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
+   using si_type = typename boost::multiprecision::detail::canonical<int, T>::type     ;
+   using exp_type = typename T::exponent_type                                           ;
+   using canonical_exp_type = typename boost::multiprecision::detail::canonical<exp_type, T>::type;
 
    // Handle special arguments.
    int  type  = eval_fpclassify(x);
    bool isneg = eval_get_sign(x) < 0;
-   if (type == (int)FP_NAN)
+   if (type == static_cast<int>(FP_NAN))
    {
       result = x;
       errno  = EDOM;
       return;
    }
-   else if (type == (int)FP_INFINITE)
+   else if (type == static_cast<int>(FP_INFINITE))
    {
       if (isneg)
          result = ui_type(0u);
@@ -221,7 +226,7 @@ void eval_exp(T& result, const T& x)
          result = x;
       return;
    }
-   else if (type == (int)FP_ZERO)
+   else if (type == static_cast<int>(FP_ZERO))
    {
       result = ui_type(1);
       return;
@@ -240,7 +245,7 @@ void eval_exp(T& result, const T& x)
       // Use series for exp(x) - 1:
       //
       T lim;
-      if (std::numeric_limits<number<T, et_on> >::is_specialized)
+      BOOST_IF_CONSTEXPR(std::numeric_limits<number<T, et_on> >::is_specialized)
          lim = std::numeric_limits<number<T, et_on> >::epsilon().backend();
       else
       {
@@ -271,12 +276,12 @@ void eval_exp(T& result, const T& x)
    }
 
    // Check for pure-integer arguments which can be either signed or unsigned.
-   typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type ll;
+   typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type ll;
    eval_trunc(exp_series, x);
    eval_convert_to(&ll, exp_series);
    if (x.compare(ll) == 0)
    {
-      detail::pow_imp(result, get_constant_e<T>(), ll, mpl::true_());
+      detail::pow_imp(result, get_constant_e<T>(), ll, std::integral_constant<bool, true>());
       return;
    }
    else if (exp_series.compare(x) == 0)
@@ -324,7 +329,7 @@ void eval_exp(T& result, const T& x)
    exp_series.negate();
    hyp0F0(result, exp_series);
 
-   detail::pow_imp(exp_series, result, p2, mpl::true_());
+   detail::pow_imp(exp_series, result, p2, std::integral_constant<bool, true>());
    result = ui_type(1);
    eval_ldexp(result, result, n);
    eval_multiply(exp_series, result);
@@ -338,17 +343,17 @@ void eval_exp(T& result, const T& x)
 template <class T>
 void eval_log(T& result, const T& arg)
 {
-   BOOST_STATIC_ASSERT_MSG(number_category<T>::value == number_kind_floating_point, "The log function is only valid for floating point types.");
+   static_assert(number_category<T>::value == number_kind_floating_point, "The log function is only valid for floating point types.");
    //
    // We use a variation of http://dlmf.nist.gov/4.45#i
    // using frexp to reduce the argument to x * 2^n,
    // then let y = x - 1 and compute:
    // log(x) = log(2) * n + log1p(1 + y)
    //
-   typedef typename boost::multiprecision::detail::canonical<unsigned, T>::type ui_type;
-   typedef typename T::exponent_type                                            exp_type;
-   typedef typename boost::multiprecision::detail::canonical<exp_type, T>::type canonical_exp_type;
-   typedef typename mpl::front<typename T::float_types>::type                   fp_type;
+   using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
+   using exp_type = typename T::exponent_type                                           ;
+   using canonical_exp_type = typename boost::multiprecision::detail::canonical<exp_type, T>::type;
+   using fp_type = typename std::tuple_element<0, typename T::float_types>::type                  ;
    int                                                                          s = eval_signbit(arg);
    switch (eval_fpclassify(arg))
    {
@@ -400,7 +405,7 @@ void eval_log(T& result, const T& arg)
    else
       eval_subtract(result, t);
 
-   if (std::numeric_limits<number<T, et_on> >::is_specialized)
+   BOOST_IF_CONSTEXPR(std::numeric_limits<number<T, et_on> >::is_specialized)
       eval_multiply(lim, result, std::numeric_limits<number<T, et_on> >::epsilon().backend());
    else
       eval_ldexp(lim, result, 1 - boost::multiprecision::detail::digits2<number<T, et_on> >::value());
@@ -426,20 +431,11 @@ void eval_log(T& result, const T& arg)
 template <class T>
 const T& get_constant_log10()
 {
-   static BOOST_MP_THREAD_LOCAL T    result;
+   static BOOST_MP_THREAD_LOCAL T             result;
    static BOOST_MP_THREAD_LOCAL long digits = 0;
-#ifndef BOOST_MP_USING_THREAD_LOCAL
-   static BOOST_MP_THREAD_LOCAL bool b = false;
-   constant_initializer<T, &get_constant_log10<T> >::do_nothing();
-
-   if (!b || (digits != boost::multiprecision::detail::digits2<number<T> >::value()))
-   {
-      b = true;
-#else
    if ((digits != boost::multiprecision::detail::digits2<number<T> >::value()))
    {
-#endif
-      typedef typename boost::multiprecision::detail::canonical<unsigned, T>::type ui_type;
+      using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
       T                                                                            ten;
       ten = ui_type(10u);
       eval_log(result, ten);
@@ -452,7 +448,7 @@ const T& get_constant_log10()
 template <class T>
 void eval_log10(T& result, const T& arg)
 {
-   BOOST_STATIC_ASSERT_MSG(number_category<T>::value == number_kind_floating_point, "The log10 function is only valid for floating point types.");
+   static_assert(number_category<T>::value == number_kind_floating_point, "The log10 function is only valid for floating point types.");
    eval_log(result, arg);
    eval_divide(result, get_constant_log10<T>());
 }
@@ -467,9 +463,9 @@ inline void eval_log2(R& result, const T& a)
 template <typename T>
 inline void eval_pow(T& result, const T& x, const T& a)
 {
-   BOOST_STATIC_ASSERT_MSG(number_category<T>::value == number_kind_floating_point, "The pow function is only valid for floating point types.");
-   typedef typename boost::multiprecision::detail::canonical<int, T>::type si_type;
-   typedef typename mpl::front<typename T::float_types>::type              fp_type;
+   static_assert(number_category<T>::value == number_kind_floating_point, "The pow function is only valid for floating point types.");
+   using si_type = typename boost::multiprecision::detail::canonical<int, T>::type;
+   using fp_type = typename std::tuple_element<0, typename T::float_types>::type             ;
 
    if ((&result == &x) || (&result == &a))
    {
@@ -503,12 +499,11 @@ inline void eval_pow(T& result, const T& x, const T& a)
       case FP_NAN:
          result = a;
          break;
-      case FP_NORMAL:
-      {
+      case FP_NORMAL: {
          // Need to check for a an odd integer as a special case:
-         try
+         BOOST_MP_TRY
          {
-            typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type i;
+            typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type i;
             eval_convert_to(&i, a);
             if (a.compare(i) == 0)
             {
@@ -536,10 +531,11 @@ inline void eval_pow(T& result, const T& x, const T& a)
                return;
             }
          }
-         catch (const std::exception&)
+         BOOST_MP_CATCH(const std::exception&)
          {
             // fallthrough..
          }
+         BOOST_MP_CATCH_END
          BOOST_FALLTHROUGH;
       }
       default:
@@ -577,38 +573,33 @@ inline void eval_pow(T& result, const T& x, const T& a)
       return;
    }
 
-   typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type an;
-   typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type max_an =
-       std::numeric_limits<typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type>::is_specialized ? (std::numeric_limits<typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type>::max)() : static_cast<typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type>(1) << (sizeof(typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type) * CHAR_BIT - 2);
-   typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type min_an =
-       std::numeric_limits<typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type>::is_specialized ? (std::numeric_limits<typename boost::multiprecision::detail::canonical<boost::intmax_t, T>::type>::min)() : -min_an;
+   typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type an;
+   typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type max_an =
+       std::numeric_limits<typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type>::is_specialized ? (std::numeric_limits<typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type>::max)() : static_cast<typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type>(1) << (sizeof(typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type) * CHAR_BIT - 2);
+   typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type min_an =
+       std::numeric_limits<typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type>::is_specialized ? (std::numeric_limits<typename boost::multiprecision::detail::canonical<std::intmax_t, T>::type>::min)() : -min_an;
 
    T fa;
-#ifndef BOOST_NO_EXCEPTIONS
-   try
+   BOOST_MP_TRY
    {
-#endif
       eval_convert_to(&an, a);
       if (a.compare(an) == 0)
       {
-         detail::pow_imp(result, x, an, mpl::true_());
+         detail::pow_imp(result, x, an, std::integral_constant<bool, true>());
          return;
       }
-#ifndef BOOST_NO_EXCEPTIONS
    }
-   catch (const std::exception&)
+   BOOST_MP_CATCH(const std::exception&)
    {
       // conversion failed, just fall through, value is not an integer.
-      an = (std::numeric_limits<boost::intmax_t>::max)();
+      an = (std::numeric_limits<std::intmax_t>::max)();
    }
-#endif
+   BOOST_MP_CATCH_END
    if ((eval_get_sign(x) < 0))
    {
-      typename boost::multiprecision::detail::canonical<boost::uintmax_t, T>::type aun;
-#ifndef BOOST_NO_EXCEPTIONS
-      try
+      typename boost::multiprecision::detail::canonical<std::uintmax_t, T>::type aun;
+      BOOST_MP_TRY
       {
-#endif
          eval_convert_to(&aun, a);
          if (a.compare(aun) == 0)
          {
@@ -619,13 +610,13 @@ inline void eval_pow(T& result, const T& x, const T& a)
                result.negate();
             return;
          }
-#ifndef BOOST_NO_EXCEPTIONS
       }
-      catch (const std::exception&)
+      BOOST_MP_CATCH(const std::exception&)
       {
          // conversion failed, just fall through, value is not an integer.
       }
-#endif
+      BOOST_MP_CATCH_END
+
       eval_floor(result, a);
       // -1^INF is a special case in C99:
       if ((x.compare(si_type(-1)) == 0) && (eval_fpclassify(a) == FP_INFINITE))
@@ -648,14 +639,14 @@ inline void eval_pow(T& result, const T& x, const T& a)
       {
          result = std::numeric_limits<number<T, et_on> >::infinity().backend();
       }
-      else if (std::numeric_limits<number<T, et_on> >::has_quiet_NaN)
+      else BOOST_IF_CONSTEXPR (std::numeric_limits<number<T, et_on> >::has_quiet_NaN)
       {
          result = std::numeric_limits<number<T, et_on> >::quiet_NaN().backend();
          errno  = EDOM;
       }
       else
       {
-         BOOST_THROW_EXCEPTION(std::domain_error("Result of pow is undefined or non-real and there is no NaN for this number type."));
+         BOOST_MP_THROW_EXCEPTION(std::domain_error("Result of pow is undefined or non-real and there is no NaN for this number type."));
       }
       return;
    }
@@ -684,7 +675,7 @@ inline void eval_pow(T& result, const T& x, const T& a)
             t = si_type(1);
             eval_subtract(t, x);
             hyp1F0(result, da, t);
-            detail::pow_imp(t, x, an, mpl::true_());
+            detail::pow_imp(t, x, an, std::integral_constant<bool, true>());
             eval_multiply(result, t);
          }
          else
@@ -706,7 +697,7 @@ inline void eval_pow(T& result, const T& x, const T& a)
          eval_log(t, x);
          eval_multiply(t, da);
          eval_exp(result, t);
-         detail::pow_imp(t, x, an, mpl::true_());
+         detail::pow_imp(t, x, an, std::integral_constant<bool, true>());
          eval_multiply(result, t);
       }
       else
@@ -720,16 +711,16 @@ inline void eval_pow(T& result, const T& x, const T& a)
 
 template <class T, class A>
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1800)
-inline typename enable_if_c<!is_integral<A>::value, void>::type
+inline typename std::enable_if<!boost::multiprecision::detail::is_integral<A>::value, void>::type
 #else
-inline typename enable_if_c<is_compatible_arithmetic_type<A, number<T> >::value && !is_integral<A>::value, void>::type
+inline typename std::enable_if<is_compatible_arithmetic_type<A, number<T> >::value && !boost::multiprecision::detail::is_integral<A>::value, void>::type
 #endif
 eval_pow(T& result, const T& x, const A& a)
 {
    // Note this one is restricted to float arguments since pow.hpp already has a version for
    // integer powers....
-   typedef typename boost::multiprecision::detail::canonical<A, T>::type          canonical_type;
-   typedef typename mpl::if_<is_same<A, canonical_type>, T, canonical_type>::type cast_type;
+   using canonical_type = typename boost::multiprecision::detail::canonical<A, T>::type         ;
+   using cast_type = typename std::conditional<std::is_same<A, canonical_type>::value, T, canonical_type>::type;
    cast_type                                                                      c;
    c = a;
    eval_pow(result, x, c);
@@ -739,12 +730,12 @@ template <class T, class A>
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1800)
 inline void
 #else
-inline typename enable_if_c<is_compatible_arithmetic_type<A, number<T> >::value, void>::type
+inline typename std::enable_if<is_compatible_arithmetic_type<A, number<T> >::value, void>::type
 #endif
 eval_pow(T& result, const A& x, const T& a)
 {
-   typedef typename boost::multiprecision::detail::canonical<A, T>::type          canonical_type;
-   typedef typename mpl::if_<is_same<A, canonical_type>, T, canonical_type>::type cast_type;
+   using canonical_type = typename boost::multiprecision::detail::canonical<A, T>::type         ;
+   using cast_type = typename std::conditional<std::is_same<A, canonical_type>::value, T, canonical_type>::type;
    cast_type                                                                      c;
    c = x;
    eval_pow(result, c, a);
@@ -753,30 +744,33 @@ eval_pow(T& result, const A& x, const T& a)
 template <class T>
 void eval_exp2(T& result, const T& arg)
 {
-   BOOST_STATIC_ASSERT_MSG(number_category<T>::value == number_kind_floating_point, "The log function is only valid for floating point types.");
+   static_assert(number_category<T>::value == number_kind_floating_point, "The log function is only valid for floating point types.");
 
    // Check for pure-integer arguments which can be either signed or unsigned.
    typename boost::multiprecision::detail::canonical<typename T::exponent_type, T>::type i;
    T                                                                                     temp;
-   try
+   BOOST_MP_TRY
    {
       eval_trunc(temp, arg);
       eval_convert_to(&i, temp);
       if (arg.compare(i) == 0)
       {
-         temp = static_cast<typename mpl::front<typename T::unsigned_types>::type>(1u);
+         temp = static_cast<typename std::tuple_element<0, typename T::unsigned_types>::type>(1u);
          eval_ldexp(result, temp, i);
          return;
       }
    }
-   catch (const boost::math::rounding_error&)
+   #ifdef BOOST_MP_MATH_AVAILABLE
+   BOOST_MP_CATCH(const boost::math::rounding_error&)
    { /* Fallthrough */
    }
-   catch (const std::runtime_error&)
+   #endif
+   BOOST_MP_CATCH(const std::runtime_error&)
    { /* Fallthrough */
    }
+   BOOST_MP_CATCH_END
 
-   temp = static_cast<typename mpl::front<typename T::unsigned_types>::type>(2u);
+   temp = static_cast<typename std::tuple_element<0, typename T::unsigned_types>::type>(2u);
    eval_pow(result, temp, arg);
 }
 
@@ -785,7 +779,7 @@ namespace detail {
 template <class T>
 void small_sinh_series(T x, T& result)
 {
-   typedef typename boost::multiprecision::detail::canonical<unsigned, T>::type ui_type;
+   using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
    bool                                                                         neg = eval_get_sign(x) < 0;
    if (neg)
       x.negate();
@@ -812,8 +806,8 @@ void small_sinh_series(T x, T& result)
 template <class T>
 void sinhcosh(const T& x, T* p_sinh, T* p_cosh)
 {
-   typedef typename boost::multiprecision::detail::canonical<unsigned, T>::type ui_type;
-   typedef typename mpl::front<typename T::float_types>::type                   fp_type;
+   using ui_type = typename boost::multiprecision::detail::canonical<unsigned, T>::type;
+   using fp_type = typename std::tuple_element<0, typename T::float_types>::type                  ;
 
    switch (eval_fpclassify(x))
    {
@@ -878,27 +872,27 @@ void sinhcosh(const T& x, T* p_sinh, T* p_cosh)
 template <class T>
 inline void eval_sinh(T& result, const T& x)
 {
-   BOOST_STATIC_ASSERT_MSG(number_category<T>::value == number_kind_floating_point, "The sinh function is only valid for floating point types.");
+   static_assert(number_category<T>::value == number_kind_floating_point, "The sinh function is only valid for floating point types.");
    detail::sinhcosh(x, &result, static_cast<T*>(0));
 }
 
 template <class T>
 inline void eval_cosh(T& result, const T& x)
 {
-   BOOST_STATIC_ASSERT_MSG(number_category<T>::value == number_kind_floating_point, "The cosh function is only valid for floating point types.");
+   static_assert(number_category<T>::value == number_kind_floating_point, "The cosh function is only valid for floating point types.");
    detail::sinhcosh(x, static_cast<T*>(0), &result);
 }
 
 template <class T>
 inline void eval_tanh(T& result, const T& x)
 {
-   BOOST_STATIC_ASSERT_MSG(number_category<T>::value == number_kind_floating_point, "The tanh function is only valid for floating point types.");
+   static_assert(number_category<T>::value == number_kind_floating_point, "The tanh function is only valid for floating point types.");
    T c;
    detail::sinhcosh(x, &result, &c);
    if ((eval_fpclassify(result) == FP_INFINITE) && (eval_fpclassify(c) == FP_INFINITE))
    {
       bool s = eval_signbit(result) != eval_signbit(c);
-      result = static_cast<typename mpl::front<typename T::unsigned_types>::type>(1u);
+      result = static_cast<typename std::tuple_element<0, typename T::unsigned_types>::type>(1u);
       if (s)
          result.negate();
       return;

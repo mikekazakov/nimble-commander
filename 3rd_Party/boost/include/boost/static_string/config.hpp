@@ -20,7 +20,7 @@
 #endif
 
 // Include <version> if we can
-#ifdef __has_include 
+#ifdef __has_include
 #if __has_include(<version>)
 #include <version>
 #endif
@@ -45,7 +45,7 @@
 #define BOOST_STATIC_STRING_CHECK_FOR_ATTR(x) __has_cpp_attribute(x)
 #elif defined(__has_attribute)
 #define BOOST_STATIC_STRING_CHECK_FOR_ATTR(x) __has_attribute(x)
-#else 
+#else
 #define BOOST_STATIC_STRING_CHECK_FOR_ATTR(x) 0
 #endif
 

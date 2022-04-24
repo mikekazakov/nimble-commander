@@ -12,8 +12,8 @@
 #define BOOST_ITERATION_CONTEXT_HPP_9556CD16_F11E_4ADC_AC8B_FB9A174BE664_INCLUDED
 
 #include <cstdlib>
-#include <cstdio>
 #include <stack>
+#include <string>
 
 #include <boost/wave/wave_config.hpp>
 #include <boost/wave/cpp_exceptions.hpp>
@@ -55,12 +55,9 @@ public:
         typename base_type::value_type const &val)
     {
         if (iter_ctx.size() == max_include_nesting_depth) {
-        char buffer[22];    // 21 bytes holds all NUL-terminated unsigned 64-bit numbers
-
-            using namespace std;    // for some systems sprintf is in namespace std
-            sprintf(buffer, "%d", (int)max_include_nesting_depth);
+            std::string buffer = std::to_string(max_include_nesting_depth);
             BOOST_WAVE_THROW_CTX(ctx, preprocess_exception,
-                include_nesting_too_deep, buffer, pos);
+                                 include_nesting_too_deep, buffer.c_str(), pos);
         }
         iter_ctx.push(val);
     }

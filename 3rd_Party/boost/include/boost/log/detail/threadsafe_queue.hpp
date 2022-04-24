@@ -1,5 +1,5 @@
 /*
- *          Copyright Andrey Semashev 2007 - 2015.
+ *          Copyright Andrey Semashev 2007 - 2021.
  * Distributed under the Boost Software License, Version 1.0.
  *    (See accompanying file LICENSE_1_0.txt or copy at
  *          http://www.boost.org/LICENSE_1_0.txt)
@@ -27,11 +27,12 @@
 #include <new>
 #include <memory>
 #include <cstddef>
-#include <boost/aligned_storage.hpp>
+#include <boost/atomic/atomic.hpp>
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
 #include <boost/type_traits/alignment_of.hpp>
-#include <boost/type_traits/type_with_alignment.hpp>
+#include <boost/type_traits/aligned_storage.hpp>
+#include <boost/log/utility/use_std_allocator.hpp>
 #include <boost/log/detail/allocator_traits.hpp>
 #include <boost/log/detail/header.hpp>
 
@@ -42,32 +43,30 @@ BOOST_LOG_OPEN_NAMESPACE
 namespace aux {
 
 //! Base class for the thread-safe queue implementation
-struct threadsafe_queue_impl
+class threadsafe_queue_impl
 {
-    struct BOOST_LOG_MAY_ALIAS pointer_storage
-    {
-        union
-        {
-            void* data[2];
-            type_with_alignment< 2 * sizeof(void*) >::type alignment;
-        };
-    };
-
+public:
     struct node_base
     {
-        pointer_storage next;
+        boost::atomic< node_base* > next;
     };
 
+protected:
+    threadsafe_queue_impl();
+    ~threadsafe_queue_impl();
+
+public:
     static BOOST_LOG_API threadsafe_queue_impl* create(node_base* first_node);
+    static BOOST_LOG_API void destroy(threadsafe_queue_impl* impl) BOOST_NOEXCEPT;
 
-    static BOOST_LOG_API void* operator new (std::size_t size);
-    static BOOST_LOG_API void operator delete (void* p, std::size_t);
+    static BOOST_LOG_API node_base* reset_last_node(threadsafe_queue_impl* impl) BOOST_NOEXCEPT;
+    static BOOST_LOG_API bool unsafe_empty(const threadsafe_queue_impl* impl) BOOST_NOEXCEPT;
+    static BOOST_LOG_API void push(threadsafe_queue_impl* impl, node_base* p);
+    static BOOST_LOG_API bool try_pop(threadsafe_queue_impl* impl, node_base*& node_to_free, node_base*& node_with_value);
 
-    virtual ~threadsafe_queue_impl() {}
-    virtual node_base* reset_last_node() = 0;
-    virtual bool unsafe_empty() = 0;
-    virtual void push(node_base* p) = 0;
-    virtual bool try_pop(node_base*& node_to_free, node_base*& node_with_value) = 0;
+    // Copying and assignment is prohibited
+    BOOST_DELETED_FUNCTION(threadsafe_queue_impl(threadsafe_queue_impl const&))
+    BOOST_DELETED_FUNCTION(threadsafe_queue_impl& operator= (threadsafe_queue_impl const&))
 };
 
 //! Thread-safe queue node type
@@ -106,7 +105,7 @@ struct threadsafe_queue_node :
  *
  * The last requirement is not mandatory but is crucial for decent performance.
  */
-template< typename T, typename AllocatorT = std::allocator< void > >
+template< typename T, typename AllocatorT = use_std_allocator >
 class threadsafe_queue :
     private boost::log::aux::rebind_alloc< AllocatorT, threadsafe_queue_node< T > >::type
 {
@@ -161,7 +160,7 @@ public:
         allocator_type(alloc)
     {
         node* p = alloc_traits::allocate(get_allocator(), 1);
-        if (p)
+        if (BOOST_LIKELY(!!p))
         {
             try
             {
@@ -194,21 +193,21 @@ public:
         if (!unsafe_empty())
         {
             value_type value;
-            while (try_pop(value));
+            while (try_pop(value)) {}
         }
 
         // Remove the last dummy node
-        node* p = static_cast< node* >(m_pImpl->reset_last_node());
+        node* p = static_cast< node* >(threadsafe_queue_impl::reset_last_node(m_pImpl));
         alloc_traits::destroy(get_allocator(), p);
         alloc_traits::deallocate(get_allocator(), p, 1);
 
-        delete m_pImpl;
+        threadsafe_queue_impl::destroy(m_pImpl);
     }
 
     /*!
      * Checks if the queue is empty. Not thread-safe, the returned result may not be actual.
      */
-    bool unsafe_empty() const { return m_pImpl->unsafe_empty(); }
+    bool unsafe_empty() const BOOST_NOEXCEPT { return threadsafe_queue_impl::unsafe_empty(m_pImpl); }
 
     /*!
      * Puts a new element to the end of the queue. Thread-safe, can be called
@@ -217,7 +216,7 @@ public:
     void push(const_reference value)
     {
         node* p = alloc_traits::allocate(get_allocator(), 1);
-        if (p)
+        if (BOOST_LIKELY(!!p))
         {
             try
             {
@@ -228,7 +227,7 @@ public:
                 alloc_traits::deallocate(get_allocator(), p, 1);
                 throw;
             }
-            m_pImpl->push(p);
+            threadsafe_queue_impl::push(m_pImpl, p);
         }
         else
             throw std::bad_alloc();
@@ -242,7 +241,7 @@ public:
     bool try_pop(reference value)
     {
         threadsafe_queue_impl::node_base *dealloc, *destr;
-        if (m_pImpl->try_pop(dealloc, destr))
+        if (threadsafe_queue_impl::try_pop(m_pImpl, dealloc, destr))
         {
             node* p = static_cast< node* >(destr);
             auto_deallocate guard(static_cast< allocator_type* >(this), static_cast< node* >(dealloc), p);

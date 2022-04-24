@@ -11,20 +11,25 @@
 #include <boost/mp11/algorithm.hpp>
 #include <boost/mp11/list.hpp>
 #include <boost/mp11/utility.hpp>
+#include <type_traits>
 
 namespace boost {
 namespace histogram {
 namespace detail {
 
 template <class T, class U>
-using if_not_same_and_has_eq =
-    std::enable_if_t<(!std::is_same<T, U>::value && has_method_eq<T, U>::value), bool>;
+using if_not_same = std::enable_if_t<(!std::is_same<T, U>::value), bool>;
+
+// template <class T, class U>
+// using if_not_same_and_has_eq =
+//     std::enable_if_t<(!std::is_same<T, U>::value && !has_method_eq<T, U>::value),
+//     bool>;
 
 // totally_ordered is for types with a <= b == !(a > b) [floats with NaN violate this]
 // Derived must implement <,== for symmetric form and <,>,== for non-symmetric.
 
 // partially_ordered is for types with a <= b == a < b || a == b [for floats with NaN]
-// Derived must implement <,== for the symmetric form and <,>,== for non-symmetric.
+// Derived must implement <,== for symmetric form and <,>,== for non-symmetric.
 
 template <class T, class U>
 struct mirrored {
@@ -34,32 +39,33 @@ struct mirrored {
   friend bool operator<=(const U& a, const T& b) noexcept { return b >= a; }
   friend bool operator>=(const U& a, const T& b) noexcept { return b <= a; }
   friend bool operator!=(const U& a, const T& b) noexcept { return b != a; }
-};
+}; // namespace histogram
 
 template <class T>
 struct mirrored<T, void> {
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator<(const U& a, const T& b) noexcept {
+  friend if_not_same<T, U> operator<(const U& a, const T& b) noexcept {
     return b > a;
   }
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator>(const U& a, const T& b) noexcept {
+  friend if_not_same<T, U> operator>(const U& a, const T& b) noexcept {
     return b < a;
   }
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator==(const U& a, const T& b) noexcept {
-    return b == a;
+  friend std::enable_if_t<(!has_method_eq<U, T>::value), bool> operator==(
+      const U& a, const T& b) noexcept {
+    return b.operator==(a);
   }
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator<=(const U& a, const T& b) noexcept {
+  friend if_not_same<T, U> operator<=(const U& a, const T& b) noexcept {
     return b >= a;
   }
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator>=(const U& a, const T& b) noexcept {
+  friend if_not_same<T, U> operator>=(const U& a, const T& b) noexcept {
     return b <= a;
   }
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator!=(const U& a, const T& b) noexcept {
+  friend if_not_same<T, U> operator!=(const U& a, const T& b) noexcept {
     return b != a;
   }
 };
@@ -77,7 +83,7 @@ struct equality {
 template <class T>
 struct equality<T, void> {
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator!=(const T& a, const U& b) noexcept {
+  friend if_not_same<T, U> operator!=(const T& a, const U& b) noexcept {
     return !(a == b);
   }
 };
@@ -91,11 +97,11 @@ struct totally_ordered_impl : equality<T, U>, mirrored<T, U> {
 template <class T>
 struct totally_ordered_impl<T, void> : equality<T, void>, mirrored<T, void> {
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator<=(const T& a, const U& b) noexcept {
+  friend if_not_same<T, U> operator<=(const T& a, const U& b) noexcept {
     return !(a > b);
   }
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator>=(const T& a, const U& b) noexcept {
+  friend if_not_same<T, U> operator>=(const T& a, const U& b) noexcept {
     return !(a < b);
   }
 };
@@ -114,11 +120,11 @@ struct partially_ordered_impl : equality<T, U>, mirrored<T, U> {
 template <class T>
 struct partially_ordered_impl<T, void> : equality<T, void>, mirrored<T, void> {
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator<=(const T& a, const U& b) noexcept {
+  friend if_not_same<T, U> operator<=(const T& a, const U& b) noexcept {
     return a < b || a == b;
   }
   template <class U>
-  friend if_not_same_and_has_eq<T, U> operator>=(const T& a, const U& b) noexcept {
+  friend if_not_same<T, U> operator>=(const T& a, const U& b) noexcept {
     return a > b || a == b;
   }
 };

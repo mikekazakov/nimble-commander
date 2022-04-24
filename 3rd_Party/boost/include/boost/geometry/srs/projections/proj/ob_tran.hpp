@@ -2,8 +2,8 @@
 
 // Copyright (c) 2008-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2019.
-// Modifications copyright (c) 2017-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2020.
+// Modifications copyright (c) 2017-2020, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle.
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -40,8 +40,12 @@
 #ifndef BOOST_GEOMETRY_PROJECTIONS_OB_TRAN_HPP
 #define BOOST_GEOMETRY_PROJECTIONS_OB_TRAN_HPP
 
+#include <type_traits>
+
 #include <boost/geometry/util/math.hpp>
 #include <boost/shared_ptr.hpp>
+
+#include <boost/geometry/core/static_assert.hpp>
 
 #include <boost/geometry/srs/projections/impl/aasincos.hpp>
 #include <boost/geometry/srs/projections/impl/base_static.hpp>
@@ -127,15 +131,15 @@ namespace projections
                 return pj;
             }
 
-            template <BOOST_GEOMETRY_PROJECTIONS_DETAIL_TYPENAME_PX, typename Parameters>
-            inline Parameters o_proj_parameters(srs::spar::parameters<BOOST_GEOMETRY_PROJECTIONS_DETAIL_PX> const& /*params*/,
+            template <typename ...Ps, typename Parameters>
+            inline Parameters o_proj_parameters(srs::spar::parameters<Ps...> const& /*params*/,
                                                 Parameters const& par)
             {
                 /* copy existing header into new */
                 Parameters pj = par;
 
                 /* get name of projection to be translated */
-                typedef srs::spar::parameters<BOOST_GEOMETRY_PROJECTIONS_DETAIL_PX> params_type;
+                typedef srs::spar::parameters<Ps...> params_type;
                 typedef typename geometry::tuples::find_if
                     <
                         params_type,
@@ -143,17 +147,23 @@ namespace projections
                     >::type o_proj_type;
 
                 static const bool is_found = geometry::tuples::is_found<o_proj_type>::value;
-                BOOST_MPL_ASSERT_MSG((is_found), NO_ROTATION_PROJ, (params_type));
+                BOOST_GEOMETRY_STATIC_ASSERT((is_found),
+                    "Rotation projection not specified.",
+                    params_type);
 
                 typedef typename o_proj_type::type proj_type;
                 static const bool is_specialized = srs::spar::detail::proj_traits<proj_type>::is_specialized;
-                BOOST_MPL_ASSERT_MSG((is_specialized), NO_ROTATION_PROJ, (params_type));
+                BOOST_GEOMETRY_STATIC_ASSERT((is_specialized),
+                    "Rotation projection not specified.",
+                    params_type);
 
                 pj.id = srs::spar::detail::proj_traits<proj_type>::id;
 
                 /* avoid endless recursion */
-                static const bool is_non_resursive = ! boost::is_same<proj_type, srs::spar::proj_ob_tran>::value;
-                BOOST_MPL_ASSERT_MSG((is_non_resursive), INVALID_O_PROJ_PARAMETER, (params_type));
+                static const bool is_non_resursive = ! std::is_same<proj_type, srs::spar::proj_ob_tran>::value;
+                BOOST_GEOMETRY_STATIC_ASSERT((is_non_resursive),
+                    "o_proj parameter can not be set to ob_tran projection.",
+                    params_type);
 
                 // Commented out for consistency with Proj4 >= 5.0.0
                 /* force spherical earth */
@@ -204,8 +214,10 @@ namespace projections
                     >::type o_proj_tag;
 
                 /* avoid endless recursion */
-                static const bool is_o_proj_not_ob_tran = ! boost::is_same<o_proj_tag, srs::spar::proj_ob_tran>::value;
-                BOOST_MPL_ASSERT_MSG((is_o_proj_not_ob_tran), INVALID_O_PROJ_PARAMETER, (StaticParameters));
+                static const bool is_o_proj_not_ob_tran = ! std::is_same<o_proj_tag, srs::spar::proj_ob_tran>::value;
+                BOOST_GEOMETRY_STATIC_ASSERT((is_o_proj_not_ob_tran),
+                    "o_proj parameter can not be set to ob_tran projection.",
+                    StaticParameters);
 
                 typedef typename projections::detail::static_projection_type
                     <

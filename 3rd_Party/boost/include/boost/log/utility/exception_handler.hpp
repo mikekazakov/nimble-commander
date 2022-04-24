@@ -248,26 +248,26 @@ inline typename boost::lazy_enable_if_c<
 }
 
 #define BOOST_LOG_MAKE_EXCEPTION_HANDLER_INTERNAL(z, n, data)\
-    template< BOOST_PP_ENUM_PARAMS(n, typename T), typename HandlerT >\
+    template< BOOST_PP_ENUM_PARAMS_Z(z, n, typename T), typename HandlerT >\
     inline exception_handler<\
-        BOOST_PP_CAT(mpl::vector, n)< BOOST_PP_ENUM_PARAMS(n, T) >,\
+        BOOST_PP_CAT(mpl::vector, n)< BOOST_PP_ENUM_PARAMS_Z(z, n, T) >,\
         HandlerT\
     > make_exception_handler(HandlerT const& handler)\
     {\
         typedef exception_handler<\
-            BOOST_PP_CAT(mpl::vector, n)< BOOST_PP_ENUM_PARAMS(n, T) >,\
+            BOOST_PP_CAT(mpl::vector, n)< BOOST_PP_ENUM_PARAMS_Z(z, n, T) >,\
             HandlerT\
         > eh_t;\
         return eh_t(handler);\
     }\
-    template< BOOST_PP_ENUM_PARAMS(n, typename T), typename HandlerT >\
+    template< BOOST_PP_ENUM_PARAMS_Z(z, n, typename T), typename HandlerT >\
     inline nothrow_exception_handler<\
-        BOOST_PP_CAT(mpl::vector, n)< BOOST_PP_ENUM_PARAMS(n, T) >,\
+        BOOST_PP_CAT(mpl::vector, n)< BOOST_PP_ENUM_PARAMS_Z(z, n, T) >,\
         HandlerT\
     > make_exception_handler(HandlerT const& handler, std::nothrow_t const&)\
     {\
         typedef nothrow_exception_handler<\
-            BOOST_PP_CAT(mpl::vector, n)< BOOST_PP_ENUM_PARAMS(n, T) >,\
+            BOOST_PP_CAT(mpl::vector, n)< BOOST_PP_ENUM_PARAMS_Z(z, n, T) >,\
             HandlerT\
         > eh_t;\
         return eh_t(handler);\

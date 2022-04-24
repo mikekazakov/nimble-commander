@@ -3,8 +3,8 @@
 
 // Copyright (c) 2008-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2019.
-// Modifications copyright (c) 2017-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2020.
+// Modifications copyright (c) 2017-2020, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -42,8 +42,10 @@
 #define BOOST_GEOMETRY_PROJECTIONS_IMPL_PJ_ELL_SET_HPP
 
 #include <string>
+#include <type_traits>
 #include <vector>
 
+#include <boost/geometry/core/static_assert.hpp>
 #include <boost/geometry/formulas/eccentricity_sqr.hpp>
 #include <boost/geometry/util/math.hpp>
 
@@ -166,18 +168,18 @@ template
             Params,
             srs::spar::detail::is_param_tr<srs::spar::detail::ellps_traits>::pred
         >::value,
-    int N = boost::tuples::length<Params>::value
+    int N = geometry::tuples::size<Params>::value
 >
 struct pj_ell_init_ellps_static
 {
     template <typename T>
     static bool apply(Params const& params, T &a, T &b)
     {
-        typedef typename boost::tuples::element<I, Params>::type param_type;
+        typedef typename geometry::tuples::element<I, Params>::type param_type;
         typedef srs::spar::detail::ellps_traits<param_type> traits_type;
         typedef typename traits_type::template model_type<T>::type model_type;
 
-        param_type const& param = boost::tuples::get<I>(params);
+        param_type const& param = geometry::tuples::get<I>(params);
         model_type const& model = traits_type::template model<T>(param);
 
         a = geometry::get_radius<0>(model);
@@ -196,13 +198,13 @@ struct pj_ell_init_ellps_static<Params, N, N>
     }
 };
 
-template <typename T, BOOST_GEOMETRY_PROJECTIONS_DETAIL_TYPENAME_PX>
-inline bool pj_ell_init_ellps(srs::spar::parameters<BOOST_GEOMETRY_PROJECTIONS_DETAIL_PX> const& params,
+template <typename T, typename ...Ps>
+inline bool pj_ell_init_ellps(srs::spar::parameters<Ps...> const& params,
                               T &a, T &b)
 {
     return pj_ell_init_ellps_static
         <
-            srs::spar::parameters<BOOST_GEOMETRY_PROJECTIONS_DETAIL_PX>
+            srs::spar::parameters<Ps...>
         >::apply(params, a, b);
 }
 
@@ -361,7 +363,7 @@ inline void pj_ell_init(Params const& params, T &a, T &es)
 template <typename Params>
 struct static_srs_tag_check_nonexpanded
 {
-    typedef typename boost::mpl::if_c
+    typedef std::conditional_t
         <
             geometry::tuples::exists_if
                 <
@@ -398,7 +400,7 @@ struct static_srs_tag_check_nonexpanded
             srs_sphere_tag,
             // NOTE: The assumption here is that if the user defines either one of:
             // b, es, e, f, rf parameters then he wants to define spheroid, not sphere
-            typename boost::mpl::if_c
+            std::conditional_t
                 <
                     geometry::tuples::exists_if
                         <
@@ -422,8 +424,8 @@ struct static_srs_tag_check_nonexpanded
                         >::value,
                     srs_spheroid_tag,
                     void
-                >::type
-        >::type type;
+                >
+        > type;
 };
 
 template <typename Params>
@@ -504,7 +506,7 @@ struct static_srs_tag<Params, void, void, void>
 {
     // User didn't pass any parameter defining model
     // so use default or generate error
-    typedef typename boost::mpl::if_c
+    typedef std::conditional_t
         <
             geometry::tuples::exists_if
                 <
@@ -512,10 +514,12 @@ struct static_srs_tag<Params, void, void, void>
                 >::value,
             void,
             srs_spheroid_tag // WGS84
-        >::type type;
+        > type;
 
-    static const bool is_found = ! boost::is_same<type, void>::value;
-    BOOST_MPL_ASSERT_MSG((is_found), UNKNOWN_ELLP_PARAM, (Params));
+    static const bool is_found = ! std::is_void<type>::value;
+    BOOST_GEOMETRY_STATIC_ASSERT((is_found),
+        "Expected ellipsoid or sphere definition.",
+        Params);
 };
 
 

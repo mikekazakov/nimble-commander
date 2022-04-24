@@ -16,7 +16,7 @@ struct value_pack
 {
    constexpr value_pack() {}
 
-   typedef value_pack<0, VALUES...> next_type;
+   using next_type = value_pack<0, VALUES...>;
 };
 template <class T>
 struct is_value_pack

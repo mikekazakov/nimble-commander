@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2013, 2014, 2015, 2017, 2019.
-// Modifications copyright (c) 2013-2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2020.
+// Modifications copyright (c) 2013-2020 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -15,7 +15,7 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_RELATE_TURNS_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_RELATE_TURNS_HPP
 
-#include <boost/geometry/strategies/distance.hpp>
+
 #include <boost/geometry/algorithms/detail/overlay/do_reverse.hpp>
 #include <boost/geometry/algorithms/detail/overlay/get_turns.hpp>
 #include <boost/geometry/algorithms/detail/overlay/get_turn_info.hpp>
@@ -25,8 +25,7 @@
 
 #include <boost/geometry/strategies/cartesian/point_in_point.hpp>
 #include <boost/geometry/strategies/spherical/point_in_point.hpp>
-
-#include <boost/type_traits/is_base_of.hpp>
+#include <boost/geometry/strategies/distance.hpp>
 
 
 namespace boost { namespace geometry {
@@ -85,43 +84,28 @@ struct get_turns
             > type;
     };
 
-    template <typename Turns>
-    static inline void apply(Turns & turns,
-                             Geometry1 const& geometry1,
-                             Geometry2 const& geometry2)
-    {
-        detail::get_turns::no_interrupt_policy interrupt_policy;
-
-        typename strategy::intersection::services::default_strategy
-            <
-                typename cs_tag<Geometry1>::type
-            >::type intersection_strategy;
-
-        apply(turns, geometry1, geometry2, interrupt_policy, intersection_strategy);
-    }
-
-    template <typename Turns, typename InterruptPolicy, typename IntersectionStrategy>
+    template <typename Turns, typename InterruptPolicy, typename Strategy>
     static inline void apply(Turns & turns,
                              Geometry1 const& geometry1,
                              Geometry2 const& geometry2,
                              InterruptPolicy & interrupt_policy,
-                             IntersectionStrategy const& intersection_strategy)
+                             Strategy const& strategy)
     {
-        typedef typename robust_policy_type<IntersectionStrategy>::type robust_policy_t;
+        typedef typename robust_policy_type<Strategy>::type robust_policy_t;
 
         robust_policy_t robust_policy
                 = geometry::get_rescale_policy<robust_policy_t>(
-                    geometry1, geometry2, intersection_strategy);
+                    geometry1, geometry2, strategy);
 
-        apply(turns, geometry1, geometry2, interrupt_policy, intersection_strategy, robust_policy);
+        apply(turns, geometry1, geometry2, interrupt_policy, strategy, robust_policy);
     }
 
-    template <typename Turns, typename InterruptPolicy, typename IntersectionStrategy, typename RobustPolicy>
+    template <typename Turns, typename InterruptPolicy, typename Strategy, typename RobustPolicy>
     static inline void apply(Turns & turns,
                              Geometry1 const& geometry1,
                              Geometry2 const& geometry2,
                              InterruptPolicy & interrupt_policy,
-                             IntersectionStrategy const& intersection_strategy,
+                             Strategy const& strategy,
                              RobustPolicy const& robust_policy)
     {
         static const bool reverse1 = detail::overlay::do_reverse
@@ -144,7 +128,7 @@ struct get_turns
                 reverse2,
                 GetTurnPolicy
             >::apply(0, geometry1, 1, geometry2,
-                     intersection_strategy, robust_policy,
+                     strategy, robust_policy,
                      turns, interrupt_policy);
     }
 };

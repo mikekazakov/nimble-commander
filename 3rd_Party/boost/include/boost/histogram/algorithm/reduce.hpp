@@ -33,7 +33,8 @@ namespace algorithm {
 */
 using reduce_command = detail::reduce_command;
 
-using reduce_option [[deprecated("use reduce_command instead")]] =
+using reduce_option [[deprecated("use reduce_command instead; "
+                                 "reduce_option will be removed in boost-1.80")]] =
     reduce_command; ///< deprecated
 
 /** Shrink command to be used in `reduce`.
@@ -111,7 +112,14 @@ inline reduce_command crop(unsigned iaxis, double lower, double upper) {
   Command is applied to corresponding axis in order of reduce arguments.
 
   Works like `shrink` (see shrink documentation for details), but counts in removed bins
-  are discarded, whether underflow and overflow bins are present or not.
+  are discarded, whether underflow and overflow bins are present or not. If the cropped
+  range goes beyond the axis range, then the content of the underflow
+  or overflow bin which overlaps with the range is kept.
+
+  If the counts in an existing underflow or overflow bin are discared by the crop, the
+  corresponding memory cells are not physically removed. Only their contents are set to
+  zero. This technical limitation may be lifted in the future, then crop may completely
+  remove the cropped memory cells.
 
   @param lower bin which contains lower is first to be kept.
   @param upper bin which contains upper is last to be kept, except if upper is equal to
@@ -323,6 +331,8 @@ inline reduce_command slice_and_rebin(axis::index_type begin, axis::index_type e
   exception. Histograms with  non-reducible axes can still be reduced along the
   other axes that are reducible.
 
+  An overload allows one to pass reduce_command as positional arguments.
+
   @param hist original histogram.
   @param options iterable sequence of reduce commands: `shrink`, `slice`, `rebin`,
   `shrink_and_rebin`, or `slice_and_rebin`. The element type of the iterable should be
@@ -343,14 +353,16 @@ Histogram reduce(const Histogram& hist, const Iterable& options) {
         auto& o = opts[iaxis];
         o.is_ordered = axis::traits::ordered(a_in);
         if (o.merge > 0) { // option is set?
-          o.use_underflow_bin = !o.crop && AO::test(axis::option::underflow);
-          o.use_overflow_bin = !o.crop && AO::test(axis::option::overflow);
+          o.use_underflow_bin = AO::test(axis::option::underflow);
+          o.use_overflow_bin = AO::test(axis::option::overflow);
           return detail::static_if_c<axis::traits::is_reducible<A>::value>(
               [&o](const auto& a_in) {
                 if (o.range == reduce_command::range_t::none) {
+                  // no range restriction, pure rebin
                   o.begin.index = 0;
                   o.end.index = a_in.size();
                 } else {
+                  // range striction, convert values to indices as needed
                   if (o.range == reduce_command::range_t::values) {
                     const auto end_value = o.end.value;
                     o.begin.index = axis::traits::index(a_in, o.begin.value);
@@ -359,7 +371,14 @@ Histogram reduce(const Histogram& hist, const Iterable& options) {
                     if (axis::traits::value_as<double>(a_in, o.end.index) != end_value)
                       ++o.end.index;
                   }
-                  // limit [begin, end] to [0, size()]
+
+                  // crop flow bins if index range does not include them
+                  if (o.crop) {
+                    o.use_underflow_bin &= o.begin.index < 0;
+                    o.use_overflow_bin &= o.end.index > a_in.size();
+                  }
+
+                  // now limit [begin, end] to [0, size()]
                   if (o.begin.index < 0) o.begin.index = 0;
                   if (o.end.index > a_in.size()) o.end.index = a_in.size();
                 }
@@ -434,6 +453,8 @@ Histogram reduce(const Histogram& hist, const Iterable& options) {
   exception. It is safe to reduce histograms with some axis that are not reducible along
   the other axes. Trying to reducing a non-reducible axis triggers an invalid_argument
   exception.
+
+  An overload allows one to pass an iterable of reduce_command.
 
   @param hist original histogram.
   @param opt first reduce command; one of `shrink`, `slice`, `rebin`,

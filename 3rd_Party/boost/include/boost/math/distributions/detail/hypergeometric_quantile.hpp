@@ -104,7 +104,7 @@ inline unsigned round_x_from_q(unsigned x, T /*q*/, T /*cum*/, T /*fudge_factor*
 template <class T, class Policy>
 unsigned hypergeometric_quantile_imp(T p, T q, unsigned r, unsigned n, unsigned N, const Policy& pol)
 {
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 #  pragma warning(push)
 #  pragma warning(disable:4267)
 #endif
@@ -219,7 +219,7 @@ unsigned hypergeometric_quantile_imp(T p, T q, unsigned r, unsigned n, unsigned 
       }
       return round_x_from_q(x, q, result, fudge_factor, base, lim, discrete_quantile_type());
    }
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 #  pragma warning(pop)
 #endif
 }

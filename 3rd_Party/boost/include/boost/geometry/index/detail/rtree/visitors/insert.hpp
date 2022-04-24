@@ -4,8 +4,8 @@
 //
 // Copyright (c) 2011-2015 Adam Wulkiewicz, Lodz, Poland.
 //
-// This file was modified by Oracle on 2019.
-// Modifications copyright (c) 2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2019-2021.
+// Modifications copyright (c) 2019-2021 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 //
 // Use, modification and distribution is subject to the Boost Software License,
@@ -15,15 +15,20 @@
 #ifndef BOOST_GEOMETRY_INDEX_DETAIL_RTREE_VISITORS_INSERT_HPP
 #define BOOST_GEOMETRY_INDEX_DETAIL_RTREE_VISITORS_INSERT_HPP
 
-#include <boost/type_traits/is_same.hpp>
+#ifdef BOOST_GEOMETRY_INDEX_EXPERIMENTAL_ENLARGE_BY_EPSILON
+#include <type_traits>
+#endif
 
 #include <boost/geometry/algorithms/detail/expand_by_epsilon.hpp>
-#include <boost/geometry/util/condition.hpp>
+#include <boost/geometry/core/static_assert.hpp>
 
 #include <boost/geometry/index/detail/algorithms/bounds.hpp>
 #include <boost/geometry/index/detail/algorithms/content.hpp>
-
+#include <boost/geometry/index/detail/rtree/node/node_elements.hpp>
 #include <boost/geometry/index/detail/rtree/node/subtree_destroyer.hpp>
+#include <boost/geometry/index/detail/rtree/options.hpp>
+
+#include <boost/geometry/util/condition.hpp>
 
 namespace boost { namespace geometry { namespace index {
 
@@ -108,10 +113,9 @@ template
 >
 struct redistribute_elements
 {
-    BOOST_MPL_ASSERT_MSG(
-        (false),
-        NOT_IMPLEMENTED_FOR_THIS_REDISTRIBUTE_TAG_TYPE,
-        (redistribute_elements));
+    BOOST_GEOMETRY_STATIC_ASSERT_FALSE(
+        "Not implemented for this RedistributeTag type.",
+        MembersHolder, RedistributeTag);
 };
 
 // ----------------------------------------------------------------------- //
@@ -124,10 +128,9 @@ template
 >
 class split
 {
-    BOOST_MPL_ASSERT_MSG(
-        (false),
-        NOT_IMPLEMENTED_FOR_THIS_SPLIT_TAG_TYPE,
-        (split));
+    BOOST_GEOMETRY_STATIC_ASSERT_FALSE(
+        "Not implemented for this SplitTag type.",
+        MembersHolder, SplitTag);
 };
 
 // Default split algorithm
@@ -324,7 +327,7 @@ protected:
         // It's because Points and Segments are compared WRT machine epsilon
         // This ensures that leafs bounds correspond to the stored elements
         if (BOOST_GEOMETRY_CONDITION((
-                boost::is_same<Element, value_type>::value
+                std::is_same<Element, value_type>::value
              && ! index::detail::is_bounding_geometry
                     <
                         typename indexable_type<translator_type>::type
@@ -421,7 +424,7 @@ protected:
         // It's because Points and Segments are compared WRT machine epsilon
         // This ensures that leafs' bounds correspond to the stored elements.
         if (BOOST_GEOMETRY_CONDITION((
-                boost::is_same<Node, leaf>::value
+                std::is_same<Node, leaf>::value
              && ! index::detail::is_bounding_geometry
                     <
                         typename indexable_type<translator_type>::type

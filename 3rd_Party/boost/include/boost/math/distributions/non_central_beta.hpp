@@ -38,7 +38,7 @@ namespace boost
             //
             // Variables come first:
             //
-            boost::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
+            std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
             T errtol = boost::math::policies::get_epsilon<T, Policy>();
             T l2 = lam / 2;
             //
@@ -74,7 +74,7 @@ namespace boost
             // direction for recursion:
             //
             T last_term = 0;
-            boost::uintmax_t count = k;
+            std::uintmax_t count = k;
             for(int i = k; i >= 0; --i)
             {
                T term = beta * pois;
@@ -101,7 +101,7 @@ namespace boost
                {
                   break;
                }
-               if(static_cast<boost::uintmax_t>(count + i - k) > max_iter)
+               if(static_cast<std::uintmax_t>(count + i - k) > max_iter)
                {
                   return policies::raise_evaluation_error(
                      "cdf(non_central_beta_distribution<%1%>, %1%)",
@@ -119,7 +119,7 @@ namespace boost
             //
             // Variables come first:
             //
-            boost::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
+            std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
             T errtol = boost::math::policies::get_epsilon<T, Policy>();
             T l2 = lam / 2;
             //
@@ -168,7 +168,7 @@ namespace boost
             // of the bulk of the sum:
             //
             T last_term = 0;
-            boost::uintmax_t count = 0;
+            std::uintmax_t count = 0;
             for(int i = k + 1; ; ++i)
             {
                poisf *= l2 / i;
@@ -182,7 +182,7 @@ namespace boost
                   count = i - k;
                   break;
                }
-               if(static_cast<boost::uintmax_t>(i - k) > max_iter)
+               if(static_cast<std::uintmax_t>(i - k) > max_iter)
                {
                   return policies::raise_evaluation_error(
                      "cdf(non_central_beta_distribution<%1%>, %1%)",
@@ -198,7 +198,7 @@ namespace boost
                {
                   break;
                }
-               if(static_cast<boost::uintmax_t>(count + k - i) > max_iter)
+               if(static_cast<std::uintmax_t>(count + k - i) > max_iter)
                {
                   return policies::raise_evaluation_error(
                      "cdf(non_central_beta_distribution<%1%>, %1%)",
@@ -289,7 +289,7 @@ namespace boost
          // heuristics.
          //
          template <class F, class T, class Tol, class Policy>
-         std::pair<T, T> bracket_and_solve_root_01(F f, const T& guess, T factor, bool rising, Tol tol, boost::uintmax_t& max_iter, const Policy& pol)
+         std::pair<T, T> bracket_and_solve_root_01(F f, const T& guess, T factor, bool rising, Tol tol, std::uintmax_t& max_iter, const Policy& pol)
          {
             BOOST_MATH_STD_USING
                static const char* function = "boost::math::tools::bracket_and_solve_root_01<%1%>";
@@ -303,7 +303,7 @@ namespace boost
             //
             // Set up invocation count:
             //
-            boost::uintmax_t count = max_iter - 1;
+            std::uintmax_t count = max_iter - 1;
 
             if((fa < 0) == (guess < 0 ? !rising : rising))
             {
@@ -489,7 +489,7 @@ namespace boost
             detail::nc_beta_quantile_functor<value_type, Policy>
                f(non_central_beta_distribution<value_type, Policy>(a, b, l), p, comp);
             tools::eps_tolerance<value_type> tol(policies::digits<RealType, Policy>());
-            boost::uintmax_t max_iter = policies::get_max_root_iterations<Policy>();
+            std::uintmax_t max_iter = policies::get_max_root_iterations<Policy>();
 
             std::pair<value_type, value_type> ir
                = bracket_and_solve_root_01(
@@ -523,7 +523,7 @@ namespace boost
             //
             // Variables come first:
             //
-            boost::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
+            std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
             T errtol = boost::math::policies::get_epsilon<T, Policy>();
             T l2 = lam / 2;
             //
@@ -544,7 +544,7 @@ namespace boost
             //
             // Stable backwards recursion first:
             //
-            boost::uintmax_t count = k;
+            std::uintmax_t count = k;
             for(int i = k; i >= 0; --i)
             {
                T term = beta * pois;
@@ -568,7 +568,7 @@ namespace boost
                {
                   break;
                }
-               if(static_cast<boost::uintmax_t>(count + i - k) > max_iter)
+               if(static_cast<std::uintmax_t>(count + i - k) > max_iter)
                {
                   return policies::raise_evaluation_error(
                      "pdf(non_central_beta_distribution<%1%>, %1%)",
@@ -652,13 +652,10 @@ namespace boost
             const char* function = "boost::math::detail::hypergeometric_2F2<%1%>(%1%,%1%,%1%,%1%,%1%)";
 
             hypergeometric_2F2_sum<value_type> s(a1, a2, b1, b2, z);
-            boost::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
-            value_type zero = 0;
-            value_type result = boost::math::tools::sum_series(s, boost::math::policies::get_epsilon<value_type, Policy>(), max_iter, zero);
-#else
+            std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
+
             value_type result = boost::math::tools::sum_series(s, boost::math::policies::get_epsilon<value_type, Policy>(), max_iter);
-#endif
+
             policies::check_series_iterations<T>(function, max_iter, pol);
             return policies::checked_narrowing_cast<T, Policy>(result, function);
          }
@@ -709,6 +706,11 @@ namespace boost
       }; // template <class RealType, class Policy> class non_central_beta_distribution
 
       typedef non_central_beta_distribution<double> non_central_beta; // Reserved name of type double.
+
+      #ifdef __cpp_deduction_guides
+      template <class RealType>
+      non_central_beta_distribution(RealType,RealType,RealType)->non_central_beta_distribution<typename boost::math::tools::promote_args<RealType>::type>;
+      #endif
 
       // Non-member functions to give properties of the distribution.
 
@@ -800,7 +802,7 @@ namespace boost
       { // skewness = sqrt(l).
          const char* function = "boost::math::non_central_beta_distribution<%1%>::skewness()";
          typedef typename Policy::assert_undefined_type assert_type;
-         BOOST_STATIC_ASSERT(assert_type::value == 0);
+         static_assert(assert_type::value == 0, "Assert type is undefined.");
 
          return policies::raise_evaluation_error<RealType>(
             function,
@@ -813,7 +815,7 @@ namespace boost
       {
          const char* function = "boost::math::non_central_beta_distribution<%1%>::kurtosis_excess()";
          typedef typename Policy::assert_undefined_type assert_type;
-         BOOST_STATIC_ASSERT(assert_type::value == 0);
+         static_assert(assert_type::value == 0, "Assert type is undefined.");
 
          return policies::raise_evaluation_error<RealType>(
             function,

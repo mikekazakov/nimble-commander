@@ -1,5 +1,5 @@
 /* A very simple result type
-(C) 2018-2020 Niall Douglas <http://www.nedproductions.biz/> (11 commits)
+(C) 2018-2022 Niall Douglas <http://www.nedproductions.biz/> (11 commits)
 File Created: Apr 2018
 
 
@@ -34,7 +34,11 @@ DEALINGS IN THE SOFTWARE.
 #include "../basic_result.hpp"
 #include "../policy/fail_to_compile_observers.hpp"
 
+#if !BOOST_OUTCOME_USE_SYSTEM_STATUS_CODE && __has_include("status-code/system_error2.hpp")
 #include "status-code/system_error2.hpp"
+#else
+#include <status-code/system_error2.hpp>
+#endif
 
 BOOST_OUTCOME_V2_NAMESPACE_EXPORT_BEGIN
 
@@ -69,6 +73,15 @@ namespace trait
     static constexpr bool value = boost::system::is_error_condition_enum<Enum>::value;
   };
 #endif
+
+  template <class DomainType> struct is_move_bitcopying<BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::status_code<DomainType>>
+  {
+    static constexpr bool value = BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::traits::is_move_bitcopying<BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::status_code<DomainType>>::value;
+  };
+  template <class DomainType> struct is_move_bitcopying<BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::errored_status_code<DomainType>>
+  {
+    static constexpr bool value = BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::traits::is_move_bitcopying<BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE::errored_status_code<DomainType>>::value;
+  };
 }  // namespace trait
 
 namespace detail
@@ -144,7 +157,8 @@ namespace experimental
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-  template <class R, class S = system_code, class NoValuePolicy = policy::default_status_result_policy<R, S>>  //
+  template <class R, class S = errored_status_code<erased<typename system_code::value_type>>,
+            class NoValuePolicy = policy::default_status_result_policy<R, S>>  //
   using status_result = basic_result<R, S, NoValuePolicy>;
 
 }  // namespace experimental

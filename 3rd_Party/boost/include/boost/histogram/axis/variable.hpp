@@ -34,17 +34,24 @@ namespace boost {
 namespace histogram {
 namespace axis {
 
-/**
-  Axis for non-equidistant bins on the real line.
+/** Axis for non-equidistant bins on the real line.
 
   Binning is a O(log(N)) operation. If speed matters and the problem domain
   allows it, prefer a regular axis, possibly with a transform.
 
-  @tparam Value input value type, must be floating point.
-  @tparam MetaData type to store meta data.
-  @tparam Options see boost::histogram::axis::option (all values allowed).
+  If the axis has an overflow bin (the default), a value on the upper edge of the last
+  bin is put in the overflow bin. The axis range represents a semi-open interval.
+
+  If the overflow bin is deactivated, then a value on the upper edge of the last bin is
+  still counted towards the last bin. The axis range represents a closed interval. This
+  is the desired behavior for random numbers drawn from a bounded interval, which is
+  usually closed.
+
+  @tparam Value     input value type, must be floating point.
+  @tparam MetaData  type to store meta data.
+  @tparam Options   see boost::histogram::axis::option.
   @tparam Allocator allocator to use for dynamic memory management.
- */
+*/
 template <class Value, class MetaData, class Options, class Allocator>
 class variable : public iterator_mixin<variable<Value, MetaData, Options, Allocator>>,
                  public metadata_base_t<MetaData> {
@@ -72,51 +79,74 @@ public:
   explicit variable(allocator_type alloc) : vec_(alloc) {}
 
   /** Construct from iterator range of bin edges.
-   *
-   * \param begin begin of edge sequence.
-   * \param end   end of edge sequence.
-   * \param meta  description of the axis.
-   * \param alloc allocator instance to use.
+
+     @param begin   begin of edge sequence.
+     @param end     end of edge sequence.
+     @param meta    description of the axis (optional).
+     @param options see boost::histogram::axis::option (optional).
+     @param alloc   allocator instance to use (optional).
    */
   template <class It, class = detail::requires_iterator<It>>
-  variable(It begin, It end, metadata_type meta = {}, allocator_type alloc = {})
+  variable(It begin, It end, metadata_type meta = {}, options_type options = {},
+           allocator_type alloc = {})
       : metadata_base(std::move(meta)), vec_(std::move(alloc)) {
+    (void)options;
+
     if (std::distance(begin, end) < 2)
       BOOST_THROW_EXCEPTION(std::invalid_argument("bins > 0 required"));
 
     vec_.reserve(std::distance(begin, end));
     vec_.emplace_back(*begin++);
     bool strictly_ascending = true;
-    while (begin != end) {
-      if (*begin <= vec_.back()) strictly_ascending = false;
-      vec_.emplace_back(*begin++);
+    for (; begin != end; ++begin) {
+      strictly_ascending &= vec_.back() < *begin;
+      vec_.emplace_back(*begin);
     }
     if (!strictly_ascending)
       BOOST_THROW_EXCEPTION(
           std::invalid_argument("input sequence must be strictly ascending"));
   }
 
+  // kept for backward compatibility
+  template <class It, class = detail::requires_iterator<It>>
+  variable(It begin, It end, metadata_type meta, allocator_type alloc)
+      : variable(begin, end, std::move(meta), {}, std::move(alloc)) {}
+
   /** Construct variable axis from iterable range of bin edges.
-   *
-   * \param iterable iterable range of bin edges.
-   * \param meta     description of the axis.
-   * \param alloc    allocator instance to use.
+
+     @param iterable iterable range of bin edges.
+     @param meta     description of the axis (optional).
+     @param options  see boost::histogram::axis::option (optional).
+     @param alloc    allocator instance to use (optional).
    */
   template <class U, class = detail::requires_iterable<U>>
-  variable(const U& iterable, metadata_type meta = {}, allocator_type alloc = {})
-      : variable(std::begin(iterable), std::end(iterable), std::move(meta),
+  variable(const U& iterable, metadata_type meta = {}, options_type options = {},
+           allocator_type alloc = {})
+      : variable(std::begin(iterable), std::end(iterable), std::move(meta), options,
+                 std::move(alloc)) {}
+
+  // kept for backward compatibility
+  template <class U, class = detail::requires_iterable<U>>
+  variable(const U& iterable, metadata_type meta, allocator_type alloc)
+      : variable(std::begin(iterable), std::end(iterable), std::move(meta), {},
                  std::move(alloc)) {}
 
   /** Construct variable axis from initializer list of bin edges.
-   *
-   * @param list  `std::initializer_list` of bin edges.
-   * @param meta  description of the axis.
-   * @param alloc allocator instance to use.
+
+     @param list     `std::initializer_list` of bin edges.
+     @param meta     description of the axis (optional).
+     @param options  see boost::histogram::axis::option (optional).
+     @param alloc    allocator instance to use (optional).
    */
   template <class U>
   variable(std::initializer_list<U> list, metadata_type meta = {},
-           allocator_type alloc = {})
-      : variable(list.begin(), list.end(), std::move(meta), std::move(alloc)) {}
+           options_type options = {}, allocator_type alloc = {})
+      : variable(list.begin(), list.end(), std::move(meta), options, std::move(alloc)) {}
+
+  // kept for backward compatibility
+  template <class U>
+  variable(std::initializer_list<U> list, metadata_type meta, allocator_type alloc)
+      : variable(list.begin(), list.end(), std::move(meta), {}, std::move(alloc)) {}
 
   /// Constructor used by algorithm::reduce to shrink and rebin (not for users).
   variable(const variable& src, index_type begin, index_type end, unsigned merge)
@@ -136,6 +166,8 @@ public:
       const auto b = vec_[size()];
       x -= std::floor((x - a) / (b - a)) * (b - a);
     }
+    // upper edge of last bin is inclusive if overflow bin is not present
+    if (!options_type::test(option::overflow) && x == vec_.back()) return size() - 1;
     return static_cast<index_type>(std::upper_bound(vec_.begin(), vec_.end(), x) -
                                    vec_.begin() - 1);
   }
@@ -175,7 +207,8 @@ public:
     if (i > size()) return detail::highest<value_type>();
     const auto k = static_cast<index_type>(i); // precond: i >= 0
     const real_index_type z = i - k;
-    return (1.0 - z) * vec_[k] + z * vec_[k + 1];
+    // check z == 0 needed to avoid returning nan when vec_[k + 1] is infinity
+    return (1.0 - z) * vec_[k] + (z == 0 ? 0 : z * vec_[k + 1]);
   }
 
   /// Return bin for index argument.
@@ -220,26 +253,36 @@ private:
 
 template <class T>
 variable(std::initializer_list<T>)
-    ->variable<detail::convert_integer<T, double>, null_type>;
+    -> variable<detail::convert_integer<T, double>, null_type>;
 
 template <class T, class M>
 variable(std::initializer_list<T>, M)
-    ->variable<detail::convert_integer<T, double>,
-               detail::replace_type<std::decay_t<M>, const char*, std::string>>;
+    -> variable<detail::convert_integer<T, double>,
+                detail::replace_type<std::decay_t<M>, const char*, std::string>>;
+
+template <class T, class M, unsigned B>
+variable(std::initializer_list<T>, M, const option::bitset<B>&)
+    -> variable<detail::convert_integer<T, double>,
+                detail::replace_type<std::decay_t<M>, const char*, std::string>,
+                option::bitset<B>>;
 
 template <class Iterable, class = detail::requires_iterable<Iterable>>
-variable(Iterable)
-    ->variable<
-        detail::convert_integer<
-            std::decay_t<decltype(*std::begin(std::declval<Iterable&>()))>, double>,
-        null_type>;
+variable(Iterable) -> variable<
+    detail::convert_integer<
+        std::decay_t<decltype(*std::begin(std::declval<Iterable&>()))>, double>,
+    null_type>;
 
 template <class Iterable, class M>
-variable(Iterable, M)
-    ->variable<
-        detail::convert_integer<
-            std::decay_t<decltype(*std::begin(std::declval<Iterable&>()))>, double>,
-        detail::replace_type<std::decay_t<M>, const char*, std::string>>;
+variable(Iterable, M) -> variable<
+    detail::convert_integer<
+        std::decay_t<decltype(*std::begin(std::declval<Iterable&>()))>, double>,
+    detail::replace_type<std::decay_t<M>, const char*, std::string>>;
+
+template <class Iterable, class M, unsigned B>
+variable(Iterable, M, const option::bitset<B>&) -> variable<
+    detail::convert_integer<
+        std::decay_t<decltype(*std::begin(std::declval<Iterable&>()))>, double>,
+    detail::replace_type<std::decay_t<M>, const char*, std::string>, option::bitset<B>>;
 
 #endif
 

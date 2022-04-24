@@ -5,7 +5,8 @@
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 #ifndef BOOST_MATH_INTERPOLATORS_WHITAKKER_SHANNON_DETAIL_HPP
 #define BOOST_MATH_INTERPOLATORS_WHITAKKER_SHANNON_DETAIL_HPP
-#include <boost/assert.hpp>
+#include <cmath>
+#include <boost/math/tools/assert.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/math/special_functions/sin_pi.hpp>
 #include <boost/math/special_functions/cos_pi.hpp>
@@ -46,7 +47,7 @@ public:
 
         if (!isfinite(y))
         {
-            BOOST_ASSERT_MSG(floor(x) == ceil(x), "Floor and ceiling should be equal.\n");
+            BOOST_MATH_ASSERT_MSG(floor(x) == ceil(x), "Floor and ceiling should be equal.\n");
             size_t i = static_cast<size_t>(floor(x));
             if (i & 1)
             {

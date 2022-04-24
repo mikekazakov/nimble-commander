@@ -5,6 +5,7 @@
 #include <Utility/PathManip.h>
 #include <Native.h>
 #include <set>
+#include <fstream>
 #include <sys/stat.h>
 
 using nc::vfs::SearchForFiles;

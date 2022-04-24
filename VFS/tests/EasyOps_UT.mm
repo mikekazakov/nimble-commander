@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -8,6 +8,7 @@
 #include <Utility/PathManip.h>
 #include <sys/stat.h>
 #include <ftw.h>
+#include <fstream>
 
 static int RMRF(const std::string& _path);
 static auto g_TestDirPrefix = "_nc__vfs__easy_ops__test_";

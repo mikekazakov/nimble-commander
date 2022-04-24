@@ -1,6 +1,7 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../Tests.h"
 #include <VFS/NetSFTP.h>
+#include <fstream>
 
 static bool Save(const std::string &_filepath, const std::string &_content);
 

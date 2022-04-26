@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFooter.h"
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ColoredSeparatorLine.h>
@@ -235,9 +235,6 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
     m_SelectionLabel.usesSingleLineMode = true;
     m_SelectionLabel.alignment = NSTextAlignmentCenter;
     [m_SelectionLabel
-     setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow
-     forOrientation:NSLayoutConstraintOrientationHorizontal];
-    [m_SelectionLabel
      setContentHuggingPriority:NSLayoutPriorityFittingSizeCompression
      forOrientation:NSLayoutConstraintOrientationHorizontal];
     
@@ -252,7 +249,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
     m_ItemsLabel.usesSingleLineMode = true;
     m_ItemsLabel.alignment = NSTextAlignmentCenter;
     [m_ItemsLabel
-     setContentCompressionResistancePriority:40
+     setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
      forOrientation:NSLayoutConstraintOrientationHorizontal];
     
     m_VolumeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
@@ -262,7 +259,6 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
     m_VolumeLabel.bordered = false;
     m_VolumeLabel.editable = false;
     m_VolumeLabel.drawsBackground = false;
-    m_VolumeLabel.lineBreakMode = NSLineBreakByTruncatingHead;
     m_VolumeLabel.usesSingleLineMode = true;
     m_VolumeLabel.alignment = NSTextAlignmentRight;
     m_VolumeLabel.lineBreakMode = NSLineBreakByClipping;
@@ -271,13 +267,13 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
      forOrientation:NSLayoutConstraintOrientationHorizontal];
     
     m_VSeparatorLine1 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
-    m_VSeparatorLine1.translatesAutoresizingMaskIntoConstraints = NO;
+    m_VSeparatorLine1.translatesAutoresizingMaskIntoConstraints = false;
     [m_VSeparatorLine1
      setContentCompressionResistancePriority:40
      forOrientation:NSLayoutConstraintOrientationHorizontal];
     
     m_VSeparatorLine2 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
-    m_VSeparatorLine2.translatesAutoresizingMaskIntoConstraints = NO;
+    m_VSeparatorLine2.translatesAutoresizingMaskIntoConstraints = false;
     [m_VSeparatorLine2
      setContentCompressionResistancePriority:40
      forOrientation:NSLayoutConstraintOrientationHorizontal];    

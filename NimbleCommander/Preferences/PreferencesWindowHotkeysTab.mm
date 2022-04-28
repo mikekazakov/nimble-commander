@@ -94,8 +94,7 @@ enum class SourceType
             const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:_t.second];
             return menu_item == nil || menu_item.isHidden == true;
         };
-        m_Shortcuts.erase(remove_if(begin(m_Shortcuts), end(m_Shortcuts), absent),
-                          end(m_Shortcuts));
+        m_Shortcuts.erase(remove_if(begin(m_Shortcuts), end(m_Shortcuts), absent), end(m_Shortcuts));
     }
     return self;
 }
@@ -124,6 +123,12 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
     m_AllNodes.clear();
     std::unordered_map<nc::utility::ActionShortcut, int> counts;
     for( auto &v : m_Shortcuts ) {
+        if( v.first == "menu.file.open_with_submenu" || v.first == "menu.file.always_open_with_submenu" ) {
+            // Skip the menu items that are actually placeholders for submenus as shortcuts don't work for them.
+            // At least for now.
+            continue;
+        }
+
         const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:v.second];
 
         ActionShortcutNode shortcut;
@@ -170,8 +175,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
 
     if( conflicts_amount ) {
         auto fmt = NSLocalizedString(@"Conflicts (%@)", "");
-        self.sourceConflictsButton.title =
-            [NSString stringWithFormat:fmt, [NSNumber numberWithInt:conflicts_amount]];
+        self.sourceConflictsButton.title = [NSString stringWithFormat:fmt, [NSNumber numberWithInt:conflicts_amount]];
     }
     else {
         self.sourceConflictsButton.title = self.sourceConflictsButton.alternateTitle;
@@ -251,8 +255,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
     auto text_field = [[GTMHotKeyTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     text_field.drawsBackground = false;
     text_field.bordered = false;
-    text_field.font =
-        [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeRegular]];
+    text_field.font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSControlSizeRegular]];
     [text_field.cell setSendsActionOnEndEditing:true];
     text_field.editable = true;
     text_field.allowsEditingTextAttributes = false;
@@ -310,9 +313,8 @@ static NSImageView *SpawnCautionSign()
                 const auto field_cell = objc_cast<GTMHotKeyTextFieldCell>(key_text_field.cell);
                 field_cell.objectValue = [GTMHotKey hotKeyWithKey:node->current_shortcut.Key()
                                                         modifiers:node->current_shortcut.modifiers];
-                field_cell.defaultHotKey =
-                    [GTMHotKey hotKeyWithKey:node->default_shortcut.Key()
-                                   modifiers:node->default_shortcut.modifiers];
+                field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:node->default_shortcut.Key()
+                                                          modifiers:node->default_shortcut.modifiers];
                 field_cell.strictModifierRequirement = node->is_menu_action;
 
                 if( node->is_customized )
@@ -399,14 +401,13 @@ static NSImageView *SpawnCautionSign()
 - (IBAction)OnDefaults:(id) [[maybe_unused]] sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedStringFromTable(
-        @"Are you sure you want to reset hotkeys to defaults?",
-        @"Preferences",
-        "Message text asking if user really wants to reset hotkeys to defaults");
-    alert.informativeText =
-        NSLocalizedStringFromTable(@"This will clear any custom hotkeys.",
+    alert.messageText =
+        NSLocalizedStringFromTable(@"Are you sure you want to reset hotkeys to defaults?",
                                    @"Preferences",
-                                   "Informative text when user wants to reset hotkeys to defaults");
+                                   "Message text asking if user really wants to reset hotkeys to defaults");
+    alert.informativeText = NSLocalizedStringFromTable(@"This will clear any custom hotkeys.",
+                                                       @"Preferences",
+                                                       "Informative text when user wants to reset hotkeys to defaults");
     [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
@@ -555,16 +556,14 @@ static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action)
         {"panel.move_next_page", NSLocalizedString(@"File Panels ▶ Move to the Next Page", "")},
         {"panel.scroll_next_page", NSLocalizedString(@"File Panels ▶ Scroll to the Next Page", "")},
         {"panel.move_prev_page", NSLocalizedString(@"File Panels ▶ Move to the Previous Page", "")},
-        {"panel.scroll_prev_page",
-         NSLocalizedString(@"File Panels ▶ Scroll to the Previous Page", "")},
+        {"panel.scroll_prev_page", NSLocalizedString(@"File Panels ▶ Scroll to the Previous Page", "")},
         {"panel.move_next_and_invert_selection",
          NSLocalizedString(@"File Panels ▶ Toggle Selection and Move Down", "")},
         {"panel.invert_item_selection", NSLocalizedString(@"File Panels ▶ Toggle Selection", "")},
         {"panel.go_root", NSLocalizedString(@"File Panels ▶ Go to Root / Directory", "")},
         {"panel.go_home", NSLocalizedString(@"File Panels ▶ Go to Home ~ Directory", "")},
         {"panel.show_preview", NSLocalizedString(@"File Panels ▶ Show Preview", "")},
-        {"panel.go_into_enclosing_folder",
-         NSLocalizedString(@"File Panels ▶ Go to Enclosing Folder", "")},
+        {"panel.go_into_enclosing_folder", NSLocalizedString(@"File Panels ▶ Go to Enclosing Folder", "")},
         {"panel.go_into_folder", NSLocalizedString(@"File Panels ▶ Go Into Folder", "")},
         {"panel.show_previous_tab", NSLocalizedString(@"File Panels ▶ Show Previous Tab", "")},
         {"panel.show_next_tab", NSLocalizedString(@"File Panels ▶ Show Next Tab", "")},
@@ -599,8 +598,6 @@ static NSString *ComposeExternalToolTitle(const ExternalTool &_et, unsigned _ind
 {
     return [NSString
         stringWithFormat:NSLocalizedString(@"Tools ▶ %@", ""),
-                         (_et.m_Title.empty()
-                              ? [NSString
-                                    stringWithFormat:NSLocalizedString(@"Tool #%u", ""), _index]
-                              : [NSString stringWithUTF8StdString:_et.m_Title])];
+                         (_et.m_Title.empty() ? [NSString stringWithFormat:NSLocalizedString(@"Tool #%u", ""), _index]
+                                              : [NSString stringWithUTF8StdString:_et.m_Title])];
 }

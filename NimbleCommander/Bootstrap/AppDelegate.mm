@@ -87,6 +87,7 @@
 #include <Panel/ExternalTools.h>
 
 #include <filesystem>
+#include <fstream>
 
 using namespace std::literals;
 using namespace nc::bootstrap;

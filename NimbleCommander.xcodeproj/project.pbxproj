@@ -129,9 +129,6 @@
 		CF36DBE31F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
 		CF36DBED1F6C184D004A018E /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; };
 		CF36DBEE1F6C185D004A018E /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CF36DBF21F6C18F3004A018E /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */; };
-		CF36DBF31F6C18F4004A018E /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */; };
-		CF36DBF41F6C18F4004A018E /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */; };
 		CF36DBF81F6C1987004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF36DBF91F6C1988004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF36DBFA1F6C1988004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
@@ -724,7 +721,6 @@
 		CFBA63B51FC1A51100077682 /* ShowTabs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C451FB834B7009F6C59 /* ShowTabs.mm */; };
 		CFBA63B61FC1A51200077682 /* ShowTabs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C451FB834B7009F6C59 /* ShowTabs.mm */; };
 		CFBA63B71FC1A5A200077682 /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.a */; };
-		CFBEF9011F6781A100C63816 /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */; };
 		CFC4F99F1F0F40430000B3EE /* Link.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F99E1F0F40430000B3EE /* Link.mm */; };
 		CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
@@ -1899,8 +1895,6 @@
 		CFB9F10D201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecentlyClosedMenuDelegate.h; path = NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h; sourceTree = SOURCE_ROOT; };
 		CFB9F10E201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RecentlyClosedMenuDelegate.mm; path = NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextWidthsCache.mm; path = NimbleCommander/States/FilePanels/Brief/TextWidthsCache.mm; sourceTree = SOURCE_ROOT; };
-		CFBEF9001F6781A100C63816 /* TextWidthsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextWidthsCache.h; path = NimbleCommander/States/FilePanels/Brief/TextWidthsCache.h; sourceTree = SOURCE_ROOT; };
 		CFC4F99D1F0F40430000B3EE /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Link.h; path = NimbleCommander/States/FilePanels/Actions/Link.h; sourceTree = SOURCE_ROOT; };
 		CFC4F99E1F0F40430000B3EE /* Link.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Link.mm; path = NimbleCommander/States/FilePanels/Actions/Link.mm; sourceTree = SOURCE_ROOT; };
 		CFC5121116C4BD3D00D247EE /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2502,8 +2496,6 @@
 				CF6BF84A2197C6690017CECB /* PanelBriefViewLayoutEngineBase.h */,
 				CF6BF84B2197C66A0017CECB /* PanelBriefViewLayoutEngineBase.mm */,
 				CF6BF8252192EC210017CECB /* PanelBriefViewLayoutProtocol.h */,
-				CFBEF9001F6781A100C63816 /* TextWidthsCache.h */,
-				CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */,
 			);
 			name = Brief;
 			sourceTree = "<group>";
@@ -4103,7 +4095,6 @@
 				CF75E88C1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
 				CF8B24411E6FC696008EB447 /* FavoritesImpl.cpp in Sources */,
 				CFB9F111201AEE8300FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
-				CF36DBF41F6C18F4004A018E /* TextWidthsCache.mm in Sources */,
 				CF509272201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */,
 				CF824F9E27AE9E4300C4F29C /* FocusPanel.mm in Sources */,
 				CFA99A7B266188B400F72E93 /* PanelListViewExtensionView.mm in Sources */,
@@ -4390,7 +4381,6 @@
 				CF3B7F70201F20D300BF2090 /* PanelControllerActionsDispatcher.mm in Sources */,
 				CF75E88B1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
 				CF7A09B01EC2DF5D00533B07 /* Delete.mm in Sources */,
-				CF36DBF31F6C18F4004A018E /* TextWidthsCache.mm in Sources */,
 				CF818B6B1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4587,7 +4577,6 @@
 				CFDAC2141DFBBD110039A104 /* PanelView.mm in Sources */,
 				CF9F4AD31ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
 				CF3B7F72201F213000BF2090 /* PanelControllerActionsDispatcher.mm in Sources */,
-				CFBEF9011F6781A100C63816 /* TextWidthsCache.mm in Sources */,
 				CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */,
 				CFDAC2211DFBCA290039A104 /* PanelDataPersistency.cpp in Sources */,
 				CF6ECDA91E9F4776008FA79E /* ChangeAttributes.mm in Sources */,
@@ -4658,7 +4647,6 @@
 				CF1FBF251E8F57CF00D3569C /* FavoriteComposing.mm in Sources */,
 				CFD8CD3E1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
 				CFD726641E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */,
-				CF36DBF21F6C18F3004A018E /* TextWidthsCache.mm in Sources */,
 				CF5BB3612581714000486C49 /* ProFeaturesWindowController.mm in Sources */,
 				CF04DDE91E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CFD726C81E42E2A100603077 /* PanelBriefView.mm in Sources */,

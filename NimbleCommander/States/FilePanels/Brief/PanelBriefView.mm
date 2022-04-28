@@ -14,7 +14,7 @@
 #include "PanelBriefViewCollectionView.h"
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewCollectionViewBackground.h"
-#include "TextWidthsCache.h"
+#include <Panel/TextWidthsCache.h>
 #include "../Helpers/IconRepositoryCleaner.h"
 #include "PanelBriefViewFixedWidthLayout.h"
 #include "PanelBriefViewDynamicWidthLayout.h"
@@ -23,12 +23,11 @@
 #include <robin_hood.h>
 
 using namespace ::nc::panel;
-using namespace ::nc::panel::brief;
 using ::nc::vfsicon::IconRepository;
 
 // font_size, double_icon, icon_size, line_height, text_baseline
 using LayoutDataT = std::tuple<int8_t, int8_t, int8_t, int8_t, int8_t>;
-static const std::array<LayoutDataT, 21> g_FixedLayoutData = {{
+static constinit const std::array<LayoutDataT, 21> g_FixedLayoutData = {{
     std::make_tuple(10, 0, 0, 17, 5),   //
     std::make_tuple(10, 1, 16, 17, 5),  //
     std::make_tuple(10, 2, 32, 35, 14), //

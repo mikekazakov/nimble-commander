@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF0B0402281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF0B0401281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib */; };
+		CF0B0405281F014800076FDF /* SelectionWithMaskPopupViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CF0B0404281F014800076FDF /* SelectionWithMaskPopupViewController.h */; };
+		CF0B0408281F016300076FDF /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B0407281F016300076FDF /* SelectionWithMaskPopupViewController.mm */; };
+		CF0B040B281F027900076FDF /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0B0409281F027900076FDF /* Internal.mm */; };
+		CF0B040E281F029A00076FDF /* Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF0B040D281F029A00076FDF /* Internal.h */; };
 		CF22060527B851A6008EDE3A /* ExternalTools.h in Headers */ = {isa = PBXBuildFile; fileRef = CF22060427B851A6008EDE3A /* ExternalTools.h */; };
 		CF22060727B851B5008EDE3A /* ExternalTools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22060627B851B5008EDE3A /* ExternalTools.mm */; };
 		CF22060927B9B73C008EDE3A /* ExternalTools_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22060827B9B73C008EDE3A /* ExternalTools_UT.mm */; };
@@ -47,6 +52,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		CF0B03FF281EFE8600076FDF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFF33F572556924900B3C92C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF0B03F7281EB16F00076FDF;
+			remoteInfo = PanelResources;
+		};
 		CFF3402025569F3B00B3C92C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFF33F572556924900B3C92C /* Project object */;
@@ -69,6 +81,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CF0B03F8281EB16F00076FDF /* PanelResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PanelResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF0B03FE281EFE5200076FDF /* PanelResources.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PanelResources.plist; path = resources/PanelResources.plist; sourceTree = "<group>"; };
+		CF0B0401281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SelectionWithMaskPopupViewController.xib; path = resources/SelectionWithMaskPopupViewController.xib; sourceTree = "<group>"; };
+		CF0B0404281F014800076FDF /* SelectionWithMaskPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionWithMaskPopupViewController.h; path = include/Panel/UI/SelectionWithMaskPopupViewController.h; sourceTree = "<group>"; };
+		CF0B0407281F016300076FDF /* SelectionWithMaskPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SelectionWithMaskPopupViewController.mm; path = source/UI/SelectionWithMaskPopupViewController.mm; sourceTree = "<group>"; };
+		CF0B0409281F027900076FDF /* Internal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Internal.mm; path = source/Internal.mm; sourceTree = "<group>"; };
+		CF0B040D281F029A00076FDF /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = include/Panel/Internal.h; sourceTree = "<group>"; };
 		CF22060427B851A6008EDE3A /* ExternalTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalTools.h; path = include/Panel/ExternalTools.h; sourceTree = "<group>"; };
 		CF22060627B851B5008EDE3A /* ExternalTools.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalTools.mm; path = source/ExternalTools.mm; sourceTree = "<group>"; };
 		CF22060827B9B73C008EDE3A /* ExternalTools_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalTools_UT.mm; path = tests/ExternalTools_UT.mm; sourceTree = "<group>"; };
@@ -117,6 +136,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		CF0B03F5281EB16F00076FDF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFF33F5D2556924900B3C92C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -137,6 +163,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF0B03FD281EFE4100076FDF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CF0B0401281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib */,
+				CF0B03FE281EFE5200076FDF /* PanelResources.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		CF0B0403281F013800076FDF /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				CF0B0404281F014800076FDF /* SelectionWithMaskPopupViewController.h */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
+		CF0B0406281F015A00076FDF /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				CF0B0407281F016300076FDF /* SelectionWithMaskPopupViewController.mm */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
 		CFF33F562556924900B3C92C = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +196,7 @@
 				CFF33F602556924900B3C92C /* Products */,
 				CFF33F942556940800B3C92C /* Source */,
 				CFF33FEF25569DBE00B3C92C /* Tests */,
+				CF0B03FD281EFE4100076FDF /* Resources */,
 				CFF3401E25569F3B00B3C92C /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -154,6 +206,7 @@
 			children = (
 				CFF33F5F2556924900B3C92C /* libPanel.a */,
 				CFF33FE425569DA700B3C92C /* PanelUT */,
+				CF0B03F8281EB16F00076FDF /* PanelResources.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -172,9 +225,11 @@
 		CFF33F932556940200B3C92C /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF0B0403281F013800076FDF /* UI */,
 				CF3ED4EA25860C8000D67AF2 /* CursorBackup.h */,
 				CF22060427B851A6008EDE3A /* ExternalTools.h */,
 				CFA89D812804C86E00BEA127 /* FindFilesData.h */,
+				CF0B040D281F029A00076FDF /* Internal.h */,
 				CF465228268D163E0085840A /* Log.h */,
 				CFF33F952556941B00B3C92C /* PanelData.h */,
 				CFF33FB42556958C00B3C92C /* PanelDataEntriesComparator.h */,
@@ -195,9 +250,11 @@
 		CFF33F942556940800B3C92C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF0B0406281F015A00076FDF /* UI */,
 				CF3ED4F125860C8900D67AF2 /* CursorBackup.mm */,
 				CF22060627B851B5008EDE3A /* ExternalTools.mm */,
 				CFA89D832804C87700BEA127 /* FindFilesData.cpp */,
+				CF0B0409281F027900076FDF /* Internal.mm */,
 				CF46522C268D16500085840A /* Log.cpp */,
 				CFF33F982556942600B3C92C /* PanelData.mm */,
 				CFF33FB72556959400B3C92C /* PanelDataEntriesComparator.cpp */,
@@ -249,12 +306,14 @@
 				CF22060527B851A6008EDE3A /* ExternalTools.h in Headers */,
 				CFF33FBB255695B800B3C92C /* PanelDataExternalEntryKey.h in Headers */,
 				CFF33F962556941B00B3C92C /* PanelData.h in Headers */,
+				CF0B0405281F014800076FDF /* SelectionWithMaskPopupViewController.h in Headers */,
 				CF3ED4FA25860D5900D67AF2 /* QuickSearch.h in Headers */,
 				CF4652592699F97C0085840A /* PanelViewFieldEditor.h in Headers */,
 				CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */,
 				CFF33FAF2556954200B3C92C /* PanelDataItemVolatileData.h in Headers */,
 				CFF33FB52556958C00B3C92C /* PanelDataEntriesComparator.h in Headers */,
 				CFF33FA92556950800B3C92C /* PanelDataFilter.h in Headers */,
+				CF0B040E281F029A00076FDF /* Internal.h in Headers */,
 				CF3ED4E725860BFE00D67AF2 /* PanelViewKeystrokeSink.h in Headers */,
 				CF3ED4EB25860C8000D67AF2 /* CursorBackup.h in Headers */,
 			);
@@ -263,6 +322,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		CF0B03F7281EB16F00076FDF /* PanelResources */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF0B03FB281EB16F00076FDF /* Build configuration list for PBXNativeTarget "PanelResources" */;
+			buildPhases = (
+				CF0B03F4281EB16F00076FDF /* Sources */,
+				CF0B03F5281EB16F00076FDF /* Frameworks */,
+				CF0B03F6281EB16F00076FDF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PanelResources;
+			productName = PanelResources;
+			productReference = CF0B03F8281EB16F00076FDF /* PanelResources.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
 		CFF33F5E2556924900B3C92C /* Panel */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CFF33F632556924900B3C92C /* Build configuration list for PBXNativeTarget "Panel" */;
@@ -274,6 +350,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CF0B0400281EFE8600076FDF /* PBXTargetDependency */,
 			);
 			name = Panel;
 			productName = Panel;
@@ -306,6 +383,9 @@
 			attributes = {
 				LastUpgradeCheck = 1220;
 				TargetAttributes = {
+					CF0B03F7281EB16F00076FDF = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
 					CFF33F5E2556924900B3C92C = {
 						CreatedOnToolsVersion = 12.0;
 					};
@@ -329,17 +409,38 @@
 			targets = (
 				CFF33F5E2556924900B3C92C /* Panel */,
 				CFF33FE325569DA700B3C92C /* PanelUT */,
+				CF0B03F7281EB16F00076FDF /* PanelResources */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		CF0B03F6281EB16F00076FDF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF0B0402281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		CF0B03F4281EB16F00076FDF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFF33F5C2556924900B3C92C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF0B0408281F016300076FDF /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFF33F992556942700B3C92C /* PanelData.mm in Sources */,
 				CF22060727B851B5008EDE3A /* ExternalTools.mm in Sources */,
+				CF0B040B281F027900076FDF /* Internal.mm in Sources */,
 				CF46522D268D16500085840A /* Log.cpp in Sources */,
 				CFA89D842804C87700BEA127 /* FindFilesData.cpp in Sources */,
 				CFF33FBE255695BF00B3C92C /* PanelDataExternalEntryKey.cpp in Sources */,
@@ -371,6 +472,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		CF0B0400281EFE8600076FDF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF0B03F7281EB16F00076FDF /* PanelResources */;
+			targetProxy = CF0B03FF281EFE8600076FDF /* PBXContainerItemProxy */;
+		};
 		CFF3402125569F3B00B3C92C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = CFF33F5E2556924900B3C92C /* Panel */;
@@ -379,6 +485,38 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		CF0B03F9281EB16F00076FDF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				INFOPLIST_FILE = resources/PanelResources.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = Icom.magnumbytes.NimbleCommander.PanelResources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		CF0B03FA281EB16F00076FDF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				INFOPLIST_FILE = resources/PanelResources.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = Icom.magnumbytes.NimbleCommander.PanelResources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 		CFF33F612556924900B3C92C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFF33F8E255692C000B3C92C /* debug.xcconfig */;
@@ -434,6 +572,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		CF0B03FB281EB16F00076FDF /* Build configuration list for PBXNativeTarget "PanelResources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF0B03F9281EB16F00076FDF /* Debug */,
+				CF0B03FA281EB16F00076FDF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CFF33F5A2556924900B3C92C /* Build configuration list for PBXProject "Panel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

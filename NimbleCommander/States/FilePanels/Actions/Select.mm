@@ -5,9 +5,9 @@
 #include <Panel/PanelDataSelection.h>
 #include <Panel/PanelData.h>
 #include <Panel/FindFilesData.h>
+#include <Panel/UI/SelectionWithMaskPopupViewController.h>
 #include "../PanelView.h"
 #include "../PanelController.h"
-#include "../Views/SelectionWithMaskPopupViewController.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Bootstrap/Config.h>

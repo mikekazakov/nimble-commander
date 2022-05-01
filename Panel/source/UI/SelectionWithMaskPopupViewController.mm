@@ -1,9 +1,10 @@
 // Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "SelectionWithMaskPopupViewController.h"
+#include <Panel/UI/SelectionWithMaskPopupViewController.h>
+#include <Panel/Internal.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 
-using nc::panel::FindFilesMask;
+using namespace nc::panel;
 
 @interface SelectionWithMaskPopupViewController ()
 
@@ -28,7 +29,7 @@ using nc::panel::FindFilesMask;
                          history:(std::span<const nc::panel::FindFilesMask>)_masks
                       doesSelect:(bool)_select
 {
-    self = [super init];
+    self = [super initWithNibName:@"SelectionWithMaskPopupViewController" bundle:Bundle()];
     if( self ) {
         m_DoesSelect = _select;
         m_History.assign(_masks.begin(), _masks.end());

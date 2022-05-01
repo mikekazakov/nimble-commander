@@ -298,6 +298,7 @@ private:
     [self updateMasksMenu];
     [self updateMaskSearchFieldPrompt];
     objc_cast<NSSearchFieldCell>(self.maskSearchField.cell).cancelButtonCell = nil;
+    self.maskSearchField.stringValue = @"*";
 
     [self updateTextMenu];
     objc_cast<NSSearchFieldCell>(self.textSearchField.cell).cancelButtonCell = nil;

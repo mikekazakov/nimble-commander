@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -135,7 +135,7 @@ public:
      */
     uint64_t FullHashForPath(const char *_path) const noexcept;
 
-    std::string MakePathVerbose(const char *_path) const;
+    std::string MakePathVerbose(std::string_view _path) const;
 
     /***********************************************************************************************
      * Probing, information, lookup

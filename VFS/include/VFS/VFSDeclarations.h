@@ -122,12 +122,16 @@ struct User {
     uint32_t uid;
     std::string name;
     std::string gecos;
+    friend bool operator==(const User&, const User&) noexcept = default;
+    friend bool operator!=(const User&, const User&) noexcept = default;
 };
 
 struct Group {
     uint32_t gid;
     std::string name;
     std::string gecos;
+    friend bool operator==(const Group&, const Group&) noexcept = default;
+    friend bool operator!=(const Group&, const Group&) noexcept = default;
 };
 
 struct Flags {

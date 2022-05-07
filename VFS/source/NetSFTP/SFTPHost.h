@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/Host.h>
@@ -42,7 +42,7 @@ public:
     virtual int Stat(const char *_path,
                      VFSStat &_st,
                      unsigned long _flags,
-                     const VFSCancelChecker &_cancel_checker) override;
+                     const VFSCancelChecker &_cancel_checker = {}) override;
     
     virtual int StatFS(const char *_path,
                        VFSStatFS &_stat,

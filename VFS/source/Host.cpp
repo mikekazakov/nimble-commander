@@ -619,7 +619,7 @@ uint64_t Host::FullHashForPath(const char *_path) const noexcept
     return std::hash<std::string_view>()(std::string_view(&buf[0], p - &buf[0]));
 }
 
-std::string Host::MakePathVerbose(const char *_path) const
+std::string Host::MakePathVerbose(std::string_view _path) const
 {
     constexpr size_t max_depth = 64;
     std::array<std::string_view, max_depth> strings;

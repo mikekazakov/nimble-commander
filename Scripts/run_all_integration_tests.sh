@@ -8,13 +8,34 @@ if ! [ -x "$(command -v xcpretty)" ] ; then
     exit -1
 fi
 
+if ! [ -x "$(command -v docker)" ] ; then
+    echo 'docker is not found, aborting. (https://www.docker.com)'
+    exit -1
+fi
+
 # get current directory
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+ROOT_DIR="${SCRIPTS_DIR}/.."
 
 # allocate a temp dir for build artifacts
 BUILD_DIR=$(mktemp -d ${SCRIPTS_DIR}/build.XXXXXXXXX)
 
 LOG_FILE=${BUILD_DIR}/xcodebuild.log
+
+# start up the docker stuff
+echo "=== Starting docker dependencies ==="
+cd ${ROOT_DIR}/VFS/tests/data/docker
+./start.sh
+
+# stop the docker stuff in a cleanup function
+function cleanup {
+  echo "=== Stopping docker dependencies ==="
+  ${ROOT_DIR}/VFS/tests/data/docker/stop.sh
+}
+trap cleanup EXIT
+
+# go to the scripts directory
+cd ${SCRIPTS_DIR}
 
 build_target()
 {

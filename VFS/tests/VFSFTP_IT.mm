@@ -20,7 +20,7 @@ static std::string UUID()
     return [NSUUID.UUID UUIDString].UTF8String;
 }
 
-TEST_CASE(PREFIX "local ftp")
+TEST_CASE(PREFIX "local ftp", "[!mayfail]")
 {
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/"));
@@ -52,7 +52,7 @@ TEST_CASE(PREFIX "local ftp")
     REQUIRE(host->Stat(fn2, stat, 0, 0) != 0);
 }
 
-TEST_CASE(PREFIX "LocalFTP, empty file test")
+TEST_CASE(PREFIX "LocalFTP, empty file test", "[!mayfail]")
 {
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/"));
@@ -79,7 +79,7 @@ TEST_CASE(PREFIX "LocalFTP, empty file test")
     REQUIRE(host->Stat(fn, stat, 0, 0) != 0);
 }
 
-TEST_CASE(PREFIX "LocalFTP, MKD RMD")
+TEST_CASE(PREFIX "LocalFTP, MKD RMD", "[!mayfail]")
 {
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/"));
@@ -100,7 +100,7 @@ TEST_CASE(PREFIX "LocalFTP, MKD RMD")
     }
 }
 
-TEST_CASE(PREFIX "LocalFTP, rename nas")
+TEST_CASE(PREFIX "LocalFTP, rename nas", "[!mayfail]")
 {
     VFSHostPtr host;
     REQUIRE_NOTHROW(host = make_shared<FTPHost>(g_LocalFTP, "", "", "/"));
@@ -176,7 +176,7 @@ TEST_CASE(PREFIX "seekread - ftp.uk.debian.org", "[!mayfail]")
     REQUIRE(memcmp(buf, expected, length) == 0);
 }
 
-TEST_CASE(PREFIX "listing, redhat.com")
+TEST_CASE(PREFIX "listing, redhat.com", "[!mayfail]")
 {
     auto path = "/redhat/dst2007/APPLICATIONS/";
     VFSHostPtr host = std::make_shared<FTPHost>("ftp.redhat.com", "", "", path);

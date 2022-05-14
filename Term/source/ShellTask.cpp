@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/select.h>
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
@@ -50,9 +50,7 @@ static bool WaitUntilBecomes(int _pid,
                              std::chrono::nanoseconds _pull_period);
 static ShellTask::ShellType DetectShellType(const std::string &_path);
 static bool fd_is_valid(int fd);
-static void KillAndReap(int _pid,
-                        std::chrono::nanoseconds _gentle_deadline,
-                        std::chrono::nanoseconds _brutal_deadline);
+static void KillAndReap(int _pid, std::chrono::nanoseconds _gentle_deadline, std::chrono::nanoseconds _brutal_deadline);
 static void TurnOffSigPipe();
 static bool IsProcessDead(int _pid) noexcept;
 static std::optional<std::filesystem::path> TryToResolve(const std::filesystem::path &_path);
@@ -138,9 +136,7 @@ static void TurnOffSigPipe()
     std::call_once(once, [] { signal(SIGPIPE, SIG_IGN); });
 }
 
-static void KillAndReap(int _pid,
-                        std::chrono::nanoseconds _gentle_deadline,
-                        std::chrono::nanoseconds _brutal_deadline)
+static void KillAndReap(int _pid, std::chrono::nanoseconds _gentle_deadline, std::chrono::nanoseconds _brutal_deadline)
 {
     constexpr auto poll_wait = std::chrono::milliseconds(1);
     // 1st attempt - do with a gentle SIGTERM
@@ -190,8 +186,12 @@ static std::optional<std::filesystem::path> TryToResolve(const std::filesystem::
         const bool is_symlink = std::filesystem::is_symlink(_path, ec);
         if( ec == std::error_code{} && is_symlink ) {
             const auto symlink = std::filesystem::read_symlink(_path, ec);
-            if( ec == std::error_code{} )
+            if( ec != std::error_code{} )
+                return {};
+            if( symlink.is_absolute() )
                 return symlink;
+            else
+                return (_path.parent_path() / symlink).lexically_normal();
         }
     }
     return {};
@@ -390,8 +390,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         I->temporary_suppressed = true; /// HACKY!!!
 
         // wait until either the forked process becomes an expected shell or dies
-        const bool became_shell =
-            WaitUntilBecomes(I->shell_pid, I->shell_resolved_path.native(), 5s, 1ms);
+        const bool became_shell = WaitUntilBecomes(I->shell_pid, I->shell_resolved_path.native(), 5s, 1ms);
         if( !became_shell ) {
             Log::Warn(SPDLOC, "forked process failed to become a shell!");
             CleanUp(); // Well, RIP
@@ -422,8 +421,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
             const ssize_t write_res = write(I->master_fd, cmd.data(), cmd.length());
             I->master_write_lock.unlock();
             if( write_res != static_cast<ssize_t>(cmd.length()) ) {
-                Log::Warn(
-                    SPDLOC, "failed to write histctrl cmd, errno: {} ({})", errno, strerror(errno));
+                Log::Warn(SPDLOC, "failed to write histctrl cmd, errno: {} ({})", errno, strerror(errno));
                 CleanUp(); // Well, RIP
                 return false;
             }
@@ -436,8 +434,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         const ssize_t write_res = write(I->master_fd, prompt_setup.data(), prompt_setup.size());
         I->master_write_lock.unlock();
         if( write_res != static_cast<ssize_t>(prompt_setup.size()) ) {
-            Log::Warn(
-                SPDLOC, "failed to write command prompt, errno: {} ({})", errno, strerror(errno));
+            Log::Warn(SPDLOC, "failed to write command prompt, errno: {} ({})", errno, strerror(errno));
             CleanUp(); // Well, RIP
             return false;
         }
@@ -447,9 +444,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     else { // fork_rc == 0
         // slave/child
         SetupTermios(slave_fd);
-        SetTermWindow(slave_fd,
-                      static_cast<unsigned short>(I->term_sx),
-                      static_cast<unsigned short>(I->term_sy));
+        SetTermWindow(slave_fd, static_cast<unsigned short>(I->term_sx), static_cast<unsigned short>(I->term_sy));
         SetupHandlesAndSID(slave_fd);
 
         chdir(_work_dir.generic_string().c_str());
@@ -620,8 +615,7 @@ void ShellTask::WriteChildInput(std::string_view _data)
         const auto lock = std::lock_guard{I->master_write_lock};
         ssize_t rc = write(I->master_fd, _data.data(), _data.size());
         if( rc < 0 || rc != static_cast<ssize_t>(_data.size()) )
-            std::cerr << "write( m_MasterFD, _data.data(), _data.size() ) returned " << rc
-                      << std::endl;
+            std::cerr << "write( m_MasterFD, _data.data(), _data.size() ) returned " << rc << std::endl;
     }
 
     if( (_data.back() == '\n' || _data.back() == '\r') && I->state == TaskState::Shell ) {
@@ -791,8 +785,7 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
     cwd[0] = 0;
     if( _at != 0 ) {
         strcpy(cwd, _at);
-        if( IsPathWithTrailingSlash(cwd) &&
-            strlen(cwd) > 1 ) // cd command don't like trailing slashes
+        if( IsPathWithTrailingSlash(cwd) && strlen(cwd) > 1 ) // cd command don't like trailing slashes
             cwd[strlen(cwd) - 1] = 0;
 
         if( IsCurrentWD(cwd) ) {
@@ -831,11 +824,8 @@ void ShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
     std::string cmd = EscapeShellFeed(_path);
 
     char input[2048];
-    sprintf(input,
-            "%s%s%s\n",
-            cmd.c_str(),
-            _parameters != nullptr ? " " : "",
-            _parameters != nullptr ? _parameters : "");
+    sprintf(
+        input, "%s%s%s\n", cmd.c_str(), _parameters != nullptr ? " " : "", _parameters != nullptr ? _parameters : "");
 
     SetState(TaskState::ProgramExternal);
     WriteChildInput(input);
@@ -881,8 +871,8 @@ int ShellTask::ShellPID() const
 
 int ShellTask::ShellChildPID() const
 {
-    if( I->state == TaskState::Inactive || I->state == TaskState::Dead ||
-        I->state == TaskState::Shell || I->shell_pid < 0 )
+    if( I->state == TaskState::Inactive || I->state == TaskState::Dead || I->state == TaskState::Shell ||
+        I->shell_pid < 0 )
         return -1;
 
     size_t proc_cnt = 0;
@@ -920,8 +910,7 @@ void ShellTask::ResizeWindow(int _sx, int _sy)
     I->term_sy = _sy;
 
     if( I->state != TaskState::Inactive && I->state != TaskState::Dead )
-        Task::SetTermWindow(
-            I->master_fd, static_cast<unsigned short>(_sx), static_cast<unsigned short>(_sy));
+        Task::SetTermWindow(I->master_fd, static_cast<unsigned short>(_sx), static_cast<unsigned short>(_sy));
 }
 
 void ShellTask::Terminate()
@@ -1019,13 +1008,9 @@ std::string ShellTask::ComposePromptCommand() const
     char prompt_setup[1024] = {0};
     const int pid = I->shell_pid;
     if( I->shell_type == ShellType::Bash )
-        sprintf(prompt_setup,
-                " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi'\n",
-                pid);
+        sprintf(prompt_setup, " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi'\n", pid);
     else if( I->shell_type == ShellType::ZSH )
-        sprintf(prompt_setup,
-                " precmd(){ if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi; }\n",
-                pid);
+        sprintf(prompt_setup, " precmd(){ if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi; }\n", pid);
     else if( I->shell_type == ShellType::TCSH )
         sprintf(prompt_setup,
                 " alias precmd 'if ( $$ == %d ) pwd>>%s;dd if=%s of=/dev/null bs=4 count=1 "

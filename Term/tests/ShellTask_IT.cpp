@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "AtomicHolder.h"
@@ -47,9 +47,7 @@ static bool WaitChildrenListToBecome(const ShellTask &_shell,
     }
 }
 
-static bool WaitUntilProcessDies(int _pid,
-                                 std::chrono::nanoseconds _deadline,
-                                 std::chrono::nanoseconds _poll_period)
+static bool WaitUntilProcessDies(int _pid, std::chrono::nanoseconds _deadline, std::chrono::nanoseconds _poll_period)
 {
     const auto deadline = machtime() + _deadline;
     while( true ) {
@@ -72,8 +70,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> Terminate - Inactive")
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
     REQUIRE(shell.State() == TaskState::Inactive);
 
-    shell.SetOnStateChange(
-        [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
+    shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
 
     REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
@@ -93,8 +90,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (exit) -> Dead -> Inactiv
     SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
     SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
     SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
-    shell.SetOnStateChange(
-        [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
+    shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     REQUIRE(shell.State() == TaskState::Inactive);
     REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
@@ -113,8 +109,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramInternal (vi) -> Shell -> Terminat
     SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
     SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
-    shell.SetOnStateChange(
-        [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
+    shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     REQUIRE(shell.State() == TaskState::Inactive);
     REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
@@ -134,8 +129,7 @@ TEST_CASE(PREFIX "Inactive -> Shell -> ProgramExternal (vi) -> Shell -> Terminat
     SECTION("/bin/tcsh") { shell.SetShellPath("/bin/tcsh"); }
     SECTION("/bin/csh") { shell.SetShellPath("/bin/csh"); }
     QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
-    shell.SetOnStateChange(
-        [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
+    shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     REQUIRE(shell.State() == TaskState::Inactive);
     REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
     REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
@@ -173,8 +167,7 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
     SECTION("tcsh") { shell.SetShellPath("/bin/tcsh"); }
     const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds =
-                parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
             !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
@@ -240,8 +233,7 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
     SECTION("tcsh") { shell.SetShellPath("/bin/tcsh"); }
     const auto type = shell.GetShellType();
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds =
-                parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
             !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
@@ -325,8 +317,7 @@ TEST_CASE(PREFIX "CWD prompt response")
     AtomicHolder<ShellTask::TaskState> shell_state;
     ShellTask shell;
     shell_state.value = shell.State();
-    shell.SetOnStateChange(
-        [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
+    shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     AtomicHolder<std::filesystem::path> cwd;
     shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
     REQUIRE(shell.State() == TaskState::Inactive);
@@ -419,8 +410,7 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)")
     ShellTask shell;
     shell_state.store(shell.State());
     shell_state.strict(false);
-    shell.SetOnStateChange(
-        [&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
+    shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
     shell.SetOnPwdPrompt([&](const char *_cwd, bool) { cwd.store(_cwd); });
     SECTION("/bin/bash") { shell.SetShellPath("/bin/bash"); }
     SECTION("/bin/zsh") { shell.SetShellPath("/bin/zsh"); }
@@ -506,8 +496,7 @@ TEST_CASE(PREFIX "Test vim interaction via output")
     SECTION("csh") { shell.SetShellPath("/bin/csh"); }
     SECTION("tcsh") { shell.SetShellPath("/bin/tcsh"); }
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds =
-                parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
             !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
@@ -612,8 +601,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
     for( auto &ctx : shells ) {
         ctx.shell.ResizeWindow(20, 5);
         ctx.shell.SetOnChildOutput([&](const void *_d, int _sz) {
-            if( auto cmds = ctx.parser.Parse(
-                    {reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+            if( auto cmds = ctx.parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
                 !cmds.empty() ) {
                 if( auto lock = ctx.screen.AcquireLock() ) {
                     ctx.interpreter.Interpret(cmds);
@@ -621,8 +609,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
                 }
             }
         });
-        ctx.shell.SetOnStateChange(
-            [&](ShellTask::TaskState _new_state) { ctx.shell_state.store(_new_state); });
+        ctx.shell.SetOnStateChange([&](ShellTask::TaskState _new_state) { ctx.shell_state.store(_new_state); });
         REQUIRE(ctx.shell.Launch(dir.directory));
 
         if( ctx.shell.GetShellType() == ShellTask::ShellType::TCSH )
@@ -690,8 +677,7 @@ TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
     }
     // [t]csh is out of equation - no such option exists (?)
     shell.SetOnChildOutput([&](const void *_d, int _sz) {
-        if( auto cmds =
-                parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
+        if( auto cmds = parser.Parse({reinterpret_cast<const std::byte *>(_d), static_cast<size_t>(_sz)});
             !cmds.empty() ) {
             if( auto lock = screen.AcquireLock() ) {
                 interpreter.Interpret(cmds);
@@ -750,26 +736,62 @@ TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
 TEST_CASE(PREFIX "Launches when shell is a symlink to a real binary")
 {
     const TempTestDir dir;
+    const auto basedir = dir.directory;
     ShellTask shell;
 
     std::filesystem::path shell_path;
     SECTION("/bin/bash")
     {
-        std::filesystem::create_symlink("/bin/bash", shell_path = dir.directory / "bash");
+        SECTION("Symlink has an absolute path")
+        {
+            std::filesystem::create_symlink("/bin/bash", shell_path = basedir / "bash");
+        }
+        SECTION("Symlink has a relative path")
+        {
+            std::filesystem::copy("/bin/bash", basedir / "bash");
+            std::filesystem::create_directory(basedir / "subdir");
+            std::filesystem::create_symlink("../bash", shell_path = basedir / "subdir/bash");
+        }
     }
     SECTION("/bin/zsh")
     {
-        std::filesystem::create_symlink("/bin/zsh", shell_path = dir.directory / "zsh");
+        SECTION("Symlink has an absolute path")
+        {
+            std::filesystem::create_symlink("/bin/zsh", shell_path = basedir / "zsh");
+        }
+        SECTION("Symlink has a relative path")
+        {
+            std::filesystem::copy("/bin/zsh", basedir / "zsh");
+            std::filesystem::create_directory(basedir / "subdir");
+            std::filesystem::create_symlink("../zsh", shell_path = basedir / "subdir/zsh");
+        }
     }
     SECTION("/bin/tcsh")
     {
-        std::filesystem::create_symlink("/bin/tcsh", shell_path = dir.directory / "tcsh");
+        SECTION("Symlink has an absolute path")
+        {
+            std::filesystem::create_symlink("/bin/tcsh", shell_path = basedir / "tcsh");
+        }
+        SECTION("Symlink has a relative path")
+        {
+            std::filesystem::copy("/bin/tcsh", basedir / "tcsh");
+            std::filesystem::create_directory(basedir / "subdir");
+            std::filesystem::create_symlink("../tcsh", shell_path = basedir / "subdir/tcsh");
+        }
     }
     SECTION("/bin/csh")
     {
-        std::filesystem::create_symlink("/bin/csh", shell_path = dir.directory / "csh");
+        SECTION("Symlink has an absolute path")
+        {
+            std::filesystem::create_symlink("/bin/csh", shell_path = basedir / "csh");
+        }
+        SECTION("Symlink has a relative path")
+        {
+            std::filesystem::copy("/bin/csh", basedir / "csh");
+            std::filesystem::create_directory(basedir / "subdir");
+            std::filesystem::create_symlink("../csh", shell_path = basedir / "subdir/csh");
+        }
     }
-
     shell.SetShellPath(shell_path);
     REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()) == true);
     REQUIRE(shell.State() == ShellTask::TaskState::Shell);

@@ -139,7 +139,6 @@
 		CF1168821E91FB4A00CC515A /* Aux.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Aux.mm; path = source/NetDropbox/Aux.mm; sourceTree = "<group>"; };
 		CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSDropbox_IT.mm; path = tests/VFSDropbox_IT.mm; sourceTree = SOURCE_ROOT; };
 		CF1847021E41C86D008B7C9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CF1847091E41C8A5008B7C9F /* tests_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tests_common.h; path = tests/tests_common.h; sourceTree = SOURCE_ROOT; };
 		CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchive_IT.mm; path = tests/VFSArchive_IT.mm; sourceTree = SOURCE_ROOT; };
 		CF18470B1E41C8A5008B7C9F /* VFSFTP_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSFTP_IT.mm; path = tests/VFSFTP_IT.mm; sourceTree = SOURCE_ROOT; };
 		CF18470C1E41C8A5008B7C9F /* VFSPS_IT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSPS_IT.cpp; path = tests/VFSPS_IT.cpp; sourceTree = SOURCE_ROOT; };
@@ -400,7 +399,6 @@
 				CF26DE2321D28754003F0E93 /* SearchInFile_UT.cpp */,
 				CFE08AEA23CFAFD8007E99B8 /* TestEnv.h */,
 				CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */,
-				CF1847091E41C8A5008B7C9F /* tests_common.h */,
 				CF26DE2021D2864D003F0E93 /* Tests.cpp */,
 				CF26DE1F21D2864D003F0E93 /* Tests.h */,
 				CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */,

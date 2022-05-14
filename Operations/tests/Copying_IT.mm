@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <Operations/Copying.h>
@@ -9,6 +9,7 @@
 #include <Habanero/algo.h>
 #include <set>
 #include <span>
+#include <fstream>
 
 using nc::ops::Copying;
 using nc::ops::CopyingOptions;

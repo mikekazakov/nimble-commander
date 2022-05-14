@@ -348,6 +348,11 @@ static void TestUbuntu2004LayoutWithHost(SFTPHost &_host)
                    root_listing->end(),
                    std::inserter(fact_root_listing, fact_root_listing.begin()),
                    [](auto &e) { return e.Filename(); });
+    for( auto filename : {"lib32", "lib64", "libx32"} ) {
+        // there's a descrepancy between the Ubuntu20.04/Docker running on Arm Mac and Intel Mac - the latter also has
+        // these 3 items in the root folder. Ignore them.
+        fact_root_listing.erase(filename);
+    }
     REQUIRE(fact_root_listing == expected_root_listing);
 
     // Check the entries types at the root level

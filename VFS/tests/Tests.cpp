@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
 
@@ -13,6 +13,9 @@
 static auto g_TestDirPrefix = "_nc__vfs__test_";
 
 int main( int argc, char* argv[] ) {
+    setlocale (LC_ALL, "");
+    if( !std::string(setlocale(LC_ALL, NULL)).ends_with(".UTF-8") )
+        setlocale (LC_ALL, "en_US.UTF-8");
     ::testing::GTEST_FLAG(throw_on_failure) = true;
     ::testing::InitGoogleMock(&argc, argv);
     int result = Catch::Session().run( argc, argv );

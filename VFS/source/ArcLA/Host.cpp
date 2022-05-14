@@ -137,7 +137,7 @@ VFSMeta ArchiveHost::Meta()
 int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
 {
     assert(m_Arc == 0);
-
+    assert(std::string_view(setlocale(LC_COLLATE, nullptr)).contains("UTF-8")); // this VFS requires UTF8 to work
     VFSFilePtr source_file;
 
     int res = Parent()->CreateFile(JunctionPath(), source_file, nil);

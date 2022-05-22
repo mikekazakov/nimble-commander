@@ -186,7 +186,7 @@ std::vector<unsigned short> FontGeometryInfo::CalculateStringsWidths(std::span<c
         // distribute equally into chunks so that each CPU core has 2 batches to process
         // TODO: stop using the 'internal' namespace! Absorb these routines instead
         const size_t chunks = ::pstld::internal::max_hw_threads() * 2;
-        ::pstld::internal::Partition<size_t, true> par(0, count, chunks);
+        ::pstld::internal::Partition<size_t, true, true> par(0, count, chunks);
         const auto block = [&](size_t _chunk_index) {
             const auto index_first = par.at(_chunk_index).first;
             const auto index_last = par.at(_chunk_index).last;

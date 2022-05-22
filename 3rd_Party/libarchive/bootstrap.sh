@@ -20,6 +20,7 @@ cmake \
   -D CMAKE_C_FLAGS="-fvisibility=hidden -flto" \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
   -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
+  -D CMAKE_IGNORE_PREFIX_PATH=/usr/local \
   -D BUILD_SHARED_LIBS="OFF" \
   -D ZLIB_INCLUDE_DIR=${CUR_DIR}/../z/include \
   -D ZLIB_LIBRARY=${CUR_DIR}/../z/lib/libz.a \

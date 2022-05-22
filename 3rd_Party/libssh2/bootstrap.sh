@@ -21,7 +21,7 @@ cd libssh2
   --enable-mac-none \
   --with-libssl-prefix=${CUR_DIR}/../OpenSSL \
   --with-libz \
-  CFLAGS='-arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -fvisibility=hidden -flto -Os'
+  CFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -fvisibility=hidden -flto -Os -isysroot $(xcrun --sdk macosx --show-sdk-path)"
 
 make -j
 

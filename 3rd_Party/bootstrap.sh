@@ -4,18 +4,19 @@ set -o xtrace
 set -e
 
 # pour yourself some coffee and relax, it'll take a while
-export MACOSX_DEPLOYMENT_TARGET="10.15"
 ./z/bootstrap.sh
 ./bz2/bootstrap.sh
 ./lzma/bootstrap.sh
+./zstd/bootstrap.sh
+./lz4/bootstrap.sh
+./lzo/bootstrap.sh
 ./openssl/bootstrap.sh
-./libcurl/bootstrap.sh
 ./libssh2/bootstrap.sh
+./libcurl/bootstrap.sh
 ./pugixml/bootstrap.sh
 ./boost/bootstrap.sh
 ./libarchive/bootstrap.sh
 ./spdlog/bootstrap.sh
-./ctrail/bootstrap.sh
 ./googletest/bootstrap.sh
 ./unrar/bootstrap.sh
 ./robin_hood/bootstrap.sh
@@ -25,3 +26,5 @@ export MACOSX_DEPLOYMENT_TARGET="10.15"
 ./AquaticPrime/bootstrap.sh
 ./frozen/bootstrap.sh
 ./expected/bootstrap.sh
+./pstld/bootstrap.sh
+./re2/bootstrap.sh

@@ -1,26 +1,56 @@
-// Copyright (c) 2021 Michael G. Kazakov. All rights reserved. Distributed under the MIT License.
+// Copyright (c) Michael G. Kazakov. All rights reserved. Distributed under the MIT License.
 #pragma once
+
+#if defined(PSTLD_INTERNAL_DO_HACK_INTO_STD) || defined(PSTLD_INTERNAL_HEADER_ONLY) ||             \
+    defined(PSTLD_INTERNAL_IMPL) || defined(PSTLD_INTERNAL_ARC)
+    #error internal settings can't be defined manually
+#endif
+
+#if defined(PSTLD_HACK_INTO_STD)
+    #define PSTLD_INTERNAL_DO_HACK_INTO_STD
+#endif
+
+#if defined(PSTLD_HEADER_ONLY)
+    #define PSTLD_INTERNAL_HEADER_ONLY
+#endif
+
+#if defined(PSTLD_INTERNAL_HEADER_ONLY)
+    #define PSTLD_INTERNAL_IMPL inline
+#else
+    #define PSTLD_INTERNAL_IMPL
+#endif
+
+#if defined(PSTLD_INTERNAL_HEADER_ONLY) && __has_feature(objc_arc)
+    #define PSTLD_INTERNAL_ARC
+#endif
+
+#if defined(PSTLD_INTERNAL_HEADER_ONLY)
+    #include <dispatch/dispatch.h>
+#endif
+
 #include <algorithm>
 #include <numeric>
 #include <iterator>
 #include <vector>
-#include <deque>
 #include <limits>
 #include <mutex>
-#include <optional>
 #include <cstddef>
 #include <thread>
 #include <type_traits>
 
-#if defined(PSTLD_INTERNAL_DO_HACK_INTO_STD)
-#error PSTLD_INTERNAL_DO_HACK_INTO_STD can't be defined manually
+namespace pstld {
+
+// To avoid ODR violations when NonARC and ARC builds are mixed together - the ARC symbols are
+// placed into a nested inline namespace.
+#if defined(PSTLD_INTERNAL_ARC)
+inline namespace arc {
 #endif
 
-#if defined(PSTLD_HACK_INTO_STD)
-#define PSTLD_INTERNAL_DO_HACK_INTO_STD
-#endif // defined(PSTLD_HACK_INTO_STD)
-
-namespace pstld {
+//--------------------------------------------------------------------------------------------------
+//
+// Common facilities
+//
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -44,8 +74,13 @@ public:
     void wait() noexcept;
 
 private:
+#if defined(PSTLD_INTERNAL_ARC)
+    __strong dispatch_group_t m_group;
+    __strong dispatch_queue_global_t m_queue;
+#else
     void *m_group;
     void *m_queue;
+#endif
 };
 
 template <class It>
@@ -139,6 +174,8 @@ struct unitialized_array : parallelism_allocator<T> {
     T *begin() noexcept { return m_data; }
 
     T *end() noexcept { return m_data + m_size; }
+
+    T &operator[](size_t ind) noexcept { return m_data[ind]; }
 };
 
 template <class T>
@@ -159,47 +196,55 @@ struct ItRange {
     It last;
 };
 
-template <class It, bool IsRandomAccess = is_random_iterator_v<It>>
+template <class It, bool Forward = true, bool IsRandomAccess = is_random_iterator_v<It>>
 struct Partition;
 
-template <class It>
-struct Partition<It, true> {
+template <class It, bool Forward>
+struct Partition<It, Forward, true> {
     It base;
     size_t fraction;
     size_t leftover;
     size_t count;
-    Partition(It first, size_t count, size_t chunks)
+    Partition(It first, size_t count, size_t chunks) noexcept
         : base(first), fraction(count / chunks), leftover(count % chunks), count(count)
     {
     }
 
-    ItRange<It> at(size_t chunk_no)
+    ItRange<It> at(size_t chunk_no) const noexcept
     {
         if( leftover ) {
             if( chunk_no >= leftover ) {
                 const auto first =
-                    base + (fraction + 1) * leftover + fraction * (chunk_no - leftover);
-                const auto last = first + fraction;
+                    advance(base, (fraction + 1) * leftover + fraction * (chunk_no - leftover));
+                const auto last = advance(first, fraction);
                 return {first, last};
             }
             else {
-                const auto first = base + (fraction + 1) * chunk_no;
-                const auto last = first + fraction + 1;
+                const auto first = advance(base, (fraction + 1) * chunk_no);
+                const auto last = advance(first, fraction + 1);
                 return {first, last};
             }
         }
         else {
-            const auto first = base + fraction * chunk_no;
-            const auto last = first + fraction;
+            const auto first = advance(base, fraction * chunk_no);
+            const auto last = advance(first, fraction);
             return {first, last};
         }
     }
 
-    It end() { return base + count; }
+    It end() const noexcept { return base + count; }
+
+    static It advance(It it, size_t distance) noexcept
+    {
+        if constexpr( Forward )
+            return it + distance;
+        else
+            return it - distance;
+    }
 };
 
-template <class It>
-struct Partition<It, false> {
+template <class It, bool Forward>
+struct Partition<It, Forward, false> {
     parallelism_vector<ItRange<It>> segments;
     Partition(It first, size_t count, size_t chunks) : segments(chunks)
     {
@@ -212,15 +257,23 @@ struct Partition<It, false> {
                 ++diff;
                 --leftover;
             }
-            auto last = std::next(it, diff);
+            auto last = advance(it, diff);
             segments[i] = {it, last};
             it = last;
         }
     }
 
-    ItRange<It> at(size_t chunk_no) { return segments[chunk_no]; }
+    ItRange<It> at(size_t chunk_no) const noexcept { return segments[chunk_no]; }
 
-    It end() { return segments.back().last; }
+    It end() const noexcept { return segments.back().last; }
+
+    static It advance(It it, size_t distance) noexcept
+    {
+        if constexpr( Forward )
+            return std::next(it, distance);
+        else
+            return std::prev(it, distance);
+    }
 };
 
 template <class It, bool = is_random_iterator_v<It> &&can_be_atomic_v<It>>
@@ -317,6 +370,26 @@ template <class T>
 struct Dispatchable {
     static void dispatch(void *ctx, size_t ind) noexcept { static_cast<T *>(ctx)->run(ind); }
     void dispatch_apply(size_t count) noexcept { internal::dispatch_apply(count, this, dispatch); }
+};
+
+template <class T>
+struct Dispatchable2 {
+    static void dispatch_first(void *ctx, size_t ind) noexcept
+    {
+        static_cast<T *>(ctx)->run_first(ind);
+    }
+    void dispatch_apply_first(size_t count) noexcept
+    {
+        internal::dispatch_apply(count, this, dispatch_first);
+    }
+    static void dispatch_second(void *ctx, size_t ind) noexcept
+    {
+        static_cast<T *>(ctx)->run_second(ind);
+    }
+    void dispatch_apply_second(size_t count) noexcept
+    {
+        internal::dispatch_apply(count, this, dispatch_second);
+    }
 };
 
 template <class T>
@@ -458,6 +531,12 @@ struct alignas(hardware_destructive_interference_size) WorkCounter {
 };
 
 } // namespace internal
+
+//--------------------------------------------------------------------------------------------------
+//
+// Algorithms implementation
+//
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -2206,7 +2285,463 @@ FwdIt2 adjacent_difference(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2) noexcept
     return ::pstld::adjacent_difference(first1, last1, first2, std::minus<>{});
 }
 
+namespace internal {
+
+template <class It>
+struct Reverse : Dispatchable<Reverse<It>> {
+    Partition<It> m_partition1;
+    Partition<It, false> m_partition2;
+
+    Reverse(size_t count, size_t chunks, It first, It last)
+        : m_partition1(first, count, chunks), m_partition2(std::prev(last), count, chunks)
+    {
+    }
+
+    void run(size_t ind) noexcept
+    {
+        auto p1 = m_partition1.at(ind);
+        auto p2 = m_partition2.at(ind);
+        for( ; p1.first != p1.last; ++p1.first, --p2.first )
+            std::iter_swap(p1.first, p2.first);
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt>
+void reverse(FwdIt first, FwdIt last) noexcept
+{
+    const auto count = std::distance(first, last);
+    if( count > 3 ) {
+        const auto chunks = internal::work_chunks_min_fraction_1(count / 2);
+        try {
+            internal::Reverse<FwdIt> op{static_cast<size_t>(count / 2), chunks, first, last};
+            op.dispatch_apply(chunks);
+            return;
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    ::std::reverse(first, last);
+}
+
+namespace internal {
+
+template <class It, class BinOp, class UnOp, class R>
+R partial_reduce(It first, It last, BinOp reduce, UnOp transform)
+{
+    auto init = first++;
+    auto val = static_cast<R>(reduce(transform(*init), transform(*first++)));
+    for( ; first != last; ++first )
+        val = reduce(std::move(val), transform(*first));
+    return val;
+}
+
+template <class It1, class It2, class BinOp, class UnOp, class T>
+struct InclusiveScan : Dispatchable2<InclusiveScan<It1, It2, BinOp, UnOp, T>> {
+    Partition<It1> m_partition1;
+    Partition<It2> m_partition2;
+    unitialized_array<T> m_reduced;
+    BinOp m_op;
+    UnOp m_tr;
+    T &m_init;
+
+    InclusiveScan(size_t count, size_t chunks, It1 first1, It2 first2, BinOp op, UnOp tr, T &init)
+        : m_partition1(first1, count, chunks), m_partition2(first2, count, chunks),
+          m_reduced(chunks), m_op(op), m_tr(tr), m_init(init)
+    {
+    }
+
+    void run_first(size_t ind) noexcept
+    {
+        // fill the reduced chunks
+        auto p1 = m_partition1.at(ind);
+        m_reduced.put(ind, partial_reduce<It1, BinOp, UnOp, T>(p1.first, p1.last, m_op, m_tr));
+    }
+
+    void run_second(size_t ind) noexcept
+    {
+        // fill the output
+        auto p1 = m_partition1.at(ind);
+        auto p2 = m_partition2.at(ind);
+        auto val = ind == 0
+                       ? static_cast<T>(m_op(m_init, m_tr(*p1.first++)))
+                       : static_cast<T>(m_op(std::move(m_reduced[ind - 1]), m_tr(*p1.first++)));
+        *p2.first++ = val;
+        for( ; p1.first != p1.last; ++p1.first, ++p2.first ) {
+            val = m_op(std::move(val), m_tr(*p1.first));
+            *p2.first = val;
+        }
+    }
+
+    void accumulate() noexcept
+    {
+        // reduce chunks serially
+        auto first = m_reduced.begin();
+        auto last = m_reduced.end();
+        *first = m_op(m_init, std::move(*first));
+        for( auto prev = first++; first != last; ++first, ++prev )
+            *first = m_op(*prev, std::move(*first));
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt1, class FwdIt2, class BinOp, class UnOp, class T>
+FwdIt2 transform_inclusive_scan(FwdIt1 first1,
+                                FwdIt1 last1,
+                                FwdIt2 first2,
+                                BinOp reduce_op,
+                                UnOp transform_op,
+                                T val) noexcept
+{
+    const auto count = std::distance(first1, last1);
+    const auto chunks = internal::work_chunks_min_fraction_2(count);
+    if( chunks > 1 ) {
+        try {
+            internal::InclusiveScan<FwdIt1, FwdIt2, BinOp, UnOp, T> op{
+                static_cast<size_t>(count), chunks, first1, first2, reduce_op, transform_op, val};
+            op.dispatch_apply_first(chunks);
+            op.accumulate();
+            op.dispatch_apply_second(chunks);
+            return op.m_partition2.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return ::std::transform_inclusive_scan(
+        first1, last1, first2, reduce_op, transform_op, std::move(val));
+}
+
+template <class FwdIt1, class FwdIt2, class BinOp, class UnOp>
+FwdIt2 transform_inclusive_scan(FwdIt1 first1,
+                                FwdIt1 last1,
+                                FwdIt2 first2,
+                                BinOp reduce_op,
+                                UnOp transform_op) noexcept
+{
+    const auto count = std::distance(first1, last1);
+    if( count == 0 )
+        return first2;
+    const auto chunks = internal::work_chunks_min_fraction_2(count - 1);
+    if( chunks > 1 ) {
+        try {
+            *first2 = transform_op(*first1);
+            internal::InclusiveScan<FwdIt1, FwdIt2, BinOp, UnOp, internal::iterator_value_t<FwdIt2>>
+                op{static_cast<size_t>(count - 1),
+                   chunks,
+                   std::next(first1),
+                   std::next(first2),
+                   reduce_op,
+                   transform_op,
+                   *first2};
+            op.dispatch_apply_first(chunks);
+            op.accumulate();
+            op.dispatch_apply_second(chunks);
+            return op.m_partition2.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return ::std::transform_inclusive_scan(first1, last1, first2, reduce_op, transform_op);
+}
+
+template <class FwdIt1, class FwdIt2, class BinOp, class T>
+FwdIt2 inclusive_scan(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, BinOp reduce_op, T val) noexcept
+{
+    return ::pstld::transform_inclusive_scan(
+        first1, last1, first2, reduce_op, internal::no_op{}, std::move(val));
+}
+
+template <class FwdIt1, class FwdIt2, class BinOp>
+FwdIt2 inclusive_scan(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, BinOp reduce_op) noexcept
+{
+    return ::pstld::transform_inclusive_scan(first1, last1, first2, reduce_op, internal::no_op{});
+}
+
+template <class FwdIt1, class FwdIt2>
+FwdIt2 inclusive_scan(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2) noexcept
+{
+    return ::pstld::inclusive_scan(first1, last1, first2, ::std::plus<>{});
+}
+
+namespace internal {
+
+template <class It1, class It2, class BinOp, class UnOp, class T>
+struct ExclusiveScan : Dispatchable2<ExclusiveScan<It1, It2, BinOp, UnOp, T>> {
+    Partition<It1> m_partition1;
+    Partition<It2> m_partition2;
+    unitialized_array<T> m_reduced;
+    BinOp m_op;
+    UnOp m_tr;
+    T &m_init;
+
+    ExclusiveScan(size_t count, size_t chunks, It1 first1, It2 first2, BinOp op, UnOp tr, T &init)
+        : m_partition1(first1, count, chunks), m_partition2(first2, count, chunks),
+          m_reduced(chunks), m_op(op), m_tr(tr), m_init(init)
+    {
+    }
+
+    void run_first(size_t ind) noexcept
+    {
+        // fill the reduced chunks
+        auto p1 = m_partition1.at(ind);
+        m_reduced.put(ind, partial_reduce<It1, BinOp, UnOp, T>(p1.first, p1.last, m_op, m_tr));
+    }
+
+    void run_second(size_t ind) noexcept
+    {
+        // fill the output
+        auto p1 = m_partition1.at(ind);
+        auto p2 = m_partition2.at(ind);
+        auto val = std::move(ind == 0 ? m_init : m_reduced[ind - 1]);
+        for( ; p1.first != p1.last; ++p1.first, ++p2.first ) {
+            auto next = m_op(val, m_tr(*p1.first));
+            *p2.first = std::move(val);
+            val = std::move(next);
+        }
+    }
+
+    void accumulate() noexcept
+    {
+        // reduce chunks serially
+        auto first = m_reduced.begin();
+        auto last = m_reduced.end();
+        *first = m_op(m_init, std::move(*first));
+        for( auto prev = first++; first != last; ++first, ++prev )
+            *first = m_op(*prev, std::move(*first));
+    }
+};
+
+template <class FwdIt1, class FwdIt2, class T, class BinOp, class UnOp>
+FwdIt2 transform_exclusive_scan_serial(FwdIt1 first1,
+                                       FwdIt1 last1,
+                                       FwdIt2 first2,
+                                       T val,
+                                       BinOp reduce_op,
+                                       UnOp transform_op) noexcept
+{
+    // manual serial implementation because transform_exclusive_scan from libc++ doesn't play well
+    // with MSVC's unit tests
+    for( ; first1 != last1; ++first1, ++first2 ) {
+        auto next = reduce_op(val, transform_op(*first1));
+        *first2 = std::move(val);
+        val = std::move(next);
+    }
+    return first2;
+}
+
+} // namespace internal
+
+template <class FwdIt1, class FwdIt2, class T, class BinOp, class UnOp>
+FwdIt2 transform_exclusive_scan(FwdIt1 first1,
+                                FwdIt1 last1,
+                                FwdIt2 first2,
+                                T val,
+                                BinOp reduce_op,
+                                UnOp transform_op) noexcept
+{
+    const auto count = std::distance(first1, last1);
+    if( count == 0 )
+        return first2;
+    if( count == 1 ) {
+        *first2 = std::move(val);
+        return std::next(first2);
+    }
+    const auto chunks = internal::work_chunks_min_fraction_2(count);
+    if( chunks > 1 ) {
+        try {
+            internal::ExclusiveScan<FwdIt1, FwdIt2, BinOp, UnOp, T> op{
+                static_cast<size_t>(count), chunks, first1, first2, reduce_op, transform_op, val};
+            op.dispatch_apply_first(chunks);
+            op.accumulate();
+            op.dispatch_apply_second(chunks);
+            return op.m_partition2.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return internal::transform_exclusive_scan_serial(
+        first1, last1, first2, std::move(val), reduce_op, transform_op);
+}
+
+template <class FwdIt1, class FwdIt2, class T, class BinOp>
+FwdIt2 exclusive_scan(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, T val, BinOp reduce_op) noexcept
+{
+    return ::pstld::transform_exclusive_scan(
+        first1, last1, first2, std::move(val), reduce_op, internal::no_op{});
+}
+
+template <class FwdIt1, class FwdIt2, class T>
+FwdIt2 exclusive_scan(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, T val) noexcept
+{
+    return ::pstld::exclusive_scan(first1, last1, first2, std::move(val), ::std::plus<>{});
+}
+
+namespace internal {
+
+template <class It1, class It2, class Cmp>
+struct LexicographicalCompare : Dispatchable<LexicographicalCompare<It1, It2, Cmp>> {
+    Partition<It1> m_partition1;
+    Partition<It2> m_partition2;
+    Cmp m_cmp;
+    MinIteratorResult<It1> m_result1;
+    MinIteratorResult<It2> m_result2;
+
+    LexicographicalCompare(size_t count, size_t chunks, It1 first1, It2 first2, Cmp cmp)
+        : m_partition1(first1, count, chunks), m_partition2(first2, count, chunks), m_cmp(cmp),
+          m_result1(m_partition1.end()), m_result2(m_partition2.end())
+    {
+    }
+
+    void run(size_t ind) noexcept
+    {
+        if( ind < m_result1.min_chunk ) {
+            auto p1 = m_partition1.at(ind);
+            auto p2 = m_partition2.at(ind);
+            for( ; p1.first != p1.last; ++p1.first, ++p2.first ) {
+                if( m_cmp(*p1.first, *p2.first) || m_cmp(*p2.first, *p1.first) ) {
+                    m_result1.put(ind, p1.first);
+                    m_result2.put(ind, p2.first);
+                    return;
+                }
+            }
+        }
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt1, class FwdIt2, class Cmp>
+bool lexicographical_compare(FwdIt1 first1,
+                             FwdIt1 last1,
+                             FwdIt2 first2,
+                             FwdIt2 last2,
+                             Cmp cmp) noexcept
+{
+    const auto count1 = std::distance(first1, last1);
+    const auto count2 = std::distance(first2, last2);
+    const auto count_min = std::min(count1, count2);
+    const auto chunks = internal::work_chunks_min_fraction_1(count_min);
+    if( chunks > 1 ) {
+        try {
+            internal::LexicographicalCompare<FwdIt1, FwdIt2, Cmp> op{
+                static_cast<size_t>(count_min), chunks, first1, first2, cmp};
+            op.dispatch_apply(chunks);
+            if( static_cast<FwdIt1>(op.m_result1.min) != op.m_partition1.end() )
+                return cmp(*static_cast<FwdIt1>(op.m_result1.min),
+                           *static_cast<FwdIt2>(op.m_result2.min));
+            else
+                return count1 < count2;
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return ::std::lexicographical_compare(first1, last1, first2, last2, cmp);
+}
+
+template <class FwdIt1, class FwdIt2>
+bool lexicographical_compare(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, FwdIt2 last2) noexcept
+{
+    return ::pstld::lexicographical_compare(first1, last1, first2, last2, std::less<>{});
+}
+
+#if defined(PSTLD_INTERNAL_ARC)
+} // inline namespace arc
+#endif
+
 } // namespace pstld
+
+//--------------------------------------------------------------------------------------------------
+//
+// System-specific implementation details
+//
+//--------------------------------------------------------------------------------------------------
+
+#if defined(PSTLD_INTERNAL_HEADER_ONLY) || defined(PSTLD_INTERNAL_IMPLEMENTATION_FILE)
+
+    #include <sys/types.h>
+    #include <sys/sysctl.h>
+    #include <dispatch/dispatch.h>
+
+namespace pstld {
+
+    #if defined(PSTLD_INTERNAL_ARC)
+inline namespace arc {
+    #endif
+
+namespace internal {
+
+PSTLD_INTERNAL_IMPL size_t max_hw_threads() noexcept
+{
+    static const size_t threads = [] {
+        int count;
+        size_t count_len = sizeof(count);
+        sysctlbyname("hw.physicalcpu_max", &count, &count_len, nullptr, 0);
+        return static_cast<size_t>(count);
+    }();
+    return threads;
+}
+
+PSTLD_INTERNAL_IMPL void
+dispatch_apply(size_t iterations, void *ctx, void (*function)(void *, size_t)) noexcept
+{
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wnullability-extension"
+    ::dispatch_apply_f(iterations, DISPATCH_APPLY_AUTO, ctx, function);
+    #pragma clang diagnostic pop
+}
+
+PSTLD_INTERNAL_IMPL void dispatch_async(void *ctx, void (*function)(void *)) noexcept
+{
+    ::dispatch_async_f(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0), ctx, function);
+}
+
+PSTLD_INTERNAL_IMPL DispatchGroup::DispatchGroup() noexcept
+    : m_group(dispatch_group_create()), m_queue(dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0))
+{
+}
+
+PSTLD_INTERNAL_IMPL DispatchGroup::~DispatchGroup()
+{
+    #if !defined(PSTLD_INTERNAL_ARC)
+    ::dispatch_release(static_cast<dispatch_group_t>(m_group));
+    #endif
+}
+
+PSTLD_INTERNAL_IMPL void DispatchGroup::dispatch(void *ctx, void (*function)(void *)) noexcept
+{
+    ::dispatch_group_async_f(static_cast<dispatch_group_t>(m_group),
+                             static_cast<dispatch_queue_t>(m_queue),
+                             ctx,
+                             function);
+}
+
+PSTLD_INTERNAL_IMPL void DispatchGroup::wait() noexcept
+{
+    ::dispatch_group_wait(static_cast<dispatch_group_t>(m_group), DISPATCH_TIME_FOREVER);
+}
+
+PSTLD_INTERNAL_IMPL const char *parallelism_exception::what() const noexcept
+{
+    return "Failed to acquire resources to perform parallel computation";
+}
+
+PSTLD_INTERNAL_IMPL void parallelism_exception::raise()
+{
+    throw parallelism_exception{};
+};
+
+} // namespace internal
+
+    #if defined(PSTLD_INTERNAL_ARC)
+} // inline namespace arc
+    #endif
+
+} // namespace pstld
+
+#endif // defined(PSTLD_INTERNAL_HEADER_ONLY) || defined(PSTLD_INTERNAL_IMPLEMENTATION_FILE)
+
+//--------------------------------------------------------------------------------------------------
+//
+// Injecting the shims into ::std
+//
+//--------------------------------------------------------------------------------------------------
 
 #if defined(PSTLD_INTERNAL_DO_HACK_INTO_STD)
 
@@ -2719,6 +3254,17 @@ execution::__enable_if_execution_policy<ExPo, It> generate_n(ExPo &&, It first, 
     return ::std::generate_n(first, count, gen);
 }
 
+// 25.7.10 - reverse ///////////////////////////////////////////////////////////////////////////////
+
+template <class ExPo, class It>
+execution::__enable_if_execution_policy<ExPo, void> reverse(ExPo &&, It first, It last)
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        ::pstld::reverse(first, last);
+    else
+        ::std::reverse(first, last);
+}
+
 // 25.8.2.1 - sort /////////////////////////////////////////////////////////////////////////////////
 
 template <class ExPo, class It>
@@ -2852,6 +3398,28 @@ minmax_element(ExPo &&, It first, It last, Cmp cmp)
         return ::std::minmax_element(first, last, cmp);
 }
 
+// 25.8.11 - lexicographical_compare ///////////////////////////////////////////////////////////////
+
+template <class ExPo, class It1, class It2>
+execution::__enable_if_execution_policy<ExPo, bool>
+lexicographical_compare(ExPo &&, It1 first1, It1 last1, It2 first2, It2 last2) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::lexicographical_compare(first1, last1, first2, last2);
+    else
+        return ::std::lexicographical_compare(first1, last1, first2, last2);
+}
+
+template <class ExPo, class It1, class It2, class Cmp>
+execution::__enable_if_execution_policy<ExPo, bool>
+lexicographical_compare(ExPo &&, It1 first1, It1 last1, It2 first2, It2 last2, Cmp cmp) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::lexicographical_compare(first1, last1, first2, last2, cmp);
+    else
+        return ::std::lexicographical_compare(first1, last1, first2, last2, cmp);
+}
+
 // 25.10.4 - reduce ////////////////////////////////////////////////////////////////////////////////
 
 template <class ExPo, class It>
@@ -2922,6 +3490,105 @@ transform_reduce(ExPo &&, It first, It last, T val, BinOp bop, UnOp uop) noexcep
         return ::pstld::internal::move_transform_reduce(first, last, std::move(val), bop, uop);
 }
 
+// 25.10.8 - exclusive_scan ////////////////////////////////////////////////////////////////////////
+
+template <class ExPo, class It1, class It2, class T>
+execution::__enable_if_execution_policy<ExPo, It2>
+exclusive_scan(ExPo &&, It1 first1, It1 last1, It2 first2, T val) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::exclusive_scan(first1, last1, first2, std::move(val));
+    else
+        return ::std::exclusive_scan(first1, last1, first2, std::move(val));
+}
+
+template <class ExPo, class It1, class It2, class T, class BinOp>
+execution::__enable_if_execution_policy<ExPo, It2>
+exclusive_scan(ExPo &&, It1 first1, It1 last1, It2 first2, T val, BinOp bop) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::exclusive_scan(first1, last1, first2, std::move(val), bop);
+    else
+        return ::std::exclusive_scan(first1, last1, first2, std::move(val), bop);
+}
+
+// 25.10.9 - inclusive_scan ////////////////////////////////////////////////////////////////////////
+
+template <class ExPo, class It1, class It2, class BinOp, class T>
+execution::__enable_if_execution_policy<ExPo, It2>
+inclusive_scan(ExPo &&, It1 first1, It1 last1, It2 first2, BinOp bop, T val) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::inclusive_scan(first1, last1, first2, bop, std::move(val));
+    else
+        return ::std::inclusive_scan(first1, last1, first2, bop, std::move(val));
+}
+
+template <class ExPo, class It1, class It2, class BinOp>
+execution::__enable_if_execution_policy<ExPo, It2>
+inclusive_scan(ExPo &&, It1 first1, It1 last1, It2 first2, BinOp bop) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::inclusive_scan(first1, last1, first2, bop);
+    else
+        return ::std::inclusive_scan(first1, last1, first2, bop);
+}
+
+template <class ExPo, class It1, class It2>
+execution::__enable_if_execution_policy<ExPo, It2>
+inclusive_scan(ExPo &&, It1 first1, It1 last1, It2 first2) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::inclusive_scan(first1, last1, first2);
+    else
+        return ::std::inclusive_scan(first1, last1, first2);
+}
+
+// 25.10.10 - transform_exclusive_scan /////////////////////////////////////////////////////////////
+
+template <class ExPo, class It1, class It2, class T, class BinOp, class UnOp>
+execution::__enable_if_execution_policy<ExPo, It2> transform_exclusive_scan(ExPo &&,
+                                                                            It1 first1,
+                                                                            It1 last1,
+                                                                            It2 first2,
+                                                                            T val,
+                                                                            BinOp bop,
+                                                                            UnOp uop) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::transform_exclusive_scan(first1, last1, first2, std::move(val), bop, uop);
+    else
+        return ::pstld::internal::transform_exclusive_scan_serial(
+            first1, last1, first2, std::move(val), bop, uop);
+}
+
+// 25.10.11 - transform_inclusive_scan /////////////////////////////////////////////////////////////
+
+template <class ExPo, class It1, class It2, class BinOp, class UnOp, class T>
+execution::__enable_if_execution_policy<ExPo, It2> transform_inclusive_scan(ExPo &&,
+                                                                            It1 first1,
+                                                                            It1 last1,
+                                                                            It2 first2,
+                                                                            BinOp bop,
+                                                                            UnOp uop,
+                                                                            T val) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::transform_inclusive_scan(first1, last1, first2, bop, uop, std::move(val));
+    else
+        return ::std::transform_inclusive_scan(first1, last1, first2, bop, uop, std::move(val));
+}
+
+template <class ExPo, class It1, class It2, class BinOp, class UnOp>
+execution::__enable_if_execution_policy<ExPo, It2>
+transform_inclusive_scan(ExPo &&, It1 first1, It1 last1, It2 first2, BinOp bop, UnOp uop) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::transform_inclusive_scan(first1, last1, first2, bop, uop);
+    else
+        return ::std::transform_inclusive_scan(first1, last1, first2, bop, uop);
+}
+
 // 25.10.12 - adjacent_difference //////////////////////////////////////////////////////////////////
 
 template <class ExPo, class It1, class It2>
@@ -2946,22 +3613,4 @@ adjacent_difference(ExPo &&, It1 first1, It1 last1, It2 first2, BinOp op) noexce
 
 } // namespace std
 
-// a hack to suport running tests from LLVM's PSTL
-namespace __pstl {
-namespace execution = ::std::execution;
-namespace __internal {
-template <typename T>
-struct __equal_value {
-    const T &val;
-    explicit __equal_value(const T &val) : val(val) {}
-    template <typename U>
-    bool operator()(U &&other) const
-    {
-        return std::forward<U>(other) == val;
-    }
-};
-} // namespace __internal
-
-} // namespace __pstl
-
-#endif
+#endif // defined(PSTLD_INTERNAL_DO_HACK_INTO_STD)

@@ -14,9 +14,11 @@ tar -xf boost_1_79_0.tar.gz
 cd boost_1_79_0
 ./bootstrap.sh --with-libraries=filesystem,system,container
 
+CFLAGS="-Os -fvisibility=hidden -fvisibility-inlines-hidden -mmacosx-version-min=10.15 -arch x86_64 -arch arm64 -isysroot $(xcrun --sdk macosx --show-sdk-path)"
+
 ./b2 \
-  cflags="-Os -fvisibility=hidden -fvisibility-inlines-hidden -mmacosx-version-min=10.15 -arch x86_64 -arch arm64" \
-  cxxflags="-Os -fvisibility=hidden -fvisibility-inlines-hidden -std=c++20 -mmacosx-version-min=10.15 -arch x86_64 -arch arm64" \
+  cflags="${CFLAGS}" \
+  cxxflags="${CFLAGS} -std=c++20" \
   link=static \
   lto=on
  

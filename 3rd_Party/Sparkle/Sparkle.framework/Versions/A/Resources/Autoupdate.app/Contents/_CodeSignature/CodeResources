@@ -8,9 +8,13 @@
 		<data>
 		4McwRDEss5BzWwUMG2Xf93+ze08=
 		</data>
-		<key>Resources/SUStatus.nib</key>
+		<key>Resources/SUStatus.nib/keyedobjects-101300.nib</key>
 		<data>
-		ECVWRExfxyDt5uvKRD+70wc9J6s=
+		cY6iKnzNVZCDdR8JYbtt7+yqB2w=
+		</data>
+		<key>Resources/SUStatus.nib/keyedobjects.nib</key>
+		<data>
+		zs82B4F3m0++emIpknTl0FMwUSk=
 		</data>
 		<key>Resources/ar.lproj/Sparkle.strings</key>
 		<dict>
@@ -307,10 +311,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			jbqvBVG5iEwxf6qfcX5ngEM2ba4=
+			/OhxiWP3I6LhNOsiNoTmykP2fQU=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"f0fbc69b53253ed1bc0f8d020c3aa6fe0b813d37" or cdhash H"8dbaaf0551b9884c317faa9f717e678043366dae" or cdhash H"9881254e39f345d52cfb5af1aa83c9c6515d0854" or cdhash H"46e748a8fb6f994256646653c911cb8724e741c4"</string>
+			<string>cdhash H"3ae6a8bed1d3f686e134c8bd60d0b5cfef43e1b3" or cdhash H"fce8718963f723a2e134eb223684e6ca43f67d05" or cdhash H"42709ecfddaaa70986f408efc1446bcc5e50d38a" or cdhash H"1456be6a58093d2826dee84735cc140ce1f70b42"</string>
 		</dict>
 		<key>Resources/AppIcon.icns</key>
 		<dict>
@@ -323,15 +327,26 @@
 			nq7j0ugQwyNbJn/7zGFwxIR0njwU3i7hAYKEyZhvUfE=
 			</data>
 		</dict>
-		<key>Resources/SUStatus.nib</key>
+		<key>Resources/SUStatus.nib/keyedobjects-101300.nib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			ECVWRExfxyDt5uvKRD+70wc9J6s=
+			cY6iKnzNVZCDdR8JYbtt7+yqB2w=
 			</data>
 			<key>hash2</key>
 			<data>
-			AtY9YmPv7cUlbFWP2vCyVdi3/M+XQn98wOlrIES2Dgk=
+			FRV5XDWmpFQvnjOMu7d3lLHhqtAvA7Lolld3bzx7/GQ=
+			</data>
+		</dict>
+		<key>Resources/SUStatus.nib/keyedobjects.nib</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			zs82B4F3m0++emIpknTl0FMwUSk=
+			</data>
+			<key>hash2</key>
+			<data>
+			SreiywbA7nxU1etZMTG6ykj5adYkvgTObEh45vKhyIY=
 			</data>
 		</dict>
 		<key>Resources/ar.lproj/Sparkle.strings</key>

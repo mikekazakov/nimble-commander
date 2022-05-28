@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 #include "BatchRenamingDialog.h"
@@ -12,8 +12,7 @@
 
 using namespace nc::ops;
 
-static auto g_MyPrivateTableViewDataType =
-    @"com.magnumbytes.nc.ops.BatchRenameSheetControllerPrivateTableViewDataType";
+static auto g_MyPrivateTableViewDataType = @"com.magnumbytes.nc.ops.BatchRenameSheetControllerPrivateTableViewDataType";
 
 [[clang::no_destroy]] static const robin_hood::unordered_map<long, NSString *> g_InsertSnippets = {
     {101, @"[N]"},        //
@@ -152,7 +151,8 @@ static auto g_MyPrivateTableViewDataType =
 
 @end
 
-using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, size_t, nc::RHTransparentStringHashEqual, nc::RHTransparentStringHashEqual>;
+using SourceReverseMappingStorage = robin_hood::
+    unordered_flat_map<std::string, size_t, nc::RHTransparentStringHashEqual, nc::RHTransparentStringHashEqual>;
 
 @implementation NCOpsBatchRenamingDialog {
     std::vector<BatchRenamingScheme::FileInfo> m_FileInfos;
@@ -283,9 +283,7 @@ using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, 
     return 0;
 }
 
-- (NSView *)tableView:(NSTableView *)tableView
-    viewForTableColumn:(NSTableColumn *)tableColumn
-                   row:(NSInteger)row
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
     if( tableView == self.FilenamesTable ) {
         if( [tableColumn.identifier isEqualToString:@"original"] ) {
@@ -310,10 +308,8 @@ using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, 
 {
     NSString *filename_mask = self.FilenameMask.stringValue ? self.FilenameMask.stringValue : @"";
 
-    NSString *search_for =
-        self.SearchForComboBox.stringValue ? self.SearchForComboBox.stringValue : @"";
-    NSString *replace_with =
-        self.ReplaceWithComboBox.stringValue ? self.ReplaceWithComboBox.stringValue : @"";
+    NSString *search_for = self.SearchForComboBox.stringValue ? self.SearchForComboBox.stringValue : @"";
+    NSString *replace_with = self.ReplaceWithComboBox.stringValue ? self.ReplaceWithComboBox.stringValue : @"";
     bool search_case_sens = self.SearchCaseSensitive.state == NSControlStateValueOn;
     bool search_once = self.SearchOnlyOnce.state == NSControlStateValueOn;
     bool search_in_ext = self.SearchInExtension.state == NSControlStateValueOn;
@@ -323,13 +319,9 @@ using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, 
     bool ct_with_ext = self.CaseProcessingWithExtension.state == NSControlStateValueOn;
 
     BatchRenamingScheme br;
-    br.SetReplacingOptions(
-        search_for, replace_with, search_case_sens, search_once, search_in_ext, search_regexp);
+    br.SetReplacingOptions(search_for, replace_with, search_case_sens, search_once, search_in_ext, search_regexp);
     br.SetCaseTransform(ct, ct_with_ext);
-    br.SetDefaultCounter(m_CounterStartsAt,
-                         m_CounterStepsBy,
-                         1,
-                         static_cast<unsigned>(self.CounterDigits.selectedTag));
+    br.SetDefaultCounter(m_CounterStartsAt, m_CounterStepsBy, 1, static_cast<unsigned>(self.CounterDigits.selectedTag));
 
     if( !br.BuildActionsScript(filename_mask) ) {
         for( auto &l : m_LabelsAfter )
@@ -370,8 +362,7 @@ using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, 
             // now check for duplicates
             const char *utf8 = renamed_into.UTF8String;
             const auto source_reverse_it = m_SourceReverseMapping.find(utf8);
-            if( source_reverse_it != m_SourceReverseMapping.end() &&
-                source_reverse_it->second != index ) {
+            if( source_reverse_it != m_SourceReverseMapping.end() && source_reverse_it->second != index ) {
                 // prohibit renaming into filenames which might already exist initially.
                 is_valid = false;
             }
@@ -406,14 +397,24 @@ using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, 
     pc.handler = ^(NSRange _range) {
       if( _range.length == 0 )
           return;
-      NSString *ph = [NSString
-          stringWithFormat:@"[N%lu-%lu]", _range.location + 1, _range.location + _range.length];
+      NSString *ph = [NSString stringWithFormat:@"[N%lu-%lu]", _range.location + 1, _range.location + _range.length];
       dispatch_to_main_queue([=] { [self InsertStringIntoMask:ph withSelection:curr_sel]; });
     };
-    if( self.FilenamesTable.selectedRow >= 0 )
-        pc.string = m_FileInfos[self.FilenamesTable.selectedRow].name;
-    else
-        pc.string = m_FileInfos[0].name;
+    if( self.FilenamesTable.selectedRow >= 0 ) {
+        // pick the filename of the select item
+        const auto index = self.FilenamesTable.selectedRow;
+        pc.string = m_FileInfos[index].name;
+    }
+    else {
+        // pick the longest filename
+        const auto longest_it =
+            std::max_element(m_FileInfos.begin(),
+                             m_FileInfos.end(),
+                             [](const BatchRenamingScheme::FileInfo &lhs, const BatchRenamingScheme::FileInfo &rhs) {
+                                 return lhs.name.length < rhs.name.length;
+                             });
+        pc.string = longest_it->name;
+    }
 
     m_Popover = [NSPopover new];
     m_Popover.contentViewController = pc;
@@ -548,8 +549,7 @@ using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, 
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
 }
 
-- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view
-                       pasteboardWriterForRow:(NSInteger)_row
+- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view pasteboardWriterForRow:(NSInteger)_row
 {
     auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
                                       requiringSecureCoding:false
@@ -565,8 +565,7 @@ using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, 
     dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
     NSData *data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];
-    NSNumber *ind =
-        [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+    NSNumber *ind = [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
     NSInteger drag_from = ind.integerValue;
 
     if( drag_to == drag_from ||    // same index, above
@@ -575,8 +574,7 @@ using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, 
 
     if( drag_from < drag_to )
         drag_to--;
-    if( drag_to >= static_cast<int>(m_LabelsBefore.size()) ||
-        drag_from >= static_cast<int>(m_LabelsBefore.size()) )
+    if( drag_to >= static_cast<int>(m_LabelsBefore.size()) || drag_from >= static_cast<int>(m_LabelsBefore.size()) )
         return false;
 
     // don't forget to swap items in ALL containers!
@@ -615,8 +613,7 @@ using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, 
 - (void)keyDown:(NSEvent *)event
 {
     if( event.type == NSEventTypeKeyDown && event.keyCode == kVK_Delete &&
-        self.window.firstResponder == self.FilenamesTable &&
-        self.FilenamesTable.selectedRow != -1 ) {
+        self.window.firstResponder == self.FilenamesTable && self.FilenamesTable.selectedRow != -1 ) {
         [self removeItemAtIndex:static_cast<int>(self.FilenamesTable.selectedRow)];
         return;
     }
@@ -637,23 +634,31 @@ using SourceReverseMappingStorage = robin_hood::unordered_flat_map<std::string, 
     return true;
 }
 
-- (void)removeItemAtIndex:(int)_index
+- (void)removeItemAtIndex:(size_t)_index
 {
+    assert(_index < m_FileInfos.size());
+    if( _index == 0 && m_FileInfos.size() == 1 ) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setMessageText:NSLocalizedString(
+                                  @"Cannot remove the last item being renamed",
+                                  "Alert shown when a user tries to remove all item from a Batch Rename dialog")];
+        [alert runModal];
+        return;
+    }
+
     // don't forget to erase items in ALL containers!
-    m_FileInfos.erase(next(begin(m_FileInfos), _index));
-    m_LabelsBefore.erase(next(begin(m_LabelsBefore), _index));
-    m_LabelsAfter.erase(next(begin(m_LabelsAfter), _index));
-    m_ResultSource.erase(next(begin(m_ResultSource), _index));
+    m_FileInfos.erase(std::next(m_FileInfos.begin(), _index));
+    m_LabelsBefore.erase(std::next(m_LabelsBefore.begin(), _index));
+    m_LabelsAfter.erase(std::next(m_LabelsAfter.begin(), _index));
+    m_ResultSource.erase(std::next(m_ResultSource.begin(), _index));
 
     [self.FilenamesTable reloadData];
 
-    if( _index < self.FilenamesTable.numberOfRows )
-        [self.FilenamesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:_index]
-                         byExtendingSelection:false];
+    if( _index < static_cast<size_t>(self.FilenamesTable.numberOfRows) )
+        [self.FilenamesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:_index] byExtendingSelection:false];
     else if( self.FilenamesTable.numberOfRows > 0 )
-        [self.FilenamesTable
-                selectRowIndexes:[NSIndexSet indexSetWithIndex:self.FilenamesTable.numberOfRows - 1]
-            byExtendingSelection:false];
+        [self.FilenamesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:self.FilenamesTable.numberOfRows - 1]
+                         byExtendingSelection:false];
 
     dispatch_to_main_queue([=] { [self updateRenamedFilenames]; });
 }

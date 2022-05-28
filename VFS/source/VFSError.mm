@@ -3,6 +3,7 @@
 #include <libarchive/archive.h>
 #include "../include/VFS/VFSError.h"
 #include "../include/VFS/VFSDeclarations.h"
+#include "../include/VFS/Log.h"
 #include <Foundation/Foundation.h>
 #include <frozen/unordered_map.h>
 #include <frozen/string.h>
@@ -155,13 +156,18 @@ int ErrorException::code() const noexcept
 
 namespace VFSError {
 
-int FromErrno(int _errno)
+int FromErrno(int _errno) noexcept
 {
-    assert(_errno >= 0 && _errno <= ELAST);
-    return _errno + g_PosixBase;
+    if( _errno >= 0 && _errno <= ELAST ) {
+        return _errno + g_PosixBase;
+    }
+    else {
+        nc::vfs::Log::Warn(SPDLOC, "VFSError::FromErrno(): unknown errno - {}", _errno);
+        return FromErrno(EINVAL);
+    }
 }
 
-int FromErrno()
+int FromErrno() noexcept
 {
     return FromErrno(errno);
 }

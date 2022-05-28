@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -83,8 +83,8 @@ enum
     NetSFTPCouldntReadKey = -4028,
 };
 
-int FromErrno(int _errno);
-int FromErrno();
+int FromErrno(int _errno) noexcept;
+int FromErrno() noexcept;
 int FromLibarchive(int _errno);
 int FromCFNetwork(int _errno);
 

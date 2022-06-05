@@ -525,16 +525,13 @@ static tl::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<
 
 static void AddPanelRefreshIfNecessary(PanelController *_target, ops::Operation &_operation)
 {
-    const bool force_refresh = !_target.receivesUpdateNotifications;
-    if( force_refresh ) {
-        __weak PanelController *cntr = _target;
-        _operation.ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
-            dispatch_to_main_queue([cntr] {
-                if( PanelController *pc = cntr )
-                    [pc refreshPanel];
-            });
+    __weak PanelController *cntr = _target;
+    _operation.ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
+        dispatch_to_main_queue([cntr] {
+            if( PanelController *pc = cntr )
+                [pc hintAboutFilesystemChange];
         });
-    }
+    });
 }
 
 static void AddPanelRefreshIfNecessary(PanelController *_target,

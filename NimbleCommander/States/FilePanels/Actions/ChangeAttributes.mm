@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ChangeAttributes.h"
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
@@ -22,8 +22,7 @@ ChangeAttributes::ChangeAttributes(nc::config::Config &_config) : m_Config(_conf
 bool ChangeAttributes::Predicate(PanelController *_target) const
 {
     const auto i = _target.view.item;
-    return i && ((!i.IsDotDot() && i.Host()->IsWritable()) ||
-                 _target.data.Stats().selected_entries_amount > 0);
+    return i && ((!i.IsDotDot() && i.Host()->IsWritable()) || _target.data.Stats().selected_entries_amount > 0);
 }
 
 void ChangeAttributes::Perform(PanelController *_target, [[maybe_unused]] id _sender) const
@@ -39,18 +38,17 @@ void ChangeAttributes::Perform(PanelController *_target, [[maybe_unused]] id _se
           return;
 
       const auto op = std::make_shared<nc::ops::AttrsChanging>(sheet.command);
-      if( !_target.receivesUpdateNotifications ) {
-          __weak PanelController *weak_panel = _target;
-          op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
-              dispatch_to_main_queue(
-                  [=] { [static_cast<PanelController *>(weak_panel) refreshPanel]; });
+      __weak PanelController *weak_panel = _target;
+      op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
+          dispatch_to_main_queue([=] {
+              if( PanelController *pc = weak_panel )
+                  [pc refreshPanel];
           });
-      }
+      });
 
       if( m_Config.GetBool(g_DeselectConfigFlag) ) {
           const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
-          op->SetItemStatusCallback(
-              [deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
+          op->SetItemStatusCallback([deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
       }
 
       [_target.mainWindowController enqueueOperation:op];

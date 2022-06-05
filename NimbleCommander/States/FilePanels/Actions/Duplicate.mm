@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Duplicate.h"
 #include "../PanelController.h"
 #include <VFS/VFS.h>
@@ -24,12 +24,9 @@ static const auto g_DeselectConfigFlag = "filePanel.general.deselectItemsAfterFi
 
 static robin_hood::unordered_set<std::string> ExtractFilenames(const VFSListing &_listing);
 static std::string ProduceFormCLowercase(std::string_view _string);
-static std::string
-FindFreeFilenameToDuplicateIn(const VFSListingItem &_item,
-                              const robin_hood::unordered_set<std::string> &_filenames);
-static void CommonPerform(PanelController *_target,
-                          const std::vector<VFSListingItem> &_items,
-                          bool _add_deselector);
+static std::string FindFreeFilenameToDuplicateIn(const VFSListingItem &_item,
+                                                 const robin_hood::unordered_set<std::string> &_filenames);
+static void CommonPerform(PanelController *_target, const std::vector<VFSListingItem> &_items, bool _add_deselector);
 
 Duplicate::Duplicate(nc::config::Config &_config) : m_Config(_config)
 {
@@ -50,9 +47,7 @@ bool Duplicate::Predicate(PanelController *_target) const
     return !i.IsDotDot() || _target.data.Stats().selected_entries_amount > 0;
 }
 
-static void CommonPerform(PanelController *_target,
-                          const std::vector<VFSListingItem> &_items,
-                          bool _add_deselector)
+static void CommonPerform(PanelController *_target, const std::vector<VFSListingItem> &_items, bool _add_deselector)
 {
     auto directory_filenames = ExtractFilenames(_target.data.Listing());
 
@@ -68,16 +63,15 @@ static void CommonPerform(PanelController *_target,
             std::vector<VFSListingItem>{item}, item.Directory() + duplicate, item.Host(), options);
 
         if( &item == &_items.front() ) {
-            const bool force_refresh = !_target.receivesUpdateNotifications;
             __weak PanelController *weak_panel = _target;
-            auto finish_handler = [weak_panel, duplicate, force_refresh] {
-                dispatch_to_main_queue([weak_panel, duplicate, force_refresh] {
+            auto finish_handler = [weak_panel, duplicate] {
+                dispatch_to_main_queue([weak_panel, duplicate] {
                     if( PanelController *panel = weak_panel ) {
+                        [panel hintAboutFilesystemChange];
                         nc::panel::DelayedFocusing req;
                         req.filename = duplicate;
+                        req.timeout = std::chrono::seconds{1};
                         [panel scheduleDelayedFocusing:req];
-                        if( force_refresh )
-                            [panel refreshPanel];
                     }
                 });
             };
@@ -86,8 +80,7 @@ static void CommonPerform(PanelController *_target,
 
         if( _add_deselector ) {
             const auto deselector = std::make_shared<const DeselectorViaOpNotification>(_target);
-            op->SetItemStatusCallback(
-                [deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
+            op->SetItemStatusCallback([deselector](nc::ops::ItemStateReport _report) { deselector->Handle(_report); });
         }
 
         [_target.mainWindowController enqueueOperation:op];
@@ -96,12 +89,10 @@ static void CommonPerform(PanelController *_target,
 
 void Duplicate::Perform(PanelController *_target, id) const
 {
-    CommonPerform(
-        _target, _target.selectedEntriesOrFocusedEntry, m_Config.GetBool(g_DeselectConfigFlag));
+    CommonPerform(_target, _target.selectedEntriesOrFocusedEntry, m_Config.GetBool(g_DeselectConfigFlag));
 }
 
-context::Duplicate::Duplicate(nc::config::Config &_config,
-                              const std::vector<VFSListingItem> &_items)
+context::Duplicate::Duplicate(nc::config::Config &_config, const std::vector<VFSListingItem> &_items)
     : m_Config(_config), m_Items(_items)
 {
 }
@@ -136,9 +127,8 @@ static std::pair<int, std::string> ExtractExistingDuplicateInfo(const std::strin
     }
 }
 
-static std::string
-FindFreeFilenameToDuplicateIn(const VFSListingItem &_item,
-                              const robin_hood::unordered_set<std::string> &_filenames)
+static std::string FindFreeFilenameToDuplicateIn(const VFSListingItem &_item,
+                                                 const robin_hood::unordered_set<std::string> &_filenames)
 {
     const auto max_duplicates = 100;
     const auto filename = _item.FilenameWithoutExt();
@@ -147,8 +137,7 @@ FindFreeFilenameToDuplicateIn(const VFSListingItem &_item,
 
     if( duplicate_index < 0 )
         for( int i = 1; i < max_duplicates; ++i ) {
-            const auto target =
-                filename + " " + g_Suffix + (i == 1 ? "" : " " + std::to_string(i)) + extension;
+            const auto target = filename + " " + g_Suffix + (i == 1 ? "" : " " + std::to_string(i)) + extension;
             if( _filenames.count(ProduceFormCLowercase(target)) == 0 )
                 return target;
         }
@@ -174,13 +163,12 @@ static std::string ProduceFormCLowercase(std::string_view _string)
 {
     CFStackAllocator allocator;
 
-    CFStringRef original =
-        CFStringCreateWithBytesNoCopy(allocator.Alloc(),
-                                      reinterpret_cast<const UInt8 *>(_string.data()),
-                                      _string.length(),
-                                      kCFStringEncodingUTF8,
-                                      false,
-                                      kCFAllocatorNull);
+    CFStringRef original = CFStringCreateWithBytesNoCopy(allocator.Alloc(),
+                                                         reinterpret_cast<const UInt8 *>(_string.data()),
+                                                         _string.length(),
+                                                         kCFStringEncodingUTF8,
+                                                         false,
+                                                         kCFAllocatorNull);
 
     if( !original )
         return "";

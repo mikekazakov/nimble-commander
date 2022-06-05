@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilesDraggingSource.h"
 #include <VFS/Native.h>
 #include <Utility/StringExtras.h>
@@ -12,18 +12,17 @@
 static const auto g_PrivateDragUTI = @"com.magnumbytes.nimblecommander.filespanelsdraganddrop";
 
 // "com.apple.pasteboard.promised-file-url"
-static const auto g_PasteboardFileURLPromiseUTI =
-    static_cast<NSString *>(kPasteboardTypeFileURLPromise);
+static const auto g_PasteboardFileURLPromiseUTI = static_cast<NSString *>(kPasteboardTypeFileURLPromise);
 
 // "public.file-url"
 static const auto g_PasteboardFileURLUTI = static_cast<NSString *>(kUTTypeFileURL);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-static const auto g_PasteboardFilenamesUTI = static_cast<NSString *>(CFBridgingRelease(
-    UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType,
-                                          (__bridge CFStringRef)NSFilenamesPboardType,
-                                          kUTTypeData)));
+static const auto g_PasteboardFilenamesUTI = static_cast<NSString *>(
+    CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType,
+                                                            (__bridge CFStringRef)NSFilenamesPboardType,
+                                                            kUTTypeData)));
 #pragma clang diagnostic pop
 
 @implementation PanelDraggingItem {
@@ -121,15 +120,14 @@ static const auto g_PasteboardFilenamesUTI = static_cast<NSString *>(CFBridgingR
     switch( context ) {
         case NSDraggingContextOutsideApplication:
             if( m_AreAllHostsNative && m_AreAllHostsWriteable )
-                return NSDragOperationCopy | NSDragOperationLink | NSDragOperationGeneric |
-                       NSDragOperationMove | NSDragOperationDelete;
+                return NSDragOperationCopy | NSDragOperationLink | NSDragOperationGeneric | NSDragOperationMove |
+                       NSDragOperationDelete;
             else
                 return NSDragOperationCopy;
 
         case NSDraggingContextWithinApplication:
             if( m_AreAllHostsNative )
-                return NSDragOperationCopy | NSDragOperationLink | NSDragOperationGeneric |
-                       NSDragOperationMove;
+                return NSDragOperationCopy | NSDragOperationLink | NSDragOperationGeneric | NSDragOperationMove;
             else
                 return NSDragOperationCopy | NSDragOperationGeneric | NSDragOperationMove;
 
@@ -191,11 +189,10 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
     opts.preserve_symlinks = true;
     opts.exist_behavior = nc::ops::CopyingOptions::ExistBehavior::Stop;
 
-    const auto dest =
-        std::filesystem::path(drop_url.path.fileSystemRepresentation) / item.item.Filename();
+    const auto dest = std::filesystem::path(drop_url.path.fileSystemRepresentation) / item.item.Filename();
 
-    auto operation = std::make_shared<nc::ops::Copying>(
-        std::vector<VFSListingItem>{item.item}, dest, m_NativeVFS, opts);
+    auto operation =
+        std::make_shared<nc::ops::Copying>(std::vector<VFSListingItem>{item.item}, dest, m_NativeVFS, opts);
 
     operation->Start();
     operation->Wait();
@@ -251,9 +248,7 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
 //}
 
 // dispatch incoming data request
-- (void)pasteboard:(NSPasteboard *)sender
-                  item:(PanelDraggingItem *)item
-    provideDataForType:(NSString *)type
+- (void)pasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item provideDataForType:(NSString *)type
 {
     if( !item.item )
         return;
@@ -283,16 +278,15 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
     m_CommonHost = nullptr;
 }
 
-static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
-                                          const std::shared_ptr<nc::ops::Operation> &_operation)
+static void AddPanelRefreshEpilogIfNeeded(PanelController *_target, nc::ops::Operation &_operation)
 {
-    if( !_target.receivesUpdateNotifications ) {
-        __weak PanelController *weak_panel = _target;
-        _operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
-            dispatch_to_main_queue(
-                [=] { [static_cast<PanelController *>(weak_panel) refreshPanel]; });
+    __weak PanelController *weak_panel = _target;
+    _operation.ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
+        dispatch_to_main_queue([=] {
+            if( PanelController *strong_pc = weak_panel )
+                [strong_pc hintAboutFilesystemChange];
         });
-    }
+    });
 }
 
 - (void)deleteSoureItems
@@ -302,10 +296,9 @@ static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
         for( auto &i : m_Items )
             items.push_back(i.item);
 
-        const auto operation =
-            std::make_shared<nc::ops::Deletion>(items, nc::ops::DeletionType::Trash);
+        const auto operation = std::make_shared<nc::ops::Deletion>(items, nc::ops::DeletionType::Trash);
 
-        AddPanelRefreshEpilogIfNeeded(target, operation);
+        AddPanelRefreshEpilogIfNeeded(target, *operation);
         [target.mainWindowController enqueueOperation:operation];
     }
 }

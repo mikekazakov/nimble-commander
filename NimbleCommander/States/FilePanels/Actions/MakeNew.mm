@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"
@@ -26,8 +26,7 @@ using namespace std::literals;
 }();
 
 [[clang::no_destroy]] static const auto g_InitialFolderName = []() -> std::string {
-    NSString *stub =
-        NSLocalizedString(@"untitled folder", "Name for freshly create folder by hotkey");
+    NSString *stub = NSLocalizedString(@"untitled folder", "Name for freshly create folder by hotkey");
     if( stub && stub.length )
         return stub.fileSystemRepresentationSafe;
 
@@ -35,8 +34,8 @@ using namespace std::literals;
 }();
 
 [[clang::no_destroy]] static const auto g_InitialFolderWithItemsName = []() -> std::string {
-    NSString *stub = NSLocalizedString(@"New Folder with Items",
-                                       "Name for freshly created folder by hotkey with items");
+    NSString *stub =
+        NSLocalizedString(@"New Folder with Items", "Name for freshly created folder by hotkey with items");
     if( stub && stub.length )
         return stub.fileSystemRepresentationSafe;
 
@@ -68,16 +67,14 @@ static bool HasEntry(const std::string &_name, const VFSListing &_listing, bool 
     else {
         auto name = [NSString stringWithUTF8StdString:_name];
         for( unsigned i = 0; i != size; ++i ) {
-            if( [name compare:_listing.FilenameNS(i)
-                      options:NSCaseInsensitiveSearch] == NSOrderedSame )
+            if( [name compare:_listing.FilenameNS(i) options:NSCaseInsensitiveSearch] == NSOrderedSame )
                 return true;
         }
     }
     return false;
 }
 
-static std::string
-FindSuitableName(const std::string &_initial, const VFSListing &_listing, bool _case_sensitive)
+static std::string FindSuitableName(const std::string &_initial, const VFSListing &_listing, bool _case_sensitive)
 {
     auto name = _initial;
     if( !HasEntry(name, _listing, _case_sensitive) )
@@ -124,7 +121,6 @@ void MakeNewFile::Perform(PanelController *_target, id) const
     const std::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
-    const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *weak_panel = _target;
 
     dispatch_to_background([=] {
@@ -137,9 +133,8 @@ void MakeNewFile::Perform(PanelController *_target, id) const
         if( ret != 0 )
             return dispatch_to_main_queue([=] {
                 Alert *alert = [[Alert alloc] init];
-                alert.messageText =
-                    NSLocalizedString(@"Failed to create an empty file:",
-                                      "Showing error when trying to create an empty file");
+                alert.messageText = NSLocalizedString(@"Failed to create an empty file:",
+                                                      "Showing error when trying to create an empty file");
                 alert.informativeText = VFSError::ToNSError(ret).localizedDescription;
                 [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
                 [alert runModal];
@@ -147,9 +142,7 @@ void MakeNewFile::Perform(PanelController *_target, id) const
 
         dispatch_to_main_queue([=] {
             if( PanelController *panel = weak_panel ) {
-                if( force_reload )
-                    [panel refreshPanel];
-
+                [panel hintAboutFilesystemChange];
                 ScheduleRenaming(name, panel);
             }
         });
@@ -166,7 +159,6 @@ void MakeNewFolder::Perform(PanelController *_target, id) const
     const std::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
-    const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     const bool case_sensitive = vfs->IsCaseSensitiveAtPath(dir.c_str());
     __weak PanelController *weak_panel = _target;
 
@@ -178,8 +170,7 @@ void MakeNewFolder::Perform(PanelController *_target, id) const
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
         dispatch_to_main_queue([=] {
             if( PanelController *panel = weak_panel ) {
-                if( force_reload )
-                    [panel refreshPanel];
+                [panel hintAboutFilesystemChange];
                 ScheduleRenaming(name, panel);
             }
         });
@@ -200,7 +191,6 @@ void MakeNewFolderWithSelection::Perform(PanelController *_target, id) const
     const boost::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
-    const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     const bool case_sensitive = vfs->IsCaseSensitiveAtPath(dir.c_str());
     __weak PanelController *weak_panel = _target;
     const auto files = _target.selectedEntriesOrFocusedEntry;
@@ -219,9 +209,7 @@ void MakeNewFolderWithSelection::Perform(PanelController *_target, id) const
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
         dispatch_to_main_queue([=] {
             if( PanelController *panel = weak_panel ) {
-                if( force_reload )
-                    [panel refreshPanel];
-
+                [panel hintAboutFilesystemChange];
                 ScheduleRenaming(name, panel);
             }
         });
@@ -253,34 +241,30 @@ void MakeNewNamedFolder::Perform(PanelController *_target, id) const
 
     cd.validationCallback = ValidateDirectoryInput;
 
-    [_target.mainWindowController
-               beginSheet:cd.window
-        completionHandler:^(NSModalResponse returnCode) {
-          if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
-              const std::string name = cd.result;
-              const std::string dir = _target.currentDirectoryPath;
-              const auto vfs = _target.vfs;
-              const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
-              __weak PanelController *weak_panel = _target;
+    [_target.mainWindowController beginSheet:cd.window
+                           completionHandler:^(NSModalResponse returnCode) {
+                             if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
+                                 const std::string name = cd.result;
+                                 const std::string dir = _target.currentDirectoryPath;
+                                 const auto vfs = _target.vfs;
+                                 __weak PanelController *weak_panel = _target;
 
-              const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
-              const auto weak_op = std::weak_ptr<nc::ops::DirectoryCreation>{op};
-              op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
-                  const auto &dir_names = weak_op.lock()->DirectoryNames();
-                  const std::string to_focus = dir_names.empty() ? ""s : dir_names.front();
-                  dispatch_to_main_queue([=] {
-                      if( PanelController *panel = weak_panel ) {
-                          if( force_reload )
-                              [panel refreshPanel];
+                                 const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
+                                 const auto weak_op = std::weak_ptr<nc::ops::DirectoryCreation>{op};
+                                 op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
+                                     const auto &dir_names = weak_op.lock()->DirectoryNames();
+                                     const std::string to_focus = dir_names.empty() ? ""s : dir_names.front();
+                                     dispatch_to_main_queue([=] {
+                                         if( PanelController *panel = weak_panel ) {
+                                             [panel hintAboutFilesystemChange];
+                                             ScheduleFocus(to_focus, panel);
+                                         }
+                                     });
+                                 });
 
-                          ScheduleFocus(to_focus, panel);
-                      }
-                  });
-              });
-
-              [_target.mainWindowController enqueueOperation:op];
-          }
-        }];
+                                 [_target.mainWindowController enqueueOperation:op];
+                             }
+                           }];
 }
 
 }

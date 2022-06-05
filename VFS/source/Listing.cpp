@@ -1,16 +1,17 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Listing.h"
 #include "../include/VFS/Host.h"
 #include "ListingInput.h"
 #include <sys/param.h>
+#include <Habanero/mach_time.h>
 
 namespace nc::vfs {
 
 using nc::base::variable_container;
 
-static_assert(sizeof(Listing) <= 816);
-static_assert(std::is_move_constructible<ListingItem>::value, "");
-static_assert(std::is_move_constructible<Listing::iterator>::value, "");
+static_assert(sizeof(Listing) <= 824);
+static_assert(std::is_move_constructible<ListingItem>::value);
+static_assert(std::is_move_constructible<Listing::iterator>::value);
 
 static bool BasicDirectoryCheck(std::string_view _str) noexcept
 {
@@ -149,6 +150,7 @@ base::intrusive_ptr<const Listing> Listing::Build(ListingInput &&_input)
     l->m_UnixFlags = std::move(_input.unix_flags);
     l->m_Symlinks = std::move(_input.symlinks);
     l->m_CreationTime = time(0);
+    l->m_CreationTicks = machtime();
     l->BuildFilenames();
 
     return l;
@@ -403,6 +405,11 @@ void Listing::BuildFilenames()
             offset = uint16_t(dot_it + 1);
         m_ExtensionOffsets[i] = offset;
     }
+}
+
+std::chrono::nanoseconds Listing::BuildTicksTimestamp() const noexcept
+{
+    return m_CreationTicks;
 }
 
 } // namespace nc::vfs

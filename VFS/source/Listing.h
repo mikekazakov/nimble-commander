@@ -6,6 +6,7 @@
 #include <Habanero/intrusive_ptr.h>
 #include <VFS/VFSDeclarations.h>
 #include <cassert>
+#include <chrono>
 
 /**
  * A note about symlinks handling. Listing must be aware, that some items might be symlinks.
@@ -57,6 +58,9 @@ public:
      * Returns an optional title for this listing object.
      */
     const std::string &Title() const noexcept;
+    
+    // Returns a timestamp time kernel ticks (mach_time) of the time point at which this listing was built.
+    std::chrono::nanoseconds BuildTicksTimestamp() const noexcept;
 
     ListingItem Item(unsigned _ind) const;
 
@@ -143,6 +147,7 @@ private:
 
     unsigned m_ItemsCount;
     time_t m_CreationTime;
+    std::chrono::nanoseconds m_CreationTicks; // the kernel ticks stamp at which the Listing was created
     std::string m_Title;
     std::unique_ptr<std::string[]> m_Filenames;
     std::unique_ptr<CFString[]> m_FilenamesCF;

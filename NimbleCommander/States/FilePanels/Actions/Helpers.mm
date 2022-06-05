@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Helpers.h"
 #include "../PanelController.h"
 #include <NimbleCommander/Core/VFSInstancePromise.h>
@@ -112,7 +112,7 @@ void DeselectorViaOpNotification::Handle(nc::ops::ItemStateReport _report) const
 // this method can be triggered for every item processed in the background, which means potentially
 // thousands, so it has to be FAST.
 // fun fact: _host can be a dangling pointer and is used only as a key.
-void DeselectorViaOpNotification::HandleImpl([[maybe_unused]] nc::vfs::Host *_host,
+void DeselectorViaOpNotification::HandleImpl(nc::vfs::Host *_host,
                                              const std::string &_path) const
 {
     dispatch_assert_main_queue();

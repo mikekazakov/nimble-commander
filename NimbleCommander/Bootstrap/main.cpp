@@ -12,13 +12,13 @@ static void SetLocale()
     char buf[256] = "en_US";
     CFStringGetCString(cf_ident, buf, sizeof(buf) - 1, kCFStringEncodingUTF8);
     strcat(buf, ".UTF-8");
-    setlocale(LC_ALL, buf);
+    ::setlocale(LC_ALL, buf);
 }
 
 int main(int argc, char *argv[])
 {
     nc::bootstrap::ProcessCLIUsage(argc, argv);
-    if( !std::string_view(setlocale(LC_COLLATE, nullptr)).contains("UTF-8") )
+    if( !std::string_view(::setlocale(LC_COLLATE, nullptr)).contains("UTF-8") )
         SetLocale();
     return NSApplicationMain(argc, const_cast<const char **>(argv));
 }

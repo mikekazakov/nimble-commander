@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRename.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
@@ -42,26 +42,26 @@ void BatchRename::Perform(PanelController *_target, id) const
     sheet.replaceWithDataSource =
         [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigReplacesPath];
 
-    [_target.mainWindowController
-               beginSheet:sheet.window
-        completionHandler:^(NSModalResponse returnCode) {
-          if( returnCode == NSModalResponseOK ) {
-              auto src_paths = sheet.filenamesSource;
-              auto dst_paths = sheet.filenamesDestination;
+    auto handler = ^(NSModalResponse returnCode) {
+      if( returnCode == NSModalResponseOK ) {
+          auto src_paths = sheet.filenamesSource;
+          auto dst_paths = sheet.filenamesDestination;
 
-              const auto operation =
-                  std::make_shared<nc::ops::BatchRenaming>(move(src_paths), move(dst_paths), host);
-              if( !_target.receivesUpdateNotifications ) {
-                  __weak PanelController *weak_panel = _target;
-                  operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
-                      dispatch_to_main_queue(
-                          [=] { [static_cast<PanelController *>(weak_panel) refreshPanel]; });
-                  });
-              }
+          const auto operation =
+              std::make_shared<nc::ops::BatchRenaming>(std::move(src_paths), std::move(dst_paths), host);
+          __weak PanelController *weak_panel = _target;
+          operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
+              dispatch_to_main_queue([=] {
+                  if( PanelController *pc = weak_panel )
+                      [pc hintAboutFilesystemChange];
+              });
+          });
 
-              [_target.mainWindowController enqueueOperation:operation];
-          }
-        }];
+          [_target.mainWindowController enqueueOperation:operation];
+      }
+    };
+
+    [_target.mainWindowController beginSheet:sheet.window completionHandler:handler];
 }
 
 }

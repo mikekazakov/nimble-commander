@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -25,12 +25,9 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 namespace nc::panel {
 
-static const auto g_ConfigArchivesExtensionsWhiteList =
-    "filePanel.general.archivesExtensionsWhitelist";
-static const auto g_ConfigExecutableExtensionsWhitelist =
-    "filePanel.general.executableExtensionsWhitelist";
-static const auto g_ConfigDefaultVerificationSetting =
-    "filePanel.operations.defaultChecksumVerification";
+static const auto g_ConfigArchivesExtensionsWhiteList = "filePanel.general.archivesExtensionsWhitelist";
+static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
+static const auto g_ConfigDefaultVerificationSetting = "filePanel.operations.defaultChecksumVerification";
 static const auto g_CheckDelay = "filePanel.operations.vfsShadowUploadChangesCheckDelay";
 static const auto g_DropDelay = "filePanel.operations.vfsShadowUploadObservationDropDelay";
 static const auto g_QLPanel = "filePanel.presentation.showQuickLookAsFloatingPanel";
@@ -39,13 +36,11 @@ static const uint64_t g_MaxFileSizeForVFSOpen = 64 * 1024 * 1024; // 64mb
 static std::chrono::milliseconds UploadingCheckDelay()
 {
     static const auto fetch = [] {
-        const auto value =
-            GlobalConfig().Has(g_CheckDelay) ? GlobalConfig().GetInt(g_CheckDelay) : 5000;
+        const auto value = GlobalConfig().Has(g_CheckDelay) ? GlobalConfig().GetInt(g_CheckDelay) : 5000;
         return std::chrono::milliseconds(value);
     };
     static std::chrono::milliseconds delay = [] {
-        [[clang::no_destroy]] static auto ticket =
-            GlobalConfig().Observe(g_CheckDelay, [] { delay = fetch(); });
+        [[clang::no_destroy]] static auto ticket = GlobalConfig().Observe(g_CheckDelay, [] { delay = fetch(); });
         return fetch();
     }();
     return delay;
@@ -54,13 +49,11 @@ static std::chrono::milliseconds UploadingCheckDelay()
 static std::chrono::milliseconds UploadingDropDelay()
 {
     static const auto fetch = [] {
-        const auto value =
-            GlobalConfig().Has(g_DropDelay) ? GlobalConfig().GetInt(g_DropDelay) : 3600000;
+        const auto value = GlobalConfig().Has(g_DropDelay) ? GlobalConfig().GetInt(g_DropDelay) : 3600000;
         return std::chrono::milliseconds(value);
     };
     static std::chrono::milliseconds delay = [] {
-        [[clang::no_destroy]] static auto ticket =
-            GlobalConfig().Observe(g_DropDelay, [] { delay = fetch(); });
+        [[clang::no_destroy]] static auto ticket = GlobalConfig().Observe(g_DropDelay, [] { delay = fetch(); });
         return fetch();
     }();
     return delay;
@@ -92,25 +85,21 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
 
         std::vector<VFSListingItem> listing_items;
         auto &storage_host = nc::bootstrap::NativeVFSHostInstance();
-        const auto changed_item_directory =
-            boost::filesystem::path(_native_path).parent_path().native();
-        const auto changed_item_filename =
-            boost::filesystem::path(_native_path).filename().native();
+        const auto changed_item_directory = boost::filesystem::path(_native_path).parent_path().native();
+        const auto changed_item_filename = boost::filesystem::path(_native_path).filename().native();
         const auto ret = storage_host.FetchFlexibleListingItems(
             changed_item_directory, {1, changed_item_filename}, 0, listing_items, nullptr);
         if( ret == 0 ) {
             auto opts = panel::MakeDefaultFileCopyOptions();
             opts.exist_behavior = nc::ops::CopyingOptions::ExistBehavior::OverwriteAll;
-            const auto op =
-                std::make_shared<nc::ops::Copying>(listing_items, _original_path, vfs, opts);
+            const auto op = std::make_shared<nc::ops::Copying>(listing_items, _original_path, vfs, opts);
             if( auto pc = static_cast<PanelController *>(origin_controller) )
-                if( !pc.receivesUpdateNotifications )
-                    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
-                        dispatch_to_main_queue([=] {
-                            // TODO: perhaps need to check that path didn't changed
-                            [static_cast<PanelController *>(origin_controller) refreshPanel];
-                        });
+                op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
+                    dispatch_to_main_queue([=] {
+                        // TODO: perhaps need to check that path didn't changed
+                        [static_cast<PanelController *>(origin_controller) hintAboutFilesystemChange];
                     });
+                });
             [window enqueueOperation:op];
         }
     };
@@ -119,14 +108,11 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
     sentinel.WatchFile(_native_path, on_file_change, UploadingCheckDelay(), UploadingDropDelay());
 }
 
-FileOpener::FileOpener(nc::utility::TemporaryFileStorage &_temp_storage)
-    : m_TemporaryFileStorage{_temp_storage}
+FileOpener::FileOpener(nc::utility::TemporaryFileStorage &_temp_storage) : m_TemporaryFileStorage{_temp_storage}
 {
 }
 
-void FileOpener::Open(std::string _filename,
-                      std::shared_ptr<VFSHost> _host,
-                      PanelController *_panel)
+void FileOpener::Open(std::string _filename, std::shared_ptr<VFSHost> _host, PanelController *_panel)
 {
     Open(_filename, _host, "", _panel);
 }
@@ -140,9 +126,8 @@ void FileOpener::Open(std::string _filename,
         NSString *filename = [NSString stringWithUTF8String:_filename.c_str()];
 
         if( !_with_app_path.empty() ) {
-            if( ![[NSWorkspace sharedWorkspace]
-                           openFile:filename
-                    withApplication:[NSString stringWithUTF8String:_with_app_path.c_str()]] )
+            if( ![[NSWorkspace sharedWorkspace] openFile:filename
+                                         withApplication:[NSString stringWithUTF8String:_with_app_path.c_str()]] )
                 NSBeep();
         }
         else {
@@ -177,9 +162,8 @@ void FileOpener::Open(std::string _filename,
             NSString *fn = [NSString stringWithUTF8StdString:*tmp_path];
             dispatch_to_main_queue([=] {
                 if( !_with_app_path.empty() ) {
-                    if( ![NSWorkspace.sharedWorkspace
-                                   openFile:fn
-                            withApplication:[NSString stringWithUTF8StdString:_with_app_path]] )
+                    if( ![NSWorkspace.sharedWorkspace openFile:fn
+                                               withApplication:[NSString stringWithUTF8StdString:_with_app_path]] )
                         NSBeep();
                 }
                 else {
@@ -285,8 +269,7 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
                                              // terminal execution in main thread
                     if( auto wnd = static_cast<NCMainWindowController *>(_panel.window.delegate) )
                         [wnd RequestExternalEditorTerminalExecution:_ext_ed->Path()
-                                                             params:_ext_ed->SubstituteFileName(
-                                                                        *tmp_path)
+                                                             params:_ext_ed->SubstituteFileName(*tmp_path)
                                                           fileTitle:_file_title];
                 });
             }
@@ -300,8 +283,7 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)
 
     // TODO: need more sophisticated executable handling here
     // THIS IS WRONG!
-    bool uexec = (_item.UnixMode() & S_IXUSR) || (_item.UnixMode() & S_IXGRP) ||
-                 (_item.UnixMode() & S_IXOTH);
+    bool uexec = (_item.UnixMode() & S_IXUSR) || (_item.UnixMode() & S_IXGRP) || (_item.UnixMode() & S_IXOTH);
 
     if( !uexec )
         return false;

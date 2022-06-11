@@ -502,7 +502,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     return NSContainsRect(vis_rect, item_rect) || NSIntersectsRect(vis_rect, item_rect);
 }
 
-- (void)setupFieldEditor:(NSScrollView *)_editor forItemAtIndex:(int)_sorted_item_index
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor forItemAtIndex:(int)_sorted_item_index
 {
     const auto index = [NSIndexPath indexPathForItem:_sorted_item_index inSection:0];
     if( auto i = objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:index]) )

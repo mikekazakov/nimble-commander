@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewDummyPresentation.h"
 
 @implementation NCPanelViewDummyPresentation
@@ -29,7 +29,7 @@
     return false;
 }
 
-- (void)setupFieldEditor:(NSScrollView*)[[maybe_unused]] _editor
+- (void)setupFieldEditor:(NCPanelViewFieldEditor*)[[maybe_unused]] _editor
           forItemAtIndex:(int)[[maybe_unused]] _sorted_item_index
 {
 }

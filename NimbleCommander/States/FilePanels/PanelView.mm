@@ -501,7 +501,11 @@ struct StateStorage {
         if( [del respondsToSelector:@selector(panelViewCursorChanged:)] )
             [del panelViewCursorChanged:self];
 
-    [self commitFieldEditor];
+    if( m_RenamingEditor ) {
+        // If we have a field editor in flight - commit it unless the cursor pos is of the item it's currently editing.
+        if( m_CursorPos != [self findSortedIndexOfForeignListingItem:m_RenamingEditor.originalItem] )
+            [self commitFieldEditor];
+    }
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -902,12 +906,41 @@ struct StateStorage {
     }
 }
 
+// Search the current data for an item which has the same name, the same directory and the same VFS as the queried item
+- (int)findSortedIndexOfForeignListingItem:(const VFSListingItem&)_item
+{
+    if( !_item )
+        return -1;
+    
+    const auto raw_inds = m_Data->RawIndicesForName(_item.Filename()); // O(logN)
+    for( const auto raw_ind: raw_inds ) {
+        const auto sort_ind = m_Data->SortedIndexForRawIndex(raw_ind); // O(1)
+        if( sort_ind < 0 )
+            continue; // skip any items not currently presented due to filtering
+        const auto new_item = m_Data->EntryAtRawPosition(raw_ind);
+        assert( new_item.Filename() == _item.Filename() ); // the filename is assumed to be the same
+        if( new_item.Directory() != _item.Directory() )
+            continue; // different directory (perhaps a non-uniform listing) - skip this entry
+        if( new_item.Host() != _item.Host() )
+            continue; // different vfs host (perhaps a non-uniform listing) - skip this entry
+        
+        // a match - return the sorted index
+        return sort_ind;
+    }
+    return -1; // no luck - this item wasn't found
+}
+
 - (void)dataUpdated
 {
     assert(dispatch_is_main_queue());
+    std::optional<int> renaming_item_ind;
     if( m_RenamingEditor ) {
-        auto focused = self.item;
-        if( !focused || m_RenamingEditor.originalItem.Filename() != focused.Filename() ) {
+        const auto new_item_ind = [self findSortedIndexOfForeignListingItem:m_RenamingEditor.originalItem];
+        if( new_item_ind >= 0 ) {
+            renaming_item_ind = new_item_ind;
+            [m_RenamingEditor stash];
+        }
+        else {
             [self discardFieldEditor];
         }
     }
@@ -917,6 +950,14 @@ struct StateStorage {
 
     [self volatileDataChanged];
     [m_FooterView updateListing:m_Data->ListingPtr()];
+    
+    
+    if( m_RenamingEditor ) {
+        assert(renaming_item_ind);
+        [m_ItemsView setupFieldEditor:m_RenamingEditor forItemAtIndex:*renaming_item_ind];
+        [self.window makeFirstResponder:m_RenamingEditor];
+        [m_RenamingEditor unstash];
+    }
 }
 
 - (void)volatileDataChanged

@@ -1,7 +1,9 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
+
+@class NCPanelViewFieldEditor;
 
 @interface PanelListViewNameView : NSView
 
@@ -11,7 +13,7 @@
 
 - (void) buildPresentation;
 
-- (void) setupFieldEditor:(NSScrollView*)_editor;
+- (void) setupFieldEditor:(NCPanelViewFieldEditor*)_editor;
 
 - (bool) dragAndDropHitTest:(NSPoint)_position; // local coordinates
 

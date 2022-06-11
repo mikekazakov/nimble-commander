@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
@@ -169,7 +169,7 @@ using namespace nc::panel;
     self.carrier.icon = _icon;
 }
 
-- (void)setupFieldEditor:(NSScrollView *)_editor
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor
 {
     [self.carrier setupFieldEditor:_editor];
 }

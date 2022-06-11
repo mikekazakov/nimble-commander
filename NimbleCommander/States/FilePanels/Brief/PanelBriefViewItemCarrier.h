@@ -1,7 +1,8 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 @class PanelBriefViewItem;
+@class NCPanelViewFieldEditor;
 struct PanelBriefViewItemLayoutConstants;
 
 @interface PanelBriefViewItemCarrier : NSView
@@ -16,6 +17,6 @@ struct PanelBriefViewItemLayoutConstants;
 @property (nonatomic)       std::pair<int16_t, int16_t>         qsHighlight;
 @property (nonatomic)       bool                                highlighted;
 
-- (void) setupFieldEditor:(NSScrollView*)_editor;
+- (void) setupFieldEditor:(NCPanelViewFieldEditor*)_editor;
 
 @end

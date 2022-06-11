@@ -943,7 +943,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return NSLocationInRange(_sorted_item_index, range);
 }
 
-- (void)setupFieldEditor:(NSScrollView *)_editor forItemAtIndex:(int)_sorted_item_index
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor forItemAtIndex:(int)_sorted_item_index
 {
     if( PanelListViewRowView *rv = [m_TableView rowViewAtRow:_sorted_item_index
                                              makeIfNecessary:false] )

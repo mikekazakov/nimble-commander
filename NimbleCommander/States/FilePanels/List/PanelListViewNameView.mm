@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListViewNameView.h"
 #include <Utility/FontExtras.h>
 #include <Utility/ObjCpp.h>
@@ -8,6 +8,7 @@
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewTableView.h"
+#include <Panel/PanelViewFieldEditor.h>
 
 using namespace nc::panel;
 using nc::utility::FontGeometryInfo;
@@ -199,7 +200,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     return self.row.listView;
 }
 
-- (void)setupFieldEditor:(NSScrollView *)_editor
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor
 {
     const auto line_padding = 2.;
 

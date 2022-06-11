@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
@@ -7,6 +7,7 @@
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewItemCarrier.h"
 #include <Habanero/dispatch_cpp.h>
+#include <Panel/PanelViewFieldEditor.h>
 
 using namespace nc::panel;
 
@@ -390,7 +391,7 @@ static bool HasNoModifiers(NSEvent *_event)
     }
 }
 
-- (void)setupFieldEditor:(NSScrollView *)_editor
+- (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor
 {
     const auto line_padding = 2.;
 

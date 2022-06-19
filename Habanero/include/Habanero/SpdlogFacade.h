@@ -1,13 +1,14 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 #include <string>
 #include <string_view>
+#include "SpdlogFormatters.h"
 
 #ifndef SPDLOC
-#define SPDLOC                                                                                     \
+#define SPDLOC                                                                                                         \
     spdlog::source_loc { __FILE__, __LINE__, __FUNCTION__ }
 #endif
 
@@ -16,12 +17,12 @@ namespace nc::base {
 class SpdLogger
 {
 public:
-    SpdLogger( std::string_view _name );
-    
+    SpdLogger(std::string_view _name);
+
     spdlog::logger &Get() noexcept;
     void Set(std::shared_ptr<spdlog::logger> _logger) noexcept;
     const std::string &Name() noexcept;
-    
+
 private:
     std::string m_Name;
     std::shared_ptr<spdlog::logger> m_Logger;
@@ -33,22 +34,13 @@ class SpdlogFacade
 {
 public:
     SpdlogFacade() = delete;
-    
-    static const std::string &Name() noexcept
-    {
-        return Impl::m_Logger.Name();
-    }
 
-    static spdlog::logger &Get() noexcept
-    {
-        return Impl::m_Logger.Get();
-    }
+    static const std::string &Name() noexcept { return Impl::m_Logger.Name(); }
 
-    static void Set(std::shared_ptr<spdlog::logger> _logger) noexcept
-    {
-        Impl::m_Logger.Set(_logger);
-    }
-    
+    static spdlog::logger &Get() noexcept { return Impl::m_Logger.Get(); }
+
+    static void Set(std::shared_ptr<spdlog::logger> _logger) noexcept { Impl::m_Logger.Set(_logger); }
+
     template <typename... Args>
     static void Trace(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args)
     {

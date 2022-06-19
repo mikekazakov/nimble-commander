@@ -1,9 +1,11 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewFixedNumberLayout.h"
 #include "PanelBriefViewFixedNumberLayoutEngine.h"
 #include <optional>
+#include <Panel/Log.h>
 
 using nc::panel::view::brief::FixedNumberLayoutEngine;
+using nc::panel::Log;
 
 namespace {
 
@@ -36,49 +38,57 @@ struct ColumnAnchor {
 
 - (NSSize)collectionViewContentSize
 {
-    return m_Engine.ContentSize();
+    const auto sz = m_Engine.ContentSize();
+    Log::Trace(SPDLOC, "[NCPanelBriefViewFixedNumberLayout collectionViewContentSize], return: {}", sz);
+    return sz;
 }
 
 - (NSCollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)_index_path
 {
     const auto index = static_cast<int>(_index_path.item);
+    Log::Trace(SPDLOC, "[NCPanelBriefViewFixedNumberLayout layoutAttributesForItemAtIndexPath={}]", index);
     return m_Engine.AttributesForItemNumber(index);
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(NSRect)_rect
 {
+    Log::Trace(SPDLOC, "[NCPanelBriefViewFixedNumberLayout layoutAttributesForElementsInRect:{}]", _rect);
     return m_Engine.AttributesForItemsInRect(_rect);
 }
 
 - (nullable NSCollectionViewLayoutAttributes *)
-    layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind)
-                                                   [[maybe_unused]] _elementKind
+    layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind) [[maybe_unused]] _elementKind
                                    atIndexPath:(NSIndexPath *) [[maybe_unused]] _indexPath
 {
     return nil;
 }
 
-- (nullable NSCollectionViewLayoutAttributes *)
-    layoutAttributesForDecorationViewOfKind:(NSCollectionViewDecorationElementKind)
-                                                [[maybe_unused]] _elementKind
-                                atIndexPath:(NSIndexPath *) [[maybe_unused]] _indexPath
+- (nullable NSCollectionViewLayoutAttributes *)layoutAttributesForDecorationViewOfKind:
+                                                   (NSCollectionViewDecorationElementKind) [[maybe_unused]] _elementKind
+                                                                           atIndexPath:(NSIndexPath *)
+                                                                                           [[maybe_unused]] _indexPath
 {
     return nil;
 }
 
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(NSRect)_new_bounds
 {
-    return m_Engine.ShouldRelayoutForNewBounds(_new_bounds);
+    const auto result = m_Engine.ShouldRelayoutForNewBounds(_new_bounds);
+    Log::Trace(SPDLOC,
+               "[NCPanelBriefViewFixedNumberLayout shouldInvalidateLayoutForBoundsChange:{}], return: {}",
+               _new_bounds,
+               result);
+    return result;
 }
 
 - (void)prepareLayout
 {
+    Log::Trace(SPDLOC, "[NCPanelBriefViewFixedNumberLayout prepareLayout]");
     const auto anchor = [self getColumnAnchor];
     const auto collection_view = self.collectionView;
     const auto clip_bounds = collection_view.superview.bounds;
-    const auto items_number =
-        static_cast<int>([collection_view.dataSource collectionView:collection_view
-                                             numberOfItemsInSection:0]);
+    const auto items_number = static_cast<int>([collection_view.dataSource collectionView:collection_view
+                                                                   numberOfItemsInSection:0]);
 
     FixedNumberLayoutEngine::Params params;
     params.items_number = items_number;

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewCollectionView.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
@@ -13,10 +13,7 @@
     self = [super initWithFrame:frameRect];
     if( self ) {
         self.selectable = true;
-
-        if( [self respondsToSelector:@selector(setBackgroundViewScrollsWithContent:)] ) {
-            self.backgroundViewScrollsWithContent = true;
-        }
+        self.backgroundViewScrollsWithContent = true;
         [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
     }
     return self;

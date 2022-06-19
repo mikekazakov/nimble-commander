@@ -15,6 +15,7 @@
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewCollectionViewBackground.h"
 #include <Panel/TextWidthsCache.h>
+#include <Panel/Log.h>
 #include "../Helpers/IconRepositoryCleaner.h"
 #include "PanelBriefViewFixedWidthLayout.h"
 #include "PanelBriefViewDynamicWidthLayout.h"
@@ -236,12 +237,16 @@ static const auto g_ScrollingBackground =
 - (NSInteger)collectionView:(NSCollectionView *) [[maybe_unused]] collectionView
      numberOfItemsInSection:(NSInteger) [[maybe_unused]] section
 {
+    Log::Trace(SPDLOC, "[PanelBriefView collectionView:{} numberOfItemsInSection:{}]",
+               (__bridge void*)collectionView, section);
     return m_Data ? m_Data->SortedDirectoryEntries().size() : 0;
 }
 
 - (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView
      itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath
 {
+    Log::Trace(SPDLOC, "[PanelBriefView collectionView:{} itemForRepresentedObjectAtIndexPath:{}]",
+               (__bridge void*)collectionView, indexPath.item);
     PanelBriefViewItem *item = [collectionView makeItemWithIdentifier:@"A" forIndexPath:indexPath];
     assert(item);
 
@@ -288,6 +293,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 
 - (void)calculateFilenamesWidths
 {
+    Log::Trace(SPDLOC, "[PanelBriefView calculateFilenamesWidths]");
     const auto strings = GatherDisplayFilenames(m_Data);
     const auto count = static_cast<int>(strings.size());
 
@@ -372,6 +378,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 
 - (void)calculateItemLayout
 {
+    Log::Trace(SPDLOC, "[PanelBriefView calculateItemLayout]");
     m_ItemLayout = BuildItemsLayout(CurrentTheme().FilePanelsBriefFont(), m_ColumnsLayout);
     [self updateItemsLayoutEngine];
 
@@ -402,6 +409,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 
 - (void)dataChanged
 {
+    Log::Trace(SPDLOC, "[PanelBriefView dataChanged]");
     dispatch_assert_main_queue();
     assert(m_Data);
     [self calculateFilenamesWidths];
@@ -422,6 +430,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 
 - (void)ensureItemIsVisible:(int)_item_index
 {
+    Log::Trace(SPDLOC, "[PanelBriefView ensureItemIsVisible:{}]", _item_index);
     if( _item_index < 0 )
         return;
 
@@ -442,6 +451,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
         else {
             [m_ScrollView.contentView setBoundsOrigin:_pt];
         }
+        [m_CollectionView prepareContentInRect:NSMakeRect(_pt.x, _pt.y, visible_rect.size.width, visible_rect.size.height)];
     };
 
     // NB! scrollToItemsAtIndexPaths is NOT used here because at some version of macOS it decided to
@@ -470,6 +480,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 
 - (void)setCursorPosition:(int)_cursor_position
 {
+    Log::Trace(SPDLOC, "[PanelBriefView setCursorPosition:{}]", _cursor_position);
     if( self.cursorPosition == _cursor_position )
         return;
 
@@ -493,6 +504,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 
 - (bool)isItemVisible:(int)_sorted_item_index
 {
+    Log::Trace(SPDLOC, "[PanelBriefView isItemVisible:{}]", _sorted_item_index);
     const auto entries_count = [m_CollectionView numberOfItemsInSection:0];
     if( _sorted_item_index < 0 || _sorted_item_index >= entries_count )
         return false;
@@ -511,11 +523,13 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 
 - (int)itemsInColumn
 {
+    Log::Trace(SPDLOC, "[PanelBriefView itemsInColumn]");
     return m_Layout.rowsNumber;
 }
 
 - (void)syncVolatileData
 {
+    Log::Trace(SPDLOC, "[PanelBriefView syncVolatileData]");
     dispatch_assert_main_queue();
     for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
         if( NSIndexPath *index_path = [m_CollectionView indexPathForItem:i] ) {
@@ -644,6 +658,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 
 - (void)collectionViewDidLayoutItems:(NSCollectionView *) [[maybe_unused]] collectionView
 {
+    Log::Trace(SPDLOC, "[PanelBriefView collectionViewDidLayoutItems:{}]", (__bridge void*)collectionView);
     static const bool draws_grid =
         [m_CollectionView respondsToSelector:@selector(setBackgroundViewScrollsWithContent:)];
     if( draws_grid )

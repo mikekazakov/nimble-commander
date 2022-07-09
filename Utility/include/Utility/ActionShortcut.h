@@ -3,48 +3,70 @@
 
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <string>
+#include <string_view>
 #include <functional>
 #include <stdint.h>
 
 #ifdef __OBJC__
-    #include <Foundation/Foundation.h>
+#include <Cocoa/Cocoa.h>
 #endif
 
 namespace nc::utility {
 
-struct ActionShortcut
-{
+struct ActionShortcut {
+    // Constructs a disabled shortcut
     constexpr ActionShortcut() noexcept = default;
-    
-    // construct from persistency string, utf8
-    ActionShortcut(const std::string& _from) noexcept; 
-    
-    // construct from persistency string
-    ActionShortcut(const char* _from) noexcept;
-    ActionShortcut(const char8_t* _from) noexcept;
-    
-    // construct from straight data
-    ActionShortcut(unsigned short  _unicode, unsigned long long _modif) noexcept; 
-    
-    bool operator ==(const ActionShortcut &_rhs) const noexcept;
-    bool operator !=(const ActionShortcut &_rhs) const noexcept;
-    operator    bool() const noexcept;
+
+    // Constructs from a persistency utf8 string
+    ActionShortcut(std::string_view _from) noexcept;
+
+    // Constructs from a persistency utf8 string, wrapper for C++20-style u8 characters
+    ActionShortcut(std::u8string_view _from) noexcept;
+
+    // Construct from data directly
+    ActionShortcut(unsigned short _unicode, unsigned long long _modif) noexcept;
+
+    bool operator==(const ActionShortcut &_rhs) const noexcept;
+    bool operator!=(const ActionShortcut &_rhs) const noexcept;
+    operator bool() const noexcept;
 
 #ifdef __OBJC__
-    NSString   *Key() const noexcept;
-    NSString   *PrettyString() const noexcept;
+    NSString *Key() const noexcept;
+    NSString *PrettyString() const noexcept;
 #endif
     std::string ToPersString() const noexcept;
-    bool        IsKeyDown(uint16_t _unicode, unsigned long long _modifiers) const noexcept;
-    
-    unsigned short              unicode = 0;
-    NSEventModifierFlagsHolder  modifiers = 0;
+
+    struct EventData {
+        EventData() noexcept;
+        EventData(unsigned short _chmod, unsigned short _chunmod, unsigned short _kc, unsigned long _mods) noexcept;
+#ifdef __OBJC__
+        EventData(NSEvent *_event) noexcept;
+#endif
+        unsigned short char_with_modifiers;
+        unsigned short char_without_modifiers;
+        unsigned short key_code;
+        unsigned long modifiers;
+    };
+
+    bool IsKeyDown(EventData _event) const noexcept;
+
+    // Lower-case english letters, numbers, generic symbols and control characters.
+    // Only characters from Unicode Plane 0 are supported
+    unsigned short unicode = 0;
+
+    // Modifiers required for this characters
+    NSEventModifierFlagsHolder modifiers = 0;
 };
 
 }
 
-template<>
-struct std::hash<nc::utility::ActionShortcut>
-{
-    size_t operator()(const nc::utility::ActionShortcut&) const noexcept;
+template <>
+struct std::hash<nc::utility::ActionShortcut> {
+    size_t operator()(const nc::utility::ActionShortcut &) const noexcept;
 };
+
+@interface NSMenuItem (NCAdditions)
+
+- (void)nc_setKeyEquivalentWithShortcut:(nc::utility::ActionShortcut)_shortcut;
+
+@end

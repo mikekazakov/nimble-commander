@@ -532,10 +532,7 @@ struct StateStorage {
         return;
     }
 
-    const auto modifiers = event.modifierFlags;
-    const auto unicode = [character characterAtIndex:0];
-
-    [self checkKeyboardModifierFlags:modifiers];
+    [self checkKeyboardModifierFlags:event.modifierFlags];
 
     static ActionsShortcutsManager::ShortCut hk_up, hk_down, hk_left, hk_right, hk_first, hk_last,
         hk_pgdown, hk_pgup, hk_inv_and_move, hk_inv, hk_scrdown, hk_scrup, hk_scrhome, hk_scrend;
@@ -556,33 +553,37 @@ struct StateStorage {
             {&hk_scrhome, "panel.scroll_first"},
             {&hk_scrend, "panel.scroll_last"}});
 
-    if( hk_up.IsKeyDown(unicode, modifiers & ~NSEventModifierFlagShift) )
+    const auto event_data = nc::utility::ActionShortcut::EventData(event);
+    auto event_data_wo_shift = event_data;
+    event_data_wo_shift.modifiers &= ~NSEventModifierFlagShift;
+        
+    if( hk_up.IsKeyDown(event_data_wo_shift) )
         [self HandlePrevFile];
-    else if( hk_down.IsKeyDown(unicode, modifiers & ~NSEventModifierFlagShift) )
+    else if( hk_down.IsKeyDown(event_data_wo_shift) )
         [self HandleNextFile];
-    else if( hk_left.IsKeyDown(unicode, modifiers & ~NSEventModifierFlagShift) )
+    else if( hk_left.IsKeyDown(event_data_wo_shift) )
         [self HandlePrevColumn];
-    else if( hk_right.IsKeyDown(unicode, modifiers & ~NSEventModifierFlagShift) )
+    else if( hk_right.IsKeyDown(event_data_wo_shift) )
         [self HandleNextColumn];
-    else if( hk_first.IsKeyDown(unicode, modifiers & ~NSEventModifierFlagShift) )
+    else if( hk_first.IsKeyDown(event_data_wo_shift) )
         [self HandleFirstFile];
-    else if( hk_last.IsKeyDown(unicode, modifiers & ~NSEventModifierFlagShift) )
+    else if( hk_last.IsKeyDown(event_data_wo_shift) )
         [self HandleLastFile];
-    else if( hk_pgdown.IsKeyDown(unicode, modifiers & ~NSEventModifierFlagShift) )
+    else if( hk_pgdown.IsKeyDown(event_data_wo_shift) )
         [self HandleNextPage];
-    else if( hk_scrdown.IsKeyDown(unicode, modifiers) )
+    else if( hk_scrdown.IsKeyDown(event_data_wo_shift) )
         [m_ItemsView onPageDown:event];
-    else if( hk_pgup.IsKeyDown(unicode, modifiers & ~NSEventModifierFlagShift) )
+    else if( hk_pgup.IsKeyDown(event_data_wo_shift) )
         [self HandlePrevPage];
-    else if( hk_scrup.IsKeyDown(unicode, modifiers) )
+    else if( hk_scrup.IsKeyDown(event_data) )
         [m_ItemsView onPageUp:event];
-    else if( hk_scrhome.IsKeyDown(unicode, modifiers) )
+    else if( hk_scrhome.IsKeyDown(event_data) )
         [m_ItemsView onScrollToBeginning:event];
-    else if( hk_scrend.IsKeyDown(unicode, modifiers) )
+    else if( hk_scrend.IsKeyDown(event_data) )
         [m_ItemsView onScrollToEnd:event];
-    else if( hk_inv_and_move.IsKeyDown(unicode, modifiers) )
+    else if( hk_inv_and_move.IsKeyDown(event_data) )
         [self onInvertCurrentItemSelectionAndMoveNext];
-    else if( hk_inv.IsKeyDown(unicode, modifiers) )
+    else if( hk_inv.IsKeyDown(event_data) )
         [self onInvertCurrentItemSelection];
     else
         [super keyDown:event];

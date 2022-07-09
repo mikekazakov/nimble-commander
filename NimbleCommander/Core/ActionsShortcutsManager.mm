@@ -384,10 +384,10 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"panel.go_into_enclosing_folder",                      u8"\u007f"  }, // backspace
     {"panel.go_into_folder",                                u8""        },
     {"panel.go_root",                                       u8"/"       }, // slash
-    {"panel.go_home",                                       u8"~"       }, // tilde
+    {"panel.go_home",                                       u8"⇧~"      }, // shift+tilde
     {"panel.show_preview",                                  u8" "       }, // space
-    {"panel.show_previous_tab",                             u8"⇧⌘["     }, // shift+cmd+[
-    {"panel.show_next_tab",                                 u8"⇧⌘]"     }, // shift+cmd+]
+    {"panel.show_previous_tab",                             u8"⇧⌘{"     }, // shift+cmd+{
+    {"panel.show_next_tab",                                 u8"⇧⌘}"     }, // shift+cmd+}
     {"panel.show_tab_no_1",                                 u8""        },
     {"panel.show_tab_no_2",                                 u8""        },
     {"panel.show_tab_no_3",                                 u8""        },
@@ -442,7 +442,7 @@ ActionsShortcutsManager::ActionsShortcutsManager()
     for( auto &d : g_DefaultShortcuts ) {
         auto i = m_ActionToTag.find(d.first);
         if( i != end(m_ActionToTag) )
-            m_ShortCutsDefaults[i->second] = reinterpret_cast<const char *>(d.second);
+            m_ShortCutsDefaults[i->second] =  nc::utility::ActionShortcut{d.second};
     }
 
     ReadOverrideFromConfig();
@@ -479,21 +479,17 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
         }
         else {
             int tag = static_cast<int>(i.tag);
-
             auto scover = m_ShortCutsOverrides.find(tag);
             if( scover != m_ShortCutsOverrides.end() ) {
-                i.keyEquivalent = scover->second.Key();
-                i.keyEquivalentModifierMask = scover->second.modifiers;
+                [i nc_setKeyEquivalentWithShortcut:scover->second];
             }
             else {
                 auto sc = m_ShortCutsDefaults.find(tag);
                 if( sc != m_ShortCutsDefaults.end() ) {
-                    i.keyEquivalent = sc->second.Key();
-                    i.keyEquivalentModifierMask = sc->second.modifiers;
+                    [i nc_setKeyEquivalentWithShortcut:sc->second];
                 }
                 else if( m_TagToAction.find(tag) != m_TagToAction.end() ) {
-                    i.keyEquivalent = @"";
-                    i.keyEquivalentModifierMask = 0;
+                    [i nc_setKeyEquivalentWithShortcut:nc::utility::ActionShortcut{}];
                 }
             }
         }
@@ -513,7 +509,7 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
         if( i->name.GetType() == kStringType && i->value.GetType() == kStringType ) {
             auto att = m_ActionToTag.find(i->name.GetString());
             if( att != m_ActionToTag.end() )
-                m_ShortCutsOverrides[att->second] = i->value.GetString();
+                m_ShortCutsOverrides[att->second] = nc::utility::ActionShortcut{i->value.GetString()};
         }
 }
 

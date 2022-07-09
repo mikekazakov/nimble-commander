@@ -223,18 +223,13 @@
         [self doShowTabBar];
 }
 
-- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+- (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
     const auto resp_view = objc_cast<NSView>(self.window.firstResponder);
     if( !resp_view || ![resp_view isDescendantOf:m_TabView] )
-        return [super performKeyEquivalent:theEvent];
+        return [super performKeyEquivalent:_event];
 
-    const auto characters = theEvent.charactersIgnoringModifiers;
-    if( characters.length != 1 )
-        return [super performKeyEquivalent:theEvent];
-
-    const auto mod = theEvent.modifierFlags;
-    const auto unicode = [characters characterAtIndex:0];
+    const auto event_data = nc::utility::ActionShortcut::EventData(_event);
 
     static ActionsShortcutsManager::ShortCut hk_prev, hk_next, hk_t1, hk_t2, hk_t3, hk_t4, hk_t5,
         hk_t6, hk_t7, hk_t8, hk_t9, hk_t10;
@@ -253,56 +248,56 @@
             {&hk_t9, "panel.show_tab_no_9"},
             {&hk_t10, "panel.show_tab_no_10"}});
 
-    if( hk_prev.IsKeyDown(unicode, mod) ) {
+    if( hk_prev.IsKeyDown(event_data) ) {
         [self selectPreviousFilePanelTab];
         return true;
     }
-    if( hk_next.IsKeyDown(unicode, mod) ) {
+    if( hk_next.IsKeyDown(event_data) ) {
         [self selectNextFilePanelTab];
         return true;
     }
-    if( hk_t1.IsKeyDown(unicode, mod) ) {
+    if( hk_t1.IsKeyDown(event_data) ) {
         [self selectTabAtIndex:0];
         return true;
     }
-    if( hk_t2.IsKeyDown(unicode, mod) ) {
+    if( hk_t2.IsKeyDown(event_data) ) {
         [self selectTabAtIndex:1];
         return true;
     }
-    if( hk_t3.IsKeyDown(unicode, mod) ) {
+    if( hk_t3.IsKeyDown(event_data) ) {
         [self selectTabAtIndex:2];
         return true;
     }
-    if( hk_t4.IsKeyDown(unicode, mod) ) {
+    if( hk_t4.IsKeyDown(event_data) ) {
         [self selectTabAtIndex:3];
         return true;
     }
-    if( hk_t5.IsKeyDown(unicode, mod) ) {
+    if( hk_t5.IsKeyDown(event_data) ) {
         [self selectTabAtIndex:4];
         return true;
     }
-    if( hk_t6.IsKeyDown(unicode, mod) ) {
+    if( hk_t6.IsKeyDown(event_data) ) {
         [self selectTabAtIndex:5];
         return true;
     }
-    if( hk_t7.IsKeyDown(unicode, mod) ) {
+    if( hk_t7.IsKeyDown(event_data) ) {
         [self selectTabAtIndex:6];
         return true;
     }
-    if( hk_t8.IsKeyDown(unicode, mod) ) {
+    if( hk_t8.IsKeyDown(event_data) ) {
         [self selectTabAtIndex:7];
         return true;
     }
-    if( hk_t9.IsKeyDown(unicode, mod) ) {
+    if( hk_t9.IsKeyDown(event_data) ) {
         [self selectTabAtIndex:8];
         return true;
     }
-    if( hk_t10.IsKeyDown(unicode, mod) ) {
+    if( hk_t10.IsKeyDown(event_data) ) {
         [self selectTabAtIndex:9];
         return true;
     }
 
-    return [super performKeyEquivalent:theEvent];
+    return [super performKeyEquivalent:_event];
 }
 
 - (void)selectPreviousFilePanelTab

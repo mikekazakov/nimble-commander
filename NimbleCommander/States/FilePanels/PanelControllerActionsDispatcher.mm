@@ -48,14 +48,8 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
                 forPanelView:(PanelView *) [[maybe_unused]] _panel_view
                    andHandle:(bool)_handle
 {
-
-    const auto character = _event.charactersIgnoringModifiers;
-    if( character.length == 0 )
-        return view::BiddingPriority::Skip;
-
-    const auto modif = _event.modifierFlags;
-    const auto unicode = [character characterAtIndex:0];
-
+    const auto event_data = nc::utility::ActionShortcut::EventData(_event);
+    
     static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root,
         hk_go_home, hk_preview, hk_go_into, kh_go_outside;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
@@ -68,7 +62,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
             {&hk_go_into, "panel.go_into_folder"},
             {&kh_go_outside, "panel.go_into_enclosing_folder"}});
 
-    if( hk_preview.IsKeyDown(unicode, modif) ) {
+    if( hk_preview.IsKeyDown(event_data) ) {
         if( _handle ) {
             [self OnFileViewCommand:self];
             return view::BiddingPriority::Default;
@@ -79,7 +73,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
                        : view::BiddingPriority::Skip;
     }
 
-    if( hk_go_home.IsKeyDown(unicode, modif) ) {
+    if( hk_go_home.IsKeyDown(event_data) ) {
         if( _handle ) {
             static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
@@ -87,7 +81,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         return view::BiddingPriority::Default;
     }
 
-    if( hk_go_root.IsKeyDown(unicode, modif) ) {
+    if( hk_go_root.IsKeyDown(event_data) ) {
         if( _handle ) {
             static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.root");
             [[NSApp menu] performActionForItemWithTagHierarchical:tag];
@@ -95,7 +89,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         return view::BiddingPriority::Default;
     }
 
-    if( hk_go_into.IsKeyDown(unicode, modif) ) {
+    if( hk_go_into.IsKeyDown(event_data) ) {
         if( _handle ) {
             static auto tag =
                 ActionsShortcutsManager::Instance().TagFromAction("menu.go.into_folder");
@@ -104,7 +98,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         return view::BiddingPriority::Default;
     }
 
-    if( kh_go_outside.IsKeyDown(unicode, modif) ) {
+    if( kh_go_outside.IsKeyDown(event_data) ) {
         if( _handle ) {
             static auto tag =
                 ActionsShortcutsManager::Instance().TagFromAction("menu.go.enclosing_folder");
@@ -113,14 +107,14 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         return view::BiddingPriority::Default;
     }
 
-    if( hk_file_open.IsKeyDown(unicode, modif) ) {
+    if( hk_file_open.IsKeyDown(event_data) ) {
         if( _handle ) {
             // we keep it here to avoid blinking on menu item
             [self OnOpen:nil];
         }
         return view::BiddingPriority::Default;
     }
-    if( hk_file_open_native.IsKeyDown(unicode, modif) ) {
+    if( hk_file_open_native.IsKeyDown(event_data) ) {
         if( _handle ) {
             [self executeBySelectorIfValidOrBeep:@selector(OnOpenNatively:) withSender:self];
         }

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerViewController.h"
 #include <Viewer/Log.h>
 #include <VFS/VFS.h>
@@ -696,36 +696,31 @@ struct BackgroundFileOpener {
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    if( const auto chars = [_event charactersIgnoringModifiers]; chars.length == 1 ) {
-        const auto unicode = [chars characterAtIndex:0];
-        const auto modifiers = [_event modifierFlags];
-        const auto is = [&](std::string_view _action_name) {
-            return m_Shortcuts(_action_name).IsKeyDown(unicode, modifiers);
-        };
-        if( is("viewer.toggle_text") ) {
-            [m_View setMode:ViewMode::Text];
-            return true;
-        }
-        if( is("viewer.toggle_hex") ) {
-            [m_View setMode:ViewMode::Hex];
-            return true;
-        }
-        if( is("viewer.toggle_preview") ) {
-            [m_View setMode:ViewMode::Preview];
-            return true;
-        }
-        if( is("viewer.show_settings") ) {
-            [self.settingsButton performClick:self];
-            return true;
-        }
-        if( is("viewer.show_goto") ) {
-            [self.positionButton performClick:self];
-            return true;
-        }
-        if( is("viewer.refresh") ) {
-            [self onRefresh];
-            return true;
-        }
+    const auto event_data = nc::utility::ActionShortcut::EventData(_event);
+    const auto is = [&](std::string_view _action_name) { return m_Shortcuts(_action_name).IsKeyDown(event_data); };
+    if( is("viewer.toggle_text") ) {
+        [m_View setMode:ViewMode::Text];
+        return true;
+    }
+    if( is("viewer.toggle_hex") ) {
+        [m_View setMode:ViewMode::Hex];
+        return true;
+    }
+    if( is("viewer.toggle_preview") ) {
+        [m_View setMode:ViewMode::Preview];
+        return true;
+    }
+    if( is("viewer.show_settings") ) {
+        [self.settingsButton performClick:self];
+        return true;
+    }
+    if( is("viewer.show_goto") ) {
+        [self.positionButton performClick:self];
+        return true;
+    }
+    if( is("viewer.refresh") ) {
+        [self onRefresh];
+        return true;
     }
     return false;
 }

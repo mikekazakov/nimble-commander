@@ -1,26 +1,49 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ActionShortcut.h"
 #include <locale>
 #include <vector>
 #include <codecvt>
 #include <unordered_map>
 #include <robin_hood.h>
+#include <Habanero/ToLower.h>
 #include <Carbon/Carbon.h>
 
 namespace nc::utility {
 
 static_assert(sizeof(ActionShortcut) == 4);
 
-ActionShortcut::ActionShortcut(const std::string &_from) noexcept : ActionShortcut(_from.c_str())
+ActionShortcut::EventData::EventData() noexcept
+    : char_with_modifiers(0), char_without_modifiers(0), key_code(0), modifiers(0)
 {
 }
 
-ActionShortcut::ActionShortcut(const char *_from) noexcept
-    : // construct from persistency string
-      ActionShortcut()
+ActionShortcut::EventData::EventData(unsigned short _chmod,
+                                     unsigned short _chunmod,
+                                     unsigned short _kc,
+                                     unsigned long _mods) noexcept
+    : char_with_modifiers(_chmod), char_without_modifiers(_chunmod), key_code(_kc), modifiers(_mods)
+{
+}
+
+ActionShortcut::EventData::EventData(NSEvent *_event) noexcept
+{
+    assert(_event != nil);
+    assert(_event.type == NSEventTypeKeyDown);
+
+    const auto chars_with_mods = _event.characters;
+    char_with_modifiers = chars_with_mods.length > 0 ? [chars_with_mods characterAtIndex:0] : 0;
+
+    const auto chars_without_mods = _event.charactersIgnoringModifiers;
+    char_without_modifiers = chars_without_mods.length > 0 ? [chars_without_mods characterAtIndex:0] : 0;
+
+    key_code = _event.keyCode;
+    modifiers = _event.modifierFlags;
+}
+
+ActionShortcut::ActionShortcut(std::string_view _from) noexcept : ActionShortcut()
 {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
-    std::u16string utf16 = convert.from_bytes(_from);
+    std::u16string utf16 = convert.from_bytes(_from.data(), _from.data() + _from.length());
     std::u16string_view v(utf16);
     uint64_t mod_flags = 0;
     while( !v.empty() ) {
@@ -47,13 +70,12 @@ ActionShortcut::ActionShortcut(const char *_from) noexcept
     modifiers = mod_flags;
 }
 
-ActionShortcut::ActionShortcut(const char8_t *_from) noexcept
-    : ActionShortcut(reinterpret_cast<const char *>(_from))
+ActionShortcut::ActionShortcut(std::u8string_view _from) noexcept
+    : ActionShortcut(std::string_view{reinterpret_cast<const char *>(_from.data()), _from.length()})
 {
 }
 
-ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long long _modif) noexcept
-    : unicode(_unicode), modifiers(0)
+ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long long _modif) noexcept : unicode(_unicode), modifiers(0)
 {
     uint64_t mod_flags = 0;
     if( _modif & NSEventModifierFlagShift )
@@ -126,45 +148,46 @@ static NSString *StringForModifierFlags(uint64_t flags)
     return [NSString stringWithCharacters:modChars length:charCount];
 }
 
-[[clang::no_destroy]] static const robin_hood::unordered_flat_map<uint32_t, NSString *>
-    g_UnicodeToNiceString = {
-        {NSLeftArrowFunctionKey, @"←"},        //
-        {NSRightArrowFunctionKey, @"→"},       //
-        {NSDownArrowFunctionKey, @"↓"},        //
-        {NSUpArrowFunctionKey, @"↑"},          //
-        {NSF1FunctionKey, @"F1"},              //
-        {NSF2FunctionKey, @"F2"},              //
-        {NSF3FunctionKey, @"F3"},              //
-        {NSF4FunctionKey, @"F4"},              //
-        {NSF5FunctionKey, @"F5"},              //
-        {NSF6FunctionKey, @"F6"},              //
-        {NSF7FunctionKey, @"F7"},              //
-        {NSF8FunctionKey, @"F8"},              //
-        {NSF9FunctionKey, @"F9"},              //
-        {NSF10FunctionKey, @"F10"},            //
-        {NSF11FunctionKey, @"F11"},            //
-        {NSF12FunctionKey, @"F12"},            //
-        {NSF13FunctionKey, @"F13"},            //
-        {NSF14FunctionKey, @"F14"},            //
-        {NSF15FunctionKey, @"F15"},            //
-        {NSF16FunctionKey, @"F16"},            //
-        {NSF17FunctionKey, @"F17"},            //
-        {NSF18FunctionKey, @"F18"},            //
-        {NSF19FunctionKey, @"F19"},            //
-        {0x2326, @"⌦"},                        //
-        {'\r', @"↩"},                          //
-        {0x3, @"⌅"},                           //
-        {0x9, @"⇥"},                           //
-        {0x2423, @"Space"},                    //
-        {0x0020, @"Space"},                    //
-        {0x8, @"⌫"},                           //
-        {NSClearDisplayFunctionKey, @"Clear"}, //
-        {0x1B, @"⎋"},                          //
-        {NSHomeFunctionKey, @"↖"},             //
-        {NSPageUpFunctionKey, @"⇞"},           //
-        {NSEndFunctionKey, @"↘"},              //
-        {NSPageDownFunctionKey, @"⇟"},         //
-        {NSHelpFunctionKey, @"Help"}           //
+[[clang::no_destroy]] static const robin_hood::unordered_flat_map<uint32_t, NSString *> g_UnicodeToNiceString = {
+    {NSLeftArrowFunctionKey, @"←"},        //
+    {NSRightArrowFunctionKey, @"→"},       //
+    {NSDownArrowFunctionKey, @"↓"},        //
+    {NSUpArrowFunctionKey, @"↑"},          //
+    {NSF1FunctionKey, @"F1"},              //
+    {NSF2FunctionKey, @"F2"},              //
+    {NSF3FunctionKey, @"F3"},              //
+    {NSF4FunctionKey, @"F4"},              //
+    {NSF5FunctionKey, @"F5"},              //
+    {NSF6FunctionKey, @"F6"},              //
+    {NSF7FunctionKey, @"F7"},              //
+    {NSF8FunctionKey, @"F8"},              //
+    {NSF9FunctionKey, @"F9"},              //
+    {NSF10FunctionKey, @"F10"},            //
+    {NSF11FunctionKey, @"F11"},            //
+    {NSF12FunctionKey, @"F12"},            //
+    {NSF13FunctionKey, @"F13"},            //
+    {NSF14FunctionKey, @"F14"},            //
+    {NSF15FunctionKey, @"F15"},            //
+    {NSF16FunctionKey, @"F16"},            //
+    {NSF17FunctionKey, @"F17"},            //
+    {NSF18FunctionKey, @"F18"},            //
+    {NSF19FunctionKey, @"F19"},            //
+    {0x2326, @"⌦"},                        // TODO: verify!
+    {0x7F28, @"⌦"},                        //
+    {'\r', @"↩"},                          //
+    {0x3, @"⌅"},                           //
+    {NSTabCharacter, @"⇥"},                //
+    {0x2423, @"Space"},                    //
+    {0x0020, @"Space"},                    //
+    {NSBackspaceCharacter, @"⌫"},          //
+    {NSDeleteCharacter, @"⌫"},             //
+    {NSClearDisplayFunctionKey, @"Clear"}, //
+    {0x1B, @"⎋"},                          //
+    {NSHomeFunctionKey, @"↖"},             //
+    {NSPageUpFunctionKey, @"⇞"},           //
+    {NSEndFunctionKey, @"↘"},              //
+    {NSPageDownFunctionKey, @"⇟"},         //
+    {NSHelpFunctionKey, @"Help"}           //
 };
 
 NSString *ActionShortcut::PrettyString() const noexcept
@@ -184,31 +207,32 @@ NSString *ActionShortcut::PrettyString() const noexcept
         return [NSString stringWithFormat:@"%@%@", StringForModifierFlags(modifiers), vis_key];
 }
 
-bool ActionShortcut::IsKeyDown(uint16_t _unicode, unsigned long long _modifiers) const noexcept
+bool ActionShortcut::IsKeyDown(EventData _event) const noexcept
 {
+    // unicode==0 => disable, don't match anything
     if( !unicode )
         return false;
 
     // exclude CapsLock/NumPad/Func from our decision process
-    constexpr auto mask = NSEventModifierFlagDeviceIndependentFlagsMask &
-                          (~NSEventModifierFlagCapsLock & ~NSEventModifierFlagNumericPad &
-                           ~NSEventModifierFlagFunction);
-    auto clean_modif = _modifiers & mask;
+    constexpr auto mask =
+        NSEventModifierFlagDeviceIndependentFlagsMask &
+        (~NSEventModifierFlagCapsLock & ~NSEventModifierFlagNumericPad & ~NSEventModifierFlagFunction);
+    const auto clean_modif = NSEventModifierFlagsHolder{_event.modifiers & mask};
 
-    if( unicode >= 32 && unicode < 128 && modifiers.is_empty() )
-        clean_modif &=
-            ~NSEventModifierFlagShift; // some chars were produced by pressing key with shift
-
-    if( modifiers == NSEventModifierFlagsHolder{clean_modif} && unicode == _unicode )
+    // modifiers should match exactly
+    if( modifiers != clean_modif )
+        return false;
+    
+    // check for exact hit - modifiers and unicode
+    if( unicode == _event.char_without_modifiers )
         return true;
 
-    if( modifiers.is_shift() && modifiers == NSEventModifierFlagsHolder{clean_modif} ) {
-        if( unicode >= 97 && unicode <= 125 && unicode == _unicode + 32 )
-            return true;
-        if( unicode >= 65 && unicode <= 93 && unicode + 32 == _unicode )
-            return true;
-    }
+    // characters are shown as UPPERCASE even when explicitly asked to provide them without modifiers.
+    // explicitly check for this case by lowercasing the input character
+    if( modifiers.is_shift() && nc::base::g_ToLower[_event.char_without_modifiers] == unicode )
+        return true;
 
+    // no dice
     return false;
 }
 
@@ -224,8 +248,32 @@ bool ActionShortcut::operator!=(const ActionShortcut &_rhs) const noexcept
 
 }
 
-size_t std::hash<nc::utility::ActionShortcut>::operator()(
-    const nc::utility::ActionShortcut &_ac) const noexcept
+size_t std::hash<nc::utility::ActionShortcut>::operator()(const nc::utility::ActionShortcut &_ac) const noexcept
 {
     return static_cast<size_t>(_ac.unicode) | (static_cast<size_t>(_ac.modifiers.flags) << 16);
 }
+
+@implementation NSMenuItem (NCAdditions)
+
+- (void)nc_setKeyEquivalentWithShortcut:(nc::utility::ActionShortcut)_shortcut
+{
+    // https://developer.apple.com/documentation/appkit/nsmenuitem/1514842-keyequivalent?language=objc
+    // If you want to specify the Backspace key as the key equivalent for a menu item, use a single character string
+    // with NSBackspaceCharacter (defined in NSText.h as 0x08) and for the Forward Delete key, use NSDeleteCharacter
+    // (defined in NSText.h as 0x7F). Note that these are not the same characters you get from an NSEvent key-down event
+    // when pressing those keys.
+    if( _shortcut.unicode == 0x007F ) {
+        [self setKeyEquivalent:@"\u0008"]; // NSBackspaceCharacter
+        [self setKeyEquivalentModifierMask:_shortcut.modifiers];
+        return;
+    }
+    if( _shortcut.unicode == 0x7F28 ) {
+        [self setKeyEquivalent:@"\u007f"]; // NSDeleteCharacter
+        [self setKeyEquivalentModifierMask:_shortcut.modifiers];
+        return;
+    }
+    [self setKeyEquivalent:_shortcut.Key()];
+    [self setKeyEquivalentModifierMask:_shortcut.modifiers];
+}
+
+@end

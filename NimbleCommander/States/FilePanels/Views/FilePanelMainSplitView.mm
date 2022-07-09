@@ -256,32 +256,27 @@ static const auto g_ResizingGran = 14.;
     return [self isSubviewCollapsed:_v];
 }
 
-- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+- (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    NSString *characters = theEvent.charactersIgnoringModifiers;
-    if( characters.length != 1 )
-        return [super performKeyEquivalent:theEvent];
-
-    const auto mod = theEvent.modifierFlags;
-    const auto unicode = [characters characterAtIndex:0];
-
+    const auto event_data = nc::utility::ActionShortcut::EventData(_event);
+    
     static ActionsShortcutsManager::ShortCut hk_move_left, hk_move_right;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
             {&hk_move_left, "menu.view.panels_position.move_left"},
             {&hk_move_right, "menu.view.panels_position.move_right"}});
 
-    if( hk_move_left.IsKeyDown(unicode, mod) ) {
+    if( hk_move_left.IsKeyDown(event_data) ) {
         [self OnViewPanelsPositionMoveLeft:self];
         return true;
     }
 
-    if( hk_move_right.IsKeyDown(unicode, mod) ) {
+    if( hk_move_right.IsKeyDown(event_data) ) {
         [self OnViewPanelsPositionMoveRight:self];
         return true;
     }
 
-    return [super performKeyEquivalent:theEvent];
+    return [super performKeyEquivalent:_event];
 }
 
 - (IBAction)OnViewPanelsPositionMoveLeft:(id) [[maybe_unused]] sender

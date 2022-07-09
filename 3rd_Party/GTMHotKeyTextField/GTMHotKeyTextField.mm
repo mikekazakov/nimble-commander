@@ -19,85 +19,84 @@
 #import <Carbon/Carbon.h>
 #include <vector>
 
-struct KeycodesHardcode
-{
+struct KeycodesHardcode {
     uint32_t keycode;
     uint16_t unicode;
     NSString *vis;
 };
 
 [[clang::no_destroy]] static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
-    {123,   NSLeftArrowFunctionKey,     @"←"},
-    {124,   NSRightArrowFunctionKey,    @"→"},
-    {125,   NSDownArrowFunctionKey,     @"↓"},
-    {126,   NSUpArrowFunctionKey,       @"↑"},
-    {122,   NSF1FunctionKey,            @"F1"},
-    {120,   NSF2FunctionKey,            @"F2"},
-    {99,    NSF3FunctionKey,            @"F3"},
-    {118,   NSF4FunctionKey,            @"F4"},
-    {96,    NSF5FunctionKey,            @"F5"},
-    {97,    NSF6FunctionKey,            @"F6"},
-    {98,    NSF7FunctionKey,            @"F7"},
-    {100,   NSF8FunctionKey,            @"F8"},
-    {101,   NSF9FunctionKey,            @"F9"},
-    {109,   NSF10FunctionKey,           @"F10"},
-    {103,   NSF11FunctionKey,           @"F11"},
-    {111,   NSF12FunctionKey,           @"F12"},
-    {105,   NSF13FunctionKey,           @"F13"},
-    {107,   NSF14FunctionKey,           @"F14"},
-    {113,   NSF15FunctionKey,           @"F15"},
-    {106,   NSF16FunctionKey,           @"F16"},
-    {64,    NSF17FunctionKey,           @"F17"},
-    {79,    NSF18FunctionKey,           @"F18"},
-    {80,    NSF19FunctionKey,           @"F19"},
-    {117,   0x2326,                     @"⌦"},
-    {36,    '\r',                       @"↩"},
-    {76,    0x3,                        @"⌅"},
-    {48,    0x9,                        @"⇥"},
-    {49,    0x0020,                     @"Space"},
-    {49,    0x2423,                     @"Space"},
-    {51,    0x8,                        @"⌫"},
-    {51,    0x7f,                       @"⌫"},
-    {71,    NSClearDisplayFunctionKey,  @"Clear"},
-    {53,    0x1B,                       @"⎋"},
-    {115,   NSHomeFunctionKey,          @"↖"},
-    {116,   NSPageUpFunctionKey,        @"⇞"},
-    {119,   NSEndFunctionKey,           @"↘"},
-    {121,   NSPageDownFunctionKey,      @"⇟"},
-    {114,   NSHelpFunctionKey,          @"Help"},
-    {65,    '.',                        @"."},
-    {67,    '*',                        @"*"},
-    {69,    '+',                        @"+"},
-    {75,    '/',                        @"/"},
-    {78,    '-',                        @"-"},
-    {81,    '=',                        @"="},
-    {82,    '0',                        @"0"},
-    {83,    '1',                        @"1"},
-    {84,    '2',                        @"2"},
-    {85,    '3',                        @"3"},
-    {86,    '4',                        @"4"},
-    {87,    '5',                        @"5"},
-    {88,    '6',                        @"6"},
-    {89,    '7',                        @"7"},
-    {91,    '8',                        @"8"},
-    {92,    '9',                        @"9"}
-};
+    {123, NSLeftArrowFunctionKey, @"←"},
+    {124, NSRightArrowFunctionKey, @"→"},
+    {125, NSDownArrowFunctionKey, @"↓"},
+    {126, NSUpArrowFunctionKey, @"↑"},
+    {122, NSF1FunctionKey, @"F1"},
+    {120, NSF2FunctionKey, @"F2"},
+    {99, NSF3FunctionKey, @"F3"},
+    {118, NSF4FunctionKey, @"F4"},
+    {96, NSF5FunctionKey, @"F5"},
+    {97, NSF6FunctionKey, @"F6"},
+    {98, NSF7FunctionKey, @"F7"},
+    {100, NSF8FunctionKey, @"F8"},
+    {101, NSF9FunctionKey, @"F9"},
+    {109, NSF10FunctionKey, @"F10"},
+    {103, NSF11FunctionKey, @"F11"},
+    {111, NSF12FunctionKey, @"F12"},
+    {105, NSF13FunctionKey, @"F13"},
+    {107, NSF14FunctionKey, @"F14"},
+    {113, NSF15FunctionKey, @"F15"},
+    {106, NSF16FunctionKey, @"F16"},
+    {64, NSF17FunctionKey, @"F17"},
+    {79, NSF18FunctionKey, @"F18"},
+    {80, NSF19FunctionKey, @"F19"},
+    {117, 0x2326, @"⌦"},
+    {117, 0xF728, @"⌦"},
+    {36, '\r', @"↩"},
+    {76, 0x3, @"⌅"},
+    {48, 0x9, @"⇥"},
+    {49, 0x0020, @"Space"},
+    {49, 0x2423, @"Space"},
+    {51, 0x8, @"⌫"},
+    {51, 0x7f, @"⌫"},
+    {71, NSClearDisplayFunctionKey, @"Clear"},
+    {53, 0x1B, @"⎋"},
+    {115, NSHomeFunctionKey, @"↖"},
+    {116, NSPageUpFunctionKey, @"⇞"},
+    {119, NSEndFunctionKey, @"↘"},
+    {121, NSPageDownFunctionKey, @"⇟"},
+    {114, NSHelpFunctionKey, @"Help"},
+    {65, '.', @"."},
+    {67, '*', @"*"},
+    {69, '+', @"+"},
+    {75, '/', @"/"},
+    {78, '-', @"-"},
+    {81, '=', @"="},
+    {82, '0', @"0"},
+    {83, '1', @"1"},
+    {84, '2', @"2"},
+    {85, '3', @"3"},
+    {86, '4', @"4"},
+    {87, '5', @"5"},
+    {88, '6', @"6"},
+    {89, '7', @"7"},
+    {91, '8', @"8"},
+    {92, '9', @"9"}};
 
 @implementation GTMHotKey {
     NSUInteger m_Modif;
-    NSString  *m_Key;
-    NSString  *m_VisKey;
+    NSString *m_Key;
+    NSString *m_VisKey;
 }
 
-+ (id)hotKeyWithKey:(NSString *)str
-          modifiers:(NSUInteger)modifiers {
++ (id)hotKeyWithKey:(NSString *)str modifiers:(NSUInteger)modifiers
+{
     return [[self alloc] initWithKey:str modifiers:modifiers];
 }
 
-+ (GTMHotKey*)emptyHotKey
++ (GTMHotKey *)emptyHotKey
 {
-    static GTMHotKey* eh = nil;
-    if(!eh) {
+    static GTMHotKey *eh = nil;
+    if( !eh ) {
         eh = [GTMHotKey new];
         eh->m_Key = @"";
         eh->m_Modif = 0;
@@ -106,17 +105,17 @@ struct KeycodesHardcode
     return eh;
 }
 
-- (id)initWithKey:(NSString *)str
-        modifiers:(NSUInteger)modifiers {
-    if ((self = [super init])) {
+- (id)initWithKey:(NSString *)str modifiers:(NSUInteger)modifiers
+{
+    if( (self = [super init]) ) {
         m_Modif = modifiers;
         m_Key = str;
         m_VisKey = [str uppercaseString];
-        
-        if(str.length > 0) {
+
+        if( str.length > 0 ) {
             uint16_t c = [str characterAtIndex:0];
-            for(auto &i: g_KeycodesHardcoded)
-                if(i.unicode == c) {
+            for( auto &i : g_KeycodesHardcoded )
+                if( i.unicode == c ) {
                     m_VisKey = i.vis;
                     break;
                 }
@@ -125,190 +124,203 @@ struct KeycodesHardcode
     return self;
 }
 
-- (NSUInteger)modifiers {
-  return m_Modif;
+- (NSUInteger)modifiers
+{
+    return m_Modif;
 }
 
-- (NSString *)key {
+- (NSString *)key
+{
     return m_Key;
 }
 
-- (NSString *)visualKey {
+- (NSString *)visualKey
+{
     return m_VisKey;
 }
 
-- (bool)isEmpty {
+- (bool)isEmpty
+{
     return m_Key == nil || [m_Key isEqualToString:@""];
 }
 
-- (BOOL)isEqual:(id)object {
-  return [object isKindOfClass:GTMHotKey.class]
-    && [object modifiers] == [self modifiers]
-    && [[object key] isEqualToString:m_Key];
+- (BOOL)isEqual:(id)object
+{
+    return [object isKindOfClass:GTMHotKey.class] && [object modifiers] == [self modifiers] &&
+           [[object key] isEqualToString:m_Key];
 }
 
-- (NSUInteger)hash {
-  return m_Modif + [m_Key characterAtIndex:0];
+- (NSUInteger)hash
+{
+    return m_Modif + [m_Key characterAtIndex:0];
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
     GTMHotKey *hk = [[GTMHotKey allocWithZone:zone] init];
-    hk->m_Modif     = m_Modif;
-    hk->m_Key       = m_Key;
-    hk->m_VisKey    = m_VisKey;
+    hk->m_Modif = m_Modif;
+    hk->m_Key = m_Key;
+    hk->m_VisKey = m_VisKey;
     return hk;
 }
 
-- (NSString *)description {
-  return [NSString stringWithFormat:@"<%@ %p> - %@",
-          [self class], self,
-          m_VisKey];
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@ %p> - %@", [self class], self, m_VisKey];
 }
 
 @end
 
 @implementation GTMHotKeyTextField
 
-+ (Class)cellClass {
-  return GTMHotKeyTextFieldCell.class;
++ (Class)cellClass
+{
+    return GTMHotKeyTextFieldCell.class;
 }
 
 @end
 
-@implementation GTMHotKeyTextFieldCell
-{
+@implementation GTMHotKeyTextFieldCell {
     GTMHotKey *hotKey_;
     GTMHotKeyFieldEditor *m_FieldEditor;
-    bool m_StrictModifierRequirement;
+    bool m_MenuHotkey;
 }
 
-@synthesize strictModifierRequirement = m_StrictModifierRequirement;
+@synthesize menuHotKey = m_MenuHotkey;
 
-- (id) initWithCoder:(NSCoder *)aDecoder
+- (id)initWithCoder:(NSCoder *)aDecoder
 {
     if( self = [super initWithCoder:aDecoder] ) {
-        m_StrictModifierRequirement = true;
-        
-        
+        m_MenuHotkey = true;
     }
     return self;
-    
 }
 
-- (id)copyWithZone:(NSZone *)zone {
-  GTMHotKeyTextFieldCell *copy = [super copyWithZone:zone];
-  copy->hotKey_ = nil;
-  [copy setObjectValue:[self objectValue]];
-  return copy;
-}
-
-- (id)objectValue {
-  return hotKey_;
-}
-
-- (NSTextView *)fieldEditorForView:(NSView *)[[maybe_unused]]aControlView
+- (id)copyWithZone:(NSZone *)zone
 {
-    if(m_FieldEditor == nil)
+    GTMHotKeyTextFieldCell *copy = [super copyWithZone:zone];
+    copy->hotKey_ = nil;
+    [copy setObjectValue:[self objectValue]];
+    return copy;
+}
+
+- (id)objectValue
+{
+    return hotKey_;
+}
+
+- (NSTextView *)fieldEditorForView:(NSView *) [[maybe_unused]] aControlView
+{
+    if( m_FieldEditor == nil )
         m_FieldEditor = [GTMHotKeyFieldEditor new];
     [m_FieldEditor setCell:self];
     return m_FieldEditor;
 }
 
-- (void)setObjectValue:(id)object {
+- (void)setObjectValue:(id)object
+{
     // Sanity only if set, nil is OK
-    if (object && ![object isKindOfClass:GTMHotKey.class]) {
+    if( object && ![object isKindOfClass:GTMHotKey.class] ) {
         return;
     }
-    if (![hotKey_ isEqual:object]) {
+    if( ![hotKey_ isEqual:object] ) {
         // Otherwise we directly update ourself
         hotKey_ = [object copy];
         [self updateDisplayedPrettyString];
     }
 }
 
-- (NSString *)stringValue {
+- (NSString *)stringValue
+{
     NSString *value = [GTMHotKeyTextFieldCell displayStringForHotKey:hotKey_];
     return value ? value : @"";
 }
 
-- (void)setStringValue:(NSString *)[[maybe_unused]]string {
+- (void)setStringValue:(NSString *) [[maybe_unused]] string
+{
 }
 
-- (NSAttributedString *)attributedStringValue {
-    if (NSString *prettyString = self.stringValue)
+- (NSAttributedString *)attributedStringValue
+{
+    if( NSString *prettyString = self.stringValue )
         return [[NSAttributedString alloc] initWithString:prettyString];
     return nil;
 }
 
-- (void)setAttributedStringValue:(NSAttributedString *)[[maybe_unused]]string {
+- (void)setAttributedStringValue:(NSAttributedString *) [[maybe_unused]] string
+{
 }
 
-- (id)formatter {
+- (id)formatter
+{
     return nil;
 }
 
-- (void)setFormatter:(NSFormatter *)[[maybe_unused]]newFormatter {
+- (void)setFormatter:(NSFormatter *) [[maybe_unused]] newFormatter
+{
 }
 
 // Private method to update the displayed text of the field with the
 // user-readable representation.
-- (void)updateDisplayedPrettyString {
+- (void)updateDisplayedPrettyString
+{
     // Pretty string
     NSString *prettyString = [GTMHotKeyTextFieldCell displayStringForHotKey:hotKey_];
     [super setObjectValue:prettyString ? prettyString : @"'"];
 }
 
-+ (NSString *)displayStringForHotKey:(GTMHotKey *)hotKey {
-    if (!hotKey)
++ (NSString *)displayStringForHotKey:(GTMHotKey *)hotKey
+{
+    if( !hotKey )
         return nil;
 
     // Modifiers
     NSUInteger modifiers = hotKey.modifiers;
     NSString *mods = [GTMHotKeyTextFieldCell stringForModifierFlags:modifiers];
-    if (modifiers && !mods.length)
+    if( modifiers && !mods.length )
         return nil;
-    
+
     NSString *keystroke = hotKey.visualKey;
-    
+
     return [NSString stringWithFormat:@"%@%@", mods, keystroke];
 }
 
 #pragma mark Useful String Class Methods
 
-- (BOOL)doesKeyCodeRequireModifier:(UInt16)keycode {
-    if( !m_StrictModifierRequirement )
+- (BOOL)doesKeyCodeRequireModifier:(UInt16)keycode
+{
+    if( !m_MenuHotkey )
         return false;
-    
+
     BOOL doesRequire = YES;
-    switch(keycode) {
+    switch( keycode ) {
         // These are the keycodes that map to the
-        //unichars in the associated comment.
-        case 122:  //  NSF1FunctionKey
-        case 120:  //  NSF2FunctionKey
-        case 99:   //  NSF3FunctionKey
-        case 118:  //  NSF4FunctionKey
-        case 96:   //  NSF5FunctionKey
-        case 97:   //  NSF6FunctionKey
-        case 98:   //  NSF7FunctionKey
-        case 100:  //  NSF8FunctionKey
-        case 101:  //  NSF9FunctionKey
-        case 109:  //  NSF10FunctionKey
-        case 103:  //  NSF11FunctionKey
-        case 111:  //  NSF12FunctionKey
-        case 105:  //  NSF13FunctionKey
-        case 107:  //  NSF14FunctionKey
-        case 113:  //  NSF15FunctionKey
-        case 106:  //  NSF16FunctionKey
-        case 64:   //  NSF17FunctionKey
-        case 79:   //  NSF18FunctionKey
-        case 80:   //  NSF19FunctionKey
-        case 115:  //  NSHomeFunctionKey
-        case 119:  //  NSEndFunctionKey
-        case 116:  //  NSPageUpFunctionKey
-        case 121:  //  NSPageDownFunctionKey
-        case 76:   //  NSInsertFunctionKey
-        case 36:   //  enter key
+        // unichars in the associated comment.
+        case 122: //  NSF1FunctionKey
+        case 120: //  NSF2FunctionKey
+        case 99:  //  NSF3FunctionKey
+        case 118: //  NSF4FunctionKey
+        case 96:  //  NSF5FunctionKey
+        case 97:  //  NSF6FunctionKey
+        case 98:  //  NSF7FunctionKey
+        case 100: //  NSF8FunctionKey
+        case 101: //  NSF9FunctionKey
+        case 109: //  NSF10FunctionKey
+        case 103: //  NSF11FunctionKey
+        case 111: //  NSF12FunctionKey
+        case 105: //  NSF13FunctionKey
+        case 107: //  NSF14FunctionKey
+        case 113: //  NSF15FunctionKey
+        case 106: //  NSF16FunctionKey
+        case 64:  //  NSF17FunctionKey
+        case 79:  //  NSF18FunctionKey
+        case 80:  //  NSF19FunctionKey
+        case 115: //  NSHomeFunctionKey
+        case 119: //  NSEndFunctionKey
+        case 116: //  NSPageUpFunctionKey
+        case 121: //  NSPageDownFunctionKey
+        case 76:  //  NSInsertFunctionKey
+        case 36:  //  enter key
             doesRequire = NO;
             break;
         default:
@@ -325,15 +337,21 @@ struct KeycodesHardcode
 // #define the class name to something else, and then you won't have any
 // conflicts.
 
-+ (NSString *)stringForModifierFlags:(NSUInteger)flags {
-    UniChar modChars[4];  // We only look for 4 flags
++ (NSString *)stringForModifierFlags:(NSUInteger)flags
+{
+    UniChar modChars[4]; // We only look for 4 flags
     unsigned int charCount = 0;
     // These are in the same order as the menu manager shows them
-    if (flags & NSEventModifierFlagControl)   modChars[charCount++] = kControlUnicode;
-    if (flags & NSEventModifierFlagOption) modChars[charCount++] = kOptionUnicode;
-    if (flags & NSEventModifierFlagShift)     modChars[charCount++] = kShiftUnicode;
-    if (flags & NSEventModifierFlagCommand)   modChars[charCount++] = kCommandUnicode;
-    if (charCount == 0) return @"";
+    if( flags & NSEventModifierFlagControl )
+        modChars[charCount++] = kControlUnicode;
+    if( flags & NSEventModifierFlagOption )
+        modChars[charCount++] = kOptionUnicode;
+    if( flags & NSEventModifierFlagShift )
+        modChars[charCount++] = kShiftUnicode;
+    if( flags & NSEventModifierFlagCommand )
+        modChars[charCount++] = kCommandUnicode;
+    if( charCount == 0 )
+        return @"";
     return [NSString stringWithCharacters:modChars length:charCount];
 }
 
@@ -351,150 +369,164 @@ struct KeycodesHardcode
 // Returns:
 //   Autoreleased NSString
 //
-+ (NSString *)stringForKeycode:(UInt16)keycode
-                      useGlyph:(BOOL)useGlyph {
-  // Some keys never move in any layout (to the best of our knowledge at least)
-  // so we can hard map them.
-  UniChar key = 0;
-  NSString *vis_key = nil;
-    
-    for(auto &kc: g_KeycodesHardcoded)
-        if(kc.keycode == keycode) {
++ (NSString *)stringForKeycode:(UInt16)keycode useGlyph:(BOOL)useGlyph
+{
+    // Some keys never move in any layout (to the best of our knowledge at least)
+    // so we can hard map them.
+    UniChar key = 0;
+    NSString *vis_key = nil;
+
+    for( auto &kc : g_KeycodesHardcoded )
+        if( kc.keycode == keycode ) {
             key = kc.unicode;
             vis_key = kc.vis;
             break;
         }
-    
-  // If they asked for strings, and we have one return it.  Otherwise, return
-  // any key we've picked.
-  if (!useGlyph && vis_key)
-      return vis_key;
-  else if (key != 0)
-    return [NSString stringWithFormat:@"%C", key];
 
-  // Everything else should be printable so look it up in the current keyboard
-  const UCKeyboardLayout *uchrData = NULL;
+    // If they asked for strings, and we have one return it.  Otherwise, return
+    // any key we've picked.
+    if( !useGlyph && vis_key )
+        return vis_key;
+    else if( key != 0 )
+        return [NSString stringWithFormat:@"%C", key];
 
-  OSStatus err = noErr;
-  TISInputSourceRef inputSource = TISCopyCurrentKeyboardLayoutInputSource();
-  if (inputSource) {
-    CFDataRef uchrDataRef
-      = static_cast<CFDataRef>(TISGetInputSourceProperty(inputSource, kTISPropertyUnicodeKeyLayoutData));
-    if(uchrDataRef) {
-      uchrData = reinterpret_cast<const UCKeyboardLayout*>(CFDataGetBytePtr(uchrDataRef));
+    // Everything else should be printable so look it up in the current keyboard
+    const UCKeyboardLayout *uchrData = NULL;
+
+    OSStatus err = noErr;
+    TISInputSourceRef inputSource = TISCopyCurrentKeyboardLayoutInputSource();
+    if( inputSource ) {
+        CFDataRef uchrDataRef =
+            static_cast<CFDataRef>(TISGetInputSourceProperty(inputSource, kTISPropertyUnicodeKeyLayoutData));
+        if( uchrDataRef ) {
+            uchrData = reinterpret_cast<const UCKeyboardLayout *>(CFDataGetBytePtr(uchrDataRef));
+        }
+        CFRelease(inputSource);
     }
-    CFRelease(inputSource);
-  }
 
-  NSString *keystrokeString = nil;
-  if (uchrData) {
-    // uchr layout data is available, this is our preference
-    UniCharCount uchrCharLength = 0;
-    UniChar  uchrChars[256] = { 0 };
-    UInt32 uchrDeadKeyState = 0;
-    err = UCKeyTranslate(uchrData,
-                         keycode,
-                         kUCKeyActionDisplay,
-                         0,  // No modifiers
-                         LMGetKbdType(),
-                         kUCKeyTranslateNoDeadKeysMask,
-                         &uchrDeadKeyState,
-                         sizeof(uchrChars) / sizeof(UniChar),
-                         &uchrCharLength,
-                         uchrChars);
-    if (err != noErr)
-      return nil;
-    if (uchrCharLength < 1)
-        return nil;
-    keystrokeString = [NSString stringWithCharacters:uchrChars length:uchrCharLength];
-  }
+    NSString *keystrokeString = nil;
+    if( uchrData ) {
+        // uchr layout data is available, this is our preference
+        UniCharCount uchrCharLength = 0;
+        UniChar uchrChars[256] = {0};
+        UInt32 uchrDeadKeyState = 0;
+        err = UCKeyTranslate(uchrData,
+                             keycode,
+                             kUCKeyActionDisplay,
+                             0, // No modifiers
+                             LMGetKbdType(),
+                             kUCKeyTranslateNoDeadKeysMask,
+                             &uchrDeadKeyState,
+                             sizeof(uchrChars) / sizeof(UniChar),
+                             &uchrCharLength,
+                             uchrChars);
+        if( err != noErr )
+            return nil;
+        if( uchrCharLength < 1 )
+            return nil;
+        keystrokeString = [NSString stringWithCharacters:uchrChars length:uchrCharLength];
+    }
 
     // Sanity we got a stroke
-  if (!keystrokeString || !keystrokeString.length) return nil;
+    if( !keystrokeString || !keystrokeString.length )
+        return nil;
 
-  // Sanity check the keystroke string for unprintable characters
-  NSMutableCharacterSet *validChars = [NSMutableCharacterSet new];
+    // Sanity check the keystroke string for unprintable characters
+    NSMutableCharacterSet *validChars = [NSMutableCharacterSet new];
 
-  [validChars formUnionWithCharacterSet:NSCharacterSet.alphanumericCharacterSet];
-  [validChars formUnionWithCharacterSet:NSCharacterSet.punctuationCharacterSet];
-  [validChars formUnionWithCharacterSet:NSCharacterSet.symbolCharacterSet];
-  for (unsigned int i = 0; i < keystrokeString.length; i++)
-    if (![validChars characterIsMember:[keystrokeString characterAtIndex:i]])
-      return nil;
+    [validChars formUnionWithCharacterSet:NSCharacterSet.alphanumericCharacterSet];
+    [validChars formUnionWithCharacterSet:NSCharacterSet.punctuationCharacterSet];
+    [validChars formUnionWithCharacterSet:NSCharacterSet.symbolCharacterSet];
+    for( unsigned int i = 0; i < keystrokeString.length; i++ )
+        if( ![validChars characterIsMember:[keystrokeString characterAtIndex:i]] )
+            return nil;
 
-  if (!useGlyph) {
-    // menus want glyphs in the original lowercase forms, so we only upper this
-    // if we aren't using it as a glyph.
-    keystrokeString = [keystrokeString uppercaseString];
-  }
+    if( !useGlyph ) {
+        // menus want glyphs in the original lowercase forms, so we only upper this
+        // if we aren't using it as a glyph.
+        keystrokeString = [keystrokeString uppercaseString];
+    }
 
-  return keystrokeString;
+    return keystrokeString;
 }
 
 @end
 
-@implementation GTMHotKeyFieldEditor
-{
+@implementation GTMHotKeyFieldEditor {
     NSButton *m_ClearButton;
     NSButton *m_RevertButton;
 }
 
-+ (GTMHotKeyFieldEditor *)sharedHotKeyFieldEditor {
++ (GTMHotKeyFieldEditor *)sharedHotKeyFieldEditor
+{
     static GTMHotKeyFieldEditor *obj = [self new];
     return obj;
 }
 
-- (id)init {
-  if (self = [super init])
-    self.fieldEditor = YES;  // We are a field editor
-  return self;
+- (id)init
+{
+    if( self = [super init] )
+        self.fieldEditor = YES; // We are a field editor
+    return self;
 }
 
-- (NSArray *)acceptableDragTypes { return @[]; /* Don't take drags */ }
-- (NSArray *)readablePasteboardTypes { return @[]; /* No pasting */ }
-- (NSArray *)writablePasteboardTypes { return @[]; /* No copying */ }
+- (NSArray *)acceptableDragTypes
+{
+    return @[]; /* Don't take drags */
+}
+- (NSArray *)readablePasteboardTypes
+{
+    return @[]; /* No pasting */
+}
+- (NSArray *)writablePasteboardTypes
+{
+    return @[]; /* No copying */
+}
 
-- (BOOL)becomeFirstResponder {
-  // We need to lose focus any time the window is not key
+- (BOOL)becomeFirstResponder
+{
+    // We need to lose focus any time the window is not key
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(windowResigned:)
                                                name:NSWindowDidResignKeyNotification
                                              object:self.window];
     if( !m_ClearButton ) {
-        m_ClearButton = [[NSButton alloc] initWithFrame:NSMakeRect(self.bounds.size.width - 20, (self.bounds.size.height - 22)/2, 22, 22)];
+        m_ClearButton = [[NSButton alloc]
+            initWithFrame:NSMakeRect(self.bounds.size.width - 20, (self.bounds.size.height - 22) / 2, 22, 22)];
         m_ClearButton.title = @"−";
         m_ClearButton.font = [NSFont labelFontOfSize:9];
         m_ClearButton.refusesFirstResponder = true;
         m_ClearButton.bezelStyle = NSBezelStyleCircular;
         m_ClearButton.target = self;
         m_ClearButton.action = @selector(OnClearButton:);
-        static_cast<NSButtonCell*>(m_ClearButton.cell).controlSize = NSControlSizeMini;
+        static_cast<NSButtonCell *>(m_ClearButton.cell).controlSize = NSControlSizeMini;
         [self addSubview:m_ClearButton];
     }
-    
+
     if( !m_RevertButton ) {
-        m_RevertButton = [[NSButton alloc] initWithFrame:NSMakeRect(self.bounds.size.width - 36, (self.bounds.size.height - 22)/2, 22, 22)];
+        m_RevertButton = [[NSButton alloc]
+            initWithFrame:NSMakeRect(self.bounds.size.width - 36, (self.bounds.size.height - 22) / 2, 22, 22)];
         m_RevertButton.title = @"↺";
         m_RevertButton.font = [NSFont labelFontOfSize:9];
         m_RevertButton.refusesFirstResponder = true;
         m_RevertButton.bezelStyle = NSBezelStyleCircular;
         m_RevertButton.target = self;
         m_RevertButton.action = @selector(OnRevertButton:);
-        static_cast<NSButtonCell*>(m_RevertButton.cell).controlSize = NSControlSizeMini;
+        static_cast<NSButtonCell *>(m_RevertButton.cell).controlSize = NSControlSizeMini;
         [self addSubview:m_RevertButton];
     }
-    
+
     return [super becomeFirstResponder];
 }
 
-- (void)OnClearButton:(id)[[maybe_unused]]sender
+- (void)OnClearButton:(id) [[maybe_unused]] sender
 {
     [self.cell setObjectValue:GTMHotKey.emptyHotKey];
     [self didChangeText];
     [self.window makeFirstResponder:nil];
 }
 
-- (void)OnRevertButton:(id)[[maybe_unused]]sender
+- (void)OnRevertButton:(id) [[maybe_unused]] sender
 {
     if( self.cell.defaultHotKey ) {
         [self.cell setObjectValue:self.cell.defaultHotKey];
@@ -503,10 +535,11 @@ struct KeycodesHardcode
     }
 }
 
-- (BOOL)resignFirstResponder {
-  // No longer interested in window resign
+- (BOOL)resignFirstResponder
+{
+    // No longer interested in window resign
     [NSNotificationCenter.defaultCenter removeObserver:self];
-    if(m_ClearButton) {
+    if( m_ClearButton ) {
         [m_ClearButton removeFromSuperview];
         m_ClearButton = nil;
     }
@@ -516,32 +549,37 @@ struct KeycodesHardcode
 
 // Private method we use to get out of global hotkey capture when the window
 // is no longer front
-- (void)windowResigned:(NSNotification *)[[maybe_unused]]notification {
-  // Lose our focus
-  [self.window makeFirstResponder:self.window];
+- (void)windowResigned:(NSNotification *) [[maybe_unused]] notification
+{
+    // Lose our focus
+    [self.window makeFirstResponder:self.window];
 }
 
-- (BOOL)shouldDrawInsertionPoint {
-  // Show an insertion point, because we'll kill our own focus after
-  // each entry
-  return YES;
+- (BOOL)shouldDrawInsertionPoint
+{
+    // Show an insertion point, because we'll kill our own focus after
+    // each entry
+    return YES;
 }
 
-- (NSRange)selectionRangeForProposedRange:(NSRange)[[maybe_unused]]proposedSelRange
-                              granularity:(NSSelectionGranularity)[[maybe_unused]]granularity {
-  // Always select everything
-  return NSMakeRange(0, self.textStorage.length);
+- (NSRange)selectionRangeForProposedRange:(NSRange) [[maybe_unused]] proposedSelRange
+                              granularity:(NSSelectionGranularity) [[maybe_unused]] granularity
+{
+    // Always select everything
+    return NSMakeRange(0, self.textStorage.length);
 }
 
-- (void)keyDown:(NSEvent *)theEvent {
-    if ([self shouldBypassEvent:theEvent])
+- (void)keyDown:(NSEvent *)theEvent
+{
+    if( [self shouldBypassEvent:theEvent] )
         [super keyDown:theEvent];
     else
         [self processEventToHotKeyAndString:theEvent]; // Try to eat the event
 }
 
-- (BOOL)performKeyEquivalent:(NSEvent *)theEvent {
-    if ([self shouldBypassEvent:theEvent])
+- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+{
+    if( [self shouldBypassEvent:theEvent] )
         return [super performKeyEquivalent:theEvent];
 
     // We always eat these key strokes while we have focus
@@ -550,61 +588,58 @@ struct KeycodesHardcode
 }
 
 // Private do method that tell us to ignore certain events
-- (BOOL)shouldBypassEvent:(NSEvent *)theEvent {
-  BOOL bypass = NO;
-  UInt16 keyCode = theEvent.keyCode;
+- (BOOL)shouldBypassEvent:(NSEvent *)theEvent
+{
+    BOOL bypass = NO;
+    UInt16 keyCode = theEvent.keyCode;
     NSUInteger modifierFlags = theEvent.modifierFlags & NSEventModifierFlagDeviceIndependentFlagsMask;
 
-  if (keyCode == 48) {  // Tab
-    // Ignore all events that the dock cares about
-    // Just to be extra clear if the user is trying to use Dock hotkeys beep
-    // at them
-      if ((modifierFlags == NSEventModifierFlagCommand) ||
-          (modifierFlags == (NSEventModifierFlagCommand | NSEventModifierFlagShift))) {
-      NSBeep();
-      bypass = YES;
-      } else if (modifierFlags == 0 || modifierFlags == NSEventModifierFlagShift) {
-      // Probably attempting to tab around the dialog.
-      bypass = YES;
+    if( keyCode == 48 ) { // Tab
+                          // Ignore all events that the dock cares about
+                          // Just to be extra clear if the user is trying to use Dock hotkeys beep
+                          // at them
+        if( (modifierFlags == NSEventModifierFlagCommand) ||
+            (modifierFlags == (NSEventModifierFlagCommand | NSEventModifierFlagShift)) ) {
+            NSBeep();
+            bypass = YES;
+        }
+        else if( modifierFlags == 0 || modifierFlags == NSEventModifierFlagShift ) {
+            // Probably attempting to tab around the dialog.
+            bypass = YES;
+        }
     }
-
-  } else if ((keyCode == 12) && (modifierFlags == NSEventModifierFlagCommand)) {
-    // Don't eat Cmd-Q. Users could have it as a hotkey, but its more likely
-    // they're trying to quit
-    bypass = YES;
-  } else if ((keyCode == 13) && (modifierFlags == NSEventModifierFlagCommand)) {
-    // Same for Cmd-W, user is probably trying to close the window
-    bypass = YES;
-  }
-  return bypass;
+    else if( (keyCode == 12) && (modifierFlags == NSEventModifierFlagCommand) ) {
+        // Don't eat Cmd-Q. Users could have it as a hotkey, but its more likely
+        // they're trying to quit
+        bypass = YES;
+    }
+    else if( (keyCode == 13) && (modifierFlags == NSEventModifierFlagCommand) ) {
+        // Same for Cmd-W, user is probably trying to close the window
+        bypass = YES;
+    }
+    return bypass;
 }
 
 // Private method that turns events into strings and dictionaries for our
 // hotkey plumbing.
-- (void)processEventToHotKeyAndString:(NSEvent *)theEvent {
-    // Construct a dictionary of the event as a hotkey pref
-    GTMHotKey *newHotKey = GTMHotKey.emptyHotKey;
-    NSString *prettyString = @"";
-    // 51 is "the delete key"
-    static const NSUInteger allModifiers = (NSEventModifierFlagCommand | NSEventModifierFlagOption | NSEventModifierFlagControl | NSEventModifierFlagShift);
-    if (!((theEvent.keyCode == 51 ) && ((theEvent.modifierFlags & allModifiers)== 0))) {
-        newHotKey = [self hotKeyForEvent:theEvent];
-        if (!newHotKey) {
-            NSBeep();
-            return;  // No action, but don't give up focus
-        }
-        prettyString = [GTMHotKeyTextFieldCell displayStringForHotKey:newHotKey];
-        if (!prettyString) {
-            NSBeep();
-            return;
-        }
+- (void)processEventToHotKeyAndString:(NSEvent *)theEvent
+{
+    GTMHotKey *newHotKey = [self hotKeyForEvent:theEvent];
+    if( !newHotKey ) {
+        NSBeep();
+        return; // No action, but don't give up focus
+    }
+    NSString *prettyString = [GTMHotKeyTextFieldCell displayStringForHotKey:newHotKey];
+    if( !prettyString ) {
+        NSBeep();
+        return;
     }
 
     // Replacement range
     NSRange replaceRange = NSMakeRange(0, self.textStorage.length);
 
     // Ask for permission to replace
-    if (![self shouldChangeTextInRange:replaceRange replacementString:prettyString]) {
+    if( ![self shouldChangeTextInRange:replaceRange replacementString:prettyString] ) {
         // If replacement was disallowed, change nothing, including hotKeyDict_
         NSBeep();
         return;
@@ -621,41 +656,53 @@ struct KeycodesHardcode
     [self.window makeFirstResponder:nil];
 }
 
-- (GTMHotKey *)hotKeyForEvent:(NSEvent *)event {
-  if (!event) return nil;
-
-  // Check event
-  NSUInteger flags = event.modifierFlags;
-  UInt16 keycode = event.keyCode;
-  // If the event has no modifiers do nothing
-    const NSUInteger allModifiers = (NSEventModifierFlagCommand | NSEventModifierFlagOption | NSEventModifierFlagControl | NSEventModifierFlagShift);
-
-  if ([self.cell doesKeyCodeRequireModifier:keycode]) {
-    // If we aren't a function key, and have no modifiers do nothing.
-    if (!(flags & allModifiers)) return nil;
-    // If the event has high bits in keycode do nothing
-    if (keycode & 0xFF00) return nil;
-  }
-    
-    NSString *stroke = [GTMHotKeyTextFieldCell stringForKeycode:keycode useGlyph:true];
-    if(stroke == nil)
+- (GTMHotKey *)hotKeyForEvent:(NSEvent *)event
+{
+    if( !event )
         return nil;
-    
-//    + (NSString *)stringForKeycode:(UInt16)keycode
-//useGlyph:(BOOL)useGlyph {
 
+    // Check event
+    NSUInteger flags = event.modifierFlags;
+    UInt16 keycode = event.keyCode;
+    // If the event has no modifiers do nothing
+    const NSUInteger allModifiers = (NSEventModifierFlagCommand | NSEventModifierFlagOption |
+                                     NSEventModifierFlagControl | NSEventModifierFlagShift);
 
-  // Clean the flags to only contain things we care about
-  UInt32 cleanFlags = 0;
-    if (flags & NSEventModifierFlagCommand)     cleanFlags |= NSEventModifierFlagCommand;
-    if (flags & NSEventModifierFlagOption)   cleanFlags |= NSEventModifierFlagOption;
-    if (flags & NSEventModifierFlagControl)     cleanFlags |= NSEventModifierFlagControl;
-    if (flags & NSEventModifierFlagShift)       cleanFlags |= NSEventModifierFlagShift;
-//  return [GTMHotKey hotKeyWithKeyCode:keycode modifiers:cleanFlags];
+    if( [self.cell doesKeyCodeRequireModifier:keycode] ) {
+        // If we aren't a function key, and have no modifiers do nothing.
+        if( !(flags & allModifiers) )
+            return nil;
+        // If the event has high bits in keycode do nothing
+        if( keycode & 0xFF00 )
+            return nil;
+    }
+
+    NSString *stroke = nil;
+    if( self.cell.menuHotKey ) {
+        // Use keycode-base handling for menu items
+        stroke = [GTMHotKeyTextFieldCell stringForKeycode:keycode useGlyph:true];
+    }
+    else {
+        // Use characters-based handling for NSEvent-based actions
+        auto chars = event.charactersIgnoringModifiers;
+        if( chars != nil && chars.length == 1 )
+            stroke = [chars lowercaseString];
+    }
+    if( stroke == nil )
+        return nil;
+
+    // Clean the flags to only contain things we care about
+    UInt32 cleanFlags = 0;
+    if( flags & NSEventModifierFlagCommand )
+        cleanFlags |= NSEventModifierFlagCommand;
+    if( flags & NSEventModifierFlagOption )
+        cleanFlags |= NSEventModifierFlagOption;
+    if( flags & NSEventModifierFlagControl )
+        cleanFlags |= NSEventModifierFlagControl;
+    if( flags & NSEventModifierFlagShift )
+        cleanFlags |= NSEventModifierFlagShift;
+    //  return [GTMHotKey hotKeyWithKeyCode:keycode modifiers:cleanFlags];
     return [GTMHotKey hotKeyWithKey:stroke modifiers:cleanFlags];
-    
-    
-    
 }
 
 @end

@@ -123,6 +123,7 @@
 		CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WriteAtomically.cpp; path = source/WriteAtomically.cpp; sourceTree = "<group>"; };
 		CFA99AA3267D354900F72E93 /* RobinHoodUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RobinHoodUtil.h; path = include/Habanero/RobinHoodUtil.h; sourceTree = "<group>"; };
 		CFCB6875285F38B300086E40 /* SpdlogFormatters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpdlogFormatters.h; path = include/Habanero/SpdlogFormatters.h; sourceTree = "<group>"; };
+		CFCB689E2879A85300086E40 /* ToLower.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ToLower.h; path = include/Habanero/ToLower.h; sourceTree = "<group>"; };
 		CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LRUCache_Tests.cpp; path = ../habanero/tests/LRUCache_Tests.cpp; sourceTree = SOURCE_ROOT; };
 		CFD62BA01C99C2AE0021EE7F /* CFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFString.cpp; path = source/CFString.cpp; sourceTree = "<group>"; };
 		CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommonPaths.cpp; path = source/CommonPaths.cpp; sourceTree = "<group>"; };
@@ -254,6 +255,7 @@
 				CF19B3FF2544B9E500838B45 /* StringsBulk.h */,
 				CF19B4162544B9E700838B45 /* StringViewZBuf.h */,
 				CF19B4062544B9E500838B45 /* tiny_string.h */,
+				CFCB689E2879A85300086E40 /* ToLower.h */,
 				CF19B40C2544B9E600838B45 /* tribool.h */,
 				CF19B3FD2544B9E500838B45 /* variable_container.h */,
 				CFDE36E226BA5F0A00EB1B0D /* WhereIs.h */,

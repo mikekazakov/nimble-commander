@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickSearch.h"
 #include <Panel/PanelDataFilter.h>
 #include <Panel/PanelData.h>
@@ -56,7 +56,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     // wire up config changing notifications
     auto wire = [&](std::string_view _path) {
         auto sel = @selector(configQuickSearchSettingsChanged);
-        return m_Config->Observe(_path, objc_callback(self, sel));
+        return m_Config->Observe(_path, objc_callback_to_main_queue(self, sel));
     };
     m_ConfigObservers[0] = wire(g_ConfigWhereToFind);
     m_ConfigObservers[1] = wire(g_ConfigIsSoftFiltering);

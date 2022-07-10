@@ -60,9 +60,10 @@ CGEventRef FunctionalKeysPass::Callback([[maybe_unused]] CGEventTapProxy _proxy,
 {
     if( _type == kCGEventTapDisabledByTimeout ) {
         CGEventTapEnable(m_Port, true);
-        return nil;
+        return _event;
     }
-    else if( NSApp.isActive && NSApp.keyWindow != nil ) {
+    
+    if( NSApp.isActive && NSApp.keyWindow != nil ) {
         /* The check above is a paranoid one since an inactive app should not receive any messages
          * via this callback. But in practice there were such occasions, which is still a bit of a
          * mystery.

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -12,32 +12,32 @@
  * If _from_ can't be converted to _T_ - returns nil.
  * If _from_ is nil - returns nil.
  */
-template<typename T>
-inline T* objc_cast(id from) noexcept
+template <typename T>
+inline T *objc_cast(id from) noexcept
 {
     static const auto class_meta = [T class];
     if( [from isKindOfClass:class_meta] )
-        return static_cast<T*>(from);
+        return static_cast<T *>(from);
     return nil;
 }
 
-template<typename T, typename U>
-inline T* objc_bridge_cast(U *from) noexcept
+template <typename T, typename U>
+inline T *objc_bridge_cast(U *from) noexcept
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
-    return (__bridge T*)from;
+    return (__bridge T *)from;
 #pragma clang diagnostic pop
 }
 
 // Returns a C string with a name of a concrete class that _object has.
 const char *objc_class_c_str(id _object) noexcept;
 
-template<typename T>
+template <typename T>
 inline std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
 {
     __weak id weak_obj = _obj;
-    return [weak_obj, _sel]{
+    return [weak_obj, _sel] {
         if( __strong T *strong_obj = weak_obj ) {
             typedef void (*func_type)(id, SEL);
             func_type func = reinterpret_cast<func_type>([T instanceMethodForSelector:_sel]);
@@ -46,26 +46,35 @@ inline std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
     };
 }
 
-template<typename T>
+template <typename T>
 inline std::function<void()> objc_callback_to_main_queue(T *_obj, SEL _sel) noexcept
 {
+    typedef void (*func_type)(id, SEL);
     __weak id weak_obj = _obj;
-    return [weak_obj, _sel]{
-        if( __strong T *strong_obj_test = weak_obj )
-            dispatch_to_main_queue([weak_obj, _sel]{
-                if( __strong T *strong_obj = weak_obj ) {
-                    typedef void (*func_type)(id, SEL);
-                    func_type func = reinterpret_cast<func_type>([T instanceMethodForSelector:_sel]);
-                    func(strong_obj, _sel);
-                }
-            });
+    return [weak_obj, _sel] {
+        if( __strong T *strong_obj_test = weak_obj ) {
+            if( dispatch_is_main_queue() ) {
+                // already in the main queue - execute immediately
+                func_type func = reinterpret_cast<func_type>([T instanceMethodForSelector:_sel]);
+                func(strong_obj_test, _sel);
+            }
+            else {
+                // in a background thread - dispatch
+                dispatch_to_main_queue([weak_obj, _sel] {
+                    if( __strong T *strong_obj = weak_obj ) {
+                        func_type func = reinterpret_cast<func_type>([T instanceMethodForSelector:_sel]);
+                        func(strong_obj, _sel);
+                    }
+                });
+            }
+        }
     };
 }
 
-template<typename T>
+template <typename T>
 inline size_t objc_sizeof() noexcept
 {
-    return class_getInstanceSize ([T class]);
+    return class_getInstanceSize([T class]);
 }
 
 #endif

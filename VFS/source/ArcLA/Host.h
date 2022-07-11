@@ -17,44 +17,43 @@ struct State;
 class ArchiveHost final : public Host
 {
 public:
+    // Creates an archive host out of raw input
     ArchiveHost(const std::string &_path,
                 const VFSHostPtr &_parent,
                 std::optional<std::string> _password = std::nullopt,
                 VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
-    ArchiveHost(const VFSHostPtr &_parent,
-                const VFSConfiguration &_config,
-                VFSCancelChecker _cancel_checker = nullptr);
+    
+    // Creates an archive host out of a configuration of a previously existed host
+    ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = nullptr);
+    
+    // Destructor
     ~ArchiveHost();
 
+    // The fixed tag identifying this VFS class
     static const char *const UniqueTag;
-    virtual VFSConfiguration Configuration() const override;
+    
+    // Type-erased configuration that contains data to restore this VFS
+    VFSConfiguration Configuration() const override;
+    
     static VFSMeta Meta();
 
     bool IsImmutableFS() const noexcept override;
 
-    bool IsDirectory(const char *_path,
-                     unsigned long _flags,
-                     const VFSCancelChecker &_cancel_checker) override;
+    bool IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
+
+    int StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
+    int Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
 
     int
-    StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker) override;
-    int Stat(const char *_path,
-             VFSStat &_st,
-             unsigned long _flags,
-             const VFSCancelChecker &_cancel_checker) override;
-
-    int CreateFile(const char *_path,
-                   std::shared_ptr<VFSFile> &_target,
-                   const VFSCancelChecker &_cancel_checker) override;
+    CreateFile(const char *_path, std::shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker) override;
 
     int FetchDirectoryListing(const char *_path,
                               VFSListingPtr &_target,
                               unsigned long _flags,
                               const VFSCancelChecker &_cancel_checker) override;
 
-    int
-    IterateDirectoryListing(const char *_path,
-                            const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
+    int IterateDirectoryListing(const char *_path,
+                                const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
 
     int ReadSymlink(const char *_symlink_path,
                     char *_buffer,
@@ -117,7 +116,7 @@ public:
 
 private:
     struct Impl;
-    
+
     int DoInit(VFSCancelChecker _cancel_checker);
     const class VFSArchiveHostConfiguration &Config() const;
 

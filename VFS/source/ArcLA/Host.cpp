@@ -22,8 +22,7 @@ using namespace std::literals;
 
 const char *const ArchiveHost::UniqueTag = "arc_libarchive";
 
-struct ArchiveHost::Impl
-{
+struct ArchiveHost::Impl {
     std::shared_ptr<VFSFile> m_ArFile;
     std::shared_ptr<arc::Mediator> m_Mediator;
     struct archive *m_Arc = nullptr;
@@ -39,10 +38,9 @@ struct ArchiveHost::Impl
     std::map<uint32_t, Symlink> m_Symlinks;
     std::recursive_mutex m_SymlinksResolveLock;
 
-    std::vector<std::pair<arc::Dir *, uint32_t>>
-        m_EntryByUID; // points to directory and entry No inside it
+    std::vector<std::pair<arc::Dir *, uint32_t>> m_EntryByUID; // points to directory and entry No inside it
     std::vector<std::unique_ptr<arc::State>> m_States;
-    std::mutex m_StatesLock;    
+    std::mutex m_StatesLock;
 };
 
 class VFSArchiveHostConfiguration
@@ -61,8 +59,7 @@ public:
     }
 };
 
-static VFSConfiguration ComposeConfiguration(const std::string &_path,
-                                             std::optional<std::string> _passwd)
+static VFSConfiguration ComposeConfiguration(const std::string &_path, std::optional<std::string> _passwd)
 {
     VFSArchiveHostConfiguration config;
     config.path = _path;
@@ -70,11 +67,7 @@ static VFSConfiguration ComposeConfiguration(const std::string &_path,
     return VFSConfiguration(std::move(config));
 }
 
-static void DecodeStringToUTF8(const void *_bytes,
-                               size_t _sz,
-                               CFStringEncoding _enc,
-                               char *_buf,
-                               size_t _buf_sz)
+static void DecodeStringToUTF8(const void *_bytes, size_t _sz, CFStringEncoding _enc, char *_buf, size_t _buf_sz)
 {
     CFStackAllocator alloc;
     auto str = CFStringCreateWithBytesNoCopy(
@@ -95,8 +88,7 @@ ArchiveHost::ArchiveHost(const std::string &_path,
                          const VFSHostPtr &_parent,
                          std::optional<std::string> _password,
                          VFSCancelChecker _cancel_checker)
-    : Host(_path.c_str(), _parent, UniqueTag),
-      I(std::make_unique<Impl>()),
+    : Host(_path.c_str(), _parent, UniqueTag), I(std::make_unique<Impl>()),
       m_Configuration(ComposeConfiguration(_path, std::move(_password)))
 {
     assert(_parent);
@@ -110,11 +102,8 @@ ArchiveHost::ArchiveHost(const std::string &_path,
     }
 }
 
-ArchiveHost::ArchiveHost(const VFSHostPtr &_parent,
-                         const VFSConfiguration &_config,
-                         VFSCancelChecker _cancel_checker)
-    : Host(_config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, UniqueTag),
-    I(std::make_unique<Impl>()),
+ArchiveHost::ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker)
+    : Host(_config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, UniqueTag), I(std::make_unique<Impl>()),
       m_Configuration(_config)
 {
     assert(_parent);
@@ -153,11 +142,10 @@ VFSMeta ArchiveHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
-    m.SpawnWithConfig = [](const VFSHostPtr &_parent,
-                           const VFSConfiguration &_config,
-                           VFSCancelChecker _cancel_checker) {
-        return std::make_shared<ArchiveHost>(_parent, _config, _cancel_checker);
-    };
+    m.SpawnWithConfig =
+        [](const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker) {
+            return std::make_shared<ArchiveHost>(_parent, _config, _cancel_checker);
+        };
     return m;
 }
 
@@ -295,16 +283,16 @@ int ArchiveHost::ReadArchiveListing()
         const auto entry_pathname = archive_entry_pathname(aentry);
         if( entry_pathname == nullptr )
             continue; // check for broken archives
-        
+
         const auto entry_pathname_len = strlen(entry_pathname);
         if( entry_pathname_len == 0 )
             continue;
-        
+
         const bool entry_has_heading_slash = entry_pathname[0] == '/';
 
         char path[1024];
         path[0] = '/';
-    
+
         // pathname can be represented in ANY encoding.
         // if we already have figured out it - convert from it to UTF8 immediately
         if( detected_encoding ) {
@@ -346,8 +334,7 @@ int ArchiveHost::ReadArchiveListing()
 
         char short_name[256];
         char parent_path[1024];
-        if( !SplitIntoFilenameAndParentPath(
-                path, short_name, sizeof(short_name), parent_path, sizeof(parent_path)) )
+        if( !SplitIntoFilenameAndParentPath(path, short_name, sizeof(short_name), parent_path, sizeof(parent_path)) )
             continue;
 
         if( parent_dir->full_path != parent_path )
@@ -384,8 +371,7 @@ int ArchiveHost::ReadArchiveListing()
             const char *link = archive_entry_symlink(aentry);
             Symlink symlink;
             symlink.uid = entry->aruid;
-            if( !link ||
-                link[0] == 0 ) { // for invalid symlinks - mark them as invalid without resolving
+            if( !link || link[0] == 0 ) { // for invalid symlinks - mark them as invalid without resolving
                 symlink.value = "";
                 symlink.state = SymlinkState::Invalid;
             }
@@ -401,7 +387,7 @@ int ArchiveHost::ReadArchiveListing()
             if( path[strlen(path) - 1] != '/' )
                 strcat(path, "/");
             if( I->m_PathToDir.find(path) ==
-               I->m_PathToDir.end() ) { // check if it wasn't added before via FindOrBuildDir
+                I->m_PathToDir.end() ) { // check if it wasn't added before via FindOrBuildDir
                 char tmp[1024];
                 strcpy(tmp, path);
                 tmp[path_len - 1] = 0;
@@ -566,11 +552,10 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
             }
 
         listing_source.unix_modes.emplace_back(stat.st_mode);
-        listing_source.sizes.insert(
-            index,
-            //                                    S_ISDIR(stat.st_mode) ?
-            //                                        VFSListingInput::unknown_size :
-            stat.st_size);
+        listing_source.sizes.insert(index,
+                                    //                                    S_ISDIR(stat.st_mode) ?
+                                    //                                        VFSListingInput::unknown_size :
+                                    stat.st_size);
         listing_source.atimes.insert(index, stat.st_atime);
         listing_source.ctimes.insert(index, stat.st_ctime);
         listing_source.mtimes.insert(index, stat.st_mtime);
@@ -584,9 +569,7 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
     return 0;
 }
 
-bool ArchiveHost::IsDirectory(const char *_path,
-                              unsigned long _flags,
-                              const VFSCancelChecker &_cancel_checker)
+bool ArchiveHost::IsDirectory(const char *_path, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( !_path )
         return false;
@@ -642,9 +625,8 @@ int ArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path, un
     return VFSError::Ok;
 }
 
-int ArchiveHost::IterateDirectoryListing(
-    const char *_path,
-    const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+int ArchiveHost::IterateDirectoryListing(const char *_path,
+                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     assert(_path != 0);
     if( _path[0] != '/' )
@@ -823,8 +805,7 @@ std::unique_ptr<State> ArchiveHost::ClosestState(uint32_t _requested_item)
     uint32_t best_delta = std::numeric_limits<uint32_t>::max();
     auto best = I->m_States.end();
     for( auto i = I->m_States.begin(), e = I->m_States.end(); i != e; ++i )
-        if( (*i)->UID() < _requested_item ||
-            ((*i)->UID() == _requested_item && !(*i)->Consumed()) ) {
+        if( (*i)->UID() < _requested_item || ((*i)->UID() == _requested_item && !(*i)->Consumed()) ) {
             uint32_t delta = _requested_item - (*i)->UID();
             if( delta < best_delta ) {
                 best_delta = delta;
@@ -930,19 +911,22 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
 struct archive *ArchiveHost::SpawnLibarchive()
 {
     archive *arc = archive_read_new();
-    auto require = []( int rc ) { if (rc != 0) abort(); };
-    require( archive_read_support_filter_bzip2(arc) );
-    require( archive_read_support_filter_compress(arc) );
-    require( archive_read_support_filter_gzip(arc) );
-    require( archive_read_support_filter_lzip(arc) );
-    require( archive_read_support_filter_lzma(arc) );
-    require( archive_read_support_filter_xz(arc) );
-    require( archive_read_support_filter_uu(arc) );
-    require( archive_read_support_filter_rpm(arc) );
-    require( archive_read_support_filter_lzop(arc) );
-    require( archive_read_support_filter_lz4(arc) );
-    require( archive_read_support_filter_zstd(arc) );
-    
+    auto require = [](int rc) {
+        if( rc != 0 )
+            abort();
+    };
+    require(archive_read_support_filter_bzip2(arc));
+    require(archive_read_support_filter_compress(arc));
+    require(archive_read_support_filter_gzip(arc));
+    require(archive_read_support_filter_lzip(arc));
+    require(archive_read_support_filter_lzma(arc));
+    require(archive_read_support_filter_xz(arc));
+    require(archive_read_support_filter_uu(arc));
+    require(archive_read_support_filter_rpm(arc));
+    require(archive_read_support_filter_lzop(arc));
+    require(archive_read_support_filter_lz4(arc));
+    require(archive_read_support_filter_zstd(arc));
+
     archive_read_support_format_ar(arc);
     archive_read_support_format_cpio(arc);
     archive_read_support_format_lha(arc);
@@ -1070,16 +1054,26 @@ int ArchiveHost::ReadSymlink(const char *_symlink_path,
     return VFSError::Ok;
 }
 
-uint32_t ArchiveHost::StatTotalFiles() const { return I->m_TotalFiles; }
+uint32_t ArchiveHost::StatTotalFiles() const
+{
+    return I->m_TotalFiles;
+}
 
-uint32_t ArchiveHost::StatTotalDirs() const { return I->m_TotalDirs; }
+uint32_t ArchiveHost::StatTotalDirs() const
+{
+    return I->m_TotalDirs;
+}
 
-uint32_t ArchiveHost::StatTotalRegs() const { return I->m_TotalRegs; }
+uint32_t ArchiveHost::StatTotalRegs() const
+{
+    return I->m_TotalRegs;
+}
 
 std::shared_ptr<const ArchiveHost> ArchiveHost::SharedPtr() const
 {
     return std::static_pointer_cast<const ArchiveHost>(Host::SharedPtr());
 }
+
 std::shared_ptr<ArchiveHost> ArchiveHost::SharedPtr()
 {
     return std::static_pointer_cast<ArchiveHost>(Host::SharedPtr());

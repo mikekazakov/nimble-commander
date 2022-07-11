@@ -12,6 +12,8 @@
 #include "File.h"
 #include "EncodingDetection.h"
 #include <sys/param.h>
+#include <map>
+#include <mutex>
 
 namespace nc::vfs {
 
@@ -19,6 +21,29 @@ using namespace arc;
 using namespace std::literals;
 
 const char *const ArchiveHost::UniqueTag = "arc_libarchive";
+
+struct ArchiveHost::Impl
+{
+    std::shared_ptr<VFSFile> m_ArFile;
+    std::shared_ptr<arc::Mediator> m_Mediator;
+    struct archive *m_Arc = nullptr;
+    std::map<std::string, arc::Dir> m_PathToDir;
+    uint32_t m_TotalFiles = 0;
+    uint32_t m_TotalDirs = 0;
+    uint32_t m_TotalRegs = 0;
+    uint64_t m_ArchiveFileSize = 0;
+    uint64_t m_ArchivedFilesTotalSize = 0;
+    uint32_t m_LastItemUID = 0;
+
+    bool m_NeedsPathResolving = false; // true if there are any symlinks present in archive
+    std::map<uint32_t, Symlink> m_Symlinks;
+    std::recursive_mutex m_SymlinksResolveLock;
+
+    std::vector<std::pair<arc::Dir *, uint32_t>>
+        m_EntryByUID; // points to directory and entry No inside it
+    std::vector<std::unique_ptr<arc::State>> m_States;
+    std::mutex m_StatesLock;    
+};
 
 class VFSArchiveHostConfiguration
 {
@@ -71,14 +96,15 @@ ArchiveHost::ArchiveHost(const std::string &_path,
                          std::optional<std::string> _password,
                          VFSCancelChecker _cancel_checker)
     : Host(_path.c_str(), _parent, UniqueTag),
-      m_Configuration(ComposeConfiguration(_path, move(_password)))
+      I(std::make_unique<Impl>()),
+      m_Configuration(ComposeConfiguration(_path, std::move(_password)))
 {
     assert(_parent);
     int rc = DoInit(_cancel_checker);
     if( rc < 0 ) {
-        if( m_Arc != 0 ) { // TODO: ugly
-            archive_read_free(m_Arc);
-            m_Arc = 0;
+        if( I->m_Arc != nullptr ) { // TODO: ugly
+            archive_read_free(I->m_Arc);
+            I->m_Arc = nullptr;
         }
         throw VFSErrorException(rc);
     }
@@ -88,14 +114,15 @@ ArchiveHost::ArchiveHost(const VFSHostPtr &_parent,
                          const VFSConfiguration &_config,
                          VFSCancelChecker _cancel_checker)
     : Host(_config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, UniqueTag),
+    I(std::make_unique<Impl>()),
       m_Configuration(_config)
 {
     assert(_parent);
     int rc = DoInit(_cancel_checker);
     if( rc < 0 ) {
-        if( m_Arc != 0 ) { // TODO: ugly
-            archive_read_free(m_Arc);
-            m_Arc = 0;
+        if( I->m_Arc != 0 ) { // TODO: ugly
+            archive_read_free(I->m_Arc);
+            I->m_Arc = 0;
         }
         throw VFSErrorException(rc);
     }
@@ -103,8 +130,8 @@ ArchiveHost::ArchiveHost(const VFSHostPtr &_parent,
 
 ArchiveHost::~ArchiveHost()
 {
-    if( m_Arc != 0 )
-        archive_read_free(m_Arc);
+    if( I->m_Arc != nullptr )
+        archive_read_free(I->m_Arc);
 }
 
 bool ArchiveHost::IsImmutableFS() const noexcept
@@ -136,11 +163,11 @@ VFSMeta ArchiveHost::Meta()
 
 int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
 {
-    assert(m_Arc == 0);
+    assert(I->m_Arc == 0);
     assert(std::string_view(setlocale(LC_COLLATE, nullptr)).contains("UTF-8")); // this VFS requires UTF8 to work
     VFSFilePtr source_file;
 
-    int res = Parent()->CreateFile(JunctionPath(), source_file, nil);
+    int res = Parent()->CreateFile(JunctionPath(), source_file, {});
     if( res < 0 )
         return res;
 
@@ -153,45 +180,45 @@ int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
                                            // I don't think so.
 
     if( Parent()->IsNativeFS() ) {
-        m_ArFile = source_file;
+        I->m_ArFile = source_file;
     }
     else {
         auto wrapping = std::make_shared<VFSSeqToRandomROWrapperFile>(source_file);
         res = wrapping->Open(VFSFlags::OF_Read, _cancel_checker);
         if( res != VFSError::Ok )
             return res;
-        m_ArFile = wrapping;
+        I->m_ArFile = wrapping;
     }
 
-    if( m_ArFile->GetReadParadigm() < VFSFile::ReadParadigm::Sequential ) {
-        m_ArFile.reset();
+    if( I->m_ArFile->GetReadParadigm() < VFSFile::ReadParadigm::Sequential ) {
+        I->m_ArFile.reset();
         return VFSError::InvalidCall;
     }
 
-    m_Mediator = std::make_shared<Mediator>();
-    m_Mediator->file = m_ArFile;
+    I->m_Mediator = std::make_shared<Mediator>();
+    I->m_Mediator->file = I->m_ArFile;
 
-    m_Arc = SpawnLibarchive();
+    I->m_Arc = SpawnLibarchive();
 
-    archive_read_set_callback_data(m_Arc, m_Mediator.get());
-    archive_read_set_read_callback(m_Arc, Mediator::myread);
-    archive_read_set_seek_callback(m_Arc, Mediator::myseek);
-    res = archive_read_open1(m_Arc);
+    archive_read_set_callback_data(I->m_Arc, I->m_Mediator.get());
+    archive_read_set_read_callback(I->m_Arc, Mediator::myread);
+    archive_read_set_seek_callback(I->m_Arc, Mediator::myseek);
+    res = archive_read_open1(I->m_Arc);
     if( res < 0 ) {
-        archive_read_free(m_Arc);
-        m_Arc = 0;
-        m_Mediator.reset();
-        m_ArFile.reset();
+        archive_read_free(I->m_Arc);
+        I->m_Arc = 0;
+        I->m_Mediator.reset();
+        I->m_ArFile.reset();
         return -1; // TODO: right error code
     }
 
     // we should fail is archive is encrypted and there's no password provided
-    if( archive_read_has_encrypted_entries(m_Arc) > 0 && !Config().password )
+    if( archive_read_has_encrypted_entries(I->m_Arc) > 0 && !Config().password )
         return VFSError::ArclibPasswordRequired;
 
     res = ReadArchiveListing();
-    m_ArchiveFileSize = m_ArFile->Size();
-    if( archive_read_has_encrypted_entries(m_Arc) > 0 && !Config().password )
+    I->m_ArchiveFileSize = I->m_ArFile->Size();
+    if( archive_read_has_encrypted_entries(I->m_Arc) > 0 && !Config().password )
         return VFSError::ArclibPasswordRequired;
 
     return res;
@@ -244,22 +271,22 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
 
 int ArchiveHost::ReadArchiveListing()
 {
-    assert(m_Arc != 0);
+    assert(I->m_Arc != 0);
     uint32_t aruid = 0;
 
     {
         Dir root_dir;
         root_dir.full_path = "/";
         root_dir.name_in_parent = "";
-        m_PathToDir.emplace("/", std::move(root_dir));
+        I->m_PathToDir.emplace("/", std::move(root_dir));
     }
 
     std::optional<CFStringEncoding> detected_encoding;
 
-    Dir *parent_dir = &m_PathToDir["/"s];
+    Dir *parent_dir = &I->m_PathToDir["/"s];
     struct archive_entry *aentry;
     int ret;
-    while( (ret = archive_read_next_header(m_Arc, &aentry)) == ARCHIVE_OK ) {
+    while( (ret = archive_read_next_header(I->m_Arc, &aentry)) == ARCHIVE_OK ) {
         aruid++;
         const struct stat *stat = archive_entry_stat(aentry);
         if( stat == nullptr )
@@ -347,11 +374,11 @@ int ArchiveHost::ReadArchiveListing()
 
         entry->aruid = aruid;
         entry->st = *stat;
-        m_ArchivedFilesTotalSize += stat->st_size;
+        I->m_ArchivedFilesTotalSize += stat->st_size;
 
-        if( m_EntryByUID.size() <= entry->aruid )
-            m_EntryByUID.resize(entry->aruid + 1, std::make_pair(nullptr, 0));
-        m_EntryByUID[entry->aruid] = std::make_pair(parent_dir, entry_index_in_dir);
+        if( I->m_EntryByUID.size() <= entry->aruid )
+            I->m_EntryByUID.resize(entry->aruid + 1, std::make_pair(nullptr, 0));
+        I->m_EntryByUID[entry->aruid] = std::make_pair(parent_dir, entry_index_in_dir);
 
         if( issymlink ) { // read any symlink values at archive opening time
             const char *link = archive_entry_symlink(aentry);
@@ -365,41 +392,41 @@ int ArchiveHost::ReadArchiveListing()
             else {
                 symlink.value = link;
             }
-            m_Symlinks.emplace(entry->aruid, symlink);
-            m_NeedsPathResolving = true;
+            I->m_Symlinks.emplace(entry->aruid, symlink);
+            I->m_NeedsPathResolving = true;
         }
 
         if( isdir ) {
             // it's a directory
             if( path[strlen(path) - 1] != '/' )
                 strcat(path, "/");
-            if( m_PathToDir.find(path) ==
-                m_PathToDir.end() ) { // check if it wasn't added before via FindOrBuildDir
+            if( I->m_PathToDir.find(path) ==
+               I->m_PathToDir.end() ) { // check if it wasn't added before via FindOrBuildDir
                 char tmp[1024];
                 strcpy(tmp, path);
                 tmp[path_len - 1] = 0;
                 Dir dir;
                 dir.full_path = path; // full_path is with trailing slash
                 dir.name_in_parent = strrchr(tmp, '/') + 1;
-                m_PathToDir.emplace(path, std::move(dir));
+                I->m_PathToDir.emplace(path, std::move(dir));
             }
         }
 
         if( isdir )
-            m_TotalDirs++;
+            I->m_TotalDirs++;
         if( isreg )
-            m_TotalRegs++;
-        m_TotalFiles++;
+            I->m_TotalRegs++;
+        I->m_TotalFiles++;
     }
 
-    m_LastItemUID = aruid - 1;
+    I->m_LastItemUID = aruid - 1;
 
-    UpdateDirectorySize(m_PathToDir["/"], "/");
+    UpdateDirectorySize(I->m_PathToDir["/"], "/");
 
     if( ret == ARCHIVE_EOF )
         return VFSError::Ok;
 
-    printf("%s\n", archive_error_string(m_Arc));
+    printf("%s\n", archive_error_string(I->m_Arc));
 
     if( ret == ARCHIVE_WARN )
         return VFSError::Ok;
@@ -413,8 +440,8 @@ uint64_t ArchiveHost::UpdateDirectorySize(Dir &_directory, const std::string &_p
     for( auto &e : _directory.entries )
         if( S_ISDIR(e.st.st_mode) ) {
             const auto subdir_path = _path + e.name + "/";
-            const auto it = m_PathToDir.find(subdir_path);
-            if( it != end(m_PathToDir) ) {
+            const auto it = I->m_PathToDir.find(subdir_path);
+            if( it != std::end(I->m_PathToDir) ) {
                 const auto subdir_sz = UpdateDirectorySize(it->second, subdir_path);
                 e.st.st_size = subdir_sz;
                 size += subdir_sz;
@@ -431,8 +458,8 @@ uint64_t ArchiveHost::UpdateDirectorySize(Dir &_directory, const std::string &_p
 Dir *ArchiveHost::FindOrBuildDir(const char *_path_with_tr_sl)
 {
     assert(IsPathWithTrailingSlash(_path_with_tr_sl));
-    auto i = m_PathToDir.find(_path_with_tr_sl);
-    if( i != m_PathToDir.end() )
+    auto i = I->m_PathToDir.find(_path_with_tr_sl);
+    if( i != I->m_PathToDir.end() )
         return &(*i).second;
 
     char entry_name[256];
@@ -452,7 +479,7 @@ Dir *ArchiveHost::FindOrBuildDir(const char *_path_with_tr_sl)
     Dir entry;
     entry.full_path = _path_with_tr_sl;
     entry.name_in_parent = entry_name;
-    auto i2 = m_PathToDir.emplace(_path_with_tr_sl, std::move(entry));
+    auto i2 = I->m_PathToDir.emplace(_path_with_tr_sl, std::move(entry));
     return &(*i2.first).second;
 }
 
@@ -489,8 +516,8 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
     if( path[strlen(path) - 1] != '/' )
         strcat(path, "/");
 
-    auto i = m_PathToDir.find(path);
-    if( i == m_PathToDir.end() )
+    auto i = I->m_PathToDir.find(path);
+    if( i == I->m_PathToDir.end() )
         return VFSError::NotFound;
 
     const auto &directory = i->second;
@@ -605,7 +632,7 @@ int ArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path, un
     if( !_path || !_resolved_path )
         return VFSError::InvalidCall;
 
-    if( !m_NeedsPathResolving || (_flags & VFSFlags::F_NoFollow) )
+    if( !I->m_NeedsPathResolving || (_flags & VFSFlags::F_NoFollow) )
         strcpy(_resolved_path, _path);
     else {
         int res = ResolvePath(_path, _resolved_path);
@@ -632,8 +659,8 @@ int ArchiveHost::IterateDirectoryListing(
     if( buf[strlen(buf) - 1] != '/' )
         strcat(buf, "/"); // we store directories with trailing slash
 
-    auto i = m_PathToDir.find(buf);
-    if( i == m_PathToDir.end() )
+    auto i = I->m_PathToDir.find(buf);
+    if( i == I->m_PathToDir.end() )
         return VFSError::NotFound;
 
     VFSDirEnt dir;
@@ -698,8 +725,8 @@ const DirEntry *ArchiveHost::FindEntry(const char *_path)
         return FindEntry(tmp);
     }
 
-    auto i = m_PathToDir.find(buf);
-    if( i == end(m_PathToDir) )
+    auto i = I->m_PathToDir.find(buf);
+    if( i == I->m_PathToDir.end() )
         return 0;
 
     // ok, found dir, now let's find item
@@ -713,11 +740,11 @@ const DirEntry *ArchiveHost::FindEntry(const char *_path)
 
 const DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
 {
-    if( !_uid || _uid >= m_EntryByUID.size() )
+    if( !_uid || _uid >= I->m_EntryByUID.size() )
         return nullptr;
 
-    auto dir = m_EntryByUID[_uid].first;
-    auto ind = m_EntryByUID[_uid].second;
+    auto dir = I->m_EntryByUID[_uid].first;
+    auto ind = I->m_EntryByUID[_uid].second;
 
     assert(ind < dir->entries.size());
     return &dir->entries[ind];
@@ -745,8 +772,8 @@ int ArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
         result_uid = entry->aruid;
 
         if( (entry->st.st_mode & S_IFMT) == S_IFLNK ) {
-            auto symlink_it = m_Symlinks.find(entry->aruid);
-            if( symlink_it == end(m_Symlinks) )
+            auto symlink_it = I->m_Symlinks.find(entry->aruid);
+            if( symlink_it == I->m_Symlinks.end() )
                 return VFSError::NotFound;
 
             auto &s = symlink_it->second;
@@ -774,7 +801,7 @@ int ArchiveHost::StatFS([[maybe_unused]] const char *_path,
         return VFSError::InvalidCall;
 
     _stat.volume_name = vol_name;
-    _stat.total_bytes = m_ArchivedFilesTotalSize;
+    _stat.total_bytes = I->m_ArchivedFilesTotalSize;
     _stat.free_bytes = 0;
     _stat.avail_bytes = 0;
 
@@ -791,11 +818,11 @@ std::unique_ptr<State> ArchiveHost::ClosestState(uint32_t _requested_item)
     if( _requested_item == 0 )
         return nullptr;
 
-    std::lock_guard<std::mutex> lock(m_StatesLock);
+    std::lock_guard<std::mutex> lock(I->m_StatesLock);
 
     uint32_t best_delta = std::numeric_limits<uint32_t>::max();
-    auto best = m_States.end();
-    for( auto i = m_States.begin(), e = m_States.end(); i != e; ++i )
+    auto best = I->m_States.end();
+    for( auto i = I->m_States.begin(), e = I->m_States.end(); i != e; ++i )
         if( (*i)->UID() < _requested_item ||
             ((*i)->UID() == _requested_item && !(*i)->Consumed()) ) {
             uint32_t delta = _requested_item - (*i)->UID();
@@ -807,9 +834,9 @@ std::unique_ptr<State> ArchiveHost::ClosestState(uint32_t _requested_item)
             }
         }
 
-    if( best != m_States.end() ) {
-        auto state = move(*best);
-        m_States.erase(best);
+    if( best != I->m_States.end() ) {
+        auto state = std::move(*best);
+        I->m_States.erase(best);
         return state;
     }
 
@@ -822,16 +849,16 @@ void ArchiveHost::CommitState(std::unique_ptr<State> _state)
         return;
 
     // will throw away archives positioned at last item - they are useless
-    if( _state->UID() < m_LastItemUID ) {
-        std::lock_guard<std::mutex> lock(m_StatesLock);
-        m_States.emplace_back(move(_state));
+    if( _state->UID() < I->m_LastItemUID ) {
+        std::lock_guard<std::mutex> lock(I->m_StatesLock);
+        I->m_States.emplace_back(move(_state));
 
-        if( m_States.size() > 32 ) { // purge the latest one
-            auto last = begin(m_States);
-            for( auto i = begin(m_States), e = end(m_States); i != e; ++i )
+        if( I->m_States.size() > 32 ) { // purge the latest one
+            auto last = std::begin(I->m_States);
+            for( auto i = std::begin(I->m_States), e = std::end(I->m_States); i != e; ++i )
                 if( (*i)->UID() > (*last)->UID() )
                     last = i;
-            m_States.erase(last);
+            I->m_States.erase(last);
         }
     }
 }
@@ -848,10 +875,10 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
         VFSFilePtr file;
 
         // bad-bad design decision, need to refactor this later
-        if( auto wrapping = std::dynamic_pointer_cast<VFSSeqToRandomROWrapperFile>(m_ArFile) )
+        if( auto wrapping = std::dynamic_pointer_cast<VFSSeqToRandomROWrapperFile>(I->m_ArFile) )
             file = wrapping->Share();
         else
-            file = m_ArFile->Clone();
+            file = I->m_ArFile->Clone();
 
         if( !file )
             return VFSError::NotSupported;
@@ -935,14 +962,14 @@ struct archive *ArchiveHost::SpawnLibarchive()
 
 void ArchiveHost::ResolveSymlink(uint32_t _uid)
 {
-    if( !_uid || _uid >= m_EntryByUID.size() )
+    if( !_uid || _uid >= I->m_EntryByUID.size() )
         return;
 
-    const auto iter = m_Symlinks.find(_uid);
-    if( iter == end(m_Symlinks) )
+    const auto iter = I->m_Symlinks.find(_uid);
+    if( iter == std::end(I->m_Symlinks) )
         return;
 
-    std::lock_guard<std::recursive_mutex> lock(m_SymlinksResolveLock);
+    std::lock_guard<std::recursive_mutex> lock(I->m_SymlinksResolveLock);
     auto &symlink = iter->second;
     if( symlink.state != SymlinkState::Unresolved )
         return; // was resolved in race condition
@@ -955,7 +982,7 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
         return;
     }
 
-    const boost::filesystem::path dir_path = m_EntryByUID[_uid].first->full_path;
+    const boost::filesystem::path dir_path = I->m_EntryByUID[_uid].first->full_path;
     const boost::filesystem::path symlink_path = symlink.value;
     boost::filesystem::path result_path;
     if( symlink_path.is_relative() ) {
@@ -980,9 +1007,9 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
             if( curr_uid == 0 || curr_uid == _uid )
                 return;
 
-            if( m_Symlinks.find(curr_uid) != end(m_Symlinks) ) {
+            if( I->m_Symlinks.find(curr_uid) != std::end(I->m_Symlinks) ) {
                 // current entry is a symlink - needs an additional processing
-                auto &s = m_Symlinks[curr_uid];
+                auto &s = I->m_Symlinks[curr_uid];
                 if( s.state == SymlinkState::Unresolved )
                     ResolveSymlink(s.uid);
 
@@ -1007,8 +1034,8 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
 
 const ArchiveHost::Symlink *ArchiveHost::ResolvedSymlink(uint32_t _uid)
 {
-    auto iter = m_Symlinks.find(_uid);
-    if( iter == end(m_Symlinks) )
+    auto iter = I->m_Symlinks.find(_uid);
+    if( iter == std::end(I->m_Symlinks) )
         return nullptr;
 
     if( iter->second.state == SymlinkState::Unresolved )
@@ -1029,8 +1056,8 @@ int ArchiveHost::ReadSymlink(const char *_symlink_path,
     if( (entry->st.st_mode & S_IFMT) != S_IFLNK )
         return VFSError::FromErrno(EINVAL);
 
-    auto symlink_it = m_Symlinks.find(entry->aruid);
-    if( symlink_it == end(m_Symlinks) )
+    auto symlink_it = I->m_Symlinks.find(entry->aruid);
+    if( symlink_it == std::end(I->m_Symlinks) )
         return VFSError::NotFound;
 
     auto &val = symlink_it->second.value;
@@ -1041,6 +1068,21 @@ int ArchiveHost::ReadSymlink(const char *_symlink_path,
     strcpy(_buffer, val.c_str());
 
     return VFSError::Ok;
+}
+
+uint32_t ArchiveHost::StatTotalFiles() const { return I->m_TotalFiles; }
+
+uint32_t ArchiveHost::StatTotalDirs() const { return I->m_TotalDirs; }
+
+uint32_t ArchiveHost::StatTotalRegs() const { return I->m_TotalRegs; }
+
+std::shared_ptr<const ArchiveHost> ArchiveHost::SharedPtr() const
+{
+    return std::static_pointer_cast<const ArchiveHost>(Host::SharedPtr());
+}
+std::shared_ptr<ArchiveHost> ArchiveHost::SharedPtr()
+{
+    return std::static_pointer_cast<ArchiveHost>(Host::SharedPtr());
 }
 
 } // namespace nc::vfs

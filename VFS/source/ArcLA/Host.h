@@ -3,8 +3,7 @@
 
 #include "../../include/VFS/Host.h"
 #include "../../include/VFS/VFSFile.h"
-#include <map>
-#include <mutex>
+#include <memory>
 
 namespace nc::vfs {
 
@@ -64,9 +63,9 @@ public:
 
     bool ShouldProduceThumbnails() const override;
 
-    inline uint32_t StatTotalFiles() const { return m_TotalFiles; }
-    inline uint32_t StatTotalDirs() const { return m_TotalDirs; }
-    inline uint32_t StatTotalRegs() const { return m_TotalRegs; }
+    uint32_t StatTotalFiles() const;
+    uint32_t StatTotalDirs() const;
+    uint32_t StatTotalRegs() const;
 
     // Caching section - to reduce seeking overhead:
 
@@ -79,14 +78,9 @@ public:
     // use SeekCache or open a new file and seeks to requested item
     int ArchiveStateForItem(const char *_filename, std::unique_ptr<arc::State> &_target);
 
-    std::shared_ptr<const ArchiveHost> SharedPtr() const
-    {
-        return std::static_pointer_cast<const ArchiveHost>(Host::SharedPtr());
-    }
-    std::shared_ptr<ArchiveHost> SharedPtr()
-    {
-        return std::static_pointer_cast<ArchiveHost>(Host::SharedPtr());
-    }
+    std::shared_ptr<const ArchiveHost> SharedPtr() const;
+
+    std::shared_ptr<ArchiveHost> SharedPtr();
 
     /** return VFSError, not uids returned */
     int ResolvePathIfNeeded(const char *_path, char *_resolved_path, unsigned long _flags);
@@ -122,6 +116,8 @@ public:
     const Symlink *ResolvedSymlink(uint32_t _uid);
 
 private:
+    struct Impl;
+    
     int DoInit(VFSCancelChecker _cancel_checker);
     const class VFSArchiveHostConfiguration &Config() const;
 
@@ -140,26 +136,8 @@ private:
 
     void ResolveSymlink(uint32_t _uid);
 
-    VFSConfiguration m_Configuration;
-    std::shared_ptr<VFSFile> m_ArFile;
-    std::shared_ptr<arc::Mediator> m_Mediator;
-    struct archive *m_Arc = nullptr;
-    std::map<std::string, arc::Dir> m_PathToDir;
-    uint32_t m_TotalFiles = 0;
-    uint32_t m_TotalDirs = 0;
-    uint32_t m_TotalRegs = 0;
-    uint64_t m_ArchiveFileSize = 0;
-    uint64_t m_ArchivedFilesTotalSize = 0;
-    uint32_t m_LastItemUID = 0;
-
-    bool m_NeedsPathResolving = false; // true if there are any symlinks present in archive
-    std::map<uint32_t, Symlink> m_Symlinks;
-    std::recursive_mutex m_SymlinksResolveLock;
-
-    std::vector<std::pair<arc::Dir *, uint32_t>>
-        m_EntryByUID; // points to directory and entry No inside it
-    std::vector<std::unique_ptr<arc::State>> m_States;
-    std::mutex m_StatesLock;
+    std::unique_ptr<Impl> I;
+    VFSConfiguration m_Configuration; // TODO: move into I
 };
 
 } // namespace nc::vfs

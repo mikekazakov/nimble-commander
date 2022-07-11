@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <libarchive/archive.h>
@@ -57,7 +57,7 @@ private:
 
 struct DirEntry
 {
-    std::string name; // optimize
+    std::string name;
     struct stat st;
     uint32_t aruid; // unique number inside archive in same order as appearance in archive
 };
@@ -67,7 +67,7 @@ struct Dir
     std::string full_path;          // should alway be with trailing slash
     std::string name_in_parent;     // can be "" only for root directory, full_path will be "/"
     uint64_t content_size = 0;
-    std::deque<DirEntry> entries;
+    std::vector<DirEntry> entries;
 };
 
 }

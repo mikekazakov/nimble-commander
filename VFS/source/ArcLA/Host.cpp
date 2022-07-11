@@ -12,8 +12,8 @@
 #include "File.h"
 #include "EncodingDetection.h"
 #include <sys/param.h>
-#include <map>
 #include <mutex>
+#include <Habanero/RobinHoodUtil.h>
 
 namespace nc::vfs {
 
@@ -23,22 +23,30 @@ using namespace std::literals;
 const char *const ArchiveHost::UniqueTag = "arc_libarchive";
 
 struct ArchiveHost::Impl {
+    using PathToDirT = robin_hood::
+        unordered_node_map<std::string, arc::Dir, nc::RHTransparentStringHashEqual, nc::RHTransparentStringHashEqual>;
+
+    using SymlinksT = robin_hood::unordered_flat_map<uint32_t, Symlink>;
+
     std::shared_ptr<VFSFile> m_ArFile;
     std::shared_ptr<arc::Mediator> m_Mediator;
     struct archive *m_Arc = nullptr;
-    std::map<std::string, arc::Dir> m_PathToDir;
+    PathToDirT m_PathToDir;
+
     uint32_t m_TotalFiles = 0;
     uint32_t m_TotalDirs = 0;
     uint32_t m_TotalRegs = 0;
+    uint32_t m_LastItemUID = 0;
     uint64_t m_ArchiveFileSize = 0;
     uint64_t m_ArchivedFilesTotalSize = 0;
-    uint32_t m_LastItemUID = 0;
 
     bool m_NeedsPathResolving = false; // true if there are any symlinks present in archive
-    std::map<uint32_t, Symlink> m_Symlinks;
+    SymlinksT m_Symlinks;
     std::recursive_mutex m_SymlinksResolveLock;
 
+    // TODO: this leaves 4 bytes of gaps, i.e. for 500K# archive = 2MB of waste(!)
     std::vector<std::pair<arc::Dir *, uint32_t>> m_EntryByUID; // points to directory and entry No inside it
+
     std::vector<std::unique_ptr<arc::State>> m_States;
     std::mutex m_StatesLock;
 };
@@ -262,16 +270,19 @@ int ArchiveHost::ReadArchiveListing()
     assert(I->m_Arc != 0);
     uint32_t aruid = 0;
 
+    Dir *parent_dir = nullptr;
     {
+        // Manually "invent" the root directory
+        assert(I->m_PathToDir.empty());
         Dir root_dir;
         root_dir.full_path = "/";
         root_dir.name_in_parent = "";
-        I->m_PathToDir.emplace("/", std::move(root_dir));
+        const auto ret = I->m_PathToDir.emplace("/", std::move(root_dir));
+        parent_dir = &ret.first->second;
     }
 
     std::optional<CFStringEncoding> detected_encoding;
 
-    Dir *parent_dir = &I->m_PathToDir["/"s];
     struct archive_entry *aentry;
     int ret;
     while( (ret = archive_read_next_header(I->m_Arc, &aentry)) == ARCHIVE_OK ) {
@@ -340,7 +351,7 @@ int ArchiveHost::ReadArchiveListing()
         if( parent_dir->full_path != parent_path )
             parent_dir = FindOrBuildDir(parent_path);
 
-        DirEntry *entry = 0;
+        DirEntry *entry = nullptr;
         unsigned entry_index_in_dir = 0;
         if( isdir ) // check if it wasn't added before via FindOrBuildDir
             for( size_t i = 0, e = parent_dir->entries.size(); i < e; ++i ) {
@@ -352,7 +363,7 @@ int ArchiveHost::ReadArchiveListing()
                 }
             }
 
-        if( entry == 0 ) {
+        if( entry == nullptr ) {
             parent_dir->entries.emplace_back();
             entry_index_in_dir = static_cast<unsigned>(parent_dir->entries.size() - 1);
             entry = &parent_dir->entries.back();
@@ -378,7 +389,7 @@ int ArchiveHost::ReadArchiveListing()
             else {
                 symlink.value = link;
             }
-            I->m_Symlinks.emplace(entry->aruid, symlink);
+            I->m_Symlinks.emplace(entry->aruid, std::move(symlink));
             I->m_NeedsPathResolving = true;
         }
 
@@ -386,8 +397,7 @@ int ArchiveHost::ReadArchiveListing()
             // it's a directory
             if( path[strlen(path) - 1] != '/' )
                 strcat(path, "/");
-            if( I->m_PathToDir.find(path) ==
-                I->m_PathToDir.end() ) { // check if it wasn't added before via FindOrBuildDir
+            if( !I->m_PathToDir.contains(path) ) { // check if it wasn't added before via FindOrBuildDir
                 char tmp[1024];
                 strcpy(tmp, path);
                 tmp[path_len - 1] = 0;
@@ -444,8 +454,7 @@ uint64_t ArchiveHost::UpdateDirectorySize(Dir &_directory, const std::string &_p
 Dir *ArchiveHost::FindOrBuildDir(const char *_path_with_tr_sl)
 {
     assert(IsPathWithTrailingSlash(_path_with_tr_sl));
-    auto i = I->m_PathToDir.find(_path_with_tr_sl);
-    if( i != I->m_PathToDir.end() )
+    if( const auto i = I->m_PathToDir.find(_path_with_tr_sl); i != I->m_PathToDir.end() )
         return &(*i).second;
 
     char entry_name[256];
@@ -465,8 +474,8 @@ Dir *ArchiveHost::FindOrBuildDir(const char *_path_with_tr_sl)
     Dir entry;
     entry.full_path = _path_with_tr_sl;
     entry.name_in_parent = entry_name;
-    auto i2 = I->m_PathToDir.emplace(_path_with_tr_sl, std::move(entry));
-    return &(*i2.first).second;
+    const auto it = I->m_PathToDir.emplace(_path_with_tr_sl, std::move(entry));
+    return &(*it.first).second;
 }
 
 void ArchiveHost::InsertDummyDirInto(Dir *_parent, const char *_dir_name)
@@ -502,7 +511,7 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
     if( path[strlen(path) - 1] != '/' )
         strcat(path, "/");
 
-    auto i = I->m_PathToDir.find(path);
+    const auto i = I->m_PathToDir.find(path);
     if( i == I->m_PathToDir.end() )
         return VFSError::NotFound;
 
@@ -641,7 +650,7 @@ int ArchiveHost::IterateDirectoryListing(const char *_path,
     if( buf[strlen(buf) - 1] != '/' )
         strcat(buf, "/"); // we store directories with trailing slash
 
-    auto i = I->m_PathToDir.find(buf);
+    const auto i = I->m_PathToDir.find(buf);
     if( i == I->m_PathToDir.end() )
         return VFSError::NotFound;
 
@@ -678,7 +687,7 @@ uint32_t ArchiveHost::ItemUID(const char *_filename)
 const DirEntry *ArchiveHost::FindEntry(const char *_path)
 {
     if( !_path || _path[0] != '/' )
-        return 0;
+        return nullptr;
 
     // 1st - try to find _path directly (assume it's directory)
     char buf[1024], short_name[256];
@@ -707,7 +716,7 @@ const DirEntry *ArchiveHost::FindEntry(const char *_path)
         return FindEntry(tmp);
     }
 
-    auto i = I->m_PathToDir.find(buf);
+    const auto i = I->m_PathToDir.find(buf);
     if( i == I->m_PathToDir.end() )
         return 0;
 
@@ -717,7 +726,7 @@ const DirEntry *ArchiveHost::FindEntry(const char *_path)
         if( it.name.length() == short_name_len && it.name.compare(short_name) == 0 )
             return &it;
 
-    return 0;
+    return nullptr;
 }
 
 const DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
@@ -754,7 +763,7 @@ int ArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
         result_uid = entry->aruid;
 
         if( (entry->st.st_mode & S_IFMT) == S_IFLNK ) {
-            auto symlink_it = I->m_Symlinks.find(entry->aruid);
+            const auto symlink_it = I->m_Symlinks.find(entry->aruid);
             if( symlink_it == I->m_Symlinks.end() )
                 return VFSError::NotFound;
 
@@ -1018,7 +1027,7 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
 
 const ArchiveHost::Symlink *ArchiveHost::ResolvedSymlink(uint32_t _uid)
 {
-    auto iter = I->m_Symlinks.find(_uid);
+    const auto iter = I->m_Symlinks.find(_uid);
     if( iter == std::end(I->m_Symlinks) )
         return nullptr;
 
@@ -1040,7 +1049,7 @@ int ArchiveHost::ReadSymlink(const char *_symlink_path,
     if( (entry->st.st_mode & S_IFMT) != S_IFLNK )
         return VFSError::FromErrno(EINVAL);
 
-    auto symlink_it = I->m_Symlinks.find(entry->aruid);
+    const auto symlink_it = I->m_Symlinks.find(entry->aruid);
     if( symlink_it == std::end(I->m_Symlinks) )
         return VFSError::NotFound;
 

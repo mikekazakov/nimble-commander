@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <dispatch/dispatch.h>
@@ -8,20 +8,20 @@
 #include <iostream>
 #include <assert.h>
 
-// synopsis
+namespace nc {
 
-/** returns true if a current thread is actually a main thread (main queue).
- I.E. UI/Events thread. */
-#define dispatch_is_main_queue() \
-    (pthread_main_np() != 0)
+// returns true if a current thread is actually a main thread (main queue). I.E. UI/Events thread.
+bool dispatch_is_main_queue() noexcept;
 
-/** effectively assert( dispatch_is_main_queue() ) */
+}
+
+// effectively assert( dispatch_is_main_queue() )
 #define dispatch_assert_main_queue() \
-    assert( dispatch_is_main_queue() );
+    assert( nc::dispatch_is_main_queue() );
 
-/** effectively assert( !dispatch_is_main_queue() ) */
+// effectively assert( !dispatch_is_main_queue() )
 #define dispatch_assert_background_queue() \
-    assert( !dispatch_is_main_queue() );
+    assert( !nc::dispatch_is_main_queue() );
 
 template <class T>
 void dispatch_async( dispatch_queue_t queue, T f );
@@ -243,7 +243,7 @@ inline void dispatch_to_background_after(std::chrono::nanoseconds _delay, T _blo
 template <class T>
 inline void dispatch_or_run_in_main_queue(T _block)
 {
-    dispatch_is_main_queue() ? _block() : dispatch_to_main_queue(std::move(_block));
+    nc::dispatch_is_main_queue() ? _block() : dispatch_to_main_queue(std::move(_block));
 }
 
 template <class T>

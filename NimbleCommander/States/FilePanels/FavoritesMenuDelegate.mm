@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "PanelDataPersistency.h"
 #include "PanelControllerActionsDispatcher.h"
@@ -57,7 +57,7 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
         m_ManageItem = _item;
         [self refreshItems];
         m_Ticket = m_Storage->ObserveFavoritesChanges(
-            objc_callback(self, @selector(favoritesChanged)) );
+            nc::objc_callback(self, @selector(favoritesChanged)) );
     }
     return self;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include "FilterPopUpMenu.h"
 #include <Utility/ObjCpp.h>
@@ -334,7 +334,7 @@ static constexpr std::array<bool, 256> g_PassthruTable = [] {
 {
     if( NSMenuItem *item = self.enclosingMenuItem )
         if( NSMenu *menu = item.menu )
-            if( auto filter_menu = objc_cast<FilterPopUpMenu>(menu) )
+            if( auto filter_menu = nc::objc_cast<FilterPopUpMenu>(menu) )
                 [filter_menu updateFilter:m_Query.stringValue];
 }
 

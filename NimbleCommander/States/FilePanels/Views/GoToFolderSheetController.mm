@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GoToFolderSheetController.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -200,8 +200,8 @@ static std::vector<unsigned> ListDirsWithPrefix
 
 - (void)menuItemClicked:(id)sender
 {
-    if( auto item = objc_cast<NSMenuItem>(sender) )
-        if( auto dir = objc_cast<NSString>(item.representedObject) )
+    if( auto item = nc::objc_cast<NSMenuItem>(sender) )
+        if( auto dir = nc::objc_cast<NSString>(item.representedObject) )
             [self updateUserInputWithAutocompetion:dir.fileSystemRepresentationSafe];
 }
 

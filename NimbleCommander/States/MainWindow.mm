@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindow.h"
 #include <Utility/SystemInformation.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
@@ -117,7 +117,7 @@ static const auto g_CloseWindowTitle = NSLocalizedString(@"Close Window", "Menu 
 
 - (IBAction)toggleToolbarShown:(id)sender
 {
-    if( auto wc = objc_cast<NCMainWindowController>(self.windowController) )
+    if( auto wc = nc::objc_cast<NCMainWindowController>(self.windowController) )
         [wc OnShowToolbar:sender];
     else
         [super toggleToolbarShown:sender];

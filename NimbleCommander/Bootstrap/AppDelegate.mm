@@ -174,7 +174,7 @@ static void SetupLogs()
     spdlog::level::level_enum level = spdlog::level::off;
     const auto defaults = NSUserDefaults.standardUserDefaults;
     const auto args = [defaults volatileDomainForName:NSArgumentDomain];
-    if( const auto arg_level = objc_cast<NSString>([args objectForKey:@"NCLogLevel"]) ) {
+    if( const auto arg_level = nc::objc_cast<NSString>([args objectForKey:@"NCLogLevel"]) ) {
         const auto casted = magic_enum::enum_cast<spdlog::level::level_enum>(arg_level.UTF8String);
         level = casted.value_or(spdlog::level::off);
     }
@@ -404,8 +404,8 @@ static std::string AquaticPrimePublicKey()
     connections_menu_item.menu.delegate = conn_delegate;
 
     auto panels_locator = []() -> MainWindowFilePanelState * {
-        if( auto wnd = objc_cast<NCMainWindow>(NSApp.keyWindow) )
-            if( auto ctrl = objc_cast<NCMainWindowController>(wnd.delegate) )
+        if( auto wnd = nc::objc_cast<NCMainWindow>(NSApp.keyWindow) )
+            if( auto ctrl = nc::objc_cast<NCMainWindowController>(wnd.delegate) )
                 return ctrl.filePanelsState;
         return nil;
     };
@@ -678,8 +678,8 @@ static std::string AquaticPrimePublicKey()
 
 - (void)windowWillClose:(NSNotification *)aNotification
 {
-    if( auto main_wnd = objc_cast<NCMainWindow>(aNotification.object) )
-        if( auto main_ctrl = objc_cast<NCMainWindowController>(main_wnd.delegate) ) {
+    if( auto main_wnd = nc::objc_cast<NCMainWindow>(aNotification.object) )
+        if( auto main_ctrl = nc::objc_cast<NCMainWindowController>(main_wnd.delegate) ) {
             dispatch_to_main_queue([=] { [self removeMainWindow:main_ctrl]; });
         }
 }
@@ -1080,7 +1080,7 @@ static std::string AquaticPrimePublicKey()
 {
     NCMainWindowController *target_window = nil;
     for( NSWindow *wnd in NSApplication.sharedApplication.orderedWindows )
-        if( auto wc = objc_cast<NCMainWindowController>(wnd.windowController) )
+        if( auto wc = nc::objc_cast<NCMainWindowController>(wnd.windowController) )
             if( [wc.topmostState isKindOfClass:MainWindowFilePanelState.class] ) {
                 target_window = wc;
                 break;

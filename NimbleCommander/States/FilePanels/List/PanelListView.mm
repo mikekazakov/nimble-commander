@@ -269,7 +269,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 
 - (void)viewDidMoveToSuperview
 {
-    if( auto pv = objc_cast<PanelView>(self.superview) ) {
+    if( auto pv = nc::objc_cast<PanelView>(self.superview) ) {
         m_PanelView = pv;
         [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
         [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
@@ -285,12 +285,12 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
         const bool active = m_PanelView.active;
         [m_TableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rv,
                                                             [[maybe_unused]] NSInteger row) {
-          if( auto v = objc_cast<PanelListViewRowView>(rv) )
+          if( auto v = nc::objc_cast<PanelListViewRowView>(rv) )
               v.panelActive = active;
         }];
     }
     if( [keyPath isEqualToString:@"width"] ) {
-        if( auto c = objc_cast<NSTableColumn>(object) )
+        if( auto c = nc::objc_cast<NSTableColumn>(object) )
             [self widthDidChangeForColumn:c];
     }
 }
@@ -390,7 +390,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     const int row = static_cast<int>(rowIndex);
 
     const auto abstract_row_view = [m_TableView rowViewAtRow:row makeIfNecessary:false];
-    const auto row_view = objc_cast<PanelListViewRowView>(abstract_row_view);
+    const auto row_view = nc::objc_cast<PanelListViewRowView>(abstract_row_view);
     if( row_view == nil )
         return nil;
 
@@ -478,7 +478,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
               forRow:(NSInteger)row
 {
     if( row < 0 && m_RowsStash.size() < g_MaxStashedRows )
-        if( auto r = objc_cast<PanelListViewRowView>(rowView) ) {
+        if( auto r = nc::objc_cast<PanelListViewRowView>(rowView) ) {
             r.item = VFSListingItem();
             m_RowsStash.push(r);
         }
@@ -725,7 +725,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     if( col_index != NSNotFound )
         [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView,
                                                             [[maybe_unused]] NSInteger row) {
-          if( auto v = objc_cast<PanelListViewDateTimeView>([rowView viewAtColumn:col_index]) )
+          if( auto v = nc::objc_cast<PanelListViewDateTimeView>([rowView viewAtColumn:col_index]) )
               v.style = _style;
         }];
 }
@@ -1034,7 +1034,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         NSArray *objects;
         if( [nib instantiateWithOwner:nil topLevelObjects:&objects] )
             for( id i in objects )
-                if( auto menu = objc_cast<NSMenu>(i) )
+                if( auto menu = nc::objc_cast<NSMenu>(i) )
                     return menu;
     }
     return nil;
@@ -1053,7 +1053,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (IBAction)onToggleColumnVisibilty:(id)sender
 {
-    if( auto menu_item = objc_cast<NSMenuItem>(sender) ) {
+    if( auto menu_item = nc::objc_cast<NSMenuItem>(sender) ) {
         const auto kind =
             IdentifierToKind(static_cast<char>([menu_item.identifier characterAtIndex:0]));
 
@@ -1111,7 +1111,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
               continue;
           const auto col_id = [v.identifier characterAtIndex:0];
           if( col_id == 'C' || col_id == 'D' || col_id == 'E' ) {
-              auto date_view = objc_cast<PanelListViewDateTimeView>(v);
+              auto date_view = nc::objc_cast<PanelListViewDateTimeView>(v);
               [date_view dateChanged];
           }
       }

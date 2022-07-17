@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "TabBarStyle.h"
 #import <MMTabBarView/MMTabStyle.h>
 #import <MMTabBarView/MMAttachedTabBarButton.h>
@@ -351,7 +351,7 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
 {
     frame.size.height -= 1; // for horizontal divider drawn by drawBezelOfTabBarView
     
-    MMAttachedTabBarButton *button = objc_cast<MMAttachedTabBarButton>(controlView);
+    MMAttachedTabBarButton *button = nc::objc_cast<MMAttachedTabBarButton>(controlView);
     
     const NSColor *bg_color = [&]{
         const MMTabBarView *tabBarView = [controlView enclosingTabBarView];

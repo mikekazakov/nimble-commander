@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <Utility/HexadecimalColor.h>
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
@@ -80,7 +80,7 @@
 
 - (void)colorChanged:(id)sender
 {
-    if( NSColorWell *cw = objc_cast<NSColorWell>(sender) ) {
+    if( NSColorWell *cw = nc::objc_cast<NSColorWell>(sender) ) {
         if( cw.color != m_Color ) {
             m_Color = cw.color;
             m_Description.stringValue = [m_Color toHexString];
@@ -95,7 +95,7 @@
                        context:(void *) [[maybe_unused]] context
 {
     if( [keyPath isEqualToString:@"color"] )
-        if( NSColorWell *cw = objc_cast<NSColorWell>(object) ) {
+        if( NSColorWell *cw = nc::objc_cast<NSColorWell>(object) ) {
             if( cw.color != m_Color ) {
                 m_Color = cw.color;
                 m_Description.stringValue = [m_Color toHexString];
@@ -270,7 +270,7 @@
 
 - (void)standardFontClicked:(id)sender
 {
-    if( auto i = objc_cast<NSMenuItem>(sender) ) {
+    if( auto i = nc::objc_cast<NSMenuItem>(sender) ) {
         const auto new_font = [NSFont systemFontOfSize:i.tag];
         if( new_font != m_Font ) {
             m_Font = new_font;
@@ -345,8 +345,8 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 
 - (void)onColorChanged:(id)sender
 {
-    if( NSColorWell *cw = objc_cast<NSColorWell>(sender) )
-        if( auto rv = objc_cast<NSTableRowView>(cw.superview) )
+    if( NSColorWell *cw = nc::objc_cast<NSColorWell>(sender) )
+        if( auto rv = nc::objc_cast<NSTableRowView>(cw.superview) )
             if( rv.superview == self.table ) {
                 long row_no = [self.table rowForView:rv];
                 if( row_no >= 0 ) {
@@ -425,7 +425,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     NSTextField *tf = obj.object;
     if( !tf )
         return;
-    if( auto rv = objc_cast<NSTableRowView>(tf.superview) ) {
+    if( auto rv = nc::objc_cast<NSTableRowView>(tf.superview) ) {
         if( rv.superview == self.table ) {
             long row_no = [self.table rowForView:rv];
             if( row_no >= 0 ) {
@@ -441,8 +441,8 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 
 - (void)onColoringFilterClicked:(id)sender
 {
-    if( auto button = objc_cast<NSButton>(sender) )
-        if( auto rv = objc_cast<NSTableRowView>(button.superview) ) {
+    if( auto button = nc::objc_cast<NSButton>(sender) )
+        if( auto rv = nc::objc_cast<NSTableRowView>(button.superview) ) {
             long row_no = [static_cast<NSTableView *>(rv.superview) rowForView:rv];
             auto sheet = [[PreferencesWindowPanelsTabColoringFilterSheet alloc]
                 initWithFilter:m_Rules.at(row_no).filter];

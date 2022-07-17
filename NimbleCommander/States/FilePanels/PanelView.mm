@@ -151,7 +151,7 @@ struct StateStorage {
 - (void)setDelegate:(id<PanelViewDelegate>)delegate
 {
     m_Delegate = delegate;
-    if( auto r = objc_cast<NSResponder>(delegate) ) {
+    if( auto r = nc::objc_cast<NSResponder>(delegate) ) {
         NSResponder *current = self.nextResponder;
         super.nextResponder = r;
         r.nextResponder = current;
@@ -165,7 +165,7 @@ struct StateStorage {
 
 - (void)setNextResponder:(NSResponder *)newNextResponder
 {
-    if( auto r = objc_cast<AttachedResponder>(self.delegate) ) {
+    if( auto r = nc::objc_cast<AttachedResponder>(self.delegate) ) {
         [r setNextResponder:newNextResponder];
         return;
     }
@@ -261,7 +261,7 @@ struct StateStorage {
     if( auto w = self.window )
         if( w.isKeyWindow || w.isMainWindow )
             if( id fr = w.firstResponder )
-                return fr == self || [objc_cast<NSView>(fr) isDescendantOf:self];
+                return fr == self || [nc::objc_cast<NSView>(fr) isDescendantOf:self];
     return false;
 }
 
@@ -643,7 +643,7 @@ struct StateStorage {
 
 - (const data::ItemVolatileData &)item_vd
 {
-    assert(dispatch_is_main_queue());
+    dispatch_assert_main_queue();
     static const data::ItemVolatileData stub{};
     int indx = m_Data->RawIndexForSortIndex(m_CursorPos);
     if( indx < 0 )
@@ -653,7 +653,7 @@ struct StateStorage {
 
 - (void)SelectUnselectInRange:(int)_start last_included:(int)_end select:(BOOL)_select
 {
-    assert(dispatch_is_main_queue());
+    dispatch_assert_main_queue();
     if( _start < 0 || _start >= static_cast<int>(m_Data->SortedDirectoryEntries().size()) ||
         _end < 0 || _end >= static_cast<int>(m_Data->SortedDirectoryEntries().size()) ) {
         NSLog(@"SelectUnselectInRange - invalid range");
@@ -678,7 +678,7 @@ struct StateStorage {
 
 - (void)performKeyboardSelection:(int)_start last_included:(int)_end
 {
-    assert(dispatch_is_main_queue());
+    dispatch_assert_main_queue();
     if( m_KeyboardCursorSelectionType == CursorSelectionType::No )
         return;
     [self SelectUnselectInRange:_start
@@ -688,7 +688,7 @@ struct StateStorage {
 
 - (void)setupBriefPresentationWithLayout:(PanelBriefViewColumnsLayout)_layout
 {
-    const auto init = !objc_cast<PanelBriefView>(m_ItemsView);
+    const auto init = !nc::objc_cast<PanelBriefView>(m_ItemsView);
     if( init ) {
         auto v = [self spawnBriefView];
         // v.translatesAutoresizingMaskIntoConstraints = false;
@@ -721,14 +721,14 @@ struct StateStorage {
             [m_ItemsView setCursorPosition:m_CursorPos];
     }
 
-    if( auto v = objc_cast<PanelBriefView>(m_ItemsView) ) {
+    if( auto v = nc::objc_cast<PanelBriefView>(m_ItemsView) ) {
         [v setColumnsLayout:_layout];
     }
 }
 
 - (void)setupListPresentationWithLayout:(PanelListViewColumnsLayout)_layout
 {
-    const auto init = !objc_cast<PanelListView>(m_ItemsView);
+    const auto init = !nc::objc_cast<PanelListView>(m_ItemsView);
 
     if( init ) {
         auto v = [self spawnListView];
@@ -761,16 +761,16 @@ struct StateStorage {
             [m_ItemsView setCursorPosition:m_CursorPos];
     }
 
-    if( auto v = objc_cast<PanelListView>(m_ItemsView) ) {
+    if( auto v = nc::objc_cast<PanelListView>(m_ItemsView) ) {
         [v setColumnsLayout:_layout];
     }
 }
 
 - (std::any)presentationLayout
 {
-    if( auto v = objc_cast<PanelBriefView>(m_ItemsView) )
+    if( auto v = nc::objc_cast<PanelBriefView>(m_ItemsView) )
         return std::any{[v columnsLayout]};
-    if( auto v = objc_cast<PanelListView>(m_ItemsView) )
+    if( auto v = nc::objc_cast<PanelListView>(m_ItemsView) )
         return std::any{[v columnsLayout]};
     return std::any{PanelViewDisabledLayout{}};
 }
@@ -787,7 +787,7 @@ struct StateStorage {
 
 - (void)savePathState
 {
-    assert(dispatch_is_main_queue());
+    dispatch_assert_main_queue();
     if( !m_Data || !m_Data->Listing().IsUniform() )
         return;
 
@@ -804,7 +804,7 @@ struct StateStorage {
 
 - (void)loadPathState
 {
-    assert(dispatch_is_main_queue());
+    dispatch_assert_main_queue();
     if( !m_Data || !m_Data->Listing().IsUniform() )
         return;
 
@@ -827,7 +827,7 @@ struct StateStorage {
 - (void)panelChangedWithFocusedFilename:(const std::string &)_focused_filename
                       loadPreviousState:(bool)_load
 {
-    assert(dispatch_is_main_queue());
+    dispatch_assert_main_queue();
     m_CursorPos = -1;
 
     if( _load )
@@ -933,7 +933,7 @@ struct StateStorage {
 
 - (void)dataUpdated
 {
-    assert(dispatch_is_main_queue());
+    dispatch_assert_main_queue();
     std::optional<int> renaming_item_ind;
     if( m_RenamingEditor ) {
         const auto new_item_ind = [self findSortedIndexOfForeignListingItem:m_RenamingEditor.originalItem];
@@ -970,8 +970,7 @@ struct StateStorage {
 
 - (int)sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options
 {
-
-    assert(dispatch_is_main_queue());
+    dispatch_assert_main_queue();
     auto pos = [m_ItemsView sortedItemPosAtPoint:_window_point hitTestOption:_options];
     return pos;
 }
@@ -1091,7 +1090,7 @@ struct StateStorage {
 
 - (PanelController *)controller
 {
-    return objc_cast<PanelController>(m_Delegate);
+    return nc::objc_cast<PanelController>(m_Delegate);
 }
 
 - (int)headerBarHeight

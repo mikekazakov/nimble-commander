@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -76,7 +76,7 @@ using namespace nc::panel;
 - (PanelView *)panelView
 {
     NSView *sv = self.superview;
-    while( sv != nil && objc_cast<PanelView>(sv) == nil )
+    while( sv != nil && nc::objc_cast<PanelView>(sv) == nil )
         sv = sv.superview;
     return static_cast<PanelView *>(sv);
 }
@@ -267,7 +267,7 @@ using namespace nc::panel;
 
 + (void)drawVerticalSeparatorForView:(NSView *)_view
 {
-    const auto table = objc_cast<NSTableView>(_view.superview.superview);
+    const auto table = nc::objc_cast<NSTableView>(_view.superview.superview);
     if( !table )
         return;
 

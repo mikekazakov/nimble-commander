@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
@@ -69,7 +69,7 @@ using nc::utility::AdaptiveDateFormatting;
 - (void)viewDidMoveToSuperview
 {
     [super viewDidMoveToSuperview];
-    if( auto rv = objc_cast<PanelListViewRowView>(self.superview) )
+    if( auto rv = nc::objc_cast<PanelListViewRowView>(self.superview) )
         m_RowView = rv;
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PoolViewController.h"
 #include "Pool.h"
 #include "Internal.h"
@@ -34,7 +34,7 @@ static const auto g_ViewAppearTimeout = 100ms;
         m_IndexToShow = -1;
         m_Pool = _pool.shared_from_this();
         m_Pool->ObserveUnticketed(Pool::NotifyAboutChange,
-                                  objc_callback(self, @selector(poolDidChangeCallback)));
+                                  nc::objc_callback(self, @selector(poolDidChangeCallback)));
     }
     return self;
 }

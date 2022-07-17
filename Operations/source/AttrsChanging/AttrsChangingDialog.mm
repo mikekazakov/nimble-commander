@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingDialog.h"
 #include <VFS/VFS.h>
 #include <Habanero/algo.h>
@@ -277,7 +277,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
 
 - (IBAction)onTimesCheckboxClicked:(id)sender
 {
-    if( const auto b = objc_cast<NSButton>(sender) ) {
+    if( const auto b = nc::objc_cast<NSButton>(sender) ) {
         b.tag++;
         [self fillTimes];
     }
@@ -285,7 +285,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
 
 - (IBAction)onTimeChanged:(id)sender
 {
-    if( const auto dp = objc_cast<NSDatePicker>(sender) )
+    if( const auto dp = nc::objc_cast<NSDatePicker>(sender) )
         dp.tag++;
 }
 
@@ -624,19 +624,19 @@ static const auto g_MixedOwnageTitle = @"[???]";
 
 - (IBAction)onPermCheckbox:(id)sender
 {
-    if( const auto b = objc_cast<NSButton>(sender) )
+    if( const auto b = nc::objc_cast<NSButton>(sender) )
         b.tag++;
 }
 
 - (IBAction)onOwnagePopup:(id)sender
 {
-    if( const auto b = objc_cast<NSPopUpButton>(sender) )
+    if( const auto b = nc::objc_cast<NSPopUpButton>(sender) )
         b.tag++;
 }
 
 - (IBAction)onFlagCheckbox:(id)sender
 {
-    if( const auto b = objc_cast<NSButton>(sender) )
+    if( const auto b = nc::objc_cast<NSButton>(sender) )
         b.tag++;
 }
 

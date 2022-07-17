@@ -50,7 +50,7 @@ using namespace nc::panel;
     [self updateMasksMenu];
     [self updateSearchPrompt];
     self.searchField.stringValue = [NSString stringWithUTF8StdString:m_Initial.string];
-    objc_cast<NSSearchFieldCell>(self.searchField.cell).cancelButtonCell = nil;
+    nc::objc_cast<NSSearchFieldCell>(self.searchField.cell).cancelButtonCell = nil;
 }
 
 - (NSMenu *)buildMasksMenu
@@ -131,7 +131,7 @@ using namespace nc::panel;
 - (IBAction)onMaskMenuHistoryEntryClicked:(id)_sender
 {
 
-    const auto item = objc_cast<NSMenuItem>(_sender);
+    const auto item = nc::objc_cast<NSMenuItem>(_sender);
     if( !item )
         return;
     const auto tag = item.tag;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include "../Internal.h"
@@ -238,7 +238,7 @@ static std::string MakeCanonicPath(std::string _input)
 
 - (void)controlTextDidChange:(NSNotification *)notification
 {
-    if( objc_cast<NSTextField>(notification.object) == self.TextField )
+    if( nc::objc_cast<NSTextField>(notification.object) == self.TextField )
         [self validate];
 }
 

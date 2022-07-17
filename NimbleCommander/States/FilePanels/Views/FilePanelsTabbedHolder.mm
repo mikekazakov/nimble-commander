@@ -171,7 +171,7 @@
     if( !it )
         return nil;
 
-    assert(objc_cast<PanelView>(it.view));
+    assert(nc::objc_cast<PanelView>(it.view));
 
     return static_cast<PanelView *>(it.view);
 }
@@ -225,7 +225,7 @@
 
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
-    const auto resp_view = objc_cast<NSView>(self.window.firstResponder);
+    const auto resp_view = nc::objc_cast<NSView>(self.window.firstResponder);
     if( !resp_view || ![resp_view isDescendantOf:m_TabView] )
         return [super performKeyEquivalent:_event];
 

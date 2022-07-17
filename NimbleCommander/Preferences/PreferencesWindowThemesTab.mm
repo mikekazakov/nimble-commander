@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowThemesTab.h"
 #include <Config/RapidJSON.h>
 #include <fstream>
@@ -129,7 +129,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
 {
     if( item == nil )
         return m_Nodes.count;
-    if( auto n = objc_cast<PreferencesWindowThemesTabGroupNode>(item) )
+    if( auto n = nc::objc_cast<PreferencesWindowThemesTabGroupNode>(item) )
         return n.children.count;
     return 0;
 }
@@ -138,27 +138,27 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
             child:(NSInteger)index
            ofItem:(nullable id)item
 {
-    if( auto n = objc_cast<PreferencesWindowThemesTabGroupNode>(item) )
+    if( auto n = nc::objc_cast<PreferencesWindowThemesTabGroupNode>(item) )
         return n.children[index];
     return m_Nodes[index];
 }
 
 - (BOOL)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView isItemExpandable:(id)item
 {
-    return objc_cast<PreferencesWindowThemesTabGroupNode>(item) != nil;
+    return nc::objc_cast<PreferencesWindowThemesTabGroupNode>(item) != nil;
 }
 
 - (nullable NSView *)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView
               viewForTableColumn:(nullable NSTableColumn *)tableColumn
                             item:(id)item
 {
-    if( auto n = objc_cast<PreferencesWindowThemesTabGroupNode>(item) ) {
+    if( auto n = nc::objc_cast<PreferencesWindowThemesTabGroupNode>(item) ) {
         if( [tableColumn.identifier isEqualToString:@"title"] )
             return SpawnSectionTitle(n.title);
 
         return nil;
     }
-    if( auto i = objc_cast<PreferencesWindowThemesTabItemNode>(item) ) {
+    if( auto i = nc::objc_cast<PreferencesWindowThemesTabItemNode>(item) ) {
         if( [tableColumn.identifier isEqualToString:@"title"] )
             return SpawnEntryTitle(i.title);
 
@@ -222,10 +222,10 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
 
 - (void)onAppearanceChanged:(id)sender
 {
-    if( const auto v = objc_cast<PreferencesWindowThemesAppearanceControl>(sender) ) {
+    if( const auto v = nc::objc_cast<PreferencesWindowThemesAppearanceControl>(sender) ) {
         const auto row = [self.outlineView rowForView:v];
         const id item = [self.outlineView itemAtRow:row];
-        if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
+        if( const auto node = nc::objc_cast<PreferencesWindowThemesTabItemNode>(item) )
             [self commitChangedValue:ThemePersistence::EncodeAppearance(v.themeAppearance)
                               forKey:node.entry];
     }
@@ -233,30 +233,30 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
 
 - (void)onColoringRulesChanged:(id)sender
 {
-    if( const auto v = objc_cast<PreferencesWindowThemesTabColoringRulesControl>(sender) ) {
+    if( const auto v = nc::objc_cast<PreferencesWindowThemesTabColoringRulesControl>(sender) ) {
         const auto row = [self.outlineView rowForView:v];
         const id item = [self.outlineView itemAtRow:row];
-        if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
+        if( const auto node = nc::objc_cast<PreferencesWindowThemesTabItemNode>(item) )
             [self commitChangedValue:ThemePersistence::EncodeRules(v.rules) forKey:node.entry];
     }
 }
 
 - (void)onColorChanged:(id)sender
 {
-    if( const auto v = objc_cast<PreferencesWindowThemesTabColorControl>(sender) ) {
+    if( const auto v = nc::objc_cast<PreferencesWindowThemesTabColorControl>(sender) ) {
         const auto row = [self.outlineView rowForView:v];
         const id item = [self.outlineView itemAtRow:row];
-        if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
+        if( const auto node = nc::objc_cast<PreferencesWindowThemesTabItemNode>(item) )
             [self commitChangedValue:ThemePersistence::EncodeColor(v.color) forKey:node.entry];
     }
 }
 
 - (void)onFontChanged:(id)sender
 {
-    if( const auto v = objc_cast<PreferencesWindowThemesTabFontControl>(sender) ) {
+    if( const auto v = nc::objc_cast<PreferencesWindowThemesTabFontControl>(sender) ) {
         const auto row = [self.outlineView rowForView:v];
         const id item = [self.outlineView itemAtRow:row];
-        if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
+        if( const auto node = nc::objc_cast<PreferencesWindowThemesTabItemNode>(item) )
             [self commitChangedValue:ThemePersistence::EncodeFont(v.font) forKey:node.entry];
     }
 }
@@ -276,7 +276,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
 
 - (CGFloat)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView heightOfRowByItem:(id)item
 {
-    if( auto i = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
+    if( auto i = nc::objc_cast<PreferencesWindowThemesTabItemNode>(item) )
         if( i.type == PreferencesWindowThemesTabItemType::ColoringRules )
             return 140;
 
@@ -428,7 +428,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
 
     const auto row = [self.outlineView rowForView:tf];
     const id item = [self.outlineView itemAtRow:row];
-    if( const auto node = objc_cast<PreferencesWindowThemesTabItemNode>(item) ) {
+    if( const auto node = nc::objc_cast<PreferencesWindowThemesTabItemNode>(item) ) {
         if( node.type == PreferencesWindowThemesTabItemType::ThemeTitle ) {
             const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
             if( m_Manager->RenameTheme(theme_name, tf.stringValue.UTF8String) )

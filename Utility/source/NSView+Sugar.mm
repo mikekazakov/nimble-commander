@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/NSView+Sugar.h>
 
@@ -6,7 +6,7 @@
 
 - (void) setNeedsDisplay
 {
-    if( dispatch_is_main_queue() )
+    if( nc::dispatch_is_main_queue() )
         self.needsDisplay = true;
     else
         dispatch_to_main_queue( [=]{ self.needsDisplay = true; } );

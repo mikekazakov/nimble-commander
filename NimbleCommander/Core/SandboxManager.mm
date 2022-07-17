@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
@@ -100,12 +100,12 @@ void SandboxManager::LoadSecurityScopeBookmarks_Unlocked()
     assert(m_Bookmarks.empty());
 
     auto bookmarks =
-        objc_cast<NSArray>([NSUserDefaults.standardUserDefaults objectForKey:g_BookmarksKey]);
+        nc::objc_cast<NSArray>([NSUserDefaults.standardUserDefaults objectForKey:g_BookmarksKey]);
     if( !bookmarks )
         return;
 
     for( id obj : bookmarks )
-        if( auto *data = objc_cast<NSData>(obj) ) {
+        if( auto *data = nc::objc_cast<NSData>(obj) ) {
             NSURL *scoped_url =
                 [NSURL URLByResolvingBookmarkData:data
                                           options:NSURLBookmarkResolutionWithoutMounting |
@@ -147,7 +147,7 @@ bool SandboxManager::Empty() const
 
 bool SandboxManager::AskAccessForPathSync(const std::string &_path, bool _mandatory_path)
 {
-    if( !dispatch_is_main_queue() ) {
+    if( !nc::dispatch_is_main_queue() ) {
         bool result = false;
         dispatch_sync(dispatch_get_main_queue(),
                       [&] { result = AskAccessForPathSync(_path, _mandatory_path); });

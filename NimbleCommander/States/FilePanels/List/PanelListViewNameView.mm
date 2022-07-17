@@ -105,7 +105,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 
 - (void)drawRect:(NSRect) [[maybe_unused]] _dirtyRect
 {
-    auto row_view = objc_cast<PanelListViewRowView>(self.superview);
+    auto row_view = nc::objc_cast<PanelListViewRowView>(self.superview);
     if( !row_view )
         return;
     if( !row_view.listView )

@@ -198,7 +198,7 @@ static const auto g_ScrollingBackground =
     m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
         ThemesManager::Notifications::FilePanelsBrief |
             ThemesManager::Notifications::FilePanelsGeneral,
-        objc_callback(self, @selector(themeDidChange)));
+        nc::objc_callback(self, @selector(themeDidChange)));
 
     return self;
 }
@@ -215,7 +215,7 @@ static const auto g_ScrollingBackground =
 
 - (void)viewDidMoveToSuperview
 {
-    if( auto pv = objc_cast<PanelView>(self.superview) ) {
+    if( auto pv = nc::objc_cast<PanelView>(self.superview) ) {
         m_PanelView = pv;
         [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
         [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
@@ -331,7 +331,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 {
     const auto columns_layout = m_ColumnsLayout;
     if( columns_layout.mode == PanelBriefViewColumnsLayout::Mode::FixedWidth ) {
-        if( auto fixed_width = objc_cast<NCPanelBriefViewFixedWidthLayout>(m_Layout) ) {
+        if( auto fixed_width = nc::objc_cast<NCPanelBriefViewFixedWidthLayout>(m_Layout) ) {
             fixed_width.itemWidth = columns_layout.fixed_mode_width;
             fixed_width.itemHeight = m_ItemLayout.item_height;
         }
@@ -345,7 +345,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
         }
     }
     else if( columns_layout.mode == PanelBriefViewColumnsLayout::Mode::FixedAmount ) {
-        if( auto fixed_number = objc_cast<NCPanelBriefViewFixedNumberLayout>(m_Layout) ) {
+        if( auto fixed_number = nc::objc_cast<NCPanelBriefViewFixedNumberLayout>(m_Layout) ) {
             fixed_number.columnsPerScreen = columns_layout.fixed_amount_value;
             fixed_number.itemHeight = m_ItemLayout.item_height;
         }
@@ -359,7 +359,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
         }
     }
     else if( columns_layout.mode == PanelBriefViewColumnsLayout::Mode::DynamicWidth ) {
-        if( auto dynamic_width = objc_cast<NCPanelBriefViewDynamicWidthLayout>(m_Layout) ) {
+        if( auto dynamic_width = nc::objc_cast<NCPanelBriefViewDynamicWidthLayout>(m_Layout) ) {
             dynamic_width.itemMinWidth = columns_layout.dynamic_width_min;
             dynamic_width.itemMaxWidth = columns_layout.dynamic_width_max;
             dynamic_width.itemHeight = m_ItemLayout.item_height;
@@ -517,7 +517,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 - (void)setupFieldEditor:(NCPanelViewFieldEditor *)_editor forItemAtIndex:(int)_sorted_item_index
 {
     const auto index = [NSIndexPath indexPathForItem:_sorted_item_index inSection:0];
-    if( auto i = objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:index]) )
+    if( auto i = nc::objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:index]) )
         [i setupFieldEditor:_editor];
 }
 
@@ -556,7 +556,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     const auto it = m_IconSlotToItemIndexMapping.find(_icon_no);
     if( it != end(m_IconSlotToItemIndexMapping) ) {
         const auto index = [NSIndexPath indexPathForItem:it->second inSection:0];
-        if( auto item = objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:index]) ) {
+        if( auto item = nc::objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:index]) ) {
             [item setIcon:_image];
         }
     }
@@ -573,7 +573,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 
 - (PanelView *)panelView
 {
-    return objc_cast<PanelView>(self.superview);
+    return nc::objc_cast<PanelView>(self.superview);
 }
 
 - (void)onPageUp:(NSEvent *) [[maybe_unused]] _event

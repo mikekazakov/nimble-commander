@@ -249,7 +249,7 @@ static NSString *TitleForData(const data::Model *_data);
 - (void)setupNotificationsCallbacks
 {
     m_ConfigTickets.emplace_back(GlobalConfig().Observe(
-        g_ConfigGeneralShowTabs, objc_callback(self, @selector(onShowTabsSettingChanged))));
+        g_ConfigGeneralShowTabs, nc::objc_callback(self, @selector(onShowTabsSettingChanged))));
 }
 
 - (void)dealloc
@@ -482,7 +482,7 @@ static NSString *TitleForData(const data::Model *_data);
 {
     if( _wnd == nil ) {
         m_LastResponder = nil;
-        if( auto resp = objc_cast<NSView>(self.window.firstResponder) )
+        if( auto resp = nc::objc_cast<NSView>(self.window.firstResponder) )
             if( [resp isDescendantOf:self] )
                 m_LastResponder = resp;
     }
@@ -542,12 +542,12 @@ static NSString *TitleForData(const data::Model *_data);
 
 - (PanelController *)leftPanelController
 {
-    return objc_cast<PanelController>(m_SplitView.leftTabbedHolder.current.delegate);
+    return nc::objc_cast<PanelController>(m_SplitView.leftTabbedHolder.current.delegate);
 }
 
 - (PanelController *)rightPanelController
 {
-    return objc_cast<PanelController>(m_SplitView.rightTabbedHolder.current.delegate);
+    return nc::objc_cast<PanelController>(m_SplitView.rightTabbedHolder.current.delegate);
 }
 
 - (const std::vector<PanelController *> &)leftControllers
@@ -771,7 +771,7 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
 
 - (void)markRestorableStateAsInvalid
 {
-    if( auto wc = objc_cast<NCMainWindowController>(self.window.delegate) )
+    if( auto wc = nc::objc_cast<NCMainWindowController>(self.window.delegate) )
         [wc invalidateRestorableState];
 }
 
@@ -927,11 +927,11 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
     }
     else {
         if( [self isLeftController:_panel] )
-            if( const auto ql = objc_cast<NCPanelQLOverlay>(m_SplitView.rightOverlay) )
+            if( const auto ql = nc::objc_cast<NCPanelQLOverlay>(m_SplitView.rightOverlay) )
                 return ql;
 
         if( [self isRightController:_panel] )
-            if( const auto ql = objc_cast<NCPanelQLOverlay>(m_SplitView.leftOverlay) )
+            if( const auto ql = nc::objc_cast<NCPanelQLOverlay>(m_SplitView.leftOverlay) )
                 return ql;
 
         if( _make_if_absent ) {
@@ -961,11 +961,11 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
                                                 make:(bool)_make_if_absent
 {
     if( [self isLeftController:_panel] )
-        if( const auto bso = objc_cast<BriefSystemOverview>(m_SplitView.rightOverlay) )
+        if( const auto bso = nc::objc_cast<BriefSystemOverview>(m_SplitView.rightOverlay) )
             return bso;
 
     if( [self isRightController:_panel] )
-        if( const auto bso = objc_cast<BriefSystemOverview>(m_SplitView.leftOverlay) )
+        if( const auto bso = nc::objc_cast<BriefSystemOverview>(m_SplitView.leftOverlay) )
             return bso;
 
     if( _make_if_absent ) {

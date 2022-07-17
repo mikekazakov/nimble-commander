@@ -136,8 +136,8 @@ using namespace std::literals;
 
 - (IBAction)onInternalViewerToolbarSettings:(id)sender
 {
-    [self.internalViewerToolbarPopover showRelativeToRect:objc_cast<NSButton>(sender).bounds
-                                                   ofView:objc_cast<NSButton>(sender)
+    [self.internalViewerToolbarPopover showRelativeToRect:nc::objc_cast<NSButton>(sender).bounds
+                                                   ofView:nc::objc_cast<NSButton>(sender)
                                             preferredEdge:NSMaxYEdge];
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Carbon/Carbon.h>
 #include "FileAlreadyExistDialog.h"
@@ -104,7 +104,7 @@ static bool IsShiftPressed()
     self.ExistingFileSize.integerValue = m_DestinationStat.st_size;
     self.RememberCheck.state = NSControlStateValueOff;
         
-    NCSheetWithHotkeys *sheet = objc_cast<NCSheetWithHotkeys>(self.window);
+    NCSheetWithHotkeys *sheet = nc::objc_cast<NCSheetWithHotkeys>(self.window);
     sheet.onCtrlA = [sheet makeClickHotkey:self.RememberCheck];
     sheet.onCtrlK = [sheet makeClickHotkey:self.keepBothButton];
     sheet.onCtrlO = [sheet makeClickHotkey:self.overwriteButton];

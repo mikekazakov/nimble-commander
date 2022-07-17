@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AskForPasswordWindowController.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
@@ -63,7 +63,7 @@
 
 bool RunAskForPasswordModalWindow( const std::string& _password_for, std::string &_passwd )
 {
-    if( !dispatch_is_main_queue() ) {
+    if( !nc::dispatch_is_main_queue() ) {
         bool r = false;
         dispatch_sync( dispatch_get_main_queue(), [&]{ r = RunAskForPasswordModalWindow(_password_for, _passwd); } );
         return r;

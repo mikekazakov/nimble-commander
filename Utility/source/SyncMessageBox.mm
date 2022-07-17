@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <AppKit/AppKit.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/SyncMessageBox.h>
@@ -13,7 +13,7 @@ void SyncMessageBoxNS(NSString *_ns_string)
     NSAlert *alert = [[NSAlert alloc] init];
     [alert setMessageText: _ns_string];
     
-    if( dispatch_is_main_queue() )
+    if( nc::dispatch_is_main_queue() )
         [alert runModal];
     else
         dispatch_sync(dispatch_get_main_queue(), ^{ [alert runModal]; } );

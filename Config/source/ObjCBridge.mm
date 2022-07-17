@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ObjCBridge.h"
 #include "RapidJSON.h"
 #include <Utility/ObjCpp.h>
@@ -94,7 +94,7 @@ using nc::config::Config;
       forKeyPath:(std::string_view)_key_path
         inConfig:(Config &)_config
 {
-    if( const auto n = objc_cast<NSNumber>(value) ) {
+    if( const auto n = nc::objc_cast<NSNumber>(value) ) {
         const auto type = n.objCType;
         if( !type || type[0] == 0 || type[1] != 0 )
             return;
@@ -130,7 +130,7 @@ using nc::config::Config;
                 break;
         }
     }
-    else if( const auto s = objc_cast<NSString>(value) ) {
+    else if( const auto s = nc::objc_cast<NSString>(value) ) {
         const auto string = s.UTF8String;
         if( string == nullptr )
             return;

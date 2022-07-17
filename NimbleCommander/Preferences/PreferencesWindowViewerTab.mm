@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowViewerTab.h"
 #include <Utility/FontExtras.h>
 #include "../Bootstrap/ActivationManager.h"
@@ -24,14 +24,14 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 
 - (id)transformedValue:(id)value
 {
-    if( auto n = objc_cast<NSNumber>(value) )
+    if( auto n = nc::objc_cast<NSNumber>(value) )
         return [NSNumber numberWithInt:n.boolValue ? 1 : 0];
     return nil;
 }
 
 - (id)reverseTransformedValue:(id)value
 {
-    if( auto n = objc_cast<NSNumber>(value) )
+    if( auto n = nc::objc_cast<NSNumber>(value) )
         return [NSNumber numberWithBool:n.intValue == 0 ? false : true];
     return nil;
 }

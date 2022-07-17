@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerSheet.h"
 #include <Utility/CocoaAppearanceManager.h>
 #include <Viewer/ViewerViewController.h>
@@ -41,7 +41,7 @@ using namespace nc::viewer;
           viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
        viewerController:(NCViewerViewController*)_viewer_controller
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
     auto nib_path = [Bundle() pathForResource:@"NCViewerSheet"
                                        ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
@@ -60,12 +60,12 @@ using namespace nc::viewer;
 
 - (void) dealloc
 {
-    assert( dispatch_is_main_queue() );
+    dispatch_assert_main_queue();
 }
 
 - (bool) open
 {
-    assert( !dispatch_is_main_queue() );
+    dispatch_assert_background_queue();
 
     return [m_Controller performBackgroundOpening];
 }
@@ -125,8 +125,8 @@ using namespace nc::viewer;
 
 - (IBAction)onSettingsClicked:(id)sender
 {
-    [self.settingsPopover showRelativeToRect:objc_cast<NSButton>(sender).bounds
-                                      ofView:objc_cast<NSButton>(sender)
+    [self.settingsPopover showRelativeToRect:nc::objc_cast<NSButton>(sender).bounds
+                                      ofView:nc::objc_cast<NSButton>(sender)
                                preferredEdge:NSMaxYEdge];
 }
 

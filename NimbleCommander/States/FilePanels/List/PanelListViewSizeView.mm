@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ByteCountFormatter.h>
 #include "../PanelViewPresentationSettings.h"
 #include "PanelListView.h"
@@ -86,7 +86,7 @@ static NSString *SizeStringFromEncodedSize(uint64_t _sz)
 - (void)viewDidMoveToSuperview
 {
     [super viewDidMoveToSuperview];
-    if( auto rv = objc_cast<PanelListViewRowView>(self.superview) )
+    if( auto rv = nc::objc_cast<PanelListViewRowView>(self.superview) )
         m_RowView = rv;
 }
 
@@ -145,7 +145,7 @@ static NSParagraphStyle *PStyle()
 
 - (void)buildPresentation
 {
-    if( auto row_view = objc_cast<PanelListViewRowView>(self.superview) ) {
+    if( auto row_view = nc::objc_cast<PanelListViewRowView>(self.superview) ) {
         m_TextAttributes = @{
             NSFontAttributeName: row_view.listView.font,
             NSForegroundColorAttributeName: row_view.rowTextColor,

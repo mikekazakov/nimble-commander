@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTab.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
@@ -25,9 +25,9 @@ static const auto g_LayoutColumnsDDType =
 }
 - (id)transformedValue:(id)value
 {
-    if( auto n = objc_cast<NSNumber>(value) )
+    if( auto n = nc::objc_cast<NSNumber>(value) )
         return n;
-    else if( auto s = objc_cast<NSString>(value) )
+    else if( auto s = nc::objc_cast<NSString>(value) )
         return [NSNumber numberWithInt:s.intValue];
     return @0;
 }
@@ -50,14 +50,14 @@ static const auto g_LayoutColumnsDDType =
 
 - (id)transformedValue:(id)value
 {
-    if( auto s = objc_cast<NSString>(value) )
+    if( auto s = nc::objc_cast<NSString>(value) )
         return [NSColor colorWithHexString:s.UTF8String];
     return nil;
 }
 
 - (id)reverseTransformedValue:(id)value
 {
-    if( auto c = objc_cast<NSColor>(value) )
+    if( auto c = nc::objc_cast<NSColor>(value) )
         return [c toHexString];
     return nil;
 }
@@ -73,7 +73,7 @@ static const auto g_LayoutColumnsDDType =
 }
 - (id)transformedValue:(id)value
 {
-    if( auto s = objc_cast<NSString>(value) )
+    if( auto s = nc::objc_cast<NSString>(value) )
         return s;
     return @"";
 }

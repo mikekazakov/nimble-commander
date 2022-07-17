@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UserNotificationsCenter.h"
 #include <Cocoa/Cocoa.h>
 #include <Operations/Statistics.h>
@@ -93,7 +93,7 @@ static void MakeWindowKey(unsigned long _wnd_adress)
        didActivateNotification:(NSUserNotification *)notification
 {
     if( notification.userInfo )
-        if( const auto packed_wnd_address = objc_cast<NSNumber>(notification.userInfo[g_Window]) )
+        if( const auto packed_wnd_address = nc::objc_cast<NSNumber>(notification.userInfo[g_Window]) )
             nc::core::MakeWindowKey(packed_wnd_address.unsignedLongValue);
 }
 

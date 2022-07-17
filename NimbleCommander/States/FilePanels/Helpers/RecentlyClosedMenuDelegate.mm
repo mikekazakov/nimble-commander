@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RecentlyClosedMenuDelegate.h"
 #include "../ListingPromise.h"
 #include "LocationFormatter.h"
@@ -132,9 +132,9 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
 
     auto payload = [[AnyHolder alloc]
         initWithAny:std::any{RestoreClosedTabRequest(CurrentSide(current_state), records.front())}];
-    objc_cast<NSMenuItem>(_sender).representedObject = payload;
+    nc::objc_cast<NSMenuItem>(_sender).representedObject = payload;
     [current_state respawnRecentlyClosedCallout:_sender];
-    objc_cast<NSMenuItem>(_sender).representedObject = nil;
+    nc::objc_cast<NSMenuItem>(_sender).representedObject = nil;
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)_item

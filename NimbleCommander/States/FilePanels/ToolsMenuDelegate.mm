@@ -54,7 +54,7 @@ static NSMenuItem *ItemForTool(const std::shared_ptr<const nc::panel::ExternalTo
     // deferred observer setup
     if( !m_ToolsObserver )
         m_ToolsObserver = NCAppDelegate.me.externalTools.ObserveChanges(
-            objc_callback(self, @selector(toolsHaveChanged)));
+            nc::objc_callback(self, @selector(toolsHaveChanged)));
 
     if( m_IsDirty ) {
         const auto tools = NCAppDelegate.me.externalTools.GetAllTools();

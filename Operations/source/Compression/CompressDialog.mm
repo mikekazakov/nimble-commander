@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
@@ -102,8 +102,8 @@ using namespace nc::ops;
 
 - (void)controlTextDidChange:(NSNotification *)notification
 {
-    if( objc_cast<NSTextField>(notification.object) == self.destinationTextField ||
-        objc_cast<NSTextField>(notification.object) == self.passwordTextField )
+    if( nc::objc_cast<NSTextField>(notification.object) == self.destinationTextField ||
+        nc::objc_cast<NSTextField>(notification.object) == self.passwordTextField )
         [self validate];
 }
 

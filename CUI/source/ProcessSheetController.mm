@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ProcessSheetController.h"
 #include <Utility/CocoaAppearanceManager.h>
 #include <Habanero/dispatch_cpp.h>
@@ -48,7 +48,7 @@ static NSBundle *Bundle() noexcept
 - (id)init
 {
     // NEED EVEN MOAR GCD HACKS!!
-    if( dispatch_is_main_queue() ) {
+    if( nc::dispatch_is_main_queue() ) {
         const auto nib_path = [Bundle() pathForResource:@"ProcessSheetController" ofType:@"nib"];
         self = [super initWithWindowNibPath:nib_path owner:self];
         (void)self.window;
@@ -118,7 +118,7 @@ static NSBundle *Bundle() noexcept
 
 - (void)setTitle:(NSString *)title
 {
-    if( dispatch_is_main_queue() ) {
+    if( nc::dispatch_is_main_queue() ) {
         self.titleTextField.stringValue = title;
     }
     else {
@@ -128,7 +128,7 @@ static NSBundle *Bundle() noexcept
 
 - (NSString *)title
 {
-    if( dispatch_is_main_queue() ) {
+    if( nc::dispatch_is_main_queue() ) {
         return self.titleTextField.stringValue;
     }
     else {
@@ -144,7 +144,7 @@ static NSBundle *Bundle() noexcept
     if( progress == m_Progress )
         return;
     m_Progress = progress;
-    if( dispatch_is_main_queue() ) {
+    if( nc::dispatch_is_main_queue() ) {
         self.progressIndicator.doubleValue = m_Progress;
     }
     else {

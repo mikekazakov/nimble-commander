@@ -258,8 +258,8 @@ static bool AskUserToDeleteTool()
 
 - (IBAction)onAddParametersMenuItemClicked:(id)sender
 {
-    if( auto t = objc_cast<NSMenuItem>(sender) )
-        if( auto s = objc_cast<NSString>(t.representedObject) )
+    if( auto t = nc::objc_cast<NSMenuItem>(sender) )
+        if( auto s = nc::objc_cast<NSString>(t.representedObject) )
             [self insertStringIntoParameters:s];
 }
 

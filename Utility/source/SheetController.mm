@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/SheetController.h>
 
@@ -30,7 +30,7 @@ using namespace std::chrono;
 - (void) beginSheetForWindow:(NSWindow*)_wnd
            completionHandler:(void (^)(NSModalResponse returnCode))_handler
 {
-    if(!dispatch_is_main_queue()) {
+    if(!nc::dispatch_is_main_queue()) {
         dispatch_to_main_queue([=]{
             [self beginSheetForWindow:_wnd completionHandler:_handler];
         });

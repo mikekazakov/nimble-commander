@@ -297,11 +297,11 @@ private:
 
     [self updateMasksMenu];
     [self updateMaskSearchFieldPrompt];
-    objc_cast<NSSearchFieldCell>(self.maskSearchField.cell).cancelButtonCell = nil;
+    nc::objc_cast<NSSearchFieldCell>(self.maskSearchField.cell).cancelButtonCell = nil;
     self.maskSearchField.stringValue = @"*";
 
     [self updateTextMenu];
-    objc_cast<NSSearchFieldCell>(self.textSearchField.cell).cancelButtonCell = nil;
+    nc::objc_cast<NSSearchFieldCell>(self.textSearchField.cell).cancelButtonCell = nil;
 
     // wire up the hotkeys
     NCSheetWithHotkeys *sheet = static_cast<NCSheetWithHotkeys *>(self.window);
@@ -612,7 +612,7 @@ private:
     NSInteger row = [self.TableView selectedRow];
     if( row >= 0 ) {
         id selected_object = [self.ArrayController.arrangedObjects objectAtIndex:row];
-        self.focusedItem = objc_cast<FindFilesSheetFoundItem>(selected_object);
+        self.focusedItem = nc::objc_cast<FindFilesSheetFoundItem>(selected_object);
     }
     else {
         self.focusedItem = nil;
@@ -655,7 +655,7 @@ private:
         return;
 
     const auto found_item =
-        objc_cast<FindFilesSheetFoundItem>([self.ArrayController.arrangedObjects objectAtIndex:row_index]);
+    nc::objc_cast<FindFilesSheetFoundItem>([self.ArrayController.arrangedObjects objectAtIndex:row_index]);
 
     const FindFilesSheetControllerFoundItem &data = found_item.data;
 
@@ -889,7 +889,7 @@ private:
 
 - (void)onTextMenuEncodingClicked:(id)_sender
 {
-    if( auto item = objc_cast<NSMenuItem>(_sender) ) {
+    if( auto item = nc::objc_cast<NSMenuItem>(_sender) ) {
         m_TextSearchEncoding = static_cast<int>(item.tag);
         [self updateTextMenu];
         [self onSearchSettingsUIChanged:_sender];
@@ -898,7 +898,7 @@ private:
 
 - (void)onTextMenuHistoryEntryClicked:(id) [[maybe_unused]] _sender
 {
-    const auto item = objc_cast<NSMenuItem>(_sender);
+    const auto item = nc::objc_cast<NSMenuItem>(_sender);
     if( !item )
         return;
     const auto tag = item.tag;
@@ -938,7 +938,7 @@ private:
 
 - (void)onMaskMenuHistoryEntryClicked:(id)_sender
 {
-    const auto item = objc_cast<NSMenuItem>(_sender);
+    const auto item = nc::objc_cast<NSMenuItem>(_sender);
     if( !item )
         return;
     const auto tag = item.tag;

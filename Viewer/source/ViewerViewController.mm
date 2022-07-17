@@ -47,7 +47,7 @@ static int InvertBitFlag(int _value, int _flag)
 }
 - (id)transformedValue:(id)value
 {
-    if( auto number = objc_cast<NSNumber>(value) )
+    if( auto number = nc::objc_cast<NSNumber>(value) )
         return [NSString stringWithFormat:@"%2.0f%%", 100.0 * number.doubleValue];
     else
         return @"";
@@ -128,7 +128,7 @@ struct BackgroundFileOpener {
 {
     self = [super init];
     if( self ) {
-        Log::Debug(SPDLOC, "created new NCViewerViewController {}", objc_bridge_cast<void>(self));
+        Log::Debug(SPDLOC, "created new NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
         m_History = &_history;
         m_Config = &_config;
         m_Shortcuts = _shortcuts;
@@ -147,7 +147,7 @@ struct BackgroundFileOpener {
 - (void)dealloc
 {
     dispatch_assert_main_queue();
-    Log::Debug(SPDLOC, "deallocating NCViewerViewController {}", objc_bridge_cast<void>(self));
+    Log::Debug(SPDLOC, "deallocating NCViewerViewController {}", nc::objc_bridge_cast<void>(self));
     [self clear];
 }
 
@@ -551,8 +551,8 @@ struct BackgroundFileOpener {
 
 - (void)onPositionButtonClicked:(id)sender
 {
-    [self.goToPositionPopover showRelativeToRect:objc_cast<NSButton>(sender).bounds
-                                          ofView:objc_cast<NSButton>(sender)
+    [self.goToPositionPopover showRelativeToRect:nc::objc_cast<NSButton>(sender).bounds
+                                          ofView:nc::objc_cast<NSButton>(sender)
                                    preferredEdge:NSMaxYEdge];
 }
 

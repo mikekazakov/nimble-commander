@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../MainWindowController.h"
@@ -152,8 +152,8 @@
 
 - (IBAction)onInternalViewerToolbarSettings:(id)sender
 {
-    [self.internalViewerToolbarPopover showRelativeToRect:objc_cast<NSButton>(sender).bounds
-                                                   ofView:objc_cast<NSButton>(sender)
+    [self.internalViewerToolbarPopover showRelativeToRect:nc::objc_cast<NSButton>(sender).bounds
+                                                   ofView:nc::objc_cast<NSButton>(sender)
                                             preferredEdge:NSMaxYEdge];
 }
 

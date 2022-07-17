@@ -456,7 +456,7 @@ using SourceReverseMappingStorage = robin_hood::
 
 - (IBAction)OnInsertPlaceholderFromMenu:(id)sender
 {
-    if( auto item = objc_cast<NSMenuItem>(sender) ) {
+    if( auto item = nc::objc_cast<NSMenuItem>(sender) ) {
         if( g_InsertSnippets.contains(item.tag) )
             [self InsertStringIntoMask:g_InsertSnippets.at(item.tag)];
     }
@@ -531,11 +531,11 @@ using SourceReverseMappingStorage = robin_hood::
 
 - (void)controlTextDidChange:(NSNotification *)notification
 {
-    if( objc_cast<NSTextField>(notification.object) == self.FilenameMask )
+    if( nc::objc_cast<NSTextField>(notification.object) == self.FilenameMask )
         [self OnFilenameMaskChanged:self.FilenameMask];
-    else if( objc_cast<NSTextField>(notification.object) == self.ReplaceWithComboBox )
+    else if( nc::objc_cast<NSTextField>(notification.object) == self.ReplaceWithComboBox )
         [self OnReplaceWithChanged:self.ReplaceWithComboBox];
-    else if( objc_cast<NSTextField>(notification.object) == self.SearchForComboBox )
+    else if( nc::objc_cast<NSTextField>(notification.object) == self.SearchForComboBox )
         [self OnSearchForChanged:self.SearchForComboBox];
     else
         [self updateRenamedFilenames];

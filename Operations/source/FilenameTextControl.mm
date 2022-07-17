@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilenameTextControl.h"
 #include <AppKit/AppKit.h>
 #include <Utility/ObjCpp.h>
@@ -74,7 +74,7 @@
         m_IsBuilding = true;
 
         const auto default_fe = [aControlView.window fieldEditor:true forObject:aControlView];
-        if( !objc_cast<NSTextView>(default_fe) )
+        if( !nc::objc_cast<NSTextView>(default_fe) )
             return nil;
 
         const auto archived_fe = [NSKeyedArchiver archivedDataWithRootObject:default_fe
@@ -83,7 +83,7 @@
         const id copied_fe = [NSKeyedUnarchiver unarchivedObjectOfClass:NSTextView.class
                                                                fromData:archived_fe
                                                                   error:nil];
-        m_FieldEditor = objc_cast<NSTextView>(copied_fe);
+        m_FieldEditor = nc::objc_cast<NSTextView>(copied_fe);
         [m_FieldEditor.layoutManager replaceTextStorage:[[NCFilenameTextStorage alloc] init]];
     }
     return m_FieldEditor;
@@ -174,11 +174,11 @@
 
 - (void)menuItemClicked:(id)sender
 {
-    const auto item = objc_cast<NSMenuItem>(sender);
+    const auto item = nc::objc_cast<NSMenuItem>(sender);
     if( !item )
         return;
 
-    const auto directory = objc_cast<NSString>(item.representedObject);
+    const auto directory = nc::objc_cast<NSString>(item.representedObject);
     if( !directory )
         return;
 

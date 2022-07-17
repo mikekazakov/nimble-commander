@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CreateSymlinkDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
@@ -64,7 +64,7 @@ using namespace nc::ops;
 
 - (void)controlTextDidChange:(NSNotification *)notification
 {
-    if( objc_cast<NSTextField>(notification.object) == self.LinkPath )
+    if( nc::objc_cast<NSTextField>(notification.object) == self.LinkPath )
         [self validate];
 }
 

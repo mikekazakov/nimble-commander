@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOperationViewController.h"
 #include "Internal.h"
 #include "Operation.h"
@@ -54,10 +54,10 @@ static const auto g_SlowUpdateFreq = 1.0;
         self.isCold = current_state == OperationState::Cold;
         _operation->ObserveUnticketed(
             Operation::NotifyAboutStateChange,
-            objc_callback_to_main_queue(self, @selector(onOperationStateChanged)));
+            nc::objc_callback_to_main_queue(self, @selector(onOperationStateChanged)));
         _operation->ObserveUnticketed(
             Operation::NotifyAboutTitleChange,
-            objc_callback_to_main_queue(self, @selector(onOperationTitleChanged)));
+            nc::objc_callback_to_main_queue(self, @selector(onOperationTitleChanged)));
     }
     return self;
 }

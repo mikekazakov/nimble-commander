@@ -161,7 +161,7 @@ static const auto g_ResizingGran = 14.;
     if( m_BasicViews[0] )
         return m_BasicViews[0];
     assert(self.subviews.count == 2);
-    assert(objc_cast<FilePanelsTabbedHolder>(self.subviews[0]));
+    assert(nc::objc_cast<FilePanelsTabbedHolder>(self.subviews[0]));
     return self.subviews[0];
 }
 
@@ -170,7 +170,7 @@ static const auto g_ResizingGran = 14.;
     if( m_BasicViews[1] )
         return m_BasicViews[1];
     assert(self.subviews.count == 2);
-    assert(objc_cast<FilePanelsTabbedHolder>(self.subviews[1]));
+    assert(nc::objc_cast<FilePanelsTabbedHolder>(self.subviews[1]));
     return self.subviews[1];
 }
 
@@ -309,7 +309,7 @@ static const auto g_ResizingGran = 14.;
 
     if( left.size.width < g_MinPanelWidth ) {
         [self collapseLeftView];
-        if( auto h = objc_cast<FilePanelsTabbedHolder>(v2) )
+        if( auto h = nc::objc_cast<FilePanelsTabbedHolder>(v2) )
             [self.window makeFirstResponder:h.current];
         else
             [self.window makeFirstResponder:v2];
@@ -351,7 +351,7 @@ static const auto g_ResizingGran = 14.;
 
     if( right.size.width < g_MinPanelWidth ) {
         [self collapseRightView];
-        if( auto h = objc_cast<FilePanelsTabbedHolder>(v1) )
+        if( auto h = nc::objc_cast<FilePanelsTabbedHolder>(v1) )
             [self.window makeFirstResponder:h.current];
         else
             [self.window makeFirstResponder:v1];

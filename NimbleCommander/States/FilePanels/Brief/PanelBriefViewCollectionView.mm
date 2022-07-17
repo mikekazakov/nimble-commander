@@ -32,7 +32,7 @@
 - (PanelView *)panelView
 {
     NSView *sv = self.superview;
-    while( sv != nil && objc_cast<PanelView>(sv) == nil )
+    while( sv != nil && nc::objc_cast<PanelView>(sv) == nil )
         sv = sv.superview;
     return static_cast<PanelView *>(sv);
 }

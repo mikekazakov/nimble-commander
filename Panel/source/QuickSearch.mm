@@ -56,7 +56,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     // wire up config changing notifications
     auto wire = [&](std::string_view _path) {
         auto sel = @selector(configQuickSearchSettingsChanged);
-        return m_Config->Observe(_path, objc_callback_to_main_queue(self, sel));
+        return m_Config->Observe(_path, nc::objc_callback_to_main_queue(self, sel));
     };
     m_ConfigObservers[0] = wire(g_ConfigWhereToFind);
     m_ConfigObservers[1] = wire(g_ConfigIsSoftFiltering);

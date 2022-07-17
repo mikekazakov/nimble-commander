@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewCollectionViewBackground.h"
 #include "PanelBriefViewLayoutProtocol.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -36,13 +36,13 @@
 
 - (NSCollectionView *)collectionView
 {
-    return objc_cast<NSCollectionView>(self.superview);
+    return nc::objc_cast<NSCollectionView>(self.superview);
 }
 
 - (NSCollectionViewLayout<NCPanelBriefViewLayoutProtocol> *)viewLayout
 {
     auto layout = self.collectionView.collectionViewLayout;
-    return objc_cast<NSCollectionViewLayout<NCPanelBriefViewLayoutProtocol>>(layout);
+    return nc::objc_cast<NSCollectionViewLayout<NCPanelBriefViewLayoutProtocol>>(layout);
 }
 
 - (void)drawRect:(NSRect)dirtyRect

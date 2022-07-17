@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSError.h>
 #include "FileUploadDelegate.h"
 #include "Aux.h"
@@ -67,7 +67,7 @@ didBecomeInvalidWithError:(nullable NSError *)_error
 
 static bool HasNoError(NSURLResponse *_response)
 {
-    if( auto http_resp = objc_cast<NSHTTPURLResponse>(_response) )
+    if( auto http_resp = nc::objc_cast<NSHTTPURLResponse>(_response) )
         if( http_resp.statusCode == 200 )
             return true;
     return false;

@@ -7,22 +7,33 @@
 #ifdef __OBJC__
 #include <objc/runtime.h>
 
+namespace nc {
+
+// a compile-time lookup of Objective-C classes
+template <typename T>
+struct objc_class_lookup {
+    inline static Class const class_meta = [T class];
+};
+
 /**
  * Returns a _T_ class object if _from_ can be converted to it.
  * If _from_ can't be converted to _T_ - returns nil.
  * If _from_ is nil - returns nil.
+ * NB! must not be used in initialization of global objects, i.e. before main().
  */
 template <typename T>
-inline T *objc_cast(id from) noexcept
+T *objc_cast(id from) noexcept
 {
-    static const auto class_meta = [T class];
-    if( [from isKindOfClass:class_meta] )
+    // This assert ensures that 'objc_cast' wasn't called before initialization of objc_class_lookup::class_meta, i.e.
+    // not before 'main()'.
+    assert(objc_class_lookup<T>::class_meta != nullptr && class_getName(objc_class_lookup<T>::class_meta) != nullptr);
+    if( [from isKindOfClass:objc_class_lookup<T>::class_meta] )
         return static_cast<T *>(from);
     return nil;
 }
 
 template <typename T, typename U>
-inline T *objc_bridge_cast(U *from) noexcept
+T *objc_bridge_cast(U *from) noexcept
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
@@ -34,7 +45,7 @@ inline T *objc_bridge_cast(U *from) noexcept
 const char *objc_class_c_str(id _object) noexcept;
 
 template <typename T>
-inline std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
+std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
 {
     __weak id weak_obj = _obj;
     return [weak_obj, _sel] {
@@ -47,7 +58,7 @@ inline std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
 }
 
 template <typename T>
-inline std::function<void()> objc_callback_to_main_queue(T *_obj, SEL _sel) noexcept
+std::function<void()> objc_callback_to_main_queue(T *_obj, SEL _sel) noexcept
 {
     typedef void (*func_type)(id, SEL);
     __weak id weak_obj = _obj;
@@ -72,9 +83,11 @@ inline std::function<void()> objc_callback_to_main_queue(T *_obj, SEL _sel) noex
 }
 
 template <typename T>
-inline size_t objc_sizeof() noexcept
+size_t objc_sizeof() noexcept
 {
     return class_getInstanceSize([T class]);
+}
+
 }
 
 #endif

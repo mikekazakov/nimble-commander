@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileDownloadDelegate.h"
 #include <VFS/VFSError.h>
 #include "Aux.h"
@@ -77,7 +77,7 @@ didCompleteWithError:(nullable NSError *)_error
 dataTask:(NSURLSessionDataTask *)task
 didReceiveData:(NSData *)data
 {
-    if( auto response = objc_cast<NSHTTPURLResponse>(task.response) )
+    if( auto response = nc::objc_cast<NSHTTPURLResponse>(task.response) )
         if( response.statusCode == 200 ) {
             std::lock_guard<std::mutex> lock{m_CallbacksLock};
             if( m_DataHandler )
@@ -93,14 +93,14 @@ didReceiveData:(NSData *)data
 
 static long ExtractContentLengthFromResponse(NSURLResponse *_response)
 {
-    auto response = objc_cast<NSHTTPURLResponse>(_response);
+    auto response = nc::objc_cast<NSHTTPURLResponse>(_response);
     if( !response )
         return -1;
     
     if( response.statusCode != 200 )
         return -1;
     
-    auto length_string = objc_cast<NSString>(response.allHeaderFields[@"Content-Length"]);
+    auto length_string = nc::objc_cast<NSString>(response.allHeaderFields[@"Content-Length"]);
     if( !length_string )
         return -1;
     

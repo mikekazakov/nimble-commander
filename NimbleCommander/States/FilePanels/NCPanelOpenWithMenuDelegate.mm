@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
 #include <Utility/SystemInformation.h>
@@ -291,7 +291,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 
 - (void)OnOpenWith:(id)sender
 {
-    if( const auto menu_item = objc_cast<NSMenuItem>(sender) ) {
+    if( const auto menu_item = nc::objc_cast<NSMenuItem>(sender) ) {
         const auto app_no = menu_item.tag;
         assert(app_no >= 0 && app_no < static_cast<long>(m_OpenWithHandlers.size()));
         const auto &handler = m_OpenWithHandlers[app_no];
@@ -325,7 +325,7 @@ static void ShowOpenPanel(NSOpenPanel *_panel,
 
 - (void)OnOpenWithOther:(id)sender
 {
-    if( const auto menu_item = objc_cast<NSMenuItem>(sender) ) {
+    if( const auto menu_item = nc::objc_cast<NSMenuItem>(sender) ) {
         ShowOpenPanel(BuildAppChoose(), self.target.window, [=](auto _path) {
             try {
                 LaunchServiceHandler handler{_path};

@@ -203,7 +203,7 @@ static NSImage *ImageForTool(const nc::panel::ExternalTool &_et)
 
 - (IBAction)onExternalToolAction:(id)sender
 {
-    if( auto i = objc_cast<NSToolbarItem>(sender) )
+    if( auto i = nc::objc_cast<NSToolbarItem>(sender) )
         if( auto tool = self.state.externalToolsStorage.GetTool(i.tag) ) {
             m_RepresentedObject = [[AnyHolder alloc] initWithAny:std::any{tool}];
             [NSApp sendAction:@selector(onExecuteExternalTool:) to:nil from:self];

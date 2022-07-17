@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectToServer.h"
 #include "FTPConnectionSheetController.h"
 #include "SFTPConnectionSheetController.h"
@@ -110,7 +110,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 
     GA().PostScreenView("Network Connections Management");
 
-    auto sheet = objc_cast<NCSheetWithHotkeys>(self.window);
+    auto sheet = nc::objc_cast<NCSheetWithHotkeys>(self.window);
     sheet.onCtrlA = ^{
       PeformClickIfEnabled(self.controlButtons, 0);
     };

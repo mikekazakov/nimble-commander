@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GenericErrorDialog.h"
 #include <VFS/VFS.h>
 #include "Internal.h"
@@ -147,7 +147,7 @@ static bool IsShiftPressed() noexcept
 
 - (void)onButtonClick:(id)sender
 {
-    if( auto b = objc_cast<NSButton>(sender) ) {
+    if( auto b = nc::objc_cast<NSButton>(sender) ) {
         if( m_ShowApplyToAll && m_Context )
             m_Context->SetApplyToAll(self.applyToAllCheckBox.state == NSControlStateValueOn ||
                                      IsShiftPressed());

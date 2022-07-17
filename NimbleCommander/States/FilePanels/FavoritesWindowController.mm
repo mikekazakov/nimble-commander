@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Habanero/algo.h>
 #include <Utility/SheetWithHotkeys.h>
@@ -64,14 +64,14 @@ static const auto g_FavoritesWindowControllerDragDataType =
         g_FavoritesWindowControllerDragDataType
     ]];
 
-    auto sheet = objc_cast<NCSheetWithHotkeys>(self.window);
+    auto sheet = nc::objc_cast<NCSheetWithHotkeys>(self.window);
 
     sheet.onCtrlV = [sheet makeActionHotkey:@selector(showAvailableLocationsToAdd:)];
     sheet.onCtrlX = [sheet makeActionHotkey:@selector(removeFavorite:)];
     sheet.onCtrlO = [sheet makeActionHotkey:@selector(showOptionsMenu:)];
 
     m_ObservationTicket = m_Storage().ObserveFavoritesChanges(
-        objc_callback(self, @selector(favoritesHadChangedOutside)));
+        nc::objc_callback(self, @selector(favoritesHadChangedOutside)));
 }
 
 - (void)show
@@ -154,7 +154,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
     NSTextField *tf = obj.object;
     if( !tf )
         return;
-    if( auto rv = objc_cast<NSTableRowView>(tf.superview) )
+    if( auto rv = nc::objc_cast<NSTableRowView>(tf.superview) )
         if( rv.superview == self.table ) {
             long row_no = [self.table rowForView:rv];
             if( row_no >= 0 && row_no < static_cast<int>(m_Favorites.size()) ) {
@@ -176,7 +176,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
         return NSDragOperationNone;
 
     const auto external_drag =
-        objc_cast<FilesDraggingSource>(info.draggingSource) ||
+    nc::objc_cast<FilesDraggingSource>(info.draggingSource) ||
         [info.draggingPasteboard.types containsObject:FilesDraggingSource.fileURLsDragUTI];
 
     return external_drag ? NSDragOperationCopy : NSDragOperationMove;
@@ -231,7 +231,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
     else {
         std::vector<FavoriteLocationsStorage::Favorite> addition;
         auto &storage = m_Storage();
-        if( auto source = objc_cast<FilesDraggingSource>(info.draggingSource) ) {
+        if( auto source = nc::objc_cast<FilesDraggingSource>(info.draggingSource) ) {
             // dragging from some NC panel
             for( PanelDraggingItem *item : source.items )
                 if( auto f = FavoriteComposing{storage}.FromListingItem(item.item) )
@@ -340,7 +340,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
 
 - (IBAction)onAddFavoriteMenuItemClicked:(id)sender
 {
-    if( auto it = objc_cast<NSMenuItem>(sender) ) {
+    if( auto it = nc::objc_cast<NSMenuItem>(sender) ) {
         const auto ind = static_cast<int>(it.tag);
         if( ind < static_cast<int>(m_PopupMenuFavorites.size()) ) {
             m_Favorites.emplace_back(m_PopupMenuFavorites[ind]);

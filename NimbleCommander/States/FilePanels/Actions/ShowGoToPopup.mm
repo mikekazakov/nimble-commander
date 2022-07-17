@@ -66,8 +66,8 @@ static const auto g_MaxTextWidth = 600;
 
 - (void)callout:(id)sender
 {
-    if( auto menu_item = objc_cast<NSMenuItem>(sender) ) {
-        auto any_holder = objc_cast<AnyHolder>(menu_item.representedObject);
+    if( auto menu_item = nc::objc_cast<NSMenuItem>(sender) ) {
+        auto any_holder = nc::objc_cast<AnyHolder>(menu_item.representedObject);
         if( !any_holder )
             return;
 

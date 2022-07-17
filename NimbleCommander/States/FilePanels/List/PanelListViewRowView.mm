@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
@@ -333,14 +333,14 @@ FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_selected, bool _
 
 - (PanelListViewNameView *)nameView
 {
-    return objc_cast<PanelListViewNameView>(
+    return nc::objc_cast<PanelListViewNameView>(
         [self viewAtColumn:0]); // need to force index #0 somehow
 }
 
 - (PanelListViewSizeView *)sizeView
 {
     for( NSView *child in self.subviews )
-        if( auto v = objc_cast<PanelListViewSizeView>(child) )
+        if( auto v = nc::objc_cast<PanelListViewSizeView>(child) )
             return v;
     return nil;
 }

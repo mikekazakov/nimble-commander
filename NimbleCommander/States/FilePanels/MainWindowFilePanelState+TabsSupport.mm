@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMAttachedTabBarButton.h>
 #include <Habanero/CommonPaths.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
@@ -38,7 +38,7 @@ using namespace nc::panel;
 - (void)tabView:(NSTabView *) [[maybe_unused]] tabView
     didSelectTabViewItem:(NSTabViewItem *)tabViewItem
 {
-    if( const auto panel_view = objc_cast<PanelView>(tabViewItem.view) ) {
+    if( const auto panel_view = nc::objc_cast<PanelView>(tabViewItem.view) ) {
         [self.window makeFirstResponder:panel_view];
         m_SplitView.leftOverlay = nil;
         m_SplitView.rightOverlay = nil;
@@ -48,7 +48,7 @@ using namespace nc::panel;
 - (void)tabView:(NSTabView *) [[maybe_unused]] aTabView
     receivedClickOnSelectedTabViewItem:(NSTabViewItem *)tabViewItem
 {
-    if( const auto panel_view = objc_cast<PanelView>(tabViewItem.view) ) {
+    if( const auto panel_view = nc::objc_cast<PanelView>(tabViewItem.view) ) {
         if( panel_view.active )
             return;
         [self.window makeFirstResponder:panel_view];
@@ -70,7 +70,7 @@ using namespace nc::panel;
              proposedIndex:(NSUInteger) [[maybe_unused]] proposedIndex
               inTabBarView:(MMTabBarView *) [[maybe_unused]] tabBarView
 {
-    const auto dragged_panel_view = objc_cast<PanelView>(tabViewItem.view);
+    const auto dragged_panel_view = nc::objc_cast<PanelView>(tabViewItem.view);
     if( !dragged_panel_view )
         return NSDragOperationNone;
 
@@ -84,11 +84,11 @@ using namespace nc::panel;
     didDropTabViewItem:(NSTabViewItem *)tabViewItem
           inTabBarView:(MMTabBarView *)tabBarView
 {
-    const auto dropped_panel_view = objc_cast<PanelView>(tabViewItem.view);
+    const auto dropped_panel_view = nc::objc_cast<PanelView>(tabViewItem.view);
     if( !dropped_panel_view )
         return;
 
-    const auto dropped_panel_controller = objc_cast<PanelController>(dropped_panel_view.delegate);
+    const auto dropped_panel_controller = nc::objc_cast<PanelController>(dropped_panel_view.delegate);
     if( !dropped_panel_controller )
         return;
 
@@ -219,8 +219,8 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
 
 - (void)respawnRecentlyClosedCallout:(id)sender
 {
-    if( auto menu_item = objc_cast<NSMenuItem>(sender) ) {
-        auto any_holder = objc_cast<AnyHolder>(menu_item.representedObject);
+    if( auto menu_item = nc::objc_cast<NSMenuItem>(sender) ) {
+        auto any_holder = nc::objc_cast<AnyHolder>(menu_item.representedObject);
         if( !any_holder )
             return;
 
@@ -282,7 +282,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
                toIndex:(NSUInteger)index
 {
     PanelController *pc =
-        objc_cast<PanelController>(objc_cast<PanelView>(tabViewItem.view).delegate);
+        nc::objc_cast<PanelController>(nc::objc_cast<PanelView>(tabViewItem.view).delegate);
     if( [self isLeftController:pc] ) {
         auto it = find(begin(m_LeftPanelControllers), end(m_LeftPanelControllers), pc);
         if( it == end(m_LeftPanelControllers) )
@@ -322,8 +322,8 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     didCloseTabViewItem:(NSTabViewItem *)tabViewItem
 {
     // NB! at this moment a tab was already removed from NSTabView objects
-    if( auto pv = objc_cast<PanelView>(tabViewItem.view) )
-        if( auto pc = objc_cast<PanelController>(pv.delegate) ) {
+    if( auto pv = nc::objc_cast<PanelView>(tabViewItem.view) )
+        if( auto pc = nc::objc_cast<PanelController>(pv.delegate) ) {
             [self panelWillBeClosed:pc];
             std::erase(m_LeftPanelControllers, pc);
             std::erase(m_RightPanelControllers, pc);
@@ -488,7 +488,7 @@ static NSImage *ResizeImage(NSImage *_img, NSSize _new_size)
                  offset:(NSSize *) [[maybe_unused]] offset
               styleMask:(NSUInteger *) [[maybe_unused]] styleMask
 {
-    const auto panel_view = objc_cast<PanelView>(tabViewItem.view);
+    const auto panel_view = nc::objc_cast<PanelView>(tabViewItem.view);
     if( !panel_view )
         return nil;
 
@@ -513,8 +513,8 @@ static NSImage *ResizeImage(NSImage *_img, NSSize _new_size)
 - (NSMenu *)tabView:(NSTabView *) [[maybe_unused]] aTabView
     menuForTabViewItem:(NSTabViewItem *)tabViewItem
 {
-    if( auto pv = objc_cast<PanelView>(tabViewItem.view) )
-        if( auto pc = objc_cast<PanelController>(pv.delegate) )
+    if( auto pv = nc::objc_cast<PanelView>(tabViewItem.view) )
+        if( auto pc = nc::objc_cast<PanelController>(pv.delegate) )
             return [[NCPanelTabContextMenu alloc] initWithPanel:pc ofState:self];
 
     return nil;

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/dispatch_cpp.h>
 #include <stdexcept>
 
@@ -25,4 +25,13 @@ const dispatch_queue &dispatch_queue::operator=(const dispatch_queue& rhs)
     m_queue = rhs.m_queue;
     dispatch_retain(m_queue);
     return *this;
+}
+
+namespace nc {
+
+bool dispatch_is_main_queue() noexcept
+{
+    return pthread_main_np() != 0;
+}
+
 }

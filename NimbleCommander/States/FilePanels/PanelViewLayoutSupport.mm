@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewLayoutSupport.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
@@ -371,7 +371,7 @@ void PanelViewLayoutsStorage::CommitChanges(bool _fire_observers)
     if( self ) {
         m_IsDirty = true;
         m_Storage = &_storage;
-        m_Ticket = m_Storage->ObserveChanges(objc_callback(self, @selector(layoutsHaveChanged)));
+        m_Ticket = m_Storage->ObserveChanges(nc::objc_callback(self, @selector(layoutsHaveChanged)));
     }
     return self;
 }

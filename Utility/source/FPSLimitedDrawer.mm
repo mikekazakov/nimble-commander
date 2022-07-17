@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <atomic>
 #include <Habanero/mach_time.h>
 #include <Habanero/dispatch_cpp.h>
@@ -23,7 +23,7 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
 {
     self = [super init];
     if( self ) {
-        assert(dispatch_is_main_queue());
+        dispatch_assert_main_queue();
         m_FPS = 60;
         m_Dirty = false;
         m_View = _view;
@@ -45,7 +45,7 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
 
 - (void)setFps:(unsigned)_fps
 {
-    assert(dispatch_is_main_queue());
+    dispatch_assert_main_queue();
     if( _fps == m_FPS )
         return;
     m_FPS = _fps;
@@ -64,7 +64,7 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
     if( m_FPS > 0 ) {
         m_Dirty = true;
         if( m_DrawTimer == nil ) {
-            if( dispatch_is_main_queue() )
+            if( nc::dispatch_is_main_queue() )
                 [self setupTimer];
             else
                 dispatch_to_main_queue([=] { [self setupTimer]; });
@@ -108,7 +108,7 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
 
 - (void)cleanupTimer
 {
-    assert(dispatch_is_main_queue());
+    dispatch_assert_main_queue();
     [m_DrawTimer invalidate];
     m_DrawTimer = nil;
 }

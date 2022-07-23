@@ -1,6 +1,7 @@
 // Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#define CATCH_CONFIG_ENABLE_BENCHMARKING
 #include <catch2/catch.hpp>
 #include <filesystem>
 

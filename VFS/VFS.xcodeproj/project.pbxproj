@@ -98,6 +98,7 @@
 		CFAB6D87258B6B1F00397DB5 /* VFSArchive_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */; };
 		CFB63CD525939A630038502E /* VFSNative_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB63CD425939A630038502E /* VFSNative_IT.mm */; };
 		CFCB684F28423A1300086E40 /* VFSError_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCB684E28423A1300086E40 /* VFSError_UT.mm */; };
+		CFCB68D3289089BF00086E40 /* VFSArchive_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCB68D2289089BF00086E40 /* VFSArchive_UT.cpp */; };
 		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
 		CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */; };
 		CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
@@ -294,6 +295,7 @@
 		CFC4F9FA1F171E990000B3EE /* AccountsFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccountsFetcher.h; path = source/NetSFTP/AccountsFetcher.h; sourceTree = "<group>"; };
 		CFCB684E28423A1300086E40 /* VFSError_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSError_UT.mm; path = tests/VFSError_UT.mm; sourceTree = SOURCE_ROOT; };
 		CFCB68B82886075900086E40 /* VFSArchive_PT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchive_PT.mm; path = tests/VFSArchive_PT.mm; sourceTree = SOURCE_ROOT; };
+		CFCB68D2289089BF00086E40 /* VFSArchive_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchive_UT.cpp; path = tests/VFSArchive_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CFCE73141F972623009E2FD7 /* Listing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Listing.h; path = source/Listing.h; sourceTree = "<group>"; };
 		CFCE73161F972B7A009E2FD7 /* Stat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Stat.cpp; path = source/Stat.cpp; sourceTree = "<group>"; };
 		CFD725FF1E42DD6000603077 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
@@ -406,6 +408,7 @@
 				CF26DE1F21D2864D003F0E93 /* Tests.h */,
 				CF18470A1E41C8A5008B7C9F /* VFSArchive_IT.mm */,
 				CFCB68B82886075900086E40 /* VFSArchive_PT.mm */,
+				CFCB68D2289089BF00086E40 /* VFSArchive_UT.cpp */,
 				CF824F68279F622900C4F29C /* VFSArchiveRaw_UT.cpp */,
 				CF1168851E91FE6D00CC515A /* VFSDropbox_IT.mm */,
 				CF465220268728F20085840A /* VFSDropbox_UT.mm */,
@@ -838,6 +841,7 @@
 				CF26DE2421D28754003F0E93 /* SearchInFile_UT.cpp in Sources */,
 				CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */,
 				CF22F0B9258DFA480033E850 /* Internal.cpp in Sources */,
+				CFCB68D3289089BF00086E40 /* VFSArchive_UT.cpp in Sources */,
 				CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */,
 				CF22F0AD258DF9260033E850 /* VFSMem_UT.cpp in Sources */,
 				CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */,

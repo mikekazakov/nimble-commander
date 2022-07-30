@@ -22,6 +22,7 @@ cmake \
   -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
   -D CMAKE_IGNORE_PREFIX_PATH=/usr/local \
   -D BUILD_SHARED_LIBS="OFF" \
+  -D ENABLE_LIBB2="OFF" \
   -D ZLIB_INCLUDE_DIR=${CUR_DIR}/../z/include \
   -D ZLIB_LIBRARY=${CUR_DIR}/../z/lib/libz.a \
   -D BZIP2_INCLUDE_DIR=${CUR_DIR}/../bz2/include \
@@ -32,9 +33,9 @@ cmake \
   -D ZSTD_LIBRARY=${CUR_DIR}/../zstd/lib/libzstd.a \
   -D LZ4_INCLUDE_DIR=${CUR_DIR}/../lz4/include \
   -D LZ4_LIBRARY=${CUR_DIR}/../lz4/lib/liblz4.a \
+  -D ENABLE_LZO="ON" \
   -D LZO2_INCLUDE_DIR=${CUR_DIR}/../lzo/include \
   -D LZO2_LIBRARY=${CUR_DIR}/../lzo/lib/liblzo2.a \
-  -D ENABLE_LZO=ON \
   .
 make -j
 

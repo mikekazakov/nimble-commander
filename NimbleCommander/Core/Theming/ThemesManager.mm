@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "Theme.h"
@@ -6,6 +6,8 @@
 #include "ThemesManager.h"
 #include <Habanero/dispatch_cpp.h>
 #include <robin_hood.h>
+
+namespace nc {
 
 using namespace std::literals;
 using nc::utility::CocoaAppearanceManager;
@@ -15,8 +17,8 @@ static const auto g_NameKey = "themeName";
 [[clang::no_destroy]] static std::shared_ptr<Theme> g_CurrentTheme;
 
 using TMN = ThemesManager::Notifications;
-[[clang::no_destroy]] static const robin_hood::unordered_flat_map<std::string, uint64_t>
-    g_EntryToNotificationMapping = {
+[[clang::no_destroy]] static const robin_hood::unordered_flat_map<std::string, uint64_t> g_EntryToNotificationMapping =
+    {
         {"themeAppearance", TMN::Appearance},
         {"filePanelsColoringRules_v1", TMN::FilePanelsGeneral},
         {"filePanelsGeneralDropBorderColor", TMN::FilePanelsGeneral},
@@ -98,9 +100,8 @@ ThemesManager::ThemesManager(const char *_current_theme_path, const char *_theme
 {
     LoadDefaultThemes();
     LoadThemes();
-    m_SelectedThemeName = GlobalConfig().Has(m_CurrentThemePath)
-                              ? GlobalConfig().GetString(m_CurrentThemePath)
-                              : "Modern";
+    m_SelectedThemeName =
+        GlobalConfig().Has(m_CurrentThemePath) ? GlobalConfig().GetString(m_CurrentThemePath) : "Modern";
 
     UpdateCurrentTheme();
 
@@ -177,20 +178,17 @@ std::shared_ptr<const nc::config::Value> ThemesManager::SelectedThemeData() cons
     return BackupThemeData("Modern");
 }
 
-std::shared_ptr<const nc::config::Value>
-ThemesManager::ThemeData(const std::string &_theme_name) const
+std::shared_ptr<const nc::config::Value> ThemesManager::ThemeData(const std::string &_theme_name) const
 {
     auto it = m_Themes.find(_theme_name);
     if( it != end(m_Themes) )
         return it->second;
 
-    [[clang::no_destroy]] static const auto dummy =
-        std::make_shared<nc::config::Value>(rapidjson::kNullType);
+    [[clang::no_destroy]] static const auto dummy = std::make_shared<nc::config::Value>(rapidjson::kNullType);
     return dummy;
 }
 
-std::shared_ptr<const nc::config::Value>
-ThemesManager::BackupThemeData(const std::string &_theme_name) const
+std::shared_ptr<const nc::config::Value> ThemesManager::BackupThemeData(const std::string &_theme_name) const
 {
     auto i = m_DefaultThemes.find(_theme_name);
     if( i != end(m_DefaultThemes) )
@@ -248,9 +246,8 @@ void ThemesManager::UpdateCurrentTheme()
 {
     // comprose new theme object
     auto theme_data = SelectedThemeData();
-    auto new_theme = std::make_shared<Theme>(
-        static_cast<const void *>(theme_data.get()),
-        static_cast<const void *>(BackupThemeData(m_SelectedThemeName).get()));
+    auto new_theme = std::make_shared<Theme>(static_cast<const void *>(theme_data.get()),
+                                             static_cast<const void *>(BackupThemeData(m_SelectedThemeName).get()));
 
     // release current theme some time after - dispatch release with 10s delay
     auto old_theme = g_CurrentTheme;
@@ -426,8 +423,7 @@ std::string ThemesManager::SuitableNameForNewTheme(const std::string &_current_t
     const auto themes = ThemeNames();
 
     for( int i = 1; i < 99; ++i ) {
-        const auto v =
-            (i == 1 ? _current_theme_name : _current_theme_name + " " + std::to_string(i));
+        const auto v = (i == 1 ? _current_theme_name : _current_theme_name + " " + std::to_string(i));
         if( find(begin(themes), end(themes), v) == end(themes) )
             return v;
     }
@@ -499,3 +495,5 @@ bool ThemesManager::RenameTheme(const std::string &_theme_name, const std::strin
 
     return true;
 }
+
+} // namespace nc

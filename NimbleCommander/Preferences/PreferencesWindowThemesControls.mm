@@ -8,6 +8,8 @@
 #include <Utility/StringExtras.h>
 #include <cmath>
 
+using nc::ThemeAppearance;
+
 @interface NCPreferencesAlphaColorWell : NSColorWell
 @end
 

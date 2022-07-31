@@ -52,8 +52,7 @@ static constinit const std::array<LayoutDataT, 21> g_FixedLayoutData = {{
     std::make_tuple(16, 2, 32, 35, 12)  //
 }};
 
-static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
-                                                          PanelBriefViewColumnsLayout _layout)
+static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font, PanelBriefViewColumnsLayout _layout)
 {
     assert(_font);
     static const short insets[4] = {7, 1, 5, 1};
@@ -101,17 +100,14 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
     return lc;
 }
 
-bool PanelBriefViewItemLayoutConstants::operator==(
-    const PanelBriefViewItemLayoutConstants &_rhs) const noexcept
+bool PanelBriefViewItemLayoutConstants::operator==(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept
 {
-    return inset_left == _rhs.inset_left && inset_top == _rhs.inset_top &&
-           inset_right == _rhs.inset_right && inset_bottom == _rhs.inset_bottom &&
-           icon_size == _rhs.icon_size && font_baseline == _rhs.font_baseline &&
+    return inset_left == _rhs.inset_left && inset_top == _rhs.inset_top && inset_right == _rhs.inset_right &&
+           inset_bottom == _rhs.inset_bottom && icon_size == _rhs.icon_size && font_baseline == _rhs.font_baseline &&
            item_height == _rhs.item_height;
 }
 
-bool PanelBriefViewItemLayoutConstants::operator!=(
-    const PanelBriefViewItemLayoutConstants &_rhs) const noexcept
+bool PanelBriefViewItemLayoutConstants::operator!=(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept
 {
     return !(*this == _rhs);
 }
@@ -130,14 +126,11 @@ bool PanelBriefViewItemLayoutConstants::operator!=(
     PanelBriefViewColumnsLayout m_ColumnsLayout;
     __weak PanelView *m_PanelView;
     data::SortMode m_SortMode;
-    ThemesManager::ObservationTicket m_ThemeObservation;
+    nc::ThemesManager::ObservationTicket m_ThemeObservation;
 }
 
 @synthesize columnsLayout = m_ColumnsLayout;
 @synthesize sortMode = m_SortMode;
-
-static const auto g_ScrollingBackground =
-    [NSCollectionView instancesRespondToSelector:@selector(setBackgroundViewScrollsWithContent:)];
 
 - (void)setData:(data::Model *)_data
 {
@@ -157,10 +150,8 @@ static const auto g_ScrollingBackground =
     m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
     m_ScrollView.wantsLayer = true;
     m_ScrollView.contentView.copiesOnScroll = true;
-    m_ScrollView.drawsBackground = g_ScrollingBackground;
-    m_ScrollView.backgroundColor =
-        g_ScrollingBackground ? CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor()
-                              : NSColor.clearColor;
+    m_ScrollView.drawsBackground = true;
+    m_ScrollView.backgroundColor = nc::CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
     [self addSubview:m_ScrollView];
 
     const auto views_dict = NSDictionaryOfVariableBindings(m_ScrollView);
@@ -179,8 +170,7 @@ static const auto g_ScrollingBackground =
     m_CollectionView.dataSource = self;
     m_CollectionView.delegate = self;
 
-    m_Background =
-        [[PanelBriefViewCollectionViewBackground alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    m_Background = [[PanelBriefViewCollectionViewBackground alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     m_CollectionView.backgroundView = m_Background;
     m_CollectionView.backgroundColors = @[NSColor.clearColor];
 
@@ -196,8 +186,7 @@ static const auto g_ScrollingBackground =
             [strong_self onIconUpdated:_icon_no image:_icon];
     });
     m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-        ThemesManager::Notifications::FilePanelsBrief |
-            ThemesManager::Notifications::FilePanelsGeneral,
+        nc::ThemesManager::Notifications::FilePanelsBrief | nc::ThemesManager::Notifications::FilePanelsGeneral,
         nc::objc_callback(self, @selector(themeDidChange)));
 
     return self;
@@ -237,16 +226,20 @@ static const auto g_ScrollingBackground =
 - (NSInteger)collectionView:(NSCollectionView *) [[maybe_unused]] collectionView
      numberOfItemsInSection:(NSInteger) [[maybe_unused]] section
 {
-    Log::Trace(SPDLOC, "[PanelBriefView collectionView:{} numberOfItemsInSection:{}]",
-               (__bridge void*)collectionView, section);
+    Log::Trace(SPDLOC,
+               "[PanelBriefView collectionView:{} numberOfItemsInSection:{}]",
+               (__bridge void *)collectionView,
+               section);
     return m_Data ? m_Data->SortedDirectoryEntries().size() : 0;
 }
 
 - (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView
      itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath
 {
-    Log::Trace(SPDLOC, "[PanelBriefView collectionView:{} itemForRepresentedObjectAtIndexPath:{}]",
-               (__bridge void*)collectionView, indexPath.item);
+    Log::Trace(SPDLOC,
+               "[PanelBriefView collectionView:{} itemForRepresentedObjectAtIndexPath:{}]",
+               (__bridge void *)collectionView,
+               indexPath.item);
     PanelBriefViewItem *item = [collectionView makeItemWithIdentifier:@"A" forIndexPath:indexPath];
     assert(item);
 
@@ -302,7 +295,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
         return;
     }
 
-    const auto font = CurrentTheme().FilePanelsBriefFont();
+    const auto font = nc::CurrentTheme().FilePanelsBriefFont();
     auto widths = TextWidthsCache::Instance().Widths(strings, font);
     assert(static_cast<int>(widths.size()) == count);
 
@@ -314,15 +307,13 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
         std::fill(widths.begin(), widths.end(), width);
     }
     else {
-        std::for_each(widths.begin(), widths.end(), [width_addition](auto &width) {
-            width += width_addition;
-        });
+        std::for_each(widths.begin(), widths.end(), [width_addition](auto &width) { width += width_addition; });
     }
     m_IntrinsicItemsWidths = std::move(widths);
 }
 
-- (std::vector<unsigned short> &)collectionViewProvideIntrinsicItemsWidths:
-    (NSCollectionView *) [[maybe_unused]] _collectionView
+- (std::vector<unsigned short> &)collectionViewProvideIntrinsicItemsWidths:(NSCollectionView *)
+                                                                               [[maybe_unused]] _collectionView
 {
     return m_IntrinsicItemsWidths;
 }
@@ -379,7 +370,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 - (void)calculateItemLayout
 {
     Log::Trace(SPDLOC, "[PanelBriefView calculateItemLayout]");
-    m_ItemLayout = BuildItemsLayout(CurrentTheme().FilePanelsBriefFont(), m_ColumnsLayout);
+    m_ItemLayout = BuildItemsLayout(nc::CurrentTheme().FilePanelsBriefFont(), m_ColumnsLayout);
     [self updateItemsLayoutEngine];
 
     [self setupIconsPxSize];
@@ -451,7 +442,8 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
         else {
             [m_ScrollView.contentView setBoundsOrigin:_pt];
         }
-        [m_CollectionView prepareContentInRect:NSMakeRect(_pt.x, _pt.y, visible_rect.size.width, visible_rect.size.height)];
+        [m_CollectionView
+            prepareContentInRect:NSMakeRect(_pt.x, _pt.y, visible_rect.size.width, visible_rect.size.height)];
     };
 
     // NB! scrollToItemsAtIndexPaths is NOT used here because at some version of macOS it decided to
@@ -623,8 +615,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     }
     else {
         const auto items_per_column = m_Layout.rowsNumber;
-        const auto prob_vis_items =
-            static_cast<NSArray<PanelBriefViewItem *> *>(m_CollectionView.visibleItems);
+        const auto prob_vis_items = static_cast<NSArray<PanelBriefViewItem *> *>(m_CollectionView.visibleItems);
         const auto vis_rect = m_ScrollView.documentVisibleRect;
         std::vector<int> visible_item_columns;
 
@@ -651,14 +642,12 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     [m_CollectionView reloadData];
     self.cursorPosition = cp;
     m_Background.needsDisplay = true;
-    if( g_ScrollingBackground )
-        m_ScrollView.backgroundColor =
-            CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
+    m_ScrollView.backgroundColor = nc::CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
 }
 
 - (void)collectionViewDidLayoutItems:(NSCollectionView *) [[maybe_unused]] collectionView
 {
-    Log::Trace(SPDLOC, "[PanelBriefView collectionViewDidLayoutItems:{}]", (__bridge void*)collectionView);
+    Log::Trace(SPDLOC, "[PanelBriefView collectionViewDidLayoutItems:{}]", (__bridge void *)collectionView);
     static const bool draws_grid =
         [m_CollectionView respondsToSelector:@selector(setBackgroundViewScrollsWithContent:)];
     if( draws_grid )

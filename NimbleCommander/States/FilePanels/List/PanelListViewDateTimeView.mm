@@ -33,7 +33,7 @@ using nc::utility::AdaptiveDateFormatting;
         m_Line = nullptr;
         m_String = @"";
         m_Style = AdaptiveDateFormatting::Style::Orthodox;
-        m_Font = CurrentTheme().FilePanelsListFont();
+        m_Font = nc::CurrentTheme().FilePanelsListFont();
     }
     return self;
 }
@@ -80,7 +80,7 @@ using nc::utility::AdaptiveDateFormatting;
     m_Line = nullptr;
     m_String = @"";
     m_Style = AdaptiveDateFormatting::Style::Orthodox;
-    m_Font = CurrentTheme().FilePanelsListFont();
+    m_Font = nc::CurrentTheme().FilePanelsListFont();
 }
 
 - (void)setTime:(time_t)time
@@ -177,7 +177,7 @@ using nc::utility::AdaptiveDateFormatting;
 
 - (void)buildPresentation
 {
-    self.font = CurrentTheme().FilePanelsListFont();
+    self.font = nc::CurrentTheme().FilePanelsListFont();
     [self setNeedsDisplay:true];
 }
 

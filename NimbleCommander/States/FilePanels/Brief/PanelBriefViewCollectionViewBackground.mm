@@ -57,12 +57,10 @@
     const auto top = static_cast<int>(dirtyRect.origin.y);
     const auto bottom = static_cast<int>(dirtyRect.origin.y + dirtyRect.size.height);
     for( int y = top; y < bottom; y += m_RowHeight - (y % m_RowHeight) ) {
-        auto c = (y / m_RowHeight) % 2
-                     ? CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor()
-                     : CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
+        auto c = (y / m_RowHeight) % 2 ? nc::CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor()
+                                       : nc::CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
         CGContextSetFillColorWithColor(context, c.CGColor);
-        CGContextFillRect(context,
-                          CGRectMake(dirtyRect.origin.x, y, dirtyRect.size.width, m_RowHeight));
+        CGContextFillRect(context, CGRectMake(dirtyRect.origin.x, y, dirtyRect.size.width, m_RowHeight));
     }
 }
 
@@ -83,7 +81,7 @@
         return;
 
     const auto context = NSGraphicsContext.currentContext.CGContext;
-    const auto color = CurrentTheme().FilePanelsBriefGridColor();
+    const auto color = nc::CurrentTheme().FilePanelsBriefGridColor();
     CGContextSetFillColorWithColor(context, color.CGColor);
 
     const auto draw_vline_at = [&](int _x) {

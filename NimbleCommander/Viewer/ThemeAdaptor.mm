@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemeAdaptor.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
 
@@ -40,7 +40,7 @@ void ThemeAdaptor::ObserveChanges( std::function<void()> _callback )
     m_ThemeObservation = m_ThemesManager.ObserveChanges(filter, std::move(_callback) );
 }
 
-const ::Theme &ThemeAdaptor::CurrentTheme() const
+const ::nc::Theme &ThemeAdaptor::CurrentTheme() const
 {
     return m_ThemesManager.SelectedTheme();
 }

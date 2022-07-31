@@ -91,9 +91,9 @@ using namespace nc::panel;
 - (NSColor *)selectedBackgroundColor
 {
     if( m_PanelActive )
-        return CurrentTheme().FilePanelsBriefFocusedActiveItemBackgroundColor();
+        return nc::CurrentTheme().FilePanelsBriefFocusedActiveItemBackgroundColor();
     else
-        return CurrentTheme().FilePanelsBriefFocusedInactiveItemBackgroundColor();
+        return nc::CurrentTheme().FilePanelsBriefFocusedInactiveItemBackgroundColor();
 }
 
 - (PanelBriefView *)briefView
@@ -128,7 +128,7 @@ using namespace nc::panel;
         return;
 
     if( self.briefView ) {
-        const auto &rules = CurrentTheme().FilePanelsItemsColoringRules();
+        const auto &rules = nc::CurrentTheme().FilePanelsItemsColoringRules();
         const bool focus = self.selected && m_PanelActive;
         for( const auto &i : rules )
             if( i.filter.Filter(m_Item, m_VD) ) {
@@ -145,7 +145,7 @@ using namespace nc::panel;
     }
     else {
         if( m_VD.is_selected() ) {
-            self.carrier.background = CurrentTheme().FilePanelsBriefSelectedItemBackgroundColor();
+            self.carrier.background = nc::CurrentTheme().FilePanelsBriefSelectedItemBackgroundColor();
         }
         else {
             self.carrier.background = nil;

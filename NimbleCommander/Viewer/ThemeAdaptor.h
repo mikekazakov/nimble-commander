@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Viewer/Theme.h>
@@ -17,7 +17,7 @@ public:
     NSColor *ViewerBackgroundColor() const override;
     void ObserveChanges( std::function<void()> _callback ) override;
 private:
-    const ::Theme &CurrentTheme() const;
+    const ::nc::Theme &CurrentTheme() const;
     ThemesManager &m_ThemesManager;
     ThemesManager::ObservationTicket m_ThemeObservation;
 };

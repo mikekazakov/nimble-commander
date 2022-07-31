@@ -9,6 +9,7 @@
 #include <Utility/ObjCpp.h>
 #include <magic_enum.hpp>
 
+using namespace nc;
 using namespace nc::panel;
 
 @interface PanelListViewTableView ()

@@ -39,8 +39,7 @@
     if( self = [super initWithFrame:_frame_rect] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
 
-        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar"
-                                                      bundle:nc::viewer::Bundle()];
+        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nc::viewer::Bundle()];
         [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
 
         auto viewer = _viewer_factory(NSMakeRect(0, 0, 100, 100));
@@ -143,8 +142,7 @@
     auto tag = item.tag;
     IF_MENU_TAG("menu.file.close")
     {
-        item.title =
-            NSLocalizedString(@"Close Viewer", "Menu item title for closing internal viewer state");
+        item.title = NSLocalizedString(@"Close Viewer", "Menu item title for closing internal viewer state");
         return true;
     }
     return true;
@@ -167,7 +165,7 @@
 }
 - (void)updateLayer
 {
-    self.layer.backgroundColor = CurrentTheme().ViewerOverlayColor().CGColor;
+    self.layer.backgroundColor = nc::CurrentTheme().ViewerOverlayColor().CGColor;
 }
 
 @end

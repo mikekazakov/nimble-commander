@@ -1,6 +1,6 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Core/Theming/Theme.h>
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListViewTableHeaderCell.h"
+#include <NimbleCommander/Core/Theming/Theme.h>
 
 @implementation PanelListViewTableHeaderCell
 
@@ -15,11 +15,11 @@ static void FillRect( NSRect rc, NSColor *c )
 
 - (void) drawBackgroundWithFrame:(NSRect)cellFrame inView:(NSView *)[[maybe_unused]]_control_view
 {
-    [CurrentTheme().FilePanelsListHeaderBackgroundColor() set];
+    [nc::CurrentTheme().FilePanelsListHeaderBackgroundColor() set];
     NSRectFill(cellFrame);
   
     if( [self cellAttribute:NSCellState] ) {
-        const auto original = CurrentTheme().FilePanelsListHeaderBackgroundColor();
+        const auto original = nc::CurrentTheme().FilePanelsListHeaderBackgroundColor();
         const auto colorspace = NSColorSpace.genericRGBColorSpace;
         const auto brightness = [original colorUsingColorSpace:colorspace].brightnessComponent;
         const auto new_color = [NSColor colorWithWhite:1.-brightness alpha:0.1];
@@ -35,7 +35,7 @@ static void FillRect( NSRect rc, NSColor *c )
                                   inView:(NSView*)[[maybe_unused]] _control_view
 {
     FillRect(NSMakeRect(cellFrame.origin.x, NSMaxY(cellFrame) - 1, cellFrame.size.width, 1),
-             CurrentTheme().FilePanelsListHeaderSeparatorColor());
+             nc::CurrentTheme().FilePanelsListHeaderSeparatorColor());
 }
 
 - (void) drawVerticalSeparatorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
@@ -45,7 +45,7 @@ static void FillRect( NSRect rc, NSColor *c )
                             NSMinY(cellFrame)+3,
                             1,
                             cellFrame.size.height-6),
-                 CurrentTheme().FilePanelsListHeaderSeparatorColor()
+                 nc::CurrentTheme().FilePanelsListHeaderSeparatorColor()
                  );
 }
 
@@ -57,8 +57,8 @@ static void FillRect( NSRect rc, NSColor *c )
 
     // this may be really bad - to set attributes on every call.
     // might need to figure out a better way to customize header cells
-    auto attrs = @{NSFontAttributeName: CurrentTheme().FilePanelsListHeaderFont(),
-                   NSForegroundColorAttributeName: CurrentTheme().FilePanelsListHeaderTextColor(),
+    auto attrs = @{NSFontAttributeName: nc::CurrentTheme().FilePanelsListHeaderFont(),
+                   NSForegroundColorAttributeName: nc::CurrentTheme().FilePanelsListHeaderTextColor(),
                    NSParagraphStyleAttributeName: [&]()->NSParagraphStyle*{
                        NSMutableParagraphStyle *ps = NSParagraphStyle.
                         defaultParagraphStyle.mutableCopy;
@@ -73,7 +73,7 @@ static void FillRect( NSRect rc, NSColor *c )
     const auto left_padding = 4;
     auto trc = [self drawingRectForBounds:cellFrame];
 
-    const auto font_height = CurrentTheme().FilePanelsListHeaderFont().pointSize;
+    const auto font_height = nc::CurrentTheme().FilePanelsListHeaderFont().pointSize;
     const auto top = (trc.size.height - font_height) / 2;
     const auto height = font_height + 4;
     

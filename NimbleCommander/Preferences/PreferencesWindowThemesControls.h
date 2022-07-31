@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -38,7 +38,7 @@ namespace nc::panel {
 @interface PreferencesWindowThemesAppearanceControl : 
     NCPreferencesActionTableCellView
 
-@property (nonatomic) ThemeAppearance themeAppearance;
+@property (nonatomic) nc::ThemeAppearance themeAppearance;
 @property (nonatomic) bool enabled;
 
 @end

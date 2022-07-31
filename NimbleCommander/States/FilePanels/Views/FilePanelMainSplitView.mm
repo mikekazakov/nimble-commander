@@ -17,7 +17,7 @@ static const auto g_ResizingGran = 14.;
     // if there's no overlays - these will be nils
     // if any part becomes overlayed - basic view is backed up in this array
     FilePanelsTabbedHolder *m_BasicViews[2];
-    ThemesManager::ObservationTicket m_ThemeChangesObservation;
+    nc::ThemesManager::ObservationTicket m_ThemeChangesObservation;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -29,17 +29,14 @@ static const auto g_ResizingGran = 14.;
         self.dividerStyle = NSSplitViewDividerStyleThin;
         self.delegate = self;
 
-        FilePanelsTabbedHolder *th1 =
-            [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        FilePanelsTabbedHolder *th1 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:th1];
-        FilePanelsTabbedHolder *th2 =
-            [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        FilePanelsTabbedHolder *th2 = [[FilePanelsTabbedHolder alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:th2];
 
         __weak FilePanelMainSplitView *weak_self = self;
         m_ThemeChangesObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-            ThemesManager::Notifications::FilePanelsGeneral,
-            [=] { [weak_self setNeedsDisplay:true]; });
+            nc::ThemesManager::Notifications::FilePanelsGeneral, [=] { [weak_self setNeedsDisplay:true]; });
     }
     return self;
 }
@@ -90,7 +87,7 @@ static const auto g_ResizingGran = 14.;
 
 - (void)drawDividerInRect:(NSRect)rect
 {
-    if( auto c = CurrentTheme().FilePanelsGeneralSplitterColor() ) {
+    if( auto c = nc::CurrentTheme().FilePanelsGeneralSplitterColor() ) {
         [c set];
         if( c.alphaComponent == 1. )
             NSRectFill(rect);
@@ -101,8 +98,7 @@ static const auto g_ResizingGran = 14.;
         NSDrawWindowBackground(rect);
 }
 
-- (BOOL)splitView:(NSSplitView *) [[maybe_unused]] splitView
-    canCollapseSubview:(NSView *) [[maybe_unused]] subview
+- (BOOL)splitView:(NSSplitView *) [[maybe_unused]] splitView canCollapseSubview:(NSView *) [[maybe_unused]] subview
 {
     return true;
 }
@@ -259,7 +255,7 @@ static const auto g_ResizingGran = 14.;
 - (BOOL)performKeyEquivalent:(NSEvent *)_event
 {
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
-    
+
     static ActionsShortcutsManager::ShortCut hk_move_left, hk_move_right;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{

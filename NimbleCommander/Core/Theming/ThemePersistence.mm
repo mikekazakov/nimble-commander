@@ -5,6 +5,8 @@
 #include <Panel/UI/PanelViewPresentationItemsColoringFilterPersistence.h>
 #include <Config/RapidJSON.h>
 
+namespace nc {
+
 NSColor *ThemePersistence::ExtractColor(const Value &_doc, const char *_path)
 {
     auto cr = _doc.FindMember(_path);
@@ -29,8 +31,8 @@ NSFont *ThemePersistence::ExtractFont(const Value &_doc, const char *_path)
     return [NSFont fontWithStringDescription:[NSString stringWithUTF8String:cr->value.GetString()]];
 }
 
-std::vector<nc::panel::PresentationItemsColoringRule>
-ThemePersistence::ExtractRules(const Value &_doc, const char *_path)
+std::vector<nc::panel::PresentationItemsColoringRule> ThemePersistence::ExtractRules(const Value &_doc,
+                                                                                     const char *_path)
 {
     std::vector<nc::panel::PresentationItemsColoringRule> r;
     auto cr = &_doc.FindMember(_path)->value;
@@ -57,8 +59,7 @@ ThemePersistence::EncodeRules(const std::vector<nc::panel::PresentationItemsColo
     Value cr(rapidjson::kArrayType);
     cr.Reserve(static_cast<unsigned>(_rules.size()), nc::config::g_CrtAllocator);
     for( const auto &r : _rules )
-        cr.PushBack(nc::panel::PresentationItemsColoringRulePersistence{}.ToJSON(r),
-                    nc::config::g_CrtAllocator);
+        cr.PushBack(nc::panel::PresentationItemsColoringRulePersistence{}.ToJSON(r), nc::config::g_CrtAllocator);
     return cr;
 }
 
@@ -85,4 +86,6 @@ ThemeAppearance ThemePersistence::ExtractAppearance(const Value &_doc, const cha
         return ThemeAppearance::Dark;
     // vibrant light some day maybe
     return ThemeAppearance::Light;
+}
+
 }

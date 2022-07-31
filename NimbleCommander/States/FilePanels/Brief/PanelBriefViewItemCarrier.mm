@@ -140,8 +140,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 - (void)drawDefaultBackgroundWithBounds:(NSRect)bounds inContext:(CGContextRef)context
 {
     const bool is_odd = int(self.frame.origin.y / bounds.size.height) % 2;
-    auto c = is_odd ? CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor()
-                    : CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
+    auto c = is_odd ? nc::CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor()
+    : nc::CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
     CGContextSetFillColorWithColor(context, c.CGColor);
     CGContextFillRect(context, bounds);
 }
@@ -169,7 +169,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     else
         [self drawDefaultBackgroundWithBounds:bounds inContext:context];
 
-    const auto grid_color = CurrentTheme().FilePanelsBriefGridColor();
+    const auto grid_color = nc::CurrentTheme().FilePanelsBriefGridColor();
     CGContextSetFillColorWithColor(context, grid_color.CGColor);
     CGContextFillRect(context, NSMakeRect(bounds.size.width - 1, 0, 1, bounds.size.height));
 
@@ -356,7 +356,7 @@ static bool HasNoModifiers(NSEvent *_event)
 {
     const auto tm = GetCurrentFilenamesTrimmingMode();
     NSDictionary *attrs = @{
-        NSFontAttributeName: CurrentTheme().FilePanelsBriefFont(),
+        NSFontAttributeName: nc::CurrentTheme().FilePanelsBriefFont(),
         NSForegroundColorAttributeName: m_TextColor,
         NSParagraphStyleAttributeName: ParagraphStyle(tm)
     };
@@ -398,7 +398,7 @@ static bool HasNoModifiers(NSEvent *_event)
     const auto bounds = self.bounds;
     auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
 
-    auto fi = nc::utility::FontGeometryInfo(CurrentTheme().FilePanelsBriefFont());
+    auto fi = nc::utility::FontGeometryInfo(nc::CurrentTheme().FilePanelsBriefFont());
 
     text_segment_rect.size.height = fi.LineHeight();
     text_segment_rect.origin.y = m_LayoutConstants.font_baseline - fi.Descent();
@@ -407,7 +407,7 @@ static bool HasNoModifiers(NSEvent *_event)
     _editor.frame = text_segment_rect;
 
     NSTextView *tv = _editor.documentView;
-    tv.font = CurrentTheme().FilePanelsBriefFont();
+    tv.font = nc::CurrentTheme().FilePanelsBriefFont();
     tv.textContainerInset = NSMakeSize(0, 0);
     tv.textContainer.lineFragmentPadding = line_padding;
 
@@ -507,7 +507,7 @@ static bool HasNoModifiers(NSEvent *_event)
 {
     if( m_IsDropTarget || m_Highlighted ) {
         self.layer.borderWidth = 1;
-        self.layer.borderColor = CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
+        self.layer.borderColor = nc::CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
     }
     else
         self.layer.borderWidth = 0;

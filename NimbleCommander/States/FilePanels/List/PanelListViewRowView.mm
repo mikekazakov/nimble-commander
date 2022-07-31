@@ -142,7 +142,7 @@ static NSColor *Blend(NSColor *_front, NSColor *_back)
 static void RebuildBackgroundColorsCache()
 {
     auto &c = g_BackgroundColorsCache;
-    const auto &t = CurrentTheme();
+    const auto &t = nc::CurrentTheme();
     c.generation = t.Generation();
     c.focused_active_odd = Blend(t.FilePanelsListFocusedActiveRowBackgroundColor(),
                                  t.FilePanelsListRegularOddRowBackgroundColor());
@@ -164,7 +164,7 @@ static NSColor *
 FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_selected, bool _is_odd)
 {
     const auto &c = g_BackgroundColorsCache;
-    if( c.generation != CurrentTheme().Generation() )
+    if( c.generation != nc::CurrentTheme().Generation() )
         RebuildBackgroundColorsCache();
 
     if( _is_focused ) {
@@ -207,7 +207,7 @@ FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_selected, bool _
     if( !m_Item )
         return NSColor.blackColor;
 
-    const auto &rules = CurrentTheme().FilePanelsItemsColoringRules();
+    const auto &rules = nc::CurrentTheme().FilePanelsItemsColoringRules();
     ;
     const auto focus = self.selected && m_PanelActive;
     for( const auto &i : rules )
@@ -517,7 +517,7 @@ static NSPoint g_LastMouseDownPos = {};
 {
     if( m_DropTarget || m_Highlighted ) {
         self.layer.borderWidth = 1;
-        self.layer.borderColor = CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
+        self.layer.borderColor = nc::CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
     }
     else
         self.layer.borderWidth = 0;

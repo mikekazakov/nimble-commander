@@ -918,9 +918,9 @@ static std::string AquaticPrimePublicKey()
     return i;
 }
 
-- (ThemesManager &)themesManager
+- (nc::ThemesManager &)themesManager
 {
-    static auto i = new ThemesManager(g_ConfigSelectedThemes, g_ConfigThemesList);
+    static auto i = new nc::ThemesManager(g_ConfigSelectedThemes, g_ConfigThemesList);
     return *i;
 }
 

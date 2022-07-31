@@ -132,7 +132,7 @@ static NSEvent *SwapScrollAxis(NSEvent *_event)
         m_IsDropTarget = isDropTarget;
         if( m_IsDropTarget ) {
             self.layer.borderWidth = 1;
-            self.layer.borderColor = CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
+            self.layer.borderColor = nc::CurrentTheme().FilePanelsGeneralDropBorderColor().CGColor;
         }
         else
             self.layer.borderWidth = 0;

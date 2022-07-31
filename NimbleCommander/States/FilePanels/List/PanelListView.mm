@@ -22,6 +22,7 @@
 #include "PanelListViewDateTimeView.h"
 #include "../Helpers/IconRepositoryCleaner.h"
 
+using namespace nc;
 using namespace nc::panel;
 using nc::vfsicon::IconRepository;
 using nc::utility::AdaptiveDateFormatting;

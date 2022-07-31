@@ -311,7 +311,7 @@ static NSString *TitleForData(const data::Model *_data);
 
 - (void)updateLayer
 {
-    self.layer.backgroundColor = CurrentTheme().FilePanelsGeneralOverlayColor().CGColor;
+    self.layer.backgroundColor = nc::CurrentTheme().FilePanelsGeneralOverlayColor().CGColor;
 }
 
 - (void)loadDefaultPanelContent
@@ -371,7 +371,7 @@ static NSString *TitleForData(const data::Model *_data);
 
     m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
     m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
-    m_SeparatorLine.borderColor = CurrentTheme().FilePanelsGeneralTopSeparatorColor();
+    m_SeparatorLine.borderColor = nc::CurrentTheme().FilePanelsGeneralTopSeparatorColor();
     [self addSubview:m_SeparatorLine];
 
     m_ToolbarDelegate =

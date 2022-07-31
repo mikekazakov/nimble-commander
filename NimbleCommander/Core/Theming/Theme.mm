@@ -5,6 +5,8 @@
 #include <Utility/HexadecimalColor.h>
 #include <Config/RapidJSON.h>
 
+namespace nc {
+
 using namespace std::literals;
 
 static std::atomic_ulong g_LastGeneration{1};
@@ -89,8 +91,7 @@ struct Theme::Internals {
     NSColor *m_ViewerBackgroundColor;
 };
 
-Theme::Theme(const void *_theme_data, const void *_backup_theme_data)
-    : I(std::make_unique<Internals>())
+Theme::Theme(const void *_theme_data, const void *_backup_theme_data) : I(std::make_unique<Internals>())
 {
     assert(_theme_data && _backup_theme_data);
     const auto &doc = *static_cast<const nc::config::Value *>(_theme_data);
@@ -152,35 +153,27 @@ Theme::Theme(const void *_theme_data, const void *_backup_theme_data)
     I->m_FilePanelsHeaderFont = ExtractFont("filePanelsHeaderFont");
     I->m_FilePanelsHeaderTextColor = ExtractColor("filePanelsHeaderTextColor");
     I->m_FilePanelsHeaderActiveTextColor = ExtractColor("filePanelsHeaderActiveTextColor");
-    I->m_FilePanelsHeaderActiveBackgroundColor =
-        ExtractColor("filePanelsHeaderActiveBackgroundColor");
-    I->m_FilePanelsHeaderInactiveBackgroundColor =
-        ExtractColor("filePanelsHeaderInactiveBackgroundColor");
+    I->m_FilePanelsHeaderActiveBackgroundColor = ExtractColor("filePanelsHeaderActiveBackgroundColor");
+    I->m_FilePanelsHeaderInactiveBackgroundColor = ExtractColor("filePanelsHeaderInactiveBackgroundColor");
     I->m_FilePanelsHeaderSeparatorColor = ExtractColor("filePanelsHeaderSeparatorColor");
 
     I->m_FilePanelsListHeaderFont = ExtractFont("filePanelsListHeaderFont");
     I->m_FilePanelsListHeaderBackgroundColor = ExtractColor("filePanelsListHeaderBackgroundColor");
     I->m_FilePanelsListHeaderTextColor = ExtractColor("filePanelsListHeaderTextColor");
     I->m_FilePanelsListHeaderSeparatorColor = ExtractColor("filePanelsListHeaderSeparatorColor");
-    I->m_FilePanelsListFocusedActiveRowBackgroundColor =
-        ExtractColor("filePanelsListFocusedActiveRowBackgroundColor");
+    I->m_FilePanelsListFocusedActiveRowBackgroundColor = ExtractColor("filePanelsListFocusedActiveRowBackgroundColor");
     I->m_FilePanelsListFocusedInactiveRowBackgroundColor =
         ExtractColor("filePanelsListFocusedInactiveRowBackgroundColor");
-    I->m_FilePanelsListRegularEvenRowBackgroundColor =
-        ExtractColor("filePanelsListRegularEvenRowBackgroundColor");
-    I->m_FilePanelsListRegularOddRowBackgroundColor =
-        ExtractColor("filePanelsListRegularOddRowBackgroundColor");
-    I->m_FilePanelsListSelectedRowBackgroundColor =
-        ExtractColor("filePanelsListSelectedItemBackgroundColor");
+    I->m_FilePanelsListRegularEvenRowBackgroundColor = ExtractColor("filePanelsListRegularEvenRowBackgroundColor");
+    I->m_FilePanelsListRegularOddRowBackgroundColor = ExtractColor("filePanelsListRegularOddRowBackgroundColor");
+    I->m_FilePanelsListSelectedRowBackgroundColor = ExtractColor("filePanelsListSelectedItemBackgroundColor");
 
     I->m_FilePanelsFooterFont = ExtractFont("filePanelsFooterFont");
     I->m_FilePanelsFooterTextColor = ExtractColor("filePanelsFooterTextColor");
     I->m_FilePanelsFooterActiveTextColor = ExtractColor("filePanelsFooterActiveTextColor");
     I->m_FilePanelsFooterSeparatorsColor = ExtractColor("filePanelsFooterSeparatorsColor");
-    I->m_FilePanelsFooterActiveBackgroundColor =
-        ExtractColor("filePanelsFooterActiveBackgroundColor");
-    I->m_FilePanelsFooterInactiveBackgroundColor =
-        ExtractColor("filePanelsFooterInactiveBackgroundColor");
+    I->m_FilePanelsFooterActiveBackgroundColor = ExtractColor("filePanelsFooterActiveBackgroundColor");
+    I->m_FilePanelsFooterInactiveBackgroundColor = ExtractColor("filePanelsFooterInactiveBackgroundColor");
 
     I->m_FilePanelsTabsFont = ExtractFont("filePanelsTabsFont");
     I->m_FilePanelsTabsTextColor = ExtractColor("filePanelsTabsTextColor");
@@ -194,23 +187,19 @@ Theme::Theme(const void *_theme_data, const void *_backup_theme_data)
         ExtractColor("filePanelsTabsRegularKeyWndHoverBackgroundColor");
     I->m_FilePanelsTabsRegularKeyWndRegularBackgroundColor =
         ExtractColor("filePanelsTabsRegularKeyWndRegularBackgroundColor");
-    I->m_FilePanelsTabsRegularNotKeyWndBackgroundColor =
-        ExtractColor("filePanelsTabsRegularNotKeyWndBackgroundColor");
+    I->m_FilePanelsTabsRegularNotKeyWndBackgroundColor = ExtractColor("filePanelsTabsRegularNotKeyWndBackgroundColor");
     I->m_FilePanelsTabsSeparatorColor = ExtractColor("filePanelsTabsSeparatorColor");
     I->m_FilePanelsTabsPictogramColor = ExtractColor("filePanelsTabsPictogramColor");
 
     I->m_FilePanelsBriefFont = ExtractFont("filePanelsBriefFont");
     I->m_FilePanelsBriefGridColor = ExtractColor("filePanelsBriefGridColor");
-    I->m_FilePanelsBriefRegularEvenRowBackgroundColor =
-        ExtractColor("filePanelsBriefRegularEvenRowBackgroundColor");
-    I->m_FilePanelsBriefRegularOddRowBackgroundColor =
-        ExtractColor("filePanelsBriefRegularOddRowBackgroundColor");
+    I->m_FilePanelsBriefRegularEvenRowBackgroundColor = ExtractColor("filePanelsBriefRegularEvenRowBackgroundColor");
+    I->m_FilePanelsBriefRegularOddRowBackgroundColor = ExtractColor("filePanelsBriefRegularOddRowBackgroundColor");
     I->m_FilePanelsBriefFocusedActiveItemBackgroundColor =
         ExtractColor("filePanelsBriefFocusedActiveItemBackgroundColor");
     I->m_FilePanelsBriefFocusedInactiveItemBackgroundColor =
         ExtractColor("filePanelsBriefFocusedInactiveItemBackgroundColor");
-    I->m_FilePanelsBriefSelectedItemBackgroundColor =
-        ExtractColor("filePanelsBriefSelectedItemBackgroundColor");
+    I->m_FilePanelsBriefSelectedItemBackgroundColor = ExtractColor("filePanelsBriefSelectedItemBackgroundColor");
 
     I->m_TerminalFont = ExtractFont("terminalFont");
     I->m_TerminalOverlayColor = ExtractColor("terminalOverlayColor");
@@ -625,4 +614,6 @@ NSColor *Theme::FilePanelsGeneralTopSeparatorColor() const noexcept
 NSColor *Theme::FilePanelsBriefGridColor() const noexcept
 {
     return I->m_FilePanelsBriefGridColor;
+}
+
 }

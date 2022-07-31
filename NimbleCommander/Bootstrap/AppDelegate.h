@@ -9,13 +9,13 @@
 @class NCMainWindowController;
 @class InternalViewerWindowController;
 @class AppStoreHelper;
-class ThemesManager;
 class ExternalEditorsStorage;
 class NetworkConnectionsManager;
 
 namespace nc {
 
 class FeedbackManager;
+class ThemesManager;
 
 namespace config {
 class Config;
@@ -114,7 +114,7 @@ class NativeHost;
 @property(nonatomic, readonly)
     const std::shared_ptr<nc::panel::PanelViewLayoutsStorage> &panelLayouts;
 
-@property(nonatomic, readonly) ThemesManager &themesManager;
+@property(nonatomic, readonly) nc::ThemesManager &themesManager;
 
 @property(nonatomic, readonly) ExternalEditorsStorage &externalEditorsStorage;
 

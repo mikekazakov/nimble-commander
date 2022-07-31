@@ -19,6 +19,7 @@
 #include <Utility/ObjCpp.h>
 
 using namespace std::literals;
+using nc::ThemePersistence;
 
 static NSTextField *SpawnSectionTitle(NSString *_title)
 {
@@ -55,7 +56,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
 @implementation PreferencesWindowThemesTab {
     NSArray *m_Nodes;
     nc::config::Document m_Doc;
-    ThemesManager *m_Manager;
+    nc::ThemesManager *m_Manager;
     std::vector<std::string> m_ThemeNames;
     int m_SelectedTheme;
     nc::bootstrap::ActivationManager *m_ActivationManager;

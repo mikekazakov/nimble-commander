@@ -6,7 +6,7 @@
 #include <Panel/PanelData.h>
 #include <Panel/PanelDataSortMode.h>
 #include "../PanelView.h"
-#include "../PanelViewPresentationItemsColoringFilter.h"
+#include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>

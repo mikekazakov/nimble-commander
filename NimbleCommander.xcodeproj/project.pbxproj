@@ -350,7 +350,6 @@
 		CF5E9A681FCE738B005608F5 /* QuickLookVFSBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A651FCE735C005608F5 /* QuickLookVFSBridge.mm */; };
 		CF5E9A691FCE738C005608F5 /* QuickLookVFSBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A651FCE735C005608F5 /* QuickLookVFSBridge.mm */; };
 		CF5FE7D51E120A4900CD83B4 /* CopyFilePaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */; };
-		CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
 		CF5FE8041E14A08500CD83B4 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
 		CF5FE80B1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */; };
 		CF5FE80E1E16461600CD83B4 /* PanelListViewTableHeaderView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */; };
@@ -725,6 +724,10 @@
 		CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CFC5D4B119BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
 		CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */; };
+		CFCB68FA28968B9300086E40 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
+		CFCB68FB28968B9400086E40 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
+		CFCB68FC28968B9400086E40 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
+		CFCB68FD28968B9500086E40 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
 		CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBAF1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
 		CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */; };
@@ -777,9 +780,6 @@
 		CFD7260D1E42E07900603077 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
 		CFD7260E1E42E07900603077 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
 		CFD7260F1E42E07A00603077 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
-		CFD726191E42E09300603077 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
-		CFD7261A1E42E09400603077 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
-		CFD7261B1E42E09500603077 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
 		CFD7261C1E42E0A500603077 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
 		CFD7261D1E42E0A600603077 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
 		CFD7261E1E42E0A700603077 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
@@ -850,9 +850,6 @@
 		CFD726B01E42E26100603077 /* CopyFilePaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */; };
 		CFD726B11E42E26200603077 /* CopyFilePaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */; };
 		CFD726B21E42E26200603077 /* CopyFilePaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */; };
-		CFD726B31E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */; };
-		CFD726B41E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */; };
-		CFD726B51E42E27A00603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */; };
 		CFD726B61E42E28100603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2101DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.mm */; };
 		CFD726B71E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2101DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.mm */; };
 		CFD726B81E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2101DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.mm */; };
@@ -998,7 +995,6 @@
 		CFDAC21B1DFBC6CB0039A104 /* PanelHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21A1DFBC6CB0039A104 /* PanelHistory.mm */; };
 		CFDAC21E1DFBC9080039A104 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */; };
 		CFDAC2211DFBCA290039A104 /* PanelDataPersistency.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21F1DFBCA290039A104 /* PanelDataPersistency.cpp */; };
-		CFDAC2241DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */; };
 		CFDAC2331DFBDE2B0039A104 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
 		CFDAC2361DFBDE560039A104 /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2351DFBDE560039A104 /* Application.mm */; };
 		CFDAC23B1DFBDEBA0039A104 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */; };
@@ -1035,10 +1031,6 @@
 		CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDC07B72158F6430069D364 /* libVFSIcon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.a */; };
-		CFDC07CA2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDC07C92159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
-		CFDC07CB2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDC07C92159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
-		CFDC07CC2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDC07C92159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
-		CFDC07CD2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDC07C92159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
 		CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
 		CFDF44A11D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
 		CFDF44A21D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
@@ -1974,8 +1966,6 @@
 		CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SandboxManager.mm; path = NimbleCommander/Core/SandboxManager.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC21F1DFBCA290039A104 /* PanelDataPersistency.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PanelDataPersistency.cpp; path = NimbleCommander/States/FilePanels/PanelDataPersistency.cpp; sourceTree = SOURCE_ROOT; };
 		CFDAC2201DFBCA290039A104 /* PanelDataPersistency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataPersistency.h; path = NimbleCommander/States/FilePanels/PanelDataPersistency.h; sourceTree = SOURCE_ROOT; };
-		CFDAC2221DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationItemsColoringFilter.h; path = NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h; sourceTree = SOURCE_ROOT; };
-		CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationItemsColoringFilter.mm; path = NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC22E1DFBDBCB0039A104 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = NimbleCommander/Bootstrap/Config.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2321DFBDE2B0039A104 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = NimbleCommander/Bootstrap/main.cpp; sourceTree = SOURCE_ROOT; };
 		CFDAC2341DFBDE560039A104 /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Application.h; path = NimbleCommander/Bootstrap/Application.h; sourceTree = SOURCE_ROOT; };
@@ -2045,8 +2035,6 @@
 		CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalEditorInfo.mm; path = NimbleCommander/States/FilePanels/ExternalEditorInfo.mm; sourceTree = SOURCE_ROOT; };
 		CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFTPConnectionSheetController.h; path = NimbleCommander/States/FilePanels/Views/SFTPConnectionSheetController.h; sourceTree = SOURCE_ROOT; };
 		CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SFTPConnectionSheetController.mm; path = NimbleCommander/States/FilePanels/Views/SFTPConnectionSheetController.mm; sourceTree = SOURCE_ROOT; };
-		CFDC07C82159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationItemsColoringFilterPersistence.h; path = NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilterPersistence.h; sourceTree = "<group>"; };
-		CFDC07C92159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationItemsColoringFilterPersistence.mm; path = NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilterPersistence.mm; sourceTree = "<group>"; };
 		CFDF449F1D2B990A0062F7AD /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = NimbleCommander/Resources/Media.xcassets; sourceTree = SOURCE_ROOT; };
 		CFE08B0C23D4BE3D007E99B8 /* NativeVFSHostInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeVFSHostInstance.h; path = NimbleCommander/Bootstrap/NativeVFSHostInstance.h; sourceTree = "<group>"; };
 		CFEADD2E259CF60D009ECA14 /* ChangePanelsPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ChangePanelsPosition.mm; path = NimbleCommander/States/FilePanels/Actions/ChangePanelsPosition.mm; sourceTree = "<group>"; };
@@ -2236,10 +2224,6 @@
 				CFB2AB6C21573BE30009EB81 /* PanelViewHeaderThemeImpl.h */,
 				CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */,
 				CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */,
-				CFDAC2221DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.h */,
-				CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */,
-				CFDC07C82159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.h */,
-				CFDC07C92159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm */,
 			);
 			name = Presentation;
 			sourceTree = "<group>";
@@ -3242,10 +3226,10 @@
 			buildConfigurationList = CFC5122E16C4BD3D00D247EE /* Build configuration list for PBXNativeTarget "NimbleCommander-NonMAS" */;
 			buildPhases = (
 				CF52C3CD22BEA5570043E825 /* CopyFiles */,
-				CF52C3CC22BE9DA90043E825 /* ShellScript */,
 				CFC5120D16C4BD3D00D247EE /* Sources */,
 				CFC5120E16C4BD3D00D247EE /* Frameworks */,
 				CFC5120F16C4BD3D00D247EE /* Resources */,
+				CF52C3CC22BE9DA90043E825 /* ShellScript */,
 				CF9EEB3E17256372001443FA /* ShellScript */,
 				CFD54FC41A29C67C0098A4A9 /* CopyFiles */,
 			);
@@ -4018,7 +4002,6 @@
 				CFD726C61E42E29B00603077 /* Layout.mm in Sources */,
 				CF4D98A92028500400ECE06D /* PanelControllerActions.mm in Sources */,
 				CFFA95171F45A3180035E606 /* Dock.mm in Sources */,
-				CFD7261A1E42E09400603077 /* Theme.mm in Sources */,
 				CFBA63AF1FC1A4F900077682 /* CopyFile.mm in Sources */,
 				CFD726621E42E1DC00603077 /* ExternalEditorInfo.mm in Sources */,
 				CFD726081E42E07000603077 /* AppDelegateCPP.mm in Sources */,
@@ -4030,6 +4013,7 @@
 				CFD7264D1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
+				CFCB68FB28968B9400086E40 /* Theme.mm in Sources */,
 				CFFA951A1F45A3400035E606 /* ConfigWiring.mm in Sources */,
 				CFD726CF1E42E2A900603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CFD799F121F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */,
@@ -4153,7 +4137,6 @@
 				CFD726B11E42E26200603077 /* CopyFilePaths.mm in Sources */,
 				CF44D33C202D632F0083FAF5 /* ExecuteExternalTool.mm in Sources */,
 				CF7D7D5D21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */,
-				CFDC07CC2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CF9B07E626FF0CDB00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */,
 				CFD8CDD21E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,
 				CF9F4B011ECC8DD000E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
@@ -4183,7 +4166,6 @@
 				CFD726051E42E06900603077 /* AppDelegate.mm in Sources */,
 				CF662AE31D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */,
 				CFA171662019700000F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
-				CFD726B41E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF6D9BD6196677CA0077B146 /* RHPreferencesWindowController.m in Sources */,
 				CF6D9BD7196677CA0077B146 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF6BF823219140360017CECB /* PanelBriefViewFixedWidthLayout.mm in Sources */,
@@ -4227,6 +4209,7 @@
 				CFD8CDB31E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
 				CFD726DB1E42E2BE00603077 /* Layout.mm in Sources */,
 				CF7A09DC1EC44A4000533B07 /* OpenNetworkConnection.mm in Sources */,
+				CFCB68FD28968B9500086E40 /* Theme.mm in Sources */,
 				CF7A09B31EC2DF6300533B07 /* Duplicate.mm in Sources */,
 				CF4E56AC1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFD726DF1E42E2C300603077 /* PanelListView.mm in Sources */,
@@ -4258,9 +4241,7 @@
 				CF4E56A51D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CFBA63B31FC1A50C00077682 /* ToggleSingleOrDualMode.mm in Sources */,
 				CFA539B91D433E2A00C562A7 /* AskForPasswordWindowController.mm in Sources */,
-				CFD726B51E42E27A00603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFD7271C1E42E32D00603077 /* ExternalEditorState.mm in Sources */,
-				CFD7261B1E42E09500603077 /* Theme.mm in Sources */,
 				CF1FBF271E8F57D000D3569C /* FavoriteComposing.mm in Sources */,
 				CF6237261EB4444D00152B2B /* PanelDataOptionsPersistence.mm in Sources */,
 				CFD726FE1E42E2F400603077 /* TabBarStyle.mm in Sources */,
@@ -4355,7 +4336,6 @@
 				CFA1716320196CB400F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
 				CF9B07EC26FF0CDC00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */,
 				CF2F10B12567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
-				CFDC07CA2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CFFA95191F45A3400035E606 /* ConfigWiring.mm in Sources */,
 				CFD8CDBF1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
 				CFD726991E42E23100603077 /* PanelDataPersistency.cpp in Sources */,
@@ -4425,6 +4405,7 @@
 				CFD8CD3B1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
 				CF3E2F791F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */,
 				CF7A09961EC2B37000533B07 /* Duplicate.mm in Sources */,
+				CFCB68FC28968B9400086E40 /* Theme.mm in Sources */,
 				CFDAC2B21DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFFA943C1F3E9C4D0035E606 /* ConfigWiring.mm in Sources */,
 				CF4E56431D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
@@ -4489,7 +4470,6 @@
 				CFDAC23C1DFBDEBA0039A104 /* AppDelegateCPP.mm in Sources */,
 				CF04DDF51E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
 				CF6ECDB31E9F4AF3008FA79E /* RenameInPlace.mm in Sources */,
-				CFDAC2241DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF4135201F890709007429B6 /* SettingsAdaptor.mm in Sources */,
 				CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
@@ -4553,8 +4533,6 @@
 				CF2F10B22567DF2500622405 /* NCHelpMenuDelegate.mm in Sources */,
 				CF9B07E726FF0CDB00D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.mm in Sources */,
 				CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
-				CFDC07CB2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
-				CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */,
 				CF5FE8041E14A08500CD83B4 /* ThemesManager.mm in Sources */,
 				CF4E56451D5064FE00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CF5BB3632581714000486C49 /* ProFeaturesWindowController.mm in Sources */,
@@ -4610,7 +4588,6 @@
 				CF1FBF281E8F57E400D3569C /* OpenWithExternalEditor.mm in Sources */,
 				CF818B5E1EA0610E00BC28E6 /* ToggleLayout.mm in Sources */,
 				CF04DDF81E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
-				CFDC07CD2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CF2F434A1EAF345400AA031A /* ConnectToServer.mm in Sources */,
 				CFD7271D1E42E32F00603077 /* ShellState.mm in Sources */,
 				CF4E56BD1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
@@ -4623,6 +4600,7 @@
 				CFD726791E42E20200603077 /* PanelController.mm in Sources */,
 				CF46C24620317FEE00A91E2F /* ServicesHandler.mm in Sources */,
 				CFD726701E42E1F500603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
+				CFCB68FA28968B9300086E40 /* Theme.mm in Sources */,
 				CFA2D6071E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
 				CF20DF451FC670100074ABB8 /* ShowTerminal.mm in Sources */,
 				CF818B641EA0610E00BC28E6 /* ShowGoToPopup.mm in Sources */,
@@ -4682,7 +4660,6 @@
 				CFD7261C1E42E0A500603077 /* ThemesManager.mm in Sources */,
 				CF20DF4C1FC694B60074ABB8 /* SyncPanels.mm in Sources */,
 				CF2084151FF14E260014D6AD /* ListingPromise.cpp in Sources */,
-				CFD726B31E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFD726A31E42E24400603077 /* PanelView.mm in Sources */,
 				CF04DE091E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CFD726041E42E06800603077 /* AppDelegate.mm in Sources */,
@@ -4704,7 +4681,6 @@
 				CFD726F61E42E2E400603077 /* PanelListViewTableHeaderView.mm in Sources */,
 				CFD8CDCD1E8CE65600E4DC53 /* OpenXAttr.mm in Sources */,
 				CFD799FE21F50B010043A26D /* ThemeAdaptor.mm in Sources */,
-				CFD726191E42E09300603077 /* Theme.mm in Sources */,
 				CFD726DA1E42E2BD00603077 /* Layout.mm in Sources */,
 				CF5E9A541FCBF5BD005608F5 /* ShowQuickLook.mm in Sources */,
 				CF04DDFE1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,

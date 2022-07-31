@@ -2,7 +2,7 @@
 #include "ThemePersistence.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
-#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilterPersistence.h>
+#include <Panel/UI/PanelViewPresentationItemsColoringFilterPersistence.h>
 #include <Config/RapidJSON.h>
 
 NSColor *ThemePersistence::ExtractColor(const Value &_doc, const char *_path)

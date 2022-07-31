@@ -1,8 +1,8 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Config/RapidJSON_fwd.h>
-#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
+#include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 
 #include "Theme.h"
 

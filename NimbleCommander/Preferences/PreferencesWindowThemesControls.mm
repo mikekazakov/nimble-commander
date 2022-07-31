@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <Utility/HexadecimalColor.h>
-#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
+#include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include "PreferencesWindowThemesControls.h"
 #include <Utility/ObjCpp.h>

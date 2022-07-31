@@ -31,6 +31,8 @@
 		CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA89D812804C86E00BEA127 /* FindFilesData.h */; };
 		CFA89D842804C87700BEA127 /* FindFilesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA89D832804C87700BEA127 /* FindFilesData.cpp */; };
 		CFA89DA22814794000BEA127 /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA89DA12814794000BEA127 /* TextWidthsCache.mm */; };
+		CFCB690228968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCB690028968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
+		CFCB690328968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCB690128968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm */; };
 		CFF33F962556941B00B3C92C /* PanelData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33F952556941B00B3C92C /* PanelData.h */; };
 		CFF33F992556942700B3C92C /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33F982556942600B3C92C /* PanelData.mm */; };
 		CFF33F9D2556948200B3C92C /* PanelDataSortMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33F9C2556948200B3C92C /* PanelDataSortMode.h */; };
@@ -108,6 +110,10 @@
 		CFA89D832804C87700BEA127 /* FindFilesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FindFilesData.cpp; path = source/FindFilesData.cpp; sourceTree = "<group>"; };
 		CFA89DA02814793600BEA127 /* TextWidthsCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextWidthsCache.h; path = include/Panel/TextWidthsCache.h; sourceTree = "<group>"; };
 		CFA89DA12814794000BEA127 /* TextWidthsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextWidthsCache.mm; path = source/TextWidthsCache.mm; sourceTree = "<group>"; };
+		CFCB68FE28968C3600086E40 /* PanelViewPresentationItemsColoringFilterPersistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationItemsColoringFilterPersistence.h; path = include/Panel/UI/PanelViewPresentationItemsColoringFilterPersistence.h; sourceTree = "<group>"; };
+		CFCB68FF28968C3600086E40 /* PanelViewPresentationItemsColoringFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationItemsColoringFilter.h; path = include/Panel/UI/PanelViewPresentationItemsColoringFilter.h; sourceTree = "<group>"; };
+		CFCB690028968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationItemsColoringFilterPersistence.mm; path = source/UI/PanelViewPresentationItemsColoringFilterPersistence.mm; sourceTree = "<group>"; };
+		CFCB690128968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationItemsColoringFilter.mm; path = source/UI/PanelViewPresentationItemsColoringFilter.mm; sourceTree = "<group>"; };
 		CFF33F5F2556924900B3C92C /* libPanel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPanel.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF33F8D255692C000B3C92C /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CFF33F8E255692C000B3C92C /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
@@ -176,6 +182,8 @@
 			isa = PBXGroup;
 			children = (
 				CF0B0404281F014800076FDF /* SelectionWithMaskPopupViewController.h */,
+				CFCB68FF28968C3600086E40 /* PanelViewPresentationItemsColoringFilter.h */,
+				CFCB68FE28968C3600086E40 /* PanelViewPresentationItemsColoringFilterPersistence.h */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -184,6 +192,8 @@
 			isa = PBXGroup;
 			children = (
 				CF0B0407281F016300076FDF /* SelectionWithMaskPopupViewController.mm */,
+				CFCB690128968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm */,
+				CFCB690028968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -440,6 +450,7 @@
 				CF0B0408281F016300076FDF /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFF33F992556942700B3C92C /* PanelData.mm in Sources */,
 				CF22060727B851B5008EDE3A /* ExternalTools.mm in Sources */,
+				CFCB690228968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CF0B040B281F027900076FDF /* Internal.mm in Sources */,
 				CF46522D268D16500085840A /* Log.cpp in Sources */,
 				CFA89D842804C87700BEA127 /* FindFilesData.cpp in Sources */,
@@ -448,6 +459,7 @@
 				CF3ED4F225860C8900D67AF2 /* CursorBackup.mm in Sources */,
 				CF46525D2699F9830085840A /* PanelViewFieldEditor.mm in Sources */,
 				CFF33FAC2556950E00B3C92C /* PanelDataFilter.mm in Sources */,
+				CFCB690328968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFA89DA22814794000BEA127 /* TextWidthsCache.mm in Sources */,
 				CFF33FA6255694E300B3C92C /* PanelDataStatistics.cpp in Sources */,
 				CFF3402A2556A13200B3C92C /* PanelDataSelection.mm in Sources */,

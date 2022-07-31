@@ -1,7 +1,7 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <Utility/SheetController.h>
-#include "../States/FilePanels/PanelViewPresentationItemsColoringFilter.h"
+#include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 
 @interface PreferencesWindowPanelsTabColoringFilterSheet : SheetController
 

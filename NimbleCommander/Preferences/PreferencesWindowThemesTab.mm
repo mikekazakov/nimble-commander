@@ -11,7 +11,7 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Core/Theming/ThemePersistence.h>
-#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
+#include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include "PreferencesWindowThemesControls.h"
 #include "PreferencesWindowThemesTabModel.h"
 #include "PreferencesWindowThemesTabImportSheet.h"

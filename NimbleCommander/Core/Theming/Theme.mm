@@ -1,6 +1,6 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Theme.h"
-#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilterPersistence.h>
+#include <Panel/UI/PanelViewPresentationItemsColoringFilterPersistence.h>
 #include "ThemePersistence.h"
 #include <Utility/HexadecimalColor.h>
 #include <Config/RapidJSON.h>

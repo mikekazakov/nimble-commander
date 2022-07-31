@@ -1,6 +1,6 @@
 // Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
-#include "../PanelViewPresentationItemsColoringFilter.h"
+#include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include "../PanelView.h"
 #include "PanelListView.h"
 #include "PanelListViewNameView.h"

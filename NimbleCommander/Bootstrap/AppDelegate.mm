@@ -34,6 +34,7 @@
 #include <Utility/SystemInformation.h>
 #include <Utility/Log.h>
 #include <Utility/FSEventsFileUpdateImpl.h>
+#include <Utility/CocoaAppearanceManager.h>
 
 #include <RoutedIO/RoutedIO.h>
 #include <RoutedIO/Log.h>
@@ -48,6 +49,7 @@
 #include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/VFSInstanceManagerImpl.h>
 #include <NimbleCommander/States/Terminal/ShellState.h>
 #include <NimbleCommander/States/MainWindow.h>
@@ -920,8 +922,23 @@ static std::string AquaticPrimePublicKey()
 
 - (nc::ThemesManager &)themesManager
 {
-    static auto i = new nc::ThemesManager(g_ConfigSelectedThemes, g_ConfigThemesList);
-    return *i;
+    // TODO: migrate into a mandatory initialization, not ad-hoc
+    using nc::ThemesManager;
+    static ThemesManager *const tm = [] {
+        // create the themes manager itself
+        auto i = new ThemesManager(g_ConfigSelectedThemes, g_ConfigThemesList);
+
+        // also hook up the appearance change notification with the CocoaAppearanceManager
+        auto &app_man = nc::utility::CocoaAppearanceManager::Instance();
+        auto update_appearance = [i, &app_man] { app_man.SetCurrentAppearance(i->SelectedTheme().Appearance()); };
+        update_appearance();
+
+        // observe forever
+        [[clang::no_destroy]] static auto token =
+            i->ObserveChanges(ThemesManager::Notifications::Appearance, update_appearance);
+        return i;
+    }();
+    return *tm;
 }
 
 - (ExternalEditorsStorage &)externalEditorsStorage

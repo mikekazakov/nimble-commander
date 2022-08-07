@@ -2,7 +2,6 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "Theme.h"
-#include <Utility/CocoaAppearanceManager.h>
 #include "ThemesManager.h"
 #include <Habanero/dispatch_cpp.h>
 #include <robin_hood.h>
@@ -10,7 +9,6 @@
 namespace nc {
 
 using namespace std::literals;
-using nc::utility::CocoaAppearanceManager;
 
 static const auto g_NameKey = "themeName";
 
@@ -105,13 +103,7 @@ ThemesManager::ThemesManager(const char *_current_theme_path, const char *_theme
     LoadThemes();
     m_SelectedThemeName =
         GlobalConfig().Has(m_CurrentThemePath) ? GlobalConfig().GetString(m_CurrentThemePath) : "Modern";
-
     UpdateCurrentTheme();
-
-    CocoaAppearanceManager::Instance().SetCurrentAppearance(CurrentTheme().Appearance());
-    m_AppearanceObservation = ObserveChanges(Notifications::Appearance, [] {
-        CocoaAppearanceManager::Instance().SetCurrentAppearance(CurrentTheme().Appearance());
-    });
 }
 
 void ThemesManager::LoadThemes()
@@ -318,9 +310,9 @@ ThemesManager::ObservationTicket ThemesManager::ObserveChanges(uint64_t _notific
     return AddObserver(move(_callback), _notification_mask);
 }
 
-bool ThemesManager::HasDefaultSettings(const std::string &_theme_name) const
+bool ThemesManager::HasDefaultSettings(const std::string &_theme_name) const noexcept
 {
-    return m_DefaultThemes.count(_theme_name) != 0;
+    return m_DefaultThemes.contains(_theme_name);
 }
 
 bool ThemesManager::DiscardThemeChanges(const std::string &_theme_name)
@@ -433,9 +425,9 @@ std::string ThemesManager::SuitableNameForNewTheme(const std::string &_current_t
     return "";
 }
 
-bool ThemesManager::CanBeRemoved(const std::string &_theme_name) const
+bool ThemesManager::CanBeRemoved(const std::string &_theme_name) const noexcept
 {
-    return m_Themes.count(_theme_name) && !HasDefaultSettings(_theme_name);
+    return m_Themes.contains(_theme_name) && !HasDefaultSettings(_theme_name);
 }
 
 bool ThemesManager::RemoveTheme(const std::string &_theme_name)
@@ -445,9 +437,7 @@ bool ThemesManager::RemoveTheme(const std::string &_theme_name)
 
     m_Themes.erase(_theme_name);
 
-    auto otni = find(begin(m_OrderedThemeNames), end(m_OrderedThemeNames), _theme_name);
-    if( otni != end(m_OrderedThemeNames) )
-        m_OrderedThemeNames.erase(otni);
+    std::erase(m_OrderedThemeNames, _theme_name);
 
     // TODO: move to background thread, delay execution
     WriteThemes();
@@ -488,7 +478,7 @@ bool ThemesManager::RenameTheme(const std::string &_theme_name, const std::strin
 
     m_Themes.erase(_theme_name);
     m_Themes.emplace(_to_name, std::make_shared<nc::config::Document>(std::move(doc)));
-    replace(begin(m_OrderedThemeNames), end(m_OrderedThemeNames), _theme_name, _to_name);
+    std::replace(m_OrderedThemeNames.begin(), m_OrderedThemeNames.end(), _theme_name, _to_name);
 
     // TODO: move to background thread, delay execution
     WriteThemes();

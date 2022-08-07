@@ -41,6 +41,7 @@ public:
      */
     std::string SelectedThemeName() const;
 
+    // Returns the currently active theme.
     const Theme &SelectedTheme() const;
 
     /**
@@ -57,12 +58,12 @@ public:
     /**
      * Check if this theme is one of default themes.
      */
-    bool HasDefaultSettings(const std::string &_theme_name) const;
+    bool HasDefaultSettings(const std::string &_theme_name) const noexcept;
 
     /**
-     * Tells if this theme can be removed. Themes that are bundled this app can't.
+     * Tells if this theme can be removed. Themes that are bundled with the app can't.
      */
-    bool CanBeRemoved(const std::string &_theme_name) const;
+    bool CanBeRemoved(const std::string &_theme_name) const noexcept;
 
     /**
      * Effectively returns ThemeData( SelectedThemeName() ).
@@ -130,19 +131,18 @@ public:
     ObservationTicket ObserveChanges(uint64_t _notification_mask, std::function<void()> _callback);
 
 private:
-    const char *const m_CurrentThemePath;
-    const char *const m_ThemesStoragePath;
-
-    void LoadThemes();
-    void LoadDefaultThemes();
-    void WriteThemes() const;
-    void UpdateCurrentTheme();
-
-    using ThemesDataT = robin_hood::unordered_map<std::string,
+    using ThemesDataT = robin_hood::unordered_flat_map<std::string,
     std::shared_ptr<const nc::config::Document>,
     RHTransparentStringHashEqual,
     RHTransparentStringHashEqual>;
     
+    void LoadThemes();
+    void LoadDefaultThemes();
+    void WriteThemes() const;
+    void UpdateCurrentTheme();
+    
+    std::string m_CurrentThemePath;
+    std::string m_ThemesStoragePath;
     std::string m_SelectedThemeName;
     ThemesDataT m_Themes;
     std::vector<std::string> m_OrderedThemeNames;

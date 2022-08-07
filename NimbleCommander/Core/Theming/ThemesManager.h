@@ -3,11 +3,12 @@
 
 #include <Habanero/Observable.h>
 #include <Habanero/RobinHoodUtil.h>
-#include <Config/RapidJSON_fwd.h>
+#include <Config/Config.h>
 
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <string_view>
 
 namespace nc {
 
@@ -34,7 +35,11 @@ public:
         };
     };
 
-    ThemesManager(const char *_current_theme_path, const char *_themes_storage_path);
+    // Creates a new manager which will load/store the themes data inside the provided '_config' in at the
+    // '_themes_storage_path' location.
+    // _config's lifespan must be longer than the theme manager's - it's referenced at internally.
+    // '_current_theme_path' denotes the path to the string value with a name of currently selected theme.
+    ThemesManager(config::Config &_config, std::string_view _current_theme_path, std::string_view _themes_storage_path);
 
     /**
      * Returns name of a currently selected user theme.
@@ -131,16 +136,23 @@ public:
     ObservationTicket ObserveChanges(uint64_t _notification_mask, std::function<void()> _callback);
 
 private:
-    using ThemesDataT = robin_hood::unordered_flat_map<std::string,
-    std::shared_ptr<const nc::config::Document>,
-    RHTransparentStringHashEqual,
-    RHTransparentStringHashEqual>;
+    // Not copy-constructable
+    ThemesManager(const ThemesManager&) = delete;
     
+    // Note copy-assignable
+    ThemesManager& operator=(const ThemesManager&) = delete;
+    
+    using ThemesDataT = robin_hood::unordered_flat_map<std::string,
+                                                       std::shared_ptr<const nc::config::Document>,
+                                                       RHTransparentStringHashEqual,
+                                                       RHTransparentStringHashEqual>;
+
     void LoadThemes();
     void LoadDefaultThemes();
     void WriteThemes() const;
     void UpdateCurrentTheme();
-    
+
+    config::Config &m_Config;
     std::string m_CurrentThemePath;
     std::string m_ThemesStoragePath;
     std::string m_SelectedThemeName;

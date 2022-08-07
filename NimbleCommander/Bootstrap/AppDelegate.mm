@@ -108,7 +108,7 @@ static nc::utility::TemporaryFileStorageImpl *g_TemporaryFileStorage = nullptr;
 static const auto g_ConfigForceFn = "general.alwaysUseFnKeysAsFunctional";
 static const auto g_ConfigExternalToolsList = "externalTools.tools_v1";
 static const auto g_ConfigLayoutsList = "filePanel.layout.layouts_v1";
-static const auto g_ConfigSelectedThemes = "general.theme";
+static const auto g_ConfigSelectedTheme = "general.theme";
 static const auto g_ConfigThemesList = "themes.themes_v1";
 static const auto g_ConfigExtEditorsList = "externalEditors.editors_v1";
 
@@ -926,7 +926,7 @@ static std::string AquaticPrimePublicKey()
     using nc::ThemesManager;
     static ThemesManager *const tm = [] {
         // create the themes manager itself
-        auto i = new ThemesManager(g_ConfigSelectedThemes, g_ConfigThemesList);
+        auto i = new ThemesManager(GlobalConfig(), g_ConfigSelectedTheme, g_ConfigThemesList);
 
         // also hook up the appearance change notification with the CocoaAppearanceManager
         auto &app_man = nc::utility::CocoaAppearanceManager::Instance();

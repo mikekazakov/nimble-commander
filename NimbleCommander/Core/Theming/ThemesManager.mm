@@ -1,14 +1,11 @@
 // Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Bootstrap/Config.h>
-#include <Config/RapidJSON.h>
-#include "Theme.h"
 #include "ThemesManager.h"
+#include "Theme.h"
+#include <Config/RapidJSON.h>
 #include <Habanero/dispatch_cpp.h>
 #include <robin_hood.h>
 
 namespace nc {
-
-using namespace std::literals;
 
 static const auto g_NameKey = "themeName";
 
@@ -96,19 +93,20 @@ using NotificationsMapping =
     {"viewerBackgroundColor", TMN::Viewer},
 };
 
-ThemesManager::ThemesManager(const char *_current_theme_path, const char *_themes_storage_path)
-    : m_CurrentThemePath(_current_theme_path), m_ThemesStoragePath(_themes_storage_path)
+ThemesManager::ThemesManager(config::Config &_config,
+                             std::string_view _current_theme_path,
+                             std::string_view _themes_storage_path)
+    : m_Config(_config), m_CurrentThemePath(_current_theme_path), m_ThemesStoragePath(_themes_storage_path)
 {
     LoadDefaultThemes();
     LoadThemes();
-    m_SelectedThemeName =
-        GlobalConfig().Has(m_CurrentThemePath) ? GlobalConfig().GetString(m_CurrentThemePath) : "Modern";
+    m_SelectedThemeName = m_Config.Has(m_CurrentThemePath) ? m_Config.GetString(m_CurrentThemePath) : "Modern";
     UpdateCurrentTheme();
 }
 
 void ThemesManager::LoadThemes()
 {
-    auto themes = GlobalConfig().Get(m_ThemesStoragePath);
+    auto themes = m_Config.Get(m_ThemesStoragePath);
     if( !themes.IsArray() )
         return;
 
@@ -135,7 +133,7 @@ void ThemesManager::LoadThemes()
 
 void ThemesManager::LoadDefaultThemes()
 {
-    auto themes = GlobalConfig().GetDefault(m_ThemesStoragePath);
+    auto themes = m_Config.GetDefault(m_ThemesStoragePath);
     if( !themes.IsArray() )
         return;
 
@@ -239,6 +237,8 @@ bool ThemesManager::SetThemeValue(const std::string &_theme_name,
 
 void ThemesManager::UpdateCurrentTheme()
 {
+    using namespace std::literals;
+    
     // comprose new theme object
     auto theme_data = SelectedThemeData();
     auto new_theme = std::make_shared<Theme>(static_cast<const void *>(theme_data.get()),
@@ -246,7 +246,7 @@ void ThemesManager::UpdateCurrentTheme()
 
     // release current theme some time after - dispatch release with 10s delay
     auto old_theme = g_CurrentTheme;
-    dispatch_to_main_queue_after(5s, [=]() mutable { old_theme = nullptr; });
+    dispatch_to_main_queue_after(5s, [old_theme]() mutable { old_theme = nullptr; });
 
     // set new theme object
     g_CurrentTheme = new_theme;
@@ -281,7 +281,7 @@ void ThemesManager::WriteThemes() const
         theme.CopyFrom(*i->second, nc::config::g_CrtAllocator);
         json_themes.PushBack(std::move(theme), nc::config::g_CrtAllocator);
     }
-    GlobalConfig().Set(m_ThemesStoragePath, json_themes);
+    m_Config.Set(m_ThemesStoragePath, json_themes);
 }
 
 bool ThemesManager::SelectTheme(const std::string &_theme_name)
@@ -293,7 +293,7 @@ bool ThemesManager::SelectTheme(const std::string &_theme_name)
         return false;
 
     m_SelectedThemeName = _theme_name;
-    GlobalConfig().Set(m_CurrentThemePath, m_SelectedThemeName);
+    m_Config.Set(m_CurrentThemePath, m_SelectedThemeName);
 
     UpdateCurrentTheme();
     // figure out what has changed

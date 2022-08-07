@@ -18,7 +18,7 @@ class ThemesManager;
 enum class ThemeAppearance : int8_t
 {
     Light = 0, // NSAppearanceNameAqua
-    Dark = 1   // NSAppearanceNameVibrantDark
+    Dark = 1   // NSAppearanceNameVibrantDark // mb use NSAppearanceNameDarkAqua instead?
 };
 
 /**

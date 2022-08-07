@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Habanero/Observable.h>
+#include <Habanero/RobinHoodUtil.h>
 #include <Config/RapidJSON_fwd.h>
 
 #include <unordered_map>
@@ -137,10 +138,15 @@ private:
     void WriteThemes() const;
     void UpdateCurrentTheme();
 
+    using ThemesDataT = robin_hood::unordered_map<std::string,
+    std::shared_ptr<const nc::config::Document>,
+    RHTransparentStringHashEqual,
+    RHTransparentStringHashEqual>;
+    
     std::string m_SelectedThemeName;
-    std::unordered_map<std::string, std::shared_ptr<const nc::config::Document>> m_Themes;
+    ThemesDataT m_Themes;
     std::vector<std::string> m_OrderedThemeNames;
-    std::unordered_map<std::string, std::shared_ptr<const nc::config::Document>> m_DefaultThemes;
+    ThemesDataT m_DefaultThemes;
     std::vector<std::string> m_OrderedDefaultThemeNames;
     ObservationTicket m_AppearanceObservation;
 };

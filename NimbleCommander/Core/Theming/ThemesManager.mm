@@ -14,85 +14,88 @@ using nc::utility::CocoaAppearanceManager;
 
 static const auto g_NameKey = "themeName";
 
-[[clang::no_destroy]] static std::shared_ptr<Theme> g_CurrentTheme;
+[[clang::no_destroy]] static std::shared_ptr<const Theme> g_CurrentTheme;
 
 using TMN = ThemesManager::Notifications;
-[[clang::no_destroy]] static const robin_hood::unordered_flat_map<std::string, uint64_t> g_EntryToNotificationMapping =
-    {
-        {"themeAppearance", TMN::Appearance},
-        {"filePanelsColoringRules_v1", TMN::FilePanelsGeneral},
-        {"filePanelsGeneralDropBorderColor", TMN::FilePanelsGeneral},
-        {"filePanelsGeneralOverlayColor", TMN::FilePanelsGeneral},
-        {"filePanelsGeneralSplitterColor", TMN::FilePanelsGeneral},
-        {"filePanelsGeneralTopSeparatorColor", TMN::FilePanelsGeneral},
-        {"filePanelsTabsFont", TMN::FilePanelsTabs},
-        {"filePanelsTabsTextColor", TMN::FilePanelsTabs},
-        {"filePanelsTabsSelectedKeyWndActiveBackgroundColor", TMN::FilePanelsTabs},
-        {"filePanelsTabsSelectedKeyWndInactiveBackgroundColor", TMN::FilePanelsTabs},
-        {"filePanelsTabsSelectedNotKeyWndBackgroundColor", TMN::FilePanelsTabs},
-        {"filePanelsTabsRegularKeyWndHoverBackgroundColor", TMN::FilePanelsTabs},
-        {"filePanelsTabsRegularKeyWndRegularBackgroundColor", TMN::FilePanelsTabs},
-        {"filePanelsTabsRegularNotKeyWndBackgroundColor", TMN::FilePanelsTabs},
-        {"filePanelsTabsSeparatorColor", TMN::FilePanelsTabs},
-        {"filePanelsTabsPictogramColor", TMN::FilePanelsTabs},
-        {"filePanelsHeaderFont", TMN::FilePanelsHeader},
-        {"filePanelsHeaderTextColor", TMN::FilePanelsHeader},
-        {"filePanelsHeaderActiveTextColor", TMN::FilePanelsHeader},
-        {"filePanelsHeaderActiveBackgroundColor", TMN::FilePanelsHeader},
-        {"filePanelsHeaderInactiveBackgroundColor", TMN::FilePanelsHeader},
-        {"filePanelsHeaderSeparatorColor", TMN::FilePanelsHeader},
-        {"filePanelsFooterFont", TMN::FilePanelsFooter},
-        {"filePanelsFooterTextColor", TMN::FilePanelsFooter},
-        {"filePanelsFooterActiveTextColor", TMN::FilePanelsFooter},
-        {"filePanelsFooterSeparatorsColor", TMN::FilePanelsFooter},
-        {"filePanelsFooterActiveBackgroundColor", TMN::FilePanelsFooter},
-        {"filePanelsFooterInactiveBackgroundColor", TMN::FilePanelsFooter},
-        {"filePanelsListFont", TMN::FilePanelsList},
-        {"filePanelsListGridColor", TMN::FilePanelsList},
-        {"filePanelsListHeaderFont", TMN::FilePanelsList},
-        {"filePanelsListHeaderBackgroundColor", TMN::FilePanelsList},
-        {"filePanelsListHeaderTextColor", TMN::FilePanelsList},
-        {"filePanelsListHeaderSeparatorColor", TMN::FilePanelsList},
-        {"filePanelsListFocusedActiveRowBackgroundColor", TMN::FilePanelsList},
-        {"filePanelsListFocusedInactiveRowBackgroundColor", TMN::FilePanelsList},
-        {"filePanelsListRegularEvenRowBackgroundColor", TMN::FilePanelsList},
-        {"filePanelsListRegularOddRowBackgroundColor", TMN::FilePanelsList},
-        {"filePanelsListSelectedItemBackgroundColor", TMN::FilePanelsList},
-        {"filePanelsBriefFont", TMN::FilePanelsBrief},
-        {"filePanelsBriefGridColor", TMN::FilePanelsBrief},
-        {"filePanelsBriefRegularEvenRowBackgroundColor", TMN::FilePanelsBrief},
-        {"filePanelsBriefRegularOddRowBackgroundColor", TMN::FilePanelsBrief},
-        {"filePanelsBriefFocusedActiveItemBackgroundColor", TMN::FilePanelsBrief},
-        {"filePanelsBriefFocusedInactiveItemBackgroundColor", TMN::FilePanelsBrief},
-        {"filePanelsBriefSelectedItemBackgroundColor", TMN::FilePanelsBrief},
-        {"terminalFont", TMN::Terminal},
-        {"terminalOverlayColor", TMN::Terminal},
-        {"terminalForegroundColor", TMN::Terminal},
-        {"terminalBoldForegroundColor", TMN::Terminal},
-        {"terminalBackgroundColor", TMN::Terminal},
-        {"terminalSelectionColor", TMN::Terminal},
-        {"terminalCursorColor", TMN::Terminal},
-        {"terminalAnsiColor0", TMN::Terminal},
-        {"terminalAnsiColor1", TMN::Terminal},
-        {"terminalAnsiColor2", TMN::Terminal},
-        {"terminalAnsiColor3", TMN::Terminal},
-        {"terminalAnsiColor4", TMN::Terminal},
-        {"terminalAnsiColor5", TMN::Terminal},
-        {"terminalAnsiColor6", TMN::Terminal},
-        {"terminalAnsiColor7", TMN::Terminal},
-        {"terminalAnsiColor8", TMN::Terminal},
-        {"terminalAnsiColor9", TMN::Terminal},
-        {"terminalAnsiColorA", TMN::Terminal},
-        {"terminalAnsiColorB", TMN::Terminal},
-        {"terminalAnsiColorC", TMN::Terminal},
-        {"terminalAnsiColorD", TMN::Terminal},
-        {"terminalAnsiColorE", TMN::Terminal},
-        {"terminalAnsiColorF", TMN::Terminal},
-        {"viewerFont", TMN::Viewer},
-        {"viewerOverlayColor", TMN::Viewer},
-        {"viewerTextColor", TMN::Viewer},
-        {"viewerSelectionColor", TMN::Viewer},
-        {"viewerBackgroundColor", TMN::Viewer},
+
+using NotificationsMapping =
+    robin_hood::unordered_flat_map<std::string, uint64_t, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
+
+[[clang::no_destroy]] static const NotificationsMapping g_EntryToNotificationMapping = {
+    {"themeAppearance", TMN::Appearance},
+    {"filePanelsColoringRules_v1", TMN::FilePanelsGeneral},
+    {"filePanelsGeneralDropBorderColor", TMN::FilePanelsGeneral},
+    {"filePanelsGeneralOverlayColor", TMN::FilePanelsGeneral},
+    {"filePanelsGeneralSplitterColor", TMN::FilePanelsGeneral},
+    {"filePanelsGeneralTopSeparatorColor", TMN::FilePanelsGeneral},
+    {"filePanelsTabsFont", TMN::FilePanelsTabs},
+    {"filePanelsTabsTextColor", TMN::FilePanelsTabs},
+    {"filePanelsTabsSelectedKeyWndActiveBackgroundColor", TMN::FilePanelsTabs},
+    {"filePanelsTabsSelectedKeyWndInactiveBackgroundColor", TMN::FilePanelsTabs},
+    {"filePanelsTabsSelectedNotKeyWndBackgroundColor", TMN::FilePanelsTabs},
+    {"filePanelsTabsRegularKeyWndHoverBackgroundColor", TMN::FilePanelsTabs},
+    {"filePanelsTabsRegularKeyWndRegularBackgroundColor", TMN::FilePanelsTabs},
+    {"filePanelsTabsRegularNotKeyWndBackgroundColor", TMN::FilePanelsTabs},
+    {"filePanelsTabsSeparatorColor", TMN::FilePanelsTabs},
+    {"filePanelsTabsPictogramColor", TMN::FilePanelsTabs},
+    {"filePanelsHeaderFont", TMN::FilePanelsHeader},
+    {"filePanelsHeaderTextColor", TMN::FilePanelsHeader},
+    {"filePanelsHeaderActiveTextColor", TMN::FilePanelsHeader},
+    {"filePanelsHeaderActiveBackgroundColor", TMN::FilePanelsHeader},
+    {"filePanelsHeaderInactiveBackgroundColor", TMN::FilePanelsHeader},
+    {"filePanelsHeaderSeparatorColor", TMN::FilePanelsHeader},
+    {"filePanelsFooterFont", TMN::FilePanelsFooter},
+    {"filePanelsFooterTextColor", TMN::FilePanelsFooter},
+    {"filePanelsFooterActiveTextColor", TMN::FilePanelsFooter},
+    {"filePanelsFooterSeparatorsColor", TMN::FilePanelsFooter},
+    {"filePanelsFooterActiveBackgroundColor", TMN::FilePanelsFooter},
+    {"filePanelsFooterInactiveBackgroundColor", TMN::FilePanelsFooter},
+    {"filePanelsListFont", TMN::FilePanelsList},
+    {"filePanelsListGridColor", TMN::FilePanelsList},
+    {"filePanelsListHeaderFont", TMN::FilePanelsList},
+    {"filePanelsListHeaderBackgroundColor", TMN::FilePanelsList},
+    {"filePanelsListHeaderTextColor", TMN::FilePanelsList},
+    {"filePanelsListHeaderSeparatorColor", TMN::FilePanelsList},
+    {"filePanelsListFocusedActiveRowBackgroundColor", TMN::FilePanelsList},
+    {"filePanelsListFocusedInactiveRowBackgroundColor", TMN::FilePanelsList},
+    {"filePanelsListRegularEvenRowBackgroundColor", TMN::FilePanelsList},
+    {"filePanelsListRegularOddRowBackgroundColor", TMN::FilePanelsList},
+    {"filePanelsListSelectedItemBackgroundColor", TMN::FilePanelsList},
+    {"filePanelsBriefFont", TMN::FilePanelsBrief},
+    {"filePanelsBriefGridColor", TMN::FilePanelsBrief},
+    {"filePanelsBriefRegularEvenRowBackgroundColor", TMN::FilePanelsBrief},
+    {"filePanelsBriefRegularOddRowBackgroundColor", TMN::FilePanelsBrief},
+    {"filePanelsBriefFocusedActiveItemBackgroundColor", TMN::FilePanelsBrief},
+    {"filePanelsBriefFocusedInactiveItemBackgroundColor", TMN::FilePanelsBrief},
+    {"filePanelsBriefSelectedItemBackgroundColor", TMN::FilePanelsBrief},
+    {"terminalFont", TMN::Terminal},
+    {"terminalOverlayColor", TMN::Terminal},
+    {"terminalForegroundColor", TMN::Terminal},
+    {"terminalBoldForegroundColor", TMN::Terminal},
+    {"terminalBackgroundColor", TMN::Terminal},
+    {"terminalSelectionColor", TMN::Terminal},
+    {"terminalCursorColor", TMN::Terminal},
+    {"terminalAnsiColor0", TMN::Terminal},
+    {"terminalAnsiColor1", TMN::Terminal},
+    {"terminalAnsiColor2", TMN::Terminal},
+    {"terminalAnsiColor3", TMN::Terminal},
+    {"terminalAnsiColor4", TMN::Terminal},
+    {"terminalAnsiColor5", TMN::Terminal},
+    {"terminalAnsiColor6", TMN::Terminal},
+    {"terminalAnsiColor7", TMN::Terminal},
+    {"terminalAnsiColor8", TMN::Terminal},
+    {"terminalAnsiColor9", TMN::Terminal},
+    {"terminalAnsiColorA", TMN::Terminal},
+    {"terminalAnsiColorB", TMN::Terminal},
+    {"terminalAnsiColorC", TMN::Terminal},
+    {"terminalAnsiColorD", TMN::Terminal},
+    {"terminalAnsiColorE", TMN::Terminal},
+    {"terminalAnsiColorF", TMN::Terminal},
+    {"viewerFont", TMN::Viewer},
+    {"viewerOverlayColor", TMN::Viewer},
+    {"viewerTextColor", TMN::Viewer},
+    {"viewerSelectionColor", TMN::Viewer},
+    {"viewerBackgroundColor", TMN::Viewer},
 };
 
 ThemesManager::ThemesManager(const char *_current_theme_path, const char *_themes_storage_path)
@@ -127,7 +130,7 @@ void ThemesManager::LoadThemes()
         }();
         if( name.empty() )
             continue;
-        if( m_Themes.count(name) )
+        if( m_Themes.contains(name) )
             continue; // broken config - duplicate theme declaration, prohibit such stuff
 
         nc::config::Document doc;
@@ -181,7 +184,7 @@ std::shared_ptr<const nc::config::Value> ThemesManager::SelectedThemeData() cons
 std::shared_ptr<const nc::config::Value> ThemesManager::ThemeData(const std::string &_theme_name) const
 {
     auto it = m_Themes.find(_theme_name);
-    if( it != end(m_Themes) )
+    if( it != m_Themes.end() )
         return it->second;
 
     [[clang::no_destroy]] static const auto dummy = std::make_shared<nc::config::Value>(rapidjson::kNullType);
@@ -191,21 +194,21 @@ std::shared_ptr<const nc::config::Value> ThemesManager::ThemeData(const std::str
 std::shared_ptr<const nc::config::Value> ThemesManager::BackupThemeData(const std::string &_theme_name) const
 {
     auto i = m_DefaultThemes.find(_theme_name);
-    if( i != end(m_DefaultThemes) )
+    if( i != m_DefaultThemes.end() )
         return i->second;
 
     i = m_DefaultThemes.find("Modern");
-    if( i != end(m_DefaultThemes) )
+    if( i != m_DefaultThemes.end() )
         return i->second;
 
     assert("default config is corrupted, there's no Modern theme" == nullptr);
     abort();
 }
 
-static uint64_t NotificationMaskForKey(const std::string &_key)
+static uint64_t NotificationMaskForKey(std::string_view _key) noexcept
 {
     const auto it = g_EntryToNotificationMapping.find(_key);
-    return it != end(g_EntryToNotificationMapping) ? it->second : 0;
+    return it != g_EntryToNotificationMapping.end() ? it->second : 0;
 }
 
 bool ThemesManager::SetThemeValue(const std::string &_theme_name,
@@ -213,7 +216,7 @@ bool ThemesManager::SetThemeValue(const std::string &_theme_name,
                                   const nc::config::Value &_value)
 {
     auto it = m_Themes.find(_theme_name);
-    if( it == end(m_Themes) )
+    if( it == m_Themes.end() )
         return false;
 
     auto &d = *it->second;

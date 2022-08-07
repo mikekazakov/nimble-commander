@@ -89,8 +89,11 @@ struct Theme::Internals {
     NSColor *m_ViewerTextColor;
     NSColor *m_ViewerSelectionColor;
     NSColor *m_ViewerBackgroundColor;
+
+    static ThemeAppearance ExtractAppearance(const nc::config::Value &_doc) noexcept;
 };
 
+// TODO: unit tests!!!
 Theme::Theme(const void *_theme_data, const void *_backup_theme_data) : I(std::make_unique<Internals>())
 {
     assert(_theme_data && _backup_theme_data);
@@ -113,25 +116,10 @@ Theme::Theme(const void *_theme_data, const void *_backup_theme_data) : I(std::m
     };
 
     I->m_Generation = g_LastGeneration++;
-
-    I->m_ThemeAppearanceType = [&] {
-        auto cr = doc.FindMember("themeAppearance");
-        if( cr == doc.MemberEnd() )
-            return ThemeAppearance::Light;
-
-        if( !cr->value.IsString() )
-            return ThemeAppearance::Light;
-
-        if( "aqua"s == cr->value.GetString() )
-            return ThemeAppearance::Light;
-        if( "dark"s == cr->value.GetString() )
-            return ThemeAppearance::Dark;
-
-        return ThemeAppearance::Light;
-    }();
+    I->m_ThemeAppearanceType = Internals::ExtractAppearance(doc);
     I->m_Appearance = I->m_ThemeAppearanceType == ThemeAppearance::Light
                           ? [NSAppearance appearanceNamed:NSAppearanceNameAqua]
-                          : [NSAppearance appearanceNamed:NSAppearanceNameVibrantDark];
+                          : [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
 
     auto cr = &doc.FindMember("filePanelsColoringRules_v1")->value;
     if( cr->IsArray() )
@@ -232,9 +220,7 @@ Theme::Theme(const void *_theme_data, const void *_backup_theme_data) : I(std::m
     I->m_ViewerBackgroundColor = ExtractColor("viewerBackgroundColor");
 }
 
-Theme::~Theme()
-{
-}
+Theme::~Theme() = default;
 
 uint64_t Theme::Generation() const noexcept
 {
@@ -614,6 +600,25 @@ NSColor *Theme::FilePanelsGeneralTopSeparatorColor() const noexcept
 NSColor *Theme::FilePanelsBriefGridColor() const noexcept
 {
     return I->m_FilePanelsBriefGridColor;
+}
+
+ThemeAppearance Theme::Internals::ExtractAppearance(const nc::config::Value &_doc) noexcept
+{
+    auto cr = _doc.FindMember("themeAppearance");
+    if( cr == _doc.MemberEnd() )
+        return ThemeAppearance::Light;
+
+    if( !cr->value.IsString() )
+        return ThemeAppearance::Light;
+
+    const auto val = cr->value.GetString();
+
+    if( "aqua"sv == val || "light"sv == val )
+        return ThemeAppearance::Light;
+    if( "dark"sv == val )
+        return ThemeAppearance::Dark;
+
+    return ThemeAppearance::Light;
 }
 
 }

@@ -58,6 +58,8 @@ ObservableBase::ObservationTicket::operator bool() const noexcept
     return instance != nullptr && ticket != 0;
 }
 
+ObservableBase::ObservableBase() = default;
+
 ObservableBase::~ObservableBase()
 {
     const auto lock = std::lock_guard{m_ObserversLock};

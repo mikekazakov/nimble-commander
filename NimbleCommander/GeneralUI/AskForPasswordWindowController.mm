@@ -1,7 +1,6 @@
 // Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AskForPasswordWindowController.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 
@@ -22,12 +21,6 @@
         GA().PostScreenView("Ask For Password");
     }
     return self;
-}
-
-- (void)windowDidLoad
-{
-    [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 }
 
 - (NSString*)enteredPasswd

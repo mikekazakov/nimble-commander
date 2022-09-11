@@ -1,9 +1,8 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "VFSListWindowController.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include "../Core/VFSInstanceManager.h"
 #include "../Core/VFSInstancePromise.h"
-#include "VFSListWindowController.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 
@@ -33,7 +32,6 @@ using namespace std::literals;
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     __weak VFSListWindowController *weak_self = self;
     auto cb = [=] {

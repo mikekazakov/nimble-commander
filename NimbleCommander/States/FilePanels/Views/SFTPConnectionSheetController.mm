@@ -1,7 +1,6 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include <VFS/NetSFTP.h>
 #include "SFTPConnectionSheetController.h"
 #include <Utility/StringExtras.h>
@@ -55,7 +54,6 @@ static bool ValidateFileExistence(const std::string &_filepath)
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;

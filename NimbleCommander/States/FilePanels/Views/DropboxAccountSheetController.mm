@@ -1,8 +1,7 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DropboxAccountSheetController.h"
 #include <VFS/NetDropbox.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include <NimbleCommander/Bootstrap/NCE.h>
 #include <Utility/StringExtras.h>
 #include <Habanero/dispatch_cpp.h>
@@ -59,7 +58,6 @@ enum class State
 {
     [super windowDidLoad];
 
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     GA().PostScreenView("Dropbox Connection");
 
     if( m_Original ) {

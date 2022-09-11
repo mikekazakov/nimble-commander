@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowController.h"
 #include <Habanero/debug.h>
 #include <Config/RapidJSON.h>
@@ -23,7 +23,6 @@
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <Operations/Pool.h>
 #include <Utility/ObjCpp.h>
@@ -478,7 +477,6 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
 
 - (void)beginSheet:(NSWindow *)sheetWindow completionHandler:(void (^)(NSModalResponse rc))handler
 {
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(sheetWindow);
     __block NSWindow *wnd = sheetWindow;
     __block NSWindowController *ctrl = wnd.windowController;
     if( auto name = ctrl.className.UTF8String )

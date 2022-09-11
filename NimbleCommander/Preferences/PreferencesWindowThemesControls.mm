@@ -544,7 +544,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         m_Button = [[NSPopUpButton alloc] initWithFrame:NSRect()];
         m_Button.translatesAutoresizingMaskIntoConstraints = false;
         static_cast<NSPopUpButtonCell *>(m_Button.cell).controlSize = NSControlSizeSmall;
-        [m_Button addItemWithTitle:@"Aqua"];
+        [m_Button addItemWithTitle:@"Light"];
         m_Button.lastItem.tag = static_cast<int>(ThemeAppearance::Light);
         [m_Button addItemWithTitle:@"Dark"];
         m_Button.lastItem.tag = static_cast<int>(ThemeAppearance::Dark);

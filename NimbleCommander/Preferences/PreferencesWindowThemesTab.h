@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #import <3rd_Party/RHPreferences/RHPreferences/RHPreferences.h>
 
@@ -9,7 +9,10 @@ class ActivationManager;
 @interface PreferencesWindowThemesTab : NSViewController <RHPreferencesViewControllerProtocol,
                                                           NSOutlineViewDelegate,
                                                           NSOutlineViewDataSource,
-                                                          NSTextFieldDelegate>
+                                                          NSTextFieldDelegate,
+                                                          NSTableViewDataSource,
+                                                          NSTableViewDelegate,
+                                                          NSMenuItemValidation>
 
 - (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am;
 

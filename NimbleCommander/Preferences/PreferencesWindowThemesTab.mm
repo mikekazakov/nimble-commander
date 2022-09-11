@@ -15,8 +15,10 @@
 #include "PreferencesWindowThemesControls.h"
 #include "PreferencesWindowThemesTabModel.h"
 #include "PreferencesWindowThemesTabImportSheet.h"
+#include "PreferencesWindowThemesTabAutomaticSwitchingSheet.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include <Utility/VerticallyCenteredTextFieldCell.h>
 
 using namespace std::literals;
 using nc::ThemePersistence;
@@ -45,12 +47,15 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
 }
 
 @interface PreferencesWindowThemesTab ()
+@property(nonatomic) IBOutlet NSMenu *tableAdditionalMenu;
+@property(nonatomic) IBOutlet NSSegmentedControl *tableButtons;
+@property(nonatomic) IBOutlet NSTableView *themesTable;
 @property(nonatomic) IBOutlet NSOutlineView *outlineView;
-@property(nonatomic) IBOutlet NSPopUpButton *themesPopUp;
-@property(nonatomic) IBOutlet NSButton *importButton;
-@property(nonatomic) IBOutlet NSButton *exportButton;
-@property(nonatomic) bool selectedThemeCanBeRemoved;
-@property(nonatomic) bool selectedThemeCanBeReverted;
+//@property(nonatomic) IBOutlet NSPopUpButton *themesPopUp;
+//@property(nonatomic) IBOutlet NSButton *importButton;
+//@property(nonatomic) IBOutlet NSButton *exportButton;
+//@property(nonatomic) bool selectedThemeCanBeRemoved;
+//@property(nonatomic) bool selectedThemeCanBeReverted;
 @end
 
 @implementation PreferencesWindowThemesTab {
@@ -58,19 +63,41 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     nc::config::Document m_Doc;
     nc::ThemesManager *m_Manager;
     std::vector<std::string> m_ThemeNames;
-    int m_SelectedTheme;
+    size_t m_SelectedTheme;
     nc::bootstrap::ActivationManager *m_ActivationManager;
+    bool m_IgnoreThemeCursorChange;
+    bool m_SelectedThemeCanBeRemoved;
+    bool m_SelectedThemeCanBeReverted;
 }
 
 - (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super init];
     if( self ) {
+        m_IgnoreThemeCursorChange = false;
+        m_SelectedThemeCanBeRemoved = false;
+        m_SelectedThemeCanBeReverted = false;
         m_ActivationManager = &_am;
         m_Manager = &NCAppDelegate.me.themesManager;
         [self loadThemesNames];
         [self loadSelectedDocument];
 
+        
+//        auto update_appearance = [self] {
+//                [NSApp setAppearance:m_ThemesManager->SelectedTheme().Appearance()];
+//        };
+//        update_appearance();
+//        // observe forever
+//        [[clang::no_destroy]] static auto token =
+//            m_ThemesManager->ObserveChanges(nc::ThemesManager::Notifications::Appearance, update_appearance);
+//        [[clang::no_destroy]] static auto token1 = m_SystemThemeDetector->ObserveChanges([self]{
+//            m_ThemesManager->NotifyAboutSystemAppearanceChange(m_SystemThemeDetector->SystemAppearance());
+//        });
+        [[clang::no_destroy]] static auto token =
+        m_Manager->ObserveChanges(nc::ThemesManager::Notifications::Name, [self]{
+            [self onThemeManagerThemeChanged];
+        });
+        
         m_Nodes = BuildThemeSettingsNodesTree();
     }
 
@@ -82,31 +109,132 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     m_ThemeNames = m_Manager->ThemeNames();
     assert(!m_ThemeNames.empty()); // there should be at least 3 default themes!
     m_SelectedTheme = 0;
-    auto it = find(begin(m_ThemeNames), end(m_ThemeNames), m_Manager->SelectedThemeName());
-    if( it != end(m_ThemeNames) )
-        m_SelectedTheme = static_cast<int>(std::distance(std::begin(m_ThemeNames), it));
+    auto it = std::find(std::begin(m_ThemeNames), std::end(m_ThemeNames), m_Manager->SelectedThemeName());
+    if( it != std::end(m_ThemeNames) )
+        m_SelectedTheme = static_cast<size_t>(std::distance(std::begin(m_ThemeNames), it));
+    [self.themesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:m_SelectedTheme] byExtendingSelection:false];
 }
 
-- (void)buildThemeNamesPopup
-{
-    [self.themesPopUp removeAllItems];
-    for( int i = 0, e = static_cast<int>(m_ThemeNames.size()); i != e; ++i ) {
-        auto &name = m_ThemeNames[i];
-        [self.themesPopUp addItemWithTitle:[NSString stringWithUTF8StdString:name]];
-        self.themesPopUp.lastItem.tag = i;
-    }
-    [self.themesPopUp selectItemWithTag:m_SelectedTheme];
-}
+//- (void)buildThemeNamesPopup
+//{
+//    [self.themesPopUp removeAllItems];
+//    for( int i = 0, e = static_cast<int>(m_ThemeNames.size()); i != e; ++i ) {
+//        auto &name = m_ThemeNames[i];
+//        [self.themesPopUp addItemWithTitle:[NSString stringWithUTF8StdString:name]];
+//        self.themesPopUp.lastItem.tag = i;
+//    }
+//    [self.themesPopUp selectItemWithTag:m_SelectedTheme];
+//}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do view setup here.
-    self.importButton.enabled = m_ActivationManager->HasThemesManipulation();
-    self.exportButton.enabled = m_ActivationManager->HasThemesManipulation();
+//    self.importButton.enabled = m_ActivationManager->HasThemesManipulation();
+//    self.exportButton.enabled = m_ActivationManager->HasThemesManipulation();
 
-    [self buildThemeNamesPopup];
+//    [self buildThemeNamesPopup];
+    
+    self.themesTable.rowSizeStyle = NSTableViewRowSizeStyleCustom;
+    self.themesTable.rowHeight = 19.;
+    self.themesTable.allowsMultipleSelection = false;
+    self.themesTable.allowsEmptySelection = false;
+    self.themesTable.allowsColumnSelection = false;
+        
+    NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:@"Theme"];
+    col.width = 140;
+    col.minWidth = 140;
+    col.maxWidth = 140;
+    col.title = @"Theme"; // TODO: localize!
+    col.resizingMask = NSTableColumnNoResizing;
+    col.editable = false;
+    [self.themesTable addTableColumn:col];
+    
+    [self reloadAll];
+    
+    
     [self.outlineView expandItem:nil expandChildren:true];
+}
+
+- (void)onThemeManagerThemeChanged
+{
+    const auto new_theme_name = m_Manager->SelectedThemeName();
+    if( new_theme_name == m_ThemeNames[m_SelectedTheme] )
+        return; // no so new, huh?
+
+    auto it = std::find(std::begin(m_ThemeNames), std::end(m_ThemeNames), new_theme_name);
+    if( it == std::end(m_ThemeNames) )
+        return;
+    m_SelectedTheme = static_cast<size_t>(std::distance(std::begin(m_ThemeNames), it));
+    [self.themesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:m_SelectedTheme] byExtendingSelection:false];
+    [self reloadSelectedTheme];
+}
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]]_table_view
+{
+    assert( _table_view == self.themesTable );
+    return static_cast<NSInteger>( m_ThemeNames.size() );
+}
+
+- (NSString *) visualTitleForTheme:(size_t)_theme
+{
+    if( _theme >= m_ThemeNames.size() )
+        return nil;
+    const auto &name = m_ThemeNames[_theme];
+    const auto ns_name = [NSString stringWithUTF8StdString:name];
+    if( const auto auto_switching = m_Manager->AutomaticSwitching(); auto_switching.enabled ) {
+        const bool is_light = auto_switching.light == name;
+        const bool is_dark = auto_switching.dark == name;
+        if( is_light && is_dark )
+            return [NSString stringWithFormat:@"%@ 🔆🌙", ns_name];
+        else if( is_light  )
+            return [NSString stringWithFormat:@"%@ 🔆", ns_name];
+        else if( is_dark )
+            return [NSString stringWithFormat:@"%@ 🌙", ns_name];
+        else
+            return ns_name;
+    }
+    else {
+        return ns_name;
+    }
+}
+
+- (NSView *)tableView:(NSTableView *) [[maybe_unused]] _table_view
+    viewForTableColumn:(NSTableColumn *) [[maybe_unused]] _table_column
+                   row:(NSInteger)_row
+{
+    assert( _table_view == self.themesTable );
+    assert( _table_column == [self.themesTable.tableColumns objectAtIndex:0] );
+    if( _row >= static_cast<NSInteger>(m_ThemeNames.size()) )
+        return nil;
+    NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    tf.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell: @""];
+    tf.stringValue = [self visualTitleForTheme:_row];
+    tf.bordered = false;
+    tf.editable = false;
+    tf.drawsBackground = false;
+    return tf;
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *) [[maybe_unused]]_notification
+{
+    assert( _notification.object == self.themesTable );
+    if( m_IgnoreThemeCursorChange )
+        return; // pretend you don't see this nonse...
+    if( self.themesTable.selectedRow < 0 )
+        return;
+    size_t row = static_cast<size_t>(self.themesTable.selectedRow);
+    if( row >= m_ThemeNames.size() )
+        return;
+
+    m_Manager->SelectTheme(m_ThemeNames[row]);
+    
+//    if( m_Manager->SelectTheme(m_ThemeNames[row]) ) {
+//        m_SelectedTheme = row;
+//        [self loadSelectedDocument];
+////        [self.outlineView reloadData];
+//        [self reloadSelectedTheme];
+//    }
 }
 
 - (NSString *)identifier
@@ -199,7 +327,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
                  It (hopefuly) will reduce astonishment when user changes UI appearance of *current*
                  theme instead of choosing a needed theme instead.
                  */
-                v.enabled = self.selectedThemeCanBeReverted == false;
+                v.enabled = m_SelectedThemeCanBeReverted == false;
 
                 return v;
             }
@@ -209,7 +337,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
                     stringWithUTF8String:self.selectedThemeFrontend[i.entry.c_str()].GetString()];
                 v.bordered = false;
                 v.editable = true;
-                v.enabled = self.selectedThemeCanBeRemoved;
+                v.enabled = m_SelectedThemeCanBeRemoved;
                 v.usesSingleLineMode = true;
                 v.lineBreakMode = NSLineBreakByTruncatingHead;
                 v.delegate = self;
@@ -284,16 +412,16 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     return 18;
 }
 
-- (IBAction)onThemesPopupChange:(id) [[maybe_unused]] sender
-{
-    int selected_ind = static_cast<int>(self.themesPopUp.selectedTag);
-    if( selected_ind >= 0 && selected_ind < static_cast<int>(m_ThemeNames.size()) )
-        if( m_Manager->SelectTheme(m_ThemeNames[selected_ind]) ) {
-            m_SelectedTheme = selected_ind;
-            [self loadSelectedDocument];
-            [self.outlineView reloadData];
-        }
-}
+//- (IBAction)onThemesPopupChange:(id) [[maybe_unused]] sender
+//{
+//    int selected_ind = static_cast<int>(self.themesPopUp.selectedTag);
+//    if( selected_ind >= 0 && selected_ind < static_cast<int>(m_ThemeNames.size()) )
+//        if( m_Manager->SelectTheme(m_ThemeNames[selected_ind]) ) {
+//            m_SelectedTheme = selected_ind;
+//            [self loadSelectedDocument];
+//            [self.outlineView reloadData];
+//        }
+//}
 
 - (void)loadSelectedDocument
 {
@@ -301,16 +429,57 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
     m_Doc.CopyFrom(*m_Manager->ThemeData(theme_name), nc::config::g_CrtAllocator);
 
-    self.selectedThemeCanBeRemoved = m_Manager->CanBeRemoved(theme_name);
-    self.selectedThemeCanBeReverted = m_Manager->HasDefaultSettings(theme_name);
+    m_SelectedThemeCanBeRemoved = m_Manager->CanBeRemoved(theme_name);
+    m_SelectedThemeCanBeReverted = m_Manager->HasDefaultSettings(theme_name);
+    [self.tableButtons setEnabled:m_SelectedThemeCanBeRemoved forSegment:1];
+}
+
+- (IBAction)onTableButtonClicked:(id)sender {
+    const auto segment = self.tableButtons.selectedSegment;
+    if( segment == 0 ) {
+        const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
+        const auto new_name = m_Manager->SuitableNameForNewTheme(theme_name);
+        if( m_Manager->AddTheme(new_name, self.selectedThemeFrontend) ) {
+            [self reloadAll];
+            m_Manager->SelectTheme(new_name);
+        }
+    }
+    else if( segment == 1 ) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText =
+        NSLocalizedString(@"Are you sure you want to remove this theme?",
+                          "Asking user for confirmation on erasing custom theme - message");
+        alert.informativeText = NSLocalizedString(
+                                                  @"You can’t undo this action.",
+                                                  "Asking user for confirmation on erasing custom theme - informative text");
+        [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
+        [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+        if( [alert runModal] == NSAlertFirstButtonReturn ) {
+            const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
+            if( m_Manager->RemoveTheme(theme_name) )
+                [self reloadAll];
+        }
+    }
+    else if (segment == 2 ) {
+        [self onDisplayAdditionalMenu];
+    }
+}
+
+- (void)onDisplayAdditionalMenu {
+    const auto b = self.tableButtons.bounds;
+    const auto origin =
+        NSMakePoint(b.size.width - [self.tableButtons widthForSegment:2] - 3, b.size.height + 3);
+    [self.tableAdditionalMenu popUpMenuPositioningItem:nil atLocation:origin inView:self.tableButtons];
 }
 
 - (IBAction)onRevertClicked:(id) [[maybe_unused]] sender
 {
+    // TODO: ask for confirmation
     const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
     if( m_Manager->DiscardThemeChanges(theme_name) ) {
-        [self loadSelectedDocument];
-        [self.outlineView reloadData];
+//        [self loadSelectedDocument];
+//        [self.outlineView reloadData];
+        [self reloadSelectedTheme];
     }
 }
 
@@ -385,41 +554,49 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     }
 }
 
-- (IBAction)onDuplicateClicked:(id) [[maybe_unused]] sender
-{
-    const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
-    const auto new_name = m_Manager->SuitableNameForNewTheme(theme_name);
-    if( m_Manager->AddTheme(new_name, self.selectedThemeFrontend) ) {
-        m_Manager->SelectTheme(new_name);
-        [self reloadAll];
-    }
-}
+//- (IBAction)onDuplicateClicked:(id) [[maybe_unused]] sender
+//{
+//    const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
+//    const auto new_name = m_Manager->SuitableNameForNewTheme(theme_name);
+//    if( m_Manager->AddTheme(new_name, self.selectedThemeFrontend) ) {
+//        m_Manager->SelectTheme(new_name);
+//        [self reloadAll];
+//    }
+//}
 
 - (void)reloadAll
 {
     [self loadThemesNames];
+    m_IgnoreThemeCursorChange = true;
+    [self.themesTable reloadData];
+    [self.themesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:m_SelectedTheme] byExtendingSelection:false];
+    m_IgnoreThemeCursorChange = false;
+    [self reloadSelectedTheme];
+}
+
+- (void)reloadSelectedTheme
+{
     [self loadSelectedDocument];
-    [self buildThemeNamesPopup];
     [self.outlineView reloadData];
 }
 
-- (IBAction)onRemoveClicked:(id) [[maybe_unused]] sender
-{
-    NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText =
-        NSLocalizedString(@"Are you sure you want to remove this theme?",
-                          "Asking user for confirmation on erasing custom theme - message");
-    alert.informativeText = NSLocalizedString(
-        @"You can’t undo this action.",
-        "Asking user for confirmation on erasing custom theme - informative text");
-    [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
-    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    if( [alert runModal] == NSAlertFirstButtonReturn ) {
-        const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
-        if( m_Manager->RemoveTheme(theme_name) )
-            [self reloadAll];
-    }
-}
+//- (IBAction)onRemoveClicked:(id) [[maybe_unused]] sender
+//{
+//    NSAlert *alert = [[NSAlert alloc] init];
+//    alert.messageText =
+//        NSLocalizedString(@"Are you sure you want to remove this theme?",
+//                          "Asking user for confirmation on erasing custom theme - message");
+//    alert.informativeText = NSLocalizedString(
+//        @"You can’t undo this action.",
+//        "Asking user for confirmation on erasing custom theme - informative text");
+//    [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
+//    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+//    if( [alert runModal] == NSAlertFirstButtonReturn ) {
+//        const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
+//        if( m_Manager->RemoveTheme(theme_name) )
+//            [self reloadAll];
+//    }
+//}
 
 - (void)controlTextDidEndEditing:(NSNotification *)obj
 {
@@ -438,6 +615,49 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
                 tf.stringValue = [NSString stringWithUTF8StdString:theme_name];
         }
     }
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)_item
+{
+    if( _item.menu != self.tableAdditionalMenu )
+        return false;
+    if( _item.action == @selector(onRevertClicked:) )
+        return m_SelectedThemeCanBeReverted;
+    return true;
+}
+
+- (IBAction)onConfigureAutomaticSwitching:(id)sender {
+    
+    auto *sheet =
+        [[PreferencesWindowThemesTabAutomaticSwitchingSheet alloc] initWithSwitchingSettings:m_Manager->AutomaticSwitching() andThemeNames:m_ThemeNames];
+//    sheet.importAsName = url.lastPathComponent.stringByDeletingPathExtension;
+
+    
+    auto handler = ^(NSModalResponse _rc) {
+        if( _rc != NSModalResponseOK )
+            return;
+ 
+            auto new_settings = sheet.settings;
+            self->m_Manager->SetAutomaticSwitching(new_settings);
+            [self reloadAll];
+        
+        
+//
+//               auto name = sheet.overwriteCurrentTheme
+//                               ? self->m_ThemeNames[self->m_SelectedTheme]
+//                               : sheet.importAsName.UTF8String;
+//
+//               nc::config::Document sdoc;
+//               sdoc.CopyFrom(*doc, nc::config::g_CrtAllocator);
+//               bool result = sheet.overwriteCurrentTheme
+//                                 ? self->m_Manager->ImportThemeData(name, sdoc)
+//                                 : self->m_Manager->AddTheme(name, sdoc);
+//
+//               if( result )
+//                   [self reloadAll];
+    };
+    
+    [sheet beginSheetForWindow:self.view.window completionHandler:handler];
 }
 
 @end

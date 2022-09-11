@@ -1,6 +1,5 @@
 // Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerSheet.h"
-#include <Utility/CocoaAppearanceManager.h>
 #include <Viewer/ViewerViewController.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
@@ -73,7 +72,6 @@ using namespace nc::viewer;
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     [self.viewPlaceholder addSubview:self.view];
     auto viewer = self.view;

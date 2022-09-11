@@ -1,10 +1,9 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/Hash.h>
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include "CalculateChecksumSheetController.h"
 #include <numeric>
 
@@ -143,7 +142,6 @@ using nc::base::Hash;
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     for( auto &i : g_Algos )
         [self.HashMethod addItemWithTitle:i.first];

@@ -16,7 +16,6 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include <NimbleCommander/Core/VFSInstancePromise.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 #include <Panel/FindFilesData.h>
@@ -283,7 +282,6 @@ private:
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     self.TableView.columnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
     [self.TableView sizeToFit];

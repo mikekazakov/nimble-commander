@@ -1,9 +1,8 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/VolumeInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NativeFSManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include "DetailedVolumeInformationSheetController.h"
 
 @interface DetailedVolumeInformationSheetController ()
@@ -63,7 +62,6 @@ static NSString* Bool2ToString(const bool b[2])
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     [self PopulateControls];
     

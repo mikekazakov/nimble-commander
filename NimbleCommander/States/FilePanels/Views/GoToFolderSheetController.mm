@@ -4,7 +4,6 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 
@@ -69,7 +68,6 @@ static std::vector<unsigned> ListDirsWithPrefix
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     if( StateConfig().Has(g_StateGoToKey) ) {
         auto path = StateConfig().GetString(g_StateGoToKey);

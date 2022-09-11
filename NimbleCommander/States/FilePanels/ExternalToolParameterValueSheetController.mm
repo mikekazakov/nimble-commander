@@ -1,6 +1,5 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalToolParameterValueSheetController.h"
-#include <Utility/CocoaAppearanceManager.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 
@@ -37,7 +36,6 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     auto prompt_fmt = NSLocalizedString(@"Please provide parameters to run \"%@\"", "");
     self.promptLabel.stringValue = [NSString

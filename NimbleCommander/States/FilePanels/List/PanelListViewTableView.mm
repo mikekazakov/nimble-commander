@@ -8,6 +8,7 @@
 #include "Layout.h"
 #include <Utility/ObjCpp.h>
 #include <magic_enum.hpp>
+#include <cmath>
 
 using namespace nc;
 using namespace nc::panel;

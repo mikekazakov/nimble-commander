@@ -2,7 +2,6 @@
 #include "MainWindow.h"
 #include <Utility/SystemInformation.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include "MainWindowController.h"
 #include <Utility/ObjCpp.h>
 
@@ -69,7 +68,6 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
         [self setContentBorderThickness:40 forEdge:NSMinYEdge];
 
         //        self.contentView.wantsLayer = YES;
-        nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self);
         [self invalidateShadow];
     }
     return self;

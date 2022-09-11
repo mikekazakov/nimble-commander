@@ -1,7 +1,6 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RegistrationInfoWindow.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include "../Bootstrap/ActivationManager.h"
 #include <Utility/StringExtras.h>
 
@@ -31,7 +30,6 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     m_Self = self;
     
     if( m_ActivationManager->ForAppStore() ) { // MAS version

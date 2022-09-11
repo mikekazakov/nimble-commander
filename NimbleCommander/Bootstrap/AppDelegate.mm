@@ -34,7 +34,6 @@
 #include <Utility/SystemInformation.h>
 #include <Utility/Log.h>
 #include <Utility/FSEventsFileUpdateImpl.h>
-#include <Utility/CocoaAppearanceManager.h>
 
 #include <RoutedIO/RoutedIO.h>
 #include <RoutedIO/Log.h>
@@ -48,6 +47,7 @@
 #include <NimbleCommander/Core/ServicesHandler.h>
 #include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
+#include <NimbleCommander/Core/Theming/SystemThemeDetector.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/VFSInstanceManagerImpl.h>
@@ -109,7 +109,7 @@ static const auto g_ConfigForceFn = "general.alwaysUseFnKeysAsFunctional";
 static const auto g_ConfigExternalToolsList = "externalTools.tools_v1";
 static const auto g_ConfigLayoutsList = "filePanel.layout.layouts_v1";
 static const auto g_ConfigSelectedTheme = "general.theme";
-static const auto g_ConfigThemesList = "themes.themes_v1";
+static const auto g_ConfigThemes = "themes";
 static const auto g_ConfigExtEditorsList = "externalEditors.editors_v1";
 
 nc::config::Config &GlobalConfig() noexcept
@@ -154,8 +154,8 @@ static void UpdateMenuItemsPlaceholders(const char *_action)
 
 static void CheckDefaultsReset()
 {
-    const auto erase_mask = NSEventModifierFlagCapsLock | NSEventModifierFlagShift |
-                            NSEventModifierFlagOption | NSEventModifierFlagCommand;
+    const auto erase_mask =
+        NSEventModifierFlagCapsLock | NSEventModifierFlagShift | NSEventModifierFlagOption | NSEventModifierFlagCommand;
     if( (NSEvent.modifierFlags & erase_mask) == erase_mask )
         if( AskUserToResetDefaults() ) {
             ResetDefaults();
@@ -164,8 +164,7 @@ static void CheckDefaultsReset()
 }
 
 template <typename Log>
-static void AttachToSink(spdlog::level::level_enum _level,
-                         std::shared_ptr<spdlog::sinks::sink> _sink)
+static void AttachToSink(spdlog::level::level_enum _level, std::shared_ptr<spdlog::sinks::sink> _sink)
 {
     Log::Set(std::make_shared<spdlog::logger>(Log::Name(), _sink));
     Log::Get().set_level(_level);
@@ -229,6 +228,8 @@ static NCAppDelegate *g_Me = nil;
     std::unique_ptr<nc::utility::FSEventsFileUpdateImpl> m_FSEventsFileUpdate;
     nc::ops::PoolEnqueueFilter m_PoolEnqueueFilter;
     std::unique_ptr<ConfigWiring> m_ConfigWiring;
+    std::unique_ptr<nc::SystemThemeDetector> m_SystemThemeDetector;
+    std::unique_ptr<nc::ThemesManager> m_ThemesManager;
 }
 
 @synthesize mainWindowControllers = m_MainWindows;
@@ -247,14 +248,14 @@ static NCAppDelegate *g_Me = nil;
         m_ViewerWindowDelegateBridge = [[NCViewerWindowDelegateBridge alloc] init];
         m_FSEventsFileUpdate = std::make_unique<nc::utility::FSEventsFileUpdateImpl>();
         m_NativeFSManager = std::make_unique<nc::utility::NativeFSManagerImpl>();
-        m_NativeHost =
-            std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager, *m_FSEventsFileUpdate);
+        m_NativeHost = std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager, *m_FSEventsFileUpdate);
         m_ActivationManager = [self createActivationManager];
         [self checkMASReceipt];
         CheckDefaultsReset();
-        m_SupportDirectory = EnsureTrailingSlash(
-            NSFileManager.defaultManager.applicationSupportDirectory.fileSystemRepresentationSafe);
+        m_SupportDirectory =
+            EnsureTrailingSlash(NSFileManager.defaultManager.applicationSupportDirectory.fileSystemRepresentationSafe);
         [self setupConfigs];
+        m_SystemThemeDetector = std::make_unique<nc::SystemThemeDetector>();
     }
     return self;
 }
@@ -266,8 +267,7 @@ static NCAppDelegate *g_Me = nil;
 
 static std::string InstalledAquaticLicensePath()
 {
-    return nc::AppDelegate::SupportDirectory() +
-           nc::bootstrap::ActivationManagerImpl::DefaultLicenseFilename();
+    return nc::AppDelegate::SupportDirectory() + nc::bootstrap::ActivationManagerImpl::DefaultLicenseFilename();
 }
 
 static std::string AquaticPrimePublicKey()
@@ -312,8 +312,7 @@ static std::string AquaticPrimePublicKey()
 - (std::unique_ptr<nc::bootstrap::ActivationManager>)createActivationManager
 {
     [[clang::no_destroy]] static auto ext_license_support =
-        ActivationManagerBase::ExternalLicenseSupport{AquaticPrimePublicKey(),
-                                                      InstalledAquaticLicensePath()};
+        ActivationManagerBase::ExternalLicenseSupport{AquaticPrimePublicKey(), InstalledAquaticLicensePath()};
     [[clang::no_destroy]] static auto trial_period_support =
         ActivationManagerBase::TrialPeriodSupport{ActivationManagerImpl::DefaultsTrialExpireDate()};
 
@@ -337,6 +336,21 @@ static std::string AquaticPrimePublicKey()
     RegisterAvailableVFS();
 
     [self feedbackManager];
+
+    // Init themes manager
+    m_ThemesManager = std::make_unique<nc::ThemesManager>(GlobalConfig(), g_ConfigSelectedTheme, g_ConfigThemes);
+    // also hook up the appearance change notification with the global application appearance
+    auto update_appearance = [self] {
+            [NSApp setAppearance:m_ThemesManager->SelectedTheme().Appearance()];
+    };
+    update_appearance();
+    // observe forever
+    [[clang::no_destroy]] static auto token =
+        m_ThemesManager->ObserveChanges(nc::ThemesManager::Notifications::Appearance, update_appearance);
+    [[clang::no_destroy]] static auto token1 = m_SystemThemeDetector->ObserveChanges([self]{
+        m_ThemesManager->NotifyAboutSystemAppearanceChange(m_SystemThemeDetector->SystemAppearance());
+    });
+    
     [self themesManager];
     [self favoriteLocationsStorage];
 
@@ -363,11 +377,9 @@ static std::string AquaticPrimePublicKey()
     // if no option already set - ask user to provide anonymous usage statistics
     // ask them only on 5th startup or later
     // ask only if there were no modal dialogs before
-    if( !showed_modal_dialog &&
-       !CFDefaultsGetOptionalBool(nc::base::GoogleAnalytics::g_DefaultsTrackingEnabledKey) &&
+    if( !showed_modal_dialog && !CFDefaultsGetOptionalBool(nc::base::GoogleAnalytics::g_DefaultsTrackingEnabledKey) &&
         self.feedbackManager.ApplicationRunsCount() >= 5 ) {
-        CFDefaultsSetBool(nc::base::GoogleAnalytics::g_DefaultsTrackingEnabledKey,
-                          AskUserToProvideUsageStatistics());
+        CFDefaultsSetBool(nc::base::GoogleAnalytics::g_DefaultsTrackingEnabledKey, AskUserToProvideUsageStatistics());
         GA().UpdateEnabledStatus();
     }
 
@@ -382,8 +394,7 @@ static std::string AquaticPrimePublicKey()
         return [NSApp.mainMenu itemWithTagHierarchical:tag];
     };
 
-    static auto layouts_delegate =
-        [[PanelViewLayoutsMenuDelegate alloc] initWithStorage:*self.panelLayouts];
+    static auto layouts_delegate = [[PanelViewLayoutsMenuDelegate alloc] initWithStorage:*self.panelLayouts];
     item_for_action("menu.view.toggle_layout_1").menu.delegate = layouts_delegate;
 
     auto manage_fav_item = item_for_action("menu.go.favorites.manage");
@@ -393,16 +404,14 @@ static std::string AquaticPrimePublicKey()
     manage_fav_item.menu.delegate = favorites_delegate;
 
     auto clear_freq_item = [NSApp.mainMenu itemWithTagHierarchical:14220];
-    static auto frequent_delegate = [[FrequentlyVisitedLocationsMenuDelegate alloc]
-         initWithStorage:*self.favoriteLocationsStorage
-        andClearMenuItem:clear_freq_item];
+    static auto frequent_delegate =
+        [[FrequentlyVisitedLocationsMenuDelegate alloc] initWithStorage:*self.favoriteLocationsStorage
+                                                       andClearMenuItem:clear_freq_item];
     clear_freq_item.menu.delegate = frequent_delegate;
 
     const auto connections_menu_item = item_for_action("menu.go.connect.network_server");
-    static const auto conn_delegate =
-        [[ConnectionsMenuDelegate alloc] initWithManager:[]() -> NetworkConnectionsManager & {
-            return *g_Me.networkConnectionsManager;
-        }];
+    static const auto conn_delegate = [[ConnectionsMenuDelegate alloc]
+        initWithManager:[]() -> NetworkConnectionsManager & { return *g_Me.networkConnectionsManager; }];
     connections_menu_item.menu.delegate = conn_delegate;
 
     auto panels_locator = []() -> MainWindowFilePanelState * {
@@ -435,12 +444,8 @@ static std::string AquaticPrimePublicKey()
     static NSMenu *original_menu_state = [NSApp.mainMenu copy];
 
     // disable some features available in menu by configuration limitation
-    auto tag_from_lit = [](const char *s) {
-        return ActionsShortcutsManager::Instance().TagFromAction(s);
-    };
-    auto current_menuitem = [&](const char *s) {
-        return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)];
-    };
+    auto tag_from_lit = [](const char *s) { return ActionsShortcutsManager::Instance().TagFromAction(s); };
+    auto current_menuitem = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)]; };
     auto initial_menuitem = [&](const char *s) {
         return [original_menu_state itemWithTagHierarchical:tag_from_lit(s)];
     };
@@ -513,9 +518,8 @@ static std::string AquaticPrimePublicKey()
     NSApp.servicesProvider = self;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [NSApp
-        registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL]
-                          returnTypes:@[]]; // pasteboard types provided by PanelController
+    [NSApp registerServicesMenuSendTypes:@[NSFilenamesPboardType, (__bridge NSString *)kUTTypeFileURL]
+                             returnTypes:@[]]; // pasteboard types provided by PanelController
 #pragma clang diagnostic pop
     NSUpdateDynamicServices();
 
@@ -537,9 +541,8 @@ static std::string AquaticPrimePublicKey()
 
         // setup Sparkle updater stuff
         NSMenuItem *item = [[NSMenuItem alloc] init];
-        item.title = NSLocalizedString(
-            @"Check for Updates...",
-            "Menu item title for check if any Nimble Commander updates are available");
+        item.title = NSLocalizedString(@"Check for Updates...",
+                                       "Menu item title for check if any Nimble Commander updates are available");
         item.target = NCBootstrapSharedSUUpdaterInstance();
         item.action = NCBootstrapSUUpdaterAction();
         [[NSApp.mainMenu itemAtIndex:0].submenu insertItem:item atIndex:1];
@@ -547,21 +550,18 @@ static std::string AquaticPrimePublicKey()
 
     // initialize stuff related with in-app purchases
     if( am.Type() == ActivationManager::Distribution::Free ) {
-        m_AppStoreHelper = [[AppStoreHelper alloc] initWithActivationManager:am
-                                                             feedbackManager:self.feedbackManager];
+        m_AppStoreHelper = [[AppStoreHelper alloc] initWithActivationManager:am feedbackManager:self.feedbackManager];
         m_AppStoreHelper.onProductPurchased = [=, &am]([[maybe_unused]] const std::string &_id) {
             if( am.ReCheckProFeaturesInAppPurchased() ) {
                 [self updateMainMenuFeaturesByVersionAndState];
                 GA().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
             }
         };
-        dispatch_to_main_queue_after(
-            500ms, [=] { [m_AppStoreHelper showProFeaturesWindowIfNeededAsNagScreen]; });
+        dispatch_to_main_queue_after(500ms, [=] { [m_AppStoreHelper showProFeaturesWindowIfNeededAsNagScreen]; });
     }
 
     // accessibility stuff for NonMAS version
-    if( am.Type() == ActivationManager::Distribution::Trial &&
-        GlobalConfig().GetBool(g_ConfigForceFn) ) {
+    if( am.Type() == ActivationManager::Distribution::Trial && GlobalConfig().GetBool(g_ConfigForceFn) ) {
         nc::utility::FunctionalKeysPass::Instance().Enable();
     }
 
@@ -599,16 +599,14 @@ static std::string AquaticPrimePublicKey()
     m_StateDirectory = state.fileSystemRepresentationSafe;
 
     const auto bundle = NSBundle.mainBundle;
-    const auto config_defaults_path =
-        [bundle pathForResource:@"Config" ofType:@"json"].fileSystemRepresentationSafe;
+    const auto config_defaults_path = [bundle pathForResource:@"Config" ofType:@"json"].fileSystemRepresentationSafe;
     const auto config_defaults = Load(config_defaults_path);
     if( config_defaults == std::nullopt ) {
         std::cerr << "Failed to read the main config file: " << config_defaults_path << std::endl;
         exit(-1);
     }
 
-    const auto state_defaults_path =
-        [bundle pathForResource:@"State" ofType:@"json"].fileSystemRepresentationSafe;
+    const auto state_defaults_path = [bundle pathForResource:@"State" ofType:@"json"].fileSystemRepresentationSafe;
     const auto state_defaults = Load(state_defaults_path);
     if( state_defaults == std::nullopt ) {
         std::cerr << "Failed to read the state config file: " << state_defaults_path << std::endl;
@@ -632,8 +630,7 @@ static std::string AquaticPrimePublicKey()
 
     g_NetworkConnectionsConfig = new nc::config::ConfigImpl(
         "",
-        std::make_shared<nc::config::FileOverwritesStorage>(self.configDirectory +
-                                                            "NetworkConnections.json"),
+        std::make_shared<nc::config::FileOverwritesStorage>(self.configDirectory + "NetworkConnections.json"),
         std::make_shared<nc::config::DelayedAsyncExecutor>(write_delay),
         std::make_shared<nc::config::DelayedAsyncExecutor>(reload_delay));
 
@@ -742,8 +739,7 @@ static std::string AquaticPrimePublicKey()
 
 - (bool)processLicenseFileActivation:(NSArray<NSString *> *)_filenames
 {
-    [[clang::no_destroy]] static const auto nc_license_extension =
-        "."s + self.activationManager.LicenseFileExtension();
+    [[clang::no_destroy]] static const auto nc_license_extension = "."s + self.activationManager.LicenseFileExtension();
 
     if( _filenames.count != 1 )
         return false;
@@ -751,8 +747,7 @@ static std::string AquaticPrimePublicKey()
     for( NSString *pathstring in _filenames )
         if( auto fs = pathstring.fileSystemRepresentationSafe ) {
             if( self.activationManager.Type() == ActivationManager::Distribution::Trial ) {
-                if( _filenames.count == 1 &&
-                    std::filesystem::path(fs).extension() == nc_license_extension ) {
+                if( _filenames.count == 1 && std::filesystem::path(fs).extension() == nc_license_extension ) {
                     std::string p = fs;
                     dispatch_to_main_queue([=] { [self processProvidedLicenseFile:p]; });
                     return true;
@@ -780,8 +775,7 @@ static std::string AquaticPrimePublicKey()
     return true;
 }
 
-- (void)application:(NSApplication *) [[maybe_unused]] _sender
-          openFiles:(NSArray<NSString *> *)filenames
+- (void)application:(NSApplication *) [[maybe_unused]] _sender openFiles:(NSArray<NSString *> *)filenames
 {
     [m_FilesToOpen addObjectsFromArray:filenames];
     dispatch_to_main_queue_after(250ms, [] { [g_Me drainFilesToOpen]; });
@@ -822,16 +816,12 @@ static std::string AquaticPrimePublicKey()
     [m_AppStoreHelper askUserToRestorePurchases];
 }
 
-- (void)openFolderService:(NSPasteboard *)pboard
-                 userData:(NSString *)data
-                    error:(__strong NSString **)error
+- (void)openFolderService:(NSPasteboard *)pboard userData:(NSString *)data error:(__strong NSString **)error
 {
     self.servicesHandler.OpenFolder(pboard, data, error);
 }
 
-- (void)revealItemService:(NSPasteboard *)pboard
-                 userData:(NSString *)data
-                    error:(__strong NSString **)error
+- (void)revealItemService:(NSPasteboard *)pboard userData:(NSString *)data error:(__strong NSString **)error
 {
     self.servicesHandler.RevealItem(pboard, data, error);
 }
@@ -878,10 +868,8 @@ static std::string AquaticPrimePublicKey()
     IF_MENU_TAG("menu.nimble_commander.toggle_admin_mode")
     {
         bool enabled = nc::routedio::RoutedIO::Instance().Enabled();
-        item.title = enabled ? NSLocalizedString(@"Disable Admin Mode",
-                                                 "Menu item title for disabling an admin mode")
-                             : NSLocalizedString(@"Enable Admin Mode",
-                                                 "Menu item title for enabling an admin mode");
+        item.title = enabled ? NSLocalizedString(@"Disable Admin Mode", "Menu item title for disabling an admin mode")
+                             : NSLocalizedString(@"Enable Admin Mode", "Menu item title for enabling an admin mode");
         return true;
     }
 
@@ -909,36 +897,20 @@ static std::string AquaticPrimePublicKey()
 - (nc::panel::ExternalToolsStorage &)externalTools
 {
     [[clang::no_destroy]] static //
-    nc::panel::ExternalToolsStorage storage{g_ConfigExternalToolsList, self.globalConfig};
+        nc::panel::ExternalToolsStorage storage{g_ConfigExternalToolsList, self.globalConfig};
     return storage;
 }
 
 - (const std::shared_ptr<nc::panel::PanelViewLayoutsStorage> &)panelLayouts
 {
-    [[clang::no_destroy]] static auto i =
-        std::make_shared<nc::panel::PanelViewLayoutsStorage>(g_ConfigLayoutsList);
+    [[clang::no_destroy]] static auto i = std::make_shared<nc::panel::PanelViewLayoutsStorage>(g_ConfigLayoutsList);
     return i;
 }
 
 - (nc::ThemesManager &)themesManager
 {
-    // TODO: migrate into a mandatory initialization, not ad-hoc
-    using nc::ThemesManager;
-    static ThemesManager *const tm = [] {
-        // create the themes manager itself
-        auto i = new ThemesManager(GlobalConfig(), g_ConfigSelectedTheme, g_ConfigThemesList);
-
-        // also hook up the appearance change notification with the CocoaAppearanceManager
-        auto &app_man = nc::utility::CocoaAppearanceManager::Instance();
-        auto update_appearance = [i, &app_man] { app_man.SetCurrentAppearance(i->SelectedTheme().Appearance()); };
-        update_appearance();
-
-        // observe forever
-        [[clang::no_destroy]] static auto token =
-            i->ObserveChanges(ThemesManager::Notifications::Appearance, update_appearance);
-        return i;
-    }();
-    return *tm;
+    assert(m_ThemesManager);
+    return *m_ThemesManager;
 }
 
 - (ExternalEditorsStorage &)externalEditorsStorage
@@ -955,8 +927,7 @@ static std::string AquaticPrimePublicKey()
         m_Favorites = std::make_shared<t>(StateConfig(), "filePanel.favorites");
     });
 
-    [[clang::no_destroy]] static const std::shared_ptr<nc::panel::FavoriteLocationsStorage> inst =
-        m_Favorites;
+    [[clang::no_destroy]] static const std::shared_ptr<nc::panel::FavoriteLocationsStorage> inst = m_Favorites;
     return inst;
 }
 
@@ -988,16 +959,14 @@ static std::string AquaticPrimePublicKey()
 {
     auto lock = std::lock_guard{m_ViewerWindowsLock};
     auto i = std::find_if(std::begin(m_ViewerWindows), std::end(m_ViewerWindows), [&](auto v) {
-        return v.internalViewerController.filePath == _path &&
-               v.internalViewerController.fileVFS == _vfs;
+        return v.internalViewerController.filePath == _path && v.internalViewerController.fileVFS == _vfs;
     });
     return i != std::end(m_ViewerWindows) ? *i : nil;
     return nil;
 }
 
-- (InternalViewerWindowController *)
-    retrieveInternalViewerWindowForPath:(const std::string &)_path
-                                  onVFS:(const std::shared_ptr<VFSHost> &)_vfs
+- (InternalViewerWindowController *)retrieveInternalViewerWindowForPath:(const std::string &)_path
+                                                                  onVFS:(const std::shared_ptr<VFSHost> &)_vfs
 {
     dispatch_assert_main_queue();
     if( auto window = [self findInternalViewerWindowForPath:_path onVFS:_vfs] )
@@ -1032,11 +1001,8 @@ static std::string AquaticPrimePublicKey()
         [w show];
         return;
     }
-    auto storage = []() -> nc::panel::FavoriteLocationsStorage & {
-        return *NCAppDelegate.me.favoriteLocationsStorage;
-    };
-    FavoritesWindowController *window =
-        [[FavoritesWindowController alloc] initWithFavoritesStorage:storage];
+    auto storage = []() -> nc::panel::FavoriteLocationsStorage & { return *NCAppDelegate.me.favoriteLocationsStorage; };
+    FavoritesWindowController *window = [[FavoritesWindowController alloc] initWithFavoritesStorage:storage];
     auto provide_panel = []() -> std::vector<std::pair<VFSHostPtr, std::string>> {
         std::vector<std::pair<VFSHostPtr, std::string>> panel_paths;
         for( const auto &ctr : NCAppDelegate.me.mainWindowControllers ) {
@@ -1056,8 +1022,7 @@ static std::string AquaticPrimePublicKey()
 - (const std::shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager
 {
     [[clang::no_destroy]] static const auto mgr =
-        std::make_shared<ConfigBackedNetworkConnectionsManager>(*g_NetworkConnectionsConfig,
-                                                                self.nativeFSManager);
+        std::make_shared<ConfigBackedNetworkConnectionsManager>(*g_NetworkConnectionsConfig, self.nativeFSManager);
     [[clang::no_destroy]] static const std::shared_ptr<NetworkConnectionsManager> int_ptr = mgr;
     return int_ptr;
 }
@@ -1086,10 +1051,8 @@ static std::string AquaticPrimePublicKey()
 
 - (const std::shared_ptr<nc::panel::ClosedPanelsHistory> &)closedPanelsHistory
 {
-    [[clang::no_destroy]] static const auto impl =
-        std::make_shared<nc::panel::ClosedPanelsHistoryImpl>();
-    [[clang::no_destroy]] static const std::shared_ptr<nc::panel::ClosedPanelsHistory> history =
-        impl;
+    [[clang::no_destroy]] static const auto impl = std::make_shared<nc::panel::ClosedPanelsHistoryImpl>();
+    [[clang::no_destroy]] static const std::shared_ptr<nc::panel::ClosedPanelsHistory> history = impl;
     return history;
 }
 
@@ -1115,8 +1078,7 @@ static std::string AquaticPrimePublicKey()
 - (nc::core::ServicesHandler &)servicesHandler
 {
     auto window_locator = [] { return [g_Me windowForExternalRevealRequest]; };
-    [[clang::no_destroy]] static nc::core::ServicesHandler handler(window_locator,
-                                                                   self.nativeHostPtr);
+    [[clang::no_destroy]] static nc::core::ServicesHandler handler(window_locator, self.nativeHostPtr);
     return handler;
 }
 
@@ -1127,8 +1089,8 @@ static std::string AquaticPrimePublicKey()
 
 - (void)showTrialWindow
 {
-    const auto expired = (self.activationManager.UserHadRegistered() == false) &&
-                         (self.activationManager.IsTrialPeriod() == false);
+    const auto expired =
+        (self.activationManager.UserHadRegistered() == false) && (self.activationManager.IsTrialPeriod() == false);
 
     auto window = [[TrialWindowController alloc] init];
     window.isExpired = expired;
@@ -1163,9 +1125,7 @@ static void DoTemporaryFileStoragePurge()
     const auto deadline = time(nullptr) - 60 * 60 * 24; // 24 hours back
     g_TemporaryFileStorage->Purge(deadline);
 
-    dispatch_after(6h,
-                   dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
-                   DoTemporaryFileStoragePurge);
+    dispatch_after(6h, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), DoTemporaryFileStoragePurge);
 }
 
 - (nc::utility::TemporaryFileStorage &)temporaryFileStorage

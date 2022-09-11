@@ -35,7 +35,6 @@
 		CF460145256125E50095FC73 /* FunctionKeysPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */; };
 		CF460146256125E50095FC73 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1B1C9AFF280021EE7F /* SheetController.mm */; };
 		CF460147256125E50095FC73 /* UTIImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2B751B22B82FF0009D4160 /* UTIImpl.cpp */; };
-		CF460148256125E50095FC73 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79ABB21FE1F480043A26D /* CocoaAppearanceManager.mm */; };
 		CF460149256125E50095FC73 /* FPSLimitedDrawer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */; };
 		CF46014A256125E50095FC73 /* BriefOnDiskStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */; };
 		CF46014B256125E50095FC73 /* PathManip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF960E261C992F35001D8B02 /* PathManip.cpp */; };
@@ -232,8 +231,6 @@
 		CFD62C1B1C9AFF280021EE7F /* SheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SheetController.mm; path = source/SheetController.mm; sourceTree = "<group>"; };
 		CFD62C1D1C9B01320021EE7F /* SheetWithHotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SheetWithHotkeys.h; path = include/Utility/SheetWithHotkeys.h; sourceTree = "<group>"; };
 		CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SheetWithHotkeys.mm; path = source/SheetWithHotkeys.mm; sourceTree = "<group>"; };
-		CFD79AB921FE1F3B0043A26D /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = include/Utility/CocoaAppearanceManager.h; sourceTree = "<group>"; };
-		CFD79ABB21FE1F480043A26D /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = source/CocoaAppearanceManager.mm; sourceTree = "<group>"; };
 		CFDAC2281DFBD8690039A104 /* BlinkScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlinkScheduler.h; path = include/Utility/BlinkScheduler.h; sourceTree = "<group>"; };
 		CFDAC22A1DFBD8740039A104 /* BlinkScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlinkScheduler.cpp; path = source/BlinkScheduler.cpp; sourceTree = "<group>"; };
 		CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataBlockAnalysis.h; path = include/Utility/DataBlockAnalysis.h; sourceTree = "<group>"; };
@@ -343,7 +340,6 @@
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
 				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
 				CF0A49AA250D2C6F008EC7B0 /* CharInfo.h */,
-				CFD79AB921FE1F3B0043A26D /* CocoaAppearanceManager.h */,
 				CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */,
 				CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */,
 				CFDAC82A2168E1C000DEBA2A /* DiskUtility.h */,
@@ -404,7 +400,6 @@
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
 				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
 				CF0A49AC250D2C83008EC7B0 /* CharInfo.cpp */,
-				CFD79ABB21FE1F480043A26D /* CocoaAppearanceManager.mm */,
 				CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */,
 				CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */,
 				CFDAC82C2168E1CC00DEBA2A /* DiskUtility.mm */,
@@ -567,7 +562,6 @@
 				CFC41DAB257159630037677B /* VersionCompare.mm in Sources */,
 				CF61F30F26404971009FF900 /* FSEventsFileUpdateImpl.cpp in Sources */,
 				CF460137256125E50095FC73 /* SyncMessageBox.mm in Sources */,
-				CF460148256125E50095FC73 /* CocoaAppearanceManager.mm in Sources */,
 				CF46014A256125E50095FC73 /* BriefOnDiskStorage.cpp in Sources */,
 				CF460162256125E50095FC73 /* ColoredSeparatorLine.mm in Sources */,
 				CF46014C256125E50095FC73 /* ExtensionLowercaseComparison.cpp in Sources */,

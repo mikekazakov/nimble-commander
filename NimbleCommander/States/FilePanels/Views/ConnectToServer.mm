@@ -10,7 +10,6 @@
 #include <Utility/StringExtras.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <Carbon/Carbon.h>
 
@@ -105,8 +104,6 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     GA().PostScreenView("Network Connections Management");
 

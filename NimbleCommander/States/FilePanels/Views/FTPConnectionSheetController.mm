@@ -1,8 +1,7 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
-#include <Utility/CocoaAppearanceManager.h>
 #include "FTPConnectionSheetController.h"
 #include <Utility/StringExtras.h>
 
@@ -40,8 +39,6 @@
     
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;
-    
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     GA().PostScreenView("FTP Connection");
     

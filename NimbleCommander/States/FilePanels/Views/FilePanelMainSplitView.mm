@@ -8,6 +8,7 @@
 #include "FilePanelMainSplitView.h"
 #include <Utility/ObjCpp.h>
 #include <Habanero/dispatch_cpp.h>
+#include <cmath>
 
 static const auto g_MidGuideGap = 24.;
 static const auto g_MinPanelWidth = 120;

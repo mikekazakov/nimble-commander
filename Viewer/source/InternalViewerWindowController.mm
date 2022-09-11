@@ -1,6 +1,5 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerWindowController.h"
-#include <Utility/CocoaAppearanceManager.h>
 #include <Viewer/ViewerView.h>
 #include <Viewer/ViewerViewController.h>
 #include <Habanero/dispatch_cpp.h>
@@ -68,7 +67,6 @@ using namespace std::literals;
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     [self.viewerPlaceholder addSubview:self.viewerView];
     auto viewer = self.viewerView;

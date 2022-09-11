@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <IOKit/IOKitLib.h>
@@ -277,6 +277,8 @@ std::chrono::seconds GetUptime() noexcept
 
 static const OSXVersion g_Version = [] {
     const auto sys_ver = NSProcessInfo.processInfo.operatingSystemVersion;
+    if( sys_ver.majorVersion == 12 )
+        return OSXVersion::macOS_12;
     if( sys_ver.majorVersion == 11 )
         return OSXVersion::macOS_11;
     if( sys_ver.majorVersion == 10 )

@@ -96,17 +96,19 @@ using NotificationsMapping =
 ThemesManager::ThemesManager(config::Config &_config,
                              std::string_view _current_theme_path,
                              std::string_view _themes_storage_path)
-    : m_Config(_config), m_CurrentThemePath(_current_theme_path), m_ThemesStoragePath(_themes_storage_path)
+    : m_Config(_config), m_CurrentThemePath(_current_theme_path), m_ThemesStoragePath(_themes_storage_path),
+      m_ThemesArrayPath(std::string(_themes_storage_path) + ".themes_v1")
 {
     LoadDefaultThemes();
     LoadThemes();
-    m_SelectedThemeName = m_Config.Has(m_CurrentThemePath) ? m_Config.GetString(m_CurrentThemePath) : "Modern";
+    m_SelectedThemeName = m_Config.Has(m_CurrentThemePath) ? m_Config.GetString(m_CurrentThemePath) : "Light";
     UpdateCurrentTheme();
+    LoadSwitchingSettings();
 }
 
 void ThemesManager::LoadThemes()
 {
-    auto themes = m_Config.Get(m_ThemesStoragePath);
+    auto themes = m_Config.Get(m_ThemesArrayPath);
     if( !themes.IsArray() )
         return;
 
@@ -133,7 +135,7 @@ void ThemesManager::LoadThemes()
 
 void ThemesManager::LoadDefaultThemes()
 {
-    auto themes = m_Config.GetDefault(m_ThemesStoragePath);
+    auto themes = m_Config.GetDefault(m_ThemesArrayPath);
     if( !themes.IsArray() )
         return;
 
@@ -167,8 +169,8 @@ std::shared_ptr<const nc::config::Value> ThemesManager::SelectedThemeData() cons
     if( i->GetType() == rapidjson::kObjectType )
         return i;
 
-    // at this moment there's some inconsistency in config, lets use a failsafe Modern theme.
-    return BackupThemeData("Modern");
+    // at this moment there's some inconsistency in config, lets use a failsafe Light theme.
+    return BackupThemeData("Light");
 }
 
 std::shared_ptr<const nc::config::Value> ThemesManager::ThemeData(const std::string &_theme_name) const
@@ -187,11 +189,11 @@ std::shared_ptr<const nc::config::Value> ThemesManager::BackupThemeData(const st
     if( i != m_DefaultThemes.end() )
         return i->second;
 
-    i = m_DefaultThemes.find("Modern");
+    i = m_DefaultThemes.find("Light");
     if( i != m_DefaultThemes.end() )
         return i->second;
 
-    assert("default config is corrupted, there's no Modern theme" == nullptr);
+    assert("default config is corrupted, there's no Light theme" == nullptr);
     abort();
 }
 
@@ -238,7 +240,7 @@ bool ThemesManager::SetThemeValue(const std::string &_theme_name,
 void ThemesManager::UpdateCurrentTheme()
 {
     using namespace std::literals;
-    
+
     // comprose new theme object
     auto theme_data = SelectedThemeData();
     auto new_theme = std::make_shared<Theme>(static_cast<const void *>(theme_data.get()),
@@ -281,7 +283,7 @@ void ThemesManager::WriteThemes() const
         theme.CopyFrom(*i->second, nc::config::g_CrtAllocator);
         json_themes.PushBack(std::move(theme), nc::config::g_CrtAllocator);
     }
-    m_Config.Set(m_ThemesStoragePath, json_themes);
+    m_Config.Set(m_ThemesArrayPath, json_themes);
 }
 
 bool ThemesManager::SelectTheme(const std::string &_theme_name)
@@ -318,11 +320,11 @@ bool ThemesManager::HasDefaultSettings(const std::string &_theme_name) const noe
 bool ThemesManager::DiscardThemeChanges(const std::string &_theme_name)
 {
     auto ci = m_Themes.find(_theme_name);
-    if( ci == end(m_Themes) )
+    if( ci == m_Themes.end() )
         return false;
 
     auto di = m_DefaultThemes.find(_theme_name);
-    if( di == end(m_Themes) )
+    if( di == m_DefaultThemes.end() )
         return false; // there's no "default" counterpart
 
     if( *ci->second == *di->second )
@@ -444,13 +446,21 @@ bool ThemesManager::RemoveTheme(const std::string &_theme_name)
 
     if( m_SelectedThemeName == _theme_name )
         SelectTheme(m_OrderedDefaultThemeNames.at(0));
-
+    
+    if( m_AutoLightThemeName == _theme_name ) {
+        m_AutoLightThemeName = "Light"; // Assuming we always have the Light theme
+        WriteSwitchingSettings();
+    }
+    if( m_AutoDarkThemeName == _theme_name ) {
+        m_AutoDarkThemeName = "Dark"; // Assuming we always have the Dark theme
+        WriteSwitchingSettings();
+    }
     return true;
 }
 
 bool ThemesManager::CanBeRenamed(const std::string &_theme_name) const
 {
-    return m_Themes.count(_theme_name) && !HasDefaultSettings(_theme_name);
+    return m_Themes.contains(_theme_name) && !HasDefaultSettings(_theme_name);
 }
 
 bool ThemesManager::RenameTheme(const std::string &_theme_name, const std::string &_to_name)
@@ -487,6 +497,60 @@ bool ThemesManager::RenameTheme(const std::string &_theme_name, const std::strin
         SelectTheme(_to_name);
 
     return true;
+}
+
+bool ThemesManager::DoesAutomaticSwitching() const
+{
+    //    bool enabled;
+    return m_AutomaticSwitchingEnabled;
+    //    !m_AutoLightThemeName.empty() && !m_AutoDarkThemeName.empty();
+}
+
+void ThemesManager::SetAutomaticSwitching(const AutoSwitchingSettings &_as)
+{
+    m_AutomaticSwitchingEnabled = _as.enabled;
+    m_AutoLightThemeName = _as.light;
+    m_AutoDarkThemeName = _as.dark;
+    WriteSwitchingSettings();
+}
+
+ThemesManager::AutoSwitchingSettings ThemesManager::AutomaticSwitching() const
+{
+    return {m_AutomaticSwitchingEnabled, m_AutoLightThemeName, m_AutoDarkThemeName};
+}
+
+void ThemesManager::NotifyAboutSystemAppearanceChange(ThemeAppearance _appearance)
+{
+    if( m_AutomaticSwitchingEnabled == false )
+        return; // nothing to do, ignore the notification
+    
+    if( _appearance == ThemeAppearance::Light ) {
+        SelectTheme(m_AutoLightThemeName); // bogus / empty names are ok here
+    }
+    if( _appearance == ThemeAppearance::Dark ) {
+        SelectTheme(m_AutoDarkThemeName); // bogus / empty names are ok here
+    }
+}
+
+void ThemesManager::LoadSwitchingSettings()
+{
+    // off if something goes wrong
+    const bool enabled = m_Config.GetBool(m_ThemesStoragePath + ".automaticSwitching.enabled");
+    // empty if something goes wrong
+    const std::string light = m_Config.GetString(m_ThemesStoragePath + ".automaticSwitching.light");
+    // empty if something goes wrong
+    const std::string dark = m_Config.GetString(m_ThemesStoragePath + ".automaticSwitching.dark");
+    
+    m_AutomaticSwitchingEnabled = enabled;
+    m_AutoLightThemeName = light;
+    m_AutoDarkThemeName = dark;
+}
+
+void ThemesManager::WriteSwitchingSettings()
+{
+    m_Config.Set(m_ThemesStoragePath + ".automaticSwitching.enabled", m_AutomaticSwitchingEnabled);
+    m_Config.Set(m_ThemesStoragePath + ".automaticSwitching.light", m_AutoLightThemeName);
+    m_Config.Set(m_ThemesStoragePath + ".automaticSwitching.dark", m_AutoDarkThemeName);
 }
 
 } // namespace nc

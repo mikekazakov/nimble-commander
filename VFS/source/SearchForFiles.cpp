@@ -261,7 +261,7 @@ void SearchForFiles::ProcessValidEntry([[maybe_unused]] const char *_full_path,
                                        VFSHost &_in_host,
                                        CFRange _cont_range)
 {
-    if( m_Callback )
+    if( m_Callback ) // change to assert
         m_Callback(_dirent.name, _dir_path, _in_host, _cont_range);
 }
 

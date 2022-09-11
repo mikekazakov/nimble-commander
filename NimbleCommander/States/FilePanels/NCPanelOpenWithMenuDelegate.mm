@@ -1,7 +1,6 @@
 // Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
-#include <Utility/SystemInformation.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/UTI.h>
 #include <Utility/VersionCompare.h>
@@ -218,13 +217,6 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
         [menu addItem:NSMenuItem.separatorItem];
     }
 
-    if( nc::utility::GetOSXVersion() < nc::utility::OSXVersion::OSX_14 ) {
-        // After the MAS redisign the old way for querying with UTI doesn't work anymore.
-        // No substitute was found so far.
-        if( !m_ItemsUTI.empty() )
-            [menu addItem:[self makeSearchInMASItem]];
-    }
-
     [menu addItem:[self makeOpenWithOtherItem]];
 }
 
@@ -239,16 +231,6 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 
     [menu removeAllItems];
     [menu addItem:[self makeFetchingStubItem]];
-}
-
-- (NSMenuItem *)makeSearchInMASItem
-{
-    auto item = [NSMenuItem new];
-    item.title = NSLocalizedStringFromTable(
-        @"App Store...", @"FilePanelsContextMenu", "Menu item to choose an app from MAS");
-    item.target = self;
-    item.action = @selector(OnSearchInMAS:);
-    return item;
 }
 
 - (NSMenuItem *)makeOpenWithOtherItem
@@ -360,14 +342,6 @@ static void ShowOpenPanel(NSOpenPanel *_panel,
         m_FileOpener->Open(
             source_items.front().Path(), source_items.front().Host(), _handler.Path(), self.target);
     }
-}
-
-- (void)OnSearchInMAS:(id) [[maybe_unused]] _sender
-{
-    auto format =
-        @"macappstores://search.itunes.apple.com/WebObjects/MZSearch.woa/wa/docTypeLookup?uti=%s";
-    NSString *mas_url = [NSString stringWithFormat:format, m_ItemsUTI.c_str()];
-    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
 }
 
 @end

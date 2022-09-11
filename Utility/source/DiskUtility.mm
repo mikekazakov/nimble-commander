@@ -1,8 +1,7 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DiskUtility.h"
 #include <boost/process.hpp>
 #include <iostream>
-#include "SystemInformation.h"
 #include "ObjCpp.h"
 
 static const auto g_APFSListCommand = "/usr/sbin/diskutil apfs list -plist";
@@ -14,9 +13,6 @@ static std::string_view RoleToDiskUtilRepr(APFSTree::Role _role) noexcept;
 
 NSDictionary *DiskUtility::ListAPFSObjects()
 {
-    if( GetOSXVersion() < OSXVersion::OSX_12 )
-        return nil;
-
     const auto plist = Execute(g_APFSListCommand);
 
     if( plist.empty() )

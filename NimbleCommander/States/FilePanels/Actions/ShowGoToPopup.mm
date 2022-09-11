@@ -23,7 +23,6 @@
 #include "Helpers.h"
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-#include <Utility/SystemInformation.h>
 #include <Habanero/dispatch_cpp.h>
 
 using namespace nc::panel;
@@ -772,11 +771,6 @@ static NSMenuItem *FindMenuItemBySelector(SEL _selector, NSMenu *_menu = NSApp.m
 
 static void AddFakeHiddenHotkeyItem(SEL _action, NSMenu *_target_menu)
 {
-    static const auto is_10_13_or_higher =
-        nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_13;
-    if( is_10_13_or_higher == false )
-        return;
-
     const auto original_item = FindMenuItemBySelector(_action);
     if( original_item == nil )
         return;
@@ -791,10 +785,7 @@ static void AddFakeHiddenHotkeyItem(SEL _action, NSMenu *_target_menu)
     item.target = original_item.target;
     item.keyEquivalent = original_item.keyEquivalent;
     item.keyEquivalentModifierMask = original_item.keyEquivalentModifierMask;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"
     item.allowsKeyEquivalentWhenHidden = true;
-#pragma clang diagnostic pop
     item.hidden = true;
     [_target_menu addItem:item];
 }

@@ -61,15 +61,10 @@ struct SystemOverview
 
 enum class OSXVersion
 {
-    OSX_9       = 100900,
-    OSX_10      = 101000,
-    OSX_11      = 101100,
-    OSX_12      = 101200,
-    OSX_13      = 101300,
-    OSX_14      = 101400,
     OSX_15      = 101500,
     macOS_11    = 110000,
     macOS_12    = 120000,
+    macOS_13    = 130000,
     OSX_Unknown = 999999
 };
     

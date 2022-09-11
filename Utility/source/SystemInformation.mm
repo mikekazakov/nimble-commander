@@ -277,6 +277,8 @@ std::chrono::seconds GetUptime() noexcept
 
 static const OSXVersion g_Version = [] {
     const auto sys_ver = NSProcessInfo.processInfo.operatingSystemVersion;
+    if( sys_ver.majorVersion == 13 )
+        return OSXVersion::macOS_13;
     if( sys_ver.majorVersion == 12 )
         return OSXVersion::macOS_12;
     if( sys_ver.majorVersion == 11 )
@@ -285,18 +287,7 @@ static const OSXVersion g_Version = [] {
         switch( sys_ver.minorVersion ) {
             case 15:
                 return OSXVersion::OSX_15;
-            case 14:
-                return OSXVersion::OSX_14;
-            case 13:
-                return OSXVersion::OSX_13;
-            case 12:
-                return OSXVersion::OSX_12;
-            case 11:
-                return OSXVersion::OSX_11;
-            case 10:
-                return OSXVersion::OSX_10;
-            case 9:
-                return OSXVersion::OSX_9;
+            // MacOSX older that 10.15 are unsupported
         }
     return OSXVersion::OSX_Unknown;
 }();

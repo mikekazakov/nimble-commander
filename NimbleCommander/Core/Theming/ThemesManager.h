@@ -7,6 +7,7 @@
 
 #include "Appearance.h"
 
+#include <compare>
 #include <vector>
 #include <string>
 #include <string_view>
@@ -220,6 +221,8 @@ struct ThemesManager::AutoSwitchingSettings
     
     // the name of a theme to be selected when system changes appearance to Dark
     std::string dark;
+    
+    std::strong_ordering operator<=>(const AutoSwitchingSettings&) const noexcept = default;
 };
 
 } // namespace nc

@@ -4,6 +4,8 @@
 #include <Config/RapidJSON.h>
 #include <Habanero/dispatch_cpp.h>
 #include <robin_hood.h>
+#include <charconv>
+#include <fmt/core.h>
 
 namespace nc {
 
@@ -417,13 +419,37 @@ bool ThemesManager::AddTheme(const std::string &_theme_name, const nc::config::V
 
 std::string ThemesManager::SuitableNameForNewTheme(const std::string &_current_theme_name) const
 {
-    const auto themes = ThemeNames();
+    if( _current_theme_name.empty() )
+        return {}; // empty names are not allowed
 
-    for( int i = 1; i < 99; ++i ) {
-        const auto v = (i == 1 ? _current_theme_name : _current_theme_name + " " + std::to_string(i));
-        if( find(begin(themes), end(themes), v) == end(themes) )
-            return v;
+    const auto themes = ThemeNames();
+    robin_hood::unordered_flat_set<std::string> names(themes.begin(), themes.end());
+
+    if( names.contains(_current_theme_name) == false ) {
+        // no collision, accept as-is
+        return _current_theme_name;
     }
+
+    // check if _current_theme_name already contains a trailing number - continue in that case, otherwise start with 2
+    const std::string &cn = _current_theme_name;
+    const auto sp_idx = cn.rfind(' ');
+    int current_idx = 2;
+    if( sp_idx != std::string::npos &&
+        std::from_chars(cn.data() + sp_idx + 1, cn.data() + cn.length(), current_idx).ec == std::errc{} ) {
+        for( ; current_idx < 99; ++current_idx ) {
+            auto name = fmt::format("{} {}", std::string_view(cn.data(), sp_idx), current_idx);
+            if( names.contains(name) == false )
+                return name;
+        }
+    }
+    else {
+        for( ; current_idx < 99; ++current_idx ) {
+            auto name = fmt::format("{} {}", cn, current_idx);
+            if( names.contains(name) == false )
+                return name;
+        }
+    }
+
     return "";
 }
 

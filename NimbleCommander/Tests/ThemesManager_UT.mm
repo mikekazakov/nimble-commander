@@ -293,3 +293,34 @@ TEST_CASE(PREFIX "Updates automatic theme if a referenced was deleted")
         CHECK(man.AutomaticSwitching().dark == "Dark");
     }
 }
+
+TEST_CASE(PREFIX "Picking a new name for a duplicate theme")
+{
+    const auto json = "\
+    {\
+        'current': 'name',\
+        'themes': {\
+            'themes_v1': [\
+                {'themeName': 'name'},\
+                {'themeName': 'name 2'},\
+                {'themeName': 'another'}\
+            ]\
+        }\
+    }\
+    ";
+    ConfigImpl config{ReplQuotes(json), MakeDummyStorage()};
+    ThemesManager man(config, "current", "themes");
+    
+    CHECK( man.SuitableNameForNewTheme("name") == "name 3" );
+    CHECK( man.SuitableNameForNewTheme("name ") == "name " );
+    CHECK( man.SuitableNameForNewTheme("name 2") == "name 3" );
+    CHECK( man.SuitableNameForNewTheme("name 2 ") == "name 2 " );
+    CHECK( man.SuitableNameForNewTheme("another") == "another 2" );
+    CHECK( man.SuitableNameForNewTheme("not here") == "not here" );
+    CHECK( man.SuitableNameForNewTheme("name2") == "name2" );
+    CHECK( man.SuitableNameForNewTheme("1") == "1" );
+    CHECK( man.SuitableNameForNewTheme(" 1") == " 1" );
+    CHECK( man.SuitableNameForNewTheme("1 ") == "1 " );
+    CHECK( man.SuitableNameForNewTheme("") == "" );
+    CHECK( man.SuitableNameForNewTheme(" ") == " " );
+}

@@ -115,7 +115,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     col.resizingMask = NSTableColumnNoResizing;
     col.editable = false;
     [self.themesTable addTableColumn:col];
-                
+
     self.outlineView.allowsMultipleSelection = false;
     self.outlineView.allowsEmptySelection = false;
     self.outlineView.allowsColumnSelection = false;
@@ -129,9 +129,9 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     col.editable = false;
     [self.outlineView addTableColumn:col];
     self.outlineView.outlineTableColumn = col;
-    
+
     [self.outlineView removeTableColumn:self.outlineView.tableColumns.firstObject]; // remove original dummy
-        
+
     col = [[NSTableColumn alloc] initWithIdentifier:@"value"];
     col.width = 300;
     col.minWidth = 300;
@@ -436,10 +436,19 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
 
 - (IBAction)onRevertClicked:(id) [[maybe_unused]] sender
 {
-    // TODO: ask for confirmation
-    const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
-    if( m_Manager->DiscardThemeChanges(theme_name) ) {
-        [self reloadSelectedTheme];
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedString(@"Are you sure you want to revert the changes of this theme?",
+                                          "Asking user for confirmation on reverting a standard theme - message");
+    alert.informativeText =
+        NSLocalizedString(@"You can’t undo this action.",
+                          "Asking user for confirmation on reverting a standard theme - informative text");
+    [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    if( [alert runModal] == NSAlertFirstButtonReturn ) {
+        const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
+        if( m_Manager->DiscardThemeChanges(theme_name) ) {
+            [self reloadSelectedTheme];
+        }
     }
 }
 

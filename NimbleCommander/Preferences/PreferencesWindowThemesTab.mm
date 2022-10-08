@@ -51,11 +51,6 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
 @property(nonatomic) IBOutlet NSSegmentedControl *tableButtons;
 @property(nonatomic) IBOutlet NSTableView *themesTable;
 @property(nonatomic) IBOutlet NSOutlineView *outlineView;
-//@property(nonatomic) IBOutlet NSPopUpButton *themesPopUp;
-//@property(nonatomic) IBOutlet NSButton *importButton;
-//@property(nonatomic) IBOutlet NSButton *exportButton;
-//@property(nonatomic) bool selectedThemeCanBeRemoved;
-//@property(nonatomic) bool selectedThemeCanBeReverted;
 @end
 
 @implementation PreferencesWindowThemesTab {
@@ -82,22 +77,9 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
         [self loadThemesNames];
         [self loadSelectedDocument];
 
-        
-//        auto update_appearance = [self] {
-//                [NSApp setAppearance:m_ThemesManager->SelectedTheme().Appearance()];
-//        };
-//        update_appearance();
-//        // observe forever
-//        [[clang::no_destroy]] static auto token =
-//            m_ThemesManager->ObserveChanges(nc::ThemesManager::Notifications::Appearance, update_appearance);
-//        [[clang::no_destroy]] static auto token1 = m_SystemThemeDetector->ObserveChanges([self]{
-//            m_ThemesManager->NotifyAboutSystemAppearanceChange(m_SystemThemeDetector->SystemAppearance());
-//        });
-        [[clang::no_destroy]] static auto token =
-        m_Manager->ObserveChanges(nc::ThemesManager::Notifications::Name, [self]{
-            [self onThemeManagerThemeChanged];
-        });
-        
+        [[clang::no_destroy]] static auto token = m_Manager->ObserveChanges(
+            nc::ThemesManager::Notifications::Name, [self] { [self onThemeManagerThemeChanged]; });
+
         m_Nodes = BuildThemeSettingsNodesTree();
     }
 
@@ -115,32 +97,16 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     [self.themesTable selectRowIndexes:[NSIndexSet indexSetWithIndex:m_SelectedTheme] byExtendingSelection:false];
 }
 
-//- (void)buildThemeNamesPopup
-//{
-//    [self.themesPopUp removeAllItems];
-//    for( int i = 0, e = static_cast<int>(m_ThemeNames.size()); i != e; ++i ) {
-//        auto &name = m_ThemeNames[i];
-//        [self.themesPopUp addItemWithTitle:[NSString stringWithUTF8StdString:name]];
-//        self.themesPopUp.lastItem.tag = i;
-//    }
-//    [self.themesPopUp selectItemWithTag:m_SelectedTheme];
-//}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do view setup here.
-//    self.importButton.enabled = m_ActivationManager->HasThemesManipulation();
-//    self.exportButton.enabled = m_ActivationManager->HasThemesManipulation();
 
-//    [self buildThemeNamesPopup];
-    
     self.themesTable.rowSizeStyle = NSTableViewRowSizeStyleCustom;
     self.themesTable.rowHeight = 19.;
     self.themesTable.allowsMultipleSelection = false;
     self.themesTable.allowsEmptySelection = false;
     self.themesTable.allowsColumnSelection = false;
-        
+
     NSTableColumn *col = [[NSTableColumn alloc] initWithIdentifier:@"Theme"];
     col.width = 140;
     col.minWidth = 140;
@@ -149,10 +115,34 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     col.resizingMask = NSTableColumnNoResizing;
     col.editable = false;
     [self.themesTable addTableColumn:col];
+                
+    self.outlineView.allowsMultipleSelection = false;
+    self.outlineView.allowsEmptySelection = false;
+    self.outlineView.allowsColumnSelection = false;
+    self.outlineView.indentationPerLevel = 4.;
+    col = [[NSTableColumn alloc] initWithIdentifier:@"title"];
+    col.width = 210;
+    col.minWidth = 210;
+    col.maxWidth = 210;
+    col.title = @"title"; // TODO: localize!
+    col.resizingMask = NSTableColumnNoResizing;
+    col.editable = false;
+    [self.outlineView addTableColumn:col];
+    self.outlineView.outlineTableColumn = col;
     
+    [self.outlineView removeTableColumn:self.outlineView.tableColumns.firstObject]; // remove original dummy
+        
+    col = [[NSTableColumn alloc] initWithIdentifier:@"value"];
+    col.width = 300;
+    col.minWidth = 300;
+    col.maxWidth = 300;
+    col.title = @"value"; // TODO: localize!
+    col.resizingMask = NSTableColumnNoResizing;
+    col.editable = false;
+    [self.outlineView addTableColumn:col];
+
     [self reloadAll];
-    
-    
+
     [self.outlineView expandItem:nil expandChildren:true];
 }
 
@@ -170,13 +160,13 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     [self reloadSelectedTheme];
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]]_table_view
+- (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]] _table_view
 {
-    assert( _table_view == self.themesTable );
-    return static_cast<NSInteger>( m_ThemeNames.size() );
+    assert(_table_view == self.themesTable);
+    return static_cast<NSInteger>(m_ThemeNames.size());
 }
 
-- (NSString *) visualTitleForTheme:(size_t)_theme
+- (NSString *)visualTitleForTheme:(size_t)_theme
 {
     if( _theme >= m_ThemeNames.size() )
         return nil;
@@ -187,7 +177,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
         const bool is_dark = auto_switching.dark == name;
         if( is_light && is_dark )
             return [NSString stringWithFormat:@"%@ 🔆🌙", ns_name];
-        else if( is_light  )
+        else if( is_light )
             return [NSString stringWithFormat:@"%@ 🔆", ns_name];
         else if( is_dark )
             return [NSString stringWithFormat:@"%@ 🌙", ns_name];
@@ -203,12 +193,12 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     viewForTableColumn:(NSTableColumn *) [[maybe_unused]] _table_column
                    row:(NSInteger)_row
 {
-    assert( _table_view == self.themesTable );
-    assert( _table_column == [self.themesTable.tableColumns objectAtIndex:0] );
+    assert(_table_view == self.themesTable);
+    assert(_table_column == [self.themesTable.tableColumns objectAtIndex:0]);
     if( _row >= static_cast<NSInteger>(m_ThemeNames.size()) )
         return nil;
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-    tf.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell: @""];
+    tf.cell = [[VerticallyCenteredTextFieldCell alloc] initTextCell:@""];
     tf.stringValue = [self visualTitleForTheme:_row];
     tf.bordered = false;
     tf.editable = false;
@@ -216,9 +206,9 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     return tf;
 }
 
-- (void)tableViewSelectionDidChange:(NSNotification *) [[maybe_unused]]_notification
+- (void)tableViewSelectionDidChange:(NSNotification *) [[maybe_unused]] _notification
 {
-    assert( _notification.object == self.themesTable );
+    assert(_notification.object == self.themesTable);
     if( m_IgnoreThemeCursorChange )
         return; // pretend you don't see this nonse...
     if( self.themesTable.selectedRow < 0 )
@@ -228,13 +218,6 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
         return;
 
     m_Manager->SelectTheme(m_ThemeNames[row]);
-    
-//    if( m_Manager->SelectTheme(m_ThemeNames[row]) ) {
-//        m_SelectedTheme = row;
-//        [self loadSelectedDocument];
-////        [self.outlineView reloadData];
-//        [self reloadSelectedTheme];
-//    }
 }
 
 - (NSString *)identifier
@@ -253,8 +236,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     return NSLocalizedStringFromTable(@"Themes", @"Preferences", "General preferences tab title");
 }
 
-- (NSInteger)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView
-    numberOfChildrenOfItem:(nullable id)item
+- (NSInteger)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView numberOfChildrenOfItem:(nullable id)item
 {
     if( item == nil )
         return m_Nodes.count;
@@ -263,9 +245,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     return 0;
 }
 
-- (id)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView
-            child:(NSInteger)index
-           ofItem:(nullable id)item
+- (id)outlineView:(NSOutlineView *) [[maybe_unused]] outlineView child:(NSInteger)index ofItem:(nullable id)item
 {
     if( auto n = nc::objc_cast<PreferencesWindowThemesTabGroupNode>(item) )
         return n.children[index];
@@ -294,8 +274,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
         if( [tableColumn.identifier isEqualToString:@"value"] ) {
             if( i.type == PreferencesWindowThemesTabItemType::Color ) {
                 auto v = [[PreferencesWindowThemesTabColorControl alloc] initWithFrame:NSRect{}];
-                v.color =
-                    ThemePersistence::ExtractColor(self.selectedThemeFrontend, i.entry.c_str());
+                v.color = ThemePersistence::ExtractColor(self.selectedThemeFrontend, i.entry.c_str());
                 v.action = @selector(onColorChanged:);
                 v.target = self;
                 return v;
@@ -308,18 +287,15 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
                 return v;
             }
             if( i.type == PreferencesWindowThemesTabItemType::ColoringRules ) {
-                auto v =
-                    [[PreferencesWindowThemesTabColoringRulesControl alloc] initWithFrame:NSRect{}];
-                v.rules =
-                    ThemePersistence::ExtractRules(self.selectedThemeFrontend, i.entry.c_str());
+                auto v = [[PreferencesWindowThemesTabColoringRulesControl alloc] initWithFrame:NSRect{}];
+                v.rules = ThemePersistence::ExtractRules(self.selectedThemeFrontend, i.entry.c_str());
                 v.action = @selector(onColoringRulesChanged:);
                 v.target = self;
                 return v;
             }
             if( i.type == PreferencesWindowThemesTabItemType::Appearance ) {
                 auto v = [[PreferencesWindowThemesAppearanceControl alloc] initWithFrame:NSRect{}];
-                v.themeAppearance = ThemePersistence::ExtractAppearance(self.selectedThemeFrontend,
-                                                                        i.entry.c_str());
+                v.themeAppearance = ThemePersistence::ExtractAppearance(self.selectedThemeFrontend, i.entry.c_str());
                 v.action = @selector(onAppearanceChanged:);
                 v.target = self;
                 /* due to a issue with MAS review proccess the following compromise decision was
@@ -333,8 +309,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
             }
             if( i.type == PreferencesWindowThemesTabItemType::ThemeTitle ) {
                 NSTextField *v = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-                v.stringValue = [NSString
-                    stringWithUTF8String:self.selectedThemeFrontend[i.entry.c_str()].GetString()];
+                v.stringValue = [NSString stringWithUTF8String:self.selectedThemeFrontend[i.entry.c_str()].GetString()];
                 v.bordered = false;
                 v.editable = true;
                 v.enabled = m_SelectedThemeCanBeRemoved;
@@ -355,8 +330,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
         const auto row = [self.outlineView rowForView:v];
         const id item = [self.outlineView itemAtRow:row];
         if( const auto node = nc::objc_cast<PreferencesWindowThemesTabItemNode>(item) )
-            [self commitChangedValue:ThemePersistence::EncodeAppearance(v.themeAppearance)
-                              forKey:node.entry];
+            [self commitChangedValue:ThemePersistence::EncodeAppearance(v.themeAppearance) forKey:node.entry];
     }
 }
 
@@ -412,17 +386,6 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     return 18;
 }
 
-//- (IBAction)onThemesPopupChange:(id) [[maybe_unused]] sender
-//{
-//    int selected_ind = static_cast<int>(self.themesPopUp.selectedTag);
-//    if( selected_ind >= 0 && selected_ind < static_cast<int>(m_ThemeNames.size()) )
-//        if( m_Manager->SelectTheme(m_ThemeNames[selected_ind]) ) {
-//            m_SelectedTheme = selected_ind;
-//            [self loadSelectedDocument];
-//            [self.outlineView reloadData];
-//        }
-//}
-
 - (void)loadSelectedDocument
 {
     // CHECKS!!!
@@ -434,7 +397,8 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     [self.tableButtons setEnabled:m_SelectedThemeCanBeRemoved forSegment:1];
 }
 
-- (IBAction)onTableButtonClicked:(id)sender {
+- (IBAction)onTableButtonClicked:(id)sender
+{
     const auto segment = self.tableButtons.selectedSegment;
     if( segment == 0 ) {
         const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
@@ -446,12 +410,10 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     }
     else if( segment == 1 ) {
         NSAlert *alert = [[NSAlert alloc] init];
-        alert.messageText =
-        NSLocalizedString(@"Are you sure you want to remove this theme?",
-                          "Asking user for confirmation on erasing custom theme - message");
+        alert.messageText = NSLocalizedString(@"Are you sure you want to remove this theme?",
+                                              "Asking user for confirmation on erasing custom theme - message");
         alert.informativeText = NSLocalizedString(
-                                                  @"You can’t undo this action.",
-                                                  "Asking user for confirmation on erasing custom theme - informative text");
+            @"You can’t undo this action.", "Asking user for confirmation on erasing custom theme - informative text");
         [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
         [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
         if( [alert runModal] == NSAlertFirstButtonReturn ) {
@@ -460,15 +422,15 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
                 [self reloadAll];
         }
     }
-    else if (segment == 2 ) {
+    else if( segment == 2 ) {
         [self onDisplayAdditionalMenu];
     }
 }
 
-- (void)onDisplayAdditionalMenu {
+- (void)onDisplayAdditionalMenu
+{
     const auto b = self.tableButtons.bounds;
-    const auto origin =
-        NSMakePoint(b.size.width - [self.tableButtons widthForSegment:2] - 3, b.size.height + 3);
+    const auto origin = NSMakePoint(b.size.width - [self.tableButtons widthForSegment:2] - 3, b.size.height + 3);
     [self.tableAdditionalMenu popUpMenuPositioningItem:nil atLocation:origin inView:self.tableButtons];
 }
 
@@ -477,8 +439,6 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     // TODO: ask for confirmation
     const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
     if( m_Manager->DiscardThemeChanges(theme_name) ) {
-//        [self loadSelectedDocument];
-//        [self.outlineView reloadData];
         [self reloadSelectedTheme];
     }
 }
@@ -518,8 +478,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
         if( !ok )
             return;
 
-        PreferencesWindowThemesTabImportSheet *sheet =
-            [[PreferencesWindowThemesTabImportSheet alloc] init];
+        PreferencesWindowThemesTabImportSheet *sheet = [[PreferencesWindowThemesTabImportSheet alloc] init];
         sheet.importAsName = url.lastPathComponent.stringByDeletingPathExtension;
 
         [sheet beginSheetForWindow:self.view.window
@@ -527,15 +486,13 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
                    if( returnCode != NSModalResponseOK )
                        return;
 
-                   auto name = sheet.overwriteCurrentTheme
-                                   ? self->m_ThemeNames[self->m_SelectedTheme]
-                                   : sheet.importAsName.UTF8String;
+                   auto name = sheet.overwriteCurrentTheme ? self->m_ThemeNames[self->m_SelectedTheme]
+                                                           : sheet.importAsName.UTF8String;
 
                    nc::config::Document sdoc;
                    sdoc.CopyFrom(*doc, nc::config::g_CrtAllocator);
-                   bool result = sheet.overwriteCurrentTheme
-                                     ? self->m_Manager->ImportThemeData(name, sdoc)
-                                     : self->m_Manager->AddTheme(name, sdoc);
+                   bool result = sheet.overwriteCurrentTheme ? self->m_Manager->ImportThemeData(name, sdoc)
+                                                             : self->m_Manager->AddTheme(name, sdoc);
 
                    if( result )
                        [self reloadAll];
@@ -554,16 +511,6 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     }
 }
 
-//- (IBAction)onDuplicateClicked:(id) [[maybe_unused]] sender
-//{
-//    const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
-//    const auto new_name = m_Manager->SuitableNameForNewTheme(theme_name);
-//    if( m_Manager->AddTheme(new_name, self.selectedThemeFrontend) ) {
-//        m_Manager->SelectTheme(new_name);
-//        [self reloadAll];
-//    }
-//}
-
 - (void)reloadAll
 {
     [self loadThemesNames];
@@ -579,24 +526,6 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     [self loadSelectedDocument];
     [self.outlineView reloadData];
 }
-
-//- (IBAction)onRemoveClicked:(id) [[maybe_unused]] sender
-//{
-//    NSAlert *alert = [[NSAlert alloc] init];
-//    alert.messageText =
-//        NSLocalizedString(@"Are you sure you want to remove this theme?",
-//                          "Asking user for confirmation on erasing custom theme - message");
-//    alert.informativeText = NSLocalizedString(
-//        @"You can’t undo this action.",
-//        "Asking user for confirmation on erasing custom theme - informative text");
-//    [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
-//    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-//    if( [alert runModal] == NSAlertFirstButtonReturn ) {
-//        const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
-//        if( m_Manager->RemoveTheme(theme_name) )
-//            [self reloadAll];
-//    }
-//}
 
 - (void)controlTextDidEndEditing:(NSNotification *)obj
 {
@@ -626,37 +555,23 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     return true;
 }
 
-- (IBAction)onConfigureAutomaticSwitching:(id)sender {
-    
-    auto *sheet =
-        [[PreferencesWindowThemesTabAutomaticSwitchingSheet alloc] initWithSwitchingSettings:m_Manager->AutomaticSwitching() andThemeNames:m_ThemeNames];
-//    sheet.importAsName = url.lastPathComponent.stringByDeletingPathExtension;
+- (IBAction)onConfigureAutomaticSwitching:(id)sender
+{
 
-    
+    auto current = m_Manager->AutomaticSwitching();
+    auto *sheet = [[PreferencesWindowThemesTabAutomaticSwitchingSheet alloc] initWithSwitchingSettings:current
+                                                                                         andThemeNames:m_ThemeNames];
+
     auto handler = ^(NSModalResponse _rc) {
-        if( _rc != NSModalResponseOK )
-            return;
- 
-            auto new_settings = sheet.settings;
-            self->m_Manager->SetAutomaticSwitching(new_settings);
-            [self reloadAll];
-        
-        
-//
-//               auto name = sheet.overwriteCurrentTheme
-//                               ? self->m_ThemeNames[self->m_SelectedTheme]
-//                               : sheet.importAsName.UTF8String;
-//
-//               nc::config::Document sdoc;
-//               sdoc.CopyFrom(*doc, nc::config::g_CrtAllocator);
-//               bool result = sheet.overwriteCurrentTheme
-//                                 ? self->m_Manager->ImportThemeData(name, sdoc)
-//                                 : self->m_Manager->AddTheme(name, sdoc);
-//
-//               if( result )
-//                   [self reloadAll];
+      if( _rc != NSModalResponseOK )
+          return;
+      auto new_settings = sheet.settings;
+      if( new_settings == current )
+          return;
+      self->m_Manager->SetAutomaticSwitching(new_settings);
+      [self reloadAll];
     };
-    
+
     [sheet beginSheetForWindow:self.view.window completionHandler:handler];
 }
 

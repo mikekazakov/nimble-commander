@@ -554,7 +554,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         [self addSubview:m_Button];
 
         auto views = NSDictionaryOfVariableBindings(m_Button);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[m_Button(>=80)]"
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==2)-[m_Button(>=80)]"
                                                                      options:0
                                                                      metrics:nil
                                                                        views:views]];

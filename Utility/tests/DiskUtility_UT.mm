@@ -19,7 +19,7 @@ TEST_CASE(PREFIX"ListAPFSObjects returns a valid nonempty NSDictionary tree")
     const auto dict = du.ListAPFSObjects();
     REQUIRE( dict != nil );
     REQUIRE( dict[@"Containers"] != nil );
-    REQUIRE( objc_cast<NSArray>(dict[@"Containers"]) != nil );
+    REQUIRE( nc::objc_cast<NSArray>(dict[@"Containers"]) != nil );
 }
 
 TEST_CASE(PREFIX"APFSTree can find a container name from its volume")

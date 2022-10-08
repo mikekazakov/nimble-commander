@@ -4,6 +4,10 @@
 #include <Cocoa/Cocoa.h>
 #include <Habanero/dispatch_cpp.h>
 
+// NCSystemThemeDetectorObjCShim listens to both 'AppleInterfaceThemeChangedNotification' notification and to changes of
+// 'AppleInterfaceStyle' in the UserDefaults. The reason for that is that these two are inherently racy and there's a
+// chance that 'AppleInterfaceStyle' won't be yet updated when queried after receiving
+// 'AppleInterfaceThemeChangedNotification'. To work around such case, the code listens to both.
 @interface NCSystemThemeDetectorObjCShim : NSObject
 @property(readwrite, nonatomic) std::function<void()> onChange;
 @end
@@ -17,6 +21,8 @@
                                                           selector:@selector(themeChanged:)
                                                               name:@"AppleInterfaceThemeChangedNotification"
                                                             object:nil];
+
+        [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:@"AppleInterfaceStyle" options:0 context:nil];
     }
     return self;
 }
@@ -26,11 +32,20 @@
     [NSDistributedNotificationCenter.defaultCenter removeObserver:self
                                                              name:@"AppleInterfaceThemeChangedNotification"
                                                            object:nil];
+    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"AppleInterfaceStyle" context:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
+                       context:(void *)context
+{
+    if( _onChange )
+        _onChange();
 }
 
 - (void)themeChanged:(NSNotification *)_notification
 {
-    NSLog(@"AppleInterfaceThemeChangedNotification fired, %@", _notification);
     if( _onChange )
         _onChange();
 }
@@ -52,10 +67,8 @@ SystemThemeDetector::SystemThemeDetector() : I(std::make_unique<Impl>())
     I->appearance = I->Detect();
     I->shim = [[NCSystemThemeDetectorObjCShim alloc] init];
     I->shim.onChange = [this] {
-        // there's an inherit race condition between "AppleInterfaceStyle" in the user defaults and the
-        // "AppleInterfaceThemeChangedNotification" notification. Don't know a valid way to work around it, so let's
-        // just delay the read from user defaults by some time and pretent there's no race condition.
-        // MB observe this value directly via KVO instead?
+        // The 30ms delay is to partially mitigate a race condition between the 'AppleInterfaceThemeChangedNotification'
+        // notification and setting the 'AppleInterfaceStyle' value.
         dispatch_to_main_queue_after(std::chrono::milliseconds{30}, [this] { OnChanged(); });
     };
 }
@@ -86,7 +99,6 @@ ThemeAppearance SystemThemeDetector::Impl::Detect()
 {
     // TODO: check me on different versions!
     NSString *style = [NSUserDefaults.standardUserDefaults stringForKey:@"AppleInterfaceStyle"];
-    //    NSLog(@"%@", style);
     if( style == nil )
         return ThemeAppearance::Light;
     else {
@@ -103,7 +115,6 @@ void SystemThemeDetector::OnChanged()
     if( new_app == I->appearance )
         return;
     I->appearance = new_app;
-    NSLog(@"Changed to %@", I->appearance == ThemeAppearance::Light ? @"light" : @"dark");
     FireObservers(1);
 }
 

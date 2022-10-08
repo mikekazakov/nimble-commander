@@ -340,16 +340,18 @@ static std::string AquaticPrimePublicKey()
     // Init themes manager
     m_ThemesManager = std::make_unique<nc::ThemesManager>(GlobalConfig(), g_ConfigSelectedTheme, g_ConfigThemes);
     // also hook up the appearance change notification with the global application appearance
-    auto update_appearance = [self] {
+    auto update_tm_appearance = [self] {
+        m_ThemesManager->NotifyAboutSystemAppearanceChange(m_SystemThemeDetector->SystemAppearance());
+    };
+    auto update_app_appearance = [self] {
             [NSApp setAppearance:m_ThemesManager->SelectedTheme().Appearance()];
     };
-    update_appearance();
+    update_tm_appearance();
+    update_app_appearance();
     // observe forever
     [[clang::no_destroy]] static auto token =
-        m_ThemesManager->ObserveChanges(nc::ThemesManager::Notifications::Appearance, update_appearance);
-    [[clang::no_destroy]] static auto token1 = m_SystemThemeDetector->ObserveChanges([self]{
-        m_ThemesManager->NotifyAboutSystemAppearanceChange(m_SystemThemeDetector->SystemAppearance());
-    });
+        m_ThemesManager->ObserveChanges(nc::ThemesManager::Notifications::Appearance, update_app_appearance);
+    [[clang::no_destroy]] static auto token1 = m_SystemThemeDetector->ObserveChanges(update_tm_appearance);
     
     [self themesManager];
     [self favoriteLocationsStorage];

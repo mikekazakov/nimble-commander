@@ -393,11 +393,15 @@ int Fetching::CountDirEntries(const int _dir_fd)
         u_int32_t count;
     } __attribute__((aligned(4), packed)) count;
 
+    // this is NOT required by the documentation, but when requesting ATTR_DIR_ENTRYCOUNT from an SF_DATALESS directory
+    // it returns garbage otherwise.
+    memset(&count, 0, sizeof(count));
+
     struct attrlist attr_list;
     memset(&attr_list, 0, sizeof(attr_list));
     attr_list.bitmapcount = ATTR_BIT_MAP_COUNT;
     attr_list.dirattr = ATTR_DIR_ENTRYCOUNT;
-    if( fgetattrlist(_dir_fd, &attr_list, &count, sizeof(count), 0) == 0 )
+    if( fgetattrlist(_dir_fd, &attr_list, &count, sizeof(count), 0) == 0 && count.length == sizeof(count) )
         return count.count;
     return VFSError::FromErrno();
 }

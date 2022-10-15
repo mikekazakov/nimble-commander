@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "../source/NetWebDAV/WebDAVHost.h"
@@ -13,28 +13,23 @@
 
 using namespace nc::vfs;
 
-static const auto g_NASHost = NCE(nc::env::test::webdav_nas_host);
-static const auto g_NASUsername = NCE(nc::env::test::webdav_nas_username);
-static const auto g_NASPassword = NCE(nc::env::test::webdav_nas_password);
-static const auto g_BoxComUsername = NCE(nc::env::test::webdav_boxcom_username);
-static const auto g_BoxComPassword = NCE(nc::env::test::webdav_boxcom_password);
+// Apache/2.4.41 on Ubuntu 20.04 LTS running in a Docker
+static const auto g_Ubuntu2004Host = "localhost";
+static const auto g_Ubuntu2004Username = "r2d2";
+static const auto g_Ubuntu2004Password = "Hello";
+static const auto g_Ubuntu2004Port = 9080;
+
 static const auto g_YandexDiskUsername = NCE(nc::env::test::webdav_yandexdisk_username);
 static const auto g_YandexDiskPassword = NCE(nc::env::test::webdav_yandexdisk_password);
 
 static std::vector<std::byte> MakeNoise(size_t size);
-static void
-VerifyFileContent(VFSHost &_host, std::filesystem::path _path, std::span<const std::byte> _content);
+static void VerifyFileContent(VFSHost &_host, const std::filesystem::path &_path, std::span<const std::byte> _content);
+static void WriteWholeFile(VFSHost &_host, const std::filesystem::path &_path, std::span<const std::byte> _content);
 
-static std::shared_ptr<WebDAVHost> spawnNASHost()
+static std::shared_ptr<WebDAVHost> spawnLocalHost()
 {
-    return std::shared_ptr<WebDAVHost>(
-        new WebDAVHost(g_NASHost, g_NASUsername, g_NASPassword, "Public", false, 5000));
-}
-
-static std::shared_ptr<WebDAVHost> spawnBoxComHost()
-{
-    return std::shared_ptr<WebDAVHost>(
-        new WebDAVHost("dav.box.com", g_BoxComUsername, g_BoxComPassword, "dav", true));
+    return std::shared_ptr<WebDAVHost>(new WebDAVHost(
+        g_Ubuntu2004Host, g_Ubuntu2004Username, g_Ubuntu2004Password, "webdav", false, g_Ubuntu2004Port));
 }
 
 static std::shared_ptr<WebDAVHost> spawnYandexDiskHost()
@@ -43,179 +38,101 @@ static std::shared_ptr<WebDAVHost> spawnYandexDiskHost()
         new WebDAVHost("webdav.yandex.com", g_YandexDiskUsername, g_YandexDiskPassword, "", true));
 }
 
-[[clang::no_destroy]] static std::array<std::function<std::shared_ptr<WebDAVHost>()>, 1>
-    g_AllFactories = {spawnYandexDiskHost};
-
-[[clang::no_destroy]] static std::array<std::function<std::shared_ptr<WebDAVHost>()>, 2>
-    g_AllFactoriesButYandex = {spawnBoxComHost, spawnNASHost};
-
 static std::shared_ptr<WebDAVHost> Spawn(const std::string &_server)
 {
-    if( _server == "nas" )
-        return spawnNASHost();
-    if( _server == "box.com" )
-        return spawnBoxComHost();
+    if( _server == "local" )
+        return spawnLocalHost();
     if( _server == "yandex.com" )
         return spawnYandexDiskHost();
     return nullptr;
 }
 
-#define INSTANTIATE_TEST(Name, Function, Server)                                                   \
+#define INSTANTIATE_TEST(Name, Function, Server)                                                                       \
     TEST_CASE(PREFIX Name " - " Server) { Function(Spawn(Server)); }
 
-TEST_CASE(PREFIX "can connect to local NAS")
+TEST_CASE(PREFIX "can connect to localhost")
 {
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnNASHost());
+    REQUIRE_NOTHROW(host = spawnLocalHost());
 
     VFSListingPtr listing;
     int rc = host->FetchDirectoryListing("/", listing, 0, nullptr);
     CHECK(rc == VFSError::Ok);
 }
 
-TEST_CASE(PREFIX "can connect to box.com")
+TEST_CASE(PREFIX "can connect to yandex.com")
 {
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
+    REQUIRE_NOTHROW(host = spawnYandexDiskHost());
 }
 
 TEST_CASE(PREFIX "invalid credentials")
 {
     REQUIRE_THROWS_AS(
-        new WebDAVHost("dav.box.com", g_BoxComUsername, "SomeRandomGibberish", "dav", true),
+        new WebDAVHost("localhost", g_Ubuntu2004Username, "SomeRandomGibberish", "webdav", false, g_Ubuntu2004Port),
         VFSErrorException);
 }
 
-TEST_CASE(PREFIX "can fetch box.com listing")
+/*==================================================================================================
+fetching listings
+==================================================================================================*/
+static void TestFetchDirectoryListing(VFSHostPtr _host)
 {
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
+    const auto p1 = "/Test1";
+    const auto pp1 = "/Test1/Dir1";
+    const auto pp2 = "/Test1/meow.txt";
+    const auto ppp1 = "/Test1/Dir1/purr.txt";
+    VFSEasyDelete(p1, _host);
+    REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
+    REQUIRE(_host->CreateDirectory(pp1, 0) == VFSError::Ok);
+    std::string_view content = "Hello, World!";
+    WriteWholeFile(*_host, pp2, {reinterpret_cast<const std::byte *>(content.data()), content.size()});
+    WriteWholeFile(*_host, ppp1, {reinterpret_cast<const std::byte *>(content.data()), content.size()});
 
     VFSListingPtr listing;
-
-    int rc = host->FetchDirectoryListing("/", listing, 0, nullptr);
-    REQUIRE(rc == VFSError::Ok);
-
-    const auto has_fn = [listing](const char *_fn) {
-        return std::any_of(std::begin(*listing), std::end(*listing), [_fn](auto &_i) {
-            return _i.Filename() == _fn;
-        });
+    const auto has_fn = [&listing](const char *_fn) {
+        return std::any_of(std::begin(*listing), std::end(*listing), [_fn](auto &_i) { return _i.Filename() == _fn; });
     };
 
+    REQUIRE(_host->FetchDirectoryListing("", listing, 0, nullptr) != VFSError::Ok);
+    REQUIRE(_host->FetchDirectoryListing("/DontExist", listing, 0, nullptr) != VFSError::Ok);
+
+    REQUIRE(_host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok);
+    REQUIRE(listing->Count() == 1);
     REQUIRE(!has_fn(".."));
     REQUIRE(has_fn("Test1"));
-}
 
-TEST_CASE(PREFIX "can fetch box.com subfolder listing")
-{
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
-
-    VFSListingPtr listing;
-
-    int rc = host->FetchDirectoryListing("/Test1", listing, 0, nullptr);
-    REQUIRE(rc == VFSError::Ok);
-
-    const auto has_fn = [listing](const char *_fn) {
-        return std::any_of(std::begin(*listing), std::end(*listing), [_fn](auto &_i) {
-            return _i.Filename() == _fn;
-        });
-    };
-
+    REQUIRE(_host->FetchDirectoryListing("/Test1", listing, 0, nullptr) == VFSError::Ok);
+    REQUIRE(listing->Count() == 3);
     REQUIRE(has_fn(".."));
-    REQUIRE(has_fn("README.md"));
-    REQUIRE(has_fn("scorpions-lifes_like_a_river.gpx"));
-}
+    REQUIRE(has_fn("meow.txt"));
+    REQUIRE(has_fn("Dir1"));
 
-TEST_CASE(PREFIX "can fetch multiple listings on box.com")
-{
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
-    VFSListingPtr listing;
+    REQUIRE(_host->FetchDirectoryListing("/Test1/Dir1", listing, 0, nullptr) == VFSError::Ok);
+    REQUIRE(listing->Count() == 2);
+    REQUIRE(has_fn(".."));
+    REQUIRE(has_fn("purr.txt"));
 
-    int rc1 = host->FetchDirectoryListing("/Test1", listing, 0, nullptr);
-    REQUIRE(rc1 == VFSError::Ok);
-    int rc2 = host->FetchDirectoryListing("/", listing, 0, nullptr);
-    REQUIRE(rc2 == VFSError::Ok);
-    int rc3 = host->FetchDirectoryListing("/Test1", listing, 0, nullptr);
-    REQUIRE(rc3 == VFSError::Ok);
-}
-
-TEST_CASE(PREFIX "consecutive stats on box.com")
-{
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
-
+    // now let's do some Stat()s
     VFSStat st;
-    int rc = host->Stat("/Test1/scorpions-lifes_like_a_river.gpx", st, 0, nullptr);
-    REQUIRE(rc == VFSError::Ok);
-    REQUIRE(st.size == 65039);
-    REQUIRE(S_ISREG(st.mode));
-
-    rc = host->Stat("/Test1/README.md", st, 0, nullptr);
-    REQUIRE(rc == VFSError::Ok);
-    REQUIRE(st.size == 1450);
-    REQUIRE(S_ISREG(st.mode));
-
-    rc = host->Stat("/Test1/", st, 0, nullptr);
-    REQUIRE(rc == VFSError::Ok);
-    REQUIRE(S_ISDIR(st.mode));
-
-    rc = host->Stat("/", st, 0, nullptr);
-    REQUIRE(rc == VFSError::Ok);
-    REQUIRE(S_ISDIR(st.mode));
-
-    rc = host->Stat("", st, 0, nullptr);
-    REQUIRE(rc != VFSError::Ok);
-
-    rc = host->Stat("/SomeGibberish/MoreGibberish/EvenMoregibberish.txt", st, 0, nullptr);
-    REQUIRE(rc != VFSError::Ok);
+    REQUIRE(_host->Stat("/Test1", st, 0, nullptr) == VFSError::Ok);
+    REQUIRE(st.mode_bits.dir);
+    REQUIRE(!st.mode_bits.reg);
+    REQUIRE(_host->Stat("/Test1/", st, 0, nullptr) == VFSError::Ok);
+    REQUIRE(st.mode_bits.dir);
+    REQUIRE(!st.mode_bits.reg);
+    REQUIRE(_host->Stat("/Test1/meow.txt", st, 0, nullptr) == VFSError::Ok);
+    REQUIRE(!st.mode_bits.dir);
+    REQUIRE(st.mode_bits.reg);
+    REQUIRE(st.size == 13);
+    REQUIRE(_host->Stat("/Test1/Dir1/purr.txt", st, 0, nullptr) == VFSError::Ok);
+    REQUIRE(!st.mode_bits.dir);
+    REQUIRE(st.mode_bits.reg);
+    REQUIRE(st.size == 13);
+    REQUIRE(_host->Stat("/SomeGibberish/MoreGibberish/EvenMoregibberish.txt", st, 0, nullptr) != VFSError::Ok);
 }
-
-TEST_CASE(PREFIX "create directory on box.com")
-{
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
-
-    const auto p1 = "/Test2/";
-    VFSEasyDelete(p1, host);
-
-    REQUIRE(host->CreateDirectory(p1, 0, nullptr) == VFSError::Ok);
-    REQUIRE(host->Exists(p1));
-    REQUIRE(host->IsDirectory(p1, 0));
-
-    const auto p2 = "/Test2/SubDir1";
-    REQUIRE(host->CreateDirectory(p2, 0, nullptr) == VFSError::Ok);
-    REQUIRE(host->Exists(p2));
-    REQUIRE(host->IsDirectory(p2, 0));
-
-    const auto p3 = "/Test2/SubDir2";
-    REQUIRE(host->CreateDirectory(p3, 0, nullptr) == VFSError::Ok);
-    REQUIRE(host->Exists(p3));
-    REQUIRE(host->IsDirectory(p3, 0));
-
-    VFSEasyDelete(p1, host);
-}
-
-TEST_CASE(PREFIX "file read on box.com")
-{
-    VFSHostPtr host;
-    REQUIRE_NOTHROW(host = spawnBoxComHost());
-
-    VFSFilePtr file;
-    const auto path = "/Test1/scorpions-lifes_like_a_river.gpx";
-    const auto filecr_rc = host->CreateFile(path, file, nullptr);
-    REQUIRE(filecr_rc == VFSError::Ok);
-
-    const auto open_rc = file->Open(VFSFlags::OF_Read);
-    REQUIRE(open_rc == VFSError::Ok);
-
-    auto data = file->ReadFile();
-    REQUIRE(data);
-    REQUIRE(data->size() == 65039);
-    REQUIRE(data->at(65037) == 4);
-    REQUIRE(data->at(65038) == 0);
-}
+INSTANTIATE_TEST("directory listing", TestFetchDirectoryListing, "local");
+// INSTANTIATE_TEST("directory listing", TestFetchDirectoryListing, "yandex.com"); - might have garbage
 
 /*==================================================================================================
  simple file write
@@ -254,8 +171,7 @@ static void TestSimpleFileWrite(VFSHostPtr _host)
 
     VFSEasyDelete(path, _host);
 }
-INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "nas");
-INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "box.com");
+INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "local");
 INSTANTIATE_TEST("simple file write", TestSimpleFileWrite, "yandex.com");
 
 /*==================================================================================================
@@ -306,8 +222,7 @@ static void TestVariousCompleteWrites(VFSHostPtr _host)
 
     VFSEasyDelete(path, _host);
 }
-INSTANTIATE_TEST("various complete writes", TestVariousCompleteWrites, "nas");
-INSTANTIATE_TEST("various complete writes", TestVariousCompleteWrites, "box.com");
+INSTANTIATE_TEST("various complete writes", TestVariousCompleteWrites, "local");
 // Yandex.disk doesn't like big uploads via WebDAV and imposes huge wait time, which fails at
 // timeouts, so skip it.
 
@@ -339,8 +254,7 @@ static void TestEdgeCase1bWrites(VFSHostPtr _host)
 
     VFSEasyDelete(path, _host);
 }
-INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "nas");
-INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "box.com");
+INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "local");
 INSTANTIATE_TEST("edge case - 1b writes", TestEdgeCase1bWrites, "yandex.com");
 
 /*==================================================================================================
@@ -369,8 +283,7 @@ static void TestAbortsPendingUploads(VFSHostPtr _host)
 
     REQUIRE(_host->Exists(path) == false);
 }
-INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "nas");
-INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "box.com");
+INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "local");
 INSTANTIATE_TEST("aborts pending uploads", TestAbortsPendingUploads, "yandex.com");
 
 /*==================================================================================================
@@ -401,8 +314,7 @@ static void TestAbortsPendingDownloads(VFSHostPtr _host)
     }
     VFSEasyDelete(path, _host);
 }
-INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "nas");
-INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "box.com");
+INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "local");
 INSTANTIATE_TEST("aborts pending downloads", TestAbortsPendingDownloads, "yandex.com");
 
 /*==================================================================================================
@@ -429,8 +341,7 @@ static void TestEmptyFileCreation(VFSHostPtr _host)
 
     VFSEasyDelete(path, _host);
 }
-INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "nas");
-INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "box.com");
+INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "local");
 INSTANTIATE_TEST("empty file creation", TestEmptyFileCreation, "yandex.com");
 
 /*==================================================================================================
@@ -456,8 +367,7 @@ static void TestEmptyFileDownload(VFSHostPtr _host)
     }
     VFSEasyDelete(path, _host);
 }
-INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "nas");
-INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "box.com");
+INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "local");
 INSTANTIATE_TEST("can download empty file", TestEmptyFileDownload, "yandex.com");
 
 /*==================================================================================================
@@ -466,21 +376,19 @@ complex copy
 static void TestComplexCopy(VFSHostPtr _host)
 {
     VFSEasyDelete("/Test2", _host);
-    const auto copy_rc = VFSEasyCopyDirectory(
-        "/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host);
+    const auto copy_rc =
+        VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host);
     REQUIRE(copy_rc == VFSError::Ok);
 
     int res = 0;
-    int cmp_rc = VFSCompareNodes(
-        "/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host, res);
+    int cmp_rc = VFSCompareNodes("/System/Library/Filesystems/msdos.fs", TestEnv().vfs_native, "/Test2", _host, res);
 
     CHECK(cmp_rc == VFSError::Ok);
     CHECK(res == 0);
 
     VFSEasyDelete("/Test2", _host);
 }
-INSTANTIATE_TEST("complex copy", TestComplexCopy, "nas");
-INSTANTIATE_TEST("complex copy", TestComplexCopy, "box.com");
+INSTANTIATE_TEST("complex copy", TestComplexCopy, "local");
 INSTANTIATE_TEST("complex copy", TestComplexCopy, "yandex.com");
 
 /*==================================================================================================
@@ -541,9 +449,26 @@ static void TestRename(VFSHostPtr _host)
         REQUIRE(_host->IsDirectory(p3, 0) == true);
         VFSEasyDelete(p2, _host);
     }
+    SECTION("dir with items -> dir in the same dir")
+    {
+        const auto p1 = "/TestTestDir1";
+        const auto pp1 = "/TestTestDir1/meow.txt";
+        const auto p2 = "/TestTestDir2";
+        const auto pp2 = "/TestTestDir2/meow.txt";
+        VFSEasyDelete(p1, _host);
+        VFSEasyDelete(p2, _host);
+        REQUIRE(_host->CreateDirectory(p1, 0) == VFSError::Ok);
+        REQUIRE(VFSEasyCreateEmptyFile(pp1, _host) == VFSError::Ok);
+        REQUIRE(_host->Rename(p1, p2) == VFSError::Ok);
+        REQUIRE(_host->Exists(p1) == false);
+        REQUIRE(_host->Exists(pp1) == false);
+        REQUIRE(_host->Exists(p2) == true);
+        REQUIRE(_host->Exists(pp2) == true);
+        REQUIRE(_host->IsDirectory(p2, 0) == true);
+        VFSEasyDelete(p2, _host);
+    }
 }
-// INSTANTIATE_TEST("rename", TestRename, "nas"); // QNAP NAS doesn't like renaming
-INSTANTIATE_TEST("rename", TestRename, "box.com");
+INSTANTIATE_TEST("rename", TestRename, "local");
 INSTANTIATE_TEST("rename", TestRename, "yandex.com");
 
 /*==================================================================================================
@@ -556,8 +481,7 @@ static void TestStatFS(VFSHostPtr _host)
     CHECK(statfs_rc == VFSError::Ok);
     CHECK(st.total_bytes > 1'000'000'000L);
 }
-// INSTANTIATE_TEST("statfs", TestStatFS, "nas"); // QNAP NAS doesn't provide stafs
-INSTANTIATE_TEST("statfs", TestStatFS, "box.com");
+// INSTANTIATE_TEST("statfs", TestStatFS, "local"); // apache2 doesn't provide stafs (??)
 INSTANTIATE_TEST("statfs", TestStatFS, "yandex.com");
 
 /*==================================================================================================
@@ -654,8 +578,7 @@ static void TestSimpleDownload(VFSHostPtr _host)
         VFSEasyDelete(dir1, _host);
     }
 }
-INSTANTIATE_TEST("simple download", TestSimpleDownload, "nas");
-INSTANTIATE_TEST("simple download", TestSimpleDownload, "box.com");
+INSTANTIATE_TEST("simple download", TestSimpleDownload, "local");
 INSTANTIATE_TEST("simple download", TestSimpleDownload, "yandex.com");
 
 /*==================================================================================================
@@ -684,8 +607,7 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
         {
             VFSFilePtr file;
             REQUIRE(_host->CreateFile(path, file, nullptr) == VFSError::Ok);
-            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_NoExist) ==
-                    VFSError::FromErrno(EEXIST));
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_NoExist) == VFSError::FromErrno(EEXIST));
         }
     }
     SECTION("Open a non-existing file for writing without OF_Create fails")
@@ -733,8 +655,7 @@ static void TestWriteFlagsSemantics(VFSHostPtr _host)
     }
     VFSEasyDelete(path, _host);
 }
-INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "nas");
-INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "box.com");
+INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "local");
 INSTANTIATE_TEST("write flags semantics", TestWriteFlagsSemantics, "yandex.com");
 
 //==================================================================================================
@@ -748,8 +669,7 @@ static std::vector<std::byte> MakeNoise(size_t size)
     return noise;
 }
 
-static void
-VerifyFileContent(VFSHost &_host, std::filesystem::path _path, std::span<const std::byte> _content)
+static void VerifyFileContent(VFSHost &_host, const std::filesystem::path &_path, std::span<const std::byte> _content)
 {
     VFSFilePtr file;
     const auto createfile_rc = _host.CreateFile(_path.c_str(), file, nullptr);
@@ -761,5 +681,21 @@ VerifyFileContent(VFSHost &_host, std::filesystem::path _path, std::span<const s
     REQUIRE(d);
     REQUIRE(d->size() == _content.size());
     REQUIRE(memcmp(d->data(), _content.data(), _content.size()) == 0);
+    REQUIRE(file->Close() == VFSError::Ok);
+}
+
+static void WriteWholeFile(VFSHost &_host, const std::filesystem::path &_path, std::span<const std::byte> _content)
+{
+    VFSFilePtr file;
+    const auto filecr_rc = _host.CreateFile(_path.c_str(), file, nullptr);
+    REQUIRE(filecr_rc == VFSError::Ok);
+
+    const auto open_rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create);
+    REQUIRE(open_rc == VFSError::Ok);
+
+    REQUIRE(file->SetUploadSize(_content.size()) == VFSError::Ok);
+    const auto write_rc = file->WriteFile(_content.data(), _content.size());
+    REQUIRE(write_rc == VFSError::Ok);
+
     REQUIRE(file->Close() == VFSError::Ok);
 }

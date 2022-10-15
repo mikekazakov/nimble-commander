@@ -1,7 +1,9 @@
 #!/bin/sh
 
-docker stop sftp_ubuntu_2004
+docker stop nc_sftp_ubuntu_2004
+docker rm -f nc_sftp_ubuntu_2004
+docker image rm nc_sftp_ubuntu_2004
 
-docker rm -f sftp_ubuntu_2004
-
-docker image rm sftp_ubuntu_2004:v1
+docker stop nc_webdav_ubuntu_2004
+docker rm -f nc_webdav_ubuntu_2004
+docker image rm nc_webdav_ubuntu_2004

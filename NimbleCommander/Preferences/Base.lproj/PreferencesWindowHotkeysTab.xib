@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -20,11 +20,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY" userLabel="Sheet">
-            <rect key="frame" x="0.0" y="0.0" width="640" height="400"/>
+            <rect key="frame" x="0.0" y="0.0" width="730" height="400"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="adE-ah-Kvz">
-                    <rect key="frame" x="533" y="13" width="94" height="32"/>
+                    <rect key="frame" x="623" y="13" width="94" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="MGD-at-Pn1"/>
                     </constraints>
@@ -48,13 +48,13 @@
                     </connections>
                 </button>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hUF-TP-nnB">
-                    <rect key="frame" x="20" y="60" width="600" height="313"/>
+                    <rect key="frame" x="20" y="60" width="690" height="313"/>
                     <clipView key="contentView" id="AD4-bi-TU5">
-                        <rect key="frame" x="1" y="1" width="598" height="311"/>
+                        <rect key="frame" x="1" y="1" width="688" height="311"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="plain" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="tQm-qO-4VI">
-                                <rect key="frame" x="0.0" y="0.0" width="598" height="311"/>
+                                <rect key="frame" x="0.0" y="0.0" width="688" height="311"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -73,11 +73,11 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="1Hf-Ga-sV1">
-                                                <rect key="frame" x="1" y="1" width="426" height="17"/>
+                                                <rect key="frame" x="1" y="1" width="421" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GQK-Mo-y59">
-                                                        <rect key="frame" x="0.0" y="0.0" width="426" height="17"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="421" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" id="i6U-D8-4UZ">
                                                             <font key="font" metaFont="system"/>
@@ -137,11 +137,11 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="xkT-JL-9Mu">
-                                                <rect key="frame" x="518" y="1" width="14" height="17"/>
+                                                <rect key="frame" x="518" y="1" width="20" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pp7-Je-Ujm">
-                                                        <rect key="frame" x="0.0" y="0.0" width="14" height="17"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="20" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" id="tUs-0e-Ay1">
                                                             <font key="font" metaFont="system"/>
@@ -174,7 +174,7 @@
                     </scroller>
                 </scrollView>
                 <textField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aWU-IL-hEj">
-                    <rect key="frame" x="460" y="374" width="160" height="22"/>
+                    <rect key="frame" x="550" y="374" width="160" height="22"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="160" id="9cs-lm-YJS"/>
                     </constraints>
@@ -201,7 +201,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wet-LC-O2P">
-                    <rect key="frame" x="61" y="376" width="78" height="17"/>
+                    <rect key="frame" x="61" y="376" width="77" height="17"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="40" id="vJO-oW-16R"/>
                     </constraints>
@@ -214,7 +214,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YCG-g1-hjk">
-                    <rect key="frame" x="140" y="376" width="62" height="17"/>
+                    <rect key="frame" x="139" y="376" width="61" height="17"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="40" id="AAz-Hp-qED"/>
                     </constraints>

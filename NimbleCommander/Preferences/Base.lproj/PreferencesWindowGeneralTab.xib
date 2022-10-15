@@ -16,11 +16,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="1">
-            <rect key="frame" x="0.0" y="0.0" width="700" height="140"/>
+            <rect key="frame" x="0.0" y="0.0" width="730" height="140"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                    <rect key="frame" x="343" y="93" width="144" height="32"/>
+                    <rect key="frame" x="321" y="93" width="144" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="130" id="Uvv-7h-B38"/>
                     </constraints>
@@ -33,7 +33,7 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="55">
-                    <rect key="frame" x="18" y="103" width="326" height="16"/>
+                    <rect key="frame" x="18" y="103" width="304" height="16"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="160" id="WRW-Mf-BIz"/>
                     </constraints>
@@ -44,7 +44,7 @@
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mE6-dr-OKl">
-                    <rect key="frame" x="18" y="77" width="326" height="16"/>
+                    <rect key="frame" x="18" y="77" width="304" height="16"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="160" id="Wx1-FM-SzG"/>
                     </constraints>
@@ -55,7 +55,7 @@
                     </textFieldCell>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8tk-ZS-HXz">
-                    <rect key="frame" x="343" y="67" width="94" height="32"/>
+                    <rect key="frame" x="321" y="67" width="94" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="8tX-8H-w09"/>
                     </constraints>
@@ -68,7 +68,7 @@
                     </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="mEe-1l-Yn2">
-                    <rect key="frame" x="184" y="45" width="331" height="18"/>
+                    <rect key="frame" x="199" y="45" width="331" height="18"/>
                     <buttonCell key="cell" type="check" title="Send anonymous usage statistics to the developer" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="uW2-01-WEk">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -86,7 +86,7 @@
                 <constraint firstItem="mE6-dr-OKl" firstAttribute="baseline" secondItem="8tk-ZS-HXz" secondAttribute="baseline" id="DWR-Gx-qRV"/>
                 <constraint firstItem="8tk-ZS-HXz" firstAttribute="leading" secondItem="mE6-dr-OKl" secondAttribute="trailing" constant="8" symbolic="YES" id="Jsg-pf-8Iw"/>
                 <constraint firstItem="mEe-1l-Yn2" firstAttribute="top" secondItem="8tk-ZS-HXz" secondAttribute="bottom" constant="12" id="Pi9-9F-rqC"/>
-                <constraint firstItem="30" firstAttribute="leading" secondItem="1" secondAttribute="centerX" id="QpF-mh-46a"/>
+                <constraint firstItem="30" firstAttribute="leading" secondItem="1" secondAttribute="centerX" multiplier="0.9" id="QpF-mh-46a"/>
                 <constraint firstItem="mE6-dr-OKl" firstAttribute="top" secondItem="55" secondAttribute="bottom" constant="10" id="XVu-Ye-Bul"/>
                 <constraint firstItem="30" firstAttribute="leading" secondItem="8tk-ZS-HXz" secondAttribute="leading" id="bTj-I0-FCe"/>
                 <constraint firstItem="55" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="gzh-KN-5Td"/>

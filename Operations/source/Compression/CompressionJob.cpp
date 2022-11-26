@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressionJob.h"
 #include <Habanero/algo.h>
 #include <libarchive/archive.h>
@@ -365,13 +365,13 @@ std::string CompressionJob::FindSuitableFilename(const std::string &_proposed_ar
 {
     char fn[MAXPATHLEN];
 
-    sprintf(fn, "%s%s.zip", m_DstRoot.c_str(), _proposed_arcname.c_str());
+    snprintf(fn, sizeof(fn), "%s%s.zip", m_DstRoot.c_str(), _proposed_arcname.c_str());
     VFSStat st;
     if( m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, 0) != 0 )
         return fn;
 
     for( int i = 2; i < 100; ++i ) {
-        sprintf(fn, "%s%s %d.zip", m_DstRoot.c_str(), _proposed_arcname.c_str(), i);
+        snprintf(fn, sizeof(fn), "%s%s %d.zip", m_DstRoot.c_str(), _proposed_arcname.c_str(), i);
         if( m_DstVFS->Stat(fn, st, VFSFlags::F_NoFollow, 0) != 0 )
             return fn;
     }
@@ -579,7 +579,7 @@ static bool
 WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char *_path, const char *_name)
 {
     char metadata_path[MAXPATHLEN];
-    sprintf(metadata_path, "__MACOSX/%s._%s", _path, _name);
+    snprintf(metadata_path, sizeof(metadata_path), "__MACOSX/%s._%s", _path, _name);
     struct archive_entry *entry = archive_entry_new();
     archive_entry_set_pathname(entry, metadata_path);
     archive_entry_set_size(entry, _md_s);

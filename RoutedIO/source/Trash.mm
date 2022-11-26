@@ -1,7 +1,8 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Trash.h"
 #include <Foundation/Foundation.h>
 #include <Habanero/CFPtr.h>
+#include <cstring>
 
 namespace nc::routedio {
 

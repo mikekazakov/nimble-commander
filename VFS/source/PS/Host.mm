@@ -391,7 +391,7 @@ void PSHost::CommitProcs(std::vector<ProcInfo> _procs)
     for( auto &i : newdata->procs ) {
         newdata->files.push_back(ProcInfoIntoFile(i, newdata));
         char filename[MAXPATHLEN];
-        sprintf(filename, "%5i - %s.txt", i.pid, i.name.c_str());
+        snprintf(filename, sizeof(filename), "%5i - %s.txt", i.pid, i.name.c_str());
         newdata->plain_filenames.emplace_back(filename);
     }
 

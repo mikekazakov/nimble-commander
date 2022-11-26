@@ -799,18 +799,20 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
 
     char input[2048];
     if( cwd[0] != 0 )
-        sprintf(input,
-                "cd '%s'; ./%s%s%s\n",
-                cwd,
-                cmd.c_str(),
-                _parameters != nullptr ? " " : "",
-                _parameters != nullptr ? _parameters : "");
+        snprintf(input,
+                 sizeof(input),
+                 "cd '%s'; ./%s%s%s\n",
+                 cwd,
+                 cmd.c_str(),
+                 _parameters != nullptr ? " " : "",
+                 _parameters != nullptr ? _parameters : "");
     else
-        sprintf(input,
-                "./%s%s%s\n",
-                cmd.c_str(),
-                _parameters != nullptr ? " " : "",
-                _parameters != nullptr ? _parameters : "");
+        snprintf(input,
+                 sizeof(input),
+                 "./%s%s%s\n",
+                 cmd.c_str(),
+                 _parameters != nullptr ? " " : "",
+                 _parameters != nullptr ? _parameters : "");
 
     SetState(TaskState::ProgramExternal);
     WriteChildInput(input);
@@ -824,8 +826,12 @@ void ShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
     std::string cmd = EscapeShellFeed(_path);
 
     char input[2048];
-    sprintf(
-        input, "%s%s%s\n", cmd.c_str(), _parameters != nullptr ? " " : "", _parameters != nullptr ? _parameters : "");
+    snprintf(input,
+             sizeof(input),
+             "%s%s%s\n",
+             cmd.c_str(),
+             _parameters != nullptr ? " " : "",
+             _parameters != nullptr ? _parameters : "");
 
     SetState(TaskState::ProgramExternal);
     WriteChildInput(input);
@@ -1008,16 +1014,23 @@ std::string ShellTask::ComposePromptCommand() const
     char prompt_setup[1024] = {0};
     const int pid = I->shell_pid;
     if( I->shell_type == ShellType::Bash )
-        sprintf(prompt_setup, " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi'\n", pid);
+        snprintf(prompt_setup,
+                 sizeof(prompt_setup),
+                 " PROMPT_COMMAND='if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi'\n",
+                 pid);
     else if( I->shell_type == ShellType::ZSH )
-        sprintf(prompt_setup, " precmd(){ if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi; }\n", pid);
+        snprintf(prompt_setup,
+                 sizeof(prompt_setup),
+                 " precmd(){ if [ $$ -eq %d ]; then pwd>&20; read sema <&21; fi; }\n",
+                 pid);
     else if( I->shell_type == ShellType::TCSH )
-        sprintf(prompt_setup,
-                " alias precmd 'if ( $$ == %d ) pwd>>%s;dd if=%s of=/dev/null bs=4 count=1 "
-                ">&/dev/null'\n",
-                pid,
-                I->tcsh_cwd_path.c_str(),
-                I->tcsh_semaphore_path.c_str());
+        snprintf(prompt_setup,
+                 sizeof(prompt_setup),
+                 " alias precmd 'if ( $$ == %d ) pwd>>%s;dd if=%s of=/dev/null bs=4 count=1 "
+                 ">&/dev/null'\n",
+                 pid,
+                 I->tcsh_cwd_path.c_str(),
+                 I->tcsh_semaphore_path.c_str());
 
     return prompt_setup;
 }

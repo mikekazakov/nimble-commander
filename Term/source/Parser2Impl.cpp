@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Parser2Impl.h"
 #include <Utility/Encodings.h>
 #include <Habanero/CFPtr.h>
@@ -210,7 +210,7 @@ void Parser2Impl::LogMissedEscChar( unsigned char _c )
 {
     if( m_ErrorLog ) {
         char buf[256];
-        sprintf(buf, "Missed an Esc char: %d(\'%c\')", static_cast<int>(_c), _c);
+        snprintf(buf, sizeof(buf), "Missed an Esc char: %d(\'%c\')", static_cast<int>(_c), _c);
         m_ErrorLog(buf);
     }
 }

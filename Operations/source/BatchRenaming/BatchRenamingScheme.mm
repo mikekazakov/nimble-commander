@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingScheme.h"
 #include <Utility/StringExtras.h>
 
@@ -590,7 +590,7 @@ NSString *BatchRenamingScheme::FormatCounter(const Counter &_c, int _file_number
     if( !buf )
         return @"";
 
-    sprintf(buf, "%0*ld", _c.width, _c.start + _c.step * (_file_number / _c.stripe));
+    snprintf(buf, sizeof(buf), "%0*ld", _c.width, _c.start + _c.step * (_file_number / _c.stripe));
     return [NSString stringWithUTF8String:buf];
 }
 
@@ -664,35 +664,35 @@ StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransform _ct, bool _ap
 static NSString *FormatTimeSeconds(const struct tm &_t)
 {
     char buf[16];
-    sprintf(buf, "%2.2d", _t.tm_sec);
+    snprintf(buf, sizeof(buf), "%2.2d", _t.tm_sec);
     return [NSString stringWithUTF8String:buf];
 }
 
 static NSString *FormatTimeMinutes(const struct tm &_t)
 {
     char buf[16];
-    sprintf(buf, "%2.2d", _t.tm_min);
+    snprintf(buf, sizeof(buf), "%2.2d", _t.tm_min);
     return [NSString stringWithUTF8String:buf];
 }
 
 static NSString *FormatTimeHours(const struct tm &_t)
 {
     char buf[16];
-    sprintf(buf, "%2.2d", _t.tm_hour);
+    snprintf(buf, sizeof(buf), "%2.2d", _t.tm_hour);
     return [NSString stringWithUTF8String:buf];
 }
 
 static NSString *FormatTimeDay(const struct tm &_t)
 {
     char buf[16];
-    sprintf(buf, "%2.2d", _t.tm_mday);
+    snprintf(buf, sizeof(buf), "%2.2d", _t.tm_mday);
     return [NSString stringWithUTF8String:buf];
 }
 
 static NSString *FormatTimeMonth(const struct tm &_t)
 {
     char buf[16];
-    sprintf(buf, "%2.2d", _t.tm_mon + 1);
+    snprintf(buf, sizeof(buf), "%2.2d", _t.tm_mon + 1);
     return [NSString stringWithUTF8String:buf];
 }
 
@@ -700,16 +700,16 @@ static NSString *FormatTimeYear2(const struct tm &_t)
 {
     char buf[16];
     if( _t.tm_year >= 100 )
-        sprintf(buf, "%2.2d", _t.tm_year - 100);
+        snprintf(buf, sizeof(buf), "%2.2d", _t.tm_year - 100);
     else
-        sprintf(buf, "%2.2d", _t.tm_year);
+        snprintf(buf, sizeof(buf), "%2.2d", _t.tm_year);
     return [NSString stringWithUTF8String:buf];
 }
 
 static NSString *FormatTimeYear4(const struct tm &_t)
 {
     char buf[16];
-    sprintf(buf, "%4.4d", _t.tm_year + 1900);
+    snprintf(buf, sizeof(buf), "%4.4d", _t.tm_year + 1900);
     return [NSString stringWithUTF8String:buf];
 }
 

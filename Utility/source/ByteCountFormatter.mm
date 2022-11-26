@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ByteCountFormatter.h>
 #include <Foundation/Foundation.h>
 #include <Utility/Encodings.h>
@@ -258,14 +258,14 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
     char buf[32];
 
     if( _size < 1000000 ) { // bytes
-        int len = sprintf(buf, "%llu", _size);
+        int len = snprintf(buf, sizeof(buf), "%llu", _size);
         chartouni(buf, _buf, len);
         return len;
     }
     else if( _size < 9999lu * m_Exponent[1] ) { // kilobytes
         uint64_t div = m_Exponent[1];
         uint64_t res = _size / div;
-        int len = sprintf(buf, "%llu", res + (_size - res * div) / (div / 2));
+        int len = snprintf(buf, sizeof(buf), "%llu", res + (_size - res * div) / (div / 2));
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[1];
@@ -274,7 +274,7 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
     else if( _size < 9999lu * m_Exponent[2] ) { // megabytes
         uint64_t div = m_Exponent[2];
         uint64_t res = _size / div;
-        int len = sprintf(buf, "%llu", res + (_size - res * div) / (div / 2));
+        int len = snprintf(buf, sizeof(buf), "%llu", res + (_size - res * div) / (div / 2));
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[2];
@@ -283,7 +283,7 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
     else if( _size < 9999lu * m_Exponent[3] ) { // gigabytes
         uint64_t div = m_Exponent[3];
         uint64_t res = _size / div;
-        int len = sprintf(buf, "%llu", res + (_size - res * div) / (div / 2));
+        int len = snprintf(buf, sizeof(buf), "%llu", res + (_size - res * div) / (div / 2));
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[3];
@@ -292,7 +292,7 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
     else if( _size < 9999lu * m_Exponent[4] ) { // terabytes
         uint64_t div = m_Exponent[4];
         uint64_t res = _size / div;
-        int len = sprintf(buf, "%llu", res + (_size - res * div) / (div / 2));
+        int len = snprintf(buf, sizeof(buf), "%llu", res + (_size - res * div) / (div / 2));
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[4];
@@ -301,7 +301,7 @@ int ByteCountFormatter::Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) cons
     else if( _size < 9999lu * m_Exponent[5] ) { // petabytes
         uint64_t div = m_Exponent[5];
         uint64_t res = _size / div;
-        int len = sprintf(buf, "%llu", res + (_size - res * div) / (div / 2));
+        int len = snprintf(buf, sizeof(buf), "%llu", res + (_size - res * div) / (div / 2));
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[5];
@@ -321,20 +321,20 @@ int ByteCountFormatter::SpaceSeparated_Impl(uint64_t _sz, unsigned short _buf[64
 #define __1000_4(a) __1000_1((a) / 1000000000lu)
 #define __1000_5(a) __1000_1((a) / 1000000000000lu)
     if( _sz < 1000lu )
-        len = sprintf(buf, "%llu ", _sz);
+        len = snprintf(buf, sizeof(buf), "%llu ", _sz);
     else if( _sz < 1000lu * 1000lu )
-        len = sprintf(buf, "%llu %03llu ", __1000_2(_sz), __1000_1(_sz));
+        len = snprintf(buf, sizeof(buf), "%llu %03llu ", __1000_2(_sz), __1000_1(_sz));
     else if( _sz < 1000lu * 1000lu * 1000lu )
-        len = sprintf(buf, "%llu %03llu %03llu ", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
+        len = snprintf(buf, sizeof(buf), "%llu %03llu %03llu ", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
     else if( _sz < 1000lu * 1000lu * 1000lu * 1000lu )
-        len = sprintf(buf,
+        len = snprintf(buf, sizeof(buf),
                       "%llu %03llu %03llu %03llu ",
                       __1000_4(_sz),
                       __1000_3(_sz),
                       __1000_2(_sz),
                       __1000_1(_sz));
     else if( _sz < 1000lu * 1000lu * 1000lu * 1000lu * 1000lu )
-        len = sprintf(buf,
+        len = snprintf(buf, sizeof(buf),
                       "%llu %03llu %03llu %03llu %03llu ",
                       __1000_5(_sz),
                       __1000_4(_sz),
@@ -366,7 +366,7 @@ int ByteCountFormatter::Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]) c
     }
 
     if( _size < 1024 ) {
-        int len = sprintf(buf, "%llu", _size);
+        int len = snprintf(buf, sizeof(buf), "%llu", _size);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_B;
@@ -431,7 +431,7 @@ int ByteCountFormatter::Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]) c
             return 6;
         }
         else {
-            int len = sprintf(buf, "%u", significant);
+            int len = snprintf(buf, sizeof(buf), "%u", significant);
             chartouni(buf, _buf, len);
             _buf[len] = ' ';
             _buf[len + 1] = m_SI[expo];
@@ -446,14 +446,14 @@ int ByteCountFormatter::Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) c
     char buf[128];
     int len = 0;
     if( _size < 999 ) { // bytes, ABC bytes format, 5 symbols max
-        len = sprintf(buf, "%llu", _size);
+        len = snprintf(buf, sizeof(buf), "%llu", _size);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_B;
         return len + 2;
     }
     else if( _size < 999ul * m_Exponent[1] ) { // kilobytes, ABC KB format, 6 symbols max
-        len = sprintf(buf, "%.0f", static_cast<double>(_size) / static_cast<double>(m_Exponent[1]));
+        len = snprintf(buf, sizeof(buf), "%.0f", static_cast<double>(_size) / static_cast<double>(m_Exponent[1]));
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[1];
@@ -461,7 +461,7 @@ int ByteCountFormatter::Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) c
         return len + 3;
     }
     else if( _size < 99ul * m_Exponent[2] ) { // megabytes, AB.CD MB format, 8 symbols max
-        len = sprintf(buf, "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[2]));
+        len = snprintf(buf, sizeof(buf), "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[2]));
         MessWithSeparator(buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
@@ -470,7 +470,7 @@ int ByteCountFormatter::Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) c
         return len + 3;
     }
     else if( _size < 99ul * m_Exponent[3] ) { // gigabytes, AB.CD GB format, 8 symbols max
-        len = sprintf(buf, "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[3]));
+        len = snprintf(buf, sizeof(buf), "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[3]));
         MessWithSeparator(buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
@@ -479,7 +479,7 @@ int ByteCountFormatter::Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) c
         return len + 3;
     }
     else if( _size < 99ul * m_Exponent[4] ) { // terabytes, AB.CD TB format, 8 symbols max
-        len = sprintf(buf, "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[4]));
+        len = snprintf(buf, sizeof(buf), "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[4]));
         MessWithSeparator(buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
@@ -488,7 +488,7 @@ int ByteCountFormatter::Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) c
         return len + 3;
     }
     else if( _size < 99ul * m_Exponent[5] ) { // petabytes, AB.CD PB format, 8 symbols max
-        len = sprintf(buf, "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[5]));
+        len = snprintf(buf, sizeof(buf), "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[5]));
         MessWithSeparator(buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';

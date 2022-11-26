@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <VFS/VFSError.h>
 #include "Aux.h"
@@ -300,7 +300,7 @@ std::string EscapeStringForJSONInHTTPHeader(const std::string &_original)
     for( int i = 0, e = static_cast<int>(str.length); i != e; ++i ) {
         auto c = [str characterAtIndex:i];
         if( c >= 127 ) {
-            sprintf(hex, "\\u%04X", c);
+            snprintf(hex, sizeof(hex), "\\u%04X", c);
             after += hex;
         }
         else {

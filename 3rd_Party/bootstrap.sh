@@ -16,6 +16,7 @@ set -e
 ./pugixml/bootstrap.sh
 ./boost/bootstrap.sh
 ./libarchive/bootstrap.sh
+./fmt/bootstrap.sh
 ./spdlog/bootstrap.sh
 ./googletest/bootstrap.sh
 ./unrar/bootstrap.sh

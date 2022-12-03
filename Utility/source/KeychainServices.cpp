@@ -1,6 +1,7 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Security/Security.h>
 #include "../include/Utility/KeychainServices.h"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations" // See issue #147
 
 KeychainServices::KeychainServices()
 {

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include "Internals.h"
 #include "Host.h"
@@ -106,7 +106,7 @@ static int parse_dir_unix(const char *line, struct stat *sbuf, char *file, char 
      ((size + ftpfs.blksize - 1) & ~((unsigned long long) ftpfs.blksize - 1)) >> 9;
      }*/
 
-    sprintf(date, "%s,%s,%s", year, month, day);
+    snprintf(date, sizeof(date), "%s,%s,%s", year, month, day);
     tt = time(NULL);
     gmtime_r(&tt, &tm);
     tm.tm_sec = tm.tm_min = tm.tm_hour = 0;

@@ -6,6 +6,7 @@
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 #include <VFS/AppleDoubleEA.h>
+#include <VFS/Log.h>
 #include "../ListingInput.h"
 #include "Host.h"
 #include "Internal.h"
@@ -160,7 +161,8 @@ VFSMeta ArchiveHost::Meta()
 int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
 {
     assert(I->m_Arc == 0);
-    assert(std::string_view(setlocale(LC_COLLATE, nullptr)).contains("UTF-8")); // this VFS requires UTF8 to work
+    if( auto loc = std::string_view(setlocale(LC_COLLATE, nullptr)); !loc.contains("UTF-8") )
+        Log::Warn(SPDLOC, "ArcLA VFS expects a UTF-8 locale, instead this once is active: {}", loc);
     VFSFilePtr source_file;
 
     int res = Parent()->CreateFile(JunctionPath(), source_file, {});

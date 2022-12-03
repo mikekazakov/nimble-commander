@@ -69,6 +69,7 @@
 		CF61F30B26404962009FF900 /* FSEventsFileUpdateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */; };
 		CF61F30F26404971009FF900 /* FSEventsFileUpdateImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF61F30E26404971009FF900 /* FSEventsFileUpdateImpl.cpp */; };
 		CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */; };
+		CF71BCE32932389100997E0F /* SpdLogWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF71BCE22932389100997E0F /* SpdLogWindow.mm */; };
 		CF88363925716F9300BAC081 /* VersionCompare_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF88363825716F9300BAC081 /* VersionCompare_UT.cpp */; };
 		CFA89D86281422EF00BEA127 /* FontExtras_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA89D85281422EF00BEA127 /* FontExtras_UT.mm */; };
 		CFA999652644888C00F72E93 /* FSEventsFileUpdate_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA999642644888C00F72E93 /* FSEventsFileUpdate_UT.cpp */; };
@@ -170,6 +171,8 @@
 		CF6E64E81F6271F000BF986E /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CF6E64EA1F62721500BF986E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		CF6E64EC1F62721C00BF986E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		CF71BCE12932387600997E0F /* SpdLogWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpdLogWindow.h; path = include/Utility/SpdLogWindow.h; sourceTree = "<group>"; };
+		CF71BCE22932389100997E0F /* SpdLogWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SpdLogWindow.mm; path = source/SpdLogWindow.mm; sourceTree = "<group>"; };
 		CF84C8E61DB867F200B4E888 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = include/Utility/Layout.h; sourceTree = "<group>"; };
 		CF84C8E81DB867FC00B4E888 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = source/Layout.mm; sourceTree = "<group>"; };
 		CF88363825716F9300BAC081 /* VersionCompare_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VersionCompare_UT.cpp; path = tests/VersionCompare_UT.cpp; sourceTree = "<group>"; };
@@ -374,6 +377,7 @@
 				CFD62C191C9AFF210021EE7F /* SheetController.h */,
 				CFD62C1D1C9B01320021EE7F /* SheetWithHotkeys.h */,
 				CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */,
+				CF71BCE12932387600997E0F /* SpdLogWindow.h */,
 				CFD62BFC1C9A84500021EE7F /* StringExtras.h */,
 				CFD62C061C9A95240021EE7F /* SyncMessageBox.h */,
 				CF960E1B1C992F2C001D8B02 /* SystemInformation.h */,
@@ -434,6 +438,7 @@
 				CFD62C1B1C9AFF280021EE7F /* SheetController.mm */,
 				CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */,
 				CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */,
+				CF71BCE22932389100997E0F /* SpdLogWindow.mm */,
 				CFD62BFE1C9A84570021EE7F /* StringExtras.mm */,
 				CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */,
 				CF960E271C992F35001D8B02 /* SystemInformation.mm */,
@@ -594,6 +599,7 @@
 				CF460159256125E50095FC73 /* VolumeInformation.cpp in Sources */,
 				CF460163256125E50095FC73 /* NSMenu+Hierarchical.mm in Sources */,
 				CFAB6D11258A086100397DB5 /* Log.cpp in Sources */,
+				CF71BCE32932389100997E0F /* SpdLogWindow.mm in Sources */,
 				CF46015C256125E50095FC73 /* NativeFSManager.mm in Sources */,
 				CF460149256125E50095FC73 /* FPSLimitedDrawer.mm in Sources */,
 				CF460143256125E50095FC73 /* NativeFSManagerVolumeLookup.cpp in Sources */,

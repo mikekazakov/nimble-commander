@@ -34,6 +34,8 @@ class SpdlogFacade
 {
 public:
     SpdlogFacade() = delete;
+    
+    static SpdLogger &Logger() noexcept { return Impl::m_Logger; }
 
     static const std::string &Name() noexcept { return Impl::m_Logger.Name(); }
 

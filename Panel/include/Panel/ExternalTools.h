@@ -1,8 +1,13 @@
 // Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include "PanelData.h"
+
 #include <Utility/ActionShortcut.h>
+#include <Utility/TemporaryFileStorage.h>
+
 #include <Habanero/Observable.h>
+
 #include <Config/Config.h>
 
 #include <string>
@@ -143,6 +148,31 @@ public:
     // run in terminal
     // allow VFS
     // string directory
+};
+
+class ExternalToolExecution
+{
+public:
+    struct Context {
+        data::Model *left_data = nullptr; // not retained
+        data::Model *right_data = nullptr; // not retained
+        int left_cursor_pos = -1;
+        int right_cursor_pos = -1;
+        utility::TemporaryFileStorage *temp_storage = nullptr; // not retained
+    };
+    
+    ExternalToolExecution(const Context &_ctx, const ExternalTool &_et);
+
+    bool RequiresUserInput() const noexcept;
+    std::span<const std::string> UserInputPrompts() const noexcept;
+    void CommitUserInput(std::span<const std::string> _input);
+    
+    
+    
+private:
+    
+    ExternalTool m_ET;
+    
 };
 
 // supposed to be thread-safe

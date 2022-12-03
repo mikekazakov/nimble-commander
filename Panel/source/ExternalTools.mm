@@ -527,4 +527,28 @@ void ExternalToolsStorage::RemoveTool(size_t _at_index)
     CommitChanges();
 }
 
+//class
+//{
+//public:
+//    struct Input {
+//        data::Model *left_data = nullptr; // not retained
+//        data::Model *right_data = nullptr; // not retained
+//        int left_cursor_pos = -1;
+//        int right_cursor_pos = -1;
+//        utility::TemporaryFileStorage *temp_storage = nullptr; // not retained
+//    };
+    
+ExternalToolExecution::ExternalToolExecution(const Context &_ctx, const ExternalTool &_et):
+    m_ET(_et)
+{
+    (void)_ctx;
+}
+
+void ExternalToolExecution::CommitUserInput(std::span<const std::string> _input)
+{
+    (void)_input;
+}
+
+
+
 }

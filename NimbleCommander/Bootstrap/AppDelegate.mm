@@ -34,6 +34,7 @@
 #include <Utility/SystemInformation.h>
 #include <Utility/Log.h>
 #include <Utility/FSEventsFileUpdateImpl.h>
+#include <Utility/SpdLogWindow.h>
 
 #include <RoutedIO/RoutedIO.h>
 #include <RoutedIO/Log.h>
@@ -84,6 +85,8 @@
 #include <Term/Log.h>
 
 #include <VFS/Log.h>
+
+#include <VFSIcon/Log.h>
 
 #include <Panel/Log.h>
 #include <Panel/ExternalTools.h>
@@ -170,6 +173,19 @@ static void AttachToSink(spdlog::level::level_enum _level, std::shared_ptr<spdlo
     Log::Get().set_level(_level);
 }
 
+static std::span<nc::base::SpdLogger *const> Loggers() noexcept
+{
+    static const auto loggers = std::to_array({&nc::config::Log::Logger(),
+                                               &nc::panel::Log::Logger(),
+                                               &nc::routedio::Log::Logger(),
+                                               &nc::term::Log::Logger(),
+                                               &nc::utility::Log::Logger(),
+                                               &nc::vfs::Log::Logger(),
+                                               &nc::vfsicon::Log::Logger(),
+                                               &nc::viewer::Log::Logger()});
+    return loggers;
+}
+
 static void SetupLogs()
 {
     spdlog::level::level_enum level = spdlog::level::off;
@@ -182,13 +198,10 @@ static void SetupLogs()
 
     if( level < spdlog::level::off ) {
         const auto stdout_sink = std::make_shared<spdlog::sinks::stdout_sink_mt>();
-        AttachToSink<nc::utility::Log>(level, stdout_sink);
-        AttachToSink<nc::term::Log>(level, stdout_sink);
-        AttachToSink<nc::viewer::Log>(level, stdout_sink);
-        AttachToSink<nc::config::Log>(level, stdout_sink);
-        AttachToSink<nc::vfs::Log>(level, stdout_sink);
-        AttachToSink<nc::panel::Log>(level, stdout_sink);
-        AttachToSink<nc::routedio::Log>(level, stdout_sink);
+        for( auto logger: Loggers() ) {
+            logger->Get().sinks().emplace_back(stdout_sink);
+            logger->Get().set_level(level);
+        }
     }
 }
 
@@ -230,6 +243,7 @@ static NCAppDelegate *g_Me = nil;
     std::unique_ptr<ConfigWiring> m_ConfigWiring;
     std::unique_ptr<nc::SystemThemeDetector> m_SystemThemeDetector;
     std::unique_ptr<nc::ThemesManager> m_ThemesManager;
+    NCSpdLogWindowController *m_LogWindowController;
 }
 
 @synthesize mainWindowControllers = m_MainWindows;
@@ -1212,6 +1226,13 @@ static void DoTemporaryFileStoragePurge()
             exit(173);
         }
     }
+}
+
+- (IBAction)onMainMenuShowLogs:(id)_sender
+{
+    if( m_LogWindowController == nil )
+        m_LogWindowController = [[NCSpdLogWindowController alloc] initWithLogs:Loggers()];
+    [m_LogWindowController showWindow:self];
 }
 
 @end

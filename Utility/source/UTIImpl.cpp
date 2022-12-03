@@ -3,6 +3,7 @@
 #include <CoreServices/CoreServices.h>
 #include <Habanero/CFPtr.h>
 #include <Habanero/CFString.h>
+#include <fmt/core.h>
 
 namespace nc::utility {
 
@@ -21,8 +22,8 @@ std::string UTIDBImpl::UTIForExtension(const std::string &_extension) const
     std::string uti;
     const auto ext = CFPtr<CFStringRef>::adopt(CFStringCreateWithUTF8StdStringNoCopy(_extension));
     if( ext ) {
-        const auto cf_uti = CFPtr<CFStringRef>::adopt(UTTypeCreatePreferredIdentifierForTag(
-            kUTTagClassFilenameExtension, ext.get(), nullptr));
+        const auto cf_uti = CFPtr<CFStringRef>::adopt(
+            UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext.get(), nullptr));
         if( cf_uti ) {
             uti = CFStringGetUTF8StdString(cf_uti.get());
             m_ExtensionToUTI.emplace(_extension, uti);
@@ -46,11 +47,9 @@ bool UTIDBImpl::IsDynamicUTI(const std::string &_uti) const
     return std::string_view{_uti}.starts_with(prefix);
 }
 
-static void
-TraverseConformingUTIs(const std::string &_uti,
-                       robin_hood::unordered_flat_set<std::string,
-                                                      RHTransparentStringHashEqual,
-                                                      RHTransparentStringHashEqual> &_target)
+static void TraverseConformingUTIs(
+    const std::string &_uti,
+    robin_hood::unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual> &_target)
 {
     const auto uti = CFPtr<CFStringRef>::adopt(CFStringCreateWithUTF8StdString(_uti));
     if( !uti )
@@ -95,12 +94,13 @@ bool UTIDBImpl::ConformsTo(const std::string &_uti, const std::string &_conforms
         const auto &conforming = it->second;
         return conforming.contains(_conforms_to);
     }
-    robin_hood::
-        unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>
-            conforming_utis;
+    robin_hood::unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>
+        conforming_utis;
     TraverseConformingUTIs(_uti, conforming_utis);
+
     const bool does_conform = conforming_utis.contains(_conforms_to);
     m_ConformsTo[_uti] = std::move(conforming_utis);
+
     return does_conform;
 }
 

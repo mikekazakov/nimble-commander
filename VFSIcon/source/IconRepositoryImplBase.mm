@@ -1,5 +1,6 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/IconRepositoryImpl.h>
+#include <VFSIcon/Log.h>
 #include <Habanero/dispatch_cpp.h>
 
 namespace nc::vfsicon::detail {
@@ -14,8 +15,7 @@ void Base::MainQueueExecutor::Execute(std::function<void()> _block)
     dispatch_to_main_queue(std::move(_block));
 }
 
-Base::GCDLimitedConcurrentQueue::GCDLimitedConcurrentQueue(short _concurrency_limit)
-    : m_Concurrency(_concurrency_limit)
+Base::GCDLimitedConcurrentQueue::GCDLimitedConcurrentQueue(short _concurrency_limit) : m_Concurrency(_concurrency_limit)
 {
     static_assert(sizeof(*this) == 80);
     if( _concurrency_limit < 1 ) {
@@ -57,8 +57,10 @@ void Base::GCDLimitedConcurrentQueue::RunBlock(const std::function<void()> &_cli
 {
     try {
         _client_block();
+    } catch( std::exception &ex ) {
+        Log::Error(SPDLOC, "RunBlock(): exception caught: '{}'({})", ex.what(), typeid(ex).name());
     } catch( ... ) {
-        std::cerr << "Exception caught inside GCDLimitedConcurrentQueue" << std::endl;
+        Log::Error(SPDLOC, "RunBlock(): unknown exception caught");
     }
 
     auto lock = std::lock_guard{m_AwaitingLock};

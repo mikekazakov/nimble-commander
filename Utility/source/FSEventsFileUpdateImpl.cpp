@@ -6,6 +6,7 @@
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/mach_time.h>
 #include <iostream>
+#include <fmt/std.h>
 
 namespace nc::utility {
 

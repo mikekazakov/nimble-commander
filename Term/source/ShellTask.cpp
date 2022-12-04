@@ -25,6 +25,7 @@
 #include <signal.h>
 #include "ShellTask.h"
 #include "Log.h"
+#include <fmt/std.h>
 
 namespace nc::term {
 

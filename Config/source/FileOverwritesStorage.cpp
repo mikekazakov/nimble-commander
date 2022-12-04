@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileOverwritesStorage.h"
 #include "Log.h"
 #include <sys/stat.h>
@@ -8,6 +8,7 @@
 #include <Habanero/WriteAtomically.h>
 #include <Utility/FSEventsDirUpdate.h>
 #include <filesystem>
+#include <fmt/std.h>
 
 namespace nc::config {
 

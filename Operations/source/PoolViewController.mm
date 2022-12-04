@@ -53,10 +53,10 @@ static const auto g_ViewAppearTimeout = 100ms;
 - (void)syncWithOperations:(const std::vector<std::shared_ptr<Operation>> &)_operations
 {
     const auto find_existing = [=](const std::shared_ptr<Operation> &_op) {
-        const auto existing = std::find_if(std::begin(m_BriefViews),
-                                           std::end(m_BriefViews),
+        const auto existing = std::find_if(m_BriefViews.begin(),
+                                           m_BriefViews.end(),
                                            [_op](auto &v) { return v.operation == _op; });
-        return existing != end(m_BriefViews) ? *existing : nullptr;
+        return existing != m_BriefViews.end() ? *existing : nullptr;
     };
 
     std::vector<NCOpsBriefOperationViewController *> new_views;
@@ -74,11 +74,13 @@ static const auto g_ViewAppearTimeout = 100ms;
         const auto it = std::find_if(std::begin(m_BriefViews),
                                      std::end(m_BriefViews),
                                      [_op](auto &v) { return v.operation == _op; });
-        return it != std::end(m_BriefViews)
-                   ? static_cast<int>(std::distance(std::begin(m_BriefViews), it))
+        return it != m_BriefViews.end()
+                   ? static_cast<int>(std::distance(m_BriefViews.begin(), it))
                    : -1;
     };
 
+    // NB! retain the view controllers until their view are removed
+    std::vector<NCOpsBriefOperationViewController *> old_view = m_BriefViews;
     m_BriefViews = new_views;
 
     if( m_ShownOperation ) {

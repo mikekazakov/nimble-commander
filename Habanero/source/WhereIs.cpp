@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WhereIs.h"
 #include <cstdlib>
 #include <boost/algorithm/string/split.hpp>
@@ -25,7 +25,12 @@ std::vector<std::filesystem::path> WhereIs(std::string_view name)
     const auto directories = GetDirectories();
     std::vector<std::filesystem::path> found;
     for( const auto &directory : directories ) {
-        for( const auto &entry : std::filesystem::directory_iterator(directory) ) {
+        std::error_code ec;
+        std::filesystem::directory_iterator iterator(directory, ec);
+        if( ec != std::error_code{} )
+            continue; // skip non-existing directories
+        
+        for( const auto &entry : iterator ) {
             if( entry.path().filename() != name )
                 continue;
             const auto status = entry.status();

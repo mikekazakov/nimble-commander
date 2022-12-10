@@ -56,6 +56,7 @@ namespace internal {
 
 inline constexpr size_t chunks_per_cpu = 8;
 inline constexpr size_t insertion_sort_limit = 32;
+inline constexpr size_t merge_parallel_limit = 8192;
 inline constexpr size_t hardware_destructive_interference_size = 128; // or 64 on x86
 
 size_t max_hw_threads() noexcept;
@@ -538,6 +539,10 @@ struct alignas(hardware_destructive_interference_size) WorkCounter {
 //
 //--------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------------------
+// reduce, transform_reduce
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It, class T, class BinOp, class UnOp>
@@ -705,6 +710,10 @@ T transform_reduce(It1 first1, It1 last1, It2 first2, T val) noexcept
         first1, last1, first2, std::move(val), std::plus<>{}, std::multiplies<>{});
 }
 
+//--------------------------------------------------------------------------------------------------
+// all_of, none_of, any_of
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It, class UnPred, bool Expected, bool Init>
@@ -785,6 +794,10 @@ bool any_of(FwdIt first, FwdIt last, UnPred pred) noexcept
     return std::any_of(first, last, pred);
 }
 
+//--------------------------------------------------------------------------------------------------
+// for_each, for_each_n
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It, class Func>
@@ -837,6 +850,10 @@ FwdIt for_each_n(FwdIt first, Size count, Func func) noexcept
     return std::for_each_n(first, count, func);
 }
 
+//--------------------------------------------------------------------------------------------------
+// count, count_if
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It, class Pred>
@@ -883,6 +900,10 @@ count(FwdIt first, FwdIt last, const T &value) noexcept
     return ::pstld::count_if(
         first, last, [&value](const auto &iter_value) { return iter_value == value; });
 }
+
+//--------------------------------------------------------------------------------------------------
+// find, find_if, find_if_not, find_first_of
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -958,6 +979,10 @@ FwdIt1 find_first_of(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, FwdIt2 last2, P
     });
 }
 
+//--------------------------------------------------------------------------------------------------
+// adjacent_find
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It, class Pred>
@@ -1013,6 +1038,10 @@ FwdIt adjacent_find(FwdIt first, FwdIt last) noexcept
     return ::pstld::adjacent_find(
         first, last, [](const auto &v1, const auto &v2) { return v1 == v2; });
 }
+
+//--------------------------------------------------------------------------------------------------
+// search
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -1082,6 +1111,10 @@ FwdIt1 search(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, FwdIt2 last2) noexcept
     return ::pstld::search(
         first1, last1, first2, last2, [](const auto &v1, const auto &v2) { return v1 == v2; });
 }
+
+//--------------------------------------------------------------------------------------------------
+// search_n
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -1156,6 +1189,10 @@ FwdIt search_n(FwdIt first, FwdIt last, Size count2, const T &value) noexcept
 {
     return ::pstld::search_n(first, last, count2, value, std::equal_to<>{});
 }
+
+//--------------------------------------------------------------------------------------------------
+// find_end
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -1250,6 +1287,10 @@ FwdIt1 find_end(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, FwdIt2 last2) noexce
         first1, last1, first2, last2, [](const auto &v1, const auto &v2) { return v1 == v2; });
 }
 
+//--------------------------------------------------------------------------------------------------
+// is_sorted
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It, class Cmp>
@@ -1307,6 +1348,10 @@ bool is_sorted(FwdIt first, FwdIt last)
     return ::pstld::is_sorted(first, last, std::less<>{});
 }
 
+//--------------------------------------------------------------------------------------------------
+// is_sorted_until
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It, class Cmp>
@@ -1361,6 +1406,122 @@ FwdIt is_sorted_until(FwdIt first, FwdIt last)
 {
     return ::pstld::is_sorted_until(first, last, std::less<>{});
 }
+
+//--------------------------------------------------------------------------------------------------
+// is_partitioned
+//--------------------------------------------------------------------------------------------------
+
+namespace internal {
+
+template <class It, class Pred>
+struct IsPartitioned : Dispatchable<IsPartitioned<It, Pred>> {
+    enum Scan
+    {
+        broken,
+        all_true,
+        all_false,
+        true_false
+    };
+
+    Partition<It> m_partition;
+    Pred m_pred;
+    std::atomic<size_t> m_right_true{0};
+    std::atomic<size_t> m_left_false{std::numeric_limits<size_t>::max() - 1};
+
+    IsPartitioned(size_t count, size_t chunks, It first, Pred pred)
+        : m_partition(first, count, chunks), m_pred(pred)
+    {
+    }
+
+    Scan scan(It first, It last) noexcept
+    {
+        if( m_pred(*first) ) {
+            while( true ) {
+                ++first;
+                if( first == last )
+                    return all_true;
+                if( !m_pred(*first) )
+                    break;
+            }
+            while( true ) {
+                ++first;
+                if( first == last )
+                    return true_false;
+                if( m_pred(*first) )
+                    return broken;
+            }
+        }
+        else {
+            while( true ) {
+                ++first;
+                if( first == last )
+                    return all_false;
+                if( m_pred(*first) )
+                    return broken;
+            }
+        }
+    }
+
+    void run(size_t ind) noexcept
+    {
+        if( m_right_true.load() <= m_left_false.load() ) {
+            auto p = m_partition.at(ind);
+            auto s = scan(p.first, p.last);
+            if( s == all_true ) {
+                size_t was = m_right_true.load();
+                while( was < ind ) {
+                    if( m_right_true.compare_exchange_strong(was, ind) )
+                        break;
+                }
+            }
+            else if( s == all_false ) {
+                size_t was = m_left_false.load();
+                while( was > ind ) {
+                    if( m_left_false.compare_exchange_strong(was, ind) )
+                        break;
+                }
+            }
+            else if( s == true_false ) {
+                size_t was = m_right_true.load();
+                while( was < ind ) {
+                    if( m_right_true.compare_exchange_strong(was, ind) )
+                        break;
+                }
+                was = m_left_false.load();
+                while( was > ind ) {
+                    if( m_left_false.compare_exchange_strong(was, ind) )
+                        break;
+                }
+            }
+            else {
+                m_right_true.store(std::numeric_limits<size_t>::max());
+            }
+        }
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt, class Pred>
+bool is_partitioned(FwdIt first, FwdIt last, Pred pred)
+{
+    const auto count = std::distance(first, last);
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::IsPartitioned<FwdIt, Pred> op{
+                static_cast<size_t>(count), chunks, first, pred};
+            op.dispatch_apply(chunks);
+            return op.m_right_true.load() <= op.m_left_false.load();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::is_partitioned(first, last, pred);
+}
+
+//--------------------------------------------------------------------------------------------------
+// min_element
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -1419,6 +1580,10 @@ FwdIt min_element(FwdIt first, FwdIt last)
     return ::pstld::min_element(first, last, std::less<>{});
 }
 
+//--------------------------------------------------------------------------------------------------
+// max_element
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It, class Cmp>
@@ -1475,6 +1640,10 @@ FwdIt max_element(FwdIt first, FwdIt last)
 {
     return ::pstld::max_element(first, last, std::less<>{});
 }
+
+//--------------------------------------------------------------------------------------------------
+// minmax_element
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -1534,6 +1703,10 @@ std::pair<FwdIt, FwdIt> minmax_element(FwdIt first, FwdIt last)
 {
     return ::pstld::minmax_element(first, last, std::less<>{});
 }
+
+//--------------------------------------------------------------------------------------------------
+// transform
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -1612,6 +1785,10 @@ transform(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, FwdIt3 first3, BinOp trans
     return std::transform(first1, last1, first2, first3, transform_op);
 }
 
+//--------------------------------------------------------------------------------------------------
+// equal
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It1, class It2, class Cmp>
@@ -1689,6 +1866,10 @@ bool equal(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, FwdIt2 last2) noexcept
 {
     return ::pstld::equal(first1, last1, first2, last2, std::equal_to<>{});
 }
+
+//--------------------------------------------------------------------------------------------------
+// mismatch
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -1770,6 +1951,10 @@ mismatch(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, FwdIt2 last2) noexcept
 {
     return ::pstld::mismatch(first1, last1, first2, last2, std::equal_to<>{});
 }
+
+//--------------------------------------------------------------------------------------------------
+// sort
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -2064,14 +2249,201 @@ void sort(RanIt first, RanIt last) noexcept
     return ::pstld::sort(first, last, std::less<>{});
 }
 
+//--------------------------------------------------------------------------------------------------
+// merge
+//--------------------------------------------------------------------------------------------------
+
+namespace internal {
+
+template <class It1, class It2, class It3, class Cmp>
+struct Merge {
+    struct Work {
+        size_t first1;
+        size_t last1;
+        size_t first2;
+        size_t last2;
+        size_t first3;
+    };
+
+    It1 m_first1;
+    It1 m_last1;
+    size_t m_size1;
+    It2 m_first2;
+    It2 m_last2;
+    size_t m_size2;
+    It3 m_first3;
+    It3 m_last3;
+    size_t m_size3; // = m_size1 + m_size2
+    Cmp m_cmp;
+    DispatchGroup m_dg;
+    size_t m_workers{max_hw_threads()};
+    std::atomic<size_t> m_next_worker_index{1};
+    parallelism_vector<CircularWorkStealingDeque<Work>> m_queues{m_workers};
+    parallelism_vector<WorkCounter> m_work_counters{m_workers};
+
+    Merge(It1 first1, It1 last1, It2 first2, It2 last2, It3 first3, Cmp cmp)
+        : m_first1(first1), m_last1(last1), m_size1(last1 - first1), m_first2(first2),
+          m_last2(last2), m_size2(last2 - first2), m_first3(first3),
+          m_last3(std::next(first3, m_size1 + m_size2)), m_size3(m_size1 + m_size2), m_cmp(cmp)
+    {
+    }
+
+    void start() noexcept
+    {
+        m_queues[0].push_bottom(Work{0, m_size1, 0, m_size2, 0});
+        for( size_t i = 1; i != m_workers; ++i )
+            m_dg.dispatch(static_cast<void *>(this), dispatch);
+        dispatch_worker(0);
+        m_dg.wait();
+    }
+
+    void dispatch_worker(size_t worker_index) noexcept
+    {
+        Work w;
+        while( true ) {
+            if( m_queues[worker_index].pop_bottom(w) ) {
+                // have a local work to do
+                do_merge(w, worker_index);
+                continue;
+            }
+
+            for( size_t i = 1; i != m_workers; ++i ) {
+                size_t steal_index = (i + worker_index) % m_workers;
+                if( m_queues[steal_index].steal_top(w) ) {
+                    // stolen from an other queue
+                    do_merge(w, worker_index);
+                    continue;
+                }
+            }
+
+            // nothing to do - perhaps we are done?
+            if( is_done() )
+                break;
+
+            // give up execution
+            std::this_thread::yield();
+        }
+    }
+
+    void do_merge(const Work w, size_t worker_index) noexcept
+    {
+        size_t first1 = w.first1;
+        size_t last1 = w.last1;
+        size_t first2 = w.first2;
+        size_t last2 = w.last2;
+        size_t first3 = w.first3;
+
+        while( (last1 - first1) + (last2 - first2) > merge_parallel_limit ) {
+            // chop the input in roughly halves while it's big enough
+            size_t mid1;
+            size_t mid2;
+            if( last1 - first1 < last2 - first2 ) {
+                mid2 = first2 + (last2 - first2) / 2;
+                mid1 = std::distance(
+                    m_first1,
+                    std::lower_bound(
+                        m_first1 + first1, m_first1 + last1, *(m_first2 + mid2), m_cmp));
+            }
+            else {
+                mid1 = first1 + (last1 - first1) / 2;
+                mid2 = std::distance(
+                    m_first2,
+                    std::lower_bound(
+                        m_first2 + first2, m_first2 + last2, *(m_first1 + mid1), m_cmp));
+            }
+
+            fork(
+                worker_index, mid1, last1, mid2, last2, first3 + (mid1 - first1) + (mid2 - first2));
+            last1 = mid1;
+            last2 = mid2;
+        }
+
+        std::merge(m_first1 + first1,
+                   m_first1 + last1,
+                   m_first2 + first2,
+                   m_first2 + last2,
+                   m_first3 + first3,
+                   m_cmp);
+        m_work_counters[worker_index].commit_relaxed((last1 - first1) + (last2 - first2));
+    }
+
+    void fork(size_t worker_index,
+              size_t first1,
+              size_t last1,
+              size_t first2,
+              size_t last2,
+              size_t first3) noexcept
+    {
+        try {
+            m_queues[worker_index].push_bottom(Work{first1, last1, first2, last2, first3});
+        } catch( const parallelism_exception & ) {
+            std::merge(m_first1 + first1,
+                       m_first1 + last1,
+                       m_first2 + first2,
+                       m_first2 + last2,
+                       m_first3 + first3,
+                       m_cmp);
+            m_work_counters[worker_index].commit_relaxed((last1 - first1) + (last2 - first2));
+        }
+    }
+
+    bool is_done() noexcept
+    {
+        size_t done = 0;
+        for( size_t i = 0; i != m_workers; ++i )
+            done += m_work_counters[i].load_relaxed();
+        return done == m_size3;
+    }
+
+    static void dispatch(void *ctx) noexcept
+    {
+        auto me = static_cast<Merge *>(ctx);
+        size_t index = me->m_next_worker_index++;
+        me->dispatch_worker(index);
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt1, class FwdIt2, class FwdIt3, class Cmp>
+FwdIt3
+merge(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, FwdIt2 last2, FwdIt3 first3, Cmp cmp) noexcept
+{
+    if constexpr( internal::is_random_iterator_v<FwdIt1> &&
+                  internal::is_random_iterator_v<FwdIt2> &&
+                  internal::is_random_iterator_v<FwdIt3> ) {
+        const auto count = std::distance(first1, last1) + std::distance(first2, last2);
+        if( static_cast<size_t>(count) > internal::merge_parallel_limit ) {
+            try {
+                internal::Merge<FwdIt1, FwdIt2, FwdIt3, Cmp> merge(
+                    first1, last1, first2, last2, first3, cmp);
+                merge.start();
+                return merge.m_last3;
+            } catch( const internal::parallelism_exception & ) {
+            }
+        }
+    }
+    return std::merge(first1, last1, first2, last2, first3, cmp);
+}
+
+template <class FwdIt1, class FwdIt2, class FwdIt3>
+FwdIt3 merge(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, FwdIt2 last2, FwdIt3 first3) noexcept
+{
+    return ::pstld::merge(first1, last1, first2, last2, first3, std::less<>{});
+}
+
+//--------------------------------------------------------------------------------------------------
+// fill, fill_n
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It, class T>
 struct Fill : Dispatchable<Fill<It, T>> {
     Partition<It> m_partition;
-    T m_val;
+    const T &m_val;
 
-    Fill(size_t count, size_t chunks, It first, T val)
+    Fill(size_t count, size_t chunks, It first, const T &val)
         : m_partition(first, count, chunks), m_val(val)
     {
     }
@@ -2100,7 +2472,6 @@ void fill(FwdIt first, FwdIt last, const T &val) noexcept
     }
     return std::fill(first, last, val);
 }
-
 template <class FwdIt, class Size, class T>
 FwdIt fill_n(FwdIt first, Size count, const T &val) noexcept
 {
@@ -2118,6 +2489,10 @@ FwdIt fill_n(FwdIt first, Size count, const T &val) noexcept
     }
     return std::fill_n(first, count, val);
 }
+
+//--------------------------------------------------------------------------------------------------
+// copy, copy_n
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -2172,6 +2547,10 @@ FwdIt2 copy_n(FwdIt1 first1, Size count, FwdIt2 first2) noexcept
     return std::copy_n(first1, count, first2);
 }
 
+//--------------------------------------------------------------------------------------------------
+// replace, replace_if
+//--------------------------------------------------------------------------------------------------
+
 template <class FwdIt, class T>
 void replace(FwdIt first, FwdIt last, const T &old_val, const T &new_val) noexcept
 {
@@ -2189,6 +2568,10 @@ void replace_if(FwdIt first, FwdIt last, Pred pred, const T &new_val) noexcept
             val = new_val;
     });
 }
+
+//--------------------------------------------------------------------------------------------------
+// swap_ranges
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -2228,6 +2611,10 @@ FwdIt2 swap_ranges(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2) noexcept
     }
     return std::swap_ranges(first1, last1, first2);
 }
+
+//--------------------------------------------------------------------------------------------------
+// adjacent_difference
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -2285,6 +2672,10 @@ FwdIt2 adjacent_difference(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2) noexcept
     return ::pstld::adjacent_difference(first1, last1, first2, std::minus<>{});
 }
 
+//--------------------------------------------------------------------------------------------------
+// reverse
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It>
@@ -2323,6 +2714,10 @@ void reverse(FwdIt first, FwdIt last) noexcept
     }
     ::std::reverse(first, last);
 }
+
+//--------------------------------------------------------------------------------------------------
+// inclusive_scan, transform_inclusive_scan
+//--------------------------------------------------------------------------------------------------
 
 namespace internal {
 
@@ -2462,6 +2857,10 @@ FwdIt2 inclusive_scan(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2) noexcept
     return ::pstld::inclusive_scan(first1, last1, first2, ::std::plus<>{});
 }
 
+//--------------------------------------------------------------------------------------------------
+// exclusive_scan, transform_exclusive_scan
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It1, class It2, class BinOp, class UnOp, class T>
@@ -2574,6 +2973,10 @@ FwdIt2 exclusive_scan(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, T val) noexcep
     return ::pstld::exclusive_scan(first1, last1, first2, std::move(val), ::std::plus<>{});
 }
 
+//--------------------------------------------------------------------------------------------------
+// lexicographical_compare
+//--------------------------------------------------------------------------------------------------
+
 namespace internal {
 
 template <class It1, class It2, class Cmp>
@@ -2639,6 +3042,358 @@ template <class FwdIt1, class FwdIt2>
 bool lexicographical_compare(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2, FwdIt2 last2) noexcept
 {
     return ::pstld::lexicographical_compare(first1, last1, first2, last2, std::less<>{});
+}
+
+//--------------------------------------------------------------------------------------------------
+// uninitialized_construct
+//--------------------------------------------------------------------------------------------------
+
+namespace internal {
+
+template <class It, bool Value>
+struct UninitializedConstruct : Dispatchable<UninitializedConstruct<It, Value>> {
+    Partition<It> m_partition;
+
+    UninitializedConstruct(size_t count, size_t chunks, It first)
+        : m_partition(first, count, chunks)
+    {
+    }
+
+    void run(size_t ind) noexcept
+    {
+        auto p = m_partition.at(ind);
+        if constexpr( Value )
+            std::uninitialized_value_construct(p.first, p.last);
+        else
+            std::uninitialized_default_construct(p.first, p.last);
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt>
+void uninitialized_default_construct(FwdIt first, FwdIt last) noexcept
+{
+    const auto count = std::distance(first, last);
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::UninitializedConstruct<FwdIt, false> op{
+                static_cast<size_t>(count), chunks, first};
+            op.dispatch_apply(chunks);
+            return;
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::uninitialized_default_construct(first, last);
+}
+
+template <class FwdIt, class Size>
+FwdIt uninitialized_default_construct_n(FwdIt first, Size count) noexcept
+{
+    if( count < 1 )
+        return first;
+
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::UninitializedConstruct<FwdIt, false> op{
+                static_cast<size_t>(count), chunks, first};
+            op.dispatch_apply(chunks);
+            return op.m_partition.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::uninitialized_default_construct_n(first, count);
+}
+
+template <class FwdIt>
+void uninitialized_value_construct(FwdIt first, FwdIt last) noexcept
+{
+    const auto count = std::distance(first, last);
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::UninitializedConstruct<FwdIt, true> op{
+                static_cast<size_t>(count), chunks, first};
+            op.dispatch_apply(chunks);
+            return;
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::uninitialized_value_construct(first, last);
+}
+
+template <class FwdIt, class Size>
+FwdIt uninitialized_value_construct_n(FwdIt first, Size count) noexcept
+{
+    if( count < 1 )
+        return first;
+
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::UninitializedConstruct<FwdIt, true> op{
+                static_cast<size_t>(count), chunks, first};
+            op.dispatch_apply(chunks);
+            return op.m_partition.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::uninitialized_value_construct_n(first, count);
+}
+
+//--------------------------------------------------------------------------------------------------
+// uninitialized_copy, uninitialized_move
+//--------------------------------------------------------------------------------------------------
+
+namespace internal {
+
+template <class It1, class It2, bool Copy>
+struct UninitializedCopyMove : Dispatchable<UninitializedCopyMove<It1, It2, Copy>> {
+    Partition<It1> m_partition1;
+    Partition<It2> m_partition2;
+
+    UninitializedCopyMove(size_t count, size_t chunks, It1 first1, It2 first2)
+        : m_partition1(first1, count, chunks), m_partition2(first2, count, chunks)
+    {
+    }
+
+    void run(size_t ind) noexcept
+    {
+        auto p1 = m_partition1.at(ind);
+        auto p2 = m_partition2.at(ind);
+        if constexpr( Copy )
+            std::uninitialized_copy(p1.first, p1.last, p2.first);
+        else
+            std::uninitialized_move(p1.first, p1.last, p2.first);
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt1, class FwdIt2>
+FwdIt2 uninitialized_copy(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2) noexcept
+{
+    const auto count = std::distance(first1, last1);
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::UninitializedCopyMove<FwdIt1, FwdIt2, true> op{
+                static_cast<size_t>(count), chunks, first1, first2};
+            op.dispatch_apply(chunks);
+            return op.m_partition2.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::uninitialized_copy(first1, last1, first2);
+}
+
+template <class FwdIt1, class Size, class FwdIt2>
+FwdIt2 uninitialized_copy_n(FwdIt1 first1, Size count, FwdIt2 first2) noexcept
+{
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::UninitializedCopyMove<FwdIt1, FwdIt2, true> op{
+                static_cast<size_t>(count), chunks, first1, first2};
+            op.dispatch_apply(chunks);
+            return op.m_partition2.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::uninitialized_copy_n(first1, count, first2);
+}
+
+template <class FwdIt1, class FwdIt2>
+FwdIt2 uninitialized_move(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2) noexcept
+{
+    const auto count = std::distance(first1, last1);
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::UninitializedCopyMove<FwdIt1, FwdIt2, false> op{
+                static_cast<size_t>(count), chunks, first1, first2};
+            op.dispatch_apply(chunks);
+            return op.m_partition2.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::uninitialized_move(first1, last1, first2);
+}
+
+template <class FwdIt1, class Size, class FwdIt2>
+std::pair<FwdIt1, FwdIt2> uninitialized_move_n(FwdIt1 first1, Size count, FwdIt2 first2) noexcept
+{
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::UninitializedCopyMove<FwdIt1, FwdIt2, false> op{
+                static_cast<size_t>(count), chunks, first1, first2};
+            op.dispatch_apply(chunks);
+            return {op.m_partition1.end(), op.m_partition2.end()};
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::uninitialized_move_n(first1, count, first2);
+}
+
+//--------------------------------------------------------------------------------------------------
+// uninitialized_fill
+//--------------------------------------------------------------------------------------------------
+
+namespace internal {
+
+template <class It, class T>
+struct UninitializedFill : Dispatchable<UninitializedFill<It, T>> {
+    Partition<It> m_partition;
+    const T &m_val;
+
+    UninitializedFill(size_t count, size_t chunks, It first, const T &val)
+        : m_partition(first, count, chunks), m_val(val)
+    {
+    }
+
+    void run(size_t ind) noexcept
+    {
+        auto p = m_partition.at(ind);
+        std::uninitialized_fill(p.first, p.last, m_val);
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt, class T>
+void uninitialized_fill(FwdIt first, FwdIt last, const T &val) noexcept
+{
+    const auto count = std::distance(first, last);
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::UninitializedFill<FwdIt, T> op{
+                static_cast<size_t>(count), chunks, first, val};
+            op.dispatch_apply(chunks);
+            return;
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::uninitialized_fill(first, last, val);
+}
+
+template <class FwdIt, class Size, class T>
+FwdIt uninitialized_fill_n(FwdIt first, Size count, const T &val) noexcept
+{
+    if( count < 1 )
+        return first;
+
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::UninitializedFill<FwdIt, T> op{
+                static_cast<size_t>(count), chunks, first, val};
+            op.dispatch_apply(chunks);
+            return op.m_partition.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::uninitialized_fill_n(first, count, val);
+}
+
+//--------------------------------------------------------------------------------------------------
+// destroy
+//--------------------------------------------------------------------------------------------------
+
+namespace internal {
+
+template <class It>
+struct Destroy : Dispatchable<Destroy<It>> {
+    Partition<It> m_partition;
+
+    Destroy(size_t count, size_t chunks, It first) : m_partition(first, count, chunks) {}
+
+    void run(size_t ind) noexcept
+    {
+        auto p = m_partition.at(ind);
+        std::destroy(p.first, p.last);
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt>
+void destroy(FwdIt first, FwdIt last) noexcept
+{
+    const auto count = std::distance(first, last);
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::Destroy<FwdIt> op{static_cast<size_t>(count), chunks, first};
+            op.dispatch_apply(chunks);
+            return;
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::destroy(first, last);
+}
+
+template <class FwdIt, class Size>
+FwdIt destroy_n(FwdIt first, Size count) noexcept
+{
+    if( count < 1 )
+        return first;
+
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::Destroy<FwdIt> op{static_cast<size_t>(count), chunks, first};
+            op.dispatch_apply(chunks);
+            return op.m_partition.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::destroy_n(first, count);
+}
+
+//--------------------------------------------------------------------------------------------------
+// move
+//--------------------------------------------------------------------------------------------------
+
+namespace internal {
+
+template <class It1, class It2>
+struct Move : Dispatchable<Move<It1, It2>> {
+    Partition<It1> m_partition1;
+    Partition<It2> m_partition2;
+
+    Move(size_t count, size_t chunks, It1 first1, It2 first2)
+        : m_partition1(first1, count, chunks), m_partition2(first2, count, chunks)
+    {
+    }
+
+    void run(size_t ind) noexcept
+    {
+        auto p1 = m_partition1.at(ind);
+        auto p2 = m_partition2.at(ind);
+        std::move(p1.first, p1.last, p2.first);
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt1, class FwdIt2>
+FwdIt2 move(FwdIt1 first1, FwdIt1 last1, FwdIt2 first2) noexcept
+{
+    const auto count = std::distance(first1, last1);
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::Move<FwdIt1, FwdIt2> op{static_cast<size_t>(count), chunks, first1, first2};
+            op.dispatch_apply(chunks);
+            return op.m_partition2.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::move(first1, last1, first2);
 }
 
 #if defined(PSTLD_INTERNAL_ARC)
@@ -3141,7 +3896,10 @@ template <class ExPo, class It1, class It2>
 execution::__enable_if_execution_policy<ExPo, It2>
 move(ExPo &&, It1 first, It1 last, It2 result) noexcept
 {
-    return ::std::move(first, last, result); // stub only
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::move(first, last, result);
+    else
+        return ::std::move(first, last, result);
 }
 
 // 25.7.3 - swap_ranges ////////////////////////////////////////////////////////////////////////////
@@ -3338,6 +4096,40 @@ is_sorted_until(ExPo &&, It first, It last, Cmp cmp)
         return ::pstld::is_sorted_until(first, last, cmp);
     else
         return ::std::is_sorted_until(first, last, cmp);
+}
+
+// 25.8.5 - is_partitioned /////////////////////////////////////////////////////////////////////////
+
+template <class ExPo, class It, class Pred>
+execution::__enable_if_execution_policy<ExPo, bool>
+is_partitioned(ExPo &&, It first, It last, Pred pred)
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::is_partitioned(first, last, pred);
+    else
+        return ::std::is_partitioned(first, last, pred);
+}
+
+// 25.8.6 - merge //////////////////////////////////////////////////////////////////////////////////
+
+template <class ExPo, class It1, class It2, class It3>
+execution::__enable_if_execution_policy<ExPo, It3>
+merge(ExPo &&, It1 first1, It1 last1, It2 first2, It2 last2, It3 first3)
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::merge(first1, last1, first2, last2, first3);
+    else
+        return ::std::merge(first1, last1, first2, last2, first3);
+}
+
+template <class ExPo, class It1, class It2, class It3, class Cmp>
+execution::__enable_if_execution_policy<ExPo, It3>
+merge(ExPo &&, It1 first1, It1 last1, It2 first2, It2 last2, It3 first3, Cmp cmp)
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::merge(first1, last1, first2, last2, first3, cmp);
+    else
+        return ::std::merge(first1, last1, first2, last2, first3, cmp);
 }
 
 // 25.8.9 - min_element, max_element, minmax_element ///////////////////////////////////////////////
@@ -3609,6 +4401,136 @@ adjacent_difference(ExPo &&, It1 first1, It1 last1, It2 first2, BinOp op) noexce
         return ::pstld::adjacent_difference(first1, last1, first2, op);
     else
         return ::std::adjacent_difference(first1, last1, first2, op);
+}
+
+// 25.11.3 - uninitialized_default_construct, uninitialized_default_construct_n ////////////////////
+
+template <class ExPo, class It>
+execution::__enable_if_execution_policy<ExPo, void>
+uninitialized_default_construct(ExPo &&, It first, It last) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        ::pstld::uninitialized_default_construct(first, last);
+    else
+        ::std::uninitialized_default_construct(first, last);
+}
+
+template <class ExPo, class It, class Size>
+execution::__enable_if_execution_policy<ExPo, It>
+uninitialized_default_construct_n(ExPo &&, It first, Size count) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::uninitialized_default_construct_n(first, count);
+    else
+        return ::std::uninitialized_default_construct_n(first, count);
+}
+
+// 25.11.4 - uninitialized_value_construct, uninitialized_value_construct_n ////////////////////////
+
+template <class ExPo, class It>
+execution::__enable_if_execution_policy<ExPo, void>
+uninitialized_value_construct(ExPo &&, It first, It last) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        ::pstld::uninitialized_value_construct(first, last);
+    else
+        ::std::uninitialized_value_construct(first, last);
+}
+
+template <class ExPo, class It, class Size>
+execution::__enable_if_execution_policy<ExPo, It>
+uninitialized_value_construct_n(ExPo &&, It first, Size count) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::uninitialized_value_construct_n(first, count);
+    else
+        return ::std::uninitialized_value_construct_n(first, count);
+}
+
+// 25.11.5 - uninitialized_copy, uninitialized_copy_n //////////////////////////////////////////////
+
+template <class ExPo, class It1, class It2>
+execution::__enable_if_execution_policy<ExPo, It2>
+uninitialized_copy(ExPo &&, It1 first, It1 last, It2 result) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::uninitialized_copy(first, last, result);
+    else
+        return ::std::uninitialized_copy(first, last, result);
+}
+
+template <class ExPo, class It1, class Size, class It2>
+execution::__enable_if_execution_policy<ExPo, It2>
+uninitialized_copy_n(ExPo &&, It1 first, Size count, It2 result) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::uninitialized_copy_n(first, count, result);
+    else
+        return ::std::uninitialized_copy_n(first, count, result);
+}
+
+// 25.11.6 - uninitialized_move, uninitialized_move_n //////////////////////////////////////////////
+
+template <class ExPo, class It1, class It2>
+execution::__enable_if_execution_policy<ExPo, It2>
+uninitialized_move(ExPo &&, It1 first, It1 last, It2 result) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::uninitialized_move(first, last, result);
+    else
+        return ::std::uninitialized_move(first, last, result);
+}
+
+template <class ExPo, class It1, class Size, class It2>
+execution::__enable_if_execution_policy<ExPo, std::pair<It1, It2>>
+uninitialized_move_n(ExPo &&, It1 first, Size count, It2 result) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::uninitialized_move_n(first, count, result);
+    else
+        return ::std::uninitialized_move_n(first, count, result);
+}
+
+// 25.11.7 - uninitialized_fill, uninitialized_fill_n //////////////////////////////////////////////
+
+template <class ExPo, class It, class T>
+execution::__enable_if_execution_policy<ExPo, void>
+uninitialized_fill(ExPo &&, It first, It last, const T &value) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        ::pstld::uninitialized_fill(first, last, value);
+    else
+        ::std::uninitialized_fill(first, last, value);
+}
+
+template <class ExPo, class It, class Size, class T>
+execution::__enable_if_execution_policy<ExPo, It>
+uninitialized_fill_n(ExPo &&, It first, Size count, const T &value) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::uninitialized_fill_n(first, count, value);
+    else
+        return ::std::uninitialized_fill_n(first, count, value);
+}
+
+// 25.11.9 - destroy, destroy_n ////////////////////////////////////////////////////////////////////
+
+template <class ExPo, class It>
+execution::__enable_if_execution_policy<ExPo, void> destroy(ExPo &&, It first, It last) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        ::pstld::destroy(first, last);
+    else
+        ::std::destroy(first, last);
+}
+
+template <class ExPo, class It, class Size>
+execution::__enable_if_execution_policy<ExPo, It> destroy_n(ExPo &&, It first, Size count) noexcept
+{
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::destroy_n(first, count);
+    else
+        return ::std::destroy_n(first, count);
 }
 
 } // namespace std

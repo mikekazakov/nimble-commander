@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/gtest.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b release-1.10.0 --single-branch https://github.com/google/googletest.git
+git clone -b release-1.12.1 --single-branch https://github.com/google/googletest.git
 cd googletest
 
 mkdir build && cd build

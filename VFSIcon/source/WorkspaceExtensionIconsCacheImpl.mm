@@ -4,6 +4,7 @@
 #include <Cocoa/Cocoa.h>
 #include <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 namespace nc::vfsicon {
 

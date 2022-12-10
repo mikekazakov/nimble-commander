@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <NimbleCommander/States/MainWindowStateProtocol.h>
@@ -16,7 +16,6 @@ namespace nc::term {
 @interface NCTermShellState : NSView<NCMainWindowState>
 
 @property (nonatomic, readonly) bool isAnythingRunning;
-@property (nonatomic) bool spamVT100Input;
 
 - (instancetype)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)frameRect

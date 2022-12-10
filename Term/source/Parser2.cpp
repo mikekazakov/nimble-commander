@@ -1,5 +1,6 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Parser2.h"
+#include "Log.h"
 #include <type_traits>
 #include <magic_enum.hpp>
 
@@ -75,11 +76,10 @@ std::string VerboseDescription(const Command &_command)
         return type + ", " + payload;
 }
 
-void PrintCommands(std::span<const Command> _commands, std::ostream &_out)
+void LogCommands(std::span<const Command> _commands)
 {
     for( auto &cmd : _commands )
-        _out << VerboseDescription(cmd) << "\n";
-    _out.flush();
+        Log::Debug(SPDLOC, "command: {}", VerboseDescription(cmd));
 }
 
 std::string FormatRawInput(std::span<const std::byte> _input)
@@ -88,7 +88,7 @@ std::string FormatRawInput(std::span<const std::byte> _input)
     formatted.reserve(_input.size());
     for( const auto c : _input ) {
         const auto byte = static_cast<unsigned char>(c);
-        if( byte < 32 ) {
+        if( byte < 32 || byte == 127 ) {
             constexpr const char h[16] = {
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
             formatted += "\\x";

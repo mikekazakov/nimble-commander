@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShellState.h"
 #include <Habanero/CommonPaths.h>
 #include <Utility/NativeFSManager.h>
@@ -11,6 +11,7 @@
 #include <NimbleCommander/States/MainWindowController.h>
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
+#include <Term/Log.h>
 #include <Term/View.h>
 #include <Term/ScrollView.h>
 #include <Term/InputTranslatorImpl.h>
@@ -37,11 +38,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     std::string m_InitalWD;
     std::string m_WindowTitle;
     std::string m_IconTitle;
-    bool m_SpamVT100Input;
-    bool m_SpamRawInput;
 }
-
-@synthesize spamVT100Input = m_SpamVT100Input;
 
 - (id)initWithFrame:(NSRect)frameRect nativeFSManager:(nc::utility::NativeFSManager &)_native_fs_man
 {
@@ -50,8 +47,6 @@ static const auto g_CustomPath = "terminal.customShellPath";
         __weak NCTermShellState *weak_self = self;
         m_NativeFSManager = &_native_fs_man;
         m_InitalWD = nc::base::CommonPaths::Home();
-        m_SpamVT100Input = false;
-        m_SpamRawInput = false;
 
         m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
                                                        attachToTop:true
@@ -212,8 +207,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
             return;
         dispatch_to_main_queue([=, cmds = std::move(cmds)] {
-            if( strongself->m_SpamVT100Input )
-                nc::term::input::PrintCommands(cmds);
+            if( Log::Level() <= spdlog::level::debug )
+                nc::term::input::LogCommands(cmds);
 
             if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() )
                 strongself->m_Interpreter->Interpret(cmds);
@@ -367,14 +362,6 @@ static const auto g_CustomPath = "terminal.customShellPath";
         item.title = NSLocalizedString(@"Hide Terminal", "Menu item title for hiding terminal");
         return true;
     }
-    else if( item.action == @selector(onPrintVT100Commands:) )
-    {
-        item.state = m_SpamVT100Input ? NSControlStateValueOn : NSControlStateValueOff;
-    }
-    else if( item.action == @selector(onPrintRawTerminalInput:) )
-    {
-        item.state = m_SpamRawInput ? NSControlStateValueOn : NSControlStateValueOff;
-    }
     return true;
 }
 
@@ -394,24 +381,15 @@ static const auto g_CustomPath = "terminal.customShellPath";
     }
 }
 
-- (IBAction)onPrintVT100Commands:(id)sender
-{
-    m_SpamVT100Input = !m_SpamVT100Input;
-}
-
-- (IBAction)onPrintRawTerminalInput:(id)sender
-{
-    m_SpamRawInput = !m_SpamRawInput;
-}
-
 - (void)dumpRawInputIfRequired:(std::span<const std::byte>)_bytes
 {
     dispatch_assert_background_queue();
-    if( !m_SpamRawInput )
-        return;
-
-    auto input = term::input::FormatRawInput(_bytes);
-    dispatch_to_main_queue([input = std::move(input)] { std::cout << input << std::endl; });
+    if( Log::Level() <= spdlog::level::trace ) {
+        auto input = term::input::FormatRawInput(_bytes);
+        dispatch_to_main_queue([input = std::move(input)] {
+            Log::Trace(SPDLOC, "raw input: {}",input);
+        });
+    }
 }
 
 @end

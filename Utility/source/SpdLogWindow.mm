@@ -73,12 +73,14 @@ void SpdLogUISink::DoFlush()
     dispatch_assert_background_queue();
     if( m_Stock.empty() )
         return;
-
-    auto s = [NSString stringWithUTF8StdString:m_Stock];
+    if( auto s = [NSString stringWithUTF8String:m_Stock.c_str()] ) {
+        auto callback = m_CB;
+        dispatch_to_main_queue([s, callback] { callback(s); });
+    }
+    else {
+        std::cerr << "failed to convert an input string to NSString: " << m_Stock << std::endl;
+    }
     m_Stock.clear();
-
-    auto callback = m_CB;
-    dispatch_to_main_queue([s, callback] { callback(s); });
 }
 
 }
@@ -241,9 +243,12 @@ void SpdLogUISink::DoFlush()
 - (void)acceptNewString:(NSString *)_str
 {
     dispatch_assert_main_queue();
-    [m_TextStorage appendAttributedString:[[NSAttributedString alloc] initWithString:_str attributes:m_TextAttrs]];
-    if( m_AutoScroll )
-        [m_TextView scrollToEndOfDocument:nil];
+    assert(_str != nil);
+    if( auto as = [[NSAttributedString alloc] initWithString:_str attributes:m_TextAttrs] ) {
+        [m_TextStorage appendAttributedString:as];
+        if( m_AutoScroll )
+            [m_TextView scrollToEndOfDocument:nil];
+    }
 }
 
 - (void)drain:(NSTimer *)_timer

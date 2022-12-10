@@ -1076,18 +1076,6 @@ CQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Debug" id="J1h-Qq-hWI">
                                     <items>
-                                        <menuItem title="Print VT100 commands" id="hq3-qv-bVt">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="onPrintVT100Commands:" target="-1" id="e1m-Xw-W7M"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Print raw terminal input" id="eKX-av-57T">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="onPrintRawTerminalInput:" target="-1" id="oUs-8q-dQX"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem title="Show Logs..." id="0UC-Ke-PdY">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

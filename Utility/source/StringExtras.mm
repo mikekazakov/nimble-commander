@@ -138,6 +138,8 @@ NSString *StringByTruncatingToWidth(NSString *str,
                                           stdstring.length(),
                                           kCFStringEncodingUTF8,
                                           false);
+    if( cf_str == nullptr )
+        return nil;
     return static_cast<NSString *>(CFBridgingRelease(cf_str));
 }
 

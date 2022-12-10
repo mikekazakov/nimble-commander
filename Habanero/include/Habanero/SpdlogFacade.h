@@ -38,6 +38,8 @@ public:
     static SpdLogger &Logger() noexcept { return Impl::m_Logger; }
 
     static const std::string &Name() noexcept { return Impl::m_Logger.Name(); }
+    
+    static spdlog::level::level_enum Level() noexcept { return Get().level(); }
 
     static spdlog::logger &Get() noexcept { return Impl::m_Logger.Get(); }
 

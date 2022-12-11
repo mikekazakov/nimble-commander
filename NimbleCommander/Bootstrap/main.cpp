@@ -18,7 +18,10 @@ static void SetLocale()
 int main(int argc, char *argv[])
 {
     nc::bootstrap::ProcessCLIUsage(argc, argv);
-    if( !std::string_view(::setlocale(LC_COLLATE, nullptr)).contains("UTF-8") )
-        SetLocale();
+    
+    // Unconditionally set the LIBC locale to a combination of current CFLocale identifier in a UTF-8 encoding.
+    // BTW fuck C locales.
+    SetLocale();
+    
     return NSApplicationMain(argc, const_cast<const char **>(argv));
 }

@@ -14,9 +14,7 @@
 static auto g_TestDirPrefix = "_nc__vfs__test_";
 
 int main( int argc, char* argv[] ) {
-    setlocale (LC_ALL, "");
-    if( !std::string(setlocale(LC_ALL, NULL)).ends_with(".UTF-8") )
-        setlocale (LC_ALL, "en_US.UTF-8");
+    setlocale (LC_ALL, "en_US.UTF-8");
     ::testing::GTEST_FLAG(throw_on_failure) = true;
     ::testing::InitGoogleMock(&argc, argv);
     int result = Catch::Session().run( argc, argv );

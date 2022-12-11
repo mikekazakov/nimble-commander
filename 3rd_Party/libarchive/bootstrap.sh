@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/libarchive.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v3.5.2 https://github.com/libarchive/libarchive.git
+git clone -b v3.6.2 https://github.com/libarchive/libarchive.git
 cd libarchive
 
 git apply ../../archive_read_support_format_zip.patch

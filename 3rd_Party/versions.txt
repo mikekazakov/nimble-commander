@@ -8,7 +8,7 @@ curl            7.73.0
 expected        1.0.0
 gtest           1.12.1
 letsmove        1.25
-libarchive      3.5.2 + custom patch
+libarchive      3.6.2 + custom patch
 libssh2         1.9.0
 lz4             1.9.3
 lzma(xz)        5.2.5

@@ -12,7 +12,7 @@ cd ${TMP_DIR}
 git clone -b v3.6.2 https://github.com/libarchive/libarchive.git
 cd libarchive
 
-git apply ../../archive_read_support_format_zip.patch
+git apply ../../*.patch
 
 cmake \
   -D CMAKE_TESTING_ENABLED=Off \

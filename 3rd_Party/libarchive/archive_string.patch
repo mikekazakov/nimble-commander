@@ -1,0 +1,15 @@
+diff --git a/libarchive/archive_string.c b/libarchive/archive_string.c
+index 69458e1a..5ae357b5 100644
+--- a/libarchive/archive_string.c
++++ b/libarchive/archive_string.c
+@@ -427,8 +427,8 @@ default_iconv_charset(const char *charset) {
+ #if HAVE_LOCALE_CHARSET && !defined(__APPLE__)
+ 	/* locale_charset() is broken on Mac OS */
+ 	return locale_charset();
+-#elif HAVE_NL_LANGINFO
+-	return nl_langinfo(CODESET);
++//#elif HAVE_NL_LANGINFO
++//	return nl_langinfo(CODESET);
+ #else
+ 	return "";
+ #endif

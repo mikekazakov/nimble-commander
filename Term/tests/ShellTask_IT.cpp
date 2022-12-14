@@ -14,6 +14,8 @@
 #include <magic_enum.hpp>
 #include <sys/param.h>
 #include <unordered_map>
+#include <algorithm>
+#include <numeric>
 
 #pragma clang diagnostic ignored "-Wframe-larger-than="
 
@@ -739,6 +741,11 @@ TEST_CASE(PREFIX "Launches when shell is a symlink to a real binary")
     const auto basedir = dir.directory;
     ShellTask shell;
 
+    std::filesystem::path rel_path;
+    size_t depth = std::count(basedir.native().begin(), basedir.native().end(), '/');
+    while( depth-- > 0 )
+        rel_path /= "../";
+
     std::filesystem::path shell_path;
     SECTION("/bin/bash")
     {
@@ -748,9 +755,7 @@ TEST_CASE(PREFIX "Launches when shell is a symlink to a real binary")
         }
         SECTION("Symlink has a relative path")
         {
-            std::filesystem::copy("/bin/bash", basedir / "bash");
-            std::filesystem::create_directory(basedir / "subdir");
-            std::filesystem::create_symlink("../bash", shell_path = basedir / "subdir/bash");
+            std::filesystem::create_symlink(rel_path / "bin/bash", shell_path = basedir / "bash");
         }
     }
     SECTION("/bin/zsh")
@@ -761,9 +766,7 @@ TEST_CASE(PREFIX "Launches when shell is a symlink to a real binary")
         }
         SECTION("Symlink has a relative path")
         {
-            std::filesystem::copy("/bin/zsh", basedir / "zsh");
-            std::filesystem::create_directory(basedir / "subdir");
-            std::filesystem::create_symlink("../zsh", shell_path = basedir / "subdir/zsh");
+            std::filesystem::create_symlink(rel_path / "bin/zsh", shell_path = basedir / "zsh");
         }
     }
     SECTION("/bin/tcsh")
@@ -774,9 +777,7 @@ TEST_CASE(PREFIX "Launches when shell is a symlink to a real binary")
         }
         SECTION("Symlink has a relative path")
         {
-            std::filesystem::copy("/bin/tcsh", basedir / "tcsh");
-            std::filesystem::create_directory(basedir / "subdir");
-            std::filesystem::create_symlink("../tcsh", shell_path = basedir / "subdir/tcsh");
+            std::filesystem::create_symlink(rel_path / "bin/tcsh", shell_path = basedir / "tcsh");
         }
     }
     SECTION("/bin/csh")
@@ -787,9 +788,7 @@ TEST_CASE(PREFIX "Launches when shell is a symlink to a real binary")
         }
         SECTION("Symlink has a relative path")
         {
-            std::filesystem::copy("/bin/csh", basedir / "csh");
-            std::filesystem::create_directory(basedir / "subdir");
-            std::filesystem::create_symlink("../csh", shell_path = basedir / "subdir/csh");
+            std::filesystem::create_symlink(rel_path / "bin/csh", shell_path = basedir / "csh");
         }
     }
     shell.SetShellPath(shell_path);

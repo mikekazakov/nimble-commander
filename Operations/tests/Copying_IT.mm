@@ -880,7 +880,7 @@ TEST_CASE(PREFIX "Copy native->xattr->xattr")
     }
 }
 
-TEST_CASE(PREFIX "Copy to local FTP, part1")
+TEST_CASE(PREFIX "Copy to local FTP, part1", "[!mayfail]")
 {
     VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
 
@@ -904,7 +904,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part1")
     REQUIRE(host->Unlink(fn2, 0) == 0);
 }
 
-TEST_CASE(PREFIX "Copy to local FTP, part2")
+TEST_CASE(PREFIX "Copy to local FTP, part2", "[!mayfail]")
 {
     using namespace std;
     VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
@@ -937,7 +937,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part2")
     }
 }
 
-TEST_CASE(PREFIX "Copy to local FTP, part3")
+TEST_CASE(PREFIX "Copy to local FTP, part3", "[!mayfail]")
 {
     VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
 
@@ -958,7 +958,7 @@ TEST_CASE(PREFIX "Copy to local FTP, part3")
     VFSEasyDelete("/Public/!FilesTesting/bin", host);
 }
 
-TEST_CASE(PREFIX "Copy to local FTP, part4")
+TEST_CASE(PREFIX "Copy to local FTP, part4", "[!mayfail]")
 {
     VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
 

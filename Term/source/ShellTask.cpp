@@ -399,9 +399,6 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
             return false;
         }
 
-        // now let's declare that we have a working shell
-        SetState(TaskState::Shell);
-
         // kickstart a background thread that will receive input from the shell
         I->input_thread = std::thread([=] {
             auto name = "ShellTask background input thread, PID="s + std::to_string(I->shell_pid);
@@ -441,6 +438,9 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
             return false;
         }
 
+        // now let's declare that we have a working shell
+        SetState(TaskState::Shell);
+        
         return true;
     }
     else { // fork_rc == 0

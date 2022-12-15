@@ -22,6 +22,7 @@
 #include <Habanero/CloseFrom.h>
 #include <Habanero/spinlock.h>
 #include <iostream>
+#include <queue>
 #include <signal.h>
 #include "ShellTask.h"
 #include "Log.h"
@@ -848,23 +849,54 @@ std::vector<std::string> ShellTask::ChildrenList() const
     if( nc::utility::GetBSDProcessList(&proc_list, &proc_cnt) != 0 )
         return {};
 
-    std::vector<std::string> result;
+    // copy kinfo_proc into a more usage datastructure
+    struct Proc {
+        pid_t pid;
+        pid_t ppid;
+        const char *name;
+    };
+    std::vector<Proc> procs;
     for( size_t i = 0; i < proc_cnt; ++i ) {
-        int pid = proc_list[i].kp_proc.p_pid;
-        int ppid = proc_list[i].kp_eproc.e_ppid;
+        procs.emplace_back(Proc{proc_list[i].kp_proc.p_pid, proc_list[i].kp_eproc.e_ppid, proc_list[i].kp_proc.p_comm});
+    }
 
-    again:
-        if( ppid == I->shell_pid ) {
-            char name[1024];
-            int ret = proc_name(pid, name, sizeof(name));
-            result.emplace_back(ret > 0 ? name : proc_list[i].kp_proc.p_comm);
+    struct PPidLess {
+        bool operator()(const Proc &lhs, const Proc &rhs) const noexcept { return lhs.ppid < rhs.ppid; }
+        bool operator()(const Proc &lhs, pid_t rhs) const noexcept { return lhs.ppid < rhs; }
+        bool operator()(pid_t lhs, const Proc &rhs) const noexcept { return lhs < rhs.ppid; }
+    };
+
+    // sort by parent pid O(nlogn)
+    std::sort(procs.begin(), procs.end(), PPidLess{});
+
+    // names of the sub-processes, sorted by depth
+    std::vector<std::string> result;
+
+    // for each parent pid in the queue:
+    std::queue<pid_t> parent_pids;
+    parent_pids.push(I->shell_pid);
+    while( !parent_pids.empty() ) {
+        const pid_t ppid = parent_pids.front();
+        parent_pids.pop();
+
+        // find all processes with this specific ppid, O(logn), get their names and add their pids at the tail of the
+        // queue
+        const auto range = std::equal_range(procs.begin(), procs.end(), ppid, PPidLess{});
+        for( auto it = range.first; it != range.second; ++it ) {
+            const pid_t pid = it->pid;
+            char path_buffer[PROC_PIDPATHINFO_MAXSIZE] = {0};
+            const int rc = proc_pidpath(pid, path_buffer, sizeof(path_buffer));
+            if( rc >= 0 ) {
+                // a proper 'long' version based on a filepath
+                const auto name = nc::utility::PathManip::Filename(path_buffer);
+                result.emplace_back(name);
+            }
+            else {
+                // 'short' backup version
+                result.emplace_back(it->name);
+            }
+            parent_pids.push(pid);
         }
-        else if( ppid >= 1024 )
-            for( size_t j = 0; j < proc_cnt; ++j )
-                if( proc_list[j].kp_proc.p_pid == ppid ) {
-                    ppid = proc_list[j].kp_eproc.e_ppid;
-                    goto again;
-                }
     }
 
     free(proc_list);

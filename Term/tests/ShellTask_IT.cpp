@@ -401,8 +401,7 @@ TEST_CASE(PREFIX "CWD prompt response - changed/same")
     REQUIRE(cwd.wait_to_become(5s, {"/", false}));
 }
 
-// this test case is for some reason flaky on Jenkins while works fine otherwise. needs further investigation.
-TEST_CASE(PREFIX "Test basics (legacy stuff)", "[!mayfail]")
+TEST_CASE(PREFIX "Test basics (legacy stuff)")
 {
     const TempTestDir dir;
     const auto dir2 = dir.directory / "Test" / "";
@@ -427,8 +426,9 @@ TEST_CASE(PREFIX "Test basics (legacy stuff)", "[!mayfail]")
     REQUIRE(shell.CWD() == dir.directory.generic_string());
 
     // the only task is running is shell itself, and is not returned by ChildrenList
-    CHECK(shell.ChildrenList() == std::vector<std::string>());
-
+    // though __in the process of bash initialization__ it can temporary spawn subprocesses
+    REQUIRE(WaitChildrenListToBecome(shell, {}, 5s, 1ms));
+    
     // test executing binaries within a shell
     shell.ExecuteWithFullPath("/usr/bin/top", nullptr);
     REQUIRE(shell_state.wait_to_become(5s, TaskState::ProgramExternal));
@@ -809,7 +809,7 @@ TEST_CASE(PREFIX "ChildrenList()")
         shell.SetShellPath("/bin/bash");
         REQUIRE(shell.Launch("/"));
         REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
-        CHECK(shell.ChildrenList() == std::vector<std::string>());
+        REQUIRE(WaitChildrenListToBecome(shell, {}, 5s, 1ms));
         shell.WriteChildInput("/bin/zsh\r");
         REQUIRE(WaitChildrenListToBecome(shell, {"zsh"}, 5s, 1ms));
         shell.WriteChildInput("/bin/bash\r");

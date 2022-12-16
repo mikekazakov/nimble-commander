@@ -16,6 +16,9 @@
 #include <unordered_map>
 #include <algorithm>
 #include <numeric>
+#include <fstream>
+#include <fmt/format.h>
+#include <fmt/std.h>
 
 #pragma clang diagnostic ignored "-Wframe-larger-than="
 
@@ -822,5 +825,29 @@ TEST_CASE(PREFIX "ChildrenList()")
         REQUIRE(WaitChildrenListToBecome(shell, {"zsh"}, 5s, 1ms));
         shell.WriteChildInput("exit\r");
         REQUIRE(WaitChildrenListToBecome(shell, {}, 5s, 1ms));
+    }
+    SECTION("Supports getting children names longer than MAXCOMLEN=16 characters")
+    {
+        // This test creates an executable that sleeps for 10 seconds and runs it a terminal's subprocess.
+        // The reason for this moronic idea is that I wasn't able to figure out a way of getting a binary image with a
+        // long name. Copying and renaming a default stuff like /bin/sleep no longer works on macOS :-(
+        const TempTestDir dir;
+        const auto basedir = dir.directory;
+        std::ofstream(basedir / "a.c") << "#include <unistd.h> \n int main() { sleep(10); }";
+        REQUIRE(system(fmt::format("cd {} && clang a.c -o an_executable_with_a_very_long_name", basedir).c_str()) == 0);
+
+        QueuedAtomicHolder<ShellTask::TaskState> shell_state;
+        ShellTask shell;
+        shell_state.store(shell.State());
+        shell_state.strict(false);
+        shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
+        shell.SetShellPath("/bin/bash");
+        REQUIRE(shell.Launch(basedir));
+        REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
+        REQUIRE(WaitChildrenListToBecome(shell, {}, 5s, 1ms));
+        shell.WriteChildInput("/bin/zsh\r");
+        REQUIRE(WaitChildrenListToBecome(shell, {"zsh"}, 5s, 1ms));
+        shell.WriteChildInput("./an_executable_with_a_very_long_name\r");
+        REQUIRE(WaitChildrenListToBecome(shell, {"zsh", "an_executable_with_a_very_long_name"}, 5s, 1ms));
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -46,7 +46,7 @@ public:
      */
     static int ReadDirAttributesStat(const int _dir_fd,
                                      const char *_dir_path,
-                                     const std::function<void(int _fetched_now)> &_cb_fetch,
+                                     const std::function<void(size_t _fetched_now)> &_cb_fetch,
                                      const Callback &_cb_param);
 
     /**
@@ -54,13 +54,8 @@ public:
      * returns 0 on success or errno value on error
      */
     static int ReadDirAttributesBulk(const int _dir_fd,
-                                     const std::function<void(int _fetched_now)> &_cb_fetch,
+                                     const std::function<void(size_t _fetched_now)> &_cb_fetch,
                                      const Callback &_cb_param);
-
-    /**
-     * returns VFSError or entries count.
-     */
-    static int CountDirEntries(const int _dir_fd);
 };
 
 } // namespace nc::vfs::native

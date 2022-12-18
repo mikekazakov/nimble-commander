@@ -1,11 +1,17 @@
-// Copyright (C) 2020-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
+#include "../../source/Native/Fetching.h" // EVIL!
+#include <fmt/core.h>
+#include <unistd.h>
+#include <fstream>
+#include <Habanero/RobinHoodUtil.h>
 #include <boost/process.hpp>
 
 using namespace nc::vfs;
+using namespace nc::vfs::native;
 #define PREFIX "VFSNative "
 
 static int Execute(const std::string &_command);
@@ -119,6 +125,123 @@ TEST_CASE(PREFIX "SetFlags")
               VFSError::FromErrno(ENOENT));
     }
 }
+
+TEST_CASE(PREFIX "Fetching")
+{
+    TestDir test_dir_holder;
+    std::filesystem::path test_dir = test_dir_holder.directory;
+    robin_hood::unordered_flat_set<std::string, nc::RHTransparentStringHashEqual, nc::RHTransparentStringHashEqual>
+        to_visit;
+    const uid_t uid = geteuid();
+    const uid_t gid = getgid();
+    const time_t time = ::time(nullptr);
+    const time_t time_eps = 100; // 100 seconds
+    const dev_t dev = [&] {
+        struct stat st;
+        ::stat(test_dir.c_str(), &st);
+        return st.st_dev;
+    }();
+
+    // spawn a bunch of regular files to ensure the batching mechanism can deal with the mass
+    for( size_t i = 0; i != 1000; ++i ) {
+        auto filename = fmt::format("reg{}", i);
+        REQUIRE(close(creat((test_dir / filename).c_str(), 0755)) == 0);
+        to_visit.emplace(filename);
+    }
+
+    // spawn something with a size
+    {
+        std::ofstream(test_dir / "non-zero-reg-file") << "Hello, World!";
+        to_visit.emplace("non-zero-reg-file");
+    }
+
+    // spawn a symlink
+    {
+        std::filesystem::create_symlink("/hello", test_dir / "symlink");
+        to_visit.emplace("symlink");
+    }
+
+    // spawn a directory
+    {
+        std::filesystem::create_directory(test_dir / "directory");
+        to_visit.emplace("directory");
+    }
+
+    // spawn a fifo
+    {
+        mkfifo((test_dir / "fifo").c_str(), 0644);
+        to_visit.emplace("fifo");
+    }
+
+    // spawn a hidden file
+    {
+        REQUIRE(close(creat((test_dir / "hidden").c_str(), 0755)) == 0);
+        chflags((test_dir / "hidden").c_str(), UF_HIDDEN);
+        to_visit.emplace("hidden");
+    }
+
+    const size_t total_items_number = to_visit.size();
+
+    const int fd = ::open(test_dir.c_str(), O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
+    REQUIRE(fd > 0);
+    auto close_fd = at_scope_end([fd] { close(fd); });
+
+    size_t fetched_notification = 0;
+    auto fetch = [&](size_t _fetched) { fetched_notification += _fetched; };
+    auto param = [&](const Fetching::CallbackParams &p) {
+        REQUIRE(p.filename != nullptr);
+        const std::string_view filename(p.filename);
+        REQUIRE(to_visit.contains(filename));
+        to_visit.erase(to_visit.find(filename));
+
+        // common checks for every file type
+        CHECK(p.uid == uid);
+        CHECK(p.gid == gid);
+        CHECK(p.dev == dev);
+        CHECK(p.inode != 0);
+
+        // checks for specific file types
+        if( filename.starts_with("reg") ) {
+            CHECK(abs(p.crt_time - time) < time_eps);
+            CHECK(abs(p.mod_time - time) < time_eps);
+            CHECK(abs(p.chg_time - time) < time_eps);
+            CHECK(abs(p.acc_time - time) < time_eps);
+            CHECK((abs(p.add_time - time) < time_eps || p.add_time == -1)); // no add via ReadDirAttributesStat
+            CHECK(p.mode == (S_IFREG | 0755));
+            CHECK(p.size == 0);
+            CHECK(p.flags == 0);
+        }
+        else if( filename == "non-zero-reg-file" ) {
+            CHECK(p.size == std::string_view("Hello, World!").length());
+        }
+        else if( filename == "symlink" ) {
+            CHECK(p.mode == (S_IFLNK | 0755));
+            CHECK(p.size == std::string_view("/hello").length());
+        }
+        else if( filename == "directory" ) {
+            CHECK(p.mode == (S_IFDIR | 0755));
+        }
+        else if( filename == "fifo" ) {
+            CHECK(p.mode == (S_IFIFO | 0644));
+        }
+        else if( filename == "hidden" ) {
+            CHECK(p.flags == UF_HIDDEN);
+        }
+        else {
+            FAIL();
+        }
+    };
+
+    SECTION("ReadDirAttributesStat")
+    {
+        CHECK(Fetching::ReadDirAttributesStat(fd, test_dir.c_str(), fetch, param) == 0);
+    }
+    SECTION("ReadDirAttributesBulk") { CHECK(Fetching::ReadDirAttributesBulk(fd, fetch, param) == 0); }
+
+    CHECK(fetched_notification == total_items_number);
+    CHECK(to_visit.empty());
+}
+
 static int Execute(const std::string &_command)
 {
     using namespace boost::process;

@@ -85,13 +85,6 @@ int NativeHost::FetchDirectoryListing(const char *_path,
         return VFSError::FromErrno();
     auto close_fd = at_scope_end([fd] { close(fd); });
 
-    const int approx_entries_count = [&] {
-        auto count = Fetching::CountDirEntries(fd);
-        if( count < 0 ) // negative means error
-            count = 64;
-        return count + (need_to_add_dot_dot ? 1 : 0);
-    }();
-
     using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
@@ -109,7 +102,9 @@ int NativeHost::FetchDirectoryListing(const char *_path,
     listing_source.symlinks.reset(variable_container<>::type::sparse);
     listing_source.display_filenames.reset(variable_container<>::type::sparse);
 
-    auto resize_dense = [&](int _sz) {
+    constexpr size_t initial_prealloc_size = 64;
+    size_t allocated_size = 0;
+    auto resize_dense = [&](size_t _sz) {
         listing_source.filenames.resize(_sz);
         listing_source.inodes.resize(_sz);
         listing_source.unix_types.resize(_sz);
@@ -122,9 +117,14 @@ int NativeHost::FetchDirectoryListing(const char *_path,
         listing_source.uids.resize(_sz);
         listing_source.gids.resize(_sz);
         listing_source.sizes.resize(_sz);
+        allocated_size = _sz;
     };
+    
+    // allocate space for up to 64 items upfront
+    resize_dense(initial_prealloc_size);
 
-    auto fill = [&](int _n, const Fetching::CallbackParams &_params) {
+    auto fill = [&](size_t _n, const Fetching::CallbackParams &_params) {
+        assert( _n < listing_source.filenames.size() );
         listing_source.filenames[_n] = _params.filename;
         listing_source.inodes[_n] = _params.inode;
         listing_source.unix_types[_n] = IFTODT(_params.mode);
@@ -151,10 +151,8 @@ int NativeHost::FetchDirectoryListing(const char *_path,
                     listing_source.display_filenames.insert(_n, display_name);
             }
     };
-
-    resize_dense(approx_entries_count);
-
-    int next_entry_index = 0;
+    
+    size_t next_entry_index = 0;
     auto cb_param = [&](const Fetching::CallbackParams &_params) {
         fill(next_entry_index++, _params);
     };
@@ -164,9 +162,9 @@ int NativeHost::FetchDirectoryListing(const char *_path,
         listing_source.filenames[0] = "..";
     }
 
-    auto cb_fetch = [&](int _fetched_now) {
+    auto cb_fetch = [&](size_t _fetched_now) {
         // check if final entries count is more than previous approximate
-        if( next_entry_index + _fetched_now > approx_entries_count )
+        if( next_entry_index + _fetched_now > allocated_size )
             resize_dense(next_entry_index + _fetched_now);
     };
 
@@ -182,11 +180,11 @@ int NativeHost::FetchDirectoryListing(const char *_path,
         return VFSError::Cancelled;
 
     // check if final entries count is less than approximate
-    if( next_entry_index < approx_entries_count )
+    if( next_entry_index < allocated_size )
         resize_dense(next_entry_index);
 
     // a little more work with symlinks, if there are any
-    for( int n = 0; n < next_entry_index; ++n )
+    for( size_t n = 0; n < next_entry_index; ++n )
         if( listing_source.unix_types[n] == DT_LNK ) {
             // read an actual link path
             char linkpath[MAXPATHLEN];

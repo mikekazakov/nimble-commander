@@ -828,7 +828,7 @@ TEST_CASE(PREFIX "ChildrenList()")
     }
     SECTION("Supports getting children names longer than MAXCOMLEN=16 characters")
     {
-        // This test creates an executable that sleeps for 10 seconds and runs it a terminal's subprocess.
+        // This test creates an executable that sleeps for 10 seconds and runs it as a terminal's subprocess.
         // The reason for this moronic idea is that I wasn't able to figure out a way of getting a binary image with a
         // long name. Copying and renaming a default stuff like /bin/sleep no longer works on macOS :-(
         const TempTestDir dir;

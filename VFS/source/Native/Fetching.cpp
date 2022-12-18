@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Fetching.h"
 #include <sys/attr.h>
 #include <sys/errno.h>
@@ -15,6 +15,8 @@
 struct dirent *_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
 namespace nc::vfs::native {
+
+static_assert(sizeof(Fetching::CallbackParams) == 88);
 
 static mode_t VNodeToUnixMode(const fsobj_type_t _type)
 {
@@ -194,7 +196,7 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
 // assuming this will be called when Admin Mode is on
 int Fetching::ReadDirAttributesStat(const int _dir_fd,
                                     const char *_dir_path,
-                                    const std::function<void(int _fetched_now)> &_cb_fetch,
+                                    const std::function<void(size_t _fetched_now)> &_cb_fetch,
                                     const Callback &_cb_param)
 {
     // initial directory lookup
@@ -251,15 +253,9 @@ int Fetching::ReadDirAttributesStat(const int _dir_fd,
 }
 
 int Fetching::ReadDirAttributesBulk(const int _dir_fd,
-                                    const std::function<void(int _fetched_now)> &_cb_fetch,
+                                    const std::function<void(size_t _fetched_now)> &_cb_fetch,
                                     const Callback &_cb_param)
 {
-    struct Attrs {
-        uint32_t length;
-        attribute_set_t returned;
-        uint32_t error;
-    } __attribute__((aligned(4), packed)); // for convenience, not very used
-
     attrlist attr_list;
     memset(&attr_list, 0, sizeof(attr_list));
     attr_list.bitmapcount = ATTR_BIT_MAP_COUNT;
@@ -285,27 +281,20 @@ int Fetching::ReadDirAttributesBulk(const int _dir_fd,
 
         const char *entry_start = &attr_buf[0];
         for( int index = 0; index < retcount; index++ ) {
-            Attrs attrs;
-            memset(&attrs, 0, sizeof(Attrs));
-
             const char *field = entry_start;
-            attrs.length = *reinterpret_cast<const uint32_t *>(field);
+            const uint32_t length = *reinterpret_cast<const uint32_t *>(field);
             field += sizeof(uint32_t);
 
-            entry_start += attrs.length;
+            entry_start += length;
 
-            attrs.returned = *reinterpret_cast<const attribute_set_t *>(field);
+            const attribute_set_t returned = *reinterpret_cast<const attribute_set_t *>(field);
             field += sizeof(attribute_set_t);
 
-            if( attrs.returned.commonattr & ATTR_CMN_ERROR ) {
-                attrs.error = *reinterpret_cast<const uint32_t *>(field);
-                field += sizeof(uint32_t);
+            if( returned.commonattr & ATTR_CMN_ERROR ) {
+                continue;
             }
 
-            if( attrs.error != 0 )
-                continue;
-
-            if( attrs.returned.commonattr & ATTR_CMN_NAME ) {
+            if( returned.commonattr & ATTR_CMN_NAME ) {
                 params.filename =
                     field + reinterpret_cast<const attrreference_t *>(field)->attr_dataoffset;
                 field += sizeof(attrreference_t);
@@ -313,70 +302,70 @@ int Fetching::ReadDirAttributesBulk(const int _dir_fd,
             else
                 continue; // can't work without filename
 
-            if( attrs.returned.commonattr & ATTR_CMN_DEVID ) {
+            if( returned.commonattr & ATTR_CMN_DEVID ) {
                 params.dev = *reinterpret_cast<const dev_t *>(field);
                 field += sizeof(dev_t);
             }
 
             params.mode = 0;
-            if( attrs.returned.commonattr & ATTR_CMN_OBJTYPE ) {
+            if( returned.commonattr & ATTR_CMN_OBJTYPE ) {
                 params.mode = VNodeToUnixMode(*reinterpret_cast<const fsobj_type_t *>(field));
                 field += sizeof(fsobj_type_t);
             }
 
-            if( attrs.returned.commonattr & ATTR_CMN_CRTIME ) {
+            if( returned.commonattr & ATTR_CMN_CRTIME ) {
                 params.crt_time = reinterpret_cast<const struct timespec *>(field)->tv_sec;
                 field += sizeof(timespec);
             }
 
-            if( attrs.returned.commonattr & ATTR_CMN_MODTIME ) {
+            if( returned.commonattr & ATTR_CMN_MODTIME ) {
                 params.mod_time = reinterpret_cast<const struct timespec *>(field)->tv_sec;
                 field += sizeof(timespec);
             }
 
-            if( attrs.returned.commonattr & ATTR_CMN_CHGTIME ) {
+            if( returned.commonattr & ATTR_CMN_CHGTIME ) {
                 params.chg_time = reinterpret_cast<const struct timespec *>(field)->tv_sec;
                 field += sizeof(timespec);
             }
 
-            if( attrs.returned.commonattr & ATTR_CMN_ACCTIME ) {
+            if( returned.commonattr & ATTR_CMN_ACCTIME ) {
                 params.acc_time = reinterpret_cast<const struct timespec *>(field)->tv_sec;
                 field += sizeof(timespec);
             }
 
-            if( attrs.returned.commonattr & ATTR_CMN_OWNERID ) {
+            if( returned.commonattr & ATTR_CMN_OWNERID ) {
                 params.uid = *reinterpret_cast<const uid_t *>(field);
                 field += sizeof(uid_t);
             }
 
-            if( attrs.returned.commonattr & ATTR_CMN_GRPID ) {
+            if( returned.commonattr & ATTR_CMN_GRPID ) {
                 params.gid = *reinterpret_cast<const gid_t *>(field);
                 field += sizeof(gid_t);
             }
 
-            if( attrs.returned.commonattr & ATTR_CMN_ACCESSMASK ) {
+            if( returned.commonattr & ATTR_CMN_ACCESSMASK ) {
                 params.mode |= *reinterpret_cast<const u_int32_t *>(field) & (~S_IFMT);
                 field += sizeof(u_int32_t);
             }
 
-            if( attrs.returned.commonattr & ATTR_CMN_FLAGS ) {
+            if( returned.commonattr & ATTR_CMN_FLAGS ) {
                 params.flags = *reinterpret_cast<const u_int32_t *>(field);
                 field += sizeof(u_int32_t);
             }
 
-            if( attrs.returned.commonattr & ATTR_CMN_FILEID ) {
+            if( returned.commonattr & ATTR_CMN_FILEID ) {
                 params.inode = *reinterpret_cast<const u_int64_t *>(field);
                 field += sizeof(uint64_t);
             }
 
-            if( attrs.returned.commonattr & ATTR_CMN_ADDEDTIME ) {
+            if( returned.commonattr & ATTR_CMN_ADDEDTIME ) {
                 params.add_time = reinterpret_cast<const struct timespec *>(field)->tv_sec;
                 field += sizeof(timespec);
             }
             else
                 params.add_time = -1;
 
-            if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH )
+            if( returned.fileattr & ATTR_FILE_DATALENGTH )
                 params.size = *reinterpret_cast<const off_t *>(field);
             else
                 params.size = -1;
@@ -384,26 +373,6 @@ int Fetching::ReadDirAttributesBulk(const int _dir_fd,
             _cb_param(params);
         }
     }
-}
-
-int Fetching::CountDirEntries(const int _dir_fd)
-{
-    struct Count {
-        u_int32_t length;
-        u_int32_t count;
-    } __attribute__((aligned(4), packed)) count;
-
-    // this is NOT required by the documentation, but when requesting ATTR_DIR_ENTRYCOUNT from an SF_DATALESS directory
-    // it returns garbage otherwise.
-    memset(&count, 0, sizeof(count));
-
-    struct attrlist attr_list;
-    memset(&attr_list, 0, sizeof(attr_list));
-    attr_list.bitmapcount = ATTR_BIT_MAP_COUNT;
-    attr_list.dirattr = ATTR_DIR_ENTRYCOUNT;
-    if( fgetattrlist(_dir_fd, &attr_list, &count, sizeof(count), 0) == 0 && count.length == sizeof(count) )
-        return count.count;
-    return VFSError::FromErrno();
 }
 
 } // namespace nc::vfs::native

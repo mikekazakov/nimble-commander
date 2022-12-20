@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -10,28 +10,30 @@ class Dock
 public:
     Dock();
     ~Dock();
-    
+
     double Progress() const noexcept;
     void SetProgress(double _value);
-    
-    void SetAdminBadge( bool _value );
+
+    void SetAdminBadge(bool _value);
     bool IsAdminBadgeSet() const noexcept;
 
-    void SetUnregisteredBadge( bool _value );
+    void SetUnregisteredBadge(bool _value);
     bool IsAUnregisteredBadgeSet() const noexcept;
-    
+
+    void SetBaseIcon(NSImage *_icon);
+
 private:
-    Dock(const Dock&) = delete;
-    void operator=(const Dock&) = delete;
+    Dock(const Dock &) = delete;
+    void operator=(const Dock &) = delete;
     void UpdateBadge();
-    
-    double              m_Progress;
-    bool                m_Admin;
-    bool                m_Unregistered;
-    NSDockTile          *m_Tile;
-    NSImageView         *m_ContentView;
+
+    double m_Progress;
+    bool m_Admin;
+    bool m_Unregistered;
+    NSDockTile *m_Tile;
+    NSImageView *m_ContentView;
     NSProgressIndicator *m_Indicator;
-    NSView              *m_UnregBadge;
+    NSView *m_UnregBadge;
 };
 
-}
+} // namespace nc::core

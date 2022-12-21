@@ -158,7 +158,7 @@ void SpdLogUISink::DoFlush()
     tv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
     [tv setHorizontallyResizable:true];
     [tv setVerticallyResizable:true];
-    tv.usesAdaptiveColorMappingForDarkAppearance = true;
+
     NSScrollView *sv = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
     sv.borderType = NSLineBorder;
     sv.translatesAutoresizingMaskIntoConstraints = false;
@@ -214,8 +214,10 @@ void SpdLogUISink::DoFlush()
                                                    metrics:nil
                                                      views:NSDictionaryOfVariableBindings(sv, now, clear, settings)]];
 
-    m_TextAttrs = @{NSFontAttributeName: [NSFont monospacedSystemFontOfSize:10. weight:NSFontWeightRegular]};
-
+    m_TextAttrs = @{
+        NSFontAttributeName: [NSFont monospacedSystemFontOfSize:10. weight:NSFontWeightRegular],
+        NSForegroundColorAttributeName: [NSColor textColor]
+    };
     m_ScrollView = sv;
     m_TextView = tv;
     m_TextStorage = tv.textStorage;

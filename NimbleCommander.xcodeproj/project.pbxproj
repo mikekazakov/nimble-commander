@@ -19,10 +19,6 @@
 		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		CF04DDD71E27743C0047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
-		CF04DDD81E2775D70047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
-		CF04DDD91E2775D70047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
-		CF04DDDA1E2775D80047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
 		CF04DDE61E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
 		CF04DDE71E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
 		CF04DDE81E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
@@ -1514,7 +1510,6 @@
 		CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RHPreferencesWindow.xib; path = 3rd_Party/RHPreferences/RHPreferences/RHPreferencesWindow.xib; sourceTree = SOURCE_ROOT; };
 		CF039EA41791112900DC85D6 /* RHPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferencesWindowController.h; path = 3rd_Party/RHPreferences/RHPreferences/RHPreferencesWindowController.h; sourceTree = SOURCE_ROOT; };
 		CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RHPreferencesWindowController.m; path = 3rd_Party/RHPreferences/RHPreferences/RHPreferencesWindowController.m; sourceTree = SOURCE_ROOT; };
-		CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = AliasBadgeIcon.icns; path = NimbleCommander/Resources/AliasBadgeIcon.icns; sourceTree = SOURCE_ROOT; };
 		CF04DDE31E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTab.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTab.h; sourceTree = SOURCE_ROOT; };
 		CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTab.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTab.mm; sourceTree = SOURCE_ROOT; };
 		CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Preferences.mm; path = NimbleCommander/Preferences/Preferences.mm; sourceTree = SOURCE_ROOT; };
@@ -2917,7 +2912,6 @@
 				CF67F1B42952034200B92944 /* Icon-Free.icns */,
 				CF67F19A2952034200B92944 /* Icon.icns */,
 				CFDF449F1D2B990A0062F7AD /* Media.xcassets */,
-				CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */,
 			);
 			name = Art;
 			sourceTree = "<group>";
@@ -3664,7 +3658,6 @@
 				CF67F1B72952034200B92944 /* Icon.icns in Resources */,
 				CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */,
 				CF8D0CFA1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */,
-				CF04DDD91E2775D70047B1F9 /* AliasBadgeIcon.icns in Resources */,
 				CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CFB7007428B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */,
 				CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
@@ -3706,7 +3699,6 @@
 				CF9F4B361ECD813300E0AF82 /* DropboxAccountSheetController.xib in Resources */,
 				CFA53A361D433E2A00C562A7 /* InfoPlist.strings in Resources */,
 				CFA53A381D433E2A00C562A7 /* Credits.rtf in Resources */,
-				CF04DDD81E2775D70047B1F9 /* AliasBadgeIcon.icns in Resources */,
 				CF7C7CD01E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */,
 				CF8D0CF91D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */,
 				CF4E56BC1D5068F800452912 /* PreferencesWindowPanelsTab.xib in Resources */,
@@ -3769,7 +3761,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF04DDD71E27743C0047B1F9 /* AliasBadgeIcon.icns in Resources */,
 				CF7D7A751C15AAC200ECEBA0 /* Config.json in Resources */,
 				CFCCFBB81A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CF9F4B411ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */,
@@ -3834,7 +3825,6 @@
 				CF8D0D071D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */,
 				CF9F4B381ECD813300E0AF82 /* DropboxAccountSheetController.xib in Resources */,
 				CF4E56CC1D50694000452912 /* PreferencesWindowViewerTab.xib in Resources */,
-				CF04DDDA1E2775D80047B1F9 /* AliasBadgeIcon.icns in Resources */,
 				CF7C7CD21E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */,
 				CF8D0CEC1D9623E000ADFF14 /* RegistrationInfoWindow.xib in Resources */,
 				CF4E56C01D50691A00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,

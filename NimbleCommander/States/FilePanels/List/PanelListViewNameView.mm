@@ -13,7 +13,8 @@
 using namespace nc::panel;
 using nc::utility::FontGeometryInfo;
 
-static const auto g_SymlinkArrowImage = [NSImage imageNamed:@"AliasBadgeIcon"];
+static const auto g_SymlinkArrowImage =
+    [[NSImage alloc] initWithData:[[NSDataAsset alloc] initWithName:@"AliasBadgeIcon"].data];
 
 static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 {
@@ -119,10 +120,9 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     NSRectFill(self.bounds);
     [PanelListViewTableView drawVerticalSeparatorForView:self];
 
-    const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds
-                                                            andGeometry:geometry];
-    const auto text_rect = NSMakeRect(
-        text_segment_rect.origin.x, geometry.TextBaseLine(), text_segment_rect.size.width, 0);
+    const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds andGeometry:geometry];
+    const auto text_rect =
+        NSMakeRect(text_segment_rect.origin.x, geometry.TextBaseLine(), text_segment_rect.size.width, 0);
 
     [m_AttrString drawWithRect:text_rect options:0];
 
@@ -165,11 +165,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     if( vd.qs_highlight_begin != vd.qs_highlight_end ) {
         const short fn_len = static_cast<short>(m_Filename.length);
         if( vd.qs_highlight_begin < fn_len && vd.qs_highlight_end <= fn_len ) {
-            const auto range =
-                NSMakeRange(vd.qs_highlight_begin, vd.qs_highlight_end - vd.qs_highlight_begin);
-            [m_AttrString addAttribute:NSUnderlineStyleAttributeName
-                                 value:@(NSUnderlineStyleSingle)
-                                 range:range];
+            const auto range = NSMakeRange(vd.qs_highlight_begin, vd.qs_highlight_end - vd.qs_highlight_begin);
+            [m_AttrString addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:range];
         }
     }
 
@@ -208,10 +205,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     const auto geometry = self.row.listView.geometry;
     const auto font = self.row.listView.font;
 
-    const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds
-                                                            andGeometry:geometry];
-    auto rc =
-        NSMakeRect(text_segment_rect.origin.x, 0, text_segment_rect.size.width, bounds.size.height);
+    const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds andGeometry:geometry];
+    auto rc = NSMakeRect(text_segment_rect.origin.x, 0, text_segment_rect.size.width, bounds.size.height);
 
     auto fi = FontGeometryInfo(font);
     rc.size.height = fi.LineHeight();
@@ -231,8 +226,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 static bool HasNoModifiers(NSEvent *_event)
 {
     const auto m = _event.modifierFlags;
-    const auto mask = NSEventModifierFlagShift | NSEventModifierFlagControl |
-                      NSEventModifierFlagOption | NSEventModifierFlagCommand;
+    const auto mask =
+        NSEventModifierFlagShift | NSEventModifierFlagControl | NSEventModifierFlagOption | NSEventModifierFlagCommand;
     return (m & mask) == 0;
 }
 
@@ -246,8 +241,7 @@ static bool HasNoModifiers(NSEvent *_event)
 {
     //    used for delayed action to ensure that click was single, not double or more
     static std::atomic_ullong current_ticket = {0};
-    static const std::chrono::nanoseconds delay =
-        std::chrono::milliseconds(int(NSEvent.doubleClickInterval * 1000));
+    static const std::chrono::nanoseconds delay = std::chrono::milliseconds(int(NSEvent.doubleClickInterval * 1000));
 
     const auto my_index = self.row.itemIndex;
     if( my_index < 0 )

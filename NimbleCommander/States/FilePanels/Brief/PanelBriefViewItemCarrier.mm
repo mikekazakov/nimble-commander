@@ -11,7 +11,8 @@
 
 using namespace nc::panel;
 
-static const auto g_SymlinkArrowImage = [NSImage imageNamed:@"AliasBadgeIcon"];
+static const auto g_SymlinkArrowImage =
+    [[NSImage alloc] initWithData:[[NSDataAsset alloc] initWithName:@"AliasBadgeIcon"].data];
 
 static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 {
@@ -129,9 +130,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 
 - (NSRect)calculateTextSegmentFromBounds:(NSRect)bounds
 {
-    const int origin = m_LayoutConstants.icon_size
-                           ? 2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size
-                           : m_LayoutConstants.inset_left;
+    const int origin = m_LayoutConstants.icon_size ? 2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size
+                                                   : m_LayoutConstants.inset_left;
     const auto width = bounds.size.width - origin - m_LayoutConstants.inset_right;
 
     return NSMakeRect(origin, 0, width, bounds.size.height);
@@ -141,7 +141,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 {
     const bool is_odd = int(self.frame.origin.y / bounds.size.height) % 2;
     auto c = is_odd ? nc::CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor()
-    : nc::CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
+                    : nc::CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
     CGContextSetFillColorWithColor(context, c.CGColor);
     CGContextFillRect(context, bounds);
 }
@@ -176,10 +176,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
     /* using additional 0.5 width to eliminame situations, when drawWithRect trims string due to,
     rounding/rendering side effects */
-    const auto text_rect = NSMakeRect(text_segment_rect.origin.x,
-                                      m_LayoutConstants.font_baseline,
-                                      text_segment_rect.size.width + 0.5,
-                                      0);
+    const auto text_rect =
+        NSMakeRect(text_segment_rect.origin.x, m_LayoutConstants.font_baseline, text_segment_rect.size.width + 0.5, 0);
     [m_AttrString drawWithRect:text_rect options:0];
 
     const auto icon_rect = NSMakeRect(m_LayoutConstants.inset_left,
@@ -222,8 +220,8 @@ static NSPoint g_LastMouseDownPos = {};
 static bool HasNoModifiers(NSEvent *_event)
 {
     const auto m = _event.modifierFlags;
-    const auto mask = NSEventModifierFlagShift | NSEventModifierFlagControl |
-                      NSEventModifierFlagOption | NSEventModifierFlagCommand;
+    const auto mask =
+        NSEventModifierFlagShift | NSEventModifierFlagControl | NSEventModifierFlagOption | NSEventModifierFlagCommand;
     return (m & mask) == 0;
 }
 
@@ -233,8 +231,7 @@ static bool HasNoModifiers(NSEvent *_event)
     if( my_index < 0 )
         return;
 
-    m_PermitFieldRenaming =
-        m_Controller.selected && m_Controller.panelActive && HasNoModifiers(event);
+    m_PermitFieldRenaming = m_Controller.selected && m_Controller.panelActive && HasNoModifiers(event);
 
     [m_Controller.briefView.panelView panelItem:my_index mouseDown:event];
 
@@ -252,8 +249,7 @@ static bool HasNoModifiers(NSEvent *_event)
 {
     // used for delayed action to ensure that click was single, not double or more
     static std::atomic_ullong current_ticket = {0};
-    static const std::chrono::nanoseconds delay =
-        std::chrono::milliseconds(int(NSEvent.doubleClickInterval * 1000));
+    static const std::chrono::nanoseconds delay = std::chrono::milliseconds(int(NSEvent.doubleClickInterval * 1000));
 
     const auto my_index = m_Controller.itemIndex;
     if( my_index < 0 )
@@ -363,13 +359,11 @@ static bool HasNoModifiers(NSEvent *_event)
 
     m_AttrString = [[NSMutableAttributedString alloc] initWithString:m_Filename attributes:attrs];
 
-    if( m_QSHighlight.first != m_QSHighlight.second &&
-        m_QSHighlight.first < static_cast<short>(m_Filename.length) &&
+    if( m_QSHighlight.first != m_QSHighlight.second && m_QSHighlight.first < static_cast<short>(m_Filename.length) &&
         m_QSHighlight.second <= static_cast<short>(m_Filename.length) )
         [m_AttrString addAttribute:NSUnderlineStyleAttributeName
                              value:@(NSUnderlineStyleSingle)
-                             range:NSMakeRange(m_QSHighlight.first,
-                                               m_QSHighlight.second - m_QSHighlight.first)];
+                             range:NSMakeRange(m_QSHighlight.first, m_QSHighlight.second - m_QSHighlight.first)];
 
     [self setNeedsDisplay:true];
 }
@@ -378,15 +372,13 @@ static bool HasNoModifiers(NSEvent *_event)
 {
     if( m_QSHighlight != qsHighlight ) {
         m_QSHighlight = qsHighlight;
-        [m_AttrString removeAttribute:NSUnderlineStyleAttributeName
-                                range:NSMakeRange(0, m_AttrString.length)];
+        [m_AttrString removeAttribute:NSUnderlineStyleAttributeName range:NSMakeRange(0, m_AttrString.length)];
         if( m_QSHighlight.first != m_QSHighlight.second &&
             m_QSHighlight.first < static_cast<short>(m_Filename.length) &&
             m_QSHighlight.second <= static_cast<short>(m_Filename.length) )
             [m_AttrString addAttribute:NSUnderlineStyleAttributeName
                                  value:@(NSUnderlineStyleSingle)
-                                 range:NSMakeRange(m_QSHighlight.first,
-                                                   m_QSHighlight.second - m_QSHighlight.first)];
+                                 range:NSMakeRange(m_QSHighlight.first, m_QSHighlight.second - m_QSHighlight.first)];
         [self setNeedsDisplay:true];
     }
 }
@@ -426,10 +418,8 @@ static bool HasNoModifiers(NSEvent *_event)
 {
     const auto bounds = self.bounds;
     const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
-    const auto text_rect = NSMakeRect(text_segment_rect.origin.x,
-                                      m_LayoutConstants.font_baseline,
-                                      text_segment_rect.size.width,
-                                      0);
+    const auto text_rect =
+        NSMakeRect(text_segment_rect.origin.x, m_LayoutConstants.font_baseline, text_segment_rect.size.width, 0);
     const auto rc = [m_AttrString boundingRectWithSize:text_rect.size options:0 context:nil];
     const auto position = [self convertPoint:sender.draggingLocation fromView:nil];
     return position.x < text_rect.origin.x + std::max(rc.size.width, 32.);
@@ -442,8 +432,7 @@ static bool HasNoModifiers(NSEvent *_event)
         return NSDragOperationNone;
 
     if( [self validateDropHitTest:sender] ) {
-        const auto op = [m_Controller.briefView.panelView panelItem:my_index
-                                               operationForDragging:sender];
+        const auto op = [m_Controller.briefView.panelView panelItem:my_index operationForDragging:sender];
         if( op != NSDragOperationNone ) {
             self.isDropTarget = true;
             [self.superview draggingExited:sender];

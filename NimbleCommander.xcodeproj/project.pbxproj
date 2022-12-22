@@ -361,6 +361,10 @@
 		CF67F1B82952034200B92944 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF67F19A2952034200B92944 /* Icon.icns */; };
 		CF67F1BB2952034200B92944 /* Icon-Free.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF67F1B42952034200B92944 /* Icon-Free.icns */; };
 		CF67F1BF2954689000B92944 /* Theme_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF67F1BE2954689000B92944 /* Theme_UT.mm */; };
+		CF67F1C02954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF67F1C52954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */; };
+		CF67F1C12954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF67F1C52954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */; };
+		CF67F1C22954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF67F1C52954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */; };
+		CF67F1C32954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF67F1C52954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */; };
 		CF69CFC51DA20DD600992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CFC31DA20DC200992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF6BF821219140360017CECB /* PanelBriefViewFixedWidthLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF80C219140360017CECB /* PanelBriefViewFixedWidthLayout.mm */; };
 		CF6BF822219140360017CECB /* PanelBriefViewFixedWidthLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF80C219140360017CECB /* PanelBriefViewFixedWidthLayout.mm */; };
@@ -689,10 +693,6 @@
 		CFB7006F28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB7006C28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm */; };
 		CFB7007028B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB7006C28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm */; };
 		CFB7007128B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB7006C28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm */; };
-		CFB7007228B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB7006D28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */; };
-		CFB7007328B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB7006D28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */; };
-		CFB7007428B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB7006D28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */; };
-		CFB7007528B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFB7006D28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */; };
 		CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
@@ -1723,6 +1723,7 @@
 		CF67F19A2952034200B92944 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = NimbleCommander/Resources/Icon.icns; sourceTree = "<group>"; };
 		CF67F1B42952034200B92944 /* Icon-Free.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = "Icon-Free.icns"; path = "NimbleCommander/Resources/Icon-Free.icns"; sourceTree = "<group>"; };
 		CF67F1BE2954689000B92944 /* Theme_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Theme_UT.mm; path = NimbleCommander/Tests/Theme_UT.mm; sourceTree = "<group>"; };
+		CF67F1C42954BF9400B92944 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowThemesTabAutomaticSwitchingSheet.xib; sourceTree = "<group>"; };
 		CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RoutedIO.xcodeproj; path = RoutedIO/RoutedIO.xcodeproj; sourceTree = "<group>"; };
 		CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VFS.xcodeproj; path = VFS/VFS.xcodeproj; sourceTree = "<group>"; };
 		CF6BF80C219140360017CECB /* PanelBriefViewFixedWidthLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedWidthLayout.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedWidthLayout.mm; sourceTree = "<group>"; };
@@ -1883,7 +1884,6 @@
 		CFB66FC81D88F9D40017D2A0 /* RegistrationInfoWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RegistrationInfoWindow.mm; path = NimbleCommander/GeneralUI/RegistrationInfoWindow.mm; sourceTree = SOURCE_ROOT; };
 		CFB7006B28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTabAutomaticSwitchingSheet.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTabAutomaticSwitchingSheet.h; sourceTree = "<group>"; };
 		CFB7006C28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTabAutomaticSwitchingSheet.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTabAutomaticSwitchingSheet.mm; sourceTree = "<group>"; };
-		CFB7006D28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = PreferencesWindowThemesTabAutomaticSwitchingSheet.xib; path = NimbleCommander/Preferences/PreferencesWindowThemesTabAutomaticSwitchingSheet.xib; sourceTree = "<group>"; };
 		CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowToolsTab.h; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.h; sourceTree = SOURCE_ROOT; };
 		CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowToolsTab.mm; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.mm; sourceTree = SOURCE_ROOT; };
 		CFB9F106201AEDB800FC65D8 /* ClosedPanelsHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClosedPanelsHistory.h; path = NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistory.h; sourceTree = SOURCE_ROOT; };
@@ -2280,7 +2280,7 @@
 				CF7C7CD41E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib */,
 				CFB7006B28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.h */,
 				CFB7006C28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm */,
-				CFB7006D28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */,
+				CF67F1C52954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */,
 				CF27F9371E31B366009A3ACF /* PreferencesWindowThemesTabModel.h */,
 				CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */,
 				CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */,
@@ -3662,7 +3662,7 @@
 				CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */,
 				CF8D0CFA1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */,
 				CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
-				CFB7007428B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */,
+				CF67F1C22954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */,
 				CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF4E56BB1D5068F700452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF36DBE21F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */,
@@ -3717,7 +3717,7 @@
 				CF7C7CBE1E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */,
 				CF9F4B301ECD810C00E0AF82 /* FavoritesWindowController.xib in Resources */,
 				CF5BB36A2581714700486C49 /* ProFeaturesWindowController.xib in Resources */,
-				CFB7007228B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */,
+				CF67F1C02954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */,
 				CF4E56A91D5068D800452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */,
 				CFA53A4C1D433E2A00C562A7 /* Media.xcassets in Resources */,
@@ -3796,7 +3796,7 @@
 				CF9F4B3B1ECD814800E0AF82 /* ConnectToServer.xib in Resources */,
 				CFCCFBB31A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */,
-				CFB7007328B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */,
+				CF67F1C12954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */,
 				CF7C7CC91E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
 				CF8D0CE31D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
 				CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
@@ -3849,7 +3849,7 @@
 				CF8D0CFB1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */,
 				CF7C7CC01E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */,
 				CF7C7CCC1E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
-				CFB7007528B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */,
+				CF67F1C32954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib in Resources */,
 				CF9F4B441ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */,
 				CF4E56BA1D5068F600452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF45CA2F1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
@@ -4998,6 +4998,15 @@
 			name = FindFilesSheetController.xib;
 			path = NimbleCommander/States/FilePanels;
 			sourceTree = SOURCE_ROOT;
+		};
+		CF67F1C52954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF67F1C42954BF9400B92944 /* Base */,
+			);
+			name = PreferencesWindowThemesTabAutomaticSwitchingSheet.xib;
+			path = NimbleCommander/Preferences;
+			sourceTree = "<group>";
 		};
 		CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */ = {
 			isa = PBXVariantGroup;

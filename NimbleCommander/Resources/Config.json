@@ -494,7 +494,7 @@
     "themes": {
         "automaticSwitching": {
             "enabled": true,
-            "light": "Modern",
+            "light": "Light",
             "dark": "Dark"
         },
         "themes_v1": [

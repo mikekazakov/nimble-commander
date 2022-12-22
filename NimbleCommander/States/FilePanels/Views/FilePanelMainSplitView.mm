@@ -450,7 +450,7 @@ static constexpr auto g_DividerThickness = 1.;
 - (void)splitViewDidResizeSubviews:(NSNotification *)_notification
 {
     if( !self.isLeftCollapsed && !self.isRightCollapsed  ) {
-        NSView *left = [self.subviews objectAtIndex:0];        
+        NSView *left = [self.subviews objectAtIndex:0];
         const auto left_width = left.frame.size.width;
         const auto full_width = self.frame.size.width;
         if( left_width > 0. ) {

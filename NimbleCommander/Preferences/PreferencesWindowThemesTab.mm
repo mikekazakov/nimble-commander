@@ -111,7 +111,7 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     col.width = 140;
     col.minWidth = 140;
     col.maxWidth = 140;
-    col.title = @"Theme"; // TODO: localize!
+    col.title = NSLocalizedString(@"Theme", "Preferences window themes list");
     col.resizingMask = NSTableColumnNoResizing;
     col.editable = false;
     [self.themesTable addTableColumn:col];
@@ -124,7 +124,6 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     col.width = 210;
     col.minWidth = 210;
     col.maxWidth = 210;
-    col.title = @"title"; // TODO: localize!
     col.resizingMask = NSTableColumnNoResizing;
     col.editable = false;
     [self.outlineView addTableColumn:col];
@@ -136,7 +135,6 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     col.width = 300;
     col.minWidth = 300;
     col.maxWidth = 300;
-    col.title = @"value"; // TODO: localize!
     col.resizingMask = NSTableColumnNoResizing;
     col.editable = false;
     [self.outlineView addTableColumn:col];

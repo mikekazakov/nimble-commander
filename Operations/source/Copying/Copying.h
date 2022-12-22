@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -18,6 +18,8 @@ public:
             const std::shared_ptr<VFSHost> &_destination_host,
             const CopyingOptions &_options);
     ~Copying();
+
+    void SetCallbackHooks(const CopyingJobCallbacks *_callbacks);
 
 private:
     using CB = CopyingJobCallbacks;
@@ -46,14 +48,12 @@ private:
                               const std::string &_path,
                               std::shared_ptr<AsyncDialogResponse> _ctx);
 
-    CB::CantAccessSourceItemResolution
-    OnCantAccessSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    CB::CantAccessSourceItemResolution OnCantAccessSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     CB::CantOpenDestinationFileResolution
     OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
-    CB::SourceFileReadErrorResolution
-    OnSourceFileReadError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    CB::SourceFileReadErrorResolution OnSourceFileReadError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     CB::DestinationFileReadErrorResolution
     OnDestinationFileReadError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
@@ -70,18 +70,14 @@ private:
     CB::CantDeleteDestinationFileResolution
     OnCantDeleteDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
-    CB::CantDeleteSourceFileResolution
-    OnCantDeleteSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    CB::CantDeleteSourceFileResolution OnCantDeleteSourceItem(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     CB::NotADirectoryResolution OnNotADirectory(const std::string &_path, VFSHost &_vfs);
-    
-    CB::UnlockErrorResolution
-    OnUnlockError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
-    CB::LockedItemResolution OnLockedItemIssue(int _vfs_error,
-                                               const std::string &_path,
-                                               VFSHost &_vfs,
-                                               LockedItemCause _cause);
+    CB::UnlockErrorResolution OnUnlockError(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+
+    CB::LockedItemResolution
+    OnLockedItemIssue(int _vfs_error, const std::string &_path, VFSHost &_vfs, LockedItemCause _cause);
 
     void OnLockedItemIssueUI(int _err,
                              const std::string &_path,
@@ -93,6 +89,7 @@ private:
     void OnStageChanged();
 
     std::unique_ptr<CopyingJob> m_Job;
+    const CopyingJobCallbacks *m_CallbackHooks = nullptr;
     CopyingOptions::ExistBehavior m_ExistBehavior;
     CopyingOptions::LockedItemBehavior m_LockedBehaviour;
     bool m_SkipAll = false;

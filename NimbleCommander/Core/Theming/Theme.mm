@@ -89,16 +89,13 @@ struct Theme::Internals {
     NSColor *m_ViewerTextColor;
     NSColor *m_ViewerSelectionColor;
     NSColor *m_ViewerBackgroundColor;
-
-    static ThemeAppearance ExtractAppearance(const nc::config::Value &_doc) noexcept;
 };
 
-// TODO: unit tests!!!
-Theme::Theme(const void *_theme_data, const void *_backup_theme_data) : I(std::make_unique<Internals>())
+Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_backup_theme_data)
+    : I(std::make_unique<Internals>())
 {
-    assert(_theme_data && _backup_theme_data);
-    const auto &doc = *static_cast<const nc::config::Value *>(_theme_data);
-    const auto &backup = *static_cast<const nc::config::Value *>(_backup_theme_data);
+    const auto &doc = _theme_data;
+    const auto &backup = _backup_theme_data;
 
     const auto ExtractColor = [&](const char *_path) {
         if( auto v = ThemePersistence::ExtractColor(doc, _path) )
@@ -116,7 +113,7 @@ Theme::Theme(const void *_theme_data, const void *_backup_theme_data) : I(std::m
     };
 
     I->m_Generation = g_LastGeneration++;
-    I->m_ThemeAppearanceType = Internals::ExtractAppearance(doc);
+    I->m_ThemeAppearanceType = ThemePersistence::ExtractAppearance(doc, "themeAppearance");
     I->m_Appearance = I->m_ThemeAppearanceType == ThemeAppearance::Light
                           ? [NSAppearance appearanceNamed:NSAppearanceNameAqua]
                           : [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
@@ -600,25 +597,6 @@ NSColor *Theme::FilePanelsGeneralTopSeparatorColor() const noexcept
 NSColor *Theme::FilePanelsBriefGridColor() const noexcept
 {
     return I->m_FilePanelsBriefGridColor;
-}
-
-ThemeAppearance Theme::Internals::ExtractAppearance(const nc::config::Value &_doc) noexcept
-{
-    auto cr = _doc.FindMember("themeAppearance");
-    if( cr == _doc.MemberEnd() )
-        return ThemeAppearance::Light;
-
-    if( !cr->value.IsString() )
-        return ThemeAppearance::Light;
-
-    const auto val = cr->value.GetString();
-
-    if( "aqua"sv == val || "light"sv == val )
-        return ThemeAppearance::Light;
-    if( "dark"sv == val )
-        return ThemeAppearance::Dark;
-
-    return ThemeAppearance::Light;
 }
 
 }

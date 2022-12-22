@@ -324,3 +324,22 @@ TEST_CASE(PREFIX "Picking a new name for a duplicate theme")
     CHECK( man.SuitableNameForNewTheme("") == "" );
     CHECK( man.SuitableNameForNewTheme(" ") == " " );
 }
+
+TEST_CASE(PREFIX "Renames 'Modern' to 'Light'")
+{
+    const auto json = "\
+    {\
+        'current': 'Modern',\
+        'themes': {\
+            'themes_v1': [\
+                {'themeName': 'Modern'},\
+                {'themeName': 'second'}\
+            ]\
+        }\
+    }\
+    ";
+    ConfigImpl config{ReplQuotes(json), MakeDummyStorage()};
+    ThemesManager man(config, "current", "themes");
+    CHECK(man.ThemeNames() == std::vector<std::string>{"Light", "second"});
+    CHECK( man.SelectedThemeName() == "Light");
+}

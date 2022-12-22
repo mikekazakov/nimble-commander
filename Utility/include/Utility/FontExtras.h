@@ -54,6 +54,7 @@ private:
 
 + (NSFont *)fontWithStringDescription:(NSString *)_description;
 - (NSString *)toStringDescription;
+- (std::string)toStdStringDescription;
 - (bool)isSystemFont;
 
 @end

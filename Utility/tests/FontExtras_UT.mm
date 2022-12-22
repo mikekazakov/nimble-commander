@@ -5,7 +5,7 @@
 
 using nc::utility::FontGeometryInfo;
 
-#define PREFIX "nc::utility::FontGeometryInfo "
+#define PREFIX "FontExtras "
 
 TEST_CASE(PREFIX "CalculateStringsWidths works for all sizes of input")
 {

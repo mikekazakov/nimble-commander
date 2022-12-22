@@ -95,6 +95,9 @@ using NotificationsMapping =
     {"viewerBackgroundColor", TMN::Viewer},
 };
 
+static std::string MigrateThemeName(const std::string &_name);
+static std::optional<std::string> ExtractThemeNameAppearance(const nc::config::Value &_doc);
+
 ThemesManager::ThemesManager(config::Config &_config,
                              std::string_view _current_theme_path,
                              std::string_view _themes_storage_path)
@@ -104,6 +107,7 @@ ThemesManager::ThemesManager(config::Config &_config,
     LoadDefaultThemes();
     LoadThemes();
     m_SelectedThemeName = m_Config.Has(m_CurrentThemePath) ? m_Config.GetString(m_CurrentThemePath) : "Light";
+    m_SelectedThemeName = MigrateThemeName(m_SelectedThemeName);
     UpdateCurrentTheme();
     LoadSwitchingSettings();
 }
@@ -117,21 +121,17 @@ void ThemesManager::LoadThemes()
     for( auto i = themes.Begin(), e = themes.End(); i != e; ++i ) {
         if( !i->IsObject() )
             continue;
-        const std::string name = [&]() -> std::string {
-            if( !i->HasMember(g_NameKey) || !(*i)[g_NameKey].IsString() )
-                return "";
-            return (*i)[g_NameKey].GetString();
-        }();
-        if( name.empty() )
+        const std::optional<std::string> name = ExtractThemeNameAppearance(*i);
+        if( !name )
             continue;
-        if( m_Themes.contains(name) )
+        if( m_Themes.contains(*name) )
             continue; // broken config - duplicate theme declaration, prohibit such stuff
 
         nc::config::Document doc;
         doc.CopyFrom(*i, nc::config::g_CrtAllocator);
 
-        m_Themes.emplace(name, std::make_shared<nc::config::Document>(std::move(doc)));
-        m_OrderedThemeNames.emplace_back(name);
+        m_Themes.emplace(*name, std::make_shared<nc::config::Document>(std::move(doc)));
+        m_OrderedThemeNames.emplace_back(*name);
     }
 }
 
@@ -144,19 +144,15 @@ void ThemesManager::LoadDefaultThemes()
     for( auto i = themes.Begin(), e = themes.End(); i != e; ++i ) {
         if( !i->IsObject() )
             continue;
-        const std::string name = [&]() -> std::string {
-            if( !i->HasMember(g_NameKey) || !(*i)[g_NameKey].IsString() )
-                return "";
-            return (*i)[g_NameKey].GetString();
-        }();
-        if( name.empty() )
+        const std::optional<std::string> name = ExtractThemeNameAppearance(*i);
+        if( !name )
             continue;
 
         nc::config::Document doc;
         doc.CopyFrom(*i, nc::config::g_CrtAllocator);
 
-        m_DefaultThemes.emplace(name, std::make_shared<nc::config::Document>(std::move(doc)));
-        m_OrderedDefaultThemeNames.emplace_back(name);
+        m_DefaultThemes.emplace(*name, std::make_shared<nc::config::Document>(std::move(doc)));
+        m_OrderedDefaultThemeNames.emplace_back(*name);
     }
 }
 
@@ -245,8 +241,8 @@ void ThemesManager::UpdateCurrentTheme()
 
     // comprose new theme object
     auto theme_data = SelectedThemeData();
-    auto new_theme = std::make_shared<Theme>(static_cast<const void *>(theme_data.get()),
-                                             static_cast<const void *>(BackupThemeData(m_SelectedThemeName).get()));
+    assert(theme_data);
+    auto new_theme = std::make_shared<Theme>(*theme_data, *BackupThemeData(m_SelectedThemeName));
 
     // release current theme some time after - dispatch release with 10s delay
     auto old_theme = g_CurrentTheme;
@@ -472,7 +468,7 @@ bool ThemesManager::RemoveTheme(const std::string &_theme_name)
 
     if( m_SelectedThemeName == _theme_name )
         SelectTheme(m_OrderedDefaultThemeNames.at(0));
-    
+
     if( m_AutoLightThemeName == _theme_name ) {
         m_AutoLightThemeName = "Light"; // Assuming we always have the Light theme
         WriteSwitchingSettings();
@@ -549,7 +545,7 @@ void ThemesManager::NotifyAboutSystemAppearanceChange(ThemeAppearance _appearanc
 {
     if( m_AutomaticSwitchingEnabled == false )
         return; // nothing to do, ignore the notification
-    
+
     if( _appearance == ThemeAppearance::Light ) {
         SelectTheme(m_AutoLightThemeName); // bogus / empty names are ok here
     }
@@ -566,7 +562,7 @@ void ThemesManager::LoadSwitchingSettings()
     const std::string light = m_Config.GetString(m_ThemesStoragePath + ".automaticSwitching.light");
     // empty if something goes wrong
     const std::string dark = m_Config.GetString(m_ThemesStoragePath + ".automaticSwitching.dark");
-    
+
     m_AutomaticSwitchingEnabled = enabled;
     m_AutoLightThemeName = light;
     m_AutoDarkThemeName = dark;
@@ -577,6 +573,23 @@ void ThemesManager::WriteSwitchingSettings()
     m_Config.Set(m_ThemesStoragePath + ".automaticSwitching.enabled", m_AutomaticSwitchingEnabled);
     m_Config.Set(m_ThemesStoragePath + ".automaticSwitching.light", m_AutoLightThemeName);
     m_Config.Set(m_ThemesStoragePath + ".automaticSwitching.dark", m_AutoDarkThemeName);
+}
+
+static std::string MigrateThemeName(const std::string &_name)
+{
+    // specifially manually 'migrate' the old theme name to the new one
+    return _name == "Modern" ? "Light" : _name;
+}
+
+static std::optional<std::string> ExtractThemeNameAppearance(const nc::config::Value &_doc)
+{
+    auto it = _doc.FindMember(g_NameKey);
+    if( it == _doc.MemberEnd() )
+        return {};
+    if( !it->value.IsString() )
+        return {};
+
+    return MigrateThemeName(it->value.GetString());
 }
 
 } // namespace nc

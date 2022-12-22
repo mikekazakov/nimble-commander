@@ -79,10 +79,12 @@ ThemeAppearance ThemePersistence::ExtractAppearance(const Value &_doc, const cha
 
     if( !cr->value.IsString() )
         return ThemeAppearance::Light;
+    
+    const std::string_view val = cr->value.GetString();
 
-    if( "aqua"s == cr->value.GetString() )
+    if( val == "aqua" || val == "light" )
         return ThemeAppearance::Light;
-    if( "dark"s == cr->value.GetString() )
+    if( val == "dark" )
         return ThemeAppearance::Dark;
     // vibrant light some day maybe
     return ThemeAppearance::Light;

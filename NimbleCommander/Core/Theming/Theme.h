@@ -7,6 +7,18 @@
 #include <Cocoa/Cocoa.h>
 #include "Appearance.h"
 
+namespace rapidjson {
+template <typename E, typename A>
+class GenericValue;
+template <typename C>
+struct UTF8;
+class CrtAllocator;
+} // namespace rapidjson
+
+namespace nc::config {
+using Value = rapidjson::GenericValue<rapidjson::UTF8<char>, rapidjson::CrtAllocator>;
+}
+
 namespace nc::panel {
 struct PresentationItemsColoringRule;
 }
@@ -25,8 +37,7 @@ const Theme &CurrentTheme() noexcept;
 class Theme
 {
 public:
-    // workaround to exclude rapidjson from header
-    Theme(const /*nc::config::Value*/ void *_1, const /*nc::config::Value*/ void *_2);
+    Theme(const nc::config::Value &_theme_data, const nc::config::Value &_backup_theme_data);
     ~Theme();
 
     // General info querying ///////////////////////////////////////////////////////////////////////

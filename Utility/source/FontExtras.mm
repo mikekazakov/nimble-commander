@@ -81,6 +81,11 @@ static bool IsSystemFont(NSFont *_font)
     return [NSString stringWithFormat:@"%@, %s", self.fontName, std::to_string(pt).c_str()];
 }
 
+- (std::string)toStdStringDescription
+{
+    return [self toStringDescription].UTF8String;
+}
+
 @end
 
 namespace nc::utility {

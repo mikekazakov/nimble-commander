@@ -523,9 +523,7 @@ bool ThemesManager::RenameTheme(const std::string &_theme_name, const std::strin
 
 bool ThemesManager::DoesAutomaticSwitching() const
 {
-    //    bool enabled;
     return m_AutomaticSwitchingEnabled;
-    //    !m_AutoLightThemeName.empty() && !m_AutoDarkThemeName.empty();
 }
 
 void ThemesManager::SetAutomaticSwitching(const AutoSwitchingSettings &_as)

@@ -10,22 +10,24 @@
 #include <Habanero/dispatch_cpp.h>
 #include <cmath>
 
-static const auto g_MidGuideGap = 24.;
-static const auto g_MinPanelWidth = 120;
-static const auto g_ResizingGran = 14.;
+static constexpr auto g_MidGuideGap = 24.;
+static constexpr auto g_MinPanelWidth = 120;
+static constexpr auto g_ResizingGran = 14.;
+static constexpr auto g_DividerThickness = 1.;
 
 @implementation FilePanelMainSplitView {
     // if there's no overlays - these will be nils
     // if any part becomes overlayed - basic view is backed up in this array
     FilePanelsTabbedHolder *m_BasicViews[2];
     nc::ThemesManager::ObservationTicket m_ThemeChangesObservation;
+    double m_PreCollapseProp; // full width minus divider divided by left width
 }
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if( self ) {
-        // Initialization code here.
+        m_PreCollapseProp = 0.5;
         self.vertical = true;
         self.dividerStyle = NSSplitViewDividerStyleThin;
         self.delegate = self;
@@ -44,7 +46,7 @@ static const auto g_ResizingGran = 14.;
 
 - (CGFloat)dividerThickness
 {
-    return 1;
+    return g_DividerThickness;
 }
 
 - (BOOL)isOpaque
@@ -381,12 +383,16 @@ static const auto g_ResizingGran = 14.;
     NSView *left = [self.subviews objectAtIndex:0];
     NSView *right = [self.subviews objectAtIndex:1];
     left.hidden = false;
-    CGFloat dividerThickness = self.dividerThickness;
-    NSRect leftFrame = left.frame;
-    NSRect rightFrame = right.frame;
-    rightFrame.size.width = rightFrame.size.width - leftFrame.size.width - dividerThickness;
-    rightFrame.origin.x = leftFrame.size.width + dividerThickness;
-    right.frame = rightFrame;
+    
+    NSRect left_frame = left.frame;
+    NSRect right_frame = right.frame;
+    const double full_width = self.frame.size.width;
+    left_frame.size.width = std::round(full_width - g_DividerThickness) / m_PreCollapseProp;
+    right_frame.origin.x = left_frame.size.width + g_DividerThickness;
+    right_frame.size.width = full_width - right_frame.origin.x;
+    
+    left.frameSize = left_frame.size;
+    right.frame = right_frame;
     [self display];
 }
 
@@ -410,13 +416,16 @@ static const auto g_ResizingGran = 14.;
     NSView *left = [self.subviews objectAtIndex:0];
     NSView *right = [self.subviews objectAtIndex:1];
     right.hidden = false;
-    CGFloat dividerThickness = self.dividerThickness;
-    NSRect leftFrame = left.frame;
-    NSRect rightFrame = right.frame;
-    leftFrame.size.width = leftFrame.size.width - rightFrame.size.width - dividerThickness;
-    rightFrame.origin.x = leftFrame.size.width + dividerThickness;
-    left.frameSize = leftFrame.size;
-    right.frame = rightFrame;
+    
+    NSRect left_frame = left.frame;
+    NSRect right_frame = right.frame;
+    const double full_width = self.frame.size.width;
+    left_frame.size.width = std::round(full_width - g_DividerThickness) / m_PreCollapseProp;
+    right_frame.origin.x = left_frame.size.width + g_DividerThickness;
+    right_frame.size.width = full_width - right_frame.origin.x;
+        
+    left.frameSize = left_frame.size;
+    right.frame = right_frame;
     [self display];
 }
 
@@ -436,6 +445,18 @@ static const auto g_ResizingGran = 14.;
     }
 
     return true;
+}
+
+- (void)splitViewDidResizeSubviews:(NSNotification *)_notification
+{
+    if( !self.isLeftCollapsed && !self.isRightCollapsed  ) {
+        NSView *left = [self.subviews objectAtIndex:0];        
+        const auto left_width = left.frame.size.width;
+        const auto full_width = self.frame.size.width;
+        if( left_width > 0. ) {
+            m_PreCollapseProp = (full_width - g_DividerThickness) / left_width;
+        }
+    }
 }
 
 @end

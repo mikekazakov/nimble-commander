@@ -179,6 +179,9 @@
 "Failed to set file time" = "Не удалось установить время файла";
 
 /* No comment provided by engineer. */
+"Failed to unlock an item" = "Не удалось разблокировать объект";
+
+/* No comment provided by engineer. */
 "Failed to write a file" = "Не удалось записать файл";
 
 /* No comment provided by engineer. */
@@ -225,6 +228,9 @@
 
 /* No comment provided by engineer. */
 "Symbolic link '%@' points at:" = "Символическая ссылка '%@' указывает на:";
+
+/* No comment provided by engineer. */
+"Unlock" = "Разблокировать";
 
 /* No comment provided by engineer. */
 "Verifying operation result.." = "Верификация результата...";

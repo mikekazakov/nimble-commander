@@ -36,6 +36,7 @@
 		CF5C1D8F255EEA6A00ADE703 /* TextModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255A2222B6D40097F9A1 /* TextModeFrame.cpp */; };
 		CF5C1D90255EEA6A00ADE703 /* TextModeFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF13256322287F250097F9A1 /* TextModeFrame.mm */; };
 		CF61F2FC263D610A009FF900 /* TextMoveView_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF61F2FB263D610A009FF900 /* TextMoveView_UT.mm */; };
+		CF739C4129564D72004758C5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF739C3F29564D72004758C5 /* Localizable.strings */; };
 		CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */; };
 		CF9BF90D226CF99000AD36D9 /* HexModeFrame_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF90C226CF99000AD36D9 /* HexModeFrame_UT.cpp */; };
 		CFA9998D26468A4300F72E93 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA9998C26468A4300F72E93 /* Log.cpp */; };
@@ -87,6 +88,7 @@
 		CF5C1D2C255ED7D300ADE703 /* ViewerResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ViewerResources.plist; path = resources/ViewerResources.plist; sourceTree = "<group>"; };
 		CF5C1D70255EEA5200ADE703 /* libViewer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libViewer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF61F2FB263D610A009FF900 /* TextMoveView_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextMoveView_UT.mm; path = tests/TextMoveView_UT.mm; sourceTree = "<group>"; };
+		CF739C4029564D72004758C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CF9BF8FF2269E4CD00AD36D9 /* HexModeProcessing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeProcessing.h; path = include/Viewer/HexModeProcessing.h; sourceTree = "<group>"; };
 		CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeProcessing.cpp; path = source/HexModeProcessing.cpp; sourceTree = "<group>"; };
 		CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeProcessing_UT.cpp; path = tests/HexModeProcessing_UT.cpp; sourceTree = "<group>"; };
@@ -206,6 +208,7 @@
 		CFD79A7921F65A710043A26D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CF739C3F29564D72004758C5 /* Localizable.strings */,
 				CFD79B0821FE4F430043A26D /* InternalViewerController.xib */,
 				CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */,
 				CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */,
@@ -360,6 +363,7 @@
 				CF5C1D6C255EEA5200ADE703 /* Headers */,
 				CF5C1D6D255EEA5200ADE703 /* Sources */,
 				CF5C1D6E255EEA5200ADE703 /* Frameworks */,
+				CF739C4229564D72004758C5 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -442,6 +446,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CF739C4229564D72004758C5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF739C4129564D72004758C5 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -511,6 +523,14 @@
 			children = (
 				CF2343F122CDDFC600F516CB /* Base */,
 				CF2343F322CDDFCF00F516CB /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		CF739C3F29564D72004758C5 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF739C4029564D72004758C5 /* ru */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

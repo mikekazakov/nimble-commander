@@ -1,3 +1,6 @@
+/* Class = "NSButton"; ibShadowedToolTip = "^K"; ObjectID = "0Kp-zw-kW9"; */
+"0Kp-zw-kW9.ibShadowedToolTip" = "^K";
+
 /* Class = "NSMenuItem"; ibShadowedToolTip = "Otherwise the item will be skipped"; ObjectID = "0un-JC-4pV"; */
 "0un-JC-4pV.ibShadowedToolTip" = "Иначе объект будет пропущен";
 
@@ -13,8 +16,14 @@
 /* Class = "NSButtonCell"; title = "Overwrite"; ObjectID = "8Xz-24-O4V"; */
 "8Xz-24-O4V.title" = "Заменить";
 
+/* Class = "NSButton"; ibShadowedToolTip = "^S"; ObjectID = "10"; */
+"10.ibShadowedToolTip" = "^S";
+
 /* Class = "NSButtonCell"; title = "Skip"; ObjectID = "12"; */
 "12.title" = "Пропустить";
+
+/* Class = "NSButton"; ibShadowedToolTip = "^P"; ObjectID = "15"; */
+"15.ibShadowedToolTip" = "^P";
 
 /* Class = "NSButtonCell"; title = "Append"; ObjectID = "16"; */
 "16.title" = "Дописать";
@@ -39,4 +48,7 @@
 
 /* Class = "NSTextFieldCell"; title = "File already exists"; ObjectID = "120"; */
 "120.title" = "Файл уже существует";
+
+/* Class = "NSButton"; ibShadowedToolTip = "^O"; ObjectID = "B89-N8-gQP"; */
+"B89-N8-gQP.ibShadowedToolTip" = "^O";
 

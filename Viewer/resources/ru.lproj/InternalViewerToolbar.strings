@@ -1,3 +1,6 @@
+/* Class = "NSTextFieldCell"; title = "File Size"; ObjectID = "4IW-jW-WfU"; */
+"4IW-jW-WfU.title" = "Размер файла";
+
 /* Class = "NSToolbarItem"; label = "File Size"; ObjectID = "Erp-uX-pUl"; */
 "Erp-uX-pUl.label" = "Размер файла";
 
@@ -33,6 +36,9 @@
 
 /* Class = "NSToolbarItem"; paletteLabel = "Mode"; ObjectID = "WQ7-Gl-Tam"; */
 "WQ7-Gl-Tam.paletteLabel" = "Режим";
+
+/* Class = "NSButtonCell"; title = "Position"; ObjectID = "xf4-mb-WQH"; */
+"xf4-mb-WQH.title" = "Позиция";
 
 /* Class = "NSButtonCell"; title = "Line wrap"; ObjectID = "xtS-o9-gcA"; */
 "xtS-o9-gcA.title" = "Заворачивать строки";

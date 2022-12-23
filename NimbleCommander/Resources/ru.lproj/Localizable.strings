@@ -17,10 +17,10 @@
 "__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" = "Дата изменения";
 
 /* (No Comment) */
-"__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Имя";
+"__PANELVIEW_LIST_COLUMN_TITLE_EXTENSION" = "Расширение";
 
 /* (No Comment) */
-"__PANELVIEW_LIST_COLUMN_TITLE_EXTENSION" = "Расширение";
+"__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Имя";
 
 /* (No Comment) */
 "__PANELVIEW_LIST_COLUMN_TITLE_SIZE" = "Размер";
@@ -64,6 +64,9 @@
 /* Asking user for confirmation on erasing custom settings - message */
 "Are you sure you want to reset settings to defaults?" = "Вы действительно хотите сбросить настройки к стандартным?";
 
+/* Asking user for confirmation on reverting a standard theme - message */
+"Are you sure you want to revert the changes of this theme?" = "Вы действительно хотите сбросить изменения этой темы?";
+
 /* Brief System Information overlay title */
 "Brief System Information" = "Краткий обзор системы";
 
@@ -73,13 +76,13 @@
 /* No comment provided by engineer. */
 "Cancel" = "Отмена";
 
-/* Menu item option in internal viewer search */
-"Case-sensitive search" = "Поиск с учетом регистра";
+/* No comment provided by engineer. */
+"Case Sensitive" = "C учетом регистра";
 
 /* Menu item title for check if any Nimble Commander updates are available */
 "Check for Updates..." = "Проверить наличие обновлений...";
 
-/* Menu item title in internal viewer search */
+/* No comment provided by engineer. */
 "Clear Recents" = "Очистить недавние поиски";
 
 /* Asking the user to grant filesystem access for NC */
@@ -119,9 +122,6 @@
 /* Brief System Information cpu box title */
 "CPU" = "ЦП";
 
-/* Title for deselection by mask popup */
-"Deselect files by mask:" = "Снять выделение по маске:";
-
 /* Menu item title for disabling an admin mode */
 "Disable Admin Mode" = "Выключить режим администратора";
 
@@ -160,6 +160,12 @@
 
 /* Favorites popup menu subtitle in file panels */
 "Favorites" = "Избранное";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Focus Left Panel" = "Файловые панели ▶ Фокус на левую панель";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Focus Right Panel" = "Файловые панели ▶ Фокус на правую панель";
 
 /* No comment provided by engineer. */
 "File Panels ▶ Go Into Folder" = "Файловые панели ▶ Перейти в папку";
@@ -296,9 +302,6 @@
 /* Asking user to provide a rating */
 "How are we doing?" = "Ваше мнение о NC?";
 
-/* Note for a social network share */
-"I use Nimble Commander, a great file manager for macOS! http://magnumbytes.com/" = "Я использую Nimble Commander! http://magnumbytes.com/";
-
 /* Brief System Information idle label title */
 "Idle:" = "Свободно:";
 
@@ -314,6 +317,12 @@
 /* Brief System Information mac model label title */
 "Mac Model:" = "Модель Mac:";
 
+/* Find file masks history - plain mask */
+"Mask “%@”" = "Маска “%@”";
+
+/* Placeholder prompt for a filemask */
+"Mask: *, or *.t?t, or *.txt,*.jpg" = "Маска: *, или *.t?t, или *.txt,*.jpg";
+
 /* No comment provided by engineer. */
 "N/A" = "Н/Д";
 
@@ -327,6 +336,9 @@
 "No" = "Нет";
 
 /* No comment provided by engineer. */
+"Not Containing" = "Не содержит";
+
+/* No comment provided by engineer. */
 "OK" = "ОК";
 
 /* Open an item */
@@ -337,6 +349,9 @@
 
 /* Toolbar palette */
 "Operations" = "Операции";
+
+/* No comment provided by engineer. */
+"Options" = "Настройки";
 
 /* Upper-dirs popup menu title in file panels */
 "Parent Folders" = "Родительские папки";
@@ -357,13 +372,22 @@
 "RAM" = "Память";
 
 /* No comment provided by engineer. */
+"Recent Searches" = "Недавние поиски";
+
+/* No comment provided by engineer. */
 "Recently Closed" = "Недавно закрытые";
+
+/* Find file masks history - regex */
+"RegEx “%@”" = "RegEx “%@”";
+
+/* Placeholder prompt for a regex */
+"Regular expression" = "Регулярное выражение";
+
+/* No comment provided by engineer. */
+"Regular Expression" = "Регулярное выражение";
 
 /* Toolbar palette */
 "Right GoTo" = "Правый Переход";
-
-/* Title for selection by mask popup */
-"Select files by mask:" = "Выделить по маске:";
 
 /* Informative text for a bottom information bar in panels, showing size of selection */
 "Selected %@ in %@ files" = "Выделено %1$@ в %2$@ файлах";
@@ -413,6 +437,9 @@
 /* Menu item title */
 "Show Toolbar" = "Показать панель инструментов";
 
+/* Tooltip for a regex filename match */
+"Specify a regular expression to match filenames with. (^M)" = "Укажите регулярное выражения для поиска имен файлов. (^M)";
+
 /* User action to stop running actions and close window */
 "Stop and Close" = "Остановить и закрыть";
 
@@ -442,6 +469,9 @@
 
 /* Asking user to close window with some operations running */
 "The window has running operations. Do you want to stop them and close the window?" = "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?";
+
+/* Preferences window themes list */
+"Theme" = "Тема";
 
 /* Asking the user for confirmation on deleting the external editor - informative text
    Asking the user for confirmation on deleting the external tool - message */
@@ -474,9 +504,6 @@
 /* Informative text when user is entering an invalid filename */
 "Try using a name with fewer characters or without punctuation marks." = "Попытайтесь использовать имя с меньшим количеством символов или без знаков пунктуации.";
 
-/* No comment provided by engineer. */
-"Unable to authorize" = "Не удалось авторизовать";
-
 /* Informing a user that NC can't connect to network share */
 "Unable to connect to a network share" = "Не удалось подключиться к сетевой папке";
 
@@ -489,6 +516,9 @@
 /* Brief System Information uptime label title */
 "Uptime:" = "Аптайм:";
 
+/* Tooltip for mask filename match */
+"Use \"*\" for multiple-character wildcard, \"?\" for single-character wildcard and \",\" to specify more than one mask. (^M)" = "Используйте \"*\" для подстановки нескольких символов, \"?\" для подстановки одного символа и \",\" чтобы указать больше одной маски. (^M)";
+
 /* Brief System Information used label title */
 "Used:" = "Используемая:";
 
@@ -499,10 +529,10 @@
 "User:" = "Пользователь:";
 
 /* No comment provided by engineer. */
-"Viewer ▶ Show GoTo" = "Просмотрщик ▶ Показать Переход";
+"Viewer ▶ Refresh" = "Просмотрщик ▶ Обновить";
 
 /* No comment provided by engineer. */
-"Viewer ▶ Refresh" = "Просмотрщик ▶ Обновить";
+"Viewer ▶ Show GoTo" = "Просмотрщик ▶ Показать Переход";
 
 /* No comment provided by engineer. */
 "Viewer ▶ Show Settings" = "Просмотрщик ▶ Показать Настройки";
@@ -525,6 +555,9 @@
 /* Showing error when connecting to WebDAV server */
 "WebDAV connection error:" = "Ошибка подключения WebDAV:";
 
+/* No comment provided by engineer. */
+"Whole Phrase" = "Фраза целиком";
+
 /* Brief System Information wired label title */
 "Wired:" = "Зарезервировано:";
 
@@ -534,6 +567,7 @@
 /* No comment provided by engineer. */
 "Yes" = "Да";
 
-/* Asking user for confirmation on erasing custom theme - informative text */
+/* Asking user for confirmation on erasing custom theme - informative text
+   Asking user for confirmation on reverting a standard theme - informative text */
 "You can’t undo this action." = "Вы не сможете отменить эту операцию.";
 

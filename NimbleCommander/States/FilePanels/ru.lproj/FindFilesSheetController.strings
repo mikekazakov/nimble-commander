@@ -4,20 +4,23 @@
 /* Class = "NSTextFieldCell"; placeholderString = "0"; ObjectID = "2dl-Rj-gsT"; */
 "2dl-Rj-gsT.placeholderString" = "0";
 
+/* Class = "NSSearchField"; ibShadowedToolTip = "^M"; ObjectID = "2em-D1-cWh"; */
+"2em-D1-cWh.ibShadowedToolTip" = "^M";
+
+/* Class = "NSTextField"; ibShadowedToolTip = "The filename mask is invalid"; ObjectID = "3as-dG-HXy"; */
+"3as-dG-HXy.ibShadowedToolTip" = "Файловая маска некорректна";
+
 /* Class = "NSMenuItem"; title = "="; ObjectID = "3HI-7Z-GC3"; */
 "3HI-7Z-GC3.title" = "=";
 
-/* Class = "NSComboBox"; ibShadowedToolTip = "^M"; ObjectID = "4kJ-ln-DDa"; */
-"4kJ-ln-DDa.ibShadowedToolTip" = "^M";
+/* Class = "NSTableView"; ibShadowedToolTip = "^I"; ObjectID = "03U-A8-eOk"; */
+"03U-A8-eOk.ibShadowedToolTip" = "^I";
 
 /* Class = "NSButtonCell"; title = "Look in archives"; ObjectID = "7HA-yk-SzZ"; */
 "7HA-yk-SzZ.title" = "Искать в архивах";
 
 /* Class = "NSMenuItem"; title = "Files and folders"; ObjectID = "9y5-XT-tuj"; */
 "9y5-XT-tuj.title" = "Файлы и папки";
-
-/* Class = "NSComboBoxCell"; placeholderString = "Enter a text to search"; ObjectID = "17I-3a-9vx"; */
-"17I-3a-9vx.placeholderString" = "Введите текст для поиска";
 
 /* Class = "NSTextField"; ibShadowedToolTip = "^S"; ObjectID = "a2f-4v-JJC"; */
 "a2f-4v-JJC.ibShadowedToolTip" = "^S";
@@ -34,9 +37,6 @@
 /* Class = "NSTableColumn"; headerCell.title = "Modify time"; ObjectID = "cGo-Vw-Uqq"; */
 "cGo-Vw-Uqq.headerCell.title" = "Время модификации";
 
-/* Class = "NSComboBox"; ibShadowedToolTip = "^T"; ObjectID = "CJi-sh-esy"; */
-"CJi-sh-esy.ibShadowedToolTip" = "^T";
-
 /* Class = "NSButtonCell"; title = "View"; ObjectID = "cjR-hz-P7N"; */
 "cjR-hz-P7N.title" = "Просмотр";
 
@@ -52,9 +52,6 @@
 /* Class = "NSButton"; ibShadowedToolTip = "^P"; ObjectID = "g6m-zK-tE9"; */
 "g6m-zK-tE9.ibShadowedToolTip" = "^P";
 
-/* Class = "NSButtonCell"; title = "Whole phrase"; ObjectID = "HbZ-P4-Wk5"; */
-"HbZ-P4-Wk5.title" = "Фраза целиком";
-
 /* Class = "NSTextFieldCell"; title = "Search for:"; ObjectID = "HCA-wY-Kq2"; */
 "HCA-wY-Kq2.title" = "Искать:";
 
@@ -63,9 +60,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "jtt-0L-3Vf"; */
 "jtt-0L-3Vf.title" = "";
-
-/* Class = "NSButtonCell"; title = "Not containing"; ObjectID = "kUk-kM-n8j"; */
-"kUk-kM-n8j.title" = "Не содержит";
 
 /* Class = "NSTableColumn"; headerCell.title = "Size"; ObjectID = "kY9-vv-6NZ"; */
 "kY9-vv-6NZ.headerCell.title" = "Размер";
@@ -91,14 +85,8 @@
 /* Class = "NSMenuItem"; title = "Gb"; ObjectID = "OhY-jN-05K"; */
 "OhY-jN-05K.title" = "Гб";
 
-/* Class = "NSButtonCell"; title = "Case sensitive"; ObjectID = "pbB-zt-FTQ"; */
-"pbB-zt-FTQ.title" = "Учитывая регистр";
-
 /* Class = "NSButtonCell"; title = "Close"; ObjectID = "PmQ-cC-ryL"; */
 "PmQ-cC-ryL.title" = "Закрыть";
-
-/* Class = "NSComboBoxCell"; placeholderString = "Mask like *, or *.txt, or *.txt, *.jpg"; ObjectID = "QoT-rJ-7t8"; */
-"QoT-rJ-7t8.placeholderString" = "Маска, например *, или *.txt, или *.txt, *.jpg";
 
 /* Class = "NSTextFieldCell"; title = "Search for items using mask:"; ObjectID = "R8e-FO-aEj"; */
 "R8e-FO-aEj.title" = "Искать файлы с маской:";
@@ -109,11 +97,11 @@
 /* Class = "NSTextFieldCell"; title = "Containing text:"; ObjectID = "sq9-fx-uq3"; */
 "sq9-fx-uq3.title" = "Содержащие текст:";
 
+/* Class = "NSSearchField"; ibShadowedToolTip = "^T"; ObjectID = "TQe-Ao-p2i"; */
+"TQe-Ao-p2i.ibShadowedToolTip" = "^T";
+
 /* Class = "NSMenuItem"; title = "b"; ObjectID = "Tt9-8O-AZV"; */
 "Tt9-8O-AZV.title" = "б";
-
-/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Enter a text to search"; ObjectID = "uaK-ba-QWq"; */
-"uaK-ba-QWq.ibShadowedIsNilPlaceholder" = "Введите текст для поиска";
 
 /* Class = "NSMenuItem"; title = "≤"; ObjectID = "udS-8N-4fz"; */
 "udS-8N-4fz.title" = "≤";
@@ -127,6 +115,9 @@
 /* Class = "NSButton"; ibShadowedToolTip = "^V"; ObjectID = "XFM-mL-fme"; */
 "XFM-mL-fme.ibShadowedToolTip" = "^V";
 
+/* Class = "NSTextFieldCell"; title = "⚠️"; ObjectID = "Y1K-uR-Va0"; */
+"Y1K-uR-Va0.title" = "⚠️";
+
 /* Class = "NSMenuItem"; title = "≥"; ObjectID = "ydK-d2-gsz"; */
 "ydK-d2-gsz.title" = "≥";
 
@@ -135,7 +126,4 @@
 
 /* Class = "NSTextFieldCell"; title = "Items found:"; ObjectID = "z2i-rD-QXz"; */
 "z2i-rD-QXz.title" = "Найдено:";
-
-/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Mask like *, or *.txt, or *.txt, *.jpg"; ObjectID = "zlY-kZ-zvU"; */
-"zlY-kZ-zvU.ibShadowedIsNilPlaceholder" = "Маска, например *, или *.txt, или *.txt, *.jpg";
 

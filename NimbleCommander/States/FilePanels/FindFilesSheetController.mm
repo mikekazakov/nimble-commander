@@ -653,7 +653,7 @@ private:
         return;
 
     const auto found_item =
-    nc::objc_cast<FindFilesSheetFoundItem>([self.ArrayController.arrangedObjects objectAtIndex:row_index]);
+        nc::objc_cast<FindFilesSheetFoundItem>([self.ArrayController.arrangedObjects objectAtIndex:row_index]);
 
     const FindFilesSheetControllerFoundItem &data = found_item.data;
 
@@ -860,7 +860,9 @@ private:
         if( i.first == m_TextSearchEncoding )
             item.state = NSControlStateValueOn;
     }
-    const auto encoding_menu_item = [[NSMenuItem alloc] initWithTitle:@"Encoding" action:nil keyEquivalent:@""];
+    const auto encoding_menu_item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Encoding", "")
+                                                               action:nil
+                                                        keyEquivalent:@""];
     encoding_menu_item.submenu = encoding_menu;
     encoding_menu_item.indentationLevel = 1;
     [menu addItem:encoding_menu_item];
@@ -959,7 +961,7 @@ private:
 }
 
 - (void)updateMaskSearchFieldPrompt
-{    
+{
     NSString *tt = @"";
     NSString *ps = @"";
     if( m_RegexSearch ) {

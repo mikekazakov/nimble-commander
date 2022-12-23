@@ -137,6 +137,9 @@
 /* Menu item title for enabling an admin mode */
 "Enable Admin Mode" = "Включить режим администратора";
 
+/* No comment provided by engineer. */
+"Encoding" = "Кодировка";
+
 /* Enter a directory */
 "Enter “%@”" = "Войти в “%@”";
 

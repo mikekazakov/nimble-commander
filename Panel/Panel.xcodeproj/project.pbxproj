@@ -28,6 +28,7 @@
 		CF4652592699F97C0085840A /* PanelViewFieldEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4652582699F97C0085840A /* PanelViewFieldEditor.h */; };
 		CF46525D2699F9830085840A /* PanelViewFieldEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */; };
 		CF465284269A4C150085840A /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF465283269A4C150085840A /* libOperations.a */; };
+		CF739C3D295644CD004758C5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF739C3B295644CD004758C5 /* Localizable.strings */; };
 		CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA89D812804C86E00BEA127 /* FindFilesData.h */; };
 		CFA89D842804C87700BEA127 /* FindFilesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA89D832804C87700BEA127 /* FindFilesData.cpp */; };
 		CFA89DA22814794000BEA127 /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA89DA12814794000BEA127 /* TextWidthsCache.mm */; };
@@ -106,6 +107,7 @@
 		CF4652582699F97C0085840A /* PanelViewFieldEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFieldEditor.h; path = include/Panel/PanelViewFieldEditor.h; sourceTree = "<group>"; };
 		CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFieldEditor.mm; path = source/PanelViewFieldEditor.mm; sourceTree = "<group>"; };
 		CF465283269A4C150085840A /* libOperations.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOperations.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF739C3C295644CD004758C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CFA89D812804C86E00BEA127 /* FindFilesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FindFilesData.h; path = include/Panel/FindFilesData.h; sourceTree = "<group>"; };
 		CFA89D832804C87700BEA127 /* FindFilesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FindFilesData.cpp; path = source/FindFilesData.cpp; sourceTree = "<group>"; };
 		CFA89DA02814793600BEA127 /* TextWidthsCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextWidthsCache.h; path = include/Panel/TextWidthsCache.h; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 		CFF33F562556924900B3C92C = {
 			isa = PBXGroup;
 			children = (
+				CF739C3B295644CD004758C5 /* Localizable.strings */,
 				CFF33F8C255692B600B3C92C /* Config */,
 				CFF33F932556940200B3C92C /* Headers */,
 				CFF33F602556924900B3C92C /* Products */,
@@ -356,6 +359,7 @@
 				CFF33F5B2556924900B3C92C /* Headers */,
 				CFF33F5C2556924900B3C92C /* Sources */,
 				CFF33F5D2556924900B3C92C /* Frameworks */,
+				CF739C3E295644CD004758C5 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -411,6 +415,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = CFF33F562556924900B3C92C;
 			productRefGroup = CFF33F602556924900B3C92C /* Products */;
@@ -430,6 +435,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF0B0402281EFE9800076FDF /* SelectionWithMaskPopupViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF739C3E295644CD004758C5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF739C3D295644CD004758C5 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -495,6 +508,17 @@
 			targetProxy = CFF3402025569F3B00B3C92C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		CF739C3B295644CD004758C5 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF739C3C295644CD004758C5 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		CF0B03F9281EB16F00076FDF /* Debug */ = {

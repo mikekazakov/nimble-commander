@@ -106,9 +106,6 @@
 /* Class = "NSMenuItem"; title = "Remove Item"; ObjectID = "e6p-dl-Cvn"; */
 "e6p-dl-Cvn.title" = "Удалить объект";
 
-/* Class = "NSMenuItem"; title = "[A] Full name"; ObjectID = "ecy-XB-j1i"; */
-"ecy-XB-j1i.title" = "[A] Полное имя";
-
 /* Class = "NSButton"; ibShadowedToolTip = "^N"; ObjectID = "EKb-UU-Za4"; */
 "EKb-UU-Za4.ibShadowedToolTip" = "^N";
 

@@ -34,6 +34,21 @@
 /* Operation title batch renaming */
 "Batch renaming %@ items" = "Групповое переименование %@ объектов";
 
+/* No comment provided by engineer. */
+"Cannot delete a locked item" = "Невозможно удалить защищенный объект";
+
+/* No comment provided by engineer. */
+"Cannot move a locked item to Trash" = "Невозможно переместить зищищенный объект в Корзину";
+
+/* No comment provided by engineer. */
+"Cannot open a locked item" = "Невозможно открыть защищенный объект";
+
+/* Alert shown when a user tries to remove all item from a Batch Rename dialog */
+"Cannot remove the last item being renamed" = "Невозможно удалить последний объект для переименования";
+
+/* No comment provided by engineer. */
+"Cannot rename a locked item" = "Невозможно переименовать заблокированный объект";
+
 /* Title for file attributes sheet, single item */
 "Change file attributes for “%@”" = "Изменить файловые атрибуты для “%@”";
 

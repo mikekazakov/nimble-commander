@@ -1752,6 +1752,7 @@
 		CF6ECDB21E9F4AF3008FA79E /* RenameInPlace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RenameInPlace.mm; path = NimbleCommander/States/FilePanels/Actions/RenameInPlace.mm; sourceTree = SOURCE_ROOT; };
 		CF6ECDB41E9F7353008FA79E /* Select.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Select.h; path = NimbleCommander/States/FilePanels/Actions/Select.h; sourceTree = SOURCE_ROOT; };
 		CF6ECDB51E9F7353008FA79E /* Select.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Select.mm; path = NimbleCommander/States/FilePanels/Actions/Select.mm; sourceTree = SOURCE_ROOT; };
+		CF739C2129563E77004758C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTabAutomaticSwitchingSheet.strings; sourceTree = "<group>"; };
 		CF754D501C8FE23C00381260 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AskForPasswordWindowController.xib; sourceTree = "<group>"; };
 		CF754D571C8FE60900381260 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/AskForPasswordWindowController.strings; sourceTree = "<group>"; };
 		CF75E87F1EAF7DC70028C108 /* ConnectionSheetProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionSheetProtocol.h; path = NimbleCommander/States/FilePanels/Views/ConnectionSheetProtocol.h; sourceTree = SOURCE_ROOT; };
@@ -5003,6 +5004,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF67F1C42954BF9400B92944 /* Base */,
+				CF739C2129563E77004758C5 /* ru */,
 			);
 			name = PreferencesWindowThemesTabAutomaticSwitchingSheet.xib;
 			path = NimbleCommander/Preferences;

@@ -1,18 +1,12 @@
-/* Class = "NSButtonCell"; title = "Revert"; ObjectID = "b8c-6i-eUM"; */
-"b8c-6i-eUM.title" = "Сбросить";
+/* Class = "NSMenuItem"; title = "Import theme..."; ObjectID = "2b4-LP-xK9"; */
+"2b4-LP-xK9.title" = "Импортировать тему...";
 
-/* Class = "NSTextFieldCell"; title = "Theme:"; ObjectID = "dpl-Vw-2I6"; */
-"dpl-Vw-2I6.title" = "Тема:";
+/* Class = "NSMenuItem"; title = "Configure automatic switching..."; ObjectID = "jUB-WD-5cq"; */
+"jUB-WD-5cq.title" = "Настроить автоматическое переключение...";
 
-/* Class = "NSButtonCell"; title = "Duplicate"; ObjectID = "Gep-4j-i4f"; */
-"Gep-4j-i4f.title" = "Дублировать";
+/* Class = "NSMenuItem"; title = "Revert theme"; ObjectID = "WDR-Z2-SLE"; */
+"WDR-Z2-SLE.title" = "Сбросить тему";
 
-/* Class = "NSButtonCell"; title = "Import"; ObjectID = "KRF-Q2-TeT"; */
-"KRF-Q2-TeT.title" = "Импорт";
-
-/* Class = "NSButtonCell"; title = "Export"; ObjectID = "MoT-ih-r3N"; */
-"MoT-ih-r3N.title" = "Экспорт";
-
-/* Class = "NSButtonCell"; title = "Remove"; ObjectID = "rLT-UR-67R"; */
-"rLT-UR-67R.title" = "Удалить";
+/* Class = "NSMenuItem"; title = "Export theme..."; ObjectID = "WHW-7t-coM"; */
+"WHW-7t-coM.title" = "Экспортировать тему...";
 

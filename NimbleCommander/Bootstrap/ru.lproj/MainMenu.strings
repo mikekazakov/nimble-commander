@@ -1,6 +1,9 @@
 /* Class = "NSMenuItem"; title = "5"; ObjectID = "0D4-mI-wvg"; */
 "0D4-mI-wvg.title" = "5";
 
+/* Class = "NSMenuItem"; title = "Show Logs..."; ObjectID = "0UC-Ke-PdY"; */
+"0UC-Ke-PdY.title" = "Показать журналы...";
+
 /* Class = "NSMenuItem"; title = "Restore Purchases"; ObjectID = "0Y5-VP-Vjw"; */
 "0Y5-VP-Vjw.title" = "Восстановить покупки";
 

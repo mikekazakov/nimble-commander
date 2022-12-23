@@ -4,7 +4,7 @@
 /* Class = "NSTableColumn"; headerCell.title = "Filter"; ObjectID = "gLa-hT-gjP"; */
 "gLa-hT-gjP.headerCell.title" = "Фильтр";
 
-/* Class = "NSTableColumn"; headerCell.title = "Unfocused"; ObjectID = "o7j-LX-8x8"; */
+/* Class = "NSTableColumn"; headerCell.title = "Regular"; ObjectID = "o7j-LX-8x8"; */
 "o7j-LX-8x8.headerCell.title" = "Обычный";
 
 /* Class = "NSTableColumn"; headerCell.title = "Focused"; ObjectID = "rgZ-Dw-zHX"; */

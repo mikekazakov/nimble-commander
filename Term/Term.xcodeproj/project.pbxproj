@@ -14,14 +14,14 @@
 		CF4600D825605B830095FC73 /* InputTranslatorImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F4CB24CA3D2000DF4ED6 /* InputTranslatorImpl.mm */; };
 		CF4600D925605B830095FC73 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF19B4962547611F00838B45 /* Log.cpp */; };
 		CF4600DA25605B830095FC73 /* FlippableHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099701F948400000AFDE7 /* FlippableHolder.mm */; };
-		CF4600DB25605B830095FC73 /* Parser2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */; };
+		CF4600DB25605B830095FC73 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2C23DCEB04007E99B8 /* Parser.cpp */; };
 		CF4600DC25605B830095FC73 /* ScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50996D1F948018000AFDE7 /* ScrollView.mm */; };
 		CF4600DD25605B830095FC73 /* ShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135111F846CF2007429B6 /* ShellTask.cpp */; };
 		CF4600DE25605B830095FC73 /* InterpreterImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */; };
 		CF4600DF25605B830095FC73 /* ScreenBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */; };
 		CF4600E025605B830095FC73 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F392C242F7D56004DF1F8 /* Interpreter.cpp */; };
 		CF4600E125605B830095FC73 /* Task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135131F846CF2007429B6 /* Task.cpp */; };
-		CF4600E225605B830095FC73 /* Parser2Impl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2D23DCEB04007E99B8 /* Parser2Impl.cpp */; };
+		CF4600E225605B830095FC73 /* ParserImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2D23DCEB04007E99B8 /* ParserImpl.cpp */; };
 		CF4600E325605B830095FC73 /* SingleTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135121F846CF2007429B6 /* SingleTask.cpp */; };
 		CF4600E425605B830095FC73 /* OrthodoxMonospace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */; };
 		CF4600E525605B830095FC73 /* TranslateMaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */; };
@@ -124,10 +124,10 @@
 		CFC4F4C724CA397600DF4ED6 /* InputTranslator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputTranslator.h; path = include/Term/InputTranslator.h; sourceTree = "<group>"; };
 		CFC4F4C924CA3D1B00DF4ED6 /* InputTranslatorImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputTranslatorImpl.h; path = include/Term/InputTranslatorImpl.h; sourceTree = "<group>"; };
 		CFC4F4CB24CA3D2000DF4ED6 /* InputTranslatorImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InputTranslatorImpl.mm; sourceTree = "<group>"; };
-		CFE08B2823DCABA4007E99B8 /* Parser2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2.h; path = include/Term/Parser2.h; sourceTree = "<group>"; };
-		CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser2Impl.h; path = include/Term/Parser2Impl.h; sourceTree = "<group>"; };
-		CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser2.cpp; sourceTree = "<group>"; };
-		CFE08B2D23DCEB04007E99B8 /* Parser2Impl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser2Impl.cpp; sourceTree = "<group>"; };
+		CFE08B2823DCABA4007E99B8 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = include/Term/Parser.h; sourceTree = "<group>"; };
+		CFE08B2A23DCEAF7007E99B8 /* ParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParserImpl.h; path = include/Term/ParserImpl.h; sourceTree = "<group>"; };
+		CFE08B2C23DCEB04007E99B8 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
+		CFE08B2D23DCEB04007E99B8 /* ParserImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParserImpl.cpp; sourceTree = "<group>"; };
 		CFE08B3423DCFBD1007E99B8 /* TermUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TermUT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFE08B3B23DCFC15007E99B8 /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tests.h; sourceTree = "<group>"; };
 		CFE08B3C23DCFC15007E99B8 /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tests.cpp; sourceTree = "<group>"; };
@@ -193,8 +193,8 @@
 				CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */,
 				CF19B4962547611F00838B45 /* Log.cpp */,
 				CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */,
-				CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */,
-				CFE08B2D23DCEB04007E99B8 /* Parser2Impl.cpp */,
+				CFE08B2C23DCEB04007E99B8 /* Parser.cpp */,
+				CFE08B2D23DCEB04007E99B8 /* ParserImpl.cpp */,
 				CF4135101F846CF2007429B6 /* PrecompiledHeaders.pch */,
 				CF1ADE391F7E7379003E9B76 /* Screen.cpp */,
 				CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */,
@@ -221,8 +221,8 @@
 				CF5F3930242F7FC6004DF1F8 /* InterpreterImpl.h */,
 				CF19B4942547611000838B45 /* Log.h */,
 				CF0A49AE250D575C008EC7B0 /* OrthodoxMonospace.h */,
-				CFE08B2823DCABA4007E99B8 /* Parser2.h */,
-				CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */,
+				CFE08B2823DCABA4007E99B8 /* Parser.h */,
+				CFE08B2A23DCEAF7007E99B8 /* ParserImpl.h */,
 				CF1ADE371F7E7370003E9B76 /* Screen.h */,
 				CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */,
 				CF50996B1F94800F000AFDE7 /* ScrollView.h */,
@@ -402,9 +402,9 @@
 				CF4600E125605B830095FC73 /* Task.cpp in Sources */,
 				CF4600DE25605B830095FC73 /* InterpreterImpl.cpp in Sources */,
 				CF4600DC25605B830095FC73 /* ScrollView.mm in Sources */,
-				CF4600E225605B830095FC73 /* Parser2Impl.cpp in Sources */,
+				CF4600E225605B830095FC73 /* ParserImpl.cpp in Sources */,
 				CF4600D825605B830095FC73 /* InputTranslatorImpl.mm in Sources */,
-				CF4600DB25605B830095FC73 /* Parser2.cpp in Sources */,
+				CF4600DB25605B830095FC73 /* Parser.cpp in Sources */,
 				CF4600E625605B830095FC73 /* View.mm in Sources */,
 				CF4600E025605B830095FC73 /* Interpreter.cpp in Sources */,
 				CF4600DF25605B830095FC73 /* ScreenBuffer.cpp in Sources */,

@@ -1,6 +1,5 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
-#include "Parser.h"
 #include "View.h"
 #include "Screen.h"
 #include "Settings.h"

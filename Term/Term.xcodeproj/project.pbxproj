@@ -86,8 +86,6 @@
 		CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenBuffer.h; path = include/Term/ScreenBuffer.h; sourceTree = "<group>"; };
 		CF1ADE371F7E7370003E9B76 /* Screen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Screen.h; path = include/Term/Screen.h; sourceTree = "<group>"; };
 		CF1ADE391F7E7379003E9B76 /* Screen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Screen.cpp; path = source/Screen.cpp; sourceTree = SOURCE_ROOT; };
-		CF1ADE3E1F7E7587003E9B76 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = include/Term/Parser.h; sourceTree = "<group>"; };
-		CF1ADE401F7E7593003E9B76 /* Parser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Parser.mm; path = source/Parser.mm; sourceTree = SOURCE_ROOT; };
 		CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CF1ADE441F7E76C4003E9B76 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TranslateMaps.cpp; path = source/TranslateMaps.cpp; sourceTree = SOURCE_ROOT; };
@@ -195,7 +193,6 @@
 				CF5F392E242F7FB2004DF1F8 /* InterpreterImpl.cpp */,
 				CF19B4962547611F00838B45 /* Log.cpp */,
 				CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */,
-				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
 				CFE08B2C23DCEB04007E99B8 /* Parser2.cpp */,
 				CFE08B2D23DCEB04007E99B8 /* Parser2Impl.cpp */,
 				CF4135101F846CF2007429B6 /* PrecompiledHeaders.pch */,
@@ -224,7 +221,6 @@
 				CF5F3930242F7FC6004DF1F8 /* InterpreterImpl.h */,
 				CF19B4942547611000838B45 /* Log.h */,
 				CF0A49AE250D575C008EC7B0 /* OrthodoxMonospace.h */,
-				CF1ADE3E1F7E7587003E9B76 /* Parser.h */,
 				CFE08B2823DCABA4007E99B8 /* Parser2.h */,
 				CFE08B2A23DCEAF7007E99B8 /* Parser2Impl.h */,
 				CF1ADE371F7E7370003E9B76 /* Screen.h */,

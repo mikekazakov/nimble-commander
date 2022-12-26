@@ -8,6 +8,26 @@
 #include <optional>
 #include <iostream>
 
+
+// RTFM:
+// http://ascii-table.com/ansi-escape-sequences.php
+// http://en.wikipedia.org/wiki/ANSI_escape_code
+// http://graphcomp.com/info/specs/ansi_col.html
+// http://vt100.net/docs/vt100-ug/chapter3.html
+// https://vt100.net/docs/tp83/appendixb.html
+// http://www.real-world-systems.com/docs/ANSIcode.html
+// https://www.xfree86.org/4.5.0/ctlseqs.html
+// http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-048.pdf
+
+// xterm:
+// http://rtfm.etla.org/xterm/ctlseq.html
+// https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+
+// https://invisible-island.net/vttest/vttest.html
+
+// https://onlineunicodetools.com/add-combining-characters
+
+
 namespace nc::term {
 
 namespace input {

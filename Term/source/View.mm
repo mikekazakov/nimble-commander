@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "View.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontCache.h>
@@ -9,7 +9,6 @@
 #include <Habanero/algo.h>
 #include "OrthodoxMonospace.h"
 #include "Screen.h"
-#include "Parser.h"
 #include "Settings.h"
 
 #include <iostream>

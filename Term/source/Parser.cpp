@@ -6,6 +6,20 @@
 
 namespace nc::term::input {
 
+static_assert(sizeof(Title) == 32);
+static_assert(sizeof(UTF8Text) == 24);
+static_assert(sizeof(CursorMovement) == 20); // SILLY...
+static_assert(sizeof(DisplayErasure) == 1);
+static_assert(sizeof(LineErasure) == 1);
+static_assert(sizeof(ModeChange) == 2);
+static_assert(sizeof(DeviceReport) == 1);
+static_assert(sizeof(ScrollingRegion) == 12); // silly...
+static_assert(sizeof(TabClear) == 1);
+static_assert(sizeof(CharacterAttributes) == 2);
+static_assert(sizeof(CharacterSetDesignation) == 2);
+static_assert(sizeof(TitleManipulation) == 2);
+static_assert(sizeof(Command) == 56 ); // TODO: make it less ridiculous...
+
 static_assert(std::is_nothrow_default_constructible_v<Command>);
 static_assert(std::is_nothrow_move_constructible_v<Command>);
 

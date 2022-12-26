@@ -1255,7 +1255,7 @@ void ParserImpl::SSDCSEnter() noexcept
     m_DCSState.buffer.clear();
 }
 
-static std::optional<unsigned> DCS_Target(const char _c) noexcept
+static std::optional<uint8_t> DCS_Target(const char _c) noexcept
 {
     switch( _c ) {
         case '(': return 0;

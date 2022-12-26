@@ -7,6 +7,7 @@
 #include <memory>
 #include <optional>
 #include <iostream>
+#include <stdint.h>
 #include "Color.h"
 
 
@@ -33,7 +34,7 @@ namespace nc::term {
 
 namespace input {
 
-enum class Type
+enum class Type : uint8_t
 {
     noop,                     // no operation, defined only for conviniency
     text,                     // clean unicode text without any control characters, both escaped
@@ -84,7 +85,7 @@ struct None {
 };
 
 struct Title {
-    enum Kind
+    enum Kind : uint8_t
     {
         IconAndWindow,
         Icon,
@@ -99,7 +100,7 @@ struct UTF8Text {
 };
 
 struct CursorMovement {
-    enum Positioning
+    enum Positioning : uint8_t
     {
         Absolute,
         Relative
@@ -110,7 +111,7 @@ struct CursorMovement {
 };
 
 struct DisplayErasure {
-    enum Area
+    enum Area : uint8_t
     {
         FromCursorToDisplayEnd,
         FromDisplayStartToCursor,
@@ -121,7 +122,7 @@ struct DisplayErasure {
 };
 
 struct LineErasure {
-    enum Area
+    enum Area : uint8_t
     {
         FromCursorToLineEnd,
         FromLineStartToCursor,
@@ -131,7 +132,7 @@ struct LineErasure {
 };
 
 struct ModeChange {
-    enum Kind
+    enum Kind : uint8_t
     {
         Insert,                           // Insert Mode / Replace Mode [IRM]
         NewLine,                          // New Line Mode / Line Feed Mode [LNM]
@@ -160,7 +161,7 @@ struct ModeChange {
 };
 
 struct DeviceReport {
-    enum Kind
+    enum Kind : uint8_t
     {
         TerminalId,
         DeviceStatus,
@@ -178,7 +179,7 @@ struct ScrollingRegion {
 };
 
 struct TabClear {
-    enum Kind
+    enum Kind : uint8_t
     {
         All,
         CurrentColumn
@@ -187,7 +188,7 @@ struct TabClear {
 };
 
 struct CharacterAttributes {
-    enum Kind
+    enum Kind : uint8_t
     {
         Normal,
         Bold,
@@ -218,7 +219,7 @@ struct CharacterAttributes {
 };
 
 struct CharacterSetDesignation {
-    enum Set
+    enum Set : uint8_t
     {
         DECSpecialGraphics,                      // '0'
         AlternateCharacterROMStandardCharacters, // '1'
@@ -226,18 +227,18 @@ struct CharacterSetDesignation {
         UK,                                      // 'A'
         USASCII                                  // 'B'
     };
-    unsigned target = 0; // 0 - G0, 1 - G1 etc
+    uint8_t target = 0; // 0 - G0, 1 - G1 etc
     Set set = DECSpecialGraphics;
 };
 
 struct TitleManipulation {
-    enum Kind
+    enum Kind : uint8_t
     {
         Both,
         Icon,
         Window
     };
-    enum Operation
+    enum Operation : uint8_t
     {
         Save,
         Restore
@@ -267,7 +268,7 @@ struct Command {
     Command(Type _type, Payload _payload) noexcept;
 
     Type type;
-    Payload payload;
+    Payload payload;    
 };
 
 std::string VerboseDescription(const Command &_command);

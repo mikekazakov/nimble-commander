@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "ScreenBuffer.h"
@@ -33,8 +33,8 @@ public:
      */
     void PutWrap();
     
-    void SetFgColor(int _color);
-    void SetBgColor(int _color);
+    void SetFgColor(std::optional<Color> _color);
+    void SetBgColor(std::optional<Color> _color);
     void SetFaint(bool _faint);
     void SetUnderline(bool _is_underline);
     void SetReverse(bool _is_reverse);

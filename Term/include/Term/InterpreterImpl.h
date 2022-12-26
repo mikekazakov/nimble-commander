@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Interpreter.h"
@@ -85,8 +85,8 @@ private:
         bool invisible = false;
         bool blink = false;
         bool underline = false;
-        std::uint8_t fg_color = ScreenColors::Default;
-        std::uint8_t bg_color = ScreenColors::Default;
+        std::optional<Color> fg_color;
+        std::optional<Color> bg_color;
     };
     
     struct SavedState {

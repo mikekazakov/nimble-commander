@@ -7,6 +7,7 @@
 #include <memory>
 #include <optional>
 #include <iostream>
+#include "Color.h"
 
 
 // RTFM:
@@ -205,42 +206,15 @@ struct CharacterAttributes {
         NotInverse,
         NotInvisible,
         NotCrossed,
-        ForegroundBlack,
-        ForegroundRed,
-        ForegroundGreen,
-        ForegroundYellow,
-        ForegroundBlue,
-        ForegroundMagenta,
-        ForegroundCyan,
-        ForegroundWhite,
-        ForegroundBlackBright,
-        ForegroundRedBright,
-        ForegroundGreenBright,
-        ForegroundYellowBright,
-        ForegroundBlueBright,
-        ForegroundMagentaBright,
-        ForegroundCyanBright,
-        ForegroundWhiteBright,
+        ForegroundColor, // specified in 'color'
         ForegroundDefault,
-        BackgroundBlack,
-        BackgroundRed,
-        BackgroundGreen,
-        BackgroundYellow,
-        BackgroundBlue,
-        BackgroundMagenta,
-        BackgroundCyan,
-        BackgroundWhite,
-        BackgroundBlackBright,
-        BackgroundRedBright,
-        BackgroundGreenBright,
-        BackgroundYellowBright,
-        BackgroundBlueBright,
-        BackgroundMagentaBright,
-        BackgroundCyanBright,
-        BackgroundWhiteBright,
+        BackgroundColor, // specified in 'color'
         BackgroundDefault,
     };
     Kind mode = Normal;
+    Color color; // For ForegroundColor and BackgroundColor
+    
+    constexpr auto operator <=>(const CharacterAttributes &rhs) const noexcept = default;
 };
 
 struct CharacterSetDesignation {

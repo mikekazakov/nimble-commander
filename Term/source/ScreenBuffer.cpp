@@ -286,18 +286,7 @@ void ScreenBuffer::SetEraseChar(Space _ch)
 ScreenBuffer::Space ScreenBuffer::DefaultEraseChar() noexcept
 {
     Space sp;
-    sp.l = 0;
-    sp.c1 = 0;
-    sp.c2 = 0;
-    sp.foreground = ScreenColors::Default;
-    sp.background = ScreenColors::Default;
-    sp.faint = 0;
-    sp.underline = 0;
-    sp.reverse = 0;
-    sp.bold = 0;
-    sp.italic = 0;
-    sp.invisible = 0;
-    sp.blink = 0;
+    memset(&sp, 0, sizeof(sp));
     return sp;
 }
 

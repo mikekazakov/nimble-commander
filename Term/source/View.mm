@@ -311,12 +311,12 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
     for( auto char_space : _line ) {
         const auto fg_fill_color = char_space.reverse
-                                       ? (char_space.foreground != ScreenColors::Default
-                                              ? m_AnsiColors[char_space.foreground]
+                                       ? (char_space.customfg
+                                              ? m_AnsiColors[char_space.foreground.c]
                                               : m_ForegroundColor)
                                              .CGColor
-                                       : (char_space.background != ScreenColors::Default
-                                              ? m_AnsiColors[char_space.background]
+                                       : (char_space.custombg
+                                              ? m_AnsiColors[char_space.background.c]
                                               : m_BackgroundColor)
                                              .CGColor;
 
@@ -388,17 +388,16 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         FontCache &effective_font_cache = char_space.bold ? *m_BoldFontCache : *m_FontCache;
 
         if( char_space.reverse ) {
-            c = char_space.background != ScreenColors::Default
-                    ? m_AnsiColors[char_space.background].CGColor
+            c = char_space.custombg
+                    ? m_AnsiColors[char_space.background.c].CGColor
                     : m_BackgroundColor.CGColor;
         }
         else {
-            int foreground = char_space.foreground;
-            if( foreground != ScreenColors::Default ) {
+            if( char_space.customfg ) {
                 if( char_space.faint )
-                    c = m_FaintAnsiColors[foreground].CGColor;
+                    c = m_FaintAnsiColors[char_space.foreground.c].CGColor;
                 else
-                    c = m_AnsiColors[foreground].CGColor;
+                    c = m_AnsiColors[char_space.foreground.c].CGColor;
             }
             else {
                 if( char_space.bold )

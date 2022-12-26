@@ -29,6 +29,7 @@
 		CF4600E725605B830095FC73 /* Settings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351C1F8666BF007429B6 /* Settings.mm */; };
 		CF4600E825605B830095FC73 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE391F7E7379003E9B76 /* Screen.cpp */; };
 		CF5F3934242FCD2B004DF1F8 /* Term_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */; };
+		CF739C76295A14F7004758C5 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739C75295A14F7004758C5 /* Color.cpp */; };
 		CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */; };
 		CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D696624A897B5008352B0 /* Screen_UT.cpp */; };
 		CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */; };
@@ -95,7 +96,6 @@
 		CF41350A1F846CE6007429B6 /* ShellTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShellTask.h; path = include/Term/ShellTask.h; sourceTree = "<group>"; };
 		CF41350B1F846CE6007429B6 /* SingleTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SingleTask.h; path = include/Term/SingleTask.h; sourceTree = "<group>"; };
 		CF41350C1F846CE6007429B6 /* Task.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Task.h; path = include/Term/Task.h; sourceTree = "<group>"; };
-		CF4135101F846CF2007429B6 /* PrecompiledHeaders.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrecompiledHeaders.pch; path = source/PrecompiledHeaders.pch; sourceTree = SOURCE_ROOT; };
 		CF4135111F846CF2007429B6 /* ShellTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShellTask.cpp; path = source/ShellTask.cpp; sourceTree = SOURCE_ROOT; };
 		CF4135121F846CF2007429B6 /* SingleTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SingleTask.cpp; path = source/SingleTask.cpp; sourceTree = SOURCE_ROOT; };
 		CF4135131F846CF2007429B6 /* Task.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Task.cpp; path = source/Task.cpp; sourceTree = SOURCE_ROOT; };
@@ -116,6 +116,8 @@
 		CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Term_IT.cpp; sourceTree = "<group>"; };
 		CF5FD92A1FA1AC5100752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF69DCD9253B17BD00AB1E3A /* AtomicHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicHolder.h; sourceTree = "<group>"; };
+		CF739C74295A146A004758C5 /* Color.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Color.h; path = include/Term/Color.h; sourceTree = "<group>"; };
+		CF739C75295A14F7004758C5 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 		CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter_UT.cpp; sourceTree = "<group>"; };
 		CF9D696624A897B5008352B0 /* Screen_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Screen_UT.cpp; sourceTree = "<group>"; };
 		CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenBuffer_UT.cpp; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 		CF1ADE0C1F7E6A2A003E9B76 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF739C75295A14F7004758C5 /* Color.cpp */,
 				CF50996F1F948400000AFDE7 /* FlippableHolder.h */,
 				CF5099701F948400000AFDE7 /* FlippableHolder.mm */,
 				CFC4F4C524CA396600DF4ED6 /* InputTranslator.cpp */,
@@ -195,7 +198,6 @@
 				CF0A49B0250D576D008EC7B0 /* OrthodoxMonospace.cpp */,
 				CFE08B2C23DCEB04007E99B8 /* Parser.cpp */,
 				CFE08B2D23DCEB04007E99B8 /* ParserImpl.cpp */,
-				CF4135101F846CF2007429B6 /* PrecompiledHeaders.pch */,
 				CF1ADE391F7E7379003E9B76 /* Screen.cpp */,
 				CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */,
 				CF50996D1F948018000AFDE7 /* ScrollView.mm */,
@@ -214,6 +216,7 @@
 		CF1ADE2A1F7E6C3F003E9B76 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF739C74295A146A004758C5 /* Color.h */,
 				CF4135221F890BC8007429B6 /* CursorMode.h */,
 				CFC4F4C724CA397600DF4ED6 /* InputTranslator.h */,
 				CFC4F4C924CA3D1B00DF4ED6 /* InputTranslatorImpl.h */,
@@ -413,6 +416,7 @@
 				CF4600E725605B830095FC73 /* Settings.mm in Sources */,
 				CF4600DA25605B830095FC73 /* FlippableHolder.mm in Sources */,
 				CF4600E825605B830095FC73 /* Screen.cpp in Sources */,
+				CF739C76295A14F7004758C5 /* Color.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

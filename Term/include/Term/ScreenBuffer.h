@@ -7,44 +7,17 @@
 #include <string>
 #include <span>
 
-namespace nc::term {
+#include "Color.h"
 
-struct ScreenColors {
-    enum
-    {
-        Black = 0,
-        Red = 1,
-        Green = 2,
-        Yellow = 3,
-        Blue = 4,
-        Magenta = 5,
-        Cyan = 6,
-        White = 7,
-        BlackHi = 8,
-        RedHi = 9,
-        GreenHi = 10,
-        YellowHi = 11,
-        BlueHi = 12,
-        MagentaHi = 13,
-        CyanHi = 14,
-        WhiteHi = 15,
-        Default = 16
-    }; // need 5 bits to store this color
-};
+namespace nc::term {
 
 struct ScreenPoint {
     int x = 0;
     int y = 0;
     inline ScreenPoint() noexcept {};
     inline ScreenPoint(int _x, int _y) noexcept : x(_x), y(_y){};
-    inline bool operator>(const ScreenPoint &_r) const noexcept
-    {
-        return (y > _r.y) || (y == _r.y && x > _r.x);
-    }
-    inline bool operator>=(const ScreenPoint &_r) const noexcept
-    {
-        return (y > _r.y) || (y == _r.y && x >= _r.x);
-    }
+    inline bool operator>(const ScreenPoint &_r) const noexcept { return (y > _r.y) || (y == _r.y && x > _r.x); }
+    inline bool operator>=(const ScreenPoint &_r) const noexcept { return (y > _r.y) || (y == _r.y && x >= _r.x); }
     inline bool operator<(const ScreenPoint &_r) const noexcept { return !(*this >= _r); }
     inline bool operator<=(const ScreenPoint &_r) const noexcept { return !(*this > _r); }
     inline bool operator==(const ScreenPoint &_r) const noexcept { return y == _r.y && x == _r.x; }
@@ -55,19 +28,21 @@ class ScreenBuffer
 {
 public:
     struct Space {
-        uint32_t l;  // basic letter, may be non-bmp
-        uint16_t c1; // combining character 1. zero if no. bmp-only
-        uint16_t c2; // combining character 2. zero if no. bmp-only
-        unsigned foreground : 5;
-        unsigned background : 5;
-        unsigned faint : 1;
-        unsigned underline : 1;
-        unsigned reverse : 1;
-        unsigned bold : 1;
-        unsigned italic : 1;
-        unsigned invisible : 1;
-        unsigned blink : 1;
-    } /*__attribute__((packed))*/; // 12 bytes per screen space
+        uint32_t l;       // basic letter, may be non-bmp
+        uint16_t c1;      // combining character 1. zero if no. bmp-only
+        uint16_t c2;      // combining character 2. zero if no. bmp-only
+        Color foreground; // 8-bit color, meaningful when customfg==true
+        Color background; // 8-bit color, meaningful when custombg==true
+        bool customfg : 1;
+        bool custombg : 1;
+        bool faint : 1;
+        bool underline : 1;
+        bool reverse : 1;
+        bool bold : 1;
+        bool italic : 1;
+        bool invisible : 1;
+        bool blink : 1;
+    }; // 12 bytes per screen space
 
     struct Snapshot {
         Snapshot();
@@ -83,10 +58,7 @@ public:
 
     inline unsigned Width() const { return m_Width; }
     inline unsigned Height() const { return m_Height; }
-    inline unsigned BackScreenLines() const
-    {
-        return static_cast<unsigned>(m_BackScreenLines.size());
-    }
+    inline unsigned BackScreenLines() const { return static_cast<unsigned>(m_BackScreenLines.size()); }
 
     // negative _line_number means backscreen, zero and positive - current screen
     // backscreen: [-BackScreenLines(), -1]
@@ -94,11 +66,6 @@ public:
     // -1 is the last (most recent) backscreen line
     // return an iterator pair [i,e)
     // on invalid input parameters return [nullptr,nullptr)
-//    template <class T>
-//    struct RangePair : public std::pair<T *, T *> {
-//        using std::pair<T *, T *>::pair;
-//        operator bool() const { return this->first != nullptr && this->second != nullptr; };
-//    };
     std::span<const Space> LineFromNo(int _line_number) const noexcept;
     std::span<Space> LineFromNo(int _line_number) noexcept;
 
@@ -153,14 +120,12 @@ private:
     LineMeta *MetaFromLineNo(int _line_number);
     const LineMeta *MetaFromLineNo(int _line_number) const;
 
-    static void FixupOnScreenLinesIndeces(std::vector<LineMeta>::iterator _i,
-                                          std::vector<LineMeta>::iterator _e,
-                                          unsigned _width);
+    static void
+    FixupOnScreenLinesIndeces(std::vector<LineMeta>::iterator _i, std::vector<LineMeta>::iterator _e, unsigned _width);
     static std::unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height);
-    static std::unique_ptr<Space[]>
-    ProduceRectangularSpaces(unsigned _width, unsigned _height, Space _initial_char);
-    std::vector<std::vector<Space>>
-    ComposeContinuousLines(int _from, int _to) const; // [_from, _to), _from is less than _to
+    static std::unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height, Space _initial_char);
+    std::vector<std::vector<Space>> ComposeContinuousLines(int _from,
+                                                           int _to) const; // [_from, _to), _from is less than _to
     static std::vector<std::tuple<std::vector<Space>, bool>>
     DecomposeContinuousLines(const std::vector<std::vector<Space>> &_scr,
                              unsigned _width); // <spaces, is wrapped>
@@ -176,33 +141,3 @@ private:
 };
 
 } // namespace nc::term
-//
-//namespace std {
-//
-//inline const nc::term::ScreenBuffer::Space *
-//begin(const std::pair<const nc::term::ScreenBuffer::Space *, const nc::term::ScreenBuffer::Space *>
-//          &_p)
-//{
-//    return _p.first;
-//}
-//
-//inline nc::term::ScreenBuffer::Space *
-//begin(const std::pair<nc::term::ScreenBuffer::Space *, nc::term::ScreenBuffer::Space *> &_p)
-//{
-//    return _p.first;
-//}
-//
-//inline const nc::term::ScreenBuffer::Space *
-//end(const std::pair<const nc::term::ScreenBuffer::Space *, const nc::term::ScreenBuffer::Space *>
-//        &_p)
-//{
-//    return _p.second;
-//}
-//
-//inline nc::term::ScreenBuffer::Space *
-//end(const std::pair<nc::term::ScreenBuffer::Space *, nc::term::ScreenBuffer::Space *> &_p)
-//{
-//    return _p.second;
-//}
-//
-//} // namespace std

@@ -179,15 +179,29 @@ void Screen::FillScreenWithSpace(ScreenBuffer::Space _space)
     }
 }
 
-void Screen::SetFgColor(int _color)
+void Screen::SetFgColor(std::optional<Color> _color)
 {
-    m_EraseChar.foreground = _color;
+    if( _color ) {
+        m_EraseChar.foreground = *_color;
+        m_EraseChar.customfg = true;
+    }
+    else {
+        m_EraseChar.foreground = Color{};
+        m_EraseChar.customfg = false;
+    }
     m_Buffer.SetEraseChar(m_EraseChar);
 }
 
-void Screen::SetBgColor(int _color)
+void Screen::SetBgColor(std::optional<Color> _color)
 {
-    m_EraseChar.background = _color;
+    if( _color ) {
+        m_EraseChar.background = *_color;
+        m_EraseChar.custombg = true;
+    }
+    else {
+        m_EraseChar.background = Color{};
+        m_EraseChar.custombg = false;
+    }    
     m_Buffer.SetEraseChar(m_EraseChar);
 }
 

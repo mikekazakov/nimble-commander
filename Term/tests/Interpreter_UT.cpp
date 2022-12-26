@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <InterpreterImpl.h>
 #include <optional>
 #include "Tests.h"
@@ -7,480 +7,410 @@ using namespace nc::term;
 using namespace nc::term::input;
 #define PREFIX "nc::term::Interpreter "
 
-TEST_CASE(PREFIX"does call the Bell callback")
-{        
+TEST_CASE(PREFIX "does call the Bell callback")
+{
     Screen screen(10, 6);
     InterpreterImpl interpreter(screen);
     bool did_bell = false;
-    interpreter.SetBell([&]{ did_bell = true; });
+    interpreter.SetBell([&] { did_bell = true; });
 
     const Command cmd{input::Type::bell};
-    interpreter.Interpret( {&cmd, 1} );
-    CHECK( did_bell == true ); 
+    interpreter.Interpret({&cmd, 1});
+    CHECK(did_bell == true);
 }
 
-TEST_CASE(PREFIX"resizes screen only when allowed")
+TEST_CASE(PREFIX "resizes screen only when allowed")
 {
     Screen screen(10, 6);
     InterpreterImpl interpreter(screen);
-    SECTION("Allowed - default") {
-        SECTION("80") {
+    SECTION("Allowed - default")
+    {
+        SECTION("80")
+        {
             const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::Column132, false}};
-            interpreter.Interpret( {&cmd, 1} );
-            CHECK( screen.Width() == 80 );
-            CHECK( screen.Height() == 6 );
+            interpreter.Interpret({&cmd, 1});
+            CHECK(screen.Width() == 80);
+            CHECK(screen.Height() == 6);
         }
-        SECTION("132") {
+        SECTION("132")
+        {
             const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::Column132, true}};
-            interpreter.Interpret( {&cmd, 1} );
-            CHECK( screen.Width() == 132 );
-            CHECK( screen.Height() == 6 );
+            interpreter.Interpret({&cmd, 1});
+            CHECK(screen.Width() == 132);
+            CHECK(screen.Height() == 6);
         }
     }
-    SECTION("Disabled") {
+    SECTION("Disabled")
+    {
         interpreter.SetScreenResizeAllowed(false);
-        SECTION("80") {
+        SECTION("80")
+        {
             const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::Column132, false}};
-            interpreter.Interpret( {&cmd, 1} );
+            interpreter.Interpret({&cmd, 1});
         }
-        SECTION("132") {
+        SECTION("132")
+        {
             const Command cmd{Type::change_mode, ModeChange{ModeChange::Kind::Column132, true}};
-            interpreter.Interpret( {&cmd, 1} );
+            interpreter.Interpret({&cmd, 1});
         }
-        CHECK( screen.Width() == 10 );
-        CHECK( screen.Height() == 6 );
+        CHECK(screen.Width() == 10);
+        CHECK(screen.Height() == 6);
     }
 }
 
-TEST_CASE(PREFIX"setting normal attributes")
+TEST_CASE(PREFIX "setting normal attributes")
 {
     using namespace input;
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Faint}));
-    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::ForegroundRed}));
-    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::BackgroundBlue}));
-    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Inverse}));
-    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Bold}));
-    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Italicized}));
-    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Invisible}));
-    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Blink}));
-    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Underlined}));
-    
-    interpreter.Interpret(Command(Type::set_character_attributes, CA{CA::Normal}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = CA::Faint}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = CA::ForegroundColor}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = CA::BackgroundColor}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = CA::Inverse}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = CA::Bold}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = CA::Italicized}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = CA::Invisible}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = CA::Blink}));
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = CA::Underlined}));
+
+    interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = CA::Normal}));
     interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-    
+
     const auto c = screen.Buffer().At(0, 0);
-    CHECK( c.foreground == ScreenColors::Default );
-    CHECK( c.background == ScreenColors::Default );
-    CHECK( c.faint == false );
-    CHECK( c.reverse == false );
-    CHECK( c.bold == false );
-    CHECK( c.italic == false );
-    CHECK( c.invisible == false );
-    CHECK( c.blink == false );
-    CHECK( c.underline == false );
+    CHECK(c.customfg == false);
+    CHECK(c.custombg == false);
+    CHECK(c.faint == false);
+    CHECK(c.reverse == false);
+    CHECK(c.bold == false);
+    CHECK(c.italic == false);
+    CHECK(c.invisible == false);
+    CHECK(c.blink == false);
+    CHECK(c.underline == false);
 }
 
-TEST_CASE(PREFIX"setting foreground colors")
+TEST_CASE(PREFIX "setting foreground colors")
 {
     using namespace input;
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, std::uint8_t _color) {
-        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+    auto verify = [&](std::optional<Color> _color) {
+        interpreter.Interpret(
+            Command(Type::set_character_attributes,
+                    _color ? CA{.mode = CA::ForegroundColor, .color = *_color} : CA{.mode = CA::ForegroundDefault}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).foreground == _color );
+        CHECK(screen.Buffer().At(0, 0).foreground == (_color ? *_color : Color{}));
+        CHECK(screen.Buffer().At(0, 0).customfg == static_cast<bool>(_color));
     };
-    SECTION("Implicit") {
+    SECTION("Implicit")
+    {
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).foreground == ScreenColors::Default );
+        CHECK(screen.Buffer().At(0, 0).foreground == Color{});
+        CHECK(screen.Buffer().At(0, 0).customfg == false);
     }
-    SECTION("Black") {
-        verify(CA::ForegroundBlack, ScreenColors::Black);
-    }
-    SECTION("Red") {
-        verify(CA::ForegroundRed, ScreenColors::Red);
-    }
-    SECTION("Green") {
-        verify(CA::ForegroundGreen, ScreenColors::Green);
-    }
-    SECTION("Yellow") {
-        verify(CA::ForegroundYellow, ScreenColors::Yellow);
-    }
-    SECTION("Blue") {
-        verify(CA::ForegroundBlue, ScreenColors::Blue);
-    }
-    SECTION("Magenta") {
-        verify(CA::ForegroundMagenta, ScreenColors::Magenta);
-    }
-    SECTION("Cyan") {
-        verify(CA::ForegroundCyan, ScreenColors::Cyan);
-    }
-    SECTION("White") {
-        verify(CA::ForegroundWhite, ScreenColors::White);
-    }
-    SECTION("BlackBright") {
-        verify(CA::ForegroundBlackBright, ScreenColors::BlackHi);
-    }
-    SECTION("RedBright") {
-        verify(CA::ForegroundRedBright, ScreenColors::RedHi);
-    }
-    SECTION("GreenBright") {
-        verify(CA::ForegroundGreenBright, ScreenColors::GreenHi);
-    }
-    SECTION("YellowBright") {
-        verify(CA::ForegroundYellowBright, ScreenColors::YellowHi);
-    }
-    SECTION("BlueBright") {
-        verify(CA::ForegroundBlueBright, ScreenColors::BlueHi);
-    }
-    SECTION("MagentaBright") {
-        verify(CA::ForegroundMagentaBright, ScreenColors::MagentaHi);
-    }
-    SECTION("CyanBright") {
-        verify(CA::ForegroundCyanBright, ScreenColors::CyanHi);
-    }
-    SECTION("WhiteBright") {
-        verify(CA::ForegroundWhiteBright, ScreenColors::WhiteHi);
-    }
-    SECTION("Default") {
-        verify(CA::ForegroundDefault, ScreenColors::Default);
-    }
+    SECTION("Black") { verify(Color::Black); }
+    SECTION("Red") { verify(Color::Red); }
+    SECTION("Green") { verify(Color::Green); }
+    SECTION("Yellow") { verify(Color::Yellow); }
+    SECTION("Blue") { verify(Color::Blue); }
+    SECTION("Magenta") { verify(Color::Magenta); }
+    SECTION("Cyan") { verify(Color::Cyan); }
+    SECTION("White") { verify(Color::White); }
+    SECTION("BlackBright") { verify(Color::BrightBlack); }
+    SECTION("RedBright") { verify(Color::BrightRed); }
+    SECTION("GreenBright") { verify(Color::BrightGreen); }
+    SECTION("YellowBright") { verify(Color::BrightYellow); }
+    SECTION("BlueBright") { verify(Color::BrightBlue); }
+    SECTION("MagentaBright") { verify(Color::BrightMagenta); }
+    SECTION("CyanBright") { verify(Color::BrightCyan); }
+    SECTION("WhiteBright") { verify(Color::BrightWhite); }
+    SECTION("Default") { verify(std::nullopt); }
+    // TODO: 8-bit colors
 }
 
-TEST_CASE(PREFIX"setting background colors")
+TEST_CASE(PREFIX "setting background colors")
 {
     using namespace input;
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    auto verify = [&](CA::Kind _kind, std::uint8_t _color) {
-        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+    auto verify = [&](std::optional<Color> _color) {
+        interpreter.Interpret(
+            Command(Type::set_character_attributes,
+                    _color ? CA{.mode = CA::BackgroundColor, .color = *_color} : CA{.mode = CA::BackgroundDefault}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).background == _color );
+        CHECK(screen.Buffer().At(0, 0).background == (_color ? *_color : Color{}));
+        CHECK(screen.Buffer().At(0, 0).custombg == static_cast<bool>(_color));
     };
-    SECTION("Implicit") {
+    SECTION("Implicit")
+    {
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).background == ScreenColors::Default );
+        CHECK(screen.Buffer().At(0, 0).background == Color{});
+        CHECK(screen.Buffer().At(0, 0).custombg == false);
     }
-    SECTION("Black") {
-        verify(CA::BackgroundBlack, ScreenColors::Black);
-    }
-    SECTION("Red") {
-        verify(CA::BackgroundRed, ScreenColors::Red);
-    }
-    SECTION("Green") {
-        verify(CA::BackgroundGreen, ScreenColors::Green);
-    }
-    SECTION("Yellow") {
-        verify(CA::BackgroundYellow, ScreenColors::Yellow);
-    }
-    SECTION("Blue") {
-        verify(CA::BackgroundBlue, ScreenColors::Blue);
-    }
-    SECTION("Magenta") {
-        verify(CA::BackgroundMagenta, ScreenColors::Magenta);
-    }
-    SECTION("Cyan") {
-        verify(CA::BackgroundCyan, ScreenColors::Cyan);
-    }
-    SECTION("White") {
-        verify(CA::BackgroundWhite, ScreenColors::White);
-    }    
-    SECTION("BlackBright") {
-        verify(CA::BackgroundBlackBright, ScreenColors::BlackHi);
-    }
-    SECTION("RedBright") {
-        verify(CA::BackgroundRedBright, ScreenColors::RedHi);
-    }
-    SECTION("GreenBright") {
-        verify(CA::BackgroundGreenBright, ScreenColors::GreenHi);
-    }
-    SECTION("YellowBright") {
-        verify(CA::BackgroundYellowBright, ScreenColors::YellowHi);
-    }
-    SECTION("BlueBright") {
-        verify(CA::BackgroundBlueBright, ScreenColors::BlueHi);
-    }
-    SECTION("MagentaBright") {
-        verify(CA::BackgroundMagentaBright, ScreenColors::MagentaHi);
-    }
-    SECTION("CyanBright") {
-        verify(CA::BackgroundCyanBright, ScreenColors::CyanHi);
-    }
-    SECTION("WhiteBright") {
-        verify(CA::BackgroundWhiteBright, ScreenColors::WhiteHi);
-    }
-    SECTION("Default") {
-        verify(CA::BackgroundDefault, ScreenColors::Default);
-    }
+    SECTION("Black") { verify(Color::Black); }
+    SECTION("Red") { verify(Color::Red); }
+    SECTION("Green") { verify(Color::Green); }
+    SECTION("Yellow") { verify(Color::Yellow); }
+    SECTION("Blue") { verify(Color::Blue); }
+    SECTION("Magenta") { verify(Color::Magenta); }
+    SECTION("Cyan") { verify(Color::Cyan); }
+    SECTION("White") { verify(Color::White); }
+    SECTION("BlackBright") { verify(Color::BrightBlack); }
+    SECTION("RedBright") { verify(Color::BrightRed); }
+    SECTION("GreenBright") { verify(Color::BrightGreen); }
+    SECTION("YellowBright") { verify(Color::BrightYellow); }
+    SECTION("BlueBright") { verify(Color::BrightBlue); }
+    SECTION("MagentaBright") { verify(Color::BrightMagenta); }
+    SECTION("CyanBright") { verify(Color::BrightCyan); }
+    SECTION("WhiteBright") { verify(Color::BrightWhite); }
+    SECTION("Default") { verify(std::nullopt); }
+    // TODO: 8-bit colors
 }
 
-TEST_CASE(PREFIX"setting faint")
+TEST_CASE(PREFIX "setting faint")
 {
     using namespace input;
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
     auto verify = [&](CA::Kind _kind, bool _faint) {
-        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).faint == _faint );
+        CHECK(screen.Buffer().At(0, 0).faint == _faint);
     };
-    SECTION("Implicit") {
+    SECTION("Implicit")
+    {
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).faint == false );
+        CHECK(screen.Buffer().At(0, 0).faint == false);
     }
-    SECTION("Normal") {
-        verify(CA::Normal, false);
-    }
-    SECTION("Faint") {
-        verify(CA::Faint, true);
-    }
-    SECTION("Not Bold Not Faint") {
-        verify(CA::NotBoldNotFaint, false);
-    }
+    SECTION("Normal") { verify(CA::Normal, false); }
+    SECTION("Faint") { verify(CA::Faint, true); }
+    SECTION("Not Bold Not Faint") { verify(CA::NotBoldNotFaint, false); }
 }
 
-TEST_CASE(PREFIX"setting inverse")
+TEST_CASE(PREFIX "setting inverse")
 {
     using namespace input;
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
     auto verify = [&](CA::Kind _kind, bool _inverse) {
-        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).reverse == _inverse );
+        CHECK(screen.Buffer().At(0, 0).reverse == _inverse);
     };
-    SECTION("Implicit") {
+    SECTION("Implicit")
+    {
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).reverse == false );
+        CHECK(screen.Buffer().At(0, 0).reverse == false);
     }
-    SECTION("Inverse") {
-        verify(CA::Inverse, true);
-    }
-    SECTION("Not inverse") {
-        verify(CA::NotInverse, false);
-    }
+    SECTION("Inverse") { verify(CA::Inverse, true); }
+    SECTION("Not inverse") { verify(CA::NotInverse, false); }
 }
 
-TEST_CASE(PREFIX"setting bold")
+TEST_CASE(PREFIX "setting bold")
 {
     using namespace input;
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
     auto verify = [&](CA::Kind _kind, bool _bold) {
-        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).bold == _bold );
+        CHECK(screen.Buffer().At(0, 0).bold == _bold);
     };
-    SECTION("Implicit") {
+    SECTION("Implicit")
+    {
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).bold == false );
+        CHECK(screen.Buffer().At(0, 0).bold == false);
     }
-    SECTION("Bold") {
-        verify(CA::Bold, true);
-    }
-    SECTION("Not bold") {
-        verify(CA::NotBoldNotFaint, false);
-    }
+    SECTION("Bold") { verify(CA::Bold, true); }
+    SECTION("Not bold") { verify(CA::NotBoldNotFaint, false); }
 }
 
-TEST_CASE(PREFIX"setting italic")
+TEST_CASE(PREFIX "setting italic")
 {
     using namespace input;
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
     auto verify = [&](CA::Kind _kind, bool _italic) {
-        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).italic == _italic );
+        CHECK(screen.Buffer().At(0, 0).italic == _italic);
     };
-    SECTION("Implicit") {
+    SECTION("Implicit")
+    {
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).italic == false );
+        CHECK(screen.Buffer().At(0, 0).italic == false);
     }
-    SECTION("Italic") {
-        verify(CA::Italicized, true);
-    }
-    SECTION("Not italic") {
-        verify(CA::NotItalicized, false);
-    }
+    SECTION("Italic") { verify(CA::Italicized, true); }
+    SECTION("Not italic") { verify(CA::NotItalicized, false); }
 }
 
-TEST_CASE(PREFIX"setting invisible")
+TEST_CASE(PREFIX "setting invisible")
 {
     using namespace input;
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
     auto verify = [&](CA::Kind _kind, bool _invisible) {
-        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).invisible == _invisible );
+        CHECK(screen.Buffer().At(0, 0).invisible == _invisible);
     };
-    SECTION("Implicit") {
+    SECTION("Implicit")
+    {
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).invisible == false );
+        CHECK(screen.Buffer().At(0, 0).invisible == false);
     }
-    SECTION("Invisible") {
-        verify(CA::Invisible, true);
-    }
-    SECTION("Not invsible") {
-        verify(CA::NotInvisible, false);
-    }
+    SECTION("Invisible") { verify(CA::Invisible, true); }
+    SECTION("Not invsible") { verify(CA::NotInvisible, false); }
 }
 
-TEST_CASE(PREFIX"setting blink")
+TEST_CASE(PREFIX "setting blink")
 {
     using namespace input;
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
     auto verify = [&](CA::Kind _kind, bool _blink) {
-        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).blink == _blink );
+        CHECK(screen.Buffer().At(0, 0).blink == _blink);
     };
-    SECTION("Implicit") {
+    SECTION("Implicit")
+    {
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).blink == false );
+        CHECK(screen.Buffer().At(0, 0).blink == false);
     }
-    SECTION("Blink") {
-        verify(CA::Blink, true);
-    }
-    SECTION("Not blink") {
-        verify(CA::NotBlink, false);
-    }
+    SECTION("Blink") { verify(CA::Blink, true); }
+    SECTION("Not blink") { verify(CA::NotBlink, false); }
 }
 
-TEST_CASE(PREFIX"setting underline")
+TEST_CASE(PREFIX "setting underline")
 {
     using namespace input;
     using CA = input::CharacterAttributes;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
     auto verify = [&](CA::Kind _kind, bool _underline) {
-        interpreter.Interpret(Command(Type::set_character_attributes, CA{_kind}));
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).underline == _underline );
+        CHECK(screen.Buffer().At(0, 0).underline == _underline);
     };
-    SECTION("Implicit") {
+    SECTION("Implicit")
+    {
         interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
-        CHECK( screen.Buffer().At(0, 0).underline == false );
+        CHECK(screen.Buffer().At(0, 0).underline == false);
     }
-    SECTION("Underline") {
-        verify(CA::Underlined, true);
-    }
-    SECTION("Doubly Underline") {
-        verify(CA::DoublyUnderlined, true);
-    }
-    SECTION("Not underlined") {
-        verify(CA::NotUnderlined, false);
-    }
+    SECTION("Underline") { verify(CA::Underlined, true); }
+    SECTION("Doubly Underline") { verify(CA::DoublyUnderlined, true); }
+    SECTION("Not underlined") { verify(CA::NotUnderlined, false); }
 }
 
-TEST_CASE(PREFIX"G0 - DEC Special Graphics")
+TEST_CASE(PREFIX "G0 - DEC Special Graphics")
 {
     using namespace input;
     using CSD = CharacterSetDesignation;
     Screen screen(1, 1);
     InterpreterImpl interpreter(screen);
-    SECTION("Graph") {
-        interpreter.Interpret(Command(Type::designate_character_set,
-                                      CSD{ 0, CSD::DECSpecialGraphics }));
+    SECTION("Graph")
+    {
+        interpreter.Interpret(Command(Type::designate_character_set, CSD{0, CSD::DECSpecialGraphics}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"n"}));
-        CHECK( screen.Buffer().At(0, 0).l == U'┼' );
+        CHECK(screen.Buffer().At(0, 0).l == U'┼');
     }
-    SECTION("Graph and back") {
-        interpreter.Interpret(Command(Type::designate_character_set,
-                                      CSD{ 0, CSD::USASCII }));
+    SECTION("Graph and back")
+    {
+        interpreter.Interpret(Command(Type::designate_character_set, CSD{0, CSD::USASCII}));
         interpreter.Interpret(Command(Type::text, UTF8Text{"n"}));
-        CHECK( screen.Buffer().At(0, 0).l == 'n' );
+        CHECK(screen.Buffer().At(0, 0).l == 'n');
     }
 }
 
-TEST_CASE(PREFIX"Save/restore")
+TEST_CASE(PREFIX "Save/restore")
 {
     using namespace input;
     Screen screen(2, 2);
     InterpreterImpl interpreter(screen);
-    SECTION("Coordinates") {
+    SECTION("Coordinates")
+    {
         interpreter.Interpret(Command{Type::save_state});
-        interpreter.Interpret(Command(Type::move_cursor,
-                                      CursorMovement{CursorMovement::Absolute, 1, 1}));
+        interpreter.Interpret(Command(Type::move_cursor, CursorMovement{CursorMovement::Absolute, 1, 1}));
         interpreter.Interpret(Command{Type::restore_state});
         CHECK(screen.CursorX() == 0);
         CHECK(screen.CursorY() == 0);
     }
-    SECTION("Rendition") {
+    SECTION("Rendition")
+    {
         using CA = CharacterAttributes;
         const auto sca = Type::set_character_attributes;
         interpreter.Interpret(Command{Type::save_state});
-        interpreter.Interpret(Command(sca, CA{CA::ForegroundRed}));
-        interpreter.Interpret(Command(sca, CA{CA::BackgroundBlue}));
-        interpreter.Interpret(Command(sca, CA{CA::Faint}));
-        interpreter.Interpret(Command(sca, CA{CA::Bold}));
-        interpreter.Interpret(Command(sca, CA{CA::Italicized}));
-        interpreter.Interpret(Command(sca, CA{CA::Blink}));
-        interpreter.Interpret(Command(sca, CA{CA::Inverse}));
-        interpreter.Interpret(Command(sca, CA{CA::Invisible}));
-        interpreter.Interpret(Command(sca, CA{CA::Underlined}));
+        interpreter.Interpret(Command(sca, CA{.mode = CA::ForegroundColor, .color = Color::Red}));
+        interpreter.Interpret(Command(sca, CA{.mode = CA::BackgroundColor, .color = Color::Blue}));
+        interpreter.Interpret(Command(sca, CA{.mode = CA::Faint}));
+        interpreter.Interpret(Command(sca, CA{.mode = CA::Bold}));
+        interpreter.Interpret(Command(sca, CA{.mode = CA::Italicized}));
+        interpreter.Interpret(Command(sca, CA{.mode = CA::Blink}));
+        interpreter.Interpret(Command(sca, CA{.mode = CA::Inverse}));
+        interpreter.Interpret(Command(sca, CA{.mode = CA::Invisible}));
+        interpreter.Interpret(Command(sca, CA{.mode = CA::Underlined}));
         interpreter.Interpret(Command{Type::restore_state});
         interpreter.Interpret(Command(Type::text, UTF8Text{"a"}));
         const auto sp = screen.Buffer().At(0, 0);
-        CHECK( sp.foreground == ScreenColors::Default );
-        CHECK( sp.background == ScreenColors::Default );
-        CHECK( sp.faint == false );
-        CHECK( sp.bold == false );
-        CHECK( sp.italic == false );
-        CHECK( sp.blink == false );
-        CHECK( sp.reverse == false );
-        CHECK( sp.invisible == false );
-        CHECK( sp.underline == false );
+        CHECK(sp.foreground == Color{});
+        CHECK(sp.background == Color{});
+        CHECK(sp.customfg == false);
+        CHECK(sp.custombg == false);
+        CHECK(sp.faint == false);
+        CHECK(sp.bold == false);
+        CHECK(sp.italic == false);
+        CHECK(sp.blink == false);
+        CHECK(sp.reverse == false);
+        CHECK(sp.invisible == false);
+        CHECK(sp.underline == false);
     }
-    SECTION("Character set") {
+    SECTION("Character set")
+    {
         using CSD = CharacterSetDesignation;
         interpreter.Interpret(Command{Type::save_state});
-        interpreter.Interpret(Command(Type::designate_character_set,
-                                      CSD{ 0, CSD::DECSpecialGraphics }));
+        interpreter.Interpret(Command(Type::designate_character_set, CSD{0, CSD::DECSpecialGraphics}));
         interpreter.Interpret(Command{Type::restore_state});
         interpreter.Interpret(Command(Type::text, UTF8Text{"n"}));
-        CHECK( screen.Buffer().At(0, 0).l == 'n' );
+        CHECK(screen.Buffer().At(0, 0).l == 'n');
     }
 }
 
-TEST_CASE(PREFIX"Change title")
+TEST_CASE(PREFIX "Change title")
 {
     using namespace input;
     Screen screen(2, 2);
     InterpreterImpl interpreter(screen);
-    
+
     std::vector<std::string> title;
     std::vector<Interpreter::TitleKind> kind;
-    auto callback = [&](const std::string& _title, Interpreter::TitleKind _kind) {
+    auto callback = [&](const std::string &_title, Interpreter::TitleKind _kind) {
         title.emplace_back(_title);
         kind.emplace_back(_kind);
     };
-    interpreter.SetTitle( callback );
+    interpreter.SetTitle(callback);
 
-    SECTION( "IconAndWindow" ) {
+    SECTION("IconAndWindow")
+    {
         Title t{Title::IconAndWindow, "Hi1"};
         interpreter.Interpret(Command(Type::change_title, t));
         REQUIRE(title.size() == 2);
-        CHECK(title[0] == "Hi1" );
-        CHECK(title[1] == "Hi1" );
+        CHECK(title[0] == "Hi1");
+        CHECK(title[1] == "Hi1");
         REQUIRE(kind.size() == 2);
         CHECK(kind[0] == Interpreter::TitleKind::Icon);
         CHECK(kind[1] == Interpreter::TitleKind::Window);
     }
-    SECTION( "Icon" ) {
+    SECTION("Icon")
+    {
         Title t{Title::Icon, "Hi2"};
         interpreter.Interpret(Command(Type::change_title, t));
         REQUIRE(title.size() == 1);
@@ -488,7 +418,8 @@ TEST_CASE(PREFIX"Change title")
         REQUIRE(kind.size() == 1);
         CHECK(kind[0] == Interpreter::TitleKind::Icon);
     }
-    SECTION( "Window" ) {
+    SECTION("Window")
+    {
         Title t{Title::Window, "Hi3"};
         interpreter.Interpret(Command(Type::change_title, t));
         REQUIRE(title.size() == 1);
@@ -496,7 +427,8 @@ TEST_CASE(PREFIX"Change title")
         REQUIRE(kind.size() == 1);
         CHECK(kind[0] == Interpreter::TitleKind::Window);
     }
-    SECTION( "Called only on actual changes") {
+    SECTION("Called only on actual changes")
+    {
         interpreter.Interpret(Command(Type::change_title, Title{Title::Window, "A"}));
         REQUIRE(title.size() == 1);
         interpreter.Interpret(Command(Type::change_title, Title{Title::Window, "A"}));
@@ -530,12 +462,10 @@ TEST_CASE(PREFIX "Supports saving/restoring titles")
     {
         interpreter.Interpret(Command(Type::change_title, Title{Title::IconAndWindow, "Cat"}));
         interpreter.Interpret(
-            Command(Type::manipulate_title,
-                    TitleManipulation{TitleManipulation::Both, TitleManipulation::Save}));
+            Command(Type::manipulate_title, TitleManipulation{TitleManipulation::Both, TitleManipulation::Save}));
         interpreter.Interpret(Command(Type::change_title, Title{Title::IconAndWindow, "Dog"}));
         interpreter.Interpret(
-            Command(Type::manipulate_title,
-                    TitleManipulation{TitleManipulation::Both, TitleManipulation::Restore}));
+            Command(Type::manipulate_title, TitleManipulation{TitleManipulation::Both, TitleManipulation::Restore}));
         CHECK(title == std::vector<std::string>{"Cat", "Cat", "Dog", "Dog", "Cat", "Cat"});
         CHECK(kind == std::vector<Interpreter::TitleKind>{Interpreter::TitleKind::Icon,
                                                           Interpreter::TitleKind::Window,
@@ -547,8 +477,7 @@ TEST_CASE(PREFIX "Supports saving/restoring titles")
     SECTION("Restore with no saved titles does nothing")
     {
         interpreter.Interpret(
-            Command(Type::manipulate_title,
-                    TitleManipulation{TitleManipulation::Both, TitleManipulation::Restore}));
+            Command(Type::manipulate_title, TitleManipulation{TitleManipulation::Both, TitleManipulation::Restore}));
         CHECK(title.empty());
         CHECK(kind.empty());
     }
@@ -556,19 +485,15 @@ TEST_CASE(PREFIX "Supports saving/restoring titles")
     {
         interpreter.Interpret(Command(Type::change_title, Title{Title::Icon, "Cat"}));
         interpreter.Interpret(
-            Command(Type::manipulate_title,
-                    TitleManipulation{TitleManipulation::Icon, TitleManipulation::Save}));
+            Command(Type::manipulate_title, TitleManipulation{TitleManipulation::Icon, TitleManipulation::Save}));
         interpreter.Interpret(Command(Type::change_title, Title{Title::Icon, "Dog"}));
         interpreter.Interpret(
-            Command(Type::manipulate_title,
-                    TitleManipulation{TitleManipulation::Icon, TitleManipulation::Save}));
+            Command(Type::manipulate_title, TitleManipulation{TitleManipulation::Icon, TitleManipulation::Save}));
         interpreter.Interpret(Command(Type::change_title, Title{Title::Icon, "Fox"}));
         interpreter.Interpret(
-            Command(Type::manipulate_title,
-                    TitleManipulation{TitleManipulation::Icon, TitleManipulation::Restore}));
+            Command(Type::manipulate_title, TitleManipulation{TitleManipulation::Icon, TitleManipulation::Restore}));
         interpreter.Interpret(
-            Command(Type::manipulate_title,
-                    TitleManipulation{TitleManipulation::Icon, TitleManipulation::Restore}));
+            Command(Type::manipulate_title, TitleManipulation{TitleManipulation::Icon, TitleManipulation::Restore}));
         CHECK(title == std::vector<std::string>{"Cat", "Dog", "Fox", "Dog", "Cat"});
         CHECK(kind == std::vector<Interpreter::TitleKind>{Interpreter::TitleKind::Icon,
                                                           Interpreter::TitleKind::Icon,
@@ -578,7 +503,7 @@ TEST_CASE(PREFIX "Supports saving/restoring titles")
     }
 }
 
-TEST_CASE(PREFIX"Properly updates internal sizes")
+TEST_CASE(PREFIX "Properly updates internal sizes")
 {
     using namespace input;
     Screen screen(2, 2);
@@ -590,49 +515,43 @@ TEST_CASE(PREFIX"Properly updates internal sizes")
     interpreter.Interpret(Command(Type::text, UTF8Text{"123"}));
     interpreter.Interpret(Command(Type::text, UTF8Text{"234"}));
     interpreter.Interpret(Command(Type::text, UTF8Text{"345"}));
-    CHECK( buffer.DumpBackScreenAsANSI() ==
-          "012" );
-    CHECK( buffer.DumpScreenAsANSI() ==
-          "123"
-          "234"
-          "345" );
+    CHECK(buffer.DumpBackScreenAsANSI() == "012");
+    CHECK(buffer.DumpScreenAsANSI() == "123"
+                                       "234"
+                                       "345");
 }
 
-TEST_CASE(PREFIX"Cursor visibility management")
+TEST_CASE(PREFIX "Cursor visibility management")
 {
     using namespace input;
     Screen screen(2, 2);
     InterpreterImpl interpreter(screen);
-    
-    CHECK( interpreter.ShowCursor() == true );
+
+    CHECK(interpreter.ShowCursor() == true);
 
     std::optional<bool> show;
-    interpreter.SetShowCursorChanged([&](bool _show){
-        show = _show;
-    });
-    SECTION( "on->on" ) {
-        interpreter.Interpret(Command(Type::change_mode,
-                                      ModeChange{ModeChange::ShowCursor, true}));
-        CHECK( interpreter.ShowCursor() == true );
-        REQUIRE( show.has_value() == false );
+    interpreter.SetShowCursorChanged([&](bool _show) { show = _show; });
+    SECTION("on->on")
+    {
+        interpreter.Interpret(Command(Type::change_mode, ModeChange{ModeChange::ShowCursor, true}));
+        CHECK(interpreter.ShowCursor() == true);
+        REQUIRE(show.has_value() == false);
     }
-    SECTION( "on->off->off->on" ) {
-        interpreter.Interpret(Command(Type::change_mode,
-                                      ModeChange{ModeChange::ShowCursor, false}));
-        CHECK( interpreter.ShowCursor() == false );
-        REQUIRE( show.has_value() );
-        CHECK( show == false );
-        
+    SECTION("on->off->off->on")
+    {
+        interpreter.Interpret(Command(Type::change_mode, ModeChange{ModeChange::ShowCursor, false}));
+        CHECK(interpreter.ShowCursor() == false);
+        REQUIRE(show.has_value());
+        CHECK(show == false);
+
         show.reset();
-        interpreter.Interpret(Command(Type::change_mode,
-                                      ModeChange{ModeChange::ShowCursor, false}));
-        CHECK( interpreter.ShowCursor() == false );
-        CHECK( show.has_value() == false );
-        
-        interpreter.Interpret(Command(Type::change_mode,
-                                      ModeChange{ModeChange::ShowCursor, true}));
-        CHECK( interpreter.ShowCursor() == true );
-        REQUIRE( show.has_value() );
-        CHECK( show == true );
+        interpreter.Interpret(Command(Type::change_mode, ModeChange{ModeChange::ShowCursor, false}));
+        CHECK(interpreter.ShowCursor() == false);
+        CHECK(show.has_value() == false);
+
+        interpreter.Interpret(Command(Type::change_mode, ModeChange{ModeChange::ShowCursor, true}));
+        CHECK(interpreter.ShowCursor() == true);
+        REQUIRE(show.has_value());
+        CHECK(show == true);
     }
 }

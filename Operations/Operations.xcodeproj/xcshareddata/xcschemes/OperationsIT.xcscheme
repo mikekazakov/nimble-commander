@@ -96,6 +96,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "&quot;nc::ops::Copying Overwriting a locked native regular item&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;Operations::Compression*&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

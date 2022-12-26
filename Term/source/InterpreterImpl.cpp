@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InterpreterImpl.h"
 #include <Habanero/CFString.h>
 #include <Habanero/CFPtr.h>
@@ -130,8 +130,7 @@ void InterpreterImpl::InterpretSingleCommand(const input::Command &_command)
             ProcessTitleManipulation(*std::get_if<input::TitleManipulation>(&_command.payload));
             break;
         default:
-            std::cerr << "Interpreter::InterpretSingleCommand: missed "
-                      << magic_enum::enum_name(type) << std::endl;
+            std::cerr << "Interpreter::InterpretSingleCommand: missed " << magic_enum::enum_name(type) << std::endl;
             break;
     }
 }
@@ -157,8 +156,8 @@ void InterpreterImpl::ProcessText(const input::UTF8Text &_text)
 
     for( const auto c : utf32 ) {
 
-        if( m_AutoWrapMode == true && m_Screen.CursorX() >= m_Screen.Width() - 1 &&
-            m_Screen.LineOverflown() && !CharInfo::IsUnicodeCombiningCharacter(c) ) {
+        if( m_AutoWrapMode == true && m_Screen.CursorX() >= m_Screen.Width() - 1 && m_Screen.LineOverflown() &&
+            !CharInfo::IsUnicodeCombiningCharacter(c) ) {
             m_Screen.PutWrap();
             ProcessCR();
             ProcessLF();
@@ -197,9 +196,8 @@ void InterpreterImpl::ProcessRI()
     else {
         const int x = m_Screen.CursorX();
         const int y = m_Screen.CursorY();
-        const auto target_y = m_OriginLineMode
-                                  ? std::clamp(y - 1, m_Extent.top, m_Extent.bottom - 1)
-                                  : std::clamp(y - 1, 0, m_Extent.height - 1);
+        const auto target_y = m_OriginLineMode ? std::clamp(y - 1, m_Extent.top, m_Extent.bottom - 1)
+                                               : std::clamp(y - 1, 0, m_Extent.height - 1);
         m_Screen.GoTo(x, target_y);
     }
 }
@@ -222,10 +220,9 @@ void InterpreterImpl::ProcessMC(const input::CursorMovement _cursor_movement)
         const int x = m_Screen.CursorX();
         const int y = m_Screen.CursorY();
         if( _cursor_movement.x != std::nullopt && _cursor_movement.y != std::nullopt ) {
-            const auto target_y =
-                m_OriginLineMode
-                    ? std::clamp(y + *_cursor_movement.y, m_Extent.top, m_Extent.bottom - 1)
-                    : (y + *_cursor_movement.y);
+            const auto target_y = m_OriginLineMode
+                                      ? std::clamp(y + *_cursor_movement.y, m_Extent.top, m_Extent.bottom - 1)
+                                      : (y + *_cursor_movement.y);
             m_Screen.GoTo(x + *_cursor_movement.x, target_y);
         }
         else if( _cursor_movement.x != std::nullopt && _cursor_movement.y == std::nullopt ) {
@@ -354,8 +351,7 @@ void InterpreterImpl::ProcessEraseCharacters(unsigned _amount)
 void InterpreterImpl::ProcessSetScrollingRegion(const input::ScrollingRegion _scrolling_region)
 {
     if( _scrolling_region.range ) {
-        if( _scrolling_region.range->top + 1 < _scrolling_region.range->bottom &&
-            _scrolling_region.range->top >= 0 &&
+        if( _scrolling_region.range->top + 1 < _scrolling_region.range->bottom && _scrolling_region.range->top >= 0 &&
             _scrolling_region.range->top <= m_Screen.Height() ) {
             // check indices!
             m_Extent.top = _scrolling_region.range->top;
@@ -425,49 +421,41 @@ void InterpreterImpl::ProcessChangeMode(const input::ModeChange _mode_change)
             }
             break;
         case Kind::SendMouseXYOnPress:
-            if( _mode_change.status == true &&
-                m_RequestedMouseEvents != RequestedMouseEvents::X10 ) {
+            if( _mode_change.status == true && m_RequestedMouseEvents != RequestedMouseEvents::X10 ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::X10;
                 RequestMouseEventsChanged();
             }
-            if( _mode_change.status == false &&
-                m_RequestedMouseEvents == RequestedMouseEvents::X10 ) {
+            if( _mode_change.status == false && m_RequestedMouseEvents == RequestedMouseEvents::X10 ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::None;
                 RequestMouseEventsChanged();
             }
             break;
         case Kind::SendMouseXYOnPressAndRelease:
-            if( _mode_change.status == true &&
-                m_RequestedMouseEvents != RequestedMouseEvents::Normal ) {
+            if( _mode_change.status == true && m_RequestedMouseEvents != RequestedMouseEvents::Normal ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::Normal;
                 RequestMouseEventsChanged();
             }
-            if( _mode_change.status == false &&
-                m_RequestedMouseEvents == RequestedMouseEvents::Normal ) {
+            if( _mode_change.status == false && m_RequestedMouseEvents == RequestedMouseEvents::Normal ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::None;
                 RequestMouseEventsChanged();
             }
             break;
         case Kind::SendMouseXYOnPressDragAndRelease:
-            if( _mode_change.status == true &&
-                m_RequestedMouseEvents != RequestedMouseEvents::ButtonTracking ) {
+            if( _mode_change.status == true && m_RequestedMouseEvents != RequestedMouseEvents::ButtonTracking ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::ButtonTracking;
                 RequestMouseEventsChanged();
             }
-            if( _mode_change.status == false &&
-                m_RequestedMouseEvents == RequestedMouseEvents::ButtonTracking ) {
+            if( _mode_change.status == false && m_RequestedMouseEvents == RequestedMouseEvents::ButtonTracking ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::None;
                 RequestMouseEventsChanged();
             }
             break;
         case Kind::SendMouseXYAnyEvent:
-            if( _mode_change.status == true &&
-                m_RequestedMouseEvents != RequestedMouseEvents::Any ) {
+            if( _mode_change.status == true && m_RequestedMouseEvents != RequestedMouseEvents::Any ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::Any;
                 RequestMouseEventsChanged();
             }
-            if( _mode_change.status == false &&
-                m_RequestedMouseEvents == RequestedMouseEvents::Any ) {
+            if( _mode_change.status == false && m_RequestedMouseEvents == RequestedMouseEvents::Any ) {
                 m_RequestedMouseEvents = RequestedMouseEvents::None;
                 RequestMouseEventsChanged();
             }
@@ -508,11 +496,11 @@ void InterpreterImpl::ProcessClearTab(input::TabClear _tab_clear)
 
 void InterpreterImpl::ProcessSetCharacterAttributes(input::CharacterAttributes _attributes)
 {
-    auto set_fg = [this](std::uint8_t _color) {
+    auto set_fg = [this](std::optional<Color> _color) {
         m_Rendition.fg_color = _color;
         m_Screen.SetFgColor(_color);
     };
-    auto set_bg = [this](std::uint8_t _color) {
+    auto set_bg = [this](std::optional<Color> _color) {
         m_Rendition.bg_color = _color;
         m_Screen.SetBgColor(_color);
     };
@@ -555,8 +543,8 @@ void InterpreterImpl::ProcessSetCharacterAttributes(input::CharacterAttributes _
             set_invisible(false);
             set_blink(false);
             set_underline(false);
-            set_fg(ScreenColors::Default);
-            set_bg(ScreenColors::Default);
+            set_fg(std::nullopt);
+            set_bg(std::nullopt);
             break;
         case Kind::Faint:
             set_faint(true);
@@ -601,110 +589,25 @@ void InterpreterImpl::ProcessSetCharacterAttributes(input::CharacterAttributes _
         case Kind::NotUnderlined:
             set_underline(false);
             break;
-        case Kind::ForegroundBlack:
-            set_fg(ScreenColors::Black);
-            break;
-        case Kind::ForegroundRed:
-            set_fg(ScreenColors::Red);
-            break;
-        case Kind::ForegroundGreen:
-            set_fg(ScreenColors::Green);
-            break;
-        case Kind::ForegroundYellow:
-            set_fg(ScreenColors::Yellow);
-            break;
-        case Kind::ForegroundBlue:
-            set_fg(ScreenColors::Blue);
-            break;
-        case Kind::ForegroundMagenta:
-            set_fg(ScreenColors::Magenta);
-            break;
-        case Kind::ForegroundCyan:
-            set_fg(ScreenColors::Cyan);
-            break;
-        case Kind::ForegroundWhite:
-            set_fg(ScreenColors::White);
-            break;
-        case Kind::ForegroundBlackBright:
-            set_fg(ScreenColors::BlackHi);
-            break;
-        case Kind::ForegroundRedBright:
-            set_fg(ScreenColors::RedHi);
-            break;
-        case Kind::ForegroundGreenBright:
-            set_fg(ScreenColors::GreenHi);
-            break;
-        case Kind::ForegroundYellowBright:
-            set_fg(ScreenColors::YellowHi);
-            break;
-        case Kind::ForegroundBlueBright:
-            set_fg(ScreenColors::BlueHi);
-            break;
-        case Kind::ForegroundMagentaBright:
-            set_fg(ScreenColors::MagentaHi);
-            break;
-        case Kind::ForegroundCyanBright:
-            set_fg(ScreenColors::CyanHi);
-            break;
-        case Kind::ForegroundWhiteBright:
-            set_fg(ScreenColors::WhiteHi);
+        case Kind::ForegroundColor:
+            set_fg(_attributes.color);
             break;
         case Kind::ForegroundDefault:
-            set_fg(ScreenColors::Default);
+            set_fg(std::nullopt);
             break;
-        case Kind::BackgroundBlack:
-            set_bg(ScreenColors::Black);
-            break;
-        case Kind::BackgroundRed:
-            set_bg(ScreenColors::Red);
-            break;
-        case Kind::BackgroundGreen:
-            set_bg(ScreenColors::Green);
-            break;
-        case Kind::BackgroundYellow:
-            set_bg(ScreenColors::Yellow);
-            break;
-        case Kind::BackgroundBlue:
-            set_bg(ScreenColors::Blue);
-            break;
-        case Kind::BackgroundMagenta:
-            set_bg(ScreenColors::Magenta);
-            break;
-        case Kind::BackgroundCyan:
-            set_bg(ScreenColors::Cyan);
-            break;
-        case Kind::BackgroundWhite:
-            set_bg(ScreenColors::White);
-            break;
-        case Kind::BackgroundBlackBright:
-            set_bg(ScreenColors::BlackHi);
-            break;
-        case Kind::BackgroundRedBright:
-            set_bg(ScreenColors::RedHi);
-            break;
-        case Kind::BackgroundGreenBright:
-            set_bg(ScreenColors::GreenHi);
-            break;
-        case Kind::BackgroundYellowBright:
-            set_bg(ScreenColors::YellowHi);
-            break;
-        case Kind::BackgroundBlueBright:
-            set_bg(ScreenColors::BlueHi);
-            break;
-        case Kind::BackgroundMagentaBright:
-            set_bg(ScreenColors::MagentaHi);
-            break;
-        case Kind::BackgroundCyanBright:
-            set_bg(ScreenColors::CyanHi);
-            break;
-        case Kind::BackgroundWhiteBright:
-            set_bg(ScreenColors::WhiteHi);
+        case input::CharacterAttributes::BackgroundColor:
+            set_bg(_attributes.color);
             break;
         case Kind::BackgroundDefault:
-            set_bg(ScreenColors::Default);
+            set_bg(std::nullopt);
             break;
-        default:
+        case Kind::Crossed:
+            /* Not implemented */
             break;
+        case Kind::NotCrossed:
+            /* Not implemented */
+            break;
+            // no default to get a warning=error just in case
     }
 }
 
@@ -736,29 +639,22 @@ static std::u32string ConvertUTF8ToUTF32(std::string_view _utf8)
         return {};
 
     const auto utf16_len = CFStringGetLength(str.get());
-    const auto utf32_len = CFStringGetBytes(str.get(),
-                                            CFRangeMake(0, utf16_len),
-                                            kCFStringEncodingUTF32LE,
-                                            0,
-                                            false,
-                                            nullptr,
-                                            0,
-                                            nullptr);
+    const auto utf32_len =
+        CFStringGetBytes(str.get(), CFRangeMake(0, utf16_len), kCFStringEncodingUTF32LE, 0, false, nullptr, 0, nullptr);
     if( utf32_len == 0 )
         return {};
 
     std::u32string result;
     result.resize(utf32_len);
 
-    [[maybe_unused]] const auto utf32_fact =
-        CFStringGetBytes(str.get(),
-                         CFRangeMake(0, utf16_len),
-                         kCFStringEncodingUTF32LE,
-                         0,
-                         false,
-                         reinterpret_cast<UInt8 *>(result.data()),
-                         result.size() * sizeof(char32_t),
-                         nullptr);
+    [[maybe_unused]] const auto utf32_fact = CFStringGetBytes(str.get(),
+                                                              CFRangeMake(0, utf16_len),
+                                                              kCFStringEncodingUTF32LE,
+                                                              0,
+                                                              false,
+                                                              reinterpret_cast<UInt8 *>(result.data()),
+                                                              result.size() * sizeof(char32_t),
+                                                              nullptr);
 
     assert(utf32_len == utf32_fact);
 
@@ -768,48 +664,39 @@ static std::u32string ConvertUTF8ToUTF32(std::string_view _utf8)
 static std::u32string ComposeUnicodePoints(std::u32string _utf32)
 {
     // temp and slow implementation
-    const bool can_be_composed = std::any_of(_utf32.begin(), _utf32.end(), [](const char32_t _c) {
-        return CharInfo::CanCharBeTheoreticallyComposed(_c);
-    });
+    const bool can_be_composed = std::any_of(
+        _utf32.begin(), _utf32.end(), [](const char32_t _c) { return CharInfo::CanCharBeTheoreticallyComposed(_c); });
     if( can_be_composed == false )
         return _utf32;
 
-    const auto orig_str = base::CFPtr<CFStringRef>::adopt(
-        CFStringCreateWithBytesNoCopy(nullptr,
-                                      reinterpret_cast<UInt8 *>(_utf32.data()),
-                                      _utf32.length() * sizeof(char32_t),
-                                      kCFStringEncodingUTF32LE,
-                                      false,
-                                      kCFAllocatorNull));
+    const auto orig_str =
+        base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(nullptr,
+                                                                      reinterpret_cast<UInt8 *>(_utf32.data()),
+                                                                      _utf32.length() * sizeof(char32_t),
+                                                                      kCFStringEncodingUTF32LE,
+                                                                      false,
+                                                                      kCFAllocatorNull));
 
-    const auto mut_str = base::CFPtr<CFMutableStringRef>::adopt(
-        CFStringCreateMutableCopy(nullptr, 0, orig_str.get()));
+    const auto mut_str = base::CFPtr<CFMutableStringRef>::adopt(CFStringCreateMutableCopy(nullptr, 0, orig_str.get()));
 
     CFStringNormalize(mut_str.get(), kCFStringNormalizationFormC);
     const auto utf16_len = CFStringGetLength(mut_str.get());
 
-    const auto utf32_len = CFStringGetBytes(mut_str.get(),
-                                            CFRangeMake(0, utf16_len),
-                                            kCFStringEncodingUTF32LE,
-                                            0,
-                                            false,
-                                            nullptr,
-                                            0,
-                                            nullptr);
+    const auto utf32_len = CFStringGetBytes(
+        mut_str.get(), CFRangeMake(0, utf16_len), kCFStringEncodingUTF32LE, 0, false, nullptr, 0, nullptr);
     if( utf32_len == 0 )
         return {};
 
     _utf32.resize(utf32_len);
 
-    [[maybe_unused]] const auto utf32_fact =
-        CFStringGetBytes(mut_str.get(),
-                         CFRangeMake(0, utf16_len),
-                         kCFStringEncodingUTF32LE,
-                         0,
-                         false,
-                         reinterpret_cast<UInt8 *>(_utf32.data()),
-                         _utf32.size() * sizeof(char32_t),
-                         nullptr);
+    [[maybe_unused]] const auto utf32_fact = CFStringGetBytes(mut_str.get(),
+                                                              CFRangeMake(0, utf16_len),
+                                                              kCFStringEncodingUTF32LE,
+                                                              0,
+                                                              false,
+                                                              reinterpret_cast<UInt8 *>(_utf32.data()),
+                                                              _utf32.size() * sizeof(char32_t),
+                                                              nullptr);
 
     assert(utf32_len == utf32_fact);
 

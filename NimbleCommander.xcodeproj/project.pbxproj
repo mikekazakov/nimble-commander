@@ -5352,7 +5352,10 @@
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
 				DEVELOPMENT_TEAM = AC5SJT236H;
-				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_FREE__=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"__NC_VERSION_FREE__=1",
+				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Free-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
@@ -5473,7 +5476,10 @@
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
 				DEVELOPMENT_TEAM = AC5SJT236H;
-				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_PAID__=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"__NC_VERSION_PAID__=1",
+				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Pro-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";

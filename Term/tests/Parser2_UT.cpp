@@ -1479,6 +1479,7 @@ TEST_CASE(PREFIX "CSI m")
 {
     ParserImpl parser;
     using CA = CharacterAttributes;
+    auto ignores = [&](const char *_cmd) { CHECK(parser.Parse(to_bytes(_cmd)).empty()); };
     auto verify = [&](const char *_cmd, CA _ca) {
         auto r = parser.Parse(to_bytes(_cmd));
         REQUIRE(r.size() == 1);
@@ -1529,6 +1530,19 @@ TEST_CASE(PREFIX "CSI m")
     SECTION("ESC [ 35 m") { verify("\x1B[35m", CA{.mode = CA::ForegroundColor, .color = Color::Magenta}); }
     SECTION("ESC [ 36 m") { verify("\x1B[36m", CA{.mode = CA::ForegroundColor, .color = Color::Cyan}); }
     SECTION("ESC [ 37 m") { verify("\x1B[37m", CA{.mode = CA::ForegroundColor, .color = Color::White}); }
+    SECTION("ESC [ 38 m")
+    {
+        ignores("\x1B[38m");
+        ignores("\x1B[38;5m");
+        ignores("\x1B[38;42m");
+        ignores("\x1B[38;5;256m");
+        ignores("\x1B[38;5;500m");
+        verify("\x1B[38;5;0m", CA{.mode = CA::ForegroundColor, .color = Color::Black});
+        verify("\x1B[38;5;15m", CA{.mode = CA::ForegroundColor, .color = Color::BrightWhite});
+        verify("\x1B[38;5;16m", CA{.mode = CA::ForegroundColor, .color = Color{16}});
+        verify("\x1B[38;5;100m", CA{.mode = CA::ForegroundColor, .color = Color{100}});
+        verify("\x1B[38;5;255m", CA{.mode = CA::ForegroundColor, .color = Color{255}});
+    }
     SECTION("ESC [ 39 m") { verify("\x1B[39m", CA{.mode = CA::ForegroundDefault}); }
     SECTION("ESC [ 40 m") { verify("\x1B[40m", CA{.mode = CA::BackgroundColor, .color = Color::Black}); }
     SECTION("ESC [ 41 m") { verify("\x1B[41m", CA{.mode = CA::BackgroundColor, .color = Color::Red}); }
@@ -1538,6 +1552,19 @@ TEST_CASE(PREFIX "CSI m")
     SECTION("ESC [ 45 m") { verify("\x1B[45m", CA{.mode = CA::BackgroundColor, .color = Color::Magenta}); }
     SECTION("ESC [ 46 m") { verify("\x1B[46m", CA{.mode = CA::BackgroundColor, .color = Color::Cyan}); }
     SECTION("ESC [ 47 m") { verify("\x1B[47m", CA{.mode = CA::BackgroundColor, .color = Color::White}); }
+    SECTION("ESC [ 48 m")
+    {
+        ignores("\x1B[48m");
+        ignores("\x1B[48;5m");
+        ignores("\x1B[48;42m");
+        ignores("\x1B[48;5;256m");
+        ignores("\x1B[48;5;500m");
+        verify("\x1B[48;5;0m", CA{.mode = CA::BackgroundColor, .color = Color::Black});
+        verify("\x1B[48;5;15m", CA{.mode = CA::BackgroundColor, .color = Color::BrightWhite});
+        verify("\x1B[48;5;16m", CA{.mode = CA::BackgroundColor, .color = Color{16}});
+        verify("\x1B[48;5;100m", CA{.mode = CA::BackgroundColor, .color = Color{100}});
+        verify("\x1B[48;5;255m", CA{.mode = CA::BackgroundColor, .color = Color{255}});
+    }
     SECTION("ESC [ 49 m") { verify("\x1B[49m", CA{.mode = CA::BackgroundDefault}); }
     SECTION("ESC [ 90 m") { verify("\x1B[90m", CA{.mode = CA::ForegroundColor, .color = Color::BrightBlack}); }
     SECTION("ESC [ 91 m") { verify("\x1B[91m", CA{.mode = CA::ForegroundColor, .color = Color::BrightRed}); }
@@ -1555,7 +1582,15 @@ TEST_CASE(PREFIX "CSI m")
     SECTION("ESC [ 105 m") { verify("\x1B[105m", CA{.mode = CA::BackgroundColor, .color = Color::BrightMagenta}); }
     SECTION("ESC [ 106 m") { verify("\x1B[106m", CA{.mode = CA::BackgroundColor, .color = Color::BrightCyan}); }
     SECTION("ESC [ 107 m") { verify("\x1B[107m", CA{.mode = CA::BackgroundColor, .color = Color::BrightWhite}); }
-    // TODO: 8-bit colors
+    SECTION("Combination")
+    {
+        auto r = parser.Parse(to_bytes("\x1B[01;04;38;05;196;48;05;232m"));
+        REQUIRE(r.size() == 4);
+        CHECK(as_character_attributes(r[0]) == CA{.mode = CA::Bold});
+        CHECK(as_character_attributes(r[1]) == CA{.mode = CA::Underlined});
+        CHECK(as_character_attributes(r[2]) == CA{.mode = CA::ForegroundColor, .color = Color{196}});
+        CHECK(as_character_attributes(r[3]) == CA{.mode = CA::BackgroundColor, .color = Color{232}});
+    }
     CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
 }
 

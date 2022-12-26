@@ -1000,7 +1000,7 @@ void ParserImpl::CSI_hl() noexcept
     }
 }
 
-static std::optional<input::CharacterAttributes> SCImToCharacterAttributes(int _ps) noexcept
+static constexpr std::optional<input::CharacterAttributes> SCImToCharacterAttributes(int _ps) noexcept
 {
     using CA = input::CharacterAttributes;
     input::CharacterAttributes ca;
@@ -1062,72 +1062,97 @@ static std::optional<input::CharacterAttributes> SCImToCharacterAttributes(int _
 
 void ParserImpl::CSI_m() noexcept
 {
-// CSI Pm m  Character Attributes (SGR).
-// Ps = 0  ⇒  Normal (default), VT100.
-// Ps = 1  ⇒  Bold, VT100.
-// Ps = 2  ⇒  Faint, decreased intensity, ECMA-48 2nd.
-// Ps = 3  ⇒  Italicized, ECMA-48 2nd.
-// Ps = 4  ⇒  Underlined, VT100.
-// Ps = 5  ⇒  Blink, VT100.
-// Ps = 7  ⇒  Inverse, VT100.
-// Ps = 8  ⇒  Invisible, i.e., hidden, ECMA-48 2nd, VT300.
-// Ps = 9  ⇒  Crossed-out characters, ECMA-48 3rd.
-// Ps = 2 1  ⇒  Doubly-underlined, ECMA-48 3rd.
-// Ps = 2 2  ⇒  Normal (neither bold nor faint), ECMA-48 3rd.
-// Ps = 2 3  ⇒  Not italicized, ECMA-48 3rd.
-// Ps = 2 4  ⇒  Not underlined, ECMA-48 3rd.
-// Ps = 2 5  ⇒  Steady (not blinking), ECMA-48 3rd.
-// Ps = 2 7  ⇒  Positive (not inverse), ECMA-48 3rd.
-// Ps = 2 8  ⇒  Visible, i.e., not hidden, ECMA-48 3rd, VT300.
-// Ps = 2 9  ⇒  Not crossed-out, ECMA-48 3rd.
-// Ps = 3 0  ⇒  Set foreground color to Black.
-// Ps = 3 1  ⇒  Set foreground color to Red.
-// Ps = 3 2  ⇒  Set foreground color to Green.
-// Ps = 3 3  ⇒  Set foreground color to Yellow.
-// Ps = 3 4  ⇒  Set foreground color to Blue.
-// Ps = 3 5  ⇒  Set foreground color to Magenta.
-// Ps = 3 6  ⇒  Set foreground color to Cyan.
-// Ps = 3 7  ⇒  Set foreground color to White.
-// Ps = 3 9  ⇒  Set foreground color to default, ECMA-48 3rd.
-// Ps = 4 0  ⇒  Set background color to Black.
-// Ps = 4 1  ⇒  Set background color to Red.
-// Ps = 4 2  ⇒  Set background color to Green.
-// Ps = 4 3  ⇒  Set background color to Yellow.
-// Ps = 4 4  ⇒  Set background color to Blue.
-// Ps = 4 5  ⇒  Set background color to Magenta.
-// Ps = 4 6  ⇒  Set background color to Cyan.
-// Ps = 4 7  ⇒  Set background color to White.
-// Ps = 4 9  ⇒  Set background color to default, ECMA-48 3rd.
-// Ps = 9 0  ⇒  Set foreground color to Bright Black.
-// Ps = 9 1  ⇒  Set foreground color to Bright Red.
-// Ps = 9 2  ⇒  Set foreground color to Bright Green.
-// Ps = 9 3  ⇒  Set foreground color to Bright Yellow.
-// Ps = 9 4  ⇒  Set foreground color to Bright Blue.
-// Ps = 9 5  ⇒  Set foreground color to Bright Magenta.
-// Ps = 9 6  ⇒  Set foreground color to Bright Cyan.
-// Ps = 9 7  ⇒  Set foreground color to Bright White.
-// Ps = 1 0 0  ⇒  Set background color to Bright Black.
-// Ps = 1 0 1  ⇒  Set background color to Bright Red.
-// Ps = 1 0 2  ⇒  Set background color to Bright Green.
-// Ps = 1 0 3  ⇒  Set background color to Bright Yellow.
-// Ps = 1 0 4  ⇒  Set background color to Bright Blue.
-// Ps = 1 0 5  ⇒  Set background color to Bright Magenta.
-// Ps = 1 0 6  ⇒  Set background color to Bright Cyan.
-// Ps = 1 0 7  ⇒  Set background color to Bright White.
+    // CSI Pm m  Character Attributes (SGR).
+    // Ps = 0  ⇒  Normal (default), VT100.
+    // Ps = 1  ⇒  Bold, VT100.
+    // Ps = 2  ⇒  Faint, decreased intensity, ECMA-48 2nd.
+    // Ps = 3  ⇒  Italicized, ECMA-48 2nd.
+    // Ps = 4  ⇒  Underlined, VT100.
+    // Ps = 5  ⇒  Blink, VT100.
+    // Ps = 7  ⇒  Inverse, VT100.
+    // Ps = 8  ⇒  Invisible, i.e., hidden, ECMA-48 2nd, VT300.
+    // Ps = 9  ⇒  Crossed-out characters, ECMA-48 3rd.
+    // Ps = 2 1  ⇒  Doubly-underlined, ECMA-48 3rd.
+    // Ps = 2 2  ⇒  Normal (neither bold nor faint), ECMA-48 3rd.
+    // Ps = 2 3  ⇒  Not italicized, ECMA-48 3rd.
+    // Ps = 2 4  ⇒  Not underlined, ECMA-48 3rd.
+    // Ps = 2 5  ⇒  Steady (not blinking), ECMA-48 3rd.
+    // Ps = 2 7  ⇒  Positive (not inverse), ECMA-48 3rd.
+    // Ps = 2 8  ⇒  Visible, i.e., not hidden, ECMA-48 3rd, VT300.
+    // Ps = 2 9  ⇒  Not crossed-out, ECMA-48 3rd.
+    // Ps = 3 0  ⇒  Set foreground color to Black.
+    // Ps = 3 1  ⇒  Set foreground color to Red.
+    // Ps = 3 2  ⇒  Set foreground color to Green.
+    // Ps = 3 3  ⇒  Set foreground color to Yellow.
+    // Ps = 3 4  ⇒  Set foreground color to Blue.
+    // Ps = 3 5  ⇒  Set foreground color to Magenta.
+    // Ps = 3 6  ⇒  Set foreground color to Cyan.
+    // Ps = 3 7  ⇒  Set foreground color to White.
+    // Ps = 3 8 ; 2 ; Color  ⇒  Set foreground color to 8-bit Color.
+    // Ps = 3 9  ⇒  Set foreground color to default, ECMA-48 3rd.
+    // Ps = 4 0  ⇒  Set background color to Black.
+    // Ps = 4 1  ⇒  Set background color to Red.
+    // Ps = 4 2  ⇒  Set background color to Green.
+    // Ps = 4 3  ⇒  Set background color to Yellow.
+    // Ps = 4 4  ⇒  Set background color to Blue.
+    // Ps = 4 5  ⇒  Set background color to Magenta.
+    // Ps = 4 6  ⇒  Set background color to Cyan.
+    // Ps = 4 7  ⇒  Set background color to White.
+    // Ps = 4 8 ; 2 ; Color  ⇒  Set background color to 8-bit Color.
+    // Ps = 4 9  ⇒  Set background color to default, ECMA-48 3rd.
+    // Ps = 9 0  ⇒  Set foreground color to Bright Black.
+    // Ps = 9 1  ⇒  Set foreground color to Bright Red.
+    // Ps = 9 2  ⇒  Set foreground color to Bright Green.
+    // Ps = 9 3  ⇒  Set foreground color to Bright Yellow.
+    // Ps = 9 4  ⇒  Set foreground color to Bright Blue.
+    // Ps = 9 5  ⇒  Set foreground color to Bright Magenta.
+    // Ps = 9 6  ⇒  Set foreground color to Bright Cyan.
+    // Ps = 9 7  ⇒  Set foreground color to Bright White.
+    // Ps = 1 0 0  ⇒  Set background color to Bright Black.
+    // Ps = 1 0 1  ⇒  Set background color to Bright Red.
+    // Ps = 1 0 2  ⇒  Set background color to Bright Green.
+    // Ps = 1 0 3  ⇒  Set background color to Bright Yellow.
+    // Ps = 1 0 4  ⇒  Set background color to Bright Blue.
+    // Ps = 1 0 5  ⇒  Set background color to Bright Magenta.
+    // Ps = 1 0 6  ⇒  Set background color to Bright Cyan.
+    // Ps = 1 0 7  ⇒  Set background color to Bright White.
+    using CA = input::CharacterAttributes;
+    constexpr auto sca = input::Type::set_character_attributes;
     const std::string_view s = m_CSIState.buffer;
-    
+
     auto params = CSIParamsScanner::Parse(s);
     if( params.count == 0 )
         params.values[params.count++] = 0;
-    
-    for( int i = 0; i != params.count; ++i ) {
+
+    for( int i = 0; i < params.count; ++i ) {
         const auto ps = params.values[i];
-        auto attrs = SCImToCharacterAttributes(ps);
-        if( attrs ) {
-            m_Output.emplace_back( input::Type::set_character_attributes, *attrs );
+        if( ps == 38 ) {
+            // Special handling for extended foreground colors.
+            if( i + 2 < params.count && params.values[i + 1] == 5 && params.values[i + 2] < 256 ) {
+                m_Output.emplace_back(
+                    sca, CA{.mode = CA::ForegroundColor, .color = Color{static_cast<uint8_t>(params.values[i + 2])}});
+            }
+            else {
+                LogMissedCSIRequest(s);
+            }
+            i += 2;
+        }
+        if( ps == 48 ) {
+            // Special handling for extended background colors.
+            if( i + 2 < params.count && params.values[i + 1] == 5 && params.values[i + 2] < 256 ) {
+                m_Output.emplace_back(
+                    sca, CA{.mode = CA::BackgroundColor, .color = Color{static_cast<uint8_t>(params.values[i + 2])}});
+            }
+            else {
+                LogMissedCSIRequest(s);
+            }
+            i += 2;
+        }
+        else if( auto attrs = SCImToCharacterAttributes(ps) ) {
+            m_Output.emplace_back(sca, *attrs);
         }
         else {
-            LogMissedCSIRequest( s );
+            LogMissedCSIRequest(s);
         }
     }
 }

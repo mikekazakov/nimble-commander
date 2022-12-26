@@ -475,10 +475,10 @@ const static std::pair<const char8_t*, const char32_t*> g_UTFCases[] =
     },    
 };
 
-static Parser2::Bytes Bytes(const char *_string) noexcept
+static Parser::Bytes Bytes(const char *_string) noexcept
 {
     const auto view = std::string_view{_string};
-    return Parser2::Bytes(reinterpret_cast<const std::byte*>(view.data()),
+    return Parser::Bytes(reinterpret_cast<const std::byte*>(view.data()),
                           view.length());
 }
 
@@ -523,12 +523,12 @@ TEST_CASE(PREFIX"Simple cases")
     for( size_t i = 0; i < std::extent_v<decltype(g_SimpleCases)>; ++i ) {
         const auto test_case = g_SimpleCases[i];
         
-        Parser2Impl parser;
+        ParserImpl parser;
         Screen screen(10, 6);
         InterpreterImpl interpreter(screen);
         
         INFO( test_case.first );
-        const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(test_case.first),
+        const auto input_bytes = Parser::Bytes(reinterpret_cast<const std::byte*>(test_case.first),
             strlen(test_case.first));
         interpreter.Interpret(parser.Parse( input_bytes ) );
          
@@ -543,7 +543,7 @@ TEST_CASE(PREFIX"Response cases")
     for( size_t i = 0; i < std::extent_v<decltype(g_ResponseCases)>; ++i ) {
         const auto test_case = g_ResponseCases[i];
         
-        Parser2Impl parser;
+        ParserImpl parser;
         Screen screen(10, 6);
         InterpreterImpl interpreter(screen);
         
@@ -553,7 +553,7 @@ TEST_CASE(PREFIX"Response cases")
                 response.append( reinterpret_cast<const char*>(_bytes.data()), _bytes.size());        
         });
         
-        const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(test_case.first),
+        const auto input_bytes = Parser::Bytes(reinterpret_cast<const std::byte*>(test_case.first),
             strlen(test_case.first));
         interpreter.Interpret(parser.Parse( input_bytes ) );
          
@@ -567,12 +567,12 @@ TEST_CASE(PREFIX"UTF cases")
     for( size_t i = 0; i < std::extent_v<decltype(g_UTFCases)>; ++i ) {
         const auto test_case = g_UTFCases[i];
         
-        Parser2Impl parser;
+        ParserImpl parser;
         Screen screen(10, 6);
         InterpreterImpl interpreter(screen);
         
         const auto input = std::u8string_view{test_case.first};
-        const auto input_bytes = Parser2::Bytes(reinterpret_cast<const std::byte*>(input.data()),
+        const auto input_bytes = Parser::Bytes(reinterpret_cast<const std::byte*>(input.data()),
             input.length());
         interpreter.Interpret(parser.Parse( input_bytes ) );
          
@@ -705,7 +705,7 @@ TEST_CASE(PREFIX"vttest(1.1) - test of cursor movements, "
     "*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*"
     "********************************************************************************";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -876,7 +876,7 @@ TEST_CASE(PREFIX"vttest(1.2) - test of cursor movements, "
     "*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*"
     "************************************************************************************************************************************";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -930,7 +930,7 @@ TEST_CASE(PREFIX"vttest(1.3) - test of cursor movements, "
     "                                                                                "
     "                                                                                ";
 
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -984,7 +984,7 @@ TEST_CASE(PREFIX"vttest(1.4) - test of cursor movements, "
     "                                                                                                                                    "
     "                                                                                                                                    ";
 
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1015,7 +1015,7 @@ TEST_CASE(PREFIX"vttest(1.5) - test of cursor movements, "
     "Push <RETURN>                                                                   ";
     
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(60, 9);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret(parser.Parse( Bytes(raw_input) ) );
@@ -1059,7 +1059,7 @@ TEST_CASE(PREFIX"vttest(1.6) - test of cursor movements, "
     "                                                                                "
     "Push <RETURN>                                                                   ";
 
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret(parser.Parse( Bytes(raw_input) ) );
@@ -1089,7 +1089,7 @@ TEST_CASE(PREFIX"vttest(2.1) - test of WRAP AROUND mode setting")
     "(Test of WRAP AROUND mode setting.)                                             "
     "Push <RETURN>                                                                   ";
 
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 8);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1119,7 +1119,7 @@ TEST_CASE(PREFIX"vttest(2.2) - Test of TAB setting/resetting")
     "Test of TAB setting/resetting. These two lines                                  "
     "should look the same. Push <RETURN>                                             ";
 
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 5);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1168,7 +1168,7 @@ TEST_CASE(PREFIX"vttest(2.3) - 132 column / video reverse")
     "                  This is 132 column mode, light background.                                                                        "
     "                   This is 132 column mode, light background.Push <RETURN>                                                          ";
 
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1215,7 +1215,7 @@ TEST_CASE(PREFIX"vttest(2.4) - 80 column / video reverse")
     "                  This is 80 column mode, light background.                     "
     "                   This is 80 column mode, light background.Push <RETURN>       ";
 
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1265,7 +1265,7 @@ TEST_CASE(PREFIX"vttest(2.5) - 132 column / no video reverse")
     "                  This is 132 column mode, dark background.                                                                         "
     "                   This is 132 column mode, dark background.Push <RETURN>                                                           ";
 
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1312,7 +1312,7 @@ TEST_CASE(PREFIX"vttest(2.6) - 80 column / no video reverse")
     "                  This is 80 column mode, dark background.                      "
     "                   This is 80 column mode, dark background.Push <RETURN>        ";
 
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 20);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1378,7 +1378,7 @@ TEST_CASE(PREFIX"vttest(2.7) - soft scroll")
     "Push <RETURN>                                                                   "
     "Soft scroll down region [12..13] size 2 Line 29                                 ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 13);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1455,7 +1455,7 @@ TEST_CASE(PREFIX"vttest(2.8) - soft scroll")
     "Soft scroll down region [1..24] size 24 Line 8                                  "
     "Soft scroll down region [1..24] size 24 Line 7                                  ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1521,7 +1521,7 @@ TEST_CASE(PREFIX"vttest(2.9) - jump scroll")
     "Push <RETURN>                                                                   "
     "Jump scroll down region [12..13] size 2 Line 29                                 ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 13);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1598,7 +1598,7 @@ TEST_CASE(PREFIX"vttest(2.10) - jump scroll")
     "Jump scroll down region [1..24] size 24 Line 8                                  "
     "Jump scroll down region [1..24] size 24 Line 7                                  ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1639,7 +1639,7 @@ TEST_CASE(PREFIX"vttest(2.11) - origin mode test")
     "This line should be the one above the bottom of the screen. Push <RETURN>       "
     "Origin mode test. This line should be at the bottom of the screen.              ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1680,7 +1680,7 @@ TEST_CASE(PREFIX"vttest(2.12) - origin mode test")
     "                                                                                "
     "Origin mode test. This line should be at the bottom of the screen.              ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -1727,7 +1727,7 @@ TEST_CASE(PREFIX"vttest(2.13) - Graphic rendition test pattern / dark background
     "Dark background. Push <RETURN>                                                  "
     "                                                                                ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
@@ -1835,7 +1835,7 @@ TEST_CASE(PREFIX"vttest(2.14) - Graphic rendition test pattern / light backgroun
     "Light background. Push <RETURN>                                                 "
     "                                                                                ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
@@ -1959,7 +1959,7 @@ TEST_CASE(PREFIX"vttest(2.15) - Test of the SAVE/RESTORE CURSOR feature")
     "of 5 x 4 A's filling the top left of the screen.                                "
     "Push <RETURN>                                                                   ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     const ScreenBuffer &buffer = screen.Buffer();
     InterpreterImpl interpreter(screen);
@@ -2056,7 +2056,7 @@ TEST_CASE(PREFIX"vttest(3) - Test of character sets")
     "These are the installed character sets. Push <RETURN>                           ";
 
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -2119,7 +2119,7 @@ TEST_CASE(PREFIX"vttest(8.1) - Screen accordion test")
     "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -2188,7 +2188,7 @@ TEST_CASE(PREFIX"vttest(8.2)")
     "                                                                                "
     "                                                                                "
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     screen.Buffer().LoadScreenFromANSI(initial);
     InterpreterImpl interpreter(screen);
@@ -2216,7 +2216,7 @@ TEST_CASE(PREFIX"vttest(8.3) - Test of 'Insert Mode'")
     "                                                                                "
     "Test of 'Insert Mode'. The top line should be 'A*** ... ***B'. Push <RETURN>    ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 4);
     screen.Buffer().LoadScreenFromANSI(initial);
     InterpreterImpl interpreter(screen);
@@ -2245,7 +2245,7 @@ TEST_CASE(PREFIX"vttest(8.4) - Test of 'Delete Character'")
     "Test of 'Delete Character'. The top line should be 'AB'. Push <RETURN>          "
     "                                                                                ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 5);
     screen.Buffer().LoadScreenFromANSI(initial);
     InterpreterImpl interpreter(screen);
@@ -2313,7 +2313,7 @@ TEST_CASE(PREFIX"vttest(8.5)")
     "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW                       "
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                        ";
     
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 24);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );
@@ -2345,7 +2345,7 @@ TEST_CASE(PREFIX"vttest(8.7) - Insert Character")
     "Push <RETURN>                                                                   "
     "                                                                                ";
         
-    Parser2Impl parser;
+    ParserImpl parser;
     Screen screen(80, 11);
     InterpreterImpl interpreter(screen);
     interpreter.Interpret( parser.Parse( Bytes(raw_input) ) );

@@ -302,11 +302,11 @@ std::string FormatRawInput(std::span<const std::byte> _input);
 
 } // namespace input
 
-class Parser2
+class Parser
 {
 public:
     using Bytes = std::span<const std::byte>;
-    virtual ~Parser2() = default;
+    virtual ~Parser() = default;
     virtual std::vector<input::Command> Parse(Bytes _to_parse) = 0;
 };
 

@@ -6,19 +6,19 @@
 
 using namespace nc::term;
 using namespace nc::term::input;
-#define PREFIX "nc::term::Parser2 "
+#define PREFIX "nc::term::Parser "
 
-static Parser2::Bytes to_bytes(const char *_characters)
+static Parser::Bytes to_bytes(const char *_characters)
 {
     assert( _characters != nullptr );
-    return Parser2::Bytes{ reinterpret_cast<const std::byte*>(_characters),
+    return Parser::Bytes{ reinterpret_cast<const std::byte*>(_characters),
         std::string_view(_characters).size() };
 }
 
-static Parser2::Bytes to_bytes(const char8_t *_characters)
+static Parser::Bytes to_bytes(const char8_t *_characters)
 {
     assert( _characters != nullptr );
-    return Parser2::Bytes{ reinterpret_cast<const std::byte*>(_characters),
+    return Parser::Bytes{ reinterpret_cast<const std::byte*>(_characters),
         std::u8string_view{_characters}.size()
     };
 }
@@ -123,13 +123,13 @@ static const CharacterSetDesignation& as_character_set_designation( const Comman
 
 TEST_CASE(PREFIX"Parsing empty data returns nothing")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     CHECK( parser.Parse({}).empty() );
 }
 
 TEST_CASE(PREFIX"Parsing raw ascii text yields it")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "Single character" ) {
         auto r = parser.Parse(to_bytes("t"));
         REQUIRE( r.size() == 1 );
@@ -165,7 +165,7 @@ TEST_CASE(PREFIX"Parsing raw ascii text yields it")
 
 TEST_CASE(PREFIX"Handles control characters")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "unused" ) {
         std::vector<input::Command> r;
         SECTION( "0" ) { r = parser.Parse(to_bytes("\x00")); }
@@ -222,7 +222,7 @@ TEST_CASE(PREFIX"Handles control characters")
     SECTION( "go into escape mode" ) {
         auto r = parser.Parse(to_bytes("\x1B"));
         REQUIRE( r.empty() );
-        CHECK( parser.GetEscState() == Parser2Impl::EscState::Esc );
+        CHECK( parser.GetEscState() == ParserImpl::EscState::Esc );
         parser.Parse(to_bytes("\x18"));
     }
     SECTION( "go to normal mode" ) {
@@ -286,12 +286,12 @@ TEST_CASE(PREFIX"Handles control characters")
         REQUIRE( r.size() == 1 );
         CHECK( r[0].type == Type::screen_alignment_test );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"OSC")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC ] 0 ; Hello" ) {
         std::vector<input::Command> r;
         SECTION("") { r = parser.Parse(to_bytes("\x1B""]0;Hello\x07")); }    
@@ -319,12 +319,12 @@ TEST_CASE(PREFIX"OSC")
         CHECK( as_title(r[0]).kind == Title::Window );
         CHECK( as_title(r[0]).title == "Hello" );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI A")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ A" ) {
         auto r = parser.Parse(to_bytes("\x1B""[A"));
         REQUIRE( r.size() == 1 );
@@ -349,12 +349,12 @@ TEST_CASE(PREFIX"CSI A")
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y == -27 );     
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI B")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ B" ) {
         auto r = parser.Parse(to_bytes("\x1B""[B"));
         REQUIRE( r.size() == 1 );
@@ -379,12 +379,12 @@ TEST_CASE(PREFIX"CSI B")
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y == 45 );     
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI C")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ C" ) {
         auto r = parser.Parse(to_bytes("\x1B""[C"));
         REQUIRE( r.size() == 1 );
@@ -418,12 +418,12 @@ TEST_CASE(PREFIX"CSI C")
         CHECK( as_cursor_movement(r[1]).x == 2 );
         CHECK( as_cursor_movement(r[1]).y == 0 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI D")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ D" ) {
         auto r = parser.Parse(to_bytes("\x1B""[D"));
         REQUIRE( r.size() == 1 );
@@ -448,12 +448,12 @@ TEST_CASE(PREFIX"CSI D")
         CHECK( as_cursor_movement(r[0]).x == -32 );
         CHECK( as_cursor_movement(r[0]).y == 0 );     
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI E")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ E" ) {
         auto r = parser.Parse(to_bytes("\x1B""[E"));
         REQUIRE( r.size() == 2 );
@@ -478,12 +478,12 @@ TEST_CASE(PREFIX"CSI E")
         CHECK( as_cursor_movement(r[1]).x == 0 );
         CHECK( as_cursor_movement(r[1]).y == std::nullopt );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI F")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ F" ) {
         auto r = parser.Parse(to_bytes("\x1B""[F"));
         REQUIRE( r.size() == 2 );
@@ -508,12 +508,12 @@ TEST_CASE(PREFIX"CSI F")
         CHECK( as_cursor_movement(r[1]).x == 0 );
         CHECK( as_cursor_movement(r[1]).y == std::nullopt );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI G")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ G" ) {
         auto r = parser.Parse(to_bytes("\x1B""[G"));
         REQUIRE( r.size() == 1 );
@@ -538,12 +538,12 @@ TEST_CASE(PREFIX"CSI G")
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y.has_value() == false );     
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI H")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ H" ) {
         auto r = parser.Parse(to_bytes("\x1B""[H"));
         REQUIRE( r.size() == 1 );
@@ -568,12 +568,12 @@ TEST_CASE(PREFIX"CSI H")
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y == 0 );     
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI I")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ I" ) {
         auto r = parser.Parse(to_bytes("\x1B""[I"));
         REQUIRE( r.size() == 1 );
@@ -586,12 +586,12 @@ TEST_CASE(PREFIX"CSI I")
         CHECK( r[0].type == Type::horizontal_tab );
         CHECK( as_signed(r[0]) == 123 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI J")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     using Area = DisplayErasure::Area;
     SECTION( "ESC [ J" ) {
         auto r = parser.Parse(to_bytes("\x1B""[J"));
@@ -627,12 +627,12 @@ TEST_CASE(PREFIX"CSI J")
         auto r = parser.Parse(to_bytes("\x1B""[4J"));
         REQUIRE( r.size() == 0 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI K")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     using Area = LineErasure::Area;
     SECTION( "ESC [ K" ) {
         auto r = parser.Parse(to_bytes("\x1B""[K"));
@@ -662,12 +662,12 @@ TEST_CASE(PREFIX"CSI K")
         auto r = parser.Parse(to_bytes("\x1B""[3K"));
         REQUIRE( r.size() == 0 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI L")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ L" ) {
         auto r = parser.Parse(to_bytes("\x1B""[L"));
         REQUIRE( r.size() == 1 );
@@ -680,12 +680,12 @@ TEST_CASE(PREFIX"CSI L")
         CHECK( r[0].type == Type::insert_lines );
         CHECK( as_unsigned(r[0]) == 12 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI M")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ M" ) {
         auto r = parser.Parse(to_bytes("\x1B""[M"));
         REQUIRE( r.size() == 1 );
@@ -698,12 +698,12 @@ TEST_CASE(PREFIX"CSI M")
         CHECK( r[0].type == Type::delete_lines );
         CHECK( as_unsigned(r[0]) == 23 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI P")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ P" ) {
         auto r = parser.Parse(to_bytes("\x1B""[P"));
         REQUIRE( r.size() == 1 );
@@ -716,12 +716,12 @@ TEST_CASE(PREFIX"CSI P")
         CHECK( r[0].type == Type::delete_characters );
         CHECK( as_unsigned(r[0]) == 34 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI S")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ S" ) {
         auto r = parser.Parse(to_bytes("\x1B""[S"));
         REQUIRE( r.size() == 1 );
@@ -734,12 +734,12 @@ TEST_CASE(PREFIX"CSI S")
         CHECK( r[0].type == Type::scroll_lines );
         CHECK( as_signed(r[0]) == 45 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI T")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ T" ) {
         auto r = parser.Parse(to_bytes("\x1B""[T"));
         REQUIRE( r.size() == 1 );
@@ -752,12 +752,12 @@ TEST_CASE(PREFIX"CSI T")
         CHECK( r[0].type == Type::scroll_lines );
         CHECK( as_signed(r[0]) == -56 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI X")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ X" ) {
         auto r = parser.Parse(to_bytes("\x1B[X"));
         REQUIRE( r.size() == 1 );
@@ -776,12 +776,12 @@ TEST_CASE(PREFIX"CSI X")
         CHECK( r[0].type == Type::erase_characters );
         CHECK( as_unsigned(r[0]) == 67 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI Z")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ Z" ) {
         auto r = parser.Parse(to_bytes("\x1B""[Z"));
         REQUIRE( r.size() == 1 );
@@ -794,12 +794,12 @@ TEST_CASE(PREFIX"CSI Z")
         CHECK( r[0].type == Type::horizontal_tab );
         CHECK( as_signed(r[0]) == -1234 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI a")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ a" ) {
         auto r = parser.Parse(to_bytes("\x1B""[a"));
         REQUIRE( r.size() == 1 );
@@ -816,12 +816,12 @@ TEST_CASE(PREFIX"CSI a")
         CHECK( as_cursor_movement(r[0]).x == 7 );
         CHECK( as_cursor_movement(r[0]).y == std::nullopt );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI b")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ b" ) {
         auto r = parser.Parse(to_bytes("\x1B""[b"));
         REQUIRE( r.size() == 1 );
@@ -834,12 +834,12 @@ TEST_CASE(PREFIX"CSI b")
         CHECK( r[0].type == Type::repeat_last_character );
         CHECK( as_unsigned(r[0]) == 7 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI c")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ c" ) {
         auto r = parser.Parse(to_bytes("\x1B""[c"));
         REQUIRE( r.size() == 1 );
@@ -856,12 +856,12 @@ TEST_CASE(PREFIX"CSI c")
         auto r = parser.Parse(to_bytes("\x1B""[1c"));
         REQUIRE( r.empty() );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI d")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ d" ) {
         auto r = parser.Parse(to_bytes("\x1B""[d"));
         REQUIRE( r.size() == 1 );
@@ -878,12 +878,12 @@ TEST_CASE(PREFIX"CSI d")
         CHECK( as_cursor_movement(r[0]).x == std::nullopt );
         CHECK( as_cursor_movement(r[0]).y == 4 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI e")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ e" ) {
         auto r = parser.Parse(to_bytes("\x1B""[e"));
         REQUIRE( r.size() == 1 );
@@ -900,12 +900,12 @@ TEST_CASE(PREFIX"CSI e")
         CHECK( as_cursor_movement(r[0]).x == std::nullopt );
         CHECK( as_cursor_movement(r[0]).y == 5 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI f")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ f" ) {
         auto r = parser.Parse(to_bytes("\x1B""[f"));
         REQUIRE( r.size() == 1 );
@@ -930,12 +930,12 @@ TEST_CASE(PREFIX"CSI f")
         CHECK( as_cursor_movement(r[0]).x == 0 );
         CHECK( as_cursor_movement(r[0]).y == 0 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI g")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ g" ) {
         auto r = parser.Parse(to_bytes("\x1B""[g"));
         REQUIRE( r.size() == 1 );
@@ -962,12 +962,12 @@ TEST_CASE(PREFIX"CSI g")
         CHECK( r[0].type == Type::clear_tab );
         CHECK( as_tab_clear(r[0]).mode == input::TabClear::All );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI hl")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     using Kind = ModeChange::Kind;
     auto verify = [&](const char *_cmd, Kind _kind, bool _status ) {
         auto r = parser.Parse(to_bytes(_cmd));
@@ -1112,12 +1112,12 @@ TEST_CASE(PREFIX"CSI hl")
         CHECK( as_mode_change(r[1]).mode == Kind::SendMouseXYOnPressAndRelease );
         CHECK( as_mode_change(r[1]).status == true );
     }    
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI m")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     auto verify = [&](const char *_cmd, CharacterAttributes::Kind _mode) {
         auto r = parser.Parse(to_bytes(_cmd));
         REQUIRE( r.size() == 1 );
@@ -1297,12 +1297,12 @@ TEST_CASE(PREFIX"CSI m")
         verify("\x1B[107m", CharacterAttributes::BackgroundWhiteBright);
     }
     
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI n")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ 5 n" ) {
         auto r = parser.Parse(to_bytes("\x1B""[5n"));
         REQUIRE( r.size() == 1 );
@@ -1323,12 +1323,12 @@ TEST_CASE(PREFIX"CSI n")
         auto r = parser.Parse(to_bytes("\x1B""[0n"));
         REQUIRE( r.size() == 0 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI r")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ r" ) {
         auto r = parser.Parse(to_bytes("\x1B[r"));
         REQUIRE( r.size() == 1 );
@@ -1349,12 +1349,12 @@ TEST_CASE(PREFIX"CSI r")
         CHECK( as_scrolling_region(r[0]).range->top == 4 );
         CHECK( as_scrolling_region(r[0]).range->bottom == 15 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI t")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ 22 ; 0 t" ) {
         auto r = parser.Parse(to_bytes("\x1B[22;0t"));
         CHECK( r[0].type == Type::manipulate_title );
@@ -1401,12 +1401,12 @@ TEST_CASE(PREFIX"CSI t")
         REQUIRE( parser.Parse(to_bytes("\x1B[23;3t")).empty() );
         REQUIRE( parser.Parse(to_bytes("\x1B[100t")).empty() );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI `")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ `" ) {
         auto r = parser.Parse(to_bytes("\x1B""[`"));
         REQUIRE( r.size() == 1 );
@@ -1423,12 +1423,12 @@ TEST_CASE(PREFIX"CSI `")
         CHECK( as_cursor_movement(r[0]).x == 6 );
         CHECK( as_cursor_movement(r[0]).y == std::nullopt );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSI @")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ @" ) {
         auto r = parser.Parse(to_bytes("\x1B""[@"));
         REQUIRE( r.size() == 1 );
@@ -1441,12 +1441,12 @@ TEST_CASE(PREFIX"CSI @")
         CHECK( r[0].type == Type::insert_characters );
         CHECK( as_unsigned(r[0]) == 42 );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"Character set designation")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     using CSD = CharacterSetDesignation;
     SECTION( "ESC ( 0" ) {
         auto r = parser.Parse(to_bytes("\x1B""(0"));
@@ -1506,12 +1506,12 @@ TEST_CASE(PREFIX"Character set designation")
         CHECK( as_character_set_designation(r[0]).target == 3 );
         CHECK( as_character_set_designation(r[0]).set == CSD::DECSpecialGraphics );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }
 
 TEST_CASE(PREFIX"CSIParamsScanner")
 {
-    using S = Parser2Impl::CSIParamsScanner;
+    using S = ParserImpl::CSIParamsScanner;
     SECTION("") {
         auto p = S::Parse("");
         CHECK(p.count == 0); 
@@ -1566,7 +1566,7 @@ TEST_CASE(PREFIX"CSIParamsScanner")
 
 TEST_CASE(PREFIX"Properly handles torn sequences")
 {
-    Parser2Impl parser;
+    ParserImpl parser;
     SECTION( "ESC [ 34 P" ) {
         auto r1 = parser.Parse(to_bytes("\x1B"));
         REQUIRE( r1.size() == 0 );
@@ -1587,5 +1587,5 @@ TEST_CASE(PREFIX"Properly handles torn sequences")
         CHECK( r3[0].type == Type::text );
         CHECK( as_utf8text(r3[0]).characters == "\xf0\x9f\x98\xb1" );
     }
-    CHECK( parser.GetEscState() == Parser2Impl::EscState::Text );
+    CHECK( parser.GetEscState() == ParserImpl::EscState::Text );
 }

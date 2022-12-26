@@ -7,10 +7,10 @@
 
 namespace nc::term {
 
-class Parser2Impl : public Parser2
+class ParserImpl : public Parser
 {
 public: 
-    using Parser2::Bytes;
+    using Parser::Bytes;
     
     struct Params {
         std::function<void(std::string_view _error)> error_log;
@@ -27,13 +27,13 @@ public:
         DCS = 5 // dedicate character set
     };
 
-    Parser2Impl( const Params& _params = {} );
-    ~Parser2Impl() override;    
+    ParserImpl( const Params& _params = {} );
+    ~ParserImpl() override;
     std::vector<input::Command> Parse( Bytes _to_parse ) override;
     
     EscState GetEscState() const noexcept;
 private:
-    using Me = Parser2Impl;
+    using Me = ParserImpl;
     
     void SwitchTo(EscState _state);
     void Reset();
@@ -163,7 +163,7 @@ private:
     std::function<void(std::string_view _error)> m_ErrorLog;    
 };
 
-struct Parser2Impl::CSIParamsScanner
+struct ParserImpl::CSIParamsScanner
 {
     static constexpr int MaxParams = 8;
     struct Params {

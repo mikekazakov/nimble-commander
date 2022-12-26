@@ -11,22 +11,22 @@
 
 namespace nc::term {
 
-Parser2Impl::Parser2Impl(const Params& _params):
+ParserImpl::ParserImpl(const Params& _params):
     m_ErrorLog(_params.error_log)
 {
     Reset();
 }
 
-Parser2Impl::~Parser2Impl()
+ParserImpl::~ParserImpl()
 {
 }
 
-void Parser2Impl::Reset()
+void ParserImpl::Reset()
 {
     SwitchTo(EscState::Text);
 }
 
-std::vector<input::Command> Parser2Impl::Parse( Bytes _to_parse )
+std::vector<input::Command> ParserImpl::Parse( Bytes _to_parse )
 {
     for( auto c: _to_parse )
         EatByte( static_cast<unsigned char>(c) );
@@ -35,7 +35,7 @@ std::vector<input::Command> Parser2Impl::Parse( Bytes _to_parse )
     return std::move(m_Output);
 }
 
-void Parser2Impl::EatByte( unsigned char _byte )
+void ParserImpl::EatByte( unsigned char _byte )
 {
     while( true ) {
         [[maybe_unused]] const auto state = m_SubState;
@@ -50,7 +50,7 @@ void Parser2Impl::EatByte( unsigned char _byte )
     }
 }
 
-void Parser2Impl::SwitchTo(EscState _state)
+void ParserImpl::SwitchTo(EscState _state)
 {
     if( m_SubState != _state ) {
         (*this.*m_SubStates[static_cast<int>(m_SubState)].exit)();
@@ -59,17 +59,17 @@ void Parser2Impl::SwitchTo(EscState _state)
     }
 }
 
-void Parser2Impl::SSTextEnter() noexcept
+void ParserImpl::SSTextEnter() noexcept
 {
     m_TextState.UTF8StockLen = 0;
 }
 
-void Parser2Impl::SSTextExit() noexcept
+void ParserImpl::SSTextExit() noexcept
 {
     FlushAllText();
 }
 
-bool Parser2Impl::SSTextConsume(unsigned char _byte) noexcept
+bool ParserImpl::SSTextConsume(unsigned char _byte) noexcept
 {    
     const unsigned char c = _byte;    
     if( c < 32 ) {
@@ -80,7 +80,7 @@ bool Parser2Impl::SSTextConsume(unsigned char _byte) noexcept
     return true;
 }
 
-void Parser2Impl::ConsumeNextUTF8TextChar( unsigned char _byte )
+void ParserImpl::ConsumeNextUTF8TextChar( unsigned char _byte )
 {
     auto &ts = m_TextState;
     if( ts.UTF8StockLen < ts.UTF8CharsStockSize ) {
@@ -88,7 +88,7 @@ void Parser2Impl::ConsumeNextUTF8TextChar( unsigned char _byte )
     }
 }
 
-void Parser2Impl::FlushAllText()
+void ParserImpl::FlushAllText()
 {
     if( m_TextState.UTF8StockLen == 0 )
         return;
@@ -105,7 +105,7 @@ void Parser2Impl::FlushAllText()
     m_TextState.UTF8StockLen = 0;
 }
 
-void Parser2Impl::FlushCompleteText()
+void ParserImpl::FlushCompleteText()
 {
     if( m_TextState.UTF8StockLen == 0 )
         return;
@@ -132,81 +132,81 @@ void Parser2Impl::FlushCompleteText()
     m_Output.emplace_back( std::move(command) );
 }
 
-Parser2Impl::EscState Parser2Impl::GetEscState() const noexcept
+ParserImpl::EscState ParserImpl::GetEscState() const noexcept
 {
     return m_SubState;
 }
 
-void Parser2Impl::LF() noexcept
+void ParserImpl::LF() noexcept
 {
     m_Output.emplace_back( input::Type::line_feed );
 }
 
-void Parser2Impl::HT() noexcept
+void ParserImpl::HT() noexcept
 {
     m_Output.emplace_back( input::Type::horizontal_tab, 1 );
 }
 
-void Parser2Impl::CR() noexcept
+void ParserImpl::CR() noexcept
 {
     m_Output.emplace_back( input::Type::carriage_return );
 }
 
-void Parser2Impl::BS() noexcept
+void ParserImpl::BS() noexcept
 {
     m_Output.emplace_back( input::Type::back_space );
 }
 
-void Parser2Impl::BEL() noexcept
+void ParserImpl::BEL() noexcept
 {
     // TODO: + if title
     m_Output.emplace_back( input::Type::bell );
 }
 
-void Parser2Impl::RI() noexcept
+void ParserImpl::RI() noexcept
 {
     m_Output.emplace_back( input::Type::reverse_index );
 }
 
-void Parser2Impl::RIS() noexcept
+void ParserImpl::RIS() noexcept
 {
     Reset();
     m_Output.emplace_back( input::Type::reset );
 }
 
-void Parser2Impl::HTS() noexcept
+void ParserImpl::HTS() noexcept
 {
     m_Output.emplace_back( input::Type::set_tab );
 }
 
-void Parser2Impl::SI() noexcept
+void ParserImpl::SI() noexcept
 {
     m_Output.emplace_back( input::Type::select_character_set, 0u );
 }
 
-void Parser2Impl::SO() noexcept
+void ParserImpl::SO() noexcept
 {
     m_Output.emplace_back( input::Type::select_character_set, 1u );
 }
 
-void Parser2Impl::DECSC() noexcept
+void ParserImpl::DECSC() noexcept
 {
     // TODO: save translation stuff
     m_Output.emplace_back( input::Type::save_state ); 
 }
 
-void Parser2Impl::DECRC() noexcept
+void ParserImpl::DECRC() noexcept
 {
     // TODO: restore translation stuff
     m_Output.emplace_back( input::Type::restore_state );
 }
 
-void Parser2Impl::DECALN() noexcept
+void ParserImpl::DECALN() noexcept
 {
     m_Output.emplace_back( input::Type::screen_alignment_test );
 }
 
-void Parser2Impl::LogMissedEscChar( unsigned char _c )
+void ParserImpl::LogMissedEscChar( unsigned char _c )
 {
     if( m_ErrorLog ) {
         char buf[256];
@@ -215,16 +215,16 @@ void Parser2Impl::LogMissedEscChar( unsigned char _c )
     }
 }
 
-void Parser2Impl::SSEscEnter() noexcept
+void ParserImpl::SSEscEnter() noexcept
 {
     m_EscState.hash = false;
 }
 
-void Parser2Impl::SSEscExit() noexcept
+void ParserImpl::SSEscExit() noexcept
 {
 }
 
-bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
+bool ParserImpl::SSEscConsume(unsigned char _byte) noexcept
 {
     const unsigned char c = _byte;
     
@@ -303,15 +303,15 @@ bool Parser2Impl::SSEscConsume(unsigned char _byte) noexcept
     return true;
 }
 
-void Parser2Impl::SSControlEnter() noexcept
+void ParserImpl::SSControlEnter() noexcept
 {
 }
 
-void Parser2Impl::SSControlExit() noexcept
+void ParserImpl::SSControlExit() noexcept
 {
 }
 
-bool Parser2Impl::SSControlConsume(unsigned char _byte) noexcept
+bool ParserImpl::SSControlConsume(unsigned char _byte) noexcept
 {
     const unsigned char c = _byte;        
     if( c < 32 ) {
@@ -354,18 +354,18 @@ bool Parser2Impl::SSControlConsume(unsigned char _byte) noexcept
     return false;
 }
 
-void Parser2Impl::SSOSCEnter() noexcept
+void ParserImpl::SSOSCEnter() noexcept
 {
     m_OSCState.buffer.clear();
     m_OSCState.got_esc = false;
 }
 
-void Parser2Impl::SSOSCExit() noexcept
+void ParserImpl::SSOSCExit() noexcept
 {
     SSOSCSubmit();
 }
 
-bool Parser2Impl::SSOSCConsume(const unsigned char _byte) noexcept
+bool ParserImpl::SSOSCConsume(const unsigned char _byte) noexcept
 {
     // consume the following (OSC was already consumed):
     // OSC Ps ; Pt BEL
@@ -396,13 +396,13 @@ bool Parser2Impl::SSOSCConsume(const unsigned char _byte) noexcept
     return true;
 }
 
-void Parser2Impl::SSOSCDiscard() noexcept
+void ParserImpl::SSOSCDiscard() noexcept
 {
     m_OSCState.buffer.clear();
 }
 
 // https://invisible-island.net/xterm/ctlseqs/ctlseqs.html -> Operating System Commands
-void Parser2Impl::SSOSCSubmit() noexcept
+void ParserImpl::SSOSCSubmit() noexcept
 {
     // parse the following format: Ps ; Pt
     std::string_view s = m_OSCState.buffer;
@@ -434,7 +434,7 @@ void Parser2Impl::SSOSCSubmit() noexcept
     }
 }
 
-void Parser2Impl::LogMissedOSCRequest( unsigned _ps, std::string_view _pt )
+void ParserImpl::LogMissedOSCRequest( unsigned _ps, std::string_view _pt )
 {
     if( m_ErrorLog ) {
         using namespace std::string_literals;
@@ -443,12 +443,12 @@ void Parser2Impl::LogMissedOSCRequest( unsigned _ps, std::string_view _pt )
     }
 }
 
-void Parser2Impl::SSCSIEnter() noexcept
+void ParserImpl::SSCSIEnter() noexcept
 {
     m_CSIState.buffer.clear();
 }
 
-void Parser2Impl::SSCSIExit() noexcept
+void ParserImpl::SSCSIExit() noexcept
 {
     SSCSISubmit();
 }
@@ -468,7 +468,7 @@ constexpr static std::array<bool, 256> g_CSI_ValidTerminal =
 constexpr static std::array<bool, 256> g_CSI_ValidContents =
     Make8BitBoolTable("01234567890; ?>=!\"\'$#*");
 
-bool Parser2Impl::SSCSIConsume(unsigned char _byte) noexcept
+bool ParserImpl::SSCSIConsume(unsigned char _byte) noexcept
 {
     if( _byte < 32 ) {
         return SSOSCConsumeControl(_byte);
@@ -491,7 +491,7 @@ bool Parser2Impl::SSCSIConsume(unsigned char _byte) noexcept
     }
 }
 
-bool Parser2Impl::SSOSCConsumeControl(unsigned char _byte) noexcept
+bool ParserImpl::SSOSCConsumeControl(unsigned char _byte) noexcept
 {
     switch (_byte) {
 //        case  0: ???
@@ -530,7 +530,7 @@ bool Parser2Impl::SSOSCConsumeControl(unsigned char _byte) noexcept
     }
 }
 
-void Parser2Impl::SSCSISubmit() noexcept
+void ParserImpl::SSCSISubmit() noexcept
 {
     if( m_CSIState.buffer.empty() )
         return;
@@ -574,7 +574,7 @@ void Parser2Impl::SSCSISubmit() noexcept
     } 
 }
 
-void Parser2Impl::LogMissedCSIRequest( std::string_view _request )
+void ParserImpl::LogMissedCSIRequest( std::string_view _request )
 {
     if( m_ErrorLog ) {
         auto msg = std::string("Missed a CSI: ") + std::string(_request);
@@ -582,7 +582,7 @@ void Parser2Impl::LogMissedCSIRequest( std::string_view _request )
     }
 }
     
-void Parser2Impl::CSI_A() noexcept
+void ParserImpl::CSI_A() noexcept
 {
 //    CSI Ps A - Cursor Up Ps Times (default = 1) (CUU).
 //    Not implemented:
@@ -599,7 +599,7 @@ void Parser2Impl::CSI_A() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
-void Parser2Impl::CSI_B() noexcept
+void ParserImpl::CSI_B() noexcept
 {
 //  CSI Ps B  Cursor Down Ps Times (default = 1) (CUD).
     const std::string_view s = m_CSIState.buffer;
@@ -613,7 +613,7 @@ void Parser2Impl::CSI_B() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );    
 }
 
-void Parser2Impl::CSI_C() noexcept
+void ParserImpl::CSI_C() noexcept
 {
 // CSI Ps C  Cursor Forward Ps Times (default = 1) (CUF).
     const std::string_view s = m_CSIState.buffer;
@@ -627,7 +627,7 @@ void Parser2Impl::CSI_C() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
-void Parser2Impl::CSI_D() noexcept
+void ParserImpl::CSI_D() noexcept
 {
 // CSI Ps D  Cursor Backward Ps Times (default = 1) (CUB).
     const std::string_view s = m_CSIState.buffer;
@@ -641,7 +641,7 @@ void Parser2Impl::CSI_D() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
-void Parser2Impl::CSI_E() noexcept
+void ParserImpl::CSI_E() noexcept
 {
 // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
 // E   CNL       Move cursor down the indicated # of rows, to column 1.
@@ -661,7 +661,7 @@ void Parser2Impl::CSI_E() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
     
-void Parser2Impl::CSI_F() noexcept
+void ParserImpl::CSI_F() noexcept
 {
 // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
 // F   CPL       Move cursor up the indicated # of rows, to column 1.
@@ -681,7 +681,7 @@ void Parser2Impl::CSI_F() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
     
-void Parser2Impl::CSI_G() noexcept
+void ParserImpl::CSI_G() noexcept
 {
 //CSI Ps G  Cursor Character Absolute  [column] (default = [row,1]) (CHA).
     int x = 0;
@@ -694,7 +694,7 @@ void Parser2Impl::CSI_G() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );   
 }
 
-void Parser2Impl::CSI_H() noexcept
+void ParserImpl::CSI_H() noexcept
 {
 //    CSI Ps ; Ps H
 //    Cursor Position [row;column] (default = [1,1]) (CUP).
@@ -712,7 +712,7 @@ void Parser2Impl::CSI_H() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );    
 }
     
-void Parser2Impl::CSI_I() noexcept
+void ParserImpl::CSI_I() noexcept
 {
 // CSI Ps I  Cursor Forward Tabulation Ps tab stops (default = 1) (CHT).
     const std::string_view s = m_CSIState.buffer;
@@ -721,7 +721,7 @@ void Parser2Impl::CSI_I() noexcept
     m_Output.emplace_back( input::Type::horizontal_tab, static_cast<int>(ps) );
 }
     
-void Parser2Impl::CSI_J() noexcept
+void ParserImpl::CSI_J() noexcept
 {
 //    CSI Ps J  Erase in Display (ED), VT100.
 //    Ps = 0  ⇒  Erase Below (default).
@@ -754,7 +754,7 @@ void Parser2Impl::CSI_J() noexcept
     m_Output.emplace_back( input::Type::erase_in_display, de );
 }
 
-void Parser2Impl::CSI_K() noexcept
+void ParserImpl::CSI_K() noexcept
 {
 // CSI Ps K  Erase in Line (EL), VT100.
 // Ps = 0  ⇒  Erase to Right (default).
@@ -783,7 +783,7 @@ void Parser2Impl::CSI_K() noexcept
     m_Output.emplace_back( input::Type::erase_in_line, le );
 }
 
-void Parser2Impl::CSI_L() noexcept
+void ParserImpl::CSI_L() noexcept
 {
 // CSI Ps L  Insert Ps Line(s) (default = 1) (IL).
     const std::string_view s = m_CSIState.buffer;
@@ -792,7 +792,7 @@ void Parser2Impl::CSI_L() noexcept
     m_Output.emplace_back( input::Type::insert_lines, ps );
 }
 
-void Parser2Impl::CSI_M() noexcept
+void ParserImpl::CSI_M() noexcept
 {
 // CSI Ps M  Delete Ps Line(s) (default = 1) (DL).
     const std::string_view s = m_CSIState.buffer;
@@ -801,7 +801,7 @@ void Parser2Impl::CSI_M() noexcept
     m_Output.emplace_back( input::Type::delete_lines, ps );
 }
     
-void Parser2Impl::CSI_P() noexcept
+void ParserImpl::CSI_P() noexcept
 {
 // CSI Ps P  Delete Ps Character(s) (default = 1) (DCH).
     const std::string_view s = m_CSIState.buffer;
@@ -810,7 +810,7 @@ void Parser2Impl::CSI_P() noexcept
     m_Output.emplace_back( input::Type::delete_characters, ps );
 }
     
-void Parser2Impl::CSI_S() noexcept
+void ParserImpl::CSI_S() noexcept
 {
 // CSI Ps S  Scroll up Ps lines (default = 1) (SU), VT420, ECMA-48.
     const std::string_view s = m_CSIState.buffer;
@@ -819,7 +819,7 @@ void Parser2Impl::CSI_S() noexcept
     m_Output.emplace_back( input::Type::scroll_lines, static_cast<signed>(ps) );
 }
     
-void Parser2Impl::CSI_T() noexcept
+void ParserImpl::CSI_T() noexcept
 {
 // CSI Ps T  Scroll down Ps lines (default = 1) (SD), VT420.
     const std::string_view s = m_CSIState.buffer;
@@ -828,7 +828,7 @@ void Parser2Impl::CSI_T() noexcept
     m_Output.emplace_back( input::Type::scroll_lines, -static_cast<signed>(ps) );
 }
     
-void Parser2Impl::CSI_X() noexcept
+void ParserImpl::CSI_X() noexcept
 {
     // CSI Ps X  Erase Ps Character(s) (default = 1) (ECH).
     const std::string_view s = m_CSIState.buffer;
@@ -838,7 +838,7 @@ void Parser2Impl::CSI_X() noexcept
     m_Output.emplace_back(input::Type::erase_characters, ps);
 }
     
-void Parser2Impl::CSI_Z() noexcept
+void ParserImpl::CSI_Z() noexcept
 {
 // CSI Ps Z  Cursor Backward Tabulation Ps tab stops (default = 1) (CBT).
     const std::string_view s = m_CSIState.buffer;
@@ -847,7 +847,7 @@ void Parser2Impl::CSI_Z() noexcept
     m_Output.emplace_back( input::Type::horizontal_tab, -static_cast<int>(ps) );
 }
     
-void Parser2Impl::CSI_a() noexcept
+void ParserImpl::CSI_a() noexcept
 {
 // CSI Pm a  Character Position Relative  [columns] (default = [row,col+1]) (HPR).
     const std::string_view s = m_CSIState.buffer;
@@ -860,7 +860,7 @@ void Parser2Impl::CSI_a() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
     
-void Parser2Impl::CSI_b() noexcept
+void ParserImpl::CSI_b() noexcept
 {
 // CSI Ps b  Repeat the preceding graphic character Ps times (REP).
     const std::string_view s = m_CSIState.buffer;
@@ -869,7 +869,7 @@ void Parser2Impl::CSI_b() noexcept
     m_Output.emplace_back( input::Type::repeat_last_character, ps );
 }
 
-void Parser2Impl::CSI_c() noexcept
+void ParserImpl::CSI_c() noexcept
 {
 // CSI Ps c  Send Device Attributes (Primary DA).
 // Ps = 0  or omitted ⇒  request attributes from terminal.
@@ -883,7 +883,7 @@ void Parser2Impl::CSI_c() noexcept
     }
 }
     
-void Parser2Impl::CSI_d() noexcept
+void ParserImpl::CSI_d() noexcept
 {
 // CSI Pm d  Line Position Absolute  [row] (default = [1,column]) (VPA).
     const std::string_view s = m_CSIState.buffer;
@@ -897,7 +897,7 @@ void Parser2Impl::CSI_d() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
-void Parser2Impl::CSI_e() noexcept
+void ParserImpl::CSI_e() noexcept
 {
 // CSI Pm e  Line Position Relative  [rows] (default = [row+1,column]) (VPR).
     const std::string_view s = m_CSIState.buffer;
@@ -910,12 +910,12 @@ void Parser2Impl::CSI_e() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
-void Parser2Impl::CSI_f() noexcept
+void ParserImpl::CSI_f() noexcept
 {
     CSI_H();
 }
 
-void Parser2Impl::CSI_g() noexcept
+void ParserImpl::CSI_g() noexcept
 {
 //    CSI Ps g  Tab Clear (TBC).
 //    Ps = 0  ⇒  Clear Current Column (default).
@@ -967,7 +967,7 @@ static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, 
     }
 }
     
-void Parser2Impl::CSI_hl() noexcept
+void ParserImpl::CSI_hl() noexcept
 {
 // CSI Pm h  Set Mode (SM).
 // CSI ? Pm h DEC Private Mode Set (DECSET).
@@ -1060,7 +1060,7 @@ static std::optional<input::CharacterAttributes> SCImToCharacterAttributes(int _
     };
 }
 
-void Parser2Impl::CSI_m() noexcept
+void ParserImpl::CSI_m() noexcept
 {
 // CSI Pm m  Character Attributes (SGR).
 // Ps = 0  ⇒  Normal (default), VT100.
@@ -1132,7 +1132,7 @@ void Parser2Impl::CSI_m() noexcept
     }
 }
 
-void Parser2Impl::CSI_n() noexcept
+void ParserImpl::CSI_n() noexcept
 {
 //CSI Ps n  Device Status Report (DSR).
 //            Ps = 5  ⇒  Status Report.
@@ -1156,7 +1156,7 @@ void Parser2Impl::CSI_n() noexcept
     }
 }
 
-void Parser2Impl::CSI_r() noexcept
+void ParserImpl::CSI_r() noexcept
 {
 // CSI Ps ; Ps r
 //    Set Scrolling Region [top;bottom] (default = full size of window) (DECSTBM), VT100.
@@ -1203,7 +1203,7 @@ static std::optional<input::TitleManipulation> ComposeWindowTitleManipulation(un
     return m;
 }
 
-void Parser2Impl::CSI_t() noexcept
+void ParserImpl::CSI_t() noexcept
 {
     // CSI Ps ; Ps ; Ps t
     const auto p = CSIParamsScanner::Parse(m_CSIState.buffer);
@@ -1227,7 +1227,7 @@ void Parser2Impl::CSI_t() noexcept
     }
 }
 
-void Parser2Impl::CSI_Accent() noexcept
+void ParserImpl::CSI_Accent() noexcept
 {
 // CSI Pm `  Character Position Absolute  [column] (default = [row,1]) (HPA).
     const std::string_view s = m_CSIState.buffer;
@@ -1241,7 +1241,7 @@ void Parser2Impl::CSI_Accent() noexcept
     m_Output.emplace_back( input::Type::move_cursor, cm );
 }
 
-void Parser2Impl::CSI_At() noexcept
+void ParserImpl::CSI_At() noexcept
 {
 // CSI Ps @  Insert Ps (Blank) Character(s) (default = 1) (ICH).
     const std::string_view s = m_CSIState.buffer;
@@ -1250,7 +1250,7 @@ void Parser2Impl::CSI_At() noexcept
     m_Output.emplace_back( input::Type::insert_characters, static_cast<unsigned>(ps) );    
 }
 
-void Parser2Impl::SSDCSEnter() noexcept
+void ParserImpl::SSDCSEnter() noexcept
 {
     m_DCSState.buffer.clear();
 }
@@ -1278,7 +1278,7 @@ DCS_Set( const std::string_view _str ) noexcept
     return std::nullopt;
 }
 
-void Parser2Impl::SSDCSExit() noexcept
+void ParserImpl::SSDCSExit() noexcept
 {
     const std::string_view buffer = m_DCSState.buffer;
     if( buffer.length() < 2 )
@@ -1304,7 +1304,7 @@ constexpr static std::array<bool, 256> g_DCS_ValidTerminal =
 constexpr static std::array<bool, 256> g_DCS_ValidContents =
     Make8BitBoolTable("()*+\"%`&");
 
-bool Parser2Impl::SSDCSConsume(unsigned char _byte) noexcept
+bool ParserImpl::SSDCSConsume(unsigned char _byte) noexcept
 {
      if( g_DCS_ValidContents[_byte] ) {
          m_DCSState.buffer += static_cast<char>(_byte);
@@ -1324,8 +1324,8 @@ bool Parser2Impl::SSDCSConsume(unsigned char _byte) noexcept
      }
 }
 
-Parser2Impl::CSIParamsScanner::Params
-Parser2Impl::CSIParamsScanner::Parse(std::string_view _csi) noexcept
+ParserImpl::CSIParamsScanner::Params
+ParserImpl::CSIParamsScanner::Parse(std::string_view _csi) noexcept
 {
     Params p;
     auto string = _csi;

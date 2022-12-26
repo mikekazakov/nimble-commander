@@ -1,10 +1,11 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
 #include <vector>
 #include <memory>
 #include <string>
+#include <span>
 
 namespace nc::term {
 
@@ -93,13 +94,13 @@ public:
     // -1 is the last (most recent) backscreen line
     // return an iterator pair [i,e)
     // on invalid input parameters return [nullptr,nullptr)
-    template <class T>
-    struct RangePair : public std::pair<T *, T *> {
-        using std::pair<T *, T *>::pair;
-        operator bool() const { return this->first != nullptr && this->second != nullptr; };
-    };
-    RangePair<const Space> LineFromNo(int _line_number) const;
-    RangePair<Space> LineFromNo(int _line_number);
+//    template <class T>
+//    struct RangePair : public std::pair<T *, T *> {
+//        using std::pair<T *, T *>::pair;
+//        operator bool() const { return this->first != nullptr && this->second != nullptr; };
+//    };
+    std::span<const Space> LineFromNo(int _line_number) const noexcept;
+    std::span<Space> LineFromNo(int _line_number) noexcept;
 
     Space At(int x, int y) const;
 
@@ -136,7 +137,7 @@ public:
     Snapshot MakeSnapshot() const;
     void RevertToSnapshot(const Snapshot &_snapshot);
 
-    static unsigned OccupiedChars(const RangePair<const Space> &_line);
+    static unsigned OccupiedChars(std::span<const Space> _line);
     static unsigned OccupiedChars(const Space *_begin, const Space *_end);
     static bool HasOccupiedChars(const Space *_begin, const Space *_end);
     unsigned OccupiedChars(int _line_no) const;
@@ -175,33 +176,33 @@ private:
 };
 
 } // namespace nc::term
-
-namespace std {
-
-inline const nc::term::ScreenBuffer::Space *
-begin(const std::pair<const nc::term::ScreenBuffer::Space *, const nc::term::ScreenBuffer::Space *>
-          &_p)
-{
-    return _p.first;
-}
-
-inline nc::term::ScreenBuffer::Space *
-begin(const std::pair<nc::term::ScreenBuffer::Space *, nc::term::ScreenBuffer::Space *> &_p)
-{
-    return _p.first;
-}
-
-inline const nc::term::ScreenBuffer::Space *
-end(const std::pair<const nc::term::ScreenBuffer::Space *, const nc::term::ScreenBuffer::Space *>
-        &_p)
-{
-    return _p.second;
-}
-
-inline nc::term::ScreenBuffer::Space *
-end(const std::pair<nc::term::ScreenBuffer::Space *, nc::term::ScreenBuffer::Space *> &_p)
-{
-    return _p.second;
-}
-
-} // namespace std
+//
+//namespace std {
+//
+//inline const nc::term::ScreenBuffer::Space *
+//begin(const std::pair<const nc::term::ScreenBuffer::Space *, const nc::term::ScreenBuffer::Space *>
+//          &_p)
+//{
+//    return _p.first;
+//}
+//
+//inline nc::term::ScreenBuffer::Space *
+//begin(const std::pair<nc::term::ScreenBuffer::Space *, nc::term::ScreenBuffer::Space *> &_p)
+//{
+//    return _p.first;
+//}
+//
+//inline const nc::term::ScreenBuffer::Space *
+//end(const std::pair<const nc::term::ScreenBuffer::Space *, const nc::term::ScreenBuffer::Space *>
+//        &_p)
+//{
+//    return _p.second;
+//}
+//
+//inline nc::term::ScreenBuffer::Space *
+//end(const std::pair<nc::term::ScreenBuffer::Space *, nc::term::ScreenBuffer::Space *> &_p)
+//{
+//    return _p.second;
+//}
+//
+//} // namespace std

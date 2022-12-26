@@ -1,8 +1,8 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
-#include <Term/Parser2Impl.h>
+#include <Term/ParserImpl.h>
 #include <Term/View.h>
 #include <Term/ScrollView.h>
 #include <Term/InputTranslatorImpl.h>
@@ -27,7 +27,7 @@ static const auto g_LongProcessDelay = 100ms;
 @implementation FilePanelOverlappedTerminal {
     NCTermScrollView *m_TermScrollView;
     std::unique_ptr<ShellTask> m_Task;
-    std::unique_ptr<Parser2> m_Parser;
+    std::unique_ptr<Parser> m_Parser;
     std::unique_ptr<InputTranslator> m_InputTranslator;
     std::unique_ptr<Interpreter> m_Interpreter;
     std::string m_InitalWD;
@@ -86,9 +86,9 @@ static const auto g_LongProcessDelay = 100ms;
         });
 
         // parser
-        Parser2Impl::Params parser_params;
+        ParserImpl::Params parser_params;
         parser_params.error_log = [](std::string_view _error) { std::cerr << _error << std::endl; };
-        m_Parser = std::make_unique<Parser2Impl>(parser_params);
+        m_Parser = std::make_unique<ParserImpl>(parser_params);
 
         // interpreter
         m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);
@@ -293,10 +293,10 @@ static const auto g_LongProcessDelay = 100ms;
     auto virgin = false;
     auto lock = m_TermScrollView.screen.AcquireLock();
     //    m_TermScrollView.screen.Lock();
-    if( auto line = m_TermScrollView.screen.Buffer().LineFromNo(m_BashCommandStartY) ) {
+    if( auto line = m_TermScrollView.screen.Buffer().LineFromNo(m_BashCommandStartY); !line.empty() ) {
         auto i = std::min(std::max(begin(line), begin(line) + m_BashCommandStartX), end(line));
         auto e = end(line);
-        if( !ScreenBuffer::HasOccupiedChars(i, e) )
+        if( !ScreenBuffer::HasOccupiedChars(&*i, &*e) )
             virgin = true;
     }
     //    m_TermScrollView.screen.Unlock();

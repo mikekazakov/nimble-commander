@@ -15,7 +15,7 @@
 #include <Term/View.h>
 #include <Term/ScrollView.h>
 #include <Term/InputTranslatorImpl.h>
-#include <Term/Parser2Impl.h>
+#include <Term/ParserImpl.h>
 #include <Term/InterpreterImpl.h>
 #include "SettingsAdaptor.h"
 #include <Habanero/dispatch_cpp.h>
@@ -31,7 +31,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     NCTermScrollView *m_TermScrollView;
     std::unique_ptr<ShellTask> m_Task;
     std::unique_ptr<InputTranslator> m_InputTranslator;
-    std::unique_ptr<Parser2> m_Parser;
+    std::unique_ptr<Parser> m_Parser;
     std::unique_ptr<Interpreter> m_Interpreter;
     NSLayoutConstraint *m_TopLayoutConstraint;
     nc::utility::NativeFSManager *m_NativeFSManager;
@@ -77,11 +77,11 @@ static const auto g_CustomPath = "terminal.customShellPath";
                 std::string_view(reinterpret_cast<const char *>(_bytes.data()), _bytes.size()));
         });
 
-        Parser2Impl::Params parser_params;
+        ParserImpl::Params parser_params;
         parser_params.error_log = [](std::string_view _error) {
             Log::Error(SPDLOC, "parsing error: {}", _error);
         };
-        m_Parser = std::make_unique<Parser2Impl>(parser_params);
+        m_Parser = std::make_unique<ParserImpl>(parser_params);
 
         m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);
         m_Interpreter->SetOuput([=](std::span<const std::byte> _bytes) {

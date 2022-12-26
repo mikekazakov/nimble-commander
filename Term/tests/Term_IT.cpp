@@ -502,9 +502,9 @@ static void Expect(const ScreenBuffer &buffer,
                    const ScreenBuffer::Space expected_sp)
 {
     const auto line = buffer.LineFromNo(line_no);
-    REQUIRE( line );
-    REQUIRE( line.second - line.first >= x_end );
-    for( auto it = line.first + x_begin; it != line.first + x_end; ++it ) {
+    REQUIRE( !line.empty() );
+    REQUIRE( static_cast<long>(line.size()) >= x_end );
+    for( auto it = line.begin() + x_begin; it != line.begin() + x_end; ++it ) {
         const auto space = *it;
         CHECK( space.foreground == expected_sp.foreground );
         CHECK( space.background == expected_sp.background );

@@ -5,7 +5,7 @@
 
 #include <ShellTask.h>
 #include <Screen.h>
-#include <Parser2Impl.h>
+#include <ParserImpl.h>
 #include <InterpreterImpl.h>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/mach_time.h>
@@ -150,7 +150,7 @@ TEST_CASE(PREFIX "Launch=>Exit via output (Bash)")
 {
     AtomicHolder<std::string> buffer_dump;
     Screen screen(20, 3);
-    Parser2Impl parser;
+    ParserImpl parser;
     InterpreterImpl interpreter(screen);
 
     ShellTask shell;
@@ -216,7 +216,7 @@ TEST_CASE(PREFIX "ChDir(), verify via output and cwd prompt (Bash)")
     AtomicHolder<std::string> buffer_dump;
     AtomicHolder<std::filesystem::path> cwd;
     Screen screen(20, 5);
-    Parser2Impl parser;
+    ParserImpl parser;
     InterpreterImpl interpreter(screen);
 
     ShellTask shell;
@@ -481,7 +481,7 @@ TEST_CASE(PREFIX "Test vim interaction via output")
 
     AtomicHolder<std::string> buffer_dump;
     Screen screen(40, 10);
-    Parser2Impl parser;
+    ParserImpl parser;
     InterpreterImpl interpreter(screen);
 
     ShellTask shell;
@@ -569,7 +569,7 @@ TEST_CASE(PREFIX "Test multiple shells in parallel via output", "[!mayfail]")
         AtomicHolder<std::string> buffer_dump;
         AtomicHolder<ShellTask::TaskState> shell_state;
         Screen screen{20, 5};
-        Parser2Impl parser;
+        ParserImpl parser;
         InterpreterImpl interpreter{screen};
         ShellTask shell;
     };
@@ -663,7 +663,7 @@ TEST_CASE(PREFIX "doesn't keep external cwd change commands in history")
 {
     AtomicHolder<std::string> buffer_dump;
     Screen screen(20, 6);
-    Parser2Impl parser;
+    ParserImpl parser;
     InterpreterImpl interpreter(screen);
 
     ShellTask shell;

@@ -1,11 +1,11 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalEditorState.h"
 #include "../../../NimbleCommander/States/MainWindowController.h"
 #include <Term/SingleTask.h>
 #include <Term/Screen.h>
 #include <Term/InterpreterImpl.h>
 #include <Term/Parser.h>
-#include <Term/Parser2Impl.h>
+#include <Term/ParserImpl.h>
 #include <Term/View.h>
 #include <Term/ScrollView.h>
 #include <Term/InputTranslatorImpl.h>
@@ -18,7 +18,7 @@ using namespace nc::term;
 
 @implementation NCTermExternalEditorState {
     std::unique_ptr<SingleTask> m_Task;
-    std::unique_ptr<Parser2> m_Parser;
+    std::unique_ptr<Parser> m_Parser;
     std::unique_ptr<InputTranslator> m_InputTranslator;
     std::unique_ptr<Interpreter> m_Interpreter;
     NCTermScrollView *m_TermScrollView;
@@ -67,9 +67,9 @@ using namespace nc::term;
             task_raw_ptr->WriteChildInput(static_cast<const void *>(_bytes.data()), _bytes.size());
         });
 
-        Parser2Impl::Params parser_params;
+        ParserImpl::Params parser_params;
         parser_params.error_log = [](std::string_view _error) { std::cerr << _error << std::endl; };
-        m_Parser = std::make_unique<Parser2Impl>(parser_params);
+        m_Parser = std::make_unique<ParserImpl>(parser_params);
 
         m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);
         m_Interpreter->SetOuput([=](std::span<const std::byte> _bytes) {

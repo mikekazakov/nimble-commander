@@ -285,11 +285,11 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
     for( int i = line_start, bsl = m_Screen->Buffer().BackScreenLines(); i < line_end; ++i ) {
         if( i < bsl ) { // scrollback
-            if( auto line = m_Screen->Buffer().LineFromNo(i - bsl) )
+            if( auto line = m_Screen->Buffer().LineFromNo(i - bsl); !line.empty() )
                 [self DrawLine:line at_y:i sel_y:i - bsl context:context cursor_at:-1];
         }
         else { // real screen
-            if( auto line = m_Screen->Buffer().LineFromNo(i - bsl) )
+            if( auto line = m_Screen->Buffer().LineFromNo(i - bsl); !line.empty() )
                 [self DrawLine:line
                           at_y:i
                          sel_y:i - bsl
@@ -300,7 +300,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 }
 
 static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
-- (void)DrawLine:(term::ScreenBuffer::RangePair<const term::ScreenBuffer::Space>)_line
+- (void)DrawLine:(std::span<const term::ScreenBuffer::Space>)_line
             at_y:(int)_y
            sel_y:(int)_sel_y
          context:(CGContextRef)_context
@@ -601,7 +601,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     NSPoint click_location = [self convertPoint:event.locationInWindow fromView:nil];
     SelPoint position = [self projectPoint:click_location];
     auto lock = m_Screen->AcquireLock();
-    if( m_Screen->Buffer().LineFromNo(position.y) ) {
+    if( !m_Screen->Buffer().LineFromNo(position.y).empty() ) {
         m_HasSelection = true;
         m_SelStart = ScreenPoint(0, position.y);
         m_SelEnd = ScreenPoint(m_Screen->Buffer().Width(), position.y);
@@ -973,7 +973,7 @@ ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
     }
 }
 
-static bool LineHasBlinkingCharacters(ScreenBuffer::RangePair<const ScreenBuffer::Space> _range)
+static constexpr bool LineHasBlinkingCharacters(std::span<const ScreenBuffer::Space> _range) noexcept
 {
     return std::any_of(
         std::begin(_range), std::end(_range), [](const auto &space) { return space.blink; });
@@ -992,13 +992,11 @@ static bool LineHasBlinkingCharacters(ScreenBuffer::RangePair<const ScreenBuffer
     const auto bsl = static_cast<int>(buffer.BackScreenLines());
     for( int line_index = line_start; line_index != line_end; ++line_index ) {
         if( line_index < bsl ) { // scrollback
-            const auto line = buffer.LineFromNo(line_index - bsl);
-            if( line && LineHasBlinkingCharacters(line) )
+            if( LineHasBlinkingCharacters(buffer.LineFromNo(line_index - bsl)) )
                 return true;
         }
         else { // real screen
-            const auto line = buffer.LineFromNo(line_index - bsl);
-            if( line && LineHasBlinkingCharacters(line) )
+            if( LineHasBlinkingCharacters(buffer.LineFromNo(line_index - bsl)) )
                 return true;
         }
     }

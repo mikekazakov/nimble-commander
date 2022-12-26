@@ -15,8 +15,8 @@ TEST_CASE(PREFIX"Init")
         ScreenBuffer buffer(3,4);
         REQUIRE(buffer.Width() == 3);
         REQUIRE(buffer.Height() == 4);
-        (buffer.LineFromNo(0).first)->l = 'A';
-        (buffer.LineFromNo(3).second-1)->l = 'B';
+        buffer.LineFromNo(0).front().l = 'A';
+        buffer.LineFromNo(3).back().l = 'B';
         REQUIRE( buffer.DumpScreenAsANSI() ==
                 "A  "
                 "   "
@@ -31,32 +31,29 @@ TEST_CASE(PREFIX"Init")
         REQUIRE(buffer.Width() == 0);
         REQUIRE(buffer.Height() == 0);
         auto l1 = buffer.LineFromNo(0);
-        REQUIRE( l1.first == nullptr );
-        REQUIRE( l1.second == nullptr );
+        REQUIRE( l1.empty() );
         auto l2 = buffer.LineFromNo(10);
-        REQUIRE( l2.first == nullptr );
-        REQUIRE( l2.second == nullptr );
+        REQUIRE( l2.empty() );
         auto l3 = buffer.LineFromNo(-1);
-        REQUIRE( l3.first == nullptr );
-        REQUIRE( l3.second == nullptr );
+        REQUIRE( l3.empty() );
     }
     SECTION("Zero width"){
         ScreenBuffer buffer(0,2);
         REQUIRE(buffer.Width() == 0);
         REQUIRE(buffer.Height() == 2);
         auto l1 = buffer.LineFromNo(0);
-        auto l2 = buffer.LineFromNo(0);
-        REQUIRE( l1.first == l1.second );
-        REQUIRE( l2.first == l2.second );
-        REQUIRE( l1.first == l2.first  );
+        auto l2 = buffer.LineFromNo(1);
+        REQUIRE( l1.data() == l1.data() );
+        REQUIRE( l1.size() == 0 );
+        REQUIRE( l2.size() == 0 );
     }
 }
 
 TEST_CASE(PREFIX"ComposeContinuousLines")
 {
     ScreenBuffer buffer(3,4);
-    (buffer.LineFromNo(0).second-1)->l = 'A';
-    (buffer.LineFromNo(2).second-1)->l = 'B';
+    buffer.LineFromNo(0).back().l = 'A';
+    buffer.LineFromNo(2).back().l = 'B';
     REQUIRE( buffer.DumpScreenAsANSI() ==
             "  A"
             "   "

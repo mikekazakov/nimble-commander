@@ -28,6 +28,60 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return _ch >= 0x2500 && _ch <= 0x257F;
 }
 
+static const std::array<NSColor *, 256> &BuiltInColors() noexcept
+{
+    [[clang::no_destroy]] static const std::array<NSColor *, 256> colors = [] {
+        std::array<NSColor *, 256> colors;
+        colors[0] = [NSColor colorWithHexString:"#000000"];
+        colors[1] = [NSColor colorWithHexString:"#990000"];
+        colors[2] = [NSColor colorWithHexString:"#00A600"];
+        colors[3] = [NSColor colorWithHexString:"#999900"];
+        colors[4] = [NSColor colorWithHexString:"#0000B2"];
+        colors[5] = [NSColor colorWithHexString:"#B200B2"];
+        colors[6] = [NSColor colorWithHexString:"#00A6B2"];
+        colors[7] = [NSColor colorWithHexString:"#BFBFBF"];
+        colors[8] = [NSColor colorWithHexString:"#666666"];
+        colors[9] = [NSColor colorWithHexString:"#E50000"];
+        colors[10] = [NSColor colorWithHexString:"#00D900"];
+        colors[11] = [NSColor colorWithHexString:"#E5E500"];
+        colors[12] = [NSColor colorWithHexString:"#0000FF"];
+        colors[13] = [NSColor colorWithHexString:"#E500E5"];
+        colors[14] = [NSColor colorWithHexString:"#00E5E5"];
+        colors[15] = [NSColor colorWithHexString:"#E5E5E5"];
+        for( int i = 16; i < 256; ++i ) {
+            if( i >= 232 ) {
+                const int v = i - 232;                          // [0, 23]
+                const double dv = static_cast<double>(v) / 27.; // [0, 0.85]
+                const double dv1 = dv + 0.05;                   // [0.05, 0.90]
+                colors[i] = [NSColor colorWithWhite:dv1 alpha:1.];
+            }
+            else {
+                const int b = (i - 16) % 6;
+                const int g = ((i - 16) / 6) % 6;
+                const int r = (i - 16) / 36;
+                colors[i] = [NSColor colorWithCalibratedRed:static_cast<double>(r) / 5.
+                                                      green:static_cast<double>(g) / 5.
+                                                       blue:static_cast<double>(b) / 5.
+                                                      alpha:1.];
+            }
+        }
+        return colors;
+    }();
+    return colors;
+}
+
+static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
+{
+    [[clang::no_destroy]] static const std::array<NSColor *, 256> faint_colors = [] {
+        const std::array<NSColor *, 256> &colors = BuiltInColors();
+        std::array<NSColor *, 256> faint_colors;
+        for( int i = 0; i < 256; ++i )
+            faint_colors[i] = [colors[i] colorWithAlphaComponent:g_FaintColorAlpha];
+        return faint_colors;
+    }();
+    return faint_colors;
+}
+
 @implementation NCTermView {
     Screen *m_Screen;
     InputTranslator *m_InputTranslator;
@@ -57,8 +111,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     NSColor *m_BackgroundColor;
     NSColor *m_SelectionColor;
     NSColor *m_CursorColor;
-    NSColor *m_AnsiColors[16];
-    NSColor *m_FaintAnsiColors[16];
+    std::array<NSColor *, 256> m_Colors;
+    std::array<NSColor *, 256> m_FaintColors;
     std::shared_ptr<Settings> m_Settings;
     int m_SettingsNotificationTicket;
     SelPoint m_LastMouseCell;
@@ -94,6 +148,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
         m_FPS.fps = 60;
         m_IntrinsicSize = NSMakeSize(NSViewNoIntrinsicMetric, frame.size.height);
+        m_Colors = BuiltInColors();
+        m_FaintColors = BuiltInFaintColors();
         self.settings = DefaultSettings::SharedDefaultSettings();
     }
     return self;
@@ -135,7 +191,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (BOOL)becomeFirstResponder
 {
-    //    NSLog(@"%@ becomeFirstResponder", self);
     m_IsFirstResponder = true;
     [self viewStatusDidChange];
     return true;
@@ -143,7 +198,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (BOOL)resignFirstResponder
 {
-    //    NSLog(@"%@ resignFirstResponder", self);
     m_IsFirstResponder = false;
     [self viewStatusDidChange];
     return true;
@@ -163,11 +217,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     m_Screen = _scr;
 }
-
-//- (void) AttachToParser:(term::Parser*)_par
-//{
-//    m_Parser = _par;
-//}
 
 - (void)AttachToInputTranslator:(nc::term::InputTranslator *)_input_translator
 {
@@ -247,10 +296,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     auto h1 = self.frame.size.height;
     auto h2 = scrollview.contentSize.height;
     if( h1 > h2 ) {
-        auto p = NSMakePoint(0,
-                             self.superview.isFlipped
-                                 ? (self.frame.size.height - scrollview.contentSize.height)
-                                 : 0);
+        auto p =
+            NSMakePoint(0, self.superview.isFlipped ? (self.frame.size.height - scrollview.contentSize.height) : 0);
         [clipview scrollToPoint:p];
         [scrollview reflectScrolledClipView:clipview];
     }
@@ -275,8 +322,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
     const auto font_height = m_FontCache->Height();
     const auto line_start = static_cast<int>(std::floor(dirtyRect.origin.y / font_height));
-    const auto line_end =
-        static_cast<int>(std::ceil((dirtyRect.origin.y + dirtyRect.size.height) / font_height));
+    const auto line_end = static_cast<int>(std::ceil((dirtyRect.origin.y + dirtyRect.size.height) / font_height));
 
     auto lock = m_Screen->AcquireLock();
 
@@ -310,15 +356,9 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     int x = 0;
 
     for( auto char_space : _line ) {
-        const auto fg_fill_color = char_space.reverse
-                                       ? (char_space.customfg
-                                              ? m_AnsiColors[char_space.foreground.c]
-                                              : m_ForegroundColor)
-                                             .CGColor
-                                       : (char_space.custombg
-                                              ? m_AnsiColors[char_space.background.c]
-                                              : m_BackgroundColor)
-                                             .CGColor;
+        const auto fg_fill_color =
+            char_space.reverse ? (char_space.customfg ? m_Colors[char_space.foreground.c] : m_ForegroundColor).CGColor
+                               : (char_space.custombg ? m_Colors[char_space.background.c] : m_BackgroundColor).CGColor;
 
         if( !CGColorEqualToColor(fg_fill_color, m_BackgroundColor.CGColor) ) {
             if( !CGColorEqualToColor(fg_fill_color, current_color) ) {
@@ -326,11 +366,10 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
                 CGContextSetFillColorWithColor(_context, current_color);
             }
 
-            CGContextFillRect(_context,
-                              CGRectMake(x * m_FontCache->Width(),
-                                         _y * m_FontCache->Height(),
-                                         m_FontCache->Width(),
-                                         m_FontCache->Height()));
+            CGContextFillRect(
+                _context,
+                CGRectMake(
+                    x * m_FontCache->Width(), _y * m_FontCache->Height(), m_FontCache->Width(), m_FontCache->Height()));
         }
         ++x;
     }
@@ -344,18 +383,14 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
                             (m_SelEnd.x - m_SelStart.x) * m_FontCache->Width(),
                             m_FontCache->Height());
         else if( _sel_y < m_SelEnd.y && _sel_y > m_SelStart.y )
-            rc = CGRectMake(
-                0, _y * m_FontCache->Height(), self.frame.size.width, m_FontCache->Height());
+            rc = CGRectMake(0, _y * m_FontCache->Height(), self.frame.size.width, m_FontCache->Height());
         else if( _sel_y == m_SelStart.y )
             rc = CGRectMake(m_SelStart.x * m_FontCache->Width(),
                             _y * m_FontCache->Height(),
                             self.frame.size.width - m_SelStart.x * m_FontCache->Width(),
                             m_FontCache->Height());
         else if( _sel_y == m_SelEnd.y )
-            rc = CGRectMake(0,
-                            _y * m_FontCache->Height(),
-                            m_SelEnd.x * m_FontCache->Width(),
-                            m_FontCache->Height());
+            rc = CGRectMake(0, _y * m_FontCache->Height(), m_SelEnd.x * m_FontCache->Width(), m_FontCache->Height());
 
         if( rc.origin.x >= 0 ) {
             CGContextSetFillColorWithColor(_context, m_SelectionColor.CGColor);
@@ -388,16 +423,14 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         FontCache &effective_font_cache = char_space.bold ? *m_BoldFontCache : *m_FontCache;
 
         if( char_space.reverse ) {
-            c = char_space.custombg
-                    ? m_AnsiColors[char_space.background.c].CGColor
-                    : m_BackgroundColor.CGColor;
+            c = char_space.custombg ? m_Colors[char_space.background.c].CGColor : m_BackgroundColor.CGColor;
         }
         else {
             if( char_space.customfg ) {
                 if( char_space.faint )
-                    c = m_FaintAnsiColors[char_space.foreground.c].CGColor;
+                    c = m_FaintColors[char_space.foreground.c].CGColor;
                 else
-                    c = m_AnsiColors[char_space.foreground.c].CGColor;
+                    c = m_Colors[char_space.foreground.c].CGColor;
             }
             else {
                 if( char_space.bold )
@@ -466,10 +499,8 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
                     break;
 
                 case TermViewCursor::VerticalBar:
-                    CGContextFillRect(
-                        _context,
-                        CGRectMake(
-                            _char_rect.origin.x, _char_rect.origin.y, 1., _char_rect.size.height));
+                    CGContextFillRect(_context,
+                                      CGRectMake(_char_rect.origin.x, _char_rect.origin.y, 1., _char_rect.size.height));
                     break;
             }
         }
@@ -487,8 +518,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect
 {
     const auto font_height = m_FontCache->Height();
-    proposedVisibleRect.origin.y =
-        floor(proposedVisibleRect.origin.y / font_height + 0.5) * font_height;
+    proposedVisibleRect.origin.y = floor(proposedVisibleRect.origin.y / font_height + 0.5) * font_height;
     return proposedVisibleRect;
 }
 
@@ -506,8 +536,8 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     if( y_pos < 0 )
         y_pos = 0;
 
-    const int line_predict = static_cast<int>(std::floor(y_pos / m_FontCache->Height()) -
-                                              m_Screen->Buffer().BackScreenLines());
+    const int line_predict =
+        static_cast<int>(std::floor(y_pos / m_FontCache->Height()) - m_Screen->Buffer().BackScreenLines());
 
     auto x_pos = _point.x;
     if( x_pos < 0 )
@@ -621,8 +651,8 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     NSPoint click_location = [self convertPoint:event.locationInWindow fromView:nil];
     SelPoint position = [self projectPoint:click_location];
     auto lock = m_Screen->AcquireLock();
-    auto data = m_Screen->Buffer().DumpUTF16StringWithLayout(SelPoint(0, position.y - 1),
-                                                             SelPoint(1024, position.y + 1));
+    auto data =
+        m_Screen->Buffer().DumpUTF16StringWithLayout(SelPoint(0, position.y - 1), SelPoint(1024, position.y + 1));
     auto &utf16 = data.first;
     auto &layout = data.second;
 
@@ -638,16 +668,14 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
     std::optional<std::pair<SelPoint, SelPoint>> search_result;
     [string enumerateSubstringsInRange:NSMakeRange(0, string.length)
-                               options:NSStringEnumerationByWords |
-                                       NSStringEnumerationSubstringNotRequired
+                               options:NSStringEnumerationByWords | NSStringEnumerationSubstringNotRequired
                             usingBlock:[&](NSString *, NSRange wordRange, NSRange, BOOL *stop) {
                                 if( wordRange.location < layout.size() ) {
                                     auto begin = layout[wordRange.location];
                                     if( position >= begin ) {
-                                        auto end =
-                                            wordRange.location + wordRange.length < layout.size()
-                                                ? layout[wordRange.location + wordRange.length]
-                                                : layout.back();
+                                        auto end = wordRange.location + wordRange.length < layout.size()
+                                                       ? layout[wordRange.location + wordRange.length]
+                                                       : layout.back();
                                         if( position < end ) {
                                             search_result = std::make_pair(begin, end);
                                             *stop = true;
@@ -675,8 +703,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 {
     // TODO: not a precise selection modification. look at viewer, it has better implementation.
 
-    bool modifying_existing_selection =
-        ([event modifierFlags] & NSEventModifierFlagShift) ? true : false;
+    bool modifying_existing_selection = ([event modifierFlags] & NSEventModifierFlagShift) ? true : false;
     NSPoint first_loc = [self convertPoint:[event locationInWindow] fromView:nil];
 
     while( [event type] != NSEventTypeLeftMouseUp ) {
@@ -705,8 +732,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             [self setNeedsDisplay];
         }
 
-        event = [self.window
-            nextEventMatchingMask:(NSEventMaskLeftMouseDragged | NSEventMaskLeftMouseUp)];
+        event = [self.window nextEventMatchingMask:(NSEventMaskLeftMouseDragged | NSEventMaskLeftMouseUp)];
     }
 }
 
@@ -733,8 +759,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 - (IBAction)paste:(id) [[maybe_unused]] _sender
 {
     NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
-    NSString *best_type =
-        [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSPasteboardTypeString]];
+    NSString *best_type = [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSPasteboardTypeString]];
     if( !best_type )
         return;
 
@@ -837,8 +862,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     if( m_Font != font ) {
         m_Font = font;
         m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_Font);
-        m_BoldFont = [NSFontManager.sharedFontManager convertFont:m_Font
-                                                      toHaveTrait:NSBoldFontMask];
+        m_BoldFont = [NSFontManager.sharedFontManager convertFont:m_Font toHaveTrait:NSBoldFontMask];
         m_BoldFontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_BoldFont);
         self.needsDisplay = true;
     }
@@ -909,16 +933,15 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     }
 }
 
-#define ANSI_COLOR(getter, setter, index)                                                          \
-    -(NSColor *)getter { return m_AnsiColors[index]; }                                             \
-    -(void)setter : (NSColor *)color                                                               \
-    {                                                                                              \
-        if( m_AnsiColors[index] != color ) {                                                       \
-            m_AnsiColors[index] = color;                                                           \
-            m_FaintAnsiColors[index] =                                                             \
-                [m_AnsiColors[index] colorWithAlphaComponent:g_FaintColorAlpha];                   \
-            self.needsDisplay = true;                                                              \
-        }                                                                                          \
+#define ANSI_COLOR(getter, setter, index)                                                                              \
+    -(NSColor *)getter { return m_Colors[index]; }                                                                     \
+    -(void)setter : (NSColor *)color                                                                                   \
+    {                                                                                                                  \
+        if( m_Colors[index] != color ) {                                                                               \
+            m_Colors[index] = color;                                                                                   \
+            m_FaintColors[index] = [m_Colors[index] colorWithAlphaComponent:g_FaintColorAlpha];                        \
+            self.needsDisplay = true;                                                                                  \
+        }                                                                                                              \
     }
 
 ANSI_COLOR(ansiColor0, setAnsiColor0, 0);
@@ -974,8 +997,7 @@ ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
 
 static constexpr bool LineHasBlinkingCharacters(std::span<const ScreenBuffer::Space> _range) noexcept
 {
-    return std::any_of(
-        std::begin(_range), std::end(_range), [](const auto &space) { return space.blink; });
+    return std::any_of(std::begin(_range), std::end(_range), [](const auto &space) { return space.blink; });
 }
 
 - (bool)visibleLinesHaveBlinkingCharacters
@@ -984,8 +1006,7 @@ static constexpr bool LineHasBlinkingCharacters(std::span<const ScreenBuffer::Sp
     const auto rect = self.visibleRect;
     const auto font_height = m_FontCache->Height();
     const auto line_start = static_cast<int>(std::floor(rect.origin.y / font_height));
-    const auto line_end =
-        static_cast<int>(std::ceil((rect.origin.y + rect.size.height) / font_height));
+    const auto line_end = static_cast<int>(std::ceil((rect.origin.y + rect.size.height) / font_height));
 
     auto lock = m_Screen->AcquireLock(); // WTF??
     const auto bsl = static_cast<int>(buffer.BackScreenLines());
@@ -1044,8 +1065,7 @@ static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType
 - (void)passMouseEvent:(NSEvent *)_event
 {
     constexpr auto has = [](const auto &_container, const auto &_value) -> bool {
-        return std::find(std::begin(_container), std::end(_container), _value) !=
-               std::end(_container);
+        return std::find(std::begin(_container), std::end(_container), _value) != std::end(_container);
     };
 
     const NSEventType type = _event.type;
@@ -1097,9 +1117,8 @@ static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType
                                                       NSEventTypeRightMouseDown,
                                                       NSEventTypeRightMouseDragged,
                                                       NSEventTypeRightMouseUp};
-        constexpr std::array<NSEventType, 3> movement_types = {NSEventTypeLeftMouseDragged,
-                                                               NSEventTypeOtherMouseDragged,
-                                                               NSEventTypeRightMouseDragged};
+        constexpr std::array<NSEventType, 3> movement_types = {
+            NSEventTypeLeftMouseDragged, NSEventTypeOtherMouseDragged, NSEventTypeRightMouseDragged};
 
         if( !has(types, type) )
             return;
@@ -1126,9 +1145,8 @@ static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType
                                                       NSEventTypeRightMouseDown,
                                                       NSEventTypeRightMouseDragged,
                                                       NSEventTypeRightMouseUp};
-        constexpr std::array<NSEventType, 3> movement_types = {NSEventTypeLeftMouseDragged,
-                                                               NSEventTypeOtherMouseDragged,
-                                                               NSEventTypeRightMouseDragged};
+        constexpr std::array<NSEventType, 3> movement_types = {
+            NSEventTypeLeftMouseDragged, NSEventTypeOtherMouseDragged, NSEventTypeRightMouseDragged};
         // plus moved?
 
         if( !has(types, type) )

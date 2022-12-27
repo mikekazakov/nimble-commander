@@ -1354,33 +1354,33 @@ void ParserImpl::CSI_m() noexcept
     constexpr auto sca = input::Type::set_character_attributes;
     const std::string_view s = m_CSIState.buffer;
 
-    auto params = CSIParamsScanner::Parse(s);
-    if( params.count == 0 )
-        params.values[params.count++] = 0;
+    auto p = CSIParamsScanner::Parse(s);
+    if( p.count == 0 )
+        p.values[p.count++] = 0;
 
-    for( int i = 0; i < params.count; ++i ) {
-        const auto ps = params.values[i];
-        if( ps == 38 ) {
+    for( int i = 0; i < p.count; ++i ) {
+        const auto ps = p.values[i];
+        if( ps == 38 || ps == 48 ) {
             // Special handling for extended foreground colors.
-            if( i + 2 < params.count && params.values[i + 1] == 5 && params.values[i + 2] < 256 ) {
-                m_Output.emplace_back(
-                    sca, CA{.mode = CA::ForegroundColor, .color = Color{static_cast<uint8_t>(params.values[i + 2])}});
+            const auto mode = ps == 38 ? CA::ForegroundColor : CA::BackgroundColor;
+            const auto ls256 = [](auto v) { return v < 256; };
+            if( i + 2 < p.count && p.values[i + 1] == 5 && ls256(p.values[i + 2]) ) {
+                // 8-bit
+                const auto c = static_cast<uint8_t>(p.values[i + 2]);
+                m_Output.emplace_back(sca, CA{.mode = mode, .color = Color{c}});
+            }
+            else if( i + 4 < p.count && p.values[i + 1] == 2 &&
+                     std::all_of(&p.values[i + 2], &p.values[i + 2] + 3, ls256) ) {
+                // 24-bit
+                const auto r = static_cast<uint8_t>(p.values[i + 2]);
+                const auto g = static_cast<uint8_t>(p.values[i + 3]);
+                const auto b = static_cast<uint8_t>(p.values[i + 4]);
+                m_Output.emplace_back(sca, CA{.mode = mode, .color = Color{r, g, b}});
             }
             else {
                 LogMissedCSIRequest(s);
             }
-            i += 2;
-        }
-        else if( ps == 48 ) {
-            // Special handling for extended background colors.
-            if( i + 2 < params.count && params.values[i + 1] == 5 && params.values[i + 2] < 256 ) {
-                m_Output.emplace_back(
-                    sca, CA{.mode = CA::BackgroundColor, .color = Color{static_cast<uint8_t>(params.values[i + 2])}});
-            }
-            else {
-                LogMissedCSIRequest(s);
-            }
-            i += 2;
+            i += (i + 1 < p.count && p.values[i + 1] == 2) ? 4 : 2;
         }
         else if( auto attrs = SCImToCharacterAttributes(ps) ) {
             m_Output.emplace_back(sca, *attrs);

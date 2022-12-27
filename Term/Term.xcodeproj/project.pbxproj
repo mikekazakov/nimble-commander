@@ -30,6 +30,7 @@
 		CF4600E825605B830095FC73 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE391F7E7379003E9B76 /* Screen.cpp */; };
 		CF5F3934242FCD2B004DF1F8 /* Term_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */; };
 		CF739C76295A14F7004758C5 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739C75295A14F7004758C5 /* Color.cpp */; };
+		CF739C78295B2610004758C5 /* Color_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739C77295B2610004758C5 /* Color_UT.cpp */; };
 		CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */; };
 		CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D696624A897B5008352B0 /* Screen_UT.cpp */; };
 		CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */; };
@@ -118,6 +119,7 @@
 		CF69DCD9253B17BD00AB1E3A /* AtomicHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicHolder.h; sourceTree = "<group>"; };
 		CF739C74295A146A004758C5 /* Color.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Color.h; path = include/Term/Color.h; sourceTree = "<group>"; };
 		CF739C75295A14F7004758C5 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
+		CF739C77295B2610004758C5 /* Color_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color_UT.cpp; sourceTree = "<group>"; };
 		CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter_UT.cpp; sourceTree = "<group>"; };
 		CF9D696624A897B5008352B0 /* Screen_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Screen_UT.cpp; sourceTree = "<group>"; };
 		CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenBuffer_UT.cpp; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 		CF5099781F948E7C000AFDE7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF739C77295B2610004758C5 /* Color_UT.cpp */,
 				CF69DCD9253B17BD00AB1E3A /* AtomicHolder.h */,
 				CF50997B1F948E7C000AFDE7 /* Info.plist */,
 				CF0A49CC2516676A008EC7B0 /* InputTranslator_UT.mm */,
@@ -428,6 +431,7 @@
 				CFE08B4023DCFCF9007E99B8 /* Parser2_UT.cpp in Sources */,
 				CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */,
 				CFE08B3D23DCFC15007E99B8 /* Tests.cpp in Sources */,
+				CF739C78295B2610004758C5 /* Color_UT.cpp in Sources */,
 				CF0A49DA251668E8008EC7B0 /* InputTranslator_UT.mm in Sources */,
 				CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */,
 				CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */,

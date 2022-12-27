@@ -144,7 +144,7 @@ std::span<const std::pair<std::string, std::string>> Task::BuildEnv()
             env.emplace_back("LC_CTYPE", "UTF-8");
         }
 
-        env.emplace_back("TERM", "xterm-16color");
+        env.emplace_back("TERM", "xterm-256color");
         env.emplace_back("TERM_PROGRAM", "Nimble_Commander");
         return env;
     }();

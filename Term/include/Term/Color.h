@@ -31,6 +31,7 @@ struct Color {
     constexpr Color() noexcept = default;
     constexpr Color(uint8_t _c) noexcept;
     constexpr Color(uint8_t _r, uint8_t _g, uint8_t _b) noexcept;
+    
     constexpr auto operator<=>(const Color &rhs) const noexcept = default;
 
     uint8_t c = Black;
@@ -40,9 +41,12 @@ inline constexpr Color::Color(uint8_t _c) noexcept : c(_c)
 {
 }
 
-inline constexpr Color::Color(uint8_t /*_r*/, uint8_t /*_g*/, uint8_t /*_b*/) noexcept : c(BrightMagenta)
+inline constexpr Color::Color(uint8_t _r, uint8_t _g, uint8_t _b) noexcept
 {
-    // TODO: implement
+    const uint8_t r = _r  / 43;
+    const uint8_t g = _g  / 43;
+    const uint8_t b = _b  / 43;
+    c = 16 + 36*r + 6*g + b;
 }
 
 } // namespace nc::term

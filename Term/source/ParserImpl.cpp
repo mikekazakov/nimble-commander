@@ -1363,14 +1363,14 @@ void ParserImpl::CSI_m() noexcept
         if( ps == 38 || ps == 48 ) {
             // Special handling for extended foreground colors.
             const auto mode = ps == 38 ? CA::ForegroundColor : CA::BackgroundColor;
-            const auto ls256 = [](auto v) { return v < 256; };
-            if( i + 2 < p.count && p.values[i + 1] == 5 && ls256(p.values[i + 2]) ) {
+            const auto less256 = [](auto v) { return v < 256; };
+            if( i + 2 < p.count && p.values[i + 1] == 5 && less256(p.values[i + 2]) ) {
                 // 8-bit
                 const auto c = static_cast<uint8_t>(p.values[i + 2]);
                 m_Output.emplace_back(sca, CA{.mode = mode, .color = Color{c}});
             }
             else if( i + 4 < p.count && p.values[i + 1] == 2 &&
-                     std::all_of(&p.values[i + 2], &p.values[i + 2] + 3, ls256) ) {
+                     std::all_of(&p.values[i + 2], &p.values[i + 2] + 3, less256) ) {
                 // 24-bit
                 const auto r = static_cast<uint8_t>(p.values[i + 2]);
                 const auto g = static_cast<uint8_t>(p.values[i + 3]);

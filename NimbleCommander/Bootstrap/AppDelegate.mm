@@ -575,9 +575,9 @@ static std::string AquaticPrimePublicKey()
         };
         dispatch_to_main_queue_after(500ms, [=] { [m_AppStoreHelper showProFeaturesWindowIfNeededAsNagScreen]; });
         
-        if( am.UsedHadPurchasedProFeatures() ) {
-            self.dock.SetBaseIcon( [NSImage imageNamed:@"Icon"] );
-        }
+//        if( am.UsedHadPurchasedProFeatures() ) {
+//            self.dock.SetBaseIcon( [NSImage imageNamed:@"Icon"] );
+//        }
     }
 
     // accessibility stuff for NonMAS version

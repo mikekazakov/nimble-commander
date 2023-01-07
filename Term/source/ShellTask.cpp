@@ -45,11 +45,10 @@ static const char *g_ZSHHistControlCmd = "setopt HIST_IGNORE_SPACE\n";
 static bool IsDirectoryAvailableForBrowsing(const char *_path) noexcept;
 static bool IsDirectoryAvailableForBrowsing(const std::string &_path) noexcept;
 static std::string GetDefaultShell();
-static std::string ProcPidPath(int _pid);
 static bool WaitUntilBecomes(int _pid,
                              std::string_view _expected_image_path,
                              std::chrono::nanoseconds _timeout,
-                             std::chrono::nanoseconds _pull_period);
+                             std::chrono::nanoseconds _pull_period) noexcept;
 static ShellTask::ShellType DetectShellType(const std::string &_path);
 static bool fd_is_valid(int fd);
 static void KillAndReap(int _pid, std::chrono::nanoseconds _gentle_deadline, std::chrono::nanoseconds _brutal_deadline);
@@ -79,16 +78,6 @@ static std::string GetDefaultShell()
         return "/bin/bash";
 }
 
-// TODO: stop returning std::string
-static std::string ProcPidPath(int _pid)
-{
-    char buf[PROC_PIDPATHINFO_MAXSIZE] = {0};
-    if( proc_pidpath(_pid, buf, PROC_PIDPATHINFO_MAXSIZE) <= 0 )
-        return {};
-    else
-        return buf;
-}
-
 static bool IsProcessDead(int _pid) noexcept
 {
     const bool dead = kill(_pid, 0) < 0;
@@ -98,17 +87,19 @@ static bool IsProcessDead(int _pid) noexcept
 static bool WaitUntilBecomes(int _pid,
                              std::string_view _expected_image_path,
                              std::chrono::nanoseconds _timeout,
-                             std::chrono::nanoseconds _pull_period)
+                             std::chrono::nanoseconds _pull_period) noexcept
 {
     const auto deadline = machtime() + _timeout;
     while( true ) {
         if( IsProcessDead(_pid) )
             return false;
-        const auto current_path = ProcPidPath(_pid);
-        if( current_path.empty() )
+        
+        char current_path[PROC_PIDPATHINFO_MAXSIZE] = {0};
+        if( proc_pidpath(_pid, current_path, sizeof(current_path)) <= 0 )
             return false;
         if( current_path == _expected_image_path )
             return true;
+        
         if( machtime() >= deadline )
             return false;
         std::this_thread::sleep_for(_pull_period);
@@ -596,73 +587,6 @@ void ShellTask::Impl::DoCalloutOnChildOutput(const void *_d, size_t _sz)
     if( clbk && *clbk && _sz && _d )
         (*clbk)(_d, _sz);
 }
-
-#if 0
-void ShellTask::ReadChildOutput()
-{
-    constexpr size_t input_sz = 65536;
-    std::unique_ptr<char[]> input = std::make_unique<char[]>(input_sz);
-    fd_set fd_in, fd_err;
-
-    while( true ) {
-        // Wait for either a data from master, cwd or signal, or an error from master.
-        FD_ZERO(&fd_in);
-        FD_SET(I->master_fd, &fd_in);
-        FD_SET(I->cwd_pipe[0], &fd_in);
-        FD_SET(I->signal_pipe[0], &fd_in);
-        FD_ZERO(&fd_err);
-        FD_SET(I->master_fd, &fd_err);
-        const int max_fd = std::max({I->master_fd, I->cwd_pipe[0], I->signal_pipe[0]});
-        const int select_rc = select(max_fd + 1, &fd_in, NULL, &fd_err, NULL);
-        const int shell_pid = I->shell_pid.load();
-        if( shell_pid < 0 ) {
-            // The shell was closed from the master thread, don't do aything.
-            // Most likely it's due to FD_ISSET(I->signal_pipe[0], &fd_in), but we can't(?) reliably
-            // check for that due to a possible race condition between "I->shell_pid = -1;" and
-            // "write(I->signal_pipe[1], ...)".
-            Log::Debug(SPDLOC, "shell_pid < 0, gracefully stopping the background thread");
-            break;
-        }
-
-        if( select_rc < 0 ) {
-            //            std::cerr << "select(max_fd + 1, &fd_in, NULL, &fd_err, NULL) returned "
-            //                << rc << std::endl;
-            // error on select(), let's think that shell has died
-            // mb call ShellDied() here?
-            Log::Warn(SPDLOC, "select() failed, errno={}({})", errno, strerror(errno));
-            break;
-        }
-
-        // If data on master side of PTY (some child's output)
-        // Need to consume it first as it can be suppressed and we want to eat it before opening a
-        // shell's semaphore.
-        if( FD_ISSET(I->master_fd, &fd_in) ) {
-            // try to read a bit more - wait 1usec to see if any additional data will come in
-            unsigned have_read = ReadInputAsMuchAsAvailable(I->master_fd, input.get(), input_sz);
-            if( !I->temporary_suppressed )
-                DoCalloutOnChildOutput(input.get(), have_read);
-        }
-
-        // check prompt's output
-        if( FD_ISSET(I->cwd_pipe[0], &fd_in) ) {
-            const int read_rc = static_cast<int>(read(I->cwd_pipe[0], input.get(), input_sz));
-            if( read_rc > 0 )
-                ProcessPwdPrompt(input.get(), read_rc);
-        }
-
-        // check if child process died
-        if( FD_ISSET(I->master_fd, &fd_err) ) {
-            Log::Info(SPDLOC, "error on master_fd={}, shell_pid={}", I->master_fd, shell_pid);
-            if( !I->is_shutting_down ) {
-                Log::Info(SPDLOC, "shutting down");
-                ShellDied();
-            }
-            break;
-        }
-    } // End while
-    //    std::cerr << "done with ReadChildOutput()" << std::endl;
-}
-#endif
 
 void ShellTask::Impl::ProcessPwdPrompt(const void *_d, int _sz)
 {

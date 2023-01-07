@@ -19,6 +19,8 @@
 #include <fstream>
 #include <fmt/format.h>
 #include <fmt/std.h>
+#include <libproc.h>
+#include <sys/proc_info.h>
 
 #pragma clang diagnostic ignored "-Wframe-larger-than="
 
@@ -63,6 +65,34 @@ static bool WaitUntilProcessDies(int _pid, std::chrono::nanoseconds _deadline, s
             return false;
         std::this_thread::sleep_for(_poll_period);
     }
+}
+
+// get all fs files, pipes and sockets
+static std::vector<int> GetAllFileDescriptors()
+{
+    // TODO: move this to nc::base and cover with tests
+    const int pid = getpid();
+    int buffer_size = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, 0, 0);
+    if( buffer_size == -1 ) {
+        abort();
+    }
+
+    std::vector<proc_fdinfo> fdinfos(buffer_size / sizeof(proc_fdinfo));
+
+    const int rc =
+        proc_pidinfo(pid, PROC_PIDLISTFDS, 0, fdinfos.data(), static_cast<int>(fdinfos.size() * sizeof(proc_fdinfo)));
+    if( rc < 0 )
+        abort();
+
+    std::vector<int> res;
+    for( auto &info : fdinfos )
+        if( info.proc_fdtype == PROX_FDTYPE_VNODE || info.proc_fdtype == PROX_FDTYPE_PIPE ||
+            info.proc_fdtype == PROX_FDTYPE_SOCKET )
+            res.emplace_back(info.proc_fd);
+
+    std::sort(res.begin(), res.end());
+
+    return res;
 }
 
 TEST_CASE(PREFIX "Inactive -> Shell -> Terminate - Inactive")
@@ -850,4 +880,27 @@ TEST_CASE(PREFIX "ChildrenList()")
         shell.WriteChildInput("./an_executable_with_a_very_long_name\r");
         REQUIRE(WaitChildrenListToBecome(shell, {"zsh", "an_executable_with_a_very_long_name"}, 5s, 1ms));
     }
+}
+
+TEST_CASE(PREFIX "Closes all file descriptors used by terminal")
+{
+    const std::vector<int> orig_fds = GetAllFileDescriptors();
+
+    ShellTask shell;
+    QueuedAtomicHolder<ShellTask::TaskState> shell_state(shell.State());
+    REQUIRE(shell.State() == TaskState::Inactive);
+
+    shell.SetOnStateChange([&shell_state](ShellTask::TaskState _new_state) { shell_state.store(_new_state); });
+
+    REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
+    REQUIRE(shell_state.wait_to_become(5s, TaskState::Shell));
+
+    const std::vector<int> tmp_fds = GetAllFileDescriptors();
+    CHECK(tmp_fds.size() > orig_fds.size());
+
+    shell.Terminate();
+    REQUIRE(shell_state.wait_to_become(5s, TaskState::Inactive));
+
+    const std::vector<int> final_fds = GetAllFileDescriptors();
+    CHECK(final_fds == orig_fds);
 }

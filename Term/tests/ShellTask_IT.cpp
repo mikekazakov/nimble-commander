@@ -904,3 +904,10 @@ TEST_CASE(PREFIX "Closes all file descriptors used by terminal")
     const std::vector<int> final_fds = GetAllFileDescriptors();
     CHECK(final_fds == orig_fds);
 }
+
+TEST_CASE(PREFIX "Doesn't allow double-launch")
+{
+    ShellTask shell;    
+    REQUIRE(shell.Launch(CommonPaths::AppTemporaryDirectory()));
+    CHECK_THROWS_AS(shell.Launch(CommonPaths::AppTemporaryDirectory()), std::logic_error);
+}

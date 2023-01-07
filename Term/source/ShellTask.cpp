@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/select.h>
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
@@ -42,8 +42,8 @@ static char **g_ShellParams[3] = {g_BashParams, g_ZSHParams, g_TCSH};
 static char g_BashHistControlEnv[] = "HISTCONTROL=ignorespace";
 static const char *g_ZSHHistControlCmd = "setopt HIST_IGNORE_SPACE\n";
 
-static bool IsDirectoryAvailableForBrowsing(const char *_path);
-static bool IsDirectoryAvailableForBrowsing(const std::string &_path);
+static bool IsDirectoryAvailableForBrowsing(const char *_path) noexcept;
+static bool IsDirectoryAvailableForBrowsing(const std::string &_path) noexcept;
 static std::string GetDefaultShell();
 static std::string ProcPidPath(int _pid);
 static bool WaitUntilBecomes(int _pid,
@@ -57,7 +57,7 @@ static void TurnOffSigPipe();
 static bool IsProcessDead(int _pid) noexcept;
 static std::optional<std::filesystem::path> TryToResolve(const std::filesystem::path &_path);
 
-static bool IsDirectoryAvailableForBrowsing(const char *_path)
+static bool IsDirectoryAvailableForBrowsing(const char *_path) noexcept
 {
     DIR *dirp = opendir(_path);
     if( dirp == nullptr )
@@ -66,7 +66,7 @@ static bool IsDirectoryAvailableForBrowsing(const char *_path)
     return true;
 }
 
-static bool IsDirectoryAvailableForBrowsing(const std::string &_path)
+static bool IsDirectoryAvailableForBrowsing(const std::string &_path) noexcept
 {
     return IsDirectoryAvailableForBrowsing(_path.c_str());
 }
@@ -79,6 +79,7 @@ static std::string GetDefaultShell()
         return "/bin/bash";
 }
 
+// TODO: stop returning std::string
 static std::string ProcPidPath(int _pid)
 {
     char buf[PROC_PIDPATHINFO_MAXSIZE] = {0};
@@ -200,20 +201,29 @@ static std::optional<std::filesystem::path> TryToResolve(const std::filesystem::
 }
 
 struct ShellTask::Impl {
+    Impl();
+    Impl(const Impl &) = delete;
+    ~Impl();
+    Impl &operator=(const Impl &) = delete;
+
+    // The IO queue and group have the same lifetime as the Impl object itself, cleaning up doesn't discard them, only
+    // destructor does.
+    dispatch_queue_t io_queue = nullptr;
+    dispatch_group_t io_group = nullptr;
+
     // accessible from any thread:
     std::mutex lock;
-    std::mutex cleanup_lock;
+    dispatch_source_t master_source = nullptr;
+    dispatch_source_t cwd_source = nullptr;
     TaskState state = TaskState::Inactive;
     int master_fd = -1;
     std::atomic_int shell_pid{-1};
     int cwd_pipe[2] = {-1, -1};
     int semaphore_pipe[2] = {-1, -1};
-    int signal_pipe[2] = {-1, -1};
     std::string tcsh_cwd_path;
     std::string tcsh_semaphore_path;
-    // will give no output until the next bash prompt will show the requested_cwd path
-    bool temporary_suppressed = false;
-    std::thread input_thread;
+
+    bool temporary_suppressed = false; // will give no output until a next bash prompt will show the requested_cwd path
     std::string requested_cwd = "";
     std::string cwd = "";
 
@@ -226,15 +236,28 @@ struct ShellTask::Impl {
     std::vector<std::pair<std::string, std::string>> custom_env_vars;
     std::vector<std::string> custom_shell_args;
 
-    std::atomic_bool is_shutting_down{false};
     spinlock master_write_lock;
 
-    spinlock callback_lock;
-    std::shared_ptr<std::function<void(const char *_cwd, bool _changed)>> on_pwd_prompt;
+    // reading and writing the callbacks has to be protected with the lock
+    mutable spinlock callback_lock;
+    std::shared_ptr<OnPwdPrompt> on_pwd_prompt;
     std::shared_ptr<OnStateChange> on_state_changed;
+    std::shared_ptr<OnChildOutput> on_child_output;
+
+    void OnMasterSourceData();
+    void OnMasterSourceCancellation();
+    void OnCwdSourceData();
+    void OnCwdSourceCancellation();
+    void OnShellDied();
+    void ProcessPwdPrompt(const void *_d, int _sz);
+    void DoCalloutOnChildOutput(const void *_d, size_t _sz);
+    void DoOnPwdPromptCallout(const char *_cwd, bool _changed) const;
+    void SetState(TaskState _new_state);
+    void CleanUp();
+    void DoCleanUp();
 };
 
-ShellTask::ShellTask() : I(std::make_shared<Impl>())
+ShellTask::ShellTask() : I(std::make_unique<Impl>())
 {
     SetShellPath(GetDefaultShell());
     TurnOffSigPipe();
@@ -242,16 +265,29 @@ ShellTask::ShellTask() : I(std::make_shared<Impl>())
 
 ShellTask::~ShellTask()
 {
-    I->is_shutting_down = true;
-    CleanUp();
+    I->CleanUp();
+}
+
+ShellTask::Impl::Impl()
+{
+    // The I/O queue has to be serial
+    io_queue = dispatch_queue_create("nc::term::ShellTask I/O", DISPATCH_QUEUE_SERIAL);
+    io_group = dispatch_group_create();
+}
+
+ShellTask::Impl::~Impl()
+{
+    dispatch_release(io_group);
+    dispatch_release(io_queue);
 }
 
 bool ShellTask::Launch(const std::filesystem::path &_work_dir)
 {
     using namespace std::literals;
 
-    if( I->input_thread.joinable() )
-        throw std::logic_error("ShellTask::Launch called with joinable input thread");
+    // TODO: write integration tests for double Launch
+    if( I->state != TaskState::Inactive )
+        throw std::logic_error("ShellTask::Launch called when the object is not pristine");
 
     if( I->shell_type == ShellType::Unknown )
         return false;
@@ -367,13 +403,6 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     Log::Debug(SPDLOC, "cwd_pipe: {}, {}", I->cwd_pipe[0], I->cwd_pipe[1]);
     Log::Debug(SPDLOC, "semaphore_pipe: {}, {}", I->semaphore_pipe[0], I->semaphore_pipe[1]);
 
-    // create a pipe to communicate with the blocking select()
-    const int signal_pipe_rc = pipe(I->signal_pipe);
-    if( signal_pipe_rc != 0 ) {
-        Log::Warn(SPDLOC, "pipe(I->signal_pipe) failed");
-        throw std::runtime_error("pipe(I->signal_pipe) failed");
-    }
-
     // Create the child process
     const auto fork_rc = fork();
     if( fork_rc < 0 ) {
@@ -395,23 +424,32 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         const bool became_shell = WaitUntilBecomes(I->shell_pid, I->shell_resolved_path.native(), 5s, 1ms);
         if( !became_shell ) {
             Log::Warn(SPDLOC, "forked process failed to become a shell!");
-            CleanUp(); // Well, RIP
+            I->CleanUp(); // Well, RIP
             return false;
         }
-
-        // kickstart a background thread that will receive input from the shell
-        I->input_thread = std::thread([=] {
-            auto name = "ShellTask background input thread, PID="s + std::to_string(I->shell_pid);
-            pthread_setname_np(name.c_str());
-            ReadChildOutput();
-        });
-        Log::Debug(SPDLOC, "started a background thread {}", I->input_thread.get_id());
 
         if( !fd_is_valid(I->master_fd) ) {
             Log::Warn(SPDLOC, "m_MasterFD is dead!");
-            CleanUp(); // Well, RIP
+            I->CleanUp(); // Well, RIP
             return false;
         }
+
+        // set up libdispatch sources here
+        I->master_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, I->master_fd, 0, I->io_queue);
+        dispatch_source_set_event_handler_f(
+            I->master_source, +[](void *_ctx) { static_cast<Impl *>(_ctx)->OnMasterSourceData(); });
+        dispatch_source_set_cancel_handler_f(
+            I->master_source, +[](void *_ctx) { static_cast<Impl *>(_ctx)->OnMasterSourceCancellation(); });
+        dispatch_set_context(I->master_source, I.get());
+        dispatch_activate(I->master_source);
+
+        I->cwd_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, I->cwd_pipe[0], 0, I->io_queue);
+        dispatch_source_set_event_handler_f(
+            I->cwd_source, +[](void *_ctx) { static_cast<Impl *>(_ctx)->OnCwdSourceData(); });
+        dispatch_source_set_cancel_handler_f(
+            I->cwd_source, +[](void *_ctx) { static_cast<Impl *>(_ctx)->OnCwdSourceCancellation(); });
+        dispatch_set_context(I->cwd_source, I.get());
+        dispatch_activate(I->cwd_source);
 
         if( I->shell_type == ShellType::ZSH ) {
             // say ZSH to not put into history any commands starting with space character
@@ -421,7 +459,7 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
             I->master_write_lock.unlock();
             if( write_res != static_cast<ssize_t>(cmd.length()) ) {
                 Log::Warn(SPDLOC, "failed to write histctrl cmd, errno: {} ({})", errno, strerror(errno));
-                CleanUp(); // Well, RIP
+                I->CleanUp(); // Well, RIP
                 return false;
             }
         }
@@ -434,13 +472,13 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
         I->master_write_lock.unlock();
         if( write_res != static_cast<ssize_t>(prompt_setup.size()) ) {
             Log::Warn(SPDLOC, "failed to write command prompt, errno: {} ({})", errno, strerror(errno));
-            CleanUp(); // Well, RIP
+            I->CleanUp(); // Well, RIP
             return false;
         }
 
         // now let's declare that we have a working shell
-        SetState(TaskState::Shell);
-        
+        I->SetState(TaskState::Shell);
+
         return true;
     }
     else { // fork_rc == 0
@@ -486,6 +524,80 @@ bool ShellTask::Launch(const std::filesystem::path &_work_dir)
     }
 }
 
+void ShellTask::SetOnChildOutput(OnChildOutput _callback)
+{
+    auto local = std::lock_guard{I->callback_lock};
+    I->on_child_output = std::make_shared<OnChildOutput>(std::move(_callback));
+}
+
+void ShellTask::Impl::OnMasterSourceData()
+{
+    dispatch_assert_background_queue();
+    const size_t estimated_size = dispatch_source_get_data(master_source);
+    Log::Trace(SPDLOC, "OnMasterSourceData() estimated {} bytes available", estimated_size);
+    if( estimated_size == 0 ) {
+        // GCD reports dead FDs as zero available data
+        OnShellDied();
+        return;
+    }
+
+    constexpr size_t input_sz = 8192;
+    char input[input_sz];
+    // There's a data on the master side of PTY (some child's output)
+    // Need to consume it first as it can be suppressed and we want to eat it before opening a
+    // shell's semaphore.
+    const ssize_t have_read = read(master_fd, input, input_sz);
+    if( have_read > 0 ) {
+        if( !temporary_suppressed ) {
+            DoCalloutOnChildOutput(input, have_read);
+        }
+    }
+}
+
+void ShellTask::Impl::OnCwdSourceData()
+{
+    dispatch_assert_background_queue(); // must be called on io_queue
+    const size_t estimated_size = dispatch_source_get_data(master_source);
+    Log::Trace(SPDLOC, "OnCwdSourceData() estimated {} bytes available", estimated_size);
+    if( estimated_size == 0 ) {
+        // GCD reports dead FDs as zero available data
+        OnShellDied();
+        return;
+    }
+
+    constexpr size_t input_sz = 8192;
+    char input[input_sz];
+    const ssize_t have_read = read(cwd_pipe[0], input, input_sz);
+    if( have_read > 0 ) {
+        ProcessPwdPrompt(input, static_cast<int>(have_read));
+    }
+}
+
+void ShellTask::Impl::OnMasterSourceCancellation()
+{
+    dispatch_assert_background_queue(); // must be called on io_queue
+    Log::Trace(SPDLOC, "ShellTask::Impl::OnMasterSourceCancellation() called");
+    assert(master_fd >= 0); // shall be closed later in DoCleanUp() but must be alive by now
+}
+
+void ShellTask::Impl::OnCwdSourceCancellation()
+{
+    dispatch_assert_background_queue(); // must be called on io_queue
+    Log::Trace(SPDLOC, "ShellTask::Impl::OnCwdSourceCancellation() called");
+    assert(cwd_pipe[0] >= 0); // shall be closed later in DoCleanUp() but must be alive by now
+}
+
+void ShellTask::Impl::DoCalloutOnChildOutput(const void *_d, size_t _sz)
+{
+    callback_lock.lock();
+    auto clbk = on_child_output;
+    callback_lock.unlock();
+
+    if( clbk && *clbk && _sz && _d )
+        (*clbk)(_d, _sz);
+}
+
+#if 0
 void ShellTask::ReadChildOutput()
 {
     constexpr size_t input_sz = 65536;
@@ -550,57 +662,58 @@ void ShellTask::ReadChildOutput()
     } // End while
     //    std::cerr << "done with ReadChildOutput()" << std::endl;
 }
+#endif
 
-void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
+void ShellTask::Impl::ProcessPwdPrompt(const void *_d, int _sz)
 {
     dispatch_assert_background_queue();
-    std::string current_cwd = I->cwd;
+    std::string current_cwd = cwd;
     bool do_nr_hack = false;
     bool current_wd_changed = false;
 
-    std::string cwd(static_cast<const char *>(_d), _sz);
-    while( cwd.empty() == false && (cwd.back() == '\n' || cwd.back() == '\r') )
-        cwd.pop_back();
-    cwd = EnsureTrailingSlash(cwd);
-    Log::Info(SPDLOC, "pwd prompt from shell_pid={}: {}", I->shell_pid.load(), cwd);
+    std::string new_cwd(static_cast<const char *>(_d), _sz);
+    while( new_cwd.empty() == false && (new_cwd.back() == '\n' || new_cwd.back() == '\r') )
+        new_cwd.pop_back();
+    new_cwd = EnsureTrailingSlash(new_cwd);
+    Log::Info(SPDLOC, "pwd prompt from shell_pid={}: {}", shell_pid.load(), new_cwd);
 
     {
-        const auto lock = std::lock_guard{I->lock};
+        const auto lock_g = std::lock_guard{lock};
 
-        I->cwd = cwd;
+        cwd = new_cwd;
 
-        if( current_cwd != I->cwd ) {
-            current_cwd = I->cwd;
+        if( current_cwd != cwd ) {
+            current_cwd = cwd;
             current_wd_changed = true;
         }
 
-        if( I->state == TaskState::ProgramExternal || I->state == TaskState::ProgramInternal ) {
+        if( state == TaskState::ProgramExternal || state == TaskState::ProgramInternal ) {
             // shell just finished running something - let's back it to StateShell state
             SetState(TaskState::Shell);
         }
 
-        if( I->temporary_suppressed && (I->requested_cwd.empty() || I->requested_cwd == cwd) ) {
-            I->temporary_suppressed = false;
-            if( !I->requested_cwd.empty() ) {
-                I->requested_cwd = "";
+        if( temporary_suppressed && (requested_cwd.empty() || requested_cwd == cwd) ) {
+            temporary_suppressed = false;
+            if( !requested_cwd.empty() ) {
+                requested_cwd = "";
                 do_nr_hack = true;
             }
         }
     }
 
-    if( I->requested_cwd.empty() )
+    if( requested_cwd.empty() )
         DoOnPwdPromptCallout(current_cwd.c_str(), current_wd_changed);
     if( do_nr_hack )
         DoCalloutOnChildOutput("\n\r", 2);
 
-    write(I->semaphore_pipe[1], "OK\n\r", 4);
+    write(semaphore_pipe[1], "OK\n\r", 4);
 }
 
-void ShellTask::DoOnPwdPromptCallout(const char *_cwd, bool _changed) const
+void ShellTask::Impl::DoOnPwdPromptCallout(const char *_cwd, bool _changed) const
 {
-    I->callback_lock.lock();
-    auto on_pwd = I->on_pwd_prompt;
-    I->callback_lock.unlock();
+    callback_lock.lock();
+    auto on_pwd = on_pwd_prompt;
+    callback_lock.unlock();
 
     if( on_pwd && *on_pwd )
         (*on_pwd)(_cwd, _changed);
@@ -622,110 +735,123 @@ void ShellTask::WriteChildInput(std::string_view _data)
 
     if( (_data.back() == '\n' || _data.back() == '\r') && I->state == TaskState::Shell ) {
         const auto lock = std::lock_guard{I->lock};
-        SetState(TaskState::ProgramInternal);
+        I->SetState(TaskState::ProgramInternal);
     }
 }
 
-void ShellTask::CleanUp()
+void ShellTask::Impl::CleanUp()
 {
-    auto cleanup_lg = std::unique_lock{I->cleanup_lock, std::defer_lock};
-    if( I->input_thread.get_id() == std::this_thread::get_id() ) {
-        if( cleanup_lg.try_lock() == false ) {
-            // already doing a cleanup from either.
-            // return immediately to avoid deadlocking on input_thread.join().
-            return;
-        }
-    }
-    else {
-        // main thread should always wait for this mutex
-        cleanup_lg.lock();
-    }
+    // first we must ensure that the dispatch sources (if any) are cancelled BEFORE calling DoCleanUp()
+    dispatch_group_async_f(
+        io_group, io_queue, this, +[](void *_ctx) {
+            Impl *me = static_cast<Impl *>(_ctx);
+            if( me->master_source != nullptr )
+                dispatch_source_cancel(me->master_source);
+            if( me->cwd_source != nullptr )
+                dispatch_source_cancel(me->cwd_source);
+        });
+    // wait until it completes and possibly GCD submits cancellation blocks
+    dispatch_group_wait(io_group, DISPATCH_TIME_FOREVER);
 
-    std::lock_guard lock{I->lock};
+    // next dispatch a request for the cleanup and wait until it completes
+    dispatch_group_async_f(
+        io_group, io_queue, this, +[](void *_ctx) { static_cast<Impl *>(_ctx)->DoCleanUp(); });
+    dispatch_group_wait(io_group, DISPATCH_TIME_FOREVER);
+}
 
-    if( I->shell_pid > 0 ) {
-        const int pid = I->shell_pid;
-        I->shell_pid = -1;
-        std::thread([pid] {
+void ShellTask::Impl::DoCleanUp()
+{
+    // this method shall be called only on the io_queue.
+    dispatch_assert_background_queue();
+    std::lock_guard lockg{lock};
+
+    if( shell_pid > 0 ) {
+        const int pid = shell_pid;
+        shell_pid = -1;
+        const auto task = +[](void *_ctx) {
+            const int pid = static_cast<int>(reinterpret_cast<intptr_t>(_ctx));
             KillAndReap(pid, std::chrono::milliseconds(400), std::chrono::milliseconds(1000));
-        }).detach();
+        };
+        dispatch_async_f(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), reinterpret_cast<void *>(pid), task);
     }
 
-    if( I->input_thread.joinable() ) {
-        if( I->input_thread.get_id() == std::this_thread::get_id() ) {
-            I->input_thread.detach();
-        }
-        else {
-            char c = 0;
-            write(I->signal_pipe[1], &c, 1);
-            I->input_thread.join();
-        }
+    if( master_source != nullptr ) {
+        // the source must be already cancelled before sheduling this cleanup call
+        assert(dispatch_source_testcancel(master_source));
+        dispatch_release(master_source);
+        master_source = nullptr;
     }
 
-    if( I->signal_pipe[0] >= 0 ) {
-        close(I->signal_pipe[0]);
-        close(I->signal_pipe[1]);
-        I->signal_pipe[0] = I->signal_pipe[1] = -1;
+    if( cwd_source != nullptr ) {
+        // the source must be already cancelled before sheduling this cleanup call
+        assert(dispatch_source_testcancel(cwd_source));
+        dispatch_release(cwd_source);
+        cwd_source = nullptr;
     }
 
-    if( I->master_fd >= 0 ) {
-        close(I->master_fd);
-        I->master_fd = -1;
+    if( master_fd >= 0 ) {
+        close(master_fd);
+        master_fd = -1;
     }
 
-    if( I->cwd_pipe[0] >= 0 ) {
-        close(I->cwd_pipe[0]);
-        I->cwd_pipe[0] = I->cwd_pipe[1] = -1;
+    if( cwd_pipe[0] >= 0 ) {
+        close(cwd_pipe[0]);
+        cwd_pipe[0] = cwd_pipe[1] = -1;
     }
 
-    if( I->semaphore_pipe[1] >= 0 ) {
-        close(I->semaphore_pipe[1]);
-        I->semaphore_pipe[0] = I->semaphore_pipe[1] = -1;
+    if( semaphore_pipe[1] >= 0 ) {
+        close(semaphore_pipe[1]);
+        semaphore_pipe[0] = semaphore_pipe[1] = -1;
     }
 
-    if( !I->tcsh_cwd_path.empty() ) {
-        unlink(I->tcsh_cwd_path.c_str());
-        I->tcsh_cwd_path.clear();
+    if( !tcsh_cwd_path.empty() ) {
+        unlink(tcsh_cwd_path.c_str());
+        tcsh_cwd_path.clear();
     }
 
-    if( !I->tcsh_semaphore_path.empty() ) {
-        unlink(I->tcsh_semaphore_path.c_str());
-        I->tcsh_semaphore_path.clear();
+    if( !tcsh_semaphore_path.empty() ) {
+        unlink(tcsh_semaphore_path.c_str());
+        tcsh_semaphore_path.clear();
     }
 
-    I->temporary_suppressed = false;
-    I->requested_cwd = "";
-    I->cwd = "";
+    temporary_suppressed = false;
+    requested_cwd = "";
+    cwd = "";
 
     SetState(TaskState::Inactive);
 }
 
-void ShellTask::ShellDied()
+void ShellTask::Impl::OnShellDied()
 {
     dispatch_assert_background_queue();
 
     // no need to call it if PID is already set to invalid - we're in closing state
-    if( I->shell_pid <= 0 )
+    if( shell_pid <= 0 )
         return; // wtf this even is??
+    if( state == TaskState::Dead || state == TaskState::Inactive )
+        return; // guard against competing calls from two GCD callbacks (master and cwd fds)
 
     SetState(TaskState::Dead);
 
-    CleanUp();
+    dispatch_source_cancel(master_source);
+    dispatch_source_cancel(cwd_source);
+    dispatch_group_async_f(
+        io_group, io_queue, this, +[](void *_ctx) { static_cast<Impl *>(_ctx)->DoCleanUp(); });
 }
 
-void ShellTask::SetState(TaskState _new_state)
+void ShellTask::Impl::SetState(TaskState _new_state)
 {
-    if( I->state == _new_state )
+    if( state == _new_state )
         return;
 
-    I->state = _new_state;
+    state = _new_state;
 
-    I->callback_lock.lock();
-    auto callback = I->on_state_changed;
-    I->callback_lock.unlock();
+    callback_lock.lock();
+    auto callback = on_state_changed;
+    callback_lock.unlock();
 
     if( callback && *callback )
-        (*callback)(I->state);
+        (*callback)(_new_state);
 }
 
 void ShellTask::ChDir(const std::filesystem::path &_new_cwd)
@@ -816,7 +942,7 @@ void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_par
                  _parameters != nullptr ? " " : "",
                  _parameters != nullptr ? _parameters : "");
 
-    SetState(TaskState::ProgramExternal);
+    I->SetState(TaskState::ProgramExternal);
     WriteChildInput(input);
 }
 
@@ -835,7 +961,7 @@ void ShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
              _parameters != nullptr ? " " : "",
              _parameters != nullptr ? _parameters : "");
 
-    SetState(TaskState::ProgramExternal);
+    I->SetState(TaskState::ProgramExternal);
     WriteChildInput(input);
 }
 
@@ -954,7 +1080,7 @@ void ShellTask::ResizeWindow(int _sx, int _sy)
 
 void ShellTask::Terminate()
 {
-    CleanUp();
+    I->CleanUp();
 }
 
 void ShellTask::SetOnPwdPrompt(OnPwdPrompt _callback)

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Task.h"
@@ -46,12 +46,14 @@ public:
 
     using OnStateChange = std::function<void(TaskState _new_state)>;
     using OnPwdPrompt = std::function<void(const char *_cwd, bool _changed)>;
+    using OnChildOutput = std::function<void(const void *_d, size_t _sz)>;
 
     ShellTask();
-    ShellTask(const ShellTask &) = delete;
     ~ShellTask();
-    ShellTask &operator=(const ShellTask &) = delete;
 
+    // TODO: describe, change to std::span
+    void SetOnChildOutput(OnChildOutput _callback);
+    
     // _callback can be called from a background thread
     void SetOnPwdPrompt(OnPwdPrompt _callback);
 
@@ -160,17 +162,14 @@ public:
     ShellType GetShellType() const;
     
 private:
+    ShellTask(const ShellTask &) = delete;
+    ShellTask &operator=(const ShellTask &) = delete;
+    
     bool IsCurrentWD(const char *_what) const;
-    void ProcessPwdPrompt(const void *_d, int _sz);
-    void SetState(TaskState _new_state);
-    void ShellDied();
-    void CleanUp();
-    void ReadChildOutput();
-    void DoOnPwdPromptCallout(const char *_cwd, bool _changed) const;
     char **BuildShellArgs() const;
     std::string ComposePromptCommand() const;
     struct Impl;
-    std::shared_ptr<Impl> I;
+    std::unique_ptr<Impl> I;
 };
 
 } // namespace nc::term

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "View.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontCache.h>
@@ -103,9 +103,13 @@ static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
     NSSize m_IntrinsicSize;
     utility::BlinkScheduler m_BlinkScheduler;
     NSFont *m_Font;
-    std::shared_ptr<FontCache> m_FontCache;
     NSFont *m_BoldFont;
+    NSFont *m_ItalicFont;
+    NSFont *m_BoldItalicFont;
+    std::shared_ptr<FontCache> m_FontCache;
     std::shared_ptr<FontCache> m_BoldFontCache;
+    std::shared_ptr<FontCache> m_ItalicFontCache;
+    std::shared_ptr<FontCache> m_BoldItalicFontCache;
     NSColor *m_ForegroundColor;
     NSColor *m_BoldForegroundColor;
     NSColor *m_BackgroundColor;
@@ -420,8 +424,10 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             continue;
 
         auto c = m_ForegroundColor.CGColor;
-        FontCache &effective_font_cache = char_space.bold ? *m_BoldFontCache : *m_FontCache;
-
+        FontCache &effective_font_cache =
+            char_space.bold ?
+            ( char_space.italic ? *m_BoldItalicFontCache : *m_BoldFontCache ) :
+            ( char_space.italic ? *m_ItalicFontCache : *m_FontCache );
         if( char_space.reverse ) {
             c = char_space.custombg ? m_Colors[char_space.background.c].CGColor : m_BackgroundColor.CGColor;
         }
@@ -468,6 +474,17 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             CGRect rc;
             rc.origin.x = x * m_FontCache->Width();
             rc.origin.y = _y * m_FontCache->Height() + m_FontCache->Height() - 1;
+            rc.size.width = m_FontCache->Width();
+            rc.size.height = 1;
+            CGContextFillRect(_context, rc);
+        }
+        
+        if( char_space.crossed ) {
+            /* NEED A REAL CROSS POSITION HERE !!! */
+            // need to set color here?
+            CGRect rc;
+            rc.origin.x = x * m_FontCache->Width();
+            rc.origin.y = _y * m_FontCache->Height() + m_FontCache->Height() / 2.;
             rc.size.width = m_FontCache->Width();
             rc.size.height = 1;
             CGContextFillRect(_context, rc);
@@ -864,6 +881,10 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_Font);
         m_BoldFont = [NSFontManager.sharedFontManager convertFont:m_Font toHaveTrait:NSBoldFontMask];
         m_BoldFontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_BoldFont);
+        m_ItalicFont = [NSFontManager.sharedFontManager convertFont:m_Font toHaveTrait:NSItalicFontMask];
+        m_ItalicFontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_ItalicFont);
+        m_BoldItalicFont = [NSFontManager.sharedFontManager convertFont:m_BoldFont toHaveTrait:NSItalicFontMask];
+        m_BoldItalicFontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_BoldItalicFont);        
         self.needsDisplay = true;
     }
 }

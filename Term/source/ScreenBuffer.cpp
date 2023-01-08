@@ -103,7 +103,7 @@ std::vector<uint32_t> ScreenBuffer::DumpUnicodeString(const ScreenPoint _begin, 
     while( curr < _end ) {
         auto line = LineFromNo(curr.y);
 
-        if( line.data() ) {
+        if( line.empty() ) {
             curr.y++;
             continue;
         }
@@ -229,7 +229,10 @@ std::u32string ScreenBuffer::DumpScreenAsUTF32(bool _break_lines) const
     std::u32string result;
     for( auto &l : m_OnScreenLines ) {
         for( auto *i = &m_OnScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i ) {
-            if( i->l >= 32 ) {
+            if( i->l == MultiCellGlyph ) {
+                result += ' ';
+            }
+            else if( i->l >= 32 ) {
                 result += i->l;
                 if( i->c1 )
                     result += i->c1;

@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Interpreter.h"
@@ -85,6 +85,7 @@ private:
         bool invisible = false;
         bool blink = false;
         bool underline = false;
+        bool crossed = false;
         std::optional<Color> fg_color;
         std::optional<Color> bg_color;
     };

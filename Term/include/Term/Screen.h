@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "ScreenBuffer.h"
@@ -37,6 +37,7 @@ public:
     void SetBgColor(std::optional<Color> _color);
     void SetFaint(bool _faint);
     void SetUnderline(bool _is_underline);
+    void SetCrossed(bool _is_crossed);
     void SetReverse(bool _is_reverse);
     void SetBold(bool _is_bold);
     void SetItalic(bool _is_italic);

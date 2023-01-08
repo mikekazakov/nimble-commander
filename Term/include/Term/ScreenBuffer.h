@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -37,6 +37,7 @@ public:
         bool custombg : 1;
         bool faint : 1;
         bool underline : 1;
+        bool crossed : 1;
         bool reverse : 1;
         bool bold : 1;
         bool italic : 1;

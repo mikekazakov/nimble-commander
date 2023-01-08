@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include <Utility/CharInfo.h>
 #include "Screen.h"
@@ -214,6 +214,12 @@ void Screen::SetFaint(bool _faint)
 void Screen::SetUnderline(bool _is_underline)
 {
     m_EraseChar.underline = _is_underline;
+    m_Buffer.SetEraseChar(m_EraseChar);
+}
+
+void Screen::SetCrossed(bool _is_crossed)
+{
+    m_EraseChar.crossed = _is_crossed;
     m_Buffer.SetEraseChar(m_EraseChar);
 }
 

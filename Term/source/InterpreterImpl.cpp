@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InterpreterImpl.h"
 #include <Habanero/CFString.h>
 #include <Habanero/CFPtr.h>
@@ -532,6 +532,10 @@ void InterpreterImpl::ProcessSetCharacterAttributes(input::CharacterAttributes _
         m_Rendition.underline = _underline;
         m_Screen.SetUnderline(_underline);
     };
+    auto set_crossed = [this](bool _crossed) {
+        m_Rendition.crossed = _crossed;
+        m_Screen.SetCrossed(_crossed);
+    };
 
     using Kind = input::CharacterAttributes::Kind;
     switch( _attributes.mode ) {
@@ -543,6 +547,7 @@ void InterpreterImpl::ProcessSetCharacterAttributes(input::CharacterAttributes _
             set_invisible(false);
             set_blink(false);
             set_underline(false);
+            set_crossed(false);
             set_fg(std::nullopt);
             set_bg(std::nullopt);
             break;
@@ -602,10 +607,10 @@ void InterpreterImpl::ProcessSetCharacterAttributes(input::CharacterAttributes _
             set_bg(std::nullopt);
             break;
         case Kind::Crossed:
-            /* Not implemented */
+            set_crossed(true);
             break;
         case Kind::NotCrossed:
-            /* Not implemented */
+            set_crossed(false);
             break;
             // no default to get a warning=error just in case
     }
@@ -622,6 +627,7 @@ void InterpreterImpl::UpdateCharacterAttributes()
     m_Screen.SetInvisible(m_Rendition.invisible);
     m_Screen.SetBlink(m_Rendition.blink);
     m_Screen.SetUnderline(m_Rendition.underline);
+    m_Screen.SetCrossed(m_Rendition.crossed);
 }
 
 void InterpreterImpl::Response(std::string_view _text)

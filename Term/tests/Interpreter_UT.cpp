@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <InterpreterImpl.h>
 #include <optional>
 #include "Tests.h"
@@ -309,6 +309,26 @@ TEST_CASE(PREFIX "setting underline")
     SECTION("Underline") { verify(CA::Underlined, true); }
     SECTION("Doubly Underline") { verify(CA::DoublyUnderlined, true); }
     SECTION("Not underlined") { verify(CA::NotUnderlined, false); }
+}
+
+TEST_CASE(PREFIX "setting crossed")
+{
+    using namespace input;
+    using CA = input::CharacterAttributes;
+    Screen screen(1, 1);
+    InterpreterImpl interpreter(screen);
+    auto verify = [&](CA::Kind _kind, bool _crossed) {
+        interpreter.Interpret(Command(Type::set_character_attributes, CA{.mode = _kind}));
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK(screen.Buffer().At(0, 0).crossed == _crossed);
+    };
+    SECTION("Implicit")
+    {
+        interpreter.Interpret(Command(Type::text, UTF8Text{"A"}));
+        CHECK(screen.Buffer().At(0, 0).crossed == false);
+    }
+    SECTION("Crossed") { verify(CA::Crossed, true); }
+    SECTION("Not crossed") { verify(CA::NotCrossed, false); }
 }
 
 TEST_CASE(PREFIX "G0 - DEC Special Graphics")

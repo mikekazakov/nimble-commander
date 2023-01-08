@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -13,8 +13,8 @@ public:
     static void BuildPossibleCompositionEvidenceTable();
     
 private:
-    static uint32_t g_PossibleCompositionEvidence[2048];
-    static uint32_t g_WCWidthTableIsFullSize[2048];
+    static const uint32_t g_PossibleCompositionEvidence[2048];
+    static const uint64_t g_WCWidthTableIsFullSize[1024];
 };
 
 inline bool CharInfo::IsUnicodeCombiningCharacter(uint32_t _a) noexcept
@@ -36,7 +36,7 @@ inline bool CharInfo::CanCharBeTheoreticallyComposed(uint32_t _c) noexcept
 inline unsigned char CharInfo::WCWidthMin1(uint32_t _c) noexcept
 {
     if(_c < 0x10000)
-        return ((g_WCWidthTableIsFullSize[_c / 32] >> (_c % 32)) & 1) ? 2 : 1;
+        return ((g_WCWidthTableIsFullSize[_c / 64] >> (_c % 64)) & 1) ? 2 : 1;
     else
         return
         (_c >= 0x10000 && _c <= 0x1fffd) ||

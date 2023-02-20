@@ -1,12 +1,15 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ScreenBuffer.h"
 #include <CoreFoundation/CoreFoundation.h>
 
 namespace nc::term {
 
-static_assert(sizeof(ScreenBuffer::Space) == 12, "");
+static_assert(sizeof(ScreenBuffer::Space) == 8);
 
-ScreenBuffer::ScreenBuffer(unsigned _width, unsigned _height) : m_Width(_width), m_Height(_height)
+static void Append(CFStringRef _what, std::u32string &_where);
+
+ScreenBuffer::ScreenBuffer(unsigned _width, unsigned _height, ExtendedCharRegistry &_reg)
+    : m_Width(_width), m_Height(_height), m_Registry(_reg)
 {
     m_OnScreenSpaces = ProduceRectangularSpaces(m_Width, m_Height);
     m_OnScreenLines.resize(m_Height);
@@ -93,12 +96,12 @@ const ScreenBuffer::LineMeta *ScreenBuffer::MetaFromLineNo(int _line_number) con
         return nullptr;
 }
 
-std::vector<uint32_t> ScreenBuffer::DumpUnicodeString(const ScreenPoint _begin, const ScreenPoint _end) const
+std::vector<uint16_t> ScreenBuffer::DumpUnicodeString(const ScreenPoint _begin, const ScreenPoint _end) const
 {
     if( _begin >= _end )
         return {};
 
-    std::vector<uint32_t> unicode;
+    std::vector<uint16_t> unicode;
     auto curr = _begin;
     while( curr < _end ) {
         auto line = LineFromNo(curr.y);
@@ -111,14 +114,28 @@ std::vector<uint32_t> ScreenBuffer::DumpUnicodeString(const ScreenPoint _begin, 
         bool any_inserted = false;
         const auto chars_len = static_cast<int>(OccupiedChars(line.data(), line.data() + line.size()));
         for( ; curr.x < chars_len && curr < _end; ++curr.x ) {
-            auto sp = line[curr.x];
+            const auto sp = line[curr.x];
             if( sp.l == MultiCellGlyph )
                 continue;
-            unicode.push_back(sp.l != 0 ? sp.l : ' ');
-            if( sp.c1 != 0 )
-                unicode.push_back(sp.c1);
-            if( sp.c2 != 0 )
-                unicode.push_back(sp.c2);
+
+            if( ExtendedCharRegistry::IsBase(sp.l) ) {
+                uint16_t buf[2];
+                if( CFStringGetSurrogatePairForLongCharacter(sp.l, buf) ) {
+                    unicode.push_back(buf[0]);
+                    unicode.push_back(buf[1]);
+                }
+                else {
+                    unicode.push_back(buf[0]);
+                }
+            }
+            else {
+                auto cf_str = m_Registry.Decode(sp.l);
+                assert(cf_str);
+                const auto len = CFStringGetLength(cf_str.get());
+                const auto curr_size = unicode.size();
+                unicode.resize(curr_size + len);
+                CFStringGetCharacters(cf_str.get(), CFRangeMake(0, len), unicode.data() + curr_size);
+            }
             any_inserted = true;
         }
 
@@ -174,10 +191,7 @@ ScreenBuffer::DumpUTF16StringWithLayout(ScreenPoint _begin, ScreenPoint _end) co
             else
                 put(utf16[0]);
 
-            if( sp.c1 != 0 )
-                put(sp.c1);
-            if( sp.c2 != 0 )
-                put(sp.c2);
+            // TODO: extended chars
 
             any_inserted = true;
         }
@@ -224,26 +238,30 @@ std::string ScreenBuffer::DumpScreenAsANSIBreaked() const
     return result;
 }
 
-std::u32string ScreenBuffer::DumpScreenAsUTF32(bool _break_lines) const
+std::u32string ScreenBuffer::DumpScreenAsUTF32(const int _opts) const
 {
     std::u32string result;
     for( auto &l : m_OnScreenLines ) {
         for( auto *i = &m_OnScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i ) {
             if( i->l == MultiCellGlyph ) {
-                result += ' ';
+                if( _opts & DumpOptions::ReportMultiCellGlyphs )
+                    result += ' ';
             }
             else if( i->l >= 32 ) {
-                result += i->l;
-                if( i->c1 )
-                    result += i->c1;
-                if( i->c2 )
-                    result += i->c2;
+                if( ExtendedCharRegistry::IsBase(i->l) ) {
+                    result += i->l;
+                }
+                else {
+                    auto cf_str = m_Registry.Decode(i->l);
+                    assert(cf_str);
+                    Append(cf_str.get(), result);
+                }
             }
             else {
                 result += ' ';
             }
         }
-        if( _break_lines )
+        if( _opts & DumpOptions::BreakLines )
             result += '\r';
     }
     return result;
@@ -256,8 +274,6 @@ void ScreenBuffer::LoadScreenFromANSI(std::string_view _dump)
             if( _dump.empty() )
                 return;
             i->l = _dump.front();
-            i->c1 = 0;
-            i->c2 = 0;
             _dump = _dump.substr(1);
         }
     }
@@ -432,8 +448,10 @@ std::vector<std::vector<ScreenBuffer::Space>> ScreenBuffer::ComposeContinuousLin
 
     for( bool continue_prev = false; _from < _to; ++_from ) {
         auto source = LineFromNo(_from);
-        if( source.empty() )
+        if( source.data() == nullptr ) {
+            // NB! comparing ptr with nullptr instead of calling .empty() - differing meaning
             throw std::out_of_range("invalid bounds in TermScreen::Buffer::ComposeContinuousLines");
+        }
 
         if( !continue_prev )
             lines.emplace_back();
@@ -519,6 +537,29 @@ std::optional<std::pair<int, int>> ScreenBuffer::OccupiedOnScreenLines() const
         return std::nullopt;
 
     return std::make_pair(first, last + 1);
+}
+
+static void Append(CFStringRef _what, std::u32string &_where)
+{
+    const auto len = CFStringGetLength(_what);
+
+    CFIndex used = 0;
+    CFStringGetBytes(_what, CFRangeMake(0, len), kCFStringEncodingUTF32LE, 0, false, nullptr, 0, &used);
+    const size_t utf32_len = used / 4;
+    if( utf32_len == 0 )
+        return;
+
+    const auto curr_size = _where.size();
+    _where.resize(curr_size + utf32_len);
+
+    CFStringGetBytes(_what,
+                     CFRangeMake(0, len),
+                     kCFStringEncodingUTF32LE,
+                     0,
+                     false,
+                     reinterpret_cast<UInt8 *>(_where.data() + curr_size),
+                     utf32_len * sizeof(char32_t),
+                     nullptr);
 }
 
 } // namespace nc::term

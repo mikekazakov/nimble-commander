@@ -11,11 +11,10 @@ namespace nc::term {
 
 using utility::CharInfo;
 
-static std::u32string ConvertUTF8ToUTF32(std::string_view _utf8);
-static std::u32string ComposeUnicodePoints(std::u32string _utf32);
-static void ApplyTranslateMap(std::u32string &_utf32, const unsigned short *_map);
+static std::u16string ConvertUTF8ToUTF16(std::string_view _utf8);
+static void ApplyTranslateMap(std::u16string &_utf16, const unsigned short *_map);
 
-InterpreterImpl::InterpreterImpl(Screen &_screen) : m_Screen(_screen)
+InterpreterImpl::InterpreterImpl(Screen &_screen, ExtendedCharRegistry &_reg) : m_Screen(_screen), m_Registry(_reg)
 {
     m_Extent.height = m_Screen.Height();
     m_Extent.width = m_Screen.Width();
@@ -147,28 +146,63 @@ void InterpreterImpl::SetBell(Bell _bell)
 
 void InterpreterImpl::ProcessText(const input::UTF8Text &_text)
 {
-    auto uncomposed_utf32 = ConvertUTF8ToUTF32(_text.characters);
+    // TODO: convert iteratively, avoid CF for conversion and use raw local stack buffers
+    auto whole_input = ConvertUTF8ToUTF16(_text.characters);
     if( m_TranslateMap != nullptr ) {
-        ApplyTranslateMap(uncomposed_utf32, m_TranslateMap);
+        ApplyTranslateMap(whole_input, m_TranslateMap);
     }
 
-    const auto utf32 = ComposeUnicodePoints(std::move(uncomposed_utf32));
+    // 'input' will gradually decrease after being eaten from the front
+    std::u16string_view input = whole_input;
+    if( input.empty() )
+        return; // ignore empty inputs
 
-    for( const auto c : utf32 ) {
+    // first try to append a whatever character currently stored at the current position
+    if( const char32_t curr = m_Screen.GetCh(); curr != 0 && curr != Screen::MultiCellGlyph ) {
+        const auto ar = m_Registry.Append(input, curr);
+        if( ar.eaten != 0 ) {
+            // managed to append something to the current character
+            assert(curr != ar.newchar);
+            assert(ar.eaten <= input.size());
+            m_Screen.PutCh(ar.newchar);
+            input = input.substr(ar.eaten);
+        }
+    }
 
-        if( m_AutoWrapMode == true && m_Screen.CursorX() >= m_Screen.Width() - 1 && m_Screen.LineOverflown() &&
-            !CharInfo::IsUnicodeCombiningCharacter(c) ) {
+    const int sx = m_Screen.Width();
+
+    auto curr_line_ends_with_mcg = [&]() -> bool {
+        auto line = m_Screen.Buffer().LineFromNo(m_Screen.CursorY());
+        return line.back().l == Screen::MultiCellGlyph;
+    };
+
+    while( !input.empty() ) {
+        const auto ar = m_Registry.Append(input);
+        assert(ar.eaten <= input.size());
+        input = input.substr(ar.eaten);
+        if( ar.newchar == 0 ) {
+            continue;
+        }
+
+        if( m_AutoWrapMode == true && m_Screen.LineOverflown() &&
+            (m_Screen.CursorX() >= sx - 1 || (m_Screen.CursorX() == sx - 2 && curr_line_ends_with_mcg())) ) {
             m_Screen.PutWrap();
             ProcessCR();
             ProcessLF();
         }
 
-        if( m_InsertMode )
-            m_Screen.DoShiftRowRight(CharInfo::WCWidthMin1(c));
+        const bool is_dw = m_Registry.IsDoubleWidth(ar.newchar);
+        const int char_width = is_dw ? 2 : 1;
 
-        m_Screen.PutCh(c);
+        if( m_InsertMode )
+            m_Screen.DoShiftRowRight(char_width);
+
+        m_Screen.PutCh(ar.newchar);
+
+        if( m_Screen.CursorX() + char_width < sx ) {
+            m_Screen.GoTo(m_Screen.CursorX() + char_width, m_Screen.CursorY());
+        }
     }
-    // TODO: MUCH STUFF
 }
 
 void InterpreterImpl::ProcessLF()
@@ -637,7 +671,7 @@ void InterpreterImpl::Response(std::string_view _text)
     m_Output(bytes);
 }
 
-static std::u32string ConvertUTF8ToUTF32(std::string_view _utf8)
+static std::u16string ConvertUTF8ToUTF16(std::string_view _utf8)
 {
     // temp and slow implementation
     auto str = base::CFPtr<CFStringRef>::adopt(CFStringCreateWithUTF8StringNoCopy(_utf8));
@@ -645,73 +679,18 @@ static std::u32string ConvertUTF8ToUTF32(std::string_view _utf8)
         return {};
 
     const auto utf16_len = CFStringGetLength(str.get());
-    const auto utf32_len =
-        CFStringGetBytes(str.get(), CFRangeMake(0, utf16_len), kCFStringEncodingUTF32LE, 0, false, nullptr, 0, nullptr);
-    if( utf32_len == 0 )
-        return {};
 
-    std::u32string result;
-    result.resize(utf32_len);
+    std::u16string result;
+    result.resize(utf16_len);
 
-    [[maybe_unused]] const auto utf32_fact = CFStringGetBytes(str.get(),
-                                                              CFRangeMake(0, utf16_len),
-                                                              kCFStringEncodingUTF32LE,
-                                                              0,
-                                                              false,
-                                                              reinterpret_cast<UInt8 *>(result.data()),
-                                                              result.size() * sizeof(char32_t),
-                                                              nullptr);
-
-    assert(utf32_len == utf32_fact);
+    CFStringGetCharacters(str.get(), CFRangeMake(0, utf16_len), reinterpret_cast<uint16_t *>(result.data()));
 
     return result;
 }
 
-static std::u32string ComposeUnicodePoints(std::u32string _utf32)
+static void ApplyTranslateMap(std::u16string &_utf16, const unsigned short *_map)
 {
-    // temp and slow implementation
-    const bool can_be_composed = std::any_of(
-        _utf32.begin(), _utf32.end(), [](const char32_t _c) { return CharInfo::CanCharBeTheoreticallyComposed(_c); });
-    if( can_be_composed == false )
-        return _utf32;
-
-    const auto orig_str =
-        base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(nullptr,
-                                                                      reinterpret_cast<UInt8 *>(_utf32.data()),
-                                                                      _utf32.length() * sizeof(char32_t),
-                                                                      kCFStringEncodingUTF32LE,
-                                                                      false,
-                                                                      kCFAllocatorNull));
-
-    const auto mut_str = base::CFPtr<CFMutableStringRef>::adopt(CFStringCreateMutableCopy(nullptr, 0, orig_str.get()));
-
-    CFStringNormalize(mut_str.get(), kCFStringNormalizationFormC);
-    const auto utf16_len = CFStringGetLength(mut_str.get());
-
-    const auto utf32_len = CFStringGetBytes(
-        mut_str.get(), CFRangeMake(0, utf16_len), kCFStringEncodingUTF32LE, 0, false, nullptr, 0, nullptr);
-    if( utf32_len == 0 )
-        return {};
-
-    _utf32.resize(utf32_len);
-
-    [[maybe_unused]] const auto utf32_fact = CFStringGetBytes(mut_str.get(),
-                                                              CFRangeMake(0, utf16_len),
-                                                              kCFStringEncodingUTF32LE,
-                                                              0,
-                                                              false,
-                                                              reinterpret_cast<UInt8 *>(_utf32.data()),
-                                                              _utf32.size() * sizeof(char32_t),
-                                                              nullptr);
-
-    assert(utf32_len == utf32_fact);
-
-    return _utf32;
-}
-
-static void ApplyTranslateMap(std::u32string &_utf32, const unsigned short *_map)
-{
-    for( auto &c : _utf32 ) {
+    for( auto &c : _utf16 ) {
         if( c <= 0x7f ) {
             c = _map[c];
         }

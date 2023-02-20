@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/FPSLimitedDrawer.h>
@@ -16,10 +16,11 @@ namespace nc::term {
 @interface NCTermView : NSView<ViewWithFPSLimitedDrawer>
 
 @property (nonatomic, readonly) FPSLimitedDrawer *fpsDrawer;
-@property (nonatomic, readonly) const nc::utility::FontCache &fontCache;
 @property (nonatomic) bool reportsSizeByOccupiedContent;
 @property (nonatomic) bool allowCursorBlinking;
 @property (nonatomic) bool showCursor;
+@property (nonatomic, readonly) double charWidth;
+@property (nonatomic, readonly) double charHeight;
 @property (nonatomic) nc::term::Interpreter::RequestedMouseEvents mouseEvents;
 @property (nonatomic) NSFont  *font;
 @property (nonatomic) NSColor *foregroundColor;

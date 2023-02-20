@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <ParserImpl.h>
 #include <InterpreterImpl.h>
 #include <Screen.h>
@@ -435,45 +435,97 @@ const static std::pair<const char*, const char*> g_ResponseCases[] =
     },
 };
 
+// 10x6 screen
+// clang-format off
 const static std::pair<const char8_t*, const char32_t*> g_UTFCases[] = 
 {
-    {
-        reinterpret_cast<const char8_t*>("\xD0\xB5\xCC\x88"), // е
-        U"ё         "
-        "          "
-        "          "
-        "          "
-        "          "
-        "          "
-    },
-    {
-        reinterpret_cast<const char8_t*>("\xD0\xB5\xCC\x88\xCC\xB6"), // ё̶
-        U"\x451\x336         "
-        "          "
-        "          "
-        "          "
-        "          "
-        "          "
-    },
-    {
-        reinterpret_cast<const char8_t*>("\x1B""[10G""\xD0\xB5\xCC\x88\xCC\xB6"), // ESC[10Gё̶
-        U"         \x451\x336"
-        "          "
-        "          "
-        "          "
-        "          "
-        "          "
-    },
-    {
-        reinterpret_cast<const char8_t*>("\x1B""[6;10H""\xD0\xB5\xCC\x88\xCC\xB6"), // ESC[6;10HGё̶
-        U"          "
-        "          "
-        "          "
-        "          "
-        "          "
-        "         \x451\x336"
-    },    
+    {    u8"\xD0\xB5\xCC\x88", // ё, non-composed
+          U"\x435\x308         "
+           "          "
+           "          "
+           "          "
+           "          "
+           "          "
+    }, { u8"\xD0\xB5\xCC\x88\xCC\xB6", // ё̶, non-composed and crossed
+          U"\x435\x308\x336         "
+           "          "
+           "          "
+           "          "
+           "          "
+           "          "
+    }, { u8"\x1B""[10G""\xD0\xB5\xCC\x88\xCC\xB6", // ESC[10Gё̶
+          U"         \x435\x308\x336"
+           "          "
+           "          "
+           "          "
+           "          "
+           "          "
+    }, { u8"\x1B""[6;10H""\xD0\xB5\xCC\x88\xCC\xB6", // ESC[6;10HGё̶
+          U"          "
+           "          "
+           "          "
+           "          "
+           "          "
+           "         \x435\x308\x336"
+    }, { u8"🧜🏾‍♀️",
+          U"🧜🏾‍♀️        "
+           "          "
+           "          "
+           "          "
+           "          "
+           "          "
+    }, { u8"🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️",
+          U"🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️"
+           "          "
+           "          "
+           "          "
+           "          "
+           "          "
+    }, { u8"0123456789🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️",
+          U"0123456789"
+           "🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️"
+           "          "
+           "          "
+           "          "
+           "          "
+    }, { u8"0123456789🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️",
+          U"0123456789"
+           "🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️"
+           "🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️🧜🏾‍♀️"
+           "          "
+           "          "
+           "          "
+    }, { u8"0123456789👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👩🏻‍❤️‍👩🏻👩🏻‍❤️‍👩🏻👩🏻‍❤️‍👩🏻👩🏻‍❤️‍👩🏻👩🏻‍❤️‍👩🏻",
+          U"0123456789"
+           "👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦👨‍👩‍👧‍👦"
+           "👩🏻‍❤️‍👩🏻👩🏻‍❤️‍👩🏻👩🏻‍❤️‍👩🏻👩🏻‍❤️‍👩🏻👩🏻‍❤️‍👩🏻"
+           "          "
+           "          "
+           "          "
+    }, { u8"0123456789🇬🇧🇬🇧🇬🇧🇬🇧🇬🇧0123456789🦄🦄🦄🦄🦄0123456789☀️☀️☀️☀️☀️",
+          U"0123456789"
+           "🇬🇧🇬🇧🇬🇧🇬🇧🇬🇧"
+           "0123456789"
+           "🦄🦄🦄🦄🦄"
+           "0123456789"
+           "☀️☀️☀️☀️☀️"
+    }, { u8"0123456789☁️  ☀️  ⛅️0☁️ ☀️ ⛅️9❄️🌨☁️🌦☁️0123456789",
+          U"0123456789"
+           "☁️  ☀️  ⛅️"
+           "0☁️ ☀️ ⛅️9"
+           "❄️🌨☁️🌦☁️"
+           "0123456789"
+           "          "
+    }, { u8"Zalgo     Z̷a̸l̴g̴o̶     Z̸̬͂ą̶̈́ľ̴͖ǧ̷̗o̶͇̒     Ź̸̫̞͝ä̴͓́͜l̸̟̈̊g̶̬̅͒ō̴̮     Z̴̠̓̄a̸͇̼͎͐̈́̽l̸͈̱̼̋̌g̷͈̩͑͂̐o̶̢̯̺̔     Z̸̛͈̩͎̉͗á̶̱̟͍͘l̷͎̒͐ͅg̷̨̩̥͓̾͛͐o̸̺̾͌͠     ",
+          U"Zalgo     "
+           "Z̷a̸l̴g̴o̶     "
+           "Z̸̬͂ą̶̈́ľ̴͖ǧ̷̗o̶͇̒     "
+           "Ź̸̫̞͝ä̴͓́͜l̸̟̈̊g̶̬̅͒ō̴̮     "
+           "Z̴̠̓̄a̸͇̼͎͐̈́̽l̸͈̱̼̋̌g̷͈̩͑͂̐o̶̢̯̺̔     "
+           "Z̸̛͈̩͎̉͗á̶̱̟͍͘l̷͎̒͐ͅg̷̨̩̥͓̾͛͐o̸̺̾͌͠     "
+    }
 };
+// clang-format on
 
 static Parser::Bytes Bytes(const char *_string) noexcept
 {
@@ -577,7 +629,8 @@ TEST_CASE(PREFIX"UTF cases")
         interpreter.Interpret(parser.Parse( input_bytes ) );
          
         const auto result = screen.Buffer().DumpScreenAsUTF32();
-        const auto expectation = test_case.second;
+        const auto expectation = std::u32string(test_case.second);
+        INFO( reinterpret_cast<const char*>(test_case.first) );
         CHECK( result == expectation );
     }
 }
@@ -2493,7 +2546,7 @@ U"Weather report: Houston                                                       
     Screen screen(static_cast<int>(w), static_cast<int>(h));
     InterpreterImpl interpreter(screen);
     interpreter.Interpret(parser.Parse(Bytes(raw_input)));
-    const auto result = screen.Buffer().DumpScreenAsUTF32();
+    const auto result = screen.Buffer().DumpScreenAsUTF32(ScreenBuffer::DumpOptions::ReportMultiCellGlyphs);
 
     REQUIRE(result.size() == h * w);
     REQUIRE(std::u32string_view(expectation).length() == h * w);

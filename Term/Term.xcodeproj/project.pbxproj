@@ -31,6 +31,11 @@
 		CF5F3934242FCD2B004DF1F8 /* Term_IT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5F3932242FCD23004DF1F8 /* Term_IT.cpp */; };
 		CF739C76295A14F7004758C5 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739C75295A14F7004758C5 /* Color.cpp */; };
 		CF739C78295B2610004758C5 /* Color_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739C77295B2610004758C5 /* Color_UT.cpp */; };
+		CF739CC32972059B004758C5 /* ExtendedCharRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = CF739CC22972059A004758C5 /* ExtendedCharRegistry.h */; };
+		CF739CC5297205A1004758C5 /* ExtendedCharRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF739CC4297205A1004758C5 /* ExtendedCharRegistry.mm */; };
+		CF739CDE297C1704004758C5 /* ExtendedCharRegistry_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739CDC297C166E004758C5 /* ExtendedCharRegistry_UT.cpp */; };
+		CF739CE0297F3EEE004758C5 /* CTCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF739CDF297F3EEE004758C5 /* CTCache.h */; };
+		CF739CE2297F3EF5004758C5 /* CTCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739CE1297F3EF5004758C5 /* CTCache.cpp */; };
 		CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */; };
 		CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D696624A897B5008352B0 /* Screen_UT.cpp */; };
 		CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */; };
@@ -120,6 +125,11 @@
 		CF739C74295A146A004758C5 /* Color.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Color.h; path = include/Term/Color.h; sourceTree = "<group>"; };
 		CF739C75295A14F7004758C5 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 		CF739C77295B2610004758C5 /* Color_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color_UT.cpp; sourceTree = "<group>"; };
+		CF739CC22972059A004758C5 /* ExtendedCharRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtendedCharRegistry.h; path = include/Term/ExtendedCharRegistry.h; sourceTree = "<group>"; };
+		CF739CC4297205A1004758C5 /* ExtendedCharRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExtendedCharRegistry.mm; sourceTree = "<group>"; };
+		CF739CDC297C166E004758C5 /* ExtendedCharRegistry_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendedCharRegistry_UT.cpp; sourceTree = "<group>"; };
+		CF739CDF297F3EEE004758C5 /* CTCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTCache.h; path = include/Term/CTCache.h; sourceTree = "<group>"; };
+		CF739CE1297F3EF5004758C5 /* CTCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CTCache.cpp; sourceTree = "<group>"; };
 		CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter_UT.cpp; sourceTree = "<group>"; };
 		CF9D696624A897B5008352B0 /* Screen_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Screen_UT.cpp; sourceTree = "<group>"; };
 		CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenBuffer_UT.cpp; sourceTree = "<group>"; };
@@ -190,6 +200,8 @@
 			isa = PBXGroup;
 			children = (
 				CF739C75295A14F7004758C5 /* Color.cpp */,
+				CF739CE1297F3EF5004758C5 /* CTCache.cpp */,
+				CF739CC4297205A1004758C5 /* ExtendedCharRegistry.mm */,
 				CF50996F1F948400000AFDE7 /* FlippableHolder.h */,
 				CF5099701F948400000AFDE7 /* FlippableHolder.mm */,
 				CFC4F4C524CA396600DF4ED6 /* InputTranslator.cpp */,
@@ -218,8 +230,10 @@
 		CF1ADE2A1F7E6C3F003E9B76 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF739CDF297F3EEE004758C5 /* CTCache.h */,
 				CF739C74295A146A004758C5 /* Color.h */,
 				CF4135221F890BC8007429B6 /* CursorMode.h */,
+				CF739CC22972059A004758C5 /* ExtendedCharRegistry.h */,
 				CFC4F4C724CA397600DF4ED6 /* InputTranslator.h */,
 				CFC4F4C924CA3D1B00DF4ED6 /* InputTranslatorImpl.h */,
 				CFB7456A2416E5850088F5EF /* Interpreter.h */,
@@ -252,8 +266,9 @@
 		CF5099781F948E7C000AFDE7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF739C77295B2610004758C5 /* Color_UT.cpp */,
 				CF69DCD9253B17BD00AB1E3A /* AtomicHolder.h */,
+				CF739C77295B2610004758C5 /* Color_UT.cpp */,
+				CF739CDC297C166E004758C5 /* ExtendedCharRegistry_UT.cpp */,
 				CF50997B1F948E7C000AFDE7 /* Info.plist */,
 				CF0A49CC2516676A008EC7B0 /* InputTranslator_UT.mm */,
 				CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */,
@@ -287,6 +302,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF739CE0297F3EEE004758C5 /* CTCache.h in Headers */,
+				CF739CC32972059B004758C5 /* ExtendedCharRegistry.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +425,7 @@
 				CF4600E125605B830095FC73 /* Task.cpp in Sources */,
 				CF4600DE25605B830095FC73 /* InterpreterImpl.cpp in Sources */,
 				CF4600DC25605B830095FC73 /* ScrollView.mm in Sources */,
+				CF739CE2297F3EF5004758C5 /* CTCache.cpp in Sources */,
 				CF4600E225605B830095FC73 /* ParserImpl.cpp in Sources */,
 				CF4600D825605B830095FC73 /* InputTranslatorImpl.mm in Sources */,
 				CF4600DB25605B830095FC73 /* Parser.cpp in Sources */,
@@ -416,6 +434,7 @@
 				CF4600DF25605B830095FC73 /* ScreenBuffer.cpp in Sources */,
 				CF4600D725605B830095FC73 /* InputTranslator.cpp in Sources */,
 				CF4600E325605B830095FC73 /* SingleTask.cpp in Sources */,
+				CF739CC5297205A1004758C5 /* ExtendedCharRegistry.mm in Sources */,
 				CF4600E725605B830095FC73 /* Settings.mm in Sources */,
 				CF4600DA25605B830095FC73 /* FlippableHolder.mm in Sources */,
 				CF4600E825605B830095FC73 /* Screen.cpp in Sources */,
@@ -434,6 +453,7 @@
 				CF739C78295B2610004758C5 /* Color_UT.cpp in Sources */,
 				CF0A49DA251668E8008EC7B0 /* InputTranslator_UT.mm in Sources */,
 				CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */,
+				CF739CDE297C1704004758C5 /* ExtendedCharRegistry_UT.cpp in Sources */,
 				CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

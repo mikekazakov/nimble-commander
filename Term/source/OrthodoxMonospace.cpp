@@ -1,29 +1,10 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Utility/FontCache.h>
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OrthodoxMonospace.h"
 
 namespace nc::term
 {
 
-using utility::FontCache;
-
-void DrawSingleUniChar(uint32_t _s, double _x, double _y, CGContextRef _context, FontCache &_cache)
-{
-    FontCache::Pair p = _cache.Get(_s);
-    if( p.glyph == 0 )
-        return;
-
-    CGPoint pos{0., 0.};
-    CGContextSetTextPosition(_context, _x, _y + _cache.Height() - _cache.Descent());
-    CTFontDrawGlyphs(_cache.Font(p.font), &p.glyph, &pos, 1, _context);
-}
-
-void DrawSingleUniCharXY(uint32_t _s, int _x, int _y, CGContextRef _cont, FontCache &_cache)
-{
-    DrawSingleUniChar(_s, _x * _cache.Width(), _y * _cache.Height(), _cont, _cache);
-}
-
-void SetParamsForUserReadableText(CGContextRef _context, [[maybe_unused]] FontCache &_cache)
+void SetParamsForUserReadableText(CGContextRef _context)
 {
     // font settings
     CGContextSetTextDrawingMode(_context, kCGTextFill);
@@ -41,7 +22,7 @@ void SetParamsForUserReadableText(CGContextRef _context, [[maybe_unused]] FontCa
     CGContextSetTextMatrix(_context, AFF);
 }
     
-void SetParamsForUserASCIIArt(CGContextRef _context, [[maybe_unused]] FontCache &_cache)
+void SetParamsForUserASCIIArt(CGContextRef _context)
 {
     // font settings
     CGContextSetTextDrawingMode(_context, kCGTextFill);

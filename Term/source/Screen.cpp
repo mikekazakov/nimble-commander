@@ -7,56 +7,45 @@ namespace nc::term {
 
 using utility::CharInfo;
 
-Screen::Screen(unsigned _w, unsigned _h) : m_Buffer(_w, _h)
+Screen::Screen(unsigned _w, unsigned _h, ExtendedCharRegistry &_reg) : m_Registry(_reg), m_Buffer(_w, _h)
+
 {
     GoToDefaultPosition();
 }
 
-void Screen::PutString(const std::string &_str)
+char32_t Screen::GetCh() noexcept
 {
-    for( auto c : _str )
-        PutCh(c);
+    const std::span<ScreenBuffer::Space> line = m_Buffer.LineFromNo(m_PosY);
+    if( line.empty() )
+        return 0;
+
+    if( m_PosX < static_cast<int>(line.size()) )
+        return line[m_PosX].l;
+    
+    return 0;
 }
 
-void Screen::PutCh(uint32_t _char)
+void Screen::PutCh(char32_t _char)
 {
-    auto line = m_Buffer.LineFromNo(m_PosY);
+    const std::span<ScreenBuffer::Space> line = m_Buffer.LineFromNo(m_PosY);
     if( line.empty() )
         return;
 
-    auto chars = begin(line);
-
-    if( !CharInfo::IsUnicodeCombiningCharacter(_char) ) {
-        if( chars + m_PosX < end(line) ) {
-            auto sp = m_EraseChar;
-            sp.l = _char;
-            // sp.c1 == 0
-            // sp.c2 == 0
-            chars[m_PosX++] = sp;
-
-            if( CharInfo::WCWidthMin1(_char) == 2 && chars + m_PosX < end(line) ) {
-                sp.l = MultiCellGlyph;
-                chars[m_PosX++] = sp;
-            }
-        }
+    auto chars = line.begin();
+    const int line_len = static_cast<int>(line.size());
+    
+    Screen::Space sp = m_EraseChar;
+    sp.l = _char;
+    chars[m_PosX] = sp;
+    const bool is_dw = m_Registry.IsDoubleWidth(_char);
+    if( is_dw && m_PosX + 1 < line_len ) {
+        sp.l = MultiCellGlyph;
+        chars[m_PosX + 1] = sp;
     }
-    else { // combining characters goes here
-        if( m_PosX > 0 && chars + m_PosX <= end(line) ) {
-            int target_pos = m_LineOverflown ? m_PosX : m_PosX - 1;
-            if( (chars[target_pos].l == MultiCellGlyph) && (target_pos > 0) )
-                target_pos--;
-            if( chars[target_pos].c1 == 0 )
-                chars[target_pos].c1 = static_cast<uint16_t>(_char);
-            else if( chars[target_pos].c2 == 0 )
-                chars[target_pos].c2 = static_cast<uint16_t>(_char);
-        }
-    }
-
-    if( m_PosX == std::distance(begin(line), end(line)) ) {
+        
+    if( m_PosX == line_len - 1 || (m_PosX == line_len - 2 && is_dw) ) {
         m_LineOverflown = true;
-        m_PosX = std::max(m_PosX - 1, 0);
     }
-
     m_Buffer.SetLineWrapped(m_PosY, false); // do we need it EVERY time?????
 }
 
@@ -201,7 +190,7 @@ void Screen::SetBgColor(std::optional<Color> _color)
     else {
         m_EraseChar.background = Color{};
         m_EraseChar.custombg = false;
-    }    
+    }
     m_Buffer.SetEraseChar(m_EraseChar);
 }
 

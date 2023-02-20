@@ -1322,7 +1322,8 @@ void ParserImpl::CSI_m() noexcept
     // Ps = 3 5  ⇒  Set foreground color to Magenta.
     // Ps = 3 6  ⇒  Set foreground color to Cyan.
     // Ps = 3 7  ⇒  Set foreground color to White.
-    // Ps = 3 8 ; 2 ; Color  ⇒  Set foreground color to 8-bit Color.
+    // Ps = 3 8 ; 5 ; Color  ⇒  Set foreground color to 8-bit Color.
+    // Ps = 3 8 ; 2 ; R ; G ; B  ⇒  Set foreground color to 24-bit Color.
     // Ps = 3 9  ⇒  Set foreground color to default, ECMA-48 3rd.
     // Ps = 4 0  ⇒  Set background color to Black.
     // Ps = 4 1  ⇒  Set background color to Red.
@@ -1332,7 +1333,8 @@ void ParserImpl::CSI_m() noexcept
     // Ps = 4 5  ⇒  Set background color to Magenta.
     // Ps = 4 6  ⇒  Set background color to Cyan.
     // Ps = 4 7  ⇒  Set background color to White.
-    // Ps = 4 8 ; 2 ; Color  ⇒  Set background color to 8-bit Color.
+    // Ps = 4 8 ; 5 ; Color  ⇒  Set background color to 8-bit Color.
+    // Ps = 4 8 ; 2 ; R ; G ; B  ⇒  Set background color to 24-bit Color.
     // Ps = 4 9  ⇒  Set background color to default, ECMA-48 3rd.
     // Ps = 9 0  ⇒  Set foreground color to Bright Black.
     // Ps = 9 1  ⇒  Set foreground color to Bright Red.

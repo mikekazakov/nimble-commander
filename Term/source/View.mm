@@ -10,6 +10,7 @@
 #include "OrthodoxMonospace.h"
 #include "Screen.h"
 #include "Settings.h"
+#include "CTCache.h"
 
 #include <iostream>
 #include <cmath>
@@ -22,6 +23,8 @@ using nc::utility::FontCache;
 using SelPoint = term::ScreenPoint;
 
 static constexpr double g_FaintColorAlpha = 0.6;
+[[clang::no_destroy]] static CTCacheRegistry
+    g_CacheRegistry(ExtendedCharRegistry::SharedInstance()); // TODO: evil, refactor!
 
 static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
@@ -106,17 +109,17 @@ static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
     NSFont *m_BoldFont;
     NSFont *m_ItalicFont;
     NSFont *m_BoldItalicFont;
-    std::shared_ptr<FontCache> m_FontCache;
-    std::shared_ptr<FontCache> m_BoldFontCache;
-    std::shared_ptr<FontCache> m_ItalicFontCache;
-    std::shared_ptr<FontCache> m_BoldItalicFontCache;
+    std::shared_ptr<CTCache> m_FontCache;
+    std::shared_ptr<CTCache> m_BoldFontCache;
+    std::shared_ptr<CTCache> m_ItalicFontCache;
+    std::shared_ptr<CTCache> m_BoldItalicFontCache;
     NSColor *m_ForegroundColor;
     NSColor *m_BoldForegroundColor;
     NSColor *m_BackgroundColor;
     NSColor *m_SelectionColor;
     NSColor *m_CursorColor;
-    std::array<NSColor *, 256> m_Colors;
-    std::array<NSColor *, 256> m_FaintColors;
+    std::array<NSColor *, 256> m_Colors;      // TODO: this is silly, share between instances!
+    std::array<NSColor *, 256> m_FaintColors; // TODO: this is silly, share between instances!
     std::shared_ptr<Settings> m_Settings;
     int m_SettingsNotificationTicket;
     SelPoint m_LastMouseCell;
@@ -212,11 +215,6 @@ static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
     return YES;
 }
 
-- (const FontCache &)fontCache
-{
-    return *m_FontCache;
-}
-
 - (void)AttachToScreen:(term::Screen *)_scr
 {
     m_Screen = _scr;
@@ -246,6 +244,16 @@ static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
 - (bool)showCursor
 {
     return m_ShowCursor;
+}
+
+- (double)charWidth
+{
+    return m_FontCache->Width();
+}
+
+- (double)charHeight
+{
+    return m_FontCache->Height();
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -330,7 +338,7 @@ static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
 
     auto lock = m_Screen->AcquireLock();
 
-    SetParamsForUserReadableText(context, *m_FontCache);
+    SetParamsForUserReadableText(context);
     CGContextSetShouldSmoothFonts(context, true);
 
     for( int i = line_start, bsl = m_Screen->Buffer().BackScreenLines(); i < line_end; ++i ) {
@@ -356,24 +364,22 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
          context:(CGContextRef)_context
        cursor_at:(int)_cur_x
 {
+    const double width = m_FontCache->Width();
+    const double height = m_FontCache->Height();
+    const double descent = m_FontCache->Descent();
     auto current_color = g_ClearCGColor;
-    int x = 0;
 
-    for( auto char_space : _line ) {
+    // fill the line background
+    for( int x = 0; auto char_space : _line ) {
         const auto fg_fill_color =
             char_space.reverse ? (char_space.customfg ? m_Colors[char_space.foreground.c] : m_ForegroundColor).CGColor
                                : (char_space.custombg ? m_Colors[char_space.background.c] : m_BackgroundColor).CGColor;
-
         if( !CGColorEqualToColor(fg_fill_color, m_BackgroundColor.CGColor) ) {
             if( !CGColorEqualToColor(fg_fill_color, current_color) ) {
                 current_color = fg_fill_color;
                 CGContextSetFillColorWithColor(_context, current_color);
             }
-
-            CGContextFillRect(
-                _context,
-                CGRectMake(
-                    x * m_FontCache->Width(), _y * m_FontCache->Height(), m_FontCache->Width(), m_FontCache->Height()));
+            CGContextFillRect(_context, CGRectMake(x * width, _y * height, width, height));
         }
         ++x;
     }
@@ -382,19 +388,13 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     if( m_HasSelection ) {
         CGRect rc = {{-1, -1}, {0, 0}};
         if( m_SelStart.y == m_SelEnd.y && m_SelStart.y == _sel_y )
-            rc = CGRectMake(m_SelStart.x * m_FontCache->Width(),
-                            _y * m_FontCache->Height(),
-                            (m_SelEnd.x - m_SelStart.x) * m_FontCache->Width(),
-                            m_FontCache->Height());
+            rc = CGRectMake(m_SelStart.x * width, _y * height, (m_SelEnd.x - m_SelStart.x) * width, height);
         else if( _sel_y < m_SelEnd.y && _sel_y > m_SelStart.y )
-            rc = CGRectMake(0, _y * m_FontCache->Height(), self.frame.size.width, m_FontCache->Height());
+            rc = CGRectMake(0, _y * height, self.frame.size.width, height);
         else if( _sel_y == m_SelStart.y )
-            rc = CGRectMake(m_SelStart.x * m_FontCache->Width(),
-                            _y * m_FontCache->Height(),
-                            self.frame.size.width - m_SelStart.x * m_FontCache->Width(),
-                            m_FontCache->Height());
+            rc = CGRectMake(m_SelStart.x * width, _y * height, self.frame.size.width - m_SelStart.x * width, height);
         else if( _sel_y == m_SelEnd.y )
-            rc = CGRectMake(0, _y * m_FontCache->Height(), m_SelEnd.x * m_FontCache->Width(), m_FontCache->Height());
+            rc = CGRectMake(0, _y * height, m_SelEnd.x * width, height);
 
         if( rc.origin.x >= 0 ) {
             CGContextSetFillColorWithColor(_context, m_SelectionColor.CGColor);
@@ -404,88 +404,84 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
     // draw cursor if it's here
     if( _cur_x >= 0 )
-        [self drawCursor:NSMakeRect(_cur_x * m_FontCache->Width(),
-                                    _y * m_FontCache->Height(),
-                                    m_FontCache->Width(),
-                                    m_FontCache->Height())
-                 context:_context];
+        [self drawCursor:NSMakeRect(_cur_x * width, _y * height, width, height) context:_context];
 
     // draw glyphs
-    x = 0;
     current_color = g_ClearCGColor;
     CGContextSetShouldAntialias(_context, true);
 
     const bool blink_visible = m_BlinkScheduler.Visible();
-    for( auto iter = std::begin(_line); iter != std::end(_line); ++iter, ++x ) {
-        const ScreenBuffer::Space char_space = *iter;
-        if( char_space.invisible )
+    for( int x = 0; x < static_cast<int>(_line.size()); ++x ) {
+        const ScreenBuffer::Space cs = _line[x];
+        if( cs.invisible )
             continue;
-        if( char_space.blink && blink_visible == false )
+        if( cs.blink && blink_visible == false )
             continue;
 
+        // pick the cell's foreground color
         auto c = m_ForegroundColor.CGColor;
-        FontCache &effective_font_cache =
-            char_space.bold ?
-            ( char_space.italic ? *m_BoldItalicFontCache : *m_BoldFontCache ) :
-            ( char_space.italic ? *m_ItalicFontCache : *m_FontCache );
-        if( char_space.reverse ) {
-            c = char_space.custombg ? m_Colors[char_space.background.c].CGColor : m_BackgroundColor.CGColor;
+        if( cs.reverse ) {
+            c = cs.custombg ? m_Colors[cs.background.c].CGColor : m_BackgroundColor.CGColor;
         }
         else {
-            if( char_space.customfg ) {
-                if( char_space.faint )
-                    c = m_FaintColors[char_space.foreground.c].CGColor;
+            if( cs.customfg ) {
+                if( cs.faint )
+                    c = m_FaintColors[cs.foreground.c].CGColor;
                 else
-                    c = m_Colors[char_space.foreground.c].CGColor;
+                    c = m_Colors[cs.foreground.c].CGColor;
             }
             else {
-                if( char_space.bold )
+                if( cs.bold )
                     c = m_BoldForegroundColor.CGColor;
             }
         }
 
-        if( char_space.l != 0 && char_space.l != 32 && char_space.l != Screen::MultiCellGlyph ) {
+        const bool draw_glyph = cs.l != 0 && cs.l != 32 && cs.l != Screen::MultiCellGlyph;
+        if( draw_glyph ) {
+            // pick the cell's effective font
+            CTCache &font = cs.bold ? (cs.italic ? *m_BoldItalicFontCache : *m_BoldFontCache)
+                                    : (cs.italic ? *m_ItalicFontCache : *m_FontCache);
+
             if( !CGColorEqualToColor(c, current_color) ) {
                 current_color = c;
                 CGContextSetFillColorWithColor(_context, current_color);
             }
 
             bool pop = false;
-            if( IsBoxDrawingCharacter(char_space.l) ) {
+            if( IsBoxDrawingCharacter(cs.l) ) {
                 CGContextSaveGState(_context);
                 CGContextSetShouldAntialias(_context, false);
                 pop = true;
             }
 
-            DrawSingleUniCharXY(char_space.l, x, _y, _context, effective_font_cache);
+            const double rx = x * width;
+            const double ry = _y * height + height - descent;
 
-            if( char_space.c1 != 0 )
-                DrawSingleUniCharXY(char_space.c1, x, _y, _context, effective_font_cache);
-            if( char_space.c2 != 0 )
-                DrawSingleUniCharXY(char_space.c2, x, _y, _context, effective_font_cache);
+            CGContextSetTextPosition(_context, rx, ry);
+            font.DrawCharacter(cs.l, _context);
 
             if( pop )
                 CGContextRestoreGState(_context);
         }
 
-        if( char_space.underline ) {
+        if( cs.underline ) {
             /* NEED A REAL UNDERLINE POSITION HERE !!! */
             // need to set color here?
             CGRect rc;
-            rc.origin.x = x * m_FontCache->Width();
-            rc.origin.y = _y * m_FontCache->Height() + m_FontCache->Height() - 1;
-            rc.size.width = m_FontCache->Width();
-            rc.size.height = 1;
+            rc.origin.x = x * width;
+            rc.origin.y = _y * height + height - 1;
+            rc.size.width = width;
+            rc.size.height = 1.;
             CGContextFillRect(_context, rc);
         }
-        
-        if( char_space.crossed ) {
+
+        if( cs.crossed ) {
             /* NEED A REAL CROSS POSITION HERE !!! */
             // need to set color here?
             CGRect rc;
-            rc.origin.x = x * m_FontCache->Width();
-            rc.origin.y = _y * m_FontCache->Height() + m_FontCache->Height() / 2.;
-            rc.size.width = m_FontCache->Width();
+            rc.origin.x = x * width;
+            rc.origin.y = _y * height + height / 2.;
+            rc.size.width = width;
             rc.size.height = 1;
             CGContextFillRect(_context, rc);
         }
@@ -762,11 +758,8 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         return;
 
     auto lock = m_Screen->AcquireLock();
-    std::vector<uint32_t> unichars = m_Screen->Buffer().DumpUnicodeString(m_SelStart, m_SelEnd);
-
-    NSString *result = [[NSString alloc] initWithBytes:unichars.data()
-                                                length:unichars.size() * sizeof(uint32_t)
-                                              encoding:NSUTF32LittleEndianStringEncoding];
+    const std::vector<uint16_t> unichars = m_Screen->Buffer().DumpUnicodeString(m_SelStart, m_SelEnd);
+    NSString *result = [[NSString alloc] initWithCharacters:unichars.data() length:unichars.size()];
     NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
     [pasteBoard clearContents];
     [pasteBoard declareTypes:@[NSPasteboardTypeString] owner:nil];
@@ -878,13 +871,15 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 {
     if( m_Font != font ) {
         m_Font = font;
-        m_FontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_Font);
         m_BoldFont = [NSFontManager.sharedFontManager convertFont:m_Font toHaveTrait:NSBoldFontMask];
-        m_BoldFontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_BoldFont);
         m_ItalicFont = [NSFontManager.sharedFontManager convertFont:m_Font toHaveTrait:NSItalicFontMask];
-        m_ItalicFontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_ItalicFont);
         m_BoldItalicFont = [NSFontManager.sharedFontManager convertFont:m_BoldFont toHaveTrait:NSItalicFontMask];
-        m_BoldItalicFontCache = FontCache::FontCacheFromFont((__bridge CTFontRef)m_BoldItalicFont);        
+
+        auto &creg = g_CacheRegistry;
+        m_FontCache = creg.CacheForFont(base::CFPtr<CTFontRef>((__bridge CTFontRef)m_Font));
+        m_BoldFontCache = creg.CacheForFont(base::CFPtr<CTFontRef>((__bridge CTFontRef)m_BoldFont));
+        m_ItalicFontCache = creg.CacheForFont(base::CFPtr<CTFontRef>((__bridge CTFontRef)m_ItalicFont));
+        m_BoldItalicFontCache = creg.CacheForFont(base::CFPtr<CTFontRef>((__bridge CTFontRef)m_BoldItalicFont));
         self.needsDisplay = true;
     }
 }

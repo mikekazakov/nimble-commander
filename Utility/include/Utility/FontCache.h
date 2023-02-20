@@ -13,12 +13,13 @@
 
 namespace nc::utility {
 
+// TODO: migrate to Term
 class FontCache
 {
 public:
     struct Pair
     {
-        uint8_t     font = 0;       // zero mean that basic font is just ok, other ones are the indeces of ctfallbacks
+        uint8_t     font = 0;       // zero mean that basic font is just ok, other ones are the indices of ctfallbacks
         uint8_t     searched = 0;   // zero means that this glyph wasn't looked up yet
         uint16_t    glyph = 0;      // zero glyphs should be ignored - that signal some king of failure
     }; // 4bytes total

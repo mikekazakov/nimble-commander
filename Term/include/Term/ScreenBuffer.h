@@ -8,6 +8,7 @@
 #include <span>
 
 #include "Color.h"
+#include "ExtendedCharRegistry.h"
 
 namespace nc::term {
 
@@ -28,9 +29,7 @@ class ScreenBuffer
 {
 public:
     struct Space {
-        uint32_t l;       // basic letter, may be non-bmp
-        uint16_t c1;      // combining character 1. zero if no. bmp-only
-        uint16_t c2;      // combining character 2. zero if no. bmp-only
+        char32_t l;       // base or 'extended' UTF32 character
         Color foreground; // 8-bit color, meaningful when customfg==true
         Color background; // 8-bit color, meaningful when custombg==true
         bool customfg : 1;
@@ -43,7 +42,7 @@ public:
         bool italic : 1;
         bool invisible : 1;
         bool blink : 1;
-    }; // 12 bytes per screen space
+    }; // 8 bytes per screen space
 
     struct Snapshot {
         Snapshot();
@@ -53,9 +52,17 @@ public:
         std::unique_ptr<Space[]> chars;
     };
 
+    struct DumpOptions {
+        static constexpr int Default = 0;
+        static constexpr int BreakLines = 1 << 0;
+        static constexpr int ReportMultiCellGlyphs = 1 << 2;
+    };
+
     static const unsigned short MultiCellGlyph = 0xFFFE;
 
-    ScreenBuffer(unsigned _width, unsigned _height);
+    ScreenBuffer(unsigned _width,
+                 unsigned _height,
+                 ExtendedCharRegistry &_reg = ExtendedCharRegistry::SharedInstance());
 
     inline unsigned Width() const { return m_Width; }
     inline unsigned Height() const { return m_Height; }
@@ -90,7 +97,7 @@ public:
      */
     std::optional<std::pair<int, int>> OccupiedOnScreenLines() const;
 
-    std::vector<uint32_t> DumpUnicodeString(ScreenPoint _begin, ScreenPoint _end) const;
+    std::vector<uint16_t> DumpUnicodeString(ScreenPoint _begin, ScreenPoint _end) const;
 
     using LayedOutUTF16Dump = std::pair<std::vector<uint16_t>, std::vector<ScreenPoint>>;
     LayedOutUTF16Dump DumpUTF16StringWithLayout(ScreenPoint _begin, ScreenPoint _end) const;
@@ -98,7 +105,7 @@ public:
     // use for diagnose and test purposes only
     std::string DumpScreenAsANSI() const;
     std::string DumpScreenAsANSIBreaked() const;
-    std::u32string DumpScreenAsUTF32(bool _break_lines = false) const;
+    std::u32string DumpScreenAsUTF32(int _options = DumpOptions::Default) const;
     void LoadScreenFromANSI(std::string_view _dump);
     std::string DumpBackScreenAsANSI() const;
 
@@ -133,6 +140,7 @@ private:
 
     unsigned m_Width = 0;  // onscreen and backscreen width
     unsigned m_Height = 0; // onscreen height, backscreen has arbitrary height
+    const ExtendedCharRegistry &m_Registry;
     std::vector<LineMeta> m_OnScreenLines;
     std::vector<LineMeta> m_BackScreenLines;
     std::unique_ptr<Space[]> m_OnScreenSpaces; // rebuilt on screeen size change

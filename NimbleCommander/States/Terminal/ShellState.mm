@@ -391,7 +391,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
         dispatch_to_main_queue([input = std::move(input)] {
             Log::Trace(SPDLOC, "raw input: {}",input);
         });
-    }
+    }    
+//    std::cerr <<  term::input::FormatRawInput(_bytes) << std::endl;
 }
 
 @end

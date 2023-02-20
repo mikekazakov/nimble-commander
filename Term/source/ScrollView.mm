@@ -53,11 +53,11 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
         self.contentView.backgroundColor = m_Settings->BackgroundColor();
         self.drawsBackground = true;
         self.backgroundColor = m_Settings->BackgroundColor();
-        self.verticalLineScroll = m_View.fontCache.Height();
+        self.verticalLineScroll = m_View.charHeight;
 
         m_Screen =
-            std::make_unique<term::Screen>(floor(rc.size.width / m_View.fontCache.Width()),
-                                           floor(rc.size.height / m_View.fontCache.Height()));
+            std::make_unique<term::Screen>(floor(rc.size.width / m_View.charWidth),
+                                           floor(rc.size.height / m_View.charHeight));
 
         [m_View AttachToScreen:m_Screen.get()];
 
@@ -185,8 +185,8 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
 
     const auto full_size = self.contentView.frame.size;
 
-    const int sy = static_cast<int>(std::floor(full_size.height / m_View.fontCache.Height()));
-    const int sx = static_cast<int>(std::floor(full_size.width / m_View.fontCache.Width()));
+    const int sy = static_cast<int>(std::floor(full_size.height / m_View.charHeight));
+    const int sx = static_cast<int>(std::floor(full_size.width / m_View.charWidth));
 
     if( sx != m_Screen->Width() || sy != m_Screen->Height() ) {
         {
@@ -228,8 +228,7 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
     rc.size.height -= g_Insets.top + g_Insets.bottom;
     rc.size.width -= g_Insets.left + g_Insets.right;
 
-    const auto rest = rc.size.height - std::floor(rc.size.height / m_View.fontCache.Height()) *
-                                           m_View.fontCache.Height();
+    const auto rest = rc.size.height - std::floor(rc.size.height / m_View.charHeight) * m_View.charHeight;
     rc.size.height -= rest;
 
     self.contentView.frame = rc;

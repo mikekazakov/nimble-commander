@@ -7,10 +7,12 @@
 #include <Utility/BlinkScheduler.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <Habanero/algo.h>
+#include <Habanero/mach_time.h>
 #include "OrthodoxMonospace.h"
 #include "Screen.h"
 #include "Settings.h"
 #include "CTCache.h"
+#include "ColorMap.h"
 
 #include <iostream>
 #include <cmath>
@@ -22,67 +24,12 @@ using nc::utility::FontCache;
 
 using SelPoint = term::ScreenPoint;
 
-static constexpr double g_FaintColorAlpha = 0.6;
 [[clang::no_destroy]] static CTCacheRegistry
     g_CacheRegistry(ExtendedCharRegistry::SharedInstance()); // TODO: evil, refactor!
 
 static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     return _ch >= 0x2500 && _ch <= 0x257F;
-}
-
-static const std::array<NSColor *, 256> &BuiltInColors() noexcept
-{
-    [[clang::no_destroy]] static const std::array<NSColor *, 256> colors = [] {
-        std::array<NSColor *, 256> colors;
-        colors[0] = [NSColor colorWithHexString:"#000000"];
-        colors[1] = [NSColor colorWithHexString:"#990000"];
-        colors[2] = [NSColor colorWithHexString:"#00A600"];
-        colors[3] = [NSColor colorWithHexString:"#999900"];
-        colors[4] = [NSColor colorWithHexString:"#0000B2"];
-        colors[5] = [NSColor colorWithHexString:"#B200B2"];
-        colors[6] = [NSColor colorWithHexString:"#00A6B2"];
-        colors[7] = [NSColor colorWithHexString:"#BFBFBF"];
-        colors[8] = [NSColor colorWithHexString:"#666666"];
-        colors[9] = [NSColor colorWithHexString:"#E50000"];
-        colors[10] = [NSColor colorWithHexString:"#00D900"];
-        colors[11] = [NSColor colorWithHexString:"#E5E500"];
-        colors[12] = [NSColor colorWithHexString:"#0000FF"];
-        colors[13] = [NSColor colorWithHexString:"#E500E5"];
-        colors[14] = [NSColor colorWithHexString:"#00E5E5"];
-        colors[15] = [NSColor colorWithHexString:"#E5E5E5"];
-        for( int i = 16; i < 256; ++i ) {
-            if( i >= 232 ) {
-                const int v = i - 232;                          // [0, 23]
-                const double dv = static_cast<double>(v) / 27.; // [0, 0.85]
-                const double dv1 = dv + 0.05;                   // [0.05, 0.90]
-                colors[i] = [NSColor colorWithWhite:dv1 alpha:1.];
-            }
-            else {
-                const int b = (i - 16) % 6;
-                const int g = ((i - 16) / 6) % 6;
-                const int r = (i - 16) / 36;
-                colors[i] = [NSColor colorWithCalibratedRed:static_cast<double>(r) / 5.
-                                                      green:static_cast<double>(g) / 5.
-                                                       blue:static_cast<double>(b) / 5.
-                                                      alpha:1.];
-            }
-        }
-        return colors;
-    }();
-    return colors;
-}
-
-static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
-{
-    [[clang::no_destroy]] static const std::array<NSColor *, 256> faint_colors = [] {
-        const std::array<NSColor *, 256> &colors = BuiltInColors();
-        std::array<NSColor *, 256> faint_colors;
-        for( int i = 0; i < 256; ++i )
-            faint_colors[i] = [colors[i] colorWithAlphaComponent:g_FaintColorAlpha];
-        return faint_colors;
-    }();
-    return faint_colors;
 }
 
 @implementation NCTermView {
@@ -113,13 +60,7 @@ static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
     std::shared_ptr<CTCache> m_BoldFontCache;
     std::shared_ptr<CTCache> m_ItalicFontCache;
     std::shared_ptr<CTCache> m_BoldItalicFontCache;
-    NSColor *m_ForegroundColor;
-    NSColor *m_BoldForegroundColor;
-    NSColor *m_BackgroundColor;
-    NSColor *m_SelectionColor;
-    NSColor *m_CursorColor;
-    std::array<NSColor *, 256> m_Colors;      // TODO: this is silly, share between instances!
-    std::array<NSColor *, 256> m_FaintColors; // TODO: this is silly, share between instances!
+    ColorMap m_Colors;
     std::shared_ptr<Settings> m_Settings;
     int m_SettingsNotificationTicket;
     SelPoint m_LastMouseCell;
@@ -155,8 +96,6 @@ static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
         m_FPS.fps = 60;
         m_IntrinsicSize = NSMakeSize(NSViewNoIntrinsicMetric, frame.size.height);
-        m_Colors = BuiltInColors();
-        m_FaintColors = BuiltInFaintColors();
         self.settings = DefaultSettings::SharedDefaultSettings();
     }
     return self;
@@ -323,7 +262,7 @@ static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     CGContextSaveGState(context);
     auto restore_gstate = at_scope_end([=] { CGContextRestoreGState(context); });
-    CGContextSetFillColorWithColor(context, m_BackgroundColor.CGColor);
+    CGContextSetFillColorWithColor(context, m_Colors.GetSpecialColor(ColorMap::Special::Background));
     CGContextFillRect(context, NSRectToCGRect(self.bounds));
 
     if( !m_Screen )
@@ -341,6 +280,7 @@ static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
     SetParamsForUserReadableText(context);
     CGContextSetShouldSmoothFonts(context, true);
 
+//    MachTimeBenchmark mtb;
     for( int i = line_start, bsl = m_Screen->Buffer().BackScreenLines(); i < line_end; ++i ) {
         if( i < bsl ) { // scrollback
             if( auto line = m_Screen->Buffer().LineFromNo(i - bsl); !line.empty() )
@@ -355,6 +295,7 @@ static const std::array<NSColor *, 256> &BuiltInFaintColors() noexcept
                      cursor_at:(m_Screen->CursorY() != i - bsl) ? -1 : m_Screen->CursorX()];
         }
     }
+//    mtb.ResetMilli();
 }
 
 static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
@@ -372,9 +313,12 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     // fill the line background
     for( int x = 0; auto char_space : _line ) {
         const auto fg_fill_color =
-            char_space.reverse ? (char_space.customfg ? m_Colors[char_space.foreground.c] : m_ForegroundColor).CGColor
-                               : (char_space.custombg ? m_Colors[char_space.background.c] : m_BackgroundColor).CGColor;
-        if( !CGColorEqualToColor(fg_fill_color, m_BackgroundColor.CGColor) ) {
+            char_space.reverse ? (char_space.customfg ? m_Colors.GetCGColor(char_space.foreground.c)
+                                                      : m_Colors.GetSpecialColor(ColorMap::Special::Foreground))
+                               : (char_space.custombg ? m_Colors.GetCGColor(char_space.background.c)
+                                                      : m_Colors.GetSpecialColor(ColorMap::Special::Background));
+
+        if( fg_fill_color != m_Colors.GetSpecialColor(ColorMap::Special::Background) ) {
             if( !CGColorEqualToColor(fg_fill_color, current_color) ) {
                 current_color = fg_fill_color;
                 CGContextSetFillColorWithColor(_context, current_color);
@@ -397,7 +341,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             rc = CGRectMake(0, _y * height, m_SelEnd.x * width, height);
 
         if( rc.origin.x >= 0 ) {
-            CGContextSetFillColorWithColor(_context, m_SelectionColor.CGColor);
+            CGContextSetFillColorWithColor(_context, m_Colors.GetSpecialColor(ColorMap::Special::Selection));
             CGContextFillRect(_context, rc);
         }
     }
@@ -419,20 +363,21 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             continue;
 
         // pick the cell's foreground color
-        auto c = m_ForegroundColor.CGColor;
+        auto c = m_Colors.GetSpecialColor(ColorMap::Special::Foreground);
         if( cs.reverse ) {
-            c = cs.custombg ? m_Colors[cs.background.c].CGColor : m_BackgroundColor.CGColor;
+            c = cs.custombg ? m_Colors.GetCGColor(cs.background.c)
+                            : m_Colors.GetSpecialColor(ColorMap::Special::Background);
         }
         else {
             if( cs.customfg ) {
                 if( cs.faint )
-                    c = m_FaintColors[cs.foreground.c].CGColor;
+                    c = m_Colors.GetFaintCGColor(cs.foreground.c);
                 else
-                    c = m_Colors[cs.foreground.c].CGColor;
+                    c = m_Colors.GetCGColor(cs.foreground.c);
             }
             else {
                 if( cs.bold )
-                    c = m_BoldForegroundColor.CGColor;
+                    c = m_Colors.GetSpecialColor(ColorMap::Special::BoldForeground);
             }
         }
 
@@ -497,7 +442,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
     if( is_wnd_active && m_IsFirstResponder ) {
         if( m_BlinkScheduler.Visible() ) {
-            CGContextSetFillColorWithColor(_context, m_CursorColor.CGColor);
+            CGContextSetFillColorWithColor(_context, m_Colors.GetSpecialColor(ColorMap::Special::Cursor));
             switch( m_CursorType ) {
                 case TermViewCursor::Block:
                     CGContextFillRect(_context, NSRectToCGRect(_char_rect));
@@ -519,7 +464,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         }
     }
     else {
-        CGContextSetStrokeColorWithColor(_context, m_CursorColor.CGColor);
+        CGContextSetStrokeColorWithColor(_context, m_Colors.GetSpecialColor(ColorMap::Special::Cursor));
         CGContextSetLineWidth(_context, 1);
         CGContextSetShouldAntialias(_context, false);
         _char_rect.origin.y += 1;
@@ -886,76 +831,75 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (NSColor *)foregroundColor
 {
-    return m_ForegroundColor;
+    return [NSColor colorWithCGColor:m_Colors.GetSpecialColor(ColorMap::Special::Foreground)];
 }
 
 - (void)setForegroundColor:(NSColor *)foregroundColor
 {
-    if( m_ForegroundColor != foregroundColor ) {
-        m_ForegroundColor = foregroundColor;
+    if( ![foregroundColor isEqualTo:self.foregroundColor]) {
+        m_Colors.SetSpecialColor(ColorMap::Special::Foreground, foregroundColor);
         self.needsDisplay = true;
     }
 }
 
 - (NSColor *)boldForegroundColor
 {
-    return m_BoldForegroundColor;
+    return [NSColor colorWithCGColor:m_Colors.GetSpecialColor(ColorMap::Special::BoldForeground)];
 }
 
 - (void)setBoldForegroundColor:(NSColor *)boldForegroundColor
 {
-    if( m_BoldForegroundColor != boldForegroundColor ) {
-        m_BoldForegroundColor = boldForegroundColor;
+    if( ![boldForegroundColor isEqualTo:self.boldForegroundColor]) {
+        m_Colors.SetSpecialColor(ColorMap::Special::BoldForeground, boldForegroundColor);
         self.needsDisplay = true;
     }
 }
 
 - (NSColor *)backgroundColor
 {
-    return m_BackgroundColor;
+    return [NSColor colorWithCGColor:m_Colors.GetSpecialColor(ColorMap::Special::Background)];
 }
 
 - (void)setBackgroundColor:(NSColor *)backgroundColor
 {
-    if( m_BackgroundColor != backgroundColor ) {
-        m_BackgroundColor = backgroundColor;
+    if( ![backgroundColor isEqualTo:self.backgroundColor]) {
+        m_Colors.SetSpecialColor(ColorMap::Special::Background, backgroundColor);
         self.needsDisplay = true;
     }
 }
 
 - (NSColor *)selectionColor
 {
-    return m_SelectionColor;
+    return [NSColor colorWithCGColor:m_Colors.GetSpecialColor(ColorMap::Special::Selection)];
 }
 
 - (void)setSelectionColor:(NSColor *)selectionColor
 {
-    if( m_SelectionColor != selectionColor ) {
-        m_SelectionColor = selectionColor;
+    if( ![selectionColor isEqualTo:self.selectionColor]) {
+        m_Colors.SetSpecialColor(ColorMap::Special::Selection, selectionColor);
         self.needsDisplay = true;
     }
 }
 
 - (NSColor *)cursorColor
 {
-    return m_CursorColor;
+    return [NSColor colorWithCGColor:m_Colors.GetSpecialColor(ColorMap::Special::Cursor)];
 }
 
 - (void)setCursorColor:(NSColor *)cursorColor
 {
-    if( m_CursorColor != cursorColor ) {
-        m_CursorColor = cursorColor;
+    if( ![cursorColor isEqualTo:self.cursorColor] ) {
+        m_Colors.SetSpecialColor(ColorMap::Special::Cursor, cursorColor);
         self.needsDisplay = true;
     }
 }
 
 #define ANSI_COLOR(getter, setter, index)                                                                              \
-    -(NSColor *)getter { return m_Colors[index]; }                                                                     \
+    -(NSColor *)getter { return [NSColor colorWithCGColor:m_Colors.GetCGColor(index)]; }                               \
     -(void)setter : (NSColor *)color                                                                                   \
     {                                                                                                                  \
-        if( m_Colors[index] != color ) {                                                                               \
-            m_Colors[index] = color;                                                                                   \
-            m_FaintColors[index] = [m_Colors[index] colorWithAlphaComponent:g_FaintColorAlpha];                        \
+        if( ![color isEqualTo:self.getter] ) {                                                                         \
+            m_Colors.SetANSIColor(index, color);                                                                       \
             self.needsDisplay = true;                                                                                  \
         }                                                                                                              \
     }

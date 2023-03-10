@@ -36,6 +36,8 @@
 		CF739CDE297C1704004758C5 /* ExtendedCharRegistry_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739CDC297C166E004758C5 /* ExtendedCharRegistry_UT.cpp */; };
 		CF739CE0297F3EEE004758C5 /* CTCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF739CDF297F3EEE004758C5 /* CTCache.h */; };
 		CF739CE2297F3EF5004758C5 /* CTCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF739CE1297F3EF5004758C5 /* CTCache.cpp */; };
+		CF739CF029B383F9004758C5 /* ColorMap.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF739CEF29B383F9004758C5 /* ColorMap.mm */; };
+		CF739CF229B38401004758C5 /* ColorMap.h in Headers */ = {isa = PBXBuildFile; fileRef = CF739CF129B38401004758C5 /* ColorMap.h */; };
 		CF83CF28243A21C8003AC820 /* Interpreter_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */; };
 		CF9D696724A897B5008352B0 /* Screen_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D696624A897B5008352B0 /* Screen_UT.cpp */; };
 		CF9D697F24ADF06D008352B0 /* ScreenBuffer_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */; };
@@ -130,6 +132,8 @@
 		CF739CDC297C166E004758C5 /* ExtendedCharRegistry_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendedCharRegistry_UT.cpp; sourceTree = "<group>"; };
 		CF739CDF297F3EEE004758C5 /* CTCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTCache.h; path = include/Term/CTCache.h; sourceTree = "<group>"; };
 		CF739CE1297F3EF5004758C5 /* CTCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CTCache.cpp; sourceTree = "<group>"; };
+		CF739CEF29B383F9004758C5 /* ColorMap.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorMap.mm; sourceTree = "<group>"; };
+		CF739CF129B38401004758C5 /* ColorMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorMap.h; path = include/Term/ColorMap.h; sourceTree = "<group>"; };
 		CF83CF27243A21C7003AC820 /* Interpreter_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter_UT.cpp; sourceTree = "<group>"; };
 		CF9D696624A897B5008352B0 /* Screen_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Screen_UT.cpp; sourceTree = "<group>"; };
 		CF9D697E24ADF06D008352B0 /* ScreenBuffer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScreenBuffer_UT.cpp; sourceTree = "<group>"; };
@@ -200,6 +204,7 @@
 			isa = PBXGroup;
 			children = (
 				CF739C75295A14F7004758C5 /* Color.cpp */,
+				CF739CEF29B383F9004758C5 /* ColorMap.mm */,
 				CF739CE1297F3EF5004758C5 /* CTCache.cpp */,
 				CF739CC4297205A1004758C5 /* ExtendedCharRegistry.mm */,
 				CF50996F1F948400000AFDE7 /* FlippableHolder.h */,
@@ -230,8 +235,9 @@
 		CF1ADE2A1F7E6C3F003E9B76 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CF739CDF297F3EEE004758C5 /* CTCache.h */,
 				CF739C74295A146A004758C5 /* Color.h */,
+				CF739CF129B38401004758C5 /* ColorMap.h */,
+				CF739CDF297F3EEE004758C5 /* CTCache.h */,
 				CF4135221F890BC8007429B6 /* CursorMode.h */,
 				CF739CC22972059A004758C5 /* ExtendedCharRegistry.h */,
 				CFC4F4C724CA397600DF4ED6 /* InputTranslator.h */,
@@ -302,6 +308,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF739CF229B38401004758C5 /* ColorMap.h in Headers */,
 				CF739CE0297F3EEE004758C5 /* CTCache.h in Headers */,
 				CF739CC32972059B004758C5 /* ExtendedCharRegistry.h in Headers */,
 			);
@@ -418,6 +425,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF739CF029B383F9004758C5 /* ColorMap.mm in Sources */,
 				CF4600E525605B830095FC73 /* TranslateMaps.cpp in Sources */,
 				CF4600D925605B830095FC73 /* Log.cpp in Sources */,
 				CF4600DD25605B830095FC73 /* ShellTask.cpp in Sources */,

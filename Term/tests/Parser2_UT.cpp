@@ -1546,8 +1546,8 @@ TEST_CASE(PREFIX "CSI m")
         ignores("\x1B[38;2;0m");
         ignores("\x1B[38;2;0;0m");
         ignores("\x1B[38;2;256;256;256m");
-        verify("\x1B[38;2;0;0;0m", CA{.mode = CA::ForegroundColor, .color = Color{16}});
-        verify("\x1B[38;2;255;255;255m", CA{.mode = CA::ForegroundColor, .color = Color{231}});
+        verify("\x1B[38;2;0;0;0m", CA{.mode = CA::ForegroundColor, .color = Color{232}});
+        verify("\x1B[38;2;255;255;255m", CA{.mode = CA::ForegroundColor, .color = Color{255}});
     }
     SECTION("ESC [ 39 m") { verify("\x1B[39m", CA{.mode = CA::ForegroundDefault}); }
     SECTION("ESC [ 40 m") { verify("\x1B[40m", CA{.mode = CA::BackgroundColor, .color = Color::Black}); }
@@ -1574,8 +1574,8 @@ TEST_CASE(PREFIX "CSI m")
         ignores("\x1B[48;2;0m");
         ignores("\x1B[48;2;0;0m");
         ignores("\x1B[48;2;256;256;256m");
-        verify("\x1B[48;2;0;0;0m", CA{.mode = CA::BackgroundColor, .color = Color{16}});
-        verify("\x1B[48;2;255;255;255m", CA{.mode = CA::BackgroundColor, .color = Color{231}});
+        verify("\x1B[48;2;0;0;0m", CA{.mode = CA::BackgroundColor, .color = Color{232}});
+        verify("\x1B[48;2;255;255;255m", CA{.mode = CA::BackgroundColor, .color = Color{255}});
     }
     SECTION("ESC [ 49 m") { verify("\x1B[49m", CA{.mode = CA::BackgroundDefault}); }
     SECTION("ESC [ 90 m") { verify("\x1B[90m", CA{.mode = CA::ForegroundColor, .color = Color::BrightBlack}); }

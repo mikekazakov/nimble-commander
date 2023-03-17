@@ -40,7 +40,12 @@ public:
     // Use CGContextSetTextPosition to set up a start position.
     // Leaves '_ctx' in unspecified state (?).
     void DrawCharacter(char32_t _code, CGContextRef _ctx);
-
+    
+    // Draws a batchs of characters with semanantics following CTLineDraw.
+    // Sets coordinates automatically, _positions are relative to (0, 0).
+    // Leaves '_ctx' in unspecified state (?).
+    void DrawCharacters(const char32_t *_codes, const CGPoint *_positions, size_t _count, CGContextRef _ctx);
+    
 private:
     enum class Kind : int
     {

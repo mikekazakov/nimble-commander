@@ -42,6 +42,8 @@ public:
         bool italic : 1;
         bool invisible : 1;
         bool blink : 1;
+        
+        constexpr bool HaveSameAttributes(const Space &_rhs) const noexcept;
     }; // 8 bytes per screen space
 
     struct Snapshot {
@@ -148,5 +150,13 @@ private:
 
     Space m_EraseChar = DefaultEraseChar();
 };
+
+constexpr bool ScreenBuffer::Space::HaveSameAttributes(const Space &_rhs) const noexcept
+{
+    uint64_t mask = 0x3FFFFFF00000000ULL;
+    uint64_t lhs = *static_cast<const uint64_t*>(static_cast<const void*>(this));
+    uint64_t rhs = *static_cast<const uint64_t*>(static_cast<const void*>(&_rhs));
+    return (lhs & mask) == (rhs & mask);
+}
 
 } // namespace nc::term

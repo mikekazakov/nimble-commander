@@ -7,7 +7,6 @@
 #include <Utility/BlinkScheduler.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <Habanero/algo.h>
-#include <Habanero/mach_time.h>
 #include "OrthodoxMonospace.h"
 #include "Screen.h"
 #include "Settings.h"
@@ -18,6 +17,9 @@
 #include <cmath>
 #include <array>
 
+#include <boost/container/pmr/vector.hpp>                    // TODO: remove as soon as libc++ gets pmr!!!
+#include <boost/container/pmr/monotonic_buffer_resource.hpp> // TODO: remove as soon as libc++ gets pmr!!!
+
 using namespace nc;
 using namespace nc::term;
 using nc::utility::FontCache;
@@ -26,11 +28,6 @@ using SelPoint = term::ScreenPoint;
 
 [[clang::no_destroy]] static CTCacheRegistry
     g_CacheRegistry(ExtendedCharRegistry::SharedInstance()); // TODO: evil, refactor!
-
-static inline bool IsBoxDrawingCharacter(uint32_t _ch)
-{
-    return _ch >= 0x2500 && _ch <= 0x257F;
-}
 
 @implementation NCTermView {
     Screen *m_Screen;
@@ -280,7 +277,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     SetParamsForUserReadableText(context);
     CGContextSetShouldSmoothFonts(context, true);
 
-//    MachTimeBenchmark mtb;
     for( int i = line_start, bsl = m_Screen->Buffer().BackScreenLines(); i < line_end; ++i ) {
         if( i < bsl ) { // scrollback
             if( auto line = m_Screen->Buffer().LineFromNo(i - bsl); !line.empty() )
@@ -295,8 +291,55 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
                      cursor_at:(m_Screen->CursorY() != i - bsl) ? -1 : m_Screen->CursorX()];
         }
     }
-//    mtb.ResetMilli();
+    
 }
+
+namespace {
+
+struct LazyLineRectFiller {
+    LazyLineRectFiller(CGContextRef _ctx, double _origin_x, double _origin_y, double _cell_width, double _cell_height)
+        : origin_x(_origin_x), origin_y(_origin_y), cell_width(_cell_width), cell_height(_cell_height), ctx(_ctx)
+    {
+    }
+
+    ~LazyLineRectFiller() { flush(); }
+
+    void draw(CGColorRef _clr, int _x_pos)
+    {
+        if( clr == nullptr ) {
+            clr = _clr;
+            start = end = _x_pos;
+        }
+        else {
+            if( clr != _clr || end + 1 != _x_pos ) {
+                flush();
+                clr = _clr;
+                start = end = _x_pos;
+            }
+            else {
+                end = _x_pos;
+            }
+        }
+    }
+
+    void flush()
+    {
+        if( clr ) {
+            CGContextSetFillColorWithColor(ctx, clr);
+            auto rc = CGRectMake(origin_x + start * cell_width, origin_y, (end - start + 1) * cell_width, cell_height);
+            CGContextFillRect(ctx, rc);
+            clr = nullptr;
+        }
+    }
+
+private:
+    CGColorRef clr = nullptr;
+    int start, end;
+    double origin_x, origin_y, cell_width, cell_height;
+    CGContextRef ctx;
+};
+
+} // namespace
 
 static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 - (void)DrawLine:(std::span<const term::ScreenBuffer::Space>)_line
@@ -308,26 +351,25 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     const double width = m_FontCache->Width();
     const double height = m_FontCache->Height();
     const double descent = m_FontCache->Descent();
-    auto current_color = g_ClearCGColor;
-
+    
     // fill the line background
-    for( int x = 0; auto char_space : _line ) {
-        const auto fg_fill_color =
-            char_space.reverse ? (char_space.customfg ? m_Colors.GetCGColor(char_space.foreground.c)
-                                                      : m_Colors.GetSpecialColor(ColorMap::Special::Foreground))
-                               : (char_space.custombg ? m_Colors.GetCGColor(char_space.background.c)
-                                                      : m_Colors.GetSpecialColor(ColorMap::Special::Background));
+    {
+        LazyLineRectFiller filler(_context, 0., _y * height, width, height);
+        const auto bg = m_Colors.GetSpecialColor(ColorMap::Special::Background);
+        for( int x = 0; auto char_space : _line ) {
+            const auto fg_fill_color =
+                char_space.reverse ? (char_space.customfg ? m_Colors.GetCGColor(char_space.foreground.c)
+                                                          : m_Colors.GetSpecialColor(ColorMap::Special::Foreground))
+                                   : (char_space.custombg ? m_Colors.GetCGColor(char_space.background.c)
+                                                          : m_Colors.GetSpecialColor(ColorMap::Special::Background));
 
-        if( fg_fill_color != m_Colors.GetSpecialColor(ColorMap::Special::Background) ) {
-            if( !CGColorEqualToColor(fg_fill_color, current_color) ) {
-                current_color = fg_fill_color;
-                CGContextSetFillColorWithColor(_context, current_color);
+            if( fg_fill_color != bg ) {
+                filler.draw(fg_fill_color, x);
             }
-            CGContextFillRect(_context, CGRectMake(x * width, _y * height, width, height));
+            ++x;
         }
-        ++x;
     }
-
+    
     // draw selection if it's here
     if( m_HasSelection ) {
         CGRect rc = {{-1, -1}, {0, 0}};
@@ -351,84 +393,92 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         [self drawCursor:NSMakeRect(_cur_x * width, _y * height, width, height) context:_context];
 
     // draw glyphs
-    current_color = g_ClearCGColor;
-    CGContextSetShouldAntialias(_context, true);
-
     const bool blink_visible = m_BlinkScheduler.Visible();
-    for( int x = 0; x < static_cast<int>(_line.size()); ++x ) {
-        const ScreenBuffer::Space cs = _line[x];
-        if( cs.invisible )
-            continue;
-        if( cs.blink && blink_visible == false )
-            continue;
+    CGContextSetShouldAntialias(_context, true);
+    
+    auto draw_characters = [&](int _first, int _last) {
+        const ScreenBuffer::Space attr = _line[_first];
+        if( attr.invisible )
+            return;
+        if( attr.blink && blink_visible == false )
+            return;
 
-        // pick the cell's foreground color
-        auto c = m_Colors.GetSpecialColor(ColorMap::Special::Foreground);
-        if( cs.reverse ) {
-            c = cs.custombg ? m_Colors.GetCGColor(cs.background.c)
-                            : m_Colors.GetSpecialColor(ColorMap::Special::Background);
-        }
-        else {
-            if( cs.customfg ) {
-                if( cs.faint )
-                    c = m_Colors.GetFaintCGColor(cs.foreground.c);
-                else
-                    c = m_Colors.GetCGColor(cs.foreground.c);
-            }
-            else {
-                if( cs.bold )
-                    c = m_Colors.GetSpecialColor(ColorMap::Special::BoldForeground);
-            }
-        }
-
-        const bool draw_glyph = cs.l != 0 && cs.l != 32 && cs.l != Screen::MultiCellGlyph;
-        if( draw_glyph ) {
-            // pick the cell's effective font
-            CTCache &font = cs.bold ? (cs.italic ? *m_BoldItalicFontCache : *m_BoldFontCache)
-                                    : (cs.italic ? *m_ItalicFontCache : *m_FontCache);
-
-            if( !CGColorEqualToColor(c, current_color) ) {
-                current_color = c;
-                CGContextSetFillColorWithColor(_context, current_color);
-            }
-
-            bool pop = false;
-            if( IsBoxDrawingCharacter(cs.l) ) {
-                CGContextSaveGState(_context);
-                CGContextSetShouldAntialias(_context, false);
-                pop = true;
-            }
-
+        // gather all char codes and their coordinates from the run
+        std::array<char, 16384> mem_buffer;
+        boost::container::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+        boost::container::pmr::vector<char32_t> codes(&mem_resource);
+        boost::container::pmr::vector<CGPoint> positions(&mem_resource);
+        for( int x = _first; x < _last; ++x ) {
+            const ScreenBuffer::Space cs = _line[x];
+            const bool draw_glyph = cs.l != 0 && cs.l != 32 && cs.l != Screen::MultiCellGlyph;
+            if( !draw_glyph )
+                continue;
             const double rx = x * width;
             const double ry = _y * height + height - descent;
-
-            CGContextSetTextPosition(_context, rx, ry);
-            font.DrawCharacter(cs.l, _context);
-
-            if( pop )
-                CGContextRestoreGState(_context);
+            codes.push_back(cs.l);
+            positions.push_back({rx, ry});
         }
-
-        if( cs.underline ) {
-            /* NEED A REAL UNDERLINE POSITION HERE !!! */
-            // need to set color here?
+        
+        // pick the cells' foreground color
+        CGColorRef c = nullptr;
+        if( attr.reverse ) {
+            if( attr.custombg )
+                c = m_Colors.GetCGColor(attr.background.c);
+            else
+                c = m_Colors.GetSpecialColor(ColorMap::Special::Background);
+        }
+        else {
+            if( attr.customfg ) {
+                if( attr.faint )
+                    c = m_Colors.GetFaintCGColor(attr.foreground.c);
+                else
+                    c = m_Colors.GetCGColor(attr.foreground.c);
+            }
+            else {
+                if( attr.bold )
+                    c = m_Colors.GetSpecialColor(ColorMap::Special::BoldForeground);
+                else
+                    c = m_Colors.GetSpecialColor(ColorMap::Special::Foreground);
+            }
+        }
+        CGContextSetFillColorWithColor(_context, c);
+        
+        // pick the cells' effective font
+        CTCache &font = attr.bold ? (attr.italic ? *m_BoldItalicFontCache : *m_BoldFontCache)
+                                : (attr.italic ? *m_ItalicFontCache : *m_FontCache);
+        
+        // Now draw the characters
+        font.DrawCharacters(codes.data(), positions.data(), codes.size(), _context);
+        
+        if( attr.underline ) {
             CGRect rc;
-            rc.origin.x = x * width;
-            rc.origin.y = _y * height + height - 1;
-            rc.size.width = width;
+            rc.origin.x = _first * width;
+            rc.origin.y = _y * height + height - 1; /* NEED A REAL UNDERLINE POSITION HERE !!! */
+            rc.size.width = (_last-_first) * width;
             rc.size.height = 1.;
             CGContextFillRect(_context, rc);
         }
 
-        if( cs.crossed ) {
-            /* NEED A REAL CROSS POSITION HERE !!! */
-            // need to set color here?
+        if( attr.crossed ) {
             CGRect rc;
-            rc.origin.x = x * width;
-            rc.origin.y = _y * height + height / 2.;
-            rc.size.width = width;
+            rc.origin.x = _first * width;
+            rc.origin.y = _y * height + height / 2.; /* NEED A REAL CROSS POSITION HERE !!! */
+            rc.size.width = (_last-_first) * width;
             rc.size.height = 1;
             CGContextFillRect(_context, rc);
+        }
+    };
+
+    // scan the line to gather spans of characters with same attributes and draw them in batches
+    for( int x = 0, start = 0; x < static_cast<int>(_line.size()); ++x ) {
+        if( !_line[x].HaveSameAttributes(_line[start]) ) {
+            // this char space have different attributes than previous - draw the previous run
+            draw_characters(start, x);
+            start = x;
+        }
+        if( x + 1 == static_cast<int>(_line.size()) ) {
+            // this is the last char space in this liine - draw what's left
+            draw_characters(start, x + 1);
         }
     }
 }

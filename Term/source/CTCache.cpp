@@ -1,8 +1,17 @@
 // Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CTCache.h"
 #include <Utility/FontExtras.h>
+#include <boost/container/pmr/vector.hpp>                    // TODO: remove as soon as libc++ gets pmr!!!
+#include <boost/container/pmr/monotonic_buffer_resource.hpp> // TODO: remove as soon as libc++ gets pmr!!!
+
+#include <iostream>
 
 namespace nc::term {
+
+static constexpr bool IsBoxDrawingCharacter(char32_t _ch) noexcept
+{
+    return _ch >= 0x2500 && _ch <= 0x257F;
+}
 
 CTCache::CTCache(base::CFPtr<CTFontRef> _font, const ExtendedCharRegistry &_reg) : m_Reg(_reg)
 {
@@ -167,15 +176,127 @@ void CTCache::DrawCharacter(char32_t _code, CGContextRef _ctx)
         CTFontRef font = m_Fonts[s.font].get();
         assert(font);
 
+        // For a specific set of characters also ensure that antialiasing is turned off, otherwise frames look wrong
+        const bool is_box = IsBoxDrawingCharacter(_code);
+        if( is_box )
+            CGContextSetShouldAntialias(_ctx, false);
+
         uint16_t glyph = s.glyph;
         CGPoint pos{0., 0.};
         CTFontDrawGlyphs(font, &glyph, &pos, 1, _ctx);
+
+        if( is_box )
+            CGContextSetShouldAntialias(_ctx, true);
     }
     else if( dc.kind == Kind::Complex ) {
         assert(dc.index < m_Complexes.size());
         CTLineRef ct_line = m_Complexes[dc.index].get();
         assert(ct_line);
         CTLineDraw(ct_line, _ctx);
+    }
+}
+
+void CTCache::DrawCharacters(const char32_t *_codes, const CGPoint *_positions, size_t _count, CGContextRef _ctx)
+{
+    if( _count == 0 ) {
+        return; // nothing to do
+    }
+    assert(_codes != nullptr);
+    assert(_positions != nullptr);
+    assert(_ctx != nullptr);
+
+    if( _count == 1 ) {
+        // for a single code it's faster to use a non-batched version
+        CGContextSetTextPosition(_ctx, _positions[0].x, _positions[0].y);
+        DrawCharacter(_codes[0], _ctx);
+        return;
+    }
+
+    // Data to be fed into CTFontDrawGlyphs(..)
+    struct IndexedSimple {
+        uint16_t glyph;
+        uint16_t font;
+        uint32_t idx;
+    };
+
+    // Data to be fed into CTLineDraw(..)
+    struct Complex {
+        CTLineRef line;
+        CGPoint pos;
+    };
+
+    // store the temp data on stack whether possible
+    std::array<char, 16384> mem_buffer;
+    boost::container::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+    boost::container::pmr::vector<IndexedSimple> simple_glyphs(&mem_resource);
+    boost::container::pmr::vector<IndexedSimple> simple_box_glyphs(&mem_resource);
+    boost::container::pmr::vector<Complex> complex_glyphs(&mem_resource);
+
+    // 1st - scan the input to look up for the according display chars and divide them into three categories
+    for( size_t idx = 0; idx != _count; ++idx ) {
+        const char32_t code = _codes[idx];
+        const DisplayChar dc = GetChar(code);
+        if( dc.kind == Kind::Single ) {
+            const bool is_box = IsBoxDrawingCharacter(code);
+            (is_box ? simple_box_glyphs : simple_glyphs)
+                .push_back({m_Singles[dc.index].glyph, m_Singles[dc.index].font, static_cast<uint32_t>(idx)});
+        }
+        if( dc.kind == Kind::Complex ) {
+            complex_glyphs.push_back({m_Complexes[dc.index].get(), _positions[idx]});
+        }
+    }
+
+    // 2nd sort simple glyphs by their font number
+    auto less_font = [](auto &_lhs, auto &_rhs) { return _lhs.font < _rhs.font; };
+    std::sort(simple_glyphs.begin(), simple_glyphs.end(), less_font);
+    std::sort(simple_box_glyphs.begin(), simple_box_glyphs.end(), less_font);
+
+    // 3rd - draw normal simple glyphs, font by font
+    boost::container::pmr::vector<uint16_t> glyphs_to_ct(&mem_resource);
+    boost::container::pmr::vector<CGPoint> pos_to_ct(&mem_resource);
+    auto flush = [&](CTFontRef _font) {
+        assert(pos_to_ct.size() == glyphs_to_ct.size());
+        if( !glyphs_to_ct.empty() ) {
+            CGContextSetTextPosition(_ctx, 0., 0.);
+            CTFontDrawGlyphs(_font, glyphs_to_ct.data(), pos_to_ct.data(), glyphs_to_ct.size(), _ctx);
+            glyphs_to_ct.clear();
+            pos_to_ct.clear();
+        }
+    };
+
+    for( size_t idx = 0; idx != simple_glyphs.size(); idx++ ) {
+        if( idx != 0 && simple_glyphs[idx - 1].font != simple_glyphs[idx].font ) {
+            flush(m_Fonts[simple_glyphs[idx - 1].font].get());
+        }
+        glyphs_to_ct.push_back(simple_glyphs[idx].glyph);
+        pos_to_ct.push_back(_positions[simple_glyphs[idx].idx]);
+        pos_to_ct.back().y = -pos_to_ct.back().y; // wtf is with the Y-coordinate?
+        if( idx + 1 == simple_glyphs.size() ) {
+            flush(m_Fonts[simple_glyphs[idx].font].get());
+        }
+    }
+
+    // 4th - now draw box simple glyphs, font by font
+    if( !simple_box_glyphs.empty() ) {
+        CGContextSetShouldAntialias(_ctx, false);
+        for( size_t idx = 0; idx != simple_box_glyphs.size(); idx++ ) {
+            if( idx != 0 && simple_box_glyphs[idx - 1].font != simple_box_glyphs[idx].font ) {
+                flush(m_Fonts[simple_box_glyphs[idx - 1].font].get());
+            }
+            glyphs_to_ct.push_back(simple_box_glyphs[idx].glyph);
+            pos_to_ct.push_back(_positions[simple_box_glyphs[idx].idx]);
+            pos_to_ct.back().y = -pos_to_ct.back().y; // wtf is with the Y-coordinate?
+            if( idx + 1 == simple_box_glyphs.size() ) {
+                flush(m_Fonts[simple_box_glyphs[idx].font].get());
+            }
+        }
+        CGContextSetShouldAntialias(_ctx, true);
+    }
+
+    // 5th - now draw the complex glyphs
+    for( const auto &complex : complex_glyphs ) {
+        CGContextSetTextPosition(_ctx, complex.pos.x, complex.pos.y);
+        CTLineDraw(complex.line, _ctx);
     }
 }
 

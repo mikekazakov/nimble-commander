@@ -73,11 +73,15 @@ NSDragOperation DragReceiver::Validate()
     int valid_items = 0;
     NSDragOperation operation = NSDragOperationNone;
     const auto destination = ComposeDestination();
-    panel::Log::Trace(SPDLOC,
-                      "DragReceiver::Validate() - dragging over path: {}{}",
-                      destination.Host()->JunctionPath(),
-                      destination.Path());
 
+    if( destination )
+        panel::Log::Trace(SPDLOC,
+                          "DragReceiver::Validate() - dragging over path: {}{}",
+                          destination.Host()->JunctionPath(),
+                          destination.Path());
+    else
+        panel::Log::Trace(SPDLOC, "DragReceiver::Validate() - dragging over an empty destination");
+    
     if( destination && destination.Host()->IsWritable() ) {
         if( const auto source = objc_cast<FilesDraggingSource>(m_Dragging.draggingSource) )
             std::tie(operation, valid_items) = ScanLocalSource(source, destination);

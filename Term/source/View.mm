@@ -945,7 +945,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 }
 
 #define ANSI_COLOR(getter, setter, index)                                                                              \
-    -(NSColor *)getter { return [NSColor colorWithCGColor:m_Colors.GetCGColor(index)]; }                               \
+    -(NSColor *)getter { return [NSColor colorWithCGColor:m_Colors.GetColor(index)]; }                                 \
     -(void)setter : (NSColor *)color                                                                                   \
     {                                                                                                                  \
         if( ![color isEqualTo:self.getter] ) {                                                                         \

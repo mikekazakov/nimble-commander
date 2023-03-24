@@ -21,24 +21,25 @@ public:
     };
 
     ColorMap();
-
     ~ColorMap();
 
+    // Sets of the special colors in this map.
     void SetSpecialColor(Special _color_type, NSColor *_color);
 
     // _color_idx must be in [0..15]
     void SetANSIColor(uint8_t _color_idx, NSColor *_color);
 
+    // Provides a special color.
     CGColorRef GetSpecialColor(Special _color_type) noexcept;
 
     // Provides a 8-bit color.
     // The Base ANSI colors [0..15] are settable, while [16..255] are fixed.
     // Returns a non-owned reference.
-    CGColorRef GetCGColor(uint8_t _color_idx) noexcept;
+    CGColorRef GetColor(uint8_t _color_idx) noexcept;
 
     // Same as GetCGColor, but the colors have an Alpha component less than 1.
     // Returns a non-owned reference
-    CGColorRef GetFaintCGColor(uint8_t _color_idx) noexcept;
+    CGColorRef GetFaintColor(uint8_t _color_idx) noexcept;
 
 private:
     std::array<base::CFPtr<CGColorRef>, 16> m_ANSI;

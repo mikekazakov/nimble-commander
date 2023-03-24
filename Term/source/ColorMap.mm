@@ -73,7 +73,7 @@ ColorMap::ColorMap()
 
 ColorMap::~ColorMap() = default;
 
-CGColorRef ColorMap::GetCGColor(uint8_t _color) noexcept
+CGColorRef ColorMap::GetColor(uint8_t _color) noexcept
 {
     if( _color < 16 && m_ANSI[_color] )
         return m_ANSI[_color].get();
@@ -81,7 +81,7 @@ CGColorRef ColorMap::GetCGColor(uint8_t _color) noexcept
         return BuiltInColors()[_color];
 }
 
-CGColorRef ColorMap::GetFaintCGColor(uint8_t _color) noexcept
+CGColorRef ColorMap::GetFaintColor(uint8_t _color) noexcept
 {
     if( _color < 16 && m_FaintANSI[_color] )
         return m_FaintANSI[_color].get();

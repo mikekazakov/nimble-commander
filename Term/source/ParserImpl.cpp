@@ -16,9 +16,7 @@ ParserImpl::ParserImpl(const Params &_params) : m_ErrorLog(_params.error_log)
     Reset();
 }
 
-ParserImpl::~ParserImpl()
-{
-}
+ParserImpl::~ParserImpl() = default;
 
 void ParserImpl::Reset()
 {

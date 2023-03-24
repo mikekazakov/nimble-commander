@@ -358,9 +358,9 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         const auto bg = m_Colors.GetSpecialColor(ColorMap::Special::Background);
         for( int x = 0; auto char_space : _line ) {
             const auto fg_fill_color =
-                char_space.reverse ? (char_space.customfg ? m_Colors.GetCGColor(char_space.foreground.c)
+                char_space.reverse ? (char_space.customfg ? m_Colors.GetColor(char_space.foreground.c)
                                                           : m_Colors.GetSpecialColor(ColorMap::Special::Foreground))
-                                   : (char_space.custombg ? m_Colors.GetCGColor(char_space.background.c)
+                                   : (char_space.custombg ? m_Colors.GetColor(char_space.background.c)
                                                           : m_Colors.GetSpecialColor(ColorMap::Special::Background));
 
             if( fg_fill_color != bg ) {
@@ -423,16 +423,16 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         CGColorRef c = nullptr;
         if( attr.reverse ) {
             if( attr.custombg )
-                c = m_Colors.GetCGColor(attr.background.c);
+                c = m_Colors.GetColor(attr.background.c);
             else
                 c = m_Colors.GetSpecialColor(ColorMap::Special::Background);
         }
         else {
             if( attr.customfg ) {
                 if( attr.faint )
-                    c = m_Colors.GetFaintCGColor(attr.foreground.c);
+                    c = m_Colors.GetFaintColor(attr.foreground.c);
                 else
-                    c = m_Colors.GetCGColor(attr.foreground.c);
+                    c = m_Colors.GetColor(attr.foreground.c);
             }
             else {
                 if( attr.bold )

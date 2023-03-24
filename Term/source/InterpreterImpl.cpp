@@ -24,9 +24,7 @@ InterpreterImpl::InterpreterImpl(Screen &_screen, ExtendedCharRegistry &_reg) : 
     UpdateCharacterAttributes();
 }
 
-InterpreterImpl::~InterpreterImpl()
-{
-}
+InterpreterImpl::~InterpreterImpl() = default;
 
 void InterpreterImpl::Interpret(Input _to_interpret)
 {

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <FunctionKeysPass.h>
 #include <Carbon/Carbon.h>
 #include <AppKit/AppKit.h>
@@ -7,6 +7,7 @@
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <Utility/Log.h>
 
 namespace nc::utility {
 
@@ -85,6 +86,7 @@ CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEvent
     const auto substitute = [&](CGKeyCode _vk) {
         return NewFnButtonPress(_vk, is_key_down, CGEventGetFlags(_event));
     };
+    Log::Trace(SPDLOC, "HandleRegularKeyEvents: keycode is {}, pressed={}", keycode, is_key_down);
     switch( keycode ) {
         case 145:
             return substitute(kVK_F1);
@@ -132,6 +134,7 @@ CGEventRef FunctionalKeysPass::HandleControlButtons([[maybe_unused]] CGEventType
     const auto substitute = [&](CGKeyCode _vk) {
         return NewFnButtonPress(_vk, is_key_down, static_cast<CGEventFlags>(ev.modifierFlags));
     };
+    Log::Trace(SPDLOC, "HandleControlButtons: keycode is {}, pressed={}", keycode, is_key_down);
     switch( keycode ) {
         case NX_KEYTYPE_BRIGHTNESS_DOWN:
             return substitute(kVK_F1);

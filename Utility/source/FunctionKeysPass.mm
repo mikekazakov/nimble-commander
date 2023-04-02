@@ -80,6 +80,8 @@ CGEventRef FunctionalKeysPass::Callback([[maybe_unused]] CGEventTapProxy _proxy,
 
 CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEventRef _event)
 {
+    // references:
+    // https://www.apple.com/uk/newsroom/2022/06/apple-unveils-all-new-macbook-air-supercharged-by-the-new-m2-chip/
     const auto is_key_down = _type == kCGEventKeyDown;
     const auto keycode =
         static_cast<CGKeyCode>(CGEventGetIntegerValueField(_event, kCGKeyboardEventKeycode));
@@ -95,11 +97,14 @@ CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEvent
         case 160:
             return substitute(kVK_F3);
         case 130: // it was used on old Macbooks
-        case 131:
+        case 131: // launchpad button - multiple generations, laptops and external keyboards
+        case 177: // search button on M2 laptops
             return substitute(kVK_F4);
-        case 96:
+        case 96:  // keyboard brightness down
+        case 176: // microphone button on M2 laptops
             return substitute(kVK_F5);
-        case 97:
+        case 97:  // keyboard brightness up
+        case 178: // sleep button on M2 laptops
             return substitute(kVK_F6);
         case 105:
             return substitute(kVK_F13);

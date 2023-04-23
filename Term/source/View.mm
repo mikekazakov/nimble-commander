@@ -404,7 +404,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             return;
 
         // gather all char codes and their coordinates from the run
-        std::array<char, 16384> mem_buffer;
+        std::array<char, 8192> mem_buffer;
         boost::container::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
         boost::container::pmr::vector<char32_t> codes(&mem_resource);
         boost::container::pmr::vector<CGPoint> positions(&mem_resource);

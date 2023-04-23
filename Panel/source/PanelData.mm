@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataEntriesComparator.h"
@@ -746,8 +746,7 @@ bool Model::ClearTextFiltering()
     m_HardFiltering.text.text = nil;
 
     for( auto &vd : m_VolatileData ) {
-        vd.qs_highlight_begin = 0;
-        vd.qs_highlight_end = 0;
+        vd.highlight = {};
     }
 
     DoSortWithHardFiltering();
@@ -787,28 +786,37 @@ void Model::DoSortWithHardFiltering()
 
     m_EntriesByCustomSort.reserve(size);
     for( auto &vd : m_VolatileData ) {
-        vd.qs_highlight_begin = 0;
-        vd.qs_highlight_end = 0;
+        vd.highlight = {};
         vd.toggle_shown(true);
     }
 
     if( m_HardFiltering.IsFiltering() ) {
-        TextualFilter::FoundRange found_range;
-        for( unsigned i = 0; i != size; ++i )
-            if( m_HardFiltering.IsValidItem(m_Listing->Item(i), found_range) ) {
-                if( m_HardFiltering.text.hightlight_results ) {
-                    m_VolatileData[i].qs_highlight_begin = found_range.first;
-                    m_VolatileData[i].qs_highlight_end = found_range.second;
+        auto filter = [&](const VFSListingItem &_item) -> std::optional<QuickSearchHiglight> {
+            QuickSearchHiglight found_range;
+            const bool valid = m_HardFiltering.IsValidItem(_item, found_range);
+            if( valid )
+                return found_range;
+            return {};
+        };
+        std::vector<std::optional<QuickSearchHiglight>> found_ranges(size);
+        pstld::transform(m_Listing->begin(), m_Listing->end(), found_ranges.begin(), filter);
+
+        const bool hightlight_results = m_HardFiltering.text.hightlight_results;
+        for( unsigned i = 0; i != size; ++i ) {
+            if( !found_ranges[i] ) {
+                m_VolatileData[i].toggle_shown(false);
+            }
+            else {
+                if( hightlight_results ) {
+                    m_VolatileData[i].highlight = *found_ranges[i];
                 }
                 m_EntriesByCustomSort.push_back(i);
             }
-            else {
-                m_VolatileData[i].toggle_shown(false);
-            }
+        }
     }
     else {
         m_EntriesByCustomSort.resize(m_Listing->Count());
-        iota(begin(m_EntriesByCustomSort), end(m_EntriesByCustomSort), 0);
+        std::iota(std::begin(m_EntriesByCustomSort), std::end(m_EntriesByCustomSort), 0);
     }
 
     if( m_EntriesByCustomSort.empty() || m_CustomSortMode.sort == SortMode::SortNoSort )
@@ -859,14 +867,13 @@ void Model::BuildSoftFilteringIndeces()
 
         int i = 0, e = static_cast<int>(m_EntriesByCustomSort.size());
         for( ; i != e; ++i ) {
-            TextualFilter::FoundRange found_range{0, 0};
+            QuickSearchHiglight found_range;
             const int raw_index = m_EntriesByCustomSort[i];
             if( m_SoftFiltering.IsValidItem(m_Listing->Item(raw_index), found_range) )
                 m_EntriesBySoftFiltering.push_back(i);
 
             if( m_SoftFiltering.hightlight_results ) {
-                m_VolatileData[raw_index].qs_highlight_begin = found_range.first;
-                m_VolatileData[raw_index].qs_highlight_end = found_range.second;
+                m_VolatileData[raw_index].highlight = found_range;
             }
         }
     }

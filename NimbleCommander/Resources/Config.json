@@ -212,6 +212,7 @@
              * 1 - Beginning
              * 2 - Ending
              * 3 - BeginningOrEnding
+             * 4 - Fuzzy
              */
             "whereToFind": 0,
   

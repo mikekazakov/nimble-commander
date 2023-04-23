@@ -1,5 +1,7 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
+
+#include <Panel/PanelDataItemVolatileData.h>
 
 @class PanelBriefViewItem;
 @class NCPanelViewFieldEditor;
@@ -14,7 +16,7 @@ struct PanelBriefViewItemLayoutConstants;
 @property (nonatomic)       NSImage                            *icon;
 @property (nonatomic)       bool                                isSymlink;
 @property (nonatomic)       PanelBriefViewItemLayoutConstants   layoutConstants;
-@property (nonatomic)       std::pair<int16_t, int16_t>         qsHighlight;
+@property (nonatomic)       nc::panel::data::QuickSearchHiglight qsHighlight;
 @property (nonatomic)       bool                                highlighted;
 
 - (void) setupFieldEditor:(NCPanelViewFieldEditor*)_editor;

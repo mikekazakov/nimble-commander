@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
@@ -58,7 +58,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     NSMutableAttributedString *m_AttrString;
     PanelBriefViewItemLayoutConstants m_LayoutConstants;
     __weak PanelBriefViewItem *m_Controller;
-    std::pair<int16_t, int16_t> m_QSHighlight;
+    nc::panel::data::QuickSearchHiglight m_QSHighlight;
     bool m_Highlighted;
     bool m_PermitFieldRenaming;
     bool m_IsDropTarget;
@@ -82,7 +82,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
         self.postsBoundsChangedNotifications = false;
         m_TextColor = NSColor.blackColor;
         m_Filename = @"";
-        m_QSHighlight = {0, 0};
+        m_QSHighlight = {};
         m_PermitFieldRenaming = false;
         m_Highlighted = false;
         m_IsDropTarget = false;
@@ -359,26 +359,34 @@ static bool HasNoModifiers(NSEvent *_event)
 
     m_AttrString = [[NSMutableAttributedString alloc] initWithString:m_Filename attributes:attrs];
 
-    if( m_QSHighlight.first != m_QSHighlight.second && m_QSHighlight.first < static_cast<short>(m_Filename.length) &&
-        m_QSHighlight.second <= static_cast<short>(m_Filename.length) )
-        [m_AttrString addAttribute:NSUnderlineStyleAttributeName
-                             value:@(NSUnderlineStyleSingle)
-                             range:NSMakeRange(m_QSHighlight.first, m_QSHighlight.second - m_QSHighlight.first)];
-
+    if( !m_QSHighlight.empty() ) {
+        const auto hl = m_QSHighlight.unpack();
+        const auto fn_len = static_cast<size_t>(m_Filename.length);
+        for( size_t i = 0; i != hl.count; ++i ) {
+            if( hl.segments[i].offset < fn_len && hl.segments[i].offset + hl.segments[i].length <= fn_len ) {
+                const auto range = NSMakeRange(hl.segments[i].offset, hl.segments[i].length);
+                [m_AttrString addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:range];
+            }
+        }
+    }
     [self setNeedsDisplay:true];
 }
 
-- (void)setQsHighlight:(std::pair<int16_t, int16_t>)qsHighlight
+- (void)setQsHighlight:(nc::panel::data::QuickSearchHiglight)qsHighlight
 {
     if( m_QSHighlight != qsHighlight ) {
         m_QSHighlight = qsHighlight;
         [m_AttrString removeAttribute:NSUnderlineStyleAttributeName range:NSMakeRange(0, m_AttrString.length)];
-        if( m_QSHighlight.first != m_QSHighlight.second &&
-            m_QSHighlight.first < static_cast<short>(m_Filename.length) &&
-            m_QSHighlight.second <= static_cast<short>(m_Filename.length) )
-            [m_AttrString addAttribute:NSUnderlineStyleAttributeName
-                                 value:@(NSUnderlineStyleSingle)
-                                 range:NSMakeRange(m_QSHighlight.first, m_QSHighlight.second - m_QSHighlight.first)];
+        if( !m_QSHighlight.empty() ) {
+            const auto hl = m_QSHighlight.unpack();
+            const auto fn_len = static_cast<size_t>(m_Filename.length);
+            for( size_t i = 0; i != hl.count; ++i ) {
+                if( hl.segments[i].offset < fn_len && hl.segments[i].offset + hl.segments[i].length <= fn_len ) {
+                    const auto range = NSMakeRange(hl.segments[i].offset, hl.segments[i].length);
+                    [m_AttrString addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:range];
+                }
+            }
+        }
         [self setNeedsDisplay:true];
     }
 }

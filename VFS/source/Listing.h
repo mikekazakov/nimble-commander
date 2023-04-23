@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/variable_container.h>
@@ -299,13 +299,28 @@ private:
 class Listing::iterator
 {
 public:
+    using difference_type = long;
+    using value_type = ListingItem;
+    using pointer  = void;
+    using reference = const ListingItem &;
+    using iterator_category = std::random_access_iterator_tag;
+    
     iterator &operator--() noexcept;   // prefix decrement
     iterator &operator++() noexcept;   // prefix increment
     iterator operator--(int) noexcept; // posfix decrement
     iterator operator++(int) noexcept; // posfix increment
-
+    iterator operator+(long _diff) const noexcept;
+    iterator operator-(long _diff) const noexcept;
+    long operator-(const iterator& _rhs) const noexcept;
+    iterator &operator+=(long _diff) noexcept;
+    iterator &operator-=(long _diff) noexcept;
+    
     bool operator==(const iterator &_r) const noexcept;
     bool operator!=(const iterator &_r) const noexcept;
+    bool operator<(const iterator &_r) const noexcept;
+    bool operator<=(const iterator &_r) const noexcept;
+    bool operator>(const iterator &_r) const noexcept;
+    bool operator>=(const iterator &_r) const noexcept;
     const ListingItem &operator*() const noexcept;
 
 private:
@@ -930,6 +945,37 @@ inline Listing::iterator Listing::iterator::operator++(int) noexcept // posfix i
     return p;
 }
 
+inline Listing::iterator Listing::iterator::operator+(long _diff) const noexcept
+{
+    auto p = *this;
+    p.i.I += _diff;
+    return p;
+}
+
+inline Listing::iterator Listing::iterator::operator-(long _diff) const noexcept
+{
+    auto p = *this;
+    p.i.I -= _diff;
+    return p;
+}
+
+inline long Listing::iterator::operator-(const iterator& _rhs) const noexcept
+{
+    return static_cast<long>(i.I) - static_cast<long>(_rhs.i.I);
+}
+
+inline Listing::iterator &Listing::iterator::operator+=(long _diff) noexcept
+{
+    i.I += _diff;
+    return *this;
+}
+
+inline Listing::iterator &Listing::iterator::operator-=(long _diff) noexcept
+{
+    i.I -= _diff;
+    return *this;
+}
+
 inline bool Listing::iterator::operator==(const iterator &_r) const noexcept
 {
     return i.I == _r.i.I && i.L == _r.i.L;
@@ -938,6 +984,26 @@ inline bool Listing::iterator::operator==(const iterator &_r) const noexcept
 inline bool Listing::iterator::operator!=(const iterator &_r) const noexcept
 {
     return !(*this == _r);
+}
+
+inline bool Listing::iterator::operator<(const iterator &_r) const noexcept
+{
+    return i.I < _r.i.I;
+}
+
+inline bool Listing::iterator::operator<=(const iterator &_r) const noexcept
+{
+    return i.I <= _r.i.I;
+}
+
+inline bool Listing::iterator::operator>(const iterator &_r) const noexcept
+{
+    return i.I > _r.i.I;
+}
+
+inline bool Listing::iterator::operator>=(const iterator &_r) const noexcept
+{
+    return i.I >= _r.i.I;
 }
 
 inline const ListingItem &Listing::iterator::operator*() const noexcept

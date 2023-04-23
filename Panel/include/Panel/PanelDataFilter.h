@@ -1,8 +1,13 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSDeclarations.h>
 #include <CoreFoundation/CoreFoundation.h>
+
+#include "PanelDataItemVolatileData.h"
+
+#include <compare>
+#include <optional>
 
 namespace nc::panel::data {
 
@@ -13,10 +18,9 @@ struct TextualFilter
         Anywhere            = 0,
         Beginning           = 1,
         Ending              = 2, // handling extensions somehow
-        BeginningOrEnding   = 3
+        BeginningOrEnding   = 3,
+        Fuzzy               = 4    
     };
-    
-    using FoundRange = std::pair<int16_t, int16_t>; // begin-end indeces range in DispayName string, {0,0} mean empty
     
     NSString *text;
     Where     type;
@@ -29,7 +33,7 @@ struct TextualFilter
     bool operator!=(const TextualFilter& _r) const noexcept;
     static Where WhereFromInt(int _v) noexcept;
     static TextualFilter NoFilter() noexcept;
-    bool IsValidItem(const VFSListingItem& _item, FoundRange &_found_range) const;
+    bool IsValidItem(const VFSListingItem& _item, QuickSearchHiglight &_found_range) const;
     bool IsValidItem(const VFSListingItem& _item) const;
     void OnPanelDataLoad();
     bool IsFiltering() const noexcept;
@@ -39,10 +43,12 @@ struct HardFilter
 {
     TextualFilter text = TextualFilter::NoFilter();
     bool show_hidden = true;
-    bool IsValidItem(const VFSListingItem& _item, TextualFilter::FoundRange &_found_range) const;
+    bool IsValidItem(const VFSListingItem& _item, QuickSearchHiglight &_found_range) const;
     bool IsFiltering() const noexcept;
-    bool operator==(const HardFilter& _r) const noexcept;
-    bool operator!=(const HardFilter& _r) const noexcept;
+    bool operator==(const HardFilter& _r) const noexcept = default;
+    bool operator!=(const HardFilter& _r) const noexcept = default;
 };
+
+std::optional<QuickSearchHiglight> FuzzySearch(NSString *_filename, NSString *_text) noexcept;
 
 }

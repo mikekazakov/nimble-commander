@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include "../PanelView.h"
@@ -24,7 +24,7 @@ using namespace nc::panel;
     m_PanelActive = false;
     [super setSelected:false];
     self.carrier.background = nil;
-    self.carrier.qsHighlight = {0, 0};
+    self.carrier.qsHighlight = {};
 }
 
 - (instancetype)initWithNibName:(nullable NSString *) [[maybe_unused]] nibNameOrNil
@@ -160,7 +160,7 @@ using namespace nc::panel;
     m_VD = _vd;
     [self updateForegroundColor];
     [self updateBackgroundColor];
-    self.carrier.qsHighlight = {_vd.qs_highlight_begin, _vd.qs_highlight_end};
+    self.carrier.qsHighlight = _vd.highlight;
     self.carrier.highlighted = _vd.is_highlighted();
 }
 

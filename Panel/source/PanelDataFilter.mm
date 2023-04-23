@@ -1,46 +1,46 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataFilter.h"
 #include <VFS/VFS.h>
+#include <Habanero/CFPtr.h>
+#include <Habanero/CFStackAllocator.h>
+#include <boost/container/pmr/vector.hpp>                    // TODO: remove as soon as libc++ gets pmr!!!
+#include <boost/container/pmr/monotonic_buffer_resource.hpp> // TODO: remove as soon as libc++ gets pmr!!!
 
 namespace nc::panel::data {
 
-static_assert( sizeof(TextualFilter) == 10 );
-static_assert( sizeof(HardFilter) == 11 );
+static_assert(sizeof(TextualFilter) == 10);
+static_assert(sizeof(HardFilter) == 11);
 
-TextualFilter::TextualFilter() noexcept :
-    text{nil},
-    type{Anywhere},
-    ignore_dot_dot{true},
-    clear_on_new_listing{false},
-    hightlight_results{true}
+TextualFilter::TextualFilter() noexcept
+    : text{nil}, type{Anywhere}, ignore_dot_dot{true}, clear_on_new_listing{false}, hightlight_results{true}
 {
 }
 
-bool TextualFilter::operator==(const TextualFilter& _r) const noexcept
+bool TextualFilter::operator==(const TextualFilter &_r) const noexcept
 {
-    if(type != _r.type)
+    if( type != _r.type )
         return false;
-    
-    if(text == nil && _r.text != nil)
+
+    if( text == nil && _r.text != nil )
         return false;
-    
-    if(text != nil && _r.text == nil)
+
+    if( text != nil && _r.text == nil )
         return false;
-    
-    if(text == nil && _r.text == nil)
+
+    if( text == nil && _r.text == nil )
         return true;
-    
+
     return [text isEqualToString:_r.text]; // no decomposion here
 }
 
-bool TextualFilter::operator!=(const TextualFilter& _r) const noexcept
+bool TextualFilter::operator!=(const TextualFilter &_r) const noexcept
 {
     return !(*this == _r);
 }
 
 TextualFilter::Where TextualFilter::WhereFromInt(int _v) noexcept
 {
-    if(_v >= 0 && _v <= BeginningOrEnding)
+    if( _v >= 0 && _v <= Fuzzy )
         return Where(_v);
     return Anywhere;
 }
@@ -54,91 +54,184 @@ TextualFilter TextualFilter::NoFilter() noexcept
     return filter;
 }
 
-static TextualFilter::FoundRange g_DummyFoundRange;
-
-bool TextualFilter::IsValidItem(const VFSListingItem& _item) const
+bool TextualFilter::IsValidItem(const VFSListingItem &_item) const
 {
-    return IsValidItem( _item, g_DummyFoundRange );
+    QuickSearchHiglight hl;
+    return IsValidItem(_item, hl);
 }
 
-bool TextualFilter::IsValidItem(const VFSListingItem& _item,
-                                           FoundRange &_found_range) const
+static bool FuzzySearchSatisfiable(CFStringRef _hay,
+                                   size_t _hay_len,
+                                   size_t _hay_start,
+                                   NSString *_needle,
+                                   size_t _needle_start) noexcept
 {
-    _found_range = {0, 0};
-    
+    CFStackAllocator alloc;
+    const auto needle_len = _needle.length;
+
+    size_t pos = _hay_start;
+    for( size_t idx = _needle_start; idx < needle_len; ++idx ) {
+        const UniChar c = [_needle characterAtIndex:idx];
+        const auto cs =
+            base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharactersNoCopy(alloc.Alloc(), &c, 1, kCFAllocatorNull));
+        CFRange result = {0, 0};
+        const bool found = CFStringFindWithOptions(
+            _hay, cs.get(), CFRangeMake(pos, _hay_len - pos), kCFCompareCaseInsensitive, &result);
+        if( found == false )
+            return false; // cannot be satisfied - filename doesn't contain a sparse sequence of chars from text
+        pos = result.location + 1;
+    }
+    return true;
+}
+
+std::optional<QuickSearchHiglight> FuzzySearch(NSString *_filename, NSString *_text) noexcept
+{
+    assert(_filename != nil);
+    assert(_text != nil);
+
+    base::CFPtr<CFStringRef> cf_filename =
+        base::CFPtr<CFStringRef>::adopt(static_cast<CFStringRef>(CFBridgingRetain(_filename)));
+
+    const auto filename_len = _filename.length;
+
+    // 1st - check satisfiability in general
+    if( !FuzzySearchSatisfiable(cf_filename.get(), filename_len, 0, _text, 0) )
+        return {};
+
+    // 2nd - now start to greadily look for longest substrings - O(n^2)
+    std::array<char, 16384> mem_buffer;
+    boost::container::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+    boost::container::pmr::vector<QuickSearchHiglight::Range> found(&mem_resource);
+    unsigned long filename_pos = 0;
+    NSString *text = _text;
+    while( true ) {
+        const size_t text_length = text.length;
+        if( text_length == 0 ) {
+            break; // done.
+        }
+
+        for( size_t length = text_length; true; --length ) {
+            if( length == 0 ) {
+                return {}; // invalid case?
+            }
+
+            NSRange result = [_filename rangeOfString:[text substringToIndex:length]
+                                              options:NSCaseInsensitiveSearch
+                                                range:NSMakeRange(filename_pos, filename_len - filename_pos)];
+            if( result.length == 0 ) {
+                continue; // cannot found a substring this long
+            }
+
+            // found one, check that the whole criterion is still satisfiable
+            if( !FuzzySearchSatisfiable(
+                    cf_filename.get(), filename_len, result.location + result.length, text, length) ) {
+                continue; // too greedy - the rest of the criterion is not satisfiable
+            }
+
+            // ok, seems legit, memorize and carry on with the leftovers
+            found.push_back({result.location, result.length});
+            filename_pos = result.location + result.length;
+            text = [text substringFromIndex:result.length];
+            break;
+        }
+    }
+
+    return QuickSearchHiglight({found.data(), found.size()}); // might discard some results here
+}
+
+bool TextualFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight &_found_range) const
+{
+    _found_range = {};
+
     if( text == nil )
         return true; // nothing to filter with - just say yes
-    
+
     if( ignore_dot_dot && _item.IsDotDot() )
         return true; // never filter out the Holy Dot-Dot directory!
-    
+
     const auto textlen = text.length;
     if( textlen == 0 )
         return true; // will return true on any item with @"" filter
     
     NSString *name = _item.DisplayNameNS();
+    const auto namelen = name.length;
+    if( textlen > namelen )
+        return false; // unsatisfiable by definition
+    
     if( type == Anywhere ) {
-        NSRange result = [name rangeOfString:text
-                                     options:NSCaseInsensitiveSearch];
+        NSRange result = [name rangeOfString:text options:NSCaseInsensitiveSearch];
         if( result.length == 0 )
             return false;
 
-        _found_range.first = static_cast<short>(result.location);
-        _found_range.second = short(result.location + result.length);
-        
+        QuickSearchHiglight::Range hlrange;
+        hlrange.offset = result.location;
+        hlrange.length = result.length;
+        _found_range = QuickSearchHiglight({&hlrange, 1});
         return true;
     }
     else if( type == Beginning ) {
-        NSRange result = [name rangeOfString:text
-                                     options:NSCaseInsensitiveSearch|NSAnchoredSearch];
-        
+        NSRange result = [name rangeOfString:text options:NSCaseInsensitiveSearch | NSAnchoredSearch];
+
         if( result.length == 0 )
             return false;
-        
-        _found_range.first = short(result.location);
-        _found_range.second = short(result.location + result.length);
-        
+
+        QuickSearchHiglight::Range hlrange;
+        hlrange.offset = result.location;
+        hlrange.length = result.length;
+        _found_range = QuickSearchHiglight({&hlrange, 1});
         return true;
     }
     else if( type == Ending || type == BeginningOrEnding ) {
-        if( type == BeginningOrEnding) { // look at beginning
-            NSRange result = [name rangeOfString:text
-                                         options:NSCaseInsensitiveSearch|NSAnchoredSearch];
-            if( result.length != 0  ) {
-                _found_range.first = short(result.location);
-                _found_range.second = short(result.location + result.length);
+        if( type == BeginningOrEnding ) { // look at beginning
+            NSRange result = [name rangeOfString:text options:NSCaseInsensitiveSearch | NSAnchoredSearch];
+            if( result.length != 0 ) {
+                QuickSearchHiglight::Range hlrange;
+                hlrange.offset = result.location;
+                hlrange.length = result.length;
+                _found_range = QuickSearchHiglight({&hlrange, 1});
                 return true;
             }
         }
-        
+
         if( _item.HasExtension() ) {
             // slow path here - look before extension
             NSRange dotrange = [name rangeOfString:@"." options:NSBackwardsSearch];
-            if(dotrange.length != 0 &&
-               dotrange.location > textlen) {
+            if( dotrange.length != 0 && dotrange.location > textlen ) {
                 NSRange result = [name rangeOfString:text
-                                     options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch
-                                       range:NSMakeRange(dotrange.location - textlen, textlen)];
+                                             options:NSCaseInsensitiveSearch | NSAnchoredSearch | NSBackwardsSearch
+                                               range:NSMakeRange(dotrange.location - textlen, textlen)];
                 if( result.length != 0 ) {
-                    _found_range.first = short(result.location);
-                    _found_range.second = short(result.location + result.length);
+                    QuickSearchHiglight::Range hlrange;
+                    hlrange.offset = result.location;
+                    hlrange.length = result.length;
+                    _found_range = QuickSearchHiglight({&hlrange, 1});
                     return true;
                 }
             }
         }
-        
+
         // look at the end at last
         NSRange result = [name rangeOfString:text
-                                     options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch];
+                                     options:NSCaseInsensitiveSearch | NSAnchoredSearch | NSBackwardsSearch];
         if( result.length != 0 ) {
-            _found_range.first = short(result.location);
-            _found_range.second = short(result.location + result.length);
+            QuickSearchHiglight::Range hlrange;
+            hlrange.offset = result.location;
+            hlrange.length = result.length;
+            _found_range = QuickSearchHiglight({&hlrange, 1});
             return true;
         }
         else
             return false;
     }
-    
+    else if( type == Fuzzy ) {
+        if( auto res = FuzzySearch(name, text) ) {
+            _found_range = *res;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     return false;
 }
 
@@ -157,28 +250,17 @@ bool TextualFilter::IsFiltering() const noexcept
 // HardFilter
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool HardFilter::IsValidItem(const VFSListingItem& _item,
-                                        TextualFilter::FoundRange &_found_range) const
+bool HardFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight &_found_range) const
 {
     if( show_hidden == false && _item.IsHidden() )
         return false;
-    
+
     return text.IsValidItem(_item, _found_range);
 }
-    
+
 bool HardFilter::IsFiltering() const noexcept
 {
     return !show_hidden || text.IsFiltering();
-}
-
-bool HardFilter::operator==(const HardFilter& _r) const noexcept
-{
-    return show_hidden == _r.show_hidden && text == _r.text;
-}
-
-bool HardFilter::operator!=(const HardFilter& _r) const noexcept
-{
-    return show_hidden != _r.show_hidden || text != _r.text;
 }
 
 }

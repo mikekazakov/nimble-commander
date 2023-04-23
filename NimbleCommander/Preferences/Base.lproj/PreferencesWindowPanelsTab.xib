@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -342,7 +342,7 @@
                                         <rect key="frame" x="155" y="20" width="200" height="334"/>
                                         <clipView key="contentView" id="m9T-Or-9up">
                                             <rect key="frame" x="1" y="1" width="198" height="332"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="Ujz-1s-pz4" viewBased="YES" id="7Vi-TZ-WWx">
                                                     <rect key="frame" x="0.0" y="0.0" width="198" height="309"/>
@@ -351,7 +351,7 @@
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                     <tableColumns>
-                                                        <tableColumn identifier="name" editable="NO" width="186" minWidth="40" maxWidth="1000" id="u8s-2Z-nWQ">
+                                                        <tableColumn identifier="name" editable="NO" width="157" minWidth="40" maxWidth="1000" id="u8s-2Z-nWQ">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Layouts">
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -364,11 +364,11 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="vfI-BX-dSy">
-                                                                    <rect key="frame" x="1" y="1" width="195" height="17"/>
+                                                                    <rect key="frame" x="11" y="1" width="166" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bMn-Fq-70k">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="195" height="17"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="166" height="17"/>
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" id="g6Z-j4-frE">
                                                                                 <font key="font" metaFont="system"/>
@@ -1270,20 +1270,21 @@
                                         <constraints>
                                             <constraint firstAttribute="width" constant="160" id="6mQ-Y3-1zh"/>
                                         </constraints>
-                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Yp8-cZ-7kX">
+                                        <popUpButtonCell key="cell" type="push" title="Fuzzy" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" tag="4" imageScaling="proportionallyDown" inset="2" selectedItem="uZL-kd-7db" id="Yp8-cZ-7kX">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
                                             <menu key="menu" title="OtherViews" id="hwd-Vk-Rmi">
                                                 <items>
+                                                    <menuItem title="Fuzzy" tag="4" id="uZL-kd-7db"/>
                                                     <menuItem title="Anywhere" id="ZK4-um-VIS"/>
-                                                    <menuItem title="Beginning" id="wWO-qC-fR7"/>
-                                                    <menuItem title="Ending" id="GOP-4J-s2Y"/>
-                                                    <menuItem title="Beginning or ending" id="ivN-Nv-wkZ"/>
+                                                    <menuItem title="Beginning" tag="1" id="wWO-qC-fR7"/>
+                                                    <menuItem title="Ending" tag="2" id="GOP-4J-s2Y"/>
+                                                    <menuItem title="Beginning or ending" tag="3" id="ivN-Nv-wkZ"/>
                                                 </items>
                                             </menu>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="-3" name="selectedIndex" keyPath="self.delegate.config.filePanel.quickSearch.whereToFind" id="fVt-bq-Vjs"/>
+                                            <binding destination="-3" name="selectedTag" keyPath="self.delegate.config.filePanel.quickSearch.whereToFind" id="nao-UX-RXG"/>
                                         </connections>
                                     </popUpButton>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EdY-ol-oYC">

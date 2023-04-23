@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListViewNameView.h"
 #include <Utility/FontExtras.h>
 #include <Utility/ObjCpp.h>
@@ -162,11 +162,14 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     m_AttrString = [[NSMutableAttributedString alloc] initWithString:m_Filename attributes:attrs];
 
     auto vd = row_view.vd;
-    if( vd.qs_highlight_begin != vd.qs_highlight_end ) {
-        const short fn_len = static_cast<short>(m_Filename.length);
-        if( vd.qs_highlight_begin < fn_len && vd.qs_highlight_end <= fn_len ) {
-            const auto range = NSMakeRange(vd.qs_highlight_begin, vd.qs_highlight_end - vd.qs_highlight_begin);
-            [m_AttrString addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:range];
+    if( !vd.highlight.empty() ) {
+        const auto fn_len = static_cast<size_t>(m_Filename.length);
+        const auto hl = vd.highlight.unpack();
+        for( size_t i = 0; i != hl.count; ++i ) {
+            if( hl.segments[i].offset < fn_len && hl.segments[i].offset + hl.segments[i].length <= fn_len ) {
+                const auto range = NSMakeRange(hl.segments[i].offset, hl.segments[i].length);
+                [m_AttrString addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:range];
+            }
         }
     }
 

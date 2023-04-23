@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <VFS/VFSListingInput.h>
 #include <VFS/Host.h>
@@ -13,6 +13,7 @@
 
 using namespace nc::panel;
 using namespace nc::panel::QuickSearch;
+using namespace nc::panel::data;
 
 static const auto g_ConfigJSON =
 "{\
@@ -240,12 +241,84 @@ TEST_CASE("Underscoring")
     auto qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data
                                               delegate:ctx.delegate
                                                 config:ctx.qsconfig];
-
     [qs setSearchCriteria:@"box"];
-    CHECK( ctx.data.VolatileDataAtSortPosition(0).qs_highlight_begin == 4 );
-    CHECK( ctx.data.VolatileDataAtSortPosition(0).qs_highlight_end == 7 );
-    CHECK( ctx.data.VolatileDataAtSortPosition(1).qs_highlight_begin == 7 );
-    CHECK( ctx.data.VolatileDataAtSortPosition(1).qs_highlight_end == 10 );
+    CHECK( ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().count == 1 );
+    CHECK( ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().segments[0].offset == 4 );
+    CHECK( ctx.data.VolatileDataAtSortPosition(0).highlight.unpack().segments[0].length == 3 );
+    CHECK( ctx.data.VolatileDataAtSortPosition(1).highlight.unpack().count == 1 );
+    CHECK( ctx.data.VolatileDataAtSortPosition(1).highlight.unpack().segments[0].offset == 7 );
+    CHECK( ctx.data.VolatileDataAtSortPosition(1).highlight.unpack().segments[0].length == 3 );
+}
+
+TEST_CASE("Different phrase locations")
+{
+    using Ranges = QuickSearchHiglight::Ranges;
+    using Where = data::TextualFilter::Where;
+    QuickSearchTestsContext ctx;
+    NCPanelQuickSearch* qs;
+    auto filter = [&](NSString *_crit, Where _where){
+        ctx.qsconfig.Set(g_ConfigIsSoftFiltering, false);
+        ctx.qsconfig.Set(g_ConfigTypingView, true);
+        ctx.qsconfig.Set(g_ConfigWhereToFind, _where);
+        qs = [[NCPanelQuickSearch alloc] initWithData:ctx.data
+                                                  delegate:ctx.delegate
+                                                    config:ctx.qsconfig];
+        [qs setSearchCriteria:_crit];
+        return qs;
+    };
+    SECTION("box, Anywhere") {
+        filter(@"box", Where::Anywhere);
+        REQUIRE( ctx.data.SortedEntriesCount() == 2 );
+        CHECK( ctx.data.VolatileDataAtSortPosition(0).highlight.unpack() == Ranges{{{4, 3}}, 1} ); // "Dropbox.app"
+        CHECK( ctx.data.VolatileDataAtSortPosition(1).highlight.unpack() == Ranges{{{7, 3}}, 1} ); // "VirtualBox.app"
+    }
+    SECTION("box, Fuzzy") {
+        filter(@"box", Where::Fuzzy);
+        REQUIRE( ctx.data.SortedEntriesCount() == 2 );
+        CHECK( ctx.data.VolatileDataAtSortPosition(0).highlight.unpack() == Ranges{{{4, 3}}, 1} ); // "Dropbox.app"
+        CHECK( ctx.data.VolatileDataAtSortPosition(1).highlight.unpack() == Ranges{{{7, 3}}, 1} ); // "VirtualBox.app"
+    }
+    SECTION("box, Beginning") {
+        filter(@"box", Where::Beginning);
+        REQUIRE( ctx.data.SortedEntriesCount() == 0 );
+    }
+    SECTION("box, Ending") {
+        filter(@"box", Where::Ending);
+        REQUIRE( ctx.data.SortedEntriesCount() == 2 );
+        CHECK( ctx.data.VolatileDataAtSortPosition(0).highlight.unpack() == Ranges{{{4, 3}}, 1} ); // "Dropbox.app"
+        CHECK( ctx.data.VolatileDataAtSortPosition(1).highlight.unpack() == Ranges{{{7, 3}}, 1} ); // "VirtualBox.app"
+    }
+    SECTION("box, BeginningOrEnding") {
+        filter(@"box", Where::BeginningOrEnding);
+        REQUIRE( ctx.data.SortedEntriesCount() == 2 );
+        CHECK( ctx.data.VolatileDataAtSortPosition(0).highlight.unpack() == Ranges{{{4, 3}}, 1} ); // "Dropbox.app"
+        CHECK( ctx.data.VolatileDataAtSortPosition(1).highlight.unpack() == Ranges{{{7, 3}}, 1} ); // "VirtualBox.app"
+    }
+
+    SECTION("calap, Anywhere") {
+        filter(@"calap", Where::Anywhere);
+        REQUIRE( ctx.data.SortedEntriesCount() == 0 );
+    }
+    SECTION("calap, Fuzzy") {
+        filter(@"calap", Where::Fuzzy);
+        REQUIRE( ctx.data.SortedEntriesCount() == 4 );
+        CHECK( ctx.data.VolatileDataAtSortPosition(0).highlight.unpack() == Ranges{{{0, 3}, {11, 2}}, 2} ); // "Calculator.app"
+        CHECK( ctx.data.VolatileDataAtSortPosition(1).highlight.unpack() == Ranges{{{0, 3}, {9, 2}}, 2} ); // "Calendar.app"
+        CHECK( ctx.data.VolatileDataAtSortPosition(2).highlight.unpack() == Ranges{{{0, 1}, {8, 1}, {13, 1}, {18, 2}}, 4} ); // "Counterparts Lite.app"
+        CHECK( ctx.data.VolatileDataAtSortPosition(3).highlight.unpack() == Ranges{{{0, 1}, {2, 1}, {6, 2}, {11, 1}}, 4} ); // "CrashPlan.app"
+    }
+    SECTION("calap, Beginning") {
+        filter(@"calap", Where::Beginning);
+        REQUIRE( ctx.data.SortedEntriesCount() == 0 );
+    }
+    SECTION("calap, Ending") {
+        filter(@"calap", Where::Ending);
+        REQUIRE( ctx.data.SortedEntriesCount() == 0 );
+    }
+    SECTION("calap, BeginningOrEnding") {
+        filter(@"calap", Where::BeginningOrEnding);
+        REQUIRE( ctx.data.SortedEntriesCount() == 0 );
+    }
 }
 
 TEST_CASE("basic soft filtering")

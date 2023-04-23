@@ -29,6 +29,8 @@
 		CF46525D2699F9830085840A /* PanelViewFieldEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */; };
 		CF465284269A4C150085840A /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF465283269A4C150085840A /* libOperations.a */; };
 		CF739C3D295644CD004758C5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF739C3B295644CD004758C5 /* Localizable.strings */; };
+		CF96DC7629CF4610003EC4EB /* ItemVolatileData_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */; };
+		CF96DC7829E7099A003EC4EB /* PanelDataFilter_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */; };
 		CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFA89D812804C86E00BEA127 /* FindFilesData.h */; };
 		CFA89D842804C87700BEA127 /* FindFilesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA89D832804C87700BEA127 /* FindFilesData.cpp */; };
 		CFA89DA22814794000BEA127 /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA89DA12814794000BEA127 /* TextWidthsCache.mm */; };
@@ -108,6 +110,8 @@
 		CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFieldEditor.mm; path = source/PanelViewFieldEditor.mm; sourceTree = "<group>"; };
 		CF465283269A4C150085840A /* libOperations.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOperations.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF739C3C295644CD004758C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ItemVolatileData_UT.mm; path = tests/ItemVolatileData_UT.mm; sourceTree = "<group>"; };
+		CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataFilter_UT.mm; path = tests/PanelDataFilter_UT.mm; sourceTree = "<group>"; };
 		CFA89D812804C86E00BEA127 /* FindFilesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FindFilesData.h; path = include/Panel/FindFilesData.h; sourceTree = "<group>"; };
 		CFA89D832804C87700BEA127 /* FindFilesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FindFilesData.cpp; path = source/FindFilesData.cpp; sourceTree = "<group>"; };
 		CFA89DA02814793600BEA127 /* TextWidthsCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TextWidthsCache.h; path = include/Panel/TextWidthsCache.h; sourceTree = "<group>"; };
@@ -287,9 +291,11 @@
 		CFF33FEF25569DBE00B3C92C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF22060827B9B73C008EDE3A /* ExternalTools_UT.mm */,
 				CF349B0D25FCAE9B009735DC /* Comparators_UT.mm */,
+				CF22060827B9B73C008EDE3A /* ExternalTools_UT.mm */,
+				CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */,
 				CFF3401525569EC600B3C92C /* PanelData_UT.mm */,
+				CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */,
 				CF3ED50825860E1000D67AF2 /* QuickSearch_UT.mm */,
 				CFF33FF025569DF200B3C92C /* Tests.cpp */,
 				CFF33FF125569DF200B3C92C /* Tests.h */,
@@ -486,9 +492,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF96DC7829E7099A003EC4EB /* PanelDataFilter_UT.mm in Sources */,
 				CF22060927B9B73C008EDE3A /* ExternalTools_UT.mm in Sources */,
 				CF349B1125FCAEA1009735DC /* Comparators_UT.mm in Sources */,
 				CF3ED50925860E1000D67AF2 /* QuickSearch_UT.mm in Sources */,
+				CF96DC7629CF4610003EC4EB /* ItemVolatileData_UT.mm in Sources */,
 				CFF3401625569EC600B3C92C /* PanelData_UT.mm in Sources */,
 				CFF33FF225569DF300B3C92C /* Tests.cpp in Sources */,
 			);

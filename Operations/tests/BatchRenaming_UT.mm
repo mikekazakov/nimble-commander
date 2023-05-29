@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "TestEnv.h"
@@ -369,6 +369,29 @@ TEST_CASE(PREFIX "Text extraction")
     }
 }
 
+TEST_CASE(PREFIX "DecomposeMaskIntoPlaceholders")
+{
+    using MD = BatchRenamingScheme::MaskDecomposition;
+    struct TC {
+        NSString *input;
+        std::optional<std::vector<MD>> expected;
+    } tcs [] = {
+        { @"", std::vector<MD>{} },
+        { @"[", std::nullopt },
+        { @"]", std::nullopt },
+        { @"a", std::vector<MD>{ {@"a", false} } },
+        { @"[[", std::vector<MD>{ {@"[", false} } },
+        { @"[[[[", std::vector<MD>{ {@"[[", false} } },
+        { @"]]", std::vector<MD>{ {@"]", false} } },
+        { @"]]]]", std::vector<MD>{ {@"]]", false} } },
+        { @"[[[[]]]]", std::vector<MD>{ {@"[[]]", false} } },
+    };
+    for( const auto &tc: tcs ) {
+        auto decomposed = BatchRenamingScheme::DecomposeMaskIntoPlaceholders(tc.input);
+        CHECK( decomposed == tc.expected  );
+    }
+}
+
 TEST_CASE(PREFIX "Renaming - simple cases")
 {
     TempTestDir tmp_dir;
@@ -406,6 +429,10 @@ TEST_CASE(PREFIX "Renaming - simple cases")
         // E - grandparent filename
         {@"[G]", true, @"grandparent_dir" },
         {@"[G1-5]", true, @"grand" },
+        // Escaping
+        {@"[[", true, @"[" },
+        {@"]]", true, @"]" },
+        {@"[N][[1]]", true, @"filename[1]" },
     };
     
     const BatchRenamingScheme::FileInfo file_info(item);

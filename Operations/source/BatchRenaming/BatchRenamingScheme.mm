@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingScheme.h"
 #include <Utility/StringExtras.h>
 
@@ -7,53 +7,81 @@ namespace nc::ops {
 std::optional<std::vector<BatchRenamingScheme::MaskDecomposition>>
 BatchRenamingScheme::DecomposeMaskIntoPlaceholders(NSString *_mask)
 {
+    static NSString *escaped_open_br = [NSString stringWithFormat:@"%C", 0xE001];
+    static NSString *escaped_closed_br = [NSString stringWithFormat:@"%C", 0xE002];
     static NSCharacterSet *open_br = [NSCharacterSet characterSetWithCharactersInString:@"["];
     static NSCharacterSet *close_br = [NSCharacterSet characterSetWithCharactersInString:@"]"];
+
     assert(_mask != nil);
+    NSString *mask = _mask;
+    if( [mask containsString:@"[["] || [mask containsString:@"]]"] ) {
+        // Escape double brackets by converting them into private characters.
+        // Thats's rather brute-force and stupid, but since the masks are normally very short it shouldn't be a problem
+        NSMutableString *tmp = [[NSMutableString alloc] initWithString:mask];
+        [tmp replaceOccurrencesOfString:@"[["
+                             withString:escaped_open_br
+                                options:NSLiteralSearch
+                                  range:NSMakeRange(0, tmp.length)];
+        [tmp replaceOccurrencesOfString:@"]]"
+                             withString:escaped_closed_br
+                                options:NSLiteralSearch
+                                  range:NSMakeRange(0, tmp.length)];
+        mask = tmp;
+    }
 
     std::vector<BatchRenamingScheme::MaskDecomposition> result;
-    auto length = _mask.length;
+    auto length = mask.length;
     auto range = NSMakeRange(0, length);
     while( range.length > 0 ) {
-
-        auto open_r = [_mask rangeOfCharacterFromSet:open_br options:0 range:range];
+        auto open_r = [mask rangeOfCharacterFromSet:open_br options:0 range:range];
         if( open_r.location == range.location ) {
             // this part starts with placeholder
-            auto close_r =
-                [_mask rangeOfCharacterFromSet:close_br
-                                       options:0
-                                         range:NSMakeRange(range.location + 1, range.length - 1)];
+            auto close_r = [mask rangeOfCharacterFromSet:close_br
+                                                 options:0
+                                                   range:NSMakeRange(range.location + 1, range.length - 1)];
             if( close_r.location == NSNotFound )
                 return std::nullopt; // invalid mask
-            while( close_r.location < length - 1 &&
-                   [_mask characterAtIndex:close_r.location + 1] == ']' )
+            while( close_r.location < length - 1 && [mask characterAtIndex:close_r.location + 1] == ']' )
                 close_r.location++;
 
             auto l = close_r.location - (open_r.location + 1);
-            result.emplace_back([_mask substringWithRange:NSMakeRange(open_r.location + 1, l)],
-                                true);
+            result.emplace_back([mask substringWithRange:NSMakeRange(open_r.location + 1, l)], true);
 
             range.location += l + 2;
             range.length -= l + 2;
         }
         else if( open_r.location == NSNotFound ) {
-            // have have no more placeholders
-            auto close_r = [_mask rangeOfCharacterFromSet:close_br options:0 range:range];
+            // have no more placeholders
+            auto close_r = [mask rangeOfCharacterFromSet:close_br options:0 range:range];
             if( close_r.location != NSNotFound )
                 return std::nullopt; // invalid mask
-            result.emplace_back([_mask substringWithRange:range], false);
+            result.emplace_back([mask substringWithRange:range], false);
             break;
         }
         else {
             // we have placeholder somewhere further
-            auto close_r = [_mask rangeOfCharacterFromSet:close_br options:0 range:range];
+            auto close_r = [mask rangeOfCharacterFromSet:close_br options:0 range:range];
             if( close_r.location == NSNotFound || close_r.location < open_r.location )
                 return std::nullopt; // invalid mask
             auto l = open_r.location - range.location;
-            result.emplace_back([_mask substringWithRange:NSMakeRange(range.location, l)], false);
+            result.emplace_back([mask substringWithRange:NSMakeRange(range.location, l)], false);
             range.location += l;
             range.length -= l;
         }
+    }
+
+    // Convert the private characters back into square brackets
+    for( auto &part : result ) {
+        if( [part.string containsString:escaped_open_br] )
+            part.string = [part.string stringByReplacingOccurrencesOfString:escaped_open_br
+                                                                 withString:@"["
+                                                                    options:NSLiteralSearch
+                                                                      range:NSMakeRange(0, part.string.length)];
+        if( [part.string containsString:escaped_closed_br] )
+            part.string = [part.string stringByReplacingOccurrencesOfString:escaped_closed_br
+                                                                 withString:@"]"
+                                                                    options:NSLiteralSearch
+                                                                      range:NSMakeRange(0, part.string.length)];
     }
 
     return result;
@@ -67,7 +95,7 @@ bool BatchRenamingScheme::BuildActionsScript(NSString *_mask)
     auto opt_decomposition = DecomposeMaskIntoPlaceholders(_mask);
     if( !opt_decomposition )
         return false;
-    auto decomposition = move(*opt_decomposition);
+    auto decomposition = std::move(*opt_decomposition);
 
     bool ok = true;
 
@@ -225,8 +253,7 @@ bool BatchRenamingScheme::ParsePlaceholder(NSString *_ph)
 }
 
 // parsed short -> characters consumed
-static std::optional<std::pair<unsigned short, short>> EatUShort(NSString *s,
-                                                                 const unsigned long pos)
+static std::optional<std::pair<unsigned short, short>> EatUShort(NSString *s, const unsigned long pos)
 {
     const auto l = s.length;
     if( pos == l )
@@ -283,8 +310,7 @@ static std::optional<std::pair<int, short>> EatInt(NSString *s, const unsigned l
     return std::make_pair(r * (minus ? -1 : 1), short(n));
 }
 
-static std::optional<std::pair<int, short>>
-EatIntWithPreffix(NSString *s, const unsigned long pos, char prefix)
+static std::optional<std::pair<int, short>> EatIntWithPreffix(NSString *s, const unsigned long pos, char prefix)
 {
     const auto l = s.length;
     auto n = 0;
@@ -310,7 +336,7 @@ EatIntWithPreffix(NSString *s, const unsigned long pos, char prefix)
 // characters starting at character 2 [N2-] All characters starting at character 2 [N02-9]
 // Characters 2-9, fill from left with zeroes if name shorter than requested (8 in this example):
 // "abc" -> "000000bc" [N 2-9] Characters 2-9, fill from left with spaces if name shorter than
-//requested (8 in this example): "abc" -> "      bc" [N-8,5] 5 characters starting at the 8-last
+// requested (8 in this example): "abc" -> "      bc" [N-8,5] 5 characters starting at the 8-last
 // character (counted from the end of the name) [N-8-5] Characters from the 8th-last to the 5th-last
 // character [N-5-] Characters from the 5th-last character to the end of the name [N2--5] Characters
 // from the 2nd to the 5th-last character
@@ -374,8 +400,7 @@ BatchRenamingScheme::ParsePlaceholder_TextExtraction(NSString *_ph, unsigned lon
                     n += num_if->second;
                     ins.zero_flag = zero_flag;
                     ins.space_flag = space_flag;
-                    ins.direct_range =
-                        Range(first_num, second_num >= first_num ? second_num - first_num + 1 : 0);
+                    ins.direct_range = Range(first_num, second_num >= first_num ? second_num - first_num + 1 : 0);
                 }
                 else {                    // [N5-
                     if( _pos + n == l ) { // [N5-]
@@ -443,8 +468,7 @@ BatchRenamingScheme::ParsePlaceholder_TextExtraction(NSString *_ph, unsigned lon
                         return std::nullopt;
                     second_num--;
                     n += num_if->second;
-                    ins.reverse_range =
-                        Range(first_num, second_num <= first_num ? first_num - second_num + 1 : 0);
+                    ins.reverse_range = Range(first_num, second_num <= first_num ? first_num - second_num + 1 : 0);
                 }
                 return std::make_pair(ins, n);
             }
@@ -536,15 +560,13 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
 
         auto res = sr.intersection(rr);
         auto str = [_from substringWithRange:res.toNSRange()];
-        if( (_te.zero_flag || _te.space_flag) && rr.length != Range::max_length() &&
-            str.length < rr.length ) {
+        if( (_te.zero_flag || _te.space_flag) && rr.length != Range::max_length() && str.length < rr.length ) {
             auto insufficient = rr.length - str.length;
             if( insufficient > 300 )
                 insufficient = 300;
 
-            auto padding =
-                [@"" stringByPaddingToLength:insufficient
-                                  withString:(_te.zero_flag ? @"0" : @" ")startingAtIndex:0];
+            auto padding = [@"" stringByPaddingToLength:insufficient
+                                             withString:(_te.zero_flag ? @"0" : @" ")startingAtIndex:0];
             return [padding stringByAppendingString:str];
         }
         else {
@@ -573,8 +595,7 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
         if( start > end )
             return @"";
 
-        auto res =
-            Range(static_cast<unsigned short>(start), static_cast<unsigned short>(end - start + 1));
+        auto res = Range(static_cast<unsigned short>(start), static_cast<unsigned short>(end - start + 1));
         return [_from substringWithRange:res.toNSRange()];
     }
 
@@ -609,10 +630,7 @@ void BatchRenamingScheme::SetReplacingOptions(NSString *_search_for,
     m_SearchReplace.use_regexp = _use_regexp;
 }
 
-void BatchRenamingScheme::SetDefaultCounter(long _start,
-                                            long _step,
-                                            unsigned _stripe,
-                                            unsigned _width)
+void BatchRenamingScheme::SetDefaultCounter(long _start, long _step, unsigned _stripe, unsigned _width)
 {
     m_DefaultCounter.start = _start;
     m_DefaultCounter.step = _step;
@@ -640,8 +658,7 @@ static inline NSString *StringByTransform(NSString *_s, BatchRenamingScheme::Cas
     };
 }
 
-static NSString *
-StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransform _ct, bool _apply_to_ext)
+static NSString *StringByTransform(NSString *_s, BatchRenamingScheme::CaseTransform _ct, bool _apply_to_ext)
 {
     if( _apply_to_ext )
         return StringByTransform(_s, _ct);
@@ -722,20 +739,10 @@ static NSString *FormatDate(time_t _t)
         return fmt;
     }();
 
-    NSMutableString *str =
-        [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_t]].mutableCopy;
-    [str replaceOccurrencesOfString:@"/"
-                         withString:@"-"
-                            options:0
-                              range:NSMakeRange(0, str.length)];
-    [str replaceOccurrencesOfString:@"\\"
-                         withString:@"-"
-                            options:0
-                              range:NSMakeRange(0, str.length)];
-    [str replaceOccurrencesOfString:@":"
-                         withString:@"-"
-                            options:0
-                              range:NSMakeRange(0, str.length)];
+    NSMutableString *str = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_t]].mutableCopy;
+    [str replaceOccurrencesOfString:@"/" withString:@"-" options:0 range:NSMakeRange(0, str.length)];
+    [str replaceOccurrencesOfString:@"\\" withString:@"-" options:0 range:NSMakeRange(0, str.length)];
+    [str replaceOccurrencesOfString:@":" withString:@"-" options:0 range:NSMakeRange(0, str.length)];
     return str;
 }
 
@@ -748,20 +755,10 @@ static NSString *FormatTime(time_t _t)
         return fmt;
     }();
 
-    NSMutableString *str =
-        [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_t]].mutableCopy;
-    [str replaceOccurrencesOfString:@"/"
-                         withString:@"."
-                            options:0
-                              range:NSMakeRange(0, str.length)];
-    [str replaceOccurrencesOfString:@"\\"
-                         withString:@"."
-                            options:0
-                              range:NSMakeRange(0, str.length)];
-    [str replaceOccurrencesOfString:@":"
-                         withString:@"."
-                            options:0
-                              range:NSMakeRange(0, str.length)];
+    NSMutableString *str = [formatter stringFromDate:[NSDate dateWithTimeIntervalSince1970:_t]].mutableCopy;
+    [str replaceOccurrencesOfString:@"/" withString:@"." options:0 range:NSMakeRange(0, str.length)];
+    [str replaceOccurrencesOfString:@"\\" withString:@"." options:0 range:NSMakeRange(0, str.length)];
+    [str replaceOccurrencesOfString:@":" withString:@"." options:0 range:NSMakeRange(0, str.length)];
     return str;
 }
 
@@ -781,8 +778,7 @@ NSString *BatchRenamingScheme::DoSearchReplace(const ReplaceOptions &_opts, NSSt
     if( !_opts.search_in_ext ) {
         static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
         auto r = [_source rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
-        bool has_ext =
-            (r.location != NSNotFound && r.location != 0 && r.location != _source.length - 1);
+        bool has_ext = (r.location != NSNotFound && r.location != 0 && r.location != _source.length - 1);
         if( has_ext )
             range = NSMakeRange(0, r.location);
     }
@@ -930,8 +926,7 @@ NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
     }
 
     NSString *after_replacing = DoSearchReplace(m_SearchReplace, str);
-    NSString *after_case_trans =
-        StringByTransform(after_replacing, m_CaseTransform, m_CaseTransformWithExt);
+    NSString *after_case_trans = StringByTransform(after_replacing, m_CaseTransform, m_CaseTransformWithExt);
     return after_case_trans;
 }
 
@@ -971,7 +966,7 @@ NSString *BatchRenamingScheme::FileInfo::GrandparentFilename() const
             return @""; // wtf?
         parent_path = parent_path.parent_path();
     }
-    parent_path = parent_path.parent_path();    
+    parent_path = parent_path.parent_path();
     return [NSString stringWithUTF8StdString:parent_path.filename().native()];
 }
 

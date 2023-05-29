@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -43,6 +43,12 @@ public:
         bool is_placeholder = false;
 
         MaskDecomposition(NSString *_s, bool _b) : string(_s), is_placeholder(_b) {}
+        bool operator==(const MaskDecomposition& _rhs) const noexcept{
+            return [string isEqualToString:_rhs.string] && is_placeholder == _rhs.is_placeholder;
+        }
+        bool operator!=(const MaskDecomposition& _rhs) const noexcept {
+            return !(*this == _rhs);
+        }
     };
 
     struct FileInfo {

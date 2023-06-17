@@ -18,6 +18,7 @@
 #import "GTMHotKeyTextField.h"
 #import <Carbon/Carbon.h>
 #include <vector>
+#include <Utility/ObjCpp.h>
 
 struct KeycodesHardcode {
     uint32_t keycode;
@@ -187,77 +188,26 @@ struct KeycodesHardcode {
 }
 
 @synthesize menuHotKey = m_MenuHotkey;
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    if( self = [super initWithCoder:aDecoder] ) {
-        m_MenuHotkey = true;
-    }
-    return self;
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    GTMHotKeyTextFieldCell *copy = [super copyWithZone:zone];
-    copy->hotKey_ = nil;
-    [copy setObjectValue:[self objectValue]];
-    return copy;
-}
-
-- (id)objectValue
-{
-    return hotKey_;
-}
+@synthesize hotKey = hotKey_;
 
 - (NSTextView *)fieldEditorForView:(NSView *) [[maybe_unused]] aControlView
 {
-    if( m_FieldEditor == nil )
+    if( m_FieldEditor == nil ) {
         m_FieldEditor = [GTMHotKeyFieldEditor new];
-    [m_FieldEditor setCell:self];
+        [m_FieldEditor setCell:self];
+    }
     return m_FieldEditor;
 }
 
-- (void)setObjectValue:(id)object
+- (void)setHotKey:(GTMHotKey*)_hk
 {
-    // Sanity only if set, nil is OK
-    if( object && ![object isKindOfClass:GTMHotKey.class] ) {
-        return;
-    }
-    if( ![hotKey_ isEqual:object] ) {
-        // Otherwise we directly update ourself
-        hotKey_ = [object copy];
-        [self updateDisplayedPrettyString];
-    }
+    hotKey_ = [_hk copy];
+    [self updateDisplayedPrettyString];
 }
 
-- (NSString *)stringValue
+- (GTMHotKey*)hotKey
 {
-    NSString *value = [GTMHotKeyTextFieldCell displayStringForHotKey:hotKey_];
-    return value ? value : @"";
-}
-
-- (void)setStringValue:(NSString *) [[maybe_unused]] string
-{
-}
-
-- (NSAttributedString *)attributedStringValue
-{
-    if( NSString *prettyString = self.stringValue )
-        return [[NSAttributedString alloc] initWithString:prettyString];
-    return nil;
-}
-
-- (void)setAttributedStringValue:(NSAttributedString *) [[maybe_unused]] string
-{
-}
-
-- (id)formatter
-{
-    return nil;
-}
-
-- (void)setFormatter:(NSFormatter *) [[maybe_unused]] newFormatter
-{
+    return hotKey_;
 }
 
 // Private method to update the displayed text of the field with the
@@ -266,7 +216,7 @@ struct KeycodesHardcode {
 {
     // Pretty string
     NSString *prettyString = [GTMHotKeyTextFieldCell displayStringForHotKey:hotKey_];
-    [super setObjectValue:prettyString ? prettyString : @"'"];
+    self.stringValue = prettyString ? prettyString : @"'";
 }
 
 + (NSString *)displayStringForHotKey:(GTMHotKey *)hotKey
@@ -521,7 +471,7 @@ struct KeycodesHardcode {
 
 - (void)OnClearButton:(id) [[maybe_unused]] sender
 {
-    [self.cell setObjectValue:GTMHotKey.emptyHotKey];
+    self.cell.hotKey = GTMHotKey.emptyHotKey;
     [self didChangeText];
     [self.window makeFirstResponder:nil];
 }
@@ -529,7 +479,7 @@ struct KeycodesHardcode {
 - (void)OnRevertButton:(id) [[maybe_unused]] sender
 {
     if( self.cell.defaultHotKey ) {
-        [self.cell setObjectValue:self.cell.defaultHotKey];
+        self.cell.hotKey = self.cell.defaultHotKey;
         [self didChangeText];
         [self.window makeFirstResponder:nil];
     }
@@ -645,7 +595,7 @@ struct KeycodesHardcode {
         return;
     }
 
-    [self.cell setObjectValue:newHotKey];
+    self.cell.hotKey = newHotKey;
 
     // Finish the change
     [self didChangeText];

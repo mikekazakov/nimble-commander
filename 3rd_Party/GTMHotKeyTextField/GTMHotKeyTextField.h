@@ -80,8 +80,9 @@
 
 - (BOOL)doesKeyCodeRequireModifier:(UInt16)keycode;
 
-@property (readwrite, nonatomic) bool menuHotKey;
+@property (readwrite, nonatomic) GTMHotKey* hotKey;
 @property (strong, nonatomic) GTMHotKey *defaultHotKey;
+@property (readwrite, nonatomic) bool menuHotKey;
 
 @end
 

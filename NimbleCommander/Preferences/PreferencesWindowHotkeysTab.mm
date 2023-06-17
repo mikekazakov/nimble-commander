@@ -311,7 +311,7 @@ static NSImageView *SpawnCautionSign()
                 key_text_field.tag = node->tag.second;
 
                 const auto field_cell = nc::objc_cast<GTMHotKeyTextFieldCell>(key_text_field.cell);
-                field_cell.objectValue = [GTMHotKey hotKeyWithKey:node->current_shortcut.Key()
+                field_cell.hotKey = [GTMHotKey hotKeyWithKey:node->current_shortcut.Key()
                                                         modifiers:node->current_shortcut.modifiers];
                 field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:node->default_shortcut.Key()
                                                           modifiers:node->default_shortcut.modifiers];
@@ -341,7 +341,7 @@ static NSImageView *SpawnCautionSign()
                 key_text_field.tag = node->tool_index;
 
                 const auto field_cell = nc::objc_cast<GTMHotKeyTextFieldCell>(key_text_field.cell);
-                field_cell.objectValue = [GTMHotKey hotKeyWithKey:tool.m_Shorcut.Key()
+                field_cell.hotKey = [GTMHotKey hotKeyWithKey:tool.m_Shorcut.Key()
                                                         modifiers:tool.m_Shorcut.modifiers];
                 field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:tool.m_Shorcut.Key()
                                                           modifiers:tool.m_Shorcut.modifiers];
@@ -368,7 +368,7 @@ static NSImageView *SpawnCautionSign()
 - (IBAction)onToolHKChanged:(id)sender
 {
     if( auto tf = nc::objc_cast<GTMHotKeyTextField>(sender) ) {
-        if( auto gtm_hk = nc::objc_cast<GTMHotKey>(tf.cell.objectValue) ) {
+        if( auto gtm_hk = nc::objc_cast<GTMHotKeyTextFieldCell>(tf.cell).hotKey ) {
             const auto tool_index = tf.tag;
             const auto hk = [self shortcutFromGTMHotKey:gtm_hk];
             if( tool_index < static_cast<long>(m_Tools.size()) ) {
@@ -387,7 +387,7 @@ static NSImageView *SpawnCautionSign()
 {
     auto &am = ActionsShortcutsManager::Instance();
     if( auto tf = nc::objc_cast<GTMHotKeyTextField>(sender) )
-        if( auto gtm_hk = nc::objc_cast<GTMHotKey>(tf.cell.objectValue) ) {
+        if( auto gtm_hk = nc::objc_cast<GTMHotKeyTextFieldCell>(tf.cell).hotKey ) {
             auto tag = int(tf.tag);
             auto hk = [self shortcutFromGTMHotKey:gtm_hk];
             auto action = am.ActionFromTag(tag);

@@ -30,6 +30,10 @@ struct QueuedAtomicHolder {
     QueuedAtomicHolder();
     QueuedAtomicHolder(T _value);
     bool wait_to_become(std::chrono::nanoseconds _timeout, const T &_new_value);
+    bool wait_to_become_with_runloop(std::chrono::nanoseconds _timeout,
+                                     std::chrono::nanoseconds _slice,
+                                     const T &_new_value,
+                                     bool _dump_on_fail = false);
     void store(const T &_new_value);
     T load() const;
     void strict(bool _strict);
@@ -120,6 +124,28 @@ bool QueuedAtomicHolder<T>::wait_to_become(std::chrono::nanoseconds _timeout, co
         return false;
     };
     return m_CondVar.wait_for(lock, _timeout, pred);
+}
+
+template <class T>
+bool QueuedAtomicHolder<T>::wait_to_become_with_runloop(std::chrono::nanoseconds _timeout,
+                                 std::chrono::nanoseconds _slice,
+                                 const T &_new_value,
+                                 bool _dump_on_fail)
+{
+    const auto deadline = machtime() + _timeout;
+    do
+    {
+        if( wait_to_become(_slice, _new_value) )
+            return true;
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(),
+                           false);
+    } while( deadline > machtime() );
+    
+    if( _dump_on_fail ) {
+        auto lg = std::lock_guard{m_Mutex};
+        std::cerr << m_Value << std::endl;
+    }
+    return false;
 }
 
 template <class T>

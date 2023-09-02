@@ -487,7 +487,7 @@ ScreenBuffer::DecomposeContinuousLines(const std::vector<std::vector<Space>> &_s
             else {
                 std::get<0>(t).assign(begin(l) + i, end(l));
             }
-            result.emplace_back(move(t));
+            result.emplace_back(std::move(t));
         }
     }
     return result;

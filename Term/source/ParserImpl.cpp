@@ -8,6 +8,7 @@
 #include <charconv>
 
 #include <iostream>
+#include <algorithm>
 
 namespace nc::term {
 

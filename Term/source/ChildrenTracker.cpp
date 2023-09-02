@@ -5,6 +5,7 @@
 #include <vector>
 #include <array>
 #include <span>
+#include <algorithm>
 
 #include <boost/container/pmr/vector.hpp>                    // TODO: remove as soon as libc++ gets pmr!!!
 #include <boost/container/pmr/monotonic_buffer_resource.hpp> // TODO: remove as soon as libc++ gets pmr!!!

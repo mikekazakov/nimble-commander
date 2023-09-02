@@ -1027,7 +1027,7 @@ void ShellTask::SetOnStateChange(OnStateChange _callback)
 {
     auto callback = to_shared_ptr(std::move(_callback));
     I->callback_lock.lock();
-    I->on_state_changed = move(callback);
+    I->on_state_changed = std::move(callback);
     I->callback_lock.unlock();
 }
 

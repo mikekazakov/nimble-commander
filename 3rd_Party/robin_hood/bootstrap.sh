@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/rh.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b 3.9.1 --single-branch https://github.com/martinus/robin-hood-hashing.git
+git clone -b 3.11.5 --single-branch https://github.com/martinus/robin-hood-hashing.git
 
 cd ..
 

@@ -118,6 +118,13 @@ static const CharacterSetDesignation &as_character_set_designation(const Command
     throw std::invalid_argument("not CharacterSetDesignation");
 }
 
+static const CursorStyle &as_cursor_style(const Command &_command)
+{
+    if( auto ptr = std::get_if<CursorStyle>(&_command.payload) )
+        return *ptr;
+    throw std::invalid_argument("not CursorStyle");
+}
+
 TEST_CASE(PREFIX "Parsing empty data returns nothing")
 {
     ParserImpl parser;
@@ -1636,6 +1643,68 @@ TEST_CASE(PREFIX "CSI n")
         auto r = parser.Parse(to_bytes("\x1B"
                                        "[0n"));
         REQUIRE(r.size() == 0);
+    }
+    CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
+}
+
+TEST_CASE(PREFIX "CSI Ps SP q")
+{
+    ParserImpl parser;
+    SECTION("ESC SP q")
+    {
+        auto r = parser.Parse(to_bytes("\x1B[ q"));
+        REQUIRE(r.size() == 1);
+        CHECK(r[0].type == Type::set_cursor_style);
+        CHECK(as_cursor_style(r[0]).style == std::nullopt);
+    }
+    SECTION("ESC 0 SP q")
+    {
+        auto r = parser.Parse(to_bytes("\x1B[0 q"));
+        REQUIRE(r.size() == 1);
+        CHECK(r[0].type == Type::set_cursor_style);
+        CHECK(as_cursor_style(r[0]).style == std::nullopt);
+    }
+    SECTION("ESC 1 SP q")
+    {
+        auto r = parser.Parse(to_bytes("\x1B[1 q"));
+        REQUIRE(r.size() == 1);
+        CHECK(r[0].type == Type::set_cursor_style);
+        CHECK(as_cursor_style(r[0]).style == CursorMode::BlinkingBlock);
+    }
+    SECTION("ESC 2 SP q")
+    {
+        auto r = parser.Parse(to_bytes("\x1B[2 q"));
+        REQUIRE(r.size() == 1);
+        CHECK(r[0].type == Type::set_cursor_style);
+        CHECK(as_cursor_style(r[0]).style == CursorMode::SteadyBlock);
+    }
+    SECTION("ESC 3 SP q")
+    {
+        auto r = parser.Parse(to_bytes("\x1B[3 q"));
+        REQUIRE(r.size() == 1);
+        CHECK(r[0].type == Type::set_cursor_style);
+        CHECK(as_cursor_style(r[0]).style == CursorMode::BlinkingUnderline);
+    }
+    SECTION("ESC 4 SP q")
+    {
+        auto r = parser.Parse(to_bytes("\x1B[4 q"));
+        REQUIRE(r.size() == 1);
+        CHECK(r[0].type == Type::set_cursor_style);
+        CHECK(as_cursor_style(r[0]).style == CursorMode::SteadyUnderline);
+    }
+    SECTION("ESC 5 SP q")
+    {
+        auto r = parser.Parse(to_bytes("\x1B[5 q"));
+        REQUIRE(r.size() == 1);
+        CHECK(r[0].type == Type::set_cursor_style);
+        CHECK(as_cursor_style(r[0]).style == CursorMode::BlinkingBar);
+    }
+    SECTION("ESC 6 SP q")
+    {
+        auto r = parser.Parse(to_bytes("\x1B[6 q"));
+        REQUIRE(r.size() == 1);
+        CHECK(r[0].type == Type::set_cursor_style);
+        CHECK(as_cursor_style(r[0]).style == CursorMode::SteadyBar);
     }
     CHECK(parser.GetEscState() == ParserImpl::EscState::Text);
 }

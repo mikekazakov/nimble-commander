@@ -27,6 +27,7 @@ public:
     void NotifyScreenResized() override;
     bool ShowCursor() override;
     void SetShowCursorChanged(ShownCursorChanged _on_show_cursor_changed) override;
+    void SetCursorStyleChanged(CursorStyleChanged _on_cursor_style_changed) override;
     void SetRequstedMouseEventsChanged(RequstedMouseEventsChanged _on_events_changed) override;
 
 private:
@@ -62,6 +63,7 @@ private:
     void ProcessInsertCharacters(unsigned _characters);
     void ProcessChangeTitle(const input::Title &_title);
     void ProcessTitleManipulation(const input::TitleManipulation &_title_manipulation);
+    void ProcessCursorStyle(const input::CursorStyle &_cursor_style);
     void Response(std::string_view _text);
     void UpdateCharacterAttributes();
     void UpdateMouseReporting();
@@ -112,6 +114,7 @@ private:
     Bell m_Bell = [] {};
     TitleChanged m_OnTitleChanged = [](const std::string &, TitleKind) {};
     ShownCursorChanged m_OnShowCursorChanged = [](bool) {};
+    CursorStyleChanged m_OnCursorStyleChanged = [](std::optional<CursorMode>) {};
     RequstedMouseEventsChanged m_OnRequestedMouseEventsChanged = [](RequestedMouseEvents) {};
     InputTranslator *m_InputTranslator = nullptr;
     Extent m_Extent;

@@ -575,3 +575,24 @@ TEST_CASE(PREFIX "Cursor visibility management")
         CHECK(show == true);
     }
 }
+
+TEST_CASE(PREFIX "Cursor style management")
+{
+    using namespace input;
+    Screen screen(2, 2);
+    InterpreterImpl interpreter(screen);
+
+    std::optional<CursorMode> mode;
+    interpreter.SetCursorStyleChanged([&](std::optional<CursorMode> _mode) { mode = _mode; });
+
+    SECTION("none")
+    {
+        interpreter.Interpret(Command(Type::set_cursor_style, CursorStyle{std::nullopt}));
+        CHECK(mode.has_value() == false);
+    }
+    SECTION("SteadyBar")
+    {
+        interpreter.Interpret(Command(Type::set_cursor_style, CursorStyle{CursorMode::SteadyBar}));
+        CHECK(mode == CursorMode::SteadyBar);
+    }
+}

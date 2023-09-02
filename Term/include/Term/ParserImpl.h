@@ -9,42 +9,44 @@ namespace nc::term {
 
 class ParserImpl : public Parser
 {
-public: 
+public:
     using Parser::Bytes;
-    
+
     struct Params {
         std::function<void(std::string_view _error)> error_log;
     };
-    
-    struct CSIParamsScanner;    
-    
-    enum class EscState{
+
+    struct CSIParamsScanner;
+
+    enum class EscState
+    {
         Text = 0,
         Control = 1,
         Esc = 2,
         OSC = 3, // operating system command
         CSI = 4, // control sequence introducer
-        DCS = 5 // dedicate character set
+        DCS = 5  // dedicate character set
     };
 
-    ParserImpl( const Params& _params = {} );
+    ParserImpl(const Params &_params = {});
     ~ParserImpl() override;
-    std::vector<input::Command> Parse( Bytes _to_parse ) override;
-    
+    std::vector<input::Command> Parse(Bytes _to_parse) override;
+
     EscState GetEscState() const noexcept;
+
 private:
     using Me = ParserImpl;
-    
+
     void SwitchTo(EscState _state);
     void Reset();
-    void EatByte( unsigned char _byte );
+    void EatByte(unsigned char _byte);
     void FlushAllText();
     void FlushCompleteText();
-    void ConsumeNextUTF8TextChar( unsigned char _byte );
-    void LogMissedEscChar( unsigned char _c );
-    void LogMissedOSCRequest( unsigned _ps, std::string_view _pt );
-    void LogMissedCSIRequest( std::string_view _request );
-    
+    void ConsumeNextUTF8TextChar(unsigned char _byte);
+    void LogMissedEscChar(unsigned char _c);
+    void LogMissedOSCRequest(unsigned _ps, std::string_view _pt);
+    void LogMissedCSIRequest(std::string_view _request);
+
     void SSTextEnter() noexcept;
     void SSTextExit() noexcept;
     bool SSTextConsume(unsigned char _byte) noexcept;
@@ -68,11 +70,11 @@ private:
     void SSCSIExit() noexcept;
     bool SSCSIConsume(unsigned char _byte) noexcept;
     void SSCSISubmit() noexcept;
-    
+
     void SSDCSEnter() noexcept;
     void SSDCSExit() noexcept;
     bool SSDCSConsume(unsigned char _byte) noexcept;
-    
+
     void LF() noexcept;
     void HT() noexcept;
     void CR() noexcept;
@@ -114,63 +116,63 @@ private:
     void CSI_hl() noexcept;
     void CSI_m() noexcept;
     void CSI_n() noexcept;
+    void CSI_q() noexcept;
     void CSI_r() noexcept;
     void CSI_t() noexcept;
     void CSI_Accent() noexcept;
     void CSI_At() noexcept;
-    
+
     constexpr static struct SubStates {
         void (Me::*enter)() noexcept;
         void (Me::*exit)() noexcept;
-        bool (Me::*consume)(unsigned char _byte) noexcept;    
+        bool (Me::*consume)(unsigned char _byte) noexcept;
     } m_SubStates[6] = {
-        { &Me::SSTextEnter, &Me::SSTextExit, &Me::SSTextConsume },
-        { &Me::SSControlEnter, &Me::SSControlExit, &Me::SSControlConsume },
-        { &Me::SSEscEnter, &Me::SSEscExit, &Me::SSEscConsume },
-        { &Me::SSOSCEnter, &Me::SSOSCExit, &Me::SSOSCConsume },
-        { &Me::SSCSIEnter, &Me::SSCSIExit, &Me::SSCSIConsume },
-        { &Me::SSDCSEnter, &Me::SSDCSExit, &Me::SSDCSConsume },
+        {&Me::SSTextEnter, &Me::SSTextExit, &Me::SSTextConsume},
+        {&Me::SSControlEnter, &Me::SSControlExit, &Me::SSControlConsume},
+        {&Me::SSEscEnter, &Me::SSEscExit, &Me::SSEscConsume},
+        {&Me::SSOSCEnter, &Me::SSOSCExit, &Me::SSOSCConsume},
+        {&Me::SSCSIEnter, &Me::SSCSIExit, &Me::SSCSIConsume},
+        {&Me::SSDCSEnter, &Me::SSDCSExit, &Me::SSDCSConsume},
     };
 
-    EscState                m_SubState = EscState::Text;
-        
+    EscState m_SubState = EscState::Text;
+
     struct SS_Esc {
         bool hash = false;
     } m_EscState;
-    
+
     struct SS_Text {
         static constexpr int UTF8CharsStockSize = 16384;
         int UTF8StockLen = 0;
         std::array<char, UTF8CharsStockSize> UTF8CharsStock;
     } m_TextState;
-    
+
     struct SS_OSC {
         std::string buffer;
-        bool        got_esc = false;
+        bool got_esc = false;
     } m_OSCState;
-    
+
     struct SS_CSI {
         std::string buffer;
     } m_CSIState;
-    
+
     struct SS_DCS {
         std::string buffer;
     } m_DCSState;
-    
+
     // parse output
     std::vector<input::Command> m_Output;
-    
-    std::function<void(std::string_view _error)> m_ErrorLog;    
+
+    std::function<void(std::string_view _error)> m_ErrorLog;
 };
 
-struct ParserImpl::CSIParamsScanner
-{
+struct ParserImpl::CSIParamsScanner {
     static constexpr int MaxParams = 8;
     struct Params {
-        std::array<unsigned, MaxParams> values;
+        std::array<unsigned, MaxParams> values = {};
         int count = 0;
     };
     static Params Parse(std::string_view _csi) noexcept;
 };
 
-}
+} // namespace nc::term

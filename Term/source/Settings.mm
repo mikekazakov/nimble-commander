@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Settings.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
@@ -6,9 +6,7 @@
 
 namespace nc::term {
     
-Settings::~Settings()
-{
-}
+Settings::~Settings() = default;
     
 std::shared_ptr<Settings> DefaultSettings::SharedDefaultSettings()
 {
@@ -133,7 +131,7 @@ int DefaultSettings::MaxFPS() const
 
 enum CursorMode DefaultSettings::CursorMode() const
 {
-    return CursorMode::Block;
+    return CursorMode::BlinkingBlock;
 }
 
 bool DefaultSettings::HideScrollbar() const

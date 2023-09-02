@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ParserImpl.h"
 #include <Utility/Encodings.h>
 #include <Habanero/CFPtr.h>
@@ -717,6 +717,9 @@ void ParserImpl::SSCSISubmit() noexcept
         case 'n':
             CSI_n();
             break;
+        case 'q':
+            CSI_q();
+            break;
         case 'r':
             CSI_r();
             break;
@@ -1091,7 +1094,7 @@ void ParserImpl::CSI_g() noexcept
     }
 }
 
-static std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, bool _dec) noexcept
+static constexpr std::optional<input::ModeChange::Kind> ToModeChange(unsigned _ps_number, bool _dec) noexcept
 {
     using Kind = input::ModeChange::Kind;
     if( _dec ) {
@@ -1412,6 +1415,63 @@ void ParserImpl::CSI_n() noexcept
             dr.mode = input::DeviceReport::CursorPosition;
             m_Output.emplace_back(input::Type::report, dr);
         }
+    }
+}
+
+void ParserImpl::CSI_q() noexcept
+{
+    // CSI > Ps q Report xterm name and version (XTVERSION)
+    // UNSUPPORTED
+
+    // CSI Ps q  Load LEDs (DECLL), VT100.
+    // UNSUPPORTED
+
+    // CSI Ps " q Select character protection attribute (DECSCA), VT220.
+    // UNSUPPORTED
+
+    // CSI # q   Pop video attributes from stack (XTPOPSGR), xterm.
+    // UNSUPPORTED
+
+    // CSI Ps SP q Set cursor style (DECSCUSR), VT520.
+    //  Ps = 0  ⇒  default cursor (reset)
+    //  Ps = 1  ⇒  blinking block.
+    //  Ps = 2  ⇒  steady block.
+    //  Ps = 3  ⇒  blinking underline.
+    //  Ps = 4  ⇒  steady underline.
+    //  Ps = 5  ⇒  blinking bar, xterm.
+    //  Ps = 6  ⇒  steady bar, xterm.
+    std::string_view request = m_CSIState.buffer;
+    const auto p = CSIParamsScanner::Parse(request);
+    const auto is_sp = request.size() >= 2 && request[request.length() - 2] == ' ';
+    if( is_sp ) {
+        const auto mode = p.count == 1 ? p.values[0] : 0u;
+        input::CursorStyle cs;
+        switch( mode ) {
+            case 1:
+                cs.style = CursorMode::BlinkingBlock;
+                break;
+            case 2:
+                cs.style = CursorMode::SteadyBlock;
+                break;
+            case 3:
+                cs.style = CursorMode::BlinkingUnderline;
+                break;
+            case 4:
+                cs.style = CursorMode::SteadyUnderline;
+                break;
+            case 5:
+                cs.style = CursorMode::BlinkingBar;
+                break;
+            case 6:
+                cs.style = CursorMode::SteadyBar;
+                break;
+            default:
+                cs.style = std::nullopt;
+        }
+        m_Output.emplace_back(input::Type::set_cursor_style, cs);
+    }
+    else {
+        LogMissedCSIRequest(m_CSIState.buffer);
     }
 }
 

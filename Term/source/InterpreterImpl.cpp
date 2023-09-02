@@ -6,6 +6,7 @@
 #include <magic_enum.hpp>
 #include "OrthodoxMonospace.h"
 #include "TranslateMaps.h"
+#include "Log.h"
 
 namespace nc::term {
 
@@ -126,8 +127,11 @@ void InterpreterImpl::InterpretSingleCommand(const input::Command &_command)
         case Type::manipulate_title:
             ProcessTitleManipulation(*std::get_if<input::TitleManipulation>(&_command.payload));
             break;
+        case Type::set_cursor_style:
+            ProcessCursorStyle(*std::get_if<input::CursorStyle>(&_command.payload));
+            break;
         default:
-            std::cerr << "Interpreter::InterpretSingleCommand: missed " << magic_enum::enum_name(type) << std::endl;
+            Log::Warn(SPDLOC, "Interpreter::InterpretSingleCommand: missed {}", magic_enum::enum_name(type));
             break;
     }
 }
@@ -440,6 +444,7 @@ void InterpreterImpl::ProcessChangeMode(const input::ModeChange _mode_change)
                 m_OnShowCursorChanged(m_CursorShown);
             }
             break;
+        // TODO: process BlinkingCursor!
         case Kind::SendMouseReportUFT8:
             if( _mode_change.status != m_MouseReportingUTF8 ) {
                 m_MouseReportingUTF8 = _mode_change.status;
@@ -920,6 +925,15 @@ void InterpreterImpl::ProcessTitleManipulation(const input::TitleManipulation &_
     }
 }
 
+void InterpreterImpl::ProcessCursorStyle(const input::CursorStyle &_style)
+{
+    assert(m_OnCursorStyleChanged);
+    if( _style.style )
+        m_OnCursorStyleChanged(*_style.style);
+    else
+        m_OnCursorStyleChanged(std::nullopt);
+}
+
 bool InterpreterImpl::ShowCursor()
 {
     return m_CursorShown;
@@ -929,6 +943,12 @@ void InterpreterImpl::SetShowCursorChanged(ShownCursorChanged _on_show_cursor_ch
 {
     assert(_on_show_cursor_changed);
     m_OnShowCursorChanged = std::move(_on_show_cursor_changed);
+}
+
+void InterpreterImpl::SetCursorStyleChanged(CursorStyleChanged _on_cursor_style_changed)
+{
+    assert(_on_cursor_style_changed);
+    m_OnCursorStyleChanged = std::move(_on_cursor_style_changed);
 }
 
 void InterpreterImpl::SetRequstedMouseEventsChanged(RequstedMouseEventsChanged _on_events_changed)

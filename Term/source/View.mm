@@ -75,7 +75,7 @@ using SelPoint = term::ScreenPoint;
         m_CursorShouldBlink = false;
         m_HasVisibleBlinkingSpaces = false;
         m_SettingsNotificationTicket = 0;
-        m_CursorType = TermViewCursor::Block;
+        m_CursorType = TermViewCursor::BlinkingBlock;
         m_MouseEvents = Interpreter::RequestedMouseEvents::None;
         m_LastMouseCell = {0, 0};
 
@@ -494,11 +494,13 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         if( m_BlinkScheduler.Visible() ) {
             CGContextSetFillColorWithColor(_context, m_Colors.GetSpecialColor(ColorMap::Special::Cursor));
             switch( m_CursorType ) {
-                case TermViewCursor::Block:
+                case CursorMode::BlinkingBlock:
+                case CursorMode::SteadyBlock:
                     CGContextFillRect(_context, NSRectToCGRect(_char_rect));
                     break;
 
-                case TermViewCursor::Underline:
+                case CursorMode::BlinkingUnderline:
+                case CursorMode::SteadyUnderline:
                     CGContextFillRect(_context,
                                       CGRectMake(_char_rect.origin.x,
                                                  _char_rect.origin.y + _char_rect.size.height - 2,
@@ -506,7 +508,8 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
                                                  2));
                     break;
 
-                case TermViewCursor::VerticalBar:
+                case CursorMode::BlinkingBar:
+                case CursorMode::SteadyBar:
                     CGContextFillRect(_context,
                                       CGRectMake(_char_rect.origin.x, _char_rect.origin.y, 1., _char_rect.size.height));
                     break;
@@ -853,6 +856,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 {
     if( m_CursorType != cursorMode ) {
         m_CursorType = cursorMode;
+        [self updateBlinkSheduling];
         self.needsDisplay = true;
     }
 }
@@ -991,7 +995,7 @@ ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
 
 - (void)updateBlinkSheduling
 {
-    const bool cursor_blink = m_AllowCursorBlinking && m_CursorShouldBlink;
+    const bool cursor_blink = m_AllowCursorBlinking && m_CursorShouldBlink && !IsSteady(m_CursorType);
     const bool spaces_blink = m_HasVisibleBlinkingSpaces;
     m_BlinkScheduler.Enable(cursor_blink || spaces_blink);
 }
@@ -1045,7 +1049,7 @@ static constexpr bool LineHasBlinkingCharacters(std::span<const ScreenBuffer::Sp
     return m_MouseEvents;
 }
 
-static InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType _type) noexcept
+static constexpr InputTranslator::MouseEvent::Type NSEventTypeToMouseEventType(NSEventType _type) noexcept
 {
     using MouseEvent = InputTranslator::MouseEvent;
     switch( _type ) {

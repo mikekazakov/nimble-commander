@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <variant>
 #include <string>
@@ -9,6 +9,7 @@
 #include <iostream>
 #include <stdint.h>
 #include "Color.h"
+#include "CursorMode.h"
 
 
 // RTFM:
@@ -78,7 +79,8 @@ enum class Type : uint8_t
     set_tab,                  // set one horizontal stop at the active position.
     set_character_attributes, // payload type - CharacterAttributes
     select_character_set,     // payload type unsigned (0 - G0, 1 - G1, 2 - G2, 3 - G3)
-    designate_character_set   // payload type - CharacterSetDesignation
+    designate_character_set,  // payload type - CharacterSetDesignation
+    set_cursor_style          // payload type - CursorStyle
 };
 
 struct None {
@@ -247,6 +249,11 @@ struct TitleManipulation {
     Operation operation = Save;
 };
 
+struct CursorStyle
+{
+    std::optional<CursorMode> style = std::nullopt;
+};
+
 struct Command {
     using Payload = std::variant<None,
                                  signed,
@@ -262,7 +269,8 @@ struct Command {
                                  TabClear,
                                  CharacterAttributes,
                                  CharacterSetDesignation,
-                                 TitleManipulation>;
+                                 TitleManipulation,
+                                 CursorStyle>;
     Command() noexcept;
     Command(Type _type) noexcept;
     Command(Type _type, Payload _payload) noexcept;

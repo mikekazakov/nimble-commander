@@ -40,7 +40,7 @@ int DispatchGroup::Count() const noexcept
 void DispatchGroup::SetOnDry( std::function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
-        std::make_shared<std::function<void()>>( move(_cb) );
+        std::make_shared<std::function<void()>>( std::move(_cb) );
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnDry = cb;
 }
@@ -48,7 +48,7 @@ void DispatchGroup::SetOnDry( std::function<void()> _cb )
 void DispatchGroup::SetOnWet( std::function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
-        std::make_shared<std::function<void()>>( move(_cb) );
+        std::make_shared<std::function<void()>>( std::move(_cb) );
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnWet = cb;
 }
@@ -56,7 +56,7 @@ void DispatchGroup::SetOnWet( std::function<void()> _cb )
 void DispatchGroup::SetOnChange( std::function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
-        std::make_shared<std::function<void()>>( move(_cb) );
+        std::make_shared<std::function<void()>>( std::move(_cb) );
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnChange = cb;
 }

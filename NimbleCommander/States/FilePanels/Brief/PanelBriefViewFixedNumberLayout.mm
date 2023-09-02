@@ -1,8 +1,9 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewFixedNumberLayout.h"
 #include "PanelBriefViewFixedNumberLayoutEngine.h"
 #include <optional>
 #include <Panel/Log.h>
+#include <algorithm>
 
 using nc::panel::view::brief::FixedNumberLayoutEngine;
 using nc::panel::Log;

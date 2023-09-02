@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/SerialQueue.h>
 
 using namespace std;
@@ -17,7 +17,7 @@ SerialQueue::~SerialQueue()
 void SerialQueue::SetOnDry( function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
-        std::make_shared<std::function<void()>>( move(_cb) );
+        std::make_shared<std::function<void()>>( std::move(_cb) );
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnDry = cb;
 }
@@ -25,7 +25,7 @@ void SerialQueue::SetOnDry( function<void()> _cb )
 void SerialQueue::SetOnWet( function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
-        std::make_shared<std::function<void()>>( move(_cb) );
+        std::make_shared<std::function<void()>>( std::move(_cb) );
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnWet = cb;
 }
@@ -33,7 +33,7 @@ void SerialQueue::SetOnWet( function<void()> _cb )
 void SerialQueue::SetOnChange( function<void()> _cb )
 {
     std::shared_ptr<std::function<void()>> cb =
-        std::make_shared<std::function<void()>>( move(_cb) );
+        std::make_shared<std::function<void()>>( std::move(_cb) );
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnChange = cb;
 }

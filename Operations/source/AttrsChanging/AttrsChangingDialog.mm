@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingDialog.h"
 #include <VFS/VFS.h>
 #include <Habanero/algo.h>
@@ -109,7 +109,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
     if( !self )
         return nil;
 
-    m_Items = move(_items);
+    m_Items = std::move(_items);
     m_ItemsHaveDirectories =
         any_of(begin(m_Items), end(m_Items), [](auto &i) { return i.IsDir(); });
     m_CommonItemsPermissions = ExtractCommonPermissions(m_Items);
@@ -153,7 +153,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
 
 - (IBAction)onOK:(id) [[maybe_unused]] _sender
 {
-    m_Command.items = move(m_Items);
+    m_Command.items = std::move(m_Items);
     m_Command.apply_to_subdirs = m_ProcessSubfolders;
     m_Command.permissions = [self extractPermissionsFromUI];
     m_Command.ownage = [self extractOwnageFromUI];

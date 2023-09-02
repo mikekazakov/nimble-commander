@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
@@ -179,7 +179,7 @@ static NSString *TitleForData(const data::Model *_data);
 {
     assert(_panel_factory);
     if( self = [super initWithFrame:frameRect] ) {
-        m_PanelFactory = move(_panel_factory);
+        m_PanelFactory = std::move(_panel_factory);
         m_ActivationManager = &_activation_manager;
         m_FeedbackManager = &_feedback_manager;
         m_ControllerStateJSONDecoder = &_controller_json_decoder;
@@ -217,7 +217,7 @@ static NSString *TitleForData(const data::Model *_data);
 {
     self = [self initBaseWithFrame:frameRect
                            andPool:_pool
-                      panelFactory:move(_panel_factory)
+                      panelFactory:std::move(_panel_factory)
         controllerStateJSONDecoder:_controller_json_decoder
                     QLPanelAdaptor:_ql_panel_adaptor
                  activationManager:_activation_manager

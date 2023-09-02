@@ -77,7 +77,7 @@ ObservableBase::ObservationTicket ObservableBase::AddObserver( function<void()> 
     auto ticket = m_ObservationTicket++;
     
     Observer o;
-    o.callback = move(_callback);
+    o.callback = std::move(_callback);
     o.ticket = ticket;
     o.mask = _mask;
     
@@ -88,7 +88,7 @@ ObservableBase::ObservationTicket ObservableBase::AddObserver( function<void()> 
             new_observers->reserve( m_Observers->size() + 1 );
             new_observers->assign( m_Observers->begin(), m_Observers->end() );
         }
-        new_observers->emplace_back( to_shared_ptr( move(o) ) );
+        new_observers->emplace_back( to_shared_ptr( std::move(o) ) );
         m_Observers = new_observers;
     }
     

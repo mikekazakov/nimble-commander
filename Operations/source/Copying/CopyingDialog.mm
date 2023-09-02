@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include "../Internal.h"
@@ -23,7 +23,7 @@ static std::string MakeCanonicPath(std::string _input)
         auto sl = _input.rfind('/', pos - 1);
         if( sl != _input.npos ) {
             _input.erase(sl + 1, pos - sl + dotdot.size() - 1);
-            return MakeCanonicPath(move(_input));
+            return MakeCanonicPath(std::move(_input));
         }
     }
 
@@ -31,7 +31,7 @@ static std::string MakeCanonicPath(std::string _input)
     pos = _input.find(dot);
     if( pos != _input.npos ) {
         _input.erase(pos, 2);
-        return MakeCanonicPath(move(_input));
+        return MakeCanonicPath(std::move(_input));
     }
 
     return _input;
@@ -88,7 +88,7 @@ static std::string MakeCanonicPath(std::string _input)
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
         self.allowVerification = false;
-        m_SourceItems = move(_source_items);
+        m_SourceItems = std::move(_source_items);
         m_SourceDirectory = _source_directory;
         m_SourceHost = _source_host;
         m_InitialDestination = _initial_destination;

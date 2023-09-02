@@ -1078,7 +1078,7 @@ struct StateStorage {
             return m_IconRepository->AvailableIconForListingItem(_item);
     }};
 
-    DragSender sender{self.controller, move(icon_producer), *m_NativeHost};
+    DragSender sender{self.controller, std::move(icon_producer), *m_NativeHost};
     sender.Start(self, _event, _sorted_index);
 }
 

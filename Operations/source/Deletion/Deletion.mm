@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Deletion.h"
 #include "DeletionJob.h"
 #include "../Internal.h"
@@ -19,7 +19,7 @@ Deletion::Deletion(std::vector<VFSListingItem> _items, DeletionOptions _options)
     SetTitle(Caption(_items).UTF8String);
     m_LockedItemBehaviour = m_OrigOptions.locked_items_behaviour;
 
-    m_Job.reset(new DeletionJob(move(_items), _options.type));
+    m_Job.reset(new DeletionJob(std::move(_items), _options.type));
     m_Job->m_OnReadDirError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return OnReadDirError(_err, _path, _vfs);
     };

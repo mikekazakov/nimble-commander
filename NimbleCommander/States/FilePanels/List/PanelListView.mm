@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
 #include <Habanero/algo.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -21,6 +21,7 @@
 #include "PanelListViewSizeView.h"
 #include "PanelListViewDateTimeView.h"
 #include "../Helpers/IconRepositoryCleaner.h"
+#include <stack>
 
 using namespace nc;
 using namespace nc::panel;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Delete.h"
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
@@ -51,7 +51,7 @@ void Delete::Perform(PanelController *_target, id) const
 
     auto sheet_handler = ^(NSModalResponse returnCode) {
       if( returnCode == NSModalResponseOK ) {
-          const auto operation = std::make_shared<nc::ops::Deletion>(move(*items), sheet.resultType);
+          const auto operation = std::make_shared<nc::ops::Deletion>(std::move(*items), sheet.resultType);
           AddPanelRefreshEpilog(_target, *operation);
           [_target.mainWindowController enqueueOperation:operation];
       }
@@ -88,7 +88,7 @@ void MoveToTrash::Perform(PanelController *_target, id _sender) const
         return;
     }
 
-    const auto operation = std::make_shared<nc::ops::Deletion>(move(items), nc::ops::DeletionType::Trash);
+    const auto operation = std::make_shared<nc::ops::Deletion>(std::move(items), nc::ops::DeletionType::Trash);
     AddPanelRefreshEpilog(_target, *operation);
     [_target.mainWindowController enqueueOperation:operation];
 }

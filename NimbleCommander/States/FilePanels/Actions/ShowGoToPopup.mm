@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShowGoToPopup.h"
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
@@ -726,7 +726,7 @@ MenuItemBuilder::MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promi
 {
     auto menu_item = [[NSMenuItem alloc] init];
     auto data = std::pair<core::VFSInstanceManager::Promise, std::string>{_promise, _path};
-    menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{move(data)}];
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{std::move(data)}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     auto rep = loc_fmt::VFSPromiseFormatter{}.Render(m_FmtOpts, _promise, _path);

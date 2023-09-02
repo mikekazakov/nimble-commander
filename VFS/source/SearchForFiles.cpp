@@ -81,10 +81,10 @@ bool SearchForFiles::Go(const std::string &_from_path,
 
     assert(!m_Callback);
 
-    m_Callback = move(_found_callback);
-    m_FinishCallback = move(_finish_callback);
-    m_SpawnArchiveCallback = move(_spawn_archive_callback);
-    m_LookingInCallback = move(_looking_in_callback);
+    m_Callback = std::move(_found_callback);
+    m_FinishCallback = std::move(_finish_callback);
+    m_SpawnArchiveCallback = std::move(_spawn_archive_callback);
+    m_LookingInCallback = std::move(_looking_in_callback);
     m_SearchOptions = _options;
     m_DirsFIFO = {};
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionJob.h"
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>
@@ -15,7 +15,7 @@ static bool IsEAStorage(VFSHost &_host,
 
 DeletionJob::DeletionJob(std::vector<VFSListingItem> _items, DeletionType _type)
 {
-    m_SourceItems = move(_items);
+    m_SourceItems = std::move(_items);
     m_Type = _type;
     if( _type == DeletionType::Trash && !all_of(begin(m_SourceItems),
                                                 end(m_SourceItems),

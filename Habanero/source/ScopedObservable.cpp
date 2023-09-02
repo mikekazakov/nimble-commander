@@ -14,8 +14,6 @@
 #include <Habanero/algo.h>
 #include <Habanero/ScopedObservable.h>
 
-using namespace std;
-
 ScopedObservableBase::ObservationTicket::ObservationTicket() noexcept:
     indirect(nullptr),
     ticket(0)
@@ -24,13 +22,13 @@ ScopedObservableBase::ObservationTicket::ObservationTicket() noexcept:
 
 ScopedObservableBase::ObservationTicket::
 ObservationTicket(std::shared_ptr<ScopedObservableBase::Indirect> _inst, unsigned long _ticket) noexcept:
-    indirect(move(_inst)),
+    indirect(std::move(_inst)),
     ticket(_ticket)
 {
 }
 
 ScopedObservableBase::ObservationTicket::ObservationTicket(ObservationTicket &&_r) noexcept:
-    indirect(move(_r.indirect)),
+    indirect(std::move(_r.indirect)),
     ticket(_r.ticket)
 {
     _r.ticket = 0;
@@ -67,7 +65,7 @@ ScopedObservableBase::ObservationTicket::operator bool() const noexcept
 
 ScopedObservableBase::ScopedObservableBase()
 {
-    m_Indirect = make_shared<Indirect>();
+    m_Indirect = std::make_shared<Indirect>();
     m_Indirect->instance = this;
 }
 
@@ -78,7 +76,7 @@ ScopedObservableBase::~ScopedObservableBase()
 }
 
 ScopedObservableBase::ObservationTicket ScopedObservableBase::AddTicketedObserver
-( function<void()> _callback, const uint64_t _mask )
+( std::function<void()> _callback, const uint64_t _mask )
 {
     if( !_callback || _mask == 0ul )
         return {nullptr, 0};
@@ -86,18 +84,18 @@ ScopedObservableBase::ObservationTicket ScopedObservableBase::AddTicketedObserve
     auto ticket = m_ObservationTicket++;
     
     Observer o;
-    o.callback = move(_callback);
+    o.callback = std::move(_callback);
     o.ticket = ticket;
     o.mask = _mask;
     
-    auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
+    auto new_observers = std::make_shared<std::vector<std::shared_ptr<Observer>>>();
     {
         const auto lock = std::lock_guard{m_ObserversLock};
         if( m_Observers ) {
             new_observers->reserve( m_Observers->size() + 1 );
             new_observers->assign( m_Observers->begin(), m_Observers->end() );
         }
-        new_observers->emplace_back( to_shared_ptr( move(o) ) );
+        new_observers->emplace_back( to_shared_ptr( std::move(o) ) );
         m_Observers = new_observers;
     }
     
@@ -111,18 +109,18 @@ void ScopedObservableBase::AddUnticketedObserver
         return;
     
     Observer o;
-    o.callback = move(_callback);
+    o.callback = std::move(_callback);
     o.ticket = 0;
     o.mask = _mask;
     
-    auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
+    auto new_observers = std::make_shared<std::vector<std::shared_ptr<Observer>>>();
     {
         const auto lock = std::lock_guard{m_ObserversLock};
         if( m_Observers ) {
             new_observers->reserve( m_Observers->size() + 1 );
             new_observers->assign( m_Observers->begin(), m_Observers->end() );
         }
-        new_observers->emplace_back( to_shared_ptr( move(o) ) );
+        new_observers->emplace_back( to_shared_ptr( std::move(o) ) );
         m_Observers = new_observers;
     }
 }
@@ -132,7 +130,7 @@ void ScopedObservableBase::FireObservers( const uint64_t _mask ) const
     if( _mask == 0ul )
         return;
 
-    shared_ptr<vector<shared_ptr<Observer>>> observers;
+    std::shared_ptr<std::vector<std::shared_ptr<Observer>>> observers;
     {
         const auto lock = std::lock_guard{m_ObserversLock};
         observers = m_Observers;
@@ -147,7 +145,7 @@ void ScopedObservableBase::FireObservers( const uint64_t _mask ) const
 void ScopedObservableBase::StopObservation(const uint64_t _ticket)
 {
     // keep this shared_ptr after time lock is released, so any observers will be ponentially freed without locking.
-    shared_ptr<vector<shared_ptr<Observer>>> old;
+    std::shared_ptr<std::vector<std::shared_ptr<Observer>>> old;
     {
         const auto lock = std::lock_guard{m_ObserversLock};
         if( !m_Observers )
@@ -156,7 +154,7 @@ void ScopedObservableBase::StopObservation(const uint64_t _ticket)
         for( size_t i = 0, e = old->size(); i != e; ++i ) {
             auto &o = (*old)[i];
             if( o->ticket == _ticket ) {
-                auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
+                auto new_observers = std::make_shared<std::vector<std::shared_ptr<Observer>>>();
                 *new_observers = *old;
                 new_observers->erase( next(new_observers->begin(), i) );
                 m_Observers = new_observers;

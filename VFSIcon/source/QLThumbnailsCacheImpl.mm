@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/QLThumbnailsCacheImpl.h>
 #include <VFSIcon/Log.h>
 #include <Quartz/Quartz.h>
@@ -48,7 +48,7 @@ inline QLThumbnailsCacheImpl::Key::Key(const Key &_key)
 QLThumbnailsCacheImpl::Key::Key(Key &&_key) noexcept
 {
     if( _key.path.data() == _key.path_storage.data() ) {
-        path_storage = move(_key.path_storage);
+        path_storage = std::move(_key.path_storage);
         path = path_storage;
     }
     else {

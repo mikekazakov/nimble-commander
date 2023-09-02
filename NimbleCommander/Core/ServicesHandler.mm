@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ServicesHandler.h"
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
@@ -71,7 +71,7 @@ static std::pair<std::string, std::vector<std::string>>
             filenames.emplace_back( boost::filesystem::path(i).filename().native() );
     }
 
-    return make_pair(move(directory), move(filenames));
+    return std::make_pair(std::move(directory), std::move(filenames));
 }
 
 static bool IsASingleDirectoryPath(const std::vector<std::string>&_paths, VFSHost& _native_host)

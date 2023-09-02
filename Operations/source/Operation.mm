@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Operation.h"
 #include "Job.h"
 #include "AsyncDialogResponse.h"
@@ -162,19 +162,19 @@ void Operation::OnJobResumed()
 Operation::ObservationTicket Operation::Observe(uint64_t _notification_mask,
                                                 std::function<void()> _callback)
 {
-    return AddTicketedObserver(move(_callback), _notification_mask);
+    return AddTicketedObserver(std::move(_callback), _notification_mask);
 }
 
 void Operation::ObserveUnticketed(uint64_t _notification_mask, std::function<void()> _callback)
 {
-    return AddUnticketedObserver(move(_callback), _notification_mask);
+    return AddUnticketedObserver(std::move(_callback), _notification_mask);
 }
 
 void Operation::SetDialogCallback(
     std::function<bool(NSWindow *, std::function<void(NSModalResponse)>)> _callback)
 {
     const auto guard = std::lock_guard{m_DialogCallbackLock};
-    m_DialogCallback = move(_callback);
+    m_DialogCallback = std::move(_callback);
 }
 
 bool Operation::IsInteractive() const noexcept

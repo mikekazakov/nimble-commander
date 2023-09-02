@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenaming.h"
 #include "BatchRenamingJob.h"
 #include <VFS/VFS.h>
@@ -25,7 +25,7 @@ BatchRenaming::BatchRenaming(std::vector<std::string> _src_paths,
     
     SetTitle(Caption(_src_paths));
     
-    m_Job.reset( new BatchRenamingJob( move(_src_paths), move(_dst_paths), _vfs ) );
+    m_Job.reset( new BatchRenamingJob( std::move(_src_paths), std::move(_dst_paths), _vfs ) );
     m_Job->m_OnRenameError = [this](int _err, const std::string &_path, VFSHost &_vfs){
         return (Callbacks::RenameErrorResolution) OnRenameError(_err, _path, _vfs);
     };

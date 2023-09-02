@@ -1,4 +1,5 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+#define _LIBCPP_DISABLE_DEPRECATION_WARNINGS 1
 #include "ActionShortcut.h"
 #include <locale>
 #include <vector>
@@ -234,16 +235,6 @@ bool ActionShortcut::IsKeyDown(EventData _event) const noexcept
 
     // no dice
     return false;
-}
-
-bool ActionShortcut::operator==(const ActionShortcut &_rhs) const noexcept
-{
-    return modifiers == _rhs.modifiers && unicode == _rhs.unicode;
-}
-
-bool ActionShortcut::operator!=(const ActionShortcut &_rhs) const noexcept
-{
-    return !(*this == _rhs);
 }
 
 }

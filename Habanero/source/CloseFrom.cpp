@@ -1,9 +1,10 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CloseFrom.h>
 #include <unistd.h>
 #include <libproc.h>
 #include <vector>
 #include <optional>
+#include <assert.h>
 
 namespace nc::base {
 

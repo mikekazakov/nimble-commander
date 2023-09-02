@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ContextMenu.h"
 #include "PanelController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
@@ -46,7 +46,7 @@ using namespace nc::panel;
     self = [super init];
     if( self ) {
         m_Panel = _panel;
-        m_Items = move(_items);
+        m_Items = std::move(_items);
         m_ActivationManager = &_activation_manager;
 
         self.delegate = self;

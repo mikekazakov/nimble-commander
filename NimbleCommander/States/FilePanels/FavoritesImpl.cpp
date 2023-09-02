@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FavoritesImpl.h"
 #include <CoreServices/CoreServices.h>
 #include <VFS/VFS.h>
@@ -36,7 +36,7 @@ FavoriteLocationsStorageImpl::FavoriteLocationsStorageImpl(config::Config &_conf
     if( m_Favorites.empty() ) {
         auto ff = FavoriteComposing{*this}.FinderFavorites();
         if( !ff.empty() )
-            m_Favorites = move(ff);
+            m_Favorites = std::move(ff);
         else
             m_Favorites = FavoriteComposing{*this}.DefaultFavorites();
     }
@@ -113,7 +113,7 @@ void FavoriteLocationsStorageImpl::ReportLocationVisit(VFSHost &_host,
     else if( auto location = Encode(_host, _directory) ) {
         // slowfast - for the first time we need to encode the visited location
         Visit v;
-        v.location = move(location);
+        v.location = std::move(location);
         v.last_visit = timestamp;
         v.visits_count = 1;
         m_Visits[footprint] = std::move(v);

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Compression.h"
 #include "CompressionJob.h"
 #include "../HaltReasonDialog.h"
@@ -23,7 +23,7 @@ Compression::Compression(std::vector<VFSListingItem> _src_files,
     m_InitialSourceItemsAmount = (int)_src_files.size();
     m_InitialSingleItemFilename =
         m_InitialSourceItemsAmount == 1 ? _src_files.front().DisplayName() : "";
-    m_Job.reset(new CompressionJob{move(_src_files), _dst_root, _dst_vfs, _passphrase});
+    m_Job.reset(new CompressionJob{std::move(_src_files), _dst_root, _dst_vfs, _passphrase});
     m_Job->m_TargetPathDefined = [this] { OnTargetPathDefined(); };
     m_Job->m_TargetWriteError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         OnTargetWriteError(_err, _path, _vfs);

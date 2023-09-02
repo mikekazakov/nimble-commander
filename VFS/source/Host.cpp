@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "ListingInput.h"
 #include "../include/VFS/Host.h"
@@ -24,7 +24,7 @@ HostDirObservationTicket::HostDirObservationTicket(unsigned long _ticket,
 }
 
 HostDirObservationTicket::HostDirObservationTicket(HostDirObservationTicket &&_rhs) noexcept
-    : m_Ticket(_rhs.m_Ticket), m_Host(move(_rhs.m_Host))
+    : m_Ticket(_rhs.m_Ticket), m_Host(std::move(_rhs.m_Host))
 {
     _rhs.m_Ticket = 0;
 }
@@ -38,7 +38,7 @@ HostDirObservationTicket &HostDirObservationTicket::operator=(HostDirObservation
 {
     reset();
     m_Ticket = _rhs.m_Ticket;
-    m_Host = move(_rhs.m_Host);
+    m_Host = std::move(_rhs.m_Host);
     _rhs.m_Ticket = 0;
     return *this;
 }

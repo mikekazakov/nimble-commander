@@ -1,10 +1,11 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SpdLogWindow.h"
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/base_sink.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 #include <Habanero/dispatch_cpp.h>
+#include <algorithm>
 
 namespace nc::utility {
 

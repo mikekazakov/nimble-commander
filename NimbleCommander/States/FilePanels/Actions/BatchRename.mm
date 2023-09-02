@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRename.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
@@ -34,7 +34,7 @@ void BatchRename::Perform(PanelController *_target, id) const
     if( !all_of(begin(items), end(items), [=](auto &i) { return i.Host() == host; }) )
         return; // currently BatchRenameOperation supports only single host for items
 
-    const auto sheet = [[NCOpsBatchRenamingDialog alloc] initWithItems:move(items)];
+    const auto sheet = [[NCOpsBatchRenamingDialog alloc] initWithItems:std::move(items)];
     sheet.renamePatternDataSource =
         [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigPatternsPath];
     sheet.searchForDataSource =

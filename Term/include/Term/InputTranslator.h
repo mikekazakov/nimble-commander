@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #ifdef __OBJC__
@@ -9,6 +9,7 @@
 
 #include <span>
 #include <string_view>
+#include <functional>
 
 namespace nc::term {
 

@@ -1,5 +1,6 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/FileWindow.h>
+#include <assert.h>
 
 namespace nc::vfs {
 

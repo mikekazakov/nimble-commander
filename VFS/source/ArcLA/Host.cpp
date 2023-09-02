@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <Habanero/CFStackAllocator.h>
 #include <Utility/PathManip.h>
@@ -841,7 +841,7 @@ void ArchiveHost::CommitState(std::unique_ptr<State> _state)
     // will throw away archives positioned at last item - they are useless
     if( _state->UID() < I->m_LastItemUID ) {
         std::lock_guard<std::mutex> lock(I->m_StatesLock);
-        I->m_States.emplace_back(move(_state));
+        I->m_States.emplace_back(std::move(_state));
 
         if( I->m_States.size() > 32 ) { // purge the latest one
             auto last = std::begin(I->m_States);
@@ -884,11 +884,11 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
             int rc = VFSError::FromLibarchive(new_state->Errno());
             return rc;
         }
-        state = move(new_state);
+        state = std::move(new_state);
     }
     else if( state->UID() == requested_item && !state->Consumed() ) {
         assert(state->Entry());
-        _target = move(state);
+        _target = std::move(state);
         return VFSError::Ok;
     }
 
@@ -912,7 +912,7 @@ int ArchiveHost::ArchiveStateForItem(const char *_filename, std::unique_ptr<Stat
         return VFSError::NotFound;
 
     state->SetEntry(entry, requested_item);
-    _target = move(state);
+    _target = std::move(state);
 
     return VFSError::Ok;
 }

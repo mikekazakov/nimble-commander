@@ -51,7 +51,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
 
     m_Position = 0;
     m_Size = archive_entry_size(state->Entry());
-    m_State = move(state);
+    m_State = std::move(state);
 
     return VFSError::Ok;
     ;
@@ -64,7 +64,7 @@ bool File::IsOpened() const
 
 int File::Close()
 {
-    std::dynamic_pointer_cast<ArchiveHost>(Host())->CommitState(move(m_State));
+    std::dynamic_pointer_cast<ArchiveHost>(Host())->CommitState(std::move(m_State));
     m_State.reset();
     return VFSError::Ok;
 }

@@ -1,6 +1,7 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MASAppInstalledChecker.h"
 #include <unistd.h>
+#include <memory>
 
 using namespace std::literals;
 

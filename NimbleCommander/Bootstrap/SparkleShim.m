@@ -3,7 +3,7 @@
 #include "SparkleShim.h"
 #include <Sparkle/Sparkle.h>
 
-SUUpdater *NCBootstrapSharedSUUpdaterInstance()
+SUUpdater *NCBootstrapSharedSUUpdaterInstance(void)
 {
 #ifdef __NC_VERSION_TRIAL__
     return [SUUpdater sharedUpdater];
@@ -12,7 +12,7 @@ SUUpdater *NCBootstrapSharedSUUpdaterInstance()
 #endif
 }
 
-SEL NCBootstrapSUUpdaterAction()
+SEL NCBootstrapSUUpdaterAction(void)
 {
     return @selector(checkForUpdates:);
 }

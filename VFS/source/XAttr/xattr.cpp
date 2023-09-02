@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include "xattr.h"
 #include <VFS/VFSFile.h>
@@ -189,7 +189,7 @@ int XAttrHost::Fetch()
         return ret;
     
     std::lock_guard<spinlock> lock(m_AttrsLock);
-    m_Attrs = move(info);
+    m_Attrs = std::move(info);
     return VFSError::Ok;
 }
 

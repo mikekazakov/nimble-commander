@@ -176,7 +176,7 @@ void tiny_string::shrink_to_fit()
 {
     if( !__is_compressed() ) {
         tiny_string tmp(*this);
-        assign(move(tmp));
+        assign(std::move(tmp));
     }
 }
 

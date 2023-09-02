@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -9,6 +9,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <string>
+#include <algorithm>
 
 // sizeof(tiny_string) == 8.
 class tiny_string

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
 #include <Utility/PathManip.h>
 #include "../PanelController.h"
@@ -70,7 +70,7 @@ static void PasteOrMove(PanelController *_target, bool _paste, vfs::NativeHost &
     opts.docopy = _paste;
     __weak PanelController *wpc = _target;
     const auto op = std::make_shared<nc::ops::Copying>(
-        move(source_items), _target.currentDirectoryPath, _target.vfs, opts);
+        std::move(source_items), _target.currentDirectoryPath, _target.vfs, opts);
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=] {
         dispatch_to_main_queue([=] {
             if( PanelController *pc = wpc )

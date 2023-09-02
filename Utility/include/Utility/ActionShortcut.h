@@ -1,10 +1,11 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <string>
 #include <string_view>
 #include <functional>
+#include <compare>
 #include <stdint.h>
 
 #ifdef __OBJC__
@@ -26,8 +27,8 @@ struct ActionShortcut {
     // Construct from data directly
     ActionShortcut(unsigned short _unicode, unsigned long long _modif) noexcept;
 
-    bool operator==(const ActionShortcut &_rhs) const noexcept;
-    bool operator!=(const ActionShortcut &_rhs) const noexcept;
+    friend bool operator==(const ActionShortcut &_lhs, const ActionShortcut &_rhs) noexcept = default;
+    friend bool operator!=(const ActionShortcut &_lhs, const ActionShortcut &_rhs) noexcept = default;
     operator bool() const noexcept;
 
 #ifdef __OBJC__

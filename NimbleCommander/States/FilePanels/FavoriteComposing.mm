@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
@@ -174,7 +174,7 @@ static std::vector<std::pair<std::string, std::string>> GetFindersFavorites() //
                         !path.ends_with(".cannedSearch/") && !path.ends_with(".savedSearch") &&
                         nc::bootstrap::NativeVFSHostInstance().IsDirectory(path.c_str(), 0) )
                         paths.emplace_back(
-                            make_pair(TitleForURL(url), ensure_tr_slash(move(path))));
+                            std::make_pair(TitleForURL(url), ensure_tr_slash(std::move(path))));
                     CFRelease(url);
                 }
                 if( err ) {

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AggregateProgressTracker.h"
 #include "Statistics.h"
 #include <iostream>
@@ -19,9 +19,7 @@ AggregateProgressTracker::AggregateProgressTracker():
     });
 }
     
-AggregateProgressTracker::~AggregateProgressTracker()
-{
-}
+AggregateProgressTracker::~AggregateProgressTracker() = default;
 
 void AggregateProgressTracker::AddPool(Pool &_pool)
 {
@@ -128,7 +126,7 @@ void AggregateProgressTracker::Signal( double _progress )
 void AggregateProgressTracker::SetProgressCallback( std::function<void(double _progress)> _callback )
 {
     dispatch_assert_main_queue();
-    m_Callback = move(_callback);
+    m_Callback = std::move(_callback);
 }
 
 void AggregateProgressTracker::Purge()

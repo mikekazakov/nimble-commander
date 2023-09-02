@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyFile.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
@@ -100,7 +100,7 @@ void CopyTo::Perform(MainWindowFilePanelState *_target, id) const
       if( !host || path.empty() )
           return; // ui invariant is broken
 
-      const auto op = std::make_shared<nc::ops::Copying>(move(entries), path, host, opts);
+      const auto op = std::make_shared<nc::ops::Copying>(std::move(entries), path, host, opts);
 
       const auto update_both_panels = RefreshBothCurrentControllersLambda(_target);
       op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
@@ -254,7 +254,7 @@ void MoveTo::Perform(MainWindowFilePanelState *_target, id) const
       if( !host || path.empty() )
           return; // ui invariant is broken
 
-      const auto op = std::make_shared<nc::ops::Copying>(move(entries), path, host, opts);
+      const auto op = std::make_shared<nc::ops::Copying>(std::move(entries), path, host, opts);
 
       const auto update_both_panels = RefreshBothCurrentControllersLambda(_target);
       op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);

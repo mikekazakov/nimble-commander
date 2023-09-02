@@ -36,7 +36,7 @@ int File::Close()
 
     if( m_CURL ) {
         auto host = std::dynamic_pointer_cast<FTPHost>(Host());
-        host->CommitIOInstanceAtDir(DirName().c_str(), move(m_CURL));
+        host->CommitIOInstanceAtDir(DirName().c_str(), std::move(m_CURL));
     }
 
     m_FilePos = 0;

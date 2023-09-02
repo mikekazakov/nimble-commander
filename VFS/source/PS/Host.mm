@@ -353,9 +353,9 @@ void PSHost::UpdateCycle()
         auto procs = GetProcs();
         if( !m_UpdateQ.IsStopped() ) {
             auto me = weak_this;
-            dispatch_to_main_queue([=, procs = move(procs)] {
+            dispatch_to_main_queue([=, procs = std::move(procs)] {
                 if( !me.expired() )
-                    me.lock()->CommitProcs(move(procs));
+                    me.lock()->CommitProcs(std::move(procs));
             });
 
             dispatch_to_main_queue_after(2s, [=] {

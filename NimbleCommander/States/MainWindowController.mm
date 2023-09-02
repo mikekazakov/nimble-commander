@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowController.h"
 #include <Habanero/debug.h>
 #include <Config/RapidJSON.h>
@@ -87,7 +87,7 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
                                              object:self.window];
 
     auto callback = objc_callback(self, @selector(onConfigShowToolbarChanged));
-    m_ConfigTickets.emplace_back(GlobalConfig().Observe(g_ConfigShowToolbar, move(callback)));
+    m_ConfigTickets.emplace_back(GlobalConfig().Observe(g_ConfigShowToolbar, std::move(callback)));
 
     [self invalidateRestorableState];
 

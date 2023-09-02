@@ -1,8 +1,9 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewCollectionViewBackground.h"
 #include "PanelBriefViewLayoutProtocol.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <Utility/ObjCpp.h>
+#include <algorithm>
 
 @implementation PanelBriefViewCollectionViewBackground {
     int m_RowHeight;

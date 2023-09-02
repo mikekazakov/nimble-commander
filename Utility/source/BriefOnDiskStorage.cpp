@@ -1,5 +1,6 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOnDiskStorage.h"
+#include <assert.h>
 
 namespace nc::utility
 {

@@ -381,7 +381,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
         }
         else if( entp->d_type == DT_REG || entp->d_type == DT_LNK ) {
             std::string full_path = _path;
-            _stat_queue.async([&, full_path = move(full_path)] {
+            _stat_queue.async([&, full_path = std::move(full_path)] {
                 if( _iscancelling )
                     return;
 

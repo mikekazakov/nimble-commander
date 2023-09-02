@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Pool.h"
 #include "Operation.h"
 #include <Habanero/dispatch_cpp.h>
@@ -115,12 +115,12 @@ void Pool::StartPendingOperations()
 
 Pool::ObservationTicket Pool::Observe(uint64_t _notification_mask, std::function<void()> _callback)
 {
-    return AddTicketedObserver(move(_callback), _notification_mask);
+    return AddTicketedObserver(std::move(_callback), _notification_mask);
 }
 
 void Pool::ObserveUnticketed(uint64_t _notification_mask, std::function<void()> _callback)
 {
-    AddUnticketedObserver(move(_callback), _notification_mask);
+    AddUnticketedObserver(std::move(_callback), _notification_mask);
 }
 
 int Pool::RunningOperationsCount() const
@@ -171,7 +171,7 @@ bool Pool::ShowDialog(NSWindow *_dialog, std::function<void(NSModalResponse)> _c
     dispatch_assert_main_queue();
     if( !m_DialogPresentation )
         return false;
-    m_DialogPresentation(_dialog, move(_callback));
+    m_DialogPresentation(_dialog, std::move(_callback));
     return true;
 }
 

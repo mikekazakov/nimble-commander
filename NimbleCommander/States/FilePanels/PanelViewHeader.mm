@@ -271,7 +271,7 @@ static bool IsDark(NSColor *_color);
 
 - (void)setSearchRequestChangeCallback:(std::function<void(NSString *)>)searchRequestChangeCallback
 {
-    m_SearchRequestChangeCallback = move(searchRequestChangeCallback);
+    m_SearchRequestChangeCallback = std::move(searchRequestChangeCallback);
 }
 
 - (std::function<void(NSString *)>)searchRequestChangeCallback

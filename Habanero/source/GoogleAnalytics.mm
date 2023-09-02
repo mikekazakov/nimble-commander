@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/GoogleAnalytics.h>
 #include <chrono>
 #include <boost/uuid/random_generator.hpp>
@@ -173,7 +173,7 @@ void GoogleAnalytics::AcceptMessage(std::string _message)
         if( m_Messages.size() >= g_MessagesOverflowLimit )
             return;
 
-        m_Messages.emplace_back(move(_message));
+        m_Messages.emplace_back(std::move(_message));
     }
 
     MarkDirty();

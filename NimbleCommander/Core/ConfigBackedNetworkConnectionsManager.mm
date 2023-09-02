@@ -567,11 +567,11 @@ void ConfigBackedNetworkConnectionsManager::NetFSCallback(int _status,
     std::function<void(const std::string &_mounted_path, const std::string &_error)> cb;
     {
         auto lock = std::lock_guard{m_PendingMountRequestsLock};
-        auto i = find_if(begin(m_PendingMountRequests), end(m_PendingMountRequests), [=](auto &_v) {
+        auto i = std::find_if(begin(m_PendingMountRequests), end(m_PendingMountRequests), [=](auto &_v) {
             return _v.first == _requestID;
         });
-        if( i != end(m_PendingMountRequests) ) {
-            cb = move(i->second);
+        if( i != std::end(m_PendingMountRequests) ) {
+            cb = std::move(i->second);
             m_PendingMountRequests.erase(i);
         }
     }
@@ -780,6 +780,6 @@ bool ConfigBackedNetworkConnectionsManager::MountShareAsync(
     }
 
     auto lock = std::lock_guard{m_PendingMountRequestsLock};
-    m_PendingMountRequests.emplace_back(request_id, move(_callback));
+    m_PendingMountRequests.emplace_back(request_id, std::move(_callback));
     return true;
 }

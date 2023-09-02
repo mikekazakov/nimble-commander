@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RecentlyClosedMenuDelegate.h"
 #include "../ListingPromise.h"
 #include "LocationFormatter.h"
@@ -30,8 +30,8 @@ using namespace nc::panel;
         m_Menu = _menu;
         m_Menu.delegate = self;
 
-        m_Storage = move(_storage);
-        m_Locator = move(_locator);
+        m_Storage = std::move(_storage);
+        m_Locator = std::move(_locator);
         m_RestoreLast = [_menu itemAtIndex:0];
         m_RestoreLast.target = self;
         m_RestoreLast.action = @selector(restoreLastClosed:);

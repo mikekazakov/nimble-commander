@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include "VFSInstanceManagerImpl.h"
 #include <VFS/VFS.h>
@@ -394,13 +394,13 @@ std::string VFSInstanceManagerImpl::GetVerboseVFSTitle(const Promise &_promise)
 VFSInstanceManager::ObservationTicket
 VFSInstanceManagerImpl::ObserveAliveVFSListChanged(std::function<void()> _callback)
 {
-    return AddObserver(move(_callback), AliveVFSListObservation);
+    return AddObserver(std::move(_callback), AliveVFSListObservation);
 }
 
 VFSInstanceManager::ObservationTicket
 VFSInstanceManagerImpl::ObserveKnownVFSListChanged(std::function<void()> _callback)
 {
-    return AddObserver(move(_callback), KnownVFSListObservation);
+    return AddObserver(std::move(_callback), KnownVFSListObservation);
 }
 
 std::vector<std::weak_ptr<VFSHost>> VFSInstanceManagerImpl::AliveHosts()

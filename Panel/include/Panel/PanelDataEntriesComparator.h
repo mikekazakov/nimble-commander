@@ -1,14 +1,14 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
 #include "PanelDataSortMode.h"
+#include "PanelDataItemVolatileData.h"
 #include <span>
 
 namespace nc::panel::data {
 
 struct ExternalEntryKey;
-struct ItemVolatileData;
 
 class ListingComparatorBase
 {

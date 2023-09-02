@@ -174,7 +174,7 @@ static void StopStream(FSEventStreamRef _stream)
 
 uint64_t FSEventsDirUpdate::AddWatchPath(const char *_path, std::function<void()> _handler)
 {
-    return me->AddWatchPath(_path, move(_handler));
+    return me->AddWatchPath(_path, std::move(_handler));
 }
 
 uint64_t FSEventsDirUpdate::Impl::AddWatchPath(const char *_path, std::function<void()> _handler)
@@ -194,19 +194,19 @@ uint64_t FSEventsDirUpdate::Impl::AddWatchPath(const char *_path, std::function<
 
     // check if this path already presents in watched paths
     if( auto it = m_Watches.find(dir_path); it != m_Watches.end() ) {
-        it->second->handlers.emplace_back(ticket, move(_handler));
+        it->second->handlers.emplace_back(ticket, std::move(_handler));
         return ticket;
     }
 
     // create a new watch stream
     auto w = std::make_unique<WatchData>();
     w->path = dir_path;
-    w->handlers.emplace_back(ticket, move(_handler));
+    w->handlers.emplace_back(ticket, std::move(_handler));
     w->stream = CreateEventStream(dir_path, w.get());
     if( w->stream == nullptr )
         return no_ticket;
     StartStream(w->stream);
-    m_Watches.emplace(make_pair(dir_path, move(w)));
+    m_Watches.emplace(make_pair(dir_path, std::move(w)));
 
     return ticket;
 }

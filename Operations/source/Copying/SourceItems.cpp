@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SourceItems.h"
 #include <sys/stat.h>
 #include <Habanero/algo.h>
@@ -21,7 +21,7 @@ int SourceItems::InsertItem(uint16_t _host_index,
         m_TotalRegBytes += _stat.size;
     
     SourceItem it;
-    it.item_name = S_ISDIR(_stat.mode) ? EnsureTrailingSlash( move(_item_name) ) : move( _item_name );
+    it.item_name = S_ISDIR(_stat.mode) ? EnsureTrailingSlash( std::move(_item_name) ) : std::move( _item_name );
     it.parent_index = _parent_index;
     it.base_dir_index = _base_dir_index;
     it.host_index = _host_index;

@@ -133,7 +133,7 @@ int FTPHost::DoInit()
     
     int result = DownloadAndCacheListing(instance.get(), Config().start_dir.c_str(), nullptr, nullptr);
     if(result == 0) {
-        m_ListingInstance = move(instance);
+        m_ListingInstance = std::move(instance);
         return 0;
     }
     
@@ -416,7 +416,7 @@ int FTPHost::Unlink(const char *_path,
     if(curl_res == CURLE_OK)
         m_Cache->CommitUnlink(_path);
     
-    CommitIOInstanceAtDir(path.parent_path(), move(curl));
+    CommitIOInstanceAtDir(path.parent_path(), std::move(curl));
     
     return curl_res == CURLE_OK ?
             VFSError::Ok :
@@ -463,7 +463,7 @@ int FTPHost::CreateDirectory(const char* _path,
     if(curl_e == CURLE_OK)
         m_Cache->CommitMKD(path.native());
     
-    CommitIOInstanceAtDir(path.parent_path(), move(curl));
+    CommitIOInstanceAtDir(path.parent_path(), std::move(curl));
     
     return curl_e == CURLE_OK ?
                         VFSError::Ok :
@@ -506,7 +506,7 @@ int FTPHost::RemoveDirectory(const char *_path,
     if(curl_res == CURLE_OK)
         m_Cache->CommitRMD(path.native());
     
-    CommitIOInstanceAtDir(path.parent_path(), move(curl));
+    CommitIOInstanceAtDir(path.parent_path(), std::move(curl));
     
     return curl_res == CURLE_OK ?
                         VFSError::Ok :
@@ -555,7 +555,7 @@ int FTPHost::Rename(const char *_old_path,
     if(curl_res == CURLE_OK)
         m_Cache->CommitRename(old_path.native(), new_path.native());
     
-    CommitIOInstanceAtDir(old_path.parent_path(), move(curl));
+    CommitIOInstanceAtDir(old_path.parent_path(), std::move(curl));
     
     return curl_res == CURLE_OK ?
         VFSError::Ok :
@@ -588,7 +588,7 @@ HostDirObservationTicket FTPHost::DirChangeObserve(const char *_path,
     h.ticket = m_LastUpdateTicket++;
     h.path = _path;
     if(h.path.back() != '/') h.path += '/';
-    h.handler = move(_handler);
+    h.handler = std::move(_handler);
     
     return HostDirObservationTicket(h.ticket, shared_from_this());
 }
@@ -646,7 +646,7 @@ std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const boost::filesyste
     auto i = m_IOIntances.find(_dir);
     if(i != end(m_IOIntances))
     {
-        auto r = move(i->second);
+        auto r = std::move(i->second);
         m_IOIntances.erase(i);
         return r;
     }
@@ -655,7 +655,7 @@ std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const boost::filesyste
     if(!m_IOIntances.empty())
     {
         i = m_IOIntances.begin();
-        auto r = move(i->second);
+        auto r = std::move(i->second);
         m_IOIntances.erase(i);
         return r;
     }
@@ -676,7 +676,7 @@ void FTPHost::CommitIOInstanceAtDir(const boost::filesystem::path &_dir,
     
     _i->EasyReset();
     BasicOptsSetup(_i.get());
-    m_IOIntances[_dir] = move(_i);
+    m_IOIntances[_dir] = std::move(_i);
 }
 
 void FTPHost::BasicOptsSetup(CURLInstance *_inst)

@@ -149,7 +149,7 @@ forMode:(NSRunLoopMode)[[maybe_unused]]_mode {}
 - (void) setFeedData:(std::function<ssize_t (uint8_t *, size_t)>)feedData
 {
     const auto lock = std::lock_guard{m_CallbacksLock};
-    m_FeedData = move(feedData);
+    m_FeedData = std::move(feedData);
 }
 
 - (std::function<ssize_t(uint8_t *_buffer, size_t _sz)>) feedData
@@ -161,7 +161,7 @@ forMode:(NSRunLoopMode)[[maybe_unused]]_mode {}
 - (void) setHasDataToFeed:(std::function<bool()>)hasDataToFeed
 {
     const auto lock = std::lock_guard{m_CallbacksLock};
-    m_HasDataToFeed = move(hasDataToFeed);
+    m_HasDataToFeed = std::move(hasDataToFeed);
 }
 
 - (std::function<bool()>) hasDataToFeed

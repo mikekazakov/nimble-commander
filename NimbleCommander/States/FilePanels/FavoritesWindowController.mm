@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Habanero/algo.h>
 #include <Utility/SheetWithHotkeys.h>
@@ -363,7 +363,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
         return;
     }
 
-    m_Favorites = move(ff);
+    m_Favorites = std::move(ff);
     [self loadData];
     [self commit];
 }
@@ -378,7 +378,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
 - (void)setProvideCurrentUniformPaths:
     (std::function<std::vector<std::pair<VFSHostPtr, std::string>>()>)callback
 {
-    m_ProvideCurrentUniformPaths = move(callback);
+    m_ProvideCurrentUniformPaths = std::move(callback);
 }
 
 - (std::function<std::vector<std::pair<VFSHostPtr, std::string>>()>)provideCurrentUniformPaths

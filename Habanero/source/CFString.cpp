@@ -1,5 +1,6 @@
-// Copyright (C) 2015-2021 Michael G. Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael G. Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CFString.h>
+#include <memory>
 
 CFStringRef CFStringCreateWithUTF8StdString(const std::string &_s) noexcept
 {

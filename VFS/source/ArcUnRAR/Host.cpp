@@ -464,7 +464,7 @@ std::unique_ptr<unrar::SeekCache> UnRARHost::SeekCache(uint32_t _requested_item)
           }
       }
       if( best != m_SeekCaches.end() ) {
-          res = move(*best);
+          res = std::move(*best);
           m_SeekCaches.erase(best);
           //            NSLog(@"found cached");
           return;
@@ -486,16 +486,16 @@ std::unique_ptr<unrar::SeekCache> UnRARHost::SeekCache(uint32_t _requested_item)
       res->rar_handle = rar_file;
     });
 
-    auto tmp = move(res);
+    auto tmp = std::move(res);
     return tmp;
 }
 
 void UnRARHost::CommitSeekCache(std::unique_ptr<unrar::SeekCache> _sc)
 {
     assert(_sc->uid < m_LastItemUID);
-    __block std::unique_ptr<unrar::SeekCache> sc(move(_sc));
+    __block std::unique_ptr<unrar::SeekCache> sc(std::move(_sc));
     dispatch_sync(m_SeekCacheControl, ^{
-      m_SeekCaches.push_back(move(sc));
+      m_SeekCaches.push_back(std::move(sc));
     });
 }
 

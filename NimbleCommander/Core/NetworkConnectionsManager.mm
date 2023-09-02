@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkConnectionsManager.h"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
@@ -37,7 +37,7 @@ struct ConnectionPathBuilder : public NetworkConnectionsManager::ConnectionVisit
     }
     std::string Path()
     {
-        return move(path);
+        return std::move(path);
     }
 private:
     void Visit( const NetworkConnectionsManager::FTP &ftp )

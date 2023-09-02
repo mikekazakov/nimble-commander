@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -6,6 +6,7 @@
 #include "DeletionJobCallbacks.h"
 #include <VFS/VFS.h>
 #include <Habanero/chained_strings.h>
+#include <stack>
 
 namespace nc::ops {
 

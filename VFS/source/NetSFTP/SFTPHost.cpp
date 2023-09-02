@@ -68,7 +68,7 @@ struct SFTPHost::AutoConnectionReturn // classic RAII stuff to prevent connectio
         assert(_this != nullptr);
     }
 
-    inline ~AutoConnectionReturn() { m_This->ReturnConnection(move(m_Conn)); }
+    inline ~AutoConnectionReturn() { m_This->ReturnConnection(std::move(m_Conn)); }
     std::unique_ptr<Connection> &m_Conn;
     SFTPHost *m_This;
 };
@@ -224,7 +224,7 @@ int SFTPHost::DoInit()
         }
     }
 
-    ReturnConnection(move(conn));
+    ReturnConnection(std::move(conn));
 
     AddFeatures(HostFeatures::SetOwnership | HostFeatures::SetPermissions | HostFeatures::SetTimes);
     if( m_OSType != sftp::OSType::Unknown )
@@ -328,7 +328,7 @@ int SFTPHost::SpawnSSH2(std::unique_ptr<Connection> &_t)
             return VFSError::NetSFTPCouldntAuthenticatePassword;
     }
 
-    _t = move(connection);
+    _t = std::move(connection);
 
     return 0;
 }
@@ -348,12 +348,12 @@ int SFTPHost::GetConnection(std::unique_ptr<Connection> &_t)
     {
         const auto lock = std::lock_guard{m_ConnectionsLock};
         while( !m_Connections.empty() ) {
-            auto connection = move(m_Connections.front());
+            auto connection = std::move(m_Connections.front());
             m_Connections.erase(begin(m_Connections));
 
             // if front connection is fine - return it
             if( connection->Alive() ) {
-                _t = move(connection);
+                _t = std::move(connection);
                 return 0;
             }
             // otherwise this connection object will be destroyed.
@@ -374,7 +374,7 @@ void SFTPHost::ReturnConnection(std::unique_ptr<Connection> _t)
 
     std::lock_guard<std::mutex> lock(m_ConnectionsLock);
 
-    m_Connections.emplace_back(move(_t));
+    m_Connections.emplace_back(std::move(_t));
 }
 
 in_addr_t SFTPHost::InetAddr() const

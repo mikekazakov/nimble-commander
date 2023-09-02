@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeView.h"
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 
 using namespace nc;
 using namespace nc::viewer;

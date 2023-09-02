@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemesManager.h"
 #include "Theme.h"
 #include <Config/RapidJSON.h>
@@ -307,7 +307,7 @@ bool ThemesManager::SelectTheme(const std::string &_theme_name)
 ThemesManager::ObservationTicket ThemesManager::ObserveChanges(uint64_t _notification_mask,
                                                                std::function<void()> _callback)
 {
-    return AddObserver(move(_callback), _notification_mask);
+    return AddObserver(std::move(_callback), _notification_mask);
 }
 
 bool ThemesManager::HasDefaultSettings(const std::string &_theme_name) const noexcept

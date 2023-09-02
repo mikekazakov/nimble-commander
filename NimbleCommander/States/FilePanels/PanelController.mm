@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelController.h"
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
@@ -206,7 +206,7 @@ static void HeatUpConfigValues()
 
     self = [super init];
     if( self ) {
-        m_Layouts = move(_layouts);
+        m_Layouts = std::move(_layouts);
         m_VFSInstanceManager = &_vfs_mgr;
         m_NativeFSManager = &_native_fs_mgr;
         m_NativeHost = &_native_host;

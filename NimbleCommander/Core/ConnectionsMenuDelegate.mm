@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectionsMenuDelegate.h"
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h>
@@ -40,7 +40,7 @@
     auto &ncm = m_Manager();
     auto connections = ncm.AllConnectionsByMRU();
     if( m_Connections != connections ) {
-        m_Connections = move(connections);
+        m_Connections = std::move(connections);
 
         while( menu.numberOfItems > m_InitialElementsCount )
             [menu removeItemAtIndex:menu.numberOfItems - 1];

@@ -100,12 +100,12 @@ int File::Close()
         if( m_Entry->uuid < rar_host->LastItemUUID() ) {
             m_Archive->uid = m_Entry->uuid;
             if( static_cast<uint64_t>(m_TotalExtracted) == m_Entry->unpacked_size ) {
-                rar_host->CommitSeekCache(move(m_Archive));
+                rar_host->CommitSeekCache(std::move(m_Archive));
             }
             else {
                 RARSetCallback(m_Archive->rar_handle, ProcessRARDummy, 0);
                 if( RARProcessFile(m_Archive->rar_handle, RAR_TEST, NULL, NULL) == 0 ) {
-                    rar_host->CommitSeekCache(move(m_Archive));
+                    rar_host->CommitSeekCache(std::move(m_Archive));
                 }
             }
         }

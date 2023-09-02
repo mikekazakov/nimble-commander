@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/GeneralUI/CalculateChecksumSheetController.h>
 #include "../PanelController.h"
 #include "CalculateChecksum.h"
@@ -32,8 +32,8 @@ void CalculateChecksum::Perform( PanelController *_target, id ) const
         return;
     
     CalculateChecksumSheetController *sheet = [CalculateChecksumSheetController alloc];
-    sheet = [sheet initWithFiles:move(filenames)
-                       withSizes:move(sizes)
+    sheet = [sheet initWithFiles:std::move(filenames)
+                       withSizes:std::move(sizes)
                           atHost:_target.vfs
                           atPath:_target.currentDirectoryPath];
     

@@ -30,7 +30,7 @@ CopyingJob::CopyingJob(std::vector<VFSListingItem> _source_items,
                        const std::string &_dest_path,
                        const VFSHostPtr &_dest_host,
                        CopyingOptions _opts)
-    : m_VFSListingItems(move(_source_items)), m_DestinationHost(_dest_host),
+    : m_VFSListingItems(std::move(_source_items)), m_DestinationHost(_dest_host),
       m_IsDestinationHostNative(_dest_host->IsNativeFS()), m_InitialDestinationPath(_dest_path),
       m_NativeFSManager(_dest_host->IsNativeFS()
                             ? &dynamic_cast<VFSNativeHost *>(_dest_host.get())->NativeFSManager()
@@ -566,7 +566,7 @@ CopyingJob::StepResult CopyingJob::BuildDestinationDirectory() const
     std::vector<std::string> paths_to_build;
     ReverseForEachDirectoryInString(m_DestinationPath, [&](std::string _path) {
         if( !m_DestinationHost->Exists(_path.c_str()) ) {
-            paths_to_build.emplace_back(move(_path));
+            paths_to_build.emplace_back(std::move(_path));
             return true;
         }
         else

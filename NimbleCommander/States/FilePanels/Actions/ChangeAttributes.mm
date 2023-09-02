@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ChangeAttributes.h"
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
@@ -31,7 +31,7 @@ void ChangeAttributes::Perform(PanelController *_target, [[maybe_unused]] id _se
     if( ![NCOpsAttrsChangingDialog canEditAnythingInItems:items] )
         return;
 
-    const auto sheet = [[NCOpsAttrsChangingDialog alloc] initWithItems:move(items)];
+    const auto sheet = [[NCOpsAttrsChangingDialog alloc] initWithItems:std::move(items)];
 
     const auto handler = ^(NSModalResponse returnCode) {
       if( returnCode != NSModalResponseOK )

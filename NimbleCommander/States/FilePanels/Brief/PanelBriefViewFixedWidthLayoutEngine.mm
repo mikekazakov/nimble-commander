@@ -1,6 +1,8 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewFixedWidthLayoutEngine.h"
 #include <cmath>
+#include <numeric>
+#include <algorithm>
 
 namespace nc::panel::view::brief {
 

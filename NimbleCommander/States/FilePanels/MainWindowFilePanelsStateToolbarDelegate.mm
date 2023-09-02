@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
 #include "StateActionsDispatcher.h"
 #include "../../Core/ActionsShortcutsManager.h"
@@ -12,6 +12,7 @@
 #include <Habanero/WhereIs.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include <deque>
 
 // do not change these strings, they are used for persistency in NSUserDefaults
 static auto g_ToolbarIdentifier = @"FilePanelsToolbar";

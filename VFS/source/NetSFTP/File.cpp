@@ -51,7 +51,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
                                                        LIBSSH2_SFTP_OPENFILE);
     if( handle == nullptr ) {
         rc = sftp_host->VFSErrorForConnection(*conn);
-        sftp_host->ReturnConnection(move(conn));
+        sftp_host->ReturnConnection(std::move(conn));
         return rc;
     }
 
@@ -62,7 +62,7 @@ int File::Open(unsigned long _open_flags, [[maybe_unused]] const VFSCancelChecke
         return conn_err;
     }
 
-    m_Connection = move(conn);
+    m_Connection = std::move(conn);
     m_Handle = handle;
     m_Position = 0;
     m_Size = attrs.filesize;

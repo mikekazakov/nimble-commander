@@ -1,7 +1,8 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "History.h"
 #include <Config/RapidJSON.h>
 #include <Utility/Encodings.h>
+#include <algorithm>
 
 static const auto g_ConfigMaximumHistoryEntries = "viewer.maximumHistoryEntries";
 static const auto g_ConfigSaveFileEnconding = "viewer.saveFileEncoding";

@@ -1,5 +1,6 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
+#include <functional>
 
 @interface SpotlightSearchPopupViewController : NSViewController<NSPopoverDelegate>
 

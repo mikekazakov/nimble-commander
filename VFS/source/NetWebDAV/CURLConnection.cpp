@@ -1,7 +1,8 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CURLConnection.h"
 #include "Internal.h"
 #include <Habanero/StringViewZBuf.h>
+#include <assert.h>
 
 // CURL is full of macros with C-style casts
 #pragma clang diagnostic ignored "-Wold-style-cast"

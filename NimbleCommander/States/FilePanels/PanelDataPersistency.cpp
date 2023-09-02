@@ -159,7 +159,7 @@ std::optional<PersistentLocation> PanelDataPersisency::EncodeLocation(const VFSH
         for( auto h : hosts ) {
             auto encoded = EncodeState(*h);
             if( encoded.has_value() )
-                location.hosts.emplace_back(move(encoded));
+                location.hosts.emplace_back(std::move(encoded));
             else
                 return std::nullopt;
         }

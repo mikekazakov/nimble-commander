@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryNativeFileChangesSentinel.h"
 #include <Habanero/algo.h>
 #include <Habanero/Hash.h>
@@ -60,15 +60,15 @@ bool TemporaryNativeFileChangesSentinel::WatchFile(const std::string &_path,
 
     current->fswatch_ticket = watch_ticket;
     current->path = _path;
-    current->callback = to_shared_ptr(move(_on_file_changed));
-    current->last_md5_hash = move(*file_hash);
+    current->callback = to_shared_ptr(std::move(_on_file_changed));
+    current->last_md5_hash = std::move(*file_hash);
     current->drop_delay = _drop_delay;
     current->check_delay = _check_delay;
 
     ScheduleItemDrop(current);
 
     auto lock = std::lock_guard{m_WatchesLock};
-    m_Watches.emplace_back(move(current));
+    m_Watches.emplace_back(std::move(current));
     return true;
 }
 
@@ -120,7 +120,7 @@ void TemporaryNativeFileChangesSentinel::BackgroundItemCheck(std::shared_ptr<Met
         return; // this file is not ok - just abort
 
     if( *current_hash != _meta->last_md5_hash ) {
-        _meta->last_md5_hash = move(*current_hash);
+        _meta->last_md5_hash = std::move(*current_hash);
         ScheduleItemDrop(_meta);
 
         auto client_callback = _meta->callback;

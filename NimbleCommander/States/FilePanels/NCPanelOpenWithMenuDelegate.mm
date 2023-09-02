@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
 #include <Utility/ObjCpp.h>
@@ -71,7 +71,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
     });
 
     FetchResult result;
-    result.handlers = move(handlers);
+    result.handlers = std::move(handlers);
     result.default_handler_path = items_handlers.DefaultHandlerPath();
     result.uti = items_handlers.CommonUTI();
     return result;
@@ -112,7 +112,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 
 - (void)setContextSource:(const std::vector<VFSListingItem>)_items
 {
-    m_ContextItems = move(_items);
+    m_ContextItems = std::move(_items);
 }
 
 - (BOOL)menuHasKeyEquivalent:(NSMenu *) [[maybe_unused]] _menu
@@ -141,9 +141,9 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 
 - (void)acceptFetchResult:(std::shared_ptr<FetchResult>)_result
 {
-    m_OpenWithHandlers = move(_result->handlers);
-    m_DefaultHandlerPath = move(_result->default_handler_path);
-    m_ItemsUTI = move(_result->uti);
+    m_OpenWithHandlers = std::move(_result->handlers);
+    m_DefaultHandlerPath = std::move(_result->default_handler_path);
+    m_ItemsUTI = std::move(_result->uti);
 
     const auto run_loop = NSRunLoop.currentRunLoop;
     if( ![run_loop.currentMode isEqualToString:NSEventTrackingRunLoopMode] )

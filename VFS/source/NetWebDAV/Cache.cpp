@@ -1,10 +1,11 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Cache.h"
 #include <Utility/PathManip.h>
 #include "Internal.h"
 #include "PathRoutines.h"
 #include <Habanero/mach_time.h>
 #include <Habanero/spinlock.h>
+#include <algorithm>
 
 namespace nc::vfs::webdav {
 
@@ -25,7 +26,7 @@ void Cache::CommitListing( const std::string &_at_path, std::vector<PropFindResp
     const auto path = EnsureTrailingSlash( _at_path );
     const auto time = machtime();
     
-    sort( begin(_items), end(_items), [](const auto &_1st, const auto &_2nd){
+    std::sort( std::begin(_items), std::end(_items), [](const auto &_1st, const auto &_2nd){
         return _1st.filename < _2nd.filename;
     });
     
@@ -34,7 +35,7 @@ void Cache::CommitListing( const std::string &_at_path, std::vector<PropFindResp
         auto &directory = m_Dirs[path];
         directory.fetch_time = time;
         directory.has_dirty_items = false;
-        directory.items = move(_items);
+        directory.items = std::move(_items);
         directory.dirty_marks.resize( directory.items.size() );
         fill( begin(directory.dirty_marks), end(directory.dirty_marks), false );
     }
@@ -309,7 +310,7 @@ unsigned long Cache::Observe(const std::string &_path, std::function<void()> _ha
     const auto ticket = m_LastTicket++;
     
     Observer o;
-    o.callback = move(_handler);
+    o.callback = std::move(_handler);
     o.ticket = ticket;
     
     {

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Requests.h"
 #include "WebDAVHost.h"
 #include <boost/algorithm/string/split.hpp>
@@ -258,8 +258,8 @@ std::pair<int, std::vector<PropFindResponse>> RequestDAVListing(const HostConfig
         const auto use_prefix = true /* FilepathsHavePathPrefix(items, _options.path) */;
         const auto base_path =
             use_prefix ? ((_options.path.empty() ? "" : "/" + _options.path) + _path) : _path;
-        items = PruneFilepaths(move(items), base_path);
-        return {VFSError::Ok, move(items)};
+        items = PruneFilepaths(std::move(items), base_path);
+        return {VFSError::Ok, std::move(items)};
     }
     else {
         return {HTTPRCToVFSError(result.http_code), {}};

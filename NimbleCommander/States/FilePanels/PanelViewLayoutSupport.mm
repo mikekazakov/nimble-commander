@@ -318,7 +318,7 @@ void PanelViewLayoutsStorage::ReplaceLayout(PanelViewLayout _layout, int _at_ind
 PanelViewLayoutsStorage::ObservationTicket
 PanelViewLayoutsStorage::ObserveChanges(std::function<void()> _callback)
 {
-    return AddObserver(move(_callback));
+    return AddObserver(std::move(_callback));
 }
 
 void PanelViewLayoutsStorage::LoadLayoutsFromConfig()

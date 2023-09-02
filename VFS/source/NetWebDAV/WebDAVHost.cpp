@@ -163,7 +163,7 @@ int WebDAVHost::IterateDirectoryListing(const char *_path,
 
     std::vector<PropFindResponse> items;
     if( auto cached = I->m_Cache.Listing(path) ) {
-        items = move(*cached);
+        items = std::move(*cached);
     }
     else {
         const auto refresh_rc = RefreshListingAtPath(path, nullptr);
@@ -171,7 +171,7 @@ int WebDAVHost::IterateDirectoryListing(const char *_path,
             return refresh_rc;
 
         if( auto cached2 = I->m_Cache.Listing(path) )
-            items = move(*cached2);
+            items = std::move(*cached2);
         else
             return VFSError::GenericError;
     }
@@ -250,7 +250,7 @@ int WebDAVHost::RefreshListingAtPath(const std::string &_path, [[maybe_unused]] 
     if( rc != VFSError::Ok )
         return rc;
 
-    I->m_Cache.CommitListing(_path, move(items));
+    I->m_Cache.CommitListing(_path, std::move(items));
 
     return VFSError::Ok;
 }
@@ -389,7 +389,7 @@ HostDirObservationTicket WebDAVHost::DirChangeObserve(const char *_path, std::fu
 {
     if( !IsValidInputPath(_path) )
         return {};
-    const auto ticket = I->m_Cache.Observe(_path, move(_handler));
+    const auto ticket = I->m_Cache.Observe(_path, std::move(_handler));
     return HostDirObservationTicket{ticket, shared_from_this()};
 }
 

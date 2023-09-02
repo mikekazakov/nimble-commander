@@ -24,7 +24,6 @@
 #include <boost/type_traits/detail/yes_no_type.hpp>
 #include <boost/type_traits/decay.hpp>
 #include <boost/type_traits/is_array.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/move/utility.hpp>
 

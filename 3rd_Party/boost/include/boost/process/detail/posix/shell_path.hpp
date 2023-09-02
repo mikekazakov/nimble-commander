@@ -12,16 +12,16 @@
 
 #include <boost/process/detail/config.hpp>
 #include <boost/system/error_code.hpp>
-#include <boost/filesystem/path.hpp>
+#include <boost/process/filesystem.hpp>
 
 namespace boost { namespace process { namespace detail { namespace posix {
 
-inline boost::filesystem::path shell_path()
+inline boost::process::filesystem::path shell_path()
 {
     return "/bin/sh";
 }
 
-inline boost::filesystem::path shell_path(std::error_code &ec)
+inline boost::process::filesystem::path shell_path(std::error_code &ec)
 {
     ec.clear();
     return "/bin/sh";

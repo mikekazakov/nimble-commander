@@ -1,6 +1,7 @@
 // Boost.Geometry
 
-// Copyright (c) 2017-2020, Oracle and/or its affiliates.
+// Copyright (c) 2017-2022, Oracle and/or its affiliates.
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -232,6 +233,7 @@ struct proj_cass {};
 struct proj_cc {};
 struct proj_cea {};
 struct proj_chamb {};
+struct proj_col_urban {};
 struct proj_collg {};
 struct proj_crast {};
 struct proj_denoy {};
@@ -363,6 +365,7 @@ BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_F(es)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_F(f)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_F(gamma)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_F(h)
+BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_F(h_0)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_F(k)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_F(k_0)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_F(m)
@@ -408,7 +411,7 @@ BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_R(tilt)
 
 #define BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_I(NAME) \
 template <int I> struct NAME { static const int value = I; };
-   
+
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_I(aperture)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_I(lsat)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_I(north_square)
@@ -433,8 +436,11 @@ BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_BE(r_au)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_BE(r_g)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_BE(r_h)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_BE(r_v)
-BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_BE(rescale) 
+BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_BE(rescale)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_BE(south)
+BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_BE(variant_c)
+BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_BE(no_off)
+BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PARAM_BE(hyperbolic)
 
 template
 <
@@ -443,7 +449,7 @@ template
 struct ellps
 {
     typedef SpheroidOrSphere model_type;
-    
+
     ellps() : model() {}
     explicit ellps(SpheroidOrSphere const& sph) : model(sph) {}
 
@@ -459,9 +465,7 @@ struct nadgrids
     nadgrids(std::string const& g0, std::string const& g1, std::string const& g2) : base_t(g0, g1, g2) {}
     nadgrids(std::string const& g0, std::string const& g1, std::string const& g2, std::string const& g3) : base_t(g0, g1, g2, g3) {}
     nadgrids(std::string const& g0, std::string const& g1, std::string const& g2, std::string const& g3, std::string const& g4) : base_t(g0, g1, g2, g3, g4) {}
-#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
     nadgrids(std::initializer_list<std::string> l) : base_t(l) {}
-#endif
 };
 
 template <typename Proj>
@@ -482,9 +486,18 @@ struct towgs84
     towgs84(T const& v0, T const& v1, T const& v2, T const& v3, T const& v4, T const& v5, T const& v6)
         : base_t(v0, v1, v2, v3, v4, v5, v6)
     {}
-#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
     towgs84(std::initializer_list<T> l) : base_t(l) {}
-#endif
+};
+
+struct axis
+    : srs::detail::axis
+{
+    typedef srs::detail::axis base_t;
+
+    axis(int const& v0, int const& v1, int const& v2)
+        : base_t(v0, v1, v2)
+    {}
+    axis(std::initializer_list<int> l) : base_t(l) {}
 };
 
 template <typename Units>
@@ -743,6 +756,7 @@ BOOST_GEOMETRY_PROJECTIONS_DETAIL_REGISTER_PROJ(proj_cass)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_REGISTER_PROJ(proj_cc)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_REGISTER_PROJ(proj_cea)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_REGISTER_PROJ(proj_chamb)
+BOOST_GEOMETRY_PROJECTIONS_DETAIL_REGISTER_PROJ(proj_col_urban)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_REGISTER_PROJ(proj_collg)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_REGISTER_PROJ(proj_crast)
 BOOST_GEOMETRY_PROJECTIONS_DETAIL_REGISTER_PROJ(proj_denoy)

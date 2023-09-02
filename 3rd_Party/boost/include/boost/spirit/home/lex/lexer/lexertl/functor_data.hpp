@@ -22,6 +22,10 @@
 #include <boost/optional.hpp>
 #include <iterator> // for std::iterator_traits
 
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
 namespace boost { namespace spirit { namespace lex { namespace lexertl
 { 
     namespace detail
@@ -190,9 +194,6 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
             boost::lexer::basic_rules<char_type> const& rules_;
 
             bool bol_;      // helper storing whether last character was \n
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(data& operator= (data const&))
         };
 
         ///////////////////////////////////////////////////////////////////////
@@ -262,9 +263,6 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
 
         protected:
             std::size_t state_;
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(data& operator= (data const&))
         };
 
         ///////////////////////////////////////////////////////////////////////
@@ -397,9 +395,6 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
             mutable TokenValue value_;  // token value to use
             mutable bool has_value_;    // 'true' if value_ is valid
             bool has_hold_;     // 'true' if hold_ is valid
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(data& operator= (data const&))
         };
 
         ///////////////////////////////////////////////////////////////////////
@@ -536,12 +531,12 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
             mutable token_value_type value_;  // token value to use
             mutable bool has_value_;    // 'true' if value_ is valid
             bool has_hold_;     // 'true' if hold_ is valid
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(data& operator= (data const&))
         };
     }
 }}}}
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
 #endif
 

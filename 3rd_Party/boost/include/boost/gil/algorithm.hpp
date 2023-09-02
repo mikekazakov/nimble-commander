@@ -1,5 +1,6 @@
 //
 // Copyright 2005-2007 Adobe Systems Incorporated
+// Copyright 2021 Pranam Lashkari <plashkari628@gmail.com>
 //
 // Distributed under the Boost Software License, Version 1.0
 // See accompanying file LICENSE_1_0.txt or copy at
@@ -8,6 +9,10 @@
 #ifndef BOOST_GIL_ALGORITHM_HPP
 #define BOOST_GIL_ALGORITHM_HPP
 
+#include <boost/gil/metafunctions.hpp>
+#include <boost/gil/pixel_iterator.hpp>
+#include <boost/gil/pixel_numeric_operations.hpp>
+#include <boost/gil/image.hpp>
 #include <boost/gil/bit_aligned_pixel_iterator.hpp>
 #include <boost/gil/color_base_algorithm.hpp>
 #include <boost/gil/concepts.hpp>
@@ -26,6 +31,7 @@
 #include <memory>
 #include <type_traits>
 #include <typeinfo>
+#include <numeric>
 
 namespace boost { namespace gil {
 
@@ -83,22 +89,22 @@ struct binary_operation_obj
     using result_type = Result;
 
     template <typename V1, typename V2> BOOST_FORCEINLINE
-    result_type operator()(const std::pair<const V1*,const V2*>& p) const {
+    auto operator()(const std::pair<const V1*,const V2*>& p) const -> result_type {
         return apply(*p.first, *p.second, typename views_are_compatible<V1,V2>::type());
     }
 
     template <typename V1, typename V2> BOOST_FORCEINLINE
-    result_type operator()(const V1& v1, const V2& v2) const {
+    auto operator()(const V1& v1, const V2& v2) const -> result_type {
         return apply(v1, v2, typename views_are_compatible<V1,V2>::type());
     }
 
-    result_type operator()(const error_t&) const { throw std::bad_cast(); }
+    auto operator()(const error_t&) const -> result_type { throw std::bad_cast(); }
 private:
 
     // dispatch from apply overload to a function with distinct name
     template <typename V1, typename V2>
     BOOST_FORCEINLINE
-    result_type apply(V1 const& v1, V2 const& v2, std::false_type) const
+    auto apply(V1 const& v1, V2 const& v2, std::false_type) const -> result_type
     {
         return ((const Derived*)this)->apply_incompatible(v1, v2);
     }
@@ -106,7 +112,7 @@ private:
     // dispatch from apply overload to a function with distinct name
     template <typename V1, typename V2>
     BOOST_FORCEINLINE
-    result_type apply(V1 const& v1, V2 const& v2, std::true_type) const
+    auto apply(V1 const& v1, V2 const& v2, std::true_type) const -> result_type
     {
         return ((const Derived*)this)->apply_compatible(v1, v2);
     }
@@ -114,7 +120,7 @@ private:
     // function with distinct name - it can be overloaded by subclasses
     template <typename V1, typename V2>
     BOOST_FORCEINLINE
-    result_type apply_incompatible(V1 const& /*v1*/, V2 const& /*v2*/) const
+    auto apply_incompatible(V1 const& /*v1*/, V2 const& /*v2*/) const -> result_type
     {
         throw std::bad_cast();
     }
@@ -149,9 +155,10 @@ auto copy(
 /// \ingroup STLOptimizations
 /// \brief Copy when both src and dst are interleaved and of the same type can be just memmove
 template<typename T, typename CS>
-BOOST_FORCEINLINE boost::gil::pixel<T,CS>*
-copy(const boost::gil::pixel<T,CS>* first, const boost::gil::pixel<T,CS>* last,
-     boost::gil::pixel<T,CS>* dst) {
+BOOST_FORCEINLINE
+auto copy(const boost::gil::pixel<T,CS>* first, const boost::gil::pixel<T,CS>* last,
+     boost::gil::pixel<T,CS>* dst) -> boost::gil::pixel<T,CS>*
+{
     return (boost::gil::pixel<T,CS>*)std::copy((unsigned char*)first,(unsigned char*)last, (unsigned char*)dst);
 }
 } // namespace std
@@ -168,7 +175,8 @@ namespace std {
 /// \ingroup STLOptimizations
 /// \brief Copy when both src and dst are planar pointers is copy for each channel
 template<typename CS, typename IC1, typename IC2> BOOST_FORCEINLINE
-boost::gil::planar_pixel_iterator<IC2,CS> copy(boost::gil::planar_pixel_iterator<IC1,CS> first, boost::gil::planar_pixel_iterator<IC1,CS> last, boost::gil::planar_pixel_iterator<IC2,CS> dst) {
+auto copy(boost::gil::planar_pixel_iterator<IC1,CS> first, boost::gil::planar_pixel_iterator<IC1,CS> last, boost::gil::planar_pixel_iterator<IC2,CS> dst) -> boost::gil::planar_pixel_iterator<IC2,CS>
+{
     boost::gil::gil_function_requires<boost::gil::ChannelsCompatibleConcept<typename std::iterator_traits<IC1>::value_type,typename std::iterator_traits<IC2>::value_type>>();
     static_for_each(first,last,dst,boost::gil::detail::copy_fn<IC1,IC2>());
     return dst+(last-first);
@@ -244,7 +252,7 @@ struct copier_n<iterator_from_2d<IL>,iterator_from_2d<OL>> {
 };
 
 template <typename SrcIterator, typename DstIterator>
-BOOST_FORCEINLINE DstIterator copy_with_2d_iterators(SrcIterator first, SrcIterator last, DstIterator dst) {
+BOOST_FORCEINLINE auto copy_with_2d_iterators(SrcIterator first, SrcIterator last, DstIterator dst) -> DstIterator {
     using src_x_iterator = typename SrcIterator::x_iterator;
     using dst_x_iterator = typename DstIterator::x_iterator;
 
@@ -270,9 +278,11 @@ namespace std {
 /// \ingroup STLOptimizations
 /// \brief  std::copy(I1,I1,I2) with I1 and I2 being a iterator_from_2d
 template <typename IL, typename OL>
-BOOST_FORCEINLINE boost::gil::iterator_from_2d<OL> copy1(boost::gil::iterator_from_2d<IL> first, boost::gil::iterator_from_2d<IL> last, boost::gil::iterator_from_2d<OL> dst) {
+BOOST_FORCEINLINE auto copy1(boost::gil::iterator_from_2d<IL> first, boost::gil::iterator_from_2d<IL> last, boost::gil::iterator_from_2d<OL> dst) -> boost::gil::iterator_from_2d<OL>
+{
     return boost::gil::detail::copy_with_2d_iterators(first,last,dst);
 }
+
 } // namespace std
 
 namespace boost { namespace gil {
@@ -307,13 +317,13 @@ public:
     copy_and_convert_pixels_fn(CC cc_in) : _cc(cc_in) {}
    // when the two color spaces are incompatible, a color conversion is performed
     template <typename V1, typename V2> BOOST_FORCEINLINE
-    result_type apply_incompatible(const V1& src, const V2& dst) const {
+    auto apply_incompatible(const V1& src, const V2& dst) const -> result_type {
         copy_pixels(color_converted_view<typename V2::value_type>(src,_cc),dst);
     }
 
     // If the two color spaces are compatible, copy_and_convert is just copy
     template <typename V1, typename V2> BOOST_FORCEINLINE
-    result_type apply_compatible(const V1& src, const V2& dst) const {
+    auto apply_compatible(const V1& src, const V2& dst) const -> result_type {
          copy_pixels(src,dst);
     }
 };
@@ -734,10 +744,33 @@ void default_construct_pixels(View const& view)
 
 namespace detail {
 
+enum class copy_planarity_condition
+{
+    planar_to_planar,
+    interleaved_to_planar,
+    mixed_to_interleaved
+};
+
+using planar_to_planar_type =
+    std::integral_constant
+    <
+        copy_planarity_condition, copy_planarity_condition::planar_to_planar
+    >;
+using interleaved_to_planar_type =
+    std::integral_constant
+    <
+        copy_planarity_condition, copy_planarity_condition::interleaved_to_planar
+    >;
+using mixed_to_interleaved_type =
+    std::integral_constant
+    <
+        copy_planarity_condition, copy_planarity_condition::mixed_to_interleaved
+    >;
+
 /// std::uninitialized_copy for pairs of planar iterators
 template <typename It1, typename It2>
 BOOST_FORCEINLINE
-void uninitialized_copy_aux(It1 first1, It1 last1, It2 first2, std::true_type)
+void uninitialized_copy_aux(It1 first1, It1 last1, It2 first2, It2 last2, planar_to_planar_type)
 {
     std::size_t channel=0;
     try {
@@ -761,12 +794,24 @@ void uninitialized_copy_aux(It1 first1, It1 last1, It2 first2, std::true_type)
     }
 }
 
-/// std::uninitialized_copy for interleaved or mixed iterators
+/// std::uninitialized_copy for interleaved or mixed(planar into interleaved) iterators
 template <typename It1, typename It2>
 BOOST_FORCEINLINE
-void uninitialized_copy_aux(It1 first1, It1 last1, It2 first2, std::false_type)
+void uninitialized_copy_aux(It1 first1, It1 last1, It2 first2, It2, mixed_to_interleaved_type)
 {
     std::uninitialized_copy(first1, last1, first2);
+}
+
+/// std::uninitialized_copy for interleaved to planar iterators
+template <typename It1, typename It2>
+BOOST_FORCEINLINE
+void uninitialized_copy_aux(It1 first1, It1, It2 first2, It2 last2,
+interleaved_to_planar_type)
+{
+    default_construct_aux(first2, last2, std::true_type());
+
+    typename It2::difference_type n = last2 - first2;
+    copier_n<It1,It2>()(first1, n, first2);
 }
 } // namespace detail
 
@@ -777,13 +822,24 @@ void uninitialized_copy_aux(It1 first1, It1 last1, It2 first2, std::false_type)
 template <typename View1, typename View2>
 void uninitialized_copy_pixels(View1 const& view1, View2 const& view2)
 {
-    using is_planar = std::integral_constant<bool, is_planar<View1>::value && is_planar<View2>::value>;
+    using copy_planarity_condition = detail::copy_planarity_condition;
+    using copy_planarity_condition_type =
+    std::integral_constant
+    <
+        copy_planarity_condition,
+        !is_planar<View2>::value
+        ? copy_planarity_condition::mixed_to_interleaved
+        : (is_planar<View1>::value
+            ? copy_planarity_condition::planar_to_planar
+            : copy_planarity_condition::interleaved_to_planar)
+    >;
     BOOST_ASSERT(view1.dimensions() == view2.dimensions());
 
     if (view1.is_1d_traversable() && view2.is_1d_traversable())
     {
         detail::uninitialized_copy_aux(
-            view1.begin().x(), view1.end().x(), view2.begin().x(), is_planar());
+            view1.begin().x(), view1.end().x(), view2.begin().x(), view2.end().x(),
+            copy_planarity_condition_type());
     }
     else
     {
@@ -792,12 +848,13 @@ void uninitialized_copy_pixels(View1 const& view1, View2 const& view2)
         {
             for (y = 0; y < view1.height(); ++y)
                 detail::uninitialized_copy_aux(
-                    view1.row_begin(y), view1.row_end(y), view2.row_begin(y), is_planar());
+                    view1.row_begin(y), view1.row_end(y), view2.row_begin(y), view2.row_end(y),
+                    copy_planarity_condition_type());
         }
         catch(...)
         {
             for (typename View1::y_coord_t y0 = 0; y0 < y; ++y0)
-                detail::destruct_aux(view2.row_begin(y0), view2.row_end(y0), is_planar());
+                detail::destruct_aux(view2.row_begin(y0), view2.row_end(y0), is_planar<View2>());
             throw;
         }
     }
@@ -827,7 +884,8 @@ F for_each_pixel(View const& view, F fun)
     else
     {
         for (std::ptrdiff_t y = 0; y < view.height(); ++y)
-            std::for_each(view.row_begin(y), view.row_end(y), fun);
+            for (auto begin = view.row_begin(y), end = view.row_end(y); begin != end; ++begin)
+                fun(*begin);
         return fun;
     }
 }
@@ -1127,6 +1185,423 @@ F transform_pixel_positions(const View1& src1,const View2& src2,const View3& dst
     }
     return fun;
 }
+
+
+// Code below this line is moved here from <boost/gil/extension/numeric/algorithm.hpp>
+
+/// \brief Reference proxy associated with a type that has a \p "reference" member type alias.
+///
+/// The reference proxy is the reference type, but with stripped-out C++ reference.
+/// Models PixelConcept.
+template <typename T>
+struct pixel_proxy : std::remove_reference<typename T::reference> {};
+
+/// \brief std::for_each for a pair of iterators
+template <typename Iterator1, typename Iterator2, typename BinaryFunction>
+BinaryFunction for_each(Iterator1 first1, Iterator1 last1, Iterator2 first2, BinaryFunction f)
+{
+    while (first1 != last1)
+        f(*first1++, *first2++);
+    return f;
+}
+
+template <typename SrcIterator, typename DstIterator>
+inline
+auto assign_pixels(SrcIterator src, SrcIterator src_end, DstIterator dst) -> DstIterator
+{
+    for_each(src, src_end, dst,
+        pixel_assigns_t
+        <
+            typename pixel_proxy<typename std::iterator_traits<SrcIterator>::value_type>::type,
+            typename pixel_proxy<typename std::iterator_traits<DstIterator>::value_type>::type
+        >());
+    return dst + (src_end - src);
+}
+
+namespace detail {
+
+template <std::size_t Size>
+struct inner_product_k_t
+{
+    template
+    <
+        class InputIterator1,
+        class InputIterator2,
+        class T,
+        class BinaryOperation1,
+        class BinaryOperation2
+    >
+    static T apply(
+        InputIterator1 first1,
+        InputIterator2 first2, T init,
+        BinaryOperation1 binary_op1,
+        BinaryOperation2 binary_op2)
+    {
+        init = binary_op1(init, binary_op2(*first1, *first2));
+        return inner_product_k_t<Size - 1>::template apply(
+            first1 + 1, first2 + 1, init, binary_op1, binary_op2);
+    }
+};
+
+template <>
+struct inner_product_k_t<0>
+{
+    template
+    <
+        class InputIterator1,
+        class InputIterator2,
+        class T,
+        class BinaryOperation1,
+        class BinaryOperation2
+    >
+    static T apply(
+        InputIterator1 first1,
+        InputIterator2 first2,
+        T init,
+        BinaryOperation1 binary_op1,
+        BinaryOperation2 binary_op2)
+    {
+        return init;
+    }
+};
+
+} // namespace detail
+
+/// static version of std::inner_product
+template
+<
+    std::size_t Size,
+    class InputIterator1,
+    class InputIterator2,
+    class T,
+    class BinaryOperation1,
+    class BinaryOperation2
+>
+BOOST_FORCEINLINE
+T inner_product_k(
+    InputIterator1 first1,
+    InputIterator2 first2,
+    T init,
+    BinaryOperation1 binary_op1,
+    BinaryOperation2 binary_op2)
+{
+    return detail::inner_product_k_t<Size>::template apply(
+        first1, first2, init, binary_op1, binary_op2);
+}
+
+/// \brief 1D un-guarded cross-correlation with a variable-size kernel
+template
+<
+    typename PixelAccum,
+    typename SrcIterator,
+    typename KernelIterator,
+    typename Size,
+    typename DstIterator
+>
+inline
+auto correlate_pixels_n(
+    SrcIterator src_begin,
+    SrcIterator src_end,
+    KernelIterator kernel_begin,
+    Size kernel_size,
+    DstIterator dst_begin)
+    -> DstIterator
+{
+    using src_pixel_ref_t = typename pixel_proxy
+        <
+            typename std::iterator_traits<SrcIterator>::value_type
+        >::type;
+    using dst_pixel_ref_t = typename pixel_proxy
+        <
+            typename std::iterator_traits<DstIterator>::value_type
+        >::type;
+    using kernel_value_t = typename std::iterator_traits<KernelIterator>::value_type;
+
+    PixelAccum accum_zero;
+    pixel_zeros_t<PixelAccum>()(accum_zero);
+    while (src_begin != src_end)
+    {
+        pixel_assigns_t<PixelAccum, dst_pixel_ref_t>()(
+            std::inner_product(
+                src_begin,
+                src_begin + kernel_size,
+                kernel_begin,
+                accum_zero,
+                pixel_plus_t<PixelAccum, PixelAccum, PixelAccum>(),
+                pixel_multiplies_scalar_t<src_pixel_ref_t, kernel_value_t, PixelAccum>()),
+            *dst_begin);
+
+        ++src_begin;
+        ++dst_begin;
+    }
+    return dst_begin;
+}
+
+/// \brief 1D un-guarded cross-correlation with a fixed-size kernel
+template
+<
+    std::size_t Size,
+    typename PixelAccum,
+    typename SrcIterator,
+    typename KernelIterator,
+    typename DstIterator
+>
+inline
+auto correlate_pixels_k(
+    SrcIterator src_begin,
+    SrcIterator src_end,
+    KernelIterator kernel_begin,
+    DstIterator dst_begin)
+    -> DstIterator
+{
+    using src_pixel_ref_t = typename pixel_proxy
+        <
+            typename std::iterator_traits<SrcIterator>::value_type
+        >::type;
+    using dst_pixel_ref_t = typename pixel_proxy
+        <
+            typename std::iterator_traits<DstIterator>::value_type
+        >::type;
+    using kernel_type = typename std::iterator_traits<KernelIterator>::value_type;
+
+    PixelAccum accum_zero;
+    pixel_zeros_t<PixelAccum>()(accum_zero);
+    while (src_begin != src_end)
+    {
+        pixel_assigns_t<PixelAccum, dst_pixel_ref_t>()(
+            inner_product_k<Size>(
+                src_begin,
+                kernel_begin,
+                accum_zero,
+                pixel_plus_t<PixelAccum, PixelAccum, PixelAccum>(),
+                pixel_multiplies_scalar_t<src_pixel_ref_t, kernel_type, PixelAccum>()),
+            *dst_begin);
+
+        ++src_begin;
+        ++dst_begin;
+    }
+    return dst_begin;
+}
+
+/// \brief destination is set to be product of the source and a scalar
+/// \tparam PixelAccum - TODO
+/// \tparam SrcView Models ImageViewConcept
+/// \tparam DstView Models MutableImageViewConcept
+template <typename PixelAccum, typename SrcView, typename Scalar, typename DstView>
+inline
+void view_multiplies_scalar(SrcView const& src_view, Scalar const& scalar, DstView const& dst_view)
+{
+    static_assert(std::is_scalar<Scalar>::value, "Scalar is not scalar");
+    BOOST_ASSERT(src_view.dimensions() == dst_view.dimensions());
+    using src_pixel_ref_t = typename pixel_proxy<typename SrcView::value_type>::type;
+    using dst_pixel_ref_t = typename pixel_proxy<typename DstView::value_type>::type;
+    using y_coord_t = typename SrcView::y_coord_t;
+
+    y_coord_t const height = src_view.height();
+    for (y_coord_t y = 0; y < height; ++y)
+    {
+        typename SrcView::x_iterator it_src = src_view.row_begin(y);
+        typename DstView::x_iterator it_dst = dst_view.row_begin(y);
+        typename SrcView::x_iterator it_src_end = src_view.row_end(y);
+        while (it_src != it_src_end)
+        {
+            pixel_assigns_t<PixelAccum, dst_pixel_ref_t>()(
+                pixel_multiplies_scalar_t<src_pixel_ref_t, Scalar, PixelAccum>()(*it_src, scalar),
+                *it_dst);
+
+            ++it_src;
+            ++it_dst;
+        }
+    }
+}
+
+
+/// \ingroup ImageAlgorithms
+/// \brief Boundary options for image boundary extension
+enum class boundary_option
+{
+    output_ignore,  /// do nothing to the output
+    output_zero,    /// set the output to zero
+    extend_padded,  /// assume the source boundaries to be padded already
+    extend_zero,    /// assume the source boundaries to be zero
+    extend_constant /// assume the source boundaries to be the boundary value
+};
+
+namespace detail
+{
+
+template <typename SrcView, typename RltView>
+void extend_row_impl(
+    SrcView const& src_view,
+    RltView result_view,
+    std::size_t extend_count,
+    boundary_option option)
+{
+    std::ptrdiff_t extend_count_ = static_cast<std::ptrdiff_t>(extend_count);
+
+    if (option == boundary_option::extend_constant)
+    {
+        for (std::ptrdiff_t i = 0; i < result_view.height(); i++)
+        {
+            if(i >= extend_count_ && i < extend_count_ + src_view.height())
+            {
+                assign_pixels(
+                    src_view.row_begin(i - extend_count_),
+                    src_view.row_end(i - extend_count_),
+                    result_view.row_begin(i)
+                );
+            }
+            else if(i < extend_count_)
+            {
+                assign_pixels(src_view.row_begin(0), src_view.row_end(0), result_view.row_begin(i));
+            }
+            else
+            {
+                assign_pixels(
+                    src_view.row_begin(src_view.height() - 1),
+                    src_view.row_end(src_view.height() - 1),
+                    result_view.row_begin(i)
+                );
+            }
+
+        }
+    }
+    else if (option == boundary_option::extend_zero)
+    {
+        typename SrcView::value_type acc_zero;
+        pixel_zeros_t<typename SrcView::value_type>()(acc_zero);
+
+        for (std::ptrdiff_t i = 0; i < result_view.height(); i++)
+        {
+            if (i >= extend_count_ && i < extend_count_ + src_view.height())
+            {
+                assign_pixels(
+                    src_view.row_begin(i - extend_count_),
+                    src_view.row_end(i - extend_count_),
+                    result_view.row_begin(i)
+                );
+            }
+            else
+            {
+                std::fill_n(result_view.row_begin(i), result_view.width(), acc_zero);
+            }
+        }
+    }
+    else if (option == boundary_option::extend_padded)
+    {
+        auto original_view = subimage_view(
+            src_view,
+            0,
+            -extend_count,
+            src_view.width(),
+            src_view.height() + (2 * extend_count)
+        );
+        for (std::ptrdiff_t i = 0; i < result_view.height(); i++)
+        {
+            assign_pixels(
+                original_view.row_begin(i),
+                original_view.row_end(i),
+                result_view.row_begin(i)
+            );
+        }
+    }
+    else
+    {
+        BOOST_ASSERT_MSG(false, "Invalid boundary option");
+    }
+}
+
+} //namespace detail
+
+
+/// \brief adds new row at top and bottom.
+/// Image padding introduces new pixels around the edges of an image.
+/// The border provides space for annotations or acts as a boundary when using advanced filtering techniques.
+/// \tparam SrcView Models ImageViewConcept
+/// \tparam extend_count number of rows to be added each side
+/// \tparam option - TODO
+template <typename SrcView>
+auto extend_row(
+    SrcView const& src_view,
+    std::size_t extend_count,
+    boundary_option option
+) -> typename gil::image<typename SrcView::value_type>
+{
+    typename gil::image<typename SrcView::value_type>
+        result_img(src_view.width(), src_view.height() + (2 * extend_count));
+
+    auto result_view = view(result_img);
+    detail::extend_row_impl(src_view, result_view, extend_count, option);
+    return result_img;
+}
+
+
+/// \brief adds new column at left and right.
+/// Image padding introduces new pixels around the edges of an image.
+/// The border provides space for annotations or acts as a boundary when using advanced filtering techniques.
+/// \tparam SrcView Models ImageViewConcept
+/// \tparam extend_count number of columns to be added each side
+/// \tparam option - TODO
+template <typename SrcView>
+auto extend_col(
+    SrcView const& src_view,
+    std::size_t extend_count,
+    boundary_option option
+) -> typename gil::image<typename SrcView::value_type>
+{
+    auto src_view_rotate = rotated90cw_view(src_view);
+
+    typename gil::image<typename SrcView::value_type>
+        result_img(src_view.width() + (2 * extend_count), src_view.height());
+
+    auto result_view = rotated90cw_view(view(result_img));
+    detail::extend_row_impl(src_view_rotate, result_view, extend_count, option);
+    return result_img;
+}
+
+/// \brief adds new row and column at all sides.
+/// Image padding introduces new pixels around the edges of an image.
+/// The border provides space for annotations or acts as a boundary when using advanced filtering techniques.
+/// \tparam SrcView Models ImageViewConcept
+/// \tparam extend_count number of rows/column to be added each side
+/// \tparam option - TODO
+template <typename SrcView>
+auto extend_boundary(
+    SrcView const& src_view,
+    std::size_t extend_count,
+    boundary_option option
+) -> typename gil::image<typename SrcView::value_type>
+{
+    if (option == boundary_option::extend_padded)
+    {
+        typename gil::image<typename SrcView::value_type>
+            result_img(src_view.width()+(2 * extend_count), src_view.height()+(2 * extend_count));
+        typename gil::image<typename SrcView::value_type>::view_t result_view = view(result_img);
+
+        auto original_view = subimage_view(
+            src_view,
+            -extend_count,
+            -extend_count,
+            src_view.width() + (2 * extend_count),
+            src_view.height() + (2 * extend_count)
+        );
+
+        for (std::ptrdiff_t i = 0; i < result_view.height(); i++)
+        {
+            assign_pixels(
+                original_view.row_begin(i),
+                original_view.row_end(i),
+                result_view.row_begin(i)
+            );
+        }
+
+        return result_img;
+    }
+
+    auto auxilary_img = extend_col(src_view, extend_count, option);
+    return extend_row(view(auxilary_img), extend_count, option);
+}
+
 } }  // namespace boost::gil
 
 #endif

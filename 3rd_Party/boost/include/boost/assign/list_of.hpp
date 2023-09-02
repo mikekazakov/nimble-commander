@@ -25,12 +25,12 @@
 #include <boost/type_traits/is_reference.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/throw_exception.hpp>
+#include <boost/type_traits/conditional.hpp>
 #include <boost/type_traits/detail/yes_no_type.hpp>
 #include <boost/type_traits/decay.hpp>
 #include <boost/type_traits/is_array.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/utility/declval.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/move/utility.hpp>
 #include <deque>
 #include <cstddef>
@@ -83,10 +83,10 @@ namespace assign_detail
         // Add constness to array parameters
         // to support string literals properly
         //
-        typedef BOOST_DEDUCED_TYPENAME mpl::eval_if<
-            ::boost::is_array<T>,
+        typedef BOOST_DEDUCED_TYPENAME ::boost::conditional<
+            ::boost::is_array<T>::value,
             ::boost::decay<const T>,
-            ::boost::decay<T> >::type type;
+            ::boost::decay<T> >::type::type type;
     };
 
     template< class T, std::size_t sz >
@@ -165,7 +165,7 @@ namespace assign_detail
             BOOST_STATIC_CONSTANT( bool, is_array_flag = sizeof( assign_detail::assign_is_array( c ) )
                                    == sizeof( type_traits::yes_type ) );
 
-            typedef BOOST_DEDUCED_TYPENAME mpl::if_c< is_array_flag,
+            typedef BOOST_DEDUCED_TYPENAME ::boost::conditional< is_array_flag,
                                                       array_type_tag,
                                              default_type_tag >::type tag_type;
 

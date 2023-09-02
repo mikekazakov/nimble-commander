@@ -16,6 +16,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/distributed/concepts.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/property_map/parallel/parallel_property_maps.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/type_traits/is_same.hpp>

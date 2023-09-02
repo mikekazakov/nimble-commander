@@ -33,7 +33,7 @@ namespace boost { namespace math {
       // for use in A&S 9.2.5 and 9.2.6.
       // This series is quick to evaluate, but divergent unless
       // x is very large, in fact it's pretty hard to figure out
-      // with any degree of precision when this series actually 
+      // with any degree of precision when this series actually
       // *will* converge!!  Consequently, we may just have to
       // try it and see...
       //
@@ -124,9 +124,9 @@ namespace boost { namespace math {
             coef *= coef_mult / k;
             sum += coef * g;
             sum1 += coef * h;
-            if (abs(coef * g) < abs(sum) * tolerance) 
-            { 
-               break; 
+            if (abs(coef * g) < abs(sum) * tolerance)
+            {
+               break;
             }
          }
          policies::check_series_iterations<T>("boost::math::bessel_jy<%1%>(%1%,%1%) in temme_jy", k, pol);
@@ -168,7 +168,7 @@ namespace boost { namespace math {
             delta = C * D;
             f *= delta;
             if (D < 0) { s = -s; }
-            if (abs(delta - 1) < tolerance) 
+            if (abs(delta - 1) < tolerance)
             { break; }
          }
          policies::check_series_iterations<T>("boost::math::bessel_jy<%1%>(%1%,%1%) in CF1_jy", k / 100, pol);
@@ -315,7 +315,7 @@ namespace boost { namespace math {
             if((kind & need_y) == 0)
                *Y = std::numeric_limits<T>::quiet_NaN();  // any value will do, not using Y.
             else if(v == 0)
-               *Y = -policies::raise_overflow_error<T>(function, 0, pol);
+               *Y = -policies::raise_overflow_error<T>(function, nullptr, pol);
             else
                *Y = policies::raise_domain_error<T>(function, "Value of Bessel Y_v(x) is complex-infinity at %1%", x, pol); // complex infinity
             return 1;
@@ -344,7 +344,7 @@ namespace boost { namespace math {
                Jv = bessel_j_small_z_series(v, x, pol);
             else
                Jv = std::numeric_limits<T>::quiet_NaN();
-            if((org_kind&need_y && (!reflect || (cp != 0))) 
+            if((org_kind&need_y && (!reflect || (cp != 0)))
                || (org_kind & need_j && (reflect && (sp != 0))))
             {
                // Only calculate if we need it, and if the reflection formula will actually use it:
@@ -361,7 +361,7 @@ namespace boost { namespace math {
                Jv = bessel_j_small_z_series(v, x, pol);
             else
                Jv = std::numeric_limits<T>::quiet_NaN();
-            if((org_kind&need_y && (!reflect || (cp != 0))) 
+            if((org_kind&need_y && (!reflect || (cp != 0)))
                || (org_kind & need_j && (reflect && (sp != 0))))
             {
                // Only calculate if we need it, and if the reflection formula will actually use it:
@@ -388,7 +388,7 @@ namespace boost { namespace math {
          else if((x > 8) && hankel_PQ(v, x, &p, &q, pol))
          {
             //
-            // Hankel approximation: note that this method works best when x 
+            // Hankel approximation: note that this method works best when x
             // is large, but in that case we end up calculating sines and cosines
             // of large values, with horrendous resulting accuracy.  It is fast though
             // when it works....
@@ -465,6 +465,13 @@ namespace boost { namespace math {
                for (k = n; k > 0; k--)             // backward recurrence for J
                {
                   next = 2 * (u + k) * current / x - prev;
+                  //
+                  // We can't allow next to completely cancel out or the subsequent logic breaks.
+                  // Pretend that one bit did not cancel:
+                  if (next == 0)
+                  {
+                     next = prev * tools::epsilon<T>() / 2;
+                  }
                   prev = current;
                   current = next;
                }
@@ -559,11 +566,11 @@ namespace boost { namespace math {
          if (reflect)
          {
             if((sp != 0) && (tools::max_value<T>() * fabs(Yv_scale) < fabs(sp * Yv)))
-               *J = org_kind & need_j ? T(-sign(sp) * sign(Yv) * (Yv_scale != 0 ? sign(Yv_scale) : 1) * policies::raise_overflow_error<T>(function, 0, pol)) : T(0);
+               *J = org_kind & need_j ? T(-sign(sp) * sign(Yv) * (Yv_scale != 0 ? sign(Yv_scale) : 1) * policies::raise_overflow_error<T>(function, nullptr, pol)) : T(0);
             else
                *J = cp * Jv - (sp == 0 ? T(0) : T((sp * Yv) / Yv_scale));     // reflection formula
             if((cp != 0) && (tools::max_value<T>() * fabs(Yv_scale) < fabs(cp * Yv)))
-               *Y = org_kind & need_y ? T(-sign(cp) * sign(Yv) * (Yv_scale != 0 ? sign(Yv_scale) : 1) * policies::raise_overflow_error<T>(function, 0, pol)) : T(0);
+               *Y = org_kind & need_y ? T(-sign(cp) * sign(Yv) * (Yv_scale != 0 ? sign(Yv_scale) : 1) * policies::raise_overflow_error<T>(function, nullptr, pol)) : T(0);
             else
                *Y = (sp != 0 ? sp * Jv : T(0)) + (cp == 0 ? T(0) : T((cp * Yv) / Yv_scale));
          }
@@ -571,7 +578,7 @@ namespace boost { namespace math {
          {
             *J = Jv;
             if(tools::max_value<T>() * fabs(Yv_scale) < fabs(Yv))
-               *Y = org_kind & need_y ? T(sign(Yv) * sign(Yv_scale) * policies::raise_overflow_error<T>(function, 0, pol)) : T(0);
+               *Y = org_kind & need_y ? T(sign(Yv) * sign(Yv_scale) * policies::raise_overflow_error<T>(function, nullptr, pol)) : T(0);
             else
                *Y = Yv / Yv_scale;
          }

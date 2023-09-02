@@ -270,7 +270,7 @@ template<>
 struct image_read_settings< tiff_tag > : public image_read_settings_base
 {
     /// Default constructor
-    image_read_settings< tiff_tag >()
+    image_read_settings()
     : image_read_settings_base()
     , _directory( tiff_directory::default_value::value )
     {}
@@ -279,8 +279,8 @@ struct image_read_settings< tiff_tag > : public image_read_settings_base
     /// \param top_left  Top left coordinate for reading partial image.
     /// \param dim       Dimensions for reading partial image.
     /// \param directory Defines the page to read in a multipage tiff file.
-    image_read_settings( const point_t&              top_left
-                       , const point_t&              dim
+    image_read_settings( point_t const&              top_left
+                       , point_t const&              dim
                        , const tiff_directory::type& directory = tiff_directory::default_value::value
                        )
     : image_read_settings_base( top_left

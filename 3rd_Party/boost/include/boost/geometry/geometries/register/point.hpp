@@ -18,10 +18,14 @@
 #ifndef BOOST_GEOMETRY_GEOMETRIES_REGISTER_POINT_HPP
 #define BOOST_GEOMETRY_GEOMETRIES_REGISTER_POINT_HPP
 
+#include <boost/geometry/core/access.hpp>
+#include <boost/geometry/core/coordinate_dimension.hpp>
+#include <boost/geometry/core/coordinate_system.hpp>
+#include <boost/geometry/core/coordinate_type.hpp>
+#include <boost/geometry/core/cs.hpp>
 
 #include <cstddef>
 #include <type_traits>
-
 
 #ifndef DOXYGEN_NO_SPECIALIZATIONS
 

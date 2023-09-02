@@ -20,11 +20,11 @@
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
 #include <boost/core/allocator_access.hpp>
+#include <boost/core/swap.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
 #include <boost/iterator/iterator_traits.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/signals2/detail/scope_guard.hpp>
-#include <boost/swap.hpp>
 #include <boost/type_traits/aligned_storage.hpp>
 #include <boost/type_traits/alignment_of.hpp>
 #include <boost/type_traits/has_nothrow_copy.hpp>

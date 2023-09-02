@@ -38,8 +38,9 @@ class variant : public iterator_mixin<variant<Ts...>> {
   template <class T>
   using requires_bounded_type = std::enable_if_t<is_bounded_type<T>::value>;
 
-  using metadata_type = std::remove_const_t<std::remove_reference_t<decltype(
-      traits::metadata(std::declval<std::remove_pointer_t<mp11::mp_first<variant>>>()))>>;
+  using metadata_type =
+      std::remove_const_t<std::remove_reference_t<decltype(traits::metadata(
+          std::declval<std::remove_pointer_t<mp11::mp_first<variant>>>()))>>;
 
 public:
   // cannot import ctors with using directive, it breaks gcc and msvc

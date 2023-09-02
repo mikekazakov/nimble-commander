@@ -9,7 +9,7 @@
 #define BOOST_GIL_IMAGE_PROCESSING_DETAIL_MATH_HPP
 
 #include <array>
-#include <boost/gil/extension/numeric/kernel.hpp>
+#include <boost/gil/image_processing/kernel.hpp>
 
 namespace boost { namespace gil { namespace detail {
 
@@ -21,7 +21,7 @@ static constexpr std::array<float, 9> dy_sobel = {{1, 2, 1, 0, 0, 0, -1, -2, -1}
 static constexpr std::array<float, 9> dy_scharr = {{1, 1, 1, 0, 0, 0, -1, -1, -1}};
 
 template <typename T, typename Allocator>
-inline detail::kernel_2d<T, Allocator> get_identity_kernel()
+inline auto get_identity_kernel() -> detail::kernel_2d<T, Allocator>
 {
     detail::kernel_2d<T, Allocator> kernel(1, 0, 0);
     kernel[0] = 1;

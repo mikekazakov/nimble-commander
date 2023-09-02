@@ -434,7 +434,7 @@ private:
     Real rel_err_goal_;
 
     #ifdef BOOST_HAS_THREADS
-    std::atomic<long> starting_level_;
+    std::atomic<long> starting_level_{};
     #else
     long starting_level_;
     #endif
@@ -663,7 +663,7 @@ private:
     Real rel_err_goal_;
 
     #ifdef BOOST_HAS_THREADS
-    std::atomic<long> starting_level_;
+    std::atomic<long> starting_level_{};
     #else
     long starting_level_;
     #endif

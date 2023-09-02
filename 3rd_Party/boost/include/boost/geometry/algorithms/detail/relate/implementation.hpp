@@ -2,9 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2013-2021.
-// Modifications copyright (c) 2013-2021 Oracle and/or its affiliates.
-
+// This file was modified by Oracle on 2013-2022.
+// Modifications copyright (c) 2013-2022 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -15,16 +14,16 @@
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_RELATE_IMPLEMENTATION_HPP
 
 
-#include <boost/geometry/core/tags.hpp>
-
-#include <boost/geometry/algorithms/detail/relate/interface.hpp>
-
-#include <boost/geometry/algorithms/detail/relate/point_point.hpp>
-#include <boost/geometry/algorithms/detail/relate/point_geometry.hpp>
-#include <boost/geometry/algorithms/detail/relate/linear_linear.hpp>
-#include <boost/geometry/algorithms/detail/relate/linear_areal.hpp>
-#include <boost/geometry/algorithms/detail/relate/multi_point_geometry.hpp>
 #include <boost/geometry/algorithms/detail/relate/areal_areal.hpp>
+#include <boost/geometry/algorithms/detail/relate/box_areal.hpp>
+#include <boost/geometry/algorithms/detail/relate/interface.hpp>
+#include <boost/geometry/algorithms/detail/relate/linear_areal.hpp>
+#include <boost/geometry/algorithms/detail/relate/linear_linear.hpp>
+#include <boost/geometry/algorithms/detail/relate/multi_point_geometry.hpp>
+#include <boost/geometry/algorithms/detail/relate/point_geometry.hpp>
+#include <boost/geometry/algorithms/detail/relate/point_point.hpp>
+
+#include <boost/geometry/core/tags.hpp>
 
 #include <boost/geometry/strategies/relate/cartesian.hpp>
 #include <boost/geometry/strategies/relate/geographic.hpp>
@@ -115,6 +114,23 @@ template <typename Areal1, typename Areal2, typename Tag1, typename Tag2>
 struct relate<Areal1, Areal2, Tag1, Tag2, 2, 2, true>
     : detail::relate::areal_areal<Areal1, Areal2>
 {};
+
+
+template <typename Box, typename Ring>
+struct relate<Box, Ring, box_tag, ring_tag, 2, 2, false>
+    : detail::relate::box_areal<Box, Ring>
+{};
+
+template <typename Box, typename Polygon>
+struct relate<Box, Polygon, box_tag, polygon_tag, 2, 2, false>
+    : detail::relate::box_areal<Box, Polygon>
+{};
+
+template <typename Box, typename MultiPolygon>
+struct relate<Box, MultiPolygon, box_tag, multi_polygon_tag, 2, 2, false>
+    : detail::relate::box_areal<Box, MultiPolygon>
+{};
+
 
 } // namespace dispatch
 #endif // DOXYGEN_NO_DISPATCH

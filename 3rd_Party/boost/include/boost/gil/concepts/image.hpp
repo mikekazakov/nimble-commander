@@ -48,7 +48,7 @@ namespace boost { namespace gil {
 ///     void Image::recreate(point_t new_dims, std::size_t alignment=1);
 ///     void Image::recreate(point_t new_dims, value_type fill_value, std::size_t alignment);
 ///
-///     const point_t&        Image::dimensions() const;
+///     point_t const&        Image::dimensions() const;
 ///     const const_view_t&   const_view(const Image&);
 ///     const view_t&         view(Image&);
 /// };

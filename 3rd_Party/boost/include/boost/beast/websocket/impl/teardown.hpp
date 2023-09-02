@@ -59,6 +59,7 @@ public:
         , nb_(false)
     {
         (*this)({}, 0, false);
+        this->set_allowed_cancellation(net::cancellation_type::all);
     }
 
     void
@@ -127,7 +128,7 @@ public:
                         "websocket::tcp::async_teardown"
                         ));
 
-                    net::post(bind_front_handler(
+                    net::post(s_.get_executor(), bind_front_handler(
                         std::move(*this), ec));
                 }
             }

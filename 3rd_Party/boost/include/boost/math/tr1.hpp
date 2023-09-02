@@ -739,44 +739,44 @@ inline typename tools::promote_args<T>::type trunc BOOST_PREVENT_MACRO_SUBSTITUT
 
 # define NO_MACRO_EXPAND /**/
 // C99 macros defined as C++ templates
-template<class T> bool signbit NO_MACRO_EXPAND(T x)
+template<class T> bool signbit NO_MACRO_EXPAND(T)
 { static_assert(sizeof(T) == 0, "Undefined behavior; this template should never be instantiated"); return false; } // must not be instantiated
 template<> bool BOOST_MATH_TR1_DECL signbit<float> NO_MACRO_EXPAND(float x);
 template<> bool BOOST_MATH_TR1_DECL signbit<double> NO_MACRO_EXPAND(double x);
 template<> bool BOOST_MATH_TR1_DECL signbit<long double> NO_MACRO_EXPAND(long double x);
 
-template<class T> int fpclassify NO_MACRO_EXPAND(T x)
+template<class T> int fpclassify NO_MACRO_EXPAND(T)
 { static_assert(sizeof(T) == 0, "Undefined behavior; this template should never be instantiated"); return false; } // must not be instantiated
 template<> int BOOST_MATH_TR1_DECL fpclassify<float> NO_MACRO_EXPAND(float x);
 template<> int BOOST_MATH_TR1_DECL fpclassify<double> NO_MACRO_EXPAND(double x);
 template<> int BOOST_MATH_TR1_DECL fpclassify<long double> NO_MACRO_EXPAND(long double x);
 
-template<class T> bool isfinite NO_MACRO_EXPAND(T x)
+template<class T> bool isfinite NO_MACRO_EXPAND(T)
 { static_assert(sizeof(T) == 0, "Undefined behavior; this template should never be instantiated"); return false; } // must not be instantiated
 template<> bool BOOST_MATH_TR1_DECL isfinite<float> NO_MACRO_EXPAND(float x);
 template<> bool BOOST_MATH_TR1_DECL isfinite<double> NO_MACRO_EXPAND(double x);
 template<> bool BOOST_MATH_TR1_DECL isfinite<long double> NO_MACRO_EXPAND(long double x);
 
-template<class T> bool isinf NO_MACRO_EXPAND(T x)
+template<class T> bool isinf NO_MACRO_EXPAND(T)
 { static_assert(sizeof(T) == 0, "Undefined behavior; this template should never be instantiated"); return false; } // must not be instantiated
 template<> bool BOOST_MATH_TR1_DECL isinf<float> NO_MACRO_EXPAND(float x);
 template<> bool BOOST_MATH_TR1_DECL isinf<double> NO_MACRO_EXPAND(double x);
 template<> bool BOOST_MATH_TR1_DECL isinf<long double> NO_MACRO_EXPAND(long double x);
 
-template<class T> bool isnan NO_MACRO_EXPAND(T x)
+template<class T> bool isnan NO_MACRO_EXPAND(T)
 { static_assert(sizeof(T) == 0, "Undefined behavior; this template should never be instantiated"); return false; } // must not be instantiated
 template<> bool BOOST_MATH_TR1_DECL isnan<float> NO_MACRO_EXPAND(float x);
 template<> bool BOOST_MATH_TR1_DECL isnan<double> NO_MACRO_EXPAND(double x);
 template<> bool BOOST_MATH_TR1_DECL isnan<long double> NO_MACRO_EXPAND(long double x);
 
-template<class T> bool isnormal NO_MACRO_EXPAND(T x)
+template<class T> bool isnormal NO_MACRO_EXPAND(T)
 { static_assert(sizeof(T) == 0, "Undefined behavior; this template should never be instantiated"); return false; } // must not be instantiated
 template<> bool BOOST_MATH_TR1_DECL isnormal<float> NO_MACRO_EXPAND(float x);
 template<> bool BOOST_MATH_TR1_DECL isnormal<double> NO_MACRO_EXPAND(double x);
 template<> bool BOOST_MATH_TR1_DECL isnormal<long double> NO_MACRO_EXPAND(long double x);
 
-#undef NO_MACRO_EXPAND   
-   
+#undef NO_MACRO_EXPAND
+
 // [5.2.1.1] associated Laguerre polynomials:
 inline float assoc_laguerref BOOST_PREVENT_MACRO_SUBSTITUTION(unsigned n, unsigned m, float x)
 { return boost::math::tr1::boost_assoc_laguerref BOOST_PREVENT_MACRO_SUBSTITUTION(n, m, x); }
@@ -788,7 +788,7 @@ inline float assoc_laguerre BOOST_PREVENT_MACRO_SUBSTITUTION(unsigned n, unsigne
 { return boost::math::tr1::assoc_laguerref BOOST_PREVENT_MACRO_SUBSTITUTION(n, m, x); }
 inline long double assoc_laguerre BOOST_PREVENT_MACRO_SUBSTITUTION(unsigned n, unsigned m, long double x)
 { return boost::math::tr1::assoc_laguerrel BOOST_PREVENT_MACRO_SUBSTITUTION(n, m, x); }
-template <class T> 
+template <class T>
 inline typename tools::promote_args<T>::type assoc_laguerre BOOST_PREVENT_MACRO_SUBSTITUTION(unsigned n, unsigned m, T x)
 { return boost::math::tr1::assoc_laguerre BOOST_PREVENT_MACRO_SUBSTITUTION(n, m, static_cast<typename tools::promote_args<T>::type>(x)); }
 

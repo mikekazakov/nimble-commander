@@ -13,6 +13,17 @@
 
 #include <boost/math/tools/is_standalone.hpp>
 
+// Minimum language standard transition
+#ifdef _MSVC_LANG
+#  if _MSVC_LANG < 201402L
+#    pragma warning("The minimum language standard to use Boost.Math will be C++14 starting in July 2023 (Boost 1.82 release)");
+#  endif
+#else
+#  if __cplusplus < 201402L
+#    warning "The minimum language standard to use Boost.Math will be C++14 starting in July 2023 (Boost 1.82 release)"
+#  endif
+#endif
+
 #ifndef BOOST_MATH_STANDALONE
 #include <boost/config.hpp>
 
@@ -77,16 +88,100 @@
 #  define BOOST_NO_CXX11_THREAD_LOCAL
 #endif // BOOST_DISABLE_THREADS
 
+#ifdef __GNUC__
+#  if !defined(__EXCEPTIONS) && !defined(BOOST_NO_EXCEPTIONS)
+#     define BOOST_NO_EXCEPTIONS
+#  endif
+   //
+   // Make sure we have some std lib headers included so we can detect __GXX_RTTI:
+   //
+#  include <algorithm>  // for min and max
+#  include <limits>
+#  ifndef __GXX_RTTI
+#     ifndef BOOST_NO_TYPEID
+#        define BOOST_NO_TYPEID
+#     endif
+#     ifndef BOOST_NO_RTTI
+#        define BOOST_NO_RTTI
+#     endif
+#  endif
+#endif
+
+#if !defined(BOOST_NOINLINE)
+#  if defined(_MSC_VER)
+#    define BOOST_NOINLINE __declspec(noinline)
+#  elif defined(__GNUC__) && __GNUC__ > 3
+     // Clang also defines __GNUC__ (as 4)
+#    if defined(__CUDACC__)
+       // nvcc doesn't always parse __noinline__,
+       // see: https://svn.boost.org/trac/boost/ticket/9392
+#      define BOOST_NOINLINE __attribute__ ((noinline))
+#    elif defined(__HIP__)
+       // See https://github.com/boostorg/config/issues/392
+#      define BOOST_NOINLINE __attribute__ ((noinline))
+#    else
+#      define BOOST_NOINLINE __attribute__ ((__noinline__))
+#    endif
+#  else
+#    define BOOST_NOINLINE
+#  endif
+#endif
+
+#if !defined(BOOST_FORCEINLINE)
+#  if defined(_MSC_VER)
+#    define BOOST_FORCEINLINE __forceinline
+#  elif defined(__GNUC__) && __GNUC__ > 3
+     // Clang also defines __GNUC__ (as 4)
+#    define BOOST_FORCEINLINE inline __attribute__ ((__always_inline__))
+#  else
+#    define BOOST_FORCEINLINE inline
+#  endif
+#endif
+
 #endif // BOOST_MATH_STANDALONE
+
+// Support compilers with P0024R2 implemented without linking TBB
+// https://en.cppreference.com/w/cpp/compiler_support
+#if !defined(BOOST_NO_CXX17_HDR_EXECUTION) && defined(BOOST_HAS_THREADS)
+#  define BOOST_MATH_EXEC_COMPATIBLE
+#endif
+
+// Attributes from C++14 and newer
+#ifdef __has_cpp_attribute
+
+// C++17
+#if (__cplusplus >= 201703L || _MSVC_LANG >= 201703L)
+#  if __has_cpp_attribute(maybe_unused)
+#    define BOOST_MATH_MAYBE_UNUSED [[maybe_unused]]
+#  endif
+#endif
+
+#endif // Standalone config
+
+// If attributes are not defined make sure we don't have compiler errors
+#ifndef BOOST_MATH_MAYBE_UNUSED
+#  define BOOST_MATH_MAYBE_UNUSED 
+#endif
+
+// C++23
+#if __cplusplus > 202002L || _MSVC_LANG > 202002L
+#  if __GNUC__ >= 13
+     // libstdc++3 only defines to/from_chars for std::float128_t when one of these defines are set
+     // otherwise we're right out of luck...
+#    if defined(_GLIBCXX_LDOUBLE_IS_IEEE_BINARY128) || defined(_GLIBCXX_HAVE_FLOAT128_MATH)
+#    include <cstring> // std::strlen is used with from_chars
+#    include <charconv>
+#    include <stdfloat>
+#    define BOOST_MATH_USE_CHARCONV_FOR_CONVERSION
+#endif
+#  endif
+#endif
 
 #include <algorithm>  // for min and max
 #include <limits>
 #include <cmath>
 #include <climits>
 #include <cfloat>
-#if (defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__))
-#  include <math.h>
-#endif
 
 #include <boost/math/tools/user.hpp>
 

@@ -196,6 +196,11 @@ struct chlit_grammar :
                                         impl::compose(self.value, self.long_lit,
                                             phx::var(self.overflow), phx::val(0x0b))
                                     ]
+                                |   (ch_p('e') | ch_p('E'))   // ESC
+                                    [
+                                        impl::compose(self.value, self.long_lit,
+                                            phx::var(self.overflow), phx::val(0x1b))
+                                    ]
                                 |   ch_p('f')    // FF
                                     [
                                         impl::compose(self.value, self.long_lit,

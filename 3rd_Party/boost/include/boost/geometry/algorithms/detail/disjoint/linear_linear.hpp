@@ -33,6 +33,8 @@
 #include <boost/geometry/algorithms/detail/overlay/do_reverse.hpp>
 #include <boost/geometry/algorithms/detail/overlay/segment_as_subrange.hpp>
 
+#include <boost/geometry/geometries/helper_geometry.hpp>
+
 #include <boost/geometry/policies/disjoint_interrupt_policy.hpp>
 #include <boost/geometry/policies/robustness/no_rescale_policy.hpp>
 
@@ -91,20 +93,21 @@ struct disjoint_linear
                              Geometry2 const& geometry2,
                              Strategy const& strategy)
     {
-        typedef typename geometry::point_type<Geometry1>::type point_type;
-        typedef geometry::segment_ratio
+        using point_type = typename geometry::point_type<Geometry1>::type;
+        using mutable_point_type = typename helper_geometry<point_type>::type;
+        using ratio_type = geometry::segment_ratio
             <
                 typename coordinate_type<point_type>::type
-            > ratio_type;
-        typedef overlay::turn_info
+            > ;
+        using turn_info_type = overlay::turn_info
             <
-                point_type,
+                mutable_point_type,
                 ratio_type,
                 typename detail::get_turns::turn_operation_type
                         <
-                            Geometry1, Geometry2, ratio_type
+                            Geometry1, Geometry2, mutable_point_type, ratio_type
                         >::type
-            > turn_info_type;
+            >;
 
         std::deque<turn_info_type> turns;
 

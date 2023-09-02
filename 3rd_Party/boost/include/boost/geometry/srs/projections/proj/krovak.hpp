@@ -2,8 +2,9 @@
 
 // Copyright (c) 2008-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2019.
-// Modifications copyright (c) 2017-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017, 2018, 2019, 2022.
+// Modifications copyright (c) 2017-2022, Oracle and/or its affiliates.
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle.
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -128,19 +129,17 @@ namespace projections
 
                     xy_y *= this->m_proj_parm.czech;
                     xy_x *= this->m_proj_parm.czech;
+                    if (this->m_proj_parm.czech == 1) std::swap(xy_x, xy_y);
                 }
 
                 // INVERSE(e_inverse)  ellipsoid
                 // Project coordinates from cartesian (x, y) to geographic (lon, lat)
                 inline void inv(Parameters const& par, T xy_x, T xy_y, T& lp_lon, T& lp_lat) const
                 {
-                    T u, deltav, s, d, eps, rho, fi1, xy0;
+                    T u, deltav, s, d, eps, rho, fi1;
                     int i;
 
-                    // TODO: replace with std::swap()
-                    xy0 = xy_x;
-                    xy_x = xy_y;
-                    xy_y = xy0;
+                    if (this->m_proj_parm.czech == -1) std::swap(xy_x, xy_y);
 
                     xy_x *= this->m_proj_parm.czech;
                     xy_y *= this->m_proj_parm.czech;
@@ -261,7 +260,7 @@ namespace projections
 
         // Factory entry(s)
         BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_ENTRY_FI(krovak_entry, krovak_ellipsoid)
-        
+
         BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_INIT_BEGIN(krovak_init)
         {
             BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_INIT_ENTRY(krovak, krovak_entry)

@@ -4,14 +4,13 @@
 //  Distributed under the Boost Software License, Version 1.0.
 //  See accompanying file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_MP_CPP_INT_CORE_HPP
-#define BOOST_MP_CPP_INT_CORE_HPP
+#ifndef BOOST_MP_CPP_INT_CONFIG_HPP
+#define BOOST_MP_CPP_INT_CONFIG_HPP
 
 #include <cstdint>
 #include <type_traits>
 #include <limits>
 #include <boost/multiprecision/detail/standalone_config.hpp>
-#include <boost/multiprecision/detail/number_base.hpp>
 #include <boost/multiprecision/detail/assert.hpp>
 
 namespace boost {
@@ -108,12 +107,12 @@ using limb_type = detail::largest_unsigned_type<64>::type;
 using signed_limb_type = detail::largest_signed_type<64>::type;
 using double_limb_type = boost::multiprecision::uint128_type;
 using signed_double_limb_type = boost::multiprecision::int128_type;
-constexpr const limb_type                       max_block_10        = 1000000000000000000uLL;
-constexpr const limb_type                       digits_per_block_10 = 18;
+constexpr limb_type                       max_block_10        = 1000000000000000000uLL;
+constexpr limb_type                       digits_per_block_10 = 18;
 
 inline BOOST_MP_CXX14_CONSTEXPR limb_type block_multiplier(std::size_t count)
 {
-   constexpr const limb_type values[digits_per_block_10] = {10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000, 100000000000, 1000000000000, 10000000000000, 100000000000000, 1000000000000000, 10000000000000000, 100000000000000000, 1000000000000000000};
+   constexpr limb_type values[digits_per_block_10] = {10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000, 100000000000, 1000000000000, 10000000000000, 100000000000000, 1000000000000000, 10000000000000000, 100000000000000000, 1000000000000000000};
    BOOST_MP_ASSERT(count < digits_per_block_10);
    return values[count];
 }
@@ -127,19 +126,19 @@ using limb_type = detail::largest_unsigned_type<32>::type;
 using signed_limb_type = detail::largest_signed_type<32>::type  ;
 using double_limb_type = detail::largest_unsigned_type<64>::type;
 using signed_double_limb_type = detail::largest_signed_type<64>::type  ;
-constexpr const limb_type                       max_block_10        = 1000000000;
-constexpr const limb_type                       digits_per_block_10 = 9;
+constexpr limb_type                       max_block_10        = 1000000000;
+constexpr limb_type                       digits_per_block_10 = 9;
 
 inline limb_type block_multiplier(std::size_t count)
 {
-   constexpr const limb_type values[digits_per_block_10] = {10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+   constexpr limb_type values[digits_per_block_10] = {10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
    BOOST_MP_ASSERT(count < digits_per_block_10);
    return values[count];
 }
 
 #endif
 
-constexpr const std::size_t bits_per_limb = sizeof(limb_type) * CHAR_BIT;
+constexpr std::size_t bits_per_limb = sizeof(limb_type) * CHAR_BIT;
 
 template <class T>
 inline BOOST_MP_CXX14_CONSTEXPR void minmax(const T& a, const T& b, T& aa, T& bb)
@@ -156,21 +155,7 @@ inline BOOST_MP_CXX14_CONSTEXPR void minmax(const T& a, const T& b, T& aa, T& bb
    }
 }
 
-enum cpp_integer_type
-{
-   signed_magnitude   = 1,
-   unsigned_magnitude = 0,
-   signed_packed      = 3,
-   unsigned_packed    = 2
-};
-
-enum cpp_int_check_type
-{
-   checked   = 1,
-   unchecked = 0
-};
-
 } // namespace multiprecision
 } // namespace boost
 
-#endif // BOOST_MP_CPP_INT_CORE_HPP
+#endif // BOOST_MP_CPP_INT_CONFIG_HPP

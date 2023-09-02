@@ -28,8 +28,8 @@ operator+( A const & a, B const & b )
     typedef typename deduce_vec2<A,B,2>::type R;
     BOOST_QVM_STATIC_ASSERT(vec_traits<R>::dim==2);
     R r;
-    vec_traits<R>::template write_element<0>(r)=vec_traits<A>::template read_element<0>(a)+vec_traits<B>::template read_element<0>(b);
-    vec_traits<R>::template write_element<1>(r)=vec_traits<A>::template read_element<1>(a)+vec_traits<B>::template read_element<1>(b);
+    write_vec_element<0>(r,vec_traits<A>::template read_element<0>(a)+vec_traits<B>::template read_element<0>(b));
+    write_vec_element<1>(r,vec_traits<A>::template read_element<1>(a)+vec_traits<B>::template read_element<1>(b));
     return r;
     }
 
@@ -63,8 +63,8 @@ operator-( A const & a, B const & b )
     typedef typename deduce_vec2<A,B,2>::type R;
     BOOST_QVM_STATIC_ASSERT(vec_traits<R>::dim==2);
     R r;
-    vec_traits<R>::template write_element<0>(r)=vec_traits<A>::template read_element<0>(a)-vec_traits<B>::template read_element<0>(b);
-    vec_traits<R>::template write_element<1>(r)=vec_traits<A>::template read_element<1>(a)-vec_traits<B>::template read_element<1>(b);
+    write_vec_element<0>(r,vec_traits<A>::template read_element<0>(a)-vec_traits<B>::template read_element<0>(b));
+    write_vec_element<1>(r,vec_traits<A>::template read_element<1>(a)-vec_traits<B>::template read_element<1>(b));
     return r;
     }
 
@@ -95,8 +95,8 @@ typename enable_if_c<
     A &>::type
 operator+=( A & a, B const & b )
     {
-    vec_traits<A>::template write_element<0>(a)+=vec_traits<B>::template read_element<0>(b);
-    vec_traits<A>::template write_element<1>(a)+=vec_traits<B>::template read_element<1>(b);
+    write_vec_element<0>(a,vec_traits<A>::template read_element<0>(a)+vec_traits<B>::template read_element<0>(b));
+    write_vec_element<1>(a,vec_traits<A>::template read_element<1>(a)+vec_traits<B>::template read_element<1>(b));
     return a;
     }
 
@@ -127,8 +127,8 @@ typename enable_if_c<
     A &>::type
 operator-=( A & a, B const & b )
     {
-    vec_traits<A>::template write_element<0>(a)-=vec_traits<B>::template read_element<0>(b);
-    vec_traits<A>::template write_element<1>(a)-=vec_traits<B>::template read_element<1>(b);
+    write_vec_element<0>(a,vec_traits<A>::template read_element<0>(a)-vec_traits<B>::template read_element<0>(b));
+    write_vec_element<1>(a,vec_traits<A>::template read_element<1>(a)-vec_traits<B>::template read_element<1>(b));
     return a;
     }
 
@@ -161,8 +161,8 @@ operator*( A const & a, B b )
     {
     typedef typename deduce_vec2<A,B,vec_traits<A>::dim>::type R;
     R r;
-    vec_traits<R>::template write_element<0>(r)=vec_traits<A>::template read_element<0>(a)*b;
-    vec_traits<R>::template write_element<1>(r)=vec_traits<A>::template read_element<1>(a)*b;
+    write_vec_element<0>(r,vec_traits<A>::template read_element<0>(a)*b);
+    write_vec_element<1>(r,vec_traits<A>::template read_element<1>(a)*b);
     return r;
     }
 
@@ -195,8 +195,8 @@ operator*( A a, B const & b )
     {
     typedef typename deduce_vec2<A,B,vec_traits<B>::dim>::type R;
     R r;
-    vec_traits<R>::template write_element<0>(r)=a*vec_traits<B>::template read_element<0>(b);
-    vec_traits<R>::template write_element<1>(r)=a*vec_traits<B>::template read_element<1>(b);
+    write_vec_element<0>(r,a*vec_traits<B>::template read_element<0>(b));
+    write_vec_element<1>(r,a*vec_traits<B>::template read_element<1>(b));
     return r;
     }
 
@@ -227,8 +227,8 @@ typename enable_if_c<
     A &>::type
 operator*=( A & a, B b )
     {
-    vec_traits<A>::template write_element<0>(a)*=b;
-    vec_traits<A>::template write_element<1>(a)*=b;
+    write_vec_element<0>(a, vec_traits<A>::template read_element<0>(a)*b);
+    write_vec_element<1>(a, vec_traits<A>::template read_element<1>(a)*b);
     return a;
     }
 
@@ -261,8 +261,8 @@ operator/( A const & a, B b )
     {
     typedef typename deduce_vec2<A,B,vec_traits<A>::dim>::type R;
     R r;
-    vec_traits<R>::template write_element<0>(r)=vec_traits<A>::template read_element<0>(a)/b;
-    vec_traits<R>::template write_element<1>(r)=vec_traits<A>::template read_element<1>(a)/b;
+    write_vec_element<0>(r,vec_traits<A>::template read_element<0>(a)/b);
+    write_vec_element<1>(r,vec_traits<A>::template read_element<1>(a)/b);
     return r;
     }
 
@@ -293,8 +293,8 @@ typename enable_if_c<
     A &>::type
 operator/=( A & a, B b )
     {
-    vec_traits<A>::template write_element<0>(a)/=b;
-    vec_traits<A>::template write_element<1>(a)/=b;
+    write_vec_element<0>(a, vec_traits<A>::template read_element<0>(a)/b);
+    write_vec_element<1>(a, vec_traits<A>::template read_element<1>(a)/b);
     return a;
     }
 
@@ -327,8 +327,8 @@ typename enable_if_c<
 convert_to( A const & a )
     {
     R r;
-    vec_traits<R>::template write_element<0>(r)=vec_traits<A>::template read_element<0>(a);
-    vec_traits<R>::template write_element<1>(r)=vec_traits<A>::template read_element<1>(a);
+    write_vec_element<0>(r,vec_traits<A>::template read_element<0>(a));
+    write_vec_element<1>(r,vec_traits<A>::template read_element<1>(a));
     return r;
     }
 
@@ -425,8 +425,8 @@ operator-( A const & a )
     {
     typedef typename deduce_vec<A>::type R;
     R r;
-    vec_traits<R>::template write_element<0>(r)=-vec_traits<A>::template read_element<0>(a);
-    vec_traits<R>::template write_element<1>(r)=-vec_traits<A>::template read_element<1>(a);
+    write_vec_element<0>(r,-vec_traits<A>::template read_element<0>(a));
+    write_vec_element<1>(r,-vec_traits<A>::template read_element<1>(a));
     return r;
     }
 
@@ -535,8 +535,8 @@ normalized( A const & a )
     T const rm=scalar_traits<T>::value(1)/sqrt(m2);
     typedef typename deduce_vec<A>::type R;
     R r;
-    vec_traits<R>::template write_element<0>(r)=a0*rm;
-    vec_traits<R>::template write_element<1>(r)=a1*rm;
+    write_vec_element<0>(r,a0*rm);
+    write_vec_element<1>(r,a1*rm);
     return r;
     }
 
@@ -560,8 +560,8 @@ normalize( A & a )
     if( m2==scalar_traits<typename vec_traits<A>::scalar_type>::value(0) )
         BOOST_QVM_THROW_EXCEPTION(zero_magnitude_error());
     T const rm=scalar_traits<T>::value(1)/sqrt(m2);
-    vec_traits<A>::template write_element<0>(a)*=rm;
-    vec_traits<A>::template write_element<1>(a)*=rm;
+    write_vec_element<0>(a,vec_traits<A>::template read_element<0>(a)*rm);
+    write_vec_element<1>(a,vec_traits<A>::template read_element<1>(a)*rm);
     }
 
 namespace

@@ -25,16 +25,19 @@ namespace filesystem {
 
 #ifndef BOOST_FILESYSTEM_NO_DEPRECATED
 
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use path::extension() instead")
 inline std::string extension(const path& p)
 {
     return p.extension().string();
 }
 
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use path::stem() instead")
 inline std::string basename(const path& p)
 {
     return p.stem().string();
 }
 
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use path::replace_extension() instead")
 inline path change_extension(const path& p, const path& new_extension)
 {
     path new_p(p);

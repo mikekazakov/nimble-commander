@@ -122,12 +122,18 @@ std::array<Real, 4> quartic_roots(Real a, Real b, Real c, Real d, Real e) {
     // z^3 + 2pz^2 + (p^2 - 4r)z - q^2 = 0.
     auto z_roots = cubic_roots(Real(1), 2*p, p*p - 4*r, -q*q);
     // z = s^2, so s = sqrt(z).
+    // Hence we require a root > 0, and for the sake of sanity we should take the largest one:
+    Real largest_root = std::numeric_limits<Real>::lowest();
+    for (auto z : z_roots) {
+        if (z > largest_root) {
+            largest_root = z;
+        }
+    }
     // No real roots:
-    if (z_roots.back() <= 0) {
+    if (largest_root <= 0) {
       return roots;
     }
-    Real s = sqrt(z_roots.back());
-
+    Real s = sqrt(largest_root);
     // s is nonzero, because we took care of the biquadratic case.
     Real v = (p + s*s + q/s)/2;
     Real u = v - q/s;

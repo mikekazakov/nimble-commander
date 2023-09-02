@@ -140,7 +140,7 @@ RealType kolmogorov_smirnov_pdf_small_x(RealType x, RealType n, const Policy&) {
     if (x2n*x2n == 0.0) {
         return static_cast<RealType>(0);
     }
-    while (1) {
+    while (true) {
         delta = exp(-RealType(i+0.5)*RealType(i+0.5)*pi2/(2*x2n)) * (RealType(i+0.5)*RealType(i+0.5)*pi2 - x2n);
 
         if (delta == 0.0)
@@ -164,7 +164,7 @@ inline RealType kolmogorov_smirnov_pdf_large_x(RealType x, RealType n, const Pol
     RealType value = RealType(0), delta = RealType(0), last_delta = RealType(0);
     RealType eps = policies::get_epsilon<RealType, Policy>();
     int i = 1;
-    while (1) {
+    while (true) {
         delta = 8*x*i*i*exp(-2*i*i*x*x*n);
 
         if (delta == 0.0)
@@ -184,7 +184,7 @@ inline RealType kolmogorov_smirnov_pdf_large_x(RealType x, RealType n, const Pol
     return value * n;
 }
 
-}; // detail
+} // detail
 
 template <class RealType = double, class Policy = policies::policy<> >
     class kolmogorov_smirnov_distribution

@@ -30,7 +30,7 @@ namespace boost
             : what_( _what )
             { }
 
-            virtual const char* what() const BOOST_NOEXCEPT_OR_NOTHROW
+            virtual const char* what() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
             {
                 return what_;
             }

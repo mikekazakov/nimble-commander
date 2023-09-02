@@ -18,71 +18,100 @@
 
 #include <cstdint>
 #include <memory>
+#if !defined(BOOST_NO_CXX17_HDR_MEMORY_RESOURCE)
+#    include <memory_resource>
+#endif  //!defined(BOOST_NO_CXX17_HDR_MEMORY_RESOURCE)
 
 // B - bits size/signedness, CM - channel model, CS - colour space, LAYOUT - pixel layout
 // Example: B = '8', CM = 'uint8_t', CS = 'bgr,  LAYOUT='bgr_layout_t'
-#define BOOST_GIL_DEFINE_BASE_TYPEDEFS_INTERNAL(B, CM, CS, LAYOUT)                             \
-    template <typename, typename> struct pixel;                                          \
-    template <typename, typename> struct planar_pixel_reference;                         \
-    template <typename, typename> struct planar_pixel_iterator;                          \
-    template <typename> class memory_based_step_iterator;                                \
-    template <typename> class point;                                                    \
-    template <typename> class memory_based_2d_locator;                                   \
-    template <typename> class image_view;                                                \
-    template <typename, bool, typename> class image;                                     \
-    using CS##B##_pixel_t     = pixel<CM, LAYOUT>;                                       \
-    using CS##B##c_pixel_t    = pixel<CM, LAYOUT> const;                                 \
-    using CS##B##_ref_t       = pixel<CM, LAYOUT>&;                                      \
-    using CS##B##c_ref_t      = pixel<CM, LAYOUT> const&;                                \
-    using CS##B##_ptr_t       = CS##B##_pixel_t*;                                        \
-    using CS##B##c_ptr_t      = CS##B##c_pixel_t*;                                       \
-    using CS##B##_step_ptr_t  = memory_based_step_iterator<CS##B##_ptr_t>;               \
-    using CS##B##c_step_ptr_t = memory_based_step_iterator<CS##B##c_ptr_t>;              \
-    using CS##B##_loc_t                                                                  \
-        = memory_based_2d_locator<memory_based_step_iterator<CS##B##_ptr_t>>;            \
-    using CS##B##c_loc_t                                                                 \
-        = memory_based_2d_locator<memory_based_step_iterator<CS##B##c_ptr_t>>;           \
-    using CS##B##_step_loc_t                                                             \
-        = memory_based_2d_locator<memory_based_step_iterator<CS##B##_step_ptr_t>>;       \
-    using CS##B##c_step_loc_t                                                            \
-        = memory_based_2d_locator<memory_based_step_iterator<CS##B##c_step_ptr_t>>;      \
-    using CS##B##_view_t       = image_view<CS##B##_loc_t>;                              \
-    using CS##B##c_view_t      = image_view<CS##B##c_loc_t>;                             \
-    using CS##B##_step_view_t  = image_view<CS##B##_step_loc_t>;                         \
-    using CS##B##c_step_view_t = image_view<CS##B##c_step_loc_t>;                        \
+#define BOOST_GIL_DEFINE_BASE_TYPEDEFS_INTERNAL(B, CM, CS, LAYOUT)                                 \
+    template <typename, typename>                                                                  \
+    struct pixel;                                                                                  \
+    template <typename, typename>                                                                  \
+    struct planar_pixel_reference;                                                                 \
+    template <typename, typename>                                                                  \
+    struct planar_pixel_iterator;                                                                  \
+    template <typename>                                                                            \
+    class memory_based_step_iterator;                                                              \
+    template <typename>                                                                            \
+    class point;                                                                                   \
+    template <typename>                                                                            \
+    class memory_based_2d_locator;                                                                 \
+    template <typename>                                                                            \
+    class image_view;                                                                              \
+    template <typename, bool, typename>                                                            \
+    class image;                                                                                   \
+    using CS##B##_pixel_t = pixel<CM, LAYOUT>;                                                     \
+    using CS##B##c_pixel_t = pixel<CM, LAYOUT> const;                                              \
+    using CS##B##_ref_t = pixel<CM, LAYOUT>&;                                                      \
+    using CS##B##c_ref_t = pixel<CM, LAYOUT> const&;                                               \
+    using CS##B##_ptr_t = CS##B##_pixel_t*;                                                        \
+    using CS##B##c_ptr_t = CS##B##c_pixel_t*;                                                      \
+    using CS##B##_step_ptr_t = memory_based_step_iterator<CS##B##_ptr_t>;                          \
+    using CS##B##c_step_ptr_t = memory_based_step_iterator<CS##B##c_ptr_t>;                        \
+    using CS##B##_loc_t = memory_based_2d_locator<memory_based_step_iterator<CS##B##_ptr_t>>;      \
+    using CS##B##c_loc_t = memory_based_2d_locator<memory_based_step_iterator<CS##B##c_ptr_t>>;    \
+    using CS##B##_step_loc_t                                                                       \
+        = memory_based_2d_locator<memory_based_step_iterator<CS##B##_step_ptr_t>>;                 \
+    using CS##B##c_step_loc_t                                                                      \
+        = memory_based_2d_locator<memory_based_step_iterator<CS##B##c_step_ptr_t>>;                \
+    using CS##B##_view_t = image_view<CS##B##_loc_t>;                                              \
+    using CS##B##c_view_t = image_view<CS##B##c_loc_t>;                                            \
+    using CS##B##_step_view_t = image_view<CS##B##_step_loc_t>;                                    \
+    using CS##B##c_step_view_t = image_view<CS##B##c_step_loc_t>;                                  \
     using CS##B##_image_t = image<CS##B##_pixel_t, false, std::allocator<unsigned char>>;
 
+#define BOOST_GIL_DEFINE_BASE_PMR_TYPEDEFS_INTERNAL(B, CM, CS, LAYOUT)                             \
+    namespace pmr {                                                                                \
+    using CS##B##_image_t                                                                          \
+        = image<CS##B##_pixel_t, false, std::pmr::polymorphic_allocator<unsigned char>>;           \
+    }
+
 // Example: B = '8', CM = 'uint8_t', CS = 'bgr' CS_FULL = 'rgb_t' LAYOUT='bgr_layout_t'
-#define BOOST_GIL_DEFINE_ALL_TYPEDEFS_INTERNAL(B, CM, CS, CS_FULL, LAYOUT)                        \
-    BOOST_GIL_DEFINE_BASE_TYPEDEFS_INTERNAL(B, CM, CS, LAYOUT)                                    \
-    using CS##B##_planar_ref_t      = planar_pixel_reference<CM&, CS_FULL>;                 \
-    using CS##B##c_planar_ref_t     = planar_pixel_reference<CM const&, CS_FULL>;           \
-    using CS##B##_planar_ptr_t      = planar_pixel_iterator<CM*, CS_FULL>;                  \
-    using CS##B##c_planar_ptr_t     = planar_pixel_iterator<CM const*, CS_FULL>;            \
-    using CS##B##_planar_step_ptr_t = memory_based_step_iterator<CS##B##_planar_ptr_t>;     \
-    using CS##B##c_planar_step_ptr_t                                                        \
-        = memory_based_step_iterator<CS##B##c_planar_ptr_t>;                                \
-    using CS##B##_planar_loc_t                                                              \
-        = memory_based_2d_locator<memory_based_step_iterator<CS##B##_planar_ptr_t>>;        \
-    using CS##B##c_planar_loc_t                                                             \
-        = memory_based_2d_locator<memory_based_step_iterator<CS##B##c_planar_ptr_t>>;       \
-    using CS##B##_planar_step_loc_t                                                         \
-        = memory_based_2d_locator<memory_based_step_iterator<CS##B##_planar_step_ptr_t>>;   \
-    using CS##B##c_planar_step_loc_t                                                        \
-        = memory_based_2d_locator<memory_based_step_iterator<CS##B##c_planar_step_ptr_t>>;  \
-    using CS##B##_planar_view_t       = image_view<CS##B##_planar_loc_t>;                   \
-    using CS##B##c_planar_view_t      = image_view<CS##B##c_planar_loc_t>;                  \
-    using CS##B##_planar_step_view_t  = image_view<CS##B##_planar_step_loc_t>;              \
-    using CS##B##c_planar_step_view_t = image_view<CS##B##c_planar_step_loc_t>;             \
-    using CS##B##_planar_image_t                                                            \
-        = image<CS##B##_pixel_t, true, std::allocator<unsigned char>>;
+#define BOOST_GIL_DEFINE_ALL_TYPEDEFS_INTERNAL(B, CM, CS, CS_FULL, LAYOUT)                         \
+    BOOST_GIL_DEFINE_BASE_TYPEDEFS_INTERNAL(B, CM, CS, LAYOUT)                                     \
+    using CS##B##_planar_ref_t = planar_pixel_reference<CM&, CS_FULL>;                             \
+    using CS##B##c_planar_ref_t = planar_pixel_reference<CM const&, CS_FULL>;                      \
+    using CS##B##_planar_ptr_t = planar_pixel_iterator<CM*, CS_FULL>;                              \
+    using CS##B##c_planar_ptr_t = planar_pixel_iterator<CM const*, CS_FULL>;                       \
+    using CS##B##_planar_step_ptr_t = memory_based_step_iterator<CS##B##_planar_ptr_t>;            \
+    using CS##B##c_planar_step_ptr_t = memory_based_step_iterator<CS##B##c_planar_ptr_t>;          \
+    using CS##B##_planar_loc_t                                                                     \
+        = memory_based_2d_locator<memory_based_step_iterator<CS##B##_planar_ptr_t>>;               \
+    using CS##B##c_planar_loc_t                                                                    \
+        = memory_based_2d_locator<memory_based_step_iterator<CS##B##c_planar_ptr_t>>;              \
+    using CS##B##_planar_step_loc_t                                                                \
+        = memory_based_2d_locator<memory_based_step_iterator<CS##B##_planar_step_ptr_t>>;          \
+    using CS##B##c_planar_step_loc_t                                                               \
+        = memory_based_2d_locator<memory_based_step_iterator<CS##B##c_planar_step_ptr_t>>;         \
+    using CS##B##_planar_view_t = image_view<CS##B##_planar_loc_t>;                                \
+    using CS##B##c_planar_view_t = image_view<CS##B##c_planar_loc_t>;                              \
+    using CS##B##_planar_step_view_t = image_view<CS##B##_planar_step_loc_t>;                      \
+    using CS##B##c_planar_step_view_t = image_view<CS##B##c_planar_step_loc_t>;                    \
+    using CS##B##_planar_image_t = image<CS##B##_pixel_t, true, std::allocator<unsigned char>>;
 
-#define BOOST_GIL_DEFINE_BASE_TYPEDEFS(B, CM, CS)                                                  \
-    BOOST_GIL_DEFINE_BASE_TYPEDEFS_INTERNAL(B, CM, CS, CS##_layout_t)
+#define BOOST_GIL_DEFINE_ALL_PMR_TYPEDEFS_INTERNAL(B, CM, CS, CS_FULL, LAYOUT)                     \
+    BOOST_GIL_DEFINE_BASE_PMR_TYPEDEFS_INTERNAL(B, CM, CS, LAYOUT)                                 \
+    namespace pmr {                                                                                \
+    using CS##B##_planar_image_t                                                                   \
+        = image<CS##B##_pixel_t, true, std::pmr::polymorphic_allocator<unsigned char>>;            \
+    }
 
-#define BOOST_GIL_DEFINE_ALL_TYPEDEFS(B, CM, CS)                                                   \
-    BOOST_GIL_DEFINE_ALL_TYPEDEFS_INTERNAL(B, CM, CS, CS##_t, CS##_layout_t)
+#if defined(BOOST_NO_CXX17_HDR_MEMORY_RESOURCE)
+#    define BOOST_GIL_DEFINE_BASE_TYPEDEFS(B, CM, CS)                                              \
+        BOOST_GIL_DEFINE_BASE_TYPEDEFS_INTERNAL(B, CM, CS, CS##_layout_t)
 
+#    define BOOST_GIL_DEFINE_ALL_TYPEDEFS(B, CM, CS)                                               \
+        BOOST_GIL_DEFINE_ALL_TYPEDEFS_INTERNAL(B, CM, CS, CS##_t, CS##_layout_t)
+#else
+#    define BOOST_GIL_DEFINE_BASE_TYPEDEFS(B, CM, CS)                                              \
+        BOOST_GIL_DEFINE_BASE_TYPEDEFS_INTERNAL(B, CM, CS, CS##_layout_t)                          \
+        BOOST_GIL_DEFINE_BASE_PMR_TYPEDEFS_INTERNAL(B, CM, CS, CS##_layout_t)
+
+#    define BOOST_GIL_DEFINE_ALL_TYPEDEFS(B, CM, CS)                                               \
+        BOOST_GIL_DEFINE_ALL_TYPEDEFS_INTERNAL(B, CM, CS, CS##_t, CS##_layout_t)                   \
+        BOOST_GIL_DEFINE_ALL_PMR_TYPEDEFS_INTERNAL(B, CM, CS, CS##_t, CS##_layout_t)
+#endif //!defined(BOOST_NO_CXX17_HDR_MEMORY_RESOURCE)
 
 namespace boost { namespace gil {
 

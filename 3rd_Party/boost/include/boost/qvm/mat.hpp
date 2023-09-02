@@ -17,7 +17,11 @@ struct
 mat
     {
     T a[Rows][Cols];
-    template <class R>
+    template <class R
+#if __cplusplus >= 201103L
+        , class = typename enable_if<is_mat<R> >::type
+#endif
+    >
     operator R() const
         {
         R r;
@@ -45,9 +49,9 @@ mat_traits< mat<T,Rows,Cols> >
     read_element( this_matrix const & x )
         {
         BOOST_QVM_STATIC_ASSERT(Row>=0);
-        BOOST_QVM_STATIC_ASSERT(Row<Rows);
+        BOOST_QVM_STATIC_ASSERT(Row<rows);
         BOOST_QVM_STATIC_ASSERT(Col>=0);
-        BOOST_QVM_STATIC_ASSERT(Col<Cols);
+        BOOST_QVM_STATIC_ASSERT(Col<cols);
         return x.a[Row][Col];
         }
 
@@ -58,9 +62,9 @@ mat_traits< mat<T,Rows,Cols> >
     write_element( this_matrix & x )
         {
         BOOST_QVM_STATIC_ASSERT(Row>=0);
-        BOOST_QVM_STATIC_ASSERT(Row<Rows);
+        BOOST_QVM_STATIC_ASSERT(Row<rows);
         BOOST_QVM_STATIC_ASSERT(Col>=0);
-        BOOST_QVM_STATIC_ASSERT(Col<Cols);
+        BOOST_QVM_STATIC_ASSERT(Col<cols);
         return x.a[Row][Col];
         }
 

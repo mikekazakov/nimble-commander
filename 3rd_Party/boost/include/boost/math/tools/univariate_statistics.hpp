@@ -12,6 +12,14 @@
 #include <boost/math/tools/assert.hpp>
 #include <boost/math/tools/header_deprecated.hpp>
 
+#include <boost/math/tools/is_standalone.hpp>
+#ifndef BOOST_MATH_STANDALONE
+#include <boost/config.hpp>
+#ifdef BOOST_NO_CXX17_IF_CONSTEXPR
+#error "The header <boost/math/norms.hpp> can only be used in C++17 and later."
+#endif
+#endif
+
 BOOST_MATH_HEADER_DEPRECATED("<boost/math/statistics/univariate_statistics.hpp>");
 
 namespace boost::math::tools {
@@ -169,7 +177,7 @@ auto skewness(ForwardIterator first, ForwardIterator last)
         {
             // The limit is technically undefined, but the interpretation here is clear:
             // A constant dataset has no skewness.
-            return double(0);
+            return static_cast<double>(0);
         }
         double skew = M3/(M2*sqrt(var));
         return skew;
@@ -345,7 +353,7 @@ auto gini_coefficient(RandomAccessIterator first, RandomAccessIterator last)
         // If the l1 norm is zero, all elements are zero, so every element is the same.
         if (denom == 0)
         {
-            return double(0);
+            return static_cast<double>(0);
         }
 
         return ((2*num)/denom - i)/(i-1);

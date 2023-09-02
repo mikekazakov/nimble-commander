@@ -20,7 +20,9 @@ namespace boost { namespace stl_interfaces { namespace detail {
 
     template<typename T, typename SizeType>
     struct n_iter : iterator_interface<
+#if !BOOST_STL_INTERFACES_USE_DEDUCED_THIS
                         n_iter<T, SizeType>,
+#endif
                         std::random_access_iterator_tag,
                         T>
     {
@@ -767,18 +769,18 @@ namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V2 {
 
       template<typename C = D>
         constexpr void push_front(const std::ranges::range_value_t<C>& x)
-          requires requires { derived().emplace_front(x); } {
+          requires requires (D d) { d.emplace_front(x); } {
             derived().emplace_front(x);
           }
       template<typename C = D>
         constexpr void push_front(std::ranges::range_value_t<C>&& x)
-          requires requires { derived().emplace_front(std::move(x)); } {
+          requires requires (D d) { d.emplace_front(std::move(x)); } {
             derived().emplace_front(std::move(x));
           }
       constexpr void pop_front() noexcept
-        requires requires (const std::ranges::range_value_t<D>& x, std::ranges::iterator_t<D> position) {
-          derived().emplace_front(x);
-          derived().erase(position);
+        requires requires (D d, const std::ranges::range_value_t<D>& x, std::ranges::iterator_t<D> position) {
+          d.emplace_front(x);
+          d.erase(position);
         } {
           return derived().erase(std::ranges::begin(derived()));
         }
@@ -796,19 +798,19 @@ namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V2 {
 
       template<std::ranges::bidirectional_range C = D>
         constexpr void push_back(const std::ranges::range_value_t<C>& x)
-          requires std::ranges::common_range<C> && requires { derived().emplace_back(x); } {
+	requires std::ranges::common_range<C> && requires (D d) { d.emplace_back(x); } {
             derived().emplace_back(x);
           }
       template<std::ranges::bidirectional_range C = D>
         constexpr void push_back(std::ranges::range_value_t<C>&& x)
-          requires std::ranges::common_range<C> && requires { derived().emplace_back(std::move(x)); } {
+	requires std::ranges::common_range<C> && requires (D d) { d.emplace_back(std::move(x)); } {
             derived().emplace_back(std::move(x));
           }
       constexpr void pop_back() noexcept
         requires std::ranges::bidirectional_range<D> && std::ranges::common_range<D> &&
-          requires (std::ranges::range_value_t<D> x, std::ranges::iterator_t<D> position) {
-          derived().emplace_back(std::move(x));
-            derived().erase(position);
+        requires (D d, std::ranges::range_value_t<D> x, std::ranges::iterator_t<D> position) {
+          d.emplace_back(std::move(x));
+            d.erase(position);
           } {
             return derived().erase(std::ranges::prev(std::ranges::end(derived())));
           }
@@ -883,13 +885,13 @@ namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V2 {
       template<typename C = D>
         constexpr auto insert(std::ranges::iterator_t<const C> position,
                               const std::ranges::range_value_t<C>& x)
-          requires requires { derived().emplace(position, x); } {
+          requires requires (D d) { d.emplace(position, x); } {
             return derived().emplace(position, x);
           }
       template<typename C = D>
         constexpr auto insert(std::ranges::iterator_t<const C> position,
                               std::ranges::range_value_t<C>&& x)
-          requires requires { derived().emplace(position, std::move(x)); } {
+          requires requires (D d) { d.emplace(position, std::move(x)); } {
             return derived().emplace(position, std::move(x));
           }
       template<typename C = D>
@@ -905,23 +907,23 @@ namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V2 {
       template<typename C = D>
         constexpr auto insert(std::ranges::iterator_t<const C> position,
                               std::initializer_list<std::ranges::range_value_t<C>> il)
-          requires requires {
-            derived().template insert<decltype(position), decltype(il)>(
+	requires requires (D d) {
+            d.template insert<decltype(position), decltype(il)>(
                 position, il.begin(), il.end()); } {
               return derived().insert(position, il.begin(), il.end());
             }
 
       template<typename C = D>
-        constexpr void erase(C::const_iterator position)
-          requires requires { derived().erase(position, std::ranges::next(position)); } {
+        constexpr void erase(typename C::const_iterator position)
+	requires requires (D d) { d.erase(position, std::ranges::next(position)); } {
             derived().erase(position, std::ranges::next(position));
           }
 
       template<std::input_iterator Iter, typename C = D>
         constexpr void assign(Iter first, Iter last)
-          requires requires {
-            derived().erase(std::ranges::begin(derived()), std::ranges::end(derived()));
-            derived().insert(std::ranges::begin(derived()), first, last); } {
+	requires requires (D d) {
+            d.erase(std::ranges::begin(d), std::ranges::end(d));
+            d.insert(std::ranges::begin(d), first, last); } {
               auto out = derived().begin();
               auto const out_last = derived().end();
               for (; out != out_last && first != last; ++first, ++out) {
@@ -935,10 +937,10 @@ namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V2 {
       template<typename C = D>
         constexpr void assign(v2_dtl::container_size_t<C> n,
                               const std::ranges::range_value_t<C>& x)
-          requires requires {
-            { derived().size() } -> std::convertible_to<std::size_t>;
-            derived().erase(std::ranges::begin(derived()), std::ranges::end(derived()));
-            derived().insert(std::ranges::begin(derived()),
+          requires requires (D d) {
+            { d.size() } -> std::convertible_to<std::size_t>;
+            d.erase(std::ranges::begin(d), std::ranges::end(d));
+            d.insert(std::ranges::begin(d),
                              detail::make_n_iter(x, n),
                              detail::make_n_iter_end(x, n)); } {
               if (detail::fake_capacity(derived()) < n) {
@@ -960,20 +962,20 @@ namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V2 {
             }
       template<typename C = D>
         constexpr void assign(std::initializer_list<std::ranges::range_value_t<C>> il)
-          requires requires { derived().assign(il.begin(), il.end()); } {
+          requires requires (D d) { d.assign(il.begin(), il.end()); } {
             derived().assign(il.begin(), il.end());
           }
 
       constexpr void clear() noexcept
-        requires requires {
-          derived().erase(std::ranges::begin(derived()), std::ranges::end(derived())); } {
+        requires requires (D d) {
+          d.erase(std::ranges::begin(d), std::ranges::end(d)); } {
             derived().erase(std::ranges::begin(derived()), std::ranges::end(derived()));
           }
 
       template<typename C = D>
         constexpr decltype(auto) operator=(
             std::initializer_list<std::ranges::range_value_t<C>> il)
-          requires requires { derived().assign(il.begin(), il.end()); } {
+          requires requires (D d) { d.assign(il.begin(), il.end()); } {
             derived().assign(il.begin(), il.end());
             return *this;
           }
@@ -1020,6 +1022,19 @@ namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V2 {
     };
 
     // clang-format on
+
+}}}
+
+#endif
+
+#if defined(BOOST_STL_INTERFACES_DOXYGEN) || BOOST_STL_INTERFACES_USE_DEDUCED_THIS
+
+namespace boost { namespace stl_interfaces { BOOST_STL_INTERFACES_NAMESPACE_V3 {
+
+    // TODO: Reimplement using deduced this.
+    template<typename D,
+             element_layout Contiguity = element_layout::discontiguous>
+    using sequence_container_interface = v2::sequence_container_interface<D, Contiguity>;
 
 }}}
 

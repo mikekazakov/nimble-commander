@@ -2,7 +2,7 @@
 //
 // Spatial index distance predicates, calculators and checkers used in nearest neighbor query
 //
-// Copyright (c) 2011-2013 Adam Wulkiewicz, Lodz, Poland.
+// Copyright (c) 2011-2022 Adam Wulkiewicz, Lodz, Poland.
 //
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -10,6 +10,12 @@
 
 #ifndef BOOST_GEOMETRY_INDEX_DISTANCE_PREDICATES_HPP
 #define BOOST_GEOMETRY_INDEX_DISTANCE_PREDICATES_HPP
+
+#ifdef BOOST_GEOMETRY_INDEX_DETAIL_EXPERIMENTAL
+#ifndef BOOST_GEOMETRY_INDEX_DETAIL_EXPERIMENTAL_PREDICATES
+#define BOOST_GEOMETRY_INDEX_DETAIL_EXPERIMENTAL_PREDICATES
+#endif
+#endif
 
 #include <boost/geometry/index/detail/distance_predicates.hpp>
 
@@ -21,7 +27,7 @@ namespace boost { namespace geometry { namespace index {
 
 // relations generators
 
-#ifdef BOOST_GEOMETRY_INDEX_DETAIL_EXPERIMENTAL
+#ifdef BOOST_GEOMETRY_INDEX_DETAIL_EXPERIMENTAL_PREDICATES
 
 /*!
 \brief Generate to_nearest() relationship.
@@ -91,7 +97,7 @@ detail::to_furthest<T> to_furthest(T const& v)
     return detail::to_furthest<T>(v);
 }
 
-#endif // BOOST_GEOMETRY_INDEX_DETAIL_EXPERIMENTAL
+#endif // BOOST_GEOMETRY_INDEX_DETAIL_EXPERIMENTAL_PREDICATES
 
 // distance predicates generators
 

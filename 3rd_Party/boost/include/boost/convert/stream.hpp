@@ -156,8 +156,9 @@ struct boost::cnv::basic_stream
     {
         cnv::notation notation = arg[cnv::parameter::notation];
 
-        /**/ if (notation == cnv::notation::     fixed)      std::fixed(stream_);
+        /**/ if (notation == cnv::notation::     fixed) std::fixed(stream_);
         else if (notation == cnv::notation::scientific) std::scientific(stream_);
+        else if (notation == cnv::notation::       hex) std::hexfloat(stream_);
         else BOOST_ASSERT(!"Not implemented");
     }
 

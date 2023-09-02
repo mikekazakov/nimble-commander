@@ -2,9 +2,10 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2013, 2014, 2017, 2018.
-// Modifications copyright (c) 2013-2018, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2022.
+// Modifications copyright (c) 2013-2023, Oracle and/or its affiliates.
 
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -44,15 +45,15 @@ struct point_point
         bool equal = detail::equals::equals_point_point(point1, point2, strategy);
         if ( equal )
         {
-            relate::set<interior, interior, '0'>(result);
+            update<interior, interior, '0'>(result);
         }
         else
         {
-            relate::set<interior, exterior, '0'>(result);
-            relate::set<exterior, interior, '0'>(result);
+            update<interior, exterior, '0'>(result);
+            update<exterior, interior, '0'>(result);
         }
 
-        relate::set<exterior, exterior, result_dimension<Point1>::value>(result);
+        update<exterior, exterior, result_dimension<Point1>::value>(result);
     }
 };
 
@@ -67,20 +68,25 @@ std::pair<bool, bool> point_multipoint_check(Point const& point,
     // point_in_geometry could be used here but why iterate over MultiPoint twice?
     // we must search for a point in the exterior because all points in MultiPoint can be equal
 
-    typedef typename boost::range_iterator<MultiPoint const>::type iterator;
-    iterator it = boost::begin(multi_point);
-    iterator last = boost::end(multi_point);
-    for ( ; it != last ; ++it )
+
+    auto const end = boost::end(multi_point);
+    for (auto it = boost::begin(multi_point); it != end; ++it)
     {
         bool ii = detail::equals::equals_point_point(point, *it, strategy);
 
-        if ( ii )
+        if (ii)
+        {
             found_inside = true;
+        }
         else
+        {
             found_outside = true;
+        }
 
-        if ( found_inside && found_outside )
+        if (found_inside && found_outside)
+        {
             break;
+        }
     }
 
     return std::make_pair(found_inside, found_outside);
@@ -99,7 +105,7 @@ struct point_multipoint
         if ( boost::empty(multi_point) )
         {
             // TODO: throw on empty input?
-            relate::set<interior, exterior, '0', Transpose>(result);
+            update<interior, exterior, '0', Transpose>(result);
             return;
         }
 
@@ -107,20 +113,20 @@ struct point_multipoint
 
         if ( rel.first ) // some point of MP is equal to P
         {
-            relate::set<interior, interior, '0', Transpose>(result);
+            update<interior, interior, '0', Transpose>(result);
 
             if ( rel.second ) // a point of MP was found outside P
             {
-                relate::set<exterior, interior, '0', Transpose>(result);
+                update<exterior, interior, '0', Transpose>(result);
             }
         }
         else
         {
-            relate::set<interior, exterior, '0', Transpose>(result);
-            relate::set<exterior, interior, '0', Transpose>(result);
+            update<interior, exterior, '0', Transpose>(result);
+            update<exterior, interior, '0', Transpose>(result);
         }
 
-        relate::set<exterior, exterior, result_dimension<Point>::value, Transpose>(result);
+        update<exterior, exterior, result_dimension<Point>::value, Transpose>(result);
     }
 };
 
@@ -148,8 +154,6 @@ struct multipoint_multipoint
                              Result & result,
                              Strategy const& /*strategy*/)
     {
-        typedef typename Strategy::cs_tag cs_tag;
-
         {
             // TODO: throw on empty input?
             bool empty1 = boost::empty(multi_point1);
@@ -160,12 +164,12 @@ struct multipoint_multipoint
             }
             else if ( empty1 )
             {
-                relate::set<exterior, interior, '0'>(result);
+                update<exterior, interior, '0'>(result);
                 return;
             }
             else if ( empty2 )
             {
-                relate::set<interior, exterior, '0'>(result);
+                update<interior, exterior, '0'>(result);
                 return;
             }
         }
@@ -173,17 +177,17 @@ struct multipoint_multipoint
         // The geometry containing smaller number of points will be analysed first
         if ( boost::size(multi_point1) < boost::size(multi_point2) )
         {
-            search_both<false, cs_tag>(multi_point1, multi_point2, result);
+            search_both<false, Strategy>(multi_point1, multi_point2, result);
         }
         else
         {
-            search_both<true, cs_tag>(multi_point2, multi_point1, result);
+            search_both<true, Strategy>(multi_point2, multi_point1, result);
         }
 
-        relate::set<exterior, exterior, result_dimension<MultiPoint1>::value>(result);
+        update<exterior, exterior, result_dimension<MultiPoint1>::value>(result);
     }
 
-    template <bool Transpose, typename CSTag, typename MPt1, typename MPt2, typename Result>
+    template <bool Transpose, typename Strategy, typename MPt1, typename MPt2, typename Result>
     static inline void search_both(MPt1 const& first_sorted_mpt, MPt2 const& first_iterated_mpt,
                                    Result & result)
     {
@@ -192,7 +196,7 @@ struct multipoint_multipoint
           || relate::may_update<exterior, interior, '0'>(result) )
         {
             // NlogN + MlogN
-            bool is_disjoint = search<Transpose, CSTag>(first_sorted_mpt, first_iterated_mpt, result);
+            bool is_disjoint = search<Transpose, Strategy>(first_sorted_mpt, first_iterated_mpt, result);
 
             if ( BOOST_GEOMETRY_CONDITION(is_disjoint || result.interrupt) )
                 return;
@@ -203,12 +207,12 @@ struct multipoint_multipoint
           || relate::may_update<exterior, interior, '0'>(result) )
         {
             // MlogM + NlogM
-            search<! Transpose, CSTag>(first_iterated_mpt, first_sorted_mpt, result);
+            search<! Transpose, Strategy>(first_iterated_mpt, first_sorted_mpt, result);
         }
     }
 
     template <bool Transpose,
-              typename CSTag,
+              typename Strategy,
               typename SortedMultiPoint,
               typename IteratedMultiPoint,
               typename Result>
@@ -218,7 +222,7 @@ struct multipoint_multipoint
     {
         // sort points from the 1 MPt
         typedef typename geometry::point_type<SortedMultiPoint>::type point_type;
-        typedef geometry::less<void, -1, CSTag> less_type;
+        typedef geometry::less<void, -1, Strategy> less_type;
 
         std::vector<point_type> points(boost::begin(sorted_mpt), boost::end(sorted_mpt));
 
@@ -229,19 +233,22 @@ struct multipoint_multipoint
         bool found_outside = false;
 
         // for each point in the second MPt
-        typedef typename boost::range_iterator<IteratedMultiPoint const>::type iterator;
-        for ( iterator it = boost::begin(iterated_mpt) ;
-              it != boost::end(iterated_mpt) ; ++it )
+        for (auto it = boost::begin(iterated_mpt); it != boost::end(iterated_mpt); ++it)
         {
-            bool ii =
-                std::binary_search(points.begin(), points.end(), *it, less);
-            if ( ii )
+            bool ii = std::binary_search(points.begin(), points.end(), *it, less);
+            if (ii)
+            {
                 found_inside = true;
+            }
             else
+            {
                 found_outside = true;
+            }
 
-            if ( found_inside && found_outside )
+            if (found_inside && found_outside)
+            {
                 break;
+            }
         }
 
         if ( found_inside ) // some point of MP2 is equal to some of MP1
@@ -249,17 +256,17 @@ struct multipoint_multipoint
 // TODO: if I/I is set for one MPt, this won't be changed when the other one in analysed
 //       so if e.g. only I/I must be analysed we musn't check the other MPt
 
-            relate::set<interior, interior, '0', Transpose>(result);
+            update<interior, interior, '0', Transpose>(result);
 
             if ( found_outside ) // some point of MP2 was found outside of MP1
             {
-                relate::set<exterior, interior, '0', Transpose>(result);
+                update<exterior, interior, '0', Transpose>(result);
             }
         }
         else
         {
-            relate::set<interior, exterior, '0', Transpose>(result);
-            relate::set<exterior, interior, '0', Transpose>(result);
+            update<interior, exterior, '0', Transpose>(result);
+            update<exterior, interior, '0', Transpose>(result);
         }
 
         // if no point is intersecting the other MPt then we musn't analyse the reversed case

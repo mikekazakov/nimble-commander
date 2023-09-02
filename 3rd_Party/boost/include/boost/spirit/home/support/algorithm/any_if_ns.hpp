@@ -51,7 +51,8 @@ namespace boost { namespace spirit
             typename result_of::attribute_value<First1, First2, Last2, Pred>::type
                 attribute = spirit::detail::attribute_value<Pred, First1, Last2>(first2);
 
-            return (0 != (f(*first1, attribute) |
+            // cast bool to int to avoid -Wbitwise-instead-of-logical warning
+            return (0 != (static_cast<int>(f(*first1, attribute)) |
                 detail::any_if_ns<Pred>(
                     fusion::next(first1)
                   , attribute_next<Pred, First1, Last2>(first2)

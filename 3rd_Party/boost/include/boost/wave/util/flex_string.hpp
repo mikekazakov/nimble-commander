@@ -287,6 +287,16 @@ inline bool operator!=(const mallocator<T>&,
   return false;
 }
 
+#if defined(BOOST_GCC) && BOOST_GCC >= 40700
+// gcc 11.2 fails to deduce below that pData_ never points to emptyString_ if capacity() == 0 and emits warnings like these:
+// 'operator delete(void*, unsigned long)' called on unallocated object 'boost::wave::util::SimpleStringStorage<char, std::allocator<char> >::emptyString_' [-Wfree-nonheap-object]
+// Unfortunately, suppressing this warning doesn't work, so we have to use __builtin_unreachable() to assert that this never happens.
+// __builtin_unreachable is supported since gcc 4.6, -Wfree-nonheap-object is supported since 4.7.
+#define BOOST_WAVE_COMPILE_TIME_ASSERT(x) if (!(x)) __builtin_unreachable()
+#else
+#define BOOST_WAVE_COMPILE_TIME_ASSERT(x)
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // class template SimpleStringStorage
 // Allocates memory with malloc
@@ -384,7 +394,11 @@ public:
     ~SimpleStringStorage()
     {
         BOOST_ASSERT(begin() <= end());
-        if (pData_ != &emptyString_) free(pData_);
+        if (capacity() > 0)
+        {
+            BOOST_WAVE_COMPILE_TIME_ASSERT(pData_ != &emptyString_);
+            free(pData_);
+        }
     }
 
     iterator begin()
@@ -410,13 +424,14 @@ public:
 
     void reserve(size_type res_arg)
     {
-        if (res_arg <= capacity())
+        size_type cap = capacity();
+        if (res_arg <= cap)
         {
             // @@@ insert shrinkage here if you wish
             return;
         }
 
-        if (pData_ == &emptyString_)
+        if (cap == 0)
         {
             Init(0, res_arg);
         }
@@ -495,7 +510,7 @@ public:
 
     const E* c_str() const
     {
-        if (pData_ != &emptyString_) *pData_->pEnd_ = E();
+        if (capacity() > 0) *pData_->pEnd_ = E();
         return pData_->buffer_;
     }
 
@@ -527,14 +542,6 @@ class AllocatorStringStorage : public A
     {
         return boost::allocator_allocate(static_cast<A&>(*this), 1 + (sz - 1) / sizeof(E),
             static_cast<const char*>(p));
-    }
-
-    void* Realloc(void* p, size_type oldSz, size_type newSz)
-    {
-        void* r = Alloc(newSz);
-        flex_string_details::pod_copy(p, p + Min(oldSz, newSz), r);
-        Free(p, oldSz);
-        return r;
     }
 
     void Free(void* p, size_type sz)
@@ -621,6 +628,7 @@ public:
     {
         if (capacity())
         {
+            BOOST_WAVE_COMPILE_TIME_ASSERT(pData_ != (&SimpleStringStorage<E, A>::emptyString_));
             Free(pData_,
                 sizeof(Data) + capacity() * sizeof(E));
         }
@@ -703,7 +711,7 @@ public:
 
     const E* c_str() const
     {
-        if (pData_ != &SimpleStringStorage<E, A>::emptyString_)
+        if (capacity() > 0)
         {
             *pData_->pEnd_ = E();
         }
@@ -987,7 +995,7 @@ public:
     }
 
     size_type max_size() const
-    { return get_allocator().max_size(); }
+    { return boost::allocator_max_size(get_allocator()); }
 
     size_type capacity() const
     { return Small() ? maxSmallString : GetStorage().capacity(); }

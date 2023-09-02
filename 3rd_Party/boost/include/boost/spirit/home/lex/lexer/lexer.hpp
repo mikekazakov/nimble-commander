@@ -34,6 +34,10 @@ namespace boost { namespace spirit { namespace lex
     namespace detail
     {
         ///////////////////////////////////////////////////////////////////////
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
         template <typename LexerDef>
         struct lexer_def_
           : proto::extends<
@@ -182,9 +186,6 @@ namespace boost { namespace spirit { namespace lex
 //                 }
 
                 lexer_def_& def;
-
-                // silence MSVC warning C4512: assignment operator could not be generated
-                BOOST_DELETED_FUNCTION(adder& operator= (adder const&))
             };
             friend struct adder;
 
@@ -203,9 +204,6 @@ namespace boost { namespace spirit { namespace lex
                 }
 
                 lexer_def_& def;
-
-                // silence MSVC warning C4512: assignment operator could not be generated
-                BOOST_DELETED_FUNCTION(pattern_adder& operator= (pattern_adder const&))
             };
             friend struct pattern_adder;
 
@@ -279,10 +277,10 @@ namespace boost { namespace spirit { namespace lex
             LexerDef& def;
             string_type state;
             string_type targetstate;
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(lexer_def_& operator= (lexer_def_ const&))
         };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
 #if defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
         // allow to assign a token definition expression

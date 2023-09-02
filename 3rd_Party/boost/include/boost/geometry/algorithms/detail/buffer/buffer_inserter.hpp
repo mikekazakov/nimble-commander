@@ -1,9 +1,10 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
 // Copyright (c) 2012-2020 Barend Gehrels, Amsterdam, the Netherlands.
+// Copyright (c) 2022-2023 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2017-2021.
-// Modifications copyright (c) 2017-2021 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2022.
+// Modifications copyright (c) 2017-2022 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -37,10 +38,13 @@
 #include <boost/geometry/core/exterior_ring.hpp>
 #include <boost/geometry/core/interior_rings.hpp>
 
+#include <boost/geometry/geometries/linestring.hpp>
+#include <boost/geometry/geometries/ring.hpp>
+
 #include <boost/geometry/strategies/buffer.hpp>
 #include <boost/geometry/strategies/side.hpp>
 
-#include <boost/geometry/util/condition.hpp>
+#include <boost/geometry/util/constexpr.hpp>
 #include <boost/geometry/util/math.hpp>
 #include <boost/geometry/util/type_traits.hpp>
 
@@ -54,11 +58,11 @@ namespace boost { namespace geometry
 namespace detail { namespace buffer
 {
 
-template <typename Range, typename DistanceStrategy, typename Strategies>
-inline void simplify_input(Range const& range,
-        DistanceStrategy const& distance,
-        Range& simplified,
-        Strategies const& strategies)
+template <typename RangeIn, typename DistanceStrategy, typename RangeOut, typename Strategies>
+inline void simplify_input(RangeIn const& range,
+                           DistanceStrategy const& distance,
+                           RangeOut& simplified,
+                           Strategies const& strategies)
 {
     // We have to simplify the ring before to avoid very small-scaled
     // features in the original (convex/concave/convex) being enlarged
@@ -291,7 +295,7 @@ struct buffer_range
                         robust_policy, strategies);
             }
 
-            collection.add_side_piece(*prev, *it, generated_side, first);
+            collection.add_side_piece(*prev, *it, generated_side, first, distance_strategy.empty(side));
 
             if (first && mark_flat)
             {
@@ -350,10 +354,7 @@ struct buffer_multi
             RobustPolicy const& robust_policy,
             Strategies const& strategies)
     {
-        for (typename boost::range_iterator<Multi const>::type
-                it = boost::begin(multi);
-            it != boost::end(multi);
-            ++it)
+        for (auto it = boost::begin(multi); it != boost::end(multi); ++it)
         {
             Policy::apply(*it, collection,
                 distance_strategy, segment_strategy,
@@ -453,7 +454,7 @@ template
 >
 struct buffer_inserter_ring
 {
-    typedef typename point_type<RingOutput>::type output_point_type;
+    using output_point_type = typename point_type<RingOutput>::type;
 
     template
     <
@@ -524,7 +525,14 @@ struct buffer_inserter_ring
             RobustPolicy const& robust_policy,
             Strategies const& strategies)
     {
-        RingInput simplified;
+        // Use helper geometry to support non-mutable input Rings
+        using simplified_ring_t = model::ring
+            <
+                output_point_type,
+                point_order<RingInput>::value != counterclockwise,
+                closure<RingInput>::value != open
+            >;
+        simplified_ring_t simplified;
         detail::buffer::simplify_input(ring, distance, simplified, strategies);
 
         geometry::strategy::buffer::result_code code = geometry::strategy::buffer::result_no_output;
@@ -532,12 +540,12 @@ struct buffer_inserter_ring
         std::size_t n = boost::size(simplified);
         std::size_t const min_points = core_detail::closure::minimum_ring_size
             <
-                geometry::closure<RingInput>::value
+                geometry::closure<simplified_ring_t>::value
             >::value;
 
         if (n >= min_points)
         {
-            detail::closed_clockwise_view<RingInput const> view(simplified);
+            detail::closed_clockwise_view<simplified_ring_t const> view(simplified);
             if (distance.negative())
             {
                 // Walk backwards (rings will be reversed afterwards)
@@ -615,9 +623,8 @@ template
 >
 struct buffer_inserter<linestring_tag, Linestring, Polygon>
 {
-    typedef typename ring_type<Polygon>::type output_ring_type;
-    typedef typename point_type<output_ring_type>::type output_point_type;
-    typedef typename point_type<Linestring>::type input_point_type;
+    using output_ring_type = typename ring_type<Polygon>::type;
+    using output_point_type = typename point_type<output_ring_type>::type;
 
     template
     <
@@ -641,8 +648,8 @@ struct buffer_inserter<linestring_tag, Linestring, Polygon>
                 Strategies const& strategies,
                 output_point_type& first_p1)
     {
-        input_point_type const& ultimate_point = *(end - 1);
-        input_point_type const& penultimate_point = *(end - 2);
+        output_point_type const& ultimate_point = *(end - 1);
+        output_point_type const& penultimate_point = *(end - 2);
 
         // For the end-cap, we need to have the last perpendicular point on the
         // other side of the linestring. If it is the second pass (right),
@@ -708,7 +715,8 @@ struct buffer_inserter<linestring_tag, Linestring, Polygon>
             RobustPolicy const& robust_policy,
             Strategies const& strategies)
     {
-        Linestring simplified;
+        // Use helper geometry to support non-mutable input Linestrings
+        model::linestring<output_point_type> simplified;
         detail::buffer::simplify_input(linestring, distance, simplified, strategies);
 
         geometry::strategy::buffer::result_code code = geometry::strategy::buffer::result_no_output;
@@ -934,17 +942,17 @@ inline void buffer_inserter(GeometryInput const& geometry_input, OutputIterator 
 {
     boost::ignore_unused(visit_pieces_policy);
 
-    typedef detail::buffer::buffered_piece_collection
-    <
-        typename geometry::ring_type<GeometryOutput>::type,
-        Strategies,
-        DistanceStrategy,
-        RobustPolicy
-    > collection_type;
+    using collection_type = detail::buffer::buffered_piece_collection
+        <
+            typename geometry::ring_type<GeometryOutput>::type,
+            Strategies,
+            DistanceStrategy,
+            RobustPolicy
+        >;
     collection_type collection(strategies, distance_strategy, robust_policy);
     collection_type const& const_collection = collection;
 
-    bool const areal = util::is_areal<GeometryInput>::value;
+    static constexpr bool areal = util::is_areal<GeometryInput>::value;
 
     dispatch::buffer_inserter
         <
@@ -961,7 +969,7 @@ inline void buffer_inserter(GeometryInput const& geometry_input, OutputIterator 
                  robust_policy, strategies);
 
     collection.get_turns();
-    if (BOOST_GEOMETRY_CONDITION(areal))
+    if BOOST_GEOMETRY_CONSTEXPR (areal)
     {
         collection.check_turn_in_original();
     }
@@ -981,7 +989,7 @@ inline void buffer_inserter(GeometryInput const& geometry_input, OutputIterator 
     // phase 1: turns (after enrichment/clustering)
     visit_pieces_policy.apply(const_collection, 1);
 
-    if (BOOST_GEOMETRY_CONDITION(areal))
+    if BOOST_GEOMETRY_CONSTEXPR (areal)
     {
         collection.deflate_check_turns();
     }
@@ -993,8 +1001,7 @@ inline void buffer_inserter(GeometryInput const& geometry_input, OutputIterator 
     // - the output is counter clockwise
     // and avoid reversing twice
     bool reverse = distance_strategy.negative() && areal;
-    if (BOOST_GEOMETRY_CONDITION(
-            geometry::point_order<GeometryOutput>::value == counterclockwise))
+    if BOOST_GEOMETRY_CONSTEXPR (geometry::point_order<GeometryOutput>::value == counterclockwise)
     {
         reverse = ! reverse;
     }
@@ -1003,9 +1010,12 @@ inline void buffer_inserter(GeometryInput const& geometry_input, OutputIterator 
         collection.reverse();
     }
 
-    if (BOOST_GEOMETRY_CONDITION(distance_strategy.negative() && areal))
+    if BOOST_GEOMETRY_CONSTEXPR (areal)
     {
-        collection.discard_nonintersecting_deflated_rings();
+        if (distance_strategy.negative())
+        {
+            collection.discard_nonintersecting_deflated_rings();
+        }
     }
 
     collection.template assign<GeometryOutput>(out);

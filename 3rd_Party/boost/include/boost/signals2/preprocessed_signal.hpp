@@ -16,15 +16,16 @@
 #define BOOST_SIGNALS2_PREPROCESSED_SIGNAL_HPP
 
 #include <boost/config.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/preprocessor/arithmetic.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/control/expr_if.hpp>
 #include <boost/preprocessor/iteration.hpp>
 #include <boost/preprocessor/repetition.hpp>
 #include <boost/signals2/detail/preprocessed_arg_type.hpp>
+#include <boost/smart_ptr/make_shared.hpp>
 #include <boost/type_traits/add_reference.hpp>
 #include <boost/type_traits/is_void.hpp> 
-#include <boost/utility/enable_if.hpp>
 
 #define BOOST_PP_ITERATION_LIMITS (0, BOOST_SIGNALS2_MAX_ARGS)
 #define BOOST_PP_FILENAME_1 <boost/signals2/detail/signal_template.hpp>

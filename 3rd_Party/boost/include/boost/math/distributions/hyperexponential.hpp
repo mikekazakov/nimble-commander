@@ -137,7 +137,7 @@ bool check_dist(char const* function, std::vector<RealT> const& probabilities, s
     if (probabilities.size() != rates.size())
     {
         *presult = policies::raise_domain_error<RealT>(function,
-                                                       "The parameters \"probabilities\" and \"rates\" must have the same length, but their size differ by: %1%.",
+                                                       R"(The parameters "probabilities" and "rates" must have the same length, but their size differ by: %1%.)",
                                                        fabs(static_cast<RealT>(probabilities.size())-static_cast<RealT>(rates.size())),
                                                        pol);
         return false;

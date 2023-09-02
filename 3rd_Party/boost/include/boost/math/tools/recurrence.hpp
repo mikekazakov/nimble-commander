@@ -50,7 +50,7 @@ namespace boost {
                }
 
             private:
-               function_ratio_from_backwards_recurrence_fraction operator=(const function_ratio_from_backwards_recurrence_fraction&);
+               function_ratio_from_backwards_recurrence_fraction operator=(const function_ratio_from_backwards_recurrence_fraction&) = delete;
 
                Recurrence r;
                int k;
@@ -139,7 +139,7 @@ namespace boost {
          // second: w(0);
          //
          template <class NextCoefs, class T>
-         inline T apply_recurrence_relation_forward(const NextCoefs& get_coefs, unsigned number_of_steps, T first, T second, long long* log_scaling = 0, T* previous = 0)
+         inline T apply_recurrence_relation_forward(const NextCoefs& get_coefs, unsigned number_of_steps, T first, T second, long long* log_scaling = nullptr, T* previous = nullptr)
          {
             BOOST_MATH_STD_USING
             using std::tuple;
@@ -195,7 +195,7 @@ namespace boost {
          // second: w(0);
          //
          template <class T, class NextCoefs>
-         inline T apply_recurrence_relation_backward(const NextCoefs& get_coefs, unsigned number_of_steps, T first, T second, long long* log_scaling = 0, T* previous = 0)
+         inline T apply_recurrence_relation_backward(const NextCoefs& get_coefs, unsigned number_of_steps, T first, T second, long long* log_scaling = nullptr, T* previous = nullptr)
          {
             BOOST_MATH_STD_USING
             using std::tuple;
@@ -209,7 +209,7 @@ namespace boost {
             {
                tie(a, b, c) = get_coefs(-static_cast<int>(k));
 
-               if ((log_scaling) && 
+               if ((log_scaling) && (second != 0) &&
                   ( (fabs(tools::max_value<T>() * (a / b) / 2048) < fabs(second))
                      || (fabs(tools::max_value<T>() * (a / c) / 2048) < fabs(first))
                      || (fabs(tools::min_value<T>() * (a / b) * 2048) > fabs(second))

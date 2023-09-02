@@ -26,7 +26,7 @@ namespace boost { namespace process {
 #if defined(BOOST_PROCESS_DOXYGEN)
 
 
-/** Class implementing and asnychronous I/O-Object for use with boost.asio.
+/** Class implementing an asnychronous I/O-Object for use with boost.asio.
  *  It is based on the corresponding I/O Object, that is either boost::asio::windows::stream_handle or
  *  boost::asio::posix::stream_descriptor.
  *

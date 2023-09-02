@@ -24,7 +24,8 @@
 # endif
 #endif
 
-BOOST_JSON_NS_BEGIN
+namespace boost {
+namespace json {
 namespace detail {
 
 #ifdef BOOST_JSON_USE_SSE2
@@ -131,7 +132,7 @@ count_valid<false>(
             continue;
         }
         // validate utf-8
-        uint16_t first = classify_utf8(c & 0x7F);
+        uint16_t first = classify_utf8(c);
         uint8_t len = first & 0xFF;
         if(BOOST_JSON_UNLIKELY(end - p < len))
             break;
@@ -180,7 +181,7 @@ count_valid<false>(
             continue;
         }
         // validate utf-8
-        uint16_t first = classify_utf8(c & 0x7F);
+        uint16_t first = classify_utf8(c);
         uint8_t len = first & 0xFF;
         if(BOOST_JSON_UNLIKELY(end - p < len))
             break;
@@ -542,6 +543,7 @@ inline const char* count_whitespace( char const* p, const char* end ) noexcept
 #endif
 
 } // detail
-BOOST_JSON_NS_END
+} // namespace json
+} // namespace boost
 
 #endif

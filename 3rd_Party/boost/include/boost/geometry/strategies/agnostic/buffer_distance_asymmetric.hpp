@@ -76,6 +76,11 @@ public :
         return m_left < 0 && m_right < 0;
     }
 
+    inline bool empty(buffer_side_selector side) const
+    {
+        return side == buffer_side_left ? m_left == 0 : m_right == 0;
+    }
+
     //! Returns the max distance distance up to the buffer will reach
     template <typename JoinStrategy, typename EndStrategy>
     inline NumericType max_distance(JoinStrategy const& join_strategy,

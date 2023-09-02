@@ -15,6 +15,7 @@ namespace boost { namespace gil {
 /// \ingroup Variant
 /// \brief Applies the visitor op to the variants
 template <typename Variant1, typename Visitor>
+[[deprecated("Use variant2::visit instead.")]]
 BOOST_FORCEINLINE
 auto apply_operation(Variant1&& arg1, Visitor&& op)
 #if defined(BOOST_NO_CXX14_DECLTYPE_AUTO) || defined(BOOST_NO_CXX11_DECLTYPE_N3276)
@@ -27,6 +28,7 @@ auto apply_operation(Variant1&& arg1, Visitor&& op)
 /// \ingroup Variant
 /// \brief Applies the visitor op to the variants
 template <typename Variant1, typename Variant2, typename Visitor>
+[[deprecated("Use variant2::visit instead.")]]
 BOOST_FORCEINLINE
 auto apply_operation(Variant1&& arg1, Variant2&& arg2, Visitor&& op)
 #if defined(BOOST_NO_CXX14_DECLTYPE_AUTO) || defined(BOOST_NO_CXX11_DECLTYPE_N3276)

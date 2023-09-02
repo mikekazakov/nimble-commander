@@ -78,6 +78,10 @@ namespace boost { namespace spirit { namespace qi
     using spirit::repeat_type;
     using spirit::inf_type;
 
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename T>
     struct exact_iterator // handles repeat(exact)[p]
     {
@@ -90,9 +94,6 @@ namespace boost { namespace spirit { namespace qi
         bool got_min(T i) const { return i >= exact; }
 
         T const exact;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(exact_iterator& operator= (exact_iterator const&))
     };
 
     template <typename T>
@@ -109,9 +110,6 @@ namespace boost { namespace spirit { namespace qi
 
         T const min;
         T const max;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(finite_iterator& operator= (finite_iterator const&))
     };
 
     template <typename T>
@@ -126,10 +124,10 @@ namespace boost { namespace spirit { namespace qi
         bool got_min(T i) const { return i >= min; }
 
         T const min;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(infinite_iterator& operator= (infinite_iterator const&))
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
     template <typename Subject, typename LoopIter>
     struct repeat_parser : unary_parser<repeat_parser<Subject, LoopIter> >
@@ -205,9 +203,6 @@ namespace boost { namespace spirit { namespace qi
 
         Subject subject;
         LoopIter iter;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(repeat_parser& operator= (repeat_parser const&))
     };
 
     ///////////////////////////////////////////////////////////////////////////

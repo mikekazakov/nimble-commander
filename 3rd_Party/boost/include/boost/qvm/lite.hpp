@@ -20,6 +20,7 @@
 #include <boost/qvm/vec_access.hpp>
 #include <boost/qvm/vec_traits_defaults.hpp>
 #include <boost/qvm/vec_traits_array.hpp>
+#include <boost/qvm/vec_traits_gnuc.hpp>
 #include <boost/qvm/vec.hpp>
 #include <boost/qvm/vec_mat_operations.hpp>
 #include <boost/qvm/vec_register.hpp>

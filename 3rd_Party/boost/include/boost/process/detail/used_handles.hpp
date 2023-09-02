@@ -69,7 +69,7 @@ template<typename Executor>
 std::vector<::boost::process::detail::api::native_handle_type>
         get_used_handles(Executor &exec)
 {
-    std::vector<::boost::process::detail::api::native_handle_type> res;
+    std::vector<::boost::process::detail::api::native_handle_type> res = exec.get_used_handles();
     foreach_used_handle(exec, [&](::boost::process::detail::api::native_handle_type handle){res.push_back(handle);});
     return res;
 }

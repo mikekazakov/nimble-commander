@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2015-2020, Oracle and/or its affiliates.
+// Copyright (c) 2015-2022, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
@@ -12,15 +12,19 @@
 #define BOOST_GEOMETRY_GEOMETRIES_HELPER_GEOMETRY_HPP
 
 
-#include <boost/geometry/core/cs.hpp>
+#include <boost/geometry/core/closure.hpp>
 #include <boost/geometry/core/coordinate_dimension.hpp>
 #include <boost/geometry/core/coordinate_type.hpp>
+#include <boost/geometry/core/cs.hpp>
+#include <boost/geometry/core/point_order.hpp>
 #include <boost/geometry/core/point_type.hpp>
 #include <boost/geometry/core/tag.hpp>
 #include <boost/geometry/core/tags.hpp>
 
 #include <boost/geometry/geometries/box.hpp>
+#include <boost/geometry/geometries/linestring.hpp>
 #include <boost/geometry/geometries/point.hpp>
+#include <boost/geometry/geometries/ring.hpp>
 
 #include <boost/geometry/algorithms/not_implemented.hpp>
 
@@ -69,23 +73,50 @@ struct helper_geometry : not_implemented<Geometry>
 template <typename Point, typename NewCoordinateType, typename NewUnits>
 struct helper_geometry<Point, NewCoordinateType, NewUnits, point_tag>
 {
-    typedef typename detail::helper_geometries::helper_point
+    using type = typename detail::helper_geometries::helper_point
         <
             Point, NewCoordinateType, NewUnits
-        >::type type;
+        >::type;
 };
 
 
 template <typename Box, typename NewCoordinateType, typename NewUnits>
 struct helper_geometry<Box, NewCoordinateType, NewUnits, box_tag>
 {
-    typedef model::box
+    using type = model::box
         <
             typename helper_geometry
                 <
                     typename point_type<Box>::type, NewCoordinateType, NewUnits
                 >::type
-        > type;
+        >;
+};
+
+
+template <typename Linestring, typename NewCoordinateType, typename NewUnits>
+struct helper_geometry<Linestring, NewCoordinateType, NewUnits, linestring_tag>
+{
+    using type = model::linestring
+        <
+            typename helper_geometry
+                <
+                    typename point_type<Linestring>::type, NewCoordinateType, NewUnits
+                >::type
+        >;
+};
+
+template <typename Ring, typename NewCoordinateType, typename NewUnits>
+struct helper_geometry<Ring, NewCoordinateType, NewUnits, ring_tag>
+{
+    using type = model::ring
+        <
+            typename helper_geometry
+                <
+                    typename point_type<Ring>::type, NewCoordinateType, NewUnits
+                >::type,
+            point_order<Ring>::value != counterclockwise,
+            closure<Ring>::value != open
+        >;
 };
 
 
@@ -103,10 +134,10 @@ template
 >
 struct helper_geometry
 {
-    typedef typename detail_dispatch::helper_geometry
+    using type = typename detail_dispatch::helper_geometry
         <
             Geometry, NewCoordinateType, NewUnits
-        >::type type;
+        >::type;
 };
 
 

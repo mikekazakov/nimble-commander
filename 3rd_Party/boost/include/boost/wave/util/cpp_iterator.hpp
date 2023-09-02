@@ -1157,6 +1157,8 @@ pp_iterator_functor<ContextT>::handle_pp_directive(IteratorT &it)
                     seen_newline = true;
                     iter_ctx->first = it;
                 }
+                if (T_PP_ENDIF == id)
+                    must_emit_line_directive = true;
                 return true;
 
             default:                // #something else
@@ -1233,6 +1235,8 @@ pp_iterator_functor<ContextT>::handle_pp_directive(IteratorT &it)
                 // we skipped to the end of this line already
                 seen_newline = true;
                 iter_ctx->first = it;
+                if (T_PP_ENDIF == id)
+                    must_emit_line_directive = true;
                 return true;
             }
             break;

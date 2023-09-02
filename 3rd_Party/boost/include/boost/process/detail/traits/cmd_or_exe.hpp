@@ -11,7 +11,7 @@
 #include <vector>
 #include <type_traits>
 #include <initializer_list>
-#include <boost/filesystem/path.hpp>
+#include <boost/process/filesystem.hpp>
 #include <boost/process/detail/traits/decl.hpp>
 namespace boost { namespace process { namespace detail {
 
@@ -53,12 +53,12 @@ template<> struct initializer_tag<std::initializer_list<const wchar_t *>> { type
 
 template<> struct initializer_tag<shell_>
 {
-    typedef cmd_or_exe_tag<typename boost::filesystem::path::value_type> type;
+    typedef cmd_or_exe_tag<typename boost::process::filesystem::path::value_type> type;
 };
 
-template<> struct initializer_tag<boost::filesystem::path>
+template<> struct initializer_tag<boost::process::filesystem::path>
 {
-    typedef cmd_or_exe_tag<typename boost::filesystem::path::value_type> type;
+    typedef cmd_or_exe_tag<typename boost::process::filesystem::path::value_type> type;
 };
 
 template <typename Char>

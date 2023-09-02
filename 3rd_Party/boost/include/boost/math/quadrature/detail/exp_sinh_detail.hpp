@@ -21,7 +21,6 @@
 
 namespace boost{ namespace math{ namespace quadrature { namespace detail{
 
-
 // Returns the exp-sinh quadrature of a function f over the open interval (0, infinity)
 
 template<class Real, class Policy>
@@ -45,7 +44,7 @@ public:
     exp_sinh_detail(size_t max_refinements);
 
     template<class F>
-    auto integrate(const F& f, Real* error, Real* L1, const char* function, Real tolerance, std::size_t* levels)->decltype(std::declval<F>()(std::declval<Real>())) const;
+    auto integrate(const F& f, Real* error, Real* L1, const char* function, Real tolerance, std::size_t* levels) const ->decltype(std::declval<F>()(std::declval<Real>()));
 
 private:
    const std::vector<Real>& get_abscissa_row(std::size_t n)const
@@ -131,7 +130,7 @@ private:
     mutable std::vector<std::vector<Real>> m_weights;
     std::size_t                       m_max_refinements;
 #if !defined(BOOST_MATH_NO_ATOMIC_INT) && defined(BOOST_HAS_THREADS)
-    mutable boost::math::detail::atomic_unsigned_type      m_committed_refinements;
+    mutable boost::math::detail::atomic_unsigned_type      m_committed_refinements{};
     mutable std::mutex m_mutex;
 #else
     mutable unsigned                  m_committed_refinements;
@@ -147,7 +146,7 @@ exp_sinh_detail<Real, Policy>::exp_sinh_detail(size_t max_refinements)
 }
 template<class Real, class Policy>
 template<class F>
-auto exp_sinh_detail<Real, Policy>::integrate(const F& f, Real* error, Real* L1, const char* function, Real tolerance, std::size_t* levels)->decltype(std::declval<F>()(std::declval<Real>())) const
+auto exp_sinh_detail<Real, Policy>::integrate(const F& f, Real* error, Real* L1, const char* function, Real tolerance, std::size_t* levels) const ->decltype(std::declval<F>()(std::declval<Real>()))
 {
     typedef decltype(f(static_cast<Real>(0))) K;
     using std::abs;
@@ -227,7 +226,7 @@ auto exp_sinh_detail<Real, Policy>::integrate(const F& f, Real* error, Real* L1,
         auto weight_row = get_weight_row(i);
 
         first_j = first_j == 0 ? 0 : 2 * first_j - 1;  // appoximate location to start looking for lowest meaningful abscissa value
-        Real abterm1 = 1;
+        BOOST_MATH_MAYBE_UNUSED Real abterm1 = 1;
         std::size_t j = first_j;
         while (abscissas_row[j] < min_abscissa)
            ++j;

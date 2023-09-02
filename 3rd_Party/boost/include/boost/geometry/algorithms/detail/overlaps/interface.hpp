@@ -4,8 +4,8 @@
 // Copyright (c) 2008-2015 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2014-2021.
-// Modifications copyright (c) 2014-2021 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2022.
+// Modifications copyright (c) 2014-2022 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -24,6 +24,7 @@
 
 #include <boost/geometry/algorithms/not_implemented.hpp>
 
+#include <boost/geometry/geometries/adapted/boost_variant.hpp>
 #include <boost/geometry/geometries/concepts/check.hpp>
 
 #include <boost/geometry/algorithms/detail/relate/relate_impl.hpp>
@@ -124,6 +125,96 @@ struct overlaps<default_strategy, false>
 } // namespace resolve_strategy
 
 
+namespace resolve_dynamic
+{
+
+template
+<
+    typename Geometry1, typename Geometry2,
+    typename Tag1 = typename geometry::tag<Geometry1>::type,
+    typename Tag2 = typename geometry::tag<Geometry2>::type
+>
+struct overlaps
+{
+    template <typename Strategy>
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        return resolve_strategy::overlaps
+            <
+                Strategy
+            >::apply(geometry1, geometry2, strategy);
+    }
+};
+
+
+template <typename DynamicGeometry1, typename Geometry2, typename Tag2>
+struct overlaps<DynamicGeometry1, Geometry2, dynamic_geometry_tag, Tag2>
+{
+    template <typename Strategy>
+    static inline bool apply(DynamicGeometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        bool result = false;
+        traits::visit<DynamicGeometry1>::apply([&](auto const& g1)
+        {
+            result = resolve_strategy::overlaps
+                <
+                    Strategy
+                >::apply(g1, geometry2, strategy);
+        }, geometry1);
+        return result;
+    }
+};
+
+
+template <typename Geometry1, typename DynamicGeometry2, typename Tag1>
+struct overlaps<Geometry1, DynamicGeometry2, Tag1, dynamic_geometry_tag>
+{
+    template <typename Strategy>
+    static inline bool apply(Geometry1 const& geometry1,
+                             DynamicGeometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        bool result = false;
+        traits::visit<DynamicGeometry2>::apply([&](auto const& g2)
+        {
+            result = resolve_strategy::overlaps
+                <
+                    Strategy
+                >::apply(geometry1, g2, strategy);
+        }, geometry2);
+        return result;
+    }
+};
+
+
+template <typename DynamicGeometry1, typename DynamicGeometry2>
+struct overlaps<DynamicGeometry1, DynamicGeometry2, dynamic_geometry_tag, dynamic_geometry_tag>
+{
+    template <typename Strategy>
+    static inline bool apply(DynamicGeometry1 const& geometry1,
+                             DynamicGeometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        bool result = false;
+        traits::visit<DynamicGeometry1, DynamicGeometry2>::apply([&](auto const& g1, auto const& g2)
+        {
+            result = resolve_strategy::overlaps
+                <
+                    Strategy
+                >::apply(g1, g2, strategy);
+        }, geometry1, geometry2);
+        return result;
+    }
+};
+
+
+} // namespace resolve_dynamic
+
+
 /*!
 \brief \brief_check2{overlap}
 \ingroup overlaps
@@ -146,9 +237,9 @@ inline bool overlaps(Geometry1 const& geometry1,
     concepts::check<Geometry1 const>();
     concepts::check<Geometry2 const>();
 
-    return resolve_strategy::overlaps
+    return resolve_dynamic::overlaps
         <
-            Strategy
+            Geometry1, Geometry2
         >::apply(geometry1, geometry2, strategy);
 }
 
@@ -174,9 +265,9 @@ inline bool overlaps(Geometry1 const& geometry1, Geometry2 const& geometry2)
     concepts::check<Geometry1 const>();
     concepts::check<Geometry2 const>();
 
-    return resolve_strategy::overlaps
+    return resolve_dynamic::overlaps
         <
-            default_strategy
+            Geometry1, Geometry2
         >::apply(geometry1, geometry2, default_strategy());
 }
 

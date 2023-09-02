@@ -1,6 +1,9 @@
 // Boost.Geometry
 
-// Copyright (c) 2017-2020, Oracle and/or its affiliates.
+// Copyright (c) 2023 Adam Wulkiewicz, Lodz, Poland.
+
+// Copyright (c) 2017-2023, Oracle and/or its affiliates.
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -30,7 +33,8 @@
 #include <boost/range/end.hpp>
 #include <boost/range/size.hpp>
 #include <boost/range/value_type.hpp>
-#include <boost/tuple/tuple.hpp>
+
+#include <boost/variant/get.hpp>
 #include <boost/variant/variant.hpp>
 
 
@@ -208,6 +212,7 @@ enum value_proj
     proj_cc,
     proj_cea,
     proj_chamb,
+    proj_col_urban,
     proj_collg,
     proj_crast,
     proj_denoy,
@@ -335,7 +340,7 @@ enum name_f
     es,
     f,
     h,
-    //h_0, // currently not used
+    h_0,
     k = 7,
     k_0,
     m, // also used for M
@@ -412,7 +417,10 @@ enum name_be
     r_h, // originally R_h
     r_v, // originally R_V
     rescale, // 70
-    south
+    south,
+    variant_c, // BG specific
+    no_off,
+    hyperbolic
 };
 
 /*enum name_catalog
@@ -480,6 +488,11 @@ enum name_units
 {
     units = 85,
     vunits
+};
+
+enum name_axis
+{
+    axis = 86 // 3 element list of numbers
 };
 
 template <typename T>
@@ -577,12 +590,10 @@ struct parameter
         , m_value(srs::detail::nadgrids(boost::begin(v), boost::end(v)))
     {}
 
-#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
     parameter(name_nadgrids id, std::initializer_list<std::string> v)
         : m_id(id)
         , m_value(srs::detail::nadgrids(v))
     {}
-#endif
 
     parameter(name_orient id, value_orient v)
         : m_id(id), m_value(int(v))
@@ -642,7 +653,6 @@ struct parameter
         }
     }
 
-#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
     parameter(name_towgs84 id, std::initializer_list<T> v)
         : m_id(id)
         , m_value(srs::detail::towgs84<T>(v))
@@ -653,7 +663,17 @@ struct parameter
             BOOST_THROW_EXCEPTION( projection_exception("Invalid number of towgs84 elements. Should be 3 or 7.") );
         }
     }
-#endif
+
+    parameter(name_axis id, std::initializer_list<int> v)
+        : m_id(id)
+        , m_value(srs::detail::axis(v))
+    {
+        std::size_t n = v.size();
+        if (n != 3)
+        {
+            BOOST_THROW_EXCEPTION( projection_exception("Invalid number of axis elements. Should be 3.") );
+        }
+    }
 
     parameter(name_units id, value_units v)
         : m_id(id), m_value(int(v))
@@ -662,7 +682,7 @@ struct parameter
     parameter(value_units v)
         : m_id(units), m_value(int(v))
     {}
-    
+
 private:
     typedef boost::variant
         <
@@ -689,6 +709,7 @@ public:
     bool is_id_equal(name_sweep const& id) const { return m_id == int(id); }
     bool is_id_equal(name_towgs84 const& id) const { return m_id == int(id); }
     bool is_id_equal(name_units const& id) const { return m_id == int(id); }
+    bool is_id_equal(name_axis const& id) const { return m_id == int(id); }
 
     template <typename V>
     V const& get_value() const
@@ -701,7 +722,7 @@ public:
     {
         return m_value.which() == srs::detail::find_type_index<variant_type, V>::value;
     }
-    
+
 private:
     int m_id;
     variant_type m_value;
@@ -720,66 +741,6 @@ public:
 
     BOOST_DEFAULTED_FUNCTION(parameters(), {})
 
-#if defined(BOOST_NO_CXX11_RVALUE_REFERENCES) || defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES)
-    template <typename Id>
-    explicit parameters(Id id)
-    {
-        add(id);
-    }
-
-    template <typename Id>
-    parameters & add(Id id)
-    {
-        m_params.push_back(parameter<T>(id));
-        return *this;
-    }
-
-    template <typename Id>
-    parameters & operator()(Id id)
-    {
-        return add(id);
-    }
-
-    template <typename Id, typename V>
-    parameters(Id id, V const& value)
-    {
-        add(id, value);
-    }
-
-    template <typename Id, typename V>
-    parameters & add(Id id, V const& value)
-    {
-        m_params.push_back(parameter<T>(id, value));
-        return *this;
-    }
-
-    template <typename Id, typename V>
-    parameters & operator()(Id id, V const& value)
-    {
-        return add(id, value);
-    }
-
-#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
-    template <typename Id, typename V>
-    parameters(Id id, std::initializer_list<V> value)
-    {
-        add(id, value);
-    }
-
-    template <typename Id, typename V>
-    parameters & add(Id id, std::initializer_list<V> value)
-    {
-        m_params.push_back(parameter<T>(id, value));
-        return *this;
-    }
-
-    template <typename Id, typename V>
-    parameters & operator()(Id id, std::initializer_list<V> value)
-    {
-        return add(id, value);
-    }
-#endif // BOOST_NO_CXX11_HDR_INITIALIZER_LIST
-#else // BOOST_NO_CXX11_RVALUE_REFERENCES || BOOST_NO_CXX11_RVALUE_REFERENCES
     template <typename Id>
     explicit parameters(Id id)
     {
@@ -818,7 +779,6 @@ public:
         return add(id, std::forward<V>(value));
     }
 
-#ifndef BOOST_NO_CXX11_HDR_INITIALIZER_LIST
     template <typename Id, typename V>
     parameters(Id id, std::initializer_list<V> value)
     {
@@ -837,8 +797,6 @@ public:
     {
         return add(id, value);
     }
-#endif // BOOST_NO_CXX11_HDR_INITIALIZER_LIST
-#endif // BOOST_NO_CXX11_RVALUE_REFERENCES || BOOST_NO_CXX11_RVALUE_REFERENCES
 
     const_iterator begin() const { return m_params.begin(); }
     const_iterator end() const { return m_params.end(); }

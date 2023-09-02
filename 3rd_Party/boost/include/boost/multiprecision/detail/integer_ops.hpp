@@ -3,8 +3,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_MP_INT_FUNC_HPP
-#define BOOST_MP_INT_FUNC_HPP
+#ifndef BOOST_MP_DETAIL_INTEGER_OPS_HPP
+#define BOOST_MP_DETAIL_INTEGER_OPS_HPP
 
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/detail/no_exceptions_support.hpp>
@@ -73,7 +73,7 @@ inline BOOST_MP_CXX14_CONSTEXPR void eval_gcd(B& result, const B& a, const B& b)
 
    std::size_t us = eval_lsb(u);
    std::size_t vs = eval_lsb(v);
-   shift       = (std::min)(us, vs);
+   shift       = static_cast<std::ptrdiff_t>((std::min)(us, vs));
    eval_right_shift(u, us);
    eval_right_shift(v, vs);
 

@@ -59,7 +59,7 @@ namespace boost
     boost::optional<TypeOut>
     convert(TypeIn const& value_in, Converter const& converter)
     {
-        optional<TypeOut> result;
+        auto result = optional<TypeOut>();
         boost::unwrap_ref(converter)(value_in, result);
         return result;
     }
@@ -139,7 +139,7 @@ namespace boost { namespace cnv
         TypeOut
         operator()(TypeIn const& value_in) const
         {
-            optional<TypeOut> result = convert<TypeOut>(value_in, converter_);
+            auto result = convert<TypeOut>(value_in, converter_);
             return result ? result.get() : fallback_.value();
         }
 
@@ -166,7 +166,7 @@ namespace boost { namespace cnv
         TypeOut
         operator()(TypeIn const& value_in) const
         {
-            optional<TypeOut> result = convert<TypeOut>(value_in, converter_);
+            auto result = convert<TypeOut>(value_in, converter_);
             return result ? result.get() : fallback_.value();
         }
 

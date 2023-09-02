@@ -2,8 +2,9 @@
 
 // Copyright (c) 2008-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2020.
-// Modifications copyright (c) 2017-2020, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017, 2018, 2020, 2022.
+// Modifications copyright (c) 2017-2022, Oracle and/or its affiliates.
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -2611,6 +2612,7 @@ namespace detail
             //{5819},
             //{5820},
             //{5821},
+            {6247, srs::dpar::parameters<>(proj_col_urban)(lon_0,-74.1465916666667)(lat_0,4.68048611111111)(x_0,92334.879)(y_0,109320.965)(h_0,2550)(ellps_grs80)(srs::dpar::datum_wgs84)(units_m)(no_defs)},
             //{7400},
             //{7401},
             //{7402},

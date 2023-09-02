@@ -1,5 +1,6 @@
 //
 // Copyright 2005-2007 Adobe Systems Incorporated
+// Copyright 2022 Marco Langer <langer.m86 at gmail dot com>
 //
 // Distributed under the Boost Software License, Version 1.0
 // See accompanying file LICENSE_1_0.txt or copy at
@@ -12,7 +13,10 @@
 
 #include <boost/gil/algorithm.hpp>
 
+#include <boost/variant2/variant.hpp>
+
 #include <functional>
+#include <utility>
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// \file
@@ -43,31 +47,31 @@ struct equal_pixels_fn : binary_operation_obj<equal_pixels_fn, bool>
 /// \tparam Types Model Boost.MP11-compatible list of models of ImageViewConcept
 /// \tparam View Model MutableImageViewConcept
 template <typename ...Types, typename View>
-bool equal_pixels(any_image_view<Types...> const& src, View const& dst)
+auto equal_pixels(any_image_view<Types...> const& src, View const& dst) -> bool
 {
-    return apply_operation(
-        src,
-        std::bind(detail::equal_pixels_fn(), std::placeholders::_1, dst));
+    return variant2::visit(
+        std::bind(detail::equal_pixels_fn(), std::placeholders::_1, dst),
+        src);
 }
 
 /// \ingroup ImageViewSTLAlgorithmsEqualPixels
 /// \tparam View Model ImageViewConcept
 /// \tparam Types Model Boost.MP11-compatible list of models of MutableImageViewConcept
 template <typename View, typename ...Types>
-bool equal_pixels(View const& src, any_image_view<Types...> const& dst)
+auto equal_pixels(View const& src, any_image_view<Types...> const& dst) -> bool
 {
-    return apply_operation(
-        dst,
-        std::bind(detail::equal_pixels_fn(), src, std::placeholders::_1));
+    return variant2::visit(
+        std::bind(detail::equal_pixels_fn(), src, std::placeholders::_1),
+        dst);
 }
 
 /// \ingroup ImageViewSTLAlgorithmsEqualPixels
 /// \tparam Types1 Model Boost.MP11-compatible list of models of ImageViewConcept
 /// \tparam Types2 Model Boost.MP11-compatible list of models of MutableImageViewConcept
 template <typename ...Types1, typename ...Types2>
-bool equal_pixels(any_image_view<Types1...> const& src, any_image_view<Types2...> const& dst)
+auto equal_pixels(any_image_view<Types1...> const& src, any_image_view<Types2...> const& dst) -> bool
 {
-    return apply_operation(src, dst, detail::equal_pixels_fn());
+    return variant2::visit(detail::equal_pixels_fn(), src, dst);
 }
 
 namespace detail {
@@ -90,7 +94,7 @@ struct copy_pixels_fn : public binary_operation_obj<copy_pixels_fn>
 template <typename ...Types, typename View>
 void copy_pixels(any_image_view<Types...> const& src, View const& dst)
 {
-    apply_operation(src, std::bind(detail::copy_pixels_fn(), std::placeholders::_1, dst));
+    variant2::visit(std::bind(detail::copy_pixels_fn(), std::placeholders::_1, dst), src);
 }
 
 /// \ingroup ImageViewSTLAlgorithmsCopyPixels
@@ -99,7 +103,7 @@ void copy_pixels(any_image_view<Types...> const& src, View const& dst)
 template <typename ...Types, typename View>
 void copy_pixels(View const& src, any_image_view<Types...> const& dst)
 {
-    apply_operation(dst, std::bind(detail::copy_pixels_fn(), src, std::placeholders::_1));
+    variant2::visit(std::bind(detail::copy_pixels_fn(), src, std::placeholders::_1), dst);
 }
 
 /// \ingroup ImageViewSTLAlgorithmsCopyPixels
@@ -108,7 +112,7 @@ void copy_pixels(View const& src, any_image_view<Types...> const& dst)
 template <typename ...Types1, typename ...Types2>
 void copy_pixels(any_image_view<Types1...> const& src, any_image_view<Types2...> const& dst)
 {
-    apply_operation(src, dst, detail::copy_pixels_fn());
+    variant2::visit(detail::copy_pixels_fn(), src, dst);
 }
 
 //forward declaration for default_color_converter (see full definition in color_convert.hpp)
@@ -122,7 +126,7 @@ template <typename ...Types, typename View, typename CC>
 void copy_and_convert_pixels(any_image_view<Types...> const& src, View const& dst, CC cc)
 {
     using cc_fn = detail::copy_and_convert_pixels_fn<CC>;
-    apply_operation(src, std::bind(cc_fn{cc}, std::placeholders::_1, dst));
+    variant2::visit(std::bind(cc_fn{cc}, std::placeholders::_1, dst), src);
 }
 
 /// \ingroup ImageViewSTLAlgorithmsCopyAndConvertPixels
@@ -132,7 +136,7 @@ template <typename ...Types, typename View>
 void copy_and_convert_pixels(any_image_view<Types...> const& src, View const& dst)
 {
     using cc_fn = detail::copy_and_convert_pixels_fn<default_color_converter>;
-    apply_operation(src, std::bind(cc_fn{}, std::placeholders::_1, dst));
+    variant2::visit(std::bind(cc_fn{}, std::placeholders::_1, dst), src);
 }
 
 /// \ingroup ImageViewSTLAlgorithmsCopyAndConvertPixels
@@ -143,7 +147,7 @@ template <typename View, typename ...Types, typename CC>
 void copy_and_convert_pixels(View const& src, any_image_view<Types...> const& dst, CC cc)
 {
     using cc_fn = detail::copy_and_convert_pixels_fn<CC>;
-    apply_operation(dst, std::bind(cc_fn{cc}, src, std::placeholders::_1));
+    variant2::visit(std::bind(cc_fn{cc}, src, std::placeholders::_1), dst);
 }
 
 /// \ingroup ImageViewSTLAlgorithmsCopyAndConvertPixels
@@ -153,7 +157,7 @@ template <typename View, typename ...Types>
 void copy_and_convert_pixels(View const& src, any_image_view<Types...> const& dst)
 {
     using cc_fn = detail::copy_and_convert_pixels_fn<default_color_converter>;
-    apply_operation(dst, std::bind(cc_fn{}, src, std::placeholders::_1));
+    variant2::visit(std::bind(cc_fn{}, src, std::placeholders::_1), dst);
 }
 
 /// \ingroup ImageViewSTLAlgorithmsCopyAndConvertPixels
@@ -165,7 +169,7 @@ void copy_and_convert_pixels(
     any_image_view<Types1...> const& src,
     any_image_view<Types2...> const& dst, CC cc)
 {
-    apply_operation(src, dst, detail::copy_and_convert_pixels_fn<CC>(cc));
+    variant2::visit(detail::copy_and_convert_pixels_fn<CC>(cc), src, dst);
 }
 
 /// \ingroup ImageViewSTLAlgorithmsCopyAndConvertPixels
@@ -176,8 +180,8 @@ void copy_and_convert_pixels(
     any_image_view<Types1...> const& src,
     any_image_view<Types2...> const& dst)
 {
-    apply_operation(src, dst,
-        detail::copy_and_convert_pixels_fn<default_color_converter>());
+    variant2::visit(
+        detail::copy_and_convert_pixels_fn<default_color_converter>(), src, dst);
 }
 
 namespace detail {
@@ -186,7 +190,7 @@ template <bool IsCompatible>
 struct fill_pixels_fn1
 {
     template <typename V, typename Value>
-    static void apply(V const &src, Value const &val) { fill_pixels(src, val); }
+    static void apply(V const& src, Value const& val) { fill_pixels(src, val); }
 };
 
 // copy_pixels invoked on incompatible images
@@ -194,7 +198,7 @@ template <>
 struct fill_pixels_fn1<false>
 {
     template <typename V, typename Value>
-    static void apply(V const &, Value const &) { throw std::bad_cast();}
+    static void apply(V const&, Value const&) { throw std::bad_cast();}
 };
 
 template <typename Value>
@@ -227,7 +231,36 @@ struct fill_pixels_fn
 template <typename ...Types, typename Value>
 void fill_pixels(any_image_view<Types...> const& view, Value const& val)
 {
-    apply_operation(view, detail::fill_pixels_fn<Value>(val));
+    variant2::visit(detail::fill_pixels_fn<Value>(val), view);
+}
+
+namespace detail {
+
+template <typename F>
+struct for_each_pixel_fn
+{
+    for_each_pixel_fn(F&& fun) : fun_(std::move(fun)) {}
+
+    template <typename View>
+    auto operator()(View const& view) -> F
+    {
+        return for_each_pixel(view, fun_);
+    }
+
+    F fun_;
+};
+
+} // namespace detail
+
+/// \defgroup ImageViewSTLAlgorithmsForEachPixel for_each_pixel
+/// \ingroup ImageViewSTLAlgorithms
+/// \brief std::for_each for any image views
+///
+/// \ingroup ImageViewSTLAlgorithmsForEachPixel
+template <typename ...Types, typename F>
+auto for_each_pixel(any_image_view<Types...> const& view, F fun) -> F
+{
+    return variant2::visit(detail::for_each_pixel_fn<F>(std::move(fun)), view);
 }
 
 }}  // namespace boost::gil

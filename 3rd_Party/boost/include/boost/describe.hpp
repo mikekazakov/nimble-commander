@@ -16,5 +16,6 @@
 #include <boost/describe/operators.hpp>
 #include <boost/describe/descriptor_by_name.hpp>
 #include <boost/describe/descriptor_by_pointer.hpp>
+#include <boost/describe/modifier_description.hpp>
 
 #endif // #ifndef BOOST_DESCRIBE_HPP_INCLUDED

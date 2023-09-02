@@ -5,8 +5,8 @@
 //
 // Comparison operators for cpp_int_backend:
 //
-#ifndef BOOST_MP_CPP_INT_DIV_HPP
-#define BOOST_MP_CPP_INT_DIV_HPP
+#ifndef BOOST_MP_CPP_INT_DIVIDE_HPP
+#define BOOST_MP_CPP_INT_DIVIDE_HPP
 
 #include <boost/multiprecision/detail/no_exceptions_support.hpp>
 #include <boost/multiprecision/detail/assert.hpp>
@@ -536,7 +536,11 @@ eval_modulus(
    if (b.size() == 1)
       eval_modulus(result, a, *b.limbs());
    else
-      divide_unsigned_helper(static_cast<cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>*>(0), a, b, result);
+   {
+      using cpp_int_backend1_type = cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>;
+
+      divide_unsigned_helper(static_cast<cpp_int_backend1_type*>(nullptr), a, b, result);
+   }
    result.sign(s);
 }
 
@@ -547,12 +551,12 @@ eval_modulus(
     const cpp_int_backend<MinBits2, MaxBits2, SignType2, Checked2, Allocator2>& a,
     const limb_type                                                             mod)
 {
-   const std::ptrdiff_t n = a.size();
+   const std::ptrdiff_t n = static_cast<std::ptrdiff_t>(a.size());
    const double_limb_type two_n_mod = static_cast<limb_type>(1u) + (~static_cast<limb_type>(0u) - mod) % mod;
    limb_type              res       = a.limbs()[n - 1] % mod;
 
    for (std::ptrdiff_t i = n - 2; i >= 0; --i)
-      res = (res * two_n_mod + a.limbs()[i]) % mod;
+      res = static_cast<limb_type>(static_cast<double_limb_type>(static_cast<double_limb_type>(res * two_n_mod) + a.limbs()[i]) % mod);
    //
    // We must not modify result until here in case
    // result and a are the same object:
@@ -569,7 +573,7 @@ eval_modulus(
    const cpp_int_backend<MinBits2, MaxBits2, SignType2, Checked2, Allocator2>& a,
    signed_limb_type                                                            b)
 {
-   const limb_type t = b < 0 ? -b : b;
+   const limb_type t = b < 0 ? static_cast<limb_type>(-b) : static_cast<limb_type>(b);
    eval_modulus(result, a, t);
    result.sign(a.sign());
 }

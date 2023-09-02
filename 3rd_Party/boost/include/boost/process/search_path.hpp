@@ -44,8 +44,8 @@ namespace boost { namespace process {
  * \returns the absolute path to the executable filename or an
  *          empty string if filename isn't found
  */
-inline boost::filesystem::path search_path(const boost::filesystem::path &filename,
-                                    const std::vector<boost::filesystem::path> path = ::boost::this_process::path())
+inline boost::process::filesystem::path search_path(const boost::process::filesystem::path &filename,
+                                    const std::vector<boost::process::filesystem::path> path = ::boost::this_process::path())
 {
     return ::boost::process::detail::api::search_path(filename, path);
 }

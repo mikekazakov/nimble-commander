@@ -36,15 +36,15 @@ namespace detail {
 struct exe_
 {
     template<typename = void>
-    inline exe_setter_<typename boost::filesystem::path::value_type> operator()(const boost::filesystem::path & pth) const
+    inline exe_setter_<typename boost::process::filesystem::path::value_type> operator()(const boost::process::filesystem::path & pth) const
     {
-        return exe_setter_<typename boost::filesystem::path::value_type>(pth.native());
+        return exe_setter_<typename boost::process::filesystem::path::value_type>(pth.native());
     }
 
     template<typename = void>
-    inline exe_setter_<typename boost::filesystem::path::value_type> operator=(const boost::filesystem::path & pth) const
+    inline exe_setter_<typename boost::process::filesystem::path::value_type> operator=(const boost::process::filesystem::path & pth) const
     {
-        return exe_setter_<typename boost::filesystem::path::value_type>(pth.native());
+        return exe_setter_<typename boost::process::filesystem::path::value_type>(pth.native());
     }
 
 
@@ -79,7 +79,7 @@ The overload form applies when to the first, when several strings are passed to 
 function.
 
 The following expressions are valid, with `value` being either a C-String or
-a `std::basic_string` with `char` or `wchar_t` or a `boost::filesystem::path`.
+a `std::basic_string` with `char` or `wchar_t` or a `boost::process::filesystem::path`.
 
 \code{.cpp}
 exe="value";

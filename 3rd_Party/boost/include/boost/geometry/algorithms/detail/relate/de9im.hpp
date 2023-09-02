@@ -1,9 +1,10 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
 // Copyright (c) 2007-2015 Barend Gehrels, Amsterdam, the Netherlands.
+// Copyright (c) 2022 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2013-2020.
-// Modifications copyright (c) 2013-2020 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2022.
+// Modifications copyright (c) 2013-2022 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -25,7 +26,7 @@
 
 namespace boost { namespace geometry
 {
-    
+
 namespace de9im
 {
 
@@ -103,7 +104,7 @@ public:
     inline explicit mask(const char* code)
         : base_type(code)
     {}
-    
+
     /*!
     \brief The constructor.
     \param code The mask pattern.
@@ -275,6 +276,11 @@ struct static_mask_touches_impl<Geometry1, Geometry2, 0, 0>
 };
 
 template <typename Geometry1, typename Geometry2>
+struct static_mask_touches_not_pp_type
+    : static_mask_touches_impl<Geometry1, Geometry2, 2, 2> // dummy dimensions
+{};
+
+template <typename Geometry1, typename Geometry2>
 struct static_mask_touches_type
     : static_mask_touches_impl<Geometry1, Geometry2>
 {};
@@ -344,6 +350,21 @@ struct static_mask_crosses_type
     : static_mask_crosses_impl<Geometry1, Geometry2>
 {};
 
+template <typename Geometry1, typename Geometry2>
+struct static_mask_crosses_d1_le_d2_type // specific dimensions are not important here
+    : static_mask_crosses_impl<Geometry1, Geometry2, 0, 1>
+{};
+
+template <typename Geometry1, typename Geometry2>
+struct static_mask_crosses_d2_le_d1_type // specific dimensions are not important here
+    : static_mask_crosses_impl<Geometry1, Geometry2, 1, 0>
+{};
+
+template <typename Geometry1, typename Geometry2>
+struct static_mask_crosses_d1_1_d2_1_type
+    : static_mask_crosses_impl<Geometry1, Geometry2, 1, 1>
+{};
+
 // OVERLAPS
 
 // dim(G1) != dim(G2) - NOT P/P, L/L, A/A
@@ -374,6 +395,16 @@ struct static_mask_overlaps_impl<Geometry1, Geometry2, 1, 1>
 template <typename Geometry1, typename Geometry2>
 struct static_mask_overlaps_type
     : static_mask_overlaps_impl<Geometry1, Geometry2>
+{};
+
+template <typename Geometry1, typename Geometry2>
+struct static_mask_overlaps_d1_eq_d2_type
+    : static_mask_overlaps_impl<Geometry1, Geometry2, 2, 2>
+{};
+
+template <typename Geometry1, typename Geometry2>
+struct static_mask_overlaps_d1_1_d2_1_type
+    : static_mask_overlaps_impl<Geometry1, Geometry2, 1, 1>
 {};
 
 }} // namespace detail::de9im

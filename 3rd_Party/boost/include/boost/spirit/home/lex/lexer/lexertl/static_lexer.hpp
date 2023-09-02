@@ -130,6 +130,10 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
         typedef iterator<Functor> iterator_type;
 
     private:
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
         // this type is purely used for the iterator_type construction below
         struct iterator_data_type 
         {
@@ -150,10 +154,10 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
             get_state_name_type get_state_name_;
             std::size_t num_states_;
             bool bol_;
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(iterator_data_type& operator= (iterator_data_type const&))
         };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
         typedef LexerTables tables_type;
 

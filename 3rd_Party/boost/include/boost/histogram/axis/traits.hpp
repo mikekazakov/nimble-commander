@@ -192,12 +192,6 @@ struct is_reducible;
 template <class Axis>
 #ifndef BOOST_HISTOGRAM_DOXYGEN_INVOKED
 using get_options = decltype(detail::traits_options<Axis>(detail::priority<2>{}));
-
-template <class Axis>
-using static_options [[deprecated("use get_options instead; "
-                                  "static_options will be removed in boost-1.80")]] =
-    get_options<Axis>;
-
 #else
 struct get_options;
 #endif
@@ -223,13 +217,6 @@ struct get_options;
 template <class Axis>
 #ifndef BOOST_HISTOGRAM_DOXYGEN_INVOKED
 using is_inclusive = decltype(detail::traits_is_inclusive<Axis>(detail::priority<1>{}));
-
-template <class Axis>
-using static_is_inclusive
-    [[deprecated("use is_inclusive instead; "
-                 "static_is_inclusive will be removed in boost-1.80")]] =
-        is_inclusive<Axis>;
-
 #else
 struct is_inclusive;
 #endif

@@ -2,7 +2,7 @@
 // buffered_read_stream.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -31,6 +31,12 @@
 
 namespace boost {
 namespace asio {
+namespace detail {
+
+template <typename> class initiate_async_buffered_fill;
+template <typename> class initiate_async_buffered_read_some;
+
+} // namespace detail
 
 /// Adds buffering to the read-related operations of a stream.
 /**
@@ -67,16 +73,17 @@ public:
 
   /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
-  explicit buffered_read_stream(Arg& a)
-    : next_layer_(a),
+  explicit buffered_read_stream(BOOST_ASIO_MOVE_OR_LVALUE_ARG(Arg) a)
+    : next_layer_(BOOST_ASIO_MOVE_OR_LVALUE(Arg)(a)),
       storage_(default_buffer_size)
   {
   }
 
   /// Construct, passing the specified argument to initialise the next layer.
   template <typename Arg>
-  buffered_read_stream(Arg& a, std::size_t buffer_size)
-    : next_layer_(a),
+  buffered_read_stream(BOOST_ASIO_MOVE_OR_LVALUE_ARG(Arg) a,
+      std::size_t buffer_size)
+    : next_layer_(BOOST_ASIO_MOVE_OR_LVALUE(Arg)(a)),
       storage_(buffer_size)
   {
   }
@@ -145,11 +152,15 @@ public:
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         std::size_t)) WriteHandler
           BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteHandler,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(WriteHandler,
       void (boost::system::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(WriteHandler) handler
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      declval<typename conditional<true, Stream&, WriteHandler>::type>()
+        .async_write_some(buffers,
+          BOOST_ASIO_MOVE_CAST(WriteHandler)(handler))))
   {
     return next_layer_.async_write_some(buffers,
         BOOST_ASIO_MOVE_CAST(WriteHandler)(handler));
@@ -172,11 +183,16 @@ public:
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         std::size_t)) ReadHandler
           BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(ReadHandler,
       void (boost::system::error_code, std::size_t))
   async_fill(
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler
-        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type));
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<ReadHandler,
+        void (boost::system::error_code, std::size_t)>(
+          declval<detail::initiate_async_buffered_fill<Stream> >(),
+          handler, declval<detail::buffered_stream_storage*>())));
 
   /// Read some data from the stream. Returns the number of bytes read. Throws
   /// an exception on failure.
@@ -199,11 +215,16 @@ public:
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         std::size_t)) ReadHandler
           BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadHandler,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(ReadHandler,
       void (boost::system::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadHandler) handler
-        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type));
+        BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<ReadHandler,
+        void (boost::system::error_code, std::size_t)>(
+          declval<detail::initiate_async_buffered_read_some<Stream> >(),
+          handler, declval<detail::buffered_stream_storage*>(), buffers)));
 
   /// Peek at the incoming data on the stream. Returns the number of bytes read.
   /// Throws an exception on failure.

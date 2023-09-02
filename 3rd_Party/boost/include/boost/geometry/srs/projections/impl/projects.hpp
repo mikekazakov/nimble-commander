@@ -106,7 +106,7 @@ struct pj_consts
     T to_meter, fr_meter;           /* cartesian scaling */
     T vto_meter, vfr_meter;         /* Vertical scaling. Internal unit [m] */
 
-    // D A T U M S   A N D   H E I G H T   S Y S T E M S    
+    // D A T U M S   A N D   H E I G H T   S Y S T E M S
 
     T from_greenwich;               /* prime meridian offset (in radians) */
     T long_wrap_center;             /* 0.0 for -180 to 180, actually in radians*/
@@ -128,6 +128,9 @@ struct pj_consts
     //enum pj_io_units left;          /* Flags for input/output coordinate types */
     //enum pj_io_units right;
 
+    srs::detail::axis axis;
+    srs::detail::axis sign;
+
     // Initialize all variables
     pj_consts()
         : a(0), ra(0)
@@ -140,6 +143,7 @@ struct pj_consts
         , datum_type(datum_unknown)
         , is_long_wrap_set(false)
         , over(false), geoc(false), is_latlong(false), is_geocent(false)
+        , axis(0,1,2), sign(1,1,1) //the default east, northing, elevation
         //, need_ellps(true)
         //, left(PJ_IO_UNITS_ANGULAR), right(PJ_IO_UNITS_CLASSIC)
     {}

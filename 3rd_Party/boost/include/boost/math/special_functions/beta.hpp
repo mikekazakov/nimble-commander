@@ -328,7 +328,7 @@ T ibeta_power_terms(T a,
          {
             l += log(result);
             if(l >= tools::log_max_value<T>())
-               return policies::raise_overflow_error<T>(function, 0, pol);
+               return policies::raise_overflow_error<T>(function, nullptr, pol);
             result = exp(l);
          }
          else
@@ -344,7 +344,7 @@ T ibeta_power_terms(T a,
          {
             l += log(result);
             if(l >= tools::log_max_value<T>())
-               return policies::raise_overflow_error<T>(function, 0, pol);
+               return policies::raise_overflow_error<T>(function, nullptr, pol);
             result = exp(l);
          }
          else
@@ -373,7 +373,7 @@ T ibeta_power_terms(T a,
          if(a < b)
          {
             T p1 = pow(b2, b / a);
-            T l3 = a * (log(b1) + log(p1));
+            T l3 = (b1 != 0) && (p1 != 0) ? (a * (log(b1) + log(p1))) : tools::max_value<T>(); // arbitrary large value if the logs would fail!
             if((l3 < tools::log_max_value<T>())
                && (l3 > tools::log_min_value<T>()))
             {
@@ -383,14 +383,14 @@ T ibeta_power_terms(T a,
             {
                l2 += l1 + log(result);
                if(l2 >= tools::log_max_value<T>())
-                  return policies::raise_overflow_error<T>(function, 0, pol);
+                  return policies::raise_overflow_error<T>(function, nullptr, pol);
                result = exp(l2);
             }
          }
          else
          {
             T p1 = pow(b1, a / b);
-            T l3 = (log(p1) + log(b2)) * b;
+            T l3 = (p1 != 0) && (b2 != 0) ? (log(p1) + log(b2)) * b : tools::max_value<T>();  // arbitrary large value if the logs would fail!
             if((l3 < tools::log_max_value<T>())
                && (l3 > tools::log_min_value<T>()))
             {
@@ -400,7 +400,7 @@ T ibeta_power_terms(T a,
             {
                l2 += l1 + log(result);
                if(l2 >= tools::log_max_value<T>())
-                  return policies::raise_overflow_error<T>(function, 0, pol);
+                  return policies::raise_overflow_error<T>(function, nullptr, pol);
                result = exp(l2);
             }
          }
@@ -415,6 +415,15 @@ T ibeta_power_terms(T a,
    }
 
    BOOST_MATH_INSTRUMENT_VARIABLE(result);
+
+   if (0 == result)
+   {
+      if ((a > 1) && (x == 0))
+         return result;  // true zero
+      if ((b > 1) && (y == 0))
+         return result; // true zero
+      return boost::math::policies::raise_underflow_error<T>(function, nullptr, pol);
+   }
 
    return result;
 }
@@ -561,6 +570,9 @@ T ibeta_series(T a, T b, T x, T s0, const Lanczos&, bool normalised, T* p_deriva
       T cgh = static_cast<T>(c + Lanczos::g() - 0.5f);
       result = Lanczos::lanczos_sum_expG_scaled(c) / (Lanczos::lanczos_sum_expG_scaled(a) * Lanczos::lanczos_sum_expG_scaled(b));
 
+      if (!(boost::math::isfinite)(result))
+         result = 0;
+
       T l1 = log(cgh / bgh) * (b - 0.5f);
       T l2 = log(x * cgh / agh) * a;
       //
@@ -574,7 +586,7 @@ T ibeta_series(T a, T b, T x, T s0, const Lanczos&, bool normalised, T* p_deriva
          if(a * b < bgh * 10)
             result *= exp((b - 0.5f) * boost::math::log1p(a / bgh, pol));
          else
-            result *= pow(cgh / bgh, b - 0.5f);
+            result *= pow(cgh / bgh, T(b - T(0.5)));
          result *= pow(x * cgh / agh, a);
          result *= sqrt(agh / boost::math::constants::e<T>());
 
@@ -951,14 +963,14 @@ T binomial_ccdf(T n, T k, T x, T y, const Policy& pol)
       int start = itrunc(n * x);
       if(start <= k + 1)
          start = itrunc(k + 2);
-      result = pow(x, start) * pow(y, n - start) * boost::math::binomial_coefficient<T>(itrunc(n), itrunc(start), pol);
+      result = static_cast<T>(pow(x, T(start)) * pow(y, n - T(start)) * boost::math::binomial_coefficient<T>(itrunc(n), itrunc(start), pol));
       if(result == 0)
       {
          // OK, starting slightly above the mode didn't work,
          // we'll have to sum the terms the old fashioned way:
          for(unsigned i = start - 1; i > k; --i)
          {
-            result += pow(x, (int)i) * pow(y, n - i) * boost::math::binomial_coefficient<T>(itrunc(n), itrunc(i), pol);
+            result += static_cast<T>(pow(x, static_cast<T>(i)) * pow(y, n - i) * boost::math::binomial_coefficient<T>(itrunc(n), itrunc(i), pol));
          }
       }
       else
@@ -1007,6 +1019,13 @@ T ibeta_imp(T a, T b, T x, const Policy& pol, bool inv, bool normalised, T* p_de
    T y = 1 - x;
 
    BOOST_MATH_ASSERT((p_derivative == 0) || normalised);
+
+   if(!(boost::math::isfinite)(a))
+      return policies::raise_domain_error<T>(function, "The argument a to the incomplete beta function must be >= zero (got a=%1%).", a, pol);
+   if(!(boost::math::isfinite)(b))
+      return policies::raise_domain_error<T>(function, "The argument b to the incomplete beta function must be >= zero (got b=%1%).", b, pol);
+   if(!(boost::math::isfinite)(x))
+      return policies::raise_domain_error<T>(function, "The argument x to the incomplete beta function must be in [0,1] (got x=%1%).", x, pol);
 
    if(p_derivative)
       *p_derivative = -1; // value not set.
@@ -1324,7 +1343,7 @@ T ibeta_imp(T a, T b, T x, const Policy& pol, bool inv, bool normalised, T* p_de
             {
                prefix = 1;
             }
-            fract = ibeta_a_step(bbar, a, y, x, n, pol, normalised, static_cast<T*>(0));
+            fract = ibeta_a_step(bbar, a, y, x, n, pol, normalised, static_cast<T*>(nullptr));
             fract = beta_small_b_large_a_series(a,  bbar, x, y, fract, T(1), pol, normalised);
             fract /= prefix;
             BOOST_MATH_INSTRUMENT_VARIABLE(fract);
@@ -1341,8 +1360,8 @@ T ibeta_imp(T a, T b, T x, const Policy& pol, bool inv, bool normalised, T* p_de
                --n;
                bbar += 1;
             }
-            fract = ibeta_a_step(bbar, a, y, x, n, pol, normalised, static_cast<T*>(0));
-            fract += ibeta_a_step(a, bbar, x, y, 20, pol, normalised, static_cast<T*>(0));
+            fract = ibeta_a_step(bbar, a, y, x, n, pol, normalised, static_cast<T*>(nullptr));
+            fract += ibeta_a_step(a, bbar, x, y, 20, pol, normalised, static_cast<T*>(nullptr));
             if(invert)
                fract -= 1;  // Note this line would need changing if we ever enable this branch in non-normalized case
             fract = beta_small_b_large_a_series(T(a+20),  bbar, x, y, fract, T(1), pol, normalised);
@@ -1392,7 +1411,7 @@ T ibeta_imp(T a, T b, T x, const Policy& pol, bool inv, bool normalised, T* p_de
 template <class T, class Policy>
 inline T ibeta_imp(T a, T b, T x, const Policy& pol, bool inv, bool normalised)
 {
-   return ibeta_imp(a, b, x, pol, inv, normalised, static_cast<T*>(0));
+   return ibeta_imp(a, b, x, pol, inv, normalised, static_cast<T*>(nullptr));
 }
 
 template <class T, class Policy>
@@ -1402,6 +1421,13 @@ T ibeta_derivative_imp(T a, T b, T x, const Policy& pol)
    //
    // start with the usual error checks:
    //
+   if (!(boost::math::isfinite)(a))
+      return policies::raise_domain_error<T>(function, "The argument a to the incomplete beta function must be >= zero (got a=%1%).", a, pol);
+   if (!(boost::math::isfinite)(b))
+      return policies::raise_domain_error<T>(function, "The argument b to the incomplete beta function must be >= zero (got b=%1%).", b, pol);
+   if (!(boost::math::isfinite)(x))
+      return policies::raise_domain_error<T>(function, "The argument x to the incomplete beta function must be in [0,1] (got x=%1%).", x, pol);
+
    if(a <= 0)
       return policies::raise_domain_error<T>(function, "The argument a to the incomplete beta function must be greater than zero (got a=%1%).", a, pol);
    if(b <= 0)
@@ -1414,23 +1440,32 @@ T ibeta_derivative_imp(T a, T b, T x, const Policy& pol)
    if(x == 0)
    {
       return (a > 1) ? 0 :
-         (a == 1) ? 1 / boost::math::beta(a, b, pol) : policies::raise_overflow_error<T>(function, 0, pol);
+         (a == 1) ? 1 / boost::math::beta(a, b, pol) : policies::raise_overflow_error<T>(function, nullptr, pol);
    }
    else if(x == 1)
    {
       return (b > 1) ? 0 :
-         (b == 1) ? 1 / boost::math::beta(a, b, pol) : policies::raise_overflow_error<T>(function, 0, pol);
+         (b == 1) ? 1 / boost::math::beta(a, b, pol) : policies::raise_overflow_error<T>(function, nullptr, pol);
    }
    //
    // Now the regular cases:
    //
    typedef typename lanczos::lanczos<T, Policy>::type lanczos_type;
    T y = (1 - x) * x;
-   T f1 = ibeta_power_terms<T>(a, b, x, 1 - x, lanczos_type(), true, pol, 1 / y, function);
+   T f1;
+   if (!(boost::math::isinf)(1 / y))
+   {
+      f1 = ibeta_power_terms<T>(a, b, x, 1 - x, lanczos_type(), true, pol, 1 / y, function);
+   }
+   else
+   {
+      return (a > 1) ? 0 : (a == 1) ? 1 / boost::math::beta(a, b, pol) : policies::raise_overflow_error<T>(function, nullptr, pol);
+   }
+
    return f1;
 }
 //
-// Some forwarding functions that dis-ambiguate the third argument type:
+// Some forwarding functions that disambiguate the third argument type:
 //
 template <class RT1, class RT2, class Policy>
 inline typename tools::promote_args<RT1, RT2>::type
@@ -1466,8 +1501,9 @@ template <class RT1, class RT2, class A>
 inline typename tools::promote_args<RT1, RT2, A>::type
    beta(RT1 a, RT2 b, A arg)
 {
-   typedef typename policies::is_policy<A>::type tag;
-   return boost::math::detail::beta(a, b, arg, static_cast<tag*>(0));
+   using tag = typename policies::is_policy<A>::type;
+   using ReturnType = tools::promote_args_t<RT1, RT2, A>;
+   return static_cast<ReturnType>(boost::math::detail::beta(a, b, arg, static_cast<tag*>(nullptr)));
 }
 
 template <class RT1, class RT2>

@@ -75,7 +75,7 @@ inline void resize_to_bit_size(cpp_int_backend<MinBits, MaxBits, SignType, Check
    std::size_t limb_count = static_cast<unsigned>(bits / (sizeof(limb_type) * CHAR_BIT));
    if (bits % (sizeof(limb_type) * CHAR_BIT))
       ++limb_count;
-   constexpr const std::size_t max_limbs = MaxBits ? MaxBits / (CHAR_BIT * sizeof(limb_type)) + ((MaxBits % (CHAR_BIT * sizeof(limb_type))) ? 1 : 0) : (std::numeric_limits<unsigned>::max)();
+   constexpr std::size_t max_limbs = MaxBits ? MaxBits / (CHAR_BIT * sizeof(limb_type)) + ((MaxBits % (CHAR_BIT * sizeof(limb_type))) ? 1 : 0) : (std::numeric_limits<unsigned>::max)();
    if (limb_count > max_limbs)
       limb_count = max_limbs;
    newval.resize(limb_count, limb_count);
@@ -172,7 +172,7 @@ import_bits(
     number<cpp_int_backend<MinBits, MaxBits, SignType, Checked, Allocator>, ExpressionTemplates>& val, T* i, T* j, std::size_t chunk_size = 0, bool msv_first = true)
 {
 #if BOOST_MP_ENDIAN_LITTLE_BYTE
-   if (((chunk_size % CHAR_BIT) == 0) && !msv_first)
+   if (((chunk_size % CHAR_BIT) == 0) && !msv_first && (sizeof(*i) * CHAR_BIT == chunk_size))
       return detail::import_bits_fast(val, i, j, chunk_size);
 #endif
    return detail::import_bits_generic(val, i, j, chunk_size, msv_first);
@@ -223,12 +223,9 @@ OutputIterator export_bits(
       return out;
    }
    std::size_t bitcount = boost::multiprecision::backends::eval_msb_imp(val.backend()) + 1;
-   std::size_t chunks   = bitcount / chunk_size;
-   if (bitcount % chunk_size)
-      ++chunks;
 
-   std::ptrdiff_t bit_location = msv_first ? bitcount - chunk_size : 0;
-   std::ptrdiff_t bit_step     = msv_first ? -static_cast<int>(chunk_size) : chunk_size;
+         std::ptrdiff_t bit_location = msv_first ? static_cast<std::ptrdiff_t>(bitcount - chunk_size) : 0;
+   const std::ptrdiff_t bit_step     = msv_first ? static_cast<std::ptrdiff_t>(-static_cast<std::ptrdiff_t>(chunk_size)) : static_cast<std::ptrdiff_t>(chunk_size);
    while (bit_location % bit_step)
       ++bit_location;
 

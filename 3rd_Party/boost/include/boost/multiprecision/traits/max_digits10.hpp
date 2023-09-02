@@ -3,8 +3,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_MATH_MAX_DIGITS10_HPP
-#define BOOST_MATH_MAX_DIGITS10_HPP
+#ifndef BOOST_MP_MAX_DIGITS10_HPP
+#define BOOST_MP_MAX_DIGITS10_HPP
 
 namespace boost {
 namespace multiprecision {
@@ -24,7 +24,7 @@ struct calc_max_digits10
       //
       return static_cast<unsigned>(0.301029995663981195213738894724493026768189881462108541310 * d) + 2;
    }
-   static constexpr const unsigned value = max_digits_10(digits);
+   static constexpr unsigned value = max_digits_10(digits);
 };
 
 template <std::size_t digits>
@@ -39,9 +39,9 @@ struct calc_max_digits10_s
       // never be exactly an integer so we can replace by trunc(log10(2) * d) + 2
       // and avoid the call to ceil:
       //
-      return static_cast<std::size_t>(0.301029995663981195213738894724493026768189881462108541310 * d) + 2;
+      return static_cast<std::size_t>(static_cast<std::size_t>(0.301029995663981195213738894724493026768189881462108541310 * static_cast<double>(d)) + 2u);
    }
-   static constexpr const std::size_t value = max_digits_10(digits);
+   static constexpr std::size_t value = max_digits_10(digits);
 };
 
 template <unsigned digits>
@@ -54,9 +54,9 @@ struct calc_digits10
       // https://www.exploringbinary.com/number-of-digits-required-for-round-trip-conversions/
       // and references therein.
       //
-      return static_cast<unsigned>(0.301029995663981195213738894724493026768189881462108541310 * (d - 1));
+      return static_cast<unsigned>(0.301029995663981195213738894724493026768189881462108541310 * static_cast<double>(d - 1u));
    }
-   static constexpr const unsigned value = digits_10(digits);
+   static constexpr unsigned value = digits_10(digits);
 };
 
 template <std::size_t digits>
@@ -69,9 +69,9 @@ struct calc_digits10_s
       // https://www.exploringbinary.com/number-of-digits-required-for-round-trip-conversions/
       // and references therein.
       //
-      return static_cast<std::size_t>(0.301029995663981195213738894724493026768189881462108541310 * (d - 1));
+      return static_cast<std::size_t>(0.301029995663981195213738894724493026768189881462108541310 * static_cast<double>(d - 1u));
    }
-   static constexpr const std::size_t value = digits_10(digits);
+   static constexpr std::size_t value = digits_10(digits);
 };
 
 }}} // namespace boost::multiprecision::detail

@@ -70,15 +70,15 @@ public:
             std::cerr << __FILE__ << ":" << __LINE__ << ":" << __func__ << "\n";
             std::cerr << "Querying the bilinear_uniform interpolator at (x,y) = (" << x << ", " << y << ") is not allowed.\n";
             std::cerr << "y must lie in the interval [" << y0_ << ", " << y0_ + (rows_ -1)*dy_ << "]\n";
-            return std::numeric_limits<Real>::quiet_NaN(); 
+            return std::numeric_limits<Real>::quiet_NaN();
         }
 
         Real s = (x - x0_)/dx_;
         Real s0 = floor(s);
         Real t = (y - y0_)/dy_;
         Real t0 = floor(t);
-        Z xidx = s0;
-        Z yidx = t0;
+        auto xidx = static_cast<Z>(s0);
+        auto yidx = static_cast<Z>(t0);
         Z idx = yidx*cols_  + xidx;
         Real alpha = s - s0;
         Real beta = t - t0;

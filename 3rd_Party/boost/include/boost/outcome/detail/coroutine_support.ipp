@@ -1,5 +1,5 @@
 /* Tells C++ coroutines about Outcome's result
-(C) 2019-2022 Niall Douglas <http://www.nedproductions.biz/> (12 commits)
+(C) 2019-2023 Niall Douglas <http://www.nedproductions.biz/> (12 commits)
 File Created: Oct 2019
 
 
@@ -37,8 +37,19 @@ DEALINGS IN THE SOFTWARE.
 
 #include <atomic>
 #include <cassert>
+#include <exception>
 
-#if __cpp_impl_coroutine || (defined(_MSC_VER) && __cpp_coroutines) || (defined(__clang__) && __cpp_coroutines)
+#ifndef BOOST_OUTCOME_COROUTINE_HEADER_TYPE
+#if __has_include(<coroutine>)
+#define BOOST_OUTCOME_COROUTINE_HEADER_TYPE 1
+#elif __has_include(<experimental/coroutine>)
+#define BOOST_OUTCOME_COROUTINE_HEADER_TYPE 2
+#else
+#define BOOST_OUTCOME_COROUTINE_HEADER_TYPE 0
+#endif
+#endif
+
+#if BOOST_OUTCOME_COROUTINE_HEADER_TYPE && (__cpp_impl_coroutine || (defined(_MSC_VER) && __cpp_coroutines))
 #ifndef BOOST_OUTCOME_HAVE_NOOP_COROUTINE
 #if defined(__has_builtin)
 #if __has_builtin(__builtin_coro_noop) || (!defined(__clang__) && __GNUC__ >= 10)
@@ -53,7 +64,7 @@ DEALINGS IN THE SOFTWARE.
 #define BOOST_OUTCOME_HAVE_NOOP_COROUTINE 0
 #endif
 #endif
-#if __has_include(<coroutine>)
+#if BOOST_OUTCOME_COROUTINE_HEADER_TYPE == 1
 #include <coroutine>
 BOOST_OUTCOME_V2_NAMESPACE_BEGIN
 namespace awaitables
@@ -68,7 +79,7 @@ namespace awaitables
 }  // namespace awaitables
 BOOST_OUTCOME_V2_NAMESPACE_END
 #define BOOST_OUTCOME_FOUND_COROUTINE_HEADER 1
-#elif __has_include(<experimental/coroutine>)
+#elif BOOST_OUTCOME_COROUTINE_HEADER_TYPE == 2
 #include <experimental/coroutine>
 BOOST_OUTCOME_V2_NAMESPACE_BEGIN
 namespace awaitables
@@ -305,9 +316,11 @@ namespace awaitables
     {
     }
 
-    template <class Cont, bool suspend_initial, bool use_atomic> struct BOOST_OUTCOME_NODISCARD awaitable
+    template <class Cont, class Executor, bool suspend_initial, bool use_atomic> struct BOOST_OUTCOME_NODISCARD awaitable
     {
       using container_type = Cont;
+      using value_type = Cont;
+      using executor_type = Executor;
       using promise_type = outcome_promise_type<awaitable, suspend_initial, use_atomic, std::is_void<container_type>::value>;
       coroutine_handle<promise_type> _h;
 
@@ -330,6 +343,7 @@ namespace awaitables
           : _h(coroutine_handle<promise_type>::from_promise(p))
       {
       }
+      bool valid() const noexcept { return _h != nullptr; }
       bool await_ready() noexcept { return _h.promise().result_set.load(std::memory_order_acquire); }
       container_type await_resume()
       {
@@ -339,6 +353,192 @@ namespace awaitables
           std::terminate();
         }
         return detail::move_result_from_promise_if_not_void(_h.promise());
+      }
+#if BOOST_OUTCOME_HAVE_NOOP_COROUTINE
+      coroutine_handle<> await_suspend(coroutine_handle<> cont) noexcept
+      {
+        _h.promise().continuation = cont;
+        return _h;
+      }
+#else
+      void await_suspend(coroutine_handle<> cont)
+      {
+        _h.promise().continuation = cont;
+        _h.resume();
+      }
+#endif
+    };
+
+    template <class ContType, class Executor, bool suspend_initial, bool use_atomic> struct generator
+    {
+      using container_type = ContType;
+      using value_type = ContType;
+      using executor_type = Executor;
+      class promise_type
+      {
+        friend struct generator;
+        using result_set_type = std::conditional_t<use_atomic, std::atomic<int8_t>, fake_atomic<int8_t>>;
+        union
+        {
+          BOOST_OUTCOME_V2_NAMESPACE::detail::empty_type _default{};
+          container_type result;
+        };
+        result_set_type result_set{0};
+        coroutine_handle<> continuation;
+
+      public:
+        promise_type() {}
+        promise_type(const promise_type &) = delete;
+        promise_type(promise_type &&) = delete;
+        promise_type &operator=(const promise_type &) = delete;
+        promise_type &operator=(promise_type &&) = delete;
+        ~promise_type()
+        {
+          if(result_set.load(std::memory_order_acquire) == 1)
+          {
+            result.~container_type();  // could throw
+          }
+        }
+
+        auto get_return_object()
+        {
+          return generator{*this};  // could throw bad_alloc
+        }
+        void return_void() noexcept
+        {
+          assert(result_set.load(std::memory_order_acquire) >= 0);
+          if(result_set.load(std::memory_order_acquire) == 1)
+          {
+            result.~container_type();  // could throw
+          }
+          result_set.store(-1, std::memory_order_release);
+        }
+        suspend_always yield_value(container_type &&value)
+        {
+          assert(result_set.load(std::memory_order_acquire) >= 0);
+          if(result_set.load(std::memory_order_acquire) == 1)
+          {
+            result.~container_type();  // could throw
+          }
+          new(&result) container_type(static_cast<container_type &&>(value));  // could throw
+          result_set.store(1, std::memory_order_release);
+          return {};
+        }
+        suspend_always yield_value(const container_type &value)
+        {
+          assert(result_set.load(std::memory_order_acquire) >= 0);
+          if(result_set.load(std::memory_order_acquire) == 1)
+          {
+            result.~container_type();  // could throw
+          }
+          new(&result) container_type(value);  // could throw
+          result_set.store(1, std::memory_order_release);
+          return {};
+        }
+        void unhandled_exception()
+        {
+          assert(result_set.load(std::memory_order_acquire) >= 0);
+          if(result_set.load(std::memory_order_acquire) == 1)
+          {
+            result.~container_type();
+          }
+#ifndef BOOST_NO_EXCEPTIONS
+          auto e = std::current_exception();
+          auto ec = detail::error_from_exception(static_cast<decltype(e) &&>(e), {});
+          // Try to set error code first
+          if(!detail::error_is_set(ec) || !detail::try_set_error(static_cast<decltype(ec) &&>(ec), &result))
+          {
+            detail::set_or_rethrow(e, &result);  // could throw
+          }
+#else
+          std::terminate();
+#endif
+          result_set.store(1, std::memory_order_release);
+        }
+        auto initial_suspend() noexcept
+        {
+          struct awaiter
+          {
+            bool await_ready() noexcept { return !suspend_initial; }
+            void await_resume() noexcept {}
+            void await_suspend(coroutine_handle<> /*unused*/) noexcept {}
+          };
+          return awaiter{};
+        }
+        auto final_suspend() noexcept
+        {
+          struct awaiter
+          {
+            bool await_ready() noexcept { return false; }
+            void await_resume() noexcept {}
+#if BOOST_OUTCOME_HAVE_NOOP_COROUTINE
+            coroutine_handle<> await_suspend(coroutine_handle<promise_type> self) noexcept
+            {
+              return self.promise().continuation ? self.promise().continuation : noop_coroutine();
+            }
+#else
+            void await_suspend(coroutine_handle<promise_type> self)
+            {
+              if(self.promise().continuation)
+              {
+                return self.promise().continuation.resume();
+              }
+            }
+#endif
+          };
+          return awaiter{};
+        }
+      };
+      coroutine_handle<promise_type> _h;
+
+      generator(generator &&o) noexcept
+          : _h(static_cast<coroutine_handle<promise_type> &&>(o._h))
+      {
+        o._h = nullptr;
+      }
+      generator(const generator &o) = delete;
+      generator &operator=(generator &&) = delete;  // as per P1056
+      generator &operator=(const generator &) = delete;
+      ~generator()
+      {
+        if(_h)
+        {
+          _h.destroy();
+        }
+      }
+      explicit generator(promise_type &p)  // could throw
+          : _h(coroutine_handle<promise_type>::from_promise(p))
+      {
+      }
+      explicit operator bool() const  // could throw
+      {
+        return valid();
+      }
+      bool valid() const  // could throw
+      {
+        auto &p = _h.promise();
+        if(p.result_set.load(std::memory_order_acquire) == 0)
+        {
+          const_cast<generator *>(this)->_h();
+        }
+        return p.result_set.load(std::memory_order_acquire) >= 0;
+      }
+      container_type operator()()  // could throw
+      {
+        auto &p = _h.promise();
+        if(p.result_set.load(std::memory_order_acquire) == 0)
+        {
+          _h();
+        }
+        assert(p.result_set.load(std::memory_order_acquire) >= 0);
+        if(p.result_set.load(std::memory_order_acquire) < 0)
+        {
+          std::terminate();
+        }
+        container_type ret(static_cast<container_type &&>(p.result));
+        p.result.~container_type();  // could throw
+        p.result_set.store(0, std::memory_order_release);
+        return ret;
       }
 #if BOOST_OUTCOME_HAVE_NOOP_COROUTINE
       coroutine_handle<> await_suspend(coroutine_handle<> cont) noexcept
@@ -368,22 +568,27 @@ BOOST_OUTCOME_COROUTINE_SUPPORT_NAMESPACE_EXPORT_BEGIN
 /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-template <class T> using eager = BOOST_OUTCOME_V2_NAMESPACE::awaitables::detail::awaitable<T, false, false>;
+template <class T, class Executor = void> using eager = BOOST_OUTCOME_V2_NAMESPACE::awaitables::detail::awaitable<T, Executor, false, false>;
 
 /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-template <class T> using atomic_eager = BOOST_OUTCOME_V2_NAMESPACE::awaitables::detail::awaitable<T, false, true>;
+template <class T, class Executor = void> using atomic_eager = BOOST_OUTCOME_V2_NAMESPACE::awaitables::detail::awaitable<T, Executor, false, true>;
 
 /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-template <class T> using lazy = BOOST_OUTCOME_V2_NAMESPACE::awaitables::detail::awaitable<T, true, false>;
+template <class T, class Executor = void> using lazy = BOOST_OUTCOME_V2_NAMESPACE::awaitables::detail::awaitable<T, Executor, true, false>;
 
 /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-template <class T> using atomic_lazy = BOOST_OUTCOME_V2_NAMESPACE::awaitables::detail::awaitable<T, true, true>;
+template <class T, class Executor = void> using atomic_lazy = BOOST_OUTCOME_V2_NAMESPACE::awaitables::detail::awaitable<T, Executor, true, true>;
+
+/*! AWAITING HUGO JSON CONVERSION TOOL
+SIGNATURE NOT RECOGNISED
+*/
+template <class T, class Executor = void> using generator = BOOST_OUTCOME_V2_NAMESPACE::awaitables::detail::generator<T, Executor, true, false>;
 
 BOOST_OUTCOME_COROUTINE_SUPPORT_NAMESPACE_END
 #endif

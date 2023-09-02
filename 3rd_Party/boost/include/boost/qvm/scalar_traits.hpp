@@ -9,7 +9,7 @@
 #include <boost/qvm/quat_traits.hpp>
 #include <boost/qvm/vec_traits.hpp>
 #include <boost/qvm/mat_traits.hpp>
-#include <boost/qvm/inline.hpp>
+#include <boost/qvm/config.hpp>
 
 namespace boost { namespace qvm {
 

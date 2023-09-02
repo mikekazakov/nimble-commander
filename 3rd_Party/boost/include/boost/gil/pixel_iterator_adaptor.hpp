@@ -121,18 +121,20 @@ struct channel_type<dereference_iterator_adaptor<I,DFn> > : public channel_type<
 /////////////////////////////
 
 template <typename Iterator, typename DFn>
-struct byte_to_memunit<dereference_iterator_adaptor<Iterator,DFn> > : public byte_to_memunit<Iterator> {};
+struct byte_to_memunit<dereference_iterator_adaptor<Iterator,DFn>> : public byte_to_memunit<Iterator> {};
 
 template <typename Iterator, typename DFn>
-inline typename std::iterator_traits<Iterator>::difference_type
-memunit_step(const dereference_iterator_adaptor<Iterator,DFn>& p) {
+inline auto memunit_step(dereference_iterator_adaptor<Iterator,DFn> const& p)
+    -> typename std::iterator_traits<Iterator>::difference_type
+{
     return memunit_step(p.base());
 }
 
 template <typename Iterator, typename DFn>
-inline typename std::iterator_traits<Iterator>::difference_type
-memunit_distance(const dereference_iterator_adaptor<Iterator,DFn>& p1,
-              const dereference_iterator_adaptor<Iterator,DFn>& p2) {
+inline auto memunit_distance(dereference_iterator_adaptor<Iterator,DFn> const& p1,
+                 dereference_iterator_adaptor<Iterator,DFn> const& p2)
+    -> typename std::iterator_traits<Iterator>::difference_type
+{
     return memunit_distance(p1.base(),p2.base());
 }
 
@@ -143,18 +145,19 @@ inline void memunit_advance(dereference_iterator_adaptor<Iterator,DFn>& p,
 }
 
 template <typename Iterator, typename DFn>
-inline dereference_iterator_adaptor<Iterator,DFn>
-memunit_advanced(const dereference_iterator_adaptor<Iterator,DFn>& p,
-              typename std::iterator_traits<Iterator>::difference_type diff) {
+inline auto memunit_advanced(dereference_iterator_adaptor<Iterator,DFn> const& p,
+              typename std::iterator_traits<Iterator>::difference_type diff)
+    -> dereference_iterator_adaptor<Iterator,DFn>
+{
     return dereference_iterator_adaptor<Iterator,DFn>(memunit_advanced(p.base(), diff), p.deref_fn());
 }
 
 
 template <typename Iterator, typename DFn>
-inline
-typename std::iterator_traits<dereference_iterator_adaptor<Iterator,DFn> >::reference
-memunit_advanced_ref(const dereference_iterator_adaptor<Iterator,DFn>& p,
-                  typename std::iterator_traits<Iterator>::difference_type diff) {
+inline auto memunit_advanced_ref(dereference_iterator_adaptor<Iterator,DFn> const& p,
+                  typename std::iterator_traits<Iterator>::difference_type diff)
+    -> typename std::iterator_traits<dereference_iterator_adaptor<Iterator,DFn> >::reference
+{
     return *memunit_advanced(p, diff);
 }
 

@@ -13,6 +13,7 @@
 #include <boost/process/detail/posix/handler.hpp>
 #include <string>
 #include <unistd.h>
+#include <boost/core/ignore_unused.hpp>
 
 namespace boost { namespace process { namespace detail { namespace posix {
 
@@ -26,7 +27,7 @@ struct start_dir_init : handler_base_ext
     template <class PosixExecutor>
     void on_exec_setup(PosixExecutor&) const
     {
-        ::chdir(s_.c_str());
+        boost::ignore_unused(::chdir(s_.c_str()));
     }
     const string_type & str() const {return s_;}
 private:

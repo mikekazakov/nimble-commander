@@ -10,10 +10,7 @@
 #include <boost/core/nvp.hpp>
 #include <boost/histogram/detail/square.hpp>
 #include <boost/histogram/fwd.hpp> // for mean<>
-#include <boost/throw_exception.hpp>
-#include <cassert>
-#include <stdexcept>
-#include <type_traits>
+#include <type_traits>             // for std::integral_constant, std::common_type
 
 namespace boost {
 namespace histogram {

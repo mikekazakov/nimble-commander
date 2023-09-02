@@ -1,4 +1,4 @@
-// Copyright Antony Polukhin, 2016-2022.
+// Copyright Antony Polukhin, 2016-2023.
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -13,7 +13,7 @@
 #endif
 
 #include <boost/stacktrace/frame.hpp>
-#include <boost/stacktrace/stacktrace.hpp>
+#include <boost/stacktrace/stacktrace.hpp>  // Actually already includes all the headers
 #include <boost/stacktrace/safe_dump_to.hpp>
 
 #endif // BOOST_STACKTRACE_HPP

@@ -127,10 +127,12 @@ eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, 
    }
    else
       *result = static_cast<R>(backend.limbs()[0]);
-   std::size_t shift = cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits;
-   std::size_t i     = 1;
+
    BOOST_IF_CONSTEXPR(numeric_limits_workaround<R>::digits > cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits)
    {
+     std::size_t shift = cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits;
+     std::size_t i     = 1u;
+
       while ((i < backend.size()) && (shift < static_cast<unsigned>(numeric_limits_workaround<R>::digits - cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits)))
       {
          *result += static_cast<R>(backend.limbs()[i]) << shift;
@@ -142,9 +144,12 @@ eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, 
       //
       if (i < backend.size())
       {
-         const limb_type mask = numeric_limits_workaround<R>::digits - shift == cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits ? ~static_cast<limb_type>(0) : (static_cast<limb_type>(1u) << (numeric_limits_workaround<R>::digits - shift)) - 1;
-         *result += (static_cast<R>(backend.limbs()[i]) & mask) << shift;
-         if ((static_cast<R>(backend.limbs()[i]) & static_cast<limb_type>(~mask)) || (i + 1 < backend.size()))
+         const limb_type mask                 = ((numeric_limits_workaround<R>::digits - shift) == cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits) ? ~static_cast<limb_type>(0) : static_cast<limb_type>(static_cast<limb_type>(1u) << (numeric_limits_workaround<R>::digits - shift)) - 1u;
+         const limb_type limb_at_index_masked = static_cast<limb_type>(backend.limbs()[i] & mask);
+
+         *result = static_cast<R>(*result + static_cast<R>(static_cast<R>(limb_at_index_masked) << shift));
+
+         if ((backend.limbs()[i] & static_cast<limb_type>(~mask)) || (i + 1 < backend.size()))
          {
             // Overflow:
             if (backend.sign())
@@ -179,7 +184,7 @@ eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, 
 
 template <class R, std::size_t MinBits1, std::size_t MaxBits1, cpp_integer_type SignType1, cpp_int_check_type Checked1, class Allocator1>
 inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<std::is_floating_point<R>::value && !is_trivial_cpp_int<cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1> >::value, void>::type
-eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>& backend) noexcept(boost::multiprecision::detail::is_arithmetic<R>::value)
+eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>& backend) noexcept(boost::multiprecision::detail::is_arithmetic<R>::value && std::numeric_limits<R>::has_infinity)
 {
    BOOST_MP_FLOAT128_USING using std::ldexp;
    if (eval_is_zero(backend))
@@ -189,11 +194,11 @@ eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, 
    }
 
 #ifdef BOOST_HAS_FLOAT128
-   std::ptrdiff_t bits_to_keep = std::is_same<R, float128_type>::value ? 113 : std::numeric_limits<R>::digits;
+   std::ptrdiff_t bits_to_keep = static_cast<std::ptrdiff_t>(std::is_same<R, float128_type>::value ? 113 : std::numeric_limits<R>::digits);
 #else
-   std::ptrdiff_t bits_to_keep = std::numeric_limits<R>::digits;
+   std::ptrdiff_t bits_to_keep = static_cast<std::ptrdiff_t>(std::numeric_limits<R>::digits);
 #endif
-   std::ptrdiff_t bits = eval_msb_imp(backend) + 1;
+   std::ptrdiff_t bits = static_cast<std::ptrdiff_t>(eval_msb_imp(backend) + 1);
 
    if (bits > bits_to_keep)
    {
@@ -208,10 +213,14 @@ eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, 
          if (bits_to_keep < (std::ptrdiff_t)cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits)
          {
             if(index != backend.size() - 1)
-               mask <<= cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits - bits_to_keep;
+            {
+               const std::ptrdiff_t left_shift_amount = static_cast<std::ptrdiff_t>(static_cast<std::ptrdiff_t>(cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits) - bits_to_keep);
+
+               mask <<= left_shift_amount;
+            }
             else
             {
-               std::ptrdiff_t bits_in_first_limb = bits % cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits;
+               std::ptrdiff_t bits_in_first_limb = static_cast<std::ptrdiff_t>(bits % static_cast<std::ptrdiff_t>(cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits));
                if (bits_in_first_limb == 0)
                   bits_in_first_limb = cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits;
                if (bits_in_first_limb > bits_to_keep)
@@ -220,9 +229,12 @@ eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, 
          }
          *result += ldexp(static_cast<R>(p[index] & mask), static_cast<int>(shift));
          shift -= cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits;
-         bits_to_keep -= (index == backend.size() - 1) && (bits % cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits)
-            ? bits % cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits 
-            : cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits;
+
+         const bool bits_has_non_zero_remainder = (bits % static_cast<std::ptrdiff_t>(cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits) != 0);
+
+         bits_to_keep -= ((index == backend.size() - 1) && bits_has_non_zero_remainder)
+            ? bits % static_cast<std::ptrdiff_t>(cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits)
+            :        static_cast<std::ptrdiff_t>(cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::limb_bits);
          --index;
       }
       // Perform rounding:
@@ -232,9 +244,18 @@ eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, 
          if ((eval_lsb_imp(backend) < static_cast<std::size_t>(bits)) || eval_bit_test(backend, static_cast<std::size_t>(bits + 1)))
          {
             #ifdef BOOST_MP_MATH_AVAILABLE
-            *result = boost::math::float_next(*result);
+            BOOST_IF_CONSTEXPR(std::numeric_limits<R>::has_infinity)
+            {
+               // Must NOT throw:
+               *result = boost::math::float_next(*result, boost::math::policies::make_policy(boost::math::policies::overflow_error<boost::math::policies::ignore_error>()));
+            }
+            else
+            {
+               *result = boost::math::float_next(*result);
+            }
             #else
-            *result = std::nextafter(*result, *result * 2);
+            using std::nextafter; BOOST_MP_FLOAT128_USING
+            *result = nextafter(*result, *result * 2);
             #endif
          }
       }
@@ -493,7 +514,7 @@ BOOST_MP_FORCEINLINE BOOST_MP_CXX14_CONSTEXPR limb_type eval_gcd(limb_type u, li
    // boundary cases
    if (!u || !v)
       return u | v;
-#if __cpp_lib_gcd_lcm >= 201606L
+#if (defined(__cpp_lib_gcd_lcm) && (__cpp_lib_gcd_lcm >= 201606L))
    return std::gcd(u, v);
 #else
    std::size_t shift = boost::multiprecision::detail::find_lsb(u | v);
@@ -511,7 +532,7 @@ BOOST_MP_FORCEINLINE BOOST_MP_CXX14_CONSTEXPR limb_type eval_gcd(limb_type u, li
 
 inline BOOST_MP_CXX14_CONSTEXPR double_limb_type eval_gcd(double_limb_type u, double_limb_type v)
 {
-#if (__cpp_lib_gcd_lcm >= 201606L) && (!defined(BOOST_HAS_INT128) || !defined(__STRICT_ANSI__))
+#if (defined(__cpp_lib_gcd_lcm) && (__cpp_lib_gcd_lcm >= 201606L)) && (!defined(BOOST_HAS_INT128) || !defined(__STRICT_ANSI__))
    return std::gcd(u, v);
 #else
    if (u == 0)
@@ -951,7 +972,7 @@ void eval_gcd_lehmer(cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Al
    //
    while (true)
    {
-      double_limb_type q = 1;
+      double_limb_type q = 1u;
       double_limb_type tt = u;
       divide_subtract(q, u, v);
       std::swap(u, v);
@@ -965,8 +986,8 @@ void eval_gcd_lehmer(cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Al
          ++i;
          break;
       }
-      x[2] = x[0] + q * x[1];
-      y[2] = tt;
+      x[2] = static_cast<limb_type>(x[0] + static_cast<double_limb_type>(q * x[1]));
+      y[2] = static_cast<limb_type>(tt);
       ++i;
       if ((i & 1u) == 0)
       {
@@ -1270,9 +1291,10 @@ inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<
     is_trivial_cpp_int<cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1> >::value && is_signed_number<cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1> >::value && std::is_convertible<typename cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::local_limb_type, R>::value>::type
 eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>& val)
 {
-   using common_type = typename std::common_type<R, typename cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::local_limb_type>::type;
    BOOST_IF_CONSTEXPR(std::numeric_limits<R>::is_specialized)
    {
+      using common_type = typename std::common_type<R, typename cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::local_limb_type>::type;
+
       if (static_cast<common_type>(*val.limbs()) > static_cast<common_type>((std::numeric_limits<R>::max)()))
       {
          if (val.isneg())
@@ -1314,9 +1336,10 @@ inline BOOST_MP_CXX14_CONSTEXPR typename std::enable_if<
     is_trivial_cpp_int<cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1> >::value && is_unsigned_number<cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1> >::value && std::is_convertible<typename cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::local_limb_type, R>::value>::type
 eval_convert_to(R* result, const cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>& val)
 {
-   using common_type = typename std::common_type<R, typename cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::local_limb_type>::type;
    BOOST_IF_CONSTEXPR(std::numeric_limits<R>::is_specialized)
    {
+      using common_type = typename std::common_type<R, typename cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::local_limb_type>::type;
+
       if(static_cast<common_type>(*val.limbs()) > static_cast<common_type>((std::numeric_limits<R>::max)()))
       {
          conversion_overflow(typename cpp_int_backend<MinBits1, MaxBits1, SignType1, Checked1, Allocator1>::checked_type());

@@ -36,7 +36,7 @@ namespace boost { namespace spirit { namespace x3
     }
 
     template <typename ID, typename RHS, typename Attribute, bool force_attribute_, bool skip_definition_injection = false>
-    struct rule_definition : parser<rule_definition<ID, RHS, Attribute, force_attribute_>>
+    struct rule_definition : parser<rule_definition<ID, RHS, Attribute, force_attribute_, skip_definition_injection>>
     {
         typedef rule_definition<ID, RHS, Attribute, force_attribute_, skip_definition_injection> this_type;
         typedef ID id;

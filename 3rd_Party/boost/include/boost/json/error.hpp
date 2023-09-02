@@ -13,7 +13,8 @@
 #include <boost/json/detail/config.hpp>
 #include <boost/json/system_error.hpp>
 
-BOOST_JSON_NS_BEGIN
+namespace boost {
+namespace json {
 
 /** Error codes returned by JSON operations
 
@@ -63,16 +64,21 @@ enum class error
     /// A string is too large
     string_too_large,
 
-    /// The parser encountered an exception and must be reset
+    /// A number is too large
+    number_too_large,
+
+    /// error occured when trying to read input
+    input_error,
+
+    //
+    // generic errors
+    //
+
+    /// An exception was thrown during operation
     exception,
 
-    //----------------------------------
-
-    /// not a number
-    not_number,
-
-    /// number cast is not exact
-    not_exact,
+    /// A requested element is outside of container's range
+    out_of_range,
 
     /// test failure
     test_failure,
@@ -101,6 +107,50 @@ enum class error
 
     /// past-the-end index is not supported
     past_the_end,
+
+    //
+    // Conversion errors
+    //
+
+    /// JSON number was expected during conversion
+    not_number,
+
+    /// number cast is not exact
+    not_exact,
+
+    /// JSON null was expected during conversion
+    not_null,
+
+    /// JSON bool was expected during conversion
+    not_bool,
+
+    /// JSON array was expected during conversion
+    not_array,
+
+    /// JSON object was expected during conversion
+    not_object,
+
+    /// JSON string was expected during conversion
+    not_string,
+
+    /// std::int64_t was expected during conversion
+    not_int64,
+
+    /// std::uint64_t was expected during conversion
+    not_uint64,
+
+    /// `double` was expected during conversion
+    not_double,
+
+    /// source composite has size incompatible with target
+    size_mismatch,
+
+    /// none of the possible conversions were successful
+    exhausted_variants,
+
+    /// the key does not correspond to a known name
+    unknown_name,
+
 };
 
 /** Error conditions corresponding to JSON errors
@@ -110,17 +160,21 @@ enum class condition
     /// A parser-related error
     parse_error = 1,
 
-    /// An error on assignment to or from a JSON value
-    assign_error,
-
     /// An error related to parsing JSON pointer string
     pointer_parse_error,
 
     /// An error related to applying JSON pointer string to a value
     pointer_use_error,
+
+    /// A conversion error
+    conversion_error,
+
+    /// A generic error
+    generic_error,
 };
 
-BOOST_JSON_NS_END
+} // namespace json
+} // namespace boost
 
 #include <boost/json/impl/error.hpp>
 

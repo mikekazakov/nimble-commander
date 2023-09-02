@@ -1,5 +1,5 @@
 /* Try operation macros
-(C) 2017-2022 Niall Douglas <http://www.nedproductions.biz/> (20 commits)
+(C) 2017-2023 Niall Douglas <http://www.nedproductions.biz/> (20 commits)
 File Created: July 2017
 
 
@@ -170,10 +170,13 @@ BOOST_OUTCOME_V2_NAMESPACE_END
 #define _OUTCOME_TRY_CALL_OVERLOAD(name, ...)                                                                                                                  \
   _OUTCOME_TRY_OVERLOAD_GLUE(_OUTCOME_TRY_OVERLOAD_MACRO(name, _OUTCOME_TRY_COUNT_ARGS_MAX8(__VA_ARGS__)), (__VA_ARGS__))
 
-#ifndef BOOST_OUTCOME_TRY_LIKELY_IF
-#if(__cplusplus >= 202000L || _HAS_CXX20) && (!defined(__clang__) || __clang_major__ >= 12) && (!defined(__GNUC__) || defined(__clang__) || __GNUC__ >= 9)
+#if !defined(BOOST_OUTCOME_TRY_LIKELY_IF) && defined(__has_cpp_attribute)
+#if __has_cpp_attribute(likely)
 #define BOOST_OUTCOME_TRY_LIKELY_IF(...) if(__VA_ARGS__) [[likely]]
-#elif defined(__clang__) || defined(__GNUC__)
+#endif
+#endif
+#ifndef BOOST_OUTCOME_TRY_LIKELY_IF
+#if defined(__clang__) || defined(__GNUC__)
 #define BOOST_OUTCOME_TRY_LIKELY_IF(...) if(__builtin_expect(!!(__VA_ARGS__), true))
 #else
 #define BOOST_OUTCOME_TRY_LIKELY_IF(...) if(__VA_ARGS__)
@@ -197,12 +200,19 @@ BOOST_OUTCOME_V2_NAMESPACE_END
 // Use if(!expr); else as some compilers assume else clauses are always unlikely
 #define BOOST_OUTCOME_TRYV2_SUCCESS_LIKELY(unique, retstmt, spec, ...)                                                                                               \
   BOOST_OUTCOME_TRYV2_UNIQUE_STORAGE(unique, spec, __VA_ARGS__);                                                                                                     \
-  BOOST_OUTCOME_TRY_LIKELY_IF(::BOOST_OUTCOME_V2_NAMESPACE::try_operation_has_value(unique));                                                                                \
-  else retstmt ::BOOST_OUTCOME_V2_NAMESPACE::try_operation_return_as(static_cast<decltype(unique) &&>(unique))
+  BOOST_OUTCOME_TRY_LIKELY_IF(::BOOST_OUTCOME_V2_NAMESPACE::try_operation_has_value(unique));                                                                              \
+  else                                                                                                                                                         \
+  { /* works around ICE in GCC's coroutines implementation */                                                                                                  \
+    auto unique##_f(::BOOST_OUTCOME_V2_NAMESPACE::try_operation_return_as(static_cast<decltype(unique) &&>(unique)));                                                \
+    retstmt unique##_f;                                                                                                                                        \
+  }
 #define BOOST_OUTCOME_TRYV3_FAILURE_LIKELY(unique, retstmt, spec, ...)                                                                                               \
   BOOST_OUTCOME_TRYV2_UNIQUE_STORAGE(unique, spec, __VA_ARGS__);                                                                                                     \
   BOOST_OUTCOME_TRY_LIKELY_IF(!BOOST_OUTCOME_V2_NAMESPACE::try_operation_has_value(unique))                                                                                \
-  retstmt ::BOOST_OUTCOME_V2_NAMESPACE::try_operation_return_as(static_cast<decltype(unique) &&>(unique))
+  { /* works around ICE in GCC's coroutines implementation */                                                                                                  \
+    auto unique##_f(::BOOST_OUTCOME_V2_NAMESPACE::try_operation_return_as(static_cast<decltype(unique) &&>(unique)));                                                \
+    retstmt unique##_f;                                                                                                                                        \
+  }
 
 #define BOOST_OUTCOME_TRY2_VAR_SECOND2(x, var) var
 #define BOOST_OUTCOME_TRY2_VAR_SECOND3(x, y, ...) x y
@@ -235,20 +245,20 @@ SIGNATURE NOT RECOGNISED
 /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-#define BOOST_OUTCOME_TRYV2(s, ...) BOOST_OUTCOME_TRYV2_SUCCESS_LIKELY(BOOST_OUTCOME_TRY_UNIQUE_NAME, return, (s,), __VA_ARGS__)
+#define BOOST_OUTCOME_TRYV2(s, ...) BOOST_OUTCOME_TRYV2_SUCCESS_LIKELY(BOOST_OUTCOME_TRY_UNIQUE_NAME, return, (s, ), __VA_ARGS__)
 /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-#define BOOST_OUTCOME_TRYV2_FAILURE_LIKELY(s, ...) BOOST_OUTCOME_TRYV3_FAILURE_LIKELY(BOOST_OUTCOME_TRY_UNIQUE_NAME, return, (s,), __VA_ARGS__)
+#define BOOST_OUTCOME_TRYV2_FAILURE_LIKELY(s, ...) BOOST_OUTCOME_TRYV3_FAILURE_LIKELY(BOOST_OUTCOME_TRY_UNIQUE_NAME, return, (s, ), __VA_ARGS__)
 
 /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-#define BOOST_OUTCOME_CO_TRYV2(s, ...) BOOST_OUTCOME_TRYV2_SUCCESS_LIKELY(BOOST_OUTCOME_TRY_UNIQUE_NAME, co_return, (s,), __VA_ARGS__)
+#define BOOST_OUTCOME_CO_TRYV2(s, ...) BOOST_OUTCOME_TRYV2_SUCCESS_LIKELY(BOOST_OUTCOME_TRY_UNIQUE_NAME, co_return, (s, ), __VA_ARGS__)
 /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-#define BOOST_OUTCOME_CO_TRYV2_FAILURE_LIKELY(s, ...) BOOST_OUTCOME_TRYV3_FAILURE_LIKELY(BOOST_OUTCOME_TRY_UNIQUE_NAME, co_return, s(,), __VA_ARGS__)
+#define BOOST_OUTCOME_CO_TRYV2_FAILURE_LIKELY(s, ...) BOOST_OUTCOME_TRYV3_FAILURE_LIKELY(BOOST_OUTCOME_TRY_UNIQUE_NAME, co_return, s(, ), __VA_ARGS__)
 
 
 #if defined(__GNUC__) || defined(__clang__)
@@ -256,7 +266,7 @@ SIGNATURE NOT RECOGNISED
 #define BOOST_OUTCOME_TRYX2(unique, retstmt, ...)                                                                                                                    \
   ({                                                                                                                                                           \
     BOOST_OUTCOME_TRYV2_SUCCESS_LIKELY(unique, retstmt, deduce, __VA_ARGS__);                                                                                        \
-    ::BOOST_OUTCOME_V2_NAMESPACE::try_operation_extract_value(static_cast<decltype(unique) &&>(unique));                                                               \
+    ::BOOST_OUTCOME_V2_NAMESPACE::try_operation_extract_value(static_cast<decltype(unique) &&>(unique));                                                             \
   })
 
 /*! AWAITING HUGO JSON CONVERSION TOOL

@@ -15,7 +15,10 @@
 #include <boost/json/parser.hpp>
 #include <boost/json/detail/except.hpp>
 
-BOOST_JSON_NS_BEGIN
+#include <istream>
+
+namespace boost {
+namespace json {
 
 value
 parse(
@@ -57,11 +60,77 @@ parse(
     auto jv = parse(
         s, ec, std::move(sp), opt);
     if(ec)
-        detail::throw_system_error(ec,
-            BOOST_JSON_SOURCE_POS);
+        detail::throw_system_error( ec );
     return jv;
 }
 
-BOOST_JSON_NS_END
+value
+parse(
+    std::istream& is,
+    error_code& ec,
+    storage_ptr sp,
+    parse_options const& opt)
+{
+    unsigned char parser_buffer[BOOST_JSON_STACK_BUFFER_SIZE / 2];
+    stream_parser p(storage_ptr(), opt, parser_buffer);
+    p.reset(std::move(sp));
+
+    char read_buffer[BOOST_JSON_STACK_BUFFER_SIZE / 2];
+    do
+    {
+        if( is.eof() )
+        {
+            p.finish(ec);
+            break;
+        }
+
+        if( !is )
+        {
+            BOOST_JSON_FAIL( ec, error::input_error );
+            break;
+        }
+
+        is.read(read_buffer, sizeof(read_buffer));
+        auto const consumed = is.gcount();
+
+        p.write( read_buffer, static_cast<std::size_t>(consumed), ec );
+    }
+    while( !ec.failed() );
+
+    if( ec.failed() )
+        return nullptr;
+
+    return p.release();
+}
+
+value
+parse(
+    std::istream& is,
+    std::error_code& ec,
+    storage_ptr sp,
+    parse_options const& opt)
+{
+    error_code jec;
+    value result = parse(is, jec, std::move(sp), opt);
+    ec = jec;
+    return result;
+}
+
+value
+parse(
+    std::istream& is,
+    storage_ptr sp,
+    parse_options const& opt)
+{
+    error_code ec;
+    auto jv = parse(
+        is, ec, std::move(sp), opt);
+    if(ec)
+        detail::throw_system_error( ec );
+    return jv;
+}
+
+} // namespace json
+} // namespace boost
 
 #endif

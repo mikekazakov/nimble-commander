@@ -13,10 +13,10 @@
 
 #include <algorithm>
 #include <boost/config.hpp>
+#include <boost/core/swap.hpp>
 #include <boost/assert.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/smart_ptr/bad_weak_ptr.hpp>
-#include <boost/utility/swap.hpp>
 
 #ifndef BOOST_NO_CXX11_SMART_PTR
 #include <memory>

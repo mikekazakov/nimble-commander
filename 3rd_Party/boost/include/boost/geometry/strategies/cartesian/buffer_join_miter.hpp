@@ -89,8 +89,8 @@ public:
         // Check the distance ip-vertex (= miter distance)
         // (We calculate it manually (not using Pythagoras strategy) to reuse
         //  dx and dy)
-        coordinate_type const dx = get<0>(p) - get<0>(vertex);
-        coordinate_type const dy = get<1>(p) - get<1>(vertex);
+        promoted_type const dx = get<0>(p) - get<0>(vertex);
+        promoted_type const dy = get<1>(p) - get<1>(vertex);
 
         promoted_type const distance = geometry::math::sqrt(dx * dx + dy * dy);
 

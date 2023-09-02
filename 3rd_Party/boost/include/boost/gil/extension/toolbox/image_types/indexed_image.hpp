@@ -100,7 +100,7 @@ struct indexed_image_deref_fn : indexed_image_deref_fn_base< IndicesLoc
             )
     {}
 
-    typename base_t::result_type operator()( const point_t& p ) const
+    typename base_t::result_type operator()( point_t const& p ) const
     {
         return * this->_palette_loc.xy_at( at_c<0>( *this->_indices_loc.xy_at( p )), 0 );
     }
@@ -166,7 +166,7 @@ public:
     , _num_colors( 0 )
     {}
 
-    indexed_image_view( const point_t& dimensions
+    indexed_image_view( point_t const& dimensions
                       , std::size_t    num_colors
                       , const Locator& locator
                       )
@@ -280,7 +280,7 @@ public:
         init( point_t( width, height ), num_colors );
     }
 
-    indexed_image( const point_t&    dimensions
+    indexed_image( point_t const&    dimensions
                  , const std::size_t num_colors = 1
                  , const std::size_t indices_alignment = 0
                  , const std::size_t palette_alignment = 0
@@ -323,7 +323,7 @@ public:
 
 private:
 
-    void init( const point_t&    dimensions
+    void init( point_t const&    dimensions
              , const std::size_t num_colors
              )
     {

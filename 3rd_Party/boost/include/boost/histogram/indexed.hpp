@@ -64,9 +64,6 @@ public:
   using value_type = typename std::iterator_traits<value_iterator>::value_type;
 
   class iterator;
-  using range_iterator [[deprecated("use iterator instead; "
-                                    "range_iterator will be removed in boost-1.80")]] =
-      iterator; ///< deprecated
 
   /** Lightweight view to access value and index of current cell.
 
@@ -86,9 +83,6 @@ public:
 
     public:
       using const_reference = const axis::index_type&;
-      using reference [[deprecated("use const_reference instead; "
-                                   "reference will be removed in boost-1.80")]] =
-          const_reference; ///< deprecated
 
       /// implementation detail
       class const_iterator
@@ -292,7 +286,7 @@ public:
   private:
     iterator(value_iterator i, histogram_type& h) : iter_(i), indices_(&h) {}
 
-    value_iterator iter_;
+    value_iterator iter_; // original histogram iterator
 
     struct index_data {
       axis::index_type idx, begin, end;
@@ -325,6 +319,9 @@ public:
   template <class Iterable, class = detail::requires_iterable<Iterable>>
   indexed_range(histogram_type& hist, Iterable&& range)
       : begin_(hist.begin(), hist), end_(hist.end(), hist) {
+    // if histogram is empty, incrementing begin_.iter_ may be undefined behavior
+    if (begin_ == end_) return;
+
     auto r_begin = std::begin(range);
     assert(std::distance(r_begin, std::end(range)) == static_cast<int>(hist.rank()));
 
@@ -337,20 +334,28 @@ public:
       constexpr axis::index_type start = opt::test(axis::option::underflow) ? -1 : 0;
       const auto stop = size + (opt::test(axis::option::overflow) ? 1 : 0);
 
-      ca->begin = std::max(start, detail::get<0>(*r_begin));
-      ca->end = std::min(stop, detail::get<1>(*r_begin));
+      ca->begin = (std::max)(start, detail::get<0>(*r_begin));
+      ca->end = (std::min)(stop, detail::get<1>(*r_begin));
       assert(ca->begin <= ca->end);
       ca->idx = ca->begin;
 
       ca->begin_skip = static_cast<std::size_t>(ca->begin - start) * stride;
       ca->end_skip = static_cast<std::size_t>(stop - ca->end) * stride;
       begin_.iter_ += ca->begin_skip;
+      end_.iter_ -= ca->end_skip;
 
       stride *= stop - start;
 
       ++ca;
       ++r_begin;
     });
+    // check if selected range is empty
+    if (end_.iter_ < begin_.iter_) {
+      begin_ = end_;
+    } else {
+      // reset end_ to hist.end(), since end_skips are done in operator++
+      end_.iter_ = hist.end();
+    }
   }
 
   iterator begin() noexcept { return begin_; }
@@ -364,8 +369,8 @@ private:
       (*it)[0] = 0;
       (*it)[1] = a.size();
       if (cov == coverage::all) {
-        (*it)[0] -= 1;
-        (*it)[1] += 1;
+        (*it)[0] -= 1; // making this wider than actual range is safe
+        (*it)[1] += 1; // making this wider than actual range is safe
       } else
         assert(cov == coverage::inner);
       ++it;

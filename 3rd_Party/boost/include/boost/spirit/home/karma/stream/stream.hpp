@@ -114,14 +114,15 @@ namespace boost { namespace spirit { namespace karma
 
 namespace detail
 {
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename OutputIterator, typename Char, typename CharEncoding
       , typename Tag>
     struct psbuf : std::basic_streambuf<Char>
     {
         psbuf(OutputIterator& sink) : sink_(sink) {}
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(psbuf& operator=(psbuf const&))
 
     protected:
         typename psbuf::int_type overflow(typename psbuf::int_type ch) BOOST_OVERRIDE
@@ -136,6 +137,9 @@ namespace detail
     private:
         OutputIterator& sink_;
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -299,9 +303,6 @@ namespace detail
         }
 
         T t_;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(lit_stream_generator& operator= (lit_stream_generator const&))
     };
 
     ///////////////////////////////////////////////////////////////////////////

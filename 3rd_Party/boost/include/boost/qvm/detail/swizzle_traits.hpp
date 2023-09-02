@@ -6,7 +6,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/qvm/inline.hpp>
+#include <boost/qvm/config.hpp>
 #include <boost/qvm/deduce_vec.hpp>
 #include <boost/qvm/enable_if.hpp>
 #include <boost/qvm/assert.hpp>
@@ -151,13 +151,66 @@ qvm_detail
             return *this;
             }
 
-        template <class R>
+        template <class R
+#if __cplusplus >= 201103L
+            , class = typename enable_if<is_vec<R> >::type
+#endif
+        >
         BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
             R r;
             assign(r,*this);
             return r;
+            }
+        };
+
+    template <class OriginalVector,class SwizzleList,bool WriteElementRef=vec_write_element_ref<OriginalVector>::value>
+    struct sw_write_traits;
+
+    template <class OriginalVector,class SwizzleList>
+    struct
+    sw_write_traits<OriginalVector,SwizzleList,true>
+        {
+        typedef qvm_detail::sw_<OriginalVector,SwizzleList> this_vector;
+        typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
+        static int const dim=qvm_detail::swizzle_list_length<SwizzleList>::value;
+
+        template <int I>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        scalar_type &
+        write_element( this_vector & x )
+            {
+            BOOST_QVM_STATIC_ASSERT(I>=0);
+            BOOST_QVM_STATIC_ASSERT(I<dim);
+            int const idx=qvm_detail::swizzle<SwizzleList,I>::value;
+            BOOST_QVM_STATIC_ASSERT(idx>=0);
+            BOOST_QVM_STATIC_ASSERT(idx<vec_traits<OriginalVector>::dim);
+            return vec_traits<OriginalVector>::template write_element<idx>(reinterpret_cast<OriginalVector &>(x));
+            }
+        };
+
+    template <class OriginalVector,class SwizzleList>
+    struct
+    sw_write_traits<OriginalVector,SwizzleList,false>
+        {
+        typedef qvm_detail::sw_<OriginalVector,SwizzleList> this_vector;
+        typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
+        static int const dim=qvm_detail::swizzle_list_length<SwizzleList>::value;
+
+        template <int I>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        void
+        write_element( this_vector & x, scalar_type s )
+            {
+            BOOST_QVM_STATIC_ASSERT(I>=0);
+            BOOST_QVM_STATIC_ASSERT(I<dim);
+            int const idx=qvm_detail::swizzle<SwizzleList,I>::value;
+            BOOST_QVM_STATIC_ASSERT(idx>=0);
+            BOOST_QVM_STATIC_ASSERT(idx<vec_traits<OriginalVector>::dim);
+            vec_traits<OriginalVector>::template write_element<idx>(reinterpret_cast<OriginalVector &>(x), s);
             }
         };
 
@@ -171,7 +224,11 @@ qvm_detail
 
         public:
 
-        template <class R>
+        template <class R
+#if __cplusplus >= 201103L
+            , class = typename enable_if<is_vec<R> >::type
+#endif
+        >
         BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
@@ -193,7 +250,11 @@ qvm_detail
 
         public:
 
-        template <class R>
+        template <class R
+#if __cplusplus >= 201103L
+            , class = typename enable_if<is_vec<R> >::type
+#endif
+        >
         BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
@@ -206,7 +267,8 @@ qvm_detail
 
 template <class OriginalVector,class SwizzleList>
 struct
-vec_traits<qvm_detail::sw_<OriginalVector,SwizzleList> >
+vec_traits<qvm_detail::sw_<OriginalVector,SwizzleList> >:
+    qvm_detail::sw_write_traits<OriginalVector,SwizzleList>
     {
     typedef qvm_detail::sw_<OriginalVector,SwizzleList> this_vector;
     typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
@@ -225,20 +287,6 @@ vec_traits<qvm_detail::sw_<OriginalVector,SwizzleList> >
         return idx>=0?
             vec_traits<OriginalVector>::template read_element<qvm_detail::neg_zero<idx>::value>(reinterpret_cast<OriginalVector const &>(x)) :
             qvm_detail::const_value<this_vector,idx>::value();
-        }
-
-    template <int I>
-    static
-    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
-    scalar_type &
-    write_element( this_vector & x )
-        {
-        BOOST_QVM_STATIC_ASSERT(I>=0);
-        BOOST_QVM_STATIC_ASSERT(I<dim);
-        int const idx=qvm_detail::swizzle<SwizzleList,I>::value;
-        BOOST_QVM_STATIC_ASSERT(idx>=0);
-        BOOST_QVM_STATIC_ASSERT(idx<vec_traits<OriginalVector>::dim);
-        return vec_traits<OriginalVector>::template write_element<idx>(reinterpret_cast<OriginalVector &>(x));
         }
     };
 
@@ -296,7 +344,7 @@ vec_traits<qvm_detail::sws_<OriginalScalar,SwizzleList> >
         BOOST_QVM_STATIC_ASSERT(I>=0);
         BOOST_QVM_STATIC_ASSERT(I<dim);
         int const idx=qvm_detail::swizzle<SwizzleList,I>::value;
-        BOOST_QVM_STATIC_ASSERT(idx==0);
+        BOOST_QVM_STATIC_ASSERT(idx<1);
         return reinterpret_cast<OriginalScalar &>(x);
         }
     };

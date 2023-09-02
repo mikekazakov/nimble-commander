@@ -15,16 +15,20 @@
 
 namespace boost { namespace spirit { namespace qi { namespace detail
 {
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename Skipper>
     struct unused_skipper : unused_type
     {
         unused_skipper(Skipper const& skipper_)
           : skipper(skipper_) {}
         Skipper const& skipper;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(unused_skipper& operator= (unused_skipper const&))
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
     template <typename Skipper>
     struct is_unused_skipper

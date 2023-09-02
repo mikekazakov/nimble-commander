@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2014 Mateusz Loskot, London, UK.
 // Copyright (c) 2013-2014 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2013-2021.
-// Modifications copyright (c) 2013-2021, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2022.
+// Modifications copyright (c) 2013-2022, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -37,7 +37,7 @@
 #include <boost/geometry/core/tag_cast.hpp>
 #include <boost/geometry/core/tags.hpp>
 
-#include <boost/geometry/algorithms/covered_by.hpp>
+#include <boost/geometry/algorithms/detail/covered_by/implementation.hpp>
 #include <boost/geometry/algorithms/not_implemented.hpp>
 
 #include <boost/geometry/algorithms/detail/assign_indexed_point.hpp>
@@ -51,6 +51,7 @@
 
 #include <boost/geometry/algorithms/dispatch/disjoint.hpp>
 
+#include <boost/geometry/geometries/helper_geometry.hpp>
 
 namespace boost { namespace geometry
 {
@@ -70,8 +71,8 @@ struct disjoint_no_intersections_policy
     template <typename Strategy>
     static inline bool apply(Geometry1 const& g1, Geometry2 const& g2, Strategy const& strategy)
     {
-        typedef typename point_type<Geometry1>::type point1_type;
-        point1_type p;
+        using point_type = typename point_type<Geometry1>::type;
+        typename helper_geometry<point_type>::type p;
         geometry::point_on_border(p, g1);
 
         return ! geometry::covered_by(p, g2, strategy);
@@ -88,12 +89,11 @@ struct disjoint_no_intersections_policy<Geometry1, Geometry2, Tag1, multi_tag>
     static inline bool apply(Geometry1 const& g1, Geometry2 const& g2, Strategy const& strategy)
     {
         // TODO: use partition or rtree on g2
-        typedef typename boost::range_iterator<Geometry1 const>::type iterator;
-        for ( iterator it = boost::begin(g1) ; it != boost::end(g1) ; ++it )
+        for (auto it = boost::begin(g1); it != boost::end(g1); ++it)
         {
             typedef typename boost::range_value<Geometry1 const>::type value_type;
-            if ( ! disjoint_no_intersections_policy<value_type const, Geometry2>
-                    ::apply(*it, g2, strategy) )
+            if (! disjoint_no_intersections_policy<value_type const, Geometry2>
+                    ::apply(*it, g2, strategy))
             {
                 return false;
             }
@@ -141,7 +141,7 @@ struct disjoint_segment_areal
 template <typename Segment, typename Polygon>
 class disjoint_segment_areal<Segment, Polygon, polygon_tag>
 {
-    
+
     template <typename InteriorRings, typename Strategy>
     static inline
     bool check_interior_rings(InteriorRings const& interior_rings,

@@ -23,6 +23,7 @@
 #include <boost/graph/distributed/concepts.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/property_map/parallel/parallel_property_maps.hpp>
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/property_map/parallel/distributed_property_map.hpp>
 #include <boost/property_map/parallel/local_property_map.hpp>

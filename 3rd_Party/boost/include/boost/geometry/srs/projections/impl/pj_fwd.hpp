@@ -92,8 +92,14 @@ inline void pj_fwd(Prj const& prj, P const& par, LL const& ll, XY& xy)
 
     prj.fwd(par, lp_lon, lp_lat, x, y);
 
-    geometry::set<0>(xy, par.fr_meter * (par.a * x + par.x0));
-    geometry::set<1>(xy, par.fr_meter * (par.a * y + par.y0));
+    if (par.axis[0] == 0)
+    {
+        geometry::set<0>(xy, par.sign[0] * par.fr_meter * (par.a * x + par.x0));
+        geometry::set<1>(xy, par.sign[1] * par.fr_meter * (par.a * y + par.y0));
+    } else {
+        geometry::set<1>(xy, par.sign[1] * par.fr_meter * (par.a * x + par.x0));
+        geometry::set<0>(xy, par.sign[0] * par.fr_meter * (par.a * y + par.y0));
+    }
 }
 
 } // namespace detail

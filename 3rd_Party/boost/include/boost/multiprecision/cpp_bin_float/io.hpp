@@ -19,13 +19,15 @@ namespace cpp_bf_io_detail {
 template <class I>
 inline I restricted_multiply(cpp_int& result, const cpp_int& a, const cpp_int& b, I max_bits, std::int64_t& error)
 {
+   using local_integral_type = I;
+
    result   = a * b;
-   I gb     = msb(result);
-   I rshift = 0;
+   local_integral_type gb     = static_cast<local_integral_type>(msb(result));
+   local_integral_type rshift = 0;
    if (gb > max_bits)
    {
-      rshift      = gb - max_bits;
-      I   lb      = lsb(result);
+      rshift = gb - max_bits;
+      local_integral_type lb      = static_cast<local_integral_type>(lsb(result));
       int roundup = 0;
       // The error rate increases by the error of both a and b,
       // this may be overly pessimistic in many case as we're assuming
@@ -170,11 +172,11 @@ namespace backends {
 template <unsigned Digits, digit_base_type DigitBase, class Allocator, class Exponent, Exponent MinE, Exponent MaxE>
 cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>& cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::operator=(const char* s)
 {
-   cpp_int                      n;
-   std::intmax_t              decimal_exp     = 0;
-   std::intmax_t              digits_seen     = 0;
-   constexpr const std::intmax_t max_digits_seen = 4 + (cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count * 301L) / 1000;
-   bool                         ss              = false;
+             cpp_int       n;
+             std::intmax_t decimal_exp     = 0;
+             std::intmax_t digits_seen     = 0;
+   constexpr std::intmax_t max_digits_seen = 4 + (cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count * 301L) / 1000;
+             bool          ss              = false;
    //
    // Extract the sign:
    //
@@ -271,7 +273,7 @@ cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>& cpp_bin_float
       return *this;
    }
 
-   constexpr const std::size_t limb_bits = sizeof(limb_type) * CHAR_BIT;
+   constexpr std::size_t limb_bits = sizeof(limb_type) * CHAR_BIT;
    //
    // Set our working precision - this is heuristic based, we want
    // a value as small as possible > cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count to avoid large computations
@@ -306,7 +308,7 @@ cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>& cpp_bin_float
          else
             t = n;
          final_exponent = (std::int64_t)cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count - 1 + decimal_exp + calc_exp;
-         std::ptrdiff_t rshift     = msb(t) - cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count + 1;
+         std::ptrdiff_t rshift     = static_cast<std::ptrdiff_t>(static_cast<std::ptrdiff_t>(msb(t)) - static_cast<std::ptrdiff_t>(cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count) + 1);
          if (rshift > 0)
          {
             final_exponent += rshift;
@@ -361,9 +363,9 @@ cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>& cpp_bin_float
       do
       {
          cpp_int d;
-         calc_exp       = boost::multiprecision::cpp_bf_io_detail::restricted_pow(d, cpp_int(5), -decimal_exp, max_bits, error);
-         std::ptrdiff_t shift      = static_cast<int>(cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count) - msb(n) + msb(d);
-         final_exponent = cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count - 1 + decimal_exp - calc_exp;
+         calc_exp                   = boost::multiprecision::cpp_bf_io_detail::restricted_pow(d, cpp_int(5), -decimal_exp, max_bits, error);
+         const std::ptrdiff_t shift = static_cast<std::ptrdiff_t>(static_cast<std::ptrdiff_t>(cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count) - static_cast<std::ptrdiff_t>(msb(n)) + static_cast<std::ptrdiff_t>(msb(d)));
+         final_exponent             = cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count - 1 + decimal_exp - calc_exp;
          if (shift > 0)
          {
             n <<= shift;
@@ -371,7 +373,7 @@ cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>& cpp_bin_float
          }
          cpp_int q, r;
          divide_qr(n, d, q, r);
-         std::ptrdiff_t gb = msb(q);
+         std::ptrdiff_t gb = static_cast<std::ptrdiff_t>(msb(q));
          BOOST_MP_ASSERT((gb >= static_cast<int>(cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count) - 1));
          //
          // Check for rounding conditions we have to
@@ -383,7 +385,7 @@ cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>& cpp_bin_float
             // Exactly the right number of bits, use the remainder to round:
             roundup = boost::multiprecision::cpp_bf_io_detail::get_round_mode(r, d, error, q);
          }
-         else if (bit_test(q, gb - static_cast<int>(cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count)) && (static_cast<int>(lsb(q)) == (gb - static_cast<int>(cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count))))
+         else if (bit_test(q, static_cast<std::size_t>(gb - static_cast<std::ptrdiff_t>(cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count))) && (static_cast<std::ptrdiff_t>(lsb(q)) == static_cast<std::ptrdiff_t>(gb - static_cast<std::ptrdiff_t>(cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count))))
          {
             // Too many bits in q and the bits in q indicate a tie, but we can break that using r,
             // note that the radius of error in r is error/2 * q:
@@ -514,7 +516,7 @@ std::string cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::s
       shift -= power10;
       cpp_int               i;
       int                   roundup   = 0; // 0=no rounding, 1=tie, 2=up
-      constexpr const std::size_t limb_bits = sizeof(limb_type) * CHAR_BIT;
+      constexpr std::size_t limb_bits = sizeof(limb_type) * CHAR_BIT;
       //
       // Set our working precision - this is heuristic based, we want
       // a value as small as possible > cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count to avoid large computations
@@ -529,7 +531,12 @@ std::string cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::s
 #else
       std::intmax_t max_bits = cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count + ((cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count % limb_bits) ? (limb_bits - cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count % limb_bits) : 0) + limb_bits;
       if (power10)
-         max_bits += (msb(boost::multiprecision::detail::abs(power10)) / 8) * limb_bits;
+      {
+         const std::uintmax_t abs_power10 = static_cast<std::uintmax_t>(boost::multiprecision::detail::abs(power10));
+         const std::intmax_t  msb_div8    = static_cast<std::intmax_t>(msb(abs_power10) / 8u);
+
+         max_bits += (msb_div8 * static_cast<std::intmax_t>(limb_bits));
+      }
 #endif
       do
       {

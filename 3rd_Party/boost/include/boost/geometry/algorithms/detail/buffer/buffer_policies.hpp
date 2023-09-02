@@ -158,7 +158,6 @@ struct buffer_turn_info
     // or (for deflate) if there are not enough points to traverse it.
     bool is_turn_traversable;
 
-    bool close_to_offset;
     bool is_linear_end_point;
     bool within_original;
     signed_size_type count_in_original; // increased by +1 for in ext.ring, -1 for int.ring
@@ -166,7 +165,6 @@ struct buffer_turn_info
     inline buffer_turn_info()
         : turn_index(0)
         , is_turn_traversable(true)
-        , close_to_offset(false)
         , is_linear_end_point(false)
         , within_original(false)
         , count_in_original(0)

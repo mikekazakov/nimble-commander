@@ -48,7 +48,7 @@ qvm_detail
                 T det = determinant_impl(c);
                 if( (i+j)&1 )
                     det=-det;
-                mat_traits<R>::write_element_idx(i,j,b) = det;
+                write_mat_element_idx(i,j,b,det);
                 }
             }
         return b;

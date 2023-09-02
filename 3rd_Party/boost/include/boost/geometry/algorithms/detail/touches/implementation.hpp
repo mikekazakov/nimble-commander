@@ -3,10 +3,10 @@
 // Copyright (c) 2007-2015 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2008-2015 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
-// Copyright (c) 2013-2015 Adam Wulkiewicz, Lodz, Poland.
+// Copyright (c) 2013-2022 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2013-2020.
-// Modifications copyright (c) 2013-2020, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2022.
+// Modifications copyright (c) 2013-2022, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -24,21 +24,28 @@
 #include <type_traits>
 
 #include <boost/geometry/algorithms/detail/for_each_range.hpp>
+#include <boost/geometry/algorithms/detail/gc_topological_dimension.hpp>
 #include <boost/geometry/algorithms/detail/overlay/overlay.hpp>
 #include <boost/geometry/algorithms/detail/overlay/self_turn_points.hpp>
 #include <boost/geometry/algorithms/detail/sub_range.hpp>
+#include <boost/geometry/algorithms/detail/relate/implementation.hpp>
+#include <boost/geometry/algorithms/detail/relate/implementation_gc.hpp>
 #include <boost/geometry/algorithms/detail/relate/relate_impl.hpp>
 #include <boost/geometry/algorithms/detail/touches/interface.hpp>
+#include <boost/geometry/algorithms/detail/visit.hpp>
 #include <boost/geometry/algorithms/disjoint.hpp>
 #include <boost/geometry/algorithms/intersects.hpp>
 #include <boost/geometry/algorithms/num_geometries.hpp>
-#include <boost/geometry/algorithms/relate.hpp>
+
+#include <boost/geometry/geometries/helper_geometry.hpp>
 
 #include <boost/geometry/policies/robustness/no_rescale_policy.hpp>
 
 #include <boost/geometry/strategies/relate/cartesian.hpp>
 #include <boost/geometry/strategies/relate/geographic.hpp>
 #include <boost/geometry/strategies/relate/spherical.hpp>
+
+#include <boost/geometry/views/detail/geometry_collection_view.hpp>
 
 
 namespace boost { namespace geometry
@@ -80,7 +87,7 @@ struct box_box_loop
         {
             touch = true;
         }
-        
+
         return box_box_loop
                 <
                     Dimension + 1,
@@ -150,19 +157,20 @@ struct areal_interrupt_policy
     inline bool apply(Range const& range)
     {
         // if already rejected (temp workaround?)
-        if ( found_not_touch )
-            return true;
-
-        typedef typename boost::range_iterator<Range const>::type iterator;
-        for ( iterator it = boost::begin(range) ; it != boost::end(range) ; ++it )
+        if (found_not_touch)
         {
-            if ( it->has(overlay::operation_intersection) )
+            return true;
+        }
+
+        for (auto it = boost::begin(range); it != boost::end(range); ++it)
+        {
+            if (it->has(overlay::operation_intersection))
             {
                 found_not_touch = true;
                 return true;
             }
 
-            switch(it->method)
+            switch (it->method)
             {
                 case overlay::method_crosses:
                     found_not_touch = true;
@@ -211,7 +219,8 @@ inline bool point_on_border_within(Geometry1 const& geometry1,
                                    Geometry2 const& geometry2,
                                    Strategy const& strategy)
 {
-    typename geometry::point_type<Geometry1>::type pt;
+    using point_type = typename geometry::point_type<Geometry1>::type;
+    typename helper_geometry<point_type>::type pt;
     return geometry::point_on_border(pt, geometry1)
         && geometry::within(pt, geometry2, strategy);
 }
@@ -235,8 +244,9 @@ struct areal_areal
                              Geometry2 const& geometry2,
                              Strategy const& strategy)
     {
-        typedef typename geometry::point_type<Geometry1>::type point_type;
-        typedef detail::overlay::turn_info<point_type> turn_info;
+        using point_type = typename geometry::point_type<Geometry1>::type;
+        using mutable_point_type = typename helper_geometry<point_type>::type;
+        using turn_info = detail::overlay::turn_info<mutable_point_type>;
 
         std::deque<turn_info> turns;
         detail::touches::areal_interrupt_policy policy;
@@ -261,6 +271,55 @@ struct use_point_in_geometry
     static inline bool apply(Point const& point, Geometry const& geometry, Strategy const& strategy)
     {
         return detail::within::point_in_geometry(point, geometry, strategy) == 0;
+    }
+};
+
+// GC
+
+struct gc_gc
+{
+    template <typename Geometry1, typename Geometry2, typename Strategy>
+    static inline bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        int const dimension1 = detail::gc_topological_dimension(geometry1);
+        int const dimension2 = detail::gc_topological_dimension(geometry2);
+
+        if (dimension1 == 0 && dimension2 == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return detail::relate::relate_impl
+                <
+                    detail::de9im::static_mask_touches_not_pp_type,
+                    Geometry1,
+                    Geometry2
+                >::apply(geometry1, geometry2, strategy);
+        }
+    }
+};
+
+struct notgc_gc
+{
+    template <typename Geometry1, typename Geometry2, typename Strategy>
+    static inline bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        using gc1_view_t = detail::geometry_collection_view<Geometry1>;
+        return gc_gc::apply(gc1_view_t(geometry1), geometry2, strategy);
+    }
+};
+
+struct gc_notgc
+{
+    template <typename Geometry1, typename Geometry2, typename Strategy>
+    static inline bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        using gc2_view_t = detail::geometry_collection_view<Geometry2>;
+        return gc_gc::apply(geometry1, gc2_view_t(geometry2), strategy);
     }
 };
 
@@ -396,14 +455,52 @@ struct touches<Areal1, Areal2, ring_tag, ring_tag, areal_tag, areal_tag, false>
     : detail::touches::areal_areal<Areal1, Areal2>
 {};
 
+// GC
+
+template <typename Geometry1, typename Geometry2>
+struct touches
+    <
+        Geometry1, Geometry2,
+        geometry_collection_tag, geometry_collection_tag,
+        geometry_collection_tag, geometry_collection_tag,
+        false
+    >
+    : detail::touches::gc_gc
+{};
+
+
+template <typename Geometry1, typename Geometry2, typename Tag1, typename CastedTag1>
+struct touches
+    <
+        Geometry1, Geometry2,
+        Tag1, geometry_collection_tag,
+        CastedTag1, geometry_collection_tag,
+        false
+    >
+    : detail::touches::notgc_gc
+{};
+
+
+template <typename Geometry1, typename Geometry2, typename Tag2, typename CastedTag2>
+struct touches
+    <
+        Geometry1, Geometry2,
+        geometry_collection_tag, Tag2,
+        geometry_collection_tag, CastedTag2,
+        false
+    >
+    : detail::touches::gc_notgc
+{};
+
+
 } // namespace dispatch
 #endif // DOXYGEN_NO_DISPATCH
 
 
-namespace resolve_variant
+namespace resolve_dynamic
 {
 
-template <typename Geometry>
+template <typename Geometry, typename Tag>
 struct self_touches
 {
     static bool apply(Geometry const& geometry)
@@ -436,7 +533,7 @@ struct self_touches
     }
 };
 
-}
+} // namespace resolve_dynamic
 
 }} // namespace boost::geometry
 

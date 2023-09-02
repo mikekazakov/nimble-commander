@@ -44,15 +44,16 @@ namespace boost { namespace spirit { namespace qi
 
 namespace detail
 {
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename Iterator>
     struct psbuf
       : std::basic_streambuf<typename std::iterator_traits<Iterator>::value_type>
     {
         psbuf(Iterator first_, Iterator const& last_)
           : first(first_), last(last_) {}
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(psbuf& operator=(psbuf const&))
 
     protected:
         typename psbuf::int_type underflow() BOOST_OVERRIDE
@@ -71,6 +72,9 @@ namespace detail
         Iterator first;
         Iterator const& last;
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 }
 
     template <typename Char = char, typename T = spirit::basic_hold_any<char> >

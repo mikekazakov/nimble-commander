@@ -10,10 +10,7 @@
 #include <algorithm>
 #include <cstring>
 
-namespace boost { namespace cnv
-{
-    template<typename> struct cnvbase;
-}}
+namespace boost { namespace cnv { template<typename> struct cnvbase; }}
 
 #define BOOST_CNV_TO_STRING                                                 \
     template<typename string_type>                                          \
@@ -89,7 +86,8 @@ struct boost::cnv::cnvbase
     BOOST_CNV_STRING_TO (string_type const& s, optional<  ldbl_type>& r) const { str_to_(s, r); }
 
     template<typename argument_pack>
-    derived_type& operator()(argument_pack const& arg)
+    typename std::enable_if<boost::parameter::is_argument_pack<argument_pack>::value, derived_type&>::type
+    operator()(argument_pack const& arg)
     {
         BOOST_CNV_PARAM_TRY(base);
         BOOST_CNV_PARAM_TRY(adjust);
@@ -98,6 +96,7 @@ struct boost::cnv::cnvbase
         BOOST_CNV_PARAM_TRY(skipws);
         BOOST_CNV_PARAM_TRY(width);
         BOOST_CNV_PARAM_TRY(fill);
+        BOOST_CNV_PARAM_TRY(notation);
 //      BOOST_CNV_PARAM_TRY(locale);
 
         return this->dncast();
@@ -105,16 +104,7 @@ struct boost::cnv::cnvbase
 
     protected:
 
-    cnvbase()
-    :
-        skipws_     (false),
-        precision_  (0),
-        uppercase_  (false),
-        width_      (0),
-        fill_       (' '),
-        base_       (boost::cnv::base::dec),
-        adjust_     (boost::cnv::adjust::right)
-    {}
+    cnvbase() = default;
 
     template<typename string_type, typename out_type>
     void
@@ -185,20 +175,22 @@ struct boost::cnv::cnvbase
     BOOST_CNV_PARAM_SET(skipws)    { skipws_    = arg[cnv::parameter::   skipws]; }
     BOOST_CNV_PARAM_SET(width)     { width_     = arg[cnv::parameter::    width]; }
     BOOST_CNV_PARAM_SET(fill)      { fill_      = arg[cnv::parameter::     fill]; }
+    BOOST_CNV_PARAM_SET(notation)  { notation_  = arg[cnv::parameter:: notation]; }
 //  BOOST_CNV_PARAM_SET(locale)    { locale_    = arg[cnv::parameter::   locale]; }
 
     // ULONG_MAX(8 bytes) = 18446744073709551615 (20(10) or 32(2) characters)
     // double (8 bytes) max is 316 chars
     static int BOOST_CONSTEXPR_OR_CONST bufsize_ = 512;
 
-    bool        skipws_;
-    int      precision_;
-    bool     uppercase_;
-    int          width_;
-    int           fill_;
-    cnv::base     base_;
-    cnv::adjust adjust_;
-//  std::locale locale_;
+    bool            skipws_ = false;
+    int          precision_ = 0;
+    bool         uppercase_ = false;
+    int              width_ = 0;
+    int               fill_ = ' ';
+    cnv::base         base_ = boost::cnv::base::dec;
+    cnv::adjust     adjust_ = boost::cnv::adjust::right;
+    cnv::notation notation_ = boost::cnv::notation::fixed;
+//  std::locale     locale_;
 };
 
 #undef BOOST_CNV_TO_STRING

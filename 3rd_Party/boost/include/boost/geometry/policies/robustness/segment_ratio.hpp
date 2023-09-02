@@ -164,7 +164,7 @@ public:
     segment_ratio& operator=(segment_ratio const&) = default;
     segment_ratio(segment_ratio&&) = default;
     segment_ratio& operator=(segment_ratio&&) = default;
-    
+
     // These are needed because in intersection strategies ratios are assigned
     // in fractions and if a user passes CalculationType then ratio Type in
     // turns is taken from geometry coordinate_type and the one used in
@@ -225,7 +225,7 @@ public:
         }
 
         m_approximation =
-            m_denominator == zero_instance() ? 0
+            m_denominator == zero_instance() ? floating_point_type{0}
             : (
                 boost::numeric_cast<floating_point_type>(m_numerator) * scale()
                 / boost::numeric_cast<floating_point_type>(m_denominator)

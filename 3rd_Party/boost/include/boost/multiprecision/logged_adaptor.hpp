@@ -3,8 +3,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_MATH_LOGGED_ADAPTER_HPP
-#define BOOST_MATH_LOGGED_ADAPTER_HPP
+#ifndef BOOST_MP_LOGGED_ADAPTER_HPP
+#define BOOST_MP_LOGGED_ADAPTER_HPP
 
 #include <boost/multiprecision/detail/standalone_config.hpp>
 #include <boost/multiprecision/traits/extract_exponent_type.hpp>
@@ -84,13 +84,13 @@ struct logged_adaptor
       return *this;
    }
    template <class T>
-   logged_adaptor(const T& i, const typename std::enable_if<std::is_convertible<T, Backend>::value>::type* = 0)
+   logged_adaptor(const T& i, const typename std::enable_if<std::is_convertible<T, Backend>::value>::type* = nullptr)
        : m_value(i)
    {
       log_postfix_event(m_value, "construct from arithmetic type");
    }
    template <class T>
-   logged_adaptor(const logged_adaptor<T>& i, const typename std::enable_if<std::is_convertible<T, Backend>::value>::type* = 0)
+   logged_adaptor(const logged_adaptor<T>& i, const typename std::enable_if<std::is_convertible<T, Backend>::value>::type* = nullptr)
        : m_value(i.value())
    {
       log_postfix_event(m_value, "construct from arithmetic type");
@@ -748,8 +748,6 @@ inline void assign_components(logged_adaptor<T>& result, const V& v1, const U& v
 
 } // namespace backends
 
-using backends::logged_adaptor;
-
 namespace detail {
    template <class Backend>
    struct is_variable_precision<logged_adaptor<Backend> > : public is_variable_precision<Backend>
@@ -772,9 +770,6 @@ namespace detail {
 template <class Backend>
 struct number_category<backends::logged_adaptor<Backend> > : public number_category<Backend>
 {};
-
-template <class Number>
-using logged_adaptor_t = number<logged_adaptor<typename Number::backend_type>, Number::et>;
 
 template <class Backend, expression_template_option ExpressionTemplates>
 struct component_type<number<logged_adaptor<Backend>, ExpressionTemplates>>

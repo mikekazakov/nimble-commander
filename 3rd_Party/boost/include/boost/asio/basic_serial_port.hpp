@@ -2,7 +2,7 @@
 // basic_serial_port.hpp
 // ~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 // Copyright (c) 2008 Rep Invariant Systems, Inc. (info@repinvariant.com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -60,6 +60,10 @@ template <typename Executor = any_io_executor>
 class basic_serial_port
   : public serial_port_base
 {
+private:
+  class initiate_async_write_some;
+  class initiate_async_read_some;
+
 public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
@@ -288,6 +292,55 @@ public:
     impl_ = std::move(other.impl_);
     return *this;
   }
+
+  // All serial ports have access to each other's implementations.
+  template <typename Executor1>
+  friend class basic_serial_port;
+
+  /// Move-construct a basic_serial_port from a serial port of another executor
+  /// type.
+  /**
+   * This constructor moves a serial port from one object to another.
+   *
+   * @param other The other basic_serial_port object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_serial_port(const executor_type&)
+   * constructor.
+   */
+  template <typename Executor1>
+  basic_serial_port(basic_serial_port<Executor1>&& other,
+      typename constraint<
+        is_convertible<Executor1, Executor>::value,
+        defaulted_constraint
+      >::type = defaulted_constraint())
+    : impl_(std::move(other.impl_))
+  {
+  }
+
+  /// Move-assign a basic_serial_port from a serial port of another executor
+  /// type.
+  /**
+   * This assignment operator moves a serial port from one object to another.
+   *
+   * @param other The other basic_serial_port object from which the move will
+   * occur.
+   *
+   * @note Following the move, the moved-from object is in the same state as if
+   * constructed using the @c basic_serial_port(const executor_type&)
+   * constructor.
+   */
+  template <typename Executor1>
+  typename constraint<
+    is_convertible<Executor1, Executor>::value,
+    basic_serial_port&
+  >::type operator=(basic_serial_port<Executor1>&& other)
+  {
+    basic_serial_port tmp(std::move(other));
+    impl_ = std::move(tmp.impl_);
+    return *this;
+  }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
   /// Destroys the serial port.
@@ -301,7 +354,7 @@ public:
   }
 
   /// Get the executor associated with the object.
-  executor_type get_executor() BOOST_ASIO_NOEXCEPT
+  const executor_type& get_executor() BOOST_ASIO_NOEXCEPT
   {
     return impl_.get_executor();
   }
@@ -710,11 +763,15 @@ public:
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         std::size_t)) WriteToken
           BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WriteToken,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(WriteToken,
       void (boost::system::error_code, std::size_t))
   async_write_some(const ConstBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(WriteToken) token
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<WriteToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_write_some>(), token, buffers)))
   {
     return async_initiate<WriteToken,
       void (boost::system::error_code, std::size_t)>(
@@ -841,11 +898,15 @@ public:
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         std::size_t)) ReadToken
           BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(ReadToken,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(ReadToken,
       void (boost::system::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers,
       BOOST_ASIO_MOVE_ARG(ReadToken) token
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<ReadToken,
+        void (boost::system::error_code, std::size_t)>(
+          declval<initiate_async_read_some>(), token, buffers)))
   {
     return async_initiate<ReadToken,
       void (boost::system::error_code, std::size_t)>(
@@ -867,7 +928,7 @@ private:
     {
     }
 
-    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    const executor_type& get_executor() const BOOST_ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }
@@ -900,7 +961,7 @@ private:
     {
     }
 
-    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    const executor_type& get_executor() const BOOST_ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }

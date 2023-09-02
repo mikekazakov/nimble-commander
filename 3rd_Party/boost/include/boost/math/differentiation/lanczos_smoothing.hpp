@@ -10,9 +10,18 @@
 #include <limits> // to nan initialize
 #include <vector>
 #include <string>
+#include <cstdint>
 #include <stdexcept>
 #include <type_traits>
 #include <boost/math/tools/assert.hpp>
+
+#include <boost/math/tools/is_standalone.hpp>
+#ifndef BOOST_MATH_STANDALONE
+#include <boost/config.hpp>
+#ifdef BOOST_NO_CXX17_IF_CONSTEXPR
+#error "The header <boost/math/norms.hpp> can only be used in C++17 and later."
+#endif
+#endif
 
 namespace boost::math::differentiation {
 
@@ -569,8 +578,8 @@ public:
     discrete_lanczos_derivative& operator=(const discrete_lanczos_derivative&) = delete;
 
     // Allow moves:
-    discrete_lanczos_derivative(discrete_lanczos_derivative&&) = default;
-    discrete_lanczos_derivative& operator=(discrete_lanczos_derivative&&) = default;
+    discrete_lanczos_derivative(discrete_lanczos_derivative&&) noexcept = default;
+    discrete_lanczos_derivative& operator=(discrete_lanczos_derivative&&) noexcept = default;
 
 private:
     std::vector<Real> m_f;

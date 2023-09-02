@@ -24,7 +24,7 @@
 #include <boost/type_traits/is_const.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/not.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <boost/core/enable_if.hpp>
 
 
 /******************************************************************************

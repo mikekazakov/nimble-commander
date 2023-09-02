@@ -236,7 +236,7 @@ bool axes_equal_impl(const T& t, const U& u, mp11::index_sequence<Is...>) noexce
 template <class... Ts, class... Us>
 bool axes_equal_impl(const std::tuple<Ts...>& t, const std::tuple<Us...>& u) noexcept {
   return axes_equal_impl(
-      t, u, mp11::make_index_sequence<std::min(sizeof...(Ts), sizeof...(Us))>{});
+      t, u, mp11::make_index_sequence<(std::min)(sizeof...(Ts), sizeof...(Us))>{});
 }
 
 template <class... Ts, class U>
@@ -433,8 +433,9 @@ using has_non_inclusive_axis = mp11::mp_any_of<axis_types<Axes>, is_not_inclusiv
 
 template <class T>
 constexpr std::size_t type_score() {
-  return sizeof(T) *
-         (std::is_integral<T>::value ? 1 : std::is_floating_point<T>::value ? 10 : 100);
+  return sizeof(T) * (std::is_integral<T>::value         ? 1
+                      : std::is_floating_point<T>::value ? 10
+                                                         : 100);
 }
 
 // arbitrary ordering of types

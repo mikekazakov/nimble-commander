@@ -30,8 +30,9 @@
 #include <boost/core/scoped_enum.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/cstdint.hpp>
-#include <string>
+#include <cstddef>
 #include <ctime>
+#include <string>
 
 #include <boost/filesystem/detail/header.hpp> // must be the last #include
 
@@ -89,78 +90,78 @@ BOOST_SCOPED_ENUM_DECLARE_END(copy_option)
 namespace detail {
 
 BOOST_FILESYSTEM_DECL
-path absolute(path const& p, path const& base, system::error_code* ec = 0);
+path absolute(path const& p, path const& base, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-file_status status(path const& p, system::error_code* ec = 0);
+file_status status(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-file_status symlink_status(path const& p, system::error_code* ec = 0);
+file_status symlink_status(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-bool is_empty(path const& p, system::error_code* ec = 0);
+bool is_empty(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-path initial_path(system::error_code* ec = 0);
+path initial_path(system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-path canonical(path const& p, path const& base, system::error_code* ec = 0);
+path canonical(path const& p, path const& base, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-void copy(path const& from, path const& to, unsigned int options, system::error_code* ec = 0);
+void copy(path const& from, path const& to, unsigned int options, system::error_code* ec = NULL);
 #if !defined(BOOST_FILESYSTEM_NO_DEPRECATED)
 BOOST_FILESYSTEM_DECL
-void copy_directory(path const& from, path const& to, system::error_code* ec = 0);
+void copy_directory(path const& from, path const& to, system::error_code* ec = NULL);
 #endif
 BOOST_FILESYSTEM_DECL
-bool copy_file(path const& from, path const& to,                  // See ticket #2925
-               unsigned int options, system::error_code* ec = 0); // see copy_options for options
+bool copy_file(path const& from, path const& to,                     // See ticket #2925
+               unsigned int options, system::error_code* ec = NULL); // see copy_options for options
 BOOST_FILESYSTEM_DECL
-void copy_symlink(path const& existing_symlink, path const& new_symlink, system::error_code* ec = 0);
+void copy_symlink(path const& existing_symlink, path const& new_symlink, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-bool create_directories(path const& p, system::error_code* ec = 0);
+bool create_directories(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-bool create_directory(path const& p, const path* existing, system::error_code* ec = 0);
+bool create_directory(path const& p, const path* existing, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-void create_directory_symlink(path const& to, path const& from, system::error_code* ec = 0);
+void create_directory_symlink(path const& to, path const& from, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-void create_hard_link(path const& to, path const& from, system::error_code* ec = 0);
+void create_hard_link(path const& to, path const& from, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-void create_symlink(path const& to, path const& from, system::error_code* ec = 0);
+void create_symlink(path const& to, path const& from, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-path current_path(system::error_code* ec = 0);
+path current_path(system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-void current_path(path const& p, system::error_code* ec = 0);
+void current_path(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-bool equivalent(path const& p1, path const& p2, system::error_code* ec = 0);
+bool equivalent(path const& p1, path const& p2, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-boost::uintmax_t file_size(path const& p, system::error_code* ec = 0);
+boost::uintmax_t file_size(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-boost::uintmax_t hard_link_count(path const& p, system::error_code* ec = 0);
+boost::uintmax_t hard_link_count(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-std::time_t creation_time(path const& p, system::error_code* ec = 0);
+std::time_t creation_time(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-std::time_t last_write_time(path const& p, system::error_code* ec = 0);
+std::time_t last_write_time(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-void last_write_time(path const& p, const std::time_t new_time, system::error_code* ec = 0);
+void last_write_time(path const& p, const std::time_t new_time, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-void permissions(path const& p, perms prms, system::error_code* ec = 0);
+void permissions(path const& p, perms prms, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-path read_symlink(path const& p, system::error_code* ec = 0);
+path read_symlink(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-path relative(path const& p, path const& base, system::error_code* ec = 0);
+path relative(path const& p, path const& base, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-bool remove(path const& p, system::error_code* ec = 0);
+bool remove(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-boost::uintmax_t remove_all(path const& p, system::error_code* ec = 0);
+boost::uintmax_t remove_all(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-void rename(path const& old_p, path const& new_p, system::error_code* ec = 0);
+void rename(path const& old_p, path const& new_p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-void resize_file(path const& p, uintmax_t size, system::error_code* ec = 0);
+void resize_file(path const& p, uintmax_t size, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-space_info space(path const& p, system::error_code* ec = 0);
+space_info space(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-path system_complete(path const& p, system::error_code* ec = 0);
+path system_complete(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-path temp_directory_path(system::error_code* ec = 0);
+path temp_directory_path(system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-path unique_path(path const& p, system::error_code* ec = 0);
+path unique_path(path const& p, system::error_code* ec = NULL);
 BOOST_FILESYSTEM_DECL
-path weakly_canonical(path const& p, path const& base, system::error_code* ec = 0);
+path weakly_canonical(path const& p, path const& base, system::error_code* ec = NULL);
 
 } // namespace detail
 
@@ -175,7 +176,7 @@ inline file_status status(path const& p)
     return detail::status(p);
 }
 
-inline file_status status(path const& p, system::error_code& ec)
+inline file_status status(path const& p, system::error_code& ec) BOOST_NOEXCEPT
 {
     return detail::status(p, &ec);
 }
@@ -185,70 +186,122 @@ inline file_status symlink_status(path const& p)
     return detail::symlink_status(p);
 }
 
-inline file_status symlink_status(path const& p, system::error_code& ec)
+inline file_status symlink_status(path const& p, system::error_code& ec) BOOST_NOEXCEPT
 {
     return detail::symlink_status(p, &ec);
 }
 
 inline bool exists(path const& p)
 {
-    return exists(detail::status(p));
+    return filesystem::exists(detail::status(p));
 }
 
-inline bool exists(path const& p, system::error_code& ec)
+inline bool exists(path const& p, system::error_code& ec) BOOST_NOEXCEPT
 {
-    return exists(detail::status(p, &ec));
-}
-
-inline bool is_directory(path const& p)
-{
-    return is_directory(detail::status(p));
-}
-
-inline bool is_directory(path const& p, system::error_code& ec)
-{
-    return is_directory(detail::status(p, &ec));
+    return filesystem::exists(detail::status(p, &ec));
 }
 
 inline bool is_regular_file(path const& p)
 {
-    return is_regular_file(detail::status(p));
+    return filesystem::is_regular_file(detail::status(p));
 }
 
-inline bool is_regular_file(path const& p, system::error_code& ec)
+inline bool is_regular_file(path const& p, system::error_code& ec) BOOST_NOEXCEPT
 {
-    return is_regular_file(detail::status(p, &ec));
+    return filesystem::is_regular_file(detail::status(p, &ec));
 }
 
-inline bool is_other(path const& p)
+inline bool is_directory(path const& p)
 {
-    return is_other(detail::status(p));
+    return filesystem::is_directory(detail::status(p));
 }
 
-inline bool is_other(path const& p, system::error_code& ec)
+inline bool is_directory(path const& p, system::error_code& ec) BOOST_NOEXCEPT
 {
-    return is_other(detail::status(p, &ec));
+    return filesystem::is_directory(detail::status(p, &ec));
 }
 
 inline bool is_symlink(path const& p)
 {
-    return is_symlink(detail::symlink_status(p));
+    return filesystem::is_symlink(detail::symlink_status(p));
 }
 
-inline bool is_symlink(path const& p, system::error_code& ec)
+inline bool is_symlink(path const& p, system::error_code& ec) BOOST_NOEXCEPT
 {
-    return is_symlink(detail::symlink_status(p, &ec));
+    return filesystem::is_symlink(detail::symlink_status(p, &ec));
+}
+
+inline bool is_block_file(path const& p)
+{
+    return filesystem::is_block_file(detail::status(p));
+}
+
+inline bool is_block_file(path const& p, system::error_code& ec) BOOST_NOEXCEPT
+{
+    return filesystem::is_block_file(detail::status(p, &ec));
+}
+
+inline bool is_character_file(path const& p)
+{
+    return filesystem::is_character_file(detail::status(p));
+}
+
+inline bool is_character_file(path const& p, system::error_code& ec) BOOST_NOEXCEPT
+{
+    return filesystem::is_character_file(detail::status(p, &ec));
+}
+
+inline bool is_fifo(path const& p)
+{
+    return filesystem::is_fifo(detail::status(p));
+}
+
+inline bool is_fifo(path const& p, system::error_code& ec) BOOST_NOEXCEPT
+{
+    return filesystem::is_fifo(detail::status(p, &ec));
+}
+
+inline bool is_socket(path const& p)
+{
+    return filesystem::is_socket(detail::status(p));
+}
+
+inline bool is_socket(path const& p, system::error_code& ec) BOOST_NOEXCEPT
+{
+    return filesystem::is_socket(detail::status(p, &ec));
+}
+
+inline bool is_reparse_file(path const& p)
+{
+    return filesystem::is_reparse_file(detail::symlink_status(p));
+}
+
+inline bool is_reparse_file(path const& p, system::error_code& ec) BOOST_NOEXCEPT
+{
+    return filesystem::is_reparse_file(detail::symlink_status(p, &ec));
+}
+
+inline bool is_other(path const& p)
+{
+    return filesystem::is_other(detail::status(p));
+}
+
+inline bool is_other(path const& p, system::error_code& ec) BOOST_NOEXCEPT
+{
+    return filesystem::is_other(detail::status(p, &ec));
 }
 
 #ifndef BOOST_FILESYSTEM_NO_DEPRECATED
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use is_regular_file() instead")
 inline bool is_regular(path const& p)
 {
-    return is_regular(detail::status(p));
+    return filesystem::is_regular_file(p);
 }
 
-inline bool is_regular(path const& p, system::error_code& ec)
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use is_regular_file() instead")
+inline bool is_regular(path const& p, system::error_code& ec) BOOST_NOEXCEPT
 {
-    return is_regular(detail::status(p, &ec));
+    return filesystem::is_regular_file(p, ec);
 }
 #endif
 
@@ -346,11 +399,13 @@ inline path canonical(path const& p, path const& base, system::error_code& ec)
 }
 
 #ifndef BOOST_FILESYSTEM_NO_DEPRECATED
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use absolute() instead")
 inline path complete(path const& p)
 {
     return absolute(p, initial_path());
 }
 
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use absolute() instead")
 inline path complete(path const& p, path const& base)
 {
     return absolute(p, base);
@@ -378,11 +433,13 @@ inline void copy(path const& from, path const& to, BOOST_SCOPED_ENUM_NATIVE(copy
 }
 
 #if !defined(BOOST_FILESYSTEM_NO_DEPRECATED)
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use create_directory() instead")
 inline void copy_directory(path const& from, path const& to)
 {
     detail::copy_directory(from, to);
 }
 
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use create_directory() instead")
 inline void copy_directory(path const& from, path const& to, system::error_code& ec) BOOST_NOEXCEPT
 {
     detail::copy_directory(from, to, &ec);
@@ -412,12 +469,14 @@ inline bool copy_file(path const& from, path const& to, // See ticket #2925
 }
 
 #if !defined(BOOST_FILESYSTEM_NO_DEPRECATED)
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use copy_options instead of copy_option")
 inline bool copy_file(path const& from, path const& to, // See ticket #2925
                       BOOST_SCOPED_ENUM_NATIVE(copy_option) options)
 {
     return detail::copy_file(from, to, static_cast< unsigned int >(options));
 }
 
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use copy_options instead of copy_option")
 inline bool copy_file(path const& from, path const& to, // See ticket #2925
                       BOOST_SCOPED_ENUM_NATIVE(copy_option) options, system::error_code& ec) BOOST_NOEXCEPT
 {
@@ -447,12 +506,12 @@ inline bool create_directories(path const& p, system::error_code& ec) BOOST_NOEX
 
 inline bool create_directory(path const& p)
 {
-    return detail::create_directory(p, 0);
+    return detail::create_directory(p, NULL);
 }
 
 inline bool create_directory(path const& p, system::error_code& ec) BOOST_NOEXCEPT
 {
-    return detail::create_directory(p, 0, &ec);
+    return detail::create_directory(p, NULL, &ec);
 }
 
 inline bool create_directory(path const& p, path const& existing)
@@ -645,6 +704,7 @@ inline space_info space(path const& p, system::error_code& ec) BOOST_NOEXCEPT
 }
 
 #ifndef BOOST_FILESYSTEM_NO_DEPRECATED
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use is_symlink(symlink_status(path)) instead")
 inline bool symbolic_link_exists(path const& p)
 {
     return is_symlink(filesystem::symlink_status(p));

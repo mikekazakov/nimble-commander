@@ -15,6 +15,10 @@
 
 namespace boost { namespace spirit { namespace lex { namespace detail
 {
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename LexerDef, typename String>
     struct sequence_collect_function
     {
@@ -32,9 +36,6 @@ namespace boost { namespace spirit { namespace lex { namespace detail
         LexerDef& def;
         String const& state;
         String const& targetstate;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(sequence_collect_function& operator= (sequence_collect_function const&))
     };
 
     template <typename LexerDef>
@@ -51,10 +52,10 @@ namespace boost { namespace spirit { namespace lex { namespace detail
         }
 
         LexerDef& def;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(sequence_add_actions_function& operator= (sequence_add_actions_function const&))
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
 }}}}
 

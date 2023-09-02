@@ -62,7 +62,7 @@ inline std::string build_args(const std::string & exe, std::vector<std::string> 
             }
         }
 
-        if (!st.empty())//first one does not need a preceeding space
+        if (!st.empty())//first one does not need a preceding space
             st += ' ';
 
         st += arg;
@@ -106,7 +106,7 @@ inline std::wstring build_args(const std::wstring & exe, std::vector<std::wstrin
             }
         }
 
-        if (!st.empty())//first one does not need a preceeding space
+        if (!st.empty())//first one does not need a preceding space
             st += L' ';
 
         st += arg;
@@ -159,8 +159,13 @@ struct exe_cmd_init : handler_base_ext
         return exe_cmd_init<Char>(std::move(sh), std::move(args_));
     }
 
+#ifdef BOOST_PROCESS_USE_STD_FS
+    static std:: string get_shell(char)    {return shell(). string(); }
+    static std::wstring get_shell(wchar_t) {return shell().wstring(); }
+#else
     static std:: string get_shell(char)    {return shell(). string(codecvt()); }
     static std::wstring get_shell(wchar_t) {return shell().wstring(codecvt());}
+#endif
 
     static exe_cmd_init<Char> cmd_shell(string_type&& cmd)
     {

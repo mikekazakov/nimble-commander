@@ -10,7 +10,7 @@
 
 #include <boost/gil/image_view.hpp>
 #include <boost/gil/typedefs.hpp>
-#include <boost/gil/extension/numeric/kernel.hpp>
+#include <boost/gil/image_processing/kernel.hpp>
 
 namespace boost { namespace gil {
 /// \defgroup CornerDetectionAlgorithms
@@ -44,7 +44,7 @@ void compute_harris_responses(
             " tensor from the same image");
     }
 
-    auto const window_length = weights.size();
+    std::ptrdiff_t const window_length = weights.size();
     auto const width = m11.width();
     auto const height = m11.height();
     auto const half_length = window_length / 2;

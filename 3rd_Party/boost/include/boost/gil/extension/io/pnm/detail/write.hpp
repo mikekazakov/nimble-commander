@@ -14,7 +14,7 @@
 #include <boost/gil/io/base.hpp>
 #include <boost/gil/io/bit_operations.hpp>
 #include <boost/gil/io/device.hpp>
-#include <boost/gil/io/dynamic_io_new.hpp>
+#include <boost/gil/io/detail/dynamic.hpp>
 #include <boost/gil/detail/mp11.hpp>
 
 #include <cstdlib>
@@ -233,7 +233,7 @@ public:
                                 , parent_t
                                 > op( this );
 
-        apply_operation( views, op );
+        variant2::visit( op, views );
     }
 };
 

@@ -165,7 +165,7 @@ namespace boost { namespace wave { namespace util
 // helper macro for throwing exceptions with additional parameter
 #if !defined(BOOST_WAVE_THROW_NAME_CTX)
 #define BOOST_WAVE_THROW_NAME_CTX(ctx, cls, code, msg, act_pos, name)         \
-    boost::wave::util::throw_<cls>(cls::code, msg, act_pos, name)             \
+    boost::wave::util::throw_<cls>(ctx, cls::code, msg, act_pos, name)        \
     /**/
 #endif // BOOST_WAVE_THROW_NAME_CTX
 

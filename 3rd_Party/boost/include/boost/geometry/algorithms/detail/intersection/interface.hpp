@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014-2020.
-// Modifications copyright (c) 2014-2020, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2022.
+// Modifications copyright (c) 2014-2022, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -14,17 +14,15 @@
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_INTERSECTION_INTERFACE_HPP
 
 
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant_fwd.hpp>
-
 #include <boost/geometry/algorithms/detail/overlay/intersection_insert.hpp>
 #include <boost/geometry/algorithms/detail/tupled_output.hpp>
+#include <boost/geometry/geometries/adapted/boost_variant.hpp>
 #include <boost/geometry/policies/robustness/get_rescale_policy.hpp>
 #include <boost/geometry/strategies/default_strategy.hpp>
 #include <boost/geometry/strategies/detail.hpp>
 #include <boost/geometry/strategies/relate/services.hpp>
 #include <boost/geometry/util/range.hpp>
+#include <boost/geometry/util/type_traits_std.hpp>
 
 
 namespace boost { namespace geometry
@@ -107,6 +105,45 @@ struct intersection
 #endif // DOXYGEN_NO_DISPATCH
 
 
+namespace resolve_collection
+{
+
+template
+<
+    typename Geometry1, typename Geometry2, typename GeometryOut,
+    typename Tag1 = typename geometry::tag<Geometry1>::type,
+    typename Tag2 = typename geometry::tag<Geometry2>::type,
+    typename TagOut = typename geometry::tag<GeometryOut>::type
+>
+struct intersection
+{
+    template <typename Strategy>
+    static bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                      GeometryOut & geometry_out, Strategy const& strategy)
+    {
+        typedef typename geometry::rescale_overlay_policy_type
+            <
+                Geometry1,
+                Geometry2,
+                typename Strategy::cs_tag
+            >::type rescale_policy_type;
+
+        rescale_policy_type robust_policy
+            = geometry::get_rescale_policy<rescale_policy_type>(
+                    geometry1, geometry2, strategy);
+
+        return dispatch::intersection
+            <
+                Geometry1,
+                Geometry2
+            >::apply(geometry1, geometry2, robust_policy, geometry_out,
+                     strategy);
+    }
+};
+
+} // namespace resolve_collection
+
+
 namespace resolve_strategy {
 
 template
@@ -127,23 +164,10 @@ struct intersection
                              GeometryOut & geometry_out,
                              Strategy const& strategy)
     {
-        typedef typename geometry::rescale_overlay_policy_type
+        return resolve_collection::intersection
             <
-                Geometry1,
-                Geometry2,
-                typename Strategy::cs_tag
-            >::type rescale_policy_type;
-        
-        rescale_policy_type robust_policy
-            = geometry::get_rescale_policy<rescale_policy_type>(
-                    geometry1, geometry2, strategy);
-
-        return dispatch::intersection
-            <
-                Geometry1,
-                Geometry2
-            >::apply(geometry1, geometry2, robust_policy, geometry_out,
-                     strategy);
+                Geometry1, Geometry2, GeometryOut
+            >::apply(geometry1, geometry2, geometry_out, strategy);
     }
 };
 
@@ -199,21 +223,24 @@ struct intersection<default_strategy, false>
 } // resolve_strategy
 
 
-namespace resolve_variant
+namespace resolve_dynamic
 {
-    
-template <typename Geometry1, typename Geometry2>
+
+template
+<
+    typename Geometry1, typename Geometry2,
+    typename Tag1 = typename geometry::tag<Geometry1>::type,
+    typename Tag2 = typename geometry::tag<Geometry2>::type
+>
 struct intersection
 {
     template <typename GeometryOut, typename Strategy>
-    static inline bool apply(Geometry1 const& geometry1,
-                             Geometry2 const& geometry2,
-                             GeometryOut& geometry_out,
-                             Strategy const& strategy)
+    static inline bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             GeometryOut& geometry_out, Strategy const& strategy)
     {
         concepts::check<Geometry1 const>();
         concepts::check<Geometry2 const>();
-        
+
         return resolve_strategy::intersection
             <
                 Strategy
@@ -222,135 +249,70 @@ struct intersection
 };
 
 
-template <BOOST_VARIANT_ENUM_PARAMS(typename T), typename Geometry2>
-struct intersection<variant<BOOST_VARIANT_ENUM_PARAMS(T)>, Geometry2>
+template <typename DynamicGeometry1, typename Geometry2, typename Tag2>
+struct intersection<DynamicGeometry1, Geometry2, dynamic_geometry_tag, Tag2>
 {
     template <typename GeometryOut, typename Strategy>
-    struct visitor: static_visitor<bool>
+    static inline bool apply(DynamicGeometry1 const& geometry1, Geometry2 const& geometry2,
+                             GeometryOut& geometry_out, Strategy const& strategy)
     {
-        Geometry2 const& m_geometry2;
-        GeometryOut& m_geometry_out;
-        Strategy const& m_strategy;
-        
-        visitor(Geometry2 const& geometry2,
-                GeometryOut& geometry_out,
-                Strategy const& strategy)
-            : m_geometry2(geometry2)
-            , m_geometry_out(geometry_out)
-            , m_strategy(strategy)
-        {}
-        
-        template <typename Geometry1>
-        bool operator()(Geometry1 const& geometry1) const
+        bool result = false;
+        traits::visit<DynamicGeometry1>::apply([&](auto const& g1)
         {
-            return intersection
+            result = intersection
                 <
-                    Geometry1,
+                    util::remove_cref_t<decltype(g1)>,
                     Geometry2
-                >::apply(geometry1, m_geometry2, m_geometry_out, m_strategy);
-        }
-    };
-    
-    template <typename GeometryOut, typename Strategy>
-    static inline bool
-    apply(variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry1,
-          Geometry2 const& geometry2,
-          GeometryOut& geometry_out,
-          Strategy const& strategy)
-    {
-        return boost::apply_visitor(visitor<GeometryOut, Strategy>(geometry2,
-                                                                   geometry_out,
-                                                                   strategy),
-                                    geometry1);
+                >::apply(g1, geometry2, geometry_out, strategy);
+        }, geometry1);
+        return result;
     }
 };
 
 
-template <typename Geometry1, BOOST_VARIANT_ENUM_PARAMS(typename T)>
-struct intersection<Geometry1, variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+template <typename Geometry1, typename DynamicGeometry2, typename Tag1>
+struct intersection<Geometry1, DynamicGeometry2, Tag1, dynamic_geometry_tag>
 {
     template <typename GeometryOut, typename Strategy>
-    struct visitor: static_visitor<bool>
+    static inline bool apply(Geometry1 const& geometry1, DynamicGeometry2 const& geometry2,
+                             GeometryOut& geometry_out, Strategy const& strategy)
     {
-        Geometry1 const& m_geometry1;
-        GeometryOut& m_geometry_out;
-        Strategy const& m_strategy;
-        
-        visitor(Geometry1 const& geometry1,
-                GeometryOut& geometry_out,
-                Strategy const& strategy)
-            : m_geometry1(geometry1)
-            , m_geometry_out(geometry_out)
-            , m_strategy(strategy)
-        {}
-        
-        template <typename Geometry2>
-        bool operator()(Geometry2 const& geometry2) const
+        bool result = false;
+        traits::visit<DynamicGeometry2>::apply([&](auto const& g2)
         {
-            return intersection
+            result = intersection
                 <
                     Geometry1,
-                    Geometry2
-                >::apply(m_geometry1, geometry2, m_geometry_out, m_strategy);
-        }
-    };
-    
-    template <typename GeometryOut, typename Strategy>
-    static inline bool
-    apply(Geometry1 const& geometry1,
-          variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry2,
-          GeometryOut& geometry_out,
-          Strategy const& strategy)
-    {
-        return boost::apply_visitor(visitor<GeometryOut, Strategy>(geometry1,
-                                                                   geometry_out,
-                                                                   strategy),
-                                    geometry2);
+                    util::remove_cref_t<decltype(g2)>
+                >::apply(geometry1, g2, geometry_out, strategy);
+        }, geometry2);
+        return result;
     }
 };
 
 
-template <BOOST_VARIANT_ENUM_PARAMS(typename T1), BOOST_VARIANT_ENUM_PARAMS(typename T2)>
-struct intersection<variant<BOOST_VARIANT_ENUM_PARAMS(T1)>, variant<BOOST_VARIANT_ENUM_PARAMS(T2)> >
+template <typename DynamicGeometry1, typename DynamicGeometry2>
+struct intersection<DynamicGeometry1, DynamicGeometry2, dynamic_geometry_tag, dynamic_geometry_tag>
 {
     template <typename GeometryOut, typename Strategy>
-    struct visitor: static_visitor<bool>
+    static inline bool apply(DynamicGeometry1 const& geometry1, DynamicGeometry2 const& geometry2,
+                             GeometryOut& geometry_out, Strategy const& strategy)
     {
-        GeometryOut& m_geometry_out;
-        Strategy const& m_strategy;
-        
-        visitor(GeometryOut& geometry_out, Strategy const& strategy)
-            : m_geometry_out(geometry_out)
-            , m_strategy(strategy)
-        {}
-        
-        template <typename Geometry1, typename Geometry2>
-        bool operator()(Geometry1 const& geometry1,
-                        Geometry2 const& geometry2) const
+        bool result = false;
+        traits::visit<DynamicGeometry1, DynamicGeometry2>::apply([&](auto const& g1, auto const& g2)
         {
-            return intersection
+            result = intersection
                 <
-                    Geometry1,
-                    Geometry2
-                >::apply(geometry1, geometry2, m_geometry_out, m_strategy);
-        }
-    };
-    
-    template <typename GeometryOut, typename Strategy>
-    static inline bool
-    apply(variant<BOOST_VARIANT_ENUM_PARAMS(T1)> const& geometry1,
-          variant<BOOST_VARIANT_ENUM_PARAMS(T2)> const& geometry2,
-          GeometryOut& geometry_out,
-          Strategy const& strategy)
-    {
-        return boost::apply_visitor(visitor<GeometryOut, Strategy>(geometry_out,
-                                                                   strategy),
-                                    geometry1, geometry2);
+                    util::remove_cref_t<decltype(g1)>,
+                    util::remove_cref_t<decltype(g2)>
+                >::apply(g1, g2, geometry_out, strategy);
+        }, geometry1, geometry2);
+        return result;
     }
 };
-    
-} // namespace resolve_variant
-    
+
+} // namespace resolve_dynamic
+
 
 /*!
 \brief \brief_calc2{intersection}
@@ -382,7 +344,7 @@ inline bool intersection(Geometry1 const& geometry1,
                          GeometryOut& geometry_out,
                          Strategy const& strategy)
 {
-    return resolve_variant::intersection
+    return resolve_dynamic::intersection
         <
             Geometry1,
             Geometry2
@@ -415,7 +377,7 @@ inline bool intersection(Geometry1 const& geometry1,
                          Geometry2 const& geometry2,
                          GeometryOut& geometry_out)
 {
-    return resolve_variant::intersection
+    return resolve_dynamic::intersection
         <
             Geometry1,
             Geometry2

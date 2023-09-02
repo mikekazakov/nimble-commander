@@ -1,5 +1,6 @@
 //
 // Copyright 2005-2007 Adobe Systems Incorporated
+// Copyright 2021 Pranam Lashkari <plashkari628@gmail.com>
 //
 // Distributed under the Boost Software License, Version 1.0
 // See accompanying file LICENSE_1_0.txt or copy at
@@ -27,7 +28,7 @@ template <typename IC, typename C> struct planar_pixel_iterator;
 template <typename I> class memory_based_step_iterator;
 template <typename I> class memory_based_2d_locator;
 template <typename L> class image_view;
-template <typename Pixel, bool IsPlanar, typename Alloc> class image;
+template <typename Pixel, bool IsPlanar = false, typename Alloc=std::allocator<unsigned char> > class image;
 template <typename T> struct channel_type;
 template <typename T> struct color_space_type;
 template <typename T> struct channel_mapping_type;

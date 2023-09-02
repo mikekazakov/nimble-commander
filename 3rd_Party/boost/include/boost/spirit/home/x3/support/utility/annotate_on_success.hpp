@@ -11,6 +11,7 @@
 #include <boost/spirit/home/x3/support/context.hpp>
 #include <boost/spirit/home/x3/support/utility/error_reporting.hpp>
 #include <boost/spirit/home/x3/support/utility/lambda_visitor.hpp>
+#include <boost/spirit/home/x3/support/traits/is_variant.hpp>
 
 namespace boost { namespace spirit { namespace x3
 {
@@ -40,6 +41,13 @@ namespace boost { namespace spirit { namespace x3
 
         template <typename T, typename Iterator, typename Context>
         inline void on_success(Iterator const& first, Iterator const& last
+          , forward_ast<T>& ast, Context const& context)
+        {
+            this->on_success(first, last, ast.get(), context);
+        }
+
+        template <typename T, typename Iterator, typename Context>
+        inline typename disable_if<traits::is_variant<T>>::type on_success(Iterator const& first, Iterator const& last
           , T& ast, Context const& context)
         {
             auto& error_handler = x3::get<error_handler_tag>(context).get();

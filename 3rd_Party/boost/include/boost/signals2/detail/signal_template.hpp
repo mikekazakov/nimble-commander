@@ -153,7 +153,7 @@ namespace boost
 
         BOOST_SIGNALS2_SIGNAL_IMPL_CLASS_NAME(BOOST_SIGNALS2_NUM_ARGS)(const combiner_type &combiner_arg,
           const group_compare_type &group_compare):
-          _shared_state(new invocation_state(connection_list_type(group_compare), combiner_arg)),
+          _shared_state(boost::make_shared<invocation_state>(connection_list_type(group_compare), combiner_arg)),
           _garbage_collector_it(_shared_state->connection_bodies().end()),
           _mutex(new mutex_type())
         {}
@@ -306,7 +306,7 @@ namespace boost
           if(_shared_state.unique())
             _shared_state->combiner() = combiner_arg;
           else
-            _shared_state.reset(new invocation_state(*_shared_state, combiner_arg));
+            _shared_state = boost::make_shared<invocation_state>(*_shared_state, combiner_arg);
         }
       private:
         typedef Mutex mutex_type;
@@ -475,7 +475,7 @@ namespace boost
         {
           if(_shared_state.unique() == false)
           {
-            _shared_state.reset(new invocation_state(*_shared_state, _shared_state->connection_bodies()));
+            _shared_state = boost::make_shared<invocation_state>(*_shared_state, _shared_state->connection_bodies());
             nolock_cleanup_connections_from(lock, true, _shared_state->connection_bodies().begin());
           }else
           {
@@ -497,7 +497,7 @@ namespace boost
           }
           if(_shared_state.unique() == false)
           {
-            _shared_state.reset(new invocation_state(*_shared_state, _shared_state->connection_bodies()));
+            _shared_state = boost::make_shared<invocation_state>(*_shared_state, _shared_state->connection_bodies());
           }
           nolock_cleanup_connections_from(list_lock, false, _shared_state->connection_bodies().begin());
         }
@@ -510,7 +510,7 @@ namespace boost
           const slot_type &slot)
         {
           nolock_force_unique_connection_list(lock);
-          return connection_body_type(new connection_body<group_key_type, slot_type, Mutex>(slot, _mutex));
+          return boost::make_shared<connection_body<group_key_type, slot_type, Mutex> >(slot, _mutex);
         }
         void do_disconnect(const group_type &group, mpl::bool_<true> /* is_group */)
         {
@@ -527,7 +527,7 @@ namespace boost
           {
             garbage_collecting_lock<connection_body_base> lock(**it);
             if((*it)->nolock_nograb_connected() == false) continue;
-            if((*it)->slot().slot_function() == slot)
+            if((*it)->slot().slot_function().contains(slot))
             {
               (*it)->nolock_disconnect(lock);
             }else
@@ -535,7 +535,7 @@ namespace boost
               // check for wrapped extended slot
               bound_extended_slot_function_type *fp;
               fp = (*it)->slot().slot_function().template target<bound_extended_slot_function_type>();
-              if(fp && *fp == slot)
+              if(fp && function_equal(*fp, slot))
               {
                 (*it)->nolock_disconnect(lock);
               }

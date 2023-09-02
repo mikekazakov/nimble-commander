@@ -645,7 +645,6 @@ bool rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
    //Iterate through all blocks obtaining their size
    for(; ib != ie; ++ib){
       free_memory += (size_type)ib->m_size*Alignment;
-      algo_impl_t::assert_alignment(&*ib);
       if(!algo_impl_t::check_alignment(&*ib))
          return false;
    }

@@ -29,6 +29,7 @@
 #ifndef BOOST_MATH_DIST_ARCSINE_HPP
 #define BOOST_MATH_DIST_ARCSINE_HPP
 
+#include <cmath>
 #include <boost/math/distributions/fwd.hpp>
 #include <boost/math/distributions/complement.hpp> // complements.
 #include <boost/math/distributions/detail/common_error_handling.hpp> // error checks.

@@ -10,10 +10,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 #include <boost/spirit/home/classic/namespace.hpp>
+#include <boost/spirit/home/classic/core/composite/composite.hpp>
 #include <boost/thread/lock_types.hpp>
-#if !defined(BOOST_SPIRIT_COMPOSITE_HPP)
-#include <boost/spirit/home/classic/core/composite.hpp>
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost { namespace spirit {

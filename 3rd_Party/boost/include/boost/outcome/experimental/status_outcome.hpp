@@ -1,5 +1,5 @@
 /* A less simple result type
-(C) 2018-2022 Niall Douglas <http://www.nedproductions.biz/> (17 commits)
+(C) 2018-2023 Niall Douglas <http://www.nedproductions.biz/> (17 commits)
 File Created: Apr 2018
 
 
@@ -76,9 +76,54 @@ namespace experimental
   /*! AWAITING HUGO JSON CONVERSION TOOL
 SIGNATURE NOT RECOGNISED
 */
-  template <class R, class S = errored_status_code<erased<typename system_code::value_type>>, class P = std::exception_ptr,
+  template <class R, class S = erased_errored_status_code<typename system_code::value_type>, class P = std::exception_ptr,
             class NoValuePolicy = policy::default_status_outcome_policy<R, S, P>>  //
   using status_outcome = basic_outcome<R, S, P, NoValuePolicy>;
+
+  /*! AWAITING HUGO JSON CONVERSION TOOL
+SIGNATURE NOT RECOGNISED
+*/
+  BOOST_OUTCOME_TEMPLATE(class R, class S, class P, class NoValuePolicy)
+  BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(std::is_copy_constructible<R>::value &&std::is_copy_constructible<P>::value &&
+                                  (is_status_code<S>::value || is_errored_status_code<S>::value)))
+  inline basic_outcome<R, S, P, NoValuePolicy> clone(const basic_outcome<R, S, P, NoValuePolicy> &v)
+  {
+    if(v)
+    {
+      return success_type<R>(v.assume_value());
+    }
+    if(v.has_error() && v.has_exception())
+    {
+      return failure_type<S, P>(v.assume_error().clone(), v.assume_exception(), hooks::spare_storage(&v));
+    }
+    if(v.has_exception())
+    {
+      return failure_type<S, P>(in_place_type<P>, v.assume_exception(), hooks::spare_storage(&v));
+    }
+    return failure_type<S, P>(in_place_type<S>, v.assume_error().clone(), hooks::spare_storage(&v));
+  }
+
+  /*! AWAITING HUGO JSON CONVERSION TOOL
+SIGNATURE NOT RECOGNISED
+*/
+  BOOST_OUTCOME_TEMPLATE(class S, class P, class NoValuePolicy)
+  BOOST_OUTCOME_TREQUIRES(BOOST_OUTCOME_TPRED(std::is_copy_constructible<P>::value && (is_status_code<S>::value || is_errored_status_code<S>::value)))
+  inline basic_outcome<void, S, P, NoValuePolicy> clone(const basic_outcome<void, S, P, NoValuePolicy> &v)
+  {
+    if(v)
+    {
+      return success_type<void>();
+    }
+    if(v.has_error() && v.has_exception())
+    {
+      return failure_type<S, P>(v.assume_error().clone(), v.assume_exception(), hooks::spare_storage(&v));
+    }
+    if(v.has_exception())
+    {
+      return failure_type<S, P>(in_place_type<P>, v.assume_exception(), hooks::spare_storage(&v));
+    }
+    return failure_type<S, P>(in_place_type<S>, v.assume_error().clone(), hooks::spare_storage(&v));
+  }
 
   namespace policy
   {

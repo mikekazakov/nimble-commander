@@ -6,7 +6,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/qvm/inline.hpp>
+#include <boost/qvm/config.hpp>
 #include <boost/qvm/deduce_mat.hpp>
 #include <boost/qvm/vec_traits.hpp>
 #include <boost/qvm/assert.hpp>
@@ -36,7 +36,11 @@ qvm_detail
             return *this;
             }
 
-        template <class R>
+        template <class R
+#if __cplusplus >= 201103L
+            , class = typename enable_if<is_mat<R> >::type
+#endif
+        >
         BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
@@ -45,11 +49,81 @@ qvm_detail
             return r;
             }
         };
+
+    template <class OriginalVector,bool WriteElementRef=vec_write_element_ref<OriginalVector>::value>
+    struct col_mat_write_traits;
+
+    template <class OriginalVector>
+    struct
+    col_mat_write_traits<OriginalVector,true>
+        {
+        typedef qvm_detail::col_mat_<OriginalVector> this_matrix;
+        typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
+        static int const rows=vec_traits<OriginalVector>::dim;
+        static int const cols=1;
+
+        template <int Row,int Col>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        scalar_type &
+        write_element( this_matrix & x )
+            {
+            BOOST_QVM_STATIC_ASSERT(Col==0);
+            BOOST_QVM_STATIC_ASSERT(Row>=0);
+            BOOST_QVM_STATIC_ASSERT(Row<rows);
+            return vec_traits<OriginalVector>::template write_element<Row>(reinterpret_cast<OriginalVector &>(x));
+            }
+
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        scalar_type &
+        write_element_idx( int row, int col, this_matrix & x )
+            {
+            BOOST_QVM_ASSERT(col==0);
+            BOOST_QVM_ASSERT(row>=0);
+            BOOST_QVM_ASSERT(row<rows);
+            return vec_traits<OriginalVector>::write_element_idx(row,reinterpret_cast<OriginalVector &>(x));
+            }
+        };
+
+    template <class OriginalVector>
+    struct
+    col_mat_write_traits<OriginalVector,false>
+        {
+        typedef qvm_detail::col_mat_<OriginalVector> this_matrix;
+        typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
+        static int const rows=vec_traits<OriginalVector>::dim;
+        static int const cols=1;
+
+        template <int Row,int Col>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        void
+        write_element( this_matrix & x, scalar_type s )
+            {
+            BOOST_QVM_STATIC_ASSERT(Col==0);
+            BOOST_QVM_STATIC_ASSERT(Row>=0);
+            BOOST_QVM_STATIC_ASSERT(Row<rows);
+            vec_traits<OriginalVector>::template write_element<Row>(reinterpret_cast<OriginalVector &>(x), s);
+            }
+
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        void
+        write_element_idx( int row, int col, this_matrix & x, scalar_type s )
+            {
+            BOOST_QVM_ASSERT(col==0);
+            BOOST_QVM_ASSERT(row>=0);
+            BOOST_QVM_ASSERT(row<rows);
+            vec_traits<OriginalVector>::write_element_idx(row,reinterpret_cast<OriginalVector &>(x), s);
+            }
+        };
     }
 
 template <class OriginalVector>
 struct
-mat_traits< qvm_detail::col_mat_<OriginalVector> >
+mat_traits< qvm_detail::col_mat_<OriginalVector> >:
+    qvm_detail::col_mat_write_traits<OriginalVector>
     {
     typedef qvm_detail::col_mat_<OriginalVector> this_matrix;
     typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
@@ -68,18 +142,6 @@ mat_traits< qvm_detail::col_mat_<OriginalVector> >
         return vec_traits<OriginalVector>::template read_element<Row>(reinterpret_cast<OriginalVector const &>(x));
         }
 
-    template <int Row,int Col>
-    static
-    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
-    scalar_type &
-    write_element( this_matrix & x )
-        {
-        BOOST_QVM_STATIC_ASSERT(Col==0);
-        BOOST_QVM_STATIC_ASSERT(Row>=0);
-        BOOST_QVM_STATIC_ASSERT(Row<rows);
-        return vec_traits<OriginalVector>::template write_element<Row>(reinterpret_cast<OriginalVector &>(x));
-        }
-
     static
     BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
@@ -89,17 +151,6 @@ mat_traits< qvm_detail::col_mat_<OriginalVector> >
         BOOST_QVM_ASSERT(row>=0);
         BOOST_QVM_ASSERT(row<rows);
         return vec_traits<OriginalVector>::read_element_idx(row,reinterpret_cast<OriginalVector const &>(x));
-        }
-
-    static
-    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
-    scalar_type &
-    write_element_idx( int row, int col, this_matrix & x )
-        {
-        BOOST_QVM_ASSERT(col==0);
-        BOOST_QVM_ASSERT(row>=0);
-        BOOST_QVM_ASSERT(row<rows);
-        return vec_traits<OriginalVector>::write_element_idx(row,reinterpret_cast<OriginalVector &>(x));
         }
     };
 
@@ -161,7 +212,11 @@ qvm_detail
             return *this;
             }
 
-        template <class R>
+        template <class R
+#if __cplusplus >= 201103L
+            , class = typename enable_if<is_mat<R> >::type
+#endif
+        >
         BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
@@ -170,11 +225,81 @@ qvm_detail
             return r;
             }
         };
+
+    template <class OriginalVector,bool WriteElementRef=vec_write_element_ref<OriginalVector>::value>
+    struct row_mat_write_traits;
+
+    template <class OriginalVector>
+    struct
+    row_mat_write_traits<OriginalVector,true>
+        {
+        typedef qvm_detail::row_mat_<OriginalVector> this_matrix;
+        typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
+        static int const rows=1;
+        static int const cols=vec_traits<OriginalVector>::dim;
+
+        template <int Row,int Col>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        scalar_type &
+        write_element( this_matrix & x )
+            {
+            BOOST_QVM_STATIC_ASSERT(Row==0);
+            BOOST_QVM_STATIC_ASSERT(Col>=0);
+            BOOST_QVM_STATIC_ASSERT(Col<cols);
+            return vec_traits<OriginalVector>::template write_element<Col>(reinterpret_cast<OriginalVector &>(x));
+            }
+
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        scalar_type &
+        write_element_idx( int row, int col, this_matrix & x )
+            {
+            BOOST_QVM_ASSERT(row==0);
+            BOOST_QVM_ASSERT(col>=0);
+            BOOST_QVM_ASSERT(col<cols);
+            return vec_traits<OriginalVector>::write_element_idx(col,reinterpret_cast<OriginalVector &>(x));
+            }
+        };
+
+    template <class OriginalVector>
+    struct
+    row_mat_write_traits<OriginalVector,false>
+        {
+        typedef qvm_detail::row_mat_<OriginalVector> this_matrix;
+        typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
+        static int const rows=1;
+        static int const cols=vec_traits<OriginalVector>::dim;
+
+        template <int Row,int Col>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        void
+        write_element( this_matrix & x, scalar_type s )
+            {
+            BOOST_QVM_STATIC_ASSERT(Row==0);
+            BOOST_QVM_STATIC_ASSERT(Col>=0);
+            BOOST_QVM_STATIC_ASSERT(Col<cols);
+            vec_traits<OriginalVector>::template write_element<Col>(reinterpret_cast<OriginalVector &>(x), s);
+            }
+
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        void
+        write_element_idx( int row, int col, this_matrix & x, scalar_type s )
+            {
+            BOOST_QVM_ASSERT(row==0);
+            BOOST_QVM_ASSERT(col>=0);
+            BOOST_QVM_ASSERT(col<cols);
+            vec_traits<OriginalVector>::write_element_idx(col,reinterpret_cast<OriginalVector &>(x), s);
+            }
+        };
     }
 
 template <class OriginalVector>
 struct
-mat_traits< qvm_detail::row_mat_<OriginalVector> >
+mat_traits< qvm_detail::row_mat_<OriginalVector> >:
+    qvm_detail::row_mat_write_traits<OriginalVector>
     {
     typedef qvm_detail::row_mat_<OriginalVector> this_matrix;
     typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
@@ -193,18 +318,6 @@ mat_traits< qvm_detail::row_mat_<OriginalVector> >
         return vec_traits<OriginalVector>::template read_element<Col>(reinterpret_cast<OriginalVector const &>(x));
         }
 
-    template <int Row,int Col>
-    static
-    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
-    scalar_type &
-    write_element( this_matrix & x )
-        {
-        BOOST_QVM_STATIC_ASSERT(Row==0);
-        BOOST_QVM_STATIC_ASSERT(Col>=0);
-        BOOST_QVM_STATIC_ASSERT(Col<cols);
-        return vec_traits<OriginalVector>::template write_element<Col>(reinterpret_cast<OriginalVector &>(x));
-        }
-
     static
     BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
@@ -214,17 +327,6 @@ mat_traits< qvm_detail::row_mat_<OriginalVector> >
         BOOST_QVM_ASSERT(col>=0);
         BOOST_QVM_ASSERT(col<cols);
         return vec_traits<OriginalVector>::read_element_idx(col,reinterpret_cast<OriginalVector const &>(x));
-        }
-
-    static
-    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
-    scalar_type &
-    write_element_idx( int row, int col, this_matrix & x )
-        {
-        BOOST_QVM_ASSERT(row==0);
-        BOOST_QVM_ASSERT(col>=0);
-        BOOST_QVM_ASSERT(col<cols);
-        return vec_traits<OriginalVector>::write_element_idx(col,reinterpret_cast<OriginalVector &>(x));
         }
     };
 
@@ -286,7 +388,11 @@ qvm_detail
             return *this;
             }
 
-        template <class R>
+        template <class R
+#if __cplusplus >= 201103L
+            , class = typename enable_if<is_mat<R> >::type
+#endif
+        >
         BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
@@ -350,11 +456,90 @@ qvm_detail
             return vec_traits<OriginalVector>::template read_element<Row>(reinterpret_cast<OriginalVector const &>(x));
             }
         };
+
+    template <class OriginalVector,bool WriteElementRef=vec_write_element_ref<OriginalVector>::value>
+    struct translation_mat_write_traits;
+
+    template <class OriginalVector>
+    struct
+    translation_mat_write_traits<OriginalVector,true>
+        {
+        typedef qvm_detail::translation_mat_<OriginalVector> this_matrix;
+        typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
+        static int const rows=vec_traits<OriginalVector>::dim+1;
+        static int const cols=vec_traits<OriginalVector>::dim+1;
+
+        template <int Row,int Col>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        scalar_type &
+        write_element( this_matrix & x )
+            {
+            BOOST_QVM_STATIC_ASSERT(Row>=0);
+            BOOST_QVM_STATIC_ASSERT(Row<rows-1);
+            BOOST_QVM_STATIC_ASSERT(Col==cols-1 || Col==0);
+            //The following should be a static_assert, but this is a constexpr
+            //function and it gets instantiated with Row=0 and Col=0 in the
+            //mat_write_element_ref test (in a sizeof expression).
+            BOOST_QVM_ASSERT(Col==cols-1);
+            return vec_traits<OriginalVector>::template write_element<Row>(reinterpret_cast<OriginalVector &>(x));
+            }
+
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        scalar_type &
+        write_element_idx( int row, int col, this_matrix const & x )
+            {
+            BOOST_QVM_ASSERT(row>=0);
+            BOOST_QVM_ASSERT(row<rows-1);
+            BOOST_QVM_ASSERT(col==cols-1);
+            return vec_traits<OriginalVector>::write_element_idx(row,reinterpret_cast<OriginalVector &>(x));
+            }
+        };
+
+    template <class OriginalVector>
+    struct
+    translation_mat_write_traits<OriginalVector,false>
+        {
+        typedef qvm_detail::translation_mat_<OriginalVector> this_matrix;
+        typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
+        static int const rows=vec_traits<OriginalVector>::dim+1;
+        static int const cols=vec_traits<OriginalVector>::dim+1;
+
+        template <int Row,int Col>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        void
+        write_element( this_matrix & x, scalar_type s )
+            {
+            BOOST_QVM_STATIC_ASSERT(Row>=0);
+            BOOST_QVM_STATIC_ASSERT(Row<rows-1);
+            BOOST_QVM_STATIC_ASSERT(Col==cols-1 || Col==0);
+            //The following should be a static_assert, but this is a constexpr
+            //function and it gets instantiated with Row=0 and Col=0 in the
+            //mat_write_element_ref test (in a sizeof expression).
+            BOOST_QVM_ASSERT(Col==cols-1);
+            vec_traits<OriginalVector>::template write_element<Row>(reinterpret_cast<OriginalVector &>(x), s);
+            }
+
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        void
+        write_element_idx( int row, int col, this_matrix const & x, scalar_type s )
+            {
+            BOOST_QVM_ASSERT(row>=0);
+            BOOST_QVM_ASSERT(row<rows);
+            BOOST_QVM_ASSERT(col==cols-1);
+            BOOST_QVM_ASSERT(col!=row);
+            vec_traits<OriginalVector>::write_element_idx(row,reinterpret_cast<OriginalVector &>(x), s);
+            }
+        };
     }
 
 template <class OriginalVector>
 struct
-mat_traits< qvm_detail::translation_mat_<OriginalVector> >
+mat_traits< qvm_detail::translation_mat_<OriginalVector> >:
+    qvm_detail::translation_mat_write_traits<OriginalVector>
     {
     typedef qvm_detail::translation_mat_<OriginalVector> this_matrix;
     typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
@@ -374,19 +559,6 @@ mat_traits< qvm_detail::translation_mat_<OriginalVector> >
         return qvm_detail::read_translation_matat<qvm_detail::translation_mat_<OriginalVector>,Row,Col>::f(x);
         }
 
-    template <int Row,int Col>
-    static
-    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
-    scalar_type &
-    write_element( this_matrix & x )
-        {
-        BOOST_QVM_STATIC_ASSERT(Row>=0);
-        BOOST_QVM_STATIC_ASSERT(Row<rows);
-        BOOST_QVM_STATIC_ASSERT(Col==cols-1);
-        BOOST_QVM_STATIC_ASSERT(Col!=Row);
-        return vec_traits<OriginalVector>::template write_element<Row>(reinterpret_cast<OriginalVector &>(x));
-        }
-
     static
     BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
@@ -402,18 +574,6 @@ mat_traits< qvm_detail::translation_mat_<OriginalVector> >
                 (col==cols-1?
                     vec_traits<OriginalVector>::read_element_idx(row,reinterpret_cast<OriginalVector const &>(x)):
                     scalar_traits<scalar_type>::value(0));
-        }
-
-    static
-    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
-    scalar_type &
-    write_element_idx( int row, int col, this_matrix const & x )
-        {
-        BOOST_QVM_ASSERT(row>=0);
-        BOOST_QVM_ASSERT(row<rows);
-        BOOST_QVM_ASSERT(col==cols-1);
-        BOOST_QVM_ASSERT(col!=row);
-        return vec_traits<OriginalVector>::write_element_idx(row,reinterpret_cast<OriginalVector &>(x));
         }
     };
 
@@ -475,7 +635,11 @@ qvm_detail
             return *this;
             }
 
-        template <class R>
+        template <class R
+#if __cplusplus >= 201103L
+            , class = typename enable_if<is_mat<R> >::type
+#endif
+        >
         BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_TRIVIAL
         operator R() const
             {
@@ -484,11 +648,81 @@ qvm_detail
             return r;
             }
         };
+
+    template <class OriginalVector,bool WriteElementRef=vec_write_element_ref<OriginalVector>::value>
+    struct diag_mat_write_traits;
+
+    template <class OriginalVector>
+    struct
+    diag_mat_write_traits<OriginalVector,true>
+        {
+        typedef qvm_detail::diag_mat_<OriginalVector> this_matrix;
+        typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
+        static int const rows=vec_traits<OriginalVector>::dim;
+        static int const cols=vec_traits<OriginalVector>::dim;
+
+        template <int Row,int Col>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        scalar_type &
+        write_element( this_matrix & x )
+            {
+            BOOST_QVM_STATIC_ASSERT(Row>=0);
+            BOOST_QVM_STATIC_ASSERT(Row<rows);
+            BOOST_QVM_STATIC_ASSERT(Row==Col);
+            return vec_traits<OriginalVector>::template write_element<Row>(reinterpret_cast<OriginalVector &>(x));
+            }
+
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        scalar_type &
+        write_element_idx( int row, int col, this_matrix & x )
+            {
+            BOOST_QVM_ASSERT(row>=0);
+            BOOST_QVM_ASSERT(row<rows);
+            BOOST_QVM_ASSERT(row==col);
+            return vec_traits<OriginalVector>::write_element_idx(row,reinterpret_cast<OriginalVector &>(x));
+            }
+        };
+
+    template <class OriginalVector>
+    struct
+    diag_mat_write_traits<OriginalVector,false>
+        {
+        typedef qvm_detail::diag_mat_<OriginalVector> this_matrix;
+        typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
+        static int const rows=vec_traits<OriginalVector>::dim;
+        static int const cols=vec_traits<OriginalVector>::dim;
+
+        template <int Row,int Col>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        void
+        write_element( this_matrix & x, scalar_type s )
+            {
+            BOOST_QVM_STATIC_ASSERT(Row>=0);
+            BOOST_QVM_STATIC_ASSERT(Row<rows);
+            BOOST_QVM_STATIC_ASSERT(Row==Col);
+            vec_traits<OriginalVector>::template write_element<Row>(reinterpret_cast<OriginalVector &>(x), s);
+            }
+
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        void
+        write_element_idx( int row, int col, this_matrix & x, scalar_type s )
+            {
+            BOOST_QVM_ASSERT(row>=0);
+            BOOST_QVM_ASSERT(row<rows);
+            BOOST_QVM_ASSERT(row==col);
+            vec_traits<OriginalVector>::write_element_idx(row,reinterpret_cast<OriginalVector &>(x), s);
+            }
+        };
     }
 
 template <class OriginalVector>
 struct
-mat_traits< qvm_detail::diag_mat_<OriginalVector> >
+mat_traits< qvm_detail::diag_mat_<OriginalVector> >:
+    qvm_detail::diag_mat_write_traits<OriginalVector>
     {
     typedef qvm_detail::diag_mat_<OriginalVector> this_matrix;
     typedef typename vec_traits<OriginalVector>::scalar_type scalar_type;
@@ -508,18 +742,6 @@ mat_traits< qvm_detail::diag_mat_<OriginalVector> >
         return Row==Col?vec_traits<OriginalVector>::template read_element<Row>(reinterpret_cast<OriginalVector const &>(x)):scalar_traits<scalar_type>::value(0);
         }
 
-    template <int Row,int Col>
-    static
-    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
-    scalar_type &
-    write_element( this_matrix & x )
-        {
-        BOOST_QVM_STATIC_ASSERT(Row>=0);
-        BOOST_QVM_STATIC_ASSERT(Row<rows);
-        BOOST_QVM_STATIC_ASSERT(Row==Col);
-        return vec_traits<OriginalVector>::template write_element<Row>(reinterpret_cast<OriginalVector &>(x));
-        }
-
     static
     BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
     scalar_type
@@ -530,17 +752,6 @@ mat_traits< qvm_detail::diag_mat_<OriginalVector> >
         BOOST_QVM_ASSERT(col>=0);
         BOOST_QVM_ASSERT(col<cols);
         return row==col?vec_traits<OriginalVector>::read_element_idx(row,reinterpret_cast<OriginalVector const &>(x)):scalar_traits<scalar_type>::value(0);
-        }
-
-    static
-    BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
-    scalar_type &
-    write_element_idx( int row, int col, this_matrix & x )
-        {
-        BOOST_QVM_ASSERT(row>=0);
-        BOOST_QVM_ASSERT(row<rows);
-        BOOST_QVM_ASSERT(row==col);
-        return vec_traits<OriginalVector>::write_element_idx(row,reinterpret_cast<OriginalVector &>(x));
         }
     };
 

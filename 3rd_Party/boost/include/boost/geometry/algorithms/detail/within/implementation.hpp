@@ -4,8 +4,8 @@
 // Copyright (c) 2008-2012 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2013-2021.
-// Modifications copyright (c) 2013-2021 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2022.
+// Modifications copyright (c) 2013-2022 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -29,7 +29,8 @@
 #include <boost/geometry/algorithms/detail/within/interface.hpp>
 #include <boost/geometry/algorithms/detail/within/multi_point.hpp>
 #include <boost/geometry/algorithms/detail/within/point_in_geometry.hpp>
-#include <boost/geometry/algorithms/relate.hpp>
+#include <boost/geometry/algorithms/detail/relate/implementation.hpp>
+#include <boost/geometry/algorithms/detail/relate/relate_impl.hpp>
 
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/closure.hpp>
@@ -68,11 +69,12 @@ struct use_relate
     template <typename Geometry1, typename Geometry2, typename Strategy>
     static inline bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2, Strategy const& strategy)
     {
-        typedef typename detail::de9im::static_mask_within_type
+        return detail::relate::relate_impl
             <
-                Geometry1, Geometry2
-            >::type within_mask;
-        return geometry::relate(geometry1, geometry2, within_mask(), strategy);
+                detail::de9im::static_mask_within_type,
+                Geometry1,
+                Geometry2
+            >::apply(geometry1, geometry2, strategy);
     }
 };
 

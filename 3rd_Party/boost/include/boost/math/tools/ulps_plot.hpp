@@ -154,7 +154,7 @@ public:
             }
         }
 
-        int height = static_cast<int>(floor(double(plot.width_)/1.61803));
+        int height = static_cast<int>(floor(static_cast<double>(plot.width_)/1.61803));
         int margin_top = 40;
         int margin_left = 25;
         if (plot.title_.size() == 0)
@@ -212,11 +212,11 @@ public:
         else
         {
             std::vector<double> ys{-3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0};
-            for (size_t i = 0; i < ys.size(); ++i)
+            for (double & i : ys)
             {
-                if (min_y <= ys[i] && ys[i] <= max_y)
+                if (min_y <= i && i <= max_y)
                 {
-                    PreciseReal y_cord_dataspace = ys[i];
+                    PreciseReal y_cord_dataspace = i;
                     PreciseReal y = y_scale(y_cord_dataspace);
                     fs << "<line x1='0' y1='" << y << "' x2='" << graph_width
                        << "' y2='" << y
@@ -509,7 +509,7 @@ ulps_plot<F, PreciseReal, CoarseReal>::ulps_plot(F hi_acc_impl, CoarseReal a, Co
     static_assert(std::numeric_limits<PreciseReal>::digits10 <= std::numeric_limits<long double>::digits10, "Standalone mode does not support types with precision that exceeds long double");
     std::uniform_real_distribution<PreciseReal> dis(static_cast<PreciseReal>(a), static_cast<PreciseReal>(b));
     #endif
-    
+
     precise_abscissas_.resize(samples);
     coarse_abscissas_.resize(samples);
 

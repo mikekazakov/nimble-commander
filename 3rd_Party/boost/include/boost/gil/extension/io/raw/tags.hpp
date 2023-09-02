@@ -123,7 +123,7 @@ template<>
 struct image_read_info< raw_tag >
 {
     /// Default contructor.
-    image_read_info< raw_tag >()
+    image_read_info()
     : _valid( false )
     {}
 
@@ -182,8 +182,8 @@ struct image_read_settings< raw_tag > : public image_read_settings_base
     /// Constructor
     /// \param top_left Top left coordinate for reading partial image.
     /// \param dim      Dimensions for reading partial image.
-    image_read_settings( const point_t& top_left
-                       , const point_t& dim
+    image_read_settings( point_t const& top_left
+                       , point_t const& dim
                        )
     : image_read_settings_base( top_left
                               , dim

@@ -18,13 +18,10 @@
 #include <boost/math/tools/assert.hpp>
 #include <boost/math/tools/config.hpp>
 
-// Support compilers with P0024R2 implemented without linking TBB
-// https://en.cppreference.com/w/cpp/compiler_support
-#if !defined(BOOST_NO_CXX17_HDR_EXECUTION) && defined(BOOST_HAS_THREADS)
+#ifdef BOOST_MATH_EXEC_COMPATIBLE
 #include <execution>
 #include <future>
 #include <thread>
-#define EXEC_COMPATIBLE
 #endif
 
 namespace boost{ namespace math{ namespace statistics { namespace detail {
@@ -60,7 +57,7 @@ ReturnType means_and_covariance_seq_impl(ForwardIterator u_begin, ForwardIterato
     return std::make_tuple(mu_u, mu_v, cov/i, Real(i));
 }
 
-#ifdef EXEC_COMPATIBLE
+#ifdef BOOST_MATH_EXEC_COMPATIBLE
 
 // Numerically stable parallel computation of (co-)variance
 // https://dl.acm.org/doi/10.1145/3221269.3223036
@@ -154,7 +151,7 @@ ReturnType means_and_covariance_parallel_impl(ForwardIterator u_begin, ForwardIt
     return std::make_tuple(mu_u_a, mu_v_a, cov_a, n_a);
 }
 
-#endif // EXEC_COMPATIBLE
+#endif // BOOST_MATH_EXEC_COMPATIBLE
 
 template<typename ReturnType, typename ForwardIterator>
 ReturnType correlation_coefficient_seq_impl(ForwardIterator u_begin, ForwardIterator u_end, ForwardIterator v_begin, ForwardIterator v_end)
@@ -204,7 +201,7 @@ ReturnType correlation_coefficient_seq_impl(ForwardIterator u_begin, ForwardIter
     return std::make_tuple(mu_u, Qu, mu_v, Qv, cov, rho, Real(i));
 }
 
-#ifdef EXEC_COMPATIBLE
+#ifdef BOOST_MATH_EXEC_COMPATIBLE
 
 // Numerically stable parallel computation of (co-)variance:
 // https://dl.acm.org/doi/10.1145/3221269.3223036
@@ -324,11 +321,11 @@ ReturnType correlation_coefficient_parallel_impl(ForwardIterator u_begin, Forwar
     return std::make_tuple(mu_u_a, Qu_a, mu_v_a, Qv_a, cov_a, rho, n_a);
 }
 
-#endif // EXEC_COMPATIBLE
+#endif // BOOST_MATH_EXEC_COMPATIBLE
 
 } // namespace detail
 
-#ifdef EXEC_COMPATIBLE
+#ifdef BOOST_MATH_EXEC_COMPATIBLE
 
 template<typename ExecutionPolicy, typename Container, typename Real = typename Container::value_type>
 inline auto means_and_covariance(ExecutionPolicy&& exec, Container const & u, Container const & v)

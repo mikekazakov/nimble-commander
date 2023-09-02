@@ -11,7 +11,7 @@
 /**
  * \file boost/process/async_system.hpp
  *
- * Defines the asynchrounous version of the system function.
+ * Defines the asynchronous version of the system function.
  */
 
 #ifndef BOOST_PROCESS_ASYNC_SYSTEM_HPP
@@ -38,12 +38,11 @@ namespace process {
 namespace detail
 {
 
-template<typename ExitHandler>
+template<typename Handler>
 struct async_system_handler : ::boost::process::detail::api::async_handler
 {
     boost::asio::io_context & ios;
-    boost::asio::async_completion<
-            ExitHandler, void(boost::system::error_code, int)> init;
+    Handler handler;
 
 #if defined(BOOST_POSIX_API)
     bool errored = false;
@@ -52,9 +51,8 @@ struct async_system_handler : ::boost::process::detail::api::async_handler
     template<typename ExitHandler_>
     async_system_handler(
             boost::asio::io_context & ios,
-            ExitHandler_ && exit_handler) : ios(ios), init(exit_handler)
+            ExitHandler_ && exit_handler) : ios(ios), handler(std::forward<ExitHandler_>(exit_handler))
     {
-
     }
 
 
@@ -64,19 +62,13 @@ struct async_system_handler : ::boost::process::detail::api::async_handler
 #if defined(BOOST_POSIX_API)
         errored = true;
 #endif
-        auto & h = init.completion_handler;
+        auto h = std::make_shared<Handler>(std::move(handler));
         boost::asio::post(
             ios.get_executor(),
             [h, ec]() mutable
             {
-                h(boost::system::error_code(ec.value(), boost::system::system_category()), -1);
+                (*h)(boost::system::error_code(ec.value(), boost::system::system_category()), -1);
             });
-    }
-
-    BOOST_ASIO_INITFN_RESULT_TYPE(ExitHandler, void (boost::system::error_code, int))
-        get_result()
-    {
-        return init.result.get();
     }
 
     template<typename Executor>
@@ -86,10 +78,10 @@ struct async_system_handler : ::boost::process::detail::api::async_handler
         if (errored)
             return [](int , const std::error_code &){};
 #endif
-        auto & h = init.completion_handler;
+        auto h = std::make_shared<Handler>(std::move(handler));
         return [h](int exit_code, const std::error_code & ec) mutable
                {
-                    h(boost::system::error_code(ec.value(), boost::system::system_category()), exit_code);
+                    (*h)(boost::system::error_code(ec.value(), boost::system::system_category()), exit_code);
                };
     }
 };
@@ -120,21 +112,36 @@ inline boost::process::detail::dummy
     async_system(boost::asio::io_context & ios, ExitHandler && exit_handler, Args && ...args);
 #endif
 
+namespace detail
+{
+struct async_system_init_op
+{
+
+    template<typename Handler, typename ... Args>
+    void operator()(Handler && handler, asio::io_context & ios, Args && ... args)
+    {
+        detail::async_system_handler<typename std::decay<Handler>::type> async_h{ios, std::forward<Handler>(handler)};
+        child(ios, std::forward<Args>(args)..., async_h ).detach();
+    }
+};
+
+
+}
+
+
 template<typename ExitHandler, typename ...Args>
 inline BOOST_ASIO_INITFN_RESULT_TYPE(ExitHandler, void (boost::system::error_code, int))
     async_system(boost::asio::io_context & ios, ExitHandler && exit_handler, Args && ...args)
 {
-    detail::async_system_handler<ExitHandler> async_h{ios, std::forward<ExitHandler>(exit_handler)};
-
+    
     typedef typename ::boost::process::detail::has_error_handler<boost::fusion::tuple<Args...>>::type
             has_err_handling;
 
     static_assert(!has_err_handling::value, "async_system cannot have custom error handling");
 
-
-    child(ios, std::forward<Args>(args)..., async_h ).detach();
-
-    return async_h.get_result();
+    return boost::asio::async_initiate<ExitHandler, void (boost::system::error_code, int)>(
+        detail::async_system_init_op{}, exit_handler, ios, std::forward<Args>(args)...
+    );
 }
 
 

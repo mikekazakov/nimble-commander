@@ -23,10 +23,10 @@ template <class RealType = double, class Policy = policies::policy<> >
 class chi_squared_distribution
 {
 public:
-   typedef RealType value_type;
-   typedef Policy policy_type;
+   using value_type = RealType;
+   using policy_type = Policy;
 
-   chi_squared_distribution(RealType i) : m_df(i)
+   explicit chi_squared_distribution(RealType i) : m_df(i)
    {
       RealType result;
       detail::check_df(
@@ -53,7 +53,7 @@ private:
    RealType m_df; // degrees of freedom is a positive real number.
 }; // class chi_squared_distribution
 
-typedef chi_squared_distribution<double> chi_squared;
+using chi_squared = chi_squared_distribution<double>;
 
 #ifdef __cpp_deduction_guides
 template <class RealType>
@@ -66,7 +66,7 @@ chi_squared_distribution(RealType)->chi_squared_distribution<typename boost::mat
 #endif
 
 template <class RealType, class Policy>
-inline const std::pair<RealType, RealType> range(const chi_squared_distribution<RealType, Policy>& /*dist*/)
+inline std::pair<RealType, RealType> range(const chi_squared_distribution<RealType, Policy>& /*dist*/)
 { // Range of permissible values for random variable x.
   if (std::numeric_limits<RealType>::has_infinity)
   { 
@@ -84,7 +84,7 @@ inline const std::pair<RealType, RealType> range(const chi_squared_distribution<
 #endif
 
 template <class RealType, class Policy>
-inline const std::pair<RealType, RealType> support(const chi_squared_distribution<RealType, Policy>& /*dist*/)
+inline std::pair<RealType, RealType> support(const chi_squared_distribution<RealType, Policy>& /*dist*/)
 { // Range of supported values for random variable x.
    // This is range where cdf rises from 0 to 1, and outside it, the pdf is zero.
    return std::pair<RealType, RealType>(static_cast<RealType>(0), tools::max_value<RealType>()); // 0 to + infinity.
@@ -224,17 +224,6 @@ inline RealType mode(const chi_squared_distribution<RealType, Policy>& dist)
 {
    RealType df = dist.degrees_of_freedom();
    static const char* function = "boost::math::mode(const chi_squared_distribution<%1%>&)";
-   // Most sources only define mode for df >= 2,
-   // but for 0 <= df <= 2, the pdf maximum actually occurs at random variate = 0;
-   // So one could extend the definition of mode thus:
-   //if(df < 0)
-   //{
-   //   return policies::raise_domain_error<RealType>(
-   //      function,
-   //      "Chi-Squared distribution only has a mode for degrees of freedom >= 0, but got degrees of freedom = %1%.",
-   //      df, Policy());
-   //}
-   //return (df <= 2) ? 0 : df - 2;
 
    if(df < 2)
       return policies::raise_domain_error<RealType>(
@@ -244,25 +233,12 @@ inline RealType mode(const chi_squared_distribution<RealType, Policy>& dist)
    return df - 2;
 }
 
-//template <class RealType, class Policy>
-//inline RealType median(const chi_squared_distribution<RealType, Policy>& dist)
-//{ // Median is given by Quantile[dist, 1/2]
-//   RealType df = dist.degrees_of_freedom();
-//   if(df <= 1)
-//      return tools::domain_error<RealType>(
-//         BOOST_CURRENT_FUNCTION,
-//         "The Chi-Squared distribution only has a mode for degrees of freedom >= 2, but got degrees of freedom = %1%.",
-//         df);
-//   return df - RealType(2)/3;
-//}
-// Now implemented via quantile(half) in derived accessors.
-
 template <class RealType, class Policy>
 inline RealType skewness(const chi_squared_distribution<RealType, Policy>& dist)
 {
    BOOST_MATH_STD_USING // For ADL
    RealType df = dist.degrees_of_freedom();
-   return sqrt (8 / df);  // == 2 * sqrt(2 / df);
+   return sqrt (8 / df);
 }
 
 template <class RealType, class Policy>

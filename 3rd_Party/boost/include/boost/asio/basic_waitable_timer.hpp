@@ -2,7 +2,7 @@
 // basic_waitable_timer.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -142,6 +142,9 @@ class basic_waitable_timer;
 template <typename Clock, typename WaitTraits, typename Executor>
 class basic_waitable_timer
 {
+private:
+  class initiate_async_wait;
+
 public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
@@ -339,7 +342,7 @@ public:
   basic_waitable_timer(
       basic_waitable_timer<Clock, WaitTraits, Executor1>&& other,
       typename constraint<
-          is_convertible<Executor1, Executor>::value
+        is_convertible<Executor1, Executor>::value
       >::type = 0)
     : impl_(std::move(other.impl_))
   {
@@ -379,7 +382,7 @@ public:
   }
 
   /// Get the executor associated with the object.
-  executor_type get_executor() BOOST_ASIO_NOEXCEPT
+  const executor_type& get_executor() BOOST_ASIO_NOEXCEPT
   {
     return impl_.get_executor();
   }
@@ -767,11 +770,14 @@ public:
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code))
         WaitToken BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WaitToken,
-      void (boost::system::error_code))
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(
+      WaitToken, void (boost::system::error_code))
   async_wait(
       BOOST_ASIO_MOVE_ARG(WaitToken) token
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<WaitToken, void (boost::system::error_code)>(
+          declval<initiate_async_wait>(), token)))
   {
     return async_initiate<WaitToken, void (boost::system::error_code)>(
         initiate_async_wait(this), token);
@@ -793,7 +799,7 @@ private:
     {
     }
 
-    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    const executor_type& get_executor() const BOOST_ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }

@@ -20,13 +20,10 @@
 #ifndef BOOST_GEOMETRY_GEOMETRY_HPP
 #define BOOST_GEOMETRY_GEOMETRY_HPP
 
-#if !defined(BOOST_GEOMETRY_DISABLE_DEPRECATED_03_WARNING)
 #include <boost/config.hpp>
+
 #if defined(BOOST_NO_CXX14_CONSTEXPR)
-#include <boost/config/pragma_message.hpp>
-BOOST_PRAGMA_MESSAGE("CAUTION: Boost.Geometry in Boost 1.73 deprecates support for C++03 and will require C++14 from Boost 1.75 onwards.")
-BOOST_PRAGMA_MESSAGE("CAUTION: Define BOOST_GEOMETRY_DISABLE_DEPRECATED_03_WARNING to suppress this message.")
-#endif
+#error "Use C++14 or higher to compile Boost.Geometry, or use Boost 1.72 or lower."
 #endif
 
 // Shortcut to include all header files
@@ -85,6 +82,7 @@ BOOST_PRAGMA_MESSAGE("CAUTION: Define BOOST_GEOMETRY_DISABLE_DEPRECATED_03_WARNI
 #include <boost/geometry/algorithms/for_each.hpp>
 #include <boost/geometry/algorithms/intersection.hpp>
 #include <boost/geometry/algorithms/intersects.hpp>
+#include <boost/geometry/algorithms/is_convex.hpp>
 #include <boost/geometry/algorithms/is_empty.hpp>
 #include <boost/geometry/algorithms/is_simple.hpp>
 #include <boost/geometry/algorithms/is_valid.hpp>
@@ -97,6 +95,7 @@ BOOST_PRAGMA_MESSAGE("CAUTION: Define BOOST_GEOMETRY_DISABLE_DEPRECATED_03_WARNI
 #include <boost/geometry/algorithms/num_segments.hpp>
 #include <boost/geometry/algorithms/overlaps.hpp>
 #include <boost/geometry/algorithms/perimeter.hpp>
+#include <boost/geometry/algorithms/point_on_surface.hpp>
 #include <boost/geometry/algorithms/relate.hpp>
 #include <boost/geometry/algorithms/relation.hpp>
 #include <boost/geometry/algorithms/remove_spikes.hpp>
@@ -131,5 +130,8 @@ BOOST_PRAGMA_MESSAGE("CAUTION: Define BOOST_GEOMETRY_DISABLE_DEPRECATED_03_WARNI
 #include <boost/geometry/io/svg/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
 #include <boost/geometry/io/wkt/write.hpp>
+
+#include <boost/geometry/algorithms/is_convex.hpp>
+#include <boost/geometry/algorithms/point_on_surface.hpp>
 
 #endif // BOOST_GEOMETRY_GEOMETRY_HPP

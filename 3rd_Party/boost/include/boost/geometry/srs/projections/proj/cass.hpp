@@ -2,8 +2,9 @@
 
 // Copyright (c) 2008-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2019.
-// Modifications copyright (c) 2017-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017, 2018, 2019, 2022.
+// Modifications copyright (c) 2017-2022, Oracle and/or its affiliates.
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle.
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -15,7 +16,7 @@
 // PROJ4 is maintained by Frank Warmerdam
 // PROJ4 is converted to Boost.Geometry by Barend Gehrels
 
-// Last updated version of proj: 5.0.0
+// Last updated version of proj: 9.0.0
 
 // Original copyright notice:
 
@@ -44,8 +45,9 @@
 #include <boost/geometry/srs/projections/impl/base_dynamic.hpp>
 #include <boost/geometry/srs/projections/impl/projects.hpp>
 #include <boost/geometry/srs/projections/impl/factory_entry.hpp>
+#include <boost/geometry/srs/projections/impl/pj_generic_inverse.hpp>
 #include <boost/geometry/srs/projections/impl/pj_mlfn.hpp>
-
+#include <boost/geometry/srs/projections/impl/pj_param.hpp>
 
 namespace boost { namespace geometry
 {
@@ -79,6 +81,7 @@ namespace projections
             {
                 T m0;
                 detail::en<T> en;
+                bool hyperbolic;
             };
 
             template <typename T, typename Parameters>
@@ -88,16 +91,18 @@ namespace projections
 
                 // FORWARD(e_forward)  ellipsoid
                 // Project coordinates from geographic (lon, lat) to cartesian (x, y)
-                inline void fwd(Parameters const& par, T const& lp_lon, T const& lp_lat, T& xy_x, T& xy_y) const
+                inline void fwd(Parameters const& par, T const& lp_lon, T const& lp_lat,
+                                T& xy_x, T& xy_y) const
                 {
-                    static const T C1 = cass::C1<T>();
-                    static const T C2 = cass::C2<T>();
-                    static const T C3 = cass::C3<T>();
+                    static T const C1 = cass::C1<T>();
+                    static T const C2 = cass::C2<T>();
+                    static T const C3 = cass::C3<T>();
 
-                    T n = sin(lp_lat);
+                    T sinlplat = sin(lp_lat);
                     T c = cos(lp_lat);
-                    xy_y = pj_mlfn(lp_lat, n, c, this->m_proj_parm.en);
-                    n = 1./sqrt(1. - par.es * n * n);
+                    xy_y = pj_mlfn(lp_lat, sinlplat, c, this->m_proj_parm.en);
+                    T n_square = 1./(1. - par.es * sinlplat * sinlplat);
+                    T n = sqrt(n_square);
                     T tn = tan(lp_lat);
                     T t = tn * tn;
                     T a1 = lp_lon * c;
@@ -107,11 +112,17 @@ namespace projections
                         (C1 - (8. - t + 8. * c) * a2 * C2));
                     xy_y -= this->m_proj_parm.m0 - n * tn * a2 *
                         (.5 + (5. - t + 6. * c) * a2 * C3);
+                    if ( this->m_proj_parm.hyperbolic )
+                    {
+                        T const rho = n_square * (1. - par.es) * n;
+                        xy_y -= xy_y * xy_y * xy_y / (6 * rho * n);
+                    }
                 }
 
                 // INVERSE(e_inverse)  ellipsoid
                 // Project coordinates from cartesian (x, y) to geographic (lon, lat)
-                inline void inv(Parameters const& par, T const& xy_x, T const& xy_y, T& lp_lon, T& lp_lat) const
+                inline void inv(Parameters const& par, T const& xy_x, T const& xy_y,
+                                T& lp_lon, T& lp_lat) const
                 {
                     static const T C3 = cass::C3<T>();
                     static const T C4 = cass::C4<T>();
@@ -131,6 +142,13 @@ namespace projections
                         (.5 - (1. + 3. * t) * d2 * C3);
                     lp_lon = dd * (1. + t * d2 *
                         (-C4 + (1. + 3. * t) * d2 * C5)) / cos(ph1);
+                    if ( this->m_proj_parm.hyperbolic )
+                    {
+                        // EPSG guidance note 7-2 suggests a custom approximation for the
+                        // 'Vanua Levu 1915 / Vanua Levu Grid' case, but better use the
+                        // generic inversion method
+                        pj_generic_inverse_2d(xy_x, xy_y, par, this, lp_lat, lp_lon);
+                    }
                 }
 
                 static inline std::string get_name()
@@ -147,7 +165,8 @@ namespace projections
 
                 // FORWARD(s_forward)  spheroid
                 // Project coordinates from geographic (lon, lat) to cartesian (x, y)
-                inline void fwd(Parameters const& par, T const& lp_lon, T const& lp_lat, T& xy_x, T& xy_y) const
+                inline void fwd(Parameters const& par, T const& lp_lon, T const& lp_lat,
+                                T& xy_x, T& xy_y) const
                 {
                     xy_x = asin(cos(lp_lat) * sin(lp_lon));
                     xy_y = atan2(tan(lp_lat) , cos(lp_lon)) - par.phi0;
@@ -155,7 +174,8 @@ namespace projections
 
                 // INVERSE(s_inverse)  spheroid
                 // Project coordinates from cartesian (x, y) to geographic (lon, lat)
-                inline void inv(Parameters const& par, T const& xy_x, T const& xy_y, T& lp_lon, T& lp_lat) const
+                inline void inv(Parameters const& par, T const& xy_x, T const& xy_y,
+                                T& lp_lon, T& lp_lat) const
                 {
                     T dd = xy_y + par.phi0;
                     lp_lat = asin(sin(dd) * cos(xy_x));
@@ -170,14 +190,18 @@ namespace projections
             };
 
             // Cassini
-            template <typename Parameters, typename T>
-            inline void setup_cass(Parameters& par, par_cass<T>& proj_parm)
+            template <typename Params, typename Parameters, typename T>
+            inline void setup_cass(Params const& params, Parameters& par, par_cass<T>& proj_parm)
             {
                 if (par.es) {
                     proj_parm.en = pj_enfn<T>(par.es);
                     proj_parm.m0 = pj_mlfn(par.phi0, sin(par.phi0), cos(par.phi0), proj_parm.en);
                 } else {
                 }
+                proj_parm.hyperbolic = false;
+                if (pj_param_exists<srs::spar::hyperbolic>(params, "hyperbolic", srs::dpar::hyperbolic))
+                    proj_parm.hyperbolic = true;
+
             }
 
     }} // namespace detail::cass
@@ -200,9 +224,9 @@ namespace projections
     struct cass_ellipsoid : public detail::cass::base_cass_ellipsoid<T, Parameters>
     {
         template <typename Params>
-        inline cass_ellipsoid(Params const& , Parameters const& par)
+        inline cass_ellipsoid(Params const& params, Parameters const& par)
         {
-            detail::cass::setup_cass(par, this->m_proj_parm);
+            detail::cass::setup_cass(params, par, this->m_proj_parm);
         }
     };
 
@@ -223,9 +247,9 @@ namespace projections
     struct cass_spheroid : public detail::cass::base_cass_spheroid<T, Parameters>
     {
         template <typename Params>
-        inline cass_spheroid(Params const& , Parameters const& par)
+        inline cass_spheroid(Params const& params, Parameters const& par)
         {
-            detail::cass::setup_cass(par, this->m_proj_parm);
+            detail::cass::setup_cass(params, par, this->m_proj_parm);
         }
     };
 
@@ -234,7 +258,8 @@ namespace projections
     {
 
         // Static projection
-        BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PROJECTION_FI2(srs::spar::proj_cass, cass_spheroid, cass_ellipsoid)
+        BOOST_GEOMETRY_PROJECTIONS_DETAIL_STATIC_PROJECTION_FI2(srs::spar::proj_cass, cass_spheroid,
+                                                                cass_ellipsoid)
 
         // Factory entry(s)
         BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_ENTRY_FI2(cass_entry, cass_spheroid, cass_ellipsoid)

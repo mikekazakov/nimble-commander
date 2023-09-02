@@ -1,6 +1,7 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
 // Copyright (c) 2012-2015 Barend Gehrels, Amsterdam, the Netherlands.
+// Copyright (c) 2023 Adam Wulkiewicz, Lodz, Poland.
 
 // This file was modified by Oracle on 2015.
 // Modifications copyright (c) 2015, Oracle and/or its affiliates.
@@ -58,9 +59,9 @@ class join_round
 public :
 
     //! \brief Constructs the strategy
-    //! \param points_per_circle points which would be used for a full circle
-    explicit inline join_round(std::size_t points_per_circle = 90)
-        : m_points_per_circle(points_per_circle)
+    //! \param points_per_circle Number of points (minimum 4) that would be used for a full circle
+    explicit inline join_round(std::size_t points_per_circle = default_points_per_circle)
+        : m_points_per_circle(get_point_count_for_join(points_per_circle))
     {}
 
 private :
@@ -143,26 +144,15 @@ public :
         geometry::equal_to<Point> equals;
         if (equals(perp1, perp2))
         {
+            boost::ignore_unused(ip);
 #ifdef BOOST_GEOMETRY_DEBUG_BUFFER_WARN
             std::cout << "Corner for equal points " << geometry::wkt(ip) << " " << geometry::wkt(perp1) << std::endl;
 #endif
             return false;
         }
 
-        // Generate 'vectors'
-        coordinate_type vix = (get<0>(ip) - get<0>(vertex));
-        coordinate_type viy = (get<1>(ip) - get<1>(vertex));
-
-        promoted_type length_i = geometry::math::sqrt(vix * vix + viy * viy);
-        DistanceType const bd = geometry::math::abs(buffer_distance);
-        promoted_type prop = bd / length_i;
-
-        Point bp;
-        set<0>(bp, get<0>(vertex) + vix * prop);
-        set<1>(bp, get<1>(vertex) + viy * prop);
-
         range_out.push_back(perp1);
-        generate_points<promoted_type>(vertex, perp1, perp2, bd, range_out);
+        generate_points<promoted_type>(vertex, perp1, perp2, geometry::math::abs(buffer_distance), range_out);
         range_out.push_back(perp2);
         return true;
     }

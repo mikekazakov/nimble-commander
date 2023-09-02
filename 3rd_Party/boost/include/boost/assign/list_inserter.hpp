@@ -17,7 +17,7 @@
 
 #include <boost/detail/workaround.hpp>
 
-#include <boost/mpl/if.hpp>
+#include <boost/type_traits/conditional.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
@@ -213,9 +213,10 @@ namespace assign
         struct n_arg_type        {};
         struct repeater_arg_type {};
 
-        typedef BOOST_DEDUCED_TYPENAME mpl::if_c< is_same<Argument,assign_detail::forward_n_arguments>::value,
-                                                  n_arg_type,
-                                                  single_arg_type >::type arg_type;  
+        typedef BOOST_DEDUCED_TYPENAME ::boost::conditional<
+            is_same<Argument,assign_detail::forward_n_arguments>::value,
+            n_arg_type,
+            single_arg_type >::type arg_type;  
             
     public:
         
@@ -293,7 +294,8 @@ namespace assign
         template< class T >
         list_inserter& operator,(T&& r)
         {
-            typedef BOOST_DEDUCED_TYPENAME mpl::if_c< assign_detail::is_repeater< T >::value,
+            typedef BOOST_DEDUCED_TYPENAME ::boost::conditional<
+                assign_detail::is_repeater< T >::value,
                 repeater_arg_type,
                 arg_type >::type tag;
 
@@ -305,7 +307,8 @@ namespace assign
         template< class T >
         list_inserter& operator,(T&& r)
         {
-            typedef BOOST_DEDUCED_TYPENAME mpl::if_c< assign_detail::is_repeater< T >::value,
+            typedef BOOST_DEDUCED_TYPENAME ::boost::conditional<
+                assign_detail::is_repeater< T >::value,
                 repeater_arg_type,
                 arg_type >::type tag;
 

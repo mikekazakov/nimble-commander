@@ -54,9 +54,11 @@ struct dynamic_xy_step_transposed_type
 /// \ingroup ImageViewConstructors
 /// \brief Constructing image views from raw interleaved pixel data
 template <typename Iterator>
-typename type_from_x_iterator<Iterator>::view_t
-interleaved_view(std::size_t width, std::size_t height,
-                 Iterator pixels, std::ptrdiff_t rowsize_in_bytes) {
+auto interleaved_view(
+    std::size_t width, std::size_t height,
+    Iterator pixels, std::ptrdiff_t rowsize_in_bytes)
+    -> typename type_from_x_iterator<Iterator>::view_t
+{
     using RView = typename type_from_x_iterator<Iterator>::view_t;
     return RView(width, height, typename RView::locator(pixels, rowsize_in_bytes));
 }
@@ -64,8 +66,9 @@ interleaved_view(std::size_t width, std::size_t height,
 /// \ingroup ImageViewConstructors
 /// \brief Constructing image views from raw interleaved pixel data
 template <typename Iterator>
-auto interleaved_view(point<std::ptrdiff_t> dim, Iterator pixels,
-                      std::ptrdiff_t rowsize_in_bytes)
+auto interleaved_view(
+    point<std::ptrdiff_t> dim, Iterator pixels,
+    std::ptrdiff_t rowsize_in_bytes)
     -> typename type_from_x_iterator<Iterator>::view_t
 {
     using RView = typename type_from_x_iterator<Iterator>::view_t;
@@ -77,23 +80,32 @@ auto interleaved_view(point<std::ptrdiff_t> dim, Iterator pixels,
 /////////////////////////////
 
 namespace detail {
-    template <typename View, bool IsMutable> struct channel_pointer_type_impl;
+    template <typename View, bool IsMutable>
+    struct channel_pointer_type_impl;
 
-    template <typename View> struct channel_pointer_type_impl<View, true> {
-        using type = typename channel_type<View>::type *;
-    };
-    template <typename View> struct channel_pointer_type_impl<View, false> {
-        using type = const typename channel_type<View>::type *;
+    template <typename View>
+    struct channel_pointer_type_impl<View, true>
+    {
+        using type = typename channel_type<View>::type*;
     };
 
-    template <typename View> struct channel_pointer_type
+    template <typename View>
+    struct channel_pointer_type_impl<View, false>
+    {
+        using type = const typename channel_type<View>::type*;
+    };
+
+    template <typename View>
+    struct channel_pointer_type
         : public channel_pointer_type_impl<View, view_is_mutable<View>::value> {};
 } // namespace detail
 
 /// \ingroup ImageViewConstructors
 /// \brief Returns C pointer to the the channels of an interleaved homogeneous view.
 template <typename HomogeneousView>
-typename detail::channel_pointer_type<HomogeneousView>::type interleaved_view_get_raw_data(const HomogeneousView& view) {
+auto interleaved_view_get_raw_data(HomogeneousView const& view)
+    -> typename detail::channel_pointer_type<HomogeneousView>::type
+{
     static_assert(!is_planar<HomogeneousView>::value && view_is_basic<HomogeneousView>::value, "");
     static_assert(std::is_pointer<typename HomogeneousView::x_iterator>::value, "");
 
@@ -103,7 +115,9 @@ typename detail::channel_pointer_type<HomogeneousView>::type interleaved_view_ge
 /// \ingroup ImageViewConstructors
 /// \brief Returns C pointer to the the channels of a given color plane of a planar homogeneous view.
 template <typename HomogeneousView>
-typename detail::channel_pointer_type<HomogeneousView>::type planar_view_get_raw_data(const HomogeneousView& view, int plane_index) {
+auto planar_view_get_raw_data(HomogeneousView const& view, int plane_index)
+    -> typename detail::channel_pointer_type<HomogeneousView>::type
+{
     static_assert(is_planar<HomogeneousView>::value && view_is_basic<HomogeneousView>::value, "");
     return dynamic_at_c(view.row_begin(0),plane_index);
 }
@@ -167,15 +181,18 @@ struct color_converted_view_type : public detail::_color_converted_view_type<Src
 /// \ingroup ImageViewTransformationsColorConvert
 /// \brief view of a different color space with a user defined color-converter
 template <typename DstP, typename View, typename CC>
-inline typename color_converted_view_type<View,DstP,CC>::type color_converted_view(const View& src,CC cc) {
+inline auto color_converted_view(View const& src,CC cc)
+    -> typename color_converted_view_type<View,DstP,CC>::type
+{
     return color_converted_view_type<View,DstP,CC>::make(src,cc);
 }
 
 /// \ingroup ImageViewTransformationsColorConvert
 /// \brief overload of generic color_converted_view with the default color-converter
 template <typename DstP, typename View>
-inline typename color_converted_view_type<View,DstP>::type
-color_converted_view(const View& src) {
+inline auto color_converted_view(View const& src)
+    -> typename color_converted_view_type<View,DstP>::type
+{
     return color_converted_view<DstP>(src,default_color_converter());
 }
 
@@ -185,7 +202,9 @@ color_converted_view(const View& src) {
 
 /// \ingroup ImageViewTransformationsFlipUD
 template <typename View>
-inline typename dynamic_y_step_type<View>::type flipped_up_down_view(const View& src) {
+inline auto flipped_up_down_view(View const& src)
+    -> typename dynamic_y_step_type<View>::type
+{
     using RView = typename dynamic_y_step_type<View>::type;
     return RView(src.dimensions(),typename RView::xy_locator(src.xy_at(0,src.height()-1),-1));
 }
@@ -196,7 +215,9 @@ inline typename dynamic_y_step_type<View>::type flipped_up_down_view(const View&
 
 /// \ingroup ImageViewTransformationsFlipLR
 template <typename View>
-inline typename dynamic_x_step_type<View>::type flipped_left_right_view(const View& src) {
+inline auto flipped_left_right_view(View const& src)
+    -> typename dynamic_x_step_type<View>::type
+{
     using RView = typename dynamic_x_step_type<View>::type;
     return RView(src.dimensions(),typename RView::xy_locator(src.xy_at(src.width()-1,0),-1,1));
 }
@@ -207,7 +228,9 @@ inline typename dynamic_x_step_type<View>::type flipped_left_right_view(const Vi
 
 /// \ingroup ImageViewTransformationsTransposed
 template <typename View>
-inline typename dynamic_xy_step_transposed_type<View>::type transposed_view(const View& src) {
+inline auto transposed_view(View const& src)
+    -> typename dynamic_xy_step_transposed_type<View>::type
+{
     using RView = typename dynamic_xy_step_transposed_type<View>::type;
     return RView(src.height(),src.width(),typename RView::xy_locator(src.xy_at(0,0),1,1,true));
 }
@@ -218,7 +241,9 @@ inline typename dynamic_xy_step_transposed_type<View>::type transposed_view(cons
 
 /// \ingroup ImageViewTransformations90CW
 template <typename View>
-inline typename dynamic_xy_step_transposed_type<View>::type rotated90cw_view(const View& src) {
+inline auto rotated90cw_view(View const& src)
+    -> typename dynamic_xy_step_transposed_type<View>::type
+{
     using RView = typename dynamic_xy_step_transposed_type<View>::type;
     return RView(src.height(),src.width(),typename RView::xy_locator(src.xy_at(0,src.height()-1),-1,1,true));
 }
@@ -229,7 +254,9 @@ inline typename dynamic_xy_step_transposed_type<View>::type rotated90cw_view(con
 
 /// \ingroup ImageViewTransformations90CCW
 template <typename View>
-inline typename dynamic_xy_step_transposed_type<View>::type rotated90ccw_view(const View& src) {
+inline auto rotated90ccw_view(View const& src)
+    -> typename dynamic_xy_step_transposed_type<View>::type
+{
     using RView = typename dynamic_xy_step_transposed_type<View>::type;
     return RView(src.height(),src.width(),typename RView::xy_locator(src.xy_at(src.width()-1,0),1,-1,true));
 }
@@ -240,7 +267,9 @@ inline typename dynamic_xy_step_transposed_type<View>::type rotated90ccw_view(co
 
 /// \ingroup ImageViewTransformations180
 template <typename View>
-inline typename dynamic_xy_step_type<View>::type rotated180_view(const View& src) {
+inline auto rotated180_view(View const& src)
+    -> typename dynamic_xy_step_type<View>::type
+{
     using RView = typename dynamic_xy_step_type<View>::type;
     return RView(src.dimensions(),typename RView::xy_locator(src.xy_at(src.width()-1,src.height()-1),-1,-1));
 }
@@ -309,7 +338,7 @@ namespace detail {
     struct __nth_channel_view_basic<View,false> {
         using type = typename view_type<typename channel_type<View>::type, gray_layout_t, false, true, view_is_mutable<View>::value>::type;
 
-        static type make(const View& src, int n) {
+        static type make(View const& src, int n) {
             using locator_t = typename type::xy_locator;
             using x_iterator_t = typename type::x_iterator;
             using x_iterator_base_t = typename iterator_adaptor_get_base<x_iterator_t>::type;
@@ -322,7 +351,7 @@ namespace detail {
     template <typename View>
     struct __nth_channel_view_basic<View,true> {
         using type = typename view_type<typename channel_type<View>::type, gray_layout_t, false, false, view_is_mutable<View>::value>::type;
-        static type make(const View& src, int n) {
+        static type make(View const& src, int n) {
             using x_iterator_t = typename type::x_iterator;
             return interleaved_view(src.width(),src.height(),(x_iterator_t)&(src(0,0)[n]), src.pixels().row_size());
         }
@@ -346,7 +375,7 @@ namespace detail {
     public:
         using type = typename __nth_channel_view_basic<View,adjacent>::type;
 
-        static type make(const View& src, int n) {
+        static type make(View const& src, int n) {
             return __nth_channel_view_basic<View,adjacent>::make(src,n);
         }
     };
@@ -375,11 +404,13 @@ namespace detail {
         using result_type = reference;
 
         nth_channel_deref_fn(int n=0) : _n(n) {}
-        template <typename P> nth_channel_deref_fn(const nth_channel_deref_fn<P>& d) : _n(d._n) {}
+        template <typename P>
+        nth_channel_deref_fn(const nth_channel_deref_fn<P>& d) : _n(d._n) {}
 
         int _n;        // the channel to use
 
-        result_type operator()(argument_type srcP) const {
+        auto operator()(argument_type srcP) const -> result_type
+        {
             return result_type(srcP[_n]);
         }
     };
@@ -390,7 +421,7 @@ namespace detail {
         using AD = typename View::template add_deref<deref_t>;
     public:
         using type = typename AD::type;
-        static type make(const View& src, int n) {
+        static type make(View const& src, int n) {
             return AD::make(src, deref_t(n));
         }
     };
@@ -409,21 +440,14 @@ private:
     using VB = detail::__nth_channel_view<View,view_is_basic<View>::value>;
 public:
     using type = typename VB::type;
-    static type make(const View& src, int n) { return VB::make(src,n); }
+    static type make(View const& src, int n) { return VB::make(src,n); }
 };
-
 
 /// \ingroup ImageViewTransformationsNthChannel
 template <typename View>
-typename nth_channel_view_type<View>::type nth_channel_view(const View& src, int n) {
+typename nth_channel_view_type<View>::type nth_channel_view(View const& src, int n) {
     return nth_channel_view_type<View>::make(src,n);
 }
-
-
-
-
-
-
 
 /// \defgroup ImageViewTransformationsKthChannel kth_channel_view
 /// \ingroup ImageViewTransformations
@@ -441,7 +465,7 @@ namespace detail {
     public:
         using type = typename view_type<channel_t, gray_layout_t, false, true, view_is_mutable<View>::value>::type;
 
-        static type make(const View& src) {
+        static type make(View const& src) {
             using locator_t = typename type::xy_locator;
             using x_iterator_t = typename type::x_iterator;
             using x_iterator_base_t = typename iterator_adaptor_get_base<x_iterator_t>::type;
@@ -457,7 +481,7 @@ namespace detail {
         using channel_t = typename kth_element_type<typename View::value_type, K>::type;
     public:
         using type = typename view_type<channel_t, gray_layout_t, false, false, view_is_mutable<View>::value>::type;
-        static type make(const View& src) {
+        static type make(View const& src) {
             using x_iterator_t = typename type::x_iterator;
             return interleaved_view(src.width(),src.height(),(x_iterator_t)&gil::at_c<K>(src(0,0)), src.pixels().row_size());
         }
@@ -480,7 +504,7 @@ namespace detail {
     public:
         using type = typename __kth_channel_view_basic<K,View,adjacent>::type;
 
-        static type make(const View& src) {
+        static type make(View const& src) {
             return __kth_channel_view_basic<K,View,adjacent>::make(src);
         }
     };
@@ -512,7 +536,8 @@ namespace detail {
         using result_type = reference;
 
         kth_channel_deref_fn() {}
-        template <typename P> kth_channel_deref_fn(const kth_channel_deref_fn<K,P>&) {}
+        template <typename P>
+        kth_channel_deref_fn(const kth_channel_deref_fn<K,P>&) {}
 
         result_type operator()(argument_type srcP) const {
             return result_type(gil::at_c<K>(srcP));
@@ -525,7 +550,7 @@ namespace detail {
         using AD = typename View::template add_deref<deref_t>;
     public:
         using type = typename AD::type;
-        static type make(const View& src) {
+        static type make(View const& src) {
             return AD::make(src, deref_t());
         }
     };
@@ -544,12 +569,14 @@ private:
     using VB = detail::__kth_channel_view<K,View,view_is_basic<View>::value>;
 public:
     using type = typename VB::type;
-    static type make(const View& src) { return VB::make(src); }
+    static type make(View const& src) { return VB::make(src); }
 };
 
 /// \ingroup ImageViewTransformationsKthChannel
 template <int K, typename View>
-typename kth_channel_view_type<K,View>::type kth_channel_view(const View& src) {
+auto kth_channel_view(View const& src)
+    -> typename kth_channel_view_type<K,View>::type
+{
     return kth_channel_view_type<K,View>::make(src);
 }
 

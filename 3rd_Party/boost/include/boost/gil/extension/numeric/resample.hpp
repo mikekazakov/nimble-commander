@@ -73,10 +73,10 @@ namespace detail {
 template <typename Sampler, typename ...Types1, typename V2, typename MapFn>
 void resample_pixels(const any_image_view<Types1...>& src, const V2& dst, const MapFn& dst_to_src, Sampler sampler=Sampler())
 {
-    apply_operation(src, std::bind(
+    variant2::visit(std::bind(
         detail::resample_pixels_fn<Sampler, MapFn>(dst_to_src, sampler),
         std::placeholders::_1,
-        dst));
+        dst), src);
 }
 
 /// \brief resample_pixels when the destination is run-time specified
@@ -86,10 +86,10 @@ template <typename Sampler, typename V1, typename ...Types2, typename MapFn>
 void resample_pixels(const V1& src, const any_image_view<Types2...>& dst, const MapFn& dst_to_src, Sampler sampler=Sampler())
 {
     using namespace std::placeholders;
-    apply_operation(dst, std::bind(
+    variant2::visit(std::bind(
         detail::resample_pixels_fn<Sampler, MapFn>(dst_to_src, sampler),
         src,
-        std::placeholders::_1));
+        std::placeholders::_1), dst);
 }
 
 /// \brief resample_pixels when both the source and the destination are run-time specified
@@ -97,7 +97,7 @@ void resample_pixels(const V1& src, const any_image_view<Types2...>& dst, const 
 /// \ingroup ImageAlgorithms
 template <typename Sampler, typename ...SrcTypes, typename ...DstTypes, typename MapFn>
 void resample_pixels(const any_image_view<SrcTypes...>& src, const any_image_view<DstTypes...>& dst, const MapFn& dst_to_src, Sampler sampler=Sampler()) {
-    apply_operation(src,dst,detail::resample_pixels_fn<Sampler,MapFn>(dst_to_src,sampler));
+    variant2::visit(detail::resample_pixels_fn<Sampler,MapFn>(dst_to_src,sampler), src, dst);
 }
 
 ///////////////////////////////////////////////////////////////////////////

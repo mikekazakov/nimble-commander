@@ -170,6 +170,10 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
         typedef iterator<Functor> iterator_type;
 
     private:
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
         // this type is purely used for the iterator_type construction below
         struct iterator_data_type
         {
@@ -185,10 +189,10 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
             boost::lexer::basic_state_machine<char_type> const& state_machine_;
             boost::lexer::basic_rules<char_type> const& rules_;
             semantic_actions_type const& actions_;
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(iterator_data_type& operator= (iterator_data_type const&))
         };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
     public:
         //  Return the start iterator usable for iterating over the generated

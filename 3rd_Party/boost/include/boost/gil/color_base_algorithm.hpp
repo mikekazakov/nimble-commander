@@ -187,14 +187,18 @@ struct color_element_const_reference_type : public kth_semantic_element_const_re
 /// \brief Mutable accessor to the element associated with a given color name
 /// \ingroup ColorBaseAlgorithmColor
 template <typename ColorBase, typename Color>
-typename color_element_reference_type<ColorBase,Color>::type get_color(ColorBase& cb, Color=Color()) {
+auto get_color(ColorBase& cb, Color=Color()) 
+    -> typename color_element_reference_type<ColorBase,Color>::type
+{
     return color_element_reference_type<ColorBase,Color>::get(cb);
 }
 
 /// \brief Constant accessor to the element associated with a given color name
 /// \ingroup ColorBaseAlgorithmColor
 template <typename ColorBase, typename Color>
-typename color_element_const_reference_type<ColorBase,Color>::type get_color(const ColorBase& cb, Color=Color()) {
+auto get_color(const ColorBase& cb, Color=Color())
+    -> typename color_element_const_reference_type<ColorBase,Color>::type
+{
     return color_element_const_reference_type<ColorBase,Color>::get(cb);
 }
 
@@ -435,36 +439,63 @@ template<> struct element_recursion<0> {
 };
 
 // std::min and std::max don't have the mutable overloads...
-template <typename Q> inline const Q& mutable_min(const Q& x, const Q& y) { return x<y ? x : y; }
-template <typename Q> inline       Q& mutable_min(      Q& x,       Q& y) { return x<y ? x : y; }
-template <typename Q> inline const Q& mutable_max(const Q& x, const Q& y) { return x<y ? y : x; }
-template <typename Q> inline       Q& mutable_max(      Q& x,       Q& y) { return x<y ? y : x; }
+template <typename Q>
+inline auto mutable_min(Q const& x, Q const& y) -> Q const& { return x<y ? x : y; }
+
+template <typename Q>
+inline auto mutable_min(Q& x, Q& y) -> Q& { return x<y ? x : y; }
+
+template <typename Q>
+inline auto mutable_max(Q const& x, Q const& y) -> Q const& { return x<y ? y : x; }
+
+template <typename Q>
+inline auto mutable_max(Q& x, Q& y) -> Q& { return x<y ? y : x; }
 
 
 // compile-time recursion for min/max element
 template <int N>
-struct min_max_recur {
-    template <typename P> static typename element_const_reference_type<P>::type max_(const P& p) {
+struct min_max_recur
+{
+    template <typename P>
+    static auto max_(P const& p) -> typename element_const_reference_type<P>::type
+    {
         return mutable_max(min_max_recur<N-1>::max_(p),semantic_at_c<N-1>(p));
     }
-    template <typename P> static typename element_reference_type<P>::type       max_(      P& p) {
+    
+    template <typename P>
+    static auto max_(P& p) -> typename element_reference_type<P>::type
+    {
         return mutable_max(min_max_recur<N-1>::max_(p),semantic_at_c<N-1>(p));
     }
-    template <typename P> static typename element_const_reference_type<P>::type min_(const P& p) {
+    
+    template <typename P>
+    static auto min_(P const& p) -> typename element_const_reference_type<P>::type 
+    {
         return mutable_min(min_max_recur<N-1>::min_(p),semantic_at_c<N-1>(p));
     }
-    template <typename P> static typename element_reference_type<P>::type       min_(      P& p) {
+    
+    template <typename P>
+    static auto min_(P& p) -> typename element_reference_type<P>::type
+    {
         return mutable_min(min_max_recur<N-1>::min_(p),semantic_at_c<N-1>(p));
     }
 };
 
 // termination condition of the compile-time recursion for min/max element
 template <>
-struct min_max_recur<1> {
-    template <typename P> static typename element_const_reference_type<P>::type max_(const P& p) { return semantic_at_c<0>(p); }
-    template <typename P> static typename element_reference_type<P>::type       max_(      P& p) { return semantic_at_c<0>(p); }
-    template <typename P> static typename element_const_reference_type<P>::type min_(const P& p) { return semantic_at_c<0>(p); }
-    template <typename P> static typename element_reference_type<P>::type       min_(      P& p) { return semantic_at_c<0>(p); }
+struct min_max_recur<1>
+{
+    template <typename P>
+    static auto max_(P const& p) -> typename element_const_reference_type<P>::type { return semantic_at_c<0>(p); }
+    
+    template <typename P>
+    static auto max_(P& p) -> typename element_reference_type<P>::type { return semantic_at_c<0>(p); }
+    
+    template <typename P>
+    static auto min_(P const& p) -> typename element_const_reference_type<P>::type { return semantic_at_c<0>(p); }
+    
+    template <typename P>
+    static auto min_(P& p) -> typename element_reference_type<P>::type { return semantic_at_c<0>(p); }
 };
 }  // namespace detail
 
@@ -483,19 +514,19 @@ struct min_max_recur<1> {
 
 template <typename P>
 BOOST_FORCEINLINE
-typename element_const_reference_type<P>::type static_max(const P& p) { return detail::min_max_recur<size<P>::value>::max_(p); }
+auto static_max(P const& p) -> typename element_const_reference_type<P>::type { return detail::min_max_recur<size<P>::value>::max_(p); }
 
 template <typename P>
 BOOST_FORCEINLINE
-typename element_reference_type<P>::type       static_max(      P& p) { return detail::min_max_recur<size<P>::value>::max_(p); }
+auto static_max(P& p) -> typename element_reference_type<P>::type { return detail::min_max_recur<size<P>::value>::max_(p); }
 
 template <typename P>
 BOOST_FORCEINLINE
-typename element_const_reference_type<P>::type static_min(const P& p) { return detail::min_max_recur<size<P>::value>::min_(p); }
+auto static_min(P const& p) -> typename element_const_reference_type<P>::type { return detail::min_max_recur<size<P>::value>::min_(p); }
 
 template <typename P>
 BOOST_FORCEINLINE
-typename element_reference_type<P>::type       static_min(      P& p) { return detail::min_max_recur<size<P>::value>::min_(p); }
+auto static_min(P& p) -> typename element_reference_type<P>::type { return detail::min_max_recur<size<P>::value>::min_(p); }
 /// \}
 
 /// \defgroup ColorBaseAlgorithmEqual static_equal
@@ -515,7 +546,7 @@ typename element_reference_type<P>::type       static_min(      P& p) { return d
 
 template <typename P1,typename P2>
 BOOST_FORCEINLINE
-bool static_equal(const P1& p1, const P2& p2) { return detail::element_recursion<size<P1>::value>::static_equal(p1,p2); }
+bool static_equal(P1 const& p1, const P2& p2) { return detail::element_recursion<size<P1>::value>::static_equal(p1,p2); }
 
 /// \}
 
@@ -708,6 +739,6 @@ BOOST_FORCEINLINE
 Op static_for_each(const P1& p1,const P2& p2,const P3& p3,Op op) { return detail::element_recursion<size<P1>::value>::static_for_each(p1,p2,p3,op); }
 ///\}
 
-} }  // namespace boost::gil
+}}  // namespace boost::gil
 
 #endif

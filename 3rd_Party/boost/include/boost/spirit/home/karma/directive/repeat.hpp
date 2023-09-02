@@ -77,6 +77,10 @@ namespace boost { namespace spirit { namespace karma
     using spirit::inf_type;
 
     ///////////////////////////////////////////////////////////////////////////
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     // handles repeat(exact)[p]
     template <typename T>
     struct exact_iterator
@@ -90,9 +94,6 @@ namespace boost { namespace spirit { namespace karma
         bool got_min(T i) const { return i >= exact; }
 
         T const exact;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(exact_iterator& operator= (exact_iterator const&))
     };
 
     // handles repeat(min, max)[p]
@@ -110,9 +111,6 @@ namespace boost { namespace spirit { namespace karma
 
         T const min;
         T const max;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(finite_iterator& operator= (finite_iterator const&))
     };
 
     // handles repeat(min, inf)[p]
@@ -128,10 +126,10 @@ namespace boost { namespace spirit { namespace karma
         bool got_min(T i) const { return i >= min; }
 
         T const min;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(infinite_iterator& operator= (infinite_iterator const&))
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
     ///////////////////////////////////////////////////////////////////////////
     template <typename Subject, typename LoopIter, typename Strict

@@ -18,6 +18,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/property_map/parallel/parallel_property_maps.hpp>
 #include <boost/graph/parallel/algorithm.hpp>
 #include <boost/graph/parallel/container_traits.hpp>
 #include <boost/property_map/vector_property_map.hpp>

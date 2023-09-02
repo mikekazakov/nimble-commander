@@ -3,8 +3,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_MP_CONSTEXPR_HPP
-#define BOOST_MP_CONSTEXPR_HPP
+#ifndef BOOST_MP_DETAIL_CONSTEXPR_HPP
+#define BOOST_MP_DETAIL_CONSTEXPR_HPP
 
 #include <cstring>
 #include <boost/multiprecision/detail/standalone_config.hpp>
@@ -48,7 +48,7 @@ inline BOOST_CXX14_CONSTEXPR OutputIterator copy(InputIterator first, InputItera
       if constexpr (std::is_pointer<InputIterator>::value && std::is_pointer<OutputIterator>::value && std::is_trivially_copyable<typename std::remove_reference<decltype(*first)>::type>::value)
       {
          // The normal runtime branch:
-         std::memcpy(result, first, (last - first) * sizeof(*first));
+         std::memcpy(result, first, static_cast<std::size_t>(static_cast<std::size_t>(last - first) * sizeof(*first)));
          return result + (last - first);
       }
       else

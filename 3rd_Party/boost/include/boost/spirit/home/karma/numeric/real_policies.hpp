@@ -258,7 +258,7 @@ namespace boost { namespace spirit { namespace karma
             // but it's spelled out to avoid inter-modular dependencies.
 
             typename remove_const<T>::type digits = 
-                (traits::test_zero(n) ? 0 : floor(log10(n))) + 1;
+                (traits::test_zero(n) ? 1 : ceil(log10(n + T(1.))));
             bool r = true;
             for (/**/; r && digits < precision_; digits = digits + 1)
                 r = char_inserter<>::call(sink, '0');

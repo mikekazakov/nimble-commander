@@ -14,16 +14,20 @@
 
 namespace boost { namespace spirit { namespace karma { namespace detail
 {
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename Delimiter>
     struct unused_delimiter : unused_type
     {
         unused_delimiter(Delimiter const& delim)
           : delimiter(delim) {}
         Delimiter const& delimiter;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(unused_delimiter& operator= (unused_delimiter const&))
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
     // If a surrounding verbatim[] directive was specified, the current
     // delimiter is of the type unused_delimiter. In this case we 

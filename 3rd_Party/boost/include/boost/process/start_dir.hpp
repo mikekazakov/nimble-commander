@@ -23,7 +23,7 @@
 
 #include <boost/process/detail/config.hpp>
 #include <string>
-#include <boost/filesystem/path.hpp>
+#include <boost/process/filesystem.hpp>
 
 /** \file boost/process/start_dir.hpp
  *
@@ -53,8 +53,8 @@ struct start_dir_
     api::start_dir_init<Char> operator()(std::basic_string<Char> && s) const {return {std::move(s)}; }
     template<typename Char>
     api::start_dir_init<Char> operator()(const Char* s)                const {return {s}; }
-    api::start_dir_init<typename boost::filesystem::path::value_type>
-                              operator()(const boost::filesystem::path & st) const {return {st.native()}; }
+    api::start_dir_init<typename boost::process::filesystem::path::value_type>
+                              operator()(const boost::process::filesystem::path & st) const {return {st.native()}; }
 
     template<typename Char>
     api::start_dir_init<Char> operator= (const std::basic_string<Char> & st) const {return {st}; }
@@ -62,8 +62,8 @@ struct start_dir_
     api::start_dir_init<Char> operator= (std::basic_string<Char> && s) const {return {std::move(s)}; }
     template<typename Char>
     api::start_dir_init<Char> operator= (const Char* s)                const {return {s}; }
-    api::start_dir_init<typename boost::filesystem::path::value_type>
-                              operator= (const boost::filesystem::path & st) const {return {st.native()}; }
+    api::start_dir_init<typename boost::process::filesystem::path::value_type>
+                              operator= (const boost::process::filesystem::path & st) const {return {st.native()}; }
 
 };
 
@@ -100,7 +100,7 @@ start_dir=path
 start_dir(path)
 \endcode
 
-It can be used with `std::string`, `std::wstring` and `boost::filesystem::path`.
+It can be used with `std::string`, `std::wstring` and `boost::process::filesystem::path`.
 
 
  */

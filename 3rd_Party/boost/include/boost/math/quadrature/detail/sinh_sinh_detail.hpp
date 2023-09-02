@@ -47,10 +47,10 @@ public:
     sinh_sinh_detail(size_t max_refinements);
 
     template<class F>
-    auto integrate(const F f, Real tolerance, Real* error, Real* L1, std::size_t* levels)->decltype(std::declval<F>()(std::declval<Real>())) const;
+    auto integrate(const F f, Real tolerance, Real* error, Real* L1, std::size_t* levels) const ->decltype(std::declval<F>()(std::declval<Real>()));
 
 private:
-private:
+
    const std::vector<Real>& get_abscissa_row(std::size_t n)const
    {
 #if !defined(BOOST_MATH_NO_ATOMIC_INT) && defined(BOOST_HAS_THREADS)
@@ -132,7 +132,7 @@ private:
    mutable std::vector<std::vector<Real>> m_weights;
    std::size_t                       m_max_refinements;
 #if !defined(BOOST_MATH_NO_ATOMIC_INT) && defined(BOOST_HAS_THREADS)
-   mutable boost::math::detail::atomic_unsigned_type      m_committed_refinements;
+   mutable boost::math::detail::atomic_unsigned_type      m_committed_refinements{};
    mutable std::mutex m_mutex;
 #else
    mutable unsigned                  m_committed_refinements;
@@ -148,7 +148,7 @@ sinh_sinh_detail<Real, Policy>::sinh_sinh_detail(size_t max_refinements)
 
 template<class Real, class Policy>
 template<class F>
-auto sinh_sinh_detail<Real, Policy>::integrate(const F f, Real tolerance, Real* error, Real* L1, std::size_t* levels)->decltype(std::declval<F>()(std::declval<Real>())) const
+auto sinh_sinh_detail<Real, Policy>::integrate(const F f, Real tolerance, Real* error, Real* L1, std::size_t* levels) const ->decltype(std::declval<F>()(std::declval<Real>()))
 {
     using std::abs;
     using std::sqrt;

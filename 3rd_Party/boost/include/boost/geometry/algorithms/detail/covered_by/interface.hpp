@@ -19,10 +19,6 @@
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_COVERED_BY_INTERFACE_HPP
 
 
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant_fwd.hpp>
-
 #include <boost/geometry/algorithms/detail/within/interface.hpp>
 #include <boost/geometry/algorithms/not_implemented.hpp>
 
@@ -121,9 +117,14 @@ struct covered_by<default_strategy, false>
 } // namespace resolve_strategy
 
 
-namespace resolve_variant {
+namespace resolve_dynamic {
 
-template <typename Geometry1, typename Geometry2>
+template
+<
+    typename Geometry1, typename Geometry2,
+    typename Tag1 = typename geometry::tag<Geometry1>::type,
+    typename Tag2 = typename geometry::tag<Geometry2>::type
+>
 struct covered_by
 {
     template <typename Strategy>
@@ -131,107 +132,74 @@ struct covered_by
                              Geometry2 const& geometry2,
                              Strategy const& strategy)
     {
-        return resolve_strategy::covered_by<Strategy>
-                               ::apply(geometry1, geometry2, strategy);
+        return resolve_strategy::covered_by
+            <
+                Strategy
+            >::apply(geometry1, geometry2, strategy);
     }
 };
 
-template <BOOST_VARIANT_ENUM_PARAMS(typename T), typename Geometry2>
-struct covered_by<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>, Geometry2>
+template <typename Geometry1, typename Geometry2, typename Tag2>
+struct covered_by<Geometry1, Geometry2, dynamic_geometry_tag, Tag2>
 {
     template <typename Strategy>
-    struct visitor: boost::static_visitor<bool>
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Strategy const& strategy)
     {
-        Geometry2 const& m_geometry2;
-        Strategy const& m_strategy;
-
-        visitor(Geometry2 const& geometry2, Strategy const& strategy)
-        : m_geometry2(geometry2), m_strategy(strategy) {}
-
-        template <typename Geometry1>
-        bool operator()(Geometry1 const& geometry1) const
+        bool result = false;
+        traits::visit<Geometry1>::apply([&](auto const& g1)
         {
-            return covered_by<Geometry1, Geometry2>
-                   ::apply(geometry1, m_geometry2, m_strategy);
-        }
-    };
-
-    template <typename Strategy>
-    static inline bool
-    apply(boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry1,
-          Geometry2 const& geometry2,
-          Strategy const& strategy)
-    {
-        return boost::apply_visitor(visitor<Strategy>(geometry2, strategy), geometry1);
+            result = resolve_strategy::covered_by
+                <
+                    Strategy
+                >::apply(g1, geometry2, strategy);
+        }, geometry1);
+        return result;
     }
 };
 
-template <typename Geometry1, BOOST_VARIANT_ENUM_PARAMS(typename T)>
-struct covered_by<Geometry1, boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+template <typename Geometry1, typename Geometry2, typename Tag1>
+struct covered_by<Geometry1, Geometry2, Tag1, dynamic_geometry_tag>
 {
     template <typename Strategy>
-    struct visitor: boost::static_visitor<bool>
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Strategy const& strategy)
     {
-        Geometry1 const& m_geometry1;
-        Strategy const& m_strategy;
-
-        visitor(Geometry1 const& geometry1, Strategy const& strategy)
-        : m_geometry1(geometry1), m_strategy(strategy) {}
-
-        template <typename Geometry2>
-        bool operator()(Geometry2 const& geometry2) const
+        bool result = false;
+        traits::visit<Geometry2>::apply([&](auto const& g2)
         {
-            return covered_by<Geometry1, Geometry2>
-                   ::apply(m_geometry1, geometry2, m_strategy);
-        }
-    };
-
-    template <typename Strategy>
-    static inline bool
-    apply(Geometry1 const& geometry1,
-          boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry2,
-          Strategy const& strategy)
-    {
-        return boost::apply_visitor(visitor<Strategy>(geometry1, strategy), geometry2);
+            result = resolve_strategy::covered_by
+                <
+                    Strategy
+                >::apply(geometry1, g2, strategy);
+        }, geometry2);
+        return result;
     }
 };
 
-template <
-    BOOST_VARIANT_ENUM_PARAMS(typename T1),
-    BOOST_VARIANT_ENUM_PARAMS(typename T2)
->
-struct covered_by<
-    boost::variant<BOOST_VARIANT_ENUM_PARAMS(T1)>,
-    boost::variant<BOOST_VARIANT_ENUM_PARAMS(T2)>
->
+template <typename Geometry1, typename Geometry2>
+struct covered_by<Geometry1, Geometry2, dynamic_geometry_tag, dynamic_geometry_tag>
 {
     template <typename Strategy>
-    struct visitor: boost::static_visitor<bool>
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Strategy const& strategy)
     {
-        Strategy const& m_strategy;
-
-        visitor(Strategy const& strategy): m_strategy(strategy) {}
-
-        template <typename Geometry1, typename Geometry2>
-        bool operator()(Geometry1 const& geometry1,
-                        Geometry2 const& geometry2) const
+        bool result = false;
+        traits::visit<Geometry1, Geometry2>::apply([&](auto const& g1, auto const& g2)
         {
-            return covered_by<Geometry1, Geometry2>
-                   ::apply(geometry1, geometry2, m_strategy);
-        }
-    };
-
-    template <typename Strategy>
-    static inline bool
-    apply(boost::variant<BOOST_VARIANT_ENUM_PARAMS(T1)> const& geometry1,
-          boost::variant<BOOST_VARIANT_ENUM_PARAMS(T2)> const& geometry2,
-          Strategy const& strategy)
-    {
-        return boost::apply_visitor(visitor<Strategy>(strategy), geometry1, geometry2);
+            result = resolve_strategy::covered_by
+                <
+                    Strategy
+                >::apply(g1, g2, strategy);
+        }, geometry1, geometry2);
+        return result;
     }
 };
 
-} // namespace resolve_variant
+} // namespace resolve_dynamic
 
 
 /*!
@@ -256,8 +224,10 @@ struct covered_by<
 template<typename Geometry1, typename Geometry2>
 inline bool covered_by(Geometry1 const& geometry1, Geometry2 const& geometry2)
 {
-    return resolve_variant::covered_by<Geometry1, Geometry2>
-                          ::apply(geometry1, geometry2, default_strategy());
+    return resolve_dynamic::covered_by
+        <
+            Geometry1, Geometry2
+        >::apply(geometry1, geometry2, default_strategy());
 }
 
 /*!
@@ -280,8 +250,10 @@ template<typename Geometry1, typename Geometry2, typename Strategy>
 inline bool covered_by(Geometry1 const& geometry1, Geometry2 const& geometry2,
         Strategy const& strategy)
 {
-    return resolve_variant::covered_by<Geometry1, Geometry2>
-                          ::apply(geometry1, geometry2, strategy);
+    return resolve_dynamic::covered_by
+        <
+            Geometry1, Geometry2
+        >::apply(geometry1, geometry2, strategy);
 }
 
 }} // namespace boost::geometry

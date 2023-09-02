@@ -20,6 +20,7 @@
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/parallel/container_traits.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/property_map/parallel/parallel_property_maps.hpp>
 #include <boost/graph/parallel/algorithm.hpp>
 #include <utility>
 #include <boost/optional.hpp>

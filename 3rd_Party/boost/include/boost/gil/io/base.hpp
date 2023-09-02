@@ -44,8 +44,8 @@ protected:
     , _dim     ( 0, 0 )
     {}
 
-    image_read_settings_base( const point_t& top_left
-                            , const point_t& dim
+    image_read_settings_base( point_t const& top_left
+                            , point_t const& dim
                             )
     : _top_left( top_left )
     , _dim     ( dim      )
@@ -54,8 +54,8 @@ protected:
 
 public:
 
-    void set( const point_t& top_left
-            , const point_t& dim
+    void set( point_t const& top_left
+            , point_t const& dim
             )
     {
         _top_left = top_left;

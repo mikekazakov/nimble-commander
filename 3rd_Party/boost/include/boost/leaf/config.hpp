@@ -195,27 +195,6 @@
 
 #endif
 
-#ifdef BOOST_NORETURN
-#   define BOOST_LEAF_NORETURN BOOST_NORETURN
-#else
-#   if defined(_MSC_VER)
-#       define BOOST_LEAF_NORETURN __declspec(noreturn)
-#   elif defined(__GNUC__)
-#       define BOOST_LEAF_NORETURN __attribute__ ((__noreturn__))
-#   elif defined(__has_attribute) && defined(__SUNPRO_CC) && (__SUNPRO_CC > 0x5130)
-#       if __has_attribute(noreturn)
-#           define BOOST_LEAF_NORETURN [[noreturn]]
-#       endif
-#   elif defined(__has_cpp_attribute)
-#       if __has_cpp_attribute(noreturn)
-#           define BOOST_LEAF_NORETURN [[noreturn]]
-#       endif
-#   endif
-#endif
-#if !defined(BOOST_LEAF_NORETURN)
-#  define BOOST_LEAF_NORETURN
-#endif
-
 ////////////////////////////////////////
 
 #ifdef _MSC_VER

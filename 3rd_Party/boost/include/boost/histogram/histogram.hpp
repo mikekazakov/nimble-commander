@@ -7,6 +7,7 @@
 #ifndef BOOST_HISTOGRAM_HISTOGRAM_HPP
 #define BOOST_HISTOGRAM_HISTOGRAM_HPP
 
+#include <boost/core/make_span.hpp>
 #include <boost/histogram/detail/accumulator_traits.hpp>
 #include <boost/histogram/detail/argument_traits.hpp>
 #include <boost/histogram/detail/axes.hpp>
@@ -16,7 +17,6 @@
 #include <boost/histogram/detail/index_translator.hpp>
 #include <boost/histogram/detail/mutex_base.hpp>
 #include <boost/histogram/detail/nonmember_container_access.hpp>
-#include <boost/histogram/detail/span.hpp>
 #include <boost/histogram/detail/static_if.hpp>
 #include <boost/histogram/fwd.hpp>
 #include <boost/histogram/indexed.hpp>
@@ -214,8 +214,13 @@ public:
 
     The argument must be an iterable with a size that matches the
     rank of the histogram. The element of an iterable may be 1) a value or 2) an iterable
-    with contiguous storage over values or 3) a variant of 1) and 2). Sub-iterables must
+    over a contiguous sequence of values or 3) a variant of 1) and 2). Sub-iterables must
     have the same length.
+
+    Warning: `std::vector<bool>` is not a contiguous sequence over boolean values because
+    of the infamous vector specialization for booleans. It cannot be used as an
+    argument, but any truely contiguous sequence of boolean values can (`std::array<bool,
+    N>` or `std::valarray<bool>`, for example).
 
     Values are passed to the corresponding histogram axis in order. If a single value is
     passed together with an iterable of values, the single value is treated like an
@@ -234,7 +239,7 @@ public:
                   "sample argument is missing but required by accumulator");
     std::lock_guard<typename mutex_base::type> guard{mutex_base::get()};
     detail::fill_n(mp11::mp_bool<(n_sample_args_expected == 0)>{}, offset_, storage_,
-                   axes_, detail::make_span(args));
+                   axes_, make_span(args));
   }
 
   /** Fill histogram with several values and weights at once.
@@ -252,8 +257,7 @@ public:
         std::is_convertible<std::tuple<>, typename acc_traits::args>::value;
     std::lock_guard<typename mutex_base::type> guard{mutex_base::get()};
     detail::fill_n(mp11::mp_bool<(weight_valid && sample_valid)>{}, offset_, storage_,
-                   axes_, detail::make_span(args),
-                   weight(detail::to_ptr_size(weights.value)));
+                   axes_, make_span(args), weight(detail::to_ptr_size(weights.value)));
   }
 
   /** Fill histogram with several values and weights at once.
@@ -284,7 +288,7 @@ public:
           constexpr bool sample_valid =
               std::is_convertible<sample_args_passed, typename acc_traits::args>::value;
           detail::fill_n(mp11::mp_bool<(sample_valid)>{}, offset_, storage_, axes_,
-                         detail::make_span(args), detail::to_ptr_size(sargs)...);
+                         make_span(args), detail::to_ptr_size(sargs)...);
         },
         samples.value);
   }
@@ -316,7 +320,7 @@ public:
           constexpr bool sample_valid =
               std::is_convertible<sample_args_passed, typename acc_traits::args>::value;
           detail::fill_n(mp11::mp_bool<(weight_valid && sample_valid)>{}, offset_,
-                         storage_, axes_, detail::make_span(args),
+                         storage_, axes_, make_span(args),
                          weight(detail::to_ptr_size(weights.value)),
                          detail::to_ptr_size(sargs)...);
         },

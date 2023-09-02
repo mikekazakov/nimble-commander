@@ -198,16 +198,32 @@ struct scoped_channel_value
         return *this;
     }
 
-    scoped_channel_value& operator++() { ++value_; return *this; }
-    scoped_channel_value& operator--() { --value_; return *this; }
+    auto operator++() -> scoped_channel_value& { ++value_; return *this; }
+    auto operator--() -> scoped_channel_value& { --value_; return *this; }
 
-    scoped_channel_value operator++(int) { scoped_channel_value tmp=*this; this->operator++(); return tmp; }
-    scoped_channel_value operator--(int) { scoped_channel_value tmp=*this; this->operator--(); return tmp; }
+    auto operator++(int) -> scoped_channel_value
+    {
+        scoped_channel_value tmp=*this;
+        this->operator++(); return tmp;
+    }
+    
+    auto operator--(int) -> scoped_channel_value
+    {
+        scoped_channel_value tmp=*this;
+        this->operator--(); return tmp;
+    }
 
-    template <typename Scalar2> scoped_channel_value& operator+=(Scalar2 v) { value_+=v; return *this; }
-    template <typename Scalar2> scoped_channel_value& operator-=(Scalar2 v) { value_-=v; return *this; }
-    template <typename Scalar2> scoped_channel_value& operator*=(Scalar2 v) { value_*=v; return *this; }
-    template <typename Scalar2> scoped_channel_value& operator/=(Scalar2 v) { value_/=v; return *this; }
+    template <typename Scalar2>
+    auto operator+=(Scalar2 v) -> scoped_channel_value& { value_+=v; return *this; }
+    
+    template <typename Scalar2>
+    auto operator-=(Scalar2 v) -> scoped_channel_value& { value_-=v; return *this; }
+
+    template <typename Scalar2>
+    auto operator*=(Scalar2 v) -> scoped_channel_value& { value_*=v; return *this; }
+
+    template <typename Scalar2>
+    auto operator/=(Scalar2 v) -> scoped_channel_value& { value_/=v; return *this; }
 
     operator BaseChannelValue() const { return value_; }
 private:
@@ -313,7 +329,7 @@ public:
         value_ = packed_channel_value(static_cast<integer_t>(v));
     }
 
-    static unsigned int num_bits() { return NumBits; }
+    static auto num_bits() -> unsigned int { return NumBits; }
 
     operator integer_t() const { return value_; }
 
@@ -348,35 +364,69 @@ public:
     data_ptr_t _data_ptr;   // void* pointer to the first byte of the bit range
 
     using value_type = packed_channel_value<NumBits>;
-    using reference = const Derived;
-    using pointer = value_type *;
-    using const_pointer = const value_type *;
+    using reference = Derived const;
+    using pointer = value_type*;
+    using const_pointer = value_type const*;
     static constexpr int num_bits = NumBits;
     static constexpr bool is_mutable = IsMutable;
 
-    static value_type min_value()       { return channel_traits<value_type>::min_value(); }
-    static value_type max_value()       { return channel_traits<value_type>::max_value(); }
+    static auto min_value() -> value_type { return channel_traits<value_type>::min_value(); }
+    static auto max_value() -> value_type { return channel_traits<value_type>::max_value(); }
 
     using bitfield_t = BitField;
     using integer_t = typename value_type::integer_t;
 
     packed_channel_reference_base(data_ptr_t data_ptr) : _data_ptr(data_ptr) {}
-    packed_channel_reference_base(const packed_channel_reference_base& ref) : _data_ptr(ref._data_ptr) {}
-    const Derived& operator=(integer_t v) const { set(v); return derived(); }
+    packed_channel_reference_base(packed_channel_reference_base const& ref) : _data_ptr(ref._data_ptr) {}
+    
+    auto operator=(integer_t v) const -> Derived const& { set(v); return derived(); }
 
-    const Derived& operator++() const { set(get()+1); return derived(); }
-    const Derived& operator--() const { set(get()-1); return derived(); }
+    auto operator++() const -> Derived const& { set(get()+1); return derived(); }
+    auto operator--() const -> Derived const& { set(get()-1); return derived(); }
 
-    Derived operator++(int) const { Derived tmp=derived(); this->operator++(); return tmp; }
-    Derived operator--(int) const { Derived tmp=derived(); this->operator--(); return tmp; }
+    auto operator++(int) const -> Derived
+    {
+        Derived tmp=derived();
+        this->operator++(); return tmp;
+    }
+    
+    auto operator--(int) const -> Derived
+    {
+        Derived tmp=derived();
+        this->operator--();
+        return tmp;
+    }
 
-    template <typename Scalar2> const Derived& operator+=(Scalar2 v) const { set( static_cast<integer_t>(  get() + v )); return derived(); }
-    template <typename Scalar2> const Derived& operator-=(Scalar2 v) const { set( static_cast<integer_t>(  get() - v )); return derived(); }
-    template <typename Scalar2> const Derived& operator*=(Scalar2 v) const { set( static_cast<integer_t>(  get() * v )); return derived(); }
-    template <typename Scalar2> const Derived& operator/=(Scalar2 v) const { set( static_cast<integer_t>(  get() / v )); return derived(); }
+    template <typename Scalar2>
+    auto operator+=(Scalar2 v) const -> Derived const&
+    {
+        set( static_cast<integer_t>(  get() + v ));
+        return derived();
+    }
+    
+    template <typename Scalar2>
+    auto operator-=(Scalar2 v) const -> Derived const&
+    {
+        set( static_cast<integer_t>(  get() - v )); return derived();
+    }
+    
+    template <typename Scalar2>
+    auto operator*=(Scalar2 v) const -> Derived const&
+    {
+        set( static_cast<integer_t>(  get() * v ));
+        return derived();
+    }
+
+    template <typename Scalar2>
+    auto operator/=(Scalar2 v) const -> Derived const&
+    {
+        set( static_cast<integer_t>(  get() / v ));
+        return derived();
+    }
 
     operator integer_t() const { return get(); }
-    data_ptr_t operator &() const {return _data_ptr;}
+    auto operator&() const -> data_ptr_t {return _data_ptr;}
+
 protected:
 
     using num_value_t = typename detail::num_value_fn<NumBits>::type;
@@ -389,12 +439,15 @@ protected:
     const bitfield_t& get_data()                      const { return *static_cast<const bitfield_t*>(_data_ptr); }
     void              set_data(const bitfield_t& val) const {        *static_cast<      bitfield_t*>(_data_ptr) = val; }
 #else
-    bitfield_t get_data() const {
+    auto get_data() const -> bitfield_t
+    {
         bitfield_t ret;
         static_copy_bytes<sizeof(bitfield_t) >()(gil_reinterpret_cast_c<const unsigned char*>(_data_ptr),gil_reinterpret_cast<unsigned char*>(&ret));
         return ret;
     }
-    void set_data(const bitfield_t& val) const {
+    
+    void set_data(bitfield_t const& val) const
+    {
         static_copy_bytes<sizeof(bitfield_t) >()(gil_reinterpret_cast_c<const unsigned char*>(&val),gil_reinterpret_cast<unsigned char*>(_data_ptr));
     }
 #endif
@@ -403,8 +456,8 @@ private:
     void set(integer_t value) const {     // can this be done faster??
         this->derived().set_unsafe(((value % num_values) + num_values) % num_values);
     }
-    integer_t get() const { return derived().get(); }
-    const Derived& derived() const { return static_cast<const Derived&>(*this); }
+    auto get() const -> integer_t { return derived().get(); }
+    auto derived() const -> Derived const& { return static_cast<const Derived&>(*this); }
 };
 }   // namespace detail
 
@@ -468,9 +521,9 @@ public:
     packed_channel_reference(const packed_channel_reference& ref) : parent_t(ref._data_ptr) {}
     packed_channel_reference(const mutable_reference& ref) : parent_t(ref._data_ptr) {}
 
-    unsigned first_bit() const { return FirstBit; }
+    auto first_bit() const -> unsigned int { return FirstBit; }
 
-    integer_t get() const { return integer_t((this->get_data()&channel_mask) >> FirstBit); }
+    auto get() const -> integer_t { return integer_t((this->get_data()&channel_mask) >> FirstBit); }
 };
 
 /// \ingroup PackedChannelReferenceModel
@@ -499,16 +552,17 @@ public:
         return *this;
     }
 
-    const packed_channel_reference& operator=(const mutable_reference& ref) const { set_from_reference(ref.get_data()); return *this; }
-    const packed_channel_reference& operator=(const const_reference&   ref) const { set_from_reference(ref.get_data()); return *this; }
+    auto operator=(mutable_reference const& ref) const -> packed_channel_reference const& { set_from_reference(ref.get_data()); return *this; }
+    auto operator=(const_reference const& ref) const -> packed_channel_reference const& { set_from_reference(ref.get_data()); return *this; }
 
     template <bool Mutable1>
-    const packed_channel_reference& operator=(const packed_dynamic_channel_reference<BitField,NumBits,Mutable1>& ref) const { set_unsafe(ref.get()); return *this; }
+    auto operator=(packed_dynamic_channel_reference<BitField,NumBits,Mutable1> const& ref) const -> packed_channel_reference const& { set_unsafe(ref.get()); return *this; }
 
-    unsigned first_bit() const { return FirstBit; }
+    auto first_bit() const -> unsigned int { return FirstBit; }
 
-    integer_t get()                  const { return integer_t((this->get_data()&channel_mask) >> FirstBit); }
+    auto get() const -> integer_t { return integer_t((this->get_data()&channel_mask) >> FirstBit); }
     void set_unsafe(integer_t value) const { this->set_data((this->get_data() & ~channel_mask) | (( static_cast< BitField >( value )<<FirstBit))); }
+
 private:
     void set_from_reference(const BitField& other_bits) const { this->set_data((this->get_data() & ~channel_mask) | (other_bits & channel_mask)); }
 };
@@ -599,13 +653,14 @@ public:
     using mutable_reference = packed_dynamic_channel_reference<BitField,NumBits,true> const;
     using integer_t = typename parent_t::integer_t;
 
-    packed_dynamic_channel_reference(const void* data_ptr, unsigned first_bit) : parent_t(data_ptr), _first_bit(first_bit) {}
-    packed_dynamic_channel_reference(const const_reference&   ref) : parent_t(ref._data_ptr), _first_bit(ref._first_bit) {}
-    packed_dynamic_channel_reference(const mutable_reference& ref) : parent_t(ref._data_ptr), _first_bit(ref._first_bit) {}
+    packed_dynamic_channel_reference(void const* data_ptr, unsigned first_bit) : parent_t(data_ptr), _first_bit(first_bit) {}
+    packed_dynamic_channel_reference(const_reference const&   ref) : parent_t(ref._data_ptr), _first_bit(ref._first_bit) {}
+    packed_dynamic_channel_reference(mutable_reference const& ref) : parent_t(ref._data_ptr), _first_bit(ref._first_bit) {}
 
-    unsigned first_bit() const { return _first_bit; }
+    auto first_bit() const -> unsigned int { return _first_bit; }
 
-    integer_t get() const {
+    auto get() const -> integer_t
+    {
         const BitField channel_mask = static_cast< integer_t >( parent_t::max_val ) <<_first_bit;
         return static_cast< integer_t >(( this->get_data()&channel_mask ) >> _first_bit );
     }
@@ -629,26 +684,30 @@ public:
     using integer_t = typename parent_t::integer_t;
 
     packed_dynamic_channel_reference(void* data_ptr, unsigned first_bit) : parent_t(data_ptr), _first_bit(first_bit) {}
-    packed_dynamic_channel_reference(const packed_dynamic_channel_reference& ref) : parent_t(ref._data_ptr), _first_bit(ref._first_bit) {}
+    packed_dynamic_channel_reference(packed_dynamic_channel_reference const& ref) : parent_t(ref._data_ptr), _first_bit(ref._first_bit) {}
 
-    packed_dynamic_channel_reference const& operator=(integer_t value) const
+    auto operator=(integer_t value) const -> packed_dynamic_channel_reference const&
     {
         BOOST_ASSERT(value <= parent_t::max_val);
         set_unsafe(value);
         return *this;
     }
 
-    const packed_dynamic_channel_reference& operator=(const mutable_reference& ref) const {  set_unsafe(ref.get()); return *this; }
-    const packed_dynamic_channel_reference& operator=(const const_reference&   ref) const {  set_unsafe(ref.get()); return *this; }
+    auto operator=(mutable_reference const& ref) const -> packed_dynamic_channel_reference const& {  set_unsafe(ref.get()); return *this; }
+    auto operator=(const_reference const& ref) const -> packed_dynamic_channel_reference const& {  set_unsafe(ref.get()); return *this; }
 
     template <typename BitField1, int FirstBit1, bool Mutable1>
-    const packed_dynamic_channel_reference& operator=(const packed_channel_reference<BitField1, FirstBit1, NumBits, Mutable1>& ref) const
-        {  set_unsafe(ref.get()); return *this; }
+    auto operator=(packed_channel_reference<BitField1, FirstBit1, NumBits, Mutable1> const& ref) const -> packed_dynamic_channel_reference const&
+    {
+        set_unsafe(ref.get());
+        return *this;
+    }
 
-    unsigned first_bit() const { return _first_bit; }
+    auto first_bit() const -> unsigned int { return _first_bit; }
 
-    integer_t get() const {
-        const BitField channel_mask = static_cast< integer_t >( parent_t::max_val ) << _first_bit;
+    auto get() const -> integer_t
+    {
+        BitField const channel_mask = static_cast< integer_t >( parent_t::max_val ) << _first_bit;
         return static_cast< integer_t >(( this->get_data()&channel_mask ) >> _first_bit );
     }
 

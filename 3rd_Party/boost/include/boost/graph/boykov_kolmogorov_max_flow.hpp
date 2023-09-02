@@ -1029,8 +1029,7 @@ boykov_kolmogorov_max_flow(Graph& g, CapacityEdgeMap cap,
  * named-parameter version, some given
  */
 template < class Graph, class P, class T, class R >
-typename property_traits<
-    typename property_map< Graph, edge_capacity_t >::const_type >::value_type
+typename detail::edge_capacity_value< Graph, P, T, R >::type
 boykov_kolmogorov_max_flow(Graph& g,
     typename graph_traits< Graph >::vertex_descriptor src,
     typename graph_traits< Graph >::vertex_descriptor sink,

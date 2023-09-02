@@ -4,8 +4,8 @@
 // Copyright (c) 2008-2015 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2015-2021.
-// Modifications copyright (c) 2015-2021, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2015-2023.
+// Modifications copyright (c) 2015-2023, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -33,6 +33,7 @@
 #include <boost/geometry/strategies/compare.hpp>
 #include <boost/geometry/strategies/side.hpp>
 
+#include <boost/geometry/util/select_calculation_type.hpp>
 #include <boost/geometry/util/select_most_precise.hpp>
 
 
@@ -70,7 +71,7 @@ class side_by_triangle
     };
 
 public :
-    typedef cartesian_tag cs_tag;
+    using cs_tag = cartesian_tag;
 
     // Template member function, because it is not always trivial
     // or convenient to explicitly mention the typenames in the
@@ -171,7 +172,7 @@ public :
             // arguments, we cyclically permute them so that the first
             // argument is always the lexicographically smallest point.
 
-            typedef compare::cartesian<compare::less> less;
+            using less = compare::cartesian<compare::less, compare::equals_epsilon>;
 
             if (less::apply(p, p1))
             {
@@ -204,41 +205,23 @@ public :
     template <typename P1, typename P2, typename P>
     static inline int apply(P1 const& p1, P2 const& p2, P const& p)
     {
-        typedef typename coordinate_type<P1>::type coordinate_type1;
-        typedef typename coordinate_type<P2>::type coordinate_type2;
-        typedef typename coordinate_type<P>::type coordinate_type3;
-
-        typedef std::conditional_t
-            <
-                std::is_void<CalculationType>::value,
-                typename select_most_precise
-                    <
-                        coordinate_type1,
-                        coordinate_type2,
-                        coordinate_type3
-                    >::type,
-                CalculationType
-            > coordinate_type;
+        using coor_t = typename select_calculation_type_alt<CalculationType, P1, P2, P>::type;
 
         // Promote float->double, small int->int
-        typedef typename select_most_precise
-            <
-                coordinate_type,
-                double
-            >::type promoted_type;
+        using promoted_t = typename select_most_precise<coor_t, double>::type;
 
         bool const are_all_integral_coordinates =
-            std::is_integral<coordinate_type1>::value
-            && std::is_integral<coordinate_type2>::value
-            && std::is_integral<coordinate_type3>::value;
+            std::is_integral<typename coordinate_type<P1>::type>::value
+            && std::is_integral<typename coordinate_type<P2>::type>::value
+            && std::is_integral<typename coordinate_type<P>::type>::value;
 
-        eps_policy< math::detail::equals_factor_policy<promoted_type> > epsp;
-        promoted_type s = compute_side_value
+        eps_policy< math::detail::equals_factor_policy<promoted_t> > epsp;
+        promoted_t s = compute_side_value
             <
-                coordinate_type, promoted_type, are_all_integral_coordinates
+                coor_t, promoted_t, are_all_integral_coordinates
             >::apply(p1, p2, p, epsp);
 
-        promoted_type const zero = promoted_type();
+        promoted_t const zero = promoted_t();
         return math::detail::equals_by_policy(s, zero, epsp.policy) ? 0
             : s > zero ? 1
             : -1;
@@ -260,7 +243,7 @@ namespace services
 template <typename CalculationType>
 struct default_strategy<cartesian_tag, CalculationType>
 {
-    typedef side_by_triangle<CalculationType> type;
+    using type = side_by_triangle<CalculationType>;
 };
 
 }

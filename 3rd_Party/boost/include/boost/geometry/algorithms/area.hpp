@@ -3,10 +3,11 @@
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 // Copyright (c) 2008-2012 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
-// Copyright (c) 2017 Adam Wulkiewicz, Lodz, Poland.
+// Copyright (c) 2017-2022 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2017-2021.
-// Modifications copyright (c) 2017-2021 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017-2023.
+// Modifications copyright (c) 2017-2023 Oracle and/or its affiliates.
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
@@ -53,8 +54,6 @@
 #include <boost/geometry/strategies/concepts/area_concept.hpp>
 #include <boost/geometry/strategies/default_strategy.hpp>
 
-#include <boost/geometry/util/math.hpp>
-
 #include <boost/geometry/views/detail/closed_clockwise_view.hpp>
 
 
@@ -69,7 +68,7 @@ namespace detail { namespace area
 struct box_area
 {
     template <typename Box, typename Strategies>
-    static inline typename coordinate_type<Box>::type
+    static inline auto
     apply(Box const& box, Strategies const& strategies)
     {
         // Currently only works for 2D Cartesian boxes
@@ -107,7 +106,7 @@ struct ring_area
         auto const end = boost::end(view);
 
         strategy_type const strategy = strategies.area(ring);
-        typename strategy_type::template state<Ring> state;        
+        typename strategy_type::template state<Ring> state;
 
         for (auto previous = it++; it != end; ++previous, ++it)
         {

@@ -98,11 +98,12 @@ private:
     using add_ref_t = typename SrcView::template add_deref<deref_t>;
 public:
     using type = typename add_ref_t::type; // the color converted view type
-    static type make(const SrcView& sv) { return add_ref_t::make(sv, deref_t()); }
+    static type make(SrcView const& sv) { return add_ref_t::make(sv, deref_t()); }
 };
 
-template <typename DstP, typename View> inline
-typename premultiplied_view_type<View,DstP>::type premultiply_view(const View& src)
+template <typename DstP, typename View>
+inline auto premultiply_view(View const& src)
+    -> typename premultiplied_view_type<View,DstP>::type
 {
     return premultiplied_view_type<View,DstP>::make(src);
 }

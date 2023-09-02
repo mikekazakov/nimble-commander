@@ -4,8 +4,8 @@
 // Copyright (c) 2008-2012 Bruno Lalande, Paris, France.
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 
-// This file was modified by Oracle on 2020.
-// Modifications copyright (c) 2020, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2020-2022.
+// Modifications copyright (c) 2020-2022, Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Parts of Boost.Geometry are redesigned from Geodan's Geographic Library
@@ -76,6 +76,10 @@ struct top_dim<multi_linestring_tag> : std::integral_constant<int, 1> {};
 
 template <>
 struct top_dim<multi_polygon_tag> : std::integral_constant<int, 2> {};
+
+
+template <>
+struct top_dim<geometry_collection_tag> : std::integral_constant<int, -1> {};
 
 
 } // namespace core_dispatch

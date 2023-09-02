@@ -2,7 +2,7 @@
 // basic_socket_acceptor.hpp
 // ~~~~~~~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -85,6 +85,11 @@ template <typename Protocol, typename Executor>
 class basic_socket_acceptor
   : public socket_base
 {
+private:
+  class initiate_async_wait;
+  class initiate_async_accept;
+  class initiate_async_move_accept;
+
 public:
   /// The type of the executor associated with the object.
   typedef Executor executor_type;
@@ -450,7 +455,7 @@ public:
   }
 
   /// Get the executor associated with the object.
-  executor_type get_executor() BOOST_ASIO_NOEXCEPT
+  const executor_type& get_executor() BOOST_ASIO_NOEXCEPT
   {
     return impl_.get_executor();
   }
@@ -1251,11 +1256,14 @@ public:
   template <
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code))
         WaitToken BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(WaitToken,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(WaitToken,
       void (boost::system::error_code))
   async_wait(wait_type w,
       BOOST_ASIO_MOVE_ARG(WaitToken) token
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<WaitToken, void (boost::system::error_code)>(
+          declval<initiate_async_wait>(), token, w)))
   {
     return async_initiate<WaitToken, void (boost::system::error_code)>(
         initiate_async_wait(this), token, w);
@@ -1385,7 +1393,7 @@ public:
   template <typename Protocol1, typename Executor1,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code))
         AcceptToken BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(AcceptToken,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(AcceptToken,
       void (boost::system::error_code))
   async_accept(basic_socket<Protocol1, Executor1>& peer,
       BOOST_ASIO_MOVE_ARG(AcceptToken) token
@@ -1393,6 +1401,10 @@ public:
       typename constraint<
         is_convertible<Protocol, Protocol1>::value
       >::type = 0)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<AcceptToken, void (boost::system::error_code)>(
+          declval<initiate_async_accept>(), token,
+          &peer, static_cast<endpoint_type*>(0))))
   {
     return async_initiate<AcceptToken, void (boost::system::error_code)>(
         initiate_async_accept(this), token,
@@ -1514,12 +1526,15 @@ public:
   template <typename Executor1,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code))
         AcceptToken BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(AcceptToken,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(AcceptToken,
       void (boost::system::error_code))
   async_accept(basic_socket<protocol_type, Executor1>& peer,
       endpoint_type& peer_endpoint,
       BOOST_ASIO_MOVE_ARG(AcceptToken) token
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<AcceptToken, void (boost::system::error_code)>(
+          declval<initiate_async_accept>(), token, &peer, &peer_endpoint)))
   {
     return async_initiate<AcceptToken, void (boost::system::error_code)>(
         initiate_async_accept(this), token, &peer, &peer_endpoint);
@@ -1657,13 +1672,21 @@ public:
         typename Protocol::socket::template rebind_executor<
           executor_type>::other)) MoveAcceptToken
             BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptToken,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(MoveAcceptToken,
       void (boost::system::error_code,
         typename Protocol::socket::template
           rebind_executor<executor_type>::other))
   async_accept(
       BOOST_ASIO_MOVE_ARG(MoveAcceptToken) token
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<MoveAcceptToken,
+        void (boost::system::error_code, typename Protocol::socket::template
+          rebind_executor<executor_type>::other)>(
+            declval<initiate_async_move_accept>(), token,
+            declval<executor_type>(), static_cast<endpoint_type*>(0),
+            static_cast<typename Protocol::socket::template
+              rebind_executor<executor_type>::other*>(0))))
   {
     return async_initiate<MoveAcceptToken,
       void (boost::system::error_code, typename Protocol::socket::template
@@ -1902,9 +1925,11 @@ public:
   template <typename Executor1,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         typename Protocol::socket::template rebind_executor<
-          Executor1>::other)) MoveAcceptToken
-            BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptToken,
+          typename constraint<is_executor<Executor1>::value
+            || execution::is_executor<Executor1>::value,
+              Executor1>::type>::other)) MoveAcceptToken
+                BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(MoveAcceptToken,
       void (boost::system::error_code,
         typename Protocol::socket::template rebind_executor<
           Executor1>::other))
@@ -1915,15 +1940,24 @@ public:
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
       >::type = 0)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<MoveAcceptToken,
+        void (boost::system::error_code,
+          typename Protocol::socket::template rebind_executor<
+            Executor1>::other)>(
+              declval<initiate_async_move_accept>(), token,
+              ex, static_cast<endpoint_type*>(0),
+              static_cast<typename Protocol::socket::template
+                rebind_executor<Executor1>::other*>(0))))
   {
-    typedef typename Protocol::socket::template rebind_executor<
-      Executor1>::other other_socket_type;
-
     return async_initiate<MoveAcceptToken,
-      void (boost::system::error_code, other_socket_type)>(
-        initiate_async_move_accept(this), token,
-        ex, static_cast<endpoint_type*>(0),
-        static_cast<other_socket_type*>(0));
+      void (boost::system::error_code,
+        typename Protocol::socket::template rebind_executor<
+          Executor1>::other)>(
+            initiate_async_move_accept(this), token,
+            ex, static_cast<endpoint_type*>(0),
+            static_cast<typename Protocol::socket::template
+              rebind_executor<Executor1>::other*>(0));
   }
 
   /// Start an asynchronous accept.
@@ -1994,7 +2028,7 @@ public:
         typename Protocol::socket::template rebind_executor<
           typename ExecutionContext::executor_type>::other)) MoveAcceptToken
             BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptToken,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(MoveAcceptToken,
       void (boost::system::error_code,
         typename Protocol::socket::template rebind_executor<
           typename ExecutionContext::executor_type>::other))
@@ -2004,15 +2038,24 @@ public:
       typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type = 0)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<MoveAcceptToken,
+        void (boost::system::error_code,
+          typename Protocol::socket::template rebind_executor<
+            typename ExecutionContext::executor_type>::other)>(
+              declval<initiate_async_move_accept>(), token,
+              context.get_executor(), static_cast<endpoint_type*>(0),
+              static_cast<typename Protocol::socket::template rebind_executor<
+                typename ExecutionContext::executor_type>::other*>(0))))
   {
-    typedef typename Protocol::socket::template rebind_executor<
-      typename ExecutionContext::executor_type>::other other_socket_type;
-
     return async_initiate<MoveAcceptToken,
-      void (boost::system::error_code, other_socket_type)>(
-        initiate_async_move_accept(this), token,
-        context.get_executor(), static_cast<endpoint_type*>(0),
-        static_cast<other_socket_type*>(0));
+      void (boost::system::error_code,
+        typename Protocol::socket::template rebind_executor<
+          typename ExecutionContext::executor_type>::other)>(
+            initiate_async_move_accept(this), token,
+            context.get_executor(), static_cast<endpoint_type*>(0),
+            static_cast<typename Protocol::socket::template rebind_executor<
+              typename ExecutionContext::executor_type>::other*>(0));
   }
 
   /// Accept a new connection.
@@ -2161,13 +2204,21 @@ public:
         typename Protocol::socket::template rebind_executor<
           executor_type>::other)) MoveAcceptToken
             BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptToken,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(MoveAcceptToken,
       void (boost::system::error_code,
         typename Protocol::socket::template
           rebind_executor<executor_type>::other))
   async_accept(endpoint_type& peer_endpoint,
       BOOST_ASIO_MOVE_ARG(MoveAcceptToken) token
         BOOST_ASIO_DEFAULT_COMPLETION_TOKEN(executor_type))
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<MoveAcceptToken,
+        void (boost::system::error_code, typename Protocol::socket::template
+          rebind_executor<executor_type>::other)>(
+            declval<initiate_async_move_accept>(), token,
+            declval<executor_type>(), &peer_endpoint,
+            static_cast<typename Protocol::socket::template
+              rebind_executor<executor_type>::other*>(0))))
   {
     return async_initiate<MoveAcceptToken,
       void (boost::system::error_code, typename Protocol::socket::template
@@ -2438,9 +2489,11 @@ public:
   template <typename Executor1,
       BOOST_ASIO_COMPLETION_TOKEN_FOR(void (boost::system::error_code,
         typename Protocol::socket::template rebind_executor<
-          Executor1>::other)) MoveAcceptToken
-            BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptToken,
+          typename constraint<is_executor<Executor1>::value
+            || execution::is_executor<Executor1>::value,
+              Executor1>::type>::other)) MoveAcceptToken
+                BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(MoveAcceptToken,
       void (boost::system::error_code,
         typename Protocol::socket::template rebind_executor<
           Executor1>::other))
@@ -2451,15 +2504,22 @@ public:
         is_executor<Executor1>::value
           || execution::is_executor<Executor1>::value
       >::type = 0)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<MoveAcceptToken,
+        void (boost::system::error_code,
+          typename Protocol::socket::template rebind_executor<
+            Executor1>::other)>(
+          declval<initiate_async_move_accept>(), token, ex, &peer_endpoint,
+          static_cast<typename Protocol::socket::template
+            rebind_executor<Executor1>::other*>(0))))
   {
-    typedef typename Protocol::socket::template rebind_executor<
-      Executor1>::other other_socket_type;
-
     return async_initiate<MoveAcceptToken,
-      void (boost::system::error_code, other_socket_type)>(
-        initiate_async_move_accept(this), token,
-        ex, &peer_endpoint,
-        static_cast<other_socket_type*>(0));
+      void (boost::system::error_code,
+        typename Protocol::socket::template rebind_executor<
+          Executor1>::other)>(
+            initiate_async_move_accept(this), token, ex, &peer_endpoint,
+            static_cast<typename Protocol::socket::template
+              rebind_executor<Executor1>::other*>(0));
   }
 
   /// Start an asynchronous accept.
@@ -2536,7 +2596,7 @@ public:
         typename Protocol::socket::template rebind_executor<
           typename ExecutionContext::executor_type>::other)) MoveAcceptToken
             BOOST_ASIO_DEFAULT_COMPLETION_TOKEN_TYPE(executor_type)>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(MoveAcceptToken,
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(MoveAcceptToken,
       void (boost::system::error_code,
         typename Protocol::socket::template rebind_executor<
           typename ExecutionContext::executor_type>::other))
@@ -2547,15 +2607,24 @@ public:
       typename constraint<
         is_convertible<ExecutionContext&, execution_context&>::value
       >::type = 0)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<MoveAcceptToken,
+        void (boost::system::error_code,
+          typename Protocol::socket::template rebind_executor<
+            typename ExecutionContext::executor_type>::other)>(
+              declval<initiate_async_move_accept>(), token,
+              context.get_executor(), &peer_endpoint,
+              static_cast<typename Protocol::socket::template rebind_executor<
+                typename ExecutionContext::executor_type>::other*>(0))))
   {
-    typedef typename Protocol::socket::template rebind_executor<
-      typename ExecutionContext::executor_type>::other other_socket_type;
-
     return async_initiate<MoveAcceptToken,
-      void (boost::system::error_code, other_socket_type)>(
-        initiate_async_move_accept(this), token,
-        context.get_executor(), &peer_endpoint,
-        static_cast<other_socket_type*>(0));
+      void (boost::system::error_code,
+        typename Protocol::socket::template rebind_executor<
+          typename ExecutionContext::executor_type>::other)>(
+            initiate_async_move_accept(this), token,
+            context.get_executor(), &peer_endpoint,
+            static_cast<typename Protocol::socket::template rebind_executor<
+              typename ExecutionContext::executor_type>::other*>(0));
   }
 #endif // defined(BOOST_ASIO_HAS_MOVE) || defined(GENERATING_DOCUMENTATION)
 
@@ -2575,7 +2644,7 @@ private:
     {
     }
 
-    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    const executor_type& get_executor() const BOOST_ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }
@@ -2607,7 +2676,7 @@ private:
     {
     }
 
-    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    const executor_type& get_executor() const BOOST_ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }
@@ -2641,7 +2710,7 @@ private:
     {
     }
 
-    executor_type get_executor() const BOOST_ASIO_NOEXCEPT
+    const executor_type& get_executor() const BOOST_ASIO_NOEXCEPT
     {
       return self_->get_executor();
     }

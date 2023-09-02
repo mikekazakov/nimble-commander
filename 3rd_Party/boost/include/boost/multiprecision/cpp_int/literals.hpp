@@ -212,8 +212,10 @@ struct make_backend_from_pack
    static constexpr B value = p;
 };
 
+#if !defined(__cpp_inline_variables)
 template <class Pack, class B>
 constexpr B make_backend_from_pack<Pack, B>::value;
+#endif
 
 template <unsigned Digits>
 struct signed_cpp_int_literal_result_type
@@ -234,17 +236,17 @@ struct unsigned_cpp_int_literal_result_type
 } // namespace detail
 
 template <char... STR>
-constexpr typename boost::multiprecision::literals::detail::signed_cpp_int_literal_result_type<(sizeof...(STR)) - 2>::number_type operator"" _cppi()
+constexpr typename boost::multiprecision::literals::detail::signed_cpp_int_literal_result_type<static_cast<unsigned>((sizeof...(STR)) - 2u)>::number_type operator"" _cppi()
 {
    using pt = typename boost::multiprecision::literals::detail::make_packed_value_from_str<STR...>::type;
-   return boost::multiprecision::literals::detail::make_backend_from_pack<pt, typename boost::multiprecision::literals::detail::signed_cpp_int_literal_result_type<(sizeof...(STR)) - 2>::backend_type>::value;
+   return boost::multiprecision::literals::detail::make_backend_from_pack<pt, typename boost::multiprecision::literals::detail::signed_cpp_int_literal_result_type<static_cast<unsigned>((sizeof...(STR)) - 2u)>::backend_type>::value;
 }
 
 template <char... STR>
-constexpr typename boost::multiprecision::literals::detail::unsigned_cpp_int_literal_result_type<(sizeof...(STR)) - 2>::number_type operator"" _cppui()
+constexpr typename boost::multiprecision::literals::detail::unsigned_cpp_int_literal_result_type<static_cast<unsigned>((sizeof...(STR)) - 2u)>::number_type operator"" _cppui()
 {
    using pt = typename boost::multiprecision::literals::detail::make_packed_value_from_str<STR...>::type;
-   return boost::multiprecision::literals::detail::make_backend_from_pack<pt, typename boost::multiprecision::literals::detail::unsigned_cpp_int_literal_result_type<(sizeof...(STR)) - 2>::backend_type>::value;
+   return boost::multiprecision::literals::detail::make_backend_from_pack<pt, typename boost::multiprecision::literals::detail::unsigned_cpp_int_literal_result_type<static_cast<unsigned>((sizeof...(STR)) - 2u)>::backend_type>::value;
 }
 
 #define BOOST_MP_DEFINE_SIZED_CPP_INT_LITERAL(Bits)                                                                                                                                                                                \

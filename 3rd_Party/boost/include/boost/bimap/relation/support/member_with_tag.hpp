@@ -20,7 +20,7 @@
 
 #include <boost/bimap/relation/member_at.hpp>
 #include <boost/bimap/detail/debug/static_error.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/not.hpp>

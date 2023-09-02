@@ -100,7 +100,6 @@ struct get_distance_measure<CalculationType, cartesian_tag>
         // Get the distance measure / side value
         // It is not a real distance and purpose is
         // to detect small differences in collinearity
-
         auto const line = detail::make::make_infinite_line<CalculationType>(p1, p2);
         result_type result;
         result.measure = arithmetic::side_value(line, p);
@@ -117,17 +116,32 @@ namespace detail
 // 0 (absolutely 0, not even an epsilon) means collinear. Like side,
 // a negative means that p is to the right of p1-p2. And a positive value
 // means that p is to the left of p1-p2.
-
 template <typename SegmentPoint, typename Point, typename Strategies>
 inline auto get_distance_measure(SegmentPoint const& p1, SegmentPoint const& p2, Point const& p,
                                  Strategies const&)
 {
-    return detail_dispatch::get_distance_measure
-            <
-                typename select_coordinate_type<SegmentPoint, Point>::type,
-                typename Strategies::cs_tag
-            >::apply(p1, p2, p);
+    using calc_t = typename select_coordinate_type<SegmentPoint, Point>::type;
 
+    // Verify equality, without using a tolerance
+    // (so don't use equals or equals_point_point)
+    // because it is about very tiny differences.
+    auto identical = [](const auto& point1, const auto& point2)
+    {
+        return geometry::get<0>(point1) == geometry::get<0>(point2)
+            && geometry::get<1>(point1) == geometry::get<1>(point2);
+    };
+
+    if (identical(p1, p) || identical(p2, p))
+    {
+        detail::distance_measure<calc_t> const result;
+        return result;
+    }
+
+    return detail_dispatch::get_distance_measure
+        <
+            calc_t,
+            typename Strategies::cs_tag
+        >::apply(p1, p2, p);
 }
 
 } // namespace detail

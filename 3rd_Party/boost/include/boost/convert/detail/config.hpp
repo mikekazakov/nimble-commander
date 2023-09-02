@@ -10,25 +10,25 @@
 #include <boost/optional.hpp>
 #include <type_traits>
 
-#if defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) || defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
-#undef BOOST_CONVERT_CXX11
+#if defined(BOOST_NO_CXX14)
+#undef BOOST_CONVERT_CXX14
 #else
-#define BOOST_CONVERT_CXX11
+#define BOOST_CONVERT_CXX14
 #endif
 
 // Intel 12.0 and lower have broken SFINAE
 #if defined(BOOST_INTEL) && (BOOST_INTEL <= 1200)
-#   define BOOST_CONVERT_IS_NOT_SUPPORTED
+#undef BOOST_CONVERT_CXX14
 #endif
 
 // No C++11 support
-#if defined(BOOST_GCC_VERSION) && (BOOST_GCC_VERSION <= 40600)
-#   define BOOST_CONVERT_IS_NOT_SUPPORTED
+#if defined(__GNUC__) && (__GNUC__ < 6)
+#undef BOOST_CONVERT_CXX14
 #endif
 
 // MSVC-11 and lower have broken SFINAE
-#if defined(BOOST_MSVC) && (BOOST_MSVC < 1800)
-#   define BOOST_CONVERT_IS_NOT_SUPPORTED
+#if defined(_MSVC_VER) && (_MSVC_VER < 1800)
+#undef BOOST_CONVERT_CXX14
 #endif
 
 #if defined(_MSC_VER)

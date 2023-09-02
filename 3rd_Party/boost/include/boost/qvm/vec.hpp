@@ -17,7 +17,11 @@ struct
 vec
     {
     T a[D];
-    template <class R>
+    template <class R
+#if __cplusplus >= 201103L
+        , class = typename enable_if<is_vec<R> >::type
+#endif
+    >
     operator R() const
         {
         R r;

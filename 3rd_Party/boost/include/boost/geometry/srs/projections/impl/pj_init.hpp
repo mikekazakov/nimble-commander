@@ -2,6 +2,7 @@
 // This file is manually converted from PROJ4
 
 // Copyright (c) 2008-2012 Barend Gehrels, Amsterdam, the Netherlands.
+// Copyright (c) 2023 Adam Wulkiewicz, Lodz, Poland.
 
 // This file was modified by Oracle on 2017-2020.
 // Modifications copyright (c) 2017-2020, Oracle and/or its affiliates.
@@ -44,9 +45,6 @@
 #include <type_traits>
 #include <vector>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/tuple/tuple.hpp>
-
 #include <boost/geometry/core/static_assert.hpp>
 
 #include <boost/geometry/srs/projections/dpar.hpp>
@@ -60,8 +58,8 @@
 #include <boost/geometry/srs/projections/proj4.hpp>
 #include <boost/geometry/srs/projections/spar.hpp>
 
-#include <boost/geometry/util/math.hpp>
 #include <boost/geometry/util/condition.hpp>
+#include <boost/geometry/util/math.hpp>
 
 
 namespace boost { namespace geometry { namespace projections
@@ -354,7 +352,7 @@ inline void pj_init_pm(srs::detail::proj4_parameters const& params, T& val)
         }
         BOOST_CATCH_END
     }
-    
+
     val = 0.0;
 }
 
@@ -428,6 +426,81 @@ inline void pj_init_pm(srs::spar::parameters<Ps...> const& params, T& val)
 }
 
 /************************************************************************/
+/*                        pj_init_axis()                                */
+/************************************************************************/
+
+template <typename Params, typename T>
+inline void pj_init_axis(Params const& params, parameters<T> & projdef)
+{
+    std::string axis = pj_get_param_s(params, "axis");
+    if(! axis.empty())
+    {
+        for (std::size_t i = 0; i < axis.length(); ++i)
+        {
+            switch(axis[i])
+            {
+                case 'w':
+                    projdef.sign[i] = -1;
+                    projdef.axis[i] = 0;
+                    break;
+                case 'e':
+                    projdef.sign[i] = 1;
+                    projdef.axis[i] = 0;
+                    break;
+                case 's':
+                    projdef.sign[i] = -1;
+                    projdef.axis[i] = 1;
+                    break;
+                case 'n':
+                    projdef.sign[i] = 1;
+                    projdef.axis[i] = 1;
+                    break;
+                case 'd':
+                    projdef.sign[i] = -1;
+                    projdef.axis[i] = 2;
+                    break;
+                case 'u':
+                    projdef.sign[i] = 1;
+                    projdef.axis[i] = 2;
+                    break;
+                default:
+                    BOOST_THROW_EXCEPTION( projection_exception(error_axis) );
+            }
+        }
+        // Currently not support elevation
+        if (projdef.axis[0] + projdef.axis[1] != 1)
+        {
+            BOOST_THROW_EXCEPTION( projection_exception(error_axis) );
+        }
+    }
+
+}
+
+// TODO: implement axis support for other types of parameters
+
+template <typename T>
+inline void pj_init_axis(srs::dpar::parameters<T> const& , parameters<T> & )
+{}
+
+template <typename Params>
+struct pj_init_axis_static
+{
+    template <typename T>
+    static void apply(Params const& , parameters<T> & )
+    {}
+};
+
+template <typename T, typename ...Ps>
+inline void pj_init_axis(srs::spar::parameters<Ps...> const& params, parameters<T> & projdef)
+{
+    pj_init_axis_static
+        <
+            srs::spar::parameters<Ps...>
+        >::apply(params, projdef);
+}
+
+
+/************************************************************************/
 /*                              pj_init()                               */
 /*                                                                      */
 /*      Main entry point for initialing a PJ projections                */
@@ -449,7 +522,7 @@ inline parameters<T> pj_init(Params const& params)
     // NOTE: proj4 gets defaults from "proj_def.dat".
     // In Boost.Geometry this is emulated by manually setting them in
     // pj_ell_init and projections aea, lcc and lagrng
-    
+
     /* set datum parameters */
     pj_datum_init(params, pin);
 
@@ -514,6 +587,9 @@ inline parameters<T> pj_init(Params const& params)
 
     /* prime meridian */
     pj_init_pm(params, pin.from_greenwich);
+
+    /* set axis orientation */
+    pj_init_axis(params, pin);
 
     return pin;
 }

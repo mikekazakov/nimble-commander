@@ -1,6 +1,11 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
 // Copyright (c) 2020 Barend Gehrels, Amsterdam, the Netherlands.
+// Copyright (c) 2023 Adam Wulkiewicz, Lodz, Poland.
+
+// This file was modified by Oracle on 2023.
+// Modifications copyright (c) 2023 Oracle and/or its affiliates.
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -9,10 +14,13 @@
 #ifndef BOOST_GEOMETRY_STRATEGIES_CARTESIAN_TURN_IN_RING_WINDING_HPP
 #define BOOST_GEOMETRY_STRATEGIES_CARTESIAN_TURN_IN_RING_WINDING_HPP
 
+#include <boost/geometry/arithmetic/infinite_line_functions.hpp>
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/config.hpp>
 #include <boost/geometry/algorithms/detail/make/make.hpp>
 #include <boost/geometry/util/math.hpp>
+
+#include <boost/geometry/strategies/cartesian/side_rounded_input.hpp>
 
 namespace boost { namespace geometry
 {
@@ -60,34 +68,41 @@ public:
 
     struct counter
     {
-        inline counter()
-            : m_count(0)
-            , m_min_distance(0)
-            , m_close_to_offset(false)
-        {}
-
-        //! Returns -1 for outside, 1 for inside
-        inline int code() const
-        {
-            return m_count == 0 ? -1 : 1;
-        }
-
         //! Counter, is increased if point is left of a segment (outside),
         //! and decreased if point is right of a segment (inside)
-        int m_count;
+        int count{0};
 
-        //! Indicate an indication of distance. It is always set, unless
-        //! the point is located on the border-part of the original.
-        //! It is not guaranteed to be the minimum distance, because it is only
-        //! calculated for a selection of the offsetted ring.
-        CalculationType m_min_distance;
-        bool m_close_to_offset;
+        int count_on_offsetted{0};
+        int count_on_origin{0};
+        int count_on_edge{0};
+
+        CalculationType edge_min_fraction{(std::numeric_limits<CalculationType>::max)()};
+#if defined(BOOST_GEOMETRY_USE_RESCALING)
+        CalculationType inside_min_measure{(std::numeric_limits<CalculationType>::max)()};
+#endif
+
+        inline bool is_inside() const
+        {
+            return count < 0 || count_on_origin > 0;
+        }
+
+        inline bool is_on_boundary() const
+        {
+            return count_on_origin == 0
+                && (count_on_offsetted > 0
+                || (count_on_edge > 0 && edge_min_fraction < 1.0e-3)
+#if defined(BOOST_GEOMETRY_USE_RESCALING)
+                || (count < 0 && inside_min_measure < 1.0e-5)
+#endif
+                );
+        }
+
     };
 
-    typedef counter state_type;
+    using state_type = counter;
 
     template <typename Point, typename PointOfSegment>
-    static inline bool in_vertical_range(Point const& point,
+    static inline bool is_in_vertical_range(Point const& point,
                              PointOfSegment const& s1,
                              PointOfSegment const& s2)
     {
@@ -95,11 +110,10 @@ public:
         CalculationType const s1y = get<1>(s1);
         CalculationType const s2y = get<1>(s2);
 
-        return (s1y >= py && s2y <= py)
-            || (s2y >= py && s1y <= py);
+        return s1y < s2y ? (py >= s1y && py <= s2y) : (py >= s2y && py <= s1y);
     }
 
-    template <typename Dm, typename Point, typename PointOfSegment>
+    template <typename Point, typename PointOfSegment>
     static inline void apply_on_boundary(Point const& point,
                              PointOfSegment const& s1,
                              PointOfSegment const& s2,
@@ -108,95 +122,98 @@ public:
     {
         if (place_on_ring == place_on_ring_offsetted)
         {
-            // Consider the point as "outside"
-            the_state.m_count = 0;
-            the_state.m_close_to_offset = true;
-            the_state.m_min_distance = 0;
+            the_state.count_on_offsetted++;
         }
         else if (place_on_ring == place_on_ring_to_offsetted
             || place_on_ring == place_on_ring_from_offsetted)
         {
-            // Check distance from "point" to either s1 or s2
-            // on a line perpendicular to s1-s2
-            typedef model::infinite_line<CalculationType> line_type;
+            the_state.count_on_edge++;
 
-            line_type const line
-                    = detail::make::make_perpendicular_line<CalculationType>(s1, s2,
-                    place_on_ring == place_on_ring_to_offsetted ? s2 : s1);
+            auto const line1 = detail::make::make_perpendicular_line<CalculationType>(s1, s2, s1);
+            auto const line2 = detail::make::make_perpendicular_line<CalculationType>(s2, s1, s2);
 
-            Dm perp;
-            perp.measure = arithmetic::side_value(line, point);
-
-            // If it is to the utmost point s1 or s2, it is "outside"
-            the_state.m_count = perp.is_zero() ? 0 : 1;
-            the_state.m_close_to_offset = true;
-            the_state.m_min_distance = geometry::math::abs(perp.measure);
+            auto const value1 = arithmetic::side_value(line1, point);
+            auto const value2 = arithmetic::side_value(line2, point);
+            if (value1 >= 0 && value2 >= 0)
+            {
+                auto const length_value = value1 + value2;
+                if (length_value > 0)
+                {
+                    // If it is to the utmost point s1 or s2, it is "outside"
+                    auto const fraction = (place_on_ring == place_on_ring_to_offsetted ? value2 : value1) / length_value;
+                    if (fraction < the_state.edge_min_fraction)
+                    {
+                        the_state.edge_min_fraction = fraction;
+                    }
+                }
+            }
         }
         else
         {
-            // It is on the border, the part of the original
-            // Consider it as "inside".
-            the_state.m_count = 1;
+            the_state.count_on_origin++;
         }
     }
 
-    template <typename Dm, typename Point, typename PointOfSegment>
+    template <typename Point, typename PointOfSegment>
     static inline bool apply(Point const& point,
                              PointOfSegment const& s1,
                              PointOfSegment const& s2,
-                             Dm const& dm,
                              place_on_ring_type place_on_ring,
+                             bool is_convex,
                              counter& the_state)
     {
+        int const side = strategy::side::side_rounded_input<CalculationType>::apply(s1, s2, point);
+
+        if (is_convex && side > 0)
+        {
+            // If the point is left of this segment of a convex piece, it can never be inside.
+            // Stop further processing
+            the_state.count = 1;
+            return false;
+        }
+
         CalculationType const px = get<0>(point);
         CalculationType const s1x = get<0>(s1);
         CalculationType const s2x = get<0>(s2);
 
-        bool const in_horizontal_range
-                 = (s1x >= px && s2x <= px)
-                || (s2x >= px && s1x <= px);
+        bool const in_horizontal_range = s1x < s2x ? (px >= s1x && px <= s2x) : (px >= s2x && px <= s1x);
 
         bool const vertical = s1x == s2x;
-        bool const measured_on_boundary = dm.is_zero();
 
-        if (measured_on_boundary
-            && (in_horizontal_range
-                || (vertical && in_vertical_range(point, s1, s2))))
+        if (in_horizontal_range || (vertical && is_in_vertical_range(point, s1, s2)))
         {
-            apply_on_boundary<Dm>(point, s1, s2, place_on_ring, the_state);
-            // Indicate that no further processing is necessary.
-            return false;
-        }
+            if (side == 0)
+            {
+                apply_on_boundary(point, s1, s2, place_on_ring, the_state);
+            }
+#if defined(BOOST_GEOMETRY_USE_RESCALING)
+            else if (side == -1)
+            {
+                auto const line = detail::make::make_infinite_line<CalculationType>(s1, s2);
+                auto const value = -arithmetic::side_value(line, point);
+                if (value > 0 && value < the_state.inside_min_measure) { the_state.inside_min_measure = value; }
 
-        bool const is_on_right_side = dm.is_negative();
-
-        if (place_on_ring == place_on_ring_offsetted
-            && is_on_right_side
-            && (! the_state.m_close_to_offset
-                || -dm.measure < the_state.m_min_distance))
-        {
-            // This part of the ring was the offsetted part,
-            // keep track of the distance WITHIN the ring
-            // with respect to the offsetted part
-            // NOTE: this is also done if it is NOT in the horizontal range.
-            the_state.m_min_distance = -dm.measure;
-            the_state.m_close_to_offset = true;
+            }
+#endif
         }
 
         if (in_horizontal_range)
         {
-            // Use only absolute comparisons, because the ring is continuous -
-            // what was missed is there earlier or later, and turns should
-            // not be counted twice (which can happen if an epsilon is used).
-            bool const eq1 = s1x == px;
-            bool const eq2 = s2x == px;
+            auto const on_boundary = the_state.count_on_offsetted + the_state.count_on_edge + the_state.count_on_origin;
+            if (on_boundary == 0)
+            {
+                // Use only absolute comparisons, because the ring is continuous -
+                // what was missed is there earlier or later, and turns should
+                // not be counted twice (which can happen if an epsilon is used).
+                bool const eq1 = s1x == px;
+                bool const eq2 = s2x == px;
 
-            // Account for  1 or  2 for left side (outside)
-            //     and for -1 or -2 for right side (inside)
-            int const side = is_on_right_side ? -1 : 1;
-            int const multiplier = eq1 || eq2 ? 1 : 2;
+                // Account for  1 or  2 for left side (outside)
+                //     and for -1 or -2 for right side (inside)
+                int const multiplier = eq1 || eq2 ? 1 : 2;
 
-            the_state.m_count += side * multiplier;
+                the_state.count += side * multiplier;
+            }
         }
 
         return true;

@@ -16,7 +16,8 @@
 #include <stdexcept>
 #include <type_traits>
 
-BOOST_JSON_NS_BEGIN
+namespace boost {
+namespace json {
 
 //----------------------------------------------------------
 
@@ -203,35 +204,49 @@ emplace_back(Arg&& arg)
 
 value&
 array::
-at(std::size_t pos)
+at(std::size_t pos) &
 {
-    if(pos >= t_->size)
-        detail::throw_out_of_range(
-            BOOST_JSON_SOURCE_POS);
-    return (*t_)[pos];
+    auto const& self = *this;
+    return const_cast< value& >( self.at(pos) );
+}
+
+value&&
+array::
+at(std::size_t pos) &&
+{
+    return std::move( at(pos) );
 }
 
 value const&
 array::
-at(std::size_t pos) const
+at(std::size_t pos) const&
 {
     if(pos >= t_->size)
-        detail::throw_out_of_range(
-            BOOST_JSON_SOURCE_POS);
+    {
+        BOOST_STATIC_CONSTEXPR source_location loc = BOOST_CURRENT_LOCATION;
+        detail::throw_system_error( error::out_of_range, &loc );
+    }
     return (*t_)[pos];
 }
 
 value&
 array::
-operator[](std::size_t pos) noexcept
+operator[](std::size_t pos) & noexcept
 {
     BOOST_ASSERT(pos < t_->size);
     return (*t_)[pos];
 }
 
+value&&
+array::
+operator[](std::size_t pos) && noexcept
+{
+    return std::move( (*this)[pos] );
+}
+
 value const&
 array::
-operator[](std::size_t pos) const noexcept
+operator[](std::size_t pos) const& noexcept
 {
     BOOST_ASSERT(pos < t_->size);
     return (*t_)[pos];
@@ -239,15 +254,22 @@ operator[](std::size_t pos) const noexcept
 
 value&
 array::
-front() noexcept
+front() & noexcept
 {
     BOOST_ASSERT(t_->size > 0);
     return (*t_)[0];
 }
 
+value&&
+array::
+front() && noexcept
+{
+    return std::move( front() );
+}
+
 value const&
 array::
-front() const noexcept
+front() const& noexcept
 {
     BOOST_ASSERT(t_->size > 0);
     return (*t_)[0];
@@ -255,16 +277,23 @@ front() const noexcept
 
 value&
 array::
-back() noexcept
+back() & noexcept
 {
     BOOST_ASSERT(
         t_->size > 0);
     return (*t_)[t_->size - 1];
 }
 
+value&&
+array::
+back() && noexcept
+{
+    return std::move( back() );
+}
+
 value const&
 array::
-back() const noexcept
+back() const& noexcept
 {
     BOOST_ASSERT(
         t_->size > 0);
@@ -555,6 +584,7 @@ insert(
     return r.commit();
 }
 
-BOOST_JSON_NS_END
+} // namespace json
+} // namespace boost
 
 #endif

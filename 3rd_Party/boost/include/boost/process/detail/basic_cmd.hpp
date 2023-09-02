@@ -168,7 +168,7 @@ struct exe_builder
     string_type exe;
     std::vector<string_type> args;
 
-    void operator()(const boost::filesystem::path & data)
+    void operator()(const boost::process::filesystem::path & data)
     {
         not_cmd = true;
         if (exe.empty())

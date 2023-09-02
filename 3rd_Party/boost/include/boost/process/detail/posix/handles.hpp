@@ -11,6 +11,8 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <algorithm>
+#include <memory>
+#include <cstdlib>
 #include <boost/process/detail/posix/handler.hpp>
 
 namespace boost { namespace process { namespace detail { namespace posix {

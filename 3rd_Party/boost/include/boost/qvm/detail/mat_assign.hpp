@@ -29,11 +29,26 @@ qvm_detail
         template <class A,class B>
         static
         BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
-        void
+        typename enable_if_c<
+            mat_write_element_ref<A>::value,
+            void>::type
         f( A & a, B const & b )
             {
             mat_traits<A>::template write_element<I/mat_traits<A>::cols,I%mat_traits<A>::cols>(a) =
                 mat_traits<B>::template read_element<I/mat_traits<B>::cols,I%mat_traits<B>::cols>(b);
+            copy_matrix_elements<I+1,N>::f(a,b);
+            }
+
+        template <class A,class B>
+        static
+        BOOST_QVM_CONSTEXPR BOOST_QVM_INLINE_CRITICAL
+        typename enable_if_c<
+            !mat_write_element_ref<A>::value,
+            void>::type
+        f( A & a, B const & b )
+            {
+            mat_traits<A>::template write_element<I/mat_traits<A>::cols,I%mat_traits<A>::cols>(a,
+                mat_traits<B>::template read_element<I/mat_traits<B>::cols,I%mat_traits<B>::cols>(b));
             copy_matrix_elements<I+1,N>::f(a,b);
             }
         };

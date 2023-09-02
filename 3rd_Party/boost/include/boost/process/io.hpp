@@ -60,9 +60,9 @@ namespace boost {
 The library allows full redirection of streams to files as shown below.
 
 \code{.cpp}
-boost::filesystem::path log    = "my_log_file.txt";
-boost::filesystem::path input  = "input.txt";
-boost::filesystem::path output = "output.txt";
+boost::process::filesystem::path log    = "my_log_file.txt";
+boost::process::filesystem::path input  = "input.txt";
+boost::process::filesystem::path output = "output.txt";
 system("my_prog", std_out>output, std_in<input, std_err>log);
 \endcode
 
@@ -152,13 +152,13 @@ struct std_in_
     api::null_in operator=(const null_t &) const {return api::null_in();}
     api::null_in operator<(const null_t &) const {return api::null_in();}
 
-    api::file_in operator=(const boost::filesystem::path &p) const {return p;}
+    api::file_in operator=(const boost::process::filesystem::path &p) const {return p;}
     api::file_in operator=(const std::string & p)            const {return p;}
     api::file_in operator=(const std::wstring &p)            const {return p;}
     api::file_in operator=(const char * p)                   const {return p;}
     api::file_in operator=(const wchar_t * p)                const {return p;}
 
-    api::file_in operator<(const boost::filesystem::path &p) const {return p;}
+    api::file_in operator<(const boost::process::filesystem::path &p) const {return p;}
     api::file_in operator<(const std::string &p)             const {return p;}
     api::file_in operator<(const std::wstring &p)            const {return p;}
     api::file_in operator<(const char*p)                     const {return p;}
@@ -209,13 +209,13 @@ struct std_out_
     api::null_out<p1,p2> operator=(const null_t &) const {return api::null_out<p1,p2>();}
     api::null_out<p1,p2> operator>(const null_t &) const {return api::null_out<p1,p2>();}
 
-    api::file_out<p1,p2> operator=(const boost::filesystem::path &p) const {return api::file_out<p1,p2>(p);}
+    api::file_out<p1,p2> operator=(const boost::process::filesystem::path &p) const {return api::file_out<p1,p2>(p);}
     api::file_out<p1,p2> operator=(const std::string &p)             const {return api::file_out<p1,p2>(p);}
     api::file_out<p1,p2> operator=(const std::wstring &p)            const {return api::file_out<p1,p2>(p);}
     api::file_out<p1,p2> operator=(const char * p)                   const {return api::file_out<p1,p2>(p);}
     api::file_out<p1,p2> operator=(const wchar_t * p)                const {return api::file_out<p1,p2>(p);}
 
-    api::file_out<p1,p2> operator>(const boost::filesystem::path &p) const {return api::file_out<p1,p2>(p);}
+    api::file_out<p1,p2> operator>(const boost::process::filesystem::path &p) const {return api::file_out<p1,p2>(p);}
     api::file_out<p1,p2> operator>(const std::string &p)             const {return api::file_out<p1,p2>(p);}
     api::file_out<p1,p2> operator>(const std::wstring &p)            const {return api::file_out<p1,p2>(p);}
     api::file_out<p1,p2> operator>(const char * p)                   const {return api::file_out<p1,p2>(p);}
@@ -282,7 +282,7 @@ This property allows to set the input stream for the child process.
 
 The file I/O simple redirects the stream to a file, for which the possible types are
 
- - `boost::filesystem::path`
+ - `boost::process::filesystem::path`
  - `std::basic_string<char_type>`
  - `const char_type*`
  - `FILE*`
@@ -424,7 +424,7 @@ This property allows to set the output stream for the child process.
 
 The file I/O simple redirects the stream to a file, for which the possible types are
 
- - `boost::filesystem::path`
+ - `boost::process::filesystem::path`
  - `std::basic_string<char_type>`
  - `const char_type*`
  - `FILE*`

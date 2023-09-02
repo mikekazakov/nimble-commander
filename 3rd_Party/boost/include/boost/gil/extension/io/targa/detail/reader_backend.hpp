@@ -122,7 +122,7 @@ public:
     }
 
     /// Check if image is large enough.
-    void check_image_size( const point_t& img_dim )
+    void check_image_size( point_t const& img_dim )
     {
         if( _settings._dim.x > 0 )
         {

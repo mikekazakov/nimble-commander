@@ -49,18 +49,18 @@ public:
         BOOST_ASSERT(bit_offset >= 0 && bit_offset < 8);
     }
 
-    bit_range(const bit_range& br) : _current_byte(br._current_byte), _bit_offset(br._bit_offset) {}
+    bit_range(bit_range const& br) : _current_byte(br._current_byte), _bit_offset(br._bit_offset) {}
     template <bool M> bit_range(const bit_range<RangeSize,M>& br) : _current_byte(br._current_byte), _bit_offset(br._bit_offset) {}
 
-    bit_range& operator=(const bit_range& br) { _current_byte = br._current_byte; _bit_offset=br._bit_offset; return *this; }
-    bool operator==(const bit_range& br) const { return  _current_byte==br._current_byte && _bit_offset==br._bit_offset; }
+    auto operator=(bit_range const& br) -> bit_range& { _current_byte = br._current_byte; _bit_offset=br._bit_offset; return *this; }
+    bool operator==(bit_range const& br) const { return  _current_byte==br._current_byte && _bit_offset==br._bit_offset; }
 
-    bit_range& operator++() {
+    auto operator++() -> bit_range& {
         _current_byte += (_bit_offset+RangeSize) / 8;
         _bit_offset    = (_bit_offset+RangeSize) % 8;
         return *this;
     }
-    bit_range& operator--() { bit_advance(-RangeSize); return *this; }
+    auto operator--() -> bit_range& { bit_advance(-RangeSize); return *this; }
 
     void bit_advance(difference_type num_bits) {
         int new_offset = int(_bit_offset+num_bits);
@@ -71,11 +71,13 @@ public:
             --_current_byte;
         }
     }
-    difference_type bit_distance_to(const bit_range& b) const {
+    
+    auto bit_distance_to(bit_range const& b) const -> difference_type
+    {
         return (b.current_byte() - current_byte())*8 + b.bit_offset()-bit_offset();
     }
-    byte_t* current_byte() const { return _current_byte; }
-    int     bit_offset()   const { return _bit_offset; }
+    auto current_byte() const -> byte_t* { return _current_byte; }
+    auto bit_offset() const -> int { return _bit_offset; }
 };
 
 /// \defgroup ColorBaseModelNonAlignedPixel bit_aligned_pixel_reference
@@ -136,8 +138,10 @@ struct bit_aligned_pixel_reference
 
     bit_aligned_pixel_reference(){}
     bit_aligned_pixel_reference(data_ptr_t data_ptr, int bit_offset)   : _bit_range(data_ptr, bit_offset) {}
-    explicit bit_aligned_pixel_reference(const bit_range_t& bit_range) : _bit_range(bit_range) {}
-    template <bool IsMutable2> bit_aligned_pixel_reference(const bit_aligned_pixel_reference<BitField,ChannelBitSizes,Layout,IsMutable2>& p) : _bit_range(p._bit_range) {}
+    explicit bit_aligned_pixel_reference(bit_range_t const& bit_range) : _bit_range(bit_range) {}
+    
+    template <bool IsMutable2>
+    bit_aligned_pixel_reference(bit_aligned_pixel_reference<BitField,ChannelBitSizes,Layout,IsMutable2> const& p) : _bit_range(p._bit_range) {}
 
     // Grayscale references can be constructed from the channel reference
     explicit bit_aligned_pixel_reference(typename kth_element_type<bit_aligned_pixel_reference,0>::type const channel0)
@@ -183,11 +187,12 @@ struct bit_aligned_pixel_reference
 
     auto operator->() const -> bit_aligned_pixel_reference const* { return this; }
 
-    bit_range_t const& bit_range() const { return _bit_range; }
+    auto bit_range() const -> bit_range_t const& { return _bit_range; }
 
 private:
     mutable bit_range_t _bit_range;
-    template <typename B, typename C, typename L, bool M> friend struct bit_aligned_pixel_reference;
+    template <typename B, typename C, typename L, bool M>
+    friend struct bit_aligned_pixel_reference;
 
     template <typename Pixel> static void check_compatible() { gil_function_requires<PixelsCompatibleConcept<Pixel,bit_aligned_pixel_reference> >(); }
 
@@ -369,7 +374,7 @@ namespace std {
 // Having three overloads allows us to swap between different (but compatible) models of PixelConcept
 
 template <typename B, typename C, typename L, typename R> inline
-void swap(const boost::gil::bit_aligned_pixel_reference<B,C,L,true> x, R& y) {
+void swap(boost::gil::bit_aligned_pixel_reference<B,C,L,true> const x, R& y) {
     boost::gil::swap_proxy<typename boost::gil::bit_aligned_pixel_reference<B,C,L,true>::value_type>(x,y);
 }
 
@@ -381,7 +386,7 @@ void swap(typename boost::gil::bit_aligned_pixel_reference<B,C,L,true>::value_ty
 
 
 template <typename B, typename C, typename L> inline
-void swap(const boost::gil::bit_aligned_pixel_reference<B,C,L,true> x, const boost::gil::bit_aligned_pixel_reference<B,C,L,true> y) {
+void swap(boost::gil::bit_aligned_pixel_reference<B,C,L,true> const x, const boost::gil::bit_aligned_pixel_reference<B,C,L,true> y) {
     boost::gil::swap_proxy<typename boost::gil::bit_aligned_pixel_reference<B,C,L,true>::value_type>(x,y);
 }
 

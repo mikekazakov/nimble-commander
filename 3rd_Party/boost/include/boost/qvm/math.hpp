@@ -7,7 +7,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <math.h>
-#include <boost/qvm/inline.hpp>
+#include <boost/qvm/config.hpp>
 
 namespace boost { namespace qvm {
 

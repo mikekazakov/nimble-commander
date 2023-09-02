@@ -70,6 +70,10 @@ namespace boost { namespace spirit { namespace karma
 
     namespace detail
     {
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
         template <typename Delimiter, typename ColumnDelimiter>
         struct columns_delimiter 
         {
@@ -108,10 +112,10 @@ namespace boost { namespace spirit { namespace karma
             ColumnDelimiter const& column_delimiter;
             unsigned int const numcolumns;
             mutable unsigned int count;
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(columns_delimiter& operator= (columns_delimiter const&))
         };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
     }
 
     ///////////////////////////////////////////////////////////////////////////

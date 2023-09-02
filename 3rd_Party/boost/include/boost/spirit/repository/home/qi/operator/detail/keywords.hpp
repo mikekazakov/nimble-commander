@@ -649,6 +649,10 @@ namespace boost { namespace spirit { namespace repository { namespace qi { names
             }
     };
 
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename ParseDispatcher>
         struct complex_kwd_function
         {
@@ -699,10 +703,10 @@ namespace boost { namespace spirit { namespace repository { namespace qi { names
             Context& context;
             Skipper const& skipper;
             ParseDispatcher const& dispatcher;
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(complex_kwd_function& operator= (complex_kwd_function const&))
         };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
 
 }}}}}

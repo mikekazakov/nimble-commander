@@ -129,6 +129,12 @@ namespace boost { namespace phoenix
     //      function evaluation involves creating a hierarchy of actor objects.
     //
     ////////////////////////////////////////////////////////////////////////////
+#if defined __clang__ && defined __has_warning
+#  pragma clang diagnostic push
+#  if __has_warning("-Wdeprecated-copy")
+#    pragma clang diagnostic ignored "-Wdeprecated-copy"
+#  endif
+#endif
     template <typename Expr>
     struct actor
     {
@@ -227,6 +233,9 @@ namespace boost { namespace phoenix
 
         BOOST_DELETED_FUNCTION(actor& operator=(actor const&))
     };
+#if defined __clang__ && defined __has_warning
+#  pragma clang diagnostic pop
+#endif
 }}
 
 namespace boost

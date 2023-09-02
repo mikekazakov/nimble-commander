@@ -156,8 +156,8 @@ public:
         if (c == CR) {
             flags_ |= f_has_CR;
 
-            int d;
-            if ((d = iostreams::get(src)) == WOULD_BLOCK)
+            int d = iostreams::get(src);
+            if (d == WOULD_BLOCK)
                 return WOULD_BLOCK;
 
             if (d == LF) {
@@ -260,10 +260,12 @@ private:
             break;
         case iostreams::newline::dos:
             if ((flags_ & f_has_LF) != 0) {
-                if ((success = boost::iostreams::put(dest, LF)))
+                success = boost::iostreams::put(dest, LF);
+                if (success)
                     flags_ &= ~f_has_LF;
             } else if (boost::iostreams::put(dest, CR)) {
-                if (!(success = boost::iostreams::put(dest, LF)))
+                success = boost::iostreams::put(dest, LF);
+                if (!success)
                     flags_ |= f_has_LF;
             }
             break;

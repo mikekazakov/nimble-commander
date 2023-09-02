@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2013-2020.
-// Modifications copyright (c) 2013-2020 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2022.
+// Modifications copyright (c) 2013-2022 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -14,12 +14,9 @@
 #ifndef BOOST_GEOMETRY_ALGORITHMS_DETAIL_RELATE_POINT_GEOMETRY_HPP
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_RELATE_POINT_GEOMETRY_HPP
 
-#include <boost/geometry/algorithms/detail/within/point_in_geometry.hpp>
-//#include <boost/geometry/algorithms/within.hpp>
-//#include <boost/geometry/algorithms/covered_by.hpp>
-
 #include <boost/geometry/algorithms/detail/relate/result.hpp>
 #include <boost/geometry/algorithms/detail/relate/topology_check.hpp>
+#include <boost/geometry/algorithms/detail/within/point_in_geometry.hpp>
 
 #include <boost/geometry/util/condition.hpp>
 
@@ -44,18 +41,18 @@ struct point_geometry
 
         if ( pig > 0 ) // within
         {
-            relate::set<interior, interior, '0', Transpose>(result);
+            update<interior, interior, '0', Transpose>(result);
         }
         else if ( pig == 0 )
         {
-            relate::set<interior, boundary, '0', Transpose>(result);
+            update<interior, boundary, '0', Transpose>(result);
         }
         else // pig < 0 - not within
         {
-            relate::set<interior, exterior, '0', Transpose>(result);
+            update<interior, exterior, '0', Transpose>(result);
         }
 
-        relate::set<exterior, exterior, result_dimension<Point>::value, Transpose>(result);
+        update<exterior, exterior, result_dimension<Point>::value, Transpose>(result);
 
         if ( BOOST_GEOMETRY_CONDITION(result.interrupt) )
             return;
@@ -70,17 +67,21 @@ struct point_geometry
             {
                 // NOTE: even for MLs, if there is at least one boundary point,
                 // somewhere there must be another one
-                relate::set<exterior, interior, tc_t::interior, Transpose>(result);
-                relate::set<exterior, boundary, tc_t::boundary, Transpose>(result);
+                update<exterior, interior, tc_t::interior, Transpose>(result);
+                update<exterior, boundary, tc_t::boundary, Transpose>(result);
             }
             else
             {
                 // check if there is a boundary in Geometry
                 tc_t tc(geometry, strategy);
                 if ( tc.has_interior() )
-                    relate::set<exterior, interior, tc_t::interior, Transpose>(result);
+                {
+                    update<exterior, interior, tc_t::interior, Transpose>(result);
+                }
                 if ( tc.has_boundary() )
-                    relate::set<exterior, boundary, tc_t::boundary, Transpose>(result);
+                {
+                    update<exterior, boundary, tc_t::boundary, Transpose>(result);
+                }
             }
         }
     }
@@ -168,7 +169,7 @@ struct geometry_point
 //            //}
 //            return result("F0FFFF**T");
 //        }
-//        else 
+//        else
 //        {
 //            /*if ( box_has_interior<Box>::apply(box) )
 //            {
@@ -194,7 +195,7 @@ struct geometry_point
 //            return result("0FTFFTFFT");
 //        else if ( geometry::covered_by(point, box) )
 //            return result("FF*0F*FFT");
-//        else 
+//        else
 //            return result("FF*FFT0FT");
 //    }
 //};

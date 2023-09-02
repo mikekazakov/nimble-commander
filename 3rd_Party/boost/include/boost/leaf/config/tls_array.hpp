@@ -9,7 +9,7 @@
 
 // LEAF requires thread local storage support for pointers and for uin32_t values.
 
-// This header implements thread local storage for pointers and for uint32_t
+// This header implements thread local storage for pointers and for unsigned int
 // values for platforms that support thread local pointers by index.
 
 namespace boost { namespace leaf {
@@ -104,7 +104,7 @@ namespace tls
     {
         int tls_idx = tls_index<T>::idx;
         if( tls_idx == (BOOST_LEAF_CFG_TLS_ARRAY_START_INDEX) )
-            return 0;
+            return nullptr;
         --tls_idx;
         return reinterpret_cast<T *>(read_void_ptr(tls_idx));
     }
@@ -121,29 +121,29 @@ namespace tls
     ////////////////////////////////////////
 
     template <class Tag>
-    std::uint32_t read_uint32() noexcept
+    unsigned read_uint() noexcept
     {
-        static_assert(sizeof(std::intptr_t) >= sizeof(std::uint32_t), "Incompatible tls_array implementation");
-        return (std::uint32_t) (std::intptr_t) (void *) read_ptr<Tag>();
+        static_assert(sizeof(std::intptr_t) >= sizeof(unsigned), "Incompatible tls_array implementation");
+        return (unsigned) (std::intptr_t) (void *) read_ptr<Tag>();
     }
 
     template <class Tag>
-    void write_uint32( std::uint32_t x ) noexcept
+    void write_uint( unsigned x ) noexcept
     {
-        static_assert(sizeof(std::intptr_t) >= sizeof(std::uint32_t), "Incompatible tls_array implementation");
+        static_assert(sizeof(std::intptr_t) >= sizeof(unsigned), "Incompatible tls_array implementation");
         write_ptr<Tag>((Tag *) (void *) (std::intptr_t) x);
     }
 
     template <class Tag>
-    void uint32_increment() noexcept
+    void uint_increment() noexcept
     {
-        write_uint32<Tag>(read_uint32<Tag>() + 1);
+        write_uint<Tag>(read_uint<Tag>() + 1);
     }
 
     template <class Tag>
-    void uint32_decrement() noexcept
+    void uint_decrement() noexcept
     {
-        write_uint32<Tag>(read_uint32<Tag>() - 1);
+        write_uint<Tag>(read_uint<Tag>() - 1);
     }
 }
 

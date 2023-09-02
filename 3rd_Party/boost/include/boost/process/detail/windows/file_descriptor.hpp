@@ -10,7 +10,7 @@
 #include <boost/winapi/handles.hpp>
 #include <boost/winapi/file_management.hpp>
 #include <string>
-#include <boost/filesystem/path.hpp>
+#include <boost/process/filesystem.hpp>
 #include <boost/core/exchange.hpp>
 
 namespace boost { namespace process { namespace detail { namespace windows {
@@ -40,7 +40,7 @@ struct file_descriptor
     }
 
     file_descriptor() = default;
-    file_descriptor(const boost::filesystem::path& p, mode_t mode = read_write)
+    file_descriptor(const boost::process::filesystem::path& p, mode_t mode = read_write)
         : file_descriptor(p.native(), mode)
     {
     }

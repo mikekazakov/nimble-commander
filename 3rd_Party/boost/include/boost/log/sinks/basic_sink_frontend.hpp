@@ -15,7 +15,7 @@
 #ifndef BOOST_LOG_SINKS_BASIC_SINK_FRONTEND_HPP_INCLUDED_
 #define BOOST_LOG_SINKS_BASIC_SINK_FRONTEND_HPP_INCLUDED_
 
-#include <boost/mpl/bool.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/code_conversion.hpp>
 #include <boost/log/detail/attachable_sstream_buf.hpp>
@@ -224,7 +224,7 @@ protected:
 private:
     //! Flushes record buffers in the backend (the actual implementation)
     template< typename BackendMutexT, typename BackendT >
-    void flush_backend_impl(BackendMutexT& backend_mutex, BackendT& backend, mpl::true_)
+    void flush_backend_impl(BackendMutexT& backend_mutex, BackendT& backend, boost::true_type)
     {
         try
         {
@@ -247,7 +247,7 @@ private:
     }
     //! Flushes record buffers in the backend (stub for backends that don't support flushing)
     template< typename BackendMutexT, typename BackendT >
-    void flush_backend_impl(BackendMutexT&, BackendT&, mpl::false_)
+    void flush_backend_impl(BackendMutexT&, BackendT&, boost::false_type)
     {
     }
 };

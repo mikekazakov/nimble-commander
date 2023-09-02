@@ -18,6 +18,7 @@
 
 #include <boost/assert.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/property_map/parallel/parallel_property_maps.hpp>
 #include <boost/property_map/parallel/distributed_property_map.hpp>
 #include <boost/property_map/parallel/caching_property_map.hpp>
 #include <boost/graph/parallel/algorithm.hpp>

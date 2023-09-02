@@ -2,7 +2,7 @@
 // io_context.hpp
 // ~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2022 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) 2003-2023 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -200,6 +200,11 @@ private:
 #if defined(BOOST_ASIO_HAS_IOCP)
   friend class detail::win_iocp_overlapped_ptr;
 #endif
+
+#if !defined(BOOST_ASIO_NO_DEPRECATED)
+  struct initiate_dispatch;
+  struct initiate_post;
+#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
 public:
   template <typename Allocator, uintptr_t Bits>
@@ -557,8 +562,11 @@ public:
    * throws an exception.
    */
   template <typename LegacyCompletionHandler>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(LegacyCompletionHandler, void ())
-  dispatch(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler);
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(LegacyCompletionHandler, void ())
+  dispatch(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<LegacyCompletionHandler, void ()>(
+          declval<initiate_dispatch>(), handler, this)));
 
   /// (Deprecated: Use boost::asio::post().) Request the io_context to invoke
   /// the given handler and return immediately.
@@ -584,8 +592,11 @@ public:
    * throws an exception.
    */
   template <typename LegacyCompletionHandler>
-  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(LegacyCompletionHandler, void ())
-  post(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler);
+  BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_PREFIX(LegacyCompletionHandler, void ())
+  post(BOOST_ASIO_MOVE_ARG(LegacyCompletionHandler) handler)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE_SUFFIX((
+      async_initiate<LegacyCompletionHandler, void ()>(
+          declval<initiate_post>(), handler, this)));
 
   /// (Deprecated: Use boost::asio::bind_executor().) Create a new handler that
   /// automatically dispatches the wrapped handler on the io_context.
@@ -621,11 +632,6 @@ public:
 private:
   io_context(const io_context&) BOOST_ASIO_DELETED;
   io_context& operator=(const io_context&) BOOST_ASIO_DELETED;
-
-#if !defined(BOOST_ASIO_NO_DEPRECATED)
-  struct initiate_dispatch;
-  struct initiate_post;
-#endif // !defined(BOOST_ASIO_NO_DEPRECATED)
 
   // Helper function to add the implementation.
   BOOST_ASIO_DECL impl_type& add_impl(impl_type* impl);
@@ -1000,20 +1006,7 @@ public:
       || static_cast<const Allocator&>(a) != static_cast<const Allocator&>(b);
   }
 
-#if !defined(GENERATING_DOCUMENTATION)
-private:
-  friend struct boost_asio_execution_execute_fn::impl;
-#endif // !defined(GENERATING_DOCUMENTATION)
-
   /// Execution function.
-  /**
-   * Do not call this function directly. It is intended for use with the
-   * execution::execute customisation point.
-   *
-   * For example:
-   * @code auto ex = my_io_context.get_executor();
-   * execution::execute(ex, my_function_object); @endcode
-   */
   template <typename Function>
   void execute(BOOST_ASIO_MOVE_ARG(Function) f) const;
 

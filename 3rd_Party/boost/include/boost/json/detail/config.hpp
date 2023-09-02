@@ -134,13 +134,6 @@
 #define BOOST_SYMBOL_VISIBLE
 #endif
 
-#if ! defined(BOOST_JSON_DOCS)
-# define BOOST_JSON_NS_BEGIN \
-    namespace boost { \
-    namespace json {
-# define BOOST_JSON_NS_END } }
-#endif
-
 #if defined(BOOST_JSON_DOCS)
 # define BOOST_JSON_DECL
 #else
@@ -190,15 +183,16 @@
 #endif
 
 #ifndef BOOST_JSON_UNREACHABLE
-# define BOOST_JSON_UNREACHABLE() static_cast<void>(0)
 # ifdef _MSC_VER
-#  undef BOOST_JSON_UNREACHABLE
 #  define BOOST_JSON_UNREACHABLE() __assume(0)
+# elif defined(__GNUC__) || defined(__clang__)
+#  define BOOST_JSON_UNREACHABLE() __builtin_unreachable()
 # elif defined(__has_builtin)
 #  if __has_builtin(__builtin_unreachable)
-#   undef BOOST_JSON_UNREACHABLE
 #   define BOOST_JSON_UNREACHABLE() __builtin_unreachable()
 #  endif
+# else
+#  define BOOST_JSON_UNREACHABLE() static_cast<void>(0)
 # endif
 #endif
 
@@ -250,7 +244,39 @@
 # endif
 #endif
 
-BOOST_JSON_NS_BEGIN
+
+#if ! defined(BOOST_JSON_BIG_ENDIAN) && ! defined(BOOST_JSON_LITTLE_ENDIAN)
+// Copied from Boost.Endian
+# if defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#  define BOOST_JSON_LITTLE_ENDIAN
+# elif defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#  define BOOST_JSON_BIG_ENDIAN
+# elif defined(__LITTLE_ENDIAN__)
+#  define BOOST_JSON_LITTLE_ENDIAN
+# elif defined(__BIG_ENDIAN__)
+#  define BOOST_JSON_BIG_ENDIAN
+# elif defined(_MSC_VER) || defined(__i386__) || defined(__x86_64__)
+#  define BOOST_JSON_LITTLE_ENDIAN
+# else
+#  error The Boost.JSON library could not determine the endianness of this platform. Define either BOOST_JSON_BIG_ENDIAN or BOOST_JSON_LITTLE_ENDIAN.
+# endif
+#endif
+
+#if defined(__cpp_constinit) && __cpp_constinit >= 201907L
+# define BOOST_JSON_CONSTINIT constinit
+#elif defined(__has_cpp_attribute) && defined(__clang__)
+# if __has_cpp_attribute(clang::require_constant_initialization)
+#  define BOOST_JSON_CONSTINIT [[clang::require_constant_initialization]]
+# endif
+#elif defined(__GNUC__) && (__GNUC__ >= 10)
+# define BOOST_JSON_CONSTINIT __constinit
+#endif
+#ifndef BOOST_JSON_CONSTINIT
+# define BOOST_JSON_CONSTINIT
+#endif
+
+namespace boost {
+namespace json {
 namespace detail {
 
 template<class...>
@@ -301,6 +327,7 @@ constexpr T static_const<T>::value;
     } struct _unused_ ## name ## _semicolon_bait_
 
 } // detail
-BOOST_JSON_NS_END
+} // namespace json
+} // namespace boost
 
 #endif

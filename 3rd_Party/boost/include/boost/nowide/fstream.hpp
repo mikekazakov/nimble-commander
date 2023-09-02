@@ -1,10 +1,9 @@
 //
-//  Copyright (c) 2012 Artyom Beilis (Tonkikh)
+// Copyright (c) 2012 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
+
 #ifndef BOOST_NOWIDE_FSTREAM_HPP_INCLUDED
 #define BOOST_NOWIDE_FSTREAM_HPP_INCLUDED
 
@@ -68,6 +67,7 @@ namespace nowide {
     ///
     /// \brief Same as std::basic_ifstream<char> but accepts UTF-8 strings under Windows
     ///
+    /// Affected by #BOOST_NOWIDE_USE_FILEBUF_REPLACEMENT and #BOOST_NOWIDE_USE_WCHAR_OVERLOADS
     template<typename CharType, typename Traits = std::char_traits<CharType>>
     class basic_ifstream : public detail::fstream_impl<CharType, Traits, detail::StreamTypeIn>
     {
@@ -118,7 +118,7 @@ namespace nowide {
     ///
     /// \brief Same as std::basic_ofstream<char> but accepts UTF-8 strings under Windows
     ///
-
+    /// Affected by #BOOST_NOWIDE_USE_FILEBUF_REPLACEMENT and #BOOST_NOWIDE_USE_WCHAR_OVERLOADS
     template<typename CharType, typename Traits = std::char_traits<CharType>>
     class basic_ofstream : public detail::fstream_impl<CharType, Traits, detail::StreamTypeOut>
     {
@@ -171,6 +171,7 @@ namespace nowide {
     ///
     /// \brief Same as std::basic_fstream<char> but accepts UTF-8 strings under Windows
     ///
+    /// Affected by #BOOST_NOWIDE_USE_FILEBUF_REPLACEMENT and #BOOST_NOWIDE_USE_WCHAR_OVERLOADS
     template<typename CharType, typename Traits = std::char_traits<CharType>>
     class basic_fstream : public detail::fstream_impl<CharType, Traits, detail::StreamTypeInOut>
     {

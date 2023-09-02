@@ -54,16 +54,14 @@ auto make_dynamic_image_reader(
         typename get_dynamic_image_reader<std::wstring, FormatTag>::type(device, settings);
 }
 
-#ifdef BOOST_GIL_IO_ADD_FS_PATH_SUPPORT
 template <typename FormatTag>
 inline
 auto make_dynamic_image_reader(
-    filesystem::path const& path, image_read_settings<FormatTag> const& settings)
+    detail::filesystem::path const& path, image_read_settings<FormatTag> const& settings)
     -> typename get_dynamic_image_reader<std::wstring, FormatTag>::type
 {
     return make_dynamic_image_reader(path.wstring(), settings);
 }
-#endif  // BOOST_GIL_IO_ADD_FS_PATH_SUPPORT
 
 template <typename Device, typename FormatTag>
 inline
@@ -109,15 +107,13 @@ auto make_dynamic_image_reader(std::wstring const& file_name, FormatTag const&)
     return make_dynamic_image_reader(file_name, image_read_settings<FormatTag>());
 }
 
-#ifdef BOOST_GIL_IO_ADD_FS_PATH_SUPPORT
 template <typename FormatTag>
 inline
-auto make_dynamic_image_reader(filesystem::path const& path, FormatTag const&)
+auto make_dynamic_image_reader(detail::filesystem::path const& path, FormatTag const&)
     -> typename get_dynamic_image_reader<std::wstring, FormatTag>::type
 {
     return make_dynamic_image_reader(path.wstring(), image_read_settings<FormatTag>());
 }
-#endif  // BOOST_GIL_IO_ADD_FS_PATH_SUPPORT
 
 template <typename Device, typename FormatTag>
 inline

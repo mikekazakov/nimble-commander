@@ -393,7 +393,7 @@ public:
     :   preprocess_exception(what_, code, line_, column_, filename_)
     {
         unsigned int off = 0;
-        while (off < sizeof(name) && *macroname)
+        while (off < sizeof(name) - 1 && *macroname)
             name[off++] = *macroname++;
         name[off] = 0;
     }

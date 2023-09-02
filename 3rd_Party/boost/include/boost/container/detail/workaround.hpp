@@ -98,12 +98,11 @@
    #define BOOST_CONTAINER_FORCEINLINE inline
 #elif defined(BOOST_CONTAINER_FORCEINLINE_IS_BOOST_FORCELINE)
    #define BOOST_CONTAINER_FORCEINLINE BOOST_FORCEINLINE
-#elif defined(BOOST_MSVC) && (_MSC_VER < 1900 || defined(_DEBUG))
+#elif defined(BOOST_MSVC) && (_MSC_VER <= 1900 || defined(_DEBUG))
    //"__forceinline" and MSVC seems to have some bugs in old versions and in debug mode
    #define BOOST_CONTAINER_FORCEINLINE inline
-//#elif defined(__GNUC__) && ((__GNUC__ < 4) || (__GNUC__ == 4 && (__GNUC_MINOR__ < 5)))
-#elif defined(__GNUC__) && (__GNUC__ <= 5)
-   //Older GCCs have problems with forceinline
+#elif defined(BOOST_GCC) && ((__GNUC__ <= 5) || defined(__MINGW32__))
+   //Older GCCs and MinGw have problems with forceinline
    #define BOOST_CONTAINER_FORCEINLINE inline
 #else
    #define BOOST_CONTAINER_FORCEINLINE BOOST_FORCEINLINE
@@ -153,6 +152,39 @@
 //#define BOOST_CONTAINER_USE_STD_EXCEPTIONS
 
 
+namespace boost {
+namespace container {
 
+template <typename T1>
+BOOST_FORCEINLINE BOOST_CXX14_CONSTEXPR void ignore(T1 const&)
+{}
+
+}} //namespace boost::container {
+
+#if !(defined BOOST_NO_EXCEPTIONS)
+#    define BOOST_CONTAINER_TRY { try
+#    define BOOST_CONTAINER_CATCH(x) catch(x)
+#    define BOOST_CONTAINER_RETHROW throw;
+#    define BOOST_CONTAINER_CATCH_END }
+#else
+#    if !defined(BOOST_MSVC) || BOOST_MSVC >= 1900
+#        define BOOST_CONTAINER_TRY { if (true)
+#        define BOOST_CONTAINER_CATCH(x) else if (false)
+#    else
+// warning C4127: conditional expression is constant
+#        define BOOST_CONTAINER_TRY { \
+             __pragma(warning(push)) \
+             __pragma(warning(disable: 4127)) \
+             if (true) \
+             __pragma(warning(pop))
+#        define BOOST_CONTAINER_CATCH(x) else \
+             __pragma(warning(push)) \
+             __pragma(warning(disable: 4127)) \
+             if (false) \
+             __pragma(warning(pop))
+#    endif
+#    define BOOST_CONTAINER_RETHROW
+#    define BOOST_CONTAINER_CATCH_END }
+#endif
 
 #endif   //#ifndef BOOST_CONTAINER_DETAIL_WORKAROUND_HPP

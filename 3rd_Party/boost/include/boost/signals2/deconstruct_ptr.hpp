@@ -16,7 +16,7 @@
 #define BOOST_SIGNALS2_DECONSTRUCT_PTR_HPP
 
 #include <boost/assert.hpp>
-#include <boost/checked_delete.hpp>
+#include <boost/core/checked_delete.hpp>
 #include <boost/core/no_exceptions_support.hpp>
 #include <boost/signals2/postconstructible.hpp>
 #include <boost/signals2/predestructible.hpp>

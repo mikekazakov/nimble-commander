@@ -21,7 +21,7 @@
 namespace boost {
 namespace fibers {
 
-#if defined(BOOST_MSVC) && (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)
+#if (defined(BOOST_MSVC) && (_MSC_VER >= 1911 && _MSVC_LANG >= 201703)) || __cplusplus >= 202002L
 template <typename>
 struct result_of;
 template <typename F, typename... Args>

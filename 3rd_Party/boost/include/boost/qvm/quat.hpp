@@ -17,7 +17,11 @@ struct
 quat
     {
     T a[4];
-    template <class R>
+    template <class R
+#if __cplusplus >= 201103L
+        , class = typename enable_if<is_quat<R> >::type
+#endif
+    >
     operator R() const
         {
         R r;

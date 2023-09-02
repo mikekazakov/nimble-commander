@@ -2,8 +2,9 @@
 
 // Copyright (c) 2008-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2020.
-// Modifications copyright (c) 2017-2020, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017, 2018, 2020, 2022.
+// Copyright (c) 2017-2022, Oracle and/or its affiliates.
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -2625,6 +2626,7 @@ BOOST_GEOMETRY_PROJECTIONS_DETAIL_SRID_TRAITS_BEG(epsg, 4999) srs::spar::paramet
 //BOOST_GEOMETRY_PROJECTIONS_DETAIL_SRID_TRAITS_BEG(epsg, 5819)
 //BOOST_GEOMETRY_PROJECTIONS_DETAIL_SRID_TRAITS_BEG(epsg, 5820)
 //BOOST_GEOMETRY_PROJECTIONS_DETAIL_SRID_TRAITS_BEG(epsg, 5821)
+BOOST_GEOMETRY_PROJECTIONS_DETAIL_SRID_TRAITS_BEG(epsg, 6247) srs::spar::parameters<srs::spar::proj_col_urban,srs::spar::lon_0<>,srs::spar::lat_0<>,srs::spar::x_0<>,srs::spar::y_0<>,srs::spar::h_0<>,srs::spar::ellps_grs80,srs::spar::datum_wgs84,srs::spar::units_m,srs::spar::no_defs> BOOST_GEOMETRY_PROJECTIONS_DETAIL_SRID_TRAITS_MID() (srs::spar::proj_col_urban(),srs::spar::lon_0<>(-74.1465916666667),srs::spar::lat_0<>(4.68048611111111),srs::spar::x_0<>(92334.879),srs::spar::y_0<>(109320.965),srs::spar::h_0<>(2550)) BOOST_GEOMETRY_PROJECTIONS_DETAIL_SRID_TRAITS_END()
 //BOOST_GEOMETRY_PROJECTIONS_DETAIL_SRID_TRAITS_BEG(epsg, 7400)
 //BOOST_GEOMETRY_PROJECTIONS_DETAIL_SRID_TRAITS_BEG(epsg, 7401)
 //BOOST_GEOMETRY_PROJECTIONS_DETAIL_SRID_TRAITS_BEG(epsg, 7402)

@@ -1,11 +1,10 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
-// Copyright (c) 2014-2017 Adam Wulkiewicz, Lodz, Poland.
+// Copyright (c) 2014-2023 Adam Wulkiewicz, Lodz, Poland.
 
 // This file was modified by Oracle on 2014-2021.
 // Modifications copyright (c) 2014-2021 Oracle and/or its affiliates.
-
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -16,10 +15,10 @@
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_GET_TURNS_HPP
 
 
+#include <array>
 #include <cstddef>
 #include <map>
 
-#include <boost/array.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <boost/range/begin.hpp>
@@ -29,7 +28,6 @@
 
 #include <boost/geometry/algorithms/detail/disjoint/box_box.hpp>
 #include <boost/geometry/algorithms/detail/disjoint/point_point.hpp>
-#include <boost/geometry/algorithms/detail/interior_iterator.hpp>
 #include <boost/geometry/algorithms/detail/overlay/get_turn_info.hpp>
 #include <boost/geometry/algorithms/detail/overlay/get_turn_info_ll.hpp>
 #include <boost/geometry/algorithms/detail/overlay/get_turn_info_la.hpp>
@@ -111,7 +109,7 @@ template
 >
 struct unique_sub_range_from_section
 {
-    typedef Point point_type;
+    using point_type = Point;
 
     unique_sub_range_from_section(Section const& section, signed_size_type index,
                           CircularIterator circular_iterator,
@@ -123,7 +121,7 @@ struct unique_sub_range_from_section
         , m_previous_point(previous)
         , m_current_point(current)
         , m_circular_iterator(circular_iterator)
-        , m_point_retrieved(false)
+        , m_next_point_retrieved(false)
         , m_strategy(strategy)
         , m_robust_policy(robust_policy)
     {}
@@ -158,18 +156,18 @@ struct unique_sub_range_from_section
 private :
     inline Point const& get_next_point() const
     {
-        if (! m_point_retrieved)
+        if (! m_next_point_retrieved)
         {
             advance_to_non_duplicate_next(m_current_point, m_circular_iterator);
-            m_point = *m_circular_iterator;
-            m_point_retrieved = true;
+            m_next_point_retrieved = true;
         }
-        return m_point;
+        return *m_circular_iterator;
     }
 
     inline void advance_to_non_duplicate_next(Point const& current, CircularIterator& circular_iterator) const
     {
-        typedef typename robust_point_type<Point, RobustPolicy>::type robust_point_type;
+        using box_point_type = typename geometry::point_type<typename Section::box_type>::type;
+        using robust_point_type = typename robust_point_type<box_point_type, RobustPolicy>::type;
         robust_point_type current_robust_point;
         robust_point_type next_robust_point;
         geometry::recalculate(current_robust_point, current, m_robust_policy);
@@ -199,8 +197,7 @@ private :
     Point const& m_previous_point;
     Point const& m_current_point;
     mutable CircularIterator m_circular_iterator;
-    mutable Point m_point;
-    mutable bool m_point_retrieved;
+    mutable bool m_next_point_retrieved;
     Strategy m_strategy;
     RobustPolicy m_robust_policy;
 };
@@ -571,7 +568,7 @@ struct get_turns_cs
 {
     typedef typename geometry::point_type<Range>::type range_point_type;
     typedef typename geometry::point_type<Box>::type box_point_type;
-    typedef boost::array<box_point_type, 4> box_array;
+    typedef std::array<box_point_type, 4> box_array;
 
     using view_type = detail::closed_clockwise_view
         <
@@ -843,10 +840,8 @@ struct get_turns_polygon_cs
 
         signed_size_type i = 0;
 
-        typename interior_return_type<Polygon const>::type
-            rings = interior_rings(polygon);
-        for (typename detail::interior_iterator<Polygon const>::type
-                it = boost::begin(rings); it != boost::end(rings); ++it, ++i)
+        auto const& rings = interior_rings(polygon);
+        for (auto it = boost::begin(rings); it != boost::end(rings); ++it, ++i)
         {
             intersector_type::apply(
                     source_id1, *it,
@@ -878,15 +873,8 @@ struct get_turns_multi_polygon_cs
             Turns& turns,
             InterruptPolicy& interrupt_policy)
     {
-        typedef typename boost::range_iterator
-            <
-                Multi const
-            >::type iterator_type;
-
         signed_size_type i = 0;
-        for (iterator_type it = boost::begin(multi);
-             it != boost::end(multi);
-             ++it, ++i)
+        for (auto it = boost::begin(multi); it != boost::end(multi); ++it, ++i)
         {
             // Call its single version
             get_turns_polygon_cs
@@ -927,24 +915,24 @@ struct get_turn_info_type<Geometry1, Geometry2, AssignPolicy, Tag1, Tag2, linear
     : overlay::get_turn_info_linear_areal<AssignPolicy>
 {};
 
-template <typename Geometry1, typename Geometry2, typename SegmentRatio,
+template <typename Geometry1, typename Geometry2, typename Point, typename SegmentRatio,
           typename Tag1 = typename tag<Geometry1>::type, typename Tag2 = typename tag<Geometry2>::type,
           typename TagBase1 = typename topological_tag_base<Geometry1>::type, typename TagBase2 = typename topological_tag_base<Geometry2>::type>
 struct turn_operation_type
 {
-    typedef overlay::turn_operation<typename point_type<Geometry1>::type, SegmentRatio> type;
+    using type = overlay::turn_operation<Point, SegmentRatio>;
 };
 
-template <typename Geometry1, typename Geometry2, typename SegmentRatio, typename Tag1, typename Tag2>
-struct turn_operation_type<Geometry1, Geometry2, SegmentRatio, Tag1, Tag2, linear_tag, linear_tag>
+template <typename Geometry1, typename Geometry2, typename Point, typename SegmentRatio, typename Tag1, typename Tag2>
+struct turn_operation_type<Geometry1, Geometry2, Point, SegmentRatio, Tag1, Tag2, linear_tag, linear_tag>
 {
-    typedef overlay::turn_operation_linear<typename point_type<Geometry1>::type, SegmentRatio> type;
+    using type = overlay::turn_operation_linear<Point, SegmentRatio>;
 };
 
-template <typename Geometry1, typename Geometry2, typename SegmentRatio, typename Tag1, typename Tag2>
-struct turn_operation_type<Geometry1, Geometry2, SegmentRatio, Tag1, Tag2, linear_tag, areal_tag>
+template <typename Geometry1, typename Geometry2, typename Point, typename SegmentRatio, typename Tag1, typename Tag2>
+struct turn_operation_type<Geometry1, Geometry2, Point, SegmentRatio, Tag1, Tag2, linear_tag, areal_tag>
 {
-    typedef overlay::turn_operation_linear<typename point_type<Geometry1>::type, SegmentRatio> type;
+    using type = overlay::turn_operation_linear<Point, SegmentRatio>;
 };
 
 }} // namespace detail::get_turns

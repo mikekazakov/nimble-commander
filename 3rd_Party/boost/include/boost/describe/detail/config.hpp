@@ -19,6 +19,10 @@
 
 # define BOOST_DESCRIBE_CXX11
 
+# if defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ == 7
+#  undef BOOST_DESCRIBE_CXX11
+# endif
+
 #endif
 
 #if defined(BOOST_DESCRIBE_CXX11)
@@ -27,12 +31,10 @@
 # define BOOST_DESCRIBE_CONSTEXPR_OR_CONST const
 #endif
 
-#define BOOST_DESCRIBE_MAYBE_UNUSED
-#if defined(__has_cpp_attribute)
-# if __has_cpp_attribute(maybe_unused)
-#  undef BOOST_DESCRIBE_MAYBE_UNUSED
-#  define BOOST_DESCRIBE_MAYBE_UNUSED [[maybe_unused]]
-# endif
+#if defined(__clang__)
+# define BOOST_DESCRIBE_MAYBE_UNUSED __attribute__((unused))
+#else
+# define BOOST_DESCRIBE_MAYBE_UNUSED
 #endif
 
 #endif // #ifndef BOOST_DESCRIBE_DETAIL_CONFIG_HPP_INCLUDED

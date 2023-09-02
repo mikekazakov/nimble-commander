@@ -1,11 +1,10 @@
 //
-//  Copyright (c) 2015 Artyom Beilis (Tonkikh)
-//  Copyright (c) 2020 Alexander Grund
+// Copyright (c) 2015 Artyom Beilis (Tonkikh)
+// Copyright (c) 2020 Alexander Grund
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
+
 #ifndef BOOST_NOWIDE_UTF8_CODECVT_HPP_INCLUDED
 #define BOOST_NOWIDE_UTF8_CODECVT_HPP_INCLUDED
 

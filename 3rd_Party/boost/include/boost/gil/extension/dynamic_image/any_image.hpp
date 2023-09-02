@@ -10,7 +10,6 @@
 #define BOOST_GIL_EXTENSION_DYNAMIC_IMAGE_ANY_IMAGE_HPP
 
 #include <boost/gil/extension/dynamic_image/any_image_view.hpp>
-#include <boost/gil/extension/dynamic_image/apply_operation.hpp>
 
 #include <boost/gil/image.hpp>
 #include <boost/gil/detail/mp11.hpp>
@@ -89,29 +88,15 @@ template <typename ...Images>
 class any_image : public variant2::variant<Images...>
 {
     using parent_t = variant2::variant<Images...>;
-public:    
+
+public:
     using view_t = mp11::mp_rename<detail::images_get_views_t<any_image>, any_image_view>;
     using const_view_t = mp11::mp_rename<detail::images_get_const_views_t<any_image>, any_image_view>;
     using x_coord_t = std::ptrdiff_t;
     using y_coord_t = std::ptrdiff_t;
     using point_t = point<std::ptrdiff_t>;
 
-    any_image() = default;
-    any_image(any_image const& img) : parent_t((parent_t const&)img) {}
-
-    template <typename Image>
-    explicit any_image(Image const& img) : parent_t(img) {}
-    
-    template <typename Image>
-    any_image(Image&& img) : parent_t(std::move(img)) {}
-
-    template <typename Image>
-    explicit any_image(Image& img, bool do_swap) : parent_t(img, do_swap) {}
-
-    template <typename ...OtherImages>
-    any_image(any_image<OtherImages...> const& img)
-        : parent_t((variant2::variant<OtherImages...> const&)img)
-    {}
+    using parent_t::parent_t;
 
     any_image& operator=(any_image const& img)
     {
@@ -133,9 +118,9 @@ public:
             return *this;
     }
 
-    void recreate(const point_t& dims, unsigned alignment=1)
+    void recreate(point_t const& dims, unsigned alignment=1)
     {
-        apply_operation(*this, detail::recreate_image_fnobj(dims, alignment));
+        variant2::visit(detail::recreate_image_fnobj(dims, alignment), *this);
     }
 
     void recreate(x_coord_t width, y_coord_t height, unsigned alignment=1)
@@ -145,12 +130,12 @@ public:
 
     std::size_t num_channels() const
     {
-        return apply_operation(*this, detail::any_type_get_num_channels());
+        return variant2::visit(detail::any_type_get_num_channels(), *this);
     }
 
     point_t dimensions() const
     {
-        return apply_operation(*this, detail::any_type_get_dimensions());
+        return variant2::visit(detail::any_type_get_dimensions(), *this);
     }
 
     x_coord_t width()  const { return dimensions().x; }
@@ -170,7 +155,7 @@ BOOST_FORCEINLINE
 auto view(any_image<Images...>& img) -> typename any_image<Images...>::view_t
 {
     using view_t = typename any_image<Images...>::view_t;
-    return apply_operation(img, detail::any_image_get_view<view_t>());
+    return variant2::visit(detail::any_image_get_view<view_t>(), img);
 }
 
 /// \brief Returns the constant-pixel view of any image. The returned view is any view.
@@ -180,7 +165,7 @@ BOOST_FORCEINLINE
 auto const_view(any_image<Images...> const& img) -> typename any_image<Images...>::const_view_t
 {
     using view_t = typename any_image<Images...>::const_view_t;
-    return apply_operation(img, detail::any_image_get_const_view<view_t>());
+    return variant2::visit(detail::any_image_get_const_view<view_t>(), img);
 }
 ///@}
 

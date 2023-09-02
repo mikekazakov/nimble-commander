@@ -11,8 +11,8 @@ namespace boost{ namespace math{ namespace detail{
 template <class Dist>
 struct generic_quantile_finder
 {
-   typedef typename Dist::value_type value_type;
-   typedef typename Dist::policy_type policy_type;
+   using value_type = typename Dist::value_type;
+   using policy_type = typename Dist::policy_type;
 
    generic_quantile_finder(const Dist& d, value_type t, bool c)
       : dist(d), target(t), comp(c) {}
@@ -34,25 +34,31 @@ template <class T, class Policy>
 inline T check_range_result(const T& x, const Policy& pol, const char* function)
 {
    if((x >= 0) && (x < tools::min_value<T>()))
-      return policies::raise_underflow_error<T>(function, 0, pol);
+   {
+      return policies::raise_underflow_error<T>(function, nullptr, pol);
+   }
    if(x <= -tools::max_value<T>())
-      return -policies::raise_overflow_error<T>(function, 0, pol);
+   {
+      return -policies::raise_overflow_error<T>(function, nullptr, pol);
+   }
    if(x >= tools::max_value<T>())
-      return policies::raise_overflow_error<T>(function, 0, pol);
+   {
+      return policies::raise_overflow_error<T>(function, nullptr, pol);
+   }
    return x;
 }
 
 template <class Dist>
 typename Dist::value_type generic_quantile(const Dist& dist, const typename Dist::value_type& p, const typename Dist::value_type& guess, bool comp, const char* function)
 {
-   typedef typename Dist::value_type value_type;
-   typedef typename Dist::policy_type policy_type;
-   typedef typename policies::normalise<
-      policy_type, 
-      policies::promote_float<false>, 
-      policies::promote_double<false>, 
-      policies::discrete_quantile<>,
-      policies::assert_undefined<> >::type forwarding_policy;
+   using value_type = typename Dist::value_type;
+   using policy_type = typename Dist::policy_type;
+   using forwarding_policy = typename policies::normalise<
+                                                            policy_type,
+                                                            policies::promote_float<false>,
+                                                            policies::promote_double<false>,
+                                                            policies::discrete_quantile<>,
+                                                            policies::assert_undefined<> >::type;
 
    //
    // Special cases first:

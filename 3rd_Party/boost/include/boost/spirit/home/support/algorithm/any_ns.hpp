@@ -38,7 +38,8 @@ namespace boost { namespace spirit
         inline bool
         any_ns(First1 const& first1, First2 const& first2, Last const& last, F& f, mpl::false_)
         {
-            return (0 != (f(*first1, *first2) |
+            // cast bool to int to avoid -Wbitwise-instead-of-logical warning
+            return (0 != (static_cast<int>(f(*first1, *first2)) |
                 detail::any_ns(
                     fusion::next(first1)
                   , fusion::next(first2)
@@ -59,7 +60,8 @@ namespace boost { namespace spirit
         inline bool
         any_ns(First const& first, Last const& last, F& f, mpl::false_)
         {
-            return (0 != (f(*first) |
+            // cast bool to int to avoid -Wbitwise-instead-of-logical warning
+            return (0 != (static_cast<int>(f(*first)) |
                 detail::any_ns(
                     fusion::next(first)
                   , last

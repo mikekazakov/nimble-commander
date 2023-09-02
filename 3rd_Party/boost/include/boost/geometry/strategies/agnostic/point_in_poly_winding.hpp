@@ -61,20 +61,27 @@ struct winding_base_type
 template <typename Point, typename PointOfSegment, typename CalculationType>
 struct winding_base_type<Point, PointOfSegment, CalculationType, cartesian_tag>
 {
-    typedef within::cartesian_winding<void, void, CalculationType> type;
-};
-
-template <typename Point, typename PointOfSegment, typename CalculationType>
-struct winding_base_type<Point, PointOfSegment, CalculationType, spherical_tag>
-{
-    typedef within::detail::spherical_winding_base
+    using type = within::detail::cartesian_winding_base
         <
             typename strategy::side::services::default_strategy
                 <
                     typename cs_tag<Point>::type
                 >::type,
             CalculationType
-        > type;
+        >;
+};
+
+template <typename Point, typename PointOfSegment, typename CalculationType>
+struct winding_base_type<Point, PointOfSegment, CalculationType, spherical_tag>
+{
+    using type = within::detail::spherical_winding_base
+        <
+            typename strategy::side::services::default_strategy
+                <
+                    typename cs_tag<Point>::type
+                >::type,
+            CalculationType
+        >;
 };
 
 

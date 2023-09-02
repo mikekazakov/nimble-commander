@@ -120,8 +120,8 @@ public:
            )
     {}
 
-    FILE*       get()       { return _file.get(); }
-    const FILE* get() const { return _file.get(); }
+    auto get() -> FILE* { return _file.get(); }
+    auto get() const -> FILE const* { return _file.get(); }
 
     int getc_unchecked()
     {
@@ -140,9 +140,7 @@ public:
     }
 
     ///@todo: change byte_t* to void*
-    std::size_t read( byte_t*     data
-                    , std::size_t count
-                    )
+    auto read(byte_t* data, std::size_t count) -> std::size_t
     {
         std::size_t num_elements = fread( data
                                         , 1
@@ -162,9 +160,7 @@ public:
     }
 
     /// Reads array
-    template< typename T
-            , int      N
-            >
+    template< typename T, int N>
     void read( T (&buf)[N] )
     {
         io_error_if( read( buf, N ) < N
@@ -201,9 +197,7 @@ public:
 
     /// Writes number of elements from a buffer
     template < typename T >
-    std::size_t write( const T*    buf
-                     , std::size_t count
-                     )
+    auto write(T const* buf, std::size_t count) -> std::size_t
     {
         std::size_t num_elements = fwrite( buf
                                          , buff_item<T>::size

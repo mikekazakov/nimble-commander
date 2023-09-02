@@ -35,63 +35,6 @@
 namespace boost { namespace geometry { namespace concepts
 {
 
-/*!
-\brief Point concept.
-\ingroup concepts
-
-\par Formal definition:
-The point concept is defined as following:
-- there must be a specialization of traits::tag defining point_tag as type
-- there must be a specialization of traits::coordinate_type defining the type
-  of its coordinates
-- there must be a specialization of traits::coordinate_system defining its
-  coordinate system (cartesian, spherical, etc)
-- there must be a specialization of traits::dimension defining its number
-  of dimensions (2, 3, ...) (derive it conveniently
-  from std::integral_constant&lt;std::size_t, X&gt; for X-D)
-- there must be a specialization of traits::access, per dimension,
-  with two functions:
-  - \b get to get a coordinate value
-  - \b set to set a coordinate value (this one is not checked for ConstPoint)
-- for non-Cartesian coordinate systems, the coordinate system's units
-  must either be boost::geometry::degree or boost::geometry::radian
-
-
-\par Example:
-
-A legacy point, defining the necessary specializations to fulfil to the concept.
-
-Suppose that the following point is defined:
-\dontinclude doxygen_5.cpp
-\skip legacy_point1
-\until };
-
-It can then be adapted to the concept as following:
-\dontinclude doxygen_5.cpp
-\skip adapt legacy_point1
-\until }}
-
-Note that it is done like above to show the system. Users will normally use the registration macro.
-
-\par Example:
-
-A read-only legacy point, using a macro to fulfil to the ConstPoint concept.
-It cannot be modified by the library but can be used in all algorithms where
-points are not modified.
-
-The point looks like the following:
-
-\dontinclude doxygen_5.cpp
-\skip legacy_point2
-\until };
-
-It uses the macro as following:
-\dontinclude doxygen_5.cpp
-\skip adapt legacy_point2
-\until end adaptation
-
-*/
-
 template <typename Geometry>
 class Point
 {

@@ -15,6 +15,7 @@
 #include <boost/gil/io/device.hpp>
 
 #include <algorithm>
+#include <cstdint>
 #include <memory>
 #include <sstream>
 #include <type_traits>
@@ -192,7 +193,7 @@ public:
     {
         io_error_if( TIFFReadScanline( _tiff_file.get()
                                      , reinterpret_cast< tdata_t >( &buffer.front() )
-                                     , (uint32) row
+                                     , static_cast<std::uint32_t>( row )
                                      , plane           ) == -1
                    , "Read error."
                    );
@@ -205,7 +206,7 @@ public:
     {
         io_error_if( TIFFReadScanline( _tiff_file.get()
                                      , reinterpret_cast< tdata_t >( buffer )
-                                     , (uint32) row
+                                     , static_cast<std::uint32_t>( row )
                                      , plane           ) == -1
                    , "Read error."
                    );
@@ -221,9 +222,9 @@ public:
     {
         if( TIFFReadTile( _tiff_file.get()
                         , reinterpret_cast< tdata_t >( &buffer.front() )
-                        , (uint32) x
-                        , (uint32) y
-                        , (uint32) z
+                        , static_cast< std::uint32_t >( x )
+                        , static_cast< std::uint32_t >( y )
+                        , static_cast< std::uint32_t >( z )
                         , plane
                         ) == -1 )
         {
@@ -234,9 +235,9 @@ public:
     }
 
     template< typename Buffer >
-    void write_scaline( Buffer&     buffer
-                      , uint32      row
-                      , tsample_t   plane
+    void write_scaline( Buffer&       buffer
+                      , std::uint32_t row
+                      , tsample_t     plane
                       )
     {
        io_error_if( TIFFWriteScanline( _tiff_file.get()
@@ -248,9 +249,9 @@ public:
                    );
     }
 
-    void write_scaline( byte_t*     buffer
-                      , uint32      row
-                      , tsample_t   plane
+    void write_scaline( byte_t*        buffer
+                      , std::uint32_t  row
+                      , tsample_t      plane
                       )
     {
        io_error_if( TIFFWriteScanline( _tiff_file.get()
@@ -263,11 +264,11 @@ public:
     }
 
     template< typename Buffer >
-    void write_tile( Buffer&     buffer
-                   , uint32      x
-                   , uint32      y
-                   , uint32      z
-                   , tsample_t   plane
+    void write_tile( Buffer&         buffer
+                   , std::uint32_t   x
+                   , std::uint32_t   y
+                   , std::uint32_t   z
+                   , tsample_t       plane
                    )
     {
        if( TIFFWriteTile( _tiff_file.get()
@@ -300,8 +301,8 @@ public:
                         )
     {
         bool result = true;
-        uint32 tw = static_cast< uint32 >( width  );
-        uint32 th = static_cast< uint32 >( height );
+        std::uint32_t tw = static_cast< std::uint32_t >( width  );
+        std::uint32_t th = static_cast< std::uint32_t >( height );
 
         TIFFDefaultTileSize( _tiff_file.get()
                            , &tw

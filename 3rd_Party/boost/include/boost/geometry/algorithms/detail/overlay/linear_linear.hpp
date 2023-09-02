@@ -1,6 +1,6 @@
 // Boost.Geometry (aka GGL, Generic Geometry Library)
 
-// Copyright (c) 2014-2020, Oracle and/or its affiliates.
+// Copyright (c) 2014-2022, Oracle and/or its affiliates.
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -30,7 +30,7 @@
 
 #include <boost/geometry/algorithms/convert.hpp>
 
-
+#include <boost/geometry/geometries/helper_geometry.hpp>
 
 namespace boost { namespace geometry
 {
@@ -82,9 +82,7 @@ struct linear_linear_no_intersections
     static inline OutputIterator apply(MultiLineString const& multilinestring,
                                        OutputIterator oit)
     {
-        for (typename boost::range_iterator<MultiLineString const>::type
-                 it = boost::begin(multilinestring);
-             it != boost::end(multilinestring); ++it)
+        for (auto it = boost::begin(multilinestring); it != boost::end(multilinestring); ++it)
         {
             LineStringOut ls_out;
             geometry::convert(*it, ls_out);
@@ -206,7 +204,7 @@ protected:
         turns::remove_duplicate_turns
             <
                 Turns, EnableRemoveDuplicateTurns
-            >::apply(turns);
+            >::apply(turns, strategy);
 
         return detail::overlay::following::linear::follow
             <

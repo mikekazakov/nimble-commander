@@ -31,18 +31,6 @@
 namespace boost { namespace geometry { namespace concepts
 {
 
-
-/*!
-\brief multi-linestring concept
-\ingroup concepts
-\par Formal definition:
-The multi linestring concept is defined as following:
-- there must be a specialization of traits::tag defining multi_linestring_tag as
-  type
-- it must behave like a Boost.Range
-- its range value must fulfil the Linestring concept
-
-*/
 template <typename Geometry>
 class MultiLinestring
 {
@@ -61,7 +49,7 @@ public :
         traits::clear<Geometry>::apply(*mls);
         traits::resize<Geometry>::apply(*mls, 0);
         linestring_type* ls = 0;
-        traits::push_back<Geometry>::apply(*mls, *ls);
+        traits::push_back<Geometry>::apply(*mls, std::move(*ls));
     }
 #endif
 };

@@ -11,15 +11,12 @@
 #include <climits>
 #include <cstdlib>
 
-namespace boost { namespace cnv
-{
-    struct strtol;
-}}
+namespace boost { namespace cnv { struct strtol; }}
 
 /// @brief std::strtol-based extended converter
 /// @details The converter offers a fairly decent overall performance and moderate formatting facilities.
 
-struct boost::cnv::strtol : public boost::cnv::cnvbase<boost::cnv::strtol>
+struct boost::cnv::strtol : boost::cnv::cnvbase<boost::cnv::strtol>
 {
     using this_type = boost::cnv::strtol;
     using base_type = boost::cnv::cnvbase<this_type>;
@@ -153,21 +150,21 @@ boost::cnv::strtol::str_to_i(cnv::range<string_type> range, boost::optional<out_
     using    range_type = cnv::range<string_type>;
     using      iterator = typename range_type::iterator;
 
-    iterator             s = range.begin();
-    uint_type           ch = *s;
-    bool const is_negative = ch == '-' ? (ch = *++s, true) : ch == '+' ? (ch = *++s, false) : false;
-    bool const is_unsigned = std::is_same<out_type, unsigned_type>::value;
-    uint_type         base = uint_type(base_);
+    iterator       s = range.begin();
+    uint_type     ch = *s;
+    bool is_negative = ch == '-' ? (ch = *++s, true) : ch == '+' ? (ch = *++s, false) : false;
+    bool is_unsigned = std::is_same<out_type, unsigned_type>::value;
+    uint_type   base = uint_type(base_);
 
     /**/ if (is_negative && is_unsigned) return;
     else if ((base == 0 || base == 16) && ch == '0' && (*++s == 'x' || *s == 'X')) ++s, base = 16;
     else if (base == 0) base = ch == '0' ? (++s, 8) : 10;
 
-    unsigned_type const    max = (std::numeric_limits<out_type>::max)();
-    unsigned_type const   umax = max + (is_negative ? 1 : 0);
-    unsigned_type const cutoff = umax / base;
-    uint_type     const cutlim = umax % base;
-    unsigned_type       result = 0;
+    unsigned_type    max = (std::numeric_limits<out_type>::max)();
+    unsigned_type   umax = max + (is_negative ? 1 : 0);
+    unsigned_type cutoff = umax / base;
+    uint_type     cutlim = umax % base;
+    unsigned_type result = 0;
 
     for (; s != range.sentry(); ++s)
     {

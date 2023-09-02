@@ -89,6 +89,85 @@ point<F> transform(matrix3x2<F> const& mat, point<F2> const& src)
     return src * mat;
 }
 
+/// Returns the inverse of the given affine transformation matrix
+///
+/// \warning Floating point arithmetic, use Boost.Rational if precision maters
+template <typename T>
+boost::gil::matrix3x2<T> inverse(boost::gil::matrix3x2<T> m)
+{
+    T const determinant = m.a * m.d - m.b * m.c;
+
+    boost::gil::matrix3x2<T> res;
+    res.a = m.d / determinant;
+    res.b = -m.b / determinant;
+    res.c = -m.c / determinant;
+    res.d = m.a / determinant;
+    res.e = (m.c * m.f - m.d * m.e) / determinant;
+    res.f = (m.b * m.e - m.a * m.f) / determinant;
+
+    return res;
+}
+
+/// \fn gil::matrix3x2 center_rotate
+/// \tparam T     Data type for source image dimensions
+/// \tparam F     Data type for angle through which image is to be rotated
+/// @param  dims  dimensions of source image
+/// @param  rads  angle through which image is to be rotated
+/// @return   A transformation matrix for rotating the source image about its center
+/// \brief    rotates an image from its center point
+///           using consecutive affine transformations.
+template<typename T, typename F>
+boost::gil::matrix3x2<F> center_rotate(boost::gil::point<T> dims,F rads)
+{
+    const F PI = F(3.141592653589793238);
+    const F c_theta = std::abs(std::cos(rads));
+    const F s_theta = std::abs(std::sin(rads));
+
+    // Bound checks for angle rads
+    while(rads + PI < 0)
+    {
+        rads = rads + PI;
+    }
+
+    while(rads > PI)
+    {
+        rads = rads - PI;
+    }
+
+    // Basic Rotation Matrix
+    boost::gil::matrix3x2<F> rotate = boost::gil::matrix3x2<F>::get_rotate(rads);
+
+    // Find distance for translating the image into view
+    boost::gil::matrix3x2<F> translation(0,0,0,0,0,0);
+    if(rads > 0)
+    {
+        translation.b = s_theta;
+    }
+    else
+    {
+        translation.c = s_theta;
+    }
+
+    if(std::abs(rads) > PI/2)
+    {
+        translation.a = c_theta;
+        translation.d = c_theta;
+    }
+
+    // To bring the complete image into view
+    boost::gil::matrix3x2<F> translate =
+        boost::gil::matrix3x2<F>::get_translate(-1 * dims * translation);
+
+    // To fit inside the source dimensions
+    boost::gil::matrix3x2<F> scale =
+        boost::gil::matrix3x2<F>::get_scale(
+            s_theta * dims.y / dims.x + c_theta ,
+            s_theta * dims.x / dims.y + c_theta
+        );
+
+    return scale *  translate * rotate;
+}
+
 }} // namespace boost::gil
 
 #endif

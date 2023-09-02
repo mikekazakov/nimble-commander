@@ -283,12 +283,12 @@ protected:
 
 private:
     //! Finds the string length so that it includes only complete characters, and does not exceed \a max_size
-    size_type length_until_boundary(const char_type* s, size_type, size_type max_size, boost::integral_constant< std::size_t, 1u >) const
+    size_type length_until_boundary(const char_type* s, size_type n, size_type max_size, boost::integral_constant< std::size_t, 1u >) const
     {
         std::locale loc = this->getloc();
         std::codecvt< wchar_t, char, std::mbstate_t > const& fac = std::use_facet< std::codecvt< wchar_t, char, std::mbstate_t > >(loc);
         std::mbstate_t mbs = std::mbstate_t();
-        return static_cast< size_type >(fac.length(mbs, s, s + max_size, ~static_cast< std::size_t >(0u)));
+        return static_cast< size_type >(fac.length(mbs, s, s + max_size, n));
     }
 
     //! Finds the string length so that it includes only complete characters, and does not exceed \a max_size

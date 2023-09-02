@@ -20,7 +20,7 @@ namespace boost { namespace process { namespace detail {
 
 template<typename T> struct is_wchar_t : std::false_type {};
 
-template<> struct is_wchar_t<boost::filesystem::path> : std::is_same<typename boost::filesystem::path::value_type, wchar_t>
+template<> struct is_wchar_t<boost::process::filesystem::path> : std::is_same<typename boost::process::filesystem::path::value_type, wchar_t>
 {
 };
 

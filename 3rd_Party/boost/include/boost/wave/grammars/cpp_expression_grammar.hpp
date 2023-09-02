@@ -573,6 +573,10 @@ struct expression_grammar :
                     [
                         constant.val = impl::as_intlit(arg1)
                     ]
+                |   ch_p(T_LONGINTLIT)
+                    [
+                        constant.val = impl::as_intlit(arg1)
+                    ]
                 |   ch_p(T_CHARLIT)
                     [
                         constant.val = impl::as_chlit(arg1)
@@ -694,6 +698,7 @@ struct expression_grammar :
             constant_nocalc
                 =   ch_p(T_PP_NUMBER)
                 |   ch_p(T_INTLIT)
+                |   ch_p(T_LONGINTLIT)
                 |   ch_p(T_CHARLIT)
                 ;
 

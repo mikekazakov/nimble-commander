@@ -59,6 +59,15 @@ stream(Args&&... args)
 }
 
 template<class NextLayer, bool deflateSupported>
+template<class Other>
+stream<NextLayer, deflateSupported>::
+stream(stream<Other> && other)
+    : impl_(boost::make_shared<impl_type>(std::move(other.next_layer())))
+{
+}
+
+
+template<class NextLayer, bool deflateSupported>
 auto
 stream<NextLayer, deflateSupported>::
 get_executor() noexcept ->
@@ -304,6 +313,22 @@ text() const
     return impl_->wr_opcode == detail::opcode::text;
 }
 
+template<class NextLayer, bool deflateSupported>
+void
+stream<NextLayer, deflateSupported>::
+compress(bool value)
+{
+    impl_->wr_compress_opt = value;
+}
+
+template<class NextLayer, bool deflateSupported>
+bool
+stream<NextLayer, deflateSupported>::
+compress() const
+{
+    return impl_->wr_compress_opt;
+}
+
 //------------------------------------------------------------------------------
 
 // _Fail the WebSocket Connection_
@@ -336,7 +361,9 @@ do_fail(
         ec = {};
     }
     if(! ec)
-        ec = ev;
+    {
+        BOOST_BEAST_ASSIGN_EC(ec, ev);
+    }
     if(ec && ec != error::closed)
         impl_->change_status(status::failed);
     else

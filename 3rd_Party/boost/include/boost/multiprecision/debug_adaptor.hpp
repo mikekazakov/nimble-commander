@@ -3,8 +3,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_MATH_DEBUG_ADAPTER_HPP
-#define BOOST_MATH_DEBUG_ADAPTER_HPP
+#ifndef BOOST_MP_DEBUG_ADAPTOR_HPP
+#define BOOST_MP_DEBUG_ADAPTOR_HPP
 
 #include <boost/multiprecision/detail/standalone_config.hpp>
 #include <boost/multiprecision/traits/extract_exponent_type.hpp>
@@ -58,13 +58,13 @@ struct debug_adaptor
       return *this;
    }
    template <class T>
-   debug_adaptor(const T& i, const typename std::enable_if<std::is_convertible<T, Backend>::value>::type* = 0)
+   debug_adaptor(const T& i, const typename std::enable_if<std::is_convertible<T, Backend>::value>::type* = nullptr)
        : m_value(i)
    {
       update_view();
    }
    template <class T>
-   debug_adaptor(const debug_adaptor<T>& i, const typename std::enable_if<std::is_convertible<T, Backend>::value>::type* = 0)
+   debug_adaptor(const debug_adaptor<T>& i, const typename std::enable_if<std::is_convertible<T, Backend>::value>::type* = nullptr)
        : m_value(i.value())
    {
       update_view();
@@ -669,8 +669,6 @@ inline BOOST_MP_CXX14_CONSTEXPR void eval_set_imag(debug_adaptor<To>& to, const 
 
 } // namespace backends
 
-using backends::debug_adaptor;
-
 namespace detail {
    template <class Backend>
    struct is_variable_precision<debug_adaptor<Backend> > : public is_variable_precision<Backend>
@@ -693,10 +691,6 @@ namespace detail {
 template <class Backend>
 struct number_category<backends::debug_adaptor<Backend> > : public number_category<Backend>
 {};
-
-template <class Number>
-using debug_adaptor_t = number<debug_adaptor<typename Number::backend_type>, Number::et>;
-
 
 template <class Backend, expression_template_option ExpressionTemplates>
 struct component_type<number<debug_adaptor<Backend>, ExpressionTemplates>>

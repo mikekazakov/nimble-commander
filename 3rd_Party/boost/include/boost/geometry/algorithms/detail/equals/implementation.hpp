@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2015 Mateusz Loskot, London, UK.
 // Copyright (c) 2014-2015 Adam Wulkiewicz, Lodz, Poland.
 
-// This file was modified by Oracle on 2014-2021.
-// Modifications copyright (c) 2014-2021 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2022.
+// Modifications copyright (c) 2014-2022 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 // Contributed and/or modified by Menelaos Karavelas, on behalf of Oracle
@@ -36,8 +36,8 @@
 #include <boost/geometry/algorithms/detail/equals/point_point.hpp>
 #include <boost/geometry/algorithms/detail/equals/collect_vectors.hpp>
 #include <boost/geometry/algorithms/detail/equals/interface.hpp>
+#include <boost/geometry/algorithms/detail/relate/implementation.hpp>
 #include <boost/geometry/algorithms/detail/relate/relate_impl.hpp>
-#include <boost/geometry/algorithms/relate.hpp>
 
 #include <boost/geometry/strategies/relate/cartesian.hpp>
 #include <boost/geometry/strategies/relate/geographic.hpp>
@@ -389,7 +389,7 @@ struct equals
     <
         MultiPolygon1, MultiPolygon2,
         multi_polygon_tag, multi_polygon_tag,
-        areal_tag, areal_tag, 
+        areal_tag, areal_tag,
         2,
         Reverse
     >
@@ -402,7 +402,7 @@ struct equals
     <
         Polygon, MultiPolygon,
         polygon_tag, multi_polygon_tag,
-        areal_tag, areal_tag, 
+        areal_tag, areal_tag,
         2,
         Reverse
     >
@@ -414,7 +414,7 @@ struct equals
     <
         MultiPolygon, Ring,
         multi_polygon_tag, ring_tag,
-        areal_tag, areal_tag, 
+        areal_tag, areal_tag,
         2,
         Reverse
     >

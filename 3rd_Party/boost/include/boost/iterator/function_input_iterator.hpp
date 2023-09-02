@@ -28,6 +28,9 @@ namespace boost {
 
 namespace iterators {
 
+    template <class Function, class Input>
+    class function_input_iterator;
+
     namespace impl {
 
         // Computes the return type of an lvalue-call with an empty argument,
@@ -46,21 +49,21 @@ namespace iterators {
         };
 
         template <class Function, class Input>
-        class function_input_iterator :
+        class function_object_input_iterator :
             public iterator_facade<
-                function_input_iterator<Function, Input>,
+                iterators::function_input_iterator<Function, Input>,
                 typename result_of_nullary_lvalue_call<Function>::type,
                 single_pass_traversal_tag,
                 typename result_of_nullary_lvalue_call<Function>::type const &
             >
         {
         public:
-            function_input_iterator() {}
-            function_input_iterator(Function & f_, Input state_ = Input())
+            function_object_input_iterator() {}
+            function_object_input_iterator(Function & f_, Input state_ = Input())
                 : f(boost::addressof(f_)), state(state_) {}
 
             void increment() {
-                if(value)
+                if (value)
                     value = none;
                 else
                     (*f)();
@@ -69,10 +72,12 @@ namespace iterators {
 
             typename result_of_nullary_lvalue_call<Function>::type const &
                 dereference() const {
-                    return (value ? value : value = (*f)()).get();
+                if (!value)
+                    value = (*f)();
+                return value.get();
             }
 
-            bool equal(function_input_iterator const & other) const {
+            bool equal(function_object_input_iterator const & other) const {
                 return f == other.f && state == other.state;
             }
 
@@ -85,7 +90,7 @@ namespace iterators {
         template <class Function, class Input>
         class function_pointer_input_iterator :
             public iterator_facade<
-                function_pointer_input_iterator<Function, Input>,
+                iterators::function_input_iterator<Function, Input>,
                 typename function_types::result_type<Function>::type,
                 single_pass_traversal_tag,
                 typename function_types::result_type<Function>::type const &
@@ -97,7 +102,7 @@ namespace iterators {
                 : f(f_), state(state_) {}
 
             void increment() {
-                if(value)
+                if (value)
                     value = none;
                 else
                     (*f)();
@@ -106,7 +111,9 @@ namespace iterators {
 
             typename function_types::result_type<Function>::type const &
                 dereference() const {
-                    return (value ? value : value = (*f)()).get();
+                if (!value)
+                    value = (*f)();
+                return value.get();
             }
 
             bool equal(function_pointer_input_iterator const & other) const {
@@ -126,13 +133,13 @@ namespace iterators {
         public boost::conditional<
             function_types::is_function_pointer<Function>::value,
             impl::function_pointer_input_iterator<Function,Input>,
-            impl::function_input_iterator<Function,Input>
+            impl::function_object_input_iterator<Function,Input>
         >::type
     {
         typedef typename boost::conditional<
             function_types::is_function_pointer<Function>::value,
             impl::function_pointer_input_iterator<Function,Input>,
-            impl::function_input_iterator<Function,Input>
+            impl::function_object_input_iterator<Function,Input>
         >::type base_type;
     public:
         function_input_iterator(Function & f, Input i)

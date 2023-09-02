@@ -44,18 +44,18 @@ struct shell_
 {
     constexpr shell_() {}
 
-    boost::filesystem::path operator()() const
+    boost::process::filesystem::path operator()() const
     {
         return boost::process::detail::api::shell_path();
     }
-    boost::filesystem::path operator()(std::error_code & ec) const noexcept
+    boost::process::filesystem::path operator()(std::error_code & ec) const noexcept
     {
         return boost::process::detail::api::shell_path(ec);
     }
 };
 
 template<>
-struct is_wchar_t<shell_> : is_wchar_t<boost::filesystem::path>
+struct is_wchar_t<shell_> : is_wchar_t<boost::process::filesystem::path>
 {
 };
 

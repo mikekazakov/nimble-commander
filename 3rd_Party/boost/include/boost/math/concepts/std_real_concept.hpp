@@ -340,7 +340,6 @@ inline std::basic_istream<charT, traits>& operator>>(std::basic_istream<charT, t
 } // namespace concepts
 }}
 
-#include <boost/math/tools/precision.hpp>
 #include <boost/math/tools/big_constant.hpp>
 
 namespace boost{ namespace math{

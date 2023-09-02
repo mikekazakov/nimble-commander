@@ -13,6 +13,11 @@
 #include <boost/mp11/algorithm.hpp>
 #include <cstring>
 
+#if defined(_MSC_VER) && _MSC_VER == 1900
+# pragma warning(push)
+# pragma warning(disable: 4100) // unreferenced formal parameter
+#endif
+
 namespace boost
 {
 namespace describe
@@ -38,6 +43,10 @@ bool enum_from_string( char const* name, E& e ) noexcept
 
 } // namespace describe
 } // namespace boost
+
+#if defined(_MSC_VER) && _MSC_VER == 1900
+# pragma warning(pop)
+#endif
 
 #endif // defined(BOOST_DESCRIBE_CXX14)
 

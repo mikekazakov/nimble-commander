@@ -17,6 +17,10 @@
 
 namespace boost { namespace spirit { namespace qi { namespace detail
 {
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <
         typename Iterator, typename Context
       , typename Skipper, typename Exception>
@@ -95,10 +99,10 @@ namespace boost { namespace spirit { namespace qi { namespace detail
         Context& context;
         Skipper const& skipper;
         mutable bool is_first;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(expect_function& operator= (expect_function const&))
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 }}}}
 
 #endif

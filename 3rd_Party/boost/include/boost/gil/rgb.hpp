@@ -42,8 +42,7 @@ using bgr_layout_t = layout<rgb_t, mp11::mp_list_c<int, 2, 1, 0>>;
 /// \ingroup ImageViewConstructors
 /// \brief from raw RGB planar data
 template <typename IC>
-inline
-auto planar_rgb_view(
+inline auto planar_rgb_view(
     std::size_t width, std::size_t height,
     IC r, IC g, IC b,
     std::ptrdiff_t rowsize_in_bytes)

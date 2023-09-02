@@ -12,7 +12,8 @@
 
 #include <utility>
 
-BOOST_JSON_NS_BEGIN
+namespace boost {
+namespace json {
 
 string::
 string(
@@ -194,10 +195,16 @@ append(
     InputIt last,
     std::random_access_iterator_tag)
 {
+
     auto const n = static_cast<
         size_type>(last - first);
-    std::copy(first, last,
-        impl_.append(n, sp_));
+    char* out = impl_.append(n, sp_);
+#if defined(_MSC_VER) && _MSC_VER <= 1900
+    while( first != last )
+        *out++ = *first++;
+#else
+    std::copy(first, last, out);
+#endif
 }
 
 template<class InputIt>
@@ -231,6 +238,7 @@ append(
         tmp.data(), tmp.size());
 }
 
-BOOST_JSON_NS_END
+} // namespace json
+} // namespace boost
 
 #endif

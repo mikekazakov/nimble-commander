@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2013-2020.
-// Modifications copyright (c) 2013-2020 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2022.
+// Modifications copyright (c) 2013-2022 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -17,16 +17,13 @@
 
 #include <tuple>
 
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant_fwd.hpp>
-
 #include <boost/geometry/algorithms/detail/relate/de9im.hpp>
 #include <boost/geometry/algorithms/not_implemented.hpp>
 #include <boost/geometry/core/coordinate_dimension.hpp>
 #include <boost/geometry/core/tag.hpp>
 #include <boost/geometry/core/tags.hpp>
 #include <boost/geometry/core/topological_dimension.hpp>
+#include <boost/geometry/geometries/adapted/boost_variant.hpp>
 #include <boost/geometry/geometries/concepts/check.hpp>
 #include <boost/geometry/strategies/default_strategy.hpp>
 #include <boost/geometry/strategies/detail.hpp>
@@ -160,8 +157,8 @@ struct result_handler_type<Geometry1, Geometry2, util::type_sequence<StaticMasks
 }} // namespace detail::relate
 #endif // DOXYGEN_NO_DETAIL
 
-namespace resolve_strategy {
-
+namespace resolve_strategy
+{
 
 template
 <
@@ -217,7 +214,7 @@ struct relate<default_strategy, false>
                 Geometry1,
                 Geometry2
             >::type strategy_type;
-        
+
         dispatch::relate
             <
                 Geometry1,
@@ -228,9 +225,15 @@ struct relate<default_strategy, false>
 
 } // resolve_strategy
 
-namespace resolve_variant {
+namespace resolve_dynamic
+{
 
-template <typename Geometry1, typename Geometry2>
+template
+<
+    typename Geometry1, typename Geometry2,
+    typename Tag1 = typename geometry::tag<Geometry1>::type,
+    typename Tag2 = typename geometry::tag<Geometry2>::type
+>
 struct relate
 {
     template <typename Mask, typename Strategy>
@@ -256,109 +259,73 @@ struct relate
     }
 };
 
-template <BOOST_VARIANT_ENUM_PARAMS(typename T), typename Geometry2>
-struct relate<boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)>, Geometry2>
+template <typename Geometry1, typename Geometry2, typename Tag2>
+struct relate<Geometry1, Geometry2, dynamic_geometry_tag, Tag2>
 {
     template <typename Mask, typename Strategy>
-    struct visitor : boost::static_visitor<bool>
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Mask const& mask,
+                             Strategy const& strategy)
     {
-        Geometry2 const& m_geometry2;
-        Mask const& m_mask;
-        Strategy const& m_strategy;
-
-        visitor(Geometry2 const& geometry2, Mask const& mask, Strategy const& strategy)
-            : m_geometry2(geometry2), m_mask(mask), m_strategy(strategy) {}
-
-        template <typename Geometry1>
-        bool operator()(Geometry1 const& geometry1) const
+        bool result = false;
+        traits::visit<Geometry1>::apply([&](auto const& g1)
         {
-            return relate<Geometry1, Geometry2>
-                   ::apply(geometry1, m_geometry2, m_mask, m_strategy);
-        }
-    };
-
-    template <typename Mask, typename Strategy>
-    static inline bool
-    apply(boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry1,
-          Geometry2 const& geometry2,
-          Mask const& mask,
-          Strategy const& strategy)
-    {
-        return boost::apply_visitor(visitor<Mask, Strategy>(geometry2, mask, strategy), geometry1);
+            result = relate
+                <
+                    util::remove_cref_t<decltype(g1)>,
+                    Geometry2
+                >::apply(g1, geometry2, mask, strategy);
+        }, geometry1);
+        return result;
     }
 };
 
-template <typename Geometry1, BOOST_VARIANT_ENUM_PARAMS(typename T)>
-struct relate<Geometry1, boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+template <typename Geometry1, typename Geometry2, typename Tag1>
+struct relate<Geometry1, Geometry2, Tag1, dynamic_geometry_tag>
 {
     template <typename Mask, typename Strategy>
-    struct visitor : boost::static_visitor<bool>
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Mask const& mask,
+                             Strategy const& strategy)
     {
-        Geometry1 const& m_geometry1;
-        Mask const& m_mask;
-        Strategy const& m_strategy;
-
-        visitor(Geometry1 const& geometry1, Mask const& mask, Strategy const& strategy)
-            : m_geometry1(geometry1), m_mask(mask), m_strategy(strategy) {}
-
-        template <typename Geometry2>
-        bool operator()(Geometry2 const& geometry2) const
+        bool result = false;
+        traits::visit<Geometry2>::apply([&](auto const& g2)
         {
-            return relate<Geometry1, Geometry2>
-                   ::apply(m_geometry1, geometry2, m_mask, m_strategy);
-        }
-    };
-
-    template <typename Mask, typename Strategy>
-    static inline bool
-    apply(Geometry1 const& geometry1,
-          boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry2,
-          Mask const& mask,
-          Strategy const& strategy)
-    {
-        return boost::apply_visitor(visitor<Mask, Strategy>(geometry1, mask, strategy), geometry2);
+            result = relate
+                <
+                    Geometry1,
+                    util::remove_cref_t<decltype(g2)>
+                >::apply(geometry1, g2, mask, strategy);
+        }, geometry2);
+        return result;
     }
 };
 
-template <
-    BOOST_VARIANT_ENUM_PARAMS(typename T1),
-    BOOST_VARIANT_ENUM_PARAMS(typename T2)
->
-struct relate<
-    boost::variant<BOOST_VARIANT_ENUM_PARAMS(T1)>,
-    boost::variant<BOOST_VARIANT_ENUM_PARAMS(T2)>
->
+template <typename Geometry1, typename Geometry2>
+struct relate<Geometry1, Geometry2, dynamic_geometry_tag, dynamic_geometry_tag>
 {
     template <typename Mask, typename Strategy>
-    struct visitor : boost::static_visitor<bool>
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Mask const& mask,
+                             Strategy const& strategy)
     {
-        Mask const& m_mask;
-        Strategy const& m_strategy;
-
-        visitor(Mask const& mask, Strategy const& strategy)
-            : m_mask(mask), m_strategy(strategy) {}
-
-        template <typename Geometry1, typename Geometry2>
-        bool operator()(Geometry1 const& geometry1,
-                        Geometry2 const& geometry2) const
+        bool result = false;
+        traits::visit<Geometry1, Geometry2>::apply([&](auto const& g1, auto const& g2)
         {
-            return relate<Geometry1, Geometry2>
-                   ::apply(geometry1, geometry2, m_mask, m_strategy);
-        }
-    };
-
-    template <typename Mask, typename Strategy>
-    static inline bool
-    apply(boost::variant<BOOST_VARIANT_ENUM_PARAMS(T1)> const& geometry1,
-          boost::variant<BOOST_VARIANT_ENUM_PARAMS(T2)> const& geometry2,
-          Mask const& mask,
-          Strategy const& strategy)
-    {
-        return boost::apply_visitor(visitor<Mask, Strategy>(mask, strategy), geometry1, geometry2);
+            result = relate
+                <
+                    util::remove_cref_t<decltype(g1)>,
+                    util::remove_cref_t<decltype(g2)>
+                >::apply(g1, g2, mask, strategy);
+        }, geometry1, geometry2);
+        return result;
     }
 };
 
-} // namespace resolve_variant
+} // namespace resolve_dynamic
 
 /*!
 \brief Checks relation between a pair of geometries defined by a mask.
@@ -382,7 +349,7 @@ inline bool relate(Geometry1 const& geometry1,
                    Mask const& mask,
                    Strategy const& strategy)
 {
-    return resolve_variant::relate
+    return resolve_dynamic::relate
             <
                 Geometry1,
                 Geometry2
@@ -407,7 +374,7 @@ inline bool relate(Geometry1 const& geometry1,
                    Geometry2 const& geometry2,
                    Mask const& mask)
 {
-    return resolve_variant::relate
+    return resolve_dynamic::relate
             <
                 Geometry1,
                 Geometry2

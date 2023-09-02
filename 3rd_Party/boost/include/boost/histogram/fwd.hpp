@@ -95,6 +95,9 @@ template <class ValueType = double, bool ThreadSafe = false>
 class count;
 
 template <class ValueType = double>
+class fraction;
+
+template <class ValueType = double>
 class sum;
 
 template <class ValueType = double>
@@ -105,12 +108,6 @@ class mean;
 
 template <class ValueType = double>
 class weighted_mean;
-
-template <class T>
-class thread_safe;
-
-template <class T>
-struct is_thread_safe;
 
 } // namespace accumulators
 
@@ -147,6 +144,22 @@ template <class Axes, class Storage = default_storage>
 class BOOST_ATTRIBUTE_NODISCARD histogram;
 
 #endif // BOOST_HISTOGRAM_DOXYGEN_INVOKED
+
+namespace utility {
+
+template <class ValueType = double>
+class clopper_pearson_interval;
+
+template <class ValueType = double>
+class jeffreys_interval;
+
+template <class ValueType = double>
+class wald_interval;
+
+template <class ValueType = double>
+class wilson_interval;
+
+} // namespace utility
 
 namespace detail {
 

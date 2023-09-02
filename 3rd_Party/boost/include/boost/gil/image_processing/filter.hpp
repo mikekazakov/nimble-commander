@@ -1,5 +1,6 @@
 //
 // Copyright 2019 Miral Shah <miralshah2211@gmail.com>
+// Copyright 2021 Pranam Lashkari <plashkari628@gmail.com>
 //
 // Use, modification and distribution are subject to the Boost Software License,
 // Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -9,18 +10,16 @@
 #ifndef BOOST_GIL_IMAGE_PROCESSING_FILTER_HPP
 #define BOOST_GIL_IMAGE_PROCESSING_FILTER_HPP
 
-#include <boost/gil/extension/numeric/algorithm.hpp>
-#include <boost/gil/extension/numeric/kernel.hpp>
-#include <boost/gil/extension/numeric/convolve.hpp>
+#include <boost/gil/image_processing/kernel.hpp>
+
+#include <boost/gil/image_processing/convolve.hpp>
 
 #include <boost/gil/image.hpp>
 #include <boost/gil/image_view.hpp>
+#include <boost/gil/algorithm.hpp>
 
 #include <cstddef>
 #include <vector>
-
-
-
 
 namespace boost { namespace gil {
 

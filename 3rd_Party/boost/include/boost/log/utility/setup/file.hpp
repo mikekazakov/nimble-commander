@@ -16,6 +16,7 @@
 #define BOOST_LOG_UTILITY_SETUP_FILE_HPP_INCLUDED_
 
 #include <boost/type_traits/is_void.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared_object.hpp>
 #include <boost/parameter/parameters.hpp> // for is_named_argument
@@ -61,12 +62,12 @@ namespace aux {
 
 //! The function creates a file collector according to the specified arguments
 template< typename ArgsT >
-inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const&, mpl::true_ const&)
+inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const&, boost::true_type)
 {
     return shared_ptr< sinks::file::collector >();
 }
 template< typename ArgsT >
-inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const& args, mpl::false_ const&)
+inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const& args, boost::false_type)
 {
     return sinks::file::make_collector(args);
 }

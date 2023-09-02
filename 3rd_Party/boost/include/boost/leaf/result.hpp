@@ -7,7 +7,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/leaf/config.hpp>
-#include <boost/leaf/error.hpp>
+#include <boost/leaf/exception.hpp>
 
 #include <climits>
 #include <functional>
@@ -95,7 +95,7 @@ namespace leaf_detail
         };
 
         explicit result_discriminant( error_id id ) noexcept:
-            state_(id.value())
+            state_(unsigned(id.value()))
         {
             BOOST_LEAF_ASSERT(state_==0 || (state_&3)==1);
         }
@@ -122,7 +122,7 @@ namespace leaf_detail
         error_id get_error_id() const noexcept
         {
             BOOST_LEAF_ASSERT(kind()==no_error || kind()==err_id);
-            return make_error_id(state_);
+            return make_error_id(int(state_));
         }
     };
 }
@@ -178,7 +178,7 @@ class result
 #if BOOST_LEAF_CFG_CAPTURE
                 {
                     error_id captured_id = r_.ctx_->propagate_captured_errors();
-                    tls::write_uint32<leaf_detail::tls_tag_id_factory_current_id>(captured_id.value());
+                    tls::write_uint<leaf_detail::tls_tag_id_factory_current_id>(unsigned(captured_id.value()));
                     return captured_id;
                 }
 #else
@@ -268,12 +268,12 @@ class result
 
     stored_type const * get() const noexcept
     {
-        return has_value() ? &stored_ : 0;
+        return has_value() ? &stored_ : nullptr;
     }
 
     stored_type * get() noexcept
     {
-        return has_value() ? &stored_ : 0;
+        return has_value() ? &stored_ : nullptr;
     }
 
 protected:
@@ -281,7 +281,7 @@ protected:
     void enforce_value_state() const
     {
         if( !has_value() )
-            ::boost::leaf::throw_exception(bad_result(get_error_id()));
+            ::boost::leaf::leaf_detail::throw_exception_impl(bad_result(get_error_id()));
     }
 
 public:
@@ -343,7 +343,7 @@ public:
 
     // SFINAE: T can be initialized with a U, e.g. result<std::string>("literal").
     template <class U>
-    result( U && u, decltype(init_T_with_U(std::forward<U>(u))) * = 0 ):
+    result( U && u, decltype(init_T_with_U(std::forward<U>(u))) * = nullptr ):
         stored_(std::forward<U>(u)),
         what_(result_discriminant::kind_val{})
     {
@@ -358,7 +358,7 @@ public:
     }
 
     template <class Enum>
-    result( Enum e, typename std::enable_if<std::is_error_code_enum<Enum>::value, int>::type * = 0 ) noexcept:
+    result( Enum e, typename std::enable_if<std::is_error_code_enum<Enum>::value, int>::type * = nullptr ) noexcept:
         what_(error_id(e))
     {
     }
@@ -451,12 +451,12 @@ public:
 
     value_type_const * operator->() const noexcept
     {
-        return has_value() ? leaf_detail::stored<T>::cptr(stored_) : 0;
+        return has_value() ? leaf_detail::stored<T>::cptr(stored_) : nullptr;
     }
 
     value_type * operator->() noexcept
     {
-        return has_value() ? leaf_detail::stored<T>::ptr(stored_) : 0;
+        return has_value() ? leaf_detail::stored<T>::ptr(stored_) : nullptr;
     }
 
 #ifdef BOOST_LEAF_NO_CXX11_REF_QUALIFIERS
@@ -464,14 +464,14 @@ public:
     value_cref operator*() const noexcept
     {
         auto p = get();
-        BOOST_LEAF_ASSERT(p != 0);
+        BOOST_LEAF_ASSERT(p != nullptr);
         return *p;
     }
 
     value_ref operator*() noexcept
     {
         auto p = get();
-        BOOST_LEAF_ASSERT(p != 0);
+        BOOST_LEAF_ASSERT(p != nullptr);
         return *p;
     }
 
@@ -480,28 +480,28 @@ public:
     value_cref operator*() const & noexcept
     {
         auto p = get();
-        BOOST_LEAF_ASSERT(p != 0);
+        BOOST_LEAF_ASSERT(p != nullptr);
         return *p;
     }
 
     value_ref operator*() & noexcept
     {
         auto p = get();
-        BOOST_LEAF_ASSERT(p != 0);
+        BOOST_LEAF_ASSERT(p != nullptr);
         return *p;
     }
 
     value_rv_cref operator*() const && noexcept
     {
         auto p = get();
-        BOOST_LEAF_ASSERT(p != 0);
+        BOOST_LEAF_ASSERT(p != nullptr);
         return std::move(*p);
     }
 
     value_rv_ref operator*() && noexcept
     {
         auto p = get();
-        BOOST_LEAF_ASSERT(p != 0);
+        BOOST_LEAF_ASSERT(p != nullptr);
         return std::move(*p);
     }
 
@@ -567,7 +567,7 @@ public:
     }
 
     template <class Enum>
-    result( Enum e, typename std::enable_if<std::is_error_code_enum<Enum>::value, Enum>::type * = 0 ) noexcept:
+    result( Enum e, typename std::enable_if<std::is_error_code_enum<Enum>::value, Enum>::type * = nullptr ) noexcept:
         base(e)
     {
     }

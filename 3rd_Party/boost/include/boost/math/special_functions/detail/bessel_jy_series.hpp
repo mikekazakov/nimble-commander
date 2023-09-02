@@ -12,6 +12,8 @@
 
 #include <cmath>
 #include <cstdint>
+#include <boost/math/tools/config.hpp>
+#include <boost/math/tools/assert.hpp>
 
 namespace boost { namespace math { namespace detail{
 
@@ -127,7 +129,7 @@ private:
    T term;
 };
 //
-// Series form for BesselY as z -> 0, 
+// Series form for BesselY as z -> 0,
 // see: http://functions.wolfram.com/Bessel-TypeFunctions/BesselY/06/01/04/01/01/0003/
 // This series is only useful when the second term is small compared to the first
 // otherwise we get catastrophic cancellation errors.
@@ -155,7 +157,7 @@ inline T bessel_y_small_z_series(T v, T x, T* pscale, const Policy& pol)
          gam = 1;
          if(tools::max_value<T>() * p < gam)
          {
-            return -policies::raise_overflow_error<T>(function, 0, pol);
+            return -policies::raise_overflow_error<T>(function, nullptr, pol);
          }
       }
       prefix = -gam / (constants::pi<T>() * p);
@@ -171,7 +173,7 @@ inline T bessel_y_small_z_series(T v, T x, T* pscale, const Policy& pol)
          scale /= (tools::max_value<T>() / 4);
          if(tools::log_max_value<T>() < prefix)
          {
-            return -policies::raise_overflow_error<T>(function, 0, pol);
+            return -policies::raise_overflow_error<T>(function, nullptr, pol);
          }
       }
       prefix = -exp(prefix);
@@ -191,7 +193,7 @@ inline T bessel_y_small_z_series(T v, T x, T* pscale, const Policy& pol)
    }
    else
    {
-      int sgn;
+      int sgn {};
       prefix = boost::math::lgamma(-v, &sgn, pol) + p;
       prefix = exp(prefix) * sgn / constants::pi<T>();
    }
@@ -222,19 +224,24 @@ T bessel_yn_small_z(int n, T z, T* scale, const Policy& pol)
    }
    else if(n == 1)
    {
-      return (z / constants::pi<T>()) * log(z / 2) 
-         - 2 / (constants::pi<T>() * z) 
+      return (z / constants::pi<T>()) * log(z / 2)
+         - 2 / (constants::pi<T>() * z)
          - (z / (2 * constants::pi<T>())) * (1 - 2 * constants::euler<T>());
    }
    else if(n == 2)
    {
-      return (z * z) / (4 * constants::pi<T>()) * log(z / 2) 
-         - (4 / (constants::pi<T>() * z * z)) 
+      return (z * z) / (4 * constants::pi<T>()) * log(z / 2)
+         - (4 / (constants::pi<T>() * z * z))
          - ((z * z) / (8 * constants::pi<T>())) * (T(3)/2 - 2 * constants::euler<T>());
    }
    else
    {
-      T p = pow(z / 2, n);
+      #if (defined(__GNUC__) && __GNUC__ == 13)
+      auto p = static_cast<T>(pow(z / 2, T(n)));
+      #else
+      auto p = static_cast<T>(pow(z / 2, n));
+      #endif
+      
       T result = -((boost::math::factorial<T>(n - 1, pol) / constants::pi<T>()));
       if(p * tools::max_value<T>() < result)
       {
@@ -243,7 +250,7 @@ T bessel_yn_small_z(int n, T z, T* scale, const Policy& pol)
          *scale /= div;
          if(p * tools::max_value<T>() < result)
          {
-            return -policies::raise_overflow_error<T>("bessel_yn_small_z<%1%>(%1%,%1%)", 0, pol);
+            return -policies::raise_overflow_error<T>("bessel_yn_small_z<%1%>(%1%,%1%)", nullptr, pol);
          }
       }
       return result / p;

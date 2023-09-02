@@ -10,19 +10,21 @@
 #ifndef BOOST_JSON_DETAIL_UTF8_HPP
 #define BOOST_JSON_DETAIL_UTF8_HPP
 
+#include <boost/json/detail/config.hpp>
+
 #include <cstddef>
 #include <cstring>
 #include <cstdint>
 
-BOOST_JSON_NS_BEGIN
+namespace boost {
+namespace json {
 namespace detail {
 
 template<int N>
 std::uint32_t
 load_little_endian(void const* p)
 {
-    // VFALCO do we need to initialize this to 0?
-    std::uint32_t v;
+    std::uint32_t v = 0;
     std::memcpy(&v, p, N);
 #ifdef BOOST_JSON_BIG_ENDIAN
     v = ((v & 0xFF000000) >> 24) |
@@ -65,7 +67,7 @@ classify_utf8(char c)
        0x504, 0x604, 0x604, 0x604, 0x704, 0x000, 0x000, 0x000,
        0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000,
     };
-    return first[static_cast<unsigned char>(c)];
+    return first[static_cast<unsigned char>(c & 0x7F)];
 }
 
 inline
@@ -86,7 +88,6 @@ is_valid_utf8(const char* p, uint16_t first)
     // 3 bytes, second byte [A0, BF]
     case 2:
         v = load_little_endian<3>(p);
-        std::memcpy(&v, p, 3);
         return (v & 0xC0E000) == 0x80A000;
 
     // 3 bytes, second byte [80, BF]
@@ -128,7 +129,7 @@ public:
         const char* p,
         std::size_t remain) noexcept
     {
-        first_ = classify_utf8(*p & 0x7F);
+        first_ = classify_utf8(*p );
         if(remain >= length())
             size_ = length();
         else
@@ -192,6 +193,7 @@ public:
 };
 
 } // detail
-BOOST_JSON_NS_END
+} // namespace json
+} // namespace boost
 
 #endif

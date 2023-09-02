@@ -1,9 +1,16 @@
+//
+// Copyright 2019 Olzhas Zhumabek <anonymous.from.applecity@gmail.com>
+// Copyright 2021 Scramjet911 <36035352+Scramjet911@users.noreply.github.com>
+// Use, modification and distribution are subject to the Boost Software License,
+// Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
 #ifndef BOOST_GIL_IMAGE_PROCESSING_HESSIAN_HPP
 #define BOOST_GIL_IMAGE_PROCESSING_HESSIAN_HPP
 
 #include <boost/gil/image_view.hpp>
 #include <boost/gil/typedefs.hpp>
-#include <boost/gil/extension/numeric/kernel.hpp>
+#include <boost/gil/image_processing/kernel.hpp>
 #include <stdexcept>
 
 namespace boost { namespace gil {
@@ -50,9 +57,9 @@ inline void compute_hessian_responses(
             auto ddxx_i = channel_t();
             auto ddyy_i = channel_t();
             auto dxdy_i = channel_t();
-            for (typename OutputView::coord_t w_y = 0; w_y < weights.size(); ++w_y)
+            for (typename OutputView::coord_t w_y = 0; w_y < static_cast<std::ptrdiff_t>(weights.size()); ++w_y)
             {
-                for (typename OutputView::coord_t w_x = 0; w_x < weights.size(); ++w_x)
+                for (typename OutputView::coord_t w_x = 0; w_x < static_cast<std::ptrdiff_t>(weights.size()); ++w_x)
                 {
                     ddxx_i += ddxx(x + w_x - center, y + w_y - center)
                         .at(std::integral_constant<int, 0>{}) * weights.at(w_x, w_y);

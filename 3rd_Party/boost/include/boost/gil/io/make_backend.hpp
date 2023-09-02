@@ -55,17 +55,15 @@ auto make_reader_backend(
     return reader_backend<device_t, FormatTag>(device, settings);
 }
 
-#ifdef BOOST_GIL_IO_ADD_FS_PATH_SUPPORT
 template <typename FormatTag>
 inline
 auto make_reader_backend(
-    filesystem::path const& path,
+    detail::filesystem::path const& path,
     image_read_settings<FormatTag> const& settings)
     -> typename get_reader_backend<std::wstring, FormatTag>::type
 {
     return make_reader_backend(path.wstring(), settings);
 }
-#endif  // BOOST_GIL_IO_ADD_FS_PATH_SUPPORT
 
 template <typename Device, typename FormatTag>
 inline

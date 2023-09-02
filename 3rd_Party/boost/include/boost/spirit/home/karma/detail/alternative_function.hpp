@@ -139,6 +139,10 @@ namespace boost { namespace spirit { namespace karma { namespace detail
     //  will be executed for every generator in a given alternative generator
     //  expression
     ///////////////////////////////////////////////////////////////////////////
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename OutputIterator, typename Context, typename Delimiter,
         typename Attribute, typename Strict>
     struct alternative_generate_function
@@ -190,9 +194,6 @@ namespace boost { namespace spirit { namespace karma { namespace detail
         Context& ctx;
         Delimiter const& delim;
         Attribute const& attr;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(alternative_generate_function& operator= (alternative_generate_function const&))
     };
 
     // specialization for strict alternatives
@@ -239,10 +240,10 @@ namespace boost { namespace spirit { namespace karma { namespace detail
         Delimiter const& delim;
         Attribute const& attr;
         bool failed;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(alternative_generate_function& operator= (alternative_generate_function const&))
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 }}}}
 
 #endif

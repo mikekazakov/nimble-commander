@@ -72,7 +72,7 @@ namespace leaf_detail
         {
             auto e = base::check(tup, ei);
             return e && Pred::evaluate(*e);
-        };
+        }
 
         template <class Tup>
         BOOST_LEAF_CONSTEXPR static Pred get( Tup const & tup, error_info const & ei ) noexcept
@@ -91,7 +91,7 @@ namespace leaf_detail
         BOOST_LEAF_CONSTEXPR static bool check( Tup &, error_info const & ) noexcept
         {
             return true;
-        };
+        }
     };
 
     template <class E>
@@ -184,7 +184,7 @@ namespace leaf_detail
         template <class CharT, class Traits>
         static void print( std::basic_ostream<CharT, Traits> & os, void const * tup, int key_to_print )
         {
-            BOOST_LEAF_ASSERT(tup != 0);
+            BOOST_LEAF_ASSERT(tup != nullptr);
             tuple_for_each<I-1,Tuple>::print(os, tup, key_to_print);
             std::get<I-1>(*static_cast<Tuple const *>(tup)).print(os, key_to_print);
         }
@@ -329,7 +329,7 @@ public:
         tuple_for_each<std::tuple_size<Tup>::value,Tup>::activate(tup_);
 #if BOOST_LEAF_CFG_DIAGNOSTICS
         if( unexpected_requested<Tup>::value )
-            tls::uint32_increment<tls_tag_unexpected_enabled_counter>();
+            tls::uint_increment<tls_tag_unexpected_enabled_counter>();
 #endif
 #if !defined(BOOST_LEAF_NO_THREADS) && !defined(NDEBUG)
         thread_id_ = std::this_thread::get_id();
@@ -348,7 +348,7 @@ public:
 #endif
 #if BOOST_LEAF_CFG_DIAGNOSTICS
         if( unexpected_requested<Tup>::value )
-            tls::uint32_decrement<tls_tag_unexpected_enabled_counter>();
+            tls::uint_decrement<tls_tag_unexpected_enabled_counter>();
 #endif
         tuple_for_each<std::tuple_size<Tup>::value,Tup>::deactivate(tup_);
     }

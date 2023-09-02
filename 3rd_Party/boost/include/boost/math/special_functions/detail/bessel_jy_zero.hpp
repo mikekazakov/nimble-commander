@@ -57,7 +57,9 @@
       class equation_as_9_3_39_and_its_derivative
       {
       public:
-        equation_as_9_3_39_and_its_derivative(const T& zt) : zeta(zt) { }
+        explicit equation_as_9_3_39_and_its_derivative(const T& zt) : zeta(zt) { }
+
+        equation_as_9_3_39_and_its_derivative(const equation_as_9_3_39_and_its_derivative&) = default;
 
         boost::math::tuple<T, T> operator()(const T& z) const
         {
@@ -126,11 +128,11 @@
         const T range_zmin = (std::max<T>)(z_estimate - T(1), T(1));
         const T range_zmax = z_estimate + T(1);
 
-        const int my_digits10 = static_cast<int>(static_cast<float>(boost::math::tools::digits<T>() * 0.301F));
+        const auto my_digits10 = static_cast<int>(static_cast<float>(boost::math::tools::digits<T>() * 0.301F));
 
         // Select the maximum allowed iterations based on the number
         // of decimal digits in the numeric type T, being at least 12.
-        const std::uintmax_t iterations_allowed = static_cast<std::uintmax_t>((std::max)(12, my_digits10 * 2));
+        const auto iterations_allowed = static_cast<std::uintmax_t>((std::max)(12, my_digits10 * 2));
 
         std::uintmax_t iterations_used = iterations_allowed;
 
@@ -187,6 +189,8 @@
                              const Policy& pol) : my_v(v),
                                                   my_pol(pol) { }
 
+          function_object_jv(const function_object_jv&) = default;
+
           T operator()(const T& x) const
           {
             return boost::math::cyl_bessel_j(my_v, x, my_pol);
@@ -207,6 +211,8 @@
                                           const Policy& pol) : my_v(v),
                                                                my_order_is_zero(order_is_zero),
                                                                my_pol(pol) { }
+
+          function_object_jv_and_jv_prime(const function_object_jv_and_jv_prime&) = default;
 
           boost::math::tuple<T, T> operator()(const T& x) const
           {
@@ -405,6 +411,8 @@
                              const Policy& pol) : my_v(v),
                                                   my_pol(pol) { }
 
+          function_object_yv(const function_object_yv&) = default;
+
           T operator()(const T& x) const
           {
             return boost::math::cyl_neumann(my_v, x, my_pol);
@@ -423,6 +431,8 @@
           function_object_yv_and_yv_prime(const T& v,
                                           const Policy& pol) : my_v(v),
                                                                my_pol(pol) { }
+
+          function_object_yv_and_yv_prime(const function_object_yv_and_yv_prime&) = default;
 
           boost::math::tuple<T, T> operator()(const T& x) const
           {

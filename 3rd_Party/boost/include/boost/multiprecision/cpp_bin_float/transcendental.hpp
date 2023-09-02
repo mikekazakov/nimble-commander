@@ -3,8 +3,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_MULTIPRECISION_CPP_BIN_FLOAT_TRANSCENDENTAL_HPP
-#define BOOST_MULTIPRECISION_CPP_BIN_FLOAT_TRANSCENDENTAL_HPP
+#ifndef BOOST_MP_CPP_BIN_FLOAT_TRANSCENDENTAL_HPP
+#define BOOST_MP_CPP_BIN_FLOAT_TRANSCENDENTAL_HPP
 
 #include <boost/multiprecision/detail/assert.hpp>
 
@@ -13,7 +13,7 @@ namespace boost { namespace multiprecision { namespace backends {
 template <unsigned Digits, digit_base_type DigitBase, class Allocator, class Exponent, Exponent MinE, Exponent MaxE>
 void eval_exp_taylor(cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>& res, const cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>& arg)
 {
-   constexpr const std::ptrdiff_t bits = cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count;
+   constexpr std::ptrdiff_t bits = cpp_bin_float<Digits, DigitBase, Allocator, Exponent, MinE, MaxE>::bit_count;
    //
    // Taylor series for small argument, note returns exp(x) - 1:
    //

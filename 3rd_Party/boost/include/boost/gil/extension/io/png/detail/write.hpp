@@ -11,7 +11,7 @@
 #include <boost/gil/extension/io/png/detail/writer_backend.hpp>
 
 #include <boost/gil/io/device.hpp>
-#include <boost/gil/io/dynamic_io_new.hpp>
+#include <boost/gil/io/detail/dynamic.hpp>
 #include <boost/gil/io/row_buffer_helper.hpp>
 #include <boost/gil/detail/mp11.hpp>
 
@@ -171,10 +171,24 @@ private:
     {};
 
     template<typename Info>
-    struct is_equal_to_sixteen : mp11::mp_less
+    struct is_equal_to_sixteen : mp11::mp_and
         <
-            std::integral_constant<int, Info::_bit_depth>,
-            std::integral_constant<int, 16>
+            mp11::mp_not
+            <
+                mp11::mp_less
+                <
+                    std::integral_constant<int, Info::_bit_depth>,
+                    std::integral_constant<int, 16>
+                >
+            >,
+            mp11::mp_not
+            <
+                mp11::mp_less
+                <
+                    std::integral_constant<int, 16>,
+                    std::integral_constant<int, Info::_bit_depth>
+                >
+            >
         >
     {};
 
@@ -234,7 +248,7 @@ public:
                                 , parent_t
                                 > op( this );
 
-        apply_operation( views, op );
+        variant2::visit( op, views );
     }
 };
 

@@ -204,10 +204,10 @@ private:
     // Get the parent of a given node in the heap
     static size_type parent(size_type index) { return (index - 1) / Arity; }
 
-    // Get the child_idx'th child of a given node; 0 <= child_idx < Arity
-    static size_type child(size_type index, std::size_t child_idx)
+    // Get the first child of a given node
+    static size_type first_child(size_type index)
     {
-        return index * Arity + child_idx + 1;
+        return index * Arity + 1;
     }
 
     // Swap two elements in the heap by index, updating index_in_heap
@@ -304,7 +304,7 @@ private:
         Value* data_ptr = &data[0];
         for (;;)
         {
-            size_type first_child_index = child(index, 0);
+            size_type first_child_index = first_child(index);
             if (first_child_index >= heap_size)
                 break; /* No children */
             Value* child_base_ptr = data_ptr + first_child_index;

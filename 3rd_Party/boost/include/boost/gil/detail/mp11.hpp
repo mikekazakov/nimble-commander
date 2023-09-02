@@ -10,7 +10,6 @@
 #define BOOST_GIL_DETAIL_MP11_HPP
 
 #include <boost/mp11.hpp>
-#include <boost/mp11/mpl.hpp> // required by dynamic_image and boost::variant (?)
 
 namespace boost { namespace gil { namespace detail {
 

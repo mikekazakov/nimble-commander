@@ -16,6 +16,10 @@
 
 namespace boost { namespace spirit { namespace qi { namespace detail
 {
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename Iterator, typename Context, typename Skipper>
     struct pass_function
     {
@@ -60,10 +64,10 @@ namespace boost { namespace spirit { namespace qi { namespace detail
         Iterator const& last;
         Context& context;
         Skipper const& skipper;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(pass_function& operator= (pass_function const&))
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 }}}}
 
 #endif

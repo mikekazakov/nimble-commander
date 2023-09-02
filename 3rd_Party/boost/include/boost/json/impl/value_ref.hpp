@@ -10,9 +10,8 @@
 #ifndef BOOST_JSON_IMPL_VALUE_REF_HPP
 #define BOOST_JSON_IMPL_VALUE_REF_HPP
 
-#include <boost/json/value_from.hpp>
-
-BOOST_JSON_NS_BEGIN
+namespace boost {
+namespace json {
 
 template<class T>
 value
@@ -34,7 +33,7 @@ from_const(
     void const* p,
     storage_ptr sp)
 {
-    return value_from(
+    return value(
         *reinterpret_cast<
             T const*>(p),
         std::move(sp));
@@ -47,12 +46,13 @@ from_rvalue(
     void* p,
     storage_ptr sp)
 {
-    return value_from(
+    return value(
         std::move(
             *reinterpret_cast<T*>(p)),
         std::move(sp));
 }
 
-BOOST_JSON_NS_END
+} // namespace json
+} // namespace boost
 
 #endif

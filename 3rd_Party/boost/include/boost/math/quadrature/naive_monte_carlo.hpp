@@ -21,6 +21,11 @@
 #include <map>
 #include <type_traits>
 #include <boost/math/policies/error_handling.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
+
+#ifdef BOOST_NAIVE_MONTE_CARLO_DEBUG_FAILURES
+#  include <iostream>
+#endif
 
 namespace boost { namespace math { namespace quadrature {
 
@@ -41,15 +46,17 @@ public:
                       Real error_goal,
                       bool singular = true,
                       uint64_t threads = std::thread::hardware_concurrency(),
-                      uint64_t seed = 0) noexcept : m_num_threads{threads}, m_seed{seed}
+                      uint64_t seed = 0) noexcept : m_num_threads{threads}, m_seed{seed}, m_volume(1)
     {
         using std::numeric_limits;
         using std::sqrt;
+        using boost::math::isinf;
+
         uint64_t n = bounds.size();
         m_lbs.resize(n);
         m_dxs.resize(n);
         m_limit_types.resize(n);
-        m_volume = 1;
+
         static const char* function = "boost::math::quadrature::naive_monte_carlo<%1%>";
         for (uint64_t i = 0; i < n; ++i)
         {
@@ -58,9 +65,9 @@ public:
                 boost::math::policies::raise_domain_error(function, "The upper bound is <= the lower bound.\n", bounds[i].second, Policy());
                 return;
             }
-            if (bounds[i].first == -numeric_limits<Real>::infinity())
+            if (isinf(bounds[i].first))
             {
-                if (bounds[i].second == numeric_limits<Real>::infinity())
+                if (isinf(bounds[i].second))
                 {
                     m_limit_types[i] = detail::limit_classification::DOUBLE_INFINITE;
                 }
@@ -72,7 +79,7 @@ public:
                     m_dxs[i] = numeric_limits<Real>::quiet_NaN();
                 }
             }
-            else if (bounds[i].second == numeric_limits<Real>::infinity())
+            else if (isinf(bounds[i].second))
             {
                 m_limit_types[i] = detail::limit_classification::UPPER_BOUND_INFINITE;
                 if (singular)
@@ -285,17 +292,17 @@ private:
             m_done = false;
 
 #ifdef BOOST_NAIVE_MONTE_CARLO_DEBUG_FAILURES
-            std::cout << "Failed to achieve required tolerance first time through..\n";
-            std::cout << "  variance =    " << m_variance << std::endl;
-            std::cout << "  average =     " << m_avg << std::endl;
-            std::cout << "  total calls = " << m_total_calls << std::endl;
+            std::cerr << "Failed to achieve required tolerance first time through..\n";
+            std::cerr << "  variance =    " << m_variance << std::endl;
+            std::cerr << "  average =     " << m_avg << std::endl;
+            std::cerr << "  total calls = " << m_total_calls << std::endl;
 
             for (std::size_t i = 0; i < m_num_threads; ++i)
-               std::cout << "  thread_calls[" << i << "] = " << m_thread_calls[i] << std::endl;
+               std::cerr << "  thread_calls[" << i << "] = " << m_thread_calls[i] << std::endl;
             for (std::size_t i = 0; i < m_num_threads; ++i)
-               std::cout << "  thread_averages[" << i << "] = " << m_thread_averages[i] << std::endl;
+               std::cerr << "  thread_averages[" << i << "] = " << m_thread_averages[i] << std::endl;
             for (std::size_t i = 0; i < m_num_threads; ++i)
-               std::cout << "  thread_Ss[" << i << "] = " << m_thread_Ss[i] << std::endl;
+               std::cerr << "  thread_Ss[" << i << "] = " << m_thread_Ss[i] << std::endl;
 #endif
          }
 
@@ -439,12 +446,12 @@ private:
     uint64_t m_num_threads;
     std::atomic<uint64_t> m_seed;
     std::atomic<Real> m_error_goal;
-    std::atomic<bool> m_done;
+    std::atomic<bool> m_done{};
     std::vector<Real> m_lbs;
     std::vector<Real> m_dxs;
     std::vector<detail::limit_classification> m_limit_types;
     Real m_volume;
-    std::atomic<uint64_t> m_total_calls;
+    std::atomic<uint64_t> m_total_calls{};
     // I wanted these to be vectors rather than maps,
     // but you can't resize a vector of atomics.
     std::unique_ptr<std::atomic<uint64_t>[]> m_thread_calls;

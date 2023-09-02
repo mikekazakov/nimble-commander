@@ -1,6 +1,6 @@
 // Boost.Geometry
 
-// Copyright (c) 2017-2020 Oracle and/or its affiliates.
+// Copyright (c) 2017-2022 Oracle and/or its affiliates.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -12,7 +12,7 @@
 #define BOOST_GEOMETRY_ALGORITHMS_DETAIL_OVERLAY_RANGE_IN_GEOMETRY_HPP
 
 
-#include <boost/geometry/algorithms/covered_by.hpp>
+#include <boost/geometry/algorithms/detail/covered_by/implementation.hpp>
 #include <boost/geometry/core/access.hpp>
 #include <boost/geometry/core/tags.hpp>
 #include <boost/geometry/iterators/point_iterator.hpp>
@@ -154,7 +154,7 @@ inline int range_in_geometry(Point1 const& first_point1,
         // check points of geometry1 until point inside/outside is found
         // NOTE: skip first point because it should be already tested above
         result = range_in_geometry(geometry1, geometry2, strategy, true);
-    }    
+    }
     return result;
 }
 

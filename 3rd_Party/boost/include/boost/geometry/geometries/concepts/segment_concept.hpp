@@ -32,25 +32,6 @@
 namespace boost { namespace geometry { namespace concepts
 {
 
-
-/*!
-\brief Segment concept.
-\ingroup concepts
-\details Formal definition:
-The segment concept is defined as following:
-- there must be a specialization of traits::tag defining segment_tag as type
-- there must be a specialization of traits::point_type to define the
-  underlying point type (even if it does not consist of points, it should define
-  this type, to indicate the points it can work with)
-- there must be a specialization of traits::indexed_access, per index
-  and per dimension, with two functions:
-  - get to get a coordinate value
-  - set to set a coordinate value (this one is not checked for ConstSegment)
-
-\note The segment concept is similar to the box concept, defining another tag.
-However, the box concept assumes the index as min_corner, max_corner, while
-for the segment concept there is no assumption.
-*/
 template <typename Geometry>
 class Segment
 {

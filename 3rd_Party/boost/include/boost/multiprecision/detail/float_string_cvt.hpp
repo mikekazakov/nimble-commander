@@ -31,16 +31,16 @@ inline void round_string_up_at(std::string& s, std::ptrdiff_t pos, I& expon)
       s.erase(s.size() - 1);
       ++expon;
    }
-   else if (s[pos] == '9')
+   else if (s[static_cast<std::size_t>(pos)] == '9')
    {
-      s[pos] = '0';
+      s[static_cast<std::size_t>(pos)] = '0';
       round_string_up_at(s, pos - 1, expon);
    }
    else
    {
-      if ((pos == 0) && (s[pos] == '0') && (s.size() == 1))
+      if ((pos == 0) && (s[static_cast<std::size_t>(pos)] == '0') && (s.size() == 1))
          ++expon;
-      ++s[pos];
+      ++s[static_cast<std::size_t>(pos)];
    }
 }
 
@@ -160,12 +160,12 @@ std::string convert_to_string(Backend b, std::streamsize digits, std::ios_base::
             // Bankers rounding:
             if ((*result.rbegin() - '0') & 1)
             {
-               round_string_up_at(result, result.size() - 1, expon);
+               round_string_up_at(result, static_cast<std::ptrdiff_t>(result.size() - 1u), expon);
             }
          }
          else if (cdigit >= 5)
          {
-            round_string_up_at(result, result.size() - 1, expon);
+            round_string_up_at(result, static_cast<std::ptrdiff_t>(result.size() - 1u), expon);
          }
       }
       eval_floor(t, b);
@@ -174,7 +174,7 @@ std::string convert_to_string(Backend b, std::streamsize digits, std::ios_base::
          // Input is an integer, sometimes we get a result which is not an integer here as a result of printing too
          // many digits, so lets round if required:
          round_string_up_at(result, expon + 1, expon);
-         result.erase(expon + 1);
+         result.erase(static_cast<std::string::size_type>(expon + 1));
       }
    }
    while ((static_cast<std::streamsize>(result.size()) > digits) && (result.size() != 0U))
@@ -212,13 +212,15 @@ void convert_from_string(Backend& b, const char* p)
    if (!p || (*p == 0))
       return;
 
-   bool                                                  is_neg       = false;
-   bool                                                  is_neg_expon = false;
-   constexpr const ui_type                               ten          = ui_type(10);
-   typename Backend::exponent_type                       expon        = 0;
-   int                                                   digits_seen  = 0;
-   using limits = std::numeric_limits<number<Backend, et_off> >;
-   constexpr const int                                   max_digits = limits::is_specialized ? limits::max_digits10 + 1 : INT_MAX;
+   bool                            is_neg       = false;
+   bool                            is_neg_expon = false;
+   constexpr ui_type               ten          = ui_type(10);
+   typename Backend::exponent_type expon        = 0;
+   int                             digits_seen  = 0;
+
+   using limits = std::numeric_limits<number<Backend, et_off>>;
+
+   constexpr int max_digits = limits::is_specialized ? limits::max_digits10 + 1 : INT_MAX;
 
    if (*p == '+')
       ++p;

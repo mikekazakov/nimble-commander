@@ -26,7 +26,7 @@ template <class C, class Iterator>
 struct is_byte_container_imp_2
 {
    using container_value_type = typename std::remove_cv<typename std::iterator_traits<typename C::const_iterator>::value_type>::type;
-   static constexpr const bool value = boost::multiprecision::detail::is_integral<container_value_type>::value && (sizeof(container_value_type) == 1);
+   static constexpr bool value = boost::multiprecision::detail::is_integral<container_value_type>::value && (sizeof(container_value_type) == 1);
 };
 
 template <class C>

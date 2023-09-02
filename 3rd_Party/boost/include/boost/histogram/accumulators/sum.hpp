@@ -100,6 +100,7 @@ public:
 
   /// Return small part of the sum.
   const_reference small_part() const noexcept { return small_; }
+  // note: windows.h illegially uses `#define small char`, cannot use method "small"
 
   // lossy conversion to value type must be explicit
   explicit operator value_type() const noexcept { return value(); }
@@ -155,25 +156,6 @@ public:
   }
 
   // end: extra operators
-
-  // windows.h illegially uses `#define small char` which breaks this now deprecated API
-#if !defined(small)
-
-  /// Return large part of the sum.
-  [[deprecated("use large_part() instead; "
-               "large() will be removed in boost-1.80")]] const_reference
-  large() const noexcept {
-    return large_;
-  }
-
-  /// Return small part of the sum.
-  [[deprecated("use small_part() instead; "
-               "small() will be removed in boost-1.80")]] const_reference
-  small() const noexcept {
-    return small_;
-  }
-
-#endif
 
 private:
   value_type large_{};

@@ -11,7 +11,7 @@
 #define BOOST_PROCESS_POSIX_PIPE_HPP
 
 
-#include <boost/filesystem.hpp>
+#include <boost/process/filesystem.hpp>
 #include <boost/process/detail/posix/compare_handles.hpp>
 #include <system_error>
 #include <array>
@@ -77,12 +77,9 @@ public:
     void assign_source(native_handle_type h) { _source = h;}
     void assign_sink  (native_handle_type h) { _sink = h;}
 
-
-
-
     int_type write(const char_type * data, int_type count)
     {
-        int_type write_len;
+        ssize_t write_len;
         while ((write_len = ::write(_sink, data, count * sizeof(char_type))) == -1)
         {
             //Try again if interrupted
@@ -90,11 +87,11 @@ public:
             if (err != EINTR)
                 ::boost::process::detail::throw_last_error();
         }
-        return write_len;
+        return static_cast<int_type>(write_len);
     }
     int_type read(char_type * data, int_type count)
     {
-        int_type read_len;
+        ssize_t read_len;
         while ((read_len = ::read(_source, data, count * sizeof(char_type))) == -1)
         {
             //Try again if interrupted
@@ -102,7 +99,7 @@ public:
             if (err != EINTR)
                 ::boost::process::detail::throw_last_error();
         }
-        return read_len;
+        return static_cast<int_type>(read_len);
     }
 
     bool is_open() const

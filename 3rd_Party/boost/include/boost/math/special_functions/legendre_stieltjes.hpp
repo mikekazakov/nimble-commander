@@ -38,8 +38,7 @@ public:
         std::ptrdiff_t n = m - 1;
         std::ptrdiff_t q;
         std::ptrdiff_t r;
-        bool odd = n & 1;
-        if (odd)
+        if ((n & 1) == 1)
         {
            q = 1;
            r = (n-1)/2 + 2;
@@ -75,7 +74,7 @@ public:
     Real norm_sq() const
     {
         Real t = 0;
-        bool odd = m_m & 1;
+        bool odd = ((m_m & 1) == 1);
         for (size_t i = 1; i < m_a.size(); ++i)
         {
             if(odd)
@@ -101,7 +100,7 @@ public:
         Real p1 = x;
 
         Real Em;
-        bool odd = m_m & 1;
+        bool odd = ((m_m & 1) == 1);
         if (odd)
         {
             Em = m_a[1]*p1;

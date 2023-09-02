@@ -93,14 +93,13 @@ std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>&
   return detail::handle_nonzero_width(os, x);
 }
 
-#include <boost/histogram/detail/ignore_deprecation_warning_begin.hpp>
-template <class CharT, class Traits, class T>
+template <class CharT, class Traits, class U>
 std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>& os,
-                                              const thread_safe<T>& x) {
-  os << static_cast<T>(x);
-  return os;
+                                              const fraction<U>& x) {
+  if (os.width() == 0)
+    return os << "fraction(" << x.successes() << ", " << x.failures() << ")";
+  return detail::handle_nonzero_width(os, x);
 }
-#include <boost/histogram/detail/ignore_deprecation_warning_end.hpp>
 
 } // namespace accumulators
 } // namespace histogram

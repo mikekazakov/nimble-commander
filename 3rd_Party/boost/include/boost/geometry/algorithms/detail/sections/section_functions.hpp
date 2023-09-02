@@ -70,7 +70,7 @@ struct preceding_check<0, Geometry, spherical_tag>
         calc_t const value = get<0>(point);
         calc_t const other_min = get<min_corner, 0>(other_box);
         calc_t const other_max = get<max_corner, 0>(other_box);
-        
+
         bool const pt_covered = strategy::within::detail::covered_by_range
                                     <
                                         Point, 0, spherical_tag
@@ -124,13 +124,14 @@ template
     typename Box,
     typename RobustPolicy
 >
-static inline bool preceding(int dir,
-                             Point const& point,
-                             Box const& point_box,
-                             Box const& other_box,
-                             RobustPolicy const& robust_policy)
+inline bool preceding(int dir,
+                      Point const& point,
+                      Box const& point_box,
+                      Box const& other_box,
+                      RobustPolicy const& robust_policy)
 {
-    typename geometry::robust_point_type<Point, RobustPolicy>::type robust_point;
+    using box_point_type = typename geometry::point_type<Box>::type;
+    typename geometry::robust_point_type<box_point_type, RobustPolicy>::type robust_point;
     geometry::recalculate(robust_point, point, robust_policy);
 
     // After recalculate() to prevent warning: 'robust_point' may be used uninitialized
@@ -148,11 +149,11 @@ template
     typename Box,
     typename RobustPolicy
 >
-static inline bool exceeding(int dir,
-                             Point const& point,
-                             Box const& point_box,
-                             Box const& other_box,
-                             RobustPolicy const& robust_policy)
+inline bool exceeding(int dir,
+                      Point const& point,
+                      Box const& point_box,
+                      Box const& other_box,
+                      RobustPolicy const& robust_policy)
 {
     return preceding<Dimension>(-dir, point, point_box, other_box, robust_policy);
 }

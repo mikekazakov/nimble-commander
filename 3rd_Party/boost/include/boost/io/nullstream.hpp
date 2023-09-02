@@ -1,5 +1,5 @@
 /*
-Copyright 2021 Glen Joseph Fernandes
+Copyright 2021-2022 Glen Joseph Fernandes
 (glenjofe@gmail.com)
 
 Distributed under the Boost Software License, Version 1.0.
@@ -32,8 +32,14 @@ protected:
 namespace detail {
 
 template<class CharT, class Traits>
-struct nullbuf {
-    boost::io::basic_nullbuf<CharT, Traits> buf;
+class nullbuf {
+public:
+    boost::io::basic_nullbuf<CharT, Traits>* buf() {
+        return &buf_;
+    }
+
+private:
+    boost::io::basic_nullbuf<CharT, Traits> buf_;
 };
 
 } /* detail */
@@ -44,8 +50,8 @@ class basic_onullstream
     , public std::basic_ostream<CharT, Traits> {
 public:
     basic_onullstream()
-        : std::basic_ostream<CharT, Traits>(&(detail::nullbuf<CharT,
-             Traits>::buf)) { }
+        : std::basic_ostream<CharT, Traits>(detail::nullbuf<CharT,
+             Traits>::buf()) { }
 };
 
 typedef basic_onullstream<char> onullstream;

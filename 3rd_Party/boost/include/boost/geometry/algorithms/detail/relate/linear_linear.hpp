@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2013, 2014, 2015, 2017, 2018, 2019.
-// Modifications copyright (c) 2013-2019 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2022.
+// Modifications copyright (c) 2013-2022 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -32,6 +32,8 @@
 #include <boost/geometry/algorithms/detail/relate/turns.hpp>
 #include <boost/geometry/algorithms/detail/relate/boundary_checker.hpp>
 #include <boost/geometry/algorithms/detail/relate/follow_helpers.hpp>
+
+#include <boost/geometry/geometries/helper_geometry.hpp>
 
 namespace boost { namespace geometry
 {
@@ -68,7 +70,7 @@ public:
         }
 
         std::size_t const count = boost::size(linestring);
-        
+
         // invalid input
         if ( count < 2 )
         {
@@ -91,11 +93,9 @@ public:
             m_flags |= 1;
 
             // check if there is a boundary
-            if ( m_flags < 2
-              && ( m_boundary_checker.template
-                    is_endpoint_boundary<boundary_front>(range::front(linestring))
-                || m_boundary_checker.template
-                    is_endpoint_boundary<boundary_back>(range::back(linestring)) ) )
+            if (m_flags < 2
+                && (m_boundary_checker.is_endpoint_boundary(range::front(linestring))
+                    || m_boundary_checker.is_endpoint_boundary(range::back(linestring))))
             {
                 update<boundary, exterior, '0', TransposeResult>(m_result);
                 m_flags |= 2;
@@ -117,26 +117,33 @@ struct linear_linear
 {
     static const bool interruption_enabled = true;
 
-    typedef typename geometry::point_type<Geometry1>::type point1_type;
-    typedef typename geometry::point_type<Geometry2>::type point2_type;
-
     template <typename Result, typename Strategy>
     static inline void apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
                              Result & result,
                              Strategy const& strategy)
     {
-        typedef typename Strategy::cs_tag cs_tag;
+        boundary_checker<Geometry1, Strategy> boundary_checker1(geometry1, strategy);
+        boundary_checker<Geometry2, Strategy> boundary_checker2(geometry2, strategy);
+        apply(geometry1, geometry2, boundary_checker1, boundary_checker2, result, strategy);
+    }
 
+    template <typename BoundaryChecker1, typename BoundaryChecker2, typename Result, typename Strategy>
+    static inline void apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             BoundaryChecker1 const& boundary_checker1,
+                             BoundaryChecker2 const& boundary_checker2,
+                             Result & result,
+                             Strategy const& strategy)
+    {
         // The result should be FFFFFFFFF
-        relate::set<exterior, exterior, result_dimension<Geometry1>::value>(result);// FFFFFFFFd, d in [1,9] or T
+        update<exterior, exterior, result_dimension<Geometry1>::value>(result);// FFFFFFFFd, d in [1,9] or T
         if ( BOOST_GEOMETRY_CONDITION( result.interrupt ) )
             return;
 
         // get and analyse turns
-        typedef typename turns::get_turns
+        using turn_type = typename turns::get_turns
             <
                 Geometry1, Geometry2
-            >::template turn_info_type<Strategy>::type turn_type;
+            >::template turn_info_type<Strategy>::type;
         std::vector<turn_type> turns;
 
         interrupt_policy_linear_linear<Result> interrupt_policy(result);
@@ -151,20 +158,16 @@ struct linear_linear
         if ( BOOST_GEOMETRY_CONDITION( result.interrupt ) )
             return;
 
-        typedef boundary_checker<Geometry1, Strategy> boundary_checker1_type;
-        boundary_checker1_type boundary_checker1(geometry1, strategy);
-        disjoint_linestring_pred<Result, boundary_checker1_type, false> pred1(result, boundary_checker1);
+        disjoint_linestring_pred<Result, BoundaryChecker1, false> pred1(result, boundary_checker1);
         for_each_disjoint_geometry_if<0, Geometry1>::apply(turns.begin(), turns.end(), geometry1, pred1);
         if ( BOOST_GEOMETRY_CONDITION( result.interrupt ) )
             return;
 
-        typedef boundary_checker<Geometry2, Strategy> boundary_checker2_type;
-        boundary_checker2_type boundary_checker2(geometry2, strategy);
-        disjoint_linestring_pred<Result, boundary_checker2_type, true> pred2(result, boundary_checker2);
+        disjoint_linestring_pred<Result, BoundaryChecker2, true> pred2(result, boundary_checker2);
         for_each_disjoint_geometry_if<1, Geometry2>::apply(turns.begin(), turns.end(), geometry2, pred2);
         if ( BOOST_GEOMETRY_CONDITION( result.interrupt ) )
             return;
-        
+
         if ( turns.empty() )
             return;
 
@@ -178,8 +181,8 @@ struct linear_linear
           || may_update<boundary, boundary, '0'>(result)
           || may_update<boundary, exterior, '0'>(result) )
         {
-            typedef turns::less<0, turns::less_op_linear_linear<0>, cs_tag> less;
-            std::sort(turns.begin(), turns.end(), less());
+            using less_t = turns::less<0, turns::less_op_linear_linear<0>, Strategy>;
+            std::sort(turns.begin(), turns.end(), less_t());
 
             turns_analyser<turn_type, 0> analyser;
             analyse_each_turn(result, analyser,
@@ -190,7 +193,7 @@ struct linear_linear
 
         if ( BOOST_GEOMETRY_CONDITION( result.interrupt ) )
             return;
-        
+
         if ( may_update<interior, interior, '1', true>(result)
           || may_update<interior, boundary, '0', true>(result)
           || may_update<interior, exterior, '1', true>(result)
@@ -198,8 +201,8 @@ struct linear_linear
           || may_update<boundary, boundary, '0', true>(result)
           || may_update<boundary, exterior, '0', true>(result) )
         {
-            typedef turns::less<1, turns::less_op_linear_linear<1>, cs_tag> less;
-            std::sort(turns.begin(), turns.end(), less());
+            using less_t = turns::less<1, turns::less_op_linear_linear<1>, Strategy>;
+            std::sort(turns.begin(), turns.end(), less_t());
 
             turns_analyser<turn_type, 1> analyser;
             analyse_each_turn(result, analyser,
@@ -224,9 +227,7 @@ struct linear_linear
         template <typename Range>
         inline bool apply(Range const& turns)
         {
-            typedef typename boost::range_iterator<Range const>::type iterator;
-            
-            for (iterator it = boost::begin(turns) ; it != boost::end(turns) ; ++it)
+            for (auto it = boost::begin(turns) ; it != boost::end(turns) ; ++it)
             {
                 if ( it->operations[0].operation == overlay::operation_intersection
                   || it->operations[1].operation == overlay::operation_intersection )
@@ -285,7 +286,6 @@ struct linear_linear
             overlay::operation_type const op = it->operations[op_id].operation;
 
             segment_identifier const& seg_id = it->operations[op_id].seg_id;
-            segment_identifier const& other_id = it->operations[other_op_id].seg_id;
 
             bool const first_in_range = m_seg_watcher.update(seg_id);
 
@@ -296,8 +296,8 @@ struct linear_linear
                 // degenerated turn
                 if ( op == overlay::operation_continue
                   && it->method == overlay::method_none
-                  && m_exit_watcher.is_outside(*it) 
-                  /*&& ( m_exit_watcher.get_exit_operation() == overlay::operation_none 
+                  && m_exit_watcher.is_outside(*it)
+                  /*&& ( m_exit_watcher.get_exit_operation() == overlay::operation_none
                     || ! turn_on_the_same_ip<op_id>(m_exit_watcher.get_exit_turn(), *it) )*/ )
                 {
                     // TODO: rewrite the above condition
@@ -336,7 +336,7 @@ struct linear_linear
                                                   boundary_checker.strategy()) )
                 {
                     m_exit_watcher.reset_detected_exit();
-                    
+
                     // not the last IP
                     update<interior, exterior, '1', transpose_result>(res);
                 }
@@ -374,20 +374,16 @@ struct linear_linear
                 update<interior, interior, '1', transpose_result>(res);
 
                 bool const this_b = it->operations[op_id].position == overlay::position_front // ignore spikes!
-                                 && is_ip_on_boundary<boundary_front>(it->point,
-                                                                      it->operations[op_id],
-                                                                      boundary_checker,
-                                                                      seg_id);
+                                 && is_ip_on_boundary(it->point, it->operations[op_id],
+                                                      boundary_checker);
 
                 // going inside on boundary point
                 // may be front only
                 if ( this_b )
                 {
                     // may be front and back
-                    bool const other_b = is_ip_on_boundary<boundary_any>(it->point,
-                                                                         it->operations[other_op_id],
-                                                                         other_boundary_checker,
-                                                                         other_id);
+                    bool const other_b = is_ip_on_boundary(it->point, it->operations[other_op_id],
+                                                           other_boundary_checker);
 
                     // it's also the boundary of the other geometry
                     if ( other_b )
@@ -413,9 +409,8 @@ struct linear_linear
                         // if it's the first IP then the first point is outside
                         if ( first_in_range )
                         {
-                            bool const front_b = is_endpoint_on_boundary<boundary_front>(
-                                                    range::front(sub_range(geometry, seg_id)),
-                                                    boundary_checker);
+                            bool const front_b = boundary_checker.is_endpoint_boundary(
+                                                    range::front(sub_range(geometry, seg_id)));
 
                             // if there is a boundary on the first point
                             if ( front_b )
@@ -461,13 +456,12 @@ struct linear_linear
                     {
                         // check if this is indeed the boundary point
                         // NOTE: is_ip_on_boundary<>() should be called here but the result will be the same
-                        if ( is_endpoint_on_boundary<boundary_back>(it->point, boundary_checker) )
+                        if (boundary_checker.is_endpoint_boundary(it->point))
                         {
                             // may be front and back
-                            bool const other_b = is_ip_on_boundary<boundary_any>(it->point,
-                                                                                 it->operations[other_op_id],
-                                                                                 other_boundary_checker,
-                                                                                 other_id);
+                            bool const other_b = is_ip_on_boundary(it->point,
+                                                                   it->operations[other_op_id],
+                                                                   other_boundary_checker);
                             // it's also the boundary of the other geometry
                             if ( other_b )
                             {
@@ -501,9 +495,8 @@ struct linear_linear
                         // it's the first point in range
                         if ( first_in_range )
                         {
-                            bool const front_b = is_endpoint_on_boundary<boundary_front>(
-                                                    range::front(sub_range(geometry, seg_id)),
-                                                    boundary_checker);
+                            bool const front_b = boundary_checker.is_endpoint_boundary(
+                                                    range::front(sub_range(geometry, seg_id)));
 
                             // if there is a boundary on the first point
                             if ( front_b )
@@ -515,16 +508,14 @@ struct linear_linear
                     // method other than crosses, check more conditions
                     else
                     {
-                        bool const this_b = is_ip_on_boundary<boundary_any>(it->point,
-                                                                            it->operations[op_id],
-                                                                            boundary_checker,
-                                                                            seg_id);
+                        bool const this_b = is_ip_on_boundary(it->point,
+                                                              it->operations[op_id],
+                                                              boundary_checker);
 
-                        bool const other_b = is_ip_on_boundary<boundary_any>(it->point,
-                                                                             it->operations[other_op_id],
-                                                                             other_boundary_checker,
-                                                                             other_id);
-                        
+                        bool const other_b = is_ip_on_boundary(it->point,
+                                                               it->operations[other_op_id],
+                                                               other_boundary_checker);
+
                         // if current IP is on boundary of the geometry
                         if ( this_b )
                         {
@@ -560,9 +551,8 @@ struct linear_linear
                           && ! m_collinear_spike_exit
                           /*&& !is_collinear*/ )
                         {
-                            bool const front_b = is_endpoint_on_boundary<boundary_front>(
-                                                    range::front(sub_range(geometry, seg_id)),
-                                                    boundary_checker);
+                            bool const front_b = boundary_checker.is_endpoint_boundary(
+                                                    range::front(sub_range(geometry, seg_id)));
 
                             // if there is a boundary on the first point
                             if ( front_b )
@@ -570,7 +560,7 @@ struct linear_linear
                                 update<boundary, exterior, '0', transpose_result>(res);
                             }
                         }
-                            
+
                     }
                 }
             }
@@ -613,15 +603,14 @@ struct linear_linear
                     turn_ptr = m_degenerated_turn_ptr;
                 else if ( m_previous_turn_ptr )
                     turn_ptr = m_previous_turn_ptr;
-                
+
                 if ( turn_ptr )
                 {
                     segment_identifier const& prev_seg_id = turn_ptr->operations[op_id].seg_id;
 
                     //BOOST_GEOMETRY_ASSERT(!boost::empty(sub_range(geometry, prev_seg_id)));
-                    bool const prev_back_b = is_endpoint_on_boundary<boundary_back>(
-                                                range::back(sub_range(geometry, prev_seg_id)),
-                                                boundary_checker);
+                    bool const prev_back_b = boundary_checker.is_endpoint_boundary(
+                                                range::back(sub_range(geometry, prev_seg_id)));
 
                     // if there is a boundary on the last point
                     if ( prev_back_b )
@@ -659,19 +648,17 @@ struct linear_linear
                                 OtherBoundaryChecker const& other_boundary_checker,
                                 bool first_in_range)
         {
-            typename detail::single_geometry_return_type<Geometry const>::type
-                ls1_ref = detail::single_geometry(geometry, turn.operations[op_id].seg_id);
-            typename detail::single_geometry_return_type<OtherGeometry const>::type
-                ls2_ref = detail::single_geometry(other_geometry, turn.operations[other_op_id].seg_id);
+            auto const& ls1 = detail::single_geometry(geometry, turn.operations[op_id].seg_id);
+            auto const& ls2 = detail::single_geometry(other_geometry, turn.operations[other_op_id].seg_id);
 
             // only one of those should be true:
 
             if ( turn.operations[op_id].position == overlay::position_front )
             {
                 // valid, point-sized
-                if ( boost::size(ls2_ref) == 2 )
+                if ( boost::size(ls2) == 2 )
                 {
-                    bool const front_b = is_endpoint_on_boundary<boundary_front>(turn.point, boundary_checker);
+                    bool const front_b = boundary_checker.is_endpoint_boundary(turn.point);
 
                     if ( front_b )
                     {
@@ -691,11 +678,11 @@ struct linear_linear
             else if ( turn.operations[op_id].position == overlay::position_back )
             {
                 // valid, point-sized
-                if ( boost::size(ls2_ref) == 2 )
+                if ( boost::size(ls2) == 2 )
                 {
                     update<interior, exterior, '1', transpose_result>(res);
 
-                    bool const back_b = is_endpoint_on_boundary<boundary_back>(turn.point, boundary_checker);
+                    bool const back_b = boundary_checker.is_endpoint_boundary(turn.point);
 
                     if ( back_b )
                     {
@@ -708,9 +695,9 @@ struct linear_linear
 
                     if ( first_in_range )
                     {
-                        //BOOST_GEOMETRY_ASSERT(!boost::empty(ls1_ref));
-                        bool const front_b = is_endpoint_on_boundary<boundary_front>(
-                                                range::front(ls1_ref), boundary_checker);
+                        //BOOST_GEOMETRY_ASSERT(!boost::empty(ls1));
+                        bool const front_b = boundary_checker.is_endpoint_boundary(
+                                                range::front(ls1));
                         if ( front_b )
                         {
                             update<boundary, exterior, '0', transpose_result>(res);
@@ -725,13 +712,13 @@ struct linear_linear
 
                 // here we don't know which one is degenerated
 
-                bool const is_point1 = boost::size(ls1_ref) == 2
-                                    && equals::equals_point_point(range::front(ls1_ref),
-                                                                  range::back(ls1_ref),
+                bool const is_point1 = boost::size(ls1) == 2
+                                    && equals::equals_point_point(range::front(ls1),
+                                                                  range::back(ls1),
                                                                   boundary_checker.strategy());
-                bool const is_point2 = boost::size(ls2_ref) == 2
-                                    && equals::equals_point_point(range::front(ls2_ref),
-                                                                  range::back(ls2_ref),
+                bool const is_point2 = boost::size(ls2) == 2
+                                    && equals::equals_point_point(range::front(ls2),
+                                                                  range::back(ls2),
                                                                   other_boundary_checker.strategy());
 
                 // if the second one is degenerated
@@ -741,9 +728,9 @@ struct linear_linear
 
                     if ( first_in_range )
                     {
-                        //BOOST_GEOMETRY_ASSERT(!boost::empty(ls1_ref));
-                        bool const front_b = is_endpoint_on_boundary<boundary_front>(
-                                                range::front(ls1_ref), boundary_checker);
+                        //BOOST_GEOMETRY_ASSERT(!boost::empty(ls1));
+                        bool const front_b = boundary_checker.is_endpoint_boundary(
+                                                range::front(ls1));
                         if ( front_b )
                         {
                             update<boundary, exterior, '0', transpose_result>(res);

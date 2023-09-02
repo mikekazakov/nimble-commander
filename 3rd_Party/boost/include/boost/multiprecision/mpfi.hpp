@@ -3,8 +3,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_MATH_BN_MPFI_HPP
-#define BOOST_MATH_BN_MPFI_HPP
+#ifndef BOOST_MP_MPFI_HPP
+#define BOOST_MP_MPFI_HPP
 
 #include <algorithm>
 #include <cmath>
@@ -35,15 +35,6 @@
 
 namespace boost {
 namespace multiprecision {
-namespace backends {
-
-template <unsigned digits10>
-struct mpfi_float_backend;
-
-template <class Backend>
-struct debug_adaptor;
-
-} // namespace backends
 
 template <unsigned digits10>
 struct number_category<backends::mpfi_float_backend<digits10> > : public std::integral_constant<int, number_kind_floating_point>
@@ -123,7 +114,7 @@ struct mpfi_float_imp
       if ((this->get_default_options() != variable_precision_options::preserve_target_precision) || (mpfi_get_prec(o.data()) == binary_default_precision))
       {
          m_data[0]                = o.m_data[0];
-         o.m_data[0].left._mpfr_d = 0;
+         o.m_data[0].left._mpfr_d = nullptr;
       }
       else
       {
@@ -136,7 +127,7 @@ struct mpfi_float_imp
    {
       if (this != &o)
       {
-         if (m_data[0].left._mpfr_d == 0)
+         if (m_data[0].left._mpfr_d == nullptr)
             mpfi_init2(m_data, preserve_source_precision() ? mpfi_get_prec(o.m_data) : boost::multiprecision::detail::digits10_2_2(get_default_precision()));
          else if (preserve_source_precision() && (mpfi_get_prec(o.data()) != mpfi_get_prec(data())))
          {
@@ -159,7 +150,7 @@ struct mpfi_float_imp
 #ifdef _MPFR_H_HAVE_INTMAX_T
    mpfi_float_imp& operator=(unsigned long long i)
    {
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpfr_set_uj(left_data(), i, GMP_RNDD);
       mpfr_set_uj(right_data(), i, GMP_RNDU);
@@ -167,7 +158,7 @@ struct mpfi_float_imp
    }
    mpfi_float_imp& operator=(long long i)
    {
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpfr_set_sj(left_data(), i, GMP_RNDD);
       mpfr_set_sj(right_data(), i, GMP_RNDU);
@@ -176,7 +167,7 @@ struct mpfi_float_imp
 #else
    mpfi_float_imp& operator=(unsigned long long i)
    {
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       unsigned long long mask  = ((((1uLL << (std::numeric_limits<unsigned long>::digits - 1)) - 1) << 1) | 1u);
       unsigned               shift = 0;
@@ -197,7 +188,7 @@ struct mpfi_float_imp
    }
    mpfi_float_imp& operator=(long long i)
    {
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       bool neg = i < 0;
       *this    = boost::multiprecision::detail::unsigned_abs(i);
@@ -210,7 +201,7 @@ struct mpfi_float_imp
 #ifdef BOOST_HAS_INT128
    mpfi_float_imp& operator=(uint128_type i)
    {
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       constexpr uint128_type mask = ((((static_cast<uint128_type>(1u) << (std::numeric_limits<unsigned long>::digits - 1)) - 1) << 1) | 1u);
       unsigned               shift = 0;
@@ -231,7 +222,7 @@ struct mpfi_float_imp
    }
    mpfi_float_imp& operator=(int128_type i)
    {
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       bool neg = i < 0;
       *this = boost::multiprecision::detail::unsigned_abs(i);
@@ -242,28 +233,28 @@ struct mpfi_float_imp
 #endif
    mpfi_float_imp& operator=(unsigned long i)
    {
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpfi_set_ui(m_data, i);
       return *this;
    }
    mpfi_float_imp& operator=(long i)
    {
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpfi_set_si(m_data, i);
       return *this;
    }
    mpfi_float_imp& operator=(double d)
    {
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpfi_set_d(m_data, d);
       return *this;
    }
    mpfi_float_imp& operator=(long double a)
    {
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpfr_set_ld(left_data(), a, GMP_RNDD);
       mpfr_set_ld(right_data(), a, GMP_RNDU);
@@ -273,7 +264,7 @@ struct mpfi_float_imp
    mpfi_float_imp& operator=(float128_type a)
    {
       BOOST_MP_FLOAT128_USING
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
 
       if (a == 0)
@@ -323,7 +314,7 @@ struct mpfi_float_imp
    {
       using default_ops::eval_fpclassify;
 
-      if (m_data[0].left._mpfr_d == 0)
+      if (m_data[0].left._mpfr_d == nullptr)
          mpfi_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
 
       if (s && (*s == '{'))
@@ -333,7 +324,7 @@ struct mpfi_float_imp
          const char*                  p = ++s;
          while (*p && (*p != ',') && (*p != '}'))
             ++p;
-         part.assign(s + 1, p);
+         part.assign(s, p);
          a = part.c_str();
          s = p;
          if (*p && (*p != '}'))
@@ -507,17 +498,17 @@ struct mpfi_float_backend : public detail::mpfi_float_imp<digits10>
    mpfi_float_backend(mpfi_float_backend&& o) : detail::mpfi_float_imp<digits10>(static_cast<detail::mpfi_float_imp<digits10>&&>(o))
    {}
    template <unsigned D>
-   mpfi_float_backend(const mpfi_float_backend<D>& val, typename std::enable_if<D <= digits10>::type* = 0)
+   mpfi_float_backend(const mpfi_float_backend<D>& val, typename std::enable_if<D <= digits10>::type* = nullptr)
        : detail::mpfi_float_imp<digits10>()
    {
       mpfi_set(this->m_data, val.data());
    }
    template <unsigned D, mpfr_allocation_type AllocationType>
-   mpfi_float_backend(const mpfr_float_backend<D, AllocationType>& val, typename std::enable_if<D <= digits10>::type* = 0)
+   mpfi_float_backend(const mpfr_float_backend<D, AllocationType>& val, typename std::enable_if<D <= digits10>::type* = nullptr)
        : detail::mpfi_float_imp<digits10>(val) {}
 
    template <unsigned D>
-   explicit mpfi_float_backend(const mpfi_float_backend<D>& val, typename std::enable_if<!(D <= digits10)>::type* = 0)
+   explicit mpfi_float_backend(const mpfi_float_backend<D>& val, typename std::enable_if<!(D <= digits10)>::type* = nullptr)
        : detail::mpfi_float_imp<digits10>()
    {
       mpfi_set(this->m_data, val.data());
@@ -533,7 +524,7 @@ struct mpfi_float_backend : public detail::mpfi_float_imp<digits10>
       return *this;
    }
    template <unsigned D>
-   mpfi_float_backend(const mpfr_float_backend<D>& val, typename std::enable_if<D <= digits10>::type* = 0)
+   mpfi_float_backend(const mpfr_float_backend<D>& val, typename std::enable_if<D <= digits10>::type* = nullptr)
        : detail::mpfi_float_imp<digits10>()
    {
       mpfi_set_fr(this->m_data, val.data());
@@ -545,7 +536,7 @@ struct mpfi_float_backend : public detail::mpfi_float_imp<digits10>
       return *this;
    }
    template <unsigned D>
-   explicit mpfi_float_backend(const mpfr_float_backend<D>& val, typename std::enable_if<!(D <= digits10)>::type* = 0)
+   explicit mpfi_float_backend(const mpfr_float_backend<D>& val, typename std::enable_if<!(D <= digits10)>::type* = nullptr)
        : detail::mpfi_float_imp<digits10>()
    {
       mpfi_set_fr(this->m_data, val.data());
@@ -1377,14 +1368,6 @@ template <unsigned Digits10>
 struct is_interval_number<backends::mpfi_float_backend<Digits10> > : public std::integral_constant<bool, true>
 {};
 
-using boost::multiprecision::backends::mpfi_float_backend;
-
-using mpfi_float_50 = number<mpfi_float_backend<50> >  ;
-using mpfi_float_100 = number<mpfi_float_backend<100> > ;
-using mpfi_float_500 = number<mpfi_float_backend<500> > ;
-using mpfi_float_1000 = number<mpfi_float_backend<1000> >;
-using mpfi_float = number<mpfi_float_backend<0> >   ;
-
 //
 // Special interval specific functions:
 //
@@ -2154,14 +2137,8 @@ struct constant_pi<boost::multiprecision::number<boost::multiprecision::backends
    template <int N>
    static inline const result_type& get(const std::integral_constant<int, N>&)
    {
-      static result_type result;
-      static bool        has_init = false;
-      if (!has_init)
-      {
-         has_init = true;
-         mpfi_const_pi(result.backend().value().data());
-         result.backend().update_view();
-      }
+      // C++11 thread safe static initialization:
+      static result_type result{get(std::integral_constant<int, 0>())};
       return result;
    }
    static inline result_type get(const std::integral_constant<int, 0>&)
@@ -2179,14 +2156,8 @@ struct constant_ln_two<boost::multiprecision::number<boost::multiprecision::back
    template <int N>
    static inline const result_type& get(const std::integral_constant<int, N>&)
    {
-      static result_type result;
-      static bool        has_init = false;
-      if (!has_init)
-      {
-         has_init = true;
-         mpfi_const_log2(result.backend().value().data());
-         result.backend().update_view();
-      }
+      // C++11 thread safe static initialization:
+      static result_type result{get(std::integral_constant<int, 0>())};
       return result;
    }
    static inline result_type get(const std::integral_constant<int, 0>&)
@@ -2204,14 +2175,8 @@ struct constant_euler<boost::multiprecision::number<boost::multiprecision::backe
    template <int N>
    static inline const result_type& get(const std::integral_constant<int, N>&)
    {
-      static result_type result;
-      static bool        has_init = false;
-      if (!has_init)
-      {
-         has_init = true;
-         mpfi_const_euler(result.backend().value().data());
-         result.backend().update_view();
-      }
+      // C++11 thread safe static initialization:
+      static result_type result{get(std::integral_constant<int, 0>())};
       return result;
    }
    static inline result_type get(const std::integral_constant<int, 0>&)
@@ -2229,14 +2194,8 @@ struct constant_catalan<boost::multiprecision::number<boost::multiprecision::bac
    template <int N>
    static inline const result_type& get(const std::integral_constant<int, N>&)
    {
-      static result_type result;
-      static bool        has_init = false;
-      if (!has_init)
-      {
-         has_init = true;
-         mpfi_const_catalan(result.backend().value().data());
-         result.backend().update_view();
-      }
+      // C++11 thread safe static initialization:
+      static result_type result{get(std::integral_constant<int, 0>())};
       return result;
    }
    static inline result_type get(const std::integral_constant<int, 0>&)
@@ -2257,13 +2216,8 @@ struct constant_pi<boost::multiprecision::number<boost::multiprecision::backends
    template <int N>
    static inline const result_type& get(const std::integral_constant<int, N>&)
    {
-      static result_type result;
-      static bool        has_init = false;
-      if (!has_init)
-      {
-         has_init = true;
-         mpfi_const_pi(result.backend().value().data());
-      }
+      // C++11 thread safe static initialization:
+      static result_type result{get(std::integral_constant<int, 0>())};
       return result;
    }
    static inline result_type get(const std::integral_constant<int, 0>&)
@@ -2280,13 +2234,8 @@ struct constant_ln_two<boost::multiprecision::number<boost::multiprecision::back
    template <int N>
    static inline const result_type& get(const std::integral_constant<int, N>&)
    {
-      static result_type result;
-      static bool        has_init = false;
-      if (!has_init)
-      {
-         has_init = true;
-         mpfi_const_log2(result.backend().value().data());
-      }
+      // C++11 thread safe static initialization:
+      static result_type result{get(std::integral_constant<int, 0>())};
       return result;
    }
    static inline result_type get(const std::integral_constant<int, 0>&)
@@ -2303,13 +2252,8 @@ struct constant_euler<boost::multiprecision::number<boost::multiprecision::backe
    template <int N>
    static inline const result_type& get(const std::integral_constant<int, N>&)
    {
-      static result_type result;
-      static bool        has_init = false;
-      if (!has_init)
-      {
-         has_init = true;
-         mpfi_const_euler(result.backend().value().data());
-      }
+      // C++11 thread safe static initialization:
+      static result_type result{get(std::integral_constant<int, 0>())};
       return result;
    }
    static inline result_type get(const std::integral_constant<int, 0>&)
@@ -2326,13 +2270,8 @@ struct constant_catalan<boost::multiprecision::number<boost::multiprecision::bac
    template <int N>
    static inline const result_type& get(const std::integral_constant<int, N>&)
    {
-      static result_type result;
-      static bool        has_init = false;
-      if (!has_init)
-      {
-         has_init = true;
-         mpfi_const_catalan(result.backend().value().data());
-      }
+      // C++11 thread safe static initialization:
+      static result_type result{get(std::integral_constant<int, 0>())};
       return result;
    }
    static inline result_type get(const std::integral_constant<int, 0>&)

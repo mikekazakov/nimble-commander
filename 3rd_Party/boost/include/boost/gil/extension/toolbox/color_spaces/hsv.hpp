@@ -8,8 +8,6 @@
 #ifndef BOOST_GIL_EXTENSION_TOOLBOX_COLOR_SPACES_HSV_HPP
 #define BOOST_GIL_EXTENSION_TOOLBOX_COLOR_SPACES_HSV_HPP
 
-#include <boost/numeric/conversion/cast.hpp>
-
 #include <boost/gil/color_convert.hpp>
 #include <boost/gil/typedefs.hpp>
 #include <boost/gil/detail/mp11.hpp>
@@ -86,7 +84,7 @@ struct default_color_converter_impl< rgb_t, hsv_t >
       }
       else
       {
-         if( (std::abs)( boost::numeric_cast<float32_t>(temp_red - max_color) ) < 0.0001f )
+         if( (std::abs)( temp_red - max_color ) < 0.0001f )
          {
             hue = ( temp_green - temp_blue )
                 / diff;

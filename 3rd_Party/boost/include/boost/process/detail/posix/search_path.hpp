@@ -11,7 +11,7 @@
 #define BOOST_PROCESS_POSIX_SEARCH_PATH_HPP
 
 #include <boost/process/detail/config.hpp>
-#include <boost/filesystem.hpp>
+#include <boost/process/filesystem.hpp>
 #include <boost/tokenizer.hpp>
 #include <string>
 #include <stdexcept>
@@ -20,15 +20,19 @@
 
 namespace boost { namespace process { namespace detail { namespace posix {
 
-inline boost::filesystem::path search_path(
-        const boost::filesystem::path &filename,
-        const std::vector<boost::filesystem::path> &path)
+inline boost::process::filesystem::path search_path(
+        const boost::process::filesystem::path &filename,
+        const std::vector<boost::process::filesystem::path> &path)
 {
-    for (const boost::filesystem::path & pp : path)
+    for (const boost::process::filesystem::path & pp : path)
     {
         auto p = pp / filename;
+#if defined(BOOST_PROCESS_USE_STD_FS)
+        std::error_code ec;
+#else
         boost::system::error_code ec;
-        bool file = boost::filesystem::is_regular_file(p, ec);
+#endif
+        bool file = boost::process::filesystem::is_regular_file(p, ec);
         if (!ec && file && ::access(p.c_str(), X_OK) == 0)
             return p;
     }

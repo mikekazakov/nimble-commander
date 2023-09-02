@@ -25,7 +25,6 @@
 #include <boost/geometry/algorithms/convert.hpp>
 #include <boost/geometry/algorithms/detail/overlay/get_distance_measure.hpp>
 #include <boost/geometry/algorithms/detail/overlay/turn_info.hpp>
-
 #include <boost/geometry/algorithms/detail/overlay/get_turn_info_helpers.hpp>
 
 #include <boost/geometry/util/condition.hpp>
@@ -193,13 +192,16 @@ template<typename VerifyPolicy>
 struct turn_info_verification_functions
 {
     template <typename Point1, typename Point2>
-    static inline typename geometry::coordinate_type<Point1>::type
-            distance_measure(Point1 const& a, Point2 const& b)
+    static inline
+    typename select_coordinate_type<Point1, Point2>::type
+    distance_measure(Point1 const& a, Point2 const& b)
     {
         // TODO: revise this using comparable distance for various
         // coordinate systems
-        auto const dx = get<0>(a) - get<0>(b);
-        auto const dy = get<1>(a) - get<1>(b);
+        using coor_t = typename select_coordinate_type<Point1, Point2>::type;
+
+        coor_t const dx = get<0>(a) - get<0>(b);
+        coor_t const dy = get<1>(a) - get<1>(b);
         return dx * dx + dy * dy;
     }
 
@@ -223,16 +225,18 @@ struct turn_info_verification_functions
         BOOST_GEOMETRY_ASSERT(index_p > 0 && index_p <= 2);
         BOOST_GEOMETRY_ASSERT(index_q > 0 && index_q <= 2);
 
+        using distance_measure_result_type = typename geometry::coordinate_type<decltype(ti.point)>::type;
+
         bool const p_in_range = index_p < range_p.size();
         bool const q_in_range = index_q < range_q.size();
         ti.operations[IndexP].remaining_distance
             = p_in_range
               ? distance_measure(ti.point, range_p.at(index_p))
-              : 0;
+              : distance_measure_result_type{0};
         ti.operations[IndexQ].remaining_distance
             = q_in_range
               ? distance_measure(ti.point, range_q.at(index_q))
-              : 0;
+              : distance_measure_result_type{0};
 
         if (p_in_range && q_in_range)
         {
@@ -556,6 +560,7 @@ struct touch : public base_turn_handler
     >
     static inline bool handle_imperfect_touch(UniqueSubRange1 const& range_p,
                                               UniqueSubRange2 const& range_q,
+                                              int side_pk_q2,
                                               UmbrellaStrategy const& umbrella_strategy,
                                               TurnInfo& ti)
     {
@@ -587,15 +592,18 @@ struct touch : public base_turn_handler
         // >----->P     qj is LEFT of P1 and pi is LEFT of Q2
         //              (the other way round is also possible)
 
-        auto const dm_qj_p1 = get_distance_measure(range_p.at(0), range_p.at(1), range_q.at(1),
-                                                   umbrella_strategy);
-        auto const dm_pi_q2 = get_distance_measure(range_q.at(1), range_q.at(2), range_p.at(0),
-                                                   umbrella_strategy);
+        auto has_distance = [&](const auto& r1, const auto& r2) -> bool
+        {
+            auto const d1 = get_distance_measure(r1.at(0), r1.at(1), r2.at(1), umbrella_strategy);
+            auto const d2 = get_distance_measure(r2.at(1), r2.at(2), r1.at(0), umbrella_strategy);
+            return d1.measure > 0 && d2.measure > 0;
+        };
 
-        if (dm_qj_p1.measure > 0 && dm_pi_q2.measure > 0)
+        if (side_pk_q2 == -1 && has_distance(range_p, range_q))
         {
             // Even though there is a touch, Q(j) is left of P1
             // and P(i) is still left from Q2.
+            // Q continues to the right.
             // It can continue.
             ti.operations[0].operation = operation_blocked;
             // Q turns right -> union (both independent),
@@ -605,19 +613,11 @@ struct touch : public base_turn_handler
             return true;
         }
 
-        auto const dm_pj_q1 = get_distance_measure(range_q.at(0), range_q.at(1), range_p.at(1),
-                                                   umbrella_strategy);
-        auto const dm_qi_p2 = get_distance_measure(range_p.at(1), range_p.at(2), range_q.at(0),
-                                                   umbrella_strategy);
-
-        if (dm_pj_q1.measure > 0 && dm_qi_p2.measure > 0)
+        if (side_pk_q2 == 1 && has_distance(range_q, range_p))
         {
-            // Even though there is a touch, Q(j) is left of P1
-            // and P(i) is still left from Q2.
-            // It can continue.
+            // Similarly, but the other way round.
+            // Q continues to the left.
             ti.operations[0].operation = operation_union;
-            // Q turns right -> union (both independent),
-            // Q turns left -> intersection
             ti.operations[1].operation = operation_blocked;
             ti.touch_only = true;
             return true;
@@ -678,8 +678,8 @@ struct touch : public base_turn_handler
                 || (side_qi_p1 == 0 && side_qk_p1 == 0 && side_pk_p != -1))
             {
                 if (side_qk_p1 == 0 && side_pk_q1 == 0
-                    && has_qk && has_qk
-                    && handle_imperfect_touch(range_p, range_q, umbrella_strategy, ti))
+                    && has_pk && has_qk
+                    && handle_imperfect_touch(range_p, range_q, side_pk_q2, umbrella_strategy, ti))
                 {
                     // If q continues collinearly (opposite) with p, it should be blocked
                     // but (FP) not if there is just a tiny space in between
@@ -1035,8 +1035,9 @@ struct collinear : public base_turn_handler
             return false;
         }
 
-        auto const dm = fun::distance_measure(info.intersections[1],
-                arrival_p == 1 ? range_q.at(1) : range_p.at(1));
+       auto const dm = arrival_p == 1
+              ? fun::distance_measure(info.intersections[1], range_q.at(1))
+              : fun::distance_measure(info.intersections[1], range_p.at(1));
         decltype(dm) const zero = 0;
         return math::equals(dm, zero);
     }

@@ -7,10 +7,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-namespace boost { namespace cnv
-{
-    struct lexical_cast;
-}}
+namespace boost { namespace cnv { struct lexical_cast; }}
 
 /// @brief boost::lexical_cast-based converter
 /// @details The purpose of the converter is to

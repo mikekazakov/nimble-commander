@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2014, 2020.
-// Modifications copyright (c) 2014-2020, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2022.
+// Modifications copyright (c) 2014-2022, Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -22,6 +22,8 @@
 #include <boost/geometry/core/tags.hpp>
 #include <boost/geometry/geometries/concepts/check.hpp>
 
+#include <boost/geometry/algorithms/detail/covered_by/implementation.hpp>
+
 // TODO: those headers probably may be removed
 #include <boost/geometry/algorithms/detail/overlay/get_ring.hpp>
 #include <boost/geometry/algorithms/detail/overlay/get_turns.hpp>
@@ -33,7 +35,6 @@
 
 #include <boost/geometry/algorithms/detail/intersection/interface.hpp>
 
-#include <boost/geometry/algorithms/covered_by.hpp>
 #include <boost/geometry/algorithms/envelope.hpp>
 #include <boost/geometry/algorithms/num_points.hpp>
 
@@ -63,19 +64,9 @@ struct intersection_multi_linestring_multi_linestring_point
     {
         // Note, this loop is quadratic w.r.t. number of linestrings per input.
         // Future Enhancement: first do the sections of each, then intersect.
-        for (typename boost::range_iterator
-                <
-                    MultiLinestring1 const
-                >::type it1 = boost::begin(ml1);
-            it1 != boost::end(ml1);
-            ++it1)
+        for (auto it1 = boost::begin(ml1); it1 != boost::end(ml1); ++it1)
         {
-            for (typename boost::range_iterator
-                    <
-                        MultiLinestring2 const
-                    >::type it2 = boost::begin(ml2);
-                it2 != boost::end(ml2);
-                ++it2)
+            for (auto it2 = boost::begin(ml2); it2 != boost::end(ml2); ++it2)
             {
                 out = intersection_linestring_linestring_point<PointOut>
                       ::apply(*it1, *it2, robust_policy, out, strategy);
@@ -102,12 +93,7 @@ struct intersection_linestring_multi_linestring_point
             OutputIterator out,
             Strategy const& strategy)
     {
-        for (typename boost::range_iterator
-                <
-                    MultiLinestring const
-                >::type it = boost::begin(ml);
-            it != boost::end(ml);
-            ++it)
+        for (auto it = boost::begin(ml); it != boost::end(ml); ++it)
         {
             out = intersection_linestring_linestring_point<PointOut>
                   ::apply(linestring, *it, robust_policy, out, strategy);
@@ -140,12 +126,7 @@ struct intersection_of_multi_linestring_with_areal
             OutputIterator out,
             Strategy const& strategy)
     {
-        for (typename boost::range_iterator
-                <
-                    MultiLinestring const
-                >::type it = boost::begin(ml);
-            it != boost::end(ml);
-            ++it)
+        for (auto it = boost::begin(ml); it != boost::end(ml); ++it)
         {
             out = intersection_of_linestring_with_areal
                 <
@@ -204,9 +185,7 @@ struct clip_multi_linestring
     {
         typedef typename point_type<LinestringOut>::type point_type;
         strategy::intersection::liang_barsky<Box, point_type> lb_strategy;
-        for (typename boost::range_iterator<MultiLinestring const>::type it
-            = boost::begin(multi_linestring);
-            it != boost::end(multi_linestring); ++it)
+        for (auto it = boost::begin(multi_linestring); it != boost::end(multi_linestring); ++it)
         {
             out = detail::intersection::clip_range_with_box
                 <LinestringOut>(box, *it, robust_policy, out, lb_strategy);
@@ -525,6 +504,40 @@ struct intersection_insert
                 // TODO: in general the result of difference should depend on the first argument
                 //       but this specialization calls L/A in reality so the first argument is linear.
                 //       So expect only L for difference?
+                std::conditional_t
+                    <
+                        (OverlayType == overlay_intersection),
+                        point_tag,
+                        void
+                    >,
+                linestring_tag
+            >
+{};
+
+template
+<
+    typename Linestring, typename MultiPolygon,
+    typename TupledOut,
+    overlay_type OverlayType,
+    bool ReverseMultiLinestring, bool ReverseMultiPolygon
+>
+struct intersection_insert
+    <
+        Linestring, MultiPolygon,
+        TupledOut,
+        OverlayType,
+        ReverseMultiLinestring, ReverseMultiPolygon,
+        linestring_tag, multi_polygon_tag, detail::tupled_output_tag,
+        linear_tag, areal_tag, detail::tupled_output_tag
+    > : detail::intersection::intersection_of_linestring_with_areal
+            <
+                ReverseMultiPolygon, TupledOut, OverlayType, true
+            >
+      , detail::expect_output
+            <
+                Linestring, MultiPolygon, TupledOut,
+                // NOTE: points can be the result only in case of intersection.
+                // TODO: union should require L and A
                 std::conditional_t
                     <
                         (OverlayType == overlay_intersection),

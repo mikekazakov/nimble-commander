@@ -573,7 +573,7 @@ template<>
 struct image_read_info< png_tag > : public png_info_base
 {
     /// Default constructor.
-    image_read_info< png_tag >()
+    image_read_info()
     : png_info_base()
     {}
 };
@@ -669,7 +669,7 @@ struct image_read_settings< png_tag > : public image_read_settings_base
                                       , public png_read_settings_base
 {
     /// Default Constructor
-    image_read_settings< png_tag >()
+    image_read_settings()
     : image_read_settings_base()
     , png_read_settings_base()
     , _screen_gamma( 1.0 )
@@ -679,8 +679,8 @@ struct image_read_settings< png_tag > : public image_read_settings_base
     /// \param top_left Top left coordinate for reading partial image.
     /// \param dim      Dimensions for reading partial image.
     /// \param gamma    Screen gamma value.
-    image_read_settings( const point_t&         top_left
-                       , const point_t&         dim
+    image_read_settings( point_t const&         top_left
+                       , point_t const&         dim
                        , const bool             apply_screen_gamma = false
                        , const png_gamma::type& screen_gamma = 1.0
                        )
@@ -708,15 +708,15 @@ struct image_read_settings< png_tag > : public image_read_settings_base
                                       , public png_read_settings_base
 {
     /// Default Constructor.
-    image_read_settings< png_tag >()
+    image_read_settings()
     : image_read_settings_base()
     , png_read_settings_base()
     , _apply_screen_gamma( false )
     , _screen_gamma      ( 2     )
     {}
 
-    image_read_settings( const point_t& top_left
-                       , const point_t& dim
+    image_read_settings( point_t const& top_left
+                       , point_t const& dim
                        )
     : image_read_settings_base( top_left
                               , dim

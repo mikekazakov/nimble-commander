@@ -33,10 +33,6 @@ namespace algorithm {
 */
 using reduce_command = detail::reduce_command;
 
-using reduce_option [[deprecated("use reduce_command instead; "
-                                 "reduce_option will be removed in boost-1.80")]] =
-    reduce_command; ///< deprecated
-
 /** Shrink command to be used in `reduce`.
 
   Command is applied to axis with given index.

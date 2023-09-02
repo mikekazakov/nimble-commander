@@ -79,6 +79,7 @@ namespace projections
                 T   cosX1;
                 T   akm1;
                 mode_type mode;
+                bool variant_c;
             };
 
             template <typename T>
@@ -137,8 +138,21 @@ namespace projections
                         sinphi = -sinphi;
                         BOOST_FALLTHROUGH;
                     case n_pole:
-                        xy_x = this->m_proj_parm.akm1 * pj_tsfn(lp_lat, sinphi, par.e);
-                        xy_y = - xy_x * coslam;
+                        // see IOGP Publication 373-7-2 – Geomatics Guidance Note number 7, part 2
+                        // December 2021 pg. 82
+                        if( m_proj_parm.variant_c )
+                        {
+                            auto t = pj_tsfn(lp_lat, sinphi, par.e);
+                            auto tf = pj_tsfn(this->m_proj_parm.phits,
+                                                sin(this->m_proj_parm.phits),
+                                                par.e);
+                            xy_x = this->m_proj_parm.akm1 * t;
+                            auto mf = this->m_proj_parm.akm1 * tf;
+                            xy_y = - xy_x * coslam - mf;
+                        } else {
+                            xy_x = this->m_proj_parm.akm1 * pj_tsfn(lp_lat, sinphi, par.e);
+                            xy_y = - xy_x * coslam;
+                        }
                         break;
                     }
 
@@ -152,6 +166,7 @@ namespace projections
                     static const T half_pi = detail::half_pi<T>();
 
                     T cosphi, sinphi, tp=0.0, phi_l=0.0, rho, halfe=0.0, halfpi=0.0;
+                    T mf = 0;
                     int i;
 
                     rho = boost::math::hypot(xy_x, xy_y);
@@ -175,6 +190,16 @@ namespace projections
                         xy_y = -xy_y;
                         BOOST_FALLTHROUGH;
                     case s_pole:
+                        // see IOGP Publication 373-7-2 – Geomatics Guidance Note number 7, part 2
+                        // December 2021 pg. 82
+                        if( m_proj_parm.variant_c )
+                        {
+                            auto tf = pj_tsfn(this->m_proj_parm.phits,
+                                              sin(this->m_proj_parm.phits),
+                                              par.e);
+                            mf = this->m_proj_parm.akm1 * tf;
+                            rho = boost::math::hypot(xy_x, xy_y + mf);
+                        }
                         phi_l = half_pi - 2. * atan(tp = - rho / this->m_proj_parm.akm1);
                         halfpi = -half_pi;
                         halfe = -.5 * par.e;
@@ -186,7 +211,7 @@ namespace projections
                         if (fabs(phi_l - lp_lat) < conv_tolerance) {
                             if (this->m_proj_parm.mode == s_pole)
                                 lp_lat = -lp_lat;
-                            lp_lon = (xy_x == 0. && xy_y == 0.) ? 0. : atan2(xy_x, xy_y);
+                            lp_lon = (xy_x == 0. && xy_y == 0.) ? 0. : atan2(xy_x, xy_y + mf);
                             return;
                         }
                     }
@@ -362,6 +387,10 @@ namespace projections
                 if (! pj_param_r<srs::spar::lat_ts>(params, "lat_ts", srs::dpar::lat_ts, proj_parm.phits))
                     proj_parm.phits = half_pi;
 
+                proj_parm.variant_c = false;
+                if (pj_param_exists<srs::spar::variant_c>(params, "variant_c", srs::dpar::variant_c))
+                    proj_parm.variant_c = true;
+
                 setup(par, proj_parm);
             }
 
@@ -499,7 +528,7 @@ namespace projections
         // Factory entry(s)
         BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_ENTRY_FI2(stere_entry, stere_spheroid, stere_ellipsoid)
         BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_ENTRY_FI2(ups_entry, ups_spheroid, ups_ellipsoid)
-        
+
         BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_INIT_BEGIN(stere_init)
         {
             BOOST_GEOMETRY_PROJECTIONS_DETAIL_FACTORY_INIT_ENTRY(stere, stere_entry)

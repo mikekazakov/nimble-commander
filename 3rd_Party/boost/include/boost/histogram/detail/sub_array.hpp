@@ -15,15 +15,17 @@ namespace boost {
 namespace histogram {
 namespace detail {
 
+// Like std::array, but allows to use less than maximum capacity.
+// Cannot inherit from std::array, since this confuses span.
 template <class T, std::size_t N>
 class sub_array {
-  constexpr bool swap_element_is_noexcept() noexcept {
+  static constexpr bool swap_element_is_noexcept() noexcept {
     using std::swap;
     return noexcept(swap(std::declval<T&>(), std::declval<T&>()));
   }
 
 public:
-  using value_type = T;
+  using element_type = T;
   using size_type = std::size_t;
   using reference = T&;
   using const_reference = const T&;
@@ -40,6 +42,12 @@ public:
       std::is_nothrow_assignable<T, const_reference>::value)
       : sub_array(s) {
     fill(value);
+  }
+
+  sub_array(std::initializer_list<T> il) noexcept(
+      std::is_nothrow_assignable<T, const_reference>::value)
+      : sub_array(il.size()) {
+    std::copy(il.begin(), il.end(), data_);
   }
 
   reference at(size_type pos) noexcept {
@@ -70,10 +78,7 @@ public:
   iterator end() noexcept { return begin() + size_; }
   const_iterator end() const noexcept { return begin() + size_; }
 
-  const_iterator cbegin() noexcept { return data_; }
   const_iterator cbegin() const noexcept { return data_; }
-
-  const_iterator cend() noexcept { return cbegin() + size_; }
   const_iterator cend() const noexcept { return cbegin() + size_; }
 
   constexpr size_type max_size() const noexcept { return N; }
@@ -87,17 +92,20 @@ public:
 
   void swap(sub_array& other) noexcept(swap_element_is_noexcept()) {
     using std::swap;
-    for (auto i = begin(), j = other.begin(); i != end(); ++i, ++j) swap(*i, *j);
+    const size_type s = (std::max)(size(), other.size());
+    for (auto i = begin(), j = other.begin(), end = begin() + s; i != end; ++i, ++j)
+      swap(*i, *j);
+    swap(size_, other.size_);
   }
 
 private:
   size_type size_ = 0;
-  value_type data_[N];
+  element_type data_[N];
 };
 
 template <class T, std::size_t N>
 bool operator==(const sub_array<T, N>& a, const sub_array<T, N>& b) noexcept {
-  return std::equal(a.begin(), a.end(), b.begin());
+  return std::equal(a.begin(), a.end(), b.begin(), b.end());
 }
 
 template <class T, std::size_t N>

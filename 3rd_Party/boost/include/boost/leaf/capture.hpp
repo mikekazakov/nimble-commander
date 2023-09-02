@@ -102,7 +102,7 @@ namespace leaf_detail
         [[noreturn]] void unload_and_rethrow_original_exception() const
         {
             BOOST_LEAF_ASSERT(ctx_->captured_id_);
-            tls::write_uint32<tls_tag_id_factory_current_id>(ctx_->captured_id_.value());
+            tls::write_uint<tls_tag_id_factory_current_id>(unsigned(ctx_->captured_id_.value()));
             ctx_->propagate(ctx_->captured_id_);
             std::rethrow_exception(ex_);
         }
@@ -132,12 +132,12 @@ namespace leaf_detail
         catch( exception_base const & e )
         {
             ctx->captured_id_ = e.get_error_id();
-            throw_exception( capturing_exception(std::current_exception(), std::move(ctx)) );
+            leaf_detail::throw_exception_impl( capturing_exception(std::current_exception(), std::move(ctx)) );
         }
         catch(...)
         {
             ctx->captured_id_ = cur_err.assigned_error_id();
-            throw_exception( capturing_exception(std::current_exception(), std::move(ctx)) );
+            leaf_detail::throw_exception_impl( capturing_exception(std::current_exception(), std::move(ctx)) );
         }
     }
 
@@ -165,12 +165,12 @@ namespace leaf_detail
         catch( exception_base const & e )
         {
             ctx->captured_id_ = e.get_error_id();
-            throw_exception( capturing_exception(std::current_exception(), std::move(ctx)) );
+            leaf_detail::throw_exception_impl( capturing_exception(std::current_exception(), std::move(ctx)) );
         }
         catch(...)
         {
             ctx->captured_id_ = cur_err.assigned_error_id();
-            throw_exception( capturing_exception(std::current_exception(), std::move(ctx)) );
+            leaf_detail::throw_exception_impl( capturing_exception(std::current_exception(), std::move(ctx)) );
         }
     }
 

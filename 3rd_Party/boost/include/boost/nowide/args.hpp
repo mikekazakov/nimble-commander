@@ -1,10 +1,9 @@
 //
-//  Copyright (c) 2012 Artyom Beilis (Tonkikh)
+// Copyright (c) 2012 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
+
 #ifndef BOOST_NOWIDE_ARGS_HPP_INCLUDED
 #define BOOST_NOWIDE_ARGS_HPP_INCLUDED
 
@@ -113,7 +112,7 @@ namespace nowide {
             }
             operator bool() const
             {
-                return p != NULL;
+                return p != nullptr;
             }
             const wchar_t* operator[](size_t i) const
             {

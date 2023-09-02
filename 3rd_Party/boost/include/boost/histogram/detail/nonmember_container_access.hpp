@@ -7,25 +7,9 @@
 #ifndef BOOST_HISTOGRAM_DETAIL_NONMEMBER_CONTAINER_ACCESS_HPP
 #define BOOST_HISTOGRAM_DETAIL_NONMEMBER_CONTAINER_ACCESS_HPP
 
-#if __cpp_lib_nonmember_container_access >= 201411
-
-#include <iterator>
-
-namespace boost {
-namespace histogram {
-namespace detail {
-
-using std::data;
-using std::size;
-
-} // namespace detail
-} // namespace histogram
-} // namespace boost
-
-#else // std implementations are not available
-
 #include <initializer_list>
 #include <type_traits>
+#include <valarray>
 
 namespace boost {
 namespace histogram {
@@ -51,6 +35,16 @@ constexpr const E* data(std::initializer_list<E> il) noexcept {
   return il.begin();
 }
 
+template <class E>
+constexpr const E* data(const std::valarray<E>& v) noexcept {
+  return std::begin(v);
+}
+
+template <class E>
+constexpr E* data(std::valarray<E>& v) noexcept {
+  return std::begin(v);
+}
+
 template <class C>
 constexpr auto size(const C& c) -> decltype(c.size()) {
   return c.size();
@@ -64,7 +58,5 @@ constexpr std::size_t size(const T (&)[N]) noexcept {
 } // namespace detail
 } // namespace histogram
 } // namespace boost
-
-#endif
 
 #endif // BOOST_HISTOGRAM_DETAIL_NONMEMBER_CONTAINER_ACCESS_HPP

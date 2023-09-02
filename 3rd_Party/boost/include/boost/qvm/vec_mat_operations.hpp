@@ -40,7 +40,7 @@ operator*( A const & a, B const & b )
         Tr x(scalar_traits<Tr>::value(0));
         for( int j=0; j<mat_traits<A>::cols; ++j )
             x += mat_traits<A>::read_element_idx(i,j,a)*vec_traits<B>::read_element_idx(j,b);
-        vec_traits<R>::write_element_idx(i,r) = x;
+        write_vec_element_idx(i,r,x);
         }
     return r;
     }
@@ -73,7 +73,7 @@ operator*( A const & a, B const & b )
         Tr x(scalar_traits<Tr>::value(0));
         for( int j=0; j<mat_traits<B>::rows; ++j )
             x += vec_traits<A>::read_element_idx(j,a)*mat_traits<B>::read_element_idx(j,i,b);
-        vec_traits<R>::write_element_idx(i,r) = x;
+        write_vec_element_idx(i,r,x);
         }
     return r;
     }
@@ -108,9 +108,9 @@ transform_point( A const & a, B const & b )
     typedef typename deduce_vec2<A,B,3>::type R;
     BOOST_QVM_STATIC_ASSERT(vec_traits<R>::dim==3);
     R r;
-    vec_traits<R>::template write_element<0>(r)=a00*b0+a01*b1+a02*b2+a03;
-    vec_traits<R>::template write_element<1>(r)=a10*b0+a11*b1+a12*b2+a13;
-    vec_traits<R>::template write_element<2>(r)=a20*b0+a21*b1+a22*b2+a23;
+    write_vec_element<0>(r, a00*b0+a01*b1+a02*b2+a03);
+    write_vec_element<1>(r, a10*b0+a11*b1+a12*b2+a13);
+    write_vec_element<2>(r, a20*b0+a21*b1+a22*b2+a23);
     return r;
     }
 
@@ -139,9 +139,9 @@ transform_vector( A const & a, B const & b )
     typedef typename deduce_vec2<A,B,3>::type R;
     BOOST_QVM_STATIC_ASSERT(vec_traits<R>::dim==3);
     R r;
-    vec_traits<R>::template write_element<0>(r)=a00*b0+a01*b1+a02*b2;
-    vec_traits<R>::template write_element<1>(r)=a10*b0+a11*b1+a12*b2;
-    vec_traits<R>::template write_element<2>(r)=a20*b0+a21*b1+a22*b2;
+    write_vec_element<0>(r, a00*b0+a01*b1+a02*b2);
+    write_vec_element<1>(r, a10*b0+a11*b1+a12*b2);
+    write_vec_element<2>(r, a20*b0+a21*b1+a22*b2);
     return r;
     }
 

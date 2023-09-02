@@ -1,11 +1,10 @@
 //
-//  Copyright (c) 2012 Artyom Beilis (Tonkikh)
-//  Copyright (c) 2020 Alexander Grund
+// Copyright (c) 2012 Artyom Beilis (Tonkikh)
+// Copyright (c) 2020 Alexander Grund
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
+
 #ifndef BOOST_NOWIDE_UTF_CONVERT_HPP_INCLUDED
 #define BOOST_NOWIDE_UTF_CONVERT_HPP_INCLUDED
 
@@ -56,7 +55,7 @@ namespace nowide {
                 size_t width = utf_traits<CharOut>::width(c);
                 if(buffer_size < width)
                 {
-                    rv = NULL;
+                    rv = nullptr;
                     break;
                 }
                 buffer = utf_traits<CharOut>::encode(c, buffer);
@@ -89,6 +88,17 @@ namespace nowide {
                 utf_traits<CharOut>::encode(c, inserter);
             }
             return result;
+        }
+
+        /// Convert the UTF sequence in the input string from \a CharIn to \a CharOut
+        /// and return it as a string
+        ///
+        /// Any illegal sequences are replaced with the replacement character, see #BOOST_NOWIDE_REPLACEMENT_CHARACTER
+        /// \tparam CharOut Output character type
+        template<typename CharOut, typename CharIn>
+        std::basic_string<CharOut> convert_string(const std::basic_string<CharIn>& s)
+        {
+            return convert_string<CharOut>(s.data(), s.data() + s.size());
         }
 
     } // namespace utf

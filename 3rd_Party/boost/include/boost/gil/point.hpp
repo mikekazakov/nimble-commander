@@ -246,44 +246,44 @@ T& axis_value(point<T>& p)
 
 /// \ingroup PointAlgorithm
 template <typename T>
-inline point<std::ptrdiff_t> iround(point<T> const& p)
+inline auto iround(point<T> const& p) -> point<std::ptrdiff_t>
 {
     static_assert(std::is_integral<T>::value, "T is not integer");
     return { static_cast<std::ptrdiff_t>(p.x), static_cast<std::ptrdiff_t>(p.y) };
 }
 
 /// \ingroup PointAlgorithm
-inline point<std::ptrdiff_t> iround(point<float> const& p)
+inline auto iround(point<float> const& p) -> point<std::ptrdiff_t>
 {
     return { iround(p.x), iround(p.y) };
 }
 
 /// \ingroup PointAlgorithm
-inline point<std::ptrdiff_t> iround(point<double> const& p)
+inline auto iround(point<double> const& p) -> point<std::ptrdiff_t>
 {
     return { iround(p.x), iround(p.y) };
 }
 
 /// \ingroup PointAlgorithm
-inline point<std::ptrdiff_t> ifloor(point<float> const& p)
+inline auto ifloor(point<float> const& p) -> point<std::ptrdiff_t>
 {
     return { ifloor(p.x), ifloor(p.y) };
 }
 
 /// \ingroup PointAlgorithm
-inline point<std::ptrdiff_t> ifloor(point<double> const& p)
+inline auto ifloor(point<double> const& p) -> point<std::ptrdiff_t>
 {
     return { ifloor(p.x), ifloor(p.y) };
 }
 
 /// \ingroup PointAlgorithm
-inline point<std::ptrdiff_t> iceil(point<float> const& p)
+inline auto iceil(point<float> const& p) -> point<std::ptrdiff_t>
 {
     return { iceil(p.x), iceil(p.y) };
 }
 
 /// \ingroup PointAlgorithm
-inline point<std::ptrdiff_t> iceil(point<double> const& p)
+inline auto iceil(point<double> const& p) -> point<std::ptrdiff_t>
 {
     return { iceil(p.x), iceil(p.y) };
 }

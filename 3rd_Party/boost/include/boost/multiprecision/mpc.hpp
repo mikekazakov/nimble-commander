@@ -3,8 +3,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_MULTIPRECISION_MPC_HPP
-#define BOOST_MULTIPRECISION_MPC_HPP
+#ifndef BOOST_MP_MPC_HPP
+#define BOOST_MP_MPC_HPP
 
 #include <cstdint>
 #include <boost/multiprecision/detail/standalone_config.hpp>
@@ -28,17 +28,6 @@
 
 namespace boost {
 namespace multiprecision {
-namespace backends {
-
-template <unsigned digits10>
-struct mpc_complex_backend;
-
-template <class Backend>
-struct logged_adaptor;
-template <class Backend>
-struct debug_adaptor;
-
-} // namespace backends
 
 template <unsigned digits10>
 struct number_category<backends::mpc_complex_backend<digits10> > : public std::integral_constant<int, number_kind_complex>
@@ -103,7 +92,7 @@ struct mpc_complex_imp
       if ((this->get_default_options() != variable_precision_options::preserve_target_precision) || (mpc_get_prec(o.data()) == binary_default_precision))
       {
          m_data[0] = o.m_data[0];
-         o.m_data[0].re[0]._mpfr_d = 0;
+         o.m_data[0].re[0]._mpfr_d = nullptr;
       }
       else
       {
@@ -117,7 +106,7 @@ struct mpc_complex_imp
    {
       if ((o.m_data[0].re[0]._mpfr_d) && (this != &o))
       {
-         if (m_data[0].re[0]._mpfr_d == 0)
+         if (m_data[0].re[0]._mpfr_d == nullptr)
             mpc_init2(m_data, preserve_source_precision() ? mpc_get_prec(o.m_data) : boost::multiprecision::detail::digits10_2_2(get_default_precision()));
          else if (preserve_source_precision() && (mpc_get_prec(o.data()) != mpc_get_prec(data())))
          {
@@ -140,14 +129,14 @@ struct mpc_complex_imp
 #ifdef _MPFR_H_HAVE_INTMAX_T
    mpc_complex_imp& operator=(unsigned long long i)
    {
-      if (m_data[0].re[0]._mpfr_d == 0)
+      if (m_data[0].re[0]._mpfr_d == nullptr)
          mpc_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpc_set_uj(data(), i, GMP_RNDN);
       return *this;
    }
    mpc_complex_imp& operator=(long long i)
    {
-      if (m_data[0].re[0]._mpfr_d == 0)
+      if (m_data[0].re[0]._mpfr_d == nullptr)
          mpc_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpc_set_sj(data(), i, GMP_RNDN);
       return *this;
@@ -171,42 +160,42 @@ struct mpc_complex_imp
 #endif
    mpc_complex_imp& operator=(unsigned long i)
    {
-      if (m_data[0].re[0]._mpfr_d == 0)
+      if (m_data[0].re[0]._mpfr_d == nullptr)
          mpc_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpc_set_ui(m_data, i, GMP_RNDN);
       return *this;
    }
    mpc_complex_imp& operator=(long i)
    {
-      if (m_data[0].re[0]._mpfr_d == 0)
+      if (m_data[0].re[0]._mpfr_d == nullptr)
          mpc_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpc_set_si(m_data, i, GMP_RNDN);
       return *this;
    }
    mpc_complex_imp& operator=(double d)
    {
-      if (m_data[0].re[0]._mpfr_d == 0)
+      if (m_data[0].re[0]._mpfr_d == nullptr)
          mpc_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpc_set_d(m_data, d, GMP_RNDN);
       return *this;
    }
    mpc_complex_imp& operator=(long double d)
    {
-      if (m_data[0].re[0]._mpfr_d == 0)
+      if (m_data[0].re[0]._mpfr_d == nullptr)
          mpc_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpc_set_ld(m_data, d, GMP_RNDN);
       return *this;
    }
    mpc_complex_imp& operator=(mpz_t i)
    {
-      if (m_data[0].re[0]._mpfr_d == 0)
+      if (m_data[0].re[0]._mpfr_d == nullptr)
          mpc_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpc_set_z(m_data, i, GMP_RNDN);
       return *this;
    }
    mpc_complex_imp& operator=(gmp_int i)
    {
-      if (m_data[0].re[0]._mpfr_d == 0)
+      if (m_data[0].re[0]._mpfr_d == nullptr)
          mpc_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
       mpc_set_z(m_data, i.data(), GMP_RNDN);
       return *this;
@@ -239,7 +228,7 @@ struct mpc_complex_imp
    {
       using default_ops::eval_fpclassify;
 
-      if (m_data[0].re[0]._mpfr_d == 0)
+      if (m_data[0].re[0]._mpfr_d == nullptr)
          mpc_init2(m_data, multiprecision::detail::digits10_2_2(digits10 ? digits10 : (unsigned)get_default_precision()));
 
       mpfr_float_backend<digits10> a(0uL, mpc_get_prec(m_data)), b(0uL, mpc_get_prec(m_data));
@@ -422,13 +411,13 @@ struct mpc_complex_backend : public detail::mpc_complex_imp<digits10>
    mpc_complex_backend(mpc_complex_backend&& o) : detail::mpc_complex_imp<digits10>(static_cast<detail::mpc_complex_imp<digits10>&&>(o))
    {}
    template <unsigned D>
-   mpc_complex_backend(const mpc_complex_backend<D>& val, typename std::enable_if<D <= digits10>::type* = 0)
+   mpc_complex_backend(const mpc_complex_backend<D>& val, typename std::enable_if<D <= digits10>::type* = nullptr)
        : detail::mpc_complex_imp<digits10>()
    {
       mpc_set(this->m_data, val.data(), GMP_RNDN);
    }
    template <unsigned D>
-   explicit mpc_complex_backend(const mpc_complex_backend<D>& val, typename std::enable_if<!(D <= digits10)>::type* = 0)
+   explicit mpc_complex_backend(const mpc_complex_backend<D>& val, typename std::enable_if<!(D <= digits10)>::type* = nullptr)
        : detail::mpc_complex_imp<digits10>()
    {
       mpc_set(this->m_data, val.data(), GMP_RNDN);
@@ -519,12 +508,12 @@ struct mpc_complex_backend : public detail::mpc_complex_imp<digits10>
       return *this;
    }
    template <unsigned D10, mpfr_allocation_type AllocationType>
-   mpc_complex_backend(mpfr_float_backend<D10, AllocationType> const& val, typename std::enable_if<D10 <= digits10>::type* = 0) : detail::mpc_complex_imp<digits10>()
+   mpc_complex_backend(mpfr_float_backend<D10, AllocationType> const& val, typename std::enable_if<D10 <= digits10>::type* = nullptr) : detail::mpc_complex_imp<digits10>()
    {
       mpc_set_fr(this->m_data, val.data(), GMP_RNDN);
    }
    template <unsigned D10, mpfr_allocation_type AllocationType>
-   explicit mpc_complex_backend(mpfr_float_backend<D10, AllocationType> const& val, typename std::enable_if<!(D10 <= digits10)>::type* = 0) : detail::mpc_complex_imp<digits10>()
+   explicit mpc_complex_backend(mpfr_float_backend<D10, AllocationType> const& val, typename std::enable_if<!(D10 <= digits10)>::type* = nullptr) : detail::mpc_complex_imp<digits10>()
    {
       mpc_set_fr(this->m_data, val.data(), GMP_RNDN);
    }
@@ -625,7 +614,7 @@ struct mpc_complex_backend<0> : public detail::mpc_complex_imp<0>
    }
    mpc_complex_backend& operator=(gmp_int const& val)
    {
-      if (this->m_data[0].im->_mpfr_d == 0)
+      if (this->m_data[0].im->_mpfr_d == nullptr)
       {
          unsigned requested_precision = this->thread_default_precision();
          if (thread_default_variable_precision_options() >= variable_precision_options::preserve_all_precision)
@@ -695,7 +684,7 @@ struct mpc_complex_backend<0> : public detail::mpc_complex_imp<0>
    }
    mpc_complex_backend& operator=(gmp_rational const& val)
    {
-      if (this->m_data[0].im->_mpfr_d == 0)
+      if (this->m_data[0].im->_mpfr_d == nullptr)
       {
          unsigned requested_precision = this->get_default_precision();
          if (thread_default_variable_precision_options() >= variable_precision_options::preserve_all_precision)
@@ -1691,14 +1680,6 @@ struct is_variable_precision<backends::mpc_complex_backend<0> > : public std::in
 template <>
 struct number_category<detail::canonical<mpc_t, backends::mpc_complex_backend<0> >::type> : public std::integral_constant<int, number_kind_floating_point>
 {};
-
-using boost::multiprecision::backends::mpc_complex_backend;
-
-using mpc_complex_50 = number<mpc_complex_backend<50> >  ;
-using mpc_complex_100 = number<mpc_complex_backend<100> > ;
-using mpc_complex_500 = number<mpc_complex_backend<500> > ;
-using mpc_complex_1000 = number<mpc_complex_backend<1000> >;
-using mpc_complex = number<mpc_complex_backend<0> >   ;
 
 template <unsigned Digits10, expression_template_option ExpressionTemplates>
 struct component_type<number<mpc_complex_backend<Digits10>, ExpressionTemplates> >

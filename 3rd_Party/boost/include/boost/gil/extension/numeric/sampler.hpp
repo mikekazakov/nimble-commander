@@ -1,5 +1,6 @@
 //
 // Copyright 2005-2007 Adobe Systems Incorporated
+// Copyright 2021 Pranam Lashkari <plashkari628@gmail.com>
 //
 // Distributed under the Boost Software License, Version 1.0
 // See accompanying file LICENSE_1_0.txt or copy at
@@ -8,8 +9,8 @@
 #ifndef BOOST_GIL_EXTENSION_NUMERIC_SAMPLER_HPP
 #define BOOST_GIL_EXTENSION_NUMERIC_SAMPLER_HPP
 
-#include <boost/gil/extension/numeric/pixel_numeric_operations.hpp>
 #include <boost/gil/extension/dynamic_image/dynamic_image_all.hpp>
+#include <boost/gil/pixel_numeric_operations.hpp>
 
 namespace boost { namespace gil {
 

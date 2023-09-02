@@ -14,6 +14,7 @@
 
 #include <boost/json/array.hpp>
 #include <boost/json/basic_parser.hpp>
+#include <boost/json/conversion.hpp>
 #include <boost/json/error.hpp>
 #include <boost/json/fwd.hpp>
 #include <boost/json/kind.hpp>
@@ -27,6 +28,7 @@
 #include <boost/json/pilfer.hpp>
 #include <boost/json/serialize.hpp>
 #include <boost/json/serializer.hpp>
+#include <boost/json/set_pointer_options.hpp>
 #include <boost/json/static_resource.hpp>
 #include <boost/json/storage_ptr.hpp>
 #include <boost/json/stream_parser.hpp>

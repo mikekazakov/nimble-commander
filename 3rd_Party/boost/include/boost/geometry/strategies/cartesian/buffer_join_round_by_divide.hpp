@@ -48,23 +48,21 @@ public :
                 RangeOut& range_out,
                 std::size_t level = 1) const
     {
-        typedef typename coordinate_type<Point>::type coordinate_type;
-
         // Generate 'vectors'
-        coordinate_type const vp1_x = get<0>(p1) - get<0>(vertex);
-        coordinate_type const vp1_y = get<1>(p1) - get<1>(vertex);
+        PromotedType const vp1_x = get<0>(p1) - get<0>(vertex);
+        PromotedType const vp1_y = get<1>(p1) - get<1>(vertex);
 
-        coordinate_type const vp2_x = (get<0>(p2) - get<0>(vertex));
-        coordinate_type const vp2_y = (get<1>(p2) - get<1>(vertex));
+        PromotedType const vp2_x = (get<0>(p2) - get<0>(vertex));
+        PromotedType const vp2_y = (get<1>(p2) - get<1>(vertex));
 
         // Average them to generate vector in between
-        coordinate_type const two = 2;
-        coordinate_type const v_x = (vp1_x + vp2_x) / two;
-        coordinate_type const v_y = (vp1_y + vp2_y) / two;
+        PromotedType const two = 2;
+        PromotedType const v_x = (vp1_x + vp2_x) / two;
+        PromotedType const v_y = (vp1_y + vp2_y) / two;
 
         PromotedType const length2 = geometry::math::sqrt(v_x * v_x + v_y * v_y);
 
-        PromotedType prop = buffer_distance / length2;
+        PromotedType const prop = buffer_distance / length2;
 
         Point mid_point;
         set<0>(mid_point, get<0>(vertex) + v_x * prop);
@@ -106,13 +104,13 @@ public :
         }
 
         // Generate 'vectors'
-        coordinate_type const vix = (get<0>(ip) - get<0>(vertex));
-        coordinate_type const viy = (get<1>(ip) - get<1>(vertex));
+        promoted_type const vix = (get<0>(ip) - get<0>(vertex));
+        promoted_type const viy = (get<1>(ip) - get<1>(vertex));
 
         promoted_type const length_i = geometry::math::sqrt(vix * vix + viy * viy);
 
         promoted_type const bd = geometry::math::abs(buffer_distance);
-        promoted_type prop = bd / length_i;
+        promoted_type const prop = bd / length_i;
 
         Point bp;
         set<0>(bp, get<0>(vertex) + vix * prop);

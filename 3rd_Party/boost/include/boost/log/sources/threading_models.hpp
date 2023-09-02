@@ -21,7 +21,7 @@
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/locks.hpp> // is_mutex_type
 #if !defined(BOOST_LOG_NO_THREADS)
-#include <boost/mpl/bool.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 #endif
 #include <boost/log/detail/header.hpp>
 
@@ -121,12 +121,12 @@ BOOST_LOG_CLOSE_NAMESPACE // namespace log
 #if !defined(BOOST_LOG_NO_THREADS) && !defined(BOOST_LOG_DOXYGEN_PASS)
 
 template< >
-struct is_mutex_type< boost::log::sources::single_thread_model > : mpl::true_
+struct is_mutex_type< boost::log::sources::single_thread_model > : boost::true_type
 {
 };
 
 template< typename T >
-struct is_mutex_type< boost::log::sources::multi_thread_model< T > > : mpl::true_
+struct is_mutex_type< boost::log::sources::multi_thread_model< T > > : boost::true_type
 {
 };
 

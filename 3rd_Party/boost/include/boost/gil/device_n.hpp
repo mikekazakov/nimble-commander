@@ -32,8 +32,8 @@ struct devicen_color_t {};
 template <int N>
 struct devicen_t;
 
-/// \brief Unnamed color space of 1, 3, 4, or 5 channels
-/// \tparam N Number of color components (1, 3, 4 or 5).
+/// \brief Unnamed color space of 1, 2, 3, 4, or 5 channels
+/// \tparam N Number of color components (1, 2, 3, 4 or 5).
 /// \ingroup ColorSpaceModel
 template <int N>
 struct devicen_t
@@ -43,7 +43,7 @@ private:
     using color_t = devicen_color_t<T::value>;
 
     static_assert(
-        N == 1 || (3 <= N && N <= 5),
+        (1 <= N && N <= 5),
         "invalid number of DeviceN color components");
 
 public:
@@ -58,8 +58,9 @@ struct devicen_layout_t : layout<typename devicen_t<N>::type> {};
 /// \ingroup ImageViewConstructors
 /// \brief from 2-channel planar data
 template <typename IC>
-inline typename type_from_x_iterator<planar_pixel_iterator<IC,devicen_t<2>>>::view_t
-planar_devicen_view(std::size_t width, std::size_t height, IC c0, IC c1, std::ptrdiff_t rowsize_in_bytes)
+inline
+auto planar_devicen_view(std::size_t width, std::size_t height, IC c0, IC c1, std::ptrdiff_t rowsize_in_bytes)
+    -> typename type_from_x_iterator<planar_pixel_iterator<IC,devicen_t<2>>>::view_t
 {
     using view_t = typename type_from_x_iterator<planar_pixel_iterator<IC,devicen_t<2>>>::view_t;
     return view_t(width, height, typename view_t::locator(typename view_t::x_iterator(c0,c1), rowsize_in_bytes));

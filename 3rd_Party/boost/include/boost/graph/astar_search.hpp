@@ -328,7 +328,6 @@ inline void astar_search_no_init_tree(const VertexListGraph& g,
                 BOOST_THROW_EXCEPTION(negative_edge());
             bool decreased
                 = relax(e, g, weight, predecessor, distance, combine, compare);
-            combine(get(distance, v), e_weight);
             if (decreased)
             {
                 vis.edge_relaxed(e, g);

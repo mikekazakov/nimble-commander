@@ -6,6 +6,7 @@
 #ifndef BOOST_PROCESS_DETAIL_ENV_HPP_
 #define BOOST_PROCESS_DETAIL_ENV_HPP_
 
+#include <boost/process/detail/traits/wchar_t.hpp>
 #include <boost/process/environment.hpp>
 #include <boost/none.hpp>
 
@@ -436,7 +437,7 @@ for both `id` and `value`.
 
 \subsubsection env_reset Reset variables
 
-Reseting signle variables can be done in the following way:
+Resetting single variables can be done in the following way:
 
 \code{.cpp}
 env[id] = boost::none;

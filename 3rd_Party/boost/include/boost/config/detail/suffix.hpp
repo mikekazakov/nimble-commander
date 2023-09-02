@@ -48,6 +48,22 @@
 #endif
 
 //
+// disable explicitly enforced visibility
+//
+#if defined(BOOST_DISABLE_EXPLICIT_SYMBOL_VISIBILITY)
+
+#undef BOOST_SYMBOL_EXPORT
+#define BOOST_SYMBOL_EXPORT
+
+#undef BOOST_SYMBOL_IMPORT
+#define BOOST_SYMBOL_IMPORT
+
+#undef BOOST_SYMBOL_VISIBLE
+#define BOOST_SYMBOL_VISIBLE
+
+#endif
+
+//
 // look for long long by looking for the appropriate macros in <limits.h>.
 // Note that we use limits.h rather than climits for maximal portability,
 // remember that since these just declare a bunch of macros, there should be
@@ -632,7 +648,7 @@ namespace std{ using ::type_info; }
        // nvcc doesn't always parse __noinline__,
        // see: https://svn.boost.org/trac/boost/ticket/9392
 #      define BOOST_NOINLINE __attribute__ ((noinline))
-#    elif defined(HIP_VERSION)
+#    elif defined(__HIP__)
        // See https://github.com/boostorg/config/issues/392
 #      define BOOST_NOINLINE __attribute__ ((noinline))
 #    else
@@ -666,6 +682,23 @@ namespace std{ using ::type_info; }
 #if !defined(BOOST_NORETURN)
 #  define BOOST_NO_NORETURN
 #  define BOOST_NORETURN
+#endif
+
+// BOOST_DEPRECATED -------------------------------------------//
+// The macro can be used to mark deprecated symbols, such as functions, objects and types.
+// Any code that uses these symbols will produce warnings, possibly with a message specified
+// as an argument. The warnings can be suppressed by defining BOOST_ALLOW_DEPRECATED_SYMBOLS
+// or BOOST_ALLOW_DEPRECATED.
+#if !defined(BOOST_DEPRECATED) && __cplusplus >= 201402
+#define BOOST_DEPRECATED(msg) [[deprecated(msg)]]
+#endif
+
+#if defined(BOOST_ALLOW_DEPRECATED_SYMBOLS) || defined(BOOST_ALLOW_DEPRECATED)
+#undef BOOST_DEPRECATED
+#endif
+
+#if !defined(BOOST_DEPRECATED)
+#define BOOST_DEPRECATED(msg)
 #endif
 
 // Branch prediction hints
@@ -1015,6 +1048,9 @@ namespace std{ using ::type_info; }
 #else
 #define BOOST_CXX14_CONSTEXPR constexpr
 #endif
+#if !defined(BOOST_NO_CXX17_STRUCTURED_BINDINGS) && defined(BOOST_NO_CXX11_HDR_TUPLE)
+#  define BOOST_NO_CXX17_STRUCTURED_BINDINGS
+#endif
 
 //
 // C++17 inline variables
@@ -1039,8 +1075,21 @@ namespace std{ using ::type_info; }
 // Unused variable/typedef workarounds:
 //
 #ifndef BOOST_ATTRIBUTE_UNUSED
+#  if defined(__has_attribute) && defined(__SUNPRO_CC) && (__SUNPRO_CC > 0x5130)
+#    if __has_attribute(maybe_unused)
+#       define BOOST_ATTRIBUTE_UNUSED [[maybe_unused]]
+#    endif
+#  elif defined(__has_cpp_attribute)
+#    if __has_cpp_attribute(maybe_unused)
+#      define BOOST_ATTRIBUTE_UNUSED [[maybe_unused]]
+#    endif
+#  endif
+#endif
+
+#ifndef BOOST_ATTRIBUTE_UNUSED
 #  define BOOST_ATTRIBUTE_UNUSED
 #endif
+
 //
 // [[nodiscard]]:
 //
@@ -1068,6 +1117,12 @@ namespace std{ using ::type_info; }
 #endif
 
 #define BOOST_STATIC_CONSTEXPR  static BOOST_CONSTEXPR_OR_CONST
+
+#if !defined(BOOST_NO_CXX11_NULLPTR)
+# define BOOST_NULLPTR nullptr
+#else
+# define BOOST_NULLPTR 0
+#endif
 
 //
 // Set BOOST_HAS_STATIC_ASSERT when BOOST_NO_CXX11_STATIC_ASSERT is not defined
@@ -1211,6 +1266,14 @@ namespace std{ using ::type_info; }
 #endif
 #else
 #  define BOOST_NO_CXX20_HDR_VERSION
+#endif
+
+#if defined(BOOST_MSVC)
+#if (BOOST_MSVC < 1914) || (_MSVC_LANG < 201703)
+#  define BOOST_NO_CXX17_DEDUCTION_GUIDES
+#endif
+#elif !defined(__cpp_deduction_guides) || (__cpp_deduction_guides < 201606)
+#  define BOOST_NO_CXX17_DEDUCTION_GUIDES
 #endif
 
 //

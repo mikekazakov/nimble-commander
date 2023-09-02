@@ -20,6 +20,10 @@
 #include <boost/mpl/bool.hpp>
 #include <iterator> // for std::iterator_traits
 
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
 namespace boost { namespace spirit { namespace lex { namespace lexertl
 { 
     namespace detail
@@ -214,9 +218,6 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
             get_state_name_type get_state_name_;
 
             bool bol_;      // helper storing whether last character was \n
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(static_data& operator= (static_data const&))
         };
 
         ///////////////////////////////////////////////////////////////////////
@@ -288,9 +289,6 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
         protected:
             std::size_t state_;
             std::size_t num_states_;
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(static_data& operator= (static_data const&))
         };
 
         ///////////////////////////////////////////////////////////////////////
@@ -426,9 +424,6 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
             mutable TokenValue value_;  // token value to use
             mutable bool has_value_;    // 'true' if value_ is valid
             bool has_hold_;     // 'true' if hold_ is valid
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(static_data& operator= (static_data const&))
         };
 
         ///////////////////////////////////////////////////////////////////////
@@ -565,11 +560,11 @@ namespace boost { namespace spirit { namespace lex { namespace lexertl
             mutable token_value_type value_;  // token value to use
             mutable bool has_value_;    // 'true' if value_ is valid
             bool has_hold_;     // 'true' if hold_ is valid
-
-            // silence MSVC warning C4512: assignment operator could not be generated
-            BOOST_DELETED_FUNCTION(static_data& operator= (static_data const&))
         };
     }
 }}}}
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
 #endif

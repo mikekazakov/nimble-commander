@@ -8,6 +8,7 @@
 
 #include <boost/qvm/scalar_traits.hpp>
 #include <boost/qvm/static_assert.hpp>
+#include <boost/qvm/detail/remove_const.hpp>
 
 namespace boost { namespace qvm {
 
@@ -125,7 +126,7 @@ template <class A,class B>
 struct
 deduce_scalar
     {
-    typedef typename deduce_scalar_detail::deduce_scalar_impl<A,B>::type type;
+    typedef typename deduce_scalar_detail::deduce_scalar_impl<typename qvm_detail::remove_const<A>::type,typename qvm_detail::remove_const<B>::type>::type type;
     };
 
 } }

@@ -89,14 +89,14 @@ namespace boost { namespace gil {
 ///     iterator         View::end()        const;
 ///     reverse_iterator View::rbegin()     const;
 ///     reverse_iterator View::rend()       const;
-///     iterator         View::at(const point_t&);
+///     iterator         View::at(point_t const&);
 ///     point_t          View::dimensions() const; // number of elements along each dimension
 ///     bool             View::is_1d_traversable() const;   // can an iterator over the first dimension visit each value? I.e. are there gaps between values?
 ///
 ///     // iterator along a given dimension starting at a given point
-///     template <size_t D> View::axis<D>::iterator View::axis_iterator(const point_t&) const;
+///     template <size_t D> View::axis<D>::iterator View::axis_iterator(point_t const&) const;
 ///
-///     reference operator()(View,const point_t&) const;
+///     reference operator()(View,point_t const&) const;
 /// };
 /// \endcode
 template <typename View>
@@ -196,17 +196,17 @@ struct RandomAccessNDImageViewConcept
 ///     y_coord_t View::height() const;
 ///
 ///     // X-navigation
-///     x_iterator View::x_at(const point_t&) const;
+///     x_iterator View::x_at(point_t const&) const;
 ///     x_iterator View::row_begin(y_coord_t) const;
 ///     x_iterator View::row_end  (y_coord_t) const;
 ///
 ///     // Y-navigation
-///     y_iterator View::y_at(const point_t&) const;
+///     y_iterator View::y_at(point_t const&) const;
 ///     y_iterator View::col_begin(x_coord_t) const;
 ///     y_iterator View::col_end  (x_coord_t) const;
 ///
 ///     // navigating in 2D
-///     xy_locator View::xy_at(const point_t&) const;
+///     xy_locator View::xy_at(point_t const&) const;
 ///
 ///     // (x,y) versions of all methods taking point_t
 ///     View::View(x_coord_t,y_coord_t,const locator&);

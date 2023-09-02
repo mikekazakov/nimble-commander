@@ -8,7 +8,6 @@
 #define BOOST_SPIRIT_X3_IS_CALLABLE_HPP_INCLUDED
 
 #include <boost/mpl/bool.hpp>
-#include <boost/spirit/home/x3/support/utility/sfinae.hpp>
 
 namespace boost { namespace spirit { namespace x3 { namespace detail
 {
@@ -16,8 +15,8 @@ namespace boost { namespace spirit { namespace x3 { namespace detail
     struct is_callable_impl : mpl::false_ {};
 
     template <typename F, typename... A>
-    struct is_callable_impl<F(A...), typename disable_if_substitution_failure<
-        decltype(std::declval<F>()(std::declval<A>()...))>::type>
+    struct is_callable_impl<F(A...),
+        decltype(void(std::declval<F>()(std::declval<A>()...)))>
       : mpl::true_
     {};
 }}}}

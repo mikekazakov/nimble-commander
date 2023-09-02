@@ -2,8 +2,8 @@
 
 // Copyright (c) 2007-2012 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2013, 2014, 2018.
-// Modifications copyright (c) 2013-2018 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2013-2022.
+// Modifications copyright (c) 2013-2022 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -30,6 +30,8 @@
 #include <boost/geometry/util/condition.hpp>
 #include <boost/geometry/util/range.hpp>
 
+#include <type_traits>
+
 namespace boost { namespace geometry
 {
 
@@ -42,7 +44,7 @@ namespace detail { namespace relate {
 template <std::size_t OpId,
           typename Geometry,
           typename Tag = typename geometry::tag<Geometry>::type,
-          bool IsMulti = boost::is_base_of<multi_tag, Tag>::value
+          bool IsMulti = std::is_base_of<multi_tag, Tag>::value
 >
 struct for_each_disjoint_geometry_if
     : public not_implemented<Tag>
@@ -52,14 +54,12 @@ template <std::size_t OpId, typename Geometry, typename Tag>
 struct for_each_disjoint_geometry_if<OpId, Geometry, Tag, false>
 {
     template <typename TurnIt, typename Pred>
-    static inline bool apply(TurnIt first, TurnIt last,
-                             Geometry const& geometry,
-                             Pred & pred)
+    static void apply(TurnIt first, TurnIt last, Geometry const& geometry, Pred & pred)
     {
-        if ( first != last )
-            return false;
-        pred(geometry);
-        return true;
+        if (first == last)
+        {
+            pred(geometry);
+        }
     }
 };
 
@@ -67,49 +67,43 @@ template <std::size_t OpId, typename Geometry, typename Tag>
 struct for_each_disjoint_geometry_if<OpId, Geometry, Tag, true>
 {
     template <typename TurnIt, typename Pred>
-    static inline bool apply(TurnIt first, TurnIt last,
-                             Geometry const& geometry,
-                             Pred & pred)
+    static void apply(TurnIt first, TurnIt last, Geometry const& geometry, Pred & pred)
     {
-        if ( first != last )
-            return for_turns(first, last, geometry, pred);
+        if (first == last)
+        {
+            for_empty(geometry, pred);
+        }
         else
-            return for_empty(geometry, pred);
+        {
+            for_turns(first, last, geometry, pred);
+        }
     }
 
     template <typename Pred>
-    static inline bool for_empty(Geometry const& geometry,
-                                 Pred & pred)
+    static void for_empty(Geometry const& geometry, Pred & pred)
     {
-        typedef typename boost::range_iterator<Geometry const>::type iterator;
-
         // O(N)
         // check predicate for each contained geometry without generated turn
-        for ( iterator it = boost::begin(geometry) ;
-              it != boost::end(geometry) ; ++it )
+        for (auto it = boost::begin(geometry); it != boost::end(geometry) ; ++it)
         {
-            bool cont = pred(*it);
-            if ( !cont )
+            if (! pred(*it))
+            {
                 break;
+            }
         }
-        
-        return !boost::empty(geometry);
     }
 
     template <typename TurnIt, typename Pred>
-    static inline bool for_turns(TurnIt first, TurnIt last,
-                                 Geometry const& geometry,
-                                 Pred & pred)
+    static void for_turns(TurnIt first, TurnIt last, Geometry const& geometry, Pred & pred)
     {
         BOOST_GEOMETRY_ASSERT(first != last);
 
         const std::size_t count = boost::size(geometry);
-        boost::ignore_unused(count);
 
         // O(I)
         // gather info about turns generated for contained geometries
         std::vector<bool> detected_intersections(count, false);
-        for ( TurnIt it = first ; it != last ; ++it )
+        for (TurnIt it = first; it != last; ++it)
         {
             signed_size_type multi_index = it->operations[OpId].seg_id.multi_index;
             BOOST_GEOMETRY_ASSERT(multi_index >= 0);
@@ -118,27 +112,22 @@ struct for_each_disjoint_geometry_if<OpId, Geometry, Tag, true>
             detected_intersections[index] = true;
         }
 
-        bool found = false;
-
         // O(N)
         // check predicate for each contained geometry without generated turn
-        for ( std::vector<bool>::iterator it = detected_intersections.begin() ;
-              it != detected_intersections.end() ; ++it )
+        for (std::size_t index = 0; index < detected_intersections.size(); ++index)
         {
             // if there were no intersections for this multi_index
-            if ( *it == false )
+            if (detected_intersections[index] == false)
             {
-                found = true;
-                std::size_t const index = std::size_t(std::distance(detected_intersections.begin(), it));
-                bool cont = pred(range::at(geometry, index));
-                if ( !cont )
+                if (! pred(range::at(geometry, index)))
+                {
                     break;
+                }
             }
         }
-        
-        return found;
     }
 };
+
 
 // WARNING! This class stores pointers!
 // Passing a reference to local variable will result in undefined behavior!
@@ -184,7 +173,7 @@ public:
 
     bool operator()(segment_identifier const& sid) const
     {
-        return sid.multi_index == sid_ptr->multi_index;                
+        return sid.multi_index == sid_ptr->multi_index;
     }
 
     template <typename Point>
@@ -267,11 +256,10 @@ public:
         segment_identifier const& other_id = turn.operations[other_op_id].seg_id;
         overlay::operation_type exit_op = turn.operations[op_id].operation;
 
-        typedef typename std::vector<point_info>::iterator point_iterator;
         // search for the entry point in the same range of other geometry
-        point_iterator entry_it = std::find_if(m_other_entry_points.begin(),
-                                               m_other_entry_points.end(),
-                                               same_single(other_id));
+        auto entry_it = std::find_if(m_other_entry_points.begin(),
+                                     m_other_entry_points.end(),
+                                     same_single(other_id));
 
         // this end point has corresponding entry point
         if ( entry_it != m_other_entry_points.end() )
@@ -365,44 +353,17 @@ inline bool turn_on_the_same_ip(Turn const& prev_turn, Turn const& curr_turn,
     return detail::equals::equals_point_point(prev_turn.point, curr_turn.point, strategy);
 }
 
-template <boundary_query BoundaryQuery,
-          typename Point,
-          typename BoundaryChecker>
-static inline bool is_endpoint_on_boundary(Point const& pt,
-                                           BoundaryChecker & boundary_checker)
-{
-    return boundary_checker.template is_endpoint_boundary<BoundaryQuery>(pt);
-}
-
-template <boundary_query BoundaryQuery,
-          typename IntersectionPoint,
-          typename OperationInfo,
-          typename BoundaryChecker>
+template <typename IntersectionPoint, typename OperationInfo, typename BoundaryChecker>
 static inline bool is_ip_on_boundary(IntersectionPoint const& ip,
                                      OperationInfo const& operation_info,
-                                     BoundaryChecker & boundary_checker,
-                                     segment_identifier const& seg_id)
+                                     BoundaryChecker const& boundary_checker)
 {
-    boost::ignore_unused(seg_id);
-
-    bool res = false;
-
-    // IP on the last point of the linestring
-    if ( BOOST_GEOMETRY_CONDITION(BoundaryQuery == boundary_back || BoundaryQuery == boundary_any)
-      && operation_info.position == overlay::position_back )
-    {
-        // check if this point is a boundary
-        res = boundary_checker.template is_endpoint_boundary<boundary_back>(ip);
-    }
-    // IP on the last point of the linestring
-    else if ( BOOST_GEOMETRY_CONDITION(BoundaryQuery == boundary_front || BoundaryQuery == boundary_any)
-           && operation_info.position == overlay::position_front )
-    {
-        // check if this point is a boundary
-        res = boundary_checker.template is_endpoint_boundary<boundary_front>(ip);
-    }
-            
-    return res;
+    // IP on the first or the last point of the linestring
+    return (operation_info.position == overlay::position_back
+            || operation_info.position == overlay::position_front)
+         // check if this point is a boundary
+         ? boundary_checker.is_endpoint_boundary(ip)
+         : false;
 }
 
 

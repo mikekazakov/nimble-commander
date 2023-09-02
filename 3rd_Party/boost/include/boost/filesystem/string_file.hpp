@@ -12,12 +12,12 @@
 
 #include <boost/filesystem/config.hpp>
 
-#if !defined(BOOST_FILESYSTEM_NO_DEPRECATED)
-
-#if !defined(BOOST_FILESYSTEM_DEPRECATED)
+#if !defined(BOOST_FILESYSTEM_DEPRECATED) && !defined(BOOST_FILESYSTEM_ALLOW_DEPRECATED)
 #include <boost/config/header_deprecated.hpp>
 BOOST_HEADER_DEPRECATED("your own implementation")
 #endif
+
+#if !defined(BOOST_FILESYSTEM_NO_DEPRECATED)
 
 #include <cstddef>
 #include <limits>
@@ -34,6 +34,7 @@ BOOST_HEADER_DEPRECATED("your own implementation")
 namespace boost {
 namespace filesystem {
 
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use file IO streams instead")
 inline void save_string_file(path const& p, std::string const& str)
 {
     filesystem::ofstream file;
@@ -45,6 +46,7 @@ inline void save_string_file(path const& p, std::string const& str)
     file.write(str.c_str(), static_cast< std::streamsize >(sz));
 }
 
+BOOST_FILESYSTEM_DETAIL_DEPRECATED("Use file IO streams instead")
 inline void load_string_file(path const& p, std::string& str)
 {
     filesystem::ifstream file;

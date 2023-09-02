@@ -3,8 +3,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_MULTIPRECISION_RATIONAL_ADAPTOR_HPP
-#define BOOST_MULTIPRECISION_RATIONAL_ADAPTOR_HPP
+#ifndef BOOST_MP_RATIONAL_ADAPTOR_HPP
+#define BOOST_MP_RATIONAL_ADAPTOR_HPP
 
 #include <boost/multiprecision/number.hpp>
 #include <boost/multiprecision/detail/hash.hpp>
@@ -61,6 +61,19 @@ struct rational_adaptor
       using default_ops::eval_gcd;
       using default_ops::eval_eq;
       using default_ops::eval_divide;
+      using default_ops::eval_get_sign;
+
+      int s = eval_get_sign(m_denom);
+
+      if(s == 0)
+      {
+         BOOST_MP_THROW_EXCEPTION(std::overflow_error("Integer division by zero"));
+      }
+      else if (s < 0)
+      {
+         m_num.negate();
+         m_denom.negate();
+      }
 
       Backend g, t;
       eval_gcd(g, m_num, m_denom);
@@ -420,7 +433,13 @@ void assign_components(rational_adaptor<Backend>& result, Backend const& a, Back
    using default_ops::eval_gcd;
    using default_ops::eval_divide;
    using default_ops::eval_eq;
+   using default_ops::eval_is_zero;
+   using default_ops::eval_get_sign;
 
+   if (eval_is_zero(b))
+   {
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Integer division by zero"));
+   }
    Backend g;
    eval_gcd(g, a, b);
    if (eval_eq(g, rational_adaptor<Backend>::one()))
@@ -433,16 +452,26 @@ void assign_components(rational_adaptor<Backend>& result, Backend const& a, Back
       eval_divide(result.num(), a, g);
       eval_divide(result.denom(), b, g);
    }
+   if (eval_get_sign(result.denom()) < 0)
+   {
+      result.num().negate();
+      result.denom().negate();
+   }
 }
 //
 // Again for arithmetic types, overload for whatever arithmetic types are directly supported:
 //
 template <class Backend, class Arithmetic1, class Arithmetic2>
-inline void assign_components(rational_adaptor<Backend>& result, const Arithmetic1& a, const Arithmetic2& b)
+inline void assign_components(rational_adaptor<Backend>& result, const Arithmetic1& a, typename std::enable_if<std::is_arithmetic<Arithmetic1>::value && std::is_arithmetic<Arithmetic2>::value, const Arithmetic2&>::type b)
 {
    using default_ops::eval_gcd;
    using default_ops::eval_divide;
    using default_ops::eval_eq;
+
+   if (b == 0)
+   {
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Integer division by zero"));
+   }
 
    Backend g;
    result.num()   = a;
@@ -455,6 +484,39 @@ inline void assign_components(rational_adaptor<Backend>& result, const Arithmeti
    {
       eval_divide(result.num(), g);
       eval_divide(result.denom(), b, g);
+   }
+   if (eval_get_sign(result.denom()) < 0)
+   {
+      result.num().negate();
+      result.denom().negate();
+   }
+}
+template <class Backend, class Arithmetic1, class Arithmetic2>
+inline void assign_components(rational_adaptor<Backend>& result, const Arithmetic1& a, typename std::enable_if<!std::is_arithmetic<Arithmetic1>::value || !std::is_arithmetic<Arithmetic2>::value, const Arithmetic2&>::type b)
+{
+   using default_ops::eval_gcd;
+   using default_ops::eval_divide;
+   using default_ops::eval_eq;
+
+   Backend g;
+   result.num()   = a;
+   result.denom() = b;
+
+   if (eval_get_sign(result.denom()) == 0)
+   {
+      BOOST_MP_THROW_EXCEPTION(std::overflow_error("Integer division by zero"));
+   }
+
+   eval_gcd(g, result.num(), result.denom());
+   if (!eval_eq(g, rational_adaptor<Backend>::one()))
+   {
+      eval_divide(result.num(), g);
+      eval_divide(result.denom(), g);
+   }
+   if (eval_get_sign(result.denom()) < 0)
+   {
+      result.num().negate();
+      result.denom().negate();
    }
 }
 //
@@ -1037,6 +1099,7 @@ void eval_divide(rational_adaptor<Backend>& result, const rational_adaptor<Backe
    {
       if (&result != &a)
          result = a;
+      result.denom() = arg;
       return;
    }
 
@@ -1070,7 +1133,7 @@ void eval_divide(rational_adaptor<Backend>& result, const rational_adaptor<Backe
    }
 }
 template <class Backend>
-void eval_divide(rational_adaptor<Backend>& result, Backend arg)
+void eval_divide(rational_adaptor<Backend>& result, const Backend& arg)
 {
    eval_divide(result, result, arg);
 }
@@ -1158,10 +1221,6 @@ inline void eval_abs(rational_adaptor<Backend>& result, const rational_adaptor<B
 } // namespace backends
 
 //
-// Import the backend into this namespace:
-//
-using boost::multiprecision::backends::rational_adaptor;
-//
 // Define a category for this number type, one of:
 // 
 //    number_kind_integer
@@ -1172,10 +1231,6 @@ using boost::multiprecision::backends::rational_adaptor;
 //
 template<class Backend>
 struct number_category<rational_adaptor<Backend> > : public std::integral_constant<int, number_kind_rational>
-{};
-
-template <class IntBackend>
-struct expression_template_default<backends::rational_adaptor<IntBackend> > : public expression_template_default<IntBackend>
 {};
 
 template <class Backend, expression_template_option ExpressionTemplates>

@@ -34,22 +34,6 @@
 namespace boost { namespace geometry { namespace concepts
 {
 
-
-/*!
-\brief ring concept
-\ingroup concepts
-\par Formal definition:
-The ring concept is defined as following:
-- there must be a specialization of traits::tag defining ring_tag as type
-- it must behave like a Boost.Range
-- there can optionally be a specialization of traits::point_order defining the
-  order or orientation of its points, clockwise or counterclockwise.
-- it must implement a std::back_insert_iterator
-  (This is the same as the for the concept Linestring, and described there)
-
-\note to fulfill the concepts, no traits class has to be specialized to
-define the point type.
-*/
 template <typename Geometry>
 class Ring
 {

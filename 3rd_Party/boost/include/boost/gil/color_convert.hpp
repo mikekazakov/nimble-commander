@@ -63,7 +63,8 @@ namespace detail {
 // The default implementation of to_luminance uses float0..1 as the intermediate channel type
 template <typename RedChannel, typename GreenChannel, typename BlueChannel, typename GrayChannelValue>
 struct rgb_to_luminance_fn {
-    GrayChannelValue operator()(const RedChannel& red, const GreenChannel& green, const BlueChannel& blue) const {
+    auto operator()(const RedChannel& red, const GreenChannel& green, const BlueChannel& blue) const -> GrayChannelValue
+    {
         return channel_convert<GrayChannelValue>(float32_t(
             channel_convert<float32_t>(red  )*0.30f +
             channel_convert<float32_t>(green)*0.59f +
@@ -74,14 +75,16 @@ struct rgb_to_luminance_fn {
 // performance specialization for unsigned char
 template <typename GrayChannelValue>
 struct rgb_to_luminance_fn<uint8_t,uint8_t,uint8_t, GrayChannelValue> {
-    GrayChannelValue operator()(uint8_t red, uint8_t green, uint8_t blue) const {
+    auto operator()(uint8_t red, uint8_t green, uint8_t blue) const -> GrayChannelValue
+    {
         return channel_convert<GrayChannelValue>(uint8_t(
             ((uint32_t(red  )*4915 + uint32_t(green)*9667 + uint32_t(blue )*1802) + 8192) >> 14));
     }
 };
 
 template <typename GrayChannel, typename RedChannel, typename GreenChannel, typename BlueChannel>
-typename channel_traits<GrayChannel>::value_type rgb_to_luminance(const RedChannel& red, const GreenChannel& green, const BlueChannel& blue) {
+auto rgb_to_luminance(const RedChannel& red, const GreenChannel& green, const BlueChannel& blue) -> typename channel_traits<GrayChannel>::value_type
+{
     return rgb_to_luminance_fn<RedChannel,GreenChannel,BlueChannel,
                                typename channel_traits<GrayChannel>::value_type>()(red,green,blue);
 }
@@ -150,8 +153,6 @@ struct default_color_converter_impl<rgb_t,gray_t> {
 /// by Burger, Wilhelm, Burge, Mark J.
 /// and it is a gross approximation not precise enough for professional work.
 ///
-/// \todo FIXME: The original implementation did not handle properly signed CMYK pixels as destination
-///
 template <>
 struct default_color_converter_impl<rgb_t, cmyk_t>
 {
@@ -159,37 +160,42 @@ struct default_color_converter_impl<rgb_t, cmyk_t>
     void operator()(SrcPixel const& src, DstPixel& dst) const
     {
         using src_t = typename channel_type<SrcPixel>::type;
-        src_t const r = get_color(src, red_t());  
+        src_t const r = get_color(src, red_t());
         src_t const g = get_color(src, green_t());
         src_t const b = get_color(src, blue_t());
 
-        using dst_t   = typename channel_type<DstPixel>::type;
-        dst_t const c = channel_invert(channel_convert<dst_t>(r)); // c = 1 - r
-        dst_t const m = channel_invert(channel_convert<dst_t>(g)); // m = 1 - g
-        dst_t const y = channel_invert(channel_convert<dst_t>(b)); // y = 1 - b
-        dst_t const k = (std::min)(c, (std::min)(m, y));           // k = minimum(c, m, y)
+        using uint_t = typename channel_type<cmyk8_pixel_t>::type;
+        uint_t c = channel_invert(channel_convert<uint_t>(r)); // c = 1 - r
+        uint_t m = channel_invert(channel_convert<uint_t>(g)); // m = 1 - g
+        uint_t y = channel_invert(channel_convert<uint_t>(b)); // y = 1 - b
+        uint_t k = (std::min)(c,(std::min)(m,y));              // k = minimum(c, m, y)
 
         // Apply color correction, strengthening, reducing non-zero components by
         // s = 1 / (1 - k) for k < 1, where 1 denotes dst_t max, otherwise s = 1 (literal).
-        dst_t const dst_max = channel_traits<dst_t>::max_value();
-        dst_t const s_div   = dst_max - k;
+        uint_t const dst_max = channel_traits<uint_t>::max_value();
+        uint_t const s_div   = static_cast<uint_t>(dst_max - k);
         if (s_div != 0)
         {
-            double const s              = dst_max / static_cast<double>(s_div);
-            get_color(dst, cyan_t())    = static_cast<dst_t>((c - k) * s);
-            get_color(dst, magenta_t()) = static_cast<dst_t>((m - k) * s);
-            get_color(dst, yellow_t())  = static_cast<dst_t>((y - k) * s);
+            double const s = dst_max / static_cast<double>(s_div);
+            c = static_cast<uint_t>((c - k) * s);
+            m = static_cast<uint_t>((m - k) * s);
+            y = static_cast<uint_t>((y - k) * s);
         }
         else
         {
             // Black only for k = 1 (max of dst_t)
-            get_color(dst, cyan_t())    = channel_traits<dst_t>::min_value();
-            get_color(dst, magenta_t()) = channel_traits<dst_t>::min_value();
-            get_color(dst, yellow_t())  = channel_traits<dst_t>::min_value();
+            c = channel_traits<uint_t>::min_value();
+            m = channel_traits<uint_t>::min_value();
+            y = channel_traits<uint_t>::min_value();
         }
-        get_color(dst, black_t()) = k; 
+        using dst_t   = typename channel_type<DstPixel>::type;
+        get_color(dst, cyan_t())    = channel_convert<dst_t>(c);
+        get_color(dst, magenta_t()) = channel_convert<dst_t>(m);
+        get_color(dst, yellow_t())  = channel_convert<dst_t>(y);
+        get_color(dst, black_t())   = channel_convert<dst_t>(k);
     }
 };
+
 
 /// \ingroup ColorConvert
 /// \brief CMYK to RGB (not the fastest code in the world)

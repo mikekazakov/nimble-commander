@@ -126,7 +126,7 @@ T ellint_pi_imp(T v, T phi, T k, T vc, const Policy& pol)
          {
             return policies::raise_domain_error<T>(function, "Got k=1 and phi=%1% but the result is complex in that domain", phi, pol);
          }
-         if(boost::math::tools::fmod_workaround(m, T(2)) > 0.5)
+         if(boost::math::tools::fmod_workaround(m, T(2)) > T(0.5))
          {
             m += 1;
             sign = -1;
@@ -261,7 +261,7 @@ T ellint_pi_imp(T v, T phi, T k, T vc, const Policy& pol)
    t = sphi * sphi;
    y = 1 - k * k * t;
    z = 1;
-   if(v * t < 0.5)
+   if(v * t < T(0.5))
       p = 1 - v * t;
    else
       p = x + vc * t;
@@ -294,7 +294,7 @@ T ellint_pi_imp(T v, T k, T vc, const Policy& pol)
 
     if(v == 0)
     {
-       return (k == 0) ? boost::math::constants::pi<T>() / 2 : ellint_k_imp(k, pol);
+       return (k == 0) ? boost::math::constants::pi<T>() / 2 : boost::math::ellint_1(k, pol);
     }
 
     if(v < 0)
@@ -308,7 +308,7 @@ T ellint_pi_imp(T v, T k, T vc, const Policy& pol)
        // This next part is split in two to avoid spurious over/underflow:
        result *= -v / (1 - v);
        result *= (1 - k2) / (k2 - v);
-       result += ellint_k_imp(k, pol) * k2 / (k2 - v);
+       result += boost::math::ellint_1(k, pol) * k2 / (k2 - v);
        return result;
     }
 
@@ -343,17 +343,18 @@ inline typename tools::promote_args<T1, T2>::type ellint_3(T1 k, T2 v, const Pol
 } // namespace detail
 
 template <class T1, class T2, class T3, class Policy>
-inline typename tools::promote_args<T1, T2, T3>::type ellint_3(T1 k, T2 v, T3 phi, const Policy& pol)
+inline typename tools::promote_args<T1, T2, T3>::type ellint_3(T1 k, T2 v, T3 phi, const Policy&)
 {
    typedef typename tools::promote_args<T1, T2, T3>::type result_type;
    typedef typename policies::evaluation<result_type, Policy>::type value_type;
+   typedef typename policies::normalise<Policy, policies::promote_float<false>, policies::promote_double<false> >::type forwarding_policy;
    return policies::checked_narrowing_cast<result_type, Policy>(
       detail::ellint_pi_imp(
          static_cast<value_type>(v), 
          static_cast<value_type>(phi), 
          static_cast<value_type>(k),
          static_cast<value_type>(1-v),
-         pol), "boost::math::ellint_3<%1%>(%1%,%1%,%1%)");
+         forwarding_policy()), "boost::math::ellint_3<%1%>(%1%,%1%,%1%)");
 }
 
 template <class T1, class T2, class T3>

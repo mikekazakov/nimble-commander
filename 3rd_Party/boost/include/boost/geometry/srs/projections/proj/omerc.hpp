@@ -2,8 +2,9 @@
 
 // Copyright (c) 2008-2015 Barend Gehrels, Amsterdam, the Netherlands.
 
-// This file was modified by Oracle on 2017, 2018, 2019.
-// Modifications copyright (c) 2017-2019, Oracle and/or its affiliates.
+// This file was modified by Oracle on 2017, 2018, 2019, 2022.
+// Modifications copyright (c) 2017-2022, Oracle and/or its affiliates.
+// Contributed and/or modified by Vissarion Fysikopoulos, on behalf of Oracle.
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle.
 
 // Use, modification and distribution is subject to the Boost Software License,
@@ -78,14 +79,16 @@ namespace projections
 
                 // FORWARD(e_forward)  ellipsoid
                 // Project coordinates from geographic (lon, lat) to cartesian (x, y)
-                inline void fwd(Parameters const& par, T const& lp_lon, T const& lp_lat, T& xy_x, T& xy_y) const
+                inline void fwd(Parameters const& par, T const& lp_lon, T const& lp_lat, T& xy_x,
+                                T& xy_y) const
                 {
                     static const T half_pi = detail::half_pi<T>();
 
                     T  s, t, U, V, W, temp, u, v;
 
                     if (fabs(fabs(lp_lat) - half_pi) > epsilon) {
-                        W = this->m_proj_parm.E / math::pow(pj_tsfn(lp_lat, sin(lp_lat), par.e), this->m_proj_parm.B);
+                        W = this->m_proj_parm.E / math::pow(pj_tsfn(lp_lat, sin(lp_lat), par.e),
+                                                            this->m_proj_parm.B);
                         temp = 1. / W;
                         s = .5 * (W - temp);
                         t = .5 * (W + temp);
@@ -99,7 +102,8 @@ namespace projections
                         if(fabs(temp) < tolerance) {
                             u = this->m_proj_parm.A * lp_lon;
                         } else {
-                            u = this->m_proj_parm.ArB * atan2((s * this->m_proj_parm.cosgam + V * this->m_proj_parm.singam), temp);
+                            u = this->m_proj_parm.ArB * atan2((s * this->m_proj_parm.cosgam
+                                                              + V * this->m_proj_parm.singam), temp);
                         }
                     } else {
                         v = lp_lat > 0 ? this->m_proj_parm.v_pole_n : this->m_proj_parm.v_pole_s;
@@ -117,7 +121,8 @@ namespace projections
 
                 // INVERSE(e_inverse)  ellipsoid
                 // Project coordinates from cartesian (x, y) to geographic (lon, lat)
-                inline void inv(Parameters const& par, T const& xy_x, T const& xy_y, T& lp_lon, T& lp_lat) const
+                inline void inv(Parameters const& par, T const& xy_x, T const& xy_y, T& lp_lon,
+                                T& lp_lat) const
                 {
                     static const T half_pi = detail::half_pi<T>();
 
@@ -128,7 +133,8 @@ namespace projections
                         u = xy_x;
                     } else {
                         v = xy_x * this->m_proj_parm.cosrot - xy_y * this->m_proj_parm.sinrot;
-                        u = xy_y * this->m_proj_parm.cosrot + xy_x * this->m_proj_parm.sinrot + this->m_proj_parm.u_0;
+                        u = xy_y * this->m_proj_parm.cosrot + xy_x * this->m_proj_parm.sinrot
+                            + this->m_proj_parm.u_0;
                     }
                     Qp = exp(- this->m_proj_parm.BrA * v);
                     Sp = .5 * (Qp - 1. / Qp);
@@ -140,7 +146,8 @@ namespace projections
                         lp_lat = Up < 0. ? -half_pi : half_pi;
                     } else {
                         lp_lat = this->m_proj_parm.E / sqrt((1. + Up) / (1. - Up));
-                        if ((lp_lat = pj_phi2(math::pow(lp_lat, T(1) / this->m_proj_parm.B), par.e)) == HUGE_VAL) {
+                        if ((lp_lat = pj_phi2(math::pow(lp_lat, T(1) / this->m_proj_parm.B), par.e))
+                            == HUGE_VAL) {
                             BOOST_THROW_EXCEPTION( projection_exception(error_tolerance_condition) );
                         }
                         lp_lon = - this->m_proj_parm.rB * atan2((Sp * this->m_proj_parm.cosgam -
@@ -168,23 +175,14 @@ namespace projections
                   gamma0, lamc=0, lam1=0, lam2=0, phi1=0, phi2=0, alpha_c=0;
                 int alp, gam, no_off = 0;
 
-                proj_parm.no_rot = pj_get_param_b<srs::spar::no_rot>(params, "no_rot", srs::dpar::no_rot);
+                proj_parm.no_rot = pj_get_param_b<srs::spar::no_rot>(params, "no_rot",
+                                                                     srs::dpar::no_rot);
                 alp = pj_param_r<srs::spar::alpha>(params, "alpha", srs::dpar::alpha, alpha_c);
                 gam = pj_param_r<srs::spar::gamma>(params, "gamma", srs::dpar::gamma, gamma);
                 if (alp || gam) {
                     lamc = pj_get_param_r<T, srs::spar::lonc>(params, "lonc", srs::dpar::lonc);
-                    // NOTE: This is not needed in Boost.Geometry
-                    //no_off =
-                    //            /* For libproj4 compatability */
-                    //            pj_param_exists(par.params, "no_off")
-                    //            /* for backward compatibility */
-                    //            || pj_param_exists(par.params, "no_uoff");
-                    //if( no_off )
-                    //{
-                    //    /* Mark the parameter as used, so that the pj_get_def() return them */
-                    //    pj_get_param_s(par.params, "no_uoff");
-                    //    pj_get_param_s(par.params, "no_off");
-                    //}
+                    // NOTE: This is needed for Hotline Oblique Mercator variant A projection
+                    no_off = pj_get_param_b<srs::spar::no_off>(params, "no_off", srs::dpar::no_off);
                 } else {
                     lam1 = pj_get_param_r<T, srs::spar::lon_1>(params, "lon_1", srs::dpar::lon_1);
                     phi1 = pj_get_param_r<T, srs::spar::lat_1>(params, "lat_1", srs::dpar::lat_1);
@@ -281,13 +279,14 @@ namespace projections
          - no_rot: No rotation
          - alpha: Alpha (degrees)
          - gamma: Gamma (degrees)
-         - no_off: Only for compatibility with libproj, proj4 (string)
+         - no_off: Do not offset origin to center of projection
+            (useful for Hotline Oblique Mercator variant A).
          - lonc: Longitude (only used if alpha (or gamma) is specified) (degrees)
          - lon_1 (degrees)
          - lat_1: Latitude of first standard parallel (degrees)
          - lon_2 (degrees)
          - lat_2: Latitude of second standard parallel (degrees)
-         - no_uoff (string)
+         - no_uoff: deprecated (string)
         \par Example
         \image html ex_omerc.gif
     */

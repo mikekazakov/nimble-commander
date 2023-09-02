@@ -26,7 +26,7 @@ template <class RealType>
 struct RealTypeConcept
 {
    template <class Other>
-   void check_binary_ops(Other o)
+   void check_binary_ops(Other o) const
    {
       RealType r(o);
       r = o;
@@ -100,7 +100,7 @@ struct RealTypeConcept
       r2 = asin(r);
       r2 = acos(r);
       r2 = atan(r);
-      int i;
+      int i {};
       r2 = ldexp(r, i);
       r2 = frexp(r, &i);
       i = boost::math::tools::digits<RealType>();

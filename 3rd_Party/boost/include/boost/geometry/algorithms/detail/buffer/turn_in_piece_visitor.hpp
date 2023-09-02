@@ -102,7 +102,7 @@ public:
         : m_turns(turns)
         , m_pieces(pieces)
         , m_distance_strategy(distance_strategy)
-        , m_umbrella_strategy(umbrella_strategy)        
+        , m_umbrella_strategy(umbrella_strategy)
     {}
 
     template <typename Turn, typename Piece>
@@ -138,6 +138,11 @@ public:
             return true;
         }
 
+        if (piece.type == geometry::strategy::buffer::buffered_empty_side)
+        {
+            return false;
+        }
+
         if (piece.type == geometry::strategy::buffer::buffered_point)
         {
             // Optimization for a buffer around points: if distance from center
@@ -159,39 +164,20 @@ public:
         }
 
         // Check if buffer is one-sided (at this point), because then a point
-        // on the original is not considered as within.
+        // on the original border is not considered as within.
         bool const one_sided = has_zero_distance_at(turn.point);
 
         typename Border::state_type state;
-        if (! border.point_on_piece(turn.point, m_umbrella_strategy, one_sided,
+        if (! border.point_on_piece(turn.point, one_sided,
                                     turn.is_linear_end_point, state))
         {
             return true;
         }
 
-        if (state.code() == 1)
+        if (state.is_inside() && ! state.is_on_boundary())
         {
-            // It is WITHIN a piece, or on the piece border, but not
-            // on the offsetted part of it.
-
-            // TODO - at further removing rescaling, this threshold can be
-            // adapted, or ideally, go.
-            // This threshold is minimized to the point where fragile
-            // unit tests of hard cases start to fail (5 in multi_polygon)
-            // But it is acknowlegded that such a threshold depends on the
-            // scale of the input.
-            if (state.m_min_distance > 1.0e-4 || ! state.m_close_to_offset)
-            {
-                Turn& mutable_turn = m_turns[turn.turn_index];
-                mutable_turn.is_turn_traversable = false;
-
-                // Keep track of the information if this turn was close
-                // to an offset (without threshold). Because if it was,
-                // it might have been classified incorrectly and in the
-                // pretraversal step, it can in hindsight be classified
-                // as "outside".
-                mutable_turn.close_to_offset = state.m_close_to_offset;
-            }
+            Turn& mutable_turn = m_turns[turn.turn_index];
+            mutable_turn.is_turn_traversable = false;
         }
 
         return true;

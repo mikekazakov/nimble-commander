@@ -10,6 +10,7 @@
 #include <array>     // for table data
 #include <cmath>     // for std::floor
 #include <cstdint>   // fixed width integer types
+#include <boost/math/special_functions/fpclassify.hpp>
 
 #if __has_include("lodepng.h")
 
@@ -1863,12 +1864,21 @@ static constexpr std::array<std::array<Real, 3>, 256> viridis_data_ = {
 template <typename Real>
 inline std::array<Real, 3>
 color_map_(Real scalar, std::array<std::array<Real, 3>, 256> const &table) {
-  static_assert(std::is_floating_point<Real>::value,
+  static_assert(std::is_floating_point_v<Real>,
                 "Color tables are only implemented in floating point "
                 "arithmetic. If you require bytes please submit an issue or "
                 "pull request");
 
-  scalar = std::clamp(scalar, static_cast<Real>(0), static_cast<Real>(1));
+  using boost::math::isnan;
+
+  if ((isnan)(scalar))
+  {
+      scalar = static_cast<Real>(0);
+  }
+  else
+  {
+      scalar = std::clamp(scalar, static_cast<Real>(0), static_cast<Real>(1));
+  }
 
   if (scalar == static_cast<Real>(1)) {
     return table.back();
@@ -1877,7 +1887,7 @@ color_map_(Real scalar, std::array<std::array<Real, 3>, 256> const &table) {
   Real s = (table.size() - 1) * scalar;
   Real ii = std::floor(s);
   Real t = s - ii;
-  std::size_t i = static_cast<std::size_t>(ii);
+  auto i = static_cast<std::size_t>(ii);
   auto const &rgb0 = table[i];
   auto const &rgb1 = table[i + 1];
   return {(1 - t) * rgb0[0] + t * rgb1[0], (1 - t) * rgb0[1] + t * rgb1[1],
@@ -1917,7 +1927,7 @@ std::array<Real, 3> extended_kindlmann(Real x) {
 template <typename Real>
 std::array<std::uint8_t, 4> to_8bit_rgba(const std::array<Real, 3> &v) {
   using std::sqrt;
-  std::array<std::uint8_t, 4> pixel;
+  std::array<std::uint8_t, 4> pixel {};
   for (auto i = 0; i < 3; ++i) {
     // Apply gamma correction here:
     Real u = sqrt(v[i]);

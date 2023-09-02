@@ -50,8 +50,6 @@ template
 >
 struct side_calculator
 {
-    typedef typename UniqueSubRange1::point_type point1_type;
-    typedef typename UniqueSubRange2::point_type point2_type;
     typedef decltype(std::declval<Strategy>().side()) side_strategy_type;
 
     inline side_calculator(UniqueSubRange1 const& range_p,
@@ -76,13 +74,13 @@ struct side_calculator
     inline int pj_wrt_q1() const { return m_side_strategy.apply(get_qi(), get_qj(), get_pj()); }
     inline int pj_wrt_q2() const { return m_side_strategy.apply(get_qj(), get_qk(), get_pj()); }
 
-    inline point1_type const& get_pi() const { return m_range_p.at(0); }
-    inline point1_type const& get_pj() const { return m_range_p.at(1); }
-    inline point1_type const& get_pk() const { return m_range_p.at(2); }
+    inline auto const& get_pi() const { return m_range_p.at(0); }
+    inline auto const& get_pj() const { return m_range_p.at(1); }
+    inline auto const& get_pk() const { return m_range_p.at(2); }
 
-    inline point2_type const& get_qi() const { return m_range_q.at(0); }
-    inline point2_type const& get_qj() const { return m_range_q.at(1); }
-    inline point2_type const& get_qk() const { return m_range_q.at(2); }
+    inline auto const& get_qi() const { return m_range_q.at(0); }
+    inline auto const& get_qj() const { return m_range_q.at(1); }
+    inline auto const& get_qk() const { return m_range_q.at(2); }
 
     // Used side-strategy, owned by the calculator
     side_strategy_type m_side_strategy;
@@ -338,9 +336,6 @@ public:
 
     typedef typename intersection_policy_type::return_type result_type;
 
-    typedef typename UniqueSubRange1::point_type point1_type;
-    typedef typename UniqueSubRange2::point_type point2_type;
-
     typedef side_calculator
         <
             UniqueSubRange1, UniqueSubRange2, UmbrellaStrategy
@@ -350,7 +345,7 @@ public:
         <
             UniqueSubRange2, UniqueSubRange1, UmbrellaStrategy
         > swapped_side_calculator_type;
-    
+
     intersection_info_base(UniqueSubRange1 const& range_p,
                            UniqueSubRange2 const& range_q,
                            UmbrellaStrategy const& umbrella_strategy,
@@ -366,13 +361,13 @@ public:
     inline bool p_is_last_segment() const { return m_range_p.is_last_segment(); }
     inline bool q_is_last_segment() const { return m_range_q.is_last_segment(); }
 
-    inline point1_type const& rpi() const { return m_side_calc.get_pi(); }
-    inline point1_type const& rpj() const { return m_side_calc.get_pj(); }
-    inline point1_type const& rpk() const { return m_side_calc.get_pk(); }
+    inline auto const& rpi() const { return m_side_calc.get_pi(); }
+    inline auto const& rpj() const { return m_side_calc.get_pj(); }
+    inline auto const& rpk() const { return m_side_calc.get_pk(); }
 
-    inline point2_type const& rqi() const { return m_side_calc.get_qi(); }
-    inline point2_type const& rqj() const { return m_side_calc.get_qj(); }
-    inline point2_type const& rqk() const { return m_side_calc.get_qk(); }
+    inline auto const& rqi() const { return m_side_calc.get_qi(); }
+    inline auto const& rqj() const { return m_side_calc.get_qj(); }
+    inline auto const& rqk() const { return m_side_calc.get_qk(); }
 
     inline side_calculator_type const& sides() const { return m_side_calc; }
     inline swapped_side_calculator_type const& swapped_sides() const
@@ -410,14 +405,11 @@ class intersection_info
 
 public:
 
-    typedef typename UniqueSubRange1::point_type point1_type;
-    typedef typename UniqueSubRange2::point_type point2_type;
-
     typedef typename UmbrellaStrategy::cs_tag cs_tag;
 
     typedef typename base::side_calculator_type side_calculator_type;
     typedef typename base::result_type result_type;
-    
+
     typedef typename result_type::intersection_points_type i_info_type;
     typedef typename result_type::direction_type d_info_type;
 
@@ -470,7 +462,7 @@ public:
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -493,18 +485,18 @@ public:
             bool const has_pk = ! base::p_is_last_segment();
             int const pk_q1 = has_pk ? base::sides().pk_wrt_q1() : 0;
             int const pk_q2 = has_pk ? base::sides().pk_wrt_q2() : 0;
-                
+
             if (pk_q1 == -pk_q2)
             {
                 if (pk_q1 == 0)
                 {
                     return direction_code<cs_tag>(base::rqi(), base::rqj(), base::rqk()) == -1;
                 }
-                        
+
                 return true;
             }
         }
-        
+
         return false;
     }
 

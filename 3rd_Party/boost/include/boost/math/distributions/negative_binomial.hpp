@@ -176,7 +176,7 @@ namespace boost
         // Discrete Distributions" Yong CAI and K. KRISHNAMOORTHY
         // http://www.ucs.louisiana.edu/~kxk4695/Discrete_new.pdf
         //
-        return ibeta_inv(successes, failures + 1, alpha, static_cast<RealType*>(0), Policy());
+        return ibeta_inv(successes, failures + 1, alpha, static_cast<RealType*>(nullptr), Policy());
       } // find_lower_bound_on_p
 
       static RealType find_upper_bound_on_p(
@@ -204,7 +204,7 @@ namespace boost
         // Discrete Distributions" Yong CAI and K. KRISHNAMOORTHY
         // http://www.ucs.louisiana.edu/~kxk4695/Discrete_new.pdf
         //
-        return ibetac_inv(successes, failures, alpha, static_cast<RealType*>(0), Policy());
+        return ibetac_inv(successes, failures, alpha, static_cast<RealType*>(nullptr), Policy());
       } // find_upper_bound_on_p
 
       // Estimate number of trials :

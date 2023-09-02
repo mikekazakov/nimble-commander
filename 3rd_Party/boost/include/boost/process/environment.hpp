@@ -11,7 +11,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/iterator/transform_iterator.hpp>
-#include <boost/filesystem/path.hpp>
+#include <boost/process/filesystem.hpp>
 
 #if defined(BOOST_POSIX_API)
 #include <boost/process/detail/posix/environment.hpp>
@@ -263,7 +263,9 @@ public:
         auto st1 = key + ::boost::process::detail::equal_sign<Char>();
         while (*p != nullptr)
         {
-            if (std::equal(st1.begin(), st1.end(), *p))
+            const std::size_t len = std::char_traits<Char>::length(*p);
+            if ((std::distance(st1.begin(), st1.end()) < len)
+                 && std::equal(st1.begin(), st1.end(), *p))
                 break;
             p++;
         }
@@ -275,7 +277,9 @@ public:
         auto st1 = key + ::boost::process::detail::equal_sign<Char>();
         while (*p != nullptr)
         {
-            if (std::equal(st1.begin(), st1.end(), *p))
+            const std::size_t len = std::char_traits<Char>::length(*p);
+            if ((std::distance(st1.begin(), st1.end()) < len)
+                && std::equal(st1.begin(), st1.end(), *p))
                 break;
             p++;
         }
@@ -288,7 +292,10 @@ public:
         auto st1 = st + ::boost::process::detail::equal_sign<Char>();
         while (*p != nullptr)
         {
-            if (std::equal(st1.begin(), st1.end(), *p))
+            const std::size_t len = std::char_traits<Char>::length(*p);
+            if ((std::distance(st1.begin(), st1.end()) <
+                 static_cast<typename string_type::iterator::difference_type>(len))
+                && std::equal(st1.begin(), st1.end(), *p))
                 return 1u;
             p++;
         }
@@ -672,7 +679,7 @@ inline native_environment   environment() { return ::boost::process:: native_env
 ///Get the enviroment of the current process.
 inline wnative_environment wenvironment() { return ::boost::process::wnative_environment(); }
 ///Get the path environment variable of the current process runs.
-inline std::vector<boost::filesystem::path> path()
+inline std::vector<boost::process::filesystem::path> path()
 {
 #if defined(BOOST_WINDOWS_API)
     const ::boost::process::wnative_environment ne{};
@@ -693,7 +700,7 @@ inline std::vector<boost::filesystem::path> path()
 
     auto vec = itr->to_vector();
 
-    std::vector<boost::filesystem::path> val;
+    std::vector<boost::process::filesystem::path> val;
     val.resize(vec.size());
 
     std::copy(vec.begin(), vec.end(), val.begin());

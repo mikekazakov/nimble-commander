@@ -24,14 +24,14 @@ namespace leaf_detail
     template <class MatchType, class T>
     BOOST_LEAF_CONSTEXPR BOOST_LEAF_ALWAYS_INLINE bool cmp_value_pack( MatchType const & e, bool (*P)(T) noexcept ) noexcept
     {
-        BOOST_LEAF_ASSERT(P != 0);
+        BOOST_LEAF_ASSERT(P != nullptr);
         return P(e);
     }
 
     template <class MatchType, class T>
     BOOST_LEAF_CONSTEXPR BOOST_LEAF_ALWAYS_INLINE bool cmp_value_pack( MatchType const & e, bool (*P)(T) )
     {
-        BOOST_LEAF_ASSERT(P != 0);
+        BOOST_LEAF_ASSERT(P != nullptr);
         return P(e);
     }
 #endif
@@ -216,7 +216,7 @@ struct is_predicate<match_member<P, V1, V...>>: std::true_type
 template <class P>
 struct if_not
 {
-    using error_type = typename P::error_type;;
+    using error_type = typename P::error_type;
     decltype(std::declval<P>().matched) matched;
 
     template <class E>
@@ -241,13 +241,13 @@ namespace leaf_detail
     template <class Ex>
     BOOST_LEAF_CONSTEXPR inline bool check_exception_pack( std::exception const & ex, Ex const * ) noexcept
     {
-        return dynamic_cast<Ex const *>(&ex)!=0;
+        return dynamic_cast<Ex const *>(&ex)!=nullptr;
     }
 
     template <class Ex, class... ExRest>
     BOOST_LEAF_CONSTEXPR inline bool check_exception_pack( std::exception const & ex, Ex const *, ExRest const * ... ex_rest ) noexcept
     {
-        return dynamic_cast<Ex const *>(&ex)!=0 || check_exception_pack(ex, ex_rest...);
+        return dynamic_cast<Ex const *>(&ex)!=nullptr || check_exception_pack(ex, ex_rest...);
     }
 
     BOOST_LEAF_CONSTEXPR inline bool check_exception_pack( std::exception const & ) noexcept
@@ -264,7 +264,7 @@ struct catch_
 
     BOOST_LEAF_CONSTEXPR static bool evaluate(std::exception const & ex) noexcept
     {
-        return leaf_detail::check_exception_pack(ex, static_cast<Ex const *>(0)...);
+        return leaf_detail::check_exception_pack(ex, static_cast<Ex const *>(nullptr)...);
     }
 };
 

@@ -35,10 +35,12 @@
 #undef BOOST_MP_HAS_IMMINTRIN_H
 #endif
 
-#if defined(BOOST_MSVC) && !defined(_M_IX86) && !defined(_M_X64) && !defined(_M_AMD64)
+#if defined(_WIN32) && (defined(_M_ARM64) || defined(_M_ARM))
 //
-// When targeting platforms such as ARM, msvc still has the Intel headers in it's include path
-// even though they're not usable.  See https://github.com/boostorg/multiprecision/issues/321
+// When targeting platforms such as ARM, msvc (and also clang when emulating msvc) still has the
+// Intel headers in its include path even though they're not usable.
+// See https://github.com/boostorg/multiprecision/issues/321
+// Also https://github.com/boostorg/multiprecision/issues/475
 //
 #undef BOOST_MP_HAS_IMMINTRIN_H
 #endif

@@ -179,7 +179,7 @@ T bessel_y0(T x, const Policy& pol)
     }
     if (x == 0)
     {
-       return -policies::raise_overflow_error<T>(function, 0, pol);
+       return -policies::raise_overflow_error<T>(function, nullptr, pol);
     }
     if (x <= 3)                       // x in (0, 3]
     {

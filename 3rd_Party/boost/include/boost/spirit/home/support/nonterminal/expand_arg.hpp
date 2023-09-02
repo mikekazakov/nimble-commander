@@ -22,6 +22,10 @@
 namespace boost { namespace spirit { namespace detail
 {
     ///////////////////////////////////////////////////////////////////////////
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename Context>
     struct expand_arg
     {
@@ -77,10 +81,10 @@ namespace boost { namespace spirit { namespace detail
         }
 
         Context& context;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(expand_arg& operator= (expand_arg const&))
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 
 }}}
 

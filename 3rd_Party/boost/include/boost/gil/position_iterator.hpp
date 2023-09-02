@@ -43,20 +43,34 @@ struct position_iterator : public iterator_facade<position_iterator<Deref,Dim>,
     using point_t = typename Deref::argument_type;
 
     position_iterator() {}
-    position_iterator(const point_t& p, const point_t& step, const Deref& d) : _p(p), _step(step), _d(d) {}
+    position_iterator(point_t const& p, point_t const& step, Deref const& d) : _p(p), _step(step), _d(d) {}
 
-    position_iterator(const position_iterator& p) : _p(p._p), _step(p._step), _d(p._d) {}
-    template <typename D> position_iterator(const position_iterator<D,Dim>& p) : _p(p._p), _step(p._step), _d(p._d) {}
-    position_iterator& operator=(const position_iterator& p) { _p=p._p; _d=p._d; _step=p._step; return *this; }
+    position_iterator(position_iterator const& p) : _p(p._p), _step(p._step), _d(p._d) {}
+    
+    template <typename D>
+    position_iterator(position_iterator<D,Dim> const& p) : _p(p._p), _step(p._step), _d(p._d) {}
+    
+    auto operator=(position_iterator const& p) -> position_iterator&
+    {
+        _p=p._p;
+        _d=p._d;
+        _step=p._step;
+        return *this;
+    }
 
-    const point_t&   pos()      const { return _p; }
-    const point_t&   step()     const { return _step; }
-    const Deref&     deref_fn() const { return _d; }
+    auto pos() const -> point_t const& { return _p; }
+    auto step() const -> point_t const& { return _step; }
+    auto deref_fn() const -> Deref const& { return _d; }
 
     void set_step(difference_type s) { _step[Dim]=s; }
     /// For some reason operator[] provided by iterator_adaptor returns a custom class that is convertible to reference
     /// We require our own reference because it is registered in iterator_traits
-    reference operator[](difference_type d) const { point_t p=_p; p[Dim]+=d*_step[Dim]; return _d(p); }
+    auto operator[](difference_type d) const -> reference
+    {
+        point_t p=_p;
+        p[Dim]+=d*_step[Dim];
+        return _d(p);
+    }
 
 private:
     point_t _p, _step;

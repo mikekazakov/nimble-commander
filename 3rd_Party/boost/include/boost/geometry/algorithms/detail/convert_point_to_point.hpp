@@ -32,6 +32,12 @@ namespace detail { namespace conversion
 {
 
 
+// TODO: Use assignment if possible.
+// WARNING: This utility is called in various places for a subset of dimensions.
+//   In such cases only some of the coordinates should be copied. Alternatively
+//   there should be a different utility for that called differently than
+//   convert_xxx, e.g. set_coordinates.
+
 template <typename Source, typename Destination, std::size_t Dimension, std::size_t DimensionCount>
 struct point_to_point
 {

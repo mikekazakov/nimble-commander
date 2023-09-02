@@ -61,9 +61,6 @@ struct packed_pixel
     packed_pixel() = default;
     explicit packed_pixel(const BitField& bitfield) : _bitfield(bitfield) {}
 
-    // Construct from another compatible pixel type
-    packed_pixel(const packed_pixel& p) : _bitfield(p._bitfield) {}
-
     template <typename Pixel>
     packed_pixel(Pixel const& p,
         typename std::enable_if<is_pixel<Pixel>::value>::type* /*dummy*/ = nullptr)
@@ -108,12 +105,6 @@ struct packed_pixel
         gil::at_c<2>(*this) = chan2;
         gil::at_c<3>(*this) = chan3;
         gil::at_c<4>(*this) = chan4;
-    }
-
-    auto operator=(packed_pixel const& p) -> packed_pixel&
-    {
-        _bitfield = p._bitfield;
-        return *this;
     }
 
     template <typename Pixel>

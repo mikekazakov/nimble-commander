@@ -33,17 +33,6 @@
 namespace boost { namespace geometry { namespace concepts
 {
 
-
-/*!
-\brief MultiPoint concept
-\ingroup concepts
-\par Formal definition:
-The multi point concept is defined as following:
-- there must be a specialization of traits::tag defining multi_point_tag as type
-- it must behave like a Boost.Range
-- its range value must fulfil the Point concept
-
-*/
 template <typename Geometry>
 class MultiPoint
 {

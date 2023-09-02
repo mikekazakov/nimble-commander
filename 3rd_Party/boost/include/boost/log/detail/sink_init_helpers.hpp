@@ -17,10 +17,10 @@
 #define BOOST_LOG_DETAIL_SINK_INIT_HELPERS_HPP_INCLUDED_
 
 #include <string>
-#include <boost/mpl/bool.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/type_traits/is_void.hpp>
 #include <boost/type_traits/is_array.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/utility/string_view_fwd.hpp>
 #include <boost/log/detail/config.hpp>
@@ -90,12 +90,12 @@ inline typename boost::disable_if_c<
 
 // The function installs filter into the sink, if provided in the arguments pack
 template< typename SinkT, typename ArgsT >
-inline void setup_filter(SinkT&, ArgsT const&, mpl::true_)
+inline void setup_filter(SinkT&, ArgsT const&, boost::true_type)
 {
 }
 
 template< typename SinkT, typename ArgsT >
-inline void setup_filter(SinkT& s, ArgsT const& args, mpl::false_)
+inline void setup_filter(SinkT& s, ArgsT const& args, boost::false_type)
 {
     s.set_filter(aux::acquire_filter(args[keywords::filter]));
 }
@@ -144,12 +144,12 @@ inline typename boost::disable_if_c<
 
 // The function installs filter into the sink, if provided in the arguments pack
 template< typename SinkT, typename ArgsT >
-inline void setup_formatter(SinkT&, ArgsT const&, mpl::true_)
+inline void setup_formatter(SinkT&, ArgsT const&, boost::true_type)
 {
 }
 
 template< typename SinkT, typename ArgsT >
-inline void setup_formatter(SinkT& s, ArgsT const& args, mpl::false_)
+inline void setup_formatter(SinkT& s, ArgsT const& args, boost::false_type)
 {
     s.set_formatter(aux::acquire_formatter(args[keywords::format]));
 }

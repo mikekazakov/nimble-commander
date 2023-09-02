@@ -5,8 +5,8 @@
 // Copyright (c) 2009-2012 Mateusz Loskot, London, UK.
 // Copyright (c) 2014 Samuel Debionne, Grenoble, France.
 
-// This file was modified by Oracle on 2014-2021.
-// Modifications copyright (c) 2014-2021 Oracle and/or its affiliates.
+// This file was modified by Oracle on 2014-2022.
+// Modifications copyright (c) 2014-2022 Oracle and/or its affiliates.
 
 // Contributed and/or modified by Adam Wulkiewicz, on behalf of Oracle
 
@@ -22,19 +22,18 @@
 
 #include <cstddef>
 
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/variant_fwd.hpp>
-
-#include <boost/geometry/algorithms/relate.hpp>
+#include <boost/geometry/algorithms/detail/gc_topological_dimension.hpp>
 #include <boost/geometry/algorithms/detail/relate/relate_impl.hpp>
+#include <boost/geometry/algorithms/relate.hpp>
 #include <boost/geometry/core/access.hpp>
+#include <boost/geometry/geometries/adapted/boost_variant.hpp>
 #include <boost/geometry/geometries/concepts/check.hpp>
 #include <boost/geometry/strategies/default_strategy.hpp>
 #include <boost/geometry/strategies/detail.hpp>
 #include <boost/geometry/strategies/relate/cartesian.hpp>
 #include <boost/geometry/strategies/relate/geographic.hpp>
 #include <boost/geometry/strategies/relate/spherical.hpp>
+#include <boost/geometry/views/detail/geometry_collection_view.hpp>
 
 
 namespace boost { namespace geometry
@@ -60,6 +59,82 @@ struct crosses
             Geometry2
         >
 {};
+
+
+template <typename Geometry1, typename Geometry2>
+struct crosses<Geometry1, Geometry2, geometry_collection_tag, geometry_collection_tag>
+{
+    template <typename Strategy>
+    static inline bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        int const dimension1 = detail::gc_topological_dimension(geometry1);
+        int const dimension2 = detail::gc_topological_dimension(geometry2);
+
+        if (dimension1 >= 0 && dimension2 >= 0)
+        {
+            if (dimension1 < dimension2)
+            {
+                return detail::relate::relate_impl
+                    <
+                        detail::de9im::static_mask_crosses_d1_le_d2_type,
+                        Geometry1,
+                        Geometry2
+                    >::apply(geometry1, geometry2, strategy);
+            }
+            else if (dimension1 > dimension2)
+            {
+                return detail::relate::relate_impl
+                    <
+                        detail::de9im::static_mask_crosses_d2_le_d1_type,
+                        Geometry1,
+                        Geometry2
+                    >::apply(geometry1, geometry2, strategy);
+            }
+            else if (dimension1 == 1 && dimension2 == 1)
+            {
+                return detail::relate::relate_impl
+                    <
+                        detail::de9im::static_mask_crosses_d1_1_d2_1_type,
+                        Geometry1,
+                        Geometry2
+                    >::apply(geometry1, geometry2, strategy);
+            }
+        }
+
+        return false;
+    }
+};
+
+template <typename Geometry1, typename Geometry2, typename Tag1>
+struct crosses<Geometry1, Geometry2, Tag1, geometry_collection_tag>
+{
+    template <typename Strategy>
+    static inline bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        using gc1_view_t = detail::geometry_collection_view<Geometry1>;
+        return crosses
+            <
+                gc1_view_t, Geometry2
+            >::apply(gc1_view_t(geometry1), geometry2, strategy);
+    }
+};
+
+template <typename Geometry1, typename Geometry2, typename Tag2>
+struct crosses<Geometry1, Geometry2, geometry_collection_tag, Tag2>
+{
+    template <typename Strategy>
+    static inline bool apply(Geometry1 const& geometry1, Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        using gc2_view_t = detail::geometry_collection_view<Geometry2>;
+        return crosses
+            <
+                Geometry1, gc2_view_t
+            >::apply(geometry1, gc2_view_t(geometry2), strategy);
+    }
+};
 
 
 } // namespace dispatch
@@ -134,130 +209,96 @@ struct crosses<default_strategy, false>
 } // namespace resolve_strategy
 
 
-namespace resolve_variant
+namespace resolve_dynamic
 {
-    template <typename Geometry1, typename Geometry2>
-    struct crosses
+
+template
+<
+    typename Geometry1, typename Geometry2,
+    typename Tag1 = typename geometry::tag<Geometry1>::type,
+    typename Tag2 = typename geometry::tag<Geometry2>::type
+>
+struct crosses
+{
+    template <typename Strategy>
+    static inline bool apply(Geometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Strategy const& strategy)
     {
-        template <typename Strategy>
-        static inline bool apply(Geometry1 const& geometry1,
-                                 Geometry2 const& geometry2,
-                                 Strategy const& strategy)
+        return resolve_strategy::crosses
+            <
+                Strategy
+            >::apply(geometry1, geometry2, strategy);
+    }
+};
+
+
+template <typename DynamicGeometry1, typename Geometry2, typename Tag2>
+struct crosses<DynamicGeometry1, Geometry2, dynamic_geometry_tag, Tag2>
+{
+    template <typename Strategy>
+    static inline bool apply(DynamicGeometry1 const& geometry1,
+                             Geometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        bool result = false;
+        traits::visit<DynamicGeometry1>::apply([&](auto const& g1)
         {
-            return resolve_strategy::crosses
+            result = resolve_strategy::crosses
                 <
                     Strategy
-                >::apply(geometry1, geometry2, strategy);
-        }
-    };
-    
-    
-    template <BOOST_VARIANT_ENUM_PARAMS(typename T), typename Geometry2>
-    struct crosses<variant<BOOST_VARIANT_ENUM_PARAMS(T)>, Geometry2>
-    {
-        template <typename Strategy>
-        struct visitor: static_visitor<bool>
-        {
-            Geometry2 const& m_geometry2;
-            Strategy const& m_strategy;
-            
-            visitor(Geometry2 const& geometry2, Strategy const& strategy)
-                : m_geometry2(geometry2)
-                , m_strategy(strategy)
-            {}
-            
-            template <typename Geometry1>
-            result_type operator()(Geometry1 const& geometry1) const
-            {
-                return crosses
-                    <
-                        Geometry1,
-                        Geometry2
-                    >::apply(geometry1, m_geometry2, m_strategy);
-            }
-        };
-        
-        template <typename Strategy>
-        static inline bool apply(variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry1,
-                                 Geometry2 const& geometry2,
-                                 Strategy const& strategy)
-        {
-            return boost::apply_visitor(visitor<Strategy>(geometry2, strategy), geometry1);
-        }
-    };
-    
-    
-    template <typename Geometry1, BOOST_VARIANT_ENUM_PARAMS(typename T)>
-    struct crosses<Geometry1, variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
-    {
-        template <typename Strategy>
-        struct visitor: static_visitor<bool>
-        {
-            Geometry1 const& m_geometry1;
-            Strategy const& m_strategy;
-            
-            visitor(Geometry1 const& geometry1, Strategy const& strategy)
-                : m_geometry1(geometry1)
-                , m_strategy(strategy)
-            {}
-            
-            template <typename Geometry2>
-            result_type operator()(Geometry2 const& geometry2) const
-            {
-                return crosses
-                    <
-                        Geometry1,
-                        Geometry2
-                    >::apply(m_geometry1, geometry2, m_strategy);
-            }
-        };
-        
-        template <typename Strategy>
-        static inline bool apply(Geometry1 const& geometry1,
-                                 variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& geometry2,
-                                 Strategy const& strategy)
-        {
-            return boost::apply_visitor(visitor<Strategy>(geometry1, strategy), geometry2);
-        }
-    };
-    
-    
-    template <BOOST_VARIANT_ENUM_PARAMS(typename T1), BOOST_VARIANT_ENUM_PARAMS(typename T2)>
-    struct crosses<variant<BOOST_VARIANT_ENUM_PARAMS(T1)>, variant<BOOST_VARIANT_ENUM_PARAMS(T2)> >
-    {
-        template <typename Strategy>
-        struct visitor: static_visitor<bool>
-        {
-            Strategy const& m_strategy;
+                >::apply(g1, geometry2, strategy);
+        }, geometry1);
+        return result;
+    }
+};
 
-            visitor(Strategy const& strategy)
-                : m_strategy(strategy)
-            {}
 
-            template <typename Geometry1, typename Geometry2>
-            result_type operator()(Geometry1 const& geometry1,
-                                   Geometry2 const& geometry2) const
-            {
-                return crosses
-                    <
-                        Geometry1,
-                        Geometry2
-                    >::apply(geometry1, geometry2, m_strategy);
-            }
-        };
-        
-        template <typename Strategy>
-        static inline bool apply(variant<BOOST_VARIANT_ENUM_PARAMS(T1)> const& geometry1,
-                                 variant<BOOST_VARIANT_ENUM_PARAMS(T2)> const& geometry2,
-                                  Strategy const& strategy)
+template <typename Geometry1, typename DynamicGeometry2, typename Tag1>
+struct crosses<Geometry1, DynamicGeometry2, Tag1, dynamic_geometry_tag>
+{
+    template <typename Strategy>
+    static inline bool apply(Geometry1 const& geometry1,
+                             DynamicGeometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        bool result = false;
+        traits::visit<DynamicGeometry2>::apply([&](auto const& g2)
         {
-            return boost::apply_visitor(visitor<Strategy>(strategy), geometry1, geometry2);
-        }
-    };
-    
-} // namespace resolve_variant
-    
-    
+            result = resolve_strategy::crosses
+                <
+                    Strategy
+                >::apply(geometry1, g2, strategy);
+        }, geometry2);
+        return result;
+    }
+};
+
+
+template <typename DynamicGeometry1, typename DynamicGeometry2>
+struct crosses<DynamicGeometry1, DynamicGeometry2, dynamic_geometry_tag, dynamic_geometry_tag>
+{
+    template <typename Strategy>
+    static inline bool apply(DynamicGeometry1 const& geometry1,
+                             DynamicGeometry2 const& geometry2,
+                             Strategy const& strategy)
+    {
+        bool result = false;
+        traits::visit<DynamicGeometry1, DynamicGeometry2>::apply([&](auto const& g1, auto const& g2)
+        {
+            result = resolve_strategy::crosses
+                <
+                    Strategy
+                >::apply(g1, g2, strategy);
+        }, geometry1, geometry2);
+        return result;
+    }
+};
+
+
+} // namespace resolve_dynamic
+
+
 /*!
 \brief \brief_check2{crosses}
 \ingroup crosses
@@ -277,7 +318,7 @@ inline bool crosses(Geometry1 const& geometry1,
                     Geometry2 const& geometry2,
                     Strategy const& strategy)
 {
-    return resolve_variant::crosses
+    return resolve_dynamic::crosses
             <
                 Geometry1, Geometry2
             >::apply(geometry1, geometry2, strategy);
@@ -302,7 +343,7 @@ inline bool crosses(Geometry1 const& geometry1,
 template <typename Geometry1, typename Geometry2>
 inline bool crosses(Geometry1 const& geometry1, Geometry2 const& geometry2)
 {
-    return resolve_variant::crosses
+    return resolve_dynamic::crosses
             <
                 Geometry1, Geometry2
             >::apply(geometry1, geometry2, default_strategy());

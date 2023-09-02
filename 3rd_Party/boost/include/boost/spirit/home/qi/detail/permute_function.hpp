@@ -16,6 +16,10 @@
 
 namespace boost { namespace spirit { namespace qi { namespace detail
 {
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4512) // assignment operator could not be generated.
+#endif
     template <typename Iterator, typename Context, typename Skipper>
     struct permute_function
     {
@@ -62,10 +66,10 @@ namespace boost { namespace spirit { namespace qi { namespace detail
         Context& context;
         Skipper const& skipper;
         bool* taken;
-
-        // silence MSVC warning C4512: assignment operator could not be generated
-        BOOST_DELETED_FUNCTION(permute_function& operator= (permute_function const&))
     };
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
 }}}}
 
 #endif

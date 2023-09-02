@@ -7,7 +7,9 @@
 #ifndef BOOST_HISTOGRAM_DETAIL_DEBUG_HPP
 #define BOOST_HISTOGRAM_DETAIL_DEBUG_HPP
 
-#warning "debug.hpp included"
+#include <boost/config/pragma_message.hpp>
+
+BOOST_PRAGMA_MESSAGE("debug.hpp included")
 
 #include <boost/histogram/detail/type_name.hpp>
 #include <iostream>

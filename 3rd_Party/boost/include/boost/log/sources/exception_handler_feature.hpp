@@ -15,11 +15,11 @@
 #ifndef BOOST_LOG_SOURCES_EXCEPTION_HANDLER_FEATURE_HPP_INCLUDED_
 #define BOOST_LOG_SOURCES_EXCEPTION_HANDLER_FEATURE_HPP_INCLUDED_
 
-#include <boost/mpl/if.hpp>
 #include <boost/move/core.hpp>
 #include <boost/move/utility_core.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_nothrow_move_constructible.hpp>
+#include <boost/type_traits/conditional.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/light_function.hpp>
 #include <boost/log/detail/locks.hpp>
@@ -211,8 +211,8 @@ private:
         // we shall acquire a read lock here, when an exception is caught.
         // If other features do require locking, the thread model is
         // already locked by now, and we don't do locking at all.
-        typedef typename mpl::if_<
-            is_same< no_lock< threading_model >, typename final_type::push_record_lock >,
+        typedef typename boost::conditional<
+            is_same< no_lock< threading_model >, typename final_type::push_record_lock >::value,
             boost::log::aux::shared_lock_guard< threading_model >,
             no_lock< threading_model >
         >::type lock_type;

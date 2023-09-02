@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 //
 // Copyright (c) 2002-2003 Eric Friedman, Itay Maman
-// Copyright (c) 2012-2022 Antony Polukhin
+// Copyright (c) 2012-2023 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -2131,7 +2131,8 @@ private: // helpers, for modifiers (below)
 
 public: // modifiers
 
-#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) && \
+    (!BOOST_WORKAROUND(BOOST_CLANG_VERSION, BOOST_TESTED_AT(150000)) || BOOST_CXX_VERSION <= 202002L)
     template <class T>
     typename boost::enable_if<
         boost::mpl::and_<

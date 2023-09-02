@@ -11,29 +11,32 @@
 #include <limits>
 #include <type_traits>
 #include <boost/math/tools/is_constant_evaluated.hpp>
+#include <boost/math/tools/promotion.hpp>
+#include <boost/math/tools/config.hpp>
 #include <boost/math/ccmath/abs.hpp>
+#include <boost/math/ccmath/signbit.hpp>
 
 namespace boost::math::ccmath {
 
 namespace detail {
 
 template <typename T>
-inline constexpr T copysign_impl(const T mag, const T sgn) noexcept
+constexpr T copysign_impl(const T mag, const T sgn) noexcept
 {
-    if(sgn >= 0)
+    if (boost::math::ccmath::signbit(sgn))
     {
-        return boost::math::ccmath::abs(mag);
+        return -boost::math::ccmath::abs(mag);
     }
     else
     {
-        return -boost::math::ccmath::abs(mag);
+        return boost::math::ccmath::abs(mag);
     }
 }
 
 } // Namespace detail
 
 template <typename Real, std::enable_if_t<!std::is_integral_v<Real>, bool> = true>
-inline constexpr Real copysign(Real mag, Real sgn) noexcept
+constexpr Real copysign(Real mag, Real sgn) noexcept
 {
     if(BOOST_MATH_IS_CONSTANT_EVALUATED(mag))
     {
@@ -47,29 +50,12 @@ inline constexpr Real copysign(Real mag, Real sgn) noexcept
 }
 
 template <typename T1, typename T2>
-inline constexpr auto copysign(T1 mag, T2 sgn) noexcept
+constexpr auto copysign(T1 mag, T2 sgn) noexcept
 {
-    if(BOOST_MATH_IS_CONSTANT_EVALUATED(mag))
-    {
-        // If the type is an integer (e.g. epsilon == 0) then set the epsilon value to 1 so that type is at a minimum 
-        // cast to double
-        constexpr auto T1p = std::numeric_limits<T1>::epsilon() > 0 ? std::numeric_limits<T1>::epsilon() : 1;
-        constexpr auto T2p = std::numeric_limits<T2>::epsilon() > 0 ? std::numeric_limits<T2>::epsilon() : 1;
-        
-        using promoted_type = 
-                              #ifndef BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS
-                              std::conditional_t<T1p <= LDBL_EPSILON && T1p <= T2p, T1,
-                              std::conditional_t<T2p <= LDBL_EPSILON && T2p <= T1p, T2,
-                              #endif
-                              std::conditional_t<T1p <= DBL_EPSILON && T1p <= T2p, T1,
-                              std::conditional_t<T2p <= DBL_EPSILON && T2p <= T1p, T2, double
-                              #ifndef BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS
-                              >>>>;
-                              #else
-                              >>;
-                              #endif
-
-        return boost::math::ccmath::copysign(promoted_type(mag), promoted_type(sgn));
+    if (BOOST_MATH_IS_CONSTANT_EVALUATED(mag))
+    {        
+        using promoted_type = boost::math::tools::promote_args_2_t<T1, T2>;
+        return boost::math::ccmath::copysign(static_cast<promoted_type>(mag), static_cast<promoted_type>(sgn));
     }
     else
     {
@@ -78,13 +64,13 @@ inline constexpr auto copysign(T1 mag, T2 sgn) noexcept
     }
 }
 
-inline constexpr float copysignf(float mag, float sgn) noexcept
+constexpr float copysignf(float mag, float sgn) noexcept
 {
     return boost::math::ccmath::copysign(mag, sgn);
 }
 
 #ifndef BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS
-inline constexpr long double copysignl(long double mag, long double sgn) noexcept
+constexpr long double copysignl(long double mag, long double sgn) noexcept
 {
     return boost::math::ccmath::copysign(mag, sgn);
 }

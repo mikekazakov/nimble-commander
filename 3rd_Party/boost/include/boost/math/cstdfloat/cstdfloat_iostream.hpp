@@ -29,14 +29,15 @@
   #include <stdexcept>
   #include <string>
   #include <boost/math/tools/assert.hpp>
+  #include <boost/math/tools/nothrow.hpp>
   #include <boost/math/tools/throw_exception.hpp>
 
 //  #if (0)
   #if defined(__GNUC__)
 
   // Forward declarations of quadruple-precision string functions.
-  extern "C" int quadmath_snprintf(char *str, size_t size, const char *format, ...) throw();
-  extern "C" boost::math::cstdfloat::detail::float_internal128_t strtoflt128(const char*, char **) throw();
+  extern "C" int quadmath_snprintf(char *str, size_t size, const char *format, ...) BOOST_MATH_NOTHROW;
+  extern "C" boost::math::cstdfloat::detail::float_internal128_t strtoflt128(const char*, char **) BOOST_MATH_NOTHROW;
 
   namespace std
   {

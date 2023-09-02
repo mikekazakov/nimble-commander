@@ -26,6 +26,5 @@ set -e
 ./LetsMove/bootstrap.sh
 ./AquaticPrime/bootstrap.sh
 ./frozen/bootstrap.sh
-./expected/bootstrap.sh
 ./pstld/bootstrap.sh
 ./re2/bootstrap.sh

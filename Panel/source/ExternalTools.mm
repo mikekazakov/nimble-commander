@@ -1,10 +1,14 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalTools.h"
 #include <Config/Config.h>
 #include <Config/RapidJSON.h>
 #include <Foundation/Foundation.h>
 #include <Utility/StringExtras.h>
+#include <Utility/PathManip.h>
+#include <Term/Task.h>
 #include <Habanero/dispatch_cpp.h>
+#include <VFS/VFSError.h>
+#include <fmt/core.h>
 #include <any>
 
 namespace nc::panel {
@@ -17,54 +21,31 @@ static const auto g_ParametersKey = "parameters";
 static const auto g_ShortcutKey = "shortcut";
 static const auto g_StartupKey = "startup";
 
-bool operator==(ExternalToolsParameters::SelectedItems _lhs, ExternalToolsParameters::SelectedItems _rhs) noexcept
-{
-    return _lhs.what == _rhs.what &&         //
-           _lhs.location == _rhs.location && //
-           _lhs.max == _rhs.max &&           //
-           _lhs.as_parameters == _rhs.as_parameters;
-}
-
-bool operator!=(ExternalToolsParameters::SelectedItems _lhs, ExternalToolsParameters::SelectedItems _rhs) noexcept
-{
-    return !(_lhs == _rhs);
-}
-
-bool operator==(ExternalToolsParameters::Step _lhs, ExternalToolsParameters::Step _rhs) noexcept
-{
-    return _lhs.type == _rhs.type && _lhs.index == _rhs.index;
-}
-
-bool operator!=(ExternalToolsParameters::Step _lhs, ExternalToolsParameters::Step _rhs) noexcept
-{
-    return !(_lhs == _rhs);
-}
-
-ExternalToolsParameters::Step::Step(ActionType t, uint16_t i) : type(t), index(i)
+ExternalToolsParameters::Step::Step(ActionType t, uint16_t i, bool _partial) : type(t), index(i), partial(_partial)
 {
 }
 
-void ExternalToolsParameters::InsertUserDefinedText(UserDefined _ud)
+void ExternalToolsParameters::InsertUserDefinedText(UserDefined _ud, bool _partial)
 {
-    m_Steps.emplace_back(ActionType::UserDefined, m_UserDefined.size());
+    m_Steps.emplace_back(ActionType::UserDefined, m_UserDefined.size(), _partial);
     m_UserDefined.emplace_back(std::move(_ud));
 }
 
-void ExternalToolsParameters::InsertValueRequirement(EnterValue _ev)
+void ExternalToolsParameters::InsertValueRequirement(EnterValue _ev, bool _partial)
 {
-    m_Steps.emplace_back(ActionType::EnterValue, m_EnterValues.size());
+    m_Steps.emplace_back(ActionType::EnterValue, m_EnterValues.size(), _partial);
     m_EnterValues.emplace_back(std::move(_ev));
 }
 
-void ExternalToolsParameters::InsertCurrentItem(CurrentItem _ci)
+void ExternalToolsParameters::InsertCurrentItem(CurrentItem _ci, bool _partial)
 {
-    m_Steps.emplace_back(ActionType::CurrentItem, m_CurrentItems.size());
+    m_Steps.emplace_back(ActionType::CurrentItem, m_CurrentItems.size(), _partial);
     m_CurrentItems.emplace_back(std::move(_ci));
 }
 
-void ExternalToolsParameters::InsertSelectedItem(SelectedItems _si)
+void ExternalToolsParameters::InsertSelectedItem(SelectedItems _si, bool _partial)
 {
-    m_Steps.emplace_back(ActionType::SelectedItems, m_SelectedItems.size());
+    m_Steps.emplace_back(ActionType::SelectedItems, m_SelectedItems.size(), _partial);
     m_SelectedItems.emplace_back(std::move(_si));
 }
 
@@ -113,11 +94,250 @@ namespace {
 struct InterpretInvertFlag {
 };
 struct SetMaximumFilesFlag {
-    unsigned maximum;
+    unsigned maximum = 0;
 };
 
-}
+using ParametersVariant = std::variant<ExternalToolsParameters::UserDefined,
+                                       ExternalToolsParameters::EnterValue,
+                                       ExternalToolsParameters::CurrentItem,
+                                       ExternalToolsParameters::SelectedItems,
+                                       SetMaximumFilesFlag>;
 
+} // namespace
+
+static std::expected<std::vector<std::pair<ParametersVariant, bool>>, std::string>
+Eat2(const std::string_view _source) noexcept
+{
+    std::string_view source = _source;
+    std::string_view prev;
+    std::optional<std::string> user_defined;
+    std::vector<std::pair<ParametersVariant, bool>> result;
+    bool left_right = false; // default is source/dest
+                             //    bool partial = false;
+
+    std::optional<unsigned> number;
+    std::optional<std::string> prompt;
+    bool placeholder = false;
+    bool minus = false;
+    bool list = false;
+    bool in_prompt = false;
+
+    auto error = [&] {
+        const auto error_pos = prev.data() - _source.data();
+        return std::unexpected(
+            fmt::format("Parse error:\n{}⚠️{}", _source.substr(0, error_pos), _source.substr(error_pos)));
+    };
+    auto reset_placeholder = [&] {
+        number.reset();
+        prompt.reset();
+        placeholder = minus = list = in_prompt = false;
+    };
+    auto location = [&] {
+        if( left_right )
+            return minus ? ExternalToolsParameters::Location::Right : ExternalToolsParameters::Location::Left;
+        else
+            return minus ? ExternalToolsParameters::Location::Target : ExternalToolsParameters::Location::Source;
+    };
+
+    while( !source.empty() ) {
+        prev = source;
+        char c;
+        bool escaped = false;
+        if( source[0] == '\\' && source.length() > 1 ) {
+            c = source[1];
+            escaped = true;
+            source.remove_prefix(2);
+        }
+        else if( source[0] == '%' && source.length() > 1 && source[1] == '%' ) {
+            c = '%';
+            escaped = true;
+            source.remove_prefix(2);
+        }
+        else {
+            c = source[0];
+            source.remove_prefix(1);
+        }
+
+        if( user_defined != std::nullopt && (c == '%' || c == ' ') && escaped == false ) {
+            // flush existing arg and continue parsing
+            result.emplace_back(ExternalToolsParameters::UserDefined{std::move(*user_defined)}, true);
+            user_defined.reset();
+        }
+
+        if( user_defined != std::nullopt ) {
+            *user_defined += c;
+            continue;
+        }
+
+        if( in_prompt ) {
+            // continuing or ending user prompt
+            if( c == '"' )
+                in_prompt = false;
+            else
+                *prompt += c;
+            continue;
+        }
+
+        if( c == '%' && !placeholder && !escaped ) {
+            // start ..%something..
+            placeholder = true;
+            continue;
+        }
+        if( c == '%' && placeholder ) {
+            // guard against ..%5%p...
+            return error();
+        }
+
+        if( placeholder ) {
+            if( c >= '0' && c <= '9' ) {
+                number = number.value_or(0) * 10 + c - '0';
+                continue;
+            }
+
+            if( c == '-' ) {
+                if( minus || number )
+                    return error(); // guard against %--, %50-
+                minus = true;
+                continue;
+            }
+
+            if( c == 'L' ) {
+                if( list || number || prompt )
+                    return error(); // guard agains %42L, %LL, %"salve"L
+                list = true;
+                continue;
+            }
+
+            if( c == '"' ) {
+                if( minus || number )
+                    return error(); // guard against %-" and %42"
+                prompt.emplace();
+                in_prompt = true;
+                continue;
+            }
+
+            if( c == '?' ) { // terminal - ask the user for a parameter
+                if( minus || number || list )
+                    return error(); // malformed string, aborting
+                result.emplace_back(ExternalToolsParameters::EnterValue{prompt ? std::move(*prompt) : std::string{}},
+                                    true);
+                reset_placeholder();
+                continue;
+            }
+            if( c == 'r' ) { // terminal - directory path
+                if( prompt || number || list )
+                    return error(); // malformed string, aborting
+                result.emplace_back(
+                    ExternalToolsParameters::CurrentItem{location(), ExternalToolsParameters::FileInfo::DirectoryPath},
+                    true);
+                reset_placeholder();
+                continue;
+            }
+            if( c == 'p' ) { // terminal - current path
+                if( prompt || number || list )
+                    return error(); // malformed string, aborting
+                result.emplace_back(
+                    ExternalToolsParameters::CurrentItem{location(), ExternalToolsParameters::FileInfo::Path}, true);
+                reset_placeholder();
+                continue;
+            }
+            if( c == 'f' ) { // terminal - current filename
+                if( prompt || number || list )
+                    return error(); // malformed string, aborting
+                result.emplace_back(
+                    ExternalToolsParameters::CurrentItem{location(), ExternalToolsParameters::FileInfo::Filename},
+                    true);
+                reset_placeholder();
+                continue;
+            }
+            if( c == 'n' ) { // terminal - current filename without extension
+                if( prompt || number || list )
+                    return error(); // malformed string, aborting
+                result.emplace_back(
+                    ExternalToolsParameters::CurrentItem{location(),
+                                                         ExternalToolsParameters::FileInfo::FilenameWithoutExtension},
+                    true);
+                reset_placeholder();
+                continue;
+            }
+            if( c == 'e' ) { // terminal - current extension
+                if( prompt || number || list )
+                    return error(); // malformed string, aborting
+                result.emplace_back(
+                    ExternalToolsParameters::CurrentItem{location(), ExternalToolsParameters::FileInfo::FileExtension},
+                    true);
+                reset_placeholder();
+                continue;
+            }
+            if( c == 'F' ) { // terminal - selected filenames
+                if( prompt )
+                    return error(); // malformed string, aborting
+                result.emplace_back(
+                    ExternalToolsParameters::SelectedItems{
+                        location(), ExternalToolsParameters::FileInfo::Filename, number.value_or(0), !list},
+                    true);
+                reset_placeholder();
+                continue;
+            }
+            if( c == 'P' ) { // terminal - selected filepaths
+                if( prompt )
+                    return error(); // malformed string, aborting
+                result.emplace_back(
+                    ExternalToolsParameters::SelectedItems{
+                        location(), ExternalToolsParameters::FileInfo::Path, number.value_or(0), !list},
+                    true);
+                reset_placeholder();
+                continue;
+            }
+            if( c == 'T' ) { // terminal - limit maxium total amount of files
+                if( prompt || minus || list || !number )
+                    return error(); // malformed string, aborting
+                result.emplace_back(SetMaximumFilesFlag{static_cast<unsigned>(number.value())}, false);
+                reset_placeholder();
+                continue;
+            }
+            if( c == ' ' && minus && !list && !number && !prompt ) { // terminal - source change
+                left_right = !left_right;
+                reset_placeholder();
+                continue;
+            }
+            return error();
+        }
+
+        if( c == ' ' && !escaped ) {
+            // remove space separators
+            if( !result.empty() )
+                result.back().second = false;
+            continue;
+        }
+
+        // otherwise, open a new user defined argument
+        user_defined.emplace(1, c);
+    }
+
+    if( placeholder )
+        return error();
+
+    if( user_defined )
+        result.emplace_back(ExternalToolsParameters::UserDefined{std::move(*user_defined)}, false);
+
+    if( !result.empty() )
+        result.back().second = false;
+
+    //    std::optional<std::string> user_defined;
+    //    std::vector<ParametersVariant> result;
+    //    bool left_right = false; // default is source/dest
+    //
+    //    std::optional<int> number;
+    //    std::optional<std::string> prompt;
+    //    bool placeholder = false;
+    //    bool minus = false;
+    //    bool list = false;
+    //    bool in_prompt = false;
+
+    return result;
+}
+#if 0
 static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool _invert_flag)
 {
     assert(_source && _source.length == _range.location + _range.length);
@@ -298,77 +518,41 @@ static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool
     }
     return make_pair(std::any(), 0);
 }
-
-ExternalToolsParameters ExternalToolsParametersParser::Parse(const std::string &_source,
-                                                             std::function<void(std::string)> _parse_error)
+#endif
+std::expected<ExternalToolsParameters, std::string> ExternalToolsParametersParser::Parse(std::string_view _source)
 {
     ExternalToolsParameters result;
 
-    NSString *source = [NSString stringWithUTF8StdString:_source];
-    bool invert_flag = false;
-    const auto length = source.length;
-    auto range = NSMakeRange(0, length);
-    while( range.length > 0 ) {
-        auto res = Eat(source, range, invert_flag);
-        assert(res.second <= range.length);
-        if( res.second == 0 ) {
-            if( _parse_error ) {
-                NSString *left = [source substringFromIndex:range.location];
-                std::string error = "Parse error nearby the following symbols:\n"s + left.UTF8String;
-                _parse_error(move(error));
-            }
-            break;
-        }
+    auto params = Eat2(_source);
+    if( !params )
+        return std::unexpected(params.error());
 
-        range = NSMakeRange(range.location + res.second, length - range.location - res.second);
-
-        if( res.first.type() == typeid(ExternalToolsParameters::UserDefined) ) {
-            auto &v = *std::any_cast<ExternalToolsParameters::UserDefined>(&res.first);
-            result.InsertUserDefinedText(std::move(v));
+    for( auto [param, partial] : params.value() ) {
+        if( auto val = std::get_if<ExternalToolsParameters::UserDefined>(&param) ) {
+            result.InsertUserDefinedText(std::move(*val), partial);
         }
-        else if( res.first.type() == typeid(ExternalToolsParameters::EnterValue) ) {
-            auto &v = *std::any_cast<ExternalToolsParameters::EnterValue>(&res.first);
-            result.InsertValueRequirement(std::move(v));
+        if( auto val = std::get_if<ExternalToolsParameters::EnterValue>(&param) ) {
+            result.InsertValueRequirement(std::move(*val), partial);
         }
-        else if( res.first.type() == typeid(ExternalToolsParameters::CurrentItem) ) {
-            auto &v = *std::any_cast<ExternalToolsParameters::CurrentItem>(&res.first);
-            result.InsertCurrentItem(std::move(v));
+        if( auto val = std::get_if<ExternalToolsParameters::CurrentItem>(&param) ) {
+            result.InsertCurrentItem(std::move(*val), partial);
         }
-        else if( res.first.type() == typeid(ExternalToolsParameters::SelectedItems) ) {
-            auto &v = *std::any_cast<ExternalToolsParameters::SelectedItems>(&res.first);
-            result.InsertSelectedItem(std::move(v));
+        if( auto val = std::get_if<ExternalToolsParameters::SelectedItems>(&param) ) {
+            result.InsertSelectedItem(std::move(*val), partial);
         }
-        else if( res.first.type() == typeid(InterpretInvertFlag) ) {
-            invert_flag = !invert_flag;
-        }
-        else if( res.first.type() == typeid(SetMaximumFilesFlag) ) {
-            auto v = *std::any_cast<SetMaximumFilesFlag>(&res.first);
-            result.m_MaximumTotalFiles = v.maximum;
+        if( auto val = std::get_if<SetMaximumFilesFlag>(&param) ) {
+            result.m_MaximumTotalFiles = val->maximum;
         }
     }
 
     return result;
 }
 
-bool operator==(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept
-{
-    return _lhs.m_Title == _rhs.m_Title &&                   //
-           _lhs.m_ExecutablePath == _rhs.m_ExecutablePath && //
-           _lhs.m_Parameters == _rhs.m_Parameters &&         //
-           _lhs.m_Shorcut == _rhs.m_Shorcut &&               //
-           _lhs.m_StartupMode == _rhs.m_StartupMode;
-}
-
-bool operator!=(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept
-{
-    return !(_lhs == _rhs);
-}
-
 static nc::config::Value SaveTool(const ExternalTool &_et)
 {
     using namespace rapidjson;
-    using nc::config::MakeStandaloneString;
     using nc::config::g_CrtAllocator;
+    using nc::config::MakeStandaloneString;
     nc::config::Value v(kObjectType);
 
     v.AddMember(MakeStandaloneString(g_TitleKey), MakeStandaloneString(_et.m_Title), g_CrtAllocator);
@@ -453,7 +637,7 @@ std::vector<std::shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllToo
 
 ExternalToolsStorage::ObservationTicket ExternalToolsStorage::ObserveChanges(std::function<void()> _callback)
 {
-    return AddObserver(move(_callback));
+    return AddObserver(std::move(_callback));
 }
 
 void ExternalToolsStorage::WriteToolsToConfig() const
@@ -527,28 +711,164 @@ void ExternalToolsStorage::RemoveTool(size_t _at_index)
     CommitChanges();
 }
 
-//class
-//{
-//public:
-//    struct Input {
-//        data::Model *left_data = nullptr; // not retained
-//        data::Model *right_data = nullptr; // not retained
-//        int left_cursor_pos = -1;
-//        int right_cursor_pos = -1;
-//        utility::TemporaryFileStorage *temp_storage = nullptr; // not retained
-//    };
-    
-ExternalToolExecution::ExternalToolExecution(const Context &_ctx, const ExternalTool &_et):
-    m_ET(_et)
+ExternalToolExecution::ExternalToolExecution(const Context &_ctx, const ExternalTool &_et) : m_Ctx(_ctx), m_ET(_et)
 {
-    (void)_ctx;
+    assert(m_Ctx.left_data);
+    assert(m_Ctx.right_data);
+    assert(m_Ctx.temp_storage);
+
+    if( auto params = ExternalToolsParametersParser().Parse(m_ET.m_Parameters) )
+        m_Params = std::move(params.value());
+    else
+        throw std::invalid_argument(params.error());
+
+    for( int i = 0, e = static_cast<int>(m_Params.StepsAmount()); i != e; ++i )
+        if( m_Params.StepNo(i).type == ExternalToolsParameters::ActionType::EnterValue )
+            m_UserInputPrompts.emplace_back(m_Params.GetEnterValue(m_Params.StepNo(i).index).name);
 }
 
 void ExternalToolExecution::CommitUserInput(std::span<const std::string> _input)
 {
-    (void)_input;
+    if( _input.size() != m_UserInputPrompts.size() )
+        throw std::logic_error(
+            fmt::format("ExternalToolExecution::CommitUserInput required {} inputs, but {} were provided",
+                        m_UserInputPrompts.size(),
+                        _input.size()));
+    m_UserInput.assign(_input.begin(), _input.end());
 }
 
-
-
+bool ExternalToolExecution::RequiresUserInput() const noexcept
+{
+    return !m_UserInputPrompts.empty();
 }
+
+std::span<const std::string> ExternalToolExecution::UserInputPrompts() const noexcept
+{
+    return m_UserInputPrompts;
+}
+
+std::vector<std::string> ExternalToolExecution::BuildArguments() const
+{
+    std::vector<std::string> result;
+    const size_t max_files =
+        m_Params.GetMaximumTotalFiles() > 0 ? m_Params.GetMaximumTotalFiles() : std::numeric_limits<size_t>::max();
+    size_t num_files = 0;
+
+    bool append = false;
+    auto commit = [&](std::string _arg) {
+        if( append && !result.empty() )
+            result.back() += _arg;
+        else
+            result.push_back(std::move(_arg));
+    };
+    auto panel_for_location = [&](ExternalToolsParameters::Location _location) {
+        switch( _location ) {
+            case ExternalToolsParameters::Location::Left:
+                return m_Ctx.left_data;
+            case ExternalToolsParameters::Location::Right:
+                return m_Ctx.right_data;
+            case ExternalToolsParameters::Location::Source:
+                return m_Ctx.focus == PanelFocus::left ? m_Ctx.left_data : m_Ctx.right_data;
+            case ExternalToolsParameters::Location::Target:
+                return m_Ctx.focus == PanelFocus::left ? m_Ctx.right_data : m_Ctx.left_data;
+        }
+    };
+    auto info_from_item = [](const VFSListingItem &_item, ExternalToolsParameters::FileInfo _info) -> std::string {
+        assert(_item);
+        using FI = ExternalToolsParameters::FileInfo;
+        switch( _info ) {
+            case FI::Filename:
+                return _item.Filename();
+            case FI::Path:
+                return _item.Path();
+            case FI::FileExtension:
+                return _item.ExtensionIfAny();
+            case FI::FilenameWithoutExtension:
+                return _item.FilenameWithoutExt();
+            case FI::DirectoryPath:
+                return EnsureNoTrailingSlash(_item.Directory());
+        }
+    };
+
+    for( const auto step : m_Params.Steps() ) {
+        if( step.type == ExternalToolsParameters::ActionType::UserDefined ) {
+            const auto &v = m_Params.GetUserDefined(step.index);
+            commit(v.text);
+        }
+        if( step.type == ExternalToolsParameters::ActionType::EnterValue ) {
+            commit(m_UserInput.at(step.index));
+        }
+        if( step.type == ExternalToolsParameters::ActionType::CurrentItem && num_files < max_files ) {
+            const auto v = m_Params.GetCurrentItem(step.index);
+            const panel::data::Model *const panel = panel_for_location(v.location);
+            const int idx = panel == m_Ctx.left_data ? m_Ctx.left_cursor_pos : m_Ctx.right_cursor_pos;
+            if( VFSListingItem item = panel->EntryAtSortPosition(idx) ) {
+                commit(info_from_item(item, v.what));
+                ++num_files;
+            }
+        }
+        if( step.type == ExternalToolsParameters::ActionType::SelectedItems ) {
+            append = false; // currently cannot concatentate multiple filenames into a single argument
+            const auto &v = m_Params.GetSelectedItems(step.index);
+            const panel::data::Model *const panel = panel_for_location(v.location);
+
+            std::vector<VFSListingItem> items;
+            for( auto ind : panel->SortedDirectoryEntries() ) {
+                if( panel->VolatileDataAtRawPosition(ind).is_selected() )
+                    if( auto e = panel->EntryAtRawPosition(ind) )
+                        items.emplace_back(std::move(e));
+                if( v.max != 0 && items.size() >= v.max )
+                    break;
+            }
+            if( items.empty() ) {
+                const int idx = panel == m_Ctx.left_data ? m_Ctx.left_cursor_pos : m_Ctx.right_cursor_pos;
+                if( auto e = panel->EntryAtSortPosition(idx) )
+                    if( e && !e.IsDotDot() )
+                        items.emplace_back(std::move(e));
+            }
+
+            if( v.as_parameters ) {
+                for( auto &item : items ) {
+                    if( num_files++ >= max_files )
+                        break;
+                    commit(info_from_item(item, v.what));
+                }
+            }
+            else {
+                std::string list;
+                for( auto &item : items ) {
+                    if( num_files++ >= max_files )
+                        break;
+                    if( !list.empty() )
+                        list += "\n";
+                    list += info_from_item(item, v.what);
+                }
+                if( !list.empty() ) {
+                    if( auto list_filename = m_Ctx.temp_storage->MakeFileFromMemory(list) )
+                        commit(*list_filename);
+                }
+            }
+        }
+        append = step.partial;
+    }
+    return result;
+}
+
+// returns a pid
+std::expected<pid_t, std::string> ExternalToolExecution::startDetached()
+{
+    // TODO: bundle?
+    // TODO: relative path from env?
+    
+//    ExternalTool m_ET;
+    auto args = BuildArguments();
+    
+    int pid = nc::term::Task::RunDetachedProcess(m_ET.m_ExecutablePath, args);
+    if( pid < 0 ) {
+        return std::unexpected(VFSError::FormatErrorCode( VFSError::FromErrno()));
+    }
+    
+    return pid;
+}
+
+} // namespace nc::panel

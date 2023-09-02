@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Task.h"
 #include <sys/select.h>
 #include <sys/ioctl.h>
@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <termios.h>
 #include <locale.h>
+#include <algorithm>
 #include <CoreFoundation/CoreFoundation.h>
 #include <Habanero/CloseFrom.h>
 
@@ -208,6 +209,9 @@ static const char *GetImgNameFromPath(const char *_path)
 int Task::RunDetachedProcess(const std::string &_process_path,
                              const std::vector<std::string> &_args)
 {
+    if( access (_process_path.c_str(), F_OK|X_OK) < 0)
+        return -1;
+    
     const int rc = fork();
     if( rc == 0 ) {
         char **argvs = static_cast<char **>(std::malloc(sizeof(char *) * (_args.size() + 2)));

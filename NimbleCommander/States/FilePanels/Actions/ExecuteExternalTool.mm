@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExecuteExternalTool.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <VFS/VFS.h>
@@ -18,6 +18,7 @@
 #include <Utility/StringExtras.h>
 #include <Habanero/dispatch_cpp.h>
 #include <sys/stat.h>
+#include <fmt/core.h>
 
 namespace nc::panel::actions {
 
@@ -78,7 +79,11 @@ void ExecuteExternalTool::Execute(const ExternalTool &_tool,
     if( _tool.m_ExecutablePath.empty() )
         return;
 
-    auto parameters = ExternalToolsParametersParser().Parse(_tool.m_Parameters);
+    auto parameters_parsed = ExternalToolsParametersParser().Parse(_tool.m_Parameters);
+    if( !parameters_parsed  )
+        throw std::invalid_argument(fmt::format("Failed to parse: {}", parameters_parsed.error()));
+    auto parameters = std::move(parameters_parsed).value();
+    
     std::vector<std::string> enter_values_names = FindEnterValueParameters(parameters);
 
     if( enter_values_names.empty() ) {
@@ -359,7 +364,7 @@ BuildParametersStringForExternalTool(const ExternalToolsParameters &_par,
             if( PanelController *context =
                     ExternalToolParametersContextFromLocation(v.location, _target) ) {
                 auto selected_items = context.selectedEntriesOrFocusedEntry;
-                if( v.max > 0 && v.max < static_cast<int>(selected_items.size()) )
+                if( v.max > 0 && v.max < selected_items.size() )
                     selected_items.resize(v.max);
                 if( static_cast<int>(selected_items.size()) > max_files_left )
                     selected_items.resize(max_files_left);

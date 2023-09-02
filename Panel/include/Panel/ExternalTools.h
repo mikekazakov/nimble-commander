@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "PanelData.h"
@@ -14,6 +14,8 @@
 #include <vector>
 #include <span>
 #include <mutex>
+#include <compare>
+#include <expected>
 
 /**
 - produces % symbol:  %%
@@ -68,12 +70,11 @@ public:
     };
 
     struct SelectedItems {
-        Location location;
-        FileInfo what;
-        int max;            // maximum of selected items to use as a parameters or as a list content
-        bool as_parameters; // as a list inside a temp file otherwise
-        friend bool operator==(SelectedItems _lhs, SelectedItems _rhs) noexcept;
-        friend bool operator!=(SelectedItems _lhs, SelectedItems _rhs) noexcept;
+        Location location = Location::Source;
+        FileInfo what = FileInfo::Filename;
+        unsigned max = 0;            // maximum of selected items to use as a parameters or as a list content
+        bool as_parameters = true; // as a list inside a temp file otherwise
+        friend constexpr auto operator<=>(SelectedItems _lhs, SelectedItems _rhs) noexcept = default;
     };
 
     enum class ActionType : uint8_t
@@ -87,9 +88,9 @@ public:
     struct Step {
         ActionType type;
         uint16_t index;
-        Step(ActionType type, uint16_t index);
-        friend bool operator==(Step _lhs, Step _rhs) noexcept;
-        friend bool operator!=(Step _lhs, Step _rhs) noexcept;
+        bool partial = false;
+        Step(ActionType _type, uint16_t _index, bool _partial = false);
+        friend auto operator<=>(Step _lhs, Step _rhs) noexcept = default;
     };
 
     std::span<const Step> Steps() const noexcept;
@@ -103,10 +104,10 @@ public:
     unsigned GetMaximumTotalFiles() const;
 
 private:
-    void InsertUserDefinedText(UserDefined _ud);
-    void InsertValueRequirement(EnterValue _ev);
-    void InsertCurrentItem(CurrentItem _ci);
-    void InsertSelectedItem(SelectedItems _si);
+    void InsertUserDefinedText(UserDefined _ud, bool _partial = false);
+    void InsertValueRequirement(EnterValue _ev, bool _partial = false);
+    void InsertCurrentItem(CurrentItem _ci, bool _partial = false);
+    void InsertSelectedItem(SelectedItems _si, bool _partial = false);
 
     std::vector<Step> m_Steps;
     std::vector<UserDefined> m_UserDefined;
@@ -121,7 +122,7 @@ private:
 class ExternalToolsParametersParser
 {
 public:
-    ExternalToolsParameters Parse(const std::string &_source, std::function<void(std::string)> _parse_error = {});
+    std::expected<ExternalToolsParameters, std::string> Parse(std::string_view _source);
 
 private:
 };
@@ -142,9 +143,9 @@ public:
     utility::ActionShortcut m_Shorcut;
     StartupMode m_StartupMode = StartupMode::Automatic;
 
-    friend bool operator==(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept;
-    friend bool operator!=(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept;
-
+    friend bool operator==(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept = default;
+    friend bool operator!=(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept = default;
+    
     // run in terminal
     // allow VFS
     // string directory
@@ -153,11 +154,13 @@ public:
 class ExternalToolExecution
 {
 public:
+    enum class PanelFocus : uint8_t { left, right};
     struct Context {
         data::Model *left_data = nullptr; // not retained
         data::Model *right_data = nullptr; // not retained
         int left_cursor_pos = -1;
         int right_cursor_pos = -1;
+        PanelFocus focus = PanelFocus::left;
         utility::TemporaryFileStorage *temp_storage = nullptr; // not retained
     };
     
@@ -166,12 +169,18 @@ public:
     bool RequiresUserInput() const noexcept;
     std::span<const std::string> UserInputPrompts() const noexcept;
     void CommitUserInput(std::span<const std::string> _input);
+        
+    std::vector<std::string> BuildArguments() const;
     
-    
+    // returns a valid pid or an error description
+    std::expected<pid_t, std::string> startDetached();
     
 private:
-    
+    Context m_Ctx;
     ExternalTool m_ET;
+    ExternalToolsParameters m_Params;
+    std::vector<std::string> m_UserInputPrompts;
+    std::vector<std::string> m_UserInput;
     
 };
 

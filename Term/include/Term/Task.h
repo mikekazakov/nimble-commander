@@ -24,6 +24,8 @@ public:
     
     
     // TODO: pwd
+    // _process_path is a full path to the executable
+    // Returns a pid of a new process or -1 and errno indicates an error
     static int RunDetachedProcess(const std::string &_process_path,
                                   const std::vector<std::string> &_args);
     

@@ -28,6 +28,8 @@
 		CF4652592699F97C0085840A /* PanelViewFieldEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4652582699F97C0085840A /* PanelViewFieldEditor.h */; };
 		CF46525D2699F9830085840A /* PanelViewFieldEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */; };
 		CF465284269A4C150085840A /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF465283269A4C150085840A /* libOperations.a */; };
+		CF60DF252A6D3BAB00478BA0 /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF60DF242A6D3BAB00478BA0 /* libTerm.a */; };
+		CF60DF272A6D47CB00478BA0 /* ExternalTools_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */; };
 		CF739C3D295644CD004758C5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF739C3B295644CD004758C5 /* Localizable.strings */; };
 		CF96DC7629CF4610003EC4EB /* ItemVolatileData_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */; };
 		CF96DC7829E7099A003EC4EB /* PanelDataFilter_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */; };
@@ -50,7 +52,7 @@
 		CFF33FB82556959400B3C92C /* PanelDataEntriesComparator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FB72556959400B3C92C /* PanelDataEntriesComparator.cpp */; };
 		CFF33FBB255695B800B3C92C /* PanelDataExternalEntryKey.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33FBA255695B800B3C92C /* PanelDataExternalEntryKey.h */; };
 		CFF33FBE255695BF00B3C92C /* PanelDataExternalEntryKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FBD255695BF00B3C92C /* PanelDataExternalEntryKey.cpp */; };
-		CFF33FF225569DF300B3C92C /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FF025569DF200B3C92C /* Tests.cpp */; };
+		CFF33FF225569DF300B3C92C /* Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33FF025569DF200B3C92C /* Tests.mm */; };
 		CFF3401625569EC600B3C92C /* PanelData_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF3401525569EC600B3C92C /* PanelData_UT.mm */; };
 		CFF3401F25569F3B00B3C92C /* libPanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF33F5F2556924900B3C92C /* libPanel.a */; };
 		CFF3402A2556A13200B3C92C /* PanelDataSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF3401A25569F2400B3C92C /* PanelDataSelection.mm */; };
@@ -109,6 +111,8 @@
 		CF4652582699F97C0085840A /* PanelViewFieldEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFieldEditor.h; path = include/Panel/PanelViewFieldEditor.h; sourceTree = "<group>"; };
 		CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFieldEditor.mm; path = source/PanelViewFieldEditor.mm; sourceTree = "<group>"; };
 		CF465283269A4C150085840A /* libOperations.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOperations.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF60DF242A6D3BAB00478BA0 /* libTerm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libTerm.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalTools_IT.mm; path = tests/ExternalTools_IT.mm; sourceTree = "<group>"; };
 		CF739C3C295644CD004758C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ItemVolatileData_UT.mm; path = tests/ItemVolatileData_UT.mm; sourceTree = "<group>"; };
 		CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataFilter_UT.mm; path = tests/PanelDataFilter_UT.mm; sourceTree = "<group>"; };
@@ -140,7 +144,7 @@
 		CFF33FBA255695B800B3C92C /* PanelDataExternalEntryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataExternalEntryKey.h; path = include/Panel/PanelDataExternalEntryKey.h; sourceTree = "<group>"; };
 		CFF33FBD255695BF00B3C92C /* PanelDataExternalEntryKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PanelDataExternalEntryKey.cpp; path = source/PanelDataExternalEntryKey.cpp; sourceTree = "<group>"; };
 		CFF33FE425569DA700B3C92C /* PanelUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PanelUT; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFF33FF025569DF200B3C92C /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
+		CFF33FF025569DF200B3C92C /* Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Tests.mm; path = tests/Tests.mm; sourceTree = "<group>"; };
 		CFF33FF125569DF200B3C92C /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
 		CFF3401525569EC600B3C92C /* PanelData_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelData_UT.mm; path = tests/PanelData_UT.mm; sourceTree = "<group>"; };
 		CFF3401925569F1700B3C92C /* PanelDataSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataSelection.h; path = include/Panel/PanelDataSelection.h; sourceTree = "<group>"; };
@@ -166,6 +170,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF60DF252A6D3BAB00478BA0 /* libTerm.a in Frameworks */,
 				CF465284269A4C150085840A /* libOperations.a in Frameworks */,
 				CFF3401F25569F3B00B3C92C /* libPanel.a in Frameworks */,
 				CF3ED50E25860F7E00D67AF2 /* libConfig.a in Frameworks */,
@@ -291,13 +296,14 @@
 		CFF33FEF25569DBE00B3C92C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */,
 				CF349B0D25FCAE9B009735DC /* Comparators_UT.mm */,
 				CF22060827B9B73C008EDE3A /* ExternalTools_UT.mm */,
 				CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */,
 				CFF3401525569EC600B3C92C /* PanelData_UT.mm */,
 				CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */,
 				CF3ED50825860E1000D67AF2 /* QuickSearch_UT.mm */,
-				CFF33FF025569DF200B3C92C /* Tests.cpp */,
+				CFF33FF025569DF200B3C92C /* Tests.mm */,
 				CFF33FF125569DF200B3C92C /* Tests.h */,
 			);
 			name = Tests;
@@ -306,6 +312,7 @@
 		CFF3401E25569F3B00B3C92C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF60DF242A6D3BAB00478BA0 /* libTerm.a */,
 				CF465283269A4C150085840A /* libOperations.a */,
 				CF3ED50C25860F7200D67AF2 /* libConfig.a */,
 			);
@@ -495,10 +502,11 @@
 				CF96DC7829E7099A003EC4EB /* PanelDataFilter_UT.mm in Sources */,
 				CF22060927B9B73C008EDE3A /* ExternalTools_UT.mm in Sources */,
 				CF349B1125FCAEA1009735DC /* Comparators_UT.mm in Sources */,
+				CF60DF272A6D47CB00478BA0 /* ExternalTools_IT.mm in Sources */,
 				CF3ED50925860E1000D67AF2 /* QuickSearch_UT.mm in Sources */,
 				CF96DC7629CF4610003EC4EB /* ItemVolatileData_UT.mm in Sources */,
 				CFF3401625569EC600B3C92C /* PanelData_UT.mm in Sources */,
-				CFF33FF225569DF300B3C92C /* Tests.cpp in Sources */,
+				CFF33FF225569DF300B3C92C /* Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

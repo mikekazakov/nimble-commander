@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DragReceiver.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
@@ -18,7 +18,7 @@
 #include <VFS/Native.h>
 #include <map>
 #include <filesystem>
-#include <tl/expected.hpp>
+#include <expected>
 
 namespace nc::panel {
 
@@ -33,7 +33,7 @@ static NSArray<NSURL *> *ExtractURLs(NSPasteboard *_source);
 static int CountItemsWithType(id<NSDraggingInfo> _sender, NSString *_type);
 static NSString *URLs_Promise_UTI();
 static NSString *URLs_UTI();
-static tl::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_items,
+static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_items,
                                                                         VFSHost &_host);
 
 static void AddPanelRefreshIfNecessary(PanelController *_target, ops::Operation &_operation);
@@ -499,7 +499,7 @@ static NSString *URLs_UTI()
     return uti;
 }
 
-static tl::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_input,
+static std::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<NSURL *> *_input,
                                                                         VFSHost &_host)
 {
     // TODO:
@@ -522,7 +522,7 @@ static tl::expected<std::vector<VFSListingItem>, int> FetchListingItems(NSArray<
             source_items.emplace_back(listing->Item(0));
         }
         else
-            return tl::unexpected<int>(rc);
+            return std::unexpected(rc);
     }
     return source_items;
 }

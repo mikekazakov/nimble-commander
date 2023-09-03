@@ -4,20 +4,19 @@
 #include <string>
 
 using nc::base::variable_container;
-using namespace std;
 
 #define PREFIX "variable_container "
 
 TEST_CASE(PREFIX"test 1")
 {    
-    variable_container< string > vc( variable_container<string>::type::common );
+    variable_container< std::string > vc( variable_container<std::string>::type::common );
     vc.at(0) = "Abra!!!";
     CHECK( vc.at(0) == "Abra!!!" );
 }
 
 TEST_CASE(PREFIX"test 2")
 {
-    variable_container< string > vc( variable_container<string>::type::sparse );
+    variable_container< std::string > vc( variable_container<std::string>::type::sparse );
 
     vc.insert(5, "abra");
     vc.insert(6, "kazam");
@@ -34,7 +33,7 @@ TEST_CASE(PREFIX"test 2")
 
 TEST_CASE(PREFIX"test 3")
 {
-    variable_container< string > vc( variable_container<string>::type::dense );
+    variable_container< std::string > vc( variable_container<std::string>::type::dense );
     
     vc.insert(5, "abra");
     vc.insert(6, "kazam");
@@ -50,9 +49,9 @@ TEST_CASE(PREFIX"test 3")
     
     CHECK( vc.at(0) == "" );
     
-    variable_container< string > vc2( vc );
+    variable_container< std::string > vc2( vc );
     CHECK( vc2.at(5) == "abra!" );
     
-    variable_container< string > vc3( std::move(vc2) );
+    variable_container< std::string > vc3( std::move(vc2) );
     CHECK( vc3.at(6) == "kazam" );
 }

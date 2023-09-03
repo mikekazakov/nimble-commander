@@ -1,9 +1,10 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <unordered_map>
 #include <variant>
 #include <string>
+#include <memory>
 
 namespace nc::vfs::mem {
 

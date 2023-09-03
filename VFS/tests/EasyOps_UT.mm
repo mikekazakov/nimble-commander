@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <ftw.h>
 #include <fstream>
+#include <filesystem>
 
 static int RMRF(const std::string& _path);
 static auto g_TestDirPrefix = "_nc__vfs__easy_ops__test_";
@@ -30,7 +31,7 @@ TEST_CASE(PREFIX "CopyFileToTempStorage works")
     
     const auto copied_path = CopyFileToTempStorage(base_dir + "aaa.txt", *host, storage);
     REQUIRE( copied_path != std::nullopt );
-    CHECK( boost::filesystem::path(*copied_path).filename()  == "aaa.txt" );
+    CHECK( std::filesystem::path(*copied_path).filename()  == "aaa.txt" );
     
     int compare_result = 0;
     const auto compare_errc = VFSEasyCompareFiles((base_dir + "aaa.txt").c_str(),
@@ -62,7 +63,7 @@ TEST_CASE(PREFIX "CopyDirectoryToTempStorage works")
                                                         storage);
 
     REQUIRE( copied_path != std::nullopt );
-    CHECK( boost::filesystem::path(*copied_path).parent_path().filename()  == "A" );
+    CHECK( std::filesystem::path(*copied_path).parent_path().filename()  == "A" );
 
     int compare_result1 = 0;
     const auto compare_errc1 = VFSEasyCompareFiles((base_dir + "A/B/aaa.txt").c_str(),

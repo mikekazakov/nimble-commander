@@ -8,6 +8,9 @@ if ! [ -x "$(command -v xcpretty)" ] ; then
     exit -1
 fi
 
+# https://github.com/xcpretty/xcpretty/issues/48
+export LC_CTYPE=en_US.UTF-8
+
 # get current directory
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 

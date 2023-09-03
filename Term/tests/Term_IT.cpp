@@ -1,4 +1,5 @@
 // Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+#define _LIBCPP_DISABLE_DEPRECATION_WARNINGS
 #include <ParserImpl.h>
 #include <InterpreterImpl.h>
 #include <Screen.h>
@@ -766,6 +767,8 @@ TEST_CASE(PREFIX"vttest(1.1) - test of cursor movements, "
     CHECK( result == expectation );
 }
 
+// ^^^ buggy!!! with a larger screen!
+
 
 TEST_CASE(PREFIX"vttest(1.2) - test of cursor movements, "
 "Test zero movements, display alignment, display erase, line erase")
@@ -937,6 +940,8 @@ TEST_CASE(PREFIX"vttest(1.2) - test of cursor movements, "
     CHECK( result == expectation );
 }
 
+// ^^^ buggy!!! with a larger screen!
+
 TEST_CASE(PREFIX"vttest(1.3) - test of cursor movements, "
 "autowrap, mixing control and print characters")
 {
@@ -991,6 +996,8 @@ TEST_CASE(PREFIX"vttest(1.3) - test of cursor movements, "
     CHECK( result == expectation );
 }
 
+// ^^^ buggy!!! with a larger screen!
+
 TEST_CASE(PREFIX"vttest(1.4) - test of cursor movements, "
 "autowrap, mixing control and print characters")
 {
@@ -1044,6 +1051,8 @@ TEST_CASE(PREFIX"vttest(1.4) - test of cursor movements, "
     const auto result = screen.Buffer().DumpScreenAsANSI();
     CHECK( result == expectation );
 }
+
+// ^^^ buggy!!! with a larger screen!
 
 TEST_CASE(PREFIX"vttest(1.5) - test of cursor movements, "
 "Test of cursor-control characters inside ESC sequences.")

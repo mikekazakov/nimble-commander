@@ -1,9 +1,7 @@
 // Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CTCache.h"
 #include <Utility/FontExtras.h>
-#include <boost/container/pmr/vector.hpp>                    // TODO: remove as soon as libc++ gets pmr!!!
-#include <boost/container/pmr/monotonic_buffer_resource.hpp> // TODO: remove as soon as libc++ gets pmr!!!
-
+#include <memory_resource>
 #include <iostream>
 
 namespace nc::term {
@@ -227,10 +225,10 @@ void CTCache::DrawCharacters(const char32_t *_codes, const CGPoint *_positions, 
 
     // store the temp data on stack whether possible
     std::array<char, 16384> mem_buffer;
-    boost::container::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
-    boost::container::pmr::vector<IndexedSimple> simple_glyphs(&mem_resource);
-    boost::container::pmr::vector<IndexedSimple> simple_box_glyphs(&mem_resource);
-    boost::container::pmr::vector<Complex> complex_glyphs(&mem_resource);
+    std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+    std::pmr::vector<IndexedSimple> simple_glyphs(&mem_resource);
+    std::pmr::vector<IndexedSimple> simple_box_glyphs(&mem_resource);
+    std::pmr::vector<Complex> complex_glyphs(&mem_resource);
 
     // 1st - scan the input to look up for the according display chars and divide them into three categories
     for( size_t idx = 0; idx != _count; ++idx ) {
@@ -252,8 +250,8 @@ void CTCache::DrawCharacters(const char32_t *_codes, const CGPoint *_positions, 
     std::sort(simple_box_glyphs.begin(), simple_box_glyphs.end(), less_font);
 
     // 3rd - draw normal simple glyphs, font by font
-    boost::container::pmr::vector<uint16_t> glyphs_to_ct(&mem_resource);
-    boost::container::pmr::vector<CGPoint> pos_to_ct(&mem_resource);
+    std::pmr::vector<uint16_t> glyphs_to_ct(&mem_resource);
+    std::pmr::vector<CGPoint> pos_to_ct(&mem_resource);
     auto flush = [&](CTFontRef _font) {
         assert(pos_to_ct.size() == glyphs_to_ct.size());
         if( !glyphs_to_ct.empty() ) {

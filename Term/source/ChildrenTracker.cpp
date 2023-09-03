@@ -6,9 +6,7 @@
 #include <array>
 #include <span>
 #include <algorithm>
-
-#include <boost/container/pmr/vector.hpp>                    // TODO: remove as soon as libc++ gets pmr!!!
-#include <boost/container/pmr/monotonic_buffer_resource.hpp> // TODO: remove as soon as libc++ gets pmr!!!
+#include <memory_resource>
 
 namespace nc::term {
 
@@ -35,8 +33,8 @@ static std::vector<pid_t> InitialPIDs(pid_t _root_pid)
 static void Subscribe(const int _kq, const std::span<const pid_t> _pids)
 {
     std::array<char, 4096> mem_buffer;
-    boost::container::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
-    boost::container::pmr::vector<struct kevent> chg(_pids.size(), &mem_resource);
+    std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+    std::pmr::vector<struct kevent> chg(_pids.size(), &mem_resource);
     for( size_t i = 0; i < _pids.size(); ++i )
         EV_SET(&chg[i], _pids[i], EVFILT_PROC, EV_ADD | EV_RECEIPT, g_Notes, 0, nullptr);
     kevent(_kq, chg.data(), static_cast<int>(chg.size()), nullptr, 0, nullptr);

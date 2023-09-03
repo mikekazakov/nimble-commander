@@ -1,11 +1,10 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextWidthsCache.h"
 #include <Utility/FontExtras.h>
 #include <Habanero/dispatch_cpp.h>
 #include <charconv>
 #include <array>
-#include <boost/container/pmr/vector.hpp>                    // TODO: remove as soon as libc++ gets pmr!!!
-#include <boost/container/pmr/monotonic_buffer_resource.hpp> // TODO: remove as soon as libc++ gets pmr!!!
+#include <memory_resource>
 
 namespace nc::panel {
 
@@ -40,9 +39,9 @@ std::vector<unsigned short> TextWidthsCache::Widths(std::span<const CFStringRef>
 
     // store the temp data on stack whether possible
     std::array<char, 16384> mem_buffer;
-    boost::container::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
-    boost::container::pmr::vector<size_t> unknown_strings_indices(&mem_resource);
-    boost::container::pmr::vector<CFStringRef> unknown_strings(&mem_resource);
+    std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+    std::pmr::vector<size_t> unknown_strings_indices(&mem_resource);
+    std::pmr::vector<CFStringRef> unknown_strings(&mem_resource);
 
     {
         auto lock = std::lock_guard{cache.lock};

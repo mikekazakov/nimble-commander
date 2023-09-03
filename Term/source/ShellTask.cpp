@@ -28,9 +28,7 @@
 #include "Log.h"
 #include <fmt/std.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include <boost/container/pmr/vector.hpp>                    // TODO: remove as soon as libc++ gets pmr!!!
-#include <boost/container/pmr/deque.hpp>                     // TODO: remove as soon as libc++ gets pmr!!!
-#include <boost/container/pmr/monotonic_buffer_resource.hpp> // TODO: remove as soon as libc++ gets pmr!!!
+#include <memory_resource>
 
 namespace nc::term {
 
@@ -904,7 +902,7 @@ std::vector<std::string> ShellTask::ChildrenList() const
         return {};
 
     std::array<char, 16384> mem_buffer;
-    boost::container::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+    std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
 
     // copy kinfo_proc into a more usage datastructure
     struct Proc {
@@ -912,7 +910,7 @@ std::vector<std::string> ShellTask::ChildrenList() const
         pid_t ppid;
         const char *name;
     };
-    boost::container::pmr::vector<Proc> procs(&mem_resource);
+    std::pmr::vector<Proc> procs(&mem_resource);
     for( size_t i = 0; i < proc_cnt; ++i ) {
         procs.emplace_back(Proc{proc_list[i].kp_proc.p_pid, proc_list[i].kp_eproc.e_ppid, proc_list[i].kp_proc.p_comm});
     }
@@ -930,8 +928,7 @@ std::vector<std::string> ShellTask::ChildrenList() const
     std::vector<std::string> result;
 
     // for each parent pid in the queue:
-    std::queue<pid_t, boost::container::pmr::deque<pid_t>> parent_pids{
-        boost::container::pmr::deque<pid_t>(&mem_resource)};
+    std::queue<pid_t, std::pmr::deque<pid_t>> parent_pids{std::pmr::deque<pid_t>(&mem_resource)};
     parent_pids.push(I->shell_pid);
     while( !parent_pids.empty() ) {
         const pid_t ppid = parent_pids.front();

@@ -3,8 +3,7 @@
 #include <VFS/VFS.h>
 #include <Habanero/CFPtr.h>
 #include <Habanero/CFStackAllocator.h>
-#include <boost/container/pmr/vector.hpp>                    // TODO: remove as soon as libc++ gets pmr!!!
-#include <boost/container/pmr/monotonic_buffer_resource.hpp> // TODO: remove as soon as libc++ gets pmr!!!
+#include <memory_resource>
 
 namespace nc::panel::data {
 
@@ -100,8 +99,8 @@ std::optional<QuickSearchHiglight> FuzzySearch(NSString *_filename, NSString *_t
 
     // 2nd - now start to greadily look for longest substrings - O(n^2)
     std::array<char, 16384> mem_buffer;
-    boost::container::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
-    boost::container::pmr::vector<QuickSearchHiglight::Range> found(&mem_resource);
+    std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+    std::pmr::vector<QuickSearchHiglight::Range> found(&mem_resource);
     unsigned long filename_pos = 0;
     NSString *text = _text;
     while( true ) {

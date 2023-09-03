@@ -16,9 +16,7 @@
 #include <iostream>
 #include <cmath>
 #include <array>
-
-#include <boost/container/pmr/vector.hpp>                    // TODO: remove as soon as libc++ gets pmr!!!
-#include <boost/container/pmr/monotonic_buffer_resource.hpp> // TODO: remove as soon as libc++ gets pmr!!!
+#include <memory_resource>
 
 using namespace nc;
 using namespace nc::term;
@@ -405,9 +403,9 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
         // gather all char codes and their coordinates from the run
         std::array<char, 8192> mem_buffer;
-        boost::container::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
-        boost::container::pmr::vector<char32_t> codes(&mem_resource);
-        boost::container::pmr::vector<CGPoint> positions(&mem_resource);
+        std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+        std::pmr::vector<char32_t> codes(&mem_resource);
+        std::pmr::vector<CGPoint> positions(&mem_resource);
         for( int x = _first; x < _last; ++x ) {
             const ScreenBuffer::Space cs = _line[x];
             const bool draw_glyph = cs.l != 0 && cs.l != 32 && cs.l != Screen::MultiCellGlyph;

@@ -37,7 +37,7 @@ OTHER_CFLAGS = -fvisibility=hidden -Wframe-larger-than=32768 -fbracket-depth=512
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2b -Wall -Wextra -Wold-style-cast -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include -cxx-isystem$(THRDPTY)/googletest/include -cxx-isystem$(THRDPTY)/robin_hood/include
 
 // Linker
-OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -framework StoreKit -framework NetFS -weak_framework UniformTypeIdentifiers -lxml2 -larchive -lboost_system -lboost_filesystem -lboost_atomic -lboost_container -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv -lAppAuth-macOS -lAquaticPrime -lpstld -lzstd -llz4 -llzo2 -lre2 -lfmt -lcxxbackport -v -ld_classic
+OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemConfiguration -framework IOKit -framework Quartz -framework QuartzCore -framework DiskArbitration -framework OpenDirectory -framework ServiceManagement -framework Security -framework Carbon -framework StoreKit -framework NetFS -weak_framework UniformTypeIdentifiers -lxml2 -larchive -lspdlog -lgmock -lgtest -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -liconv -lAppAuth-macOS -lAquaticPrime -lpstld -lzstd -llz4 -llzo2 -lre2 -lfmt -lcxxbackport -v -ld_classic
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Search paths
@@ -48,7 +48,7 @@ USE_HEADERMAP = NO
 HEADER_SEARCH_PATHS = $(THRDPTY)/magic_enum/include $(THRDPTY)/Catch2/include $(THRDPTY)/rapidjson/include $(THRDPTY)/libssh2/include $(THRDPTY)/pugixml/include $(THRDPTY)/unrar/include $(THRDPTY)/zlib/include $(THRDPTY)/bz2/include $(THRDPTY)/libcurl/include $(THRDPTY)/AquaticPrime/include $(THRDPTY)/MMTabBarView $(THRDPTY)/AppAuth/include $(THRDPTY)/frozen/include $(THRDPTY)/pstld/include $(THRDPTY)/re2/include $(THRDPTY)/fmt/include
 
 // Paths - libraries
- LIBRARY_SEARCH_PATHS = $(THRDPTY)/boost/lib $(THRDPTY)/spdlog/lib $(THRDPTY)/googletest/lib $(THRDPTY)/z/lib $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/lib $(THRDPTY)/lzma/lib $(THRDPTY)/bz2/lib $(THRDPTY)/libssh2/lib  $(THRDPTY)/libcurl/lib $(THRDPTY)/pugixml/lib $(THRDPTY)/unrar/lib $(THRDPTY)/AquaticPrime/lib $(THRDPTY)/AppAuth/built $(THRDPTY)/pstld/lib $(THRDPTY)/zstd/lib $(THRDPTY)/lz4/lib $(THRDPTY)/lzo/lib $(THRDPTY)/re2/lib $(THRDPTY)/fmt/lib $(THRDPTY)/libcxxbackport/lib
+ LIBRARY_SEARCH_PATHS = $(THRDPTY)/spdlog/lib $(THRDPTY)/googletest/lib $(THRDPTY)/z/lib $(THRDPTY)/OpenSSL/lib $(THRDPTY)/libarchive/lib $(THRDPTY)/lzma/lib $(THRDPTY)/bz2/lib $(THRDPTY)/libssh2/lib  $(THRDPTY)/libcurl/lib $(THRDPTY)/pugixml/lib $(THRDPTY)/unrar/lib $(THRDPTY)/AquaticPrime/lib $(THRDPTY)/AppAuth/built $(THRDPTY)/pstld/lib $(THRDPTY)/zstd/lib $(THRDPTY)/lz4/lib $(THRDPTY)/lzo/lib $(THRDPTY)/re2/lib $(THRDPTY)/fmt/lib $(THRDPTY)/libcxxbackport/lib
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Warnings

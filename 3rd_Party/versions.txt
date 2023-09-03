@@ -8,6 +8,7 @@ curl            7.73.0
 gtest           1.12.1
 letsmove        1.25
 libarchive      3.6.2 + custom patch
+libcxx		16.x
 libssh2         1.9.0
 lz4             1.9.3
 lzma(xz)        5.2.5
@@ -28,6 +29,7 @@ Build flags:
 -arch x86_64
 -arch arm64
 -mmacosx-version-min=10.15
+-DNDEBUG
 -fvisibility=hidden
 -flto
 -Os

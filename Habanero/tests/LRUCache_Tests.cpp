@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/LRUCache.h>
 #include "UnitTests_main.h"
 #include <string>
@@ -82,7 +82,7 @@ TEST_CASE(PREFIX"copy")
     CHECK( copy["a"] == "A" );
     CHECK( copy["b"] == "B" );
     
-    LRUCache<std::string, std::string, 2> copy2(move(cache));
+    LRUCache<std::string, std::string, 2> copy2(std::move(cache));
     CHECK( cache.empty() == true );
     CHECK( copy2["a"] == "A" );
     CHECK( copy2["b"] == "B" );
@@ -92,7 +92,7 @@ TEST_CASE(PREFIX"copy")
     CHECK( cache["a"] == "A" );
     CHECK( cache["b"] == "B" );
     
-    copy = move(copy2);
+    copy = std::move(copy2);
     CHECK( copy2.empty() == true );
     CHECK( copy["a"] == "A" );
     CHECK( copy["b"] == "B" );    

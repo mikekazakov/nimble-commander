@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/StringsBulk.h>
 #include "UnitTests_main.h"
 
@@ -134,7 +134,7 @@ TEST_CASE(PREFIX"equality")
     CHECK( d != a );
     
     StringsBulk e;
-    e = move(d);
+    e = std::move(d);
     CHECK( e == c );
     CHECK( d.empty() );
 }

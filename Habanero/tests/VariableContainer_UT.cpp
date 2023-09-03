@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "variable_container.h"
 #include "UnitTests_main.h"
 #include <string>
@@ -53,6 +53,6 @@ TEST_CASE(PREFIX"test 3")
     variable_container< string > vc2( vc );
     CHECK( vc2.at(5) == "abra!" );
     
-    variable_container< string > vc3( move(vc2) );
+    variable_container< string > vc3( std::move(vc2) );
     CHECK( vc3.at(6) == "kazam" );
 }

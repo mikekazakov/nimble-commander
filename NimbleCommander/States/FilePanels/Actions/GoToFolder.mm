@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GoToFolder.h"
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
@@ -181,7 +181,7 @@ bool GoToEnclosingFolder::Predicate( PanelController *_target ) const
 void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
 {
     if( _target.isUniform  ) {
-        auto cur = boost::filesystem::path(_target.data.DirectoryPathWithTrailingSlash());
+        auto cur = std::filesystem::path(_target.data.DirectoryPathWithTrailingSlash());
         if( cur.empty() )
             return;
         
@@ -189,10 +189,10 @@ void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
         
         if( cur == "/" ) {
             if( const auto parent_vfs = vfs->Parent() ) {
-                boost::filesystem::path junct = vfs->JunctionPath();
+                std::filesystem::path junct = vfs->JunctionPath();
                 assert(!junct.empty());
-                std::string dir = junct.parent_path().native();
-                std::string sel_fn = junct.filename().native();
+                std::string dir = junct.parent_path();
+                std::string sel_fn = junct.filename();
                                 
                 auto request = std::make_shared<DirectoryChangeRequest>();
                 request->RequestedDirectory = dir;
@@ -205,8 +205,8 @@ void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
             }
         }
         else {
-            std::string dir = cur.parent_path().remove_filename().native();
-            std::string sel_fn = cur.parent_path().filename().native();
+            std::string dir = cur.parent_path().remove_filename();
+            std::string sel_fn = cur.parent_path().filename();
             
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = dir;

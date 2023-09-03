@@ -1,6 +1,6 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Cache.h"
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 namespace nc::vfs::ftp {
 
@@ -123,12 +123,12 @@ void Cache::InsertLISTDirectory(const char *_path, std::shared_ptr<Directory> _d
 
 void Cache::CommitNewFile(const std::string &_path)
 {
-    boost::filesystem::path p = _path;
+    std::filesystem::path p = _path;
     assert(p.is_absolute());
     
-    boost::filesystem::path dir_path = p.parent_path();
+    std::filesystem::path dir_path = p.parent_path();
     if(dir_path != "/")
-        dir_path /= "/";
+        dir_path += "/";
     
     std::lock_guard<std::mutex> lock(m_CacheLock);
     auto dir = FindDirectoryInt(dir_path.native());
@@ -154,12 +154,12 @@ void Cache::CommitNewFile(const std::string &_path)
 
 void Cache::MakeEntryDirty(const std::string &_path)
 {
-    boost::filesystem::path p = _path;
+    std::filesystem::path p = _path;
     assert(p.is_absolute());
     
-    boost::filesystem::path dir_path = p.parent_path();
+    std::filesystem::path dir_path = p.parent_path();
     if(dir_path != "/")
-        dir_path / "/";
+        dir_path += "/";
     
     std::lock_guard<std::mutex> lock(m_CacheLock);
     auto dir = FindDirectoryInt(dir_path.native());
@@ -180,8 +180,8 @@ void Cache::CommitRMD(const std::string &_path)
     
     EraseEntryInt(_path);
     
-    boost::filesystem::path p = _path;
-    p /= "/";
+    std::filesystem::path p = _path;
+    p += "/";
     
     auto i = m_Directories.find(p.native());
     if(i != m_Directories.end())
@@ -196,12 +196,12 @@ void Cache::CommitUnlink(const std::string &_path)
 
 void Cache::CommitMKD(const std::string &_path)
 {
-    boost::filesystem::path p = _path;
+    std::filesystem::path p = _path;
     assert(p.is_absolute());
     
-    boost::filesystem::path dir_path = p.parent_path();
+    std::filesystem::path dir_path = p.parent_path();
     if(dir_path != "/")
-        dir_path /= "/";
+        dir_path += "/";
     
     std::lock_guard<std::mutex> lock(m_CacheLock);
     auto dir = FindDirectoryInt(dir_path.native());
@@ -220,15 +220,15 @@ void Cache::CommitMKD(const std::string &_path)
 
 void Cache::CommitRename(const std::string &_old_path, const std::string &_new_path)
 {
-    boost::filesystem::path old_path = _old_path, new_path = _new_path;
+    std::filesystem::path old_path = _old_path, new_path = _new_path;
     assert(old_path.is_absolute() && new_path.is_absolute());
     
     std::lock_guard<std::mutex> lock(m_CacheLock);
     
-    boost::filesystem::path old_par_path = old_path.parent_path();
-    if(old_par_path != "/") old_par_path /= "/";
-    boost::filesystem::path new_par_path = new_path.parent_path();
-    if(new_par_path != "/") new_par_path /= "/";
+    std::filesystem::path old_par_path = old_path.parent_path();
+    if(old_par_path != "/") old_par_path += "/";
+    std::filesystem::path new_par_path = new_path.parent_path();
+    if(new_par_path != "/") new_par_path += "/";
     
     
     bool same_dir = old_path.parent_path() == new_path.parent_path();
@@ -294,14 +294,14 @@ void Cache::CommitRename(const std::string &_old_path, const std::string &_new_p
 
 void Cache::EraseEntryInt(const std::string &_path)
 {
-    boost::filesystem::path p = _path;
-    assert(p.filename() != "."); // _path with no trailing slashes
+    std::filesystem::path p = _path;
+    assert(p.filename() != ""); // _path with no trailing slashes
     assert(p.is_absolute());
     
     // find and erase entry of this dir in parent dir if any
-    boost::filesystem::path dir_path = p.parent_path();
+    std::filesystem::path dir_path = p.parent_path();
     if(dir_path != "/")
-        dir_path /= "/";
+        dir_path += "/";
     
     auto dir = FindDirectoryInt(dir_path.native());
     if(dir)

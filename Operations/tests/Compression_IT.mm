@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <sys/stat.h>
 #include <set>
 
@@ -18,9 +18,9 @@ using namespace std::literals;
 
 #define PREFIX "Operations::Compression "
 
-static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
+static int VFSCompareEntries(const std::filesystem::path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
-                             const boost::filesystem::path& _file2_full_path,
+                             const std::filesystem::path& _file2_full_path,
                              const VFSHostPtr& _file2_host,
                              int &_result);
 
@@ -291,9 +291,9 @@ TEST_CASE(PREFIX "Item reporting")
     CHECK(processed == expected);
 }
 
-static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
+static int VFSCompareEntries(const std::filesystem::path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
-                             const boost::filesystem::path& _file2_full_path,
+                             const std::filesystem::path& _file2_full_path,
                              const VFSHostPtr& _file2_host,
                              int &_result)
 {

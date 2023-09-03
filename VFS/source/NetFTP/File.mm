@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Host.h"
 #include "Internals.h"
@@ -49,9 +49,9 @@ int File::Close()
     return 0;
 }
 
-boost::filesystem::path File::DirName() const
+std::filesystem::path File::DirName() const
 {
-    return boost::filesystem::path(Path()).parent_path();
+    return std::filesystem::path(Path()).parent_path();
 }
 
 int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)

@@ -85,8 +85,8 @@ static void RegisterRemoteFileUploading(const std::string &_original_path,
 
         std::vector<VFSListingItem> listing_items;
         auto &storage_host = nc::bootstrap::NativeVFSHostInstance();
-        const auto changed_item_directory = boost::filesystem::path(_native_path).parent_path().native();
-        const auto changed_item_filename = boost::filesystem::path(_native_path).filename().native();
+        const auto changed_item_directory = std::filesystem::path(_native_path).parent_path().native();
+        const auto changed_item_filename = std::filesystem::path(_native_path).filename().native();
         const auto ret = storage_host.FetchFlexibleListingItems(
             changed_item_directory, {1, changed_item_filename}, 0, listing_items, nullptr);
         if( ret == 0 ) {

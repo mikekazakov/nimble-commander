@@ -23,6 +23,7 @@
 #include "Helpers.h"
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <Utility/PathManip.h>
 #include <Habanero/dispatch_cpp.h>
 
 using namespace nc::panel;
@@ -216,9 +217,7 @@ ProduceLocationsForParentDirectories(const VFSListing &_listing, core::VFSInstan
     std::vector<std::pair<core::VFSInstancePromise, std::string>> result;
 
     auto host = _listing.Host();
-    boost::filesystem::path dir = _listing.Directory();
-    if( dir.filename() == "." )
-        dir.remove_filename();
+    std::filesystem::path dir = EnsureNoTrailingSlash(_listing.Directory());
     while( host ) {
 
         bool brk = false;

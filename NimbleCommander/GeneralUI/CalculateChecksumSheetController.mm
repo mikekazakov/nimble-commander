@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/Hash.h>
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -92,7 +92,7 @@ using nc::base::Hash;
             const auto item_index = int(&i - &m_Filenames[0]);
 
             VFSFilePtr file;
-            int rc = m_Host->CreateFile((boost::filesystem::path(m_Path) / i).c_str(),
+            int rc = m_Host->CreateFile((std::filesystem::path(m_Path) / i).c_str(),
                                         file,
                                         [self] { return m_WorkQue.IsStopped(); });
             if( rc != 0 ) {
@@ -252,7 +252,7 @@ using nc::base::Hash;
         return;
 
     VFSFilePtr file;
-    m_Host->CreateFile((boost::filesystem::path(m_Path) / g_SumsFilename).c_str(), file);
+    m_Host->CreateFile((std::filesystem::path(m_Path) / g_SumsFilename).c_str(), file);
     int rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_NoExist | VFSFlags::OF_Create | S_IWUSR |
                         S_IRUSR | S_IRGRP);
     if( rc < 0 ) {

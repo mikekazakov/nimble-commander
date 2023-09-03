@@ -176,9 +176,9 @@ void CopyAs::Perform(MainWindowFilePanelState *_target, id) const
               if( PanelController *panel = weak_panel ) {
                   if( panel.isUniform &&
                       panel.currentDirectoryPath ==
-                          boost::filesystem::path(path).parent_path().native() + "/" ) {
+                          std::filesystem::path(path).parent_path().native() + "/" ) {
                       nc::panel::DelayedFocusing req;
-                      req.filename = boost::filesystem::path(path).filename().native();
+                      req.filename = std::filesystem::path(path).filename().native();
                       [panel scheduleDelayedFocusing:req];
                   }
               }
@@ -325,7 +325,7 @@ void MoveAs::Perform(MainWindowFilePanelState *_target, id) const
       op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=] {
           dispatch_to_main_queue([=] {
               nc::panel::DelayedFocusing req;
-              req.filename = boost::filesystem::path(path).filename().native();
+              req.filename = std::filesystem::path(path).filename().native();
               [static_cast<PanelController *>(cur) scheduleDelayedFocusing:req];
           });
       });

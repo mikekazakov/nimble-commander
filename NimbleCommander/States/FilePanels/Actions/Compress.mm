@@ -260,8 +260,8 @@ static void FocusResult(PanelController *_target, const std::shared_ptr<nc::ops:
         return;
 
     if( dispatch_is_main_queue() ) {
-        const auto result_path = boost::filesystem::path(_op->ArchivePath());
-        const auto directory = EnsureTrailingSlash(result_path.parent_path().native());
+        const auto result_path = std::filesystem::path(_op->ArchivePath());
+        const auto directory = EnsureTrailingSlash(result_path.parent_path());
         const auto filename = result_path.filename().native();
         if( _target.isUniform && _target.currentDirectoryPath == directory ) {
             [_target refreshPanel];

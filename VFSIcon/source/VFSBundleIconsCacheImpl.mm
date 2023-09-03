@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/VFSBundleIconsCacheImpl.h>
 #include <Utility/ObjCpp.h>
 
@@ -111,7 +111,7 @@ static NSImage *ReadImageFromFile(const std::string &_path, VFSHost &_host)
 
 static NSImage *ProduceBundleIcon(const std::string &_path, VFSHost &_host)
 {
-    const auto info_plist_path = boost::filesystem::path(_path) / "Contents/Info.plist";
+    const auto info_plist_path = std::filesystem::path(_path) / "Contents/Info.plist";
     const auto plist = ReadDictionary(info_plist_path.native(), _host);
     if( !plist )
         return 0;
@@ -122,9 +122,8 @@ static NSImage *ProduceBundleIcon(const std::string &_path, VFSHost &_host)
     if( !icon_str.fileSystemRepresentation )
         return nil;
 
-    const auto img_path =
-        boost::filesystem::path(_path) / "Contents/Resources/" / icon_str.fileSystemRepresentation;
-    return ReadImageFromFile(img_path.native(), _host);
+    const auto img_path = std::filesystem::path(_path) / "Contents/Resources/" / icon_str.fileSystemRepresentation;
+    return ReadImageFromFile(img_path, _host);
 }
 
 }

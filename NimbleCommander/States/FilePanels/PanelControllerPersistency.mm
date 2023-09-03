@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerPersistency.h"
 #include "PanelController.h"
 #include <Panel/PanelData.h>
@@ -8,6 +8,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Config/RapidJSON.h>
 #include <Habanero/dispatch_cpp.h>
+#include <Utility/PathManip.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 
 namespace nc::panel {
@@ -93,10 +94,7 @@ static void RecoverSavedPathAtVFSAsync(const VFSHostPtr &_host,
             // failed to load a listing on this VFS on specified path
             // will try upper directories on this VFS up to the root,
             // in case if everyone fails we will fallback to Home Directory on native VFS.
-            auto fs_path = boost::filesystem::path{_path};
-            if( fs_path.filename() == "." )
-                fs_path.remove_filename();
-            
+            auto fs_path = std::filesystem::path{ EnsureNoTrailingSlash(_path)};
             if( fs_path.has_parent_path() ) {
                 auto upper_dir = fs_path.parent_path().native();
                 dispatch_to_main_queue([=]{
@@ -162,9 +160,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentSync(const PersistentLocatio
             // failed to load a listing on this VFS on specified path
             // will try upper directories on this VFS up to the root,
             // in case if everyone fails we will fallback to Home Directory on native VFS.
-            auto fs_path = boost::filesystem::path{path};
-            if( fs_path.filename() == "." )
-                fs_path.remove_filename();
+            auto fs_path = std::filesystem::path{EnsureNoTrailingSlash(path)};
             
             if( fs_path.has_parent_path() ) {
                 auto upper_dir = fs_path.parent_path().native();

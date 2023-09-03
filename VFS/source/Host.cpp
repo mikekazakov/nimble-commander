@@ -6,7 +6,7 @@
 #include <queue>
 #include <algorithm>
 #include <numeric>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <sys/dirent.h>
 #include <sys/stat.h>
 
@@ -233,7 +233,7 @@ ssize_t Host::CalculateDirectorySize(const char *_path, const VFSCancelChecker &
     if( _path == 0 || _path[0] != '/' )
         return VFSError::InvalidCall;
 
-    std::queue<boost::filesystem::path> look_paths;
+    std::queue<std::filesystem::path> look_paths;
     int64_t total_size = 0;
 
     look_paths.emplace(_path);
@@ -242,7 +242,7 @@ ssize_t Host::CalculateDirectorySize(const char *_path, const VFSCancelChecker &
             return VFSError::Cancelled;
 
         IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt &_dirent) {
-            boost::filesystem::path full_path = look_paths.front() / _dirent.name;
+            std::filesystem::path full_path = look_paths.front() / _dirent.name;
             if( _dirent.type == VFSDirEnt::Dir )
                 look_paths.emplace(std::move(full_path));
             else {

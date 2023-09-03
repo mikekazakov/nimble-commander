@@ -34,6 +34,7 @@
 #include <Config/RapidJSON.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <Utility/PathManip.h>
 #include <Habanero/mach_time.h>
 
 using namespace nc;
@@ -934,11 +935,11 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
 
 - (void)recoverFromInvalidDirectory
 {
-    boost::filesystem::path initial_path = self.currentDirectoryPath;
+    std::filesystem::path initial_path = EnsureNoTrailingSlash(self.currentDirectoryPath);
     auto initial_vfs = self.vfs;
     m_DirectoryLoadingQ.Run([=] {
         // 1st - try to locate a valid dir in current host
-        boost::filesystem::path path = initial_path;
+        std::filesystem::path path = initial_path;
         auto vfs = initial_vfs;
 
         while( true ) {
@@ -956,8 +957,6 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
             if( path == "/" )
                 break;
 
-            if( path.filename() == "." )
-                path.remove_filename();
             path = path.parent_path();
         }
 

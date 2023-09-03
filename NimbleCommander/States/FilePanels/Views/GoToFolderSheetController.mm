@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GoToFolderSheetController.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -205,33 +205,33 @@ static std::vector<unsigned> ListDirsWithPrefix
 
 - (void) updateUserInputWithAutocompetion:(const std::string&)_dir_name
 {
-    boost::filesystem::path curr = self.Text.stringValue.fileSystemRepresentationSafe;
+    std::filesystem::path curr = self.Text.stringValue.fileSystemRepresentationSafe;
     
     if( curr != "/" && curr.has_filename() )
         curr.remove_filename();
     
     curr /= _dir_name;
-    curr /= "/";
+    curr += "/";
     
     self.Text.stringValue = [NSString stringWithUTF8StdString:curr.native()];
 }
 
 - (std::string) currentDirectory
 {
-    boost::filesystem::path path = [self.panel expandPath:self.Text.stringValue.fileSystemRepresentationSafe];
+    std::filesystem::path path = [self.panel expandPath:self.Text.stringValue.fileSystemRepresentationSafe];
     
     if( path == "/" )
-        return path.native();
+        return path;
     
     if( path.has_filename() )
         path = path.parent_path();
     
-    return path.native();
+    return path;
 }
 
 - (std::string) currentFilename
 {
-    boost::filesystem::path path = [self.panel expandPath:self.Text.stringValue.fileSystemRepresentationSafe];
+    std::filesystem::path path = [self.panel expandPath:self.Text.stringValue.fileSystemRepresentationSafe];
     
     if( path.has_filename() )
         if( path.native().back() != '/' )

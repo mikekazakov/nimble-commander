@@ -50,7 +50,7 @@ static std::string TitleForItem(const VFSListingItem &_i)
     if( _i.IsDir() )
         if( !_i.IsDotDot() )
             return _i.Filename();
-    return boost::filesystem::path(_i.Directory()).parent_path().filename().native();
+    return std::filesystem::path(_i.Directory()).parent_path().filename();
 }
 
 std::optional<FavoriteLocationsStorage::Favorite>

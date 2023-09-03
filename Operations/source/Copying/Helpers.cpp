@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Helpers.h"
 
 namespace nc::ops::copying {
@@ -8,8 +8,8 @@ std::string FindNonExistingItemPath(const std::string &_orig_existing_path,
                                     const VFSCancelChecker &_cancel_checker)
 {    
     const auto [epilog, prologue] = [&]{
-        const auto p = boost::filesystem::path{_orig_existing_path}; 
-        if( p.has_extension() ) {        
+        const auto p = std::filesystem::path{_orig_existing_path};
+        if( p.has_extension() ) {
             return std::make_pair((p.parent_path() / p.stem()).native() + " ",
                                   p.extension().native());
         }

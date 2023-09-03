@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "../ListingInput.h"
 #include "Host.h"
@@ -226,7 +226,7 @@ int FTPHost::Stat(const char *_path,
     if(_path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
 
-    boost::filesystem::path path = _path;
+    std::filesystem::path path = EnsureNoTrailingSlash(_path);
     if(path == "/")
     {
         // special case for root path
@@ -241,9 +241,6 @@ int FTPHost::Stat(const char *_path,
     }
     
     // 1st - extract directory and filename from _path
-    if(path.filename() == ".")
-        path.remove_filename();
-    
     std::string parent_dir = path.parent_path().native();
     std::string filename = path.filename().native();
     
@@ -385,8 +382,8 @@ int FTPHost::CreateFile(const char* _path,
 int FTPHost::Unlink(const char *_path,
                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    boost::filesystem::path path = _path;
-    if(path.is_absolute() == false || path.filename() == ".")
+    std::filesystem::path path = _path;
+    if(path.is_absolute() == false || path.native().back() == '/')
         return VFSError::InvalidCall;
     
     std::string cmd = "DELE " + path.filename().native();
@@ -428,12 +425,9 @@ int FTPHost::CreateDirectory(const char* _path,
                              [[maybe_unused]] int _mode,
                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    boost::filesystem::path path = _path;
+    const std::filesystem::path path = EnsureNoTrailingSlash(_path);
     if(path.is_absolute() == false)
         return VFSError::InvalidCall;
-
-    if(*--path.end() == ".") // remove trailing slash if any
-        path.remove_filename();
     
     std::string cmd = "MKD " + path.filename().native();
     std::string url = BuildFullURLString((path.parent_path() / "/").c_str());
@@ -473,13 +467,10 @@ int FTPHost::CreateDirectory(const char* _path,
 int FTPHost::RemoveDirectory(const char *_path,
                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    boost::filesystem::path path = _path;
+    const std::filesystem::path path = EnsureNoTrailingSlash(_path);
     if(path.is_absolute() == false)
         return VFSError::InvalidCall;
-    
-    if(path.filename() == ".") // remove trailing slash if any
-        path.remove_filename();
-    
+        
     std::string cmd = "RMD " + path.filename().native();
     std::string url = BuildFullURLString((path.parent_path() / "/").c_str());
     
@@ -517,15 +508,11 @@ int FTPHost::Rename(const char *_old_path,
                     const char *_new_path,
                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
-    boost::filesystem::path old_path = _old_path, new_path = _new_path;
+    const std::filesystem::path old_path = EnsureNoTrailingSlash(_old_path);
+    const std::filesystem::path new_path = EnsureNoTrailingSlash(_new_path);
     if(old_path.is_absolute() == false || new_path.is_absolute() == false)
         return VFSError::InvalidCall;
-    
-    if(old_path.filename() == ".") // remove trailing slash if any
-        old_path.remove_filename();
-    if(new_path.filename() == ".") // remove trailing slash if any
-        new_path.remove_filename();
-    
+        
     std::string url = BuildFullURLString((old_path.parent_path() / "/").c_str());
     std::string cmd1 = "RNFR "s + old_path.native();
     std::string cmd2 = "RNTO "s + new_path.native();
@@ -637,9 +624,9 @@ int FTPHost::IterateDirectoryListing(const char *_path,
     return 0;
 }
 
-std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const boost::filesystem::path &_dir)
+std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const std::filesystem::path &_dir)
 {
-    assert(_dir.filename() != ".");
+    assert(_dir.filename() != "");
     std::lock_guard<std::mutex> lock(m_IOIntancesLock);
     
     // try to find cached inst in exact this directory
@@ -668,10 +655,10 @@ std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const boost::filesyste
     return inst;
 }
 
-void FTPHost::CommitIOInstanceAtDir(const boost::filesystem::path &_dir,
+void FTPHost::CommitIOInstanceAtDir(const std::filesystem::path &_dir,
                                     std::unique_ptr<CURLInstance> _i)
 {
-    assert(_dir.filename() != ".");
+    assert(_dir.filename() != "");
     std::lock_guard<std::mutex> lock(m_IOIntancesLock);
     
     _i->EasyReset();

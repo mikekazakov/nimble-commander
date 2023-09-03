@@ -161,12 +161,12 @@ std::string Compression::BuildInitialTitle() const
 
 std::string Compression::BuildTitleWithArchiveFilename() const
 {
-    auto p = boost::filesystem::path(m_Job->TargetArchivePath());
+    auto p = std::filesystem::path(m_Job->TargetArchivePath());
     return [NSString
                localizedStringWithFormat:NSLocalizedString(@"%@ to \u201c%@\u201d",
                                                            "Compressing \u201c%@\u201d"),
                                          BuildTitlePrefix(),
-                                         [NSString stringWithUTF8StdString:p.filename().native()]]
+                                         [NSString stringWithUTF8StdString:p.filename()]]
         .UTF8String;
 }
 

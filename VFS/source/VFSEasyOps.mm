@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
 #include <Habanero/SerialQueue.h>
@@ -377,7 +377,7 @@ int VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &_host)
     if((st.mode & S_IFMT) == S_IFDIR) {
         if( !(_host->Features() & HostFeatures::NonEmptyRmDir) )
             _host->IterateDirectoryListing(_full_path, [&](const VFSDirEnt &_dirent) {
-                boost::filesystem::path p = _full_path;
+                std::filesystem::path p = _full_path;
                 p /= _dirent.name;
                 VFSEasyDelete(p.native().c_str(), _host);
                 return true;
@@ -407,9 +407,9 @@ int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr & _vfs)
     return file->Close();
 }
 
-int VFSCompareNodes(const boost::filesystem::path& _file1_full_path,
+int VFSCompareNodes(const std::filesystem::path& _file1_full_path,
                     const VFSHostPtr& _file1_host,
-                    const boost::filesystem::path& _file2_full_path,
+                    const std::filesystem::path& _file2_full_path,
                     const VFSHostPtr& _file2_host,
                     int &_result)
 {
@@ -537,7 +537,7 @@ static std::optional<std::vector<TraversedFSEntry>> Traverse
     if( !st_src_dir.mode_bits.dir )
         return {};
     
-    const auto top_level_name = boost::filesystem::path{vfs_dirpath}.filename().native();
+    const auto top_level_name = std::filesystem::path{vfs_dirpath}.filename().native();
 
     std::vector<TraversedFSEntry> result;
     std::stack<TraversedFSEntry> traverse;
@@ -691,7 +691,7 @@ std::optional<std::string> CopyDirectoryToTempStorage
     if( tmp_dir == std::nullopt )
         return {};
     
-    const auto base_path = EnsureTrailingSlash( boost::filesystem::path{*tmp_dir}.
+    const auto base_path = EnsureTrailingSlash( std::filesystem::path{*tmp_dir}.
                                                 parent_path().parent_path().native() );
     
     for( auto i = std::next(traversed->begin()), e = traversed->end(); i != e; ++i ) {

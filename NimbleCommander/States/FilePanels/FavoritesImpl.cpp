@@ -8,6 +8,7 @@
 #include <Habanero/dispatch_cpp.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
+#include <Utility/PathManip.h>
 #include "FavoriteComposing.h"
 
 namespace nc::panel {
@@ -85,11 +86,7 @@ FavoriteLocationsStorageImpl::ComposeFavoriteLocation(VFSHost &_host,
     f.location = location;
     f.footprint = _host.FullHashForPath(_directory.c_str());
     if( _title.empty() ) {
-        auto p = boost::filesystem::path(_directory);
-        if( p.filename() == "." )
-            f.title = p.parent_path().filename().native();
-        else
-            f.title = p.filename().native();
+        f.title = std::filesystem::path(EnsureNoTrailingSlash(_directory)).filename();
     }
     else {
         f.title = _title;

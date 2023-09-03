@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreationJob.h"
 
 namespace nc::ops {
@@ -23,7 +23,7 @@ void DirectoryCreationJob::Perform()
 {
     Statistics().CommitEstimated( Statistics::SourceType::Items, m_DirectoriesChain.size() );
 
-    boost::filesystem::path p = m_RootFolder;
+    std::filesystem::path p = m_RootFolder;
     for( auto &s: m_DirectoriesChain ) {
         if( BlockIfPaused(); IsStopped() )
             return;

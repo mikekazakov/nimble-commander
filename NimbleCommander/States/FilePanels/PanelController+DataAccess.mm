@@ -134,7 +134,7 @@
     if( self.vfs->IsNativeFS() &&
        _ref.front() == '~' ) { // relative to home
         auto ref = _ref.substr(1);
-        auto p = boost::filesystem::path(nc::base::CommonPaths::Home());
+        auto p = std::filesystem::path(nc::base::CommonPaths::Home());
         if(!ref.empty())
             p.remove_filename();
         p /= ref;
@@ -142,7 +142,7 @@
     }
 
     // sub-dir
-    boost::filesystem::path p = self.currentDirectoryPath;
+    std::filesystem::path p = self.currentDirectoryPath;
     if( p.empty() )
         return {};
 

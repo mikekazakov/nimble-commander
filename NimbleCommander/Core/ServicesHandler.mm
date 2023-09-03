@@ -61,14 +61,14 @@ static std::pair<std::string, std::vector<std::string>>
         if( i.empty() )
             continue;
         
-        boost::filesystem::path p = i;
+        std::filesystem::path p = i;
         if( directory.empty() ) {
-            directory = p.filename() == "." ?
-                p.parent_path().parent_path().native() : // .../abra/cadabra/ -> .../abra/cadabra
-                p.parent_path().native();                // .../abra/cadabra  -> .../abra
+            directory = p.filename() == "" ?
+                p.parent_path().parent_path() : // .../abra/cadabra/ -> .../abra/cadabra
+                p.parent_path();                // .../abra/cadabra  -> .../abra
         }
         if( i.front() == '/' && i.back() != '/' && i != "/" )
-            filenames.emplace_back( boost::filesystem::path(i).filename().native() );
+            filenames.emplace_back( std::filesystem::path(i).filename() );
     }
 
     return std::make_pair(std::move(directory), std::move(filenames));

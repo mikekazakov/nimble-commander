@@ -1,12 +1,13 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
 #include "SandboxManager.h"
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <Utility/ObjCpp.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
+#include <Utility/PathManip.h>
 
 static const auto g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 
@@ -17,7 +18,7 @@ static const auto g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 @end
 
 @implementation SandboxManagerPanelDelegate {
-    boost::filesystem::path m_Path;
+    std::filesystem::path m_Path;
     bool m_Mandatory;
 }
 
@@ -45,22 +46,12 @@ static const auto g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
     if( !m_Mandatory )
         return true;
 
-    boost::filesystem::path p = _url.path.fileSystemRepresentation;
-    if( p.filename() == "." )
-        p.remove_filename();
+    std::filesystem::path p = EnsureNoTrailingSlash(_url.path.fileSystemRepresentation);
 
     return p == m_Path;
 }
 
 @end
-
-static std::string EnsureNoTrailingSlash(std::string _path)
-{
-    while( _path.length() > 1 && _path.back() == '/' )
-        _path.pop_back();
-
-    return _path;
-}
 
 static std::string MakeRealPathWithoutTrailingSlash(std::string _path)
 {

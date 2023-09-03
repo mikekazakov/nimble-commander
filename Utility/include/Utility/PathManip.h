@@ -88,7 +88,7 @@ inline std::string EnsureTrailingSlash(std::string _s)
 
 inline std::string EnsureNoTrailingSlash(std::string _s)
 {
-    if( _s.size() > 1 && _s.back() == '/' )
+    while( _s.length() > 1 && _s.back() == '/' )
         _s.pop_back();
     return _s;
 }

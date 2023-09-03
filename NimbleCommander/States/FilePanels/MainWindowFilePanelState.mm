@@ -71,7 +71,7 @@ static std::string ExpandPath(const std::string &_ref)
 
     if( _ref.front() == '~' ) { // relative to home
         auto ref = _ref.substr(1);
-        auto p = boost::filesystem::path(nc::base::CommonPaths::Home());
+        auto p = std::filesystem::path(nc::base::CommonPaths::Home());
         if( !ref.empty() )
             p.remove_filename();
         p /= ref;

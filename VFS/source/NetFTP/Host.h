@@ -1,8 +1,8 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <VFS/Host.h>
 #include "InternalsForward.h"
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <map>
 
 // RTFM: http://www.ietf.org/rfc/rfc959.txt
@@ -70,8 +70,8 @@ public:
 
     void MakeDirectoryStructureDirty(const char *_path);
     
-    std::unique_ptr<ftp::CURLInstance> InstanceForIOAtDir(const boost::filesystem::path &_dir);
-    void CommitIOInstanceAtDir(const boost::filesystem::path &_dir, std::unique_ptr<ftp::CURLInstance> _i);
+    std::unique_ptr<ftp::CURLInstance> InstanceForIOAtDir(const std::filesystem::path &_dir);
+    void CommitIOInstanceAtDir(const std::filesystem::path &_dir, std::unique_ptr<ftp::CURLInstance> _i);
     
     
     inline ftp::Cache &Cache() const { return *m_Cache.get(); };
@@ -106,7 +106,7 @@ private:
     std::unique_ptr<ftp::Cache>        m_Cache;
     std::unique_ptr<ftp::CURLInstance> m_ListingInstance;
     
-    std::map<boost::filesystem::path, std::unique_ptr<ftp::CURLInstance>>  m_IOIntances;
+    std::map<std::filesystem::path, std::unique_ptr<ftp::CURLInstance>>  m_IOIntances;
     std::mutex                                           m_IOIntancesLock;
     
     struct UpdateHandler

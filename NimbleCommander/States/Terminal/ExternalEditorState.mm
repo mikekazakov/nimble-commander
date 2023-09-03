@@ -22,7 +22,7 @@ using namespace nc::term;
     std::unique_ptr<InputTranslator> m_InputTranslator;
     std::unique_ptr<Interpreter> m_Interpreter;
     NCTermScrollView *m_TermScrollView;
-    boost::filesystem::path m_BinaryPath;
+    std::filesystem::path m_BinaryPath;
     std::string m_Params;
     std::string m_FileTitle;
     NSLayoutConstraint *m_TopLayoutConstraint;
@@ -30,7 +30,7 @@ using namespace nc::term;
 }
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
-                      binary:(const boost::filesystem::path &)_binary_path
+                      binary:(const std::filesystem::path &)_binary_path
                       params:(const std::string &)_params
                    fileTitle:(const std::string &)_file_title
 {

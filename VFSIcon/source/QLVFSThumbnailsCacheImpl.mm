@@ -1,7 +1,7 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/QLVFSThumbnailsCacheImpl.h>
 #include <Quartz/Quartz.h>
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 
 namespace nc::vfsicon {
 
@@ -46,7 +46,7 @@ NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_file_pat
     }
 
     auto image = ProduceThumbnail(_file_path,
-                                  boost::filesystem::path(_file_path).extension().native(),
+                                  std::filesystem::path(_file_path).extension(),
                                   _host,
                                   CGSizeMake(double(_px_size), double(_px_size)));
 

@@ -746,14 +746,12 @@ int ArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
     if( !_path || _path[0] != '/' )
         return VFSError::NotFound;
 
-    boost::filesystem::path p = _path;
+    std::filesystem::path p = EnsureNoTrailingSlash(_path);
     p = p.relative_path();
-    if( p.filename() == "." )
-        p.remove_filename();
-    boost::filesystem::path result_path = "/";
+    std::filesystem::path result_path = "/";
 
     uint32_t result_uid = 0;
-    for( auto &i : p ) {
+    for( auto i : p ) {
         result_path /= i;
 
         auto entry = FindEntry(result_path.c_str());
@@ -771,8 +769,7 @@ int ArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
             if( s.state == SymlinkState::Unresolved )
                 ResolveSymlink(s.uid);
             if( s.state != SymlinkState::Resolved )
-                return VFSError::NotFound;
-            ; // current part points to nowhere
+                return VFSError::NotFound; // current part points to nowhere
 
             result_path = s.target_path;
             result_uid = s.target_uid;
@@ -975,16 +972,16 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
         return;
     }
 
-    const boost::filesystem::path dir_path = I->m_EntryByUID[_uid].first->full_path;
-    const boost::filesystem::path symlink_path = symlink.value;
-    boost::filesystem::path result_path;
+    const std::filesystem::path dir_path = I->m_EntryByUID[_uid].first->full_path;
+    const std::filesystem::path symlink_path = symlink.value;
+    std::filesystem::path result_path;
     if( symlink_path.is_relative() ) {
         result_path = dir_path;
         //        printf("%s\n", result_path.c_str());
 
         // TODO: check for loops
-        for( auto &i : symlink_path ) {
-            if( i != "." ) {
+        for( auto i : symlink_path ) {
+            if( i != "" && i != "." ) {
                 if( i != ".." ) {
                     result_path /= i;
                 }

@@ -1,11 +1,11 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilenameTextControl.h"
 #include <AppKit/AppKit.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/FilenameTextNavigation.h>
 #include <Utility/StringExtras.h>
 #include <Utility/PathManip.h>
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 
 @interface NCFilenameTextStorage ()
 @property(nonatomic, strong) NSMutableAttributedString *backingStore;
@@ -230,20 +230,19 @@ DirectoryPathAutoCompletionImpl::PossibleCompletions(const std::string &_path)
 std::string DirectoryPathAutoCompletionImpl::Complete(const std::string &_path,
                                                       const std::string &_completion)
 {
-    boost::filesystem::path path = _path;
+    std::filesystem::path path = _path;
 
-    if( path != "/" && path.has_filename() )
+    if( path.has_filename() )
         path.remove_filename();
 
     path /= _completion;
-    path /= "/";
 
-    return path.native();
+    return EnsureTrailingSlash(path.native());
 }
 
 std::string DirectoryPathAutoCompletionImpl::ExtractDirectory(const std::string &_path) const
 {
-    const boost::filesystem::path path = _path;
+    const std::filesystem::path path = _path;
     if( path == "/" )
         return path.native();
 
@@ -255,7 +254,7 @@ std::string DirectoryPathAutoCompletionImpl::ExtractDirectory(const std::string 
 
 std::string DirectoryPathAutoCompletionImpl::ExtractFilename(const std::string &_path) const
 {
-    const boost::filesystem::path path = _path;
+    const std::filesystem::path path = _path;
 
     if( path.has_filename() )
         if( path.native().back() != '/' )

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"
@@ -188,7 +188,7 @@ bool MakeNewFolderWithSelection::Predicate(PanelController *_target) const
 
 void MakeNewFolderWithSelection::Perform(PanelController *_target, id) const
 {
-    const boost::filesystem::path dir = _target.currentDirectoryPath;
+    const std::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
     const bool case_sensitive = vfs->IsCaseSensitiveAtPath(dir.c_str());
@@ -202,7 +202,7 @@ void MakeNewFolderWithSelection::Perform(PanelController *_target, id) const
     if( name.empty() )
         return;
 
-    const boost::filesystem::path destination = dir / name / "/";
+    const std::filesystem::path destination = (dir / name).concat("/");
 
     const auto options = MakeDefaultFileMoveOptions();
     const auto op = std::make_shared<nc::ops::Copying>(files, destination.native(), vfs, options);

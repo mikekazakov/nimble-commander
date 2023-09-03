@@ -1,9 +1,9 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSFile.h>
 #include "InternalsForward.h"
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 namespace nc::vfs::ftp {
 
@@ -41,7 +41,7 @@ private:
                       VFSCancelChecker _cancel_checker
                       );
     
-    boost::filesystem::path DirName() const;
+    std::filesystem::path DirName() const;
     void FinishWriting();
     void FinishReading();
     

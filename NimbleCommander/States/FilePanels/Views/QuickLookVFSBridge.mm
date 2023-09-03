@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickLookVFSBridge.h"
 #include <Utility/StringExtras.h>
 #include <Utility/TemporaryFileStorage.h>
@@ -39,8 +39,8 @@ NSURL *QuickLookVFSBridge::FetchItem( const std::string& _path, VFSHost &_host )
     }
     else {
         // basic check that directory looks like a bundle
-        if( !boost::filesystem::path(_path).has_extension() ||
-            boost::filesystem::path(_path).filename() == boost::filesystem::path(_path).extension())
+        if( !std::filesystem::path(_path).has_extension() ||
+            std::filesystem::path(_path).filename() == std::filesystem::path(_path).extension())
             return nil;
         
         const auto copied_path = CopyDirectoryToTempStorage(_path, _host, m_MaxSize, m_TempStorage);

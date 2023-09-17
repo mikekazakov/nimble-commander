@@ -29,6 +29,10 @@ static void Validate(const ListingInput &_source)
     if( _source.hosts.mode() == variable_container<>::type::sparse )
         throw std::logic_error("VFSListingInput validation failed: hosts can't be sparse");
 
+    if( _source.hosts.mode() ==  variable_container<>::type::dense && items_no == 0) {
+        throw std::logic_error("VFSListingInput validation failed: hosts of empty listings can't be dense");
+    }
+    
     for( auto i = size_t(0), e = _source.hosts.size(); i != e; ++i )
         if( _source.hosts[i] == nullptr )
             throw std::logic_error("VFSListingInput validation failed: host can't be nullptr");
@@ -95,7 +99,22 @@ static void Compress(ListingInput &_input)
     CompressIntoContiguous(_input.gids);
     CompressIntoContiguous(_input.unix_flags);
 
-    // todo: ability to compress hosts into common? dense is an overkill here in most cases
+    // TODO: generalize and move this into variable_container itself?
+    // Compress dense hosts into a common one if all are the same
+    if( _input.hosts.mode() ==  variable_container<>::type::dense ) {
+        assert(!_input.hosts.empty());
+        auto first = _input.hosts[0];
+        bool allsame = true;
+        for( size_t i = 1, e = _input.hosts.size(); i < e; ++i ) {
+            if( _input.hosts[i] != first ) {
+                allsame = false;
+                break;
+            }
+        }
+        if( allsame ) {
+            _input.hosts = variable_container<VFSHostPtr>{first};
+        }
+    }
 }
 
 Listing::Listing() = default;

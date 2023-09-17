@@ -1,9 +1,10 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include "PanelController+DataAccess.h"
 #include <Panel/PanelDataItemVolatileData.h>
 #include <Panel/PanelData.h>
 #include "PanelView.h"
+#include <Utility/PathManip.h>
 #include <VFS/VFS.h>
 
 @implementation PanelController (DataAccess)
@@ -125,33 +126,13 @@
 
 - (std::string) expandPath:(const std::string&)_ref
 {
-    if( _ref.empty() )
-        return {};
-    
-    if( _ref.front() == '/' ) // absolute path
-        return _ref;
-    
-    if( self.vfs->IsNativeFS() &&
-       _ref.front() == '~' ) { // relative to home
-        auto ref = _ref.substr(1);
-        auto p = std::filesystem::path(nc::base::CommonPaths::Home());
-        if(!ref.empty())
-            p.remove_filename();
-        p /= ref;
-        return p.native();
+    auto &listing = self.data.Listing();
+    if( listing.HasCommonHost() && listing.Host()->IsNativeFS() ) {
+        return nc::utility::PathManip::Expand(_ref, nc::base::CommonPaths::Home(), self.currentDirectoryPath);
     }
-
-    // sub-dir
-    std::filesystem::path p = self.currentDirectoryPath;
-    if( p.empty() )
-        return {};
-
-    if( _ref.find("./", 0, 2) == 0 )
-        p /= _ref.substr(2);
-    else
-        p /= _ref;
-    
-    return p.native();
+    else {
+        return nc::utility::PathManip::Expand(_ref, "/", self.currentDirectoryPath);
+    }
 }
 
 @end

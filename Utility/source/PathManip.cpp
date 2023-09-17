@@ -212,4 +212,52 @@ std::string_view PathManip::Parent(std::string_view _path) noexcept
     return std::string_view(first, last - first);
 }
 
+std::filesystem::path PathManip::Expand(std::string_view _path, std::string_view _home, std::string_view _cwd) noexcept
+{
+    if( _home.empty() )
+        _home = "/";
+    if( _cwd.empty() )
+        _cwd = "/";
+
+    if( _path.empty() ) {
+        // empty path - return empty
+        return {};
+    }
+    else if( _path.front() == '/' ) {
+        // absolute path - normalize and return
+        return std::filesystem::path(_path).lexically_normal();
+    }
+    else if( _path.front() == '~' ) {
+        // relative to home path - concatenate, normalize and return
+        _path.remove_prefix(1);
+        std::string result;
+        result.reserve(_home.size() + _path.size() + 1);
+        result += _home;
+        if( result.back() == '/' ) {
+            result += _path;
+        }
+        else {
+            if( _path.empty() || _path.front() != '/' )
+                result += '/';
+            result += _path;
+        }
+        return std::filesystem::path(result).lexically_normal();
+    }
+    else {
+        // relative to cwd path - concatenate, normalize and return
+        std::string result;
+        result.reserve(_cwd.size() + _path.size() + 1);
+        result += _cwd;
+        if( result.back() == '/' ) {
+            result += _path;
+        }
+        else {
+            if( _path.front() != '/' )
+                result += '/';
+            result += _path;
+        }
+        return std::filesystem::path(result).lexically_normal();
+    }
+}
+
 } // namespace nc::utility

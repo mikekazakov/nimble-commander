@@ -61,26 +61,6 @@ static const auto g_InitialStatePath = "filePanel.initialState";
 static const auto g_InitialStateLeftDefaults = "left";
 static const auto g_InitialStateRightDefaults = "right";
 
-static std::string ExpandPath(const std::string &_ref)
-{
-    if( _ref.empty() )
-        return {};
-
-    if( _ref.front() == '/' ) // absolute path
-        return _ref;
-
-    if( _ref.front() == '~' ) { // relative to home
-        auto ref = _ref.substr(1);
-        auto p = std::filesystem::path(nc::base::CommonPaths::Home());
-        if( !ref.empty() )
-            p.remove_filename();
-        p /= ref;
-        return p.native();
-    }
-
-    return {};
-}
-
 static void SetupUnregisteredLabel(NSView *_background_view)
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
@@ -316,17 +296,17 @@ static NSString *TitleForData(const data::Model *_data);
 
 - (void)loadDefaultPanelContent
 {
+    using nc::utility::PathManip;
     auto &am = *m_ActivationManager;
     auto left_controller = m_LeftPanelControllers.front();
     auto right_controller = m_RightPanelControllers.front();
-
     std::vector<std::string> left_panel_desired_paths, right_panel_desired_paths;
 
     // 1st attempt - load editable default path from config
-    left_panel_desired_paths.emplace_back(
-        ExpandPath(GlobalConfig().GetString(g_ConfigInitialLeftPath)));
-    right_panel_desired_paths.emplace_back(
-        ExpandPath(GlobalConfig().GetString(g_ConfigInitialRightPath)));
+    left_panel_desired_paths.emplace_back(EnsureTrailingSlash(
+        PathManip::Expand(GlobalConfig().GetString(g_ConfigInitialLeftPath), nc::base::CommonPaths::Home(), {})));
+    right_panel_desired_paths.emplace_back(EnsureTrailingSlash(
+        PathManip::Expand(GlobalConfig().GetString(g_ConfigInitialRightPath), nc::base::CommonPaths::Home(), {})));
 
     // 2nd attempt - load home path
     left_panel_desired_paths.emplace_back(nc::base::CommonPaths::Home());

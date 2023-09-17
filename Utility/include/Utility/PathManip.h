@@ -1,8 +1,8 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <stdbool.h>
 #include <string>
+#include <filesystem>
 
 /**
  * Converts path like "/Dir/Abra/" to "/Dir/Abra".
@@ -105,6 +105,7 @@ struct PathManip {
     static std::string_view Filename(std::string_view _path) noexcept;
     static std::string_view Extension(std::string_view _path) noexcept;
     static std::string_view Parent(std::string_view _path) noexcept;
+    static std::filesystem::path Expand(std::string_view _path, std::string_view _home, std::string_view _cwd) noexcept;
 };
 
 } // namespace nc::utility

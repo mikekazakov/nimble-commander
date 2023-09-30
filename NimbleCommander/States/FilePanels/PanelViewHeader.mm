@@ -225,14 +225,14 @@ static bool IsDark(NSColor *_color);
     return true;
 }
 
-- (void)drawRect:(NSRect)dirtyRect
+- (void)drawRect:(NSRect)[[maybe_unused]]dirtyRect
 {
     if( m_Background && m_Background != NSColor.clearColor ) {
         CGContextRef context = NSGraphicsContext.currentContext.CGContext;
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
-        CGContextFillRect(context, NSRectToCGRect(dirtyRect));
+        CGContextFillRect(context, NSRectToCGRect(self.bounds));
     } else {
-        NSDrawWindowBackground(dirtyRect);
+        NSDrawWindowBackground(self.bounds);
     }
 }
 

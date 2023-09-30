@@ -59,7 +59,7 @@ class NativeHost;
 
 }
 
-@interface NCAppDelegate : NSObject <NSApplicationDelegate>
+@interface NCAppDelegate : NSObject <NSApplicationDelegate, NSWindowRestoration>
 
 - (InternalViewerWindowController *)
     findInternalViewerWindowForPath:(const std::string &)_path

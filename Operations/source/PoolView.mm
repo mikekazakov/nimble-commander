@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PoolView.h"
 
 
@@ -10,7 +10,7 @@
         return;
 
     [NSColor.windowBackgroundColor set];
-    NSRectFill(dirtyRect);
+    NSRectFill(self.bounds);
     return;
 }
 

@@ -175,7 +175,7 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
 {
     const auto context = NSGraphicsContext.currentContext.CGContext;
     CGContextSetFillColorWithColor(context, m_Settings->BackgroundColor().CGColor);
-    CGContextFillRect(context, NSRectToCGRect(dirtyRect));
+    CGContextFillRect(context, NSRectToCGRect(NSIntersectionRect(dirtyRect, self.bounds)));
 }
 
 - (void)frameDidChange

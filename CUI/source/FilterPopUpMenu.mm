@@ -1,9 +1,15 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include "FilterPopUpMenu.h"
 #include <Utility/ObjCpp.h>
 #include <vector>
 #include <array>
+
+enum class InterceiptMode
+{
+    Carbon,
+    Cocoa
+};
 
 @interface FilterPopUpMenu ()
 
@@ -92,9 +98,7 @@
 
     if( m_Filter.length == 0 && m_KeyEquivalentsHidden == true ) {
         auto items = self.itemArray;
-        for( size_t i1 = 0, e1 = items.count, i2 = 0, e2 = m_KeyEquivalents.size();
-             i1 != e1 && i2 != e2;
-             ++i1, ++i2 )
+        for( size_t i1 = 0, e1 = items.count, i2 = 0, e2 = m_KeyEquivalents.size(); i1 != e1 && i2 != e2; ++i1, ++i2 )
             [items objectAtIndex:i1].keyEquivalent = m_KeyEquivalents[i2];
         m_KeyEquivalentsHidden = false;
     }
@@ -121,12 +125,14 @@
 @implementation FilterPopUpMenuItem {
     NSTextField *m_Title;
     NSTextField *m_Query;
+    InterceiptMode m_Mode;
     EventHandlerRef m_EventHandler;
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect
 {
     if( self = [super initWithFrame:frameRect] ) {
+        m_Mode = InterceiptMode::Carbon;
         m_EventHandler = nullptr;
         self.autoresizingMask = NSViewWidthSizable;
 
@@ -158,12 +164,10 @@
         [self addSubview:m_Query];
 
         auto views = NSDictionaryOfVariableBindings(m_Title, m_Query);
-        [self
-            addConstraints:[NSLayoutConstraint
-                               constraintsWithVisualFormat:@"|-(==21)-[m_Title]-[m_Query]-(==10)-|"
-                                                   options:0
-                                                   metrics:nil
-                                                     views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==21)-[m_Title]-[m_Query]-(==10)-|"
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[m_Query]-(==1)-|"
                                                                      options:0
                                                                      metrics:nil
@@ -257,8 +261,7 @@ static constexpr std::array<bool, 256> g_PassthruTable = [] {
         return false;
 
     const auto mod_flags = ev.modifierFlags;
-    if( (mod_flags & NSEventModifierFlagCommand) != 0 ||
-        (mod_flags & NSEventModifierFlagControl) != 0 ||
+    if( (mod_flags & NSEventModifierFlagCommand) != 0 || (mod_flags & NSEventModifierFlagControl) != 0 ||
         (mod_flags & NSEventModifierFlagOption) != 0 )
         return false;
 
@@ -293,11 +296,59 @@ static constexpr std::array<bool, 256> g_PassthruTable = [] {
     [self updateVisibility];
 }
 
+- (void)keyDown:(NSEvent *)ev
+{
+    auto bypass = [&] {
+        [super keyDown:ev];
+        [self.window makeFirstResponder:self];
+    };
+
+    if( ev.type != NSEventTypeKeyDown ) {
+        bypass();
+        return;
+    }
+
+    const auto kc = ev.keyCode;
+    if( kc >= g_PassthruTable.size() || g_PassthruTable[kc] ) {
+        bypass();
+        return;
+    }
+
+    const auto mod_flags = ev.modifierFlags;
+    if( (mod_flags & NSEventModifierFlagCommand) != 0 || (mod_flags & NSEventModifierFlagControl) != 0 ||
+        (mod_flags & NSEventModifierFlagOption) != 0 ) {
+        bypass();
+        return;
+    }
+
+    const auto query = m_Query.stringValue;
+    if( kc == 51 ) { // backspace
+        if( query.length > 0 )
+            [self setQuery:[query substringToIndex:query.length - 1]];
+        return;
+    }
+
+    const auto chars = ev.charactersIgnoringModifiers;
+    if( chars && chars.length == 1 ) {
+        [self setQuery:[query stringByAppendingString:chars]];
+        return;
+    }
+
+    bypass();
+}
+
 - (void)viewDidMoveToWindow
 {
     const auto window = self.window;
     if( window ) {
         const auto window_class = window.className;
+        if( [window_class isEqualToString:@"NSPopupMenuWindow"] ) {
+            // MacOS14+
+            m_Mode = InterceiptMode::Cocoa;
+            [window makeFirstResponder:self];
+            return;
+        }
+
         const auto is_supported = [window_class isEqualToString:@"NSCarbonMenuWindow"] ||
                                   [window_class isEqualToString:@"NSMenuWindowManagerWindow"];
         if( is_supported == false ) {
@@ -316,8 +367,8 @@ static constexpr std::array<bool, 256> g_PassthruTable = [] {
         evts[0].eventKind = kEventRawKeyDown;
         evts[1].eventClass = kEventClassKeyboard;
         evts[1].eventKind = kEventRawKeyRepeat;
-        const auto result = InstallEventHandler(
-            dispatcher, CarbonCallback, 2, &evts[0], (__bridge void *)self, &m_EventHandler);
+        const auto result =
+            InstallEventHandler(dispatcher, CarbonCallback, 2, &evts[0], (__bridge void *)self, &m_EventHandler);
         if( result != noErr ) {
             NSLog(@"InstallEventHandler() failed");
         }
@@ -341,6 +392,9 @@ static constexpr std::array<bool, 256> g_PassthruTable = [] {
 - (void)updateVisibility
 {
     m_Query.hidden = m_Query.stringValue.length == 0;
+    if( m_Query.hidden && m_Mode == InterceiptMode::Cocoa ) {
+        [self.window makeFirstResponder:self];
+    }
 }
 
 - (void)controlTextDidChange:(NSNotification *) [[maybe_unused]] _obj

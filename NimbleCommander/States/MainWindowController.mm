@@ -161,7 +161,7 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
 
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
-    const id encoded_state = [coder decodeObjectForKey:g_CocoaRestorationFilePanelsStateKey];
+    const id encoded_state = [coder decodeObjectOfClass:NSString.class forKey:g_CocoaRestorationFilePanelsStateKey];
     if( auto json = objc_cast<NSString>(encoded_state) ) {
         nc::config::Document state;
         rapidjson::ParseResult ok = state.Parse<rapidjson::kParseCommentsFlag>(json.UTF8String);

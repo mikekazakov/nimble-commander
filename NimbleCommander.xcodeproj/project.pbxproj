@@ -466,7 +466,6 @@
 		CF7D7D5C21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */; };
 		CF7D7D5D21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */; };
 		CF7D7D5E21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */; };
-		CF7E35781F6CAF2F009D15D9 /* SparkleDSA_Pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */; };
 		CF818B451EA0610C00BC28E6 /* Select.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDB51E9F7353008FA79E /* Select.mm */; };
 		CF818B461EA0610C00BC28E6 /* RenameInPlace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDB21E9F4AF3008FA79E /* RenameInPlace.mm */; };
 		CF818B471EA0610C00BC28E6 /* ChangeAttributes.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */; };
@@ -1776,7 +1775,6 @@
 		CF7D7A741C15AAC200ECEBA0 /* Config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Config.json; path = NimbleCommander/Resources/Config.json; sourceTree = SOURCE_ROOT; };
 		CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewDummyPresentation.mm; path = NimbleCommander/States/FilePanels/PanelViewDummyPresentation.mm; sourceTree = "<group>"; };
 		CF7D7D5A21576E0100DA1794 /* PanelViewDummyPresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewDummyPresentation.h; path = NimbleCommander/States/FilePanels/PanelViewDummyPresentation.h; sourceTree = "<group>"; };
-		CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SparkleDSA_Pub.pem; path = NimbleCommander/Resources/SparkleDSA_Pub.pem; sourceTree = SOURCE_ROOT; };
 		CF818B6F1EA07A5B00BC28E6 /* Pasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pasteboard.h; path = NimbleCommander/States/FilePanels/Helpers/Pasteboard.h; sourceTree = SOURCE_ROOT; };
 		CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pasteboard.mm; path = NimbleCommander/States/FilePanels/Helpers/Pasteboard.mm; sourceTree = SOURCE_ROOT; };
 		CF818B721EA0830400BC28E6 /* CopyToPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyToPasteboard.h; path = NimbleCommander/States/FilePanels/Actions/CopyToPasteboard.h; sourceTree = SOURCE_ROOT; };
@@ -2653,7 +2651,6 @@
 		CF6D99A5196675FE0077B146 /* NC NonMAS */ = {
 			isa = PBXGroup;
 			children = (
-				CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */,
 				CF6D9D2B1966A56E0077B146 /* NimbleCommander-Info.plist */,
 				CF52C3CB22BE5B2D0043E825 /* NCNonMAS.entitlements */,
 			);
@@ -3807,7 +3804,6 @@
 				CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CF9F4B101ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF8D0CE91D9623E000ADFF14 /* RegistrationInfoWindow.xib in Resources */,
-				CF7E35781F6CAF2F009D15D9 /* SparkleDSA_Pub.pem in Resources */,
 				CF8400FD21A2A8DE007FEF7B /* TrialWindowController.xib in Resources */,
 				CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */,

@@ -1,12 +1,14 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
-
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SparkleShim.h"
 #include <Sparkle/Sparkle.h>
 
-SUUpdater *NCBootstrapSharedSUUpdaterInstance(void)
+SPUStandardUpdaterController *NCBootstrapSharedSUUpdaterInstance(void)
 {
 #ifdef __NC_VERSION_TRIAL__
-    return [SUUpdater sharedUpdater];
+    static SPUStandardUpdaterController *ctrl = nil;
+    if( !ctrl )
+        ctrl = [[SPUStandardUpdaterController alloc] initWithUpdaterDelegate:nil userDriverDelegate:nil];
+    return ctrl;
 #else
     return nil;
 #endif

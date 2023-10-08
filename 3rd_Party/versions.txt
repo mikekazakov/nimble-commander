@@ -18,7 +18,7 @@ pstld           head
 pugixml         1.10
 re2             2022-02-01
 robin_hood      3.11.5
-sparkle         1.24.0
+sparkle         2.5.0
 spdlog          1.11.0
 unrar           ???
 zlib            1.2.13

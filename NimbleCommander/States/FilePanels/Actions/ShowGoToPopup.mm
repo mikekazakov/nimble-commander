@@ -477,7 +477,9 @@ static bool RerouteGoToEventToLeftToolbarButton(MainWindowFilePanelState *_targe
     if( !delegate.leftPanelGoToButton || !delegate.leftPanelGoToButton.window )
         return false;
 
-    [delegate.leftPanelGoToButton performClick:_target];
+    dispatch_to_main_queue([b = delegate.leftPanelGoToButton, t=_target]{
+        [b performClick:t];
+    });
     return true;
 }
 
@@ -520,7 +522,9 @@ static bool RerouteGoToEventToRightToolbarButton(MainWindowFilePanelState *_targ
     if( !delegate.rightPanelGoToButton || !delegate.rightPanelGoToButton.window )
         return false;
 
-    [delegate.rightPanelGoToButton performClick:_target];
+    dispatch_to_main_queue([b = delegate.rightPanelGoToButton, t=_target]{
+        [b performClick:t];
+    });
     return true;
 }
 

@@ -31,7 +31,7 @@ using nc::base::Hash;
     std::vector<std::string> m_Checksums;
     std::vector<std::string> m_Errors;
     std::string m_Path;
-    SerialQueue m_WorkQue;
+    nc::base::SerialQueue m_WorkQue;
     uint64_t m_TotalSize;
 }
 

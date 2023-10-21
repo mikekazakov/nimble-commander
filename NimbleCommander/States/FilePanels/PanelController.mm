@@ -133,9 +133,9 @@ static void HeatUpConfigValues()
     unsigned long m_VFSFetchingFlags;
 
     // background operations' queues
-    SerialQueue m_DirectorySizeCountingQ;
-    SerialQueue m_DirectoryLoadingQ;
-    SerialQueue m_DirectoryReLoadingQ;
+    nc::base::SerialQueue m_DirectorySizeCountingQ;
+    nc::base::SerialQueue m_DirectoryLoadingQ;
+    nc::base::SerialQueue m_DirectoryReLoadingQ;
 
     NCPanelQuickSearch *m_QuickSearch;
 
@@ -403,6 +403,8 @@ static void HeatUpConfigValues()
         const auto vfs = self.vfs;
 
         m_DirectoryReLoadingQ.Run([=] {
+            if( m_DirectoryReLoadingQ.IsStopped() )
+                return;
             VFSListingPtr listing;
             int ret = vfs->FetchDirectoryListing(
                 dirpath.c_str(), listing, fetch_flags, [&] { return m_DirectoryReLoadingQ.IsStopped(); });
@@ -414,6 +416,8 @@ static void HeatUpConfigValues()
     }
     else {
         m_DirectoryReLoadingQ.Run([=] {
+            if( m_DirectoryReLoadingQ.IsStopped() )
+                return;
             auto listing = VFSListing::ProduceUpdatedTemporaryPanelListing(
                 m_Data.Listing(), [&] { return m_DirectoryReLoadingQ.IsStopped(); });
             if( listing )

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/SerialQueue.h>
@@ -83,7 +83,7 @@ private:
     std::shared_ptr<Snapshot> m_Data;
     std::vector<std::pair<unsigned long, std::function<void()>>> m_UpdateHandlers;
     unsigned long m_LastTicket = 1;
-    SerialQueue m_UpdateQ;
+    base::SerialQueue m_UpdateQ;
     bool m_UpdateStarted = false;
 };
 

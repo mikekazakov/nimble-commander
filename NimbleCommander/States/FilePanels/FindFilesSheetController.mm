@@ -227,9 +227,9 @@ private:
 
     NSMutableArray *m_FoundItemsBatch;
     NSTimer *m_BatchDrainTimer;
-    SerialQueue m_BatchQueue;
+    nc::base::SerialQueue m_BatchQueue;
     DispatchGroup m_StatGroup; // for native VFS
-    SerialQueue m_StatQueue;   // for custom VFS
+    nc::base::SerialQueue m_StatQueue;   // for custom VFS
 
     std::string m_LookingInPath;
     std::mutex m_LookingInPathGuard;

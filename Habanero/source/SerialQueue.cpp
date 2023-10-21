@@ -1,10 +1,9 @@
 // Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/SerialQueue.h>
 
-using namespace std;
+namespace nc::base {
 
-SerialQueue::SerialQueue(const char *_label):
-    m_Queue( dispatch_queue_create(_label, DISPATCH_QUEUE_SERIAL) )
+SerialQueue::SerialQueue(const char *_label) : m_Queue(dispatch_queue_create(_label, DISPATCH_QUEUE_SERIAL))
 {
 }
 
@@ -14,33 +13,30 @@ SerialQueue::~SerialQueue()
     Wait();
 }
 
-void SerialQueue::SetOnDry( function<void()> _cb )
+void SerialQueue::SetOnDry(std::function<void()> _cb)
 {
-    std::shared_ptr<std::function<void()>> cb =
-        std::make_shared<std::function<void()>>( std::move(_cb) );
+    std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnDry = cb;
 }
 
-void SerialQueue::SetOnWet( function<void()> _cb )
+void SerialQueue::SetOnWet(std::function<void()> _cb)
 {
-    std::shared_ptr<std::function<void()>> cb =
-        std::make_shared<std::function<void()>>( std::move(_cb) );
+    std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnWet = cb;
 }
 
-void SerialQueue::SetOnChange( function<void()> _cb )
+void SerialQueue::SetOnChange(std::function<void()> _cb)
 {
-    std::shared_ptr<std::function<void()>> cb =
-        std::make_shared<std::function<void()>>( std::move(_cb) );
+    std::shared_ptr<std::function<void()>> cb = std::make_shared<std::function<void()>>(std::move(_cb));
     const auto lock = std::lock_guard{m_CallbackLock};
     m_OnChange = cb;
 }
 
 void SerialQueue::Stop()
 {
-    if(m_Length > 0)
+    if( m_Length > 0 )
         m_Stopped = true;
 }
 
@@ -67,8 +63,8 @@ void SerialQueue::Wait()
 {
     if( Empty() )
         return;
-    
-    dispatch_sync_f( m_Queue, nullptr, [](void*){} );
+
+    dispatch_sync_f(m_Queue, nullptr, [](void *) {});
 }
 
 int SerialQueue::Length() const noexcept
@@ -115,3 +111,5 @@ void SerialQueue::FireChanged() const
     if( cb && *cb )
         (*cb)();
 }
+
+} // namespace nc::base

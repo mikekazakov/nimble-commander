@@ -92,7 +92,7 @@ struct BackgroundFileOpener {
     std::shared_ptr<nc::vfs::FileWindow> m_ViewerFileWindow;
     std::shared_ptr<nc::vfs::FileWindow> m_SearchFileWindow;
     std::shared_ptr<nc::vfs::SearchInFile> m_SearchInFile;
-    SerialQueue m_SearchInFileQueue;
+    nc::base::SerialQueue m_SearchInFileQueue;
     nc::viewer::History *m_History;
     nc::config::Config *m_Config;
     std::function<nc::utility::ActionShortcut(std::string_view _name)> m_Shortcuts;

@@ -51,7 +51,7 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
     MainWindowInternalViewerState *m_Viewer;
     nc::bootstrap::ActivationManager *m_ActivationManager;
 
-    SerialQueue m_BigFileViewLoadingQ;
+    nc::base::SerialQueue m_BigFileViewLoadingQ;
     bool m_ToolbarVisible;
     std::vector<config::Token> m_ConfigTickets;
 

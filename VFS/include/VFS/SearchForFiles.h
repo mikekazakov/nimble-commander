@@ -122,7 +122,7 @@ private:
     bool FilterByContent(const char* _full_path, VFSHost &_in_host, CFRange &_r);
     bool FilterByFilename(const char* _filename) const;
     
-    SerialQueue                 m_Queue;
+    base::SerialQueue           m_Queue;
     utility::FileMask           m_FilterName;
     std::optional<FilterContent>m_FilterContent;
     std::optional<FilterSize>   m_FilterSize;

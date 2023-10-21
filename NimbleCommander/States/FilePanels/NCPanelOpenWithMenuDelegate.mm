@@ -84,7 +84,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
     std::vector<LaunchServiceHandler> m_OpenWithHandlers;
     std::string m_DefaultHandlerPath;
     std::string m_ItemsUTI;
-    SerialQueue m_FetchQueue;
+    nc::base::SerialQueue m_FetchQueue;
     robin_hood::unordered_set<NSMenu *> m_ManagedMenus;
     FileOpener *m_FileOpener;
     const UTIDB *m_UTIDB;

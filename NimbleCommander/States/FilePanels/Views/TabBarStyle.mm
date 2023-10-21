@@ -318,10 +318,10 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
     const NSColor *bg_color = nc::CurrentTheme().FilePanelsTabsRegularNotKeyWndBackgroundColor();
     if( bg_color && bg_color != NSColor.clearColor ) {
         [bg_color set];
-        NSRectFill(rect);
+        NSRectFill(tabBarView.bounds);
     }
     else {
-        NSDrawWindowBackground(rect);
+        NSDrawWindowBackground(tabBarView.bounds);
     }
 
     [nc::CurrentTheme().FilePanelsTabsSeparatorColor() set];

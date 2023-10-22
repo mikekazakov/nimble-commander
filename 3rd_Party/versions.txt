@@ -9,7 +9,7 @@ gtest           1.12.1
 letsmove        1.25
 libarchive      3.6.2 + custom patch
 libcxx		16.x
-libssh2         1.9.0
+libssh2         1.11.0
 lz4             1.9.3
 lzma(xz)        5.2.5
 lzo             2.10
@@ -21,7 +21,7 @@ robin_hood      3.11.5
 sparkle         2.5.0
 spdlog          1.11.0
 unrar           ???
-zlib            1.2.13
+zlib            1.3
 zstd            1.5.1
 
 Build flags:

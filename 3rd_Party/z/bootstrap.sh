@@ -9,10 +9,10 @@ TMP_DIR=${CUR_DIR}/libz.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-wget https://zlib.net/zlib-1.2.13.tar.gz
-gunzip -c zlib-1.2.13.tar.gz | tar xopf -
+wget https://zlib.net/zlib-1.3.tar.gz
+gunzip -c zlib-1.3.tar.gz | tar xopf -
 
-cd zlib-1.2.13
+cd zlib-1.3
 mkdir build && cd build
 cmake \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
@@ -28,8 +28,8 @@ rm -rf ./lib/
 mkdir include
 mkdir lib
 
-cp ${TMP_DIR}/zlib-1.2.13/build/libz.a ./lib/
-cp ${TMP_DIR}/zlib-1.2.13/build/zconf.h ./include/
-cp ${TMP_DIR}/zlib-1.2.13/zlib.h ./include/
+cp ${TMP_DIR}/zlib-1.3/build/libz.a ./lib/
+cp ${TMP_DIR}/zlib-1.3/build/zconf.h ./include/
+cp ${TMP_DIR}/zlib-1.3/zlib.h ./include/
 
 rm -rf ${TMP_DIR} 

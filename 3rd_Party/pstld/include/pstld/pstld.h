@@ -2079,7 +2079,7 @@ std::pair<It, It> partition(It first, It last, Pred pred)
     }
 }
 
-inline size_t log2(size_t n) noexcept
+inline constexpr size_t log2(size_t n) noexcept
 {
     size_t log2n = 0;
     while( n > 1 ) {
@@ -2247,6 +2247,240 @@ template <class RanIt>
 void sort(RanIt first, RanIt last) noexcept
 {
     return ::pstld::sort(first, last, std::less<>{});
+}
+
+//--------------------------------------------------------------------------------------------------
+// stable_sort
+//--------------------------------------------------------------------------------------------------
+
+namespace internal {
+
+inline size_t stable_sort_tree_height(size_t elems) noexcept
+{
+    size_t chunks_elems = elems / insertion_sort_limit;
+    size_t log2_elems = log2(chunks_elems);
+
+    size_t chunks_oversubscr = max_hw_threads() * chunks_per_cpu;
+    size_t log2_oversubscr = log2(chunks_oversubscr);
+
+    return std::min(log2_elems, log2_oversubscr) & ~size_t(1);
+}
+
+template <class It1, class It2, class Cmp>
+void merge_mid_move(It1 first, It1 mid, It1 last, It2 out, Cmp cmp)
+{
+    // TODO: should it move-construct in-place instead of moving into?
+    auto first1 = first;
+    auto first2 = mid;
+    for( ; first1 != mid; ++out ) {
+        if( first2 == last ) {
+            std::move(first1, mid, out);
+            return;
+        }
+        if( cmp(*first2, *first1) ) {
+            *out = std::move(*first2);
+            ++first2;
+        }
+        else {
+            *out = std::move(*first1);
+            ++first1;
+        }
+    }
+    std::move(first2, last, out);
+}
+
+template <class It, class Cmp>
+void insertion_sort_buf_assign_move(It first, It last, Cmp cmp, iterator_value_t<It> *buf)
+{
+    if( first == last )
+        return;
+
+    auto last2 = buf;
+    *(last2++) = std::move(*first);
+
+    for( ; ++first != last; ++last2 ) {
+        auto j2 = last2;
+        auto i2 = j2;
+        if( cmp(*first, *--i2) ) {
+            *j2 = std::move(*i2);
+            for( --j2; i2 != buf && cmp(*first, *--i2); --j2 )
+                *j2 = std::move(*i2);
+            *j2 = std::move(*first);
+        }
+        else {
+            *j2 = std::move(*first);
+        }
+    }
+}
+
+template <class It, class Cmp>
+void stable_sort(It first, It last, Cmp cmp, iterator_value_t<It> *buf);
+
+template <class It, class Cmp>
+void stable_sort_buf_assign_move(It first, It last, Cmp cmp, iterator_value_t<It> *buf)
+{
+    size_t len = last - first;
+    if( len == 0 ) {
+    }
+    else if( len == 1 ) {
+        *buf = std::move(*first);
+    }
+    else if( len == 2 ) {
+        auto second = first;
+        ++second;
+        if( cmp(*second, *first) ) {
+            *(buf++) = std::move(*second);
+            *buf = std::move(*first);
+        }
+        else {
+            *(buf++) = std::move(*first);
+            *buf = std::move(*second);
+        }
+    }
+    else if( len <= insertion_sort_limit ) {
+        insertion_sort_buf_assign_move(first, last, cmp, buf);
+    }
+    else {
+        size_t half = len / 2;
+        It mid = first + half;
+        stable_sort(first, mid, cmp, buf);
+        stable_sort(mid, last, cmp, buf + half);
+        merge_mid_move(first, mid, last, buf, cmp);
+    }
+}
+
+template <class It, class Cmp>
+void stable_sort(It first, It last, Cmp cmp, iterator_value_t<It> *buf)
+{
+    size_t len = last - first;
+    if( len <= insertion_sort_limit ) {
+        insertion_sort(first, last, cmp);
+    }
+    else {
+        size_t half = len / 2;
+        It mid = first + half;
+        stable_sort_buf_assign_move(first, mid, cmp, buf);
+        stable_sort_buf_assign_move(mid, last, cmp, buf + half);
+        merge_mid_move(buf, buf + half, buf + len, first, cmp);
+    }
+}
+
+template <class It, class Cmp>
+struct StableSort {
+    struct Work {
+        size_t first;
+        size_t last;
+        size_t depth;
+    };
+
+    It m_first;
+    It m_last;
+    Cmp m_cmp;
+    size_t m_size;
+    size_t m_height;
+    size_t m_chunks;
+    size_t m_workers{max_hw_threads()};
+    std::atomic<size_t> m_next_chunk{0};
+
+    Partition<It> m_partition;
+    parallelism_vector<iterator_value_t<It>> m_buf; // TODO: should be raw temp memory instead?
+    parallelism_vector<std::atomic<bool>> m_flags;
+
+    DispatchGroup m_dg;
+
+    StableSort(It first, It last, Cmp cmp)
+        : m_first(first), m_last(last), m_cmp(cmp), m_size(last - first),
+          m_height(stable_sort_tree_height(m_size)), m_chunks(size_t(1) << m_height),
+          m_partition(first, m_size, m_chunks), m_buf(m_size), m_flags(size_t(1) << m_height)
+    {
+    }
+
+    void start() noexcept
+    {
+        for( size_t i = 1; i != m_workers; ++i )
+            m_dg.dispatch(static_cast<void *>(this), dispatch);
+        dispatch_worker();
+        m_dg.wait();
+    }
+
+    static void dispatch(void *ctx) noexcept
+    {
+        auto me = static_cast<StableSort *>(ctx);
+        me->dispatch_worker();
+    }
+
+    void dispatch_worker() noexcept
+    {
+        while( true ) {
+            size_t chunk = m_next_chunk.fetch_add(1);
+            if( chunk >= m_chunks )
+                break;
+            bottomup(chunk);
+        }
+    }
+
+    void bottomup(size_t ind) noexcept
+    {
+        auto p = m_partition.at(ind);
+
+        stable_sort(p.first, p.last, m_cmp, m_buf.data() + std::distance(m_first, p.first));
+        std::atomic<bool> *flag_ptr = m_flags.data();
+        if( !flag_ptr[ind / 2].exchange(true) ) // try to give up merging
+            return;
+
+        auto buf = m_buf.data();
+        for( size_t lvl = 1, chunks = m_chunks / 2;; ++lvl, chunks >>= 1 ) {
+            bool odd = ind & 1;
+            ind >>= 1;
+
+            auto first = odd ? m_partition.at(ind << lvl).first : p.first;
+            auto mid = odd ? p.first : p.last;
+            auto last = odd ? p.last : m_partition.at(((ind + 1) << lvl) - 1).last;
+
+            if( lvl % 2 ) {
+                // merge into tmp buf
+                merge_mid_move(first, mid, last, buf + (first - m_first), m_cmp);
+            }
+            else {
+                // merge back into orig buffer
+                merge_mid_move(buf + (first - m_first),
+                               buf + (mid - m_first),
+                               buf + (last - m_first),
+                               first,
+                               m_cmp);
+            }
+
+            flag_ptr += chunks;
+            if( !flag_ptr[ind / 2].exchange(true) ) // try to give up merging
+                return;
+
+            p.first = first;
+            p.last = last;
+        }
+    }
+};
+
+} // namespace internal
+
+template <class RanIt, class Cmp>
+void stable_sort(RanIt first, RanIt last, Cmp cmp) noexcept
+{
+    const auto count = std::distance(first, last);
+    if( static_cast<size_t>(count) > internal::insertion_sort_limit * 4 ) {
+        try {
+            internal::StableSort<RanIt, Cmp> op(first, last, cmp);
+            op.start();
+            return;
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    std::stable_sort(first, last, cmp);
+}
+
+template <class RanIt>
+void stable_sort(RanIt first, RanIt last) noexcept
+{
+    return ::pstld::stable_sort(first, last, std::less<>{});
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2472,6 +2706,7 @@ void fill(FwdIt first, FwdIt last, const T &val) noexcept
     }
     return std::fill(first, last, val);
 }
+
 template <class FwdIt, class Size, class T>
 FwdIt fill_n(FwdIt first, Size count, const T &val) noexcept
 {
@@ -2488,6 +2723,69 @@ FwdIt fill_n(FwdIt first, Size count, const T &val) noexcept
         }
     }
     return std::fill_n(first, count, val);
+}
+
+//--------------------------------------------------------------------------------------------------
+// generate, generate_n
+//--------------------------------------------------------------------------------------------------
+
+namespace internal {
+
+template <class It, class Gen>
+struct Generate : Dispatchable<Generate<It, Gen>> {
+    Partition<It> m_partition;
+    Gen &m_gen;
+
+    Generate(size_t count, size_t chunks, It first, Gen &gen)
+        : m_partition(first, count, chunks), m_gen(gen)
+    {
+    }
+
+    void run(size_t ind) noexcept
+    {
+        // this technically violates the assumption that the generation will be performed in a
+        // deterministic order, but that in turn essentially makes a parallel version
+        // unimplementable. so instead this implementation calls the generator concurrently without
+        // a specific order.
+        for( auto p = m_partition.at(ind); p.first != p.last; ++p.first )
+            *p.first = m_gen();
+    }
+};
+
+} // namespace internal
+
+template <class FwdIt, class Gen>
+void generate(FwdIt first, FwdIt last, Gen gen) noexcept
+{
+    const auto count = std::distance(first, last);
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::Generate<FwdIt, Gen> op{static_cast<size_t>(count), chunks, first, gen};
+            op.dispatch_apply(chunks);
+            return;
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::generate(first, last, gen);
+}
+
+template <class FwdIt, class Size, class Gen>
+FwdIt generate_n(FwdIt first, Size count, Gen gen) noexcept
+{
+    if( count < 1 )
+        return first;
+
+    const auto chunks = internal::work_chunks_min_fraction_1(count);
+    if( chunks > 1 ) {
+        try {
+            internal::Generate<FwdIt, Gen> op{static_cast<size_t>(count), chunks, first, gen};
+            op.dispatch_apply(chunks);
+            return op.m_partition.end();
+        } catch( const internal::parallelism_exception & ) {
+        }
+    }
+    return std::generate_n(first, count, gen);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -3500,6 +3798,14 @@ PSTLD_INTERNAL_IMPL void parallelism_exception::raise()
 
 #if defined(PSTLD_INTERNAL_DO_HACK_INTO_STD)
 
+#ifndef __cpp_lib_execution
+#define __cpp_lib_execution 201902L
+#endif
+
+#ifndef __cpp_lib_parallel_algorithm
+#define __cpp_lib_parallel_algorithm 201603L
+#endif
+
 namespace std {
 
 namespace execution {
@@ -4001,15 +4307,19 @@ fill_n(ExPo &&, It first, Size count, const T &value) noexcept
 template <class ExPo, class It, class Gen>
 execution::__enable_if_execution_policy<ExPo, void> generate(ExPo &&, It first, It last, Gen gen)
 {
-    // stub only
-    ::std::generate(first, last, gen);
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        ::pstld::generate(first, last, gen);
+    else
+        ::std::generate(first, last, gen);
 }
 
 template <class ExPo, class It, class Size, class Gen>
 execution::__enable_if_execution_policy<ExPo, It> generate_n(ExPo &&, It first, Size count, Gen gen)
 {
-    // stub only
-    return ::std::generate_n(first, count, gen);
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        return ::pstld::generate_n(first, count, gen);
+    else
+        return ::std::generate_n(first, count, gen);
 }
 
 // 25.7.10 - reverse ///////////////////////////////////////////////////////////////////////////////
@@ -4029,18 +4339,18 @@ template <class ExPo, class It>
 execution::__enable_if_execution_policy<ExPo, void> sort(ExPo &&, It first, It last)
 {
     if constexpr( execution::__pstld_enabled<ExPo> )
-        return ::pstld::sort(first, last);
+        ::pstld::sort(first, last);
     else
-        return ::std::sort(first, last);
+        ::std::sort(first, last);
 }
 
 template <class ExPo, class It, class Cmp>
 execution::__enable_if_execution_policy<ExPo, void> sort(ExPo &&, It first, It last, Cmp cmp)
 {
     if constexpr( execution::__pstld_enabled<ExPo> )
-        return ::pstld::sort(first, last, cmp);
+        ::pstld::sort(first, last, cmp);
     else
-        return ::std::sort(first, last, cmp);
+        ::std::sort(first, last, cmp);
 }
 
 // 25.8.2.2 - stable_sort //////////////////////////////////////////////////////////////////////////
@@ -4048,15 +4358,19 @@ execution::__enable_if_execution_policy<ExPo, void> sort(ExPo &&, It first, It l
 template <class ExPo, class It>
 execution::__enable_if_execution_policy<ExPo, void> stable_sort(ExPo &&, It first, It last)
 {
-    // stub for now
-    return ::std::stable_sort(first, last);
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        ::pstld::stable_sort(first, last);
+    else
+        ::std::stable_sort(first, last);
 }
 
 template <class ExPo, class It, class Cmp>
 execution::__enable_if_execution_policy<ExPo, void> stable_sort(ExPo &&, It first, It last, Cmp cmp)
 {
-    // stub for now
-    return ::std::stable_sort(first, last, cmp);
+    if constexpr( execution::__pstld_enabled<ExPo> )
+        ::pstld::stable_sort(first, last, cmp);
+    else
+        ::std::stable_sort(first, last, cmp);
 }
 
 // 25.8.2.5 - is_sorted, is_sorted_until ///////////////////////////////////////////////////////////

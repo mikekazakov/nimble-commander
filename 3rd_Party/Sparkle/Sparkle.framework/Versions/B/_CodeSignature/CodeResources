@@ -6,15 +6,15 @@
 	<dict>
 		<key>Resources/Base.lproj/SUUpdateAlert.nib</key>
 		<data>
-		eBQK56K7Zi7fyb8hmUBvAAKDflo=
+		+mVX/DnW4TKIePWPy2VlO5qFbuE=
 		</data>
 		<key>Resources/Base.lproj/SUUpdatePermissionPrompt.nib/keyedobjects-101300.nib</key>
 		<data>
-		f1xkYDhE0BT0n3LxhxuDRcGBlLk=
+		Eg2JxLWh4Vqrk9lIyZK7XrwAdwE=
 		</data>
 		<key>Resources/Base.lproj/SUUpdatePermissionPrompt.nib/keyedobjects-110000.nib</key>
 		<data>
-		dCevxm0fvHkUqJiG9KJJJ7H1wtg=
+		iCDLtkiqEGyP+9AKdymQgRefogs=
 		</data>
 		<key>Resources/Base.lproj/Sparkle.strings</key>
 		<data>
@@ -30,7 +30,7 @@
 		</data>
 		<key>Resources/SUStatus.nib</key>
 		<data>
-		ZAnGku07bS8gPWfDKzQvhK49E+A=
+		OWZDeincn8NSC+VnhtbMvoqOl6k=
 		</data>
 		<key>Resources/ar.lproj/SUUpdateAlert.strings</key>
 		<dict>
@@ -912,10 +912,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			W21w/AQ+JDcBW2Q7MV9Awadk4Po=
+			CVqA9PwOob/2KIVkdfAwMj2xZh0=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"5b6d70fc043e2437015b643b315f40c1a764e0fa" or cdhash H"fd952417532d8928dc3a7540309316715b0d71af"</string>
+			<string>cdhash H"095a80f4fc0ea1bff628856475f030323db1661d" or cdhash H"12ba76023963fc256613ac2cd84328f696c561af"</string>
 		</dict>
 		<key>Headers/SPUDownloadData.h</key>
 		<dict>
@@ -1131,21 +1131,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			2Z0dXFe+B5t9UpTEl02RwlVz8V2TtMBUE1dV576cPgo=
+			aQ6Tf6SZ9wvJbWyy+ppqUebqdTRraXfbw2M+AJM7pP4=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/SUUpdatePermissionPrompt.nib/keyedobjects-101300.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Vm3IuajHd6rLp7CLp0DPmYXQGC43+a5z6MU+ICu/2vk=
+			XcuFu25jR0/fzhOimL8q31t2fahLaULLZ0OjRuz7PNQ=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/SUUpdatePermissionPrompt.nib/keyedobjects-110000.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			Uv3E6/aop9N4mHRhvET4JLnbkvPokib+LW5ygCdPpIs=
+			1C3aBWPb8U1rElomH/K6B9HWJwSVKNDG1kyxlW0oenM=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Sparkle.strings</key>
@@ -1173,7 +1173,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			EKe925NYcAgvdxcboaIaOFNtL17zDmjuLzUz7/YDpM0=
+			sww3FwJleaV9cer49f34s7XmPNyJf7tQQSmOjy8UUAQ=
 			</data>
 		</dict>
 		<key>Resources/ar.lproj/SUUpdateAlert.strings</key>
@@ -2053,28 +2053,28 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			nhn1obiwyVVfAnuolXJH7COcEVQ=
+			qpBNnKEHdMBRJjLkROhKszCmats=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"9e19f5a1b8b0c9555f027ba8957247ec239c1154" or cdhash H"46f78970367ae287211e7b00db501b813370021d"</string>
+			<string>cdhash H"aa904d9ca10774c0512632e444e84ab330a66adb" or cdhash H"98c87ee670e978cdea26466f883158d4250f6689"</string>
 		</dict>
 		<key>XPCServices/Downloader.xpc</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			28SKDsDhM0c6S2nB9WdYzxJJMDM=
+			aFm54SPsO/pcqkNeuTLygeggAG0=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"dbc48a0ec0e133473a4b69c1f56758cf12493033" or cdhash H"6859b9e123ec3bfa5caa435eb932f281e820006d"</string>
+			<string>cdhash H"6859b9e123ec3bfa5caa435eb932f281e820006d" or cdhash H"dbc48a0ec0e133473a4b69c1f56758cf12493033"</string>
 		</dict>
 		<key>XPCServices/Installer.xpc</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			DdxoFDdNzWXKt6zx1eG5S2UD140=
+			kSL7Qf7Oi4nUcD3H00IYLv1U4Uo=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"0ddc6814374dcd65cab7acf1d5e1b94b6503d78d" or cdhash H"9122fb41fece8b89d4703dc7d342182efd54e14a"</string>
+			<string>cdhash H"9122fb41fece8b89d4703dc7d342182efd54e14a" or cdhash H"0ddc6814374dcd65cab7acf1d5e1b94b6503d78d"</string>
 		</dict>
 	</dict>
 	<key>rules</key>

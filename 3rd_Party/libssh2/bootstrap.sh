@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/libssh2.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b libssh2-1.9.0 --single-branch https://github.com/libssh2/libssh2.git
+git clone -b libssh2-1.11.0 --single-branch https://github.com/libssh2/libssh2.git
 cd libssh2
 
 ./buildconf

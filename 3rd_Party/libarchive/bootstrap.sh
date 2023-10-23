@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/libarchive.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v3.6.2 https://github.com/libarchive/libarchive.git
+git clone -b v3.6.2 --depth 1 https://github.com/libarchive/libarchive.git
 cd libarchive
 
 git apply ../../*.patch
@@ -36,8 +36,11 @@ cmake \
   -D ENABLE_LZO="ON" \
   -D LZO2_INCLUDE_DIR=${CUR_DIR}/../lzo/include \
   -D LZO2_LIBRARY=${CUR_DIR}/../lzo/lib/liblzo2.a \
+  -D ENABLE_ICONV="ON" \
   .
 make -j
+
+ctest -E libarchive_test_sparse_basic --testing-dir .
 
 cd ./../../
 rm -rf ./include/
@@ -51,4 +54,4 @@ cp ./libarchive.tmp/libarchive/libarchive/archive.h ./include/libarchive/
 cp ./libarchive.tmp/libarchive/libarchive/archive_entry.h ./include/libarchive/
 cp ./libarchive.tmp/libarchive/libarchive/libarchive.a ./lib
 
-rm -rf ${TMP_DIR} 
+rm -rf ${TMP_DIR}

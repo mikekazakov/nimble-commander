@@ -42,6 +42,8 @@
 		CF5338632525317700022EE8 /* CloseFrom_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */; };
 		CFA99A022650661300F72E93 /* SpdlogFacade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A012650661300F72E93 /* SpdlogFacade.cpp */; };
 		CFA99A1026512D4400F72E93 /* WriteAtomically.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */; };
+		CFD230F62AE5CF190000C7CF /* SysLocale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD230F52AE5CF190000C7CF /* SysLocale.cpp */; };
+		CFD230F82AE5CF260000C7CF /* SysLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD230F72AE5CF260000C7CF /* SysLocale.h */; };
 		CFDE36E426BA5F2400EB1B0D /* WhereIs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */; };
 		CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */; };
 		CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */; };
@@ -125,6 +127,8 @@
 		CFCB6875285F38B300086E40 /* SpdlogFormatters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpdlogFormatters.h; path = include/Habanero/SpdlogFormatters.h; sourceTree = "<group>"; };
 		CFCB689E2879A85300086E40 /* ToLower.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ToLower.h; path = include/Habanero/ToLower.h; sourceTree = "<group>"; };
 		CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LRUCache_Tests.cpp; path = ../habanero/tests/LRUCache_Tests.cpp; sourceTree = SOURCE_ROOT; };
+		CFD230F52AE5CF190000C7CF /* SysLocale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SysLocale.cpp; path = source/SysLocale.cpp; sourceTree = "<group>"; };
+		CFD230F72AE5CF260000C7CF /* SysLocale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SysLocale.h; path = include/Habanero/SysLocale.h; sourceTree = "<group>"; };
 		CFD62BA01C99C2AE0021EE7F /* CFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFString.cpp; path = source/CFString.cpp; sourceTree = "<group>"; };
 		CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommonPaths.cpp; path = source/CommonPaths.cpp; sourceTree = "<group>"; };
 		CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CommonPaths.mm; path = source/CommonPaths.mm; sourceTree = "<group>"; };
@@ -254,6 +258,7 @@
 				CF19B4082544B9E600838B45 /* spinlock.h */,
 				CF19B3FF2544B9E500838B45 /* StringsBulk.h */,
 				CF19B4162544B9E700838B45 /* StringViewZBuf.h */,
+				CFD230F72AE5CF260000C7CF /* SysLocale.h */,
 				CF19B4062544B9E500838B45 /* tiny_string.h */,
 				CFCB689E2879A85300086E40 /* ToLower.h */,
 				CF19B40C2544B9E600838B45 /* tribool.h */,
@@ -290,6 +295,7 @@
 				CFA99A012650661300F72E93 /* SpdlogFacade.cpp */,
 				CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */,
 				CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */,
+				CFD230F52AE5CF190000C7CF /* SysLocale.cpp */,
 				CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */,
 				CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */,
 				CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */,
@@ -304,6 +310,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD230F82AE5CF260000C7CF /* SysLocale.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +423,7 @@
 				CF4601F525630DE80095FC73 /* spinlock.cpp in Sources */,
 				CF4601F425630DE80095FC73 /* dispatch_cpp.cpp in Sources */,
 				CF4601F825630DE80095FC73 /* CFStackAllocator.cpp in Sources */,
+				CFD230F62AE5CF190000C7CF /* SysLocale.cpp in Sources */,
 				CF4601FC25630DE80095FC73 /* CloseFrom.cpp in Sources */,
 				CF4601ED25630DE80095FC73 /* DispatchGroup.cpp in Sources */,
 				CFA99A1026512D4400F72E93 /* WriteAtomically.cpp in Sources */,

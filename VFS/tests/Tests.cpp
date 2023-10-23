@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #define CATCH_CONFIG_RUNNER
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 #include <catch2/catch.hpp>
@@ -9,11 +9,13 @@
 
 #include "Tests.h"
 #include <Habanero/CommonPaths.h>
+#include <Habanero/SysLocale.h>
 #include <ftw.h>
 
 static auto g_TestDirPrefix = "_nc__vfs__test_";
 
 int main( int argc, char* argv[] ) {
+    nc::base::SetSystemLocaleAsCLocale();
     ::testing::GTEST_FLAG(throw_on_failure) = true;
     ::testing::InitGoogleMock(&argc, argv);
     int result = Catch::Session().run( argc, argv );

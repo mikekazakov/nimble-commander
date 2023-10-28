@@ -371,6 +371,14 @@ VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing(const Listing &_origi
     if( _cancel_checker && _cancel_checker() )
         return nullptr;
 
+    if( count == 0 ) {
+        // A specific fixup for singlular cases
+        result.hosts.reset(variable_container<>::type::common);
+        result.hosts.insert(0, _original.Host(0));
+        result.directories.reset(variable_container<>::type::common);
+        result.directories.insert(0, _original.Directory(0));
+    }
+    
     return Build(std::move(result));
 }
 

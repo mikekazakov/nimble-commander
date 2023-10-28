@@ -42,7 +42,9 @@ static NSMenuItem *ItemForTool(const std::shared_ptr<const nc::panel::ExternalTo
 - (void)toolsHaveChanged
 {
     m_IsDirty = true;
-    [self menuNeedsUpdate:m_MyMenu];
+    dispatch_or_run_in_main_queue([=]{
+        [self menuNeedsUpdate:m_MyMenu];
+    });
 }
 
 - (void)menuNeedsUpdate:(NSMenu *)menu

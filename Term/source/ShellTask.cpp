@@ -236,7 +236,7 @@ struct ShellTask::Impl {
     std::shared_ptr<OnPwdPrompt> on_pwd_prompt;
     std::shared_ptr<OnStateChange> on_state_changed;
     std::shared_ptr<OnChildOutput> on_child_output;
-
+    
     void OnMasterSourceData();
     void OnMasterSourceCancellation();
     void OnCwdSourceData();

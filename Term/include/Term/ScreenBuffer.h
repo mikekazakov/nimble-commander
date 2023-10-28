@@ -114,9 +114,12 @@ public:
     Snapshot MakeSnapshot() const;
     void RevertToSnapshot(const Snapshot &_snapshot);
 
-    static unsigned OccupiedChars(std::span<const Space> _line);
-    static unsigned OccupiedChars(const Space *_begin, const Space *_end);
-    static bool HasOccupiedChars(const Space *_begin, const Space *_end);
+    static unsigned OccupiedChars(std::span<const Space> _line) noexcept;
+    static unsigned OccupiedChars(const Space *_begin, const Space *_end) noexcept;
+    
+    // Returns 'true' if the range contains and non-null characters
+    static bool HasOccupiedChars(const Space *_begin, const Space *_end) noexcept;
+    
     unsigned OccupiedChars(int _line_no) const;
     bool HasOccupiedChars(int _line_no) const;
 

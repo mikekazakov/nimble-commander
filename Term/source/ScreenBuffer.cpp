@@ -392,17 +392,17 @@ void ScreenBuffer::FeedBackscreen(const Space *_from, const Space *_to, bool _wr
     }
 }
 
-static constexpr bool IsOccupiedChar(const ScreenBuffer::Space &_s)
+static constexpr bool IsOccupiedChar(const ScreenBuffer::Space &_s) noexcept
 {
     return _s.l != 0;
 }
 
-unsigned ScreenBuffer::OccupiedChars(std::span<const Space> _line)
+unsigned ScreenBuffer::OccupiedChars(std::span<const Space> _line) noexcept
 {
     return OccupiedChars(_line.data(), _line.data() + _line.size());
 }
 
-unsigned ScreenBuffer::OccupiedChars(const Space *_begin, const Space *_end)
+unsigned ScreenBuffer::OccupiedChars(const Space *_begin, const Space *_end) noexcept
 {
     assert(_end >= _end);
     if( _end == _begin )
@@ -418,14 +418,13 @@ unsigned ScreenBuffer::OccupiedChars(const Space *_begin, const Space *_end)
     return len;
 }
 
-bool ScreenBuffer::HasOccupiedChars(const Space *_begin, const Space *_end)
+bool ScreenBuffer::HasOccupiedChars(const Space *_begin, const Space *_end) noexcept
 {
     assert(_end >= _end);
     for( ; _begin != _end; ++_begin ) // going forward
         if( IsOccupiedChar(*_begin) )
             return true;
     return false;
-    ;
 }
 
 unsigned ScreenBuffer::OccupiedChars(int _line_no) const

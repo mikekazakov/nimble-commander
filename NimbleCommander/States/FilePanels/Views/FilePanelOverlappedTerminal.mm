@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
@@ -62,14 +62,12 @@ static const auto g_LongProcessDelay = 100ms;
                                  constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|"
                                                      options:0
                                                      metrics:nil
-                                                       views:NSDictionaryOfVariableBindings(
-                                                                 m_TermScrollView)]];
+                                                       views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
         [self addConstraints:[NSLayoutConstraint
                                  constraintsWithVisualFormat:@"V:|-(==0)-[m_TermScrollView]-(==0)-|"
                                                      options:0
                                                      metrics:nil
-                                                       views:NSDictionaryOfVariableBindings(
-                                                                 m_TermScrollView)]];
+                                                       views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
 
         m_Task = std::make_unique<ShellTask>();
         if( !GlobalConfig().GetBool(g_UseDefault) )
@@ -81,8 +79,7 @@ static const auto g_LongProcessDelay = 100ms;
         // input translator
         m_InputTranslator = std::make_unique<InputTranslatorImpl>();
         m_InputTranslator->SetOuput([=](std::span<const std::byte> _bytes) {
-            task_ptr->WriteChildInput(
-                std::string_view(reinterpret_cast<const char *>(_bytes.data()), _bytes.size()));
+            task_ptr->WriteChildInput(std::string_view(reinterpret_cast<const char *>(_bytes.data()), _bytes.size()));
         });
 
         // parser
@@ -93,22 +90,19 @@ static const auto g_LongProcessDelay = 100ms;
         // interpreter
         m_Interpreter = std::make_unique<InterpreterImpl>(m_TermScrollView.screen);
         m_Interpreter->SetOuput([=](std::span<const std::byte> _bytes) {
-            task_ptr->WriteChildInput(
-                std::string_view(reinterpret_cast<const char *>(_bytes.data()), _bytes.size()));
+            task_ptr->WriteChildInput(std::string_view(reinterpret_cast<const char *>(_bytes.data()), _bytes.size()));
         });
         m_Interpreter->SetBell([] { NSBeep(); });
-        m_Interpreter->SetTitle(
-            [](const std::string &, Interpreter::TitleKind) { /* deliberately nothing*/ });
+        m_Interpreter->SetTitle([](const std::string &, Interpreter::TitleKind) { /* deliberately nothing*/ });
         m_Interpreter->SetInputTranslator(m_InputTranslator.get());
         m_Interpreter->SetShowCursorChanged([weak_self](bool _show) {
             FilePanelOverlappedTerminal *me = weak_self;
             me->m_TermScrollView.view.showCursor = _show;
         });
-        m_Interpreter->SetRequstedMouseEventsChanged(
-            [weak_self](Interpreter::RequestedMouseEvents _events) {
-                FilePanelOverlappedTerminal *me = weak_self;
-                me->m_TermScrollView.view.mouseEvents = _events;
-            });
+        m_Interpreter->SetRequstedMouseEventsChanged([weak_self](Interpreter::RequestedMouseEvents _events) {
+            FilePanelOverlappedTerminal *me = weak_self;
+            me->m_TermScrollView.view.mouseEvents = _events;
+        });
         m_Interpreter->SetScreenResizeAllowed(false);
 
         [m_TermScrollView.view AttachToInputTranslator:m_InputTranslator.get()];
@@ -122,8 +116,7 @@ static const auto g_LongProcessDelay = 100ms;
             [static_cast<FilePanelOverlappedTerminal *>(weak_self) onChildOutput:_d size:_sz];
         });
         m_Task->SetOnPwdPrompt([weak_self](const char *_cwd, bool _changed) {
-            [static_cast<FilePanelOverlappedTerminal *>(weak_self) onBashPrompt:_cwd
-                                                                     cwdChanged:_changed];
+            [static_cast<FilePanelOverlappedTerminal *>(weak_self) onBashPrompt:_cwd cwdChanged:_changed];
         });
         m_Task->SetOnStateChange([weak_self](ShellTask::TaskState _state) {
             [static_cast<FilePanelOverlappedTerminal *>(weak_self) onTaskStateChanged:_state];
@@ -165,8 +158,7 @@ static const auto g_LongProcessDelay = 100ms;
 
 - (void)onTaskStateChanged:(ShellTask::TaskState)_state
 {
-    if( _state == ShellTask::TaskState::ProgramInternal ||
-        _state == ShellTask::TaskState::ProgramExternal ) {
+    if( _state == ShellTask::TaskState::ProgramInternal || _state == ShellTask::TaskState::ProgramExternal ) {
         dispatch_to_main_queue_after(g_TaskStartInputDelay, [=] {
             int task_pid = m_Task->ShellChildPID();
             if( task_pid >= 0 )
@@ -218,8 +210,7 @@ static const auto g_LongProcessDelay = 100ms;
         return m_TermScrollView.bounds.size.height;
 
     auto view_pt = [m_TermScrollView.view beginningOfScreenLine:screen_line_index];
-    const auto local_pt = NSMakePoint(
-        view_pt.x, self.frame.size.height - view_pt.y - m_TermScrollView.viewInsets.top);
+    const auto local_pt = NSMakePoint(view_pt.x, self.frame.size.height - view_pt.y - m_TermScrollView.viewInsets.top);
     const auto gap = local_pt.y;
     return std::clamp(gap, 0., self.bounds.size.height);
 }
@@ -292,14 +283,11 @@ static const auto g_LongProcessDelay = 100ms;
 
     auto virgin = false;
     auto lock = m_TermScrollView.screen.AcquireLock();
-    //    m_TermScrollView.screen.Lock();
     if( auto line = m_TermScrollView.screen.Buffer().LineFromNo(m_BashCommandStartY); !line.empty() ) {
-        auto i = std::min(std::max(begin(line), begin(line) + m_BashCommandStartX), end(line));
-        auto e = end(line);
-        if( !ScreenBuffer::HasOccupiedChars(&*i, &*e) )
-            virgin = true;
+        auto i = std::min(std::max(begin(line), std::begin(line) + m_BashCommandStartX), std::end(line));
+        auto e = std::end(line);
+        virgin = std::all_of(i, e, [](const ScreenBuffer::Space &sp) { return sp.l == 0 || sp.l == ' '; });
     }
-    //    m_TermScrollView.screen.Unlock();
 
     return virgin;
 }
@@ -340,8 +328,7 @@ static const auto g_LongProcessDelay = 100ms;
         [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet whitespaceCharacterSet]];
-        [un formUnionWithCharacterSet:[NSCharacterSet
-                                          characterSetWithCharactersInString:@"\u007f"]];
+        [un formUnionWithCharacterSet:[NSCharacterSet characterSetWithCharactersInString:@"\u007f"]];
         chars = un;
     });
 

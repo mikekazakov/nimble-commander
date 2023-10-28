@@ -1,5 +1,4 @@
-// Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Core/GoogleAnalytics.h>
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
 #include "SpotlightSearchPopupViewController.h"
 
@@ -26,8 +25,6 @@ static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.querie
         [[SimpleComboBoxPersistentDataSource alloc] initWithStateConfigPath:g_ConfigHistoryPath];
     self.queryComboBox.usesDataSource = true;
     self.queryComboBox.dataSource = m_QueryHistory;
-
-    GA().PostScreenView("Spotlight Popup");
 }
 
 - (IBAction)onQueryComboBox:(id) [[maybe_unused]] _sender

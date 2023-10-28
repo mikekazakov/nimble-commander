@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Interactions.h"
 #include "ActivationManager.h"
 #include <Habanero/CommonPaths.h>
@@ -48,24 +48,6 @@ bool AskUserToResetDefaults()
     if( [alert runModal] == NSAlertFirstButtonReturn )
         return true;
     return false;
-}
-
-bool AskUserToProvideUsageStatistics()
-{
-    const auto msg =
-        NSLocalizedString(@"Please help us to improve the product",
-                          "Asking user to provide anonymous usage information - message");
-    const auto info =
-        NSLocalizedString(@"Would you like to send anonymous usage statistics to the developer? "
-                          @"None of your personal data would be collected.",
-                          "Asking user to provide anonymous usage information - informative text");
-
-    Alert *alert = [[Alert alloc] init];
-    alert.messageText = msg;
-    alert.informativeText = info;
-    [alert addButtonWithTitle:NSLocalizedString(@"Send", "")];
-    [alert addButtonWithTitle:NSLocalizedString(@"Don't send", "")];
-    return [alert runModal] == NSAlertFirstButtonReturn;
 }
 
 bool AskToExitWithRunningOperations()

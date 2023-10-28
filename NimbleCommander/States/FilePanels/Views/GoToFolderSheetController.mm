@@ -2,7 +2,6 @@
 #include "GoToFolderSheetController.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
@@ -76,7 +75,6 @@ static std::vector<unsigned> ListDirsWithPrefix
     
     self.Text.delegate = self;
     [self controlTextDidChange:[NSNotification notificationWithName:@"" object:nil]];
-    GA().PostScreenView("Go To Folder");
 }
 
 - (void)showSheetWithParentWindow:(NSWindow *)_window

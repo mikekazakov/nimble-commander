@@ -1,6 +1,5 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RegistrationInfoWindow.h"
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../Bootstrap/ActivationManager.h"
 #include <Utility/StringExtras.h>
 
@@ -57,7 +56,6 @@
             [self.tabView selectTabViewItemAtIndex:2];
         }
     }
-    GA().PostScreenView("Registration Info Sheet");
 }
 
 - (IBAction)onOK:(id)[[maybe_unused]]_sender

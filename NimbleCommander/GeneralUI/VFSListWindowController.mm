@@ -1,6 +1,5 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "VFSListWindowController.h"
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../Core/VFSInstanceManager.h"
 #include "../Core/VFSInstancePromise.h"
 #include <Habanero/dispatch_cpp.h>
@@ -50,7 +49,6 @@ using namespace std::literals;
 {
     [self showWindow:self];
     m_Self = self;
-    GA().PostScreenView("VFS List Window");
 }
 
 - (void)updateData

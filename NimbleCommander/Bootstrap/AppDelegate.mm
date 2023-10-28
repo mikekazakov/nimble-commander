@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate.h"
 #include "AppDelegateCPP.h"
 #include "AppDelegate+Migration.h"
@@ -41,7 +41,6 @@
 
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/FeedbackManagerImpl.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>
 #include <NimbleCommander/Core/Dock.h>
@@ -342,7 +341,7 @@ static std::string AquaticPrimePublicKey()
 #endif
 
     return std::make_unique<nc::bootstrap::ActivationManagerImpl>(
-        type, ext_license_support, trial_period_support, GA());
+        type, ext_license_support, trial_period_support);
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *) [[maybe_unused]] _notification
@@ -377,29 +376,16 @@ static std::string AquaticPrimePublicKey()
 
     [self wireMenuDelegates];
 
-    bool showed_modal_dialog = false;
     if( self.activationManager.Sandboxed() ) {
         auto &sm = SandboxManager::Instance();
         if( sm.Empty() ) {
             sm.AskAccessForPathSync(nc::base::CommonPaths::Home(), false);
-            showed_modal_dialog = true;
             if( self.mainWindowControllers.empty() ) {
                 auto ctrl = [self allocateDefaultMainWindow];
                 [ctrl showWindow:self];
             }
         }
     }
-
-    // if no option already set - ask user to provide anonymous usage statistics
-    // ask them only on 5th startup or later
-    // ask only if there were no modal dialogs before
-    if( !showed_modal_dialog && !CFDefaultsGetOptionalBool(nc::base::GoogleAnalytics::g_DefaultsTrackingEnabledKey) &&
-        self.feedbackManager.ApplicationRunsCount() >= 5 ) {
-        CFDefaultsSetBool(nc::base::GoogleAnalytics::g_DefaultsTrackingEnabledKey, AskUserToProvideUsageStatistics());
-        GA().UpdateEnabledStatus();
-    }
-
-    GA().PostEvent("Appearance", "Set", self.themesManager.SelectedThemeName().c_str());
 }
 
 - (void)wireMenuDelegates
@@ -570,7 +556,6 @@ static std::string AquaticPrimePublicKey()
         m_AppStoreHelper.onProductPurchased = [=, &am]([[maybe_unused]] const std::string &_id) {
             if( am.ReCheckProFeaturesInAppPurchased() ) {
                 [self updateMainMenuFeaturesByVersionAndState];
-                GA().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
             }
         };
         dispatch_to_main_queue_after(500ms, [=] { [m_AppStoreHelper showProFeaturesWindowIfNeededAsNagScreen]; });
@@ -809,7 +794,6 @@ static std::string AquaticPrimePublicKey()
         ThankUserForBuyingALicense();
         [self updateMainMenuFeaturesByVersionAndState];
         self.dock.SetUnregisteredBadge(false);
-        GA().PostEvent("Licensing", "Buy", "Successful external license activation");
     }
 }
 
@@ -823,7 +807,6 @@ static std::string AquaticPrimePublicKey()
 {
     const auto url = [NSURL URLWithString:@"http://magnumbytes.com/redirectlinks/buy_license"];
     [NSWorkspace.sharedWorkspace openURL:url];
-    GA().PostEvent("Licensing", "Buy", "Go to 3rd party registrator");
 }
 
 - (IBAction)OnPurchaseProFeaturesInApp:(id) [[maybe_unused]] _sender
@@ -855,14 +838,12 @@ static std::string AquaticPrimePublicKey()
 {
     const auto url = [NSBundle.mainBundle URLForResource:@"Help" withExtension:@"pdf"];
     [NSWorkspace.sharedWorkspace openURL:url];
-    GA().PostEvent("Help", "Click", "Open Help");
 }
 
 - (IBAction)onMainMenuPerformGoToProductForum:(id) [[maybe_unused]] _sender
 {
     const auto url = [NSURL URLWithString:@"http://magnumbytes.com/forum/"];
     [NSWorkspace.sharedWorkspace openURL:url];
-    GA().PostEvent("Help", "Click", "Visit Forum");
 }
 
 - (IBAction)OnMenuToggleAdminMode:(id) [[maybe_unused]] _sender
@@ -871,8 +852,6 @@ static std::string AquaticPrimePublicKey()
     if( RoutedIO::Instance().Enabled() )
         RoutedIO::Instance().TurnOff();
     else {
-        GA().PostScreenView("Admin Mode");
-
         const auto turned_on = RoutedIO::Instance().TurnOn();
         if( !turned_on )
             WarnAboutFailingToAccessPrivilegedHelper();
@@ -1213,7 +1192,7 @@ static void DoTemporaryFileStoragePurge()
 - (nc::FeedbackManager &)feedbackManager
 {
     static nc::FeedbackManager *instance = [self] {
-        auto fm = new nc::FeedbackManagerImpl(*m_ActivationManager, GA());
+        auto fm = new nc::FeedbackManagerImpl(*m_ActivationManager);
         atexit([] { instance->UpdateStatistics(); });
         return fm;
     }();

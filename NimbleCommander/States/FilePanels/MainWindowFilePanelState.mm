@@ -12,7 +12,6 @@
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
@@ -444,8 +443,6 @@ static NSString *TitleForData(const data::Model *_data);
 
     [self updateTitle];
 
-    // think it's a bad idea to post messages on every new window created
-    GA().PostScreenView("File Panels State");
 }
 
 - (void)layout

@@ -4,12 +4,6 @@
 #include "ActivationManager.h"
 #include "ActivationManagerBase.h"
 
-namespace nc::base {
-
-class GoogleAnalytics;
-
-}
-
 namespace nc::bootstrap {
 
 class ActivationManagerImpl : public ActivationManager
@@ -17,8 +11,7 @@ class ActivationManagerImpl : public ActivationManager
 public:
     ActivationManagerImpl(Distribution _type,
                           ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
-                          ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
-                          base::GoogleAnalytics &_ga);
+                          ActivationManagerBase::TrialPeriodSupport &_trial_period_support);
 
     Distribution Type() const noexcept override;
     bool Sandboxed() const noexcept override;
@@ -75,7 +68,6 @@ private:
     std::unordered_map<std::string, std::string> m_LicenseInfo;
     ActivationManagerBase::ExternalLicenseSupport &m_ExtLicenseSupport;
     ActivationManagerBase::TrialPeriodSupport &m_TrialPeriodSupport;
-    base::GoogleAnalytics &m_GA;
 };
 
 std::string CFBundleGetAppStoreReceiptPath(CFBundleRef _bundle);

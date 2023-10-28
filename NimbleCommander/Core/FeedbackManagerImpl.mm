@@ -1,8 +1,7 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FeedbackManagerImpl.h"
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <Habanero/CFDefaultsCPP.h>
-#include <Habanero/GoogleAnalytics.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "../GeneralUI/FeedbackWindow.h"
 #include <Habanero/dispatch_cpp.h>
@@ -41,10 +40,9 @@ static bool HasInternetConnection()
 }
 
 FeedbackManagerImpl::FeedbackManagerImpl(nc::bootstrap::ActivationManager &_am,
-                                         base::GoogleAnalytics &_ga,
                                          std::function<time_t()> _time_source)
     : m_ApplicationRunsCount(GetAndUpdateRunsCount()), m_TotalHoursUsed(GetTotalHoursUsed()),
-      m_StartupTime(_time_source()), m_ActivationManager(_am), m_GA(_ga),
+      m_StartupTime(_time_source()), m_ActivationManager(_am), 
       m_TimeSource(_time_source), m_LastRating(CFDefaultsGetOptionalInt(g_LastRatingKey)),
       m_LastRatingTime(CFDefaultsGetOptionalLong(g_LastRatingTimeKey))
 {
@@ -57,9 +55,6 @@ void FeedbackManagerImpl::CommitRatingOverlayResult(int _result)
 
     if( _result < 0 || _result > 5 )
         return;
-
-    const char *labels[] = {"Discard", "1 Star", "2 Stars", "3 Stars", "4 Stars", "5 Stars"};
-    m_GA.PostEvent("Feedback", "Rating Overlay Choice", labels[_result]);
 
     m_LastRating = _result;
     m_LastRatingTime = m_TimeSource();
@@ -80,7 +75,6 @@ bool FeedbackManagerImpl::ShouldShowRatingOverlayView()
 {
     if( IsEligibleForRatingOverlay() )
         if( HasInternetConnection() ) {
-            m_GA.PostEvent("Feedback", "Rating Overlay Shown", "Shown");
             return m_ShownRatingOverlay = true;
         }
 
@@ -150,7 +144,6 @@ void FeedbackManagerImpl::UpdateStatistics()
 
 void FeedbackManagerImpl::EmailFeedback()
 {
-    m_GA.PostEvent("Feedback", "Action", "Email Feedback");
     const auto info = NSBundle.mainBundle.infoDictionary;
     NSString *toAddress = @"feedback@magnumbytes.com";
     NSString *subject =
@@ -170,7 +163,6 @@ void FeedbackManagerImpl::EmailFeedback()
 
 void FeedbackManagerImpl::EmailSupport()
 {
-    m_GA.PostEvent("Feedback", "Action", "Email Support");
     const auto info = NSBundle.mainBundle.infoDictionary;
     NSString *toAddress = @"support@magnumbytes.com";
     NSString *subject =
@@ -190,7 +182,6 @@ void FeedbackManagerImpl::EmailSupport()
 void FeedbackManagerImpl::RateOnAppStore()
 {
     // https://developer.apple.com/documentation/storekit/skstorereviewcontroller/requesting_app_store_reviews
-    m_GA.PostEvent("Feedback", "Action", "Rate on AppStore");
     const auto fmt = @"https://apps.apple.com/app/id%s?action=write-review";
     const auto review_url =
         [NSString stringWithFormat:fmt, m_ActivationManager.AppStoreID().c_str()];

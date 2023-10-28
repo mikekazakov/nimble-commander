@@ -1,6 +1,5 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <VFS/NetSFTP.h>
 #include "SFTPConnectionSheetController.h"
 #include <Utility/StringExtras.h>
@@ -57,8 +56,6 @@ static bool ValidateFileExistence(const std::string &_filepath)
 
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;
-
-    GA().PostScreenView("SFTP Connection");
 
     if( m_Original ) {
         auto &c = m_Original->Get<NetworkConnectionsManager::SFTP>();

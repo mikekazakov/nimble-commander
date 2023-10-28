@@ -9,7 +9,6 @@
 #include <Utility/PathManip.h>
 #include <VFS/SearchForFiles.h>
 #include <Utility/ByteCountFormatter.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/States/FilePanels/PanelAux.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
@@ -325,8 +324,6 @@ private:
         [self.SearchInArchivesButton unbind:@"enabled"];
         self.SearchInArchivesButton.enabled = false;
     }
-
-    GA().PostScreenView("Find Files");
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item

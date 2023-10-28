@@ -1,6 +1,5 @@
 // Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowGeneralTab.h"
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../Core/SandboxManager.h"
 #include "../Bootstrap/AppDelegate.h"
 #include "../Bootstrap/ActivationManager.h"
@@ -73,11 +72,6 @@ using namespace std::literals;
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if( [alert runModal] == NSAlertFirstButtonReturn )
         SandboxManager::Instance().ResetBookmarks();
-}
-
-- (IBAction)OnSendStatisticsChanged:(id) [[maybe_unused]] _sender
-{
-    dispatch_to_main_queue_after(1s, [] { GA().UpdateEnabledStatus(); });
 }
 
 @end

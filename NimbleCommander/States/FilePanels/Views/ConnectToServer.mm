@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectToServer.h"
 #include "FTPConnectionSheetController.h"
 #include "SFTPConnectionSheetController.h"
@@ -9,7 +9,6 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <Carbon/Carbon.h>
 
@@ -104,8 +103,6 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-
-    GA().PostScreenView("Network Connections Management");
 
     auto sheet = nc::objc_cast<NCSheetWithHotkeys>(self.window);
     sheet.onCtrlA = ^{

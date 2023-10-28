@@ -1,7 +1,6 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ActivationManagerImpl.h"
 #include <Utility/SystemInformation.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>
 #include <NimbleCommander/Bootstrap/NCE.h>
@@ -61,22 +60,18 @@ static const char *AppStoreIdentifier(ActivationManager::Distribution _type) noe
 ActivationManagerImpl::ActivationManagerImpl(
     Distribution _type,
     ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
-    ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
-    nc::base::GoogleAnalytics &_ga)
+    ActivationManagerBase::TrialPeriodSupport &_trial_period_support)
     : m_Type(_type), m_IsSandBoxed(_type != ActivationManager::Distribution::Trial),
       m_AppStoreIdentifier(AppStoreIdentifier(_type)), m_ExtLicenseSupport(_ext_license_support),
-      m_TrialPeriodSupport(_trial_period_support), m_GA(_ga)
+      m_TrialPeriodSupport(_trial_period_support)
 {
     if( m_Type == Distribution::Paid ) {
         m_IsActivated = true;
     } else if( m_Type == Distribution::Trial ) {
         const bool has_mas_paid_version = UserHasPaidVersionInstalled();
-        if( has_mas_paid_version )
-            m_GA.PostEvent("Licensing", "Activated Startup", "MAS Installed");
         const bool has_valid_license = m_ExtLicenseSupport.HasValidInstalledLicense();
         if( has_valid_license ) {
             m_LicenseInfo = m_ExtLicenseSupport.ExtractInfoFromInstalledLicense();
-            m_GA.PostEvent("Licensing", "Activated Startup", "License Installed");
         }
 
         m_UserHadRegistered = has_mas_paid_version || has_valid_license;
@@ -91,10 +86,8 @@ ActivationManagerImpl::ActivationManagerImpl(
 
             if( m_TrialDaysLeft > 0 ) {
                 m_IsTrialPeriod = true;
-                m_GA.PostEvent("Licensing", "Trial Startup", "Trial valid", m_TrialDaysLeft);
             } else {
                 m_IsTrialPeriod = false;
-                m_GA.PostEvent("Licensing", "Trial Startup", "Trial exceeded", 0);
             }
         }
     } else { // m_Type == Distribution::Free

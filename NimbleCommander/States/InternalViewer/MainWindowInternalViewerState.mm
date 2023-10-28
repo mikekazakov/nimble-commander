@@ -1,5 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Core/GoogleAnalytics.h>
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../MainWindowController.h"
 #include <Viewer/ViewerViewController.h>
@@ -114,7 +113,6 @@
     [m_Controller show];
     self.window.title = m_Controller.verboseTitle;
     [self.embeddedFileView.window makeFirstResponder:self.embeddedFileView.keyboardResponder];
-    GA().PostScreenView("File Viewer State");
 }
 
 - (void)windowStateDidResign

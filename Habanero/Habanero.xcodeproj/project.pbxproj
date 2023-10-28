@@ -28,7 +28,6 @@
 		CF4601F725630DE80095FC73 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA31C99C2AE0021EE7F /* debug.cpp */; };
 		CF4601F825630DE80095FC73 /* CFStackAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */; };
 		CF4601F925630DE80095FC73 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */; };
-		CF4601FA25630DE80095FC73 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */; };
 		CF4601FB25630DE80095FC73 /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */; };
 		CF4601FC25630DE80095FC73 /* CloseFrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF0A49F125252C40008EC7B0 /* CloseFrom.cpp */; };
 		CF4601FD25630DE80095FC73 /* mach_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */; };
@@ -67,7 +66,6 @@
 		CF19B3ED2544B94800838B45 /* ScopedObservable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScopedObservable.cpp; path = source/ScopedObservable.cpp; sourceTree = "<group>"; };
 		CF19B3F82544B9E400838B45 /* CFRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFRange.h; path = include/Habanero/CFRange.h; sourceTree = "<group>"; };
 		CF19B3F92544B9E400838B45 /* PosixFilesystemMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PosixFilesystemMock.h; path = include/Habanero/PosixFilesystemMock.h; sourceTree = "<group>"; };
-		CF19B3FB2544B9E500838B45 /* GoogleAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoogleAnalytics.h; path = include/Habanero/GoogleAnalytics.h; sourceTree = "<group>"; };
 		CF19B3FC2544B9E500838B45 /* Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hash.h; path = include/Habanero/Hash.h; sourceTree = "<group>"; };
 		CF19B3FD2544B9E500838B45 /* variable_container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = variable_container.h; path = include/Habanero/variable_container.h; sourceTree = "<group>"; };
 		CF19B3FE2544B9E500838B45 /* CloseFrom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CloseFrom.h; path = include/Habanero/CloseFrom.h; sourceTree = "<group>"; };
@@ -106,7 +104,6 @@
 		CF24E210229191B800C166FA /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CF24E2132291937F00C166FA /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CF24E214229196E100C166FA /* CFPtr_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CFPtr_UT.cpp; sourceTree = "<group>"; };
-		CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GoogleAnalytics.mm; path = source/GoogleAnalytics.mm; sourceTree = "<group>"; };
 		CF308F48213B755F00915730 /* PosixFilesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PosixFilesystem.cpp; path = source/PosixFilesystem.cpp; sourceTree = "<group>"; };
 		CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PosixFilesystemImpl.cpp; path = source/PosixFilesystemImpl.cpp; sourceTree = "<group>"; };
 		CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringViewZBuf_UT.cpp; sourceTree = "<group>"; };
@@ -240,7 +237,6 @@
 				CF19B4032544B9E500838B45 /* dispatch_cpp.h */,
 				CF19B4002544B9E500838B45 /* DispatchGroup.h */,
 				CF19B40B2544B9E600838B45 /* ExecutionDeadline.h */,
-				CF19B3FB2544B9E500838B45 /* GoogleAnalytics.h */,
 				CF19B3FC2544B9E500838B45 /* Hash.h */,
 				CF19B4152544B9E700838B45 /* IdleSleepPreventer.h */,
 				CF19B4052544B9E500838B45 /* intrusive_ptr.h */,
@@ -283,7 +279,6 @@
 				CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */,
 				CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */,
 				CF5338682532512100022EE8 /* ExecutionDeadline.cpp */,
-				CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */,
 				CFD62BA71C99C2AE0021EE7F /* Hash.cpp */,
 				CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */,
 				CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */,
@@ -414,7 +409,6 @@
 				CF46020425630DE80095FC73 /* ExecutionDeadline.cpp in Sources */,
 				CF4601EE25630DE80095FC73 /* PosixFilesystemImpl.cpp in Sources */,
 				CF4601FB25630DE80095FC73 /* IdleSleepPreventer.cpp in Sources */,
-				CF4601FA25630DE80095FC73 /* GoogleAnalytics.mm in Sources */,
 				CF4601FD25630DE80095FC73 /* mach_time.cpp in Sources */,
 				CF4601F025630DE80095FC73 /* Hash.cpp in Sources */,
 				CFA99A022650661300F72E93 /* SpdlogFacade.cpp in Sources */,

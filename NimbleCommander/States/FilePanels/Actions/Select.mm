@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Select.h"
 #include <Utility/FileMask.h>
 #include <Utility/StringExtras.h>
@@ -9,7 +9,6 @@
 #include "../PanelView.h"
 #include "../PanelController.h"
 #include <VFS/VFS.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include <robin_hood.h>
@@ -147,7 +146,6 @@ void SelectAllByMask::Perform(PanelController *_target, id) const
     };
 
     [_target.view showPopoverUnderPathBarWithView:view andDelegate:view];
-    GA().PostScreenView("Mask Selection Popup");
 }
 
 }

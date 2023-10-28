@@ -1,11 +1,10 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppStoreHelper.h"
 #include <Habanero/CFDefaultsCPP.h>
 #include <Habanero/dispatch_cpp.h>
 #include <NimbleCommander/GeneralUI/ProFeaturesWindowController.h>
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 
 static const auto g_ProFeaturesInAppID = @"com.magnumbytes.nimblecommander.paid_features";
 static const auto g_PrefsPriceString = @"proFeaturesIAPPriceString";
@@ -127,7 +126,6 @@ static const auto g_PrefsPFNextTime = CFSTR("proFeaturesIAPNextShowTime");
 {
     assert(m_ProFeaturesProduct != nil);
     dispatch_assert_main_queue();
-    GA().PostEvent("Licensing", "Buy", "Buy Pro features IAP");
     SKPayment *payment = [SKPayment paymentWithProduct:m_ProFeaturesProduct];
     [SKPaymentQueue.defaultQueue addPayment:payment];
 }
@@ -137,7 +135,6 @@ static const auto g_PrefsPFNextTime = CFSTR("proFeaturesIAPNextShowTime");
     if( !m_ProFeaturesProduct )
         return;
 
-    GA().PostEvent("Licensing", "Buy", "Restore IAP purchases");
     [SKPaymentQueue.defaultQueue restoreCompletedTransactions];
 }
 
@@ -146,8 +143,6 @@ static const auto g_PrefsPFNextTime = CFSTR("proFeaturesIAPNextShowTime");
     dispatch_assert_main_queue();
     ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
     w.suppressDontShowAgain = true;
-    GA().PostEvent("Licensing", "Buy", "Show Pro features IAP");
-
     const auto result = [NSApp runModalForWindow:w.window];
 
     if( result == NSModalResponseOK )
@@ -175,15 +170,12 @@ static const auto g_PrefsPFNextTime = CFSTR("proFeaturesIAPNextShowTime");
     CFDefaultsSetLong(g_PrefsPFNextTime, time(0) + next_show_delay);
 
     // let's show a nag screen
-    GA().PostEvent("Licensing", "Buy", "Show Pro features IAP As Nagscreen");
-
     ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
     w.priceText = self.priceString;
     const auto result = [NSApp runModalForWindow:w.window];
 
     if( w.dontShowAgain ) {
         CFDefaultsSetBool(g_PrefsPFDontShow, true);
-        GA().PostEvent("Licensing", "Buy", "User has turned off IAP Nagscreen");
     }
     if( result == NSModalResponseOK ) {
         dispatch_to_main_queue([self] { [self askUserToBuyProFeatures]; });

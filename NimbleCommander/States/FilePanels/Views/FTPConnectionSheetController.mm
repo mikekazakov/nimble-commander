@@ -1,6 +1,5 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include "FTPConnectionSheetController.h"
 #include <Utility/StringExtras.h>
@@ -39,9 +38,7 @@
     
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;
-    
-    GA().PostScreenView("FTP Connection");
-    
+        
     if( m_Original  ) {
         auto &c = m_Original->Get<NetworkConnectionsManager::FTP>();
         self.title = [NSString stringWithUTF8StdString:c.title];

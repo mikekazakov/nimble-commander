@@ -7,10 +7,6 @@
 #include <functional>
 #include <ctime>
 
-namespace nc::base {
-class GoogleAnalytics;
-}
-
 namespace nc::bootstrap {
 class ActivationManager;
 }
@@ -28,7 +24,6 @@ public:
     static const std::function<time_t()> g_DefaultTimeSource;
     
     FeedbackManagerImpl(nc::bootstrap::ActivationManager &_am,
-                        base::GoogleAnalytics &_ga,
                         std::function<time_t()> _time_source = g_DefaultTimeSource);
     
     /**
@@ -80,7 +75,6 @@ private:
     bool m_ShownRatingOverlay = false;
     bool m_HasUI = true;
     nc::bootstrap::ActivationManager &m_ActivationManager;
-    base::GoogleAnalytics &m_GA;
     std::function<time_t()> m_TimeSource;
 
     std::optional<int> m_LastRating; // 0 - discarded, [1-5] - rating

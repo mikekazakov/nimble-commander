@@ -1,8 +1,7 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/VolumeInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NativeFSManager.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "DetailedVolumeInformationSheetController.h"
 
 @interface DetailedVolumeInformationSheetController ()
@@ -295,8 +294,6 @@ static NSString* Bool2ToString(const bool b[2])
     
     NSString *advstr = [NSString stringWithFormat:@"%@%@%@%@%@%@%@", uuid, formatcap, formatint, attrcmn, attrvol, attrdir, attrfile];
     [[self AdvancedTextView] setString:advstr];
-    
-    GA().PostScreenView("Detailed Volume Information");
 }
 
 - (void)showSheetForWindow:(NSWindow *)_window withPath: (const std::string&)_path

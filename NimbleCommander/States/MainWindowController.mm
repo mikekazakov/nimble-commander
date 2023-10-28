@@ -22,7 +22,6 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <Habanero/SerialQueue.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <Operations/Pool.h>
 #include <Utility/ObjCpp.h>
@@ -479,8 +478,6 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
 {
     __block NSWindow *wnd = sheetWindow;
     __block NSWindowController *ctrl = wnd.windowController;
-    if( auto name = ctrl.className.UTF8String )
-        GA().PostScreenView(name);
     [self.window beginSheet:sheetWindow
           completionHandler:^(NSModalResponse _r) {
             if( handler )

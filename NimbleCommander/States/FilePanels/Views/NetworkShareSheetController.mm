@@ -1,6 +1,5 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkShareSheetController.h"
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/StringExtras.h>
 
 @interface NetworkShareSheetController ()
@@ -43,8 +42,6 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-
-    GA().PostScreenView("LANShare Connection");
 
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;

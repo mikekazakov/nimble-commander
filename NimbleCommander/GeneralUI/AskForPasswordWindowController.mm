@@ -1,6 +1,5 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AskForPasswordWindowController.h"
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 
@@ -18,7 +17,6 @@
     if(self) {
         (void)self.window;
         self.Resource.stringValue = _name;
-        GA().PostScreenView("Ask For Password");
     }
     return self;
 }

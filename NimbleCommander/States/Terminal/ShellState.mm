@@ -5,7 +5,6 @@
 #include <Utility/PathManip.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
@@ -245,7 +244,6 @@ static const auto g_CustomPath = "terminal.customShellPath";
     [self updateTitle];
     [m_TermScrollView tile];
     [m_TermScrollView.view scrollToBottom];
-    GA().PostScreenView("Terminal State");
 }
 
 - (void)windowStateDidResign

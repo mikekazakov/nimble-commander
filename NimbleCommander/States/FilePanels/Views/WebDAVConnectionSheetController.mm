@@ -1,6 +1,5 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WebDAVConnectionSheetController.h"
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <boost/algorithm/string.hpp>
 #include <Utility/StringExtras.h>
 
@@ -38,8 +37,6 @@
 
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;
-
-    GA().PostScreenView("WebDAV Connection");
 
     if( m_Original ) {
         auto &c = m_Original->Get<NetworkConnectionsManager::WebDAV>();

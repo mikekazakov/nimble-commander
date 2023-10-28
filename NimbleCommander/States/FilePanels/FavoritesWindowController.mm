@@ -3,7 +3,6 @@
 #include <Habanero/algo.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include "FavoritesWindowController.h"
@@ -54,7 +53,6 @@ static const auto g_FavoritesWindowControllerDragDataType =
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    GA().PostScreenView("Favorites");
 
     [self.table registerForDraggedTypes:@[
         FilesDraggingSource.fileURLsDragUTI,

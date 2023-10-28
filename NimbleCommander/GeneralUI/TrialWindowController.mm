@@ -1,5 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Core/GoogleAnalytics.h>
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TrialWindowController.h"
 #include <Habanero/dispatch_cpp.h>
 
@@ -46,7 +45,6 @@ static const NSTimeInterval g_ForcedQuitInterval = 10. * 60.;
         self.window.backgroundColor = NSColor.textBackgroundColor;
         m_Self = self;
         m_SecondsTillForcedQuit = g_ForcedQuitInterval;
-        GA().PostScreenView("Trial Nag Screen");
     }
     return self;
 }

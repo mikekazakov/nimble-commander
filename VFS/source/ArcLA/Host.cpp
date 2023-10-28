@@ -282,7 +282,7 @@ int ArchiveHost::ReadArchiveListing()
     }
 
     std::optional<CFStringEncoding> detected_encoding;
-
+        
     struct archive_entry *aentry;
     int ret;
     while( (ret = archive_read_next_header(I->m_Arc, &aentry)) == ARCHIVE_OK ) {
@@ -294,7 +294,7 @@ int ArchiveHost::ReadArchiveListing()
         const auto entry_pathname = archive_entry_pathname(aentry);
         if( entry_pathname == nullptr )
             continue; // check for broken archives
-
+        
         const auto entry_pathname_len = strlen(entry_pathname);
         if( entry_pathname_len == 0 )
             continue;
@@ -590,10 +590,7 @@ bool ArchiveHost::IsDirectory(const char *_path, unsigned long _flags, const VFS
     return Host::IsDirectory(_path, _flags, _cancel_checker);
 }
 
-int ArchiveHost::Stat(const char *_path,
-                      VFSStat &_st,
-                      unsigned long _flags,
-                      const VFSCancelChecker &)
+int ArchiveHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &)
 {
     if( !_path )
         return VFSError::InvalidCall;
@@ -780,9 +777,7 @@ int ArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
     return result_uid;
 }
 
-int ArchiveHost::StatFS(const char */*_path*/,
-                        VFSStatFS &_stat,
-                        const VFSCancelChecker &)
+int ArchiveHost::StatFS(const char * /*_path*/, VFSStatFS &_stat, const VFSCancelChecker &)
 {
     char vol_name[256];
     if( !GetFilenameFromPath(JunctionPath(), vol_name) )
@@ -933,18 +928,20 @@ struct archive *ArchiveHost::SpawnLibarchive()
     require(archive_read_support_filter_lz4(arc));
     require(archive_read_support_filter_zstd(arc));
 
-    archive_read_support_format_ar(arc);
-    archive_read_support_format_cpio(arc);
-    archive_read_support_format_lha(arc);
-    archive_read_support_format_mtree(arc);
-    archive_read_support_format_tar(arc);
-    archive_read_support_format_xar(arc);
-    archive_read_support_format_7zip(arc);
-    archive_read_support_format_cab(arc);
-    archive_read_support_format_iso9660(arc);
-    archive_read_support_format_warc(arc);
-    archive_read_support_format_xar(arc);
-    archive_read_support_format_zip(arc);
+    require(archive_read_support_format_ar(arc));
+    require(archive_read_support_format_cpio(arc));
+    require(archive_read_support_format_lha(arc));
+    require(archive_read_support_format_mtree(arc));
+    require(archive_read_support_format_tar(arc));
+    require(archive_read_support_format_xar(arc));
+    require(archive_read_support_format_7zip(arc));
+    require(archive_read_support_format_cab(arc));
+    require(archive_read_support_format_iso9660(arc));
+    require(archive_read_support_format_warc(arc));
+    require(archive_read_support_format_zip(arc));
+    require(archive_read_support_format_rar(arc));
+    require(archive_read_support_format_rar5(arc));
+
     if( Config().password )
         archive_read_add_passphrase(arc, Config().password->c_str());
     return arc;
@@ -1034,10 +1031,7 @@ const ArchiveHost::Symlink *ArchiveHost::ResolvedSymlink(uint32_t _uid)
     return &iter->second;
 }
 
-int ArchiveHost::ReadSymlink(const char *_symlink_path,
-                             char *_buffer,
-                             size_t _buffer_size,
-                             const VFSCancelChecker &)
+int ArchiveHost::ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &)
 {
     auto entry = FindEntry(_symlink_path);
     if( !entry )

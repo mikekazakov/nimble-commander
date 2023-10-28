@@ -42,9 +42,6 @@
 		CF460086256057A90095FC73 /* EncodingDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099941F95C881000AFDE7 /* EncodingDetection.mm */; };
 		CF460087256057A90095FC73 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0511DA2336500992B84 /* File.cpp */; };
 		CF460088256057A90095FC73 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0541DA2336500992B84 /* Host.cpp */; };
-		CF46008C256057B00095FC73 /* Internals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0661DA2344A00992B84 /* Internals.cpp */; };
-		CF46008D256057B00095FC73 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0621DA2344A00992B84 /* File.cpp */; };
-		CF46008E256057B00095FC73 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0641DA2344A00992B84 /* Host.cpp */; };
 		CF460092256057BE0095FC73 /* Fetching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBF381E909AC400D3569C /* Fetching.cpp */; };
 		CF460093256057BE0095FC73 /* Host.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0281DA2305A00992B84 /* Host.mm */; };
 		CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */; };
@@ -201,7 +198,6 @@
 		CF5099941F95C881000AFDE7 /* EncodingDetection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EncodingDetection.mm; path = source/ArcLA/EncodingDetection.mm; sourceTree = "<group>"; };
 		CF5FD92C1FA1BD0700752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
-		CF69CFE11DA227E400992B84 /* ArcUnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcUnRAR.h; path = include/VFS/ArcUnRAR.h; sourceTree = "<group>"; };
 		CF69CFE21DA227E400992B84 /* Native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Native.h; path = include/VFS/Native.h; sourceTree = "<group>"; };
 		CF69CFE31DA227E400992B84 /* NetFTP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetFTP.h; path = include/VFS/NetFTP.h; sourceTree = "<group>"; };
 		CF69CFE41DA227E400992B84 /* NetSFTP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetSFTP.h; path = include/VFS/NetSFTP.h; sourceTree = "<group>"; };
@@ -260,12 +256,6 @@
 		CF69D0561DA2336500992B84 /* Internal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Internal.cpp; path = source/ArcLA/Internal.cpp; sourceTree = "<group>"; };
 		CF69D05D1DA233EC00992B84 /* AppleDoubleEA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppleDoubleEA.h; path = include/VFS/AppleDoubleEA.h; sourceTree = "<group>"; };
 		CF69D05F1DA233F700992B84 /* AppleDoubleEA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppleDoubleEA.cpp; path = source/AppleDoubleEA.cpp; sourceTree = "<group>"; };
-		CF69D0621DA2344A00992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/ArcUnRAR/File.cpp; sourceTree = "<group>"; };
-		CF69D0631DA2344A00992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/ArcUnRAR/File.h; sourceTree = "<group>"; };
-		CF69D0641DA2344A00992B84 /* Host.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Host.cpp; path = source/ArcUnRAR/Host.cpp; sourceTree = "<group>"; };
-		CF69D0651DA2344A00992B84 /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/ArcUnRAR/Host.h; sourceTree = "<group>"; };
-		CF69D0661DA2344A00992B84 /* Internals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Internals.cpp; path = source/ArcUnRAR/Internals.cpp; sourceTree = "<group>"; };
-		CF69D0671DA2344A00992B84 /* Internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internals.h; path = source/ArcUnRAR/Internals.h; sourceTree = "<group>"; };
 		CF69D06F1DA2353000992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/PS/File.cpp; sourceTree = "<group>"; };
 		CF69D0701DA2353000992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/PS/File.h; sourceTree = "<group>"; };
 		CF69D0711DA2353000992B84 /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/PS/Host.h; sourceTree = "<group>"; };
@@ -510,7 +500,6 @@
 				CFA99A99266FC16800F72E93 /* Log.h */,
 				CF69D05D1DA233EC00992B84 /* AppleDoubleEA.h */,
 				CF69CFE01DA227E400992B84 /* ArcLA.h */,
-				CF69CFE11DA227E400992B84 /* ArcUnRAR.h */,
 				CF26DE0821CFA2AE003F0E93 /* FileWindow.h */,
 				CF69CFF01DA227E400992B84 /* Host.h */,
 				CF69CFE21DA227E400992B84 /* Native.h */,
@@ -565,7 +554,6 @@
 				CF69D00F1DA22BE800992B84 /* VFSError.mm */,
 				CF69D0501DA2335700992B84 /* ArcLA */,
 				CF824F63279F563300C4F29C /* ArcLARaw */,
-				CF69D0611DA2343700992B84 /* ArcUnRAR */,
 				CF22F0A4258DF7550033E850 /* Mem */,
 				CF69D0221DA2304B00992B84 /* Native */,
 				CF11687C1E91FA9D00CC515A /* NetDropbox */,
@@ -652,19 +640,6 @@
 				CF69D0551DA2336500992B84 /* Internal.h */,
 			);
 			name = ArcLA;
-			sourceTree = "<group>";
-		};
-		CF69D0611DA2343700992B84 /* ArcUnRAR */ = {
-			isa = PBXGroup;
-			children = (
-				CF69D0621DA2344A00992B84 /* File.cpp */,
-				CF69D0631DA2344A00992B84 /* File.h */,
-				CF69D0641DA2344A00992B84 /* Host.cpp */,
-				CF69D0651DA2344A00992B84 /* Host.h */,
-				CF69D0661DA2344A00992B84 /* Internals.cpp */,
-				CF69D0671DA2344A00992B84 /* Internals.h */,
-			);
-			name = ArcUnRAR;
 			sourceTree = "<group>";
 		};
 		CF69D06E1DA2352000992B84 /* PS */ = {
@@ -882,13 +857,10 @@
 				CF4600722560579F0095FC73 /* VFSFile.cpp in Sources */,
 				CF4600BB256057E80095FC73 /* ReadBuffer.cpp in Sources */,
 				CF460094256057BE0095FC73 /* DisplayNamesCache.mm in Sources */,
-				CF46008C256057B00095FC73 /* Internals.cpp in Sources */,
-				CF46008E256057B00095FC73 /* Host.cpp in Sources */,
 				CFA99A92266F887100F72E93 /* Authenticator.mm in Sources */,
 				CF4600B5256057E80095FC73 /* File.cpp in Sources */,
 				CF4600BF256057EC0095FC73 /* File.cpp in Sources */,
 				CF4600B7256057E80095FC73 /* Requests.cpp in Sources */,
-				CF46008D256057B00095FC73 /* File.cpp in Sources */,
 				CF46009E256057C80095FC73 /* FileUploadStream.mm in Sources */,
 				CF22F0A7258DF7990033E850 /* Host.cpp in Sources */,
 				CF46009C256057C80095FC73 /* File.mm in Sources */,

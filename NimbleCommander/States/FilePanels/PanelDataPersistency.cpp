@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
 #include <boost/uuid/uuid_io.hpp>
@@ -8,7 +8,6 @@
 #include <VFS/Native.h>
 #include <VFS/ArcLA.h>
 #include <VFS/ArcLARaw.h>
-#include <VFS/ArcUnRAR.h>
 #include <VFS/PS.h>
 #include <VFS/XAttr.h>
 #include <VFS/NetFTP.h>
@@ -133,9 +132,6 @@ static std::any EncodeState(const VFSHost &_host)
     }
     else if( tag == vfs::ArchiveRawHost::UniqueTag ) {
         return ArcLARaw{_host.JunctionPath()};
-    }
-    else if( tag == vfs::UnRARHost::UniqueTag ) {
-        return ArcUnRAR{_host.JunctionPath()};
     }
     return {};
 }
@@ -292,14 +288,6 @@ std::optional<PersistentLocation> PanelDataPersisency::JSONToLocation(const json
 
                 result.hosts.emplace_back(ArcLARaw{h[g_HostInfoJunctionKey].GetString()});
             }
-            else if( tag == vfs::UnRARHost::UniqueTag ) {
-                if( !has_string(g_HostInfoJunctionKey) )
-                    return std::nullopt; // invalid data
-                if( result.hosts.size() < 1 || !std::any_cast<Native>(&result.hosts.back()) )
-                    return std::nullopt; // invalid data
-
-                result.hosts.emplace_back(ArcUnRAR{h[g_HostInfoJunctionKey].GetString()});
-            }
         }
     }
 
@@ -358,11 +346,6 @@ std::string PanelDataPersisency::MakeFootprintString(const PersistentLocation &_
             footprint += vfs::ArchiveRawHost::UniqueTag;
             footprint += "|";
             footprint += la_raw->junction;
-        }
-        else if( auto rar = std::any_cast<ArcUnRAR>(&h) ) {
-            footprint += vfs::UnRARHost::UniqueTag;
-            footprint += "|";
-            footprint += rar->junction;
         }
         footprint += "|";
     }
@@ -457,8 +440,7 @@ Value PanelDataPersisency::EncodeVFSHostInfo(const VFSHost &_host)
             return json;
         }
     }
-    else if( tag == vfs::ArchiveHost::UniqueTag || tag == vfs::ArchiveRawHost::UniqueTag ||
-             tag == vfs::UnRARHost::UniqueTag ) {
+    else if( tag == vfs::ArchiveHost::UniqueTag || tag == vfs::ArchiveRawHost::UniqueTag ) {
         json.AddMember(
             MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator);
         json.AddMember(MakeStandaloneString(g_HostInfoJunctionKey),
@@ -522,15 +504,6 @@ static Value EncodeAny(const std::any &_host)
                        g_CrtAllocator);
         return json;
     }
-    else if( auto rar = std::any_cast<ArcUnRAR>(&_host) ) {
-        json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
-                       MakeStandaloneString(vfs::UnRARHost::UniqueTag),
-                       g_CrtAllocator);
-        json.AddMember(MakeStandaloneString(g_HostInfoJunctionKey),
-                       MakeStandaloneString(rar->junction),
-                       g_CrtAllocator);
-        return json;
-    }
 
     return Value{kNullType};
 }
@@ -564,10 +537,6 @@ static bool Fits(VFSHost &_alive, const std::any &_encoded)
     else if( tag == vfs::ArchiveRawHost::UniqueTag ) {
         if( auto la_raw = std::any_cast<ArcLARaw>(encoded) )
             return la_raw->junction == _alive.JunctionPath();
-    }
-    else if( tag == vfs::UnRARHost::UniqueTag ) {
-        if( auto unrar = std::any_cast<ArcUnRAR>(encoded) )
-            return unrar->junction == _alive.JunctionPath();
     }
     return false;
 }
@@ -645,13 +614,6 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
 
                 auto host =
                     std::make_shared<vfs::ArchiveRawHost>(la_raw->junction.c_str(), vfs.back());
-                vfs.emplace_back(host);
-            }
-            else if( auto rar = std::any_cast<ArcUnRAR>(&h) ) {
-                if( vfs.size() < 1 || !vfs.back()->IsNativeFS() )
-                    return VFSError::GenericError; // invalid data
-
-                auto host = std::make_shared<vfs::UnRARHost>(rar->junction.c_str(), vfs.back());
                 vfs.emplace_back(host);
             }
         }

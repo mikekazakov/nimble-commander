@@ -20,7 +20,6 @@ re2             2022-02-01
 robin_hood      3.11.5
 sparkle         2.5.0
 spdlog          1.11.0
-unrar           ???
 zlib            1.3
 zstd            1.5.1
 

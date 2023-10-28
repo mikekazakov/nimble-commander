@@ -1,9 +1,8 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "VFSInit.h"
 #include <VFS/Native.h>
 #include <VFS/ArcLA.h>
 #include <VFS/ArcLARaw.h>
-#include <VFS/ArcUnRAR.h>
 #include <VFS/PS.h>
 #include <VFS/XAttr.h>
 #include <VFS/NetFTP.h>
@@ -28,7 +27,6 @@ void RegisterAvailableVFS()
     VFSFactory::Instance().RegisterVFS(vfs::DropboxHost::Meta());
     VFSFactory::Instance().RegisterVFS(vfs::ArchiveHost::Meta());
     VFSFactory::Instance().RegisterVFS(vfs::ArchiveRawHost::Meta());
-    VFSFactory::Instance().RegisterVFS(vfs::UnRARHost::Meta());
     VFSFactory::Instance().RegisterVFS(vfs::XAttrHost::Meta());
     VFSFactory::Instance().RegisterVFS(vfs::WebDAVHost::Meta());
 }

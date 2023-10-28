@@ -1,10 +1,9 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <NimbleCommander/Bootstrap/ActivationManagerImpl.h>
 #include <NimbleCommander/Bootstrap/ActivationManagerBase.h>
 #include <VFS/Native.h>
 #include <Habanero/CFDefaultsCPP.h>
-#include <Habanero/GoogleAnalytics.h>
 #include <ftw.h>
 #include <fstream>
 
@@ -335,7 +334,6 @@ struct ActivationManagerContext {
     std::string temp_license_path = tmpdir.directory / "test.nimblecommanderlicense";
     ExternalLicenseSupport license{g_TestPublicKey, installed_license_path};
     TrialPeriodSupportWithFakeTime trial{g_DefaultsTrialExpireDate};
-    nc::base::GoogleAnalytics ga;
     ActivationManagerContext() { trial.m_Time = g_Y2018; }
     ~ActivationManagerContext() { CFDefaultsRemoveValue(g_DefaultsTrialExpireDate); }
 };
@@ -343,7 +341,7 @@ struct ActivationManagerContext {
 TEST_CASE(PREFIX "is checking trial build") // really? TODO: update
 {
     ActivationManagerContext ctx;
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
     CHECK(sut.Type() == Distribution::Trial);
     CHECK(sut.Sandboxed() == false);
 }
@@ -351,7 +349,7 @@ TEST_CASE(PREFIX "is checking trial build") // really? TODO: update
 TEST_CASE(PREFIX "by default user didnt register")
 {
     ActivationManagerContext ctx;
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
 
     CHECK(sut.UserHadRegistered() == false);
 
@@ -362,7 +360,7 @@ TEST_CASE(PREFIX "by default user didnt register")
 TEST_CASE(PREFIX "by default starts trial period")
 {
     ActivationManagerContext ctx;
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
 
     CHECK(ctx.trial.IsTrialStarted() == true);
     CHECK(sut.IsTrialPeriod() == true);
@@ -373,12 +371,12 @@ TEST_CASE(PREFIX "doesnt overwrite existing trial period")
 {
     ActivationManagerContext ctx;
     {
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
     }
     const auto time_stamp_before = CFDefaultsGetDouble(g_DefaultsTrialExpireDate);
     ctx.trial.m_Time += 1. * 24. * 60. * 60.;
     {
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
     }
     const auto time_stamp_after = CFDefaultsGetDouble(g_DefaultsTrialExpireDate);
     CHECK(time_stamp_before == time_stamp_after);
@@ -387,7 +385,7 @@ TEST_CASE(PREFIX "doesnt overwrite existing trial period")
 TEST_CASE(PREFIX "by default shouldnt show nag screen")
 {
     ActivationManagerContext ctx;
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
 
     CHECK(sut.ShouldShowTrialNagScreen() == false);
 }
@@ -397,7 +395,7 @@ TEST_CASE(PREFIX "reports user had registered when a valid license file is insta
     ActivationManagerContext ctx;
     Save(ctx.installed_license_path, g_ValidLicense);
 
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
 
     CHECK(sut.UserHadRegistered() == true);
     CHECK(sut.IsTrialPeriod() == false);
@@ -409,7 +407,7 @@ TEST_CASE(PREFIX "ignores an invalid installed license")
     ActivationManagerContext ctx;
     Save(ctx.installed_license_path, g_LicenseWithBrokenSignature);
 
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
 
     CHECK(ctx.trial.IsTrialStarted() == true);
     CHECK(sut.IsTrialPeriod() == true);
@@ -420,25 +418,25 @@ TEST_CASE(PREFIX "shows nag screen when less than 15 days is left")
 {
     ActivationManagerContext ctx;
     {
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.ShouldShowTrialNagScreen() == false);
     }
 
     {
         ctx.trial.m_Time += 14. * 24. * 60. * 60.;
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.ShouldShowTrialNagScreen() == false);
     }
 
     {
         ctx.trial.m_Time += 1. * 24. * 60. * 60.;
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.ShouldShowTrialNagScreen() == true);
     }
 
     {
         ctx.trial.m_Time += 1. * 24. * 60. * 60.;
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.ShouldShowTrialNagScreen() == true);
     }
 }
@@ -448,12 +446,12 @@ TEST_CASE(PREFIX "dont show nag screen when license file is installed")
     ActivationManagerContext ctx;
     Save(ctx.installed_license_path, g_ValidLicense);
     {
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.ShouldShowTrialNagScreen() == false);
     }
     {
         ctx.trial.m_Time += 100. * 24. * 60. * 60.;
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.ShouldShowTrialNagScreen() == false);
     }
 }
@@ -462,22 +460,22 @@ TEST_CASE(PREFIX "dont show nag screen when license file is installed and trial 
 {
     ActivationManagerContext ctx;
     {
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.ShouldShowTrialNagScreen() == false);
     }
     {
         ctx.trial.m_Time += 20 * 24. * 60. * 60.;
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.ShouldShowTrialNagScreen() == true);
     }
     Save(ctx.installed_license_path, g_ValidLicense);
     {
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.ShouldShowTrialNagScreen() == false);
     }
     {
         ctx.trial.m_Time += 100. * 24. * 60. * 60.;
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.ShouldShowTrialNagScreen() == false);
     }
 }
@@ -486,7 +484,7 @@ TEST_CASE(PREFIX "finishes trial period after 30 days")
 {
     ActivationManagerContext ctx;
     {
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.UserHadRegistered() == false);
         CHECK(sut.IsTrialPeriod() == true);
         CHECK(sut.TrialDaysLeft() == 30);
@@ -494,7 +492,7 @@ TEST_CASE(PREFIX "finishes trial period after 30 days")
 
     {
         ctx.trial.m_Time += 14. * 24. * 60. * 60.;
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.UserHadRegistered() == false);
         CHECK(sut.IsTrialPeriod() == true);
         CHECK(sut.TrialDaysLeft() == 16);
@@ -502,7 +500,7 @@ TEST_CASE(PREFIX "finishes trial period after 30 days")
 
     {
         ctx.trial.m_Time += 15. * 24. * 60. * 60.;
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.UserHadRegistered() == false);
         CHECK(sut.IsTrialPeriod() == true);
         CHECK(sut.TrialDaysLeft() == 1);
@@ -510,7 +508,7 @@ TEST_CASE(PREFIX "finishes trial period after 30 days")
 
     {
         ctx.trial.m_Time += 1. * 24. * 60. * 60.;
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.UserHadRegistered() == false);
         CHECK(sut.IsTrialPeriod() == false);
         CHECK(sut.TrialDaysLeft() == 0);
@@ -518,7 +516,7 @@ TEST_CASE(PREFIX "finishes trial period after 30 days")
 
     {
         ctx.trial.m_Time += 5. * 24. * 60. * 60.;
-        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+        auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
         CHECK(sut.UserHadRegistered() == false);
         CHECK(sut.IsTrialPeriod() == false);
         CHECK(sut.TrialDaysLeft() == 0);
@@ -528,7 +526,7 @@ TEST_CASE(PREFIX "finishes trial period after 30 days")
 TEST_CASE(PREFIX "by default reports an empty license info")
 {
     ActivationManagerContext ctx;
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
     CHECK(sut.LicenseInformation().empty() == true);
 }
 
@@ -537,7 +535,7 @@ TEST_CASE(PREFIX "reports proper info when license file is installed")
     ActivationManagerContext ctx;
     Save(ctx.installed_license_path, g_ValidLicense);
 
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
     auto info = sut.LicenseInformation();
     CHECK(info["Name"] == "Test User");
 }
@@ -547,7 +545,7 @@ TEST_CASE(PREFIX "after processing a valid license file the user has registered"
     ActivationManagerContext ctx;
     Save(ctx.temp_license_path, g_ValidLicense);
 
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
     CHECK(sut.UserHadRegistered() == false);
 
     CHECK(sut.ProcessLicenseFile(ctx.temp_license_path) == true);
@@ -562,7 +560,7 @@ TEST_CASE(PREFIX "ignores processing invalid license file")
     ActivationManagerContext ctx;
     Save(ctx.temp_license_path, g_LicenseWithBrokenSignature);
 
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
     CHECK(sut.UserHadRegistered() == false);
 
     CHECK(sut.ProcessLicenseFile(ctx.temp_license_path) == false);
@@ -572,7 +570,7 @@ TEST_CASE(PREFIX "ignores processing invalid license file")
 TEST_CASE(PREFIX "ignores processing invalid license file path")
 {
     ActivationManagerContext ctx;
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
     CHECK(sut.UserHadRegistered() == false);
 
     CHECK(sut.ProcessLicenseFile("/some/abra/cadabra/alakazam/aaa.txt") == false);
@@ -594,7 +592,7 @@ TEST_CASE(PREFIX "ignores processing invalid license file path")
 TEST_CASE(PREFIX "reports proper license file extension")
 {
     ActivationManagerContext ctx;
-    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial, ctx.ga};
+    auto sut = ActivationManagerImpl{Distribution::Trial, ctx.license, ctx.trial};
 
     CHECK(sut.LicenseFileExtension() == "nimblecommanderlicense");
 }

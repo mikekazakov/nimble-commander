@@ -1,9 +1,8 @@
-// Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <NimbleCommander/Core/FeedbackManagerImpl.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <Habanero/CFDefaultsCPP.h>
-#include <Habanero/GoogleAnalytics.h>
 
 using nc::FeedbackManager;
 using nc::FeedbackManagerImpl;
@@ -17,12 +16,6 @@ static void ClearAll()
     CFDefaultsRemoveValue(FeedbackManagerImpl::g_FirstRunKey);
     CFDefaultsRemoveValue(FeedbackManagerImpl::g_LastRatingKey);
     CFDefaultsRemoveValue(FeedbackManagerImpl::g_LastRatingTimeKey);
-}
-
-static nc::base::GoogleAnalytics &GA()
-{
-    [[clang::no_destroy]] static nc::base::GoogleAnalytics ga;
-    return ga;
 }
 
 struct MockTrialAM : nc::bootstrap::ActivationManager {
@@ -80,7 +73,7 @@ TEST_CASE(PREFIX "sets first run time")
 {
     ClearAll();
     std::time_t now = 123456;
-    FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+    FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
     const auto stored = CFDefaultsGetOptionalLong(FeedbackManagerImpl::g_FirstRunKey);
     REQUIRE(stored);
     CHECK(*stored == now);
@@ -90,7 +83,7 @@ TEST_CASE(PREFIX "doesn't change existing first run time")
 {
     ClearAll();
     CFDefaultsSetLong(FeedbackManagerImpl::g_FirstRunKey, 10000);
-    FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [] { return 123456; });
+    FeedbackManagerImpl fm(NonMASActivationManager(), [] { return 123456; });
     const auto stored = CFDefaultsGetOptionalLong(FeedbackManagerImpl::g_FirstRunKey);
     REQUIRE(stored);
     CHECK(*stored == 10000);
@@ -105,21 +98,21 @@ TEST_CASE(PREFIX "sets and increments runs count ")
     SECTION("initially negative") { CFDefaultsSetLong(FeedbackManagerImpl::g_RunsKey, -777); }
 
     {
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [] { return 123456; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [] { return 123456; });
         const auto stored = CFDefaultsGetOptionalLong(FeedbackManagerImpl::g_RunsKey);
         REQUIRE(stored);
         CHECK(*stored == 1);
     }
 
     {
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [] { return 123456; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [] { return 123456; });
         const auto stored = CFDefaultsGetOptionalLong(FeedbackManagerImpl::g_RunsKey);
         REQUIRE(stored);
         CHECK(*stored == 2);
     }
 
     {
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [] { return 123456; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [] { return 123456; });
         const auto stored = CFDefaultsGetOptionalLong(FeedbackManagerImpl::g_RunsKey);
         REQUIRE(stored);
         CHECK(*stored == 3);
@@ -131,7 +124,7 @@ TEST_CASE(PREFIX "Sets and updates number of hours used")
     ClearAll();
     std::time_t now = 123456;
     {
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.TotalHoursUsed() == Approx(0.));
         now += 60 * 60 * 6;
         fm.UpdateStatistics();
@@ -141,7 +134,7 @@ TEST_CASE(PREFIX "Sets and updates number of hours used")
     }
     {
         now += 60 * 60 * 10;
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.TotalHoursUsed() == Approx(6.));
         now += 60 * 60 * 5;
         fm.UpdateStatistics();
@@ -158,7 +151,7 @@ TEST_CASE(PREFIX "Shows feedback overlay only after a certain amount of usage")
     std::time_t now = 946684800; // 2000.01.01 00:00:00
     SECTION("No usage")
     {
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == false);
     }
     SECTION("Used for 10 days, 10 hours, 20 times")
@@ -166,7 +159,7 @@ TEST_CASE(PREFIX "Shows feedback overlay only after a certain amount of usage")
         CFDefaultsSetLong(FeedbackManagerImpl::g_FirstRunKey, now - 60 * 60 * 24 * 10);
         CFDefaultsSetDouble(FeedbackManagerImpl::g_HoursKey, 10.);
         CFDefaultsSetLong(FeedbackManagerImpl::g_RunsKey, 20);
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == true);
     }
     SECTION("Used for 9 days, 10 hours, 20 times")
@@ -174,7 +167,7 @@ TEST_CASE(PREFIX "Shows feedback overlay only after a certain amount of usage")
         CFDefaultsSetLong(FeedbackManagerImpl::g_FirstRunKey, now - 60 * 60 * 24 * 9);
         CFDefaultsSetDouble(FeedbackManagerImpl::g_HoursKey, 10.);
         CFDefaultsSetLong(FeedbackManagerImpl::g_RunsKey, 20);
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == false);
     }
     SECTION("Used for 10 days, 9 hours, 20 times")
@@ -182,7 +175,7 @@ TEST_CASE(PREFIX "Shows feedback overlay only after a certain amount of usage")
         CFDefaultsSetLong(FeedbackManagerImpl::g_FirstRunKey, now - 60 * 60 * 24 * 10);
         CFDefaultsSetDouble(FeedbackManagerImpl::g_HoursKey, 9.);
         CFDefaultsSetLong(FeedbackManagerImpl::g_RunsKey, 20);
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == false);
     }
     SECTION("Used for 10 days, 10 hours, 19 times")
@@ -190,7 +183,7 @@ TEST_CASE(PREFIX "Shows feedback overlay only after a certain amount of usage")
         CFDefaultsSetLong(FeedbackManagerImpl::g_FirstRunKey, now - 60 * 60 * 24 * 10);
         CFDefaultsSetDouble(FeedbackManagerImpl::g_HoursKey, 10.);
         CFDefaultsSetLong(FeedbackManagerImpl::g_RunsKey, 19);
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == false);
     }
 }
@@ -202,7 +195,7 @@ TEST_CASE(PREFIX "Shows overlay only once is eligible")
     CFDefaultsSetLong(FeedbackManagerImpl::g_FirstRunKey, now - 60 * 60 * 24 * 10);
     CFDefaultsSetDouble(FeedbackManagerImpl::g_HoursKey, 10.);
     CFDefaultsSetLong(FeedbackManagerImpl::g_RunsKey, 20);
-    FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+    FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
     CHECK(fm.IsEligibleForRatingOverlay() == true);
     CHECK(fm.ShouldShowRatingOverlayView() == true);
     CHECK(fm.ShouldShowRatingOverlayView() == false);
@@ -220,19 +213,19 @@ TEST_CASE(PREFIX "Shows overlay after 14 days if it was discarded")
     SECTION("15 days ago")
     {
         CFDefaultsSetLong(FeedbackManagerImpl::g_LastRatingTimeKey, now - 60 * 60 * 24 * 15);
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == true);
     }
     SECTION("14 days ago")
     {
         CFDefaultsSetLong(FeedbackManagerImpl::g_LastRatingTimeKey, now - 60 * 60 * 24 * 14);
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == true);
     }
     SECTION("13 days ago")
     {
         CFDefaultsSetLong(FeedbackManagerImpl::g_LastRatingTimeKey, now - 60 * 60 * 24 * 13);
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == false);
     }
 }
@@ -249,19 +242,19 @@ TEST_CASE(PREFIX "Shows overlay after 365 days if it was rated")
     SECTION("366 days ago")
     {
         CFDefaultsSetLong(FeedbackManagerImpl::g_LastRatingTimeKey, now - 60 * 60 * 24 * 366);
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == true);
     }
     SECTION("365 days ago")
     {
         CFDefaultsSetLong(FeedbackManagerImpl::g_LastRatingTimeKey, now - 60 * 60 * 24 * 365);
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == true);
     }
     SECTION("364 days ago")
     {
         CFDefaultsSetLong(FeedbackManagerImpl::g_LastRatingTimeKey, now - 60 * 60 * 24 * 364);
-        FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+        FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
         CHECK(fm.IsEligibleForRatingOverlay() == false);
     }
 }
@@ -273,7 +266,7 @@ TEST_CASE(PREFIX "Saves ratings")
     CFDefaultsSetLong(FeedbackManagerImpl::g_FirstRunKey, now - 60 * 60 * 24 * 100);
     CFDefaultsSetDouble(FeedbackManagerImpl::g_HoursKey, 10.);
     CFDefaultsSetLong(FeedbackManagerImpl::g_RunsKey, 20);
-    FeedbackManagerImpl fm(NonMASActivationManager(), GA(), [&] { return now; });
+    FeedbackManagerImpl fm(NonMASActivationManager(), [&] { return now; });
     fm.SetHasUI(false);
     const auto g_LastRatingKey = FeedbackManagerImpl::g_LastRatingKey;
     const auto g_LastRatingTimeKey = FeedbackManagerImpl::g_LastRatingTimeKey;

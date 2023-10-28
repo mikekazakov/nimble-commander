@@ -95,7 +95,12 @@ static std::string GetLocale()
 {
     // Keep a copy of the current locale setting for this process
     char *backupLocale = setlocale(LC_CTYPE, NULL);
-
+    if( backupLocale != nullptr && 
+        std::string_view{backupLocale} != "" &&
+        std::string_view{backupLocale} != "C" ) {
+        return backupLocale;
+    }
+    
     // Start with the locale
     std::string locale = "en"; // en as a backup for any possible error
 

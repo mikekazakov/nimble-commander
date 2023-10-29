@@ -45,6 +45,8 @@
 		CFD230F82AE5CF260000C7CF /* SysLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD230F72AE5CF260000C7CF /* SysLocale.h */; };
 		CFD2312F2AEDC3B80000C7CF /* algo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD2312E2AEDC3B80000C7CF /* algo.cpp */; };
 		CFD231322AEDC6330000C7CF /* algo_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD231302AEDC6260000C7CF /* algo_UT.cpp */; };
+		CFD231352AEEA2610000C7CF /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD231342AEEA2610000C7CF /* UUID.cpp */; };
+		CFD231372AEEA26E0000C7CF /* UUID_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD231362AEEA26E0000C7CF /* UUID_UT.cpp */; };
 		CFDE36E426BA5F2400EB1B0D /* WhereIs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */; };
 		CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */; };
 		CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */; };
@@ -130,6 +132,9 @@
 		CFD230F72AE5CF260000C7CF /* SysLocale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SysLocale.h; path = include/Habanero/SysLocale.h; sourceTree = "<group>"; };
 		CFD2312E2AEDC3B80000C7CF /* algo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = algo.cpp; path = source/algo.cpp; sourceTree = "<group>"; };
 		CFD231302AEDC6260000C7CF /* algo_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = algo_UT.cpp; sourceTree = "<group>"; };
+		CFD231332AEEA24F0000C7CF /* UUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UUID.h; path = include/Habanero/UUID.h; sourceTree = "<group>"; };
+		CFD231342AEEA2610000C7CF /* UUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UUID.cpp; path = source/UUID.cpp; sourceTree = "<group>"; };
+		CFD231362AEEA26E0000C7CF /* UUID_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UUID_UT.cpp; sourceTree = "<group>"; };
 		CFD62BA01C99C2AE0021EE7F /* CFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFString.cpp; path = source/CFString.cpp; sourceTree = "<group>"; };
 		CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommonPaths.cpp; path = source/CommonPaths.cpp; sourceTree = "<group>"; };
 		CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CommonPaths.mm; path = source/CommonPaths.mm; sourceTree = "<group>"; };
@@ -198,6 +203,7 @@
 				CF2084021FEFB2F70014D6AD /* StringsBulk_UT.cpp */,
 				CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */,
 				CF24E20B2291777D00C166FA /* UnitTests_main.cpp */,
+				CFD231362AEEA26E0000C7CF /* UUID_UT.cpp */,
 				CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */,
 				CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */,
 			);
@@ -263,6 +269,7 @@
 				CF19B4062544B9E500838B45 /* tiny_string.h */,
 				CFCB689E2879A85300086E40 /* ToLower.h */,
 				CF19B40C2544B9E600838B45 /* tribool.h */,
+				CFD231332AEEA24F0000C7CF /* UUID.h */,
 				CF19B3FD2544B9E500838B45 /* variable_container.h */,
 				CFDE36E226BA5F0A00EB1B0D /* WhereIs.h */,
 				CFA99A0E26512D3700F72E93 /* WriteAtomically.h */,
@@ -298,6 +305,7 @@
 				CF2084001FEFACFC0014D6AD /* StringsBulk.cpp */,
 				CFD230F52AE5CF190000C7CF /* SysLocale.cpp */,
 				CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */,
+				CFD231342AEEA2610000C7CF /* UUID.cpp */,
 				CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */,
 				CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */,
 			);
@@ -394,6 +402,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF3ABD8723C094A700D1878B /* StringViewZBuf_UT.cpp in Sources */,
+				CFD231372AEEA26E0000C7CF /* UUID_UT.cpp in Sources */,
 				CF24E2192291A0D500C166FA /* LRUCache_Tests.cpp in Sources */,
 				CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */,
 				CF24E21D2291B63E00C166FA /* VariableContainer_UT.cpp in Sources */,
@@ -425,6 +434,7 @@
 				CF4601F525630DE80095FC73 /* spinlock.cpp in Sources */,
 				CF4601F425630DE80095FC73 /* dispatch_cpp.cpp in Sources */,
 				CF4601F825630DE80095FC73 /* CFStackAllocator.cpp in Sources */,
+				CFD231352AEEA2610000C7CF /* UUID.cpp in Sources */,
 				CFD230F62AE5CF190000C7CF /* SysLocale.cpp in Sources */,
 				CF4601FC25630DE80095FC73 /* CloseFrom.cpp in Sources */,
 				CF4601ED25630DE80095FC73 /* DispatchGroup.cpp in Sources */,

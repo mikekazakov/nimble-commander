@@ -1,22 +1,11 @@
 // Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkConnectionsManager.h"
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wshadow"
-#include <boost/uuid/random_generator.hpp>
-#include <boost/uuid/string_generator.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#pragma clang diagnostic pop
-#include <Habanero/spinlock.h>
 
 using namespace std::literals;
 
-boost::uuids::uuid NetworkConnectionsManager::MakeUUID()
+nc::base::UUID NetworkConnectionsManager::MakeUUID()
 {
-    static nc::spinlock lock;
-    [[clang::no_destroy]] static boost::uuids::basic_random_generator<boost::mt19937> gen;
-
-    auto guard = std::lock_guard{lock};
-    return gen();
+    return nc::base::UUID::Generate();
 }
 
 static const std::string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
@@ -94,7 +83,7 @@ const std::string& NetworkConnectionsManager::Connection::Title() const noexcept
     return m_Object->Title();
 }
 
-const boost::uuids::uuid& NetworkConnectionsManager::Connection::Uuid() const noexcept
+const nc::base::UUID& NetworkConnectionsManager::Connection::Uuid() const noexcept
 {
     return m_Object->Uuid();
 }
@@ -142,11 +131,6 @@ void NetworkConnectionsManager::ConnectionVisitor::Visit(
 void NetworkConnectionsManager::ConnectionVisitor::Visit(
     const NetworkConnectionsManager::WebDAV & )
 {
-}
-
-bool NetworkConnectionsManager::BaseConnection::operator==(const BaseConnection&_rhs) const noexcept
-{
-    return uuid == _rhs.uuid && title == _rhs.title;
 }
 
 bool NetworkConnectionsManager::FTP::operator==(const FTP&_rhs) const noexcept

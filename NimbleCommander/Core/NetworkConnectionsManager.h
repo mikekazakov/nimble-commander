@@ -1,7 +1,7 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <boost/uuid/uuid.hpp>
+#include <Habanero/UUID.h>
 #include <VFS/VFS.h>
 
 class NetworkConnectionsManager
@@ -19,7 +19,7 @@ public:
     class ConnectionVisitor;
     
     
-    static boost::uuids::uuid MakeUUID();
+    static nc::base::UUID MakeUUID();
     
     /**
      * Returns connections path is the following format: protocol://[user@]domain[/resource]
@@ -36,7 +36,7 @@ public:
      */
     static std::string TitleForConnection(const Connection &_conn);
 
-    virtual std::optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const = 0;
+    virtual std::optional<Connection> ConnectionByUUID(const nc::base::UUID& _uuid) const = 0;
     virtual std::optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const = 0 ;
     
     virtual void InsertConnection( const Connection &_connection ) = 0;
@@ -120,7 +120,7 @@ public:
     void Accept( NetworkConnectionsManager::ConnectionVisitor &_visitor ) const;
 
     const std::string& Title() const noexcept;
-    const boost::uuids::uuid& Uuid() const noexcept;
+    const nc::base::UUID& Uuid() const noexcept;
 
     bool operator==(const Connection&_rhs) const noexcept;
     bool operator!=(const Connection&_rhs) const noexcept;
@@ -134,8 +134,8 @@ class NetworkConnectionsManager::BaseConnection
 {
 public:
     std::string         title; // arbitrary user-defined title
-    boost::uuids::uuid  uuid;
-    bool operator==(const BaseConnection&_rhs) const noexcept;
+    nc::base::UUID      uuid;
+    bool operator==(const BaseConnection&_rhs) const noexcept = default;
 };
 
 class NetworkConnectionsManager::FTP : public NetworkConnectionsManager::BaseConnection
@@ -197,7 +197,7 @@ struct NetworkConnectionsManager::Connection::Concept
 {
     virtual ~Concept() = default;
     virtual const std::string& Title() const noexcept = 0;
-    virtual const boost::uuids::uuid& Uuid() const noexcept = 0;
+    virtual const nc::base::UUID& Uuid() const noexcept = 0;
     virtual void Accept( NetworkConnectionsManager::ConnectionVisitor &_visitor ) const = 0;
     virtual const std::type_info &TypeID() const noexcept = 0;
     virtual bool Equal( const Concept &_rhs ) const noexcept = 0;
@@ -218,7 +218,7 @@ struct NetworkConnectionsManager::Connection::Model final :
         return obj.title;
     }
     
-    virtual const boost::uuids::uuid& Uuid() const noexcept override
+    virtual const nc::base::UUID& Uuid() const noexcept override
     {
         return obj.uuid;
     }

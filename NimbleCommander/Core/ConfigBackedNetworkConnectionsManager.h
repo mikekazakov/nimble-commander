@@ -1,9 +1,7 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "NetworkConnectionsManager.h"
-#include <boost/uuid/uuid.hpp>
-#include <boost/functional/hash.hpp>
 #include <VFS/VFS.h>
 #include <Config/Config.h>
 
@@ -18,7 +16,7 @@ public:
                                           nc::utility::NativeFSManager &_native_fs_man);
     ~ConfigBackedNetworkConnectionsManager();
 
-    std::optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const override;
+    std::optional<Connection> ConnectionByUUID(const nc::base::UUID& _uuid) const override;
     std::optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const override;
     
     void InsertConnection( const Connection &_connection ) override;
@@ -57,7 +55,7 @@ private:
     void NetFSCallback(int _status, void *_requestID, CFArrayRef _mountpoints);
     
     std::vector<Connection>                         m_Connections;
-    std::vector<boost::uuids::uuid>                 m_MRU;
+    std::vector<nc::base::UUID>                     m_MRU;
     mutable std::mutex                              m_Lock;
     nc::config::Config                             &m_Config;
     nc::utility::NativeFSManager                   &m_NativeFSManager;

@@ -1,9 +1,5 @@
 // Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wshadow"
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/uuid/string_generator.hpp>
-#pragma clang diagnostic pop
 #include <boost/container/static_vector.hpp>
 #include <VFS/Native.h>
 #include <VFS/ArcLA.h>
@@ -64,7 +60,7 @@ struct XAttr {
 };
 
 struct Network {
-    boost::uuids::uuid connection;
+    nc::base::UUID connection;
 };
 
 struct ArcLA {
@@ -266,11 +262,11 @@ std::optional<PersistentLocation> PanelDataPersisency::JSONToLocation(const json
             else if( tag == g_HostInfoTypeNetworkValue ) {
                 if( !has_string(g_HostInfoUuidKey) )
                     return std::nullopt; // invalid data
+                const auto uuid = base::UUID::FromString(h[g_HostInfoUuidKey].GetString());
+                if( !uuid )
+                    return std::nullopt; // invalid data
 
-                static const boost::uuids::string_generator uuid_gen{};
-                const auto uuid = uuid_gen(h[g_HostInfoUuidKey].GetString());
-
-                result.hosts.emplace_back(Network{uuid});
+                result.hosts.emplace_back(Network{*uuid});
             }
             else if( tag == vfs::ArchiveHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
@@ -435,7 +431,7 @@ Value PanelDataPersisency::EncodeVFSHostInfo(const VFSHost &_host)
                            MakeStandaloneString(g_HostInfoTypeNetworkValue),
                            g_CrtAllocator);
             json.AddMember(MakeStandaloneString(g_HostInfoUuidKey),
-                           MakeStandaloneString(to_string(conn->Uuid()).c_str()),
+                           MakeStandaloneString(conn->Uuid().ToString()),
                            g_CrtAllocator);
             return json;
         }
@@ -482,7 +478,7 @@ static Value EncodeAny(const std::any &_host)
                        MakeStandaloneString(g_HostInfoTypeNetworkValue),
                        g_CrtAllocator);
         json.AddMember(MakeStandaloneString(g_HostInfoUuidKey),
-                       MakeStandaloneString(to_string(network->connection)),
+                       MakeStandaloneString(network->connection.ToString()),
                        g_CrtAllocator);
         return json;
     }

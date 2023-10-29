@@ -1,10 +1,7 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigBackedNetworkConnectionsManager.h"
 #include <dirent.h>
 #include <NetFS/NetFS.h>
-#include <boost/uuid/random_generator.hpp>
-#include <boost/uuid/string_generator.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <Habanero/algo.h>
 #include <Utility/KeychainServices.h>
 #include <Utility/ObjCpp.h>
@@ -26,8 +23,7 @@ using namespace std::literals;
 static const auto g_ConnectionsKey = "connections";
 static const auto g_MRUKey = "mostRecentlyUsed";
 
-static void SortByMRU(std::vector<NetworkConnectionsManager::Connection> &_values,
-                      const std::vector<boost::uuids::uuid> &_mru)
+static void SortByMRU(std::vector<NetworkConnectionsManager::Connection> &_values, const std::vector<base::UUID> &_mru)
 {
     std::vector<std::pair<NetworkConnectionsManager::Connection, decltype(begin(_mru))>> v;
     for( auto &i : _values ) {
@@ -35,24 +31,21 @@ static void SortByMRU(std::vector<NetworkConnectionsManager::Connection> &_value
         v.emplace_back(std::move(i), it);
     }
 
-    std::sort(std::begin(v), std::end(v), [](auto &_1st, auto &_2nd) {
-        return _1st.second < _2nd.second;
-    });
+    std::sort(std::begin(v), std::end(v), [](auto &_1st, auto &_2nd) { return _1st.second < _2nd.second; });
 
     for( size_t i = 0, e = v.size(); i != e; ++i )
         _values[i] = std::move(v[i].first);
 }
 
-static config::Value
-FillBasicConnectionInfoInJSONObject(const char *_type,
-                                    const NetworkConnectionsManager::BaseConnection &_bc)
+static config::Value FillBasicConnectionInfoInJSONObject(const char *_type,
+                                                         const NetworkConnectionsManager::BaseConnection &_bc)
 {
     auto &alloc = config::g_CrtAllocator;
     config::Value cv(rapidjson::kObjectType);
 
     cv.AddMember("type", config::Value(_type, alloc), alloc);
-    cv.AddMember("title", config::Value(_bc.title.c_str(), alloc), alloc);
-    cv.AddMember("uuid", config::Value(to_string(_bc.uuid).c_str(), alloc), alloc);
+    cv.AddMember("title", config::Value(_bc.title, alloc), alloc);
+    cv.AddMember("uuid", config::Value(_bc.uuid.ToString(), alloc), alloc);
     return cv;
 }
 
@@ -111,10 +104,8 @@ static config::Value ConnectionToJSONObject(NetworkConnectionsManager::Connectio
     return value(rapidjson::kNullType);
 }
 
-static std::optional<NetworkConnectionsManager::Connection>
-JSONObjectToConnection(const config::Value &_object)
+static std::optional<NetworkConnectionsManager::Connection> JSONObjectToConnection(const config::Value &_object)
 {
-    static const boost::uuids::string_generator uuid_gen{};
     using namespace rapidjson;
     auto has_string = [&](const char *k) {
         if( const auto i = _object.FindMember(k); i != _object.MemberEnd() )
@@ -138,14 +129,17 @@ JSONObjectToConnection(const config::Value &_object)
     if( !has_string("type") || !has_string("title") || !has_string("uuid") )
         return std::nullopt;
 
+    const auto uuid = base::UUID::FromString(_object["uuid"].GetString());
+    if( !uuid )
+        return std::nullopt;
+
     std::string type = _object["type"].GetString();
     if( type == "ftp" ) {
-        if( !has_string("user") || !has_string("host") || !has_string("path") ||
-            !has_number("port") )
+        if( !has_string("user") || !has_string("host") || !has_string("path") || !has_number("port") )
             return std::nullopt;
 
         NetworkConnectionsManager::FTP c;
-        c.uuid = uuid_gen(_object["uuid"].GetString());
+        c.uuid = *uuid;
         c.title = _object["title"].GetString();
         c.user = _object["user"].GetString();
         c.host = _object["host"].GetString();
@@ -156,12 +150,11 @@ JSONObjectToConnection(const config::Value &_object)
         return NetworkConnectionsManager::Connection(std::move(c));
     }
     else if( type == "sftp" ) {
-        if( !has_string("user") || !has_string("host") || !has_string("keypath") ||
-            !has_number("port") )
+        if( !has_string("user") || !has_string("host") || !has_string("keypath") || !has_number("port") )
             return std::nullopt;
 
         NetworkConnectionsManager::SFTP c;
-        c.uuid = uuid_gen(_object["uuid"].GetString());
+        c.uuid = *uuid;
         c.title = _object["title"].GetString();
         c.user = _object["user"].GetString();
         c.host = _object["host"].GetString();
@@ -171,19 +164,18 @@ JSONObjectToConnection(const config::Value &_object)
         return NetworkConnectionsManager::Connection(std::move(c));
     }
     else if( type == "lanshare" ) {
-        if( !has_string("user") || !has_string("host") || !has_string("share") ||
-            !has_string("mountpoint") || !has_number("proto") )
+        if( !has_string("user") || !has_string("host") || !has_string("share") || !has_string("mountpoint") ||
+            !has_number("proto") )
             return std::nullopt;
 
         NetworkConnectionsManager::LANShare c;
-        c.uuid = uuid_gen(_object["uuid"].GetString());
+        c.uuid = *uuid;
         c.title = _object["title"].GetString();
         c.user = _object["user"].GetString();
         c.host = _object["host"].GetString();
         c.share = _object["share"].GetString();
         c.mountpoint = _object["mountpoint"].GetString();
-        c.proto =
-            static_cast<NetworkConnectionsManager::LANShare::Protocol>(_object["proto"].GetInt());
+        c.proto = static_cast<NetworkConnectionsManager::LANShare::Protocol>(_object["proto"].GetInt());
 
         return NetworkConnectionsManager::Connection(std::move(c));
     }
@@ -192,19 +184,19 @@ JSONObjectToConnection(const config::Value &_object)
             return std::nullopt;
 
         NetworkConnectionsManager::Dropbox c;
-        c.uuid = uuid_gen(_object["uuid"].GetString());
+        c.uuid = *uuid;
         c.title = _object["title"].GetString();
         c.account = _object["account"].GetString();
 
         return NetworkConnectionsManager::Connection(std::move(c));
     }
     else if( type == "webdav" ) {
-        if( !has_string("user") || !has_string("host") || !has_string("path") ||
-            !has_number("port") || !has_bool("https") )
+        if( !has_string("user") || !has_string("host") || !has_string("path") || !has_number("port") ||
+            !has_bool("https") )
             return std::nullopt;
 
         NetworkConnectionsManager::WebDAV c;
-        c.uuid = uuid_gen(_object["uuid"].GetString());
+        c.uuid = *uuid;
         c.title = _object["title"].GetString();
         c.user = _object["user"].GetString();
         c.host = _object["host"].GetString();
@@ -237,13 +229,12 @@ static std::string KeychainWhereFromConnection(const NetworkConnectionsManager::
     if( auto c = _c.Cast<NetworkConnectionsManager::SFTP>() )
         return "sftp://" + c->host;
     if( auto c = _c.Cast<NetworkConnectionsManager::LANShare>() )
-        return PrefixForShareProtocol(c->proto) + "://" + (c->user.empty() ? c->user + "@" : "") +
-               c->host + "/" + c->share;
+        return PrefixForShareProtocol(c->proto) + "://" + (c->user.empty() ? c->user + "@" : "") + c->host + "/" +
+               c->share;
     if( auto c = _c.Cast<NetworkConnectionsManager::Dropbox>() )
         return "dropbox://"s + c->account;
     if( auto c = _c.Cast<NetworkConnectionsManager::WebDAV>() )
-        return (c->https ? "https://" : "http://") + c->host +
-               (c->path.empty() ? "" : "/" + c->path);
+        return (c->https ? "https://" : "http://") + c->host + (c->path.empty() ? "" : "/" + c->path);
     return "";
 }
 
@@ -284,14 +275,11 @@ ConfigBackedNetworkConnectionsManager::~ConfigBackedNetworkConnectionsManager()
 {
 }
 
-void ConfigBackedNetworkConnectionsManager::InsertConnection(
-    const NetworkConnectionsManager::Connection &_conn)
+void ConfigBackedNetworkConnectionsManager::InsertConnection(const NetworkConnectionsManager::Connection &_conn)
 {
     {
         auto lock = std::lock_guard{m_Lock};
-        auto t = find_if(begin(m_Connections), end(m_Connections), [&](auto &_c) {
-            return _c.Uuid() == _conn.Uuid();
-        });
+        auto t = find_if(begin(m_Connections), end(m_Connections), [&](auto &_c) { return _c.Uuid() == _conn.Uuid(); });
         if( t != end(m_Connections) )
             *t = _conn;
         else
@@ -304,14 +292,12 @@ void ConfigBackedNetworkConnectionsManager::RemoveConnection(const Connection &_
 {
     {
         auto lock = std::lock_guard{m_Lock};
-        auto t = find_if(begin(m_Connections), end(m_Connections), [&](auto &_c) {
-            return _c.Uuid() == _connection.Uuid();
-        });
+        auto t = find_if(
+            begin(m_Connections), end(m_Connections), [&](auto &_c) { return _c.Uuid() == _connection.Uuid(); });
         if( t != end(m_Connections) )
             m_Connections.erase(t);
 
-        auto i =
-            find_if(begin(m_MRU), end(m_MRU), [&](auto &_c) { return _c == _connection.Uuid(); });
+        auto i = find_if(begin(m_MRU), end(m_MRU), [&](auto &_c) { return _c == _connection.Uuid(); });
         if( i != end(m_MRU) )
             m_MRU.erase(i);
     }
@@ -319,11 +305,10 @@ void ConfigBackedNetworkConnectionsManager::RemoveConnection(const Connection &_
 }
 
 std::optional<NetworkConnectionsManager::Connection>
-ConfigBackedNetworkConnectionsManager::ConnectionByUUID(const boost::uuids::uuid &_uuid) const
+ConfigBackedNetworkConnectionsManager::ConnectionByUUID(const base::UUID &_uuid) const
 {
     std::lock_guard<std::mutex> lock(m_Lock);
-    auto t = find_if(
-        begin(m_Connections), end(m_Connections), [&](auto &_c) { return _c.Uuid() == _uuid; });
+    auto t = find_if(begin(m_Connections), end(m_Connections), [&](auto &_c) { return _c.Uuid() == _uuid; });
     if( t != end(m_Connections) )
         return *t;
     return std::nullopt;
@@ -343,7 +328,7 @@ void ConfigBackedNetworkConnectionsManager::Save()
                 connections.PushBack(std::move(o), allocator);
         }
         for( auto &u : m_MRU )
-            mru.PushBack(Value(to_string(u).c_str(), allocator), allocator);
+            mru.PushBack(Value(u.ToString(), allocator), allocator);
     }
 
     m_IsWritingConfig = true;
@@ -356,7 +341,6 @@ void ConfigBackedNetworkConnectionsManager::Save()
 void ConfigBackedNetworkConnectionsManager::Load()
 {
     using namespace rapidjson;
-    static const boost::uuids::string_generator uuid_gen{};
     auto lock = std::lock_guard{m_Lock};
     m_Connections.clear();
     m_MRU.clear();
@@ -370,16 +354,15 @@ void ConfigBackedNetworkConnectionsManager::Load()
     auto mru = m_Config.Get(g_MRUKey);
     if( mru.GetType() == kArrayType )
         for( auto i = mru.Begin(), e = mru.End(); i != e; ++i )
-            if( i->GetType() == kStringType )
-                m_MRU.emplace_back(uuid_gen(i->GetString()));
+            if( i->GetType() == kStringType && base::UUID::FromString(i->GetString()) )
+                m_MRU.emplace_back(*base::UUID::FromString(i->GetString()));
 }
 
 void ConfigBackedNetworkConnectionsManager::ReportUsage(const Connection &_connection)
 {
     {
         auto lock = std::lock_guard{m_Lock};
-        auto it =
-            find_if(begin(m_MRU), end(m_MRU), [&](auto &i) { return i == _connection.Uuid(); });
+        auto it = find_if(begin(m_MRU), end(m_MRU), [&](auto &i) { return i == _connection.Uuid(); });
         if( it != end(m_MRU) )
             rotate(begin(m_MRU), it, it + 1);
         else
@@ -388,8 +371,7 @@ void ConfigBackedNetworkConnectionsManager::ReportUsage(const Connection &_conne
     dispatch_to_background([=] { Save(); });
 }
 
-std::vector<NetworkConnectionsManager::Connection>
-ConfigBackedNetworkConnectionsManager::FTPConnectionsByMRU() const
+std::vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::FTPConnectionsByMRU() const
 {
     std::vector<Connection> c;
     auto lock = std::lock_guard{m_Lock};
@@ -400,8 +382,7 @@ ConfigBackedNetworkConnectionsManager::FTPConnectionsByMRU() const
     return c;
 }
 
-std::vector<NetworkConnectionsManager::Connection>
-ConfigBackedNetworkConnectionsManager::SFTPConnectionsByMRU() const
+std::vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::SFTPConnectionsByMRU() const
 {
     std::vector<Connection> c;
     auto lock = std::lock_guard{m_Lock};
@@ -426,8 +407,7 @@ ConfigBackedNetworkConnectionsManager::LANShareConnectionsByMRU() const
     return c;
 }
 
-std::vector<NetworkConnectionsManager::Connection>
-ConfigBackedNetworkConnectionsManager::AllConnectionsByMRU() const
+std::vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::AllConnectionsByMRU() const
 {
     std::vector<Connection> c;
     {
@@ -438,22 +418,19 @@ ConfigBackedNetworkConnectionsManager::AllConnectionsByMRU() const
     return c;
 }
 
-bool ConfigBackedNetworkConnectionsManager::SetPassword(const Connection &_conn,
-                                                        const std::string &_password)
+bool ConfigBackedNetworkConnectionsManager::SetPassword(const Connection &_conn, const std::string &_password)
 {
     return KeychainServices::Instance().SetPassword(
         KeychainWhereFromConnection(_conn), KeychainAccountFromConnection(_conn), _password);
 }
 
-bool ConfigBackedNetworkConnectionsManager::GetPassword(const Connection &_conn,
-                                                        std::string &_password)
+bool ConfigBackedNetworkConnectionsManager::GetPassword(const Connection &_conn, std::string &_password)
 {
     return KeychainServices::Instance().GetPassword(
         KeychainWhereFromConnection(_conn), KeychainAccountFromConnection(_conn), _password);
 }
 
-bool ConfigBackedNetworkConnectionsManager::AskForPassword(const Connection &_conn,
-                                                           std::string &_password)
+bool ConfigBackedNetworkConnectionsManager::AskForPassword(const Connection &_conn, std::string &_password)
 {
     return RunAskForPasswordModalWindow(TitleForConnection(_conn), _password);
 }
@@ -466,15 +443,15 @@ ConfigBackedNetworkConnectionsManager::ConnectionForVFS(const VFSHost &_vfs) con
     if( auto ftp = dynamic_cast<const vfs::FTPHost *>(&_vfs) )
         pred = [ftp](const Connection &i) {
             if( auto p = i.Cast<FTP>() )
-                return p->host == ftp->ServerUrl() && p->user == ftp->User() &&
-                       p->port == ftp->Port() && p->active == ftp->Active();
+                return p->host == ftp->ServerUrl() && p->user == ftp->User() && p->port == ftp->Port() &&
+                       p->active == ftp->Active();
             return false;
         };
     else if( auto sftp = dynamic_cast<const vfs::SFTPHost *>(&_vfs) )
         pred = [sftp](const Connection &i) {
             if( auto p = i.Cast<SFTP>() )
-                return p->host == sftp->ServerUrl() && p->user == sftp->User() &&
-                       p->keypath == sftp->Keypath() && p->port == sftp->Port();
+                return p->host == sftp->ServerUrl() && p->user == sftp->User() && p->keypath == sftp->Keypath() &&
+                       p->port == sftp->Port();
             return false;
         };
     else if( auto dropbox = dynamic_cast<const vfs::DropboxHost *>(&_vfs) )
@@ -486,8 +463,7 @@ ConfigBackedNetworkConnectionsManager::ConnectionForVFS(const VFSHost &_vfs) con
     else if( auto webdav = dynamic_cast<const vfs::WebDAVHost *>(&_vfs) )
         pred = [webdav](const Connection &i) {
             if( auto p = i.Cast<WebDAV>() )
-                return p->host == webdav->Host() && p->path == webdav->Path() &&
-                       p->user == webdav->Username();
+                return p->host == webdav->Host() && p->path == webdav->Path() && p->user == webdav->Username();
             return false;
         };
 
@@ -502,9 +478,8 @@ ConfigBackedNetworkConnectionsManager::ConnectionForVFS(const VFSHost &_vfs) con
     return std::nullopt;
 }
 
-VFSHostPtr
-ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection(const Connection &_connection,
-                                                               bool _allow_password_ui)
+VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection(const Connection &_connection,
+                                                                          bool _allow_password_ui)
 {
     std::string passwd;
     bool shoud_save_passwd = false;
@@ -516,11 +491,9 @@ ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection(const Connection 
 
     VFSHostPtr host;
     if( auto ftp = _connection.Cast<FTP>() )
-        host = std::make_shared<vfs::FTPHost>(
-            ftp->host, ftp->user, passwd, ftp->path, ftp->port, ftp->active);
+        host = std::make_shared<vfs::FTPHost>(ftp->host, ftp->user, passwd, ftp->path, ftp->port, ftp->active);
     else if( auto sftp = _connection.Cast<SFTP>() )
-        host = std::make_shared<vfs::SFTPHost>(
-            sftp->host, sftp->user, passwd, sftp->keypath, sftp->port);
+        host = std::make_shared<vfs::SFTPHost>(sftp->host, sftp->user, passwd, sftp->keypath, sftp->port);
     else if( auto dropbox = _connection.Cast<Dropbox>() ) {
         vfs::DropboxHost::Params params;
         params.account = dropbox->account;
@@ -530,8 +503,7 @@ ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection(const Connection 
         host = std::make_shared<vfs::DropboxHost>(params);
     }
     else if( auto w = _connection.Cast<WebDAV>() )
-        host =
-            std::make_shared<vfs::WebDAVHost>(w->host, w->user, passwd, w->path, w->https, w->port);
+        host = std::make_shared<vfs::WebDAVHost>(w->host, w->user, passwd, w->path, w->https, w->port);
 
     if( host ) {
         ReportUsage(_connection);
@@ -560,9 +532,7 @@ static std::string NetFSErrorString(int _code)
     return "Unknown error";
 }
 
-void ConfigBackedNetworkConnectionsManager::NetFSCallback(int _status,
-                                                          void *_requestID,
-                                                          CFArrayRef _mountpoints)
+void ConfigBackedNetworkConnectionsManager::NetFSCallback(int _status, void *_requestID, CFArrayRef _mountpoints)
 {
     std::function<void(const std::string &_mounted_path, const std::string &_error)> cb;
     {
@@ -592,8 +562,7 @@ void ConfigBackedNetworkConnectionsManager::NetFSCallback(int _status,
 
 static NSURL *CookURLForLANShare(const NetworkConnectionsManager::LANShare &_share)
 {
-    const auto url_string =
-        PrefixForShareProtocol(_share.proto) + "://" + _share.host + "/" + _share.share;
+    const auto url_string = PrefixForShareProtocol(_share.proto) + "://" + _share.host + "/" + _share.share;
     const auto cocoa_url_string = [NSString stringWithUTF8StdString:url_string];
     if( !cocoa_url_string )
         return nil;
@@ -629,10 +598,8 @@ static bool IsEmptyDirectory(const std::string &_path)
     return false;
 }
 
-static bool TearDownSMBOrAFPMountName(const std::string &_name,
-                                      std::string &_user,
-                                      std::string &_host,
-                                      std::string &_share)
+static bool
+TearDownSMBOrAFPMountName(const std::string &_name, std::string &_user, std::string &_host, std::string &_share)
 {
     auto url_string = [NSString stringWithUTF8StdString:_name];
     if( !url_string )
@@ -683,8 +650,7 @@ GetMountedRemoteFilesystems(nc::utility::NativeFSManager &_native_fs_man)
             continue;
 
         // treat only these filesystems as remote
-        if( volume.fs_type_name == smb || volume.fs_type_name == afp ||
-            volume.fs_type_name == nfs ) {
+        if( volume.fs_type_name == smb || volume.fs_type_name == afp || volume.fs_type_name == nfs ) {
             remotes.emplace_back(v);
         }
     }
@@ -704,8 +670,7 @@ static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo &_volum
             auto same_host = strcasecmp(host.c_str(), _share.host.c_str()) == 0;
             auto same_share = strcasecmp(share.c_str(), _share.share.c_str()) == 0;
             auto same_user = (strcasecmp(user.c_str(), _share.user.c_str()) == 0) ||
-                             (_share.user.empty() && user == "GUEST") ||
-                             (_share.user.empty() && user == "guest");
+                             (_share.user.empty() && user == "GUEST") || (_share.user.empty() && user == "guest");
             return same_host && same_share && same_user;
         }
     }

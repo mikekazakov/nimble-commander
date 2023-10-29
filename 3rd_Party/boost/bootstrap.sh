@@ -50,7 +50,6 @@ cp -R \
  ${B}/predef \
  ${B}/preprocessor \
  ${B}/process \
- ${B}/random \
  ${B}/range \
  ${B}/smart_ptr \
  ${B}/system \
@@ -58,7 +57,6 @@ cp -R \
  ${B}/type_index \
  ${B}/type_traits \
  ${B}/utility \
- ${B}/uuid \
  ${B}/winapi \
  ./include/boost/
 

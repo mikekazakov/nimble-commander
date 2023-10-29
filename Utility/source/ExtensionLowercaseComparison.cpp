@@ -1,9 +1,9 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Habanero/CFStackAllocator.h>
+#include <Habanero/algo.h>
 #include <string_view>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/trim.hpp>
+#include <ranges>
 
 namespace nc::utility {
 
@@ -17,13 +17,12 @@ static std::string ProduceFormCLowercase(std::string_view _string)
 {
     CFStackAllocator allocator;
 
-    CFStringRef original =
-        CFStringCreateWithBytesNoCopy(allocator.Alloc(),
-                                      reinterpret_cast<const UInt8 *>(_string.data()),
-                                      _string.length(),
-                                      kCFStringEncodingUTF8,
-                                      false,
-                                      kCFAllocatorNull);
+    CFStringRef original = CFStringCreateWithBytesNoCopy(allocator.Alloc(),
+                                                         reinterpret_cast<const UInt8 *>(_string.data()),
+                                                         _string.length(),
+                                                         kCFStringEncodingUTF8,
+                                                         false,
+                                                         kCFAllocatorNull);
 
     if( !original )
         return {};
@@ -68,8 +67,7 @@ std::string ExtensionLowercaseComparison::ExtensionToLowercase(std::string_view 
     return cl;
 }
 
-bool ExtensionLowercaseComparison::Equal(std::string_view _filename_ext,
-                                         std::string_view _compare_to_formc_lc)
+bool ExtensionLowercaseComparison::Equal(std::string_view _filename_ext, std::string_view _compare_to_formc_lc)
 {
     if( _filename_ext.empty() )
         return _compare_to_formc_lc.empty();
@@ -96,10 +94,10 @@ ExtensionsLowercaseList::ExtensionsLowercaseList(std::string_view _comma_separat
 {
     auto &i = ExtensionLowercaseComparison::Instance();
     std::vector<std::string> exts;
-    boost::split(
-        exts, _comma_separated_list, [](char _c) { return _c == ','; }, boost::token_compress_on);
+    for( const auto ext : std::views::split(_comma_separated_list, ',') )
+        if( auto trimmed = base::Trim(std::string_view{ext}); !trimmed.empty() )
+            exts.emplace_back(trimmed);
     for( auto &ext : exts ) {
-        boost::trim(ext);
         if( ext.empty() == false )
             m_List.emplace(i.ExtensionToLowercase(ext));
     }
@@ -107,8 +105,7 @@ ExtensionsLowercaseList::ExtensionsLowercaseList(std::string_view _comma_separat
 
 bool ExtensionsLowercaseList::contains(std::string_view _extension) const noexcept
 {
-    return m_List.contains(
-        ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_extension));
+    return m_List.contains(ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_extension));
 }
 
 } // namespace nc::utility

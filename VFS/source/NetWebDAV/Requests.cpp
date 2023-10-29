@@ -1,7 +1,6 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Requests.h"
 #include "WebDAVHost.h"
-#include <boost/algorithm/string/split.hpp>
 #include <Habanero/algo.h>
 #include <pugixml/pugixml.hpp>
 #include "DateTimeParser.h"
@@ -21,13 +20,7 @@ static bool IsOkHTTPRC(const int _rc)
 
 static HTTPRequests::Mask ParseSupportedRequests(std::string_view _options_response_header)
 {
-    std::vector<std::string> lines;
-    boost::split(
-        lines,
-        _options_response_header,
-        [](char _c) { return _c == '\r' || _c == '\n'; },
-        boost::token_compress_on);
-
+    const std::vector<std::string> lines = base::SplitByDelimiters(_options_response_header, "\r\n");
     HTTPRequests::Mask mask = HTTPRequests::None;
 
     const std::string_view allowed_prefix = "Allow: ";
@@ -36,12 +29,7 @@ static HTTPRequests::Mask ParseSupportedRequests(std::string_view _options_respo
     });
     if( allowed != end(lines) ) {
         const auto requests_set = allowed->substr(allowed_prefix.size());
-        std::vector<std::string> requests;
-        boost::split(
-            requests,
-            requests_set,
-            [](char _c) { return _c == ',' || _c == ' '; },
-            boost::token_compress_on);
+        const std::vector<std::string> requests = base::SplitByDelimiters(requests_set, ", ");
         for( const auto &request : requests ) {
             if( request == "GET" )
                 mask |= HTTPRequests::Get;

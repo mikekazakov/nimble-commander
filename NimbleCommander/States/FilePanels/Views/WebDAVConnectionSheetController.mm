@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WebDAVConnectionSheetController.h"
-#include <boost/algorithm/string.hpp>
 #include <Utility/StringExtras.h>
+#include <Habanero/algo.h>
 
 @interface WebDAVConnectionSheetController ()
 @property(nonatomic) bool isValid;
@@ -80,14 +80,6 @@ static const char *SafeStr(const char *_s)
     return m_Password ? *m_Password : "";
 }
 
-static std::string TrimSlashes(std::string _str)
-{
-    using namespace boost;
-    trim_left_if(_str, is_any_of("/"));
-    trim_right_if(_str, is_any_of("/"));
-    return _str;
-}
-
 - (IBAction)onConnect:(id) [[maybe_unused]] _sender
 {
     if( m_Original )
@@ -97,7 +89,7 @@ static std::string TrimSlashes(std::string _str)
 
     m_Connection.title = SafeStr(self.titleTextField.stringValue.UTF8String);
     m_Connection.host = SafeStr(self.serverTextField.stringValue.UTF8String);
-    m_Connection.path = TrimSlashes(SafeStr(self.basePathTextField.stringValue.UTF8String));
+    m_Connection.path = std::string{nc::base::Trim(SafeStr(self.basePathTextField.stringValue.UTF8String), '/')};
     m_Connection.user = SafeStr(self.usernameTextField.stringValue.UTF8String);
     m_Connection.https = self.protocolPopup.selectedTag == 1;
     m_Connection.port = 0;
@@ -132,9 +124,8 @@ static std::string TrimSlashes(std::string _str)
 
 - (bool)validatePort
 {
-    return !self.remotePortTextField.stringValue ||
-           (self.remotePortTextField.stringValue.intValue >= 0 &&
-            self.remotePortTextField.stringValue.intValue < 65'536);
+    return !self.remotePortTextField.stringValue || (self.remotePortTextField.stringValue.intValue >= 0 &&
+                                                     self.remotePortTextField.stringValue.intValue < 65'536);
 }
 
 @end

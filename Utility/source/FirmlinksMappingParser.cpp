@@ -1,20 +1,18 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FirmlinksMappingParser.h>
-#include <boost/algorithm/string/split.hpp>
+#include <Habanero/algo.h>
 
 namespace nc::utility {
 
 std::vector<FirmlinksMappingParser::Firmlink>
 FirmlinksMappingParser::Parse( std::string_view _mapping )
 {
-    std::vector<std::string> by_line;
-    boost::algorithm::split(by_line, _mapping, [](auto c){ return c == '\x0A'; } );
+    std::vector<std::string> by_line = base::SplitByDelimiter(_mapping, '\x0A');
     
     std::vector<Firmlink> result;    
     
     for( const auto &line: by_line ) {
-        std::vector<std::string> by_part;
-        boost::algorithm::split(by_part, line, [](auto c){ return c == '\x09'; } );
+        std::vector<std::string> by_part = base::SplitByDelimiter(line, '\x09');
         if( by_part.size() == 2 ) {
             result.push_back({by_part[0], by_part[1]});
         }

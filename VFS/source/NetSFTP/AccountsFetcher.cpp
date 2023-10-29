@@ -1,8 +1,7 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AccountsFetcher.h"
 #include <VFS/VFSError.h>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/trim.hpp>
+#include <Habanero/algo.h>
 #include <unordered_map>
 
 // libssh2 has macros with C-style casts
@@ -10,8 +9,7 @@
 
 namespace nc::vfs::sftp {
 
-AccountsFetcher::AccountsFetcher(LIBSSH2_SESSION *_session, OSType _os_type)
-    : m_Session(_session), m_OSType(_os_type)
+AccountsFetcher::AccountsFetcher(LIBSSH2_SESSION *_session, OSType _os_type) : m_Session(_session), m_OSType(_os_type)
 {
 }
 
@@ -73,18 +71,15 @@ int AccountsFetcher::GetUsersViaGetent(std::vector<VFSUser> &_target)
     if( !getent )
         return VFSError::FromErrno(ENODEV);
 
-    std::vector<std::string> entries;
-    boost::algorithm::split(entries, *getent, [](auto c) { return c == '\n'; });
-
+    const std::vector<std::string> entries = base::SplitByDelimiter(*getent, '\n');
     for( const auto &e : entries ) {
-        std::vector<std::string> fields;
-        boost::algorithm::split(fields, e, [](auto c) { return c == ':'; });
+        const std::vector<std::string> fields = base::SplitByDelimiter(e, ':', false);
         const auto passwd_fields = 7;
         if( fields.size() == passwd_fields ) {
             VFSUser user;
             user.name = fields[0];
             user.gecos = fields[4];
-            boost::algorithm::trim_right_if(user.gecos, [](auto c) { return c == ','; });
+            user.gecos = std::string{base::TrimRight(user.gecos, ',')};
             user.uid = static_cast<unsigned>(std::atoi(fields[2].c_str()));
             _target.emplace_back(std::move(user));
         }
@@ -99,12 +94,10 @@ int AccountsFetcher::GetGroupsViaGetent(std::vector<VFSGroup> &_target)
     if( !getent )
         return VFSError::FromErrno(ENODEV);
 
-    std::vector<std::string> entries;
-    boost::algorithm::split(entries, *getent, [](auto c) { return c == '\n'; });
+    const std::vector<std::string> entries = base::SplitByDelimiter(*getent, '\n');
 
     for( const auto &e : entries ) {
-        std::vector<std::string> fields;
-        boost::algorithm::split(fields, e, [](auto c) { return c == ':'; });
+        const std::vector<std::string> fields = base::SplitByDelimiter(e, ':', false);
         const auto group_fields_at_least = 3;
         if( fields.size() >= group_fields_at_least ) {
             VFSGroup group;
@@ -128,24 +121,20 @@ int AccountsFetcher::GetUsersViaOpenDirectory(std::vector<VFSUser> &_target)
         return VFSError::FromErrno(ENODEV);
 
     std::unordered_map<std::string, std::pair<uint32_t, std::string>> users; // user -> uid, gecos
-    std::vector<std::string> entries;
-
-    boost::algorithm::split(entries, *ds_ids, [](auto c) { return c == '\n'; });
+    std::vector<std::string> entries = base::SplitByDelimiter(*ds_ids, '\n');
     for( const auto &e : entries )
         if( const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
-            auto uid_str = e.substr(fs);
-            boost::algorithm::trim_left(uid_str);
+            auto uid_str = std::string{base::TrimLeft(e.substr(fs), ' ')};
             users[name].first = static_cast<uint32_t>(std::atoi(uid_str.c_str()));
         }
 
-    boost::algorithm::split(entries, *ds_gecos, [](auto c) { return c == '\n'; });
+    entries = base::SplitByDelimiter(*ds_gecos, '\n');
     for( const auto &e : entries )
         if( const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
             auto gecos = e.substr(fs);
-            boost::algorithm::trim_left(gecos);
-            users[name].second = gecos;
+            users[name].second = base::TrimLeft(gecos, ' ');
         }
 
     for( const auto &u : users ) {
@@ -170,24 +159,21 @@ int AccountsFetcher::GetGroupsViaOpenDirectory(std::vector<VFSGroup> &_target)
         return VFSError::FromErrno(ENODEV);
 
     std::unordered_map<std::string, std::pair<uint32_t, std::string>> groups; // group -> gid, gecos
-    std::vector<std::string> entries;
+    std::vector<std::string> entries = base::SplitByDelimiter(*ds_ids, '\n');
 
-    boost::algorithm::split(entries, *ds_ids, [](auto c) { return c == '\n'; });
     for( const auto &e : entries )
         if( const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
-            auto gid_str = e.substr(fs);
-            boost::algorithm::trim_left(gid_str);
+            auto gid_str = std::string{base::TrimLeft(e.substr(fs), ' ')};
             groups[name].first = static_cast<uint32_t>(std::atoi(gid_str.c_str()));
         }
 
-    boost::algorithm::split(entries, *ds_gecos, [](auto c) { return c == '\n'; });
+    entries = base::SplitByDelimiter(*ds_gecos, '\n');
     for( const auto &e : entries )
         if( const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
             auto gecos = e.substr(fs);
-            boost::algorithm::trim_left(gecos);
-            groups[name].second = gecos;
+            groups[name].second = base::TrimLeft(gecos, ' ');
         }
 
     for( const auto &g : groups ) {

@@ -1,6 +1,5 @@
 // Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExecuteExternalTool.h"
-#include <boost/algorithm/string/replace.hpp>
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
 #include "../PanelController.h"
@@ -17,6 +16,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <Habanero/dispatch_cpp.h>
+#include <Habanero/algo.h>
 #include <sys/stat.h>
 #include <fmt/core.h>
 
@@ -24,8 +24,8 @@ namespace nc::panel::actions {
 
 using namespace std::literals;
 
-static std::string EscapeSpaces(std::string _str);
-static std::string UnescapeSpaces(std::string _str);
+static std::string EscapeSpaces(std::string_view _str);
+static std::string UnescapeSpaces(std::string_view _str);
 static std::vector<std::string> SplitByEscapedSpaces(const std::string &_str);
 static std::string ExtractParamInfoFromListingItem(ExternalToolsParameters::FileInfo _what,
                                                    const VFSListingItem &_i);
@@ -105,16 +105,14 @@ void ExecuteExternalTool::Execute(const ExternalTool &_tool,
     }
 }
 
-static std::string EscapeSpaces(std::string _str)
+static std::string EscapeSpaces(std::string_view _str)
 {
-    boost::replace_all(_str, " ", "\\ ");
-    return _str;
+    return base::ReplaceAll(_str, " ", "\\ ");
 }
 
-static std::string UnescapeSpaces(std::string _str)
+static std::string UnescapeSpaces(std::string_view _str)
 {
-    boost::replace_all(_str, "\\ ", " ");
-    return _str;
+    return base::ReplaceAll(_str, "\\ ", " ");
 }
 
 static std::vector<std::string> SplitByEscapedSpaces(const std::string &_str)

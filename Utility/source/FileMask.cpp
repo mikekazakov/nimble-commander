@@ -1,14 +1,14 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileMask.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/param.h>
-#include <boost/algorithm/string/replace.hpp>
-#include <boost/algorithm/string/split.hpp>
 #include <optional>
 #include <regex>
+#include <ranges>
 #include <Habanero/CFStackAllocator.h>
 #include <Habanero/CFPtr.h>
+#include <Habanero/algo.h>
 
 namespace nc::utility {
 
@@ -32,29 +32,17 @@ static std::string regex_escape(const std::string &string_to_escape)
         string_to_escape, escape, replace, std::regex_constants::match_default | std::regex_constants::format_sed);
 }
 
-static void trim_leading_whitespaces(std::string &_str)
-{
-    auto first = _str.find_first_not_of(' ');
-    if( first == std::string::npos ) {
-        _str.clear();
-        return;
-    }
-    if( first == 0 )
-        return;
-
-    _str.erase(std::begin(_str), std::next(std::begin(_str), first));
-}
-
 static std::vector<std::string> sub_masks(std::string_view _source)
 {
     std::vector<std::string> masks;
-    boost::split(masks, _source, [](char _c) { return _c == ','; });
+    for( const auto mask : std::views::split(_source, ',') )
+        if( auto trimmed = base::Trim(std::string_view{mask}); !trimmed.empty() )
+            masks.emplace_back(trimmed);
 
     for( auto &s : masks ) {
-        trim_leading_whitespaces(s);
         s = regex_escape(s);
-        boost::replace_all(s, "*", ".*");
-        boost::replace_all(s, "?", ".");
+        s = base::ReplaceAll(s, '*', ".*");
+        s = base::ReplaceAll(s, '?', ".");
     }
 
     return masks;
@@ -84,7 +72,7 @@ InplaceFormCLowercaseString::InplaceFormCLowercaseString(std::string_view _strin
 {
     if( !string_needs_normalization(_string) )
         m_View = _string; // using the original string! The characters are not copied.
-    
+
     using base::CFPtr;
     CFStackAllocator allocator;
 
@@ -106,7 +94,7 @@ InplaceFormCLowercaseString::InplaceFormCLowercaseString(std::string_view _strin
 
     CFStringLowercase(mutable_string.get(), nullptr);
     CFStringNormalize(mutable_string.get(), kCFStringNormalizationFormC);
-    
+
     long characters_used = 0;
     CFStringGetBytes(mutable_string.get(),
                      CFRangeMake(0, CFStringGetLength(mutable_string.get())),
@@ -239,7 +227,7 @@ bool FileMask::MatchName(std::string_view _name) const noexcept
 {
     if( m_Masks.empty() || _name.empty() )
         return false;
-        
+
     InplaceFormCLowercaseString normalized_name(_name);
     for( auto &m : m_Masks )
         if( m.index() == 0 ) {
@@ -267,12 +255,12 @@ static std::string ToWildCard(const std::string &_mask, const bool _for_extensio
         return "";
 
     std::vector<std::string> sub_masks;
-    boost::split(sub_masks, _mask, [](char _c) { return _c == ','; });
+    for( const auto mask : std::views::split(std::string_view{_mask}, ',') )
+        if( auto trimmed = base::Trim(std::string_view{mask}); !trimmed.empty() )
+            sub_masks.emplace_back(trimmed);
 
     std::string result;
     for( auto &s : sub_masks ) {
-        trim_leading_whitespaces(s);
-
         if( FileMask::IsWildCard(s) ) {
             // just use this part as it is
             if( !result.empty() )

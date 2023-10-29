@@ -1,8 +1,11 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTabOperationsConcurrencySheet.h"
-#include <boost/algorithm/string.hpp>
+#include <Habanero/algo.h>
 #include <robin_hood.h>
 #include <vector>
+#include <ranges>
+#include <fmt/core.h>
+#include <fmt/ranges.h>
 
 @interface PreferencesWindowPanelsTabOperationsConcurrencySheet ()
 @property(strong, nonatomic) IBOutlet NSButton *opCopy;
@@ -47,13 +50,10 @@
 
     // now turn off everything which is excluded from queueing
     std::vector<std::string> excluded;
-    boost::split(
-        excluded,
-        m_OriginalExclusionList,
-        [](char _c) { return _c == ','; },
-        boost::token_compress_on);
-    for( auto &entry : excluded )
-        boost::trim(entry);
+    for( const auto str : std::views::split(std::string_view{m_OriginalExclusionList}, ',') )
+        if( auto trimmed = nc::base::Trim(std::string_view{str}); !trimmed.empty() )
+            excluded.emplace_back(trimmed);
+    
     for( auto &operation : excluded )
         if( m_Tags.contains(operation) )
             [m_Tags[operation] setState:NSControlStateValueOff];
@@ -66,7 +66,7 @@
     for( auto &p : m_Tags )
         if( p.second.state == NSControlStateValueOff )
             excluded.push_back(p.first);
-    m_FinalExclusionList = boost::algorithm::join(excluded, ", ");
+    m_FinalExclusionList = fmt::format("{}", fmt::join(excluded, ", "));
 
     // report that we're done
     [self endSheet:NSModalResponseOK];

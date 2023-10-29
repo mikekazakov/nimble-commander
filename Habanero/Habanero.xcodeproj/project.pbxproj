@@ -43,6 +43,8 @@
 		CFA99A1026512D4400F72E93 /* WriteAtomically.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA99A0F26512D4400F72E93 /* WriteAtomically.cpp */; };
 		CFD230F62AE5CF190000C7CF /* SysLocale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD230F52AE5CF190000C7CF /* SysLocale.cpp */; };
 		CFD230F82AE5CF260000C7CF /* SysLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD230F72AE5CF260000C7CF /* SysLocale.h */; };
+		CFD2312F2AEDC3B80000C7CF /* algo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD2312E2AEDC3B80000C7CF /* algo.cpp */; };
+		CFD231322AEDC6330000C7CF /* algo_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD231302AEDC6260000C7CF /* algo_UT.cpp */; };
 		CFDE36E426BA5F2400EB1B0D /* WhereIs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E326BA5F2400EB1B0D /* WhereIs.cpp */; };
 		CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDE36E926BA665700EB1B0D /* WhereIs_UT.cpp */; };
 		CFE08ADF23C20664007E99B8 /* intrusive_ptr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08ADE23C20664007E99B8 /* intrusive_ptr_UT.cpp */; };
@@ -126,6 +128,8 @@
 		CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LRUCache_Tests.cpp; path = ../habanero/tests/LRUCache_Tests.cpp; sourceTree = SOURCE_ROOT; };
 		CFD230F52AE5CF190000C7CF /* SysLocale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SysLocale.cpp; path = source/SysLocale.cpp; sourceTree = "<group>"; };
 		CFD230F72AE5CF260000C7CF /* SysLocale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SysLocale.h; path = include/Habanero/SysLocale.h; sourceTree = "<group>"; };
+		CFD2312E2AEDC3B80000C7CF /* algo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = algo.cpp; path = source/algo.cpp; sourceTree = "<group>"; };
+		CFD231302AEDC6260000C7CF /* algo_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = algo_UT.cpp; sourceTree = "<group>"; };
 		CFD62BA01C99C2AE0021EE7F /* CFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFString.cpp; path = source/CFString.cpp; sourceTree = "<group>"; };
 		CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommonPaths.cpp; path = source/CommonPaths.cpp; sourceTree = "<group>"; };
 		CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CommonPaths.mm; path = source/CommonPaths.mm; sourceTree = "<group>"; };
@@ -183,6 +187,7 @@
 		CF614ABF1F9D8E6E0005F2DB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CFD231302AEDC6260000C7CF /* algo_UT.cpp */,
 				CF24E214229196E100C166FA /* CFPtr_UT.cpp */,
 				CF614AD11F9D8EF00005F2DB /* chained_strings_UT.cpp */,
 				CF0A49F3252530D2008EC7B0 /* CloseFrom_UT.cpp */,
@@ -268,6 +273,7 @@
 		CFD62B851C99C2590021EE7F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFD2312E2AEDC3B80000C7CF /* algo.cpp */,
 				CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */,
 				CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */,
 				CFD62BA01C99C2AE0021EE7F /* CFString.cpp */,
@@ -398,6 +404,7 @@
 				CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */,
 				CF24E21A2291A61F00C166FA /* Hash_UT.cpp in Sources */,
 				CFDE36EA26BA665700EB1B0D /* WhereIs_UT.cpp in Sources */,
+				CFD231322AEDC6330000C7CF /* algo_UT.cpp in Sources */,
 				CF24E21B2291ABAD00C166FA /* StringsBulk_UT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -408,6 +415,7 @@
 			files = (
 				CF46020425630DE80095FC73 /* ExecutionDeadline.cpp in Sources */,
 				CF4601EE25630DE80095FC73 /* PosixFilesystemImpl.cpp in Sources */,
+				CFD2312F2AEDC3B80000C7CF /* algo.cpp in Sources */,
 				CF4601FB25630DE80095FC73 /* IdleSleepPreventer.cpp in Sources */,
 				CF4601FD25630DE80095FC73 /* mach_time.cpp in Sources */,
 				CF4601F025630DE80095FC73 /* Hash.cpp in Sources */,

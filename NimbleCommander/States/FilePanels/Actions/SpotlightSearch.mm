@@ -1,7 +1,5 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SpotlightSearch.h"
-#include <boost/algorithm/string/replace.hpp>
-#include <boost/algorithm/string/split.hpp>
 #include <Habanero/algo.h>
 #include <VFS/Native.h>
 #include <VFS/VFSListingInput.h>
@@ -28,23 +26,21 @@ static std::string CookSpotlightSearchQuery(const std::string &_format, const st
                         _format.find("#{query9}") != npos;
 
     if( !should_split )
-        return boost::replace_all_copy(_format, "#{query}", _input);
+        return base::ReplaceAll(_format, "#{query}", _input);
 
-    std::vector<std::string> words;
-    boost::split(
-        words, _input, [](char _c) { return _c == ' '; }, boost::token_compress_on);
+    const std::vector<std::string> words = base::SplitByDelimiters(_input, " ");
 
     std::string result = _format;
-    boost::replace_all(result, "#{query}", _input);
-    boost::replace_all(result, "#{query1}", words.size() > 0 ? words[0] : "");
-    boost::replace_all(result, "#{query2}", words.size() > 1 ? words[1] : "");
-    boost::replace_all(result, "#{query3}", words.size() > 2 ? words[2] : "");
-    boost::replace_all(result, "#{query4}", words.size() > 3 ? words[3] : "");
-    boost::replace_all(result, "#{query5}", words.size() > 4 ? words[4] : "");
-    boost::replace_all(result, "#{query6}", words.size() > 5 ? words[5] : "");
-    boost::replace_all(result, "#{query7}", words.size() > 6 ? words[6] : "");
-    boost::replace_all(result, "#{query8}", words.size() > 7 ? words[7] : "");
-    boost::replace_all(result, "#{query9}", words.size() > 8 ? words[8] : "");
+    result = base::ReplaceAll(result, "#{query}", _input);
+    result = base::ReplaceAll(result, "#{query1}", words.size() > 0 ? words[0] : "");
+    result = base::ReplaceAll(result, "#{query2}", words.size() > 1 ? words[1] : "");
+    result = base::ReplaceAll(result, "#{query3}", words.size() > 2 ? words[2] : "");
+    result = base::ReplaceAll(result, "#{query4}", words.size() > 3 ? words[3] : "");
+    result = base::ReplaceAll(result, "#{query5}", words.size() > 4 ? words[4] : "");
+    result = base::ReplaceAll(result, "#{query6}", words.size() > 5 ? words[5] : "");
+    result = base::ReplaceAll(result, "#{query7}", words.size() > 6 ? words[6] : "");
+    result = base::ReplaceAll(result, "#{query8}", words.size() > 7 ? words[7] : "");
+    result = base::ReplaceAll(result, "#{query9}", words.size() > 8 ? words[8] : "");
 
     return result;
 }

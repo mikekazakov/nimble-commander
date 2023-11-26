@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include "../PanelView.h"
@@ -144,28 +144,35 @@ static void RebuildBackgroundColorsCache()
     auto &c = g_BackgroundColorsCache;
     const auto &t = nc::CurrentTheme();
     c.generation = t.Generation();
-    c.focused_active_odd = Blend(t.FilePanelsListFocusedActiveRowBackgroundColor(),
-                                 t.FilePanelsListRegularOddRowBackgroundColor());
-    c.focused_active_even = Blend(t.FilePanelsListFocusedActiveRowBackgroundColor(),
-                                  t.FilePanelsListRegularEvenRowBackgroundColor());
-    c.focused_inactive_odd = Blend(t.FilePanelsListFocusedInactiveRowBackgroundColor(),
-                                   t.FilePanelsListRegularOddRowBackgroundColor());
-    c.focused_inactive_even = Blend(t.FilePanelsListFocusedInactiveRowBackgroundColor(),
-                                    t.FilePanelsListRegularEvenRowBackgroundColor());
-    c.selected_odd = Blend(t.FilePanelsListSelectedRowBackgroundColor(),
-                           t.FilePanelsListRegularOddRowBackgroundColor());
-    c.selected_even = Blend(t.FilePanelsListSelectedRowBackgroundColor(),
-                            t.FilePanelsListRegularEvenRowBackgroundColor());
+    c.focused_active_odd =
+        Blend(t.FilePanelsListFocusedActiveRowBackgroundColor(), t.FilePanelsListRegularOddRowBackgroundColor());
+    c.focused_active_even =
+        Blend(t.FilePanelsListFocusedActiveRowBackgroundColor(), t.FilePanelsListRegularEvenRowBackgroundColor());
+    c.focused_inactive_odd =
+        Blend(t.FilePanelsListFocusedInactiveRowBackgroundColor(), t.FilePanelsListRegularOddRowBackgroundColor());
+    c.focused_inactive_even =
+        Blend(t.FilePanelsListFocusedInactiveRowBackgroundColor(), t.FilePanelsListRegularEvenRowBackgroundColor());
+    c.selected_odd =
+        Blend(t.FilePanelsListSelectedRowBackgroundColor(), t.FilePanelsListRegularOddRowBackgroundColor());
+    c.selected_even =
+        Blend(t.FilePanelsListSelectedRowBackgroundColor(), t.FilePanelsListRegularEvenRowBackgroundColor());
     c.odd = t.FilePanelsListRegularOddRowBackgroundColor();
     c.even = t.FilePanelsListRegularEvenRowBackgroundColor();
 }
 
-static NSColor *
-FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_selected, bool _is_odd)
+static NSColor *FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_selected, bool _is_odd)
 {
     const auto &c = g_BackgroundColorsCache;
-    if( c.generation != nc::CurrentTheme().Generation() )
-        RebuildBackgroundColorsCache();
+    if( auto &t = nc::CurrentTheme(); c.generation != t.Generation() ) {
+        if( @available(macOS 11.0, *) ) {
+            [t.Appearance() performAsCurrentDrawingAppearance:^{
+              RebuildBackgroundColorsCache();
+            }];
+        }
+        else {
+            RebuildBackgroundColorsCache();
+        }
+    }
 
     if( _is_focused ) {
         if( _is_active ) {
@@ -333,8 +340,7 @@ FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_selected, bool _
 
 - (PanelListViewNameView *)nameView
 {
-    return nc::objc_cast<PanelListViewNameView>(
-        [self viewAtColumn:0]); // need to force index #0 somehow
+    return nc::objc_cast<PanelListViewNameView>([self viewAtColumn:0]); // need to force index #0 somehow
 }
 
 - (PanelListViewSizeView *)sizeView

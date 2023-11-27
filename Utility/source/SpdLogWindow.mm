@@ -6,6 +6,7 @@
 #include <Utility/ObjCpp.h>
 #include <Habanero/dispatch_cpp.h>
 #include <algorithm>
+#include <iostream>
 
 namespace nc::utility {
 

@@ -19,6 +19,7 @@
 #include <map>
 #include <filesystem>
 #include <expected>
+#include <iostream>
 
 namespace nc::panel {
 

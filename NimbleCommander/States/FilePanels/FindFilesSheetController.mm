@@ -18,6 +18,7 @@
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 #include <Panel/FindFilesData.h>
+#include <iostream>
 
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
 static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -14,6 +14,7 @@
 #include "NativeFSHelpers.h"
 #include <VFS/Native.h>
 #include "Helpers.h"
+#include <iostream>
 
 using namespace nc::ops::copying;
 

@@ -4,6 +4,7 @@
 #include <Utility/ObjCpp.h>
 #include <vector>
 #include <array>
+#include <algorithm>
 
 enum class InterceiptMode
 {

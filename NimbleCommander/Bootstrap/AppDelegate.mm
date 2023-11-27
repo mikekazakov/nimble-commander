@@ -92,6 +92,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 
 using namespace std::literals;
 using namespace nc::bootstrap;

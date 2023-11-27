@@ -17,6 +17,7 @@
 #include <util.h>
 #include <syslog.h>
 #include <signal.h>
+#include <iostream>
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/CloseFrom.h>
 

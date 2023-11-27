@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <VFS/VFS.h>
 #include <VFS/VFSListingInput.h>
@@ -51,9 +51,26 @@ static VFSListingPtr ProduceDummyListing(const std::vector<std::tuple<std::strin
         const auto &filename = std::get<0>(i);
         const auto is_directory = std::get<1>(i);
         l.filenames.emplace_back(filename);
-        l.unix_modes.emplace_back(is_directory ? (S_IRUSR | S_IWUSR | S_IFDIR)
-                                               : (S_IRUSR | S_IWUSR | S_IFREG));
+        l.unix_modes.emplace_back(is_directory ? (S_IRUSR | S_IWUSR | S_IFDIR) : (S_IRUSR | S_IWUSR | S_IFREG));
         l.unix_types.emplace_back(is_directory ? DT_DIR : DT_REG);
+    }
+    return VFSListing::Build(std::move(l));
+}
+
+// directory, filename, size
+static VFSListingPtr
+ProduceNonUniformDummyListing(const std::vector<std::tuple<std::string, std::string, size_t>> &_entries)
+{
+    vfs::ListingInput l;
+    l.directories.reset(variable_container<>::type::dense);
+    l.hosts.reset(variable_container<>::type::dense);
+    for( size_t i = 0; i < _entries.size(); ++i ) {
+        l.directories.insert(i, std::get<0>(_entries[i]));
+        l.hosts.insert(i, VFSHost::DummyHost());
+        l.filenames.emplace_back(std::get<1>(_entries[i]));
+        l.unix_modes.emplace_back(0);
+        l.unix_types.emplace_back(0);
+        l.sizes.insert(i, std::get<2>(_entries[i]));
     }
     return VFSListing::Build(std::move(l));
 }
@@ -68,13 +85,8 @@ TEST_CASE(PREFIX "Empty model")
 
 TEST_CASE(PREFIX "Load")
 {
-    const auto listing =
-        ProduceDummyListing(std::vector<std::tuple<std::string, bool>>{{"..", true},
-                                                                       {"file1", false},
-                                                                       {"File2", false},
-                                                                       {"file3", false},
-                                                                       {"Dir1", true},
-                                                                       {"dir2", true}});
+    const auto listing = ProduceDummyListing(std::vector<std::tuple<std::string, bool>>{
+        {"..", true}, {"file1", false}, {"File2", false}, {"file3", false}, {"Dir1", true}, {"dir2", true}});
     Model model;
     model.Load(listing, Model::PanelType::Directory);
 
@@ -89,8 +101,7 @@ TEST_CASE(PREFIX "RawIndicesForName")
 {
     SECTION("Filled")
     {
-        const auto listing = ProduceDummyListing(
-            std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
+        const auto listing = ProduceDummyListing(std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
         Model model;
         model.Load(listing, Model::PanelType::Directory);
         {
@@ -128,8 +139,7 @@ TEST_CASE(PREFIX "SortedIndexForRawIndex")
     }
     SECTION("Filled, no hard filtering")
     {
-        const auto listing = ProduceDummyListing(
-            std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
+        const auto listing = ProduceDummyListing(std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
         data::SortMode sorting;
         sorting.sort = data::SortMode::SortByName;
         sorting.case_sens = false;
@@ -152,8 +162,7 @@ TEST_CASE(PREFIX "SortedIndexForRawIndex")
     }
     SECTION("Filled, hard filtering")
     {
-        const auto listing = ProduceDummyListing(
-            std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
+        const auto listing = ProduceDummyListing(std::vector<std::string>{"a", "b", "c", "a", "A", "b", "a", "c", "a"});
         data::SortMode sorting;
         sorting.sort = data::SortMode::SortByName;
         sorting.case_sens = false;
@@ -186,11 +195,10 @@ TEST_CASE(PREFIX "SortedIndexForRawIndex")
 
 TEST_CASE(PREFIX "Basic")
 {
-    const auto strings = std::vector<std::string>{
-        "..",
-        "some filename",
-        "another filename",
-        reinterpret_cast<const char *>(u8"even written with какие-то буквы")};
+    const auto strings = std::vector<std::string>{"..",
+                                                  "some filename",
+                                                  "another filename",
+                                                  reinterpret_cast<const char *>(u8"even written with какие-то буквы")};
     const auto listing = ProduceDummyListing(strings);
 
     data::Model data;
@@ -242,42 +250,41 @@ TEST_CASE(PREFIX "SortingWithCases")
 TEST_CASE(PREFIX "HardFiltering")
 {
     // just my home dir below
-    const auto strings =
-        std::vector<std::string>{"..",
-                                 ".cache",
-                                 reinterpret_cast<const char *>(u8"АААА"),
-                                 reinterpret_cast<const char *>(u8"ББББ"),
-                                 ".config",
-                                 ".cups",
-                                 ".dropbox",
-                                 ".dvdcss",
-                                 ".local",
-                                 ".mplayer",
-                                 ".ssh",
-                                 ".subversion",
-                                 ".Trash",
-                                 "Applications",
-                                 "Another app",
-                                 "Another app number two",
-                                 "Applications (Parallels)",
-                                 reinterpret_cast<const char *>(u8"что-то на русском языке"),
-                                 reinterpret_cast<const char *>(u8"ЕЩЕ РУССКИЙ ЯЗЫК"),
-                                 "Desktop",
-                                 "Documents",
-                                 "Downloads",
-                                 "Dropbox",
-                                 "Games",
-                                 "Library",
-                                 "Movies",
-                                 "Music",
-                                 "Pictures",
-                                 "Public"};
+    const auto strings = std::vector<std::string>{"..",
+                                                  ".cache",
+                                                  reinterpret_cast<const char *>(u8"АААА"),
+                                                  reinterpret_cast<const char *>(u8"ББББ"),
+                                                  ".config",
+                                                  ".cups",
+                                                  ".dropbox",
+                                                  ".dvdcss",
+                                                  ".local",
+                                                  ".mplayer",
+                                                  ".ssh",
+                                                  ".subversion",
+                                                  ".Trash",
+                                                  "Applications",
+                                                  "Another app",
+                                                  "Another app number two",
+                                                  "Applications (Parallels)",
+                                                  reinterpret_cast<const char *>(u8"что-то на русском языке"),
+                                                  reinterpret_cast<const char *>(u8"ЕЩЕ РУССКИЙ ЯЗЫК"),
+                                                  "Desktop",
+                                                  "Documents",
+                                                  "Downloads",
+                                                  "Dropbox",
+                                                  "Games",
+                                                  "Library",
+                                                  "Movies",
+                                                  "Music",
+                                                  "Pictures",
+                                                  "Public"};
     const auto listing = ProduceDummyListing(strings);
 
     const auto empty_listing = VFSListing::EmptyListing();
 
-    const auto almost_empty_listing = ProduceDummyListing(
-        std::vector<std::string>{reinterpret_cast<const char *>(u8"какой-то файл")});
+    const auto almost_empty_listing =
+        ProduceDummyListing(std::vector<std::string>{reinterpret_cast<const char *>(u8"какой-то файл")});
 
     data::Model data;
     auto sorting = data.SortMode();
@@ -394,11 +401,10 @@ TEST_CASE(PREFIX "SelectionWithExtension")
     const data::SelectionBuilder selector_w_dirs{data, false};
 
     const auto bin_listing = ProduceDummyListing(std::vector<std::string>{
-        "..",   "[",         "bash",   "cat",       "chmod", "cp",    "csh",      "dash",
-        "date", "dd",        "df",     "echo",      "ed",    "expr",  "hostname", "kill",
-        "ksh",  "launchctl", "link",   "ln",        "ls",    "mkdir", "mv",       "pax",
-        "ps",   "pwd",       "rm",     "rmdir",     "sh",    "sleep", "stty",     "sync",
-        "tcsh", "test",      "unlink", "wait4path", "zsh"});
+        "..",   "[",     "bash", "cat",  "chmod",    "cp",        "csh", "dash",      "date", "dd",
+        "df",   "echo",  "ed",   "expr", "hostname", "kill",      "ksh", "launchctl", "link", "ln",
+        "ls",   "mkdir", "mv",   "pax",  "ps",       "pwd",       "rm",  "rmdir",     "sh",   "sleep",
+        "stty", "sync",  "tcsh", "test", "unlink",   "wait4path", "zsh"});
     data.Load(bin_listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted(selector.SelectionByExtension("", true));
     CHECK(data.Stats().selected_entries_amount == 36);
@@ -427,25 +433,25 @@ TEST_CASE(PREFIX "SelectionWithExtension")
     data.CustomFlagsSelectSorted(selector.SelectionByExtension("1", true));
     CHECK(data.Stats().selected_entries_amount == 18);
 
-    const auto servs_listing = ProduceDummyListing(
-        std::vector<std::tuple<std::string, bool>>{{"..", true},
-                                                   {".disk_label", false},
-                                                   {".disk_label_2x", false},
-                                                   {"AOS.bundle", true},
-                                                   {"APFSUserAgent", false},
-                                                   {"AVB Audio Configuration.app", true},
-                                                   {"AddPrinter.app", true},
-                                                   {"AddressBookUrlForwarder.app", true},
-                                                   {"AirPlayUIAgent.app", true},
-                                                   {"AirPort Base Station Agent.app", true},
-                                                   {"AppleFileServer.app", true},
-                                                   {"AppleScript Utility.app", true},
-                                                   {"ApplicationFirewall.bundle", true},
-                                                   {"Applications", true},
-                                                   {"Automator Installer.app", true},
-                                                   {"Bluetooth Setup Assistant.app", true},
-                                                   {"BluetoothUIServer.app", true},
-                                                   {"BridgeRestoreVersion.plist", false}});
+    const auto servs_listing =
+        ProduceDummyListing(std::vector<std::tuple<std::string, bool>>{{"..", true},
+                                                                       {".disk_label", false},
+                                                                       {".disk_label_2x", false},
+                                                                       {"AOS.bundle", true},
+                                                                       {"APFSUserAgent", false},
+                                                                       {"AVB Audio Configuration.app", true},
+                                                                       {"AddPrinter.app", true},
+                                                                       {"AddressBookUrlForwarder.app", true},
+                                                                       {"AirPlayUIAgent.app", true},
+                                                                       {"AirPort Base Station Agent.app", true},
+                                                                       {"AppleFileServer.app", true},
+                                                                       {"AppleScript Utility.app", true},
+                                                                       {"ApplicationFirewall.bundle", true},
+                                                                       {"Applications", true},
+                                                                       {"Automator Installer.app", true},
+                                                                       {"Bluetooth Setup Assistant.app", true},
+                                                                       {"BluetoothUIServer.app", true},
+                                                                       {"BridgeRestoreVersion.plist", false}});
     data.Load(servs_listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted(selector.SelectionByExtension("app", true));
     CHECK(data.Stats().selected_entries_amount == 0);
@@ -503,31 +509,9 @@ TEST_CASE(PREFIX "DirectorySorting")
     CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha.2");
 }
 
-// bool Model::SetCalculatedSizeForDirectory(std::string_view _filename,
-//                                          std::string_view _directory,
-//                                          uint64_t _size)
-
-//
-// TEST_CASE(PREFIX "DirectorySorting")
-//{
-//    const std::vector<std::tuple<std::string, bool>> entries = {
-//        {{"Alpha.2", true}, {"Bravo.1", true}, {"Charlie.3", true}}};
-//    auto listing = ProduceDummyListing(entries);
-//
-//    data::Model data;
-//    data.Load(listing, data::Model::PanelType::Directory);
-//
-//
-//}
-
-// bool Model::SetCalculatedSizeForDirectory(std::string_view _filename,
-//                                          std::string_view _directory,
-//                                          uint64_t _size)
-
 TEST_CASE(PREFIX "SetCalculatedSizeForDirectory")
 {
-    const std::vector<std::tuple<std::string, bool>> entries = {
-        {{"Alpha", true}, {"Bravo", true}, {"Charlie", true}}};
+    const std::vector<std::tuple<std::string, bool>> entries = {{{"Alpha", true}, {"Bravo", true}, {"Charlie", true}}};
     auto listing = ProduceDummyListing(entries);
 
     data::Model data;
@@ -574,8 +558,7 @@ TEST_CASE(PREFIX "SetCalculatedSizeForDirectory")
 
 TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
 {
-    const std::vector<std::tuple<std::string, bool>> entries = {
-        {{"Alpha", true}, {"Bravo", true}, {"Charlie", true}}};
+    const std::vector<std::tuple<std::string, bool>> entries = {{{"Alpha", true}, {"Bravo", true}, {"Charlie", true}}};
     auto listing = ProduceDummyListing(entries);
 
     data::Model data;
@@ -593,7 +576,7 @@ TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
 
     SECTION("Empty")
     {
-        CHECK(data.SetCalculatedSizesForDirectories({},{},{}) == 0);
+        CHECK(data.SetCalculatedSizesForDirectories({}, {}, {}) == 0);
         CHECK(data.EntryAtSortPosition(0).Filename() == "Alpha");
         CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
         CHECK(data.EntryAtSortPosition(2).Filename() == "Charlie");
@@ -608,7 +591,7 @@ TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
             const std::string_view filenames[1] = {"Alpha"};
             const std::string_view directories[1] = {"/"};
             const uint64_t sizes[1] = {10};
-            CHECK(data.SetCalculatedSizesForDirectories(filenames,directories,sizes) == 1);
+            CHECK(data.SetCalculatedSizesForDirectories(filenames, directories, sizes) == 1);
             CHECK(data.EntryAtSortPosition(0).Filename() == "Bravo");
             CHECK(data.EntryAtSortPosition(1).Filename() == "Charlie");
             CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha");
@@ -621,14 +604,14 @@ TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
             const std::string_view filenames[] = {"Alpha", "Bravo", "Charlie"};
             const std::string_view directories[] = {"/", "/", "/"};
             const uint64_t sizes[] = {10, 20, 30};
-            CHECK(data.SetCalculatedSizesForDirectories(filenames,directories,sizes) == 3);
+            CHECK(data.SetCalculatedSizesForDirectories(filenames, directories, sizes) == 3);
             CHECK(data.EntryAtSortPosition(0).Filename() == "Charlie");
             CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
             CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha");
             CHECK(data.VolatileDataAtRawPosition(0).size == 10);
             CHECK(data.VolatileDataAtRawPosition(1).size == 20);
             CHECK(data.VolatileDataAtRawPosition(2).size == 30);
-        }        
+        }
     }
     SECTION("Invalid")
     {
@@ -637,7 +620,7 @@ TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
             const std::string_view filenames[] = {"Alpha", "Bravo"};
             const std::string_view directories[] = {"/", "/", "/"};
             const uint64_t sizes[] = {10, 20, 30};
-            CHECK(data.SetCalculatedSizesForDirectories(filenames,directories,sizes) == 0);
+            CHECK(data.SetCalculatedSizesForDirectories(filenames, directories, sizes) == 0);
             CHECK(data.EntryAtSortPosition(0).Filename() == "Alpha");
             CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
             CHECK(data.EntryAtSortPosition(2).Filename() == "Charlie");
@@ -650,7 +633,7 @@ TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
             const std::string_view filenames[] = {"Alpha", "Bravo", "Charlie1"};
             const std::string_view directories[] = {"/", "/", "/"};
             const uint64_t sizes[] = {10, 20, 30};
-            CHECK(data.SetCalculatedSizesForDirectories(filenames,directories,sizes) == 2);
+            CHECK(data.SetCalculatedSizesForDirectories(filenames, directories, sizes) == 2);
             CHECK(data.EntryAtSortPosition(0).Filename() == "Charlie");
             CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
             CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha");
@@ -665,7 +648,7 @@ TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
         {
             const unsigned indices[1] = {0};
             const uint64_t sizes[1] = {10};
-            CHECK(data.SetCalculatedSizesForDirectories(indices,sizes) == 1);
+            CHECK(data.SetCalculatedSizesForDirectories(indices, sizes) == 1);
             CHECK(data.EntryAtSortPosition(0).Filename() == "Bravo");
             CHECK(data.EntryAtSortPosition(1).Filename() == "Charlie");
             CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha");
@@ -677,7 +660,7 @@ TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
         {
             const unsigned indices[3] = {0, 1, 2};
             const uint64_t sizes[] = {10, 20, 30};
-            CHECK(data.SetCalculatedSizesForDirectories(indices,sizes) == 3);
+            CHECK(data.SetCalculatedSizesForDirectories(indices, sizes) == 3);
             CHECK(data.EntryAtSortPosition(0).Filename() == "Charlie");
             CHECK(data.EntryAtSortPosition(1).Filename() == "Bravo");
             CHECK(data.EntryAtSortPosition(2).Filename() == "Alpha");
@@ -685,5 +668,59 @@ TEST_CASE(PREFIX "SetCalculatedSizesForDirectories")
             CHECK(data.VolatileDataAtRawPosition(1).size == 20);
             CHECK(data.VolatileDataAtRawPosition(2).size == 30);
         }
+    }
+}
+
+TEST_CASE(PREFIX "ReLoad a temporary listing")
+{
+    VFSListingPtr l1 = ProduceNonUniformDummyListing({{"/D1/", "meow.txt", 10}, {"/D2/", "bark.txt", 20}});
+    CHECK(l1->IsUniform() == false);
+
+    data::Model data;
+    data.Load(l1, data::Model::PanelType::Temporary);
+    data.CustomFlagsSelectSorted(0, true);
+    data.CustomFlagsSelectSorted(1, true);
+
+    SECTION("Same items, Different order, updated size")
+    {
+        VFSListingPtr l2 = ProduceNonUniformDummyListing({{"/D2/", "bark.txt", 21}, {"/D1/", "meow.txt", 11}});
+        data.ReLoad(l2);
+        CHECK(data.EntryAtSortPosition(data.SortedIndexForName("bark.txt")).Size() == 21);
+        CHECK(data.EntryAtSortPosition(data.SortedIndexForName("bark.txt")).Directory() == "/D2/");
+        CHECK(data.VolatileDataAtSortPosition(data.SortedIndexForName("bark.txt")).is_selected());
+        CHECK(data.EntryAtSortPosition(data.SortedIndexForName("meow.txt")).Size() == 11);
+        CHECK(data.EntryAtSortPosition(data.SortedIndexForName("meow.txt")).Directory() == "/D1/");
+        CHECK(data.VolatileDataAtSortPosition(data.SortedIndexForName("meow.txt")).is_selected());
+    }
+#if 0
+    SECTION("One added")
+    {
+        // currently can only remove items
+        VFSListingPtr l2 = ProduceNonUniformDummyListing(
+            {{"/D2/", "bark.txt", 21}, {"/D1/", "meow.txt", 11}, {"/D1/", "hiss.txt", 55}});
+        data.ReLoad(l2);
+        CHECK(data.EntryAtSortPosition(data.SortedIndexForName("bark.txt")).Size() == 21);
+        CHECK(data.VolatileDataAtSortPosition(data.SortedIndexForName("bark.txt")).is_selected());
+        CHECK(data.EntryAtSortPosition(data.SortedIndexForName("meow.txt")).Size() == 11);
+        CHECK(data.VolatileDataAtSortPosition(data.SortedIndexForName("meow.txt")).is_selected());
+        CHECK(data.EntryAtSortPosition(data.SortedIndexForName("hiss.txt")).Size() == 55);
+        CHECK(data.VolatileDataAtSortPosition(data.SortedIndexForName("hiss")).is_selected() == false);
+    }
+#endif
+    SECTION("One removed, updated size")
+    {
+        VFSListingPtr l2 = ProduceNonUniformDummyListing({{"/D2/", "bark.txt", 21}});
+        data.ReLoad(l2);
+        CHECK(data.EntryAtSortPosition(data.SortedIndexForName("bark.txt")).Size() == 21);
+        CHECK(data.EntryAtSortPosition(data.SortedIndexForName("bark.txt")).Directory() == "/D2/");
+        CHECK(data.VolatileDataAtSortPosition(data.SortedIndexForName("bark.txt")).is_selected());
+        CHECK(data.SortedIndexForName("meow.txt") == -1);
+    }
+    SECTION("Both removed")
+    {
+        VFSListingPtr l2 = ProduceNonUniformDummyListing({});
+        data.ReLoad(l2);
+        CHECK(data.SortedIndexForName("bark.txt") == -1);
+        CHECK(data.SortedIndexForName("meow.txt") == -1);
     }
 }

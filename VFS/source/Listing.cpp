@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Listing.h"
 #include "../include/VFS/Host.h"
 #include "ListingInput.h"
@@ -29,10 +29,6 @@ static void Validate(const ListingInput &_source)
     if( _source.hosts.mode() == variable_container<>::type::sparse )
         throw std::logic_error("VFSListingInput validation failed: hosts can't be sparse");
 
-    if( _source.hosts.mode() ==  variable_container<>::type::dense && items_no == 0) {
-        throw std::logic_error("VFSListingInput validation failed: hosts of empty listings can't be dense");
-    }
-    
     for( auto i = size_t(0), e = _source.hosts.size(); i != e; ++i )
         if( _source.hosts[i] == nullptr )
             throw std::logic_error("VFSListingInput validation failed: host can't be nullptr");
@@ -49,8 +45,7 @@ static void Validate(const ListingInput &_source)
             throw std::logic_error("VFSListingInput validation failed: filename can't be empty");
 
     if( _source.display_filenames.mode() == variable_container<>::type::common && items_no > 1 )
-        throw std::logic_error(
-            "VFSListingInput validation failed: dispay_filenames can't be common");
+        throw std::logic_error("VFSListingInput validation failed: dispay_filenames can't be common");
 
     if( _source.sizes.mode() == variable_container<>::type::common && items_no > 1 )
         throw std::logic_error("VFSListingInput validation failed: sizes can't be common");
@@ -61,22 +56,17 @@ static void Validate(const ListingInput &_source)
     if( _source.symlinks.mode() == variable_container<>::type::common && items_no > 1 )
         throw std::logic_error("VFSListingInput validation failed: symlinks can't be common");
 
-    if( _source.hosts.mode() == variable_container<>::type::dense &&
-        _source.hosts.size() != items_no )
+    if( _source.hosts.mode() == variable_container<>::type::dense && _source.hosts.size() != items_no )
         throw std::logic_error("VFSListingInput validation failed: hosts amount is inconsistent");
 
-    if( _source.directories.mode() == variable_container<>::type::dense &&
-        _source.directories.size() != items_no )
-        throw std::logic_error(
-            "VFSListingInput validation failed: directories amount is inconsistent");
+    if( _source.directories.mode() == variable_container<>::type::dense && _source.directories.size() != items_no )
+        throw std::logic_error("VFSListingInput validation failed: directories amount is inconsistent");
 
     if( _source.unix_modes.size() != items_no )
-        throw std::logic_error(
-            "VFSListingInput validation failed: unix_modes amount is inconsistent");
+        throw std::logic_error("VFSListingInput validation failed: unix_modes amount is inconsistent");
 
     if( _source.unix_types.size() != items_no )
-        throw std::logic_error(
-            "VFSListingInput validation failed: unix_types amount is inconsistent");
+        throw std::logic_error("VFSListingInput validation failed: unix_types amount is inconsistent");
 }
 
 template <class C>
@@ -101,8 +91,7 @@ static void Compress(ListingInput &_input)
 
     // TODO: generalize and move this into variable_container itself?
     // Compress dense hosts into a common one if all are the same
-    if( _input.hosts.mode() ==  variable_container<>::type::dense ) {
-        assert(!_input.hosts.empty());
+    if( _input.hosts.mode() == variable_container<>::type::dense && !_input.hosts.empty() ) {
         auto first = _input.hosts[0];
         bool allsame = true;
         for( size_t i = 1, e = _input.hosts.size(); i < e; ++i ) {
@@ -122,8 +111,7 @@ Listing::Listing() = default;
 Listing::~Listing() = default;
 
 template <class It>
-static std::unique_ptr<typename std::iterator_traits<It>::value_type[]> CopyToUniquePtr(It first,
-                                                                                        It last)
+static std::unique_ptr<typename std::iterator_traits<It>::value_type[]> CopyToUniquePtr(It first, It last)
 {
     using T = typename std::iterator_traits<It>::value_type;
     auto count = std::distance(first, last);
@@ -133,8 +121,7 @@ static std::unique_ptr<typename std::iterator_traits<It>::value_type[]> CopyToUn
 }
 
 template <class It>
-static std::unique_ptr<typename std::iterator_traits<It>::value_type[]> MoveToUniquePtr(It first,
-                                                                                        It last)
+static std::unique_ptr<typename std::iterator_traits<It>::value_type[]> MoveToUniquePtr(It first, It last)
 {
     using T = typename std::iterator_traits<It>::value_type;
     auto count = std::distance(first, last);
@@ -301,8 +288,7 @@ ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<const Listin
     return result;
 }
 
-VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing(const Listing &_original,
-                                                           VFSCancelChecker _cancel_checker)
+VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing(const Listing &_original, VFSCancelChecker _cancel_checker)
 {
     ListingInput result;
     unsigned count = 0;
@@ -321,17 +307,17 @@ VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing(const Listing &_origi
     result.unix_flags.reset(variable_container<>::type::sparse);
     result.symlinks.reset(variable_container<>::type::sparse);
 
+    std::string path;
     for( unsigned i = 0, e = _original.Count(); i != e; ++i ) {
         if( _cancel_checker && _cancel_checker() )
             return nullptr;
 
-        char path[MAXPATHLEN];
-        strcpy(path, _original.Directory(i).c_str());
-        strcat(path, _original.Filename(i).c_str());
+        path.assign(_original.Directory(i));
+        path.append(_original.Filename(i));
 
         VFSStat st;
         auto stat_flags = _original.IsSymlink(i) ? VFSFlags::F_NoFollow : 0;
-        if( _original.Host(i)->Stat(path, st, stat_flags, _cancel_checker) == 0 ) {
+        if( _original.Host(i)->Stat(path.c_str(), st, stat_flags, _cancel_checker) == 0 ) {
 
             result.filenames.emplace_back(_original.Filename(i));
             result.unix_modes.emplace_back(_original.UnixMode(i));
@@ -371,14 +357,6 @@ VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing(const Listing &_origi
     if( _cancel_checker && _cancel_checker() )
         return nullptr;
 
-    if( count == 0 ) {
-        // A specific fixup for singlular cases
-        result.hosts.reset(variable_container<>::type::common);
-        result.hosts.insert(0, _original.Host(0));
-        result.directories.reset(variable_container<>::type::common);
-        result.directories.insert(0, _original.Directory(0));
-    }
-    
     return Build(std::move(result));
 }
 
@@ -418,9 +396,8 @@ void Listing::BuildFilenames()
         m_FilenamesCF[i] = UTF8WithFallback(current);
 
         if( m_DisplayFilenames.has(static_cast<unsigned>(i)) )
-            m_DisplayFilenamesCF.insert(
-                static_cast<unsigned>(i),
-                UTF8WithFallback(m_DisplayFilenames[static_cast<unsigned>(i)]));
+            m_DisplayFilenamesCF.insert(static_cast<unsigned>(i),
+                                        UTF8WithFallback(m_DisplayFilenames[static_cast<unsigned>(i)]));
 
         // parse extension if any
         // here we skip possible cases like

@@ -17,7 +17,16 @@ SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # allocate a temp dir for build artifacts
 BUILD_DIR=$(mktemp -d ${SCRIPTS_DIR}/build.XXXXXXXXX)
 
+ROOT_DIR=$(cd "$SCRIPTS_DIR/.." && pwd)
+
 LOG_FILE=${BUILD_DIR}/xcodebuild.log
+
+if type -p /usr/local/bin/ccache >/dev/null 2>&1; then
+    export CCACHE_BASEDIR="${ROOT_DIR}"
+    export CCACHE_SLOPPINESS=time_macros,include_file_mtime,include_file_ctime,file_stat_matches
+    export CC="${SCRIPTS_DIR}/ccache-clang"
+    export CXX="${SCRIPTS_DIR}/ccache-clang++"
+fi
 
 build_target()
 {
@@ -30,7 +39,8 @@ build_target()
         -configuration ${CONFIGURATION} \
         SYMROOT=${BUILD_DIR} \
         OBJROOT=${BUILD_DIR} \
-        -parallelizeTargets"
+        -parallelizeTargets \
+        OTHER_CFLAGS=\"-fdebug-prefix-map=${ROOT_DIR}=.\""
     BINARY_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//')
     BINARY_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//')
     BINARY_PATH=$BINARY_DIR/$BINARY_NAME

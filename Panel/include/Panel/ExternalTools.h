@@ -72,7 +72,7 @@ public:
     struct SelectedItems {
         Location location = Location::Source;
         FileInfo what = FileInfo::Filename;
-        unsigned max = 0;            // maximum of selected items to use as a parameters or as a list content
+        unsigned max = 0;          // maximum of selected items to use as a parameters or as a list content
         bool as_parameters = true; // as a list inside a temp file otherwise
         friend constexpr auto operator<=>(SelectedItems _lhs, SelectedItems _rhs) noexcept = default;
     };
@@ -130,11 +130,16 @@ private:
 class ExternalTool
 {
 public:
-    enum class StartupMode : int
+    enum class StartupMode : uint8_t
     {
         Automatic = 0,
         RunInTerminal = 1,
         RunDeatached = 2
+    };
+    enum class GUIArgumentInterpretation : uint8_t
+    {
+        PassAllAsArguments = 0,
+        PassExistingPathsAsURLs = 1
     };
 
     std::string m_Title;
@@ -142,10 +147,11 @@ public:
     std::string m_Parameters;
     utility::ActionShortcut m_Shorcut;
     StartupMode m_StartupMode = StartupMode::Automatic;
+    GUIArgumentInterpretation m_GUIArgumentInterpretation = GUIArgumentInterpretation::PassExistingPathsAsURLs;
 
     friend bool operator==(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept = default;
     friend bool operator!=(const ExternalTool &_lhs, const ExternalTool &_rhs) noexcept = default;
-    
+
     // run in terminal
     // allow VFS
     // string directory
@@ -154,34 +160,47 @@ public:
 class ExternalToolExecution
 {
 public:
-    enum class PanelFocus : uint8_t { left, right};
+    enum class PanelFocus : uint8_t
+    {
+        left,
+        right
+    };
     struct Context {
-        data::Model *left_data = nullptr; // not retained
+        data::Model *left_data = nullptr;  // not retained
         data::Model *right_data = nullptr; // not retained
         int left_cursor_pos = -1;
         int right_cursor_pos = -1;
         PanelFocus focus = PanelFocus::left;
         utility::TemporaryFileStorage *temp_storage = nullptr; // not retained
     };
-    
+
     ExternalToolExecution(const Context &_ctx, const ExternalTool &_et);
 
     bool RequiresUserInput() const noexcept;
     std::span<const std::string> UserInputPrompts() const noexcept;
     void CommitUserInput(std::span<const std::string> _input);
-        
+
     std::vector<std::string> BuildArguments() const;
-    
-    // returns a valid pid or an error description
-    std::expected<pid_t, std::string> startDetached();
-    
+
+    ExternalTool::StartupMode DeduceStartupMode() const;
+
+    bool IsBundle() const;
+
+    // returns a pid (that can already be -1 if the process quit too fast) or an error description
+    // automatically deduces if the app should be started via UI (StartDetachedUI) or as headless fork
+    // (StartDetachedFork)
+    std::expected<pid_t, std::string> StartDetached();
+
+    std::expected<pid_t, std::string> StartDetachedFork();
+
+    std::expected<pid_t, std::string> StartDetachedUI();
+
 private:
     Context m_Ctx;
     ExternalTool m_ET;
     ExternalToolsParameters m_Params;
     std::vector<std::string> m_UserInputPrompts;
     std::vector<std::string> m_UserInput;
-    
 };
 
 // supposed to be thread-safe

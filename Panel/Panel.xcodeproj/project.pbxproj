@@ -296,15 +296,15 @@
 		CFF33FEF25569DBE00B3C92C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */,
 				CF349B0D25FCAE9B009735DC /* Comparators_UT.mm */,
+				CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */,
 				CF22060827B9B73C008EDE3A /* ExternalTools_UT.mm */,
 				CF96DC7529CF460F003EC4EB /* ItemVolatileData_UT.mm */,
 				CFF3401525569EC600B3C92C /* PanelData_UT.mm */,
 				CF96DC7729E7099A003EC4EB /* PanelDataFilter_UT.mm */,
 				CF3ED50825860E1000D67AF2 /* QuickSearch_UT.mm */,
-				CFF33FF025569DF200B3C92C /* Tests.mm */,
 				CFF33FF125569DF200B3C92C /* Tests.h */,
+				CFF33FF025569DF200B3C92C /* Tests.mm */,
 			);
 			name = Tests;
 			sourceTree = "<group>";

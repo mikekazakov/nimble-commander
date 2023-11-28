@@ -10,6 +10,8 @@
 #include <VFS/VFSError.h>
 #include <fmt/core.h>
 #include <any>
+#include <atomic>
+#include <filesystem>
 
 namespace nc::panel {
 
@@ -563,6 +565,7 @@ static nc::config::Value SaveTool(const ExternalTool &_et)
     v.AddMember(
         MakeStandaloneString(g_StartupKey), nc::config::Value(static_cast<int>(_et.m_StartupMode)), g_CrtAllocator);
 
+    // TODO: save m_GUIArgumentInterpretation
     return v;
 }
 
@@ -590,6 +593,7 @@ static std::optional<ExternalTool> LoadTool(const nc::config::Value &_from)
     if( _from.HasMember(g_StartupKey) && _from[g_StartupKey].IsInt() )
         et.m_StartupMode = static_cast<ExternalTool::StartupMode>(_from[g_StartupKey].GetInt());
 
+    // TODO: load m_GUIArgumentInterpretation
     return et;
 }
 
@@ -761,16 +765,19 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
         else
             result.push_back(std::move(_arg));
     };
-    auto panel_for_location = [&](ExternalToolsParameters::Location _location) {
+    auto panel_cursor_for_location =
+        [&](ExternalToolsParameters::Location _location) -> std::pair<const panel::data::Model *, int> {
         switch( _location ) {
             case ExternalToolsParameters::Location::Left:
-                return m_Ctx.left_data;
+                return {m_Ctx.left_data, m_Ctx.left_cursor_pos};
             case ExternalToolsParameters::Location::Right:
-                return m_Ctx.right_data;
+                return {m_Ctx.right_data, m_Ctx.right_cursor_pos};
             case ExternalToolsParameters::Location::Source:
-                return m_Ctx.focus == PanelFocus::left ? m_Ctx.left_data : m_Ctx.right_data;
+                return m_Ctx.focus == PanelFocus::left ? std::make_pair(m_Ctx.left_data, m_Ctx.left_cursor_pos)
+                                                       : std::make_pair(m_Ctx.right_data, m_Ctx.right_cursor_pos);
             case ExternalToolsParameters::Location::Target:
-                return m_Ctx.focus == PanelFocus::left ? m_Ctx.right_data : m_Ctx.left_data;
+                return m_Ctx.focus == PanelFocus::left ? std::make_pair(m_Ctx.right_data, m_Ctx.right_cursor_pos)
+                                                       : std::make_pair(m_Ctx.left_data, m_Ctx.left_cursor_pos);
         }
     };
     auto info_from_item = [](const VFSListingItem &_item, ExternalToolsParameters::FileInfo _info) -> std::string {
@@ -800,8 +807,7 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
         }
         if( step.type == ExternalToolsParameters::ActionType::CurrentItem && num_files < max_files ) {
             const auto v = m_Params.GetCurrentItem(step.index);
-            const panel::data::Model *const panel = panel_for_location(v.location);
-            const int idx = panel == m_Ctx.left_data ? m_Ctx.left_cursor_pos : m_Ctx.right_cursor_pos;
+            const auto [panel, idx] = panel_cursor_for_location(v.location);
             if( VFSListingItem item = panel->EntryAtSortPosition(idx) ) {
                 commit(info_from_item(item, v.what));
                 ++num_files;
@@ -810,7 +816,7 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
         if( step.type == ExternalToolsParameters::ActionType::SelectedItems ) {
             append = false; // currently cannot concatentate multiple filenames into a single argument
             const auto &v = m_Params.GetSelectedItems(step.index);
-            const panel::data::Model *const panel = panel_for_location(v.location);
+            const auto [panel, idx] = panel_cursor_for_location(v.location);
 
             std::vector<VFSListingItem> items;
             for( auto ind : panel->SortedDirectoryEntries() ) {
@@ -821,7 +827,6 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
                     break;
             }
             if( items.empty() ) {
-                const int idx = panel == m_Ctx.left_data ? m_Ctx.left_cursor_pos : m_Ctx.right_cursor_pos;
                 if( auto e = panel->EntryAtSortPosition(idx) )
                     if( e && !e.IsDotDot() )
                         items.emplace_back(std::move(e));
@@ -854,21 +859,117 @@ std::vector<std::string> ExternalToolExecution::BuildArguments() const
     return result;
 }
 
-// returns a pid
-std::expected<pid_t, std::string> ExternalToolExecution::startDetached()
+bool ExternalToolExecution::IsBundle() const
 {
-    // TODO: bundle?
+    NSBundle *b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:m_ET.m_ExecutablePath]];
+    return b != nil;
+}
+
+ExternalTool::StartupMode ExternalToolExecution::DeduceStartupMode() const
+{
+    switch( m_ET.m_StartupMode ) {
+        case ExternalTool::StartupMode::RunDeatached:
+            return ExternalTool::StartupMode::RunDeatached;
+        case ExternalTool::StartupMode::RunInTerminal:
+            return ExternalTool::StartupMode::RunInTerminal;
+        case ExternalTool::StartupMode::Automatic:
+            break;
+    }
+    return IsBundle() ? ExternalTool::StartupMode::RunDeatached : ExternalTool::StartupMode::RunInTerminal;
+}
+
+std::expected<pid_t, std::string> ExternalToolExecution::StartDetached()
+{
     // TODO: relative path from env?
-    
-//    ExternalTool m_ET;
+    if( IsBundle() )
+        return StartDetachedUI();
+    else
+        return StartDetachedFork();
+}
+
+std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedFork()
+{
     auto args = BuildArguments();
-    
+
     int pid = nc::term::Task::RunDetachedProcess(m_ET.m_ExecutablePath, args);
     if( pid < 0 ) {
-        return std::unexpected(VFSError::FormatErrorCode( VFSError::FromErrno()));
+        return std::unexpected(VFSError::FormatErrorCode(VFSError::FromErrno()));
     }
-    
+
     return pid;
 }
 
+std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedUI()
+{
+    NSURL *app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:m_ET.m_ExecutablePath]];
+
+    const auto args = BuildArguments();
+
+    NSMutableArray *params_urls = [NSMutableArray new];
+    NSMutableArray *params_args = [NSMutableArray new];
+    const bool allow_urls =
+        m_ET.m_GUIArgumentInterpretation == ExternalTool::GUIArgumentInterpretation::PassExistingPathsAsURLs;
+    for( auto &s : args ) {
+        if( allow_urls && !s.empty() && s.front() == '/' && std::filesystem::exists(s) ) {
+            // Add as a URL/document
+            [params_urls addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8StdString:s]]];
+        }
+        else {
+            // Add as a generic argument
+            [params_args addObject:[NSString stringWithUTF8StdString:s]];
+        }
+    }
+
+    NSWorkspaceOpenConfiguration *config = [NSWorkspaceOpenConfiguration new];
+    config.promptsUserIfNeeded = false;
+    config.arguments = params_args;
+
+    struct Ctx {
+        std::mutex mut;
+        std::condition_variable cv;
+        bool done = false;
+        NSRunningApplication *app = nil;
+        NSError *error = nil;
+    };
+
+    auto ctx = std::make_shared<Ctx>();
+    auto handler = ^(NSRunningApplication *_Nullable app, NSError *_Nullable error) {
+      std::unique_lock lock{ctx->mut};
+      ctx->app = app;
+      ctx->error = error;
+      ctx->done = true;
+      lock.unlock();
+      ctx->cv.notify_one();
+    };
+
+    if( params_urls.count ) {
+        [NSWorkspace.sharedWorkspace openURLs:params_urls
+                         withApplicationAtURL:app_url
+                                configuration:config
+                            completionHandler:handler];
+    }
+    else {
+        [NSWorkspace.sharedWorkspace openApplicationAtURL:app_url configuration:config completionHandler:handler];
+    }
+
+    std::unique_lock lk(ctx->mut);
+    bool done = ctx->cv.wait_for(lk, std::chrono::seconds{10}, [&] { return ctx->done; });
+
+    if( !done ) {
+        return std::unexpected<std::string>(
+            fmt::format("Failed to start '{}' due to a timeout", m_ET.m_ExecutablePath));
+    }
+
+    if( ctx->app ) {
+        return ctx->app.processIdentifier;
+    }
+
+    if( ctx->error ) {
+        return std::unexpected<std::string>(ctx->error.localizedDescription.UTF8String);
+    }
+
+    abort(); // internal logic error
+}
+
+//
 } // namespace nc::panel

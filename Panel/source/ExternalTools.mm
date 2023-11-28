@@ -12,6 +12,7 @@
 #include <any>
 #include <atomic>
 #include <filesystem>
+#include <sys/stat.h>
 
 namespace nc::panel {
 
@@ -108,15 +109,13 @@ using ParametersVariant = std::variant<ExternalToolsParameters::UserDefined,
 } // namespace
 
 static std::expected<std::vector<std::pair<ParametersVariant, bool>>, std::string>
-Eat2(const std::string_view _source) noexcept
+Eat(const std::string_view _source) noexcept
 {
     std::string_view source = _source;
     std::string_view prev;
     std::optional<std::string> user_defined;
     std::vector<std::pair<ParametersVariant, bool>> result;
     bool left_right = false; // default is source/dest
-                             //    bool partial = false;
-
     std::optional<unsigned> number;
     std::optional<std::string> prompt;
     bool placeholder = false;
@@ -326,206 +325,14 @@ Eat2(const std::string_view _source) noexcept
     if( !result.empty() )
         result.back().second = false;
 
-    //    std::optional<std::string> user_defined;
-    //    std::vector<ParametersVariant> result;
-    //    bool left_right = false; // default is source/dest
-    //
-    //    std::optional<int> number;
-    //    std::optional<std::string> prompt;
-    //    bool placeholder = false;
-    //    bool minus = false;
-    //    bool list = false;
-    //    bool in_prompt = false;
-
     return result;
 }
-#if 0
-static std::pair<std::any, unsigned> Eat(NSString *_source, NSRange _range, bool _invert_flag)
-{
-    assert(_source && _source.length == _range.location + _range.length);
-    assert(_range.length > 0);
-    static NSCharacterSet *percent = [NSCharacterSet characterSetWithCharactersInString:@"%"];
-    static NSCharacterSet *quote = [NSCharacterSet characterSetWithCharactersInString:@"\""];
 
-    const auto r = [_source rangeOfCharacterFromSet:percent options:0 range:_range];
-    if( r.location != NSNotFound ) {
-        // found % somewhere in the string
-        if( r.location == _range.location ) {
-            // we're right at % symbol, let's parse a placeholder
-            bool minus_sign = false;
-            const auto produce_location = [&] {
-                if( !_invert_flag ) {
-                    if( !minus_sign )
-                        return ExternalToolsParameters::Location::Source;
-                    else
-                        return ExternalToolsParameters::Location::Target;
-                }
-                else {
-                    if( !minus_sign )
-                        return ExternalToolsParameters::Location::Left;
-                    else
-                        return ExternalToolsParameters::Location::Right;
-                }
-            };
-            bool list_flag = false;
-            int number = 0;
-            std::string prompt_text;
-            unsigned long position = r.location + 1;
-            do {
-                if( position >= _range.location + _range.length ) {
-                    if( minus_sign )
-                        return make_pair(std::any(InterpretInvertFlag()),
-                                         2);         // treat this situation as "%-" inversion flag
-                    return make_pair(std::any(), 0); // malformed string, aborting
-                }
-
-                const auto c = [_source characterAtIndex:position];
-                if( c >= '0' && c <= '9' ) {
-                    number = number * 10 + c - '0';
-                }
-                else if( c == '"' ) {
-                    const auto right_quote =
-                        [_source rangeOfCharacterFromSet:quote
-                                                 options:0
-                                                   range:NSMakeRange(position + 1, _source.length - (position + 1))];
-                    if( right_quote.location != NSNotFound ) {
-                        NSString *substr =
-                            [_source substringWithRange:NSMakeRange(position + 1, right_quote.location - position - 1)];
-                        prompt_text = substr.UTF8String;
-                        position = right_quote.location + 1;
-                        continue;
-                    }
-                    else
-                        return make_pair(std::any(), 0); // malformed string, aborting
-                }
-                else if( c == '%' && position == r.location + 1 ) {
-                    ExternalToolsParameters::UserDefined result;
-                    result.text = "%";
-                    return make_pair(std::any(std::move(result)), position - _range.location + 1);
-                }
-                else
-                    switch( c ) {
-                        case '-': {
-                            if( minus_sign == true )
-                                return make_pair(std::any(),
-                                                 0); // already up - malformed string, aborting
-                            minus_sign = true;
-                            break;
-                        }
-                        case 'L': {
-                            if( list_flag == true )
-                                return make_pair(std::any(),
-                                                 0); // already up - malformed string, aborting
-                            list_flag = true;
-                            break;
-                        }
-                        case '?': { // terminal - ask user for parameter
-                            if( minus_sign != false || number != 0 || list_flag != false )
-                                return make_pair(std::any(), 0); // malformed string, aborting
-                            ExternalToolsParameters::EnterValue result;
-                            result.name = move(prompt_text);
-                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
-                        }
-                        case 'r': { // terminal - directory path
-                            if( number != 0 || !prompt_text.empty() || list_flag != false )
-                                return make_pair(std::any(), 0); // malformed string, aborting
-                            ExternalToolsParameters::CurrentItem result;
-                            result.what = ExternalToolsParameters::FileInfo::DirectoryPath;
-                            result.location = produce_location();
-                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
-                        }
-                        case 'p': { // terminal - current path
-                            if( number != 0 || !prompt_text.empty() || list_flag != false )
-                                return make_pair(std::any(), 0); // malformed string, aborting
-                            ExternalToolsParameters::CurrentItem result;
-                            result.what = ExternalToolsParameters::FileInfo::Path;
-                            result.location = produce_location();
-                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
-                        }
-                        case 'f': { // terminal - current filename
-                            if( number != 0 || !prompt_text.empty() || list_flag != false )
-                                return make_pair(std::any(), 0); // malformed string, aborting
-                            ExternalToolsParameters::CurrentItem result;
-                            result.what = ExternalToolsParameters::FileInfo::Filename;
-                            result.location = produce_location();
-                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
-                        }
-                        case 'n': { // terminal - current filename w/o ext
-                            if( number != 0 || !prompt_text.empty() || list_flag != false )
-                                return make_pair(std::any(), 0); // malformed string, aborting
-                            ExternalToolsParameters::CurrentItem result;
-                            result.what = ExternalToolsParameters::FileInfo::FilenameWithoutExtension;
-                            result.location = produce_location();
-                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
-                        }
-                        case 'e': { // terminal - current filename extension
-                            if( number != 0 || !prompt_text.empty() || list_flag != false )
-                                return make_pair(std::any(), 0); // malformed string, aborting
-                            ExternalToolsParameters::CurrentItem result;
-                            result.what = ExternalToolsParameters::FileInfo::FileExtension;
-                            result.location = produce_location();
-                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
-                        }
-                        case 'F': { // terminal - selected filenames
-                            if( !prompt_text.empty() )
-                                return make_pair(std::any(), 0); // malformed string, aborting
-                            ExternalToolsParameters::SelectedItems result;
-                            result.what = ExternalToolsParameters::FileInfo::Filename;
-                            result.location = produce_location();
-                            result.as_parameters = !list_flag;
-                            result.max = number;
-                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
-                        }
-                        case 'P': { // terminal - selected filepaths
-                            if( !prompt_text.empty() )
-                                return make_pair(std::any(), 0); // malformed string, aborting
-                            ExternalToolsParameters::SelectedItems result;
-                            result.what = ExternalToolsParameters::FileInfo::Path;
-                            result.location = produce_location();
-                            result.as_parameters = !list_flag;
-                            result.max = number;
-                            return make_pair(std::any(std::move(result)), position - _range.location + 1);
-                        }
-                        case 'T': {
-                            if( minus_sign != false || list_flag != false != !prompt_text.empty() )
-                                return make_pair(std::any(), 0); // malformed string, aborting
-                            SetMaximumFilesFlag limit;
-                            limit.maximum = number >= 0 ? number : 0;
-                            return make_pair(std::any(limit), position - _range.location + 1);
-                        }
-                        default: {
-                            if( minus_sign )
-                                return make_pair(std::any(InterpretInvertFlag()),
-                                                 2); // treat this situation as "%-" inversion flag
-                            else
-                                return make_pair(std::any(), 0); // malformed string, aborting
-                        }
-                    }
-                position++;
-            } while( true );
-        }
-        else {
-            // % symbol is somewhere next
-            ExternalToolsParameters::UserDefined result;
-            result.text =
-                [_source substringWithRange:NSMakeRange(_range.location, r.location - _range.location)].UTF8String;
-            return make_pair(std::any(std::move(result)), r.location - _range.location);
-        }
-    }
-    else {
-        // there's no % in the string - can return the whole tail at one
-        ExternalToolsParameters::UserDefined result;
-        result.text = [_source substringFromIndex:_range.location].UTF8String;
-        return make_pair(std::any(std::move(result)), _range.length);
-    }
-    return make_pair(std::any(), 0);
-}
-#endif
 std::expected<ExternalToolsParameters, std::string> ExternalToolsParametersParser::Parse(std::string_view _source)
 {
     ExternalToolsParameters result;
 
-    auto params = Eat2(_source);
+    auto params = Eat(_source);
     if( !params )
         return std::unexpected(params.error());
 
@@ -878,6 +685,40 @@ ExternalTool::StartupMode ExternalToolExecution::DeduceStartupMode() const
     return IsBundle() ? ExternalTool::StartupMode::RunDeatached : ExternalTool::StartupMode::RunInTerminal;
 }
 
+static bool IsRunnableExecutable(const std::string &_path)
+{
+    struct stat st;
+    return stat(_path.c_str(), &st) == 0 && (st.st_mode & S_IFREG) != 0 && (st.st_mode & S_IRUSR) != 0 &&
+           (st.st_mode & S_IXUSR) != 0;
+}
+
+static std::filesystem::path GetExecutablePathForBundle(const std::string &_path)
+{
+    if( NSBundle *b = [NSBundle bundleWithPath:[NSString stringWithUTF8StdString:_path]] )
+        if( NSURL *u = b.executableURL )
+            if( const char *fsr = u.fileSystemRepresentation )
+                return fsr;
+    return "";
+}
+
+std::filesystem::path ExternalToolExecution::ExecutablePath() const
+{
+    if( IsBundle() ) {
+        if( IsRunnableExecutable(m_ET.m_ExecutablePath) ) {
+            return m_ET.m_ExecutablePath;
+        }
+        else if( auto p = GetExecutablePathForBundle(m_ET.m_ExecutablePath); !p.empty() ) {
+            return p;
+        }
+        else {
+            return m_ET.m_ExecutablePath; // fallback - not actually found
+        }
+    }
+    else {
+        return m_ET.m_ExecutablePath; // TODO: whereis?
+    }
+}
+
 std::expected<pid_t, std::string> ExternalToolExecution::StartDetached()
 {
     // TODO: relative path from env?
@@ -971,5 +812,4 @@ std::expected<pid_t, std::string> ExternalToolExecution::StartDetachedUI()
     abort(); // internal logic error
 }
 
-//
 } // namespace nc::panel

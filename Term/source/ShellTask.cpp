@@ -891,6 +891,22 @@ void ShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
     WriteChildInput(input);
 }
 
+void ShellTask::ExecuteWithFullPath(const std::filesystem::path& _binary_path, std::span<const std::string> _arguments)
+{
+    if( I->state != TaskState::Shell )
+        return;
+    
+    std::string cmd = EscapeShellFeed(_binary_path);
+    for( auto &arg: _arguments ) {
+        cmd += ' ';
+        cmd += EscapeShellFeed(arg);
+    }
+    cmd += "\n";
+    
+    I->SetState(TaskState::ProgramExternal);
+    WriteChildInput(cmd.c_str());
+}
+
 std::vector<std::string> ShellTask::ChildrenList() const
 {
     if( I->state == TaskState::Inactive || I->state == TaskState::Dead || I->shell_pid < 0 )

@@ -73,20 +73,22 @@ TEST_CASE(PREFIX "execute a detached console app")
         std::string params;
         std::string expected;
     } tcs[] = {
-        {basedir / "test.txt",                                                              //
-         "echopars\n" + (basedir / "test.txt").string() + "\n"},                            //
-            {(basedir / "test.txt").string() + " Hello!",                                   //
-             "echopars\n" + (basedir / "test.txt").string() + "\nHello!\n"},                //
-            {(basedir / "test.txt").string() + " Hello, World!",                            //
-             "echopars\n" + (basedir / "test.txt").string() + "\nHello,\nWorld!\n"},        //
-            {(basedir / "test.txt").string() + " first second",                             //
-             "echopars\n" + (basedir / "test.txt").string() + "\nfirst\nsecond\n"},         //
-            {(basedir / "test.txt").string() + " \"first\" \"second\"",                     //
-             "echopars\n" + (basedir / "test.txt").string() + "\n\"first\"\n\"second\"\n"}, //
-            {(basedir / "test.txt").string() + " %f",                                       //
-             "echopars\n" + (basedir / "test.txt").string() + "\na.c\n"},                   //
-            {(basedir / "test.txt").string() + " %-f",                                      //
-             "echopars\n" + (basedir / "test.txt").string() + "\nz z\n"},                   //
+        {basedir / "test.txt",                                                          //
+         "echopars\n" + (basedir / "test.txt").string() + "\n"},                        //
+        {(basedir / "test.txt").string() + " Hello!",                                   //
+         "echopars\n" + (basedir / "test.txt").string() + "\nHello!\n"},                //
+        {(basedir / "test.txt").string() + " Hello, World!",                            //
+         "echopars\n" + (basedir / "test.txt").string() + "\nHello,\nWorld!\n"},        //
+        {(basedir / "test.txt").string() + " first second",                             //
+         "echopars\n" + (basedir / "test.txt").string() + "\nfirst\nsecond\n"},         //
+        {(basedir / "test.txt").string() + " \"first\" \"second\"",                     //
+         "echopars\n" + (basedir / "test.txt").string() + "\n\"first\"\n\"second\"\n"}, //
+        {(basedir / "test.txt").string() + " first\\ second",                           //
+         "echopars\n" + (basedir / "test.txt").string() + "\nfirst second\n"},          //
+        {(basedir / "test.txt").string() + " %f",                                       //
+         "echopars\n" + (basedir / "test.txt").string() + "\na.c\n"},                   //
+        {(basedir / "test.txt").string() + " %-f",                                      //
+         "echopars\n" + (basedir / "test.txt").string() + "\nz z\n"},                   //
     };
 
     auto run = [&] {

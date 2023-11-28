@@ -1,8 +1,9 @@
-// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "MainWindowStateProtocol.h"
 #include <VFS/VFS.h>
+#include <span>
 
 @class OperationsController;
 @class MainWindowFilePanelState;
@@ -34,9 +35,8 @@ class Operation;
 - (void)requestTerminalExecution:(const char *)_filename
                               at:(const char *)_cwd
                   withParameters:(const char *)_params;
-- (void)requestTerminalExecutionWithFullPath:(const char *)_binary_path
-                              withParameters:(const char *)_params;
-
+- (void)requestTerminalExecutionWithFullPath:(const std::filesystem::path&)_binary_path
+                              andArguments:(std::span<const std::string>)_params;
 - (void)RequestExternalEditorTerminalExecution:(const std::string &)_full_app_path
                                         params:(const std::string &)_params
                                      fileTitle:(const std::string &)_file_title;

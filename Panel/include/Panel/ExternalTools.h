@@ -16,6 +16,7 @@
 #include <mutex>
 #include <compare>
 #include <expected>
+#include <filesystem>
 
 /**
 - produces % symbol:  %%
@@ -166,8 +167,8 @@ public:
         right
     };
     struct Context {
-        data::Model *left_data = nullptr;  // not retained
-        data::Model *right_data = nullptr; // not retained
+        const data::Model *left_data = nullptr;  // not retained
+        const data::Model *right_data = nullptr; // not retained
         int left_cursor_pos = -1;
         int right_cursor_pos = -1;
         PanelFocus focus = PanelFocus::left;
@@ -185,6 +186,8 @@ public:
     ExternalTool::StartupMode DeduceStartupMode() const;
 
     bool IsBundle() const;
+    
+    std::filesystem::path ExecutablePath() const;
 
     // returns a pid (that can already be -1 if the process quit too fast) or an error description
     // automatically deduces if the app should be started via UI (StartDetachedUI) or as headless fork

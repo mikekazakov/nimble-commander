@@ -109,6 +109,9 @@ public:
      */
     void ExecuteWithFullPath(const char *_path, const char *_parameters);
 
+    // TODO: describe
+    void ExecuteWithFullPath(const std::filesystem::path& _binary_path, std::span<const std::string> _arguments);
+
     /**
      * Can be used in any TermShellTask state.
      * If shell is alive - will send actual resize signal, otherwise will only

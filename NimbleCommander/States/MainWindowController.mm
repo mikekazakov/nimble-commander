@@ -404,8 +404,8 @@ static int CountMainWindows()
     [m_Terminal execute:_filename at:_cwd parameters:_params];
 }
 
-- (void)requestTerminalExecutionWithFullPath:(const char *)_binary_path
-                              withParameters:(const char *)_params
+- (void)requestTerminalExecutionWithFullPath:(const std::filesystem::path&)_binary_path
+                              andArguments:(std::span<const std::string>)_params
 {
     dispatch_assert_main_queue();
 
@@ -422,7 +422,8 @@ static int CountMainWindows()
     else {
         [self pushState:m_Terminal];
     }
-    [m_Terminal executeWithFullPath:_binary_path parameters:_params];
+    
+    [m_Terminal executeWithFullPath:_binary_path andArguments:_params];
 }
 
 - (void)RequestExternalEditorTerminalExecution:(const std::string &)_full_app_path

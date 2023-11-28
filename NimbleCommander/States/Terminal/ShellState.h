@@ -1,42 +1,41 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <NimbleCommander/States/MainWindowStateProtocol.h>
 
 #include <string>
+#include <filesystem>
+#include <span>
 
 namespace nc::utility {
-    class NativeFSManager;
+class NativeFSManager;
 }
 
 namespace nc::term {
-    class ShellTask;
+class ShellTask;
 }
 
-@interface NCTermShellState : NSView<NCMainWindowState>
+@interface NCTermShellState : NSView <NCMainWindowState>
 
-@property (nonatomic, readonly) bool isAnythingRunning;
+@property(nonatomic, readonly) bool isAnythingRunning;
 
 - (instancetype)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
-- (instancetype)initWithFrame:(NSRect)frameRect
-              nativeFSManager:(nc::utility::NativeFSManager&)_native_fs_man;
+- (instancetype)initWithFrame:(NSRect)frameRect nativeFSManager:(nc::utility::NativeFSManager &)_native_fs_man;
 
 - (std::string)initialWD;
-- (void) setInitialWD:(const std::string&)_wd;
+- (void)setInitialWD:(const std::string &)_wd;
 
-- (void) chDir:(const std::string&)_new_dir;
-- (void) execute:(const char *)_binary_name
-              at:(const char*)_binary_dir;
-- (void) execute:(const char *)_binary_name
-              at:(const char*)_binary_dir
-      parameters:(const char*)_params;
+- (void)chDir:(const std::string &)_new_dir;
+- (void)execute:(const char *)_binary_name at:(const char *)_binary_dir;
+- (void)execute:(const char *)_binary_name at:(const char *)_binary_dir parameters:(const char *)_params;
 
-- (void) executeWithFullPath:(const char *)_path parameters:(const char*)_params;
+- (void)executeWithFullPath:(const std::filesystem::path &)_binary_path
+               andArguments:(std::span<const std::string>)_params;
 
-- (void) terminate;
+- (void)terminate;
 
-- (std::string) cwd;
+- (std::string)cwd;
 
-- (nc::term::ShellTask&) task;
+- (nc::term::ShellTask &)task;
 
 @end

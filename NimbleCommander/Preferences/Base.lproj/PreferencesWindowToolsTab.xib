@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -54,7 +54,7 @@
                                                 <rect key="frame" x="1" y="1" width="206" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="64Q-K6-1BY">
+                                                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="64Q-K6-1BY">
                                                         <rect key="frame" x="0.0" y="0.0" width="100" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" id="99h-eZ-LFp">
@@ -108,15 +108,15 @@
                 </segmentedControl>
                 <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0qz-u9-ass">
                     <rect key="frame" x="68" y="19" width="222" height="23"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="21" id="cYh-ZI-XI6"/>
-                    </constraints>
                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wsv-qm-c1T">
                         <behavior key="behavior" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="cYh-ZI-XI6"/>
+                    </constraints>
                 </button>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TtZ-FY-dXk">
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TtZ-FY-dXk">
                     <rect key="frame" x="296" y="305" width="60" height="16"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Tool title:" id="3Pc-uE-9BV">
                         <font key="font" metaFont="system"/>
@@ -124,7 +124,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Erl-hM-Whw">
+                <textField focusRingType="none" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Erl-hM-Whw">
                     <rect key="frame" x="298" y="276" width="412" height="21"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="n9f-8M-ZOg">
                         <font key="font" metaFont="system"/>
@@ -137,7 +137,7 @@
                         <outlet property="nextKeyView" destination="tJK-iz-Vmx" id="MRb-a1-sea"/>
                     </connections>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j8B-4J-nM4">
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j8B-4J-nM4">
                     <rect key="frame" x="296" y="252" width="76" height="16"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Application:" id="GbL-vv-Nbz">
                         <font key="font" metaFont="system"/>
@@ -145,7 +145,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tJK-iz-Vmx">
+                <textField focusRingType="none" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tJK-iz-Vmx">
                     <rect key="frame" x="298" y="223" width="386" height="21"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="e1H-wi-Y8y">
                         <font key="font" metaFont="system"/>
@@ -158,7 +158,7 @@
                         <outlet property="nextKeyView" destination="FFZ-gZ-3G4" id="PVZ-nv-YLa"/>
                     </connections>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HGo-IY-2d3">
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HGo-IY-2d3">
                     <rect key="frame" x="296" y="199" width="77" height="16"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Parameters:" id="lzh-Bc-bxZ">
                         <font key="font" metaFont="system"/>
@@ -166,7 +166,7 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ikD-oi-3mc">
+                <textField focusRingType="none" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ikD-oi-3mc">
                     <rect key="frame" x="298" y="170" width="382" height="21"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="Wui-Ab-D1q">
                         <font key="font" metaFont="system"/>
@@ -181,13 +181,13 @@
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FFZ-gZ-3G4">
                     <rect key="frame" x="692" y="221" width="18" height="24"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="22" id="Fub-cz-2xk"/>
-                    </constraints>
                     <buttonCell key="cell" type="smallSquare" title="..." bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7vb-zY-kcK">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="22" id="Fub-cz-2xk"/>
+                    </constraints>
                     <connections>
                         <action selector="onSetApplicationPathButtonClicked:" target="-2" id="KSc-YT-9vl"/>
                         <binding destination="-2" name="enabled" keyPath="self.anySelected" id="NGI-a2-5vu"/>
@@ -196,21 +196,21 @@
                 </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mtl-Sr-Edq">
                     <rect key="frame" x="688" y="168" width="22" height="24"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="22" id="19h-FA-AgX"/>
-                        <constraint firstAttribute="width" constant="22" id="SIm-GY-3Oa"/>
-                    </constraints>
                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="CUA-OB-A9Q">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="22" id="19h-FA-AgX"/>
+                        <constraint firstAttribute="width" constant="22" id="SIm-GY-3Oa"/>
+                    </constraints>
                     <connections>
                         <action selector="onAddParameter:" target="-2" id="abn-Pn-0fj"/>
                         <binding destination="-2" name="enabled" keyPath="self.anySelected" id="EmO-8g-3On"/>
                         <outlet property="nextKeyView" destination="Bm0-Is-ddH" id="8OU-HT-kZf"/>
                     </connections>
                 </button>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GY2-2T-g6W">
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GY2-2T-g6W">
                     <rect key="frame" x="296" y="20" width="416" height="28"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Please note that command-line external tools are not supported in MacAppStore versions" id="78m-ca-qgo">
                         <font key="font" metaFont="smallSystem"/>
@@ -221,7 +221,7 @@
                         <binding destination="-2" name="hidden" keyPath="self.haveCommandLineTools" id="mQQ-2k-w6P"/>
                     </connections>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qe2-8x-UrM">
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qe2-8x-UrM">
                     <rect key="frame" x="296" y="146" width="91" height="16"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Startup Mode:" id="iVQ-ca-93Q">
                         <font key="font" metaFont="system"/>
@@ -422,7 +422,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem id="Uut-qc-UcK">
-                                <string key="title">%LP	Source filepaths in a text file</string>
+                                <string key="title">%LP		Source filepaths in a text file</string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="representedObject" value="%LP"/>
@@ -629,7 +629,7 @@
         </menu>
     </objects>
     <resources>
-        <image name="NSAddTemplate" width="14" height="13"/>
-        <image name="NSRemoveTemplate" width="14" height="4"/>
+        <image name="NSAddTemplate" width="18" height="17"/>
+        <image name="NSRemoveTemplate" width="18" height="5"/>
     </resources>
 </document>

@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeView.h"
 #include "HexModeFrame.h"
 #include "HexModeLayout.h"
@@ -37,6 +37,7 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
 {
     if( self = [super initWithFrame:_frame] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
+        self.clipsToBounds = true;
         m_Backend = _backend;
         m_Theme = &_theme;
         m_FontInfo = FontGeometryInfo{(__bridge CTFontRef)m_Theme->Font()};
@@ -213,7 +214,7 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
 {
     const auto context = NSGraphicsContext.currentContext.CGContext;
     CGContextSetFillColorWithColor(context, m_Theme->ViewerBackgroundColor().CGColor);
-    CGContextFillRect(context, NSRectToCGRect(dirtyRect));
+    CGContextFillRect(context, NSRectToCGRect(self.bounds));
 
     CGAffineTransform transform;
     transform.a = 1.;

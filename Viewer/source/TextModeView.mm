@@ -78,6 +78,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
 {
     if( self = [super initWithFrame:_frame] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
+        self.clipsToBounds = true;
         m_Backend = _backend;
         m_Theme = &_theme;
         m_WorkingSet = MakeEmptyWorkingSet();
@@ -234,7 +235,7 @@ static double CalculateVerticalPxPositionFromScrollPosition(const TextModeFrame 
     const auto context = NSGraphicsContext.currentContext.CGContext;
 
     CGContextSetFillColorWithColor(context, m_Theme->ViewerBackgroundColor().CGColor);
-    CGContextFillRect(context, NSRectToCGRect(_dirty_rect));
+    CGContextFillRect(context, NSRectToCGRect(self.bounds));
     CGAffineTransform transform;
     transform.a = 1.;
     transform.b = 0.;

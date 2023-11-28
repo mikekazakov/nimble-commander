@@ -55,7 +55,7 @@
 {
     const auto context = NSGraphicsContext.currentContext.CGContext;
     CGContextSetFillColorWithColor(context, m_Theme->ViewerBackgroundColor().CGColor );
-    CGContextFillRect(context, NSRectToCGRect(_dirty_rect));
+    CGContextFillRect(context, NSRectToCGRect(self.bounds));
 }
 
 - (void) themeHasChanged

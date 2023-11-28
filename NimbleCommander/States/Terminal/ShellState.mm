@@ -227,12 +227,11 @@ static const auto g_CustomPath = "terminal.customShellPath";
             [strongself updateTitle];
         }
     });
-  
+
     m_Task->SetOnStateChange([=](ShellTask::TaskState _new_state) {
         if( auto strongself = weakself )
             [strongself taskStateChanged:_new_state];
     });
-    
 
     // need right CWD here
     if( m_Task->State() == ShellTask::TaskState::Inactive || m_Task->State() == ShellTask::TaskState::Dead ) {
@@ -272,13 +271,12 @@ static const auto g_CustomPath = "terminal.customShellPath";
     }
     else {
         auto children = m_Task->ChildrenList();
-        if(children.empty()) {
+        if( children.empty() ) {
             title = fmt::format("{} \u2015 {}x{}", EnsureTrailingSlash(m_Task->CWD()), sx, sy);
         }
         else {
-            title = fmt::format("{} \u2015 {} \u2015 {}x{}", EnsureTrailingSlash(m_Task->CWD()),
-                                children.back(),
-                                sx, sy);
+            title =
+                fmt::format("{} \u2015 {} \u2015 {}x{}", EnsureTrailingSlash(m_Task->CWD()), children.back(), sx, sy);
         }
     }
     return [NSString stringWithUTF8StdString:title];
@@ -305,9 +303,10 @@ static const auto g_CustomPath = "terminal.customShellPath";
     m_Task->Execute(_binary_name, _binary_dir, _params);
 }
 
-- (void)executeWithFullPath:(const char *)_path parameters:(const char *)_params
+- (void)executeWithFullPath:(const std::filesystem::path &)_binary_path
+               andArguments:(std::span<const std::string>)_params
 {
-    m_Task->ExecuteWithFullPath(_path, _params);
+    m_Task->ExecuteWithFullPath(_binary_path, _params);
 }
 
 - (bool)windowStateShouldClose:(NCMainWindowController *)sender
@@ -407,14 +406,14 @@ static const auto g_CustomPath = "terminal.customShellPath";
 - (void)taskStateChanged:(ShellTask::TaskState)_new_state
 {
     // may be a background thread
-    if(m_ChildrenTracker == nullptr || m_ChildrenTracker->pid() != m_Task->ShellPID() ) {
+    if( m_ChildrenTracker == nullptr || m_ChildrenTracker->pid() != m_Task->ShellPID() ) {
         if( m_Task->ShellPID() < 0 ) {
             m_ChildrenTracker.reset();
         }
         else {
             __weak NCTermShellState *weakself = self;
-            auto cb = [weakself]{
-                dispatch_to_main_queue([weakself]{
+            auto cb = [weakself] {
+                dispatch_to_main_queue([weakself] {
                     if( auto strongself = weakself )
                         [strongself updateTitle];
                 });

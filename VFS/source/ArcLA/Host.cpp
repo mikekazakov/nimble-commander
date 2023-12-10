@@ -15,6 +15,7 @@
 #include <sys/param.h>
 #include <mutex>
 #include <Habanero/RobinHoodUtil.h>
+#include <Habanero/algo.h>
 
 namespace nc::vfs {
 
@@ -961,47 +962,61 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
     if( symlink.state != SymlinkState::Unresolved )
         return; // was resolved in race condition
 
-    symlink.state = SymlinkState::Invalid;
-
     if( symlink.value == "." || symlink.value == "./" ) {
-        // special treating for some weird cases
-        symlink.state = SymlinkState::Loop;
+        symlink.state = SymlinkState::Loop; // special upfront treating for some weird cases
         return;
     }
 
-    const std::filesystem::path dir_path = I->m_EntryByUID[_uid].first->full_path;
-    const std::filesystem::path symlink_path = symlink.value;
+    symlink.state = SymlinkState::CurrentlyResolving;
+    auto make_invalid_state = at_scope_end([&]{symlink.state = SymlinkState::Invalid;});
+
+    const std::filesystem::path &symlink_path = symlink.value;
     std::filesystem::path result_path;
     if( symlink_path.is_relative() ) {
-        result_path = dir_path;
-        //        printf("%s\n", result_path.c_str());
-
-        // TODO: check for loops
-        for( auto i : symlink_path ) {
+        result_path = I->m_EntryByUID[_uid].first->full_path;
+        
+        for( const auto &i : symlink_path ) {
             if( i != "" && i != "." ) {
-                if( i != ".." ) {
-                    result_path /= i;
-                }
-                else {
-                    if( result_path.filename() == "." )
-                        result_path.remove_filename();
+                if( i == ".." ) {
+                    if( !result_path.has_filename() )
+                        result_path = result_path.parent_path(); // "/meow/bark/" -> "/meow/bark"
                     result_path = result_path.parent_path();
                 }
+                else {
+                    result_path /= i;
+                }
             }
-            //            printf("%s\n", result_path.c_str());
 
-            uint32_t curr_uid = ItemUID(result_path.c_str());
-            if( curr_uid == 0 || curr_uid == _uid )
+            const uint32_t curr_uid = ItemUID(result_path.c_str());
+            if( curr_uid == _uid ) {
+                make_invalid_state.disengage();
+                symlink.state = SymlinkState::Loop;
+                return;
+            }
+            if( curr_uid == 0 )
                 return;
 
-            if( I->m_Symlinks.find(curr_uid) != std::end(I->m_Symlinks) ) {
+            if( auto sym_it =  I->m_Symlinks.find(curr_uid); sym_it != std::end(I->m_Symlinks) ) {
                 // current entry is a symlink - needs an additional processing
-                auto &s = I->m_Symlinks[curr_uid];
+                const auto &s = sym_it->second;
+                
+                if( s.state == SymlinkState::CurrentlyResolving ) {
+                    make_invalid_state.disengage();
+                    symlink.state = SymlinkState::Loop;
+                    return;
+                }
+                
                 if( s.state == SymlinkState::Unresolved )
                     ResolveSymlink(s.uid);
-
-                if( s.state != SymlinkState::Resolved )
+                
+                if( s.state != SymlinkState::Resolved ) {
+                    if( s.state == SymlinkState::Loop ) {
+                        // the current part is a looping symlinks, mark the original symlink as a loop as well
+                        make_invalid_state.disengage();
+                        symlink.state = SymlinkState::Loop;
+                    }
                     return; // current part points to nowhere
+                }
 
                 result_path = s.target_path;
             }
@@ -1011,10 +1026,12 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
         result_path = symlink_path;
     }
 
-    uint32_t result_uid = ItemUID(result_path.c_str());
+    const uint32_t result_uid = ItemUID(result_path.c_str());
     if( result_uid == 0 )
         return;
-    symlink.target_path = result_path.native();
+    
+    make_invalid_state.disengage();
+    symlink.target_path = std::move(result_path);
     symlink.target_uid = result_uid;
     symlink.state = SymlinkState::Resolved;
 }
@@ -1046,7 +1063,7 @@ int ArchiveHost::ReadSymlink(const char *_symlink_path, char *_buffer, size_t _b
 
     auto &val = symlink_it->second.value;
 
-    if( val.size() >= _buffer_size )
+    if( val.native().size() >= _buffer_size )
         return VFSError::SmallBuffer;
 
     strcpy(_buffer, val.c_str());

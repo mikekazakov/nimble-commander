@@ -1,9 +1,10 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
 #include "../../include/VFS/VFSFile.h"
 #include <memory>
+#include <filesystem>
 
 namespace nc::vfs {
 
@@ -22,19 +23,19 @@ public:
                 const VFSHostPtr &_parent,
                 std::optional<std::string> _password = std::nullopt,
                 VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
-    
+
     // Creates an archive host out of a configuration of a previously existed host
     ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = nullptr);
-    
+
     // Destructor
     ~ArchiveHost();
 
     // The fixed tag identifying this VFS class
     static const char *const UniqueTag;
-    
+
     // Type-erased configuration that contains data to restore this VFS
     VFSConfiguration Configuration() const override;
-    
+
     static VFSMeta Meta();
 
     bool IsImmutableFS() const noexcept override;
@@ -84,25 +85,26 @@ public:
     /** return VFSError, not uids returned */
     int ResolvePathIfNeeded(const char *_path, char *_resolved_path, unsigned long _flags);
 
-    enum class SymlinkState
+    enum class SymlinkState : uint8_t
     {
-        /** symlink is ok to use */
-        Resolved = 0,
-        /** default value - never tried to resolve */
-        Unresolved = 1,
-        /** can't resolve symlink since it point to non-existant file or if some error occured while
-         * resolving */
-        Invalid = 2,
-        /** symlink resolving resulted in loop, thus symlink can't be used */
-        Loop = 3
+        /// symlink is ok to use
+        Resolved,
+        /// default value - never tried to resolve
+        Unresolved,
+        /// in-flight state used during the symlink resolution process
+        CurrentlyResolving,
+        /// can't resolve symlink since it point to non-existant file or if some error occured while resolving
+        Invalid,
+        /// symlink resolving resulted in loop, thus symlink can't be used
+        Loop
     };
 
     struct Symlink {
+        std::filesystem::path value;       // the value stored in the symlink
+        std::filesystem::path target_path; // meaningful only if state == SymlinkState::Resolved
+        uint32_t uid = 0;                  // uid of symlink entry itself
+        uint32_t target_uid = 0;           // meaningful only if state == SymlinkState::Resolved
         SymlinkState state = SymlinkState::Unresolved;
-        std::string value = "";
-        uint32_t uid = 0;             // uid of symlink entry itself
-        uint32_t target_uid = 0;      // meaningful only if state == SymlinkState::Resolved
-        std::string target_path = ""; // meaningful only if state == SymlinkState::Resolved
     };
 
     /** searches for entry in archive without any path resolving */

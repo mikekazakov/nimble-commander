@@ -15,7 +15,8 @@ mkdir build
 cd build
 cmake \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-  -D CMAKE_C_FLAGS="-mmacosx-version-min=10.15 -fvisibility=hidden -flto -Os" \
+  -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
+  -D CMAKE_C_FLAGS="-fvisibility=hidden -flto -Os" \
   ..
 make DESTDIR=./installed -j install
 cd ../../..

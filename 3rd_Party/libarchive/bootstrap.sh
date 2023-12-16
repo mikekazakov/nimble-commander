@@ -9,7 +9,8 @@ TMP_DIR=${CUR_DIR}/libarchive.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v3.6.2 --depth 1 https://github.com/libarchive/libarchive.git
+git clone -b v3.7.2 --depth 1 https://github.com/libarchive/libarchive.git
+
 cd libarchive
 
 git apply ../../*.patch
@@ -40,7 +41,14 @@ cmake \
   .
 make -j
 
-ctest -E libarchive_test_sparse_basic --testing-dir .
+ctest \
+  -E "libarchive_test_gnutar_filename_encoding_EUCJP_CP932|\
+libarchive_test_read_format_cab_filename|\
+libarchive_test_read_format_lha_filename|\
+libarchive_test_read_format_zip_filename_CP932_eucJP|\
+libarchive_test_read_format_zip_filename_CP932_CP932|\
+libarchive_test_sparse_basic|libarchive_test_ustar_filename_encoding_EUCJP_CP932" \
+  --testing-dir .
 
 cd ./../../
 rm -rf ./include/

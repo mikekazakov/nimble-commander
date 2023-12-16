@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/zstd.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b v1.5.1 --single-branch https://github.com/facebook/zstd.git
+git clone -b v1.5.5 --single-branch https://github.com/facebook/zstd.git
 
 cd zstd/build/cmake
 mkdir builddir
@@ -19,7 +19,7 @@ cmake \
   -D CMAKE_BUILD_TYPE=Release \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
   -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
-  -D CMAKE_C_FLAGS="-fvisibility=hidden -flto" \
+  -D CMAKE_C_FLAGS="-fvisibility=hidden -flto -DZSTDLIB_VISIBLE= -DZSTDLIB_HIDDEN=" \
   -D BUILD_SHARED_LIBS="OFF" \
   -D ZSTD_BUILD_STATIC="ON" \
   -D ZSTD_BUILD_SHARED="OFF" \

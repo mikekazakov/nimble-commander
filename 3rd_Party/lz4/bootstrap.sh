@@ -19,7 +19,7 @@ cmake \
   -D CMAKE_BUILD_TYPE=Release \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
   -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
-  -D CMAKE_C_FLAGS="-fvisibility=hidden -flto" \
+  -D CMAKE_C_FLAGS="-fvisibility=hidden -flto -DLZ4LIB_VISIBILITY=" \
   -D BUILD_SHARED_LIBS="OFF" \
   -D BUILD_STATIC_LIBS="ON" \
   ..

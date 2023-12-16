@@ -1,0 +1,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ff1b025..93f4a93 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2060,7 +2060,6 @@ CHECK_C_SOURCE_COMPILES("void __attribute__((visibility(\"default\"))) foo(void)
+ int main() { return 0; }" HAVE_VISIBILITY_ATTR)
+ IF (HAVE_VISIBILITY_ATTR)
+   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
+-  ADD_DEFINITIONS(-D__LIBARCHIVE_ENABLE_VISIBILITY)
+ ENDIF(HAVE_VISIBILITY_ATTR)
+ SET(CMAKE_REQUIRED_FLAGS "${OLD_CMAKE_REQUIRED_FLAGS}")
+ 

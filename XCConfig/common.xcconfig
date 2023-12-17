@@ -31,7 +31,7 @@ DEBUG_INFORMATION_FORMAT = dwarf
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // C
-OTHER_CFLAGS = -fvisibility=hidden -Wframe-larger-than=32768 -fbracket-depth=512
+OTHER_CFLAGS = -fvisibility=hidden -fvisibility-inlines-hidden -fvisibility-inlines-hidden-static-local-var -Wframe-larger-than=32768 -fbracket-depth=512
 
 // C++
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2b -Wall -Wextra -Wold-style-cast -Werror -cxx-isystem$(THRDPTY)/boost/include -cxx-isystem$(THRDPTY)/spdlog/include -cxx-isystem$(THRDPTY)/libarchive/include -cxx-isystem$(THRDPTY)/googletest/include -cxx-isystem$(THRDPTY)/robin_hood/include

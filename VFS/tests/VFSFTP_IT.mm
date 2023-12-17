@@ -1,4 +1,6 @@
 // Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+#if 0 // disabled until new docker-based VMs are rolled out
+
 #include "Tests.h"
 #include "TestEnv.h"
 #include "NCE.h"
@@ -18,6 +20,12 @@ using namespace nc::vfs;
 static std::string UUID()
 {
     return [NSUUID.UUID UUIDString].UTF8String;
+}
+
+TEST_CASE(PREFIX "local ftp - just connect", "[!mayfail]")
+{
+    VFSHostPtr host;
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "anonymous", "anonymous", "/"));
 }
 
 TEST_CASE(PREFIX "local ftp", "[!mayfail]")
@@ -228,3 +236,5 @@ TEST_CASE(PREFIX "big files reading cancellation", "[!mayfail]")
         REQUIRE(std::chrono::system_clock::now() < deadline);
     }
 }
+
+#endif

@@ -65,14 +65,14 @@ static bool FuzzySearchSatisfiable(CFStringRef _hay,
                                    NSString *_needle,
                                    size_t _needle_start) noexcept
 {
-    CFStackAllocator alloc;
+    base::CFStackAllocator alloc;
     const auto needle_len = _needle.length;
 
     size_t pos = _hay_start;
     for( size_t idx = _needle_start; idx < needle_len; ++idx ) {
         const UniChar c = [_needle characterAtIndex:idx];
         const auto cs =
-            base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharactersNoCopy(alloc.Alloc(), &c, 1, kCFAllocatorNull));
+            base::CFPtr<CFStringRef>::adopt(CFStringCreateWithCharactersNoCopy(alloc, &c, 1, kCFAllocatorNull));
         CFRange result = {0, 0};
         const bool found = CFStringFindWithOptions(
             _hay, cs.get(), CFRangeMake(pos, _hay_len - pos), kCFCompareCaseInsensitive, &result);
@@ -151,12 +151,12 @@ bool TextualFilter::IsValidItem(const VFSListingItem &_item, QuickSearchHiglight
     const auto textlen = text.length;
     if( textlen == 0 )
         return true; // will return true on any item with @"" filter
-    
+
     NSString *name = _item.DisplayNameNS();
     const auto namelen = name.length;
     if( textlen > namelen )
         return false; // unsatisfiable by definition
-    
+
     if( type == Anywhere ) {
         NSRange result = [name rangeOfString:text options:NSCaseInsensitiveSearch];
         if( result.length == 0 )

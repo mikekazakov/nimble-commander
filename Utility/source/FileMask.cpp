@@ -74,10 +74,10 @@ InplaceFormCLowercaseString::InplaceFormCLowercaseString(std::string_view _strin
         m_View = _string; // using the original string! The characters are not copied.
 
     using base::CFPtr;
-    CFStackAllocator allocator;
+    base::CFStackAllocator allocator;
 
     auto original =
-        CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(allocator.Alloc(),
+        CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(allocator,
                                                                 reinterpret_cast<const UInt8 *>(_string.data()),
                                                                 _string.length(),
                                                                 kCFStringEncodingUTF8,
@@ -87,8 +87,7 @@ InplaceFormCLowercaseString::InplaceFormCLowercaseString(std::string_view _strin
     if( !original )
         return;
 
-    auto mutable_string =
-        CFPtr<CFMutableStringRef>::adopt(CFStringCreateMutableCopy(allocator.Alloc(), 0, original.get()));
+    auto mutable_string = CFPtr<CFMutableStringRef>::adopt(CFStringCreateMutableCopy(allocator, 0, original.get()));
     if( !mutable_string )
         return;
 
@@ -114,9 +113,9 @@ std::string_view InplaceFormCLowercaseString::str() const noexcept
 
 static std::string ProduceFormCLowercase(std::string_view _string)
 {
-    CFStackAllocator allocator;
+    base::CFStackAllocator allocator;
 
-    CFStringRef original = CFStringCreateWithBytesNoCopy(allocator.Alloc(),
+    CFStringRef original = CFStringCreateWithBytesNoCopy(allocator,
                                                          reinterpret_cast<const UInt8 *>(_string.data()),
                                                          _string.length(),
                                                          kCFStringEncodingUTF8,
@@ -126,7 +125,7 @@ static std::string ProduceFormCLowercase(std::string_view _string)
     if( !original )
         return "";
 
-    CFMutableStringRef mutable_string = CFStringCreateMutableCopy(allocator.Alloc(), 0, original);
+    CFMutableStringRef mutable_string = CFStringCreateMutableCopy(allocator, 0, original);
     CFRelease(original);
     if( !mutable_string )
         return "";

@@ -79,9 +79,9 @@ static VFSConfiguration ComposeConfiguration(const std::string &_path, std::opti
 
 static void DecodeStringToUTF8(const void *_bytes, size_t _sz, CFStringEncoding _enc, char *_buf, size_t _buf_sz)
 {
-    CFStackAllocator alloc;
+    base::CFStackAllocator alloc;
     auto str = CFStringCreateWithBytesNoCopy(
-        alloc.Alloc(), reinterpret_cast<const UInt8 *>(_bytes), _sz, _enc, false, kCFAllocatorNull);
+        alloc, reinterpret_cast<const UInt8 *>(_bytes), _sz, _enc, false, kCFAllocatorNull);
     if( str ) {
         if( auto utf8 = CFStringGetCStringPtr(str, kCFStringEncodingUTF8) )
             strcpy(_buf, utf8);
@@ -283,7 +283,7 @@ int ArchiveHost::ReadArchiveListing()
     }
 
     std::optional<CFStringEncoding> detected_encoding;
-        
+
     struct archive_entry *aentry;
     int ret;
     while( (ret = archive_read_next_header(I->m_Arc, &aentry)) == ARCHIVE_OK ) {
@@ -295,7 +295,7 @@ int ArchiveHost::ReadArchiveListing()
         const auto entry_pathname = archive_entry_pathname(aentry);
         if( entry_pathname == nullptr )
             continue; // check for broken archives
-        
+
         const auto entry_pathname_len = strlen(entry_pathname);
         if( entry_pathname_len == 0 )
             continue;
@@ -968,13 +968,13 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
     }
 
     symlink.state = SymlinkState::CurrentlyResolving;
-    auto make_invalid_state = at_scope_end([&]{symlink.state = SymlinkState::Invalid;});
+    auto make_invalid_state = at_scope_end([&] { symlink.state = SymlinkState::Invalid; });
 
     const std::filesystem::path &symlink_path = symlink.value;
     std::filesystem::path result_path;
     if( symlink_path.is_relative() ) {
         result_path = I->m_EntryByUID[_uid].first->full_path;
-        
+
         for( const auto &i : symlink_path ) {
             if( i != "" && i != "." ) {
                 if( i == ".." ) {
@@ -996,19 +996,19 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
             if( curr_uid == 0 )
                 return;
 
-            if( auto sym_it =  I->m_Symlinks.find(curr_uid); sym_it != std::end(I->m_Symlinks) ) {
+            if( auto sym_it = I->m_Symlinks.find(curr_uid); sym_it != std::end(I->m_Symlinks) ) {
                 // current entry is a symlink - needs an additional processing
                 const auto &s = sym_it->second;
-                
+
                 if( s.state == SymlinkState::CurrentlyResolving ) {
                     make_invalid_state.disengage();
                     symlink.state = SymlinkState::Loop;
                     return;
                 }
-                
+
                 if( s.state == SymlinkState::Unresolved )
                     ResolveSymlink(s.uid);
-                
+
                 if( s.state != SymlinkState::Resolved ) {
                     if( s.state == SymlinkState::Loop ) {
                         // the current part is a looping symlinks, mark the original symlink as a loop as well
@@ -1029,7 +1029,7 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
     const uint32_t result_uid = ItemUID(result_path.c_str());
     if( result_uid == 0 )
         return;
-    
+
     make_invalid_state.disengage();
     symlink.target_path = std::move(result_path);
     symlink.target_uid = result_uid;

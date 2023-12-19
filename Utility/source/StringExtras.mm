@@ -1,10 +1,9 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <Utility/StringExtras.h>
 #include <Habanero/CFStackAllocator.h>
 
-static void
-StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETruncationType truncationType)
+static void StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETruncationType truncationType)
 {
     if( [str length] <= maxCharacters )
         return;
@@ -42,10 +41,8 @@ StringTruncateTo(NSMutableString *str, unsigned maxCharacters, ETruncationType t
     [str replaceCharactersInRange:replaceRange withString:sEllipsisString];
 }
 
-static void StringTruncateToWidth(NSMutableString *str,
-                                  double maxWidth,
-                                  ETruncationType truncationType,
-                                  NSDictionary *attributes)
+static void
+StringTruncateToWidth(NSMutableString *str, double maxWidth, ETruncationType truncationType, NSDictionary *attributes)
 {
     // First check if we have to truncate at all.
     if( [str sizeWithAttributes:attributes].width <= maxWidth )
@@ -89,10 +86,8 @@ static void StringTruncateToWidth(NSMutableString *str,
         StringTruncateTo(str, hi, truncationType);
 }
 
-NSString *StringByTruncatingToWidth(NSString *str,
-                                    double inWidth,
-                                    ETruncationType truncationType,
-                                    NSDictionary *attributes)
+NSString *
+StringByTruncatingToWidth(NSString *str, double inWidth, ETruncationType truncationType, NSDictionary *attributes)
 {
     if( [str sizeWithAttributes:attributes].width > inWidth ) {
         NSMutableString *mutableCopy = [str mutableCopy];
@@ -122,22 +117,18 @@ NSString *StringByTruncatingToWidth(NSString *str,
 
 + (instancetype)stringWithUTF8StringNoCopy:(const char *)nullTerminatedCString
 {
-    auto cf_str =
-        CFStringCreateWithBytesNoCopy(0,
-                                      reinterpret_cast<const UInt8 *>(nullTerminatedCString),
-                                      std::strlen(nullTerminatedCString),
-                                      kCFStringEncodingUTF8,
-                                      false,
-                                      kCFAllocatorNull);
+    auto cf_str = CFStringCreateWithBytesNoCopy(0,
+                                                reinterpret_cast<const UInt8 *>(nullTerminatedCString),
+                                                std::strlen(nullTerminatedCString),
+                                                kCFStringEncodingUTF8,
+                                                false,
+                                                kCFAllocatorNull);
     return static_cast<NSString *>(CFBridgingRelease(cf_str));
 }
 + (instancetype)stringWithUTF8StdString:(const std::string &)stdstring
 {
-    auto cf_str = CFStringCreateWithBytes(0,
-                                          reinterpret_cast<const UInt8 *>(stdstring.c_str()),
-                                          stdstring.length(),
-                                          kCFStringEncodingUTF8,
-                                          false);
+    auto cf_str = CFStringCreateWithBytes(
+        0, reinterpret_cast<const UInt8 *>(stdstring.c_str()), stdstring.length(), kCFStringEncodingUTF8, false);
     if( cf_str == nullptr )
         return nil;
     return static_cast<NSString *>(CFBridgingRelease(cf_str));
@@ -145,28 +136,19 @@ NSString *StringByTruncatingToWidth(NSString *str,
 
 + (instancetype)stringWithUTF8StdStringView:(std::string_view)_string_view
 {
-    auto cf_str = CFStringCreateWithBytes(0,
-                                          reinterpret_cast<const UInt8 *>(_string_view.data()),
-                                          _string_view.length(),
-                                          kCFStringEncodingUTF8,
-                                          false);
+    auto cf_str = CFStringCreateWithBytes(
+        0, reinterpret_cast<const UInt8 *>(_string_view.data()), _string_view.length(), kCFStringEncodingUTF8, false);
     return static_cast<NSString *>(CFBridgingRelease(cf_str));
 }
 
 + (instancetype)stringWithUTF8StdStringFallback:(const std::string &)stdstring
 {
-    if( auto s = CFStringCreateWithBytes(0,
-                                         reinterpret_cast<const UInt8 *>(stdstring.c_str()),
-                                         stdstring.length(),
-                                         kCFStringEncodingUTF8,
-                                         false) )
+    if( auto s = CFStringCreateWithBytes(
+            0, reinterpret_cast<const UInt8 *>(stdstring.c_str()), stdstring.length(), kCFStringEncodingUTF8, false) )
         return static_cast<NSString *>(CFBridgingRelease(s));
 
-    auto s = CFStringCreateWithBytes(0,
-                                     reinterpret_cast<const UInt8 *>(stdstring.c_str()),
-                                     stdstring.length(),
-                                     kCFStringEncodingMacRoman,
-                                     false);
+    auto s = CFStringCreateWithBytes(
+        0, reinterpret_cast<const UInt8 *>(stdstring.c_str()), stdstring.length(), kCFStringEncodingMacRoman, false);
     return static_cast<NSString *>(CFBridgingRelease(s));
 }
 
@@ -196,9 +178,9 @@ bool LowercaseEqual(std::string_view _s1, std::string_view _s2) noexcept
     if( _s1.data() == nullptr || _s2.data() == nullptr )
         return false;
 
-    CFStackAllocator st_alloc;
+    nc::base::CFStackAllocator st_alloc;
 
-    const auto s1 = CFStringCreateWithBytesNoCopy(st_alloc.Alloc(),
+    const auto s1 = CFStringCreateWithBytesNoCopy(st_alloc,
                                                   reinterpret_cast<const UInt8 *>(_s1.data()),
                                                   _s1.length(),
                                                   kCFStringEncodingUTF8,
@@ -207,7 +189,7 @@ bool LowercaseEqual(std::string_view _s1, std::string_view _s2) noexcept
     if( !s1 )
         return false;
 
-    const auto s2 = CFStringCreateWithBytesNoCopy(st_alloc.Alloc(),
+    const auto s2 = CFStringCreateWithBytesNoCopy(st_alloc,
                                                   reinterpret_cast<const UInt8 *>(_s2.data()),
                                                   _s2.length(),
                                                   kCFStringEncodingUTF8,

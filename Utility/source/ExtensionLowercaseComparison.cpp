@@ -15,9 +15,9 @@ ExtensionLowercaseComparison &ExtensionLowercaseComparison::Instance() noexcept
 
 static std::string ProduceFormCLowercase(std::string_view _string)
 {
-    CFStackAllocator allocator;
+    base::CFStackAllocator allocator;
 
-    CFStringRef original = CFStringCreateWithBytesNoCopy(allocator.Alloc(),
+    CFStringRef original = CFStringCreateWithBytesNoCopy(allocator,
                                                          reinterpret_cast<const UInt8 *>(_string.data()),
                                                          _string.length(),
                                                          kCFStringEncodingUTF8,
@@ -27,7 +27,7 @@ static std::string ProduceFormCLowercase(std::string_view _string)
     if( !original )
         return {};
 
-    CFMutableStringRef mutable_string = CFStringCreateMutableCopy(allocator.Alloc(), 0, original);
+    CFMutableStringRef mutable_string = CFStringCreateMutableCopy(allocator, 0, original);
     CFRelease(original);
     if( !mutable_string )
         return {};

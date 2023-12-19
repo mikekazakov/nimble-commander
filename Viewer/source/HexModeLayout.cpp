@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeLayout.h"
 #include <Habanero/CFRange.h>
 #include <cmath>
@@ -19,9 +19,8 @@ HexModeLayout::ScrollerPosition HexModeLayout::CalcScrollerPosition() const noex
     if( m_FileSize > bytes_in_view ) {
         const auto &working_set = m_Frame->WorkingSet();
         ScrollerPosition position;
-        position.position =
-            double(working_set.GlobalOffset() + m_ScrollOffset.row * m_Frame->BytesPerRow()) /
-            double(m_FileSize - bytes_in_view);
+        position.position = double(working_set.GlobalOffset() + m_ScrollOffset.row * m_Frame->BytesPerRow()) /
+                            double(m_FileSize - bytes_in_view);
         position.proportion = double(bytes_in_view) / double(m_FileSize);
         return position;
     }
@@ -60,8 +59,7 @@ void HexModeLayout::SetOffset(ScrollOffset _new_offset)
     m_ScrollOffset = _new_offset;
 }
 
-std::optional<int>
-HexModeLayout::FindRowToScrollWithGlobalOffset(int64_t _global_offset) const noexcept
+std::optional<int> HexModeLayout::FindRowToScrollWithGlobalOffset(int64_t _global_offset) const noexcept
 {
     if( m_Frame->Empty() ) {
         // let's pretend that an empty frame should always yeild a zero row position
@@ -95,8 +93,7 @@ HexModeLayout::FindRowToScrollWithGlobalOffset(int64_t _global_offset) const noe
     return std::nullopt;
 }
 
-int64_t HexModeLayout::CalcGlobalOffsetForScrollerPosition(
-    ScrollerPosition _scroller_position) const noexcept
+int64_t HexModeLayout::CalcGlobalOffsetForScrollerPosition(ScrollerPosition _scroller_position) const noexcept
 {
     const int64_t bytes_total = m_FileSize;
     const int64_t bytes_in_view = BytesInView();
@@ -108,8 +105,7 @@ int64_t HexModeLayout::CalcGlobalOffset() const noexcept
     const auto working_set_pos = m_Frame->WorkingSet().GlobalOffset();
     const auto first_row_index = m_ScrollOffset.row;
     if( first_row_index >= 0 && first_row_index < m_Frame->NumberOfRows() )
-        return working_set_pos +
-               static_cast<long>(m_Frame->RowAtIndex(first_row_index).BytesStart());
+        return working_set_pos + static_cast<long>(m_Frame->RowAtIndex(first_row_index).BytesStart());
     else
         return working_set_pos;
 }
@@ -133,10 +129,8 @@ int HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(const HexModeFrame &ol
             // new frame.
             const auto &old_line = old_frame.RowAtIndex(old_vertical_offset);
             const auto old_byte_offset = old_line.BytesStart();
-            const auto closest =
-                HexModeFrame::FindClosest(new_frame.Rows().data(),
-                                          new_frame.Rows().data() + new_frame.NumberOfRows(),
-                                          old_byte_offset);
+            const auto closest = HexModeFrame::FindClosest(
+                new_frame.Rows().data(), new_frame.Rows().data() + new_frame.NumberOfRows(), old_byte_offset);
             return closest;
         }
     }
@@ -159,10 +153,9 @@ int HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(const HexModeFrame &ol
             const auto new_byte_offset = old_byte_offset + old_global_offset - new_global_offset;
             if( new_byte_offset < 0 || new_byte_offset > std::numeric_limits<int>::max() )
                 return 0; // can't possibly satisfy
-            const auto closest =
-                HexModeFrame::FindClosest(new_frame.Rows().data(),
-                                          new_frame.Rows().data() + new_frame.NumberOfRows(),
-                                          static_cast<int>(new_byte_offset));
+            const auto closest = HexModeFrame::FindClosest(new_frame.Rows().data(),
+                                                           new_frame.Rows().data() + new_frame.NumberOfRows(),
+                                                           static_cast<int>(new_byte_offset));
             return closest + delta_offset;
         }
         else {
@@ -172,10 +165,9 @@ int HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(const HexModeFrame &ol
             const auto new_byte_offset = old_byte_offset + old_global_offset - new_global_offset;
             if( new_byte_offset < 0 || new_byte_offset > std::numeric_limits<int>::max() )
                 return 0; // can't possibly satisfy
-            const auto closest =
-                HexModeFrame::FindClosest(new_frame.Rows().data(),
-                                          new_frame.Rows().data() + new_frame.NumberOfRows(),
-                                          static_cast<int>(new_byte_offset));
+            const auto closest = HexModeFrame::FindClosest(new_frame.Rows().data(),
+                                                           new_frame.Rows().data() + new_frame.NumberOfRows(),
+                                                           static_cast<int>(new_byte_offset));
             return closest;
         }
     }
@@ -227,8 +219,7 @@ HexModeLayout::HitPart HexModeLayout::HitTest(double _x) const
 
 int HexModeLayout::RowIndexFromYCoordinate(const double _y) const
 {
-    const auto scrolled =
-        _y + m_ScrollOffset.row * m_Frame->FontInfo().LineHeight() + m_ScrollOffset.smooth;
+    const auto scrolled = _y + m_ScrollOffset.row * m_Frame->FontInfo().LineHeight() + m_ScrollOffset.smooth;
     const auto index = static_cast<int>(std::floor(scrolled / m_Frame->FontInfo().LineHeight()));
     if( index < 0 )
         return -1;
@@ -270,8 +261,7 @@ int HexModeLayout::ByteOffsetFromColumnHit(CGPoint _position) const
             const auto local_x = x - x_offsets.columns[i];
             const auto triplet_fract = local_x / (symb_width * 3);
             const auto round_up = std::floor(triplet_fract) != std::floor(triplet_fract + 0.33);
-            const auto local_byte =
-                static_cast<int>(std::floor(triplet_fract)) + (round_up ? 1 : 0);
+            const auto local_byte = static_cast<int>(std::floor(triplet_fract)) + (round_up ? 1 : 0);
             return row.BytesStart() + std::min(bytes_per_column * i + local_byte, row.BytesNum());
         }
     }
@@ -292,25 +282,22 @@ int HexModeLayout::CharOffsetFromSnippetHit(CGPoint _position) const
     if( x <= x_offsets.snippet )
         return row.CharsStart();
 
-    const auto ht =
-        CTLineGetStringIndexForPosition(row.SnippetLine(), CGPointMake(x - x_offsets.snippet, 0.));
+    const auto ht = CTLineGetStringIndexForPosition(row.SnippetLine(), CGPointMake(x - x_offsets.snippet, 0.));
     if( ht == kCFNotFound )
         return row.CharsStart();
     return int(row.CharsStart() + ht);
 }
 
-std::pair<double, double>
-HexModeLayout::CalcColumnSelectionBackground(const CFRange _bytes_selection,
-                                             const int _row_index,
-                                             const int _columm_index,
-                                             const HorizontalOffsets &_offsets) const
+std::pair<double, double> HexModeLayout::CalcColumnSelectionBackground(const CFRange _bytes_selection,
+                                                                       const int _row_index,
+                                                                       const int _columm_index,
+                                                                       const HorizontalOffsets &_offsets) const
 {
     const auto &row = m_Frame->RowAtIndex(_row_index);
 
     const auto bytes_range =
-        CFRangeMake(row.BytesStart() + _columm_index * m_Frame->BytesPerColumn(),
-                    row.BytesInColum(_columm_index));
-    const auto sel_range = CFRangeIntersect(_bytes_selection, bytes_range);
+        CFRangeMake(row.BytesStart() + _columm_index * m_Frame->BytesPerColumn(), row.BytesInColum(_columm_index));
+    const auto sel_range = base::CFRangeIntersect(_bytes_selection, bytes_range);
     if( sel_range.length <= 0 )
         return {0., 0.};
 
@@ -323,34 +310,30 @@ HexModeLayout::CalcColumnSelectionBackground(const CFRange _bytes_selection,
     return {std::floor(x1), std::ceil(x2)};
 }
 
-std::pair<double, double>
-HexModeLayout::CalcSnippetSelectionBackground(const CFRange _chars_selection,
-                                              const int _row_index,
-                                              const HorizontalOffsets &_offsets) const
+std::pair<double, double> HexModeLayout::CalcSnippetSelectionBackground(const CFRange _chars_selection,
+                                                                        const int _row_index,
+                                                                        const HorizontalOffsets &_offsets) const
 {
     const auto &row = m_Frame->RowAtIndex(_row_index);
     const auto chars_range = CFRangeMake(row.CharsStart(), row.CharsNum());
-    const auto sel_range = CFRangeIntersect(_chars_selection, chars_range);
+    const auto sel_range = base::CFRangeIntersect(_chars_selection, chars_range);
     if( sel_range.length <= 0 ) // [      ]
         return {0., 0.};
 
     const auto ctline = row.SnippetLine();
-    if( CFRangeInside(_chars_selection, chars_range) ) { // [******]
+    if( base::CFRangeInside(_chars_selection, chars_range) ) { // [******]
         const auto x1 = 0.;
         const auto x2 = CTLineGetOffsetForStringIndex(ctline, row.CharsNum(), nullptr);
         return {std::floor(x1) + _offsets.snippet, std::ceil(x2) + _offsets.snippet};
     }
     else if( sel_range.location == chars_range.location ) { // [****  ]
         const auto x1 = 0.;
-        const auto x2 = CTLineGetOffsetForStringIndex(
-            ctline, CFRangeMax(sel_range) - row.CharsStart(), nullptr);
+        const auto x2 = CTLineGetOffsetForStringIndex(ctline, base::CFRangeMax(sel_range) - row.CharsStart(), nullptr);
         return {std::floor(x1) + _offsets.snippet, std::ceil(x2) + _offsets.snippet};
     }
     else { // [ ***  ]
-        const auto x1 =
-            CTLineGetOffsetForStringIndex(ctline, sel_range.location - row.CharsStart(), nullptr);
-        const auto x2 = CTLineGetOffsetForStringIndex(
-            ctline, CFRangeMax(sel_range) - row.CharsStart(), nullptr);
+        const auto x1 = CTLineGetOffsetForStringIndex(ctline, sel_range.location - row.CharsStart(), nullptr);
+        const auto x2 = CTLineGetOffsetForStringIndex(ctline, base::CFRangeMax(sel_range) - row.CharsStart(), nullptr);
         return {std::floor(x1) + _offsets.snippet, std::ceil(x2) + _offsets.snippet};
     }
 }
@@ -360,24 +343,22 @@ std::pair<int, int> HexModeLayout::MergeSelection(const CFRange _existing_select
                                                   const int _first_mouse_hit_index,
                                                   const int _current_mouse_hit_index) noexcept
 {
-    if( _modifiying_existing == false || _existing_selection.location < 0 ||
-        _existing_selection.length <= 0 ) {
+    if( _modifiying_existing == false || _existing_selection.location < 0 || _existing_selection.length <= 0 ) {
         return {std::min(_first_mouse_hit_index, _current_mouse_hit_index),
                 std::max(_first_mouse_hit_index, _current_mouse_hit_index)};
     }
 
-    if( CFRangeInside(_existing_selection, _first_mouse_hit_index) ) {
-        const auto attach_top =
-            _first_mouse_hit_index - _existing_selection.location >
-            _existing_selection.location + _existing_selection.length - _first_mouse_hit_index;
-        const auto base = attach_top ? static_cast<int>(_existing_selection.location)
-                                     : static_cast<int>(_existing_selection.location) +
-                                           static_cast<int>(_existing_selection.length);
+    if( base::CFRangeInside(_existing_selection, _first_mouse_hit_index) ) {
+        const auto attach_top = _first_mouse_hit_index - _existing_selection.location >
+                                _existing_selection.location + _existing_selection.length - _first_mouse_hit_index;
+        const auto base =
+            attach_top ? static_cast<int>(_existing_selection.location)
+                       : static_cast<int>(_existing_selection.location) + static_cast<int>(_existing_selection.length);
         return {std::min(base, _current_mouse_hit_index), std::max(base, _current_mouse_hit_index)};
     }
-    else if( _first_mouse_hit_index < CFRangeMax(_existing_selection) &&
-             _current_mouse_hit_index < CFRangeMax(_existing_selection) ) {
-        const auto base = static_cast<int>(CFRangeMax(_existing_selection));
+    else if( _first_mouse_hit_index < base::CFRangeMax(_existing_selection) &&
+             _current_mouse_hit_index < base::CFRangeMax(_existing_selection) ) {
+        const auto base = static_cast<int>(base::CFRangeMax(_existing_selection));
         return {std::min(base, _current_mouse_hit_index), std::max(base, _current_mouse_hit_index)};
     }
     else if( _first_mouse_hit_index > _existing_selection.location &&
@@ -391,9 +372,9 @@ std::pair<int, int> HexModeLayout::MergeSelection(const CFRange _existing_select
     }
 }
 
-void HexModeLayout::SetFileSize( int64_t _file_size )
+void HexModeLayout::SetFileSize(int64_t _file_size)
 {
-    m_FileSize = _file_size;    
+    m_FileSize = _file_size;
 }
 
 }

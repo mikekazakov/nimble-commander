@@ -11,6 +11,7 @@
 #include <cmath>
 
 using namespace nc;
+using namespace nc::base;
 using namespace nc::viewer;
 using nc::utility::FontGeometryInfo;
 

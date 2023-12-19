@@ -48,8 +48,7 @@ static const auto g_PrefsPFNextTime = CFSTR("proFeaturesIAPNextShowTime");
 }
 
 // background thread
-- (void)productsRequest:(SKProductsRequest *) [[maybe_unused]] request
-     didReceiveResponse:(SKProductsResponse *)response
+- (void)productsRequest:(SKProductsRequest *) [[maybe_unused]] request didReceiveResponse:(SKProductsResponse *)response
 {
     for( SKProduct *p in response.products ) {
         if( [p.productIdentifier isEqualToString:g_ProFeaturesInAppID] ) {
@@ -62,8 +61,7 @@ static const auto g_PrefsPFNextTime = CFSTR("proFeaturesIAPNextShowTime");
             NSString *price_string = [formatter stringFromNumber:p.price];
             if( ![price_string isEqualToString:m_PriceString] ) {
                 m_PriceString = price_string;
-                [NSUserDefaults.standardUserDefaults setObject:m_PriceString
-                                                        forKey:g_PrefsPriceString];
+                [NSUserDefaults.standardUserDefaults setObject:m_PriceString forKey:g_PrefsPriceString];
             }
         }
     }
@@ -77,14 +75,12 @@ static const auto g_PrefsPFNextTime = CFSTR("proFeaturesIAPNextShowTime");
 }
 
 // background thread
-- (void)request:(SKRequest *) [[maybe_unused]] request
-    didFailWithError:(NSError *) [[maybe_unused]] error
+- (void)request:(SKRequest *) [[maybe_unused]] request didFailWithError:(NSError *) [[maybe_unused]] error
 {
 }
 
 // background thread
-- (void)paymentQueue:(SKPaymentQueue *)queue
-    updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions
 {
     for( SKPaymentTransaction *pt in transactions ) {
         switch( pt.transactionState ) {
@@ -159,15 +155,15 @@ static const auto g_PrefsPFNextTime = CFSTR("proFeaturesIAPNextShowTime");
                                                               // already bought pro features
         m_FeedbackManager->ApplicationRunsCount() <
             min_runs || // don't show nag screen if user didn't use software for long enough
-        CFDefaultsGetBool(g_PrefsPFDontShow) ) // don't show nag screen it user has opted to
+        nc::base::CFDefaultsGetBool(g_PrefsPFDontShow) ) // don't show nag screen it user has opted to
         return;
 
-    const auto next_time = CFDefaultsGetOptionalLong(g_PrefsPFNextTime);
+    const auto next_time = nc::base::CFDefaultsGetOptionalLong(g_PrefsPFNextTime);
     if( next_time && *next_time > time(0) )
         return; // it's not time yet
 
     // setup next show time
-    CFDefaultsSetLong(g_PrefsPFNextTime, time(0) + next_show_delay);
+    nc::base::CFDefaultsSetLong(g_PrefsPFNextTime, time(0) + next_show_delay);
 
     // let's show a nag screen
     ProFeaturesWindowController *w = [[ProFeaturesWindowController alloc] init];
@@ -175,7 +171,7 @@ static const auto g_PrefsPFNextTime = CFSTR("proFeaturesIAPNextShowTime");
     const auto result = [NSApp runModalForWindow:w.window];
 
     if( w.dontShowAgain ) {
-        CFDefaultsSetBool(g_PrefsPFDontShow, true);
+        nc::base::CFDefaultsSetBool(g_PrefsPFDontShow, true);
     }
     if( result == NSModalResponseOK ) {
         dispatch_to_main_queue([self] { [self askUserToBuyProFeatures]; });

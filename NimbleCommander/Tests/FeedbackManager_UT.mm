@@ -4,6 +4,7 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <Habanero/CFDefaultsCPP.h>
 
+using namespace nc::base;
 using nc::FeedbackManager;
 using nc::FeedbackManagerImpl;
 

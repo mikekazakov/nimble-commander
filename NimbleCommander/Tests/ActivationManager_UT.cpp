@@ -9,6 +9,7 @@
 
 using ExternalLicenseSupport = nc::bootstrap::ActivationManagerBase::ExternalLicenseSupport;
 using TrialPeriodSupport = nc::bootstrap::ActivationManagerBase::TrialPeriodSupport;
+using namespace nc::base;
 using nc::bootstrap::ActivationManager;
 using nc::bootstrap::ActivationManagerImpl;
 using Distribution = ActivationManager::Distribution;

@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2021 Michael G. Kazakov
+/* Copyright (c) 2016-2023 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -16,7 +16,7 @@
 #include <Habanero/algo.h>
 #include <Habanero/CFString.h>
 
-using namespace std;
+namespace nc::base {
 
 bool CFDefaultsHasValue(CFStringRef _key) noexcept
 {
@@ -27,54 +27,54 @@ bool CFDefaultsHasValue(CFStringRef _key) noexcept
     return true;
 }
 
-optional<int> CFDefaultsGetOptionalInt(CFStringRef _key) noexcept
+std::optional<int> CFDefaultsGetOptionalInt(CFStringRef _key) noexcept
 {
     int result = 0;
-    
+
     CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
     if( !val )
-        return nullopt;
-    auto release_val = at_scope_end([=]{ CFRelease(val); });
-    
+        return {};
+    auto release_val = at_scope_end([=] { CFRelease(val); });
+
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
         CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberIntType, &result);
     }
-    
+
     return result;
 }
 
-optional<long> CFDefaultsGetOptionalLong(CFStringRef _key) noexcept
+std::optional<long> CFDefaultsGetOptionalLong(CFStringRef _key) noexcept
 {
     long result = 0;
-    
+
     CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
     if( !val )
-        return nullopt;
-    auto release_val = at_scope_end([=]{ CFRelease(val); });
-    
+        return {};
+    auto release_val = at_scope_end([=] { CFRelease(val); });
+
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
         CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberLongType, &result);
     }
-    
+
     return result;
 }
 
-optional<double> CFDefaultsGetOptionalDouble(CFStringRef _key) noexcept
+std::optional<double> CFDefaultsGetOptionalDouble(CFStringRef _key) noexcept
 {
     double result = 0;
-    
+
     CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
     if( !val )
-        return nullopt;
-    auto release_val = at_scope_end([=]{ CFRelease(val); });
-    
+        return {};
+    auto release_val = at_scope_end([=] { CFRelease(val); });
+
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
         CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberDoubleType, &result);
     }
-    
+
     return result;
 }
 
@@ -83,12 +83,12 @@ bool CFDefaultsGetBool(CFStringRef _key) noexcept
     return CFPreferencesGetAppBooleanValue(_key, kCFPreferencesCurrentApplication, nullptr);
 }
 
-optional<bool> CFDefaultsGetOptionalBool(CFStringRef _key) noexcept
+std::optional<bool> CFDefaultsGetOptionalBool(CFStringRef _key) noexcept
 {
     Boolean has = false;
     Boolean v = CFPreferencesGetAppBooleanValue(_key, kCFPreferencesCurrentApplication, &has);
     if( !has )
-        return nullopt;
+        return {};
     return v ? true : false;
 }
 
@@ -100,51 +100,51 @@ void CFDefaultsSetBool(CFStringRef _key, bool _value) noexcept
 double CFDefaultsGetDouble(CFStringRef _key) noexcept
 {
     double result = 0.;
-    
+
     CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
     if( !val )
         return result;
-    auto release_val = at_scope_end([=]{ CFRelease(val); });
-    
+    auto release_val = at_scope_end([=] { CFRelease(val); });
+
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
         CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberDoubleType, &result);
     }
-    
+
     return result;
 }
 
 int CFDefaultsGetInt(CFStringRef _key) noexcept
 {
     int result = 0.;
-    
+
     CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
     if( !val )
         return result;
-    auto release_val = at_scope_end([=]{ CFRelease(val); });
-    
+    auto release_val = at_scope_end([=] { CFRelease(val); });
+
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
         CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberIntType, &result);
     }
-    
+
     return result;
 }
 
 long CFDefaultsGetLong(CFStringRef _key) noexcept
 {
     long result = 0.;
-    
+
     CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
     if( !val )
         return result;
-    auto release_val = at_scope_end([=]{ CFRelease(val); });
-    
+    auto release_val = at_scope_end([=] { CFRelease(val); });
+
     if( CFGetTypeID(val) == CFNumberGetTypeID() ) {
         CFNumberRef num = static_cast<CFNumberRef>(val);
         CFNumberGetValue(num, kCFNumberLongType, &result);
     }
-    
+
     return result;
 }
 
@@ -153,7 +153,7 @@ void CFDefaultsSetDouble(CFStringRef _key, double _value) noexcept
     CFNumberRef num = CFNumberCreate(NULL, kCFNumberDoubleType, &_value);
     if( num == nullptr )
         return;
-    auto release_val = at_scope_end([=]{ CFRelease(num); });
+    auto release_val = at_scope_end([=] { CFRelease(num); });
     CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
 }
 
@@ -162,7 +162,7 @@ void CFDefaultsSetInt(CFStringRef _key, int _value) noexcept
     CFNumberRef num = CFNumberCreate(NULL, kCFNumberIntType, &_value);
     if( num == nullptr )
         return;
-    auto release_val = at_scope_end([=]{ CFRelease(num); });
+    auto release_val = at_scope_end([=] { CFRelease(num); });
     CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
 }
 
@@ -171,34 +171,34 @@ void CFDefaultsSetLong(CFStringRef _key, long _value) noexcept
     CFNumberRef num = CFNumberCreate(NULL, kCFNumberLongType, &_value);
     if( num == nullptr )
         return;
-    auto release_val = at_scope_end([=]{ CFRelease(num); });
+    auto release_val = at_scope_end([=] { CFRelease(num); });
     CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
 }
 
-string CFDefaultsGetString(CFStringRef _key)
+std::string CFDefaultsGetString(CFStringRef _key)
 {
     CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
     if( !val )
         return "";
-    auto release_val = at_scope_end([=]{ CFRelease(val); });
-    
-    if( CFGetTypeID(val) ==  CFStringGetTypeID() )
-        return CFStringGetUTF8StdString( static_cast<CFStringRef>(val) );
-    
+    auto release_val = at_scope_end([=] { CFRelease(val); });
+
+    if( CFGetTypeID(val) == CFStringGetTypeID() )
+        return CFStringGetUTF8StdString(static_cast<CFStringRef>(val));
+
     return "";
 }
 
-optional<string> CFDefaultsGetOptionalString(CFStringRef _key)
+std::optional<std::string> CFDefaultsGetOptionalString(CFStringRef _key)
 {
     CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
     if( !val )
-        return nullopt;
-    auto release_val = at_scope_end([=]{ CFRelease(val); });
-    
-    if( CFGetTypeID(val) ==  CFStringGetTypeID() )
-        return CFStringGetUTF8StdString( static_cast<CFStringRef>(val) );
-    
-    return nullopt;
+        return {};
+    auto release_val = at_scope_end([=] { CFRelease(val); });
+
+    if( CFGetTypeID(val) == CFStringGetTypeID() )
+        return CFStringGetUTF8StdString(static_cast<CFStringRef>(val));
+
+    return {};
 }
 
 void CFDefaultsSetString(CFStringRef _key, const std::string &_value) noexcept
@@ -206,7 +206,7 @@ void CFDefaultsSetString(CFStringRef _key, const std::string &_value) noexcept
     CFStringRef str = CFStringCreateWithUTF8StdString(_value);
     if( !str )
         return;
-    auto release_val = at_scope_end([=]{ CFRelease(str); });
+    auto release_val = at_scope_end([=] { CFRelease(str); });
     CFPreferencesSetAppValue(_key, str, kCFPreferencesCurrentApplication);
 }
 
@@ -214,3 +214,5 @@ void CFDefaultsRemoveValue(CFStringRef _key) noexcept
 {
     CFPreferencesSetAppValue(_key, nullptr, kCFPreferencesCurrentApplication);
 }
+
+} // namespace nc::base

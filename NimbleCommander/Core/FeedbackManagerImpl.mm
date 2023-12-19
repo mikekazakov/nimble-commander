@@ -43,8 +43,8 @@ FeedbackManagerImpl::FeedbackManagerImpl(nc::bootstrap::ActivationManager &_am,
                                          std::function<time_t()> _time_source)
     : m_ApplicationRunsCount(GetAndUpdateRunsCount()), m_TotalHoursUsed(GetTotalHoursUsed()),
       m_StartupTime(_time_source()), m_ActivationManager(_am), 
-      m_TimeSource(_time_source), m_LastRating(CFDefaultsGetOptionalInt(g_LastRatingKey)),
-      m_LastRatingTime(CFDefaultsGetOptionalLong(g_LastRatingTimeKey))
+      m_TimeSource(_time_source), m_LastRating(base::CFDefaultsGetOptionalInt(g_LastRatingKey)),
+      m_LastRatingTime(base::CFDefaultsGetOptionalLong(g_LastRatingTimeKey))
 {
     m_FirstRunTime = GetOrSetFirstRunTime();
 }
@@ -59,8 +59,8 @@ void FeedbackManagerImpl::CommitRatingOverlayResult(int _result)
     m_LastRating = _result;
     m_LastRatingTime = m_TimeSource();
 
-    CFDefaultsSetInt(g_LastRatingKey, *m_LastRating);
-    CFDefaultsSetLong(g_LastRatingTimeKey, *m_LastRatingTime);
+    base::CFDefaultsSetInt(g_LastRatingKey, *m_LastRating);
+    base::CFDefaultsSetLong(g_LastRatingTimeKey, *m_LastRatingTime);
 
     if( m_HasUI && _result > 0 ) {
         // used clicked at some star - lets show a window then
@@ -127,11 +127,11 @@ bool FeedbackManagerImpl::IsEligibleForRatingOverlay() const
 
 void FeedbackManagerImpl::ResetStatistics()
 {
-    CFDefaultsRemoveValue(g_RunsKey);
-    CFDefaultsRemoveValue(g_HoursKey);
-    CFDefaultsRemoveValue(g_FirstRunKey);
-    CFDefaultsRemoveValue(g_LastRatingKey);
-    CFDefaultsRemoveValue(g_LastRatingTimeKey);
+    base::CFDefaultsRemoveValue(g_RunsKey);
+    base::CFDefaultsRemoveValue(g_HoursKey);
+    base::CFDefaultsRemoveValue(g_FirstRunKey);
+    base::CFDefaultsRemoveValue(g_LastRatingKey);
+    base::CFDefaultsRemoveValue(g_LastRatingTimeKey);
 }
 
 void FeedbackManagerImpl::UpdateStatistics()
@@ -139,7 +139,7 @@ void FeedbackManagerImpl::UpdateStatistics()
     auto d = m_TimeSource() - m_StartupTime;
     if( d < 0 )
         d = 0;
-    CFDefaultsSetDouble(g_HoursKey, m_TotalHoursUsed + static_cast<double>(d) / 3600.);
+    base::CFDefaultsSetDouble(g_HoursKey, m_TotalHoursUsed + static_cast<double>(d) / 3600.);
 }
 
 void FeedbackManagerImpl::EmailFeedback()
@@ -195,26 +195,26 @@ int FeedbackManagerImpl::ApplicationRunsCount()
 
 int FeedbackManagerImpl::GetAndUpdateRunsCount()
 {
-    if( auto runs = CFDefaultsGetOptionalInt(g_RunsKey) ) {
+    if( auto runs = base::CFDefaultsGetOptionalInt(g_RunsKey) ) {
         int v = *runs;
         if( v < 1 ) {
             v = 1;
-            CFDefaultsSetInt(g_RunsKey, v);
+            base::CFDefaultsSetInt(g_RunsKey, v);
         }
         else {
-            CFDefaultsSetInt(g_RunsKey, v + 1);
+            base::CFDefaultsSetInt(g_RunsKey, v + 1);
         }
         return v;
     }
     else {
-        CFDefaultsSetInt(g_RunsKey, 1);
+        base::CFDefaultsSetInt(g_RunsKey, 1);
         return 1;
     }
 }
 
 double FeedbackManagerImpl::GetTotalHoursUsed()
 {
-    double v = CFDefaultsGetDouble(g_HoursKey);
+    double v = base::CFDefaultsGetDouble(g_HoursKey);
     if( v < 0 )
         v = 0;
     return v;
@@ -223,11 +223,11 @@ double FeedbackManagerImpl::GetTotalHoursUsed()
 time_t FeedbackManagerImpl::GetOrSetFirstRunTime() const
 {
     const auto now = m_TimeSource();
-    if( auto t = CFDefaultsGetOptionalLong(g_FirstRunKey) ) {
+    if( auto t = base::CFDefaultsGetOptionalLong(g_FirstRunKey) ) {
         if( *t < now )
             return *t;
     }
-    CFDefaultsSetLong(g_FirstRunKey, now);
+    base::CFDefaultsSetLong(g_FirstRunKey, now);
     return now;
 }
 

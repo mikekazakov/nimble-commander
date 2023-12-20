@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <ServiceManagement/ServiceManagement.h>
 #include <Security/Security.h>
 #include <Habanero/CommonPaths.h>
@@ -22,7 +22,7 @@ PosixIOInterface &RoutedIO::Direct = IODirectCreateProxy();
 PosixIOInterface &RoutedIO::Default = IOWrappedCreateProxy();
 
 static const char *g_HelperLabel = "info.filesmanager.Files.PrivilegedIOHelperV2";
-static CFStringRef g_HelperLabelCF = CFStringCreateWithUTF8StringNoCopy(g_HelperLabel);
+static CFStringRef g_HelperLabelCF = base::CFStringCreateWithUTF8StringNoCopy(g_HelperLabel);
 
 static const char *AuthRCToString(OSStatus _rc) noexcept;
 
@@ -262,16 +262,16 @@ bool RoutedIO::AskToInstallHelper()
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyDescription(error)) )
             Log::Error(SPDLOC,
                        "RoutedIO::AskToInstallHelper() SMJobBless failed with error: {}. ",
-                       CFStringGetUTF8StdString(desc.get()));
+                       base::CFStringGetUTF8StdString(desc.get()));
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyFailureReason(error)) )
             Log::Error(SPDLOC,
                        "RoutedIO::AskToInstallHelper() SMJobBless failed with failure reason: {}. ",
-                       CFStringGetUTF8StdString(desc.get()));
+                       base::CFStringGetUTF8StdString(desc.get()));
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyRecoverySuggestion(error)) )
             Log::Error(
                 SPDLOC,
                 "RoutedIO::AskToInstallHelper() SMJobBless failed with recovery suggestion: {}. ",
-                CFStringGetUTF8StdString(desc.get()));
+                       base::CFStringGetUTF8StdString(desc.get()));
         CFRelease(error);
     }
 
@@ -445,11 +445,11 @@ void RoutedIO::InstallViaRootCLI()
     const bool result = SMJobBless(kSMDomainSystemLaunchd, g_HelperLabelCF, auth_ref, &error);
     if( !result && error != nullptr ) {
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyDescription(error)) )
-            std::cerr << CFStringGetUTF8StdString(desc.get()) << std::endl;
+            std::cerr << base::CFStringGetUTF8StdString(desc.get()) << std::endl;
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyFailureReason(error)) )
-            std::cerr << CFStringGetUTF8StdString(desc.get()) << std::endl;
+            std::cerr << base::CFStringGetUTF8StdString(desc.get()) << std::endl;
         if( auto desc = base::CFPtr<CFStringRef>::adopt(CFErrorCopyRecoverySuggestion(error)) )
-            std::cerr << CFStringGetUTF8StdString(desc.get()) << std::endl;
+            std::cerr << base::CFStringGetUTF8StdString(desc.get()) << std::endl;
         CFRelease(error);
     }
 

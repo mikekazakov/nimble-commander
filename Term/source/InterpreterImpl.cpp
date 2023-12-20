@@ -677,7 +677,7 @@ void InterpreterImpl::Response(std::string_view _text)
 static std::u16string ConvertUTF8ToUTF16(std::string_view _utf8)
 {
     // temp and slow implementation
-    auto str = base::CFPtr<CFStringRef>::adopt(CFStringCreateWithUTF8StringNoCopy(_utf8));
+    auto str = base::CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StringNoCopy(_utf8));
     if( !str )
         return {};
 

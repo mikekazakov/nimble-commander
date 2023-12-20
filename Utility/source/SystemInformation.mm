@@ -420,12 +420,11 @@ bool IsThisProcessSandboxed() noexcept
 
 const std::string &GetBundleID() noexcept
 {
-    using namespace std::string_literals;
-    [[clang::no_destroy]] static const std::string bundle_id = [] {
+    [[clang::no_destroy]] static const std::string bundle_id = []() -> std::string {
         if( CFStringRef bid = CFBundleGetIdentifier(CFBundleGetMainBundle()) )
-            return CFStringGetUTF8StdString(bid);
+            return base::CFStringGetUTF8StdString(bid);
         else
-            return "unknown"s;
+            return "unknown";
     }();
     return bundle_id;
 }

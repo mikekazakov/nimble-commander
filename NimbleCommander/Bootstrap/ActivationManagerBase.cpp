@@ -22,7 +22,7 @@ AMB::ExternalLicenseSupport::ExternalLicenseSupport(std::string _public_key, std
 
 bool AMB::ExternalLicenseSupport::CheckLicenseValidity(const std::string &_license_file_raw_data) const
 {
-    const auto key = CFStringCreateWithUTF8StdString(m_PublicKey);
+    const auto key = base::CFStringCreateWithUTF8StdString(m_PublicKey);
     if( key == nullptr )
         return false;
     auto release_key = at_scope_end([&] { CFRelease(key); });
@@ -46,7 +46,7 @@ AMB::ExternalLicenseSupport::ExtractLicenseInfo(const std::string &_license_data
         return {};
     auto release_data = at_scope_end([&] { CFRelease(data); });
 
-    const auto key = CFStringCreateWithUTF8StdString(m_PublicKey);
+    const auto key = base::CFStringCreateWithUTF8StdString(m_PublicKey);
     if( key == nullptr )
         return {};
     auto release_key = at_scope_end([&] { CFRelease(key); });
@@ -61,8 +61,8 @@ AMB::ExternalLicenseSupport::ExtractLicenseInfo(const std::string &_license_data
     auto block = [](const void *_key, const void *_value, void *_context) {
         if( CFGetTypeID(_key) == CFStringGetTypeID() && CFGetTypeID(_value) == CFStringGetTypeID() ) {
             auto &context = *static_cast<std::unordered_map<std::string, std::string> *>(_context);
-            context.insert_or_assign(CFStringGetUTF8StdString(static_cast<CFStringRef>(_key)),
-                                     CFStringGetUTF8StdString(static_cast<CFStringRef>(_value)));
+            context.insert_or_assign(base::CFStringGetUTF8StdString(static_cast<CFStringRef>(_key)),
+                                     base::CFStringGetUTF8StdString(static_cast<CFStringRef>(_value)));
         }
     };
     CFDictionaryApplyFunction(dict, block, &result);

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/CFString.h>
@@ -49,7 +49,7 @@ public:
         virtual double SecondsSinceMacEpoch() const;
         
     private:
-        CFString m_DefaultsTrialExpireDate;
+        base::CFString m_DefaultsTrialExpireDate;
     };
     
 };

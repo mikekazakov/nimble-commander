@@ -112,7 +112,7 @@ void FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback(
 FSEventStreamRef FSEventsDirUpdate::Impl::CreateEventStream(const std::string &path,
                                                             void *context_ptr)
 {
-    auto cf_path = CFStringCreateWithUTF8StdString(path);
+    auto cf_path = base::CFStringCreateWithUTF8StdString(path);
     if( !cf_path )
         return 0;
 

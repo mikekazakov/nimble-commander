@@ -77,7 +77,7 @@ static std::vector<std::string> FetchSpotlightResults(const std::string &_query)
         CFStringRef item_path = static_cast<CFStringRef>(MDItemCopyAttribute(item, kMDItemPath));
         auto clear_item_path = at_scope_end([=] { CFRelease(item_path); });
 
-        result.emplace_back(CFStringGetUTF8StdString(item_path));
+        result.emplace_back(base::CFStringGetUTF8StdString(item_path));
     }
 
     // make results unique - spotlight sometimes produces duplicates

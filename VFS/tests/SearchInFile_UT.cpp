@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "SearchInFile.h"
 #include "VFSGenericMemReadOnlyFile.h"
@@ -6,6 +6,7 @@
 #include <Utility/StringExtras.h>
 #include <Habanero/CFString.h>
 
+using namespace nc::base;
 using nc::vfs::FileWindow;
 using nc::vfs::SearchInFile;
 using nc::vfs::GenericMemReadOnlyFile;

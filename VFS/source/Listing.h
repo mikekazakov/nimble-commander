@@ -150,7 +150,7 @@ private:
     std::chrono::nanoseconds m_CreationTicks; // the kernel ticks stamp at which the Listing was created
     std::string m_Title;
     std::unique_ptr<std::string[]> m_Filenames;
-    std::unique_ptr<CFString[]> m_FilenamesCF;
+    std::unique_ptr<base::CFString[]> m_FilenamesCF;
     std::unique_ptr<uint16_t[]> m_ExtensionOffsets;
     std::unique_ptr<mode_t[]> m_UnixModes;
     std::unique_ptr<uint8_t[]> m_UnixTypes;
@@ -168,7 +168,7 @@ private:
     base::variable_container<uint32_t> m_UnixFlags;
     base::variable_container<std::string> m_Symlinks;
     base::variable_container<std::string> m_DisplayFilenames;
-    base::variable_container<CFString> m_DisplayFilenamesCF;
+    base::variable_container<base::CFString> m_DisplayFilenamesCF;
 
     // this is a copy of POSIX/BSD constants to reduce headers pollution
     inline constexpr static const mode_t m_S_IFMT = 0170000;

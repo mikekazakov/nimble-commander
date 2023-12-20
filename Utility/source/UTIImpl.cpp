@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/UTIImpl.h>
 #include <CoreServices/CoreServices.h>
 #include <Habanero/CFPtr.h>
@@ -20,12 +20,11 @@ std::string UTIDBImpl::UTIForExtension(const std::string &_extension) const
         return i->second;
 
     std::string uti;
-    const auto ext = CFPtr<CFStringRef>::adopt(CFStringCreateWithUTF8StdStringNoCopy(_extension));
-    if( ext ) {
+    if( const auto ext = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StdStringNoCopy(_extension)) ) {
         const auto cf_uti = CFPtr<CFStringRef>::adopt(
             UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext.get(), nullptr));
         if( cf_uti ) {
-            uti = CFStringGetUTF8StdString(cf_uti.get());
+            uti = base::CFStringGetUTF8StdString(cf_uti.get());
             m_ExtensionToUTI.emplace(_extension, uti);
         }
     }
@@ -34,8 +33,7 @@ std::string UTIDBImpl::UTIForExtension(const std::string &_extension) const
 
 bool UTIDBImpl::IsDeclaredUTI(const std::string &_uti) const
 {
-    const auto ext = CFPtr<CFStringRef>::adopt(CFStringCreateWithUTF8StdStringNoCopy(_uti));
-    if( ext ) {
+    if( const auto ext = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StdStringNoCopy(_uti)) ) {
         return UTTypeIsDeclared(ext.get());
     }
     return false;
@@ -51,7 +49,7 @@ static void TraverseConformingUTIs(
     const std::string &_uti,
     robin_hood::unordered_flat_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual> &_target)
 {
-    const auto uti = CFPtr<CFStringRef>::adopt(CFStringCreateWithUTF8StdString(_uti));
+    const auto uti = CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StdString(_uti));
     if( !uti )
         return;
 
@@ -69,7 +67,7 @@ static void TraverseConformingUTIs(
             const auto object = CFArrayGetValueAtIndex(array, i);
             if( object != nullptr && CFGetTypeID(object) == CFStringGetTypeID() ) {
                 const auto conforming_cf_string = static_cast<CFStringRef>(object);
-                const auto conforming_std_string = CFStringGetUTF8StdString(conforming_cf_string);
+                const auto conforming_std_string = base::CFStringGetUTF8StdString(conforming_cf_string);
                 if( _target.contains(conforming_std_string) == false ) {
                     _target.emplace(conforming_std_string);
                     TraverseConformingUTIs(conforming_std_string, _target);
@@ -79,7 +77,7 @@ static void TraverseConformingUTIs(
     }
     else if( CFGetTypeID(conforms_to) == CFStringGetTypeID() ) {
         const auto conforming_cf_string = static_cast<CFStringRef>(conforms_to);
-        const auto conforming_std_string = CFStringGetUTF8StdString(conforming_cf_string);
+        const auto conforming_std_string = base::CFStringGetUTF8StdString(conforming_cf_string);
         if( _target.contains(conforming_std_string) == false ) {
             _target.emplace(conforming_std_string);
             TraverseConformingUTIs(conforming_std_string, _target);

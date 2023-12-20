@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchForFiles.h"
 #include <sys/stat.h>
 #include <VFS/FileWindow.h>
@@ -39,7 +39,7 @@ void SearchForFiles::SetFilterName(utility::FileMask _filter)
 {
     if( IsRunning() )
         throw std::logic_error("Filters can't be changed during background search process");
-    
+
     m_FilterName = std::move(_filter);
 }
 
@@ -151,13 +151,11 @@ void SearchForFiles::ProcessDirent(const char *_full_path,
     bool failed_filtering = false;
 
     // Filter by being a directory
-    if( failed_filtering == false && _dirent.type == VFSDirEnt::Dir &&
-        (m_SearchOptions & Options::SearchForDirs) == 0 )
+    if( failed_filtering == false && _dirent.type == VFSDirEnt::Dir && (m_SearchOptions & Options::SearchForDirs) == 0 )
         failed_filtering = true;
 
     // Filter by being a reg or link
-    if( failed_filtering == false &&
-        (_dirent.type == VFSDirEnt::Reg || _dirent.type == VFSDirEnt::Link) &&
+    if( failed_filtering == false && (_dirent.type == VFSDirEnt::Reg || _dirent.type == VFSDirEnt::Link) &&
         (m_SearchOptions & Options::SearchForFiles) == 0 )
         failed_filtering = true;
 
@@ -225,9 +223,8 @@ bool SearchForFiles::FilterByContent(const char *_full_path, VFSHost &_in_host, 
     using nc::vfs::SearchInFile;
     SearchInFile sif(fw);
 
-    CFStringRef request = CFStringCreateWithUTF8StdString(m_FilterContent->text);
-    sif.ToggleTextSearch(request, encoding);
-    CFRelease(request);
+    base::CFString request{m_FilterContent->text};
+    sif.ToggleTextSearch(*request, encoding);
     const auto search_options = [&] {
         auto options = SearchInFile::Options::None;
         if( m_FilterContent->case_sensitive )

@@ -1,28 +1,24 @@
-// Copyright (C) 2015-2021 Michael G. Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael G. Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
 #ifdef __OBJC__
-    #import <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 #endif
 
+#include "CFPtr.h"
 #include <string>
 #include <string_view>
+
+namespace nc::base {
 
 class CFString
 {
 public:
     CFString() noexcept = default;
     CFString(CFStringRef _str) noexcept;
-    CFString(const std::string &_str) noexcept;
-    CFString(const std::string &_str, CFStringEncoding _encoding) noexcept;
-    CFString(const char *_str) noexcept;
-    CFString(const CFString &_rhs) noexcept;
-    CFString(CFString &&_rhs) noexcept;
-    ~CFString();
-
-    const CFString &operator=(const CFString &_rhs) noexcept;
-    const CFString &operator=(CFString &&_rhs) noexcept;
+    CFString(std::string_view _str, CFStringEncoding _encoding = kCFStringEncodingUTF8) noexcept;
+    CFString(const char *_str, CFStringEncoding _encoding = kCFStringEncodingUTF8) noexcept;
 
     operator bool() const noexcept;
     CFStringRef operator*() const noexcept;
@@ -31,7 +27,7 @@ public:
 #endif
 
 private:
-    CFStringRef p = nullptr;
+    nc::base::CFPtr<CFStringRef> p;
 };
 
 std::string CFStringGetUTF8StdString(CFStringRef _str);
@@ -46,63 +42,23 @@ CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len
 
 inline CFString::operator bool() const noexcept
 {
-    return p != nullptr;
+    return static_cast<bool>(p);
 }
 
 inline CFStringRef CFString::operator*() const noexcept
 {
-    return p;
+    return p.get();
 }
 
 #ifdef __OBJC__
 inline NSString *CFString::ns() const noexcept
 {
-    return (__bridge NSString *)p;
+    return (__bridge NSString *)p.get();
 }
 #endif
 
 inline CFString::CFString(CFStringRef _str) noexcept : p(_str)
 {
-    if( p != nullptr )
-        CFRetain(p);
 }
 
-inline CFString::CFString(const CFString &_rhs) noexcept : p(_rhs.p)
-{
-    if( p )
-        CFRetain(p);
-}
-
-inline CFString::CFString(CFString &&_rhs) noexcept : p(_rhs.p)
-{
-    _rhs.p = nullptr;
-}
-
-inline CFString::~CFString()
-{
-    if( p )
-        CFRelease(p);
-}
-
-inline const CFString &CFString::operator=(const CFString &_rhs) noexcept
-{
-    if( &_rhs == this )
-        return *this;
-    if( p )
-        CFRelease(p);
-    p = _rhs.p;
-    if( p )
-        CFRetain(p);
-    return *this;
-}
-
-inline const CFString &CFString::operator=(CFString &&_rhs) noexcept
-{
-    if( &_rhs == this )
-        return *this;
-    if( p )
-        CFRelease(p);
-    p = _rhs.p;
-    _rhs.p = nullptr;
-    return *this;
 }

@@ -372,11 +372,11 @@ const base::intrusive_ptr<const Listing> &Listing::EmptyListing() noexcept
     return empty;
 }
 
-static CFString UTF8WithFallback(const std::string &_s)
+static base::CFString UTF8WithFallback(const std::string &_s)
 {
-    CFString s(_s);
+    base::CFString s(_s);
     if( !s )
-        s = CFString(_s, kCFStringEncodingMacRoman);
+        s = base::CFString(_s, kCFStringEncodingMacRoman);
     return s;
 }
 
@@ -384,9 +384,9 @@ void Listing::BuildFilenames()
 {
     size_t i = 0, e = m_ItemsCount;
 
-    m_FilenamesCF = std::make_unique<CFString[]>(e);
+    m_FilenamesCF = std::make_unique<base::CFString[]>(e);
     m_ExtensionOffsets = std::make_unique<uint16_t[]>(e);
-    m_DisplayFilenamesCF = variable_container<CFString>(variable_container<>::type::sparse);
+    m_DisplayFilenamesCF = variable_container<base::CFString>(variable_container<>::type::sparse);
 
     for( ; i != e; ++i ) {
         auto &current = m_Filenames[i];

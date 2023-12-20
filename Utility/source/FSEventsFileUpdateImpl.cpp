@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsFileUpdateImpl.h"
 #include <Utility/StringExtras.h>
 #include <Utility/Log.h>
@@ -16,8 +16,7 @@ static const std::chrono::nanoseconds g_StaleInterval = g_ScanInterval / 2;
 
 static std::optional<struct stat> GetStat(const std::filesystem::path &_path) noexcept;
 
-size_t
-FSEventsFileUpdateImpl::PathHash::operator()(const std::filesystem::path &_path) const noexcept
+size_t FSEventsFileUpdateImpl::PathHash::operator()(const std::filesystem::path &_path) const noexcept
 {
     return robin_hood::hash_bytes(_path.native().c_str(), _path.native().size());
 }
@@ -60,8 +59,7 @@ FSEventsFileUpdateImpl::~FSEventsFileUpdateImpl()
     dispatch_release(m_KickstartQueue);
 }
 
-uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path,
-                                              std::function<void()> _handler)
+uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path, std::function<void()> _handler)
 {
     assert(_handler);
     auto lock = std::lock_guard{m_Lock};
@@ -96,8 +94,7 @@ uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path
 void FSEventsFileUpdateImpl::RemoveWatchPathWithToken(uint64_t _token)
 {
     auto lock = std::lock_guard{m_Lock};
-    for( auto watch_it = m_Watches.begin(), watch_end = m_Watches.end(); watch_it != watch_end;
-         ++watch_it ) {
+    for( auto watch_it = m_Watches.begin(), watch_end = m_Watches.end(); watch_it != watch_end; ++watch_it ) {
         auto &watch = watch_it->second;
         if( watch.handlers.contains(_token) ) {
             Log::Debug(SPDLOC, "Removing a watch for token {} - {}", _token, watch_it->first);
@@ -114,18 +111,18 @@ void FSEventsFileUpdateImpl::RemoveWatchPathWithToken(uint64_t _token)
 
 FSEventStreamRef FSEventsFileUpdateImpl::CreateEventStream(const std::filesystem::path &_path) const
 {
-    auto cf_path = base::CFPtr<CFStringRef>::adopt(CFStringCreateWithUTF8StdString(_path.native()));
+    auto cf_path = base::CFPtr<CFStringRef>::adopt(base::CFStringCreateWithUTF8StdString(_path.native()));
     if( !cf_path )
         return nullptr;
 
-    const auto paths_to_watch = base::CFPtr<CFArrayRef>::adopt(
-        CFArrayCreate(0, reinterpret_cast<const void **>(&cf_path), 1, nullptr));
+    const auto paths_to_watch =
+        base::CFPtr<CFArrayRef>::adopt(CFArrayCreate(0, reinterpret_cast<const void **>(&cf_path), 1, nullptr));
     if( !paths_to_watch )
         return nullptr;
 
     const auto flags = kFSEventStreamCreateFlagNoDefer | kFSEventStreamCreateFlagFileEvents;
-    auto context = FSEventStreamContext{
-        0, const_cast<void *>(reinterpret_cast<const void *>(this)), nullptr, nullptr, nullptr};
+    auto context =
+        FSEventStreamContext{0, const_cast<void *>(reinterpret_cast<const void *>(this)), nullptr, nullptr, nullptr};
 
     FSEventStreamRef stream = nullptr;
     auto create_schedule_and_run = [&] {
@@ -238,14 +235,12 @@ void FSEventsFileUpdateImpl::KickstartBackgroundScanner()
         }
     }
 
-    dispatch_to_background([paths = std::move(paths), context = m_WeakAsyncContext] {
-        BackgroundScanner(std::move(paths), context);
-    });
+    dispatch_to_background(
+        [paths = std::move(paths), context = m_WeakAsyncContext] { BackgroundScanner(std::move(paths), context); });
 }
 
-void FSEventsFileUpdateImpl::AcceptScannedStats(
-    const std::vector<std::filesystem::path> &_paths,
-    const std::vector<std::optional<struct stat>> &_stats)
+void FSEventsFileUpdateImpl::AcceptScannedStats(const std::vector<std::filesystem::path> &_paths,
+                                                const std::vector<std::optional<struct stat>> &_stats)
 {
     dispatch_assert_main_queue();
     auto lock = std::lock_guard{m_Lock};

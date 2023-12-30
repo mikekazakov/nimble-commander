@@ -126,7 +126,7 @@ void Model::Load(const VFSListingPtr &_listing, PanelType _type)
     m_SoftFiltering.OnPanelDataLoad();
 
     // now sort our new data
-    DispatchGroup exec_group{DispatchGroup::High};
+    base::DispatchGroup exec_group{base::DispatchGroup::High};
     exec_group.Run([=] { DoRawSort(*m_Listing, m_EntriesByRawName); });
     exec_group.Run([=] { DoSortWithHardFiltering(); });
     exec_group.Wait();

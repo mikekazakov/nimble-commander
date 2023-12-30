@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
 #include <Habanero/CommonPaths.h>
@@ -40,7 +40,8 @@ CATCH_REGISTER_LISTENER(CatchEventsListener);
 
 int main(int argc, char *argv[])
 {
-    nc::base::ExecutionDeadline deadline(AmIBeingDebugged() ? std::chrono::hours(1) : std::chrono::minutes(1));
+    nc::base::ExecutionDeadline deadline(nc::base::AmIBeingDebugged() ? std::chrono::hours(1)
+                                                                      : std::chrono::minutes(1));
     g_Log->set_level(spdlog::level::debug);
     Log::Set(g_Log);
     int result = Catch::Session().run(argc, argv);

@@ -1,4 +1,4 @@
-// Copyright (C) 2021-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <spdlog/spdlog.h>
@@ -34,11 +34,11 @@ class SpdlogFacade
 {
 public:
     SpdlogFacade() = delete;
-    
+
     static SpdLogger &Logger() noexcept { return Impl::m_Logger; }
 
     static const std::string &Name() noexcept { return Impl::m_Logger.Name(); }
-    
+
     static spdlog::level::level_enum Level() noexcept { return Get().level(); }
 
     static spdlog::logger &Get() noexcept { return Impl::m_Logger.Get(); }
@@ -48,37 +48,37 @@ public:
     template <typename... Args>
     static void Trace(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args)
     {
-        Get().log(_loc, spdlog::level::trace, _fmt, args...);
+        Get().log(_loc, spdlog::level::trace, fmt::runtime(_fmt), args...);
     }
 
     template <typename... Args>
     static void Debug(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args)
     {
-        Get().log(_loc, spdlog::level::debug, _fmt, args...);
+        Get().log(_loc, spdlog::level::debug, fmt::runtime(_fmt), args...);
     }
 
     template <typename... Args>
     static void Info(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args)
     {
-        Get().log(_loc, spdlog::level::info, _fmt, args...);
+        Get().log(_loc, spdlog::level::info, fmt::runtime(_fmt), args...);
     }
 
     template <typename... Args>
     static void Warn(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args)
     {
-        Get().log(_loc, spdlog::level::warn, _fmt, args...);
+        Get().log(_loc, spdlog::level::warn, fmt::runtime(_fmt), args...);
     }
 
     template <typename... Args>
     static void Error(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args)
     {
-        Get().log(_loc, spdlog::level::err, _fmt, args...);
+        Get().log(_loc, spdlog::level::err, fmt::runtime(_fmt), args...);
     }
 
     template <typename... Args>
     static void Critical(spdlog::source_loc _loc, std::string_view _fmt, const Args &...args)
     {
-        Get().log(_loc, spdlog::level::critical, _fmt, args...);
+        Get().log(_loc, spdlog::level::critical, fmt::runtime(_fmt), args...);
     }
 };
 

@@ -181,7 +181,7 @@ bool RoutedIO::TurnOn()
     if( Connect() )
         m_Enabled = true;
 
-    Log::Info(SPDLOC, "RoutedIO enabled={}", m_Enabled);
+    Log::Info(SPDLOC, "RoutedIO enabled={}", m_Enabled.load());
 
     return m_Enabled;
 }
@@ -198,7 +198,7 @@ void RoutedIO::TurnOff()
     m_Enabled = false;
     m_AuthenticatedAsAdmin = false;
     
-    Log::Info(SPDLOC, "RoutedIO enabled={}", m_Enabled);
+    Log::Info(SPDLOC, "RoutedIO enabled={}", m_Enabled.load());
 }
 
 bool RoutedIO::SayImAuthenticated(xpc_connection_t _connection) noexcept

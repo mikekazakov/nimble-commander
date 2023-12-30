@@ -192,7 +192,7 @@ private:
     const std::unique_ptr<uint8_t[]> m_Buffers[2] = {std::make_unique<uint8_t[]>(m_BufferSize),
                                                      std::make_unique<uint8_t[]>(m_BufferSize)};
 
-    const DispatchGroup m_IOGroup;
+    const base::DispatchGroup m_IOGroup;
     bool m_IsSingleInitialItemProcessing = false;
     bool m_IsSingleScannedItemProcessing = false;
     bool m_IsSingleDirectoryCaseRenaming = false;

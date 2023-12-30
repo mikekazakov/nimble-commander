@@ -78,7 +78,7 @@ static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<
 
 static int CopyFileContentsLarge(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
 {
-    DispatchGroup io;
+    nc::base::DispatchGroup io;
   
     // consider using variable-sized buffers depending on underlying media
     const int buffer_size = 1024*1024; // 1Mb

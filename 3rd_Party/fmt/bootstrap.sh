@@ -9,7 +9,7 @@ TMP_DIR=${CUR_DIR}/fmt.tmp
 mkdir ${TMP_DIR}
 cd ${TMP_DIR} 
 
-git clone -b 9.1.0 --single-branch https://github.com/fmtlib/fmt.git
+git clone -b 10.1.1 --single-branch --depth=1 https://github.com/fmtlib/fmt.git
 
 cd fmt
 mkdir build
@@ -20,6 +20,7 @@ cmake \
   -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
   -D CMAKE_OSX_DEPLOYMENT_TARGET="10.15" \
   -D CMAKE_CXX_FLAGS="-fvisibility=hidden -flto" \
+  -D CMAKE_CXX_STANDARD="23" \
   -D BUILD_SHARED_LIBS="OFF" \
   ..
 make -j

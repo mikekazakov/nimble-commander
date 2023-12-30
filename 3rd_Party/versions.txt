@@ -2,7 +2,7 @@ appauth         1.4.0
 aquaticprime    ???
 boost           1.83.0
 bz2             1.0.8
-fmt             9.1.0
+fmt             10.1.1
 frozen          1.0.1
 curl            7.73.0
 gtest           1.12.1
@@ -19,7 +19,7 @@ pugixml         1.10
 re2             2022-02-01
 robin_hood      3.11.5
 sparkle         2.5.0
-spdlog          1.11.0
+spdlog          1.12.0
 zlib            1.3
 zstd            1.5.5
 

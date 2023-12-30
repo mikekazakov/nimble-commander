@@ -7,7 +7,7 @@
 
 namespace nc::ops {
 
-class Pool : public std::enable_shared_from_this<Pool>, private ScopedObservableBase
+class Pool : public std::enable_shared_from_this<Pool>, private base::ScopedObservableBase
 {
     Pool();
 

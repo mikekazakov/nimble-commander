@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <atomic>
 #include <Habanero/mach_time.h>
 #include <Habanero/dispatch_cpp.h>
@@ -80,11 +80,11 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
         if( m_Dirty ) {
             self.view.needsDisplay = true;
             m_Dirty = false;
-            m_LastDrawedTime = machtime();
+            m_LastDrawedTime = nc::base::machtime();
         }
         else {
             // timer invalidation by max inactivity time
-            if( machtime() - m_LastDrawedTime > m_MaxTimeBeforeInvalidation )
+            if( nc::base::machtime() - m_LastDrawedTime > m_MaxTimeBeforeInvalidation )
                 [self cleanupTimer];
         }
     }
@@ -103,7 +103,7 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
                                                  userInfo:nil
                                                   repeats:YES];
     [m_DrawTimer setDefaultTolerance];
-    m_LastDrawedTime = machtime();
+    m_LastDrawedTime = nc::base::machtime();
 }
 
 - (void)cleanupTimer

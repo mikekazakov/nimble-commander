@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Michael G. Kazakov
+/* Copyright (c) 2015-2023 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -12,19 +12,22 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 #pragma once
-
 #include <chrono>
+
+namespace nc::base {
 
 /** returns relative Mach time in nanoseconds using mach_absolute_time. */
 std::chrono::nanoseconds machtime() noexcept;
 
-struct MachTimeBenchmark
-{
+struct MachTimeBenchmark {
     MachTimeBenchmark() noexcept;
     std::chrono::nanoseconds Delta() const;
-    void ResetNano (const char *_msg = "");
+    void ResetNano(const char *_msg = "");
     void ResetMicro(const char *_msg = "");
     void ResetMilli(const char *_msg = "");
+
 private:
     std::chrono::nanoseconds last;
 };
+
+} // namespace nc::base

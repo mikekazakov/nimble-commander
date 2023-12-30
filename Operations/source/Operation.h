@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/ScopedObservable.h>
@@ -37,7 +37,7 @@ enum class OperationState
           --Paused ---|
 #endif
 
-class Operation : private ScopedObservableBase
+class Operation : private base::ScopedObservableBase
 {
 public:
     virtual ~Operation();

@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "../include/Utility/BlinkScheduler.h"
 #include <Habanero/mach_time.h>
@@ -149,7 +149,7 @@ bool BlinkScheduler::Impl::VisibleNow() const noexcept
 
 std::chrono::nanoseconds BlinkScheduler::DefaultIO::Now() noexcept
 {
-    return machtime();
+    return base::machtime();
 }
 
 void BlinkScheduler::DefaultIO::Dispatch(std::chrono::nanoseconds _after,

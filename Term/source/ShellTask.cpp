@@ -91,7 +91,7 @@ static bool WaitUntilBecomes(int _pid,
                              std::chrono::nanoseconds _timeout,
                              std::chrono::nanoseconds _pull_period) noexcept
 {
-    const auto deadline = machtime() + _timeout;
+    const auto deadline = base::machtime() + _timeout;
     while( true ) {
         if( IsProcessDead(_pid) )
             return false;
@@ -102,7 +102,7 @@ static bool WaitUntilBecomes(int _pid,
         if( current_path == _expected_image_path )
             return true;
 
-        if( machtime() >= deadline )
+        if( base::machtime() >= deadline )
             return false;
         std::this_thread::sleep_for(_pull_period);
     }
@@ -139,14 +139,14 @@ static void KillAndReap(int _pid, std::chrono::nanoseconds _gentle_deadline, std
     kill(_pid, SIGTERM);
     int status = 0;
     int waitpid_rc = 0;
-    const auto gentle_deadline = machtime() + _gentle_deadline;
+    const auto gentle_deadline = base::machtime() + _gentle_deadline;
     while( true ) {
         waitpid_rc = waitpid(_pid, &status, WNOHANG | WUNTRACED);
 
         if( waitpid_rc != 0 )
             break;
 
-        if( machtime() >= gentle_deadline )
+        if( base::machtime() >= gentle_deadline )
             break;
 
         std::this_thread::sleep_for(poll_wait);
@@ -155,13 +155,13 @@ static void KillAndReap(int _pid, std::chrono::nanoseconds _gentle_deadline, std
     if( waitpid_rc > 0 ) {
         // 2nd attemp - bruteforce
         kill(_pid, SIGKILL);
-        const auto brutal_deadline = machtime() + _brutal_deadline;
+        const auto brutal_deadline = base::machtime() + _brutal_deadline;
         while( true ) {
             waitpid_rc = waitpid(_pid, &status, WNOHANG | WUNTRACED);
             if( waitpid_rc != 0 )
                 break;
 
-            if( machtime() >= brutal_deadline ) {
+            if( base::machtime() >= brutal_deadline ) {
                 // at this point we give up and let the child linger in limbo/zombie state.
                 // I have no idea what to do with the marvelous MacOS thing called
                 // "E - The process is trying to exit". Subprocesses can fall into this state

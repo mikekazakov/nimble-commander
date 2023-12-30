@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "BriefOnDiskStorage.h"
@@ -12,7 +12,7 @@ class BriefOnDiskStorageImpl final : public BriefOnDiskStorage
 public:
     BriefOnDiskStorageImpl(const std::string &_base_path,
                            const std::string &_file_prefix = "",
-                           hbn::PosixFilesystem &_fs = hbn::PosixFilesystemImpl::instance);
+                           base::PosixFilesystem &_fs = base::PosixFilesystemImpl::instance);
     ~BriefOnDiskStorageImpl();
     
     std::optional<PlacementResult> Place(const void *_data, long _bytes) override;    
@@ -24,7 +24,7 @@ public:
 private:
     std::string m_BasePath;
     std::string m_FilePrefix;
-    hbn::PosixFilesystem &m_FS;
+    base::PosixFilesystem &m_FS;
 };
 
 }

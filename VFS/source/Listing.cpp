@@ -156,7 +156,7 @@ base::intrusive_ptr<const Listing> Listing::Build(ListingInput &&_input)
     l->m_UnixFlags = std::move(_input.unix_flags);
     l->m_Symlinks = std::move(_input.symlinks);
     l->m_CreationTime = time(0);
-    l->m_CreationTicks = machtime();
+    l->m_CreationTicks = base::machtime();
     l->BuildFilenames();
 
     return l;

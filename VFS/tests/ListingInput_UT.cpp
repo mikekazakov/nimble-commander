@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFSListingInput.h>
@@ -39,11 +39,11 @@ TEST_CASE(PREFIX"Prodives a correct ticks timestamp")
     ListingInput input;
     input.hosts.insert(0, TestEnv().vfs_native);
     input.directories.insert(0, "/");    
-    const auto old_ts = machtime();
+    const auto old_ts = nc::base::machtime();
     std::this_thread::sleep_for(std::chrono::microseconds(1));
     const auto listing = Listing::Build(std::move(input));
     std::this_thread::sleep_for(std::chrono::microseconds(1));
-    const auto new_ts = machtime();
+    const auto new_ts = nc::base::machtime();
     CHECK( listing->BuildTicksTimestamp() >= old_ts );
     CHECK( listing->BuildTicksTimestamp() <= new_ts );
 }

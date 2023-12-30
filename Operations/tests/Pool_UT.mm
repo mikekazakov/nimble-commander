@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include "../source/Pool.h"
@@ -19,11 +19,11 @@ static bool check_until_or_die(std::function<bool()> _predicate, std::chrono::na
 {
     assert(_predicate);
     const auto _poll_period = std::chrono::microseconds(10);
-    const auto deadline = machtime() + _deadline;
+    const auto deadline = nc::base::machtime() + _deadline;
     while( true ) {
         if( _predicate() )
             return true;
-        if( machtime() >= deadline )
+        if( nc::base::machtime() >= deadline )
             return false;
         std::this_thread::sleep_for(_poll_period);
     }

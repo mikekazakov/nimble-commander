@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/Observable.h>
@@ -19,7 +19,7 @@ class Theme;
 /**
  * This class is not thread-safe yet!
  */
-class ThemesManager : ObservableBase
+class ThemesManager : base::ObservableBase
 {
 public:
     struct Notifications;

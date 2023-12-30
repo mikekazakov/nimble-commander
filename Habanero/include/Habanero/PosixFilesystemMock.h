@@ -1,10 +1,10 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "PosixFilesystem.h"
 #include <gmock/gmock.h>
 
-namespace nc::hbn {
+namespace nc::base {
 
 class PosixFilesystemMock : public PosixFilesystem
 {
@@ -15,5 +15,5 @@ public:
     MOCK_METHOD2(rename, int(const char *, const char *));
     MOCK_METHOD1(mkstemp, int(char *));
 };
-    
-}
+
+} // namespace nc::base

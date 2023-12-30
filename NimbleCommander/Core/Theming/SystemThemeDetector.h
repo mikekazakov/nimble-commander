@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Appearance.h"
@@ -6,7 +6,7 @@
 
 namespace nc {
 
-class SystemThemeDetector : ObservableBase
+class SystemThemeDetector : base::ObservableBase
 {
 public:
     using ObservationTicket = ObservableBase::ObservationTicket;

@@ -1,4 +1,4 @@
-/* Copyright (c) 2017-2021 Michael G. Kazakov
+/* Copyright (c) 2017-2023 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -19,6 +19,8 @@
 #include <atomic>
 #include "spinlock.h"
 
+namespace nc::base {
+
 /**
  * Fully thread-safe and intended for concurrent usage.
  * Observers may be triggered from any thread, synchronously.
@@ -31,53 +33,52 @@ public:
     ScopedObservableBase();
     ~ScopedObservableBase();
     struct ObservationTicket;
-    
+
 protected:
     ObservationTicket AddTicketedObserver(std::function<void()> _callback,
-                                          uint64_t _mask = std::numeric_limits<uint64_t>::max() );
-    void AddUnticketedObserver(std::function<void()> _callback,
-                               uint64_t _mask = std::numeric_limits<uint64_t>::max() );
-    void FireObservers( uint64_t _mask = std::numeric_limits<uint64_t>::max() ) const;
-    
+                                          uint64_t _mask = std::numeric_limits<uint64_t>::max());
+    void AddUnticketedObserver(std::function<void()> _callback, uint64_t _mask = std::numeric_limits<uint64_t>::max());
+    void FireObservers(uint64_t _mask = std::numeric_limits<uint64_t>::max()) const;
+
 private:
-    ScopedObservableBase(ScopedObservableBase&) = delete;
-    void operator=(ScopedObservableBase&) = delete;
+    ScopedObservableBase(ScopedObservableBase &) = delete;
+    void operator=(ScopedObservableBase &) = delete;
     void StopObservation(uint64_t _ticket);
-    
-    struct Indirect
-    {
-        ScopedObservableBase* instance;
+
+    struct Indirect {
+        ScopedObservableBase *instance;
         nc::spinlock lock;
     };
-    
-    struct Observer
-    {
+
+    struct Observer {
         std::function<void()> callback;
         uint64_t ticket;
         uint64_t mask;
     };
-    
-    std::shared_ptr<std::vector<std::shared_ptr<Observer>>>     m_Observers;
-    mutable nc::spinlock                                        m_ObserversLock;
-    std::atomic_ullong                                          m_ObservationTicket{ 1 };
-    std::shared_ptr<Indirect>                                   m_Indirect;
-    
+
+    std::shared_ptr<std::vector<std::shared_ptr<Observer>>> m_Observers;
+    mutable nc::spinlock m_ObserversLock;
+    std::atomic_ullong m_ObservationTicket{1};
+    std::shared_ptr<Indirect> m_Indirect;
+
     friend struct ObservationTicket;
 };
 
-struct ScopedObservableBase::ObservationTicket
-{
+struct ScopedObservableBase::ObservationTicket {
     ObservationTicket() noexcept;
     ObservationTicket(ObservationTicket &&) noexcept;
     ~ObservationTicket();
     const ObservationTicket &operator=(ObservationTicket &&);
     operator bool() const noexcept;
+
 private:
     ObservationTicket(std::shared_ptr<ScopedObservableBase::Indirect> _inst, unsigned long _ticket) noexcept;
-    ObservationTicket(const ObservationTicket&) = delete;
-    void operator=(const ObservationTicket&) = delete;
-    
+    ObservationTicket(const ObservationTicket &) = delete;
+    void operator=(const ObservationTicket &) = delete;
+
     std::shared_ptr<ScopedObservableBase::Indirect> indirect;
-    uint64_t        ticket;
+    uint64_t ticket;
     friend class ScopedObservableBase;
 };
+
+} // namespace nc::base

@@ -981,7 +981,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     if( request.filename.empty() )
         return;
 
-    m_DelayedSelection.request_end = machtime() + request.timeout;
+    m_DelayedSelection.request_end = nc::base::machtime() + request.timeout;
     m_DelayedSelection.filename = request.filename;
     m_DelayedSelection.done = request.done;
 
@@ -999,7 +999,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     if( m_DelayedSelection.filename.empty() )
         return false;
 
-    if( machtime() > m_DelayedSelection.request_end ) {
+    if( nc::base::machtime() > m_DelayedSelection.request_end ) {
         [self clearFocusingRequest];
         return false;
     }
@@ -1102,7 +1102,7 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     dispatch_assert_main_queue(); // to preserve against fancy threading stuff
     if( self.receivesUpdateNotifications ) {
         // check in some future that the notification actually came
-        const auto timestamp = machtime();
+        const auto timestamp = nc::base::machtime();
         __weak PanelController *weak_me = self;
         dispatch_to_main_queue_after(g_FilesystemHintTriggerDelay, [weak_me, timestamp] {
             if( PanelController *me = weak_me ) {

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "TabBarStyle.h"
 #import <MMTabBarView/MMTabStyle.h>
 #import <MMTabBarView/MMAttachedTabBarButton.h>
@@ -158,7 +158,7 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
         auto &tm = NCAppDelegate.me.themesManager;
         __weak MMTabBarView *v = tabBarView;
         m_Observation = tm.ObserveChanges(nc::ThemesManager::Notifications::FilePanelsTabs, [v] {
-            if( g_LastImagesRebuildTime + 200ms < machtime() ) {
+            if( g_LastImagesRebuildTime + 200ms < nc::base::machtime() ) {
                 // make sure images will be rebuilt only by one object, not by all of them.
                 g_TabCloseFreeImage = MakeTabCloseFreeImage();
                 g_TabCloseHoverImage = MakeTabCloseHoverImage();
@@ -166,7 +166,7 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
                 g_TabAddFreeImage = MakeTabAddFreeImage();
                 g_TabAddHoverImage = MakeTabAddHoverImage();
                 g_TabAddPressedImage = MakeTabAddPressedImage();
-                g_LastImagesRebuildTime = machtime();
+                g_LastImagesRebuildTime = nc::base::machtime();
             }
 
             if( MMTabBarView *sv = v ) {

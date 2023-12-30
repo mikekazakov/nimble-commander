@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Progress.h"
 #include <iostream>
 #include <Habanero/mach_time.h>
@@ -33,7 +33,7 @@ void Progress::CommitSkipped(uint64_t _delta)
 
 void Progress::CommitProcessed(uint64_t _delta)
 {
-    const auto current_time = machtime();
+    const auto current_time = base::machtime();
     m_TimepointsLock.lock();
     const auto delta_time = current_time - m_LastCommitTimePoint;
     m_LastCommitTimePoint = current_time;
@@ -73,7 +73,7 @@ void Progress::ReportSleptDelta(std::chrono::nanoseconds _delta)
 void Progress::SetupTiming()
 {
     auto lock = std::lock_guard{m_TimepointsLock};
-    m_BaseTimePoint = machtime();
+    m_BaseTimePoint = base::machtime();
     m_LastCommitTimePoint = m_BaseTimePoint;
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/Observable.h>
@@ -8,7 +8,7 @@
 namespace nc::panel {
 
 // STA API design at the moment, call it only from main thread!
-class FavoriteLocationsStorage : protected ObservableBase
+class FavoriteLocationsStorage : protected base::ObservableBase
 {
 public:
     struct Location

@@ -81,7 +81,7 @@ uint64_t FSEventsFileUpdateImpl::AddWatchPath(const std::filesystem::path &_path
         watch.stream = stream;
         watch.handlers.emplace(token, std::move(_handler));
         watch.stat = GetStat(_path); // sync I/O here :(
-        watch.snapshot_time = machtime();
+        watch.snapshot_time = base::machtime();
         m_Watches.emplace(_path, std::move(watch));
     }
 
@@ -177,7 +177,7 @@ void FSEventsFileUpdateImpl::Callback([[maybe_unused]] ConstFSEventStreamRef _st
     paths.erase(std::unique(paths.begin(), paths.end()), paths.end());
 
     auto lock = std::lock_guard{m_Lock};
-    const auto now = machtime();
+    const auto now = base::machtime();
     for( auto path : paths ) {
         Log::Debug(SPDLOC, "Callback fired for {}", path);
         auto watches_it = m_Watches.find(path);
@@ -227,7 +227,7 @@ void FSEventsFileUpdateImpl::KickstartBackgroundScanner()
 
     std::vector<std::filesystem::path> paths;
     paths.reserve(m_Watches.size());
-    const auto now = machtime();
+    const auto now = base::machtime();
     for( const auto &watch : m_Watches ) {
         // check that the last snapshot is stale enough to bother
         if( watch.second.snapshot_time + g_StaleInterval < now ) {
@@ -247,7 +247,7 @@ void FSEventsFileUpdateImpl::AcceptScannedStats(const std::vector<std::filesyste
     ScheduleScannerKickstart();
 
     assert(_paths.size() == _stats.size());
-    const auto now = machtime();
+    const auto now = base::machtime();
     for( size_t i = 0; i != _paths.size(); ++i ) {
         auto it = m_Watches.find(_paths[i]);
         if( it == m_Watches.end() )

@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-203 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsFileUpdateImpl.h"
 #include "UnitTests_main.h"
 #include <CoreFoundation/CoreFoundation.h>
@@ -136,12 +136,12 @@ static bool run_until_timeout_or_predicate(std::chrono::nanoseconds _timeout,
                                            std::function<bool()> _done)
 {
     assert(_done);
-    const auto deadline = machtime() + _timeout;
+    const auto deadline = nc::base::machtime() + _timeout;
     do {
         if( _done() )
             return true;
         CFRunLoopRunInMode(
             kCFRunLoopDefaultMode, std::chrono::duration<double>(_slice).count(), false);
-    } while( deadline > machtime() );
+    } while( deadline > nc::base::machtime() );
     return false;
 }

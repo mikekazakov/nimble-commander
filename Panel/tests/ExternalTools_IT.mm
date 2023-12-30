@@ -24,14 +24,14 @@ static bool WaitForChildProcess(int _pid, std::chrono::nanoseconds _deadline, st
 {
     if( _pid < 0 )
         return true;
-    const auto deadline = machtime() + _deadline;
+    const auto deadline = nc::base::machtime() + _deadline;
     while( true ) {
         int waitpid_status = 0;
         waitpid(_pid, &waitpid_status, WNOHANG | WUNTRACED);
         const bool dead = kill(_pid, 0) < 0;
         if( dead && errno == ESRCH )
             return true;
-        if( machtime() >= deadline )
+        if( nc::base::machtime() >= deadline )
             return false;
         std::this_thread::sleep_for(_poll_period);
     }

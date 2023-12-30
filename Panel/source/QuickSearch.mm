@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickSearch.h"
 #include <Panel/PanelDataFilter.h>
 #include <Panel/PanelData.h>
@@ -119,15 +119,14 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     }
 }
 
-- (bool)isIgnored:(NSString*)_character
+- (bool)isIgnored:(NSString *)_character
 {
-    assert( _character.length > 0 );
+    assert(_character.length > 0);
     const auto utf16 = [_character characterAtIndex:0]; // consider uing UTF-32 here ?
     return [m_IgnoreCharacters characterIsMember:utf16];
 }
 
-- (int)bidForHandlingKeyDown:(NSEvent *)_event
-                forPanelView:(PanelView *) [[maybe_unused]] _panel_view
+- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView *) [[maybe_unused]] _panel_view
 {
     const auto modif = _event.modifierFlags;
     if( !IsQuickSearchModifier(modif, m_Modifier) )
@@ -136,15 +135,15 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     const auto character = _event.charactersIgnoringModifiers;
     if( character.length == 0 )
         return view::BiddingPriority::Skip;
-    
+
     if( [self isIgnored:character] )
         return view::BiddingPriority::Skip;
 
     if( IsQuickSearchStringCharacter(character) )
         return view::BiddingPriority::Default;
 
-    bool empty_now = m_IsSoftFiltering ? m_Data->SoftFiltering().text.length == 0
-                                       : m_Data->HardFiltering().text.text.length == 0;
+    bool empty_now =
+        m_IsSoftFiltering ? m_Data->SoftFiltering().text.length == 0 : m_Data->HardFiltering().text.text.length == 0;
 
     if( !empty_now ) {
         if( IsBackspace(character) )
@@ -208,7 +207,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
         return;
     }
 
-    const auto is_in_progress = m_SoftFilteringLastAction + g_SoftFilteringTimeout >= machtime();
+    const auto is_in_progress = m_SoftFilteringLastAction + g_SoftFilteringTimeout >= nc::base::machtime();
     const auto current = is_in_progress ? m_Data->SoftFiltering().text : static_cast<NSString *>(nil);
     const auto replace = ModifyStringByKeyDownString(current, key);
 
@@ -243,8 +242,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     [self updateTypingUI];
 
     // for convinience - if we have ".." and cursor is on it - move it to the first element after
-    if( [m_Delegate quickSearchNeedsCursorPosition:self] == 0 &&
-        m_Data->SortedDirectoryEntries().size() >= 2 &&
+    if( [m_Delegate quickSearchNeedsCursorPosition:self] == 0 && m_Data->SortedDirectoryEntries().size() >= 2 &&
         m_Data->EntryAtRawPosition(m_Data->SortedDirectoryEntries()[0]).IsDotDot() )
         [m_Delegate quickSearch:self wantsToSetCursorPosition:1];
 }
@@ -254,7 +252,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     if( !_text )
         return;
 
-    const auto current_time = machtime();
+    const auto current_time = nc::base::machtime();
 
     auto filtering = m_Data->SoftFiltering();
     if( m_SoftFilteringLastAction + g_SoftFilteringTimeout < current_time )
@@ -292,7 +290,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
         m_SoftFilteringOffset = 0;
         const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
         [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];
-        m_SoftFilteringLastAction = machtime();
+        m_SoftFilteringLastAction = nc::base::machtime();
         [self scheduleSoftFilteringCleanup];
     }
 }
@@ -304,7 +302,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
         m_SoftFilteringOffset = filtered_amount - 1;
         const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
         [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];
-        m_SoftFilteringLastAction = machtime();
+        m_SoftFilteringLastAction = nc::base::machtime();
         [self scheduleSoftFilteringCleanup];
     }
 }
@@ -316,7 +314,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
         m_SoftFilteringOffset = std::max(0, m_SoftFilteringOffset - 1);
         const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
         [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];
-        m_SoftFilteringLastAction = machtime();
+        m_SoftFilteringLastAction = nc::base::machtime();
         [self scheduleSoftFilteringCleanup];
     }
 }
@@ -328,7 +326,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
         m_SoftFilteringOffset = std::min(filtered_amount - 1, m_SoftFilteringOffset + 1);
         const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
         [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];
-        m_SoftFilteringLastAction = machtime();
+        m_SoftFilteringLastAction = nc::base::machtime();
         [self scheduleSoftFilteringCleanup];
     }
 }
@@ -338,7 +336,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     __weak NCPanelQuickSearch *weak_self = self;
     auto clear_filtering = [=] {
         if( NCPanelQuickSearch *strong_self = weak_self ) {
-            if( strong_self->m_SoftFilteringLastAction + g_SoftFilteringTimeout <= machtime() )
+            if( strong_self->m_SoftFilteringLastAction + g_SoftFilteringTimeout <= nc::base::machtime() )
                 [strong_self setSearchCriteria:nil];
         }
     };
@@ -393,8 +391,7 @@ namespace nc::panel::QuickSearch {
 static bool IsQuickSearchModifier(NSUInteger _modif, KeyModif _mode)
 {
     // we don't care about CapsLock, Function or NumPad
-    _modif &= ~(NSEventModifierFlagCapsLock | NSEventModifierFlagFunction |
-                NSEventModifierFlagNumericPad) &
+    _modif &= ~(NSEventModifierFlagCapsLock | NSEventModifierFlagFunction | NSEventModifierFlagNumericPad) &
               (NSEventModifierFlagDeviceIndependentFlagsMask);
 
     const auto alt = NSEventModifierFlagOption;
@@ -402,16 +399,16 @@ static bool IsQuickSearchModifier(NSUInteger _modif, KeyModif _mode)
     const auto ctrl = NSEventModifierFlagControl;
 
     switch( _mode ) {
-    case KeyModif::WithAlt:
-        return _modif == alt || _modif == (alt | shift);
-    case KeyModif::WithCtrlAlt:
-        return _modif == (alt | ctrl) || _modif == (alt | ctrl | shift);
-    case KeyModif::WithShiftAlt:
-        return _modif == (alt | shift);
-    case KeyModif::WithoutModif:
-        return _modif == 0 || _modif == shift;
-    default:
-        break;
+        case KeyModif::WithAlt:
+            return _modif == alt || _modif == (alt | shift);
+        case KeyModif::WithCtrlAlt:
+            return _modif == (alt | ctrl) || _modif == (alt | ctrl | shift);
+        case KeyModif::WithShiftAlt:
+            return _modif == (alt | shift);
+        case KeyModif::WithoutModif:
+            return _modif == 0 || _modif == shift;
+        default:
+            break;
     }
     return false;
 }

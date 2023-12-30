@@ -24,7 +24,7 @@ Cache::~Cache()
 void Cache::CommitListing( const std::string &_at_path, std::vector<PropFindResponse> _items )
 {
     const auto path = EnsureTrailingSlash( _at_path );
-    const auto time = machtime();
+    const auto time = base::machtime();
     
     std::sort( std::begin(_items), std::end(_items), [](const auto &_1st, const auto &_2nd){
         return _1st.filename < _2nd.filename;
@@ -100,7 +100,7 @@ void Cache::DiscardListing( const std::string &_at_path )
 
 bool Cache::IsOutdated(const Directory &_listing)
 {
-    return _listing.fetch_time + g_ListingTimeout < machtime();
+    return _listing.fetch_time + g_ListingTimeout < base::machtime();
 }
 
 void Cache::CommitMkDir( const std::string &_at_path )

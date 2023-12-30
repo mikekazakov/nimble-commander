@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 // ⇧ - NSShiftKeyMask
@@ -16,7 +16,7 @@
 #include <string_view>
 #include <Cocoa/Cocoa.h>
 
-class ActionsShortcutsManager : ObservableBase
+class ActionsShortcutsManager : nc::base::ObservableBase
 {
 public:
     using ShortCut = nc::utility::ActionShortcut;

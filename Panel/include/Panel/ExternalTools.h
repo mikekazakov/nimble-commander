@@ -207,7 +207,7 @@ private:
 };
 
 // supposed to be thread-safe
-class ExternalToolsStorage : public ObservableBase
+class ExternalToolsStorage : public base::ObservableBase
 {
 public:
     ExternalToolsStorage(const char *_config_path, nc::config::Config &_config);

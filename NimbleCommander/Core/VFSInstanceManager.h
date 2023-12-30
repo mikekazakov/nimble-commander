@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS_fwd.h>
@@ -17,7 +17,7 @@ class VFSInstancePromise;
  * Instances of this class are supposed to live forever, as spawned promises don't prolong the 
  * lifetime of the manager object.
  */
-class VFSInstanceManager : protected ObservableBase
+class VFSInstanceManager : protected base::ObservableBase
 {
 public:
     using ObservationTicket = ObservableBase::ObservationTicket;

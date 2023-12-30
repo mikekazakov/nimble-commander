@@ -76,9 +76,9 @@ void TemporaryNativeFileChangesSentinel::ScheduleItemDrop(const std::shared_ptr<
 {
     using namespace std::chrono;
     static const auto safety_backlash = 100ms;
-    _meta->drop_time = duration_cast<milliseconds>(machtime() + _meta->drop_delay);
+    _meta->drop_time = duration_cast<milliseconds>(nc::base::machtime() + _meta->drop_delay);
     dispatch_to_background_after(_meta->drop_delay + safety_backlash, [=] {
-        if( _meta->drop_time < machtime() )
+        if( _meta->drop_time < nc::base::machtime() )
             StopFileWatch(_meta->path);
     });
 }

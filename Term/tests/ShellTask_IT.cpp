@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "Tests.h"
 #include "AtomicHolder.h"
@@ -43,12 +43,12 @@ static bool WaitChildrenListToBecome(const ShellTask &_shell,
                                      std::chrono::nanoseconds _deadline,
                                      std::chrono::nanoseconds _poll_period)
 {
-    const auto deadline = machtime() + _deadline;
+    const auto deadline = nc::base::machtime() + _deadline;
     while( true ) {
         const auto list = _shell.ChildrenList();
         if( list == _expected )
             return true;
-        if( machtime() >= deadline )
+        if( nc::base::machtime() >= deadline )
             return false;
         std::this_thread::sleep_for(_poll_period);
     }
@@ -56,12 +56,12 @@ static bool WaitChildrenListToBecome(const ShellTask &_shell,
 
 static bool WaitUntilProcessDies(int _pid, std::chrono::nanoseconds _deadline, std::chrono::nanoseconds _poll_period)
 {
-    const auto deadline = machtime() + _deadline;
+    const auto deadline = nc::base::machtime() + _deadline;
     while( true ) {
         const bool dead = kill(_pid, 0) < 0;
         if( dead && errno == ESRCH )
             return true;
-        if( machtime() >= deadline )
+        if( nc::base::machtime() >= deadline )
             return false;
         std::this_thread::sleep_for(_poll_period);
     }

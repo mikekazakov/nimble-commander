@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/Observable.h>
@@ -41,7 +41,7 @@ struct PanelViewLayout
 };
 
 // supposed to be thread-safe
-class PanelViewLayoutsStorage : public ObservableBase
+class PanelViewLayoutsStorage : public base::ObservableBase
 {
 public:
     PanelViewLayoutsStorage( const char*_config_path );

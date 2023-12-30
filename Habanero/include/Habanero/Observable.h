@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2022 Michael G. Kazakov
+/* Copyright (c) 2016-2023 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -18,6 +18,8 @@
 #include <vector>
 #include <atomic>
 #include "spinlock.h"
+
+namespace nc::base {
 
 /**
  * Fully thread-safe and intended for concurrent usage.
@@ -68,3 +70,5 @@ private:
     uint64_t ticket;
     friend class ObservableBase;
 };
+
+} // namespace nc::base

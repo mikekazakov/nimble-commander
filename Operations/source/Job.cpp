@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/Operations/Job.h"
 #include <Habanero/IdleSleepPreventer.h>
 #include <boost/core/demangle.hpp>
@@ -12,9 +12,7 @@ Job::Job() : m_IsRunning{false}, m_IsPaused{false}, m_IsCompleted{false}, m_IsSt
 {
 }
 
-Job::~Job()
-{
-}
+Job::~Job() = default;
 
 void Job::Perform()
 {
@@ -31,22 +29,20 @@ void Job::Run()
 
 void Job::Execute()
 {
-    const auto thread_title =
-        "com.magnumbytes.nimblecommander." + boost::core::demangle(typeid(*this).name());
+    const auto thread_title = "com.magnumbytes.nimblecommander." + boost::core::demangle(typeid(*this).name());
     pthread_setname_np(thread_title.c_str());
 
-    const auto sleep_preventer = IdleSleepPreventer::Instance().GetPromise();
+    const auto sleep_preventer = base::IdleSleepPreventer::Instance().GetPromise();
     m_Stats.StartTiming();
 
     try {
         Perform();
     } catch( const std::exception &e ) {
-        std::cerr << "Error: operation " << typeid(*this).name()
-                  << " has thrown an exeption: " << e.what() << "." << std::endl;
+        std::cerr << "Error: operation " << typeid(*this).name() << " has thrown an exeption: " << e.what() << "."
+                  << std::endl;
         Stop();
     } catch( ... ) {
-        std::cerr << "Error: operation " << typeid(*this).name()
-                  << " has thrown an unknown exeption." << std::endl;
+        std::cerr << "Error: operation " << typeid(*this).name() << " has thrown an unknown exeption." << std::endl;
         Stop();
     }
 

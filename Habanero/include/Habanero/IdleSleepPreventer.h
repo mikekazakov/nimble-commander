@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Michael G. Kazakov
+/* Copyright (c) 2015-2023 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -16,6 +16,8 @@
 #include <memory>
 #include <mutex>
 
+namespace nc::base {
+
 class IdleSleepPreventer
 {
 public:
@@ -23,23 +25,26 @@ public:
     {
     public:
         ~Promise();
+
     private:
         Promise();
-        Promise(Promise&) = delete;
-        void operator=(Promise&) = delete;
+        Promise(Promise &) = delete;
+        void operator=(Promise &) = delete;
         friend class IdleSleepPreventer;
     };
 
     static IdleSleepPreventer &Instance();
     std::unique_ptr<Promise> GetPromise();
-    
+
 private:
     void Add();
     void Release();
-    
-    std::mutex  m_Lock;
-    int         m_Promises = 0;
-    uint32_t    m_ID = 0; // zero means ID is not acquired
-    
+
+    std::mutex m_Lock;
+    int m_Promises = 0;
+    uint32_t m_ID = 0; // zero means ID is not acquired
+
     friend class Promise;
 };
+
+} // namespace nc::base

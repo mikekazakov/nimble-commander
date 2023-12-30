@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/NetSFTP.h>
@@ -474,7 +474,7 @@ TEST_CASE(PREFIX "doesn't crash on many connections")
 
     // in this test VFS must simply not crash under this workload.
     // returning errors on this case is ok at the moment
-    DispatchGroup grp;
+    nc::base::DispatchGroup grp;
     for( int i = 0; i < 100; ++i )
         grp.Run([&] {
             VFSStat st;

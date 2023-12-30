@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Michael G. Kazakov
+/* Copyright (c) 2015-2023 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -15,6 +15,8 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <Habanero/IdleSleepPreventer.h>
 
+namespace nc::base {
+
 IdleSleepPreventer::Promise::Promise()
 {
     IdleSleepPreventer::Instance().Add();
@@ -27,8 +29,8 @@ IdleSleepPreventer::Promise::~Promise()
 
 IdleSleepPreventer &IdleSleepPreventer::Instance()
 {
-    static auto i = new IdleSleepPreventer;
-    return *i;
+    [[clang::no_destroy]] static IdleSleepPreventer i;
+    return i;
 }
 
 std::unique_ptr<IdleSleepPreventer::Promise> IdleSleepPreventer::GetPromise()
@@ -40,16 +42,11 @@ void IdleSleepPreventer::Add()
 {
     std::lock_guard<std::mutex> lock(m_Lock);
     m_Promises++;
-    
+
     if( m_ID == kIOPMNullAssertionID ) {
-        static CFStringRef reason = CFStringCreateWithFormat(nullptr,
-                                                             nullptr,
-                                                             CFSTR("%@ is performing an operation"),
-                                                             CFBundleGetIdentifier(CFBundleGetMainBundle()));
-        IOPMAssertionCreateWithName(kIOPMAssertionTypeNoIdleSleep,
-                                    kIOPMAssertionLevelOn,
-                                    reason,
-                                    &m_ID);
+        static CFStringRef reason = CFStringCreateWithFormat(
+            nullptr, nullptr, CFSTR("%@ is performing an operation"), CFBundleGetIdentifier(CFBundleGetMainBundle()));
+        IOPMAssertionCreateWithName(kIOPMAssertionTypeNoIdleSleep, kIOPMAssertionLevelOn, reason, &m_ID);
     }
 }
 
@@ -63,3 +60,5 @@ void IdleSleepPreventer::Release()
         m_ID = kIOPMNullAssertionID;
     }
 }
+
+} // namespace nc::base

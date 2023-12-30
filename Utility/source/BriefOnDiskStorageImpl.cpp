@@ -1,3 +1,4 @@
+// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOnDiskStorageImpl.h"
 #include <Habanero/algo.h>
 
@@ -6,7 +7,7 @@ namespace nc::utility
     
 BriefOnDiskStorageImpl::BriefOnDiskStorageImpl(const std::string &_base_path,
                                                const std::string &_file_prefix,
-                                               hbn::PosixFilesystem &_fs):
+                                               base::PosixFilesystem &_fs):
     m_BasePath{_base_path},
     m_FilePrefix{_file_prefix},
     m_FS(_fs)

@@ -1,7 +1,7 @@
 // Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryFileStorageImpl.h"
 #include <Utility/PathManip.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>

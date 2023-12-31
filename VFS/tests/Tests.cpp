@@ -8,8 +8,8 @@
 #include <gmock/gmock.h>
 
 #include "Tests.h"
-#include <Habanero/CommonPaths.h>
-#include <Habanero/SysLocale.h>
+#include <Base/CommonPaths.h>
+#include <Base/SysLocale.h>
 #include <ftw.h>
 
 static auto g_TestDirPrefix = "_nc__vfs__test_";

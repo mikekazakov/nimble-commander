@@ -7,7 +7,7 @@
 #include <gmock/gmock.h>
 
 #include "UnitTests_main.h"
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 #include <sys/dirent.h>

@@ -2,7 +2,7 @@
 #include "Duplicate.h"
 #include "../PanelController.h"
 #include <VFS/VFS.h>
-#include <Habanero/CFStackAllocator.h>
+#include <Base/CFStackAllocator.h>
 #include <Panel/PanelData.h>
 #include "../PanelView.h"
 #include "../PanelAux.h"
@@ -10,7 +10,7 @@
 #include "../../MainWindowController.h"
 #include <Operations/Copying.h>
 #include <unordered_set>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Config/Config.h>
 #include "Helpers.h"
 #include <robin_hood.h>

@@ -3,7 +3,7 @@
 #include "TextModeFrame.h"
 #include "TextModeWorkingSet.h"
 #include <Utility/Encodings.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 
 #include <vector>
 #include <numeric>

@@ -2,7 +2,7 @@
 #pragma once
 
 #include <VFS/VFS_fwd.h>
-#include <Habanero/StringsBulk.h>
+#include <Base/StringsBulk.h>
 #include <NimbleCommander/Core/VFSInstancePromise.h>
 #include <variant>
 

@@ -7,8 +7,8 @@
 // ⌥ - NSAlternateKeyMask
 // ⌘ - NSCommandKeyMask
 
-#include <Habanero/Observable.h>
-#include <Habanero/RobinHoodUtil.h>
+#include <Base/Observable.h>
+#include <Base/RobinHoodUtil.h>
 #include <Utility/ActionShortcut.h>
 #include <robin_hood.h>
 #include <vector>

@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingDialog.h"
 #include <VFS/VFS.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "../Internal.h"

@@ -4,7 +4,7 @@
 #include "../PanelController.h"
 #include "FindFiles.h"
 #include "../PanelView.h"
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Viewer/ViewerSheet.h>
 #include <Viewer/ViewerViewController.h>
 #include <Viewer/InternalViewerWindowController.h>

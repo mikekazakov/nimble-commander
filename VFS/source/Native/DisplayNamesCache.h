@@ -5,7 +5,7 @@
 #include <optional>
 #include <unordered_map>
 #include <atomic>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 
 namespace nc::vfs::native {
 

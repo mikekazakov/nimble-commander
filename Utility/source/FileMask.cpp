@@ -6,9 +6,9 @@
 #include <optional>
 #include <regex>
 #include <ranges>
-#include <Habanero/CFStackAllocator.h>
-#include <Habanero/CFPtr.h>
-#include <Habanero/algo.h>
+#include <Base/CFStackAllocator.h>
+#include <Base/CFPtr.h>
+#include <Base/algo.h>
 
 namespace nc::utility {
 

@@ -3,8 +3,8 @@
 
 #include "QLVFSThumbnailsCache.h"
 #include <Utility/BriefOnDiskStorage.h>
-#include <Habanero/LRUCache.h>
-#include <Habanero/spinlock.h>
+#include <Base/LRUCache.h>
+#include <Base/spinlock.h>
 
 namespace nc::vfsicon {
     

@@ -3,9 +3,9 @@
 #include "HexModeFrame.h"
 #include "HexModeLayout.h"
 
-#include <Habanero/algo.h>
-#include <Habanero/CFRange.h>
-#include <Habanero/mach_time.h>
+#include <Base/algo.h>
+#include <Base/CFRange.h>
+#include <Base/mach_time.h>
 
 #include <iostream>
 #include <cmath>

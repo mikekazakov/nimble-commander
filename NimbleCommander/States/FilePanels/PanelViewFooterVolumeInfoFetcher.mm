@@ -1,6 +1,6 @@
 // Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/SerialQueue.h>
-#include <Habanero/CommonPaths.h>
+#include <Base/SerialQueue.h>
+#include <Base/CommonPaths.h>
 #include "PanelViewFooterVolumeInfoFetcher.h"
 
 namespace nc::panel {

@@ -6,7 +6,7 @@
 #include <Utility/TemporaryFileStorage.h>
 #include <Config/Config.h>
 #include "DataBackend.h"
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <VFS/VFS.h>
 #include "Theme.h"
 #include "TextModeView.h"

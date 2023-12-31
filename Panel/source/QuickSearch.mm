@@ -5,7 +5,7 @@
 #include <Panel/CursorBackup.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-#include <Habanero/mach_time.h>
+#include <Base/mach_time.h>
 #include <array>
 
 using namespace nc::panel;

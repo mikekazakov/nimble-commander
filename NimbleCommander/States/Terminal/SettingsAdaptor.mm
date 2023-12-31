@@ -5,7 +5,7 @@
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 
 namespace nc::term {
 

@@ -1,5 +1,5 @@
 // Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <Utility/PathManip.h>
 #include <libssh2.h>
 #include <libssh2_sftp.h>
@@ -12,7 +12,7 @@
 #include <sys/param.h>
 #include <netdb.h>
 #include <thread>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 #include <sys/dirent.h>
 
 // libssh2 is full of macros with C-style casts, hence disabling here

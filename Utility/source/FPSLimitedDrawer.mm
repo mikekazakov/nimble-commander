@@ -1,7 +1,7 @@
 // Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <atomic>
-#include <Habanero/mach_time.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/mach_time.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/FPSLimitedDrawer.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/NSTimer+Tolerance.h>

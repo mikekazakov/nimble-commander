@@ -1,6 +1,6 @@
 // Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <AppKit/AppKit.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/SyncMessageBox.h>
 
 void SyncMessageBoxUTF8(const char *_utf8_string)

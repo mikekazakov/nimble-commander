@@ -3,7 +3,7 @@
 #include "TabContextMenu.h"
 #include "Actions/TabsManagement.h"
 #include <NimbleCommander/Core/Alert.h>
-#include <Habanero/RobinHoodUtil.h>
+#include <Base/RobinHoodUtil.h>
 #include <iostream>
 
 using namespace nc::panel;

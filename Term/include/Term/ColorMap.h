@@ -3,7 +3,7 @@
 
 #include <Cocoa/Cocoa.h>
 #include <CoreGraphics/CoreGraphics.h>
-#include <Habanero/CFPtr.h>
+#include <Base/CFPtr.h>
 #include <array>
 
 namespace nc::term {

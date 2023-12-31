@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SourceItems.h"
 #include <sys/stat.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <Utility/PathManip.h>
 
 namespace nc::ops::copying {

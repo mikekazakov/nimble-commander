@@ -2,7 +2,7 @@
 #include "UnitTests_main.h"
 #include "TemporaryFileStorageImpl.h"
 #include "PathManip.h"
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <sys/dirent.h>
 #include <dirent.h>
 #include <ftw.h>

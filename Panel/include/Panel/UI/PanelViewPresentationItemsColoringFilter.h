@@ -2,7 +2,7 @@
 #pragma once
 
 #include <VFS/VFS.h>
-#include <Habanero/tribool.h>
+#include <Base/tribool.h>
 #include <Utility/FileMask.h>
 #include <Panel/PanelDataItemVolatileData.h>
 #include <Cocoa/Cocoa.h>

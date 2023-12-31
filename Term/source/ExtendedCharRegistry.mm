@@ -1,8 +1,8 @@
 // Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExtendedCharRegistry.h"
 #include <CoreFoundation/CoreFoundation.h>
-#include <Habanero/CFPtr.h>
-#include <Habanero/CFStackAllocator.h>
+#include <Base/CFPtr.h>
+#include <Base/CFStackAllocator.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/CharInfo.h>
 #include <array>

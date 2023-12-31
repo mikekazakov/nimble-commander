@@ -1,6 +1,6 @@
 // Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/algo.h>
-#include <Habanero/CommonPaths.h>
+#include <Base/algo.h>
+#include <Base/CommonPaths.h>
 #include <Utility/SystemInformation.h>
 #include "../include/VFS/VFSSeqToRandomWrapper.h"
 #include "../include/VFS/VFSError.h"

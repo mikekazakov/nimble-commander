@@ -6,7 +6,7 @@
 #include <codecvt>
 #include <unordered_map>
 #include <robin_hood.h>
-#include <Habanero/ToLower.h>
+#include <Base/ToLower.h>
 #include <Carbon/Carbon.h>
 
 namespace nc::utility {

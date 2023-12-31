@@ -3,7 +3,7 @@
 #include <Quartz/Quartz.h>
 #include "../MainWindowFilePanelState.h"
 #include "QuickLookVFSBridge.h"
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 
 static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};

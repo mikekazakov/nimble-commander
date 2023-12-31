@@ -3,7 +3,7 @@
 #include <NimbleCommander/Bootstrap/ActivationManagerImpl.h>
 #include <NimbleCommander/Bootstrap/ActivationManagerBase.h>
 #include <VFS/Native.h>
-#include <Habanero/CFDefaultsCPP.h>
+#include <Base/CFDefaultsCPP.h>
 #include <ftw.h>
 #include <fstream>
 

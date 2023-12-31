@@ -4,7 +4,7 @@
 #include <VFS/VFS.h>
 #include <VFS/ArcLARaw.h>
 #include <VFS/Native.h>
-#include <Habanero/WriteAtomically.h>
+#include <Base/WriteAtomically.h>
 #include <sys/stat.h>
 #include <thread>
 #include "NCE.h"

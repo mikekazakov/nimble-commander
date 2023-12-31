@@ -1,9 +1,9 @@
 // Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
-#include <Habanero/CommonPaths.h>
-#include <Habanero/ExecutionDeadline.h>
-#include <Habanero/debug.h>
+#include <Base/CommonPaths.h>
+#include <Base/ExecutionDeadline.h>
+#include <Base/debug.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 #include <sys/dirent.h>

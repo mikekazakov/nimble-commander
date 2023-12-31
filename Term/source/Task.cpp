@@ -13,7 +13,7 @@
 #include <locale.h>
 #include <algorithm>
 #include <CoreFoundation/CoreFoundation.h>
-#include <Habanero/CloseFrom.h>
+#include <Base/CloseFrom.h>
 
 namespace nc::term {
 

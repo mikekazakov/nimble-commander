@@ -1,5 +1,5 @@
 // Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
 #include <Term/ParserImpl.h>
@@ -10,7 +10,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/States/Terminal/SettingsAdaptor.h>
 #include "FilePanelOverlappedTerminal.h"
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 

@@ -3,7 +3,7 @@
 #include <sys/param.h>
 #include <pwd.h>
 #include <unistd.h>
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 
 namespace nc::base {
 

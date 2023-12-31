@@ -1,6 +1,6 @@
 // Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FirmlinksMappingParser.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 
 namespace nc::utility {
 

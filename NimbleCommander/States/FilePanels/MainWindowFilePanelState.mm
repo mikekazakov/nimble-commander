@@ -1,5 +1,5 @@
 // Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/ColoredSeparatorLine.h>
@@ -40,7 +40,7 @@
 #include "ToolsMenuDelegate.h"
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 
 using namespace nc::panel;
 using namespace std::literals;

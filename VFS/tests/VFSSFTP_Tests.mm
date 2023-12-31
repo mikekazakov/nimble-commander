@@ -2,9 +2,9 @@
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/NetSFTP.h>
-#include <Habanero/dispatch_cpp.h>
-#include <Habanero/DispatchGroup.h>
-#include <Habanero/WriteAtomically.h>
+#include <Base/dispatch_cpp.h>
+#include <Base/DispatchGroup.h>
+#include <Base/WriteAtomically.h>
 #include <set>
 #include <dirent.h>
 

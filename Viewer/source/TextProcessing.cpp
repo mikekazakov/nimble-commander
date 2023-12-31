@@ -2,8 +2,8 @@
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
 
-#include <Habanero/algo.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/algo.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/CharInfo.h>
 
 #include <stdexcept>

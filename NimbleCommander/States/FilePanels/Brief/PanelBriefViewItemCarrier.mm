@@ -6,7 +6,7 @@
 #include "PanelBriefView.h"
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewItemCarrier.h"
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Panel/PanelViewFieldEditor.h>
 
 using namespace nc::panel;

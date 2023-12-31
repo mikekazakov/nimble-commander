@@ -2,7 +2,7 @@
 #include "ConfigBackedNetworkConnectionsManager.h"
 #include <dirent.h>
 #include <NetFS/NetFS.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <Utility/KeychainServices.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
@@ -14,8 +14,8 @@
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 #include <NimbleCommander/Bootstrap/NCE.h>
-#include <Habanero/spinlock.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/spinlock.h>
+#include <Base/dispatch_cpp.h>
 
 using namespace nc;
 using namespace std::literals;

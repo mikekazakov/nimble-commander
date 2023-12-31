@@ -5,7 +5,7 @@
 #include <rapidjson/memorystream.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 
 namespace nc::config {
 

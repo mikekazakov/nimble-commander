@@ -2,10 +2,10 @@
 #pragma once
 
 #include <string>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 #include "WorkspaceExtensionIconsCache.h"
 #include <Utility/UTI.h>
-#include <Habanero/RobinHoodUtil.h>
+#include <Base/RobinHoodUtil.h>
 
 namespace nc::vfsicon {
 

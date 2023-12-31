@@ -5,7 +5,7 @@
 #include <Viewer/Bundle.h>
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowInternalViewerState.h"
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 
 @interface MainWindowInternalViewerState ()

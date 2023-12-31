@@ -3,7 +3,7 @@
 #include "TestEnv.h"
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <Utility/TemporaryFileStorageImpl.h>
 #include <Utility/PathManip.h>
 #include <sys/stat.h>

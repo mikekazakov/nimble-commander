@@ -1,5 +1,5 @@
 // Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/SerialQueue.h>
+#include <Base/SerialQueue.h>
 
 namespace nc::base {
 

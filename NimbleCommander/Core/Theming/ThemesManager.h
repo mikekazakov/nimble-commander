@@ -1,8 +1,8 @@
 // Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <Habanero/Observable.h>
-#include <Habanero/RobinHoodUtil.h>
+#include <Base/Observable.h>
+#include <Base/RobinHoodUtil.h>
 #include <Config/Config.h>
 
 #include "Appearance.h"

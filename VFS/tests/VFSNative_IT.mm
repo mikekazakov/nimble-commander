@@ -1,13 +1,13 @@
 // Copyright (C) 2020-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
-#include <Habanero/algo.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/algo.h>
+#include <Base/dispatch_cpp.h>
 #include "../../source/Native/Fetching.h" // EVIL!
 #include <fmt/core.h>
 #include <unistd.h>
 #include <fstream>
-#include <Habanero/RobinHoodUtil.h>
+#include <Base/RobinHoodUtil.h>
 #include <boost/process.hpp>
 
 using namespace nc::vfs;

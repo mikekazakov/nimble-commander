@@ -1,7 +1,7 @@
 // Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <Habanero/CFString.h>
+#include <Base/CFString.h>
 #include <unordered_map>
 #include <string>
 

@@ -1,9 +1,9 @@
 // Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
-#include <Habanero/SerialQueue.h>
-#include <Habanero/DispatchGroup.h>
-#include <Habanero/algo.h>
+#include <Base/SerialQueue.h>
+#include <Base/DispatchGroup.h>
+#include <Base/algo.h>
 #include <Utility/PathManip.h>
 #include <Utility/TemporaryFileStorage.h>
 #include <sys/stat.h>

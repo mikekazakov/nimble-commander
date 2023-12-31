@@ -6,7 +6,7 @@
 #include <VFS/Native.h>
 #include <VFS/XAttr.h>
 #include <VFS/NetFTP.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <set>
 #include <span>
 #include <fstream>

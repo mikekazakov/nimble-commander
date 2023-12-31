@@ -1,7 +1,7 @@
 // Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 #include <string>
 #include <functional>
 #include <memory>

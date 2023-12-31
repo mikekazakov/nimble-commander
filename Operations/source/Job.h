@@ -4,7 +4,7 @@
 #include <atomic>
 #include <functional>
 #include <mutex>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 #include "Statistics.h"
 #include "ItemStateReport.h"
 

@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 
 namespace nc::vfsicon {
 

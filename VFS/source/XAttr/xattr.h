@@ -3,7 +3,7 @@
 
 #include <sys/stat.h>
 #include <VFS/Host.h>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 
 namespace nc::vfs {
 

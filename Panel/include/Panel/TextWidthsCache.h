@@ -2,8 +2,8 @@
 #pragma once
 
 #include <Cocoa/Cocoa.h>
-#include <Habanero/CFPtr.h>
-#include <Habanero/RobinHoodUtil.h>
+#include <Base/CFPtr.h>
+#include <Base/RobinHoodUtil.h>
 #include <string>
 #include <mutex>
 #include <robin_hood.h>

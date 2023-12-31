@@ -19,9 +19,9 @@
 #include <spdlog/sinks/stdout_sinks.h>
 #include <magic_enum.hpp>
 
-#include <Habanero/CommonPaths.h>
-#include <Habanero/CFDefaultsCPP.h>
-#include <Habanero/algo.h>
+#include <Base/CommonPaths.h>
+#include <Base/CFDefaultsCPP.h>
+#include <Base/algo.h>
 
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/NativeFSManagerImpl.h>

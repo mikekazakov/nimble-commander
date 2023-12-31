@@ -6,8 +6,8 @@
 #include <vector>
 #include <unordered_map>
 #include <Utility/StringExtras.h>
-#include <Habanero/dispatch_cpp.h>
-#include <Habanero/spinlock.h>
+#include <Base/dispatch_cpp.h>
+#include <Base/spinlock.h>
 
 namespace nc::utility {
 

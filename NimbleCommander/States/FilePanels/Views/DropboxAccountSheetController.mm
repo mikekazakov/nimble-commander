@@ -3,7 +3,7 @@
 #include <VFS/NetDropbox.h>
 #include <NimbleCommander/Bootstrap/NCE.h>
 #include <Utility/StringExtras.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 
 using namespace nc;
 using vfs::dropbox::Authenticator;

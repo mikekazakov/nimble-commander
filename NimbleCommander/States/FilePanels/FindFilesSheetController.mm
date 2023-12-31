@@ -1,7 +1,7 @@
 // Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FindFilesSheetController.h"
-#include <Habanero/dispatch_cpp.h>
-#include <Habanero/DispatchGroup.h>
+#include <Base/dispatch_cpp.h>
+#include <Base/DispatchGroup.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>

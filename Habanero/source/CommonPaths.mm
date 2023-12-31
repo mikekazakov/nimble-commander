@@ -1,6 +1,6 @@
 // Copyright (C) 2013-2020 Michael G. Kazakov. Subject to GNU General Public License version 3.
 #include <Foundation/Foundation.h>
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <stdlib.h>
 #include <limits.h>
 

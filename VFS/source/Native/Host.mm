@@ -4,7 +4,7 @@
 #include <sys/errno.h>
 #include <sys/vnode.h>
 #include <sys/stat.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <Utility/PathManip.h>
 #include <Utility/FSEventsDirUpdate.h>
 #include <Utility/FSEventsFileUpdate.h>
@@ -16,7 +16,7 @@
 #include <VFS/VFSError.h>
 #include "../ListingInput.h"
 #include "Fetching.h"
-#include <Habanero/DispatchGroup.h>
+#include <Base/DispatchGroup.h>
 #include <Utility/ObjCpp.h>
 #include <sys/mount.h>
 

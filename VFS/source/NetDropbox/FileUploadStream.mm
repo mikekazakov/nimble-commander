@@ -2,7 +2,7 @@
 #include "FileUploadStream.h"
 #include <mutex>
 #include <deque>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 
 @implementation NCVFSDropboxFileUploadStream
 {

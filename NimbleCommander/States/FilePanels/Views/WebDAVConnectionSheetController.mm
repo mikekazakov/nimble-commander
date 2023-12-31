@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WebDAVConnectionSheetController.h"
 #include <Utility/StringExtras.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 
 @interface WebDAVConnectionSheetController ()
 @property(nonatomic) bool isValid;

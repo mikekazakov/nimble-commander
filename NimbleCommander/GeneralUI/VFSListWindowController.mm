@@ -2,7 +2,7 @@
 #include "VFSListWindowController.h"
 #include "../Core/VFSInstanceManager.h"
 #include "../Core/VFSInstancePromise.h"
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 
 using namespace std::literals;

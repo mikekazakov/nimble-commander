@@ -2,7 +2,7 @@
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataEntriesComparator.h"
-#include <Habanero/DispatchGroup.h>
+#include <Base/DispatchGroup.h>
 #include <VFS/VFS.h>
 #include "PanelDataExternalEntryKey.h"
 #include "Log.h"

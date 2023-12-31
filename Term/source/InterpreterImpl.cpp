@@ -1,7 +1,7 @@
 // Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InterpreterImpl.h"
-#include <Habanero/CFString.h>
-#include <Habanero/CFPtr.h>
+#include <Base/CFString.h>
+#include <Base/CFPtr.h>
 #include <Utility/CharInfo.h>
 #include <magic_enum.hpp>
 #include "OrthodoxMonospace.h"

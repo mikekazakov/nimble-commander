@@ -3,7 +3,7 @@
 #include <VFSIcon/Log.h>
 #include <Quartz/Quartz.h>
 #include <sys/stat.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 
 namespace nc::vfsicon {
 

@@ -14,7 +14,7 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "ExternalEditorInfo.h"
 #include <Operations/Copying.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 #include <robin_hood.h>
 

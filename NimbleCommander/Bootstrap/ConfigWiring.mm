@@ -5,8 +5,8 @@
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <Habanero/dispatch_cpp.h>
-#include <Habanero/algo.h>
+#include <Base/dispatch_cpp.h>
+#include <Base/algo.h>
 #include <ranges>
 
 namespace nc::bootstrap {

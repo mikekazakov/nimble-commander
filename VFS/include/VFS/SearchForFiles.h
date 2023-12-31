@@ -1,7 +1,7 @@
 // Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <Habanero/SerialQueue.h>
+#include <Base/SerialQueue.h>
 #include <Utility/Encodings.h>
 #include <Utility/FileMask.h>
 #include <VFS/VFS.h>

@@ -10,7 +10,7 @@
 #include <Utility/StringExtras.h>
 #include <Utility/ActionShortcut.h>
 #include "History.h"
-#include <Habanero/SerialQueue.h>
+#include <Base/SerialQueue.h>
 #include "Internal.h"
 
 using namespace std::literals;

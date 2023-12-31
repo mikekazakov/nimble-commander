@@ -1,8 +1,8 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataFilter.h"
 #include <VFS/VFS.h>
-#include <Habanero/CFPtr.h>
-#include <Habanero/CFStackAllocator.h>
+#include <Base/CFPtr.h>
+#include <Base/CFStackAllocator.h>
 #include <memory_resource>
 
 namespace nc::panel::data {

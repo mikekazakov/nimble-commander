@@ -6,7 +6,7 @@
 #include <Utility/ActionShortcut.h>
 #include <Utility/TemporaryFileStorage.h>
 
-#include <Habanero/Observable.h>
+#include <Base/Observable.h>
 
 #include <Config/Config.h>
 

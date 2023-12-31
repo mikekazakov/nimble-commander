@@ -1,6 +1,6 @@
 // Copyright (C) 2021-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTabOperationsConcurrencySheet.h"
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <robin_hood.h>
 #include <vector>
 #include <ranges>

@@ -3,7 +3,7 @@
 
 #include <typeindex>
 #include <robin_hood.h>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 
 namespace nc::ops {
 

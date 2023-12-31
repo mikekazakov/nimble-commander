@@ -1,6 +1,6 @@
 // Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
 
-#include <Habanero/intrusive_ptr.h>
+#include <Base/intrusive_ptr.h>
 #include "UnitTests_main.h"
 #include <vector>
 #include <thread>

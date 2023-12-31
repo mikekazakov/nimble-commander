@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Requests.h"
 #include "WebDAVHost.h"
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <pugixml/pugixml.hpp>
 #include "DateTimeParser.h"
 #include "Connection.h"

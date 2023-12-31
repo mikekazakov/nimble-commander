@@ -1,6 +1,6 @@
 // Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowController.h"
-#include <Habanero/debug.h>
+#include <Base/debug.h>
 #include <Config/RapidJSON.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
@@ -21,7 +21,7 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
-#include <Habanero/SerialQueue.h>
+#include <Base/SerialQueue.h>
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <Operations/Pool.h>
 #include <Utility/ObjCpp.h>

@@ -1,9 +1,9 @@
 // Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <ServiceManagement/ServiceManagement.h>
 #include <Security/Security.h>
-#include <Habanero/CommonPaths.h>
-#include <Habanero/CFString.h>
-#include <Habanero/CFPtr.h>
+#include <Base/CommonPaths.h>
+#include <Base/CFString.h>
+#include <Base/CFPtr.h>
 #include <Utility/SystemInformation.h>
 #include <RoutedIO/RoutedIO.h>
 #include <RoutedIO/Log.h>

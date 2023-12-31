@@ -3,9 +3,9 @@
 #include <CoreServices/CoreServices.h>
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
-#include <Habanero/CommonPaths.h>
-#include <Habanero/algo.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/CommonPaths.h>
+#include <Base/algo.h>
+#include <Base/dispatch_cpp.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include <Utility/PathManip.h>

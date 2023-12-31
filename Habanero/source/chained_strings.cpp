@@ -1,5 +1,5 @@
 // Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/chained_strings.h>
+#include <Base/chained_strings.h>
 #include <stdlib.h>
 #include <memory.h>
 

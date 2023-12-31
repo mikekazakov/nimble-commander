@@ -18,8 +18,8 @@
 #include <syslog.h>
 #include <signal.h>
 #include <iostream>
-#include <Habanero/dispatch_cpp.h>
-#include <Habanero/CloseFrom.h>
+#include <Base/dispatch_cpp.h>
+#include <Base/CloseFrom.h>
 
 #include "SingleTask.h"
 

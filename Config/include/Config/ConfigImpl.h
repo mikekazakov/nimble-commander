@@ -3,9 +3,9 @@
 
 #include "Config.h"
 #include "RapidJSON.h"
-#include <Habanero/spinlock.h>
-#include <Habanero/intrusive_ptr.h>
-#include <Habanero/RobinHoodUtil.h>
+#include <Base/spinlock.h>
+#include <Base/intrusive_ptr.h>
+#include <Base/RobinHoodUtil.h>
 #include <vector>
 #include "OverwritesStorage.h"
 #include "Executor.h"

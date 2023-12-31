@@ -4,8 +4,8 @@
 #include <string>
 #include <string_view>
 
-#include <Habanero/RobinHoodUtil.h>
-#include <Habanero/spinlock.h>
+#include <Base/RobinHoodUtil.h>
+#include <Base/spinlock.h>
 
 namespace nc::utility {
 

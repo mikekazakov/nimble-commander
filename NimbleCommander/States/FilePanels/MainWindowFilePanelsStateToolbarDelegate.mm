@@ -8,8 +8,8 @@
 #include "Actions/ExecuteExternalTool.h"
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <Panel/ExternalTools.h>
-#include <Habanero/dispatch_cpp.h>
-#include <Habanero/WhereIs.h>
+#include <Base/dispatch_cpp.h>
+#include <Base/WhereIs.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 #include <deque>

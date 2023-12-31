@@ -1,6 +1,6 @@
 // Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
-#include <Habanero/CFStackAllocator.h>
+#include <Base/CFStackAllocator.h>
 #include <Utility/PathManip.h>
 #include <Utility/DataBlockAnalysis.h>
 #include <libarchive/archive.h>
@@ -14,8 +14,8 @@
 #include "EncodingDetection.h"
 #include <sys/param.h>
 #include <mutex>
-#include <Habanero/RobinHoodUtil.h>
-#include <Habanero/algo.h>
+#include <Base/RobinHoodUtil.h>
+#include <Base/algo.h>
 
 namespace nc::vfs {
 

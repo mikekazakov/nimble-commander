@@ -5,7 +5,7 @@
 #include "PanelListViewRowView.h"
 #include "PanelListViewTableView.h"
 #include <Utility/ObjCpp.h>
-#include <Habanero/CFPtr.h>
+#include <Base/CFPtr.h>
 #include <cassert>
 
 using namespace nc;

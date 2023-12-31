@@ -2,7 +2,7 @@
 #include "Tests.h"
 #include "TestEnv.h"
 #include <NativeSpecialDirectories.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <sys/stat.h>
 
 using namespace nc::vfs;

@@ -1,6 +1,6 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/CommonPaths.h>
-#include <Habanero/algo.h>
+#include <Base/CommonPaths.h>
+#include <Base/algo.h>
 #include "../Internal.h"
 #include "DisclosureViewController.h"
 #include "CopyingDialog.h"

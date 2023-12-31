@@ -1,6 +1,6 @@
 // Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMAttachedTabBarButton.h>
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include <VFS/Native.h>
 #include "MainWindowFilePanelState+TabsSupport.h"

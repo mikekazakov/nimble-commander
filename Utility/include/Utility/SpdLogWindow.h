@@ -2,7 +2,7 @@
 #pragma once
 
 #include <Cocoa/Cocoa.h>
-#include <Habanero/SpdlogFacade.h>
+#include <Base/SpdlogFacade.h>
 #include <span>
 
 @interface NCSpdLogWindowController : NSWindowController<NSWindowDelegate, NSTextViewDelegate>

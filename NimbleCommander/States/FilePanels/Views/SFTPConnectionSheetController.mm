@@ -1,5 +1,5 @@
 // Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <VFS/NetSFTP.h>
 #include "SFTPConnectionSheetController.h"
 #include <Utility/StringExtras.h>

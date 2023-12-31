@@ -1,6 +1,6 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SpotlightSearch.h"
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <VFS/Native.h>
 #include <VFS/VFSListingInput.h>
 #include "../PanelController.h"
@@ -9,7 +9,7 @@
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include "../PanelView.h"
 #include <Utility/StringExtras.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 

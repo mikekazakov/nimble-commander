@@ -34,8 +34,8 @@
 #include <Operations/AggregateProgressTracker.h>
 #include "Config.h"
 #include "ActivationManager.h"
-#include <Habanero/CommonPaths.h>
-#include <Habanero/algo.h>
+#include <Base/CommonPaths.h>
+#include <Base/algo.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include "AppDelegate+ViewerCreation.h"
 #include <ranges>

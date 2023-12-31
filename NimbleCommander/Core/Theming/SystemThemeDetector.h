@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Appearance.h"
-#include <Habanero/Observable.h>
+#include <Base/Observable.h>
 
 namespace nc {
 

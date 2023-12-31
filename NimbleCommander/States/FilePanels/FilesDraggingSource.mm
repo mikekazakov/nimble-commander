@@ -4,7 +4,7 @@
 #include <Utility/StringExtras.h>
 #include <Operations/Deletion.h>
 #include <Operations/Copying.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include "PanelController.h"
 #include "MainWindowFilePanelState.h"
 #include "../MainWindowController.h"

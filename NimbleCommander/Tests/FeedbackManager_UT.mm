@@ -2,7 +2,7 @@
 #include "Tests.h"
 #include <NimbleCommander/Core/FeedbackManagerImpl.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include <Habanero/CFDefaultsCPP.h>
+#include <Base/CFDefaultsCPP.h>
 
 using namespace nc::base;
 using nc::FeedbackManager;

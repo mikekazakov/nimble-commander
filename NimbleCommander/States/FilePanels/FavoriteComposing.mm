@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
-#include <Habanero/CommonPaths.h>
-#include <Habanero/algo.h>
+#include <Base/CommonPaths.h>
+#include <Base/algo.h>
 #include "FavoriteComposing.h"
 #include "PanelDataPersistency.h"
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>

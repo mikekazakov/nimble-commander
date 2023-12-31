@@ -15,7 +15,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/sysctl.h>
-#include <Habanero/debug.h>
+#include <Base/debug.h>
 
 namespace nc::base {
 

@@ -6,7 +6,7 @@
 #include <Utility/NSView+Sugar.h>
 #include <Utility/BlinkScheduler.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include "OrthodoxMonospace.h"
 #include "Screen.h"
 #include "Settings.h"

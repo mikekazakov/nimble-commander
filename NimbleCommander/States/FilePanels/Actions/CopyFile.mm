@@ -11,7 +11,7 @@
 #include <Operations/CopyingDialog.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Config/Config.h>
 
 namespace nc::panel::actions {

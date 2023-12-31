@@ -1,6 +1,6 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DateTimeParser.h"
-#include <Habanero/CFStackAllocator.h>
+#include <Base/CFStackAllocator.h>
 #include <mutex>
 
 namespace nc::vfs::webdav {

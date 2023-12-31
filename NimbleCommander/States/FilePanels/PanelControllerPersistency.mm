@@ -5,9 +5,9 @@
 #include "PanelDataOptionsPersistence.h"
 #include "PanelDataPersistency.h"
 #include <VFS/Native.h>
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <Config/RapidJSON.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/PathManip.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 

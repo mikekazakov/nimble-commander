@@ -1,8 +1,8 @@
 // Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "../include/Utility/BlinkScheduler.h"
-#include <Habanero/mach_time.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/mach_time.h>
+#include <Base/dispatch_cpp.h>
 #include <stdexcept>
 
 namespace nc::utility {

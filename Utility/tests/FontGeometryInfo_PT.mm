@@ -2,7 +2,7 @@
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 #include "UnitTests_main.h"
 #include "FontExtras.h"
-#include <Habanero/CFString.h>
+#include <Base/CFString.h>
 #include <random>
 
 // NB! disable by default, include in the UtilityUT to enable

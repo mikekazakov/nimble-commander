@@ -1,6 +1,6 @@
 // Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>

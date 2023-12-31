@@ -1,7 +1,7 @@
 // Copyright (C) 2016-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AdaptiveDateFormatting.h"
 #include <Cocoa/Cocoa.h>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 
 // Finder (10.12) heuristics for min column width:
 // Font Size  Long  Medium  Short  Tiny

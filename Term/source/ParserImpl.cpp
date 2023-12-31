@@ -1,7 +1,7 @@
 // Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ParserImpl.h"
 #include <Utility/Encodings.h>
-#include <Habanero/CFPtr.h>
+#include <Base/CFPtr.h>
 #include <Carbon/Carbon.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include "TranslateMaps.h"

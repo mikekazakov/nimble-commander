@@ -1,11 +1,11 @@
 // Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryNativeFileChangesSentinel.h"
-#include <Habanero/algo.h>
-#include <Habanero/Hash.h>
+#include <Base/algo.h>
+#include <Base/Hash.h>
 #include <Utility/FSEventsDirUpdate.h>
 #include <VFS/Native.h>
-#include <Habanero/mach_time.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/mach_time.h>
+#include <Base/dispatch_cpp.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 
 static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &_path)

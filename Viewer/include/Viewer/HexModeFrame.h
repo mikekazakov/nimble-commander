@@ -4,8 +4,8 @@
 #include "TextModeWorkingSet.h"
 
 #include <Utility/FontExtras.h>
-#include <Habanero/CFPtr.h>
-#include <Habanero/spinlock.h>
+#include <Base/CFPtr.h>
+#include <Base/spinlock.h>
 
 #include <memory>
 #include <vector>

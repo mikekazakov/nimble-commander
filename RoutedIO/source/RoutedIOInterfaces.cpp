@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <sys/mount.h>
-#include <Habanero/CFPtr.h>
+#include <Base/CFPtr.h>
 
 #include "RoutedIOInterfaces.h"
 #include "Trash.h"

@@ -5,7 +5,7 @@
 #include <Utility/StringExtras.h>
 #include <Utility/Encodings.h>
 #include <Utility/FontExtras.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 
 #include <string>
 #include <stdint.h>

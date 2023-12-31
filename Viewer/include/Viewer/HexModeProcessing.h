@@ -3,7 +3,7 @@
 
 #include "TextModeWorkingSet.h"
 
-#include <Habanero/CFPtr.h>
+#include <Base/CFPtr.h>
 
 #include <vector>
 

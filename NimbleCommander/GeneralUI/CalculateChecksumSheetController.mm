@@ -1,6 +1,6 @@
 // Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/Hash.h>
-#include <Habanero/SerialQueue.h>
+#include <Base/Hash.h>
+#include <Base/SerialQueue.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Alert.h>
 #include "CalculateChecksumSheetController.h"

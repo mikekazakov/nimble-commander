@@ -1,8 +1,8 @@
 // Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ActivationManagerBase.h"
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <AquaticPrime/AquaticPrime.h>
-#include <Habanero/CFDefaultsCPP.h>
+#include <Base/CFDefaultsCPP.h>
 #include <fstream>
 #include <filesystem>
 

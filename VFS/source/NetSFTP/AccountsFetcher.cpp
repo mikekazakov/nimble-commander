@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AccountsFetcher.h"
 #include <VFS/VFSError.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <unordered_map>
 
 // libssh2 has macros with C-style casts

@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <Habanero/Observable.h>
+#include <Base/Observable.h>
 #include <VFS/VFS.h>
 #include "PanelDataPersistency.h"
 

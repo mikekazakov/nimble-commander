@@ -7,8 +7,8 @@
 #include <queue>
 #include <vector>
 #include <stack>
-#include <Habanero/spinlock.h>
-#include <Habanero/intrusive_ptr.h>
+#include <Base/spinlock.h>
+#include <Base/intrusive_ptr.h>
 
 namespace nc::vfsicon {
 

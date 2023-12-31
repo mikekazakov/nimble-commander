@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <Habanero/ScopedObservable.h>
+#include <Base/ScopedObservable.h>
 #include <VFS/VFS.h>
 #include <string_view>
 

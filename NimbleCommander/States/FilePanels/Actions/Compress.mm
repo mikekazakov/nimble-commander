@@ -9,7 +9,7 @@
 #include <Utility/PathManip.h>
 #include <Operations/Compression.h>
 #include <Operations/CompressDialog.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Config/Config.h>
 #include "Helpers.h"
 

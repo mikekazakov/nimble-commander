@@ -4,7 +4,7 @@
 #include "Modes.h"
 
 #include <Config/Config.h>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 #include <deque>
 #include <vector>
 #include <CoreFoundation/CoreFoundation.h>

@@ -1,7 +1,7 @@
 // Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefView.h"
 #include <VFS/VFS.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <Utility/FontExtras.h>
 #include <Panel/PanelData.h>
 #include <Panel/PanelDataSortMode.h>

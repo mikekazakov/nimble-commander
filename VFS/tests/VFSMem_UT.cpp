@@ -2,7 +2,7 @@
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/Mem.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 
 using namespace nc::vfs;
 //using nc::vfs::MemHost;

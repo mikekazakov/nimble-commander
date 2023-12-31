@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AsyncDialogResponse.h"
 #include "ModalDialogResponses.h"
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 
 namespace nc::ops {
 

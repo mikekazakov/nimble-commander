@@ -1,7 +1,7 @@
 // Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <VFSIcon/QLThumbnailsCacheImpl.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 
 static const char* g_Paths[] = {
 "/Library/Desktop Pictures/Abstract Shapes.jpg",

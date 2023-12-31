@@ -1,6 +1,6 @@
 // Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelController.h"
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include "../MainWindowController.h"
@@ -13,10 +13,10 @@
 #include "PanelViewLayoutSupport.h"
 #include <Panel/PanelDataItemVolatileData.h>
 #include "PanelDataOptionsPersistence.h"
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <VFS/Native.h>
 #include "PanelHistory.h"
-#include <Habanero/SerialQueue.h>
+#include <Base/SerialQueue.h>
 #include <Panel/PanelData.h>
 #include "PanelView.h"
 #include "DragReceiver.h"
@@ -35,7 +35,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <Utility/PathManip.h>
-#include <Habanero/mach_time.h>
+#include <Base/mach_time.h>
 
 using namespace nc;
 using namespace nc::core;

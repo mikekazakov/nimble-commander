@@ -9,8 +9,8 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/SystemInformation.h>
 #include <Utility/StringExtras.h>
-#include <Habanero/CFString.h>
-#include <Habanero/CommonPaths.h>
+#include <Base/CFString.h>
+#include <Base/CommonPaths.h>
 
 namespace nc::utility {
 

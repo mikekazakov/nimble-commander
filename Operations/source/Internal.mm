@@ -1,6 +1,6 @@
 // Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Internal.h"
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <filesystem>
 
 namespace nc::ops {

@@ -4,8 +4,8 @@
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <sys/mount.h>
-#include <Habanero/algo.h>
-#include <Habanero/Hash.h>
+#include <Base/algo.h>
+#include <Base/Hash.h>
 #include <Utility/PathManip.h>
 #include <Utility/StringExtras.h>
 #include <RoutedIO/RoutedIO.h>

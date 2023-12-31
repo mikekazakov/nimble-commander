@@ -1,8 +1,8 @@
 // Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/UTIImpl.h>
 #include <CoreServices/CoreServices.h>
-#include <Habanero/CFPtr.h>
-#include <Habanero/CFString.h>
+#include <Base/CFPtr.h>
+#include <Base/CFString.h>
 #include <fmt/core.h>
 
 namespace nc::utility {

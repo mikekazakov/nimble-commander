@@ -4,7 +4,7 @@
 #include <vector>
 #include <VFS/VFSGenericMemReadOnlyFile.h>
 #include <VFS/VFSListingInput.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <Utility/PathManip.h>
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <libarchive/archive.h>

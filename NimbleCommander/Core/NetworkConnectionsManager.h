@@ -1,7 +1,7 @@
 // Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <Habanero/UUID.h>
+#include <Base/UUID.h>
 #include <VFS/VFS.h>
 
 class NetworkConnectionsManager

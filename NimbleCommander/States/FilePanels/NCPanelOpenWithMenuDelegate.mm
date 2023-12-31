@@ -7,7 +7,7 @@
 #include <VFS/VFS.h>
 #include "PanelAux.h"
 #include "PanelController.h"
-#include <Habanero/SerialQueue.h>
+#include <Base/SerialQueue.h>
 #include <robin_hood.h>
 
 using namespace nc::core;

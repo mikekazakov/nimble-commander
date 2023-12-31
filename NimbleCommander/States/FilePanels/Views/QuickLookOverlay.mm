@@ -2,7 +2,7 @@
 #include "QuickLookOverlay.h"
 #include <Quartz/Quartz.h>
 #include <Utility/SystemInformation.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <Utility/PathManip.h>

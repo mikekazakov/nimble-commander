@@ -3,7 +3,7 @@
 #include "../PanelController.h"
 #include "../PanelHistory.h"
 #include <NimbleCommander/Core/VFSInstanceManager.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 

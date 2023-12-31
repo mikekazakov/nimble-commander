@@ -8,7 +8,7 @@
 #include <Operations/BatchRenaming.h>
 #include <Operations/BatchRenamingDialog.h>
 #include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 

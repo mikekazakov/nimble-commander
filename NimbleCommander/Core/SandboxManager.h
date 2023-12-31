@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 #include <Cocoa/Cocoa.h>
 
 /**

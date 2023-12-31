@@ -6,7 +6,7 @@
 #define GTEST_DONT_DEFINE_SUCCEED 1
 #include <gmock/gmock.h>
 
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
 #include <sys/dirent.h>

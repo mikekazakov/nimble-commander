@@ -5,7 +5,7 @@
 #include <optional>
 #include <chrono>
 #include <vector>
-#include <Habanero/spinlock.h>
+#include <Base/spinlock.h>
 
 namespace nc::ops {
 

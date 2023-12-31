@@ -1,7 +1,7 @@
 // Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ExtensionLowercaseComparison.h>
-#include <Habanero/CFStackAllocator.h>
-#include <Habanero/algo.h>
+#include <Base/CFStackAllocator.h>
+#include <Base/algo.h>
 #include <string_view>
 #include <ranges>
 

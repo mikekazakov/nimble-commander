@@ -5,7 +5,7 @@
 #include "HexModeFrame.h"
 #include "HexModeLayout.h"
 #include <Utility/Encodings.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 
 using namespace nc::viewer;
 

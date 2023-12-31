@@ -4,7 +4,7 @@
 #include "VFSGenericMemReadOnlyFile.h"
 #include <Utility/Encodings.h>
 #include <Utility/StringExtras.h>
-#include <Habanero/CFString.h>
+#include <Base/CFString.h>
 
 using namespace nc::base;
 using nc::vfs::FileWindow;

@@ -6,8 +6,8 @@
 #include <compare>
 #include <string_view>
 #include <vector>
-#include <Habanero/CFPtr.h>
-#include <Habanero/spinlock.h>
+#include <Base/CFPtr.h>
+#include <Base/spinlock.h>
 #include <robin_hood.h>
 
 #ifdef __OBJC__

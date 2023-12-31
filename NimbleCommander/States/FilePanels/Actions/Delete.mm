@@ -3,14 +3,14 @@
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
 #include <Utility/NativeFSManager.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <Panel/PanelData.h>
 #include "../PanelView.h"
 #include <Operations/Deletion.h>
 #include <Operations/DeletionDialog.h>
 #include "../../MainWindowController.h"
 #include <robin_hood.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 

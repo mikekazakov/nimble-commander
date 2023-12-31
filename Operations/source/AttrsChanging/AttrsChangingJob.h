@@ -4,7 +4,7 @@
 #include "../Job.h"
 #include "Options.h"
 #include <VFS/VFS.h>
-#include <Habanero/chained_strings.h>
+#include <Base/chained_strings.h>
 
 namespace nc::ops {
 

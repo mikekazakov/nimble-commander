@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CURLConnection.h"
 #include "Internal.h"
-#include <Habanero/StringViewZBuf.h>
+#include <Base/StringViewZBuf.h>
 #include <assert.h>
 
 // CURL is full of macros with C-style casts

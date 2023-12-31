@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdexcept>
 #include <Utility/FontExtras.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 
 namespace nc::utility {
 

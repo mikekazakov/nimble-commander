@@ -1,6 +1,6 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/States/MainWindowController.h>
@@ -11,7 +11,7 @@
 #include "FilesDraggingSource.h"
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <unordered_map>
 
 using namespace nc::panel;

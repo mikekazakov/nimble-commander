@@ -1,6 +1,6 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/Operations/Job.h"
-#include <Habanero/IdleSleepPreventer.h>
+#include <Base/IdleSleepPreventer.h>
 #include <boost/core/demangle.hpp>
 #include <thread>
 #include <cassert>

@@ -1,6 +1,6 @@
 // Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShellState.h"
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <Utility/NativeFSManager.h>
 #include <Utility/PathManip.h>
 #include <NimbleCommander/Core/Alert.h>
@@ -19,7 +19,7 @@
 #include <Term/InterpreterImpl.h>
 #include <Term/ChildrenTracker.h>
 #include "SettingsAdaptor.h"
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 #include <fmt/core.h>
 

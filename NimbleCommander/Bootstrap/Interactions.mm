@@ -1,7 +1,7 @@
 // Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Interactions.h"
 #include "ActivationManager.h"
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <Utility/StringExtras.h>
 

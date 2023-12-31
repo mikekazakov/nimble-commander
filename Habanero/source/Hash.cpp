@@ -1,5 +1,5 @@
 // Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/Hash.h>
+#include <Base/Hash.h>
 #include <CommonCrypto/CommonDigest.h>
 #include <zlib.h>
 #include <assert.h>

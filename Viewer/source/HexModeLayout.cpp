@@ -1,6 +1,6 @@
 // Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeLayout.h"
-#include <Habanero/CFRange.h>
+#include <Base/CFRange.h>
 #include <cmath>
 
 namespace nc::viewer {

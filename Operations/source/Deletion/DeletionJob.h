@@ -5,7 +5,7 @@
 #include "Options.h"
 #include "DeletionJobCallbacks.h"
 #include <VFS/VFS.h>
-#include <Habanero/chained_strings.h>
+#include <Base/chained_strings.h>
 #include <stack>
 
 namespace nc::ops {

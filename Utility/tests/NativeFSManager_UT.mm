@@ -1,7 +1,7 @@
 // Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NativeFSManagerImpl.h>
-#include <Habanero/algo.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/algo.h>
+#include <Base/dispatch_cpp.h>
 #include <boost/process.hpp>
 #include <filesystem>
 #include "UnitTests_main.h"

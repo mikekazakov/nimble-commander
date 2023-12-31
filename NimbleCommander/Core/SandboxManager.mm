@@ -1,11 +1,11 @@
 // Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
-#include <Habanero/algo.h>
-#include <Habanero/CommonPaths.h>
+#include <Base/algo.h>
+#include <Base/CommonPaths.h>
 #include "SandboxManager.h"
 #include <filesystem>
 #include <Utility/ObjCpp.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 #include <Utility/PathManip.h>
 

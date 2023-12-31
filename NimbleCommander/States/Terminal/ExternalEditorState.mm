@@ -10,7 +10,7 @@
 #include <Term/ScrollView.h>
 #include <Term/InputTranslatorImpl.h>
 #include "SettingsAdaptor.h"
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 
 using namespace nc;

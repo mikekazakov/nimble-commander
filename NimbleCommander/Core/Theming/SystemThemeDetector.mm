@@ -2,7 +2,7 @@
 #include "SystemThemeDetector.h"
 #include <functional>
 #include <Cocoa/Cocoa.h>
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 
 // NCSystemThemeDetectorObjCShim listens to both 'AppleInterfaceThemeChangedNotification' notification and to changes of
 // 'AppleInterfaceStyle' in the UserDefaults. The reason for that is that these two are inherently racy and there's a

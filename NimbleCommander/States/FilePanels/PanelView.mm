@@ -5,7 +5,7 @@
 #include <Utility/MIMResponder.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-#include <Habanero/RobinHoodUtil.h>
+#include <Base/RobinHoodUtil.h>
 #include "PanelViewLayoutSupport.h"
 #include <Panel/PanelData.h>
 #include "PanelController.h"

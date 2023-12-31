@@ -1,6 +1,6 @@
 // Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressionJob.h"
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 #include <Utility/PathManip.h>

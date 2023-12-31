@@ -3,7 +3,7 @@
 #include <sys/attr.h>
 #include <sys/errno.h>
 #include <sys/vnode.h>
-#include <Habanero/algo.h>
+#include <Base/algo.h>
 #include <RoutedIO/RoutedIO.h>
 #include <Utility/PathManip.h>
 #include <VFS/VFSError.h>

@@ -1,7 +1,7 @@
 // Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
-#include <Habanero/CommonPaths.h>
+#include <Base/CommonPaths.h>
 #include <Utility/FSEventsFileUpdateImpl.h>
 #include <Utility/NativeFSManagerImpl.h>
 #include <sys/stat.h>

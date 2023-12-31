@@ -3,9 +3,9 @@
 
 #include "QLThumbnailsCache.h"
 #include <Cocoa/Cocoa.h>
-#include <Habanero/LRUCache.h>
-#include <Habanero/spinlock.h>
-#include <Habanero/intrusive_ptr.h>
+#include <Base/LRUCache.h>
+#include <Base/spinlock.h>
+#include <Base/intrusive_ptr.h>
 #include <string>
 #include <atomic>
 #include <optional>

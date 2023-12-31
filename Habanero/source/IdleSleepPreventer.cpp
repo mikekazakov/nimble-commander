@@ -13,7 +13,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 #include <IOKit/pwr_mgt/IOPMLib.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include <Habanero/IdleSleepPreventer.h>
+#include <Base/IdleSleepPreventer.h>
 
 namespace nc::base {
 

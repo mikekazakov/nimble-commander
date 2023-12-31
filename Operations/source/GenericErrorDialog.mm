@@ -3,7 +3,7 @@
 #include <VFS/VFS.h>
 #include "Internal.h"
 #include "ModalDialogResponses.h"
-#include <Habanero/dispatch_cpp.h>
+#include <Base/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 

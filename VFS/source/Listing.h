@@ -1,9 +1,9 @@
 // Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <Habanero/variable_container.h>
-#include <Habanero/CFString.h>
-#include <Habanero/intrusive_ptr.h>
+#include <Base/variable_container.h>
+#include <Base/CFString.h>
+#include <Base/intrusive_ptr.h>
 #include <VFS/VFSDeclarations.h>
 #include <cassert>
 #include <chrono>

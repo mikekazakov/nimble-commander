@@ -5,7 +5,7 @@
 #include <VFS/ArcLA.h>
 #include "../source/ArcLA/Internal.h" // FIXME!
 #include <VFS/VFSGenericMemReadOnlyFile.h>
-#include <Habanero/WriteAtomically.h>
+#include <Base/WriteAtomically.h>
 
 using namespace nc::vfs;
 

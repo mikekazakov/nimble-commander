@@ -2,7 +2,7 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/SystemInformation.h>
 #include <robin_hood.h>
-#include <Habanero/RobinHoodUtil.h>
+#include <Base/RobinHoodUtil.h>
 #include <vector>
 
 // In some contexts, primarily OpenGL, the term "RGBA" actually means the colors are stored in

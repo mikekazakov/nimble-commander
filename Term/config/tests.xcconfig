@@ -1,2 +1,2 @@
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_DONT_DEFINE_FAIL=1 GTEST_DONT_DEFINE_SUCCEED=1
-OTHER_LDFLAGS = $(inherited) -framework Foundation -framework Cocoa -lTerm -lUtility -lHabanero
+OTHER_LDFLAGS = $(inherited) -framework Foundation -framework Cocoa -lTerm -lUtility -lBase

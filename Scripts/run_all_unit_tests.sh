@@ -49,7 +49,7 @@ build_target()
 
 # list of targets to build
 tests=(\
-HabaneroUT \
+BaseUT \
 ConfigUT \
 UtilityUT \
 VFSIconUT \

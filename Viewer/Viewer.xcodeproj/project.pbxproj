@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CF1325622225FD630097F9A1 /* TextModeFrame_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */; };
 		CF24E1D3227F0B2A00C166FA /* HexModeLayout_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */; };
+		CF3989B62B41707F006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989B52B41707F006103C1 /* libBase.a */; };
 		CF46FEFF255EF4480095FC73 /* Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF46FEFE255EF4480095FC73 /* Internal.h */; };
 		CF5C1D36255EE63000ADE703 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B0821FE4F430043A26D /* InternalViewerController.xib */; };
 		CF5C1D3A255EE63C00ADE703 /* InternalViewerToolbar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B1B2205DE520043A26D /* InternalViewerToolbar.xib */; };
@@ -43,7 +44,6 @@
 		CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B5822106E3C0043A26D /* Tests.cpp */; };
 		CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */; };
 		CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */; };
-		CFF54449261670F100A6C49C /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF54448261670F100A6C49C /* libHabanero.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +82,7 @@
 		CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeLayout_UT.cpp; path = tests/HexModeLayout_UT.cpp; sourceTree = "<group>"; };
 		CF24E1D62286E23800C166FA /* PreviewModeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreviewModeView.mm; path = source/PreviewModeView.mm; sourceTree = "<group>"; };
 		CF24E1D82286E24300C166FA /* PreviewModeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreviewModeView.h; path = include/Viewer/PreviewModeView.h; sourceTree = "<group>"; };
+		CF3989B52B41707F006103C1 /* libBase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libBase.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF46FEFE255EF4480095FC73 /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/Internal.h; sourceTree = "<group>"; };
 		CF46FF03255EF4690095FC73 /* Bundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Bundle.h; path = include/Viewer/Bundle.h; sourceTree = "<group>"; };
 		CF5C1D1D255ED68200ADE703 /* ViewerResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViewerResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -175,7 +176,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFF54449261670F100A6C49C /* libHabanero.a in Frameworks */,
+				CF3989B62B41707F006103C1 /* libBase.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,6 +312,7 @@
 		CFD79AA021F65BA10043A26D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF3989B52B41707F006103C1 /* libBase.a */,
 				CFF54448261670F100A6C49C /* libHabanero.a */,
 				CFD79B0621FE4D400043A26D /* CUI.framework */,
 				CFD79AAF21F65BC60043A26D /* libHabanero.dylib */,

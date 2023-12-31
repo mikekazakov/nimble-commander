@@ -125,6 +125,11 @@
 		CF36DBF81F6C1987004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF36DBF91F6C1988004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF36DBFA1F6C1988004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
+		CF3989AE2B416D57006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989AC2B416D41006103C1 /* libBase.a */; };
+		CF3989AF2B416D96006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989AC2B416D41006103C1 /* libBase.a */; };
+		CF3989B02B416D9B006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989AC2B416D41006103C1 /* libBase.a */; };
+		CF3989B12B416D9E006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989AC2B416D41006103C1 /* libBase.a */; };
+		CF3989B72B417160006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989AC2B416D41006103C1 /* libBase.a */; };
 		CF39A0E21F70C1E1005A4583 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* libOperations.a */; };
 		CF3B7F70201F20D300BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
 		CF3B7F71201F212F00BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
@@ -161,10 +166,6 @@
 		CF46019C25612D920095FC73 /* OperationsResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CF46FFA3255FCD320095FC73 /* OperationsResources.bundle */; };
 		CF4601B625612F140095FC73 /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
 		CF4601B725612F180095FC73 /* libCUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* libCUI.a */; };
-		CF46022525630E790095FC73 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
-		CF46022625630E8E0095FC73 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
-		CF46022725630EA70095FC73 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
-		CF46022825630EC20095FC73 /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
 		CF46023B256313880095FC73 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
 		CF46023C256313B60095FC73 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
 		CF46C23620317FD700A91E2F /* ServicesHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46C23520317FD700A91E2F /* ServicesHandler.mm */; };
@@ -313,7 +314,6 @@
 		CF5DE0C22584157B00604DEE /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE0C12584157B00604DEE /* Tests.cpp */; };
 		CF5DE0D6258415D500604DEE /* ActivationManager_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5DE0D5258415D500604DEE /* ActivationManager_UT.cpp */; };
 		CF5DE0DA2584186600604DEE /* libNimbleCommanderCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5DE07E2583E73300604DEE /* libNimbleCommanderCommon.a */; };
-		CF5DE0DB2584186900604DEE /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.a */; };
 		CF5E9A381FCBC521005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
 		CF5E9A481FCBC66A005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
 		CF5E9A491FCBC66B005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
@@ -1365,13 +1365,6 @@
 			remoteGlobalIDString = CFE08B3423DCFBD1007E99B8;
 			remoteInfo = TermUT;
 		};
-		CFD62B821C99C1CA0021EE7F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CFD62B721C99C19A0021EE7F;
-			remoteInfo = Habanero;
-		};
 		CFD79A7721F65A540043A26D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFD79A7321F65A540043A26D /* Viewer.xcodeproj */;
@@ -1399,13 +1392,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = CF46001F256051B10095FC73;
 			remoteInfo = VFSIcon;
-		};
-		CFE3F1DB229A8319009D6AB4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CF24E2042291772900C166FA;
-			remoteInfo = HabaneroUT;
 		};
 		CFF33F882556929300B3C92C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1586,6 +1572,7 @@
 		CF36DBDD1F6BA76B004A018E /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_Party/Sparkle/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 		CF36DBE41F6BCDA0004A018E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/WebDAVConnectionSheetController.xib; sourceTree = "<group>"; };
 		CF36DBE61F6BCF5B004A018E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/WebDAVConnectionSheetController.strings; sourceTree = "<group>"; };
+		CF3989AC2B416D41006103C1 /* libBase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libBase.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF3B7F6E201F20D300BF2090 /* PanelControllerActionsDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelControllerActionsDispatcher.h; path = NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h; sourceTree = SOURCE_ROOT; };
 		CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelControllerActionsDispatcher.mm; path = NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.mm; sourceTree = SOURCE_ROOT; };
 		CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInit.h; path = NimbleCommander/Bootstrap/VFSInit.h; sourceTree = SOURCE_ROOT; };
@@ -1925,7 +1912,7 @@
 		CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefView.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefView.mm; sourceTree = SOURCE_ROOT; };
 		CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		CFD6295C1C2CE3AD0050EC68 /* State.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = State.json; path = NimbleCommander/Resources/State.json; sourceTree = SOURCE_ROOT; };
-		CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Habanero.xcodeproj; path = Habanero/Habanero.xcodeproj; sourceTree = "<group>"; };
+		CFD62B7E1C99C1C90021EE7F /* Base.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Base.xcodeproj; path = Habanero/Base.xcodeproj; sourceTree = "<group>"; };
 		CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListWindowController.h; path = NimbleCommander/GeneralUI/VFSListWindowController.h; sourceTree = SOURCE_ROOT; };
 		CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListWindowController.mm; path = NimbleCommander/GeneralUI/VFSListWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowFilePanelsStateToolbarDelegate.h; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h; sourceTree = SOURCE_ROOT; };
@@ -2082,12 +2069,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF764CEE258766AD00D7ED17 /* libPanel.a in Frameworks */,
+				CF3989B72B417160006103C1 /* libBase.a in Frameworks */,
 				CF764D4A258783E700D7ED17 /* libRoutedIO.a in Frameworks */,
 				CF764D102587673000D7ED17 /* libOperations.a in Frameworks */,
 				CF764CF2258766BB00D7ED17 /* libVFS.a in Frameworks */,
 				CF764CD22587640B00D7ED17 /* libConfig.a in Frameworks */,
 				CF764CCE258763FE00D7ED17 /* libUtility.a in Frameworks */,
-				CF5DE0DB2584186900604DEE /* libHabanero.a in Frameworks */,
 				CF5DE0DA2584186600604DEE /* libNimbleCommanderCommon.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2096,8 +2083,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF3989B02B416D9B006103C1 /* libBase.a in Frameworks */,
 				CFB63D3C2598A7B70038502E /* libNimbleCommanderCommon.a in Frameworks */,
-				CF46022725630EA70095FC73 /* libHabanero.a in Frameworks */,
 				CF46019525612D710095FC73 /* libCUI.a in Frameworks */,
 				CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */,
 				CF7C7CE91E5D3990002DB0E2 /* libVFS.a in Frameworks */,
@@ -2120,9 +2107,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF3989AE2B416D57006103C1 /* libBase.a in Frameworks */,
 				CF5DE09925840D3E00604DEE /* libNimbleCommanderCommon.a in Frameworks */,
 				CF46023C256313B60095FC73 /* libRoutedIO.a in Frameworks */,
-				CF46022625630E8E0095FC73 /* libHabanero.a in Frameworks */,
 				CF46019425612D680095FC73 /* libCUI.a in Frameworks */,
 				CFA53A1C1D433E2A00C562A7 /* libUtility.a in Frameworks */,
 				CF614AF01F9D932B0005F2DB /* libTerm.a in Frameworks */,
@@ -2142,9 +2129,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF3989AF2B416D96006103C1 /* libBase.a in Frameworks */,
 				CF5DE0A325840E9200604DEE /* libNimbleCommanderCommon.a in Frameworks */,
 				CF46023B256313880095FC73 /* libRoutedIO.a in Frameworks */,
-				CF46022525630E790095FC73 /* libHabanero.a in Frameworks */,
 				CF4601B725612F180095FC73 /* libCUI.a in Frameworks */,
 				CF4601B625612F140095FC73 /* libConfig.a in Frameworks */,
 				CFFA949B1F45411C0035E606 /* libUtility.a in Frameworks */,
@@ -2164,8 +2151,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF3989B12B416D9E006103C1 /* libBase.a in Frameworks */,
 				CFB63D2B2598A5AE0038502E /* libNimbleCommanderCommon.a in Frameworks */,
-				CF46022825630EC20095FC73 /* libHabanero.a in Frameworks */,
 				CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */,
 				CF7C7CE51E5D3521002DB0E2 /* libVFS.a in Frameworks */,
 				CFDAC8462169D31600DEBA2A /* libVFSIcon.a in Frameworks */,
@@ -2956,7 +2943,7 @@
 				CF19B4872546250000838B45 /* XCConfig */,
 				CF20CC01215A258F006716F6 /* Config.xcodeproj */,
 				CFD79AD821FE29420043A26D /* CUI.xcodeproj */,
-				CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */,
+				CFD62B7E1C99C1C90021EE7F /* Base.xcodeproj */,
 				CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */,
 				CFF33F842556929300B3C92C /* Panel.xcodeproj */,
 				CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */,
@@ -2989,6 +2976,7 @@
 		CFC5121316C4BD3D00D247EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF3989AC2B416D41006103C1 /* libBase.a */,
 				CF55F80E254F2BAB00CC415D /* LetsMove.framework */,
 				CF36DBDD1F6BA76B004A018E /* Sparkle.framework */,
 				CFC5121616C4BD3D00D247EE /* System Frameworks */,
@@ -3043,15 +3031,6 @@
 				CF6D99A6196676200077B146 /* NS Free MAS */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		CFD62B7F1C99C1C90021EE7F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CFD62B831C99C1CA0021EE7F /* libHabanero.a */,
-				CFE3F1DC229A8319009D6AB4 /* HabaneroUT */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CFD79A7421F65A540043A26D /* Products */ = {
@@ -3354,10 +3333,6 @@
 					ProjectRef = CFD79AD821FE29420043A26D /* CUI.xcodeproj */;
 				},
 				{
-					ProductGroup = CFD62B7F1C99C1C90021EE7F /* Products */;
-					ProjectRef = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
-				},
-				{
 					ProductGroup = CFACF9CD1E24AAD800FD6AB6 /* Products */;
 					ProjectRef = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
 				},
@@ -3575,13 +3550,6 @@
 			remoteRef = CFC8F2BB23E5FEAC00A25046 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CFD62B831C99C1CA0021EE7F /* libHabanero.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libHabanero.a;
-			remoteRef = CFD62B821C99C1CA0021EE7F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		CFD79A7821F65A540043A26D /* libViewer.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -3594,13 +3562,6 @@
 			fileType = archive.ar;
 			path = libCUI.a;
 			remoteRef = CFD79ADC21FE29430043A26D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CFE3F1DC229A8319009D6AB4 /* HabaneroUT */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = HabaneroUT;
-			remoteRef = CFE3F1DB229A8319009D6AB4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CFF33F892556929300B3C92C /* libPanel.a */ = {

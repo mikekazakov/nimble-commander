@@ -3,4 +3,4 @@
 COPY_PHASE_STRIP = NO
 PRODUCT_NAME = $(TARGET_NAME)
 
-HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../Panel/include $(PROJECT_DIR)/../Panel/include/Panel $(PROJECT_DIR)/../Source/Base/include $(PROJECT_DIR)/../Source/Utility/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Source/Config/include $(PROJECT_DIR)/../Operations/include $(PROJECT_DIR)/../Term/include
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../Panel/include $(PROJECT_DIR)/../Panel/include/Panel $(PROJECT_DIR)/../Source/Base/include $(PROJECT_DIR)/../Source/Utility/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Source/Config/include $(PROJECT_DIR)/../Operations/include $(PROJECT_DIR)/../Source/Term/include

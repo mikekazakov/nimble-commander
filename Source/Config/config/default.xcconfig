@@ -1,0 +1,10 @@
+#include "../../XCConfig/common.xcconfig"
+THRDPTY=../../3rd_Party
+LIBS=$(PROJECT_DIR)/..
+COPY_PHASE_STRIP = NO
+
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Config $(LIBS)/Utility/include $(LIBS)/Base/include
+
+PRODUCT_NAME = $(TARGET_NAME)
+
+EXECUTABLE_PREFIX = lib

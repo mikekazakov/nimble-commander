@@ -405,10 +405,10 @@
 		CF5FD93D1FA2D39F00752E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF2C101B22A073AF00A5359D /* tests.xcconfig */,
 				CF62B7C121B3D703009972DE /* debug.xcconfig */,
-				CF62B7C221B3D703009972DE /* release.xcconfig */,
 				CF5FD93E1FA2D3B400752E59 /* default.xcconfig */,
+				CF62B7C221B3D703009972DE /* release.xcconfig */,
+				CF2C101B22A073AF00A5359D /* tests.xcconfig */,
 			);
 			name = Config;
 			sourceTree = "<group>";

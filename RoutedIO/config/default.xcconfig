@@ -1,3 +1,0 @@
-#include "../../XCConfig/common.xcconfig"
-
-HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../Source/Base/include $(PROJECT_DIR)/../Source/Utility/include $(PROJECT_DIR)/include

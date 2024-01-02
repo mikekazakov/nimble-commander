@@ -2,7 +2,7 @@
 
 COPY_PHASE_STRIP = NO
 
-HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Viewer  $(PROJECT_DIR)/../Source/Utility/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Source/Base/include $(PROJECT_DIR)/../Source/Config/include $(PROJECT_DIR)/../CUI/include
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Viewer  $(PROJECT_DIR)/../Source/Utility/include $(PROJECT_DIR)/../Source/VFS/include $(PROJECT_DIR)/../Source/Base/include $(PROJECT_DIR)/../Source/Config/include $(PROJECT_DIR)/../CUI/include
 
 INSTALL_PATH = @rpath/
 

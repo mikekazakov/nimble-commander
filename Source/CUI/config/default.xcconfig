@@ -1,0 +1,12 @@
+#include "../../XCConfig/common.xcconfig"
+THRDPTY=../../3rd_Party
+LIBS=$(PROJECT_DIR)/..
+
+COPY_PHASE_STRIP = NO
+
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/CUI $(LIBS)/Utility/include $(LIBS)/Base/include
+
+INSTALL_PATH = @rpath/
+
+PRODUCT_NAME = $(TARGET_NAME)
+

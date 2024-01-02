@@ -3,7 +3,7 @@ THRDPTY=../../3rd_Party
 LIBS=$(PROJECT_DIR)/..
 COPY_PHASE_STRIP = NO
 
-HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Viewer $(LIBS)/Utility/include $(LIBS)/VFS/include $(LIBS)/Base/include $(LIBS)/Config/include $(PROJECT_DIR)/../../CUI/include
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Viewer $(LIBS)/Utility/include $(LIBS)/VFS/include $(LIBS)/Base/include $(LIBS)/Config/include $(LIBS)/CUI/include
 
 INSTALL_PATH = @rpath/
 

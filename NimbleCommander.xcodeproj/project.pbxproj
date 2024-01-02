@@ -1148,6 +1148,20 @@
 			remoteGlobalIDString = CF8BDD5F2147EB3F00F14C3E;
 			remoteInfo = VFSIconUnitTests;
 		};
+		CF3989BD2B417ABF006103C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF3989B82B417ABF006103C1 /* Base.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF4601E725630DCB0095FC73;
+			remoteInfo = Base;
+		};
+		CF3989BF2B417ABF006103C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF3989B82B417ABF006103C1 /* Base.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF24E2042291772900C166FA;
+			remoteInfo = BaseUT;
+		};
 		CF46018B25612D1C0095FC73 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFD79AD821FE29420043A26D /* CUI.xcodeproj */;
@@ -1573,6 +1587,7 @@
 		CF36DBE41F6BCDA0004A018E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/WebDAVConnectionSheetController.xib; sourceTree = "<group>"; };
 		CF36DBE61F6BCF5B004A018E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/WebDAVConnectionSheetController.strings; sourceTree = "<group>"; };
 		CF3989AC2B416D41006103C1 /* libBase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libBase.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF3989B82B417ABF006103C1 /* Base.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Base.xcodeproj; path = Base/Base.xcodeproj; sourceTree = "<group>"; };
 		CF3B7F6E201F20D300BF2090 /* PanelControllerActionsDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelControllerActionsDispatcher.h; path = NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h; sourceTree = SOURCE_ROOT; };
 		CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelControllerActionsDispatcher.mm; path = NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.mm; sourceTree = SOURCE_ROOT; };
 		CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInit.h; path = NimbleCommander/Bootstrap/VFSInit.h; sourceTree = SOURCE_ROOT; };
@@ -1912,7 +1927,6 @@
 		CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefView.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefView.mm; sourceTree = SOURCE_ROOT; };
 		CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		CFD6295C1C2CE3AD0050EC68 /* State.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = State.json; path = NimbleCommander/Resources/State.json; sourceTree = SOURCE_ROOT; };
-		CFD62B7E1C99C1C90021EE7F /* Base.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Base.xcodeproj; path = Habanero/Base.xcodeproj; sourceTree = "<group>"; };
 		CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListWindowController.h; path = NimbleCommander/GeneralUI/VFSListWindowController.h; sourceTree = SOURCE_ROOT; };
 		CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListWindowController.mm; path = NimbleCommander/GeneralUI/VFSListWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowFilePanelsStateToolbarDelegate.h; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h; sourceTree = SOURCE_ROOT; };
@@ -2428,6 +2442,15 @@
 			name = Viewer;
 			sourceTree = "<group>";
 		};
+		CF3989B92B417ABF006103C1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF3989BE2B417ABF006103C1 /* libBase.a */,
+				CF3989C02B417ABF006103C1 /* BaseUT */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CF536C0D16C92EA200F37203 /* FilePanels */ = {
 			isa = PBXGroup;
 			children = (
@@ -2941,9 +2964,9 @@
 			isa = PBXGroup;
 			children = (
 				CF19B4872546250000838B45 /* XCConfig */,
+				CF3989B82B417ABF006103C1 /* Base.xcodeproj */,
 				CF20CC01215A258F006716F6 /* Config.xcodeproj */,
 				CFD79AD821FE29420043A26D /* CUI.xcodeproj */,
-				CFD62B7E1C99C1C90021EE7F /* Base.xcodeproj */,
 				CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */,
 				CFF33F842556929300B3C92C /* Panel.xcodeproj */,
 				CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */,
@@ -3325,6 +3348,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = CF3989B92B417ABF006103C1 /* Products */;
+					ProjectRef = CF3989B82B417ABF006103C1 /* Base.xcodeproj */;
+				},
+				{
 					ProductGroup = CF20CC02215A258F006716F6 /* Products */;
 					ProjectRef = CF20CC01215A258F006716F6 /* Config.xcodeproj */;
 				},
@@ -3436,6 +3463,20 @@
 			fileType = "compiled.mach-o.executable";
 			path = VFSIconUT;
 			remoteRef = CF38BEB72148A959005E336C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF3989BE2B417ABF006103C1 /* libBase.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBase.a;
+			remoteRef = CF3989BD2B417ABF006103C1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF3989C02B417ABF006103C1 /* BaseUT */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = BaseUT;
+			remoteRef = CF3989BF2B417ABF006103C1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CF46018C25612D1C0095FC73 /* CUIResources.bundle */ = {

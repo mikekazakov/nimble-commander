@@ -4,7 +4,7 @@ ENABLE_TESTABILITY = YES
 COPY_PHASE_STRIP = NO
 PRODUCT_NAME = $(TARGET_NAME)
 
-HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/include/Term
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/../Base/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/include/Term
 
 INSTALL_PATH = @rpath/
 

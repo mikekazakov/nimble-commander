@@ -1,4 +1,4 @@
 #include "../../XCConfig/common.xcconfig"
 
 PRODUCT_NAME = $(TARGET_NAME)
-HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include/ $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Habanero/include
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include/ $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Base/include

@@ -2,7 +2,7 @@
 
 COPY_PHASE_STRIP = NO
 
-HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/CUI $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../Base/include
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/CUI $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../Source/Base/include
 
 INSTALL_PATH = @rpath/
 

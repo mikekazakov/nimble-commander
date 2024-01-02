@@ -1148,16 +1148,16 @@
 			remoteGlobalIDString = CF8BDD5F2147EB3F00F14C3E;
 			remoteInfo = VFSIconUnitTests;
 		};
-		CF3989BD2B417ABF006103C1 /* PBXContainerItemProxy */ = {
+		CF3989C62B44447D006103C1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = CF3989B82B417ABF006103C1 /* Base.xcodeproj */;
+			containerPortal = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CF4601E725630DCB0095FC73;
 			remoteInfo = Base;
 		};
-		CF3989BF2B417ABF006103C1 /* PBXContainerItemProxy */ = {
+		CF3989C82B44447D006103C1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = CF3989B82B417ABF006103C1 /* Base.xcodeproj */;
+			containerPortal = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CF24E2042291772900C166FA;
 			remoteInfo = BaseUT;
@@ -1587,7 +1587,7 @@
 		CF36DBE41F6BCDA0004A018E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/WebDAVConnectionSheetController.xib; sourceTree = "<group>"; };
 		CF36DBE61F6BCF5B004A018E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/WebDAVConnectionSheetController.strings; sourceTree = "<group>"; };
 		CF3989AC2B416D41006103C1 /* libBase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libBase.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF3989B82B417ABF006103C1 /* Base.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Base.xcodeproj; path = Base/Base.xcodeproj; sourceTree = "<group>"; };
+		CF3989C12B44447D006103C1 /* Base.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Base.xcodeproj; path = Source/Base/Base.xcodeproj; sourceTree = "<group>"; };
 		CF3B7F6E201F20D300BF2090 /* PanelControllerActionsDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelControllerActionsDispatcher.h; path = NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h; sourceTree = SOURCE_ROOT; };
 		CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelControllerActionsDispatcher.mm; path = NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.mm; sourceTree = SOURCE_ROOT; };
 		CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInit.h; path = NimbleCommander/Bootstrap/VFSInit.h; sourceTree = SOURCE_ROOT; };
@@ -2442,11 +2442,11 @@
 			name = Viewer;
 			sourceTree = "<group>";
 		};
-		CF3989B92B417ABF006103C1 /* Products */ = {
+		CF3989C22B44447D006103C1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF3989BE2B417ABF006103C1 /* libBase.a */,
-				CF3989C02B417ABF006103C1 /* BaseUT */,
+				CF3989C72B44447D006103C1 /* libBase.a */,
+				CF3989C92B44447D006103C1 /* BaseUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2963,8 +2963,8 @@
 		CFC5120816C4BD3D00D247EE = {
 			isa = PBXGroup;
 			children = (
+				CF3989C12B44447D006103C1 /* Base.xcodeproj */,
 				CF19B4872546250000838B45 /* XCConfig */,
-				CF3989B82B417ABF006103C1 /* Base.xcodeproj */,
 				CF20CC01215A258F006716F6 /* Config.xcodeproj */,
 				CFD79AD821FE29420043A26D /* CUI.xcodeproj */,
 				CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */,
@@ -3348,8 +3348,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = CF3989B92B417ABF006103C1 /* Products */;
-					ProjectRef = CF3989B82B417ABF006103C1 /* Base.xcodeproj */;
+					ProductGroup = CF3989C22B44447D006103C1 /* Products */;
+					ProjectRef = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
 				},
 				{
 					ProductGroup = CF20CC02215A258F006716F6 /* Products */;
@@ -3465,18 +3465,18 @@
 			remoteRef = CF38BEB72148A959005E336C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF3989BE2B417ABF006103C1 /* libBase.a */ = {
+		CF3989C72B44447D006103C1 /* libBase.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libBase.a;
-			remoteRef = CF3989BD2B417ABF006103C1 /* PBXContainerItemProxy */;
+			remoteRef = CF3989C62B44447D006103C1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF3989C02B417ABF006103C1 /* BaseUT */ = {
+		CF3989C92B44447D006103C1 /* BaseUT */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = BaseUT;
-			remoteRef = CF3989BF2B417ABF006103C1 /* PBXContainerItemProxy */;
+			remoteRef = CF3989C82B44447D006103C1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CF46018C25612D1C0095FC73 /* CUIResources.bundle */ = {

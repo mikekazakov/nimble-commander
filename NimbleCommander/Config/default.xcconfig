@@ -1,7 +1,7 @@
 #include "../../XCConfig/common.xcconfig"
 THRDPTY = 3rd_Party
 
-HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/3rd_Party $(PROJECT_DIR)/Base/include $(PROJECT_DIR)/Utility/include $(PROJECT_DIR)/RoutedIO/include $(PROJECT_DIR)/VFS/include $(PROJECT_DIR)/VFSIcon/include $(PROJECT_DIR)/Config/include $(PROJECT_DIR)/Operations/include $(PROJECT_DIR)/Term/include $(PROJECT_DIR)/CUI/include $(PROJECT_DIR)/Viewer/include $(PROJECT_DIR)/Panel/include $(PROJECT_DIR) $(HOME)
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/3rd_Party $(PROJECT_DIR)/Source/Base/include $(PROJECT_DIR)/Utility/include $(PROJECT_DIR)/RoutedIO/include $(PROJECT_DIR)/VFS/include $(PROJECT_DIR)/VFSIcon/include $(PROJECT_DIR)/Config/include $(PROJECT_DIR)/Operations/include $(PROJECT_DIR)/Term/include $(PROJECT_DIR)/CUI/include $(PROJECT_DIR)/Viewer/include $(PROJECT_DIR)/Panel/include $(PROJECT_DIR) $(HOME)
 
 LD_RUNPATH_SEARCH_PATHS = @executable_path/../Frameworks
 

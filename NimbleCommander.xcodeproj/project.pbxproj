@@ -16,7 +16,6 @@
 		CF0260C71E9DEC380025B50F /* CalculateSizes.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260C61E9DEC380025B50F /* CalculateSizes.mm */; };
 		CF0260CA1E9DF45D0025B50F /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260C91E9DF45D0025B50F /* BatchRename.mm */; };
 		CF0260D21E9F10060025B50F /* ToggleLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0260D11E9F10060025B50F /* ToggleLayout.mm */; };
-		CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF039EA61791112900DC85D6 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CF04DDE61E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
@@ -130,6 +129,11 @@
 		CF3989B02B416D9B006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989AC2B416D41006103C1 /* libBase.a */; };
 		CF3989B12B416D9E006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989AC2B416D41006103C1 /* libBase.a */; };
 		CF3989B72B417160006103C1 /* libBase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989AC2B416D41006103C1 /* libBase.a */; };
+		CF3989F32B444C5B006103C1 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989F02B444A76006103C1 /* libUtility.a */; };
+		CF3989F42B444C61006103C1 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989F02B444A76006103C1 /* libUtility.a */; };
+		CF3989F52B444C68006103C1 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989F02B444A76006103C1 /* libUtility.a */; };
+		CF3989F62B444C6F006103C1 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989F02B444A76006103C1 /* libUtility.a */; };
+		CF3989F72B444C77006103C1 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF3989F02B444A76006103C1 /* libUtility.a */; };
 		CF39A0E21F70C1E1005A4583 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* libOperations.a */; };
 		CF3B7F70201F20D300BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
 		CF3B7F71201F212F00BF2090 /* PanelControllerActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6F201F20D300BF2090 /* PanelControllerActionsDispatcher.mm */; };
@@ -387,7 +391,6 @@
 		CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
-		CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF6E44881CCE390A009F45B0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E44871CCE390A009F45B0 /* StoreKit.framework */; };
 		CF6ECDA91E9F4776008FA79E /* ChangeAttributes.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */; };
 		CF6ECDB31E9F4AF3008FA79E /* RenameInPlace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDB21E9F4AF3008FA79E /* RenameInPlace.mm */; };
@@ -400,7 +403,6 @@
 		CF75E88C1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
 		CF75E88D1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
 		CF764CBE258763DA00D7ED17 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
-		CF764CCE258763FE00D7ED17 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CF764CD22587640B00D7ED17 /* libConfig.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.a */; };
 		CF764CE2258765E600D7ED17 /* DragReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95241F47CA760035E606 /* DragReceiver.mm */; };
 		CF764CE72587661300D7ED17 /* DragSender_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF764CE62587661300D7ED17 /* DragSender_UT.mm */; };
@@ -616,7 +618,6 @@
 		CFA539FA1D433E2A00C562A7 /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
 		CFA53A081D433E2A00C562A7 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
 		CFA53A091D433E2A00C562A7 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
-		CFA53A1C1D433E2A00C562A7 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CFA53A341D433E2A00C562A7 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA53A351D433E2A00C562A7 /* FTPConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */; };
 		CFA53A361D433E2A00C562A7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
@@ -1071,7 +1072,6 @@
 		CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFFA942E1F3DBF790035E606 /* Dock.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA942D1F3DBF790035E606 /* Dock.mm */; };
 		CFFA943C1F3E9C4D0035E606 /* ConfigWiring.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA943B1F3E9C4D0035E606 /* ConfigWiring.mm */; };
-		CFFA949B1F45411C0035E606 /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.a */; };
 		CFFA95081F45638F0035E606 /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.a */; };
 		CFFA95121F45A2EB0035E606 /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* libOperations.a */; };
 		CFFA95131F45A3040035E606 /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
@@ -1134,13 +1134,6 @@
 			remoteGlobalIDString = CF26DE1821D285A6003F0E93;
 			remoteInfo = VFSUT;
 		};
-		CF308F42213ADAD800915730 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CFC546272136DAC800D288A4;
-			remoteInfo = "Utility Unit Tests";
-		};
 		CF38BEB72148A959005E336C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF8BDD0B2147D60800F14C3E /* VFSIcon.xcodeproj */;
@@ -1148,19 +1141,33 @@
 			remoteGlobalIDString = CF8BDD5F2147EB3F00F14C3E;
 			remoteInfo = VFSIconUnitTests;
 		};
-		CF3989C62B44447D006103C1 /* PBXContainerItemProxy */ = {
+		CF3989E72B444A74006103C1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CF4601E725630DCB0095FC73;
 			remoteInfo = Base;
 		};
-		CF3989C82B44447D006103C1 /* PBXContainerItemProxy */ = {
+		CF3989E92B444A74006103C1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CF24E2042291772900C166FA;
 			remoteInfo = BaseUT;
+		};
+		CF3989EF2B444A76006103C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF46012C256125A30095FC73;
+			remoteInfo = Utility;
+		};
+		CF3989F12B444A76006103C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CFC546272136DAC800D288A4;
+			remoteInfo = UtilityUT;
 		};
 		CF46018B25612D1C0095FC73 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1266,13 +1273,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = CF4601A525612E9F0095FC73;
 			remoteInfo = Config;
-		};
-		CF768DF41C99C0F4002748BC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CF960E0C1C97FA73001D8B02;
-			remoteInfo = Utility;
 		};
 		CF84A7972161C53700E03CB1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1811,7 +1811,7 @@
 		CF94CF921DD4418000EEA420 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/List/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF94CF931DD4418000EEA420 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = NimbleCommander/States/FilePanels/List/Layout.mm; sourceTree = SOURCE_ROOT; };
 		CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewImplementationProtocol.h; path = NimbleCommander/States/FilePanels/PanelViewImplementationProtocol.h; sourceTree = SOURCE_ROOT; };
-		CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Utility.xcodeproj; path = Utility/Utility.xcodeproj; sourceTree = "<group>"; };
+		CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Utility.xcodeproj; path = Source/Utility/Utility.xcodeproj; sourceTree = "<group>"; };
 		CF9721DA214FD43100A1B19E /* IconRepositoryCleaner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconRepositoryCleaner.h; path = NimbleCommander/States/FilePanels/Helpers/IconRepositoryCleaner.h; sourceTree = "<group>"; };
 		CF9721F0214FD43100A1B19E /* IconRepositoryCleaner.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconRepositoryCleaner.mm; path = NimbleCommander/States/FilePanels/Helpers/IconRepositoryCleaner.mm; sourceTree = "<group>"; };
 		CF9B07C326FF0CC200D2842B /* PreferencesWindowPanelsTabOperationsConcurrencySheet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowPanelsTabOperationsConcurrencySheet.h; path = NimbleCommander/Preferences/PreferencesWindowPanelsTabOperationsConcurrencySheet.h; sourceTree = "<group>"; };
@@ -2086,9 +2086,9 @@
 				CF3989B72B417160006103C1 /* libBase.a in Frameworks */,
 				CF764D4A258783E700D7ED17 /* libRoutedIO.a in Frameworks */,
 				CF764D102587673000D7ED17 /* libOperations.a in Frameworks */,
+				CF3989F72B444C77006103C1 /* libUtility.a in Frameworks */,
 				CF764CF2258766BB00D7ED17 /* libVFS.a in Frameworks */,
 				CF764CD22587640B00D7ED17 /* libConfig.a in Frameworks */,
-				CF764CCE258763FE00D7ED17 /* libUtility.a in Frameworks */,
 				CF5DE0DA2584186600604DEE /* libNimbleCommanderCommon.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2100,7 +2100,7 @@
 				CF3989B02B416D9B006103C1 /* libBase.a in Frameworks */,
 				CFB63D3C2598A7B70038502E /* libNimbleCommanderCommon.a in Frameworks */,
 				CF46019525612D710095FC73 /* libCUI.a in Frameworks */,
-				CF6E44501CC9DAE1009F45B0 /* libUtility.a in Frameworks */,
+				CF3989F52B444C68006103C1 /* libUtility.a in Frameworks */,
 				CF7C7CE91E5D3990002DB0E2 /* libVFS.a in Frameworks */,
 				CF233AD2219C110D00693E1A /* libVFSIcon.a in Frameworks */,
 				CF4E556623114BF700F607D7 /* Carbon.framework in Frameworks */,
@@ -2125,7 +2125,7 @@
 				CF5DE09925840D3E00604DEE /* libNimbleCommanderCommon.a in Frameworks */,
 				CF46023C256313B60095FC73 /* libRoutedIO.a in Frameworks */,
 				CF46019425612D680095FC73 /* libCUI.a in Frameworks */,
-				CFA53A1C1D433E2A00C562A7 /* libUtility.a in Frameworks */,
+				CF3989F42B444C61006103C1 /* libUtility.a in Frameworks */,
 				CF614AF01F9D932B0005F2DB /* libTerm.a in Frameworks */,
 				CFD727381E42E3E300603077 /* libVFS.a in Frameworks */,
 				CFDC07B72158F6430069D364 /* libVFSIcon.a in Frameworks */,
@@ -2147,8 +2147,8 @@
 				CF5DE0A325840E9200604DEE /* libNimbleCommanderCommon.a in Frameworks */,
 				CF46023B256313880095FC73 /* libRoutedIO.a in Frameworks */,
 				CF4601B725612F180095FC73 /* libCUI.a in Frameworks */,
+				CF3989F32B444C5B006103C1 /* libUtility.a in Frameworks */,
 				CF4601B625612F140095FC73 /* libConfig.a in Frameworks */,
-				CFFA949B1F45411C0035E606 /* libUtility.a in Frameworks */,
 				CF1ADE291F7E6BB4003E9B76 /* libTerm.a in Frameworks */,
 				CFFA95081F45638F0035E606 /* libVFS.a in Frameworks */,
 				CF8BDD272147DEC600F14C3E /* libVFSIcon.a in Frameworks */,
@@ -2167,8 +2167,8 @@
 			files = (
 				CF3989B12B416D9E006103C1 /* libBase.a in Frameworks */,
 				CFB63D2B2598A5AE0038502E /* libNimbleCommanderCommon.a in Frameworks */,
-				CF02B5A01D0A61C000F2760D /* libUtility.a in Frameworks */,
 				CF7C7CE51E5D3521002DB0E2 /* libVFS.a in Frameworks */,
+				CF3989F62B444C6F006103C1 /* libUtility.a in Frameworks */,
 				CFDAC8462169D31600DEBA2A /* libVFSIcon.a in Frameworks */,
 				CF4E55612311425400F607D7 /* libCUI.a in Frameworks */,
 				CF4E55602311424F00F607D7 /* libViewer.a in Frameworks */,
@@ -2442,11 +2442,20 @@
 			name = Viewer;
 			sourceTree = "<group>";
 		};
-		CF3989C22B44447D006103C1 /* Products */ = {
+		CF3989E32B444A74006103C1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF3989C72B44447D006103C1 /* libBase.a */,
-				CF3989C92B44447D006103C1 /* BaseUT */,
+				CF3989E82B444A74006103C1 /* libBase.a */,
+				CF3989EA2B444A74006103C1 /* BaseUT */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CF3989EB2B444A76006103C1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF3989F02B444A76006103C1 /* libUtility.a */,
+				CF3989F22B444A76006103C1 /* UtilityUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2671,15 +2680,6 @@
 				CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Free-Info.plist */,
 			);
 			name = "NS Free MAS";
-			sourceTree = "<group>";
-		};
-		CF768DEE1C99C0F4002748BC /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CF768DF51C99C0F4002748BC /* libUtility.a */,
-				CF308F43213ADAD800915730 /* UtilityUT */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CF84C8EF1DBB2AA900B4E888 /* List */ = {
@@ -2963,15 +2963,15 @@
 		CFC5120816C4BD3D00D247EE = {
 			isa = PBXGroup;
 			children = (
-				CF3989C12B44447D006103C1 /* Base.xcodeproj */,
 				CF19B4872546250000838B45 /* XCConfig */,
+				CF3989C12B44447D006103C1 /* Base.xcodeproj */,
+				CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */,
 				CF20CC01215A258F006716F6 /* Config.xcodeproj */,
 				CFD79AD821FE29420043A26D /* CUI.xcodeproj */,
 				CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */,
 				CFF33F842556929300B3C92C /* Panel.xcodeproj */,
 				CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */,
 				CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */,
-				CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */,
 				CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */,
 				CF8BDD0B2147D60800F14C3E /* VFSIcon.xcodeproj */,
 				CFD79A7321F65A540043A26D /* Viewer.xcodeproj */,
@@ -3348,7 +3348,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = CF3989C22B44447D006103C1 /* Products */;
+					ProductGroup = CF3989E32B444A74006103C1 /* Products */;
 					ProjectRef = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
 				},
 				{
@@ -3380,7 +3380,7 @@
 					ProjectRef = CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */;
 				},
 				{
-					ProductGroup = CF768DEE1C99C0F4002748BC /* Products */;
+					ProductGroup = CF3989EB2B444A76006103C1 /* Products */;
 					ProjectRef = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
 				},
 				{
@@ -3451,13 +3451,6 @@
 			remoteRef = CF26DE3321D92135003F0E93 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF308F43213ADAD800915730 /* UtilityUT */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = UtilityUT;
-			remoteRef = CF308F42213ADAD800915730 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		CF38BEB82148A959005E336C /* VFSIconUT */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -3465,18 +3458,32 @@
 			remoteRef = CF38BEB72148A959005E336C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF3989C72B44447D006103C1 /* libBase.a */ = {
+		CF3989E82B444A74006103C1 /* libBase.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libBase.a;
-			remoteRef = CF3989C62B44447D006103C1 /* PBXContainerItemProxy */;
+			remoteRef = CF3989E72B444A74006103C1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF3989C92B44447D006103C1 /* BaseUT */ = {
+		CF3989EA2B444A74006103C1 /* BaseUT */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = BaseUT;
-			remoteRef = CF3989C82B44447D006103C1 /* PBXContainerItemProxy */;
+			remoteRef = CF3989E92B444A74006103C1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF3989F02B444A76006103C1 /* libUtility.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libUtility.a;
+			remoteRef = CF3989EF2B444A76006103C1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF3989F22B444A76006103C1 /* UtilityUT */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = UtilityUT;
+			remoteRef = CF3989F12B444A76006103C1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CF46018C25612D1C0095FC73 /* CUIResources.bundle */ = {
@@ -3526,13 +3533,6 @@
 			fileType = archive.ar;
 			path = libVFS.a;
 			remoteRef = CF69CFDA1DA2250C00992B84 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF768DF51C99C0F4002748BC /* libUtility.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libUtility.a;
-			remoteRef = CF768DF41C99C0F4002748BC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CF84A7982161C53700E03CB1 /* ConfigUT */ = {

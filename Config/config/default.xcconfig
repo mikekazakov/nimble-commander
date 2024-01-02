@@ -2,7 +2,7 @@
 
 COPY_PHASE_STRIP = NO
 
-HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Config $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../Source/Base/include
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Config $(PROJECT_DIR)/../Source/Utility/include $(PROJECT_DIR)/../Source/Base/include
 
 PRODUCT_NAME = $(TARGET_NAME)
 

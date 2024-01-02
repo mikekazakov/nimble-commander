@@ -1,4 +1,0 @@
-#include "../../XCConfig/common.xcconfig"
-
-PRODUCT_NAME = $(TARGET_NAME)
-HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include/ $(PROJECT_DIR)/../Source/Utility/include $(PROJECT_DIR)/../Source/VFS/include $(PROJECT_DIR)/../Source/Base/include

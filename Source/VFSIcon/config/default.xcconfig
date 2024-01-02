@@ -1,0 +1,5 @@
+#include "../../XCConfig/common.xcconfig"
+THRDPTY=../../3rd_Party
+LIBS=$(PROJECT_DIR)/..
+PRODUCT_NAME = $(TARGET_NAME)
+HEADER_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/include/ $(LIBS)/Utility/include $(LIBS)/VFS/include $(LIBS)/Base/include

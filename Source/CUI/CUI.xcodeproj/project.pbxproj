@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -183,7 +183,7 @@
 				};
 			};
 			buildConfigurationList = CFD79AC121FE29130043A26D /* Build configuration list for PBXProject "CUI" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

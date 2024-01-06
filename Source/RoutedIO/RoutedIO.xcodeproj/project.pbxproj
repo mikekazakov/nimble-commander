@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -264,7 +264,7 @@
 				};
 			};
 			buildConfigurationList = CF8D0D531D9E4D7400ADFF14 /* Build configuration list for PBXProject "RoutedIO" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

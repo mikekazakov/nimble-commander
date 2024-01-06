@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -224,7 +224,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1320;
-				ORGANIZATIONNAME = "Magnum Bytes";
+				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CF20CC1F215BB0CE006716F6 = {
 						CreatedOnToolsVersion = 10.0;
@@ -235,7 +235,7 @@
 				};
 			};
 			buildConfigurationList = CF20CBD7215A2525006716F6 /* Build configuration list for PBXProject "Config" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

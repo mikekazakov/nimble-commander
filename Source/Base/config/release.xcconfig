@@ -1,2 +1,2 @@
-#include "../../XCConfig/release.xcconfig"
+#include "../XCConfig/release.xcconfig"
 #include "default.xcconfig"

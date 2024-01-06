@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 47;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -3201,7 +3201,7 @@
 				};
 			};
 			buildConfigurationList = CFC5120C16C4BD3D00D247EE /* Build configuration list for PBXProject "NimbleCommander" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -5216,7 +5216,10 @@
 					"__NC_VERSION_TRIAL__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -5229,7 +5232,10 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_Unsigned";
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

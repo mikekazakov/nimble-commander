@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -409,6 +409,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1220;
+				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CF0B03F7281EB16F00076FDF = {
 						CreatedOnToolsVersion = 13.2.1;
@@ -422,7 +423,7 @@
 				};
 			};
 			buildConfigurationList = CFF33F5A2556924900B3C92C /* Build configuration list for PBXProject "Panel" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

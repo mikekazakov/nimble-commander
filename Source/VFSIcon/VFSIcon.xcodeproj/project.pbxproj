@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -318,7 +318,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1320;
-				ORGANIZATIONNAME = "Magnum Bytes";
+				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CF38BEC12148AE5D005E336C = {
 						CreatedOnToolsVersion = 10.0;
@@ -332,7 +332,7 @@
 				};
 			};
 			buildConfigurationList = CF8BDCF42147D50300F14C3E /* Build configuration list for PBXProject "VFSIcon" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

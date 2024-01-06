@@ -2,7 +2,7 @@
 set -o pipefail
 
 XC="xcodebuild \
-    -project ../NimbleCommander.xcodeproj \
+    -project ../Source/NimbleCommander/NimbleCommander.xcodeproj \
     -scheme NimbleCommander-Unsigned \
     -configuration Debug"
 

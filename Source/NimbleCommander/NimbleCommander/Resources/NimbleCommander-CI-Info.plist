@@ -54,7 +54,7 @@
 	<key>NSAppleScriptEnabled</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2013-2023 Michael Kazakov.
+	<string>Copyright © 2013-2024 Michael Kazakov.
 All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
@@ -65,8 +65,10 @@ All rights reserved.</string>
 		<key>info.filesmanager.Files.PrivilegedIOHelperV2</key>
 		<string>identifier info.filesmanager.Files.PrivilegedIOHelperV2 and certificate leaf[subject.CN] = &quot;Developer ID Application: Mikhail Kazakov (AC5SJT236H)&quot;</string>
 	</dict>
+	<key>SUPublicEDKey</key>
+	<string>+YiqopcJYs/3V0iERkxnA2NdWhDOCEdZjl/WdK1ljz8=</string>
 	<key>SUFeedURL</key>
-	<string>http://magnumbytes.com/downloads/releases/sparkle-nimble-commander.xml</string>
+	<string>https://magnumbytes.com/downloads/releases/sparkle-nimble-commander.xml</string>
 	<key>NSServices</key>
 	<array>
 		<dict>

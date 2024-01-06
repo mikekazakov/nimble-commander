@@ -24,13 +24,13 @@ LOG_FILE=${BUILD_DIR}/xcodebuild.log
 
 # start up the docker stuff
 echo "=== Starting docker dependencies ==="
-cd ${ROOT_DIR}/VFS/tests/data/docker
+cd ${ROOT_DIR}/Source/VFS/tests/data/docker
 ./start.sh
 
 # stop the docker stuff in a cleanup function
 function cleanup {
   echo "=== Stopping docker dependencies ==="
-  ${ROOT_DIR}/VFS/tests/data/docker/stop.sh
+  ${ROOT_DIR}/Source/VFS/tests/data/docker/stop.sh
 }
 trap cleanup EXIT
 

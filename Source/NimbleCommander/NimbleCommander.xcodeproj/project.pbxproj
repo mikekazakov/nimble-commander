@@ -1349,6 +1349,20 @@
 			remoteGlobalIDString = CFACF9B91E24AAB800FD6AB6;
 			remoteInfo = MMTabBarViewLib;
 		};
+		CFC7067E2B49D1050045D2C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF4601E725630DCB0095FC73;
+			remoteInfo = Base;
+		};
+		CFC706802B49D1050045D2C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF24E2042291772900C166FA;
+			remoteInfo = BaseUT;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1407,7 +1421,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		B50976A31729BA150080412E /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		CF0139AD1E99DAC100E44F2D /* ToggleSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToggleSort.h; path = NimbleCommander/States/FilePanels/Actions/ToggleSort.h; sourceTree = SOURCE_ROOT; };
 		CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToggleSort.mm; path = NimbleCommander/States/FilePanels/Actions/ToggleSort.mm; sourceTree = SOURCE_ROOT; };
 		CF0139B01E99EC4A00E44F2D /* DefaultAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DefaultAction.h; path = NimbleCommander/States/FilePanels/Actions/DefaultAction.h; sourceTree = SOURCE_ROOT; };
@@ -1426,7 +1439,6 @@
 		CF0260C91E9DF45D0025B50F /* BatchRename.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRename.mm; path = NimbleCommander/States/FilePanels/Actions/BatchRename.mm; sourceTree = SOURCE_ROOT; };
 		CF0260D01E9F10060025B50F /* ToggleLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToggleLayout.h; path = NimbleCommander/States/FilePanels/Actions/ToggleLayout.h; sourceTree = SOURCE_ROOT; };
 		CF0260D11E9F10060025B50F /* ToggleLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToggleLayout.mm; path = NimbleCommander/States/FilePanels/Actions/ToggleLayout.mm; sourceTree = SOURCE_ROOT; };
-		CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CF039EA21791112900DC85D6 /* RHPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferences.h; path = ../../3rd_Party/RHPreferences/RHPreferences/RHPreferences.h; sourceTree = SOURCE_ROOT; };
 		CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RHPreferencesWindow.xib; path = ../../3rd_Party/RHPreferences/RHPreferences/RHPreferencesWindow.xib; sourceTree = SOURCE_ROOT; };
 		CF039EA41791112900DC85D6 /* RHPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferencesWindowController.h; path = ../../3rd_Party/RHPreferences/RHPreferences/RHPreferencesWindowController.h; sourceTree = SOURCE_ROOT; };
@@ -1442,8 +1454,6 @@
 		CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolParameterValueSheetController.mm; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF0B78D925739F61003061D0 /* SparkleShim.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SparkleShim.m; path = NimbleCommander/Bootstrap/SparkleShim.m; sourceTree = "<group>"; };
 		CF0B78F825739F79003061D0 /* SparkleShim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SparkleShim.h; path = NimbleCommander/Bootstrap/SparkleShim.h; sourceTree = "<group>"; };
-		CF1100CF1913788800E170FC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CF15D0811E8E1E7A00FEAA04 /* OpenWithExternalEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenWithExternalEditor.h; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.h; sourceTree = SOURCE_ROOT; };
 		CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenWithExternalEditor.mm; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.mm; sourceTree = SOURCE_ROOT; };
 		CF1863F61D8B9224008628E4 /* ProFeaturesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProFeaturesWindowController.h; path = NimbleCommander/GeneralUI/ProFeaturesWindowController.h; sourceTree = SOURCE_ROOT; };
@@ -1680,7 +1690,6 @@
 		CF764D422587837200D7ED17 /* PanelBriefViewDynamicWidthLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewDynamicWidthLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewDynamicWidthLayoutEngine_UT.mm; sourceTree = "<group>"; };
 		CF764D4E258785CC00D7ED17 /* PanelBriefViewFixedNumberLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedNumberLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewFixedNumberLayoutEngine_UT.mm; sourceTree = "<group>"; };
 		CF764D562587875E00D7ED17 /* PanelBriefViewFixedWidthLayoutEngine_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedWidthLayoutEngine_UT.mm; path = NimbleCommander/Tests/PanelBriefViewFixedWidthLayoutEngine_UT.mm; sourceTree = "<group>"; };
-		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CF7A09941EC2B37000533B07 /* Duplicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Duplicate.h; path = NimbleCommander/States/FilePanels/Actions/Duplicate.h; sourceTree = SOURCE_ROOT; };
 		CF7A09951EC2B37000533B07 /* Duplicate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Duplicate.mm; path = NimbleCommander/States/FilePanels/Actions/Duplicate.mm; sourceTree = SOURCE_ROOT; };
 		CF7C7CC11E5C3D84002DB0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PanelViewHeaderSortPopup.xib; sourceTree = "<group>"; };
@@ -1765,7 +1774,6 @@
 		CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTabImportSheet.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTabImportSheet.mm; sourceTree = SOURCE_ROOT; };
 		CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMHotKeyTextField.h; path = ../../3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.h; sourceTree = SOURCE_ROOT; };
 		CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GTMHotKeyTextField.mm; path = ../../3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.mm; sourceTree = SOURCE_ROOT; };
-		CFA3D7C81962613B006A30A1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CFA53A6D1D433E2A00C562A7 /* NimbleCommander-Unsigned.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NimbleCommander-Unsigned.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFA6C85A2015944D00CD7681 /* PanelControllerPersistency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelControllerPersistency.h; path = NimbleCommander/States/FilePanels/PanelControllerPersistency.h; sourceTree = SOURCE_ROOT; };
 		CFA6C85B2015944D00CD7681 /* PanelControllerPersistency.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelControllerPersistency.mm; path = NimbleCommander/States/FilePanels/PanelControllerPersistency.mm; sourceTree = SOURCE_ROOT; };
@@ -1808,20 +1816,14 @@
 		CFB9F108201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClosedPanelsHistoryImpl.h; path = NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h; sourceTree = SOURCE_ROOT; };
 		CFB9F10D201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecentlyClosedMenuDelegate.h; path = NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h; sourceTree = SOURCE_ROOT; };
 		CFB9F10E201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RecentlyClosedMenuDelegate.mm; path = NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
-		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CFC4F99D1F0F40430000B3EE /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Link.h; path = NimbleCommander/States/FilePanels/Actions/Link.h; sourceTree = SOURCE_ROOT; };
 		CFC4F99E1F0F40430000B3EE /* Link.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Link.mm; path = NimbleCommander/States/FilePanels/Actions/Link.mm; sourceTree = SOURCE_ROOT; };
 		CFC5121116C4BD3D00D247EE /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFC5121416C4BD3D00D247EE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		CFC5121716C4BD3D00D247EE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		CFC5121816C4BD3D00D247EE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		CFC5121916C4BD3D00D247EE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CFC5D4AE19BDD59F005BB24A /* CalculateChecksumSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CalculateChecksumSheetController.h; path = NimbleCommander/GeneralUI/CalculateChecksumSheetController.h; sourceTree = SOURCE_ROOT; };
 		CFC5D4AF19BDD59F005BB24A /* CalculateChecksumSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CalculateChecksumSheetController.mm; path = NimbleCommander/GeneralUI/CalculateChecksumSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CFC705FA2B497D600045D2C9 /* VFSIcon.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VFSIcon.xcodeproj; path = ../VFSIcon/VFSIcon.xcodeproj; sourceTree = "<group>"; };
 		CFC706462B497F5C0045D2C9 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ../../../3rd_Party/Sparkle/Sparkle.framework; sourceTree = "<group>"; };
 		CFC706482B497F6A0045D2C9 /* LetsMove.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LetsMove.framework; path = ../../../3rd_Party/LetsMove/LetsMove.framework; sourceTree = "<group>"; };
-		CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CFCCFBB11A5D340000313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SFTPConnectionSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBB61A5D4E6100313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CalculateChecksumSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBBB1A5D687600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FTPConnectionSheetController.xib; sourceTree = "<group>"; };
@@ -1845,7 +1847,6 @@
 		CFD2F37D2709DA0800ADC852 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowPanelsTabOperationsConcurrencySheet.strings; sourceTree = "<group>"; };
 		CFD3CB1B1DA4C888006DA143 /* PanelBriefView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefView.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefView.h; sourceTree = SOURCE_ROOT; };
 		CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefView.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefView.mm; sourceTree = SOURCE_ROOT; };
-		CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		CFD6295C1C2CE3AD0050EC68 /* State.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = State.json; path = NimbleCommander/Resources/State.json; sourceTree = SOURCE_ROOT; };
 		CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListWindowController.h; path = NimbleCommander/GeneralUI/VFSListWindowController.h; sourceTree = SOURCE_ROOT; };
 		CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListWindowController.mm; path = NimbleCommander/GeneralUI/VFSListWindowController.mm; sourceTree = SOURCE_ROOT; };
@@ -1866,7 +1867,6 @@
 		CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FavoritesMenuDelegate.mm; path = NimbleCommander/States/FilePanels/FavoritesMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddToFavorites.h; path = NimbleCommander/States/FilePanels/Actions/AddToFavorites.h; sourceTree = SOURCE_ROOT; };
 		CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AddToFavorites.mm; path = NimbleCommander/States/FilePanels/Actions/AddToFavorites.mm; sourceTree = SOURCE_ROOT; };
-		CFD8CD9C1E823CAC00E4DC53 /* NetFS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetFS.framework; path = System/Library/Frameworks/NetFS.framework; sourceTree = SDKROOT; };
 		CFD8CDA51E84CC3B00E4DC53 /* NetworkShareSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkShareSheetController.h; path = NimbleCommander/States/FilePanels/Views/NetworkShareSheetController.h; sourceTree = SOURCE_ROOT; };
 		CFD8CDA61E84CC3B00E4DC53 /* NetworkShareSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkShareSheetController.mm; path = NimbleCommander/States/FilePanels/Views/NetworkShareSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CFD8CDB01E8CCD0A00E4DC53 /* GoToFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoToFolder.h; path = NimbleCommander/States/FilePanels/Actions/GoToFolder.h; sourceTree = SOURCE_ROOT; };
@@ -2786,21 +2786,7 @@
 		CFC5121616C4BD3D00D247EE /* System Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CFD8CD9C1E823CAC00E4DC53 /* NetFS.framework */,
-				CFC5121716C4BD3D00D247EE /* AppKit.framework */,
-				CFA3D7C81962613B006A30A1 /* Carbon.framework */,
-				CFC5121416C4BD3D00D247EE /* Cocoa.framework */,
-				CFC5121816C4BD3D00D247EE /* CoreData.framework */,
-				CFCA09E0174D071800AEC8C2 /* DiskArbitration.framework */,
-				CFC5121916C4BD3D00D247EE /* Foundation.framework */,
-				CF1100D1191378BD00E170FC /* LDAP.framework */,
-				CF76B3201701DEC70066A49F /* OpenDirectory.framework */,
-				B50976A31729BA150080412E /* Quartz.framework */,
-				CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */,
-				CF1100CF1913788800E170FC /* Security.framework */,
-				CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */,
 				CF6E44871CCE390A009F45B0 /* StoreKit.framework */,
-				CF033A6A18059C100088CAB4 /* SystemConfiguration.framework */,
 			);
 			name = "System Frameworks";
 			sourceTree = "<group>";
@@ -2937,6 +2923,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CFC7067A2B49D1050045D2C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFC7067F2B49D1050045D2C9 /* libBase.a */,
+				CFC706812B49D1050045D2C9 /* BaseUT */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
@@ -2946,7 +2941,7 @@
 				CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */,
 			);
 			name = 3rd_party;
-			path = 3rd_Party;
+			path = ../../3rd_Party;
 			sourceTree = SOURCE_ROOT;
 		};
 		CFDAC3011DFD20810039A104 /* GeneralUI */ = {
@@ -3187,6 +3182,10 @@
 			productRefGroup = CFC5121216C4BD3D00D247EE /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = CFC7067A2B49D1050045D2C9 /* Products */;
+					ProjectRef = CF3989C12B44447D006103C1 /* Base.xcodeproj */;
+				},
 				{
 					ProductGroup = CFC705B02B497CEC0045D2C9 /* Products */;
 					ProjectRef = CF20CC01215A258F006716F6 /* Config.xcodeproj */;
@@ -3446,6 +3445,20 @@
 			fileType = archive.ar;
 			path = libMMTabBarViewLib.a;
 			remoteRef = CFC706662B49856B0045D2C9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CFC7067F2B49D1050045D2C9 /* libBase.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBase.a;
+			remoteRef = CFC7067E2B49D1050045D2C9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CFC706812B49D1050045D2C9 /* BaseUT */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = BaseUT;
+			remoteRef = CFC706802B49D1050045D2C9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

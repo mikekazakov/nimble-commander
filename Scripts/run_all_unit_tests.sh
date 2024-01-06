@@ -34,7 +34,7 @@ build_target()
     CONFIGURATION=$2
     echo building ${TARGET} - ${CONFIGURATION}
     XC="xcodebuild \
-        -project ../NimbleCommander.xcodeproj \
+        -project ../Source/NimbleCommander/NimbleCommander.xcodeproj \
         -scheme ${TARGET} \
         -configuration ${CONFIGURATION} \
         SYMROOT=${BUILD_DIR} \

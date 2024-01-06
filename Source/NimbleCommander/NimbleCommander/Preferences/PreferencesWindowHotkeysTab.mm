@@ -2,7 +2,7 @@
 #include "PreferencesWindowHotkeysTab.h"
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/FunctionKeysPass.h>
-#import <3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.h>
+#import <GTMHotKeyTextField/GTMHotKeyTextField.h>
 #include "../Core/ActionsShortcutsManager.h"
 #include <Panel/ExternalTools.h>
 #include "../Bootstrap/ActivationManager.h"

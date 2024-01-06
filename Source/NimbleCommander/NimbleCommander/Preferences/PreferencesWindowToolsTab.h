@@ -1,7 +1,7 @@
 // Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#import <3rd_Party/RHPreferences/RHPreferences/RHPreferences.h>
+#import <RHPreferences/RHPreferences/RHPreferences.h>
 #include <functional>
 
 namespace nc::panel {

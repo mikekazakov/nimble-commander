@@ -1467,7 +1467,7 @@
 		CF197C481FB92E80009F6C59 /* CopyFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyFile.mm; path = NimbleCommander/States/FilePanels/Actions/CopyFile.mm; sourceTree = SOURCE_ROOT; };
 		CF197C4A1FB960CC009F6C59 /* RevealInOppositePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RevealInOppositePanel.h; path = NimbleCommander/States/FilePanels/Actions/RevealInOppositePanel.h; sourceTree = SOURCE_ROOT; };
 		CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RevealInOppositePanel.mm; path = NimbleCommander/States/FilePanels/Actions/RevealInOppositePanel.mm; sourceTree = SOURCE_ROOT; };
-		CF19B4872546250000838B45 /* XCConfig */ = {isa = PBXFileReference; lastKnownFileType = folder; name = XCConfig; path = ../../XCConfig; sourceTree = "<group>"; };
+		CF19B4872546250000838B45 /* XCConfig */ = {isa = PBXFileReference; lastKnownFileType = folder; name = XCConfig; path = ../XCConfig; sourceTree = "<group>"; };
 		CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Term.xcodeproj; path = ../Term/Term.xcodeproj; sourceTree = "<group>"; };
 		CF1E3D181D5AD3C600609ADB /* MainWindowInternalViewerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowInternalViewerState.h; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.h; sourceTree = SOURCE_ROOT; };
 		CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowInternalViewerState.mm; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.mm; sourceTree = SOURCE_ROOT; };
@@ -2242,8 +2242,8 @@
 		CF197C051FB31597009F6C59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF5FD92D1FA2C02E00752E59 /* default.xcconfig */,
 				CF6572991FA6CD7300ABF85F /* debug.xcconfig */,
+				CF5FD92D1FA2C02E00752E59 /* default.xcconfig */,
 				CF65729A1FA6CD8100ABF85F /* release.xcconfig */,
 			);
 			name = Config;

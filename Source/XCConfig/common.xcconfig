@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Build target
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // Architecture
 VALID_ARCHS = $(ARCHS_STANDARD_64_BIT)
 ARCHS = $(ARCHS_STANDARD_64_BIT)
@@ -7,15 +11,13 @@ ONLY_ACTIVE_ARCH = NO
 MACOSX_DEPLOYMENT_TARGET = 10.15
 SDKROOT = macosx
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // Preprocessor
-
+////////////////////////////////////////////////////////////////////////////////////////////////////
 RAPIDJSON_PP_FLAGS[arch=x86_64] = RAPIDJSON_HAS_STDSTRING=1 RAPIDJSON_HAS_CXX11_NOEXCEPT=1 RAPIDJSON_HAS_CXX11_RVALUE_REFS=1 RAPIDJSON_48BITPOINTER_OPTIMIZATION=1 RAPIDJSON_SSE2=1 RAPIDJSON_SSE42=1
 RAPIDJSON_PP_FLAGS[arch=arm64]  = RAPIDJSON_HAS_STDSTRING=1 RAPIDJSON_HAS_CXX11_NOEXCEPT=1 RAPIDJSON_HAS_CXX11_RVALUE_REFS=1
 // disabled RAPIDJSON_NEON=1 for now, after a weird crash on ARM64 during MAS review...
 GCC_PREPROCESSOR_DEFINITIONS = SPDLOG_COMPILED_LIB SPDLOG_FMT_EXTERNAL $(RAPIDJSON_PP_FLAGS)
-
-// Path to 3rd-Part dependencies. Can be overriden.
-THRDPTY=../3rd_Party
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Code generation
@@ -42,6 +44,12 @@ OTHER_LDFLAGS = -ObjC -framework Foundation -framework Cocoa -framework SystemCo
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Search paths
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Path to 3rd-Party dependencies
+THRDPTY=../../3rd_Party
+
+// Path to NC's own libraries
+LIBS=..
 
 // Paths - headers
 USE_HEADERMAP = NO

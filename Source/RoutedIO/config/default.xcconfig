@@ -1,5 +1,2 @@
-#include "../../XCConfig/common.xcconfig"
-THRDPTY=../../3rd_Party
-LIBS=$(PROJECT_DIR)/..
-
+#include "../XCConfig/common.xcconfig"
 HEADER_SEARCH_PATHS = $(inherited) $(LIBS)/Base/include $(LIBS)/Utility/include $(PROJECT_DIR)/include

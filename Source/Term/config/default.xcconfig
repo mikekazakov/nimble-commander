@@ -1,6 +1,4 @@
-#include "../../XCConfig/common.xcconfig"
-THRDPTY=../../3rd_Party
-LIBS=$(PROJECT_DIR)/..
+#include "../XCConfig/common.xcconfig"
 ENABLE_TESTABILITY = YES
 COPY_PHASE_STRIP = NO
 PRODUCT_NAME = $(TARGET_NAME)

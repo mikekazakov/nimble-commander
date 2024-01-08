@@ -1,10 +1,13 @@
 name: Build and Test
 on: [workflow_dispatch]
 jobs:
-  build:
-    runs-on: [macos-13]
+  run-unit-tests:
+    runs-on: macos-13
     env:
       XC_VERSION: ${{ '15.1' }}
+    strategy:
+      matrix:
+        configuration: ["Debug", "Release"]
     steps:
     - name: Select latest Xcode
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
@@ -12,4 +15,4 @@ jobs:
     - name: Build and run unit tests
       run: |
         cd Scripts
-        ./run_all_unit_tests.sh
+        ./run_all_unit_tests.sh ${{ matrix.configuration }}

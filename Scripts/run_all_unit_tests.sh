@@ -19,6 +19,8 @@ BUILD_DIR=$(mktemp -d ${SCRIPTS_DIR}/build.XXXXXXXXX)
 
 ROOT_DIR=$(cd "$SCRIPTS_DIR/.." && pwd)
 
+XCODEPROJ="../Source/NimbleCommander/NimbleCommander.xcodeproj"
+
 LOG_FILE=${BUILD_DIR}/xcodebuild.log
 
 if type -p /usr/local/bin/ccache >/dev/null 2>&1; then
@@ -34,7 +36,7 @@ build_target()
     CONFIGURATION=$2
     echo building ${TARGET} - ${CONFIGURATION}
     XC="xcodebuild \
-        -project ../Source/NimbleCommander/NimbleCommander.xcodeproj \
+        -project ${XCODEPROJ} \
         -scheme ${TARGET} \
         -configuration ${CONFIGURATION} \
         SYMROOT=${BUILD_DIR} \
@@ -48,30 +50,22 @@ build_target()
 }
 
 # list of targets to build
-tests=(\
-BaseUT \
-ConfigUT \
-UtilityUT \
-VFSIconUT \
-VFSUT \
-OperationsUT \
-ViewerUT \
-TermUT \
-PanelUT \
-NimbleCommanderUT \
-)
+tests=$(xcodebuild -project ${XCODEPROJ} -list | awk -v word="Schemes:" 'BEGIN {found=0} found {if ($0 ~ /UT$/) print} $0 ~ word {found=1}' | sed 's/^[[:space:]]*//')
+echo Building these unit tests: ${tests}
 
 # list of configurations to build the targets with
-configurations=(\
-Debug \
-Release \
-)
+if [ -n "$1" ]; then
+    configurations="$1"
+else
+    configurations="Debug Release"
+fi
+echo Building these configurations: ${configurations}
 
 # run N * M binaries
-for configuration in ${configurations[@]}; do
-  for test in ${tests[@]}; do
+for configuration in ${configurations}; do
+  for test in ${tests}; do
     # build the binary
-    build_target $test $configuration
+    build_target ${test} ${configuration}
     
     # execute the binary
     $BINARY_PATH

@@ -5,7 +5,7 @@ jobs:
     runs-on: macos-13
     env:
       XC_VERSION: ${{ '15.1' }}
-      CCACHE_DIR: "~/.ccache"
+#     CCACHE_DIR: "~/.ccache"
       CCACHE_COMPRESS: "true"
       CCACHE_COMPRESSLEVEL: "6"
       CCACHE_MAXSIZE: "400M"
@@ -27,5 +27,5 @@ jobs:
     - name: Cache ccache
       uses: actions/cache@v2
       with:
-        path: ~/.ccache
+        path: ~/Library/Caches/ccache
         key: ccache-${{ runner.os }}-${{ github.job }}-${{ matrix.configuration }}

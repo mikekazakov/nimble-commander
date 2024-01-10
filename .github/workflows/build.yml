@@ -23,7 +23,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/Library/Caches/ccache
-        key: ccache-${{ runner.os }}-${{ github.job }}-${{ matrix.configuration }}
+        key: ccache-${{ github.job }}-${{ matrix.configuration }}-${{ github.run_id }}
+        restore-keys: ccache-${{ github.job }}-${{ matrix.configuration }}
     - uses: actions/checkout@v2
     - name: Build and run unit tests
       run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"

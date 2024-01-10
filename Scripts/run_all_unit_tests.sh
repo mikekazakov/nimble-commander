@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# tmp
-set -x
-
 set -e
 set -o pipefail
 
@@ -54,8 +51,7 @@ build_target()
 }
 
 # list of targets to build
-#tests=$(xcodebuild -project ${XCODEPROJ} -list | awk -v word="Schemes:" 'BEGIN {found=0} found {if ($0 ~ /UT$/) print} $0 ~ word {found=1}' | sed 's/^[[:space:]]*//')
-tests="BaseUT"
+tests=$(xcodebuild -project ${XCODEPROJ} -list | awk -v word="Schemes:" 'BEGIN {found=0} found {if ($0 ~ /UT$/) print} $0 ~ word {found=1}' | sed 's/^[[:space:]]*//')
 echo Building these unit tests: ${tests}
 
 # list of configurations to build the targets with

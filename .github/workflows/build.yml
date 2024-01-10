@@ -43,6 +43,8 @@ jobs:
             gh actions-cache delete $cacheKey --confirm
         done
         echo "Done"
+      env:
+        GH_TOKEN: ${{ github.token }}
 
 #        env:
 #          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

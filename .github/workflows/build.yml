@@ -19,13 +19,13 @@ jobs:
       run: "brew install ccache"
     - name: Check ccache
       run: "which ccache"
-    - uses: actions/checkout@v2
-    - name: Build and run unit tests
-      run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
-    - name: Show ccache stats
-      run: "ccache --show-stats --verbose"
     - name: Cache ccache
       uses: actions/cache@v2
       with:
         path: ~/Library/Caches/ccache
         key: ccache-${{ runner.os }}-${{ github.job }}-${{ matrix.configuration }}
+    - uses: actions/checkout@v2
+    - name: Build and run unit tests
+      run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
+    - name: Show ccache stats
+      run: "ccache --show-stats --verbose"

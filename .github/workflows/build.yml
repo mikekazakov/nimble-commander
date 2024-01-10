@@ -7,7 +7,7 @@ jobs:
       XC_VERSION: ${{ '15.1' }}
 #     CCACHE_DIR: "~/.ccache"
       CCACHE_COMPRESS: "true"
-      CCACHE_COMPRESSLEVEL: "6"
+      CCACHE_COMPRESSLEVEL: "10"
       CCACHE_MAXSIZE: "400M"
     strategy:
       matrix:
@@ -30,3 +30,21 @@ jobs:
       run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
     - name: Show ccache stats
       run: "ccache --show-stats --verbose"
+    - name: Remove old ccache caches
+        run: |
+          gh extension install actions/gh-actions-cache
+          echo "Fetching list of cache key"
+          cacheKeys=$(gh actions-cache list --key ccache-${{ github.job }}-${{ matrix.configuration }}- | cut -f 1 )
+          ## Setting this to not fail the workflow while deleting cache keys.
+          set +e
+          echo "Deleting caches..."
+          for cacheKey in $cacheKeys
+          do
+              gh actions-cache delete $cacheKey --confirm
+          done
+          echo "Done"
+
+#        env:
+#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          REPO: ${{ github.repository }}
+#          BRANCH: refs/pull/${{ github.event.pull_request.number }}/merge

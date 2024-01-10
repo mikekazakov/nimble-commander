@@ -23,7 +23,7 @@ jobs:
     - name: Build and run unit tests
       run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
     - name: Show ccache stats
-      run: "ccache --show-stats"
+      run: "ccache --show-stats --verbose"
     - name: Cache ccache
       uses: actions/cache@v2
       with:

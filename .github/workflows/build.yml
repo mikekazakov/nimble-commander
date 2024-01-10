@@ -17,6 +17,8 @@ jobs:
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
     - name: Install ccache
       run: "brew install ccache"
+    - name: Check ccache
+      run: "which ccache"
     - uses: actions/checkout@v2
     - name: Build and run unit tests
       run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"

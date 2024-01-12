@@ -142,7 +142,7 @@ TEST_CASE(PREFIX "execute a non-existing app")
     }
 }
 
-TEST_CASE(PREFIX "execute a ui app", "![mayfail]")
+TEST_CASE(PREFIX "execute a ui app", "[!mayfail]")
 {
     TempTestDir dir;
     const auto basedir = dir.directory;

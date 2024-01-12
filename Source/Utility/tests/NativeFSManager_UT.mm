@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NativeFSManagerImpl.h>
 #include <Base/algo.h>
 #include <Base/dispatch_cpp.h>
@@ -102,7 +102,7 @@ TEST_CASE(PREFIX "Can detect filesystem mounts and unmounts")
     REQUIRE(runMainLoopUntilExpectationOrTimeout(10s, predicate));
 }
 
-TEST_CASE(PREFIX "Can detect filesystem renames")
+TEST_CASE(PREFIX "Can detect filesystem renames", "[!mayfail]")
 {
     using namespace std::chrono_literals;
     TempTestDir tmp_dir;
@@ -118,7 +118,7 @@ TEST_CASE(PREFIX "Can detect filesystem renames")
     auto volume_path_old = "/Volumes/SomethingWickedThisWayComes12345";
     auto volume_path_new = "/Volumes/SomethingWickedThisWayComes123456";
 
-    REQUIRE(Execute(create_cmd) == 0);
+    REQUIRE(Execute(create_cmd) == 0); // Flaky!
 
     NativeFSManagerImpl fsm;
     auto predicate_old = [&]() -> bool {

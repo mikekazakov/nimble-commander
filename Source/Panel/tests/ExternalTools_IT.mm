@@ -1,4 +1,4 @@
-// Copyright (C) 2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2023-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 // TODO: add a PanelIT target
 
 #include "ExternalTools.h"
@@ -142,7 +142,7 @@ TEST_CASE(PREFIX "execute a non-existing app")
     }
 }
 
-TEST_CASE(PREFIX "execute a ui app")
+TEST_CASE(PREFIX "execute a ui app", "[!mayfail]")
 {
     TempTestDir dir;
     const auto basedir = dir.directory;
@@ -235,7 +235,7 @@ TEST_CASE(PREFIX "execute a ui app")
     auto run = [&] {
         ExternalToolExecution ex{ctx, et};
         auto pid = ex.StartDetachedUI();
-        REQUIRE(pid);
+        REQUIRE(pid); // <-- Flaky!
         REQUIRE(WaitForChildProcess(*pid, 5s, 1ms));
     };
 

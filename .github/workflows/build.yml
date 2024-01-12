@@ -1,15 +1,46 @@
 name: Build and Test
-on: [workflow_dispatch]
+on: [push, workflow_dispatch]
 jobs:
-  build:
-    runs-on: [macos-13]
+  unit-tests:
+    runs-on: macos-13
     env:
       XC_VERSION: ${{ '15.1' }}
+      CCACHE_COMPRESS: "true"
+      CCACHE_COMPRESSLEVEL: "10"
+      CCACHE_MAXSIZE: "400M"
+    strategy:
+      matrix:
+        configuration: ["Debug", "Release"]
     steps:
     - name: Select latest Xcode
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
+    - name: Install ccache
+      run: |
+        brew install ccache
+        which ccache
+    - name: Cache ccache
+      uses: actions/cache@v2
+      with:
+        path: ~/Library/Caches/ccache
+        key: ccache-${{ github.job }}-${{ matrix.configuration }}-${{ github.run_id }}
+        restore-keys: ccache-${{ github.job }}-${{ matrix.configuration }}
     - uses: actions/checkout@v2
     - name: Build and run unit tests
+      run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
+    - name: Show ccache stats
+      run: "ccache --show-stats --verbose"
+    - name: Remove old ccache caches
       run: |
-        cd Scripts
-        ./run_all_unit_tests.sh
+        gh extension install actions/gh-actions-cache
+        echo "Fetching list of cache key"
+        cacheKeys=$(gh actions-cache list --key ccache-${{ github.job }}-${{ matrix.configuration }}- | cut -f 1 )
+        ## Setting this to not fail the workflow while deleting cache keys.
+        set +e
+        echo "Deleting caches..."
+        for cacheKey in $cacheKeys
+        do
+            gh actions-cache delete $cacheKey --confirm
+        done
+        echo "Done"
+      env:
+        GH_TOKEN: ${{ github.token }}

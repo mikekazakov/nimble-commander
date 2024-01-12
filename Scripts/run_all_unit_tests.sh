@@ -1,4 +1,5 @@
 #!/bin/sh
+# Usage: ./run_all_unit_tests.sh [Debug|Release|ASAN]
 
 set -e
 set -o pipefail
@@ -36,6 +37,13 @@ build_target()
     TARGET=$1
     CONFIGURATION=$2
     echo building ${TARGET} - ${CONFIGURATION}
+    
+    asan_flags=""
+    if [ "$CONFIGURATION" == "ASAN" ]; then
+        CONFIGURATION="Release"
+        asan_flags="-enableAddressSanitizer YES"
+    fi
+        
     XC="xcodebuild \
         -project ${XCODEPROJ} \
         -scheme ${TARGET} \
@@ -43,6 +51,7 @@ build_target()
         SYMROOT=${BUILD_DIR} \
         OBJROOT=${BUILD_DIR} \
         -parallelizeTargets \
+        ${asan_flags} \
         OTHER_CFLAGS=\"-fdebug-prefix-map=${ROOT_DIR}=.\""
     BINARY_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//')
     BINARY_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//')

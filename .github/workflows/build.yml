@@ -10,7 +10,7 @@ jobs:
       CCACHE_MAXSIZE: "400M"
     strategy:
       matrix:
-        configuration: ["Debug", "Release"]
+        configuration: ["Debug", "Release", "ASAN"]
     steps:
     - name: Select latest Xcode
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"

@@ -214,7 +214,7 @@ TEST_CASE(PREFIX "Can unzip an archive with Cyrillic symbols")
         auto bytes = file->ReadFile();
         REQUIRE(bytes);
         REQUIRE(bytes->size() == 3);
-        CHECK(std::memcmp(bytes->data(), "123", 4) == 0);
+        CHECK(std::memcmp(bytes->data(), "123", 3) == 0);
     };
     check({reinterpret_cast<const std::byte *>(__1_zip), __1_zip_len});
     check({reinterpret_cast<const std::byte *>(__2_zip), __2_zip_len});

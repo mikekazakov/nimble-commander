@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Theme.h"
 #include <Panel/UI/PanelViewPresentationItemsColoringFilterPersistence.h>
 #include "ThemePersistence.h"
@@ -118,12 +118,15 @@ Theme::Theme(const nc::config::Value &_theme_data, const nc::config::Value &_bac
                           ? [NSAppearance appearanceNamed:NSAppearanceNameAqua]
                           : [NSAppearance appearanceNamed:NSAppearanceNameDarkAqua];
 
-    auto cr = &doc.FindMember("filePanelsColoringRules_v1")->value;
-    if( cr->IsArray() )
-        for( auto i = cr->Begin(), e = cr->End(); i != e; ++i ) {
-            auto rule = nc::panel::PresentationItemsColoringRulePersistence{}.FromJSON(*i);
-            I->m_ColoringRules.emplace_back(std::move(rule));
+    if( const auto rules_it = doc.FindMember("filePanelsColoringRules_v1"); rules_it != doc.MemberEnd() ) {
+        if( const auto &cr = rules_it->value; cr.IsArray() ) {
+            for( auto i = cr.Begin(), e = cr.End(); i != e; ++i ) {
+                auto rule = nc::panel::PresentationItemsColoringRulePersistence{}.FromJSON(*i);
+                I->m_ColoringRules.emplace_back(std::move(rule));
+            }
         }
+    }
+
     // always have a default ("others") non-filtering filter at the back
     I->m_ColoringRules.emplace_back();
 

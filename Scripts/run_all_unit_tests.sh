@@ -62,15 +62,24 @@ else
 fi
 echo Building these configurations: ${configurations}
 
-# run N * M binaries
+# a list of binaries of UTs to execute
+binary_paths=()
+
+# build N * M binaries
 for configuration in ${configurations}; do
   for test in ${tests}; do
     # build the binary
     build_target ${test} ${configuration}
     
-    # execute the binary
-    $BINARY_PATH
+    # store the path to execute later
+    binary_paths+=("$BINARY_PATH")
   done
+done
+
+# run the binaries
+for path in "${binary_paths[@]}"; do
+    echo "$path"
+    $path
 done
 
 # cleanup

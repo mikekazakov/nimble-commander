@@ -1770,6 +1770,7 @@
 		CFA1716220196CB400F507D5 /* AppDelegate+MainWindowCreation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "AppDelegate+MainWindowCreation.mm"; path = "NimbleCommander/Bootstrap/AppDelegate+MainWindowCreation.mm"; sourceTree = SOURCE_ROOT; };
 		CFA1716420196CF600F507D5 /* AppDelegate.Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.Private.h; path = NimbleCommander/Bootstrap/AppDelegate.Private.h; sourceTree = SOURCE_ROOT; };
 		CFA1716820199E8700F507D5 /* FavoritesImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavoritesImpl.h; path = NimbleCommander/States/FilePanels/FavoritesImpl.h; sourceTree = SOURCE_ROOT; };
+		CFA22D2B2B51BD7E00E71479 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = NimbleCommander/Config/tests.xcconfig; sourceTree = "<group>"; };
 		CFA2D6011E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTabImportSheet.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTabImportSheet.h; sourceTree = SOURCE_ROOT; };
 		CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTabImportSheet.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTabImportSheet.mm; sourceTree = SOURCE_ROOT; };
 		CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMHotKeyTextField.h; path = ../../3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.h; sourceTree = SOURCE_ROOT; };
@@ -2221,6 +2222,7 @@
 				CF6572991FA6CD7300ABF85F /* debug.xcconfig */,
 				CF5FD92D1FA2C02E00752E59 /* default.xcconfig */,
 				CF65729A1FA6CD8100ABF85F /* release.xcconfig */,
+				CFA22D2B2B51BD7E00E71479 /* tests.xcconfig */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -5142,6 +5144,7 @@
 		};
 		CF5DE0B7258414CA00604DEE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFA22D2B2B51BD7E00E71479 /* tests.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -5149,6 +5152,7 @@
 		};
 		CF5DE0B8258414CA00604DEE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFA22D2B2B51BD7E00E71479 /* tests.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

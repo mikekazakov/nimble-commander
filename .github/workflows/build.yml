@@ -1,7 +1,7 @@
 name: Build and Test
-on: [workflow_dispatch]
+on: [push, workflow_dispatch]
 jobs:
-  run-unit-tests:
+  unit-tests:
     runs-on: macos-13
     env:
       XC_VERSION: ${{ '15.1' }}

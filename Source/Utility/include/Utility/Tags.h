@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <filesystem>
 
 namespace nc::utility {
 
@@ -27,6 +28,10 @@ public:
     // Parses the bplist stored as "com.apple.metadata:_kMDItemUserTags" xattr and returns a list of tags contained in
     // it. Returns an empty vector as an error mechanism.
     static std::vector<Tag> ParseMDItemUserTags(std::span<const std::byte> _bytes) noexcept;
+
+    static std::vector<Tag> ReadMDItemUserTags(int _fd) noexcept;
+
+    static std::vector<Tag> ReadMDItemUserTags(const std::filesystem::path &_path) noexcept;
 };
 
 // Non-owning class that represent a text label and a color of a tag.

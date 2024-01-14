@@ -187,7 +187,7 @@ TEST_CASE(PREFIX "Supports Unicode labels")
     }
 }
 
-TEST_CASE(PREFIX "Can read muliple labels at once")
+TEST_CASE(PREFIX "Can parse muliple labels at once")
 {
     uint8_t plist[] = {0x62, 0x70, 0x6c, 0x69, 0x73, 0x74, 0x30, 0x30, 0xa8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
                        0x07, 0x08, 0x56, 0x42, 0x6c, 0x75, 0x65, 0x0a, 0x34, 0x56, 0x47, 0x72, 0x65, 0x79, 0x0a,
@@ -209,3 +209,45 @@ TEST_CASE(PREFIX "Can read muliple labels at once")
                                          {label("Yellow"), Tags::Color::Yellow},
                                          {label("Home"), Tags::Color::None}});
 }
+
+TEST_CASE(PREFIX "Can read from a file, set via NSURLTagNamesKey")
+{
+    TempTestDir dir;
+    const auto path = dir.directory / "f.txt";
+    struct TC {
+        NSArray *labels;
+        std::string expected_label;
+        Tags::Color expected_color;
+    } tcs[] = {{@[@"None"], "None", Tags::Color::None},
+               {@[@"Grey"], "Grey", Tags::Color::Grey},
+               {@[@"Green"], "Green", Tags::Color::Green},
+               {@[@"Purple"], "Purple", Tags::Color::Purple},
+               {@[@"Blue"], "Blue", Tags::Color::Blue},
+               {@[@"Yellow"], "Yellow", Tags::Color::Yellow},
+               {@[@"Red"], "Red", Tags::Color::Red},
+               {@[@"Orange"], "Orange", Tags::Color::Orange}};
+    for( auto &tc : tcs ) {
+        close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
+        NSURL *url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:path.c_str()
+                                                                isDirectory:false
+                                                              relativeToURL:nil];
+        CHECK([url setResourceValue:tc.labels forKey:NSURLTagNamesKey error:nil]);
+        auto tags = Tags::ReadMDItemUserTags(path);
+        REQUIRE(tags.size() == 1);
+        CHECK(tags[0].Label() == tc.expected_label);
+        CHECK(tags[0].Color() == tc.expected_color);
+        unlink(path.c_str());
+    }
+}
+
+// TODO: support 'simple' forms:
+//    if (![fileURL setResourceValue:@(2) forKey:NSURLLabelNumberKey error:&resourceError]) {
+//    @(0): None
+//    @(1): Grey
+//    @(2): Green
+//    @(3): Purple
+//    @(4): Blue
+//    @(5): Yellow
+//    @(6): Red
+//    @(7): Orange
+    

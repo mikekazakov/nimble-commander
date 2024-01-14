@@ -222,7 +222,7 @@ TEST_CASE(PREFIX "Can read from a file")
         Tags::Color expected_color;
     } tcs[] = {
         {NSURLTagNamesKey, @[@"Home"], "Home", Tags::Color::None},
-        {NSURLTagNamesKey, @[@"Grey"], "Grey", Tags::Color::Grey},
+        {NSURLTagNamesKey, @[@"Gray"], "Gray", Tags::Color::Grey},
         {NSURLTagNamesKey, @[@"Green"], "Green", Tags::Color::Green},
         {NSURLTagNamesKey, @[@"Purple"], "Purple", Tags::Color::Purple},
         {NSURLTagNamesKey, @[@"Blue"], "Blue", Tags::Color::Blue},

@@ -95,7 +95,7 @@ TEST_CASE(PREFIX "Simple cases")
           0x08, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
           0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11},
          "Gray",
-         Tags::Color::Grey},
+         Tags::Color::Gray},
         {{0x62, 0x70, 0x6c, 0x69, 0x73, 0x74, 0x30, 0x30, 0xa1, 0x01, 0x57, 0x47, 0x72, 0x65, 0x65, 0x6e, 0x0a, 0x32,
           0x08, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02,
           0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x12},
@@ -202,7 +202,7 @@ TEST_CASE(PREFIX "Can parse muliple labels at once")
     std::set<std::string> labels;
     auto label = [&labels](const char *_l) { return &*labels.emplace(_l).first; };
     CHECK(tags == std::vector<Tags::Tag>{{label("Blue"), Tags::Color::Blue},
-                                         {label("Grey"), Tags::Color::Grey},
+                                         {label("Grey"), Tags::Color::Gray},
                                          {label("Green"), Tags::Color::Green},
                                          {label("Orange"), Tags::Color::Orange},
                                          {label("Purple"), Tags::Color::Purple},
@@ -222,14 +222,14 @@ TEST_CASE(PREFIX "Can read from a file")
         Tags::Color expected_color;
     } tcs[] = {
         {NSURLTagNamesKey, @[@"Home"], "Home", Tags::Color::None},
-        {NSURLTagNamesKey, @[@"Gray"], "Gray", Tags::Color::Grey},
+        {NSURLTagNamesKey, @[@"Gray"], "Gray", Tags::Color::Gray},
         {NSURLTagNamesKey, @[@"Green"], "Green", Tags::Color::Green},
         {NSURLTagNamesKey, @[@"Purple"], "Purple", Tags::Color::Purple},
         {NSURLTagNamesKey, @[@"Blue"], "Blue", Tags::Color::Blue},
         {NSURLTagNamesKey, @[@"Yellow"], "Yellow", Tags::Color::Yellow},
         {NSURLTagNamesKey, @[@"Red"], "Red", Tags::Color::Red},
         {NSURLTagNamesKey, @[@"Orange"], "Orange", Tags::Color::Orange},
-        {NSURLLabelNumberKey, @(1), "Grey", Tags::Color::Grey},
+        {NSURLLabelNumberKey, @(1), "Gray", Tags::Color::Gray},
         {NSURLLabelNumberKey, @(2), "Green", Tags::Color::Green},
         {NSURLLabelNumberKey, @(3), "Purple", Tags::Color::Purple},
         {NSURLLabelNumberKey, @(4), "Blue", Tags::Color::Blue},

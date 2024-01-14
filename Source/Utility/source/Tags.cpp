@@ -12,12 +12,14 @@
 #include <Base/CFStackAllocator.h>
 #include <Base/CFPtr.h>
 #include <memory_resource>
+#include <sys/xattr.h>
 
 namespace nc::utility {
 
 // RTFM: https://opensource.apple.com/source/CF/CF-1153.18/CFBinaryPList.c
 
 static constexpr std::string_view g_Prologue = "bplist00";
+static constexpr const char *g_XAttrName = "com.apple.metadata:_kMDItemUserTags";
 
 namespace {
 
@@ -202,6 +204,29 @@ std::vector<Tags::Tag> Tags::ParseMDItemUserTags(const std::span<const std::byte
                     tags.push_back(*tag);
         }
     }
+    return tags;
+}
+
+std::vector<Tags::Tag> Tags::ReadMDItemUserTags(int _fd) noexcept
+{
+    assert(_fd >= 0);
+    std::array<uint8_t, 4096> buf;
+    const ssize_t res = fgetxattr(_fd, g_XAttrName, buf.data(), buf.size(), 0, 0);
+    if( res < 0 )
+        return {};
+    return ParseMDItemUserTags({reinterpret_cast<const std::byte *>(buf.data()), static_cast<size_t>(res)});
+}
+
+std::vector<Tags::Tag> Tags::ReadMDItemUserTags(const std::filesystem::path &_path) noexcept
+{
+    const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
+    if( fd < 0 )
+        return {};
+
+    auto tags = ReadMDItemUserTags(fd);
+
+    close(fd);
+
     return tags;
 }
 

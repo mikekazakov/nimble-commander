@@ -2,6 +2,7 @@
 #include "Tags.h"
 #include "UnitTests_main.h"
 #include <set>
+#include <fmt/core.h>
 
 using nc::utility::Tags;
 
@@ -210,7 +211,7 @@ TEST_CASE(PREFIX "Can parse muliple labels at once")
                                          {label("Home"), Tags::Color::None}});
 }
 
-TEST_CASE(PREFIX "Can read from a file, set via NSURLTagNamesKey")
+TEST_CASE(PREFIX "Can read from a file")
 {
     TempTestDir dir;
     const auto path = dir.directory / "f.txt";
@@ -237,6 +238,7 @@ TEST_CASE(PREFIX "Can read from a file, set via NSURLTagNamesKey")
         {NSURLLabelNumberKey, @(7), "Orange", Tags::Color::Orange},
     };
     for( auto &tc : tcs ) {
+        INFO(fmt::format("{} - {} - {}", tc.key.UTF8String, tc.expected_label, std::to_underlying(tc.expected_color)));
         close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
         NSURL *url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:path.c_str()
                                                                 isDirectory:false

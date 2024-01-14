@@ -29,9 +29,13 @@ public:
     // it. Returns an empty vector as an error mechanism.
     static std::vector<Tag> ParseMDItemUserTags(std::span<const std::byte> _bytes) noexcept;
 
+    static std::vector<Tag> ParseFinderInfo(std::span<const std::byte> _bytes) noexcept;
+        
     static std::vector<Tag> ReadMDItemUserTags(int _fd) noexcept;
+    
+    static std::vector<Tag> ReadFinderInfo(int _fd) noexcept;
 
-    static std::vector<Tag> ReadMDItemUserTags(const std::filesystem::path &_path) noexcept;
+    static std::vector<Tag> ReadTags(const std::filesystem::path &_path) noexcept;
 };
 
 // Non-owning class that represent a text label and a color of a tag.

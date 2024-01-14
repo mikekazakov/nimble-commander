@@ -215,39 +215,37 @@ TEST_CASE(PREFIX "Can read from a file, set via NSURLTagNamesKey")
     TempTestDir dir;
     const auto path = dir.directory / "f.txt";
     struct TC {
-        NSArray *labels;
+        NSURLResourceKey key;
+        id value;
         std::string expected_label;
         Tags::Color expected_color;
-    } tcs[] = {{@[@"None"], "None", Tags::Color::None},
-               {@[@"Grey"], "Grey", Tags::Color::Grey},
-               {@[@"Green"], "Green", Tags::Color::Green},
-               {@[@"Purple"], "Purple", Tags::Color::Purple},
-               {@[@"Blue"], "Blue", Tags::Color::Blue},
-               {@[@"Yellow"], "Yellow", Tags::Color::Yellow},
-               {@[@"Red"], "Red", Tags::Color::Red},
-               {@[@"Orange"], "Orange", Tags::Color::Orange}};
+    } tcs[] = {
+        {NSURLTagNamesKey, @[@"Home"], "Home", Tags::Color::None},
+        {NSURLTagNamesKey, @[@"Grey"], "Grey", Tags::Color::Grey},
+        {NSURLTagNamesKey, @[@"Green"], "Green", Tags::Color::Green},
+        {NSURLTagNamesKey, @[@"Purple"], "Purple", Tags::Color::Purple},
+        {NSURLTagNamesKey, @[@"Blue"], "Blue", Tags::Color::Blue},
+        {NSURLTagNamesKey, @[@"Yellow"], "Yellow", Tags::Color::Yellow},
+        {NSURLTagNamesKey, @[@"Red"], "Red", Tags::Color::Red},
+        {NSURLTagNamesKey, @[@"Orange"], "Orange", Tags::Color::Orange},
+        {NSURLLabelNumberKey, @(1), "Grey", Tags::Color::Grey},
+        {NSURLLabelNumberKey, @(2), "Green", Tags::Color::Green},
+        {NSURLLabelNumberKey, @(3), "Purple", Tags::Color::Purple},
+        {NSURLLabelNumberKey, @(4), "Blue", Tags::Color::Blue},
+        {NSURLLabelNumberKey, @(5), "Yellow", Tags::Color::Yellow},
+        {NSURLLabelNumberKey, @(6), "Red", Tags::Color::Red},
+        {NSURLLabelNumberKey, @(7), "Orange", Tags::Color::Orange},
+    };
     for( auto &tc : tcs ) {
         close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
         NSURL *url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:path.c_str()
                                                                 isDirectory:false
                                                               relativeToURL:nil];
-        CHECK([url setResourceValue:tc.labels forKey:NSURLTagNamesKey error:nil]);
-        auto tags = Tags::ReadMDItemUserTags(path);
+        CHECK([url setResourceValue:tc.value forKey:tc.key error:nil]);
+        auto tags = Tags::ReadTags(path);
         REQUIRE(tags.size() == 1);
         CHECK(tags[0].Label() == tc.expected_label);
         CHECK(tags[0].Color() == tc.expected_color);
         unlink(path.c_str());
     }
 }
-
-// TODO: support 'simple' forms:
-//    if (![fileURL setResourceValue:@(2) forKey:NSURLLabelNumberKey error:&resourceError]) {
-//    @(0): None
-//    @(1): Grey
-//    @(2): Green
-//    @(3): Purple
-//    @(4): Blue
-//    @(5): Yellow
-//    @(6): Red
-//    @(7): Orange
-    

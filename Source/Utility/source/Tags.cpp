@@ -19,7 +19,15 @@ namespace nc::utility {
 // RTFM: https://opensource.apple.com/source/CF/CF-1153.18/CFBinaryPList.c
 
 static constexpr std::string_view g_Prologue = "bplist00";
-static constexpr const char *g_XAttrName = "com.apple.metadata:_kMDItemUserTags";
+static constexpr const char *g_MDItemUserTags = "com.apple.metadata:_kMDItemUserTags";
+static constexpr const char *g_FinderInfo = "com.apple.FinderInfo";
+[[clang::no_destroy]] static const std::string g_LabelGrey = "Grey";
+[[clang::no_destroy]] static const std::string g_LabelGreen = "Green";
+[[clang::no_destroy]] static const std::string g_LabelPurple = "Purple";
+[[clang::no_destroy]] static const std::string g_LabelBlue = "Blue";
+[[clang::no_destroy]] static const std::string g_LabelYellow = "Yellow";
+[[clang::no_destroy]] static const std::string g_LabelRed = "Red";
+[[clang::no_destroy]] static const std::string g_LabelOrange = "Orange";
 
 namespace {
 
@@ -207,23 +215,63 @@ std::vector<Tags::Tag> Tags::ParseMDItemUserTags(const std::span<const std::byte
     return tags;
 }
 
+std::vector<Tags::Tag> Tags::ParseFinderInfo(std::span<const std::byte> _bytes) noexcept
+{
+    if( _bytes.size() != 32 )
+        return {};
+
+    const uint8_t b = (static_cast<uint8_t>(_bytes[9]) & 0xF) >> 1;
+    switch( b ) {
+        case 0:
+            return {};
+        case 1:
+            return {Tag{&g_LabelGrey, Color::Grey}};
+        case 2:
+            return {Tag{&g_LabelGreen, Color::Green}};
+        case 3:
+            return {Tag{&g_LabelPurple, Color::Purple}};
+        case 4:
+            return {Tag{&g_LabelBlue, Color::Blue}};
+        case 5:
+            return {Tag{&g_LabelYellow, Color::Yellow}};
+        case 6:
+            return {Tag{&g_LabelRed, Color::Red}};
+        case 7:
+            return {Tag{&g_LabelOrange, Color::Orange}};
+    }
+    return {};
+}
+
 std::vector<Tags::Tag> Tags::ReadMDItemUserTags(int _fd) noexcept
 {
     assert(_fd >= 0);
     std::array<uint8_t, 4096> buf;
-    const ssize_t res = fgetxattr(_fd, g_XAttrName, buf.data(), buf.size(), 0, 0);
+    const ssize_t res = fgetxattr(_fd, g_MDItemUserTags, buf.data(), buf.size(), 0, 0);
     if( res < 0 )
         return {};
     return ParseMDItemUserTags({reinterpret_cast<const std::byte *>(buf.data()), static_cast<size_t>(res)});
 }
 
-std::vector<Tags::Tag> Tags::ReadMDItemUserTags(const std::filesystem::path &_path) noexcept
+std::vector<Tags::Tag> Tags::ReadFinderInfo(int _fd) noexcept
+{
+    assert(_fd >= 0);
+    std::array<uint8_t, 32> buf;
+    const ssize_t res = fgetxattr(_fd, g_FinderInfo, buf.data(), buf.size(), 0, 0);
+    if( res < 0 )
+        return {};
+    return ParseFinderInfo({reinterpret_cast<const std::byte *>(buf.data()), static_cast<size_t>(res)});
+}
+
+std::vector<Tags::Tag> Tags::ReadTags(const std::filesystem::path &_path) noexcept
 {
     const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
         return {};
 
     auto tags = ReadMDItemUserTags(fd);
+    if( tags.empty() ) {
+        tags = ReadFinderInfo(fd);
+    }
 
     close(fd);
 

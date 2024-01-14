@@ -65,6 +65,8 @@
 		CF460164256125E50095FC73 /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E271C992F35001D8B02 /* SystemInformation.mm */; };
 		CF46524F269103D90085840A /* ObjCpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46524E269103D90085840A /* ObjCpp.mm */; };
 		CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C39922B974210043E825 /* UTIImpl_UT.cpp */; };
+		CF5D1DC72B52B9E900750174 /* Tags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1DC62B52B9E900750174 /* Tags.cpp */; };
+		CF5D1DC92B52B9FA00750174 /* Tags_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1DC82B52B9FA00750174 /* Tags_UT.mm */; };
 		CF61F305264048F6009FF900 /* FSEventsFileUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF61F304264048F6009FF900 /* FSEventsFileUpdate.cpp */; };
 		CF61F30B26404962009FF900 /* FSEventsFileUpdateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */; };
 		CF61F30F26404971009FF900 /* FSEventsFileUpdateImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF61F30E26404971009FF900 /* FSEventsFileUpdateImpl.cpp */; };
@@ -154,6 +156,9 @@
 		CF52C39922B974210043E825 /* UTIImpl_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UTIImpl_UT.cpp; path = tests/UTIImpl_UT.cpp; sourceTree = "<group>"; };
 		CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ByteCountFormatter.h; path = include/Utility/ByteCountFormatter.h; sourceTree = "<group>"; };
 		CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter.mm; path = source/ByteCountFormatter.mm; sourceTree = "<group>"; };
+		CF5D1DC52B52B9D900750174 /* Tags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Tags.h; path = include/Utility/Tags.h; sourceTree = "<group>"; };
+		CF5D1DC62B52B9E900750174 /* Tags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tags.cpp; path = source/Tags.cpp; sourceTree = "<group>"; };
+		CF5D1DC82B52B9FA00750174 /* Tags_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Tags_UT.mm; path = tests/Tags_UT.mm; sourceTree = "<group>"; };
 		CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter_UT.mm; path = tests/ByteCountFormatter_UT.mm; sourceTree = SOURCE_ROOT; };
 		CF614AA91F9D871D0005F2DB /* Encodings_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Encodings_UT.mm; path = tests/Encodings_UT.mm; sourceTree = SOURCE_ROOT; };
 		CF614AAA1F9D871D0005F2DB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = tests/Info.plist; sourceTree = SOURCE_ROOT; };
@@ -302,6 +307,7 @@
 				CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */,
 				CF3F587B255B38A20027B69A /* PathManip_UT.cpp */,
 				CFB062442590BB4E0095C748 /* SystemInformation_UT.mm */,
+				CF5D1DC82B52B9FA00750174 /* Tags_UT.mm */,
 				CF26DE3021D5685A003F0E93 /* TemporaryFileStorageImpl_UT.mm */,
 				CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */,
 				CF308F10213781ED00915730 /* UnitTests_main.h */,
@@ -381,6 +387,7 @@
 				CFD62BFC1C9A84500021EE7F /* StringExtras.h */,
 				CFD62C061C9A95240021EE7F /* SyncMessageBox.h */,
 				CF960E1B1C992F2C001D8B02 /* SystemInformation.h */,
+				CF5D1DC52B52B9D900750174 /* Tags.h */,
 				CF26DE2921D3EFEE003F0E93 /* TemporaryFileStorage.h */,
 				CF26DE2821D3EFEE003F0E93 /* TemporaryFileStorageImpl.h */,
 				CFAB7F18276009BD00926554 /* URLSecurityScopedResourceGuard.h */,
@@ -442,6 +449,7 @@
 				CFD62BFE1C9A84570021EE7F /* StringExtras.mm */,
 				CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */,
 				CF960E271C992F35001D8B02 /* SystemInformation.mm */,
+				CF5D1DC62B52B9E900750174 /* Tags.cpp */,
 				CF26DE2C21D3F033003F0E93 /* TemporaryFileStorage.cpp */,
 				CF26DE2D21D3F033003F0E93 /* TemporaryFileStorageImpl.cpp */,
 				CFAB7F19276009E400926554 /* URLSecurityScopedResourceGuard.mm */,
@@ -578,6 +586,7 @@
 				CF460134256125E50095FC73 /* Layout.mm in Sources */,
 				CF46014D256125E50095FC73 /* Encodings.cpp in Sources */,
 				CFAB7F1A276009E400926554 /* URLSecurityScopedResourceGuard.mm in Sources */,
+				CF5D1DC72B52B9E900750174 /* Tags.cpp in Sources */,
 				CF460151256125E50095FC73 /* NSObject+MassObserving.mm in Sources */,
 				CF46013A256125E50095FC73 /* NativeFSManagerImpl.mm in Sources */,
 				CF460152256125E50095FC73 /* ButtonWithTextColor.mm in Sources */,
@@ -638,6 +647,7 @@
 				CFAB7F7A2774A50700926554 /* ExtensionLowercaseComparison_UT.cpp in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
 				CF3ABD7D23B8AC0A00D1878B /* NativeFSManagerVolumeLookup_UT.cpp in Sources */,
+				CF5D1DC92B52B9FA00750174 /* Tags_UT.mm in Sources */,
 				CFA999652644888C00F72E93 /* FSEventsFileUpdate_UT.cpp in Sources */,
 				CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */,
 				CFE3F1C522932EAA009D6AB4 /* FileMask_UT.cpp in Sources */,

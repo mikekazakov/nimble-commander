@@ -21,7 +21,7 @@ namespace nc::utility {
 static constexpr std::string_view g_Prologue = "bplist00";
 static constexpr const char *g_MDItemUserTags = "com.apple.metadata:_kMDItemUserTags";
 static constexpr const char *g_FinderInfo = "com.apple.FinderInfo";
-[[clang::no_destroy]] static const std::string g_LabelGrey = "Grey";
+[[clang::no_destroy]] static const std::string g_LabelGray = "Gray";
 [[clang::no_destroy]] static const std::string g_LabelGreen = "Green";
 [[clang::no_destroy]] static const std::string g_LabelPurple = "Purple";
 [[clang::no_destroy]] static const std::string g_LabelBlue = "Blue";
@@ -225,7 +225,7 @@ std::vector<Tags::Tag> Tags::ParseFinderInfo(std::span<const std::byte> _bytes) 
         case 0:
             return {};
         case 1:
-            return {Tag{&g_LabelGrey, Color::Grey}};
+            return {Tag{&g_LabelGray, Color::Gray}};
         case 2:
             return {Tag{&g_LabelGreen, Color::Green}};
         case 3:

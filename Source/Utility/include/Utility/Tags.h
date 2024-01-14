@@ -14,7 +14,7 @@ public:
     enum class Color : unsigned char
     {
         None = 0,
-        Grey = 1,
+        Gray = 1,
         Green = 2,
         Purple = 3,
         Blue = 4,

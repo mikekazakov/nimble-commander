@@ -3,6 +3,8 @@
 #include "UnitTests_main.h"
 #include <set>
 #include <fmt/core.h>
+#include <Utility/ObjCpp.h>
+#include <Cocoa/Cocoa.h>
 
 using nc::utility::Tags;
 
@@ -221,14 +223,15 @@ TEST_CASE(PREFIX "Can read from a file")
         std::string expected_label;
         Tags::Color expected_color;
     } tcs[] = {
-        {NSURLTagNamesKey, @[@"Home"], "Home", Tags::Color::None},
-        {NSURLTagNamesKey, @[@"Gray"], "Gray", Tags::Color::Gray},
-        {NSURLTagNamesKey, @[@"Green"], "Green", Tags::Color::Green},
-        {NSURLTagNamesKey, @[@"Purple"], "Purple", Tags::Color::Purple},
-        {NSURLTagNamesKey, @[@"Blue"], "Blue", Tags::Color::Blue},
-        {NSURLTagNamesKey, @[@"Yellow"], "Yellow", Tags::Color::Yellow},
-        {NSURLTagNamesKey, @[@"Red"], "Red", Tags::Color::Red},
-        {NSURLTagNamesKey, @[@"Orange"], "Orange", Tags::Color::Orange},
+        // TODO: figure out a way of getting current Finder tags, otherwise these tests are setup-dependent
+        // {NSURLTagNamesKey, @[@"Home"], "Home", Tags::Color::None},
+        // {NSURLTagNamesKey, @[@"Grey"], "Grey", Tags::Color::Gray},
+        // {NSURLTagNamesKey, @[@"Green"], "Green", Tags::Color::Green},
+        // {NSURLTagNamesKey, @[@"Purple"], "Purple", Tags::Color::Purple},
+        // {NSURLTagNamesKey, @[@"Blue"], "Blue", Tags::Color::Blue},
+        // {NSURLTagNamesKey, @[@"Yellow"], "Yellow", Tags::Color::Yellow},
+        // {NSURLTagNamesKey, @[@"Red"], "Red", Tags::Color::Red},
+        // {NSURLTagNamesKey, @[@"Orange"], "Orange", Tags::Color::Orange},
         {NSURLLabelNumberKey, @(1), "Gray", Tags::Color::Gray},
         {NSURLLabelNumberKey, @(2), "Green", Tags::Color::Green},
         {NSURLLabelNumberKey, @(3), "Purple", Tags::Color::Purple},

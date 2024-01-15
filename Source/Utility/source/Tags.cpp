@@ -257,9 +257,37 @@ std::vector<Tags::Tag> Tags::ReadFinderInfo(int _fd) noexcept
     assert(_fd >= 0);
     std::array<uint8_t, 32> buf;
     const ssize_t res = fgetxattr(_fd, g_FinderInfo, buf.data(), buf.size(), 0, 0);
-    if( res < 0 )
+    if( res != buf.size() )
         return {};
-    return ParseFinderInfo({reinterpret_cast<const std::byte *>(buf.data()), static_cast<size_t>(res)});
+    return ParseFinderInfo({reinterpret_cast<const std::byte *>(buf.data()), buf.size()});
+}
+
+std::vector<Tags::Tag> Tags::ReadTags(int _fd) noexcept
+{
+    assert(_fd >= 0);
+
+    // it's faster to first get a list of xattrs and only if one was found to read it than to try reading upfront as
+    // a probing mechanism.
+    std::array<char, 8192> buf; // Given XATTR_MAXNAMELEN=127, this allows to read up to 64 max-len names
+    const ssize_t res = flistxattr(_fd, buf.data(), buf.size(), 0);
+    if( res <= 0 )
+        return {};
+    
+    // 1st - try MDItemUserTags
+    const bool has_usertags =
+        memmem(buf.data(), res, g_MDItemUserTags, std::string_view{g_MDItemUserTags}.length()) != nullptr;
+    if( has_usertags ) {
+        auto tags = ReadMDItemUserTags(_fd);
+        if( !tags.empty() )
+            return tags;
+    }
+
+    // 2nd - try FinderInfo
+    const bool has_finfo = memmem(buf.data(), res, g_FinderInfo, std::string_view{g_FinderInfo}.length()) != nullptr;
+    if( !has_finfo )
+        return {};
+
+    return ReadFinderInfo(_fd);
 }
 
 std::vector<Tags::Tag> Tags::ReadTags(const std::filesystem::path &_path) noexcept
@@ -268,10 +296,7 @@ std::vector<Tags::Tag> Tags::ReadTags(const std::filesystem::path &_path) noexce
     if( fd < 0 )
         return {};
 
-    auto tags = ReadMDItemUserTags(fd);
-    if( tags.empty() ) {
-        tags = ReadFinderInfo(fd);
-    }
+    auto tags = ReadTags(fd);
 
     close(fd);
 

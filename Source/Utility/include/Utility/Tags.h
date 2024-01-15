@@ -29,12 +29,20 @@ public:
     // it. Returns an empty vector as an error mechanism.
     static std::vector<Tag> ParseMDItemUserTags(std::span<const std::byte> _bytes) noexcept;
 
+    // Parses the "com.apple.FinderInfo" xattr and extracts a tag color if any is present.
+    // Returns an empty vector as an error mechanism.
     static std::vector<Tag> ParseFinderInfo(std::span<const std::byte> _bytes) noexcept;
         
+    // Loads the contents an the xattrs and processes it with ParseMDItemUserTags
     static std::vector<Tag> ReadMDItemUserTags(int _fd) noexcept;
     
+    // Loads the contents an the xattrs and processes it with ParseFinderInfo
     static std::vector<Tag> ReadFinderInfo(int _fd) noexcept;
 
+    // Loads tags from MDItemUserTags (1st priority) or from FinderInfo(2nd priority), works with file handles
+    static std::vector<Tag> ReadTags(int _fd) noexcept;
+    
+    // Loads tags from MDItemUserTags (1st priority) or from FinderInfo(2nd priority), works with file paths
     static std::vector<Tag> ReadTags(const std::filesystem::path &_path) noexcept;
 };
 

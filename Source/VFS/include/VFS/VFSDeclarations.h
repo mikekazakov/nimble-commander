@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -122,16 +122,16 @@ struct User {
     uint32_t uid;
     std::string name;
     std::string gecos;
-    friend bool operator==(const User&, const User&) noexcept = default;
-    friend bool operator!=(const User&, const User&) noexcept = default;
+    friend bool operator==(const User &, const User &) noexcept = default;
+    friend bool operator!=(const User &, const User &) noexcept = default;
 };
 
 struct Group {
     uint32_t gid;
     std::string name;
     std::string gecos;
-    friend bool operator==(const Group&, const Group&) noexcept = default;
-    friend bool operator!=(const Group&, const Group&) noexcept = default;
+    friend bool operator==(const Group &, const Group &) noexcept = default;
+    friend bool operator!=(const Group &, const Group &) noexcept = default;
 };
 
 struct Flags {
@@ -160,17 +160,20 @@ struct Flags {
 
     // Flags altering host behaviour
     /** do not follow symlinks when resolving item name */
-    static constexpr uint64_t F_NoFollow = 0x10000000;
+    static constexpr uint64_t F_NoFollow = 0x010000000ull;
 
     // Flags altering listing building
     /** for listing. don't fetch dot-dot entry in directory listing */
-    static constexpr uint64_t F_NoDotDot = 0x20000000;
+    static constexpr uint64_t F_NoDotDot = 0x020000000ull;
 
     /** for listing. ask system to provide localized display names */
-    static constexpr uint64_t F_LoadDisplayNames = 0x40000000;
+    static constexpr uint64_t F_LoadDisplayNames = 0x040000000ull;
 
     /** discard caches when fetching information. */
-    static constexpr uint64_t F_ForceRefresh = 0x80000000;
+    static constexpr uint64_t F_ForceRefresh = 0x080000000ull;
+
+    /** load Finder Tafs. */
+    static constexpr uint64_t F_LoadTags = 0x100000000ull;
 };
 
 class Listing;

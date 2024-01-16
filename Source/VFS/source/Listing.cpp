@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Listing.h"
 #include "../include/VFS/Host.h"
 #include "ListingInput.h"
@@ -155,6 +155,7 @@ base::intrusive_ptr<const Listing> Listing::Build(ListingInput &&_input)
     l->m_GIDS = std::move(_input.gids);
     l->m_UnixFlags = std::move(_input.unix_flags);
     l->m_Symlinks = std::move(_input.symlinks);
+    l->m_Tags = std::move(_input.tags);
     l->m_CreationTime = time(0);
     l->m_CreationTicks = base::machtime();
     l->BuildFilenames();
@@ -213,7 +214,10 @@ ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<const Listin
                 result.unix_flags.insert(count, listing.UnixFlags(i));
             if( listing.HasSymlink(i) )
                 result.symlinks.insert(count, listing.Symlink(i));
-
+            if( listing.HasTags(i) ) {
+                auto tags = listing.Tags(i);
+                result.tags.emplace(count, std::vector<utility::Tags::Tag>(tags.begin(), tags.end()));
+            }
             count++;
         }
     }

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Fetching.h"
 #include <sys/attr.h>
 #include <sys/errno.h>
@@ -15,8 +15,6 @@
 struct dirent *_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
 namespace nc::vfs::native {
-
-static_assert(sizeof(Fetching::CallbackParams) == 88);
 
 static mode_t VNodeToUnixMode(const fsobj_type_t _type)
 {
@@ -89,6 +87,7 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
         u_int64_t inode;
         struct timespec add_time;
         off_t file_size;
+        uint64_t ext_flags;
     } __attribute__((aligned(4), packed)) attrs;
 
     attrlist attr_list;
@@ -99,6 +98,7 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
         ATTR_CMN_MODTIME | ATTR_CMN_CHGTIME | ATTR_CMN_ACCTIME | ATTR_CMN_OWNERID | ATTR_CMN_GRPID |
         ATTR_CMN_ACCESSMASK | ATTR_CMN_FLAGS | ATTR_CMN_FILEID | ATTR_CMN_ADDEDTIME;
     attr_list.fileattr = ATTR_FILE_DATALENGTH;
+    attr_list.forkattr = ATTR_CMNEXT_EXT_FLAGS;
 
     const int fd = _io.open(_path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC);
     if( fd < 0 ) {
@@ -113,7 +113,9 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
     }
     auto close_fd = at_scope_end([fd] { close(fd); });
 
-    if( fgetattrlist(fd, &attr_list, &attrs, sizeof(attrs), 0) != 0 )
+    constexpr uint64_t options = FSOPT_ATTR_CMN_EXTENDED;
+    
+    if( fgetattrlist(fd, &attr_list, &attrs, sizeof(attrs), options) != 0 )
         return errno;
 
     CallbackParams params;
@@ -183,10 +185,17 @@ int Fetching::ReadSingleEntryAttributesByPath(nc::routedio::PosixIOInterface &_i
     else
         params.add_time = -1;
 
-    if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH )
+    if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH ) {
         params.size = *reinterpret_cast<const off_t *>(field);
+        field += sizeof(off_t);
+    }
     else
         params.size = -1;
+    
+    if( attrs.returned.forkattr & ATTR_CMNEXT_EXT_FLAGS ) {
+        params.ext_flags = *reinterpret_cast<const uint64_t *>(field);
+        field += sizeof(uint64_t);
+    }
 
     _cb_param(params);
 
@@ -240,6 +249,7 @@ int Fetching::ReadDirAttributesStat(const int _dir_fd,
             params.dev = stat_buffer.st_dev;
             params.inode = stat_buffer.st_ino;
             params.flags = stat_buffer.st_flags;
+            params.ext_flags = 0;
             params.size = -1;
             if( !S_ISDIR(stat_buffer.st_mode) )
                 params.size = stat_buffer.st_size;
@@ -265,12 +275,17 @@ int Fetching::ReadDirAttributesBulk(const int _dir_fd,
                            ATTR_CMN_OWNERID | ATTR_CMN_GRPID | ATTR_CMN_ACCESSMASK |
                            ATTR_CMN_FLAGS | ATTR_CMN_FILEID;
     attr_list.fileattr = ATTR_FILE_DATALENGTH;
+    attr_list.forkattr = ATTR_CMNEXT_EXT_FLAGS;
 
+// TODO: handle ENOTSUP
+//    getattrlist() will return ENOTSUP if it is not supported on a particular volume.
+
+    constexpr uint64_t options = FSOPT_ATTR_CMN_EXTENDED;
     constexpr size_t attr_buf_size = 65536;
     std::unique_ptr<char[]> attr_buf = std::make_unique<char[]>(attr_buf_size);
     CallbackParams params;
     while( true ) {
-        const int retcount = getattrlistbulk(_dir_fd, &attr_list, &attr_buf[0], attr_buf_size, 0);
+        const int retcount = getattrlistbulk(_dir_fd, &attr_list, &attr_buf[0], attr_buf_size, options);
         if( retcount < 0 )
             return errno;
 
@@ -317,30 +332,48 @@ int Fetching::ReadDirAttributesBulk(const int _dir_fd,
                 params.crt_time = reinterpret_cast<const struct timespec *>(field)->tv_sec;
                 field += sizeof(timespec);
             }
+            else {
+                params.crt_time = 0;
+            }
 
             if( returned.commonattr & ATTR_CMN_MODTIME ) {
                 params.mod_time = reinterpret_cast<const struct timespec *>(field)->tv_sec;
                 field += sizeof(timespec);
+            }
+            else {
+                params.mod_time = 0;
             }
 
             if( returned.commonattr & ATTR_CMN_CHGTIME ) {
                 params.chg_time = reinterpret_cast<const struct timespec *>(field)->tv_sec;
                 field += sizeof(timespec);
             }
+            else {
+                params.chg_time = 0;
+            }
 
             if( returned.commonattr & ATTR_CMN_ACCTIME ) {
                 params.acc_time = reinterpret_cast<const struct timespec *>(field)->tv_sec;
                 field += sizeof(timespec);
+            }
+            else {
+                params.acc_time = 0;
             }
 
             if( returned.commonattr & ATTR_CMN_OWNERID ) {
                 params.uid = *reinterpret_cast<const uid_t *>(field);
                 field += sizeof(uid_t);
             }
+            else {
+                params.uid = 0;
+            }
 
             if( returned.commonattr & ATTR_CMN_GRPID ) {
                 params.gid = *reinterpret_cast<const gid_t *>(field);
                 field += sizeof(gid_t);
+            }
+            else {
+                params.gid = 0;
             }
 
             if( returned.commonattr & ATTR_CMN_ACCESSMASK ) {
@@ -352,23 +385,41 @@ int Fetching::ReadDirAttributesBulk(const int _dir_fd,
                 params.flags = *reinterpret_cast<const u_int32_t *>(field);
                 field += sizeof(u_int32_t);
             }
+            else {
+                params.flags = 0;
+            }
 
             if( returned.commonattr & ATTR_CMN_FILEID ) {
                 params.inode = *reinterpret_cast<const u_int64_t *>(field);
                 field += sizeof(uint64_t);
+            }
+            else {
+                params.inode = 0;
             }
 
             if( returned.commonattr & ATTR_CMN_ADDEDTIME ) {
                 params.add_time = reinterpret_cast<const struct timespec *>(field)->tv_sec;
                 field += sizeof(timespec);
             }
-            else
+            else {
                 params.add_time = -1;
+            }
 
-            if( returned.fileattr & ATTR_FILE_DATALENGTH )
+            if( returned.fileattr & ATTR_FILE_DATALENGTH ) {
                 params.size = *reinterpret_cast<const off_t *>(field);
-            else
+                field += sizeof(off_t);
+            }
+            else {
                 params.size = -1;
+            }
+            
+            if( returned.forkattr & ATTR_CMNEXT_EXT_FLAGS ) {
+                params.ext_flags = *reinterpret_cast<const uint64_t *>(field);
+                field += sizeof(uint64_t);
+            }
+            else {
+                params.ext_flags = 0;
+            }
 
             _cb_param(params);
         }

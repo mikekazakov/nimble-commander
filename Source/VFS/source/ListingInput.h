@@ -1,7 +1,8 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/variable_container.h>
+#include <Utility/Tags.h>
 #include "../include/VFS/VFSDeclarations.h"
 #include <sys/types.h>
 
@@ -93,6 +94,11 @@ struct ListingInput
      * can be sparse or dense. on common type will throw an exception.
      */
     base::variable_container<std::string> symlinks{base::variable_container<>::type::sparse};
+    
+    /**
+     * finder tags of the listing entries.
+     */
+    robin_hood::unordered_flat_map<size_t, std::vector<utility::Tags::Tag>> tags;
 };
 
 }

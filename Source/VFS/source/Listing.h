@@ -1,12 +1,14 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/variable_container.h>
 #include <Base/CFString.h>
 #include <Base/intrusive_ptr.h>
 #include <VFS/VFSDeclarations.h>
+#include <Utility/Tags.h>
 #include <cassert>
 #include <chrono>
+#include <span>
 
 /**
  * A note about symlinks handling. Listing must be aware, that some items might be symlinks.
@@ -42,8 +44,8 @@ public:
     static ListingInput Compose(const std::vector<base::intrusive_ptr<const Listing>> &_listings,
                                 const std::vector<std::vector<unsigned>> &_items_indeces);
 
-    static base::intrusive_ptr<const Listing>
-    ProduceUpdatedTemporaryPanelListing(const Listing &_original, VFSCancelChecker _cancel_checker);
+    static base::intrusive_ptr<const Listing> ProduceUpdatedTemporaryPanelListing(const Listing &_original,
+                                                                                  VFSCancelChecker _cancel_checker);
 
     /**
      * Returns items amount in this listing.
@@ -58,7 +60,7 @@ public:
      * Returns an optional title for this listing object.
      */
     const std::string &Title() const noexcept;
-    
+
     // Returns a timestamp time kernel ticks (mach_time) of the time point at which this listing was built.
     std::chrono::nanoseconds BuildTicksTimestamp() const noexcept;
 
@@ -122,6 +124,9 @@ public:
     bool HasSymlink(unsigned _ind) const;
     const std::string &Symlink(unsigned _ind) const;
 
+    bool HasTags(unsigned _ind) const;
+    std::span<const utility::Tags::Tag> Tags(unsigned _ind) const; // will return {} if there are no tags
+
     bool HasDisplayFilename(unsigned _ind) const;
     const std::string &DisplayFilename(unsigned _ind) const;
     CFStringRef DisplayFilenameCF(unsigned _ind) const;
@@ -169,6 +174,7 @@ private:
     base::variable_container<std::string> m_Symlinks;
     base::variable_container<std::string> m_DisplayFilenames;
     base::variable_container<base::CFString> m_DisplayFilenamesCF;
+    robin_hood::unordered_flat_map<size_t, std::vector<utility::Tags::Tag>> m_Tags;
 
     // this is a copy of POSIX/BSD constants to reduce headers pollution
     inline constexpr static const mode_t m_S_IFMT = 0170000;
@@ -240,8 +246,7 @@ public:
 
     bool HasExtension() const;
     uint16_t ExtensionOffset() const;
-    const char *
-    Extension() const; // unguarded calls whout HasExtension will yeild a whole filename as a result
+    const char *Extension() const;      // unguarded calls whout HasExtension will yeild a whole filename as a result
     const char *ExtensionIfAny() const; // will return "" if there's no extension
     std::string FilenameWithoutExt() const;
 
@@ -281,6 +286,9 @@ public:
     bool HasSymlink() const;
     const std::string &Symlink() const;
 
+    bool HasTags() const;
+    std::span<const utility::Tags::Tag> Tags() const;
+
     bool IsDir() const;
     bool IsReg() const;
     bool IsSymlink() const;
@@ -301,20 +309,20 @@ class Listing::iterator
 public:
     using difference_type = long;
     using value_type = ListingItem;
-    using pointer  = void;
+    using pointer = void;
     using reference = const ListingItem &;
     using iterator_category = std::random_access_iterator_tag;
-    
+
     iterator &operator--() noexcept;   // prefix decrement
     iterator &operator++() noexcept;   // prefix increment
     iterator operator--(int) noexcept; // posfix decrement
     iterator operator++(int) noexcept; // posfix increment
     iterator operator+(long _diff) const noexcept;
     iterator operator-(long _diff) const noexcept;
-    long operator-(const iterator& _rhs) const noexcept;
+    long operator-(const iterator &_rhs) const noexcept;
     iterator &operator+=(long _diff) noexcept;
     iterator &operator-=(long _diff) noexcept;
-    
+
     bool operator==(const iterator &_r) const noexcept;
     bool operator!=(const iterator &_r) const noexcept;
     bool operator<(const iterator &_r) const noexcept;
@@ -328,43 +336,43 @@ private:
     friend class Listing;
 };
 
-#define __CHECK_BOUNDS(a)                                                                          \
-    if( (a) >= m_ItemsCount ) [[unlikely]]                                                         \
+#define VFS_LISTING_CHECK_BOUNDS(a)                                                                                    \
+    if( (a) >= m_ItemsCount ) [[unlikely]]                                                                             \
         throw std::out_of_range(std::string(__PRETTY_FUNCTION__) + ": index out of range");
 
 inline bool Listing::HasExtension(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_ExtensionOffsets[_ind] != 0;
 }
 
 inline uint16_t Listing::ExtensionOffset(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_ExtensionOffsets[_ind];
 }
 
 inline const char *Listing::Extension(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_Filenames[_ind].c_str() + m_ExtensionOffsets[_ind];
 }
 
 inline const std::string &Listing::Filename(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_Filenames[_ind];
 }
 
 inline CFStringRef Listing::FilenameCF(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return *m_FilenamesCF[_ind];
 }
 
 inline std::string Listing::Path(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     if( !IsDotDot(_ind) )
         return m_Directories[_ind] + m_Filenames[_ind];
     else {
@@ -377,7 +385,7 @@ inline std::string Listing::Path(unsigned _ind) const
 
 inline std::string Listing::FilenameWithoutExt(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     if( m_ExtensionOffsets[_ind] == 0 )
         return m_Filenames[_ind];
     return m_Filenames[_ind].substr(0, m_ExtensionOffsets[_ind] - 1);
@@ -395,7 +403,7 @@ inline const VFSHostPtr &Listing::Host(unsigned _ind) const
     if( HasCommonHost() )
         return m_Hosts[0];
     else {
-        __CHECK_BOUNDS(_ind);
+        VFS_LISTING_CHECK_BOUNDS(_ind);
         return m_Hosts[_ind];
     }
 }
@@ -413,7 +421,7 @@ inline const std::string &Listing::Directory(unsigned _ind) const
         return m_Directories[0];
     }
     else {
-        __CHECK_BOUNDS(_ind);
+        VFS_LISTING_CHECK_BOUNDS(_ind);
         return m_Directories[_ind];
     }
 }
@@ -450,201 +458,215 @@ inline bool Listing::HasCommonDirectory() const noexcept
 
 inline bool Listing::HasSize(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_Sizes.has(_ind);
 }
 
 inline uint64_t Listing::Size(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_Sizes.has(_ind) ? m_Sizes[_ind] : 0;
 }
 
 inline bool Listing::HasInode(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_Inodes.has(_ind);
 }
 
 inline uint64_t Listing::Inode(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_Inodes.has(_ind) ? m_Inodes[_ind] : 0;
 }
 
 inline bool Listing::HasATime(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_ATimes.has(_ind);
 }
 
 inline time_t Listing::ATime(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_ATimes.has(_ind) ? m_ATimes[_ind] : m_CreationTime;
 }
 
 inline bool Listing::HasMTime(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_MTimes.has(_ind);
 }
 
 inline time_t Listing::MTime(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_MTimes.has(_ind) ? m_MTimes[_ind] : m_CreationTime;
 }
 
 inline bool Listing::HasCTime(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_CTimes.has(_ind);
 }
 
 inline time_t Listing::CTime(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_CTimes.has(_ind) ? m_CTimes[_ind] : m_CreationTime;
 }
 
 inline bool Listing::HasBTime(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_BTimes.has(_ind);
 }
 
 inline time_t Listing::BTime(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_BTimes.has(_ind) ? m_BTimes[_ind] : m_CreationTime;
 }
 
 inline bool Listing::HasAddTime(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_AddTimes.has(_ind);
 }
 
 inline time_t Listing::AddTime(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_AddTimes.has(_ind) ? m_AddTimes[_ind] : BTime(_ind);
 }
 
 inline mode_t Listing::UnixMode(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_UnixModes[_ind];
 }
 
 inline uint8_t Listing::UnixType(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_UnixTypes[_ind];
 }
 
 inline bool Listing::HasUID(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_UIDS.has(_ind);
 }
 
 inline uid_t Listing::UID(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_UIDS.has(_ind) ? m_UIDS[_ind] : 0;
 }
 
 inline bool Listing::HasGID(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_GIDS.has(_ind);
 }
 
 inline gid_t Listing::GID(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_GIDS.has(_ind) ? m_GIDS[_ind] : 0;
 }
 
 inline bool Listing::HasUnixFlags(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_UnixFlags.has(_ind);
 }
 
 inline uint32_t Listing::UnixFlags(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_UnixFlags.has(_ind) ? m_UnixFlags[_ind] : 0;
 }
 
 inline bool Listing::HasSymlink(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_Symlinks.has(_ind);
 }
 
 inline const std::string &Listing::Symlink(unsigned _ind) const
 {
     [[clang::no_destroy]] static const std::string st = "";
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_Symlinks.has(_ind) ? m_Symlinks[_ind] : st;
+}
+
+inline bool Listing::HasTags(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    return m_Tags.contains(_ind);
+}
+
+inline std::span<const utility::Tags::Tag> Listing::Tags(unsigned _ind) const
+{
+    VFS_LISTING_CHECK_BOUNDS(_ind);
+    if( auto it = m_Tags.find(_ind); it != m_Tags.end() )
+        return it->second;
+    return {};
 }
 
 inline bool Listing::HasDisplayFilename(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_DisplayFilenames.has(_ind);
 }
 
 inline const std::string &Listing::DisplayFilename(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_DisplayFilenames.has(_ind) ? m_DisplayFilenames[_ind] : Filename(_ind);
 }
 
 inline CFStringRef Listing::DisplayFilenameCF(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_DisplayFilenamesCF.has(_ind) ? *m_DisplayFilenamesCF[_ind] : FilenameCF(_ind);
 }
 
 inline bool Listing::IsDotDot(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     auto &s = m_Filenames[_ind];
     return s[0] == '.' && s[1] == '.' && s[2] == 0;
 }
 
 inline bool Listing::IsDir(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return (m_UnixModes[_ind] & m_S_IFMT) == m_S_IFDIR;
 }
 
 inline bool Listing::IsReg(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return (m_UnixModes[_ind] & m_S_IFMT) == m_S_IFREG;
 }
 
 inline bool Listing::IsSymlink(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return m_UnixTypes[_ind] == m_DT_LNK;
 }
 
 inline bool Listing::IsHidden(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return (Filename(_ind)[0] == '.' || (UnixFlags(_ind) & m_UF_HIDDEN)) && !IsDotDot(_ind);
 }
 
 inline ListingItem Listing::Item(unsigned _ind) const
 {
-    __CHECK_BOUNDS(_ind);
+    VFS_LISTING_CHECK_BOUNDS(_ind);
     return ListingItem(base::intrusive_ptr{this}, _ind);
 }
 
@@ -662,14 +684,13 @@ inline Listing::iterator Listing::end() const noexcept
     return it;
 }
 
-#undef __CHECK_BOUNDS
+#undef VFS_LISTING_CHECK_BOUNDS
 
 inline ListingItem::ListingItem() noexcept : L(nullptr), I(std::numeric_limits<unsigned>::max())
 {
 }
 
-inline ListingItem::ListingItem(const base::intrusive_ptr<const class Listing> &_listing,
-                                unsigned _ind) noexcept
+inline ListingItem::ListingItem(const base::intrusive_ptr<const class Listing> &_listing, unsigned _ind) noexcept
     : L(_listing), I(_ind)
 {
 }
@@ -884,6 +905,16 @@ inline const std::string &ListingItem::Symlink() const
     return L->Symlink(I);
 }
 
+inline bool ListingItem::HasTags() const
+{
+    return L->HasTags(I);
+}
+
+inline std::span<const utility::Tags::Tag> ListingItem::Tags() const
+{
+    return L->Tags(I);
+}
+
 inline bool ListingItem::IsDir() const
 {
     return L->IsDir(I);
@@ -959,7 +990,7 @@ inline Listing::iterator Listing::iterator::operator-(long _diff) const noexcept
     return p;
 }
 
-inline long Listing::iterator::operator-(const iterator& _rhs) const noexcept
+inline long Listing::iterator::operator-(const iterator &_rhs) const noexcept
 {
     return static_cast<long>(i.I) - static_cast<long>(_rhs.i.I);
 }

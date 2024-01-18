@@ -9,17 +9,6 @@
 
 namespace nc::panel {
 
-static NSColor *Saturate(NSColor *_color) noexcept
-{
-    double factor = 1.5;
-    double hue, saturation, brightness, alpha;
-    [_color getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
-    return [NSColor colorWithCalibratedHue:hue
-                                saturation:std::min(1.0, saturation * factor)
-                                brightness:brightness
-                                     alpha:alpha];
-}
-
 // fill, stroke
 static std::pair<NSColor *, NSColor *> Color(utility::Tags::Color _color) noexcept
 {
@@ -28,22 +17,23 @@ static std::pair<NSColor *, NSColor *> Color(utility::Tags::Color _color) noexce
     [[clang::no_destroy]] static std::array<NSColor *, 8> stroke_colors;
     static std::once_flag once;
     std::call_once(once, [] {
-        // TODO: explicit components for stroke
-        constexpr int components[8][4] = {{0, 0, 0, 0},
-                                          {147, 147, 151, 255},
-                                          {71, 208, 83, 255},
-                                          {174, 88, 220, 255},
-                                          {42, 125, 252, 255},
-                                          {252, 205, 40, 255},
-                                          {252, 73, 72, 255},
-                                          {252, 154, 40, 255}};
-
+        constexpr int components[8][7] = {{0, 0, 0, 0, 0, 0, 0},
+                                          {147, 147, 151, 129, 128, 133, 255},
+                                          {71, 208, 83, 47, 202, 58, 255},
+                                          {174, 88, 220, 161, 60, 215, 255},
+                                          {42, 125, 252, 17, 102, 255, 255},
+                                          {252, 205, 40, 254, 196, 15, 255},
+                                          {252, 73, 72, 252, 42, 45, 255},
+                                          {252, 154, 40, 253, 136, 15, 255}};
         for( size_t i = 0; i < 8; ++i ) {
             fill_colors[i] = [NSColor colorWithCalibratedRed:components[i][0] / 255.
                                                        green:components[i][1] / 255.
                                                         blue:components[i][2] / 255.
-                                                       alpha:components[i][3] / 255.];
-            stroke_colors[i] = Saturate(fill_colors[i]);
+                                                       alpha:components[i][6] / 255.];
+            stroke_colors[i] = [NSColor colorWithCalibratedRed:components[i][3] / 255.
+                                                         green:components[i][4] / 255.
+                                                          blue:components[i][5] / 255.
+                                                         alpha:components[i][6] / 255.];
         }
     });
     auto idx = std::to_underlying(_color);
@@ -80,13 +70,25 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
     if( num_colors_to_draw == 0 )
         return;
 
-    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-    [currentContext saveGraphicsState];
-
     constexpr double radius = static_cast<double>(Diameter / 2);
     constexpr double spacing = static_cast<double>(Step);
+    static NSBezierPath *const circle = [] {
+        NSBezierPath *circle = [NSBezierPath bezierPath];
+        [circle appendBezierPathWithArcWithCenter:NSMakePoint(0., 0.) radius:radius startAngle:0 endAngle:360];
+        [circle setLineWidth:1.];
+        return circle;
+    }();
+    static NSBezierPath *const shadow = [] {
+        NSBezierPath *shadow = [NSBezierPath bezierPath];
+        [shadow appendBezierPathWithArcWithCenter:NSMakePoint(0., 0.) radius:radius + 1. startAngle:0 endAngle:360];
+        [shadow setLineWidth:1.];
+        return shadow;
+    }();
 
+    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     for( ssize_t i = num_colors_to_draw - 1; i >= 0; --i ) {
+        [currentContext saveGraphicsState];
+
         auto colors = Color(colors_to_draw[i]);
         [colors.first setFill];
         if( _accent )
@@ -94,24 +96,20 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
         else
             [colors.second setStroke];
 
-        NSPoint center = NSMakePoint(_offset_x + i * spacing, _view_height / 2.);
+        NSAffineTransform *tr = [NSAffineTransform transform];
+        [tr translateXBy:_offset_x + i * spacing yBy:_view_height / 2.];
+        [tr concat];
 
-        NSBezierPath *circle = [NSBezierPath bezierPath];
-        [circle appendBezierPathWithArcWithCenter:center radius:radius startAngle:0 endAngle:360];
         [circle fill];
-        [circle setLineWidth:1.];
         [circle stroke];
 
         if( i < static_cast<ssize_t>(num_colors_to_draw) - 1 ) {
-            NSBezierPath *shadow = [NSBezierPath bezierPath];
-            [shadow appendBezierPathWithArcWithCenter:center radius:radius + 1. startAngle:0 endAngle:360];
             [_background setStroke];
-            [shadow setLineWidth:1.];
             [shadow stroke];
         }
-    }
 
-    [currentContext restoreGraphicsState];
+        [currentContext restoreGraphicsState];
+    }
 }
 
 }

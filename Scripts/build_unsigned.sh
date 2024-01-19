@@ -49,12 +49,12 @@ APP_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= 
 APP_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//' )
 APP_PATH=$APP_DIR/$APP_NAME
 
-VERSION=$( $PBUDDY -c "Print CFBundleShortVersionString" "$APP_PATH/Contents/Info.plist" )
-BUILD=$( $PBUDDY -c "Print CFBundleVersion" "$APP_PATH/Contents/Info.plist" )
-
 $XC build | xcpretty
 
 cp -R "${APP_PATH}" ./
+
+VERSION=$( $PBUDDY -c "Print CFBundleShortVersionString" "$APP_PATH/Contents/Info.plist" )
+BUILD=$( $PBUDDY -c "Print CFBundleVersion" "$APP_PATH/Contents/Info.plist" )
 
 create-dmg \
  --volname "Nimble Commander Unsigned" \

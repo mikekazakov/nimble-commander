@@ -3731,7 +3731,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "codesign --verbose --sign 'Developer ID Application' --force --deep --timestamp --options runtime \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app\"\ncodesign --verbose --sign 'Developer ID Application' --force --deep --timestamp --options runtime \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework\"\n";
+			shellScript = "if [[ $CODE_SIGNING_ALLOWED -eq NO ]] ; then exit ; fi\ncodesign --verbose --sign 'Developer ID Application' --force --deep --timestamp --options runtime \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app\"\ncodesign --verbose --sign 'Developer ID Application' --force --deep --timestamp --options runtime \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework\"\n";
 		};
 		CF9EEB3E17256372001443FA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

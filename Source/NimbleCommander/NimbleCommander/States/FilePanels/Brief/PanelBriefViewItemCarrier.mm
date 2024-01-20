@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
@@ -8,6 +8,7 @@
 #include "PanelBriefViewItemCarrier.h"
 #include <Base/dispatch_cpp.h>
 #include <Panel/PanelViewFieldEditor.h>
+#include <Panel/UI/TagsPresentation.h>
 
 using namespace nc::panel;
 
@@ -51,7 +52,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 }
 
 @implementation PanelBriefViewItemCarrier {
-    NSColor *m_Background;
+    NSColor *m_BackgroundColor;
+    NSColor *m_TagAccentColor;
     NSColor *m_TextColor;
     NSString *m_Filename;
     NSImage *m_Icon;
@@ -65,7 +67,8 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     bool m_IsSymlink;
 }
 
-@synthesize background = m_Background;
+@synthesize backgroundColor = m_BackgroundColor;
+@synthesize tagAccentColor = m_TagAccentColor;
 @synthesize filename = m_Filename;
 @synthesize layoutConstants = m_LayoutConstants;
 @synthesize controller = m_Controller;
@@ -132,30 +135,43 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
 {
     const int origin = m_LayoutConstants.icon_size ? 2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size
                                                    : m_LayoutConstants.inset_left;
-    const auto width = bounds.size.width - origin - m_LayoutConstants.inset_right;
-
+    const auto tags = m_Controller.item.Tags();
+    const auto tags_geom = TrailingTagsInplaceDisplay::Place(tags);
+    const auto width = bounds.size.width - origin - m_LayoutConstants.inset_right - tags_geom.margin - tags_geom.width;
     return NSMakeRect(origin, 0, width, bounds.size.height);
 }
 
-- (void)drawDefaultBackgroundWithBounds:(NSRect)bounds inContext:(CGContextRef)context
+static NSColor *Blend(NSColor *_front, NSColor *_back)
 {
-    const bool is_odd = int(self.frame.origin.y / bounds.size.height) % 2;
-    auto c = is_odd ? nc::CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor()
-                    : nc::CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
-    CGContextSetFillColorWithColor(context, c.CGColor);
-    CGContextFillRect(context, bounds);
+    const auto alpha = _front.alphaComponent;
+    if( alpha == 1. )
+        return _front;
+    if( alpha == 0. )
+        return _back;
+
+    const auto cs = NSColorSpace.genericRGBColorSpace;
+    _front = [_front colorUsingColorSpace:cs];
+    _back = [_back colorUsingColorSpace:cs];
+    const auto r = _front.redComponent * alpha + _back.redComponent * (1. - alpha);
+    const auto g = _front.greenComponent * alpha + _back.greenComponent * (1. - alpha);
+    const auto b = _front.blueComponent * alpha + _back.blueComponent * (1. - alpha);
+    return [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.];
 }
 
-- (void)drawCustomBackgroundWithBounds:(NSRect)bounds inContext:(CGContextRef)context
+- (NSColor *)deduceBackground:(NSRect)_bounds
 {
-    const auto alpha = m_Background.alphaComponent;
+    const bool is_odd = int(self.frame.origin.y / _bounds.size.height) % 2;
+    auto c = is_odd ? nc::CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor()
+                    : nc::CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
 
-    if( alpha != 1. )
-        [self drawDefaultBackgroundWithBounds:bounds inContext:context];
-
-    if( alpha != 0. ) {
-        CGContextSetFillColorWithColor(context, m_Background.CGColor);
-        CGContextFillRect(context, bounds);
+    if( m_BackgroundColor ) {
+        const auto alpha = m_BackgroundColor.alphaComponent;
+        if( alpha == 1. )
+            return m_BackgroundColor;
+        return Blend(m_BackgroundColor, c);
+    }
+    else {
+        return c;
     }
 }
 
@@ -164,10 +180,9 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     const auto bounds = self.bounds;
     const auto context = NSGraphicsContext.currentContext.CGContext;
 
-    if( m_Background )
-        [self drawCustomBackgroundWithBounds:bounds inContext:context];
-    else
-        [self drawDefaultBackgroundWithBounds:bounds inContext:context];
+    NSColor *background = [self deduceBackground:bounds];
+    CGContextSetFillColorWithColor(context, background.CGColor);
+    CGContextFillRect(context, bounds);
 
     const auto grid_color = nc::CurrentTheme().FilePanelsBriefGridColor();
     CGContextSetFillColorWithColor(context, grid_color.CGColor);
@@ -199,6 +214,15 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
                                fraction:1.0
                          respectFlipped:false
                                   hints:nil];
+
+    if( const auto tags = m_Controller.item.Tags(); !tags.empty() ) {
+        const auto tags_geom = TrailingTagsInplaceDisplay::Place(tags);
+        TrailingTagsInplaceDisplay::Draw(text_segment_rect.origin.x + text_segment_rect.size.width + tags_geom.margin,
+                                         bounds.size.height,
+                                         tags,
+                                         m_TagAccentColor,
+                                         background);
+    }
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *) [[maybe_unused]] _event
@@ -332,10 +356,10 @@ static bool HasNoModifiers(NSEvent *_event)
     }
 }
 
-- (void)setBackground:(NSColor *)background
+- (void)setBackgroundColor:(NSColor *)background
 {
-    if( m_Background != background ) {
-        m_Background = background;
+    if( m_BackgroundColor != background ) {
+        m_BackgroundColor = background;
         [self setNeedsDisplay:true];
     }
 }
@@ -383,7 +407,9 @@ static bool HasNoModifiers(NSEvent *_event)
             for( size_t i = 0; i != hl.count; ++i ) {
                 if( hl.segments[i].offset < fn_len && hl.segments[i].offset + hl.segments[i].length <= fn_len ) {
                     const auto range = NSMakeRange(hl.segments[i].offset, hl.segments[i].length);
-                    [m_AttrString addAttribute:NSUnderlineStyleAttributeName value:@(NSUnderlineStyleSingle) range:range];
+                    [m_AttrString addAttribute:NSUnderlineStyleAttributeName
+                                         value:@(NSUnderlineStyleSingle)
+                                         range:range];
                 }
             }
         }

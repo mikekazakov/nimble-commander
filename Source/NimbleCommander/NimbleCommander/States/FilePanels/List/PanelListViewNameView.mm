@@ -9,6 +9,7 @@
 #include "PanelListViewRowView.h"
 #include "PanelListViewTableView.h"
 #include <Panel/PanelViewFieldEditor.h>
+#include <Panel/UI/TagsPresentation.h>
 
 using namespace nc::panel;
 using nc::utility::FontGeometryInfo;
@@ -56,6 +57,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     NSString *m_Filename;
     NSImage *m_Icon;
     NSMutableAttributedString *m_AttrString;
+    std::vector<nc::utility::Tags::Tag> m_Tags; // Consider a small vector of some sort
     bool m_PermitFieldRenaming;
 }
 
@@ -90,16 +92,18 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     return true;
 }
 
-- (void)setFilename:(NSString *)_filename
+- (void)setFilename:(NSString *)_filename andTags:(std::span<const nc::utility::Tags::Tag>)_tags
 {
     m_Filename = _filename;
+    m_Tags.assign(_tags.begin(), _tags.end());
     [self buildPresentation];
 }
 
 - (NSRect)calculateTextSegmentFromBounds:(NSRect)bounds andGeometry:(const PanelListViewGeometry &)g
 {
     const int origin = g.IconSize() ? 2 * g.LeftInset() + g.IconSize() : g.LeftInset();
-    const auto width = bounds.size.width - origin - g.RightInset();
+    const auto tags_geom = TrailingTagsInplaceDisplay::Place(m_Tags);
+    const auto width = bounds.size.width - origin - g.RightInset() - tags_geom.margin - tags_geom.width;
 
     return NSMakeRect(origin, 0, width, bounds.size.height);
 }
@@ -145,6 +149,15 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
                                fraction:1.0
                          respectFlipped:false
                                   hints:nil];
+    
+    if( !m_Tags.empty() ) {
+        const auto tags_geom = TrailingTagsInplaceDisplay::Place(m_Tags);
+        TrailingTagsInplaceDisplay::Draw(text_segment_rect.origin.x + text_segment_rect.size.width + tags_geom.margin,
+                                         bounds.size.height,
+                                         m_Tags,
+                                         row_view.tagAccentColor,
+                                         row_view.rowBackgroundColor);
+    }
 }
 
 - (void)buildPresentation

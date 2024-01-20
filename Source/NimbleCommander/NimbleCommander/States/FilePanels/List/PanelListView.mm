@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
 #include <Base/algo.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -490,7 +490,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                    withItem:(const VFSListingItem &)_item
                       andVD:(data::ItemVolatileData &)_vd
 {
-    [_view setFilename:_item.DisplayNameNS()];
+    [_view setFilename:_item.DisplayNameNS() andTags:_item.Tags()];
 
     if( m_IconRepository->IsValidSlot(_vd.icon) == true ) {
         [_view setIcon:m_IconRepository->AvailableIconForSlot(_vd.icon)];

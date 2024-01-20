@@ -48,6 +48,7 @@ static constexpr std::chrono::nanoseconds g_FilesystemHintTriggerDelay = std::ch
 static const auto g_ConfigShowDotDotEntry = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigShowLocalizedFilenames = "filePanel.general.showLocalizedFilenames";
+static const auto g_ConfigEnableFinderTags = "filePanel.FinderTags.enable";
 
 namespace nc::panel {
 
@@ -108,11 +109,13 @@ struct CalculatedSizesBatch {
 
 MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE(ConfigShowDotDotEntry, g_ConfigShowDotDotEntry);
 MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE(ConfigShowLocalizedFilenames, g_ConfigShowLocalizedFilenames);
+MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE(ConfigEnableFinderTags, g_ConfigEnableFinderTags);
 
 static void HeatUpConfigValues()
 {
     ConfigShowDotDotEntry();
     ConfigShowLocalizedFilenames();
+    ConfigEnableFinderTags();
 }
 
 @interface PanelController ()
@@ -170,7 +173,7 @@ static void HeatUpConfigValues()
 
     __weak MainWindowFilePanelState *m_FilePanelState;
 
-    boost::container::static_vector<nc::config::Token, 2> m_ConfigObservers;
+    boost::container::static_vector<nc::config::Token, 3> m_ConfigObservers;
     nc::core::VFSInstanceManager *m_VFSInstanceManager;
     nc::panel::DirectoryAccessProvider *m_DirectoryAccessProvider;
     std::shared_ptr<PanelViewLayoutsStorage> m_Layouts;
@@ -240,6 +243,7 @@ static void HeatUpConfigValues()
         };
         add_co(g_ConfigShowDotDotEntry, @selector(configVFSFetchFlagsChanged));
         add_co(g_ConfigShowLocalizedFilenames, @selector(configVFSFetchFlagsChanged));
+        add_co(g_ConfigEnableFinderTags, @selector(configVFSFetchFlagsChanged));
 
         m_LayoutsObservation = m_Layouts->ObserveChanges(objc_callback(self, @selector(panelLayoutsChanged)));
 
@@ -281,6 +285,11 @@ static void HeatUpConfigValues()
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_LoadDisplayNames;
 
+    if( ConfigEnableFinderTags()== true )
+        m_VFSFetchingFlags |= VFSFlags::F_LoadTags;
+    else
+        m_VFSFetchingFlags &= ~VFSFlags::F_LoadTags;
+    
     [self refreshPanel];
 }
 

@@ -65,7 +65,7 @@ jobs:
         key: ccache-${{ github.job }}-${{ github.run_id }}
         restore-keys: ccache-${{ github.job }}
     - uses: actions/checkout@v2
-    - name: Build and run unit tests
+    - name: Build and package
       run: "cd Scripts && ./build_unsigned.sh"
     - name: Show ccache stats
       run: "ccache --show-stats --verbose"
@@ -86,6 +86,6 @@ jobs:
         GH_TOKEN: ${{ github.token }}
     - uses: actions/upload-artifact@v4
       with:
-        name: my-artifact
+        name: nimble-commander-unsigned
         path: Scripts/*.dmg
         if-no-files-found: error

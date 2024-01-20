@@ -38,12 +38,17 @@ if type -p /usr/local/bin/ccache >/dev/null 2>&1; then
 fi
 
 XC="xcodebuild \
-    -project ${XCODEPROJ} \
-    -scheme NimbleCommander-Unsigned \
-    -configuration Release \
-    SYMROOT=${BUILD_DIR} \
-    OBJROOT=${BUILD_DIR} \
-    OTHER_CFLAGS=\"-fdebug-prefix-map=${ROOT_DIR}=.\""
+ -project ${XCODEPROJ} \
+ -scheme NimbleCommander-NonMAS \
+ -configuration Release \
+ CODE_SIGNING_ALLOWED=NO \
+ CODE_SIGN_IDENTITY= \
+ DEVELOPMENT_TEAM= \
+ PROVISIONING_PROFILE_SPECIFIER= \
+ CODE_SIGN_ENTITLEMENTS= \
+ SYMROOT=${BUILD_DIR} \
+ OBJROOT=${BUILD_DIR} \
+ OTHER_CFLAGS=\"-fdebug-prefix-map=${ROOT_DIR}=.\""
 
 APP_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//' )
 APP_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//' )

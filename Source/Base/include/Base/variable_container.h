@@ -1,10 +1,11 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <cassert>
 #include <array>
 #include <vector>
 #include <robin_hood.h>
+#include <stddef.h>
 
 namespace nc::base {
 
@@ -22,7 +23,7 @@ struct variable_container_base {
 } // namespace detail
 
 template <class T = int>
-class variable_container
+class alignas(max_align_t) variable_container
 {
 public:
     typedef T value_type;
@@ -116,10 +117,13 @@ public:
 
 private:
     using common_type = value_type;
-    using sparse_type = robin_hood::unordered_map<size_t, T>;
+    using sparse_type = robin_hood::unordered_flat_map<size_t, T>;
     using dense_type = std::vector<T>;
     static constexpr std::size_t m_StorageSize =
         std::max({sizeof(common_type), sizeof(sparse_type), sizeof(dense_type)});
+    static_assert(alignof(max_align_t) >= alignof(common_type));
+    static_assert(alignof(max_align_t) >= alignof(sparse_type));
+    static_assert(alignof(max_align_t) >= alignof(dense_type));
 
     common_type &Common();
     const common_type &Common() const;
@@ -152,8 +156,7 @@ variable_container<T>::variable_container(const variable_container<T> &_rhs) : m
 }
 
 template <class T>
-variable_container<T>::variable_container(variable_container<T> &&_rhs) noexcept
-    : m_Type(_rhs.m_Type)
+variable_container<T>::variable_container(variable_container<T> &&_rhs) noexcept : m_Type(_rhs.m_Type)
 {
     ConstructMove(std::move(_rhs));
 }
@@ -405,8 +408,7 @@ void variable_container<T>::insert(size_t _at, T &&_value)
     else { // if( m_Type == type::sparse )
         auto i = Sparse().find(static_cast<unsigned>(_at));
         if( i == std::end(Sparse()) )
-            Sparse().insert(
-                typename sparse_type::value_type(static_cast<unsigned>(_at), std::move(_value)));
+            Sparse().insert(typename sparse_type::value_type(static_cast<unsigned>(_at), std::move(_value)));
         else
             i->second = std::move(_value);
     }
@@ -459,8 +461,7 @@ template <class T>
 void variable_container<T>::compress_contiguous()
 {
     if( m_Type != type::sparse )
-        throw std::logic_error(
-            "variable_container<T>::compress_contiguous was called for a non-sparse container");
+        throw std::logic_error("variable_container<T>::compress_contiguous was called for a non-sparse container");
 
     variable_container<T> new_dense(type::dense);
 

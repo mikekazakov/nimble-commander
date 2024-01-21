@@ -1,5 +1,5 @@
 #!/bin/sh
-# Usage: ./run_all_unit_tests.sh [Debug|Release|ASAN]
+# Usage: ./run_all_unit_tests.sh [Debug|Release|ASAN|UBSAN]
 
 set -e
 set -o pipefail
@@ -43,7 +43,13 @@ build_target()
         CONFIGURATION="Release"
         asan_flags="-enableAddressSanitizer YES"
     fi
-        
+
+    ubsan_flags=""
+    if [ "$CONFIGURATION" == "UBSAN" ]; then
+        CONFIGURATION="Release"
+        ubsan_flags="-enableUndefinedBehaviorSanitizer YES"
+    fi
+
     XC="xcodebuild \
         -project ${XCODEPROJ} \
         -scheme ${TARGET} \
@@ -52,6 +58,7 @@ build_target()
         OBJROOT=${BUILD_DIR} \
         -parallelizeTargets \
         ${asan_flags} \
+        ${ubsan_flags} \
         OTHER_CFLAGS=\"-fdebug-prefix-map=${ROOT_DIR}=.\""
     BINARY_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//')
     BINARY_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//')

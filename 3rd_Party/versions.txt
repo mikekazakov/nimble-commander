@@ -3,7 +3,7 @@ aquaticprime    ???
 boost           1.83.0
 bz2             1.0.8
 fmt             10.1.1
-frozen          1.0.1
+frozen          1.1.1
 curl            7.73.0
 gtest           1.12.1
 letsmove        1.25

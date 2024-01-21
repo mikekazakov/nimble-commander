@@ -27,6 +27,7 @@
 #include "frozen/bits/basic_types.h"
 #include "frozen/bits/constexpr_assert.h"
 #include "frozen/bits/version.h"
+#include "frozen/bits/defines.h"
 
 #include <utility>
 
@@ -74,17 +75,21 @@ public:
   constexpr set(std::initializer_list<Key> keys)
       : set{keys, Compare{}} {}
 
+  constexpr set& operator=(const set &other) = default;
+
   /* capacity */
   constexpr bool empty() const { return !N; }
   constexpr size_type size() const { return N; }
   constexpr size_type max_size() const { return N; }
 
   /* lookup */
-  constexpr std::size_t count(Key const &key) const {
+  template <class KeyType>
+  constexpr std::size_t count(KeyType const &key) const {
     return bits::binary_search<N>(keys_.begin(), key, less_than_);
   }
 
-  constexpr const_iterator find(Key const &key) const {
+  template <class KeyType>
+  constexpr const_iterator find(KeyType const &key) const {
     const_iterator where = lower_bound(key);
     if ((where != end()) && !less_than_(key, *where))
       return where;
@@ -92,7 +97,8 @@ public:
       return end();
   }
 
-  constexpr std::pair<const_iterator, const_iterator> equal_range(Key const &key) const {
+  template <class KeyType>
+  constexpr std::pair<const_iterator, const_iterator> equal_range(KeyType const &key) const {
     auto const lower = lower_bound(key);
     if (lower == end())
       return {lower, lower};
@@ -100,7 +106,8 @@ public:
       return {lower, lower + 1};
   }
 
-  constexpr const_iterator lower_bound(Key const &key) const {
+  template <class KeyType>
+  constexpr const_iterator lower_bound(KeyType const &key) const {
     auto const where = bits::lower_bound<N>(keys_.begin(), key, less_than_);
     if ((where != end()) && !less_than_(key, *where))
       return where;
@@ -108,7 +115,8 @@ public:
       return end();
   }
 
-  constexpr const_iterator upper_bound(Key const &key) const {
+  template <class KeyType>
+  constexpr const_iterator upper_bound(KeyType const &key) const {
     auto const where = bits::lower_bound<N>(keys_.begin(), key, less_than_);
     if ((where != end()) && !less_than_(key, *where))
       return where + 1;
@@ -117,8 +125,8 @@ public:
   }
 
   /* observers */
-  constexpr key_compare key_comp() const { return less_than_; }
-  constexpr key_compare value_comp() const { return less_than_; }
+  constexpr const key_compare& key_comp() const { return less_than_; }
+  constexpr const key_compare& value_comp() const { return less_than_; }
 
   /* iterators */
   constexpr const_iterator begin() const { return keys_.begin(); }
@@ -171,22 +179,29 @@ public:
       : less_than_{comp} {}
   constexpr set(std::initializer_list<Key> keys) : set{keys, Compare{}} {}
 
+  constexpr set& operator=(const set &other) = default;
+
   /* capacity */
   constexpr bool empty() const { return true; }
   constexpr size_type size() const { return 0; }
   constexpr size_type max_size() const { return 0; }
 
   /* lookup */
-  constexpr std::size_t count(Key const &) const { return 0; }
+  template <class KeyType>
+  constexpr std::size_t count(KeyType const &) const { return 0; }
 
-  constexpr const_iterator find(Key const &) const { return end(); }
+  template <class KeyType>
+  constexpr const_iterator find(KeyType const &) const { return end(); }
 
+  template <class KeyType>
   constexpr std::pair<const_iterator, const_iterator>
-  equal_range(Key const &) const { return {end(), end()}; }
+  equal_range(KeyType const &) const { return {end(), end()}; }
 
-  constexpr const_iterator lower_bound(Key const &) const { return end(); }
+  template <class KeyType>
+  constexpr const_iterator lower_bound(KeyType const &) const { return end(); }
 
-  constexpr const_iterator upper_bound(Key const &) const { return end(); }
+  template <class KeyType>
+  constexpr const_iterator upper_bound(KeyType const &) const { return end(); }
 
   /* observers */
   constexpr key_compare key_comp() const { return less_than_; }
@@ -214,6 +229,27 @@ constexpr auto make_set(const T (&args)[N]) {
   return set<T, N>(args);
 }
 
+template <typename T, std::size_t N>
+constexpr auto make_set(std::array<T, N> const &args) {
+  return set<T, N>(args);
+}
+
+template <typename T, typename Compare, std::size_t N>
+constexpr auto make_set(const T (&args)[N], Compare const& compare = Compare{}) {
+  return set<T, N, Compare>(args, compare);
+}
+
+template <typename T, typename Compare, std::size_t N>
+constexpr auto make_set(std::array<T, N> const &args, Compare const& compare = Compare{}) {
+  return set<T, N, Compare>(args, compare);
+}
+
+#ifdef FROZEN_LETITGO_HAS_DEDUCTION_GUIDES
+
+template<class T, class... Args>
+set(T, Args...) -> set<T, sizeof...(Args) + 1>;
+
+#endif // FROZEN_LETITGO_HAS_DEDUCTION_GUIDES
 
 } // namespace frozen
 

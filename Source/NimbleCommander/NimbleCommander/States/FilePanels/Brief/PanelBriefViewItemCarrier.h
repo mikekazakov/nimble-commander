@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Panel/PanelDataItemVolatileData.h>
@@ -10,7 +10,8 @@ struct PanelBriefViewItemLayoutConstants;
 @interface PanelBriefViewItemCarrier : NSView
 
 @property (nonatomic, weak) PanelBriefViewItem                 *controller;
-@property (nonatomic)       NSColor                            *background;
+@property (nonatomic)       NSColor                            *backgroundColor;
+@property (nonatomic)       NSColor                            *tagAccentColor;
 @property (nonatomic)       NSString                           *filename;
 @property (nonatomic)       NSColor                            *filenameColor;
 @property (nonatomic)       NSImage                            *icon;

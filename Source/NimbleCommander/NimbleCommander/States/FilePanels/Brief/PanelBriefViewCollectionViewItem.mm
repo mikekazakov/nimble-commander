@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include "../PanelView.h"
@@ -23,7 +23,8 @@ using namespace nc::panel;
     m_VD = data::ItemVolatileData{};
     m_PanelActive = false;
     [super setSelected:false];
-    self.carrier.background = nil;
+    self.carrier.backgroundColor = nil;
+    self.carrier.tagAccentColor = nil;
     self.carrier.qsHighlight = {};
 }
 
@@ -69,13 +70,11 @@ using namespace nc::panel;
 {
     if( m_PanelActive == _active )
         return;
-
     m_PanelActive = _active;
-
-    if( self.selected ) {
-        [self updateBackgroundColor];
-        [self updateForegroundColor];
-    }
+    
+    [self updateBackgroundColor];
+    [self updateForegroundColor];
+    [self updateAccentColor];
 }
 
 - (void)setSelected:(BOOL)selected
@@ -86,6 +85,7 @@ using namespace nc::panel;
 
     [self updateBackgroundColor];
     [self updateForegroundColor];
+    [self updateAccentColor];
 }
 
 - (NSColor *)selectedBackgroundColor
@@ -141,15 +141,28 @@ using namespace nc::panel;
 - (void)updateBackgroundColor
 {
     if( self.selected ) {
-        self.carrier.background = self.selectedBackgroundColor;
+        self.carrier.backgroundColor = self.selectedBackgroundColor;
     }
     else {
         if( m_VD.is_selected() ) {
-            self.carrier.background = nc::CurrentTheme().FilePanelsBriefSelectedItemBackgroundColor();
+            self.carrier.backgroundColor = nc::CurrentTheme().FilePanelsBriefSelectedItemBackgroundColor();
         }
         else {
-            self.carrier.background = nil;
+            self.carrier.backgroundColor = nil;
         }
+    }
+}
+
+- (void)updateAccentColor
+{
+    if( !m_Item )
+        return;
+
+    if( m_PanelActive && m_Item.HasTags() && (m_VD.is_selected() || self.selected) ) {
+        self.carrier.tagAccentColor = NSColor.whiteColor; // TODO: Pick from Themes
+    }
+    else {
+        self.carrier.tagAccentColor = nil;
     }
 }
 
@@ -160,6 +173,7 @@ using namespace nc::panel;
     m_VD = _vd;
     [self updateForegroundColor];
     [self updateBackgroundColor];
+    [self updateAccentColor];
     self.carrier.qsHighlight = _vd.highlight;
     self.carrier.highlighted = _vd.is_highlighted();
 }

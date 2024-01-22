@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefView.h"
 #include <VFS/VFS.h>
 #include <Base/algo.h>
@@ -7,6 +7,7 @@
 #include <Panel/PanelDataSortMode.h>
 #include "../PanelView.h"
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
+#include <Panel/UI/TagsPresentation.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -284,9 +285,27 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     return strings;
 }
 
+static void PadWithSpaceForTags(std::span<unsigned short> _widths, const data::Model *_data)
+{
+    if( _data == nullptr )
+        return;
+    const auto &sorted_idices = _data->SortedDirectoryEntries();
+    const auto &listing = _data->Listing();
+    assert(sorted_idices.size() == _widths.size());
+    const auto count = static_cast<int>(sorted_idices.size());
+    for( int i = 0; i < count; ++i ) {
+        const auto raw_idx = sorted_idices[i];
+        if(const auto tags = listing.Tags(raw_idx); !tags.empty() ) {
+            const auto geom = TrailingTagsInplaceDisplay::Place(tags);
+            _widths[i] += geom.margin + geom.width;
+        }
+    }
+}
+
 - (void)calculateFilenamesWidths
 {
-    Log::Trace(SPDLOC, "[PanelBriefView calculateFilenamesWidths]");
+    Log::Trace(SPDLOC, "[PanelBriefView calculateFilenamesWidths] started");
+    at_scope_end([]{Log::Trace(SPDLOC, "[PanelBriefView calculateFilenamesWidths] finished");});
     const auto strings = GatherDisplayFilenames(m_Data);
     const auto count = static_cast<int>(strings.size());
 
@@ -297,6 +316,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 
     const auto font = nc::CurrentTheme().FilePanelsBriefFont();
     auto widths = TextWidthsCache::Instance().Widths(strings, font);
+    PadWithSpaceForTags(widths, m_Data);
     assert(static_cast<int>(widths.size()) == count);
 
     const auto &layout = m_ItemLayout;

@@ -1,4 +1,5 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "Host.h"
 #include <OpenDirectory/OpenDirectory.h>
 #include <sys/attr.h>
 #include <sys/errno.h>
@@ -11,13 +12,13 @@
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
 #include "DisplayNamesCache.h"
-#include "Host.h"
 #include "File.h"
 #include <VFS/VFSError.h>
 #include "../ListingInput.h"
 #include "Fetching.h"
 #include <Base/DispatchGroup.h>
 #include <Utility/ObjCpp.h>
+#include <Utility/Tags.h>
 #include <sys/mount.h>
 
 // hack to access function from libc implementation directly.
@@ -57,8 +58,7 @@ VFSMeta NativeHost::Meta()
 
 NativeHost::NativeHost(nc::utility::NativeFSManager &_native_fs_man,
                        nc::utility::FSEventsFileUpdate &_fsevents_file_update)
-    : Host("", 0, UniqueTag), m_NativeFSManager(_native_fs_man),
-      m_FSEventsFileUpdate(_fsevents_file_update)
+    : Host("", 0, UniqueTag), m_NativeFSManager(_native_fs_man), m_FSEventsFileUpdate(_fsevents_file_update)
 {
     AddFeatures(HostFeatures::FetchUsers | HostFeatures::FetchGroups | HostFeatures::SetOwnership |
                 HostFeatures::SetFlags | HostFeatures::SetPermissions | HostFeatures::SetTimes);
@@ -71,7 +71,7 @@ bool NativeHost::ShouldProduceThumbnails() const
 
 int NativeHost::FetchDirectoryListing(const char *_path,
                                       VFSListingPtr &_target,
-                                      unsigned long _flags,
+                                      const unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker)
 {
     if( !_path || _path[0] != '/' )
@@ -102,6 +102,7 @@ int NativeHost::FetchDirectoryListing(const char *_path,
     listing_source.symlinks.reset(variable_container<>::type::sparse);
     listing_source.display_filenames.reset(variable_container<>::type::sparse);
 
+    std::vector<uint64_t> ext_flags; // store EF_xxx here
     constexpr size_t initial_prealloc_size = 64;
     size_t allocated_size = 0;
     auto resize_dense = [&](size_t _sz) {
@@ -117,14 +118,15 @@ int NativeHost::FetchDirectoryListing(const char *_path,
         listing_source.uids.resize(_sz);
         listing_source.gids.resize(_sz);
         listing_source.sizes.resize(_sz);
+        ext_flags.resize(_sz);
         allocated_size = _sz;
     };
-    
+
     // allocate space for up to 64 items upfront
     resize_dense(initial_prealloc_size);
 
     auto fill = [&](size_t _n, const Fetching::CallbackParams &_params) {
-        assert( _n < listing_source.filenames.size() );
+        assert(_n < listing_source.filenames.size());
         listing_source.filenames[_n] = _params.filename;
         listing_source.inodes[_n] = _params.inode;
         listing_source.unix_types[_n] = IFTODT(_params.mode);
@@ -144,18 +146,16 @@ int NativeHost::FetchDirectoryListing(const char *_path,
             if( S_ISDIR(listing_source.unix_modes[_n]) && !listing_source.filenames[_n].empty() &&
                 !strisdotdot(listing_source.filenames[_n]) ) {
                 static auto &dnc = DisplayNamesCache::Instance();
-                if( auto display_name = dnc.DisplayName(_params.inode,
-                                                        _params.dev,
-                                                        listing_source.directories[0] +
-                                                            listing_source.filenames[_n]) )
+                if( auto display_name = dnc.DisplayName(
+                        _params.inode, _params.dev, listing_source.directories[0] + listing_source.filenames[_n]) )
                     listing_source.display_filenames.insert(_n, display_name);
             }
+
+        ext_flags[_n] = _params.ext_flags;
     };
-    
+
     size_t next_entry_index = 0;
-    auto cb_param = [&](const Fetching::CallbackParams &_params) {
-        fill(next_entry_index++, _params);
-    };
+    auto cb_param = [&](const Fetching::CallbackParams &_params) { fill(next_entry_index++, _params); };
 
     if( need_to_add_dot_dot ) {
         Fetching::ReadSingleEntryAttributesByPath(io, _path, cb_param);
@@ -169,10 +169,9 @@ int NativeHost::FetchDirectoryListing(const char *_path,
     };
 
     // when Admin Mode is on - we use different fetch route
-    const int ret = is_native_io
-                        ? Fetching::ReadDirAttributesBulk(fd, cb_fetch, cb_param)
-                        : Fetching::ReadDirAttributesStat(
-                              fd, listing_source.directories[0].c_str(), cb_fetch, cb_param);
+    const int ret =
+        is_native_io ? Fetching::ReadDirAttributesBulk(fd, cb_fetch, cb_param)
+                     : Fetching::ReadDirAttributesStat(fd, listing_source.directories[0].c_str(), cb_fetch, cb_param);
     if( ret != 0 )
         return VFSError::FromErrno(ret);
 
@@ -188,13 +187,11 @@ int NativeHost::FetchDirectoryListing(const char *_path,
         if( listing_source.unix_types[n] == DT_LNK ) {
             // read an actual link path
             char linkpath[MAXPATHLEN];
-            const ssize_t sz =
-                is_native_io
-                    ? readlinkat(fd, listing_source.filenames[n].c_str(), linkpath, MAXPATHLEN)
-                    : io.readlink(
-                          (listing_source.directories[0] + listing_source.filenames[n]).c_str(),
-                          linkpath,
-                          MAXPATHLEN);
+            const ssize_t sz = is_native_io
+                                   ? readlinkat(fd, listing_source.filenames[n].c_str(), linkpath, MAXPATHLEN)
+                                   : io.readlink((listing_source.directories[0] + listing_source.filenames[n]).c_str(),
+                                                 linkpath,
+                                                 MAXPATHLEN);
             if( sz != -1 ) {
                 linkpath[sz] = 0;
                 listing_source.symlinks.insert(n, linkpath);
@@ -205,17 +202,34 @@ int NativeHost::FetchDirectoryListing(const char *_path,
             const auto stat_ret =
                 is_native_io
                     ? fstatat(fd, listing_source.filenames[n].c_str(), &stat_buffer, 0)
-                    : io.stat((listing_source.directories[0] + listing_source.filenames[n]).c_str(),
-                              &stat_buffer);
+                    : io.stat((listing_source.directories[0] + listing_source.filenames[n]).c_str(), &stat_buffer);
             if( stat_ret == 0 ) {
                 listing_source.unix_modes[n] = stat_buffer.st_mode;
-                listing_source.unix_flags[n] =
-                    MergeUnixFlags(listing_source.unix_flags[n], stat_buffer.st_flags);
+                listing_source.unix_flags[n] = MergeUnixFlags(listing_source.unix_flags[n], stat_buffer.st_flags);
                 listing_source.uids[n] = stat_buffer.st_uid;
                 listing_source.gids[n] = stat_buffer.st_gid;
                 listing_source.sizes[n] = S_ISDIR(stat_buffer.st_mode) ? -1 : stat_buffer.st_size;
             }
         }
+
+    // Fetch FinderTags if they were requested AND if an entry doesn't have an EF_NO_XATTRS flag (to do less unnecessary
+    // syscalls).
+    if( _flags & Flags::F_LoadTags ) {
+        for( size_t n = 0; n < next_entry_index; ++n ) {
+            if( ext_flags[n] & EF_NO_XATTRS )
+                continue; // tags are stored in xattrs and if we no in advance that there are no xattrs in this entry -
+                          // there's no point trying
+
+            // TODO: is it worth routing the I/O here? guess not atm
+            const int entry_fd = openat(fd, listing_source.filenames[n].c_str(), O_RDONLY | O_NONBLOCK);
+            if( entry_fd < 0 )
+                continue; // guess silenty skipping the errors is ok here...
+            auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
+
+            if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() )
+                listing_source.tags.emplace(n, std::move(tags));
+        }
+    }
 
     _target = VFSListing::Build(std::move(listing_source));
 
@@ -236,14 +250,14 @@ int NativeHost::FetchSingleItemListing(const char *_path,
     char path[MAXPATHLEN], directory[MAXPATHLEN], filename[MAXPATHLEN];
     strcpy(path, _path);
 
-    if( !EliminateTrailingSlashInPath(path) ||
-        !GetDirectoryContainingItemFromPath(path, directory) ||
+    if( !EliminateTrailingSlashInPath(path) || !GetDirectoryContainingItemFromPath(path, directory) ||
         !GetFilenameFromPath(path, filename) )
         return VFSError::InvalidCall;
 
     auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
 
     using nc::base::variable_container;
+    uint64_t ext_flags = 0;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = directory;
@@ -286,6 +300,8 @@ int NativeHost::FetchSingleItemListing(const char *_path,
                 if( auto display_name = dnc.DisplayName(_params.inode, _params.dev, path) )
                     listing_source.display_filenames.insert(0, display_name);
             }
+
+        ext_flags = _params.ext_flags;
     };
 
     int ret = Fetching::ReadSingleEntryAttributesByPath(io, _path, cb_param);
@@ -307,11 +323,22 @@ int NativeHost::FetchSingleItemListing(const char *_path,
         const auto stat_ret = io.stat(path, &stat_buffer);
         if( stat_ret == 0 ) {
             listing_source.unix_modes[0] = stat_buffer.st_mode;
-            listing_source.unix_flags[0] =
-                MergeUnixFlags(listing_source.unix_flags[0], stat_buffer.st_flags);
+            listing_source.unix_flags[0] = MergeUnixFlags(listing_source.unix_flags[0], stat_buffer.st_flags);
             listing_source.uids[0] = stat_buffer.st_uid;
             listing_source.gids[0] = stat_buffer.st_gid;
             listing_source.sizes[0] = stat_buffer.st_size;
+        }
+    }
+
+    // Fetch FinderTags if they were requested AND if an entry doesn't have an EF_NO_XATTRS flag (to do less unnecessary
+    // syscalls).
+    if( (_flags & Flags::F_LoadTags) && !(ext_flags & EF_NO_XATTRS) ) {
+        // TODO: is it worth routing the I/O here? guess not atm
+        const int entry_fd = open(_path, O_RDONLY | O_NONBLOCK);
+        if( entry_fd >= 0 ) {
+            auto close_entry_fd = at_scope_end([entry_fd] { close(entry_fd); });
+            if( auto tags = utility::Tags::ReadTags(entry_fd); !tags.empty() )
+                listing_source.tags.emplace(0, std::move(tags));
         }
     }
 
@@ -370,12 +397,8 @@ static int CalculateDirectoriesSizesHelper(char *_path,
 
         memcpy(var, entp->d_name, entp->d_namlen + 1);
         if( entp->d_type == DT_DIR ) {
-            CalculateDirectoriesSizesHelper(_path,
-                                            _path_len + entp->d_namlen + 1,
-                                            _iscancelling,
-                                            _checker,
-                                            _stat_queue,
-                                            _size_stock);
+            CalculateDirectoriesSizesHelper(
+                _path, _path_len + entp->d_namlen + 1, _iscancelling, _checker, _stat_queue, _size_stock);
             if( _iscancelling )
                 goto cleanup;
         }
@@ -396,12 +419,8 @@ static int CalculateDirectoriesSizesHelper(char *_path,
             struct stat st;
             if( io.lstat(_path, &st) == 0 ) { // <-- sync IO operation
                 if( S_ISDIR(st.st_mode) ) {
-                    CalculateDirectoriesSizesHelper(_path,
-                                                    _path_len + entp->d_namlen + 1,
-                                                    _iscancelling,
-                                                    _checker,
-                                                    _stat_queue,
-                                                    _size_stock);
+                    CalculateDirectoriesSizesHelper(
+                        _path, _path_len + entp->d_namlen + 1, _iscancelling, _checker, _stat_queue, _size_stock);
                     if( _iscancelling )
                         goto cleanup;
                 }
@@ -418,8 +437,7 @@ cleanup:
     return VFSError::Ok;
 }
 
-ssize_t NativeHost::CalculateDirectorySize(const char *_path,
-                                           const VFSCancelChecker &_cancel_checker)
+ssize_t NativeHost::CalculateDirectorySize(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     if( _cancel_checker && _cancel_checker() )
         return VFSError::Cancelled;
@@ -434,8 +452,7 @@ ssize_t NativeHost::CalculateDirectorySize(const char *_path,
     dispatch_queue stat_queue("VFSNativeHost.CalculateDirectoriesSizes");
 
     std::atomic_int64_t size{0};
-    int result = CalculateDirectoriesSizesHelper(
-        path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
+    int result = CalculateDirectoriesSizesHelper(path, strlen(path), iscancelling, _cancel_checker, stat_queue, size);
     stat_queue.sync([] {});
     if( result >= 0 )
         return size;
@@ -450,8 +467,7 @@ bool NativeHost::IsDirChangeObservingAvailable(const char *_path)
     return access(_path, R_OK) == 0; // should use _not_ routed I/O here!
 }
 
-HostDirObservationTicket NativeHost::DirChangeObserve(const char *_path,
-                                                      std::function<void()> _handler)
+HostDirObservationTicket NativeHost::DirChangeObserve(const char *_path, std::function<void()> _handler)
 {
     auto &inst = nc::utility::FSEventsDirUpdate::Instance();
     uint64_t t = inst.AddWatchPath(_path, std::move(_handler));
@@ -464,8 +480,7 @@ void NativeHost::StopDirChangeObserving(unsigned long _ticket)
     inst.RemoveWatchPathWithTicket(_ticket);
 }
 
-FileObservationToken NativeHost::ObserveFileChanges(const char *_path,
-                                        std::function<void()> _handler)
+FileObservationToken NativeHost::ObserveFileChanges(const char *_path, std::function<void()> _handler)
 {
     assert(_path != nullptr);
     const auto token = m_FSEventsFileUpdate.AddWatchPath(_path, std::move(_handler));
@@ -498,9 +513,8 @@ int NativeHost::Stat(const char *_path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::IterateDirectoryListing(
-    const char *_path,
-    const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+int NativeHost::IterateDirectoryListing(const char *_path,
+                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     auto &io = routedio::RoutedIO::InterfaceForAccess(_path, R_OK);
 
@@ -527,9 +541,7 @@ int NativeHost::IterateDirectoryListing(
     return VFSError::Ok;
 }
 
-int NativeHost::StatFS(const char *_path,
-                       VFSStatFS &_stat,
-                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int NativeHost::StatFS(const char *_path, VFSStatFS &_stat, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     struct statfs info;
     if( statfs(_path, &info) < 0 )
@@ -563,9 +575,7 @@ bool NativeHost::IsWritable() const
     return true; // dummy now
 }
 
-int NativeHost::CreateDirectory(const char *_path,
-                                int _mode,
-                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int NativeHost::CreateDirectory(const char *_path, int _mode, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     auto &io = routedio::RoutedIO::Default;
     int ret = io.mkdir(_path, mode_t(_mode));
@@ -574,8 +584,7 @@ int NativeHost::CreateDirectory(const char *_path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::RemoveDirectory(const char *_path,
-                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int NativeHost::RemoveDirectory(const char *_path, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     auto &io = routedio::RoutedIO::Default;
     int ret = io.rmdir(_path);
@@ -718,8 +727,7 @@ int NativeHost::SetOwnership(const char *_path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::FetchUsers(std::vector<VFSUser> &_target,
-                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int NativeHost::FetchUsers(std::vector<VFSUser> &_target, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     _target.clear();
 
@@ -749,13 +757,11 @@ int NativeHost::FetchUsers(std::vector<VFSUser> &_target,
         const auto uid_values = [record valuesForAttribute:kODAttributeTypeUniqueID error:nil];
         if( uid_values == nil || uid_values.count == 0 )
             continue;
-        const auto uid =
-            static_cast<uint32_t>(objc_cast<NSString>(uid_values.firstObject).integerValue);
+        const auto uid = static_cast<uint32_t>(objc_cast<NSString>(uid_values.firstObject).integerValue);
 
         const auto gecos_values = [record valuesForAttribute:kODAttributeTypeFullName error:nil];
-        const auto gecos = (gecos_values && gecos_values.count > 0)
-                               ? objc_cast<NSString>(gecos_values.firstObject).UTF8String
-                               : "";
+        const auto gecos =
+            (gecos_values && gecos_values.count > 0) ? objc_cast<NSString>(gecos_values.firstObject).UTF8String : "";
 
         VFSUser user;
         user.uid = uid;
@@ -775,8 +781,7 @@ int NativeHost::FetchUsers(std::vector<VFSUser> &_target,
     return VFSError::Ok;
 }
 
-int NativeHost::FetchGroups(std::vector<VFSGroup> &_target,
-                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
+int NativeHost::FetchGroups(std::vector<VFSGroup> &_target, [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     _target.clear();
 
@@ -803,17 +808,14 @@ int NativeHost::FetchGroups(std::vector<VFSGroup> &_target,
         return VFSError::FromNSError(error);
 
     for( ODRecord *record in records ) {
-        const auto gid_values = [record valuesForAttribute:kODAttributeTypePrimaryGroupID
-                                                     error:nil];
+        const auto gid_values = [record valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
         if( gid_values == nil || gid_values.count == 0 )
             continue;
-        const auto gid =
-            static_cast<uint32_t>(objc_cast<NSString>(gid_values.firstObject).integerValue);
+        const auto gid = static_cast<uint32_t>(objc_cast<NSString>(gid_values.firstObject).integerValue);
 
         const auto gecos_values = [record valuesForAttribute:kODAttributeTypeFullName error:nil];
-        const auto gecos = (gecos_values && gecos_values.count > 0)
-                               ? objc_cast<NSString>(gecos_values.firstObject).UTF8String
-                               : "";
+        const auto gecos =
+            (gecos_values && gecos_values.count > 0) ? objc_cast<NSString>(gecos_values.firstObject).UTF8String : "";
 
         VFSGroup group;
         group.gid = gid;

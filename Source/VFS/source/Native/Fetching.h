@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <functional>
@@ -26,6 +26,7 @@ public:
         dev_t dev = 0;
         uint64_t inode = 0;
         uint32_t flags = 0;
+        uint64_t ext_flags = 0; // EF_xxx
         int64_t size = 0; // will be -1 if absent
     };
 

@@ -28,6 +28,8 @@
 		CF4652592699F97C0085840A /* PanelViewFieldEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4652582699F97C0085840A /* PanelViewFieldEditor.h */; };
 		CF46525D2699F9830085840A /* PanelViewFieldEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */; };
 		CF465284269A4C150085840A /* libOperations.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF465283269A4C150085840A /* libOperations.a */; };
+		CF5D1DCC2B56E5C000750174 /* TagsPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1DCB2B56E5C000750174 /* TagsPresentation.mm */; };
+		CF5D1DCF2B58798A00750174 /* TagsPresentation_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1DCE2B58798A00750174 /* TagsPresentation_UT.mm */; };
 		CF60DF252A6D3BAB00478BA0 /* libTerm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF60DF242A6D3BAB00478BA0 /* libTerm.a */; };
 		CF60DF272A6D47CB00478BA0 /* ExternalTools_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */; };
 		CF739C3D295644CD004758C5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF739C3B295644CD004758C5 /* Localizable.strings */; };
@@ -111,6 +113,9 @@
 		CF4652582699F97C0085840A /* PanelViewFieldEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFieldEditor.h; path = include/Panel/PanelViewFieldEditor.h; sourceTree = "<group>"; };
 		CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFieldEditor.mm; path = source/PanelViewFieldEditor.mm; sourceTree = "<group>"; };
 		CF465283269A4C150085840A /* libOperations.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOperations.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF5D1DCA2B56E5AE00750174 /* TagsPresentation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TagsPresentation.h; path = include/Panel/UI/TagsPresentation.h; sourceTree = "<group>"; };
+		CF5D1DCB2B56E5C000750174 /* TagsPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TagsPresentation.mm; path = source/UI/TagsPresentation.mm; sourceTree = "<group>"; };
+		CF5D1DCE2B58798A00750174 /* TagsPresentation_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TagsPresentation_UT.mm; path = tests/UI/TagsPresentation_UT.mm; sourceTree = "<group>"; };
 		CF60DF242A6D3BAB00478BA0 /* libTerm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libTerm.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalTools_IT.mm; path = tests/ExternalTools_IT.mm; sourceTree = "<group>"; };
 		CF739C3C295644CD004758C5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -192,9 +197,10 @@
 		CF0B0403281F013800076FDF /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				CF0B0404281F014800076FDF /* SelectionWithMaskPopupViewController.h */,
 				CFCB68FF28968C3600086E40 /* PanelViewPresentationItemsColoringFilter.h */,
 				CFCB68FE28968C3600086E40 /* PanelViewPresentationItemsColoringFilterPersistence.h */,
+				CF0B0404281F014800076FDF /* SelectionWithMaskPopupViewController.h */,
+				CF5D1DCA2B56E5AE00750174 /* TagsPresentation.h */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -202,9 +208,18 @@
 		CF0B0406281F015A00076FDF /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				CF0B0407281F016300076FDF /* SelectionWithMaskPopupViewController.mm */,
 				CFCB690128968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm */,
 				CFCB690028968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm */,
+				CF0B0407281F016300076FDF /* SelectionWithMaskPopupViewController.mm */,
+				CF5D1DCB2B56E5C000750174 /* TagsPresentation.mm */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
+		CF5D1DCD2B58797500750174 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				CF5D1DCE2B58798A00750174 /* TagsPresentation_UT.mm */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -296,6 +311,7 @@
 		CFF33FEF25569DBE00B3C92C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF5D1DCD2B58797500750174 /* UI */,
 				CF349B0D25FCAE9B009735DC /* Comparators_UT.mm */,
 				CF60DF262A6D47CB00478BA0 /* ExternalTools_IT.mm */,
 				CF22060827B9B73C008EDE3A /* ExternalTools_UT.mm */,
@@ -480,6 +496,7 @@
 				CFCB690228968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CF0B040B281F027900076FDF /* Internal.mm in Sources */,
 				CF46522D268D16500085840A /* Log.cpp in Sources */,
+				CF5D1DCC2B56E5C000750174 /* TagsPresentation.mm in Sources */,
 				CFA89D842804C87700BEA127 /* FindFilesData.cpp in Sources */,
 				CFF33FBE255695BF00B3C92C /* PanelDataExternalEntryKey.cpp in Sources */,
 				CFF33FA02556948900B3C92C /* PanelDataSortMode.cpp in Sources */,
@@ -507,6 +524,7 @@
 				CF3ED50925860E1000D67AF2 /* QuickSearch_UT.mm in Sources */,
 				CF96DC7629CF4610003EC4EB /* ItemVolatileData_UT.mm in Sources */,
 				CFF3401625569EC600B3C92C /* PanelData_UT.mm in Sources */,
+				CF5D1DCF2B58798A00750174 /* TagsPresentation_UT.mm in Sources */,
 				CFF33FF225569DF300B3C92C /* Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
 #include "../PanelView.h"
@@ -22,6 +22,7 @@ using namespace nc::panel;
     data::ItemVolatileData m_VD;
     NSColor *m_RowColor;
     NSColor *m_TextColor;
+    NSColor *m_TagAccentColor;
     int m_ItemIndex;
     bool m_PanelActive;
     bool m_DropTarget;
@@ -29,6 +30,7 @@ using namespace nc::panel;
 }
 @synthesize rowBackgroundColor = m_RowColor;
 @synthesize rowTextColor = m_TextColor;
+@synthesize tagAccentColor = m_TagAccentColor;
 @synthesize itemIndex = m_ItemIndex;
 @synthesize item = m_Item;
 
@@ -69,8 +71,7 @@ using namespace nc::panel;
 {
     if( m_PanelActive != panelActive ) {
         m_PanelActive = panelActive;
-        if( self.selected )
-            [self updateColors];
+        [self updateColors];
     }
 }
 
@@ -215,13 +216,23 @@ static NSColor *FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_
         return NSColor.blackColor;
 
     const auto &rules = nc::CurrentTheme().FilePanelsItemsColoringRules();
-    ;
+
     const auto focus = self.selected && m_PanelActive;
     for( const auto &i : rules )
         if( i.filter.Filter(m_Item, m_VD) )
             return focus ? i.focused : i.regular;
 
     return NSColor.blackColor;
+}
+
+- (NSColor *)findCurrentTagAccentColor
+{
+    if( m_Item && m_PanelActive && m_Item.HasTags() && (m_VD.is_selected() || self.selected) ) {
+        return NSColor.whiteColor; // TODO: Pick from Themes
+    }
+    else {
+        return nil;
+    }
 }
 
 - (void)updateColors
@@ -237,6 +248,12 @@ static NSColor *FindBackgroundColor(bool _is_focused, bool _is_active, bool _is_
     auto new_row_fg_color = [self findCurrentTextColor];
     if( new_row_fg_color != m_TextColor ) {
         m_TextColor = new_row_fg_color;
+        colors_has_changed = true;
+    }
+
+    auto new_accent_color = [self findCurrentTagAccentColor];
+    if( new_accent_color != m_TagAccentColor ) {
+        m_TagAccentColor = new_accent_color;
         colors_has_changed = true;
     }
 

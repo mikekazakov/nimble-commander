@@ -231,6 +231,16 @@
              */
             "ignoreCharacters": " "
         },
+        
+        /**
+         * Settings related to the usage of Finder Tags 
+         */
+        "FinderTags": {
+            /**
+             * Enable loading and UI components of tags
+             */
+            "enable": true
+         },
   
         /**
          * Settings related to Spotlight usage

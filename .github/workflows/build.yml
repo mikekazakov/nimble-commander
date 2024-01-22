@@ -5,7 +5,7 @@ on: [push, workflow_dispatch]
 env:
   XC_VERSION: ${{ '15.1' }}
   CCACHE_COMPRESS: "true"
-  CCACHE_COMPRESSLEVEL: "10"
+  CCACHE_COMPRESSLEVEL: "19"
   CCACHE_MAXSIZE: "400M"
 
 jobs:
@@ -35,19 +35,12 @@ jobs:
       run: "ccache --show-stats --verbose"
     - name: Remove old ccache caches
       run: |
-        gh extension install actions/gh-actions-cache
-        echo "Fetching list of cache key"
-        cacheKeys=$(gh actions-cache list --key ccache-${{ github.job }}-${{ matrix.configuration }}- | cut -f 1 )
-        ## Setting this to not fail the workflow while deleting cache keys.
         set +e
-        echo "Deleting caches..."
-        for cacheKey in $cacheKeys
-        do
-            gh actions-cache delete $cacheKey --confirm
-        done
-        echo "Done"
+        gh extension install actions/gh-actions-cache
+        gh actions-cache list -B $BRANCH --key ccache-${{ github.job }}-${{ matrix.configuration }}- | cut -f 1 | xargs -I {} gh actions-cache delete {} --confirm
       env:
         GH_TOKEN: ${{ github.token }}
+        BRANCH: ${{ github.ref }}
 
   build-unsigned:
     runs-on: macos-13
@@ -71,19 +64,12 @@ jobs:
       run: "ccache --show-stats --verbose"
     - name: Remove old ccache caches
       run: |
-        gh extension install actions/gh-actions-cache
-        echo "Fetching list of cache key"
-        cacheKeys=$(gh actions-cache list --key ccache-${{ github.job }}- | cut -f 1 )
-        # Setting this to not fail the workflow while deleting cache keys.
         set +e
-        echo "Deleting caches..."
-        for cacheKey in $cacheKeys
-        do
-            gh actions-cache delete $cacheKey --confirm
-        done
-        echo "Done"
+        gh extension install actions/gh-actions-cache
+        gh actions-cache list -B $BRANCH --key ccache-${{ github.job }}- | cut -f 1 | xargs -I {} gh actions-cache delete {} --confirm
       env:
         GH_TOKEN: ${{ github.token }}
+        BRANCH: ${{ github.ref }}
     - uses: actions/upload-artifact@v4
       with:
         name: nimble-commander-unsigned

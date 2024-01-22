@@ -19,8 +19,9 @@ export LC_CTYPE=en_US.UTF-8
 # get current directory
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-# allocate a temp dir for build artifacts
-BUILD_DIR=$(mktemp -d ${SCRIPTS_DIR}/build_unsigned.tmp)
+# allocate a dir for build artifacts
+BUILD_DIR="${SCRIPTS_DIR}/build_unsigned.tmp"
+mkdir "${BUILD_DIR}"
 
 # all builds paths will be relative to ROOT_DIR
 ROOT_DIR=$(cd "$SCRIPTS_DIR/.." && pwd)

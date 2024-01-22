@@ -8,7 +8,7 @@ namespace nc::panel {
 
 struct TrailingTagsInplaceDisplay {
     static constexpr int MaxDrawn = 3;
-    static constexpr int Diameter = 10;
+    static constexpr int Diameter = 9;
     static constexpr int Step = 5;
     static constexpr int Margin = 8;
 

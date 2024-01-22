@@ -70,7 +70,7 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
     if( num_colors_to_draw == 0 )
         return;
 
-    constexpr double radius = static_cast<double>(Diameter / 2);
+    constexpr double radius = static_cast<double>(Diameter) / 2.;
     constexpr double spacing = static_cast<double>(Step);
     static NSBezierPath *const circle = [] {
         NSBezierPath *circle = [NSBezierPath bezierPath];
@@ -81,7 +81,7 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
     static NSBezierPath *const shadow = [] {
         NSBezierPath *shadow = [NSBezierPath bezierPath];
         [shadow appendBezierPathWithArcWithCenter:NSMakePoint(0., 0.) radius:radius + 1. startAngle:0 endAngle:360];
-        [shadow setLineWidth:1.];
+        [shadow setLineWidth:2.0];
         return shadow;
     }();
 
@@ -89,24 +89,24 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
     for( ssize_t i = num_colors_to_draw - 1; i >= 0; --i ) {
         [currentContext saveGraphicsState];
 
+        NSAffineTransform *tr = [NSAffineTransform transform];
+        [tr translateXBy:_offset_x + i * spacing yBy:_view_height / 2.];
+        [tr concat];
+
+        if( i < static_cast<ssize_t>(num_colors_to_draw) - 1 ) {
+            [_background setStroke];
+            [shadow stroke];
+        }
+
         auto colors = Color(colors_to_draw[i]);
         [colors.first setFill];
         if( _accent )
             [_accent setStroke];
         else
             [colors.second setStroke];
-
-        NSAffineTransform *tr = [NSAffineTransform transform];
-        [tr translateXBy:_offset_x + i * spacing yBy:_view_height / 2.];
-        [tr concat];
-
+        
         [circle fill];
         [circle stroke];
-
-        if( i < static_cast<ssize_t>(num_colors_to_draw) - 1 ) {
-            [_background setStroke];
-            [shadow stroke];
-        }
 
         [currentContext restoreGraphicsState];
     }

@@ -194,13 +194,20 @@ vfs::VFSPath DragReceiver::ComposeDestination() const
         if( m_ItemUnderDrag.IsDotDot() ) {
             if( !m_Target.isUniform )
                 return {};
+            auto vfs = m_Target.vfs;
+            
+            std::filesystem::path parent_dir = nc::utility::PathManip::Parent(m_Target.currentDirectoryPath);
+            if( parent_dir.empty() && vfs->Parent() != nullptr) {
+                // 'escape' from the current vfs into the parent one
+                parent_dir = nc::utility::PathManip::Parent(vfs->JunctionPath());
+                vfs = vfs->Parent();
+            }
+            
+            if( parent_dir.empty() ) {
+                parent_dir += "/"; // ensure that the path is 1) non-empty 2) has a trailing slash
+            }
 
-            std::filesystem::path parent{
-                nc::utility::PathManip::Parent(m_Target.currentDirectoryPath)};
-            if( parent.empty() )
-                parent += "/"; // ensure that the path is 1) non-empty 2) has a trailing slash
-
-            return {m_Target.vfs, std::move(parent)};
+            return {vfs, std::move(parent_dir)};
         }
         else {
             return {m_ItemUnderDrag.Host(), m_ItemUnderDrag.Path() + "/"};

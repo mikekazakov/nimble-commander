@@ -1,18 +1,19 @@
-// Copyright (C) 2019-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FSEventsDirUpdate.h"
+#include "FSEventsDirUpdateImpl.h"
 #include "UnitTests_main.h"
 #include <Base/dispatch_cpp.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <fcntl.h>
 
 using nc::utility::FSEventsDirUpdate;
+using nc::utility::FSEventsDirUpdateImpl;
 using namespace std::chrono_literals;
 
 #define PREFIX "nc::utility::FSEventsDirUpdate "
 
 static void touch(const std::string &_path);
-static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,
-                                                 std::function<bool()> _expectation);
+static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation);
 
 TEST_CASE(PREFIX "Returns zero on invalid paths")
 {
@@ -34,8 +35,7 @@ TEST_CASE(PREFIX "Registers event listeners")
     const auto ticket1 = inst.AddWatchPath(tmp_dir.directory.c_str(), [&] { ++call_count[1]; });
 
     touch(tmp_dir.directory / "something else.txt");
-    REQUIRE(runMainLoopUntilExpectationOrTimeout(
-        5s, [&] { return call_count[0] == 2 && call_count[1] == 1; }));
+    REQUIRE(runMainLoopUntilExpectationOrTimeout(5s, [&] { return call_count[0] == 2 && call_count[1] == 1; }));
 
     const auto ticket2 = inst.AddWatchPath(tmp_dir.directory.c_str(), [&] { ++call_count[2]; });
 
@@ -63,8 +63,7 @@ TEST_CASE(PREFIX "Removes event listeners")
     const auto ticket1 = inst.AddWatchPath(tmp_dir.directory.c_str(), [&] { ++call_count[1]; });
 
     touch(tmp_dir.directory / "something else.txt");
-    REQUIRE(runMainLoopUntilExpectationOrTimeout(
-        5s, [&] { return call_count[0] == 1 && call_count[1] == 1; }));
+    REQUIRE(runMainLoopUntilExpectationOrTimeout(5s, [&] { return call_count[0] == 1 && call_count[1] == 1; }));
 
     const auto ticket2 = inst.AddWatchPath(tmp_dir.directory.c_str(), [&] { ++call_count[2]; });
 
@@ -76,13 +75,45 @@ TEST_CASE(PREFIX "Removes event listeners")
     inst.RemoveWatchPathWithTicket(ticket2);
 }
 
+TEST_CASE(PREFIX "Firing logic")
+{
+    using I = FSEventsDirUpdateImpl;
+    struct TC {
+        std::string_view watched_path;
+        std::vector<const char *> event_paths;
+        std::vector<FSEventStreamEventFlags> event_flags;
+        bool exp = false;
+    } tcs[] = {
+        {"/dir/", {}, {}, false},
+        {"/dir/", {""}, {0}, false},
+        {"/dir/", {"/"}, {0}, false},
+        {"/dir/", {"/di"}, {0}, false},
+        {"/dir/", {"/dir"}, {0}, true},
+        {"/dir/", {"/dir/"}, {0}, true},
+        {"/dir/", {"/dirr"}, {0}, false},
+        {"/dir/", {"/dirr/"}, {0}, false},
+        {"/dir/", {"/dir/sub"}, {0}, false},
+        {"/dir/", {"/dir/sub/"}, {0}, false},
+        {"/dir/", {"/else", "/dir/"}, {0, 0}, true},
+        {"/dir/", {"/else/", "/dir"}, {0, 0}, true},
+        {"/dir/", {"/else", "/another/"}, {kFSEventStreamEventFlagRootChanged, 0}, true},
+        {"/dir/", {"/else", "/another/"}, {0, kFSEventStreamEventFlagRootChanged}, true},
+    };
+
+    for( auto &tc : tcs ) {
+        assert(tc.event_paths.size() == tc.event_flags.size());
+        bool result =
+            I::ShouldFire(tc.watched_path, tc.event_paths.size(), tc.event_paths.data(), tc.event_flags.data());
+        CHECK(result == tc.exp);
+    }
+}
+
 static void touch(const std::string &_path)
 {
     close(open(_path.c_str(), O_CREAT | O_RDWR, S_IRWXU));
 }
 
-static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,
-                                                 std::function<bool()> _expectation)
+static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout, std::function<bool()> _expectation)
 {
     dispatch_assert_main_queue();
     assert(_timeout.count() > 0);

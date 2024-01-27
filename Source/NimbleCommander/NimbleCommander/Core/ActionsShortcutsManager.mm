@@ -3,13 +3,15 @@
 #include <Config/RapidJSON.h>
 #include "ActionsShortcutsManager.h"
 #include <assert.h>
+#include <frozen/unordered_map.h>
+#include <frozen/string.h>
 
 // this key should not exist in config defaults
 static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
 
 // clang-format off
 // the persistance holy grail is below, change ids only in emergency case:
-[[clang::no_destroy]] static const std::vector<std::pair<const char*,int>> g_ActionsTags = {
+static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"menu.nimble_commander.about",                     10'000},
     {"menu.nimble_commander.preferences",               10'010},
     {"menu.nimble_commander.hide",                      10'020},
@@ -213,7 +215,7 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"viewer.refresh",                                  101'005}
 };
 
-[[clang::no_destroy]] static const std::vector<std::pair<const char*, const char8_t*>> g_DefaultShortcuts = {
+static constinit std::pair<const char*, const char8_t*> g_DefaultShortcuts[] = {
     {"menu.nimble_commander.about",                         u8""        },
     {"menu.nimble_commander.preferences",                   u8"⌘,"      }, // cmd+,
     {"menu.nimble_commander.toggle_admin_mode",             u8""        },
@@ -221,11 +223,11 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
     {"menu.nimble_commander.hide_others",                   u8"⌥⌘h"     }, // cmd+alt+h
     {"menu.nimble_commander.show_all",                      u8""        },
     {"menu.nimble_commander.quit",                          u8"⌘q"      }, // cmd+q
-    {"menu.nimble_commander.active_license_file",           u8""        },
-    {"menu.nimble_commander.purchase_license",              u8""        },
-    {"menu.nimble_commander.purchase_pro_features",         u8""        },
-    {"menu.nimble_commander.restore_purchases",             u8""        },
-    {"menu.nimble_commander.registration_info",             u8""        },
+    {"menu.nimble_commander.active_license_file",           u8""        }, // no longer used
+    {"menu.nimble_commander.purchase_license",              u8""        }, // no longer used
+    {"menu.nimble_commander.purchase_pro_features",         u8""        }, // no longer used
+    {"menu.nimble_commander.restore_purchases",             u8""        }, // no longer used
+    {"menu.nimble_commander.registration_info",             u8""        }, // no longer used
 
     {"menu.file.newwindow",                                 u8"⌘n"      }, // cmd+n
     {"menu.file.new_folder",                                u8"⇧⌘n"     }, // cmd+shift+n
@@ -410,6 +412,22 @@ static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
 };
 // clang-format on
 
+static constinit const auto g_ActionToTag = [] {
+    std::pair<frozen::string, int> items[std::size(g_ActionsTags)] = {
+        [0 ... std::size(g_ActionsTags) - 1] = {frozen::string(""), 0}};
+    for( size_t i = 0; i < std::size(g_ActionsTags); ++i )
+        items[i] = std::pair<frozen::string, int>(g_ActionsTags[i].first, g_ActionsTags[i].second);
+    return frozen::make_unordered_map(items);
+}();
+
+static constinit const auto g_TagToAction = [] {
+    std::pair<int, frozen::string> items[std::size(g_ActionsTags)] = {
+        [0 ... std::size(g_ActionsTags) - 1] = {0, frozen::string("")}};
+    for( size_t i = 0; i < std::size(g_ActionsTags); ++i )
+        items[i] = std::pair<int, frozen::string>(g_ActionsTags[i].second, g_ActionsTags[i].first);
+    return frozen::make_unordered_map(items);
+}();
+
 ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(std::span<const UpdateTarget> _targets)
 {
     auto &am = ActionsShortcutsManager::Instance();
@@ -430,19 +448,15 @@ void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
 
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
-    for( auto &p : g_ActionsTags ) {
-        // safety checks against malformed g_ActionsTags
-        assert(m_TagToAction.count(p.second) == 0);
-        assert(m_ActionToTag.count(p.first) == 0);
-
-        m_TagToAction[p.second] = p.first;
-        m_ActionToTag[p.first] = p.second;
-    }
+    // safety checks against malformed g_ActionsTags, only in Debug builds
+    assert(
+        (robin_hood::unordered_map<std::string_view, int>{std::begin(g_ActionsTags), std::end(g_ActionsTags)}).size() ==
+        std::size(g_ActionsTags));
 
     for( auto &d : g_DefaultShortcuts ) {
-        auto i = m_ActionToTag.find(d.first);
-        if( i != end(m_ActionToTag) )
-            m_ShortCutsDefaults[i->second] =  nc::utility::ActionShortcut{d.second};
+        auto i = g_ActionToTag.find(std::string_view{d.first});
+        if( i != g_ActionToTag.end() )
+            m_ShortCutsDefaults[i->second] = nc::utility::ActionShortcut{d.second};
     }
 
     ReadOverrideFromConfig();
@@ -456,18 +470,14 @@ ActionsShortcutsManager &ActionsShortcutsManager::Instance()
 
 int ActionsShortcutsManager::TagFromAction(std::string_view _action) const noexcept
 {
-    auto it = m_ActionToTag.find(_action);
-    if( it != std::end(m_ActionToTag) )
-        return it->second;
-    return -1;
+    const auto it = g_ActionToTag.find(_action);
+    return it == g_ActionToTag.end() ? -1 : it->second;
 }
 
-std::string ActionsShortcutsManager::ActionFromTag(int _tag) const
+std::string_view ActionsShortcutsManager::ActionFromTag(int _tag) const noexcept
 {
-    auto it = m_TagToAction.find(_tag);
-    if( it != end(m_TagToAction) )
-        return it->second;
-    return "";
+    const auto it = g_TagToAction.find(_tag);
+    return it == g_TagToAction.end() ? "" : std::string_view{it->second.data(), it->second.size()};
 }
 
 void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
@@ -488,7 +498,7 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
                 if( sc != m_ShortCutsDefaults.end() ) {
                     [i nc_setKeyEquivalentWithShortcut:sc->second];
                 }
-                else if( m_TagToAction.find(tag) != m_TagToAction.end() ) {
+                else if( g_TagToAction.find(tag) != g_TagToAction.end() ) {
                     [i nc_setKeyEquivalentWithShortcut:nc::utility::ActionShortcut{}];
                 }
             }
@@ -507,14 +517,13 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
     m_ShortCutsOverrides.clear();
     for( auto i = v.MemberBegin(), e = v.MemberEnd(); i != e; ++i )
         if( i->name.GetType() == kStringType && i->value.GetType() == kStringType ) {
-            auto att = m_ActionToTag.find(i->name.GetString());
-            if( att != m_ActionToTag.end() )
+            auto att = g_ActionToTag.find(std::string_view{i->name.GetString()});
+            if( att != g_ActionToTag.end() )
                 m_ShortCutsOverrides[att->second] = nc::utility::ActionShortcut{i->value.GetString()};
         }
 }
 
-ActionsShortcutsManager::ShortCut
-ActionsShortcutsManager::ShortCutFromAction(std::string_view _action) const noexcept
+ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction(std::string_view _action) const noexcept
 {
     int tag = TagFromAction(_action);
     if( tag <= 0 )
@@ -544,7 +553,7 @@ ActionsShortcutsManager::ShortCut ActionsShortcutsManager::DefaultShortCutFromTa
     return {};
 }
 
-bool ActionsShortcutsManager::SetShortCutOverride(const std::string &_action, const ShortCut &_sc)
+bool ActionsShortcutsManager::SetShortCutOverride(const std::string_view _action, const ShortCut &_sc)
 {
     const auto tag = TagFromAction(_action);
     if( tag <= 0 )
@@ -605,8 +614,7 @@ std::span<const std::pair<const char *, int>> ActionsShortcutsManager::AllShortc
     return g_ActionsTags;
 }
 
-ActionsShortcutsManager::ObservationTicket
-ActionsShortcutsManager::ObserveChanges(std::function<void()> _callback)
+ActionsShortcutsManager::ObservationTicket ActionsShortcutsManager::ObserveChanges(std::function<void()> _callback)
 {
     return ObservableBase::AddObserver(_callback);
 }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2016-2023 Michael G. Kazakov
+/* Copyright (c) 2016-2024 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -49,10 +49,11 @@ bool AmIBeingDebugged() noexcept
     return ((info.kp_proc.p_flag & P_TRACED) != 0);
 }
 
+static const bool g_IsSandboxed = getenv("APP_SANDBOX_CONTAINER_ID") != nullptr;
+
 bool AmISandboxed() noexcept
 {
-    static const auto is_sandboxed = getenv("APP_SANDBOX_CONTAINER_ID") != nullptr;
-    return is_sandboxed;
+    return g_IsSandboxed;
 }
 
 } // namespace nc::base

@@ -451,12 +451,6 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
     return true;
 }
 
-- (IBAction)onMainMenuPerformShowRegistrationInfo:(id) [[maybe_unused]] sender
-{
-    // no-lic TODO: remove me!
-    abort();
-}
-
 - (void)enqueueOperation:(const std::shared_ptr<nc::ops::Operation> &)_operation
 {
     m_OperationsPool->Enqueue(_operation);

@@ -9,8 +9,7 @@
 
 namespace nc::panel::actions {
 
-Enter::Enter(const PanelAction &_open_files_action)
-    : m_OpenFilesAction(_open_files_action), m_GoIntoFolder(true, false)
+Enter::Enter(const PanelAction &_open_files_action) : m_OpenFilesAction(_open_files_action), m_GoIntoFolder(false)
 {
 }
 

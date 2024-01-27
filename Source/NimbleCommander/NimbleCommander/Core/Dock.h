@@ -17,9 +17,6 @@ public:
     void SetAdminBadge(bool _value);
     bool IsAdminBadgeSet() const noexcept;
 
-    void SetUnregisteredBadge(bool _value); // no-lic remove
-    bool IsAUnregisteredBadgeSet() const noexcept; // no-lic remove
-
     void SetBaseIcon(NSImage *_icon);
 
 private:
@@ -29,11 +26,9 @@ private:
 
     double m_Progress;
     bool m_Admin;
-    bool m_Unregistered; // no-lic remove
     NSDockTile *m_Tile;
     NSImageView *m_ContentView;
     NSProgressIndicator *m_Indicator;
-    NSView *m_UnregBadge; // no-lic remove
 };
 
 } // namespace nc::core

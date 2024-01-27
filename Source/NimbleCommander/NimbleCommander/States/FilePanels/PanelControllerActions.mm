@@ -66,7 +66,8 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
 
     add(@selector(OnOpenNatively:), new OpenFilesWithDefaultHandler{_file_opener});
     add(@selector(onOpenFileWith:), new OpenFileWithSubmenu{_open_with_menu_delegate});
-    add(@selector(OnOpen:), new Enter { *m[@selector(OnOpenNatively:)] });
+    add(
+        @selector(OnOpen:), new Enter { *m[@selector(OnOpenNatively:)] });
     add(@selector(onAlwaysOpenFileWith:), new AlwaysOpenFileWithSubmenu{_open_with_menu_delegate});
     add(@selector(onMainMenuPerformFindAction:), new FindFiles{_make_viewer, _make_viewer_controller});
     add(@selector(OnSpotlightSearch:), new SpotlightSearch);
@@ -108,7 +109,7 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(onToggleViewLayout10:), new ToggleLayout{9});
     add(@selector(OnRefreshPanel:), new RefreshPanel);
     add(@selector(OnGoToUpperDirectory:), new GoToEnclosingFolder);
-    add(@selector(OnGoIntoDirectory:), new GoIntoFolder{true, true});
+    add(@selector(OnGoIntoDirectory:), new GoIntoFolder{true});
     add(@selector(onFollowSymlink:), new FollowSymlink);
     add(@selector(OnGoBack:), new GoBack);
     add(@selector(OnGoForward:), new GoForward);

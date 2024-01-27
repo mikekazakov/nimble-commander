@@ -67,6 +67,7 @@
 		CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C39922B974210043E825 /* UTIImpl_UT.cpp */; };
 		CF5D1DC72B52B9E900750174 /* Tags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1DC62B52B9E900750174 /* Tags.cpp */; };
 		CF5D1DC92B52B9FA00750174 /* Tags_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1DC82B52B9FA00750174 /* Tags_UT.mm */; };
+		CF5D1E442B652AA900750174 /* FSEventsDirUpdateImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF5D1E432B652AA900750174 /* FSEventsDirUpdateImpl.cpp */; };
 		CF61F305264048F6009FF900 /* FSEventsFileUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF61F304264048F6009FF900 /* FSEventsFileUpdate.cpp */; };
 		CF61F30B26404962009FF900 /* FSEventsFileUpdateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */; };
 		CF61F30F26404971009FF900 /* FSEventsFileUpdateImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF61F30E26404971009FF900 /* FSEventsFileUpdateImpl.cpp */; };
@@ -159,6 +160,8 @@
 		CF5D1DC52B52B9D900750174 /* Tags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Tags.h; path = include/Utility/Tags.h; sourceTree = "<group>"; };
 		CF5D1DC62B52B9E900750174 /* Tags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tags.cpp; path = source/Tags.cpp; sourceTree = "<group>"; };
 		CF5D1DC82B52B9FA00750174 /* Tags_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Tags_UT.mm; path = tests/Tags_UT.mm; sourceTree = "<group>"; };
+		CF5D1E422B652A9A00750174 /* FSEventsDirUpdateImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FSEventsDirUpdateImpl.h; path = include/Utility/FSEventsDirUpdateImpl.h; sourceTree = "<group>"; };
+		CF5D1E432B652AA900750174 /* FSEventsDirUpdateImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FSEventsDirUpdateImpl.cpp; path = source/FSEventsDirUpdateImpl.cpp; sourceTree = "<group>"; };
 		CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter_UT.mm; path = tests/ByteCountFormatter_UT.mm; sourceTree = SOURCE_ROOT; };
 		CF614AA91F9D871D0005F2DB /* Encodings_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Encodings_UT.mm; path = tests/Encodings_UT.mm; sourceTree = SOURCE_ROOT; };
 		CF614AAA1F9D871D0005F2DB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = tests/Info.plist; sourceTree = SOURCE_ROOT; };
@@ -361,6 +364,7 @@
 				CFD62BD91C9A6BE30021EE7F /* FontExtras.h */,
 				CFD62BE71C9A709C0021EE7F /* FPSLimitedDrawer.h */,
 				CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */,
+				CF5D1E422B652A9A00750174 /* FSEventsDirUpdateImpl.h */,
 				CF61F303264048EA009FF900 /* FSEventsFileUpdate.h */,
 				CF61F30A26404962009FF900 /* FSEventsFileUpdateImpl.h */,
 				CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */,
@@ -425,6 +429,7 @@
 				CFD62C001C9A87170021EE7F /* FontExtras.mm */,
 				CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */,
 				CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */,
+				CF5D1E432B652AA900750174 /* FSEventsDirUpdateImpl.cpp */,
 				CF61F304264048F6009FF900 /* FSEventsFileUpdate.cpp */,
 				CF61F30E26404971009FF900 /* FSEventsFileUpdateImpl.cpp */,
 				CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */,
@@ -611,6 +616,7 @@
 				CF71BCE32932389100997E0F /* SpdLogWindow.mm in Sources */,
 				CF46015C256125E50095FC73 /* NativeFSManager.mm in Sources */,
 				CF460149256125E50095FC73 /* FPSLimitedDrawer.mm in Sources */,
+				CF5D1E442B652AA900750174 /* FSEventsDirUpdateImpl.cpp in Sources */,
 				CF460143256125E50095FC73 /* NativeFSManagerVolumeLookup.cpp in Sources */,
 				CF460158256125E50095FC73 /* VerticallyCenteredTextFieldCell.mm in Sources */,
 				CF460164256125E50095FC73 /* SystemInformation.mm in Sources */,

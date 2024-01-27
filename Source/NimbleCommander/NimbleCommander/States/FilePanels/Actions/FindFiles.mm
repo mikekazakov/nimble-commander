@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSListingInput.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
 #include "../PanelController.h"
@@ -18,10 +18,8 @@ static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
 namespace nc::panel::actions {
 
 FindFiles::FindFiles(std::function<NCViewerView *(NSRect)> _make_viewer,
-                     std::function<NCViewerViewController *()> _make_controller,
-                     nc::bootstrap::ActivationManager &_activation_manager)
-    : m_MakeViewer{std::move(_make_viewer)}, m_MakeController{std::move(_make_controller)},
-      m_ActivationManager{_activation_manager}
+                     std::function<NCViewerViewController *()> _make_controller)
+    : m_MakeViewer{std::move(_make_viewer)}, m_MakeController{std::move(_make_controller)}
 {
 }
 
@@ -52,8 +50,7 @@ static VFSListingPtr FetchSearchResultsAsListing(const std::vector<vfs::VFSPath>
 
 void FindFiles::Perform(PanelController *_target, id) const
 {
-    FindFilesSheetController *sheet =
-        [[FindFilesSheetController alloc] initWithActivationManager:m_ActivationManager];
+    FindFilesSheetController *sheet = [FindFilesSheetController new];
     sheet.vfsInstanceManager = &_target.vfsInstanceManager;
     sheet.host = _target.isUniform ? _target.vfs : _target.view.item.Host();
     sheet.path = _target.isUniform ? _target.currentDirectoryPath : _target.view.item.Directory();

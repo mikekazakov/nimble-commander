@@ -1,11 +1,7 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
-
-namespace nc::bootstrap {
-class ActivationManager;
-}
 
 class ExternalEditorStartupInfo
 {
@@ -45,7 +41,7 @@ private:
 class ExternalEditorsStorage
 {
 public:
-    ExternalEditorsStorage(const char* _config_path, nc::bootstrap::ActivationManager &_am);
+    ExternalEditorsStorage(const char* _config_path);
 
     std::shared_ptr<ExternalEditorStartupInfo> ViableEditorForItem(const VFSListingItem&_item) const;
     std::vector<std::shared_ptr<ExternalEditorStartupInfo>> AllExternalEditors() const;
@@ -58,5 +54,4 @@ private:
 
     std::vector<std::shared_ptr<ExternalEditorStartupInfo>> m_ExternalEditors;
     const char* const m_ConfigPath;
-    nc::bootstrap::ActivationManager &m_ActivationManager;
 };

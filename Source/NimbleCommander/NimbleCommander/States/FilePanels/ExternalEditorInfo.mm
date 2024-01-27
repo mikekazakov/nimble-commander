@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalEditorInfo.h"
 #include "../../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <VFS/VFS.h>
@@ -6,8 +6,8 @@
 #include <Utility/FileMask.h>
 #include <Utility/StringExtras.h>
 #include <Config/RapidJSON.h>
+#include <Base/debug.h>
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "ExternalEditorInfoPrivate.h"
 
 using namespace nc::config;
@@ -80,17 +80,11 @@ struct ExternalEditorsPersistence {
         nc::config::Value v{kObjectType};
         v.AddMember(MakeStandaloneString(name), MakeStandaloneString(_ed.Name()), g_CrtAllocator);
         v.AddMember(MakeStandaloneString(path), MakeStandaloneString(_ed.Path()), g_CrtAllocator);
-        v.AddMember(
-            MakeStandaloneString(args), MakeStandaloneString(_ed.Arguments()), g_CrtAllocator);
+        v.AddMember(MakeStandaloneString(args), MakeStandaloneString(_ed.Arguments()), g_CrtAllocator);
         v.AddMember(MakeStandaloneString(mask), MakeStandaloneString(_ed.Mask()), g_CrtAllocator);
-        v.AddMember(MakeStandaloneString(maxfilesize),
-                    nc::config::Value{_ed.MaxFileSize()},
-                    g_CrtAllocator);
-        v.AddMember(
-            MakeStandaloneString(onlyfiles), nc::config::Value{_ed.OnlyFiles()}, g_CrtAllocator);
-        v.AddMember(MakeStandaloneString(terminal),
-                    nc::config::Value{_ed.OpenInTerminal()},
-                    g_CrtAllocator);
+        v.AddMember(MakeStandaloneString(maxfilesize), nc::config::Value{_ed.MaxFileSize()}, g_CrtAllocator);
+        v.AddMember(MakeStandaloneString(onlyfiles), nc::config::Value{_ed.OnlyFiles()}, g_CrtAllocator);
+        v.AddMember(MakeStandaloneString(terminal), nc::config::Value{_ed.OpenInTerminal()}, g_CrtAllocator);
         return v;
     }
 };
@@ -182,8 +176,7 @@ struct ExternalEditorsPersistence {
 
 - (std::shared_ptr<ExternalEditorStartupInfo>)toStartupInfo
 {
-    return std::make_shared<ExternalEditorStartupInfo>(
-        ExternalEditorsPersistence::LoadFromLegacyObjC(self));
+    return std::make_shared<ExternalEditorStartupInfo>(ExternalEditorsPersistence::LoadFromLegacyObjC(self));
 }
 
 @end
@@ -228,8 +221,7 @@ bool ExternalEditorStartupInfo::OpenInTerminal() const noexcept
     return m_OpenInTerminal;
 }
 
-bool ExternalEditorStartupInfo::IsValidForItem(const VFSListingItem &_item,
-                                               bool _allow_terminal) const
+bool ExternalEditorStartupInfo::IsValidForItem(const VFSListingItem &_item, bool _allow_terminal) const
 {
     if( _allow_terminal == false && m_OpenInTerminal )
         return false;
@@ -271,10 +263,7 @@ std::string ExternalEditorStartupInfo::SubstituteFileName(const std::string &_pa
     return args;
 }
 
-ExternalEditorsStorage::ExternalEditorsStorage(const char *_config_path,
-                                               nc::bootstrap::ActivationManager &_am) :
-    m_ConfigPath(_config_path),
-    m_ActivationManager(_am)
+ExternalEditorsStorage::ExternalEditorsStorage(const char *_config_path) : m_ConfigPath(_config_path)
 {
     LoadFromConfig();
 }
@@ -304,21 +293,19 @@ void ExternalEditorsStorage::SaveToConfig()
 std::shared_ptr<ExternalEditorStartupInfo>
 ExternalEditorsStorage::ViableEditorForItem(const VFSListingItem &_item) const
 {
-    const auto has_terminal = m_ActivationManager.HasTerminal();
+    const auto has_terminal = nc::base::AmISandboxed() == false;
     for( auto &ed : m_ExternalEditors )
         if( ed->IsValidForItem(_item, has_terminal) )
             return ed;
     return nullptr;
 }
 
-std::vector<std::shared_ptr<ExternalEditorStartupInfo>>
-ExternalEditorsStorage::AllExternalEditors() const
+std::vector<std::shared_ptr<ExternalEditorStartupInfo>> ExternalEditorsStorage::AllExternalEditors() const
 {
     return m_ExternalEditors;
 }
 
-void ExternalEditorsStorage::SetExternalEditors(
-    const std::vector<std::shared_ptr<ExternalEditorStartupInfo>> &_editors)
+void ExternalEditorsStorage::SetExternalEditors(const std::vector<std::shared_ptr<ExternalEditorStartupInfo>> &_editors)
 {
     m_ExternalEditors = _editors;
     SaveToConfig();

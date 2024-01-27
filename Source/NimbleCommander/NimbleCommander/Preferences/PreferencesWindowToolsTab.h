@@ -8,15 +8,10 @@ namespace nc::panel {
 class ExternalToolsStorage;
 }
 
-namespace nc::bootstrap {
-class ActivationManager;
-}
-
 @interface PreferencesWindowToolsTab : NSViewController <RHPreferencesViewControllerProtocol,
                                                          NSTableViewDataSource,
                                                          NSTableViewDelegate>
 
-- (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage
-         activationManager:(nc::bootstrap::ActivationManager &)_am;
+- (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage;
 
 @end

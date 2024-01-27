@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Actions/DefaultAction.h"
@@ -6,10 +6,6 @@
 #include <memory>
 
 class NetworkConnectionsManager;
-
-namespace nc::bootstrap {
-class ActivationManager;
-}
 
 namespace nc::config {
 class Config;
@@ -28,7 +24,6 @@ using StateActionsMap =
 StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
                                  NetworkConnectionsManager &_net_mgr,
                                  nc::utility::TemporaryFileStorage &_temp_file_storage,
-                                 nc::utility::NativeFSManager &_native_fs_manager,
-                                 nc::bootstrap::ActivationManager &_activation_manager);
+                                 nc::utility::NativeFSManager &_native_fs_manager);
 
 } // namespace nc::panel

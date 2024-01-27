@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowThemesTab.h"
 #include <Config/RapidJSON.h>
 #include <fstream>
@@ -8,7 +8,6 @@
 #include <rapidjson/prettywriter.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Core/Theming/ThemePersistence.h>
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
@@ -59,20 +58,18 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     nc::ThemesManager *m_Manager;
     std::vector<std::string> m_ThemeNames;
     size_t m_SelectedTheme;
-    nc::bootstrap::ActivationManager *m_ActivationManager;
     bool m_IgnoreThemeCursorChange;
     bool m_SelectedThemeCanBeRemoved;
     bool m_SelectedThemeCanBeReverted;
 }
 
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
+- (instancetype)init
 {
     self = [super init];
     if( self ) {
         m_IgnoreThemeCursorChange = false;
         m_SelectedThemeCanBeRemoved = false;
         m_SelectedThemeCanBeReverted = false;
-        m_ActivationManager = &_am;
         m_Manager = &NCAppDelegate.me.themesManager;
         [self loadThemesNames];
         [self loadSelectedDocument];

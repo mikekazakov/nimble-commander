@@ -1,22 +1,17 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExecuteInTerminal.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include "../PanelAux.h"
 #include "../MainWindowFilePanelState.h"
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <VFS/VFS.h>
+#include <Base/debug.h>
 
 namespace nc::panel::actions {
 
-ExecuteInTerminal::ExecuteInTerminal(nc::bootstrap::ActivationManager &_am)
-    : m_ActivationManager(_am)
-{
-}
-
 bool ExecuteInTerminal::Predicate(PanelController *_target) const
 {
-    if( !m_ActivationManager.HasTerminal() )
+    if( base::AmISandboxed() )
         return false;
 
     const auto item = _target.view.item;

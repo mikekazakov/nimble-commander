@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowController.h"
 #include <Base/debug.h>
 #include <Config/RapidJSON.h>
@@ -10,7 +10,6 @@
 #include "Terminal/ShellState.h"
 #include "Terminal/ExternalEditorState.h"
 #include "InternalViewer/MainWindowInternalViewerState.h"
-#include "../GeneralUI/RegistrationInfoWindow.h"
 #include <Utility/NativeFSManager.h>
 #include "MainWindow.h"
 #include "../Bootstrap/AppDelegate.h"
@@ -18,7 +17,6 @@
 #include "FilePanels/MainWindowFilePanelState.h"
 #include "FilePanels/PanelController.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <Base/SerialQueue.h>
@@ -48,7 +46,6 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
     MainWindowFilePanelState *m_PanelState;
     NCTermShellState *m_Terminal;
     MainWindowInternalViewerState *m_Viewer;
-    nc::bootstrap::ActivationManager *m_ActivationManager;
 
     nc::base::SerialQueue m_BigFileViewLoadingQ;
     bool m_ToolbarVisible;
@@ -66,7 +63,6 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
 }
 
 - (instancetype)initWithWindow:(NCMainWindow *)window
-             activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     if( !window )
         return nil;
@@ -75,7 +71,6 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
     if( !self )
         return nil;
 
-    m_ActivationManager = &_am;
     window.delegate = self;
 
     m_ToolbarVisible = GlobalConfig().GetBool(g_ConfigShowToolbar);
@@ -458,11 +453,8 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
 
 - (IBAction)onMainMenuPerformShowRegistrationInfo:(id) [[maybe_unused]] sender
 {
-    RegistrationInfoWindow *w =
-        [[RegistrationInfoWindow alloc] initWithActivationManager:*m_ActivationManager];
-    [self.window beginSheet:w.window
-          completionHandler:^(NSModalResponse){
-          }];
+    // no-lic TODO: remove me!
+    abort();
 }
 
 - (void)enqueueOperation:(const std::shared_ptr<nc::ops::Operation> &)_operation

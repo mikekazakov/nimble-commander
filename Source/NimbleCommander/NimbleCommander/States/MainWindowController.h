@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "MainWindowStateProtocol.h"
@@ -10,10 +10,6 @@
 @class NCTermShellState;
 @class NCMainWindow;
 
-namespace nc::bootstrap {
-class ActivationManager;
-}
-
 namespace nc::ops {
 class Pool;
 class Operation;
@@ -21,9 +17,7 @@ class Operation;
 
 @interface NCMainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
 
-- (instancetype)initWithWindow:(NCMainWindow *)_window NS_UNAVAILABLE;
-- (instancetype)initWithWindow:(NCMainWindow *)_window
-             activationManager:(nc::bootstrap::ActivationManager &)_am;
+- (instancetype)initWithWindow:(NCMainWindow *)_window;
 
 // Window state manipulations
 - (void)ResignAsWindowState:(id)_state;

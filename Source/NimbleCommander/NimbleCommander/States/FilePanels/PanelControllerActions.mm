@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActions.h"
 #include "PanelControllerActionsDispatcher.h"
 #include "Actions/CopyFilePaths.h"
@@ -35,7 +35,6 @@
 #include "Actions/ShowQuickLook.h"
 #include "Actions/ShowSystemOverview.h"
 #include "Actions/FollowSymlink.h"
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 namespace nc::panel {
 
@@ -45,38 +44,31 @@ static std::vector<SEL> QuickListsBut(int but)
 {
     std::vector<SEL> lists
     {
-        @selector(OnGoToQuickListsParents:), @selector(OnGoToQuickListsHistory:),
-            @selector(OnGoToQuickListsFavorites:), @selector(OnGoToQuickListsVolumes:),
-            @selector(OnGoToQuickListsConnections:)
+        @selector(OnGoToQuickListsParents:), @selector(OnGoToQuickListsHistory:), @selector(OnGoToQuickListsFavorites:),
+            @selector(OnGoToQuickListsVolumes:), @selector(OnGoToQuickListsConnections:)
     };
     assert(but >= 0 && but < static_cast<int>(lists.size()));
     lists.erase(lists.begin() + but);
     return lists;
 }
 
-PanelActionsMap
-BuildPanelActionsMap(nc::config::Config &_global_config,
-                     NetworkConnectionsManager &_net_mgr,
-                     utility::NativeFSManager &_native_fs_mgr,
-                     nc::bootstrap::ActivationManager &_activation_manager,
-                     nc::vfs::NativeHost &_native_host,
-                     FileOpener &_file_opener,
-                     NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
-                     std::function<NCViewerView *(NSRect)> _make_viewer,
-                     std::function<NCViewerViewController *()> _make_viewer_controller)
+PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
+                                     NetworkConnectionsManager &_net_mgr,
+                                     utility::NativeFSManager &_native_fs_mgr,
+                                     nc::vfs::NativeHost &_native_host,
+                                     FileOpener &_file_opener,
+                                     NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
+                                     std::function<NCViewerView *(NSRect)> _make_viewer,
+                                     std::function<NCViewerViewController *()> _make_viewer_controller)
 {
     PanelActionsMap m;
     auto add = [&](SEL _sel, actions::PanelAction *_action) { m[_sel].reset(_action); };
 
-    const auto has_archive_support = _activation_manager.HasArchivesBrowsing();
-
     add(@selector(OnOpenNatively:), new OpenFilesWithDefaultHandler{_file_opener});
     add(@selector(onOpenFileWith:), new OpenFileWithSubmenu{_open_with_menu_delegate});
-    add(
-        @selector(OnOpen:), new Enter { _activation_manager, *m[@selector(OnOpenNatively:)] });
+    add(@selector(OnOpen:), new Enter { *m[@selector(OnOpenNatively:)] });
     add(@selector(onAlwaysOpenFileWith:), new AlwaysOpenFileWithSubmenu{_open_with_menu_delegate});
-    add(@selector(onMainMenuPerformFindAction:),
-        new FindFiles{_make_viewer, _make_viewer_controller, _activation_manager});
+    add(@selector(onMainMenuPerformFindAction:), new FindFiles{_make_viewer, _make_viewer_controller});
     add(@selector(OnSpotlightSearch:), new SpotlightSearch);
     add(@selector(OnDuplicate:), new Duplicate{_global_config});
     add(@selector(OnAddToFavorites:), new AddToFavorites);
@@ -116,7 +108,7 @@ BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(onToggleViewLayout10:), new ToggleLayout{9});
     add(@selector(OnRefreshPanel:), new RefreshPanel);
     add(@selector(OnGoToUpperDirectory:), new GoToEnclosingFolder);
-    add(@selector(OnGoIntoDirectory:), new GoIntoFolder{has_archive_support, true});
+    add(@selector(OnGoIntoDirectory:), new GoIntoFolder{true, true});
     add(@selector(onFollowSymlink:), new FollowSymlink);
     add(@selector(OnGoBack:), new GoBack);
     add(@selector(OnGoForward:), new GoForward);
@@ -135,17 +127,13 @@ BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(onGoToWebDAV:), new OpenNewWebDAVConnection{_net_mgr});
     add(@selector(OnGoToNetworkShare:), new OpenNewLANShare{_net_mgr});
     add(@selector(OnGoToDropboxStorage:), new OpenNewDropboxStorage{_net_mgr});
-    add(@selector(OnConnectToNetworkServer:),
-        new OpenNetworkConnections{_net_mgr, _activation_manager});
+    add(@selector(OnConnectToNetworkServer:), new OpenNetworkConnections{_net_mgr});
     add(@selector(OnGoToSavedConnectionItem:), new OpenExistingNetworkConnection{_net_mgr});
     add(@selector(OnGoToQuickListsParents:),
         new ShowParentFoldersQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(0)});
-    add(@selector(OnGoToQuickListsHistory:),
-        new ShowHistoryQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(1)});
-    add(@selector(OnGoToQuickListsFavorites:),
-        new ShowFavoritesQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(2)});
-    add(@selector(OnGoToQuickListsVolumes:),
-        new ShowVolumesQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(3)});
+    add(@selector(OnGoToQuickListsHistory:), new ShowHistoryQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(1)});
+    add(@selector(OnGoToQuickListsFavorites:), new ShowFavoritesQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(2)});
+    add(@selector(OnGoToQuickListsVolumes:), new ShowVolumesQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(3)});
     add(@selector(OnGoToQuickListsConnections:),
         new ShowConnectionsQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(4)});
     add(@selector(OnGoToFavoriteLocation:), new GoToFavoriteLocation);
@@ -179,4 +167,4 @@ BuildPanelActionsMap(nc::config::Config &_global_config,
     return m;
 }
 
-}
+} // namespace nc::panel

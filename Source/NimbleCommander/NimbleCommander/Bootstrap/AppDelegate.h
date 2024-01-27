@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #pragma once
 
@@ -19,10 +19,6 @@ class ThemesManager;
 
 namespace config {
 class Config;
-}
-
-namespace bootstrap {
-class ActivationManager;
 }
 
 namespace utility {
@@ -146,8 +142,6 @@ class NativeHost;
 @property(nonatomic, readonly) nc::vfs::NativeHost &nativeHost;
 
 @property(nonatomic, readonly) const std::shared_ptr<nc::vfs::NativeHost> &nativeHostPtr;
-
-@property(nonatomic, readonly) nc::bootstrap::ActivationManager &activationManager;
 
 @property(nonatomic, readonly) nc::FeedbackManager &feedbackManager;
 

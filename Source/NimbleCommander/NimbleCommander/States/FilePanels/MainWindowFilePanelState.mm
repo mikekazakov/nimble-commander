@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
@@ -6,7 +6,6 @@
 #include <VFS/Native.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/Core/Alert.h>
@@ -41,6 +40,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <Base/dispatch_cpp.h>
+#include <Base/debug.h>
 
 using namespace nc::panel;
 using namespace std::literals;
@@ -59,36 +59,6 @@ static const auto g_ResorationUIFocusedSide = "focusedSide";
 static const auto g_InitialStatePath = "filePanel.initialState";
 static const auto g_InitialStateLeftDefaults = "left";
 static const auto g_InitialStateRightDefaults = "right";
-
-static void SetupUnregisteredLabel(NSView *_background_view)
-{
-    NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-    tf.translatesAutoresizingMaskIntoConstraints = false;
-    tf.stringValue = @"UNREGISTERED";
-    tf.editable = false;
-    tf.bordered = false;
-    tf.drawsBackground = false;
-    tf.alignment = NSTextAlignmentCenter;
-    tf.textColor = NSColor.tertiaryLabelColor;
-    tf.font = [NSFont labelFontOfSize:12];
-
-    [_background_view addSubview:tf];
-    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:tf
-                                                                 attribute:NSLayoutAttributeCenterX
-                                                                 relatedBy:NSLayoutRelationEqual
-                                                                    toItem:_background_view
-                                                                 attribute:NSLayoutAttributeCenterX
-                                                                multiplier:1.0
-                                                                  constant:0]];
-    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:tf
-                                                                 attribute:NSLayoutAttributeCenterY
-                                                                 relatedBy:NSLayoutRelationEqual
-                                                                    toItem:_background_view
-                                                                 attribute:NSLayoutAttributeCenterY
-                                                                multiplier:1.0
-                                                                  constant:0]];
-    [_background_view layoutSubtreeIfNeeded];
-}
 
 static void SetupRatingOverlay(NSView *_background_view, nc::FeedbackManager &_feedback_manager)
 {
@@ -153,13 +123,11 @@ static NSString *TitleForData(const data::Model *_data);
                      panelFactory:(std::function<PanelController *()>)_panel_factory
        controllerStateJSONDecoder:(ControllerStateJSONDecoder &)_controller_json_decoder
                    QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
-                activationManager:(nc::bootstrap::ActivationManager &)_activation_manager
                   feedbackManager:(nc::FeedbackManager &)_feedback_manager
 {
     assert(_panel_factory);
     if( self = [super initWithFrame:frameRect] ) {
         m_PanelFactory = std::move(_panel_factory);
-        m_ActivationManager = &_activation_manager;
         m_FeedbackManager = &_feedback_manager;
         m_ControllerStateJSONDecoder = &_controller_json_decoder;
         m_ClosedPanelsHistory = nullptr;
@@ -191,7 +159,6 @@ static NSString *TitleForData(const data::Model *_data);
                   panelFactory:(std::function<PanelController *()>)_panel_factory
     controllerStateJSONDecoder:(ControllerStateJSONDecoder &)_controller_json_decoder
                 QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
-             activationManager:(nc::bootstrap::ActivationManager &)_activation_manager
                feedbackManager:(nc::FeedbackManager &)_feedback_manager
 {
     self = [self initBaseWithFrame:frameRect
@@ -199,7 +166,6 @@ static NSString *TitleForData(const data::Model *_data);
                       panelFactory:std::move(_panel_factory)
         controllerStateJSONDecoder:_controller_json_decoder
                     QLPanelAdaptor:_ql_panel_adaptor
-                 activationManager:_activation_manager
                    feedbackManager:_feedback_manager];
     if( self ) {
         if( _load_content ) {
@@ -296,7 +262,6 @@ static NSString *TitleForData(const data::Model *_data);
 - (void)loadDefaultPanelContent
 {
     using nc::utility::PathManip;
-    auto &am = *m_ActivationManager;
     auto left_controller = m_LeftPanelControllers.front();
     auto right_controller = m_RightPanelControllers.front();
     std::vector<std::string> left_panel_desired_paths, right_panel_desired_paths;
@@ -312,7 +277,7 @@ static NSString *TitleForData(const data::Model *_data);
     right_panel_desired_paths.emplace_back(nc::base::CommonPaths::Home());
 
     // 3rd attempt - load first reachable folder in case of sandboxed environment
-    if( am.Sandboxed() ) {
+    if( nc::base::AmISandboxed() ) {
         left_panel_desired_paths.emplace_back(SandboxManager::Instance().FirstFolderWithAccess());
         right_panel_desired_paths.emplace_back(SandboxManager::Instance().FirstFolderWithAccess());
     }
@@ -375,7 +340,7 @@ static NSString *TitleForData(const data::Model *_data);
     m_MainSplitViewBottomConstraint.priority = NSLayoutPriorityDragThatCannotResizeWindow;
     [self addConstraint:m_MainSplitViewBottomConstraint];
 
-    if( m_ActivationManager->HasTerminal() ) {
+    if( nc::base::AmISandboxed() == false ) {
         m_OverlappedTerminal->terminal =
             [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
         m_OverlappedTerminal->terminal.translatesAutoresizingMaskIntoConstraints = false;
@@ -415,9 +380,6 @@ static NSString *TitleForData(const data::Model *_data);
     if( m_FeedbackManager->ShouldShowRatingOverlayView() )
         SetupRatingOverlay(m_ToolbarDelegate.operationsPoolViewController.idleView,
                            *m_FeedbackManager);
-    else if( m_ActivationManager->Type() == nc::bootstrap::ActivationManager::Distribution::Trial &&
-             !m_ActivationManager->UserHadRegistered() )
-        SetupUnregisteredLabel(m_ToolbarDelegate.operationsPoolViewController.idleView);
 }
 
 - (void)windowStateDidBecomeAssigned

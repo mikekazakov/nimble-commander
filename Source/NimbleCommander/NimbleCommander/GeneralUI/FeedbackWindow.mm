@@ -1,9 +1,9 @@
-// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "../Bootstrap/ActivationManager.h"
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../Core/FeedbackManager.h"
 #include "FeedbackWindow.h"
 #include <chrono>
 #include <Base/dispatch_cpp.h>
+#include <Base/debug.h>
 
 using namespace std::literals;
 
@@ -14,18 +14,15 @@ using namespace std::literals;
 
 @implementation FeedbackWindow {
     FeedbackWindow *m_Self;
-    nc::bootstrap::ActivationManager *m_ActivationManager;
     nc::FeedbackManager *m_FeedbackManager;
 }
 
 @synthesize rating;
 
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
-                          feedbackManager:(nc::FeedbackManager &)_fm
+- (instancetype)initWithFeedbackManager:(nc::FeedbackManager &)_fm
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if( self ) {
-        m_ActivationManager = &_am;
         m_FeedbackManager = &_fm;
         self.rating = 1;
     }
@@ -39,7 +36,7 @@ using namespace std::literals;
 
     if( self.rating == 5 || self.rating == 4 ) {
         // positive branch
-        if( m_ActivationManager->ForAppStore() )
+        if( nc::base::AmISandboxed() ) // i.e. for AppStore
             [self.tabView selectTabViewItemAtIndex:0];
         else
             [self.tabView selectTabViewItemAtIndex:1];

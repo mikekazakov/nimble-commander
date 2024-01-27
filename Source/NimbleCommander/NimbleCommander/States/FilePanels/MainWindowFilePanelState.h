@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -12,10 +12,6 @@
 
 namespace nc {
 class FeedbackManager;
-}
-
-namespace nc::bootstrap {
-class ActivationManager;
 }
 
 namespace nc::ops {
@@ -72,7 +68,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     std::shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
     nc::panel::ControllerStateJSONDecoder *m_ControllerStateJSONDecoder;
     NCPanelQLPanelAdaptor *m_QLPanelAdaptor;
-    nc::bootstrap::ActivationManager *m_ActivationManager;
     nc::FeedbackManager *m_FeedbackManager;
 #pragma clang diagnostic pop
 }
@@ -94,7 +89,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
                   panelFactory:(std::function<PanelController *()>)_panel_factory
     controllerStateJSONDecoder:(nc::panel::ControllerStateJSONDecoder &)_controller_json_decoder
                 QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
-             activationManager:(nc::bootstrap::ActivationManager &)_activation_manager
               feedbackManager:(nc::FeedbackManager&)_feedback_manager;
 
 - (void)loadDefaultPanelContent;

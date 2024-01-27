@@ -1,9 +1,9 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include "PreferencesWindowExternalEditorsTab.h"
 #include <Utility/StringExtras.h>
+#include <Base/debug.h>
 
 static const auto g_TableViewDataType =
     @"com.magnumbytes.nc.pref.PreferencesWindowExternalEditorsTabPrivateTableViewDataType";
@@ -38,16 +38,13 @@ static bool AskUserToDeleteEditor()
 
 @implementation PreferencesWindowExternalEditorsTab {
     NSMutableArray *m_Editors;
-    nc::bootstrap::ActivationManager *m_ActivationManager;
     ExternalEditorsStorage *m_ExternalEditorsStorage;
 }
 
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
-                           editorsStorage:(ExternalEditorsStorage &)_storage
+- (instancetype)initWithEditorsStorage:(ExternalEditorsStorage &)_storage
 {
     self = [super init];
     if( self ) {
-        m_ActivationManager = &_am;
         m_ExternalEditorsStorage = &_storage;
         auto v = m_ExternalEditorsStorage->AllExternalEditors();
         m_Editors = [NSMutableArray new];
@@ -110,7 +107,7 @@ static bool AskUserToDeleteEditor()
 {
     PreferencesWindowExternalEditorsTabNewEditorSheet *sheet =
         [PreferencesWindowExternalEditorsTabNewEditorSheet new];
-    sheet.hasTerminal = m_ActivationManager->HasTerminal();
+    sheet.hasTerminal = nc::base::AmISandboxed() == false;;
     return sheet;
 }
 

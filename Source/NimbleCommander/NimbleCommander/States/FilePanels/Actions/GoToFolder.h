@@ -74,7 +74,7 @@ struct GoToEnclosingFolder final : PanelAction
 
 struct GoIntoFolder final : PanelAction
 {
-    GoIntoFolder(bool _support_archives = false, 
+    GoIntoFolder(bool _support_archives = false, // no-lic remove me
                  bool _force_checking_for_archive = false );
     bool Predicate( PanelController *_target ) const override;
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;

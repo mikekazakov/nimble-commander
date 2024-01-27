@@ -1,10 +1,10 @@
-// Copyright (C) 2014-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowTerminalTab.h"
 #include <Utility/FontExtras.h>
 #include <Config/ObjCBridge.h>
 #include "../Bootstrap/Config.h"
-#include "../Bootstrap/ActivationManager.h"
 #include <Utility/StringExtras.h>
+#include <Base/debug.h>
 
 // this stuff currently works only in one direction:
 // config -> ObjectiveC property
@@ -12,13 +12,9 @@
 class ConfigBinder
 {
 public:
-    ConfigBinder(nc::config::Config &_config,
-                 const char *_config_path,
-                 id _object,
-                 NSString *_object_key)
+    ConfigBinder(nc::config::Config &_config, const char *_config_path, id _object, NSString *_object_key)
         : m_Config(_config), m_ConfigPath(_config_path),
-          m_Ticket(_config.Observe(_config_path, [=] { ConfigChanged(); })), m_Object(_object),
-          m_ObjectKey(_object_key)
+          m_Ticket(_config.Observe(_config_path, [=] { ConfigChanged(); })), m_Object(_object), m_ObjectKey(_object_key)
     {
         ConfigChanged();
     }
@@ -41,30 +37,28 @@ private:
     NSString *m_ObjectKey;
 };
 
-@interface PreferencesWindowTerminalTab()
+@interface PreferencesWindowTerminalTab ()
 
-@property (nonatomic) bool usesDefaultLoginShell;
+@property(nonatomic) bool usesDefaultLoginShell;
 
 @end
 
-@implementation PreferencesWindowTerminalTab
-{
+@implementation PreferencesWindowTerminalTab {
     NSFont *m_Font;
     std::unique_ptr<ConfigBinder> m_B1;
-    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
+- (instancetype)init
 {
     self = [super init];
-    if (self) {
-        m_ActivationManager = &_am;
-        m_B1 = std::make_unique<ConfigBinder>( GlobalConfig(), "terminal.useDefaultLoginShell", self, @"usesDefaultLoginShell" );
+    if( self ) {
+        m_B1 = std::make_unique<ConfigBinder>(
+            GlobalConfig(), "terminal.useDefaultLoginShell", self, @"usesDefaultLoginShell");
     }
     return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     m_B1.reset();
 }
@@ -80,20 +74,21 @@ private:
     NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:self.identifier];
     item.image = self.toolbarItemImage;
     item.label = self.toolbarItemLabel;
-    item.enabled = m_ActivationManager->HasTerminal();
+    item.enabled = nc::base::AmISandboxed() == false;
     return item;
 }
 
--(NSString*)identifier{
+- (NSString *)identifier
+{
     return NSStringFromClass(self.class);
 }
--(NSImage*)toolbarItemImage{
+- (NSImage *)toolbarItemImage
+{
     return [NSImage imageNamed:@"PreferencesIcons_Terminal"];
 }
--(NSString*)toolbarItemLabel{
-    return NSLocalizedStringFromTable(@"Terminal",
-                                      @"Preferences",
-                                      "General preferences tab title");
+- (NSString *)toolbarItemLabel
+{
+    return NSLocalizedStringFromTable(@"Terminal", @"Preferences", "General preferences tab title");
 }
 
 @end

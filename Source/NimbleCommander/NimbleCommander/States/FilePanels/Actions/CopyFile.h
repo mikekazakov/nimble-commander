@@ -1,13 +1,10 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
 
 namespace nc {
 
-namespace bootstrap {
-class ActivationManager;
-}
 namespace config {
 class Config;
 }
@@ -35,38 +32,28 @@ private:
 
 class CopyTo final : public StateAction, CopyBase {
 public:
-    CopyTo(nc::config::Config &_config, nc::bootstrap::ActivationManager &_ac);
+    CopyTo(nc::config::Config &_config);
     bool Predicate(MainWindowFilePanelState *_target) const override;
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
-private:
-    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
 class CopyAs final : public StateAction, CopyBase {
 public:
-    CopyAs(nc::config::Config &_config, nc::bootstrap::ActivationManager &_ac);
+    CopyAs(nc::config::Config &_config);
     bool Predicate(MainWindowFilePanelState *_target) const override;
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
-private:
-    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
 class MoveTo final : public StateAction {
 public:
-    MoveTo(nc::bootstrap::ActivationManager &_ac);
     bool Predicate(MainWindowFilePanelState *_target) const override;
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
-private:
-    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
 class MoveAs final : public StateAction {
 public:
-    MoveAs(nc::bootstrap::ActivationManager &_ac);
     bool Predicate(MainWindowFilePanelState *_target) const override;
     void Perform(MainWindowFilePanelState *_target, id _sender) const override;
-public:
-    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
 } // namespace nc::panel::actions

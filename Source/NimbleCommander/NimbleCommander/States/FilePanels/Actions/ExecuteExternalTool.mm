@@ -1,14 +1,14 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExecuteExternalTool.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include "../MainWindowFilePanelState.h"
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <Panel/ExternalTools.h>
 #include "../ExternalToolParameterValueSheetController.h"
 #include <Utility/ObjCpp.h>
+#include <Base/debug.h>
 
 namespace nc::panel::actions {
 
@@ -26,9 +26,8 @@ ExecuteExternalTool::Payload::Payload(const ExternalTool &_tool,
 {
 }
 
-ExecuteExternalTool::ExecuteExternalTool(nc::utility::TemporaryFileStorage &_temp_storage,
-                                         nc::bootstrap::ActivationManager &_ac)
-    : m_TempFileStorage{_temp_storage}, m_ActivationManager{_ac}
+ExecuteExternalTool::ExecuteExternalTool(nc::utility::TemporaryFileStorage &_temp_storage)
+    : m_TempFileStorage{_temp_storage}
 {
 }
 
@@ -90,7 +89,7 @@ void ExecuteExternalTool::RunExtTool(std::shared_ptr<Payload> _payload) const
 
     const auto startup_mode = _payload->exec.DeduceStartupMode();
     if( startup_mode == ExternalTool::StartupMode::RunInTerminal ) {
-        if( !m_ActivationManager.HasTerminal() )
+        if( base::AmISandboxed() )
             return;
         const auto path = _payload->exec.ExecutablePath();
         const auto args = _payload->exec.BuildArguments();
@@ -102,4 +101,4 @@ void ExecuteExternalTool::RunExtTool(std::shared_ptr<Payload> _payload) const
     }
 }
 
-}
+} // namespace nc::panel::actions

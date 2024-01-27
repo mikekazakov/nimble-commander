@@ -1,5 +1,4 @@
 appauth         1.4.0
-aquaticprime    ???
 boost           1.83.0
 bz2             1.0.8
 fmt             10.1.1

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -11,7 +11,6 @@
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include "PanelAux.h"
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "ExternalEditorInfo.h"
 #include <Operations/Copying.h>
 #include <Base/dispatch_cpp.h>
@@ -299,9 +298,7 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem &_item)
 
 static ops::CopyingOptions::ChecksumVerification DefaultChecksumVerificationSetting()
 {
-    // TODO: make depencies on Config and ActivationManager explicit
-    if( !NCAppDelegate.me.activationManager.HasCopyVerification() )
-        return ops::CopyingOptions::ChecksumVerification::Never;
+    // TODO: make depencies on Config explicit
     int v = GlobalConfig().GetInt(g_ConfigDefaultVerificationSetting);
     if( v == static_cast<int>(ops::CopyingOptions::ChecksumVerification::Always) )
         return ops::CopyingOptions::ChecksumVerification::Always;

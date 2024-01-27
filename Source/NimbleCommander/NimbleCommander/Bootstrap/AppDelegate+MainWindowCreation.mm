@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate.Private.h"
 #include <VFSIcon/IconRepositoryImpl.h>
@@ -33,9 +33,9 @@
 #include <Operations/PoolEnqueueFilter.h>
 #include <Operations/AggregateProgressTracker.h>
 #include "Config.h"
-#include "ActivationManager.h"
 #include <Base/CommonPaths.h>
 #include <Base/algo.h>
+#include <Base/debug.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include "AppDelegate+ViewerCreation.h"
 #include <ranges>
@@ -44,8 +44,7 @@ static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLas
 
 namespace {
 
-enum class CreationContext
-{
+enum class CreationContext {
     Default,
     ManualRestoration,
     SystemRestoration
@@ -54,15 +53,11 @@ enum class CreationContext
 class DirectoryAccessProviderImpl : public nc::panel::DirectoryAccessProvider
 {
 public:
-    DirectoryAccessProviderImpl(nc::bootstrap::ActivationManager &_activation_manager);
     bool HasAccess(PanelController *_panel, const std::string &_directory_path, VFSHost &_host) override;
     bool RequestAccessSync(PanelController *_panel, const std::string &_directory_path, VFSHost &_host) override;
-
-private:
-    nc::bootstrap::ActivationManager &m_ActivationManager;
 };
 
-}
+} // namespace
 
 static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *_state);
 
@@ -83,7 +78,6 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
         self.globalConfig,
         *self.networkConnectionsManager,
         self.nativeFSManager,
-        self.activationManager,
         self.nativeHost,
         self.fileOpener,
         self.panelOpenWithMenuDelegate,
@@ -94,11 +88,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 
 - (const nc::panel::StateActionsMap &)stateActionsMap
 {
-    [[clang::no_destroy]] static auto actions_map = nc::panel::BuildStateActionsMap(self.globalConfig,
-                                                                                    *self.networkConnectionsManager,
-                                                                                    self.temporaryFileStorage,
-                                                                                    self.nativeFSManager,
-                                                                                    self.activationManager);
+    [[clang::no_destroy]] static auto actions_map = nc::panel::BuildStateActionsMap(
+        self.globalConfig, *self.networkConnectionsManager, self.temporaryFileStorage, self.nativeFSManager);
     return actions_map;
 }
 
@@ -138,7 +129,7 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
 
 - (nc::panel::DirectoryAccessProvider &)directoryAccessProvider
 {
-    [[clang::no_destroy]] static auto provider = DirectoryAccessProviderImpl{self.activationManager};
+    [[clang::no_destroy]] static auto provider = DirectoryAccessProviderImpl{};
     return provider;
 }
 
@@ -200,7 +191,6 @@ static PanelController *PanelFactory()
                                                   panelFactory:PanelFactory
                                     controllerStateJSONDecoder:ctrl_state_json_decoder
                                                 QLPanelAdaptor:self.QLPanelAdaptor
-                                             activationManager:self.activationManager
                                                feedbackManager:self.feedbackManager];
     }
     else if( _context == CreationContext::ManualRestoration ) {
@@ -211,7 +201,6 @@ static PanelController *PanelFactory()
                                                             panelFactory:PanelFactory
                                               controllerStateJSONDecoder:ctrl_state_json_decoder
                                                           QLPanelAdaptor:self.QLPanelAdaptor
-                                                       activationManager:self.activationManager
                                                          feedbackManager:self.feedbackManager];
             RestoreFilePanelStateFromLastOpenedWindow(state);
             [state loadDefaultPanelContent];
@@ -224,7 +213,6 @@ static PanelController *PanelFactory()
                                                             panelFactory:PanelFactory
                                               controllerStateJSONDecoder:ctrl_state_json_decoder
                                                           QLPanelAdaptor:self.QLPanelAdaptor
-                                                       activationManager:self.activationManager
                                                          feedbackManager:self.feedbackManager];
             if( ![NCMainWindowController restoreDefaultWindowStateFromConfig:state] )
                 [state loadDefaultPanelContent];
@@ -243,7 +231,6 @@ static PanelController *PanelFactory()
                                                   panelFactory:PanelFactory
                                     controllerStateJSONDecoder:ctrl_state_json_decoder
                                                 QLPanelAdaptor:self.QLPanelAdaptor
-                                             activationManager:self.activationManager
                                                feedbackManager:self.feedbackManager];
     }
     return nil;
@@ -260,15 +247,14 @@ static PanelController *PanelFactory()
             return filter->ShouldEnqueue(_operation);
         });
 
-    const auto window_controller = [[NCMainWindowController alloc] initWithWindow:window
-                                                                activationManager:self.activationManager];
+    const auto window_controller = [[NCMainWindowController alloc] initWithWindow:window];
     window_controller.operationsPool = *operations_pool;
     self.operationsProgressTracker.AddPool(*operations_pool);
 
     const auto file_state = [self allocateFilePanelsWithFrame:frame inContext:_context withOpsPool:*operations_pool];
     auto actions_dispatcher = [[NCPanelsStateActionsDispatcher alloc] initWithState:file_state
                                                                       andActionsMap:self.stateActionsMap];
-    actions_dispatcher.hasTerminal = self.activationManager.HasTerminal();
+    actions_dispatcher.hasTerminal = !nc::base::AmISandboxed();
     file_state.attachedResponder = actions_dispatcher;
 
     file_state.closedPanelsHistory = self.closedPanelsHistory;
@@ -326,8 +312,7 @@ static PanelController *PanelFactory()
         return [[NCPanelContextMenu alloc] initWithItems:std::move(_items)
                                                  ofPanel:_panel
                                           withFileOpener:self.fileOpener
-                                               withUTIDB:self.utiDB
-                                   withActivationManager:self.activationManager];
+                                               withUTIDB:self.utiDB];
     };
     return nc::panel::ContextMenuProvider{std::move(provider)};
 }
@@ -346,17 +331,13 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     return true;
 }
 
-DirectoryAccessProviderImpl::DirectoryAccessProviderImpl(nc::bootstrap::ActivationManager &_activation_manager)
-    : m_ActivationManager(_activation_manager)
-{
-}
 
 bool DirectoryAccessProviderImpl::HasAccess([[maybe_unused]] PanelController *_panel,
                                             const std::string &_directory_path,
                                             VFSHost &_host)
 {
     // at this moment we (thankfully) care only about sanboxed versions
-    if( m_ActivationManager.Sandboxed() == false )
+    if( nc::base::AmISandboxed() == false )
         return true;
 
     if( _host.IsNativeFS() )
@@ -369,7 +350,7 @@ bool DirectoryAccessProviderImpl::RequestAccessSync([[maybe_unused]] PanelContro
                                                     const std::string &_directory_path,
                                                     VFSHost &_host)
 {
-    if( m_ActivationManager.Sandboxed() == false )
+    if( nc::base::AmISandboxed() == false )
         return true;
 
     if( _host.IsNativeFS() )

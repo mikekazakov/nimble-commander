@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "FeedbackManager.h"
@@ -6,10 +6,6 @@
 #include <optional>
 #include <functional>
 #include <ctime>
-
-namespace nc::bootstrap {
-class ActivationManager;
-}
 
 namespace nc {
 
@@ -23,8 +19,7 @@ public:
     static const CFStringRef g_LastRatingTimeKey;
     static const std::function<time_t()> g_DefaultTimeSource;
     
-    FeedbackManagerImpl(nc::bootstrap::ActivationManager &_am,
-                        std::function<time_t()> _time_source = g_DefaultTimeSource);
+    FeedbackManagerImpl(std::function<time_t()> _time_source = g_DefaultTimeSource);
     
     /**
      * Decided if rating overlay need to be shown, based on usage statistics.
@@ -74,7 +69,6 @@ private:
     time_t m_FirstRunTime;
     bool m_ShownRatingOverlay = false;
     bool m_HasUI = true;
-    nc::bootstrap::ActivationManager &m_ActivationManager;
     std::function<time_t()> m_TimeSource;
 
     std::optional<int> m_LastRating; // 0 - discarded, [1-5] - rating

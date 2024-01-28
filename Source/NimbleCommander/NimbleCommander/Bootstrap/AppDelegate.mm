@@ -62,7 +62,6 @@
 #include <NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h>
 #include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
 #include <NimbleCommander/Preferences/Preferences.h>
-#include <NimbleCommander/GeneralUI/TrialWindowController.h>
 #include <NimbleCommander/GeneralUI/VFSListWindowController.h>
 
 #include <Operations/Pool.h>
@@ -431,7 +430,9 @@ static NCAppDelegate *g_Me = nil;
         if( GlobalConfig().GetBool(g_ConfigForceFn) )
             nc::utility::FunctionalKeysPass::Instance().Enable(); // accessibility - remapping functional keys FnXX
 
+#ifdef __NC_VERSION_TRIAL__ // no-lic - temp workaround
         PFMoveToApplicationsFolderIfNecessary();
+#endif
     }
 
     m_ConfigWiring = std::make_unique<ConfigWiring>(GlobalConfig(), m_PoolEnqueueFilter);

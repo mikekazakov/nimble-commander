@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "ActionsShortcutsManager.h"
@@ -19,11 +19,11 @@ static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"menu.nimble_commander.show_all",                  10'040},
     {"menu.nimble_commander.quit",                      10'050},
     {"menu.nimble_commander.toggle_admin_mode",         10'070},
-    {"menu.nimble_commander.active_license_file",       10'080},
-    {"menu.nimble_commander.purchase_license",          10'090},
-    {"menu.nimble_commander.purchase_pro_features",     10'100},
-    {"menu.nimble_commander.restore_purchases",         10'110},
-    {"menu.nimble_commander.registration_info",         10'120},
+    {"menu.nimble_commander.active_license_file",       10'080}, // no longer used
+    {"menu.nimble_commander.purchase_license",          10'090}, // no longer used
+    {"menu.nimble_commander.purchase_pro_features",     10'100}, // no longer used
+    {"menu.nimble_commander.restore_purchases",         10'110}, // no longer used
+    {"menu.nimble_commander.registration_info",         10'120}, // no longer used
     
     {"menu.file.newwindow",                             11'000},
     {"menu.file.new_folder",                            11'090},

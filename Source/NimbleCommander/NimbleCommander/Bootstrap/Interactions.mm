@@ -1,43 +1,17 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Interactions.h"
-#include "ActivationManager.h"
 #include <Base/CommonPaths.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <Utility/StringExtras.h>
 
 namespace nc::bootstrap {
 
-std::optional<std::string> AskUserForLicenseFile(const ActivationManager &_am)
-{
-    NSOpenPanel *panel = [NSOpenPanel openPanel];
-    panel.resolvesAliases = true;
-    panel.canChooseDirectories = false;
-    panel.canChooseFiles = true;
-    panel.allowsMultipleSelection = false;
-    panel.showsHiddenFiles = true;
-    const auto extension = _am.LicenseFileExtension();
-    panel.allowedFileTypes = @[[NSString stringWithUTF8StdString:extension]];
-    panel.allowsOtherFileTypes = false;
-    const auto downloads_path = [NSString stringWithUTF8StdString:base::CommonPaths::Downloads()];
-    panel.directoryURL = [[NSURL alloc] initFileURLWithPath:downloads_path isDirectory:true];
-    panel.message =
-        NSLocalizedString(@"Please select your license file (.nimblecommanderlicense)", "");
-    if( [panel runModal] == NSModalResponseOK )
-        if( panel.URL != nil ) {
-            std::string path = panel.URL.path.fileSystemRepresentationSafe;
-            return path;
-        }
-    return std::nullopt;
-}
-
 bool AskUserToResetDefaults()
 {
-    const auto msg =
-        NSLocalizedString(@"Are you sure you want to reset settings to defaults?",
-                          "Asking user for confirmation on erasing custom settings - message");
-    const auto info = NSLocalizedString(
-        @"This will erase all your custom settings.",
-        "Asking user for confirmation on erasing custom settings - informative text");
+    const auto msg = NSLocalizedString(@"Are you sure you want to reset settings to defaults?",
+                                       "Asking user for confirmation on erasing custom settings - message");
+    const auto info = NSLocalizedString(@"This will erase all your custom settings.",
+                                        "Asking user for confirmation on erasing custom settings - informative text");
 
     Alert *alert = [[Alert alloc] init];
     alert.messageText = msg;
@@ -52,34 +26,18 @@ bool AskUserToResetDefaults()
 
 bool AskToExitWithRunningOperations()
 {
-    const auto msg = NSLocalizedString(
-        @"The application has running operations. Do you want to stop all operations and quit?",
-        "Asking user for quitting app with activity");
+    const auto msg =
+        NSLocalizedString(@"The application has running operations. Do you want to stop all operations and quit?",
+                          "Asking user for quitting app with activity");
 
     Alert *alert = [[Alert alloc] init];
     alert.messageText = msg;
-    [alert addButtonWithTitle:NSLocalizedString(
-                                  @"Stop and Quit",
-                                  "Asking user for quitting app with activity - confirmation")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Stop and Quit",
+                                                "Asking user for quitting app with activity - confirmation")];
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
     NSInteger result = [alert runModal];
 
     return result == NSAlertFirstButtonReturn;
-}
-
-void ThankUserForBuyingALicense()
-{
-    const auto msg =
-        NSLocalizedString(@"__THANKS_FOR_REGISTER_MESSAGE", "Message to thank user for buying");
-    const auto info = NSLocalizedString(@"__THANKS_FOR_REGISTER_INFORMATIVE",
-                                        "Informative text to thank user for buying");
-
-    Alert *alert = [[Alert alloc] init];
-    alert.icon = [NSImage imageNamed:@"checked_icon"];
-    alert.messageText = msg;
-    alert.informativeText = info;
-    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-    [alert runModal];
 }
 
 void WarnAboutFailingToAccessPrivilegedHelper()
@@ -93,4 +51,4 @@ void WarnAboutFailingToAccessPrivilegedHelper()
     [alert runModal];
 }
 
-}
+} // namespace nc::bootstrap

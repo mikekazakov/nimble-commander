@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Actions/DefaultAction.h"
@@ -11,10 +11,6 @@ class NetworkConnectionsManager;
 @class NCPanelOpenWithMenuDelegate;
 @class NCViewerView;
 @class NCViewerViewController;
-
-namespace nc::bootstrap {
-class ActivationManager;
-}
 
 namespace nc::vfs {
 class NativeHost;
@@ -30,7 +26,6 @@ PanelActionsMap
 BuildPanelActionsMap(nc::config::Config &_global_config,
                      NetworkConnectionsManager &_net_mgr,
                      nc::utility::NativeFSManager &_native_fs_mgr,
-                     nc::bootstrap::ActivationManager &_activation_manager,
                      nc::vfs::NativeHost &_native_host,
                      FileOpener &_file_opener,
                      NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,

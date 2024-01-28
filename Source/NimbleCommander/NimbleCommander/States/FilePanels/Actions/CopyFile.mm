@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyFile.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
@@ -9,7 +9,6 @@
 #include "Helpers.h"
 #include <Operations/Copying.h>
 #include <Operations/CopyingDialog.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <Base/dispatch_cpp.h>
 #include <Config/Config.h>
@@ -41,8 +40,8 @@ bool CopyBase::ShouldAutomaticallyDeselect() const
     return m_Config.GetBool(g_DeselectConfigFlag);
 }
 
-CopyTo::CopyTo(nc::config::Config &_config, nc::bootstrap::ActivationManager &_ac)
-    : CopyBase(_config), m_ActivationManager(_ac)
+CopyTo::CopyTo(nc::config::Config &_config)
+    : CopyBase(_config)
 {
 }
 
@@ -88,8 +87,6 @@ void CopyTo::Perform(MainWindowFilePanelState *_target, id) const
                                    destinationVFS:opp_uniform ? opp_pc.vfs : nullptr
                                  operationOptions:MakeDefaultFileCopyOptions()];
 
-    cd.allowVerification = m_ActivationManager.HasCopyVerification();
-
     const auto handler = ^(NSModalResponse returnCode) {
       if( returnCode != NSModalResponseOK )
           return;
@@ -113,8 +110,8 @@ void CopyTo::Perform(MainWindowFilePanelState *_target, id) const
     [_target.mainWindowController beginSheet:cd.window completionHandler:handler];
 }
 
-CopyAs::CopyAs(nc::config::Config &_config, nc::bootstrap::ActivationManager &_ac)
-    : CopyBase(_config), m_ActivationManager(_ac)
+CopyAs::CopyAs(nc::config::Config &_config)
+    : CopyBase(_config)
 {
 }
 
@@ -153,7 +150,6 @@ void CopyAs::Perform(MainWindowFilePanelState *_target, id) const
                                            initialDestination:item.Filename()
                                                destinationVFS:item.Host()
                                              operationOptions:MakeDefaultFileCopyOptions()];
-    cd.allowVerification = m_ActivationManager.HasCopyVerification();
 
     const auto handler = ^(NSModalResponse returnCode) {
       if( returnCode != NSModalResponseOK )
@@ -191,10 +187,6 @@ void CopyAs::Perform(MainWindowFilePanelState *_target, id) const
     };
 
     [_target.mainWindowController beginSheet:cd.window completionHandler:handler];
-}
-
-MoveTo::MoveTo(nc::bootstrap::ActivationManager &_ac) : m_ActivationManager(_ac)
-{
 }
 
 bool MoveTo::Predicate(MainWindowFilePanelState *_target) const
@@ -242,7 +234,6 @@ void MoveTo::Perform(MainWindowFilePanelState *_target, id) const
                                initialDestination:opp_uniform ? opp_pc.currentDirectoryPath : ""
                                    destinationVFS:opp_uniform ? opp_pc.vfs : nullptr
                                  operationOptions:MakeDefaultFileMoveOptions()];
-    cd.allowVerification = m_ActivationManager.HasCopyVerification();
 
     const auto handler = ^(NSModalResponse returnCode) {
       if( returnCode != NSModalResponseOK )
@@ -263,10 +254,6 @@ void MoveTo::Perform(MainWindowFilePanelState *_target, id) const
     };
 
     [_target.mainWindowController beginSheet:cd.window completionHandler:handler];
-}
-
-MoveAs::MoveAs(nc::bootstrap::ActivationManager &_ac) : m_ActivationManager(_ac)
-{
 }
 
 bool MoveAs::Predicate(MainWindowFilePanelState *_target) const
@@ -304,7 +291,6 @@ void MoveAs::Perform(MainWindowFilePanelState *_target, id) const
                                            initialDestination:item.Filename()
                                                destinationVFS:item.Host()
                                              operationOptions:MakeDefaultFileMoveOptions()];
-    cd.allowVerification = m_ActivationManager.HasCopyVerification();
 
     const auto handler = ^(NSModalResponse returnCode) {
       if( returnCode != NSModalResponseOK )

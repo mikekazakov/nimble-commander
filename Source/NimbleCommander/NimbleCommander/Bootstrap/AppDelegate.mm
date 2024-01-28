@@ -1,10 +1,9 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate.h"
 #include "AppDelegateCPP.h"
 #include "AppDelegate+Migration.h"
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate+ViewerCreation.h"
-#include "ActivationManagerImpl.h"
 #include "Config.h"
 #include "ConfigWiring.h"
 #include "VFSInit.h"
@@ -22,6 +21,7 @@
 #include <Base/CommonPaths.h>
 #include <Base/CFDefaultsCPP.h>
 #include <Base/algo.h>
+#include <Base/debug.h>
 
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/NativeFSManagerImpl.h>
@@ -42,7 +42,6 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Core/FeedbackManagerImpl.h>
-#include <NimbleCommander/Core/AppStoreHelper.h>
 #include <NimbleCommander/Core/Dock.h>
 #include <NimbleCommander/Core/ServicesHandler.h>
 #include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
@@ -63,7 +62,6 @@
 #include <NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h>
 #include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
 #include <NimbleCommander/Preferences/Preferences.h>
-#include <NimbleCommander/GeneralUI/TrialWindowController.h>
 #include <NimbleCommander/GeneralUI/VFSListWindowController.h>
 
 #include <Operations/Pool.h>
@@ -96,7 +94,6 @@
 
 using namespace std::literals;
 using namespace nc::bootstrap;
-using nc::bootstrap::ActivationManager;
 
 static std::optional<std::string> Load(const std::string &_filepath);
 
@@ -198,7 +195,7 @@ static void SetupLogs()
 
     if( level < spdlog::level::off ) {
         const auto stdout_sink = std::make_shared<spdlog::sinks::stdout_sink_mt>();
-        for( auto logger: Loggers() ) {
+        for( auto logger : Loggers() ) {
             logger->Get().sinks().emplace_back(stdout_sink);
             logger->Get().set_level(level);
         }
@@ -237,7 +234,6 @@ static NCAppDelegate *g_Me = nil;
     NCViewerWindowDelegateBridge *m_ViewerWindowDelegateBridge;
     std::unique_ptr<nc::utility::NativeFSManager> m_NativeFSManager;
     std::shared_ptr<nc::vfs::NativeHost> m_NativeHost;
-    std::unique_ptr<nc::bootstrap::ActivationManager> m_ActivationManager;
     std::unique_ptr<nc::utility::FSEventsFileUpdateImpl> m_FSEventsFileUpdate;
     nc::ops::PoolEnqueueFilter m_PoolEnqueueFilter;
     std::unique_ptr<ConfigWiring> m_ConfigWiring;
@@ -263,8 +259,6 @@ static NCAppDelegate *g_Me = nil;
         m_FSEventsFileUpdate = std::make_unique<nc::utility::FSEventsFileUpdateImpl>();
         m_NativeFSManager = std::make_unique<nc::utility::NativeFSManagerImpl>();
         m_NativeHost = std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager, *m_FSEventsFileUpdate);
-        m_ActivationManager = [self createActivationManager];
-        [self checkMASReceipt];
         CheckDefaultsReset();
         m_SupportDirectory =
             EnsureTrailingSlash(NSFileManager.defaultManager.applicationSupportDirectory.fileSystemRepresentationSafe);
@@ -279,72 +273,6 @@ static NCAppDelegate *g_Me = nil;
     return g_Me;
 }
 
-static std::string InstalledAquaticLicensePath()
-{
-    return nc::AppDelegate::SupportDirectory() + nc::bootstrap::ActivationManagerImpl::DefaultLicenseFilename();
-}
-
-static std::string AquaticPrimePublicKey()
-{
-    std::string key;
-    key += NCE(nc::env::aqp_pk_00);
-    key += NCE(nc::env::aqp_pk_01);
-    key += NCE(nc::env::aqp_pk_02);
-    key += NCE(nc::env::aqp_pk_03);
-    key += NCE(nc::env::aqp_pk_04);
-    key += NCE(nc::env::aqp_pk_05);
-    key += NCE(nc::env::aqp_pk_06);
-    key += NCE(nc::env::aqp_pk_07);
-    key += NCE(nc::env::aqp_pk_08);
-    key += NCE(nc::env::aqp_pk_09);
-    key += NCE(nc::env::aqp_pk_10);
-    key += NCE(nc::env::aqp_pk_11);
-    key += NCE(nc::env::aqp_pk_12);
-    key += NCE(nc::env::aqp_pk_13);
-    key += NCE(nc::env::aqp_pk_14);
-    key += NCE(nc::env::aqp_pk_15);
-    key += NCE(nc::env::aqp_pk_16);
-    key += NCE(nc::env::aqp_pk_17);
-    key += NCE(nc::env::aqp_pk_18);
-    key += NCE(nc::env::aqp_pk_19);
-    key += NCE(nc::env::aqp_pk_20);
-    key += NCE(nc::env::aqp_pk_21);
-    key += NCE(nc::env::aqp_pk_22);
-    key += NCE(nc::env::aqp_pk_23);
-    key += NCE(nc::env::aqp_pk_24);
-    key += NCE(nc::env::aqp_pk_25);
-    key += NCE(nc::env::aqp_pk_26);
-    key += NCE(nc::env::aqp_pk_27);
-    key += NCE(nc::env::aqp_pk_28);
-    key += NCE(nc::env::aqp_pk_29);
-    key += NCE(nc::env::aqp_pk_30);
-    key += NCE(nc::env::aqp_pk_31);
-    key += NCE(nc::env::aqp_pk_32);
-    return key;
-}
-
-- (std::unique_ptr<nc::bootstrap::ActivationManager>)createActivationManager
-{
-    [[clang::no_destroy]] static auto ext_license_support =
-        ActivationManagerBase::ExternalLicenseSupport{AquaticPrimePublicKey(), InstalledAquaticLicensePath()};
-    [[clang::no_destroy]] static auto trial_period_support =
-        ActivationManagerBase::TrialPeriodSupport{ActivationManagerImpl::DefaultsTrialExpireDate()};
-
-    const ActivationManager::Distribution type =
-#if defined(__NC_VERSION_FREE__)
-        ActivationManager::Distribution::Free;
-#elif defined(__NC_VERSION_PAID__)
-        ActivationManager::Distribution::Paid;
-#elif defined(__NC_VERSION_TRIAL__)
-        ActivationManager::Distribution::Trial;
-#else
-#error Invalid build configuration - no version type specified
-#endif
-
-    return std::make_unique<nc::bootstrap::ActivationManagerImpl>(
-        type, ext_license_support, trial_period_support);
-}
-
 - (void)applicationWillFinishLaunching:(NSNotification *) [[maybe_unused]] _notification
 {
     RegisterAvailableVFS();
@@ -357,16 +285,14 @@ static std::string AquaticPrimePublicKey()
     auto update_tm_appearance = [self] {
         m_ThemesManager->NotifyAboutSystemAppearanceChange(m_SystemThemeDetector->SystemAppearance());
     };
-    auto update_app_appearance = [self] {
-            [NSApp setAppearance:m_ThemesManager->SelectedTheme().Appearance()];
-    };
+    auto update_app_appearance = [self] { [NSApp setAppearance:m_ThemesManager->SelectedTheme().Appearance()]; };
     update_tm_appearance();
     update_app_appearance();
     // observe forever
     [[clang::no_destroy]] static auto token =
         m_ThemesManager->ObserveChanges(nc::ThemesManager::Notifications::Appearance, update_app_appearance);
     [[clang::no_destroy]] static auto token1 = m_SystemThemeDetector->ObserveChanges(update_tm_appearance);
-    
+
     [self themesManager];
     [self favoriteLocationsStorage];
 
@@ -377,7 +303,7 @@ static std::string AquaticPrimePublicKey()
 
     [self wireMenuDelegates];
 
-    if( self.activationManager.Sandboxed() ) {
+    if( nc::base::AmISandboxed() ) {
         auto &sm = SandboxManager::Instance();
         if( sm.Empty() ) {
             sm.AskAccessForPathSync(nc::base::CommonPaths::Home(), false);
@@ -444,26 +370,16 @@ static std::string AquaticPrimePublicKey()
 
 - (void)updateMainMenuFeaturesByVersionAndState
 {
-    static NSMenu *original_menu_state = [NSApp.mainMenu copy];
-
     // disable some features available in menu by configuration limitation
     auto tag_from_lit = [](const char *s) { return ActionsShortcutsManager::Instance().TagFromAction(s); };
     auto current_menuitem = [&](const char *s) { return [NSApp.mainMenu itemWithTagHierarchical:tag_from_lit(s)]; };
-    auto initial_menuitem = [&](const char *s) {
-        return [original_menu_state itemWithTagHierarchical:tag_from_lit(s)];
-    };
     auto hide = [&](const char *s) {
         auto item = current_menuitem(s);
         item.alternate = false;
         item.hidden = true;
     };
-    auto enable = [&](const char *_action, bool _enabled) {
-        current_menuitem(_action).action = _enabled ? initial_menuitem(_action).action : nil;
-    };
-    auto &am = self.activationManager;
-
     // one-way items hiding
-    if( !am.HasTerminal() ) {
+    if( nc::base::AmISandboxed() ) {
         hide("menu.view.show_terminal");
         hide("menu.view.panels_position.move_up");
         hide("menu.view.panels_position.move_down");
@@ -471,43 +387,9 @@ static std::string AquaticPrimePublicKey()
         hide("menu.view.panels_position.focusterminal");
         hide("menu.file.feed_filename_to_terminal");
         hide("menu.file.feed_filenames_to_terminal");
-    }
-    if( am.ForAppStore() ) {
-        hide("menu.nimble_commander.active_license_file");
-        hide("menu.nimble_commander.purchase_license");
-    }
-    if( am.Type() != ActivationManager::Distribution::Free || am.UsedHadPurchasedProFeatures() ) {
-        hide("menu.nimble_commander.purchase_pro_features");
-        hide("menu.nimble_commander.restore_purchases");
-    }
-    if( am.Type() != ActivationManager::Distribution::Trial || am.UserHadRegistered() ) {
-        hide("menu.nimble_commander.active_license_file");
-        hide("menu.nimble_commander.purchase_license");
-    }
-    if( !am.HasRoutedIO() )
         hide("menu.nimble_commander.toggle_admin_mode");
-
-    // reversible items disabling / enabling
-    enable("menu.file.calculate_checksum", am.HasChecksumCalculation());
-    enable("menu.file.find_with_spotlight", am.HasSpotlightSearch());
-    enable("menu.go.processes_list", am.HasPSFS());
-    enable("menu.go.connect.ftp", am.HasNetworkConnectivity());
-    enable("menu.go.connect.sftp", am.HasNetworkConnectivity());
-    enable("menu.go.connect.webdav", am.HasNetworkConnectivity());
-    enable("menu.go.connect.lanshare", am.HasLANSharesMounting());
-    enable("menu.go.connect.dropbox", am.HasNetworkConnectivity());
-    enable("menu.go.connect.network_server", am.HasNetworkConnectivity());
-    enable("menu.command.system_overview", am.HasBriefSystemOverview());
-    enable("menu.command.file_attributes", am.HasUnixAttributesEditing());
-    enable("menu.command.volume_information", am.HasDetailedVolumeInformation());
-    enable("menu.command.batch_rename", am.HasBatchRename());
-    enable("menu.command.internal_viewer", am.HasInternalViewer());
-    enable("menu.command.compress_here", am.HasCompressionOperation());
-    enable("menu.command.compress_to_opposite", am.HasCompressionOperation());
-    enable("menu.command.link_create_soft", am.HasLinksManipulation());
-    enable("menu.command.link_create_hard", am.HasLinksManipulation());
-    enable("menu.command.link_edit", am.HasLinksManipulation());
-    enable("menu.command.open_xattr", am.HasXAttrFS());
+        hide("menu.go.connect.lanshare");
+    }
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *) [[maybe_unused]] _notification
@@ -535,13 +417,8 @@ static std::string AquaticPrimePublicKey()
 
     [self temporaryFileStorage]; // implicitly runs the background temp storage purging
 
-    auto &am = self.activationManager;
-
-    // Non-MAS version stuff below:
-    if( !am.ForAppStore() ) {
-        if( am.ShouldShowTrialNagScreen() ) // check if we should show a nag screen
-            dispatch_to_main_queue_after(500ms, [self] { [self showTrialWindow]; });
-
+    // Non-MAS version extended logic below:
+    if( !nc::base::AmISandboxed() ) {
         // setup Sparkle updater stuff
         NSMenuItem *item = [[NSMenuItem alloc] init];
         item.title = NSLocalizedString(@"Check for Updates...",
@@ -549,36 +426,14 @@ static std::string AquaticPrimePublicKey()
         item.target = NCBootstrapSharedSUUpdaterInstance();
         item.action = NCBootstrapSUUpdaterAction();
         [[NSApp.mainMenu itemAtIndex:0].submenu insertItem:item atIndex:1];
-    }
 
-    // initialize stuff related with in-app purchases
-    if( am.Type() == ActivationManager::Distribution::Free ) {
-        m_AppStoreHelper = [[AppStoreHelper alloc] initWithActivationManager:am feedbackManager:self.feedbackManager];
-        m_AppStoreHelper.onProductPurchased = [=, &am]([[maybe_unused]] const std::string &_id) {
-            if( am.ReCheckProFeaturesInAppPurchased() ) {
-                [self updateMainMenuFeaturesByVersionAndState];
-            }
-        };
-        dispatch_to_main_queue_after(500ms, [=] { [m_AppStoreHelper showProFeaturesWindowIfNeededAsNagScreen]; });
-        
-        if( am.UsedHadPurchasedProFeatures() ) {
-            self.dock.SetBaseIcon( [NSImage imageNamed:@"Icon"] );
-        }
-    }
+        if( GlobalConfig().GetBool(g_ConfigForceFn) )
+            nc::utility::FunctionalKeysPass::Instance().Enable(); // accessibility - remapping functional keys FnXX
 
-    // accessibility stuff for NonMAS version
-    if( am.Type() == ActivationManager::Distribution::Trial && GlobalConfig().GetBool(g_ConfigForceFn) ) {
-        nc::utility::FunctionalKeysPass::Instance().Enable();
-    }
-
-    if( am.Type() == ActivationManager::Distribution::Trial && am.UserHadRegistered() == false &&
-        am.IsTrialPeriod() == false )
-        self.dock.SetUnregisteredBadge(true);
-
-#ifdef __NC_VERSION_TRIAL__
-    if( !am.ForAppStore() )
+#ifdef __NC_VERSION_TRIAL__ // no-lic - temp workaround
         PFMoveToApplicationsFolderIfNecessary();
 #endif
+    }
 
     m_ConfigWiring = std::make_unique<ConfigWiring>(GlobalConfig(), m_PoolEnqueueFilter);
     m_ConfigWiring->Wire();
@@ -743,34 +598,11 @@ static std::string AquaticPrimePublicKey()
     return true;
 }
 
-- (bool)processLicenseFileActivation:(NSArray<NSString *> *)_filenames
-{
-    [[clang::no_destroy]] static const auto nc_license_extension = "."s + self.activationManager.LicenseFileExtension();
-
-    if( _filenames.count != 1 )
-        return false;
-
-    for( NSString *pathstring in _filenames )
-        if( auto fs = pathstring.fileSystemRepresentationSafe ) {
-            if( self.activationManager.Type() == ActivationManager::Distribution::Trial ) {
-                if( _filenames.count == 1 && std::filesystem::path(fs).extension() == nc_license_extension ) {
-                    std::string p = fs;
-                    dispatch_to_main_queue([=] { [self processProvidedLicenseFile:p]; });
-                    return true;
-                }
-            }
-        }
-    return false;
-}
-
 - (void)drainFilesToOpen
 {
     if( m_FilesToOpen.count == 0 )
         return;
-
-    if( ![self processLicenseFileActivation:m_FilesToOpen] )
-        self.servicesHandler.OpenFiles(m_FilesToOpen);
-
+    self.servicesHandler.OpenFiles(m_FilesToOpen);
     [m_FilesToOpen removeAllObjects];
 }
 
@@ -786,38 +618,6 @@ static std::string AquaticPrimePublicKey()
     [m_FilesToOpen addObjectsFromArray:filenames];
     dispatch_to_main_queue_after(250ms, [] { [g_Me drainFilesToOpen]; });
     [NSApp replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
-}
-
-- (void)processProvidedLicenseFile:(const std::string &)_path
-{
-    const bool valid_and_installed = self.activationManager.ProcessLicenseFile(_path);
-    if( valid_and_installed ) {
-        ThankUserForBuyingALicense();
-        [self updateMainMenuFeaturesByVersionAndState];
-        self.dock.SetUnregisteredBadge(false);
-    }
-}
-
-- (IBAction)OnActivateExternalLicense:(id) [[maybe_unused]] _sender
-{
-    if( auto path = AskUserForLicenseFile(self.activationManager) )
-        [self processProvidedLicenseFile:*path];
-}
-
-- (IBAction)OnPurchaseExternalLicense:(id) [[maybe_unused]] _sender
-{
-    const auto url = [NSURL URLWithString:@"http://magnumbytes.com/redirectlinks/buy_license"];
-    [NSWorkspace.sharedWorkspace openURL:url];
-}
-
-- (IBAction)OnPurchaseProFeaturesInApp:(id) [[maybe_unused]] _sender
-{
-    [m_AppStoreHelper showProFeaturesWindow];
-}
-
-- (IBAction)OnRestoreInAppPurchases:(id) [[maybe_unused]] _sender
-{
-    [m_AppStoreHelper askUserToRestorePurchases];
 }
 
 - (void)openFolderService:(NSPasteboard *)pboard userData:(NSString *)data error:(__strong NSString **)error
@@ -915,7 +715,7 @@ static std::string AquaticPrimePublicKey()
 
 - (ExternalEditorsStorage &)externalEditorsStorage
 {
-    static auto i = new ExternalEditorsStorage(g_ConfigExtEditorsList, self.activationManager);
+    static auto i = new ExternalEditorsStorage(g_ConfigExtEditorsList);
     return *i;
 }
 
@@ -1087,38 +887,6 @@ static std::string AquaticPrimePublicKey()
     return *m_NativeFSManager;
 }
 
-- (void)showTrialWindow
-{
-    const auto expired =
-        (self.activationManager.UserHadRegistered() == false) && (self.activationManager.IsTrialPeriod() == false);
-
-    auto window = [[TrialWindowController alloc] init];
-    window.isExpired = expired;
-    __weak NCAppDelegate *weak_self = self;
-    window.onBuyLicense = [weak_self] {
-        if( auto self = weak_self ) {
-            [self OnPurchaseExternalLicense:self];
-        }
-    };
-    window.onActivate = [weak_self] {
-        if( auto self = weak_self ) {
-            [self OnActivateExternalLicense:self];
-            if( self.activationManager.UserHadRegistered() == true )
-                return true;
-        }
-        return false;
-    };
-    window.onQuit = [weak_self] {
-        if( auto self = weak_self ) {
-            const auto expired = (self.activationManager.UserHadRegistered() == false) &&
-                                 (self.activationManager.IsTrialPeriod() == false);
-            if( expired == true )
-                dispatch_to_main_queue([] { [NSApp terminate:nil]; });
-        }
-    };
-    [window show];
-}
-
 static void DoTemporaryFileStoragePurge()
 {
     assert(g_TemporaryFileStorage != nullptr);
@@ -1185,31 +953,14 @@ static void DoTemporaryFileStoragePurge()
     return m_PoolEnqueueFilter;
 }
 
-- (nc::bootstrap::ActivationManager &)activationManager
-{
-    return *m_ActivationManager;
-}
-
 - (nc::FeedbackManager &)feedbackManager
 {
-    static nc::FeedbackManager *instance = [self] {
-        auto fm = new nc::FeedbackManagerImpl(*m_ActivationManager);
+    static nc::FeedbackManager *instance = [] {
+        auto fm = new nc::FeedbackManagerImpl();
         atexit([] { instance->UpdateStatistics(); });
         return fm;
     }();
     return *instance;
-}
-
-- (void)checkMASReceipt
-{
-    if( self.activationManager.ForAppStore() ) {
-        const auto path = NSBundle.mainBundle.appStoreReceiptURL.path;
-        const auto exists = [NSFileManager.defaultManager fileExistsAtPath:path];
-        if( !exists ) {
-            std::cerr << "No receipt - exit the app with code 173" << std::endl;
-            exit(173);
-        }
-    }
 }
 
 - (IBAction)onMainMenuShowLogs:(id)_sender
@@ -1258,4 +1009,4 @@ nc::vfs::NativeHost &NativeVFSHostInstance() noexcept
     return NCAppDelegate.me.nativeHost;
 }
 
-}
+} // namespace nc::bootstrap

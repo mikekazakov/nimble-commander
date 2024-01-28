@@ -1,10 +1,10 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowToolsTab.h"
-#include "../Bootstrap/ActivationManager.h"
 #include <Panel/ExternalTools.h>
 #include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include <Base/debug.h>
 
 using namespace std::literals;
 using nc::panel::ExternalTool;
@@ -49,16 +49,13 @@ static bool AskUserToDeleteTool()
     std::function<nc::panel::ExternalToolsStorage &()> m_ToolsStorage;
     std::vector<std::shared_ptr<const ExternalTool>> m_Tools;
     nc::panel::ExternalToolsStorage::ObservationTicket m_ToolsObserver;
-    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
 - (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage
-         activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     assert(_tool_storage);
     self = [super init];
     if( self ) {
-        m_ActivationManager = &_am;
         self.anySelected = false;
         m_ToolsStorage = _tool_storage;
     }
@@ -70,7 +67,7 @@ static bool AskUserToDeleteTool()
     NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:self.identifier];
     item.image = self.toolbarItemImage;
     item.label = self.toolbarItemLabel;
-    item.enabled = m_ActivationManager->HasExternalTools();
+    item.enabled = true;
     return item;
 }
 
@@ -391,7 +388,7 @@ static bool AskUserToDeleteTool()
 
 - (bool)haveCommandLineTools
 {
-    return m_ActivationManager->HasTerminal();
+    return nc::base::AmISandboxed() == false;
 }
 
 @end

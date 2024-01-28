@@ -12,23 +12,6 @@
 	<string>Click OK to allow Nimble Commander to display and manage the contents of the Documents folder.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>nimblecommanderlicense</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>License File Type</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
-			<key>LSTypeIsPackage</key>
-			<integer>0</integer>
-		</dict>
-	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>

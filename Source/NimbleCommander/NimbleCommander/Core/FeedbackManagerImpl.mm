@@ -1,8 +1,7 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FeedbackManagerImpl.h"
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <Base/CFDefaultsCPP.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "../GeneralUI/FeedbackWindow.h"
 #include <Base/dispatch_cpp.h>
 
@@ -39,11 +38,10 @@ static bool HasInternetConnection()
     return returnValue;
 }
 
-FeedbackManagerImpl::FeedbackManagerImpl(nc::bootstrap::ActivationManager &_am,
-                                         std::function<time_t()> _time_source)
+FeedbackManagerImpl::FeedbackManagerImpl(std::function<time_t()> _time_source)
     : m_ApplicationRunsCount(GetAndUpdateRunsCount()), m_TotalHoursUsed(GetTotalHoursUsed()),
-      m_StartupTime(_time_source()), m_ActivationManager(_am), 
-      m_TimeSource(_time_source), m_LastRating(base::CFDefaultsGetOptionalInt(g_LastRatingKey)),
+      m_StartupTime(_time_source()), m_TimeSource(_time_source),
+      m_LastRating(base::CFDefaultsGetOptionalInt(g_LastRatingKey)),
       m_LastRatingTime(base::CFDefaultsGetOptionalLong(g_LastRatingTimeKey))
 {
     m_FirstRunTime = GetOrSetFirstRunTime();
@@ -64,8 +62,7 @@ void FeedbackManagerImpl::CommitRatingOverlayResult(int _result)
 
     if( m_HasUI && _result > 0 ) {
         // used clicked at some star - lets show a window then
-        FeedbackWindow *w = [[FeedbackWindow alloc] initWithActivationManager:m_ActivationManager
-                                                              feedbackManager:*this];
+        FeedbackWindow *w = [[FeedbackWindow alloc] initWithFeedbackManager:*this];
         w.rating = _result;
         [w showWindow:nil];
     }
@@ -146,18 +143,15 @@ void FeedbackManagerImpl::EmailFeedback()
 {
     const auto info = NSBundle.mainBundle.infoDictionary;
     NSString *toAddress = @"feedback@magnumbytes.com";
-    NSString *subject =
-        [NSString stringWithFormat:@"Feedback on %@ version %@ (%@)",
-                                   [info objectForKey:@"CFBundleName"],
-                                   [info objectForKey:@"CFBundleShortVersionString"],
-                                   [info objectForKey:@"CFBundleVersion"]];
+    NSString *subject = [NSString stringWithFormat:@"Feedback on %@ version %@ (%@)",
+                                                   [info objectForKey:@"CFBundleName"],
+                                                   [info objectForKey:@"CFBundleShortVersionString"],
+                                                   [info objectForKey:@"CFBundleVersion"]];
     NSString *bodyText = @"Please write your feedback here.";
-    NSString *mailtoAddress =
-        [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
+    NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
 
-    NSString *urlstring = [mailtoAddress
-        stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet
-                                                               .URLQueryAllowedCharacterSet];
+    NSString *urlstring =
+        [mailtoAddress stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet];
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
 }
 
@@ -165,17 +159,14 @@ void FeedbackManagerImpl::EmailSupport()
 {
     const auto info = NSBundle.mainBundle.infoDictionary;
     NSString *toAddress = @"support@magnumbytes.com";
-    NSString *subject =
-        [NSString stringWithFormat:@"Support for %@ version %@ (%@)",
-                                   [info objectForKey:@"CFBundleName"],
-                                   [info objectForKey:@"CFBundleShortVersionString"],
-                                   [info objectForKey:@"CFBundleVersion"]];
+    NSString *subject = [NSString stringWithFormat:@"Support for %@ version %@ (%@)",
+                                                   [info objectForKey:@"CFBundleName"],
+                                                   [info objectForKey:@"CFBundleShortVersionString"],
+                                                   [info objectForKey:@"CFBundleVersion"]];
     NSString *bodyText = @"Please describle your issues with Nimble Commander here.";
-    NSString *mailtoAddress =
-        [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
-    NSString *urlstring = [mailtoAddress
-        stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet
-                                                               .URLQueryAllowedCharacterSet];
+    NSString *mailtoAddress = [NSString stringWithFormat:@"mailto:%@?Subject=%@&body=%@", toAddress, subject, bodyText];
+    NSString *urlstring =
+        [mailtoAddress stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet];
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:urlstring]];
 }
 
@@ -183,8 +174,7 @@ void FeedbackManagerImpl::RateOnAppStore()
 {
     // https://developer.apple.com/documentation/storekit/skstorereviewcontroller/requesting_app_store_reviews
     const auto fmt = @"https://apps.apple.com/app/id%s?action=write-review";
-    const auto review_url =
-        [NSString stringWithFormat:fmt, m_ActivationManager.AppStoreID().c_str()];
+    const auto review_url = [NSString stringWithFormat:fmt, "905202937"]; // ID of a free MAS version
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:review_url]];
 }
 
@@ -241,4 +231,4 @@ void FeedbackManagerImpl::SetHasUI(bool _has_ui)
     m_HasUI = _has_ui;
 }
 
-}
+} // namespace nc

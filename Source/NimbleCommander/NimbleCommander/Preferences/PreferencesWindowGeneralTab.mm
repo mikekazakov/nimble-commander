@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowGeneralTab.h"
 #include "../Core/SandboxManager.h"
 #include "../Bootstrap/AppDelegate.h"
-#include "../Bootstrap/ActivationManager.h"
 #include <Base/dispatch_cpp.h>
+#include <Base/debug.h>
 
 using namespace std::literals;
 
@@ -14,24 +14,12 @@ using namespace std::literals;
 
 @end
 
-@implementation PreferencesWindowGeneralTab {
-    nc::bootstrap::ActivationManager *m_ActivationManager;
-}
-
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
-{
-    self = [super init];
-    if( self ) {
-        m_ActivationManager = &_am;
-    }
-
-    return self;
-}
+@implementation PreferencesWindowGeneralTab
 
 - (void)loadView
 {
     [super loadView];
-    if( !m_ActivationManager->Sandboxed() ) {
+    if( !nc::base::AmISandboxed() ) {
         self.FSAccessResetButton.enabled = false;
     }
     [self.view layoutSubtreeIfNeeded];

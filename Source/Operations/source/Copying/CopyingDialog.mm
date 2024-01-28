@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Base/CommonPaths.h>
 #include <Base/algo.h>
 #include "../Internal.h"
@@ -87,7 +87,6 @@ static std::string MakeCanonicPath(std::string _input)
     const auto nib_path = [Bundle() pathForResource:@"CopyingDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
     if( self ) {
-        self.allowVerification = false;
         m_SourceItems = std::move(_source_items);
         m_SourceDirectory = _source_directory;
         m_SourceHost = _source_host;
@@ -157,8 +156,6 @@ static std::string MakeCanonicPath(std::string _input)
         self.CopyButton.title = self.RenameButtonStringStub.title;
     }
     [self.VerifySetting selectItemWithTag:static_cast<int>(m_Options.verification)];
-    if( !self.allowVerification )
-        self.VerifySetting.enabled = false;
 }
 
 - (IBAction)OnCopy:(id) [[maybe_unused]] _sender

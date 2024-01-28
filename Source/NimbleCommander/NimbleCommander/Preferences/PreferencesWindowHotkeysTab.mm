@@ -1,13 +1,13 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowHotkeysTab.h"
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/FunctionKeysPass.h>
 #import <GTMHotKeyTextField/GTMHotKeyTextField.h>
 #include "../Core/ActionsShortcutsManager.h"
 #include <Panel/ExternalTools.h>
-#include "../Bootstrap/ActivationManager.h"
 #include <any>
 #include <Base/dispatch_cpp.h>
+#include <Base/debug.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 
@@ -71,17 +71,14 @@ enum class SourceType
     std::vector<std::any> m_SourceNodes;
     std::vector<std::any> m_FilteredNodes;
     SourceType m_SourceType;
-    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
 @synthesize sourceType = m_SourceType;
 
 - (id)initWithToolsStorage:(std::function<nc::panel::ExternalToolsStorage &()>)_tool_storage
-         activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super init];
     if( self ) {
-        m_ActivationManager = &_am;
         m_SourceType = SourceType::All;
         m_ToolsStorage = _tool_storage;
         const auto &all_shortcuts = ActionsShortcutsManager::Instance().AllShortcuts();
@@ -216,7 +213,7 @@ static bool ParticipatesInConflicts(const std::string &_action_name)
     [super loadView];
     m_Tools = m_ToolsStorage().GetAllTools();
 
-    if( m_ActivationManager->Sandboxed() )
+    if( nc::base::AmISandboxed() )
         self.forceFnButton.hidden = true;
 
     m_ToolsObserver = m_ToolsStorage().ObserveChanges([=] {

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectToServer.h"
 #include "FTPConnectionSheetController.h"
 #include "SFTPConnectionSheetController.h"
@@ -8,8 +8,8 @@
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <Base/debug.h>
 #include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <Carbon/Carbon.h>
 
 namespace {
@@ -80,7 +80,6 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 
 @implementation ConnectToServer {
     NetworkConnectionsManager *m_Manager;
-    nc::bootstrap::ActivationManager *m_ActivationManager;
     std::vector<NetworkConnectionsManager::Connection> m_Connections;
     std::optional<NetworkConnectionsManager::Connection> m_OutputConnection;
     bool m_Shown;
@@ -89,13 +88,11 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 @synthesize connection = m_OutputConnection;
 
 - (instancetype)initWithNetworkConnectionsManager:(NetworkConnectionsManager &)_manager
-                                activationManager:(nc::bootstrap::ActivationManager &)_am
 {
     self = [super init];
     if( self ) {
         m_Shown = false;
         m_Manager = &_manager;
-        m_ActivationManager = &_am;
     }
     return self;
 }
@@ -362,7 +359,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 
 - (bool)LANSharesEnabled
 {
-    return m_ActivationManager->HasLANSharesMounting();
+    return nc::base::AmISandboxed() == false;
 }
 
 @end

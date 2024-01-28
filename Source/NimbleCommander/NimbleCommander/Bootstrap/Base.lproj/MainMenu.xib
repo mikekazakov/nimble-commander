@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -35,39 +35,6 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnMenuSendFeedback:" target="-1" id="893"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="143">
-                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
-                            </menuItem>
-                            <menuItem title="Registration Info..." tag="10120" id="p5z-kC-qPf">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="onMainMenuPerformShowRegistrationInfo:" target="-1" id="NmJ-EJ-5YB"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Purchase License" tag="10090" id="NOq-ty-cHI">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="OnPurchaseExternalLicense:" target="-1" id="mYb-Au-kxf"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Activate License..." tag="10080" id="Obg-B8-YTv">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="OnActivateExternalLicense:" target="-1" id="dEP-2K-I2S"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Purchase Pro Features" tag="10100" id="chd-VR-dSN">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="OnPurchaseProFeaturesInApp:" target="-1" id="uug-QA-Iud"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Restore Purchases" tag="10110" id="0Y5-VP-Vjw">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="OnRestoreInAppPurchases:" target="-1" id="gfV-dI-x37"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="fPr-eP-snC">

@@ -3,14 +3,9 @@
 
 class ExternalEditorsStorage;
 
-namespace nc::bootstrap {
-class ActivationManager;
-}
-
 @interface PreferencesWindowExternalEditorsTab
     : NSViewController <RHPreferencesViewControllerProtocol, NSTableViewDataSource>
 
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
-                           editorsStorage:(ExternalEditorsStorage &)_storage;
+- (instancetype)initWithEditorsStorage:(ExternalEditorsStorage &)_storage;
 
 @end

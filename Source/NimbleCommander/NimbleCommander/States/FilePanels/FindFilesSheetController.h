@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/SheetController.h>
@@ -8,10 +8,6 @@
 #include <span>
 
 @class FindFilesSheetController;
-
-namespace nc::bootstrap {
-class ActivationManager;
-}
 
 namespace nc::config {
 class Config;
@@ -45,9 +41,6 @@ struct FindFilesSheetViewRequest {
 
 @interface FindFilesSheetController
     : SheetController <NSTableViewDataSource, NSTableViewDelegate, NSSearchFieldDelegate>
-
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am;
 
 @property(nonatomic) VFSHostPtr host;
 @property(nonatomic) std::string path;

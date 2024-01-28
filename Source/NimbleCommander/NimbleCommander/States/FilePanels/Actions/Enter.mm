@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Enter.h"
 #include "GoToFolder.h"
 #include "ExecuteInTerminal.h"
@@ -6,14 +6,10 @@
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include <VFS/VFS.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 namespace nc::panel::actions {
 
-Enter::Enter(nc::bootstrap::ActivationManager &_am, const PanelAction &_open_files_action)
-    : m_ActivationManager(_am), m_OpenFilesAction(_open_files_action),
-      m_GoIntoFolder(m_ActivationManager.HasArchivesBrowsing(), false),
-      m_ExecuteInTerminal(m_ActivationManager)
+Enter::Enter(const PanelAction &_open_files_action) : m_OpenFilesAction(_open_files_action), m_GoIntoFolder(false)
 {
 }
 

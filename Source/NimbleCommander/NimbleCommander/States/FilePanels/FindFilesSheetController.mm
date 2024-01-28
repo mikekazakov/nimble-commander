@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FindFilesSheetController.h"
 #include <Base/dispatch_cpp.h>
 #include <Base/DispatchGroup.h>
@@ -12,7 +12,6 @@
 #include <NimbleCommander/States/FilePanels/PanelAux.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include <NimbleCommander/Core/VFSInstancePromise.h>
 #include <Utility/StringExtras.h>
@@ -238,8 +237,6 @@ private:
     FindFilesSheetFoundItem *m_DoubleClickedItem;
     std::function<void(const std::vector<nc::vfs::VFSPath> &_filepaths)> m_OnPanelize;
     std::function<void(const nc::panel::FindFilesSheetViewRequest &)> m_OnView;
-
-    nc::bootstrap::ActivationManager *m_ActivationManager;
 }
 
 @synthesize FoundItems = m_FoundItems;
@@ -248,11 +245,10 @@ private:
 @synthesize onPanelize = m_OnPanelize;
 @synthesize onView = m_OnView;
 
-- (instancetype)initWithActivationManager:(nc::bootstrap::ActivationManager &)_am
+- (instancetype)init
 {
     self = [super init];
     if( self ) {
-        m_ActivationManager = &_am;
         m_FileSearch = std::make_unique<SearchForFiles>();
         m_FoundItems = [[NSMutableArray alloc] initWithCapacity:4096];
         m_FoundItemsBatch = [[NSMutableArray alloc] initWithCapacity:4096];
@@ -310,21 +306,6 @@ private:
     sheet.onCtrlP = [sheet makeClickHotkey:self.PanelButton];
     sheet.onCtrlG = [sheet makeClickHotkey:self.GoToButton];
     sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
-
-    if( !m_ActivationManager->HasTemporaryPanels() ) {
-        [self.PanelButton unbind:@"enabled2"];
-        [self.PanelButton unbind:@"enabled"];
-        self.PanelButton.enabled = false;
-    }
-    if( !m_ActivationManager->HasInternalViewer() ) {
-        [self.ViewButton unbind:@"enabled2"];
-        [self.ViewButton unbind:@"enabled"];
-        self.ViewButton.enabled = false;
-    }
-    if( !m_ActivationManager->HasArchivesBrowsing() ) {
-        [self.SearchInArchivesButton unbind:@"enabled"];
-        self.SearchInArchivesButton.enabled = false;
-    }
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item
@@ -541,9 +522,6 @@ private:
 
 - (VFSHostPtr)spawnArchiveFromPath:(const char *)_path inVFS:(const VFSHostPtr &)_host
 {
-    if( !m_ActivationManager->HasArchivesBrowsing() )
-        return nullptr;
-
     char extension[MAXPATHLEN];
     if( !GetExtensionFromPath(_path, extension) )
         return nullptr;

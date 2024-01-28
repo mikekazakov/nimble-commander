@@ -1,6 +1,6 @@
 name: Build and Test
 
-on: [push, workflow_dispatch]
+on: [push, pull_request, workflow_dispatch]
 
 env:
   XC_VERSION: ${{ '15.1' }}

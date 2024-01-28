@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 // ⇧ - NSShiftKeyMask
@@ -33,7 +33,7 @@ public:
     /**
      * return "" on if action corresponing _tag wasn't found.
      */
-    std::string ActionFromTag(int _tag) const;
+    std::string_view ActionFromTag(int _tag) const noexcept;
 
     /**
      * Return default if can't be found.
@@ -54,7 +54,7 @@ public:
 
     void RevertToDefaults();
 
-    bool SetShortCutOverride(const std::string &_action, const ShortCut &_sc);
+    bool SetShortCutOverride(std::string_view _action, const ShortCut &_sc);
 
     void SetMenuShortCuts(NSMenu *_menu) const;
 
@@ -70,12 +70,6 @@ private:
     void ReadOverrideFromConfig();
     void WriteOverridesToConfig() const;
 
-    robin_hood::unordered_flat_map<int, const char *> m_TagToAction;
-    robin_hood::unordered_flat_map<std::string,
-                                   int,
-                                   nc::RHTransparentStringHashEqual,
-                                   nc::RHTransparentStringHashEqual>
-        m_ActionToTag;
     robin_hood::unordered_flat_map<int, ShortCut> m_ShortCutsDefaults;
     robin_hood::unordered_flat_map<int, ShortCut> m_ShortCutsOverrides;
 };

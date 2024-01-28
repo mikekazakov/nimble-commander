@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -26,6 +26,11 @@ static std::string ReplQuotes(std::string_view src)
     std::string s(src);
     std::replace(s.begin(), s.end(), '\'', '\"');
     return s;
+}
+
+static std::shared_ptr<NonPersistentOverwritesStorage> MakeOverwritesStorage(std::string_view _src)
+{
+    return std::make_shared<NonPersistentOverwritesStorage>(ReplQuotes(_src));
 }
 
 static nc::config::Value JSONToObj(std::string_view _json)
@@ -310,19 +315,19 @@ TEST_CASE(PREFIX "Picking a new name for a duplicate theme")
     ";
     ConfigImpl config{ReplQuotes(json), MakeDummyStorage()};
     ThemesManager man(config, "current", "themes");
-    
-    CHECK( man.SuitableNameForNewTheme("name") == "name 3" );
-    CHECK( man.SuitableNameForNewTheme("name ") == "name " );
-    CHECK( man.SuitableNameForNewTheme("name 2") == "name 3" );
-    CHECK( man.SuitableNameForNewTheme("name 2 ") == "name 2 " );
-    CHECK( man.SuitableNameForNewTheme("another") == "another 2" );
-    CHECK( man.SuitableNameForNewTheme("not here") == "not here" );
-    CHECK( man.SuitableNameForNewTheme("name2") == "name2" );
-    CHECK( man.SuitableNameForNewTheme("1") == "1" );
-    CHECK( man.SuitableNameForNewTheme(" 1") == " 1" );
-    CHECK( man.SuitableNameForNewTheme("1 ") == "1 " );
-    CHECK( man.SuitableNameForNewTheme("") == "" );
-    CHECK( man.SuitableNameForNewTheme(" ") == " " );
+
+    CHECK(man.SuitableNameForNewTheme("name") == "name 3");
+    CHECK(man.SuitableNameForNewTheme("name ") == "name ");
+    CHECK(man.SuitableNameForNewTheme("name 2") == "name 3");
+    CHECK(man.SuitableNameForNewTheme("name 2 ") == "name 2 ");
+    CHECK(man.SuitableNameForNewTheme("another") == "another 2");
+    CHECK(man.SuitableNameForNewTheme("not here") == "not here");
+    CHECK(man.SuitableNameForNewTheme("name2") == "name2");
+    CHECK(man.SuitableNameForNewTheme("1") == "1");
+    CHECK(man.SuitableNameForNewTheme(" 1") == " 1");
+    CHECK(man.SuitableNameForNewTheme("1 ") == "1 ");
+    CHECK(man.SuitableNameForNewTheme("") == "");
+    CHECK(man.SuitableNameForNewTheme(" ") == " ");
 }
 
 TEST_CASE(PREFIX "Renames 'Modern' to 'Light'")
@@ -341,5 +346,42 @@ TEST_CASE(PREFIX "Renames 'Modern' to 'Light'")
     ConfigImpl config{ReplQuotes(json), MakeDummyStorage()};
     ThemesManager man(config, "current", "themes");
     CHECK(man.ThemeNames() == std::vector<std::string>{"Light", "second"});
-    CHECK( man.SelectedThemeName() == "Light");
+    CHECK(man.SelectedThemeName() == "Light");
+}
+
+TEST_CASE(PREFIX "New themes can be added when there are overwrites already")
+{
+    const auto defaults = "\
+    {\
+        'current': 'Light',\
+        'themes': {\
+            'themes_v1': [\
+                {'themeName': 'Light', 'themeAppearance': 'light'},\
+                {'themeName': 'Dark', 'themeAppearance': 'dark'},\
+                {'themeName': 'Grey', 'themeAppearance': 'dark'}\
+            ]\
+        }\
+    }";
+    const auto overwrites = "\
+    {\
+        'current': 'Light',\
+        'themes': {\
+            'themes_v1': [\
+                {'themeName': 'Light', 'themeAppearance': 'dark'},\
+                {'themeName': 'Dark', 'themeAppearance': 'light'},\
+                {'themeName': 'Blue', 'themeAppearance': 'light'}\
+            ]\
+        }\
+    }";
+    ConfigImpl config{ReplQuotes(defaults), MakeOverwritesStorage(overwrites)};
+    ThemesManager man(config, "current", "themes");
+    CHECK(man.ThemeNames() == std::vector<std::string>{"Light", "Dark", "Grey", "Blue"});
+    CHECK(man.SelectTheme("Light"));
+    CHECK(man.SelectedTheme().AppearanceType() == ThemeAppearance::Dark);
+    CHECK(man.SelectTheme("Dark"));
+    CHECK(man.SelectedTheme().AppearanceType() == ThemeAppearance::Light);
+    CHECK(man.SelectTheme("Grey"));
+    CHECK(man.SelectedTheme().AppearanceType() == ThemeAppearance::Dark);
+    CHECK(man.SelectTheme("Blue"));
+    CHECK(man.SelectedTheme().AppearanceType() == ThemeAppearance::Light);
 }

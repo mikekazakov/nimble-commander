@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ThemesManager.h"
 #include "Theme.h"
 #include <Config/RapidJSON.h>
@@ -6,6 +6,8 @@
 #include <robin_hood.h>
 #include <charconv>
 #include <fmt/core.h>
+#include <ranges>
+#include <algorithm>
 
 namespace nc {
 
@@ -118,6 +120,9 @@ void ThemesManager::LoadThemes()
     if( !themes.IsArray() )
         return;
 
+    m_OrderedThemeNames = m_OrderedDefaultThemeNames;
+
+    // Load themes from the current state
     for( auto i = themes.Begin(), e = themes.End(); i != e; ++i ) {
         if( !i->IsObject() )
             continue;
@@ -131,7 +136,16 @@ void ThemesManager::LoadThemes()
         doc.CopyFrom(*i, nc::config::g_CrtAllocator);
 
         m_Themes.emplace(*name, std::make_shared<nc::config::Document>(std::move(doc)));
-        m_OrderedThemeNames.emplace_back(*name);
+
+        if( std::ranges::find(m_OrderedThemeNames, *name) == m_OrderedThemeNames.end() )
+            m_OrderedThemeNames.emplace_back(*name);
+    }
+
+    // Load any new themes that were added into the defaults
+    for( auto &name : m_OrderedDefaultThemeNames ) {
+        if( !m_Themes.contains(name) ) {
+            m_Themes.emplace(name, m_DefaultThemes.at(name));
+        }
     }
 }
 

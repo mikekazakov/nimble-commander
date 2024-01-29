@@ -1,7 +1,7 @@
 name: Nightly Build
 
 on:
-  pull_request:
+  workflow_dispatch:
 
 env:
   XC_VERSION: ${{ '15.1' }}

@@ -1,0 +1,13 @@
+name: Nightly Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v3
+    - name: Hello
+      run: echo Hello

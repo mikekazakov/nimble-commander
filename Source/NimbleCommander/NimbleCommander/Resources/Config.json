@@ -1063,7 +1063,7 @@
                         "viewerOverlayColor": "#FFFFFF",
                         "viewerTextColor": "#EFEFEF",
                         "viewerSelectionColor": "#B4D6FC",
-                        "viewerBackgroundColor": "#FFFFFF"
+                        "viewerBackgroundColor": "#202020"
                     }
         ]
     }

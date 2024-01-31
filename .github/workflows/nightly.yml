@@ -40,7 +40,8 @@ jobs:
         # apply provisioning profile
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-
+    - name: Build and package
+      run: "cd Scripts && ./build_nightly.sh"
     - name: Clean up keychain and provisioning profile
       if: ${{ always() }}
       run: |

@@ -95,7 +95,7 @@ create-dmg \
  "${APP_NAME}"
 
 # Upload the built dmg into Apple's notary service
-# xcrun notarytool submit ${DMG_NAME} --keychain-profile AC_PASSWORD --wait
+xcrun notarytool submit ${DMG_NAME} --keychain-profile AC_PASSWORD --wait
 
 # Finally, staple the dmg
-# xcrun stapler staple "${DMG_NAME}"
+xcrun stapler staple "${DMG_NAME}"

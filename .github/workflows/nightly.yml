@@ -22,6 +22,9 @@ jobs:
         P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
         BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        NOTARIZATION_APPLE_ID: ${{ secrets.NOTARIZATION_APPLE_ID }}
+        NOTARIZATION_PWD: ${{ secrets.NOTARIZATION_PWD }}
+        NOTARIZATION_TEAM: ${{ secrets.NOTARIZATION_TEAM }}
       run: |
         # create variables
         CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
@@ -40,6 +43,8 @@ jobs:
         # apply provisioning profile
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+        # store notatization credentials
+        xcrun notarytool store-credentials AC_PASSWORD --apple-id $NOTARIZATION_APPLE_ID --team-id $NOTARIZATION_TEAM --password $NOTARIZATION_PWD
     - name: Build and package
       run: "cd Scripts && ./build_nightly.sh"
     - name: Clean up keychain and provisioning profile

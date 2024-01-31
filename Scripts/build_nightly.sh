@@ -52,11 +52,9 @@ APP_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= 
 APP_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//' )
 APP_PATH=$APP_DIR/$APP_NAME
 
-$XC build
-#$XC build | xcpretty
+$XC build | xcpretty
 
 cp -R "${APP_PATH}" ./
-
 
 # Sign the app with timestamps
 codesign \
@@ -91,6 +89,7 @@ create-dmg \
  --icon-size 128 \
  --icon "${APP_NAME}" 176 192 \
  --app-drop-link 432 192 \
+ --codesign "Developer ID Application: Mikhail Kazakov (AC5SJT236H)" \
  "${DMG_NAME}" \
  "${APP_NAME}"
 

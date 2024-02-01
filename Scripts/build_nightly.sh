@@ -28,6 +28,10 @@ mkdir -p "${BUILD_DIR}"
 ROOT_DIR=$(cd "$SCRIPTS_DIR/.." && pwd)
 
 XCODEPROJ="../Source/NimbleCommander/NimbleCommander.xcodeproj"
+ARCHIVE_PATH="${BUILD_DIR}/NC_NonMAS.xcarchive"
+BUILT_PATH="${BUILD_DIR}/built"
+
+mkdir -p "${ARCHIVE_PATH}"
 
 PBUDDY=/usr/libexec/PlistBuddy
 
@@ -43,41 +47,22 @@ XC="xcodebuild \
  -project ${XCODEPROJ} \
  -scheme NimbleCommander-NonMAS \
  -configuration Release \
- CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO \
- SYMROOT=${BUILD_DIR} \
- OBJROOT=${BUILD_DIR} \
  OTHER_CFLAGS=\"-fdebug-prefix-map=${ROOT_DIR}=.\""
 
-APP_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//' )
 APP_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//' )
-APP_PATH=$APP_DIR/$APP_NAME
+APP_PATH="${BUILT_PATH}/${APP_NAME}"
 
-$XC build | xcpretty
+$XC -archivePath ${ARCHIVE_PATH} archive | xcpretty
 
-cp -R "${APP_PATH}" ./
-
-# Sign the app with timestamps
-codesign \
- --verbose \
- --sign 'Developer ID Application' \
- --force \
- --deep \
- --timestamp \
- --options runtime \
- "./${APP_NAME}/Contents/Library/LaunchServices/info.filesmanager.Files.PrivilegedIOHelperV2"
-
-codesign \
- --verbose \
- --sign 'Developer ID Application' \
- --force \
- --deep \
- --timestamp \
- --options runtime \
- "./${APP_NAME}"
+# Export a signed version
+xcodebuild -exportArchive \
+ -archivePath $ARCHIVE_PATH \
+ -exportPath $BUILT_PATH \
+ -exportOptionsPlist export_options.plist
 
 # Extract the version number and the build number
-VERSION=$( $PBUDDY -c "Print CFBundleShortVersionString" "$APP_PATH/Contents/Info.plist" )
-BUILD=$( $PBUDDY -c "Print CFBundleVersion" "$APP_PATH/Contents/Info.plist" )
+VERSION=$( $PBUDDY -c "Print CFBundleShortVersionString" "${APP_PATH}/Contents/Info.plist" )
+BUILD=$( $PBUDDY -c "Print CFBundleVersion" "${APP_PATH}/Contents/Info.plist" )
 DMG_NAME="nimble-commander-nightly-${VERSION}(${BUILD}).dmg"
 
 create-dmg \
@@ -91,7 +76,7 @@ create-dmg \
  --app-drop-link 432 192 \
  --codesign "Developer ID Application: Mikhail Kazakov (AC5SJT236H)" \
  "${DMG_NAME}" \
- "${APP_NAME}"
+ "${APP_PATH}"
 
 # Upload the built dmg into Apple's notary service
 xcrun notarytool submit ${DMG_NAME} --keychain-profile AC_PASSWORD --wait

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>info.filesmanager.Files</key>
+		<string>NC NonMAS Developer ID</string>
+	</dict>
+	<key>method</key>
+	<string>developer-id</string>
+	<key>embedOnDemandResourcesAssetPacksInBundle</key>
+	<false/>
+	<key>compileBitcode</key>
+	<false/>
+	<key>destination</key>
+	<string>export</string>
+</dict>
+</plist>

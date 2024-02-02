@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListViewNameView.h"
 #include <Utility/FontExtras.h>
 #include <Utility/ObjCpp.h>
@@ -149,7 +149,7 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
                                fraction:1.0
                          respectFlipped:false
                                   hints:nil];
-    
+
     if( !m_Tags.empty() ) {
         const auto tags_geom = TrailingTagsInplaceDisplay::Place(m_Tags);
         TrailingTagsInplaceDisplay::Draw(text_segment_rect.origin.x + text_segment_rect.size.width + tags_geom.margin,
@@ -222,18 +222,19 @@ static NSParagraphStyle *ParagraphStyle(PanelViewFilenameTrimming _mode)
     const auto font = self.row.listView.font;
 
     const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds andGeometry:geometry];
-    auto rc = NSMakeRect(text_segment_rect.origin.x, 0, text_segment_rect.size.width, bounds.size.height);
+    const auto fi = FontGeometryInfo(font);
 
-    auto fi = FontGeometryInfo(font);
-    rc.size.height = fi.LineHeight();
-    rc.origin.y = geometry.TextBaseLine() - fi.Descent();
-    rc.origin.x -= line_padding;
-
+    // let the editor occupy the entire text segment and ensure that it is vertically centered within our view
+    const auto rc =
+        NSMakeRect(text_segment_rect.origin.x - line_padding,
+                   geometry.TextBaseLine() - fi.Descent(),
+                   text_segment_rect.size.width + 1, // cover for any roundings potentially caused by compressing
+                   bounds.size.height - (geometry.TextBaseLine() - fi.Descent()) * 2.);
     _editor.frame = rc;
 
     NSTextView *tv = _editor.documentView;
     tv.font = font;
-    tv.textContainerInset = NSMakeSize(0, 0);
+    tv.textContainerInset = NSMakeSize(0, rc.size.height - fi.LineHeight());
     tv.textContainer.lineFragmentPadding = line_padding;
 
     [self addSubview:_editor];

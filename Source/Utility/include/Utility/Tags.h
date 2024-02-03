@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <filesystem>
+#include <optional>
 
 namespace nc::utility {
 
@@ -44,6 +45,9 @@ public:
     
     // Loads tags from MDItemUserTags (1st priority) or from FinderInfo(2nd priority), works with file paths
     static std::vector<Tag> ReadTags(const std::filesystem::path &_path) noexcept;
+        
+    // ...
+    static std::vector<std::byte> BuildMDItemUserTags(std::span<const Tag> _tags) noexcept;
 };
 
 // Non-owning class that represent a text label and a color of a tag.

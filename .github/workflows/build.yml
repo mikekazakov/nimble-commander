@@ -4,64 +4,31 @@ on: [push, pull_request, workflow_dispatch]
 
 env:
   XC_VERSION: ${{ '15.1' }}
-  CCACHE_COMPRESS: "true"
-  CCACHE_COMPRESSLEVEL: "15"
-  CCACHE_MAXSIZE: "400M"
-  GH_TOKEN: ${{ github.token }}
-  BRANCH: ${{ github.ref }}
 
 jobs:
 
   unit-tests:
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
       matrix:
         configuration: ["Debug", "Release", "ASAN", "UBSAN"]
     steps:
     - name: Select latest Xcode
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
-    - name: Install ccache
-      run: brew install ccache
-    - name: Cache ccache
-      uses: actions/cache@v3
-      with:
-        path: ~/Library/Caches/ccache
-        key: ccache-${{ github.job }}-${{ matrix.configuration }}-${{ github.run_id }}
-        restore-keys: ccache-${{ github.job }}-${{ matrix.configuration }}
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Build and run unit tests
       run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
-    - name: Show ccache stats
-      run: "ccache --show-stats --verbose"
-    - name: Remove old ccache caches
-      run: |
-        set +e
-        gh extension install actions/gh-actions-cache
-        gh actions-cache list -B $BRANCH --key ccache-${{ github.job }}-${{ matrix.configuration }}- | cut -f 1 | xargs -I {} gh actions-cache delete {} --confirm
 
   build-unsigned:
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
     - name: Select latest Xcode
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
     - name: Install deps
-      run: brew install ccache && brew install create-dmg
-    - name: Cache ccache
-      uses: actions/cache@v3
-      with:
-        path: ~/Library/Caches/ccache
-        key: ccache-${{ github.job }}-${{ github.run_id }}
-        restore-keys: ccache-${{ github.job }}
-    - uses: actions/checkout@v3
+      run: brew install create-dmg
+    - uses: actions/checkout@v4
     - name: Build and package
       run: "cd Scripts && ./build_unsigned.sh"
-    - name: Show ccache stats
-      run: "ccache --show-stats --verbose"
-    - name: Remove old ccache caches
-      run: |
-        set +e
-        gh extension install actions/gh-actions-cache
-        gh actions-cache list -B $BRANCH --key ccache-${{ github.job }}- | cut -f 1 | xargs -I {} gh actions-cache delete {} --confirm
     - uses: actions/upload-artifact@v4
       with:
         name: nimble-commander-unsigned

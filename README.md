@@ -1,56 +1,61 @@
+[![Build and Test](https://github.com/mikekazakov/nimble-commander/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/mikekazakov/nimble-commander/actions/workflows/build.yml)
+[![Nightly Build](https://github.com/mikekazakov/nimble-commander/actions/workflows/nightly.yml/badge.svg?branch=main)](https://github.com/mikekazakov/nimble-commander/actions/workflows/nightly.yml)
+
 # Nimble Commander
-Nimble Commander is a dual-pane file manager for macOS, which was developed with an emphasis on performance, keyboard navigation and flexibility. Project's website: https://magnumbytes.com.  
-This repository contains the project's source code.
+Nimble Commander is a free dual-pane file manager for macOS, designed with a focus on speed, keyboard-based navigation, and flexibility.  
+The project's aim is to blend the user experience of classic file managers from the '80s-'90s with the modern look and feel of Mac computers.  
+Visit the project's website at: https://magnumbytes.com.  
 
-# How to Build
+# Getting Nimble Commander
+
+## Nightly Builds
+You can download the latest nightly build of the app from [GitHub Actions](https://github.com/mikekazakov/nimble-commander/actions/workflows/nightly.yml).  
+Go to the most recent integration and select the `nimble-commander-nightly` in the `Artifacts` section (a GitHub account is required).
+
+## Current Release
+Direct download link: https://magnumbytes.com/downloads/releases/nimble-commander.dmg.  
+Available on Mac App Store: https://itunes.apple.com/app/files-lite/id905202937?ls=1&mt=12.  
+Install via Homebrew: `brew install nimble-commander`.  
+
+## Past Releases
+Access all previous releases at https://github.com/mikekazakov/nimble-commander-releases. 
+
+# Building from Source
 **Prerequisites**  
-Xcode15, preferrebly Xcode15.1.0.  
+Recommended: Xcode15, ideally Xcode15.1.0.  
+Ensure you have the correct Xcode version: `xcode-select -p`.  
+If not, change it using: `sudo xcode-select -s /Application/ProperXcodeVersionPath/`.  
 
-Make sure that the correct Xcode version is selected:
-```
-xcode-select -p
-```
-If it's not - adjust this setting:
-```
-sudo xcode-select -s /Application/ProperXcodeVersionPath/
-```
+**Obtaining the Source Code**  
+To clone the repository, use: `git clone https://github.com/mikekazakov/nimble-commander`.  
 
-**Getting the source code**  
-Clone the repository in appropriate directory:
-```
-git clone https://github.com/mikekazakov/nimble-commander
-```
+**Building an Unsigned Version**  
+To verify the build system's functionality, use this script: `cd nimble-commander/Scripts && ./build_unsigned_and_run.sh`.  
+Upon successful execution, this script will launch the newly compiled version of Nimble Commander.  
+The location of the resulting application bundle varies based on Xcode settings, but is typically found here:  
+`~/Library/Developer/Xcode/DerivedData/NimbleCommander-.../Build/Products/Debug_Unsigned/NimbleCommander-Unsigned.app`.
 
-**Building an unsigned version**  
-Use the following script to check if the build system works as expected:
-```
-cd nimble-commander/Scripts
-./build_unsigned_and_run.sh
-```
-If execution was successful, this script will run the freshly built version of Nimble Commander.  
-Location of resulting application bundle depends on current Xcode settings, by default it can be found here:  
-~/Library/Developer/Xcode/DerivedData/NimbleCommander-.../Build/Products/Debug_Unsigned/NimbleCommander-Unsigned.app
+# Exploring the Source Code
+Simply open `Source/NimbleCommander/NimbleCommander.xcodeproj` in Xcode and select the right scheme: NimbleCommander-Unsigned.  
+The source code is ready for building and execution.  
 
-# Exploring the source code
-Just open `Source/NimbleCommander/NimbleCommander.xcodeproj` in Xcode and select the proper scheme: NimbleCommander-Unsigned.  
-The source code is ready to be built and run.  
-There re 10 sub-projects in the codebase, apart from the main one:
-  * Base - low-level general-purpose facilities.
-  * Config - configuration facilities.
-  * CUI - common UI components.
-  * Operations - a set of file operations running on top of the VFS layer.
+The codebase includes 10 sub-projects, in addition to the primary one:
+  * Base - foundational, general-purpose tools.
+  * Config - configuration tools.
+  * CUI - shared UI components.
+  * Operations - file operation suite running atop the VFS layer.
   * Panel - components of the file panels.
-  * RoutedIO - AdminMode-related code, including privileged helper and client-side interface.
-  * Term - built-in terminal emulator.
-  * Utility - platform-dependent utilities.
+  * RoutedIO - Admin Mode code, including the privileged helper and client interface.
+  * Term - integrated terminal emulator.
+  * Utility - system-specific utilities.
   * VFS - virtual file systems: generic interface and various implementations.
   * VFSIcon - production of icons and thumbnails for VFS entries.
-  * Viewer - built-in viewer.
+  * Viewer - integrated file viewer.
 
 # Limitations
-This source code is the same as the one used to build the officially distributed versions of Nimble Commander.
-However, the public repository does not contain any sensitive information like accounts, addresses, keys, and alike.
-Thus a few parts, which specifically rely on that information, might not work as expected.
+This source code is identical to that used for the official Nimble Commander builds.  
+However, the public repository excludes sensitive data such as accounts, addresses, and keys.  
+Therefore, some components dependent on this information may not function as intended.
 
 # License
 Copyright (C) 2013-2024 Michael Kazakov (mike.kazakov@gmail.com)  

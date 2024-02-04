@@ -407,34 +407,110 @@ std::vector<Tags::Tag> Tags::ReadTags(const std::filesystem::path &_path) noexce
     return tags;
 }
 
+static void WriteVarSize(unsigned char _marker_type, size_t _size, std::pmr::vector<std::byte> &_dst)
+{
+    if( _size < 15 ) {
+        _dst.push_back(std::byte{static_cast<unsigned char>(_marker_type + _size)});
+    }
+    else if( _size < 256 ) {
+        _dst.push_back(std::byte{static_cast<unsigned char>(_marker_type + 15)});
+        _dst.push_back(std::byte{0x10});
+        _dst.push_back(std::byte{static_cast<unsigned char>(_size)});
+    }
+    else if( _size < 65536 ) {
+        _dst.push_back(std::byte{static_cast<unsigned char>(_marker_type + 15)});
+        _dst.push_back(std::byte{0x11});
+        _dst.push_back(std::byte{static_cast<unsigned char>(_size >> 8)});
+        _dst.push_back(std::byte{static_cast<unsigned char>(_size & 0xFF)});
+    }
+    else {
+        _dst.push_back(std::byte{static_cast<unsigned char>(_marker_type + 15)});
+        _dst.push_back(std::byte{0x12});
+        _dst.push_back(std::byte{static_cast<unsigned char>((_size >> 24) & 0xFF)});
+        _dst.push_back(std::byte{static_cast<unsigned char>((_size >> 16) & 0xFF)});
+        _dst.push_back(std::byte{static_cast<unsigned char>((_size >> 8) & 0xFF)});
+        _dst.push_back(std::byte{static_cast<unsigned char>((_size >> 0) & 0xFF)});
+    }
+    // not supporting sizes larger than 4GB.
+    // Finder actually doesn't allow even tags longer that 255 bytes
+}
+
 static std::pmr::vector<std::byte> WritePListObject(const Tags::Tag &_tag, std::pmr::memory_resource &_mem) noexcept
 {
+    // NB! Finder does sometimes skip the color information if the label text matches some of the predefined ones.
+    // I don't understand the logic on write it makes these decisions.
+    // It's possible to do that as well, but then binary blobs will be a bit different - need to update the test corpus.
+    // So for now the color information is written unconditionally (of course if that color is not None)
     std::pmr::vector<std::byte> dst(&_mem);
     const std::string &label = _tag.Label();
-    const bool is_ascii = std::ranges::all_of(label, [](auto _c) { return static_cast<unsigned char>(_c) < 0x7F; });
+    const bool is_ascii = std::ranges::all_of(label, [](auto _c) { return static_cast<unsigned char>(_c) <= 0x7F; });
     if( is_ascii ) {
         const size_t len_color = _tag.Color() == Tags::Color::None ? 0 : 2;
         const size_t len = label.length() + len_color;
-        if( len < 15 ) {
-            // write the byte marker
-            dst.push_back(std::byte{static_cast<unsigned char>(0x50 + len)});
-            // write the label
-            dst.insert(dst.end(),
-                       reinterpret_cast<const std::byte *>(label.data()),
-                       reinterpret_cast<const std::byte *>(label.data() + label.length()));
-            if( len_color != 0 ) {
-                // write the color if it's not None
-                dst.push_back(std::byte{'\x0a'});
-                dst.push_back(std::byte{static_cast<unsigned char>('0' + std::to_underlying(_tag.Color()))});
-            }
-            return dst;
+
+        // write the byte marker and size
+        WriteVarSize(0x50, len, dst);
+
+        // write the label
+        dst.insert(dst.end(),
+                   reinterpret_cast<const std::byte *>(label.data()),
+                   reinterpret_cast<const std::byte *>(label.data() + label.length()));
+        if( len_color != 0 ) {
+            // write the color if it's not None
+            dst.push_back(std::byte{'\x0a'});
+            dst.push_back(std::byte{static_cast<unsigned char>('0' + std::to_underlying(_tag.Color()))});
         }
-        else {
-            abort(); // TODO: implement
-        }
+        return dst;
     }
     else {
-        abort(); // TODO: implement
+        // Build CF strings out of our label
+        base::CFStackAllocator alloc;
+        auto cf_str =
+            base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(alloc,
+                                                                          reinterpret_cast<const UInt8 *>(label.data()),
+                                                                          label.length(),
+                                                                          kCFStringEncodingUTF8,
+                                                                          false,
+                                                                          kCFAllocatorNull));
+        if( !cf_str )
+            return {}; // corrupted utf8?
+
+        // Calculate the about of bytes required to store it as UTF16BE
+        const CFRange range = CFRangeMake(0, CFStringGetLength(cf_str.get()));
+        CFIndex target_size = 0;
+        const CFIndex converted =
+            CFStringGetBytes(cf_str.get(), range, kCFStringEncodingUTF16BE, ' ', false, nullptr, 0, &target_size);
+        if( converted != range.length )
+            return {}; // corrupted utf8?
+
+        assert(target_size % 2 == 0);
+        const size_t len_color = _tag.Color() == Tags::Color::None ? 0 : 2;
+        const size_t len = target_size / 2 + len_color;
+
+        // write the byte marker and size
+        WriteVarSize(0x60, len, dst);
+
+        // write the label
+        const size_t label_pos = dst.size();
+        dst.resize(dst.size() + target_size);
+        CFStringGetBytes(cf_str.get(),
+                         range,
+                         kCFStringEncodingUTF16BE,
+                         ' ',
+                         false,
+                         reinterpret_cast<UInt8 *>(dst.data() + label_pos),
+                         target_size,
+                         &target_size);
+
+        if( len_color != 0 ) {
+            // write the color if it's not None
+            dst.push_back(std::byte{'\x00'});
+            dst.push_back(std::byte{'\x0a'});
+            dst.push_back(std::byte{'\x00'});
+            dst.push_back(std::byte{static_cast<unsigned char>('0' + std::to_underlying(_tag.Color()))});
+        }
+
+        return dst;
     }
 }
 

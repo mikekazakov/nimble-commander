@@ -404,3 +404,49 @@ TEST_CASE(PREFIX "BuildMDItemUserTags")
                                          reinterpret_cast<const unsigned char *>(bytes.data() + bytes.size())});
     }
 }
+
+TEST_CASE(PREFIX "Our tags can be read back by Cocoa")
+{
+    std::set<std::string> labels;
+    auto tag = [&labels](const char *_l, Tags::Color _c) { return Tags::Tag(&*labels.emplace(_l).first, _c); };
+    TempTestDir dir;
+    const auto path = dir.directory / "f.txt";
+    close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
+    struct TC {
+        std::vector<Tags::Tag> tags;
+        NSArray<NSString *> *expected_labels;
+        Tags::Color expected_color;
+    } const tcs[] = {
+        {{}, @[], Tags::Color::None},
+        {{tag("Hello!", Tags::Color::Green)}, @[@"Hello!"], Tags::Color::Green},
+        {{tag("N", Tags::Color::None)}, @[@"N"], Tags::Color::None},
+        {{tag("Gy", Tags::Color::Gray)}, @[@"Gy"], Tags::Color::Gray},
+        {{tag("Gn", Tags::Color::Green)}, @[@"Gn"], Tags::Color::Green},
+        {{tag("P", Tags::Color::Purple)}, @[@"P"], Tags::Color::Purple},
+        {{tag("B", Tags::Color::Blue)}, @[@"B"], Tags::Color::Blue},
+        {{tag("Y", Tags::Color::Yellow)}, @[@"Y"], Tags::Color::Yellow},
+        {{tag("R", Tags::Color::Red)}, @[@"R"], Tags::Color::Red},
+        {{tag("O", Tags::Color::Orange)}, @[@"O"], Tags::Color::Orange},
+        {{tag("1", Tags::Color::Orange), tag("2", Tags::Color::Blue)}, @[@"1", @"2"], Tags::Color::Orange},
+        {{tag("2", Tags::Color::Blue), tag("1", Tags::Color::Orange)}, @[@"2", @"1"], Tags::Color::Blue},
+        {{tag("🤡", Tags::Color::Green)}, @[@"🤡"], Tags::Color::Green},
+    };
+
+    for( auto &tc : tcs ) {
+        CHECK(Tags::WriteTags(path, tc.tags));
+        NSURL *url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:path.c_str()
+                                                                isDirectory:false
+                                                              relativeToURL:nil];
+
+        id tag_names;
+        CHECK([url getResourceValue:&tag_names forKey:NSURLTagNamesKey error:nil]);
+        if( tc.expected_labels.count )
+            CHECK([nc::objc_cast<NSArray>(tag_names) isEqualToArray:tc.expected_labels]);
+        else
+            CHECK(tag_names == nil);
+
+        id number;
+        CHECK([url getResourceValue:&number forKey:NSURLLabelNumberKey error:nil]);
+        CHECK(nc::objc_cast<NSNumber>(number).integerValue == std::to_underlying(tc.expected_color));
+    }
+}

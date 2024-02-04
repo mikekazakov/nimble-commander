@@ -48,6 +48,12 @@ public:
         
     // ...
     static std::vector<std::byte> BuildMDItemUserTags(std::span<const Tag> _tags) noexcept;
+    
+    // ...
+    static bool WriteTags(int _fd, std::span<const Tag> _tags) noexcept;
+    
+    // ...
+    static bool WriteTags(const std::filesystem::path &_path, std::span<const Tag> _tags) noexcept;
 };
 
 // Non-owning class that represent a text label and a color of a tag.

@@ -346,6 +346,15 @@ std::vector<Tags::Tag> Tags::ParseFinderInfo(std::span<const std::byte> _bytes) 
     return {};
 }
 
+static void SetFinderInfoLabel(std::span<uint8_t, 32> _bytes, Tags::Color _color) noexcept
+{
+    if( _bytes.size() == 32 ) {
+        const uint8_t orig_b = _bytes[9];
+        const uint8_t new_b = (orig_b & 0xF1) | static_cast<uint8_t>(std::to_underlying(_color) << 1);
+        _bytes[9] = new_b;
+    }
+}
+
 std::vector<Tags::Tag> Tags::ReadMDItemUserTags(int _fd) noexcept
 {
     assert(_fd >= 0);
@@ -379,7 +388,7 @@ std::vector<Tags::Tag> Tags::ReadTags(int _fd) noexcept
 
     // 1st - try MDItemUserTags
     const bool has_usertags =
-        memmem(buf.data(), res, g_MDItemUserTags, std::string_view{g_MDItemUserTags}.length()) != nullptr;
+        memmem(buf.data(), res, g_MDItemUserTags, std::string_view{g_MDItemUserTags}.length() + 1) != nullptr;
     if( has_usertags ) {
         auto tags = ReadMDItemUserTags(_fd);
         if( !tags.empty() )
@@ -387,7 +396,8 @@ std::vector<Tags::Tag> Tags::ReadTags(int _fd) noexcept
     }
 
     // 2nd - try FinderInfo
-    const bool has_finfo = memmem(buf.data(), res, g_FinderInfo, std::string_view{g_FinderInfo}.length()) != nullptr;
+    const bool has_finfo =
+        memmem(buf.data(), res, g_FinderInfo, std::string_view{g_FinderInfo}.length() + 1) != nullptr;
     if( !has_finfo )
         return {};
 
@@ -587,6 +597,83 @@ std::vector<std::byte> Tags::BuildMDItemUserTags(const std::span<const Tag> _tag
 
     // Done.
     return {plist.begin(), plist.end()};
+}
+
+static bool ClearAllTags(int _fd)
+{
+    std::array<char, 8192> buf; // Given XATTR_MAXNAMELEN=127, this allows to read up to 64 max-len names
+    const ssize_t buf_len = flistxattr(_fd, buf.data(), buf.size(), 0);
+    if( buf_len < 0 )
+        return false;
+
+    if( buf_len == 0 )
+        return true; // nothing to do
+
+    const bool has_usertags = memmem(buf.data(), buf_len, g_MDItemUserTags, strlen(g_MDItemUserTags) + 1) != nullptr;
+    if( has_usertags ) {
+        if( fremovexattr(_fd, g_MDItemUserTags, 0) != 0 )
+            return false;
+    }
+
+    const bool has_finfo = memmem(buf.data(), buf_len, g_FinderInfo, strlen(g_FinderInfo) + 1) != nullptr;
+    if( has_finfo ) {
+        std::array<uint8_t, 32> finder_info;
+        const ssize_t ff_read = fgetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0);
+        if( ff_read != finder_info.size() )
+            return false;
+
+        SetFinderInfoLabel(finder_info, Tags::Color::None);
+        if( fsetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0) != 0 )
+            return false;
+    }
+
+    return true;
+}
+
+bool Tags::WriteTags(int _fd, std::span<const Tag> _tags) noexcept
+{
+    if( _tags.empty() ) {
+        return ClearAllTags(_fd);
+    }
+
+    // it's faster to first get a list of xattrs and only if one was found to read it than to try reading upfront as
+    // a probing mechanism.
+    std::array<char, 8192> buf; // Given XATTR_MAXNAMELEN=127, this allows to read up to 64 max-len names
+    const ssize_t res = flistxattr(_fd, buf.data(), buf.size(), 0);
+    if( res < 0 )
+        return false;
+
+    auto blob = BuildMDItemUserTags(_tags);
+    if( fsetxattr(_fd, g_MDItemUserTags, blob.data(), blob.size(), 0, 0) != 0 )
+        return false;
+
+    std::array<uint8_t, 32> finder_info;
+    finder_info.fill(0);
+    const bool has_finfo = memmem(buf.data(), res, g_FinderInfo, strlen(g_FinderInfo) + 1) != nullptr;
+    if( has_finfo ) {
+        const ssize_t ff_read = fgetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0);
+        if( ff_read != finder_info.size() )
+            return false;
+    }
+    SetFinderInfoLabel(finder_info, _tags.front().Color());
+
+    if( fsetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0) != 0 )
+        return false;
+
+    return true;
+}
+
+bool Tags::WriteTags(const std::filesystem::path &_path, std::span<const Tag> _tags) noexcept
+{
+    const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK); // TODO: is read-write required to change xattr??
+    if( fd < 0 )
+        return false;
+
+    const bool res = WriteTags(fd, _tags);
+
+    close(fd);
+
+    return res;
 }
 
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept

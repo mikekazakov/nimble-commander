@@ -6,14 +6,14 @@
 #include <string>
 #include <filesystem>
 #include <optional>
+#include <utility>
 
 namespace nc::utility {
 
 class Tags
 {
 public:
-    enum class Color : unsigned char
-    {
+    enum class Color : unsigned char {
         None = 0,
         Gray = 1,
         Green = 2,
@@ -33,27 +33,33 @@ public:
     // Parses the "com.apple.FinderInfo" xattr and extracts a tag color if any is present.
     // Returns an empty vector as an error mechanism.
     static std::vector<Tag> ParseFinderInfo(std::span<const std::byte> _bytes) noexcept;
-        
+
     // Loads the contents an the xattrs and processes it with ParseMDItemUserTags
     static std::vector<Tag> ReadMDItemUserTags(int _fd) noexcept;
-    
+
     // Loads the contents an the xattrs and processes it with ParseFinderInfo
     static std::vector<Tag> ReadFinderInfo(int _fd) noexcept;
 
     // Loads tags from MDItemUserTags (1st priority) or from FinderInfo(2nd priority), works with file handles
     static std::vector<Tag> ReadTags(int _fd) noexcept;
-    
+
     // Loads tags from MDItemUserTags (1st priority) or from FinderInfo(2nd priority), works with file paths
     static std::vector<Tag> ReadTags(const std::filesystem::path &_path) noexcept;
-        
+
     // ...
     static std::vector<std::byte> BuildMDItemUserTags(std::span<const Tag> _tags) noexcept;
-    
+
     // ...
     static bool WriteTags(int _fd, std::span<const Tag> _tags) noexcept;
-    
+
     // ...
     static bool WriteTags(const std::filesystem::path &_path, std::span<const Tag> _tags) noexcept;
+
+    // ...
+    static std::vector<std::filesystem::path> GatherAllItemsWithTags() noexcept;
+
+    // ...
+    static std::vector<Tag> GatherAllItemsTags() noexcept;
 };
 
 // Non-owning class that represent a text label and a color of a tag.
@@ -72,3 +78,17 @@ private:
 };
 
 } // namespace nc::utility
+
+namespace std {
+
+template <>
+class hash<nc::utility::Tags::Tag>
+{
+public:
+    size_t operator()(const nc::utility::Tags::Tag &_tag) const noexcept
+    {
+        return std::hash<std::string>{}(_tag.Label()) + std::to_underlying(_tag.Color());
+    }
+};
+
+} // namespace std

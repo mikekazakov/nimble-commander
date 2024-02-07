@@ -3,7 +3,12 @@
 #include "UnitTests_main.h"
 #include <set>
 #include <fmt/core.h>
+#include <fmt/std.h>
+#include <fmt/printf.h>
+#include <fmt/os.h>
 #include <Utility/ObjCpp.h>
+#include <Base/CommonPaths.h>
+#include <Base/algo.h>
 #include <Cocoa/Cocoa.h>
 
 using nc::utility::Tags;
@@ -449,4 +454,40 @@ TEST_CASE(PREFIX "Our tags can be read back by Cocoa")
         CHECK([url getResourceValue:&number forKey:NSURLLabelNumberKey error:nil]);
         CHECK(nc::objc_cast<NSNumber>(number).integerValue == std::to_underlying(tc.expected_color));
     }
+}
+
+TEST_CASE(PREFIX "Spotlight detects items with new tags invented by NC")
+{
+    // Need to place these temp files into an indexable location (which the temp dir is not)
+    auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
+    std::filesystem::create_directory(basepath);
+    auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
+
+    const std::string label =
+        fmt::format("Hello! This is a new tag created via Nimble Commander! My PID is {}", getpid());
+    const Tags::Color color = Tags::Color::Orange;
+
+    {
+        // Write a temp file with a newly invented tag
+        const auto path = basepath / "f.txt";
+        CHECK(close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR)) == 0);
+        CHECK(Tags::WriteTags(path, std::vector<Tags::Tag>{{&label, color}}));
+        CHECK(system(fmt::format("mdimport {}", path.c_str()).c_str()) == 0);
+    }
+
+    // Try a few times to find the new tag via Spotlight, need multiple attempts since there's still a race condition
+    // even after an explicit call to mdimport
+    for( int attempt = 0; attempt < 10; ++attempt ) {
+        auto all_tags = Tags::GatherAllItemsTags();
+        if( std::ranges::find(all_tags, Tags::Tag{&label, color}) == all_tags.end() ) {
+            std::this_thread::sleep_for(std::chrono::milliseconds{100});
+            continue;
+        }
+
+        // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
+        return;
+    }
+
+    // Failed to find the new tag after the number of attempts
+    FAIL();
 }

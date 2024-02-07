@@ -9,8 +9,10 @@
 #include <mutex>
 #include <optional>
 #include <CoreFoundation/CoreFoundation.h>
+#include <CoreServices/CoreServices.h>
 #include <Base/CFStackAllocator.h>
 #include <Base/CFPtr.h>
+#include <Base/CFString.h>
 #include <memory_resource>
 #include <sys/xattr.h>
 #include <frozen/unordered_map.h>
@@ -674,6 +676,47 @@ bool Tags::WriteTags(const std::filesystem::path &_path, std::span<const Tag> _t
     close(fd);
 
     return res;
+}
+
+std::vector<std::filesystem::path> Tags::GatherAllItemsWithTags() noexcept
+{
+    const CFStringRef query_string = CFSTR("kMDItemUserTags=*");
+
+    const base::CFPtr<MDQueryRef> query =
+        base::CFPtr<MDQueryRef>::adopt(MDQueryCreate(nullptr, query_string, nullptr, nullptr));
+    if( !query )
+        return {};
+
+    const bool query_result = MDQueryExecute(query.get(), kMDQuerySynchronous);
+    if( !query_result )
+        return {};
+
+    std::vector<std::filesystem::path> result;
+    for( long i = 0, e = MDQueryGetResultCount(query.get()); i < e; ++i ) {
+        const MDItemRef item = static_cast<MDItemRef>(const_cast<void *>(MDQueryGetResultAtIndex(query.get(), i)));
+        base::CFPtr<CFStringRef> item_path =
+            base::CFPtr<CFStringRef>::adopt(static_cast<CFStringRef>(MDItemCopyAttribute(item, kMDItemPath)));
+        if( item_path ) {
+            result.emplace_back(base::CFStringGetUTF8StdString(item_path.get()));
+        }
+    }
+
+    return result;
+}
+
+std::vector<Tags::Tag> Tags::GatherAllItemsTags() noexcept
+{
+    auto files = GatherAllItemsWithTags();
+
+    robin_hood::unordered_flat_set<Tags::Tag> tags;
+    for( auto &file : files ) {
+        auto file_tags = ReadTags(file); // this can be actually done in multiple threads...
+        for( auto &file_tag : file_tags )
+            tags.emplace(file_tag);
+    }
+
+    // any sort???
+    return {tags.begin(), tags.end()};
 }
 
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept

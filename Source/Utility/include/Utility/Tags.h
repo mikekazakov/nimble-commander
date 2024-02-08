@@ -46,19 +46,23 @@ public:
     // Loads tags from MDItemUserTags (1st priority) or from FinderInfo(2nd priority), works with file paths
     static std::vector<Tag> ReadTags(const std::filesystem::path &_path) noexcept;
 
-    // ...
+    // Composes a binary blob representing the contents of the "com.apple.metadata:_kMDItemUserTags" xattr corresponding
+    // to the specified list of tags. Empty blob is returned if no tags were provided.
     static std::vector<std::byte> BuildMDItemUserTags(std::span<const Tag> _tags) noexcept;
 
-    // ...
+    // Writes the "com.apple.metadata:_kMDItemUserTags" and "com.apple.FinderInfo" xattrs to the specified file
+    // according to the provided set of tags.
     static bool WriteTags(int _fd, std::span<const Tag> _tags) noexcept;
 
-    // ...
+    // Writes the "com.apple.metadata:_kMDItemUserTags" and "com.apple.FinderInfo" xattrs to the specified file
+    // according to the provided set of tags.
     static bool WriteTags(const std::filesystem::path &_path, std::span<const Tag> _tags) noexcept;
 
-    // ...
+    // Executes a "kMDItemUserTags=*" query by Spotlight to gather all indexed items on the filesystem that contain any
+    // tags.
     static std::vector<std::filesystem::path> GatherAllItemsWithTags() noexcept;
 
-    // ...
+    // Gather a current set of tags used by the items on the filesystem.
     static std::vector<Tag> GatherAllItemsTags() noexcept;
 };
 

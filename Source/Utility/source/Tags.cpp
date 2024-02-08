@@ -9,12 +9,15 @@
 #include <mutex>
 #include <optional>
 #include <CoreFoundation/CoreFoundation.h>
+#include <CoreServices/CoreServices.h>
 #include <Base/CFStackAllocator.h>
 #include <Base/CFPtr.h>
+#include <Base/CFString.h>
 #include <memory_resource>
 #include <sys/xattr.h>
 #include <frozen/unordered_map.h>
 #include <frozen/string.h>
+#include <ranges>
 
 namespace nc::utility {
 
@@ -345,6 +348,15 @@ std::vector<Tags::Tag> Tags::ParseFinderInfo(std::span<const std::byte> _bytes) 
     return {};
 }
 
+static void SetFinderInfoLabel(std::span<uint8_t, 32> _bytes, Tags::Color _color) noexcept
+{
+    if( _bytes.size() == 32 ) {
+        const uint8_t orig_b = _bytes[9];
+        const uint8_t new_b = (orig_b & 0xF1) | static_cast<uint8_t>(std::to_underlying(_color) << 1);
+        _bytes[9] = new_b;
+    }
+}
+
 std::vector<Tags::Tag> Tags::ReadMDItemUserTags(int _fd) noexcept
 {
     assert(_fd >= 0);
@@ -378,7 +390,7 @@ std::vector<Tags::Tag> Tags::ReadTags(int _fd) noexcept
 
     // 1st - try MDItemUserTags
     const bool has_usertags =
-        memmem(buf.data(), res, g_MDItemUserTags, std::string_view{g_MDItemUserTags}.length()) != nullptr;
+        memmem(buf.data(), res, g_MDItemUserTags, std::string_view{g_MDItemUserTags}.length() + 1) != nullptr;
     if( has_usertags ) {
         auto tags = ReadMDItemUserTags(_fd);
         if( !tags.empty() )
@@ -386,7 +398,8 @@ std::vector<Tags::Tag> Tags::ReadTags(int _fd) noexcept
     }
 
     // 2nd - try FinderInfo
-    const bool has_finfo = memmem(buf.data(), res, g_FinderInfo, std::string_view{g_FinderInfo}.length()) != nullptr;
+    const bool has_finfo =
+        memmem(buf.data(), res, g_FinderInfo, std::string_view{g_FinderInfo}.length() + 1) != nullptr;
     if( !has_finfo )
         return {};
 
@@ -404,6 +417,306 @@ std::vector<Tags::Tag> Tags::ReadTags(const std::filesystem::path &_path) noexce
     close(fd);
 
     return tags;
+}
+
+static void WriteVarSize(unsigned char _marker_type, size_t _size, std::pmr::vector<std::byte> &_dst)
+{
+    if( _size < 15 ) {
+        _dst.push_back(std::byte{static_cast<unsigned char>(_marker_type + _size)});
+    }
+    else if( _size < 256 ) {
+        _dst.push_back(std::byte{static_cast<unsigned char>(_marker_type + 15)});
+        _dst.push_back(std::byte{0x10});
+        _dst.push_back(std::byte{static_cast<unsigned char>(_size)});
+    }
+    else if( _size < 65536 ) {
+        _dst.push_back(std::byte{static_cast<unsigned char>(_marker_type + 15)});
+        _dst.push_back(std::byte{0x11});
+        _dst.push_back(std::byte{static_cast<unsigned char>(_size >> 8)});
+        _dst.push_back(std::byte{static_cast<unsigned char>(_size & 0xFF)});
+    }
+    else {
+        _dst.push_back(std::byte{static_cast<unsigned char>(_marker_type + 15)});
+        _dst.push_back(std::byte{0x12});
+        _dst.push_back(std::byte{static_cast<unsigned char>((_size >> 24) & 0xFF)});
+        _dst.push_back(std::byte{static_cast<unsigned char>((_size >> 16) & 0xFF)});
+        _dst.push_back(std::byte{static_cast<unsigned char>((_size >> 8) & 0xFF)});
+        _dst.push_back(std::byte{static_cast<unsigned char>((_size >> 0) & 0xFF)});
+    }
+    // not supporting sizes larger than 4GB.
+    // Finder actually doesn't allow even tags longer that 255 bytes
+}
+
+static std::pmr::vector<std::byte> WritePListObject(const Tags::Tag &_tag, std::pmr::memory_resource &_mem) noexcept
+{
+    // NB! Finder does sometimes skip the color information if the label text matches some of the predefined ones.
+    // I don't understand the logic on write it makes these decisions.
+    // It's possible to do that as well, but then binary blobs will be a bit different - need to update the test corpus.
+    // So for now the color information is written unconditionally (of course if that color is not None)
+    std::pmr::vector<std::byte> dst(&_mem);
+    const std::string &label = _tag.Label();
+    const bool is_ascii = std::ranges::all_of(label, [](auto _c) { return static_cast<unsigned char>(_c) <= 0x7F; });
+    if( is_ascii ) {
+        const size_t len_color = _tag.Color() == Tags::Color::None ? 0 : 2;
+        const size_t len = label.length() + len_color;
+
+        // write the byte marker and size
+        WriteVarSize(0x50, len, dst);
+
+        // write the label
+        dst.insert(dst.end(),
+                   reinterpret_cast<const std::byte *>(label.data()),
+                   reinterpret_cast<const std::byte *>(label.data() + label.length()));
+        if( len_color != 0 ) {
+            // write the color if it's not None
+            dst.push_back(std::byte{'\x0a'});
+            dst.push_back(std::byte{static_cast<unsigned char>('0' + std::to_underlying(_tag.Color()))});
+        }
+        return dst;
+    }
+    else {
+        // Build CF strings out of our label
+        base::CFStackAllocator alloc;
+        auto cf_str =
+            base::CFPtr<CFStringRef>::adopt(CFStringCreateWithBytesNoCopy(alloc,
+                                                                          reinterpret_cast<const UInt8 *>(label.data()),
+                                                                          label.length(),
+                                                                          kCFStringEncodingUTF8,
+                                                                          false,
+                                                                          kCFAllocatorNull));
+        if( !cf_str )
+            return {}; // corrupted utf8?
+
+        // Calculate the about of bytes required to store it as UTF16BE
+        const CFRange range = CFRangeMake(0, CFStringGetLength(cf_str.get()));
+        CFIndex target_size = 0;
+        const CFIndex converted =
+            CFStringGetBytes(cf_str.get(), range, kCFStringEncodingUTF16BE, ' ', false, nullptr, 0, &target_size);
+        if( converted != range.length )
+            return {}; // corrupted utf8?
+
+        assert(target_size % 2 == 0);
+        const size_t len_color = _tag.Color() == Tags::Color::None ? 0 : 2;
+        const size_t len = target_size / 2 + len_color;
+
+        // write the byte marker and size
+        WriteVarSize(0x60, len, dst);
+
+        // write the label
+        const size_t label_pos = dst.size();
+        dst.resize(dst.size() + target_size);
+        CFStringGetBytes(cf_str.get(),
+                         range,
+                         kCFStringEncodingUTF16BE,
+                         ' ',
+                         false,
+                         reinterpret_cast<UInt8 *>(dst.data() + label_pos),
+                         target_size,
+                         &target_size);
+
+        if( len_color != 0 ) {
+            // write the color if it's not None
+            dst.push_back(std::byte{'\x00'});
+            dst.push_back(std::byte{'\x0a'});
+            dst.push_back(std::byte{'\x00'});
+            dst.push_back(std::byte{static_cast<unsigned char>('0' + std::to_underlying(_tag.Color()))});
+        }
+
+        return dst;
+    }
+}
+
+std::vector<std::byte> Tags::BuildMDItemUserTags(const std::span<const Tag> _tags) noexcept
+{
+    if( _tags.empty() )
+        return {};
+
+    std::array<char, 4096> mem_buffer;
+    std::pmr::monotonic_buffer_resource mem_resource(mem_buffer.data(), mem_buffer.size());
+
+    // Build serialized representation of the tags
+    std::pmr::vector<std::pmr::vector<std::byte>> objects(&mem_resource);
+    for( auto &tag : _tags ) {
+        objects.emplace_back(WritePListObject(tag, mem_resource));
+    }
+
+    if( objects.size() > 14 ) {
+        // for now the algorithm is simpified to support only up to 14 tags simultaneously, which will be enough unless
+        // the system is abused.
+        objects.resize(14);
+    }
+
+    std::pmr::vector<size_t> offsets; // offset of every object written into the plist will be gathered here
+
+    // Write the magick prologue
+    std::pmr::vector<std::byte> plist;
+    plist.insert(plist.end(),
+                 reinterpret_cast<const std::byte *>(g_Prologue.data()),
+                 reinterpret_cast<const std::byte *>(g_Prologue.data() + g_Prologue.length()));
+
+    // Write an array object with up to 14 objects
+    offsets.push_back(plist.size());
+    plist.push_back(std::byte{static_cast<unsigned char>(0xA0 + objects.size())});
+
+    // Write the object references
+    for( size_t i = 0; i < objects.size(); ++i )
+        plist.push_back(std::byte{static_cast<unsigned char>(i + 1)});
+
+    // Write the objects themselves
+    for( auto &object : objects ) {
+        offsets.push_back(plist.size());
+        plist.insert(plist.end(), object.begin(), object.end());
+    }
+
+    // Deduce the stride of the offset table
+    size_t offset_int_size = 1;
+    if( const size_t max = *std::max_element(offsets.begin(), offsets.end()); max > 255 ) {
+        abort(); // TODO: implement
+    }
+
+    // Compose the trailer to be written later on
+    Trailer trailer;
+    memset(&trailer, 0, sizeof(trailer));
+    trailer.offset_int_size = static_cast<uint8_t>(offset_int_size);
+    trailer.object_ref_size = 1;
+    trailer.num_objects = std::byteswap(static_cast<uint64_t>(objects.size() + 1));
+    trailer.offset_table_offset = std::byteswap(static_cast<uint64_t>(plist.size()));
+
+    // Write the offset table
+    for( const size_t offset : offsets ) {
+        if( offset_int_size == 1 ) {
+            plist.push_back(std::byte{static_cast<unsigned char>(offset)});
+        }
+        else {
+            abort(); // TODO: implement
+        }
+    }
+
+    // Write the trailer
+    plist.insert(plist.end(),
+                 reinterpret_cast<const std::byte *>(&trailer),
+                 reinterpret_cast<const std::byte *>(&trailer) + sizeof(trailer));
+
+    // Done.
+    return {plist.begin(), plist.end()};
+}
+
+static bool ClearAllTags(int _fd)
+{
+    std::array<char, 8192> buf; // Given XATTR_MAXNAMELEN=127, this allows to read up to 64 max-len names
+    const ssize_t buf_len = flistxattr(_fd, buf.data(), buf.size(), 0);
+    if( buf_len < 0 )
+        return false;
+
+    if( buf_len == 0 )
+        return true; // nothing to do
+
+    const bool has_usertags = memmem(buf.data(), buf_len, g_MDItemUserTags, strlen(g_MDItemUserTags) + 1) != nullptr;
+    if( has_usertags ) {
+        if( fremovexattr(_fd, g_MDItemUserTags, 0) != 0 )
+            return false;
+    }
+
+    const bool has_finfo = memmem(buf.data(), buf_len, g_FinderInfo, strlen(g_FinderInfo) + 1) != nullptr;
+    if( has_finfo ) {
+        std::array<uint8_t, 32> finder_info;
+        const ssize_t ff_read = fgetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0);
+        if( ff_read != finder_info.size() )
+            return false;
+
+        SetFinderInfoLabel(finder_info, Tags::Color::None);
+        if( fsetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0) != 0 )
+            return false;
+    }
+
+    return true;
+}
+
+bool Tags::WriteTags(int _fd, std::span<const Tag> _tags) noexcept
+{
+    if( _tags.empty() ) {
+        return ClearAllTags(_fd);
+    }
+
+    // it's faster to first get a list of xattrs and only if one was found to read it than to try reading upfront as
+    // a probing mechanism.
+    std::array<char, 8192> buf; // Given XATTR_MAXNAMELEN=127, this allows to read up to 64 max-len names
+    const ssize_t res = flistxattr(_fd, buf.data(), buf.size(), 0);
+    if( res < 0 )
+        return false;
+
+    auto blob = BuildMDItemUserTags(_tags);
+    if( fsetxattr(_fd, g_MDItemUserTags, blob.data(), blob.size(), 0, 0) != 0 )
+        return false;
+
+    std::array<uint8_t, 32> finder_info;
+    finder_info.fill(0);
+    const bool has_finfo = memmem(buf.data(), res, g_FinderInfo, strlen(g_FinderInfo) + 1) != nullptr;
+    if( has_finfo ) {
+        const ssize_t ff_read = fgetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0);
+        if( ff_read != finder_info.size() )
+            return false;
+    }
+    SetFinderInfoLabel(finder_info, _tags.front().Color());
+
+    if( fsetxattr(_fd, g_FinderInfo, finder_info.data(), finder_info.size(), 0, 0) != 0 )
+        return false;
+
+    return true;
+}
+
+bool Tags::WriteTags(const std::filesystem::path &_path, std::span<const Tag> _tags) noexcept
+{
+    const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK); // TODO: is read-write required to change xattr??
+    if( fd < 0 )
+        return false;
+
+    const bool res = WriteTags(fd, _tags);
+
+    close(fd);
+
+    return res;
+}
+
+std::vector<std::filesystem::path> Tags::GatherAllItemsWithTags() noexcept
+{
+    const CFStringRef query_string = CFSTR("kMDItemUserTags=*");
+
+    const base::CFPtr<MDQueryRef> query =
+        base::CFPtr<MDQueryRef>::adopt(MDQueryCreate(nullptr, query_string, nullptr, nullptr));
+    if( !query )
+        return {};
+
+    const bool query_result = MDQueryExecute(query.get(), kMDQuerySynchronous);
+    if( !query_result )
+        return {};
+
+    std::vector<std::filesystem::path> result;
+    for( long i = 0, e = MDQueryGetResultCount(query.get()); i < e; ++i ) {
+        const MDItemRef item = static_cast<MDItemRef>(const_cast<void *>(MDQueryGetResultAtIndex(query.get(), i)));
+        base::CFPtr<CFStringRef> item_path =
+            base::CFPtr<CFStringRef>::adopt(static_cast<CFStringRef>(MDItemCopyAttribute(item, kMDItemPath)));
+        if( item_path ) {
+            result.emplace_back(base::CFStringGetUTF8StdString(item_path.get()));
+        }
+    }
+
+    return result;
+}
+
+std::vector<Tags::Tag> Tags::GatherAllItemsTags() noexcept
+{
+    auto files = GatherAllItemsWithTags();
+
+    robin_hood::unordered_flat_set<Tags::Tag> tags;
+    for( auto &file : files ) {
+        auto file_tags = ReadTags(file); // this can be actually done in multiple threads...
+        for( auto &file_tag : file_tags )
+            tags.emplace(file_tag);
+    }
+
+    // any sort???
+    return {tags.begin(), tags.end()};
 }
 
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept

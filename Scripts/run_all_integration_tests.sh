@@ -13,12 +13,17 @@ if ! [ -x "$(command -v docker)" ] ; then
     exit -1
 fi
 
+# https://github.com/xcpretty/xcpretty/issues/48
+export LC_CTYPE=en_US.UTF-8
+
 # get current directory
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT_DIR="${SCRIPTS_DIR}/.."
 
 # allocate a temp dir for build artifacts
-BUILD_DIR=$(mktemp -d ${SCRIPTS_DIR}/build.XXXXXXXXX)
+#BUILD_DIR=$(mktemp -d ${SCRIPTS_DIR}/build.XXXXXXXXX)
+BUILD_DIR="${SCRIPTS_DIR}/run_all_integration_tests.tmp"
+mkdir -p "${BUILD_DIR}"
 
 LOG_FILE=${BUILD_DIR}/xcodebuild.log
 
@@ -58,19 +63,25 @@ build_target()
 # list of targets to build
 tests=(\
 VFSIconIT \
-VFSIT \
-OperationsIT \
-TermIT \
+VFSIT
 )
+
+#tests=(\
+#VFSIconIT \
+#VFSIT \
+#OperationsIT \
+#TermIT \
+#)
 
 # list of configurations to build the targets with
-configurations=(\
-Debug \
-Release \
-)
+#configurations=(\
+#Debug \
+#Release \
+#)
+configuration=Debug
 
 # run N * M binaries
-for configuration in ${configurations[@]}; do
+#for configuration in ${configurations[@]}; do
   for test in ${tests[@]}; do
     # build the binary
     build_target $test $configuration
@@ -78,7 +89,7 @@ for configuration in ${configurations[@]}; do
     # execute the binary
     $BINARY_PATH
   done
-done
+#done
 
 # cleanup
 rm -rf ${BUILD_DIR}

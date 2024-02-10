@@ -22,13 +22,29 @@ jobs:
     steps:
     - name: Select latest Xcode
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
-    - name: Install deps
-      run: |
-        brew install docker
-        colima start
     - uses: actions/checkout@v4
     - name: Build and run unit tests
       run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
+
+
+  integration-tests:
+    runs-on: macos-13 # NB! need to run on amd64 since m1 doesn't support nested virtualization
+    steps:
+    - name: Select latest Xcode
+      run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
+    - name: Install deps
+      run: |
+        brew install docker
+        brew install colima
+        colima start
+    - uses: actions/checkout@v4
+    - name: Build and run unit tests
+      env:
+        NC_SENSITIVE: ${{ secrets.NC_SENSITIVE }}
+      run: |
+        "echo -n "$NC_SENSITIVE" | base64 --decode -o ~/.nc_sensitive.h"
+        "cd Scripts && ./run_all_integration_tests.sh"
+
 
   build-unsigned:
     runs-on: macos-14

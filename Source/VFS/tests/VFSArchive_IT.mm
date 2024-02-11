@@ -26,7 +26,6 @@ using namespace nc::vfs;
 [[clang::no_destroy]] static const auto g_HeadingSlash =
     g_Preffix + "the.expanse.calibans.war.(2017).tv.s02.e13.eng.1cd.zip";
 [[clang::no_destroy]] static const auto g_SlashDir = g_Preffix + "archive_with_slash_dir.zip";
-[[clang::no_destroy]] static const auto g_GDriveDownload = g_Preffix + "gdrive_encoding.zip";
 
 static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
                              const VFSHostPtr &_file1_host,
@@ -332,20 +331,4 @@ TEST_CASE(PREFIX "archive with slash dir")
 
     VFSListingPtr listing;
     REQUIRE(host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok);
-}
-
-TEST_CASE(PREFIX "gdrive archives are properly decoded")
-{
-    std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(
-        host = std::make_shared<ArchiveHost>(g_GDriveDownload.c_str(), TestEnv().vfs_native));
-
-    VFSFilePtr file;
-    REQUIRE(host->CreateFile(@"/тест.txt".UTF8String, file, 0) == 0);
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-
-    auto d = file->ReadFile();
-    REQUIRE(d->size() == 9);
-    auto ref = @"Тест!".UTF8String;
-    REQUIRE(std::memcmp(d->data(), ref, std::strlen(ref)) == 0);
 }

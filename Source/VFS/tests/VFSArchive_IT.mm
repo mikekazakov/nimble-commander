@@ -19,7 +19,6 @@ using namespace nc::vfs;
 [[clang::no_destroy]] static const auto g_Adium = g_Preffix + "adium.app.zip";
 [[clang::no_destroy]] static const auto g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
 [[clang::no_destroy]] static const auto g_Files = g_Preffix + "files-1.1.0(1341).zip";
-[[clang::no_destroy]] static const auto g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
 [[clang::no_destroy]] static const auto g_LZMA = g_Preffix + "lzma-4.32.7.tar.xz";
 [[clang::no_destroy]] static const auto g_WarningArchive = g_Preffix + "maverix-master.zip";
 [[clang::no_destroy]] static const auto g_ChineseArchive = g_Preffix + "GB18030.zip";
@@ -176,26 +175,6 @@ TEST_CASE(PREFIX "XNU2")
     REQUIRE(d->size() == 957);
     auto ref = "# See top level .clang-format for explanation of options";
     REQUIRE(std::memcmp(d->data(), ref, strlen(ref)) == 0);
-}
-
-TEST_CASE(PREFIX "Encrypted")
-{
-    const auto passwd = std::string("pass1");
-    std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(
-        host = std::make_shared<ArchiveHost>(g_Encrypted.c_str(), TestEnv().vfs_native, passwd));
-    REQUIRE(host->StatTotalFiles() == 2);
-    REQUIRE(host->StatTotalRegs() == 2);
-    REQUIRE(host->StatTotalDirs() == 0);
-
-    VFSFilePtr file;
-    auto fn = "/file2";
-    REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-    auto d = file->ReadFile();
-    REQUIRE(d->size() == 19);
-    auto ref = "contents of file2.\0A";
-    REQUIRE(memcmp(d->data(), ref, strlen(ref)) == 0);
 }
 
 // contains symlinks

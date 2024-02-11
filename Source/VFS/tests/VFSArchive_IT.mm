@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -6,16 +6,14 @@
 #include <VFS/Native.h>
 #include <sys/stat.h>
 #include <thread>
+#include <fmt/core.h>
 #include "NCE.h"
 
 using namespace nc::vfs;
 
 #define PREFIX "VFSArchive "
 
-[[clang::no_destroy]] static const auto g_Preffix =
-    std::string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
-[[clang::no_destroy]] static const auto g_XNU = g_Preffix + "xnu-2050.18.24.tar";
-[[clang::no_destroy]] static const auto g_XNU2 = g_Preffix + "xnu-3248.20.55.tar";
+[[clang::no_destroy]] static const auto g_Preffix = std::string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
 [[clang::no_destroy]] static const auto g_Adium = g_Preffix + "adium.app.zip";
 [[clang::no_destroy]] static const auto g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
 [[clang::no_destroy]] static const auto g_Files = g_Preffix + "files-1.1.0(1341).zip";
@@ -50,7 +48,8 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
     if( S_ISREG(st1.mode) ) {
         if( int64_t(st1.size) - int64_t(st2.size) != 0 )
             _result = int(int64_t(st1.size) - int64_t(st2.size));
-    } else if( S_ISLNK(st1.mode) ) {
+    }
+    else if( S_ISLNK(st1.mode) ) {
         char link1[MAXPATHLEN], link2[MAXPATHLEN];
         if( (ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, 0)) < 0 )
             return ret;
@@ -58,55 +57,73 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
             return ret;
         if( strcmp(link1, link2) != 0 )
             _result = strcmp(link1, link2);
-    } else if( S_ISDIR(st1.mode) ) {
-        _file1_host->IterateDirectoryListing(
-            _file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-                int ret = VFSCompareEntries(_file1_full_path / _dirent.name,
-                                            _file1_host,
-                                            _file2_full_path / _dirent.name,
-                                            _file2_host,
-                                            _result);
-                if( ret != 0 )
-                    return false;
-                return true;
-            });
+    }
+    else if( S_ISDIR(st1.mode) ) {
+        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+            int ret = VFSCompareEntries(
+                _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
+            if( ret != 0 )
+                return false;
+            return true;
+        });
     }
     return 0;
 }
 
 TEST_CASE(PREFIX "XNUSource - TAR")
 {
-    std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_XNU.c_str(), TestEnv().vfs_native));
+    TestDir dir;
+    auto url = "https://opensource.apple.com/tarballs/xnu/xnu-3248.20.55.tar.gz";
+    auto path = dir.directory / "xnu-3248.20.55.tar.gz";
+    auto cmd = fmt::format("/usr/local/bin/wget -q -O {} {}", path.native(), url);
+    REQUIRE(system(cmd.c_str()) == 0);
 
-    REQUIRE(host->StatTotalDirs() == 246);
-    REQUIRE(host->StatTotalRegs() == 3288);
+    std::shared_ptr<ArchiveHost> host;
+    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(path.c_str(), TestEnv().vfs_native));
+
+    REQUIRE(host->StatTotalDirs() == 245);
+    REQUIRE(host->StatTotalRegs() == 3451);
     REQUIRE(host->IsDirectory("/", 0, 0) == true);
-    REQUIRE(host->IsDirectory("/xnu-2050.18.24/EXTERNAL_HEADERS/mach-o/x86_64", 0, 0) == true);
-    REQUIRE(host->IsDirectory("/xnu-2050.18.24/EXTERNAL_HEADERS/mach-o/x86_64/", 0, 0) == true);
-    REQUIRE(host->Exists("/xnu-2050.18.24/2342423/9182391273/x86_64") == false);
+    REQUIRE(host->IsDirectory("/xnu-xnu-3248.20.55/EXTERNAL_HEADERS/mach-o/x86_64", 0, 0) == true);
+    REQUIRE(host->IsDirectory("/xnu-xnu-3248.20.55/EXTERNAL_HEADERS/mach-o/x86_64/", 0, 0) == true);
+    REQUIRE(host->Exists("/xnu-xnu-3248.20.55/2342423/9182391273/x86_64") == false);
 
     VFSStat st;
-    REQUIRE(host->Stat("/xnu-2050.18.24/bsd/security/audit/audit_bsm_socket_type.c", st, 0, 0) ==
-            0);
+    REQUIRE(host->Stat("/xnu-xnu-3248.20.55/bsd/security/audit/audit_bsm_socket_type.c", st, 0, 0) == 0);
     REQUIRE(st.mode_bits.reg);
     REQUIRE(st.size == 3313);
 
-    std::vector<std::string> filenames{
-        "/xnu-2050.18.24/bsd/bsm/audit_domain.h",
-        "/xnu-2050.18.24/bsd/netat/ddp_rtmp.c",
-        "/xnu-2050.18.24/bsd/vm/vm_unix.c",
-        "/xnu-2050.18.24/iokit/bsddev/DINetBootHook.cpp",
-        "/xnu-2050.18.24/iokit/Kernel/x86_64/IOAsmSupport.s",
-        "/xnu-2050.18.24/iokit/Kernel/IOSubMemoryDescriptor.cpp",
-        "/xnu-2050.18.24/libkern/c++/Tests/TestSerialization/test2/test2.xcodeproj/project.pbxproj",
-        "/xnu-2050.18.24/libkern/zlib/intel/inffastS.s",
-        "/xnu-2050.18.24/osfmk/x86_64/pmap.c",
-        "/xnu-2050.18.24/pexpert/gen/device_tree.c",
-        "/xnu-2050.18.24/pexpert/i386/pe_init.c",
-        "/xnu-2050.18.24/pexpert/pexpert/i386/efi.h",
-        "/xnu-2050.18.24/security/mac_policy.h",
-        "/xnu-2050.18.24/tools/lockstat/lockstat.c"};
+    {
+        // symlinks were faulty in <1.1.3
+        auto fn = "/xnu-xnu-3248.20.55/libkern/.clang-format";
+        REQUIRE(host->IsSymlink(fn, VFSFlags::F_NoFollow));
+        REQUIRE(host->Stat(fn, st, 0, 0) == 0);
+        REQUIRE(st.mode_bits.reg);
+        REQUIRE(st.size == 957);
+
+        VFSFilePtr file;
+        REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
+        auto d = file->ReadFile();
+        REQUIRE(d->size() == 957);
+        auto ref = "# See top level .clang-format for explanation of options";
+        REQUIRE(std::memcmp(d->data(), ref, strlen(ref)) == 0);
+    }
+
+    std::vector<std::string> filenames{"/xnu-xnu-3248.20.55/bsd/bsm/audit_domain.h",
+                                       "/xnu-xnu-3248.20.55/bsd/netinet6/scope6_var.h",
+                                       "/xnu-xnu-3248.20.55/bsd/vm/vm_unix.c",
+                                       "/xnu-xnu-3248.20.55/iokit/bsddev/DINetBootHook.cpp",
+                                       "/xnu-xnu-3248.20.55/iokit/Kernel/x86_64/IOAsmSupport.s",
+                                       "/xnu-xnu-3248.20.55/iokit/Kernel/IOSubMemoryDescriptor.cpp",
+                                       "/xnu-xnu-3248.20.55/bsd/libkern/memchr.c",
+                                       "/xnu-xnu-3248.20.55/bsd/miscfs/deadfs/dead_vnops.c",
+                                       "/xnu-xnu-3248.20.55/osfmk/x86_64/pmap.c",
+                                       "/xnu-xnu-3248.20.55/pexpert/gen/device_tree.c",
+                                       "/xnu-xnu-3248.20.55/pexpert/i386/pe_init.c",
+                                       "/xnu-xnu-3248.20.55/pexpert/pexpert/i386/efi.h",
+                                       "/xnu-xnu-3248.20.55/security/mac_policy.h",
+                                       "/xnu-xnu-3248.20.55/tools/lockstat/lockstat.c"};
 
     dispatch_group_t dg = dispatch_group_create();
 
@@ -114,6 +131,7 @@ TEST_CASE(PREFIX "XNUSource - TAR")
     for( int i = 0; i < 1000; ++i )
         dispatch_group_async(dg, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
           std::string fn = filenames[std::rand() % filenames.size()];
+          INFO(fn);
 
           VFSStat local_st;
           REQUIRE(host->Stat(fn.c_str(), local_st, 0, 0) == 0);
@@ -156,27 +174,6 @@ TEST_CASE(PREFIX "angular")
     REQUIRE(std::memcmp(d->data(), ref, strlen(ref)) == 0);
 }
 
-// symlinks were faulty in <1.1.3
-TEST_CASE(PREFIX "XNU2")
-{
-    std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_XNU2.c_str(), TestEnv().vfs_native));
-
-    VFSStat st;
-    auto fn = "/xnu-3248.20.55/libkern/.clang-format";
-    REQUIRE(host->Stat(fn, st, 0, 0) == 0);
-    REQUIRE(st.mode_bits.reg);
-    REQUIRE(st.size == 957);
-
-    VFSFilePtr file;
-    REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-    auto d = file->ReadFile();
-    REQUIRE(d->size() == 957);
-    auto ref = "# See top level .clang-format for explanation of options";
-    REQUIRE(std::memcmp(d->data(), ref, strlen(ref)) == 0);
-}
-
 // contains symlinks
 TEST_CASE(PREFIX "adium.zip")
 {
@@ -196,22 +193,15 @@ TEST_CASE(PREFIX "adium.zip")
     REQUIRE(!st.mode_bits.chr);
     REQUIRE(st.size == 2013068);
 
-    REQUIRE(host->Stat("/Adium.app/Contents/Frameworks/Adium.framework/Adium",
-                       st,
-                       VFSFlags::F_NoFollow,
-                       0) == 0);
+    REQUIRE(host->Stat("/Adium.app/Contents/Frameworks/Adium.framework/Adium", st, VFSFlags::F_NoFollow, 0) == 0);
     REQUIRE(st.mode_bits.reg);
     REQUIRE(st.mode_bits.chr);
 
-    REQUIRE(host->IsDirectory("/Adium.app/Contents/Frameworks/Adium.framework/Headers", 0, 0) ==
-            true);
-    REQUIRE(host->IsSymlink("/Adium.app/Contents/Frameworks/Adium.framework/Headers",
-                            VFSFlags::F_NoFollow,
-                            0) == true);
+    REQUIRE(host->IsDirectory("/Adium.app/Contents/Frameworks/Adium.framework/Headers", 0, 0) == true);
+    REQUIRE(host->IsSymlink("/Adium.app/Contents/Frameworks/Adium.framework/Headers", VFSFlags::F_NoFollow, 0) == true);
 
     char buf[MAXPATHLEN + 1];
-    REQUIRE(host->ReadSymlink(
-                "/Adium.app/Contents/Frameworks/Adium.framework/Adium", buf, MAXPATHLEN, 0) == 0);
+    REQUIRE(host->ReadSymlink("/Adium.app/Contents/Frameworks/Adium.framework/Adium", buf, MAXPATHLEN, 0) == 0);
     REQUIRE(std::string_view("Versions/Current/Adium") == buf);
 }
 
@@ -262,8 +252,7 @@ TEST_CASE(PREFIX "lzma support")
 TEST_CASE(PREFIX "archive with warning")
 {
     std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(
-        host = std::make_shared<ArchiveHost>(g_WarningArchive.c_str(), TestEnv().vfs_native));
+    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_WarningArchive.c_str(), TestEnv().vfs_native));
 
     VFSFilePtr file;
 
@@ -279,8 +268,7 @@ TEST_CASE(PREFIX "archive with warning")
 TEST_CASE(PREFIX "chinese archive")
 {
     std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(
-        host = std::make_shared<ArchiveHost>(g_ChineseArchive.c_str(), TestEnv().vfs_native));
+    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_ChineseArchive.c_str(), TestEnv().vfs_native));
 
     VFSFilePtr file;
 
@@ -296,8 +284,7 @@ TEST_CASE(PREFIX "chinese archive")
 TEST_CASE(PREFIX "archive with heading slash")
 {
     std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(
-        host = std::make_shared<ArchiveHost>(g_HeadingSlash.c_str(), TestEnv().vfs_native));
+    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_HeadingSlash.c_str(), TestEnv().vfs_native));
 
     VFSListingPtr listing;
     REQUIRE(host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok);

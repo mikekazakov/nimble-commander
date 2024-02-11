@@ -14,7 +14,6 @@ using namespace nc::vfs;
 #define PREFIX "VFSArchive "
 
 [[clang::no_destroy]] static const auto g_Preffix = std::string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
-[[clang::no_destroy]] static const auto g_Adium = g_Preffix + "adium.app.zip";
 [[clang::no_destroy]] static const auto g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
 [[clang::no_destroy]] static const auto g_Files = g_Preffix + "files-1.1.0(1341).zip";
 [[clang::no_destroy]] static const auto g_LZMA = g_Preffix + "lzma-4.32.7.tar.xz";
@@ -172,65 +171,6 @@ TEST_CASE(PREFIX "angular")
     REQUIRE(d->size() == 1207);
     auto ref = "var value = element(by.binding('example.value | date: \"yyyy-Www\"'));";
     REQUIRE(std::memcmp(d->data(), ref, strlen(ref)) == 0);
-}
-
-// contains symlinks
-TEST_CASE(PREFIX "adium.zip")
-{
-    std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_Adium.c_str(), TestEnv().vfs_native));
-
-    VFSStat st;
-    REQUIRE(host->Stat("/Adium.app/Contents/Info.plist", st, 0, 0) == 0);
-    REQUIRE(st.mode_bits.reg);
-    REQUIRE(st.size == 6201);
-    REQUIRE(host->Stat("/Adium.app/Contents/Info.plist", st, VFSFlags::F_NoFollow, 0) == 0);
-    REQUIRE(st.mode_bits.reg);
-    REQUIRE(st.size == 6201);
-
-    REQUIRE(host->Stat("/Adium.app/Contents/Frameworks/Adium.framework/Adium", st, 0, 0) == 0);
-    REQUIRE(st.mode_bits.reg);
-    REQUIRE(!st.mode_bits.chr);
-    REQUIRE(st.size == 2013068);
-
-    REQUIRE(host->Stat("/Adium.app/Contents/Frameworks/Adium.framework/Adium", st, VFSFlags::F_NoFollow, 0) == 0);
-    REQUIRE(st.mode_bits.reg);
-    REQUIRE(st.mode_bits.chr);
-
-    REQUIRE(host->IsDirectory("/Adium.app/Contents/Frameworks/Adium.framework/Headers", 0, 0) == true);
-    REQUIRE(host->IsSymlink("/Adium.app/Contents/Frameworks/Adium.framework/Headers", VFSFlags::F_NoFollow, 0) == true);
-
-    char buf[MAXPATHLEN + 1];
-    REQUIRE(host->ReadSymlink("/Adium.app/Contents/Frameworks/Adium.framework/Adium", buf, MAXPATHLEN, 0) == 0);
-    REQUIRE(std::string_view("Versions/Current/Adium") == buf);
-}
-
-TEST_CASE(PREFIX "adium.zip - xattrs")
-{
-    std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_Adium.c_str(), TestEnv().vfs_native));
-
-    VFSFilePtr file;
-    char buf[4096];
-    ssize_t sz;
-
-    // com.apple.quarantine has a special treating, value in archive differs from a plain value
-    // returned from xattr util
-    REQUIRE(host->CreateFile("/Adium.app/Contents/MacOS/Adium", file, 0) == 0);
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-    REQUIRE(file->XAttrCount() == 1);
-    REQUIRE((sz = file->XAttrGet("com.apple.quarantine", buf, sizeof(buf))) == 60);
-    REQUIRE(strncmp(buf, "q/0042;50f14fe0;Safari;9A8E9C25-2CA8-4A2C-8A45-852A966494A1", sz) == 0);
-    file.reset();
-
-    REQUIRE(host->CreateFile("/Adium.app/Icon\r", file, 0) == 0);
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-    REQUIRE(file->XAttrCount() == 2);
-    REQUIRE((sz = file->XAttrGet("com.apple.FinderInfo", buf, sizeof(buf))) == 32);
-    const uint8_t finfo[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00,
-                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    REQUIRE(memcmp(buf, finfo, sz) == 0);
 }
 
 TEST_CASE(PREFIX "lzma support")

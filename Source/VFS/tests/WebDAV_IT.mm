@@ -14,7 +14,7 @@
 using namespace nc::vfs;
 
 // Apache/2.4.41 on Ubuntu 20.04 LTS running in a Docker
-static const auto g_Ubuntu2004Host = "localhost";
+static const auto g_Ubuntu2004Host = "127.0.0.1";
 static const auto g_Ubuntu2004Username = "r2d2";
 static const auto g_Ubuntu2004Password = "Hello";
 static const auto g_Ubuntu2004Port = 9080;

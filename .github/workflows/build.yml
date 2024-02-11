@@ -32,16 +32,11 @@ jobs:
     steps:
     - name: Select latest Xcode
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
-#    - name: Install deps
-#      run: |
-#        brew install docker
-#        brew install colima
-#        colima start
-    - name: Setup Docker on macOS
-      uses: douglascamata/setup-docker-macos-action@v1-alpha
-#    - name: Setup Docker on macOS
-#      uses: docker-practice/actions-setup-docker@master
-#      timeout-minutes: 12
+    - name: Install deps
+      run: |
+        brew install docker
+        brew install colima
+        colima start --network-address
     - uses: actions/checkout@v4
     - name: Build and run unit tests
       env:

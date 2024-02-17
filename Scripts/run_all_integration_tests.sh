@@ -53,6 +53,7 @@ build_target()
         -configuration ${CONFIGURATION} \
         SYMROOT=${BUILD_DIR} \
         OBJROOT=${BUILD_DIR} \
+        -enableAddressSanitizer YES \
         -parallelizeTargets"
     BINARY_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//')
     BINARY_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//')

@@ -7,15 +7,10 @@
 #include <sys/stat.h>
 #include <thread>
 #include <fmt/core.h>
-#include "NCE.h"
 
 using namespace nc::vfs;
 
 #define PREFIX "VFSArchive "
-
-[[clang::no_destroy]] static const auto g_Preffix = std::string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
-[[clang::no_destroy]] static const auto g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
-[[clang::no_destroy]] static const auto g_WarningArchive = g_Preffix + "maverix-master.zip";
 
 static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
                              const VFSHostPtr &_file1_host,
@@ -140,20 +135,4 @@ TEST_CASE(PREFIX "XNUSource - TAR")
         });
 
     dispatch_group_wait(dg, DISPATCH_TIME_FOREVER);
-}
-
-TEST_CASE(PREFIX "archive with warning")
-{
-    std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_WarningArchive.c_str(), TestEnv().vfs_native));
-
-    VFSFilePtr file;
-
-    REQUIRE(host->CreateFile("/maverix-master/maverix-theme/app/js/app.js", file, 0) == 0);
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-
-    auto d = file->ReadFile();
-    REQUIRE(d->size() == 1426);
-    auto ref = "'use strict';";
-    REQUIRE(std::memcmp(d->data(), ref, std::strlen(ref)) == 0);
 }

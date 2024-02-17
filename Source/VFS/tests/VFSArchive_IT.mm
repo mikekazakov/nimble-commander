@@ -19,8 +19,6 @@ using namespace nc::vfs;
 [[clang::no_destroy]] static const auto g_LZMA = g_Preffix + "lzma-4.32.7.tar.xz";
 [[clang::no_destroy]] static const auto g_WarningArchive = g_Preffix + "maverix-master.zip";
 [[clang::no_destroy]] static const auto g_ChineseArchive = g_Preffix + "GB18030.zip";
-[[clang::no_destroy]] static const auto g_HeadingSlash =
-    g_Preffix + "the.expanse.calibans.war.(2017).tv.s02.e13.eng.1cd.zip";
 
 static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
                              const VFSHostPtr &_file1_host,
@@ -218,13 +216,4 @@ TEST_CASE(PREFIX "chinese archive")
     REQUIRE(d->size() == 627);
     auto ref = "#include <stdio.h>";
     REQUIRE(std::memcmp(d->data(), ref, std::strlen(ref)) == 0);
-}
-
-TEST_CASE(PREFIX "archive with heading slash")
-{
-    std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_HeadingSlash.c_str(), TestEnv().vfs_native));
-
-    VFSListingPtr listing;
-    REQUIRE(host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok);
 }

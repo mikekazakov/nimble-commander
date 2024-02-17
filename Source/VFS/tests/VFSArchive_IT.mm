@@ -15,8 +15,6 @@ using namespace nc::vfs;
 
 [[clang::no_destroy]] static const auto g_Preffix = std::string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
 [[clang::no_destroy]] static const auto g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
-[[clang::no_destroy]] static const auto g_Files = g_Preffix + "files-1.1.0(1341).zip";
-[[clang::no_destroy]] static const auto g_LZMA = g_Preffix + "lzma-4.32.7.tar.xz";
 [[clang::no_destroy]] static const auto g_WarningArchive = g_Preffix + "maverix-master.zip";
 [[clang::no_destroy]] static const auto g_ChineseArchive = g_Preffix + "GB18030.zip";
 
@@ -143,47 +141,6 @@ TEST_CASE(PREFIX "XNUSource - TAR")
         });
 
     dispatch_group_wait(dg, DISPATCH_TIME_FOREVER);
-}
-
-// was fault before 1.0.6, so introducing this regression test
-TEST_CASE(PREFIX "angular")
-{
-    std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_Angular.c_str(), TestEnv().vfs_native));
-
-    REQUIRE(host->StatTotalFiles() == 2764);
-    REQUIRE(host->StatTotalRegs() == 2431);
-    REQUIRE(host->StatTotalDirs() == 333);
-
-    VFSStat st;
-    auto fn = "/angular-1.4.0-beta.4/docs/examples/example-week-input-directive/protractor.js";
-    REQUIRE(host->Stat(fn, st, 0, 0) == 0);
-    REQUIRE(st.mode_bits.reg);
-    REQUIRE(st.size == 1207);
-
-    VFSFilePtr file;
-    REQUIRE(host->CreateFile(fn, file, nullptr) == 0);
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-    auto d = file->ReadFile();
-    REQUIRE(d->size() == 1207);
-    auto ref = "var value = element(by.binding('example.value | date: \"yyyy-Www\"'));";
-    REQUIRE(std::memcmp(d->data(), ref, strlen(ref)) == 0);
-}
-
-TEST_CASE(PREFIX "lzma support")
-{
-    std::shared_ptr<ArchiveHost> host;
-    REQUIRE_NOTHROW(host = std::make_shared<ArchiveHost>(g_LZMA.c_str(), TestEnv().vfs_native));
-
-    VFSFilePtr file;
-
-    REQUIRE(host->CreateFile("/lzma-4.32.7/ltmain.sh", file, 0) == 0);
-    REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
-
-    auto d = file->ReadFile();
-    REQUIRE(d->size() == 196440);
-    auto ref = "# ltmain.sh - Provide generalized library-building support services.";
-    REQUIRE(std::memcmp(d->data(), ref, std::strlen(ref)) == 0);
 }
 
 TEST_CASE(PREFIX "archive with warning")

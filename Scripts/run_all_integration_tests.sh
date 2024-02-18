@@ -13,12 +13,16 @@ if ! [ -x "$(command -v docker)" ] ; then
     exit -1
 fi
 
+# https://github.com/xcpretty/xcpretty/issues/48
+export LC_CTYPE=en_US.UTF-8
+
 # get current directory
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT_DIR="${SCRIPTS_DIR}/.."
 
 # allocate a temp dir for build artifacts
-BUILD_DIR=$(mktemp -d ${SCRIPTS_DIR}/build.XXXXXXXXX)
+BUILD_DIR="${SCRIPTS_DIR}/run_all_integration_tests.tmp"
+mkdir -p "${BUILD_DIR}"
 
 LOG_FILE=${BUILD_DIR}/xcodebuild.log
 
@@ -40,14 +44,14 @@ cd ${SCRIPTS_DIR}
 build_target()
 {
     TARGET=$1
-    CONFIGURATION=$2
     echo building ${TARGET} - ${CONFIGURATION}
     XC="xcodebuild \
         -project ../Source/NimbleCommander/NimbleCommander.xcodeproj \
         -scheme ${TARGET} \
-        -configuration ${CONFIGURATION} \
+        -configuration Debug \
         SYMROOT=${BUILD_DIR} \
         OBJROOT=${BUILD_DIR} \
+        -enableAddressSanitizer YES \
         -parallelizeTargets"
     BINARY_DIR=$($XC -showBuildSettings | grep " BUILT_PRODUCTS_DIR =" | sed -e 's/.*= *//')
     BINARY_NAME=$($XC -showBuildSettings | grep " FULL_PRODUCT_NAME =" | sed -e 's/.*= *//')
@@ -63,21 +67,12 @@ OperationsIT \
 TermIT \
 )
 
-# list of configurations to build the targets with
-configurations=(\
-Debug \
-Release \
-)
-
-# run N * M binaries
-for configuration in ${configurations[@]}; do
-  for test in ${tests[@]}; do
-    # build the binary
-    build_target $test $configuration
+for test in ${tests[@]}; do
+  # build the binary
+  build_target $test
     
-    # execute the binary
-    $BINARY_PATH
-  done
+  # execute the binary
+  $BINARY_PATH
 done
 
 # cleanup

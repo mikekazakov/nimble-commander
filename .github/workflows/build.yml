@@ -26,6 +26,30 @@ jobs:
     - name: Build and run unit tests
       run: "cd Scripts && ./run_all_unit_tests.sh ${{ matrix.configuration }}"
 
+
+  # NB! need to run on amd64 since m1 doesn't support nested virtualization
+  # NB! colima v0.5.6 seem to run more stable than latest - that has occasional network failures (ports are not open)
+  integration-tests:
+    runs-on: macos-13
+    steps:
+    - name: Select latest Xcode
+      run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
+    - name: Install deps
+      run: |
+        brew install docker
+        brew install colima
+        brew unlink colima
+        curl -L -o /usr/local/bin/colima https://github.com/abiosoft/colima/releases/download/v0.5.6/colima-Darwin-x86_64 && sudo chmod +x /usr/local/bin/colima
+        colima start --network-address
+    - uses: actions/checkout@v4
+    - name: Build and run unit tests
+      env:
+        NC_SENSITIVE: ${{ secrets.NC_SENSITIVE }}
+      run: |
+        echo -n "$NC_SENSITIVE" | base64 --decode -o /Users/runner/.nc_sensitive.h
+        cd Scripts && ./run_all_integration_tests.sh
+
+
   build-unsigned:
     runs-on: macos-14
     steps:

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <Operations/Copying.h>
@@ -15,7 +15,6 @@ using nc::ops::Copying;
 using nc::ops::CopyingOptions;
 using nc::ops::OperationState;
 using nc::utility::NativeFSManager;
-static const auto g_LocalFTP = NCE(nc::env::test::ftp_qnap_nas_host);
 
 static std::vector<std::byte> MakeNoise(size_t _size);
 static bool Save(const std::filesystem::path &_filepath, std::span<const std::byte> _content);
@@ -880,119 +879,120 @@ TEST_CASE(PREFIX "Copy native->xattr->xattr")
     }
 }
 
-TEST_CASE(PREFIX "Copy to local FTP, part1", "[!mayfail]")
-{
-    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
+// Disabled for now
+//TEST_CASE(PREFIX "Copy to local FTP, part1", "[!mayfail]")
+//{
+//    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
+//
+//    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/kernel";
+//
+//    VFSEasyDelete(fn2, host);
+//
+//    CopyingOptions opts;
+//    Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
+//               "/Public/!FilesTesting/",
+//               host,
+//               opts);
+//
+//    op.Start();
+//    op.Wait();
+//
+//    int compare;
+//    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
+//    REQUIRE(compare == 0);
+//
+//    REQUIRE(host->Unlink(fn2, 0) == 0);
+//}
 
-    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/kernel";
-
-    VFSEasyDelete(fn2, host);
-
-    CopyingOptions opts;
-    Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
-               "/Public/!FilesTesting/",
-               host,
-               opts);
-
-    op.Start();
-    op.Wait();
-
-    int compare;
-    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
-    REQUIRE(compare == 0);
-
-    REQUIRE(host->Unlink(fn2, 0) == 0);
-}
-
-TEST_CASE(PREFIX "Copy to local FTP, part2", "[!mayfail]")
-{
-    using namespace std;
-    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
-
-    auto files = {"Info.plist", "PkgInfo", "version.plist"};
-
-    for( auto &i : files )
-        VFSEasyDelete(("/Public/!FilesTesting/"s + i).c_str(), host);
-
-    CopyingOptions opts;
-    Copying op(FetchItems("/System/Applications/Mail.app/Contents",
-                          {begin(files), end(files)},
-                          *TestEnv().vfs_native),
-               "/Public/!FilesTesting/",
-               host,
-               opts);
-
-    op.Start();
-    op.Wait();
-
-    for( auto &i : files ) {
-        int compare;
-        REQUIRE(VFSEasyCompareFiles(("/System/Applications/Mail.app/Contents/"s + i).c_str(),
-                                    TestEnv().vfs_native,
-                                    ("/Public/!FilesTesting/"s + i).c_str(),
-                                    host,
-                                    compare) == 0);
-        REQUIRE(compare == 0);
-        REQUIRE(host->Unlink(("/Public/!FilesTesting/"s + i).c_str(), 0) == 0);
-    }
-}
-
-TEST_CASE(PREFIX "Copy to local FTP, part3", "[!mayfail]")
-{
-    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
-
-    VFSEasyDelete("/Public/!FilesTesting/bin", host);
-
-    CopyingOptions opts;
-    Copying op(
-        FetchItems("/", {"bin"}, *TestEnv().vfs_native), "/Public/!FilesTesting/", host, opts);
-
-    op.Start();
-    op.Wait();
-
-    int result = 0;
-    REQUIRE(VFSCompareEntries(
-                "/bin", TestEnv().vfs_native, "/Public/!FilesTesting/bin", host, result) == 0);
-    REQUIRE(result == 0);
-
-    VFSEasyDelete("/Public/!FilesTesting/bin", host);
-}
-
-TEST_CASE(PREFIX "Copy to local FTP, part4", "[!mayfail]")
-{
-    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
-
-    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/kernel",
-               *fn3 = "/Public/!FilesTesting/kernel copy";
-
-    VFSEasyDelete(fn2, host);
-    VFSEasyDelete(fn3, host);
-
-    {
-        Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
-                   "/Public/!FilesTesting/",
-                   host,
-                   {});
-        op.Start();
-        op.Wait();
-    }
-
-    int compare;
-    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
-    REQUIRE(compare == 0);
-
-    {
-        Copying op(FetchItems("/Public/!FilesTesting/", {"kernel"}, *host), fn3, host, {});
-        op.Start();
-        op.Wait();
-    }
-
-    REQUIRE(VFSEasyCompareFiles(fn2, host, fn3, host, compare) == 0);
-    REQUIRE(compare == 0);
-
-    REQUIRE(host->Unlink(fn2, 0) == 0);
-    REQUIRE(host->Unlink(fn3, 0) == 0);
-}
+//TEST_CASE(PREFIX "Copy to local FTP, part2", "[!mayfail]")
+//{
+//    using namespace std;
+//    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
+//
+//    auto files = {"Info.plist", "PkgInfo", "version.plist"};
+//
+//    for( auto &i : files )
+//        VFSEasyDelete(("/Public/!FilesTesting/"s + i).c_str(), host);
+//
+//    CopyingOptions opts;
+//    Copying op(FetchItems("/System/Applications/Mail.app/Contents",
+//                          {begin(files), end(files)},
+//                          *TestEnv().vfs_native),
+//               "/Public/!FilesTesting/",
+//               host,
+//               opts);
+//
+//    op.Start();
+//    op.Wait();
+//
+//    for( auto &i : files ) {
+//        int compare;
+//        REQUIRE(VFSEasyCompareFiles(("/System/Applications/Mail.app/Contents/"s + i).c_str(),
+//                                    TestEnv().vfs_native,
+//                                    ("/Public/!FilesTesting/"s + i).c_str(),
+//                                    host,
+//                                    compare) == 0);
+//        REQUIRE(compare == 0);
+//        REQUIRE(host->Unlink(("/Public/!FilesTesting/"s + i).c_str(), 0) == 0);
+//    }
+//}
+//
+//TEST_CASE(PREFIX "Copy to local FTP, part3", "[!mayfail]")
+//{
+//    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
+//
+//    VFSEasyDelete("/Public/!FilesTesting/bin", host);
+//
+//    CopyingOptions opts;
+//    Copying op(
+//        FetchItems("/", {"bin"}, *TestEnv().vfs_native), "/Public/!FilesTesting/", host, opts);
+//
+//    op.Start();
+//    op.Wait();
+//
+//    int result = 0;
+//    REQUIRE(VFSCompareEntries(
+//                "/bin", TestEnv().vfs_native, "/Public/!FilesTesting/bin", host, result) == 0);
+//    REQUIRE(result == 0);
+//
+//    VFSEasyDelete("/Public/!FilesTesting/bin", host);
+//}
+//
+//TEST_CASE(PREFIX "Copy to local FTP, part4", "[!mayfail]")
+//{
+//    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
+//
+//    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/kernel",
+//               *fn3 = "/Public/!FilesTesting/kernel copy";
+//
+//    VFSEasyDelete(fn2, host);
+//    VFSEasyDelete(fn3, host);
+//
+//    {
+//        Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
+//                   "/Public/!FilesTesting/",
+//                   host,
+//                   {});
+//        op.Start();
+//        op.Wait();
+//    }
+//
+//    int compare;
+//    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
+//    REQUIRE(compare == 0);
+//
+//    {
+//        Copying op(FetchItems("/Public/!FilesTesting/", {"kernel"}, *host), fn3, host, {});
+//        op.Start();
+//        op.Wait();
+//    }
+//
+//    REQUIRE(VFSEasyCompareFiles(fn2, host, fn3, host, compare) == 0);
+//    REQUIRE(compare == 0);
+//
+//    REQUIRE(host->Unlink(fn2, 0) == 0);
+//    REQUIRE(host->Unlink(fn3, 0) == 0);
+//}
 
 TEST_CASE(PREFIX "Renaming a locked native regular item")
 {

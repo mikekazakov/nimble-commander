@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -11,8 +11,6 @@
 
 using namespace nc;
 using namespace nc::ops;
-
-static const auto g_LocalFTP = NCE(nc::env::test::ftp_qnap_nas_host);
 
 #define PREFIX "Operations::Deletion "
 
@@ -269,55 +267,56 @@ TEST_CASE(PREFIX "Complex deletion")
     REQUIRE(!host->Exists((dir.directory / "Mail.app").c_str()));
 }
 
-TEST_CASE(PREFIX "Simple delete from FTP")
-{
-    VFSHostPtr host;
-    try {
-        host = std::make_shared<vfs::FTPHost>(g_LocalFTP, "", "", "/");
-    } catch( VFSErrorException &e ) {
-        std::cout << "Skipping test, host not reachable: " << g_LocalFTP << std::endl;
-        return;
-    }
-
-    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/mach_kernel";
-    VFSStat stat;
-    // if there's a trash from previous runs - remove it
-    if( host->Stat(fn2, stat, 0, 0) == 0 )
-        REQUIRE(host->Unlink(fn2, 0) == 0);
-    REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
-
-    Deletion operation{FetchItems("/Public/!FilesTesting", {"mach_kernel"}, *host),
-                       DeletionType::Permanent};
-    operation.Start();
-    operation.Wait();
-
-    REQUIRE(host->Stat(fn2, stat, 0, 0) != 0); // check that file has gone
-}
-
-TEST_CASE(PREFIX "Deleting from FTP directory")
-{
-    VFSHostPtr host;
-    try {
-        host = std::make_shared<vfs::FTPHost>(g_LocalFTP, "", "", "/");
-    } catch( VFSErrorException &e ) {
-        std::cout << "Skipping test, host not reachable: " << g_LocalFTP << std::endl;
-        return;
-    }
-    const char *fn1 = "/bin", *fn2 = "/Public/!FilesTesting/bin";
-    VFSStat stat;
-
-    // if there's a trash from previous runs - remove it
-    if( host->Stat(fn2, stat, 0, 0) == 0 )
-        REQUIRE(VFSEasyDelete(fn2, host) == 0);
-    REQUIRE(VFSEasyCopyNode(fn1, TestEnv().vfs_native, fn2, host) == 0);
-
-    Deletion operation{FetchItems("/Public/!FilesTesting", {"bin"}, *host),
-                       DeletionType::Permanent};
-    operation.Start();
-    operation.Wait();
-
-    REQUIRE(host->Stat(fn2, stat, 0, 0) != 0); // check that file has gone
-}
+// Disabled for now
+//TEST_CASE(PREFIX "Simple delete from FTP")
+//{
+//    VFSHostPtr host;
+//    try {
+//        host = std::make_shared<vfs::FTPHost>(g_LocalFTP, "", "", "/");
+//    } catch( VFSErrorException &e ) {
+//        std::cout << "Skipping test, host not reachable: " << g_LocalFTP << std::endl;
+//        return;
+//    }
+//
+//    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/mach_kernel";
+//    VFSStat stat;
+//    // if there's a trash from previous runs - remove it
+//    if( host->Stat(fn2, stat, 0, 0) == 0 )
+//        REQUIRE(host->Unlink(fn2, 0) == 0);
+//    REQUIRE(VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
+//
+//    Deletion operation{FetchItems("/Public/!FilesTesting", {"mach_kernel"}, *host),
+//                       DeletionType::Permanent};
+//    operation.Start();
+//    operation.Wait();
+//
+//    REQUIRE(host->Stat(fn2, stat, 0, 0) != 0); // check that file has gone
+//}
+//
+//TEST_CASE(PREFIX "Deleting from FTP directory")
+//{
+//    VFSHostPtr host;
+//    try {
+//        host = std::make_shared<vfs::FTPHost>(g_LocalFTP, "", "", "/");
+//    } catch( VFSErrorException &e ) {
+//        std::cout << "Skipping test, host not reachable: " << g_LocalFTP << std::endl;
+//        return;
+//    }
+//    const char *fn1 = "/bin", *fn2 = "/Public/!FilesTesting/bin";
+//    VFSStat stat;
+//
+//    // if there's a trash from previous runs - remove it
+//    if( host->Stat(fn2, stat, 0, 0) == 0 )
+//        REQUIRE(VFSEasyDelete(fn2, host) == 0);
+//    REQUIRE(VFSEasyCopyNode(fn1, TestEnv().vfs_native, fn2, host) == 0);
+//
+//    Deletion operation{FetchItems("/Public/!FilesTesting", {"bin"}, *host),
+//                       DeletionType::Permanent};
+//    operation.Start();
+//    operation.Wait();
+//
+//    REQUIRE(host->Stat(fn2, stat, 0, 0) != 0); // check that file has gone
+//}
 
 static std::vector<VFSListingItem> FetchItems(const std::string &_directory_path,
                                               const std::vector<std::string> &_filenames,

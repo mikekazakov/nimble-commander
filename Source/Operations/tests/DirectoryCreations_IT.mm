@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TestEnv.h"
 #include <VFS/VFS.h>
@@ -8,8 +8,6 @@
 #include "Environment.h"
 #include <sys/stat.h>
 #include <iostream>
-
-static const auto g_LocalFTP = NCE(nc::env::test::ftp_qnap_nas_host);
 
 using namespace nc::ops;
 using namespace nc::vfs;
@@ -113,34 +111,35 @@ TEST_CASE(PREFIX "Alredy existing reg file")
     REQUIRE(!host->Exists((dir.directory / "Test1/Test2/Test3").c_str()));
 }
 
-TEST_CASE(PREFIX "On lLocal FTP server")
-{
-    VFSHostPtr host;
-    try {
-        host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/");
-    } catch( VFSErrorException &e ) {
-        std::cout << "Skipping test, host not reachable: " << g_LocalFTP << std::endl;
-        return;
-    }
-
-    {
-        DirectoryCreation operation(
-            "/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", "/", *host);
-        operation.Start();
-        operation.Wait();
-    }
-
-    VFSStat st;
-    REQUIRE(host->Stat(
-                "/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", st, 0, 0) == 0);
-    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/Dir", host) == 0);
-
-    {
-        DirectoryCreation operation("AnotherDir/AndSecondOne", "/Public/!FilesTesting", *host);
-        operation.Start();
-        operation.Wait();
-    }
-
-    REQUIRE(host->Stat("/Public/!FilesTesting/AnotherDir/AndSecondOne", st, 0, 0) == 0);
-    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host) == 0);
-}
+// Disabled for now
+//TEST_CASE(PREFIX "On local FTP server")
+//{
+//    VFSHostPtr host;
+//    try {
+//        host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/");
+//    } catch( VFSErrorException &e ) {
+//        std::cout << "Skipping test, host not reachable: " << g_LocalFTP << std::endl;
+//        return;
+//    }
+//
+//    {
+//        DirectoryCreation operation(
+//            "/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", "/", *host);
+//        operation.Start();
+//        operation.Wait();
+//    }
+//
+//    VFSStat st;
+//    REQUIRE(host->Stat(
+//                "/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", st, 0, 0) == 0);
+//    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/Dir", host) == 0);
+//
+//    {
+//        DirectoryCreation operation("AnotherDir/AndSecondOne", "/Public/!FilesTesting", *host);
+//        operation.Start();
+//        operation.Wait();
+//    }
+//
+//    REQUIRE(host->Stat("/Public/!FilesTesting/AnotherDir/AndSecondOne", st, 0, 0) == 0);
+//    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host) == 0);
+//}

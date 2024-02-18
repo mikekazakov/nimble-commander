@@ -64,15 +64,10 @@ build_target()
 # list of targets to build
 tests=(\
 VFSIconIT \
-VFSIT
+VFSIT \
+OperationsIT \
+TermIT \
 )
-
-#tests=(\
-#VFSIconIT \
-#VFSIT \
-#OperationsIT \
-#TermIT \
-#)
 
 # list of configurations to build the targets with
 #configurations=(\

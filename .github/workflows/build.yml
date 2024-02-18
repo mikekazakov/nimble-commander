@@ -36,7 +36,10 @@ jobs:
       run: |
         brew install docker
         brew install colima
-        colima start --network-address
+        brew unlink colima
+        mkdir -p /usr/local/bin
+        curl -L -o /usr/local/bin/colima https://github.com/abiosoft/colima/releases/download/v0.5.6/colima-Darwin-x86_64 && sudo chmod +x /usr/local/bin/colima
+        /usr/local/bin/colima start --network-address
     - uses: actions/checkout@v4
     - name: Build and run unit tests
       env:

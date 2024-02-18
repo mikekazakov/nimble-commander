@@ -32,6 +32,26 @@ echo "=== Starting docker dependencies ==="
 cd ${ROOT_DIR}/Source/VFS/tests/data/docker
 ./start.sh
 
+# temp workaround for the faulty colima docker VM which sometimes fails to expose network ports.
+if [ -n "$GITHUB_ACTION" ]; then
+    echo "Working on GHA, check for colima soundness"
+    sleep 10
+    if ! netstat -an | grep ':9022 ' | grep -q LISTEN; then
+        echo "Port 9022 is not open for listening, restart colima and the containers"
+        docker stop nc_sftp_ubuntu_2004
+        docker stop nc_webdav_ubuntu_2004
+    
+        sleep 5
+        colima stop -f
+        sleep 5
+        colima start --network-address
+        sleep 5
+        
+        docker start nc_sftp_ubuntu_2004
+        docker start nc_webdav_ubuntu_2004
+    fi
+fi
+
 # stop the docker stuff in a cleanup function
 function cleanup {
   echo "=== Stopping docker dependencies ==="

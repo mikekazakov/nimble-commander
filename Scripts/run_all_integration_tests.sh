@@ -37,7 +37,7 @@ if [ -n "$GITHUB_ACTION" ]; then
     echo "Working on GHA, check for colima soundness"
     sleep 10
     netstat -an | grep LISTEN
-    if ! netstat -an | grep ':9022 ' | grep -q LISTEN; then
+    if ! netstat -an | grep '.9022 ' | grep -q LISTEN; then
         echo "Port 9022 is not open for listening, restart colima and the containers"
         docker stop nc_sftp_ubuntu_2004
         docker stop nc_webdav_ubuntu_2004

@@ -21,7 +21,6 @@ SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT_DIR="${SCRIPTS_DIR}/.."
 
 # allocate a temp dir for build artifacts
-#BUILD_DIR=$(mktemp -d ${SCRIPTS_DIR}/build.XXXXXXXXX)
 BUILD_DIR="${SCRIPTS_DIR}/run_all_integration_tests.tmp"
 mkdir -p "${BUILD_DIR}"
 
@@ -31,29 +30,6 @@ LOG_FILE=${BUILD_DIR}/xcodebuild.log
 echo "=== Starting docker dependencies ==="
 cd ${ROOT_DIR}/Source/VFS/tests/data/docker
 ./start.sh
-
-# temp workaround for the faulty colima docker VM which sometimes fails to expose network ports.
-if [ -n "$GITHUB_ACTION" ]; then
-    echo "Working on GHA, check for colima soundness"
-    sleep 10
-    netstat -an | grep LISTEN
-    if ! netstat -an | grep '.9022 ' | grep -q LISTEN; then
-        echo "Port 9022 is not open for listening, restart colima and the containers"
-        docker stop nc_sftp_ubuntu_2004
-        docker stop nc_webdav_ubuntu_2004
-    
-        sleep 5
-        colima stop -f
-        sleep 5
-        colima start --network-address
-        sleep 5
-        
-        docker start nc_sftp_ubuntu_2004
-        docker start nc_webdav_ubuntu_2004
-        
-        netstat -an | grep LISTEN
-    fi
-fi
 
 # stop the docker stuff in a cleanup function
 function cleanup {
@@ -68,12 +44,11 @@ cd ${SCRIPTS_DIR}
 build_target()
 {
     TARGET=$1
-    CONFIGURATION=$2
     echo building ${TARGET} - ${CONFIGURATION}
     XC="xcodebuild \
         -project ../Source/NimbleCommander/NimbleCommander.xcodeproj \
         -scheme ${TARGET} \
-        -configuration ${CONFIGURATION} \
+        -configuration Debug \
         SYMROOT=${BUILD_DIR} \
         OBJROOT=${BUILD_DIR} \
         -enableAddressSanitizer YES \
@@ -92,23 +67,13 @@ OperationsIT \
 TermIT \
 )
 
-# list of configurations to build the targets with
-#configurations=(\
-#Debug \
-#Release \
-#)
-configuration=Debug
-
-# run N * M binaries
-#for configuration in ${configurations[@]}; do
-  for test in ${tests[@]}; do
-    # build the binary
-    build_target $test $configuration
+for test in ${tests[@]}; do
+  # build the binary
+  build_target $test
     
-    # execute the binary
-    $BINARY_PATH
-  done
-#done
+  # execute the binary
+  $BINARY_PATH
+done
 
 # cleanup
 rm -rf ${BUILD_DIR}

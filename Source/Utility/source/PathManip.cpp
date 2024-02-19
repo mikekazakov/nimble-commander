@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -258,6 +258,13 @@ std::filesystem::path PathManip::Expand(std::string_view _path, std::string_view
         }
         return std::filesystem::path(result).lexically_normal();
     }
+}
+
+std::filesystem::path PathManip::EnsureTrailingSlash(std::filesystem::path _path) noexcept
+{
+    if( !_path.empty() && _path.native().back() != '/' )
+        _path += '/';
+    return _path;
 }
 
 } // namespace nc::utility

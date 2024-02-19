@@ -1,8 +1,9 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <VFS/Host.h>
 #include "InternalsForward.h"
 #include <filesystem>
+#include <string_view>
 #include <map>
 
 // RTFM: http://www.ietf.org/rfc/rfc959.txt
@@ -66,7 +67,7 @@ public:
     virtual void StopDirChangeObserving(unsigned long _ticket) override;    
 
     // internal stuff below:
-    std::string BuildFullURLString(const char *_path) const;
+    std::string BuildFullURLString(std::string_view _path) const;
 
     void MakeDirectoryStructureDirty(const char *_path);
     

@@ -1,8 +1,9 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Host.h"
 #include "Internals.h"
 #include "Cache.h"
+#include <Utility/PathManip.h>
 
 namespace nc::vfs::ftp {
 
@@ -51,7 +52,7 @@ int File::Close()
 
 std::filesystem::path File::DirName() const
 {
-    return std::filesystem::path(Path()).parent_path();
+    return  utility::PathManip::EnsureTrailingSlash(std::filesystem::path(Path()).parent_path());
 }
 
 int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)

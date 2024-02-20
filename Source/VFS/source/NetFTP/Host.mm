@@ -108,7 +108,7 @@ VFSConfiguration FTPHost::Configuration() const
 int FTPHost::DoInit()
 {
     m_Cache->SetChangesCallback([this](const std::string &_at_dir) {
-      InformDirectoryChanged(_at_dir.back() == '/' ? _at_dir : _at_dir + "/");
+        InformDirectoryChanged(_at_dir.back() == '/' ? _at_dir : _at_dir + "/");
     });
 
     auto instance = SpawnCURL();
@@ -125,7 +125,7 @@ int FTPHost::DoInit()
 int FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
                                      const char *_path,
                                      std::shared_ptr<Directory> *_cached_dir,
-                                     VFSCancelChecker _cancel_checker)
+                                     const VFSCancelChecker &_cancel_checker)
 {
     if( _inst == nullptr || _path == nullptr )
         return VFSError::InvalidCall;
@@ -149,7 +149,7 @@ int FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
 int FTPHost::DownloadListing(CURLInstance *_inst,
                              const char *_path,
                              std::string &_buffer,
-                             VFSCancelChecker _cancel_checker)
+                             const VFSCancelChecker &_cancel_checker)
 {
     if( _path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
@@ -199,10 +199,7 @@ std::unique_ptr<CURLInstance> FTPHost::SpawnCURL()
     return inst;
 }
 
-int FTPHost::Stat(const char *_path,
-                  VFSStat &_st,
-                  unsigned long _flags,
-                  const VFSCancelChecker &_cancel_checker)
+int FTPHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( _path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
@@ -268,7 +265,7 @@ int FTPHost::FetchDirectoryListing(const char *_path,
         m_Cache->MarkDirectoryDirty(_path);
 
     std::shared_ptr<Directory> dir;
-    int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, _cancel_checker);
+    int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, _cancel_checker);
     if( result != 0 )
         return result;
 
@@ -316,26 +313,28 @@ int FTPHost::FetchDirectoryListing(const char *_path,
 
 int FTPHost::GetListingForFetching([[maybe_unused]] CURLInstance *_inst,
                                    const char *_path,
-                                   std::shared_ptr<Directory> *_cached_dir,
-                                   VFSCancelChecker _cancel_checker)
+                                   std::shared_ptr<Directory> &_cached_dir,
+                                   const VFSCancelChecker &_cancel_checker)
 {
     if( _path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
 
-    auto dir = m_Cache->FindDirectory(_path);
+    const auto path = utility::PathManip::EnsureTrailingSlash(_path);
+
+    auto dir = m_Cache->FindDirectory(path.native());
     if( dir && !dir->IsOutdated() && !dir->has_dirty_items ) {
-        *_cached_dir = dir;
+        _cached_dir = dir;
         return 0;
     }
 
     // download listing, sync I/O
-    int result = DownloadAndCacheListing(m_ListingInstance.get(), _path, &dir, _cancel_checker); // sync I/O here
+    int result = DownloadAndCacheListing(m_ListingInstance.get(), path.c_str(), &dir, _cancel_checker); // sync I/O here
     if( result != 0 )
         return result;
 
     assert(dir);
 
-    *_cached_dir = dir;
+    _cached_dir = dir;
     return 0;
 }
 
@@ -353,7 +352,7 @@ int FTPHost::Unlink(const char *_path, [[maybe_unused]] const VFSCancelChecker &
     const std::filesystem::path path = _path;
     if( path.is_absolute() == false || path.native().back() == '/' )
         return VFSError::InvalidCall;
-    
+
     const std::filesystem::path parent_path = utility::PathManip::EnsureTrailingSlash(path.parent_path());
     const std::string cmd = "DELE " + path.filename().native();
     const std::string url = BuildFullURLString(parent_path.native());
@@ -481,7 +480,7 @@ int FTPHost::Rename(const char *_old_path,
         return VFSError::InvalidCall;
 
     const std::filesystem::path old_parent_path = utility::PathManip::EnsureTrailingSlash(old_path.parent_path());
-    
+
     std::string url = BuildFullURLString(old_parent_path.native());
     std::string cmd1 = "RNFR "s + old_path.native();
     std::string cmd2 = "RNTO "s + new_path.native();
@@ -573,7 +572,7 @@ bool FTPHost::IsWritable() const
 int FTPHost::IterateDirectoryListing(const char *_path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     std::shared_ptr<Directory> dir;
-    int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, nullptr);
+    int result = GetListingForFetching(m_ListingInstance.get(), _path, dir, nullptr);
     if( result != 0 )
         return result;
 

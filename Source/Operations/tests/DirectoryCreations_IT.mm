@@ -111,35 +111,27 @@ TEST_CASE(PREFIX "Alredy existing reg file")
     REQUIRE(!host->Exists((dir.directory / "Test1/Test2/Test3").c_str()));
 }
 
-// Disabled for now
-//TEST_CASE(PREFIX "On local FTP server")
-//{
-//    VFSHostPtr host;
-//    try {
-//        host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/");
-//    } catch( VFSErrorException &e ) {
-//        std::cout << "Skipping test, host not reachable: " << g_LocalFTP << std::endl;
-//        return;
-//    }
-//
-//    {
-//        DirectoryCreation operation(
-//            "/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", "/", *host);
-//        operation.Start();
-//        operation.Wait();
-//    }
-//
-//    VFSStat st;
-//    REQUIRE(host->Stat(
-//                "/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", st, 0, 0) == 0);
-//    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/Dir", host) == 0);
-//
-//    {
-//        DirectoryCreation operation("AnotherDir/AndSecondOne", "/Public/!FilesTesting", *host);
-//        operation.Start();
-//        operation.Wait();
-//    }
-//
-//    REQUIRE(host->Stat("/Public/!FilesTesting/AnotherDir/AndSecondOne", st, 0, 0) == 0);
-//    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host) == 0);
-//}
+TEST_CASE(PREFIX "On local FTP server")
+{
+    VFSHostPtr host;
+    REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+
+    {
+        DirectoryCreation operation("/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", "/", *host);
+        operation.Start();
+        operation.Wait();
+    }
+
+    VFSStat st;
+    REQUIRE(host->Stat("/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", st, 0, 0) == 0);
+    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/Dir", host) == 0);
+
+    {
+        DirectoryCreation operation("AnotherDir/AndSecondOne", "/Public/!FilesTesting", *host);
+        operation.Start();
+        operation.Wait();
+    }
+
+    REQUIRE(host->Stat("/Public/!FilesTesting/AnotherDir/AndSecondOne", st, 0, 0) == 0);
+    REQUIRE(VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host) == 0);
+}

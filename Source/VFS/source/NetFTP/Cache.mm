@@ -4,9 +4,7 @@
 
 namespace nc::vfs::ftp {
 
-Entry::Entry()
-{
-}
+Entry::Entry() = default;
 
 Entry::Entry(const std::string &_name) : name(_name), cfname(base::CFStringCreateWithUTF8StdStringNoCopy(name))
 {

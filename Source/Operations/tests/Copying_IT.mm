@@ -23,9 +23,8 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
                              const std::filesystem::path &_file2_full_path,
                              const VFSHostPtr &_file2_host,
                              int &_result);
-static std::vector<VFSListingItem> FetchItems(const std::string &_directory_path,
-                                              const std::vector<std::string> &_filenames,
-                                              VFSHost &_host)
+static std::vector<VFSListingItem>
+FetchItems(const std::string &_directory_path, const std::vector<std::string> &_filenames, VFSHost &_host)
 {
     std::vector<VFSListingItem> items;
     _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
@@ -197,10 +196,7 @@ TEST_CASE(PREFIX "Can rename a regular file on injected data volume")
     opts.docopy = false;
 
     auto host = TestEnv().vfs_native;
-    Copying op(FetchItems(test_dir.directory, {filename_src}, *host),
-               target_dir + filename_dst,
-               host,
-               opts);
+    Copying op(FetchItems(test_dir.directory, {filename_src}, *host), target_dir + filename_dst, host, opts);
     RunOperationAndCheckSuccess(op);
 
     struct stat renamed_stat;
@@ -227,10 +223,8 @@ TEST_CASE(PREFIX "Correctly handles requests to rename into non-existing dir")
     opts.docopy = false;
 
     auto host = TestEnv().vfs_native;
-    Copying op(FetchItems(test_dir.directory, {filename}, *host),
-               test_dir.directory / target_dir / filename,
-               host,
-               opts);
+    Copying op(
+        FetchItems(test_dir.directory, {filename}, *host), test_dir.directory / target_dir / filename, host, opts);
     RunOperationAndCheckSuccess(op);
 
     struct stat renamed_stat;
@@ -285,8 +279,7 @@ TEST_CASE(PREFIX "Overwrite bug regression")
     }
 
     int result = -1;
-    REQUIRE(VFSEasyCompareFiles(
-                (tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host, result) == 0);
+    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host, result) == 0);
     REQUIRE(result == 0);
 
     {
@@ -298,8 +291,7 @@ TEST_CASE(PREFIX "Overwrite bug regression")
         op.Wait();
     }
 
-    REQUIRE(VFSEasyCompareFiles(
-                (tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host, result) == 0);
+    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host, result) == 0);
     REQUIRE(result == 0);
 }
 
@@ -325,8 +317,7 @@ TEST_CASE(PREFIX "Overwrite bug regression - revert")
     }
 
     int result = -1;
-    REQUIRE(VFSEasyCompareFiles(
-                (tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host, result) == 0);
+    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "small.zzz").c_str(), host, dest.c_str(), host, result) == 0);
     REQUIRE(result == 0);
 
     {
@@ -338,8 +329,7 @@ TEST_CASE(PREFIX "Overwrite bug regression - revert")
         op.Wait();
     }
 
-    REQUIRE(VFSEasyCompareFiles(
-                (tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host, result) == 0);
+    REQUIRE(VFSEasyCompareFiles((tmp_dir.directory / "big.zzz").c_str(), host, dest.c_str(), host, result) == 0);
     REQUIRE(result == 0);
 }
 
@@ -355,10 +345,7 @@ TEST_CASE(PREFIX "case renaming")
 
         CopyingOptions opts;
         opts.docopy = false;
-        Copying op(FetchItems(dir.native(), {"directory"}, *host),
-                   (dir / "DIRECTORY").native(),
-                   host,
-                   opts);
+        Copying op(FetchItems(dir.native(), {"directory"}, *host), (dir / "DIRECTORY").native(), host, opts);
         op.Start();
         op.Wait();
 
@@ -372,8 +359,7 @@ TEST_CASE(PREFIX "case renaming")
 
         CopyingOptions opts;
         opts.docopy = false;
-        Copying op(
-            FetchItems(dir.native(), {"filename"}, *host), (dir / "FILENAME").native(), host, opts);
+        Copying op(FetchItems(dir.native(), {"filename"}, *host), (dir / "FILENAME").native(), host, opts);
 
         op.Start();
         op.Wait();
@@ -388,10 +374,7 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix")
     TempTestDir tmp_dir;
     const auto host = TestEnv().vfs_native;
     CopyingOptions opts;
-    Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *TestEnv().vfs_native),
-               tmp_dir.directory,
-               host,
-               opts);
+    Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *TestEnv().vfs_native), tmp_dir.directory, host, opts);
 
     op.Start();
     op.Wait();
@@ -414,10 +397,7 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix, with absent directories in path")
     const auto dst_dir = tmp_dir.directory / "Some" / "Absent" / "Dir" / "Is" / "Here/";
 
     CopyingOptions opts;
-    Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *TestEnv().vfs_native),
-               dst_dir.native(),
-               host,
-               opts);
+    Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *TestEnv().vfs_native), dst_dir.native(), host, opts);
 
     op.Start();
     op.Wait();
@@ -438,10 +418,8 @@ TEST_CASE(PREFIX "Modes - CopyToPrefix_WithLocalDir")
     TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app",
-                            host,
-                            (tmp_dir.directory / "Mail.app").c_str(),
-                            host) == 0);
+    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
+            0);
 
     CopyingOptions opts;
     Copying op(FetchItems(tmp_dir.directory, {"Mail.app"}, *TestEnv().vfs_native),
@@ -469,24 +447,18 @@ TEST_CASE(PREFIX "Modes - CopyToPathName_WithLocalDir")
     TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app",
-                            host,
-                            (tmp_dir.directory / "Mail.app").c_str(),
-                            host) == 0);
+    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
+            0);
 
-    Copying op(FetchItems(tmp_dir.directory, {"Mail.app"}, *TestEnv().vfs_native),
-               tmp_dir.directory / "Mail2.app",
-               host,
-               {});
+    Copying op(
+        FetchItems(tmp_dir.directory, {"Mail.app"}, *TestEnv().vfs_native), tmp_dir.directory / "Mail2.app", host, {});
 
     op.Start();
     op.Wait();
 
     int result = 0;
-    REQUIRE(
-        VFSCompareEntries(
-            "/System/Applications/Mail.app", host, tmp_dir.directory / "Mail2.app", host, result) ==
-        0);
+    REQUIRE(VFSCompareEntries("/System/Applications/Mail.app", host, tmp_dir.directory / "Mail2.app", host, result) ==
+            0);
     REQUIRE(result == 0);
 }
 
@@ -495,14 +467,11 @@ TEST_CASE(PREFIX "Modes - RenameToPathPreffix")
     // works on single host - In and Out same as where source files are
     // Copies "Mail.app" to "Mail2.app" in the same dir
     TempTestDir tmp_dir;
-    auto dir2 =
-        tmp_dir.directory / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
+    auto dir2 = tmp_dir.directory / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app",
-                            host,
-                            (tmp_dir.directory / "Mail.app").c_str(),
-                            host) == 0);
+    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
+            0);
 
     CopyingOptions opts;
     opts.docopy = false;
@@ -511,8 +480,7 @@ TEST_CASE(PREFIX "Modes - RenameToPathPreffix")
     op.Wait();
 
     int result = 0;
-    REQUIRE(VFSCompareEntries(
-                "/System/Applications/Mail.app", host, dir2 / "Mail.app", host, result) == 0);
+    REQUIRE(VFSCompareEntries("/System/Applications/Mail.app", host, dir2 / "Mail.app", host, result) == 0);
     REQUIRE(result == 0);
 }
 
@@ -523,23 +491,18 @@ TEST_CASE(PREFIX "Modes - RenameToPathName")
     TempTestDir tmp_dir;
     auto host = TestEnv().vfs_native;
 
-    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app",
-                            host,
-                            (tmp_dir.directory / "Mail.app").c_str(),
-                            host) == 0);
+    REQUIRE(VFSEasyCopyNode("/System/Applications/Mail.app", host, (tmp_dir.directory / "Mail.app").c_str(), host) ==
+            0);
 
     CopyingOptions opts;
     opts.docopy = false;
-    Copying op(
-        FetchItems(tmp_dir, {"Mail.app"}, *host), tmp_dir.directory / "Mail2.app", host, opts);
+    Copying op(FetchItems(tmp_dir, {"Mail.app"}, *host), tmp_dir.directory / "Mail2.app", host, opts);
     op.Start();
     op.Wait();
 
     int result = 0;
-    REQUIRE(
-        VFSCompareEntries(
-            "/System/Applications/Mail.app", host, tmp_dir.directory / "Mail2.app", host, result) ==
-        0);
+    REQUIRE(VFSCompareEntries("/System/Applications/Mail.app", host, tmp_dir.directory / "Mail2.app", host, result) ==
+            0);
     REQUIRE(result == 0);
 }
 
@@ -579,8 +542,7 @@ TEST_CASE(PREFIX "overwriting of symlinks in subdir")
     op.Start();
     op.Wait();
     REQUIRE(op.State() == OperationState::Completed);
-    REQUIRE(std::filesystem::read_symlink(tmp_dir.directory / "D1" / "symlink") ==
-            "new_symlink_value");
+    REQUIRE(std::filesystem::read_symlink(tmp_dir.directory / "D1" / "symlink") == "new_symlink_value");
 }
 
 TEST_CASE(PREFIX "symlink renaming")
@@ -620,18 +582,13 @@ TEST_CASE(PREFIX "rename dir into existing dir")
     mkdir((tmp_dir.directory / "DirB").c_str(), 0755);
     mkdir((tmp_dir.directory / "DirB" / "TestDir").c_str(), 0755);
     chflags((tmp_dir.directory / "DirB" / "TestDir").c_str(), UF_HIDDEN);
-    close(open((tmp_dir.directory / "DirB" / "TestDir" / "file.txt").c_str(),
-               O_WRONLY | O_CREAT,
-               S_IWUSR | S_IRUSR));
+    close(open((tmp_dir.directory / "DirB" / "TestDir" / "file.txt").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
 
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteOld;
     auto host = TestEnv().vfs_native;
-    Copying op(FetchItems(tmp_dir.directory / "DirB", {"TestDir"}, *host),
-               tmp_dir.directory / "DirA",
-               host,
-               opts);
+    Copying op(FetchItems(tmp_dir.directory / "DirB", {"TestDir"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
     op.Wait();
@@ -649,8 +606,7 @@ TEST_CASE(PREFIX "renaming dir into existing reg")
     // DirB/item (directory)
     TempTestDir tmp_dir;
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
-    close(
-        open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
+    close(open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     mkdir((tmp_dir.directory / "DirB").c_str(), 0755);
     mkdir((tmp_dir.directory / "DirB" / "item").c_str(), 0755);
 
@@ -658,10 +614,7 @@ TEST_CASE(PREFIX "renaming dir into existing reg")
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
     auto host = TestEnv().vfs_native;
-    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host),
-               tmp_dir.directory / "DirA",
-               host,
-               opts);
+    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
     op.Wait();
@@ -679,22 +632,16 @@ TEST_CASE(PREFIX "renaming non-empty dir into existing reg")
     // DirB/item/test
     TempTestDir tmp_dir;
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
-    close(
-        open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
+    close(open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     mkdir((tmp_dir.directory / "DirB").c_str(), 0755);
     mkdir((tmp_dir.directory / "DirB" / "item").c_str(), 0755);
-    close(open((tmp_dir.directory / "DirB" / "item" / "test").c_str(),
-               O_WRONLY | O_CREAT,
-               S_IWUSR | S_IRUSR));
+    close(open((tmp_dir.directory / "DirB" / "item" / "test").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
 
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
     auto host = TestEnv().vfs_native;
-    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host),
-               tmp_dir.directory / "DirA",
-               host,
-               opts);
+    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
     op.Wait();
@@ -717,8 +664,7 @@ TEST_CASE(PREFIX "copied application has a valid signature")
     op.Start();
     op.Wait();
     REQUIRE(op.State() == OperationState::Completed);
-    const auto command =
-        "/usr/bin/codesign --verify --no-strict " + (tmp_dir.directory / "Mail.app").native();
+    const auto command = "/usr/bin/codesign --verify --no-strict " + (tmp_dir.directory / "Mail.app").native();
     REQUIRE(system(command.c_str()) == 0);
 }
 
@@ -728,20 +674,15 @@ TEST_CASE(PREFIX "copying to existing item with KeepBoth results in orig copied 
     // DirA/item (file)
     // DirB/item (file)
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
-    close(
-        open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
+    close(open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     mkdir((tmp_dir.directory / "DirB").c_str(), 0755);
-    close(
-        open((tmp_dir.directory / "DirB" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
+    close(open((tmp_dir.directory / "DirB" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
 
     CopyingOptions opts;
     opts.docopy = true;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
     auto host = TestEnv().vfs_native;
-    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host),
-               tmp_dir.directory / "DirA",
-               host,
-               opts);
+    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
     op.Wait();
@@ -750,27 +691,21 @@ TEST_CASE(PREFIX "copying to existing item with KeepBoth results in orig copied 
             std::filesystem::file_type::regular);
 }
 
-TEST_CASE(PREFIX
-          "renaming to existing item with KeepiBoth results in orig rename with another name")
+TEST_CASE(PREFIX "renaming to existing item with KeepiBoth results in orig rename with another name")
 {
     TempTestDir tmp_dir;
     // DirA/item (file)
     // DirB/item (file)
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
-    close(
-        open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
+    close(open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     mkdir((tmp_dir.directory / "DirB").c_str(), 0755);
-    close(
-        open((tmp_dir.directory / "DirB" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
+    close(open((tmp_dir.directory / "DirB" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
 
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
     auto host = TestEnv().vfs_native;
-    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host),
-               tmp_dir.directory / "DirA",
-               host,
-               opts);
+    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
     op.Wait();
@@ -781,15 +716,13 @@ TEST_CASE(PREFIX
             std::filesystem::file_type::not_found);
 }
 
-TEST_CASE(PREFIX
-          "copying symlink to existing item with KeepBoth results in orig copied with another name")
+TEST_CASE(PREFIX "copying symlink to existing item with KeepBoth results in orig copied with another name")
 {
     TempTestDir tmp_dir;
     // DirA/item (file)
     // DirB/item (simlink)
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
-    close(
-        open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
+    close(open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     mkdir((tmp_dir.directory / "DirB").c_str(), 0755);
     symlink("something", (tmp_dir.directory / "DirB" / "item").c_str());
 
@@ -797,10 +730,7 @@ TEST_CASE(PREFIX
     opts.docopy = true;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
     auto host = TestEnv().vfs_native;
-    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host),
-               tmp_dir.directory / "DirA",
-               host,
-               opts);
+    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
     op.Wait();
@@ -809,16 +739,13 @@ TEST_CASE(PREFIX
             std::filesystem::file_type::symlink);
 }
 
-TEST_CASE(
-    PREFIX
-    "renaming symlink to existing item with KeepBoth results in orig renamed with Another name")
+TEST_CASE(PREFIX "renaming symlink to existing item with KeepBoth results in orig renamed with Another name")
 {
     TempTestDir tmp_dir;
     // DirA/item (file)
     // DirB/item (symink)
     mkdir((tmp_dir.directory / "DirA").c_str(), 0755);
-    close(
-        open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
+    close(open((tmp_dir.directory / "DirA" / "item").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR));
     mkdir((tmp_dir.directory / "DirB").c_str(), 0755);
     symlink("something", (tmp_dir.directory / "DirB" / "item").c_str());
 
@@ -826,10 +753,7 @@ TEST_CASE(
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
     auto host = TestEnv().vfs_native;
-    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host),
-               tmp_dir.directory / "DirA",
-               host,
-               opts);
+    Copying op(FetchItems(tmp_dir.directory / "DirB", {"item"}, *host), tmp_dir.directory / "DirA", host, opts);
 
     op.Start();
     op.Wait();
@@ -879,120 +803,118 @@ TEST_CASE(PREFIX "Copy native->xattr->xattr")
     }
 }
 
-// Disabled for now
-//TEST_CASE(PREFIX "Copy to local FTP, part1", "[!mayfail]")
-//{
-//    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
-//
-//    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/kernel";
-//
-//    VFSEasyDelete(fn2, host);
-//
-//    CopyingOptions opts;
-//    Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
-//               "/Public/!FilesTesting/",
-//               host,
-//               opts);
-//
-//    op.Start();
-//    op.Wait();
-//
-//    int compare;
-//    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
-//    REQUIRE(compare == 0);
-//
-//    REQUIRE(host->Unlink(fn2, 0) == 0);
-//}
+TEST_CASE(PREFIX "Copy to local FTP, part1")
+{
+    VFSHostPtr host;
+    REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
-//TEST_CASE(PREFIX "Copy to local FTP, part2", "[!mayfail]")
-//{
-//    using namespace std;
-//    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
-//
-//    auto files = {"Info.plist", "PkgInfo", "version.plist"};
-//
-//    for( auto &i : files )
-//        VFSEasyDelete(("/Public/!FilesTesting/"s + i).c_str(), host);
-//
-//    CopyingOptions opts;
-//    Copying op(FetchItems("/System/Applications/Mail.app/Contents",
-//                          {begin(files), end(files)},
-//                          *TestEnv().vfs_native),
-//               "/Public/!FilesTesting/",
-//               host,
-//               opts);
-//
-//    op.Start();
-//    op.Wait();
-//
-//    for( auto &i : files ) {
-//        int compare;
-//        REQUIRE(VFSEasyCompareFiles(("/System/Applications/Mail.app/Contents/"s + i).c_str(),
-//                                    TestEnv().vfs_native,
-//                                    ("/Public/!FilesTesting/"s + i).c_str(),
-//                                    host,
-//                                    compare) == 0);
-//        REQUIRE(compare == 0);
-//        REQUIRE(host->Unlink(("/Public/!FilesTesting/"s + i).c_str(), 0) == 0);
-//    }
-//}
-//
-//TEST_CASE(PREFIX "Copy to local FTP, part3", "[!mayfail]")
-//{
-//    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
-//
-//    VFSEasyDelete("/Public/!FilesTesting/bin", host);
-//
-//    CopyingOptions opts;
-//    Copying op(
-//        FetchItems("/", {"bin"}, *TestEnv().vfs_native), "/Public/!FilesTesting/", host, opts);
-//
-//    op.Start();
-//    op.Wait();
-//
-//    int result = 0;
-//    REQUIRE(VFSCompareEntries(
-//                "/bin", TestEnv().vfs_native, "/Public/!FilesTesting/bin", host, result) == 0);
-//    REQUIRE(result == 0);
-//
-//    VFSEasyDelete("/Public/!FilesTesting/bin", host);
-//}
-//
-//TEST_CASE(PREFIX "Copy to local FTP, part4", "[!mayfail]")
-//{
-//    VFSHostPtr host = std::make_shared<nc::vfs::FTPHost>(g_LocalFTP, "", "", "/");
-//
-//    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/kernel",
-//               *fn3 = "/Public/!FilesTesting/kernel copy";
-//
-//    VFSEasyDelete(fn2, host);
-//    VFSEasyDelete(fn3, host);
-//
-//    {
-//        Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
-//                   "/Public/!FilesTesting/",
-//                   host,
-//                   {});
-//        op.Start();
-//        op.Wait();
-//    }
-//
-//    int compare;
-//    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
-//    REQUIRE(compare == 0);
-//
-//    {
-//        Copying op(FetchItems("/Public/!FilesTesting/", {"kernel"}, *host), fn3, host, {});
-//        op.Start();
-//        op.Wait();
-//    }
-//
-//    REQUIRE(VFSEasyCompareFiles(fn2, host, fn3, host, compare) == 0);
-//    REQUIRE(compare == 0);
-//
-//    REQUIRE(host->Unlink(fn2, 0) == 0);
-//    REQUIRE(host->Unlink(fn3, 0) == 0);
-//}
+    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/kernel";
+
+    VFSEasyDelete(fn2, host);
+
+    CopyingOptions opts;
+    Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
+               "/Public/!FilesTesting/",
+               host,
+               opts);
+
+    op.Start();
+    op.Wait();
+
+    int compare;
+    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
+    REQUIRE(compare == 0);
+
+    REQUIRE(host->Unlink(fn2, 0) == 0);
+}
+
+TEST_CASE(PREFIX "Copy to local FTP")
+{
+    VFSHostPtr host;
+    REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+
+    auto files = std::vector<std::string>{"Info.plist", "PkgInfo", "version.plist"};
+
+    for( auto &i : files )
+        VFSEasyDelete(("/Public/!FilesTesting/" + i).c_str(), host);
+
+    CopyingOptions opts;
+    Copying op(FetchItems("/System/Applications/Mail.app/Contents", {begin(files), end(files)}, *TestEnv().vfs_native),
+               "/Public/!FilesTesting/",
+               host,
+               opts);
+
+    op.Start();
+    op.Wait();
+
+    for( auto &i : files ) {
+        int compare;
+        REQUIRE(VFSEasyCompareFiles(("/System/Applications/Mail.app/Contents/" + i).c_str(),
+                                    TestEnv().vfs_native,
+                                    ("/Public/!FilesTesting/" + i).c_str(),
+                                    host,
+                                    compare) == 0);
+        REQUIRE(compare == 0);
+        REQUIRE(host->Unlink(("/Public/!FilesTesting/" + i).c_str(), 0) == 0);
+    }
+}
+
+TEST_CASE(PREFIX "Copy to local FTP, part3")
+{
+    VFSHostPtr host;
+    REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+
+    VFSEasyDelete("/Public/!FilesTesting/bin", host);
+
+    CopyingOptions opts;
+    Copying op(FetchItems("/", {"bin"}, *TestEnv().vfs_native), "/Public/!FilesTesting/", host, opts);
+
+    op.Start();
+    op.Wait();
+
+    int result = 0;
+    REQUIRE(VFSCompareEntries("/bin", TestEnv().vfs_native, "/Public/!FilesTesting/bin", host, result) == 0);
+    REQUIRE(result == 0);
+
+    VFSEasyDelete("/Public/!FilesTesting/bin", host);
+}
+
+TEST_CASE(PREFIX "Copy to local FTP, part4")
+{
+    VFSHostPtr host;
+    REQUIRE_NOTHROW(host = std::make_shared<nc::vfs::FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+
+    const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/kernel",
+               *fn3 = "/Public/!FilesTesting/kernel copy";
+
+    VFSEasyDelete(fn2, host);
+    VFSEasyDelete(fn3, host);
+
+    {
+        Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
+                   "/Public/!FilesTesting/",
+                   host,
+                   {});
+        op.Start();
+        op.Wait();
+    }
+
+    int compare;
+    REQUIRE(VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
+    REQUIRE(compare == 0);
+
+    {
+        Copying op(FetchItems("/Public/!FilesTesting/", {"kernel"}, *host), fn3, host, {});
+        op.Start();
+        op.Wait();
+    }
+
+    REQUIRE(VFSEasyCompareFiles(fn2, host, fn3, host, compare) == 0);
+    REQUIRE(compare == 0);
+
+    REQUIRE(host->Unlink(fn2, 0) == 0);
+    REQUIRE(host->Unlink(fn3, 0) == 0);
+}
 
 TEST_CASE(PREFIX "Renaming a locked native regular item")
 {
@@ -1073,7 +995,7 @@ TEST_CASE(PREFIX "Renaming a locked native regular item")
 TEST_CASE(PREFIX "Overwriting a locked native regular item")
 {
     using LockedItemBehavior = CopyingOptions::LockedItemBehavior;
-    
+
     TempTestDir dir;
     const auto host = TestEnv().vfs_native;
     const auto filename_src = "source";
@@ -1082,16 +1004,16 @@ TEST_CASE(PREFIX "Overwriting a locked native regular item")
     const auto path_dst = dir.directory / filename_dst;
     const auto old_sz = ssize_t(76);
     const auto new_sz = ssize_t(33);
-    
+
     auto exists = [](const std::filesystem::path &_path) -> bool {
         struct stat st;
         return lstat(_path.c_str(), &st) == 0;
     };
     auto file_size = [](const std::filesystem::path &_path) -> ssize_t {
         struct stat st;
-        return (lstat(_path.c_str(), &st) == 0 ) ? st.st_size : -1;
+        return (lstat(_path.c_str(), &st) == 0) ? st.st_size : -1;
     };
-    
+
     struct TestCase {
         bool do_copy;
         CopyingOptions::LockedItemBehavior locked_behaviour;
@@ -1100,17 +1022,17 @@ TEST_CASE(PREFIX "Overwriting a locked native regular item")
         bool dst_exist;
         ssize_t dst_size;
     } test_cases[] = {
-        { true, LockedItemBehavior::Ask, OperationState::Stopped, true, true, old_sz  },
-        { true, LockedItemBehavior::SkipAll, OperationState::Completed, true, true, old_sz  },
-        { true, LockedItemBehavior::UnlockAll, OperationState::Completed, true, true, new_sz  },
-        { true, LockedItemBehavior::Stop, OperationState::Stopped, true, true, old_sz },
-        { false, LockedItemBehavior::Ask, OperationState::Stopped, true, true, old_sz  },
-        { false, LockedItemBehavior::SkipAll, OperationState::Completed, true, true, old_sz  },
-        { false, LockedItemBehavior::UnlockAll, OperationState::Completed, false, true, new_sz  },
-        { false, LockedItemBehavior::Stop, OperationState::Stopped, true, true, old_sz },
+        {true, LockedItemBehavior::Ask, OperationState::Stopped, true, true, old_sz},
+        {true, LockedItemBehavior::SkipAll, OperationState::Completed, true, true, old_sz},
+        {true, LockedItemBehavior::UnlockAll, OperationState::Completed, true, true, new_sz},
+        {true, LockedItemBehavior::Stop, OperationState::Stopped, true, true, old_sz},
+        {false, LockedItemBehavior::Ask, OperationState::Stopped, true, true, old_sz},
+        {false, LockedItemBehavior::SkipAll, OperationState::Completed, true, true, old_sz},
+        {false, LockedItemBehavior::UnlockAll, OperationState::Completed, false, true, new_sz},
+        {false, LockedItemBehavior::Stop, OperationState::Stopped, true, true, old_sz},
     };
-    
-    for( const auto test_case: test_cases ) {
+
+    for( const auto test_case : test_cases ) {
         // create files to tinker with
         REQUIRE(close(creat(path_src.c_str(), 0755)) == 0);
         REQUIRE_NOTHROW(std::filesystem::resize_file(path_src, new_sz));
@@ -1132,12 +1054,12 @@ TEST_CASE(PREFIX "Overwriting a locked native regular item")
         REQUIRE(exists(path_src) == test_case.src_exist);
         REQUIRE(exists(path_dst) == test_case.dst_exist);
         REQUIRE(file_size(path_dst) == test_case.dst_size);
-                        
+
         // cleanup
-        if(exists(path_src)) {
+        if( exists(path_src) ) {
             REQUIRE(remove(path_src.c_str()) == 0);
         }
-        if(exists(path_dst)) {
+        if( exists(path_dst) ) {
             REQUIRE(lchflags(path_dst.c_str(), 0) == 0);
             REQUIRE(remove(path_dst.c_str()) == 0);
         }
@@ -1162,25 +1084,24 @@ TEST_CASE(PREFIX "Moving a locked native regular item to a separate volume")
         return ::lchflags(_path.c_str(), 0) == 0 && ::remove(_path.c_str()) == 0;
     };
     auto run = [&](CopyingOptions &opts) -> std::unique_ptr<Copying> {
-        auto op = std::make_unique<Copying>(
-            FetchItems(dir.directory, {filename}, *host), new_path, host, opts);
+        auto op = std::make_unique<Copying>(FetchItems(dir.directory, {filename}, *host), new_path, host, opts);
         op->Start();
         op->Wait();
         return op;
     };
-    std::vector<std::function<void()>> setups{
-        [&] {
-            REQUIRE(close(creat(path.c_str(), 0755)) == 0);
-            REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
-        },
-        [&] {
-            REQUIRE_NOTHROW(std::filesystem::create_symlink("some nonsense", path));
-            REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
-        },
-        [&] {
-            REQUIRE_NOTHROW(std::filesystem::create_directory(path));
-            REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
-        }};
+    std::vector<std::function<void()>> setups{[&] {
+                                                  REQUIRE(close(creat(path.c_str(), 0755)) == 0);
+                                                  REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+                                              },
+                                              [&] {
+                                                  REQUIRE_NOTHROW(
+                                                      std::filesystem::create_symlink("some nonsense", path));
+                                                  REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+                                              },
+                                              [&] {
+                                                  REQUIRE_NOTHROW(std::filesystem::create_directory(path));
+                                                  REQUIRE(lchflags(path.c_str(), UF_IMMUTABLE) == 0);
+                                              }};
     for( auto &setup : setups ) {
         CopyingOptions opts;
         opts.docopy = false;
@@ -1272,17 +1193,13 @@ static int VFSCompareEntries(const std::filesystem::path &_file1_full_path,
         return 0;
     }
     else if( S_ISDIR(st1.mode) ) {
-        _file1_host->IterateDirectoryListing(
-            _file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
-                int ret = VFSCompareEntries(_file1_full_path / _dirent.name,
-                                            _file1_host,
-                                            _file2_full_path / _dirent.name,
-                                            _file2_host,
-                                            _result);
-                if( ret != 0 )
-                    return false;
-                return true;
-            });
+        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+            int ret = VFSCompareEntries(
+                _file1_full_path / _dirent.name, _file1_host, _file2_full_path / _dirent.name, _file2_host, _result);
+            if( ret != 0 )
+                return false;
+            return true;
+        });
     }
     return 0;
 }

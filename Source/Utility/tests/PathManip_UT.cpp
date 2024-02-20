@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <PathManip.h>
 #include "UnitTests_main.h"
 
@@ -31,8 +31,8 @@ TEST_CASE(PREFIX "Filename")
         {"foo/a/", "a"},
         {"foo/a//", "a"},
     };
-    
-    for(auto &tc: tcs)
+
+    for( auto &tc : tcs )
         CHECK(PM::Filename(tc.path) == tc.expected);
 }
 
@@ -77,8 +77,8 @@ TEST_CASE(PREFIX "Extension")
         {"foo/a/", ""},
         {"foo/a//", ""},
     };
-    
-    for(auto &tc: tcs)
+
+    for( auto &tc : tcs )
         CHECK(PM::Extension(tc.path) == tc.expected);
 }
 
@@ -107,7 +107,7 @@ TEST_CASE(PREFIX "Parent")
         {"foo/a/", "foo/"},
         {"foo/a//", "foo/"},
     };
-    for(auto &tc: tcs)
+    for( auto &tc : tcs )
         CHECK(PM::Parent(tc.path) == tc.expected);
 }
 
@@ -171,8 +171,30 @@ TEST_CASE(PREFIX "Expand")
         {"../", "", "/a/b/", "/a/"},
         {"../c", "", "/a/b/", "/a/c"},
     };
-    for(auto &tc: tcs) {
+    for( auto &tc : tcs ) {
         INFO(tc.path);
         CHECK(PM::Expand(tc.path, tc.home, tc.cwd).native() == tc.expected);
+    }
+}
+
+TEST_CASE(PREFIX "EnsureTrailingSlash")
+{
+    struct TC {
+        std::string_view path;
+        std::string_view expected;
+    } const tcs[] = {
+        {"", ""},
+        {"/", "/"},
+        {"//", "//"},
+        {"/a", "/a/"},
+        {"/a/", "/a/"},
+        {"/a/b", "/a/b/"},
+        {"/a/b/", "/a/b/"},
+        {"a", "a/"},
+        {"a/", "a/"},
+    };
+    for( auto &tc : tcs ) {
+        INFO(tc.path);
+        CHECK(PM::EnsureTrailingSlash(tc.path).native() == tc.expected);
     }
 }

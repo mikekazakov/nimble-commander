@@ -52,7 +52,7 @@ int File::Close()
 
 std::filesystem::path File::DirName() const
 {
-    return  utility::PathManip::EnsureTrailingSlash(std::filesystem::path(Path()).parent_path());
+    return utility::PathManip::EnsureTrailingSlash(std::filesystem::path(Path()).parent_path());
 }
 
 int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
@@ -61,8 +61,8 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     VFSStat stat;
     int stat_ret = ftp_host->Stat(Path(), stat, 0, _cancel_checker);
 
-    if( stat_ret == 0 && ((stat.mode & S_IFMT) == S_IFREG) &&
-        (_open_flags & VFSFlags::OF_Read) != 0 && (_open_flags & VFSFlags::OF_Write) == 0 ) {
+    if( stat_ret == 0 && ((stat.mode & S_IFMT) == S_IFREG) && (_open_flags & VFSFlags::OF_Read) != 0 &&
+        (_open_flags & VFSFlags::OF_Write) == 0 ) {
         m_URLRequest = ftp_host->BuildFullURLString(Path());
         m_CURL = ftp_host->InstanceForIOAtDir(DirName().c_str());
         m_FileSize = stat.size;
@@ -81,8 +81,8 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
 
         return VFSError::GenericError;
     }
-    else if( (!(_open_flags & VFSFlags::OF_NoExist) || stat_ret != 0) &&
-             (_open_flags & VFSFlags::OF_Read) == 0 && (_open_flags & VFSFlags::OF_Write) != 0 ) {
+    else if( (!(_open_flags & VFSFlags::OF_NoExist) || stat_ret != 0) && (_open_flags & VFSFlags::OF_Read) == 0 &&
+             (_open_flags & VFSFlags::OF_Write) != 0 ) {
         m_URLRequest = ftp_host->BuildFullURLString(Path());
         m_CURL = ftp_host->InstanceForIOAtDir(DirName().c_str());
 
@@ -114,16 +114,13 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     return VFSError::NotSupported;
 }
 
-ssize_t File::ReadChunk(void *_read_to,
-                        uint64_t _read_size,
-                        uint64_t _file_offset,
-                        VFSCancelChecker _cancel_checker)
+ssize_t File::ReadChunk(void *_read_to, uint64_t _read_size, uint64_t _file_offset, VFSCancelChecker _cancel_checker)
 {
     // TODO: mutex lock
     bool error = false;
 
-    if( (m_ReadBuf->size < _read_size + _file_offset - m_BufFileOffset ||
-         _file_offset < m_BufFileOffset || _file_offset > m_BufFileOffset + m_ReadBuf->size) &&
+    if( (m_ReadBuf->size < _read_size + _file_offset - m_BufFileOffset || _file_offset < m_BufFileOffset ||
+         _file_offset > m_BufFileOffset + m_ReadBuf->size) &&
         (m_ReadBuf->size < m_FileSize) ) {
         // can't satisfy request from memory buffer, need to perform I/O
 
@@ -166,8 +163,7 @@ ssize_t File::ReadChunk(void *_read_to,
 
         curl_easy_setopt(m_CURL->curl, CURLOPT_RANGE, NULL);
 
-        while( (m_ReadBuf->size < _read_size + _file_offset - m_BufFileOffset) &&
-               running_handles ) {
+        while( (m_ReadBuf->size < _read_size + _file_offset - m_BufFileOffset) && running_handles ) {
             struct timeval timeout = m_SelectTimeout;
 
             fd_set fdread, fdwrite, fdexcep;
@@ -399,4 +395,4 @@ void File::FinishReading()
     } while( running_handles );
 }
 
-}
+} // namespace nc::vfs::ftp

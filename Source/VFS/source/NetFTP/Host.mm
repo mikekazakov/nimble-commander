@@ -107,7 +107,7 @@ VFSConfiguration FTPHost::Configuration() const
 
 int FTPHost::DoInit()
 {
-    m_Cache->SetChangesCallback(^(const std::string &_at_dir) {
+    m_Cache->SetChangesCallback([this](const std::string &_at_dir) {
       InformDirectoryChanged(_at_dir.back() == '/' ? _at_dir : _at_dir + "/");
     });
 
@@ -221,12 +221,12 @@ int FTPHost::Stat(const char *_path,
     }
 
     // 1st - extract directory and filename from _path
-    std::string parent_dir = path.parent_path().native();
+    const std::filesystem::path parent_dir = utility::PathManip::EnsureTrailingSlash(path.parent_path());
     std::string filename = path.filename().native();
 
     // try to find dir from cache
     if( !(_flags & VFSFlags::F_ForceRefresh) ) {
-        if( auto dir = m_Cache->FindDirectory(parent_dir) ) {
+        if( auto dir = m_Cache->FindDirectory(parent_dir.native()) ) {
             auto entry = dir->EntryByName(filename);
             if( entry ) {
                 if( !entry->dirty ) { // if entry is here and it's not outdated - return it

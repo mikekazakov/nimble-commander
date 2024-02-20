@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Cache.h"
 #include <filesystem>
 
@@ -45,25 +45,7 @@ const Entry *Directory::EntryByName(const std::string &_name) const
     return i != end(entries) ? &(*i) : nullptr;
 }
 
-std::shared_ptr<Directory> Cache::FindDirectory(const char *_path) const
-{
-    if( _path == 0 || _path[0] != '/' )
-        return nullptr;
-
-    std::string dir = _path;
-    if( dir.back() != '/' )
-        dir.push_back('/');
-
-    std::lock_guard<std::mutex> lock(m_CacheLock);
-
-    auto i = m_Directories.find(dir);
-    if( i != m_Directories.end() )
-        return i->second;
-
-    return nullptr;
-}
-
-std::shared_ptr<Directory> Cache::FindDirectory(const std::string &_path) const
+std::shared_ptr<Directory> Cache::FindDirectory(std::string_view _path) const noexcept
 {
     std::lock_guard<std::mutex> lock(m_CacheLock);
 
@@ -72,17 +54,21 @@ std::shared_ptr<Directory> Cache::FindDirectory(const std::string &_path) const
 
 void Cache::MarkDirectoryDirty(const std::string &_path)
 {
+    assert(!_path.empty() && _path.back() == '/');
+
     std::lock_guard<std::mutex> lock(m_CacheLock);
     if( auto d = FindDirectoryInt(_path) )
         d->dirty_structure = true;
 }
 
-std::shared_ptr<Directory> Cache::FindDirectoryInt(const std::string &_path) const
+std::shared_ptr<Directory> Cache::FindDirectoryInt(std::string_view _path) const noexcept
 {
     if( _path.empty() || _path.front() != '/' )
         return nullptr;
 
-    auto i = m_Directories.find(_path.back() == '/' ? _path : _path + "/");
+    assert(_path.back() == '/');
+
+    auto i = m_Directories.find(_path);
     if( i != m_Directories.end() )
         return i->second;
 
@@ -270,7 +256,7 @@ void Cache::CommitRename(const std::string &_old_path, const std::string &_new_p
     if( self_dir != m_Directories.end() ) {
         auto data = self_dir->second;
         m_Directories.erase(self_dir);
-        m_Directories.insert(make_pair(new_path.native(), data));
+        m_Directories.emplace(new_path.native(), data);
     }
 }
 
@@ -300,9 +286,9 @@ void Cache::EraseEntryInt(const std::string &_path)
     m_Callback(dir_path.native());
 }
 
-void Cache::SetChangesCallback(void (^_handler)(const std::string &_at_dir))
+void Cache::SetChangesCallback(std::function<void(const std::string &_at_dir)> _handler)
 {
-    m_Callback = _handler;
+    m_Callback = std::move(_handler);
 }
 
-}
+} // namespace nc::vfs::ftp

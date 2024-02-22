@@ -9,6 +9,7 @@
 #include "PanelPreview.h"
 #include "PanelControllerPersistency.h"
 #include <Utility/MIMResponder.h>
+#include <Base/Observable.h>
 
 namespace nc {
 class FeedbackManager;
@@ -25,7 +26,7 @@ class ExternalToolsStorage;
 namespace data {
 class Model;
 }
-}
+} // namespace nc::panel
 
 @class NCMainWindowController;
 @class Operation;
@@ -40,8 +41,7 @@ class Model;
 
 struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
-@interface MainWindowFilePanelState
-    : NSView <NCMainWindowState, NCPanelViewKeystrokeSink, MMTabBarViewDelegate> {
+@interface MainWindowFilePanelState : NSView <NCMainWindowState, NCPanelViewKeystrokeSink, MMTabBarViewDelegate> {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wobjc-interface-ivars"
     std::function<PanelController *()> m_PanelFactory;
@@ -69,6 +69,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     nc::panel::ControllerStateJSONDecoder *m_ControllerStateJSONDecoder;
     NCPanelQLPanelAdaptor *m_QLPanelAdaptor;
     nc::FeedbackManager *m_FeedbackManager;
+    nc::base::ObservableBase::ObservationTicket m_ThemesObservationTicket;
 #pragma clang diagnostic pop
 }
 
@@ -79,8 +80,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property(nonatomic, readonly) bool isPanelActive;
 @property(nonatomic, readonly) bool goToForcesPanelActivation;
 @property(nonatomic, readwrite) std::shared_ptr<nc::panel::ClosedPanelsHistory> closedPanelsHistory;
-@property(nonatomic, readwrite) std::shared_ptr<nc::panel::FavoriteLocationsStorage>
-    favoriteLocationsStorage;
+@property(nonatomic, readwrite) std::shared_ptr<nc::panel::FavoriteLocationsStorage> favoriteLocationsStorage;
 @property(nonatomic, readwrite) AttachedResponder *attachedResponder;
 
 - (instancetype)initWithFrame:(NSRect)frameRect
@@ -89,7 +89,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
                   panelFactory:(std::function<PanelController *()>)_panel_factory
     controllerStateJSONDecoder:(nc::panel::ControllerStateJSONDecoder &)_controller_json_decoder
                 QLPanelAdaptor:(NCPanelQLPanelAdaptor *)_ql_panel_adaptor
-              feedbackManager:(nc::FeedbackManager&)_feedback_manager;
+               feedbackManager:(nc::FeedbackManager &)_feedback_manager;
 
 - (void)loadDefaultPanelContent;
 
@@ -109,12 +109,10 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 /**
  * result may contain duplicates
  */
-@property(nonatomic, readonly) std::vector<std::tuple<std::string, VFSHostPtr>>
-    filePanelsCurrentPaths;
+@property(nonatomic, readonly) std::vector<std::tuple<std::string, VFSHostPtr>> filePanelsCurrentPaths;
 
 - (id<NCPanelPreview>)quickLookForPanel:(PanelController *)_panel make:(bool)_make_if_absent;
-- (BriefSystemOverview *)briefSystemOverviewForPanel:(PanelController *)_panel
-                                                make:(bool)_make_if_absent;
+- (BriefSystemOverview *)briefSystemOverviewForPanel:(PanelController *)_panel make:(bool)_make_if_absent;
 
 - (void)requestTerminalExecution:(const std::string &)_filename at:(const std::string &)_cwd;
 - (void)closeAttachedUI:(PanelController *)_panel;
@@ -131,9 +129,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  * Return currently active file panel if any.
  */
 @property(nonatomic, readonly) PanelController *activePanelController;
-@property(nonatomic, readonly)
-    const nc::panel::data::Model *activePanelData;         // based on .ActivePanelController
-@property(nonatomic, readonly) PanelView *activePanelView; // based on .ActivePanelController
+@property(nonatomic, readonly) const nc::panel::data::Model *activePanelData; // based on .ActivePanelController
+@property(nonatomic, readonly) PanelView *activePanelView;                    // based on .ActivePanelController
 
 /**
  * If current active panel controller is left - return .rightPanelController,
@@ -142,9 +139,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  * (regardless if this panel is collapsed or overlayed)
  */
 @property(nonatomic, readonly) PanelController *oppositePanelController;
-@property(nonatomic, readonly)
-    const nc::panel::data::Model *oppositePanelData;         // based on oppositePanelController
-@property(nonatomic, readonly) PanelView *oppositePanelView; // based on oppositePanelController
+@property(nonatomic, readonly) const nc::panel::data::Model *oppositePanelData; // based on oppositePanelController
+@property(nonatomic, readonly) PanelView *oppositePanelView;                    // based on oppositePanelController
 
 /**
  * Pick one of a controllers in left side tabbed bar, which is currently selected (regardless if it

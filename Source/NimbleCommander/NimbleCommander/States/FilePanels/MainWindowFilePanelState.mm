@@ -12,6 +12,7 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include "MainWindowFilePanelState.h"
@@ -195,6 +196,8 @@ static NSString *TitleForData(const data::Model *_data);
 {
     m_ConfigTickets.emplace_back(GlobalConfig().Observe(
         g_ConfigGeneralShowTabs, nc::objc_callback(self, @selector(onShowTabsSettingChanged))));
+    m_ThemesObservationTicket = NCAppDelegate.me.themesManager.ObserveChanges(
+        nc::ThemesManager::Notifications::FilePanelsGeneral, nc::objc_callback(self, @selector(onThemeChanged)));
 }
 
 - (void)dealloc
@@ -946,6 +949,12 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
             m_ShowTabs = show;
             [self updateTabBarsVisibility];
         });
+}
+
+- (void)onThemeChanged
+{
+    m_SeparatorLine.borderColor = nc::CurrentTheme().FilePanelsGeneralTopSeparatorColor();
+    [self setNeedsDisplay:true];
 }
 
 - (void)updateBottomConstraint

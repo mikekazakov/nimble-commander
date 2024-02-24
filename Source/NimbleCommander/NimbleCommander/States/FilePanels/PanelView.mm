@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelView.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
@@ -8,6 +8,7 @@
 #include <Base/RobinHoodUtil.h>
 #include "PanelViewLayoutSupport.h"
 #include <Panel/PanelData.h>
+#include <Panel/Log.h>
 #include "PanelController.h"
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
@@ -1021,36 +1022,35 @@ struct StateStorage {
 
 - (void)panelItem:(int)_sorted_index mouseDown:(NSEvent *)_event
 {
-    // any cursor movements or selection changes should be performed only in active window
-    const bool window_focused = self.window.isKeyWindow;
-    if( window_focused ) {
-        if( !self.active )
-            [self.window makeFirstResponder:self];
-
-        if( !m_Data->IsValidSortPosition(_sorted_index) ) {
-            [self commitFieldEditor];
-            return;
-        }
-
-        const int current_cursor_pos = m_CursorPos;
-        const auto click_entry_vd = m_Data->VolatileDataAtSortPosition(_sorted_index);
-        const auto modifier_flags =
-            _event.modifierFlags & NSEventModifierFlagDeviceIndependentFlagsMask;
-
-        // Select range of items with shift+click.
-        // If clicked item is selected, then deselect the range instead.
-        if( modifier_flags & NSEventModifierFlagShift )
-            [self SelectUnselectInRange:current_cursor_pos >= 0 ? current_cursor_pos : 0
-                          last_included:_sorted_index
-                                 select:!click_entry_vd.is_selected()];
-        else if( modifier_flags &
-                 NSEventModifierFlagCommand ) // Select or deselect a single item with cmd+click.
-            [self SelectUnselectInRange:_sorted_index
-                          last_included:_sorted_index
-                                 select:!click_entry_vd.is_selected()];
-
-        [self setCurpos:_sorted_index];
+    nc::panel::Log::Trace(SPDLOC, "[PanelController panelItem:mouseDown:] called for sorted index '{}'", _sorted_index);
+    
+    if( !self.window.isKeyWindow ) {
+        // any cursor movements or selection changes should be performed only in active window
+        return;
     }
+
+    if( !self.active )
+        [self.window makeFirstResponder:self];
+
+    if( !m_Data->IsValidSortPosition(_sorted_index) ) {
+        [self commitFieldEditor];
+        return;
+    }
+
+    const int current_cursor_pos = m_CursorPos;
+    const auto click_entry_vd = m_Data->VolatileDataAtSortPosition(_sorted_index);
+    const auto modifier_flags = _event.modifierFlags & NSEventModifierFlagDeviceIndependentFlagsMask;
+
+    // Select range of items with shift+click.
+    // If clicked item is selected, then deselect the range instead.
+    if( modifier_flags & NSEventModifierFlagShift )
+        [self SelectUnselectInRange:current_cursor_pos >= 0 ? current_cursor_pos : 0
+                      last_included:_sorted_index
+                             select:!click_entry_vd.is_selected()];
+    else if( modifier_flags & NSEventModifierFlagCommand ) // Select or deselect a single item with cmd+click.
+        [self SelectUnselectInRange:_sorted_index last_included:_sorted_index select:!click_entry_vd.is_selected()];
+
+    [self setCurpos:_sorted_index];
 }
 
 - (void)panelItem:(int)_sorted_index fieldEditor:(NSEvent *) [[maybe_unused]] _event
@@ -1061,6 +1061,7 @@ struct StateStorage {
 
 - (void)panelItem:(int)_sorted_index dblClick:(NSEvent *) [[maybe_unused]] _event
 {
+    nc::panel::Log::Trace(SPDLOC, "[PanelController panelItem:dblClick:] called for sorted index '{}'", _sorted_index);
     if( _sorted_index >= 0 && _sorted_index == m_CursorPos ) {
         if( auto action_dispatcher = self.actionsDispatcher )
             [action_dispatcher OnOpen:self];

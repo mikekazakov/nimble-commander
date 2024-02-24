@@ -249,18 +249,28 @@ static bool HasNoModifiers(NSEvent *_event)
     return (m & mask) == 0;
 }
 
-- (void)mouseDown:(NSEvent *)event
+- (void)mouseDown:(NSEvent *)_event
 {
+    const NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+    if( !NSPointInRect(local_point, self.bounds) ) {
+        // In case of rapid mouse clicks and reloading items of NSCollectionView at the same time it's possible to end
+        // up with a situation when mouse events are incoming to the view which is no longer relevant. Sometimes it's
+        // possible to partially salvage this situation by manually re-routing the event to the correct view.
+        NSView *ht_view = [self.window.contentView hitTest:_event.locationInWindow];
+        if( ht_view != nil && ht_view != self )
+            [ht_view mouseDown:_event];
+        return;
+    }
+
     const auto my_index = m_Controller.itemIndex;
     if( my_index < 0 )
         return;
 
-    m_PermitFieldRenaming = m_Controller.selected && m_Controller.panelActive && HasNoModifiers(event);
+    m_PermitFieldRenaming = m_Controller.selected && m_Controller.panelActive && HasNoModifiers(_event);
 
-    [m_Controller.briefView.panelView panelItem:my_index mouseDown:event];
+    [m_Controller.briefView.panelView panelItem:my_index mouseDown:_event];
 
-    const auto lb_pressed = (NSEvent.pressedMouseButtons & 1) == 1;
-    const auto local_point = [self convertPoint:event.locationInWindow fromView:nil];
+    const bool lb_pressed = NSEvent.pressedMouseButtons == 1;
 
     if( lb_pressed ) {
         g_RowReadyToDrag = true;
@@ -269,28 +279,39 @@ static bool HasNoModifiers(NSEvent *_event)
     }
 }
 
-- (void)mouseUp:(NSEvent *)event
+- (void)mouseUp:(NSEvent *)_event
 {
     // used for delayed action to ensure that click was single, not double or more
     static std::atomic_ullong current_ticket = {0};
     static const std::chrono::nanoseconds delay = std::chrono::milliseconds(int(NSEvent.doubleClickInterval * 1000));
 
+    const NSPoint local_point = [self convertPoint:_event.locationInWindow fromView:nil];
+    if( !NSPointInRect(local_point, self.bounds) ) {
+        // In case of rapid mouse clicks and reloading items of NSCollectionView at the same time it's possible to end
+        // up with a situation when mouse events are incoming to the view which is no longer relevant. Sometimes it's
+        // possible to partially salvage this situation by manually re-routing the event to the correct view.
+        NSView *ht_view = [self.window.contentView hitTest:_event.locationInWindow];
+        if( ht_view != nil && ht_view != self )
+            [ht_view mouseUp:_event];
+        return;
+    }
+
     const auto my_index = m_Controller.itemIndex;
     if( my_index < 0 )
         return;
 
-    int click_count = static_cast<int>(event.clickCount);
+    int click_count = static_cast<int>(_event.clickCount);
     if( click_count <= 1 && m_PermitFieldRenaming ) {
         uint64_t renaming_ticket = ++current_ticket;
         dispatch_to_main_queue_after(delay, [=] {
             if( renaming_ticket == current_ticket )
-                [m_Controller.briefView.panelView panelItem:my_index fieldEditor:event];
+                [m_Controller.briefView.panelView panelItem:my_index fieldEditor:_event];
         });
     }
     else if( click_count == 2 || click_count == 4 || click_count == 6 || click_count == 8 ) {
         // Handle double-or-four-etc clicks as double-click
         ++current_ticket; // to abort field editing
-        [m_Controller.briefView.panelView panelItem:my_index dblClick:event];
+        [m_Controller.briefView.panelView panelItem:my_index dblClick:_event];
     }
 
     m_PermitFieldRenaming = false;

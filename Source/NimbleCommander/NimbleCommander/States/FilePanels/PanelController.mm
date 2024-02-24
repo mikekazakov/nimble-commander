@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelController.h"
 #include <Base/algo.h>
 #include <Utility/NSView+Sugar.h>
@@ -94,7 +94,7 @@ struct CalculatedSizesBatch {
     std::vector<uint64_t> sizes;
 };
 
-}
+} // namespace nc::panel
 
 #define MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE(_name, _path)                                                             \
     static bool _name()                                                                                                \
@@ -285,11 +285,11 @@ static void HeatUpConfigValues()
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_LoadDisplayNames;
 
-    if( ConfigEnableFinderTags()== true )
+    if( ConfigEnableFinderTags() == true )
         m_VFSFetchingFlags |= VFSFlags::F_LoadTags;
     else
         m_VFSFetchingFlags &= ~VFSFlags::F_LoadTags;
-    
+
     [self refreshPanel];
 }
 
@@ -982,13 +982,15 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
     });
 }
 
-- (void)scheduleDelayedFocusing:(DelayedFocusing)request
+- (void)scheduleDelayedFocusing:(const DelayedFocusing &)request
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     // we assume that _item_name will not contain any forward slashes
 
     if( request.filename.empty() )
         return;
+
+    nc::panel::Log::Trace(SPDLOC, "[PanelController scheduleDelayedFocusing] called for '{}'", request.filename);
 
     m_DelayedSelection.request_end = nc::base::machtime() + request.timeout;
     m_DelayedSelection.filename = request.filename;
@@ -1009,14 +1011,19 @@ static void ShowAlertAboutInvalidFilename(const std::string &_filename)
         return false;
 
     if( nc::base::machtime() > m_DelayedSelection.request_end ) {
+        nc::panel::Log::Trace(SPDLOC,
+                              "[PanelController checkAgainstRequestedFocusing] removing a stale request for '{}'",
+                              m_DelayedSelection.filename);
         [self clearFocusingRequest];
         return false;
     }
 
     // now try to find it
-    int raw_index = m_Data.RawIndexForName(m_DelayedSelection.filename.c_str());
+    int raw_index = m_Data.RawIndexForName(m_DelayedSelection.filename);
     if( raw_index < 0 )
         return false;
+    nc::panel::Log::Trace(
+        SPDLOC, "[PanelController checkAgainstRequestedFocusing] found an entry for '{}'", m_DelayedSelection.filename);
 
     // we found this entry. regardless of appearance of this entry in current directory presentation
     // there's no reason to search for it again

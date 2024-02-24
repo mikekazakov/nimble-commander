@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
@@ -209,7 +209,7 @@ using ContextMenuProvider = std::function<NSMenu *(std::vector<VFSListingItem> _
  * If on any checking it will be found that time for request has went out - it will be removed (500ms is just ok for
  * _time_out_in_ms). Will also deselect any currenly selected items.
  */
-- (void)scheduleDelayedFocusing:(nc::panel::DelayedFocusing)request;
+- (void)scheduleDelayedFocusing:(const nc::panel::DelayedFocusing&)request;
 
 - (void)requestQuickRenamingOfItem:(VFSListingItem)_item to:(const std::string &)_new_filename;
 

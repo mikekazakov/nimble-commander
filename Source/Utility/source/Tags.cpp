@@ -13,6 +13,7 @@
 #include <Base/CFStackAllocator.h>
 #include <Base/CFPtr.h>
 #include <Base/CFString.h>
+#include <pstld/pstld.h>
 #include <memory_resource>
 #include <sys/xattr.h>
 #include <frozen/unordered_map.h>
@@ -22,6 +23,9 @@
 namespace nc::utility {
 
 // RTFM: https://opensource.apple.com/source/CF/CF-1153.18/CFBinaryPList.c
+
+static_assert(std::is_trivially_copyable_v<Tags::Tag>);
+static_assert(std::is_trivially_destructible_v<Tags::Tag>);
 
 static constexpr std::string_view g_Prologue = "bplist00";
 static constexpr const char *g_MDItemUserTags = "com.apple.metadata:_kMDItemUserTags";
@@ -163,11 +167,9 @@ static uint64_t GetSizedInt(const std::byte *_ptr, uint64_t _sz) noexcept
 
 static const std::string *InternalizeString(std::string_view _str) noexcept
 {
-    [[clang::no_destroy]] static //
-        robin_hood::unordered_node_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>
-            strings;
-    [[clang::no_destroy]] static //
-        std::mutex mut;
+    using Set = robin_hood::unordered_node_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
+    [[clang::no_destroy]] static Set strings;
+    [[clang::no_destroy]] static std::mutex mut;
 
     std::lock_guard lock{mut};
     if( auto it = strings.find(_str); it != strings.end() ) {
@@ -706,17 +708,31 @@ std::vector<std::filesystem::path> Tags::GatherAllItemsWithTags() noexcept
 
 std::vector<Tags::Tag> Tags::GatherAllItemsTags() noexcept
 {
-    auto files = GatherAllItemsWithTags();
+    const std::vector<std::filesystem::path> files = GatherAllItemsWithTags();
+    std::vector<std::vector<Tag>> files_tags(files.size());
 
+    // Read all the tags in multiple threads
+    pstld::transform(files.begin(),
+                     files.end(),
+                     files_tags.begin(),
+                     [](const std::filesystem::path &_path) -> std::vector<Tag> { return ReadTags(_path); });
+
+    // And the consolidate them in a single dictionary
     robin_hood::unordered_flat_set<Tags::Tag> tags;
-    for( auto &file : files ) {
-        auto file_tags = ReadTags(file); // this can be actually done in multiple threads...
+    for( const auto &file_tags : files_tags ) {
         for( auto &file_tag : file_tags )
             tags.emplace(file_tag);
     }
 
-    // any sort???
-    return {tags.begin(), tags.end()};
+    std::vector<Tag> res{tags.begin(), tags.end()};
+    std::sort(res.begin(), res.end(), [](const Tag &_lhs, const Tag &_rhs) {
+        const auto &ll = _lhs.Label();
+        const auto &rl = _rhs.Label();
+        if( ll != rl )
+            return ll < rl;
+        return _lhs.Color() < _rhs.Color();
+    });
+    return res;
 }
 
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept
@@ -746,6 +762,11 @@ bool Tags::Tag::operator==(const Tag &_rhs) const noexcept
 bool Tags::Tag::operator!=(const Tag &_rhs) const noexcept
 {
     return !(*this == _rhs);
+}
+
+const std::string *Tags::Tag::Internalize(std::string_view _label) noexcept
+{
+    return InternalizeString(_label);
 }
 
 } // namespace nc::utility

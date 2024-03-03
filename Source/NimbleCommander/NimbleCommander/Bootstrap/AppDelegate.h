@@ -43,6 +43,7 @@ class PanelViewLayoutsStorage;
 class FavoriteLocationsStorage;
 class ClosedPanelsHistory;
 class ExternalToolsStorage;
+class TagsStorage;
 }
 
 namespace viewer {
@@ -148,5 +149,7 @@ class NativeHost;
 @property(nonatomic, readonly) nc::utility::FSEventsFileUpdate &fsEventsFileUpdate;
 
 @property(nonatomic, readonly) nc::ops::PoolEnqueueFilter &poolEnqueueFilter;
+
+@property(nonatomic, readonly) nc::panel::TagsStorage &tagsStorage;
 
 @end

@@ -35,6 +35,7 @@
 #include <Utility/Log.h>
 #include <Utility/FSEventsFileUpdateImpl.h>
 #include <Utility/SpdLogWindow.h>
+#include <Utility/Tags.h>
 
 #include <RoutedIO/RoutedIO.h>
 #include <RoutedIO/Log.h>
@@ -87,6 +88,7 @@
 
 #include <Panel/Log.h>
 #include <Panel/ExternalTools.h>
+#include <Panel/TagsStorage.h>
 
 #include <filesystem>
 #include <fstream>
@@ -111,6 +113,7 @@ static const auto g_ConfigLayoutsList = "filePanel.layout.layouts_v1";
 static const auto g_ConfigSelectedTheme = "general.theme";
 static const auto g_ConfigThemes = "themes";
 static const auto g_ConfigExtEditorsList = "externalEditors.editors_v1";
+static const auto g_ConfigFinderTags = "filePanel.FinderTags.tags";
 
 nc::config::Config &GlobalConfig() noexcept
 {
@@ -295,6 +298,7 @@ static NCAppDelegate *g_Me = nil;
 
     [self themesManager];
     [self favoriteLocationsStorage];
+    [self tagsStorage]; // might kickstart a background scanning of the finder tags
 
     [self updateMainMenuFeaturesByVersionAndState];
 
@@ -968,6 +972,21 @@ static void DoTemporaryFileStoragePurge()
     if( m_LogWindowController == nil )
         m_LogWindowController = [[NCSpdLogWindowController alloc] initWithLogs:Loggers()];
     [m_LogWindowController showWindow:self];
+}
+
+- (nc::panel::TagsStorage&) tagsStorage
+{
+    [[clang::no_destroy]] static nc::panel::TagsStorage storage(GlobalConfig(), g_ConfigFinderTags);
+    static std::once_flag once;
+    std::call_once(once, []{
+        if( !storage.Initialized() ) {
+            dispatch_to_background( []{
+                auto tags = nc::utility::Tags::GatherAllItemsTags();
+                storage.Set(tags);
+            });
+        }
+    });
+    return storage;
 }
 
 @end

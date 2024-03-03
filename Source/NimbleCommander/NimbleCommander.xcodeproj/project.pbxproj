@@ -2064,13 +2064,13 @@
 				CF04DDE31E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.h */,
 				CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */,
 				CF7C7CC81E5C3EB9002DB0E2 /* PreferencesWindowThemesTab.xib */,
+				CFB7006B28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.h */,
+				CFB7006C28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm */,
+				CF67F1C52954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */,
 				CF7C7CCE1E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib */,
 				CFA2D6011E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.h */,
 				CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */,
 				CF7C7CD41E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib */,
-				CFB7006B28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.h */,
-				CFB7006C28B243F6000A1272 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.mm */,
-				CF67F1C52954BF9400B92944 /* PreferencesWindowThemesTabAutomaticSwitchingSheet.xib */,
 				CF27F9371E31B366009A3ACF /* PreferencesWindowThemesTabModel.h */,
 				CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */,
 				CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */,
@@ -3051,6 +3051,7 @@
 				TargetAttributes = {
 					CF5DE07D2583E73300604DEE = {
 						CreatedOnToolsVersion = 12.2;
+						LastSwiftMigration = 1510;
 					};
 					CF5DE0B1258414CA00604DEE = {
 						CreatedOnToolsVersion = 12.2;

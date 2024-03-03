@@ -104,7 +104,7 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
             [_accent setStroke];
         else
             [colors.second setStroke];
-        
+
         [circle fill];
         [circle stroke];
 
@@ -112,4 +112,35 @@ void TrailingTagsInplaceDisplay::Draw(const double _offset_x,
     }
 }
 
+const std::array<NSImage *, 8> &TagsMenuDisplay::Images() noexcept
+{
+    [[clang::no_destroy]] static const std::array<NSImage *, 8> images = [] {
+        std::array<NSImage *, 8> images;
+        constexpr double diameter = 12.;
+        for( size_t i = 0; i < images.size(); ++i ) {
+            auto handler = ^(NSRect _rc) {
+              if( i == 0 ) {
+                  [NSColor.textColor setStroke];
+                  NSBezierPath *circle = [NSBezierPath bezierPathWithOvalInRect:NSInsetRect(_rc, 1., 1.)];
+                  [circle stroke];
+              }
+              else {
+                  auto colors = Color(static_cast<utility::Tags::Color>(i));
+                  [colors.first setFill];
+                  [colors.second setStroke];
+                  NSBezierPath *circle = [NSBezierPath bezierPathWithOvalInRect:NSInsetRect(_rc, 1., 1.)];
+                  [circle setLineWidth:1.];
+                  [circle fill];
+                  [circle stroke];
+              }
+              return YES;
+            };
+            images[i] = [NSImage imageWithSize:NSMakeSize(diameter, diameter) flipped:false drawingHandler:handler];
+            [images[i] setTemplate:i == 0];
+        }
+        return images;
+    }();
+    return images;
 }
+
+} // namespace nc::panel

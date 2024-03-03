@@ -40,6 +40,8 @@
 		CFA89DA22814794000BEA127 /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA89DA12814794000BEA127 /* TextWidthsCache.mm */; };
 		CFCB690228968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCB690028968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm */; };
 		CFCB690328968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCB690128968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm */; };
+		CFCF43E22B8B642C00B513C7 /* TagsStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CFCF43E12B8B642C00B513C7 /* TagsStorage.h */; };
+		CFCF43E42B8B644B00B513C7 /* TagsStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCF43E32B8B644B00B513C7 /* TagsStorage.cpp */; };
 		CFF33F962556941B00B3C92C /* PanelData.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33F952556941B00B3C92C /* PanelData.h */; };
 		CFF33F992556942700B3C92C /* PanelData.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF33F982556942600B3C92C /* PanelData.mm */; };
 		CFF33F9D2556948200B3C92C /* PanelDataSortMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF33F9C2556948200B3C92C /* PanelDataSortMode.h */; };
@@ -129,6 +131,8 @@
 		CFCB68FF28968C3600086E40 /* PanelViewPresentationItemsColoringFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationItemsColoringFilter.h; path = include/Panel/UI/PanelViewPresentationItemsColoringFilter.h; sourceTree = "<group>"; };
 		CFCB690028968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationItemsColoringFilterPersistence.mm; path = source/UI/PanelViewPresentationItemsColoringFilterPersistence.mm; sourceTree = "<group>"; };
 		CFCB690128968C4800086E40 /* PanelViewPresentationItemsColoringFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationItemsColoringFilter.mm; path = source/UI/PanelViewPresentationItemsColoringFilter.mm; sourceTree = "<group>"; };
+		CFCF43E12B8B642C00B513C7 /* TagsStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TagsStorage.h; path = include/Panel/TagsStorage.h; sourceTree = "<group>"; };
+		CFCF43E32B8B644B00B513C7 /* TagsStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TagsStorage.cpp; path = source/TagsStorage.cpp; sourceTree = "<group>"; };
 		CFF33F5F2556924900B3C92C /* libPanel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPanel.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF33F8D255692C000B3C92C /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CFF33F8E255692C000B3C92C /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
@@ -262,7 +266,6 @@
 		CFF33F932556940200B3C92C /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CF0B0403281F013800076FDF /* UI */,
 				CF3ED4EA25860C8000D67AF2 /* CursorBackup.h */,
 				CF22060427B851A6008EDE3A /* ExternalTools.h */,
 				CFA89D812804C86E00BEA127 /* FindFilesData.h */,
@@ -279,7 +282,9 @@
 				CF4652582699F97C0085840A /* PanelViewFieldEditor.h */,
 				CF3ED4E625860BFE00D67AF2 /* PanelViewKeystrokeSink.h */,
 				CF3ED4F925860D5900D67AF2 /* QuickSearch.h */,
+				CFCF43E12B8B642C00B513C7 /* TagsStorage.h */,
 				CFA89DA02814793600BEA127 /* TextWidthsCache.h */,
+				CF0B0403281F013800076FDF /* UI */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -287,7 +292,6 @@
 		CFF33F942556940800B3C92C /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CF0B0406281F015A00076FDF /* UI */,
 				CF3ED4F125860C8900D67AF2 /* CursorBackup.mm */,
 				CF22060627B851B5008EDE3A /* ExternalTools.mm */,
 				CFA89D832804C87700BEA127 /* FindFilesData.cpp */,
@@ -303,7 +307,9 @@
 				CFF33FA5255694E300B3C92C /* PanelDataStatistics.cpp */,
 				CF46525C2699F9830085840A /* PanelViewFieldEditor.mm */,
 				CF3ED50025860D5E00D67AF2 /* QuickSearch.mm */,
+				CFCF43E32B8B644B00B513C7 /* TagsStorage.cpp */,
 				CFA89DA12814794000BEA127 /* TextWidthsCache.mm */,
+				CF0B0406281F015A00076FDF /* UI */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -351,6 +357,7 @@
 				CF0B0405281F014800076FDF /* SelectionWithMaskPopupViewController.h in Headers */,
 				CF3ED4FA25860D5900D67AF2 /* QuickSearch.h in Headers */,
 				CF4652592699F97C0085840A /* PanelViewFieldEditor.h in Headers */,
+				CFCF43E22B8B642C00B513C7 /* TagsStorage.h in Headers */,
 				CFA89D822804C86E00BEA127 /* FindFilesData.h in Headers */,
 				CFF33FAF2556954200B3C92C /* PanelDataItemVolatileData.h in Headers */,
 				CFF33FB52556958C00B3C92C /* PanelDataEntriesComparator.h in Headers */,
@@ -491,6 +498,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF0B0408281F016300076FDF /* SelectionWithMaskPopupViewController.mm in Sources */,
+				CFCF43E42B8B644B00B513C7 /* TagsStorage.cpp in Sources */,
 				CFF33F992556942700B3C92C /* PanelData.mm in Sources */,
 				CF22060727B851B5008EDE3A /* ExternalTools.mm in Sources */,
 				CFCB690228968C4800086E40 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,

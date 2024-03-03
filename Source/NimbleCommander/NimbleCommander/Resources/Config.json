@@ -239,7 +239,12 @@
             /**
              * Enable loading and UI components of tags
              */
-            "enable": true
+            "enable": true,
+            
+            /**
+             * Storage for the known tags
+             */
+            "tags": {}
          },
   
         /**

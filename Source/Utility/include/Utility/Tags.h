@@ -76,7 +76,7 @@ public:
     Tags::Color Color() const noexcept;
     bool operator==(const Tag &_rhs) const noexcept;
     bool operator!=(const Tag &_rhs) const noexcept;
-
+    static const std::string *Internalize(std::string_view _label) noexcept;
 private:
     const std::string *m_TaggedPtr;
 };

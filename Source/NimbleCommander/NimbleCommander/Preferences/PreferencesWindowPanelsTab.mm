@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTab.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
@@ -9,6 +9,8 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <Config/Config.h>
+#include <Panel/TagsStorage.h>
+#include <Panel/UI/TagsPresentation.h>
 
 using namespace nc::panel;
 
@@ -119,28 +121,34 @@ static const auto g_LayoutColumnsDDType =
 @property(nonatomic) IBOutlet NSButton *layoutsListIcon1x;
 @property(nonatomic) IBOutlet NSButton *layoutsListIcon2x;
 
+// tags bindings
+@property(nonatomic) IBOutlet NSTableView *tagsTable;
+
 @end
 
 @implementation PreferencesWindowPanelsTab {
     std::shared_ptr<PanelViewLayoutsStorage> m_LayoutsStorage;
     std::vector<std::pair<PanelListViewColumnsLayout::Column, bool>> m_LayoutListColumns;
+    TagsStorage *m_TagsStorage;
+    std::vector<nc::utility::Tags::Tag> m_Tags;
 }
 
 - (id)initWithNibName:(NSString *) [[maybe_unused]] nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     static std::once_flag once;
     std::call_once(once, [] {
-        NSImage *image = [[NSImage alloc]
-            initWithContentsOfFile:@"/System/Library/CoreServices/CoreTypes.bundle/Contents/"
-                                   @"Resources/GenericApplicationIcon.icns"];
+        NSImage *image =
+            [[NSImage alloc] initWithContentsOfFile:@"/System/Library/CoreServices/CoreTypes.bundle/Contents/"
+                                                    @"Resources/GenericApplicationIcon.icns"];
         if( image )
             [image setName:@"GenericApplicationIcon"];
     });
 
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if( self ) {
-        // Initialization code here.
-        m_LayoutsStorage = NCAppDelegate.me.panelLayouts;
+        m_LayoutsStorage = NCAppDelegate.me.panelLayouts; // TODO: DI instead
+        m_TagsStorage = &NCAppDelegate.me.tagsStorage;    // TODO: DI instead
+        m_Tags = m_TagsStorage->Get();
     }
 
     return self;
@@ -153,11 +161,9 @@ static const auto g_LayoutColumnsDDType =
 
     uint64_t magic_size = 2597065;
     for( NSMenuItem *it in self.fileSizeFormatCombo.itemArray )
-        it.title = ByteCountFormatter::Instance().ToNSString(
-            magic_size, static_cast<ByteCountFormatter::Type>(it.tag));
+        it.title = ByteCountFormatter::Instance().ToNSString(magic_size, static_cast<ByteCountFormatter::Type>(it.tag));
     for( NSMenuItem *it in self.selectionSizeFormatCombo.itemArray )
-        it.title = ByteCountFormatter::Instance().ToNSString(
-            magic_size, static_cast<ByteCountFormatter::Type>(it.tag));
+        it.title = ByteCountFormatter::Instance().ToNSString(magic_size, static_cast<ByteCountFormatter::Type>(it.tag));
 
     [self.view layoutSubtreeIfNeeded];
 }
@@ -175,12 +181,14 @@ static const auto g_LayoutColumnsDDType =
     return NSLocalizedStringFromTable(@"Panels", @"Preferences", "General preferences tab title");
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)_table
 {
-    if( tableView == self.layoutsTable )
+    if( _table == self.layoutsTable )
         return m_LayoutsStorage->LayoutsCount();
-    if( tableView == self.layoutsListColumnsTable )
+    if( _table == self.layoutsListColumnsTable )
         return m_LayoutListColumns.size();
+    if( _table == self.tagsTable )
+        return m_Tags.size();
     return 0;
 }
 
@@ -206,15 +214,36 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
     }
 }
 
-- (NSView *)tableView:(NSTableView *)tableView
-    viewForTableColumn:(NSTableColumn *)tableColumn
-                   row:(NSInteger)row
+static NSMenu *BuildTagColorMenu()
 {
-    if( tableView == self.layoutsTable ) {
-        if( [tableColumn.identifier isEqualToString:@"name"] ) {
-            if( auto l = m_LayoutsStorage->GetLayout(static_cast<int>(row)) ) {
+    using Color = nc::utility::Tags::Color;
+    [[clang::no_destroy]] static const std::pair<Color, NSString *> items[] = {
+        {Color::None, NSLocalizedString(@"No Colour", "")},
+        {Color::Red, NSLocalizedString(@"Red", "")},
+        {Color::Orange, NSLocalizedString(@"Orange", "")},
+        {Color::Yellow, NSLocalizedString(@"Yellow", "")},
+        {Color::Green, NSLocalizedString(@"Green", "")},
+        {Color::Blue, NSLocalizedString(@"Blue", "")},
+        {Color::Purple, NSLocalizedString(@"Purple", "")},
+        {Color::Gray, NSLocalizedString(@"Gray", "")}};
+    NSMenu *menu = [[NSMenu alloc] init];
+    for( auto &item : items ) {
+        NSMenuItem *it = [[NSMenuItem alloc] initWithTitle:item.second action:nil keyEquivalent:@""];
+        it.image = TagsMenuDisplay::Images().at(std::to_underlying(item.first));
+        it.tag = std::to_underlying(item.first);
+        [menu addItem:it];
+    }
+    assert(menu.numberOfItems == 8);
+    return menu;
+}
+
+- (NSView *)tableView:(NSTableView *)_table viewForTableColumn:(NSTableColumn *)_column row:(NSInteger)_row
+{
+    if( _table == self.layoutsTable ) {
+        if( [_column.identifier isEqualToString:@"name"] ) {
+            if( auto l = m_LayoutsStorage->GetLayout(static_cast<int>(_row)) ) {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-                tf.stringValue = l->name.empty() ? [NSString stringWithFormat:@"Layout #%ld", row]
+                tf.stringValue = l->name.empty() ? [NSString stringWithFormat:@"Layout #%ld", _row]
                                                  : [NSString stringWithUTF8StdString:l->name];
                 tf.bordered = false;
                 tf.editable = false;
@@ -223,22 +252,21 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
             }
         }
     }
-    if( tableView == self.layoutsListColumnsTable ) {
+    if( _table == self.layoutsListColumnsTable ) {
         if( auto layout = self.selectedLayout ) {
             if( auto list = layout->list() ) {
-                if( row < static_cast<int>(m_LayoutListColumns.size()) ) {
-                    auto &col = m_LayoutListColumns[row];
-
-                    if( [tableColumn.identifier isEqualToString:@"enabled"] ) {
+                if( _row < static_cast<int>(m_LayoutListColumns.size()) ) {
+                    auto &col = m_LayoutListColumns[_row];
+                    if( [_column.identifier isEqualToString:@"enabled"] ) {
                         NSButton *cb = [[NSButton alloc] initWithFrame:NSRect()];
-                        cb.enabled = row != 0;
+                        cb.enabled = _row != 0;
                         cb.buttonType = NSButtonTypeSwitch;
                         cb.state = col.second;
                         cb.target = self;
                         cb.action = @selector(onLayoutListColumnEnabledClicked:);
                         return cb;
                     }
-                    if( [tableColumn.identifier isEqualToString:@"title"] ) {
+                    if( [_column.identifier isEqualToString:@"title"] ) {
                         NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
                         tf.stringValue = PanelListColumnTypeToString(col.first.kind);
                         tf.bordered = false;
@@ -248,6 +276,40 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
                     }
                 }
             }
+        }
+    }
+    if( _table == self.tagsTable && _row < static_cast<long>(m_Tags.size()) ) {
+        auto tag = m_Tags[_row];
+        if( [_column.identifier isEqualToString:@"color"] ) {
+            NSPopUpButton *but = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 15) pullsDown:false];
+            but.imagePosition = NSImageOnly;
+            but.bordered = false;
+            but.menu = BuildTagColorMenu();
+            [but selectItemWithTag:std::to_underlying(tag.Color())];
+            return but;
+        }
+        if( [_column.identifier isEqualToString:@"label"] ) {
+            NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
+            tf.stringValue = [NSString stringWithUTF8StdString:tag.Label()];
+            tf.bordered = false;
+            tf.editable = false; // TODO: make editable
+            tf.drawsBackground = false;
+            tf.usesSingleLineMode = true;
+            tf.translatesAutoresizingMaskIntoConstraints = false;
+            NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+            [cv addSubview:tf];
+            [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(4)-[tf(>=40)]-(4)-|"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:NSDictionaryOfVariableBindings(tf)]];
+            [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                           attribute:NSLayoutAttributeCenterY
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:cv
+                                                           attribute:NSLayoutAttributeCenterY
+                                                          multiplier:1.
+                                                            constant:0.]];
+            return cv;
         }
     }
     return nil;
@@ -263,8 +325,7 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
     return NSDragOperationNone;
 }
 
-- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view
-                       pasteboardWriterForRow:(NSInteger)_row
+- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view pasteboardWriterForRow:(NSInteger)_row
 {
     if( _table_view != self.layoutsListColumnsTable )
         return nil;
@@ -287,8 +348,7 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
 {
     if( aTableView == self.layoutsListColumnsTable ) {
         auto data = [info.draggingPasteboard dataForType:g_LayoutColumnsDDType];
-        NSNumber *ind =
-            [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+        NSNumber *ind = [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
         NSInteger drag_from = ind.integerValue;
 
         if( drag_to == drag_from ||     // same index, above
@@ -381,12 +441,9 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
     [self.layoutDetailsTabView selectTabViewItemWithIdentifier:LayoutTypeToTabIdentifier(t)];
 
     if( auto brief = l->brief() ) {
-        self.layoutsBriefFixedRadioChoosen =
-            brief->mode == PanelBriefViewColumnsLayout::Mode::FixedWidth;
-        self.layoutsBriefAmountRadioChoosen =
-            brief->mode == PanelBriefViewColumnsLayout::Mode::FixedAmount;
-        self.layoutsBriefDynamicRadioChoosen =
-            brief->mode == PanelBriefViewColumnsLayout::Mode::DynamicWidth;
+        self.layoutsBriefFixedRadioChoosen = brief->mode == PanelBriefViewColumnsLayout::Mode::FixedWidth;
+        self.layoutsBriefAmountRadioChoosen = brief->mode == PanelBriefViewColumnsLayout::Mode::FixedAmount;
+        self.layoutsBriefDynamicRadioChoosen = brief->mode == PanelBriefViewColumnsLayout::Mode::DynamicWidth;
         self.layoutsBriefFixedValueTextField.intValue = brief->fixed_mode_width;
         self.layoutsBriefAmountValueTextField.intValue = brief->fixed_amount_value;
         self.layoutsBriefDynamicMinValueTextField.intValue = brief->dynamic_width_min;
@@ -409,9 +466,8 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
         for( auto c : list->columns )
             m_LayoutListColumns.emplace_back(c, true);
         for( auto c : columns_order )
-            if( !any_of(begin(m_LayoutListColumns), end(m_LayoutListColumns), [=](auto v) {
-                    return v.first.kind == c;
-                }) ) {
+            if( !any_of(
+                    begin(m_LayoutListColumns), end(m_LayoutListColumns), [=](auto v) { return v.first.kind == c; }) ) {
                 PanelListViewColumnsLayout::Column dummy;
                 dummy.kind = c;
 
@@ -442,11 +498,9 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 
 - (IBAction)onLayoutListColumnEnabledClicked:(id)sender
 {
-    int row =
-        static_cast<int>([self.layoutsListColumnsTable rowForView:static_cast<NSView *>(sender)]);
+    int row = static_cast<int>([self.layoutsListColumnsTable rowForView:static_cast<NSView *>(sender)]);
     if( row >= 0 && row < static_cast<int>(m_LayoutListColumns.size()) ) {
-        m_LayoutListColumns[row].second =
-            static_cast<NSButton *>(sender).state == NSControlStateValueOn;
+        m_LayoutListColumns[row].second = static_cast<NSButton *>(sender).state == NSControlStateValueOn;
         [self commitLayoutChanges];
     }
 }
@@ -463,10 +517,7 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 {
     [self commitLayoutChanges];
     [self.layoutsTable
-        reloadDataForRowIndexes:[NSIndexSet
-                                    indexSetWithIndexesInRange:NSMakeRange(0,
-                                                                           m_LayoutsStorage
-                                                                               ->LayoutsCount())]
+        reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, m_LayoutsStorage->LayoutsCount())]
                   columnIndexes:[NSIndexSet indexSetWithIndex:0]];
 }
 
@@ -585,8 +636,8 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 {
     constexpr auto path = "filePanel.operations.concurrencyPerWindowDoesntApplyTo";
     const auto orig_list = NCAppDelegate.me.globalConfig.GetString(path);
-    auto sheet = [[PreferencesWindowPanelsTabOperationsConcurrencySheet alloc]
-        initWithConcurrencyExclusionList:orig_list];
+    auto sheet =
+        [[PreferencesWindowPanelsTabOperationsConcurrencySheet alloc] initWithConcurrencyExclusionList:orig_list];
     __weak PreferencesWindowPanelsTabOperationsConcurrencySheet *weak_sheet = sheet;
     [sheet beginSheetForWindow:self.view.window
              completionHandler:^([[maybe_unused]] NSModalResponse rc) {

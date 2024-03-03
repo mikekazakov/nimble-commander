@@ -16,6 +16,7 @@ using namespace nc::panel;
 
 static const auto g_LayoutColumnsDDType =
     @"com.magnumbytes.nc.pref.PreferencesWindowPanelsTabPrivateTableViewDataColumns";
+static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPanelsTabPrivateTableViewTagRows";
 
 @interface PreferencesToNumberValueTransformer : NSValueTransformer
 @end
@@ -158,6 +159,7 @@ static const auto g_LayoutColumnsDDType =
 {
     [super loadView];
     [self.layoutsListColumnsTable registerForDraggedTypes:@[g_LayoutColumnsDDType]];
+    [self.tagsTable registerForDraggedTypes:@[g_TagsDDType]];
 
     uint64_t magic_size = 2597065;
     for( NSMenuItem *it in self.fileSizeFormatCombo.itemArray )
@@ -315,55 +317,82 @@ static NSMenu *BuildTagColorMenu()
     return nil;
 }
 
-- (NSDragOperation)tableView:(NSTableView *)aTableView
-                validateDrop:(id<NSDraggingInfo>) [[maybe_unused]] info
-                 proposedRow:(NSInteger) [[maybe_unused]] row
-       proposedDropOperation:(NSTableViewDropOperation)operation
+- (NSDragOperation)tableView:(NSTableView *)_table_view
+                validateDrop:(id<NSDraggingInfo>)_info
+                 proposedRow:(NSInteger) [[maybe_unused]] _row
+       proposedDropOperation:(NSTableViewDropOperation)_operation
 {
-    if( aTableView == self.layoutsListColumnsTable )
-        return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+    if( _table_view == self.layoutsListColumnsTable ) {
+        return _operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+    }
+    if( _table_view == self.tagsTable ) {
+        return _operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+    }
     return NSDragOperationNone;
 }
 
 - (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view pasteboardWriterForRow:(NSInteger)_row
 {
-    if( _table_view != self.layoutsListColumnsTable )
-        return nil;
+    auto pb_item_with_type = [&](NSString *_type) -> NSPasteboardItem * {
+        auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
+                                          requiringSecureCoding:false
+                                                          error:nil];
+        NSPasteboardItem *pbitem = [[NSPasteboardItem alloc] init];
+        [pbitem setData:data forType:_type];
+        return pbitem;
+    };
 
-    if( _row == 0 )
-        return nil;
-
-    auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
-                                      requiringSecureCoding:false
-                                                      error:nil];
-    NSPasteboardItem *pbitem = [[NSPasteboardItem alloc] init];
-    [pbitem setData:data forType:g_LayoutColumnsDDType];
-    return pbitem;
+    if( _table_view == self.layoutsListColumnsTable ) {
+        if( _row == 0 )
+            return nil;
+        return pb_item_with_type(g_LayoutColumnsDDType);
+    }
+    if( _table_view == self.tagsTable ) {
+        return pb_item_with_type(g_TagsDDType);
+    }
+    return nil;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView
-       acceptDrop:(id<NSDraggingInfo>)info
-              row:(NSInteger)drag_to
+- (BOOL)tableView:(NSTableView *)_table_view
+       acceptDrop:(id<NSDraggingInfo>)_info
+              row:(NSInteger)_drag_to
     dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
-    if( aTableView == self.layoutsListColumnsTable ) {
-        auto data = [info.draggingPasteboard dataForType:g_LayoutColumnsDDType];
+    if( _table_view == self.layoutsListColumnsTable ) {
+        auto data = [_info.draggingPasteboard dataForType:g_LayoutColumnsDDType];
         NSNumber *ind = [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
-        NSInteger drag_from = ind.integerValue;
+        const NSInteger drag_from = ind.integerValue;
 
-        if( drag_to == drag_from ||     // same index, above
-            drag_to == drag_from + 1 || // same index, below
-            drag_to == 0 )              // first item should be filename
+        if( _drag_to == drag_from ||     // same index, above
+            _drag_to == drag_from + 1 || // same index, below
+            _drag_to == 0 )              // first item should be filename
             return false;
 
         assert(drag_from < static_cast<int>(m_LayoutListColumns.size()));
-        auto i = begin(m_LayoutListColumns);
-        if( drag_from < drag_to )
-            rotate(i + drag_from, i + drag_from + 1, i + drag_to);
+        auto i = m_LayoutListColumns.begin();
+        if( drag_from < _drag_to )
+            std::rotate(i + drag_from, i + drag_from + 1, i + _drag_to);
         else
-            rotate(i + drag_to, i + drag_from, i + drag_from + 1);
+            std::rotate(i + _drag_to, i + drag_from, i + drag_from + 1);
         [self.layoutsListColumnsTable reloadData];
         [self commitLayoutChanges];
+        return true;
+    }
+    if( _table_view == self.tagsTable ) {
+        auto data = [_info.draggingPasteboard dataForType:g_TagsDDType];
+        NSNumber *ind = [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+        const NSInteger drag_from = ind.integerValue;
+        if( _drag_to == drag_from || _drag_to == drag_from + 1 )
+            return false; // same index, above or below
+
+        assert(drag_from < static_cast<int>(m_Tags.size()));
+        auto i = m_Tags.begin();
+        if( drag_from < _drag_to )
+            std::rotate(i + drag_from, i + drag_from + 1, i + _drag_to);
+        else
+            std::rotate(i + _drag_to, i + drag_from, i + drag_from + 1);
+        [self.tagsTable reloadData];
+        m_TagsStorage->Set(m_Tags);
         return true;
     }
     return false;

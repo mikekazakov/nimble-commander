@@ -10,6 +10,21 @@ TagsStorage::TagsStorage(config::Config &_persistant_storage, std::string_view _
     : m_Storage(_persistant_storage), m_PathV1(std::string(_path) + ".v1")
 {
     m_Initialized = Load();
+    if( m_Initialized && m_Tags.empty() ) {
+        // In case there are no items on the filesystem with tags we still want to have some tags,
+        // use a default set for that
+        using Tags = utility::Tags;
+        m_Tags = std::vector<Tags::Tag>{
+            {Tags::Tag::Internalize("Red"), Tags::Color::Red},
+            {Tags::Tag::Internalize("Orange"), Tags::Color::Orange},
+            {Tags::Tag::Internalize("Yellow"), Tags::Color::Yellow},
+            {Tags::Tag::Internalize("Green"), Tags::Color::Green},
+            {Tags::Tag::Internalize("Blue"), Tags::Color::Blue},
+            {Tags::Tag::Internalize("Purple"), Tags::Color::Purple},
+            {Tags::Tag::Internalize("Grey"), Tags::Color::Gray},
+            {Tags::Tag::Internalize("None"), Tags::Color::None},
+        };
+    }
 }
 
 std::vector<utility::Tags::Tag> TagsStorage::Get() const

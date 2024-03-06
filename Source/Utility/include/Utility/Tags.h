@@ -62,8 +62,16 @@ public:
     // tags.
     static std::vector<std::filesystem::path> GatherAllItemsWithTags() noexcept;
 
+    // Executes "kMDItemUserTags=_tag" (conceptually) query by Spotlight to gather all indexed items on the filesystem
+    // that contain the specified tag.
+    static std::vector<std::filesystem::path> GatherAllItemsWithTag(std::string_view _tag) noexcept;
+
     // Gather a current set of tags used by the items on the filesystem.
     static std::vector<Tag> GatherAllItemsTags() noexcept;
+
+    // Finds all items on the filesystem that contain the specified tag and change the color of this tag in these items
+    // to the specified new color
+    static void ChangeColorOfAllItemsWithTag(std::string_view _tag, Color _color) noexcept;
 };
 
 // Non-owning class that represent a text label and a color of a tag.
@@ -77,6 +85,7 @@ public:
     bool operator==(const Tag &_rhs) const noexcept;
     bool operator!=(const Tag &_rhs) const noexcept;
     static const std::string *Internalize(std::string_view _label) noexcept;
+
 private:
     const std::string *m_TaggedPtr;
 };

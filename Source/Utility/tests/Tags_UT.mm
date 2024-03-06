@@ -491,3 +491,95 @@ TEST_CASE(PREFIX "Spotlight detects items with new tags invented by NC")
     // Failed to find the new tag after the number of attempts
     FAIL();
 }
+
+TEST_CASE(PREFIX "GatherAllItemsWithTag")
+{
+    // Need to place these temp files into an indexable location (which the temp dir is not)
+    auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
+    std::filesystem::create_directory(basepath);
+    auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
+    const std::set<std::filesystem::path> filepaths = {basepath / "f1.txt", basepath / "f2.txt", basepath / "f3.txt"};
+
+    const std::string labels[] = {
+        fmt::format("simple_label_{}", getpid()),
+        fmt::format("label with spaces {}", getpid()),
+        fmt::format("this label 'even' has \"quotes\" {}", getpid()),
+        fmt::format("gibberish |&;<>()$`\t! {}", getpid()),
+        fmt::format("even emojii are supported! 🤯 {}", getpid()),
+        fmt::format("а вот этот лейбл написан по-русски {}", getpid()),
+    };
+    const Tags::Color color = Tags::Color::Orange;
+
+    for( const std::string &label : labels ) {
+        // Write temp files with a newly invented tag
+        for( const std::filesystem::path &filepath : filepaths ) {
+            CHECK(close(open(filepath.c_str(), O_CREAT, S_IRUSR | S_IWUSR)) == 0);
+            CHECK(Tags::WriteTags(filepath, std::vector<Tags::Tag>{{&label, color}}));
+        }
+
+        // Tell Spotlight to look into the dir
+        CHECK(system(fmt::format("mdimport {}", basepath.c_str()).c_str()) == 0);
+
+        // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
+        // even after an explicit call to mdimport
+        for( int attempt = 0; attempt < 10; ++attempt ) {
+            const auto items = Tags::GatherAllItemsWithTag(label);
+            if( std::set<std::filesystem::path>{items.begin(), items.end()} == filepaths )
+                break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
+            if( attempt == 9 )
+                FAIL(); // Failed to find the new tag after the number of attempts
+            std::this_thread::sleep_for(std::chrono::milliseconds{100});
+        }
+
+        // Remove the temp files
+        for( const std::filesystem::path &filepath : filepaths ) {
+            std::filesystem::remove(filepath);
+        }
+    }
+}
+
+TEST_CASE(PREFIX "ChangeColorOfAllItemsWithTag")
+{
+    // Need to place these temp files into an indexable location (which the temp dir is not)
+    auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
+    std::filesystem::create_directory(basepath);
+    auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
+    const std::filesystem::path p1 = basepath / "f1";
+    const std::filesystem::path p2 = basepath / "f2";
+    const std::filesystem::path p3 = basepath / "f3";
+    const std::string label1 = fmt::format("the first temporary label for ChangeColorOfAllItemsWithTag {}", getpid());
+    const std::string label2 = fmt::format("the second temporary label for ChangeColorOfAllItemsWithTag {}", getpid());
+    const Tags::Color orig_color1 = Tags::Color::Orange;
+    const Tags::Color orig_color2 = Tags::Color::Blue;
+
+    // Write temp files with the newly invented tags
+    CHECK(close(open(p1.c_str(), O_CREAT, S_IRUSR | S_IWUSR)) == 0);
+    CHECK(Tags::WriteTags(p1, std::vector<Tags::Tag>{{&label1, orig_color1}}));
+    CHECK(close(open(p2.c_str(), O_CREAT, S_IRUSR | S_IWUSR)) == 0);
+    CHECK(Tags::WriteTags(p2, std::vector<Tags::Tag>{{&label1, orig_color1}, {&label2, orig_color2}}));
+    CHECK(close(open(p3.c_str(), O_CREAT, S_IRUSR | S_IWUSR)) == 0);
+    CHECK(Tags::WriteTags(p3, std::vector<Tags::Tag>{{&label2, orig_color2}, {&label1, orig_color1}}));
+
+    // Tell Spotlight to look into the dir
+    CHECK(system(fmt::format("mdimport {}", basepath.c_str()).c_str()) == 0);
+
+    // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
+    // even after an explicit call to mdimport
+    for( int attempt = 0; attempt < 10; ++attempt ) {
+        const auto items = Tags::GatherAllItemsWithTag(label1);
+        if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
+            break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
+        if( attempt == 9 )
+            FAIL(); // Failed to find the new tag after the number of attempts
+        std::this_thread::sleep_for(std::chrono::milliseconds{100});
+    }
+
+    // Change the color for one of the new tags
+    const Tags::Color new_color1 = Tags::Color::Purple;
+    Tags::ChangeColorOfAllItemsWithTag(label1, new_color1);
+
+    // Verify the change
+    CHECK(Tags::ReadTags(p1) == std::vector<Tags::Tag>{{&label1, new_color1}});
+    CHECK(Tags::ReadTags(p2) == std::vector<Tags::Tag>{{&label1, new_color1}, {&label2, orig_color2}});
+    CHECK(Tags::ReadTags(p3) == std::vector<Tags::Tag>{{&label2, orig_color2}, {&label1, new_color1}});
+}

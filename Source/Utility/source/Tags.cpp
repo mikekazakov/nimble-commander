@@ -4,6 +4,7 @@
 #include <bit>
 #include <utility>
 #include <fmt/printf.h>
+#include <fmt/format.h>
 #include <assert.h>
 #include <Base/RobinHoodUtil.h>
 #include <mutex>
@@ -706,6 +707,48 @@ std::vector<std::filesystem::path> Tags::GatherAllItemsWithTags() noexcept
     return result;
 }
 
+static std::string EscapeForMD(std::string_view _tag) noexcept
+{
+    constexpr char to_esc[] = {'\'', '\\', '\"'};
+    std::string escaped_tag;
+    for( auto c : _tag ) {
+        if( std::any_of(std::begin(to_esc), std::end(to_esc), [=](auto e) { return c == e; }) )
+            escaped_tag += '\\';
+        escaped_tag += c;
+    }
+    return escaped_tag;
+}
+
+std::vector<std::filesystem::path> Tags::GatherAllItemsWithTag(std::string_view _tag) noexcept
+{
+    if( _tag.empty() )
+        return {};
+
+    const base::CFPtr<CFStringRef> query_string = base::CFPtr<CFStringRef>::adopt(
+        base::CFStringCreateWithUTF8StdString(fmt::format("kMDItemUserTags=='{}'", EscapeForMD(_tag))));
+
+    const base::CFPtr<MDQueryRef> query =
+        base::CFPtr<MDQueryRef>::adopt(MDQueryCreate(nullptr, query_string.get(), nullptr, nullptr));
+    if( !query )
+        return {};
+
+    const bool query_result = MDQueryExecute(query.get(), kMDQuerySynchronous);
+    if( !query_result )
+        return {};
+
+    std::vector<std::filesystem::path> result;
+    for( long i = 0, e = MDQueryGetResultCount(query.get()); i < e; ++i ) {
+        const MDItemRef item = static_cast<MDItemRef>(const_cast<void *>(MDQueryGetResultAtIndex(query.get(), i)));
+        base::CFPtr<CFStringRef> item_path =
+            base::CFPtr<CFStringRef>::adopt(static_cast<CFStringRef>(MDItemCopyAttribute(item, kMDItemPath)));
+        if( item_path ) {
+            result.emplace_back(base::CFStringGetUTF8StdString(item_path.get()));
+        }
+    }
+
+    return result;
+}
+
 std::vector<Tags::Tag> Tags::GatherAllItemsTags() noexcept
 {
     const std::vector<std::filesystem::path> files = GatherAllItemsWithTags();
@@ -733,6 +776,25 @@ std::vector<Tags::Tag> Tags::GatherAllItemsTags() noexcept
         return _lhs.Color() < _rhs.Color();
     });
     return res;
+}
+
+void Tags::ChangeColorOfAllItemsWithTag(std::string_view _tag, Color _color) noexcept
+{
+    const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
+    pstld::for_each(paths.begin(), paths.end(), [_tag, _color](const std::filesystem::path &path) {
+        if( const int fd = open(path.c_str(), O_RDWR | O_NONBLOCK); fd >= 0 ) {
+            if( auto tags = ReadTags(fd); !tags.empty() ) {
+                for( auto &tag : tags ) {
+                    if( tag.Label() == _tag ) {
+                        tag = Tag{&tag.Label(), _color};
+                        break;
+                    }
+                }
+                WriteTags(fd, tags);
+            }
+            close(fd);
+        }
+    });
 }
 
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept

@@ -11,6 +11,7 @@
 #include <Config/Config.h>
 #include <Panel/TagsStorage.h>
 #include <Panel/UI/TagsPresentation.h>
+#include <Base/dispatch_cpp.h>
 
 using namespace nc::panel;
 
@@ -132,6 +133,7 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
     std::vector<std::pair<PanelListViewColumnsLayout::Column, bool>> m_LayoutListColumns;
     TagsStorage *m_TagsStorage;
     std::vector<nc::utility::Tags::Tag> m_Tags;
+    dispatch_queue m_TagOperationsQue;
 }
 
 - (id)initWithNibName:(NSString *) [[maybe_unused]] nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -288,6 +290,8 @@ static NSMenu *BuildTagColorMenu()
             but.bordered = false;
             but.menu = BuildTagColorMenu();
             [but selectItemWithTag:std::to_underlying(tag.Color())];
+            but.target = self;
+            but.action = @selector(onTagsTableColorChanged:);
             return but;
         }
         if( [_column.identifier isEqualToString:@"label"] ) {
@@ -672,6 +676,29 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
              completionHandler:^([[maybe_unused]] NSModalResponse rc) {
                NCAppDelegate.me.globalConfig.Set(path, weak_sheet.exclusionList);
              }];
+}
+
+- (IBAction)onTagsTableColorChanged:(id)_sender
+{
+    NSPopUpButton *but = nc::objc_cast<NSPopUpButton>(_sender);
+    if(!but)
+        return;
+    const long row = [self.tagsTable rowForView:but];
+    if( row < 0 || static_cast<size_t>(row) >= m_Tags.size())
+        return;
+    
+    const long selected_color = std::clamp(but.selectedTag, 0l, 7l);
+    const nc::utility::Tags::Tag old_tag = m_Tags[row];
+    const nc::utility::Tags::Tag new_tag{&old_tag.Label(),static_cast<nc::utility::Tags::Color>(selected_color)};
+    if( old_tag == new_tag )
+        return;
+        
+    m_Tags[row] = new_tag;
+    [self.tagsTable reloadData];
+    m_TagsStorage->Set(m_Tags);
+    m_TagOperationsQue.async([new_tag]{
+        nc::utility::Tags::ChangeColorOfAllItemsWithTag( new_tag.Label(), new_tag.Color() );
+    });
 }
 
 @end

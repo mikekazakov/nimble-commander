@@ -12,6 +12,7 @@
 #include <Panel/TagsStorage.h>
 #include <Panel/UI/TagsPresentation.h>
 #include <Base/dispatch_cpp.h>
+#include <ranges>
 
 using namespace nc::panel;
 
@@ -298,10 +299,11 @@ static NSMenu *BuildTagColorMenu()
             NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
             tf.stringValue = [NSString stringWithUTF8StdString:tag.Label()];
             tf.bordered = false;
-            tf.editable = false; // TODO: make editable
+            tf.editable = true;
             tf.drawsBackground = false;
             tf.usesSingleLineMode = true;
             tf.translatesAutoresizingMaskIntoConstraints = false;
+            tf.delegate = self;
             NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
             [cv addSubview:tf];
             [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(4)-[tf(>=40)]-(4)-|"
@@ -681,24 +683,60 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 - (IBAction)onTagsTableColorChanged:(id)_sender
 {
     NSPopUpButton *but = nc::objc_cast<NSPopUpButton>(_sender);
-    if(!but)
+    if( !but )
         return;
     const long row = [self.tagsTable rowForView:but];
-    if( row < 0 || static_cast<size_t>(row) >= m_Tags.size())
+    if( row < 0 || static_cast<size_t>(row) >= m_Tags.size() )
         return;
-    
+
     const long selected_color = std::clamp(but.selectedTag, 0l, 7l);
     const nc::utility::Tags::Tag old_tag = m_Tags[row];
-    const nc::utility::Tags::Tag new_tag{&old_tag.Label(),static_cast<nc::utility::Tags::Color>(selected_color)};
+    const nc::utility::Tags::Tag new_tag{&old_tag.Label(), static_cast<nc::utility::Tags::Color>(selected_color)};
     if( old_tag == new_tag )
         return;
-        
+
     m_Tags[row] = new_tag;
-    [self.tagsTable reloadData];
     m_TagsStorage->Set(m_Tags);
-    m_TagOperationsQue.async([new_tag]{
-        nc::utility::Tags::ChangeColorOfAllItemsWithTag( new_tag.Label(), new_tag.Color() );
-    });
+    m_TagOperationsQue.async(
+        [new_tag] { nc::utility::Tags::ChangeColorOfAllItemsWithTag(new_tag.Label(), new_tag.Color()); });
+}
+
+- (void)controlTextDidEndEditing:(NSNotification *)_notification
+{
+    NSTextField *tf = nc::objc_cast<NSTextField>(_notification.object);
+    if( !tf || !tf.stringValue )
+        return;
+
+    if( const long row = [self.tagsTable rowForView:tf]; row >= 0 && static_cast<size_t>(row) < m_Tags.size() ) {
+        const nc::utility::Tags::Tag old_tag = m_Tags[row];
+
+        const NSString *value = tf.stringValue;
+        if( value.length == 0 || value.length > 255 ) {
+            tf.stringValue = [NSString stringWithUTF8StdString:old_tag.Label()];
+            return; // silently ignore
+        }
+
+        const std::string new_label = value.UTF8String;
+        if( old_tag.Label() == new_label )
+            return; // nothing to do
+
+        if( std::ranges::find_if(m_Tags, [&](auto &_tag) { return _tag.Label() == new_label; }) != m_Tags.end() ) {
+            auto fmt = NSLocalizedString(@"The name “%@” is already taken.\nPlease choose a different name.",
+                                         "Alert shown when a user tries to enter a tag label that is already in use");
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = [NSString localizedStringWithFormat:fmt, value];
+            alert.alertStyle = NSAlertStyleCritical;
+            [alert runModal];
+            tf.stringValue = [NSString stringWithUTF8StdString:old_tag.Label()];
+            return;
+        }
+
+        const nc::utility::Tags::Tag new_tag{nc::utility::Tags::Tag::Internalize(new_label), old_tag.Color()};
+        m_Tags[row] = new_tag;
+        m_TagsStorage->Set(m_Tags);
+        m_TagOperationsQue.async(
+            [old_tag, new_tag] { nc::utility::Tags::ChangeLabelOfAllItemsWithTag(old_tag.Label(), new_tag.Label()); });
+    }
 }
 
 @end

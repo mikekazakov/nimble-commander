@@ -781,8 +781,8 @@ std::vector<Tags::Tag> Tags::GatherAllItemsTags() noexcept
 void Tags::ChangeColorOfAllItemsWithTag(std::string_view _tag, Color _color) noexcept
 {
     const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
-    pstld::for_each(paths.begin(), paths.end(), [_tag, _color](const std::filesystem::path &path) {
-        if( const int fd = open(path.c_str(), O_RDWR | O_NONBLOCK); fd >= 0 ) {
+    auto change = [_tag, _color](const std::filesystem::path &_path) {
+        if( const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK); fd >= 0 ) {
             if( auto tags = ReadTags(fd); !tags.empty() ) {
                 for( auto &tag : tags ) {
                     if( tag.Label() == _tag ) {
@@ -794,7 +794,32 @@ void Tags::ChangeColorOfAllItemsWithTag(std::string_view _tag, Color _color) noe
             }
             close(fd);
         }
-    });
+    };
+    pstld::for_each(paths.begin(), paths.end(), change);
+}
+
+void Tags::ChangeLabelOfAllItemsWithTag(std::string_view _tag, std::string_view _new_name) noexcept
+{
+    if( _new_name == _tag || _new_name.empty() )
+        return;
+    const std::string *const internalized = Tags::Tag::Internalize(_new_name);
+    const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
+    auto change = [_tag, internalized](const std::filesystem::path &_path) {
+        if( const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK); fd >= 0 ) {
+            if( auto tags = ReadTags(fd); !tags.empty() ) {
+                for( auto &tag : tags ) {
+                    if( tag.Label() == _tag ) {
+                        tag = Tag{internalized, tag.Color()};
+                        break;
+                    }
+                }
+                // TODO: this currently allows to end up with duplicated labels...
+                WriteTags(fd, tags);
+            }
+            close(fd);
+        }
+    };
+    pstld::for_each(paths.begin(), paths.end(), change);
 }
 
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept

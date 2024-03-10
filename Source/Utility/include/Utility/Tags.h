@@ -83,6 +83,9 @@ public:
     
     // Removes the specified tag from the existing list of tags of the specified item.
     static bool RemoveTag(const std::filesystem::path &_path, std::string_view _label) noexcept;
+    
+    // Removes the specified tag from all items on the filesystem.
+    static void RemoveTagFromAllItems(std::string_view _tag) noexcept;
 };
 
 // Non-owning class that represent a text label and a color of a tag.

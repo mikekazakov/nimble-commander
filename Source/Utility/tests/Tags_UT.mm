@@ -681,3 +681,48 @@ TEST_CASE(PREFIX "RemoveTag")
         CHECK(Tags::ReadTags(path) == tc.expected);
     }
 }
+
+TEST_CASE(PREFIX "RemoveTagFromAllItems")
+{
+    // Need to place these temp files into an indexable location (which the temp dir is not)
+    auto basepath = std::filesystem::path{nc::base::CommonPaths::Library()} / "__nc_testing_tags_ut__";
+    std::filesystem::create_directory(basepath);
+    auto cleanup = at_scope_end([basepath] { std::filesystem::remove_all(basepath); });
+    const std::filesystem::path p1 = basepath / "f1";
+    const std::filesystem::path p2 = basepath / "f2";
+    const std::filesystem::path p3 = basepath / "f3";
+    const std::string label1 = fmt::format("the first temporary label for RemoveTagFromAllItems {}", getpid());
+    const std::string label2 = fmt::format("the second temporary label for RemoveTagFromAllItems {}", getpid());
+    const Tags::Color color1 = Tags::Color::Orange;
+    const Tags::Color color2 = Tags::Color::Blue;
+
+    // Write temp files with the newly invented tags
+    CHECK(close(open(p1.c_str(), O_CREAT, S_IRUSR | S_IWUSR)) == 0);
+    CHECK(Tags::WriteTags(p1, std::vector<Tags::Tag>{{&label1, color1}}));
+    CHECK(close(open(p2.c_str(), O_CREAT, S_IRUSR | S_IWUSR)) == 0);
+    CHECK(Tags::WriteTags(p2, std::vector<Tags::Tag>{{&label1, color1}, {&label2, color2}}));
+    CHECK(close(open(p3.c_str(), O_CREAT, S_IRUSR | S_IWUSR)) == 0);
+    CHECK(Tags::WriteTags(p3, std::vector<Tags::Tag>{{&label2, color2}, {&label1, color1}}));
+
+    // Tell Spotlight to look into the dir
+    CHECK(system(fmt::format("mdimport {}", basepath.c_str()).c_str()) == 0);
+
+    // Try a few times to find the items via Spotlight, need multiple attempts since there's still a race condition
+    // even after an explicit call to mdimport
+    for( int attempt = 0; attempt < 10; ++attempt ) {
+        const auto items = Tags::GatherAllItemsWithTag(label1);
+        if( std::set<std::filesystem::path>{items.begin(), items.end()} == std::set<std::filesystem::path>{p1, p2, p3} )
+            break; // Sucessfully found the newly created tag among all tags found via Spotlight, i.e. success
+        if( attempt == 9 )
+            FAIL(); // Failed to find the new tag after the number of attempts
+        std::this_thread::sleep_for(std::chrono::milliseconds{100});
+    }
+
+    // Remove the first tag from all items
+    Tags::RemoveTagFromAllItems(label1);
+
+    // Verify the change
+    CHECK(Tags::ReadTags(p1) == std::vector<Tags::Tag>{});
+    CHECK(Tags::ReadTags(p2) == std::vector<Tags::Tag>{{&label2, color2}});
+    CHECK(Tags::ReadTags(p3) == std::vector<Tags::Tag>{{&label2, color2}});
+}

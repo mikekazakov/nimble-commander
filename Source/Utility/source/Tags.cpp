@@ -862,6 +862,13 @@ bool Tags::RemoveTag(const std::filesystem::path &_path, std::string_view _label
     return WriteTags(fd, tags);
 }
 
+void Tags::RemoveTagFromAllItems(std::string_view _tag) noexcept
+{
+    const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
+    auto change = [_tag](const std::filesystem::path &_path) { RemoveTag(_path, _tag); };
+    pstld::for_each(paths.begin(), paths.end(), change);
+}
+
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept
     : m_TaggedPtr{reinterpret_cast<const std::string *>(reinterpret_cast<uint64_t>(_label) |
                                                         static_cast<uint64_t>(std::to_underlying(_color)))}

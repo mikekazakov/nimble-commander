@@ -629,3 +629,29 @@ TEST_CASE(PREFIX "ChangeLabelOfAllItemsWithTag")
     CHECK(Tags::ReadTags(p2) == std::vector<Tags::Tag>{{&new_label1, color1}, {&label2, color2}});
     CHECK(Tags::ReadTags(p3) == std::vector<Tags::Tag>{{&label2, color2}, {&new_label1, color1}});
 }
+
+TEST_CASE(PREFIX "AddTag")
+{
+    using C = Tags::Color;
+    auto tag = [](std::string_view _l, Tags::Color _c) { return Tags::Tag(Tags::Tag::Internalize(_l), _c); };
+    TempTestDir dir;
+    const auto path = dir.directory / "f.txt";
+    close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
+    struct TC {
+        std::vector<Tags::Tag> initial;
+        Tags::Tag to_add;
+        std::vector<Tags::Tag> expected;
+    } const tcs[] = {
+        {{}, tag("A", C::Red), {tag("A", C::Red)}},
+        {{tag("A", C::Red)}, tag("A", C::Red), {tag("A", C::Red)}},
+        {{tag("A", C::Blue)}, tag("A", C::Red), {tag("A", C::Red)}},
+        {{tag("B", C::Blue)}, tag("A", C::Red), {tag("B", C::Blue), tag("A", C::Red)}},
+        {{tag("B", C::Blue), tag("A", C::Purple)}, tag("A", C::Red), {tag("B", C::Blue), tag("A", C::Red)}},
+        {{tag("A", C::Purple), tag("B", C::Blue)}, tag("A", C::Red), {tag("A", C::Red), tag("B", C::Blue)}},
+    };
+    for( auto &tc : tcs ) {
+        CHECK(Tags::WriteTags(path, tc.initial));
+        CHECK(Tags::AddTag(path, tc.to_add));
+        CHECK(Tags::ReadTags(path) == tc.expected);
+    }
+}

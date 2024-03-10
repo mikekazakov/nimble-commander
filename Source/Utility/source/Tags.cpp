@@ -14,6 +14,7 @@
 #include <Base/CFStackAllocator.h>
 #include <Base/CFPtr.h>
 #include <Base/CFString.h>
+#include <Base/algo.h>
 #include <pstld/pstld.h>
 #include <memory_resource>
 #include <sys/xattr.h>
@@ -820,6 +821,31 @@ void Tags::ChangeLabelOfAllItemsWithTag(std::string_view _tag, std::string_view 
         }
     };
     pstld::for_each(paths.begin(), paths.end(), change);
+}
+
+bool Tags::AddTag(const std::filesystem::path &_path, const Tag &_new_tag) noexcept
+{
+    const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK);
+    if( fd < 0 )
+        return false;
+    auto cleanup = at_scope_end([fd] { close(fd); });
+
+    auto tags = ReadTags(fd);
+    if( std::ranges::find_if(tags, [&](const Tag &_tag) { return _tag == _new_tag; }) != tags.end() ) {
+        return true; // an exact tag is already present in this item, so there's nothing to do
+    }
+
+    if( auto it = std::ranges::find_if(tags, [&](const Tag &_tag) { return _tag.Label() == _new_tag.Label(); });
+        it != tags.end() ) {
+        // there's a tag with the same name, but with a different color - override it
+        *it = _new_tag;
+    }
+    else {
+        // add a new tag at the end
+        tags.push_back(_new_tag);
+    }
+
+    return WriteTags(fd, tags);
 }
 
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept

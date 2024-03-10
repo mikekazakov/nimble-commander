@@ -72,11 +72,14 @@ public:
     // Finds all items on the filesystem that contain the specified tag and change the color of this tag in these items
     // to the specified new color
     static void ChangeColorOfAllItemsWithTag(std::string_view _tag, Color _color) noexcept;
-    
+
     // Finds all items on the filesystem that contain the specified tag and change the label of this tag in these items
     // to the specified new name
     static void ChangeLabelOfAllItemsWithTag(std::string_view _tag, std::string_view _new_name) noexcept;
-    
+
+    // Adds the specified that to the existing list of tags of the specified item.
+    // It there's a tag with the same label and different color, it will be overwritten.
+    static bool AddTag(const std::filesystem::path &_path, const Tag &_tag) noexcept;
 };
 
 // Non-owning class that represent a text label and a color of a tag.

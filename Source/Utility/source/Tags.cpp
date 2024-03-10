@@ -848,6 +848,20 @@ bool Tags::AddTag(const std::filesystem::path &_path, const Tag &_new_tag) noexc
     return WriteTags(fd, tags);
 }
 
+bool Tags::RemoveTag(const std::filesystem::path &_path, std::string_view _label) noexcept
+{
+    const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK);
+    if( fd < 0 )
+        return false;
+    auto cleanup = at_scope_end([fd] { close(fd); });
+    auto tags = ReadTags(fd);
+    auto it = std::ranges::find_if(tags, [_label](const Tag &_tag) { return _tag.Label() == _label; });
+    if( it == tags.end() )
+        return true; // nothing to do - there's no tag with this label in the fs item
+    tags.erase(it);
+    return WriteTags(fd, tags);
+}
+
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept
     : m_TaggedPtr{reinterpret_cast<const std::string *>(reinterpret_cast<uint64_t>(_label) |
                                                         static_cast<uint64_t>(std::to_underlying(_color)))}

@@ -655,3 +655,29 @@ TEST_CASE(PREFIX "AddTag")
         CHECK(Tags::ReadTags(path) == tc.expected);
     }
 }
+
+TEST_CASE(PREFIX "RemoveTag")
+{
+    using C = Tags::Color;
+    auto tag = [](std::string_view _l, Tags::Color _c) { return Tags::Tag(Tags::Tag::Internalize(_l), _c); };
+    TempTestDir dir;
+    const auto path = dir.directory / "f.txt";
+    close(open(path.c_str(), O_CREAT, S_IRUSR | S_IWUSR));
+    struct TC {
+        std::vector<Tags::Tag> initial;
+        std::string to_remove;
+        std::vector<Tags::Tag> expected;
+    } const tcs[] = {
+        {{}, "A", {}},
+        {{tag("A", C::Red)}, "A", {}},
+        {{tag("A", C::Red)}, "B", {tag("A", C::Red)}},
+        {{tag("B", C::Blue), tag("A", C::Purple)}, "A", {tag("B", C::Blue)}},
+        {{tag("B", C::Blue), tag("A", C::Purple)}, "B", {tag("A", C::Purple)}},
+        {{tag("B", C::Blue), tag("A", C::Purple)}, "C", {tag("B", C::Blue), tag("A", C::Purple)}},
+    };
+    for( auto &tc : tcs ) {
+        CHECK(Tags::WriteTags(path, tc.initial));
+        CHECK(Tags::RemoveTag(path, tc.to_remove));
+        CHECK(Tags::ReadTags(path) == tc.expected);
+    }
+}

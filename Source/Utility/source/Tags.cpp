@@ -671,7 +671,7 @@ bool Tags::WriteTags(int _fd, std::span<const Tag> _tags) noexcept
 
 bool Tags::WriteTags(const std::filesystem::path &_path, std::span<const Tag> _tags) noexcept
 {
-    const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK); // TODO: is read-write required to change xattr??
+    const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
         return false;
 
@@ -783,7 +783,7 @@ void Tags::ChangeColorOfAllItemsWithTag(std::string_view _tag, Color _color) noe
 {
     const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
     auto change = [_tag, _color](const std::filesystem::path &_path) {
-        if( const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK); fd >= 0 ) {
+        if( const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK); fd >= 0 ) {
             if( auto tags = ReadTags(fd); !tags.empty() ) {
                 for( auto &tag : tags ) {
                     if( tag.Label() == _tag ) {
@@ -806,7 +806,7 @@ void Tags::ChangeLabelOfAllItemsWithTag(std::string_view _tag, std::string_view 
     const std::string *const internalized = Tags::Tag::Internalize(_new_name);
     const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
     auto change = [_tag, internalized](const std::filesystem::path &_path) {
-        if( const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK); fd >= 0 ) {
+        if( const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK); fd >= 0 ) {
             if( auto tags = ReadTags(fd); !tags.empty() ) {
                 for( auto &tag : tags ) {
                     if( tag.Label() == _tag ) {
@@ -825,7 +825,7 @@ void Tags::ChangeLabelOfAllItemsWithTag(std::string_view _tag, std::string_view 
 
 bool Tags::AddTag(const std::filesystem::path &_path, const Tag &_new_tag) noexcept
 {
-    const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK);
+    const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
         return false;
     auto cleanup = at_scope_end([fd] { close(fd); });
@@ -850,7 +850,7 @@ bool Tags::AddTag(const std::filesystem::path &_path, const Tag &_new_tag) noexc
 
 bool Tags::RemoveTag(const std::filesystem::path &_path, std::string_view _label) noexcept
 {
-    const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK);
+    const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
         return false;
     auto cleanup = at_scope_end([fd] { close(fd); });

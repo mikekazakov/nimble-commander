@@ -632,6 +632,7 @@ TEST_CASE(PREFIX "ChangeLabelOfAllItemsWithTag")
 
 TEST_CASE(PREFIX "AddTag")
 {
+    // TODO: add a unit test for directories as well
     using C = Tags::Color;
     auto tag = [](std::string_view _l, Tags::Color _c) { return Tags::Tag(Tags::Tag::Internalize(_l), _c); };
     TempTestDir dir;
@@ -658,6 +659,7 @@ TEST_CASE(PREFIX "AddTag")
 
 TEST_CASE(PREFIX "RemoveTag")
 {
+    // TODO: add a unit test for directories as well
     using C = Tags::Color;
     auto tag = [](std::string_view _l, Tags::Color _c) { return Tags::Tag(Tags::Tag::Internalize(_l), _c); };
     TempTestDir dir;
@@ -701,7 +703,7 @@ TEST_CASE(PREFIX "RemoveTagFromAllItems")
     CHECK(Tags::WriteTags(p1, std::vector<Tags::Tag>{{&label1, color1}}));
     CHECK(close(open(p2.c_str(), O_CREAT, S_IRUSR | S_IWUSR)) == 0);
     CHECK(Tags::WriteTags(p2, std::vector<Tags::Tag>{{&label1, color1}, {&label2, color2}}));
-    CHECK(close(open(p3.c_str(), O_CREAT, S_IRUSR | S_IWUSR)) == 0);
+    CHECK(mkdir(p3.c_str(), S_IRUSR | S_IWUSR) == 0);
     CHECK(Tags::WriteTags(p3, std::vector<Tags::Tag>{{&label2, color2}, {&label1, color1}}));
 
     // Tell Spotlight to look into the dir

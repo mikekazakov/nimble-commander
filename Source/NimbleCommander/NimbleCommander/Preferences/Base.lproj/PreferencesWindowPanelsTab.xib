@@ -30,6 +30,7 @@
                 <outlet property="layoutsTable" destination="7Vi-TZ-WWx" id="YbV-Es-D6w"/>
                 <outlet property="selectionSizeFormatCombo" destination="EaD-ec-z3N" id="fw3-Uo-Eda"/>
                 <outlet property="tabParts" destination="3" id="XDG-iV-bHL"/>
+                <outlet property="tagsAdditionalMenu" destination="WZK-mo-3jo" id="YCk-Jy-HJV"/>
                 <outlet property="tagsPlusMinus" destination="JBP-JY-hIC" id="C1f-Jd-sUj"/>
                 <outlet property="tagsTable" destination="1YK-eG-CYm" id="bj6-2Z-07L"/>
                 <outlet property="view" destination="1" id="2"/>
@@ -1547,6 +1548,17 @@
             <point key="canvasLocation" x="685" y="-70"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="36"/>
+        <menu id="WZK-mo-3jo">
+            <items>
+                <menuItem title="Search for new tags..." id="0Kl-Dk-sYm">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSearchForNewTags:" target="-2" id="2VI-jL-rDt"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="617" y="-383"/>
+        </menu>
     </objects>
     <resources>
         <image name="GenericApplicationIcon" width="128" height="128"/>

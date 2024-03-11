@@ -128,6 +128,7 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
 // tags bindings
 @property(nonatomic) IBOutlet NSTableView *tagsTable;
 @property(nonatomic) IBOutlet NSSegmentedControl *tagsPlusMinus;
+@property(nonatomic) IBOutlet NSMenu *tagsAdditionalMenu;
 
 @end
 
@@ -801,6 +802,66 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
             };
             [alert beginSheetModalForWindow:self.tagsTable.window completionHandler:handler];
         }
+        if( segment == 2 ) {
+            const auto b = self.tagsPlusMinus.bounds;
+            const auto origin =
+                NSMakePoint(b.size.width - [self.tagsPlusMinus widthForSegment:2] - 3, b.size.height + 3);
+            [self.tagsAdditionalMenu popUpMenuPositioningItem:nil atLocation:origin inView:self.tagsPlusMinus];
+        }
+    }
+}
+
+- (IBAction)onSearchForNewTags:(id)sender
+{
+    __weak PreferencesWindowPanelsTab *weak_self = self;
+    m_TagOperationsQue.async([weak_self] {
+        if( PreferencesWindowPanelsTab *me = weak_self ) {
+            auto all_tags = nc::utility::Tags::GatherAllItemsTags();
+            dispatch_to_main_queue([all_tags = std::move(all_tags), weak_self] {
+                if( PreferencesWindowPanelsTab *me = weak_self )
+                    [me acceptFSTags:all_tags];
+            });
+        }
+    });
+}
+
+- (void)acceptFSTags:(const std::vector<nc::utility::Tags::Tag> &)_tags
+{
+    using nc::utility::Tags;
+    std::vector<Tags::Tag> added;
+    for( auto &fs_tag : _tags ) {
+        if( std::ranges::none_of(m_Tags, [&](auto &_tag) { return _tag.Label() == fs_tag.Label(); }) ) {
+            m_Tags.push_back(fs_tag);
+            added.push_back(fs_tag);
+        }
+    }
+
+    if( added.empty() ) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"No new tags were found.",
+                                              "Information shown when no new tags were found after searching the fs");
+        alert.alertStyle = NSAlertStyleInformational;
+        [alert beginSheetModalForWindow:self.tagsTable.window
+                      completionHandler:^(NSModalResponse){
+                      }];
+    }
+    else {
+        m_TagsStorage->Set(m_Tags);
+        [self.tagsTable reloadData];
+        std::vector<std::string> labels;
+        for( auto &tag : added )
+            labels.push_back(fmt::format("“{}”", tag.Label()));
+
+        NSAlert *alert = [[NSAlert alloc] init];
+        auto msg = NSLocalizedString(@"The following tags were added: %@.",
+                                     "Information shown when new tags were found after searching the fs");
+        alert.messageText = [NSString
+            localizedStringWithFormat:msg,
+                                      [NSString stringWithUTF8StdString:fmt::format("{}", fmt::join(labels, ", "))]];
+        alert.alertStyle = NSAlertStyleInformational;
+        [alert beginSheetModalForWindow:self.tagsTable.window
+                      completionHandler:^(NSModalResponse){
+                      }];
     }
 }
 

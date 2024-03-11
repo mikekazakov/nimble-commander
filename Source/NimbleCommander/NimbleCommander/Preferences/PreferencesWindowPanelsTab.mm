@@ -13,6 +13,7 @@
 #include <Panel/UI/TagsPresentation.h>
 #include <Base/dispatch_cpp.h>
 #include <ranges>
+#include <fmt/format.h>
 
 using namespace nc::panel;
 
@@ -126,6 +127,7 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
 
 // tags bindings
 @property(nonatomic) IBOutlet NSTableView *tagsTable;
+@property(nonatomic) IBOutlet NSSegmentedControl *tagsPlusMinus;
 
 @end
 
@@ -306,6 +308,7 @@ static NSMenu *BuildTagColorMenu()
             tf.delegate = self;
             NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
             [cv addSubview:tf];
+            cv.textField = tf;
             [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(4)-[tf(>=40)]-(4)-|"
                                                                        options:0
                                                                        metrics:nil
@@ -726,7 +729,9 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
             NSAlert *alert = [[NSAlert alloc] init];
             alert.messageText = [NSString localizedStringWithFormat:fmt, value];
             alert.alertStyle = NSAlertStyleCritical;
-            [alert runModal];
+            [alert beginSheetModalForWindow:self.tagsTable.window
+                          completionHandler:^(NSModalResponse){
+                          }];
             tf.stringValue = [NSString stringWithUTF8StdString:old_tag.Label()];
             return;
         }
@@ -736,6 +741,66 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
         m_TagsStorage->Set(m_Tags);
         m_TagOperationsQue.async(
             [old_tag, new_tag] { nc::utility::Tags::ChangeLabelOfAllItemsWithTag(old_tag.Label(), new_tag.Label()); });
+    }
+}
+
+- (std::string)findNextTagLabel
+{
+    const std::string base = NSLocalizedString(@"Untitled", "Name of a newly created tag").UTF8String;
+    for( int i = 1;; ++i ) {
+        const std::string label = i == 1 ? base : fmt::format("{} {}", base, i);
+        if( std::ranges::none_of(m_Tags, [&](auto &_tag) { return _tag.Label() == label; }) )
+            return label;
+    }
+}
+
+- (IBAction)onTagPlusMinusClicked:(id)_sender
+{
+    using nc::utility::Tags;
+    if( _sender == self.tagsPlusMinus ) {
+        const auto segment = self.tagsPlusMinus.selectedSegment;
+        if( segment == 0 ) {
+            const std::string new_label = [self findNextTagLabel];
+            const Tags::Tag new_tag{Tags::Tag::Internalize(new_label), Tags::Color::None};
+            m_Tags.insert(m_Tags.begin(), new_tag);
+            m_TagsStorage->Set(m_Tags);
+            [self.tagsTable reloadData];
+            [self.tagsTable scrollRowToVisible:0];
+            if( NSTableRowView *row = [self.tagsTable rowViewAtRow:0 makeIfNecessary:true] ) {
+                if( NSTableCellView *cell = nc::objc_cast<NSTableCellView>([row viewAtColumn:1]) ) {
+                    if( NSTextField *tf = cell.textField ) {
+                        [self.tagsTable.window makeFirstResponder:tf];
+                        [tf selectText:nil];
+                    }
+                }
+            }
+        }
+        if( segment == 1 ) {
+            const long row = self.tagsTable.selectedRow;
+            if( row < 0 || static_cast<size_t>(row) >= m_Tags.size() )
+                return;
+
+            const nc::utility::Tags::Tag tag = m_Tags[row];
+            NSAlert *alert = [[NSAlert alloc] init];
+            auto fmt = NSLocalizedString(@"Do you want to delete tag “%@”?", "Alert shown when a user removes a tag");
+            alert.messageText =
+                [NSString localizedStringWithFormat:fmt, [NSString stringWithUTF8StdString:tag.Label()]];
+            alert.informativeText =
+                NSLocalizedString(@"You can’t undo this action.", "Alert shown when a user removes a tag - message");
+            [alert addButtonWithTitle:NSLocalizedString(@"Delete Tag", "")];
+            [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+            [alert.buttons objectAtIndex:0].keyEquivalent = @"";
+            alert.alertStyle = NSAlertStyleCritical;
+            auto handler = [self, row, tag](NSModalResponse _resp) {
+                if( _resp != NSAlertFirstButtonReturn )
+                    return;
+                m_Tags.erase(std::next(m_Tags.begin(), row));
+                m_TagsStorage->Set(m_Tags);
+                [self.tagsTable reloadData];
+                m_TagOperationsQue.async([tag] { nc::utility::Tags::RemoveTagFromAllItems(tag.Label()); });
+            };
+            [alert beginSheetModalForWindow:self.tagsTable.window completionHandler:handler];
+        }
     }
 }
 

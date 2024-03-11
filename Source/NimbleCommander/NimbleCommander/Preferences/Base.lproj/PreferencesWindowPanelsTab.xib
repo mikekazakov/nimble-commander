@@ -30,6 +30,7 @@
                 <outlet property="layoutsTable" destination="7Vi-TZ-WWx" id="YbV-Es-D6w"/>
                 <outlet property="selectionSizeFormatCombo" destination="EaD-ec-z3N" id="fw3-Uo-Eda"/>
                 <outlet property="tabParts" destination="3" id="XDG-iV-bHL"/>
+                <outlet property="tagsPlusMinus" destination="JBP-JY-hIC" id="C1f-Jd-sUj"/>
                 <outlet property="tagsTable" destination="1YK-eG-CYm" id="bj6-2Z-07L"/>
                 <outlet property="view" destination="1" id="2"/>
             </connections>
@@ -343,7 +344,7 @@
                                         <rect key="frame" x="155" y="20" width="200" height="334"/>
                                         <clipView key="contentView" id="m9T-Or-9up">
                                             <rect key="frame" x="1" y="1" width="198" height="332"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="Ujz-1s-pz4" viewBased="YES" id="7Vi-TZ-WWx">
                                                     <rect key="frame" x="0.0" y="0.0" width="198" height="309"/>
@@ -365,7 +366,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="vfI-BX-dSy">
-                                                                    <rect key="frame" x="1" y="1" width="166" height="17"/>
+                                                                    <rect key="frame" x="11" y="1" width="166" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bMn-Fq-70k">
@@ -1347,7 +1348,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BRP-Q8-rcP">
-                                        <rect key="frame" x="213" y="337" width="99" height="18"/>
+                                        <rect key="frame" x="163" y="337" width="99" height="18"/>
                                         <buttonCell key="cell" type="check" title="Enable Tags" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="7Ul-EA-77f">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -1357,13 +1358,13 @@
                                         </connections>
                                     </button>
                                     <scrollView autohidesScrollers="YES" horizontalLineScroll="20" horizontalPageScroll="10" verticalLineScroll="20" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9v6-BQ-5yF">
-                                        <rect key="frame" x="215" y="130" width="300" height="200"/>
+                                        <rect key="frame" x="165" y="40" width="400" height="290"/>
                                         <clipView key="contentView" id="42L-US-hgx">
-                                            <rect key="frame" x="1" y="1" width="298" height="198"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <rect key="frame" x="1" y="1" width="398" height="288"/>
+                                            <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" viewBased="YES" id="1YK-eG-CYm">
-                                                    <rect key="frame" x="0.0" y="0.0" width="298" height="198"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="398" height="288"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="17" height="0.0"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1382,7 +1383,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="bit-Yb-oxf">
-                                                                    <rect key="frame" x="8" y="0.0" width="58" height="24"/>
+                                                                    <rect key="frame" x="18" y="0.0" width="58" height="24"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jl8-u7-nEG">
@@ -1414,7 +1415,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="3Jb-cB-oeg">
-                                                                    <rect key="frame" x="83" y="0.0" width="197" height="17"/>
+                                                                    <rect key="frame" x="93" y="0.0" width="197" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hCJ-vV-6FF">
@@ -1442,8 +1443,8 @@
                                             </subviews>
                                         </clipView>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="200" id="NZ1-Ud-fn1"/>
-                                            <constraint firstAttribute="width" constant="300" id="w4g-vS-uWH"/>
+                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="200" id="NZ1-Ud-fn1"/>
+                                            <constraint firstAttribute="width" constant="400" id="w4g-vS-uWH"/>
                                         </constraints>
                                         <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="RcO-hg-yU2">
                                             <rect key="frame" x="1" y="183" width="298" height="16"/>
@@ -1455,7 +1456,7 @@
                                         </scroller>
                                     </scrollView>
                                     <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TPA-0R-vXl">
-                                        <rect key="frame" x="297" y="109" width="217" height="23"/>
+                                        <rect key="frame" x="247" y="19" width="317" height="23"/>
                                         <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="VIj-WW-nQQ">
                                             <behavior key="behavior" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -1465,7 +1466,7 @@
                                         </constraints>
                                     </button>
                                     <segmentedControl horizontalHuggingPriority="1" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="JBP-JY-hIC">
-                                        <rect key="frame" x="215" y="109" width="83" height="23"/>
+                                        <rect key="frame" x="165" y="19" width="83" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="83" id="pvu-FN-0Gt"/>
                                         </constraints>
@@ -1479,6 +1480,9 @@
                                                 </segment>
                                             </segments>
                                         </segmentedCell>
+                                        <connections>
+                                            <action selector="onTagPlusMinusClicked:" target="-2" id="ziT-bU-gzC"/>
+                                        </connections>
                                     </segmentedControl>
                                 </subviews>
                                 <constraints>
@@ -1491,6 +1495,7 @@
                                     <constraint firstItem="TPA-0R-vXl" firstAttribute="trailing" secondItem="1YK-eG-CYm" secondAttribute="trailing" id="Zyd-VZ-Jci"/>
                                     <constraint firstItem="JBP-JY-hIC" firstAttribute="leading" secondItem="9v6-BQ-5yF" secondAttribute="leading" id="ggS-xR-ljh"/>
                                     <constraint firstItem="BRP-Q8-rcP" firstAttribute="leading" secondItem="9v6-BQ-5yF" secondAttribute="leading" id="hMX-6B-5eq"/>
+                                    <constraint firstAttribute="bottom" secondItem="TPA-0R-vXl" secondAttribute="bottom" constant="20" symbolic="YES" id="v5u-f4-5cD"/>
                                 </constraints>
                             </view>
                         </tabViewItem>

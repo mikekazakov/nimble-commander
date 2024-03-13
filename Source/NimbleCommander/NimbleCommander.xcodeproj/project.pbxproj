@@ -670,6 +670,7 @@
 		CFCCFC5E1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
 		CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
 		CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
+		CFCF44012BA2418100B513C7 /* ConfigBinder.h in Headers */ = {isa = PBXBuildFile; fileRef = CFCF43F22BA2418100B513C7 /* ConfigBinder.h */; };
 		CFD231052AED7BEB0000C7CF /* OpenFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEC1ECADEDB00E0AF82 /* OpenFile.mm */; };
 		CFD2311F2AED7BEC0000C7CF /* OpenFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEC1ECADEDB00E0AF82 /* OpenFile.mm */; };
 		CFD231202AED7BED0000C7CF /* OpenFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEC1ECADEDB00E0AF82 /* OpenFile.mm */; };
@@ -1787,6 +1788,7 @@
 		CFCCFC591A5FAFFD00313845 /* ru */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
 		CFCCFC611A5FBC9500313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/FilePanelsQuickSearch.strings; sourceTree = "<group>"; };
 		CFCCFC631A5FBD9600313845 /* ru */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FilePanelsQuickSearch.strings; sourceTree = "<group>"; };
+		CFCF43F22BA2418100B513C7 /* ConfigBinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigBinder.h; path = NimbleCommander/Preferences/ConfigBinder.h; sourceTree = "<group>"; };
 		CFD2D26028A03DC0003C18F9 /* ThemesManager_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ThemesManager_UT.mm; path = NimbleCommander/Tests/ThemesManager_UT.mm; sourceTree = "<group>"; };
 		CFD2D27F28A7876C003C18F9 /* SystemThemeDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SystemThemeDetector.h; path = NimbleCommander/Core/Theming/SystemThemeDetector.h; sourceTree = "<group>"; };
 		CFD2D28028A7876C003C18F9 /* SystemThemeDetector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemThemeDetector.mm; path = NimbleCommander/Core/Theming/SystemThemeDetector.mm; sourceTree = "<group>"; };
@@ -2030,6 +2032,7 @@
 		B52EB78B172277C5004ABC2E /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				CFCF43F22BA2418100B513C7 /* ConfigBinder.h */,
 				CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */,
 				CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */,
 				CF4E569D1D50687A00452912 /* Preferences.h */,
@@ -2896,6 +2899,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFCF44012BA2418100B513C7 /* ConfigBinder.h in Headers */,
 				CFEADD49259CF60D009ECA14 /* ChangePanelsPosition.h in Headers */,
 				CFEADD54259D01AD009ECA14 /* FocusOverlappedTerminal.h in Headers */,
 				CFAB6CE32587C38800397DB5 /* FollowSymlink.h in Headers */,

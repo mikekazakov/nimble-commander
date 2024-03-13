@@ -14,6 +14,7 @@
 #include <Base/dispatch_cpp.h>
 #include <ranges>
 #include <fmt/format.h>
+#include "ConfigBinder.h"
 
 using namespace nc::panel;
 
@@ -129,6 +130,7 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
 @property(nonatomic) IBOutlet NSTableView *tagsTable;
 @property(nonatomic) IBOutlet NSSegmentedControl *tagsPlusMinus;
 @property(nonatomic) IBOutlet NSMenu *tagsAdditionalMenu;
+@property(nonatomic) bool tagsAreEnabled; // mirrors "filePanel.FinderTags.enable" from config
 
 @end
 
@@ -138,6 +140,7 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
     TagsStorage *m_TagsStorage;
     std::vector<nc::utility::Tags::Tag> m_Tags;
     dispatch_queue m_TagOperationsQue;
+    std::unique_ptr<nc::ConfigBinder> m_BinderTagsAreEnabled;
 }
 
 - (id)initWithNibName:(NSString *) [[maybe_unused]] nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -156,6 +159,8 @@ static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPane
         m_LayoutsStorage = NCAppDelegate.me.panelLayouts; // TODO: DI instead
         m_TagsStorage = &NCAppDelegate.me.tagsStorage;    // TODO: DI instead
         m_Tags = m_TagsStorage->Get();
+        m_BinderTagsAreEnabled = std::make_unique<nc::ConfigBinder>(
+            NCAppDelegate.me.globalConfig, "filePanel.FinderTags.enable", self, @"tagsAreEnabled");
     }
 
     return self;
@@ -296,6 +301,7 @@ static NSMenu *BuildTagColorMenu()
             [but selectItemWithTag:std::to_underlying(tag.Color())];
             but.target = self;
             but.action = @selector(onTagsTableColorChanged:);
+            [but bind:@"enabled" toObject:self withKeyPath:@"tagsAreEnabled" options:nil];
             return but;
         }
         if( [_column.identifier isEqualToString:@"label"] ) {
@@ -307,6 +313,7 @@ static NSMenu *BuildTagColorMenu()
             tf.usesSingleLineMode = true;
             tf.translatesAutoresizingMaskIntoConstraints = false;
             tf.delegate = self;
+            [tf bind:@"enabled" toObject:self withKeyPath:@"tagsAreEnabled" options:nil];
             NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
             [cv addSubview:tf];
             cv.textField = tf;

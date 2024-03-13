@@ -1362,7 +1362,7 @@
                                         <rect key="frame" x="165" y="40" width="400" height="290"/>
                                         <clipView key="contentView" id="42L-US-hgx">
                                             <rect key="frame" x="1" y="1" width="398" height="288"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" viewBased="YES" id="1YK-eG-CYm">
                                                     <rect key="frame" x="0.0" y="0.0" width="398" height="288"/>
@@ -1384,7 +1384,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="bit-Yb-oxf">
-                                                                    <rect key="frame" x="18" y="0.0" width="58" height="24"/>
+                                                                    <rect key="frame" x="8" y="0.0" width="58" height="24"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jl8-u7-nEG">
@@ -1416,7 +1416,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="3Jb-cB-oeg">
-                                                                    <rect key="frame" x="93" y="0.0" width="197" height="17"/>
+                                                                    <rect key="frame" x="83" y="0.0" width="197" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hCJ-vV-6FF">
@@ -1437,6 +1437,7 @@
                                                         </tableColumn>
                                                     </tableColumns>
                                                     <connections>
+                                                        <binding destination="-2" name="enabled" keyPath="self.tagsAreEnabled" id="Vwe-yT-8wx"/>
                                                         <outlet property="dataSource" destination="-2" id="Syg-bx-Dwa"/>
                                                         <outlet property="delegate" destination="-2" id="pya-vy-Lev"/>
                                                     </connections>
@@ -1483,6 +1484,7 @@
                                         </segmentedCell>
                                         <connections>
                                             <action selector="onTagPlusMinusClicked:" target="-2" id="ziT-bU-gzC"/>
+                                            <binding destination="-2" name="enabled" keyPath="self.tagsAreEnabled" id="YX2-r7-wkw"/>
                                         </connections>
                                     </segmentedControl>
                                 </subviews>

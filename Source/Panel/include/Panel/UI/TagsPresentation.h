@@ -2,6 +2,7 @@
 #pragma once
 #include <Utility/Tags.h>
 #include <span>
+#include <array>
 #include <Cocoa/Cocoa.h>
 
 namespace nc::panel {
@@ -28,6 +29,10 @@ struct TrailingTagsInplaceDisplay {
                      std::span<const utility::Tags::Tag> _tags,
                      NSColor *_accent,
                      NSColor *_background) noexcept;
+};
+
+struct TagsMenuDisplay {
+    static const std::array<NSImage *, 8> &Images() noexcept;
 };
 
 } // namespace nc::panel

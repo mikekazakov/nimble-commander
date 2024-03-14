@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTab.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
@@ -9,11 +9,18 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <Config/Config.h>
+#include <Panel/TagsStorage.h>
+#include <Panel/UI/TagsPresentation.h>
+#include <Base/dispatch_cpp.h>
+#include <ranges>
+#include <fmt/format.h>
+#include "ConfigBinder.h"
 
 using namespace nc::panel;
 
 static const auto g_LayoutColumnsDDType =
     @"com.magnumbytes.nc.pref.PreferencesWindowPanelsTabPrivateTableViewDataColumns";
+static const auto g_TagsDDType = @"com.magnumbytes.nc.pref.PreferencesWindowPanelsTabPrivateTableViewTagRows";
 
 @interface PreferencesToNumberValueTransformer : NSValueTransformer
 @end
@@ -119,28 +126,41 @@ static const auto g_LayoutColumnsDDType =
 @property(nonatomic) IBOutlet NSButton *layoutsListIcon1x;
 @property(nonatomic) IBOutlet NSButton *layoutsListIcon2x;
 
+// tags bindings
+@property(nonatomic) IBOutlet NSTableView *tagsTable;
+@property(nonatomic) IBOutlet NSSegmentedControl *tagsPlusMinus;
+@property(nonatomic) IBOutlet NSMenu *tagsAdditionalMenu;
+@property(nonatomic) bool tagsAreEnabled; // mirrors "filePanel.FinderTags.enable" from config
+
 @end
 
 @implementation PreferencesWindowPanelsTab {
     std::shared_ptr<PanelViewLayoutsStorage> m_LayoutsStorage;
     std::vector<std::pair<PanelListViewColumnsLayout::Column, bool>> m_LayoutListColumns;
+    TagsStorage *m_TagsStorage;
+    std::vector<nc::utility::Tags::Tag> m_Tags;
+    dispatch_queue m_TagOperationsQue;
+    std::unique_ptr<nc::ConfigBinder> m_BinderTagsAreEnabled;
 }
 
 - (id)initWithNibName:(NSString *) [[maybe_unused]] nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     static std::once_flag once;
     std::call_once(once, [] {
-        NSImage *image = [[NSImage alloc]
-            initWithContentsOfFile:@"/System/Library/CoreServices/CoreTypes.bundle/Contents/"
-                                   @"Resources/GenericApplicationIcon.icns"];
+        NSImage *image =
+            [[NSImage alloc] initWithContentsOfFile:@"/System/Library/CoreServices/CoreTypes.bundle/Contents/"
+                                                    @"Resources/GenericApplicationIcon.icns"];
         if( image )
             [image setName:@"GenericApplicationIcon"];
     });
 
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if( self ) {
-        // Initialization code here.
-        m_LayoutsStorage = NCAppDelegate.me.panelLayouts;
+        m_LayoutsStorage = NCAppDelegate.me.panelLayouts; // TODO: DI instead
+        m_TagsStorage = &NCAppDelegate.me.tagsStorage;    // TODO: DI instead
+        m_Tags = m_TagsStorage->Get();
+        m_BinderTagsAreEnabled = std::make_unique<nc::ConfigBinder>(
+            NCAppDelegate.me.globalConfig, "filePanel.FinderTags.enable", self, @"tagsAreEnabled");
     }
 
     return self;
@@ -150,14 +170,13 @@ static const auto g_LayoutColumnsDDType =
 {
     [super loadView];
     [self.layoutsListColumnsTable registerForDraggedTypes:@[g_LayoutColumnsDDType]];
+    [self.tagsTable registerForDraggedTypes:@[g_TagsDDType]];
 
     uint64_t magic_size = 2597065;
     for( NSMenuItem *it in self.fileSizeFormatCombo.itemArray )
-        it.title = ByteCountFormatter::Instance().ToNSString(
-            magic_size, static_cast<ByteCountFormatter::Type>(it.tag));
+        it.title = ByteCountFormatter::Instance().ToNSString(magic_size, static_cast<ByteCountFormatter::Type>(it.tag));
     for( NSMenuItem *it in self.selectionSizeFormatCombo.itemArray )
-        it.title = ByteCountFormatter::Instance().ToNSString(
-            magic_size, static_cast<ByteCountFormatter::Type>(it.tag));
+        it.title = ByteCountFormatter::Instance().ToNSString(magic_size, static_cast<ByteCountFormatter::Type>(it.tag));
 
     [self.view layoutSubtreeIfNeeded];
 }
@@ -175,12 +194,14 @@ static const auto g_LayoutColumnsDDType =
     return NSLocalizedStringFromTable(@"Panels", @"Preferences", "General preferences tab title");
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)_table
 {
-    if( tableView == self.layoutsTable )
+    if( _table == self.layoutsTable )
         return m_LayoutsStorage->LayoutsCount();
-    if( tableView == self.layoutsListColumnsTable )
+    if( _table == self.layoutsListColumnsTable )
         return m_LayoutListColumns.size();
+    if( _table == self.tagsTable )
+        return m_Tags.size();
     return 0;
 }
 
@@ -206,15 +227,36 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
     }
 }
 
-- (NSView *)tableView:(NSTableView *)tableView
-    viewForTableColumn:(NSTableColumn *)tableColumn
-                   row:(NSInteger)row
+static NSMenu *BuildTagColorMenu()
 {
-    if( tableView == self.layoutsTable ) {
-        if( [tableColumn.identifier isEqualToString:@"name"] ) {
-            if( auto l = m_LayoutsStorage->GetLayout(static_cast<int>(row)) ) {
+    using Color = nc::utility::Tags::Color;
+    [[clang::no_destroy]] static const std::pair<Color, NSString *> items[] = {
+        {Color::None, NSLocalizedString(@"No Colour", "")},
+        {Color::Red, NSLocalizedString(@"Red", "")},
+        {Color::Orange, NSLocalizedString(@"Orange", "")},
+        {Color::Yellow, NSLocalizedString(@"Yellow", "")},
+        {Color::Green, NSLocalizedString(@"Green", "")},
+        {Color::Blue, NSLocalizedString(@"Blue", "")},
+        {Color::Purple, NSLocalizedString(@"Purple", "")},
+        {Color::Gray, NSLocalizedString(@"Gray", "")}};
+    NSMenu *menu = [[NSMenu alloc] init];
+    for( auto &item : items ) {
+        NSMenuItem *it = [[NSMenuItem alloc] initWithTitle:item.second action:nil keyEquivalent:@""];
+        it.image = TagsMenuDisplay::Images().at(std::to_underlying(item.first));
+        it.tag = std::to_underlying(item.first);
+        [menu addItem:it];
+    }
+    assert(menu.numberOfItems == 8);
+    return menu;
+}
+
+- (NSView *)tableView:(NSTableView *)_table viewForTableColumn:(NSTableColumn *)_column row:(NSInteger)_row
+{
+    if( _table == self.layoutsTable ) {
+        if( [_column.identifier isEqualToString:@"name"] ) {
+            if( auto l = m_LayoutsStorage->GetLayout(static_cast<int>(_row)) ) {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-                tf.stringValue = l->name.empty() ? [NSString stringWithFormat:@"Layout #%ld", row]
+                tf.stringValue = l->name.empty() ? [NSString stringWithFormat:@"Layout #%ld", _row]
                                                  : [NSString stringWithUTF8StdString:l->name];
                 tf.bordered = false;
                 tf.editable = false;
@@ -223,22 +265,21 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
             }
         }
     }
-    if( tableView == self.layoutsListColumnsTable ) {
+    if( _table == self.layoutsListColumnsTable ) {
         if( auto layout = self.selectedLayout ) {
             if( auto list = layout->list() ) {
-                if( row < static_cast<int>(m_LayoutListColumns.size()) ) {
-                    auto &col = m_LayoutListColumns[row];
-
-                    if( [tableColumn.identifier isEqualToString:@"enabled"] ) {
+                if( _row < static_cast<int>(m_LayoutListColumns.size()) ) {
+                    auto &col = m_LayoutListColumns[_row];
+                    if( [_column.identifier isEqualToString:@"enabled"] ) {
                         NSButton *cb = [[NSButton alloc] initWithFrame:NSRect()];
-                        cb.enabled = row != 0;
+                        cb.enabled = _row != 0;
                         cb.buttonType = NSButtonTypeSwitch;
                         cb.state = col.second;
                         cb.target = self;
                         cb.action = @selector(onLayoutListColumnEnabledClicked:);
                         return cb;
                     }
-                    if( [tableColumn.identifier isEqualToString:@"title"] ) {
+                    if( [_column.identifier isEqualToString:@"title"] ) {
                         NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
                         tf.stringValue = PanelListColumnTypeToString(col.first.kind);
                         tf.bordered = false;
@@ -250,60 +291,125 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
             }
         }
     }
+    if( _table == self.tagsTable && _row < static_cast<long>(m_Tags.size()) ) {
+        auto tag = m_Tags[_row];
+        if( [_column.identifier isEqualToString:@"color"] ) {
+            NSPopUpButton *but = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(0, 0, 40, 15) pullsDown:false];
+            but.imagePosition = NSImageOnly;
+            but.bordered = false;
+            but.menu = BuildTagColorMenu();
+            [but selectItemWithTag:std::to_underlying(tag.Color())];
+            but.target = self;
+            but.action = @selector(onTagsTableColorChanged:);
+            [but bind:@"enabled" toObject:self withKeyPath:@"tagsAreEnabled" options:nil];
+            return but;
+        }
+        if( [_column.identifier isEqualToString:@"label"] ) {
+            NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
+            tf.stringValue = [NSString stringWithUTF8StdString:tag.Label()];
+            tf.bordered = false;
+            tf.editable = true;
+            tf.drawsBackground = false;
+            tf.usesSingleLineMode = true;
+            tf.translatesAutoresizingMaskIntoConstraints = false;
+            tf.delegate = self;
+            [tf bind:@"enabled" toObject:self withKeyPath:@"tagsAreEnabled" options:nil];
+            NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+            [cv addSubview:tf];
+            cv.textField = tf;
+            [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(4)-[tf(>=40)]-(4)-|"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:NSDictionaryOfVariableBindings(tf)]];
+            [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                           attribute:NSLayoutAttributeCenterY
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:cv
+                                                           attribute:NSLayoutAttributeCenterY
+                                                          multiplier:1.
+                                                            constant:0.]];
+            return cv;
+        }
+    }
     return nil;
 }
 
-- (NSDragOperation)tableView:(NSTableView *)aTableView
-                validateDrop:(id<NSDraggingInfo>) [[maybe_unused]] info
-                 proposedRow:(NSInteger) [[maybe_unused]] row
-       proposedDropOperation:(NSTableViewDropOperation)operation
+- (NSDragOperation)tableView:(NSTableView *)_table_view
+                validateDrop:(id<NSDraggingInfo>)_info
+                 proposedRow:(NSInteger) [[maybe_unused]] _row
+       proposedDropOperation:(NSTableViewDropOperation)_operation
 {
-    if( aTableView == self.layoutsListColumnsTable )
-        return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+    if( _table_view == self.layoutsListColumnsTable ) {
+        return _operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+    }
+    if( _table_view == self.tagsTable ) {
+        return _operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
+    }
     return NSDragOperationNone;
 }
 
-- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view
-                       pasteboardWriterForRow:(NSInteger)_row
+- (nullable id<NSPasteboardWriting>)tableView:(NSTableView *)_table_view pasteboardWriterForRow:(NSInteger)_row
 {
-    if( _table_view != self.layoutsListColumnsTable )
-        return nil;
+    auto pb_item_with_type = [&](NSString *_type) -> NSPasteboardItem * {
+        auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
+                                          requiringSecureCoding:false
+                                                          error:nil];
+        NSPasteboardItem *pbitem = [[NSPasteboardItem alloc] init];
+        [pbitem setData:data forType:_type];
+        return pbitem;
+    };
 
-    if( _row == 0 )
-        return nil;
-
-    auto data = [NSKeyedArchiver archivedDataWithRootObject:[NSNumber numberWithInteger:_row]
-                                      requiringSecureCoding:false
-                                                      error:nil];
-    NSPasteboardItem *pbitem = [[NSPasteboardItem alloc] init];
-    [pbitem setData:data forType:g_LayoutColumnsDDType];
-    return pbitem;
+    if( _table_view == self.layoutsListColumnsTable ) {
+        if( _row == 0 )
+            return nil;
+        return pb_item_with_type(g_LayoutColumnsDDType);
+    }
+    if( _table_view == self.tagsTable ) {
+        return pb_item_with_type(g_TagsDDType);
+    }
+    return nil;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView
-       acceptDrop:(id<NSDraggingInfo>)info
-              row:(NSInteger)drag_to
+- (BOOL)tableView:(NSTableView *)_table_view
+       acceptDrop:(id<NSDraggingInfo>)_info
+              row:(NSInteger)_drag_to
     dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
-    if( aTableView == self.layoutsListColumnsTable ) {
-        auto data = [info.draggingPasteboard dataForType:g_LayoutColumnsDDType];
-        NSNumber *ind =
-            [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
-        NSInteger drag_from = ind.integerValue;
+    if( _table_view == self.layoutsListColumnsTable ) {
+        auto data = [_info.draggingPasteboard dataForType:g_LayoutColumnsDDType];
+        NSNumber *ind = [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+        const NSInteger drag_from = ind.integerValue;
 
-        if( drag_to == drag_from ||     // same index, above
-            drag_to == drag_from + 1 || // same index, below
-            drag_to == 0 )              // first item should be filename
+        if( _drag_to == drag_from ||     // same index, above
+            _drag_to == drag_from + 1 || // same index, below
+            _drag_to == 0 )              // first item should be filename
             return false;
 
         assert(drag_from < static_cast<int>(m_LayoutListColumns.size()));
-        auto i = begin(m_LayoutListColumns);
-        if( drag_from < drag_to )
-            rotate(i + drag_from, i + drag_from + 1, i + drag_to);
+        auto i = m_LayoutListColumns.begin();
+        if( drag_from < _drag_to )
+            std::rotate(i + drag_from, i + drag_from + 1, i + _drag_to);
         else
-            rotate(i + drag_to, i + drag_from, i + drag_from + 1);
+            std::rotate(i + _drag_to, i + drag_from, i + drag_from + 1);
         [self.layoutsListColumnsTable reloadData];
         [self commitLayoutChanges];
+        return true;
+    }
+    if( _table_view == self.tagsTable ) {
+        auto data = [_info.draggingPasteboard dataForType:g_TagsDDType];
+        NSNumber *ind = [NSKeyedUnarchiver unarchivedObjectOfClass:NSNumber.class fromData:data error:nil];
+        const NSInteger drag_from = ind.integerValue;
+        if( _drag_to == drag_from || _drag_to == drag_from + 1 )
+            return false; // same index, above or below
+
+        assert(drag_from < static_cast<int>(m_Tags.size()));
+        auto i = m_Tags.begin();
+        if( drag_from < _drag_to )
+            std::rotate(i + drag_from, i + drag_from + 1, i + _drag_to);
+        else
+            std::rotate(i + _drag_to, i + drag_from, i + drag_from + 1);
+        [self.tagsTable reloadData];
+        m_TagsStorage->Set(m_Tags);
         return true;
     }
     return false;
@@ -381,12 +487,9 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
     [self.layoutDetailsTabView selectTabViewItemWithIdentifier:LayoutTypeToTabIdentifier(t)];
 
     if( auto brief = l->brief() ) {
-        self.layoutsBriefFixedRadioChoosen =
-            brief->mode == PanelBriefViewColumnsLayout::Mode::FixedWidth;
-        self.layoutsBriefAmountRadioChoosen =
-            brief->mode == PanelBriefViewColumnsLayout::Mode::FixedAmount;
-        self.layoutsBriefDynamicRadioChoosen =
-            brief->mode == PanelBriefViewColumnsLayout::Mode::DynamicWidth;
+        self.layoutsBriefFixedRadioChoosen = brief->mode == PanelBriefViewColumnsLayout::Mode::FixedWidth;
+        self.layoutsBriefAmountRadioChoosen = brief->mode == PanelBriefViewColumnsLayout::Mode::FixedAmount;
+        self.layoutsBriefDynamicRadioChoosen = brief->mode == PanelBriefViewColumnsLayout::Mode::DynamicWidth;
         self.layoutsBriefFixedValueTextField.intValue = brief->fixed_mode_width;
         self.layoutsBriefAmountValueTextField.intValue = brief->fixed_amount_value;
         self.layoutsBriefDynamicMinValueTextField.intValue = brief->dynamic_width_min;
@@ -409,9 +512,8 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
         for( auto c : list->columns )
             m_LayoutListColumns.emplace_back(c, true);
         for( auto c : columns_order )
-            if( !any_of(begin(m_LayoutListColumns), end(m_LayoutListColumns), [=](auto v) {
-                    return v.first.kind == c;
-                }) ) {
+            if( !any_of(
+                    begin(m_LayoutListColumns), end(m_LayoutListColumns), [=](auto v) { return v.first.kind == c; }) ) {
                 PanelListViewColumnsLayout::Column dummy;
                 dummy.kind = c;
 
@@ -442,11 +544,9 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 
 - (IBAction)onLayoutListColumnEnabledClicked:(id)sender
 {
-    int row =
-        static_cast<int>([self.layoutsListColumnsTable rowForView:static_cast<NSView *>(sender)]);
+    int row = static_cast<int>([self.layoutsListColumnsTable rowForView:static_cast<NSView *>(sender)]);
     if( row >= 0 && row < static_cast<int>(m_LayoutListColumns.size()) ) {
-        m_LayoutListColumns[row].second =
-            static_cast<NSButton *>(sender).state == NSControlStateValueOn;
+        m_LayoutListColumns[row].second = static_cast<NSButton *>(sender).state == NSControlStateValueOn;
         [self commitLayoutChanges];
     }
 }
@@ -463,10 +563,7 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 {
     [self commitLayoutChanges];
     [self.layoutsTable
-        reloadDataForRowIndexes:[NSIndexSet
-                                    indexSetWithIndexesInRange:NSMakeRange(0,
-                                                                           m_LayoutsStorage
-                                                                               ->LayoutsCount())]
+        reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, m_LayoutsStorage->LayoutsCount())]
                   columnIndexes:[NSIndexSet indexSetWithIndex:0]];
 }
 
@@ -585,13 +682,194 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
 {
     constexpr auto path = "filePanel.operations.concurrencyPerWindowDoesntApplyTo";
     const auto orig_list = NCAppDelegate.me.globalConfig.GetString(path);
-    auto sheet = [[PreferencesWindowPanelsTabOperationsConcurrencySheet alloc]
-        initWithConcurrencyExclusionList:orig_list];
+    auto sheet =
+        [[PreferencesWindowPanelsTabOperationsConcurrencySheet alloc] initWithConcurrencyExclusionList:orig_list];
     __weak PreferencesWindowPanelsTabOperationsConcurrencySheet *weak_sheet = sheet;
     [sheet beginSheetForWindow:self.view.window
              completionHandler:^([[maybe_unused]] NSModalResponse rc) {
                NCAppDelegate.me.globalConfig.Set(path, weak_sheet.exclusionList);
              }];
+}
+
+- (IBAction)onTagsTableColorChanged:(id)_sender
+{
+    NSPopUpButton *but = nc::objc_cast<NSPopUpButton>(_sender);
+    if( !but )
+        return;
+    const long row = [self.tagsTable rowForView:but];
+    if( row < 0 || static_cast<size_t>(row) >= m_Tags.size() )
+        return;
+
+    const long selected_color = std::clamp(but.selectedTag, 0l, 7l);
+    const nc::utility::Tags::Tag old_tag = m_Tags[row];
+    const nc::utility::Tags::Tag new_tag{&old_tag.Label(), static_cast<nc::utility::Tags::Color>(selected_color)};
+    if( old_tag == new_tag )
+        return;
+
+    m_Tags[row] = new_tag;
+    m_TagsStorage->Set(m_Tags);
+    m_TagOperationsQue.async(
+        [new_tag] { nc::utility::Tags::ChangeColorOfAllItemsWithTag(new_tag.Label(), new_tag.Color()); });
+}
+
+- (void)controlTextDidEndEditing:(NSNotification *)_notification
+{
+    NSTextField *tf = nc::objc_cast<NSTextField>(_notification.object);
+    if( !tf || !tf.stringValue )
+        return;
+
+    if( const long row = [self.tagsTable rowForView:tf]; row >= 0 && static_cast<size_t>(row) < m_Tags.size() ) {
+        const nc::utility::Tags::Tag old_tag = m_Tags[row];
+
+        const NSString *value = tf.stringValue;
+        if( value.length == 0 || value.length > 255 ) {
+            tf.stringValue = [NSString stringWithUTF8StdString:old_tag.Label()];
+            return; // silently ignore
+        }
+
+        const std::string new_label = value.UTF8String;
+        if( old_tag.Label() == new_label )
+            return; // nothing to do
+
+        if( std::ranges::find_if(m_Tags, [&](auto &_tag) { return _tag.Label() == new_label; }) != m_Tags.end() ) {
+            auto fmt = NSLocalizedString(@"The name “%@” is already taken.\nPlease choose a different name.",
+                                         "Alert shown when a user tries to enter a tag label that is already in use");
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = [NSString localizedStringWithFormat:fmt, value];
+            alert.alertStyle = NSAlertStyleCritical;
+            [alert beginSheetModalForWindow:self.tagsTable.window
+                          completionHandler:^(NSModalResponse){
+                          }];
+            tf.stringValue = [NSString stringWithUTF8StdString:old_tag.Label()];
+            return;
+        }
+
+        const nc::utility::Tags::Tag new_tag{nc::utility::Tags::Tag::Internalize(new_label), old_tag.Color()};
+        m_Tags[row] = new_tag;
+        m_TagsStorage->Set(m_Tags);
+        m_TagOperationsQue.async(
+            [old_tag, new_tag] { nc::utility::Tags::ChangeLabelOfAllItemsWithTag(old_tag.Label(), new_tag.Label()); });
+    }
+}
+
+- (std::string)findNextTagLabel
+{
+    const std::string base = NSLocalizedString(@"Untitled", "Name of a newly created tag").UTF8String;
+    for( int i = 1;; ++i ) {
+        const std::string label = i == 1 ? base : fmt::format("{} {}", base, i);
+        if( std::ranges::none_of(m_Tags, [&](auto &_tag) { return _tag.Label() == label; }) )
+            return label;
+    }
+}
+
+- (IBAction)onTagPlusMinusClicked:(id)_sender
+{
+    using nc::utility::Tags;
+    if( _sender == self.tagsPlusMinus ) {
+        const auto segment = self.tagsPlusMinus.selectedSegment;
+        if( segment == 0 ) {
+            const std::string new_label = [self findNextTagLabel];
+            const Tags::Tag new_tag{Tags::Tag::Internalize(new_label), Tags::Color::None};
+            m_Tags.insert(m_Tags.begin(), new_tag);
+            m_TagsStorage->Set(m_Tags);
+            [self.tagsTable reloadData];
+            [self.tagsTable scrollRowToVisible:0];
+            if( NSTableRowView *row = [self.tagsTable rowViewAtRow:0 makeIfNecessary:true] ) {
+                if( NSTableCellView *cell = nc::objc_cast<NSTableCellView>([row viewAtColumn:1]) ) {
+                    if( NSTextField *tf = cell.textField ) {
+                        [self.tagsTable.window makeFirstResponder:tf];
+                        [tf selectText:nil];
+                    }
+                }
+            }
+        }
+        if( segment == 1 ) {
+            const long row = self.tagsTable.selectedRow;
+            if( row < 0 || static_cast<size_t>(row) >= m_Tags.size() )
+                return;
+
+            const nc::utility::Tags::Tag tag = m_Tags[row];
+            NSAlert *alert = [[NSAlert alloc] init];
+            auto fmt = NSLocalizedString(@"Do you want to delete tag “%@”?", "Alert shown when a user removes a tag");
+            alert.messageText =
+                [NSString localizedStringWithFormat:fmt, [NSString stringWithUTF8StdString:tag.Label()]];
+            alert.informativeText =
+                NSLocalizedString(@"You can’t undo this action.", "Alert shown when a user removes a tag - message");
+            [alert addButtonWithTitle:NSLocalizedString(@"Delete Tag", "")];
+            [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+            [alert.buttons objectAtIndex:0].keyEquivalent = @"";
+            alert.alertStyle = NSAlertStyleCritical;
+            auto handler = [self, row, tag](NSModalResponse _resp) {
+                if( _resp != NSAlertFirstButtonReturn )
+                    return;
+                m_Tags.erase(std::next(m_Tags.begin(), row));
+                m_TagsStorage->Set(m_Tags);
+                [self.tagsTable reloadData];
+                m_TagOperationsQue.async([tag] { nc::utility::Tags::RemoveTagFromAllItems(tag.Label()); });
+            };
+            [alert beginSheetModalForWindow:self.tagsTable.window completionHandler:handler];
+        }
+        if( segment == 2 ) {
+            const auto b = self.tagsPlusMinus.bounds;
+            const auto origin =
+                NSMakePoint(b.size.width - [self.tagsPlusMinus widthForSegment:2] - 3, b.size.height + 3);
+            [self.tagsAdditionalMenu popUpMenuPositioningItem:nil atLocation:origin inView:self.tagsPlusMinus];
+        }
+    }
+}
+
+- (IBAction)onSearchForNewTags:(id)sender
+{
+    __weak PreferencesWindowPanelsTab *weak_self = self;
+    m_TagOperationsQue.async([weak_self] {
+        if( PreferencesWindowPanelsTab *me = weak_self ) {
+            auto all_tags = nc::utility::Tags::GatherAllItemsTags();
+            dispatch_to_main_queue([all_tags = std::move(all_tags), weak_self] {
+                if( PreferencesWindowPanelsTab *me = weak_self )
+                    [me acceptFSTags:all_tags];
+            });
+        }
+    });
+}
+
+- (void)acceptFSTags:(const std::vector<nc::utility::Tags::Tag> &)_tags
+{
+    using nc::utility::Tags;
+    std::vector<Tags::Tag> added;
+    for( auto &fs_tag : _tags ) {
+        if( std::ranges::none_of(m_Tags, [&](auto &_tag) { return _tag.Label() == fs_tag.Label(); }) ) {
+            m_Tags.push_back(fs_tag);
+            added.push_back(fs_tag);
+        }
+    }
+
+    if( added.empty() ) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        alert.messageText = NSLocalizedString(@"No new tags were found.",
+                                              "Information shown when no new tags were found after searching the fs");
+        alert.alertStyle = NSAlertStyleInformational;
+        [alert beginSheetModalForWindow:self.tagsTable.window
+                      completionHandler:^(NSModalResponse){
+                      }];
+    }
+    else {
+        m_TagsStorage->Set(m_Tags);
+        [self.tagsTable reloadData];
+        std::vector<std::string> labels;
+        for( auto &tag : added )
+            labels.push_back(fmt::format("“{}”", tag.Label()));
+
+        NSAlert *alert = [[NSAlert alloc] init];
+        auto msg = NSLocalizedString(@"The following tags were added: %@.",
+                                     "Information shown when new tags were found after searching the fs");
+        alert.messageText = [NSString
+            localizedStringWithFormat:msg,
+                                      [NSString stringWithUTF8StdString:fmt::format("{}", fmt::join(labels, ", "))]];
+        alert.alertStyle = NSAlertStyleInformational;
+        [alert beginSheetModalForWindow:self.tagsTable.window
+                      completionHandler:^(NSModalResponse){
+                      }];
+    }
 }
 
 @end

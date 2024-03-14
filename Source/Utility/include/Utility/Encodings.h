@@ -1,8 +1,9 @@
-// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <vector>
+#include <utility>
 
 unsigned short SingleByteIntoUniCharUsingCodepage(
                                                     unsigned char _input,

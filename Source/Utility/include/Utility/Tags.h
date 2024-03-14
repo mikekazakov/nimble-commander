@@ -62,8 +62,30 @@ public:
     // tags.
     static std::vector<std::filesystem::path> GatherAllItemsWithTags() noexcept;
 
+    // Executes "kMDItemUserTags=_tag" (conceptually) query by Spotlight to gather all indexed items on the filesystem
+    // that contain the specified tag.
+    static std::vector<std::filesystem::path> GatherAllItemsWithTag(std::string_view _tag) noexcept;
+
     // Gather a current set of tags used by the items on the filesystem.
     static std::vector<Tag> GatherAllItemsTags() noexcept;
+
+    // Finds all items on the filesystem that contain the specified tag and change the color of this tag in these items
+    // to the specified new color
+    static void ChangeColorOfAllItemsWithTag(std::string_view _tag, Color _color) noexcept;
+
+    // Finds all items on the filesystem that contain the specified tag and change the label of this tag in these items
+    // to the specified new name
+    static void ChangeLabelOfAllItemsWithTag(std::string_view _tag, std::string_view _new_name) noexcept;
+
+    // Adds the specified tag to the existing list of tags of the specified item.
+    // It there's a tag with the same label and different color, it will be overwritten.
+    static bool AddTag(const std::filesystem::path &_path, const Tag &_tag) noexcept;
+    
+    // Removes the specified tag from the existing list of tags of the specified item.
+    static bool RemoveTag(const std::filesystem::path &_path, std::string_view _label) noexcept;
+    
+    // Removes the specified tag from all items on the filesystem.
+    static void RemoveTagFromAllItems(std::string_view _tag) noexcept;
 };
 
 // Non-owning class that represent a text label and a color of a tag.
@@ -76,6 +98,7 @@ public:
     Tags::Color Color() const noexcept;
     bool operator==(const Tag &_rhs) const noexcept;
     bool operator!=(const Tag &_rhs) const noexcept;
+    static const std::string *Internalize(std::string_view _label) noexcept;
 
 private:
     const std::string *m_TaggedPtr;

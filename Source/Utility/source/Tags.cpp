@@ -4,6 +4,7 @@
 #include <bit>
 #include <utility>
 #include <fmt/printf.h>
+#include <fmt/format.h>
 #include <assert.h>
 #include <Base/RobinHoodUtil.h>
 #include <mutex>
@@ -13,6 +14,8 @@
 #include <Base/CFStackAllocator.h>
 #include <Base/CFPtr.h>
 #include <Base/CFString.h>
+#include <Base/algo.h>
+#include <pstld/pstld.h>
 #include <memory_resource>
 #include <sys/xattr.h>
 #include <frozen/unordered_map.h>
@@ -22,6 +25,9 @@
 namespace nc::utility {
 
 // RTFM: https://opensource.apple.com/source/CF/CF-1153.18/CFBinaryPList.c
+
+static_assert(std::is_trivially_copyable_v<Tags::Tag>);
+static_assert(std::is_trivially_destructible_v<Tags::Tag>);
 
 static constexpr std::string_view g_Prologue = "bplist00";
 static constexpr const char *g_MDItemUserTags = "com.apple.metadata:_kMDItemUserTags";
@@ -163,11 +169,9 @@ static uint64_t GetSizedInt(const std::byte *_ptr, uint64_t _sz) noexcept
 
 static const std::string *InternalizeString(std::string_view _str) noexcept
 {
-    [[clang::no_destroy]] static //
-        robin_hood::unordered_node_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>
-            strings;
-    [[clang::no_destroy]] static //
-        std::mutex mut;
+    using Set = robin_hood::unordered_node_set<std::string, RHTransparentStringHashEqual, RHTransparentStringHashEqual>;
+    [[clang::no_destroy]] static Set strings;
+    [[clang::no_destroy]] static std::mutex mut;
 
     std::lock_guard lock{mut};
     if( auto it = strings.find(_str); it != strings.end() ) {
@@ -667,7 +671,7 @@ bool Tags::WriteTags(int _fd, std::span<const Tag> _tags) noexcept
 
 bool Tags::WriteTags(const std::filesystem::path &_path, std::span<const Tag> _tags) noexcept
 {
-    const int fd = open(_path.c_str(), O_RDWR | O_NONBLOCK); // TODO: is read-write required to change xattr??
+    const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
     if( fd < 0 )
         return false;
 
@@ -704,19 +708,165 @@ std::vector<std::filesystem::path> Tags::GatherAllItemsWithTags() noexcept
     return result;
 }
 
+static std::string EscapeForMD(std::string_view _tag) noexcept
+{
+    constexpr char to_esc[] = {'\'', '\\', '\"'};
+    std::string escaped_tag;
+    for( auto c : _tag ) {
+        if( std::any_of(std::begin(to_esc), std::end(to_esc), [=](auto e) { return c == e; }) )
+            escaped_tag += '\\';
+        escaped_tag += c;
+    }
+    return escaped_tag;
+}
+
+std::vector<std::filesystem::path> Tags::GatherAllItemsWithTag(std::string_view _tag) noexcept
+{
+    if( _tag.empty() )
+        return {};
+
+    const base::CFPtr<CFStringRef> query_string = base::CFPtr<CFStringRef>::adopt(
+        base::CFStringCreateWithUTF8StdString(fmt::format("kMDItemUserTags=='{}'", EscapeForMD(_tag))));
+
+    const base::CFPtr<MDQueryRef> query =
+        base::CFPtr<MDQueryRef>::adopt(MDQueryCreate(nullptr, query_string.get(), nullptr, nullptr));
+    if( !query )
+        return {};
+
+    const bool query_result = MDQueryExecute(query.get(), kMDQuerySynchronous);
+    if( !query_result )
+        return {};
+
+    std::vector<std::filesystem::path> result;
+    for( long i = 0, e = MDQueryGetResultCount(query.get()); i < e; ++i ) {
+        const MDItemRef item = static_cast<MDItemRef>(const_cast<void *>(MDQueryGetResultAtIndex(query.get(), i)));
+        base::CFPtr<CFStringRef> item_path =
+            base::CFPtr<CFStringRef>::adopt(static_cast<CFStringRef>(MDItemCopyAttribute(item, kMDItemPath)));
+        if( item_path ) {
+            result.emplace_back(base::CFStringGetUTF8StdString(item_path.get()));
+        }
+    }
+
+    return result;
+}
+
 std::vector<Tags::Tag> Tags::GatherAllItemsTags() noexcept
 {
-    auto files = GatherAllItemsWithTags();
+    const std::vector<std::filesystem::path> files = GatherAllItemsWithTags();
+    std::vector<std::vector<Tag>> files_tags(files.size());
 
+    // Read all the tags in multiple threads
+    pstld::transform(files.begin(),
+                     files.end(),
+                     files_tags.begin(),
+                     [](const std::filesystem::path &_path) -> std::vector<Tag> { return ReadTags(_path); });
+
+    // And the consolidate them in a single dictionary
     robin_hood::unordered_flat_set<Tags::Tag> tags;
-    for( auto &file : files ) {
-        auto file_tags = ReadTags(file); // this can be actually done in multiple threads...
+    for( const auto &file_tags : files_tags ) {
         for( auto &file_tag : file_tags )
             tags.emplace(file_tag);
     }
 
-    // any sort???
-    return {tags.begin(), tags.end()};
+    std::vector<Tag> res{tags.begin(), tags.end()};
+    std::sort(res.begin(), res.end(), [](const Tag &_lhs, const Tag &_rhs) {
+        const auto &ll = _lhs.Label();
+        const auto &rl = _rhs.Label();
+        if( ll != rl )
+            return ll < rl;
+        return _lhs.Color() < _rhs.Color();
+    });
+    return res;
+}
+
+void Tags::ChangeColorOfAllItemsWithTag(std::string_view _tag, Color _color) noexcept
+{
+    const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
+    auto change = [_tag, _color](const std::filesystem::path &_path) {
+        if( const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK); fd >= 0 ) {
+            if( auto tags = ReadTags(fd); !tags.empty() ) {
+                for( auto &tag : tags ) {
+                    if( tag.Label() == _tag ) {
+                        tag = Tag{&tag.Label(), _color};
+                        break;
+                    }
+                }
+                WriteTags(fd, tags);
+            }
+            close(fd);
+        }
+    };
+    pstld::for_each(paths.begin(), paths.end(), change);
+}
+
+void Tags::ChangeLabelOfAllItemsWithTag(std::string_view _tag, std::string_view _new_name) noexcept
+{
+    if( _new_name == _tag || _new_name.empty() )
+        return;
+    const std::string *const internalized = Tags::Tag::Internalize(_new_name);
+    const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
+    auto change = [_tag, internalized](const std::filesystem::path &_path) {
+        if( const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK); fd >= 0 ) {
+            if( auto tags = ReadTags(fd); !tags.empty() ) {
+                for( auto &tag : tags ) {
+                    if( tag.Label() == _tag ) {
+                        tag = Tag{internalized, tag.Color()};
+                        break;
+                    }
+                }
+                // TODO: this currently allows to end up with duplicated labels...
+                WriteTags(fd, tags);
+            }
+            close(fd);
+        }
+    };
+    pstld::for_each(paths.begin(), paths.end(), change);
+}
+
+bool Tags::AddTag(const std::filesystem::path &_path, const Tag &_new_tag) noexcept
+{
+    const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
+    if( fd < 0 )
+        return false;
+    auto cleanup = at_scope_end([fd] { close(fd); });
+
+    auto tags = ReadTags(fd);
+    if( std::ranges::find_if(tags, [&](const Tag &_tag) { return _tag == _new_tag; }) != tags.end() ) {
+        return true; // an exact tag is already present in this item, so there's nothing to do
+    }
+
+    if( auto it = std::ranges::find_if(tags, [&](const Tag &_tag) { return _tag.Label() == _new_tag.Label(); });
+        it != tags.end() ) {
+        // there's a tag with the same name, but with a different color - override it
+        *it = _new_tag;
+    }
+    else {
+        // add a new tag at the end
+        tags.push_back(_new_tag);
+    }
+
+    return WriteTags(fd, tags);
+}
+
+bool Tags::RemoveTag(const std::filesystem::path &_path, std::string_view _label) noexcept
+{
+    const int fd = open(_path.c_str(), O_RDONLY | O_NONBLOCK);
+    if( fd < 0 )
+        return false;
+    auto cleanup = at_scope_end([fd] { close(fd); });
+    auto tags = ReadTags(fd);
+    auto it = std::ranges::find_if(tags, [_label](const Tag &_tag) { return _tag.Label() == _label; });
+    if( it == tags.end() )
+        return true; // nothing to do - there's no tag with this label in the fs item
+    tags.erase(it);
+    return WriteTags(fd, tags);
+}
+
+void Tags::RemoveTagFromAllItems(std::string_view _tag) noexcept
+{
+    const std::vector<std::filesystem::path> paths = GatherAllItemsWithTag(_tag);
+    auto change = [_tag](const std::filesystem::path &_path) { RemoveTag(_path, _tag); };
+    pstld::for_each(paths.begin(), paths.end(), change);
 }
 
 Tags::Tag::Tag(const std::string *const _label, const Tags::Color _color) noexcept
@@ -746,6 +896,11 @@ bool Tags::Tag::operator==(const Tag &_rhs) const noexcept
 bool Tags::Tag::operator!=(const Tag &_rhs) const noexcept
 {
     return !(*this == _rhs);
+}
+
+const std::string *Tags::Tag::Internalize(std::string_view _label) noexcept
+{
+    return InternalizeString(_label);
 }
 
 } // namespace nc::utility

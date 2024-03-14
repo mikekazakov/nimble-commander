@@ -9,9 +9,16 @@
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <VFS/VFS.h>
 #include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
+#include <Panel/TagsStorage.h>
+#include <Panel/UI/TagsPresentation.h>
+#include <ranges>
+#include <pstld/pstld.h>
 
 // TODO: remove this global dependency
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
+
+#include <NimbleCommander/Core/AnyHolder.h>
 
 using namespace nc::panel;
 
@@ -205,6 +212,44 @@ using namespace nc::panel;
     [self addItem:NSMenuItem.separatorItem];
 
     //////////////////////////////////////////////////////////////////////
+    // Tags stuff
+    if( const auto eligible = std::ranges::all_of(m_Items, [](const auto &_i) { return _i.Host()->IsNativeFS(); });
+        eligible && NCAppDelegate.me.globalConfig.GetBool("filePanel.FinderTags.enable") ) {
+        const std::vector<nc::utility::Tags::Tag> all_tags = NCAppDelegate.me.tagsStorage.Get();
+        auto tag_state = [&](const nc::utility::Tags::Tag &_tag) -> NSControlStateValue {
+            const auto count = std::ranges::count_if(m_Items, [&](const VFSListingItem &_item) -> bool {
+                auto item_tags = _item.Tags();
+                return std::ranges::find(item_tags, _tag) != item_tags.end();
+            });
+            if( count == 0 )
+                return NSControlStateValueOff;
+            else if( static_cast<size_t>(count) == m_Items.size() )
+                return NSControlStateValueOn;
+            else
+                return NSControlStateValueMixed;
+        };
+        const auto tags_submenu = [NSMenu new];
+        // TODO: that's O(N*M) complexity, might backfire when there's many tags used
+        for( auto &tag : all_tags ) {
+            NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8StdString:tag.Label()]
+                                                          action:@selector(onTagItem:)
+                                                   keyEquivalent:@""];
+            item.image = TagsMenuDisplay::Images().at(std::to_underlying(tag.Color()));
+            item.state = tag_state(tag);
+            item.representedObject = [[AnyHolder alloc] initWithAny:tag];
+            item.target = self;
+            [tags_submenu addItem:item];
+        }
+
+        const auto tags_menuitem = [NSMenuItem new];
+        tags_menuitem.title = NSLocalizedStringFromTable(@"Tags", @"FilePanelsContextMenu", "Tags submenu title");
+        tags_menuitem.submenu = tags_submenu;
+        tags_menuitem.enabled = tags_submenu.numberOfItems > 0;
+        [self addItem:tags_menuitem];
+        [self addItem:NSMenuItem.separatorItem];
+    }
+
+    //////////////////////////////////////////////////////////////////////
     // Copy element for native FS. simply copies selected items' paths
     {
         NSMenuItem *item = [NSMenuItem new];
@@ -279,6 +324,24 @@ using namespace nc::panel;
 - (void)OnDuplicateItem:(id)sender
 {
     m_DuplicateAction->Perform(m_Panel, sender);
+}
+
+- (void)onTagItem:(id)_sender
+{
+    // TODO: somehow move this action code into actual actions
+    NSMenuItem *it = nc::objc_cast<NSMenuItem>(_sender);
+    if( !it )
+        return;
+    const auto tag = std::any_cast<nc::utility::Tags::Tag>(nc::objc_cast<AnyHolder>(it.representedObject).any);
+    const auto state = it.state;
+    dispatch_to_background([tag, state, items = m_Items] {
+        pstld::for_each(items.begin(), items.end(), [&](const VFSListingItem &_item) {
+            if( state == NSControlStateValueOn )
+                nc::utility::Tags::RemoveTag(_item.Path(), tag.Label());
+            else
+                nc::utility::Tags::AddTag(_item.Path(), tag);
+        });
+    });
 }
 
 @end

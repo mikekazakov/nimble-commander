@@ -37,6 +37,7 @@ jobs:
     - name: Install deps
       run: |
         brew update
+        brew unlink python && brew link --overwrite python
         brew install docker
         brew install colima
         brew unlink colima

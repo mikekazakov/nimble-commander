@@ -36,6 +36,7 @@ jobs:
       run: "sudo xcode-select -s /Applications/Xcode_$XC_VERSION.app"
     - name: Install deps
       run: |
+        brew update
         brew install docker
         brew install colima
         brew unlink colima

@@ -62,7 +62,7 @@ TEST_CASE(PREFIX "empty file test")
         REQUIRE(host->Unlink(fn, 0) == 0);
 
     VFSFilePtr file;
-    REQUIRE(host->CreateFile(fn, file, 0) == 0);
+    REQUIRE(host->CreateFile(fn, file) == 0);
     REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
     REQUIRE(file->IsOpened() == true);
     REQUIRE(file->Close() == 0);
@@ -173,37 +173,88 @@ TEST_CASE(PREFIX "renaming")
     REQUIRE(host->RemoveDirectory("/DirectoryName2") == 0);
 }
 
-TEST_CASE(PREFIX "listing, redhat.com")
+TEST_CASE(PREFIX "listing")
 {
+    {
+        // Create the context to check with a separate instance of FTPHost to not have any cached state.
+        VFSHostPtr host;
+        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+        VFSEasyDelete("/Test", host);
+        auto touch = [&](const char *_path) {
+            VFSFilePtr file;
+            REQUIRE(host->CreateFile(_path, file) == 0);
+            REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+        };
+        REQUIRE(host->CreateDirectory("/Test", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/Test/DirectoryName1", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/Test/DirectoryName2", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/Test/DirectoryName3", 0755) == 0);
+        REQUIRE(host->CreateDirectory("/Test/DirectoryName4", 0755) == 0);
+        touch("/Test/FileName1.txt");
+        touch("/Test/FileName2.txt");
+        touch("/Test/FileName3.txt");
+        touch("/Test/FileName4.txt");
+    }
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("ftp.redhat.com", "", "", "/"));
-
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    const std::set<std::string> expected_filenames = {"DirectoryName1",
+                                                      "DirectoryName2",
+                                                      "DirectoryName3",
+                                                      "DirectoryName4",
+                                                      "FileName1.txt",
+                                                      "FileName2.txt",
+                                                      "FileName3.txt",
+                                                      "FileName4.txt"};
     std::set<std::string> filenames;
-    REQUIRE(host->IterateDirectoryListing("/redhat/dst2007/APPLICATIONS/", [&](const VFSDirEnt &_dirent) {
+    REQUIRE(host->IterateDirectoryListing("/Test/", [&](const VFSDirEnt &_dirent) {
         filenames.emplace(_dirent.name);
         return true;
     }) == 0);
-    REQUIRE(filenames == std::set<std::string>{"evolution",
-                                               "evolution-data-server",
-                                               "gcj",
-                                               "IBMJava2-JRE",
-                                               "IBMJava2-SDK",
-                                               "java-1.4.2-bea",
-                                               "java-1.4.2-ibm",
-                                               "rhn_satellite_java_update"});
+    REQUIRE(filenames == expected_filenames);
+    VFSEasyDelete("/Test", host);
 }
 
-TEST_CASE(PREFIX "seekread, redhat.com")
+static void WriteAll(VFSFile &_file, const std::span<const uint8_t> _bytes)
 {
+    ssize_t write_left = _bytes.size();
+    const uint8_t *buf = _bytes.data();
+    while( write_left > 0 ) {
+        ssize_t res = _file.Write(buf, write_left);
+        REQUIRE(res >= 0);
+        write_left -= res;
+        buf += res;
+    }
+}
+
+TEST_CASE(PREFIX "seekread")
+{
+    {
+        // Create the context to check with a separate instance of FTPHost to not have any cached state.
+        VFSHostPtr host;
+        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+        VFSEasyDelete("/TestSeekRead", host);
+
+        constexpr size_t sz = 50'000'000;
+        std::vector<uint8_t> bytes(sz);
+        for( size_t i = 0; i < sz; ++i )
+            bytes[i] = static_cast<uint8_t>(i & 0xFF);
+
+        VFSFilePtr file;
+        REQUIRE(host->CreateDirectory("/TestSeekRead", 0755) == 0);
+        REQUIRE(host->CreateFile("/TestSeekRead/blob", file) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+        WriteAll(*file, bytes);
+        REQUIRE(file->Close() == 0);
+    }
+
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("ftp.redhat.com", "", "", "/"));
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
 
     // check seeking at big distance and reading an arbitrary selected known data block
-    constexpr auto offset = 0x170CE00;
+    constexpr auto offset = 0x2E0F077;
     constexpr auto length = 16;
-    constexpr auto expected = "\x90\xFF\x7F\xEA\x11\xAA\xEE\x0E\x9A\x2E\xD6\x6E\xC6\x26\x76\xE6";
-    constexpr auto fn =
-        "/redhat/dst2007/APPLICATIONS/rhn_satellite_java_update/dst-4.0-4AS/java-1.4.2-ibm-1.4.2.7-1jpp.4.el4.i386.rpm";
+    constexpr auto expected = "\x77\x78\x79\x7A\x7B\x7C\x7D\x7E\x7F\x80\x81\x82\x83\x84\x85\x86";
+    constexpr auto fn = "/TestSeekRead/blob";
     VFSFilePtr file;
     char buf[length];
     REQUIRE(host->CreateFile(fn, file, 0) == 0);
@@ -211,21 +262,38 @@ TEST_CASE(PREFIX "seekread, redhat.com")
     REQUIRE(file->Seek(offset, VFSFile::Seek_Set) == offset);
     REQUIRE(file->Read(buf, length) == length);
     REQUIRE(memcmp(buf, expected, length) == 0);
+    VFSEasyDelete("/TestSeekRead", host);
 }
 
-TEST_CASE(PREFIX "big files reading cancellation", "[!mayfail]")
+TEST_CASE(PREFIX "big files reading cancellation")
 {
+    {
+        // Create the context to check with a separate instance of FTPHost to not have any cached state.
+        VFSHostPtr host;
+        REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+        VFSEasyDelete("/TestCancellation", host);
+
+        constexpr size_t sz = 200'000'000;
+        std::vector<uint8_t> bytes(sz);
+        for( size_t i = 0; i < sz; ++i )
+            bytes[i] = static_cast<uint8_t>(i & 0xFF);
+
+        VFSFilePtr file;
+        REQUIRE(host->CreateDirectory("/TestCancellation", 0755) == 0);
+        REQUIRE(host->CreateFile("/TestCancellation/blob", file) == 0);
+        REQUIRE(file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0);
+        WriteAll(*file, bytes);
+        REQUIRE(file->Close() == 0);
+    }
+
     VFSHostPtr host;
-    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("ftp.redhat.com", "", "", "/"));
-
-    const auto host_path =
-        "/redhat/dst2007/APPLICATIONS/rhn_satellite_java_update/dst-4.0-4AS/java-1.4.2-ibm-1.4.2.7-1jpp.4.el4.i386.rpm";
-
+    REQUIRE_NOTHROW(host = std::make_shared<FTPHost>("127.0.0.1", "ftpuser", "ftpuserpasswd", "/", 9021));
+    const auto host_path = "/TestCancellation/blob";
     std::atomic_bool finished = false;
     std::thread th{[&] {
         VFSFilePtr file;
         char buf[256];
-        REQUIRE(host->CreateFile(host_path, file, 0) == 0);
+        REQUIRE(host->CreateFile(host_path, file) == 0);
         REQUIRE(file->Open(VFSFlags::OF_Read) == 0);
         REQUIRE(file->Read(buf, sizeof(buf)) == sizeof(buf));
         REQUIRE(file->Close() == 0); // at this moment we have read only a small part of file
@@ -234,10 +302,11 @@ TEST_CASE(PREFIX "big files reading cancellation", "[!mayfail]")
         finished = true;
     }};
 
-    const auto deadline = std::chrono::system_clock::now() + std::chrono::seconds(60);
+    const auto deadline = std::chrono::system_clock::now() + std::chrono::seconds(1);
     while( finished == false ) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         REQUIRE(std::chrono::system_clock::now() < deadline);
     }
     th.join();
+    VFSEasyDelete("/TestCancellation", host);
 }

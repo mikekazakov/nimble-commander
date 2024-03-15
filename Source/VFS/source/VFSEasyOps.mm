@@ -54,13 +54,15 @@ static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<
     while ( (res_read = _src->Read(buf.get(), std::min(bufsz, left_read))) > 0 )
     {
         ssize_t res_write = 0;
+        const char *ptr = buf.get();
         while(res_read > 0)
         {
-            res_write = _dst->Write(buf.get(), res_read);
+            res_write = _dst->Write(ptr, res_read);
             if(res_write >= 0)
             {
                 res_read -= res_write;
                 total_wrote += res_write;
+                ptr += res_write;
             }
             else
                 return static_cast<int>(res_write);

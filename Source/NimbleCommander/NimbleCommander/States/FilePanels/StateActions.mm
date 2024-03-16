@@ -30,12 +30,8 @@ StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
     add(@selector(performClose:), new CloseTab);
     add(@selector(onFileCloseOtherTabs:), new CloseOtherTabs);
     add(@selector(OnFileCloseWindow:), new CloseWindow);
-    add(
-        @selector(onLeftPanelGoToButtonAction:),
-        new ShowLeftGoToPopup { _net_mgr, _native_fs_manager, @selector(onRightPanelGoToButtonAction:) });
-    add(
-        @selector(onRightPanelGoToButtonAction:),
-        new ShowRightGoToPopup { _net_mgr, _native_fs_manager, @selector(onLeftPanelGoToButtonAction:) });
+    add(@selector(onLeftPanelGoToButtonAction:), new ShowLeftGoToPopup{_net_mgr, _native_fs_manager});
+    add(@selector(onRightPanelGoToButtonAction:), new ShowRightGoToPopup{_net_mgr, _native_fs_manager});
     add(@selector(onSwitchDualSinglePaneMode:), new ToggleSingleOrDualMode);
     add(@selector(OnWindowShowPreviousTab:), new ShowPreviousTab);
     add(@selector(OnWindowShowNextTab:), new ShowNextTab);

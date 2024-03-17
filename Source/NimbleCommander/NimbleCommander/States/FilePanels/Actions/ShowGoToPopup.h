@@ -8,6 +8,10 @@
 class NetworkConnectionsManager;
 @class GoToPopupListActionMediator;
 
+namespace nc::config {
+class Config;
+}
+
 namespace nc::utility {
 class NativeFSManager;
 }
@@ -80,10 +84,15 @@ struct ShowHistoryQuickList final : PanelAction, GoToPopupsBase {
 };
 
 struct ShowTagsQuickList final : PanelAction, GoToPopupsBase {
-    using GoToPopupsBase::GoToPopupsBase;
+    ShowTagsQuickList(NetworkConnectionsManager &_net_mgr,
+                      nc::utility::NativeFSManager &_native_fs_mgr,
+                      const nc::panel::TagsStorage &_tags_storage,
+                      const nc::config::Config &_config);
+    bool Predicate(PanelController *_target) const override;
     void Perform(PanelController *_target, id _sender) const override;
-    // TODO: should be valid only if enabled in the settings
-    // bool Predicate(PanelController *_target) const override;
+
+private:
+    const nc::config::Config &m_Config;
 };
 
 } // namespace nc::panel::actions

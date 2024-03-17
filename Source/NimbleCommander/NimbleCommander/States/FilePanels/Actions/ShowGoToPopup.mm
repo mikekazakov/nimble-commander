@@ -617,6 +617,19 @@ void ShowHistoryQuickList::Perform(PanelController *_target, id) const
     PopupQuickList(menu, _target);
 }
 
+ShowTagsQuickList::ShowTagsQuickList(NetworkConnectionsManager &_net_mgr,
+                                     nc::utility::NativeFSManager &_native_fs_mgr,
+                                     const nc::panel::TagsStorage &_tags_storage,
+                                     const nc::config::Config &_config)
+    : GoToPopupsBase(_net_mgr, _native_fs_mgr, _tags_storage), m_Config(_config)
+{
+}
+
+bool ShowTagsQuickList::Predicate(PanelController *) const
+{
+    return m_Config.GetBool("filePanel.FinderTags.enable");
+}
+
 void ShowTagsQuickList::Perform(PanelController *_target, id) const
 {
     const auto menu = BuildTagsQuickList(_target);

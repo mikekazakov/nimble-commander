@@ -180,7 +180,9 @@ static const auto g_MaxTextWidth = 600;
         std::erase_if(listings, [](auto &_l) { return _l == nullptr; });
 
         // Combine the listings into a single non-uniform one and load it in the main thread
-        if( auto combined_listing = VFSListing::Build(VFSListing::Compose(listings)) )
+        auto listing_input = VFSListing::Compose(listings);
+        listing_input.title = tag.Label();
+        if( auto combined_listing = VFSListing::Build(std::move(listing_input)) )
             dispatch_to_main_queue([=] { [panel loadListing:combined_listing]; });
     };
     [m_Panel commitCancelableLoadingTask:std::move(task)];

@@ -17,13 +17,14 @@ class NativeFSManager;
 } // namespace nc::utility
 
 namespace nc::panel {
+class TagsStorage;
 
-using StateActionsMap =
-    robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::StateAction>>;
+using StateActionsMap = robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::StateAction>>;
 
 StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
-                                 NetworkConnectionsManager &_net_mgr,
-                                 nc::utility::TemporaryFileStorage &_temp_file_storage,
-                                 nc::utility::NativeFSManager &_native_fs_manager);
+                                     NetworkConnectionsManager &_net_mgr,
+                                     nc::utility::TemporaryFileStorage &_temp_file_storage,
+                                     nc::utility::NativeFSManager &_native_fs_manager,
+                                     const nc::panel::TagsStorage &_tags_storage);
 
 } // namespace nc::panel

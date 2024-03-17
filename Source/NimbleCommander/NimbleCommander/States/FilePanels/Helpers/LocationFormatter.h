@@ -1,7 +1,8 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/NativeFSManager.h>
+#include <Utility/Tags.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstancePromise.h>
 
@@ -9,98 +10,85 @@
 #include "../Favorites.h"
 
 namespace nc::panel {
-    class ListingPromise;
+class ListingPromise;
 }
 
 namespace nc::panel::loc_fmt {
-    
-class Formatter {
+
+class Formatter
+{
 public:
     struct Representation {
-        NSString    *menu_title;
-        NSString    *menu_tooltip;
-        NSImage     *menu_icon;
+        NSString *menu_title;
+        NSString *menu_tooltip;
+        NSImage *menu_icon;
     };
 
     enum RenderOptions {
-        RenderMenuTitle     =  1,
-        RenderMenuIcon      =  2,
-        RenderMenuTooltip   =  4,
-        RenderEverything    = -1,
-        RenderNothing       =  0
+        RenderMenuTitle = 1,
+        RenderMenuIcon = 2,
+        RenderMenuTooltip = 4,
+        RenderEverything = -1,
+        RenderNothing = 0
     };
-
 };
 
-    
-class ListingPromiseFormatter : public Formatter {
+class ListingPromiseFormatter : public Formatter
+{
 public:
-    
-    Representation Render( RenderOptions _options, const ListingPromise &_promise );
-    
+    Representation Render(RenderOptions _options, const ListingPromise &_promise);
 };
 
-    
-class FavoriteLocationFormatter : public Formatter {
+class FavoriteLocationFormatter : public Formatter
+{
 public:
-    
     FavoriteLocationFormatter(const NetworkConnectionsManager &_conn_mgr);
-    
-    Representation Render(RenderOptions _options,
-                          const FavoriteLocationsStorage::Location &_location );
-    
+
+    Representation Render(RenderOptions _options, const FavoriteLocationsStorage::Location &_location);
+
 private:
     const NetworkConnectionsManager &m_NetworkConnectionsManager;
 };
-    
-    
-class FavoriteFormatter : public Formatter {
+
+class FavoriteFormatter : public Formatter
+{
 public:
     FavoriteFormatter(const NetworkConnectionsManager &_conn_mgr);
-    
-    Representation Render(RenderOptions _options,
-                          const FavoriteLocationsStorage::Favorite &_favorite );
+
+    Representation Render(RenderOptions _options, const FavoriteLocationsStorage::Favorite &_favorite);
 
 private:
     const NetworkConnectionsManager &m_NetworkConnectionsManager;
 };
 
-    
-class NetworkConnectionFormatter : public Formatter {
+class NetworkConnectionFormatter : public Formatter
+{
 public:
-
-    Representation Render(RenderOptions _options,
-                          const NetworkConnectionsManager::Connection &_connection );
-    
-};
-    
-
-class VolumeFormatter : public Formatter {
-public:
-  
-    Representation Render(RenderOptions _options,
-                          const utility::NativeFileSystemInfo &_volume );
-    
+    Representation Render(RenderOptions _options, const NetworkConnectionsManager::Connection &_connection);
 };
 
-    
-class VFSPromiseFormatter : public Formatter {
+class VolumeFormatter : public Formatter
+{
 public:
-    
-    Representation Render(RenderOptions _options,
-                          const core::VFSInstancePromise &_promise,
-                          const std::string &_path);
-    
+    Representation Render(RenderOptions _options, const utility::NativeFileSystemInfo &_volume);
 };
 
-    
-class VFSPathFormatter : public Formatter {
+class VFSPromiseFormatter : public Formatter
+{
 public:
-        
-    Representation Render(RenderOptions _options,
-                          const VFSHost &_vfs,
-                          const std::string &_path);
-        
+    Representation Render(RenderOptions _options, const core::VFSInstancePromise &_promise, const std::string &_path);
 };
-    
+
+class VFSPathFormatter : public Formatter
+{
+public:
+    Representation Render(RenderOptions _options, const VFSHost &_vfs, const std::string &_path);
 };
+
+class VFSFinderTagsFormatter : public Formatter
+{
+public:
+    Representation Render(RenderOptions _options, const utility::Tags::Tag &_tag);
+};
+
+}; // namespace nc::panel::loc_fmt

@@ -21,7 +21,8 @@ using namespace actions;
 StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
                                      NetworkConnectionsManager &_net_mgr,
                                      nc::utility::TemporaryFileStorage &_temp_file_storage,
-                                     nc::utility::NativeFSManager &_native_fs_manager)
+                                     nc::utility::NativeFSManager &_native_fs_manager,
+                                     const nc::panel::TagsStorage &_tags_storage)
 {
     StateActionsMap m;
     auto add = [&](SEL _sel, actions::StateAction *_action) { m[_sel].reset(_action); };
@@ -30,8 +31,8 @@ StateActionsMap BuildStateActionsMap(nc::config::Config &_global_config,
     add(@selector(performClose:), new CloseTab);
     add(@selector(onFileCloseOtherTabs:), new CloseOtherTabs);
     add(@selector(OnFileCloseWindow:), new CloseWindow);
-    add(@selector(onLeftPanelGoToButtonAction:), new ShowLeftGoToPopup{_net_mgr, _native_fs_manager});
-    add(@selector(onRightPanelGoToButtonAction:), new ShowRightGoToPopup{_net_mgr, _native_fs_manager});
+    add(@selector(onLeftPanelGoToButtonAction:), new ShowLeftGoToPopup{_net_mgr, _native_fs_manager, _tags_storage});
+    add(@selector(onRightPanelGoToButtonAction:), new ShowRightGoToPopup{_net_mgr, _native_fs_manager, _tags_storage});
     add(@selector(onSwitchDualSinglePaneMode:), new ToggleSingleOrDualMode);
     add(@selector(OnWindowShowPreviousTab:), new ShowPreviousTab);
     add(@selector(OnWindowShowNextTab:), new ShowNextTab);

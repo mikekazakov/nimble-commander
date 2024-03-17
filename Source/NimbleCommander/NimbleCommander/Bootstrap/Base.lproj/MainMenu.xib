@@ -703,6 +703,12 @@ DQ
                                                 <action selector="OnGoToQuickListsConnections:" target="-1" id="uCn-9Y-BfF"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Tags" tag="14310" id="ANW-0c-qGJ">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnGoToQuickListsTags:" target="-1" id="LwE-Ex-cgd"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

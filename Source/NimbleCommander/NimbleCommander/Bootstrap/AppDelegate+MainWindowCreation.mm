@@ -79,6 +79,7 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
         *self.networkConnectionsManager,
         self.nativeFSManager,
         self.nativeHost,
+        self.tagsStorage,
         self.fileOpener,
         self.panelOpenWithMenuDelegate,
         [self](NSRect rc) { return [self makeViewerWithFrame:rc]; },
@@ -88,8 +89,11 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 
 - (const nc::panel::StateActionsMap &)stateActionsMap
 {
-    [[clang::no_destroy]] static auto actions_map = nc::panel::BuildStateActionsMap(
-        self.globalConfig, *self.networkConnectionsManager, self.temporaryFileStorage, self.nativeFSManager);
+    [[clang::no_destroy]] static auto actions_map = nc::panel::BuildStateActionsMap(self.globalConfig,
+                                                                                    *self.networkConnectionsManager,
+                                                                                    self.temporaryFileStorage,
+                                                                                    self.nativeFSManager,
+                                                                                    self.tagsStorage);
     return actions_map;
 }
 
@@ -330,7 +334,6 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     [_state.rightPanelController copyOptionsFromController:source_state.rightPanelController];
     return true;
 }
-
 
 bool DirectoryAccessProviderImpl::HasAccess([[maybe_unused]] PanelController *_panel,
                                             const std::string &_directory_path,

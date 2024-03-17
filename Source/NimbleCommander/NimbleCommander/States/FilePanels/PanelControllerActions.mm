@@ -44,6 +44,7 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
                                      NetworkConnectionsManager &_net_mgr,
                                      utility::NativeFSManager &_native_fs_mgr,
                                      nc::vfs::NativeHost &_native_host,
+                                     const nc::panel::TagsStorage &_tags_storage,
                                      FileOpener &_file_opener,
                                      NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
                                      std::function<NCViewerView *(NSRect)> _make_viewer,
@@ -118,11 +119,12 @@ PanelActionsMap BuildPanelActionsMap(nc::config::Config &_global_config,
     add(@selector(OnGoToDropboxStorage:), new OpenNewDropboxStorage{_net_mgr});
     add(@selector(OnConnectToNetworkServer:), new OpenNetworkConnections{_net_mgr});
     add(@selector(OnGoToSavedConnectionItem:), new OpenExistingNetworkConnection{_net_mgr});
-    add(@selector(OnGoToQuickListsParents:), new ShowParentFoldersQuickList{_net_mgr, _native_fs_mgr});
-    add(@selector(OnGoToQuickListsHistory:), new ShowHistoryQuickList{_net_mgr, _native_fs_mgr});
-    add(@selector(OnGoToQuickListsFavorites:), new ShowFavoritesQuickList{_net_mgr, _native_fs_mgr});
-    add(@selector(OnGoToQuickListsVolumes:), new ShowVolumesQuickList{_net_mgr, _native_fs_mgr});
-    add(@selector(OnGoToQuickListsConnections:), new ShowConnectionsQuickList{_net_mgr, _native_fs_mgr});
+    add(@selector(OnGoToQuickListsParents:), new ShowParentFoldersQuickList{_net_mgr, _native_fs_mgr, _tags_storage});
+    add(@selector(OnGoToQuickListsHistory:), new ShowHistoryQuickList{_net_mgr, _native_fs_mgr, _tags_storage});
+    add(@selector(OnGoToQuickListsFavorites:), new ShowFavoritesQuickList{_net_mgr, _native_fs_mgr, _tags_storage});
+    add(@selector(OnGoToQuickListsVolumes:), new ShowVolumesQuickList{_net_mgr, _native_fs_mgr, _tags_storage});
+    add(@selector(OnGoToQuickListsConnections:), new ShowConnectionsQuickList{_net_mgr, _native_fs_mgr, _tags_storage});
+    add(@selector(OnGoToQuickListsTags:), new ShowTagsQuickList{_net_mgr, _native_fs_mgr, _tags_storage});
     add(@selector(OnGoToFavoriteLocation:), new GoToFavoriteLocation);
     add(@selector(OnFileViewCommand:), new ShowQuickLook);
     add(@selector(OnBriefSystemOverviewCommand:), new ShowSystemOverview);

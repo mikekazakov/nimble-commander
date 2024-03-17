@@ -126,6 +126,7 @@ static constexpr std::pair<const char*,int> g_ActionsTags[] = {
     {"menu.go.quick_lists.favorites",                   14'180},
     {"menu.go.quick_lists.volumes",                     14'190},
     {"menu.go.quick_lists.connections",                 14'200},
+    {"menu.go.quick_lists.tags",                        14'310},
     
     {"menu.command.system_overview",                    15'000},
     {"menu.command.volume_information",                 15'010},
@@ -329,6 +330,7 @@ static constinit std::pair<const char*, const char8_t*> g_DefaultShortcuts[] = {
     {"menu.go.quick_lists.favorites",                       u8"⌘3"      }, // cmd+3
     {"menu.go.quick_lists.volumes",                         u8"⌘4"      }, // cmd+4
     {"menu.go.quick_lists.connections",                     u8"⌘5"      }, // cmd+5
+    {"menu.go.quick_lists.tags",                            u8"⌘6"      }, // cmd+6
 
     {"menu.command.system_overview",                        u8"⌘l"      }, // cmd+l
     {"menu.command.volume_information",                     u8""        },

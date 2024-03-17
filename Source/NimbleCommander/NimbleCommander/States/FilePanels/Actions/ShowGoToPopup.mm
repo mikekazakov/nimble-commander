@@ -2,6 +2,7 @@
 #include "ShowGoToPopup.h"
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
+#include <VFS/VFSListingInput.h>
 #include <CUI/FilterPopUpMenu.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -18,14 +19,17 @@
 #include "OpenNetworkConnection.h"
 #include "../PanelHistory.h"
 #include <Panel/PanelData.h>
+#include <Panel/TagsStorage.h>
 #include "../PanelView.h"
 #include "../Helpers/LocationFormatter.h"
 #include "Helpers.h"
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <Utility/PathManip.h>
+#include <Utility/Tags.h>
 #include <Base/dispatch_cpp.h>
-#include <iostream>
+#include <fmt/printf.h>
+#include <pstld/pstld.h>
 
 using namespace nc::panel;
 
@@ -108,8 +112,11 @@ static const auto g_MaxTextWidth = 600;
         [self handleVFSPromiseInstance:promise->first path:promise->second];
     else if( auto listing_promise = std::any_cast<nc::panel::ListingPromise>(&_context) )
         nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
+    else if( auto tag = std::any_cast<nc::utility::Tags::Tag>(&_context) )
+        [self handleTag:*tag];
     else
-        std::cerr << "GoToPopupListActionMediator performGoTo: unknown context type." << std::endl;
+        fmt::print(
+            stderr, "GoToPopupListActionMediator performGoTo: unknown context type '{}'.\n", _context.type().name());
 }
 
 - (void)handlePersistentLocation:(const PersistentLocation &)_location
@@ -144,6 +151,39 @@ static const auto g_MaxTextWidth = 600;
         });
     };
     restorer.Restore(_promise, std::move(handler), nullptr);
+}
+
+- (void)handleTag:(const nc::utility::Tags::Tag &)_tag
+{
+    // The Spotlight query is done in a background in the panel's loading queue
+    auto task = [tag = _tag, fetch_flags = m_Panel.vfsFetchingFlags, panel = m_Panel](
+                    const std::function<bool()> &_is_cancelled) {
+        auto items = nc::utility::Tags::GatherAllItemsWithTag(tag.Label());
+        std::vector<VFSListingPtr> listings(items.size());
+        auto vfs = nc::bootstrap::NativeVFSHostInstance().SharedPtr(); // TODO: DI instead
+
+        // Load listing per each query result in parallel
+        pstld::transform(items.begin(),    //
+                         items.end(),      //
+                         listings.begin(), //
+                         [&](const std::filesystem::path &_path) -> VFSListingPtr {
+                             if( _is_cancelled && _is_cancelled() )
+                                 return nullptr;
+                             VFSListingPtr listing;
+                             vfs->FetchSingleItemListing(_path.c_str(), listing, fetch_flags, _is_cancelled);
+                             return listing;
+                         });
+        if( _is_cancelled && _is_cancelled() )
+            return;
+
+        // There might be failures to fetch a listing - remove these null listings explicitly
+        std::erase_if(listings, [](auto &_l) { return _l == nullptr; });
+
+        // Combine the listings into a single non-uniform one and load it in the main thread
+        if( auto combined_listing = VFSListing::Build(VFSListing::Compose(listings)) )
+            dispatch_to_main_queue([=] { [panel loadListing:combined_listing]; });
+    };
+    [m_Panel commitCancelableLoadingTask:std::move(task)];
 }
 
 @end
@@ -248,6 +288,7 @@ public:
     NSMenuItem *MenuItemForPath(const vfs::VFSPath &_p);
     NSMenuItem *MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise, const std::string &_path);
     NSMenuItem *MenuItemForListingPromise(const ListingPromise &_promise);
+    NSMenuItem *MenuItemForFinderTags(const utility::Tags::Tag &_tag);
 
 private:
     const NetworkConnectionsManager &m_ConnectionManager;
@@ -302,6 +343,13 @@ static void SetupHotkeys(NSMenu *_menu)
             i.keyEquivalent = KeyEquivalent(hotkey_index++);
             i.keyEquivalentModifierMask = 0;
         }
+}
+
+GoToPopupsBase::GoToPopupsBase(NetworkConnectionsManager &_net_mgr,
+                               nc::utility::NativeFSManager &_native_fs_mgr,
+                               const nc::panel::TagsStorage &_tags_storage)
+    : m_NetMgr{_net_mgr}, m_NativeFSMgr{_native_fs_mgr}, m_Tags{_tags_storage}
+{
 }
 
 std::tuple<NSMenu *, GoToPopupListActionMediator *>
@@ -408,6 +456,21 @@ NSMenu *GoToPopupsBase::BuildVolumesQuickList(PanelController *_panel) const
     return menu;
 }
 
+NSMenu *GoToPopupsBase::BuildTagsQuickList(PanelController *_panel) const
+{
+    const auto [menu, action_target] =
+        BuidInitialMenu(nil, _panel, NSLocalizedString(@"Tags", "Tags popup menu title in file panels"));
+
+    MenuItemBuilder builder{m_NetMgr, action_target};
+    const auto tags = m_Tags.Get();
+    for( auto &tag : tags )
+        [menu addItem:builder.MenuItemForFinderTags(tag)];
+
+    SetupHotkeys(menu);
+
+    return menu;
+}
+
 NSMenu *GoToPopupsBase::BuildParentFoldersQuickList(PanelController *_panel) const
 {
     const auto [menu, action_target] = BuidInitialMenu(
@@ -460,11 +523,6 @@ static bool RerouteGoToEventToLeftToolbarButton(MainWindowFilePanelState *_targe
     return true;
 }
 
-ShowLeftGoToPopup::ShowLeftGoToPopup(NetworkConnectionsManager &_net_mgr, nc::utility::NativeFSManager &_native_fs_mgr)
-    : GoToPopupsBase(_net_mgr, _native_fs_mgr)
-{
-}
-
 void ShowLeftGoToPopup::Perform(MainWindowFilePanelState *_target, id _sender) const
 {
     if( RerouteGoToEventToLeftToolbarButton(_target, _sender) )
@@ -496,12 +554,6 @@ static bool RerouteGoToEventToRightToolbarButton(MainWindowFilePanelState *_targ
     return true;
 }
 
-ShowRightGoToPopup::ShowRightGoToPopup(NetworkConnectionsManager &_net_mgr,
-                                       nc::utility::NativeFSManager &_native_fs_mgr)
-    : GoToPopupsBase(_net_mgr, _native_fs_mgr)
-{
-}
-
 void ShowRightGoToPopup::Perform(MainWindowFilePanelState *_target, id _sender) const
 {
     if( RerouteGoToEventToRightToolbarButton(_target, _sender) )
@@ -530,22 +582,10 @@ static void PopupQuickList(NSMenu *_menu, PanelController *_target)
     [_menu popUpMenuPositioningItem:nil atLocation:p inView:_target.view];
 }
 
-ShowConnectionsQuickList::ShowConnectionsQuickList(NetworkConnectionsManager &_net_mgr,
-                                                   nc::utility::NativeFSManager &_native_fs_mgr)
-    : GoToPopupsBase(_net_mgr, _native_fs_mgr)
-{
-}
-
 void ShowConnectionsQuickList::Perform(PanelController *_target, id) const
 {
     const auto menu = BuildConnectionsQuickList(_target);
     PopupQuickList(menu, _target);
-}
-
-ShowFavoritesQuickList::ShowFavoritesQuickList(NetworkConnectionsManager &_net_mgr,
-                                               nc::utility::NativeFSManager &_native_fs_mgr)
-    : nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr)
-{
 }
 
 void ShowFavoritesQuickList::Perform(PanelController *_target, id) const
@@ -554,22 +594,10 @@ void ShowFavoritesQuickList::Perform(PanelController *_target, id) const
     PopupQuickList(menu, _target);
 }
 
-ShowVolumesQuickList::ShowVolumesQuickList(NetworkConnectionsManager &_net_mgr,
-                                           nc::utility::NativeFSManager &_native_fs_mgr)
-    : nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr)
-{
-}
-
 void ShowVolumesQuickList::Perform(PanelController *_target, id) const
 {
     const auto menu = BuildVolumesQuickList(_target);
     PopupQuickList(menu, _target);
-}
-
-ShowParentFoldersQuickList::ShowParentFoldersQuickList(NetworkConnectionsManager &_net_mgr,
-                                                       nc::utility::NativeFSManager &_native_fs_mgr)
-    : GoToPopupsBase(_net_mgr, _native_fs_mgr)
-{
 }
 
 bool ShowParentFoldersQuickList::Predicate(PanelController *_target) const
@@ -583,21 +611,16 @@ void ShowParentFoldersQuickList::Perform(PanelController *_target, id) const
     PopupQuickList(menu, _target);
 }
 
-ShowHistoryQuickList::ShowHistoryQuickList(NetworkConnectionsManager &_net_mgr,
-                                           nc::utility::NativeFSManager &_native_fs_mgr)
-    : nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr)
-{
-}
-
 void ShowHistoryQuickList::Perform(PanelController *_target, id) const
 {
     const auto menu = BuildHistoryQuickList(_target);
     PopupQuickList(menu, _target);
 }
 
-GoToPopupsBase::GoToPopupsBase(NetworkConnectionsManager &_net_mgr, nc::utility::NativeFSManager &_native_fs_mgr)
-    : m_NetMgr(_net_mgr), m_NativeFSMgr(_native_fs_mgr)
+void ShowTagsQuickList::Perform(PanelController *_target, id) const
 {
+    const auto menu = BuildTagsQuickList(_target);
+    PopupQuickList(menu, _target);
 }
 
 MenuItemBuilder::MenuItemBuilder(const NetworkConnectionsManager &_conn_manager, id _action_target)
@@ -692,6 +715,19 @@ NSMenuItem *MenuItemBuilder::MenuItemForListingPromise(const ListingPromise &_pr
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     auto rep = loc_fmt::ListingPromiseFormatter{}.Render(m_FmtOpts, _promise);
+    menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
+    menu_item.toolTip = rep.menu_tooltip;
+    menu_item.image = rep.menu_icon;
+    return menu_item;
+}
+
+NSMenuItem *MenuItemBuilder::MenuItemForFinderTags(const utility::Tags::Tag &_tag)
+{
+    const auto menu_item = [[NSMenuItem alloc] init];
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_tag}];
+    menu_item.target = m_ActionTarget;
+    menu_item.action = @selector(callout:);
+    auto rep = loc_fmt::VFSFinderTagsFormatter{}.Render(m_FmtOpts, _tag);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;

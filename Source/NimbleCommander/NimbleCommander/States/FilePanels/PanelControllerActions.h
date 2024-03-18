@@ -18,6 +18,7 @@ class NativeHost;
 
 namespace nc::panel {
 class FileOpener;
+class TagsStorage;
 
 using PanelActionsMap =
     robin_hood::unordered_flat_map<SEL, std::unique_ptr<const actions::PanelAction>>;
@@ -27,6 +28,7 @@ BuildPanelActionsMap(nc::config::Config &_global_config,
                      NetworkConnectionsManager &_net_mgr,
                      nc::utility::NativeFSManager &_native_fs_mgr,
                      nc::vfs::NativeHost &_native_host,
+                     const nc::panel::TagsStorage &_tags_storage,
                      FileOpener &_file_opener,
                      NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
                      std::function<NCViewerView *(NSRect)> _make_viewer,

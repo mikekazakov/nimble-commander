@@ -117,6 +117,7 @@ using PanelActionsMap =
 - (IBAction)OnGoToQuickListsVolumes:(id)sender;
 - (IBAction)OnGoToQuickListsFavorites:(id)sender;
 - (IBAction)OnGoToQuickListsConnections:(id)sender;
+- (IBAction)OnGoToQuickListsTags:(id)sender;
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender;
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender;
 - (IBAction)OnCreateHardLinkCommand:(id)sender;

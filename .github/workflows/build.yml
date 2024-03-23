@@ -46,7 +46,7 @@ jobs:
         colima start --network-address
     - uses: actions/checkout@v4
     - name: Work around GHA issue 7522
-       run: |
+      run: |
          # TODO: Replace this with a better solution. See https://github.com/actions/runner-images/issues/7522
          echo Killing XProtect...; sudo pkill -9 XProtect >/dev/null || true;
          echo Waiting for XProtect process...; while pgrep XProtect; do sleep 3; done;

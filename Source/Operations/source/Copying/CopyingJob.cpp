@@ -1844,10 +1844,9 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(vfs::Nat
 
     if( m_Options.copy_unix_flags ) {
         // change unix mode - only schedule if needed
-        if( const bool special_perm = (src_stat.st_mode & g_ChModMask) != g_NewDirectoryMode; special_perm ) {
-            m_TargetPermissionsFixupEpilogue.push_back(
-                {std::filesystem::path{_dst_path}, static_cast<mode_t>(src_stat.st_mode & g_ChModMask)});
-        }
+        const mode_t mode = src_stat.st_mode & g_ChModMask;
+        if( mode != g_NewDirectoryMode )
+            m_TargetPermissionsFixupEpilogue.push_back( {std::filesystem::path{_dst_path}, mode});
 
         // change flags
         fchflags(dst_fd, src_stat.st_flags);
@@ -1914,10 +1913,9 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
 
     if( m_Options.copy_unix_flags ) {
         // change unix mode - only schedule if needed
-        if( const bool special_perm = (src_stat_buffer.mode & g_ChModMask) != g_NewDirectoryMode; special_perm ) {
-            m_TargetPermissionsFixupEpilogue.push_back(
-                {std::filesystem::path{_dst_path}, static_cast<mode_t>(src_stat_buffer.mode & g_ChModMask)});
-        }
+        const mode_t mode = src_stat_buffer.mode & g_ChModMask;
+        if( mode != g_NewDirectoryMode )
+            m_TargetPermissionsFixupEpilogue.push_back({std::filesystem::path{_dst_path}, mode});
 
         // change flags
         if( src_stat_buffer.meaning.flags )
@@ -1970,7 +1968,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
     }
     else {
         while( true ) {
-            const auto rc = m_DestinationHost->CreateDirectory(_dst_path.c_str(), src_st.mode);
+            const auto rc = m_DestinationHost->CreateDirectory(_dst_path.c_str(), g_NewDirectoryMode);
             if( rc == VFSError::Ok )
                 break;
             switch( m_OnCantCreateDestinationDir(rc, _dst_path, *m_DestinationHost) ) {
@@ -1984,9 +1982,20 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
         }
     }
 
-    if( m_Options.copy_file_times && m_DestinationHost->Features() & vfs::HostFeatures::SetTimes )
+    if( m_Options.copy_unix_flags && (m_DestinationHost->Features() & vfs::HostFeatures::SetPermissions) ) {
+        // change unix mode - only schedule if needed
+        const mode_t mode = src_st.mode & g_ChModMask;
+        if( mode != g_NewDirectoryMode )
+            m_TargetPermissionsFixupEpilogue.push_back({std::filesystem::path{_dst_path}, mode});
+
+        // TODO: chflags??
+    }
+
+    if( m_Options.copy_file_times && (m_DestinationHost->Features() & vfs::HostFeatures::SetTimes) ) {
+        // TODO: move to epilogue
         m_DestinationHost->SetTimes(
             _dst_path.c_str(), src_st.btime.tv_sec, src_st.mtime.tv_sec, src_st.ctime.tv_sec, src_st.atime.tv_sec);
+    }
 
     return StepResult::Ok;
 }
@@ -2494,7 +2503,10 @@ void CopyingJob::ApplyPermissionFixups()
         }
     }
     else {
-        // TODO: implement
+        for( auto i = m_TargetPermissionsFixupEpilogue.rbegin(), e = m_TargetPermissionsFixupEpilogue.rend(); i != e;
+             ++i ) {
+            m_DestinationHost->SetPermissions(i->path.c_str(), i->mode);
+        }
     }
 }
 

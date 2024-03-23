@@ -6,6 +6,7 @@
 #include <VFS/Native.h>
 #include <VFS/XAttr.h>
 #include <VFS/NetFTP.h>
+#include <VFS/NetSFTP.h>
 #include <VFS/ArcLA.h>
 #include <Base/algo.h>
 #include <Base/WriteAtomically.h>
@@ -1151,6 +1152,8 @@ TEST_CASE(PREFIX "Moving a locked native regular item to a separate volume")
     }
 }
 
+// TODO: perm fixup also need a test to check the reversed order of the chmod() executions
+
 TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (native -> native)")
 {
     TempTestDir dir;
@@ -1327,6 +1330,48 @@ TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> native)
                     (dir.directory / "d/f.txt").c_str(), TestEnv().vfs_native, "/d/f.txt", host, result) == 0);
         REQUIRE(result == 0);
     }
+}
+
+TEST_CASE(PREFIX "Setting directory permissions in an epilogue - (vfs -> vfs)")
+{
+    TempTestDir dir;
+    REQUIRE(mkdir((dir.directory / "dir").c_str(), S_IRWXU) == 0);
+    REQUIRE(close(open((dir.directory / "dir/file").c_str(), O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR)) == 0);
+    REQUIRE(chmod((dir.directory / "dir").c_str(), S_IRUSR | S_IXUSR) == 0);
+    auto revert_mod = at_scope_end([&] { chmod((dir.directory / "dir").c_str(), S_IRWXU); });
+
+    auto host = TestEnv().SpawnSFTPHost();
+    REQUIRE(host);
+    const std::filesystem::path target_dir = std::filesystem::path(host->HomeDir()) / "__nc_operations_test";
+    VFSEasyDelete(target_dir.c_str(), host);
+
+    CopyingOptions opts;
+    opts.docopy = true;
+    SECTION("Copy unix flags")
+    {
+        opts.copy_unix_flags = true;
+        Copying op(FetchItems(dir.directory, {"dir"}, *TestEnv().vfs_native), target_dir, host, opts);
+        op.Start();
+        op.Wait();
+        REQUIRE(op.State() == OperationState::Completed);
+        VFSStat st;
+        REQUIRE(host->Stat(target_dir.c_str(), st, 0) == 0);
+        REQUIRE(st.mode == (S_IFDIR | S_IRUSR | S_IXUSR));
+        host->SetPermissions(target_dir.c_str(), S_IRWXU);
+    }
+    SECTION("Don't copy unix flags")
+    {
+        opts.copy_unix_flags = false;
+        Copying op(FetchItems(dir.directory, {"dir"}, *TestEnv().vfs_native), target_dir, host, opts);
+        op.Start();
+        op.Wait();
+        REQUIRE(op.State() == OperationState::Completed);
+        VFSStat st;
+        REQUIRE(host->Stat(target_dir.c_str(), st, 0) == 0);
+        REQUIRE(st.mode == (S_IFDIR | S_IRUSR | S_IXUSR | S_IWUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH));
+    }
+
+    VFSEasyDelete(target_dir.c_str(), host);
 }
 
 static std::vector<std::byte> MakeNoise(size_t _size)

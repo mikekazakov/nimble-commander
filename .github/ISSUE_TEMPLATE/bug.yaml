@@ -21,8 +21,8 @@ body:
       label: Distribution Type
       description: Please select where this version was downloaded from.
       options:
-        - label: Downloaded directly from the website
-        - label: Downloaded from the Mac App Store (i.e. sandboxed)
+        - Downloaded directly from the website
+        - Downloaded from the Mac App Store (i.e. sandboxed)
       default: 0
   - type: textarea
     id: expected

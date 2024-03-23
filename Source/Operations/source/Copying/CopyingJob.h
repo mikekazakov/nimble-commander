@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Base/algo.h>
@@ -24,8 +24,7 @@ public:
                CopyingOptions _opts);
     ~CopyingJob();
 
-    enum class Stage
-    {
+    enum class Stage {
         Default,
         Preparing,
         Process,
@@ -39,14 +38,11 @@ public:
     const std::vector<VFSListingItem> &SourceItems() const noexcept;
     const std::string &DestinationPath() const noexcept;
     const CopyingOptions &Options() const noexcept;
-    
-private:
-    virtual void Perform() override;
 
+private:
     using ChecksumVerification = CopyingOptions::ChecksumVerification;
 
-    enum class StepResult
-    {
+    enum class StepResult {
         // operation was successful
         Ok = 0,
 
@@ -57,14 +53,12 @@ private:
         Skipped,
     };
 
-    enum class PathCompositionType
-    {
+    enum class PathCompositionType {
         PathPreffix, // path = dest_path + source_rel_path
         FixedPath    // path = dest_path
     };
 
-    enum class SourceItemAftermath
-    {
+    enum class SourceItemAftermath {
         NoChanges,
         Moved,
         NeedsToBeDeleted
@@ -72,6 +66,20 @@ private:
 
     using RequestNonexistentDst = std::function<void()>;
 
+    struct PermissionFixup {
+        std::filesystem::path path;
+        mode_t mode = 0;
+    };
+
+    struct TimestampFixup {
+        std::filesystem::path path;
+        timespec atime = {0, 0};
+        timespec mtime = {0, 0};
+        timespec ctime = {0, 0};
+        timespec btime = {0, 0};
+    };
+
+    void Perform() override;
     void ProcessItems();
     StepResult ProcessItemNo(int _item_number);
     StepResult ProcessSymlinkItem(VFSHost &_source_host,
@@ -83,13 +91,11 @@ private:
                                     int _source_index,
                                     const std::string &_destination_path);
 
-    PathCompositionType AnalyzeInitialDestination(std::string &_result_destination,
-                                                  bool &_need_to_build);
+    PathCompositionType AnalyzeInitialDestination(std::string &_result_destination, bool &_need_to_build);
     StepResult BuildDestinationDirectory() const;
     std::tuple<StepResult, copying::SourceItems> ScanSourceItems();
     std::string ComposeDestinationNameForItem(int _src_item_index) const;
-    std::string ComposeDestinationNameForItemInDB(int _src_item_index,
-                                                  const copying::SourceItems &_db) const;
+    std::string ComposeDestinationNameForItemInDB(int _src_item_index, const copying::SourceItems &_db) const;
 
     // will be used for checksum calculation when copying verifiyng is enabled
     using SourceDataFeedback = std::function<void(const void *_data, unsigned _sz)>;
@@ -118,9 +124,8 @@ private:
                                                  const std::string &_src_path,
                                                  vfs::NativeHost &_dst_host,
                                                  const std::string &_dst_path) const;
-    StepResult CopyVFSDirectoryToVFSDirectory(VFSHost &_src_vfs,
-                                              const std::string &_src_path,
-                                              const std::string &_dst_path) const;
+    StepResult
+    CopyVFSDirectoryToVFSDirectory(VFSHost &_src_vfs, const std::string &_src_path, const std::string &_dst_path) const;
     StepResult CopyNativeSymlinkToNative(vfs::NativeHost &_native_host,
                                          const std::string &_src_path,
                                          const std::string &_dst_path,
@@ -140,15 +145,12 @@ private:
                                 const std::string &_dst_path,
                                 const RequestNonexistentDst &_new_dst_callback) const;
 
-    std::pair<StepResult, SourceItemAftermath>
-    RenameNativeDirectory(vfs::NativeHost &_native_host,
-                          const std::string &_src_path,
-                          const std::string &_dst_path) const;
+    std::pair<StepResult, SourceItemAftermath> RenameNativeDirectory(vfs::NativeHost &_native_host,
+                                                                     const std::string &_src_path,
+                                                                     const std::string &_dst_path) const;
 
     std::pair<StepResult, SourceItemAftermath>
-    RenameVFSDirectory(VFSHost &_common_host,
-                       const std::string &_src_path,
-                       const std::string &_dst_path) const;
+    RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_path, const std::string &_dst_path) const;
 
     StepResult RenameVFSFile(VFSHost &_common_host,
                              const std::string &_src_path,
@@ -157,6 +159,9 @@ private:
     StepResult VerifyCopiedFile(const copying::ChecksumExpectation &_exp, bool &_matched);
     void ClearSourceItems();
     void ClearSourceItem(const std::string &_path, mode_t _mode, VFSHost &_host);
+    void ApplyPermissionFixups();
+    void ApplyTimestampsFixups();
+
     void SetStage(enum Stage _stage);
 
     void EraseXattrsFromNativeFD(int _fd_in) const;
@@ -165,23 +170,21 @@ private:
     void CopyXattrsFromVFSFileToPath(VFSFile &_file, const char *_fn_to) const;
 
     bool IsNativeLockedItemNoFollow(int vfs_error, const std::string &_path) const;
-    StepResult UnlockNativeItemNoFollow(const std::string &_path,
-                                        vfs::NativeHost &_native_host) const;
-    
-    StepResult
-    OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);
+    StepResult UnlockNativeItemNoFollow(const std::string &_path, vfs::NativeHost &_native_host) const;
+
+    StepResult OnCantOpenDestinationFile(int _vfs_error, const std::string &_path, VFSHost &_vfs);
 
     const std::vector<VFSListingItem> m_VFSListingItems;
     copying::SourceItems m_SourceItems;
     int m_CurrentlyProcessingSourceItemIndex = -1;
     std::vector<copying::ChecksumExpectation> m_Checksums;
     std::vector<unsigned> m_SourceItemsToDelete;
+    mutable std::vector<PermissionFixup> m_TargetPermissionsFixupEpilogue;
+    mutable std::vector<TimestampFixup> m_TargetTimestampFixupEpilogue;
     const VFSHostPtr m_DestinationHost;
     const bool m_IsDestinationHostNative;
-    std::shared_ptr<const utility::NativeFileSystemInfo>
-        m_DestinationNativeFSInfo; // used only for native vfs
-    const std::string
-        m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
+    std::shared_ptr<const utility::NativeFileSystemInfo> m_DestinationNativeFSInfo; // used only for native vfs
+    const std::string m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
     std::string m_DestinationPath;
     PathCompositionType m_PathCompositionType;
     nc::utility::NativeFSManager *const m_NativeFSManager;

@@ -1,6 +1,7 @@
 name: 🐞 Bug Report
 description: Found a bug in Nimble Commander?
 title: "[Bug]: "
+labels: ["bug"]
 body:
   - type: markdown
     attributes:

@@ -1,0 +1,59 @@
+name: 🐞 Bug Report
+description: Found a bug in Nimble Commander?
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: version
+    attributes:
+      label: Version of Nimble Commander
+      description: Fill in below what version of Nimble Commander you are using, including your OS.
+      placeholder: ex. v1.5.0, MacOS 14
+    validations:
+      required: true
+  - type: checkboxes
+    id: mas
+    attributes:
+      label: Mac App Store
+      description: |
+        Please check the box if this version was downloaded from the Mac App Store, i.e. it is sandboxed.
+      options:
+        - label: This version was downloaded from Mac App Store
+          default: false
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Result
+      description: Describe in a few words what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Result
+      description: Describe in a few words what actually happens.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Please provide detailed steps for reproducing the issue. Feel free to attach screenshots to make it more clear.
+      placeholder: |
+        Steps:
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional Information
+      description: Feel free to provide any additional information or context that might be helpful.
+      placeholder: "Any other details or context?"
+    validations:
+      required: false

@@ -22,7 +22,7 @@ body:
         Please check the box if this version was downloaded from the Mac App Store, i.e. it is sandboxed.
       options:
         - label: This version was downloaded from Mac App Store
-          default: false
+          required: false
   - type: textarea
     id: expected
     attributes:

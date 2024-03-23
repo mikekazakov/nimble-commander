@@ -45,6 +45,11 @@ jobs:
         curl -L -o /usr/local/bin/colima https://github.com/abiosoft/colima/releases/download/v0.5.6/colima-Darwin-x86_64 && sudo chmod +x /usr/local/bin/colima
         colima start --network-address
     - uses: actions/checkout@v4
+    - name: Work around GHA issue 7522
+       run: |
+         # TODO: Replace this with a better solution. See https://github.com/actions/runner-images/issues/7522
+         echo Killing XProtect...; sudo pkill -9 XProtect >/dev/null || true;
+         echo Waiting for XProtect process...; while pgrep XProtect; do sleep 3; done;
     - name: Build and run unit tests
       env:
         NC_SENSITIVE: ${{ secrets.NC_SENSITIVE }}

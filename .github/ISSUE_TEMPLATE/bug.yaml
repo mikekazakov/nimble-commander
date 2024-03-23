@@ -15,15 +15,15 @@ body:
       placeholder: ex. v1.5.0, MacOS 14
     validations:
       required: true
-  - type: checkboxes
-    id: mas
+  - type: dropdown
+    id: source
     attributes:
-      label: Mac App Store
-      description: |
-        Please check the box if this version was downloaded from the Mac App Store, i.e. it is sandboxed.
+      label: Distribution Type
+      description: Please select where this version was downloaded from.
       options:
-        - label: This version was downloaded from Mac App Store
-          required: false
+        - label: Downloaded directly from the website
+        - label: Downloaded from the Mac App Store (i.e. sandboxed)
+      default: 0
   - type: textarea
     id: expected
     attributes:

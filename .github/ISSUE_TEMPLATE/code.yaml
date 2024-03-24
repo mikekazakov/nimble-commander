@@ -6,7 +6,7 @@ body:
     id: task-type
     attributes:
       label: Task Type
-      description: Select the type of code improvement task:
+      description: "Select the type of code improvement task:"
       options:
         - Refactoring
         - Migration

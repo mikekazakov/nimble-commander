@@ -1,0 +1,32 @@
+name: 🛠️ Code Improvement
+description: Internals need renovation? Report here.
+title: "[Code]: "
+body:
+  - type: dropdown
+    id: task-type
+    attributes:
+      label: Task Type
+      description: "Select the type of code improvement task:"
+      options:
+        - Refactoring
+        - Migration
+        - Technical Debt
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please provide a clear and concise description of the code improvement task. Explain the reason behind this task and the expected outcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional Information
+      description: Feel free to provide any additional information or context that might be helpful.
+      placeholder: "Any other details or context?"
+    validations:
+      required: false

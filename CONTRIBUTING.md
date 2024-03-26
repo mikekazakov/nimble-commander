@@ -5,6 +5,7 @@ First off, thank you for considering contributing to Nimble Commander! Your supp
 - [Reporting Bugs](#reporting-bugs)
 - [Suggesting Enhancements](#suggesting-enhancements)
 - [Helping Other Users](#helping-other-users)
+- [Localizations](#localizations)
 
 ## Reporting Bugs
 Bug reports are crucial for making Nimble Commander more reliable and user-friendly, as the tool's versatility means use cases can vary significantly.
@@ -35,10 +36,10 @@ To ensure these suggestions are effectively considered, please adhere to the fol
 ## Helping Other Users
 Got experience with Nimble Commander or insights on common questions? Your expertise can make a big difference! Consider lending a hand to fellow users. Whether answering questions, sharing tips, or providing feedback on their projects, your knowledge helps build a supportive and vibrant Nimble Commander community. Visit the [Discussions](https://github.com/mikekazakov/nimble-commander/discussions) section to start helping today.
 
-## Testing
-TODO:
-
 ## Localizations
+Nimble Commander is currently available in two languages—the languages that the original author is fluent in. If you're proficient in another language and interested in helping to make Nimble Commander accessible to more users worldwide, your skills could be invaluable. To participate in translating Nimble Commander into additional languages, please reach out to express your interest.
+
+## Testing
 TODO:
 
 ## Reviews etc

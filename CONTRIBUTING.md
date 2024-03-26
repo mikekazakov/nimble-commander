@@ -6,6 +6,7 @@ First off, thank you for considering contributing to Nimble Commander! Your supp
 - [Suggesting Enhancements](#suggesting-enhancements)
 - [Helping Other Users](#helping-other-users)
 - [Localizations](#localizations)
+- [Sharing](#sharing)
 
 ## Reporting Bugs
 Bug reports are crucial for making Nimble Commander more reliable and user-friendly, as the tool's versatility means use cases can vary significantly.
@@ -39,11 +40,8 @@ Got experience with Nimble Commander or insights on common questions? Your exper
 ## Localizations
 Nimble Commander is currently available in two languages—the languages that the original author is fluent in. If you're proficient in another language and interested in helping to make Nimble Commander accessible to more users worldwide, your skills could be invaluable. To participate in translating Nimble Commander into additional languages, please reach out to express your interest.
 
-## Testing
-TODO:
-
-## Reviews etc
-TODO:
+## Sharing
+A single tweet from you can go a long way. You can support this project by sharing information about it. Whether it's mentioning Nimble Commander on forums, submitting reviews, or talking about your experience, every bit of exposure helps.
 
 ## Code Contributions
 TODO:

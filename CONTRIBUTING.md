@@ -4,6 +4,7 @@ First off, thank you for considering contributing to Nimble Commander! Your supp
 ## Table of Contents
 - [Reporting Bugs](#reporting-bugs)
 - [Suggesting Enhancements](#suggesting-enhancements)
+- [Helping Other Users](#helping-other-users)
 
 ## Reporting Bugs
 Bug reports are crucial for making Nimble Commander more reliable and user-friendly, as the tool's versatility means use cases can vary significantly.
@@ -31,13 +32,13 @@ To ensure these suggestions are effectively considered, please adhere to the fol
 - Share why you think this enhancement will benefit most Nimble Commander users.
 - If possible, provide examples of this functionality in other applications.
 
-## Localizations
-TODO:
+## Helping Other Users
+Got experience with Nimble Commander or insights on common questions? Your expertise can make a big difference! Consider lending a hand to fellow users. Whether answering questions, sharing tips, or providing feedback on their projects, your knowledge helps build a supportive and vibrant Nimble Commander community. Visit the [Discussions](https://github.com/mikekazakov/nimble-commander/discussions) section to start helping today.
 
 ## Testing
 TODO:
 
-## Helping Others
+## Localizations
 TODO:
 
 ## Reviews etc

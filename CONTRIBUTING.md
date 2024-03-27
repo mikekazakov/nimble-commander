@@ -1,5 +1,5 @@
 # Contributing to Nimble Commander
-First off, thank you for considering contributing to Nimble Commander! Your support, whether it's reporting a bug, suggesting a feature, or submitting a pull request, is invaluable to this project.
+First off, thank you for considering contributing to Nimble Commander! Your support, whether it's reporting a bug, suggesting a feature, or submitting a pull request, is invaluable to this project. The reality is that Nimble Commander is maintained and developed by just one person in their free time, so any meaningful help can make a significant difference.
 
 ## Table of Contents
 - [Reporting Bugs](#reporting-bugs)
@@ -7,6 +7,7 @@ First off, thank you for considering contributing to Nimble Commander! Your supp
 - [Helping Other Users](#helping-other-users)
 - [Localizations](#localizations)
 - [Sharing](#sharing)
+- [Code Contributions](#code-contributions)
 
 ## Reporting Bugs
 Bug reports are crucial for making Nimble Commander more reliable and user-friendly, as the tool's versatility means use cases can vary significantly.
@@ -44,4 +45,7 @@ Nimble Commander is currently available in two languages—the languages that th
 A single tweet from you can go a long way. You can support this project by sharing information about it. Whether it's mentioning Nimble Commander on forums, submitting reviews, or talking about your experience, every bit of exposure helps.
 
 ## Code Contributions
-TODO:
+Contributions to the codebase are greatly appreciated, whether they come in the form of bug fixes, feature implementations, or improvements to existing features. If you're interested in contributing code to Nimble Commander, here's how to get started:
+  1. Look at the build instructions: please refer to the [Building](Docs/Building.md) document in the repository. 
+  2. Discuss Your Ideas: If you have an idea for a new feature or a significant change, it's a good idea to discuss it with the project maintainer first. This can be done through the [Issues](https://github.com/mikekazakov/nimble-commander/issues) section or the [Discussions](https://github.com/mikekazakov/nimble-commander/discussions) forum. Getting feedback early on can save time and ensure that your efforts align with the project's direction.
+  3. Submit a Pull Request: Once you've made your changes and tested them, submit a pull request. Be sure to provide a clear and detailed description of your contributions, including the reasons behind the changes and any additional information that might help review your pull request.

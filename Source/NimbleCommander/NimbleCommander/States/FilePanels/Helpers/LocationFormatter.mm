@@ -199,13 +199,13 @@ VFSFinderTagsFormatter::Representation VFSFinderTagsFormatter::Render(RenderOpti
 
     if( _options & RenderMenuTooltip )
         rep.menu_tooltip = [NSString
-            localizedStringWithFormat:NSLocalizedString(@"Display all items with the tag “%s”",
+            localizedStringWithFormat:NSLocalizedString(@"Display all items with the tag “%@”",
                                                         "Tooltip for a quick list menu shown for each finder tag"),
-                                      _tag.Label().c_str()];
+                                      [NSString stringWithUTF8StdString:_tag.Label()]];
 
     if( _options & RenderMenuIcon )
         rep.menu_icon = panel::TagsMenuDisplay::Images().at(std::to_underlying(_tag.Color()));
-    
+
     return rep;
 }
 

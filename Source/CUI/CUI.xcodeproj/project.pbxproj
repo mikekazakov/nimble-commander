@@ -10,6 +10,7 @@
 		CF46017425612B9D0095FC73 /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79AEE21FE475F0043A26D /* ProcessSheetController.xib */; };
 		CF46018425612BFD0095FC73 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79AEC21FE47560043A26D /* ProcessSheetController.mm */; };
 		CF76D1862576E43400D28FA3 /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF76D1852576E43400D28FA3 /* FilterPopUpMenu.mm */; };
+		CFAA4D0F2BBADD0D003073A2 /* CommandPopover.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFAA4D0E2BBADD0D003073A2 /* CommandPopover.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -18,6 +19,8 @@
 		CF46018725612CFD0095FC73 /* CUIResources.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = CUIResources.plist; path = resources/CUIResources.plist; sourceTree = "<group>"; };
 		CF76D1842576E42A00D28FA3 /* FilterPopUpMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FilterPopUpMenu.h; path = include/CUI/FilterPopUpMenu.h; sourceTree = "<group>"; };
 		CF76D1852576E43400D28FA3 /* FilterPopUpMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilterPopUpMenu.mm; path = source/FilterPopUpMenu.mm; sourceTree = "<group>"; };
+		CFAA4D0D2BBADD03003073A2 /* CommandPopover.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommandPopover.h; path = include/CUI/CommandPopover.h; sourceTree = "<group>"; };
+		CFAA4D0E2BBADD0D003073A2 /* CommandPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CommandPopover.mm; path = source/CommandPopover.mm; sourceTree = "<group>"; };
 		CFD79ADE21FE298F0043A26D /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CFD79ADF21FE298F0043A26D /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CFD79AE121FE29900043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
@@ -92,6 +95,7 @@
 		CFD79AE821FE45C30043A26D /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFAA4D0D2BBADD03003073A2 /* CommandPopover.h */,
 				CF76D1842576E42A00D28FA3 /* FilterPopUpMenu.h */,
 				CFD79AEA21FE474B0043A26D /* ProcessSheetController.h */,
 			);
@@ -101,6 +105,7 @@
 		CFD79AE921FE45CB0043A26D /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFAA4D0E2BBADD0D003073A2 /* CommandPopover.mm */,
 				CF76D1852576E43400D28FA3 /* FilterPopUpMenu.mm */,
 				CFD79AEC21FE47560043A26D /* ProcessSheetController.mm */,
 			);
@@ -225,6 +230,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFAA4D0F2BBADD0D003073A2 /* CommandPopover.mm in Sources */,
 				CF46018425612BFD0095FC73 /* ProcessSheetController.mm in Sources */,
 				CF76D1862576E43400D28FA3 /* FilterPopUpMenu.mm in Sources */,
 			);

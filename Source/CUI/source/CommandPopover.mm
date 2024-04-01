@@ -22,6 +22,9 @@
 @interface NCCommandPopoverTableView : NSTableView
 @end
 
+@interface NCCommandPopoverTableSectionRowView : NSTableRowView
+@end
+
 @implementation NCCommandPopoverItem {
     NSString *m_Title;
     __weak id m_Target;
@@ -32,8 +35,6 @@
     bool m_IsSeparator;
     bool m_IsSectionHeader;
 }
-@synthesize target = m_Target;
-@synthesize action = m_Action;
 @synthesize tag = m_Tag;
 @synthesize representedObject = m_RepresentedObject;
 @synthesize image = m_Image;
@@ -87,6 +88,28 @@
     return m_IsSectionHeader;
 }
 
+- (void)setTarget:(id)_target
+{
+    assert(!m_IsSeparator && !m_IsSectionHeader);
+    m_Target = _target;
+}
+
+- (__weak id)target
+{
+    return m_Target;
+}
+
+- (void)setAction:(SEL)_action
+{
+    assert(!m_IsSeparator && !m_IsSectionHeader);
+    m_Action = _action;
+}
+
+- (SEL)action
+{
+    return m_Action;
+}
+
 @end
 
 @implementation NCCommandPopoverViewController {
@@ -97,11 +120,13 @@
     NSScrollView *m_ScrollView;
     NSLayoutConstraint *m_ScrollViewHeightConstraint;
     NSFont *m_LabelFont;
+    NSFont *m_SectionFont;
     __weak NCCommandPopover *m_Parent;
     std::vector<signed char> m_ItemIdxToHotKeyIdx; // negative means no mapping
     std::array<int, 12> m_HotKeyIdxToItemIdx;      // negative means no mapping
     double m_RegularRowHeight;
     double m_SeparatorRowHeight;
+    double m_RowPadding;
 }
 
 - (instancetype _Nonnull)initWithPopover:(NCCommandPopover *)_popover andTitle:(NSString *)_title
@@ -110,8 +135,10 @@
         m_Parent = _popover;
         m_Title = _title;
         m_LabelFont = [NSFont menuFontOfSize:0.0];
+        m_SectionFont = [NSFont menuFontOfSize:NSFont.smallSystemFontSize];
         m_RegularRowHeight = std::round(m_LabelFont.pointSize + 7.);
         m_SeparatorRowHeight = 11.;
+        m_RowPadding = 16.; // TODO: will be different on MacOS 10.15, verify and adjust
     }
     return self;
 }
@@ -344,9 +371,7 @@
     if( _row < 0 || _row >= static_cast<long>(items.size()) ) {
         return nil;
     }
-
     NCCommandPopoverItem *item = items[_row];
-
     if( item.separatorItem ) {
         NSBox *box = [[NSBox alloc] initWithFrame:NSRect()];
         box.boxType = NSBoxSeparator;
@@ -373,112 +398,163 @@
                                                         constant:1.]];
         return cv;
     }
-
-    if( [_column.identifier isEqualToString:@"I"] ) {
-        if( item.image == nil )
-            return nil;
-        NSImageView *iv = [[NSImageView alloc] initWithFrame:NSRect()];
-        iv.image = item.image;
-        iv.imageFrameStyle = NSImageFrameNone;
-        iv.imageAlignment = NSImageAlignCenter;
-        iv.imageScaling = NSImageScaleProportionallyDown;
-        iv.translatesAutoresizingMaskIntoConstraints = false;
-        NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
-        [cv addSubview:iv];
-        cv.imageView = iv;
-        [cv addConstraints:@[
-            [NSLayoutConstraint constraintWithItem:iv
-                                         attribute:NSLayoutAttributeWidth
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:nil
-                                         attribute:NSLayoutAttributeNotAnAttribute
-                                        multiplier:1.
-                                          constant:16.],
-            [NSLayoutConstraint constraintWithItem:iv
-                                         attribute:NSLayoutAttributeHeight
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:nil
-                                         attribute:NSLayoutAttributeNotAnAttribute
-                                        multiplier:1.
-                                          constant:16.],
-            [NSLayoutConstraint constraintWithItem:iv
-                                         attribute:NSLayoutAttributeLeft
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:cv
-                                         attribute:NSLayoutAttributeLeft
-                                        multiplier:1.
-                                          constant:0.],
-            [NSLayoutConstraint constraintWithItem:iv
-                                         attribute:NSLayoutAttributeCenterY
-                                         relatedBy:NSLayoutRelationEqual
-                                            toItem:cv
-                                         attribute:NSLayoutAttributeCenterY
-                                        multiplier:1.
-                                          constant:0.]
-        ]];
-        return cv;
+    else if( item.sectionHeader ) {
+        return nil; // handled in rowViewForRow
     }
-
-    if( [_column.identifier isEqualToString:@"L"] ) {
-        NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
-        tf.translatesAutoresizingMaskIntoConstraints = false;
-        tf.stringValue = item.title;
-        tf.bordered = false;
-        tf.editable = false;
-        tf.drawsBackground = false;
-        tf.font = m_LabelFont;
-        tf.textColor = NSColor.labelColor;
-
-        NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
-        [cv addSubview:tf];
-        cv.textField = tf;
-        [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==0)-[tf]-(==0)-|"
-                                                                   options:0
-                                                                   metrics:nil
-                                                                     views:NSDictionaryOfVariableBindings(tf)]];
-        [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
-                                                       attribute:NSLayoutAttributeCenterY
-                                                       relatedBy:NSLayoutRelationEqual
-                                                          toItem:cv
-                                                       attribute:NSLayoutAttributeCenterY
-                                                      multiplier:1.
-                                                        constant:0.]];
-        return cv;
+    else {
+        
+        if( [_column.identifier isEqualToString:@"I"] ) {
+            if( item.image == nil )
+                return nil;
+            NSImageView *iv = [[NSImageView alloc] initWithFrame:NSRect()];
+            iv.image = item.image;
+            iv.imageFrameStyle = NSImageFrameNone;
+            iv.imageAlignment = NSImageAlignCenter;
+            iv.imageScaling = NSImageScaleProportionallyDown;
+            iv.translatesAutoresizingMaskIntoConstraints = false;
+            NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+            [cv addSubview:iv];
+            cv.imageView = iv;
+            [cv addConstraints:@[
+                [NSLayoutConstraint constraintWithItem:iv
+                                             attribute:NSLayoutAttributeWidth
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:nil
+                                             attribute:NSLayoutAttributeNotAnAttribute
+                                            multiplier:1.
+                                              constant:16.],
+                [NSLayoutConstraint constraintWithItem:iv
+                                             attribute:NSLayoutAttributeHeight
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:nil
+                                             attribute:NSLayoutAttributeNotAnAttribute
+                                            multiplier:1.
+                                              constant:16.],
+                [NSLayoutConstraint constraintWithItem:iv
+                                             attribute:NSLayoutAttributeLeft
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:cv
+                                             attribute:NSLayoutAttributeLeft
+                                            multiplier:1.
+                                              constant:0.],
+                [NSLayoutConstraint constraintWithItem:iv
+                                             attribute:NSLayoutAttributeCenterY
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:cv
+                                             attribute:NSLayoutAttributeCenterY
+                                            multiplier:1.
+                                              constant:0.]
+            ]];
+            return cv;
+        }
+        
+        if( [_column.identifier isEqualToString:@"L"] ) {
+            NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
+            tf.translatesAutoresizingMaskIntoConstraints = false;
+            tf.stringValue = item.title;
+            tf.bordered = false;
+            tf.editable = false;
+            tf.usesSingleLineMode = true;
+            tf.drawsBackground = false;
+            tf.font = m_LabelFont;
+            tf.textColor = NSColor.labelColor;
+            
+            NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+            [cv addSubview:tf];
+            cv.textField = tf;
+            [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==0)-[tf]-(==0)-|"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:NSDictionaryOfVariableBindings(tf)]];
+            [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                           attribute:NSLayoutAttributeCenterY
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:cv
+                                                           attribute:NSLayoutAttributeCenterY
+                                                          multiplier:1.
+                                                            constant:0.]];
+            return cv;
+        }
+        
+        if( [_column.identifier isEqualToString:@"K"] ) {
+            NSString *hk = [self hotkeyLabelForItemAtIndex:_row];
+            if( hk.length == 0 )
+                return nil;
+            NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
+            tf.translatesAutoresizingMaskIntoConstraints = false;
+            tf.stringValue = hk;
+            tf.bordered = false;
+            tf.editable = false;
+            tf.drawsBackground = false;
+            tf.usesSingleLineMode = true;
+            tf.alignment = NSTextAlignmentCenter;
+            tf.font = m_LabelFont;
+            tf.textColor = NSColor.disabledControlTextColor;
+            
+            NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+            [cv addSubview:tf];
+            cv.textField = tf;
+            [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==0)-[tf]-(==0)-|"
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:NSDictionaryOfVariableBindings(tf)]];
+            [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                           attribute:NSLayoutAttributeCenterY
+                                                           relatedBy:NSLayoutRelationEqual
+                                                              toItem:cv
+                                                           attribute:NSLayoutAttributeCenterY
+                                                          multiplier:1.
+                                                            constant:0.]];
+            return cv;
+        }
     }
-
-    if( [_column.identifier isEqualToString:@"K"] ) {
-        NSString *hk = [self hotkeyLabelForItemAtIndex:_row];
-        if( hk.length == 0 )
-            return nil;
-        NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
-        tf.translatesAutoresizingMaskIntoConstraints = false;
-        tf.stringValue = hk;
-        tf.bordered = false;
-        tf.editable = false;
-        tf.drawsBackground = false;
-        tf.usesSingleLineMode = true;
-        tf.alignment = NSTextAlignmentCenter;
-        tf.font = m_LabelFont;
-        tf.textColor = NSColor.disabledControlTextColor;
-
-        NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
-        [cv addSubview:tf];
-        cv.textField = tf;
-        [cv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==0)-[tf]-(==0)-|"
-                                                                   options:0
-                                                                   metrics:nil
-                                                                     views:NSDictionaryOfVariableBindings(tf)]];
-        [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
-                                                       attribute:NSLayoutAttributeCenterY
-                                                       relatedBy:NSLayoutRelationEqual
-                                                          toItem:cv
-                                                       attribute:NSLayoutAttributeCenterY
-                                                      multiplier:1.
-                                                        constant:0.]];
-        return cv;
-    }
-
     return nil;
+}
+
+- (nullable NSTableRowView *)tableView:(NSTableView *)_table rowViewForRow:(NSInteger)_row
+{
+    const auto items = m_Parent.commandItems;
+    if( _row < 0 || _row >= static_cast<long>(items.size()) ) {
+        return nil;
+    }
+    NCCommandPopoverItem *item = items[_row];
+    if( !item.sectionHeader )
+        return nil;
+
+    NCCommandPopoverTableSectionRowView *rv = [[NCCommandPopoverTableSectionRowView alloc] initWithFrame:NSRect()];
+
+    NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
+    tf.translatesAutoresizingMaskIntoConstraints = false;
+    tf.stringValue = item.title;
+    tf.bordered = false;
+    tf.editable = false;
+    tf.usesSingleLineMode = true;
+    tf.drawsBackground = false;
+    tf.font = m_SectionFont;
+    tf.textColor = NSColor.disabledControlTextColor;
+
+    [rv addSubview:tf];
+
+    [rv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[tf]-(==0)-|"
+                                                               options:0
+                                                               metrics:nil
+                                                                 views:NSDictionaryOfVariableBindings(tf)]];
+    [rv addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                   attribute:NSLayoutAttributeLeading
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:rv
+                                                   attribute:NSLayoutAttributeLeading
+                                                  multiplier:1.
+                                                    constant:m_RowPadding]];
+
+    [rv addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                   attribute:NSLayoutAttributeCenterY
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:rv
+                                                   attribute:NSLayoutAttributeCenterY
+                                                  multiplier:1.
+                                                    constant:0.]];
+    return rv;
 }
 
 - (void)viewDidAppear
@@ -625,6 +701,9 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 
 @end
 
+@implementation NCCommandPopoverTableSectionRowView
+@end
+
 @implementation NCCommandPopover {
     std::vector<NCCommandPopoverItem *> m_Items;
     NCCommandPopoverViewController *m_Controller;
@@ -647,26 +726,26 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
     m_Items.push_back(_new_item);
 }
 
-- (void)showRelativeToRect:(NSRect)_positioning_rect
-                    ofView:(NSView *)_positioning_view
-             preferredEdge:(NSRectEdge)_preferred_edge
-{
-    if( [self respondsToSelector:NSSelectorFromString(@"shouldHideAnchor")] ) {
-
-        [self setValue:@true forKeyPath:@"shouldHideAnchor"];
-        const bool flipped = _positioning_view.flipped;
-        // TODO: clarify!
-        if( _preferred_edge == NSMaxYEdge ) {
-            const double arror_height = 19.;
-            _positioning_rect = NSOffsetRect(_positioning_rect, 0., flipped ? -arror_height : arror_height);
-        }
-        if( _preferred_edge == NSMinYEdge ) {
-            const double arror_height = 17.;
-            _positioning_rect = NSOffsetRect(_positioning_rect, 0., flipped ? arror_height : -arror_height);
-        }
-    }
-    [super showRelativeToRect:_positioning_rect ofView:_positioning_view preferredEdge:_preferred_edge];
-}
+//- (void)showRelativeToRect:(NSRect)_positioning_rect
+//                    ofView:(NSView *)_positioning_view
+//             preferredEdge:(NSRectEdge)_preferred_edge
+//{
+//    if( [self respondsToSelector:NSSelectorFromString(@"shouldHideAnchor")] ) {
+//
+//        [self setValue:@true forKeyPath:@"shouldHideAnchor"];
+//        const bool flipped = _positioning_view.flipped;
+//        // TODO: clarify!
+//        if( _preferred_edge == NSMaxYEdge ) {
+//            const double arror_height = 19.;
+//            _positioning_rect = NSOffsetRect(_positioning_rect, 0., flipped ? -arror_height : arror_height);
+//        }
+//        if( _preferred_edge == NSMinYEdge ) {
+//            const double arror_height = 17.;
+//            _positioning_rect = NSOffsetRect(_positioning_rect, 0., flipped ? arror_height : -arror_height);
+//        }
+//    }
+//    [super showRelativeToRect:_positioning_rect ofView:_positioning_view preferredEdge:_preferred_edge];
+//}
 
 - (std::span<NCCommandPopoverItem *const>)commandItems
 {

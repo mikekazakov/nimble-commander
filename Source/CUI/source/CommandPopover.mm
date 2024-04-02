@@ -14,9 +14,12 @@
 
 @end
 
-@interface NCCommandPopoverViewController : NSViewController <NSTableViewDataSource, NSTableViewDelegate>
+@interface NCCommandPopoverViewController : NSViewController <NSTableViewDataSource, //
+                                                              NSTableViewDelegate,   //
+                                                              NSTextFieldDelegate>
 - (instancetype _Nonnull)initWithPopover:(NCCommandPopover *)_popover andTitle:(NSString *)_title;
 - (void)tableView:(NSTableView *)_table didClickTableRow:(NSInteger)_row;
+- (bool)processKeyDown:(NSEvent *)_event;
 @end
 
 @interface NCCommandPopoverTableView : NSTableView
@@ -115,13 +118,15 @@
 @implementation NCCommandPopoverViewController {
     NSString *m_Title;
     NSTextField *m_LabelTextField;
-    NSTextField *m_FilterTextField;
+    NSImageView *m_SearchIcon;
     NCCommandPopoverTableView *m_TableView;
     NSScrollView *m_ScrollView;
     NSLayoutConstraint *m_ScrollViewHeightConstraint;
     NSFont *m_LabelFont;
     NSFont *m_SectionFont;
     __weak NCCommandPopover *m_Parent;
+    std::vector<NCCommandPopoverItem *> m_AllItems;
+    std::vector<NCCommandPopoverItem *> m_FilteredItems;
     std::vector<signed char> m_ItemIdxToHotKeyIdx; // negative means no mapping
     std::array<int, 12> m_HotKeyIdxToItemIdx;      // negative means no mapping
     double m_RegularRowHeight;
@@ -145,27 +150,35 @@
 
 - (void)loadView
 {
+    m_AllItems.assign(m_Parent.commandItems.begin(), m_Parent.commandItems.end());
+    m_FilteredItems = m_AllItems;
+
     [self setupHotKeysMapping];
     const double max_title_width = [m_Parent maximumCommandTitleWidth];
     const double title_col_margin = 20.;
     const double title_col_width = std::max(max_title_width + title_col_margin, 160.);
 
     NSView *v = [[NSView alloc] initWithFrame:NSMakeRect(0., 0., 200., 200.)];
+
+    m_SearchIcon = [[NSImageView alloc] initWithFrame:NSRect()];
+    m_SearchIcon.translatesAutoresizingMaskIntoConstraints = false;
+    m_SearchIcon.image = [NSImage imageNamed:NSImageNameTouchBarSearchTemplate];
+    m_SearchIcon.imageAlignment = NSImageAlignCenter;
+    m_SearchIcon.imageScaling = NSImageScaleProportionallyDown;
+    m_SearchIcon.imageFrameStyle = NSImageFrameNone;
+    [v addSubview:m_SearchIcon];
+
     m_LabelTextField = [[NSTextField alloc] initWithFrame:NSRect()];
-    m_LabelTextField.stringValue = m_Title;
+    m_LabelTextField.stringValue = @"";
+    m_LabelTextField.placeholderString = m_Title;
     m_LabelTextField.bordered = false;
-    m_LabelTextField.editable = false;
+    m_LabelTextField.editable = true;
     m_LabelTextField.drawsBackground = false;
     m_LabelTextField.translatesAutoresizingMaskIntoConstraints = false;
+    m_LabelTextField.font = m_LabelFont;
+    m_LabelTextField.focusRingType = NSFocusRingTypeNone;
+    m_LabelTextField.delegate = self;
     [v addSubview:m_LabelTextField];
-
-    m_FilterTextField = [[NSTextField alloc] initWithFrame:NSRect()];
-    m_FilterTextField.stringValue = @"Filter";
-    m_FilterTextField.bordered = true;
-    m_FilterTextField.editable = true;
-    m_FilterTextField.drawsBackground = true;
-    m_FilterTextField.translatesAutoresizingMaskIntoConstraints = false;
-    [v addSubview:m_FilterTextField];
 
     m_ScrollView = [[NSScrollView alloc] initWithFrame:NSRect()];
     m_ScrollView.borderType = NSNoBorder;
@@ -220,12 +233,9 @@
     m_ScrollView.documentView = m_TableView;
     [v addSubview:m_ScrollView];
 
-    auto views = NSDictionaryOfVariableBindings(m_LabelTextField, m_FilterTextField, m_ScrollView);
-    [v addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(4)-[m_LabelTextField(>=40)]-(4)-|"
-                                                              options:0
-                                                              metrics:nil
-                                                                views:views]];
-    [v addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(4)-[m_FilterTextField(>=40)]-(4)-|"
+    auto views = NSDictionaryOfVariableBindings(m_LabelTextField, m_SearchIcon, m_ScrollView);
+    [v addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                                              @"H:|-(11)-[m_SearchIcon(==16)]-(4)-[m_LabelTextField(>=40)]-(4)-|"
                                                               options:0
                                                               metrics:nil
                                                                 views:views]];
@@ -237,11 +247,24 @@
                                                               metrics:nil
                                                                 views:views]];
     [v addConstraints:[NSLayoutConstraint
-                          constraintsWithVisualFormat:
-                              @"V:|-(4)-[m_LabelTextField]-(4)-[m_FilterTextField]-(4)-[m_ScrollView(>=20)]-(4)-|"
+                          constraintsWithVisualFormat:@"V:|-(6)-[m_LabelTextField]-(4)-[m_ScrollView(>=20)]-(4)-|"
                                               options:0
                                               metrics:nil
                                                 views:views]];
+    [v addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchIcon
+                                                  attribute:NSLayoutAttributeCenterY
+                                                  relatedBy:NSLayoutRelationEqual
+                                                     toItem:m_LabelTextField
+                                                  attribute:NSLayoutAttributeCenterY
+                                                 multiplier:1.
+                                                   constant:0.]];
+    [v addConstraint:[NSLayoutConstraint constraintWithItem:m_SearchIcon
+                                                  attribute:NSLayoutAttributeHeight
+                                                  relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                     toItem:nil
+                                                  attribute:NSLayoutAttributeNotAnAttribute
+                                                 multiplier:1.
+                                                   constant:16.]];
 
     [v addConstraint:[NSLayoutConstraint constraintWithItem:m_ScrollView
                                                   attribute:NSLayoutAttributeWidth
@@ -264,9 +287,31 @@
     self.view = v;
 }
 
+- (void)viewDidAppear
+{
+    [super viewDidAppear];
+    [self.view.window makeFirstResponder:m_TableView];
+    [self selectFirstSelectableRow];
+
+    const auto &items = m_FilteredItems;
+
+    double height = 18.; // why???
+    for( size_t idx = 0; idx < std::min(items.size(), 30ul); ++idx ) {
+        height += items[idx].separatorItem ? m_SeparatorRowHeight : m_RegularRowHeight;
+        if( idx > 0 )
+            height += m_TableView.intercellSpacing.height;
+    }
+    m_ScrollViewHeightConstraint.constant = height;
+
+    //    [m_TableView tile]; // no idea why this is not triggered automatically?
+    [self.view layout];
+
+    [m_Parent setContentSize:self.view.fittingSize];
+}
+
 - (void)setupHotKeysMapping
 {
-    const auto items = m_Parent.commandItems;
+    const auto &items = m_FilteredItems;
     m_HotKeyIdxToItemIdx.fill(-1);
     m_ItemIdxToHotKeyIdx.resize(items.size(), -1);
     for( size_t it_idx = 0, hk_idx = 0; it_idx < items.size() && hk_idx < m_HotKeyIdxToItemIdx.size(); ++it_idx ) {
@@ -280,7 +325,7 @@
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return m_Parent.commandItems.size();
+    return m_FilteredItems.size();
 }
 
 - (NSString *)hotkeyLabelForItemAtIndex:(size_t)_index
@@ -367,7 +412,7 @@
 
 - (NSView *)tableView:(NSTableView *)_table viewForTableColumn:(NSTableColumn *)_column row:(NSInteger)_row
 {
-    const auto items = m_Parent.commandItems;
+    const auto &items = m_FilteredItems;
     if( _row < 0 || _row >= static_cast<long>(items.size()) ) {
         return nil;
     }
@@ -402,7 +447,7 @@
         return nil; // handled in rowViewForRow
     }
     else {
-        
+
         if( [_column.identifier isEqualToString:@"I"] ) {
             if( item.image == nil )
                 return nil;
@@ -447,7 +492,7 @@
             ]];
             return cv;
         }
-        
+
         if( [_column.identifier isEqualToString:@"L"] ) {
             NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
             tf.translatesAutoresizingMaskIntoConstraints = false;
@@ -458,7 +503,7 @@
             tf.drawsBackground = false;
             tf.font = m_LabelFont;
             tf.textColor = NSColor.labelColor;
-            
+
             NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
             [cv addSubview:tf];
             cv.textField = tf;
@@ -475,7 +520,7 @@
                                                             constant:0.]];
             return cv;
         }
-        
+
         if( [_column.identifier isEqualToString:@"K"] ) {
             NSString *hk = [self hotkeyLabelForItemAtIndex:_row];
             if( hk.length == 0 )
@@ -490,7 +535,7 @@
             tf.alignment = NSTextAlignmentCenter;
             tf.font = m_LabelFont;
             tf.textColor = NSColor.disabledControlTextColor;
-            
+
             NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
             [cv addSubview:tf];
             cv.textField = tf;
@@ -513,7 +558,7 @@
 
 - (nullable NSTableRowView *)tableView:(NSTableView *)_table rowViewForRow:(NSInteger)_row
 {
-    const auto items = m_Parent.commandItems;
+    const auto &items = m_FilteredItems;
     if( _row < 0 || _row >= static_cast<long>(items.size()) ) {
         return nil;
     }
@@ -557,33 +602,9 @@
     return rv;
 }
 
-- (void)viewDidAppear
-{
-    [super viewDidAppear];
-    [self.view.window makeFirstResponder:m_TableView];
-
-    if( !m_Parent.commandItems.empty() && [self tableView:m_TableView shouldSelectRow:0] ) {
-        [m_TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:false];
-    }
-
-    const auto items = m_Parent.commandItems;
-    double height = 18.; // why???
-    for( size_t idx = 0; idx < std::min(items.size(), 30ul); ++idx ) {
-        height += items[idx].separatorItem ? m_SeparatorRowHeight : m_RegularRowHeight;
-        if( idx > 0 )
-            height += m_TableView.intercellSpacing.height;
-    }
-    m_ScrollViewHeightConstraint.constant = height;
-
-    //    [m_TableView tile]; // no idea why this is not triggered automatically?
-    [self.view layout];
-
-    [m_Parent setContentSize:self.view.fittingSize];
-}
-
 - (void)tableView:(NSTableView *)_table didClickTableRow:(NSInteger)_row
 {
-    const auto items = m_Parent.commandItems;
+    const auto &items = m_FilteredItems;
     if( _row >= 0 || _row < static_cast<long>(items.size()) ) {
         NCCommandPopoverItem *item = items[_row];
         [m_Parent close]; // should we close BEFORE or AFTER triggering the action??
@@ -595,7 +616,7 @@
 
 - (double)tableView:(NSTableView *)_table heightOfRow:(long)_row
 {
-    const auto items = m_Parent.commandItems;
+    const auto &items = m_FilteredItems;
     if( _row >= 0 && _row < static_cast<long>(items.size()) && items[_row].separatorItem )
         return m_SeparatorRowHeight;
     return m_RegularRowHeight;
@@ -603,10 +624,81 @@
 
 - (BOOL)tableView:(NSTableView *)_table shouldSelectRow:(NSInteger)_row
 {
-    const auto items = m_Parent.commandItems;
+    const auto &items = m_FilteredItems;
     if( _row >= 0 && _row < static_cast<long>(items.size()) )
         return !(items[_row].separatorItem || items[_row].sectionHeader);
     return false;
+}
+
+- (bool)processKeyDown:(NSEvent *)_event
+{
+    // Use only clear keypresses, no modifiers
+    if( _event.modifierFlags & (NSEventModifierFlagControl | NSEventModifierFlagCommand) )
+        return true;
+
+    const auto keycode = _event.keyCode;
+    if( keycode == kVK_Delete ) {
+        NSString *str = m_LabelTextField.stringValue ? m_LabelTextField.stringValue : @"";
+        if( str.length > 0 ) {
+            str = [str substringToIndex:str.length - 1];
+            m_LabelTextField.stringValue = str;
+            [self updateFiltering];
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    NSString *chars = _event.characters;
+    static const auto allowed = NSCharacterSet.alphanumericCharacterSet.invertedSet;
+    if( chars.length == 0 || [chars rangeOfCharacterFromSet:allowed].location != NSNotFound ) {
+        return false;
+    }
+
+    NSString *str = m_LabelTextField.stringValue ? m_LabelTextField.stringValue : @"";
+    str = [str stringByAppendingString:chars];
+    m_LabelTextField.stringValue = str;
+
+    [self updateFiltering];
+    return true;
+}
+
+- (void)controlTextDidChange:(NSNotification *) [[maybe_unused]] _obj
+{
+    [self updateFiltering];
+}
+
+- (void)updateFiltering
+{
+    NSString *str = m_LabelTextField.stringValue ? m_LabelTextField.stringValue : @"";
+    auto validate = [str](NCCommandPopoverItem *_item) -> bool {
+        if( str.length == 0 )
+            return true; // no filtering
+        if( _item.separatorItem || _item.sectionHeader )
+            return false;
+        return [_item.title rangeOfString:str options:NSCaseInsensitiveSearch].location != NSNotFound;
+    };
+
+    std::vector<NCCommandPopoverItem *> new_filtered;
+    std::ranges::copy_if(m_AllItems, std::back_inserter(new_filtered), validate);
+    if( new_filtered != m_FilteredItems ) {
+        m_FilteredItems = new_filtered;
+        [self setupHotKeysMapping];
+        [m_TableView reloadData];
+        [self selectFirstSelectableRow];
+    }
+}
+
+- (void)selectFirstSelectableRow
+{
+    const auto &items = m_FilteredItems;
+    for( size_t idx = 0; idx < items.size(); ++idx ) {
+        if( [self tableView:m_TableView shouldSelectRow:idx] ) {
+            [m_TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:idx] byExtendingSelection:false];
+            break;
+        }
+    }
 }
 
 @end
@@ -632,23 +724,28 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 
 - (void)keyDown:(NSEvent *)_event
 {
+    NCCommandPopoverViewController *ctrl = static_cast<NCCommandPopoverViewController *>(self.delegate);
+    assert(ctrl != nil);
     const unsigned short keycode = _event.keyCode;
     if( keycode == kVK_Return || keycode == kVK_ANSI_KeypadEnter || keycode == kVK_Space ) {
         const long selected = self.selectedRow;
         if( selected != -1 ) {
-            [static_cast<NCCommandPopoverViewController *>(self.delegate) tableView:self didClickTableRow:selected];
+            [ctrl tableView:self didClickTableRow:selected];
         }
         else {
             NSBeep();
         }
     }
-    else if( auto idx = [static_cast<NCCommandPopoverViewController *>(self.delegate) itemIndexFromKeyDown:_event] ) {
+    else if( auto idx = [ctrl itemIndexFromKeyDown:_event] ) {
         if( static_cast<long>(*idx) < self.numberOfRows ) {
-            [static_cast<NCCommandPopoverViewController *>(self.delegate) tableView:self didClickTableRow:*idx];
+            [ctrl tableView:self didClickTableRow:*idx];
         }
         else {
             NSBeep();
         }
+    }
+    else if( [ctrl processKeyDown:_event] ) {
+        /*nothing - already processed*/
     }
     else {
         [super keyDown:_event];

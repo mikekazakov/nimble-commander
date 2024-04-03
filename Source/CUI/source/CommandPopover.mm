@@ -736,6 +736,24 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
             NSBeep();
         }
     }
+    else if( keycode == kVK_Home ) {
+        const long rows = self.numberOfRows;
+        for( long row = 0; row < rows; ++row )
+            if( [ctrl tableView:self shouldSelectRow:row] ) {
+                [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:false];
+                [self scrollRowToVisible:row];
+                break;
+            }
+    }
+    else if( keycode == kVK_End ) {
+        const long rows = self.numberOfRows;
+        for( long row = rows - 1; row >= 0; --row )
+            if( [ctrl tableView:self shouldSelectRow:row] ) {
+                [self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:false];
+                [self scrollRowToVisible:row];
+                break;
+            }
+    }
     else if( auto idx = [ctrl itemIndexFromKeyDown:_event] ) {
         if( static_cast<long>(*idx) < self.numberOfRows ) {
             [ctrl tableView:self didClickTableRow:*idx];

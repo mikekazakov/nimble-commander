@@ -188,6 +188,7 @@
     m_ScrollView.horizontalScrollElasticity = NSScrollElasticityNone;
     m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
     m_ScrollView.drawsBackground = false;
+    m_ScrollView.contentInsets = NSEdgeInsets{0., 0., 0., 0.};
 
     m_TableView = [[NCCommandPopoverTableView alloc] initWithFrame:NSRect()];
     m_TableView.autoresizingMask = NSViewNotSizable;
@@ -203,7 +204,7 @@
     m_TableView.autosaveTableColumns = false;
     m_TableView.intercellSpacing = NSMakeSize(0., 2);
     if( @available(macOS 11.0, *) ) {
-        m_TableView.style = NSTableViewStyleInset;
+        m_TableView.style = NSTableViewStyleFullWidth;
     }
     else {
         m_TableView.selectionHighlightStyle = NSTableViewSelectionHighlightStyleRegular;
@@ -234,15 +235,13 @@
     [v addSubview:m_ScrollView];
 
     auto views = NSDictionaryOfVariableBindings(m_LabelTextField, m_SearchIcon, m_ScrollView);
-    [v addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                                              @"H:|-(11)-[m_SearchIcon(==16)]-(4)-[m_LabelTextField(>=40)]-(4)-|"
-                                                              options:0
-                                                              metrics:nil
-                                                                views:views]];
+    [v addConstraints:[NSLayoutConstraint
+                          constraintsWithVisualFormat:@"H:|-(6)-[m_SearchIcon(==16)]-(4)-[m_LabelTextField(>=40)]-(4)-|"
+                                              options:0
+                                              metrics:nil
+                                                views:views]];
 
-    //    [v addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==0)-[m_ScrollView]-(==0)-|"
-    // TODO: for MacOS < 11 remove this VVVV hack ^^^
-    [v addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==-5)-[m_ScrollView]-(==-5)-|"
+    [v addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==0)-[m_ScrollView]-(==0)-|"
                                                               options:0
                                                               metrics:nil
                                                                 views:views]];
@@ -287,26 +286,27 @@
     self.view = v;
 }
 
-- (void)viewDidAppear
+- (void)updateScrollViewHeighConstraint
 {
-    [super viewDidAppear];
-    [self.view.window makeFirstResponder:m_TableView];
-    [self selectFirstSelectableRow];
-
     const auto &items = m_FilteredItems;
-
-    double height = 18.; // why???
-    for( size_t idx = 0; idx < std::min(items.size(), 30ul); ++idx ) {
+    double height = 2.; // why???
+    const size_t max_visible_rows = 30;
+    for( size_t idx = 0; idx < std::min(items.size(), max_visible_rows); ++idx ) {
         height += items[idx].separatorItem ? m_SeparatorRowHeight : m_RegularRowHeight;
         if( idx > 0 )
             height += m_TableView.intercellSpacing.height;
     }
     m_ScrollViewHeightConstraint.constant = height;
+}
 
-    //    [m_TableView tile]; // no idea why this is not triggered automatically?
+- (void)viewDidAppear
+{
+    [super viewDidAppear];
+    [self.view.window makeFirstResponder:m_TableView];
+    [self selectFirstSelectableRow];
+    [self updateScrollViewHeighConstraint];
     [self.view layout];
-
-    [m_Parent setContentSize:self.view.fittingSize];
+    m_Parent.contentSize = self.view.fittingSize;
 }
 
 - (void)setupHotKeysMapping
@@ -634,7 +634,7 @@
 {
     // Use only clear keypresses, no modifiers
     if( _event.modifierFlags & (NSEventModifierFlagControl | NSEventModifierFlagCommand) )
-        return true;
+        return false;
 
     const auto keycode = _event.keyCode;
     if( keycode == kVK_Delete ) {
@@ -650,8 +650,14 @@
         }
     }
 
+    static NSCharacterSet *const allowed = [] {
+        NSMutableCharacterSet *set = [[NSMutableCharacterSet alloc] init];
+        [set formUnionWithCharacterSet:NSCharacterSet.alphanumericCharacterSet];
+        [set formUnionWithCharacterSet:NSCharacterSet.punctuationCharacterSet];
+        [set formUnionWithCharacterSet:NSCharacterSet.symbolCharacterSet];
+        return set.invertedSet;
+    }();
     NSString *chars = _event.characters;
-    static const auto allowed = NSCharacterSet.alphanumericCharacterSet.invertedSet;
     if( chars.length == 0 || [chars rangeOfCharacterFromSet:allowed].location != NSNotFound ) {
         return false;
     }
@@ -687,6 +693,10 @@
         [self setupHotKeysMapping];
         [m_TableView reloadData];
         [self selectFirstSelectableRow];
+
+        [self updateScrollViewHeighConstraint];
+        [self.view layout];
+        m_Parent.contentSize = self.view.fittingSize;
     }
 }
 

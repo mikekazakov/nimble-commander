@@ -12,7 +12,6 @@ static constexpr double g_ContentViewCornerRadius = 10.;
 
 @interface NCCommandPopover (Private)
 - (std::span<NCCommandPopoverItem *const>)commandItems;
-- (double)maximumCommandTitleWidth;
 
 @property(nonatomic, readwrite) NSSize contentSize;
 
@@ -33,9 +32,6 @@ static constexpr double g_ContentViewCornerRadius = 10.;
 @end
 
 @interface NCCommandPopoverTableView : NSTableView
-@end
-
-@interface NCCommandPopoverTableSectionRowView : NSTableRowView
 @end
 
 @implementation NCCommandPopoverItem {
@@ -162,7 +158,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     m_FilteredItems = m_AllItems;
 
     [self setupHotKeysMapping];
-    const double max_title_width = [m_Parent maximumCommandTitleWidth];
+    const double max_title_width = [self maximumCommandTitleWidth];
     const double title_col_margin = 20.;
     const double title_col_width = std::max(max_title_width + title_col_margin, 160.);
 
@@ -319,6 +315,18 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     [self updateScrollViewHeighConstraint];
     [self.view layout];
     m_Parent.contentSize = self.view.fittingSize;
+}
+
+- (double)maximumCommandTitleWidth
+{
+    if( m_AllItems.empty() ) {
+        return 0.;
+    }
+    auto attributes = @{NSFontAttributeName:m_LabelFont};
+    auto widths = m_AllItems | std::views::transform([attributes](NCCommandPopoverItem *_item) -> double {
+                      return [_item.title sizeWithAttributes:attributes].width;
+                  });
+    return *std::ranges::max_element(widths);
 }
 
 - (void)setupHotKeysMapping
@@ -578,8 +586,6 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     if( !item.sectionHeader )
         return nil;
 
-    NCCommandPopoverTableSectionRowView *rv = [[NCCommandPopoverTableSectionRowView alloc] initWithFrame:NSRect()];
-
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
     tf.translatesAutoresizingMaskIntoConstraints = false;
     tf.stringValue = item.title;
@@ -590,8 +596,8 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     tf.font = m_SectionFont;
     tf.textColor = NSColor.disabledControlTextColor;
 
+    NSTableRowView *rv = [[NSTableRowView alloc] initWithFrame:NSRect()];
     [rv addSubview:tf];
-
     [rv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==6)-[tf]-(==0)-|"
                                                                options:0
                                                                metrics:nil
@@ -844,9 +850,6 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 
 @end
 
-@implementation NCCommandPopoverTableSectionRowView
-@end
-
 @implementation NCCommandPopoverWindow {
     id m_GlobalEventMonitor;
     id m_LocalEventMonitor;
@@ -1006,18 +1009,6 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 - (std::span<NCCommandPopoverItem *const>)commandItems
 {
     return m_Items;
-}
-
-- (double)maximumCommandTitleWidth
-{
-    if( m_Items.empty() ) {
-        return 0.;
-    }
-    auto attributes = @{NSFontAttributeName: [NSFont menuFontOfSize:0.0]};
-    auto widths = m_Items | std::views::transform([attributes](NCCommandPopoverItem *_item) -> double {
-                      return [_item.title sizeWithAttributes:attributes].width;
-                  });
-    return *std::ranges::max_element(widths);
 }
 
 - (void)close

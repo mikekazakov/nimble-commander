@@ -19,6 +19,7 @@
 #include <Base/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include <CUI/CommandPopover.h>
 
 namespace nc::panel::actions {
 
@@ -399,10 +400,17 @@ OpenExistingNetworkConnection::OpenExistingNetworkConnection(NetworkConnectionsM
 
 void OpenExistingNetworkConnection::Perform(PanelController *_target, id _sender) const
 {
+    AnyHolder *holder = nil;
     if( auto menuitem = objc_cast<NSMenuItem>(_sender) )
-        if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
-            if( auto conn = std::any_cast<NetworkConnectionsManager::Connection>(&holder.any) )
-                GoToConnection(_target, *conn, m_NetMgr);
+        holder = objc_cast<AnyHolder>(menuitem.representedObject);
+    else if( auto command = objc_cast<NCCommandPopoverItem>(_sender) )
+        holder = objc_cast<AnyHolder>(command.representedObject);
+
+    if( holder ) {
+        if( auto conn = std::any_cast<NetworkConnectionsManager::Connection>(&holder.any) ) {
+            GoToConnection(_target, *conn, m_NetMgr);
+        }
+    }
 }
 
 } // namespace nc::panel::actions

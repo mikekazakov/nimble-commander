@@ -523,6 +523,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
             tf.drawsBackground = false;
             tf.font = m_LabelFont;
             tf.textColor = NSColor.labelColor;
+            tf.toolTip = item.toolTip;
 
             NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
             [cv addSubview:tf];

@@ -185,6 +185,8 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     m_LabelTextField.translatesAutoresizingMaskIntoConstraints = false;
     m_LabelTextField.font = m_LabelFont;
     m_LabelTextField.focusRingType = NSFocusRingTypeNone;
+    m_LabelTextField.usesSingleLineMode = true;
+    m_LabelTextField.lineBreakMode = NSLineBreakByClipping;
     m_LabelTextField.delegate = self;
     [v addSubview:m_LabelTextField];
 
@@ -279,7 +281,7 @@ static constexpr double g_ContentViewCornerRadius = 10.;
                                                      toItem:nil
                                                   attribute:NSLayoutAttributeNotAnAttribute
                                                  multiplier:1.
-                                                   constant:total_columns_width + 32.]];
+                                                   constant:total_columns_width + 16.]];
 
     m_ScrollViewHeightConstraint = [NSLayoutConstraint constraintWithItem:m_ScrollView
                                                                 attribute:NSLayoutAttributeHeight
@@ -681,6 +683,15 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     [self updateFiltering];
 }
 
+- (BOOL)control:(NSControl *)_control textView:(NSTextView *)_text_biew doCommandBySelector:(SEL)_sel
+{
+    if (_control == m_LabelTextField && _sel == @selector(cancelOperation:)) {
+        [m_Parent close];
+        return true;
+    }
+    return false;
+}
+
 - (void)updateFiltering
 {
     NSString *str = m_LabelTextField.stringValue ? m_LabelTextField.stringValue : @"";
@@ -884,22 +895,18 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 
 - (void)closeIfNeededWithMouseEvent:(NSEvent *)_event
 {
-    NSPoint globalLocation = [_event locationInWindow];
-    NSPoint windowLocation = [self.contentView convertPoint:globalLocation fromView:nil];
-    BOOL isInsidePopover = NSPointInRect(windowLocation, self.contentView.bounds);
-    if( !isInsidePopover ) {
+    const NSPoint global = [_event locationInWindow];
+    const NSPoint local = [self.contentView convertPoint:global fromView:nil];
+    if( !NSPointInRect(local, self.contentView.bounds) )
         [self close];
-    }
 }
 
-- (void)keyDown:(NSEvent *)event
+- (void)keyDown:(NSEvent *)_event
 {
-    if( event.keyCode == kVK_Escape ) {
+    if( _event.keyCode == kVK_Escape )
         [self close];
-    }
-    else {
-        [super keyDown:event];
-    }
+    else
+        [super keyDown:_event];
 }
 
 - (void)close
@@ -935,11 +942,10 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
     [NSColor.clearColor setFill];
     NSRectFill(self.bounds);
 
-    NSBezierPath *borderPath = [NSBezierPath bezierPathWithRoundedRect:self.bounds
-                                                               xRadius:g_ContentViewCornerRadius
-                                                               yRadius:g_ContentViewCornerRadius];
     [NSColor.windowBackgroundColor setFill];
-    [borderPath fill];
+    [[NSBezierPath bezierPathWithRoundedRect:self.bounds
+                                     xRadius:g_ContentViewCornerRadius
+                                     yRadius:g_ContentViewCornerRadius] fill];
 }
 
 @end
@@ -959,6 +965,14 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
     return self;
 }
 
+- (void)dealloc
+{
+    if(m_Window) {
+        m_Window.delegate = nil;
+        [m_Window close];
+    }
+}
+
 - (void)addItem:(NCCommandPopoverItem *_Nonnull)_new_item
 {
     assert(std::ranges::find(m_Items, _new_item) == m_Items.end());
@@ -972,15 +986,18 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
     NSView *view = m_Controller.view;
     m_ContentSize = view.fittingSize;
 
-    // TODO: use _alignment
     const NSRect rect_in_window = [_positioning_view convertRect:_positioning_rect toView:nil];
     const NSRect rect_on_screen = [_positioning_view.window convertRectToScreen:rect_in_window];
-    NSRect frame = NSMakeRect(NSMinX(rect_on_screen),
-                              NSMinY(rect_on_screen) - m_ContentSize.height,
-                              m_ContentSize.width,
-                              m_ContentSize.height);
+    const double sx = m_ContentSize.width;
+    const double sy = m_ContentSize.height;
+    const double x = _alignment == NCCommandPopoverAlignment::Left
+                         ? NSMinX(rect_on_screen)
+                         : (_alignment == NCCommandPopoverAlignment::Right
+                                ? NSMaxX(rect_on_screen) - sx
+                                : NSMinX(rect_on_screen) + (rect_on_screen.size.width - sx) / 2.);
+    const double y = NSMinY(rect_on_screen) - m_ContentSize.height;
 
-    m_Window = [[NCCommandPopoverWindow alloc] initWithContentRect:frame];
+    m_Window = [[NCCommandPopoverWindow alloc] initWithContentRect:NSMakeRect(x, y, sx, sy)];
     m_Window.contentView = view;
     m_Window.delegate = self;
     [m_Window makeKeyAndOrderFront:nil];

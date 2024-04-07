@@ -2,6 +2,15 @@
 #pragma once
 #include <Cocoa/Cocoa.h>
 
+@class NCCommandPopover;
+@class NCCommandPopoverItem;
+
+enum class NCCommandPopoverAlignment {
+    Left = 0,
+    Center = 1,
+    Right = 2
+};
+
 @interface NCCommandPopoverItem : NSObject
 
 - (instancetype _Nonnull)init;
@@ -30,13 +39,24 @@
 
 @end
 
-@interface NCCommandPopover : NSPopover
+@protocol NCCommandPopoverDelegate <NSObject>
+@optional
+- (void)commandPopoverDidClose:(NCCommandPopover *_Nonnull)_popover;
+@end
+
+@interface NCCommandPopover : NSObject <NSWindowDelegate>
 
 - (instancetype _Nonnull)init NS_UNAVAILABLE;
 - (instancetype _Nonnull)initWithTitle:(NSString *_Nonnull)_title;
 
 - (void)addItem:(NCCommandPopoverItem *_Nonnull)_newItem;
 
-// TODO: add a dedicated show... method
+- (void)showRelativeToRect:(NSRect)_positioning_rect
+                    ofView:(NSView *_Nonnull)_positioning_view
+                 alignment:(NCCommandPopoverAlignment)_alignment;
+
+- (void)close;
+
+@property(nonatomic, nullable, weak) id<NCCommandPopoverDelegate> delegate;
 
 @end

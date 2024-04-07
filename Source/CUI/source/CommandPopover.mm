@@ -8,10 +8,20 @@
 #include <span>
 #include <optional>
 
+static constexpr double g_ContentViewCornerRadius = 10.;
+
 @interface NCCommandPopover (Private)
 - (std::span<NCCommandPopoverItem *const>)commandItems;
 - (double)maximumCommandTitleWidth;
 
+@property(nonatomic, readwrite) NSSize contentSize;
+
+@end
+
+@interface NCCommandPopoverWindow : NSWindow
+@end
+
+@interface NCCommandPopoverContentView : NSView
 @end
 
 @interface NCCommandPopoverViewController : NSViewController <NSTableViewDataSource, //
@@ -131,7 +141,6 @@
     std::array<int, 12> m_HotKeyIdxToItemIdx;      // negative means no mapping
     double m_RegularRowHeight;
     double m_SeparatorRowHeight;
-    double m_RowPadding;
 }
 
 - (instancetype _Nonnull)initWithPopover:(NCCommandPopover *)_popover andTitle:(NSString *)_title
@@ -143,7 +152,6 @@
         m_SectionFont = [NSFont menuFontOfSize:NSFont.smallSystemFontSize];
         m_RegularRowHeight = std::round(m_LabelFont.pointSize + 7.);
         m_SeparatorRowHeight = 11.;
-        m_RowPadding = 16.; // TODO: will be different on MacOS 10.15, verify and adjust
     }
     return self;
 }
@@ -158,7 +166,7 @@
     const double title_col_margin = 20.;
     const double title_col_width = std::max(max_title_width + title_col_margin, 160.);
 
-    NSView *v = [[NSView alloc] initWithFrame:NSMakeRect(0., 0., 200., 200.)];
+    NCCommandPopoverContentView *v = [[NCCommandPopoverContentView alloc] initWithFrame:NSMakeRect(0., 0., 200., 200.)];
 
     m_SearchIcon = [[NSImageView alloc] initWithFrame:NSRect()];
     m_SearchIcon.translatesAutoresizingMaskIntoConstraints = false;
@@ -284,6 +292,8 @@
     [v addConstraint:m_ScrollViewHeightConstraint];
 
     self.view = v;
+    [self updateScrollViewHeighConstraint];
+    [self.view layout];
 }
 
 - (void)updateScrollViewHeighConstraint
@@ -580,18 +590,10 @@
 
     [rv addSubview:tf];
 
-    [rv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[tf]-(==0)-|"
+    [rv addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==6)-[tf]-(==0)-|"
                                                                options:0
                                                                metrics:nil
                                                                  views:NSDictionaryOfVariableBindings(tf)]];
-    [rv addConstraint:[NSLayoutConstraint constraintWithItem:tf
-                                                   attribute:NSLayoutAttributeLeading
-                                                   relatedBy:NSLayoutRelationEqual
-                                                      toItem:rv
-                                                   attribute:NSLayoutAttributeLeading
-                                                  multiplier:1.
-                                                    constant:m_RowPadding]];
-
     [rv addConstraint:[NSLayoutConstraint constraintWithItem:tf
                                                    attribute:NSLayoutAttributeCenterY
                                                    relatedBy:NSLayoutRelationEqual
@@ -607,8 +609,12 @@
     const auto &items = m_FilteredItems;
     if( _row >= 0 || _row < static_cast<long>(items.size()) ) {
         NCCommandPopoverItem *item = items[_row];
+        SEL action = item.action;
+        id target = item.target;
+
         [m_Parent close]; // should we close BEFORE or AFTER triggering the action??
-        if( ![NSApplication.sharedApplication sendAction:item.action to:item.target from:item] ) {
+
+        if( ![NSApplication.sharedApplication sendAction:action to:target from:item] ) {
             NSBeep();
         }
     }
@@ -688,16 +694,17 @@
 
     std::vector<NCCommandPopoverItem *> new_filtered;
     std::ranges::copy_if(m_AllItems, std::back_inserter(new_filtered), validate);
-    if( new_filtered != m_FilteredItems ) {
-        m_FilteredItems = new_filtered;
-        [self setupHotKeysMapping];
-        [m_TableView reloadData];
-        [self selectFirstSelectableRow];
+    if( new_filtered == m_FilteredItems )
+        return; // nothing to do
 
-        [self updateScrollViewHeighConstraint];
-        [self.view layout];
-        m_Parent.contentSize = self.view.fittingSize;
-    }
+    m_FilteredItems = new_filtered;
+    [self setupHotKeysMapping];
+    [m_TableView reloadData];
+    [self selectFirstSelectableRow];
+
+    [self updateScrollViewHeighConstraint];
+    [self.view layout];
+    m_Parent.contentSize = self.view.fittingSize;
 }
 
 - (void)selectFirstSelectableRow
@@ -829,18 +836,125 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
 @implementation NCCommandPopoverTableSectionRowView
 @end
 
+@implementation NCCommandPopoverWindow {
+    id m_GlobalEventMonitor;
+    id m_LocalEventMonitor;
+}
+
+- (instancetype)initWithContentRect:(NSRect)contentRect
+{
+    self = [super initWithContentRect:contentRect
+                            styleMask:NSWindowStyleMaskBorderless
+                              backing:NSBackingStoreBuffered
+                                defer:true];
+    if( self ) {
+        self.opaque = false;
+        self.backgroundColor = NSColor.clearColor;
+        self.level = NSPopUpMenuWindowLevel;
+        self.ignoresMouseEvents = false;
+        self.hasShadow = true;
+        self.releasedWhenClosed = false;
+    }
+    return self;
+}
+
+- (BOOL)canBecomeKeyWindow
+{
+    return true;
+}
+
+- (void)makeKeyAndOrderFront:(nullable id)_sender
+{
+    [super makeKeyAndOrderFront:_sender];
+
+    __weak NCCommandPopoverWindow *weak_self = self;
+    const NSEventMask mask = NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown | NSEventMaskOtherMouseDown;
+    m_GlobalEventMonitor = [NSEvent addGlobalMonitorForEventsMatchingMask:mask
+                                                                  handler:^(NSEvent *_Nonnull _event) {
+                                                                    if( NCCommandPopoverWindow *me = weak_self )
+                                                                        [me closeIfNeededWithMouseEvent:_event];
+                                                                  }];
+    m_LocalEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:mask
+                                                                handler:^(NSEvent *_Nonnull _event) {
+                                                                  if( NCCommandPopoverWindow *me = weak_self )
+                                                                      [me closeIfNeededWithMouseEvent:_event];
+                                                                  return _event;
+                                                                }];
+}
+
+- (void)closeIfNeededWithMouseEvent:(NSEvent *)_event
+{
+    NSPoint globalLocation = [_event locationInWindow];
+    NSPoint windowLocation = [self.contentView convertPoint:globalLocation fromView:nil];
+    BOOL isInsidePopover = NSPointInRect(windowLocation, self.contentView.bounds);
+    if( !isInsidePopover ) {
+        [self close];
+    }
+}
+
+- (void)keyDown:(NSEvent *)event
+{
+    if( event.keyCode == kVK_Escape ) {
+        [self close];
+    }
+    else {
+        [super keyDown:event];
+    }
+}
+
+- (void)close
+{
+    if( m_GlobalEventMonitor ) {
+        [NSEvent removeMonitor:m_GlobalEventMonitor];
+        m_GlobalEventMonitor = nil;
+    }
+    if( m_LocalEventMonitor ) {
+        [NSEvent removeMonitor:m_LocalEventMonitor];
+        m_LocalEventMonitor = nil;
+    }
+
+    [super close];
+}
+
+@end
+@implementation NCCommandPopoverContentView
+
+- (instancetype)initWithFrame:(NSRect)_rect
+{
+    if( self = [super initWithFrame:_rect] ) {
+        self.wantsLayer = true;
+        self.layer.cornerRadius = g_ContentViewCornerRadius;
+        self.layer.masksToBounds = true;
+    }
+    return self;
+}
+
+- (void)drawRect:(NSRect)_rc
+{
+    [super drawRect:_rc];
+    [NSColor.clearColor setFill];
+    NSRectFill(self.bounds);
+
+    NSBezierPath *borderPath = [NSBezierPath bezierPathWithRoundedRect:self.bounds
+                                                               xRadius:g_ContentViewCornerRadius
+                                                               yRadius:g_ContentViewCornerRadius];
+    [NSColor.windowBackgroundColor setFill];
+    [borderPath fill];
+}
+
+@end
+
 @implementation NCCommandPopover {
     std::vector<NCCommandPopoverItem *> m_Items;
     NCCommandPopoverViewController *m_Controller;
+    NCCommandPopoverWindow *m_Window;
+    NSSize m_ContentSize;
 }
 
 - (instancetype _Nonnull)initWithTitle:(NSString *_Nonnull)_title
 {
     if( self = [super init] ) {
-        self.behavior = NSPopoverBehaviorTransient;
-        self.animates = false;
         m_Controller = [[NCCommandPopoverViewController alloc] initWithPopover:self andTitle:_title];
-        self.contentViewController = m_Controller;
     }
     return self;
 }
@@ -851,26 +965,26 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
     m_Items.push_back(_new_item);
 }
 
-//- (void)showRelativeToRect:(NSRect)_positioning_rect
-//                    ofView:(NSView *)_positioning_view
-//             preferredEdge:(NSRectEdge)_preferred_edge
-//{
-//    if( [self respondsToSelector:NSSelectorFromString(@"shouldHideAnchor")] ) {
-//
-//        [self setValue:@true forKeyPath:@"shouldHideAnchor"];
-//        const bool flipped = _positioning_view.flipped;
-//        // TODO: clarify!
-//        if( _preferred_edge == NSMaxYEdge ) {
-//            const double arror_height = 19.;
-//            _positioning_rect = NSOffsetRect(_positioning_rect, 0., flipped ? -arror_height : arror_height);
-//        }
-//        if( _preferred_edge == NSMinYEdge ) {
-//            const double arror_height = 17.;
-//            _positioning_rect = NSOffsetRect(_positioning_rect, 0., flipped ? arror_height : -arror_height);
-//        }
-//    }
-//    [super showRelativeToRect:_positioning_rect ofView:_positioning_view preferredEdge:_preferred_edge];
-//}
+- (void)showRelativeToRect:(NSRect)_positioning_rect
+                    ofView:(NSView *_Nonnull)_positioning_view
+                 alignment:(NCCommandPopoverAlignment)_alignment
+{
+    NSView *view = m_Controller.view;
+    m_ContentSize = view.fittingSize;
+
+    // TODO: use _alignment
+    const NSRect rect_in_window = [_positioning_view convertRect:_positioning_rect toView:nil];
+    const NSRect rect_on_screen = [_positioning_view.window convertRectToScreen:rect_in_window];
+    NSRect frame = NSMakeRect(NSMinX(rect_on_screen),
+                              NSMinY(rect_on_screen) - m_ContentSize.height,
+                              m_ContentSize.width,
+                              m_ContentSize.height);
+
+    m_Window = [[NCCommandPopoverWindow alloc] initWithContentRect:frame];
+    m_Window.contentView = view;
+    m_Window.delegate = self;
+    [m_Window makeKeyAndOrderFront:nil];
+}
 
 - (std::span<NCCommandPopoverItem *const>)commandItems
 {
@@ -887,6 +1001,42 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
                       return [_item.title sizeWithAttributes:attributes].width;
                   });
     return *std::ranges::max_element(widths);
+}
+
+- (void)close
+{
+    [m_Window close];
+}
+
+- (void)windowDidResignKey:(NSNotification *)_notification
+{
+    [self close];
+}
+
+- (void)windowWillClose:(NSNotification *)_notification
+{
+    if( id<NCCommandPopoverDelegate> delegate = self.delegate;
+        delegate != nil && [delegate respondsToSelector:@selector(commandPopoverDidClose:)] ) {
+        [delegate commandPopoverDidClose:self];
+    }
+}
+
+- (NSSize)contentSize
+{
+    return m_ContentSize;
+}
+
+- (void)setContentSize:(NSSize)contentSize
+{
+    if( !NSEqualSizes(m_ContentSize, contentSize) ) {
+        m_ContentSize = contentSize;
+        const NSRect frame = m_Window.frame;
+        NSRect new_frame = NSMakeRect(frame.origin.x,
+                                      frame.origin.y - (m_ContentSize.height - frame.size.height),
+                                      m_ContentSize.width,
+                                      m_ContentSize.height);
+        [m_Window setFrame:new_frame display:true animate:false];
+    }
 }
 
 @end

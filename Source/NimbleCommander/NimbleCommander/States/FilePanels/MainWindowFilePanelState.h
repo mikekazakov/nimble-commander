@@ -38,6 +38,7 @@ class Model;
 @class MainWindowFilePanelsStateToolbarDelegate;
 @class ColoredSeparatorLine;
 @class NCPanelQLPanelAdaptor;
+@class NCCommandPopover;
 
 struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
@@ -59,6 +60,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     ColoredSeparatorLine *m_SeparatorLine;
     MainWindowFilePanelsStateToolbarDelegate *m_ToolbarDelegate;
     __weak NSResponder *m_LastResponder;
+    NCCommandPopover *m_CommandPopover;
 
     bool m_ShowTabs;
 

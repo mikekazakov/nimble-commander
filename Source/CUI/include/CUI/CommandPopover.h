@@ -5,12 +5,14 @@
 @class NCCommandPopover;
 @class NCCommandPopoverItem;
 
+// Controls the horizontal alignment of the popover window relative to the positioning rectangle
 enum class NCCommandPopoverAlignment {
     Left = 0,
     Center = 1,
     Right = 2
 };
 
+// NCCommandPopoverItem mimics the semantics of NSMenuItem but for NCCommandPopover instead
 @interface NCCommandPopoverItem : NSObject
 
 - (instancetype _Nonnull)init;
@@ -41,6 +43,7 @@ enum class NCCommandPopoverAlignment {
 
 @protocol NCCommandPopoverDelegate <NSObject>
 @optional
+// Called after the popover is closed due to any reason.
 - (void)commandPopoverDidClose:(NCCommandPopover *_Nonnull)_popover;
 @end
 
@@ -49,8 +52,11 @@ enum class NCCommandPopoverAlignment {
 - (instancetype _Nonnull)init NS_UNAVAILABLE;
 - (instancetype _Nonnull)initWithTitle:(NSString *_Nonnull)_title;
 
+// Adds a new item to be shown in the list later
 - (void)addItem:(NCCommandPopoverItem *_Nonnull)_newItem;
 
+// Shows the popover positioning it under the specified rectangle of a particular view.
+// Can be aligned horizontally.
 - (void)showRelativeToRect:(NSRect)_positioning_rect
                     ofView:(NSView *_Nonnull)_positioning_view
                  alignment:(NCCommandPopoverAlignment)_alignment;

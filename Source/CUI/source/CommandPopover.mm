@@ -221,7 +221,10 @@ static constexpr double g_ContentViewCornerRadius = 10.;
     m_TableView.rowHeight = m_RegularRowHeight;
 
     NSTableColumn *img_col = [[NSTableColumn alloc] initWithIdentifier:@"I"];
-    img_col.width = 20.;
+    if( @available(macOS 11.0, *))
+        img_col.width = 20.;
+    else
+        img_col.width = 26.;
     [m_TableView addTableColumn:img_col];
 
     NSTableColumn *label_col = [[NSTableColumn alloc] initWithIdentifier:@"L"];
@@ -496,12 +499,12 @@ static constexpr double g_ContentViewCornerRadius = 10.;
                                             multiplier:1.
                                               constant:16.],
                 [NSLayoutConstraint constraintWithItem:iv
-                                             attribute:NSLayoutAttributeLeft
+                                             attribute:NSLayoutAttributeRight
                                              relatedBy:NSLayoutRelationEqual
                                                 toItem:cv
-                                             attribute:NSLayoutAttributeLeft
+                                             attribute:NSLayoutAttributeRight
                                             multiplier:1.
-                                              constant:0.],
+                                              constant:-4.],
                 [NSLayoutConstraint constraintWithItem:iv
                                              attribute:NSLayoutAttributeCenterY
                                              relatedBy:NSLayoutRelationEqual

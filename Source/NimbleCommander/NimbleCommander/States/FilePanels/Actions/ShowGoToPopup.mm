@@ -3,7 +3,6 @@
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include <VFS/VFSListingInput.h>
-#include <CUI/FilterPopUpMenu.h>
 #include <CUI/CommandPopover.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>

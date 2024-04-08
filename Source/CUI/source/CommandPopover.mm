@@ -1031,6 +1031,10 @@ static constexpr NSTrackingAreaOptions g_TrackingOptions =
         delegate != nil && [delegate respondsToSelector:@selector(commandPopoverDidClose:)] ) {
         [delegate commandPopoverDidClose:self];
     }
+        
+    m_Window = nil;
+    m_Controller = nil;
+    m_Items.clear();
 }
 
 - (NSSize)contentSize

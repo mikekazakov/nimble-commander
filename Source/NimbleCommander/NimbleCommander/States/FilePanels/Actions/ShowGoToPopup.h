@@ -7,6 +7,8 @@
 
 class NetworkConnectionsManager;
 @class GoToPopupListActionMediator;
+@class NCCommandPopover;
+@class NCCommandPopoverItem;
 
 namespace nc::config {
 class Config;
@@ -32,15 +34,18 @@ struct GoToPopupsBase {
                    const nc::panel::TagsStorage &_tags_storage);
 
 protected:
-    std::tuple<NSMenu *, GoToPopupListActionMediator *>
-    BuidInitialMenu(MainWindowFilePanelState *_state, PanelController *_panel, NSString *_title) const;
-    NSMenu *BuildConnectionsQuickList(PanelController *_panel) const;
-    NSMenu *BuildFavoritesQuickList(PanelController *_panel) const;
-    NSMenu *BuildHistoryQuickList(PanelController *_panel) const;
-    NSMenu *BuildParentFoldersQuickList(PanelController *_panel) const;
-    NSMenu *BuildVolumesQuickList(PanelController *_panel) const;
-    NSMenu *BuildTagsQuickList(PanelController *_panel) const;
-    NSMenu *BuildGoToMenu(MainWindowFilePanelState *_state, PanelController *_panel) const;
+    std::pair<NCCommandPopover *, GoToPopupListActionMediator *>
+    BuidInitialPopover(MainWindowFilePanelState *_state, PanelController *_panel, NSString *_title) const;
+    std::pair<NCCommandPopover *, GoToPopupListActionMediator *>
+    BuildConnectionsQuickList(PanelController *_panel) const;
+    std::pair<NCCommandPopover *, GoToPopupListActionMediator *> BuildFavoritesQuickList(PanelController *_panel) const;
+    std::pair<NCCommandPopover *, GoToPopupListActionMediator *> BuildHistoryQuickList(PanelController *_panel) const;
+    std::pair<NCCommandPopover *, GoToPopupListActionMediator *>
+    BuildParentFoldersQuickList(PanelController *_panel) const;
+    std::pair<NCCommandPopover *, GoToPopupListActionMediator *> BuildVolumesQuickList(PanelController *_panel) const;
+    std::pair<NCCommandPopover *, GoToPopupListActionMediator *> BuildTagsQuickList(PanelController *_panel) const;
+    std::pair<NCCommandPopover *, GoToPopupListActionMediator *> BuildGoToMenu(MainWindowFilePanelState *_state,
+                                                                               PanelController *_panel) const;
 
     NetworkConnectionsManager &m_NetMgr;
     nc::utility::NativeFSManager &m_NativeFSMgr;

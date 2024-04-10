@@ -22,7 +22,6 @@
 #include "PanelListViewDateTimeView.h"
 #include "PanelListViewTagsView.h"
 #include "../Helpers/IconRepositoryCleaner.h"
-#include <stack>
 
 using namespace nc;
 using namespace nc::panel;
@@ -75,7 +74,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     AdaptiveDateFormatting::Style m_DateModifiedFormattingStyle;
     AdaptiveDateFormatting::Style m_DateAccessedFormattingStyle;
 
-    std::stack<PanelListViewRowView *> m_RowsStash;
+    std::vector<PanelListViewRowView *> m_RowsStash;
 
     data::SortMode m_SortMode;
     std::function<void(data::SortMode)> m_SortModeChangeCallback;
@@ -91,15 +90,15 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
 @synthesize sortMode = m_SortMode;
 @synthesize sortModeChangeCallback = m_SortModeChangeCallback;
 
-- (id)initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository &)_ir
+- (id)initWithFrame:(NSRect)_frame andIR:(nc::vfsicon::IconRepository &)_ir
 {
-    self = [super initWithFrame:frameRect];
+    self = [super initWithFrame:_frame];
     if( self ) {
         m_IconRepository = &_ir;
 
         [self calculateItemLayout];
 
-        m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
+        m_ScrollView = [[NSScrollView alloc] initWithFrame:_frame];
         m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
         m_ScrollView.wantsLayer = true;
         m_ScrollView.layer.drawsAsynchronously = false;
@@ -121,7 +120,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
                                                                      metrics:nil
                                                                        views:views]];
 
-        m_TableView = [[PanelListViewTableView alloc] initWithFrame:frameRect];
+        m_TableView = [[PanelListViewTableView alloc] initWithFrame:_frame];
         m_TableView.dataSource = self;
         m_TableView.delegate = self;
         m_TableView.allowsMultipleSelection = false;
@@ -282,20 +281,20 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     }
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *) [[maybe_unused]] change
-                       context:(void *) [[maybe_unused]] context
+- (void)observeValueForKeyPath:(NSString *)_key_path
+                      ofObject:(id)_object
+                        change:(NSDictionary *) [[maybe_unused]] _change
+                       context:(void *) [[maybe_unused]] _context
 {
-    if( object == m_PanelView && [keyPath isEqualToString:@"active"] ) {
+    if( _object == m_PanelView && [_key_path isEqualToString:@"active"] ) {
         const bool active = m_PanelView.active;
         [m_TableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rv, [[maybe_unused]] NSInteger row) {
           if( auto v = nc::objc_cast<PanelListViewRowView>(rv) )
               v.panelActive = active;
         }];
     }
-    if( [keyPath isEqualToString:@"width"] ) {
-        if( auto c = nc::objc_cast<NSTableColumn>(object) )
+    if( [_key_path isEqualToString:@"width"] ) {
+        if( auto c = nc::objc_cast<NSTableColumn>(_object) )
             [self widthDidChangeForColumn:c];
     }
 }
@@ -338,7 +337,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     [m_TableView setNeedsDisplay:true];
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]] _tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *) [[maybe_unused]] _table_view
 {
     return m_Data ? m_Data->SortedEntriesCount() : 0;
 }
@@ -380,14 +379,14 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return v;
 }
 
-- (nullable NSView *)tableView:(NSTableView *)tableView
-            viewForTableColumn:(nullable NSTableColumn *)tableColumn
-                           row:(NSInteger)rowIndex
+- (nullable NSView *)tableView:(NSTableView *)_table_view
+            viewForTableColumn:(nullable NSTableColumn *)_table_column
+                           row:(NSInteger)_row_index
 {
     if( !m_Data )
         return nil;
 
-    const int row = static_cast<int>(rowIndex);
+    const int row = static_cast<int>(_row_index);
 
     const auto abstract_row_view = [m_TableView rowViewAtRow:row makeIfNecessary:false];
     const auto row_view = nc::objc_cast<PanelListViewRowView>(abstract_row_view);
@@ -395,10 +394,10 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         return nil;
 
     if( const auto vfs_item = row_view.item ) {
-        const auto identifier = tableColumn.identifier;
+        const auto identifier = _table_column.identifier;
         const auto kind = IdentifierToKind(static_cast<char>([identifier characterAtIndex:0]));
         if( kind == PanelListViewColumns::Filename ) {
-            auto nv = RetrieveOrSpawnView<PanelListViewNameView>(tableView, identifier);
+            auto nv = RetrieveOrSpawnView<PanelListViewNameView>(_table_view, identifier);
             if( m_Data->IsValidSortPosition(row) ) {
                 auto &vd = m_Data->VolatileDataAtSortPosition(row);
                 [self fillDataForNameView:nv withItem:vfs_item andVD:vd];
@@ -406,12 +405,12 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             return nv;
         }
         if( kind == PanelListViewColumns::Extension ) {
-            auto ev = RetrieveOrSpawnView<NCPanelListViewExtensionView>(tableView, identifier);
+            auto ev = RetrieveOrSpawnView<NCPanelListViewExtensionView>(_table_view, identifier);
             [self fillDataForExensionView:ev withItem:vfs_item];
             return ev;
         }
         if( kind == PanelListViewColumns::Size ) {
-            auto sv = RetrieveOrSpawnView<PanelListViewSizeView>(tableView, identifier);
+            auto sv = RetrieveOrSpawnView<PanelListViewSizeView>(_table_view, identifier);
             if( m_Data->IsValidSortPosition(row) ) {
                 auto &vd = m_Data->VolatileDataAtSortPosition(row);
                 [self fillDataForSizeView:sv withItem:vfs_item andVD:vd];
@@ -419,27 +418,27 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             return sv;
         }
         if( kind == PanelListViewColumns::DateCreated ) {
-            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(_table_view, identifier);
             [self fillDataForDateCreatedView:dv withItem:vfs_item];
             return dv;
         }
         if( kind == PanelListViewColumns::DateAdded ) {
-            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(_table_view, identifier);
             [self fillDataForDateAddedView:dv withItem:vfs_item];
             return dv;
         }
         if( kind == PanelListViewColumns::DateModified ) {
-            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(_table_view, identifier);
             [self fillDataForDateModifiedView:dv withItem:vfs_item];
             return dv;
         }
         if( kind == PanelListViewColumns::DateAccessed ) {
-            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
+            auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(_table_view, identifier);
             [self fillDataForDateAccessedView:dv withItem:vfs_item];
             return dv;
         }
         if( kind == PanelListViewColumns::Tags ) {
-            auto tv = RetrieveOrSpawnView<NCPanelListViewTagsView>(tableView, identifier);
+            auto tv = RetrieveOrSpawnView<NCPanelListViewTagsView>(_table_view, identifier);
             [self fillDataForTagsView:tv withItem:vfs_item];
             return tv;
         }
@@ -447,19 +446,19 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return nil;
 }
 
-- (nullable NSTableRowView *)tableView:(NSTableView *) [[maybe_unused]] tableView rowViewForRow:(NSInteger)rowIndex
+- (nullable NSTableRowView *)tableView:(NSTableView *) [[maybe_unused]] _table_view rowViewForRow:(NSInteger)_row_index
 {
     if( !m_Data )
         return nil;
 
-    const auto row = static_cast<int>(rowIndex);
+    const auto row = static_cast<int>(_row_index);
     if( auto item = m_Data->EntryAtSortPosition(row) ) {
         auto &vd = m_Data->VolatileDataAtSortPosition(row);
 
         PanelListViewRowView *row_view;
         if( !m_RowsStash.empty() ) {
-            row_view = m_RowsStash.top();
-            m_RowsStash.pop();
+            row_view = m_RowsStash.back();
+            m_RowsStash.pop_back();
             row_view.item = item;
         }
         else {
@@ -482,7 +481,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     if( row < 0 && m_RowsStash.size() < g_MaxStashedRows )
         if( auto r = nc::objc_cast<PanelListViewRowView>(rowView) ) {
             r.item = VFSListingItem();
-            m_RowsStash.push(r);
+            m_RowsStash.push_back(r);
         }
 }
 
@@ -636,11 +635,11 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return static_cast<int>(m_TableView.selectedRow);
 }
 
-- (void)setCursorPosition:(int)cursorPosition
+- (void)setCursorPosition:(int)_cursor_position
 {
-    if( cursorPosition >= 0 ) {
-        [m_TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:cursorPosition] byExtendingSelection:false];
-        [self ensureItemIsVisible:cursorPosition];
+    if( _cursor_position >= 0 ) {
+        [m_TableView selectRowIndexes:[NSIndexSet indexSetWithIndex:_cursor_position] byExtendingSelection:false];
+        [self ensureItemIsVisible:_cursor_position];
     }
     else {
         [m_TableView selectRowIndexes:[NSIndexSet indexSet] byExtendingSelection:false];
@@ -721,35 +720,35 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             }];
 }
 
-- (void)setDateCreatedFormattingStyle:(AdaptiveDateFormatting::Style)dateCreatedFormattingStyle
+- (void)setDateCreatedFormattingStyle:(AdaptiveDateFormatting::Style)_style
 {
-    if( m_DateCreatedFormattingStyle != dateCreatedFormattingStyle ) {
-        m_DateCreatedFormattingStyle = dateCreatedFormattingStyle;
-        [self updateDateTimeViewAtColumn:m_DateCreatedColumn withStyle:dateCreatedFormattingStyle];
+    if( m_DateCreatedFormattingStyle != _style ) {
+        m_DateCreatedFormattingStyle = _style;
+        [self updateDateTimeViewAtColumn:m_DateCreatedColumn withStyle:_style];
     }
 }
 
-- (void)setDateAddedFormattingStyle:(AdaptiveDateFormatting::Style)dateAddedFormattingStyle
+- (void)setDateAddedFormattingStyle:(AdaptiveDateFormatting::Style)_style
 {
-    if( m_DateAddedFormattingStyle != dateAddedFormattingStyle ) {
-        m_DateAddedFormattingStyle = dateAddedFormattingStyle;
-        [self updateDateTimeViewAtColumn:m_DateAddedColumn withStyle:dateAddedFormattingStyle];
+    if( m_DateAddedFormattingStyle != _style ) {
+        m_DateAddedFormattingStyle = _style;
+        [self updateDateTimeViewAtColumn:m_DateAddedColumn withStyle:_style];
     }
 }
 
-- (void)setDateModifiedFormattingStyle:(AdaptiveDateFormatting::Style)dateModifiedFormattingStyle
+- (void)setDateModifiedFormattingStyle:(AdaptiveDateFormatting::Style)_style
 {
-    if( m_DateModifiedFormattingStyle != dateModifiedFormattingStyle ) {
-        m_DateModifiedFormattingStyle = dateModifiedFormattingStyle;
-        [self updateDateTimeViewAtColumn:m_DateModifiedColumn withStyle:dateModifiedFormattingStyle];
+    if( m_DateModifiedFormattingStyle != _style ) {
+        m_DateModifiedFormattingStyle = _style;
+        [self updateDateTimeViewAtColumn:m_DateModifiedColumn withStyle:_style];
     }
 }
 
-- (void)setDateAccessedFormattingStyle:(AdaptiveDateFormatting::Style)dateAccessedFormattingStyle
+- (void)setDateAccessedFormattingStyle:(AdaptiveDateFormatting::Style)_style
 {
-    if( m_DateAccessedFormattingStyle != dateAccessedFormattingStyle ) {
-        m_DateAccessedFormattingStyle = dateAccessedFormattingStyle;
-        [self updateDateTimeViewAtColumn:m_DateAccessedColumn withStyle:dateAccessedFormattingStyle];
+    if( m_DateAccessedFormattingStyle != _style ) {
+        m_DateAccessedFormattingStyle = _style;
+        [self updateDateTimeViewAtColumn:m_DateAccessedColumn withStyle:_style];
     }
 }
 
@@ -811,15 +810,15 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return l;
 }
 
-- (void)setColumnsLayout:(PanelListViewColumnsLayout)columnsLayout
+- (void)setColumnsLayout:(PanelListViewColumnsLayout)_layout
 {
-    if( columnsLayout == m_AssignedLayout )
+    if( _layout == m_AssignedLayout )
         return;
 
     for( NSTableColumn *c in [m_TableView.tableColumns copy] )
         [m_TableView removeTableColumn:c];
 
-    for( auto &c : columnsLayout.columns ) {
+    for( auto &c : _layout.columns ) {
         if( NSTableColumn *tc = [self columnByType:c.kind] ) {
             if( c.min_width >= 0 )
                 tc.minWidth = c.min_width;
@@ -832,7 +831,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         }
     }
 
-    m_AssignedLayout = columnsLayout;
+    m_AssignedLayout = _layout;
     [m_TableView sizeToFit];
     [self calculateItemLayout];
     [self placeSortIndicator];
@@ -892,26 +891,26 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         [m_TableView setIndicatorImage:set.first inTableColumn:set.second];
 }
 
-- (void)tableView:(NSTableView *) [[maybe_unused]] tableView didClickTableColumn:(NSTableColumn *)tableColumn
+- (void)tableView:(NSTableView *) [[maybe_unused]] _table_view didClickTableColumn:(NSTableColumn *)_table_column
 {
     auto proposed = m_SortMode;
     auto swp = [&](data::SortMode::Mode _1st, data::SortMode::Mode _2nd) {
         proposed.sort = (proposed.sort == _1st ? _2nd : _1st);
     };
 
-    if( tableColumn == m_NameColumn )
+    if( _table_column == m_NameColumn )
         swp(data::SortMode::SortByName, data::SortMode::SortByNameRev);
-    else if( tableColumn == m_ExtensionColumn )
+    else if( _table_column == m_ExtensionColumn )
         swp(data::SortMode::SortByExt, data::SortMode::SortByExtRev);
-    else if( tableColumn == m_SizeColumn )
+    else if( _table_column == m_SizeColumn )
         swp(data::SortMode::SortBySize, data::SortMode::SortBySizeRev);
-    else if( tableColumn == m_DateCreatedColumn )
+    else if( _table_column == m_DateCreatedColumn )
         swp(data::SortMode::SortByBirthTime, data::SortMode::SortByBirthTimeRev);
-    else if( tableColumn == m_DateModifiedColumn )
+    else if( _table_column == m_DateModifiedColumn )
         swp(data::SortMode::SortByModTime, data::SortMode::SortByModTimeRev);
-    else if( tableColumn == m_DateAddedColumn )
+    else if( _table_column == m_DateAddedColumn )
         swp(data::SortMode::SortByAddTime, data::SortMode::SortByAddTimeRev);
-    else if( tableColumn == m_DateAccessedColumn )
+    else if( _table_column == m_DateAccessedColumn )
         swp(data::SortMode::SortByAccessTime, data::SortMode::SortByAccessTimeRev);
 
     if( proposed != m_SortMode && m_SortModeChangeCallback )
@@ -1030,19 +1029,19 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return nil;
 }
 
-- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+- (BOOL)validateMenuItem:(NSMenuItem *)_menu_item
 {
-    if( menuItem.action == @selector(onToggleColumnVisibilty:) ) {
-        const auto kind = IdentifierToKind(static_cast<char>([menuItem.identifier characterAtIndex:0]));
+    if( _menu_item.action == @selector(onToggleColumnVisibilty:) ) {
+        const auto kind = IdentifierToKind(static_cast<char>([_menu_item.identifier characterAtIndex:0]));
         const auto column = [self columnByType:kind];
-        menuItem.state = column && [m_TableView.tableColumns containsObject:column];
+        _menu_item.state = column && [m_TableView.tableColumns containsObject:column];
     }
     return true;
 }
 
-- (IBAction)onToggleColumnVisibilty:(id)sender
+- (IBAction)onToggleColumnVisibilty:(id)_sender
 {
-    if( auto menu_item = nc::objc_cast<NSMenuItem>(sender) ) {
+    if( auto menu_item = nc::objc_cast<NSMenuItem>(_sender) ) {
         const auto kind = IdentifierToKind(static_cast<char>([menu_item.identifier characterAtIndex:0]));
 
         if( kind == PanelListViewColumns::Empty )

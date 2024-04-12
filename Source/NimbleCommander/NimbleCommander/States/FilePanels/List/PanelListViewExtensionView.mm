@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2021-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListViewExtensionView.h"
 #include "PanelListView.h"
 #include "PanelListViewGeometry.h"
@@ -21,6 +21,7 @@ static NSParagraphStyle *const g_Style = [] {
 @implementation NCPanelListViewExtensionView {
     NSString *m_Extension;
     base::CFPtr<CTLineRef> m_Line;
+    __weak PanelListViewRowView *m_RowView;
 }
 
 - (id)initWithFrame:(NSRect) [[maybe_unused]] _frameRect
@@ -41,6 +42,21 @@ static NSParagraphStyle *const g_Style = [] {
     return false;
 }
 
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    m_Extension = nil;
+    m_Line.reset();
+    m_RowView = nil;
+}
+
+- (void)viewDidMoveToSuperview
+{
+    [super viewDidMoveToSuperview];
+    if( auto rv = nc::objc_cast<PanelListViewRowView>(self.superview) )
+        m_RowView = rv;
+}
+
 - (void)setExtension:(NSString *)_extension
 {
     m_Extension = _extension;
@@ -58,8 +74,7 @@ static NSParagraphStyle *const g_Style = [] {
             NSForegroundColorAttributeName: row_view.rowTextColor,
             NSParagraphStyleAttributeName: g_Style
         };
-        auto attr_str = [[NSMutableAttributedString alloc] initWithString:m_Extension
-                                                               attributes:attrs];
+        auto attr_str = [[NSMutableAttributedString alloc] initWithString:m_Extension attributes:attrs];
         m_Line = base::CFPtr<CTLineRef>::adopt(
             CTLineCreateWithAttributedString(static_cast<CFAttributedStringRef>(attr_str)));
     }
@@ -72,37 +87,22 @@ static NSParagraphStyle *const g_Style = [] {
 
 - (void)drawRect:(NSRect) [[maybe_unused]] _rect
 {
-    auto row_view = self.row;
-    if( !row_view )
-        return;
+    if( auto rv = m_RowView ) {
+        if( auto lv = rv.listView ) {
+            [rv.rowBackgroundColor set];
+            NSRectFill(self.bounds);
+            [PanelListViewTableView drawVerticalSeparatorForView:self];
 
-    auto list_view = self.listView;
-    if( !list_view )
-        return;
-
-    const auto geometry = list_view.geometry;
-    const auto context = NSGraphicsContext.currentContext.CGContext;
-
-    [row_view.rowBackgroundColor set];
-    NSRectFill(self.bounds);
-    [PanelListViewTableView drawVerticalSeparatorForView:self];
-
-    if( m_Line ) {
-        CGContextSetFillColorWithColor(context, row_view.rowTextColor.CGColor);
-        CGContextSetTextPosition(context, geometry.LeftInset(), geometry.TextBaseLine());
-        CGContextSetTextDrawingMode(context, kCGTextFill);
-        CTLineDraw(m_Line.get(), context);
+            if( m_Line ) {
+                const auto geometry = lv.geometry;
+                const auto context = NSGraphicsContext.currentContext.CGContext;
+                CGContextSetFillColorWithColor(context, rv.rowTextColor.CGColor);
+                CGContextSetTextPosition(context, geometry.LeftInset(), geometry.TextBaseLine());
+                CGContextSetTextDrawingMode(context, kCGTextFill);
+                CTLineDraw(m_Line.get(), context);
+            }
+        }
     }
-}
-
-- (PanelListViewRowView *)row
-{
-    return objc_cast<PanelListViewRowView>(self.superview);
-}
-
-- (PanelListView *)listView
-{
-    return self.row.listView;
 }
 
 @end

@@ -26,6 +26,9 @@
 "__PANELVIEW_LIST_COLUMN_TITLE_SIZE" = "Размер";
 
 /* (No Comment) */
+"__PANELVIEW_LIST_COLUMN_TITLE_TAGS" = "Теги";
+
+/* (No Comment) */
 "__PANELVIEW_TEMPORARY_PANEL_WITH_TITLE" = "Временная панель: %@";
 
 /* (No Comment) */

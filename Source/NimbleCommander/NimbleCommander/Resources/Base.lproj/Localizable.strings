@@ -17,5 +17,6 @@ This window appears only in the trial version.";
 "__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED" = "Date Added";
 "__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" = "Date Modified";
 "__PANELVIEW_LIST_COLUMN_TITLE_DATE_ACCESSED" = "Date Accessed";
+"__PANELVIEW_LIST_COLUMN_TITLE_TAGS" = "Tags";
 "__PANELVIEW_TEMPORARY_PANEL_WITHOUT_TITLE" = "Temporary Panel";
 "__PANELVIEW_TEMPORARY_PANEL_WITH_TITLE" = "Temporary Panel: %@";

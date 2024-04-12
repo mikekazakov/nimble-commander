@@ -222,6 +222,8 @@ static NSString *PanelListColumnTypeToString(PanelListViewColumns _c)
             return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED", "");
         case PanelListViewColumns::DateAccessed:
             return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ACCESSED", "");
+        case PanelListViewColumns::Tags:
+            return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_TAGS", "");
         default:
             return @"";
     }
@@ -285,7 +287,22 @@ static NSMenu *BuildTagColorMenu()
                         tf.bordered = false;
                         tf.editable = false;
                         tf.drawsBackground = false;
-                        return tf;
+                        tf.translatesAutoresizingMaskIntoConstraints = false;
+                        NSTableCellView *cv = [[NSTableCellView alloc] initWithFrame:NSRect()];
+                        [cv addSubview:tf];
+                        [cv addConstraints:[NSLayoutConstraint
+                                               constraintsWithVisualFormat:@"H:|-(4)-[tf]-(4)-|"
+                                                                   options:0
+                                                                   metrics:nil
+                                                                     views:NSDictionaryOfVariableBindings(tf)]];
+                        [cv addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                                       attribute:NSLayoutAttributeCenterY
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:cv
+                                                                       attribute:NSLayoutAttributeCenterY
+                                                                      multiplier:1.
+                                                                        constant:0.]];
+                        return cv;
                     }
                 }
             }
@@ -501,22 +518,21 @@ static NSString *LayoutTypeToTabIdentifier(PanelViewLayout::Type _t)
     }
 
     if( auto list = l->list() ) {
-        static const auto columns_order = {PanelListViewColumns::Filename,
-                                           PanelListViewColumns::Extension,
-                                           PanelListViewColumns::Size,
-                                           PanelListViewColumns::DateCreated,
-                                           PanelListViewColumns::DateModified,
-                                           PanelListViewColumns::DateAdded,
-                                           PanelListViewColumns::DateAccessed};
+        constexpr PanelListViewColumns columns_order[] = {PanelListViewColumns::Filename,
+                                                          PanelListViewColumns::Extension,
+                                                          PanelListViewColumns::Size,
+                                                          PanelListViewColumns::DateCreated,
+                                                          PanelListViewColumns::DateModified,
+                                                          PanelListViewColumns::DateAdded,
+                                                          PanelListViewColumns::DateAccessed,
+                                                          PanelListViewColumns::Tags};
         m_LayoutListColumns.clear();
         for( auto c : list->columns )
             m_LayoutListColumns.emplace_back(c, true);
         for( auto c : columns_order )
-            if( !any_of(
-                    begin(m_LayoutListColumns), end(m_LayoutListColumns), [=](auto v) { return v.first.kind == c; }) ) {
+            if( std::ranges::none_of(m_LayoutListColumns, [=](auto v) { return v.first.kind == c; }) ) {
                 PanelListViewColumnsLayout::Column dummy;
                 dummy.kind = c;
-
                 m_LayoutListColumns.emplace_back(dummy, false);
             }
         [self.layoutsListColumnsTable reloadData];

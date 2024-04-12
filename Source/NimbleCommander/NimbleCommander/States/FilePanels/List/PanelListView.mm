@@ -196,7 +196,7 @@ static NSString *ToKindIdentifier(PanelListViewColumns _kind) noexcept;
     m_SizeColumn.width = 90;
     m_SizeColumn.minWidth = 75;
     m_SizeColumn.maxWidth = 110;
-    m_SizeColumn.headerCell.alignment = NSTextAlignmentRight;
+    m_SizeColumn.headerCell.alignment = NSTextAlignmentLeft;
     m_SizeColumn.resizingMask = NSTableColumnUserResizingMask;
     [m_SizeColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
 

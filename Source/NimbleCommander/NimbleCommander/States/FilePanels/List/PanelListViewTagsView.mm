@@ -23,6 +23,7 @@ static NSParagraphStyle *const g_Style = [] {
 @implementation NCPanelListViewTagsView {
     std::vector<utility::Tags::Tag> m_Tags;
     NSMutableAttributedString *m_AttrString;
+    __weak PanelListViewRowView *m_RowView;
 }
 
 - (id)initWithFrame:(NSRect) [[maybe_unused]] _rc
@@ -41,6 +42,21 @@ static NSParagraphStyle *const g_Style = [] {
 - (BOOL)wantsDefaultClipping
 {
     return false;
+}
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    m_Tags.clear();
+    m_AttrString = nil;
+    m_RowView = nil;
+}
+
+- (void)viewDidMoveToSuperview
+{
+    [super viewDidMoveToSuperview];
+    if( auto rv = nc::objc_cast<PanelListViewRowView>(self.superview) )
+        m_RowView = rv;
 }
 
 - (void)setTags:(std::span<const nc::utility::Tags::Tag>)_tags
@@ -80,36 +96,22 @@ static NSParagraphStyle *const g_Style = [] {
 
 - (void)drawRect:(NSRect) [[maybe_unused]] _rect
 {
-    auto row_view = self.row;
-    if( !row_view )
-        return;
+    if( auto rv = m_RowView ) {
+        if( auto lv = rv.listView ) {
+            [rv.rowBackgroundColor set];
+            NSRectFill(self.bounds);
+            [PanelListViewTableView drawVerticalSeparatorForView:self];
 
-    auto list_view = self.listView;
-    if( !list_view )
-        return;
-
-    [row_view.rowBackgroundColor set];
-    NSRectFill(self.bounds);
-    [PanelListViewTableView drawVerticalSeparatorForView:self];
-
-    if( m_AttrString ) {
-        const auto geometry = list_view.geometry;
-        NSRect rc = NSMakeRect(geometry.LeftInset(),
-                               geometry.TextBaseLine(),
-                               self.bounds.size.width - geometry.LeftInset() - geometry.RightInset(),
-                               0.);
-        [m_AttrString drawWithRect:rc options:0];
+            if( m_AttrString ) {
+                const auto geometry = lv.geometry;
+                NSRect rc = NSMakeRect(geometry.LeftInset(),
+                                       geometry.TextBaseLine(),
+                                       self.bounds.size.width - geometry.LeftInset() - geometry.RightInset(),
+                                       0.);
+                [m_AttrString drawWithRect:rc options:0];
+            }
+        }
     }
-}
-
-- (PanelListViewRowView *)row
-{
-    return objc_cast<PanelListViewRowView>(self.superview);
-}
-
-- (PanelListView *)listView
-{
-    return self.row.listView;
 }
 
 @end

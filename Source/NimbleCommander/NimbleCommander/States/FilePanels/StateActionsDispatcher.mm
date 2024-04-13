@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StateActionsDispatcher.h"
 #include "Actions/DefaultAction.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
@@ -11,11 +11,9 @@ using namespace nc::core;
 using namespace nc::panel;
 
 namespace nc::panel {
-
 static const actions::StateAction *ActionBySel(SEL _sel, const StateActionsMap &_map) noexcept;
-static void
-Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target, id _sender);
-}
+static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target, id _sender);
+} // namespace nc::panel
 
 @implementation NCPanelsStateActionsDispatcher {
     __unsafe_unretained MainWindowFilePanelState *m_FS;
@@ -28,6 +26,7 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
     ActionsShortcutsManager::ShortCut m_HKFocusTerminal;
     std::unique_ptr<ActionsShortcutsManager::ShortCutsUpdater> m_ShortCutsUpdater;
 }
+@synthesize hasTerminal;
 
 - (instancetype)initWithState:(MainWindowFilePanelState *)_state
                 andActionsMap:(const nc::panel::StateActionsMap &)_actions_map
@@ -67,8 +66,7 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
         try {
             return action->Predicate(m_FS);
         } catch( const std::exception &e ) {
-            std::cerr << "validateActionBySelector has caught an exception: " << e.what()
-                      << std::endl;
+            std::cerr << "validateActionBySelector has caught an exception: " << e.what() << std::endl;
         } catch( ... ) {
             std::cerr << "validateActionBySelector has caught an unknown exception!" << std::endl;
         }
@@ -84,8 +82,7 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
         return [super performKeyEquivalent:theEvent];
 
     constexpr auto mask = NSEventModifierFlagDeviceIndependentFlagsMask &
-                          ~(NSEventModifierFlagCapsLock | NSEventModifierFlagNumericPad |
-                            NSEventModifierFlagFunction);
+                          ~(NSEventModifierFlagCapsLock | NSEventModifierFlagNumericPad | NSEventModifierFlagFunction);
     const auto mod = theEvent.modifierFlags & mask;
     const auto unicode = [characters characterAtIndex:0];
 
@@ -97,13 +94,12 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
             return [super performKeyEquivalent:theEvent];
         return true;
     }
-    if( unicode == NSTabCharacter &&
-        mod == (NSEventModifierFlagControl | NSEventModifierFlagShift) ) {
+    if( unicode == NSTabCharacter && mod == (NSEventModifierFlagControl | NSEventModifierFlagShift) ) {
         if( ActionBySel(@selector(OnWindowShowPreviousTab:), *m_AM)->Predicate(m_FS) )
             return [super performKeyEquivalent:theEvent];
         return true;
     }
-    
+
     const auto event_data = nc::utility::ActionShortcut::EventData(theEvent);
     if( m_HKFocusLeft.IsKeyDown(event_data) ) {
         [self executeBySelectorIfValidOrBeep:@selector(onFocusLeftPanel:) withSender:self];
@@ -116,28 +112,24 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
     }
 
     // overlapped terminal stuff
-    if( _hasTerminal ) {
+    if( hasTerminal ) {
         if( m_HKMoveUp.IsKeyDown(event_data) ) {
-            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveUp:)
-                                      withSender:self];
+            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveUp:) withSender:self];
             return true;
         }
 
         if( m_HKMoveDown.IsKeyDown(event_data) ) {
-            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveDown:)
-                                      withSender:self];
+            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionMoveDown:) withSender:self];
             return true;
         }
 
         if( m_HKShow.IsKeyDown(event_data) ) {
-            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionShowHidePanels:)
-                                      withSender:self];
+            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionShowHidePanels:) withSender:self];
             return true;
         }
 
         if( m_HKFocusTerminal.IsKeyDown(event_data) ) {
-            [self executeBySelectorIfValidOrBeep:@selector
-                  (OnViewPanelsPositionFocusOverlappedTerminal:)
+            [self executeBySelectorIfValidOrBeep:@selector(OnViewPanelsPositionFocusOverlappedTerminal:)
                                       withSender:self];
             return true;
         }
@@ -284,8 +276,7 @@ static const actions::StateAction *ActionBySel(SEL _sel, const StateActionsMap &
     return action == end(_map) ? nullptr : action->second.get();
 }
 
-static void
-Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target, id _sender)
+static void Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target, id _sender)
 {
     if( const auto action = ActionBySel(_sel, _map) ) {
         try {
@@ -297,9 +288,8 @@ Perform(SEL _sel, const StateActionsMap &_map, MainWindowFilePanelState *_target
         }
     }
     else {
-        std::cerr << "warning - unrecognized selector: " << NSStringFromSelector(_sel).UTF8String
-                  << std::endl;
+        std::cerr << "warning - unrecognized selector: " << NSStringFromSelector(_sel).UTF8String << std::endl;
     }
 }
 
-}
+} // namespace nc::panel

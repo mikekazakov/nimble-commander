@@ -815,6 +815,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(vfs::NativeHost &_
             case CopyDestExistsResolution::OverwriteOld:
                 if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
+                [[fallthrough]];
             case CopyDestExistsResolution::Overwrite:
                 setup_overwrite();
                 break;
@@ -1182,6 +1183,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
             case CopyDestExistsResolution::OverwriteOld:
                 if( src_stat_buffer.mtime.tv_sec <= dst_stat_buffer.st_mtime )
                     return StepResult::Skipped;
+                [[fallthrough]];
             case CopyDestExistsResolution::Overwrite:
                 setup_overwrite();
                 break;
@@ -1539,6 +1541,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
             case CopyDestExistsResolution::OverwriteOld:
                 if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
+                [[fallthrough]];
             case CopyDestExistsResolution::Overwrite:
                 setup_overwrite();
                 break;
@@ -1846,7 +1849,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(vfs::Nat
         // change unix mode - only schedule if needed
         const mode_t mode = src_stat.st_mode & g_ChModMask;
         if( mode != g_NewDirectoryMode )
-            m_TargetPermissionsFixupEpilogue.push_back( {std::filesystem::path{_dst_path}, mode});
+            m_TargetPermissionsFixupEpilogue.push_back({std::filesystem::path{_dst_path}, mode});
 
         // change flags
         fchflags(dst_fd, src_stat.st_flags);
@@ -2083,6 +2086,7 @@ CopyingJob::RenameNativeDirectory(vfs::NativeHost &_native_host,
                     case RenameDestExistsResolution::OverwriteOld:
                         if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                             return {StepResult::Skipped, SourceItemAftermath::NoChanges};
+                        [[fallthrough]];
                     case RenameDestExistsResolution::Overwrite:
                         break;
                     default:
@@ -2237,6 +2241,7 @@ CopyingJob::RenameVFSDirectory(VFSHost &_common_host, const std::string &_src_pa
                     case RenameDestExistsResolution::OverwriteOld:
                         if( !EntryIsOlder(dst_stat_buffer, src_stat) )
                             return {StepResult::Skipped, SourceItemAftermath::NoChanges};
+                        [[fallthrough]];
                     case RenameDestExistsResolution::Overwrite:
                         break;
                     default:
@@ -2320,6 +2325,7 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(vfs::NativeHost &_native_hos
                 case RenameDestExistsResolution::OverwriteOld:
                     if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                         return StepResult::Skipped;
+                    [[fallthrough]];
                 case RenameDestExistsResolution::Overwrite:
                     break;
                 case RenameDestExistsResolution::KeepBoth:
@@ -2404,6 +2410,7 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
             case RenameDestExistsResolution::OverwriteOld:
                 if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
+                [[fallthrough]];
             case RenameDestExistsResolution::Overwrite:
                 break;
             case RenameDestExistsResolution::KeepBoth:
@@ -2643,6 +2650,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(vfs::NativeHost &_n
             case RenameDestExistsResolution::OverwriteOld:
                 if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
+                [[fallthrough]];
             case RenameDestExistsResolution::Overwrite:
                 break;
             case RenameDestExistsResolution::KeepBoth:
@@ -2742,6 +2750,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
             case RenameDestExistsResolution::OverwriteOld:
                 if( !EntryIsOlder(dst_stat_buffer, posix_src_stat_buffer) )
                     return StepResult::Skipped;
+                [[fallthrough]];
             case RenameDestExistsResolution::Overwrite:
                 break;
             case RenameDestExistsResolution::KeepBoth:
@@ -2841,6 +2850,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
             case RenameDestExistsResolution::OverwriteOld:
                 if( !EntryIsOlder(dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
+                [[fallthrough]];
             case RenameDestExistsResolution::Overwrite:
                 break;
             case RenameDestExistsResolution::KeepBoth:

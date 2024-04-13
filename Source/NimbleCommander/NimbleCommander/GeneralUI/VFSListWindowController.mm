@@ -18,6 +18,8 @@ using namespace std::literals;
     std::vector<nc::core::VFSInstanceManager::ObservationTicket> m_Observations;
     nc::core::VFSInstanceManager *m_Manager;
 }
+@synthesize vfsTable;
+@synthesize listType;
 
 - (instancetype)initWithVFSManager:(nc::core::VFSInstanceManager &)_manager
 {

@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeView.h"
 #include "HexModeFrame.h"
 #include "HexModeLayout.h"
@@ -31,6 +31,8 @@ BuildWorkingSetForBackendState(const DataBackend &_backend);
     std::unique_ptr<HexModeLayout> m_Layout;
     NSScroller *m_VerticalScroller;
 }
+
+@synthesize delegate;
 
 - (instancetype)initWithFrame:(NSRect)_frame
                       backend:(std::shared_ptr<const nc::viewer::DataBackend>)_backend

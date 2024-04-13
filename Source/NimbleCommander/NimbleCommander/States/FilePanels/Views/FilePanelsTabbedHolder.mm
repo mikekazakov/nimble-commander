@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMTabBarView.h>
 #import <MMTabBarView/MMTabBarItem.h>
 #include "FilePanelsTabbedHolder.h"
@@ -15,6 +15,7 @@
 @end
 
 @implementation FilePanelsTabbedBarItem
+@synthesize hasCloseButton;
 
 - (id)init
 {
@@ -47,23 +48,21 @@
         m_TabView = [[NSTabView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
         m_TabView.translatesAutoresizingMaskIntoConstraints = false;
         m_TabView.tabViewType = NSNoTabsNoBorder;
-        [m_TabView
-            addConstraint:[NSLayoutConstraint constraintWithItem:m_TabView
-                                                       attribute:NSLayoutAttributeWidth
-                                                       relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                          toItem:nil
-                                                       attribute:NSLayoutAttributeNotAnAttribute
-                                                      multiplier:1.0
-                                                        constant:50]];
+        [m_TabView addConstraint:[NSLayoutConstraint constraintWithItem:m_TabView
+                                                              attribute:NSLayoutAttributeWidth
+                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                 toItem:nil
+                                                              attribute:NSLayoutAttributeNotAnAttribute
+                                                             multiplier:1.0
+                                                               constant:50]];
 
-        NSLayoutConstraint *c =
-            [NSLayoutConstraint constraintWithItem:m_TabView
-                                         attribute:NSLayoutAttributeHeight
-                                         relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                            toItem:nil
-                                         attribute:NSLayoutAttributeNotAnAttribute
-                                        multiplier:1.0
-                                          constant:50];
+        NSLayoutConstraint *c = [NSLayoutConstraint constraintWithItem:m_TabView
+                                                             attribute:NSLayoutAttributeHeight
+                                                             relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                toItem:nil
+                                                             attribute:NSLayoutAttributeNotAnAttribute
+                                                            multiplier:1.0
+                                                              constant:50];
         c.priority = NSLayoutPriorityDefaultLow;
         [m_TabView addConstraint:c];
         [self addSubview:m_TabView];
@@ -81,14 +80,13 @@
         m_TabBar.buttonMaxWidth = 2000;
         m_TabBar.buttonOptimumWidth = 2000;
         [m_TabBar setStyleNamed:@"NC"];
-        [m_TabBar
-            addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
-                                                       attribute:NSLayoutAttributeWidth
-                                                       relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                          toItem:nil
-                                                       attribute:NSLayoutAttributeNotAnAttribute
-                                                      multiplier:1.0
-                                                        constant:50]];
+        [m_TabBar addConstraint:[NSLayoutConstraint constraintWithItem:m_TabBar
+                                                             attribute:NSLayoutAttributeWidth
+                                                             relatedBy:NSLayoutRelationGreaterThanOrEqual
+                                                                toItem:nil
+                                                             attribute:NSLayoutAttributeNotAnAttribute
+                                                            multiplier:1.0
+                                                              constant:50]];
         c = [NSLayoutConstraint constraintWithItem:m_TabBar
                                          attribute:NSLayoutAttributeHeight
                                          relatedBy:NSLayoutRelationEqual
@@ -118,11 +116,10 @@
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
-    [self addConstraints:[NSLayoutConstraint
-                             constraintsWithVisualFormat:@"V:|-(==0)-[m_TabView]-(==0)-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TabView]-(==0)-|"
+                                                                 options:0
+                                                                 metrics:nil
+                                                                   views:views]];
 }
 
 - (void)doLayoutWithTabs
@@ -137,11 +134,11 @@
                                                                  options:0
                                                                  metrics:nil
                                                                    views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                                                 @"V:|-(==0)-[m_TabBar]-(==0)-[m_TabView]-(==0)-|"
-                                                                 options:0
-                                                                 metrics:nil
-                                                                   views:views]];
+    [self
+        addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TabBar]-(==0)-[m_TabView]-(==0)-|"
+                                                               options:0
+                                                               metrics:nil
+                                                                 views:views]];
 }
 
 - (MMTabBarView *)tabBar
@@ -231,8 +228,8 @@
 
     const auto event_data = nc::utility::ActionShortcut::EventData(_event);
 
-    static ActionsShortcutsManager::ShortCut hk_prev, hk_next, hk_t1, hk_t2, hk_t3, hk_t4, hk_t5,
-        hk_t6, hk_t7, hk_t8, hk_t9, hk_t10;
+    static ActionsShortcutsManager::ShortCut hk_prev, hk_next, hk_t1, hk_t2, hk_t3, hk_t4, hk_t5, hk_t6, hk_t7, hk_t8,
+        hk_t9, hk_t10;
     [[clang::no_destroy]] static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
         std::initializer_list<ActionsShortcutsManager::ShortCutsUpdater::UpdateTarget>{
             {&hk_prev, "panel.show_previous_tab"},

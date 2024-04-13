@@ -250,6 +250,7 @@ static NCAppDelegate *g_Me = nil;
 @synthesize stateDirectory = m_StateDirectory;
 @synthesize supportDirectory = m_SupportDirectory;
 @synthesize appStoreHelper = m_AppStoreHelper;
+@synthesize recentlyClosedMenu;
 
 - (id)init
 {

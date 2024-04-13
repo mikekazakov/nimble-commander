@@ -17,6 +17,7 @@
     NSFont *m_Font;
     std::unique_ptr<nc::ConfigBinder> m_B1;
 }
+@synthesize usesDefaultLoginShell;
 
 - (instancetype)init
 {

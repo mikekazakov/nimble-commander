@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingDialog.h"
 #include <VFS/VFS.h>
 #include <Base/algo.h>
@@ -64,8 +64,7 @@ using namespace nc::ops;
 @property(strong, nonatomic) IBOutlet NSButton *processSubfolders;
 @end
 
-static AttrsChangingCommand::Permissions
-ExtractCommonPermissions(const std::vector<VFSListingItem> &_items);
+static AttrsChangingCommand::Permissions ExtractCommonPermissions(const std::vector<VFSListingItem> &_items);
 static AttrsChangingCommand::Ownage ExtractCommonOwnage(const std::vector<VFSListingItem> &_items);
 static AttrsChangingCommand::Flags ExtractCommonFlags(const std::vector<VFSListingItem> &_items);
 static AttrsChangingCommand::Times ExtractCommonTimes(const std::vector<VFSListingItem> &_items);
@@ -95,14 +94,57 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
 }
 
 @synthesize command = m_Command;
+@synthesize titleLabel;
+@synthesize stackView;
+@synthesize permissionsBlockView;
+@synthesize ownageBlockView;
+@synthesize flagsBlockView;
+@synthesize timesBlockView;
+@synthesize permUsrR;
+@synthesize permUsrW;
+@synthesize permUsrX;
+@synthesize permGrpR;
+@synthesize permGrpW;
+@synthesize permGrpX;
+@synthesize permOthR;
+@synthesize permOthW;
+@synthesize permOthX;
+@synthesize permSUID;
+@synthesize permSGID;
+@synthesize permSticky;
+@synthesize userPopup;
+@synthesize groupPopup;
+@synthesize flagUAppend;
+@synthesize flagUImmutable;
+@synthesize flagUHidden;
+@synthesize flagUNodump;
+@synthesize flagUOpaque;
+@synthesize flagUTracked;
+@synthesize flagUCompressed;
+@synthesize flagUDataVault;
+@synthesize flagSAppend;
+@synthesize flagSImmutable;
+@synthesize flagSArchived;
+@synthesize flagSNounlink;
+@synthesize flagSRestricted;
+@synthesize flagSFirmlink;
+@synthesize flagSDataless;
+@synthesize timesATime;
+@synthesize timesATimeCheckbox;
+@synthesize timesMTime;
+@synthesize timesMTimeCheckbox;
+@synthesize timesCTime;
+@synthesize timesCTimeCheckbox;
+@synthesize timesBTime;
+@synthesize timesBTimeCheckbox;
+@synthesize processSubfolders;
 
 - (instancetype)initWithItems:(std::vector<VFSListingItem>)_items
 {
     if( _items.empty() )
         throw std::invalid_argument("NCOpsAttrsChangingDialog: input array can't be empty");
     if( !all_equal(begin(_items), end(_items), [](auto &i) { return i.Host(); }) )
-        throw std::invalid_argument(
-            "NCOpsAttrsChangingDialog: input items must have a same vfs host");
+        throw std::invalid_argument("NCOpsAttrsChangingDialog: input items must have a same vfs host");
 
     const auto nib_path = [Bundle() pathForResource:@"AttrsChangingDialog" ofType:@"nib"];
     self = [super initWithWindowNibPath:nib_path owner:self];
@@ -110,8 +152,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
         return nil;
 
     m_Items = std::move(_items);
-    m_ItemsHaveDirectories =
-        any_of(begin(m_Items), end(m_Items), [](auto &i) { return i.IsDir(); });
+    m_ItemsHaveDirectories = any_of(begin(m_Items), end(m_Items), [](auto &i) { return i.IsDir(); });
     m_CommonItemsPermissions = ExtractCommonPermissions(m_Items);
     m_CommonItemsOwnage = ExtractCommonOwnage(m_Items);
     m_CommonItemsFlags = ExtractCommonFlags(m_Items);
@@ -123,8 +164,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
 
     const auto vfs_features = m_VFS->Features();
     m_AccessRightsBlockShown = vfs_features & nc::vfs::HostFeatures::SetPermissions;
-    m_OwnageBlockShown = (vfs_features & nc::vfs::HostFeatures::SetOwnership) && !m_Users.empty() &&
-                         !m_Groups.empty();
+    m_OwnageBlockShown = (vfs_features & nc::vfs::HostFeatures::SetOwnership) && !m_Users.empty() && !m_Groups.empty();
     m_FlagsBlockShown = vfs_features & nc::vfs::HostFeatures::SetFlags;
     m_TimesBlockShown = vfs_features & nc::vfs::HostFeatures::SetTimes;
 
@@ -228,9 +268,7 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
     [self.window makeFirstResponder:fr];
 }
 
-- (void)fillTimepicker:(NSDatePicker *)_dp
-           andCheckbox:(NSButton *)_b
-              withTime:(std::optional<time_t>)_t
+- (void)fillTimepicker:(NSDatePicker *)_dp andCheckbox:(NSButton *)_b withTime:(std::optional<time_t>)_t
 {
     const auto user_has_entered_date = _dp.tag > 0;
     const auto user_has_toggled_applying = _b.tag > 0;
@@ -261,18 +299,10 @@ static NSString *Title(const std::vector<VFSListingItem> &_items);
 
 - (void)fillTimes
 {
-    [self fillTimepicker:self.timesATime
-             andCheckbox:self.timesATimeCheckbox
-                withTime:m_CommonItemsTimes.atime];
-    [self fillTimepicker:self.timesMTime
-             andCheckbox:self.timesMTimeCheckbox
-                withTime:m_CommonItemsTimes.mtime];
-    [self fillTimepicker:self.timesCTime
-             andCheckbox:self.timesCTimeCheckbox
-                withTime:m_CommonItemsTimes.ctime];
-    [self fillTimepicker:self.timesBTime
-             andCheckbox:self.timesBTimeCheckbox
-                withTime:m_CommonItemsTimes.btime];
+    [self fillTimepicker:self.timesATime andCheckbox:self.timesATimeCheckbox withTime:m_CommonItemsTimes.atime];
+    [self fillTimepicker:self.timesMTime andCheckbox:self.timesMTimeCheckbox withTime:m_CommonItemsTimes.mtime];
+    [self fillTimepicker:self.timesCTime andCheckbox:self.timesCTimeCheckbox withTime:m_CommonItemsTimes.ctime];
+    [self fillTimepicker:self.timesBTime andCheckbox:self.timesBTimeCheckbox withTime:m_CommonItemsTimes.btime];
 }
 
 - (IBAction)onTimesCheckboxClicked:(id)sender
@@ -399,8 +429,7 @@ static NSImage *UserIcon()
 {
     static const auto icon = [] {
         const auto img = [NSImage imageNamed:NSImageNameUser];
-        img.size =
-            NSMakeSize([NSFont menuFontOfSize:0].pointSize, [NSFont menuFontOfSize:0].pointSize);
+        img.size = NSMakeSize([NSFont menuFontOfSize:0].pointSize, [NSFont menuFontOfSize:0].pointSize);
         return img;
     }();
     return icon;
@@ -410,8 +439,7 @@ static NSImage *GroupIcon()
 {
     static const auto icon = [] {
         const auto img = [NSImage imageNamed:NSImageNameUserGroup];
-        img.size =
-            NSMakeSize([NSFont menuFontOfSize:0].pointSize, [NSFont menuFontOfSize:0].pointSize);
+        img.size = NSMakeSize([NSFont menuFontOfSize:0].pointSize, [NSFont menuFontOfSize:0].pointSize);
         return img;
     }();
     return icon;
@@ -422,8 +450,7 @@ static const auto g_MixedOwnageTitle = @"[???]";
 - (void)fillOwner:(const AttrsChangingCommand::Ownage &)_o
 {
     const auto popup = self.userPopup;
-    const auto previous_selection =
-        popup.tag > 0 ? std::optional<long>{popup.selectedTag} : std::optional<long>{};
+    const auto previous_selection = popup.tag > 0 ? std::optional<long>{popup.selectedTag} : std::optional<long>{};
     [popup removeAllItems];
     for( const auto &i : m_Users ) {
         const auto entry = UserToString(i);
@@ -499,15 +526,14 @@ static const auto g_MixedOwnageTitle = @"[???]";
     m(self.permSGID, p.sgid);
     m(self.permSticky, p.sticky);
 
-    if( !p.usr_r && !p.usr_w && !p.usr_x && !p.grp_r && !p.grp_w && !p.grp_x && !p.oth_r &&
-        !p.oth_w && !p.oth_x && !p.suid && !p.sgid && !p.sticky )
+    if( !p.usr_r && !p.usr_w && !p.usr_x && !p.grp_r && !p.grp_w && !p.grp_x && !p.oth_r && !p.oth_w && !p.oth_x &&
+        !p.suid && !p.sgid && !p.sticky )
         return std::nullopt;
 
     const auto &common = m_CommonItemsPermissions;
-    if( !m_ProcessSubfolders && p.usr_r == common.usr_r && p.usr_w == common.usr_w &&
-        p.usr_x == common.usr_x && p.grp_r == common.grp_r && p.grp_w == common.grp_w &&
-        p.grp_x == common.grp_x && p.oth_r == common.oth_r && p.oth_w == common.oth_w &&
-        p.oth_x == common.oth_x && p.suid == common.suid && p.sgid == common.sgid &&
+    if( !m_ProcessSubfolders && p.usr_r == common.usr_r && p.usr_w == common.usr_w && p.usr_x == common.usr_x &&
+        p.grp_r == common.grp_r && p.grp_w == common.grp_w && p.grp_x == common.grp_x && p.oth_r == common.oth_r &&
+        p.oth_w == common.oth_w && p.oth_x == common.oth_x && p.suid == common.suid && p.sgid == common.sgid &&
         p.sticky == common.sticky )
         return std::nullopt;
 
@@ -545,20 +571,19 @@ static const auto g_MixedOwnageTitle = @"[???]";
     m(self.flagSFirmlink, f.s_firmlink);
     m(self.flagSDataless, f.s_dataless);
 
-    if( !f.u_append && !f.u_immutable && !f.u_hidden && !f.u_nodump && !f.u_opaque &&
-        !f.u_tracked && !f.u_compressed && !f.s_append && !f.s_immutable && !f.s_archived &&
-        !f.s_nounlink && !f.s_restricted && !f.u_datavault && !f.s_firmlink && !f.s_dataless )
+    if( !f.u_append && !f.u_immutable && !f.u_hidden && !f.u_nodump && !f.u_opaque && !f.u_tracked && !f.u_compressed &&
+        !f.s_append && !f.s_immutable && !f.s_archived && !f.s_nounlink && !f.s_restricted && !f.u_datavault &&
+        !f.s_firmlink && !f.s_dataless )
         return std::nullopt;
 
     const auto &common = m_CommonItemsFlags;
-    if( !m_ProcessSubfolders && f.u_append == common.u_append &&
-        f.u_immutable == common.u_immutable && f.u_hidden == common.u_hidden &&
-        f.u_nodump == common.u_nodump && f.u_opaque == common.u_opaque &&
+    if( !m_ProcessSubfolders && f.u_append == common.u_append && f.u_immutable == common.u_immutable &&
+        f.u_hidden == common.u_hidden && f.u_nodump == common.u_nodump && f.u_opaque == common.u_opaque &&
         f.u_tracked == common.u_tracked && f.u_compressed == common.u_compressed &&
-        f.u_datavault == common.u_datavault && f.s_append == common.s_append &&
-        f.s_immutable == common.s_immutable && f.s_archived == common.s_archived &&
-        f.s_nounlink == common.s_nounlink && f.s_restricted == common.s_restricted &&
-        f.s_firmlink == common.s_firmlink && f.s_dataless == common.s_dataless )
+        f.u_datavault == common.u_datavault && f.s_append == common.s_append && f.s_immutable == common.s_immutable &&
+        f.s_archived == common.s_archived && f.s_nounlink == common.s_nounlink &&
+        f.s_restricted == common.s_restricted && f.s_firmlink == common.s_firmlink &&
+        f.s_dataless == common.s_dataless )
         return std::nullopt;
 
     return f;
@@ -651,8 +676,7 @@ static const auto g_MixedOwnageTitle = @"[???]";
     const auto &vfs = _items.front().Host();
     const auto vfs_features = vfs->Features();
     if( (vfs_features & nc::vfs::HostFeatures::SetPermissions) ||
-        (vfs_features & nc::vfs::HostFeatures::SetOwnership) ||
-        (vfs_features & nc::vfs::HostFeatures::SetFlags) ||
+        (vfs_features & nc::vfs::HostFeatures::SetOwnership) || (vfs_features & nc::vfs::HostFeatures::SetFlags) ||
         (vfs_features & nc::vfs::HostFeatures::SetTimes) )
         return true;
     return false;
@@ -672,8 +696,7 @@ static auto optional_common_value(_InputIterator _first, _InputIterator _last, _
     return value;
 }
 
-static AttrsChangingCommand::Permissions
-ExtractCommonPermissions(const std::vector<VFSListingItem> &_items)
+static AttrsChangingCommand::Permissions ExtractCommonPermissions(const std::vector<VFSListingItem> &_items)
 {
     std::vector<uint16_t> modes;
     for( const auto &i : _items )
@@ -749,9 +772,7 @@ static AttrsChangingCommand::Times ExtractCommonTimes(const std::vector<VFSListi
 static NSString *UserToString(const VFSUser &_user)
 {
     if( _user.gecos.empty() )
-        return [NSString stringWithFormat:@"%@ (%d)",
-                                          [NSString stringWithUTF8StdString:_user.name],
-                                          signed(_user.uid)];
+        return [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8StdString:_user.name], signed(_user.uid)];
     else
         return [NSString stringWithFormat:@"%@ (%d) - %@",
                                           [NSString stringWithUTF8StdString:_user.name],
@@ -762,9 +783,8 @@ static NSString *UserToString(const VFSUser &_user)
 static NSString *GroupToString(const VFSGroup &_group)
 {
     if( _group.gecos.empty() )
-        return [NSString stringWithFormat:@"%@ (%d)",
-                                          [NSString stringWithUTF8StdString:_group.name],
-                                          signed(_group.gid)];
+        return
+            [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8StdString:_group.name], signed(_group.gid)];
     else
         return [NSString stringWithFormat:@"%@ (%d) - %@",
                                           [NSString stringWithUTF8StdString:_group.name],
@@ -775,15 +795,13 @@ static NSString *GroupToString(const VFSGroup &_group)
 static NSString *Title(const std::vector<VFSListingItem> &_items)
 {
     if( _items.size() == 1 )
-        return [NSString
-            stringWithFormat:NSLocalizedString(@"Change file attributes for \u201c%@\u201d",
-                                               "Title for file attributes sheet, single item"),
-                             [NSString stringWithUTF8String:_items.front().FilenameC()]];
+        return [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for \u201c%@\u201d",
+                                                            "Title for file attributes sheet, single item"),
+                                          [NSString stringWithUTF8String:_items.front().FilenameC()]];
     else
-        return [NSString
-            stringWithFormat:NSLocalizedString(@"Change file attributes for %@ selected items",
-                                               "Title for file attributes sheet, multiple items"),
-                             [NSNumber numberWithInt:static_cast<int>(_items.size())]];
+        return [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for %@ selected items",
+                                                            "Title for file attributes sheet, multiple items"),
+                                          [NSNumber numberWithInt:static_cast<int>(_items.size())]];
 }
 
 @end

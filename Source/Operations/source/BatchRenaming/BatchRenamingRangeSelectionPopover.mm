@@ -1,18 +1,22 @@
-// Copyright (C) 2015-2021 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingRangeSelectionPopover.h"
 #include "../Internal.h"
 
 using namespace nc::ops;
 
-@implementation NCOpsBatchRenamingRangeSelectionPopover
-{
+@implementation NCOpsBatchRenamingRangeSelectionPopover {
     NSRange m_Selection;
 }
 
-- (id) init
+@synthesize handler;
+@synthesize string;
+@synthesize textField;
+@synthesize enclosingPopover;
+
+- (id)init
 {
     self = [super initWithNibName:@"BatchRenamingRangeSelectionPopover" bundle:Bundle()];
-    if(self) {
+    if( self ) {
         self.string = @"";
         m_Selection = NSMakeRange(0, 0);
     }
@@ -25,44 +29,43 @@ using namespace nc::ops;
     self.textField.stringValue = self.string;
 }
 
-- (IBAction)OnOK:(id)[[maybe_unused]]_sender
+- (IBAction)OnOK:(id) [[maybe_unused]] _sender
 {
     if( self.textField.currentEditor )
         m_Selection = self.textField.currentEditor.selectedRange;
-    
-    if(self.handler)
+
+    if( self.handler )
         self.handler(m_Selection);
-    
-    if(auto v = self.enclosingPopover)
+
+    if( auto v = self.enclosingPopover )
         [v close];
 }
 
-- (IBAction)OnCancel:(id)[[maybe_unused]]_sender
+- (IBAction)OnCancel:(id) [[maybe_unused]] _sender
 {
-    if(auto v = self.enclosingPopover)
+    if( auto v = self.enclosingPopover )
         [v close];
 }
 
-- (void)popoverWillShow:(NSNotification *)[[maybe_unused]]_notification
+- (void)popoverWillShow:(NSNotification *) [[maybe_unused]] _notification
 {
     self.view.window.initialFirstResponder = self.textField;
 }
 
 - (void)popoverDidClose:(NSNotification *)notification
 {
-    static_cast<NSPopover*>(notification.object).contentViewController = nil; // here we are
+    static_cast<NSPopover *>(notification.object).contentViewController = nil; // here we are
 }
 
-- (void)controlTextDidEndEditing:(NSNotification *)[[maybe_unused]]_notification
+- (void)controlTextDidEndEditing:(NSNotification *) [[maybe_unused]] _notification
 {
     if( self.textField.currentEditor )
         m_Selection = self.textField.currentEditor.selectedRange;
 }
 
-- (void)controlTextDidChange:(NSNotification *)[[maybe_unused]]_notification
+- (void)controlTextDidChange:(NSNotification *) [[maybe_unused]] _notification
 {
     self.textField.stringValue = self.string;
-    
 }
 
 @end

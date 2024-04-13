@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -24,6 +24,7 @@ using namespace nc::panel;
     bool m_IsDropTarget;
     ThemesManager::ObservationTicket m_ThemeObservation;
 }
+@synthesize alternateBackgroundColor;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -33,8 +34,8 @@ using namespace nc::panel;
         [self setupColors];
 
         __weak PanelListViewTableView *weak_self = self;
-        m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-            ThemesManager::Notifications::FilePanelsList, [weak_self] {
+        m_ThemeObservation =
+            NCAppDelegate.me.themesManager.ObserveChanges(ThemesManager::Notifications::FilePanelsList, [weak_self] {
                 if( auto strong_self = weak_self )
                     [strong_self setupColors];
             });
@@ -209,8 +210,8 @@ using namespace nc::panel;
             while( virtualRowOrigin < clipRect.origin.y + clipRect.size.height ) {
                 if( virtualRowNumber % 2 != 0 ) {
                     // This is an alternate row
-                    NSRect virtualRowRect = NSMakeRect(
-                        clipRect.origin.x, virtualRowOrigin, clipRect.size.width, rowHeight);
+                    NSRect virtualRowRect =
+                        NSMakeRect(clipRect.origin.x, virtualRowOrigin, clipRect.size.width, rowHeight);
                     NSRectFill(virtualRowRect);
                 }
 
@@ -224,8 +225,8 @@ using namespace nc::panel;
             while( virtualRowOrigin + rowHeight > clipRect.origin.y ) {
                 if( abs(virtualRowNumber) % 2 != 0 ) {
                     // This is an alternate row
-                    NSRect virtualRowRect = NSMakeRect(
-                        clipRect.origin.x, virtualRowOrigin, clipRect.size.width, rowHeight);
+                    NSRect virtualRowRect =
+                        NSMakeRect(clipRect.origin.x, virtualRowOrigin, clipRect.size.width, rowHeight);
                     NSRectFill(virtualRowRect);
                 }
 
@@ -242,9 +243,8 @@ using namespace nc::panel;
         size_t columns_number = 0;
         for( NSTableColumn *column in self.tableColumns ) {
             assert(columns_number < x_offset.size());
-            x_offset[columns_number] = columns_number == 0
-                                           ? column.width - 1.
-                                           : x_offset[columns_number - 1] + column.width;
+            x_offset[columns_number] =
+                columns_number == 0 ? column.width - 1. : x_offset[columns_number - 1] + column.width;
             ++columns_number;
         }
         if( columns_number != 0 && x_offset[columns_number - 1] >= self.bounds.size.width - 1 ) {

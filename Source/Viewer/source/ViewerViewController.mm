@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ViewerViewController.h"
 #include <Viewer/Log.h>
 #include <VFS/VFS.h>
@@ -120,6 +120,10 @@ struct BackgroundFileOpener {
 @synthesize filePath = m_Path;
 @synthesize fileVFS = m_VFS;
 @synthesize wordWrappingCheckBox = m_WordWrappingCheckBox;
+@synthesize settingsButton;
+@synthesize goToPositionPopover;
+@synthesize goToPositionValueTextField;
+@synthesize goToPositionKindButton;
 
 - (instancetype)initWithHistory:(nc::viewer::History &)_history
                          config:(nc::config::Config &)_config

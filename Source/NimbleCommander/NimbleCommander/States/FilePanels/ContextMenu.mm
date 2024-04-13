@@ -349,6 +349,7 @@ using namespace nc::panel;
 @implementation NCPanelContextMenuSharingDelegate {
     NCPanelContextMenuSharingDelegate *m_Self;
 }
+@synthesize sourceWindow;
 
 - (instancetype)init
 {

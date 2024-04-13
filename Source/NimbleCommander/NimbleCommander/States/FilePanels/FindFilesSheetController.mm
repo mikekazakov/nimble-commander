@@ -244,6 +244,29 @@ private:
 @synthesize path = m_Path;
 @synthesize onPanelize = m_OnPanelize;
 @synthesize onView = m_OnView;
+@synthesize vfsInstanceManager;
+@synthesize didAnySearchStarted;
+@synthesize searchingNow;
+@synthesize CloseButton;
+@synthesize SearchButton;
+@synthesize GoToButton;
+@synthesize ViewButton;
+@synthesize PanelButton;
+@synthesize maskSearchField;
+@synthesize textSearchField;
+@synthesize LookingIn;
+@synthesize TableView;
+@synthesize ArrayController;
+@synthesize SizeRelationPopUp;
+@synthesize SizeTextField;
+@synthesize SizeTextFieldValue;
+@synthesize SizeMetricPopUp;
+@synthesize SearchInSubDirsButton;
+@synthesize SearchInArchivesButton;
+@synthesize searchForPopup;
+@synthesize focusedItem;
+@synthesize focusedItemIsReg;
+@synthesize filenameMaskIsOk;
 
 - (instancetype)init
 {

@@ -62,6 +62,10 @@ static NSTextField *SpawnEntryTitle(NSString *_title)
     bool m_SelectedThemeCanBeRemoved;
     bool m_SelectedThemeCanBeReverted;
 }
+@synthesize tableAdditionalMenu;
+@synthesize tableButtons;
+@synthesize themesTable;
+@synthesize outlineView;
 
 - (instancetype)init
 {

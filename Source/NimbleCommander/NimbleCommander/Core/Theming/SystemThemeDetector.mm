@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2022-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SystemThemeDetector.h"
 #include <functional>
 #include <Cocoa/Cocoa.h>
@@ -13,6 +13,10 @@
 @end
 
 @implementation NCSystemThemeDetectorObjCShim
+{
+    std::function<void()> m_onChange;
+}
+@synthesize onChange = m_onChange;
 
 - (instancetype)init
 {
@@ -40,14 +44,14 @@
                         change:(NSDictionary<NSKeyValueChangeKey, id> *)change
                        context:(void *)context
 {
-    if( _onChange )
-        _onChange();
+    if( m_onChange )
+        m_onChange();
 }
 
 - (void)themeChanged:(NSNotification *)_notification
 {
-    if( _onChange )
-        _onChange();
+    if( m_onChange )
+        m_onChange();
 }
 
 @end

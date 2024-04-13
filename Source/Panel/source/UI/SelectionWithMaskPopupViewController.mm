@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Panel/UI/SelectionWithMaskPopupViewController.h>
 #include <Panel/Internal.h>
 #include <Utility/StringExtras.h>
@@ -24,6 +24,8 @@ using namespace nc::panel;
 
 @synthesize onSelect = m_OnSelect;
 @synthesize onClearHistory = m_OnClearHistory;
+@synthesize searchField;
+@synthesize titleLabel;
 
 - (instancetype)initInitialQuery:(const nc::panel::FindFilesMask &)_initial_mask
                          history:(std::span<const nc::panel::FindFilesMask>)_masks

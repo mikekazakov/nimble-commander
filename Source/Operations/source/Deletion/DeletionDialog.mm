@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionDialog.h"
 #include "../Internal.h"
 #include <VFS/VFS.h>
@@ -25,6 +25,9 @@ using namespace nc::ops;
 @synthesize allowMoveToTrash = m_AllowMoveToTrash;
 @synthesize resultType = m_ResultType;
 @synthesize defaultType = m_DefaultType;
+@synthesize Label;
+@synthesize primaryActionButton;
+@synthesize auxiliaryActionPopup;
 
 - (id)initWithItems:(const std::shared_ptr<std::vector<VFSListingItem>>&)_items
 {

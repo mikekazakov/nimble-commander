@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingScheme.h"
 #include <Utility/StringExtras.h>
 
@@ -915,6 +915,7 @@ NSString *BatchRenamingScheme::Rename(const FileInfo &_fi, int _number) const
                 break;
             case ActionType::Capitalized:
                 case_transform = CaseTransform::Capitalized;
+                break;
             default:
                 break;
         }
@@ -970,4 +971,4 @@ NSString *BatchRenamingScheme::FileInfo::GrandparentFilename() const
     return [NSString stringWithUTF8StdString:parent_path.filename().native()];
 }
 
-}
+} // namespace nc::ops

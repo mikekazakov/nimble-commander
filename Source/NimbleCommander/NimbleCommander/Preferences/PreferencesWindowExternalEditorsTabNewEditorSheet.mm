@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include <Utility/FileMask.h>
 #include <Utility/StringExtras.h>
@@ -9,8 +9,7 @@
 @implementation PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty
 + (void)initialize
 {
-    [NSValueTransformer setValueTransformer:[[self alloc] init]
-                                    forName:NSStringFromClass(self.class)];
+    [NSValueTransformer setValueTransformer:[[self alloc] init] forName:NSStringFromClass(self.class)];
 }
 + (Class)transformedValueClass
 {
@@ -28,6 +27,7 @@
 @implementation PreferencesWindowExternalEditorsTabNewEditorSheet
 
 @synthesize hasTerminal;
+@synthesize Info;
 
 - (IBAction)OnClose:(id) [[maybe_unused]] _sender
 {
@@ -62,8 +62,7 @@
         if( panel.URL != nil ) {
             self.Info.path = panel.URL.path;
 
-            if( NSString *loc_name =
-                    [NSFileManager.defaultManager displayNameAtPath:self.Info.path] )
+            if( NSString *loc_name = [NSFileManager.defaultManager displayNameAtPath:self.Info.path] )
                 self.Info.name = loc_name;
         }
     }

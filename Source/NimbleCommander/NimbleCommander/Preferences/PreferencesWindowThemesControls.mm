@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <Utility/HexadecimalColor.h>
 #include <Panel/UI/PanelViewPresentationItemsColoringFilter.h>
@@ -30,10 +30,12 @@ using nc::ThemeAppearance;
 @end
 
 @implementation NCPreferencesActionTableCellView
+@synthesize target;
+@synthesize action;
 
-- (BOOL)sendAction:(SEL)action to:(id)target
+- (BOOL)sendAction:(SEL)_action to:(id)_target
 {
-    return [NSApp sendAction:action to:target from:self];
+    return [NSApp sendAction:_action to:_target from:self];
 }
 
 @end
@@ -170,8 +172,7 @@ using nc::ThemeAppearance;
 
         auto views = NSDictionaryOfVariableBindings(m_Custom, m_System, m_Description);
         [self addConstraints:[NSLayoutConstraint
-                                 constraintsWithVisualFormat:
-                                     @"|[m_Custom]-(==1)-[m_System]-[m_Description]-(>=0)-|"
+                                 constraintsWithVisualFormat:@"|[m_Custom]-(==1)-[m_System]-[m_Description]-(>=0)-|"
                                                      options:0
                                                      metrics:nil
                                                        views:views]];
@@ -265,9 +266,7 @@ using nc::ThemeAppearance;
         [menu addItem:item];
     }
 
-    [menu popUpMenuPositioningItem:nil
-                        atLocation:NSMakePoint(0, [sender bounds].size.height)
-                            inView:sender];
+    [menu popUpMenuPositioningItem:nil atLocation:NSMakePoint(0, [sender bounds].size.height) inView:sender];
 }
 
 - (void)standardFontClicked:(id)sender
@@ -297,14 +296,15 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 @implementation PreferencesWindowThemesTabColoringRulesControl {
     std::vector<nc::panel::PresentationItemsColoringRule> m_Rules;
 }
+@synthesize carrier;
+@synthesize table;
+@synthesize plusMinus;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
     if( self = [super initWithFrame:frameRect] ) {
 
-        NSNib *nib =
-            [[NSNib alloc] initWithNibNamed:@"PreferencesWindowThemesTabColoringRulesControl"
-                                     bundle:nil];
+        NSNib *nib = [[NSNib alloc] initWithNibNamed:@"PreferencesWindowThemesTabColoringRulesControl" bundle:nil];
         [nib instantiateWithOwner:self topLevelObjects:nil];
 
         auto v = self.carrier;
@@ -321,8 +321,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
                                                                      metrics:nil
                                                                        views:views]];
 
-        [self.table
-            registerForDraggedTypes:@[g_PreferencesWindowThemesTabColoringRulesControlDataType]];
+        [self.table registerForDraggedTypes:@[g_PreferencesWindowThemesTabColoringRulesControlDataType]];
     }
     return self;
 }
@@ -397,8 +396,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     }
     if( [tableColumn.identifier isEqualToString:@"filter"] ) {
         NSButton *bt = [[NSButton alloc] initWithFrame:NSRect()];
-        bt.title =
-            NSLocalizedStringFromTable(@"edit", @"Preferences", "Coloring rules edit button title");
+        bt.title = NSLocalizedStringFromTable(@"edit", @"Preferences", "Coloring rules edit button title");
         bt.buttonType = NSButtonTypeMomentaryLight;
         bt.bezelStyle = NSBezelStyleRecessed;
         static_cast<NSButtonCell *>(bt.cell).controlSize = NSControlSizeMini;
@@ -446,8 +444,8 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     if( auto button = nc::objc_cast<NSButton>(sender) )
         if( auto rv = nc::objc_cast<NSTableRowView>(button.superview) ) {
             long row_no = [static_cast<NSTableView *>(rv.superview) rowForView:rv];
-            auto sheet = [[PreferencesWindowPanelsTabColoringFilterSheet alloc]
-                initWithFilter:m_Rules.at(row_no).filter];
+            auto sheet =
+                [[PreferencesWindowPanelsTabColoringFilterSheet alloc] initWithFilter:m_Rules.at(row_no).filter];
             [sheet beginSheetForWindow:self.window
                      completionHandler:^(NSModalResponse returnCode) {
                        if( returnCode != NSModalResponseOK )
@@ -473,9 +471,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
             toPasteboard:(NSPasteboard *)pboard
 {
     [pboard declareTypes:@[g_PreferencesWindowThemesTabColoringRulesControlDataType] owner:self];
-    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes
-                                          requiringSecureCoding:false
-                                                          error:nil]
+    [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes requiringSecureCoding:false error:nil]
             forType:g_PreferencesWindowThemesTabColoringRulesControlDataType];
     return true;
 }
@@ -485,10 +481,8 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
               row:(NSInteger)drag_to
     dropOperation:(NSTableViewDropOperation) [[maybe_unused]] operation
 {
-    auto data = [info.draggingPasteboard
-        dataForType:g_PreferencesWindowThemesTabColoringRulesControlDataType];
-    NSIndexSet *inds =
-        [NSKeyedUnarchiver unarchivedObjectOfClass:NSIndexSet.class fromData:data error:nil];
+    auto data = [info.draggingPasteboard dataForType:g_PreferencesWindowThemesTabColoringRulesControlDataType];
+    NSIndexSet *inds = [NSKeyedUnarchiver unarchivedObjectOfClass:NSIndexSet.class fromData:data error:nil];
     NSInteger drag_from = inds.firstIndex;
 
     if( drag_to == drag_from ||    // same index, above

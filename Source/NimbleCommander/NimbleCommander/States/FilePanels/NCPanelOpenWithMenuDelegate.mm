@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
 #include <Utility/ObjCpp.h>
@@ -32,8 +32,7 @@ static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_ha
     for( int i = 0; i < static_cast<int>(_handlers.size()) - 1; ) {
         auto &first = _handlers[i];
         auto &second = _handlers[i + 1];
-        if( [first.Name() isEqualToString:second.Name()] &&
-            [first.Identifier() isEqualToString:second.Identifier()] ) {
+        if( [first.Name() isEqualToString:second.Name()] && [first.Identifier() isEqualToString:second.Identifier()] ) {
             // choose the latest version
             if( ver_cmp.Compare(first.Version(), second.Version()) >= 0 ) {
                 // _handlers[i] has later version or they are the same, remove the second
@@ -77,7 +76,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
     return result;
 }
 
-}
+} // namespace
 
 @implementation NCPanelOpenWithMenuDelegate {
     std::vector<VFSListingItem> m_ContextItems;
@@ -89,9 +88,9 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
     FileOpener *m_FileOpener;
     const UTIDB *m_UTIDB;
 }
+@synthesize target;
 
-- (instancetype)initWithFileOpener:(nc::panel::FileOpener &)_file_opener
-                             utiDB:(const nc::utility::UTIDB &)_uti_db
+- (instancetype)initWithFileOpener:(nc::panel::FileOpener &)_file_opener utiDB:(const nc::utility::UTIDB &)_uti_db
 {
     if( self = [super init] ) {
         m_FileOpener = &_file_opener;
@@ -129,8 +128,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
         return;
 
     auto source_items = m_ContextItems.empty() && self.target != nil
-                            ? std::make_shared<std::vector<VFSListingItem>>(
-                                  self.target.selectedEntriesOrFocusedEntry)
+                            ? std::make_shared<std::vector<VFSListingItem>>(self.target.selectedEntriesOrFocusedEntry)
                             : std::make_shared<std::vector<VFSListingItem>>(m_ContextItems);
 
     m_FetchQueue.Run([source_items, self] {
@@ -165,13 +163,12 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 - (NSMenuItem *)makeDefaultHandlerItem:(const LaunchServiceHandler &)_handler
 {
     const auto item = [NSMenuItem new];
-    item.title = [NSString
-        stringWithFormat:@"%@ (%@)",
-                         _handler.Name(),
-                         NSLocalizedStringFromTable(@"default",
-                                                    @"FilePanelsContextMenu",
-                                                    "Menu item postfix marker for default apps to "
-                                                    "open with, for English is 'default'")];
+    item.title = [NSString stringWithFormat:@"%@ (%@)",
+                                            _handler.Name(),
+                                            NSLocalizedStringFromTable(@"default",
+                                                                       @"FilePanelsContextMenu",
+                                                                       "Menu item postfix marker for default apps to "
+                                                                       "open with, for English is 'default'")];
     item.image = [_handler.Icon() copy];
     item.image.size = NSMakeSize(16, 16);
     item.target = self;
@@ -237,9 +234,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 {
     auto item = [NSMenuItem new];
     item.title = NSLocalizedStringFromTable(
-        @"Other...",
-        @"FilePanelsContextMenu",
-        "Menu item to choose other app to open with, for English is 'Other...'");
+        @"Other...", @"FilePanelsContextMenu", "Menu item to choose other app to open with, for English is 'Other...'");
     item.target = self;
     item.action = @selector(OnOpenWithOther:);
     return item;
@@ -247,10 +242,10 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 
 - (NSMenuItem *)makeNoneStubItem
 {
-    auto title = NSLocalizedStringFromTable(
-        @"<None>",
-        @"FilePanelsContextMenu",
-        "Menu item for case when no handlers are available, for English is '<None>'");
+    auto title =
+        NSLocalizedStringFromTable(@"<None>",
+                                   @"FilePanelsContextMenu",
+                                   "Menu item for case when no handlers are available, for English is '<None>'");
     auto item = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
     item.enabled = false;
     return item;
@@ -258,17 +253,14 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, cons
 
 - (NSMenuItem *)makeFetchingStubItem
 {
-    auto title =
-        NSLocalizedStringFromTable(@"Fetching...",
-                                   @"FilePanelsContextMenu",
-                                   "Menu item for indicating that fetching process is in progress");
+    auto title = NSLocalizedStringFromTable(
+        @"Fetching...", @"FilePanelsContextMenu", "Menu item for indicating that fetching process is in progress");
     return [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
 }
 
 - (bool)isAlwaysOpenWith:(NSMenu *)_menu
 {
-    return
-        [_menu.identifier isEqualToString:NCPanelOpenWithMenuDelegate.alwaysOpenWithMenuIdentifier];
+    return [_menu.identifier isEqualToString:NCPanelOpenWithMenuDelegate.alwaysOpenWithMenuIdentifier];
 }
 
 - (void)OnOpenWith:(id)sender
@@ -294,9 +286,7 @@ static NSOpenPanel *BuildAppChoose()
     return panel;
 }
 
-static void ShowOpenPanel(NSOpenPanel *_panel,
-                          NSWindow *_window,
-                          std::function<void(const std::string &_path)> _on_ok)
+static void ShowOpenPanel(NSOpenPanel *_panel, NSWindow *_window, std::function<void(const std::string &_path)> _on_ok)
 {
     [_panel beginSheetModalForWindow:_window
                    completionHandler:^(NSInteger result) {
@@ -322,9 +312,8 @@ static void ShowOpenPanel(NSOpenPanel *_panel,
 
 - (void)openItemsWithHandler:(const LaunchServiceHandler &)_handler
 {
-    const auto &source_items = m_ContextItems.empty() && self.target != nil
-                                   ? self.target.selectedEntriesOrFocusedEntry
-                                   : m_ContextItems;
+    const auto &source_items =
+        m_ContextItems.empty() && self.target != nil ? self.target.selectedEntriesOrFocusedEntry : m_ContextItems;
 
     if( source_items.size() > 1 ) {
         const auto same_host = all_of(begin(source_items), end(source_items), [&](const auto &i) {
@@ -334,13 +323,11 @@ static void ShowOpenPanel(NSOpenPanel *_panel,
             std::vector<std::string> items;
             for( auto &i : source_items )
                 items.emplace_back(i.Path());
-            m_FileOpener->Open(
-                items, source_items.front().Host(), _handler.Identifier(), self.target);
+            m_FileOpener->Open(items, source_items.front().Host(), _handler.Identifier(), self.target);
         }
     }
     else if( source_items.size() == 1 ) {
-        m_FileOpener->Open(
-            source_items.front().Path(), source_items.front().Host(), _handler.Path(), self.target);
+        m_FileOpener->Open(source_items.front().Path(), source_items.front().Host(), _handler.Path(), self.target);
     }
 }
 

@@ -1,15 +1,15 @@
-// Copyright (C) 2014-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include <Utility/StringExtras.h>
 
-using nc::base::tribool;
 using nc::base::indeterminate;
+using nc::base::tribool;
 
 static NSControlStateValue tribool_to_state(tribool _val)
 {
-    if(_val == false)
+    if( _val == false )
         return NSControlStateValueOff;
-    else if(_val == true)
+    else if( _val == true )
         return NSControlStateValueOn;
     else
         return NSControlStateValueMixed;
@@ -17,24 +17,29 @@ static NSControlStateValue tribool_to_state(tribool _val)
 
 static tribool state_to_tribool(NSControlStateValue _val)
 {
-    if(_val == NSControlStateValueOn)
+    if( _val == NSControlStateValueOn )
         return true;
-    else if(_val == NSControlStateValueOff)
+    else if( _val == NSControlStateValueOff )
         return false;
     else
         return indeterminate;
 }
 
-@implementation PreferencesWindowPanelsTabColoringFilterSheet
-{
+@implementation PreferencesWindowPanelsTabColoringFilterSheet {
     nc::panel::PresentationItemsColoringFilter m_Filter;
-    
 }
+@synthesize executable;
+@synthesize hidden;
+@synthesize directory;
+@synthesize symlink;
+@synthesize regular;
+@synthesize selected;
+@synthesize mask;
 
-- (id) initWithFilter:(nc::panel::PresentationItemsColoringFilter)_filter
+- (id)initWithFilter:(nc::panel::PresentationItemsColoringFilter)_filter
 {
     self = [super init];
-    if(self) {
+    if( self ) {
         m_Filter = _filter;
     }
     return self;
@@ -52,12 +57,12 @@ static tribool state_to_tribool(NSControlStateValue _val)
     self.mask.stringValue = [NSString stringWithUTF8StdString:m_Filter.mask.Mask()];
 }
 
-- (void)cancelOperation:(id)[[maybe_unused]]_sender
+- (void)cancelOperation:(id) [[maybe_unused]] _sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (IBAction)OnOK:(id)[[maybe_unused]]_sender
+- (IBAction)OnOK:(id) [[maybe_unused]] _sender
 {
     m_Filter.executable = state_to_tribool(self.executable.state);
     m_Filter.hidden = state_to_tribool(self.hidden.state);
@@ -65,20 +70,20 @@ static tribool state_to_tribool(NSControlStateValue _val)
     m_Filter.symlink = state_to_tribool(self.symlink.state);
     m_Filter.reg = state_to_tribool(self.regular.state);
     m_Filter.selected = state_to_tribool(self.selected.state);
-    NSString *mask = self.mask.stringValue;
-    if( mask == nil ) {
-        mask = @"";
+    NSString *mask_str = self.mask.stringValue;
+    if( mask_str == nil ) {
+        mask_str = @"";
     }
-    else if( !nc::utility::FileMask::IsWildCard(mask.UTF8String) ) {
-        auto wc = nc::utility::FileMask::ToExtensionWildCard(mask.UTF8String);
+    else if( !nc::utility::FileMask::IsWildCard(mask_str.UTF8String) ) {
+        auto wc = nc::utility::FileMask::ToExtensionWildCard(mask_str.UTF8String);
         if( auto replace = [NSString stringWithUTF8StdString:wc] )
-            mask = replace;
+            mask_str = replace;
     }
-    m_Filter.mask = nc::utility::FileMask(mask.UTF8String);
+    m_Filter.mask = nc::utility::FileMask(mask_str.UTF8String);
     [self endSheet:NSModalResponseOK];
 }
 
-- (nc::panel::PresentationItemsColoringFilter) filter
+- (nc::panel::PresentationItemsColoringFilter)filter
 {
     return m_Filter;
 }

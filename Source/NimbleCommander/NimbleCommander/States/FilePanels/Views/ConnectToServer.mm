@@ -16,9 +16,7 @@ namespace {
 class SheetsDispatcher : public NetworkConnectionsManager::ConnectionVisitor
 {
 public:
-    SheetsDispatcher(NetworkConnectionsManager::Connection _connection) : m_Connection(_connection)
-    {
-    }
+    SheetsDispatcher(NetworkConnectionsManager::Connection _connection) : m_Connection(_connection) {}
 
     SheetController<ConnectionSheetProtocol> *CreateSheet()
     {
@@ -58,7 +56,7 @@ private:
     SheetController<ConnectionSheetProtocol> *m_Sheet;
 };
 
-}
+} // namespace
 
 static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 {
@@ -86,6 +84,10 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 }
 
 @synthesize connection = m_OutputConnection;
+@synthesize connectionsTable;
+@synthesize controlButtons;
+@synthesize addNewConnectionMenu;
+@synthesize connectButton;
 
 - (instancetype)initWithNetworkConnectionsManager:(NetworkConnectionsManager &)_manager
 {
@@ -130,11 +132,9 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
     if( current >= 0 ) {
         const auto rows = self.connectionsTable.numberOfRows;
         if( rows > current )
-            [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:current]
-                               byExtendingSelection:false];
+            [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:current] byExtendingSelection:false];
         else if( rows > 0 )
-            [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:rows - 1]
-                               byExtendingSelection:false];
+            [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:rows - 1] byExtendingSelection:false];
     }
 
     [self validateButtons];
@@ -256,8 +256,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
     const auto new_it = find(begin(m_Connections), end(m_Connections), _connection);
     if( new_it != end(m_Connections) ) {
         const auto new_ind = distance(begin(m_Connections), new_it);
-        [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:new_ind]
-                           byExtendingSelection:false];
+        [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:new_ind] byExtendingSelection:false];
         [self.connectionsTable scrollRowToVisible:new_ind];
     }
 }
@@ -321,9 +320,7 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
 - (void)showNewConnectionMenu:(id) [[maybe_unused]] _sender
 {
     const auto origin = NSMakePoint(2, self.controlButtons.bounds.size.height + 3);
-    [self.addNewConnectionMenu popUpMenuPositioningItem:nil
-                                             atLocation:origin
-                                                 inView:self.controlButtons];
+    [self.addNewConnectionMenu popUpMenuPositioningItem:nil atLocation:origin inView:self.controlButtons];
 }
 
 - (void)onRemoveConnection:(id) [[maybe_unused]] _sender
@@ -334,9 +331,9 @@ static void PeformClickIfEnabled(NSSegmentedControl *_control, int _segment)
     auto connection = m_Connections.at(row);
 
     Alert *alert = [[Alert alloc] init];
-    alert.messageText = NSLocalizedString(
-        @"Are you sure you want to delete this connection?",
-        "Asking user if he really wants to delete information about a stored connection");
+    alert.messageText =
+        NSLocalizedString(@"Are you sure you want to delete this connection?",
+                          "Asking user if he really wants to delete information about a stored connection");
     alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "");
     [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
     [alert addButtonWithTitle:NSLocalizedString(@"No", "")];

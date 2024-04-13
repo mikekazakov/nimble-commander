@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include "View.h"
 #include "Screen.h"
@@ -24,10 +24,9 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
 
 @synthesize view = m_View;
 @synthesize onScreenResized = m_OnScreenResized;
+@synthesize customCursor;
 
-- (id)initWithFrame:(NSRect)frameRect
-        attachToTop:(bool)top
-           settings:(std::shared_ptr<nc::term::Settings>)settings
+- (id)initWithFrame:(NSRect)frameRect attachToTop:(bool)top settings:(std::shared_ptr<nc::term::Settings>)settings
 {
     assert(settings);
     self = [super initWithFrame:frameRect];
@@ -39,9 +38,7 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
         m_Settings = settings;
         m_View = [[NCTermView alloc] initWithFrame:rc];
         m_View.settings = settings;
-        m_ViewHolder = [[NCTermFlippableHolder alloc] initWithFrame:rc
-                                                            andView:m_View
-                                                          beFlipped:top];
+        m_ViewHolder = [[NCTermFlippableHolder alloc] initWithFrame:rc andView:m_View beFlipped:top];
         self.documentView = m_ViewHolder;
         self.hasVerticalScroller = !settings->HideScrollbar();
         self.borderType = NSNoBorder;
@@ -55,9 +52,8 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
         self.backgroundColor = m_Settings->BackgroundColor();
         self.verticalLineScroll = m_View.charHeight;
 
-        m_Screen =
-            std::make_unique<term::Screen>(floor(rc.size.width / m_View.charWidth),
-                                           floor(rc.size.height / m_View.charHeight));
+        m_Screen = std::make_unique<term::Screen>(floor(rc.size.width / m_View.charWidth),
+                                                  floor(rc.size.height / m_View.charHeight));
 
         [m_View AttachToScreen:m_Screen.get()];
 
@@ -65,8 +61,7 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
                                  constraintsWithVisualFormat:@"H:|-0-[m_ViewHolder(>=100)]-0-|"
                                                      options:0
                                                      metrics:nil
-                                                       views:NSDictionaryOfVariableBindings(
-                                                                 m_ViewHolder)]];
+                                                       views:NSDictionaryOfVariableBindings(m_ViewHolder)]];
 
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(frameDidChange)
@@ -92,9 +87,7 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
 
 - (id)initWithFrame:(NSRect)frameRect attachToTop:(bool)top
 {
-    return [self initWithFrame:frameRect
-                   attachToTop:top
-                      settings:DefaultSettings::SharedDefaultSettings()];
+    return [self initWithFrame:frameRect attachToTop:top settings:DefaultSettings::SharedDefaultSettings()];
 }
 
 - (void)dealloc
@@ -207,8 +200,7 @@ static const NSEdgeInsets g_Insets = {2., 5., 2., 5.};
     // is this code necessary?
     NSRect scrollRect;
     scrollRect = [self documentVisibleRect];
-    scrollRect.origin.y +=
-        std::floor(theEvent.deltaY) * self.verticalLineScroll * (m_ViewHolder.isFlipped ? -1 : 1);
+    scrollRect.origin.y += std::floor(theEvent.deltaY) * self.verticalLineScroll * (m_ViewHolder.isFlipped ? -1 : 1);
     [static_cast<NSView *>(self.documentView) scrollRectToVisible:scrollRect];
 }
 

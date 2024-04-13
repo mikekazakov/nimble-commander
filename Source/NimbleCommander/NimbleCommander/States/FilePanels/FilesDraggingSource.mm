@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilesDraggingSource.h"
 #include <VFS/Native.h>
 #include <Utility/StringExtras.h>
@@ -29,6 +29,7 @@ static const auto g_PasteboardFilenamesUTI = static_cast<NSString *>(
     VFSListingItem m_Item;
 }
 @synthesize item = m_Item;
+@synthesize icon;
 
 - (PanelDraggingItem *)initWithItem:(const VFSListingItem &)_item
 {

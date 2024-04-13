@@ -76,6 +76,22 @@ static std::string MakeCanonicPath(std::string _input)
 @synthesize resultDestination = m_ResultDestination;
 @synthesize resultHost = m_ResultHost;
 @synthesize resultOptions = m_Options;
+@synthesize CopyButton;
+@synthesize TextField;
+@synthesize DescriptionText;
+@synthesize PreserveSymlinksCheckbox;
+@synthesize CopyXattrsCheckbox;
+@synthesize CopyFileTimesCheckbox;
+@synthesize CopyUNIXFlagsCheckbox;
+@synthesize CopyUnixOwnersCheckbox;
+@synthesize CopyButtonStringStub;
+@synthesize RenameButtonStringStub;
+@synthesize isValidInput;
+@synthesize DisclosedViewController;
+@synthesize StackView;
+@synthesize PathPart;
+@synthesize ButtonsPart;
+@synthesize VerifySetting;
 
 - (instancetype)initWithItems:(std::vector<VFSListingItem>)_source_items
                     sourceVFS:(const VFSHostPtr &)_source_host
@@ -94,8 +110,7 @@ static std::string MakeCanonicPath(std::string _input)
         m_DestinationHost = _destination_host;
         m_Options = _options;
         if( m_DestinationHost ) {
-            m_AutoCompletion =
-                std::make_shared<nc::ops::DirectoryPathAutoCompletionImpl>(m_DestinationHost);
+            m_AutoCompletion = std::make_shared<nc::ops::DirectoryPathAutoCompletionImpl>(m_DestinationHost);
             m_AutoCompletionDelegate = [[NCFilepathAutoCompletionDelegate alloc] init];
             m_AutoCompletionDelegate.completion = m_AutoCompletion;
             m_AutoCompletionDelegate.isNativeVFS = m_DestinationHost->IsNativeFS();
@@ -111,9 +126,7 @@ static std::string MakeCanonicPath(std::string _input)
     [super windowDidLoad];
     [self.DisclosedViewController toggleDisclosure:self];
     [self.StackView insertView:self.PathPart atIndex:0 inGravity:NSStackViewGravityTop];
-    [self.StackView insertView:self.DisclosedViewController.view
-                       atIndex:0
-                     inGravity:NSStackViewGravityBottom];
+    [self.StackView insertView:self.DisclosedViewController.view atIndex:0 inGravity:NSStackViewGravityBottom];
     [self.StackView insertView:self.ButtonsPart atIndex:1 inGravity:NSStackViewGravityBottom];
     [self.window.contentView updateConstraintsForSubtreeIfNeeded];
     [self.window makeFirstResponder:self.TextField];
@@ -132,27 +145,26 @@ static std::string MakeCanonicPath(std::string _input)
     if( m_Options.docopy ) {
         if( amount > 1 )
             self.DescriptionText.stringValue = [NSString
-                stringWithFormat:NSLocalizedString(@"Copy %@ items to:",
-                                                   "Copy files sheet prompt, copying many files"),
+                stringWithFormat:NSLocalizedString(@"Copy %@ items to:", "Copy files sheet prompt, copying many files"),
                                  [NSNumber numberWithInt:amount]];
         else
-            self.DescriptionText.stringValue = [NSString
-                stringWithFormat:NSLocalizedString(@"Copy \u201c%@\u201d to:",
-                                                   "Copy files sheet prompt, copying single file"),
-                                 [NSString stringWithUTF8String:m_SourceItems.front().FilenameC()]];
+            self.DescriptionText.stringValue =
+                [NSString stringWithFormat:NSLocalizedString(@"Copy \u201c%@\u201d to:",
+                                                             "Copy files sheet prompt, copying single file"),
+                                           [NSString stringWithUTF8String:m_SourceItems.front().FilenameC()]];
         self.CopyButton.title = self.CopyButtonStringStub.title;
     }
     else {
         if( amount > 1 )
-            self.DescriptionText.stringValue = [NSString
-                stringWithFormat:NSLocalizedString(@"Rename/move %@ items to:",
-                                                   "Move files sheet prompt, moving many files"),
-                                 [NSNumber numberWithInt:amount]];
+            self.DescriptionText.stringValue =
+                [NSString stringWithFormat:NSLocalizedString(@"Rename/move %@ items to:",
+                                                             "Move files sheet prompt, moving many files"),
+                                           [NSNumber numberWithInt:amount]];
         else
-            self.DescriptionText.stringValue = [NSString
-                stringWithFormat:NSLocalizedString(@"Rename/move \u201c%@\u201d to:",
-                                                   "Move files sheet prompt, moving single file"),
-                                 [NSString stringWithUTF8String:m_SourceItems.front().FilenameC()]];
+            self.DescriptionText.stringValue =
+                [NSString stringWithFormat:NSLocalizedString(@"Rename/move \u201c%@\u201d to:",
+                                                             "Move files sheet prompt, moving single file"),
+                                           [NSString stringWithUTF8String:m_SourceItems.front().FilenameC()]];
         self.CopyButton.title = self.RenameButtonStringStub.title;
     }
     [self.VerifySetting selectItemWithTag:static_cast<int>(m_Options.verification)];
@@ -197,11 +209,9 @@ static std::string MakeCanonicPath(std::string _input)
         if( !m_SourceHost )
             return not_valid();
 
-        if( m_SourceHost->IsNativeFS() &&
-            _input.starts_with("~/") ) // input is relative to home dir
+        if( m_SourceHost->IsNativeFS() && _input.starts_with("~/") ) // input is relative to home dir
             input.replace(0, 2, nc::base::CommonPaths::Home());
-        else if( m_SourceHost->IsNativeFS() &&
-                 _input.starts_with("~") ) // input is relative to home dir
+        else if( m_SourceHost->IsNativeFS() && _input.starts_with("~") ) // input is relative to home dir
             input.replace(0, 1, nc::base::CommonPaths::Home());
         else // input is relative to source base dir
             input = m_SourceDirectory + input;
@@ -223,8 +233,7 @@ static std::string MakeCanonicPath(std::string _input)
     m_Options.copy_file_times = self.CopyFileTimesCheckbox.state == NSControlStateValueOn;
     m_Options.copy_unix_flags = self.CopyUNIXFlagsCheckbox.state == NSControlStateValueOn;
     m_Options.copy_unix_owners = self.CopyUnixOwnersCheckbox.state == NSControlStateValueOn;
-    m_Options.verification =
-        static_cast<CopyingOptions::ChecksumVerification>(self.VerifySetting.selectedTag);
+    m_Options.verification = static_cast<CopyingOptions::ChecksumVerification>(self.VerifySetting.selectedTag);
 }
 
 - (void)validate
@@ -239,15 +248,10 @@ static std::string MakeCanonicPath(std::string _input)
         [self validate];
 }
 
-- (BOOL)control:(NSControl *)_control
-               textView:(NSTextView *)_text_view
-    doCommandBySelector:(SEL)_command_selector
+- (BOOL)control:(NSControl *)_control textView:(NSTextView *)_text_view doCommandBySelector:(SEL)_command_selector
 {
-    if( _control == self.TextField && _command_selector == @selector(complete:) &&
-        m_AutoCompletionDelegate ) {
-        return [m_AutoCompletionDelegate control:_control
-                                        textView:_text_view
-                             doCommandBySelector:_command_selector];
+    if( _control == self.TextField && _command_selector == @selector(complete:) && m_AutoCompletionDelegate ) {
+        return [m_AutoCompletionDelegate control:_control textView:_text_view doCommandBySelector:_command_selector];
     }
     return false;
 }

@@ -118,6 +118,7 @@ static NSString *TitleForData(const data::Model *_data);
 @synthesize splitView = m_SplitView;
 @synthesize closedPanelsHistory = m_ClosedPanelsHistory;
 @synthesize favoriteLocationsStorage = m_FavoriteLocationsStorage;
+@synthesize filePanelsToolsbar;
 
 - (instancetype)initBaseWithFrame:(NSRect)frameRect
                           andPool:(nc::ops::Pool &)_pool

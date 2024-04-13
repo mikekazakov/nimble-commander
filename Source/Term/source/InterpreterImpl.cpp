@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InterpreterImpl.h"
 #include <Base/CFString.h>
 #include <Base/CFPtr.h>
@@ -7,6 +7,7 @@
 #include "OrthodoxMonospace.h"
 #include "TranslateMaps.h"
 #include "Log.h"
+#include <fmt/format.h>
 
 namespace nc::term {
 
@@ -321,7 +322,7 @@ void InterpreterImpl::ProcessReport(const input::DeviceReport _device_report)
         char buf[64];
         const int x = m_Screen.CursorX();
         const int y = m_OriginLineMode ? m_Screen.CursorY() - m_Extent.top : m_Screen.CursorY();
-        snprintf(buf, sizeof(buf), "\033[%d;%dR", y + 1, x + 1);
+        *fmt::format_to(buf, "\033[{};{}R", y + 1, x + 1) = 0;
         Response(buf);
     }
 }

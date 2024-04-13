@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2023 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2020-2024 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ParserImpl.h"
 #include <Utility/Encodings.h>
 #include <Base/CFPtr.h>
@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <fmt/format.h>
 
 namespace nc::term {
 
@@ -207,7 +208,7 @@ void ParserImpl::LogMissedEscChar(unsigned char _c)
 {
     if( m_ErrorLog ) {
         char buf[256];
-        snprintf(buf, sizeof(buf), "Missed an Esc char: %d(\'%c\')", static_cast<int>(_c), _c);
+        *fmt::format_to(buf, "Missed an Esc char: {}(\'{}\')", static_cast<int>(_c), _c) = 0;
         m_ErrorLog(buf);
     }
 }

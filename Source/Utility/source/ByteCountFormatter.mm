@@ -21,8 +21,6 @@ static constexpr unsigned chartouni(const char *_from, unsigned short *_to, unsi
     return _amount;
 }
 
-constexpr uint64_t ByteCountFormatter::m_Exponent[];
-
 ByteCountFormatter::ByteCountFormatter(bool _localized)
 {
     m_SI = {' ', 'K', 'M', 'G', 'T', 'P'};
@@ -304,23 +302,25 @@ int ByteCountFormatter::SpaceSeparated_Impl(uint64_t _sz, unsigned short _buf[64
 #define __1000_4(a) __1000_1((a) / 1000000000lu)
 #define __1000_5(a) __1000_1((a) / 1000000000000lu)
     if( _sz < 1000lu )
-        len = snprintf(buf, sizeof(buf), "%llu ", _sz);
+        len = static_cast<int>(fmt::format_to(buf, "{} ", _sz) - buf);
     else if( _sz < 1000lu * 1000lu )
-        len = snprintf(buf, sizeof(buf), "%llu %03llu ", __1000_2(_sz), __1000_1(_sz));
+        len = static_cast<int>(fmt::format_to(buf, "{} {:03} ", __1000_2(_sz), __1000_1(_sz)) - buf);
     else if( _sz < 1000lu * 1000lu * 1000lu )
-        len = snprintf(buf, sizeof(buf), "%llu %03llu %03llu ", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
+        len =
+            static_cast<int>(fmt::format_to(buf, "{} {:03} {:03} ", __1000_3(_sz), __1000_2(_sz), __1000_1(_sz)) - buf);
     else if( _sz < 1000lu * 1000lu * 1000lu * 1000lu )
-        len = snprintf(
-            buf, sizeof(buf), "%llu %03llu %03llu %03llu ", __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz));
+        len = static_cast<int>(
+            fmt::format_to(buf, "{} {:03} {:03} {:03} ", __1000_4(_sz), __1000_3(_sz), __1000_2(_sz), __1000_1(_sz)) -
+            buf);
     else if( _sz < 1000lu * 1000lu * 1000lu * 1000lu * 1000lu )
-        len = snprintf(buf,
-                       sizeof(buf),
-                       "%llu %03llu %03llu %03llu %03llu ",
-                       __1000_5(_sz),
-                       __1000_4(_sz),
-                       __1000_3(_sz),
-                       __1000_2(_sz),
-                       __1000_1(_sz));
+        len = static_cast<int>(fmt::format_to(buf,
+                                              "{} {:03} {:03} {:03} {:03} ",
+                                              __1000_5(_sz),
+                                              __1000_4(_sz),
+                                              __1000_3(_sz),
+                                              __1000_2(_sz),
+                                              __1000_1(_sz)) -
+                               buf);
 #undef __1000_1
 #undef __1000_2
 #undef __1000_3

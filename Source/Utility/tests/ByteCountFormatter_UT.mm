@@ -71,3 +71,27 @@ TEST_CASE(PREFIX "Fixed6")
         CHECK([f.ToNSString(tc.size, ByteCountFormatter::Fixed6) isEqualToString:tc.expected]);
     }
 }
+
+TEST_CASE(PREFIX "SpaceSeparated")
+{
+    ByteCountFormatter f(false);
+    struct TC {
+        uint64_t size;
+        NSString *expected;
+    } tcs[] = {
+        {0ull, @"0 bytes"},
+        {999ull, @"999 bytes"},
+        {1'000ull, @"1 000 bytes"},
+        {999'999ull, @"999 999 bytes"},
+        {1'000'000ull, @"1 000 000 bytes"},
+        {999'999'999ull, @"999 999 999 bytes"},
+        {1'000'000'000ull, @"1 000 000 000 bytes"},
+        {999'999'999'999ull, @"999 999 999 999 bytes"},
+        {1'000'000'000'000ull, @"1 000 000 000 000 bytes"},
+        {999'999'999'999'999ull, @"999 999 999 999 999 bytes"},
+        {1'000'000'000'000'000ull, @"bytes"},
+    };
+    for( auto &tc : tcs ) {
+        CHECK([f.ToNSString(tc.size, ByteCountFormatter::SpaceSeparated) isEqualToString:tc.expected]);
+    }
+}

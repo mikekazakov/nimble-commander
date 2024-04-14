@@ -346,7 +346,7 @@ int ByteCountFormatter::Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]) c
     }
 
     if( _size < 1024 ) {
-        int len = snprintf(buf, sizeof(buf), "%llu", _size);
+        const int len = static_cast<int>(fmt::format_to(buf, "{}", _size) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_B;
@@ -411,7 +411,7 @@ int ByteCountFormatter::Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]) c
             return 6;
         }
         else {
-            int len = snprintf(buf, sizeof(buf), "%u", significant);
+            const int len = static_cast<int>(fmt::format_to(buf, "{}", significant) - buf);
             chartouni(buf, _buf, len);
             _buf[len] = ' ';
             _buf[len + 1] = m_SI[expo];
@@ -426,14 +426,15 @@ int ByteCountFormatter::Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) c
     char buf[128];
     int len = 0;
     if( _size < 999 ) { // bytes, ABC bytes format, 5 symbols max
-        len = snprintf(buf, sizeof(buf), "%llu", _size);
+        len = static_cast<int>(fmt::format_to(buf, "{}", _size) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_B;
         return len + 2;
     }
     else if( _size < 999ul * m_Exponent[1] ) { // kilobytes, ABC KB format, 6 symbols max
-        len = snprintf(buf, sizeof(buf), "%.0f", static_cast<double>(_size) / static_cast<double>(m_Exponent[1]));
+        len = static_cast<int>(
+            fmt::format_to(buf, "{:.0f}", static_cast<double>(_size) / static_cast<double>(m_Exponent[1])) - buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
         _buf[len + 1] = m_SI[1];
@@ -441,7 +442,9 @@ int ByteCountFormatter::Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) c
         return len + 3;
     }
     else if( _size < 99ul * m_Exponent[2] ) { // megabytes, AB.CD MB format, 8 symbols max
-        len = snprintf(buf, sizeof(buf), "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[2]));
+        len = static_cast<int>(
+            fmt::format_to(buf, "{:.2f}", static_cast<double>(_size) / static_cast<double>(m_Exponent[2])) - buf);
+        _buf[len] = 0;
         MessWithSeparator(buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
@@ -450,7 +453,9 @@ int ByteCountFormatter::Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) c
         return len + 3;
     }
     else if( _size < 99ul * m_Exponent[3] ) { // gigabytes, AB.CD GB format, 8 symbols max
-        len = snprintf(buf, sizeof(buf), "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[3]));
+        len = static_cast<int>(
+            fmt::format_to(buf, "{:.2f}", static_cast<double>(_size) / static_cast<double>(m_Exponent[3])) - buf);
+        _buf[len] = 0;
         MessWithSeparator(buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
@@ -459,7 +464,9 @@ int ByteCountFormatter::Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) c
         return len + 3;
     }
     else if( _size < 99ul * m_Exponent[4] ) { // terabytes, AB.CD TB format, 8 symbols max
-        len = snprintf(buf, sizeof(buf), "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[4]));
+        len = static_cast<int>(
+            fmt::format_to(buf, "{:.2f}", static_cast<double>(_size) / static_cast<double>(m_Exponent[4])) - buf);
+        _buf[len] = 0;
         MessWithSeparator(buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
@@ -468,7 +475,9 @@ int ByteCountFormatter::Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) c
         return len + 3;
     }
     else if( _size < 99ul * m_Exponent[5] ) { // petabytes, AB.CD PB format, 8 symbols max
-        len = snprintf(buf, sizeof(buf), "%.2f", static_cast<double>(_size) / static_cast<double>(m_Exponent[5]));
+        len = static_cast<int>(
+            fmt::format_to(buf, "{:.2f}", static_cast<double>(_size) / static_cast<double>(m_Exponent[5])) - buf);
+        _buf[len] = 0;
         MessWithSeparator(buf);
         chartouni(buf, _buf, len);
         _buf[len] = ' ';
